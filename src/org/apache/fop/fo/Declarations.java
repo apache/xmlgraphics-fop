@@ -1,18 +1,58 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.fo;
 
-// FOP
-import org.apache.fop.fo.flow.*;
-import org.apache.fop.apps.FOPException;
-
-import java.util.ArrayList;
-import java.util.HashMap;
+// Java
+import java.util.List;
+import java.util.Map;
 import java.util.Iterator;
 
 /**
@@ -23,8 +63,9 @@ import java.util.Iterator;
  * references.
  */
 public class Declarations extends FObj {
-    HashMap colorProfiles = null;
-    ArrayList external = null;
+    
+    private Map colorProfiles = null;
+    private List external = null;
 
     protected Declarations(FONode parent) {
         super(parent);
@@ -35,25 +76,26 @@ public class Declarations extends FObj {
      * a hashmap of color profiles and a list of external xml.
      */
     public void end() {
-        for(Iterator iter = children.iterator(); iter.hasNext(); ) {
+        for (Iterator iter = children.iterator(); iter.hasNext();) {
             FONode node = (FONode)iter.next();
-            if(node.getName().equals("fo:color-profile")) {
+            if (node.getName().equals("fo:color-profile")) {
                 ColorProfile cp = (ColorProfile)node;
-                if(!"".equals(cp.getProfileName())) {
-                    if(colorProfiles == null) {
-                        colorProfiles = new HashMap();
+                if (!"".equals(cp.getProfileName())) {
+                    if (colorProfiles == null) {
+                        colorProfiles = new java.util.HashMap();
                     }
-                    if(colorProfiles.get(cp.getProfileName()) != null) {
+                    if (colorProfiles.get(cp.getProfileName()) != null) {
                         // duplicate names
-                        getLogger().warn("Duplicate fo:color-profile profile name : " + cp.getProfileName());
+                        getLogger().warn("Duplicate fo:color-profile profile name : " 
+                                + cp.getProfileName());
                     }
                     colorProfiles.put(cp.getProfileName(), cp);
                 } else {
                     getLogger().warn("color-profile-name required for color profile");
                 }
-            } else if(node instanceof XMLObj) {
-                if(external == null) {
-                    external = new ArrayList();
+            } else if (node instanceof XMLObj) {
+                if (external == null) {
+                    external = new java.util.ArrayList();
                 }
                 external.add(node);
             } else {

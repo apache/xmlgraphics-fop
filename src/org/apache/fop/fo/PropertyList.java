@@ -1,10 +1,53 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.fo;
 
 import java.util.HashMap;
@@ -28,26 +71,26 @@ public class PropertyList extends HashMap {
     public static final int BLOCKPROGDIM = 4;
     public static final int INLINEPROGDIM = 5;
 
-    private static final String[] sAbsNames = new String[] {
+    private static final String[] ABS_NAMES = new String[] {
         "left", "right", "top", "bottom", "height", "width"
     };
 
-    private static final String[] sRelNames = new String[] {
+    private static final String[] REL_NAMES = new String[] {
         "start", "end", "before", "after", "block-progression-dimension",
         "inline-progression-dimension"
     };
 
-    private static final HashMap wmtables = new HashMap(4);
+    private static final HashMap WRITING_MODE_TABLES = new HashMap(4);
     {
-        wmtables.put(new Integer(WritingMode.LR_TB),    /* lr-tb */
+        WRITING_MODE_TABLES.put(new Integer(WritingMode.LR_TB),    /* lr-tb */
         new byte[] {
             START, END, BEFORE, AFTER, BLOCKPROGDIM, INLINEPROGDIM
         });
-        wmtables.put(new Integer(WritingMode.RL_TB),    /* rl-tb */
+        WRITING_MODE_TABLES.put(new Integer(WritingMode.RL_TB),    /* rl-tb */
         new byte[] {
             END, START, BEFORE, AFTER, BLOCKPROGDIM, INLINEPROGDIM
         });
-        wmtables.put(new Integer(WritingMode.TB_RL),    /* tb-rl */
+        WRITING_MODE_TABLES.put(new Integer(WritingMode.TB_RL),    /* tb-rl */
         new byte[] {
             AFTER, BEFORE, START, END, INLINEPROGDIM, BLOCKPROGDIM
         });
@@ -55,9 +98,9 @@ public class PropertyList extends HashMap {
 
     private PropertyListBuilder builder;
     private PropertyList parentPropertyList = null;
-    String namespace = "";
-    String element = "";
-    FObj fobj = null;
+    private String namespace = "";
+    private String element = "";
+    private FObj fobj = null;
 
     public PropertyList(PropertyList parentPropertyList, String space,
                         String el) {
@@ -77,8 +120,9 @@ public class PropertyList extends HashMap {
     public FObj getParentFObj() {
         if (parentPropertyList != null) {
             return parentPropertyList.getFObj();
-        } else
+        } else {
             return null;
+        }
     }
 
     /**
@@ -94,8 +138,9 @@ public class PropertyList extends HashMap {
         String baseName;
         if (sepchar > -1) {
             baseName = propertyName.substring(0, sepchar);
-        } else
+        } else {
             baseName = propertyName;
+        }
         Property p = getExplicitBaseProp(baseName);
         if (p == null) {
             p = builder.getShorthand(this, namespace, element, baseName);
@@ -125,8 +170,9 @@ public class PropertyList extends HashMap {
                                                     baseName, p,
                                                     propertyName.substring(sepchar
                                                     + 1));
-            } else
+            } else {
                 return null;
+            }
         }
         return (Property)super.get(propertyName);
     }
@@ -255,7 +301,7 @@ public class PropertyList extends HashMap {
 
         // if value is inherit then get computed value from
         // parent
-        if(p != null && "inherit".equals(p.getSpecifiedValue())) {
+        if (p != null && "inherit".equals(p.getSpecifiedValue())) {
             if (this.parentPropertyList != null) {
                 p = parentPropertyList.get(propertyName, true, false);
             }
@@ -264,8 +310,9 @@ public class PropertyList extends HashMap {
         if (subpropName != null && p != null) {
             return this.builder.getSubpropValue(namespace, element,
                                                 propertyName, p, subpropName);
-        } else
+        } else {
             return p;
+        }
     }
 
     public void setBuilder(PropertyListBuilder builder) {
@@ -336,9 +383,10 @@ public class PropertyList extends HashMap {
      */
     public String wmAbsToRel(int absdir) {
         if (wmtable != null) {
-            return sRelNames[wmtable[absdir]];
-        } else
+            return REL_NAMES[wmtable[absdir]];
+        } else {
             return "";
+        }
     }
 
     /**
@@ -349,8 +397,9 @@ public class PropertyList extends HashMap {
     public String wmRelToAbs(int reldir) {
         if (wmtable != null) {
             for (int i = 0; i < wmtable.length; i++) {
-                if (wmtable[i] == reldir)
-                    return sAbsNames[i];
+                if (wmtable[i] == reldir) {
+                    return ABS_NAMES[i];
+                }
             }
         }
         return "";
@@ -360,7 +409,7 @@ public class PropertyList extends HashMap {
      * Set the writing mode traits for the FO with this property list.
      */
     public void setWritingMode(int writingMode) {
-        this.wmtable = (byte[])wmtables.get(new Integer(writingMode));
+        this.wmtable = (byte[])WRITING_MODE_TABLES.get(new Integer(writingMode));
     }
 
 }

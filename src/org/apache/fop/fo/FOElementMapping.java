@@ -1,23 +1,67 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.fo;
 
+// Java
 import java.util.HashMap;
-import java.util.Iterator;
 
-import org.apache.fop.fo.flow.*;
-import org.apache.fop.fo.pagination.*;
-
+/**
+ * Element mapping class for all XSL-FO elements.
+ */
 public class FOElementMapping implements ElementMapping {
+    
     private static HashMap foObjs = null;
 
     private static synchronized void setupFO() {
-        if(foObjs == null) {
+        if (foObjs == null) {
             foObjs = new HashMap();
 
             // Declarations and Pagination and Layout Formatting Objects
@@ -107,6 +151,9 @@ public class FOElementMapping implements ElementMapping {
 
     }
 
+    /**
+     * @see org.apache.fop.fo.ElementMapping#addToBuilder(FOTreeBuilder)
+     */
     public void addToBuilder(FOTreeBuilder builder) {
         setupFO();
         String uri = "http://www.w3.org/1999/XSL/Format";
@@ -115,7 +162,7 @@ public class FOElementMapping implements ElementMapping {
 
     static class R extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new Root(parent);
+            return new org.apache.fop.fo.pagination.Root(parent);
         }
     }
 
@@ -133,91 +180,91 @@ public class FOElementMapping implements ElementMapping {
 
     static class PS extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new PageSequence(parent);
+            return new org.apache.fop.fo.pagination.PageSequence(parent);
         }
     }
 
     static class LMS extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new LayoutMasterSet(parent);
+            return new org.apache.fop.fo.pagination.LayoutMasterSet(parent);
         }
     }
 
     static class PSM extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new PageSequenceMaster(parent);
+            return new org.apache.fop.fo.pagination.PageSequenceMaster(parent);
         }
     }
 
     static class SPMR extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new SinglePageMasterReference(parent);
+            return new org.apache.fop.fo.pagination.SinglePageMasterReference(parent);
         }
     }
 
     static class RPMR extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new RepeatablePageMasterReference(parent);
+            return new org.apache.fop.fo.pagination.RepeatablePageMasterReference(parent);
         }
     }
 
     static class RPMA extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new RepeatablePageMasterAlternatives(parent);
+            return new org.apache.fop.fo.pagination.RepeatablePageMasterAlternatives(parent);
         }
     }
 
     static class CPMR extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new ConditionalPageMasterReference(parent);
+            return new org.apache.fop.fo.pagination.ConditionalPageMasterReference(parent);
         }
     }
 
     static class SPM extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new SimplePageMaster(parent);
+            return new org.apache.fop.fo.pagination.SimplePageMaster(parent);
         }
     }
 
     static class RB extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new RegionBody(parent);
+            return new org.apache.fop.fo.pagination.RegionBody(parent);
         }
     }
 
     static class RBefore extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new RegionBefore(parent);
+            return new org.apache.fop.fo.pagination.RegionBefore(parent);
         }
     }
 
     static class RA extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new RegionAfter(parent);
+            return new org.apache.fop.fo.pagination.RegionAfter(parent);
         }
     }
 
     static class RS extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new RegionStart(parent);
+            return new org.apache.fop.fo.pagination.RegionStart(parent);
         }
     }
 
     static class RE extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new RegionEnd(parent);
+            return new org.apache.fop.fo.pagination.RegionEnd(parent);
         }
     }
 
     static class Fl extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new Flow(parent);
+            return new org.apache.fop.fo.flow.Flow(parent);
         }
     }
 
     static class SC extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new StaticContent(parent);
+            return new org.apache.fop.fo.flow.StaticContent(parent);
         }
     }
 
@@ -229,19 +276,19 @@ public class FOElementMapping implements ElementMapping {
 
     static class B extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new Block(parent);
+            return new org.apache.fop.fo.flow.Block(parent);
         }
     }
 
     static class BC extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new BlockContainer(parent);
+            return new org.apache.fop.fo.flow.BlockContainer(parent);
         }
     }
 
     static class BO extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new BidiOverride(parent);
+            return new org.apache.fop.fo.flow.BidiOverride(parent);
         }
     }
 
@@ -253,151 +300,151 @@ public class FOElementMapping implements ElementMapping {
 
     static class IPS extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new InitialPropertySet(parent);
+            return new org.apache.fop.fo.flow.InitialPropertySet(parent);
         }
     }
 
     static class EG extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new ExternalGraphic(parent);
+            return new org.apache.fop.fo.flow.ExternalGraphic(parent);
         }
     }
 
     static class IFO extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new InstreamForeignObject(parent);
+            return new org.apache.fop.fo.flow.InstreamForeignObject(parent);
         }
     }
 
     static class In extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new Inline(parent);
+            return new org.apache.fop.fo.flow.Inline(parent);
         }
     }
 
     static class IC extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new InlineContainer(parent);
+            return new org.apache.fop.fo.flow.InlineContainer(parent);
         }
     }
 
     static class L extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new Leader(parent);
+            return new org.apache.fop.fo.flow.Leader(parent);
         }
     }
 
     static class PN extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new PageNumber(parent);
+            return new org.apache.fop.fo.flow.PageNumber(parent);
         }
     }
 
     static class PNC extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new PageNumberCitation(parent);
+            return new org.apache.fop.fo.flow.PageNumberCitation(parent);
         }
     }
 
     static class TAC extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new TableAndCaption(parent);
+            return new org.apache.fop.fo.flow.TableAndCaption(parent);
         }
     }
 
     static class Ta extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new Table(parent);
+            return new org.apache.fop.fo.flow.Table(parent);
         }
     }
 
     static class TC extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new TableColumn(parent);
+            return new org.apache.fop.fo.flow.TableColumn(parent);
         }
     }
 
     static class TCaption extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new TableCaption(parent);
+            return new org.apache.fop.fo.flow.TableCaption(parent);
         }
     }
 
     static class TB extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new TableBody(parent);
+            return new org.apache.fop.fo.flow.TableBody(parent);
         }
     }
 
     static class TR extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new TableRow(parent);
+            return new org.apache.fop.fo.flow.TableRow(parent);
         }
     }
 
     static class TCell extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new TableCell(parent);
+            return new org.apache.fop.fo.flow.TableCell(parent);
         }
     }
 
     static class LB extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new ListBlock(parent);
+            return new org.apache.fop.fo.flow.ListBlock(parent);
         }
     }
 
     static class LI extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new ListItem(parent);
+            return new org.apache.fop.fo.flow.ListItem(parent);
         }
     }
 
     static class LIB extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new ListItemBody(parent);
+            return new org.apache.fop.fo.flow.ListItemBody(parent);
         }
     }
 
     static class LIL extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new ListItemLabel(parent);
+            return new org.apache.fop.fo.flow.ListItemLabel(parent);
         }
     }
 
     static class BL extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new BasicLink(parent);
+            return new org.apache.fop.fo.flow.BasicLink(parent);
         }
     }
 
     static class MS extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new MultiSwitch(parent);
+            return new org.apache.fop.fo.flow.MultiSwitch(parent);
         }
     }
 
     static class MC extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new MultiCase(parent);
+            return new org.apache.fop.fo.flow.MultiCase(parent);
         }
     }
 
     static class MT extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new MultiToggle(parent);
+            return new org.apache.fop.fo.flow.MultiToggle(parent);
         }
     }
 
     static class MP extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new MultiProperties(parent);
+            return new org.apache.fop.fo.flow.MultiProperties(parent);
         }
     }
 
     static class MPS extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new MultiPropertySet(parent);
+            return new org.apache.fop.fo.flow.MultiPropertySet(parent);
         }
     }
 
@@ -409,31 +456,31 @@ public class FOElementMapping implements ElementMapping {
 
     static class Foot extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new Footnote(parent);
+            return new org.apache.fop.fo.flow.Footnote(parent);
         }
     }
 
     static class FB extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new FootnoteBody(parent);
+            return new org.apache.fop.fo.flow.FootnoteBody(parent);
         }
     }
 
     static class W extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new Wrapper(parent);
+            return new org.apache.fop.fo.flow.Wrapper(parent);
         }
     }
 
     static class M extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new Marker(parent);
+            return new org.apache.fop.fo.flow.Marker(parent);
         }
     }
 
     static class RM extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new RetrieveMarker(parent);
+            return new org.apache.fop.fo.flow.RetrieveMarker(parent);
         }
     }
 }
