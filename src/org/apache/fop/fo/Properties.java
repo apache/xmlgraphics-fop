@@ -48,6 +48,8 @@ import org.apache.fop.datatypes.FontFamilySet;
 import org.apache.fop.datatypes.TextDecorations;
 import org.apache.fop.datatypes.TextDecorator;
 import org.apache.fop.datatypes.ShadowEffect;
+import org.apache.fop.datatypes.FromParent;
+import org.apache.fop.datatypes.FromNearestSpecified;
 
 /**
  * Parent class for all of the individual property classes.  It also contains
@@ -619,6 +621,12 @@ public abstract class Properties {
         public static PropertyValue complex
             (int property, PropertyValue value) throws PropertyException
         {
+            // TODO the property argument looks redundant.
+            // Check whether it is possible for a PropertyValue to be
+            // generated with a different property value.
+            //  If so, remove direct use of the property index from the
+            //    value
+            //  If not, removed the property argument from complex
             if ( ! (value instanceof PropertyValueList)) {
                 return processValue(property, value);
             } else {
@@ -629,24 +637,13 @@ public abstract class Properties {
         private static PropertyValueList processValue
             (int property, PropertyValue value) throws PropertyException
         {
-            PropertyValueList newlist = new PropertyValueList(property);
             // Can be Inherit, ColorType, UriType, None, Numeric, or an
             // NCName (i.e. enum token)
-            if (value instanceof Inherit) {
+            if (value instanceof Inherit |
+                    value instanceof FromParent |
+                        value instanceof FromNearestSpecified) {
                 // Construct a list of Inherit values
-                newlist.add(new Inherit(
-                            PropNames.BACKGROUND_COLOR));
-                newlist.add(new Inherit(
-                            PropNames.BACKGROUND_IMAGE));
-                newlist.add(new Inherit(
-                            PropNames.BACKGROUND_REPEAT));
-                newlist.add(new Inherit(
-                            PropNames.BACKGROUND_ATTACHMENT));
-                newlist.add(new Inherit(
-                            PropNames.BACKGROUND_POSITION_HORIZONTAL));
-                newlist.add(new Inherit(
-                            PropNames.BACKGROUND_POSITION_VERTICAL));
-                return newlist;
+                return PropertySets.expandAndCopySHand(value);
             } else  {
                 // Make a list an pass to processList
                 PropertyValueList tmpList = new PropertyValueList(property);
