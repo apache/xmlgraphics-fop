@@ -290,8 +290,7 @@ public class CTM implements Serializable {
         int width, height;
         // We will use the absolute reference-orientation to set up the CTM.
         // The value here is relative to its ancestor reference area.
-        int absRefOrient = pm.getAbsRefOrient(
-                pm.getProperties().get("reference-orientation").getNumber().intValue());
+        int absRefOrient = pm.getAbsRefOrient();
         if (absRefOrient % 180 == 0) {
             width = (int) absVPrect.getWidth();
             height = (int) absVPrect.getHeight();
@@ -327,7 +326,7 @@ public class CTM implements Serializable {
             }
             ctm = ctm.rotate(absRefOrient);
         }
-        int wm = pm.getProperties().get("writing-mode").getEnum();
+        int wm = pm.getWritingMode();
         /* Since we've already put adjusted width and height values for the
          * top and left positions implied by the reference-orientation, we
          * can set ipd and bpd appropriately based on the writing mode.
