@@ -57,6 +57,9 @@ import org.apache.fop.fo.extensions.Bookmarks;
 // Avalon
 import org.apache.avalon.framework.logger.Logger;
 
+// Java
+import java.util.Set;
+
 /**
  * An interface for classes that are conceptually the parent class of the
  * area.AreaTree object. The purpose of the interface is to keep the AreaTree
@@ -75,5 +78,11 @@ public interface AreaTreeControl {
      * @return the Logger being used with this FO Tree
      */
     Logger getLogger();
+
+    /**
+     * The current set of IDs in the document.
+     * @return the Set of IDReferences in the document.
+     */
+    Set getIDReferences();
 
 }
