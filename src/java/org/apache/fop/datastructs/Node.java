@@ -528,7 +528,7 @@ public class Node implements Cloneable {
          * Constructor for pre-order iterator.
          */
         public PreOrder() {
-            hasNext();  // A call to set up the initial iterators
+            hasNextNode();  // A call to set up the initial iterators
             // so that a call to next() without a preceding call to
             // hasNext() will behave sanely
         }
@@ -538,19 +538,23 @@ public class Node implements Cloneable {
          */
         public PreOrder(Object sync) {
             synchronized (sync) {
-                hasNext();  // A call to set up the initial iterators
+                hasNextNode();  // A call to set up the initial iterators
                 // so that a call to next() without a preceding call to
                 // hasNext() will behave sanely
             }
         }
         
         public boolean hasNext() {
+            return hasNextNode();
+        }
+        
+        private boolean hasNextNode() {
             if (selfNotReturned) {
                 return true;
             }
             // self has been returned - are there any children?
             // if so, we must always have an iterator available
-            // even unless it is exhausted.  Assume it is set up this 
+            // even if it is exhausted.  Assume it is set up this 
             // way by next().  The iterator has a chance to do this 
             // because self will always be returned first.
             // The test of nextChildIndex must always be made because
@@ -566,7 +570,7 @@ public class Node implements Cloneable {
         }
 
         public Object next() {
-            if (! hasNext()) {
+            if (! hasNextNode()) {
                 throw new NoSuchElementException();
             }
             if (selfNotReturned) {
@@ -640,7 +644,7 @@ public class Node implements Cloneable {
          * Constructor for post-order iterator.
          */
         public PostOrder() {
-            hasNext();  // A call to set up the initial iterators
+            hasNextNode();  // A call to set up the initial iterators
             // so that a call to next() without a preceding call to
             // hasNext() will behave sanely
         }
@@ -651,13 +655,17 @@ public class Node implements Cloneable {
          */
         public PostOrder(Object sync) {
             synchronized (sync) {
-                hasNext();  // A call to set up the initial iterators
+                hasNextNode();  // A call to set up the initial iterators
                 // so that a call to next() without a preceding call to
                 // hasNext() will behave sanely
             }
         }
         
         public boolean hasNext() {
+            return hasNextNode();
+        }
+        
+        private boolean hasNextNode() {
             // self is always the last to go
             if (selfReturned) { // nothing left
                 return false;
@@ -677,7 +685,7 @@ public class Node implements Cloneable {
         }
 
         public Object next() throws NoSuchElementException {
-            if (! hasNext()) {
+            if (! hasNextNode()) {
                 throw new NoSuchElementException();
             }
             // Are there any children?
