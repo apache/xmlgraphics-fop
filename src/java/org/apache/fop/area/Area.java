@@ -43,18 +43,70 @@ import org.apache.fop.fo.properties.WritingMode;
  */
 public class Area extends AreaNode implements Cloneable  {
 
-    /** The geometrical area.  The <code>width</code> of this
-     * <code>Rectangle</code> is the <code>inline-progression-dimension</code>
-     * of the area, and the <code>height</code> is the
+    /** The total geometrical area covered by this <code>Area</code>, including
+     * content rectangle, padding, borders and spaces.  The <code>width</code>
+     * of this <code>Rectangle</code> is the <code>inline-progression-dimension
+     * </code> of the area, and the <code>height</code> is the
      * <code>block-progression-dimension</code>.  */
-
-    protected Rectangle2D area = null;
+    protected Rectangle2D space = new Rectangle2D.Float();
+    protected Rectangle2D border = null;
+    protected Rectangle2D padding = null;
+    protected Rectangle2D content = new Rectangle2D.Float();
     /** True if the the <code>writing-mode</code> of the content area is
      * horizontal */
     protected boolean contentIsHorizontal = true;
     /** True if the the <code>writing-mode</code> of the content area is
      * left-to-right */
     protected boolean contentLeftToRight = true;
+
+    /**
+     * @return the border
+     */
+    public Rectangle2D getBorder() {
+        return border;
+    }
+    /**
+     * @param border to set
+     */
+    public void setBorder(Rectangle2D border) {
+        this.border = border;
+    }
+    /**
+     * @return the content
+     */
+    public Rectangle2D getContent() {
+        return content;
+    }
+    /**
+     * @param content to set
+     */
+    public void setContent(Rectangle2D content) {
+        this.content = content;
+    }
+    /**
+     * @return the padding
+     */
+    public Rectangle2D getPadding() {
+        return padding;
+    }
+    /**
+     * @param padding to set
+     */
+    public void setPadding(Rectangle2D padding) {
+        this.padding = padding;
+    }
+    /**
+     * @return the space
+     */
+    public Rectangle2D getSpace() {
+        return space;
+    }
+    /**
+     * @param space to set
+     */
+    public void setSpace(Rectangle2D space) {
+        this.space = space;
+    }
 
     private void setup() {
         try {
@@ -65,25 +117,6 @@ public class Area extends AreaNode implements Cloneable  {
         } catch (PropertyException e) {
             throw new RuntimeException(e.getMessage());
         }
-    }
-    /**
-     * Constructs an <code>Area</code> which is based on the given
-     * <code>Rectangle2D</code>
-     * @param area the rectangular area
-     * @param pageSeq through which this area was generated
-     * @param generatedBy the given <code>FONode</code> generated this
-     * @param parent <code>Node</code> of this
-     * @param sync the object on which this area is synchronized <code>for tree
-     * operations</code>.
-     */
-    public Area(
-            Rectangle2D area,
-            FoPageSequence pageSeq,
-            FONode generatedBy,
-            Node parent,
-            Object sync) {
-        this(pageSeq, generatedBy, parent, sync);
-        this.area = area;
     }
 
     /**
@@ -102,21 +135,6 @@ public class Area extends AreaNode implements Cloneable  {
             Object sync) {
         super(pageSeq, generatedBy, parent, sync);
         setup();
-    }
-
-    /**
-     * Constructs an <code>Area</code> with the given rectangular area,
-     * which is the root of a tree, and is synchronized on itself.
-     * @param area the rectangular area
-     * @param pageSeq through which this area was generated
-     * @param generatedBy the given <code>FONode</code> generated this
-     */
-    public Area(
-            Rectangle2D area,
-            FoPageSequence pageSeq,
-            FONode generatedBy) {
-        this(pageSeq, generatedBy);
-        this.area = area;
     }
 
     /**
@@ -155,13 +173,15 @@ public class Area extends AreaNode implements Cloneable  {
      */
     public double getBPDimPts() {
         synchronized (this) {
-            if (area == null) {
-                return 0;
-            }
+            // TODO - check this.  Should the rectangle just be rotated as
+            // required?  This is incompatible with transform in space
+            // requests at block reference-areas.  OK if the transform is
+            // only for area rotations.  This depnds on how Java handles the
+            // layout of text in horizontal locales.
             if (contentIsHorizontal) {
-                return area.getHeight();
+                return content.getHeight();
             } else {
-                return area.getWidth();
+                return content.getWidth();
             }
         }
     }
@@ -192,15 +212,13 @@ public class Area extends AreaNode implements Cloneable  {
      */
     public void setBPDimPts(float pts) {
         synchronized (this) {
-            if (area == null) {
-                area = new Rectangle2D.Float();
-            }
+            // TODO - check this
             if (contentIsHorizontal) {
-                area.setRect(
-                        area.getX(),area.getY(), area.getWidth(), pts);
+                content.setRect(
+                        content.getX(),content.getY(), content.getWidth(), pts);
             } else {
-                area.setRect(
-                        area.getX(),area.getY(), pts, area.getHeight());
+                content.setRect(
+                        content.getX(),content.getY(), pts, content.getHeight());
             }
         }
     }
@@ -229,13 +247,11 @@ public class Area extends AreaNode implements Cloneable  {
      */
     public double getIPDimPts() {
         synchronized (this) {
-            if (area == null) {
-                area = new Rectangle2D.Float();
-            }
+            // TODO - check this
             if (contentIsHorizontal){
-                return area.getWidth();
+                return content.getWidth();
             } else {
-                return area.getHeight();
+                return content.getHeight();
             }
         }
     }
@@ -264,13 +280,13 @@ public class Area extends AreaNode implements Cloneable  {
      */
     public void setIPDimPts(double pts) {
         synchronized (this) {
-            if (area == null) {
-                area = new Rectangle2D.Float();
-            }
+            // Check this
             if (contentIsHorizontal){
-                area.setRect(area.getX(), area.getY(), pts, area.getHeight());
+                content.setRect(
+                        content.getX(), content.getY(), pts, content.getHeight());
             } else {
-                area.setRect(area.getX(), area.getY(), area.getWidth(), pts);
+                content.setRect(
+                        content.getX(), content.getY(), content.getWidth(), pts);
             }
         }
     }
@@ -299,7 +315,7 @@ public class Area extends AreaNode implements Cloneable  {
     private ArrayList listeners = null;
     /**
      * Registers a listener to be notified on any change of dimension in the
-     * <code>Rectangle2D</code> area
+     * <code>Rectangle2D</code> content
      * @param listener to be notified
      */
     public void registerAreaListener(AreaListener listener) {
@@ -313,12 +329,12 @@ public class Area extends AreaNode implements Cloneable  {
 
     /**
      * Notifies any registered listener of a change of dimensions in the
-     * <code>Rectangle2D</code> area
+     * <code>Rectangle2D</code> content
      */
     protected void notifyListeners() {
         for (int i = 0; i < listeners.size(); i++) {
             synchronized (this) {
-                ((AreaListener)(listeners.get(i))).setDimensions(area);
+                ((AreaListener)(listeners.get(i))).setDimensions(content);
             }
         }
     }

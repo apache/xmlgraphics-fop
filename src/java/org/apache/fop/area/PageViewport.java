@@ -17,8 +17,6 @@
  */ 
 package org.apache.fop.area;
 
-import java.awt.geom.Rectangle2D;
-
 import org.apache.fop.datastructs.Node;
 import org.apache.fop.fo.flow.FoPageSequence;
 
@@ -45,23 +43,6 @@ implements Viewport {
             FoPageSequence pageSeq) {
         // The pageSeq is also the generating node
         super(pageSeq, pageSeq);
-    }
-
-    /**
-     * Creates a page viewport, with a null page reference area and the given
-     * rectangular area
-     * @param area the rectangular area
-     * @param pageSeq the page-sequence which generated this area
-     * @param parent
-     * @param sync
-     */
-    public PageViewport(
-            Rectangle2D area,
-            FoPageSequence pageSeq,
-            Node parent,
-            Object sync) {
-        // The pageSeq is also the generating node
-        super(area, pageSeq, pageSeq, parent, sync);
     }
 
     /**

@@ -17,8 +17,6 @@
  */ 
 package org.apache.fop.area;
 
-import java.awt.geom.Rectangle2D;
-import java.io.IOException;
 import org.apache.fop.datastructs.Node;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.FoPageSequence;
@@ -30,22 +28,6 @@ import org.apache.fop.fo.flow.FoPageSequence;
 public class RegionViewport
 extends AbstractViewport
 implements Viewport, Cloneable {
-    /**
-     * Creates a new region viewport with the given rectangular area
-     * @param area the rectangular area
-     * @param pageSeq the generating <code>page-sequence</code>
-     * @param generatedBy the generating node; in this case, the page sequence
-     * @param parent the <code>main-reference-area</code>
-     * @param sync
-     */
-    public RegionViewport(
-            Rectangle2D area,
-            FoPageSequence pageSeq,
-            FONode generatedBy,
-            Node parent,
-            Object sync) {
-        super(area, pageSeq, generatedBy, parent, sync);
-    }
 
     /**
      * Creates a new region viewport with a null rectangular area
@@ -162,30 +144,6 @@ implements Viewport, Cloneable {
 //    }
 
     /**
-     * @param out
-     * @throws IOException
-     */
-    private void writeObject(java.io.ObjectOutputStream out)
-    throws IOException {
-        out.writeFloat((float) area.getX());
-        out.writeFloat((float) area.getY());
-        out.writeFloat((float) area.getWidth());
-        out.writeFloat((float) area.getHeight());
-        out.writeBoolean(clip);
-        //out.writeObject(props);
-        out.writeObject(refArea);
-    }
-
-    private void readObject(java.io.ObjectInputStream in)
-            throws IOException, ClassNotFoundException {
-        area = new Rectangle2D.Float(in.readFloat(), in.readFloat(),
-                                         in.readFloat(), in.readFloat());
-        clip = in.readBoolean();
-        //props = (HashMap)in.readObject();
-        setRegionRefArea((RegionRefArea) in.readObject());
-    }
-
-    /**
      * Clone this region viewport.
      * Used when creating a copy from the page master.
      *
@@ -199,7 +157,6 @@ implements Viewport, Cloneable {
             } catch (CloneNotSupportedException e) {
                 throw new RuntimeException(e);
             }
-            rv.area = (Rectangle2D)(area.clone());
             rv.refArea = (PageRefArea)(refArea.clone());
             return rv;
         }

@@ -19,8 +19,6 @@
  */
 package org.apache.fop.area;
 
-import java.awt.geom.Rectangle2D;
-
 import org.apache.fop.datastructs.Node;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.FoPageSequence;
@@ -38,49 +36,27 @@ implements Viewport {
 
     /** The reference-area of the viewport/reference pair */
     protected ReferenceArea refArea;
-
     /**
      * @param pageSeq
      * @param generatedBy
      * @param parent
      * @param sync
      */
-    public AbstractViewport(FoPageSequence pageSeq, FONode generatedBy,
-            Node parent, Object sync) {
+    public AbstractViewport(
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            Node parent,
+            Object sync) {
         super(pageSeq, generatedBy, parent, sync);
     }
     /**
      * @param pageSeq
      * @param generatedBy
      */
-    public AbstractViewport(FoPageSequence pageSeq, FONode generatedBy) {
-        super(pageSeq, generatedBy);
-    }
-    /**
-     * @param pageSeq
-     * @param generatedBy
-     * @param area the viewport rectangle
-     * @param parent
-     * @param sync
-     */
     public AbstractViewport(
-            Rectangle2D area,
-            FoPageSequence pageSeq,
-            FONode generatedBy,
-            Node parent,
-            Object sync) {
-        super(area, pageSeq, generatedBy, parent, sync);
-    }
-    /**
-     * @param pageSeq
-     * @param generatedBy
-     * @param area the viewport rectangle
-     */
-    public AbstractViewport(
-            Rectangle2D area,
             FoPageSequence pageSeq,
             FONode generatedBy) {
-        super(area, pageSeq, generatedBy);
+        super(pageSeq, generatedBy);
     }
     /* (non-Javadoc)
      * @see org.apache.fop.area.Viewport#setReferenceArea(org.apache.fop.area.ReferenceArea)

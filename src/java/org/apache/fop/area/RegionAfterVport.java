@@ -19,8 +19,6 @@
  */
 package org.apache.fop.area;
 
-import java.awt.geom.Rectangle2D;
-
 import org.apache.fop.datastructs.Node;
 import org.apache.fop.fo.flow.FoPageSequence;
 
@@ -42,21 +40,6 @@ public class RegionAfterVport extends RegionViewport {
             Object sync) {
         // the page-sequence is the generated-by node
         super(pageSeq, pageSeq, parent, sync);
-    }
-
-    /**
-     * Creates a new region-after area with the defined rectangular area
-     * @param area the rectangular area
-     * @param pageSeq the generating <code>page-sequence</code>
-     * @param parent the page-reference-area
-     * @param sync
-     */
-    public RegionAfterVport(
-            Rectangle2D area,
-            FoPageSequence pageSeq,
-            Node parent,
-            Object sync) {
-        super(area, pageSeq, pageSeq, parent, sync);
     }
 
     /**
