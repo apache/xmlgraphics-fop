@@ -56,7 +56,7 @@ import org.xml.sax.Attributes;
 
 // FOP
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.Property.*;
+import org.apache.fop.fo.Property.Maker;
 
 public class PropertyListBuilder {
 
@@ -129,7 +129,7 @@ public class PropertyListBuilder {
      *     properties.
      * @return PropertyList object containing collection of Properties objects
      *     appropriate for the FObj
-     * @throws FOPException
+     * @throws FOPException If an error occurs while building the PropertyList
      */
     public PropertyList makeList(String nameSpaceURI, String elementName,
                                  Attributes attributes,
@@ -203,8 +203,7 @@ public class PropertyListBuilder {
             Property prop = null;
             if (subPropertyName == null) {
                 prop = propertyMaker.make(propList, attributeValue, parentFO);
-            }
-            else {
+            } else {
                 Property baseProperty = findBaseProperty(attributes, propList,
                         parentFO, basePropertyName, propertyMaker);
                 prop = propertyMaker.make(baseProperty, subPropertyName,
@@ -213,8 +212,7 @@ public class PropertyListBuilder {
             if (prop != null) {
                 propList.put(basePropertyName, prop);
             }
-        }
-        catch (FOPException e) {
+        } catch (FOPException e) {
             /**@todo log this exception */
             // log.error(e.getMessage());
         }
