@@ -274,12 +274,15 @@ public class TraitSetter {
         if (deco != null) {
             if (deco.hasUnderline()) {
                 area.addTrait(Trait.UNDERLINE, Boolean.TRUE);
+                area.addTrait(Trait.UNDERLINE_COLOR, deco.getUnderlineColor());
             }
             if (deco.hasOverline()) {
                 area.addTrait(Trait.OVERLINE, Boolean.TRUE);
+                area.addTrait(Trait.OVERLINE_COLOR, deco.getOverlineColor());
             }
             if (deco.hasLineThrough()) {
                 area.addTrait(Trait.LINETHROUGH, Boolean.TRUE);
+                area.addTrait(Trait.LINETHROUGH_COLOR, deco.getLineThroughColor());
             }
             if (deco.isBlinking()) {
                 area.addTrait(Trait.BLINK, Boolean.TRUE);
