@@ -54,6 +54,7 @@ package org.apache.fop.fo;
 // FOP
 import org.apache.fop.layout.Area;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.IDReferences;
 
 // Java
 import java.util.Hashtable;
@@ -117,6 +118,23 @@ public class FObj extends FONode {
     {
     	return(properties.get(name));
     }
+
+    
+
+    public void removeID(IDReferences idReferences)
+    {
+        idReferences.removeID( ((FObj)this).properties.get("id").getString());                            
+        int numChildren = this.children.size();
+	for (int i = 0; i < numChildren; i++) 
+        {            
+            FONode child= (FONode)children.elementAt(i);
+            if ((child instanceof FObj))   
+            {
+                child.removeID(idReferences);            
+            }	
+	}
+    }
+
 
 }
 
