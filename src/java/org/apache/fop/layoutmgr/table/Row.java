@@ -20,6 +20,7 @@ package org.apache.fop.layoutmgr.table;
 
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.Table;
+import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
@@ -40,6 +41,7 @@ import org.apache.fop.traits.MinOptMax;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * LayoutManager for a table-row FO.
@@ -49,6 +51,14 @@ import java.util.List;
  * but effect the occupied columns of future rows.
  */
 public class Row extends BlockStackingLayoutManager {
+    
+    /** Used by CellInfo: Indicates start of cell. */
+    public static final int CI_START_OF_CELL = 0;
+    /** Used by CellInfo: Indicates part of a spanned cell in column direction. */
+    public static final int CI_COL_SPAN      = 1;
+    /** Used by CellInfo: Indicates part of a spanned cell in row direction. */
+    public static final int CI_ROW_SPAN      = 2;
+    
     private TableRow fobj;
     
     private List cellList = null;
@@ -96,30 +106,77 @@ public class Row extends BlockStackingLayoutManager {
     }
 
     private void setupCells() {
-        cellList = new ArrayList();
+        cellList = new java.util.ArrayList();
+        List availableCells = new java.util.ArrayList();
         // add cells to list
         while (childLMiter.hasNext()) {
             curChildLM = (LayoutManager) childLMiter.next();
             curChildLM.setParent(this);
             curChildLM.initialize();
-            cellList.add(curChildLM);
+            availableCells.add(curChildLM);
+        }
+        
+        //Transfer available cells to their slots
+        int colnum = 1;
+        ListIterator iter = availableCells.listIterator();
+        while (iter.hasNext()) {
+            Cell cellLM = (Cell)iter.next();
+            TableCell cell = cellLM.getFObj();
+            if (cell.hasColumnNumber()) {
+                colnum = cell.getColumnNumber();
+            }
+            while (colnum > cellList.size()) {
+                cellList.add(null);
+            }
+            if (cellList.get(colnum - 1) != null) {
+                log.error("Overlapping cell at position " + colnum);
+            }
+            //Add cell info for primary slot
+            cellList.set(colnum - 1, new CellInfo(cellLM));
+            
+            //Add cell infos on spanned slots if any
+            for (int j = 1; j < cell.getNumberColumnsSpanned(); j++) {
+                colnum++;
+                if (colnum > cellList.size()) {
+                    cellList.add(new CellInfo(CI_COL_SPAN));
+                } else {
+                    if (cellList.get(colnum - 1) != null) {
+                        log.error("Overlapping cell at position " + colnum);
+                    }
+                    cellList.set(colnum - 1, new CellInfo(CI_COL_SPAN));
+                }
+            }
+            colnum++;
+        }
+        
+        //Post-processing the list (looking for gaps)
+        int pos = 1;
+        ListIterator ppIter = cellList.listIterator();
+        while (ppIter.hasNext()) {
+            CellInfo cellInfo = (CellInfo)ppIter.next();
+            if (cellInfo == null) {
+                //Add cell info on empty cell
+                ppIter.set(new CellInfo(CI_START_OF_CELL));
+            }
+            pos++;
         }
     }
 
     /**
-     * Get the layout manager for a cell.
+     * Get the cell info for a cell.
      *
-     * @param pos the position of the cell
-     * @return the cell layout manager
+     * @param pos the position of the cell (must be >= 1)
+     * @return the cell info object
      */
-    protected Cell getCellLM(int pos) {
+    protected CellInfo getCellInfo(int pos) {
         if (cellList == null) {
             setupCells();
         }
-        if (pos < cellList.size()) {
-            return (Cell)cellList.get(pos);
+        if (pos <= cellList.size()) {
+            return (CellInfo)cellList.get(pos - 1);
+        } else {
+            return null;
         }
-        return null;
     }
 
     /**
@@ -131,7 +188,8 @@ public class Row extends BlockStackingLayoutManager {
      * @return the next break possibility
      */
     public BreakPoss getNextBreakPoss(LayoutContext context) {
-        LayoutManager curLM; // currently active LM
+        //LayoutManager curLM; // currently active LM
+        CellInfo curCellInfo; //currently active cell info
 
         BreakPoss lastPos = null;
         List breakList = new java.util.ArrayList();
@@ -141,12 +199,19 @@ public class Row extends BlockStackingLayoutManager {
         int opt = 0;
         int max = 0;
 
+        // This is used for the displacement of the individual cells
+        int ipdOffset = 0;
+        
         int startColumn = 1;
-        int cellLMIndex = 0;
         boolean over = false;
 
-        while ((curLM = getCellLM(cellLMIndex++)) != null) {
-            Cell cellLM = (Cell)curLM;
+        while ((curCellInfo = getCellInfo(startColumn)) != null) {
+            Cell cellLM = curCellInfo.layoutManager;
+            if (curCellInfo.isColSpan()) {
+                //skip spanned slots
+                startColumn++;
+                continue;
+            }
             
             List childBreaks = new ArrayList();
             MinOptMax stackSize = new MinOptMax();
@@ -161,6 +226,7 @@ public class Row extends BlockStackingLayoutManager {
                   MinOptMax.subtract(context.getStackLimit(),
                                      stackSize));
 
+            //Determine which columns this cell will occupy
             getColumnsForCell(cellLM, startColumn, spannedColumns);
             int childRefIPD = 0;
             Iterator i = spannedColumns.iterator();
@@ -175,35 +241,52 @@ public class Row extends BlockStackingLayoutManager {
             }
             childLC.setRefIPD(childRefIPD);
 
-            while (!curLM.isFinished()) {
-                if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
-                    if (stackSize.opt + bp.getStackingSize().opt > context.getStackLimit().max) {
-                        // reset to last break
-                        if (lastPos != null) {
-                            LayoutManager lm = lastPos.getLayoutManager();
-                            lm.resetPosition(lastPos.getPosition());
-                            if (lm != curLM) {
-                                curLM.resetPosition(null);
+            if (cellLM != null) {
+                cellLM.setInRowIPDOffset(ipdOffset);
+                while (!cellLM.isFinished()) {
+                    if ((bp = cellLM.getNextBreakPoss(childLC)) != null) {
+                        if (stackSize.opt + bp.getStackingSize().opt > context.getStackLimit().max) {
+                            // reset to last break
+                            if (lastPos != null) {
+                                LayoutManager lm = lastPos.getLayoutManager();
+                                lm.resetPosition(lastPos.getPosition());
+                                if (lm != cellLM) {
+                                    cellLM.resetPosition(null);
+                                }
+                            } else {
+                                cellLM.resetPosition(null);
                             }
-                        } else {
-                            curLM.resetPosition(null);
+                            over = true;
+                            break;
                         }
-                        over = true;
-                        break;
-                    }
-                    stackSize.add(bp.getStackingSize());
-                    lastPos = bp;
-                    childBreaks.add(bp);
+                        stackSize.add(bp.getStackingSize());
+                        lastPos = bp;
+                        childBreaks.add(bp);
 
-                    if (bp.nextBreakOverflows()) {
-                        over = true;
-                        break;
-                    }
+                        if (bp.nextBreakOverflows()) {
+                            over = true;
+                            break;
+                        }
 
-                    childLC.setStackLimit(MinOptMax.subtract(
-                                             context.getStackLimit(), stackSize));
+                        childLC.setStackLimit(MinOptMax.subtract(
+                                                 context.getStackLimit(), stackSize));
+                    }
                 }
+                startColumn += cellLM.getFObj().getNumberColumnsSpanned();
+            } else {
+                //Skipping empty cells
+                //log.debug("empty cell at pos " + startColumn);
+                startColumn++;
             }
+            
+            //Adjust in-row x offset for individual cells
+            //TODO Probably needs more work to support writing modes
+            ipdOffset += childRefIPD;
+            if (getTable().getBorderCollapse() == EN_SEPARATE) {
+                ipdOffset += getTable().getBorderSeparation().getIPD().getLength().getValue();
+            }
+            
+            
             // the min is the maximum min of all cells
             if (stackSize.min > min) {
                 min = stackSize.min;
@@ -217,9 +300,9 @@ public class Row extends BlockStackingLayoutManager {
                 max = stackSize.max;
             }
 
-            breakList.add(childBreaks);
-            
-            startColumn += cellLM.getFObj().getNumberColumnsSpanned();
+            if (childBreaks.size() > 0) {
+                breakList.add(childBreaks);
+            }
         }
         MinOptMax rowSize = new MinOptMax(min, opt, max);
         LengthRangeProperty specifiedBPD = fobj.getBlockProgressionDimension();
@@ -234,13 +317,20 @@ public class Row extends BlockStackingLayoutManager {
         rowHeight = rowSize.opt;
 
         boolean fin = true;
-        cellLMIndex = 0;
+        startColumn = 1;
         //Check if any of the cell LMs haven't finished, yet
-        while ((curLM = getCellLM(cellLMIndex++)) != null) {
-            if (!curLM.isFinished()) {
+        while ((curCellInfo = getCellInfo(startColumn)) != null) {
+            Cell cellLM = curCellInfo.layoutManager;
+            if (cellLM == null) {
+                //skip empty cell
+                startColumn++;
+                continue;
+            }
+            if (!cellLM.isFinished()) {
                 fin = false;
                 break;
             }
+            startColumn += cellLM.getFObj().getNumberColumnsSpanned();
         }
 
         setFinished(fin);
@@ -274,7 +364,12 @@ public class Row extends BlockStackingLayoutManager {
      * @param spannedColumns List to receive the applicable columns
      */
     private void getColumnsForCell(Cell cellLM, int startCell, List spannedColumns) {
-        int count = cellLM.getFObj().getNumberColumnsSpanned();
+        int count;
+        if (cellLM != null) {
+            count = cellLM.getFObj().getNumberColumnsSpanned();
+        } else {
+            count = 1;
+        }
         spannedColumns.clear();
         for (int i = 0; i < count; i++) {
             spannedColumns.add(getColumn(startCell + i));
@@ -290,22 +385,28 @@ public class Row extends BlockStackingLayoutManager {
      * If pos is null, then back up to the first child LM.
      */
     protected void reset(Position pos) {
-        LayoutManager curLM; // currently active LM
-        int cellcount = 0;
+        //LayoutManager curLM; // currently active LM
+        CellInfo curCellInfo;
+        int cellIndex = 0;
 
         if (pos == null) {
-            while ((curLM = getCellLM(cellcount)) != null) {
-                curLM.resetPosition(null);
-                cellcount++;
+            while ((curCellInfo = getCellInfo(cellIndex)) != null) {
+                if (curCellInfo.layoutManager != null) {
+                    curCellInfo.layoutManager.resetPosition(null);
+                }
+                cellIndex++;
             }
         } else {
             RowPosition rpos = (RowPosition)pos;
             List breaks = rpos.cellBreaks;
 
-            while ((curLM = getCellLM(cellcount)) != null) {
-                List childbreaks = (List)breaks.get(cellcount);
-                curLM.resetPosition((Position)childbreaks.get(childbreaks.size() - 1));
-                cellcount++;
+            while ((curCellInfo = getCellInfo(cellIndex)) != null) {
+                if (curCellInfo.layoutManager != null) {
+                    List childbreaks = (List)breaks.get(cellIndex);
+                    curCellInfo.layoutManager.resetPosition(
+                            (Position)childbreaks.get(childbreaks.size() - 1));
+                }
+                cellIndex++;
             }
         }
 
@@ -364,29 +465,17 @@ public class Row extends BlockStackingLayoutManager {
                 parentLM.addChild(rowArea);
             }
 
-            int cellcount = 0;
-            int x = this.xoffset;
-            //int x = (TableLayoutManager)getParent()).;
             for (Iterator iter = lfp.cellBreaks.iterator(); iter.hasNext();) {
                 List cellsbr = (List)iter.next();
                 BreakPossPosIter breakPosIter;
                 breakPosIter = new BreakPossPosIter(cellsbr, 0, cellsbr.size());
                 iStartPos = lfp.getLeafPos() + 1;
 
-                int cellWidth = 0;
                 while ((childLM = (Cell)breakPosIter.getNextChildLM()) != null) {
-                    cellWidth = childLM.getReferenceIPD();
-                    childLM.setXOffset(x);
+                    childLM.setXOffset(xoffset);
                     childLM.setYOffset(yoffset);
                     childLM.setRowHeight(rowHeight);
                     childLM.addAreas(breakPosIter, lc);
-                }
-                x += cellWidth;
-                
-                //Handle border-separation
-                Table table = getTable();
-                if (table.getBorderCollapse() == EN_SEPARATE) {
-                    x += table.getBorderSeparation().getIPD().getLength().getValue();
                 }
             }
         }
@@ -461,5 +550,27 @@ public class Row extends BlockStackingLayoutManager {
         }
     }
 
+    private class CellInfo {
+        
+        /** layout manager for this cell, may be null */
+        public Cell layoutManager;
+        /** flags for this cell, on of Row.CI_* */
+        public int flags = CI_START_OF_CELL;
+        
+        public CellInfo(Cell layoutManager) {
+            this.layoutManager = layoutManager;
+        }
+        
+        public CellInfo(int flags) {
+            this.flags = flags;
+        }
+        
+        /** @return true if the cell is part of a span in column direction */
+        public boolean isColSpan() {
+            return (flags & CI_COL_SPAN) != 0;
+        }
+
+    }
+    
 }
 
