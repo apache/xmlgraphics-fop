@@ -51,13 +51,13 @@ public class PropertyListBuilder {
             try {
                 p = propertyMaker.compute(propertyList);
             } catch (FOPException e) {
-                MessageHandler.errorln("ERROR: exception occurred while computing"
+                MessageHandler.errorln("exception occurred while computing"
                                        + " value of property '"
                                        + propertyName + "': "
                                        + e.getMessage());
             }
         } else {
-            MessageHandler.errorln("WARNING: property " + propertyName
+            MessageHandler.errorln("property " + propertyName
                                    + " ignored");
         }
         return p;
@@ -72,7 +72,7 @@ public class PropertyListBuilder {
         if (propertyMaker != null) {
             b = propertyMaker.isInherited();
         } else {
-            // MessageHandler.errorln("WARNING: Unknown property " + propertyName);
+            // MessageHandler.errorln("Unknown property " + propertyName);
             b = true;
         }
         return b;
@@ -171,7 +171,7 @@ public class PropertyListBuilder {
                 }
             } else {
                 if (!attributeName.startsWith("xmlns"))
-                    MessageHandler.errorln("WARNING: property '"
+                    MessageHandler.errorln("property '"
                                            + attributeName + "' ignored");
             }
         }
@@ -198,7 +198,7 @@ public class PropertyListBuilder {
         if (propertyMaker != null) {
             return propertyMaker.isCorrespondingForced(propertyList);
         } else {
-            MessageHandler.errorln("WARNING: no Maker for " + propertyName);
+            MessageHandler.errorln("no Maker for " + propertyName);
         }
         return false;
     }
@@ -210,7 +210,7 @@ public class PropertyListBuilder {
         if (propertyMaker != null) {
             return propertyMaker.getShorthand(propertyList);
         } else {
-            MessageHandler.errorln("WARNING: no Maker for " + propertyName);
+            MessageHandler.errorln("no Maker for " + propertyName);
             return null;
         }
     }
@@ -227,7 +227,7 @@ public class PropertyListBuilder {
         if (propertyMaker != null) {
             p = propertyMaker.make(propertyList);
         } else {
-            MessageHandler.errorln("WARNING: property " + propertyName
+            MessageHandler.errorln("property " + propertyName
                                    + " ignored");
         }
         return p;

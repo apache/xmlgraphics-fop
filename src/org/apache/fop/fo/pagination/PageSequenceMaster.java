@@ -51,7 +51,7 @@ public class PageSequenceMaster extends FObj {
             this.layoutMasterSet = (LayoutMasterSet)parent;
             String pm = this.properties.get("master-name").getString();
             if (pm == null) {
-                log.error("WARNING: page-sequence-master does not have "
+                log.warn("page-sequence-master does not have "
                                        + "a page-master-name and so is being ignored");
             } else {
                 this.layoutMasterSet.addPageSequenceMaster(pm, this);

@@ -104,7 +104,7 @@ public class PageNumberCitation extends FObj {
 
     public Status layout(Area area) throws FOPException {
         if (!(area instanceof BlockArea)) {
-            log.error("WARNING: page-number-citation outside block area");
+            log.warn("page-number-citation outside block area");
             return new Status(Status.OK);
         }
 

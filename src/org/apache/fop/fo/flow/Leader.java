@@ -47,7 +47,7 @@ public class Leader extends FObjMixed {
         BlockArea blockArea;
         // restriction in this version
         if (!(area instanceof BlockArea)) {
-            log.error("WARNING: in this version of Fop fo:leader must be a direct child of fo:block ");
+            log.warn("in this version of Fop fo:leader must be a direct child of fo:block ");
             return new Status(Status.OK);
         } else {
             blockArea = (BlockArea)area;

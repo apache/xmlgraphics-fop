@@ -58,9 +58,9 @@ public class FontInfo {
                 if (f == null) {
                     throw new FOPException("no default font defined by OutputConverter");
                 }
-                MessageHandler.errorln("WARNING: defaulted font to any,normal,normal");
+                MessageHandler.errorln("defaulted font to any,normal,normal");
             }
-            MessageHandler.errorln("WARNING: unknown font " + key
+            MessageHandler.errorln("unknown font " + key
                                    + " so defaulted font to any");
         }
 

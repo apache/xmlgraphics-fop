@@ -218,7 +218,7 @@ public class PCLRenderer extends PrintRenderer {
         int xpos = xoffset + (x / 100);
         if (xpos < 0) {
             xpos = 0;
-            log.error("PCLRenderer.addRect() WARNING: Horizontal position out of bounds.");
+            log.warn("Horizontal position out of bounds.");
         }
 
         currentStream.add("\033*v1O\033&a" + xpos + "h"
@@ -229,7 +229,7 @@ public class PCLRenderer extends PrintRenderer {
             xpos = xoffset + ((x + 240) / 100);
             if (xpos < 0) {
                 xpos = 0;
-                log.error("PCLRenderer.addRect() WARNING: Horizontal position out of bounds.");
+                log.warn("Horizontal position out of bounds.");
             }
             currentStream.add("\033&a" + xpos + "h"
                               + (pageHeight - ((y + 240)) / 100) + "V"
@@ -372,7 +372,7 @@ public class PCLRenderer extends PrintRenderer {
         int xpos = xoffset + (x / 100);
         if (xpos < 0) {
             xpos = 0;
-            log.error("PCLRenderer.renderImageArea() WARNING: Horizontal position out of bounds.");
+            log.warn("Horizontal position out of bounds.");
         }
 
         currentStream.add("\033&a" + xpos + "h" + (pageHeight - (y / 100))
@@ -616,7 +616,7 @@ public class PCLRenderer extends PrintRenderer {
         int xpos = xoffset + (rx / 100);
         if (xpos < 0) {
             xpos = 0;
-            log.error("PCLRenderer.renderWordArea() WARNING: Horizontal position out of bounds.");
+            log.warn("Horizontal position out of bounds.");
         }
         currentStream.add("\033&a" + xpos + "h" + (pageHeight - (bl / 100))
                           + "V" + s);

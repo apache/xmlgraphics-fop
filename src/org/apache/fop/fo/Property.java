@@ -132,7 +132,7 @@ public class Property {
                     return setSubprop(baseProp, partName, p);
                 }
             } else {
-                //MessageHandler.errorln("WARNING: compound property component "
+                //MessageHandler.errorln("compound property component "
                 //                       + partName + " unknown.");
             }
             return baseProp;

@@ -56,7 +56,7 @@ public class SVGImage extends AbstractFopImage {
                 new SAXSVGDocumentFactory(SVGImage.getParserName());
             doc = factory.createDocument(this.m_href.toExternalForm());
         } catch (Exception e) {
-            MessageHandler.errorln("ERROR LOADING EXTERNAL SVG: "
+            MessageHandler.errorln("Could not load external SVG: "
                                    + e.getMessage());
         }
     }

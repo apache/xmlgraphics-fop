@@ -71,7 +71,7 @@ public abstract class PageMasterReference extends FObj
             _pageSequenceMaster = (PageSequenceMaster)parent;
 
             if (getMasterName() == null) {
-                log.error("WARNING: " + getElementName()
+                log.warn("" + getElementName()
                                        + " does not have a master-name and so is being ignored");
             } else {
                 _pageSequenceMaster.addSubsequenceSpecifier(this);

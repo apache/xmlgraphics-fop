@@ -74,7 +74,7 @@ public class Length {
             dvalue = dvalue * assumed_resolution;
         else {
             dvalue = 0;
-            MessageHandler.errorln("ERROR: unknown length unit '" + unit
+            MessageHandler.errorln("unknown length unit '" + unit
                                    + "'");
         }
         this.millipoints = (int)(dvalue * 1000);

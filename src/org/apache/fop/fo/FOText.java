@@ -105,7 +105,7 @@ public class FOText extends FONode {
         // ML - remove refs to BufferManager
         // char ca[] = this.bufferManager.readBuffer((Object)this);
         if (!(area instanceof BlockArea)) {
-            log.error("WARNING: text outside block area"
+            log.error("text outside block area"
                                    + new String(ca, start, length));
             return new Status(Status.OK);
         }
