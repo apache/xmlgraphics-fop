@@ -199,6 +199,10 @@ public class Table extends FObj {
      * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws FOPException {
+        if (!tableBodyFound) {
+           missingChildElementError("(marker*,table-column*,table-header?,table-footer?,table-body+)");
+        }
+
         getFOEventHandler().endTable(this);
     }
 
