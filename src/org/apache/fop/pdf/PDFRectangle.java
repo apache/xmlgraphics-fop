@@ -7,6 +7,9 @@
 
 package org.apache.fop.pdf;
 
+// Java
+import java.io.UnsupportedEncodingException;
+
 /**
  * class representing a rectangle
  *
@@ -67,7 +70,11 @@ public class PDFRectangle {
      * @return the PDF
      */
     public byte[] toPDF() {
-        return toPDFString().getBytes();
+        try {
+            return toPDFString().getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            return toPDFString().getBytes();
+        }       
     }
 
     public String toPDFString() {

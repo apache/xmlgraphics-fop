@@ -7,6 +7,9 @@
 
 package org.apache.fop.pdf;
 
+// Java
+import java.io.UnsupportedEncodingException;
+
 // based on work by Takayuki Takeuchi
 
 /**
@@ -36,7 +39,11 @@ public class PDFCIDSystemInfo extends PDFObject {
      * @return the PDF
      */
     public byte[] toPDF() {
-        return toPDFString().getBytes();
+        try {
+            return toPDFString().getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            return toPDFString().getBytes();
+        }       
     }
 
     public String toPDFString() {

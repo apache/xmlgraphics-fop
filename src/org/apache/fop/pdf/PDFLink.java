@@ -9,6 +9,7 @@ package org.apache.fop.pdf;
 
 // Java
 import java.awt.Rectangle;
+import java.io.UnsupportedEncodingException;
 
 /**
  * class representing an /Annot object of /Subtype /Link
@@ -56,7 +57,12 @@ public class PDFLink extends PDFObject {
                    + (brx / 1000f) + " " + (bry / 1000f) + " ]\n" + "/C [ "
                    + this.color + " ]\n" + "/Border [ 0 0 0 ]\n" + "/A "
                    + this.action.getAction() + "\n" + "/H /I\n>>\nendobj\n";
-        return p.getBytes();
+
+        try {
+            return p.getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            return p.getBytes();
+        }       
     }
 
     /*

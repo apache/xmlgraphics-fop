@@ -7,6 +7,9 @@
 
 package org.apache.fop.pdf;
 
+// Java
+import java.io.UnsupportedEncodingException;
+
 public class PDFT1Stream extends PDFStream {
     private int origLength;
     private int len1, len3;
@@ -41,7 +44,12 @@ public class PDFT1Stream extends PDFStream {
         // Get the first binary number and search backwards for "eexec"
         len1 = 30;
 
-        byte[] eexec = (new String("currentfile eexec")).getBytes();
+        byte[] eexec;
+        try {
+            eexec = "currentfile eexec".getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            eexec = "currentfile eexec".getBytes();
+        }       
         // System.out.println("Length1="+len1);
         while (!byteCmp(originalData, len1 - eexec.length, eexec))
             len1++;
@@ -50,7 +58,13 @@ public class PDFT1Stream extends PDFStream {
 
         // Length3 is length of the last portion of the file
         len3 = 0;
-        byte[] cltom = (new String("cleartomark")).getBytes();
+        byte[] cltom;
+        try {
+            cltom = "cleartomark".getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            cltom = "cleartomark".getBytes();
+        }       
+        
         len3 -= cltom.length;
         while (!byteCmp(originalData, origLength + len3, cltom)) {
             len3--;
@@ -60,9 +74,24 @@ public class PDFT1Stream extends PDFStream {
         len3++;
         // Eat 512 zeroes
         int numZeroes = 0;
-        byte[] ws1 = "\n".getBytes();
-        byte[] ws2 = "\r".getBytes();
-        byte[] ws3 = "0".getBytes();
+        byte[] ws1;
+        try {
+            ws1 = "\n".getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            ws1 = "\n".getBytes();
+        }       
+        byte[] ws2;
+        try {
+            ws2 = "\r".getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            ws2 = "\r".getBytes();
+        }       
+        byte[] ws3;
+        try {
+            ws3 = "0".getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            ws3 = "0".getBytes();
+        }       
         while ((originalData[origLength - len3] == ws1[0] || originalData[origLength - len3] == ws2[0] || originalData[origLength - len3] == ws3[0])
                && numZeroes < 512) {
             len3++;
@@ -85,12 +114,22 @@ public class PDFT1Stream extends PDFStream {
                                     + (origLength - len3 - len1)
                                     + " /Length3 " + len3 + " >>\n");
 
-        byte[] p = preData.getBytes();
+        byte[] p;
+        try {
+            p = preData.getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            p = preData.getBytes();
+        }       
+
         stream.write(p);
         length += p.length;
 
         length += outputStreamData(stream);
-        p = "endobj\n".getBytes();
+        try {
+            p = "endobj\n".getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            p = "endobj\n".getBytes();
+        }       
         stream.write(p);
         length += p.length;
         //System.out.println("Embedded Type1 font");

@@ -27,6 +27,7 @@ import org.apache.fop.layout.FontDescriptor;
 // Java
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 import java.util.Hashtable;
 import java.util.Enumeration;
@@ -153,6 +154,11 @@ public class PDFDocument {
      * the objects themselves
      */
     protected Vector pendingLinks = null;
+
+    /**
+     * Encoding of the PDF
+     */
+    public static final String ENCODING = "ISO-8859-1";
 
     /**
      * creates an empty PDF document <p>
@@ -1218,7 +1224,12 @@ public class PDFDocument {
     throws IOException {
         this.position=0;
 
-        byte[] pdf = ("%PDF-" + this.pdfVersion + "\n").getBytes();
+        byte[] pdf;
+        try {
+            pdf = ("%PDF-" + this.pdfVersion + "\n").getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            pdf = ("%PDF-" + this.pdfVersion + "\n").getBytes();
+        }       
         stream.write(pdf);
         this.position += pdf.length;
 
@@ -1265,7 +1276,13 @@ public class PDFDocument {
             "%%EOF\n";
 
         /* write the trailer */
-        stream.write(pdf.getBytes());
+        byte[] trailer;
+        try {
+            trailer = pdf.getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            trailer = pdf.getBytes();
+        }       
+        stream.write(trailer);
     }
 
     /**
@@ -1297,7 +1314,12 @@ public class PDFDocument {
         }
 
         /* write the xref table and return the character length */
-        byte[] pdfBytes = pdf.toString().getBytes();
+        byte[] pdfBytes;
+        try {
+            pdfBytes = pdf.toString().getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            pdfBytes = pdf.toString().getBytes();
+        }       
         stream.write(pdfBytes);
         return pdfBytes.length;
     }

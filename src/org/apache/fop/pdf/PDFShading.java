@@ -8,6 +8,7 @@
 package org.apache.fop.pdf;
 
 // Java...
+import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 
 // FOP
@@ -505,7 +506,11 @@ public class PDFShading extends PDFObject {
 
         p.append(">> \nendobj\n");
 
-        return (p.toString().getBytes());
+        try {
+            return p.toString().getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            return p.toString().getBytes();
+        }       
     }
 
 }

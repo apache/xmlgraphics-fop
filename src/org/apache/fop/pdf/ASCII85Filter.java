@@ -9,6 +9,7 @@ package org.apache.fop.pdf;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 public class ASCII85Filter extends PDFFilter {
     private static final char ASCII85_ZERO = 'z';
@@ -87,12 +88,14 @@ public class ASCII85Filter extends PDFFilter {
 
         }
         // finally write the two character end of data marker
-        buffer.write(ASCII85_EOD.getBytes(), 0,
-                     ASCII85_EOD.getBytes().length);
-
-
+        byte[] eod;
+        try {
+            eod = ASCII85_EOD.getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            eod = ASCII85_EOD.getBytes();
+        }       
+        buffer.write(eod, 0, eod.length);
         byte[] result = buffer.toByteArray();
-
 
         // assert that we have the correct outgoing length
         /*

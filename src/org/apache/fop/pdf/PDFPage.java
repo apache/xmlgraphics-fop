@@ -7,6 +7,8 @@
 
 package org.apache.fop.pdf;
 
+import java.io.UnsupportedEncodingException;
+
 /**
  * class representing a /Page object.
  *
@@ -129,7 +131,11 @@ public class PDFPage extends PDFObject {
 
         sb = sb.append(">>\nendobj\n");
 
-        return sb.toString().getBytes();
+        try {
+            return sb.toString().getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            return sb.toString().getBytes();
+        }       
     }
 
 }

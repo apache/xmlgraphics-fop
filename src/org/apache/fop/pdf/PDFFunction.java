@@ -9,6 +9,7 @@ package org.apache.fop.pdf;
 
 // Java...
 import java.util.Vector;
+import java.io.UnsupportedEncodingException;
 
 /**
  * class representing a PDF Function.
@@ -663,8 +664,11 @@ public class PDFFunction extends PDFObject {
 
         }
 
-        return (p.toString().getBytes());
-
+        try {
+            return p.toString().getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            return p.toString().getBytes();
+        }       
     }
 
 }
