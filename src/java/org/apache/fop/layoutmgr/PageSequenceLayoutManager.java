@@ -75,7 +75,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
     }
 
-    private int pageCount = 1;
+    private int startPageNum = 0;
+    private int currentPageNum = 0;
     private String pageNumberString;
     private boolean isFirstPage = true;
 
@@ -177,9 +178,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * which creates and adds all the pages to the area tree.
      */
     public void activateLayout() {
-        pageSeq.initPageNumber();
-        pageCount = pageSeq.getCurrentPageNumber();
-        pageNumberString = pageSeq.makeFormattedPageNumber(pageCount);
+        startPageNum = pageSeq.getStartingPageNumber();
+        currentPageNum = startPageNum;
+        pageNumberString = pageSeq.makeFormattedPageNumber(currentPageNum);
 
         LineArea title = null;
         if (pageSeq.getTitleFO() != null) {
@@ -203,14 +204,15 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 
                 // finish page and add to area tree
                 finishPage();
-                pageCount++;
-                pageNumberString = pageSeq.makeFormattedPageNumber(pageCount);
+                currentPageNum++;
+                pageNumberString = pageSeq.makeFormattedPageNumber(currentPageNum);
             }
         }
-        pageCount--;
+        // TODO: Don't decrement currentPageNum when no pages are generated
+        currentPageNum--;
         log.debug("Ending layout");
         finishPage();
-        pageSeq.setCurrentPageNumber(pageCount);
+        pageSeq.getRoot().reportAdditionalPagesGenerated((currentPageNum - startPageNum) + 1);
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager#isBogus() */
@@ -257,7 +259,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      *
      * @return the formatted page number string
      */
-    public String getCurrentPageNumber() {
+    public String getCurrentPageNumberString() {
         return pageNumberString;
     }
     
@@ -464,7 +466,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         try {
             // create a new page
             currentSimplePageMaster = pageSeq.getSimplePageMasterToUse(
-                pageCount, isFirstPage, bIsBlank);
+                currentPageNum, isFirstPage, bIsBlank);
             Region body = currentSimplePageMaster.getRegion(FO_REGION_BODY);
             if (!pageSeq.getMainFlow().getFlowName().equals(body.getRegionName())) {
               throw new FOPException("Flow '" + pageSeq.getMainFlow().getFlowName()
@@ -477,7 +479,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             throw new IllegalArgumentException("Cannot create page: " + fopex.getMessage());
         }
 
-        curPage.setPageNumberString(getCurrentPageNumber());
+        curPage.setPageNumberString(pageNumberString);
         if (log.isDebugEnabled()) {
             log.debug("[" + curPage.getPageNumberString() + "]");
         }
@@ -669,7 +671,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
         else {
             /* IF we are on the kind of page we need, we'll need a new page. */
-            if (pageCount%2 != 0) {
+            if (currentPageNum%2 != 0) {
                 // Current page is odd
                 return (breakValue == Constants.EN_ODD_PAGE);
             }
@@ -687,7 +689,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             if (breakValue == Constants.EN_PAGE) {
                 return false;
             }
-            else if (pageCount%2 != 0) {
+            else if (currentPageNum%2 != 0) {
                 // Current page is odd
                 return (breakValue == Constants.EN_EVEN_PAGE);
             }

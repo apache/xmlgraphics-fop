@@ -49,11 +49,6 @@ public class PageSequence extends FObj {
     private String masterReference;
     // End of property values
 
-    //
-    // initial-page-number types
-    //
-    public static final int EXPLICIT = 0;
-
     /**
      * The parent root object
      */
@@ -76,31 +71,11 @@ public class PageSequence extends FObj {
 
 //  private boolean isFlowSet = false;
 
-    // for structure handler
-    private boolean sequenceStarted = false;
-
-    //
-    // state attributes used during layout
-    //
-
     // page number and related formatting variables
-    public int currentPageNumber = 0;
+    public int startingPageNumber = 0;
     private int explicitFirstNumber = 0; // explicitly specified
-    public int firstPageNumber = 0; // actual
     private PageNumberGenerator pageNumberGenerator;
-
-    private int pageCount = 0;
     private boolean isForcing = false;
-
-    /**
-     * specifies page numbering type (auto|auto-even|auto-odd|explicit)
-     */
-    public int pageNumberType;
-
-    /**
-     * used to determine whether to calculate auto, auto-even, auto-odd
-     */
-    private boolean thisIsFirstPage;
 
     /**
      * The currentSimplePageMaster is either the page master for the
@@ -155,18 +130,6 @@ public class PageSequence extends FObj {
         layoutMasterSet = root.getLayoutMasterSet();
         flowMap = new HashMap();
 
-        // we are now on the first page of the page sequence
-        thisIsFirstPage = true;
-
-        if (initialPageNumber.getEnum() != 0) {
-            // auto | auto-odd | auto-even.
-            pageNumberType = initialPageNumber.getEnum();
-        } else {
-            pageNumberType = EXPLICIT;
-            int pageStart = initialPageNumber.getValue();
-            this.explicitFirstNumber = (pageStart > 0) ? pageStart : 1;
-        }
-
         this.simplePageMaster =
                 this.layoutMasterSet.getSimplePageMaster(masterReference);
         if (this.simplePageMaster == null) {
@@ -186,9 +149,8 @@ public class PageSequence extends FObj {
             new PageNumberGenerator(format, groupingSeparator, groupingSize, letterValue);
 
         checkId(id);
-        //call startStructuredPageSequence to ensure, that startPageSequence is called
-        //before startFlow.
-        startStructuredPageSequence();
+        initPageNumber();
+        getFOEventHandler().startPageSequence(this);
     }
 
     /**
@@ -248,13 +210,11 @@ public class PageSequence extends FObj {
         } else if (childId == FO_FLOW) {
             this.mainFlow = (Flow) child;
             addFlow(mainFlow);
-            startStructuredPageSequence();
             super.addChildNode(child); // For getChildren
         } else if (childId == FO_STATIC_CONTENT) {
             addFlow((StaticContent) child);
             String flowName = ((StaticContent) child).getFlowName();
             flowMap.put(flowName, child);
-            startStructuredPageSequence();
         }
     }
 
@@ -284,197 +244,33 @@ public class PageSequence extends FObj {
     }
 
     /**
-     * Start the page-sequence logic in the Structured Handler
-     */
-    private void startStructuredPageSequence() {
-        if (!sequenceStarted) {
-            getFOEventHandler().startPageSequence(this);
-            sequenceStarted = true;
-        }
-    }
-
-    /**
      * Initialize the current page number for the start of the page sequence.
      */
-    public void initPageNumber() {
-        this.currentPageNumber = this.root.getRunningPageNumberCounter() + 1;
-
-        if (this.pageNumberType == EN_AUTO_ODD) {
-            // Next page but force odd. May force empty page creation!
-            // Whose master is used for this??? Assume no.
-            // Use force-page-count = auto
-            // on preceding page-sequence to make sure that there is no gap!
-            if (currentPageNumber % 2 == 0) {
-                this.currentPageNumber++;
+    private void initPageNumber() {
+        int pageNumberType = 0;
+        
+        if (initialPageNumber.getEnum() != 0) {
+            // auto | auto-odd | auto-even.
+            startingPageNumber = root.getEndingPageNumberOfPreviousSequence() + 1;
+            pageNumberType = initialPageNumber.getEnum();
+            if (pageNumberType == EN_AUTO_ODD) {
+                // Next page but force odd. May force empty page creation!
+                // Whose master is used for this??? Assume no.
+                // Use force-page-count = auto
+                // on preceding page-sequence to make sure that there is no gap!
+                if (startingPageNumber % 2 == 0) {
+                    startingPageNumber++;
+                }
+            } else if (pageNumberType == EN_AUTO_EVEN) {
+                if (startingPageNumber % 2 == 1) {
+                    startingPageNumber++;
+                }
             }
-        } else if (pageNumberType == EN_AUTO_EVEN) {
-            if (currentPageNumber % 2 == 1) {
-                this.currentPageNumber++;
-            }
-        } else if (pageNumberType == EXPLICIT) {
-            this.currentPageNumber = this.explicitFirstNumber;
+        } else { // <integer> for explicit page number
+            int pageStart = initialPageNumber.getValue();
+            startingPageNumber = (pageStart > 0) ? pageStart : 1; // spec rule
         }
-        this.firstPageNumber = this.currentPageNumber;
     }
-
-    /**
-     * Creates a new page area for the given parameters
-     * @param areaTree the area tree the page should be contained in
-     * @param firstAvailPageNumber the page number for this page
-     * @param isFirstPage true when this is the first page in the sequence
-     * @param isEmptyPage true if this page will be empty
-     * (e.g. forced even or odd break)
-     * @return a Page layout object based on the page master selected
-     * from the params
-     * @todo modify the other methods to use even/odd flag and bIsLast
-     */
-//      private PageViewport makePage(int firstAvailPageNumber,
-//                boolean isFirstPage, boolean bIsLast,
-//                boolean isEmptyPage) throws FOPException {
-//          // layout this page sequence
-
-//          // while there is still stuff in the flow, ask the
-//          // layoutMasterSet for a new page
-
-//          // page number is 0-indexed
-//          PageMaster pageMaster = getNextPageMaster(masterName,
-//                                  firstAvailPageNumber,
-//                                  isFirstPage, isEmptyPage);
-
-//          // a legal alternative is to use the last sub-sequence
-//          // specification which should be handled in getNextSubsequence.
-//      // That's not done here.
-//          if (pageMaster == null) {
-//              throw new FOPException("page masters exhausted. Cannot recover.");
-//          }
-//          PageViewport p = pageMaster.makePage();
-//          return p;
-//      }
-
-    /**
-     * Returns the next SubSequenceSpecifier for the given page sequence master.
-     * The result is bassed on the current state of this page sequence.
-     */
-//      private SubSequenceSpecifier getNextSubsequence(PageSequenceMaster master) {
-//          if (master.getSubSequenceSpecifierCount()
-//                  > currentSubsequenceNumber + 1) {
-
-//              currentSubsequence =
-//                  master.getSubSequenceSpecifier(currentSubsequenceNumber + 1);
-//              currentSubsequenceNumber++;
-//              return currentSubsequence;
-//          } else {
-//              return null;
-//          }
-//      }
-
-    /**
-     * Returns the next simple page master for the given sequence master, page number and
-     * other state information
-     */
-//      private SimplePageMaster getNextSimplePageMaster(PageSequenceMaster sequenceMaster,
-//              int pageNumber, boolean thisIsFirstPage,
-//              boolean isEmptyPage) {
-//          // handle forcing
-//          if (isForcing) {
-//              String nextPageMaster = getNextPageMasterName(sequenceMaster,
-//                                      pageNumber, false, true);
-//              return this.layoutMasterSet.getSimplePageMaster(nextPageMaster);
-//          }
-//          String nextPageMaster = getNextPageMasterName(sequenceMaster,
-//                                  pageNumber, thisIsFirstPage, isEmptyPage);
-//          return this.layoutMasterSet.getSimplePageMaster(nextPageMaster);
-
-//      }
-
-    /**
-     * Get the next page master name.
-     * This gets the name of the next page master. If the sequence
-     * is exhausted then an error is indicated and the last page
-     * master name is used.
-     */
-//      private String getNextPageMasterName(PageSequenceMaster sequenceMaster,
-//                                           int pageNumber,
-//                                           boolean thisIsFirstPage,
-//                                           boolean isEmptyPage) {
-
-//          if (null == currentSubsequence) {
-//              currentSubsequence = getNextSubsequence(sequenceMaster);
-//          }
-
-//          String nextPageMaster =
-//              currentSubsequence.getNextPageMaster(pageNumber,
-//                                                   thisIsFirstPage,
-//                                                   isEmptyPage);
-
-
-//          if (null == nextPageMaster
-//                  || isFlowForMasterNameDone(currentPageMasterName)) {
-//              SubSequenceSpecifier nextSubsequence =
-//                  getNextSubsequence(sequenceMaster);
-//              if (nextSubsequence == null) {
-//                  getLogger().error("Page subsequences exhausted. Using previous subsequence.");
-//                  thisIsFirstPage =
-//                      true;    // this becomes the first page in the new (old really) page master
-//                  currentSubsequence.reset();
-
-//                  // we leave currentSubsequence alone
-//              }
-//              else {
-//                  currentSubsequence = nextSubsequence;
-//              }
-
-//              nextPageMaster =
-//                  currentSubsequence.getNextPageMaster(pageNumber,
-//                                                       thisIsFirstPage,
-//                                                       isEmptyPage);
-//          }
-//          currentPageMasterName = nextPageMaster;
-
-//          return nextPageMaster;
-
-//      }
-
-//      private SimplePageMaster getCurrentSimplePageMaster() {
-//          return this.layoutMasterSet.getSimplePageMaster(currentPageMasterName);
-//      }
-
-//      private String getCurrentPageMasterName() {
-//          return currentPageMasterName;
-//      }
-
-    // refactored from LayoutMasterSet
-//      private PageMaster getNextPageMaster(String pageSequenceName,
-//                                           int pageNumber,
-//                                           boolean thisIsFirstPage,
-//                                           boolean isEmptyPage) throws FOPException {
-//          PageMaster pageMaster = null;
-
-//          // see if there is a page master sequence for this master name
-//          PageSequenceMaster sequenceMaster =
-//              this.layoutMasterSet.getPageSequenceMaster(pageSequenceName);
-
-//          if (sequenceMaster != null) {
-//              pageMaster = getNextSimplePageMaster(sequenceMaster,
-//                                                   pageNumber,
-//                                                   thisIsFirstPage,
-//                                                   isEmptyPage).getPageMaster();
-
-//          } else {    // otherwise see if there's a simple master by the given name
-//              SimplePageMaster simpleMaster =
-//                  this.layoutMasterSet.getSimplePageMaster(pageSequenceName);
-//              if (simpleMaster == null) {
-//                  throw new FOPException("'master-reference' for 'fo:page-sequence'"
-//                                         + "matches no 'simple-page-master'"
-//                                         + " or 'page-sequence-master'");
-//              }
-//              currentPageMasterName = pageSequenceName;
-
-//              pageMaster = simpleMaster.getNextPageMaster();
-//          }
-//          return pageMaster;
-//      }
-
 
 //     /**
 //      * Returns true when there is more flow elements left to lay out.
@@ -545,12 +341,12 @@ public class PageSequence extends FObj {
 //      }
 
     /**
-     * Get the current page number for this page sequence.
+     * Get the starting page number for this page sequence.
      *
-     * @return the current page number
+     * @return the starting page number
      */
-    public int getCurrentPageNumber() {
-        return currentPageNumber;
+    public int getStartingPageNumber() {
+        return startingPageNumber;
     }
 
 //     private void forcePage(AreaTree areaTree, int firstAvailPageNumber) {
@@ -686,18 +482,6 @@ public class PageSequence extends FObj {
      */
     public String makeFormattedPageNumber(int pageNumber) {
         return pageNumberGenerator.makeFormattedPageNumber(pageNumber);
-    }
-
-    /**
-     * Public accessor for setting the currentPageNumber.
-     * @param currentPageNumber the value to which currentPageNumber should be
-     * set.
-     */
-    public void setCurrentPageNumber(int currentPageNumber) {
-        this.currentPageNumber = currentPageNumber;
-
-        // Tell the root the last page number we created.
-        root.setRunningPageNumberCounter(currentPageNumber);
     }
 
     /**
