@@ -180,6 +180,7 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
         final RtfTable parentTable = (RtfTable) parent;
         adjustBorderProperties(parentTable);
 
+        writeAttributes(attrib,new String[]{ITableAttributes.ATTR_HEADER});
         writeAttributes(attrib, ITableAttributes.ROW_BORDER);
         writeAttributes(attrib, ITableAttributes.CELL_BORDER);
         writeAttributes(attrib, BorderAttributesConverter.BORDERS);

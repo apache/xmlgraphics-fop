@@ -84,16 +84,16 @@ class MergedTableCells extends TestDocument {
         {
             RtfTableRow r = tbl.newTableRow();
             RtfTableCell c = r.newTableCell(80 * MM_TO_TWIPS);
-            c.setHMerge(c.MERGE_START);
+            c.setHMerge(RtfTableCell.MERGE_START);
             c.newParagraph().newText("cell 0,0, width 80mm, merge start, "
                     + "followed by two merged cells totalling 80mm width.");
 
             c = r.newTableCell(40 * MM_TO_TWIPS);
-            c.setHMerge(c.MERGE_WITH_PREVIOUS);
+            c.setHMerge(RtfTableCell.MERGE_WITH_PREVIOUS);
             c.newParagraph().newText("THIS IS IN AN HMERGED CELL, MUST NOT APPEAR IN RTF DOCUMENT");
 
             c = r.newTableCell(40 * MM_TO_TWIPS);
-            c.setHMerge(c.MERGE_WITH_PREVIOUS);
+            c.setHMerge(RtfTableCell.MERGE_WITH_PREVIOUS);
             c.newParagraph().newText("THIS IS IN AN HMERGED CELL, MUST NOT APPEAR IN RTF DOCUMENT");
         }
 
@@ -101,13 +101,13 @@ class MergedTableCells extends TestDocument {
         {
             RtfTableRow r = tbl.newTableRow();
             RtfTableCell c = r.newTableCell(40 * MM_TO_TWIPS);
-            c.setVMerge(c.MERGE_START);
+            c.setVMerge(RtfTableCell.MERGE_START);
             c.newParagraph().newText("cell 1,0, vertical merge start, 40mm, spans three rows.");
 
             r.newTableCell(80 * MM_TO_TWIPS).newParagraph().newText("cell 1,1, no merge, 80mm");
 
             c = r.newTableCell(40 * MM_TO_TWIPS);
-            c.setVMerge(c.MERGE_START);
+            c.setVMerge(RtfTableCell.MERGE_START);
             c.newParagraph().newText("cell 1,2, vertical merge start, 40mm, spans two rows.");
         }
 
@@ -115,14 +115,14 @@ class MergedTableCells extends TestDocument {
         {
             RtfTableRow r = tbl.newTableRow();
             RtfTableCell c = r.newTableCell(40 * MM_TO_TWIPS);
-            c.setVMerge(c.MERGE_WITH_PREVIOUS);
+            c.setVMerge(RtfTableCell.MERGE_WITH_PREVIOUS);
             c.newParagraph().newText("cell 2,0, VMERGED CELL, MUST NOT APPEAR IN RTF DOCUMENT");
 
             r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText("cell 2,1, no merge, 40mm");
             r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText("cell 2,2, no merge, 40mm");
 
             c = r.newTableCell(40 * MM_TO_TWIPS);
-            c.setVMerge(c.MERGE_WITH_PREVIOUS);
+            c.setVMerge(RtfTableCell.MERGE_WITH_PREVIOUS);
             c.newParagraph().newText("cell 2,3, VMERGED CELL, MUST NOT APPEAR IN RTF DOCUMENT");
         }
 
@@ -130,7 +130,7 @@ class MergedTableCells extends TestDocument {
         {
             RtfTableRow r = tbl.newTableRow();
             RtfTableCell c = r.newTableCell(40 * MM_TO_TWIPS);
-            c.setVMerge(c.MERGE_WITH_PREVIOUS);
+            c.setVMerge(RtfTableCell.MERGE_WITH_PREVIOUS);
             c.newParagraph().newText("cell 3,0, VMERGED CELL, MUST NOT APPEAR IN RTF DOCUMENT");
 
             r.newTableCell(10 * MM_TO_TWIPS).newParagraph().newText("cell 3,1, no merge, 10mm");
