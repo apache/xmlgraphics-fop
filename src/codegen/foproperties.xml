@@ -1363,6 +1363,50 @@
 			</enumeration>
 		<default>before</default>
 	</property>
+	<property>
+		<name>format</name>
+		<inherited>false</inherited>
+		<datatype>String</datatype>
+		<default>1</default>
+	</property>
+	<property>
+		<name>grouping-separator</name>
+		<inherited>false</inherited>
+		<datatype>Character</datatype>
+		<default>none</default>
+	</property>
+	<property>
+		<name>grouping-size</name>
+		<inherited>false</inherited>
+		<datatype>Number</datatype>
+		<!-- 0 means no grouping -->
+		<default>0</default>
+	</property>
+	<property>
+		<name>letter-value</name>
+		<inherited>false</inherited>
+		<datatype>Enum</datatype>
+			<enumeration>
+				<value const="ALPHABETIC">alphabetic</value>
+				<value const="TRADITIONAL">traditional</value>
+				<value const="AUTO">auto</value>
+			</enumeration>
+		<default>auto</default>
+	</property>
+	<property>
+		<name>force-page-count</name>
+		<inherited>false</inherited>
+		<datatype>Enum</datatype>
+			<enumeration>
+				<value const="EVEN">even</value>
+				<value const="ODD">odd</value>
+				<value const="END_ON_EVEN">end-on-even</value>
+				<value const="END_ON_ODD">end-on-odd</value>
+				<value const="NO_FORCE">no-force</value>
+				<value const="AUTO">auto</value>
+			</enumeration>
+		<default>auto</default>
+	</property>
  </generic-property-list>
 </property-list>
 
