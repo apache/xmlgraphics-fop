@@ -34,6 +34,7 @@
           <fo:block margin="0pt 5pt">left/right</fo:block>
           <fo:block margin="5pt 0pt">top/bottom</fo:block>
           <fo:block margin="1pt 2pt 3pt">three values</fo:block>
+          <fo:block>EOF</fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
