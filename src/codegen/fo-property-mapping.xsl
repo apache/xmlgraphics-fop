@@ -111,7 +111,10 @@ import org.apache.fop.fo.Property;
 public class <xsl:value-of select="@family"/>PropertyMapping implements Constants {
 
   private static Property.Maker[] s_htGeneric = new Property.Maker[PROPERTY_COUNT+1];
-  private static HashMap s_htElementStringLists = new HashMap();    // temporary
+  /* s_htElementLists not currently used; apparently for specifying element-specific
+   * property makers (instead of the default maker for a particular property); see
+   * former org.apache.fop.fo.PropertyListBuilder 
+   */
   private static HashMap s_htElementLists = new HashMap();
   private static HashMap s_htSubPropNames = new HashMap();
   private static HashMap s_htPropNames = new HashMap();
@@ -120,14 +123,6 @@ public class <xsl:value-of select="@family"/>PropertyMapping implements Constant
   private static HashMap s_ht<xsl:value-of select="localname[1]"/>;</xsl:for-each>
 
   <xsl:apply-templates/>
-
-  public static Set getElementStringMappings() { // temporary
-    return s_htElementStringLists.keySet();
-  }
-
-  public static HashMap getElementStringMapping(String elemName) {  // temporary
-    return (HashMap) s_htElementStringLists.get(elemName);
-  }
 
   public static Property.Maker[] getGenericMappings() {
     return s_htGeneric;
