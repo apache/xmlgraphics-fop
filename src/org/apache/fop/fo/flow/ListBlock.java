@@ -145,6 +145,12 @@ public class ListBlock extends FObj {
 		startIndent += bodyIndent + distanceBetweenStarts;
 		bodyIndent = startIndent;
 	    }
+
+	    if (this.isInTableCell) {
+		startIndent += forcedStartOffset;
+		endIndent += area.getAllocationWidth() - forcedWidth -
+		    forcedStartOffset;
+	    }
 	}
 
 	BlockArea blockArea =
