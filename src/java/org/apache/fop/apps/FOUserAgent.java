@@ -36,6 +36,7 @@ import org.apache.commons.logging.LogFactory;
 
 // FOP
 import org.apache.fop.fo.ElementMapping;
+import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.render.Renderer;
 
@@ -65,12 +66,14 @@ public class FOUserAgent {
     public Map defaults = new java.util.HashMap();
     /** Map containing XML handlers for various document types */
     public Map handlers = new java.util.HashMap();
+    
     private String baseURL;
     private PDFEncryptionParams pdfEncryptionParams;
     private float px2mm = (25.4f / 72); //dpi (=25.4/dpi)
     private HashMap rendererOptions = new java.util.HashMap();
     private InputHandler inputHandler = null;
     private Renderer rendererOverride = null;
+    private FOEventHandler foEventHandlerOverride = null;
     /* user configuration */
     private Configuration userConfig = null;
     private Log log = LogFactory.getLog("FOP");
@@ -112,7 +115,7 @@ public class FOUserAgent {
 
     /**
      * Add the element mapping with the given class name.
-     * @param mappingClassName the class name representing the element mapping.
+     * @param elementMapping the class name representing the element mapping.
      */
     public void addElementMapping(ElementMapping elementMapping) {
         if (additionalElementMappings == null) {
@@ -130,19 +133,37 @@ public class FOUserAgent {
     }
 
     /**
-     * Sets the producer of the document.  
-     * @param producer source of document
+     * Sets an explicit renderer to use which overrides the one defined by the 
+     * render type setting.  
+     * @param renderer the Renderer instance to use
      */
     public void setRendererOverride(Renderer renderer) {
         this.rendererOverride = renderer;
     }
 
     /**
-     * Returns the producer of the document
-     * @return producer name
+     * Returns the overriding Renderer instance, if any.
+     * @return the overriding Renderer or null
      */
     public Renderer getRendererOverride() {
         return rendererOverride;
+    }
+
+    /**
+     * Sets an explicit FOEventHandler instance which overrides the one
+     * defined by the render type setting.  
+     * @param handler the FOEventHandler instance
+     */
+    public void setFOEventHandlerOverride(FOEventHandler handler) {
+        this.foEventHandlerOverride = handler;
+    }
+
+    /**
+     * Returns the overriding FOEventHandler instance, if any.
+     * @return the overriding FOEventHandler or null
+     */
+    public FOEventHandler getFOEventHandlerOverride() {
+        return this.foEventHandlerOverride;
     }
 
     /**
@@ -179,7 +200,7 @@ public class FOUserAgent {
 
     /**
      * Sets the creation date of the document.  
-     * @param creation date of document
+     * @param creationDate date of document
      */
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
@@ -203,7 +224,7 @@ public class FOUserAgent {
 
     /**
      * Set the user configuration.
-     * @param user configuration
+     * @param userConfig configuration
      */
     public void setUserConfig(Configuration userConfig) {
         this.userConfig = userConfig;
@@ -217,6 +238,11 @@ public class FOUserAgent {
         return userConfig;
     }
 
+    /**
+     * Returns the configuration subtree for a specific renderer.
+     * @param mimeType MIME type of the renderer
+     * @return the requested configuration subtree, null if there's no configuration
+     */
     public Configuration getUserRendererConfig (String mimeType) {
 
         if (userConfig == null || mimeType == null) {
@@ -238,7 +264,7 @@ public class FOUserAgent {
                 // silently pass over configurations without mime type
             }
         }
-        log.debug((userRendererConfig==null ? "No u" : "U")
+        log.debug((userRendererConfig == null ? "No u" : "U")
                   + "ser configuration found for MIME type " + mimeType);
         return userRendererConfig;
     }
