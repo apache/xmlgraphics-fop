@@ -28,7 +28,7 @@ public class MultiSwitch extends ToBeImplementedElement {
         AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
 
         // this.properties.get("auto-restore");
-        // this.properties.get("id");
+        setupID();
 
         return super.layout(area);
     }

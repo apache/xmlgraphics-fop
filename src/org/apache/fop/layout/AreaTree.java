@@ -87,7 +87,7 @@ public class AreaTree {
     }
 
     public IDReferences getIDReferences() {
-        return streamRenderer.getIDReferences();
+        return null;//streamRenderer.getIDReferences();
     }
 
     public void addExtension(ExtensionObj obj) {

@@ -29,7 +29,6 @@ public class ListItem extends FObj {
     int endIndent;
     int spaceBefore;
     int spaceAfter;
-    String id;
     BlockArea blockArea;
 
     public ListItem(FONode parent) {
@@ -57,7 +56,7 @@ public class ListItem extends FObj {
 
             // this.properties.get("break-after");
             // this.properties.get("break-before");
-            // this.properties.get("id");
+            setupID();
             // this.properties.get("keep-together");
             // this.properties.get("keep-with-next");
             // this.properties.get("keep-with-previous");
@@ -71,7 +70,6 @@ public class ListItem extends FObj {
                 this.properties.get("space-before.optimum").getLength().mvalue();
             this.spaceAfter =
                 this.properties.get("space-after.optimum").getLength().mvalue();
-            this.id = this.properties.get("id").getString();
 
             area.getIDReferences().createID(id);
 

@@ -89,7 +89,7 @@ public class Leader extends FObjMixed {
         // this.properties.get("dominant-baseline");
         // this.properties.get("text-depth");
         // this.properties.get("text-altitude");
-        // this.properties.get("id");
+        setupID();
         // this.properties.get("leader-alignment");
         // this.properties.get("leader-length");
         // this.properties.get("leader-pattern");
@@ -137,7 +137,6 @@ public class Leader extends FObjMixed {
             this.properties.get("leader-alignment").getEnum();
 
         // initialize id
-        String id = this.properties.get("id").getString();
         blockArea.getIDReferences().initializeID(id, blockArea);
 
         // adds leader to blockarea, there the leaderArea is generated

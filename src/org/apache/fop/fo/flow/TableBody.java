@@ -23,7 +23,6 @@ public class TableBody extends FObj {
     int spaceBefore;
     int spaceAfter;
     ColorType backgroundColor;
-    String id;
 
     ArrayList columns;
     RowSpanMgr rowSpanMgr;    // manage information about spanning rows
@@ -70,7 +69,7 @@ public class TableBody extends FObj {
             // Common Relative Position Properties        
             RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
         
-            // this.properties.get("id");
+            setupID();
 
             this.spaceBefore =
                 this.properties.get("space-before.optimum").getLength().mvalue();
@@ -78,7 +77,6 @@ public class TableBody extends FObj {
                 this.properties.get("space-after.optimum").getLength().mvalue();
             this.backgroundColor =
                 this.properties.get("background-color").getColorType();
-            this.id = this.properties.get("id").getString();
 
             area.getIDReferences().createID(id);
 
@@ -242,7 +240,6 @@ public class TableBody extends FObj {
             area.increaseHeight(-spaceAfter);
         }
         this.resetMarker();
-        this.removeID(area.getIDReferences());
     }
 
 }

@@ -24,7 +24,6 @@ public class TableRow extends FObj {
 
     int breakAfter;
     ColorType backgroundColor;
-    String id;
 
     KeepValue keepWithNext;
     KeepValue keepWithPrevious;
@@ -193,7 +192,7 @@ public class TableRow extends FObj {
                     
         // this.properties.get("break-before");
         // this.properties.get("break-after");
-        // this.properties.get("id");
+        setupID();
         // this.properties.get("height");
         // this.properties.get("keep-together");
         // this.properties.get("keep-with-next");
@@ -209,7 +208,6 @@ public class TableRow extends FObj {
         this.keepWithPrevious =
             getKeepValue("keep-with-previous.within-column");
 
-        this.id = this.properties.get("id").getString();
         this.minHeight = this.properties.get("height").getLength().mvalue();
         setup = true;
     }
@@ -337,7 +335,6 @@ public class TableRow extends FObj {
                     // if this row is at the top of the column area.
                     // Remove spanning cells from RowSpanMgr?
                     this.resetMarker();
-                    this.removeID(area.getIDReferences());
                     return new Status(Status.AREA_FULL_NONE);
                 } else if (status.getCode() == Status.AREA_FULL_SOME) {
                     /*
@@ -447,7 +444,6 @@ public class TableRow extends FObj {
             area.removeChild(areaContainer);
         areaAdded = false;
         this.resetMarker();
-        this.removeID(area.getIDReferences());
     }
 
     public void resetMarker() {

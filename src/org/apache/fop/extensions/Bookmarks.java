@@ -8,6 +8,7 @@
 package org.apache.fop.extensions;
 
 import org.apache.fop.fo.FONode;
+import org.apache.fop.area.AreaTree;
 
 import java.util.*;
 
@@ -39,6 +40,8 @@ public class Bookmarks extends ExtensionObj {
             data.addSubData(out.getData());
         }
         // add data to area tree for resolving and handling
+        AreaTree at = streamRenderer.getAreaTree();
+        at.addTreeExtension(data);
     }
 }
 

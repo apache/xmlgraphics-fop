@@ -64,10 +64,8 @@ public class FObjMixed extends FObj {
     public Status layout(Area area) throws FOPException {
 
         if (this.properties != null) {
-            Property prop = this.properties.get("id");
-            if (prop != null) {
-                String id = prop.getString();
-
+            setupID();
+            if (id != null) {
                 if (this.marker == START) {
                     if (area.getIDReferences() != null)
                         area.getIDReferences().createID(id);

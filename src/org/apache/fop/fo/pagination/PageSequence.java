@@ -199,7 +199,7 @@ public class PageSequence extends FObj {
 
         // this.properties.get("country");
         // this.properties.get("language");
-        // this.properties.get("id");
+        setupID();
     }
 
 

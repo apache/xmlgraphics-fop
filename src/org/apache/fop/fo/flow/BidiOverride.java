@@ -63,7 +63,7 @@ public class BidiOverride extends FObjMixed {
 
         // this.properties.get("color");
         // this.properties.get("direction");
-        // this.properties.get("id");
+        setupID();
         // this.properties.get("letter-spacing");
         // this.properties.get("line-height");
         // this.properties.get("line-height-shift-adjustment");

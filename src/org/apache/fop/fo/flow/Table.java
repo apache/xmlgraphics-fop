@@ -28,7 +28,6 @@ public class Table extends FObj {
     ColorType backgroundColor;
     LengthRange ipd;
     int height;
-    String id;
     TableHeader tableHeader = null;
     TableFooter tableFooter = null;
     boolean omitHeaderAtBreak = false;
@@ -82,7 +81,7 @@ public class Table extends FObj {
             // this.properties.get("border-start-precendence");
             // this.properties.get("break-after");
             // this.properties.get("break-before");
-            // this.properties.get("id");
+            setupID();
             // this.properties.get("inline-progression-dimension");
             // this.properties.get("height");
             // this.properties.get("keep-together");
@@ -108,8 +107,6 @@ public class Table extends FObj {
             this.height = this.properties.get("height").getLength().mvalue();
             this.bAutoLayout = (this.properties.get("table-layout").getEnum() == 
 		TableLayout.AUTO);
-
-            this.id = this.properties.get("id").getString();
 
             this.omitHeaderAtBreak =
                 this.properties.get("table-omit-header-at-break").getEnum()

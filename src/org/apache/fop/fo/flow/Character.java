@@ -102,7 +102,7 @@ public class Character extends FObj {
         // this.properties.get("text-altitude");
         // this.properties.get("glyph-orientation-horizontal");
         // this.properties.get("glyph-orientation-vertical");
-        // this.properties.get("id");
+        setupID();
         // this.properties.get("keep-with-next");
         // this.properties.get("keep-with-previous");
         // this.properties.get("letter-spacing");
