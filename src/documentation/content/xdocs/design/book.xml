@@ -14,9 +14,6 @@
       <menu-item label="Index" href="index.html"/>
       <menu-item label="Understanding" href="understanding/index.html"/>
     </menu>
-    <menu label="Overview">
-      <menu-item label="Architecture Implementation" href="architecture.html"/>
-    </menu>
     <menu label="Sections">
       <menu-item label="FO Tree" href="fotree.html"/>
       <menu-item label="Properties" href="properties.html"/>
