@@ -105,6 +105,8 @@ public class InstreamForeignObject extends FObj {
 	boolean chauto;
 	int spaceBefore;
 	int spaceAfter;
+    int startIndent;
+    int endIndent;
 
     ForeignObjectArea areaCurrent;
 
@@ -157,6 +159,10 @@ public class InstreamForeignObject extends FObj {
 		this.cwauto = this.properties.get("content-width").getLength().isAuto();
 		this.chauto = this.properties.get("content-height").getLength().isAuto();
 		
+	    this.startIndent =
+	       		this.properties.get("start-indent").getLength().mvalue();
+	    this.endIndent =
+			this.properties.get("end-indent").getLength().mvalue();
 		this.spaceBefore =
 		this.properties.get("space-before.optimum").getLength().mvalue();
 		this.spaceAfter =
@@ -221,6 +227,26 @@ public class InstreamForeignObject extends FObj {
 		return new Status(Status.FORCE_PAGE_BREAK_EVEN);
 		}
 	}
+
+    if (this.isInLabel) {
+	startIndent += bodyIndent;
+/*	endIndent += (areaCurrent.getEffectiveWidth()
+		      - distanceBetweenStarts - startIndent)
+	    + labelSeparation;*/
+    }
+
+    if (this.isInListBody) {
+	startIndent += bodyIndent + distanceBetweenStarts;
+    }
+
+    if (this.isInTableCell) {
+	startIndent += forcedStartOffset;
+/*	endIndent = areaCurrent.getEffectiveWidth() - forcedWidth -
+	    forcedStartOffset;*/
+    }
+
+	areaCurrent.setStartIndent(startIndent);
+//	areaCurrent.setEndIndent(endIndent);
 
 	/* if there is a space-before */
 	if (spaceBefore != 0) {
