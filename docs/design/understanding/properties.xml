@@ -1,0 +1,130 @@
+<?xml version="1.0" standalone="no"?>
+<!-- Overview -->
+<document> 
+  <header> 
+	 <title>Properties</title> 
+	 <subtitle>All you wanted to know about the Properties !</subtitle> 
+	 <authors> <person name="Keiron Liddle" email="keiron@aftexsw.com"/> 
+	 </authors> 
+  </header> 
+  <body><s1 title="Property Handling"> 
+<p>During XML Parsing, the FO tree is constructed. For each FO object (some
+subclass of FObj), the tree builder then passes the list of all
+attributes specified on the FO element to the handleAttrs method. This
+method converts the attribute specifications into a PropertyList.</p>
+<p>The actual work is done by a PropertyListBuilder (PLB for short). The
+basic idea of the PLB is to handle each attribute in the list in turn,
+find an appropriate "Maker" for it, call the Maker to convert the
+attribute value into a Property object of the correct type, and store
+that Property in the PropertyList.</p>
+
+
+<s2 title="Finding a Maker">
+<p>
+The PLB finds a "Maker" for the property based on the attribute name and
+the element name. Most Makers are generic and handle the attribute on
+any element, but it's possible to set up an element-specific property
+Maker. The attribute name to Maker mappings are automatically created
+during the code generation phase by processing the XML property
+description files.</p>
+</s2>
+
+<s2 title="Processing the attribute list">
+<p>The PLB first looks to see if the font-size property is specified, since
+it sets up relative units which can be used in other property
+specifications. Each attribute is then handled in turn. If the attribute
+specifies part of a compound property such as space-before.optimum, the
+PLB looks to see if the attribute list also contains the "base" property
+(space-before in this case) and processes that first.</p></s2>
+<s2 title="How the Property Maker works"><p>There is a family of Maker objects for each of the property datatypes,
+such as Length, Number, Enumerated, Space, etc. But since each Property
+has specific aspects such as whether it's inherited, its default value,
+its corresponding properties, etc. there is usually a specific Maker for
+each Property. All these Maker classes are created during the code
+generation phase by processing (using XSLT) the XML property description
+files to create Java classes.</p>
+
+
+<p>The Maker first checks for "keyword" values for a property. These are
+things like "thin, medium, thick" for the border-width property. The
+datatype is really a Length but it can be specified using these keywords
+whose actual value is determined by the "User Agent" rather than being
+specified in the XSL standard. For FOP, these values are currently
+defined in foproperties.xml. The keyword value is just a string, so it
+still needs to be parsed as described next.</p>
+
+
+<p>The Maker also checks to see if the property is an Enumerated type and
+then checks whether the value matches one of the specified enumeration
+values.</p>
+
+
+<p>Otherwise the Maker uses the property parser in the fo.expr package to
+evaluate the attribute value and return a Property object. The parser
+interprets the expression language and performs numeric operations and
+function call evaluations.</p>
+
+
+<p>If the returned Property value is of the correct type (specificed in
+foproperties.xml, where else?), the Maker returns it. Otherwise, it may
+be able to convert the returned type into the correct type.</p>
+
+
+<p>Some kinds of property values can't be fully resolved during FO tree
+building because they depend on layout information. This is the case of
+length values specified as percentages and of the special
+proportional-column-width(x) specification for table-column widths.
+These are stored as special kinds of Length objects which are evaluated
+during layout. Expressions involving "em" units which are relative to
+font-size _are_ resolved during the FO tree building however.</p></s2>
+
+
+<s2 title="Structure of the PropertyList">
+<p>The PropertyList extends HashMap and its basic function is to associate
+Property value objects with Property names. The Property objects are all
+subclasses of the base Property class. Each one simply contains a
+reference to one of the property datatype objects. Property provides
+accessors for all known datatypes and various subclasses override the
+accessor(s) which are reasonable for the datatype they store.</p>
+
+
+<p>The PropertyList itself provides various ways of looking up Property
+values to handle such issues as inheritance and corresponding
+properties. </p>
+
+
+<p>The main logic is:<br/>If the property is a writing-mode relative property (using start, end,
+before or after in its name), the corresponding absolute property value
+is returned if it's explicitly set on this FO. <br/>Otherwise, the
+writing-mode relative value is returned if it's explicitly set. If the
+property is inherited, the process repeats using the PropertyList of the
+FO's parent object. (This is easy because each PropertyList points to
+the PropertyList of the nearest ancestor FO.) If the property isn't
+inherited or no value is found at any level, the initial value is
+returned.</p></s2>
+
+
+<s2 title="References">
+
+<dl><dt>docs/design/properties.xml</dt> <dd>a more detailed version of this (generated
+html in docs/html-docs/design/properties.html)</dd>
+
+
+<dt>src/codegen/properties.dtd</dt> <dd>heavily commented DTD for foproperties.xml,
+but may not be completely up-to-date</dd></dl></s2>
+
+
+<s2 title="To Do"> <s3 title="documentation">
+                                                                 
+<ul><li>explain PropertyManager vs. direct access</li>
+<li>Explain corresponding properties</li></ul></s3>
+
+
+<s3 title="development">
+
+<p>Lots of properties are incompletely handled, especially funny kinds of
+keyword values and shorthand values (one attribute which sets several
+properties)</p></s3></s2>
+
+</s1> 
+  </body></document>
