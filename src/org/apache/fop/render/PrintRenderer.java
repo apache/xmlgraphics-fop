@@ -332,6 +332,8 @@ public abstract class PrintRenderer extends AbstractRenderer {
                         prevUnderlineXEndPos + space.getSize(),
                         prevUnderlineYEndPos, prevUnderlineSize,
                         prevUnderlineColor);
+                // save position for a following InlineSpace
+                prevUnderlineXEndPos = prevUnderlineXEndPos + space.getSize();
             }
         }
         if (space.getOverlined()) {
@@ -340,6 +342,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
                         prevOverlineXEndPos + space.getSize(),
                         prevOverlineYEndPos, prevOverlineSize,
                         prevOverlineColor);
+                prevOverlineXEndPos = prevOverlineXEndPos + space.getSize();
             }
         }
         if (space.getLineThrough()) {
@@ -348,6 +351,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
                         prevLineThroughXEndPos + space.getSize(),
                         prevLineThroughYEndPos, prevLineThroughSize,
                         prevLineThroughColor);
+                prevLineThroughXEndPos = prevLineThroughXEndPos + space.getSize();
             }
         }
     }
