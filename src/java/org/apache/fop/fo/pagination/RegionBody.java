@@ -60,7 +60,6 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.Property;
-import org.apache.fop.fo.properties.Overflow;
 import org.apache.fop.fo.properties.WritingMode;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.FODimension;
@@ -144,31 +143,6 @@ public class RegionBody extends Region {
      */
     public int getRegionAreaClass() {
         return RegionReference.BODY;
-    }
-
-    /**
-     * Override the inherited method.
-     * @see org.apache.fop.fo.pagination.Region#makeRegionReferenceArea(Rectangle2D)
-     */
-    public RegionReference makeRegionReferenceArea(Rectangle2D absRegVPRect) {
-        // Should set some column stuff here I think, or put it elsewhere
-        BodyRegion body = new BodyRegion();
-        setRegionPosition(body, absRegVPRect);
-        int columnCount =
-                this.properties.get("column-count").getNumber().intValue();
-        if ((columnCount > 1) && (overflow == Overflow.SCROLL)) {
-            // recover by setting 'column-count' to 1. This is allowed but
-            // not required by the spec.
-            getLogger().error("Setting 'column-count' to 1 because "
-                    + "'overflow' is set to 'scroll'");
-            columnCount = 1;
-        }
-        body.setColumnCount(columnCount);
-
-        int columnGap =
-                this.properties.get("column-gap").getLength().getValue();
-        body.setColumnGap(columnGap);
-        return body;
     }
 
     /**
