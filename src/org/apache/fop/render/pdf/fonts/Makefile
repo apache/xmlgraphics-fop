@@ -11,7 +11,7 @@ CLASSES=
 
 all: allsubs
 
-clean: cleanme cleansubs
+clean: cleanme
 
 cleanme:
 	rm -f *.class

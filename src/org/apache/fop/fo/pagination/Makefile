@@ -22,9 +22,9 @@ SOURCES=LayoutMasterSet.java \
 
 CLASSES=$(SOURCES:.java=.class)
 
-all: $(CLASSES) allsubs
+all: $(CLASSES)
 
-clean: cleanme cleansubs
+clean: cleanme
 
 cleanme:
 	rm -f *.class
