@@ -30,8 +30,11 @@
     <!-- Pipeline that manages the internal URI space
        For the external URI space manager, see the next pipeline.
        Set it to internal-only="true" in production environment -->
+    <!--
     <map:pipeline internal-only="false">
+    -->
       <!-- ========================== FOP Additions ========================== -->
+    <!--
       <map:match pattern="**compliance.xml">
         <map:generate src="{project:content.xdocs}{1}compliance.xml"/>
           <map:transform src="{project:resources.stylesheets}/compliance2document.xsl"/>
@@ -39,6 +42,7 @@
       </map:match>
       <!-- ======================== End FOP Additions ======================== -->
     </map:pipeline>
+    -->
     <map:pipeline internal-only="false">
       <!-- ========================== FOP Additions ========================== -->
       <map:match pattern="*/svg/*.svg">
@@ -65,11 +69,13 @@
         <map:generate src="content/{1}/fo/{2}.fo"/>
         <map:serialize type="fo2pdf"/>
       </map:match>
+      <!--
       <map:match pattern="compliance.pdf">
         <map:generate src="content/xdocs/compliance.xml"/>
         <map:transform src="resources/stylesheets/compliance2fo.xsl" label="content"/>
         <map:serialize type="fo2pdf"/>
       </map:match>
+      -->
       <!-- ======================= End FOP Additions ======================== -->
     </map:pipeline>
   </map:pipelines>
