@@ -39,6 +39,7 @@ import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.fo.properties.LineHeightPropertyMaker;
 import org.apache.fop.fo.properties.ListProperty;
 import org.apache.fop.fo.properties.NumberProperty;
+import org.apache.fop.fo.properties.PositionShorthandParser;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyMaker;
 import org.apache.fop.fo.properties.ShorthandParser;
@@ -511,6 +512,7 @@ public class FOPropertyMapping implements Constants {
         m.addEnum("fixed", makeEnumProperty(FIXED, "FIXED"));
         m.addEnum("absolute", makeEnumProperty(ABSOLUTE, "ABSOLUTE"));
         m.setDefault("auto");
+        m.addShorthand(s_generics[PR_POSITION]);
         addPropertyMaker("absolute-position", m);
 
         // top
@@ -1257,7 +1259,8 @@ public class FOPropertyMapping implements Constants {
         m  = new ToBeImplementedProperty.Maker(PR_RELATIVE_POSITION);
         m.setInherited(false);
         m.setDefault("static");
-        addPropertyMaker("relative-position", m);
+        m.addShorthand(s_generics[PR_POSITION]);
+		addPropertyMaker("relative-position", m);
     }
         
     private void createAreaAlignmentProperties() {
@@ -2503,6 +2506,7 @@ public class FOPropertyMapping implements Constants {
         m.addEnum("absolute", makeEnumProperty(ABSOLUTE, "ABSOLUTE"));
         m.addEnum("fixed", makeEnumProperty(FIXED, "FIXED"));
         m.setDefault("static");
+        m.setDatatypeParser(new PositionShorthandParser());
         addPropertyMaker("position", m);
 
         // size
