@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN" "book-cocoon-v10.dtd">
+
+<book software="FOP"
+    title="FOP Design"
+    copyright="@year@ The Apache Software Foundation"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <menu label="About">
+      <menu-item label="Index" href="index.html"/>
+    </menu>
+    <menu label="Overview">
+      <menu-item label="Architecture" href="architecture.html"/>
+    </menu>
+    <menu label="Sections">
+      <menu-item label="FO Tree" href="fotree.html"/>
+      <menu-item label="Propterties" href="properties.html"/>
+      <menu-item label="Layout" href="layout.html"/>
+      <menu-item label="Area Tree" href="areas.html"/>
+      <menu-item label="Renderers" href="renderers.html"/>
+    </menu>
+    <menu label="Miscellaneous">
+      <menu-item label="Embedding" href="embedding.html"/>
+      <menu-item label="Extending" href="extending.html"/>
+      <menu-item label="Break Possibility" href="breakpos.html"/>
+      <menu-item label="Optimisations" href="optimise.html"/>
+      <menu-item label="User Agent" href="useragent.html"/>
+    </menu>
+    <menu label="Status">
+      <menu-item label="Status" href="status.html"/>
+    </menu>
+</book>
+

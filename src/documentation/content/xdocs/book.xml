@@ -13,32 +13,40 @@
           <menu-item label="Download" href="download.html"/>
           <menu-item label="Release Notes" href="relnotes.html"/>
           <menu-item label="Getting Help" href="gethelp.html"/>
+          <menu-item label="Examples" href="examples.html"/>
+        </menu>
 
+        <menu label="Project">
           <menu-item label="Status" href="status.html"/>
           <menu-item label="Changes" href="changes.html"/>
           <menu-item label="Todo" href="todo.html"/>
+        </menu>
 
+        <menu label="Using FOP">
           <menu-item label="Running" href="running.html"/>
           <menu-item label="Embedding" href="embedding.html"/>
           <menu-item label="Output Formats" href="output.html"/>
           <menu-item label="Implemented" href="implemented.html"/>
           <menu-item label="Limitations" href="limitations.html"/>
+        </menu>
 
+        <menu label="Extras">
           <menu-item label="SVG" href="svg.html"/>
           <menu-item label="Extensions" href="extensions.html"/>
           <menu-item label="Fonts" href="fonts.html"/>
           <menu-item label="Configuration" href="configuration.html"/>
+        </menu>
 
+        <menu label="Developing">
           <menu-item label="Getting Involved" href="involved.html"/>
           <menu-item label="Compiling" href="compiling.html"/>
           <menu-item label="Testing" href="testing.html"/>
+        </menu>
 
+        <menu label="Resources">
           <menu-item label="Bugs" href="bugs.html"/>
           <menu-item label="Resources" href="resources.html"/>
           <menu-item label="License" href="license.html"/>
-
-          <menu-item label="Examples" href="examples.html"/>
-
           <external label="Patch queue" href="http://nagoya.apache.org/bugzilla/buglist.cgi?bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;email1=&amp;emailtype1=substring&amp;emailassigned_to1=1&amp;email2=&amp;emailtype2=substring&amp;emailreporter2=1&amp;bugidtype=include&amp;bug_id=&amp;changedin=&amp;votes=&amp;chfieldfrom=&amp;chfieldto=Now&amp;chfieldvalue=&amp;product=Fop&amp;short_desc=%5BPATCH%5D&amp;short_desc_type=allwordssubstr&amp;long_desc=&amp;long_desc_type=allwordssubstr&amp;bug_file_loc=&amp;bug_file_loc_type=allwordssubstr&amp;keywords=&amp;keywords_type=anywords&amp;field0-0-0=noop&amp;type0-0-0=noop&amp;value0-0-0=&amp;namedcmd=Fop+all&amp;newqueryname=fop+patch+queue&amp;tofooter=1&amp;order=Reuse+same+sort+as+last+time"/>
         </menu>
     </book>

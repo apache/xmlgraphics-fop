@@ -59,8 +59,9 @@ To use this standard Fop extension, you need to add a namespace entry for
     <fox:outline>
   </fox:bookmarks>
 </fo:root>]]></source>
-    <p>It works similarly to a basic-link. There is also an external-destination 
-       property, but it isn't supported currently. See the <link href="pdfoutline.pdf">pdfoutline.pdf</link> for a more complete example.
+    <p>It works similarly to a basic-link. There is also an external-destination
+       property, but it isn't supported currently. The documents
+       on the fop-site use this extension so you can see it in action.
             </p>
           </section>
           </section>
