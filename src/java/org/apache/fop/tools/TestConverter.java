@@ -105,6 +105,8 @@ public class TestConverter {
                 tc.setRenderType(Fop.RENDER_PDF);
             } else if (args[count].equals("-rtf")) {
                 tc.setRenderType(Fop.RENDER_RTF);
+            } else if (args[count].equals("-ps")) {
+                tc.setRenderType(Fop.RENDER_PS);
             } else if (args[count].equals("-d")) {
                 tc.setDebug(true);
             } else if (args[count].equals("-b")) {
@@ -348,6 +350,8 @@ public class TestConverter {
            return ".pdf";
         } else if (renderType == Fop.RENDER_RTF) {
            return ".rtf";
+        } else if (renderType == Fop.RENDER_PS) {
+           return ".ps";
         } else {
             return ".at.xml";
         }
