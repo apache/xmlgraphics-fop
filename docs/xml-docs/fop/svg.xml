@@ -36,8 +36,33 @@ Currently the SVG image is simply scaled in PDF so the result my not be the best
     </p>
     <p>
 For more information see <jump href="http://xml.apache.org/batik/">Batik</jump> for
-how transocders work.
+how transcoders work.
     </p>
+
+    <p>
+These are the relevant classes, found in the package org.apache.fop.svg :
+    </p>
+    <p>
+<ul>
+<li><em>PDFGraphics2D</em>
+<br/>
+used for drawing onto a Graphics2D into an existing pdf document, used
+internally to draw the svg.
+</li>
+<li><em>PDFDocumentGraphics2D</em>
+<br/>
+used to create a pdf document and inherits from PDFGraphics2D to do the
+rest of the drawing. Used by the transcoder to create a standalone pdf
+document from an svg. Can be used independantly the same as any Graphics2D.
+</li>
+<li><em>PDFTranscoder</em>
+<br/>
+used to transcode an svg document into a standalone pdf, via
+PDFDocumentGraphics2D.
+</li>
+</ul>
+    </p>
+
   </s2>
 
 
