@@ -63,17 +63,17 @@ import org.apache.fop.traits.MinOptMax;
 public class SpaceSpecifier implements Cloneable {
 
 
-    private boolean bStartsRefArea;
+    private boolean bStartsReferenceArea;
     private boolean bHasForcing = false;
     private List vecSpaceVals = new java.util.ArrayList();
 
 
     /**
      * Creates a new SpaceSpecifier.
-     * @param bStarts true if it starts anew reference area
+     * @param bStarts true if it starts a new reference area
      */
     public SpaceSpecifier(boolean bStarts) {
-        bStartsRefArea = bStarts;
+        bStartsReferenceArea = bStarts;
     }
 
     /**
@@ -82,6 +82,8 @@ public class SpaceSpecifier implements Cloneable {
     public Object clone() {
         try {
             SpaceSpecifier ss = (SpaceSpecifier) super.clone();
+            ss.bStartsReferenceArea = this.bStartsReferenceArea;
+            ss.bHasForcing = this.bHasForcing;            
             // Clone the vector, but share the objects in it!
             ss.vecSpaceVals = new ArrayList();
             ss.vecSpaceVals.addAll(this.vecSpaceVals);
@@ -115,7 +117,7 @@ public class SpaceSpecifier implements Cloneable {
      * add it to the sequence.
      */
     public void addSpace(SpaceVal moreSpace) {
-        if (!bStartsRefArea
+        if (!bStartsReferenceArea
                 || !moreSpace.isConditional()
                 || !vecSpaceVals.isEmpty()) {
             if (moreSpace.isForcing()) {
@@ -181,5 +183,11 @@ public class SpaceSpecifier implements Cloneable {
 
         }
         return resSpace;
+    }
+    
+    public String toString() {
+        return "Space Specifier (resolved at begin/end of ref. area:):\n" +
+            resolve(false).toString() + "\n" +
+            resolve(true).toString();
     }
 }
