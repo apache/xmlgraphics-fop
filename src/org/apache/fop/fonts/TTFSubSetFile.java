@@ -1,45 +1,47 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.fonts;
-import java.io.*;
+
+import java.io.IOException;
 import java.util.Iterator;
-import java.util.HashMap;
-import java.util.ArrayList;
+import java.util.Map;
+import java.util.List;
 
 /**
  * Reads a TrueType file and generates a subset
- * That can be used to embed a TrueType CID font
+ * that can be used to embed a TrueType CID font
  * TrueType tables needed for embedded CID fonts are:
- * "head", "hhea", "loca", "maxp", "cvt ", "prep", "glyf", "hmtx" and "fpgm"
+ * "head", "hhea", "loca", "maxp", "cvt ", "prep", "glyf", "hmtx" and "fpgm".
  * The TrueType spec can be found at the Microsoft
  * Typography site: http://www.microsoft.com/truetype/
  */
 public class TTFSubSetFile extends TTFFile {
-    byte[] output = null;
-    int realSize = 0;
-    int currentPos = 0;
+    
+    private byte[] output = null;
+    private int realSize = 0;
+    private int currentPos = 0;
 
     /*
      * Offsets in name table to be filled out by table.
      * The offsets are to the checkSum field
      */
-    int cvtDirOffset = 0;
-    int fpgmDirOffset = 0;
-    int glyfDirOffset = 0;
-    int headDirOffset = 0;
-    int hheaDirOffset = 0;
-    int hmtxDirOffset = 0;
-    int locaDirOffset = 0;
-    int maxpDirOffset = 0;
-    int prepDirOffset = 0;
+    private int cvtDirOffset = 0;
+    private int fpgmDirOffset = 0;
+    private int glyfDirOffset = 0;
+    private int headDirOffset = 0;
+    private int hheaDirOffset = 0;
+    private int hmtxDirOffset = 0;
+    private int locaDirOffset = 0;
+    private int maxpDirOffset = 0;
+    private int prepDirOffset = 0;
 
-    int checkSumAdjustmentOffset = 0;
-    int locaOffset = 0;
+    private int checkSumAdjustmentOffset = 0;
+    private int locaOffset = 0;
 
     /**
      * Initalize the output array
@@ -134,16 +136,16 @@ public class TTFSubSetFile extends TTFFile {
         TTFDirTabEntry entry = (TTFDirTabEntry)dirTabs.get("cvt ");
         if (entry != null) {
             pad4();
-            seek_tab(in, "cvt ", 0);
-            System.arraycopy(in.getBytes((int)entry.offset, (int)entry.length),
-                             0, output, currentPos, (int)entry.length);
+            seekTab(in, "cvt ", 0);
+            System.arraycopy(in.getBytes((int)entry.getOffset(), (int)entry.getLength()),
+                             0, output, currentPos, (int)entry.getLength());
 
-            int checksum = getCheckSum(currentPos, (int)entry.length);
+            int checksum = getCheckSum(currentPos, (int)entry.getLength());
             writeULong(cvtDirOffset, checksum);
             writeULong(cvtDirOffset + 4, currentPos);
-            writeULong(cvtDirOffset + 8, (int)entry.length);
-            currentPos += (int)entry.length;
-            realSize += (int)entry.length;
+            writeULong(cvtDirOffset + 8, (int)entry.getLength());
+            currentPos += (int)entry.getLength();
+            realSize += (int)entry.getLength();
         } else {
             throw new IOException("Can't find cvt table");
         }
@@ -158,15 +160,15 @@ public class TTFSubSetFile extends TTFFile {
         TTFDirTabEntry entry = (TTFDirTabEntry)dirTabs.get("fpgm");
         if (entry != null) {
             pad4();
-            seek_tab(in, "fpgm", 0);
-            System.arraycopy(in.getBytes((int)entry.offset, (int)entry.length),
-                             0, output, currentPos, (int)entry.length);
-            int checksum = getCheckSum(currentPos, (int)entry.length);
+            seekTab(in, "fpgm", 0);
+            System.arraycopy(in.getBytes((int)entry.getOffset(), (int)entry.getLength()),
+                             0, output, currentPos, (int)entry.getLength());
+            int checksum = getCheckSum(currentPos, (int)entry.getLength());
             writeULong(fpgmDirOffset, checksum);
             writeULong(fpgmDirOffset + 4, currentPos);
-            writeULong(fpgmDirOffset + 8, (int)entry.length);
-            currentPos += (int)entry.length;
-            realSize += (int)entry.length;
+            writeULong(fpgmDirOffset + 8, (int)entry.getLength());
+            currentPos += (int)entry.getLength();
+            realSize += (int)entry.getLength();
         } else {
             throw new IOException("Can't find fpgm table");
         }
@@ -195,17 +197,17 @@ public class TTFSubSetFile extends TTFFile {
         TTFDirTabEntry entry = (TTFDirTabEntry)dirTabs.get("maxp");
         if (entry != null) {
             pad4();
-            seek_tab(in, "maxp", 0);
-            System.arraycopy(in.getBytes((int)entry.offset, (int)entry.length),
-                             0, output, currentPos, (int)entry.length);
+            seekTab(in, "maxp", 0);
+            System.arraycopy(in.getBytes((int)entry.getOffset(), (int)entry.getLength()),
+                             0, output, currentPos, (int)entry.getLength());
             writeUShort(currentPos + 4, size);
 
-            int checksum = getCheckSum(currentPos, (int)entry.length);
+            int checksum = getCheckSum(currentPos, (int)entry.getLength());
             writeULong(maxpDirOffset, checksum);
             writeULong(maxpDirOffset + 4, currentPos);
-            writeULong(maxpDirOffset + 8, (int)entry.length);
-            currentPos += (int)entry.length;
-            realSize += (int)entry.length;
+            writeULong(maxpDirOffset + 8, (int)entry.getLength());
+            currentPos += (int)entry.getLength();
+            realSize += (int)entry.getLength();
         } else {
             throw new IOException("Can't find maxp table");
         }
@@ -219,16 +221,16 @@ public class TTFSubSetFile extends TTFFile {
         TTFDirTabEntry entry = (TTFDirTabEntry)dirTabs.get("prep");
         if (entry != null) {
             pad4();
-            seek_tab(in, "prep", 0);
-            System.arraycopy(in.getBytes((int)entry.offset, (int)entry.length),
-                             0, output, currentPos, (int)entry.length);
+            seekTab(in, "prep", 0);
+            System.arraycopy(in.getBytes((int)entry.getOffset(), (int)entry.getLength()),
+                             0, output, currentPos, (int)entry.getLength());
 
-            int checksum = getCheckSum(currentPos, (int)entry.length);
+            int checksum = getCheckSum(currentPos, (int)entry.getLength());
             writeULong(prepDirOffset, checksum);
             writeULong(prepDirOffset + 4, currentPos);
-            writeULong(prepDirOffset + 8, (int)entry.length);
-            currentPos += (int)entry.length;
-            realSize += (int)entry.length;
+            writeULong(prepDirOffset + 8, (int)entry.getLength());
+            currentPos += (int)entry.getLength();
+            realSize += (int)entry.getLength();
         } else {
             throw new IOException("Can't find prep table");
         }
@@ -243,17 +245,17 @@ public class TTFSubSetFile extends TTFFile {
         TTFDirTabEntry entry = (TTFDirTabEntry)dirTabs.get("hhea");
         if (entry != null) {
             pad4();
-            seek_tab(in, "hhea", 0);
-            System.arraycopy(in.getBytes((int)entry.offset, (int)entry.length),
-                             0, output, currentPos, (int)entry.length);
-            writeUShort((int)entry.length + currentPos - 2, size);
+            seekTab(in, "hhea", 0);
+            System.arraycopy(in.getBytes((int)entry.getOffset(), (int)entry.getLength()),
+                             0, output, currentPos, (int)entry.getLength());
+            writeUShort((int)entry.getLength() + currentPos - 2, size);
 
-            int checksum = getCheckSum(currentPos, (int)entry.length);
+            int checksum = getCheckSum(currentPos, (int)entry.getLength());
             writeULong(hheaDirOffset, checksum);
             writeULong(hheaDirOffset + 4, currentPos);
-            writeULong(hheaDirOffset + 8, (int)entry.length);
-            currentPos += (int)entry.length;
-            realSize += (int)entry.length;
+            writeULong(hheaDirOffset + 8, (int)entry.getLength());
+            currentPos += (int)entry.getLength();
+            realSize += (int)entry.getLength();
         } else {
             throw new IOException("Can't find hhea table");
         }
@@ -270,9 +272,9 @@ public class TTFSubSetFile extends TTFFile {
         TTFDirTabEntry entry = (TTFDirTabEntry)dirTabs.get("head");
         if (entry != null) {
             pad4();
-            seek_tab(in, "head", 0);
-            System.arraycopy(in.getBytes((int)entry.offset, (int)entry.length),
-                             0, output, currentPos, (int)entry.length);
+            seekTab(in, "head", 0);
+            System.arraycopy(in.getBytes((int)entry.getOffset(), (int)entry.getLength()),
+                             0, output, currentPos, (int)entry.getLength());
 
             checkSumAdjustmentOffset = currentPos + 8;
             output[currentPos + 8] = 0;     // Set checkSumAdjustment to 0
@@ -282,13 +284,13 @@ public class TTFSubSetFile extends TTFFile {
             output[currentPos + 50] = 0;    // long locaformat
             output[currentPos + 51] = 1;    // long locaformat
 
-            int checksum = getCheckSum(currentPos, (int)entry.length);
+            int checksum = getCheckSum(currentPos, (int)entry.getLength());
             writeULong(headDirOffset, checksum);
             writeULong(headDirOffset + 4, currentPos);
-            writeULong(headDirOffset + 8, (int)entry.length);
+            writeULong(headDirOffset + 8, (int)entry.getLength());
 
-            currentPos += (int)entry.length;
-            realSize += (int)entry.length;
+            currentPos += (int)entry.getLength();
+            realSize += (int)entry.getLength();
         } else {
             throw new IOException("Can't find head table");
         }
@@ -299,7 +301,7 @@ public class TTFSubSetFile extends TTFFile {
      * Create the glyf table and fill in loca table
      */
     private void createGlyf(FontFileReader in,
-                            HashMap glyphs) throws IOException {
+                            Map glyphs) throws IOException {
         TTFDirTabEntry entry = (TTFDirTabEntry)dirTabs.get("glyf");
         int size = 0;
         int start = 0;
@@ -308,31 +310,43 @@ public class TTFSubSetFile extends TTFFile {
             pad4();
             start = currentPos;
 
-            for (Iterator e = glyphs.keySet().iterator(); e.hasNext(); ) {
-                int glyphLength = 0;
+            /* Loca table must be in order by glyph index, so build
+             * an array first and then write the glyph info and
+             * location offset.
+             */
+            int[] origIndexes = new int[glyphs.size()];
+
+            Iterator e = glyphs.keySet().iterator();
+            while (e.hasNext()) {
                 Integer origIndex = (Integer)e.next();
                 Integer subsetIndex = (Integer)glyphs.get(origIndex);
+                origIndexes[subsetIndex.intValue()] = origIndex.intValue();
+            }
 
+            for (int i = 0; i < origIndexes.length; i++) {
+                int glyphLength = 0;
                 int nextOffset = 0;
-                if (origIndex.intValue() >= (mtx_tab.length - 1))
+                int origGlyphIndex = origIndexes[i];
+                if (origGlyphIndex >= (mtxTab.length - 1)) {
                     nextOffset = (int)lastLoca;
-                else
-                    nextOffset =
-                        (int)mtx_tab[origIndex.intValue() + 1].offset;
-
-                glyphLength = nextOffset
-                              - (int)mtx_tab[origIndex.intValue()].offset;
+                } else {
+                    nextOffset = (int)mtxTab[origGlyphIndex + 1].getOffset();
+                }
+                glyphLength = nextOffset - (int)mtxTab[origGlyphIndex].getOffset();
 
                 // Copy glyph
-                System.arraycopy(in.getBytes((int)entry.offset + (int)mtx_tab[origIndex.intValue()].offset, glyphLength),
-                                 0, output, currentPos, glyphLength);
+                System.arraycopy(
+                    in.getBytes((int)entry.getOffset() + (int)mtxTab[origGlyphIndex].getOffset(),
+                        glyphLength), 0,
+                    output, currentPos,
+                    glyphLength);
 
 
                 // Update loca table
-                writeULong(locaOffset + subsetIndex.intValue() * 4,
-                           currentPos - start);
-                if ((currentPos - start + glyphLength) > endOffset)
+                writeULong(locaOffset + i * 4, currentPos - start);
+                if ((currentPos - start + glyphLength) > endOffset) {
                     endOffset = (currentPos - start + glyphLength);
+                }
 
                 currentPos += glyphLength;
                 realSize += glyphLength;
@@ -361,12 +375,12 @@ public class TTFSubSetFile extends TTFFile {
 
     /**
      * Create the hmtx table by copying metrics from original
-     * font to subset font. The glyphs hashtable contains an
+     * font to subset font. The glyphs Map contains an
      * Integer key and Integer value that maps the original
      * metric (key) to the subset metric (value)
      */
     private void createHmtx(FontFileReader in,
-                            HashMap glyphs) throws IOException {
+                            Map glyphs) throws IOException {
         TTFDirTabEntry entry = (TTFDirTabEntry)dirTabs.get("hmtx");
 
         int longHorMetricSize = glyphs.size() * 2;
@@ -375,15 +389,16 @@ public class TTFSubSetFile extends TTFFile {
 
         if (entry != null) {
             pad4();
-            int offset = (int)entry.offset;
-            for (Iterator e = glyphs.keySet().iterator(); e.hasNext(); ) {
+            //int offset = (int)entry.offset;
+            Iterator e = glyphs.keySet().iterator(); 
+            while (e.hasNext()) {
                 Integer origIndex = (Integer)e.next();
                 Integer subsetIndex = (Integer)glyphs.get(origIndex);
 
                 writeUShort(currentPos + subsetIndex.intValue() * 4,
-                            mtx_tab[origIndex.intValue()].wx);
+                            mtxTab[origIndex.intValue()].getWx());
                 writeUShort(currentPos + subsetIndex.intValue() * 4 + 2,
-                            mtx_tab[origIndex.intValue()].lsb);
+                            mtxTab[origIndex.intValue()].getLsb());
             }
 
             int checksum = getCheckSum(currentPos, hmtxSize);
@@ -401,12 +416,11 @@ public class TTFSubSetFile extends TTFFile {
      * Returns a List containing the glyph itself plus all glyphs
      * that this composite glyph uses
      */
-    private ArrayList getIncludedGlyphs(FontFileReader in, int glyphOffset,
+    private List getIncludedGlyphs(FontFileReader in, int glyphOffset,
                                      Integer glyphIdx) throws IOException {
-        ArrayList ret = new ArrayList();
+        List ret = new java.util.ArrayList();
         ret.add(glyphIdx);
-        int offset = glyphOffset + (int)mtx_tab[glyphIdx.intValue()].offset
-                     + 10;
+        int offset = glyphOffset + (int)mtxTab[glyphIdx.intValue()].getOffset() + 10;
         Integer compositeIdx = null;
         int flags = 0;
         boolean moreComposites = true;
@@ -423,17 +437,19 @@ public class TTFSubSetFile extends TTFFile {
                 offset += 2;
             }
 
-            if ((flags & 8) > 0)
+            if ((flags & 8) > 0) {
                 offset += 2;    // WE_HAVE_A_SCALE
-            else if ((flags & 64) > 0)
+            } else if ((flags & 64) > 0) {
                 offset += 4;    // WE_HAVE_AN_X_AND_Y_SCALE
-            else if ((flags & 128) > 0)
+            } else if ((flags & 128) > 0) {
                 offset += 8;    // WE_HAVE_A_TWO_BY_TWO
+            }
 
-            if ((flags & 32) > 0)
+            if ((flags & 32) > 0) {
                 moreComposites = true;
-            else
+            } else {
                 moreComposites = false;
+            }
         }
 
         return ret;
@@ -444,10 +460,10 @@ public class TTFSubSetFile extends TTFFile {
      * Rewrite all compositepointers in glyphindex glyphIdx
      *
      */
-    private void remapComposite(FontFileReader in, HashMap glyphs,
+    private void remapComposite(FontFileReader in, Map glyphs,
                                 int glyphOffset,
                                 Integer glyphIdx) throws IOException {
-        int offset = glyphOffset + (int)mtx_tab[glyphIdx.intValue()].offset
+        int offset = glyphOffset + (int)mtxTab[glyphIdx.intValue()].getOffset()
                      + 10;
 
         Integer compositeIdx = null;
@@ -488,10 +504,11 @@ public class TTFSubSetFile extends TTFFile {
                 offset += 8;    // WE_HAVE_A_TWO_BY_TWO
             }
 
-            if ((flags & 32) > 0)
+            if ((flags & 32) > 0) {
                 moreComposites = true;
-            else
+            } else {
                 moreComposites = false;
+            }
         }
     }
 
@@ -502,35 +519,35 @@ public class TTFSubSetFile extends TTFFile {
      * mapping
      */
     private void scanGlyphs(FontFileReader in,
-                            HashMap glyphs) throws IOException {
+                            Map glyphs) throws IOException {
         TTFDirTabEntry entry = (TTFDirTabEntry)dirTabs.get("glyf");
-        HashMap newComposites = null;
-        HashMap allComposites = new HashMap();
+        Map newComposites = null;
+        Map allComposites = new java.util.HashMap();
 
         int newIndex = glyphs.size();
 
         if (entry != null) {
             while (newComposites == null || newComposites.size() > 0) {
                 // Inefficient to iterate through all glyphs
-                newComposites = new HashMap();
+                newComposites = new java.util.HashMap();
 
-                for (Iterator e = glyphs.keySet().iterator(); e.hasNext(); ) {
+                Iterator e = glyphs.keySet().iterator(); 
+                while (e.hasNext()) {
                     Integer origIndex = (Integer)e.next();
 
-                    if (in.readTTFShort(entry.offset
-                                        + mtx_tab[origIndex.intValue()].offset) < 0) {
+                    if (in.readTTFShort(entry.getOffset()
+                                        + mtxTab[origIndex.intValue()].getOffset()) < 0) {
                         // origIndex is a composite glyph
                         allComposites.put(origIndex, glyphs.get(origIndex));
-                        ArrayList composites =
-                            getIncludedGlyphs(in, (int)entry.offset,
+                        List composites =
+                            getIncludedGlyphs(in, (int)entry.getOffset(),
                                               origIndex);
 
                         // Iterate through all composites pointed to
                         // by this composite and check if they exists
                         // in the glyphs map, add them if not.
-                        for (Iterator cps = composites.iterator();
-                                cps.hasNext(); ) {
-
+                        Iterator cps = composites.iterator();
+                        while (cps.hasNext()) {
                             Integer cIdx = (Integer)cps.next();
                             if (glyphs.get(cIdx) == null
                                     && newComposites.get(cIdx) == null) {
@@ -543,18 +560,17 @@ public class TTFSubSetFile extends TTFFile {
                 }
 
                 // Add composites to glyphs
-                for (Iterator m = newComposites.keySet().iterator();
-                        m.hasNext(); ) {
+                Iterator m = newComposites.keySet().iterator();
+                while (m.hasNext()) {
                     Integer im = (Integer)m.next();
                     glyphs.put(im, newComposites.get(im));
                 }
             }
 
             // Iterate through all composites to remap their composite index
-
-            for (Iterator ce = allComposites.keySet().iterator();
-                    ce.hasNext(); ) {
-                remapComposite(in, glyphs, (int)entry.offset,
+            Iterator ce = allComposites.keySet().iterator();
+            while (ce.hasNext()) {
+                remapComposite(in, glyphs, (int)entry.getOffset(),
                                (Integer)ce.next());
             }
 
@@ -566,19 +582,22 @@ public class TTFSubSetFile extends TTFFile {
 
 
     /**
-     * glyphs has old index as (Integer) key and new index
-     * as (Integer) value
+     * Returns a subset of the original font.
+     * 
+     * @param in FontFileReader to read from
+     * @param name Name to be checked for in the font file
+     * @param glyphs Map of glyphs (glyphs has old index as (Integer) key and 
+     * new index as (Integer) value)
+     * @return A subset of the original font
+     * @throws IOException in case of an I/O problem
      */
-
     public byte[] readFont(FontFileReader in, String name,
-                           HashMap glyphs) throws IOException {
+                           Map glyphs) throws IOException {
 
-        /*
-         * Check if TrueType collection, and that the name
-         * exists in the collection
-         */
-        if (!checkTTC(in, name))
+        //Check if TrueType collection, and that the name exists in the collection
+        if (!checkTTC(in, name)) {
             throw new IOException("Failed to read font");
+        }
 
         output = new byte[in.getFileSize()];
 
@@ -654,7 +673,7 @@ public class TTFSubSetFile extends TTFFile {
             System.arraycopy(buf, 0, output, currentPos, buf.length);
             length = buf.length;
             currentPos += length;
-        } catch (Exception e) {
+        } catch (java.io.UnsupportedEncodingException e) {
             // This should never happen!
         }
 
@@ -734,13 +753,15 @@ public class TTFSubSetFile extends TTFFile {
      */
     private int readUShort(int pos) {
         int ret = (int)output[pos];
-        if (ret < 0)
+        if (ret < 0) {
             ret += 256;
+        }
         ret = ret << 8;
         if ((int)output[pos + 1] < 0) {
             ret |= (int)output[pos + 1] + 256;
-        } else
+        } else {
             ret |= (int)output[pos + 1];
+        }
 
         return ret;
     }
@@ -762,8 +783,9 @@ public class TTFSubSetFile extends TTFFile {
      */
     private int maxPow2(int max) {
         int i = 0;
-        while (Math.pow(2, (double)i) < max)
+        while (Math.pow(2, (double)i) < max) {
             i++;
+        }
 
         return (i - 1);
     }
@@ -781,8 +803,9 @@ public class TTFSubSetFile extends TTFFile {
         // All the tables here are aligned on four byte boundaries
         // Add remainder to size if it's not a multiple of 4
         int remainder = size % 4;
-        if (remainder != 0)
+        if (remainder != 0) {
             size += remainder;
+        }
 
         long sum = 0;
 
@@ -792,8 +815,9 @@ public class TTFSubSetFile extends TTFFile {
             l += (int)(output[start + i + 2] << 16);
             l += (int)(output[start + i + 3] << 16);
             sum += l;
-            if (sum > 0xffffffff)
+            if (sum > 0xffffffff) {
                 sum = sum - 0xffffffff;
+            }
         }
 
         return sum;
