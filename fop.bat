@@ -37,7 +37,9 @@ rem Possible SimpleLog values:  "trace", "debug", "info" (default), "warn", "err
 rem set LOGLEVEL=-Dorg.apache.commons.logging.simplelog.defaultlog=INFO
 
 set LIBDIR=%LOCAL_FOP_HOME%lib
+
 set LOCALCLASSPATH=%LOCAL_FOP_HOME%build\fop.jar
+set LOCALCLASSPATH=%LOCALCLASSPATH%;%LOCAL_FOP_HOME%build\fop-hyph.jar
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\xml-apis.jar
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\xercesImpl-2.2.1.jar
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\xalan-2.4.1.jar
@@ -48,6 +50,8 @@ set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\commons-logging-1.0.3.jar
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\jimi-1.0.jar
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\jai_core.jar
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\jai_codec.jar
+set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\fop-hyph.jar
+set LOCALCLASSPATH=%LOCALCLASSPATH%;%FOP_HYPHENATION_PATH%
 
 java %LOGCHOICE% %LOGLEVEL% -cp "%LOCALCLASSPATH%" org.apache.fop.apps.Fop %FOP_CMD_LINE_ARGS%
 

@@ -124,6 +124,7 @@ list of possible build targets.
     <path refid="libs-basic-run-classpath"/>
     <fileset dir="${basedir}/build">
       <include name="fop.jar"/>
+      <include name="fop-hyph.jar" />
     </fileset>
   </path>
 
@@ -187,7 +188,7 @@ list of possible build targets.
     <property name="xdocs.dir" value="${src.dir}/documentation/content/xdocs"/>
     <property name="fo.examples.dir" value="${basedir}/examples/fo/basic"/>
     <property name="lib.dir" value="${basedir}/lib"/>
-    <property name="hyph.dir" value="${src.dir}/hyph"/>
+    <property name="hyph.dir" value="${basedir}/hyph"/>
     <property name="conf.dir" value="${basedir}/conf"/>
     <property name="packages" value="org.apache.fop.*"/>
 
@@ -484,6 +485,17 @@ list of possible build targets.
              targetDir="${user.hyphdest.dir}"/>
   </target>
 
+  <target name="hyphenation-jar" depends="hyphenation">
+    <jar jarfile="${build.dir}/fop-hyph.jar" basedir="${build.dest}" includes="hyph/**">
+      <manifest>
+        <attribute name="Implementation-Title" value="${Name}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
+        <attribute name="Implementation-Vendor" value="The Apache Software Foundation (http://xml.apache.org/fop/)"/>
+        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
+      </manifest>
+    </jar>
+  </target>
+  
   <target name="uptodate-jar" depends="compile, hyphenation">
     <uptodate property="jar.uptodate" targetfile="${build.dir}/${name}.jar">
       <srcfiles dir= "${build.dest}"/>
@@ -492,7 +504,7 @@ list of possible build targets.
   <!-- =================================================================== -->
   <!-- Creates the class package                                           -->
   <!-- =================================================================== -->
-  <target name="package" depends="compile,hyphenation,uptodate-jar" description="Generates the jar files" unless="jar.uptodate">
+  <target name="package" depends="compile,hyphenation-jar,uptodate-jar" description="Generates the jar files" unless="jar.uptodate">
     <echo message="Creating the jar file ${build.dir}/${name}.jar"/>
 
     <tstamp>
@@ -504,7 +516,7 @@ list of possible build targets.
       <map from="${optional.lib.dir}${file.separator}" to=""/>
     </pathconvert>
 
-    <jar jarfile="${build.dir}/${name}.jar" basedir="${build.dest}" includes="org/**,hyph/**">
+    <jar jarfile="${build.dir}/${name}.jar" basedir="${build.dest}" includes="org/**">
       <manifest>
         <attribute name="Main-Class" value="${main.class}"/>
         <attribute name="Class-Path" value="${manifest-classpath}"/>
