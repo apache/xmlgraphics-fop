@@ -61,6 +61,7 @@ import java.util.BitSet;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
@@ -70,7 +71,7 @@ import org.apache.fop.xml.FoXmlEvent;
 /**
  * Implements the fo:page-number flow object.
  */
-public class FoPageNumber extends FONode {
+public class FoPageNumber extends FOPageSeqNode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -141,6 +142,7 @@ public class FoPageNumber extends FONode {
     /**
      * Construct an fo:page-number node.  This node has no children.
      * @param foTree the FO tree being built
+     * @param pageSequence ancestor of this node
      * @param parent the parent FONode of this node
      * @param event that triggered the creation of
      * this node
@@ -148,10 +150,11 @@ public class FoPageNumber extends FONode {
      * attribute set information.
      */
     public FoPageNumber
-            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
+            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+                    FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
-        super(foTree, FObjectNames.PAGE_NUMBER, parent, event,
+        super(foTree, FObjectNames.PAGE_NUMBER, pageSequence, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
 
         makeSparsePropsSet();

@@ -60,6 +60,7 @@ import java.util.BitSet;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FObjects;
@@ -73,7 +74,7 @@ import org.apache.fop.xml.UnexpectedStartElementException;
 /**
  * Implements the fo:block flow object.
  */
-public class FoBlock extends FONode {
+public class FoBlock extends FOPageSeqNode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -155,6 +156,7 @@ public class FoBlock extends FONode {
      * Construct an fo:block node, and build the fo:block subtree.
      * <p>Content model for fo:inline: (#PCDATA|%inline;|%block;)*
      * @param foTree the FO tree being built
+     * @param pageSequence ancestor of this node
      * @param parent the parent FONode of this node
      * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
@@ -162,13 +164,15 @@ public class FoBlock extends FONode {
      * attribute set information.
      */
     public FoBlock
-            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
+            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+                    FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
-        super(foTree, FObjectNames.BLOCK, parent, event,
+        super(foTree, FObjectNames.BLOCK, pageSequence, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         getMarkers();
         XmlEvent ev = null;
+        System.out.println("In FoBlock");
         do {
             try {
                 if ((stateFlags & FONode.MC_OUT_OF_LINE) == 0)
@@ -177,9 +181,9 @@ public class FoBlock extends FONode {
                     ev = xmlevents.expectOutOfLinePcdataOrInlineOrBlock();
                 if (ev != null) {
                     // Generate the flow object
-                    //System.out.println("Generating flow object for " + ev);
-                    FObjects.fobjects.makeFlowObject(
-                            foTree, this, ev, stateFlags);
+                    System.out.println("Generating flow object for " + ev);
+                    FObjects.fobjects.makePageSeqFOChild(
+                            foTree, pageSequence, this, ev, stateFlags);
                     if (ev.getType() != XmlEvent.CHARACTERS) {
                         ev = xmlevents.getEndElement(
                                 XmlEventReader.DISCARD_EV, ev);

@@ -61,6 +61,7 @@ import java.util.BitSet;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FObjects;
@@ -73,7 +74,7 @@ import org.apache.fop.xml.UnexpectedStartElementException;
 /**
  * Implements the fo:simple-page-master flow object
  */
-public class FoFlow extends FONode {
+public class FoFlow extends FOPageSeqNode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -108,7 +109,7 @@ public class FoFlow extends FONode {
         sparsePropsMap[PropNames.FLOW_NAME] = 0;
         sparseIndices = new int[] { PropNames.FLOW_NAME };
     }
-
+    
     /**
      * Construct an fo:flow node, and build the fo:flow subtree.
      * <p>Content model for fo:flow (%block;)+
@@ -129,9 +130,9 @@ public class FoFlow extends FONode {
             if ((ev = xmlevents.expectBlock()) == null)
                 throw new FOPException("%block; not found in fo:flow");
             // Generate the flow object
-            //System.out.println("Generating first block for flow.");
-            FObjects.fobjects.makeFlowObject(
-                    foTree, this, (FoXmlEvent)ev, FONode.FLOW_SET);
+            FObjects.fobjects.makePageSeqFOChild(
+                    foTree, pageSequence, this, (FoXmlEvent)ev,
+                    FONode.FLOW_SET);
             // Clear the blockage
             ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
             namespaces.relinquishEvent(ev);
@@ -140,10 +141,9 @@ public class FoFlow extends FONode {
                 ev = xmlevents.expectBlock();
                 if (ev != null) {
                     // Generate the flow object
-                    //System.out.println
-                            //("Generating subsequent block for flow.");
-                    FObjects.fobjects.makeFlowObject(
-                            foTree, this, (FoXmlEvent)ev, FONode.FLOW_SET);
+                    FObjects.fobjects.makePageSeqFOChild(
+                            foTree, parent, this, (FoXmlEvent)ev,
+                            FONode.FLOW_SET);
                     ev = xmlevents.getEndElement(
                             XmlEventReader.DISCARD_EV, ev);
                     namespaces.relinquishEvent(ev);

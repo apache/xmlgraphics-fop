@@ -57,6 +57,7 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.xml.FoXmlEvent;
 
@@ -104,6 +105,7 @@ public class FoNoFo {
      * The non-existent flow object.  If it comes to this, something
      * has gone wrong.  A use may be found for this later.
      * @param foTree the FO tree being built
+     * @param pageSequence ancestor of this node
      * @param parent the parent FONode of this node
      * @param event that triggered the creation of
      * this node
@@ -112,7 +114,8 @@ public class FoNoFo {
      * @throws FOPException, without exception.
      */
     public FoNoFo
-            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
+            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+                    FoXmlEvent event, int stateFlags)
         throws FOPException
     {
         throw new FOPException("No such flow object as fo:no-fo.");

@@ -29,6 +29,13 @@ import org.apache.fop.datastructs.SyncedNode;
  */
 public class Area extends SyncedNode {
 
+    protected Integer iPDim = null;
+    protected Integer iPDimMax = null;
+    protected Integer iPDimMin = null;
+    protected Integer bPDim = null;
+    protected Integer bPDimMax = null;
+    protected Integer bPDimMin = null;
+    
     /**
      * @param parent
      * @param index

@@ -61,6 +61,7 @@ import java.util.BitSet;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
@@ -70,7 +71,7 @@ import org.apache.fop.xml.FoXmlEvent;
 /**
  * Implements the fo:character flow object.
  */
-public class FoCharacter extends FONode {
+public class FoCharacter extends FOPageSeqNode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -145,16 +146,18 @@ public class FoCharacter extends FONode {
     /**
      * Construct an fo:character node.  This node has no children.
      * @param foTree the FO tree being built
+     * @param pageSequence ancestor of this node
      * @param parent the parent FONode of this node
      * @param event that triggered the creation of this node
      * @param stateFlags - passed down from the parent.  Includes the
      * attribute set information.
      */
     public FoCharacter
-            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
+            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+                    FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
-        super(foTree, FObjectNames.CHARACTER, parent, event,
+        super(foTree, FObjectNames.CHARACTER, pageSequence, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         makeSparsePropsSet();
     }

@@ -61,6 +61,7 @@ import java.util.BitSet;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FObjects;
@@ -74,7 +75,7 @@ import org.apache.fop.xml.UnexpectedStartElementException;
 /**
  * Implements the fo:table-cell flow object.
  */
-public class FoTableCell extends FONode {
+public class FoTableCell extends FOPageSeqNode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -142,6 +143,7 @@ public class FoTableCell extends FONode {
      * Construct an fo:table-cell node, and build the fo:table-cell subtree.
      * <p>Content model for fo:table-cell: (marker*, %block;+)
      * @param foTree the FO tree being built
+     * @param pageSequence ancestor of this node
      * @param parent the parent FONode of this node
      * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
@@ -149,10 +151,11 @@ public class FoTableCell extends FONode {
      * attribute set information.
      */
     public FoTableCell
-            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
+            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+                    FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
-        super(foTree, FObjectNames.TABLE_CELL, parent, event,
+        super(foTree, FObjectNames.TABLE_CELL, pageSequence, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         getMarkers();
         XmlEvent ev = null;
@@ -166,8 +169,9 @@ public class FoTableCell extends FONode {
                 throw new FOPException
                         ("%block; not found in fo:table-cell");
             // Generate the flow object
-            FObjects.fobjects.makeFlowObject(
-                    foTree, this, (FoXmlEvent)ev, stateFlags);
+            FObjects.fobjects.makePageSeqFOChild(
+                    foTree, pageSequence, this,
+                    (FoXmlEvent)ev, stateFlags);
             // Clear the blockage
             ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
             namespaces.relinquishEvent(ev);
@@ -179,8 +183,9 @@ public class FoTableCell extends FONode {
                     ev = xmlevents.expectOutOfLineBlock();
                 if (ev != null) {
                     // Generate the flow object
-                    FObjects.fobjects.makeFlowObject(
-                            foTree, this, (FoXmlEvent)ev, stateFlags);
+                    FObjects.fobjects.makePageSeqFOChild(
+                            foTree, pageSequence, this,
+                            (FoXmlEvent)ev, stateFlags);
                     ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
                     namespaces.relinquishEvent(ev);
                 }

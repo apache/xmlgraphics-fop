@@ -61,6 +61,7 @@ import java.util.BitSet;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FObjects;
@@ -74,7 +75,7 @@ import org.apache.fop.xml.UnexpectedStartElementException;
 /**
  * Implements the fo:list-item-body flow object.
  */
-public class FoListItemBody extends FONode {
+public class FoListItemBody extends FOPageSeqNode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -123,6 +124,7 @@ public class FoListItemBody extends FONode {
      * fo:list-item-body subtree.
      * <p>Content model for fo:list-item-body: (marker*, %block;+)
      * @param foTree the FO tree being built
+     * @param pageSequence ancestor of this node
      * @param parent the parent FONode of this node
      * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
@@ -130,11 +132,12 @@ public class FoListItemBody extends FONode {
      * attribute set information.
      */
     public FoListItemBody
-            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
+            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+                    FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
-        super(foTree, FObjectNames.LIST_ITEM_BODY, parent, event,
-                          stateFlags, sparsePropsMap, sparseIndices);
+        super(foTree, FObjectNames.LIST_ITEM_BODY, pageSequence, parent,
+                event, stateFlags, sparsePropsMap, sparseIndices);
         getMarkers();
         XmlEvent ev = null;
         try {
@@ -147,8 +150,8 @@ public class FoListItemBody extends FONode {
                 throw new FOPException
                         ("%block; not found in fo:list-item-body");
             // Generate the flow object
-            FObjects.fobjects.makeFlowObject(
-                    foTree, this, (FoXmlEvent)ev, stateFlags);
+            FObjects.fobjects.makePageSeqFOChild(
+                    foTree, pageSequence, this, (FoXmlEvent)ev, stateFlags);
             // Clear the blockage
             ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
             namespaces.relinquishEvent(ev);
@@ -160,8 +163,9 @@ public class FoListItemBody extends FONode {
                     ev = xmlevents.expectOutOfLineBlock();
                 if (ev != null) {
                     // Generate the flow object
-                    FObjects.fobjects.makeFlowObject(
-                            foTree, this, (FoXmlEvent)ev, stateFlags);
+                    FObjects.fobjects.makePageSeqFOChild(
+                            foTree, pageSequence, this,
+                            (FoXmlEvent)ev, stateFlags);
                     ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
                     namespaces.relinquishEvent(ev);
                 }

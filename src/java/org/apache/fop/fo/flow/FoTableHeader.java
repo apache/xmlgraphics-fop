@@ -61,6 +61,7 @@ import java.util.BitSet;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
@@ -73,7 +74,7 @@ import org.apache.fop.xml.XmlEventReader;
 /**
  * Implements the fo:table-header flow object.
  */
-public class FoTableHeader extends FONode {
+public class FoTableHeader extends FOPageSeqNode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -143,6 +144,7 @@ public class FoTableHeader extends FONode {
      * <p>Content model for fo:table-header
      * (marker*, (table-row+|table-cell+))
      * @param foTree the FO tree being built
+     * @param pageSequence ancestor of this node
      * @param parent the parent FONode of this node
      * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
@@ -150,31 +152,24 @@ public class FoTableHeader extends FONode {
      * attribute set information.
      */
     public FoTableHeader
-            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
+            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+                    FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
-        super(foTree, FObjectNames.TABLE_HEADER, parent, event,
+        super(foTree, FObjectNames.TABLE_HEADER, pageSequence, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         // Look for zero or more markers
         getMarkers();
         XmlEvent ev;
         String nowProcessing;
         try {
-            while ((ev = xmlevents.expectStartElement
-                    (FObjectNames.MARKER, XmlEvent.DISCARD_W_SPACE))
-                   != null) {
-                new FoMarker(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
-                numMarkers++;
-                ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
-                namespaces.relinquishEvent(ev);
-            }
-
             // Look for one or more table-rows
             nowProcessing = "table-row";
             while ((ev = xmlevents.expectStartElement
                     (FObjectNames.TABLE_ROW, XmlEvent.DISCARD_W_SPACE))
                    != null) {
-                new FoTableRow(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
+                new FoTableRow(getFOTree(), pageSequence, this,
+                        (FoXmlEvent)ev, stateFlags);
                 numRows++;
                 ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
                 namespaces.relinquishEvent(ev);
@@ -189,7 +184,8 @@ public class FoTableHeader extends FONode {
                         (FObjectNames.TABLE_CELL, XmlEvent.DISCARD_W_SPACE))
                        != null) {
                     new FoTableCell(
-                            getFOTree(), this, (FoXmlEvent)ev, stateFlags);
+                            getFOTree(), pageSequence, this,
+                            (FoXmlEvent)ev, stateFlags);
                     numCells++;
                     ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
                     namespaces.relinquishEvent(ev);

@@ -61,6 +61,7 @@ import java.util.BitSet;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
@@ -73,7 +74,7 @@ import org.apache.fop.xml.XmlEventReader;
 /**
  * Implements the fo:multi-properties flow object.
  */
-public class FoMultiProperties extends FONode {
+public class FoMultiProperties extends FOPageSeqNode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -124,6 +125,7 @@ public class FoMultiProperties extends FONode {
      * fo:multi-properties subtree.
      * <p>Content model for fo:multi-properties: (multi-property-set+,wrapper)
      * @param foTree the FO tree being built
+     * @param pageSequence ancestor of this node
      * @param parent the parent FONode of this node
      * @param event that triggered the creation of
      * this node
@@ -131,10 +133,11 @@ public class FoMultiProperties extends FONode {
      * attribute set information.
      */
     public FoMultiProperties
-            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
+            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+                    FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
-        super(foTree, FObjectNames.MULTI_PROPERTIES, parent, event,
+        super(foTree, FObjectNames.MULTI_PROPERTIES, pageSequence, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         XmlEvent ev;
         try {
@@ -144,7 +147,8 @@ public class FoMultiProperties extends FONode {
                                                  XmlEvent.DISCARD_W_SPACE))
                    != null) {
                 new FoMultiPropertySet(
-                        getFOTree(), this, (FoXmlEvent)ev, stateFlags);
+                        getFOTree(), pageSequence, this,
+                        (FoXmlEvent)ev, stateFlags);
                 numSets++;
                 ev = xmlevents.getEndElement(
                         XmlEventReader.DISCARD_EV, ev);
@@ -161,7 +165,8 @@ public class FoMultiProperties extends FONode {
                    == null)
                 throw new FOPException
                         ("No wrapper in multi-properties.");
-            new FoWrapper(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
+            new FoWrapper(getFOTree(), pageSequence, this,
+                    (FoXmlEvent)ev, stateFlags);
             ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
             namespaces.relinquishEvent(ev);
 

@@ -61,6 +61,7 @@ import java.util.BitSet;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
@@ -70,7 +71,7 @@ import org.apache.fop.xml.FoXmlEvent;
 /**
  * Implements the fo:instream-foreign-object flow object.
  */
-public class FoInstreamForeignObject extends FONode {
+public class FoInstreamForeignObject extends FOPageSeqNode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -143,6 +144,7 @@ public class FoInstreamForeignObject extends FONode {
      * Construct an fo:instream-foreign-object node.  This child of this
      * node depends on implemented support for non-xsl namespace objects.
      * @param foTree the FO tree being built
+     * @param pageSequence ancestor of this node
      * @param parent the parent FONode of this node
      * @param event that triggered the creation of
      * this node
@@ -150,10 +152,12 @@ public class FoInstreamForeignObject extends FONode {
      * attribute set information.
      */
     public FoInstreamForeignObject
-            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
+            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+                    FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
-        super(foTree, FObjectNames.INSTREAM_FOREIGN_OBJECT, parent, event,
+        super(foTree, FObjectNames.INSTREAM_FOREIGN_OBJECT,
+                pageSequence, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         // TODO
         makeSparsePropsSet();

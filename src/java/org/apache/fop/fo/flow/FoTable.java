@@ -61,6 +61,7 @@ import java.util.BitSet;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
@@ -73,7 +74,7 @@ import org.apache.fop.xml.XmlEventReader;
 /**
  * Implements the fo:table flow object.
  */
-public class FoTable extends FONode {
+public class FoTable extends FOPageSeqNode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -162,6 +163,7 @@ public class FoTable extends FONode {
      * <p>Content model for fo:table:<br>
      * (marker*, table-column*, table-header?, table-footer?, table-body+)
      * @param foTree the FO tree being built
+     * @param pageSequence ancestor of this node
      * @param parent the parent FONode of this node
      * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
@@ -169,21 +171,24 @@ public class FoTable extends FONode {
      * attribute set information.
      */
     public FoTable
-            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
+            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+                    FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
-        super(foTree, FObjectNames.TABLE, parent, event,
+        super(foTree, FObjectNames.TABLE, pageSequence, parent, event,
                                   stateFlags, sparsePropsMap, sparseIndices);
         XmlEvent ev;
+        System.out.println("In FoTable");
         // Look for zero or more markers
         getMarkers();
         try {
             // Look for zero or more table-columns
             while ((ev = xmlevents.expectStartElement
                     (FObjectNames.TABLE_COLUMN, XmlEvent.DISCARD_W_SPACE))
-                   != null) {
+            != null) {
                 new FoTableColumn(
-                        getFOTree(), this, (FoXmlEvent)ev, stateFlags);
+                        getFOTree(), pageSequence, this,
+                        (FoXmlEvent)ev, stateFlags);
                 numColumns++;
                 ev = xmlevents.getEndElement(
                         XmlEventReader.DISCARD_EV, ev);
@@ -196,7 +201,8 @@ public class FoTable extends FONode {
                    != null) {
                 headerOffset = numChildren();
                 new FoTableHeader(
-                        getFOTree(), this, (FoXmlEvent)ev, stateFlags);
+                        getFOTree(), pageSequence, this,
+                        (FoXmlEvent)ev, stateFlags);
                 ev = xmlevents.getEndElement(
                         XmlEventReader.DISCARD_EV, ev);
                 namespaces.relinquishEvent(ev);
@@ -208,7 +214,8 @@ public class FoTable extends FONode {
                    != null) {
                 footerOffset = numChildren();
                 new FoTableFooter(
-                        getFOTree(), this, (FoXmlEvent)ev, stateFlags);
+                        getFOTree(), pageSequence, this,
+                        (FoXmlEvent)ev, stateFlags);
                 ev = xmlevents.getEndElement(
                         XmlEventReader.DISCARD_EV, ev);
                 namespaces.relinquishEvent(ev);
@@ -221,7 +228,8 @@ public class FoTable extends FONode {
             if (ev == null)
                 throw new FOPException("No table-body found.");
             firstBodyOffset = numChildren();
-            new FoTableBody(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
+            new FoTableBody(getFOTree(), pageSequence, this,
+                    (FoXmlEvent)ev, stateFlags);
             numBodies++;
             ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
             namespaces.relinquishEvent(ev);
@@ -230,7 +238,8 @@ public class FoTable extends FONode {
                    != null) {
                 // Loop over remaining fo:table-body's
                 new FoTableBody(
-                        getFOTree(), this, (FoXmlEvent)ev, stateFlags);
+                        getFOTree(), pageSequence, this,
+                        (FoXmlEvent)ev, stateFlags);
                 numBodies++;
                 ev = xmlevents.getEndElement(
                         XmlEventReader.DISCARD_EV, ev);

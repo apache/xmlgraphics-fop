@@ -60,6 +60,7 @@ import java.util.BitSet;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FObjects;
@@ -73,7 +74,7 @@ import org.apache.fop.xml.UnexpectedStartElementException;
 /**
  * Implements the fo:simple-page-master flow object
  */
-public class FoTitle extends FONode {
+public class FoTitle extends FOPageSeqNode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -150,8 +151,8 @@ public class FoTitle extends FONode {
                 ev = xmlevents.expectOutOfLinePcdataOrInline();
                 if (ev != null) {
                     // Generate the flow object
-                    FObjects.fobjects.makeFlowObject(
-                            foTree, this, ev, FONode.TITLE_SET);
+                    FObjects.fobjects.makePageSeqFOChild(
+                            foTree, parent, this, ev, FONode.TITLE_SET);
                     if (ev.getType() != XmlEvent.CHARACTERS)
                         ev = xmlevents.getEndElement(
                                 XmlEventReader.DISCARD_EV, ev);

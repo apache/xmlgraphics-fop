@@ -36,9 +36,7 @@ import org.apache.fop.datatypes.indirect.IndirectValue;
 import org.apache.fop.fo.expr.FunctionNotImplementedException;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.PropertyParser;
-import org.apache.fop.fo.flow.FoMarker;
 import org.apache.fop.fo.properties.Property;
-import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.Namespaces;
 import org.apache.fop.xml.XmlEventReader;
@@ -189,16 +187,14 @@ public class FONode extends SyncedNode{
     /**
      * @param foTree an <tt>FOTree</tt> to which this node belongs
      * @param type the fo type of this FONode.
-     * @param parent an <tt>FONode</tt>, the parent node of this node in
-     * <i>foTree</i>
-     * @param event the <tt>XmlEvent</tt> that triggered the creation of this
-     * node.
-     * @param stateFlags - the set of states relevant at this point in the
-     * tree.  Includes the state information necessaryto select an attribute
+     * @param parent node of this node in <i>foTree</i>
+     * @param event that triggered the creation of this node
+     * @param stateFlags the set of states relevant at this point in the
+     * tree.  Includes the state information necessary to select an attribute
      * set for this node.
-     * @param sparsePropsMap  maps the property indices
+     * @param sparsePropsMap maps the property indices
      * to their offsets in the set of properties applicable to this node.
-     * @param sparseIndices  holds the set of property
+     * @param sparseIndices holds the set of property
      * indices applicable to this node, in ascending order.
      * <i>sparsePropsMap</i> maps property indices to a position in this array.
      * Together they provide a sparse array facility for this node's
@@ -578,31 +574,6 @@ public class FONode extends SyncedNode{
         } catch (CloneNotSupportedException e) {
             throw new PropertyException("Clone not supported.");
         }
-    }
-
-    /**
-     * Gets the fo:marker elements (if any) defined in the this node.  Any
-     * fo:marker events found are relinquished.
-     * @return the number of markers found
-     * @throws FOPException
-     */
-    public int getMarkers() throws FOPException {
-        XmlEvent ev;
-        try {
-            while ((ev = xmlevents.expectStartElement
-                    (FObjectNames.MARKER, XmlEvent.DISCARD_W_SPACE))
-            != null) {
-                new FoMarker(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
-                numMarkers++;
-                // Relinquish the original event
-                namespaces.relinquishEvent(ev);
-            }
-        } catch (TreeException e) {
-            throw new FOPException(e);
-        } catch (FOPException e) {
-            throw new FOPException(e);
-        }
-        return numMarkers;
     }
     
 }// FONode

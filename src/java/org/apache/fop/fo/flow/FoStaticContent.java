@@ -62,6 +62,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.datatypes.NCName;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
@@ -74,7 +75,7 @@ import org.apache.fop.xml.XmlEventsArrayBuffer;
 /**
  * Implements the fo:simple-page-master flow object
  */
-public class FoStaticContent extends FONode {
+public class FoStaticContent extends FOPageSeqNode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -139,7 +140,8 @@ public class FoStaticContent extends FONode {
         try {
             ncName = (NCName)(getPropertyValue(PropNames.FLOW_NAME));
         } catch (PropertyException e) {
-            throw new FOPException("Cannot find marker-class-name in fo:marker", e);
+            throw new FOPException(
+                    "Cannot find marker-class-name in fo:marker", e);
         } catch (ClassCastException e) {
             throw new FOPException("Wrong PropertyValue type in fo:marker", e);
         }
