@@ -20,41 +20,30 @@ package org.apache.fop.layoutmgr;
 
 import org.apache.fop.apps.FOPException;
 
-import org.apache.fop.area.CTM;
 import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.LineArea;
-import org.apache.fop.area.Page;
 import org.apache.fop.area.RegionViewport;
-import org.apache.fop.area.RegionReference;
-import org.apache.fop.area.BodyRegion;
 import org.apache.fop.area.BeforeFloat;
 import org.apache.fop.area.Footnote;
 import org.apache.fop.area.Resolvable;
 import org.apache.fop.area.Trait;
 
 import org.apache.fop.datatypes.PercentBase;
-import org.apache.fop.datatypes.FODimension;
 
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Region;
-import org.apache.fop.fo.pagination.RegionBody;
 import org.apache.fop.fo.pagination.SideRegion;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
-import org.apache.fop.fo.properties.CommonMarginBlock;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.awt.Rectangle;
-import java.util.Iterator;
-import java.awt.geom.Rectangle2D;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -432,6 +421,13 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             // create a new page
             SimplePageMaster spm = pageSeq.getSimplePageMasterToUse(
                 currentPageNum, bIsFirst, bIsBlank);
+            
+            // Unsure if these four lines are needed
+            int pageWidth = spm.getPageWidth().getValue();
+            int pageHeight = spm.getPageHeight().getValue();
+            pageSeq.getRoot().setLayoutDimension(PercentBase.BLOCK_IPD, pageWidth);
+            pageSeq.getRoot().setLayoutDimension(PercentBase.BLOCK_BPD, pageHeight);
+            
             Region body = spm.getRegion(FO_REGION_BODY);
             if (!pageSeq.getMainFlow().getFlowName().equals(body.getRegionName())) {
               // this is fine by the XSL Rec (fo:flow's flow-name can be mapped to
@@ -441,7 +437,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                  + spm.getMasterName() + "'.  FOP presently "
                  + "does not support this.");
             }
-            curPage = createPageAreas(spm);
+            curPage = new PageViewport(spm);
         } catch (FOPException fopex) {
             throw new IllegalArgumentException("Cannot create page: " + fopex.getMessage());
         }
@@ -672,96 +668,5 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         } else {
             return true;
         }
-    }
-
-    private PageViewport createPageAreas(SimplePageMaster spm) {
-        int pageWidth = spm.getPageWidth().getValue();
-        int pageHeight = spm.getPageHeight().getValue();
-
-        // Set the page dimension as the toplevel containing block for margin.
-        ((FObj) pageSeq.getParent()).setLayoutDimension(PercentBase.BLOCK_IPD, pageWidth);
-        ((FObj) pageSeq.getParent()).setLayoutDimension(PercentBase.BLOCK_BPD, pageHeight);
-
-        // Get absolute margin properties (top, left, bottom, right)
-        CommonMarginBlock mProps = spm.getCommonMarginBlock();
-
-      /* Create the page reference area rectangle (0,0 is at top left
-       * of the "page media" and y increases
-       * when moving towards the bottom of the page.
-       * The media rectangle itself is (0,0,pageWidth,pageHeight).
-       */
-       Rectangle pageRefRect =
-               new Rectangle(mProps.marginLeft.getValue(), mProps.marginTop.getValue(),
-                       pageWidth - mProps.marginLeft.getValue() - mProps.marginRight.getValue(),
-                       pageHeight - mProps.marginTop.getValue() - mProps.marginBottom.getValue());
-
-       Page page = new Page();  // page reference area
-
-       // Set up the CTM on the page reference area based on writing-mode
-       // and reference-orientation
-       FODimension reldims = new FODimension(0, 0);
-       CTM pageCTM = CTM.getCTMandRelDims(spm.getReferenceOrientation(),
-               spm.getWritingMode(), pageRefRect, reldims);
-
-       // Create a RegionViewport/ reference area pair for each page region
-       RegionReference rr = null;
-       for (Iterator regenum = spm.getRegions().values().iterator();
-            regenum.hasNext();) {
-           Region r = (Region)regenum.next();
-           RegionViewport rvp = makeRegionViewport(r, reldims, pageCTM);
-           r.setLayoutDimension(PercentBase.BLOCK_IPD, rvp.getIPD());
-           r.setLayoutDimension(PercentBase.BLOCK_BPD, rvp.getBPD());
-           if (r.getNameId() == FO_REGION_BODY) {
-               RegionBody rb = (RegionBody) r;
-               rr = new BodyRegion(rb.getColumnCount(), rb.getColumnGap(),
-                       rvp);
-           } else {
-               rr = new RegionReference(r.getNameId(), rvp);
-           }
-           setRegionReferencePosition(rr, r, rvp.getViewArea());
-           rvp.setRegionReference(rr);
-           page.setRegionViewport(r.getNameId(), rvp);
-       }
-
-       return new PageViewport(spm, page, new Rectangle(0, 0, pageWidth, pageHeight));
-    }  
-    
-    /**
-     * Creates a RegionViewport Area object for this pagination Region.
-     * @param reldims relative dimensions
-     * @param pageCTM page coordinate transformation matrix
-     * @return the new region viewport
-     */
-    private RegionViewport makeRegionViewport(Region r, FODimension reldims, CTM pageCTM) {
-        Rectangle2D relRegionRect = r.getViewportRectangle(reldims);
-        Rectangle2D absRegionRect = pageCTM.transform(relRegionRect);
-        // Get the region viewport rectangle in absolute coords by
-        // transforming it using the page CTM
-        RegionViewport rv = new RegionViewport(absRegionRect);
-        rv.setBPD((int)relRegionRect.getHeight());
-        rv.setIPD((int)relRegionRect.getWidth());
-        TraitSetter.addBackground(rv, r.getCommonBorderPaddingBackground());
-        rv.setClip(r.getOverflow() == EN_HIDDEN || r.getOverflow() == EN_ERROR_IF_OVERFLOW);
-        return rv;
-    }
-   
-    /**
-     * Set the region reference position within the region viewport.
-     * This sets the transform that is used to place the contents of
-     * the region reference.
-     *
-     * @param rr the region reference area
-     * @param r the region-xxx formatting object
-     * @param absRegVPRect The region viewport rectangle in "absolute" coordinates
-     * where x=distance from left, y=distance from bottom, width=right-left
-     * height=top-bottom
-     */
-    private void setRegionReferencePosition(RegionReference rr, Region r, 
-                                  Rectangle2D absRegVPRect) {
-        FODimension reldims = new FODimension(0, 0);
-        rr.setCTM(CTM.getCTMandRelDims(r.getReferenceOrientation(),
-                r.getWritingMode(), absRegVPRect, reldims));
-        rr.setIPD(reldims.ipd);
-        rr.setBPD(reldims.bpd);
     }
 }
