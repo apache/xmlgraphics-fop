@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.Fop;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTree;
@@ -51,8 +52,7 @@ public class FoLayoutMasterSet extends FONode {
 
     /** Map of <tt>Integer</tt> indices of <i>sparsePropsSet</i> array.
         It is indexed by the FO index of the FO associated with a given
-        position in the <i>sparsePropsSet</i> array.  See
-        {@link org.apache.fop.fo.FONode#sparsePropsSet FONode.sparsePropsSet}.
+        position in the <i>sparsePropsSet</i> array.
      */
     private static final int[] sparsePropsMap;
 
@@ -240,5 +240,25 @@ public class FoLayoutMasterSet extends FONode {
     public Map getPageSequenceMasters() {
         return finalPageSequenceMasters;
     }
-        
+
+    /**
+     * The genrator field for page ids.
+     * These page ids generated within any given instance of
+     * <code>FoLayoutMasterSet</code> increase monotonically from 1 through
+     * the range of values of <code>long</code>.  They wrap around when that
+     * range is exhausted, but the value 0 is never returned.
+     */
+    private long pageId = 0;
+    
+    /**
+     * @return a <code>long</code> page id not equal to 0.
+     */
+    public long makePageId() {
+        if (++pageId == 0) {
+            ++pageId;   // 0 is invalid
+            Fop.logger.warning("Page ID rollover.");
+        }
+        return pageId;
+    }
+    
 }// FoLayoutMasterSet
