@@ -227,6 +227,16 @@ public class PDFRenderer extends PrintRenderer {
     private StringBuffer wordAreaPDF = new StringBuffer();
 
     /**
+     * Offset for rendering text, taking into account borders and padding
+     */
+    protected int BPMarginOffset = 0;
+
+    /**
+     * Offset for rendering text, taking into account borders and padding
+     */
+    protected int IPMarginOffset = 0;
+
+    /**
      * create the PDF renderer
      */
     public PDFRenderer() {
@@ -467,7 +477,6 @@ public class PDFRenderer extends PrintRenderer {
         this.pdfDoc.output(ostream);
     }
 
-
     /**
      * @see org.apache.fop.render.AbstractRenderer#startVParea(CTM)
      */
@@ -494,6 +503,21 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     /**
+     * Handle block traits.
+     * The block could be any sort of block with any positioning
+     * so this should render the traits such as border and background
+     * in its position.
+     *
+     * @param block the block to render the traits
+     */
+    protected void handleBlockTraits(Block block) {
+        float startx = currentIPPosition / 1000f;
+        float starty = currentBPPosition / 1000f;
+        drawBackAndBorders(block, startx, starty,
+                           block.getWidth() / 1000f, block.getHeight() / 1000f);
+    }
+
+    /**
      * Handle the traits for a region
      * This is used to draw the traits for the given page region.
      * (See Sect. 6.4.1.2 of XSL-FO spec.)
@@ -510,22 +534,35 @@ public class PDFRenderer extends PrintRenderer {
         Trait.Background back;
         back = (Trait.Background)region.getTrait(Trait.BACKGROUND);
         */
-        drawBackAndBorders(region, startx, starty, width, height);
-    }
 
-    /**
-     * Handle block traits.
-     * The block could be any sort of block with any positioning
-     * so this should render the traits such as border and background
-     * in its position.
-     *
-     * @param block the block to render the traits
-     */
-    protected void handleBlockTraits(Block block) {
-        float startx = currentIPPosition / 1000f;
-        float starty = currentBPPosition / 1000f;
-        drawBackAndBorders(block, startx, starty,
-                           block.getWidth() / 1000f, block.getHeight() / 1000f);
+        if (region.getRegion().getRegionClass() == org.apache.fop.fo.pagination.Region.BODY_CODE)
+        {   
+            // need to collect vertical and horizontal offsets
+            // for body-region (for rendering of text)
+            BorderProps bps = (BorderProps) region.getTrait(Trait.BORDER_BEFORE);
+            if (bps != null) {
+                BPMarginOffset = bps.width;
+            }
+                              
+            bps = (BorderProps) region.getTrait(Trait.BORDER_START);
+            if (bps != null) {
+                IPMarginOffset = bps.width;
+            }
+            
+            java.lang.Integer padWidth = (java.lang.Integer) 
+                region.getTrait(Trait.PADDING_BEFORE);
+            if (padWidth != null) {
+                BPMarginOffset += padWidth.intValue();
+            }
+                              
+            padWidth = (java.lang.Integer) 
+                region.getTrait(Trait.PADDING_START);
+            if (padWidth != null) {
+                IPMarginOffset += padWidth.intValue();
+            }
+        }
+
+        drawBackAndBorders(region, startx, starty, width, height);
     }
 
     /**
@@ -848,7 +885,6 @@ public class PDFRenderer extends PrintRenderer {
      * @see org.apache.fop.render.Renderer#renderCharacter(Character)
      */
     public void renderCharacter(Character ch) {
-
         super.renderCharacter(ch);
     }
 
@@ -875,9 +911,16 @@ public class PDFRenderer extends PrintRenderer {
             updateColor(ct, true, pdf);
         }
 
-        int rx = currentBlockIPPosition;
-        // int bl = pageHeight - currentBPPosition;
-        int bl = currentBPPosition + word.getOffset();
+        // word.getOffset() = only height of text itself
+        // currentBlockIPPosition: 0 for beginning of line; nonzero 
+        //  where previous line area failed to take up entire allocated space
+        int rx = currentBlockIPPosition + IPMarginOffset;
+        int bl = currentBPPosition + BPMarginOffset + word.getOffset();
+
+/*      System.out.println("BlockIP Position: " + currentBlockIPPosition +
+            "; currentBPPosition: " + currentBPPosition +
+            "; offset: " + word.getOffset() +
+            "; Word = " + word.getWord()); */
 
         // Set letterSpacing
         //float ls = fs.getLetterSpacing() / this.currentFontSize;
