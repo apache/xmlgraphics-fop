@@ -1,0 +1,379 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" >
+<html>
+  <head>
+    <META http-equiv= "Content-Type" content= "text/html; charset=ISO-8859-1" >
+    <title>Property classes overview</title>
+    <style type= "text/css" >
+      body {
+          font-family: Verdana, Helvetica, sans-serif;
+      }
+      .note { border: solid 1px #7099C5; background-color: #f0f0ff; }
+      .note .label { background-color: #7099C5; color: #ffffff; }
+      .content {
+          padding: 5px 5px 5px 10px;
+          font : Verdana, Helvetica, sans-serif;  font-size : 90%;
+      }
+    </style>
+  </head>
+  <body marginheight= "0" marginwidth= "0" topmargin= "0" leftmargin= "0" text= "#000000" bgcolor= "#FFFFFF" >
+    <div class= "content" >
+      <h1>Property classes overview</h1>
+      <p>
+        <font size= "-2" >by&nbsp;Peter B. West</font>
+      </p>
+      <ul class= "minitoc" >
+        <li>
+          <a href = "#N10014" >Properties: packages</a>
+          <ul class= "minitoc" >
+            <li>
+              <a href = "#N10019" >org.apache.fop.fo</a>
+            </li>
+            <li>
+              <a href = "#N100AC" >org.apache.fop.fo.properties</a>
+            </li>
+            <li>
+              <a href = "#N100EE" >org.apache.fop.fo.expr</a>
+            </li>
+            <li>
+              <a href = "#N10134" >org.apache.fop.datatypes</a>
+            </li>
+            <li>
+              <a href = "#N101A2"
+              >org.apache.fop.datatypes.indirect</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <a name= "N10014" ></a> <h3>Properties: packages</h3> <a name=
+      "N10019" ></a> <h4>org.apache.fop.fo</h4>
+      <dl>
+        <dt>
+          <a href = "javascript:parent.displayCode(
+             'PropNames.html#PropNamesClass'
+          )" ><em>PropNames</em></a>
+        </dt>
+        <dd>
+          This class maintains an array of <a href=
+          "javascript:parent.displayCode(
+          'PropNames.html#propertyNames' )" >property names</a>,
+          synchronized to a complete set of property name <a href =
+          "javascript:parent.displayCode( 'PropNames.html#NO_PROPERTY'
+          )" >constants</a> for indexing property-based arrays.  It
+          includes methods to <a href =
+          "javascript:parent.displayCode(
+          'PropNames.html#getPropertyName' )" >convert an index to a
+          name</a> and to <a href = "javascript:parent.displayCode(
+          'PropNames.html#getPropertyIndex' )" >convert a property
+          name to an index</a>.
+        </dd>
+        <dt>
+          <a href = "PropertyConsts-class.html" ><em>PropertyConsts</em></a>
+        </dt>
+        <dd>
+          A singleton instance of <span class= "codefrag"
+          >PropertyConsts</span> is created by the static initializer
+          of the <a href = "javascript:parent.displayCode(
+          'PropertyConsts.html#pconsts' )" >pconsts</a> field.
+          Working from the property indices defined in PropNames, the
+          methods in this class collect and supply the values of
+          fields defined in property objects into arrays.<br> The
+          heart of this class in the method <a href =
+          "javascript:parent.displayCode(
+          'PropertyConsts.html#setupProperty' )" >setupProperty</a>,
+          which constructs the property name from the index,
+          instantiates a singleton of the appropriate class, and
+          extracts static fields by reflection from that instance into
+          the arrays of field values.
+        </dd>
+        <dt>
+          <a href = "javascript:parent.displayCode(
+          'PropertySets.html#PropertySetsClass' )" ><em>PropertySets</em></a>
+        </dt>
+        <dd>
+          This class provides a number of <span class= "codefrag"
+          >ROBitSet</span>s representing many of the sets of
+          properties defined in <em>Section 7</em> of the
+          specification.  Note that the <a
+          href="javascript:parent.displayCode(
+          'PropertySets.html#borderProps' )"><em>Border</em></a>, <a
+          href="javascript:parent.displayCode(
+          'PropertySets.html#paddingProps' )"><em>Padding</em></a> and
+          <a href="javascript:parent.displayCode(
+          'PropertySets.html#backgroundProps'
+          )"><em>Background</em></a> sets are defined separately.
+        </dd>
+        <dt>
+          <a href = "javascript:parent.displayCode(
+          '../FOPropertySets.html#FOPropertySetsClass' )"
+          ><em>FOPropertySets</em></a>
+        </dt>
+        <dd>
+          This class provides a number of <span class= "codefrag"
+          >ROBitSet</span>s representing sets of properties which are
+          applicable in particular subtrees of the FO tree.  These
+          sets are provided so that other properties can be ignored
+          during processing of the subtrees.
+        </dd>
+        <dt>
+          <a href = "javascript:parent.displayCode(
+          'ShorthandPropSets.html#ShorthandPropSetsClass' )"
+          ><em>ShorthandPropSets</em></a>
+        </dt>
+        <dd>
+          This class contains arrays of <a href =
+          "javascript:parent.displayCode(
+          'ShorthandPropSets.html#shorthands' )" >shorthand property
+          indices</a> and <a href = "javascript:parent.displayCode(
+          'ShorthandPropSets.html#compounds' )" >compound property
+          indices</a>, and <span class= "codefrag" >ROBitSet</span>s
+          representing the expansion sets of these shorthands and
+          compounds.  Various methods useful in the expansion of these
+          properties are also included.
+        </dd>
+        <dt>
+          <a href = "javascript:parent.displayCode(
+          'FOAttributes.html#FOAttributesClass' )"
+          ><em>FOAttributes</em></a>
+        </dt>
+        <dd>
+          This class manages the attribute set that is associated with
+          a SAX <span class= "codefrag" >startElement</span> event.
+          <em>fo:</em> namespace attributes are entered into a <a href
+          = "javascript:parent.displayCode(
+          'FOAttributes.html#foAttrMap' )"><span class= "codefrag"
+          >HashMap</span></a>, indexed by the <em>fo:</em> property
+          index.  As other namespaces are encountered, the values are
+          entered into namespace-specific <a href =
+          "javascript:parent.displayCode(
+          'FOAttributes.html#nSpaceAttrMaps' )"><span class=
+          "codefrag" >HashMap</span>s</a>, indexed by the <em>local
+          name</em> of the attribute.
+        </dd>
+      </dl>
+      <a name= "N100AC" ></a><a name= "property-classes" ></a>
+      <h4>org.apache.fop.fo.properties</h4>
+      <dl>
+        <dt>
+          <a href="javascript:parent.displayCode(
+          'Property.html#PropertyClass' )" ><em>Property</em></a>
+        </dt>
+        <dd>
+          The base class for all individual property classes.
+          There are 320 properties in all.
+        </dd>
+        <dt>
+          <em>ColumnNumber</em>
+        </dt>
+        <dd>
+          The actual property class with the lowest index
+          number, followed in the index order by properties required
+          for further processing, e.g. FontSize.
+        </dd>
+        <dt>
+          <em>....</em>
+        </dt>
+        <dd>....</dd>
+        <dt>
+          <em>Background</em>
+        </dt>
+        <dd>
+          First in index order of the remainining shorthand
+          properties, followed in index order by all other remaining
+          shorthands.
+        </dd>
+        <dt>
+          <em>....</em>
+        </dt>
+        <dd>....</dd>
+        <dt>
+          <em>AbsolutePosition</em>
+        </dt>
+        <dd>
+          First in index order of the remaining properties.  Within
+          this ordering, compound properties precede their expansion
+          properties, and corresponding relative properties precede
+          corresponding absolute properties.
+        </dd>
+        <dt>
+          <em>....</em>
+        </dt>
+        <dd>....</dd>
+        <dt>
+          <em>ZIndex</em>
+        </dt>
+        <dd>
+          The property class with the highest index
+          number.
+        </dd>
+      </dl>
+      <a name= "N100EE" ></a>
+      <h4>org.apache.fop.fo.expr</h4>
+      <dl>
+        <dt>
+          <a href = "javascript:parent.displayCode(
+          'PropertyTokenizer.html#PropertyTokenizerClass' )"
+          ><em>PropertyTokenizer</em></a>
+        </dt>
+        <dd>
+          The tokenizer for the property expression parser.  Defines a
+          set of <a href = "javascript:parent.displayCode(
+          'PropertyTokenizer.html#EOF' )" >token constants</a> and
+          returns these with associated token values.
+        </dd>
+        <dt>
+          <a href = "javascript:parent.displayCode(
+          'PropertyParser.html#PropertyParserClass' )"
+          ><em>PropertyParser</em></a>
+        </dt>
+        <dd>
+          This extends <span class= "codefrag"
+          >PropertyTokenizer</span>.  It parses property
+          expressions on the basis of the tokens passed to it by its
+          superclass, generating <span class= "codefrag"
+          >PropertyValue</span>s, including <span class= "codefrag"
+          >PropertyValueList</span>s.
+        </dd>
+        <dt>
+          <em>PropertyException</em>
+        </dt>
+        <dd>
+          The basic class for all property-related exceptions.
+          It extends <span class= "codefrag" >FOPException</span>. It
+          is housed in this package by historical accident.
+        </dd>
+        <dt>
+          <em>DataTypeNotImplementedException</em>
+          <br>
+          <em>FunctionNotImplementedException</em>
+          <br>
+          <em>PropertyNotImplementedException</em>
+        </dt>
+        <dd>
+          A set of particular exceptions extending <span class=
+          "codefrag" >PropertyException</span>.  Also in this package
+          by accident.
+        </dd>
+      </dl>
+      <a name= "N10134" ></a>
+      <h4>org.apache.fop.datatypes</h4>
+      <dl>
+        <dt>
+          <a href = "javascript:parent.displayCode(
+          'PropertyValue.html#PropertyValueInterface' )"
+          ><em>PropertyValue</em></a>
+        </dt>
+        <dd>
+          An <em>interface</em> which all <span class= "codefrag"
+          >PropertyValue</span> classes must implement.  In addition
+          to a few methods, <span class= "codefrag"
+          >PropertyValue</span> defines the set of <a href =
+          "javascript:parent.displayCode( 'PropertyValue.html#NO_TYPE'
+          )" >constants</a> which the <span class= "codefrag"
+          >getType()</span> method may return; i.e. the valid set of
+          <span class= "codefrag" >PropertyValue</span> types.
+        </dd>
+        <dt>
+          <a href = "javascript:parent.displayCode(
+          'AbstractPropertyValue.html#AbstractPropertyValueClass' )"
+          ><em>AbstractPropertyValue</em></a>
+        </dt>
+        <dd>
+          An abstract implementation of the <span class= "codefrag"
+          >PropertyValue</span> interface.  Most actual property value
+          classes extend <span class= "codefrag"
+          >AbstractPropertyValue</span>.
+        </dd>
+        <dt>
+          <a href = "javascript:parent.displayCode(
+          'PropertyValueList.html#PropertyValueListClass' )"
+          ><em>PropertyValueList</em></a>
+        </dt>
+        <dd>
+          This class extends <span class= "codefrag"
+          >LinkedList</span> and implements <span class= "codefrag"
+          >PropertyValue</span>.  It is used whenever the process of
+          resolving a property expression yields a list of <span
+          class= "codefrag" >PropertyValue</span> elements; notably
+          during the processing of shorthands and "compound"
+          properties.
+        </dd>
+        <dt>
+          <em>StringType</em>
+        </dt>
+        <dd>
+          A basic type extending <span class= "codefrag"
+          >AbstractPropertyValue</span>.  Extended by <span class=
+          "codefrag" >NCName</span>.
+        </dd>
+        <dt>
+          <em>NCName</em>
+        </dt>
+        <dd>
+          Extends <span class= "codefrag" >StringType</span> to represent
+          NCName strings.
+        </dd>
+        <dt>
+          <em>EnumType</em>
+        </dt>
+        <dd>
+          Extends <span class= "codefrag"
+          >AbstractPropertyValue</span> to represented enumerated
+          types.
+        </dd>
+        <dt>
+          <em>Other types</em>
+        </dt>
+        <dd>
+          All other types extend one of the above classes.
+        </dd>
+      </dl>
+      <a name= "N101A2" ></a>
+      <h4>org.apache.fop.datatypes.indirect</h4>
+      <dl>
+        <dt>
+          <em>IndirectValue</em>
+        </dt>
+        <dd>
+          The base type for all indirect value types; extends
+          <span class= "codefrag" >AbstractPropertyValue</span>.
+        </dd>
+      </dl>
+      <p>
+        <strong>Previous:</strong> <a href = "introduction.html"
+        >Introduction</a>
+      </p>
+      <p>
+        <strong>Next:</strong> <a href= "PropertyConsts-class.html"
+                                     >The PropertyConsts class</a>
+      </p>
+    </div>
+    
+    <table summary= "footer" cellspacing= "0" cellpadding= "0" width= "100%" height= "20" border= "0" >
+        <tr>
+          <td colspan= "2" height= "1" bgcolor= "#4C6C8F" ><img
+          height= "1" width= "1" alt= "" src=
+          "../../skin/images/spacer.gif" ><a href =
+          "../../skin/images/label.gif" ></a><a href =
+          "../../skin/images/page.gif" ></a><a href =
+          "../../skin/images/chapter.gif" ></a><a href =
+          "../../skin/images/chapter_open.gif" ></a><a href =
+          "../../skin/images/current.gif" ></a><a href =
+          "../..//favicon.ico" ></a></td>
+        </tr>
+        <tr>
+          <td colspan= "2" bgcolor= "#CFDCED" class= "copyright"
+          align= "center" ><font size= "2" face= "Arial, Helvetica,
+          Sans-Serif" >Copyright &copy; 1999-2002&nbsp;The Apache
+          Software Foundation. All rights reserved.<script type=
+          "text/javascript" language= "JavaScript" ><!--
+          document.write(" - "+"Last Published: " +
+          document.lastModified); // --></script></font></td>
+        </tr>
+        <tr>
+          <td align= "left" bgcolor= "#CFDCED" class= "logos"
+          ></td><td align= "right" bgcolor= "#CFDCED" class= "logos"
+          ></td>
+        </tr>
+    </table>
+  </body>
+</html>

@@ -1,0 +1,494 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <title>Property Expression Parsing</title>
+    <style type= "text/css" >
+      body {
+      font-family: Verdana, Helvetica, sans-serif;
+      }
+
+      .note { border: solid 1px #7099C5; background-color: #f0f0ff; }
+      .note .label { background-color: #7099C5; color: #ffffff; }
+      .content {
+      padding: 5px 5px 5px 10px;
+      font : Verdana, Helvetica, sans-serif;  font-size : 90%;
+      }
+    </style>
+  </head>
+  <body marginheight="0" marginwidth="0" topmargin="0" leftmargin="0" text="#000000" bgcolor="#FFFFFF">
+    <div class="content">
+      <h1>Property Expression Parsing</h1>
+      <p>
+        <font size="-2">by&nbsp;Peter B. West</font>
+      </p>
+      <ul class="minitoc">
+        <li>
+          <a href="#N10014">Property expression parsing</a>
+          <ul class="minitoc">
+            <li>
+              <a href="#N10044">Data types</a>
+            </li>
+            <li>
+              <a href="#N10252">Tokenizer</a>
+            </li>
+            <li>
+              <a href="#N1029C">Parser</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      
+      <a name="N10014"></a>
+      <h3>Property expression parsing</h3>
+      <p>
+        The parsing of property value expressions is handled by two
+        closely related classes: <a href=
+        "javascript:parent.displayCode(
+        'PropertyTokenizer.html#PropertyTokenizerClass' )" ><span
+        class="codefrag">org.apache.fop.fo.expr.PropertyTokenizer</span></a>
+        and its subclass, <a href= "javascript:parent.displayCode(
+        'PropertyParser.html#PropertyParserClass' )" ><span
+        class="codefrag">org.apache.fop.fo.expr.PropertyParser</span></a>,
+        and by <span class= "codefrag" >refineParsing(int, FONode,
+        PropertyValue)</span> methods in the individual property
+        classes.  <span class="codefrag">PropertyTokenizer</span>, as
+        the name suggests, handles the tokenizing of the expression,
+        handing <a href= "javascript:parent.displayCode(
+        'PropertyTokenizer.html#EOF' )" ><em>tokens</em></a> back to
+        its subclass, <span
+        class="codefrag">PropertyParser</span>. <span
+        class="codefrag">PropertyParser</span>, in turn, returns a <a
+        href= "javascript:parent.displayCode(
+        'PropertyValueList.html#PropertyValueListClass' )" ><span
+        class= "codefrag">PropertyValueList</span></a>, a list of <a
+        href= "javascript:parent.displayCode(
+        'PropertyValue.html#PropertyValueInterface' )" ><span class=
+        "codefrag">PropertyValue</span></a>s.
+      </p>
+      <p>
+        The tokenizer and parser rely in turn on the datatype
+        definitions from the <span
+        class="codefrag">org.apache.fop.datatypes</span> package,
+        which include the <a href= "javascript:parent.displayCode(
+        'PropertyValue.html#NO_TYPE' )" ><span class= "codefrag"
+        >PropertyValue</span> datatype constant definitions</a>.
+      </p>
+      <a name="N10044"></a>
+      <h4>Data types</h4>
+      <p>
+        The data types currently defined in
+        <span class="codefrag">org.apache.fop.datatypes</span> include:
+      </p>
+      <table class="ForrestTable" cellspacing="1" cellpadding="4">
+        
+          <tr>
+            <th colspan="2" rowspan="1">Numbers and lengths</th>
+          </tr>
+          
+          <tr>
+            <th colspan="1" rowspan="1">Numeric</th>
+            <td colspan="3" rowspan="1">
+              The fundamental length data type.  <em>Numerics</em> of
+              various types are constructed by the classes listed
+              below.
+            </td>
+          </tr>
+          
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <th colspan="3"
+                rowspan="1">Constructor classes for <em>Numeric</em></th>
+          </tr>
+          
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <td colspan="1" rowspan="1">Ems</td>
+            <td colspan="2" rowspan="1">Relative length in <em>ems</em></td>
+          </tr>
+          
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <td colspan="1" rowspan="1">IntegerType</td>
+            <td colspan="1" rowspan="1"></td>
+          </tr>
+          
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <td colspan="1" rowspan="1">Length</td>
+            <td colspan="2" rowspan="1">In centimetres(cm), millimetres(mm),
+              inches(in), points(pt), picas(pc) or pixels(px)</td>
+          </tr>
+          
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <td colspan="1" rowspan="1">Percentage</td>
+            <td colspan="1" rowspan="1"></td>
+          </tr>
+
+          <tr>
+            <th colspan="1" rowspan="1">Other Numeric</th>
+            <td colspan="3" rowspan="1">
+              Other numeric vaues which do not interact with the
+              lengths represented by <em>Numeric</em> values.
+            </td>
+          </tr>
+          
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <td colspan="1" rowspan="1">Angle</td>
+            <td colspan="2" rowspan="1">In degrees(deg), gradients(grad) or
+              radians(rad)</td>
+          </tr>
+          
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <td colspan="1" rowspan="1">Frequency</td>
+            <td colspan="2" rowspan="1">In hertz(Hz) or kilohertz(kHz)</td>
+          </tr>
+          
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <td colspan="1" rowspan="1">Time</td>
+            <td colspan="1" rowspan="1">In seconds(s) or milliseconds(ms)</td>
+          </tr>
+          
+          <tr>
+            <th colspan="2" rowspan="1">Strings</th>
+          </tr>
+          
+          <tr>
+            <th colspan="1" rowspan="1">StringType</th>
+            <td colspan="3" rowspan="1">
+              Base class for data types which result in a <em>String</em>.
+            </td>
+          </tr>
+          
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <th colspan="1" rowspan="1">Literal</th>
+            <td colspan="2" rowspan="1">
+              A subclass of <em>StringType</em> for literals which
+              exceed the constraints of an <em>NCName</em>.
+            </td>
+          </tr>
+          
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <th colspan="1" rowspan="1">MimeType</th>
+            <td colspan="2" rowspan="1">
+              A subclass of <em>StringType</em> for literals which
+              represent a mime type.
+            </td>
+          </tr>
+          
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <th colspan="1" rowspan="1">UriType</th>
+            <td colspan="2" rowspan="1">
+              A subclass of <em>StringType</em> for literals which
+              represent a URI, as specified by the argument to
+              <em>url()</em>.
+            </td>
+          </tr>
+          
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <th colspan="1" rowspan="1">NCName</th>
+            <td colspan="2" rowspan="1">
+              A subclass of <em>StringType</em> for literals which
+              meet the constraints of an <em>NCName</em>.
+            </td>
+          </tr>
+          
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <td colspan="1" rowspan="1"></td>
+            <th colspan="1" rowspan="1">Country</th>
+            <td colspan="1" rowspan="1">An RFC 3066/ISO 3166 country code.</td>
+          </tr>
+          
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <td colspan="1" rowspan="1"></td>
+            <th colspan="1" rowspan="1">Language</th>
+            <td colspan="1" rowspan="1">An RFC 3066/ISO 639 language code.</td>
+          </tr>
+          
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <td colspan="1" rowspan="1"></td>
+            <th colspan="1" rowspan="1">Script</th>
+            <td colspan="1" rowspan="1">An ISO 15924 script code.</td>
+          </tr>
+          
+          <tr>
+            <th colspan="2" rowspan="1">Enumerated types</th>
+          </tr>
+          
+          <tr>
+            <th colspan="1" rowspan="1">EnumType</th>
+            <td colspan="3" rowspan="1">
+              An integer representing one of the tokens in a set of
+              enumeration values.
+            </td>
+          </tr>
+          
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <th colspan="1" rowspan="1">MappedEnumType</th>
+            <td colspan="2" rowspan="1">
+              A subclass of <em>EnumType</em>.  Maintains a
+              <em>String</em> with the value to which the associated
+              "raw" enumeration token maps.  E.g., the
+              <em>font-size</em> enumeration value "medium" maps to
+              the <em>String</em> "12pt".
+            </td>
+          </tr>
+          
+          <tr>
+            <th colspan="2" rowspan="1">Colors</th>
+          </tr>
+          
+          <tr>
+            <th colspan="1" rowspan="1">ColorType</th>
+            <td colspan="3" rowspan="1">
+              Maintains a four-element array of float, derived from
+              the name of a standard colour, the name returned by a
+              call to <em>system-color()</em>, or an RGB
+              specification.
+            </td>
+          </tr>
+          
+          <tr>
+            <th colspan="2" rowspan="1">Fonts</th>
+          </tr>
+          
+          <tr>
+            <th colspan="1" rowspan="1">FontFamilySet</th>
+            <td colspan="3" rowspan="1">
+              Maintains an array of <em>String</em>s containing a
+              prioritized list of possibly generic font family names.
+            </td>
+          </tr>
+          
+          <tr>
+            <th colspan="2" rowspan="1">Pseudo-types</th>
+          </tr>
+          
+          <tr>
+            <td colspan="4" rowspan="1">
+              A variety of pseudo-types have been defined as
+              convenience types for frequently appearing enumeration
+              token values, or for other special purposes.
+            </td>
+          </tr>
+          
+          <tr>
+            <th colspan="1" rowspan="1">Inherit</th>
+            <td colspan="3" rowspan="1">
+              For values of <em>inherit</em>.
+            </td>
+          </tr>
+          
+          <tr>
+            <th colspan="1" rowspan="1">Auto</th>
+            <td colspan="3" rowspan="1">
+              For values of <em>auto</em>.
+            </td>
+          </tr>
+          
+          <tr>
+            <th colspan="1" rowspan="1">None</th>
+            <td colspan="3" rowspan="1">
+              For values of <em>none</em>.
+            </td>
+          </tr>
+          
+          <tr>
+            <th colspan="1" rowspan="1">Bool</th>
+            <td colspan="3" rowspan="1">
+              For values of <em>true/false</em>.
+            </td>
+          </tr>
+          
+          <tr>
+            <th colspan="1" rowspan="1">FromNearestSpecified</th>
+            <td colspan="3" rowspan="1">
+              Created to ensure that, when associated with
+              a shorthand, the <em>from-nearest-specified-value()</em>
+              core function is the sole component of the expression.
+            </td>
+          </tr>
+          
+          <tr>
+            <th colspan="1" rowspan="1">FromParent</th>
+            <td colspan="3" rowspan="1">
+              Created to ensure that, when associated with
+              a shorthand, the <em>from-parent()</em>
+              core function is the sole component of the expression.
+            </td>
+          </tr>
+          
+      </table>
+      <a name="N10252"></a>
+      <h4>Tokenizer</h4>
+      <p>
+        The tokenizer returns one of the following token
+        values:
+      </p>
+      <pre class="code">
+          static final int
+          EOF = 0
+          ,NCNAME = 1
+          ,MULTIPLY = 2
+          ,LPAR = 3
+          ,RPAR = 4
+          ,LITERAL = 5
+          ,FUNCTION_LPAR = 6
+          ,PLUS = 7
+          ,MINUS = 8
+          ,MOD = 9
+          ,DIV = 10
+          ,COMMA = 11
+          ,PERCENT = 12
+          ,COLORSPEC = 13
+          ,FLOAT = 14
+          ,INTEGER = 15
+          ,ABSOLUTE_LENGTH = 16
+          ,RELATIVE_LENGTH = 17
+          ,TIME = 18
+          ,FREQ = 19
+          ,ANGLE = 20
+          ,INHERIT = 21
+          ,AUTO = 22
+          ,NONE = 23
+          ,BOOL = 24
+          ,URI = 25
+          ,MIMETYPE = 26
+          // NO_UNIT is a transient token for internal use only.  It is
+          // never set as the end result of parsing a token.
+          ,NO_UNIT = 27
+          ;
+      </pre>
+      <p>
+        Most of these tokens are self-explanatory, but a few need
+        further comment.
+      </p>
+      <dl>
+        
+        <dt>AUTO</dt>
+        
+        <dd>
+          Because of its frequency of occurrence, and the fact that
+          it is always the <em>initial value</em> for any property
+          which supports it, AUTO has been promoted into a
+          pseudo-type with its on datatype class.  Therefore, it is
+          also reported as a token.
+        </dd>
+        
+        <dt>NONE</dt>
+        
+        <dd>
+          Similarly to AUTO, NONE has been promoted to a pseudo-type
+          because of its frequency.
+        </dd>
+        
+        <dt>BOOL</dt>
+        
+        <dd>
+          There is a <em>de facto</em> boolean type buried in the
+          enumeration types for many of the properties.  It had been
+          specified as a type in its own right in this code.
+        </dd>
+        
+        <dt>MIMETYPE</dt>
+        
+        <dd>
+          The property <span class="codefrag">content-type</span>
+          introduces this complication.  It can have two values of the
+          form <strong>content-type:</strong><em>mime-type</em>
+          (e.g. <span
+          class="codefrag">content-type="content-type:xml/svg"</span>)
+          or <strong>namespace-prefix:</strong><em>prefix</em>
+          (e.g. <span
+          class="codefrag">content-type="namespace-prefix:svg"</span>).
+          The experimental code reduces these options to the payload
+          in each case: an <span class="codefrag">NCName</span> in the
+          case of a namespace prefix, and a MIMETYPE in the case of a
+          content-type specification.  <span
+          class="codefrag">NCName</span>s cannot contain a "/".
+        </dd>
+        
+      </dl>
+      <a name="N1029C"></a>
+      <h4>Parser</h4>
+      <p>
+        The parser returns a <span
+        class="codefrag">PropertyValueList</span>, necessary because
+        of the possibility that a list of <span
+        class="codefrag">PropertyValue</span> elements may be returned
+        from the expressions of some properties.
+      </p>
+      <p>
+        
+        <span class="codefrag">PropertyValueList</span>s may contain
+        <span class="codefrag">PropertyValue</span>s or other <span
+        class="codefrag">PropertyValueList</span>s.  This latter
+        provision is necessitated for the peculiar case of of
+        <em>text-shadow</em>, which may contain whitespace separated
+        sublists of either two or three elements, separated from one
+        another by commas.  To accommodate this peculiarity, comma
+        separated elements are added to the top-level list, while
+        whitespace separated values are always collected into sublists
+        to be added to the top-level list.
+      </p>
+      <p>
+        Other special cases include the processing of the core
+        functions <span class="codefrag">from-parent()</span> and
+        <span class="codefrag">from-nearest-specified-value()</span>
+        when these function calls are assigned to a shorthand
+        property, or used with a shorthand property name as an
+        argument.  In these cases, the function call must be the sole
+        component of the expression.  The pseudo-element classes <span
+        class="codefrag">FromParent</span> and <span
+        class="codefrag">FromNearestSpecified</span> are generated in
+        these circumstances so that an exception will be thrown if
+        they are involved in expression evaluation with other
+        components. (See Rec. Section 5.10.4 Property Value
+        Functions.)
+      </p>
+      <p>
+        The experimental code is a simple extension of the existing
+        parser code, which itself borrowed heavily from James
+        Clark's XT processor.
+      </p>
+      
+    </div>
+    <table summary="footer" cellspacing="0" cellpadding="0" width="100%" height="20" border="0">
+        <tr>
+          <td colspan="2" height="1" bgcolor="#4C6C8F"><img height="1"
+          width="1" alt="" src="../../../skin/images/spacer.gif"><a
+          href="../../../skin/images/label.gif"></a><a
+          href="../../../skin/images/page.gif"></a><a
+          href="../../../skin/images/chapter.gif"></a><a
+          href="../../../skin/images/chapter_open.gif"></a><a
+          href="../../../skin/images/current.gif"></a><a
+          href="../../..//favicon.ico"></a></td>
+        </tr>
+        <tr>
+          <td colspan="2" bgcolor="#CFDCED" class="copyright"
+          align="center"><font size="2" face="Arial, Helvetica,
+          Sans-Serif">Copyright &copy; 1999-2002&nbsp;The Apache
+          Software Foundation. All rights reserved.<script
+          type="text/javascript" language="JavaScript"><!--
+          document.write(" - "+"Last Published: " +
+          document.lastModified); // --></script></font></td>
+        </tr>
+        <tr>
+          <td align="left" bgcolor="#CFDCED" class="logos"></td><td
+          align="right" bgcolor="#CFDCED" class="logos"></td>
+        </tr>
+    </table>
+  </body>
+</html>

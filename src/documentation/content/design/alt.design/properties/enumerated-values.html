@@ -1,0 +1,325 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <title>Enumerated Data Values</title>
+    <style type= "text/css" >
+      body {
+      font-family: Verdana, Helvetica, sans-serif;
+      }
+
+      .note { border: solid 1px #7099C5; background-color: #f0f0ff; }
+      .note .label { background-color: #7099C5; color: #ffffff; }
+      .content {
+      padding: 5px 5px 5px 10px;
+      font : Verdana, Helvetica, sans-serif;  font-size : 90%;
+      }
+    </style>
+  </head>
+  <body marginheight="0" marginwidth="0" topmargin="0" leftmargin="0" text="#000000" bgcolor="#FFFFFF">
+    <div class="content">
+      <h1>Enumerated Data Values</h1>
+      <ul class="minitoc">
+        <li>
+          <a href="#N1000C">Enumerated Data Values</a>
+          <ul class="minitoc">
+            <li>
+              <a href="#N10020">Array representation</a>
+            </li>
+            <li>
+              <a href="#N1005C">HashMap representation</a>
+            </li>
+            <li>
+              <a href="#N1009D">
+                Factoring Out Common Enumeration Values
+              </a>
+            </li>
+            <li>
+              <a href="#N100DD">Mapped Numeric Values</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      
+      <a name="N1000C"></a>
+      <h3>Enumerated Data Values</h3>
+      <p>
+        Property classes which allow enumerated data types must encode
+        integer constants representing the enumeration tokens, and
+        must provide a way of translating between the tokens and the
+        integers, and <em>vice versa</em>.  Depending on the number of
+        tokens in an enumeration set, the mapping from token to
+        integer is maintained in an array or a <span
+        class="codefrag">HashMap</span>.  The switch-over point from
+        array to <span class="codefrag">HashMap</span> was determined
+        by some highly implementation-dependent testing to be in the
+        region of four to five elements.
+      </p>
+      <p>
+        Many properties share common sets of enumeration tokens,
+        e.g. those which allow color values, and those applying to
+        borders and padding.  A special case of enumerated value is
+        the mapped numeric enumeration, in which a token maps to a
+        Numeric value.  These situations are discussed below.
+      </p>
+      <a name="N10020"></a>
+      <h4>Array representation</h4>
+      <p>
+        
+        <a href= "javascript:parent.displayCode(
+        'Direction.html#DirectionClass' )" ><span
+        class="codefrag">org.apache.fop.fo.properties.Direction</span></a>
+        is an example of a class which supports an enumerated value
+        with a small set of tokens.  The <a href=
+        "javascript:parent.displayCode( 'Direction.html#dataTypes' )"
+        ><span class="codefrag">dataTypes</span></a> field contains
+        the <a href= "javascript:parent.displayCode(
+        'Property.html#NOTYPE' )" ><span class="codefrag">ENUM</span>
+        data type constant, defined in <span
+        class="codefrag">Property</span></a>.  The enumeration integer
+        constants are defined as <span class="codefrag">public static
+        final int</span> values, <a href=
+        "javascript:parent.displayCode( 'Direction.html#LTR') "><span
+        class="codefrag' )" >LTR</span> and <span
+        class="codefrag">RTL</span></a>.  Associating enumeration
+        tokens with these integer constants occurs in the array <a
+        href= "javascript:parent.displayCode( 'Direction.html#rwEnums'
+        )" ><span class="codefrag">String[] rwEnums</span></a>, which
+        is initialized with the token strings.  By convention, zero is
+        never used to represent a valid enumeration constant, anywhere
+        in this code.  It is, of course, critical that synchronization
+        between <span class="codefrag">rwEnums</span> and the
+        enumeration constants be maintained.
+      </p>
+      <p>
+        The publicly accessible mapping from enumeration token to
+        enumeration constant is achieved through the method <a href=
+        "javascript:parent.displayCode( 'Direction.html#getEnumIndex'
+        )" ><span class="codefrag">int
+        getEnumIndex(String)</span></a>.  The corresponding mapping
+        from enumeration constant to enumeration token is achieved
+        through the method <a href= "javascript:parent.displayCode(
+        'Direction.html#getEnumText' )" ><span class="codefrag">String
+        getEnumText(int)</span></a>.
+      </p>
+      <a name="N1005C"></a>
+      <h4>HashMap representation</h4>
+      <p>
+        
+        <a href= "javascript:parent.displayCode(
+        'RenderingIntent.html#RenderingIntentClass' )" ><span
+        class="codefrag"
+        >org.apache.fop.fo.properties.RenderingIntent</span ></a> is
+        an example of a class which supports an enumerated value with
+        a larger set of tokens.  The <a href=
+        "javascript:parent.displayCode(
+        'RenderingIntent.html#dataTypes' )" ><span
+        class="codefrag">dataTypes</span></a> field contains the <a
+        href= "javascript:parent.displayCode( 'Property.html#NOTYPE'
+        )" ><span class="codefrag">ENUM</span> data type constant,
+        defined in <span class="codefrag">Property</span></a>.
+        Enumeration integer constants are defined as <a href=
+        "javascript:parent.displayCode(
+        'RenderingIntent.html#PERCEPTUAL' )" ><span
+        class="codefrag">public static final int</span></a> values.
+        Zero is never used to represent a valid enumeration constant.
+        The enumeration tokens are stored in the array <a href=
+        "javascript:parent.displayCode( 'RenderingIntent.html#rwEnums'
+        )" ><span class="codefrag">String[] rwEnums</span></a>, which
+        is initialized with the token strings.  Association of
+        enumeration tokens with the integer constants occurs in the
+        <span class="codefrag">HashMap</span> <a href=
+        "javascript:parent.displayCode(
+        'RenderingIntent.html#rwEnumHash"><span class="codefrag' )" >
+        rwEnumHash</span></a>, which is initialized from the token
+        array in a <span class="codefrag">static {}</span>
+        initializer.  It is, of course, critical that synchronization
+        between <span class="codefrag">rwEnums</span> and the
+        enumeration constants be maintained.
+      </p>
+      <p>
+        The publicly accessible mapping from enumeration token to
+        enumeration constant is achieved through the method <a href=
+        "javascript:parent.displayCode(
+        'RenderingIntent.html#getEnumIndex' )" ><span
+        class="codefrag">int getEnumIndex(String)</span></a>.  The
+        corresponding mapping from enumeration constant to enumeration
+        token is achieved through the method <a href=
+        "javascript:parent.displayCode(
+        'RenderingIntent.html#getEnumText' )" ><span
+        class="codefrag">String getEnumText(int)</span></a>.
+      </p>
+      <a name="N1009D"></a>
+      <h4 id="common-enum-values">
+        Factoring Out Common Enumeration Values
+      </h4>
+      <p>
+        When a number of properties support a common enumerated value,
+        that value and its associated access methods may be factored
+        out to a new class, which each of the properties then extends.
+        An example of such a common super-class is <a href=
+        "javascript:parent.displayCode(
+        'BorderCommonStyle.html#BorderCommonStyleClass' )" ><span
+        class="codefrag">BorderCommonStyle</span></a>.  Like a
+        property with a normal HashMap representation of an enumerated
+        value, BorderCommonStyle defines <a href=
+        "javascript:parent.displayCode(
+        'BorderCommonStyle.html#HIDDEN' )" ><span
+        class="codefrag">public static final int</span></a>
+        enumeration integer constants.  Similarly, the enumeration
+        tokens are stored in the array <a href=
+        "javascript:parent.displayCode(
+        'BorderCommonStyle.html#rwEnums' )" ><span
+        class="codefrag">String[] rwEnums</span></a>, and the
+        association of enumeration tokens with the integer constants
+        occurs in the <span class="codefrag">HashMap</span> <a href=
+        "javascript:parent.displayCode(
+        'BorderCommonStyle.html#rwEnumHash' )" ><span
+        class="codefrag"> rwEnumHash</span></a>, initialized in a
+        <span class="codefrag">static {}</span> initializer.  The
+        mapping methods <a href= "javascript:parent.displayCode(
+        'BorderCommonStyle.html#getEnumIndex' )" ><span
+        class="codefrag">int getEnumIndex(String)</span></a> and <a
+        href= "javascript:parent.displayCode(
+        'BorderCommonStyle.html#getEnumText' )" ><span
+        class="codefrag">String getEnumText(int)</span></a> are also
+        present.
+      </p>
+      <p>
+        Notice, however, that the class has none of the static data
+        constants described in the discussion of <a
+        href="simple-properties.html">simple properties</a>.  These
+        values are defined in the individual sub-classes of this
+        class, e.g. <a href= "javascript:parent.displayCode(
+        'BorderLeftStyle.html#BorderLeftStyleClass' )" ><span
+        class="codefrag">BorderLeftStyle</span></a>.  None of the
+        above fields or methods occur, and <span
+        class="codefrag">BorderLeftStyle</span> is left looking like
+        an example of a simple property.  The enumeration mapping
+        methods are, however, available through the super-class <span
+        class="codefrag">BorderCommonStyle</span>.
+      </p>
+      <a name="N100DD"></a>
+      <h4>Mapped Numeric Values</h4>
+      <p>
+        In "normal" enumerated values, the token is, effectively,
+        passed directly into the layout operation of the flow object
+        to which the property is applied.  Some enumerated values,
+        however, generate a <span class="codefrag">Numeric</span>
+        result.  Their resolution involves mapping the token to the
+        indicated <span class="codefrag">Numeric</span> value.
+      </p>
+      <p>
+        An example is the <a href= "javascript:parent.displayCode(
+        'BorderCommonWidth.html#BorderCommonWidthClass' )" ><span
+        class="codefrag">BorderCommonWidth</span></a> property.  This,
+        like the example of <a href="#common-enum-values"><span
+        class="codefrag">BorderCommonStyle</span></a> above, also
+        represents common enumerated values which have been factored
+        out to form a super-class for particular properties.  <span
+        class="codefrag">BorderCommonWidth</span>, therefore, also
+        defines <a href= "javascript:parent.displayCode(
+        'BorderCommonWidth.html#THIN' )" ><span
+        class="codefrag">enumeration constant values</span></a> and an
+        array of tokens.  In this case, there is no <span
+        class="codefrag">HashMap</span>, because of the limited number
+        of tokens, but the mapping methods <a href=
+        "javascript:parent.displayCode(
+        'BorderCommonWidth.html#getEnumIndex' )" ><span
+        class="codefrag">int getEnumIndex(String)</span></a> and <a
+        href= "javascript:parent.displayCode(
+        'BorderCommonWidth.html#getEnumText' )" ><span
+        class="codefrag">String getEnumText(int)</span></a> are
+        present.
+      </p>
+      <p>
+        The added element in this property is the array <a href=
+        "javascript:parent.displayCode(
+        'BorderCommonWidth.html#mappedPoints' )" ><span
+        class="codefrag">double[] mappedPoints</span></a>.  The
+        entries in this array must by maintained in syncronization
+        with the <a href= "javascript:parent.displayCode(
+        'BorderCommonWidth.html#rwEnums' )" ><span
+        class="codefrag">String[] rwEnums</span></a> array of tokens
+        and the set of <a href= "javascript:parent.displayCode(
+        'BorderCommonWidth.html#THIN' )" >enumeration constants</a>.
+        The mapping from token to Numeric value is achieved by the <a
+        href= "javascript:parent.displayCode(
+        'BorderCommonWidth.html#getMappedLength' )" ><span
+        class="codefrag">Numeric getMappedLength(FONode, int,
+        int)</span></a> method.
+      </p>
+      <p>
+        
+        <a href= "javascript:parent.displayCode(
+        'BorderLeftWidth.html#BorderLeftWidthClass' )" ><span
+        class="codefrag">BorderLeftWidth</span></a> extends <a href=
+        "javascript:parent.displayCode( 'BorderCommonWidth.html' )"
+        ><span class="codefrag">BorderCommonWidth</span></a>.  It
+        includes the basic static data, like <a
+        href="simple-properties.html">simple properties</a>, and, in
+        this case, the <a href= "javascript:parent.displayCode(
+        'BorderLeftWidth.html#getInitialValue' )" ><span
+        class="codefrag">PropertyValue getInitialValue(int)</span></a>
+        method to derive the initial value.
+      </p>
+      <a name="N10139"></a>
+      <h4>Deriving Mapped Numeric Values</h4>
+      <p>
+        As usual with property values, the usual method of deriving a
+        mapped numeric value is by calling the <a href=
+        "javascript:parent.displayCode(
+        '../PropertyConsts.html#getMappedNumeric' )" ><span
+        class="codefrag">Numeric getMappedNumeric(FONode, int,
+        int)</span></a> method in <a href=
+        "javascript:parent.displayCode(
+        '../PropertyConsts.html#pconsts' )" ><span
+        class="codefrag">pconsts</span></a>.  All properties which
+        support a mapped numeric value must have a <span
+        class="codefrag">Numeric getMappedNumeric(FONode, int)</span>
+        method, which will be called through its singleton instance,
+        stored in the <a href= "javascript:parent.displayCode(
+        'PropertyConsts.html#properties' )" ><span class= "codefrag"
+        >properties</span ></a> array, by the <span
+        class="codefrag">PropertyConsts</span> method.
+      </p>
+
+      <p>
+        <strong>Previous:</strong> <a href= "getInitialValue.html"
+                                  >getInitialValue()</a>
+      </p>
+      <!--
+      <p>
+        <strong>Next:</strong> <a href= "getInitialValue.html"
+                                  >getInitialValue()</a>
+      </p>
+-->
+      
+    </div>
+    <table summary="footer" cellspacing="0" cellpadding="0" width="100%" height="20" border="0">
+        <tr>
+          <td colspan="2" height="1" bgcolor="#4C6C8F"><img height="1"
+          width="1" alt="" src="../../../skin/images/spacer.gif"><a
+          href="../../../skin/images/label.gif"></a><a
+          href="../../../skin/images/page.gif"></a><a
+          href="../../../skin/images/chapter.gif"></a><a
+          href="../../../skin/images/chapter_open.gif"></a><a
+          href="../../../skin/images/current.gif"></a><a
+          href="../../..//favicon.ico"></a></td>
+        </tr>
+        <tr>
+          <td colspan="2" bgcolor="#CFDCED" class="copyright"
+          align="center"><font size="2" face="Arial, Helvetica,
+          Sans-Serif">Copyright &copy; 1999-2002&nbsp;The Apache
+          Software Foundation. All rights reserved.<script
+          type="text/javascript" language="JavaScript"><!--
+          document.write(" - "+"Last Published: " +
+          document.lastModified); // --></script></font></td>
+        </tr>
+        <tr>
+          <td align="left" bgcolor="#CFDCED" class="logos"></td><td
+          align="right" bgcolor="#CFDCED" class="logos"></td>
+        </tr>
+    </table>
+  </body>
+</html>

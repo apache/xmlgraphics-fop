@@ -1,0 +1,266 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <title>Simple &lt;property&gt; Classes</title>
+    <style type= "text/css" >
+      body {
+      font-family: Verdana, Helvetica, sans-serif;
+      }
+
+      .note { border: solid 1px #7099C5; background-color: #f0f0ff; }
+      .note .label { background-color: #7099C5; color: #ffffff; }
+      .content {
+      padding: 5px 5px 5px 10px;
+      font : Verdana, Helvetica, sans-serif;  font-size : 90%;
+      }
+    </style>
+  </head>
+  <body marginheight="0" marginwidth="0" topmargin="0" leftmargin="0" text="#000000" bgcolor="#FFFFFF">
+    <div class="content">
+      <h1>Simple &lt;property&gt; Classes</h1>
+      <p>
+        <font size="-2">by&nbsp;Peter B. West</font>
+      </p>
+      <ul class="minitoc">
+        <li>
+          <a href="#N10014">Introduction</a>
+        </li>
+        <li>
+          <a href="#N10026">Common data</a>
+        </li>
+        <li>
+          <a href="#N10075">Accessing &lt;property&gt; Data Constants</a>
+        </li>
+      </ul>
+      
+      <a name="N10014"></a>
+      <h3>Introduction</h3>
+      <p>
+        An <a href="classes-overview.html">overview of the properties
+        and classes</a> involved in handling properties has already
+        been given.  This discussion will go in detail into the way
+        data are represented within properties.  Iit is important to
+        keep in mind that the primary avenue of access to the data and
+        the methods of property classes is the <a href=
+        "javascript:parent.displayCode(
+        'PropertyConsts.html#PropertyConstsClass' )" ><span
+        class="codefrag">PropertyConsts</span></a> class and its
+        singleton object.
+      </p>
+      
+      <a name="N10026"></a>
+      <h3>Common data</h3>
+      <p>
+        
+        <a href= "javascript:parent.displayCode( 'Character.html' )" ><span
+        class="codefrag">org.apache.fop.fo.properties.Character</span></a>
+        is an example of a basic property class.  The data fields
+        common to all properties are:
+      </p>
+      <dl>
+        
+        <dt>
+          
+          <span class="codefrag">final int dataTypes</span>
+          
+        </dt>
+        
+        <dd>
+          This field defines the allowable data types which may be
+          assigned to the property.  The value is chosen from the data
+          type constants defined in <a href=
+          "javascript:parent.displayCode( 'Property.html#NOTYPE' )"
+          ><span
+          class="codefrag">org.apache.fop.fo.properties.Property</span></a>,
+          and may consist of more than one of those constants,
+          bit-ORed together.
+        </dd>
+        
+        <dt>
+          
+          <span class="codefrag">final int traitMapping</span>
+          
+        </dt>
+        
+        <dd>
+          This field defines the mapping of properties to traits in
+          the <span class="codefrag">Area tree</span>. The value is
+          chosen from the trait mapping constants defined in <a href=
+          "javascript:parent.displayCode( 'Property.html#NO_TRAIT' )"
+          ><span
+          class="codefrag">org.apache.fop.fo.properties.Property</span></a>,
+          and may consist of more than one of those constants,
+          bit-ORed together.
+        </dd>
+        
+        <dt>
+          
+          <span class="codefrag">final int initialValueType</span>
+          
+        </dt>
+        
+        <dd>
+          This field defines the data type of the initial value
+          assigned to the property.  The value is chosen from the
+          initial value type constants defined in <a href=
+          "javascript:parent.displayCode( 'Property.html#NOTYPE_IT' )"
+          ><span
+          class="codefrag">org.apache.fop.fo.properties.Property</span></a>.
+          In the simplest property classes, such as <span
+          class="codefrag">Character</span>, there is no defined
+          initial value type.
+        </dd>
+        
+        <dt>
+          
+          <span class="codefrag">final int inherited</span>
+          
+        </dt>
+        
+        <dd>
+          This field defines the kind of inheritance applicable to the
+          property.  The value is chosen from the inheritance
+          constants defined in <a href=
+          "javascript:parent.displayCode( 'Property.html#NO' )" ><span
+          class="codefrag">org.apache.fop.fo.properties.Property</span></a>.
+        </dd>
+        
+      </dl>
+      
+      <a name="N10075"></a>
+      <h3>Accessing &lt;property&gt; Data Constants</h3>
+      <p>
+        The constants above are generally accessed through the arrays
+        maintained in the <a href= "javascript:parent.displayCode(
+        'PropertyConsts.html#PropertyConstsClass' )" ><span
+        class="codefrag">PropertyConsts</span></a> singleton <a href=
+        "javascript:parent.displayCode( 'PropertyConsts.html#pconsts'
+        )" ><span class="codefrag">pconsts</span></a>.  The first
+        invocation of the method <a href=
+        "javascript:parent.displayCode(
+        'PropertyConsts.html#setupProperty' )" ><span
+        class="codefrag">setupProperty</span></a> on the property
+        generates a <span class="codefrag">Class</span> instance for
+        the class, and stores it in the array <a href=
+        "javascript:parent.displayCode( 'PropertyConsts.html#classes'
+        )" ><span class="codefrag">classes</span></a>.  This <span
+        class="codefrag">Class</span> object is used, in turn, to
+        instantiate the singleton instance of the class, which is
+        stored in the <a href= "javascript:parent.displayCode(
+        'PropertyConsts.html#properties' )" ><span
+        class="codefrag">Property[] properties</span></a> array of <a
+        href= "javascript:parent.displayCode(
+        '../PropertyConsts.html#pconsts' )" ><span
+        class="codefrag">pconsts</span></a>.
+      </p>
+      <p>
+        
+        <em>Reflection</em> methods are then used, via the same <span
+        class="codefrag">Class</span> instance, to extract and store
+        the static data fields.  These arrays and associated access
+        methods are:
+      </p>
+      <dl>
+        
+        <dt>
+          
+          <a href= "javascript:parent.displayCode(
+          'PropertyConsts.html#datatypes' )" ><span
+          class="codefrag">int[] datatypes</span></a>
+          
+        </dt>
+        
+        <dd>
+          
+          <a href= "javascript:parent.displayCode(
+          'PropertyConsts.html#getDataTypes' )" ><span
+          class="codefrag">int getDataTypes(int)</span></a>
+          
+        </dd>
+        
+        <dt>
+          
+          <a href= "javascript:parent.displayCode(
+          'PropertyConsts.html#traitMappings' )" ><span
+          class="codefrag">int[] traitMappings</span></a>
+          
+        </dt>
+        
+        <dd>
+          
+          <em>No access method yet defined.</em>
+          
+        </dd>
+        
+        <dt>
+          
+          <a href= "javascript:parent.displayCode(
+          'PropertyConsts.html#initialValueTypes' )" ><span
+          class="codefrag">int[] initialValueTypes</span></a>
+          
+        </dt>
+        
+        <dd>
+          
+          <a href= "javascript:parent.displayCode(
+          'PropertyConsts.html#getInitialValueType' )" ><span
+          class="codefrag">int getInitialValueType(int)</span></a>
+          
+        </dd>
+        
+        <dt>
+          
+          <a href= "javascript:parent.displayCode(
+          'PropertyConsts.html#inherited' )" ><span
+          class="codefrag">int[] inherited</span></a>
+          
+        </dt>
+        
+        <dd>
+          
+          <a href= "javascript:parent.displayCode(
+          'PropertyConsts.html#inheritance' )" ><span
+          class="codefrag">int inheritance(int)</span></a>
+          
+        </dd>
+        
+      </dl>
+
+      <p>
+        <strong>Previous:</strong> <a href = "PropertyConsts-class.html"
+        >PropertyConsts class</a>
+      </p>
+      <p>
+        <strong>Next:</strong> <a href= "getInitialValue.html"
+                                  >getInitialValue()</a>
+      </p>
+      
+    </div>
+    <table summary="footer" cellspacing="0" cellpadding="0" width="100%" height="20" border="0">
+        <tr>
+          <td colspan="2" height="1" bgcolor="#4C6C8F"><img height="1"
+          width="1" alt="" src="../../../skin/images/spacer.gif"><a
+          href="../../../skin/images/label.gif"></a><a
+          href="../../../skin/images/page.gif"></a><a
+          href="../../../skin/images/chapter.gif"></a><a
+          href="../../../skin/images/chapter_open.gif"></a><a
+          href="../../../skin/images/current.gif"></a><a
+          href="../../..//favicon.ico"></a></td>
+        </tr>
+        <tr>
+          <td colspan="2" bgcolor="#CFDCED" class="copyright"
+          align="center"><font size="2" face="Arial, Helvetica,
+          Sans-Serif">Copyright &copy; 1999-2002&nbsp;The Apache
+          Software Foundation. All rights reserved.<script
+          type="text/javascript" language="JavaScript"><!--
+          document.write(" - "+"Last Published: " +
+          document.lastModified); // --></script></font></td>
+        </tr>
+        <tr>
+          <td align="left" bgcolor="#CFDCED" class="logos"></td><td
+          align="right" bgcolor="#CFDCED" class="logos"></td>
+        </tr>
+    </table>
+  </body>
+</html>
