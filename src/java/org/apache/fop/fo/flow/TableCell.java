@@ -159,6 +159,8 @@ public class TableCell extends FObj {
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
         doSetup();    // init some basic property values
+
+        getFOTreeControl().getFOInputHandler().startCell(this);
     }
 
     /**
@@ -386,4 +388,7 @@ public class TableCell extends FObj {
         fotv.serveTableCell(this);
     }
 
+    protected void end() {
+        getFOTreeControl().getFOInputHandler().endCell(this);
+    }
 }

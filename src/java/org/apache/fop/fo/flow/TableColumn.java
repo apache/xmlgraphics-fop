@@ -50,7 +50,11 @@
  */
 package org.apache.fop.fo.flow;
 
+// XML
+import org.xml.sax.Attributes;
+
 // FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
@@ -168,5 +172,20 @@ public class TableColumn extends FObj {
         fotv.serveTableColumn(this);
     }
 
+    /**
+     * Overriden from FObj.
+     * @param attlist Collection of attributes passed to us from the parser.
+     * @throws FOPException for FO errors
+     */
+    public void handleAttrs(Attributes attlist) throws FOPException {
+        super.handleAttrs(attlist);
+        doSetup();    // init some basic property values
+
+        getFOTreeControl().getFOInputHandler().startColumn(this);
+    }
+
+    protected void end() {
+        getFOTreeControl().getFOInputHandler().endColumn(this);
+    }
 }
 
