@@ -161,6 +161,10 @@ public class InstreamForeignObject extends FObj {
 
         Point2D csize = new Point2D.Float(cwidth == -1 ? -1 : cwidth / 1000f, cheight == -1 ? -1 : cheight / 1000f);
         Point2D size = child.getDimension(csize);
+        if(size == null) {
+            // error
+            return null;
+        }
         if(cwidth == -1) {
             cwidth = (int)size.getX() * 1000;
         }
