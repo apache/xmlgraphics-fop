@@ -42,6 +42,7 @@ public class Wrapper extends FObjMixed {
 
     protected void addCharacters(char data[], int start, int length) {
         FOText ft = new FOText(data, start, length, this);
+        ft.setLogger(log);
         children.addElement(ft);
     }
 

@@ -96,6 +96,7 @@ public class Inline extends FObjMixed {
 
     protected void addCharacters(char data[], int start, int length) {
         FOText ft = new FOText(data, start, length, this);
+        ft.setLogger(log);
         ft.setUnderlined(underlined);
         ft.setOverlined(overlined);
         ft.setLineThrough(lineThrough);
