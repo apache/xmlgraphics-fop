@@ -29,21 +29,7 @@ inactive??
   <todo>
    <actions priority="high">
     <action context="code" dev="open">
-      sort out page sequence details
-    </action>
-    <action context="code" dev="open">
-      complete resolving id areas
-    </action>
-
-    <action context="code" dev="open">
-      Add id areas to page when area added.
-      When the layout managers add an area to the page it can also add the id
-      information. 
-    </action>
-    <action context="code" dev="open">
-      Resolve id references on other pages, extensions.
-      When an id is added to a page this will allow id references to be
-      resolved.
+      Sort out page sequence details and page numbering.
     </action>
     <action context="code" dev="open">
       Add markers to page when areas added.
@@ -62,7 +48,7 @@ inactive??
       resolved then we need to be able to save the page contents to
       disk to save memory
     </action>
-    <action context="code" dev="open">
+    <action context="code" dev="KLL">
       Implement table layout.
       The table layout will use the same technique as the block layout. It
       will locate suitable breaks between rows or inside rows until table
@@ -77,15 +63,6 @@ inactive??
     <action context="code" dev="open">
       Implemented spacing between blocks and the adjustment to
       actual height when adding areas.
-    </action>
-    <action context="code" dev="open">
-      Get bookmark extension working.
-      Make sure the extension id references are resolved. Once the data is
-      fully resolved then implement a way for the pdf renderer to add the
-      bookmarks. See branch for code how to add bookmarks. 
-    </action>
-    <action context="code" dev="open">
-      add the pdf side part of bookmark extension
     </action>
 
    </actions>
@@ -116,6 +93,32 @@ inactive??
 
   <changes>
    <release version="?" date="2002">
+    <action context="code" dev="KLL" type="update">
+      Implemented link part of basic link. Internal desitnation
+      is resolved. The link is a trait on the inline parent.
+    </action>
+    <action context="code" dev="KLL" type="update">
+      Got bookmark extension working.
+      Make sure the extension id references are resolved. Once the data is
+      fully resolved then implement a way for the pdf renderer to add the
+      bookmarks. See branch for code how to add bookmarks.
+    </action>
+    <action context="code" dev="KLL" type="update">
+      add the pdf side part of bookmark extension
+    </action>
+    <action context="code" dev="KLL" type="update">
+      complete resolving id areas
+    </action>
+    <action context="code" dev="KLL" type="update">
+      Add id areas to page when area added.
+      When the layout managers add an area to the page it can also add the id
+      information. 
+    </action>
+    <action context="code" dev="KLL" type="update">
+      Resolve id references on other pages, extensions.
+      When an id is added to a page this will allow id references to be
+      resolved.
+    </action>
     <action context="code" dev="KLL" type="update">
       Fixed a bug in the TTFReader where it tried to read
       values for the end character. Handles unsupported
