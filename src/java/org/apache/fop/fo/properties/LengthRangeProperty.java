@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
     private static final int OPTSET = 2;
     private static final int MAXSET = 4;
     private int bfSet = 0;    // bit field
-    private boolean bChecked = false;
+    private boolean consistent = false;
 
     /**
      * Inner class for a Maker for LengthProperty objects
@@ -112,6 +112,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
         if (!bIsDefault) {
             bfSet |= MINSET;
         }
+        consistent = false;
     }
 
 
@@ -126,6 +127,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
         if (!bIsDefault) {
             bfSet |= MAXSET;
         }
+        consistent = false;
     }
 
 
@@ -140,63 +142,59 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
         if (!bIsDefault) {
             bfSet |= OPTSET;
         }
+        consistent = false;
     }
-
+    
     // Minimum is prioritaire, if explicit
     private void checkConsistency() {
-        if (bChecked) {
+        if (consistent) {
             return;
         }
         // Make sure max >= min
         // Must also control if have any allowed enum values!
 
-        /**
-         * *******************
-         * if (minimum.mvalue() > maximum.mvalue()) {
-         * if ((bfSet&MINSET)!=0) {
-         * // if minimum is explicit, force max to min
-         * if ((bfSet&MAXSET)!=0) {
-         * // Warning: min>max, resetting max to min
-         * log.error("forcing max to min in LengthRange");
-         * }
-         * maximum = minimum ;
-         * }
-         * else {
-         * minimum = maximum; // minimum was default value
-         * }
-         * }
-         * // Now make sure opt <= max and opt >= min
-         * if (optimum.mvalue() > maximum.mvalue()) {
-         * if ((bfSet&OPTSET)!=0) {
-         * if ((bfSet&MAXSET)!=0) {
-         * // Warning: opt > max, resetting opt to max
-         * log.error("forcing opt to max in LengthRange");
-         * optimum = maximum ;
-         * }
-         * else {
-         * maximum = optimum; // maximum was default value
-         * }
-         * }
-         * else {
-         * // opt is default and max is explicit or default
-         * optimum = maximum ;
-         * }
-         * }
-         * else if (optimum.mvalue() < minimum.mvalue()) {
-         * if ((bfSet&MINSET)!=0) {
-         * // if minimum is explicit, force opt to min
-         * if ((bfSet&OPTSET)!=0) {
-         * log.error("forcing opt to min in LengthRange");
-         * }
-         * optimum = minimum ;
-         * }
-         * else {
-         * minimum = optimum; // minimum was default value
-         * }
-         * }
-         * *******$*******
-         */
-        bChecked = true;
+        if (!minimum.isAuto() && !maximum.isAuto() 
+                && minimum.getLength().getValue() > maximum.getLength().getValue()) {
+            if ((bfSet & MINSET) != 0) {
+                // if minimum is explicit, force max to min
+                if ((bfSet & MAXSET) != 0) {
+                    // Warning: min>max, resetting max to min
+                    log.error("forcing max to min in LengthRange");
+                }
+                maximum = minimum;
+            } else {
+                minimum = maximum; // minimum was default value
+            }
+        }
+        // Now make sure opt <= max and opt >= min
+        if (!optimum.isAuto() && !maximum.isAuto() 
+                && optimum.getLength().getValue() > maximum.getLength().getValue()) {
+            if ((bfSet & OPTSET) != 0) {
+                if ((bfSet & MAXSET) != 0) {
+                    // Warning: opt > max, resetting opt to max
+                    log.error("forcing opt to max in LengthRange");
+                    optimum = maximum;
+                } else {
+                    maximum = optimum; // maximum was default value
+                }
+            } else {
+                // opt is default and max is explicit or default
+                optimum = maximum;
+            }
+        } else if (!optimum.isAuto() && !minimum.isAuto() && 
+                optimum.getLength().getValue() < minimum.getLength().getValue()) {
+            if ((bfSet & MINSET) != 0) {
+                // if minimum is explicit, force opt to min
+                if ((bfSet & OPTSET) != 0) {
+                    log.error("forcing opt to min in LengthRange");
+                }
+                optimum = minimum;
+            } else {
+                minimum = optimum; // minimum was default value
+            }
+        }
+        
+        consistent = true;
     }
 
     /**
