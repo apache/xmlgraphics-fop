@@ -191,6 +191,13 @@ public class InstreamForeignObject extends FObj {
     }
 
     /**
+     * Return the Common Border, Padding, and Background Properties.
+     */
+    public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
+        return commonBorderPaddingBackground;
+    }
+
+    /**
      * Return the "line-height" property.
      */
     public Length getLineHeight() {

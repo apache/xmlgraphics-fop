@@ -30,9 +30,10 @@ import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Viewport;
 
 /**
- * LayoutManager for the fo:basic-link formatting object
+ * LayoutManager for the fo:instream-foreign-object formatting object
  */
 public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
+    
     private InstreamForeignObject fobj;
     
     /**
@@ -63,7 +64,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
         //int h = this.propertyList.get("height").getLength().mvalue();
 
         // use specified line-height then ignore dimension in height direction
-        boolean hasLH = false;//propertyList.get("line-height").getSpecifiedValue() != null;
+        boolean hasLH = false; //propertyList.get("line-height").getSpecifiedValue() != null;
 
         Length len;
 
@@ -175,16 +176,23 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
         fobj.childNodes = null;
         ForeignObject foreign = new ForeignObject(doc, ns);
 
-        Viewport areaCurrent = new Viewport(foreign);
-        areaCurrent.setIPD(ipd);
-        areaCurrent.setBPD(bpd);
-        areaCurrent.setContentPosition(placement);
-        areaCurrent.setClip(clip);
-        areaCurrent.setOffset(0);
+        Viewport vp = new Viewport(foreign);
+        vp.setIPD(ipd);
+        vp.setBPD(bpd);
+        vp.setContentPosition(placement);
+        vp.setClip(clip);
+        vp.setOffset(0);
 
-        return areaCurrent;
+        // Common Border, Padding, and Background Properties
+        TraitSetter.addBorders(vp, fobj.getCommonBorderPaddingBackground());
+        TraitSetter.addBackground(vp, fobj.getCommonBorderPaddingBackground());
+
+        return vp;
     }
     
+    /**
+     * @see org.apache.fop.layoutmgr.LeafNodeLayoutManager#addId()
+     */
     protected void addId() {
         addID(fobj.getId());
     }
