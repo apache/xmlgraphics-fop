@@ -78,6 +78,37 @@ public class PDFPage extends PDFObject {
     }
 
     /**
+     * create a /Page object
+     *
+     * @param number the object's number
+     * @param resources the /Resources object
+     * @param pagewidth the page's width in points
+     * @param pageheight the page's height in points
+     */
+    public PDFPage(int number, PDFResources resources,
+                   int pagewidth, int pageheight) {
+
+        /* generic creation of object */
+        super(number);
+
+        /* set fields using parameters */
+        this.resources = resources;
+        this.pagewidth = pagewidth;
+        this.pageheight = pageheight;
+
+        this.annotList = null;
+    }
+
+    /**
+     * set this page contents
+     * 
+     * @param contents the contents of the page
+     */
+    public void setContents(PDFStream contents) {
+        this.contents = contents;
+    }
+
+    /**
      * set this page's parent
      *
      * @param parent the /Pages object that is this page's parent

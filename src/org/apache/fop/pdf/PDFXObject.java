@@ -119,24 +119,6 @@ public class PDFXObject extends PDFObject {
     }
 
     byte[] toPDF() {
-        /*
-         * Not used any more
-         * String p = this.number + " " + this.generation + " obj\n";
-         * p = p + "<</Type /XObject\n";
-         * p = p + "/Subtype /Image\n";
-         * p = p + "/Name /Im"+Xnum+"\n";
-         * p = p + "/Width "+fopimage.getpixelwidth()+"\n";
-         * p = p + "/Height "+fopimage.getpixelheight()+"\n";
-         * p = p + "/BitsPerComponent 8\n";
-         * if (fopimage.getcolor())
-         * p = p + "/ColorSpace /DeviceRGB\n";
-         * else
-         * p = p + "/ColorSpace /DeviceGray\n";
-         * p = p + "/Filter /ASCIIHexDecode\n";
-         * p = p + "/Length ";
-         * return p;
-         */
         return null;
     }
-
 }

@@ -7,8 +7,9 @@
 
 package org.apache.fop.area;
 
-import java.util.ArrayList;
+import org.apache.fop.render.Renderer;
 
+import java.util.ArrayList;
 
 /**
  * Area tree for formatting objects.
@@ -32,8 +33,8 @@ public class AreaTree {
     // in different situations
     AreaTreeModel model;
 
-    public void createRenderPageModel(PageRenderListener listener) {
-
+    public RenderPagesModel createRenderPagesModel(Renderer rend) {
+        return new RenderPagesModel(rend);
     }
 
     public static StorePagesModel createStorePagesModel() {
@@ -44,7 +45,7 @@ public class AreaTree {
         model = m;
     }
 
-    public void startPageSequence(Area title) {
+    public void startPageSequence(Title title) {
         model.startPageSequence(title);
     }
 
@@ -54,7 +55,7 @@ public class AreaTree {
 
     // this is the model for the area tree object
     public static abstract class AreaTreeModel {
-        public abstract void startPageSequence(Area title);
+        public abstract void startPageSequence(Title title);
         public abstract void addPage(PageViewport page);
     }
 
@@ -67,7 +68,7 @@ public class AreaTree {
 
         public StorePagesModel() {}
 
-        public void startPageSequence(Area title) {
+        public void startPageSequence(Title title) {
             titles.add(title);
             if (pageSequence == null) {
                 pageSequence = new ArrayList();
@@ -99,18 +100,31 @@ public class AreaTree {
         }
     }
 
-    // this queues pages and will call the render listener
-    // when the page is ready to be rendered
-    // if the render supports out of order rendering
-    // then a ready page is rendered immediately
+    // this uses the store pages model to store the pages
+    // each page is either rendered if ready or prepared
+    // for later rendering
     public static class RenderPagesModel extends StorePagesModel {
-        public void startPageSequence(Area title) {}
-        public void addPage(PageViewport page) {}
-    }
+        Renderer renderer;
+        ArrayList prepared = new ArrayList();
 
-    public static abstract class PageRenderListener {
-        public abstract void renderPage(RenderPagesModel model,
-                                        int pageseq, int count);
+        public RenderPagesModel(Renderer rend) {
+            renderer = rend;
+        }
+
+        public void startPageSequence(Title title) {
+            super.startPageSequence(title);
+            renderer.startPageSequence(title);
+        }
+
+        public void addPage(PageViewport page) {
+            super.addPage(page);
+            // if page finished
+            //renderer.renderPage(page);
+            page.clear();
+            // else prepare
+            //renderer.preparePage(page);
+            prepared.add(page);
+        }
     }
 
 }
