@@ -42,7 +42,7 @@ public class PageViewport implements Resolvable, Cloneable {
     private Page page;
     private Rectangle2D viewArea;
     private boolean clip = false;
-    private String pageNumber = null;
+    private String pageNumberString = null;
 
     // list of id references and the rectangle on the page
     private Map idReferences = null;
@@ -100,16 +100,16 @@ public class PageViewport implements Resolvable, Cloneable {
      * Set the page number for this page.
      * @param num the string representing the page number
      */
-    public void setPageNumber(String num) {
-        pageNumber = num;
+    public void setPageNumberString(String num) {
+        pageNumberString = num;
     }
 
     /**
      * Get the page number of this page.
      * @return the string that represents this page
      */
-    public String getPageNumber() {
-        return pageNumber;
+    public String getPageNumberString() {
+        return pageNumberString;
     }
 
     /**
@@ -368,7 +368,7 @@ public class PageViewport implements Resolvable, Cloneable {
     public String toString() {
         StringBuffer sb = new StringBuffer(64);
         sb.append("PageViewport: page=");
-        sb.append(getPageNumber());
+        sb.append(getPageNumberString());
         return sb.toString();
     }
 }

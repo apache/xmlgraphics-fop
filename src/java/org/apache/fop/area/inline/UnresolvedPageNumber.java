@@ -65,7 +65,7 @@ public class UnresolvedPageNumber extends TextArea implements Resolvable {
         if (pageIDRef.equals(id) && pages != null) {
             resolved = true;
             PageViewport page = (PageViewport)pages.get(0);
-            text = page.getPageNumber();
+            text = page.getPageNumberString();
             /**@todo Update IPD ??? */
         }
     }

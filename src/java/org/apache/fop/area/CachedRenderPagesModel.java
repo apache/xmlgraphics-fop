@@ -83,7 +83,7 @@ public class CachedRenderPagesModel extends RenderPagesModel {
                     if (!p.isResolved()) {
                         String[] idrefs = p.getIDRefs();
                         for (int count = 0; count < idrefs.length; count++) {
-                            log.warn("Page " + p.getPageNumber() + 
+                            log.warn("Page " + p.getPageNumberString() + 
                                 ": Unresolved id reference \"" + idrefs[count] 
                                 + "\" found.");
                         }
