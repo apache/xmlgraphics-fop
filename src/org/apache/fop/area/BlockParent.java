@@ -38,4 +38,11 @@ public class BlockParent extends Area implements Serializable {
         return children;
     }
 
+    public void setBounds(Rectangle2D b) {
+        bounds = b;
+    }
+
+    public Rectangle2D getBounds() {
+        return bounds;
+    }
 }

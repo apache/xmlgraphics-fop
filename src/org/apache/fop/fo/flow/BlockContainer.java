@@ -14,9 +14,11 @@ import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.*;
-
+import org.apache.fop.layoutmgr.BlockContainerLayoutManager;
 
 import org.xml.sax.Attributes;
+
+import java.util.List;
 
 public class BlockContainer extends FObj {
 
@@ -40,6 +42,12 @@ public class BlockContainer extends FObj {
         super.handleAttrs(attlist);
         this.span = this.properties.get("span").getEnum();
         setupID();
+    }
+
+    public void addLayoutManager(List list) {
+        BlockContainerLayoutManager blm = new BlockContainerLayoutManager(this);
+        blm.setOverflow(properties.get("overflow").getEnum());
+        list.add(blm);
     }
 
     public void setup() {
@@ -75,11 +83,6 @@ public class BlockContainer extends FObj {
             this.backgroundColor =
                 this.properties.get("background-color").getColorType();
 
-            this.position = this.properties.get("position").getEnum();
-            this.top = this.properties.get("top").getLength().mvalue();
-            this.bottom = this.properties.get("bottom").getLength().mvalue();
-            this.left = this.properties.get("left").getLength().mvalue();
-            this.right = this.properties.get("right").getLength().mvalue();
             this.width = this.properties.get("width").getLength().mvalue();
             this.height = this.properties.get("height").getLength().mvalue();
             span = this.properties.get("span").getEnum();
@@ -99,3 +102,4 @@ public class BlockContainer extends FObj {
     }
 
 }
+

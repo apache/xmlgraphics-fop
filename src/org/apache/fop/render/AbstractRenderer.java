@@ -95,7 +95,8 @@ public abstract class AbstractRenderer extends AbstractLogEnabled implements Ren
             } else if (inline instanceof Word) {
                 str += ((Word) inline).getWord();
             } else if (inline instanceof InlineParent) {
-                str += convertToString(((InlineParent)inline).getChildAreas());
+                str += convertToString(
+                         ((InlineParent) inline).getChildAreas());
             } else {
                 str += " ";
             }
@@ -135,21 +136,21 @@ public abstract class AbstractRenderer extends AbstractLogEnabled implements Ren
     protected void renderRegionViewport(RegionViewport port) {
         if (port != null) {
             Rectangle2D view = port.getViewArea();
-        // The CTM will transform coordinates relative to
-        // this region-reference area into page coords, so
-        // set origin for the region to 0,0.
+            // The CTM will transform coordinates relative to
+            // this region-reference area into page coords, so
+            // set origin for the region to 0,0.
             currentBPPosition = 0; // (int) (view.getY() / 1000);
             currentIPPosition = 0; // (int) (view.getX() / 1000);
             currentBlockIPPosition = currentIPPosition;
 
             RegionReference region = port.getRegion();
-        startVParea(region.getCTM());
+            startVParea(region.getCTM());
             if (region.getRegionClass() == RegionReference.BODY) {
                 renderBodyRegion((BodyRegion) region);
             } else {
                 renderRegion(region);
             }
-        endVParea();
+            endVParea();
         }
     }
 
@@ -237,6 +238,32 @@ public abstract class AbstractRenderer extends AbstractLogEnabled implements Ren
         List children = block.getChildAreas();
         if (children == null) {
             // simply move position
+        } else if (block instanceof BlockViewport) {
+            renderBlockViewport((BlockViewport) block, children);
+        } else {
+            renderBlocks(children);
+        }
+    }
+
+    protected void renderBlockViewport(BlockViewport bv, List children) {
+        // clip and position viewport if necessary
+        if (bv.getPositioning() == Block.ABSOLUTE) {
+            // save positions
+            int saveIP = currentIPPosition;
+            int saveBP = currentBPPosition;
+
+            CTM ctm = bv.getCTM();
+            currentIPPosition = 0;
+            currentBPPosition = 0;
+
+            startVParea(ctm);
+            renderBlocks(children);
+            endVParea();
+
+            // clip if necessary
+
+            currentIPPosition = saveIP;
+            currentBPPosition = saveBP;
         } else {
             renderBlocks(children);
         }
@@ -314,7 +341,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled implements Ren
         int saveIP = currentBlockIPPosition;
         Iterator iter = ip.getChildAreas().iterator();
         while (iter.hasNext()) {
-            ((InlineArea)iter.next()).render(this);
+            ((InlineArea) iter.next()).render(this);
         }
         currentBlockIPPosition = saveIP + ip.getWidth();
     }
@@ -322,14 +349,14 @@ public abstract class AbstractRenderer extends AbstractLogEnabled implements Ren
     protected void renderBlocks(List blocks) {
         for (int count = 0; count < blocks.size(); count++) {
             Object obj = blocks.get(count);
-            if(obj instanceof Block) {
-                renderBlock((Block)obj);
+            if (obj instanceof Block) {
+                renderBlock((Block) obj);
             } else {
                 // a line area is rendered from the top left position
                 // of the line, each inline object is offset from there
                 LineArea line = (LineArea) obj;
-                currentBlockIPPosition = currentIPPosition
-                                         + line.getStartIndent();
+                currentBlockIPPosition =
+                  currentIPPosition + line.getStartIndent();
                 renderLineArea(line);
                 currentBPPosition += line.getHeight();
             }

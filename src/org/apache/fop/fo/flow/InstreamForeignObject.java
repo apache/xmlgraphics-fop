@@ -201,7 +201,7 @@ public class InstreamForeignObject extends FObj {
             if(overflow == Overflow.HIDDEN) {
                 clip = true;
             } else if(overflow == Overflow.ERROR_IF_OVERFLOW) {
-                getLogger().error("Instream foreign object overflows the viewport");
+                getLogger().error("Instream foreign object overflows the viewport: clipping");
                 clip = true;
             }
         }
