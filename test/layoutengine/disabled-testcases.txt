@@ -1,6 +1,7 @@
 breaks1.xml
 breaks2.xml
 normal-breaking2.xml
+normal-breaking3.xml
 table-column1.xml
 table-column2.xml
 table-row1.xml
