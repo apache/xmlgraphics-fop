@@ -120,7 +120,7 @@ public class Document implements FOTreeControl, FOTreeListener,
     public void foPageSequenceComplete (FOTreeEvent event) throws FOPException {
         PageSequence pageSeq = event.getPageSequence();
         areaTree.addBookmarksToAreaTree();
-        format(pageSeq, areaTree);
+        formatPageSequence(pageSeq, areaTree);
     }
 
     /**
@@ -187,7 +187,8 @@ public class Document implements FOTreeControl, FOTreeListener,
      * @param areaTree the area tree to format this page sequence into
      * @throws FOPException if there is an error formatting the contents
      */
-    public void format(PageSequence pageSeq, AreaTree areaTree) throws FOPException {
+    private void formatPageSequence(PageSequence pageSeq, AreaTree areaTree) 
+            throws FOPException {
         Title title = null;
         if (pageSeq.getTitleFO() != null) {
             title = getTitleArea(pageSeq.getTitleFO());
