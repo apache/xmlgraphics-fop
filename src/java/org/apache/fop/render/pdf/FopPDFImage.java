@@ -50,11 +50,11 @@
  */ 
 package org.apache.fop.render.pdf;
 
+import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFImage;
 import org.apache.fop.pdf.PDFFilter;
 import org.apache.fop.pdf.PDFICCStream;
 import org.apache.fop.pdf.PDFColor;
-import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.DCTFilter;
 import org.apache.fop.pdf.PDFColorSpace;
@@ -64,9 +64,9 @@ import org.apache.fop.image.JpegImage;
 import org.apache.fop.image.EPSImage;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
-import java.util.Map;
 
 /**
  * PDFImage implementation for the PDF renderer.
@@ -79,7 +79,6 @@ public class FopPDFImage implements PDFImage {
     private String maskRef;
     private String softMaskRef;
     private boolean isPS = false;
-    private Map filters;
     private String key;
 
     /**
@@ -105,7 +104,6 @@ public class FopPDFImage implements PDFImage {
      * @see org.apache.fop.pdf.PDFImage#setup(PDFDocument)
      */
     public void setup(PDFDocument doc) {
-        filters = doc.getFilterMap();
         if ("image/jpeg".equals(fopImage.getMimeType())) {
             pdfFilter = new DCTFilter();
             pdfFilter.setApplied(true);
@@ -114,9 +112,8 @@ public class FopPDFImage implements PDFImage {
             ICC_Profile prof = jpegimage.getICCProfile();
             PDFColorSpace pdfCS = toPDFColorSpace(jpegimage.getColorSpace());
             if (prof != null) {
-                pdfICCStream = doc.makePDFICCStream();
+                pdfICCStream = doc.getFactory().makePDFICCStream();
                 pdfICCStream.setColorSpace(prof, pdfCS);
-                pdfICCStream.addDefaultFilters(filters, PDFStream.CONTENT_FILTER);
             }
         }
     }
@@ -128,6 +125,13 @@ public class FopPDFImage implements PDFImage {
         return isPS;
     }
 
+    /**
+     * @see org.apache.fop.pdf.PDFImage#isDCT()
+     */
+    public boolean isDCT() {
+        return fopImage.getMimeType().equals("image/jpeg");
+    }
+    
     /**
      * @see org.apache.fop.pdf.PDFImage#getWidth()
      */
@@ -186,36 +190,22 @@ public class FopPDFImage implements PDFImage {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFImage#getDataStream()
+     * @see org.apache.fop.pdf.PDFImage#outputContents(OutputStream)
      */
-    public PDFStream getDataStream() throws IOException {
+    public void outputContents(OutputStream out) throws IOException {
         if (isPS) {
-            return getPSDataStream();
+            outputPostScriptContents(out);
         } else {
-            // delegate the stream work to PDFStream
-            PDFStream imgStream = new PDFStream(0);
-
-            imgStream.setData(fopImage.getBitmaps());
-
-            /*
-             * Added by Eric Dalquist
-             * If the DCT filter hasn't been added to the object we add it here
-             */
-            if (pdfFilter != null) {
-                imgStream.addFilter(pdfFilter);
-            }
-
-            imgStream.addDefaultFilters(filters, PDFStream.IMAGE_FILTER);
-            return imgStream;
+            out.write(fopImage.getBitmaps());
         }
     }
 
     /**
-     * Returns a PDFStream for an EPS image.
-     * @return PDFStream the newly creates PDFStream
+     * Serializes an EPS image to an OutputStream.
+     * @param out OutputStream to write to
      * @throws IOException in case of an I/O problem
      */
-    protected PDFStream getPSDataStream() throws IOException {
+    protected void outputPostScriptContents(OutputStream out) throws IOException {
         int length = 0;
         int i = 0;
         EPSImage epsImage = (EPSImage) fopImage;
@@ -224,7 +214,7 @@ public class FopPDFImage implements PDFImage {
         int bboxh = bbox[3] - bbox[1];
 
         // delegate the stream work to PDFStream
-        PDFStream imgStream = new PDFStream(0);
+        //PDFStream imgStream = new PDFStream(0);
 
         StringBuffer preamble = new StringBuffer();
         preamble.append("%%BeginDocument: " + epsImage.getDocName() + "\n");
@@ -250,26 +240,12 @@ public class FopPDFImage implements PDFImage {
         post.append("PreEPS_state restore\n");
         post.append("end % userdict\n");
 
-        byte[] preBytes = preamble.toString().getBytes();
-        byte[] postBytes = post.toString().getBytes();
-        byte[] epsBytes = ((EPSImage)fopImage).getEPSImage();
-        int epsLength = epsBytes.length;
-        byte[] imgData = new byte[preBytes.length 
-                                + postBytes.length 
-                                + epsLength];
-
-        System.arraycopy (preBytes, 0, imgData, 0, preBytes.length);
-        System.arraycopy (epsBytes, 0, imgData,
-                          preBytes.length, epsBytes.length);
-        System.arraycopy (postBytes, 0, imgData,
-                          preBytes.length + epsBytes.length,
-                          postBytes.length);
-
-
-        imgStream.setData(imgData);
-        imgStream.addDefaultFilters(filters, PDFStream.CONTENT_FILTER);
-
-        return imgStream;
+        //Write Preamble
+        out.write(PDFDocument.encode(preamble.toString()));
+        //Write EPS contents
+        out.write(((EPSImage)fopImage).getEPSImage());
+        //Writing trailer
+        out.write(PDFDocument.encode(post.toString()));
     }
 
     /**
@@ -303,5 +279,19 @@ public class FopPDFImage implements PDFImage {
         }
         return pdfCS;
     }
+    
+    /**
+     * @see org.apache.fop.pdf.PDFImage#getFilterHint()
+     */
+    public String getFilterHint() {
+        if (isPS()) {
+            return PDFFilterList.CONTENT_FILTER;
+        } else if (fopImage.getMimeType().equals("image/jpeg")) {
+            return PDFFilterList.JPEG_FILTER;
+        } else {
+            return PDFFilterList.IMAGE_FILTER;
+        }
+    }
+
 }
 
