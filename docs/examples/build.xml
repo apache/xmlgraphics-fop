@@ -1,126 +1,126 @@
 <?xml version="1.0"?>
-
 <!-- =========================================================================== -->
-
-<project default="creating new test pdf files" basedir=".">
-
-  <!-- =================================================================== -->
-  <!-- Initialization target                                               -->
-  <!-- =================================================================== -->
-  <target name="init">
-    <tstamp/>
-    <mkdir dir="tests"/>
-    <property name="referenceDir" value="reference"/>
-    <property name="testDir" value="tests"/>
-    <property name="foDir" value="fo"/>
-    <taskdef name="fop" classname="org.apache.fop.tools.anttasks.Fop"/>
-    <taskdef name="compare" classname="org.apache.fop.tools.anttasks.Compare"/>
-
-
-  </target>
-
-  <!-- =================================================================== -->
-  <!-- Help on usage                                                       -->
-  <!-- =================================================================== -->
-  <target name="usage">
-    <echo message=""/>
-    <echo message=""/>
-    <echo message="USAGE of runtests"/>
-    <echo message="-------------------------------------------------------------"/>
-    <echo message=""/>
-    <echo message=" available targets are:"/>
-    <echo message=""/>
-    <echo message="   compare  --> generates new pdf test files and compares them to reference files (default)"/>
-    <echo message="   reference --> generates new reference pdf files"/>
-    <echo message=" See the comments inside the build.xml file for more details."/>
-    <echo message="-------------------------------------------------------------"/>
-    <echo message=""/>
-    <echo message=""/>
-  </target>
-
-  <!-- =================================================================== -->
-  <!-- Produces new test pdf files                                         -->
-  <!-- =================================================================== -->
-  <target name="creating new test pdf files" depends="init">
-    <fop fofile="${foDir}/normal.fo" pdffile="${testDir}/normal.pdf"/>
-    <fop fofile="${foDir}/table.fo"  pdffile="${testDir}/table.pdf"/>
-    <fop fofile="${foDir}/list.fo"   pdffile="${testDir}/list.pdf"/>
-    <fop fofile="${foDir}/link.fo"   pdffile="${testDir}/link.pdf"/> 
-    <fop fofile="${foDir}/newlinktest.fo" pdffile="${testDir}/newlinktest.pdf"/>
-    <fop fofile="${foDir}/border.fo"   pdffile="${testDir}/border.pdf"/> 
-    <fop fofile="${foDir}/extensive.fo"   pdffile="${testDir}/extensive.pdf"/> 
-    <fop fofile="${foDir}/images.fo"   pdffile="${testDir}/images.pdf"/> 
-    <fop fofile="${foDir}/readme.fo"   pdffile="${testDir}/readme.pdf"/> 
-    <fop fofile="${foDir}/fonts.fo"   pdffile="${testDir}/fonts.pdf"/> 
-    <fop fofile="${foDir}/leader.fo"   pdffile="${testDir}/leader.pdf"/> 
-    <fop fofile="${foDir}/textdeko.fo"   pdffile="${testDir}/textdeko.pdf"/> 
-    <fop fofile="${foDir}/inhprop.fo" pdffile="${testDir}/inhprop.pdf"/>
-    <fop fofile="${foDir}/normalex.fo" pdffile="${testDir}/normalex.pdf"/>
-    <fop fofile="${foDir}/simple.fo" pdffile="${testDir}/simple.pdf"/>
-    <!-- <fop fofile="${foDir}/hyphen.fo" pdffile="${testDir}/hyphen.pdf"/> -->
-    <fop fofile="${foDir}/character.fo" pdffile="${testDir}/character.pdf"/>
-    <fop fofile="${foDir}/pdfoutline.fo" pdffile="${testDir}/pdfoutline.pdf"/>
-    <fop fofile="${foDir}/corresprop.fo" pdffile="${testDir}/corresprop.pdf"/>
-    <fop fofile="${foDir}/bordershorthand.fo" pdffile="${testDir}/bordershorthand.pdf"/>
-  </target>
-
-
-  <target name="image" depends="init">
-    <fop fofile="${foDir}/images.fo"   pdffile="${testDir}/images.pdf"/> 
-  </target>
-
-  <!-- =================================================================== -->
-  <!-- Compares new test pdf files to reference pdf files                  -->
-  <!-- =================================================================== -->
-  <target name="compare" depends ="creating new test pdf files">
-    <compare referenceDirectory  = "${referenceDir}" 
-             testDirectory       = "${testDir}" 
-             filenames           = "normal.pdf,table.pdf,list.pdf,link.pdf,border.pdf,images.pdf,extensive.pdf,readme.pdf,fonts.pdf,list2.pdf"/>
-  </target>
-
-  <!-- =================================================================== -->
-  <!-- Produces new reference pdf files                                         -->
-  <!-- =================================================================== -->
-  <target name="reference">
-    <fop fofile="${foDir}/normal.fo" pdffile="${referenceDir}/normal.pdf"/>
-    <fop fofile="${foDir}/table.fo"  pdffile="${referenceDir}/table.pdf"/>
-    <fop fofile="${foDir}/list.fo"   pdffile="${referenceDir}/list.pdf"/>
-    <fop fofile="${foDir}/link.fo"   pdffile="${referenceDir}/link.pdf"/>
-    <fop fofile="${foDir}/newlinktest.fo"   pdffile="${referenceDir}/newlinktest.pdf"/>
-    <fop fofile="${foDir}/border.fo"   pdffile="${referenceDir}/border.pdf"/>
-    <fop fofile="${foDir}/extensive.fo"   pdffile="${referenceDir}/extensive.pdf"/>
-    <fop fofile="${foDir}/images.fo"   pdffile="${referenceDir}/images.pdf"/>
-    <fop fofile="${foDir}/readme.fo"   pdffile="${referenceDir}/readme.pdf"/>
-    <fop fofile="${foDir}/fonts.fo"   pdffile="${referenceDir}/fonts.pdf"/>     
-    <fop fofile="${foDir}/leader.fo"   pdffile="${referenceDir}/leader.pdf"/> 
-    <fop fofile="${foDir}/textdeko.fo"   pdffile="${referenceDir}/textdeko.pdf"/> 
-    <fop fofile="${foDir}/inhprop.fo"   pdffile="${referenceDir}/inhprop.pdf"/> 
-    <fop fofile="${foDir}/normalex.fo"   pdffile="${referenceDir}/normalex.pdf"/> 
-    <fop fofile="${foDir}/simple.fo"   pdffile="${referenceDir}/simple.pdf"/> 
-    <!-- <fop fofile="${foDir}/hyphen.fo" pdffile="${referenceDir}/hyphen.pdf"/> -->
-    <fop fofile="${foDir}/character.fo" pdffile="${referenceDir}/character.pdf"/>
-
-  </target>
-
-
-
-
-  <!-- =================================================================== -->
-  <!-- Starts the test                                                     -->
-  <!-- =================================================================== -->
-  <target name="runtest" depends="compare">
-    <echo message="Running Fop tests"/>
-  </target>
-
-  <!-- =================================================================== -->
-  <!-- Clean targets                                                       -->
-  <!-- =================================================================== -->
-  <target name="clean" depends="init">
-    <delete dir="${testDir}"/>
-    
-  </target>
-
-
+<project default="newPDF" basedir=".">
+	<!-- =================================================================== -->
+	<!-- Initialization target                                               -->
+	<!-- =================================================================== -->
+	<target name="init">
+		<tstamp/>
+		<mkdir dir="tests"/>
+		<property name="referenceDir" value="reference"/>
+		<property name="testDir" value="tests"/>
+		<property name="foDir" value="fo"/>
+		<taskdef name="fop" classname="org.apache.fop.tools.anttasks.Fop"/>
+		<taskdef name="compare" classname="org.apache.fop.tools.anttasks.Compare"/>
+	</target>
+	<!-- =================================================================== -->
+	<!-- Help on usage                                                       -->
+	<!-- =================================================================== -->
+	<target name="usage">
+		<echo message=""/>
+		<echo message=""/>
+		<echo message="USAGE of runtests"/>
+		<echo message="-------------------------------------------------------------"/>
+		<echo message=""/>
+		<echo message=" available targets are:"/>
+		<echo message=""/>
+		<echo message="   newPDF  --> generates new PDF test files (default)"/>
+		<echo message="   newPS  --> generates new PostScript test files"/>
+		<echo message="   newAT  --> generates new AreaTree (XML) test files"/>
+		<echo message="   comparePDF  --> generates new PDF test files and compares them to reference files"/>
+		<echo message="   referencePDF --> generates new reference PDF files"/>
+		<echo message=" See the comments inside the build.xml file for more details."/>
+		<echo message="-------------------------------------------------------------"/>
+		<echo message=""/>
+		<echo message=""/>
+	</target>
+	<!-- =================================================================== -->
+	<!-- Produces new test pdf files                                         -->
+	<!-- =================================================================== -->
+	<target name="newPDF" depends="init">
+		<fop fofile="${foDir}/normal.fo" outfile="${testDir}/normal.pdf"/>
+		<fop fofile="${foDir}/table.fo" outfile="${testDir}/table.pdf"/>
+		<fop fofile="${foDir}/list.fo" outfile="${testDir}/list.pdf"/>
+		<fop fofile="${foDir}/link.fo" outfile="${testDir}/link.pdf"/>
+		<fop fofile="${foDir}/newlinktest.fo" outfile="${testDir}/newlinktest.pdf"/>
+		<fop fofile="${foDir}/border.fo" outfile="${testDir}/border.pdf"/>
+		<fop fofile="${foDir}/extensive.fo" outfile="${testDir}/extensive.pdf"/>
+		<fop fofile="${foDir}/images.fo" outfile="${testDir}/images.pdf"/>
+		<fop fofile="${foDir}/readme.fo" outfile="${testDir}/readme.pdf"/>
+		<fop fofile="${foDir}/fonts.fo" outfile="${testDir}/fonts.pdf"/>
+		<fop fofile="${foDir}/leader.fo" outfile="${testDir}/leader.pdf"/>
+		<fop fofile="${foDir}/textdeko.fo" outfile="${testDir}/textdeko.pdf"/>
+		<fop fofile="${foDir}/inhprop.fo" outfile="${testDir}/inhprop.pdf"/>
+		<fop fofile="${foDir}/normalex.fo" outfile="${testDir}/normalex.pdf"/>
+		<fop fofile="${foDir}/simple.fo" outfile="${testDir}/simple.pdf"/>
+		<!-- <fop fofile="${foDir}/hyphen.fo" outfile="${testDir}/hyphen.pdf"/> -->
+		<fop fofile="${foDir}/character.fo" outfile="${testDir}/character.pdf"/>
+		<fop fofile="${foDir}/pdfoutline.fo" outfile="${testDir}/pdfoutline.pdf"/>
+		<fop fofile="${foDir}/corresprop.fo" outfile="${testDir}/corresprop.pdf"/>
+		<fop fofile="${foDir}/bordershorthand.fo" outfile="${testDir}/bordershorthand.pdf"/>
+	</target>
+	<target name="image" depends="init">
+		<fop fofile="${foDir}/images.fo" outfile="${testDir}/images.pdf"/>
+	</target>
+	<!-- =================================================================== -->
+	<!-- Produces new test ps files                                         -->
+	<!-- =================================================================== -->
+	<target name="newPS" depends="init">
+		<fop format="application/postscript" outdir="${testDir}">
+			<fileset dir="${foDir}">
+				<include name="**/*.fo"/>
+			</fileset>
+		</fop>
+	</target>
+	<!-- =================================================================== -->
+	<!-- Produces new test areatree files                                         -->
+	<!-- =================================================================== -->
+	<target name="newAT" depends="init">
+		<fop format="text/xml" outdir="${testDir}">
+			<fileset dir="${foDir}">
+				<include name="**/*.fo"/>
+			</fileset>
+		</fop>
+	</target>
+	<!-- =================================================================== -->
+	<!-- Compares new test pdf files to reference pdf files                  -->
+	<!-- =================================================================== -->
+	<target name="comparePDF" depends="newPDF">
+		<compare referenceDirectory="${referenceDir}" testDirectory="${testDir}" filenames="normal.pdf,table.pdf,list.pdf,link.pdf,border.pdf,images.pdf,extensive.pdf,readme.pdf,fonts.pdf,list2.pdf"/>
+	</target>
+	<!-- =================================================================== -->
+	<!-- Produces new reference pdf files                                         -->
+	<!-- =================================================================== -->
+	<target name="referencePDF">
+		<fop fofile="${foDir}/normal.fo" outfile="${referenceDir}/normal.pdf"/>
+		<fop fofile="${foDir}/table.fo" outfile="${referenceDir}/table.pdf"/>
+		<fop fofile="${foDir}/list.fo" outfile="${referenceDir}/list.pdf"/>
+		<fop fofile="${foDir}/link.fo" outfile="${referenceDir}/link.pdf"/>
+		<fop fofile="${foDir}/newlinktest.fo" outfile="${referenceDir}/newlinktest.pdf"/>
+		<fop fofile="${foDir}/border.fo" outfile="${referenceDir}/border.pdf"/>
+		<fop fofile="${foDir}/extensive.fo" outfile="${referenceDir}/extensive.pdf"/>
+		<fop fofile="${foDir}/images.fo" outfile="${referenceDir}/images.pdf"/>
+		<fop fofile="${foDir}/readme.fo" outfile="${referenceDir}/readme.pdf"/>
+		<fop fofile="${foDir}/fonts.fo" outfile="${referenceDir}/fonts.pdf"/>
+		<fop fofile="${foDir}/leader.fo" outfile="${referenceDir}/leader.pdf"/>
+		<fop fofile="${foDir}/textdeko.fo" outfile="${referenceDir}/textdeko.pdf"/>
+		<fop fofile="${foDir}/inhprop.fo" outfile="${referenceDir}/inhprop.pdf"/>
+		<fop fofile="${foDir}/normalex.fo" outfile="${referenceDir}/normalex.pdf"/>
+		<fop fofile="${foDir}/simple.fo" outfile="${referenceDir}/simple.pdf"/>
+		<!-- <fop fofile="${foDir}/hyphen.fo" outfile="${referenceDir}/hyphen.pdf"/> -->
+		<fop fofile="${foDir}/character.fo" outfile="${referenceDir}/character.pdf"/>
+	</target>
+	<!-- =================================================================== -->
+	<!-- Starts the test                                                     -->
+	<!-- =================================================================== -->
+	<target name="runtest" depends="comparePDF">
+		<echo message="Running Fop tests"/>
+	</target>
+	<!-- =================================================================== -->
+	<!-- Clean targets                                                       -->
+	<!-- =================================================================== -->
+	<target name="clean" depends="init">
+		<delete dir="${testDir}"/>
+	</target>
 </project>
-
 <!-- End of file -->

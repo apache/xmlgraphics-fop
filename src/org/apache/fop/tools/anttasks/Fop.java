@@ -9,6 +9,7 @@ package org.apache.fop.tools.anttasks;
 
 // Ant
 import org.apache.tools.ant.*;
+import org.apache.tools.ant.types.FileSet;
 
 import org.apache.log.*;
 import org.apache.log.format.*;
@@ -34,20 +35,23 @@ import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.configuration.Configuration;
 
-
 /**
  * Wrapper for Fop which allows it to be accessed from within an Ant task.
  * Accepts the inputs:
  * <ul>
  * <li>fofile -> formatting objects file to be transformed</li>
- * <li>pdffile -> output filename</li>
+ * <li>format -> MIME type of the format to generate ex. "application/pdf"</li>
+ * <li>outfile -> output filename</li>
  * <li>baseDir -> directory to work from</li>
  * <li>messagelevel -> (info | verbose | debug) level to output non-error messages</li>
  * </ul>
  */
 public class Fop extends Task {
     File foFile;
-    File pdfFile;
+    Vector filesets = new Vector();
+    File outFile;
+    File outDir;
+    String format; //MIME type
     File baseDir;
     int messageType = Project.MSG_VERBOSE;
 
@@ -63,30 +67,58 @@ public class Fop extends Task {
      * Gets the input file
      */
     public File getFofile() {
-        if (foFile == null) {
-            log("fofile attribute is not set", Project.MSG_ERR);
-            throw new BuildException("fofile attribute is not set");
-        }
         return foFile;
+    }
+
+    /**
+     * Adds a set of fo files (nested fileset attribute).
+     */
+    public void addFileset(FileSet set) {
+        filesets.addElement(set);
     }
 
     /**
      * Sets the output file
      * @param File to output to
      */
-    public void setPdffile(File pdfFile) {
-        this.pdfFile = pdfFile;
+    public void setOutfile(File outFile) {
+        this.outFile = outFile;
     }
 
     /**
-     * Sets the output file
+     * Gets the output file
      */
-    public File getPdffile() {
-        if (pdfFile == null) {
-            log("pdffile attribute is not set", Project.MSG_ERR);
-            throw new BuildException("pdffile attribute is not set");
-        }
-        return pdfFile;
+    public File getOutfile() {
+        return this.outFile;
+    }
+
+    /**
+     * Sets the output directory
+     * @param Directory to output to
+     */
+    public void setOutdir(File outDir) {
+        this.outDir = outDir;
+    }
+
+    /**
+     * Gets the output directory
+     */
+    public File getOutdir() {
+        return this.outDir;
+    }
+
+    /**
+     * Sets output format (MIME type)
+     */
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
+    /**
+     * Gets the output format (MIME type)
+     */
+    public String getFormat() {
+        return this.format;
     }
 
     /**
@@ -173,6 +205,58 @@ class FOPTaskStarter extends Starter {
         log.setPriority(Priority.INFO);
     }
 
+    private int determineRenderer(String format) {
+        if ((format == null) ||
+                format.equalsIgnoreCase("application/pdf") ||
+                format.equalsIgnoreCase("pdf")) {
+            return Driver.RENDER_PDF;
+        } else if (format.equalsIgnoreCase("application/postscript") ||
+                format.equalsIgnoreCase("ps")) {
+            return Driver.RENDER_PS;
+        } else if (format.equalsIgnoreCase("application/vnd.mif") ||
+                format.equalsIgnoreCase("mif")) {
+            return Driver.RENDER_MIF;
+        } else if (format.equalsIgnoreCase("application/vnd.gp-PCL") ||
+                format.equalsIgnoreCase("pcl")) {
+            return Driver.RENDER_PCL;
+        } else if (format.equalsIgnoreCase("text/plain") ||
+                format.equalsIgnoreCase("txt")) {
+            return Driver.RENDER_TXT;
+        } else if (format.equalsIgnoreCase("text/xml") ||
+                format.equalsIgnoreCase("at") ||
+                format.equalsIgnoreCase("xml")) {
+            return Driver.RENDER_XML;
+        } else {
+            String err = "Couldn't determine renderer to use: "+format;
+            log.error(err);
+            throw new BuildException(err);
+        }
+    }
+
+    private String determineExtension(int renderer) {
+        switch (renderer) {
+            case Driver.RENDER_PDF: return ".pdf";
+            case Driver.RENDER_PS:  return ".ps";
+            case Driver.RENDER_MIF: return ".mif";
+            case Driver.RENDER_PCL: return ".pcl";
+            case Driver.RENDER_TXT: return ".txt";
+            case Driver.RENDER_XML: return ".xml";
+            default:
+               String err = "Unknown renderer: "+renderer;
+               log.error(err);
+               throw new BuildException(err);
+        }
+    }
+
+    private File replaceExtension(File file, String expectedExt, String newExt) {
+        String name = file.getName();
+        if (name.toLowerCase().endsWith(expectedExt)) {
+            name = name.substring(0, name.length()-expectedExt.length());
+        }
+        name = name.concat(newExt);
+        return new File(file.getParentFile(), name);
+    }
+
     public void run() throws FOPException {
         try {
             // Configuration.put("baseDir", task.getBasedir().toURL().toExternalForm());
@@ -182,31 +266,76 @@ class FOPTaskStarter extends Starter {
             task.log("Error setting base directory", Project.MSG_DEBUG);
         }
 
-        InputHandler inputHandler = new FOInputHandler(task.getFofile());
+        task.log("Using base directory: "
+                 + Configuration.getValue("baseDir"), Project.MSG_DEBUG);
+
+        int rint = determineRenderer(task.getFormat());
+        String newExtension = determineExtension(rint);
+
+        int actioncount = 0;
+
+        // deal with single source file
+        if (task.getFofile() != null) {
+            if (task.getFofile().exists()) {
+                File outf = task.getOutfile();
+                if (outf == null) {
+                    throw new BuildException("outfile is required when fofile is used");
+                }
+                if (task.getOutdir() != null) {
+                    outf = new File(task.getOutdir(), outf.getName());
+                }
+                render(task.getFofile(), outf, rint);
+                actioncount++;
+            }
+        }
+
+        // deal with the filesets
+        for (int i=0; i<task.filesets.size(); i++) {
+            FileSet fs = (FileSet)task.filesets.elementAt(i);
+            DirectoryScanner ds = fs.getDirectoryScanner(task.getProject());
+            String[] files = ds.getIncludedFiles();
+
+            for (int j=0; j<files.length; j++) {
+                File f = new File(fs.getDir(task.getProject()), files[j]);
+                File outf = replaceExtension(f, ".fo", newExtension);
+                if (task.getOutdir() != null) {
+                    outf = new File(task.getOutdir(), outf.getName());
+                }
+                render(f, outf, rint);
+                actioncount++;
+            }
+        }
+
+        if (actioncount == 0) {
+            task.log("No files processed. No files were selected by the filesets and no fofile was set."
+                     , Project.MSG_WARN);
+        }
+    }
+
+    private void render(File foFile, File outFile, int renderer) throws FOPException {
+        InputHandler inputHandler = new FOInputHandler(foFile);
         XMLReader parser = inputHandler.getParser();
         setParserFeatures(parser);
 
-        FileOutputStream pdfOut = null;
+        FileOutputStream out = null;
         try {
-            pdfOut = new FileOutputStream(task.getPdffile());
+            out = new FileOutputStream(outFile);
         } catch (Exception ex) {
-            log.error("Failed to open " + task.getPdffile());
+            log.error("Failed to open " + outFile);
             throw new BuildException(ex);
         }
 
-        task.log("Using base directory: "
-                 + Configuration.getValue("baseDir"), Project.MSG_DEBUG);
-        task.log(task.getFofile().getName() + " -> "
-                 + task.getPdffile().getName(), Project.MSG_INFO);
+        task.log(foFile + " -> " + outFile, Project.MSG_INFO);
 
         try {
-            Driver driver = new Driver(inputHandler.getInputSource(), pdfOut);
+            Driver driver = new Driver(inputHandler.getInputSource(), out);
             driver.setLogger(log);
-            driver.setRenderer(Driver.RENDER_PDF);
+            driver.setRenderer(renderer);
             driver.setXMLReader(parser);
             driver.run();
+            out.close();
         } catch (Exception ex) {
-            log.error("Couldn't render pdf: " + ex.getMessage());
+            log.error("Couldn't render file: " + ex.getMessage());
             throw new BuildException(ex);
         }
     }

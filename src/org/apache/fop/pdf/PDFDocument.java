@@ -1150,7 +1150,7 @@ public class PDFDocument {
         String goToRef = getGoToReference(destination);
 
         PDFOutline obj = new PDFOutline(++this.objectcount, label, goToRef);
-        System.out.println("created new outline object");
+        //log.debug("created new outline object");
 
         if (parent != null) {
             parent.addOutline(obj);
