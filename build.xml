@@ -183,7 +183,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <tstamp/>
     <property name="Name" value="Fop"/>
     <property name="name" value="fop"/>
-    <property name="version" value="0.20.4"/>
+    <property name="version" value="0.20.5cvs"/>
     <filter  token="version" value="${version}"/>
     <property name="year" value="1999-2002"/>
 
