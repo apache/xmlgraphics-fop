@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -8,54 +8,54 @@
 package org.apache.fop.fo.flow;
 
 // FOP
-import org.apache.fop.fo.*;
-import org.apache.fop.fo.properties.*;
-import org.apache.fop.datatypes.Length;
-import org.apache.fop.area.Area;
-import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.inline.Viewport;
-import org.apache.fop.area.inline.ForeignObject;
-import org.apache.fop.layout.FontState;
-import org.apache.fop.layout.AccessibilityProps;
-import org.apache.fop.layout.AuralProps;
-import org.apache.fop.layout.BorderAndPadding;
-import org.apache.fop.layout.BackgroundProps;
-import org.apache.fop.layout.MarginInlineProps;
-import org.apache.fop.layout.RelativePositionProps;
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.layoutmgr.LayoutManager;
-import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
-
-import org.w3c.dom.Document;
-
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
+import org.apache.fop.area.inline.ForeignObject;
+import org.apache.fop.area.inline.Viewport;
+import org.apache.fop.datatypes.Length;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.XMLObj;
+import org.apache.fop.fo.properties.DisplayAlign;
+import org.apache.fop.fo.properties.Overflow;
+import org.apache.fop.fo.properties.Scaling;
+import org.apache.fop.fo.properties.TextAlign;
+import org.apache.fop.layout.AccessibilityProps;
+import org.apache.fop.layout.AuralProps;
+import org.apache.fop.layout.BackgroundProps;
+import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.layout.MarginInlineProps;
+import org.apache.fop.layout.RelativePositionProps;
+import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
+import org.w3c.dom.Document;
+
+/**
+ * The instream-foreign-object flow formatting object.
+ * This is an atomic inline object that contains
+ * xml data.
+ */
 public class InstreamForeignObject extends FObj {
 
-    int breakBefore;
-    int breakAfter;
-    int spaceBefore;
-    int spaceAfter;
-    int startIndent;
-    int endIndent;
-
-    Viewport areaCurrent;
+    private Viewport areaCurrent;
 
     /**
      * constructs an instream-foreign-object object (called by Maker).
      *
      * @param parent the parent formatting object
-     * @param propertyList the explicit properties of this object
      */
     public InstreamForeignObject(FONode parent) {
         super(parent);
     }
 
+    /**
+     * Add the layout manager for this into the list.
+     * @see org.apache.fop.fo.FObj#addLayoutManager(List)
+     */
     public void addLayoutManager(List list) {
         areaCurrent = getInlineArea();
-        if(areaCurrent != null) {
+        if (areaCurrent != null) {
             LeafNodeLayoutManager lm = new LeafNodeLayoutManager();
             lm.setUserAgent(getUserAgent());
             lm.setFObj(this);
@@ -68,6 +68,8 @@ public class InstreamForeignObject extends FObj {
 
     /**
      * Get the inline area created by this element.
+     *
+     * @return the viewport inline area
      */
     protected Viewport getInlineArea() {
         if (children == null) {
@@ -79,7 +81,7 @@ public class InstreamForeignObject extends FObj {
             return null;
         }
         FONode fo = (FONode)children.get(0);
-        if(!(fo instanceof XMLObj)) {
+        if (!(fo instanceof XMLObj)) {
             // error
             return null;
         }
@@ -115,14 +117,14 @@ public class InstreamForeignObject extends FObj {
         int bpd = -1;
         int ipd = -1;
         boolean bpdauto = false;
-        if(hasLH) {
+        if (hasLH) {
             bpd = properties.get("line-height").getLength().mvalue();
         } else {
             // this property does not apply when the line-height applies
             // isn't the block-progression-dimension always in the same
             // direction as the line height?
             len = properties.get("block-progression-dimension.optimum").getLength();
-            if(!len.isAuto()) {
+            if (!len.isAuto()) {
                 bpd = len.mvalue();
             } else {
                 len = properties.get("height").getLength();
@@ -133,11 +135,11 @@ public class InstreamForeignObject extends FObj {
         }
 
         len = properties.get("inline-progression-dimension.optimum").getLength();
-        if(!len.isAuto()) {
+        if (!len.isAuto()) {
             ipd = len.mvalue();
         } else {
             len = properties.get("width").getLength();
-            if(!len.isAuto()) {
+            if (!len.isAuto()) {
                 ipd = len.mvalue();
             }
         }
@@ -147,7 +149,7 @@ public class InstreamForeignObject extends FObj {
         int cwidth = -1;
         int cheight = -1;
         len = properties.get("content-width").getLength();
-        if(!len.isAuto()) {
+        if (!len.isAuto()) {
             /*if(len.scaleToFit()) {
                 if(ipd != -1) {
                     cwidth = ipd;
@@ -156,7 +158,7 @@ public class InstreamForeignObject extends FObj {
             cwidth = len.mvalue();
         }
         len = properties.get("content-height").getLength();
-        if(!len.isAuto()) {
+        if (!len.isAuto()) {
             /*if(len.scaleToFit()) {
                 if(bpd != -1) {
                     cwidth = bpd;
@@ -167,18 +169,18 @@ public class InstreamForeignObject extends FObj {
 
         Point2D csize = new Point2D.Float(cwidth == -1 ? -1 : cwidth / 1000f, cheight == -1 ? -1 : cheight / 1000f);
         Point2D size = child.getDimension(csize);
-        if(size == null) {
+        if (size == null) {
             // error
             return null;
         }
-        if(cwidth == -1) {
+        if (cwidth == -1) {
             cwidth = (int)size.getX() * 1000;
         }
-        if(cheight == -1) {
+        if (cheight == -1) {
             cheight = (int)size.getY() * 1000;
         }
         int scaling = properties.get("scaling").getEnum();
-        if(scaling == Scaling.UNIFORM) {
+        if (scaling == Scaling.UNIFORM) {
             // adjust the larger
             double rat1 = cwidth / (size.getX() * 1000f);
             double rat2 = cheight / (size.getY() * 1000f);
@@ -190,15 +192,15 @@ public class InstreamForeignObject extends FObj {
             }
         }
 
-        if(ipd == -1) {
+        if (ipd == -1) {
             ipd = cwidth;
         }
-        if(bpd == -1) {
+        if (bpd == -1) {
             bpd = cheight;
         }
 
         boolean clip = false;
-        if(cwidth > ipd || cheight > bpd) {
+        if (cwidth > ipd || cheight > bpd) {
             int overflow = properties.get("overflow").getEnum();
             if(overflow == Overflow.HIDDEN) {
                 clip = true;
@@ -211,7 +213,7 @@ public class InstreamForeignObject extends FObj {
         int xoffset = 0;
         int yoffset = 0;
         int da = properties.get("display-align").getEnum();
-        switch(da) {
+        switch (da) {
             case DisplayAlign.BEFORE:
             break;
             case DisplayAlign.AFTER:
@@ -226,7 +228,7 @@ public class InstreamForeignObject extends FObj {
         }
 
         int ta = properties.get("text-align").getEnum();
-        switch(ta) {
+        switch (ta) {
             case TextAlign.CENTER:
                 xoffset = (ipd - cwidth) / 2;
             break;
@@ -257,6 +259,11 @@ public class InstreamForeignObject extends FObj {
         return areaCurrent;
     }
 
+    /**
+     * This flow object generates inline areas.
+     * @see org.apache.fop.fo.FObj#generatesInlineAreas()
+     * @return true
+     */
     public boolean generatesInlineAreas() {
         return true;
     }
