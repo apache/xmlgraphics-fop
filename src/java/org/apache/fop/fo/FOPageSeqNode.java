@@ -56,7 +56,7 @@ public class FOPageSeqNode extends FONode {
      * Comment for <code>childContext</code>
      */
     protected Area currentArea = null;
-    protected Area myContext = null;
+    protected Area layoutContext = null;
     protected ArrayList generated = null;
     /** Decorations applicable to generated text. See 7.16.4 "text-decoration"
      * in the Recommendation.*/
@@ -92,7 +92,7 @@ public class FOPageSeqNode extends FONode {
     public FOPageSeqNode(
         FOTree foTree,
         int type,
-        FONode pageSequence,
+        FoPageSequence pageSequence,
         FONode parent,
         XmlEvent event,
         int stateFlags,
@@ -112,8 +112,9 @@ public class FOPageSeqNode extends FONode {
                     "FOPageSeqNode constructor expects FoPageSequence; got " +
                     nodeType());
         }
-        this.pageSequence = (FoPageSequence)pageSequence;
+        this.pageSequence = pageSequence;
         decorations = processDecorations();
+        layoutContext = getLayoutContext();
     }
     
     
@@ -142,7 +143,7 @@ public class FOPageSeqNode extends FONode {
     public FOPageSeqNode(
             FOTree foTree,
             int type,
-            FONode pageSequence,
+            FoPageSequence pageSequence,
             XmlEvent event,
             int stateFlags,
             int[] sparsePropsMap,
