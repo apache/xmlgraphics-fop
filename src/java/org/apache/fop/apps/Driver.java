@@ -489,6 +489,7 @@ public class Driver {
                 throw new IllegalStateException(
                         "Renderer not set when using standard foInputHandler");
             }
+
             foInputHandler = new FOTreeHandler(currentDocument, true);
             currentDocument.areaTree = new AreaTree();
             currentDocument.atModel = new RenderPagesModel(renderer);
