@@ -65,6 +65,7 @@ import java.io.IOException;
 public class RtfAfter extends RtfAfterBeforeBase {
     /**RtfBefore attributes*/
     public static final String FOOTER = "footer";
+    /** String array of footer attributes */
     public static final String[] FOOTER_ATTR = new String[]{
         FOOTER
     };
@@ -73,7 +74,11 @@ public class RtfAfter extends RtfAfterBeforeBase {
         super(parent, w, attrs);
     }
 
+    /**
+     *
+     * @throws IOException for I/O problems
+     */
     protected void writeMyAttributes() throws IOException {
-        writeAttributes(m_attrib, FOOTER_ATTR);
+        writeAttributes(attrib, FOOTER_ATTR);
     }
 }

@@ -75,6 +75,6 @@ public class RtfBefore extends RtfAfterBeforeBase {
     }
 
     protected void writeMyAttributes() throws IOException {
-        writeAttributes(m_attrib, HEADER_ATTR);
+        writeAttributes(attrib, HEADER_ATTR);
     }
 }
