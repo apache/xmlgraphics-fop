@@ -31,25 +31,35 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 /**
- * class representing svg:svg pseudo flow object.
+ * class representing the SVG root element
+ * for constructing an svg document.
  */
 public class SVGElement extends SVGObj {
 
     /**
-     * constructs an SVG object (called by Maker).
+     * Constructs an SVG object
      *
      * @param parent the parent formatting object
-     * @param propertyList the explicit properties of this object
      */
     public SVGElement(FONode parent) {
         super(parent);
     }
 
+    /**
+     * Handle the xml attributes from SAX.
+     * @param attlist the attribute list
+     * @throws FOPException not thrown from here
+     */
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
         init();
     }
 
+    /**
+     * Get the dimensions of this XML document.
+     * @param view the viewport dimensions
+     * @return the dimensions of this SVG document
+     */
     public Point2D getDimension(final Point2D view) {
 
         // TODO - change so doesn't hold onto fo,area tree
@@ -59,7 +69,7 @@ public class SVGElement extends SVGObj {
 
         try {
             String baseDir = userAgent.getBaseURL();
-            if(baseDir != null) {
+            if (baseDir != null) {
                 ((SVGOMDocument)doc).setURLObject(new URL(baseDir));
             }
         } catch (Exception e) {
@@ -68,6 +78,7 @@ public class SVGElement extends SVGObj {
 
         Element e = ((SVGDocument)doc).getRootElement();
         final float ptmm = userAgent.getPixelUnitToMillimeter();
+        // temporary svg context
         SVGContext dc = new SVGContext() {
             public float getPixelToMM() {
                 return ptmm;
@@ -96,14 +107,15 @@ public class SVGElement extends SVGObj {
                 return (float)view.getY();
             }
 
-            public float getFontSize(){
+            public float getFontSize() {
                 return 12;
             }
         };
         ((SVGOMElement)e).setSVGContext(dc);
 
-        //if(!e.hasAttributeNS(XMLSupport.XMLNS_NAMESPACE_URI, "xmlns")) {
-            e.setAttributeNS(XMLSupport.XMLNS_NAMESPACE_URI, "xmlns", SVGDOMImplementation.SVG_NAMESPACE_URI);
+        //if (!e.hasAttributeNS(XMLSupport.XMLNS_NAMESPACE_URI, "xmlns")) {
+            e.setAttributeNS(XMLSupport.XMLNS_NAMESPACE_URI, "xmlns",
+                                SVGDOMImplementation.SVG_NAMESPACE_URI);
         //}
         int fontSize = 12;
         Point2D p2d = getSize(fontSize, svgRoot, userAgent.getPixelUnitToMillimeter());
@@ -122,17 +134,28 @@ public class SVGElement extends SVGObj {
         buildTopLevel(doc, element);
     }
 
+    /**
+     * Get the size of the SVG root element.
+     * @param size the font size
+     * @param svgRoot the svg root element
+     * @param ptmm the pixel to millimeter conversion factor
+     * @return the size of the SVG document
+     */
     public static Point2D getSize(int size, Element svgRoot, float ptmm) {
         String str;
         UnitProcessor.Context ctx;
         ctx = new PDFUnitContext(size, svgRoot, ptmm);
         str = svgRoot.getAttributeNS(null, SVGConstants.SVG_WIDTH_ATTRIBUTE);
-        if (str.length() == 0) str = "100%";
+        if (str.length() == 0) {
+            str = "100%";
+        }
         float width = UnitProcessor.svgHorizontalLengthToUserSpace
             (str, SVGConstants.SVG_WIDTH_ATTRIBUTE, ctx);
 
         str = svgRoot.getAttributeNS(null, SVGConstants.SVG_HEIGHT_ATTRIBUTE);
-        if (str.length() == 0) str = "100%";
+        if (str.length() == 0) {
+            str = "100%";
+        }
         float height = UnitProcessor.svgVerticalLengthToUserSpace
             (str, SVGConstants.SVG_HEIGHT_ATTRIBUTE, ctx);
         return new Point2D.Float(width, height);
@@ -147,10 +170,16 @@ public class SVGElement extends SVGObj {
     public static class PDFUnitContext implements UnitProcessor.Context {
 
         /** The element. */
-        protected Element e;
-        protected int fontSize;
-        float pixeltoMM;
+        private Element e;
+        private int fontSize;
+        private float pixeltoMM;
 
+        /**
+         * Create a PDF unit context.
+         * @param size the font size.
+         * @param e the svg element
+         * @param ptmm the pixel to millimeter factor
+         */
         public PDFUnitContext(int size, Element e, float ptmm) {
             this.e = e;
             this.fontSize = size;
@@ -159,6 +188,7 @@ public class SVGElement extends SVGObj {
 
         /**
          * Returns the element.
+         * @return the element
          */
         public Element getElement() {
             return e;
@@ -168,23 +198,31 @@ public class SVGElement extends SVGObj {
          * Returns the context of the parent element of this context.
          * Since this is always for the root SVG element there never
          * should be one...
+         * @return null
          */
         public UnitProcessor.Context getParentElementContext() {
             return null;
         }
 
         /**
-         * Returns the pixel to mm factor.
+         * Returns the pixel to mm factor. (this is deprecated)
+         * @return the pixel to millimeter factor
          */
         public float getPixelToMM() {
             return pixeltoMM;
         }
+
+        /**
+         * Returns the pixel to mm factor.
+         * @return the pixel to millimeter factor
+         */
         public float getPixelUnitToMillimeter() {
             return pixeltoMM;
         }
 
         /**
          * Returns the font-size value.
+         * @return the default font size
          */
         public float getFontSize() {
             return fontSize;
@@ -192,6 +230,7 @@ public class SVGElement extends SVGObj {
 
         /**
          * Returns the x-height value.
+         * @return the x-height value
          */
         public float getXHeight() {
             return 0.5f;
@@ -199,6 +238,7 @@ public class SVGElement extends SVGObj {
 
         /**
          * Returns the viewport width used to compute units.
+         * @return the default viewport width of 100
          */
         public float getViewportWidth() {
             return 100;
@@ -206,6 +246,7 @@ public class SVGElement extends SVGObj {
 
         /**
          * Returns the viewport height used to compute units.
+         * @return the default viewport height of 100
          */
         public float getViewportHeight() {
             return 100;

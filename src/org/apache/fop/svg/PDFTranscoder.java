@@ -1,40 +1,24 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.svg;
 
-import java.awt.AlphaComposite;
-import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Paint;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Shape;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.geom.*;
-import java.awt.font.*;
+import java.awt.Color;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import java.io.IOException;
-
-import org.apache.batik.transcoder.*;
 
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.BridgeException;
@@ -46,55 +30,25 @@ import org.apache.batik.bridge.ViewBox;
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.dom.svg.SVGOMDocument;
-import org.apache.batik.dom.svg.SVGContext; 
 import org.apache.batik.dom.util.DocumentFactory;
 
-import org.apache.batik.ext.awt.image.GraphicsUtil;
-
 import org.apache.batik.gvt.GraphicsNode;
-import org.apache.batik.gvt.event.EventDispatcher;
-import org.apache.batik.gvt.renderer.ImageRenderer;
-import org.apache.batik.gvt.renderer.ImageRendererFactory;
 
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderOutput;
-import org.apache.batik.transcoder.TranscodingHints;
 import org.apache.batik.transcoder.XMLAbstractTranscoder;
 import org.apache.batik.transcoder.image.resources.Messages;
 
-import org.apache.batik.transcoder.keys.BooleanKey;
-import org.apache.batik.transcoder.keys.FloatKey;
-import org.apache.batik.transcoder.keys.LengthKey;
-import org.apache.batik.transcoder.keys.PaintKey;
-import org.apache.batik.transcoder.keys.PaintKey;
-import org.apache.batik.transcoder.keys.Rectangle2DKey;
-import org.apache.batik.transcoder.keys.StringKey;
-import org.apache.batik.transcoder.*;
-import org.apache.batik.transcoder.image.*;
+import org.apache.batik.transcoder.image.ImageTranscoder;
 
 import org.apache.batik.util.SVGConstants;
 import org.apache.batik.util.XMLResourceDescriptor;
 
-import org.apache.batik.bridge.*;
-import org.apache.batik.swing.svg.*;
-import org.apache.batik.swing.gvt.*;
-import org.apache.batik.gvt.*;
-import org.apache.batik.gvt.renderer.*;
-import org.apache.batik.gvt.filter.*;
-import org.apache.batik.gvt.event.*;
+import org.apache.batik.gvt.TextPainter;
+import org.apache.batik.gvt.renderer.StrokingTextPainter;
 
-import org.w3c.dom.*;
-import org.w3c.dom.svg.*;
-import org.w3c.dom.css.*;
-import org.w3c.dom.svg.SVGLength;
-
-//import org.apache.fop.layout.FontInfo;
-import org.apache.fop.pdf.*;
-
-import org.w3c.dom.DOMException;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
-import org.w3c.dom.svg.SVGAElement;
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGSVGElement;
 
@@ -180,7 +134,8 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         textPainter = new StrokingTextPainter();
         ctx.setTextPainter(textPainter);
 
-        PDFTextElementBridge pdfTextElementBridge = new PDFTextElementBridge(graphics.getFontInfo());
+        PDFTextElementBridge pdfTextElementBridge;
+        pdfTextElementBridge = new PDFTextElementBridge(graphics.getFontInfo());
         ctx.putBridge(pdfTextElementBridge);
 
         PDFAElementBridge pdfAElementBridge = new PDFAElementBridge();
@@ -226,7 +181,7 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
             height = docHeight;
         }
         // compute the preserveAspectRatio matrix
-        AffineTransform Px;
+        AffineTransform px;
         String ref = null;
         try {
             ref = new URL(uri).getRef();
@@ -235,34 +190,34 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         }
 
         try {
-            Px = ViewBox.getViewTransform(ref, root, width, height);
+            px = ViewBox.getViewTransform(ref, root, width, height);
         } catch (BridgeException ex) {
             throw new TranscoderException(ex);
         }
 
-        if (Px.isIdentity() && (width != docWidth || height != docHeight)) {
+        if (px.isIdentity() && (width != docWidth || height != docHeight)) {
             // The document has no viewBox, we need to resize it by hand.
             // we want to keep the document size ratio
             float d = Math.max(docWidth, docHeight);
             float dd = Math.max(width, height);
             float scale = dd / d;
-            Px = AffineTransform.getScaleInstance(scale, scale);
+            px = AffineTransform.getScaleInstance(scale, scale);
         }
         // take the AOI into account if any
         if (hints.containsKey(ImageTranscoder.KEY_AOI)) {
             Rectangle2D aoi = (Rectangle2D)hints.get(ImageTranscoder.KEY_AOI);
             // transform the AOI into the image's coordinate system
-            aoi = Px.createTransformedShape(aoi).getBounds2D();
-            AffineTransform Mx = new AffineTransform();
+            aoi = px.createTransformedShape(aoi).getBounds2D();
+            AffineTransform mx = new AffineTransform();
             double sx = width / aoi.getWidth();
             double sy = height / aoi.getHeight();
-            Mx.scale(sx, sy);
+            mx.scale(sx, sy);
             double tx = -aoi.getX();
             double ty = -aoi.getY();
-            Mx.translate(tx, ty);
+            mx.translate(tx, ty);
             // take the AOI transformation matrix into account
             // we apply first the preserveAspectRatio matrix
-            Px.preConcatenate(Mx);
+            px.preConcatenate(mx);
         }
         // prepare the image to be painted
         int w = (int)width;
@@ -284,7 +239,7 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
             graphics.setBackgroundColor((Color)hints.get(ImageTranscoder.KEY_BACKGROUND_COLOR));
         }
         graphics.setGraphicContext(new org.apache.batik.ext.awt.g2d.GraphicContext());
-        graphics.setTransform(Px);
+        graphics.setTransform(px);
 
         gvtRoot.paint(graphics);
 
@@ -302,6 +257,7 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
      *
      * @param domImpl the DOM Implementation (not used)
      * @param parserClassname the XML parser classname
+     * @return the document factory
      */
     protected DocumentFactory createDocumentFactory(DOMImplementation domImpl,
             String parserClassname) {
@@ -319,6 +275,7 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
 
         /**
          * Returns the default size of this user agent (400x400).
+         * @return the default viewport size
          */
         public Dimension2D getViewportSize() {
             return new Dimension(400, 400);
@@ -326,6 +283,7 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
 
         /**
          * Displays the specified error message using the <tt>ErrorHandler</tt>.
+         * @param message the message to display
          */
         public void displayError(String message) {
             try {
@@ -337,6 +295,7 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
 
         /**
          * Displays the specified error using the <tt>ErrorHandler</tt>.
+         * @param e the exception to display
          */
         public void displayError(Exception e) {
             try {
@@ -348,6 +307,7 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
 
         /**
          * Displays the specified message using the <tt>ErrorHandler</tt>.
+         * @param message the message to display
          */
         public void displayMessage(String message) {
             try {
@@ -360,10 +320,12 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         /**
          * Returns the pixel to millimeter conversion factor specified in the
          * <tt>TranscodingHints</tt> or 0.3528 if any.
+         * @return the pixel unit to millimeter factor
          */
         public float getPixelUnitToMillimeter() {
-            if (getTranscodingHints().containsKey(ImageTranscoder.KEY_PIXEL_UNIT_TO_MILLIMETER)) {
-                return ((Float)getTranscodingHints().get(ImageTranscoder.KEY_PIXEL_UNIT_TO_MILLIMETER)).floatValue();
+            Object key = ImageTranscoder.KEY_PIXEL_UNIT_TO_MILLIMETER;
+            if (getTranscodingHints().containsKey(key)) {
+                return ((Float)getTranscodingHints().get(key)).floatValue();
             } else {
                 // return 0.3528f; // 72 dpi
                 return 0.26458333333333333333333333333333f;    // 96dpi
@@ -373,15 +335,21 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         /**
          * Returns the user language specified in the
          * <tt>TranscodingHints</tt> or "en" (english) if any.
+         * @return the languages for the transcoder
          */
         public String getLanguages() {
-            if (getTranscodingHints().containsKey(ImageTranscoder.KEY_LANGUAGE)) {
-                return (String)getTranscodingHints().get(ImageTranscoder.KEY_LANGUAGE);
+            Object key = ImageTranscoder.KEY_LANGUAGE;
+            if (getTranscodingHints().containsKey(key)) {
+                return (String)getTranscodingHints().get(key);
             } else {
                 return "en";
             }
         }
 
+        /**
+         * Get the media for this transcoder. Which is always print.
+         * @return PDF media is "print"
+         */
         public String getMedia() {
             return "print";
         }
@@ -389,28 +357,37 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         /**
          * Returns the user stylesheet specified in the
          * <tt>TranscodingHints</tt> or null if any.
+         * @return the user style sheet URI specified in the hints
          */
         public String getUserStyleSheetURI() {
-            return (String)getTranscodingHints().get(ImageTranscoder.KEY_USER_STYLESHEET_URI);
+            return (String)getTranscodingHints()
+                        .get(ImageTranscoder.KEY_USER_STYLESHEET_URI);
         }
 
         /**
          * Returns the XML parser to use from the TranscodingHints.
+         * @return the XML parser class name
          */
         public String getXMLParserClassName() {
-            if (getTranscodingHints().containsKey(KEY_XML_PARSER_CLASSNAME)) {
-                return (String)getTranscodingHints().get(KEY_XML_PARSER_CLASSNAME);
+            Object key = KEY_XML_PARSER_CLASSNAME;
+            if (getTranscodingHints().containsKey(key)) {
+                return (String)getTranscodingHints().get(key);
             } else {
                 return XMLResourceDescriptor.getXMLParserClassName();
             }
         }
 
+        /**
+         * Check if the XML parser is validating.
+         * @return true if the XML parser is validating
+         */
         public boolean isXMLParserValidating() {
             return false;
         }
 
         /**
          * Unsupported operation.
+         * @return null since this is unsupported
          */
         public AffineTransform getTransform() {
             return null;

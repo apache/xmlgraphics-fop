@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -16,8 +16,12 @@ import org.apache.fop.apps.Driver;
 
 import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
-import org.w3c.dom.DOMImplementation;
 
+/**
+ * Setup the SVG element mapping.
+ * This adds the svg element mappings used to create the objects
+ * that create the SVG Document.
+ */
 public class SVGElementMapping implements ElementMapping {
     private static HashMap foObjs = null;
     private static boolean batik = true;
@@ -36,8 +40,12 @@ public class SVGElementMapping implements ElementMapping {
         }
     }
 
+    /**
+     * Add the SVG element mappings to the tree builder.
+     * @param builder the FOTreeBuilder to add the mappings to
+     */
     public void addToBuilder(FOTreeBuilder builder) {
-        if(batik) {
+        if (batik) {
             try {
                 setupSVG();
                 String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
