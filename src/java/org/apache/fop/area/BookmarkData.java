@@ -161,13 +161,13 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
      *      PageViewport objects
      * @param pages the list of PageViewport objects the ID resolves to
      */
-    public void resolve(String id, List pages) {
+    public void resolveIDRef(String id, List pages) {
         // this method is buggy
         if (!id.equals(idRef)) {
             BookmarkData bd = (BookmarkData)idRefs.get(id);
             idRefs.remove(id);
             if (bd != null) {
-                bd.resolve(id, pages);
+                bd.resolveIDRef(id, pages);
                 if (bd.isResolved()) {
                     checkFinish();
                 }

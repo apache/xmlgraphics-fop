@@ -160,13 +160,9 @@ public class PageViewport implements Resolvable, Cloneable {
     }
 
     /**
-     * This resolves reference with a list of pages.
-     * The pages (PageViewport) contain the rectangle of the area.
-     * @param id the id to resolve
-     * @param pages the list of pages with the id area
-     *              may be null if not found
+     * @see org.apache.fop.area.Resolveable#resolveIDRef(String, List)
      */
-    public void resolve(String id, List pages) {
+    public void resolveIDRef(String id, List pages) {
         if (page == null) {
             if (pendingResolved == null) {
                 pendingResolved = new HashMap();
@@ -178,7 +174,7 @@ public class PageViewport implements Resolvable, Cloneable {
                 if (todo != null) {
                     for (int count = 0; count < todo.size(); count++) {
                         Resolvable res = (Resolvable)todo.get(count);
-                        res.resolve(id, pages);
+                        res.resolveIDRef(id, pages);
                     }
                 }
             }
@@ -337,7 +333,7 @@ public class PageViewport implements Resolvable, Cloneable {
             for (Iterator iter = pendingResolved.keySet().iterator();
                          iter.hasNext();) {
                 String id = (String) iter.next();
-                resolve(id, (List)pendingResolved.get(id));
+                resolveIDRef(id, (List)pendingResolved.get(id));
             }
             pendingResolved = null;
         }
