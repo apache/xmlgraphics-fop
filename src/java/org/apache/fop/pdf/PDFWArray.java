@@ -120,7 +120,7 @@ public class PDFWArray {
      * @return byte[] the PDF code
      */
     public byte[] toPDF() {
-        return toPDFString().getBytes();
+        return PDFDocument.encode(toPDFString());
     }
 
     /**
