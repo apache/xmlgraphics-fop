@@ -14,22 +14,22 @@ import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGSVGElement;
 
 // FOP
-import org.apache.fop.svg.SVGDriver;
 import org.apache.fop.messaging.*;
 import org.apache.fop.image.SVGImage;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
+import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
+
 /**
  * ImageReader object for SVG document image type.
  */
 public class SVGReader extends AbstractImageReader {
-
-    public boolean verifySignature(BufferedInputStream fis)
+    public boolean verifySignature(String uri, BufferedInputStream fis)
     throws IOException {
         this.imageStream = fis;
-        return loadImage();
+        return loadImage(uri);
     }
 
     public String getMimeType() {
@@ -40,16 +40,12 @@ public class SVGReader extends AbstractImageReader {
      * This means the external svg document will be loaded twice.
      * Possibly need a slightly different design for the image stuff.
      */
-    protected boolean loadImage() {
+    protected boolean loadImage(String uri) {
         // parse document and get the size attributes of the svg element
         try {
+            SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(SVGImage.getParserName());
+            SVGDocument doc = factory.createDocument(uri, imageStream);
             // should check the stream contains text data
-            SVGDriver driver = new SVGDriver();
-            driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
-            driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
-            XMLReader parser = SVGImage.createParser();
-            driver.buildSVGTree(parser, new InputSource(this.imageStream));
-            SVGDocument doc = driver.getSVGDocument();
             SVGSVGElement svg = doc.getRootElement();
             this.width =
               (int) svg.getWidth().getBaseVal().getValue() * 1000;
