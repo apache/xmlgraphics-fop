@@ -53,10 +53,15 @@ package org.apache.fop.apps;
 // Imported SAX classes
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotSupportedException;
 
 // java
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.net.URL;
+
 
 /**
  * Manages input if it is an XSL-FO file.
@@ -97,7 +102,7 @@ public class FOInputHandler extends InputHandler {
      * @see org.apache.fop.apps.InputHandler#getParser()
      */
     public XMLReader getParser() throws FOPException {
-        return super.createParser();
+        return createParser();
     }
 
     /**
@@ -107,6 +112,29 @@ public class FOInputHandler extends InputHandler {
         throw new FOPException("not implemented: FOInputHandler.run(Driver)");
     }
 
+    /**
+     * Creates <code>XMLReader</code> object using default
+     * <code>SAXParserFactory</code>
+     * @return the created <code>XMLReader</code>
+     * @throws FOPException if the parser couldn't be created or configured for proper operation.
+     */
+    protected static XMLReader createParser() throws FOPException {
+        try {
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            factory.setNamespaceAware(true);
+            factory.setFeature(
+                "http://xml.org/sax/features/namespace-prefixes", true);
+            return factory.newSAXParser().getXMLReader();
+        } catch (SAXNotSupportedException se) {
+            throw new FOPException("Error: You need a parser which allows the"
+                   + " http://xml.org/sax/features/namespace-prefixes"
+                   + " feature to be set to true to support namespaces", se);
+        } catch (SAXException se) {
+            throw new FOPException("Couldn't create XMLReader", se);
+        } catch (ParserConfigurationException pce) {
+            throw new FOPException("Couldn't create XMLReader", pce);
+        }
+    }
 
 }
 

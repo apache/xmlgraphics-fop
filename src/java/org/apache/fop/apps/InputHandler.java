@@ -111,24 +111,6 @@ public abstract class InputHandler {
             throw new Error("unexpected MalformedURLException");
         }
     }
-
-    /**
-     * Creates <code>XMLReader</code> object using default
-     * <code>SAXParserFactory</code>
-     * @return the created <code>XMLReader</code>
-     * @throws FOPException if the parser couldn't be created or configured for proper operation.
-     */
-    protected static XMLReader createParser() throws FOPException {
-        try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setNamespaceAware(true);
-            return factory.newSAXParser().getXMLReader();
-        } catch (SAXException se) {
-            throw new FOPException("Coudn't create XMLReader", se);
-        } catch (ParserConfigurationException pce) {
-            throw new FOPException("Coudn't create XMLReader", pce);
-        }
-    }
     
     /**
      * Runs this InputHandler through the Driver.
@@ -136,22 +118,5 @@ public abstract class InputHandler {
      * @throws FOPException if processing this InputHandler fails
      */
     public abstract void run(Driver driver) throws FOPException;
-
-    /**
-     * Sets the parser features on an XMLReader
-     * @param parser XMLReader to set features on
-     * @throws FOPException if the XMLReader doesn't support the feature that
-     * need to be set
-     */
-    public static void setParserFeatures(XMLReader parser) throws FOPException {
-        try {
-            parser.setFeature("http://xml.org/sax/features/namespace-prefixes",
-                              true);
-        } catch (SAXException e) {
-            throw new FOPException("Error: You need a parser which allows the"
-                   + " http://xml.org/sax/features/namespace-prefixes"
-                   + " feature to be set to true to support namespaces", e);
-        }
-    }
 }
 
