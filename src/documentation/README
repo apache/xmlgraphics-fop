@@ -1,0 +1,24 @@
+To update the docs:
+
+The documentation is generated using forrest (http://xml.apache.org/forrest/).
+
+The current procedure is:
+
+- checkout xml-forrest module
+- run: build.sh(bat) dist
+- follow instructions to set FORREST_HOME and path
+- go to xml-fop directory
+- run forrest(.bat)
+
+The documents will then be placed in build/site/
+
+NOTE: the compliance.html currently does not work, it can be fixed by
+adding the dtd ref to: build/tmp/context/resources/schema/catalog
+and placing the dtd in: build/tmp/context/resources/schema/dtd/
+
+To update website
+- put the generated docs into the xml-site module targets/fop/
+  this could be done by simlinking the destination to the targets/fop
+- commit the documents
+
+
