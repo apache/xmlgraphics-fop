@@ -25,6 +25,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.CommonMarginBlock;
@@ -54,6 +55,16 @@ public class RegionBody extends Region {
         commonMarginBlock = pList.getMarginBlockProps();
         columnCount = pList.get(PR_COLUMN_COUNT).getNumeric();
         columnGap = pList.get(PR_COLUMN_GAP).getLength();
+        
+        if ((getColumnCount() > 1) && (getOverflow() == EN_SCROLL)) {
+            /* This is an error (See XSL Rec, fo:region-body description).
+             * The Rec allows for acting as if "1" is chosen in
+             * these cases, but we will need to be able to change Numeric
+             * values in order to do this.
+             */
+            attributeError("If overflow property is set to \"scroll\"," +
+                    " a column-count other than \"1\" may not be specified.");
+        }
     }
 
     /**

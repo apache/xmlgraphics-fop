@@ -259,16 +259,16 @@ public abstract class AbstractRenderer
             currentBPPosition = 0;
             currentIPPosition = 0;
 
-            RegionReference region = port.getRegion();
+            RegionReference regionReference = port.getRegionReference();
             handleRegionTraits(port);
 
             //  shouldn't the viewport have the CTM
-            startVParea(region.getCTM());
+            startVParea(regionReference.getCTM());
             // do after starting viewport area
-            if (region.getRegionClass() == FO_REGION_BODY) {
-                renderBodyRegion((BodyRegion) region);
+            if (regionReference.getRegionClass() == FO_REGION_BODY) {
+                renderBodyRegion((BodyRegion) regionReference);
             } else {
-                renderRegion(region);
+                renderRegion(regionReference);
             }
             endVParea();
         }

@@ -82,6 +82,7 @@ public class Span extends Area {
         return height;
     }
 
+
     /**
      * Get the normal flow area for a particular column.
      *

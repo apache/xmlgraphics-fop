@@ -517,7 +517,7 @@ public class PDFRenderer extends PrintRenderer {
         float width = (float)(viewArea.getWidth() / 1000f);
         float height = (float)(viewArea.getHeight() / 1000f);
 
-        if (region.getRegion().getRegionClass() == FO_REGION_BODY) {
+        if (region.getRegionReference().getRegionClass() == FO_REGION_BODY) {
             currentBPPosition = region.getBorderAndPaddingWidthBefore();
             currentIPPosition = region.getBorderAndPaddingWidthStart();
         }

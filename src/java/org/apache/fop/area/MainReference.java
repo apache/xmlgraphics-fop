@@ -47,8 +47,15 @@ public class MainReference extends Area {
      *
      * @param span the span area to add
      */
-    public void addSpan(Span span) {
-        spanAreas.add(span);
+    public Span createSpan(boolean spanAll) {
+        RegionViewport rv = parent.getRegionViewport();
+        int ipdWidth = (int) parent.getIPD() -
+            rv.getBorderAndPaddingWidthStart() - rv.getBorderAndPaddingWidthEnd();
+        
+        Span newSpan = new Span(((spanAll) ? 1 : getColumnCount()), 
+                getColumnGap(), ipdWidth);
+        spanAreas.add(newSpan);
+        return getCurrentSpan(); 
     }
 
     /**
@@ -58,6 +65,15 @@ public class MainReference extends Area {
      */
     public List getSpans() {
         return spanAreas;
+    }
+
+    /**
+     * Get the span area currently being filled (i.e., the last span created)
+     *
+     * @return the active span 
+     */
+    public Span getCurrentSpan() {
+        return (Span) spanAreas.get(spanAreas.size()-1);
     }
 
     /**
