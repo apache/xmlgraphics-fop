@@ -226,7 +226,7 @@ public class FOPropertySets {
      * to the corresponding formatting object..  This array, and each
      * <tt>HashSet</tt> within it, is intialized in a static initializer.
      */
-    private static final HashSet[] foPropertyLists;
+    private static final ROBitSet[] foPropertyLists;
 
     /**
      * A Bitmap representing all of the Properties for use in building
@@ -234,1661 +234,860 @@ public class FOPropertySets {
      */
 
     static {
-        foPropertyLists = new HashSet[FObjectNames.LAST_FO + 1];
+        foPropertyLists = new ROBitSet[FObjectNames.LAST_FO + 1];
         
-        foPropertyLists[FObjectNames.NO_FO] = new HashSet(1);
-        foPropertyLists[FObjectNames.NO_FO].
-                	    add(Ints.consts.get(PropNames.NO_PROPERTY));
+        BitSet no_fo = new BitSet();
+        no_fo.set(PropNames.NO_PROPERTY);
+        foPropertyLists[FObjectNames.NO_FO] = new ROBitSet(no_fo);
 
         //basic-link
-        foPropertyLists[FObjectNames.BASIC_LINK] = new HashSet(
-                                PropertySets.accessibilityPropsSize +
-                                PropertySets.auralPropsSize +
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.paddingPropsSize +
-                                PropertySets.marginInlinePropsSize +
-                                PropertySets.relativePositionPropsSize +
-                                18 );
-        foPropertyLists[FObjectNames.BASIC_LINK].
-                            addAll(PropertySets.accessibilitySet);
-        foPropertyLists[FObjectNames.BASIC_LINK].
-                            addAll(PropertySets.auralSet);
-        foPropertyLists[FObjectNames.BASIC_LINK].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.BASIC_LINK].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.BASIC_LINK].
-                            addAll(PropertySets.paddingSet);
-        foPropertyLists[FObjectNames.BASIC_LINK].
-                            addAll(PropertySets.marginInlineSet);
-        foPropertyLists[FObjectNames.BASIC_LINK].
-                            addAll(PropertySets.relativePositionSet);
-        foPropertyLists[FObjectNames.BASIC_LINK].
-                        add(Ints.consts.get(PropNames.ALIGNMENT_ADJUST));
-        foPropertyLists[FObjectNames.BASIC_LINK].
-                        add(Ints.consts.get(PropNames.ALIGNMENT_BASELINE));
-        foPropertyLists[FObjectNames.BASIC_LINK].
-                        add(Ints.consts.get(PropNames.BASELINE_SHIFT));
-        foPropertyLists[FObjectNames.BASIC_LINK].
-                add(Ints.consts.get(PropNames.DESTINATION_PLACEMENT_OFFSET));
-        foPropertyLists[FObjectNames.BASIC_LINK].
-                        add(Ints.consts.get(PropNames.DOMINANT_BASELINE));
-        foPropertyLists[FObjectNames.BASIC_LINK].
-                        add(Ints.consts.get(PropNames.EXTERNAL_DESTINATION));
-        foPropertyLists[FObjectNames.BASIC_LINK].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.BASIC_LINK].
-                        add(Ints.consts.get(PropNames.INDICATE_DESTINATION));
-        foPropertyLists[FObjectNames.BASIC_LINK].
-                        add(Ints.consts.get(PropNames.INTERNAL_DESTINATION));
-        foPropertyLists[FObjectNames.BASIC_LINK].
-                        add(Ints.consts.get(PropNames.KEEP_TOGETHER));
-        foPropertyLists[FObjectNames.BASIC_LINK].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_NEXT));
-        foPropertyLists[FObjectNames.BASIC_LINK].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_PREVIOUS));
-        foPropertyLists[FObjectNames.BASIC_LINK].
-                        add(Ints.consts.get(PropNames.LINE_HEIGHT));
-        foPropertyLists[FObjectNames.BASIC_LINK].
-                        add(Ints.consts.get(PropNames.SHOW_DESTINATION));
-        foPropertyLists[FObjectNames.BASIC_LINK].
-                    add(Ints.consts.get(PropNames.TARGET_PROCESSING_CONTEXT));
-        foPropertyLists[FObjectNames.BASIC_LINK].
-                add(Ints.consts.get(PropNames.TARGET_PRESENTATION_CONTEXT));
-        foPropertyLists[FObjectNames.BASIC_LINK].
-                        add(Ints.consts.get(PropNames.TARGET_STYLESHEET));
+        BitSet basic_link = new BitSet();
+        basic_link.or(PropertySets.accessibilitySet);
+        basic_link.or(PropertySets.auralSet);
+        basic_link.or(PropertySets.backgroundSet);
+        basic_link.or(PropertySets.borderSet);
+        basic_link.or(PropertySets.paddingSet);
+        basic_link.or(PropertySets.marginInlineSet);
+        basic_link.or(PropertySets.relativePositionSet);
+        basic_link.set(PropNames.ALIGNMENT_ADJUST);
+        basic_link.set(PropNames.ALIGNMENT_BASELINE);
+        basic_link.set(PropNames.BASELINE_SHIFT);
+        basic_link.set(PropNames.DESTINATION_PLACEMENT_OFFSET);
+        basic_link.set(PropNames.DOMINANT_BASELINE);
+        basic_link.set(PropNames.EXTERNAL_DESTINATION);
+        basic_link.set(PropNames.ID);
+        basic_link.set(PropNames.INDICATE_DESTINATION);
+        basic_link.set(PropNames.INTERNAL_DESTINATION);
+        basic_link.set(PropNames.KEEP_TOGETHER);
+        basic_link.set(PropNames.KEEP_WITH_NEXT);
+        basic_link.set(PropNames.KEEP_WITH_PREVIOUS);
+        basic_link.set(PropNames.LINE_HEIGHT);
+        basic_link.set(PropNames.SHOW_DESTINATION);
+        basic_link.set(PropNames.TARGET_PROCESSING_CONTEXT);
+        basic_link.set(PropNames.TARGET_PRESENTATION_CONTEXT);
+        basic_link.set(PropNames.TARGET_STYLESHEET);
+        foPropertyLists[FObjectNames.BASIC_LINK] = new ROBitSet(basic_link);
         
         //bidi-override
-        foPropertyLists[FObjectNames.BIDI_OVERRIDE] = new HashSet(
-                                PropertySets.auralPropsSize +
-                                PropertySets.fontPropsSize +
-                                PropertySets.relativePositionPropsSize +
-                                1);
-        foPropertyLists[FObjectNames.BIDI_OVERRIDE].
-                            addAll(PropertySets.auralSet);
-        foPropertyLists[FObjectNames.BIDI_OVERRIDE].
-                            addAll(PropertySets.fontSet);
-        foPropertyLists[FObjectNames.BIDI_OVERRIDE].
-                            addAll(PropertySets.relativePositionSet);
-        foPropertyLists[FObjectNames.BIDI_OVERRIDE].
-                        add(Ints.consts.get(PropNames.COLOR));
-        foPropertyLists[FObjectNames.BIDI_OVERRIDE].
-                        add(Ints.consts.get(PropNames.DIRECTION));
-        foPropertyLists[FObjectNames.BIDI_OVERRIDE].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.BIDI_OVERRIDE].
-                        add(Ints.consts.get(PropNames.LETTER_SPACING));
-        foPropertyLists[FObjectNames.BIDI_OVERRIDE].
-                        add(Ints.consts.get(PropNames.LINE_HEIGHT));
-        foPropertyLists[FObjectNames.BIDI_OVERRIDE].
-                        add(Ints.consts.get(PropNames.SCORE_SPACES));
-        foPropertyLists[FObjectNames.BIDI_OVERRIDE].
-                        add(Ints.consts.get(PropNames.UNICODE_BIDI));
-        foPropertyLists[FObjectNames.BIDI_OVERRIDE].
-                        add(Ints.consts.get(PropNames.WORD_SPACING));
+        BitSet bidi_override = new BitSet();
+        bidi_override.or(PropertySets.relativePositionSet);
+        bidi_override.or(PropertySets.auralSet);
+        bidi_override.or(PropertySets.fontSet);
+        bidi_override.set(PropNames.COLOR);
+        bidi_override.set(PropNames.DIRECTION);
+        bidi_override.set(PropNames.ID);
+        bidi_override.set(PropNames.LETTER_SPACING);
+        bidi_override.set(PropNames.LINE_HEIGHT);
+        bidi_override.set(PropNames.SCORE_SPACES);
+        bidi_override.set(PropNames.UNICODE_BIDI);
+        bidi_override.set(PropNames.WORD_SPACING);
+        foPropertyLists[FObjectNames.BIDI_OVERRIDE] = new ROBitSet(bidi_override);
 
         //block
-        foPropertyLists[FObjectNames.BLOCK] = new HashSet(
-                                PropertySets.accessibilityPropsSize +
-                                PropertySets.auralPropsSize +
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.fontPropsSize +
-                                PropertySets.hyphenationPropsSize +
-                                PropertySets.marginBlockPropsSize +
-                                PropertySets.paddingPropsSize +
-                                PropertySets.relativePositionPropsSize +
-                                27);
-        foPropertyLists[FObjectNames.BLOCK].
-                            addAll(PropertySets.accessibilitySet);
-        foPropertyLists[FObjectNames.BLOCK].
-                            addAll(PropertySets.auralSet);
-        foPropertyLists[FObjectNames.BLOCK].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.BLOCK].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.BLOCK].
-                            addAll(PropertySets.fontSet);
-        foPropertyLists[FObjectNames.BLOCK].
-                            addAll(PropertySets.hyphenationSet);
-        foPropertyLists[FObjectNames.BLOCK].
-                            addAll(PropertySets.marginBlockSet);
-        foPropertyLists[FObjectNames.BLOCK].
-                            addAll(PropertySets.paddingSet);
-        foPropertyLists[FObjectNames.BLOCK].
-                            addAll(PropertySets.relativePositionSet);
-        foPropertyLists[FObjectNames.BLOCK].
-                        add(Ints.consts.get(PropNames.BREAK_AFTER));
-        foPropertyLists[FObjectNames.BLOCK].
-                        add(Ints.consts.get(PropNames.BREAK_BEFORE));
-        foPropertyLists[FObjectNames.BLOCK].
-                        add(Ints.consts.get(PropNames.COLOR));
-        foPropertyLists[FObjectNames.BLOCK].
-                        add(Ints.consts.get(PropNames.TEXT_DEPTH));
-        foPropertyLists[FObjectNames.BLOCK].
-                        add(Ints.consts.get(PropNames.TEXT_ALTITUDE));
-        foPropertyLists[FObjectNames.BLOCK].
-                        add(Ints.consts.get(PropNames.HYPHENATION_KEEP));
-        foPropertyLists[FObjectNames.BLOCK].
-                    add(Ints.consts.get(PropNames.HYPHENATION_LADDER_COUNT));
-        foPropertyLists[FObjectNames.BLOCK].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.BLOCK].
-                        add(Ints.consts.get(PropNames.INTRUSION_DISPLACE));
-        foPropertyLists[FObjectNames.BLOCK].
-                        add(Ints.consts.get(PropNames.KEEP_TOGETHER));
-        foPropertyLists[FObjectNames.BLOCK].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_NEXT));
-        foPropertyLists[FObjectNames.BLOCK].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_PREVIOUS));
-        foPropertyLists[FObjectNames.BLOCK].
-                        add(Ints.consts.get(PropNames.LAST_LINE_END_INDENT));
-        foPropertyLists[FObjectNames.BLOCK].
-                        add(Ints.consts.get(PropNames.LINEFEED_TREATMENT));
-        foPropertyLists[FObjectNames.BLOCK].
-                        add(Ints.consts.get(PropNames.LINE_HEIGHT));
-        foPropertyLists[FObjectNames.BLOCK].
-                add(Ints.consts.get(PropNames.LINE_HEIGHT_SHIFT_ADJUSTMENT));
-        foPropertyLists[FObjectNames.BLOCK].
-                    add(Ints.consts.get(PropNames.LINE_STACKING_STRATEGY));
-        foPropertyLists[FObjectNames.BLOCK].
-                        add(Ints.consts.get(PropNames.ORPHANS));
-        foPropertyLists[FObjectNames.BLOCK].
-                        add(Ints.consts.get(PropNames.WHITE_SPACE_TREATMENT));
-        foPropertyLists[FObjectNames.BLOCK].
-                        add(Ints.consts.get(PropNames.SPAN));
-        foPropertyLists[FObjectNames.BLOCK].
-                        add(Ints.consts.get(PropNames.TEXT_ALIGN));
-        foPropertyLists[FObjectNames.BLOCK].
-                        add(Ints.consts.get(PropNames.TEXT_ALIGN_LAST));
-        foPropertyLists[FObjectNames.BLOCK].
-                        add(Ints.consts.get(PropNames.TEXT_INDENT));
-        foPropertyLists[FObjectNames.BLOCK].
-                        add(Ints.consts.get(PropNames.VISIBILITY));
-        foPropertyLists[FObjectNames.BLOCK].
-                        add(Ints.consts.get(PropNames.WHITE_SPACE_COLLAPSE));
-        foPropertyLists[FObjectNames.BLOCK].
-                        add(Ints.consts.get(PropNames.WIDOWS));
-        foPropertyLists[FObjectNames.BLOCK].
-                        add(Ints.consts.get(PropNames.WRAP_OPTION));
+        BitSet block = new BitSet();
+        block.or(PropertySets.accessibilitySet);
+        block.or(PropertySets.auralSet);
+        block.or(PropertySets.backgroundSet);
+        block.or(PropertySets.borderSet);
+        block.or(PropertySets.fontSet);
+        block.or(PropertySets.hyphenationSet);
+        block.or(PropertySets.marginBlockSet);
+        block.or(PropertySets.paddingSet);
+        block.or(PropertySets.relativePositionSet);
+        block.set(PropNames.BREAK_AFTER);
+        block.set(PropNames.BREAK_BEFORE);
+        block.set(PropNames.COLOR);
+        block.set(PropNames.TEXT_DEPTH);
+        block.set(PropNames.TEXT_ALTITUDE);
+        block.set(PropNames.HYPHENATION_KEEP);
+        block.set(PropNames.HYPHENATION_LADDER_COUNT);
+        block.set(PropNames.ID);
+        block.set(PropNames.INTRUSION_DISPLACE);
+        block.set(PropNames.KEEP_TOGETHER);
+        block.set(PropNames.KEEP_WITH_NEXT);
+        block.set(PropNames.KEEP_WITH_PREVIOUS);
+        block.set(PropNames.LAST_LINE_END_INDENT);
+        block.set(PropNames.LINEFEED_TREATMENT);
+        block.set(PropNames.LINE_HEIGHT);
+        block.set(PropNames.LINE_HEIGHT_SHIFT_ADJUSTMENT);
+        block.set(PropNames.LINE_STACKING_STRATEGY);
+        block.set(PropNames.ORPHANS);
+        block.set(PropNames.WHITE_SPACE_TREATMENT);
+        block.set(PropNames.SPAN);
+        block.set(PropNames.TEXT_ALIGN);
+        block.set(PropNames.TEXT_ALIGN_LAST);
+        block.set(PropNames.TEXT_INDENT);
+        block.set(PropNames.VISIBILITY);
+        block.set(PropNames.WHITE_SPACE_COLLAPSE);
+        block.set(PropNames.WIDOWS);
+        block.set(PropNames.WRAP_OPTION);
+        foPropertyLists[FObjectNames.BLOCK] = new ROBitSet(block);
 
         //block-container
-        foPropertyLists[FObjectNames.BLOCK_CONTAINER] = new HashSet(
-                                PropertySets.absolutePositionPropsSize +
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.marginBlockPropsSize +
-                                PropertySets.paddingPropsSize +
-                                18);
-        foPropertyLists[FObjectNames.BLOCK_CONTAINER].
-                            addAll(PropertySets.absolutePositionSet);
-        foPropertyLists[FObjectNames.BLOCK_CONTAINER].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.BLOCK_CONTAINER].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.BLOCK_CONTAINER].
-                            addAll(PropertySets.marginBlockSet);
-        foPropertyLists[FObjectNames.BLOCK_CONTAINER].
-                            addAll(PropertySets.paddingSet);
-        foPropertyLists[FObjectNames.BLOCK_CONTAINER].
-                add(Ints.consts.get(PropNames.BLOCK_PROGRESSION_DIMENSION));
-        foPropertyLists[FObjectNames.BLOCK_CONTAINER].
-                        add(Ints.consts.get(PropNames.BREAK_AFTER));
-        foPropertyLists[FObjectNames.BLOCK_CONTAINER].
-                        add(Ints.consts.get(PropNames.BREAK_BEFORE));
-        foPropertyLists[FObjectNames.BLOCK_CONTAINER].
-                        add(Ints.consts.get(PropNames.CLIP));
-        foPropertyLists[FObjectNames.BLOCK_CONTAINER].
-                        add(Ints.consts.get(PropNames.DISPLAY_ALIGN));
-        foPropertyLists[FObjectNames.BLOCK_CONTAINER].
-                        add(Ints.consts.get(PropNames.HEIGHT));
-        foPropertyLists[FObjectNames.BLOCK_CONTAINER].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.BLOCK_CONTAINER].
-                add(Ints.consts.get(PropNames.INLINE_PROGRESSION_DIMENSION));
-        foPropertyLists[FObjectNames.BLOCK_CONTAINER].
-                        add(Ints.consts.get(PropNames.INTRUSION_DISPLACE));
-        foPropertyLists[FObjectNames.BLOCK_CONTAINER].
-                        add(Ints.consts.get(PropNames.KEEP_TOGETHER));
-        foPropertyLists[FObjectNames.BLOCK_CONTAINER].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_NEXT));
-        foPropertyLists[FObjectNames.BLOCK_CONTAINER].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_PREVIOUS));
-        foPropertyLists[FObjectNames.BLOCK_CONTAINER].
-                        add(Ints.consts.get(PropNames.OVERFLOW));
-        foPropertyLists[FObjectNames.BLOCK_CONTAINER].
-                        add(Ints.consts.get(PropNames.REFERENCE_ORIENTATION));
-        foPropertyLists[FObjectNames.BLOCK_CONTAINER].
-                        add(Ints.consts.get(PropNames.SPAN));
-        foPropertyLists[FObjectNames.BLOCK_CONTAINER].
-                        add(Ints.consts.get(PropNames.WIDTH));
-        foPropertyLists[FObjectNames.BLOCK_CONTAINER].
-                        add(Ints.consts.get(PropNames.WRITING_MODE));
-        foPropertyLists[FObjectNames.BLOCK_CONTAINER].
-                        add(Ints.consts.get(PropNames.Z_INDEX));
+        BitSet block_container = new BitSet();
+        block_container.or(PropertySets.absolutePositionSet);
+        block_container.or(PropertySets.backgroundSet);
+        block_container.or(PropertySets.borderSet);
+        block_container.or(PropertySets.marginBlockSet);
+        block_container.or(PropertySets.paddingSet);
+        block_container.set(PropNames.BLOCK_PROGRESSION_DIMENSION);
+        block_container.set(PropNames.BREAK_AFTER);
+        block_container.set(PropNames.BREAK_BEFORE);
+        block_container.set(PropNames.CLIP);
+        block_container.set(PropNames.DISPLAY_ALIGN);
+        block_container.set(PropNames.HEIGHT);
+        block_container.set(PropNames.ID);
+        block_container.set(PropNames.INLINE_PROGRESSION_DIMENSION);
+        block_container.set(PropNames.INTRUSION_DISPLACE);
+        block_container.set(PropNames.KEEP_TOGETHER);
+        block_container.set(PropNames.KEEP_WITH_NEXT);
+        block_container.set(PropNames.KEEP_WITH_PREVIOUS);
+        block_container.set(PropNames.OVERFLOW);
+        block_container.set(PropNames.REFERENCE_ORIENTATION);
+        block_container.set(PropNames.SPAN);
+        block_container.set(PropNames.WIDTH);
+        block_container.set(PropNames.WRITING_MODE);
+        block_container.set(PropNames.Z_INDEX);
+        foPropertyLists[FObjectNames.BLOCK_CONTAINER] = new ROBitSet(block_container);
 
         //character
-        foPropertyLists[FObjectNames.CHARACTER] = new HashSet(
-                                PropertySets.auralPropsSize +
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.fontPropsSize +
-                                PropertySets.hyphenationPropsSize +
-                                PropertySets.marginInlinePropsSize +
-                                PropertySets.paddingPropsSize +
-                                PropertySets.relativePositionPropsSize +
-                                23);
-        foPropertyLists[FObjectNames.CHARACTER].
-                            addAll(PropertySets.auralSet);
-        foPropertyLists[FObjectNames.CHARACTER].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.CHARACTER].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.CHARACTER].
-                            addAll(PropertySets.fontSet);
-        foPropertyLists[FObjectNames.CHARACTER].
-                            addAll(PropertySets.hyphenationSet);
-        foPropertyLists[FObjectNames.CHARACTER].
-                            addAll(PropertySets.marginInlineSet);
-        foPropertyLists[FObjectNames.CHARACTER].
-                            addAll(PropertySets.paddingSet);
-        foPropertyLists[FObjectNames.CHARACTER].
-                            addAll(PropertySets.relativePositionSet);
-        foPropertyLists[FObjectNames.CHARACTER].
-                        add(Ints.consts.get(PropNames.ALIGNMENT_ADJUST));
-        foPropertyLists[FObjectNames.CHARACTER].
-                        add(Ints.consts.get(PropNames.TREAT_AS_WORD_SPACE));
-        foPropertyLists[FObjectNames.CHARACTER].
-                        add(Ints.consts.get(PropNames.ALIGNMENT_BASELINE));
-        foPropertyLists[FObjectNames.CHARACTER].
-                        add(Ints.consts.get(PropNames.BASELINE_SHIFT));
-        foPropertyLists[FObjectNames.CHARACTER].
-                        add(Ints.consts.get(PropNames.CHARACTER));
-        foPropertyLists[FObjectNames.CHARACTER].
-                        add(Ints.consts.get(PropNames.COLOR));
-        foPropertyLists[FObjectNames.CHARACTER].
-                        add(Ints.consts.get(PropNames.DOMINANT_BASELINE));
-        foPropertyLists[FObjectNames.CHARACTER].
-                        add(Ints.consts.get(PropNames.TEXT_DEPTH));
-        foPropertyLists[FObjectNames.CHARACTER].
-                        add(Ints.consts.get(PropNames.TEXT_ALTITUDE));
-        foPropertyLists[FObjectNames.CHARACTER].
-                add(Ints.consts.get(PropNames.GLYPH_ORIENTATION_HORIZONTAL));
-        foPropertyLists[FObjectNames.CHARACTER].
-                add(Ints.consts.get(PropNames.GLYPH_ORIENTATION_VERTICAL));
-        foPropertyLists[FObjectNames.CHARACTER].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.CHARACTER].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_NEXT));
-        foPropertyLists[FObjectNames.CHARACTER].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_PREVIOUS));
-        foPropertyLists[FObjectNames.CHARACTER].
-                        add(Ints.consts.get(PropNames.LETTER_SPACING));
-        foPropertyLists[FObjectNames.CHARACTER].
-                        add(Ints.consts.get(PropNames.LINE_HEIGHT));
-        foPropertyLists[FObjectNames.CHARACTER].
-                        add(Ints.consts.get(PropNames.SCORE_SPACES));
-        foPropertyLists[FObjectNames.CHARACTER].
-                        add(Ints.consts.get(PropNames.SUPPRESS_AT_LINE_BREAK));
-        foPropertyLists[FObjectNames.CHARACTER].
-                        add(Ints.consts.get(PropNames.TEXT_DECORATION));
-        foPropertyLists[FObjectNames.CHARACTER].
-                        add(Ints.consts.get(PropNames.TEXT_SHADOW));
-        foPropertyLists[FObjectNames.CHARACTER].
-                        add(Ints.consts.get(PropNames.TEXT_TRANSFORM));
-        foPropertyLists[FObjectNames.CHARACTER].
-                        add(Ints.consts.get(PropNames.VISIBILITY));
-        foPropertyLists[FObjectNames.CHARACTER].
-                        add(Ints.consts.get(PropNames.WORD_SPACING));
+        BitSet character = new BitSet();
+        character.or(PropertySets.auralSet);
+        character.or(PropertySets.backgroundSet);
+        character.or(PropertySets.borderSet);
+        character.or(PropertySets.fontSet);
+        character.or(PropertySets.hyphenationSet);
+        character.or(PropertySets.marginInlineSet);
+        character.or(PropertySets.paddingSet);
+        character.or(PropertySets.relativePositionSet);
+        character.set(PropNames.ALIGNMENT_ADJUST);
+        character.set(PropNames.TREAT_AS_WORD_SPACE);
+        character.set(PropNames.ALIGNMENT_BASELINE);
+        character.set(PropNames.BASELINE_SHIFT);
+        character.set(PropNames.CHARACTER);
+        character.set(PropNames.COLOR);
+        character.set(PropNames.DOMINANT_BASELINE);
+        character.set(PropNames.TEXT_DEPTH);
+        character.set(PropNames.TEXT_ALTITUDE);
+        character.set(PropNames.GLYPH_ORIENTATION_HORIZONTAL);
+        character.set(PropNames.GLYPH_ORIENTATION_VERTICAL);
+        character.set(PropNames.ID);
+        character.set(PropNames.KEEP_WITH_NEXT);
+        character.set(PropNames.KEEP_WITH_PREVIOUS);
+        character.set(PropNames.LETTER_SPACING);
+        character.set(PropNames.LINE_HEIGHT);
+        character.set(PropNames.SCORE_SPACES);
+        character.set(PropNames.SUPPRESS_AT_LINE_BREAK);
+        character.set(PropNames.TEXT_DECORATION);
+        character.set(PropNames.TEXT_SHADOW);
+        character.set(PropNames.TEXT_TRANSFORM);
+        character.set(PropNames.VISIBILITY);
+        character.set(PropNames.WORD_SPACING);
+        foPropertyLists[FObjectNames.CHARACTER] = new ROBitSet(character);
 
         //color-profile
-        foPropertyLists[FObjectNames.COLOR_PROFILE] = new HashSet(3);
-        foPropertyLists[FObjectNames.COLOR_PROFILE].
-                        add(Ints.consts.get(PropNames.COLOR_PROFILE_NAME));
-        foPropertyLists[FObjectNames.COLOR_PROFILE].
-                        add(Ints.consts.get(PropNames.RENDERING_INTENT));
-        foPropertyLists[FObjectNames.COLOR_PROFILE].
-                        add(Ints.consts.get(PropNames.SRC));
+        BitSet color_profile = new BitSet();
+        color_profile.set(PropNames.COLOR_PROFILE_NAME);
+        color_profile.set(PropNames.RENDERING_INTENT);
+        color_profile.set(PropNames.SRC);
+        foPropertyLists[FObjectNames.COLOR_PROFILE] = new ROBitSet(color_profile);
 
         //conditional-page-master-reference
-        foPropertyLists[FObjectNames.CONDITIONAL_PAGE_MASTER_REFERENCE]
-                        = new HashSet(4);
-        foPropertyLists[FObjectNames.CONDITIONAL_PAGE_MASTER_REFERENCE].
-                        add(Ints.consts.get(PropNames.MASTER_REFERENCE));
-        foPropertyLists[FObjectNames.CONDITIONAL_PAGE_MASTER_REFERENCE].
-                        add(Ints.consts.get(PropNames.PAGE_POSITION));
-        foPropertyLists[FObjectNames.CONDITIONAL_PAGE_MASTER_REFERENCE].
-                        add(Ints.consts.get(PropNames.ODD_OR_EVEN));
-        foPropertyLists[FObjectNames.CONDITIONAL_PAGE_MASTER_REFERENCE].
-                        add(Ints.consts.get(PropNames.BLANK_OR_NOT_BLANK));
+        BitSet conditional_page_master_reference = new BitSet();
+        conditional_page_master_reference.set(PropNames.MASTER_REFERENCE);
+        conditional_page_master_reference.set(PropNames.PAGE_POSITION);
+        conditional_page_master_reference.set(PropNames.ODD_OR_EVEN);
+        conditional_page_master_reference.set(PropNames.BLANK_OR_NOT_BLANK);
+        foPropertyLists[FObjectNames.CONDITIONAL_PAGE_MASTER_REFERENCE] = new ROBitSet(conditional_page_master_reference);
 
         //declarations
-        foPropertyLists[FObjectNames.DECLARATIONS] = null;
+        foPropertyLists[FObjectNames.DECLARATIONS] = new ROBitSet(new BitSet());
 
         //external-graphic
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC] = new HashSet(
-                                PropertySets.accessibilityPropsSize +
-                                PropertySets.auralPropsSize +
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.marginInlinePropsSize +
-                                PropertySets.paddingPropsSize +
-                                PropertySets.relativePositionPropsSize +
-                                22);
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                            addAll(PropertySets.accessibilitySet);
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                            addAll(PropertySets.auralSet);
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                            addAll(PropertySets.marginInlineSet);
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                            addAll(PropertySets.paddingSet);
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                            addAll(PropertySets.relativePositionSet);
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                        add(Ints.consts.get(PropNames.ALIGNMENT_ADJUST));
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                        add(Ints.consts.get(PropNames.ALIGNMENT_BASELINE));
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                        add(Ints.consts.get(PropNames.BASELINE_SHIFT));
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                add(Ints.consts.get(PropNames.BLOCK_PROGRESSION_DIMENSION));
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                        add(Ints.consts.get(PropNames.CLIP));
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                        add(Ints.consts.get(PropNames.CONTENT_HEIGHT));
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                        add(Ints.consts.get(PropNames.CONTENT_TYPE));
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                        add(Ints.consts.get(PropNames.CONTENT_WIDTH));
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                        add(Ints.consts.get(PropNames.DISPLAY_ALIGN));
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                        add(Ints.consts.get(PropNames.DOMINANT_BASELINE));
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                        add(Ints.consts.get(PropNames.HEIGHT));
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                add(Ints.consts.get(PropNames.INLINE_PROGRESSION_DIMENSION));
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_NEXT));
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_PREVIOUS));
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                        add(Ints.consts.get(PropNames.LINE_HEIGHT));
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                        add(Ints.consts.get(PropNames.OVERFLOW));
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                        add(Ints.consts.get(PropNames.SCALING));
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                        add(Ints.consts.get(PropNames.SCALING_METHOD));
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                        add(Ints.consts.get(PropNames.SRC));
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                        add(Ints.consts.get(PropNames.TEXT_ALIGN));
-        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC].
-                        add(Ints.consts.get(PropNames.WIDTH));
+        BitSet external_graphic = new BitSet();
+        external_graphic.or(PropertySets.accessibilitySet);
+        external_graphic.or(PropertySets.auralSet);
+        external_graphic.or(PropertySets.backgroundSet);
+        external_graphic.or(PropertySets.borderSet);
+        external_graphic.or(PropertySets.marginInlineSet);
+        external_graphic.or(PropertySets.paddingSet);
+        external_graphic.or(PropertySets.relativePositionSet);
+        external_graphic.set(PropNames.ALIGNMENT_ADJUST);
+        external_graphic.set(PropNames.ALIGNMENT_BASELINE);
+        external_graphic.set(PropNames.BASELINE_SHIFT);
+        external_graphic.set(PropNames.BLOCK_PROGRESSION_DIMENSION);
+        external_graphic.set(PropNames.CLIP);
+        external_graphic.set(PropNames.CONTENT_HEIGHT);
+        external_graphic.set(PropNames.CONTENT_TYPE);
+        external_graphic.set(PropNames.CONTENT_WIDTH);
+        external_graphic.set(PropNames.DISPLAY_ALIGN);
+        external_graphic.set(PropNames.DOMINANT_BASELINE);
+        external_graphic.set(PropNames.HEIGHT);
+        external_graphic.set(PropNames.ID);
+        external_graphic.set(PropNames.INLINE_PROGRESSION_DIMENSION);
+        external_graphic.set(PropNames.KEEP_WITH_NEXT);
+        external_graphic.set(PropNames.KEEP_WITH_PREVIOUS);
+        external_graphic.set(PropNames.LINE_HEIGHT);
+        external_graphic.set(PropNames.OVERFLOW);
+        external_graphic.set(PropNames.SCALING);
+        external_graphic.set(PropNames.SCALING_METHOD);
+        external_graphic.set(PropNames.SRC);
+        external_graphic.set(PropNames.TEXT_ALIGN);
+        external_graphic.set(PropNames.WIDTH);
+        foPropertyLists[FObjectNames.EXTERNAL_GRAPHIC] = new ROBitSet(external_graphic);
 
         //float
-        foPropertyLists[FObjectNames.FLOAT] = new HashSet(2);
-        foPropertyLists[FObjectNames.FLOAT].
-                        add(Ints.consts.get(PropNames.CLEAR));
-        foPropertyLists[FObjectNames.FLOAT].
-                        add(Ints.consts.get(PropNames.FLOAT));
+        BitSet floatset = new BitSet();
+        floatset.set(PropNames.CLEAR);
+        floatset.set(PropNames.FLOAT);
+        foPropertyLists[FObjectNames.FLOAT] = new ROBitSet(floatset);
 
         //flow
-        foPropertyLists[FObjectNames.FLOW] = new HashSet(1);
-        foPropertyLists[FObjectNames.FLOW].
-                        add(Ints.consts.get(PropNames.FLOW_NAME));
+        BitSet flow = new BitSet();
+        flow.set(PropNames.FLOW_NAME);
+        foPropertyLists[FObjectNames.FLOW] = new ROBitSet(flow);
 
         //footnote
-        foPropertyLists[FObjectNames.FOOTNOTE] = new HashSet(
-                                PropertySets.accessibilityPropsSize);
-        foPropertyLists[FObjectNames.FOOTNOTE].
-                            addAll(PropertySets.accessibilitySet);
+        BitSet footnote = new BitSet();
+        footnote.or(PropertySets.accessibilitySet);
+        foPropertyLists[FObjectNames.FOOTNOTE] = new ROBitSet(footnote);
 
         //footnote-body
-        foPropertyLists[FObjectNames.FOOTNOTE_BODY] = new HashSet(
-                                PropertySets.accessibilityPropsSize);
-        foPropertyLists[FObjectNames.FOOTNOTE_BODY].
-                            addAll(PropertySets.accessibilitySet);
+        BitSet footnote_body = new BitSet();
+        footnote_body.or(PropertySets.accessibilitySet);
+        foPropertyLists[FObjectNames.FOOTNOTE_BODY] = new ROBitSet(footnote_body);
 
         //initial-property-set
-        foPropertyLists[FObjectNames.INITIAL_PROPERTY_SET] = new HashSet(
-                                PropertySets.accessibilityPropsSize +
-                                PropertySets.auralPropsSize +
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.fontPropsSize +
-                                PropertySets.paddingPropsSize +
-                                PropertySets.relativePositionPropsSize +
-                                1);
-        foPropertyLists[FObjectNames.INITIAL_PROPERTY_SET].
-                            addAll(PropertySets.accessibilitySet);
-        foPropertyLists[FObjectNames.INITIAL_PROPERTY_SET].
-                            addAll(PropertySets.auralSet);
-        foPropertyLists[FObjectNames.INITIAL_PROPERTY_SET].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.INITIAL_PROPERTY_SET].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.INITIAL_PROPERTY_SET].
-                            addAll(PropertySets.fontSet);
-        foPropertyLists[FObjectNames.INITIAL_PROPERTY_SET].
-                            addAll(PropertySets.paddingSet);
-        foPropertyLists[FObjectNames.INITIAL_PROPERTY_SET].
-                            addAll(PropertySets.relativePositionSet);
-        foPropertyLists[FObjectNames.INITIAL_PROPERTY_SET].
-                        add(Ints.consts.get(PropNames.COLOR));
-        foPropertyLists[FObjectNames.INITIAL_PROPERTY_SET].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.INITIAL_PROPERTY_SET].
-                        add(Ints.consts.get(PropNames.LETTER_SPACING));
-        foPropertyLists[FObjectNames.INITIAL_PROPERTY_SET].
-                        add(Ints.consts.get(PropNames.LINE_HEIGHT));
-        foPropertyLists[FObjectNames.INITIAL_PROPERTY_SET].
-                        add(Ints.consts.get(PropNames.SCORE_SPACES));
-        foPropertyLists[FObjectNames.INITIAL_PROPERTY_SET].
-                        add(Ints.consts.get(PropNames.TEXT_DECORATION));
-        foPropertyLists[FObjectNames.INITIAL_PROPERTY_SET].
-                        add(Ints.consts.get(PropNames.TEXT_SHADOW));
-        foPropertyLists[FObjectNames.INITIAL_PROPERTY_SET].
-                        add(Ints.consts.get(PropNames.TEXT_TRANSFORM));
-        foPropertyLists[FObjectNames.INITIAL_PROPERTY_SET].
-                        add(Ints.consts.get(PropNames.WORD_SPACING));
+        BitSet initial_property_set = new BitSet();
+        initial_property_set.or(PropertySets.accessibilitySet);
+        initial_property_set.or(PropertySets.auralSet);
+        initial_property_set.or(PropertySets.backgroundSet);
+        initial_property_set.or(PropertySets.borderSet);
+        initial_property_set.or(PropertySets.fontSet);
+        initial_property_set.or(PropertySets.paddingSet);
+        initial_property_set.or(PropertySets.relativePositionSet);
+        initial_property_set.set(PropNames.COLOR);
+        initial_property_set.set(PropNames.ID);
+        initial_property_set.set(PropNames.LETTER_SPACING);
+        initial_property_set.set(PropNames.LINE_HEIGHT);
+        initial_property_set.set(PropNames.SCORE_SPACES);
+        initial_property_set.set(PropNames.TEXT_DECORATION);
+        initial_property_set.set(PropNames.TEXT_SHADOW);
+        initial_property_set.set(PropNames.TEXT_TRANSFORM);
+        initial_property_set.set(PropNames.WORD_SPACING);
+        foPropertyLists[FObjectNames.INITIAL_PROPERTY_SET] = new ROBitSet(initial_property_set);
 
         //inline
-        foPropertyLists[FObjectNames.INLINE] = new HashSet(
-                                PropertySets.accessibilityPropsSize +
-                                PropertySets.auralPropsSize +
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.fontPropsSize +
-                                PropertySets.marginInlinePropsSize +
-                                PropertySets.paddingPropsSize +
-                                PropertySets.relativePositionPropsSize +
-                                17);
-        foPropertyLists[FObjectNames.INLINE].
-                            addAll(PropertySets.accessibilitySet);
-        foPropertyLists[FObjectNames.INLINE].
-                            addAll(PropertySets.auralSet);
-        foPropertyLists[FObjectNames.INLINE].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.INLINE].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.INLINE].
-                            addAll(PropertySets.fontSet);
-        foPropertyLists[FObjectNames.INLINE].
-                            addAll(PropertySets.marginInlineSet);
-        foPropertyLists[FObjectNames.INLINE].
-                            addAll(PropertySets.paddingSet);
-        foPropertyLists[FObjectNames.INLINE].
-                            addAll(PropertySets.relativePositionSet);
-        foPropertyLists[FObjectNames.INLINE].
-                        add(Ints.consts.get(PropNames.ALIGNMENT_ADJUST));
-        foPropertyLists[FObjectNames.INLINE].
-                        add(Ints.consts.get(PropNames.ALIGNMENT_BASELINE));
-        foPropertyLists[FObjectNames.INLINE].
-                        add(Ints.consts.get(PropNames.BASELINE_SHIFT));
-        foPropertyLists[FObjectNames.INLINE].
-                add(Ints.consts.get(PropNames.BLOCK_PROGRESSION_DIMENSION));
-        foPropertyLists[FObjectNames.INLINE].
-                        add(Ints.consts.get(PropNames.COLOR));
-        foPropertyLists[FObjectNames.INLINE].
-                        add(Ints.consts.get(PropNames.DOMINANT_BASELINE));
-        foPropertyLists[FObjectNames.INLINE].
-                        add(Ints.consts.get(PropNames.HEIGHT));
-        foPropertyLists[FObjectNames.INLINE].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.INLINE].
-                add(Ints.consts.get(PropNames.INLINE_PROGRESSION_DIMENSION));
-        foPropertyLists[FObjectNames.INLINE].
-                        add(Ints.consts.get(PropNames.KEEP_TOGETHER));
-        foPropertyLists[FObjectNames.INLINE].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_NEXT));
-        foPropertyLists[FObjectNames.INLINE].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_PREVIOUS));
-        foPropertyLists[FObjectNames.INLINE].
-                        add(Ints.consts.get(PropNames.LINE_HEIGHT));
-        foPropertyLists[FObjectNames.INLINE].
-                        add(Ints.consts.get(PropNames.TEXT_DECORATION));
-        foPropertyLists[FObjectNames.INLINE].
-                        add(Ints.consts.get(PropNames.VISIBILITY));
-        foPropertyLists[FObjectNames.INLINE].
-                        add(Ints.consts.get(PropNames.WIDTH));
-        foPropertyLists[FObjectNames.INLINE].
-                        add(Ints.consts.get(PropNames.WRAP_OPTION));
+        BitSet inline = new BitSet();
+        inline.or(PropertySets.accessibilitySet);
+        inline.or(PropertySets.auralSet);
+        inline.or(PropertySets.backgroundSet);
+        inline.or(PropertySets.borderSet);
+        inline.or(PropertySets.fontSet);
+        inline.or(PropertySets.marginInlineSet);
+        inline.or(PropertySets.paddingSet);
+        inline.or(PropertySets.relativePositionSet);
+        inline.set(PropNames.ALIGNMENT_ADJUST);
+        inline.set(PropNames.ALIGNMENT_BASELINE);
+        inline.set(PropNames.BASELINE_SHIFT);
+        inline.set(PropNames.BLOCK_PROGRESSION_DIMENSION);
+        inline.set(PropNames.COLOR);
+        inline.set(PropNames.DOMINANT_BASELINE);
+        inline.set(PropNames.HEIGHT);
+        inline.set(PropNames.ID);
+        inline.set(PropNames.INLINE_PROGRESSION_DIMENSION);
+        inline.set(PropNames.KEEP_TOGETHER);
+        inline.set(PropNames.KEEP_WITH_NEXT);
+        inline.set(PropNames.KEEP_WITH_PREVIOUS);
+        inline.set(PropNames.LINE_HEIGHT);
+        inline.set(PropNames.TEXT_DECORATION);
+        inline.set(PropNames.VISIBILITY);
+        inline.set(PropNames.WIDTH);
+        inline.set(PropNames.WRAP_OPTION);
+        foPropertyLists[FObjectNames.INLINE] = new ROBitSet(inline);
 
         //inline-container
-        foPropertyLists[FObjectNames.INLINE_CONTAINER] = new HashSet(
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.marginInlinePropsSize +
-                                PropertySets.paddingPropsSize +
-                                PropertySets.relativePositionPropsSize +
-                                18);
-        foPropertyLists[FObjectNames.INLINE_CONTAINER].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.INLINE_CONTAINER].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.INLINE_CONTAINER].
-                            addAll(PropertySets.marginInlineSet);
-        foPropertyLists[FObjectNames.INLINE_CONTAINER].
-                            addAll(PropertySets.paddingSet);
-        foPropertyLists[FObjectNames.INLINE_CONTAINER].
-                            addAll(PropertySets.relativePositionSet);
-        foPropertyLists[FObjectNames.INLINE_CONTAINER].
-                        add(Ints.consts.get(PropNames.ALIGNMENT_ADJUST));
-        foPropertyLists[FObjectNames.INLINE_CONTAINER].
-                        add(Ints.consts.get(PropNames.ALIGNMENT_BASELINE));
-        foPropertyLists[FObjectNames.INLINE_CONTAINER].
-                        add(Ints.consts.get(PropNames.BASELINE_SHIFT));
-        foPropertyLists[FObjectNames.INLINE_CONTAINER].
-                add(Ints.consts.get(PropNames.BLOCK_PROGRESSION_DIMENSION));
-        foPropertyLists[FObjectNames.INLINE_CONTAINER].
-                        add(Ints.consts.get(PropNames.CLIP));
-        foPropertyLists[FObjectNames.INLINE_CONTAINER].
-                        add(Ints.consts.get(PropNames.DISPLAY_ALIGN));
-        foPropertyLists[FObjectNames.INLINE_CONTAINER].
-                        add(Ints.consts.get(PropNames.DOMINANT_BASELINE));
-        foPropertyLists[FObjectNames.INLINE_CONTAINER].
-                        add(Ints.consts.get(PropNames.HEIGHT));
-        foPropertyLists[FObjectNames.INLINE_CONTAINER].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.INLINE_CONTAINER].
-                add(Ints.consts.get(PropNames.INLINE_PROGRESSION_DIMENSION));
-        foPropertyLists[FObjectNames.INLINE_CONTAINER].
-                        add(Ints.consts.get(PropNames.KEEP_TOGETHER));
-        foPropertyLists[FObjectNames.INLINE_CONTAINER].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_NEXT));
-        foPropertyLists[FObjectNames.INLINE_CONTAINER].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_PREVIOUS));
-        foPropertyLists[FObjectNames.INLINE_CONTAINER].
-                        add(Ints.consts.get(PropNames.LINE_HEIGHT));
-        foPropertyLists[FObjectNames.INLINE_CONTAINER].
-                        add(Ints.consts.get(PropNames.OVERFLOW));
-        foPropertyLists[FObjectNames.INLINE_CONTAINER].
-                        add(Ints.consts.get(PropNames.REFERENCE_ORIENTATION));
-        foPropertyLists[FObjectNames.INLINE_CONTAINER].
-                        add(Ints.consts.get(PropNames.WIDTH));
-        foPropertyLists[FObjectNames.INLINE_CONTAINER].
-                        add(Ints.consts.get(PropNames.WRITING_MODE));
+        BitSet inline_container = new BitSet();
+        inline_container.or(PropertySets.backgroundSet);
+        inline_container.or(PropertySets.borderSet);
+        inline_container.or(PropertySets.marginInlineSet);
+        inline_container.or(PropertySets.paddingSet);
+        inline_container.or(PropertySets.relativePositionSet);
+        inline_container.set(PropNames.ALIGNMENT_ADJUST);
+        inline_container.set(PropNames.ALIGNMENT_BASELINE);
+        inline_container.set(PropNames.BASELINE_SHIFT);
+        inline_container.set(PropNames.BLOCK_PROGRESSION_DIMENSION);
+        inline_container.set(PropNames.CLIP);
+        inline_container.set(PropNames.DISPLAY_ALIGN);
+        inline_container.set(PropNames.DOMINANT_BASELINE);
+        inline_container.set(PropNames.HEIGHT);
+        inline_container.set(PropNames.ID);
+        inline_container.set(PropNames.INLINE_PROGRESSION_DIMENSION);
+        inline_container.set(PropNames.KEEP_TOGETHER);
+        inline_container.set(PropNames.KEEP_WITH_NEXT);
+        inline_container.set(PropNames.KEEP_WITH_PREVIOUS);
+        inline_container.set(PropNames.LINE_HEIGHT);
+        inline_container.set(PropNames.OVERFLOW);
+        inline_container.set(PropNames.REFERENCE_ORIENTATION);
+        inline_container.set(PropNames.WIDTH);
+        inline_container.set(PropNames.WRITING_MODE);
+        foPropertyLists[FObjectNames.INLINE_CONTAINER] = new ROBitSet(inline_container);
 
 
         //instream-foreign-object
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT] = new HashSet(
-                                PropertySets.accessibilityPropsSize +
-                                PropertySets.auralPropsSize +
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.marginInlinePropsSize +
-                                PropertySets.paddingPropsSize +
-                                PropertySets.relativePositionPropsSize +
-                                21);
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                            addAll(PropertySets.accessibilitySet);
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                            addAll(PropertySets.auralSet);
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                            addAll(PropertySets.marginInlineSet);
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                            addAll(PropertySets.paddingSet);
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                            addAll(PropertySets.relativePositionSet);
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                        add(Ints.consts.get(PropNames.ALIGNMENT_ADJUST));
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                        add(Ints.consts.get(PropNames.ALIGNMENT_BASELINE));
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                        add(Ints.consts.get(PropNames.BASELINE_SHIFT));
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                add(Ints.consts.get(PropNames.BLOCK_PROGRESSION_DIMENSION));
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                        add(Ints.consts.get(PropNames.CLIP));
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                        add(Ints.consts.get(PropNames.CONTENT_HEIGHT));
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                        add(Ints.consts.get(PropNames.CONTENT_TYPE));
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                        add(Ints.consts.get(PropNames.CONTENT_WIDTH));
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                        add(Ints.consts.get(PropNames.DISPLAY_ALIGN));
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                        add(Ints.consts.get(PropNames.DOMINANT_BASELINE));
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                        add(Ints.consts.get(PropNames.HEIGHT));
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                add(Ints.consts.get(PropNames.INLINE_PROGRESSION_DIMENSION));
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_NEXT));
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_PREVIOUS));
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                        add(Ints.consts.get(PropNames.LINE_HEIGHT));
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                        add(Ints.consts.get(PropNames.OVERFLOW));
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                        add(Ints.consts.get(PropNames.SCALING));
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                        add(Ints.consts.get(PropNames.SCALING_METHOD));
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                        add(Ints.consts.get(PropNames.TEXT_ALIGN));
-        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT].
-                        add(Ints.consts.get(PropNames.WIDTH));
+        BitSet instream_foreign_object = new BitSet();
+        instream_foreign_object.or(PropertySets.accessibilitySet);
+        instream_foreign_object.or(PropertySets.auralSet);
+        instream_foreign_object.or(PropertySets.backgroundSet);
+        instream_foreign_object.or(PropertySets.borderSet);
+        instream_foreign_object.or(PropertySets.marginInlineSet);
+        instream_foreign_object.or(PropertySets.paddingSet);
+        instream_foreign_object.or(PropertySets.relativePositionSet);
+        instream_foreign_object.set(PropNames.ALIGNMENT_ADJUST);
+        instream_foreign_object.set(PropNames.ALIGNMENT_BASELINE);
+        instream_foreign_object.set(PropNames.BASELINE_SHIFT);
+        instream_foreign_object.set(PropNames.BLOCK_PROGRESSION_DIMENSION);
+        instream_foreign_object.set(PropNames.CLIP);
+        instream_foreign_object.set(PropNames.CONTENT_HEIGHT);
+        instream_foreign_object.set(PropNames.CONTENT_TYPE);
+        instream_foreign_object.set(PropNames.CONTENT_WIDTH);
+        instream_foreign_object.set(PropNames.DISPLAY_ALIGN);
+        instream_foreign_object.set(PropNames.DOMINANT_BASELINE);
+        instream_foreign_object.set(PropNames.HEIGHT);
+        instream_foreign_object.set(PropNames.ID);
+        instream_foreign_object.set(PropNames.INLINE_PROGRESSION_DIMENSION);
+        instream_foreign_object.set(PropNames.KEEP_WITH_NEXT);
+        instream_foreign_object.set(PropNames.KEEP_WITH_PREVIOUS);
+        instream_foreign_object.set(PropNames.LINE_HEIGHT);
+        instream_foreign_object.set(PropNames.OVERFLOW);
+        instream_foreign_object.set(PropNames.SCALING);
+        instream_foreign_object.set(PropNames.SCALING_METHOD);
+        instream_foreign_object.set(PropNames.TEXT_ALIGN);
+        instream_foreign_object.set(PropNames.WIDTH);
+        foPropertyLists[FObjectNames.INSTREAM_FOREIGN_OBJECT] = new ROBitSet(instream_foreign_object);
 
         //layout-master-set
-        foPropertyLists[FObjectNames.LAYOUT_MASTER_SET] = null;
+        foPropertyLists[FObjectNames.LAYOUT_MASTER_SET] = new ROBitSet(new BitSet());
 
         //leader
-        foPropertyLists[FObjectNames.LEADER] = new HashSet(
-                                PropertySets.accessibilityPropsSize +
-                                PropertySets.auralPropsSize +
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.fontPropsSize +
-                                PropertySets.marginInlinePropsSize +
-                                PropertySets.paddingPropsSize +
-                                PropertySets.relativePositionPropsSize +
-                                21);
-        foPropertyLists[FObjectNames.LEADER].
-                            addAll(PropertySets.accessibilitySet);
-        foPropertyLists[FObjectNames.LEADER].
-                            addAll(PropertySets.auralSet);
-        foPropertyLists[FObjectNames.LEADER].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.LEADER].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.LEADER].
-                            addAll(PropertySets.fontSet);
-        foPropertyLists[FObjectNames.LEADER].
-                            addAll(PropertySets.marginInlineSet);
-        foPropertyLists[FObjectNames.LEADER].
-                            addAll(PropertySets.paddingSet);
-        foPropertyLists[FObjectNames.LEADER].
-                            addAll(PropertySets.relativePositionSet);
-        foPropertyLists[FObjectNames.LEADER].
-                        add(Ints.consts.get(PropNames.ALIGNMENT_ADJUST));
-        foPropertyLists[FObjectNames.LEADER].
-                        add(Ints.consts.get(PropNames.ALIGNMENT_BASELINE));
-        foPropertyLists[FObjectNames.LEADER].
-                        add(Ints.consts.get(PropNames.BASELINE_SHIFT));
-        foPropertyLists[FObjectNames.LEADER].
-                        add(Ints.consts.get(PropNames.COLOR));
-        foPropertyLists[FObjectNames.LEADER].
-                        add(Ints.consts.get(PropNames.DOMINANT_BASELINE));
-        foPropertyLists[FObjectNames.LEADER].
-                        add(Ints.consts.get(PropNames.TEXT_DEPTH));
-        foPropertyLists[FObjectNames.LEADER].
-                        add(Ints.consts.get(PropNames.TEXT_ALTITUDE));
-        foPropertyLists[FObjectNames.LEADER].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.LEADER].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_NEXT));
-        foPropertyLists[FObjectNames.LEADER].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_PREVIOUS));
-        foPropertyLists[FObjectNames.LEADER].
-                        add(Ints.consts.get(PropNames.LEADER_ALIGNMENT));
-        foPropertyLists[FObjectNames.LEADER].
-                        add(Ints.consts.get(PropNames.LEADER_LENGTH));
-        foPropertyLists[FObjectNames.LEADER].
-                        add(Ints.consts.get(PropNames.LEADER_PATTERN));
-        foPropertyLists[FObjectNames.LEADER].
-                        add(Ints.consts.get(PropNames.LEADER_PATTERN_WIDTH));
-        foPropertyLists[FObjectNames.LEADER].
-                        add(Ints.consts.get(PropNames.RULE_STYLE));
-        foPropertyLists[FObjectNames.LEADER].
-                        add(Ints.consts.get(PropNames.RULE_THICKNESS));
-        foPropertyLists[FObjectNames.LEADER].
-                        add(Ints.consts.get(PropNames.LETTER_SPACING));
-        foPropertyLists[FObjectNames.LEADER].
-                        add(Ints.consts.get(PropNames.LINE_HEIGHT));
-        foPropertyLists[FObjectNames.LEADER].
-                        add(Ints.consts.get(PropNames.TEXT_SHADOW));
-        foPropertyLists[FObjectNames.LEADER].
-                        add(Ints.consts.get(PropNames.VISIBILITY));
-        foPropertyLists[FObjectNames.LEADER].
-                        add(Ints.consts.get(PropNames.WORD_SPACING));
+        BitSet leader = new BitSet();
+        leader.or(PropertySets.accessibilitySet);
+        leader.or(PropertySets.auralSet);
+        leader.or(PropertySets.backgroundSet);
+        leader.or(PropertySets.borderSet);
+        leader.or(PropertySets.fontSet);
+        leader.or(PropertySets.marginInlineSet);
+        leader.or(PropertySets.paddingSet);
+        leader.or(PropertySets.relativePositionSet);
+        leader.set(PropNames.ALIGNMENT_ADJUST);
+        leader.set(PropNames.ALIGNMENT_BASELINE);
+        leader.set(PropNames.BASELINE_SHIFT);
+        leader.set(PropNames.COLOR);
+        leader.set(PropNames.DOMINANT_BASELINE);
+        leader.set(PropNames.TEXT_DEPTH);
+        leader.set(PropNames.TEXT_ALTITUDE);
+        leader.set(PropNames.ID);
+        leader.set(PropNames.KEEP_WITH_NEXT);
+        leader.set(PropNames.KEEP_WITH_PREVIOUS);
+        leader.set(PropNames.LEADER_ALIGNMENT);
+        leader.set(PropNames.LEADER_LENGTH);
+        leader.set(PropNames.LEADER_PATTERN);
+        leader.set(PropNames.LEADER_PATTERN_WIDTH);
+        leader.set(PropNames.RULE_STYLE);
+        leader.set(PropNames.RULE_THICKNESS);
+        leader.set(PropNames.LETTER_SPACING);
+        leader.set(PropNames.LINE_HEIGHT);
+        leader.set(PropNames.TEXT_SHADOW);
+        leader.set(PropNames.VISIBILITY);
+        leader.set(PropNames.WORD_SPACING);
+        foPropertyLists[FObjectNames.LEADER] = new ROBitSet(leader);
 
         //list-block
-        foPropertyLists[FObjectNames.LIST_BLOCK] = new HashSet(
-                                PropertySets.accessibilityPropsSize +
-                                PropertySets.auralPropsSize +
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.marginBlockPropsSize +
-                                PropertySets.paddingPropsSize +
-                                PropertySets.relativePositionPropsSize +
-                                9);
-        foPropertyLists[FObjectNames.LIST_BLOCK].
-                            addAll(PropertySets.accessibilitySet);
-        foPropertyLists[FObjectNames.LIST_BLOCK].
-                            addAll(PropertySets.auralSet);
-        foPropertyLists[FObjectNames.LIST_BLOCK].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.LIST_BLOCK].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.LIST_BLOCK].
-                            addAll(PropertySets.marginBlockSet);
-        foPropertyLists[FObjectNames.LIST_BLOCK].
-                            addAll(PropertySets.paddingSet);
-        foPropertyLists[FObjectNames.LIST_BLOCK].
-                            addAll(PropertySets.relativePositionSet);
-        foPropertyLists[FObjectNames.LIST_BLOCK].
-                        add(Ints.consts.get(PropNames.BREAK_AFTER));
-        foPropertyLists[FObjectNames.LIST_BLOCK].
-                        add(Ints.consts.get(PropNames.BREAK_BEFORE));
-        foPropertyLists[FObjectNames.LIST_BLOCK].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.LIST_BLOCK].
-                        add(Ints.consts.get(PropNames.INTRUSION_DISPLACE));
-        foPropertyLists[FObjectNames.LIST_BLOCK].
-                        add(Ints.consts.get(PropNames.KEEP_TOGETHER));
-        foPropertyLists[FObjectNames.LIST_BLOCK].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_NEXT));
-        foPropertyLists[FObjectNames.LIST_BLOCK].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_PREVIOUS));
-        foPropertyLists[FObjectNames.LIST_BLOCK].
-        add(Ints.consts.get(PropNames.PROVISIONAL_DISTANCE_BETWEEN_STARTS));
-        foPropertyLists[FObjectNames.LIST_BLOCK].
-                add(Ints.consts.get(PropNames.PROVISIONAL_LABEL_SEPARATION));
+        BitSet list_block = new BitSet();
+        list_block.or(PropertySets.accessibilitySet);
+        list_block.or(PropertySets.auralSet);
+        list_block.or(PropertySets.backgroundSet);
+        list_block.or(PropertySets.borderSet);
+        list_block.or(PropertySets.marginBlockSet);
+        list_block.or(PropertySets.paddingSet);
+        list_block.or(PropertySets.relativePositionSet);
+        list_block.set(PropNames.BREAK_AFTER);
+        list_block.set(PropNames.BREAK_BEFORE);
+        list_block.set(PropNames.ID);
+        list_block.set(PropNames.INTRUSION_DISPLACE);
+        list_block.set(PropNames.KEEP_TOGETHER);
+        list_block.set(PropNames.KEEP_WITH_NEXT);
+        list_block.set(PropNames.KEEP_WITH_PREVIOUS);
+        list_block.set(PropNames.PROVISIONAL_DISTANCE_BETWEEN_STARTS);
+        list_block.set(PropNames.PROVISIONAL_LABEL_SEPARATION);
+        foPropertyLists[FObjectNames.LIST_BLOCK] = new ROBitSet(list_block);
 
         //list-item
-        foPropertyLists[FObjectNames.LIST_ITEM] = new HashSet(
-                                PropertySets.accessibilityPropsSize +
-                                PropertySets.auralPropsSize +
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.marginBlockPropsSize +
-                                PropertySets.paddingPropsSize +
-                                PropertySets.relativePositionPropsSize +
-                                8);
-        foPropertyLists[FObjectNames.LIST_ITEM].
-                            addAll(PropertySets.accessibilitySet);
-        foPropertyLists[FObjectNames.LIST_ITEM].
-                            addAll(PropertySets.auralSet);
-        foPropertyLists[FObjectNames.LIST_ITEM].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.LIST_ITEM].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.LIST_ITEM].
-                            addAll(PropertySets.marginBlockSet);
-        foPropertyLists[FObjectNames.LIST_ITEM].
-                            addAll(PropertySets.paddingSet);
-        foPropertyLists[FObjectNames.LIST_ITEM].
-                            addAll(PropertySets.relativePositionSet);
-        foPropertyLists[FObjectNames.LIST_ITEM].
-                        add(Ints.consts.get(PropNames.BREAK_AFTER));
-        foPropertyLists[FObjectNames.LIST_ITEM].
-                        add(Ints.consts.get(PropNames.BREAK_BEFORE));
-        foPropertyLists[FObjectNames.LIST_ITEM].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.LIST_ITEM].
-                        add(Ints.consts.get(PropNames.INTRUSION_DISPLACE));
-        foPropertyLists[FObjectNames.LIST_ITEM].
-                        add(Ints.consts.get(PropNames.KEEP_TOGETHER));
-        foPropertyLists[FObjectNames.LIST_ITEM].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_NEXT));
-        foPropertyLists[FObjectNames.LIST_ITEM].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_PREVIOUS));
-        foPropertyLists[FObjectNames.LIST_ITEM].
-                        add(Ints.consts.get(PropNames.RELATIVE_ALIGN));
+        BitSet list_item = new BitSet();
+        list_item.or(PropertySets.accessibilitySet);
+        list_item.or(PropertySets.auralSet);
+        list_item.or(PropertySets.backgroundSet);
+        list_item.or(PropertySets.borderSet);
+        list_item.or(PropertySets.marginBlockSet);
+        list_item.or(PropertySets.paddingSet);
+        list_item.or(PropertySets.relativePositionSet);
+        list_item.set(PropNames.BREAK_AFTER);
+        list_item.set(PropNames.BREAK_BEFORE);
+        list_item.set(PropNames.ID);
+        list_item.set(PropNames.INTRUSION_DISPLACE);
+        list_item.set(PropNames.KEEP_TOGETHER);
+        list_item.set(PropNames.KEEP_WITH_NEXT);
+        list_item.set(PropNames.KEEP_WITH_PREVIOUS);
+        list_item.set(PropNames.RELATIVE_ALIGN);
+        foPropertyLists[FObjectNames.LIST_ITEM] = new ROBitSet(list_item);
 
         //list-item-body
-        foPropertyLists[FObjectNames.LIST_ITEM_BODY] = new HashSet(
-                                PropertySets.accessibilityPropsSize +
-                                2);
-        foPropertyLists[FObjectNames.LIST_ITEM_BODY].
-                            addAll(PropertySets.accessibilitySet);
-        foPropertyLists[FObjectNames.LIST_ITEM_BODY].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.LIST_ITEM_BODY].
-                        add(Ints.consts.get(PropNames.KEEP_TOGETHER));
+        BitSet list_item_body = new BitSet();
+        list_item_body.or(PropertySets.accessibilitySet);
+        list_item_body.set(PropNames.ID);
+        list_item_body.set(PropNames.KEEP_TOGETHER);
+        foPropertyLists[FObjectNames.LIST_ITEM_BODY] = new ROBitSet(list_item_body);
 
         //list-item-label
-        foPropertyLists[FObjectNames.LIST_ITEM_LABEL] = new HashSet(
-                                PropertySets.accessibilityPropsSize +
-                                2);
-        foPropertyLists[FObjectNames.LIST_ITEM_LABEL].
-                            addAll(PropertySets.accessibilitySet);
-        foPropertyLists[FObjectNames.LIST_ITEM_LABEL].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.LIST_ITEM_LABEL].
-                        add(Ints.consts.get(PropNames.KEEP_TOGETHER));
+        BitSet list_item_label = new BitSet();
+        list_item_label.or(PropertySets.accessibilitySet);
+        list_item_label.set(PropNames.ID);
+        list_item_label.set(PropNames.KEEP_TOGETHER);
+        foPropertyLists[FObjectNames.LIST_ITEM_LABEL] = new ROBitSet(list_item_label);
 
         //marker
-        foPropertyLists[FObjectNames.MARKER] = new HashSet(1);
-        foPropertyLists[FObjectNames.MARKER].
-                        add(Ints.consts.get(PropNames.MARKER_CLASS_NAME));
+        BitSet marker = new BitSet();
+        marker.set(PropNames.MARKER_CLASS_NAME);
+        foPropertyLists[FObjectNames.MARKER] = new ROBitSet(marker);
 
         //multi-case
-        foPropertyLists[FObjectNames.MULTI_CASE] = new HashSet(
-                                PropertySets.accessibilityPropsSize +
-                                4);
-        foPropertyLists[FObjectNames.MULTI_CASE].
-                            addAll(PropertySets.accessibilitySet);
-        foPropertyLists[FObjectNames.MULTI_CASE].
-                        add(Ints.consts.get(PropNames.CASE_NAME));
-        foPropertyLists[FObjectNames.MULTI_CASE].
-                        add(Ints.consts.get(PropNames.CASE_TITLE));
-        foPropertyLists[FObjectNames.MULTI_CASE].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.MULTI_CASE].
-                        add(Ints.consts.get(PropNames.STARTING_STATE));
+        BitSet multi_case = new BitSet();
+        multi_case.or(PropertySets.accessibilitySet);
+        multi_case.set(PropNames.CASE_NAME);
+        multi_case.set(PropNames.CASE_TITLE);
+        multi_case.set(PropNames.ID);
+        multi_case.set(PropNames.STARTING_STATE);
+        foPropertyLists[FObjectNames.MULTI_CASE] = new ROBitSet(multi_case);
 
         //multi-properties
-        foPropertyLists[FObjectNames.MULTI_PROPERTIES]
-                = new HashSet(FObjectNames.LAST_FO + 1);
-        foPropertyLists[FObjectNames.MULTI_PROPERTIES] = new HashSet(
-                                PropertySets.accessibilityPropsSize +
-                                1);
-        foPropertyLists[FObjectNames.MULTI_PROPERTIES].
-                            addAll(PropertySets.accessibilitySet);
-        foPropertyLists[FObjectNames.MULTI_PROPERTIES].
-                        add(Ints.consts.get(PropNames.ID));
+        BitSet multi_properties = new BitSet();
+        multi_properties.or(PropertySets.accessibilitySet);
+        multi_properties.set(PropNames.ID);
+        foPropertyLists[FObjectNames.MULTI_PROPERTIES] = new ROBitSet(multi_properties);
 
         //multi-property-set
-        foPropertyLists[FObjectNames.MULTI_PROPERTY_SET] = new HashSet(2);
-        foPropertyLists[FObjectNames.MULTI_PROPERTIES].
-                        add(Ints.consts.get(PropNames.ACTIVE_STATE));
-        foPropertyLists[FObjectNames.MULTI_PROPERTIES].
-                        add(Ints.consts.get(PropNames.ID));
+        BitSet multi_property_set = new BitSet();
+        multi_properties.set(PropNames.ACTIVE_STATE);
+        multi_properties.set(PropNames.ID);
+        foPropertyLists[FObjectNames.MULTI_PROPERTY_SET] = new ROBitSet(multi_property_set);
 
         //multi-switch
-        foPropertyLists[FObjectNames.MULTI_SWITCH] = new HashSet(
-                                PropertySets.accessibilityPropsSize +
-                                2);
-        foPropertyLists[FObjectNames.MULTI_SWITCH].
-                            addAll(PropertySets.accessibilitySet);
-        foPropertyLists[FObjectNames.MULTI_SWITCH].
-                        add(Ints.consts.get(PropNames.AUTO_RESTORE));
-        foPropertyLists[FObjectNames.MULTI_SWITCH].
-                        add(Ints.consts.get(PropNames.ID));
+        BitSet multi_switch = new BitSet();
+        multi_switch.or(PropertySets.accessibilitySet);
+        multi_switch.set(PropNames.AUTO_RESTORE);
+        multi_switch.set(PropNames.ID);
+        foPropertyLists[FObjectNames.MULTI_SWITCH] = new ROBitSet(multi_switch);
 
         //multi-toggle
-        foPropertyLists[FObjectNames.MULTI_TOGGLE] = new HashSet(
-                                PropertySets.accessibilityPropsSize +
-                                2);
-        foPropertyLists[FObjectNames.MULTI_TOGGLE].
-                            addAll(PropertySets.accessibilitySet);
-        foPropertyLists[FObjectNames.MULTI_TOGGLE].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.MULTI_TOGGLE].
-                        add(Ints.consts.get(PropNames.SWITCH_TO));
+        BitSet multi_toggle = new BitSet();
+        multi_toggle.or(PropertySets.accessibilitySet);
+        multi_toggle.set(PropNames.ID);
+        multi_toggle.set(PropNames.SWITCH_TO);
+        foPropertyLists[FObjectNames.MULTI_TOGGLE] = new ROBitSet(multi_toggle);
 
         //page-number
-        foPropertyLists[FObjectNames.PAGE_NUMBER] = new HashSet(
-                                PropertySets.accessibilityPropsSize +
-                                PropertySets.auralPropsSize +
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.fontPropsSize +
-                                PropertySets.marginInlinePropsSize +
-                                PropertySets.paddingPropsSize +
-                                PropertySets.relativePositionPropsSize +
-                                18);
-        foPropertyLists[FObjectNames.PAGE_NUMBER].
-                            addAll(PropertySets.accessibilitySet);
-        foPropertyLists[FObjectNames.PAGE_NUMBER].
-                            addAll(PropertySets.auralSet);
-        foPropertyLists[FObjectNames.PAGE_NUMBER].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.PAGE_NUMBER].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.PAGE_NUMBER].
-                            addAll(PropertySets.fontSet);
-        foPropertyLists[FObjectNames.PAGE_NUMBER].
-                            addAll(PropertySets.marginInlineSet);
-        foPropertyLists[FObjectNames.PAGE_NUMBER].
-                            addAll(PropertySets.paddingSet);
-        foPropertyLists[FObjectNames.PAGE_NUMBER].
-                            addAll(PropertySets.relativePositionSet);
-        foPropertyLists[FObjectNames.PAGE_NUMBER].
-                        add(Ints.consts.get(PropNames.ALIGNMENT_ADJUST));
-        foPropertyLists[FObjectNames.PAGE_NUMBER].
-                        add(Ints.consts.get(PropNames.ALIGNMENT_BASELINE));
-        foPropertyLists[FObjectNames.PAGE_NUMBER].
-                        add(Ints.consts.get(PropNames.BASELINE_SHIFT));
-        foPropertyLists[FObjectNames.PAGE_NUMBER].
-                        add(Ints.consts.get(PropNames.DOMINANT_BASELINE));
-        foPropertyLists[FObjectNames.PAGE_NUMBER].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.PAGE_NUMBER].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_NEXT));
-        foPropertyLists[FObjectNames.PAGE_NUMBER].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_PREVIOUS));
-        foPropertyLists[FObjectNames.PAGE_NUMBER].
-                        add(Ints.consts.get(PropNames.LETTER_SPACING));
-        foPropertyLists[FObjectNames.PAGE_NUMBER].
-                        add(Ints.consts.get(PropNames.LINE_HEIGHT));
-        foPropertyLists[FObjectNames.PAGE_NUMBER].
-                        add(Ints.consts.get(PropNames.SCORE_SPACES));
-        foPropertyLists[FObjectNames.PAGE_NUMBER].
-                        add(Ints.consts.get(PropNames.TEXT_ALTITUDE));
-        foPropertyLists[FObjectNames.PAGE_NUMBER].
-                        add(Ints.consts.get(PropNames.TEXT_DECORATION));
-        foPropertyLists[FObjectNames.PAGE_NUMBER].
-                        add(Ints.consts.get(PropNames.TEXT_DEPTH));
-        foPropertyLists[FObjectNames.PAGE_NUMBER].
-                        add(Ints.consts.get(PropNames.TEXT_SHADOW));
-        foPropertyLists[FObjectNames.PAGE_NUMBER].
-                        add(Ints.consts.get(PropNames.TEXT_TRANSFORM));
-        foPropertyLists[FObjectNames.PAGE_NUMBER].
-                        add(Ints.consts.get(PropNames.VISIBILITY));
-        foPropertyLists[FObjectNames.PAGE_NUMBER].
-                        add(Ints.consts.get(PropNames.WORD_SPACING));
-        foPropertyLists[FObjectNames.PAGE_NUMBER].
-                        add(Ints.consts.get(PropNames.WRAP_OPTION));
+        BitSet page_number = new BitSet();
+        page_number.or(PropertySets.accessibilitySet);
+        page_number.or(PropertySets.auralSet);
+        page_number.or(PropertySets.backgroundSet);
+        page_number.or(PropertySets.borderSet);
+        page_number.or(PropertySets.fontSet);
+        page_number.or(PropertySets.marginInlineSet);
+        page_number.or(PropertySets.paddingSet);
+        page_number.or(PropertySets.relativePositionSet);
+        page_number.set(PropNames.ALIGNMENT_ADJUST);
+        page_number.set(PropNames.ALIGNMENT_BASELINE);
+        page_number.set(PropNames.BASELINE_SHIFT);
+        page_number.set(PropNames.DOMINANT_BASELINE);
+        page_number.set(PropNames.ID);
+        page_number.set(PropNames.KEEP_WITH_NEXT);
+        page_number.set(PropNames.KEEP_WITH_PREVIOUS);
+        page_number.set(PropNames.LETTER_SPACING);
+        page_number.set(PropNames.LINE_HEIGHT);
+        page_number.set(PropNames.SCORE_SPACES);
+        page_number.set(PropNames.TEXT_ALTITUDE);
+        page_number.set(PropNames.TEXT_DECORATION);
+        page_number.set(PropNames.TEXT_DEPTH);
+        page_number.set(PropNames.TEXT_SHADOW);
+        page_number.set(PropNames.TEXT_TRANSFORM);
+        page_number.set(PropNames.VISIBILITY);
+        page_number.set(PropNames.WORD_SPACING);
+        page_number.set(PropNames.WRAP_OPTION);
+        foPropertyLists[FObjectNames.PAGE_NUMBER] = new ROBitSet(page_number);
 
         //page-number-citation
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION] = new HashSet(
-                                PropertySets.accessibilityPropsSize +
-                                PropertySets.auralPropsSize +
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.fontPropsSize +
-                                PropertySets.marginInlinePropsSize +
-                                PropertySets.paddingPropsSize +
-                                PropertySets.relativePositionPropsSize +
-                                19);
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION].
-                            addAll(PropertySets.accessibilitySet);
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION].
-                            addAll(PropertySets.auralSet);
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION].
-                            addAll(PropertySets.fontSet);
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION].
-                            addAll(PropertySets.marginInlineSet);
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION].
-                            addAll(PropertySets.paddingSet);
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION].
-                            addAll(PropertySets.relativePositionSet);
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION].
-                        add(Ints.consts.get(PropNames.ALIGNMENT_ADJUST));
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION].
-                        add(Ints.consts.get(PropNames.ALIGNMENT_BASELINE));
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION].
-                        add(Ints.consts.get(PropNames.BASELINE_SHIFT));
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION].
-                        add(Ints.consts.get(PropNames.DOMINANT_BASELINE));
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_NEXT));
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_PREVIOUS));
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION].
-                        add(Ints.consts.get(PropNames.LETTER_SPACING));
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION].
-                        add(Ints.consts.get(PropNames.LINE_HEIGHT));
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION].
-                        add(Ints.consts.get(PropNames.REF_ID));
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION].
-                        add(Ints.consts.get(PropNames.SCORE_SPACES));
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION].
-                        add(Ints.consts.get(PropNames.TEXT_ALTITUDE));
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION].
-                        add(Ints.consts.get(PropNames.TEXT_DECORATION));
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION].
-                        add(Ints.consts.get(PropNames.TEXT_DEPTH));
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION].
-                        add(Ints.consts.get(PropNames.TEXT_SHADOW));
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION].
-                        add(Ints.consts.get(PropNames.TEXT_TRANSFORM));
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION].
-                        add(Ints.consts.get(PropNames.VISIBILITY));
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION].
-                        add(Ints.consts.get(PropNames.WORD_SPACING));
-        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION].
-                        add(Ints.consts.get(PropNames.WRAP_OPTION));
+        BitSet page_number_citation = new BitSet();
+        page_number_citation.or(PropertySets.accessibilitySet);
+        page_number_citation.or(PropertySets.auralSet);
+        page_number_citation.or(PropertySets.backgroundSet);
+        page_number_citation.or(PropertySets.borderSet);
+        page_number_citation.or(PropertySets.fontSet);
+        page_number_citation.or(PropertySets.marginInlineSet);
+        page_number_citation.or(PropertySets.paddingSet);
+        page_number_citation.or(PropertySets.relativePositionSet);
+        page_number_citation.set(PropNames.ALIGNMENT_ADJUST);
+        page_number_citation.set(PropNames.ALIGNMENT_BASELINE);
+        page_number_citation.set(PropNames.BASELINE_SHIFT);
+        page_number_citation.set(PropNames.DOMINANT_BASELINE);
+        page_number_citation.set(PropNames.ID);
+        page_number_citation.set(PropNames.KEEP_WITH_NEXT);
+        page_number_citation.set(PropNames.KEEP_WITH_PREVIOUS);
+        page_number_citation.set(PropNames.LETTER_SPACING);
+        page_number_citation.set(PropNames.LINE_HEIGHT);
+        page_number_citation.set(PropNames.REF_ID);
+        page_number_citation.set(PropNames.SCORE_SPACES);
+        page_number_citation.set(PropNames.TEXT_ALTITUDE);
+        page_number_citation.set(PropNames.TEXT_DECORATION);
+        page_number_citation.set(PropNames.TEXT_DEPTH);
+        page_number_citation.set(PropNames.TEXT_SHADOW);
+        page_number_citation.set(PropNames.TEXT_TRANSFORM);
+        page_number_citation.set(PropNames.VISIBILITY);
+        page_number_citation.set(PropNames.WORD_SPACING);
+        page_number_citation.set(PropNames.WRAP_OPTION);
+        foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION] = new ROBitSet(page_number_citation);
 
         //page-sequence
-        foPropertyLists[FObjectNames.PAGE_SEQUENCE] = new HashSet(10);
-        foPropertyLists[FObjectNames.PAGE_SEQUENCE].
-                        add(Ints.consts.get(PropNames.COUNTRY));
-        foPropertyLists[FObjectNames.PAGE_SEQUENCE].
-                        add(Ints.consts.get(PropNames.FORMAT));
-        foPropertyLists[FObjectNames.PAGE_SEQUENCE].
-                        add(Ints.consts.get(PropNames.LANGUAGE));
-        foPropertyLists[FObjectNames.PAGE_SEQUENCE].
-                        add(Ints.consts.get(PropNames.LETTER_VALUE));
-        foPropertyLists[FObjectNames.PAGE_SEQUENCE].
-                        add(Ints.consts.get(PropNames.GROUPING_SEPARATOR));
-        foPropertyLists[FObjectNames.PAGE_SEQUENCE].
-                        add(Ints.consts.get(PropNames.GROUPING_SIZE));
-        foPropertyLists[FObjectNames.PAGE_SEQUENCE].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.PAGE_SEQUENCE].
-                        add(Ints.consts.get(PropNames.INITIAL_PAGE_NUMBER));
-        foPropertyLists[FObjectNames.PAGE_SEQUENCE].
-                        add(Ints.consts.get(PropNames.FORCE_PAGE_COUNT));
-        foPropertyLists[FObjectNames.PAGE_SEQUENCE].
-                        add(Ints.consts.get(PropNames.MASTER_REFERENCE));
+        BitSet page_sequence = new BitSet();
+        page_sequence.set(PropNames.COUNTRY);
+        page_sequence.set(PropNames.FORMAT);
+        page_sequence.set(PropNames.LANGUAGE);
+        page_sequence.set(PropNames.LETTER_VALUE);
+        page_sequence.set(PropNames.GROUPING_SEPARATOR);
+        page_sequence.set(PropNames.GROUPING_SIZE);
+        page_sequence.set(PropNames.ID);
+        page_sequence.set(PropNames.INITIAL_PAGE_NUMBER);
+        page_sequence.set(PropNames.FORCE_PAGE_COUNT);
+        page_sequence.set(PropNames.MASTER_REFERENCE);
+        foPropertyLists[FObjectNames.PAGE_SEQUENCE] = new ROBitSet(page_sequence);
 
         //page-sequence-master
-        foPropertyLists[FObjectNames.PAGE_SEQUENCE_MASTER] = new HashSet(1);
-        foPropertyLists[FObjectNames.PAGE_SEQUENCE_MASTER].
-                        add(Ints.consts.get(PropNames.MASTER_NAME));
-        
+        BitSet page_sequence_master = new BitSet();
+        page_sequence_master.set(PropNames.MASTER_NAME);
+        foPropertyLists[FObjectNames.PAGE_SEQUENCE_MASTER] = new ROBitSet(page_sequence_master);
+
         //region-after
-        foPropertyLists[FObjectNames.REGION_AFTER] = new HashSet(
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.paddingPropsSize +
-                                8);
-        foPropertyLists[FObjectNames.REGION_AFTER].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.REGION_AFTER].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.REGION_AFTER].
-                            addAll(PropertySets.paddingSet);
-        foPropertyLists[FObjectNames.REGION_AFTER].
-                        add(Ints.consts.get(PropNames.CLIP));
-        foPropertyLists[FObjectNames.REGION_AFTER].
-                        add(Ints.consts.get(PropNames.DISPLAY_ALIGN));
-        foPropertyLists[FObjectNames.REGION_AFTER].
-                        add(Ints.consts.get(PropNames.EXTENT));
-        foPropertyLists[FObjectNames.REGION_AFTER].
-                        add(Ints.consts.get(PropNames.OVERFLOW));
-        foPropertyLists[FObjectNames.REGION_AFTER].
-                        add(Ints.consts.get(PropNames.PRECEDENCE));
-        foPropertyLists[FObjectNames.REGION_AFTER].
-                        add(Ints.consts.get(PropNames.REGION_NAME));
-        foPropertyLists[FObjectNames.REGION_AFTER].
-                        add(Ints.consts.get(PropNames.REFERENCE_ORIENTATION));
-        foPropertyLists[FObjectNames.REGION_AFTER].
-                        add(Ints.consts.get(PropNames.WRITING_MODE));
+        BitSet region_after = new BitSet();
+        region_after.or(PropertySets.backgroundSet);
+        region_after.or(PropertySets.borderSet);
+        region_after.or(PropertySets.paddingSet);
+        region_after.set(PropNames.CLIP);
+        region_after.set(PropNames.DISPLAY_ALIGN);
+        region_after.set(PropNames.EXTENT);
+        region_after.set(PropNames.OVERFLOW);
+        region_after.set(PropNames.PRECEDENCE);
+        region_after.set(PropNames.REGION_NAME);
+        region_after.set(PropNames.REFERENCE_ORIENTATION);
+        region_after.set(PropNames.WRITING_MODE);
+        foPropertyLists[FObjectNames.REGION_AFTER] = new ROBitSet(region_after);
 
         //region-before
-        foPropertyLists[FObjectNames.REGION_BEFORE] = new HashSet(
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.paddingPropsSize +
-                                8);
-        foPropertyLists[FObjectNames.REGION_BEFORE].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.REGION_BEFORE].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.REGION_BEFORE].
-                            addAll(PropertySets.paddingSet);
-        foPropertyLists[FObjectNames.REGION_BEFORE].
-                        add(Ints.consts.get(PropNames.CLIP));
-        foPropertyLists[FObjectNames.REGION_BEFORE].
-                        add(Ints.consts.get(PropNames.DISPLAY_ALIGN));
-        foPropertyLists[FObjectNames.REGION_BEFORE].
-                        add(Ints.consts.get(PropNames.EXTENT));
-        foPropertyLists[FObjectNames.REGION_BEFORE].
-                        add(Ints.consts.get(PropNames.OVERFLOW));
-        foPropertyLists[FObjectNames.REGION_BEFORE].
-                        add(Ints.consts.get(PropNames.PRECEDENCE));
-        foPropertyLists[FObjectNames.REGION_BEFORE].
-                        add(Ints.consts.get(PropNames.REGION_NAME));
-        foPropertyLists[FObjectNames.REGION_BEFORE].
-                        add(Ints.consts.get(PropNames.REFERENCE_ORIENTATION));
-        foPropertyLists[FObjectNames.REGION_BEFORE].
-                        add(Ints.consts.get(PropNames.WRITING_MODE));
+        BitSet region_before = new BitSet();
+        region_before.or(PropertySets.backgroundSet);
+        region_before.or(PropertySets.borderSet);
+        region_before.or(PropertySets.paddingSet);
+        region_before.set(PropNames.CLIP);
+        region_before.set(PropNames.DISPLAY_ALIGN);
+        region_before.set(PropNames.EXTENT);
+        region_before.set(PropNames.OVERFLOW);
+        region_before.set(PropNames.PRECEDENCE);
+        region_before.set(PropNames.REGION_NAME);
+        region_before.set(PropNames.REFERENCE_ORIENTATION);
+        region_before.set(PropNames.WRITING_MODE);
+        foPropertyLists[FObjectNames.REGION_BEFORE] = new ROBitSet(region_before);
 
         //region-body
-        foPropertyLists[FObjectNames.REGION_BODY] = new HashSet(
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.paddingPropsSize +
-                                PropertySets.marginBlockPropsSize +
-                                8);
-        foPropertyLists[FObjectNames.REGION_BODY].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.REGION_BODY].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.REGION_BODY].
-                            addAll(PropertySets.paddingSet);
-        foPropertyLists[FObjectNames.REGION_BODY].
-                            addAll(PropertySets.marginBlockSet);
-        foPropertyLists[FObjectNames.REGION_BODY].
-                        add(Ints.consts.get(PropNames.CLIP));
-        foPropertyLists[FObjectNames.REGION_BODY].
-                        add(Ints.consts.get(PropNames.COLUMN_COUNT));
-        foPropertyLists[FObjectNames.REGION_BODY].
-                        add(Ints.consts.get(PropNames.COLUMN_GAP));
-        foPropertyLists[FObjectNames.REGION_BODY].
-                        add(Ints.consts.get(PropNames.DISPLAY_ALIGN));
-        foPropertyLists[FObjectNames.REGION_BODY].
-                        add(Ints.consts.get(PropNames.OVERFLOW));
-        foPropertyLists[FObjectNames.REGION_BODY].
-                        add(Ints.consts.get(PropNames.REGION_NAME));
-        foPropertyLists[FObjectNames.REGION_BODY].
-                        add(Ints.consts.get(PropNames.REFERENCE_ORIENTATION));
-        foPropertyLists[FObjectNames.REGION_BODY].
-                        add(Ints.consts.get(PropNames.WRITING_MODE));
+        BitSet region_body = new BitSet();
+        region_body.or(PropertySets.backgroundSet);
+        region_body.or(PropertySets.borderSet);
+        region_body.or(PropertySets.paddingSet);
+        region_body.or(PropertySets.marginBlockSet);
+        region_body.set(PropNames.CLIP);
+        region_body.set(PropNames.COLUMN_COUNT);
+        region_body.set(PropNames.COLUMN_GAP);
+        region_body.set(PropNames.DISPLAY_ALIGN);
+        region_body.set(PropNames.OVERFLOW);
+        region_body.set(PropNames.REGION_NAME);
+        region_body.set(PropNames.REFERENCE_ORIENTATION);
+        region_body.set(PropNames.WRITING_MODE);
+        foPropertyLists[FObjectNames.REGION_BODY] = new ROBitSet(region_body);
 
         //region-end
-        foPropertyLists[FObjectNames.REGION_END] = new HashSet(
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.paddingPropsSize +
-                                7);
-        foPropertyLists[FObjectNames.REGION_END].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.REGION_END].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.REGION_END].
-                            addAll(PropertySets.paddingSet);
-        foPropertyLists[FObjectNames.REGION_END].
-                        add(Ints.consts.get(PropNames.CLIP));
-        foPropertyLists[FObjectNames.REGION_END].
-                        add(Ints.consts.get(PropNames.DISPLAY_ALIGN));
-        foPropertyLists[FObjectNames.REGION_END].
-                        add(Ints.consts.get(PropNames.EXTENT));
-        foPropertyLists[FObjectNames.REGION_END].
-                        add(Ints.consts.get(PropNames.OVERFLOW));
-        foPropertyLists[FObjectNames.REGION_END].
-                        add(Ints.consts.get(PropNames.REGION_NAME));
-        foPropertyLists[FObjectNames.REGION_END].
-                        add(Ints.consts.get(PropNames.REFERENCE_ORIENTATION));
-        foPropertyLists[FObjectNames.REGION_END].
-                        add(Ints.consts.get(PropNames.WRITING_MODE));
+        BitSet region_end = new BitSet();
+        region_end.or(PropertySets.backgroundSet);
+        region_end.or(PropertySets.borderSet);
+        region_end.or(PropertySets.paddingSet);
+        region_end.set(PropNames.CLIP);
+        region_end.set(PropNames.DISPLAY_ALIGN);
+        region_end.set(PropNames.EXTENT);
+        region_end.set(PropNames.OVERFLOW);
+        region_end.set(PropNames.REGION_NAME);
+        region_end.set(PropNames.REFERENCE_ORIENTATION);
+        region_end.set(PropNames.WRITING_MODE);
+        foPropertyLists[FObjectNames.REGION_END] = new ROBitSet(region_end);
 
         //region-start
-        foPropertyLists[FObjectNames.REGION_START] = new HashSet(
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.paddingPropsSize +
-                                7);
-        foPropertyLists[FObjectNames.REGION_START].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.REGION_START].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.REGION_START].
-                            addAll(PropertySets.paddingSet);
-        foPropertyLists[FObjectNames.REGION_START].
-                        add(Ints.consts.get(PropNames.CLIP));
-        foPropertyLists[FObjectNames.REGION_START].
-                        add(Ints.consts.get(PropNames.DISPLAY_ALIGN));
-        foPropertyLists[FObjectNames.REGION_START].
-                        add(Ints.consts.get(PropNames.EXTENT));
-        foPropertyLists[FObjectNames.REGION_START].
-                        add(Ints.consts.get(PropNames.OVERFLOW));
-        foPropertyLists[FObjectNames.REGION_START].
-                        add(Ints.consts.get(PropNames.REGION_NAME));
-        foPropertyLists[FObjectNames.REGION_START].
-                        add(Ints.consts.get(PropNames.REFERENCE_ORIENTATION));
-        foPropertyLists[FObjectNames.REGION_START].
-                        add(Ints.consts.get(PropNames.WRITING_MODE));
+        BitSet region_start = new BitSet();
+        region_start.or(PropertySets.backgroundSet);
+        region_start.or(PropertySets.borderSet);
+        region_start.or(PropertySets.paddingSet);
+        region_start.set(PropNames.CLIP);
+        region_start.set(PropNames.DISPLAY_ALIGN);
+        region_start.set(PropNames.EXTENT);
+        region_start.set(PropNames.OVERFLOW);
+        region_start.set(PropNames.REGION_NAME);
+        region_start.set(PropNames.REFERENCE_ORIENTATION);
+        region_start.set(PropNames.WRITING_MODE);
+        foPropertyLists[FObjectNames.REGION_START] = new ROBitSet(region_start);
 
         //repeatable-page-master-alternatives
-        foPropertyLists[FObjectNames.REPEATABLE_PAGE_MASTER_ALTERNATIVES]
-                = new HashSet(1);
-        foPropertyLists[FObjectNames.REPEATABLE_PAGE_MASTER_ALTERNATIVES].
-                        add(Ints.consts.get(PropNames.MAXIMUM_REPEATS));
-        
+        BitSet repeatable_page_master_alternatives = new BitSet();
+        repeatable_page_master_alternatives.set(PropNames.MAXIMUM_REPEATS);
+        foPropertyLists[FObjectNames.REPEATABLE_PAGE_MASTER_ALTERNATIVES] = new ROBitSet(repeatable_page_master_alternatives);
+
         //repeatable-page-master-reference
-        foPropertyLists[FObjectNames.REPEATABLE_PAGE_MASTER_REFERENCE]
-                = new HashSet(2);
-        foPropertyLists[FObjectNames.REPEATABLE_PAGE_MASTER_REFERENCE].
-                        add(Ints.consts.get(PropNames.MASTER_REFERENCE));
-        foPropertyLists[FObjectNames.REPEATABLE_PAGE_MASTER_REFERENCE].
-                        add(Ints.consts.get(PropNames.MAXIMUM_REPEATS));
+        BitSet repeatable_page_master_reference = new BitSet();
+        repeatable_page_master_reference.set(PropNames.MASTER_REFERENCE);
+        repeatable_page_master_reference.set(PropNames.MAXIMUM_REPEATS);
+        foPropertyLists[FObjectNames.REPEATABLE_PAGE_MASTER_REFERENCE] = new ROBitSet(repeatable_page_master_reference);
 
         //retrieve-marker
-        foPropertyLists[FObjectNames.RETRIEVE_MARKER] = new HashSet(3);
-        foPropertyLists[FObjectNames.RETRIEVE_MARKER].
-                        add(Ints.consts.get(PropNames.RETRIEVE_BOUNDARY));
-        foPropertyLists[FObjectNames.RETRIEVE_MARKER].
-                        add(Ints.consts.get(PropNames.RETRIEVE_CLASS_NAME));
-        foPropertyLists[FObjectNames.RETRIEVE_MARKER].
-                        add(Ints.consts.get(PropNames.RETRIEVE_POSITION));
+        BitSet retrieve_marker = new BitSet();
+        retrieve_marker.set(PropNames.RETRIEVE_BOUNDARY);
+        retrieve_marker.set(PropNames.RETRIEVE_CLASS_NAME);
+        retrieve_marker.set(PropNames.RETRIEVE_POSITION);
+        foPropertyLists[FObjectNames.RETRIEVE_MARKER] = new ROBitSet(retrieve_marker);
 
         //root
-        foPropertyLists[FObjectNames.ROOT] = new HashSet(1);
-        foPropertyLists[FObjectNames.ROOT].
-                        add(Ints.consts.get(PropNames.MEDIA_USAGE));
+        BitSet root = new BitSet();
+        root.set(PropNames.MEDIA_USAGE);
+        foPropertyLists[FObjectNames.ROOT] = new ROBitSet(root);
 
         //simple-page-master
-        foPropertyLists[FObjectNames.SIMPLE_PAGE_MASTER] = new HashSet(
-                                PropertySets.marginBlockPropsSize +
-                                5);
-        foPropertyLists[FObjectNames.SIMPLE_PAGE_MASTER].
-                            addAll(PropertySets.marginBlockSet);
-        foPropertyLists[FObjectNames.SIMPLE_PAGE_MASTER].
-                        add(Ints.consts.get(PropNames.MASTER_NAME));
-        foPropertyLists[FObjectNames.SIMPLE_PAGE_MASTER].
-                        add(Ints.consts.get(PropNames.PAGE_HEIGHT));
-        foPropertyLists[FObjectNames.SIMPLE_PAGE_MASTER].
-                        add(Ints.consts.get(PropNames.PAGE_WIDTH));
-        foPropertyLists[FObjectNames.SIMPLE_PAGE_MASTER].
-                        add(Ints.consts.get(PropNames.REFERENCE_ORIENTATION));
-        foPropertyLists[FObjectNames.SIMPLE_PAGE_MASTER].
-                        add(Ints.consts.get(PropNames.WRITING_MODE));
-        
+        BitSet simple_page_master = new BitSet();
+        simple_page_master.or(PropertySets.marginBlockSet);
+        simple_page_master.set(PropNames.MASTER_NAME);
+        simple_page_master.set(PropNames.PAGE_HEIGHT);
+        simple_page_master.set(PropNames.PAGE_WIDTH);
+        simple_page_master.set(PropNames.REFERENCE_ORIENTATION);
+        simple_page_master.set(PropNames.WRITING_MODE);
+        foPropertyLists[FObjectNames.SIMPLE_PAGE_MASTER] = new ROBitSet(simple_page_master);
+
         //single-page-master-reference
-        foPropertyLists[FObjectNames.SINGLE_PAGE_MASTER_REFERENCE]
-                = new HashSet(1);
-        foPropertyLists[FObjectNames.SINGLE_PAGE_MASTER_REFERENCE].
-                        add(Ints.consts.get(PropNames.MASTER_REFERENCE));
+        BitSet single_page_master_reference = new BitSet();
+        single_page_master_reference.set(PropNames.MASTER_REFERENCE);
+        foPropertyLists[FObjectNames.SINGLE_PAGE_MASTER_REFERENCE] = new ROBitSet(single_page_master_reference);
 
         //static-content
-        foPropertyLists[FObjectNames.STATIC_CONTENT] = new HashSet(1);
-        foPropertyLists[FObjectNames.STATIC_CONTENT].
-                        add(Ints.consts.get(PropNames.FLOW_NAME));
+        BitSet static_content = new BitSet();
+        static_content.set(PropNames.FLOW_NAME);
+        foPropertyLists[FObjectNames.STATIC_CONTENT] = new ROBitSet(static_content);
 
         //table
-        foPropertyLists[FObjectNames.TABLE] = new HashSet(
-                                PropertySets.accessibilityPropsSize +
-                                PropertySets.auralPropsSize +
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.marginBlockPropsSize +
-                                PropertySets.paddingPropsSize +
-                                PropertySets.relativePositionPropsSize +
-                                21);
-        foPropertyLists[FObjectNames.TABLE].
-                            addAll(PropertySets.accessibilitySet);
-        foPropertyLists[FObjectNames.TABLE].
-                            addAll(PropertySets.auralSet);
-        foPropertyLists[FObjectNames.TABLE].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.TABLE].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.TABLE].
-                            addAll(PropertySets.marginBlockSet);
-        foPropertyLists[FObjectNames.TABLE].
-                            addAll(PropertySets.paddingSet);
-        foPropertyLists[FObjectNames.TABLE].
-                            addAll(PropertySets.relativePositionSet);
-        foPropertyLists[FObjectNames.TABLE].
-                add(Ints.consts.get(PropNames.BLOCK_PROGRESSION_DIMENSION));
-        foPropertyLists[FObjectNames.TABLE].
-                    add(Ints.consts.get(PropNames.BORDER_AFTER_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE].
-                    add(Ints.consts.get(PropNames.BORDER_BEFORE_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE].
-                        add(Ints.consts.get(PropNames.BORDER_COLLAPSE));
-        foPropertyLists[FObjectNames.TABLE].
-                        add(Ints.consts.get(PropNames.BORDER_END_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE].
-                        add(Ints.consts.get(PropNames.BORDER_SEPARATION));
-        foPropertyLists[FObjectNames.TABLE].
-                    add(Ints.consts.get(PropNames.BORDER_START_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE].
-                        add(Ints.consts.get(PropNames.BREAK_AFTER));
-        foPropertyLists[FObjectNames.TABLE].
-                        add(Ints.consts.get(PropNames.BREAK_BEFORE));
-        foPropertyLists[FObjectNames.TABLE].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.TABLE].
-                add(Ints.consts.get(PropNames.INLINE_PROGRESSION_DIMENSION));
-        foPropertyLists[FObjectNames.TABLE].
-                        add(Ints.consts.get(PropNames.INTRUSION_DISPLACE));
-        foPropertyLists[FObjectNames.TABLE].
-                        add(Ints.consts.get(PropNames.HEIGHT));
-        foPropertyLists[FObjectNames.TABLE].
-                        add(Ints.consts.get(PropNames.KEEP_TOGETHER));
-        foPropertyLists[FObjectNames.TABLE].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_NEXT));
-        foPropertyLists[FObjectNames.TABLE].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_PREVIOUS));
-        foPropertyLists[FObjectNames.TABLE].
-                        add(Ints.consts.get(PropNames.TABLE_LAYOUT));
-        foPropertyLists[FObjectNames.TABLE].
-                    add(Ints.consts.get(PropNames.TABLE_OMIT_FOOTER_AT_BREAK));
-        foPropertyLists[FObjectNames.TABLE].
-                    add(Ints.consts.get(PropNames.TABLE_OMIT_HEADER_AT_BREAK));
-        foPropertyLists[FObjectNames.TABLE].
-                        add(Ints.consts.get(PropNames.WIDTH));
-        foPropertyLists[FObjectNames.TABLE].
-                        add(Ints.consts.get(PropNames.WRITING_MODE));
+        BitSet table = new BitSet();
+        table.or(PropertySets.accessibilitySet);
+        table.or(PropertySets.auralSet);
+        table.or(PropertySets.backgroundSet);
+        table.or(PropertySets.borderSet);
+        table.or(PropertySets.marginBlockSet);
+        table.or(PropertySets.paddingSet);
+        table.or(PropertySets.relativePositionSet);
+        table.set(PropNames.BLOCK_PROGRESSION_DIMENSION);
+        table.set(PropNames.BORDER_AFTER_PRECEDENCE);
+        table.set(PropNames.BORDER_BEFORE_PRECEDENCE);
+        table.set(PropNames.BORDER_COLLAPSE);
+        table.set(PropNames.BORDER_END_PRECEDENCE);
+        table.set(PropNames.BORDER_SEPARATION);
+        table.set(PropNames.BORDER_START_PRECEDENCE);
+        table.set(PropNames.BREAK_AFTER);
+        table.set(PropNames.BREAK_BEFORE);
+        table.set(PropNames.ID);
+        table.set(PropNames.INLINE_PROGRESSION_DIMENSION);
+        table.set(PropNames.INTRUSION_DISPLACE);
+        table.set(PropNames.HEIGHT);
+        table.set(PropNames.KEEP_TOGETHER);
+        table.set(PropNames.KEEP_WITH_NEXT);
+        table.set(PropNames.KEEP_WITH_PREVIOUS);
+        table.set(PropNames.TABLE_LAYOUT);
+        table.set(PropNames.TABLE_OMIT_FOOTER_AT_BREAK);
+        table.set(PropNames.TABLE_OMIT_HEADER_AT_BREAK);
+        table.set(PropNames.WIDTH);
+        table.set(PropNames.WRITING_MODE);
+        foPropertyLists[FObjectNames.TABLE] = new ROBitSet(table);
 
         //table-and-caption
-        foPropertyLists[FObjectNames.TABLE_AND_CAPTION] = new HashSet(
-                                PropertySets.accessibilityPropsSize +
-                                PropertySets.auralPropsSize +
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.marginBlockPropsSize +
-                                PropertySets.paddingPropsSize +
-                                PropertySets.relativePositionPropsSize +
-                                9);
-        foPropertyLists[FObjectNames.TABLE_AND_CAPTION].
-                            addAll(PropertySets.accessibilitySet);
-        foPropertyLists[FObjectNames.TABLE_AND_CAPTION].
-                            addAll(PropertySets.auralSet);
-        foPropertyLists[FObjectNames.TABLE_AND_CAPTION].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.TABLE_AND_CAPTION].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.TABLE_AND_CAPTION].
-                            addAll(PropertySets.marginBlockSet);
-        foPropertyLists[FObjectNames.TABLE_AND_CAPTION].
-                            addAll(PropertySets.paddingSet);
-        foPropertyLists[FObjectNames.TABLE_AND_CAPTION].
-                            addAll(PropertySets.relativePositionSet);
-        foPropertyLists[FObjectNames.TABLE_AND_CAPTION].
-                        add(Ints.consts.get(PropNames.BREAK_AFTER));
-        foPropertyLists[FObjectNames.TABLE_AND_CAPTION].
-                        add(Ints.consts.get(PropNames.BREAK_BEFORE));
-        foPropertyLists[FObjectNames.TABLE_AND_CAPTION].
-                        add(Ints.consts.get(PropNames.CAPTION_SIDE));
-        foPropertyLists[FObjectNames.TABLE_AND_CAPTION].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.TABLE_AND_CAPTION].
-                        add(Ints.consts.get(PropNames.INTRUSION_DISPLACE));
-        foPropertyLists[FObjectNames.TABLE_AND_CAPTION].
-                        add(Ints.consts.get(PropNames.KEEP_TOGETHER));
-        foPropertyLists[FObjectNames.TABLE_AND_CAPTION].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_NEXT));
-        foPropertyLists[FObjectNames.TABLE_AND_CAPTION].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_PREVIOUS));
-        foPropertyLists[FObjectNames.TABLE_AND_CAPTION].
-                        add(Ints.consts.get(PropNames.TEXT_ALIGN));
+        BitSet table_and_caption = new BitSet();
+        table_and_caption.or(PropertySets.accessibilitySet);
+        table_and_caption.or(PropertySets.auralSet);
+        table_and_caption.or(PropertySets.backgroundSet);
+        table_and_caption.or(PropertySets.borderSet);
+        table_and_caption.or(PropertySets.marginBlockSet);
+        table_and_caption.or(PropertySets.paddingSet);
+        table_and_caption.or(PropertySets.relativePositionSet);
+        table_and_caption.set(PropNames.BREAK_AFTER);
+        table_and_caption.set(PropNames.BREAK_BEFORE);
+        table_and_caption.set(PropNames.CAPTION_SIDE);
+        table_and_caption.set(PropNames.ID);
+        table_and_caption.set(PropNames.INTRUSION_DISPLACE);
+        table_and_caption.set(PropNames.KEEP_TOGETHER);
+        table_and_caption.set(PropNames.KEEP_WITH_NEXT);
+        table_and_caption.set(PropNames.KEEP_WITH_PREVIOUS);
+        table_and_caption.set(PropNames.TEXT_ALIGN);
+        foPropertyLists[FObjectNames.TABLE_AND_CAPTION] = new ROBitSet(table_and_caption);
 
         //table-body
-        foPropertyLists[FObjectNames.TABLE_BODY] = new HashSet(
-                                PropertySets.accessibilityPropsSize +
-                                PropertySets.auralPropsSize +
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.relativePositionPropsSize +
-                                6);
-        foPropertyLists[FObjectNames.TABLE_BODY].
-                            addAll(PropertySets.accessibilitySet);
-        foPropertyLists[FObjectNames.TABLE_BODY].
-                            addAll(PropertySets.auralSet);
-        foPropertyLists[FObjectNames.TABLE_BODY].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.TABLE_BODY].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.TABLE_BODY].
-                            addAll(PropertySets.relativePositionSet);
-        foPropertyLists[FObjectNames.TABLE_BODY].
-                    add(Ints.consts.get(PropNames.BORDER_AFTER_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE_BODY].
-                    add(Ints.consts.get(PropNames.BORDER_BEFORE_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE_BODY].
-                        add(Ints.consts.get(PropNames.BORDER_END_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE_BODY].
-                    add(Ints.consts.get(PropNames.BORDER_START_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE_BODY].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.TABLE_BODY].
-                        add(Ints.consts.get(PropNames.VISIBILITY));
+        BitSet table_body = new BitSet();
+        table_body.or(PropertySets.accessibilitySet);
+        table_body.or(PropertySets.auralSet);
+        table_body.or(PropertySets.backgroundSet);
+        table_body.or(PropertySets.borderSet);
+        table_body.or(PropertySets.relativePositionSet);
+        table_body.set(PropNames.BORDER_AFTER_PRECEDENCE);
+        table_body.set(PropNames.BORDER_BEFORE_PRECEDENCE);
+        table_body.set(PropNames.BORDER_END_PRECEDENCE);
+        table_body.set(PropNames.BORDER_START_PRECEDENCE);
+        table_body.set(PropNames.ID);
+        table_body.set(PropNames.VISIBILITY);
+        foPropertyLists[FObjectNames.TABLE_BODY] = new ROBitSet(table_body);
 
         //table-caption
-        foPropertyLists[FObjectNames.TABLE_CAPTION] = new HashSet(
-                                PropertySets.accessibilityPropsSize +
-                                PropertySets.auralPropsSize +
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.paddingPropsSize +
-                                PropertySets.relativePositionPropsSize +
-                                7);
-        foPropertyLists[FObjectNames.TABLE_CAPTION].
-                            addAll(PropertySets.accessibilitySet);
-        foPropertyLists[FObjectNames.TABLE_CAPTION].
-                            addAll(PropertySets.auralSet);
-        foPropertyLists[FObjectNames.TABLE_CAPTION].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.TABLE_CAPTION].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.TABLE_CAPTION].
-                            addAll(PropertySets.paddingSet);
-        foPropertyLists[FObjectNames.TABLE_CAPTION].
-                            addAll(PropertySets.relativePositionSet);
-        foPropertyLists[FObjectNames.TABLE_CAPTION].
-                add(Ints.consts.get(PropNames.BLOCK_PROGRESSION_DIMENSION));
-        foPropertyLists[FObjectNames.TABLE_CAPTION].
-                        add(Ints.consts.get(PropNames.HEIGHT));
-        foPropertyLists[FObjectNames.TABLE_CAPTION].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.TABLE_CAPTION].
-                add(Ints.consts.get(PropNames.INLINE_PROGRESSION_DIMENSION));
-        foPropertyLists[FObjectNames.TABLE_CAPTION].
-                        add(Ints.consts.get(PropNames.INTRUSION_DISPLACE));
-        foPropertyLists[FObjectNames.TABLE_CAPTION].
-                        add(Ints.consts.get(PropNames.KEEP_TOGETHER));
-        foPropertyLists[FObjectNames.TABLE_CAPTION].
-                        add(Ints.consts.get(PropNames.WIDTH));
+        BitSet table_caption = new BitSet();
+        table_caption.or(PropertySets.accessibilitySet);
+        table_caption.or(PropertySets.auralSet);
+        table_caption.or(PropertySets.backgroundSet);
+        table_caption.or(PropertySets.borderSet);
+        table_caption.or(PropertySets.paddingSet);
+        table_caption.or(PropertySets.relativePositionSet);
+        table_caption.set(PropNames.BLOCK_PROGRESSION_DIMENSION);
+        table_caption.set(PropNames.HEIGHT);
+        table_caption.set(PropNames.ID);
+        table_caption.set(PropNames.INLINE_PROGRESSION_DIMENSION);
+        table_caption.set(PropNames.INTRUSION_DISPLACE);
+        table_caption.set(PropNames.KEEP_TOGETHER);
+        table_caption.set(PropNames.WIDTH);
+        foPropertyLists[FObjectNames.TABLE_CAPTION] = new ROBitSet(table_caption);
 
         //table-cell
-        foPropertyLists[FObjectNames.TABLE_CELL]
-                = new HashSet(FObjectNames.LAST_FO + 1);
-        foPropertyLists[FObjectNames.TABLE_CELL] = new HashSet(
-                                PropertySets.accessibilityPropsSize +
-                                PropertySets.auralPropsSize +
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.paddingPropsSize +
-                                PropertySets.relativePositionPropsSize +
-                                17);
-        foPropertyLists[FObjectNames.TABLE_CELL].
-                            addAll(PropertySets.accessibilitySet);
-        foPropertyLists[FObjectNames.TABLE_CELL].
-                            addAll(PropertySets.auralSet);
-        foPropertyLists[FObjectNames.TABLE_CELL].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.TABLE_CELL].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.TABLE_CELL].
-                            addAll(PropertySets.paddingSet);
-        foPropertyLists[FObjectNames.TABLE_CELL].
-                            addAll(PropertySets.relativePositionSet);
-        foPropertyLists[FObjectNames.TABLE_CELL].
-                    add(Ints.consts.get(PropNames.BORDER_AFTER_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE_CELL].
-                    add(Ints.consts.get(PropNames.BORDER_BEFORE_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE_CELL].
-                        add(Ints.consts.get(PropNames.BORDER_END_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE_CELL].
-                    add(Ints.consts.get(PropNames.BORDER_START_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE_CELL].
-                add(Ints.consts.get(PropNames.BLOCK_PROGRESSION_DIMENSION));
-        foPropertyLists[FObjectNames.TABLE_CELL].
-                        add(Ints.consts.get(PropNames.COLUMN_NUMBER));
-        foPropertyLists[FObjectNames.TABLE_CELL].
-                        add(Ints.consts.get(PropNames.DISPLAY_ALIGN));
-        foPropertyLists[FObjectNames.TABLE_CELL].
-                        add(Ints.consts.get(PropNames.RELATIVE_ALIGN));
-        foPropertyLists[FObjectNames.TABLE_CELL].
-                        add(Ints.consts.get(PropNames.EMPTY_CELLS));
-        foPropertyLists[FObjectNames.TABLE_CELL].
-                        add(Ints.consts.get(PropNames.ENDS_ROW));
-        foPropertyLists[FObjectNames.TABLE_CELL].
-                        add(Ints.consts.get(PropNames.HEIGHT));
-        foPropertyLists[FObjectNames.TABLE_CELL].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.TABLE_CELL].
-                add(Ints.consts.get(PropNames.INLINE_PROGRESSION_DIMENSION));
-        foPropertyLists[FObjectNames.TABLE_CELL].
-                    add(Ints.consts.get(PropNames.NUMBER_COLUMNS_SPANNED));
-        foPropertyLists[FObjectNames.TABLE_CELL].
-                        add(Ints.consts.get(PropNames.NUMBER_ROWS_SPANNED));
-        foPropertyLists[FObjectNames.TABLE_CELL].
-                        add(Ints.consts.get(PropNames.STARTS_ROW));
-        foPropertyLists[FObjectNames.TABLE_CELL].
-                        add(Ints.consts.get(PropNames.WIDTH));
+        BitSet table_cell = new BitSet();
+        table_cell.or(PropertySets.accessibilitySet);
+        table_cell.or(PropertySets.auralSet);
+        table_cell.or(PropertySets.backgroundSet);
+        table_cell.or(PropertySets.borderSet);
+        table_cell.or(PropertySets.paddingSet);
+        table_cell.or(PropertySets.relativePositionSet);
+        table_cell.set(PropNames.BORDER_AFTER_PRECEDENCE);
+        table_cell.set(PropNames.BORDER_BEFORE_PRECEDENCE);
+        table_cell.set(PropNames.BORDER_END_PRECEDENCE);
+        table_cell.set(PropNames.BORDER_START_PRECEDENCE);
+        table_cell.set(PropNames.BLOCK_PROGRESSION_DIMENSION);
+        table_cell.set(PropNames.COLUMN_NUMBER);
+        table_cell.set(PropNames.DISPLAY_ALIGN);
+        table_cell.set(PropNames.RELATIVE_ALIGN);
+        table_cell.set(PropNames.EMPTY_CELLS);
+        table_cell.set(PropNames.ENDS_ROW);
+        table_cell.set(PropNames.HEIGHT);
+        table_cell.set(PropNames.ID);
+        table_cell.set(PropNames.INLINE_PROGRESSION_DIMENSION);
+        table_cell.set(PropNames.NUMBER_COLUMNS_SPANNED);
+        table_cell.set(PropNames.NUMBER_ROWS_SPANNED);
+        table_cell.set(PropNames.STARTS_ROW);
+        table_cell.set(PropNames.WIDTH);
+        foPropertyLists[FObjectNames.TABLE_CELL] = new ROBitSet(table_cell);
 
         //table-column
-        foPropertyLists[FObjectNames.TABLE_COLUMN] = new HashSet(
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                9);
-        foPropertyLists[FObjectNames.TABLE_COLUMN].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.TABLE_COLUMN].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.TABLE_COLUMN].
-                    add(Ints.consts.get(PropNames.BORDER_AFTER_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE_COLUMN].
-                    add(Ints.consts.get(PropNames.BORDER_BEFORE_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE_COLUMN].
-                        add(Ints.consts.get(PropNames.BORDER_END_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE_COLUMN].
-                    add(Ints.consts.get(PropNames.BORDER_START_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE_COLUMN].
-                        add(Ints.consts.get(PropNames.COLUMN_NUMBER));
-        foPropertyLists[FObjectNames.TABLE_COLUMN].
-                        add(Ints.consts.get(PropNames.COLUMN_WIDTH));
-        foPropertyLists[FObjectNames.TABLE_COLUMN].
-                    add(Ints.consts.get(PropNames.NUMBER_COLUMNS_REPEATED));
-        foPropertyLists[FObjectNames.TABLE_COLUMN].
-                    add(Ints.consts.get(PropNames.NUMBER_COLUMNS_SPANNED));
-        foPropertyLists[FObjectNames.TABLE_COLUMN].
-                        add(Ints.consts.get(PropNames.VISIBILITY));
+        BitSet table_column = new BitSet();
+        table_column.or(PropertySets.backgroundSet);
+        table_column.or(PropertySets.borderSet);
+        table_column.set(PropNames.BORDER_AFTER_PRECEDENCE);
+        table_column.set(PropNames.BORDER_BEFORE_PRECEDENCE);
+        table_column.set(PropNames.BORDER_END_PRECEDENCE);
+        table_column.set(PropNames.BORDER_START_PRECEDENCE);
+        table_column.set(PropNames.COLUMN_NUMBER);
+        table_column.set(PropNames.COLUMN_WIDTH);
+        table_column.set(PropNames.NUMBER_COLUMNS_REPEATED);
+        table_column.set(PropNames.NUMBER_COLUMNS_SPANNED);
+        table_column.set(PropNames.VISIBILITY);
+        foPropertyLists[FObjectNames.TABLE_COLUMN] = new ROBitSet(table_column);
 
         //table-footer
-        foPropertyLists[FObjectNames.TABLE_FOOTER] = new HashSet(
-                                PropertySets.accessibilityPropsSize +
-                                PropertySets.auralPropsSize +
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.relativePositionPropsSize +
-                                6);
-        foPropertyLists[FObjectNames.TABLE_FOOTER].
-                            addAll(PropertySets.accessibilitySet);
-        foPropertyLists[FObjectNames.TABLE_FOOTER].
-                            addAll(PropertySets.auralSet);
-        foPropertyLists[FObjectNames.TABLE_FOOTER].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.TABLE_FOOTER].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.TABLE_FOOTER].
-                            addAll(PropertySets.relativePositionSet);
-        foPropertyLists[FObjectNames.TABLE_FOOTER].
-                    add(Ints.consts.get(PropNames.BORDER_AFTER_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE_FOOTER].
-                    add(Ints.consts.get(PropNames.BORDER_BEFORE_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE_FOOTER].
-                        add(Ints.consts.get(PropNames.BORDER_END_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE_FOOTER].
-                    add(Ints.consts.get(PropNames.BORDER_START_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE_FOOTER].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.TABLE_FOOTER].
-                        add(Ints.consts.get(PropNames.VISIBILITY));
+        BitSet table_footer = new BitSet();
+        table_footer.or(PropertySets.accessibilitySet);
+        table_footer.or(PropertySets.auralSet);
+        table_footer.or(PropertySets.backgroundSet);
+        table_footer.or(PropertySets.borderSet);
+        table_footer.or(PropertySets.relativePositionSet);
+        table_footer.set(PropNames.BORDER_AFTER_PRECEDENCE);
+        table_footer.set(PropNames.BORDER_BEFORE_PRECEDENCE);
+        table_footer.set(PropNames.BORDER_END_PRECEDENCE);
+        table_footer.set(PropNames.BORDER_START_PRECEDENCE);
+        table_footer.set(PropNames.ID);
+        table_footer.set(PropNames.VISIBILITY);
+        foPropertyLists[FObjectNames.TABLE_FOOTER] = new ROBitSet(table_footer);
 
         //table-header
-        foPropertyLists[FObjectNames.TABLE_HEADER] = new HashSet(
-                                PropertySets.accessibilityPropsSize +
-                                PropertySets.auralPropsSize +
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.relativePositionPropsSize +
-                                6);
-        foPropertyLists[FObjectNames.TABLE_HEADER].
-                            addAll(PropertySets.accessibilitySet);
-        foPropertyLists[FObjectNames.TABLE_HEADER].
-                            addAll(PropertySets.auralSet);
-        foPropertyLists[FObjectNames.TABLE_HEADER].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.TABLE_HEADER].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.TABLE_HEADER].
-                            addAll(PropertySets.relativePositionSet);
-        foPropertyLists[FObjectNames.TABLE_HEADER].
-                    add(Ints.consts.get(PropNames.BORDER_AFTER_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE_HEADER].
-                    add(Ints.consts.get(PropNames.BORDER_BEFORE_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE_HEADER].
-                        add(Ints.consts.get(PropNames.BORDER_END_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE_HEADER].
-                    add(Ints.consts.get(PropNames.BORDER_START_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE_HEADER].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.TABLE_HEADER].
-                        add(Ints.consts.get(PropNames.VISIBILITY));
+        BitSet table_header = new BitSet();
+        table_header.or(PropertySets.accessibilitySet);
+        table_header.or(PropertySets.auralSet);
+        table_header.or(PropertySets.backgroundSet);
+        table_header.or(PropertySets.borderSet);
+        table_header.or(PropertySets.relativePositionSet);
+        table_header.set(PropNames.BORDER_AFTER_PRECEDENCE);
+        table_header.set(PropNames.BORDER_BEFORE_PRECEDENCE);
+        table_header.set(PropNames.BORDER_END_PRECEDENCE);
+        table_header.set(PropNames.BORDER_START_PRECEDENCE);
+        table_header.set(PropNames.ID);
+        table_header.set(PropNames.VISIBILITY);
+        foPropertyLists[FObjectNames.TABLE_HEADER] = new ROBitSet(table_header);
 
         //table-row
-        foPropertyLists[FObjectNames.TABLE_ROW] = new HashSet(
-                                PropertySets.accessibilityPropsSize +
-                                PropertySets.auralPropsSize +
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.relativePositionPropsSize +
-                                13);
-        foPropertyLists[FObjectNames.TABLE_ROW].
-                            addAll(PropertySets.accessibilitySet);
-        foPropertyLists[FObjectNames.TABLE_ROW].
-                            addAll(PropertySets.auralSet);
-        foPropertyLists[FObjectNames.TABLE_ROW].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.TABLE_ROW].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.TABLE_ROW].
-                            addAll(PropertySets.relativePositionSet);
-        foPropertyLists[FObjectNames.TABLE_ROW].
-                add(Ints.consts.get(PropNames.BLOCK_PROGRESSION_DIMENSION));
-        foPropertyLists[FObjectNames.TABLE_ROW].
-                    add(Ints.consts.get(PropNames.BORDER_AFTER_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE_ROW].
-                    add(Ints.consts.get(PropNames.BORDER_BEFORE_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE_ROW].
-                        add(Ints.consts.get(PropNames.BORDER_END_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE_ROW].
-                    add(Ints.consts.get(PropNames.BORDER_START_PRECEDENCE));
-        foPropertyLists[FObjectNames.TABLE_ROW].
-                        add(Ints.consts.get(PropNames.BREAK_AFTER));
-        foPropertyLists[FObjectNames.TABLE_ROW].
-                        add(Ints.consts.get(PropNames.BREAK_BEFORE));
-        foPropertyLists[FObjectNames.TABLE_ROW].
-                        add(Ints.consts.get(PropNames.ID));
-        foPropertyLists[FObjectNames.TABLE_ROW].
-                        add(Ints.consts.get(PropNames.HEIGHT));
-        foPropertyLists[FObjectNames.TABLE_ROW].
-                        add(Ints.consts.get(PropNames.KEEP_TOGETHER));
-        foPropertyLists[FObjectNames.TABLE_ROW].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_NEXT));
-        foPropertyLists[FObjectNames.TABLE_ROW].
-                        add(Ints.consts.get(PropNames.KEEP_WITH_PREVIOUS));
-        foPropertyLists[FObjectNames.TABLE_ROW].
-                        add(Ints.consts.get(PropNames.VISIBILITY));
+        BitSet table_row = new BitSet();
+        table_row.or(PropertySets.accessibilitySet);
+        table_row.or(PropertySets.auralSet);
+        table_row.or(PropertySets.backgroundSet);
+        table_row.or(PropertySets.borderSet);
+        table_row.or(PropertySets.relativePositionSet);
+        table_row.set(PropNames.BLOCK_PROGRESSION_DIMENSION);
+        table_row.set(PropNames.BORDER_AFTER_PRECEDENCE);
+        table_row.set(PropNames.BORDER_BEFORE_PRECEDENCE);
+        table_row.set(PropNames.BORDER_END_PRECEDENCE);
+        table_row.set(PropNames.BORDER_START_PRECEDENCE);
+        table_row.set(PropNames.BREAK_AFTER);
+        table_row.set(PropNames.BREAK_BEFORE);
+        table_row.set(PropNames.ID);
+        table_row.set(PropNames.HEIGHT);
+        table_row.set(PropNames.KEEP_TOGETHER);
+        table_row.set(PropNames.KEEP_WITH_NEXT);
+        table_row.set(PropNames.KEEP_WITH_PREVIOUS);
+        table_row.set(PropNames.VISIBILITY);
+        foPropertyLists[FObjectNames.TABLE_ROW] = new ROBitSet(table_row);
 
         //title
-        foPropertyLists[FObjectNames.TITLE] = new HashSet(
-                                PropertySets.accessibilityPropsSize +
-                                PropertySets.auralPropsSize +
-                                PropertySets.backgroundPropsSize +
-                                PropertySets.borderPropsSize +
-                                PropertySets.paddingPropsSize +
-                                PropertySets.fontPropsSize +
-                                PropertySets.marginInlinePropsSize +
-                                3);
-        foPropertyLists[FObjectNames.TITLE].
-                            addAll(PropertySets.accessibilitySet);
-        foPropertyLists[FObjectNames.TITLE].
-                            addAll(PropertySets.auralSet);
-        foPropertyLists[FObjectNames.TITLE].
-                            addAll(PropertySets.backgroundSet);
-        foPropertyLists[FObjectNames.TITLE].
-                            addAll(PropertySets.borderSet);
-        foPropertyLists[FObjectNames.TITLE].
-                            addAll(PropertySets.paddingSet);
-        foPropertyLists[FObjectNames.TITLE].
-                            addAll(PropertySets.fontSet);
-        foPropertyLists[FObjectNames.TITLE].
-                            addAll(PropertySets.marginInlineSet);
-        foPropertyLists[FObjectNames.TITLE].
-                        add(Ints.consts.get(PropNames.COLOR));
-        foPropertyLists[FObjectNames.TITLE].
-                        add(Ints.consts.get(PropNames.LINE_HEIGHT));
-        foPropertyLists[FObjectNames.TITLE].
-                        add(Ints.consts.get(PropNames.VISIBILITY));
+        BitSet title = new BitSet();
+        title.or(PropertySets.accessibilitySet);
+        title.or(PropertySets.auralSet);
+        title.or(PropertySets.backgroundSet);
+        title.or(PropertySets.borderSet);
+        title.or(PropertySets.paddingSet);
+        title.or(PropertySets.fontSet);
+        title.or(PropertySets.marginInlineSet);
+        title.set(PropNames.COLOR);
+        title.set(PropNames.LINE_HEIGHT);
+        title.set(PropNames.VISIBILITY);
+        foPropertyLists[FObjectNames.TITLE] = new ROBitSet(title);
 
         //wrapper
-        foPropertyLists[FObjectNames.WRAPPER] = new HashSet(1);
-        foPropertyLists[FObjectNames.WRAPPER].
-                        add(Ints.consts.get(PropNames.ID));
+        BitSet wrapper = new BitSet();
+        wrapper.set(PropNames.ID);
+        foPropertyLists[FObjectNames.WRAPPER] = new ROBitSet(wrapper);
 
     }
 
@@ -2050,8 +1249,6 @@ public class FOPropertySets {
 
     static {
 
-        // Iterator for the PropertySets defined in PropertySets
-        Iterator propertySet;
         // fill the BitSet of all properties
         BitSet allprops = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
         allprops.set(1, PropNames.LAST_PROPERTY_INDEX);
@@ -2129,25 +1326,13 @@ public class FOPropertySets {
         layoutmasterset.set(PropNames.OVERFLOW);
 
         // Add the common margin properties - block
-        propertySet = PropertySets.marginBlockSet.iterator();
-        while (propertySet.hasNext()) {
-            layoutmasterset.set(((Integer)propertySet.next()).intValue());
-        }
+	layoutmasterset.or(PropertySets.marginBlockSet);
         // Add the common border properties
-        propertySet = PropertySets.borderSet.iterator();
-        while (propertySet.hasNext()) {
-            layoutmasterset.set(((Integer)propertySet.next()).intValue());
-        }
+	layoutmasterset.or(PropertySets.borderSet);
         // Add the common padding properties
-        propertySet = PropertySets.paddingSet.iterator();
-        while (propertySet.hasNext()) {
-            layoutmasterset.set(((Integer)propertySet.next()).intValue());
-        }
+	layoutmasterset.or(PropertySets.paddingSet);
         // Add the common background properties
-        propertySet = PropertySets.backgroundSet.iterator();
-        while (propertySet.hasNext()) {
-            layoutmasterset.set(((Integer)propertySet.next()).intValue());
-        }
+	layoutmasterset.or(PropertySets.backgroundSet);
         layoutMasterSet = new ROBitSet(layoutmasterset);
         inheritedLayoutSet =
             new ROBitSet(makeInheritedSet(layoutmasterset));
