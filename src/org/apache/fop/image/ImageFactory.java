@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -10,36 +10,34 @@ package org.apache.fop.image;
 // Java
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.BufferedInputStream;
-import java.io.File;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.lang.reflect.Constructor;
-import java.util.HashMap;
-import java.util.WeakHashMap;
 import java.util.Map;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.Collections;
 import java.util.Iterator;
 
-// FOP
-import org.apache.fop.image.analyser.ImageReaderFactory;
-import org.apache.fop.image.analyser.ImageReader;
-import org.apache.fop.fo.FOUserAgent;
-
 // Avalon
 import org.apache.avalon.framework.logger.Logger;
 
+// FOP
+import org.apache.fop.image.analyser.ImageReaderFactory;
+import org.apache.fop.fo.FOUserAgent;
+
+
 /**
- * create FopImage objects (with a configuration file - not yet implemented).
+ * Create FopImage objects (with a configuration file - not yet implemented).
  * @author Eric SCHAEFFER
  */
 public class ImageFactory {
+    
     private static ImageFactory factory = new ImageFactory();
-    ImageCache cache = new ContextImageCache(true);
+    
+    private ImageCache cache = new ContextImageCache(true);
 
-    private ImageFactory() {}
+    private ImageFactory() {
+    }
 
     /**
      * Get static image factory instance.
@@ -53,7 +51,7 @@ public class ImageFactory {
     /**
      * Get the url string from a wrapped url.
      *
-     * @href the input wrapped url
+     * @param href the input wrapped url
      * @return the raw url
      */
     public static String getURL(String href) {
@@ -64,8 +62,6 @@ public class ImageFactory {
          * URI
          * So handle both.
          */
-        // Get the absolute URL
-        URL absoluteURL = null;
         href = href.trim();
         if (href.startsWith("url(") && (href.indexOf(")") != -1)) {
             href = href.substring(4, href.indexOf(")")).trim();
@@ -117,10 +113,7 @@ public class ImageFactory {
     }
 
     /**
-     * create an FopImage objects.
-     * @param href image URL as a String
-     * @return a new FopImage object
-     *
+     * Create an FopImage objects.
      * @param href the url for the image
      * @param baseURL the base url
      * @param ua the user agent context
@@ -130,9 +123,9 @@ public class ImageFactory {
                                         FOUserAgent ua) {
         Logger log = ua.getLogger();
 
-        InputStream imgIS = openStream(href, baseURL, ua);
+        InputStream in = openStream(href, baseURL, ua);
 
-        if (imgIS == null) {
+        if (in == null) {
             return null;
         }
 
@@ -140,28 +133,29 @@ public class ImageFactory {
         FopImage.ImageInfo imgInfo = null;
         try {
             imgInfo = ImageReaderFactory.make(
-                          href, imgIS, ua);
+                          href, in, ua);
         } catch (Exception e) {
-            log.error("Error while recovering Image Informations (" +
-                      href + ") : " + e.getMessage(), e);
+            log.error("Error while recovering image information (" 
+                    + href + ") : " + e.getMessage(), e);
             return null;
         }
         if (imgInfo == null) {
             try {
-                imgIS.close();
-                imgIS = null;
+                in.close();
+                in = null;
             } catch (Exception e) {
+                log.debug("Error closing the InputStream for the image", e);
             }
-            log.error("No ImageReader for this type of image (" +
-                      href + ")");
+            log.error("No ImageReader for this type of image (" 
+                    + href + ")");
             return null;
         }
         // Associate mime-type to FopImage class
         String imgMimeType = imgInfo.mimeType;
         String imgClassName = getImageClassName(imgMimeType);
         if (imgClassName == null) {
-            log.error("Unsupported image type (" +
-                      href + ") : " + imgMimeType);
+            log.error("Unsupported image type (" 
+                    + href + "): " + imgMimeType);
             return null;
         }
 
@@ -187,27 +181,29 @@ public class ImageFactory {
             } else {
                 msg = ex.getMessage();
             }
-            log.error("Error creating FopImage object (" +
-                      href + ") : " + msg, (t == null) ? ex:t);
+            log.error("Error creating FopImage object (" 
+                    + href + "): " + msg, (t == null) ? ex : t);
             return null;
-        }
-        catch (Exception ex) {
-            log.error("Error creating FopImage object (" +
-                      href + ") : " + ex.getMessage(), ex);
+        } catch (Exception ex) {
+            log.error("Error creating FopImage object (" 
+                    + href + "): " + ex.getMessage(), ex);
             return null;
         }
         if (!(imageInstance instanceof org.apache.fop.image.FopImage)) {
-            log.error("Error creating FopImage object (" +
-                      href + ") : " + "class " +
-                      imageClass.getName() + " doesn't implement org.apache.fop.image.FopImage interface");
+            log.error("Error creating FopImage object (" 
+                    + href + "): " + "class " 
+                    + imageClass.getName() 
+                    + " doesn't implement org.apache.fop.image.FopImage interface");
             return null;
         }
         return (FopImage) imageInstance;
     }
 
     /**
-     * create an FopImage objects.
+     * Create an FopImage objects.
      * @param href image URL as a String
+     * @param baseURL base URL for relative URLs
+     * @param ua user agent
      * @return a new FopImage object
      */
     protected static InputStream openStream(String href, String baseURL,
@@ -215,57 +211,64 @@ public class ImageFactory {
         Logger log = ua.getLogger();
         // Get the absolute URL
         URL absoluteURL = null;
-        InputStream imgIS = ua.getStream(href);
-        if(imgIS != null) {
-            return imgIS;
-        }
+        InputStream in = null;
         try {
-            // try url as complete first, this can cause
-            // a problem with relative uri's if there is an
-            // image relative to where fop is run and relative
-            // to the base dir of the document
-            try {
-                absoluteURL = new URL(href);
-            } catch (MalformedURLException mue) {
-                // if the href contains only a path then file is assumed
-                absoluteURL = new URL("file:" + href);
-            }
-            imgIS = absoluteURL.openStream();
-        } catch (MalformedURLException e_context) {
-            log.error("Error with image URL: " + e_context.getMessage(), e_context);
+            in = ua.getStream(href);
+        } catch (IOException ioe) {
+            log.error("Error while opening stream for (" 
+                    + href + "): " + ioe.getMessage(), ioe);
             return null;
         }
-        catch (Exception e) {
-            // maybe relative
-            URL context_url = null;
-            if (baseURL == null) {
-                log.error("Error with image URL: " + e.getMessage() + " and no base directory is specified", e);
-                return null;
-            }
+        if (in == null) {
             try {
-                absoluteURL = new URL(baseURL + absoluteURL.getFile());
-            } catch (MalformedURLException e_context) {
-                // pb context url
-                log.error( "Invalid Image URL - error on relative URL : " +
-                           e_context.getMessage(), e_context);
+                // try url as complete first, this can cause
+                // a problem with relative uri's if there is an
+                // image relative to where fop is run and relative
+                // to the base dir of the document
+                try {
+                    absoluteURL = new URL(href);
+                } catch (MalformedURLException mue) {
+                    // if the href contains only a path then file is assumed
+                    absoluteURL = new URL("file:" + href);
+                }
+                in = absoluteURL.openStream();
+            } catch (MalformedURLException mfue) {
+                log.error("Error with image URL: " + mfue.getMessage(), mfue);
                 return null;
+            } catch (Exception e) {
+                // maybe relative
+                if (baseURL == null) {
+                    log.error("Error with image URL: " + e.getMessage() 
+                            + " and no base directory is specified", e);
+                    return null;
+                }
+                try {
+                    absoluteURL = new URL(baseURL + absoluteURL.getFile());
+                } catch (MalformedURLException e_context) {
+                    // pb context url
+                    log.error("Invalid Image URL - error on relative URL: " 
+                            + e_context.getMessage(), e_context);
+                    return null;
+                }
             }
-        }
+        } /* if (in == null) */
 
-        BufferedInputStream bis = null;
-        // If not, check image type
-        FopImage.ImageInfo imgInfo = null;
         try {
-            if (imgIS == null) {
-                imgIS = absoluteURL.openStream();
+            if (in == null && absoluteURL != null) {
+                in = absoluteURL.openStream();
             }
-            bis = new BufferedInputStream(imgIS);
+            if (in == null) {
+                log.error("Could not resolve URI for image: " + href);
+                return null;
+            }
+            
+            //Decorate the InputStream with a BufferedInputStream
+            return new java.io.BufferedInputStream(in);
         } catch (Exception e) {
-            log.error("Error while opening stream for (" +
-                      href + ") : " + e.getMessage(), e);
+            log.error("Error while opening stream for (" 
+                    + href + "): " + e.getMessage(), e);
             return null;
         }
-        return bis;
     }
 
     private static String getImageClassName(String imgMimeType) {
@@ -304,8 +307,9 @@ public class ImageFactory {
  * This keeps track of invalid images.
  */
 class BasicImageCache implements ImageCache {
-    Set invalid = Collections.synchronizedSet(new HashSet());
-    Map contextStore = Collections.synchronizedMap(new HashMap());
+    
+    private Set invalid = Collections.synchronizedSet(new java.util.HashSet());
+    private Map contextStore = Collections.synchronizedMap(new java.util.HashMap());
 
     public FopImage getImage(String url, FOUserAgent context) {
         if (invalid.contains(url)) {
@@ -342,20 +346,21 @@ class BasicImageCache implements ImageCache {
  * weak hashmap so they may be garbage collected.
  */
 class ContextImageCache implements ImageCache {
+    
     // if this cache is collective then images can be shared
     // among contexts, this implies that the base directory
     // is either the same or does not effect the images being
     // loaded
-    boolean collective;
-    Map contextStore = Collections.synchronizedMap(new HashMap());
-    Set invalid = null;
-    Map weakStore = null;
+    private boolean collective;
+    private Map contextStore = Collections.synchronizedMap(new java.util.HashMap());
+    private Set invalid = null;
+    private Map weakStore = null;
 
     public ContextImageCache(boolean col) {
         collective = col;
-        if(collective) {
-            weakStore = Collections.synchronizedMap(new WeakHashMap());
-            invalid = Collections.synchronizedSet(new HashSet());
+        if (collective) {
+            weakStore = Collections.synchronizedMap(new java.util.WeakHashMap());
+            invalid = Collections.synchronizedSet(new java.util.HashSet());
         }
     }
 
@@ -374,22 +379,23 @@ class ContextImageCache implements ImageCache {
                 con = new Context(context, collective);
                 contextStore.put(context, con);
             } else {
-                if(con.invalid(url)) {
+                if (con.invalid(url)) {
                     return null;
                 }
                 im = con.getImage(url);
             }
-            if(im == null && collective) {
-                for(Iterator iter = contextStore.values().iterator(); iter.hasNext(); ) {
-                    Context c = (Context)iter.next();
-                    if(c != con) {
+            if (im == null && collective) {
+                Iterator i = contextStore.values().iterator();
+                while (i.hasNext()) {
+                    Context c = (Context)i.next();
+                    if (c != con) {
                         im = c.getImage(url);
-                        if(im != null) {
+                        if (im != null) {
                             break;
                         }
                     }
                 }
-                if(im == null) {
+                if (im == null) {
                     im = (ImageLoader) weakStore.get(url);
                 }
             }
@@ -412,7 +418,7 @@ class ContextImageCache implements ImageCache {
     public void releaseImage(String url, FOUserAgent context) {
         Context con = (Context) contextStore.get(context);
         if (con != null) {
-            if(collective) {
+            if (collective) {
                 ImageLoader im = con.getImage(url);
                 weakStore.put(url, im);
             }
@@ -421,7 +427,7 @@ class ContextImageCache implements ImageCache {
     }
 
     public void invalidateImage(String url, FOUserAgent context) {
-        if(collective) {
+        if (collective) {
             // cap size of invalid list
             if (invalid.size() > 100) {
                 invalid.clear();
@@ -437,7 +443,7 @@ class ContextImageCache implements ImageCache {
     public void removeContext(FOUserAgent context) {
         Context con = (Context) contextStore.get(context);
         if (con != null) {
-            if(collective) {
+            if (collective) {
                 Map images = con.getImages();
                 weakStore.putAll(images);
             }
@@ -446,14 +452,14 @@ class ContextImageCache implements ImageCache {
     }
 
     class Context {
-        Map images = Collections.synchronizedMap(new HashMap());
-        Set invalid = null;
-        FOUserAgent userAgent;
+        private Map images = Collections.synchronizedMap(new java.util.HashMap());
+        private Set invalid = null;
+        private FOUserAgent userAgent;
 
         public Context(FOUserAgent ua, boolean inv) {
             userAgent = ua;
-            if(inv) {
-                invalid = Collections.synchronizedSet(new HashSet());
+            if (inv) {
+                invalid = Collections.synchronizedSet(new java.util.HashSet());
             }
         }
 
