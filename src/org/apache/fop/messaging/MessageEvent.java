@@ -13,8 +13,8 @@ import java.util.EventObject;
  * a container for the text and the type of a message
  * MessageEvents are created by MessageHandler and can be received by any
  * MessageListener, which is added to MessageHandler;
- * @see org.apache.fop.MessageListener MessageListener
  *
+ * @see org.apache.fop.messaging.MessageListener MessageListener
  */
 
 public class MessageEvent extends EventObject {

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -20,7 +20,7 @@ import java.util.Iterator;
   IDReferences contains a map of IDs and the objects to which
   they refer. It also contains a list of references to IDs which
   have yet to be encountered.
-  
+
   Modified by Mark Lillywhite mark-fop@inomial.com. Added
   getInvalidElements() so that StreamRenderer can tell what
   hasn't been determined yet.
@@ -29,7 +29,7 @@ import java.util.Iterator;
   Sometimes IDs are created, but not validated. This code fixes
   the incorrect complaint that the ID already exists which prevents
   basic-links from working (sometimes).
-   
+
   */
 public class IDReferences {
     private HashMap idReferences, idValidation, idUnvalidated;
@@ -70,7 +70,7 @@ public class IDReferences {
         if (id != null &&!id.equals("")) {
             if (doesUnvalidatedIDExist(id)) {
                 removeFromUnvalidatedIDList(id);
-                //Steve's (gears@apache.org) comment: Is this right? 
+                //Steve's (gears@apache.org) comment: Is this right?
                 removeFromIdValidationList(id);
             }
             else if (doesIDExist(id)) {
@@ -88,19 +88,18 @@ public class IDReferences {
      * Creates id entry that hasn't been validated
      *
      * @param id     The id to create
-     * @exception FOPException
      */
     public void createUnvalidatedID(String id) {
         if (id != null &&!id.equals("")) {
             if (!doesIDExist(id)) {
                 createNewId(id);
                 addToUnvalidatedIdList(id);
-            } 
+            }
         }
     }
 
     /**
-     * Adds created id list of unvalidated ids that have already 
+     * Adds created id list of unvalidated ids that have already
      * been created. This should be used if it is unsure whether
      * the id is valid but it must be anyhow.
      *
@@ -112,8 +111,8 @@ public class IDReferences {
 
     /**
      * Removes id from list of unvalidated ids.
-     * This should be used if the id has been determined 
-     * to be valid. 
+     * This should be used if the id has been determined
+     * to be valid.
      *
      * @param id     The id to remove
      */
@@ -154,7 +153,8 @@ public class IDReferences {
      * Adds id to validation list to be validated.  This should be
      * used if it is unsure whether the id is valid.
      *
-     * @param id id to be added */
+     * @param id id to be added
+     */
     public void addToIdValidationList(String id) {
         idValidation.put(id, "");
     }
@@ -175,7 +175,6 @@ public class IDReferences {
      * Removes id from IDReferences
      *
      * @param id     The id to remove
-     * @exception FOPException
      */
     public void removeID(String id) {
         idReferences.remove(id);

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -146,7 +146,7 @@ public class BodyAreaContainer extends Area {
      * whether the area to be returned ought not to be the footnote
      * or before-float reference area.
      * @param fo The next formatting object
-     * @returns the next column area (possibly the current one)
+     * @return the next column area (possibly the current one)
      */
     public AreaContainer getNextArea(FObj fo) throws FOPException {
         isNewSpanArea = false;
@@ -189,7 +189,7 @@ public class BodyAreaContainer extends Area {
     /**
      * Add a new span area with specified number of column areas.
      * @param numColumns The number of column areas
-     * @returns AreaContainer The next column area
+     * @return AreaContainer The next column area
      */
     private AreaContainer addSpanArea(int numColumns) {
         resetHeights();
@@ -213,7 +213,7 @@ public class BodyAreaContainer extends Area {
      * This almost does what getNewArea() does, without actually
      * returning an area. These 2 methods can be reworked.
      * @param fo The next formatting object
-     * @returns boolean True if we need to balance.
+     * @return boolean True if we need to balance.
      */
     public boolean isBalancingRequired(FObj fo) {
         if (this.mainReferenceArea.getChildren().isEmpty())
@@ -284,7 +284,7 @@ public class BodyAreaContainer extends Area {
      * Determine remaining height for new span area. Needs to be
      * modified for footnote and before-float reference areas when
      * those are supported.
-     * @returns int The remaining available height in millipoints.
+     * @return int The remaining available height in millipoints.
      */
     public int getRemainingHeight() {
         return this.mainReferenceArea.getMaxHeight()
@@ -311,7 +311,7 @@ public class BodyAreaContainer extends Area {
 
     /**
      * Used in Flow when layout returns incomplete.
-     * @returns boolean Is this the last column in this span?
+     * @return boolean Is this the last column in this span?
      */
     public boolean isLastColumn() {
         ArrayList spanAreas = this.mainReferenceArea.getChildren();
@@ -322,7 +322,7 @@ public class BodyAreaContainer extends Area {
     /**
      * This variable is unset by getNextArea(), is set by addSpanArea(),
      * and <i>may</i> be set by resetSpanArea().
-     * @returns boolean Is the span area new or not?
+     * @return boolean Is the span area new or not?
      */
     public boolean isNewSpanArea() {
         return isNewSpanArea;

@@ -9,8 +9,8 @@ package org.apache.fop.messaging;
 
 
 /**
- * A trivial implementation of a MessageListener
- * For further explanation
+ * A trivial implementation of a MessageListener.
+ *
  * @see MessageListener
  */
 

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -222,21 +222,21 @@ public class TTFFile {
                             unicodeMapping.add(new UnicodeMapping(glyphIdx, j));
                             mtx_tab[glyphIdx].unicodeIndex.add(new Integer(j));
                             // Also add winAnsiWidth
-			    ArrayList v =
-				(ArrayList)ansiIndex.get(new Integer(j));
-			    if (v != null) {
-				for (int k = 0; k < v.size(); k++ ) {
-				    Integer aIdx = (Integer)v.get(k);
-				    ansiWidth[aIdx.intValue()] =
-					mtx_tab[glyphIdx].wx;
-				    /*
-				     * System.out.println("Added width "+
-				     * mtx_tab[glyphIdx].wx +
-				     * " uni: " + j +
-				     * " ansi: " + aIdx.intValue());
-				     */
-				}
-			    }
+                ArrayList v =
+                (ArrayList)ansiIndex.get(new Integer(j));
+                if (v != null) {
+                for (int k = 0; k < v.size(); k++ ) {
+                    Integer aIdx = (Integer)v.get(k);
+                    ansiWidth[aIdx.intValue()] =
+                    mtx_tab[glyphIdx].wx;
+                    /*
+                     * System.out.println("Added width "+
+                     * mtx_tab[glyphIdx].wx +
+                     * " uni: " + j +
+                     * " ansi: " + aIdx.intValue());
+                     */
+                }
+                }
                             /*
                              * System.out.println("Idx: "+
                              * glyphIdx +
@@ -269,15 +269,15 @@ public class TTFFile {
 
 
                             // Also add winAnsiWidth
-			    ArrayList v =
-				(ArrayList)ansiIndex.get(new Integer(j));
-			    if (v != null) {
-				for (int k = 0; k < v.size(); k++ ) {
-				    Integer aIdx = (Integer)v.get(k);
-				    ansiWidth[aIdx.intValue()] =
-					mtx_tab[glyphIdx].wx;
-				}
-			    }
+                ArrayList v =
+                (ArrayList)ansiIndex.get(new Integer(j));
+                if (v != null) {
+                for (int k = 0; k < v.size(); k++ ) {
+                    Integer aIdx = (Integer)v.get(k);
+                    ansiWidth[aIdx.intValue()] =
+                    mtx_tab[glyphIdx].wx;
+                }
+                }
 
                             /*
                              * System.out.println("IIdx: "+
@@ -986,7 +986,7 @@ public class TTFFile {
      * name exists in the collection.
      * If it does, set offset in fontfile to the beginning of
      * the Table Directory for that font
-     * @ return true if not collection or font name present, false
+     * @return true if not collection or font name present, false
      * otherwise
      */
     protected final boolean checkTTC(FontFileReader in, String name,
