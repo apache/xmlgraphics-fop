@@ -35,7 +35,6 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.extensions.BookmarkData;
 import org.apache.fop.fo.FOEventHandler;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.extensions.Outline;
 import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fo.pagination.PageSequence;
@@ -77,9 +76,6 @@ public class AreaTreeHandler extends FOEventHandler {
 
     // count of number of pages rendered
     private int pageCount;
-
-    /** The List object to which FO's should add Layout Managers */
-    protected List currentLMList;
 
     // AreaTreeModel in use
     private AreaTreeModel model;
@@ -337,17 +333,6 @@ public class AreaTreeHandler extends FOEventHandler {
             pageSLM.run();
             pageSequence.setCurrentPageNumber(pageSLM.getPageCount());
         }
-    }
-
-    /**
-     *
-     * @param fobj the FObj object for which a layout manager should be created
-     * @param lmList the list to which the newly created layout manager(s)
-     * should be added
-     */
-    public void addLayoutManager(FObj fobj, List lmList) {
-        currentLMList = lmList;
-        fobj.addLayoutManager(currentLMList);
     }
 }
 
