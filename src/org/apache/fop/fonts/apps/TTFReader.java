@@ -25,9 +25,9 @@ import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.avalon.framework.logger.Logger;
 
 //FOP
-import org.apache.fop.fonts.FontFileReader;
-import org.apache.fop.fonts.TTFCmapEntry;
-import org.apache.fop.fonts.TTFFile;
+import org.apache.fop.fonts.truetype.FontFileReader;
+import org.apache.fop.fonts.truetype.TTFCmapEntry;
+import org.apache.fop.fonts.truetype.TTFFile;
 
 /**
  * A tool which reads TTF files and generates

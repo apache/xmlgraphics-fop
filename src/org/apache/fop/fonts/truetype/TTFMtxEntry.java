@@ -1,14 +1,17 @@
 /*
  * $Id$
- * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
-package org.apache.fop.fonts;
+package org.apache.fop.fonts.truetype;
 
 import java.util.List;
 
+/**
+ * This class represents a TrueType Mtx Entry.
+ */
 class TTFMtxEntry {
 
     private int wx;
@@ -20,6 +23,12 @@ class TTFMtxEntry {
     private long offset;
     private byte found = 0;
 
+    /**
+     * Returns a String representation of this object.
+     * 
+     * @param t TTFFile to use for unit conversion
+     * @return String String representation
+     */
     public String toString(TTFFile t) {
         return "Glyph " + name + " index: " + index + " bbox [ "
              + t.convertTTFUnit2PDFUnit(boundingBox[0]) + " "
