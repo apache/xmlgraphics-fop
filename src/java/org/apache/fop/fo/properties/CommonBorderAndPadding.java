@@ -175,7 +175,6 @@ public class CommonBorderAndPadding implements Cloneable {
         return getPadding(TOP, bDiscard);
     }
 
-
     public int getBorderWidth(int side, boolean bDiscard) {
         if ((borderInfo[side] == null)
                 || (borderInfo[side].mStyle == Constants.NONE)
@@ -209,5 +208,14 @@ public class CommonBorderAndPadding implements Cloneable {
             return padding[side].iLength;
         }
     }
-
+    
+    public String toString() {
+        return "CommonBordersAndPadding (Before, After, Start, End):\n" +
+        "Borders: (" + getBorderTopWidth(false) + ", " + getBorderBottomWidth(false) + ", " +
+        getBorderLeftWidth(false) + ", " + getBorderRightWidth(false) + ")\n" +
+        "Border Colors: (" + getBorderColor(BEFORE) + ", " + getBorderColor(AFTER) + ", " +
+        getBorderColor(START) + ", " + getBorderColor(END) + ")\n" +
+        "Padding: (" + getPaddingTop(false) + ", " + getPaddingBottom(false) + ", " +
+        getPaddingLeft(false) + ", " + getPaddingRight(false) + ")\n";
+    }
 }

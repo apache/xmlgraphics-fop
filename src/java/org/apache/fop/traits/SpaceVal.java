@@ -133,5 +133,8 @@ public class SpaceVal {
         return space;
     }
 
+    public String toString() {
+        return "SpaceVal: " + getSpace().toString();
+    }
 }
 
