@@ -18,6 +18,7 @@
  
 package org.apache.fop.layoutmgr.list;
 
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
@@ -40,6 +41,7 @@ import java.util.List;
  * A cell contains blocks. These blocks fill the cell.
  */
 public class Item extends BlockStackingLayoutManager {
+    private FObj fobj;
 
     private Block curBlockArea;
 
