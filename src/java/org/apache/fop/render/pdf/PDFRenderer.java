@@ -524,19 +524,19 @@ public class PDFRenderer extends PrintRenderer {
      * This draws the background and border traits for an area given
      * the position.
      *
-     * @param block the area to get the traits from
+     * @param area the area to get the traits from
      * @param startx the start x position
      * @param starty the start y position
      * @param width the width of the area
      * @param height the height of the area
      */
-    protected void drawBackAndBorders(Area block,
+    protected void drawBackAndBorders(Area area,
                     float startx, float starty,
                     float width, float height) {
         // draw background then border
 
         Trait.Background back;
-        back = (Trait.Background)block.getTrait(Trait.BACKGROUND);
+        back = (Trait.Background)area.getTrait(Trait.BACKGROUND);
         if (back != null) {
             endTextObject();
 
@@ -565,7 +565,7 @@ public class PDFRenderer extends PrintRenderer {
             }
         }
 
-        BorderProps bps = (BorderProps)block.getTrait(Trait.BORDER_BEFORE);
+        BorderProps bps = (BorderProps)area.getTrait(Trait.BORDER_BEFORE);
         if (bps != null) {
             endTextObject();
 
@@ -578,7 +578,7 @@ public class PDFRenderer extends PrintRenderer {
             currentStream.add(startx + width + " " + y1 + " l\n");
             currentStream.add("S\n");
         }
-        bps = (BorderProps)block.getTrait(Trait.BORDER_AFTER);
+        bps = (BorderProps)area.getTrait(Trait.BORDER_AFTER);
         if (bps != null) {
             endTextObject();
 
@@ -591,7 +591,7 @@ public class PDFRenderer extends PrintRenderer {
             currentStream.add((startx + width) + " " + (y1 + height) + " l\n");
             currentStream.add("S\n");
         }
-        bps = (BorderProps)block.getTrait(Trait.BORDER_START);
+        bps = (BorderProps)area.getTrait(Trait.BORDER_START);
         if (bps != null) {
             endTextObject();
 
@@ -604,7 +604,7 @@ public class PDFRenderer extends PrintRenderer {
             currentStream.add(x1 + " " + (starty + height) + " l\n");
             currentStream.add("S\n");
         }
-        bps = (BorderProps)block.getTrait(Trait.BORDER_END);
+        bps = (BorderProps)area.getTrait(Trait.BORDER_END);
         if (bps != null) {
             endTextObject();
 
