@@ -18,9 +18,9 @@
 package org.apache.fop.area;
 
 import java.awt.geom.Rectangle2D;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.ObjectInputStream;
+//import java.io.IOException;
+//import java.io.ObjectOutputStream;
+//import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -89,7 +89,7 @@ implements Viewport, Resolveable {
     /**
      * Create a page viewport.
      * @param parent node of this viewport
-     * @param sync object on which teh Area is synchronized
+     * @param sync object on which the Area is synchronized
      * @param pageId the unique identifier of this page
      * @param p the page reference area for the contents of this page
      * @param bounds the dimensions of the viewport
@@ -371,48 +371,48 @@ implements Viewport, Resolveable {
         }
     }
 
-    /**
-     * Save the viewport pageRefArea to an object stream.
-     * The map of unresolved references are set on the pageRefArea so that
-     * the resolvers can be properly serialized and reloaded.
-     * @param out the object output stream to write the contents
-     */
-    public void savePage(ObjectOutputStream out) {
-        // set the unresolved references so they are serialized
-        synchronized (sync) {
-            ((PageRefArea)refArea).setUnresolvedReferences(unresolved);
-            try {
-                out.writeObject(refArea);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            refArea = null;
-        }
-    }
+//    /**
+//     * Save the viewport pageRefArea to an object stream.
+//     * The map of unresolved references are set on the pageRefArea so that
+//     * the resolvers can be properly serialized and reloaded.
+//     * @param out the object output stream to write the contents
+//     */
+//    public void savePage(ObjectOutputStream out) {
+//        // set the unresolved references so they are serialized
+//        synchronized (sync) {
+//            ((PageRefArea)refArea).setUnresolvedReferences(unresolved);
+//            try {
+//                out.writeObject(refArea);
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//            refArea = null;
+//        }
+//    }
 
-    /**
-     * Load the viewport pageRefArea from an object stream.
-     * This loads the pageRefArea from the stream and
-     * if there are any unresolved references that were resolved
-     * while saved they will be resolved on the page contents.
-     * @param in the object input stream to read the pageRefArea from
-     * @throws Exception if there is an error loading the pageRefArea
-     */
-    public void loadPage(ObjectInputStream in) throws Exception {
-        synchronized (sync) {
-            PageRefArea pageRefArea = (PageRefArea) in.readObject();
-            refArea = pageRefArea;
-            unresolved = pageRefArea.getUnresolvedReferences();
-            if (unresolved != null && pendingResolved != null) {
-                for (Iterator iter = pendingResolved.keySet().iterator();
-                iter.hasNext();) {
-                    String id = (String) iter.next();
-                    resolve(id, (List)pendingResolved.get(id));
-                }
-                pendingResolved = null;
-            }
-        }
-    }
+//    /**
+//     * Load the viewport pageRefArea from an object stream.
+//     * This loads the pageRefArea from the stream and
+//     * if there are any unresolved references that were resolved
+//     * while saved they will be resolved on the page contents.
+//     * @param in the object input stream to read the pageRefArea from
+//     * @throws Exception if there is an error loading the pageRefArea
+//     */
+//    public void loadPage(ObjectInputStream in) throws Exception {
+//        synchronized (sync) {
+//            PageRefArea pageRefArea = (PageRefArea) in.readObject();
+//            refArea = pageRefArea;
+//            unresolved = pageRefArea.getUnresolvedReferences();
+//            if (unresolved != null && pendingResolved != null) {
+//                for (Iterator iter = pendingResolved.keySet().iterator();
+//                iter.hasNext();) {
+//                    String id = (String) iter.next();
+//                    resolve(id, (List)pendingResolved.get(id));
+//                }
+//                pendingResolved = null;
+//            }
+//        }
+//    }
 
     /**
      * Clone this page.
