@@ -134,6 +134,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
         while (proxyLMiter.hasNext()) {
             LayoutManager lm = (LayoutManager) proxyLMiter.next();
+            lm.setParent(this);
             if (lm.generatesInlineAreas()) {
                 LineLayoutManager lineLM = createLineManager(lm);
                 addChildLM(lineLM);
@@ -160,6 +161,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         inlines.add(firstlm);
         while (proxyLMiter.hasNext()) {
             LayoutManager lm = (LayoutManager) proxyLMiter.next();
+            lm.setParent(this);
             if (lm.generatesInlineAreas()) {
                 inlines.add(lm);
             } else {
