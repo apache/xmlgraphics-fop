@@ -77,6 +77,7 @@ public class BlockArea extends Area {
     protected int alignLastLine;
 	
     protected LineArea currentLineArea;
+    protected LinkSet currentLinkSet;
 
     /* have any line areas been used? */
     protected boolean hasLines = false;
@@ -134,6 +135,7 @@ public class BlockArea extends Area {
 	this.currentLineArea.changeWhiteSpaceTreatment(whiteSpaceTreatment);
 
 	if (ls != null) {
+            this.currentLinkSet = ls;
 	    ls.setYOffset(currentHeight);
 	}
 
@@ -142,6 +144,9 @@ public class BlockArea extends Area {
 		
 	while (ts != -1) {
 	    this.currentLineArea.align(this.align);
+            if (ls != null) {
+                ls.align(this.align, this.currentLineArea.getStartIndent());
+            }
 	    this.addLineArea(this.currentLineArea);
 	    this.currentLineArea = new
 		LineArea(fontState, lineHeight, halfLeading,
@@ -168,6 +173,10 @@ public class BlockArea extends Area {
 	    this.currentLineArea.addPending();
 	    this.currentLineArea.align(this.alignLastLine);
 	    this.addLineArea(this.currentLineArea);
+            if (this.currentLinkSet != null) {
+                this.currentLinkSet.align(this.alignLastLine,
+		    this.currentLineArea.getStartIndent());
+            }
 	}
     }
 
