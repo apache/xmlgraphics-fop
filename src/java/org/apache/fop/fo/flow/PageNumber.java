@@ -71,8 +71,6 @@ import org.apache.fop.fo.FOInputHandler;
  * Standard.
  */
 public class PageNumber extends FObj {
-    /** FontInfo for this object */
-    protected FOTreeControl fontInfo = null;
     /** FontState for this object */
     protected Font fontState;
 
@@ -88,14 +86,6 @@ public class PageNumber extends FObj {
         super(parent);
     }
 
-    /**
-     * @param foih FOInputHandler to be set
-     */
-    public void setFOInputHandler(FOInputHandler foih) {
-        super.setFOInputHandler(foih);
-        fontInfo = foih.getFontInfo();
-    }
-
     public void setup() {
 
         // Common Accessibility Properties
@@ -109,7 +99,7 @@ public class PageNumber extends FObj {
         CommonBackground bProps = propMgr.getBackgroundProps();
 
         // Common Font Properties
-        this.fontState = propMgr.getFontState(fontInfo);
+        this.fontState = propMgr.getFontState(getFOTreeControl());
 
         // Common Margin Properties-Inline
         CommonMarginInline mProps = propMgr.getMarginInlineProps();

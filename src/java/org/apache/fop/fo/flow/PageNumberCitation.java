@@ -74,8 +74,6 @@ import org.apache.fop.util.CharUtilities;
  * block referenced with the ref-id attribute.
  */
 public class PageNumberCitation extends FObj {
-    /** FontInfo for this object **/
-    protected FOTreeControl fontInfo = null;
     /** Fontstate for this object **/
     protected Font fontState;
 
@@ -92,14 +90,6 @@ public class PageNumberCitation extends FObj {
      */
     public PageNumberCitation(FONode parent) {
         super(parent);
-    }
-
-    /**
-     * @param foih the FOInputHandler object to set
-     */
-    public void setFOInputHandler(FOInputHandler foih) {
-        super.setFOInputHandler(foih);
-        fontInfo = foih.getFontInfo();
     }
 
     /**
@@ -128,7 +118,7 @@ public class PageNumberCitation extends FObj {
         CommonBackground bProps = propMgr.getBackgroundProps();
 
         // Common Font Properties
-        this.fontState = propMgr.getFontState(fontInfo);
+        this.fontState = propMgr.getFontState(getFOTreeControl());
 
         // Common Margin Properties-Inline
         CommonMarginInline mProps = propMgr.getMarginInlineProps();

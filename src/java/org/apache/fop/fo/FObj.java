@@ -79,12 +79,6 @@ public class FObj extends FONode {
     protected static PropertyListBuilder plb = null;
 
     /**
-     * Structure handler used to notify structure events
-     * such as start end element.
-     */
-    protected FOInputHandler foInputHandler;
-
-    /**
      * Formatting properties for this fo element.
      */
     public PropertyList properties;
@@ -249,19 +243,6 @@ public class FObj extends FONode {
             }
             children.add(child);
         }
-    }
-
-    /**
-     * Set the structure handler for handling structure events.
-     *
-     * @param st the structure handler
-     */
-    public void setFOInputHandler(FOInputHandler foih) {
-        foInputHandler = foih;
-    }
-
-    public FOInputHandler getFOInputHandler() {
-        return foInputHandler;
     }
 
     /**

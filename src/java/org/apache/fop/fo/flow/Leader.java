@@ -79,8 +79,6 @@ public class Leader extends FObjMixed {
     private int ruleThickness;
     private int leaderPattern;
     private int patternWidth;
-    /** FontInfo for this object */
-    protected FOTreeControl fontInfo = null;
     /** FontState for this object */
     protected Font fontState;
 
@@ -89,15 +87,6 @@ public class Leader extends FObjMixed {
      */
     public Leader(FONode parent) {
         super(parent);
-    }
-
-
-    /**
-     * @param foih FOInputHandler to set
-     */
-    public void setFOInputHandler(FOInputHandler foih) {
-        super.setFOInputHandler(foih);
-        fontInfo = foih.getFontInfo();
     }
 
     public void setup() {
@@ -113,7 +102,7 @@ public class Leader extends FObjMixed {
         CommonBackground bProps = propMgr.getBackgroundProps();
 
         // Common Font Properties
-        this.fontState = propMgr.getFontState(fontInfo);
+        this.fontState = propMgr.getFontState(getFOTreeControl());
 
         // Common Margin Properties-Inline
         CommonMarginInline mProps = propMgr.getMarginInlineProps();
