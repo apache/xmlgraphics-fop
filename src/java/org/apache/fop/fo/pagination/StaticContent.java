@@ -54,7 +54,6 @@ package org.apache.fop.fo.pagination;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.layoutmgr.StaticContentLayoutManager;
 
 /**
  * Class modelling the fo:static-content object. See Sec. 6.4.19 of the XSL-FO
@@ -85,20 +84,6 @@ public class StaticContent extends Flow {
             super.setFlowName(name);
         }
 
-    }
-
-    private StaticContentLayoutManager lm;
-
-    /**
-     * @return this object's layout manager
-     */
-    public StaticContentLayoutManager getLayoutManager() {
-        if (lm == null) {
-            lm = new StaticContentLayoutManager();
-            lm.setUserAgent(getUserAgent());
-            lm.setFObj(this);
-        }
-        return lm;
     }
 
     /**
