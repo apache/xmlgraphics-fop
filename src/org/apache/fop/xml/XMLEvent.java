@@ -34,6 +34,28 @@ public class XMLEvent {
     private static final int MIN_XML_EV_TYPE = NOEVENT;
     private static final int MAX_XML_EV_TYPE = CHARACTERS;
 
+    public static final boolean DISCARD_W_SPACE = true;
+    public static final boolean RETAIN_W_SPACE = false;
+
+    public static String eventTypeName(int type) {
+        switch (type) {
+        case NOEVENT:
+            return "NOEVENT";
+        case STARTDOCUMENT:
+            return "STARTDOCUMENT";
+        case ENDDOCUMENT:
+            return "ENDDOCUMENT";
+        case STARTELEMENT:
+            return "STARTELEMENT";
+        case ENDELEMENT:
+            return "ENDELEMENT";
+        case CHARACTERS:
+            return "CHARACTERS";
+        default:
+            return "Unknown type " + type;
+        }
+    }
+
     // These are made public specifically so the the values of individual
     // XMLEvent instances can be changed directly, on the assumption that
     // the basic XML events are unlikely to change.
@@ -171,28 +193,7 @@ public class XMLEvent {
 
     public String toString() {
         String tstr;
-        switch (type) {
-        case NOEVENT:
-            tstr = "NOEVENT";
-            break;
-        case STARTDOCUMENT:
-            tstr = "STARTDOCUMENT";
-            break;
-        case ENDDOCUMENT:
-            tstr = "ENDDOCUMENT";
-            break;
-        case STARTELEMENT:
-            tstr = "STARTELEMENT";
-            break;
-        case ENDELEMENT:
-            tstr = "ENDELEMENT";
-            break;
-        case CHARACTERS:
-            tstr = "CHARACTERS";
-            break;
-        default:
-            tstr = "Unknown type " + type;
-        }
+        tstr = eventTypeName(type);
         tstr = tstr + "\nURI "
                 + uriIndex + " " + namespaces.getIndexURI(uriIndex);
         tstr = tstr + "\n" + "Local Name " + localName;
