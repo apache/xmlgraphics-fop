@@ -29,9 +29,11 @@ import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.BreakPossPosIter;
 import org.apache.fop.layoutmgr.Position;
+import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.traits.MinOptMax;
+import org.apache.fop.traits.SpaceVal;
 
 import java.util.Iterator;
 import java.util.ArrayList;
@@ -47,11 +49,17 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
     private Item label;
     private Item body;
 
+    private int referenceIPD = 0;
+
     private Block curBlockArea = null;
 
-    private List cellList = null;
+    //private List cellList = null;
     private int listItemHeight;
 
+    //TODO space-before|after: handle space-resolution rules
+    private MinOptMax spaceBefore;
+    private MinOptMax spaceAfter;
+    
     private class ItemPosition extends LeafPosition {
         protected List cellBreaks;
         protected ItemPosition(LayoutManager lm, int pos, List l) {
@@ -62,7 +70,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
 
     /**
      * Create a new list item layout manager.
-     *
+     * @param node list-item to create the layout manager for
      */
     public ListItemLayoutManager(ListItem node) {
         super(node);
@@ -89,6 +97,20 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         body.setParent(this);
     }
 
+    /** @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties() */
+    protected void initProperties() {
+        super.initProperties();
+        spaceBefore = new SpaceVal(fobj.getCommonMarginBlock().spaceBefore).getSpace();
+        spaceAfter = new SpaceVal(fobj.getCommonMarginBlock().spaceAfter).getSpace();
+    }
+
+    private int getIPIndents() {
+        int iIndents = 0;
+        iIndents += fobj.getCommonMarginBlock().startIndent.getValue();
+        iIndents += fobj.getCommonMarginBlock().endIndent.getValue();
+        return iIndents;
+    }
+    
     /**
      * Get the next break possibility.
      *
@@ -98,6 +120,9 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
     public BreakPoss getNextBreakPoss(LayoutContext context) {
         // currently active LM
         Item curLM;
+
+        //int allocBPD = context.
+        referenceIPD = context.getRefIPD();
 
         BreakPoss lastPos = null;
         List breakList = new ArrayList();
@@ -121,14 +146,14 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
 
             // Set up a LayoutContext
             // the ipd is from the current column
-            int ipd = context.getRefIPD();
+            //int ipd = context.getRefIPD();
             BreakPoss bp;
 
             LayoutContext childLC = new LayoutContext(0);
             childLC.setStackLimit(
                   MinOptMax.subtract(context.getStackLimit(),
                                      stackSize));
-            childLC.setRefIPD(context.getRefIPD());
+            childLC.setRefIPD(referenceIPD);
             
             stage++;
             while (!curLM.isFinished()) {
@@ -178,12 +203,20 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         }
         listItemHeight = opt;
 
-        MinOptMax itemSize = new MinOptMax(min, opt, max);
-
         if (label.isFinished() && body.isFinished()) {
             setFinished(true);
         }
 
+        MinOptMax itemSize = new MinOptMax(min, opt, max);
+        
+        //Add spacing
+        if (spaceAfter != null) {
+            itemSize.add(spaceAfter);
+        }
+        if (spaceBefore != null) {
+            itemSize.add(spaceBefore);
+        }
+        
         ItemPosition rp = new ItemPosition(this, breakList.size() - 1, breakList);
         BreakPoss breakPoss = new BreakPoss(rp);
         if (over) {
@@ -203,6 +236,12 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
+
+        // if adjusted space before
+        double adjust = layoutContext.getSpaceAdjust();
+        addBlockSpacing(adjust, spaceBefore);
+        spaceBefore = null;
+
         addID(fobj.getId());
 
         Item childLM;
@@ -226,6 +265,9 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
 
         flush();
 
+        // if adjusted space after
+        addBlockSpacing(adjust, spaceAfter);
+        
         curBlockArea = null;
     }
 
@@ -257,11 +299,21 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
             curBlockArea = new Block();
 
             // Set up dimensions
-            Area parentArea = parentLM.getParentArea(curBlockArea);
-            int referenceIPD = parentArea.getIPD();
-            curBlockArea.setIPD(referenceIPD);
-            // Get reference IPD from parentArea
-            setCurrentArea(curBlockArea); // ??? for generic operations
+            /*Area parentArea =*/ parentLM.getParentArea(curBlockArea);
+            
+            // set traits
+            TraitSetter.addBorders(curBlockArea, fobj.getCommonBorderPaddingBackground());
+            TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
+            TraitSetter.addMargins(curBlockArea,
+                    fobj.getCommonBorderPaddingBackground(), 
+                    fobj.getCommonMarginBlock());
+            TraitSetter.addBreaks(curBlockArea, 
+                    fobj.getBreakBefore(), fobj.getBreakAfter());
+            
+            int contentIPD = referenceIPD - getIPIndents();
+            curBlockArea.setIPD(contentIPD);
+
+            setCurrentArea(curBlockArea);
         }
         return curBlockArea;
     }
