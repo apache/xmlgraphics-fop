@@ -10,7 +10,6 @@ package org.apache.fop.render;
 // FOP
 import org.apache.fop.pdf.PDFPathPaint;
 import org.apache.fop.pdf.PDFColor;
-import org.apache.fop.image.ImageArea;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.datatypes.*;

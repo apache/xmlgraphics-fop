@@ -12,7 +12,6 @@ package org.apache.fop.render.mif;
 // FOP
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.AbstractRenderer;
-import org.apache.fop.image.ImageArea;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.*;

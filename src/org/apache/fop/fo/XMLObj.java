@@ -20,6 +20,7 @@ import org.xml.sax.Attributes;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import java.util.*;
+import java.awt.geom.Point2D;
 
 /**
  * Generic XML object.
@@ -53,6 +54,10 @@ public abstract class XMLObj extends FONode {
 
     public Document getDocument() {
          return doc;
+    }
+
+    public Point2D getDimension(Point2D view) {
+         return null;
     }
 
     public abstract String getNameSpace();

@@ -9,7 +9,6 @@ package org.apache.fop.render.pdf;
 
 // FOP
 import org.apache.fop.render.PrintRenderer;
-import org.apache.fop.image.ImageArea;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.*;

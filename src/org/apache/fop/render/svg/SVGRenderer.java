@@ -13,7 +13,6 @@ import org.apache.fop.area.inline.*;
 import org.apache.fop.datatypes.IDReferences;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.image.*;
-import org.apache.fop.svg.SVGArea;
 import org.apache.fop.svg.SVGUtilities;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.fo.FOUserAgent;

@@ -27,6 +27,8 @@ import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
 
 import org.w3c.dom.Document;
 
+import java.awt.geom.Point2D;
+
 public class InstreamForeignObject extends FObj {
 
     int breakBefore;
@@ -121,6 +123,8 @@ public class InstreamForeignObject extends FObj {
 
         // if auto then use the intrinsic size of the content scaled
         // to the content-height and content-width
+
+        Point2D size = child.getDimension(new Point2D.Float(-1, -1));
 
         Document doc = child.getDocument();
         String ns = child.getNameSpace();

@@ -8,7 +8,6 @@
 package org.apache.fop.render;
 
 // FOP
-import org.apache.fop.image.ImageArea;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.*;
 import org.apache.fop.area.Span;
