@@ -99,7 +99,7 @@ import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Viewport;
-import org.apache.fop.area.inline.Word;
+import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.apps.Document;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.render.Renderer;
@@ -589,13 +589,13 @@ class TreeLoader extends AbstractLogEnabled {
                 FontMetrics metrics = fontInfo.getMetricsFor(fname);
                 currentFontState =
                     new Font(fname, metrics, 12000);
-                Word word = getWord((Element) obj);
+                TextArea text = getText((Element) obj);
 
-                word.addTrait(Trait.FONT_NAME, fname);
-                word.addTrait(Trait.FONT_SIZE, new Integer(12000));
+                text.addTrait(Trait.FONT_NAME, fname);
+                text.addTrait(Trait.FONT_SIZE, new Integer(12000));
 
-                if (word != null) {
-                    list.add(word);
+                if (text != null) {
+                    list.add(text);
                 }
             } else {
             }
@@ -723,19 +723,19 @@ class TreeLoader extends AbstractLogEnabled {
         return leader;
     }
 
-    Word getWord(Element root) {
+    TextArea getText(Element root) {
         String str = getString(root);
-        Word word = new Word();
-        word.setWord(str);
-        addTraits(root, word);
+        TextArea text = new TextArea();
+        text.setTextArea(str);
+        addTraits(root, text);
         int width = 0;
         for (int count = 0; count < str.length(); count++) {
             width += currentFontState.getWidth(str.charAt(count));
         }
-        word.setWidth(width);
-        word.setOffset(currentFontState.getCapHeight());
+        text.setWidth(width);
+        text.setOffset(currentFontState.getCapHeight());
 
-        return word;
+        return text;
     }
 
 

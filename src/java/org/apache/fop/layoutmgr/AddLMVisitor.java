@@ -71,7 +71,7 @@ import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.UnresolvedPageNumber;
 import org.apache.fop.area.inline.Viewport;
-import org.apache.fop.area.inline.Word;
+import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
@@ -378,15 +378,15 @@ public class AddLMVisitor implements FOTreeVisitor {
          } else if (node.getLeaderPattern() == LeaderPattern.SPACE) {
              leaderArea = new Space();
          } else if (node.getLeaderPattern() == LeaderPattern.DOTS) {
-             Word w = new Word();
+             TextArea t = new TextArea();
              char dot = '.'; // userAgent.getLeaderDotCharacter();
 
-             w.setWord("" + dot);
-             w.addTrait(Trait.FONT_NAME, node.getFontState().getFontName());
-             w.addTrait(Trait.FONT_SIZE,
+             t.setTextArea("" + dot);
+             t.addTrait(Trait.FONT_NAME, node.getFontState().getFontName());
+             t.addTrait(Trait.FONT_SIZE,
                               new Integer(node.getFontState().getFontSize()));
              // set offset of dot within inline parent
-             w.setOffset(node.getFontState().getAscender());
+             t.setOffset(node.getFontState().getAscender());
              int width = node.getFontState().getCharWidth(dot);
              Space spacer = null;
              if (node.getPatternWidth() > width) {
@@ -396,7 +396,7 @@ public class AddLMVisitor implements FOTreeVisitor {
              }
              FilledArea fa = new FilledArea();
              fa.setUnitWidth(width);
-             fa.addChild(w);
+             fa.addChild(t);
              if (spacer != null) {
                  fa.addChild(spacer);
              }
@@ -738,14 +738,14 @@ public class AddLMVisitor implements FOTreeVisitor {
          lm = new LeafNodeLayoutManager() {
                      public InlineArea get(LayoutContext context) {
                          // get page string from parent, build area
-                         Word inline = new Word();
+                         TextArea inline = new TextArea();
                          String str = parentLM.getCurrentPageNumber();
                          int width = 0;
                      for (int count = 0; count < str.length(); count++) {
                              width += node.getFontState().getCharWidth(
                                         str.charAt(count));
                          }
-                         inline.setWord(str);
+                         inline.setTextArea(str);
                          inline.setIPD(width);
                          inline.setHeight(node.getFontState().getAscender()
                                           - node.getFontState().getDescender());
@@ -808,10 +808,10 @@ public class AddLMVisitor implements FOTreeVisitor {
          if (page != null) {
              String str = page.getPageNumber();
              // get page string from parent, build area
-             Word word = new Word();
-             inline = word;
+             TextArea text = new TextArea();
+             inline = text;
              int width = node.getStringWidth(str);
-             word.setWord(str);
+             text.setTextArea(str);
              inline.setIPD(width);
              inline.setHeight(node.getFontState().getAscender()
                               - node.getFontState().getDescender());

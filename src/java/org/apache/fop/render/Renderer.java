@@ -66,7 +66,7 @@ import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Viewport;
-import org.apache.fop.area.inline.Word;
+import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.apps.FOUserAgent;
 
@@ -227,11 +227,11 @@ public interface Renderer {
     void renderContainer(Container cont);
 
     /**
-     * Tells the renderer to render an inline word.
+     * Tells the renderer to render an inline text area
      *
-     * @param area  The word area
+     * @param area  The text area
      */
-    void renderWord(Word area);
+    void renderText(TextArea area);
 
     /**
      * Tells the renderer to render an inline parent area.

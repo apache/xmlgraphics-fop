@@ -66,11 +66,11 @@ public interface InlineAreaVisitor {
     void serveVisitor(Viewport viewport);
 
     /**
-     * Handle a visitor request to process an inline word.
+     * Handle a visitor request to process inline text.
      *
-     * @param area  The word area
+     * @param area  The text area
      */
-    void serveVisitor(Word area);
+    void serveVisitor(TextArea area);
 
     /**
      * Handle a visitor request to process an inline parent area.

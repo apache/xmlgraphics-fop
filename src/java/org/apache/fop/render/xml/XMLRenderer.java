@@ -91,7 +91,7 @@ import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Viewport;
-import org.apache.fop.area.inline.Word;
+import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.fo.properties.RuleStyle;
 import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fo.pagination.Region;
@@ -453,17 +453,17 @@ public class XMLRenderer extends AbstractRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#renderWord(Word)
+     * @see org.apache.fop.render.Renderer#renderText(Text)
      */
-    public void renderWord(Word word) {
+    public void renderText(TextArea text) {
         String prop = "";
-        Map map = word.getTraits();
+        Map map = text.getTraits();
         if (map != null) {
             prop = " props=\"" + getPropString(map) + "\"";
         }
-        writeElement("<word wsadjust=\"" + word.getWSadjust() + "\""
-             + prop + ">" + word.getWord() + "</word>");
-        super.renderWord(word);
+        writeElement("<text tsadjust=\"" + text.getTSadjust() + "\""
+             + prop + ">" + text.getTextArea() + "</text>");
+        super.renderText(text);
     }
 
     /**

@@ -85,7 +85,7 @@ import org.apache.fop.area.Page;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
-import org.apache.fop.area.inline.Word;
+import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fo.properties.BackgroundRepeat;
@@ -460,16 +460,16 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     }
     
     /**
-     * @see org.apache.fop.render.Renderer#renderWord(Word)
+     * @see org.apache.fop.render.Renderer#renderText(Text)
      */
-    public void renderWord(Word word) {
-        System.out.println("In render word: " + word.getWord());
+    public void renderText(TextArea text) {
+        System.out.println("In render text: " + text.getTextArea());
 
         Graphics2D graphics = currentPageImage.createGraphics();
-        String fontName = (String) word.getTrait(Trait.FONT_NAME);
-        int size = ((Integer) word.getTrait(Trait.FONT_SIZE)).intValue();
+        String fontName = (String) text.getTrait(Trait.FONT_NAME);
+        int size = ((Integer) text.getTrait(Trait.FONT_SIZE)).intValue();
 //      Typeface f = (Typeface) fontInfo.getFonts().get(fontName);
-        ColorType ct = (ColorType) word.getTrait(Trait.COLOR);
+        ColorType ct = (ColorType) text.getTrait(Trait.COLOR);
 
         FontMetricsMapper mapper = (FontMetricsMapper) 
             fontInfo.getMetricsFor(fontName);
@@ -485,16 +485,16 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
             10));
         
         int rx = currentBlockIPPosition;
-        int bl = currentBPPosition + word.getOffset();
+        int bl = currentBPPosition + text.getOffset();
 
         int newx = (int) (rx + 500) / 1000;
         int newy = (int) (pageHeight - (bl + 500) / 1000);
                 
-        String s = word.getWord();
+        String s = text.getTextArea();
 //      graphics.drawString(s, newx, newy);
         graphics.drawString(s, 220, 200);
 
         // TODO: render text decorations
-        currentBlockIPPosition += word.getWidth();
+        currentBlockIPPosition += text.getWidth();
     }
 }
