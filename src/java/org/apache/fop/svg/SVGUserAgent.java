@@ -68,7 +68,6 @@ import java.awt.Dimension;
  */
 public class SVGUserAgent extends UserAgentAdapter {
     private AffineTransform currentTransform = null;
-    private Logger log;
     private FOUserAgent userAgent;
 
     /**
@@ -79,7 +78,14 @@ public class SVGUserAgent extends UserAgentAdapter {
     public SVGUserAgent(FOUserAgent ua, AffineTransform at) {
         currentTransform = at;
         userAgent = ua;
-        log = userAgent.getLogger();
+    }
+
+    /**
+     * Returns the logger associated with this user agent.
+     * @return Logger the logger
+     */
+    protected final Logger getLogger() {
+        return this.userAgent.getLogger();
     }
 
     /**
@@ -87,7 +93,7 @@ public class SVGUserAgent extends UserAgentAdapter {
      * @param message the message to display
      */
     public void displayError(String message) {
-        log.error(message);
+        getLogger().error(message);
     }
 
     /**
@@ -95,7 +101,7 @@ public class SVGUserAgent extends UserAgentAdapter {
      * @param ex the exception to display
      */
     public void displayError(Exception ex) {
-        log.error("SVG Error" + ex.getMessage(), ex);
+        getLogger().error("SVG Error" + ex.getMessage(), ex);
     }
 
     /**
@@ -104,7 +110,7 @@ public class SVGUserAgent extends UserAgentAdapter {
      * @param message the message to display
      */
     public void displayMessage(String message) {
-        log.info(message);
+        getLogger().info(message);
     }
 
     /**
@@ -112,7 +118,7 @@ public class SVGUserAgent extends UserAgentAdapter {
      * @param message the message to display
      */
     public void showAlert(String message) {
-        log.warn(message);
+        getLogger().warn(message);
     }
 
     /**
