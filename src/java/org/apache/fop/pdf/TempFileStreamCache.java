@@ -50,16 +50,14 @@
  */ 
 package org.apache.fop.pdf;
 
-import org.apache.fop.util.StreamUtilities;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+// Java
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
 import java.io.File;
+
+//Commons
+import org.apache.commons.io.IOUtil;
 
 /**
  * StreamCache implementation that uses temporary files rather than heap.
@@ -96,8 +94,8 @@ public class TempFileStreamCache implements StreamCache {
      */
     public OutputStream getOutputStream() throws IOException {
         if (output == null) {
-            output = new BufferedOutputStream(
-                       new FileOutputStream(tempFile));
+            output = new java.io.BufferedOutputStream(
+                       new java.io.FileOutputStream(tempFile));
         }
         return output;
     }
@@ -109,38 +107,6 @@ public class TempFileStreamCache implements StreamCache {
         getOutputStream().write(data);
     }
     
-    /**
-     * Filter the cache with the supplied PDFFilter.
-     *
-     * @param filter the filter to apply
-     * @throws IOException if there is an IO error
-     */
-    public void applyFilter(PDFFilter filter) throws IOException {
-        if (output == null) {
-            return;
-        }
-
-        output.close();
-        output = null;
-
-        // need a place to put results
-        File newTempFile =
-          File.createTempFile("org.apache.fop.pdf.StreamCache-",
-                              ".temp");
-        newTempFile.deleteOnExit();
-
-        // filter may not be buffered
-        BufferedInputStream input =
-          new BufferedInputStream(new FileInputStream(tempFile));
-        BufferedOutputStream output = new BufferedOutputStream(
-                                        new FileOutputStream(newTempFile));
-        filter.encode(input, output, (int) tempFile.length());
-        input.close();
-        output.close();
-        tempFile.delete();
-        tempFile = newTempFile;
-    }
-
     /**
      * Outputs the cached bytes to the given stream.
      *
@@ -158,7 +124,7 @@ public class TempFileStreamCache implements StreamCache {
 
         // don't need a buffer because streamCopy is buffered
         InputStream input = new java.io.FileInputStream(tempFile);
-        final long bytesCopied = StreamUtilities.streamCopy(input, out);
+        final long bytesCopied = IOUtil.copy(input, out);
         input.close();
         return (int)bytesCopied;
     }

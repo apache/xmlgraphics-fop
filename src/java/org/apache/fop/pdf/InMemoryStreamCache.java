@@ -51,7 +51,6 @@
 package org.apache.fop.pdf;
 
 import java.io.ByteArrayOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.OutputStream;
 import java.io.IOException;
 
@@ -105,32 +104,6 @@ public class InMemoryStreamCache implements StreamCache {
         getOutputStream().write(data);
     }
     
-    /**
-     * Filter the cache with the supplied PDFFilter.
-     * @param filter the filter to apply
-     * @throws IOException if an IO error occurs
-     */
-    public void applyFilter(PDFFilter filter) throws IOException {
-        if (output == null) {
-            return;
-        }
-
-        output.close();
-
-        // make inputstream from copy of outputted bytes
-        int size = getSize();
-        ByteArrayInputStream input =
-          new ByteArrayInputStream(output.toByteArray());
-
-        // reset output
-        output.reset();
-
-        // run filter
-        filter.encode(input, output, size);
-        input.close();
-        output.close();
-    }
-
     /**
      * Outputs the cached bytes to the given stream.
      * @param out the output stream to write to
