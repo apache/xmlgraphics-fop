@@ -18,7 +18,7 @@
           <th>Support Thru</th>
         </tr>
         <tr>
-          <td>BMP (Microsoft Windows Bitmap)</td>
+          <td><link href="#bmp">BMP</link> (Microsoft Windows Bitmap)</td>
           <td>bitmap</td>
           <td><link href="#native">FOP native</link></td>
         </tr>
@@ -38,7 +38,7 @@
           <td><link href="#native">FOP native</link></td>
         </tr>
         <tr>
-          <td>PNG (Portable Network Graphic)</td>
+          <td><link href="#png">PNG</link> (Portable Network Graphic)</td>
           <td>bitmap</td>
           <td><link href="#jimi">JIMI</link> or <link href="#jai">JAI</link></td>
         </tr>
@@ -95,6 +95,10 @@ If you run a server without X, or if you can't connect to the X server due to se
         </ul>
       </section>
     </section>
+    <section id="bmp">
+      <title>BMP</title>
+      <p>FOP native support for BMP images is limited to the RGB color-space.</p>
+    </section>
     <section id="eps">
       <title>EPS</title>
       <p>FOP provides support for two output targets:</p>
@@ -115,16 +119,16 @@ If you run a server without X, or if you can't connect to the X server due to se
     </section>
     <section id="jpeg">
       <title>JPEG</title>
-      <p>
-        Not all variants of JPEG are supported, especially those containing unusual color 
-        lookup tables and color profiles. If you have trouble with a JPEG image in FOP, try 
-        opening it with an image processing program (such as Photoshop or Gimp) and then saving 
-        it. Specifying 24-bit color output may also help.
+      <p>FOP native support of JPEG does not include all variants, especially those containing unusual color lookup tables and color profiles.
+If you have trouble with a JPEG image in FOP, try opening it with an image processing program (such as Photoshop or Gimp) and then saving it.
+Specifying 24-bit color output may also help.
+For the PDF and PostScript renderers most JPEG images can be passed through without decompression.
+User reports indicate that grayscale, RGB, and CMYK color-spaces are all rendered properly.
       </p>
-      <p>
-        For the PDF and PostScript renderers most JPEG images can be passed through without 
-        decompression.
-      </p>
+    </section>
+    <section id="png">
+      <title>PNG</title>
+      <p>If using JAI for PNG support, only RGB and RGBA color-spaces are supported for FOP rendering.</p>
     </section>
     <section id="svg">
       <title>SVG</title>
@@ -242,7 +246,13 @@ into a raster graphic are not drawn properly in PDF. The image is opaque.
     </section>
     <section id="tiff">
       <title>TIFF</title>
-      <p>TIFF images with JPEG or CCITT content are passed through by FOP natively (PDF and PostScript only). Other TIFF subformats are handled by JAI.</p>
+      <p>FOP-native TIFF support is limited to PDF and PostScript output only. Also, according to user reports, FOP's native support for TIFF is limited to images with the following characteristics (all must be true for successful rendering):</p>
+      <ul>
+        <li>single channel images (i.e., bi-level and grayscale only)</li>
+        <li>uncompressed images, or images using CCITT T.4, CCITT T.6, or JPEG compression</li>
+        <li>images using white-is-zero encoding in the TIFF PhotometricInterpretation tag</li>
+      </ul>
+      <p><em>JAI:</em> Supports RGB and RGBA only for FOP rendering.</p>
     </section>
     <section id="resolution">
       <title>Graphics Resolution</title>
