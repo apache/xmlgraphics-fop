@@ -42,7 +42,7 @@ public interface Resolvable {
      *
      * @return the id references for resolving this object
      */
-    String[] getIDs();
+    String[] getIDRefs();
 
     /**
      * This method allows the Resolvable object to resolve one of

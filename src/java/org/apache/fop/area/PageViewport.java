@@ -157,7 +157,7 @@ public class PageViewport implements Resolvable, Cloneable {
      * Get the unresolved idrefs for this page.
      * @return String array of idref's that still have not been resolved
      */
-    public String[] getIDs() {
+    public String[] getIDRefs() {
         return (unresolvedIDRefs == null) ? null :
             (String[]) unresolvedIDRefs.keySet().toArray(new String[] {});
     }

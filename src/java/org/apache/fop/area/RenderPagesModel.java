@@ -149,7 +149,7 @@ public class RenderPagesModel extends StorePagesModel {
                 try {
                     renderer.renderPage(p);
                     if (!p.isResolved()) {
-                        String[] idrefs = p.getIDs();
+                        String[] idrefs = p.getIDRefs();
                         for (int count = 0; count < idrefs.length; count++) {
                             log.warn("Page " + p.getPageNumber() + 
                                 ": Unresolved id reference \"" + idrefs[count] 

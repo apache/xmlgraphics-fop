@@ -23,8 +23,9 @@ import java.util.List;
 import java.util.HashMap;
 
 /**
- * An instance of this class is either a PDF bookmark OffDocumentItem and
- * its child bookmarks.
+ * An instance of this class is either a PDF bookmark-tree and
+ * its child bookmark-items, or a bookmark-item and the child
+ * child bookmark-items under it.
  */
 public class BookmarkData extends OffDocumentItem implements Resolvable {
     private ArrayList subData = new ArrayList();
@@ -43,9 +44,8 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
 
     /**
      * Create a new bookmark data object.
-     * This should only be call by the top level element as its
-     * idref will be null.
-     *
+     * This should only be called by the bookmark-tree item because
+     * it has no idref item that needs to be resolved.
      */
     public BookmarkData() {
         idRef = null;
@@ -54,22 +54,23 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
 
     /**
      * Create a new pdf bookmark data object.
-     * This is used by the outlines to create a data object
-     * with a id reference. The id reference is to be resolved.
+     * This is used by the bookmark-items to create a data object
+     * with a idref.  During processing, this idref will be
+     * subsequently resolved to a particular PageViewport.
      *
-     * @param id the id reference
+     * @param idref the id reference
      */
-    public BookmarkData(String id) {
-        idRef = id;
+    public BookmarkData(String idref) {
+        this.idRef = idref;
         unresolvedIDRefs.put(idRef, this);
     }
 
     /**
-     * Get the id reference for this data.
+     * Get the idref for this bookmark-item
      *
-     * @return the id reference
+     * @return the idref for the bookmark-item
      */
-    public String getID() {
+    public String getIDRef() {
         return idRef;
     }
 
@@ -81,8 +82,8 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
      */
     public void addSubData(BookmarkData sub) {
         subData.add(sub);
-        unresolvedIDRefs.put(sub.getID(), sub);
-        String[] ids = sub.getIDs();
+        unresolvedIDRefs.put(sub.getIDRef(), sub);
+        String[] ids = sub.getIDRefs();
         for (int count = 0; count < ids.length; count++) {
             unresolvedIDRefs.put(ids[count], sub);
         }
@@ -136,63 +137,46 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
 
     /**
      * Check if this resolvable object has been resolved.
-     * Once the id reference is null then it has been resolved.
+     * A BookmarkData object is considered resolved once the idrefs for it
+     * and for all of its child bookmark-items have been resolved.
      *
-     * @return true if this has been resolved
+     * @return true if this object has been resolved
      */
     public boolean isResolved() {
-        return unresolvedIDRefs == null;
+        return unresolvedIDRefs == null || (unresolvedIDRefs.size() == 0);
     }
 
     /**
-     * Get the id references held by this object.
-     * Also includes all id references of all children.
-     *
-     * @return the array of id references
+     * @see org.apache.fop.area.Resolvable#getIDRefs()
      */
-    public String[] getIDs() {
+    public String[] getIDRefs() {
         return (String[])unresolvedIDRefs.keySet().toArray(new String[] {});
     }
 
     /**
      * Resolve this resolvable object.
-     * This resolves the id reference and if possible also
+     * This resolves the idref of this object and if possible also
      * resolves id references of child elements that have the same
      * id reference.
      *
-     * @param id the ID which has already been resolved to one or more
-     *      PageViewport objects
-     * @param pages the list of PageViewport objects the ID resolves to
+     * @see org.apache.fop.area.Resolvable#resolveIDRef(String, List)
+     * @todo check to make sure works when multiple bookmark-items
+     * have the same idref
      */
     public void resolveIDRef(String id, List pages) {
-        // this method is buggy
         if (!id.equals(idRef)) {
-            BookmarkData bd = (BookmarkData)unresolvedIDRefs.get(id);
-            unresolvedIDRefs.remove(id);
+            BookmarkData bd = (BookmarkData) unresolvedIDRefs.get(id);
             if (bd != null) {
                 bd.resolveIDRef(id, pages);
-                if (bd.isResolved()) {
-                    checkFinish();
-                }
-            } else if (idRef == null) {
-                checkFinish();
+                unresolvedIDRefs.remove(id);
             }
         } else {
-            if (pages != null) {
-                pageRef = (PageViewport)pages.get(0);
-            }
+            pageRef = (PageViewport) pages.get(0);
             // TODO get rect area of id on page
             unresolvedIDRefs.remove(idRef);
-            checkFinish();
         }
     }
 
-    private void checkFinish() {
-        if (unresolvedIDRefs.size() == 0) {
-            unresolvedIDRefs = null;
-        }
-    }
-    
     /**
      * @see org.apache.fop.area.OffDocumentItem#getName()
      */
