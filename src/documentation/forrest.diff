@@ -1,0 +1,150 @@
+Index: src/resources/skins/forrest-site/xslt/fo/document2fo.xsl
+===================================================================
+RCS file: /home/cvspublic/xml-forrest/src/resources/skins/forrest-site/xslt/fo/document2fo.xsl,v
+retrieving revision 1.3
+diff -u -r1.3 document2fo.xsl
+--- src/resources/skins/forrest-site/xslt/fo/document2fo.xsl	1 Nov 2002 02:49:58 -0000	1.3
++++ src/resources/skins/forrest-site/xslt/fo/document2fo.xsl	8 Nov 2002 12:05:50 -0000
+@@ -2,6 +2,7 @@
+ 
+ <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                 xmlns:fo="http://www.w3.org/1999/XSL/Format"
++                xmlns:fox="http://xml.apache.org/fop/extensions"
+                 version="1.0">
+ 
+   <xsl:output method="xml"/>
+@@ -80,14 +81,52 @@
+           </fo:repeatable-page-master-alternatives>
+         </fo:page-sequence-master>
+       </fo:layout-master-set>
+-      
++
++      <fox:bookmarks>
++        <xsl:apply-templates select="document/body/section" mode="bookmarks"/>
++      </fox:bookmarks>
++
+       <fo:page-sequence master-reference="book">
+         <xsl:apply-templates/>
+       </fo:page-sequence>
+       
+     </fo:root>
+   </xsl:template>
+-  
++
++  <xsl:template match="section" mode="bookmarks">
++    <fox:outline internal-destination="{generate-id()}">
++      <fox:label>
++        <xsl:number format="1.1.1.1.1.1.1" count="section" level="multiple"/>
++        <xsl:text> </xsl:text>
++        <xsl:value-of select="title"/>
++      </fox:label>
++      <xsl:apply-templates mode="bookmarks"/>
++    </fox:outline>
++  </xsl:template>
++
++  <xsl:template match="*" mode="bookmarks">
++    <xsl:apply-templates mode="bookmarks"/>
++  </xsl:template>
++
++  <xsl:template name="info">
++    <fo:block-container font-style="italic" absolute-position="absolute"
++              left="0pt" top="0pt" right="6.25in" bottom="150pt"
++              font-size="10pt">
++      <fo:block text-align="center">
++        <fo:basic-link color="lightgrey"
++                       external-destination="http://xml.apache.org/fop/dev">
++          Created by: FOP 1.0dev
++        </fo:basic-link>
++      </fo:block>
++      <fo:block text-align="center">
++        <fo:basic-link color="lightgrey"
++                       external-destination="http://xml.apache.org/fop/dev">
++          http://xml.apache.org/fop/dev
++        </fo:basic-link>
++      </fo:block>
++    </fo:block-container>
++  </xsl:template>
++
+   <xsl:template match="document">
+     <fo:title><xsl:value-of select="header/title"/></fo:title>
+     
+@@ -102,6 +141,7 @@
+         text-align="start">
+         Page <fo:page-number/>
+       </fo:block>
++      <xsl:call-template name="info"/>
+     </fo:static-content>
+ 
+     <fo:static-content flow-name="even-header">
+@@ -110,6 +150,7 @@
+         font-style="italic">
+         <xsl:value-of select="header/title"/>
+       </fo:block>
++      <xsl:call-template name="info"/>
+     </fo:static-content>
+ 
+     <fo:static-content flow-name="even-footer">
+@@ -131,6 +172,7 @@
+         font-style="italic">
+         <xsl:value-of select="header/title"/>
+       </fo:block>
++      <xsl:call-template name="info"/>
+     </fo:static-content>
+     
+     <fo:static-content flow-name="odd-footer">
+@@ -191,7 +233,12 @@
+       NOTICE: <xsl:apply-templates/>
+     </fo:block>
+   </xsl:template>
+-
++<!--
++  <xsl:template match="anchor">
++    <fo:block id="{@id}"/>
++    <xsl:apply-templates/>
++  </xsl:template>
++-->
+   <xsl:template match="section">
+     
+     <xsl:param name="level">0</xsl:param>
+@@ -201,9 +248,15 @@
+       font-family="serif"
+       font-size="{$size}pt"
+       font-weight="bold"
+-      space-before="12pt">
++      space-before="12pt"
++      id="{generate-id()}">
+       <xsl:number format="1.1.1.1.1.1.1" count="section" level="multiple"/>
+       <xsl:text> </xsl:text>
++
++      <xsl:if test="normalize-space(@id)!=''">
++        <fo:block id="{@id}"/>
++      </xsl:if>
++
+       <xsl:value-of select="title"/>
+     </fo:block>
+     <xsl:apply-templates>
+@@ -255,6 +308,9 @@
+       font-size="10pt"
+       background-color="#f0f0f0"
+       white-space-collapse="false"
++      linefeed-treatment="preserve"
++      white-space-treatment="preserve"
++      wrap-option="no-wrap"
+       text-align="start">
+       <xsl:apply-templates/>
+     </fo:block>
+@@ -456,7 +512,14 @@
+   </xsl:template>
+ 
+   <xsl:template match="link">
++    <xsl:choose>
++      <xsl:when test="starts-with(@href, '#')">
++    <fo:basic-link color="blue" text-decoration="underline" internal-destination="substring(@href,2)"><xsl:apply-templates/></fo:basic-link>
++      </xsl:when>
++      <xsl:otherwise>
+     <fo:basic-link color="blue" text-decoration="underline" external-destination="{@href}"><xsl:apply-templates/></fo:basic-link>
++      </xsl:otherwise>
++    </xsl:choose>
+   </xsl:template>
+ 
+   <xsl:template match="figure">
