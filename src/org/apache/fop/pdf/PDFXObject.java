@@ -108,6 +108,9 @@ public class PDFXObject extends PDFObject {
                         pdfICCStream = pdfDoc.makePDFICCStream();
                         pdfICCStream.setColorSpace(jpegimage.getColorSpace());
                         pdfICCStream.addDefaultFilters();
+                        if (pdfDoc.encryption != null) {
+                            pdfICCStream.addFilter(pdfDoc.encryption.makeFilter(pdfICCStream.number, pdfICCStream.generation));
+                        }
                     }
             }
         } catch (Exception e) {
@@ -185,6 +188,9 @@ public class PDFXObject extends PDFObject {
                 imgStream.setData(imgData);
                 //imgStream.addFilter(new FlateFilter());
                 imgStream.addDefaultFilters();
+                if (pdfDoc.encryption != null) {
+                    imgStream.addFilter(pdfDoc.encryption.makeFilter(this.number,this.generation));
+                }
 
                 String dictEntries = imgStream.applyFilters();
 
@@ -241,7 +247,9 @@ public class PDFXObject extends PDFObject {
                 } else {
                     imgStream.addDefaultFilters();
                 }
-
+                if (pdfDoc.encryption != null) {
+                    imgStream.addFilter(pdfDoc.encryption.makeFilter(this.number,this.generation));
+                }
                 
                 String dictEntries = imgStream.applyFilters();
 

@@ -147,6 +147,26 @@ public class CommandLineOptions {
 
     }
 
+    private boolean pdfEncryptionAvailable = false;
+    private boolean pdfEncryptionChecked = false;
+    private boolean encryptionAvailable() {
+        if (!pdfEncryptionChecked) {
+            try {
+                Class c = Class.forName("javax.crypto.Cipher");
+                pdfEncryptionAvailable
+                    = org.apache.fop.pdf.PDFEncryption.encryptionAvailable();
+            }
+            catch(ClassNotFoundException e) {
+                pdfEncryptionAvailable = false;
+            }
+            pdfEncryptionChecked = true;
+            if (!pdfEncryptionAvailable) {
+                log.warn("PDF encryption not available.");
+            }
+        }
+        return pdfEncryptionAvailable;
+    }
+    
     /**
      * parses the commandline arguments
      * @return true if parse was successful and procesing can continue, false if processing should stop
@@ -218,6 +238,44 @@ public class CommandLineOptions {
                 } else {
                     outfile = new File(args[i + 1]);
                     i++;
+                }
+            } else if (args[i].equals("-o")) {
+                if ((i + 1 == args.length) || (args[i + 1].charAt(0) == '-')) {
+                    if (encryptionAvailable()) {
+                        rendererOptions.put("ownerPassword", "");
+                    }
+                } else {
+                    if (encryptionAvailable()) {
+                        rendererOptions.put("ownerPassword", args[i + 1]);
+                    }
+                    i++;
+                }
+            } else if (args[i].equals("-u")) {
+                if ((i + 1 == args.length) || (args[i + 1].charAt(0) == '-')) {
+                    if (encryptionAvailable()) {
+                        rendererOptions.put("userPassword", "");
+                    }
+                } else {
+                    if (encryptionAvailable()) {
+                        rendererOptions.put("userPassword", args[i + 1]);
+                    }
+                    i++;
+                }
+            } else if (args[i].equals("-noprint")) {
+                if (encryptionAvailable()) {
+                    rendererOptions.put("allowPrint", "FALSE");
+                }
+            } else if (args[i].equals("-nocopy")) {
+                if (encryptionAvailable()) {
+                    rendererOptions.put("allowCopyContent", "FALSE");
+                }
+            } else if (args[i].equals("-noedit")) {
+                if (encryptionAvailable()) {
+                    rendererOptions.put("allowEditContent", "FALSE");
+                }
+            } else if (args[i].equals("-noannotations")) {
+                if (encryptionAvailable()) {
+                    rendererOptions.put("allowEditAnnotations", "FALSE");
                 }
             } else if (args[i].equals("-mif")) {
                 setOutputMode(MIF_OUTPUT);
@@ -534,38 +592,45 @@ public class CommandLineOptions {
      */
     public static void printUsage() {
         System.err.println("\nUSAGE\nFop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-pcl|-ps|-txt|-at|-print] <outfile>\n"
-                               + " [OPTIONS]  \n"
-                               + "  -d          debug mode   \n"
-                               + "  -x          dump configuration settings  \n"
-                               + "  -q          quiet mode  \n"
-                               + "  -c cfg.xml  use additional configuration file cfg.xml\n"
-                               + "  -l lang     the language to use for user information \n"
-                               + "  -s          for area tree XML, down to block areas only\n\n"
-                               + " [INPUT]  \n"
-                               + "  infile            xsl:fo input file (the same as the next) \n"
-                               + "  -fo  infile       xsl:fo input file  \n"
-                               + "  -xml infile       xml input file, must be used together with -xsl \n"
-                               + "  -xsl stylesheet   xslt stylesheet \n \n"
-                               + " [OUTPUT] \n"
-                               + "  outfile           input will be rendered as pdf file into outfile \n"
-                               + "  -pdf outfile      input will be rendered as pdf file (outfile req'd) \n"
-                               + "  -awt              input will be displayed on screen \n"
+                               + " [OPTIONS]\n"
+                               + "  -d             debug mode\n"
+                               + "  -x             dump configuration settings\n"
+                               + "  -q             quiet mode\n"
+                               + "  -c cfg.xml     use additional configuration file cfg.xml\n"
+                               + "  -l lang        the language to use for user information\n"
+                               + "  -s             (-at output) omit tree below block areas\n"
+                               + "  -"+TXTRenderer.encodingOptionName+"  (-txt output encoding use the encoding for the output file.\n"
+                               + "                 The encoding must be a valid java encoding.\n"
+                               + "  -o [password]  pdf file will be encrypted with option owner password\n"
+                               + "  -u [password]  pdf file will be encrypted with option user password\n"
+                               + "  -noprint       pdf file will be encrypted without printing permission\n"
+                               + "  -nocopy        pdf file will be encrypted without copy content permission\n"
+                               + "  -noedit        pdf file will be encrypted without edit content permission\n"
+                               + "  -noannotations pdf file will be encrypted without edit annotation permission\n"
+                               + "\n [INPUT]\n"
+                               + "  infile            xsl:fo input file (the same as the next)\n"
+                               + "  -fo  infile       xsl:fo input file\n"
+                               + "  -xml infile       xml input file, must be used together with -xsl\n"
+                               + "  -xsl stylesheet   xslt stylesheet\n"
+                               + "\n [OUTPUT]\n"
+                               + "  outfile           input will be rendered as pdf file into outfile\n"
+                               + "  -pdf outfile      input will be rendered as pdf file (outfile req'd)\n"
+                               + "  -awt              input will be displayed on screen\n"
                                + "  -mif outfile      input will be rendered as mif file (outfile req'd)\n"
-                               + "  -pcl outfile      input will be rendered as pcl file (outfile req'd) \n"
-                               + "  -ps outfile       input will be rendered as PostScript file (outfile req'd) \n"
-                               + "  -txt outfile      input will be rendered as text file (outfile req'd) \n"
-                               + "    -"+TXTRenderer.encodingOptionName+" encoding  use the encoding for the output file.\n"
-                               + "                    the encoding must be a valid java encoding.\n"
-                               + "  -svg outfile      input will be rendered as an svg slides file (outfile req'd) \n"
-                               + "  -at outfile       representation of area tree as XML (outfile req'd) \n"
-                               + "  -print            input file will be rendered and sent to the printer \n"
-                               + "                    see options with \"-print help\" \n\n"
-                               + " [Examples]\n" + "  Fop foo.fo foo.pdf \n"
+                               + "  -pcl outfile      input will be rendered as pcl file (outfile req'd)\n"
+                               + "  -ps outfile       input will be rendered as PostScript file (outfile req'd)\n"
+                               + "  -txt outfile      input will be rendered as text file (outfile req'd)\n"
+                               + "  -svg outfile      input will be rendered as an svg slides file (outfile req'd)\n"
+                               + "  -at outfile       representation of area tree as XML (outfile req'd)\n"
+                               + "  -print            input file will be rendered and sent to the printer\n"
+                               + "                    see print specific options with \"-print help\"\n"
+                               + "\n [Examples]\n"
+                               + "  Fop foo.fo foo.pdf\n"
                                + "  Fop -fo foo.fo -pdf foo.pdf (does the same as the previous line)\n"
                                + "  Fop -xsl foo.xsl -xml foo.xml -pdf foo.pdf\n"
                                + "  Fop foo.fo -mif foo.mif\n"
-                               + "  Fop foo.fo -print or Fop -print foo.fo \n"
-                               + "  Fop foo.fo -awt \n");
+                               + "  Fop foo.fo -print or Fop -print foo.fo\n"
+                               + "  Fop foo.fo -awt\n");
     }
 
     /**
@@ -573,7 +638,7 @@ public class CommandLineOptions {
      */
     public void printUsagePrintOutput() {
         System.err.println("USAGE: -print [-Dstart=i] [-Dend=i] [-Dcopies=i] [-Deven=true|false] "
-                               + " org.apache.fop.apps.Fop (..) -print \n"
+                               + " org.apache.fop.apps.Fop (..) -print\n"
                                + "Example:\n"
                                + "java -Dstart=1 -Dend=2 org.apache.Fop.apps.Fop infile.fo -print ");
     }

@@ -160,6 +160,11 @@ public class PDFDocument {
     protected IDReferences idReferences;
 
     /**
+     * the documents encryption, if exists
+     */
+    protected PDFEncryption encryption;
+
+    /**
      * the colorspace (0=RGB, 1=CMYK)
      */
     // protected int colorspace = 0;
@@ -235,6 +240,30 @@ public class PDFDocument {
      */
     public void setProducer(String producer) {
         this.info.setProducer(producer);
+    }
+
+    /**
+     * set the encryption object
+     *
+     * @param ownerPassword The owner password for the pdf file
+     * @param userPassword The user password for the pdf file
+     * @param allowPrint Indicates whether the printing permission will be set
+     * @param allowCopyContent Indicates whether the content extracting permission will be set
+     * @param allowEditContent Indicates whether the edit content permission will be set
+     * @param allowEditAnnotations Indicates whether the edit annotations permission will be set
+     */
+    public void setEncryption(String ownerPassword, String userPassword, 
+                              boolean allowPrint, boolean allowCopyContent,
+                              boolean allowEditContent, boolean allowEditAnnotations) {
+        this.encryption = new PDFEncryption(++this.objectcount);
+        this.encryption.setOwnerPassword(ownerPassword);
+        this.encryption.setUserPassword(userPassword);
+        this.encryption.setAllowPrint(allowPrint);
+        this.encryption.setAllowCopyContent(allowCopyContent);
+        this.encryption.setAllowEditContent(allowEditContent);
+        this.encryption.setAllowEditAnnotation(allowEditAnnotations);
+        this.encryption.init();
+        addTrailerObject(this.encryption);
     }
 
     /**
@@ -1170,6 +1199,9 @@ public class PDFDocument {
          */
         PDFStream obj = new PDFStream(++this.objectcount);
         obj.addDefaultFilters();
+        if (this.encryption != null) {
+            obj.addFilter(this.encryption.makeFilter(obj.number,obj.generation));
+        }
 
         this.objects.add(obj);
         return obj;
@@ -1317,6 +1349,15 @@ public class PDFDocument {
           by the table's length */
         this.position += outputXref(stream);
 
+        // Determine existance of encryption dictionary
+        String encryptEntry = "";
+        
+        if (this.encryption != null) {
+          encryptEntry =
+            "/Encrypt " + this.encryption.number + " " + this.encryption.generation + " R\n"+
+            "/ID[<"+this.encryption.getFileID(1)+"><"+this.encryption.getFileID(2)+">]\n";
+        }
+
         /* construct the trailer */
         String pdf =
             "trailer\n" +
@@ -1324,6 +1365,7 @@ public class PDFDocument {
             "/Size " + (this.objectcount + 1) + "\n" +
             "/Root " + this.root.number + " " + this.root.generation + " R\n" +
             "/Info " + this.info.number + " " + this.info.generation + " R\n" +
+            encryptEntry +
             ">>\n" +
             "startxref\n" +
             this.xref + "\n" +
