@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@
 package org.apache.fop.layoutmgr;
 
 import java.util.ListIterator;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.fop.datatypes.PercentBase;
@@ -39,6 +38,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     
     private Block curBlockArea;
 
+    /** Iterator over the child layout managers. */
     protected ListIterator proxyLMiter;
 
     /* holds the (one-time use) fo:block space-before
@@ -61,8 +61,13 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
     private int iStartPos = 0;
 
+    /** The list of child BreakPoss instances. */
     protected List childBreaks = new java.util.ArrayList();
 
+    /**
+     * Creates a new BlockLayoutManager.
+     * @param inBlock the block FO object to create the layout manager for.
+     */
     public BlockLayoutManager(org.apache.fop.fo.flow.Block inBlock) {
         super(inBlock);
         fobj = inBlock;
@@ -98,7 +103,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
         public ProxyLMiter() {
             super(BlockLayoutManager.this);
-            listLMs = new ArrayList(10);
+            listLMs = new java.util.ArrayList(10);
         }
 
         public boolean hasNext() {
@@ -143,7 +148,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     private LineLayoutManager createLineManager(LayoutManager firstlm) {
         LineLayoutManager llm;
         llm = new LineLayoutManager(fobj, lineHeight, lead, follow, middleShift);
-        List inlines = new ArrayList();
+        List inlines = new java.util.ArrayList();
         inlines.add(firstlm);
         while (proxyLMiter.hasNext()) {
             LayoutManager lm = (LayoutManager) proxyLMiter.next();
@@ -158,12 +163,18 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         return llm;
     }
 
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#getNextBreakPoss(org.apache.fop.layoutmgr.LayoutContext)
+     */
     public BreakPoss getNextBreakPoss(LayoutContext context) {
         LayoutManager curLM; // currently active LM
 
         int ipd = context.getRefIPD();
-        int iIndents = fobj.getCommonMarginBlock().startIndent.getValue() + fobj.getCommonMarginBlock().endIndent.getValue();
-        int bIndents = fobj.getCommonBorderPaddingBackground().getBPPaddingAndBorder(false);
+        int iIndents = fobj.getCommonMarginBlock().startIndent.getValue();
+        iIndents += fobj.getCommonMarginBlock().endIndent.getValue();
+        iIndents -= fobj.getCommonMarginBlock().inheritedStartIndent.getValue();
+        iIndents -= fobj.getCommonMarginBlock().inheritedEndIndent.getValue();
+        //int bIndents = fobj.getCommonBorderPaddingBackground().getBPPaddingAndBorder(false);
         ipd -= iIndents;
 
         MinOptMax stackSize = new MinOptMax();
@@ -258,6 +269,9 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         return breakPoss;
     }
 
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#addAreas(org.apache.fop.layoutmgr.PositionIterator, org.apache.fop.layoutmgr.LayoutContext)
+     */
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
@@ -309,16 +323,22 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
      * Finally, based on the dimensions of the parent area, it initializes
      * its own area. This includes setting the content IPD and the maximum
      * BPD.
+     * @param childArea area to get the parent area for
      */
     public Area getParentArea(Area childArea) {
         if (curBlockArea == null) {
             curBlockArea = new Block();
 
             // set traits
-            TraitSetter.addBorders(curBlockArea, fobj.getCommonBorderPaddingBackground());
-            TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
-            TraitSetter.addMargins(curBlockArea, fobj.getCommonBorderPaddingBackground(), fobj.getCommonMarginBlock());
-            TraitSetter.addBreaks(curBlockArea, fobj.getBreakBefore(), fobj.getBreakAfter());
+            TraitSetter.addBorders(curBlockArea, 
+                    fobj.getCommonBorderPaddingBackground());
+            TraitSetter.addBackground(curBlockArea, 
+                    fobj.getCommonBorderPaddingBackground());
+            TraitSetter.addMargins(curBlockArea, 
+                    fobj.getCommonBorderPaddingBackground(), 
+                    fobj.getCommonMarginBlock());
+            TraitSetter.addBreaks(curBlockArea, 
+                    fobj.getBreakBefore(), fobj.getBreakAfter());
 
             // Set up dimensions
             // Must get dimensions from parent area
@@ -337,13 +357,20 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             if (parentwidth == 0) {
                 parentwidth = referenceIPD;
             }
-            parentwidth -= fobj.getCommonMarginBlock().startIndent.getValue() + fobj.getCommonMarginBlock().endIndent.getValue();
+            parentwidth -= fobj.getCommonMarginBlock().startIndent.getValue();
+            parentwidth -= fobj.getCommonMarginBlock().endIndent.getValue();
+            parentwidth += fobj.getCommonMarginBlock().inheritedStartIndent.getValue();
+            parentwidth += fobj.getCommonMarginBlock().inheritedEndIndent.getValue();
+            
             curBlockArea.setIPD(parentwidth);
             setCurrentArea(curBlockArea); // ??? for generic operations
         }
         return curBlockArea;
     }
 
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#addChild(org.apache.fop.area.Area)
+     */
     public void addChild(Area childArea) {
         if (curBlockArea != null) {
             if (childArea instanceof LineArea) {
@@ -354,6 +381,9 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         }
     }
 
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#resetPosition(org.apache.fop.layoutmgr.Position)
+     */
     public void resetPosition(Position resetPos) {
         if (resetPos == null) {
             reset(null);
