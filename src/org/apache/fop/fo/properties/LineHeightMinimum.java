@@ -13,7 +13,7 @@ public class LineHeightMinimum extends Property  {
     public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
-        return Ems.makeEms(PropNames.LINE_HEIGHT_MINIMUM, 1.2d);
+        return Ems.makeEms(null, PropNames.LINE_HEIGHT_MINIMUM, 1.2d);
     }
     public static final int inherited = COMPUTED;
 }
