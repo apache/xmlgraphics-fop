@@ -48,12 +48,11 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+
 package org.apache.fop.apps;
 
 /**
  * class representing the version of FOP.
- *
- * added at the request of Stefano Mazzocchi for use by Cocoon.
  */
 public class Version {
 
@@ -63,6 +62,6 @@ public class Version {
      * @return the version string
      */
     public static String getVersion() {
-	return "FOP 0.11.5";
+	return "FOP 0.12.0";
     }
 }
