@@ -85,7 +85,6 @@ import org.apache.fop.area.inline.Container;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.inline.InlineAreaVisitor;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
@@ -109,7 +108,7 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
  * handle viewports. This keeps track of the current block and inline position.
  */
 public abstract class AbstractRenderer extends AbstractLogEnabled
-         implements Renderer, Configurable, InlineAreaVisitor, Constants {
+         implements Renderer, Configurable, Constants {
 
     /**
      * user agent
@@ -618,8 +617,59 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
 
         for (int count = 0; count < children.size(); count++) {
             InlineArea inline = (InlineArea) children.get(count);
-            inline.acceptVisitor(this);
+            renderInlineArea(inline);
         }
+    }
+
+    protected void renderInlineArea(InlineArea inlineArea) {
+        if (inlineArea instanceof TextArea) {
+            renderText((TextArea) inlineArea);
+        } else if (inlineArea instanceof InlineParent) {
+            renderInlineParent((InlineParent) inlineArea);
+        } else if (inlineArea instanceof Space) {
+            renderInlineSpace((Space) inlineArea);
+        } else if (inlineArea instanceof Character) {
+            renderCharacter((Character) inlineArea);
+        } else if (inlineArea instanceof Viewport) {
+            renderViewport((Viewport) inlineArea);
+        } else if (inlineArea instanceof Leader) {
+            renderLeader((Leader) inlineArea);
+        }
+    }
+
+
+    /** @see org.apache.fop.render.Renderer */
+    public void renderCharacter(Character ch) {
+        currentBlockIPPosition += ch.getWidth();
+    }
+
+    /** @see org.apache.fop.render.Renderer */
+    public void renderInlineSpace(Space space) {
+        // an inline space moves the inline progression position
+        // for the current block by the width or height of the space
+        // it may also have styling (only on this object) that needs
+        // handling
+        currentBlockIPPosition += space.getWidth();
+    }
+
+    /** @see org.apache.fop.render.Renderer */
+    public void renderLeader(Leader area) {
+        currentBlockIPPosition += area.getWidth();
+    }
+
+    /** @see org.apache.fop.render.Renderer */
+    public void renderText(TextArea text) {
+        currentBlockIPPosition += text.getWidth();
+    }
+
+    /** @see org.apache.fop.render.Renderer */
+    public void renderInlineParent(InlineParent ip) {
+        int saveIP = currentBlockIPPosition;
+        Iterator iter = ip.getChildAreas().iterator();
+        while (iter.hasNext()) {
+            renderInlineArea((InlineArea) iter.next()); 
+        }
+        currentBlockIPPosition = saveIP + ip.getWidth();
     }
 
     /** @see org.apache.fop.render.Renderer */
@@ -675,40 +725,6 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
     public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
         // Default: do nothing.
         // Some renderers (ex. Text) don't support foreign objects.
-    }
-
-    /** @see org.apache.fop.render.Renderer */
-    public void renderCharacter(Character ch) {
-        currentBlockIPPosition += ch.getWidth();
-    }
-
-    /** @see org.apache.fop.render.Renderer */
-    public void renderInlineSpace(Space space) {
-        // an inline space moves the inline progression position
-        // for the current block by the width or height of the space
-        // it may also have styling (only on this object) that needs
-        // handling
-        currentBlockIPPosition += space.getWidth();
-    }
-
-    /** @see org.apache.fop.render.Renderer */
-    public void renderLeader(Leader area) {
-        currentBlockIPPosition += area.getWidth();
-    }
-
-    /** @see org.apache.fop.render.Renderer */
-    public void renderText(TextArea text) {
-        currentBlockIPPosition += text.getWidth();
-    }
-
-    /** @see org.apache.fop.render.Renderer */
-    public void renderInlineParent(InlineParent ip) {
-        int saveIP = currentBlockIPPosition;
-        Iterator iter = ip.getChildAreas().iterator();
-        while (iter.hasNext()) {
-            ((InlineArea) iter.next()).acceptVisitor(this);
-        }
-        currentBlockIPPosition = saveIP + ip.getWidth();
     }
 
     /**
@@ -770,78 +786,5 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
                     + "No handler defined for XML: " + namespace);
         }
     }
-
-    /**
-     * Render the specified Viewport.
-     * Required by InlineAreaVisitor interface, which is used to determine which
-     * InlineArea subclass should be rendered.
-     *
-     * @param viewport  The Viewport area to be rendered
-     * @see org.apache.fop.area.inline.InlineAreaVisitor
-     */
-    public void serveVisitor(Viewport viewport) {
-        renderViewport(viewport);
-    }
-
-    /**
-     * Render the specified Text.
-     * Required by InlineAreaVisitor interface, which is used to determine which
-     * InlineArea subclass should be rendered.
-     *
-     * @param area  The Text area to be rendered
-     * @see org.apache.fop.area.inline.InlineAreaVisitor
-     */
-    public void serveVisitor(TextArea area) {
-        renderText(area);
-    }
-
-    /**
-     * Render the specified InlineParent.
-     * Required by InlineAreaVisitor interface, which is used to determine which
-     * InlineArea subclass should be rendered.
-     *
-     * @param ip  The InlineParent area to be rendered
-     * @see org.apache.fop.area.inline.InlineAreaVisitor
-     */
-    public void serveVisitor(InlineParent ip) {
-        renderInlineParent(ip);
-    }
-
-    /**
-     * Render the specified Character.
-     * Required by InlineAreaVisitor interface, which is used to determine which
-     * InlineArea subclass should be rendered.
-     *
-     * @param ch  The Character area to be rendered
-     * @see org.apache.fop.area.inline.InlineAreaVisitor
-     */
-    public void serveVisitor(org.apache.fop.area.inline.Character ch) {
-        renderCharacter(ch);
-    }
-
-    /**
-     * Render the specified Space.
-     * Required by InlineAreaVisitor interface, which is used to determine which
-     * InlineArea subclass should be rendered.
-     *
-     * @param space  The Space area to be rendered
-     * @see org.apache.fop.area.inline.InlineAreaVisitor
-     */
-    public void serveVisitor(Space space) {
-        renderInlineSpace(space);
-    }
-
-    /**
-     * Render the specified Leader.
-     * Required by InlineAreaVisitor interface, which is used to determine which
-     * InlineArea subclass should be rendered.
-     *
-     * @param area  The Leader area to be rendered
-     * @see org.apache.fop.area.inline.InlineAreaVisitor
-     */
-    public void serveVisitor(Leader area) {
-        renderLeader(area);
-    }
-
 }
 

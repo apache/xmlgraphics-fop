@@ -124,16 +124,6 @@ public class Viewport extends InlineArea {
         return content;
     }
 
-    /**
-     * Handle InlineAreaVisitor request by passing this back to it.
-     *
-     * @param visitor the InlineAreaVisitor wishing to process this.
-     * @see org.apache.fop.area.inline.InlineAreaVisitor
-     */
-    public void acceptVisitor(InlineAreaVisitor visitor) {
-        visitor.serveVisitor(this);
-    }
-
     private void writeObject(java.io.ObjectOutputStream out)
     throws IOException {
         out.writeBoolean(contentPosition != null);

@@ -272,7 +272,7 @@ public class XMLRenderer extends AbstractRenderer {
 
             for (int count = 0; count < children.size(); count++) {
                 InlineArea inline = (InlineArea) children.get(count);
-                inline.acceptVisitor(this);
+                renderInlineArea(inline);
             }
 
             writeEndTag("</title>");
@@ -476,7 +476,7 @@ public class XMLRenderer extends AbstractRenderer {
         }
         writeStartTag("<inlineparent" + prop + ">");
         super.renderInlineParent(ip);
-    writeEndTag("</inlineparent>");
+        writeEndTag("</inlineparent>");
     }
 
     /**

@@ -68,16 +68,6 @@ public class TextArea extends InlineArea {
     }
 
     /**
-     * Handle InlineAreaVisitor request by passing this back to it.
-     *
-     * @param visitor the InlineAreaVisitor wishing to process this.
-     * @see org.apache.fop.area.inline.InlineAreaVisitor
-     */
-    public void acceptVisitor(InlineAreaVisitor visitor) {
-        visitor.serveVisitor(this);
-    }
-
-    /**
      * Set the text string
      *
      * @param t the text string

@@ -58,8 +58,6 @@ import org.apache.fop.traits.BorderProps;
  * Inline Area
  * This area is for all inline areas that can be placed
  * in a line area.
- * Extensions of this class should render themselves with the
- * requested renderer.
  */
 public class InlineArea extends Area {
     // int width;
@@ -73,17 +71,6 @@ public class InlineArea extends Area {
      * offset position from top of parent area
      */
     protected int verticalPosition = 0;
-
-    /**
-     * Handle a visitor (usually a renderer) for this inline area.
-     * Inline areas that extend this class are expected
-     * to pass themselves back to the visitor so that the visitor can process
-     * them, usually by rendering them.
-     *
-     * @param visitor the InlineAreaVisitor that will process this
-     */
-    public void acceptVisitor(InlineAreaVisitor visitor) {
-    }
 
     /**
      * Set the width of this inline area.

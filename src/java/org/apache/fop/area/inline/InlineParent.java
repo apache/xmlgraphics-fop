@@ -77,16 +77,6 @@ public class InlineParent extends InlineArea {
     }
 
     /**
-     * Handle InlineAreaVisitor request by passing this back to it.
-     *
-     * @param visitor the InlineAreaVisitor wishing to process this.
-     * @see org.apache.fop.area.inline.InlineAreaVisitor
-     */
-    public void acceptVisitor(InlineAreaVisitor visitor) {
-        visitor.serveVisitor(this);
-    }
-
-    /**
      * Override generic Area method.
      *
      * @param childArea the child area to add
