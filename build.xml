@@ -34,7 +34,7 @@ Call the build script (see above) with the parameter "-projecthelp" to get a
 list of possible build targets.
 
 ============================================================================ -->
-<project default="package" basedir=".">
+<project default="all" basedir=".">
 
   <!-- used to set values for testing etc. -->
   <!-- build-local.properties is not stored in CVS and overrides values from build.properties -->
@@ -147,7 +147,7 @@ list of possible build targets.
     <property name="src.codegen" value="./src/codegen"/>
     <property name="docs.dir" value="./docs"/>
     <property name="xdocs.dir" value="./src/documentation/content/xdocs"/>
-    <property name="fo.examples.dir" value="./docs/examples/fo"/>
+    <property name="fo.examples.dir" value="./examples/fo/basic"/>
     <property name="lib.dir" value="./lib"/>
     <property name="hyph.dir" value="./src/hyph"/>
     <property name="conf.dir" value="./conf"/>
@@ -459,8 +459,19 @@ list of possible build targets.
     </jar>
   </target>
 
-  <target name="all" depends="package"/> <!-- "all" target for us Makefile converts ;-) -->
-
+  <target name="servlet" depends="package" description="Generates the WAR with the sample FOP servlet">
+    <echo message="Creating the WAR file"/>
+    <war warfile="${build.dir}/fop.war" webxml="${src.dir}/conf/web.xml">
+      <lib dir="${lib.dir}">
+        <include name="avalon-framework*.jar"/>
+        <include name="batik*.jar"/>
+      </lib>
+      <lib dir="${build.dir}">
+        <include name="fop.jar"/>
+      </lib>
+    </war>
+  </target>
+  
   <target name="pdf-transcoder" depends="compile" description="Generates the jar for the pdf transcoder for Batik">
     <echo message="Creating the jar file ${build.dir}/pdf-transcoder.jar"/>
 
@@ -494,6 +505,8 @@ list of possible build targets.
       </manifest>
     </jar>
   </target>
+
+  <target name="all" depends="package, servlet, pdf-transcoder"/> <!-- "all" target for us Makefile converts ;-) -->
 
   <!-- =================================================================== -->
   <!-- Testing                                                             -->
@@ -629,7 +642,7 @@ list of possible build targets.
   <!-- =================================================================== -->
   <target name="dist" depends="dist-src,dist-bin" description="Generates the distribution package"/>
 
-  <target name="dist-bin" depends="package">
+  <target name="dist-bin" depends="all">
     <echo message="Building the binary distribution files (zip,tar)"/>
     <mkdir dir="${dist.bin.result.dir}"/>
     <copy todir="${dist.bin.result.dir}">
@@ -646,7 +659,7 @@ list of possible build targets.
     <delete file="${Name}-${version}-bin.tar"/>
   </target>
 
-  <target name="dist-src" depends="package, javadocs">
+  <target name="dist-src" depends="all, javadocs">
     <echo message="Building the source distribution files (zip,tar)"/>
     <mkdir dir="${dist.src.result.dir}"/>
     <copy todir="${dist.src.result.dir}">
