@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE hyphenation-info SYSTEM "hyphenation.dtd">
-<!-- 
+<!--
 This file contains the hyphenation patterns for danish.
 Adapted from dkhyph.tex, dkcommon.tex and dkspecial.tex
 originally created by Frank Jensen (fj@iesd.auc.dk).
@@ -8,7 +8,7 @@ FOP adaptation by Carlos Villegas (cav@uniscope.co.jp)
 -->
 <hyphenation-info>
 
-<hyphen-char value="-"/> 
+<hyphen-char value="-"/>
 <hyphen-min before="2" after="2"/>
 
 <classes>

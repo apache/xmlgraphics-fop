@@ -77,8 +77,8 @@ zZ
 -->
 <patterns>
 <!--
-%	1C(s/z/y)V   (V <> y)
-% 	1C(s/z/y)y  occus at the end of names, so I added some of them
+%  1C(s/z/y)V   (V <> y)
+%   1C(s/z/y)y  occus at the end of names, so I added some of them
 -->
 1ba
 1bá
@@ -502,7 +502,7 @@ zZ
 1zsú
 1zsü
 1zsû
-<!-- %	V1V -->
+<!-- %  V1V -->
 a1a
 a1á
 a1e
@@ -699,14 +699,14 @@ u1û
 û1ú
 û1ü
 û1û
-<!-- %	kettös Consonantes: c/d/s/z 2 h/s/z  - exceptions later -->
+<!-- %  kettös Consonantes: c/d/s/z 2 h/s/z  - exceptions later -->
 c2s
 s2z
 z2s
 <!-- %d2zs -->
 d2z
 c2h
-<!-- %	long Consonantes:  - exceptions later -->
+<!-- %  long Consonantes:  - exceptions later -->
 s2sz
 c2cs
 z2zs
@@ -715,7 +715,7 @@ g2gy
 l2ly
 n2ny
 t2ty
-<!-- % 	all exceptions (mainly composita/pounds) in a single row -->
+<!-- %   all exceptions (mainly composita/pounds) in a single row -->
 abla2k1üveg
 ádá2z3ság
 agy1é2r1elmesz
@@ -1196,7 +1196,7 @@ hüvely2k1ujj
 igazsá2g1ér
 igazsá3g2ért
 igazsá2g1ügy
-i2i2i<!--  %		not to hyphenate roman numerals -->
+i2i2i<!--  %    not to hyphenate roman numerals -->
 in2g1ujj
 .ipa2r1eng
 .ipa2r1ig

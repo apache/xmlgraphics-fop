@@ -17,27 +17,27 @@
 <xsl:template match="/xs:schema">
 <xsl:text>
 </xsl:text>
-<xsl:comment> 
- This DTD has been developed in order to validate XSL FO documents 
+<xsl:comment>
+ This DTD has been developed in order to validate XSL FO documents
  The namespace prefix is xmlns:fo="http://www.w3.org/1999/XSL/Format".
- 
+
  In addition, the functionality implemented or not in FOP has been segregated
  To create an FOP only validating DTD, remove the references marked %\([a-zA-Z_]+\)_Not;
- I certainly have not exhaustively removed all of the properties not implemented in FOP. 
+ I certainly have not exhaustively removed all of the properties not implemented in FOP.
  If you notice an item that is incorrectly included or excluded, please send me a note
- 
+
  The FOP only DTD will not guard against the entering of attribute values not implemented by FOP
  (Such as fo:leader-pattern="use-content")
  See http://xml.apache.org/fop/implemented.html for more detailed restrictions
- 
- It has not been well tested. 
+
+ It has not been well tested.
  For instance, the length attribute is able to be negative for some elements like margins.
  I have not represented that here.
  I have not added values for the Aural properties
  There are several instances where I've entered %integer_Type; and it should be positive-integer or number
  The DTD trys to handle the text based rules re: fo:markers, fo:float, footer and fo:initial-property-set
  But, allows you to do illegal things if you want because I couldn't figure out how to constrain against the illegal actions.
- 
+
  Please e-mail your comments to cpaussa@myrealbox.com
 
 </xsl:comment><xsl:text>
@@ -67,7 +67,7 @@
 
 <xsl:template match="xs:group">
   <xsl:text disable-output-escaping="yes">
-&lt;!ENTITY % </xsl:text><xsl:value-of select="./@name"/><xsl:text> "</xsl:text> 
+&lt;!ENTITY % </xsl:text><xsl:value-of select="./@name"/><xsl:text> "</xsl:text>
   <xsl:for-each select="./xs:choice/xs:element">
     <xsl:text>
   </xsl:text>

@@ -1,7 +1,7 @@
 Fop documentation (xml version)
 
-The files in these directory contain the Fop documentation as xml files. 
-The directory xml-docs/fop is a mirror of the files in the cvs repository 
+The files in these directory contain the Fop documentation as xml files.
+The directory xml-docs/fop is a mirror of the files in the cvs repository
 modul 'xml-site' /sources/fop. These files are used to create the html
 documentation on xml.apache.org.
 

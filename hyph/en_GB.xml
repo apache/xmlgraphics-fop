@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="US-ASCII"?>
 <!DOCTYPE hyphenation-info SYSTEM "hyphenation.dtd">
-<!-- 
+<!--
 %
 %  Created by Jeff Kingston, 16 November 1996, from a TeX
 %  hyphenation file with the following header comment:
@@ -10,18 +10,18 @@
 % Version 1.0.  Released 17 April 1992.
 %
 % Created by Dominik Wujastyk and Graham Toal using Frank Liang's PATGEN 1.0.
-% Like the US patterns, these UK patterns correctly hyphenate about 90% of 
-% the words in the input list, and produce no hyphens not in the list 
+% Like the US patterns, these UK patterns correctly hyphenate about 90% of
+% the words in the input list, and produce no hyphens not in the list
 % (see TeXbook pp. 451-2).
 %
 % These patterns are based on a file of 114925 British-hyphenated words
 % generously made available to Dominik Wujastyk by Oxford University Press.
-% This list of words is copyright to the OUP and may not be redistributed.  
-% The hyphenation break points in the words in the abovementioned file is 
+% This list of words is copyright to the OUP and may not be redistributed.
+% The hyphenation break points in the words in the abovementioned file is
 % also copyright to the OUP.
 %
-% We are very grateful to Oxford University Press for allowing us to use 
-% their list of hyphenated words to produce the following TeX hyphenation 
+% We are very grateful to Oxford University Press for allowing us to use
+% their list of hyphenated words to produce the following TeX hyphenation
 % patterns.  This file of hyphenation patterns may be freely distributed.
 %
 % These patterns require a value of about 14000 for TeX's pattern memory size.
@@ -29,7 +29,7 @@
 -->
 <hyphenation-info>
 
-<hyphen-char value="-"/> 
+<hyphen-char value="-"/>
 <hyphen-min before="3" after="2"/>
 
 <classes>

@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE hyphenation-info SYSTEM "hyphenation.dtd">
-<!-- 
-    
-	PURPOSE: 8-bit hyphenation patterns based upon the new Dutch spelling, officially since 1 August 1996.
- 	These patterns follow the new hyphenation rules in the `Woordenlijst Nederlandse Taal, SDU Uitgevers,
-	Den Haag 1995' (the so called `Groene Boekje') described in section 5.2 (Het afbreekteken).
-	Also handles words derived from other languages (`bastaard woorden') according to the new rules.
-	Hyphenation information for Dutch
-    	Original (TeX) author: Piet Tutelaers
-	Transformed to XML by: Reinout Verkerk (rverkerk@hotmail.com)
+<!--
+
+  PURPOSE: 8-bit hyphenation patterns based upon the new Dutch spelling, officially since 1 August 1996.
+  These patterns follow the new hyphenation rules in the `Woordenlijst Nederlandse Taal, SDU Uitgevers,
+  Den Haag 1995' (the so called `Groene Boekje') described in section 5.2 (Het afbreekteken).
+  Also handles words derived from other languages (`bastaard woorden') according to the new rules.
+  Hyphenation information for Dutch
+      Original (TeX) author: Piet Tutelaers
+  Transformed to XML by: Reinout Verkerk (rverkerk@hotmail.com)
         Character encoding corrections by: Carlos Villegas (cav@uniscope.co.jp)
 -->
 <hyphenation-info>
 
-<hyphen-char value="-"/> 
+<hyphen-char value="-"/>
 <hyphen-min before="3" after="2"/>
 
 <classes>
@@ -101,7 +101,7 @@ wa-ter-staats-in-ge-ni-eur
 wa-ter-staats-in-ge-ni-eurs
 </exceptions>
 
-<patterns> 
+<patterns>
 <!-- % The Plain TeX hyphenation tables [NOT TO BE CHANGED IN ANY WAY!] -->
 .a4
 .aan5

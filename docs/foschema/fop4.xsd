@@ -2,56 +2,56 @@
 <schema xmlns = "http://www.w3.org/2001/XMLSchema" targetNamespace = "http://www.w3.org/1999/XSL/Format"  xmlns:fo = "http://www.w3.org/1999/XSL/Format" xmlns:xs = "http://www.w3.org/2001/XMLSchema" elementFormDefault = "qualified">
 
   <annotation>
-    <documentation> 
+    <documentation>
 
       I'm not sure where to place this.
       It applies to the page context (NOT implemented)
       <attribute name = "size"  type = "size_Type"/>
-      
+
       I have not coded for the functions described in 5.10 Core Function Library
       They need to be segregated into groups and then inserted in the types
-      
+
       common_functions
-      object  inherited-property-value(NCName) 
-      object  from-parent( NCName) 
-      object  from-nearest-specified-value( NCName) 
-      object  merge-property-values( NCName) 
-      
+      object  inherited-property-value(NCName)
+      object  from-parent( NCName)
+      object  from-nearest-specified-value( NCName)
+      object  merge-property-values( NCName)
+
       font_functions
-      object  system-font( NCName , NCName) 
-      
+      object  system-font( NCName , NCName)
+
       length_functions
-      numeric floor( numeric) 
-      numeric ceiling(numeric) 
-      numeric round(numeric) 
-      numeric min( numeric , numeric) 
-      numeric max(numeric , numeric) 
+      numeric floor( numeric)
+      numeric ceiling(numeric)
+      numeric round(numeric)
+      numeric min( numeric , numeric)
+      numeric max(numeric , numeric)
       numeric abs( numeric)
-      
+
       table_cell_or_descendants_functions
-      object  from-table-column( NCName) 
+      object  from-table-column( NCName)
 
       color_functions
-      color rgb(numeric , numeric , numeric) 
-      color rgb-icc(numeric , numeric , numeric , NCName , numeric , numeric) 
-      color system-color( NCName) 
+      color rgb(numeric , numeric , numeric)
+      color rgb-icc(numeric , numeric , numeric , NCName , numeric , numeric)
+      color system-color( NCName)
 
       label_functions
-      numeric body-start() 
-      numeric label-end() 
-      
+      numeric body-start()
+      numeric label-end()
+
       (defined)
       table-column_functions
-      numeric proportional-column-width( numeric) 
-      
+      numeric proportional-column-width( numeric)
+
       This schema has been developed in order to validate XSL FO documents for FOP
       All of the elements need to be prefixed with fo:
       The namespace prefix is xmlns:fo = "http://www.w3.org/1999/XSL/Format".
 
-      This schema, as delivered, may either validate the full spec, or, just the FOP portion. 
+      This schema, as delivered, may either validate the full spec, or, just the FOP portion.
       (What it validates depends upon what I was doing with it when released.)
-      
-      If you want to restrict it to just those elements and attributes implemented by FOP, 
+
+      If you want to restrict it to just those elements and attributes implemented by FOP,
       you need to edit the <group xmlns=""/> and <attributeGroup xmlns=""/> tags to exclude the groups ending with _Not
 
       Some schema tools complain about the placement of comments in this schema and will remove or reorder them
@@ -75,14 +75,14 @@
 
       Please e-mail your comments to cpaussa@myrealbox.com
 
-      Contribution by Oleg Tkachenko 
+      Contribution by Oleg Tkachenko
       (Declarations able to include non-xsl children)
       <xs:any minOccurs = "0" maxOccurs = "unbounded" namespace = "##other" processContents = "skip"/>
-      This declaration assumes that all <fo:color-profile/> elements must come before other stuff, 
-      which is not required by spec, but I cannot see any way to express such constraints in schema, 
+      This declaration assumes that all <fo:color-profile/> elements must come before other stuff,
+      which is not required by spec, but I cannot see any way to express such constraints in schema,
       one could use <xs:choice/> instead of <xs:sequence/>, but this way we lose control over (color-profile)+ constraint.
-      
-      VCP 21-Oct-2002 
+
+      VCP 21-Oct-2002
         Updated all (px|pt|mm|cm|in|em) to (px|pt|mm|cm|in|em|%) to allow percentage types.
         Updated the restriction base of those types from NMTOKEN to string
 
@@ -94,7 +94,7 @@
       <element ref = "fo:initial-property-set"/>
     </choice>
   </group>
-  
+
   <annotation>
     <documentation>
       empty group so cannot be defined
@@ -103,7 +103,7 @@
       </group>
     </documentation>
   </annotation>
-  
+
   <group name = "initial_property_set_List">
     <annotation>
       <documentation>
@@ -240,7 +240,7 @@
 
   <attributeGroup name = "inheritable_properties_List_Not">
     <attribute name = "auto-restore" type = "fo:auto_restore_Type"/>
-    <attribute name = "background"    type = "fo:background_Type"   /> 
+    <attribute name = "background"    type = "fo:background_Type"   />
     <attribute name = "border-spacing" type = "fo:length_Type"/>
     <attribute name = "caption-side" type = "fo:caption_side_Type"/>
     <attribute name = "direction" type = "fo:direction_Type"/>
@@ -259,7 +259,7 @@
     <attribute name = "line-height-shift-adjustment" type = "fo:line_height_shift_adjustment_Type"/>
     <attribute name = "line-stacking-strategy" type = "fo:line_stacking_strategy_Type"/>
     <attribute name = "linefeed-treatment" type = "fo:linefeed_treatment_Type"/>
-    <attribute name = "margin"        type = "fo:border_margin_width_Type"       /> 
+    <attribute name = "margin"        type = "fo:border_margin_width_Type"       />
     <attribute name = "max-width"     type = "fo:max_width_Type"/>
     <attribute name = "min-height"    type = "fo:start_indent_Type"/>
     <attribute name = "min-width"     type = "fo:start_indent_Type"/>
@@ -279,18 +279,18 @@
   <attributeGroup name = "inheritable_properties_List_FOP">
     <annotation>
       <documentation>
-        Removed because I'm not sure how to handle this<attribute xmlns="" name = "xml:lang" type = "xs:string"/> 
+        Removed because I'm not sure how to handle this<attribute xmlns="" name = "xml:lang" type = "xs:string"/>
       </documentation>
     </annotation>
-    <attribute name = "border-bottom" type = "fo:border_side_Type"/> 
+    <attribute name = "border-bottom" type = "fo:border_side_Type"/>
     <attribute name = "border-collapse" type = "fo:border_collapse_Type"/>
-    <attribute name = "border-color"  type = "fo:border_color_Type" /> 
-    <attribute name = "border-left"   type = "fo:border_side_Type"  /> 
-    <attribute name = "border-right"  type = "fo:border_side_Type" /> 
+    <attribute name = "border-color"  type = "fo:border_color_Type" />
+    <attribute name = "border-left"   type = "fo:border_side_Type"  />
+    <attribute name = "border-right"  type = "fo:border_side_Type" />
     <attribute name = "border-separation" type = "fo:length_bp_ip_direction_Type"/>
-    <attribute name = "border-style"  type = "fo:border_multi_style_Type" /> 
-    <attribute name = "border-top"    type = "fo:border_side_Type"   /> 
-    <attribute name = "border-width"  type = "fo:border_margin_width_Type" /> 
+    <attribute name = "border-style"  type = "fo:border_multi_style_Type" />
+    <attribute name = "border-top"    type = "fo:border_side_Type"   />
+    <attribute name = "border-width"  type = "fo:border_margin_width_Type" />
     <attribute name = "color" type = "fo:color_Type"/>
     <attribute name = "country" type = "fo:country_Type"/>
     <attribute name = "display-align" type = "fo:display_align_Type"/>
@@ -661,7 +661,7 @@
   <attributeGroup name = "Hyphenation_Properties_List_FOP">
     <annotation>
       <documentation>
-        The hyphenation properties are all inheritable and so superceeded by that list 
+        The hyphenation properties are all inheritable and so superceeded by that list
         <attribute name = "country" type = "fo:country_Type"/>
         <attribute name = "language" type = "fo:language_Type"/>
         <attribute name = "hyphenate" type = "fo:hyphenate_Type"/>
@@ -674,7 +674,7 @@
   <attributeGroup name = "Hyphenation_Properties_List_Not">
     <annotation>
       <documentation>
-        The hyphenation properties are all inheritable and so superceeded by that list 
+        The hyphenation properties are all inheritable and so superceeded by that list
         <attribute name = "script" type = "xs:string"/>
       </documentation>
     </annotation>
@@ -767,7 +767,7 @@
   <simpleType name = "number_Type">
     <annotation>
       <documentation>
-        A signed real number which consists of an optional '+' or '-' character followed by a sequence of digits followed by an optional '.' character and sequence of digits. A property may define additional constraints on the value. 
+        A signed real number which consists of an optional '+' or '-' character followed by a sequence of digits followed by an optional '.' character and sequence of digits. A property may define additional constraints on the value.
         <enumeration value = "-2.4"/>
         <enumeration value = "2"/>
         <enumeration value = "4"/>
@@ -1058,7 +1058,7 @@
       <pattern value = "(rect\((\+?\d+\.?\d*(px|pt|mm|cm|in|em|%)|auto),(\+?\d+\.?\d*(px|pt|mm|cm|in|em|%)|auto),(\+?\d+\.?\d*(px|pt|mm|cm|in|em|%)|auto),(\+?\d+\.?\d*(px|pt|mm|cm|in|em|%)|auto)\)|auto|inherit)"/>
     </restriction>
   </simpleType>
-  
+
   <simpleType name = "border_side_Type">
     <annotation>
       <documentation>
@@ -1529,7 +1529,7 @@
   <simpleType name = "keep_compound_Type">
     <annotation>
       <documentation>
-        A compound datatype, with components: within-line, within-column, within-page. Each component is a <keep/>. 
+        A compound datatype, with components: within-line, within-column, within-page. Each component is a <keep/>.
         <enumeration value = "2 auto always"/>
         <enumeration value = "auto"/>
         <enumeration value = "always"/>
@@ -1725,7 +1725,7 @@
   <simpleType name = "measurement_Type">
     <annotation>
       <documentation>
-        Here to document the acceptable measurements 
+        Here to document the acceptable measurements
       </documentation>
     </annotation>
     <restriction base = "string">
@@ -1761,7 +1761,7 @@
   <simpleType name = "country_Type">
     <annotation>
       <documentation>
-        A string of characters conforming to an ISO 3166 country code. 
+        A string of characters conforming to an ISO 3166 country code.
       </documentation>
     </annotation>
     <restriction base = "NMTOKEN">
@@ -3065,13 +3065,13 @@
   <simpleType name = "border_top_width_Type">
     <union memberTypes = "fo:width_Type fo:length_Type fo:inherit_Type"/>
   </simpleType>
-  
+
   <annotation>
     <documentation>
-      Element definitions 
+      Element definitions
     </documentation>
   </annotation>
-  
+
   <element name = "root">
     <complexType>
       <sequence>
@@ -3172,7 +3172,7 @@
     <complexType>
       <annotation>
         <documentation>
-          Inheritable <attribute name = "display-align" type = "fo:display_align_Type"/> 
+          Inheritable <attribute name = "display-align" type = "fo:display_align_Type"/>
         </documentation>
       </annotation>
       <attributeGroup ref = "fo:Margin_Properties_Block_List"/>
@@ -3190,7 +3190,7 @@
     <complexType>
       <annotation>
         <documentation>
-          Inheritable <attribute name = "display-align" type = "fo:display_align_Type"/> 
+          Inheritable <attribute name = "display-align" type = "fo:display_align_Type"/>
         </documentation>
       </annotation>
       <attributeGroup ref = "fo:Border_Padding_and_Background_Properties_List"/>
@@ -3207,7 +3207,7 @@
     <complexType>
       <annotation>
         <documentation>
-          Inheritable <attribute name = "display-align" type = "fo:display_align_Type"/> 
+          Inheritable <attribute name = "display-align" type = "fo:display_align_Type"/>
         </documentation>
       </annotation>
       <attributeGroup ref = "fo:Border_Padding_and_Background_Properties_List"/>
@@ -3224,7 +3224,7 @@
     <complexType>
       <annotation>
         <documentation>
-          Inheritable <attribute name = "display-align" type = "fo:display_align_Type"/> 
+          Inheritable <attribute name = "display-align" type = "fo:display_align_Type"/>
         </documentation>
       </annotation>
       <attributeGroup ref = "fo:Border_Padding_and_Background_Properties_List"/>
@@ -3241,7 +3241,7 @@
     <complexType>
       <annotation>
         <documentation>
-          Inheritable <attribute name = "display-align" type = "fo:display_align_Type"/> 
+          Inheritable <attribute name = "display-align" type = "fo:display_align_Type"/>
         </documentation>
       </annotation>
       <attributeGroup ref = "fo:Border_Padding_and_Background_Properties_List"/>
@@ -3258,8 +3258,8 @@
     <complexType>
       <annotation>
         <documentation>
-          Inheritable 
-          <attribute name = "country" type = "fo:country_Type"/> 
+          Inheritable
+          <attribute name = "country" type = "fo:country_Type"/>
           <attribute name = "language" type = "fo:language_Type"/>
         </documentation>
       </annotation>
@@ -3283,7 +3283,7 @@
     <complexType mixed = "true">
       <annotation>
         <documentation>
-          Inheritable 
+          Inheritable
           <attribute name = "color" type = "fo:color_Type"/>
           <attribute name = "line-height" type = "fo:line_height_Type"/>
           <attribute name = "visibility" type = "fo:visibility_Type"/>
@@ -3378,7 +3378,7 @@
     <complexType>
       <annotation>
         <documentation>
-          Inheritable <attribute name = "display-align" type = "fo:display_align_Type"/> 
+          Inheritable <attribute name = "display-align" type = "fo:display_align_Type"/>
         </documentation>
       </annotation>
       <choice maxOccurs = "unbounded">
@@ -3411,13 +3411,13 @@
     <complexType mixed = "true">
       <annotation>
         <documentation>
-          Inheritable 
-          <attribute name = "color" type = "fo:color_Type"/> 
-          <attribute name = "direction" type = "fo:direction_Type"/> 
+          Inheritable
+          <attribute name = "color" type = "fo:color_Type"/>
+          <attribute name = "direction" type = "fo:direction_Type"/>
           <attribute name = "letter-spacing" type = "fo:letter_spacing_Type"/>
-          <attribute name = "line-height" type = "fo:line_height_Type"/> 
-          <attribute name = "score-spaces" type = "fo:score_spaces_Type"/> 
-          <attribute name = "word-spacing" type = "fo:letter_spacing_Type"/> 
+          <attribute name = "line-height" type = "fo:line_height_Type"/>
+          <attribute name = "score-spaces" type = "fo:score_spaces_Type"/>
+          <attribute name = "word-spacing" type = "fo:letter_spacing_Type"/>
         </documentation>
       </annotation>
       <choice minOccurs = "0" maxOccurs = "unbounded">
@@ -3442,14 +3442,14 @@
       <annotation>
         <documentation>
           Inheritable
-          <attribute name = "color" type = "fo:color_Type"/> 
-          <attribute name = "glyph-orientation-horizontal" type = "fo:orientation_Type"/> 
-          <attribute name = "glyph-orientation-vertical" type = "fo:orientation_Type"/> 
-          <attribute name = "letter-spacing" type = "fo:letter_spacing_Type"/> 
-          <attribute name = "line-height" type = "fo:line_height_Type"/> 
-          <attribute name = "score-spaces" type = "fo:score_spaces_Type"/> 
-          <attribute name = "text-transform" type = "fo:text_transform_Type"/> 
-          <attribute name = "visibility" type = "fo:visibility_Type"/> 
+          <attribute name = "color" type = "fo:color_Type"/>
+          <attribute name = "glyph-orientation-horizontal" type = "fo:orientation_Type"/>
+          <attribute name = "glyph-orientation-vertical" type = "fo:orientation_Type"/>
+          <attribute name = "letter-spacing" type = "fo:letter_spacing_Type"/>
+          <attribute name = "line-height" type = "fo:line_height_Type"/>
+          <attribute name = "score-spaces" type = "fo:score_spaces_Type"/>
+          <attribute name = "text-transform" type = "fo:text_transform_Type"/>
+          <attribute name = "visibility" type = "fo:visibility_Type"/>
           <attribute name = "word-spacing" type = "fo:letter_spacing_Type"/>
         </documentation>
       </annotation>
@@ -3481,11 +3481,11 @@
       <annotation>
         <documentation>
           Inheritable
-          <attribute name = "color" type = "fo:color_Type"/> 
-          <attribute name = "letter-spacing" type = "fo:letter_spacing_Type"/> 
-          <attribute name = "line-height" type = "fo:line_height_Type"/> 
-          <attribute name = "score-spaces" type = "fo:score_spaces_Type"/> 
-          <attribute name = "text-transform" type = "fo:text_transform_Type"/> 
+          <attribute name = "color" type = "fo:color_Type"/>
+          <attribute name = "letter-spacing" type = "fo:letter_spacing_Type"/>
+          <attribute name = "line-height" type = "fo:line_height_Type"/>
+          <attribute name = "score-spaces" type = "fo:score_spaces_Type"/>
+          <attribute name = "text-transform" type = "fo:text_transform_Type"/>
           <attribute name = "word-spacing" type = "fo:letter_spacing_Type"/>
         </documentation>
       </annotation>
@@ -3505,8 +3505,8 @@
       <annotation>
         <documentation>
           Inheritable
-          <attribute name = "display-align" type = "fo:display_align_Type"/> 
-          <attribute name = "line-height" type = "fo:line_height_Type"/> 
+          <attribute name = "display-align" type = "fo:display_align_Type"/>
+          <attribute name = "line-height" type = "fo:line_height_Type"/>
           <attribute name = "text-align" type = "fo:text_align_Type"/>
         </documentation>
       </annotation>
@@ -3542,8 +3542,8 @@
       <annotation>
         <documentation>
           Inheritable
-          <attribute name = "display-align" type = "fo:display_align_Type"/> 
-          <attribute name = "line-height" type = "fo:line_height_Type"/> 
+          <attribute name = "display-align" type = "fo:display_align_Type"/>
+          <attribute name = "line-height" type = "fo:line_height_Type"/>
           <attribute name = "text-align" type = "fo:text_align_Type"/>
         </documentation>
       </annotation>
@@ -3578,9 +3578,9 @@
       <annotation>
         <documentation>
           Inheritable
-          <attribute name = "color" type = "fo:color_Type"/> 
-          <attribute name = "line-height" type = "fo:line_height_Type"/> 
-          <attribute name = "visibility" type = "fo:visibility_Type"/> 
+          <attribute name = "color" type = "fo:color_Type"/>
+          <attribute name = "line-height" type = "fo:line_height_Type"/>
+          <attribute name = "visibility" type = "fo:visibility_Type"/>
           <attribute name = "wrap-option" type = "fo:wrap_option_Type"/>
         </documentation>
       </annotation>
@@ -3622,7 +3622,7 @@
     <complexType>
       <annotation>
         <documentation>
-          Inheritable 
+          Inheritable
           <attribute name = "display-align" type = "fo:display_align_Type"/>
           <attribute name = "line-height" type = "fo:line_height_Type"/>
         </documentation>
@@ -3657,20 +3657,20 @@
     <complexType mixed = "true">
       <annotation>
         <documentation>
-          Inheritable 
-          <attribute name = "color" type = "fo:color_Type"/> 
-          <attribute name = "leader-alignment" type = "fo:leader_alignment_Type"/> 
-          <attribute name = "leader-length" type = "fo:leader_length_Type"/> 
+          Inheritable
+          <attribute name = "color" type = "fo:color_Type"/>
+          <attribute name = "leader-alignment" type = "fo:leader_alignment_Type"/>
+          <attribute name = "leader-length" type = "fo:leader_length_Type"/>
           <attribute name = "leader-length.minimum" type = "fo:length_Type"/>
           <attribute name = "leader-length.optimum" type = "fo:length_Type"/>
           <attribute name = "leader-length.maximum" type = "fo:length_Type"/>
-          <attribute name = "leader-pattern" type = "fo:leader_pattern_Type"/> 
-          <attribute name = "leader-pattern-width" type = "fo:leader_pattern_width_Type"/> 
-          <attribute name = "rule-style" type = "fo:rule_style_Type"/> 
-          <attribute name = "rule-thickness" type = "fo:length_Type"/> 
-          <attribute name = "letter-spacing" type = "fo:letter_spacing_Type"/> 
-          <attribute name = "line-height" type = "fo:line_height_Type"/> 
-          <attribute name = "visibility" type = "fo:visibility_Type"/> 
+          <attribute name = "leader-pattern" type = "fo:leader_pattern_Type"/>
+          <attribute name = "leader-pattern-width" type = "fo:leader_pattern_width_Type"/>
+          <attribute name = "rule-style" type = "fo:rule_style_Type"/>
+          <attribute name = "rule-thickness" type = "fo:length_Type"/>
+          <attribute name = "letter-spacing" type = "fo:letter_spacing_Type"/>
+          <attribute name = "line-height" type = "fo:line_height_Type"/>
+          <attribute name = "visibility" type = "fo:visibility_Type"/>
           <attribute name = "word-spacing" type = "fo:letter_spacing_Type"/>
         </documentation>
       </annotation>
@@ -3701,7 +3701,7 @@
     <complexType>
       <annotation>
         <documentation>
-          Inheritable 
+          Inheritable
           <attribute name = "letter-spacing" type = "fo:letter_spacing_Type"/>
           <attribute name = "line-height" type = "fo:line_height_Type"/>
           <attribute name = "score-spaces" type = "fo:score_spaces_Type"/>
@@ -3735,7 +3735,7 @@
     <complexType>
       <annotation>
         <documentation>
-          Inheritable 
+          Inheritable
           <attribute name = "letter-spacing" type = "fo:letter_spacing_Type"/>
           <attribute name = "line-height" type = "fo:line_height_Type"/>
           <attribute name = "score-spaces" type = "fo:score_spaces_Type"/>
@@ -3796,7 +3796,7 @@
     <complexType>
       <annotation>
         <documentation>
-          Inheritable 
+          Inheritable
           <attribute name = "keep-together" type = "fo:keep_compound_Type"/>
           <attribute name = "keep-together.within-line" type = "fo:keep_integer_Type"/>
           <attribute name = "keep-together.within-column" type = "fo:keep_integer_Type"/>
@@ -3866,8 +3866,8 @@
     <complexType>
       <annotation>
         <documentation>
-          Inheritable 
-          <attribute name = "visibility" type = "fo:visibility_Type"/> 
+          Inheritable
+          <attribute name = "visibility" type = "fo:visibility_Type"/>
         </documentation>
       </annotation>
       <attributeGroup ref = "fo:Border_Properties_List"/>
@@ -3887,7 +3887,7 @@
     <complexType>
       <annotation>
         <documentation>
-          Inheritable <attribute name = "visibility" type = "fo:visibility_Type"/> 
+          Inheritable <attribute name = "visibility" type = "fo:visibility_Type"/>
         </documentation>
       </annotation>
       <choice>
@@ -3911,7 +3911,7 @@
     <complexType>
       <annotation>
         <documentation>
-          Inheritable <attribute name = "visibility" type = "fo:visibility_Type"/> 
+          Inheritable <attribute name = "visibility" type = "fo:visibility_Type"/>
         </documentation>
       </annotation>
       <choice>
@@ -3935,7 +3935,7 @@
     <complexType>
       <annotation>
         <documentation>
-          Inheritable <attribute name = "visibility" type = "fo:visibility_Type"/> 
+          Inheritable <attribute name = "visibility" type = "fo:visibility_Type"/>
         </documentation>
       </annotation>
       <choice>
@@ -3959,7 +3959,7 @@
     <complexType>
       <annotation>
         <documentation>
-          Inheritable <attribute name = "visibility" type = "fo:visibility_Type"/> 
+          Inheritable <attribute name = "visibility" type = "fo:visibility_Type"/>
         </documentation>
       </annotation>
       <sequence>
@@ -4054,7 +4054,7 @@
     <complexType>
       <annotation>
         <documentation>
-          Inheritable <attribute name = "relative-align" type = "fo:relative_align_Type"/> 
+          Inheritable <attribute name = "relative-align" type = "fo:relative_align_Type"/>
         </documentation>
       </annotation>
       <sequence>
@@ -4078,7 +4078,7 @@
     <complexType>
       <annotation>
         <documentation>
-          Inheritable 
+          Inheritable
           <attribute name = "keep-together" type = "fo:keep_compound_Type"/>
           <attribute name = "keep-together.within-line" type = "fo:keep_integer_Type"/>
           <attribute name = "keep-together.within-column" type = "fo:keep_integer_Type"/>
@@ -4102,7 +4102,7 @@
     <complexType>
       <annotation>
         <documentation>
-          Inheritable 
+          Inheritable
           <attribute name = "keep-together" type = "fo:keep_compound_Type"/>
           <attribute name = "keep-together.within-line" type = "fo:keep_integer_Type"/>
           <attribute name = "keep-together.within-column" type = "fo:keep_integer_Type"/>
@@ -4161,7 +4161,7 @@
     <complexType mixed = "true">
       <annotation>
         <documentation>
-          Inheritable <attribute name = "line-height" type = "fo:line_height_Type"/> 
+          Inheritable <attribute name = "line-height" type = "fo:line_height_Type"/>
         </documentation>
       </annotation>
       <choice minOccurs = "0" maxOccurs = "unbounded">
@@ -4231,7 +4231,7 @@
     <complexType>
       <annotation>
         <documentation>
-          Inheritable <attribute name = "auto-restore" type = "fo:auto_restore_Type"/> 
+          Inheritable <attribute name = "auto-restore" type = "fo:auto_restore_Type"/>
         </documentation>
       </annotation>
       <sequence>

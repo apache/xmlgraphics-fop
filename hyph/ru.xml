@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hyphenation-info SYSTEM "hyphenation.dtd">
-<!-- 
+<!--
     Hyphenation information for Russian language
-    Created by Alex "Achtung" Alishevskikh [mailto:alex@vismech.ru] from TeX's hyphenation 
+    Created by Alex "Achtung" Alishevskikh [mailto:alex@vismech.ru] from TeX's hyphenation
     patterns originally written (thnx!) by:
       1) TeX russian patterns by D. Vulis (with corrections by A. Lebedev)
-      2) TeX russian patterns by A. Slepukhin    
+      2) TeX russian patterns by A. Slepukhin
 -->
 <hyphenation-info>
 
-<hyphen-char value="-"/> 
+<hyphen-char value="-"/>
 <hyphen-min before="2" after="2"/>
 
 <classes>
@@ -61,8 +61,8 @@
 ра-зом
 </exceptions>
 
-<patterns> 
-<!-- 
+<patterns>
+<!--
 % This code is based on the patterns originally written by Dimitri Vulis.
 % The corrections were made by Alexander Lebedev, 1998-1999.
 % Version: 10/08/99 -->
