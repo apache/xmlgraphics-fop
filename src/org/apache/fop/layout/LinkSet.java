@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -10,7 +10,7 @@ package org.apache.fop.layout;
 import org.apache.fop.layout.inline.InlineArea;
 
 // Java
-import java.util.ArrayList;
+import java.util.List;
 import java.awt.Rectangle;
 
 /**
@@ -22,12 +22,12 @@ public class LinkSet {
     /**
      * the destination of the links
      */
-    String destination;
+    private String destination;
 
     /**
      * the set of rectangles
      */
-    ArrayList rects = new ArrayList();
+    private List rects = new java.util.ArrayList();
 
     private int xoffset = 0;
     private int yoffset = 0;
@@ -42,11 +42,11 @@ public class LinkSet {
 
     private Area area;
 
-    public final static int INTERNAL = 0,    // represents internal link
-    EXTERNAL = 1;                            // represents external link
+    public static final int INTERNAL = 0;    // represents internal link
+    public static final int EXTERNAL = 1;    // represents external link
 
     // property required for alignment adjustments
-    int contentRectangleWidth = 0;
+    private int contentRectangleWidth = 0;
 
     public LinkSet(String destination, Area area, int linkType) {
         this.destination = destination;
@@ -91,12 +91,11 @@ public class LinkSet {
     // intermediate implementation for joining all sublinks on same line
     public void mergeLinks() {
         int numRects = rects.size();
-        if (numRects == 1)
-            return;
+        if (numRects < 1) return;
 
         LinkedRectangle curRect =
-    new LinkedRectangle((LinkedRectangle)rects.get(0));
-        ArrayList nv = new ArrayList();
+            new LinkedRectangle((LinkedRectangle)rects.get(0));
+        List nv = new java.util.ArrayList();
 
         for (int ri = 1; ri < numRects; ri++) {
             LinkedRectangle r = (LinkedRectangle)rects.get(ri);
@@ -109,8 +108,9 @@ public class LinkSet {
                 curRect = new LinkedRectangle(r);
             }
 
-            if (ri == numRects - 1)
+            if (ri == numRects - 1) {
                 nv.add(curRect);
+            }
         }
 
         rects = nv;
@@ -128,7 +128,7 @@ public class LinkSet {
         return this.destination;
     }
 
-    public ArrayList getRects() {
+    public List getRects() {
         return this.rects;
     }
 
