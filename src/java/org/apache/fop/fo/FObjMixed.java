@@ -57,22 +57,33 @@ import org.apache.fop.layoutmgr.LMiter;
 import java.util.List;
 
 /**
- * base class for representation of mixed content formatting objects
+ * Base class for representation of mixed content formatting objects
  * and their processing
  */
 public class FObjMixed extends FObj {
+    /** TextInfo for this object */
     protected TextInfo textInfo = null;
+    /** FontInfo for this object */
     protected FontInfo fontInfo = null;
 
+    /**
+     * @param parent FONode that is the parent of this object
+     */
     public FObjMixed(FONode parent) {
         super(parent);
     }
 
+    /**
+     * @param st StructureHandler to set
+     */
     public void setStructHandler(StructureHandler st) {
         super.setStructHandler(st);
         fontInfo = st.getFontInfo();
     }
 
+    /**
+     * @param lms the list to which the layout manager(s) should be added
+     */
     public void addLayoutManager(List lms) {
         if (children != null) {
             InlineStackingLayoutManager lm;
@@ -84,12 +95,17 @@ public class FObjMixed extends FObj {
         }
     }
 
+    /**
+     * @param data array of characters containing text to be added
+     * @param start starting array element to add
+     * @param length number of characters to add
+     */
     protected void addCharacters(char data[], int start, int length) {
         if (textInfo == null) {
-        // Really only need one of these, but need to get fontInfo
-        // stored in propMgr for later use.
-        propMgr.setFontInfo(fontInfo);
-        textInfo = propMgr.getTextLayoutProps(fontInfo);
+            // Really only need one of these, but need to get fontInfo
+            // stored in propMgr for later use.
+            propMgr.setFontInfo(fontInfo);
+            textInfo = propMgr.getTextLayoutProps(fontInfo);
         }
 
         FOText ft = new FOText(data, start, length, textInfo, this);
@@ -98,12 +114,15 @@ public class FObjMixed extends FObj {
         addChild(ft);
     }
 
-    public void setup() {
+    private void setup() {
         if (this.properties != null) {
             setupID();
         }
     }
 
+    /**
+     * @return iterator for this object
+     */
     public CharIterator charIterator() {
         return new RecursiveCharIterator(this);
     }
