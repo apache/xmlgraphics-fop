@@ -132,6 +132,11 @@ public class Driver implements Loggable {
     public static final int RENDER_TXT = 8;
 
     /**
+     * Render to SVG. OutputStream must be set
+     */
+    public static final int RENDER_SVG = 9;
+
+    /**
      * the FO tree builder
      */
     private FOTreeBuilder _treeBuilder;
@@ -308,6 +313,7 @@ public class Driver implements Loggable {
      * <li>RENDER_PCL
      * <li>RENDER_PS
      * <li>RENDER_TXT
+     * <li>RENDER_SVG
      * </ul>
      * @param renderer the type of renderer to use
      */
@@ -334,6 +340,9 @@ public class Driver implements Loggable {
             break;
         case RENDER_XML:
             setRenderer(new org.apache.fop.render.xml.XMLRenderer());
+            break;
+        case RENDER_SVG:
+            setRenderer(new org.apache.fop.render.svg.SVGRenderer());
             break;
         default:
             throw new IllegalArgumentException("Unknown renderer type");
