@@ -313,7 +313,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
 
     public static class TableLayoutManagerMaker extends Maker {
         
-        private List getColumnLayoutManagerList(Table table) {
+        private List getColumnLayoutManagerList(Table table, TableLayoutManager tlm) {
             List columnLMs = null;
             List columns = table.getColumns();
             if (columns != null) {
@@ -329,7 +329,9 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
                         while (colnum > columnLMs.size()) {
                             columnLMs.add(null);
                         }
-                        columnLMs.set(colnum - 1, new Column(col));
+                        Column colLM = new Column(col);
+                        colLM.setParent(tlm);
+                        columnLMs.set(colnum - 1, colLM);
                         colnum++;
                     }
                 }
@@ -350,7 +352,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         public void make(FONode node, List lms) {
             Table table = (Table) node;
             TableLayoutManager tlm = new TableLayoutManager(table);
-            List columnLMs = getColumnLayoutManagerList(table);
+            List columnLMs = getColumnLayoutManagerList(table, tlm);
             if (columnLMs != null) {
                 tlm.setColumns(columnLMs);
             }

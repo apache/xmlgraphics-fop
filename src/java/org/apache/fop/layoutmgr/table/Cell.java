@@ -21,6 +21,7 @@ package org.apache.fop.layoutmgr.table;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableCell;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManager;
@@ -59,9 +60,14 @@ public class Cell extends BlockStackingLayoutManager {
     private int cellIPD;
     private int rowHeight;
     private int usedBPD;
+    private int startBorderWidth;
+    private int endBorderWidth;
     private int borderAndPaddingBPD;
     private boolean emptyCell = true;
 
+    /** List of Lists containing GridUnit instances, one List per row. */
+    private List rows = new java.util.ArrayList(); 
+    
     /**
      * Create a new Cell layout manager.
      * @node table-cell FO for which to create the LM
@@ -102,10 +108,34 @@ public class Cell extends BlockStackingLayoutManager {
         return (Table)node;
     }
     
+
+    /**
+     * Called by Row LM to register the grid units occupied by this cell for a row.
+     * @param spannedGridUnits a List of GridUnits
+     */
+    public void addGridUnitsFromRow(List spannedGridUnits) {
+        log.debug("Getting another row, " + spannedGridUnits.size() + " grid units");
+        this.rows.add(spannedGridUnits);
+        
+    }
+
     private int getIPIndents() {
         int iIndents = 0;
-        iIndents += fobj.getCommonBorderPaddingBackground().getBorderStartWidth(false);
-        iIndents += fobj.getCommonBorderPaddingBackground().getBorderEndWidth(false);
+        startBorderWidth = 0;
+        endBorderWidth = 0;
+        for (int i = 0; i < rows.size(); i++) {
+            List gridUnits = (List)rows.get(i);
+            startBorderWidth = Math.max(startBorderWidth, 
+                    ((GridUnit)gridUnits.get(0)).
+                        effBorders.getBorderStartWidth(false));
+            endBorderWidth = Math.max(endBorderWidth, 
+                    ((GridUnit)gridUnits.get(gridUnits.size() - 1)).
+                        effBorders.getBorderEndWidth(false));
+        }
+        //iIndents += fobj.getCommonBorderPaddingBackground().getBorderStartWidth(false);
+        iIndents += startBorderWidth;
+        //iIndents += fobj.getCommonBorderPaddingBackground().getBorderEndWidth(false);
+        iIndents += endBorderWidth;
         if (!fobj.isSeparateBorderModel()) {
             iIndents /= 2;
         }
@@ -277,8 +307,15 @@ public class Cell extends BlockStackingLayoutManager {
             TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
             //TODO Set these booleans right
             boolean[] outer = new boolean[] {false, false, false, false};
-            TraitSetter.addCollapsingBorders(curBlockArea, 
-                    fobj.getCommonBorderPaddingBackground(), outer);
+            if (rows.size() == 1 && ((List)rows.get(0)).size() == 1) {
+                //Can set the borders directly if there's no span
+                CommonBorderPaddingBackground effBorders =
+                    ((GridUnit)((List)rows.get(0)).get(0)).effBorders;
+                TraitSetter.addCollapsingBorders(curBlockArea, 
+                        effBorders, outer);
+            } else {
+                log.warn("TODO Add collapsed border painting for spanned cells");
+            }
         }
 
         //Handle display-align
@@ -339,7 +376,7 @@ public class Cell extends BlockStackingLayoutManager {
             curBlockArea.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
             curBlockArea.setPositioning(Block.ABSOLUTE);
             int indent = 0;
-            indent += fobj.getCommonBorderPaddingBackground().getBorderStartWidth(false);
+            indent += startBorderWidth;
             if (!fobj.isSeparateBorderModel()) {
                 indent /= 2;
             }
@@ -390,5 +427,6 @@ public class Cell extends BlockStackingLayoutManager {
             childBreaks.clear();
         }
     }
+
 }
 

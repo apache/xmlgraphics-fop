@@ -280,8 +280,26 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
         //new property evaluation context so proportional-column-width() works
         //correctly.
         if (columns.size() == 0) {
-            this.columns.add(new Column(getTable().getDefaultColumn()));
+            Column col = new Column(getTable().getDefaultColumn());
+            col.setParent(this);
+            this.columns.add(col);
         }
+    }
+    
+    /**
+     * @param column the column to check
+     * @return true if the column is the first column
+     */
+    public boolean isFirst(Column column) {
+        return (this.columns.size() == 0 || this.columns.get(0) == column);
+    }
+    
+    /**
+     * @param column the column to check
+     * @return true if the column is the last column
+     */
+    public boolean isLast(Column column) {
+        return (this.columns.size() == 0 || this.columns.get(columns.size() - 1) == column);
     }
     
     /**
@@ -455,6 +473,6 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
             reset(null);
         }
     }
-    
+
 }
 

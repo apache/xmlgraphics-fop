@@ -20,8 +20,10 @@ package org.apache.fop.layoutmgr.table;
 
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.Table;
+import org.apache.fop.fo.flow.TableBody;
 import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableRow;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManager;
@@ -52,16 +54,9 @@ import java.util.ListIterator;
  */
 public class Row extends BlockStackingLayoutManager {
     
-    /** Used by CellInfo: Indicates start of cell. */
-    public static final int CI_START_OF_CELL = 0;
-    /** Used by CellInfo: Indicates part of a spanned cell in column direction. */
-    public static final int CI_COL_SPAN      = 1;
-    /** Used by CellInfo: Indicates part of a spanned cell in row direction. */
-    public static final int CI_ROW_SPAN      = 2;
-    
     private TableRow fobj;
     
-    private List cellList = null;
+    private List gridUnits = null;
     private List columns = null;
     private int referenceIPD;
     private int rowHeight;
@@ -85,6 +80,11 @@ public class Row extends BlockStackingLayoutManager {
         fobj = node;
     }
 
+    /** @return the table-row FO */
+    public TableRow getFObj() {
+        return this.fobj;
+    }
+    
     /**
      * @return the table owning this row
      */
@@ -105,8 +105,32 @@ public class Row extends BlockStackingLayoutManager {
         columns = cols;
     }
 
-    private void setupCells() {
-        cellList = new java.util.ArrayList();
+    /** @return true if this is the layout manager for the first row in a body. */
+    public boolean isFirstInBody() {
+        return ((TableBody)getFObj().getParent()).isFirst(getFObj());
+    }
+    
+    /** @return true if this is the layout manager for the last row in a body. */
+    public boolean isLastInBody() {
+        return ((TableBody)getFObj().getParent()).isLast(getFObj());
+    }
+    
+    /**
+     * Gets the Column at a given index.
+     * @param index index of the column (index must be >= 1)
+     * @return the requested Column
+     */
+    private Column getColumn(int index) {
+        int size = columns.size();
+        if (index > size - 1) {
+            return (Column)columns.get(size - 1);
+        } else {
+            return (Column)columns.get(index - 1);
+        }
+    }
+    
+    private void prepareGridUnits() {
+        gridUnits = new java.util.ArrayList();
         List availableCells = new java.util.ArrayList();
         // add cells to list
         while (childLMiter.hasNext()) {
@@ -125,55 +149,108 @@ public class Row extends BlockStackingLayoutManager {
             if (cell.hasColumnNumber()) {
                 colnum = cell.getColumnNumber();
             }
-            while (colnum > cellList.size()) {
-                cellList.add(null);
+            while (colnum > gridUnits.size()) {
+                gridUnits.add(null);
             }
-            if (cellList.get(colnum - 1) != null) {
+            if (gridUnits.get(colnum - 1) != null) {
                 log.error("Overlapping cell at position " + colnum);
             }
             //Add cell info for primary slot
-            cellList.set(colnum - 1, new CellInfo(cellLM));
+            GridUnit info = new GridUnit(cellLM);
+            info.row = this;
+            gridUnits.set(colnum - 1, info);
+            info.column = getColumn(colnum);
             
             //Add cell infos on spanned slots if any
             for (int j = 1; j < cell.getNumberColumnsSpanned(); j++) {
                 colnum++;
-                if (colnum > cellList.size()) {
-                    cellList.add(new CellInfo(CI_COL_SPAN));
+                GridUnit infoSpan = new GridUnit(cellLM, j);
+                infoSpan.row = this;
+                infoSpan.column = getColumn(colnum);
+                if (colnum > gridUnits.size()) {
+                    gridUnits.add(infoSpan);
                 } else {
-                    if (cellList.get(colnum - 1) != null) {
+                    if (gridUnits.get(colnum - 1) != null) {
                         log.error("Overlapping cell at position " + colnum);
+                        //TODO throw layout exception
                     }
-                    cellList.set(colnum - 1, new CellInfo(CI_COL_SPAN));
+                    gridUnits.set(colnum - 1, infoSpan);
                 }
             }
             colnum++;
         }
         
-        //Post-processing the list (looking for gaps)
-        int pos = 1;
-        ListIterator ppIter = cellList.listIterator();
-        while (ppIter.hasNext()) {
-            CellInfo cellInfo = (CellInfo)ppIter.next();
-            if (cellInfo == null) {
-                //Add cell info on empty cell
-                ppIter.set(new CellInfo(CI_START_OF_CELL));
-            }
-            pos++;
-        }
+        //Post-processing the list (looking for gaps and resolve start and end borders)
+        postProcessGridUnits();
     }
 
+    private void postProcessGridUnits() {
+        for (int pos = 1; pos <= gridUnits.size(); pos++) {
+            GridUnit gu = (GridUnit)gridUnits.get(pos - 1);
+            
+            //Empty grid units
+            if (gu == null) {
+                //Add grid unit
+                gu = new GridUnit(null);
+                gu.row = this;
+                gu.column = getColumn(pos);
+                gridUnits.set(pos - 1, gu);
+            }
+        }
+            
+        //Border resolution now that the empty grid units are filled
+        for (int pos = 1; pos <= gridUnits.size(); pos++) {
+            GridUnit gu = (GridUnit)gridUnits.get(pos - 1);
+         
+            //Border resolution
+            if (getTable().isSeparateBorderModel()) {
+                gu.assignBorder(gu.layoutManager);
+            } else {
+                GridUnit start = null;
+                int find = pos - 1;
+                while (find >= 1) {
+                    GridUnit candidate = (GridUnit)gridUnits.get(find - 1);
+                    if (candidate.isLastGridUnitColSpan()) {
+                        start = candidate;
+                        break;
+                    }
+                    find--;
+                }
+                GridUnit end = null;
+                find = pos + 1;
+                while (find <= gridUnits.size()) {
+                    GridUnit candidate = (GridUnit)gridUnits.get(find - 1);
+                    if (candidate.isPrimaryGridUnit()) {
+                        end = candidate;
+                        break;
+                    }
+                }
+                CommonBorderPaddingBackground borders = new CommonBorderPaddingBackground();
+                GridUnit.resolveBorder(getTable(), borders, gu, 
+                        (start != null ? start : null), 
+                        CommonBorderPaddingBackground.START);
+                GridUnit.resolveBorder(getTable(), borders, gu, 
+                        (end != null ? end : null), 
+                        CommonBorderPaddingBackground.END);
+                gu.effBorders = borders;
+                //Only start and end borders here, before and after during layout
+                //TODO resolve before and after borders during layout
+            }
+        }
+    }
+    
     /**
      * Get the cell info for a cell.
      *
      * @param pos the position of the cell (must be >= 1)
      * @return the cell info object
      */
-    protected CellInfo getCellInfo(int pos) {
-        if (cellList == null) {
-            setupCells();
+    protected GridUnit getCellInfo(int pos) {
+        if (gridUnits == null) {
+            prepareGridUnits();
         }
-        if (pos <= cellList.size()) {
-            return (CellInfo)cellList.get(pos - 1);
+        if (pos <= gridUnits.size()) {
+            return (GridUnit)gridUnits.get(pos - 1);
         } else {
             return null;
         }
@@ -189,11 +266,10 @@ public class Row extends BlockStackingLayoutManager {
      */
     public BreakPoss getNextBreakPoss(LayoutContext context) {
         //LayoutManager curLM; // currently active LM
-        CellInfo curCellInfo; //currently active cell info
+        GridUnit curGridUnit; //currently active grid unit
 
         BreakPoss lastPos = null;
         List breakList = new java.util.ArrayList();
-        List spannedColumns = new java.util.ArrayList();
 
         int min = 0;
         int opt = 0;
@@ -205,9 +281,9 @@ public class Row extends BlockStackingLayoutManager {
         int startColumn = 1;
         boolean over = false;
 
-        while ((curCellInfo = getCellInfo(startColumn)) != null) {
-            Cell cellLM = curCellInfo.layoutManager;
-            if (curCellInfo.isColSpan()) {
+        while ((curGridUnit = getCellInfo(startColumn)) != null) {
+            Cell cellLM = curGridUnit.layoutManager;
+            if (curGridUnit.isColSpan()) {
                 //skip spanned slots
                 startColumn++;
                 continue;
@@ -227,15 +303,17 @@ public class Row extends BlockStackingLayoutManager {
                                      stackSize));
 
             //Determine which columns this cell will occupy
-            getColumnsForCell(cellLM, startColumn, spannedColumns);
+            List spannedGridUnits = new java.util.ArrayList();
+            getGridUnitsForCell(cellLM, startColumn, spannedGridUnits);
             int childRefIPD = 0;
-            for (int i = 0; i < spannedColumns.size(); i++) {
-                Column col = (Column)spannedColumns.get(i);
+            for (int i = 0; i < spannedGridUnits.size(); i++) {
+                Column col = ((GridUnit)spannedGridUnits.get(i)).column;
                 childRefIPD += col.getWidth().getValue();
             }
             childLC.setRefIPD(childRefIPD);
 
             if (cellLM != null) {
+                cellLM.addGridUnitsFromRow(spannedGridUnits);
                 cellLM.setInRowIPDOffset(ipdOffset);
                 while (!cellLM.isFinished()) {
                     if ((bp = cellLM.getNextBreakPoss(childLC)) != null) {
@@ -309,8 +387,8 @@ public class Row extends BlockStackingLayoutManager {
         boolean fin = true;
         startColumn = 1;
         //Check if any of the cell LMs haven't finished, yet
-        while ((curCellInfo = getCellInfo(startColumn)) != null) {
-            Cell cellLM = curCellInfo.layoutManager;
+        while ((curGridUnit = getCellInfo(startColumn)) != null) {
+            Cell cellLM = curGridUnit.layoutManager;
             if (cellLM == null) {
                 //skip empty cell
                 startColumn++;
@@ -334,26 +412,12 @@ public class Row extends BlockStackingLayoutManager {
     }
 
     /**
-     * Gets the Column at a given index.
-     * @param index index of the column (index must be >= 1)
-     * @return the requested Column
-     */
-    private Column getColumn(int index) {
-        int size = columns.size();
-        if (index > size - 1) {
-            return (Column)columns.get(size - 1);
-        } else {
-            return (Column)columns.get(index - 1);
-        }
-    }
-    
-    /**
      * Determines the columns that are spanned by the given cell.
      * @param cellLM table-cell LM
      * @param startCell starting cell index (must be >= 1)
      * @param spannedColumns List to receive the applicable columns
      */
-    private void getColumnsForCell(Cell cellLM, int startCell, List spannedColumns) {
+    private void getGridUnitsForCell(Cell cellLM, int startCell, List spannedColumns) {
         int count;
         if (cellLM != null) {
             count = cellLM.getFObj().getNumberColumnsSpanned();
@@ -362,7 +426,7 @@ public class Row extends BlockStackingLayoutManager {
         }
         spannedColumns.clear();
         for (int i = 0; i < count; i++) {
-            spannedColumns.add(getColumn(startCell + i));
+            spannedColumns.add(this.gridUnits.get(startCell + i - 1));
         }
     }
 
@@ -376,13 +440,13 @@ public class Row extends BlockStackingLayoutManager {
      */
     protected void reset(Position pos) {
         //LayoutManager curLM; // currently active LM
-        CellInfo curCellInfo;
+        GridUnit curGridUnit;
         int cellIndex = 1;
 
         if (pos == null) {
-            while ((curCellInfo = getCellInfo(cellIndex)) != null) {
-                if (curCellInfo.layoutManager != null) {
-                    curCellInfo.layoutManager.resetPosition(null);
+            while ((curGridUnit = getCellInfo(cellIndex)) != null) {
+                if (curGridUnit.layoutManager != null) {
+                    curGridUnit.layoutManager.resetPosition(null);
                 }
                 cellIndex++;
             }
@@ -390,10 +454,10 @@ public class Row extends BlockStackingLayoutManager {
             RowPosition rpos = (RowPosition)pos;
             List breaks = rpos.cellBreaks;
 
-            while ((curCellInfo = getCellInfo(cellIndex)) != null) {
-                if (curCellInfo.layoutManager != null) {
+            while ((curGridUnit = getCellInfo(cellIndex)) != null) {
+                if (curGridUnit.layoutManager != null) {
                     List childbreaks = (List)breaks.get(cellIndex);
-                    curCellInfo.layoutManager.resetPosition(
+                    curGridUnit.layoutManager.resetPosition(
                             (Position)childbreaks.get(childbreaks.size() - 1));
                 }
                 cellIndex++;
@@ -540,27 +604,5 @@ public class Row extends BlockStackingLayoutManager {
         }
     }
 
-    private class CellInfo {
-        
-        /** layout manager for this cell, may be null */
-        public Cell layoutManager;
-        /** flags for this cell, on of Row.CI_* */
-        public int flags = CI_START_OF_CELL;
-        
-        public CellInfo(Cell layoutManager) {
-            this.layoutManager = layoutManager;
-        }
-        
-        public CellInfo(int flags) {
-            this.flags = flags;
-        }
-        
-        /** @return true if the cell is part of a span in column direction */
-        public boolean isColSpan() {
-            return (flags & CI_COL_SPAN) != 0;
-        }
-
-    }
-    
 }
 
