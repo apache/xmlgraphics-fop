@@ -35,9 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.area.AreaTreeHandler;
-import org.apache.fop.render.mif.MIFHandler;
-import org.apache.fop.render.rtf.RTFHandler;
+import org.apache.fop.render.RendererFactory;
 import org.apache.fop.fo.ElementMapping.Maker;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.pagination.Root;
@@ -95,32 +93,14 @@ public class FOTreeBuilder extends DefaultHandler {
      * @param renderType output type as defined in Constants class
      * @param foUserAgent in effect for this process
      * @param stream OutputStream to direct results
+     * @throws FOPException if the FOTreeBuilder cannot be properly created
      */
     public FOTreeBuilder(int renderType, FOUserAgent foUserAgent, 
         OutputStream stream) throws FOPException {
 
-        if (renderType != Constants.RENDER_PRINT && 
-            renderType != Constants.RENDER_AWT) {
-            if (stream == null) {
-                throw new IllegalStateException(
-                    "OutputStream has not been set");
-            }
-        }
-            
-        if (renderType == Constants.RENDER_MIF) {
-            foEventHandler = new MIFHandler(foUserAgent, stream);
-        } else if (renderType == Constants.RENDER_RTF) {
-            foEventHandler = new RTFHandler(foUserAgent, stream);
-        } else {
-            if (renderType < Constants.RENDER_MIN_CONST 
-                || renderType > Constants.RENDER_MAX_CONST) {
-                throw new IllegalArgumentException(
-                    "Invalid render ID#" + renderType);
-            }
-
-            foEventHandler = new AreaTreeHandler(foUserAgent, renderType, 
-                stream);
-        }
+        //This creates either an AreaTreeHandler and ultimately a Renderer, or
+        //one of the RTF-, MIF- etc. Handlers.
+        foEventHandler = RendererFactory.createFOEventHandler(foUserAgent, renderType, stream);
         
         // Add standard element mappings
         setupDefaultMappings();

@@ -27,17 +27,12 @@ import java.util.Iterator;
 // XML
 import org.xml.sax.SAXException;
 
-// avalon configuration
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
-
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.Renderer;
-import org.apache.fop.render.AbstractRenderer;
+import org.apache.fop.render.RendererFactory;
 
 /**
  * This uses the store pages model to store the pages
@@ -67,30 +62,12 @@ public class RenderPagesModel extends StorePagesModel {
      *   RENDER_PS, etc.)
      * @param fontInfo FontInfo object
      * @param stream OutputStream
+     * @throws FOPException if the renderer cannot be properly initialized
      */
     public RenderPagesModel (FOUserAgent userAgent, int renderType, 
         FontInfo fontInfo, OutputStream stream) throws FOPException {
 
-        if (userAgent.getRendererOverride() != null) {
-            renderer = userAgent.getRendererOverride();
-        } else {
-            AbstractRenderer rend = createRenderer(renderType);
-            rend.setUserAgent(userAgent);
-            String mimeType = rend.getMimeType();
-            Configuration userRendererConfig = null;
-            if (mimeType != null) {
-                userRendererConfig
-                    = userAgent.getUserRendererConfig(mimeType);
-            }
-            if (userRendererConfig != null) {
-                try {
-                    rend.configure(userRendererConfig);
-                } catch (ConfigurationException e) {
-                    throw new FOPException(e);
-                }
-            }
-            renderer = rend;
-        }
+        renderer = RendererFactory.createRenderer(userAgent, renderType);
 
         try {
             renderer.setupFontInfo(fontInfo);
@@ -102,37 +79,6 @@ public class RenderPagesModel extends StorePagesModel {
             renderer.startRenderer(stream);
         } catch (IOException e) {
             throw new FOPException(e);
-        }
-    }
-
-    /**
-     * Creates an AbstractRenderer object based on render-type desired
-     * @param renderType the type of renderer to use
-     * @return AbstractRenderer the new Renderer instance
-     * @throws IllegalArgumentException if an unsupported renderer type was requested
-     */
-    private AbstractRenderer createRenderer(int renderType) throws IllegalArgumentException {
-
-        switch (renderType) {
-        case Constants.RENDER_PDF:
-            return new org.apache.fop.render.pdf.PDFRenderer();
-        case Constants.RENDER_AWT:
-            return new org.apache.fop.render.awt.AWTRenderer();
-        case Constants.RENDER_PRINT:
-            return new org.apache.fop.render.awt.AWTPrintRenderer();
-        case Constants.RENDER_PCL:
-            return new org.apache.fop.render.pcl.PCLRenderer();
-        case Constants.RENDER_PS:
-            return new org.apache.fop.render.ps.PSRenderer();
-        case Constants.RENDER_TXT:
-            return new org.apache.fop.render.txt.TXTRenderer();
-        case Constants.RENDER_XML:
-            return new org.apache.fop.render.xml.XMLRenderer();
-        case Constants.RENDER_SVG:
-            return new org.apache.fop.render.svg.SVGRenderer();
-        default:
-            throw new IllegalArgumentException("Invalid renderer type " 
-                + renderType);
         }
     }
 
@@ -260,6 +206,7 @@ public class RenderPagesModel extends StorePagesModel {
 
     /**
      * End the document. Render any end document extensions.
+     * @see org.apache.fop.area.AreaTreeModel#endDocument()
      */
     public void endDocument() throws SAXException {
         // render any pages that had unresolved ids
