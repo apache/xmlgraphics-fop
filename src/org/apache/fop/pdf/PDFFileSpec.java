@@ -53,4 +53,29 @@ public class PDFFileSpec extends PDFObject {
      * >>
      * endobj
      */
+
+    /**
+     * Check if this equals another object.
+     *
+     * @param obj the object to compare
+     * @return true if this equals other object
+     */
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || !(obj instanceof PDFFileSpec)) {
+            return false;
+        }
+
+        PDFFileSpec spec = (PDFFileSpec)obj;
+
+        if (!spec.filename.equals(filename)) {
+            return false;
+        }
+
+        return true;
+    }
 }
+

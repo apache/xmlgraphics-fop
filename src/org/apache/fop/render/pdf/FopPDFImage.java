@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
-import java.util.HashMap;
+import java.util.Map;
 
 public class FopPDFImage implements PDFImage {
     FopImage fopImage;
@@ -33,7 +33,7 @@ public class FopPDFImage implements PDFImage {
     String maskRef;
     String softMaskRef;
     boolean isPS = false;
-    HashMap filters;
+    Map filters;
     String key;
 
     public FopPDFImage(FopImage im, String k) {
