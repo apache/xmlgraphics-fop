@@ -159,8 +159,6 @@ public class BodyRegion extends RegionReference {
 
     /**
      * Clone this object.
-     * This is only used to clone the current object, the child areas
-     * are assumed to be null and are not cloned.
      *
      * @return a shallow copy of this object
      */
@@ -170,6 +168,9 @@ public class BodyRegion extends RegionReference {
         br.setIPD(getIPD());
         br.columnGap = columnGap;
         br.columnCount = columnCount;
+        br.beforeFloat = beforeFloat;
+        br.mainReference = mainReference;
+        br.footnote = footnote;
         return br;
     }
 }
