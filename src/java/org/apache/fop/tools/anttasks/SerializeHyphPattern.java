@@ -28,8 +28,8 @@ import org.apache.tools.ant.taskdefs.MatchingTask;
 import org.apache.tools.ant.DirectoryScanner;
 
 // FOP
-import org.apache.fop.layout.hyphenation.HyphenationTree;
-import org.apache.fop.layout.hyphenation.HyphenationException;
+import org.apache.fop.hyphenation.HyphenationTree;
+import org.apache.fop.hyphenation.HyphenationException;
 
 /**
  * SerializeHyphPattern

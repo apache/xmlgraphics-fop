@@ -792,8 +792,6 @@ list of possible build targets.
       <group title="Layout">
         <package name="org.apache.fop.layoutmgr"/>
         <package name="org.apache.fop.layoutmgr.*"/>
-        <package name="org.apache.fop.layout"/>
-        <package name="org.apache.fop.layout.*"/>
       </group>
       <group title="Area Tree">
         <package name="org.apache.fop.area"/>

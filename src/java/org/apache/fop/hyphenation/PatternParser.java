@@ -16,7 +16,7 @@
 
 /* $Id$ */
  
-package org.apache.fop.layout.hyphenation;
+package org.apache.fop.hyphenation;
 
 // SAX
 import org.xml.sax.XMLReader;

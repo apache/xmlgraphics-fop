@@ -16,7 +16,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.layout.hyphenation;
+package org.apache.fop.hyphenation;
 
 /**
  * @author Carlos Villegas <cav@uniscope.co.jp>
