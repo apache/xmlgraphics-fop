@@ -18,11 +18,14 @@
 
 package org.apache.fop.fo.flow;
 
+// Java
+import java.util.List;
+import java.util.ListIterator;
+
 // FOP
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FObjMixed;
-import org.apache.fop.layoutmgr.AddLMVisitor;
-import org.apache.fop.fo.LMVisited;
 
 /**
  * Implementation for fo:wrapper formatting object.
@@ -32,7 +35,7 @@ import org.apache.fop.fo.LMVisited;
  * Content: (#PCDATA|%inline;|%block;)*
  * Properties: id
  */
-public class Wrapper extends FObjMixed implements LMVisited {
+public class Wrapper extends FObjMixed {
 
     /**
      * @param parent FONode that is the parent of this object
@@ -41,10 +44,24 @@ public class Wrapper extends FObjMixed implements LMVisited {
         super(parent);
     }
 
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveWrapper(this);
+    /**
+     * @see org.apache.fop.fo.FObj#addLayoutManager(List)
+     * @todo remove null check when vCN() & endOfNode() implemented
+     */
+    public void addLayoutManager(List list) {
+        ListIterator baseIter = getChildNodes();
+        if (baseIter == null) {
+            return;
+        }
+        while (baseIter.hasNext()) {
+            FObj child = (FObj) baseIter.next();
+            child.addLayoutManager(list);
+        }
     }
-    
+
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:wrapper";
     }
