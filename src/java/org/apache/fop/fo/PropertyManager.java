@@ -83,7 +83,7 @@ import org.apache.fop.fo.properties.CommonHyphenation;
 public class PropertyManager {
 
     private PropertyList properties;
-    private Document fontInfo = null;
+    private Document doc = null;
     private Font fontState = null;
     private CommonBorderAndPadding borderAndPadding = null;
     private CommonHyphenation hyphProps = null;
@@ -118,27 +118,27 @@ public class PropertyManager {
     }
 
     /**
-     * Sets the FontInfo object telling the property manager which fonts are
+     * Sets the Document object telling the property manager which fonts are
      * available.
-     * @param fontInfo available fonts
+     * @param doc Document containing font information
      */
-    public void setFontInfo(Document fontInfo) {
-        this.fontInfo = fontInfo;
+    public void setFontInfo(Document doc) {
+        this.doc = doc;
     }
 
 
     /**
      * Constructs a FontState object. If it was constructed before it is
      * reused.
-     * @param fontInfo FontInfo to work with
+     * @param doc Document containing the font information
      * @return a FontState object
      */
-    public Font getFontState(Document fontInfo) {
+    public Font getFontState(Document doc) {
         if (fontState == null) {
-            if (fontInfo == null) {
-                fontInfo = this.fontInfo;
-            } else if (this.fontInfo == null) {
-                this.fontInfo = fontInfo;
+            if (doc == null) {
+                doc = this.doc;
+            } else if (this.doc == null) {
+                this.doc = doc;
             }
             /**@todo this is ugly. need to improve. */
 
@@ -167,9 +167,9 @@ public class PropertyManager {
             // various kinds of keywords too
             int fontSize = properties.get("font-size").getLength().getValue();
             //int fontVariant = properties.get("font-variant").getEnum();
-            String fname = fontInfo.fontLookup(fontFamily, fontStyle,
+            String fname = doc.fontLookup(fontFamily, fontStyle,
                                                fontWeight);
-            FontMetrics metrics = fontInfo.getMetricsFor(fname);
+            FontMetrics metrics = doc.getMetricsFor(fname);
             fontState = new Font(fname, metrics, fontSize);
         }
         return fontState;
@@ -476,13 +476,13 @@ public class PropertyManager {
     /**
      * Constructs a TextInfo objects. If it was constructed before it is
      * reused.
-     * @param fontInfo available fonts
+     * @param doc Document containing list of available fonts
      * @return a TextInfo object
      */
-    public TextInfo getTextLayoutProps(Document fontInfo) {
+    public TextInfo getTextLayoutProps(Document doc) {
         if (textInfo == null) {
             textInfo = new TextInfo();
-            textInfo.fs = getFontState(fontInfo);
+            textInfo.fs = getFontState(doc);
             textInfo.color = properties.get("color").getColorType();
 
             textInfo.verticalAlign =

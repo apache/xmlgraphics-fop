@@ -61,6 +61,7 @@ import org.apache.avalon.framework.logger.Logger;
 
 // FOP
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.control.Document;
 import org.apache.fop.util.CharUtilities;
 
 /**
@@ -209,5 +210,10 @@ public abstract class FONode {
     protected boolean isMarker() {
         return false;
     }
+
+    public Document getDocument() {
+        return parent.getDocument();
+    }
+
 }
 
