@@ -145,7 +145,7 @@ public class IDReferences {
                         + area.getTableCellXOffset() - ID_PADDING,
                         area.getPage().getBody().getYPosition()
                         - area.getAbsoluteHeight() + ID_PADDING);
-            setPageNumber(id, area.getPage().getNumber());
+            setPageNumber(id, area.getPage().getFormattedNumber());
             area.getPage().addToIDList(id);
         }
     }
@@ -307,7 +307,7 @@ public class IDReferences {
      * @param id     The id whose page number is being set
      * @param pageNumber The page number of the specified id
      */
-    public void setPageNumber(String id, int pageNumber) {
+    public void setPageNumber(String id, String pageNumber) {
         IDNode node = (IDNode)idReferences.get(id);
         node.setPageNumber(pageNumber);
     }
