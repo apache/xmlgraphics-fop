@@ -72,6 +72,13 @@ public class Area extends SyncedNode implements Cloneable  {
     }
 
     /**
+     * Construct an <code>Area</code> which is the root of a tree, and is
+     * synchronized on itself
+     */
+    public Area() {
+        super();
+    }
+    /**
      * @return the bPDim
      */
     public Integer getBPDim() {
