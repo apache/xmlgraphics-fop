@@ -132,7 +132,7 @@ class TextAttributesConverter {
     private static void attrFont(CommonFont font, FOPRtfAttributes rtfAttr) {
         rtfAttr.set(RtfText.ATTR_FONT_FAMILY,
                 RtfFontManager.getInstance().getFontNumber(font.fontFamily));
-        rtfAttr.set("fs", font.fontSize);
+        rtfAttr.set(RtfText.ATTR_FONT_SIZE, font.fontSize);
 
         if (font.fontWeight.equals("bold") || font.fontWeight.equals("700")) {
             rtfAttr.set("b", 1);
@@ -230,10 +230,11 @@ class TextAttributesConverter {
            default here. Changing FOP's default to "white" causes problems in
            PDF output, so we will look for the default here & change it to
            "auto". */
-        if ((fopValue.getRed() == 0)
+        if ((fopValue == null)
+                || ((fopValue.getRed() == 0)
                 && (fopValue.getGreen() == 0)
                 && (fopValue.getBlue() == 0)
-                && (fopValue.getAlpha() == 0)) {
+                && (fopValue.getAlpha() == 0))) {
             return;
         } else {
             rtfColor = convertFOPColorToRTF(fopValue);
