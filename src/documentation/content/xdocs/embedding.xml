@@ -261,6 +261,76 @@ You may also use dynamically generated XSL if you like.
       Because you have an explicit transformer object, you can also use it to explicitly set parameters for the transformation run.
     </p>
   </section>
+  <section id="config-external">
+    <title>Using a Configuration File</title>
+    <p>
+      To access an external configuration:
+    </p>
+    <source>org.apache.fop.apps.Options options = new Options(new File("userconfig.xml"));</source>
+    <p>
+      No further reference to the <code>options</code> variable is necessary.
+    </p>
+    <p>
+      See <link href="#multithreading">Multithreading FOP</link> for issues related to changing configuration in a multithreaded environment.
+    </p>
+  </section>
+  <section id="config-internal">
+    <title>Setting the Configuration Programmatically</title>
+    <p>
+      If you wish to set configuration options from within your embedded application, use the <code>Configuration.put</code> method. Here is an example that sets the "baseDir" configuration in a Unix environment:
+    </p>
+    <source>org.apache.fop.configuration.Configuration.put("baseDir","/my/base/dir");</source>
+    <p>
+      Here is another that sets baseDir in a Windows environment:
+    </p>
+    <source>org.apache.fop.configuration.Configuration.put("baseDir","C:\my\base\dir");</source>
+    <p>
+      See <link href="#multithreading">Multithreading FOP</link> for issues related to changing configuration in a multithreaded environment.
+    </p>
+  </section>
+  <section id="multithreading">
+    <title>Multithreading FOP</title>
+    <p>
+      FOP is not currently completely thread safe.
+Although the relevant methods of the Driver object are synchronized, FOP uses static
+variables for configuration data and loading images.
+Here are some tips to mitigate these problems:
+    </p>
+    <ul>
+      <li>To avoid having your threads blocked, create a Driver object for each thread.</li>
+      <li>If possible, do not change the configuration data while there is a Driver object rendering.
+Setup the configuration only once, preferably in the <code>init()</code> method of the servlet.
+      </li>
+      <li>If you must change the configuration data more often, or if you have multiple servlets within the same webapp using FOP, consider implementing a singleton class to encapsulate the configuration settings and to run FOP in synchronized methods.
+      </li>
+    </ul>
+  </section>
+  <section id="servlet-engine">
+    <title>Servlet Engines</title>
+    <p>
+      When using a servlet engine, there are potential CLASSPATH issues, and potential conflicts with existing XML/XSLT libraries.
+Servlet containers also often use their own classloaders for loading webapps, which can cause bugs and security problems.
+    </p>
+    <section id="tomcat">
+      <title>Tomcat</title>
+        <p>
+          Check Tomcat's documentation for detailed instructions about installing FOP and Cocoon.
+There are known bugs that must be addressed, particularly for Tomcat 4.0.3.
+        </p>
+    </section>
+    <section id="websphere">
+      <title>WebSphere 3.5</title>
+      <p>
+        Put a copy of a working parser in some directory where WebSphere can access it.
+For example, if /usr/webapps/yourapp/servlets is the CLASSPATH for your servlets, copy the Xerces jar into it (any other directory would also be fine).
+Do not add the jar to the servlet CLASSPATH, but add it to the CLASSPATH of the application server which contains your web application.
+In the WebSphere administration console, click on the "environment" button in the "general" tab.
+In the "variable name" box, enter "CLASSPATH".
+In the "value" box, enter the correct path to the parser jar file (/usr/webapps/yourapp/servlets/Xerces.jar in our example here).
+Press "OK", then apply the change and restart the application server.
+      </p>
+    </section>
+  </section>
 <section>
   <title>Examples</title>
   <p>

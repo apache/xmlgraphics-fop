@@ -619,7 +619,7 @@
       <question>How do I pass parameters to the XSLT transformation?</question>
       <answer>
         <p>
-          See the end of the answer for the question above.
+          See <link href="embedding.html#servlet-transform">Using FOP in a Servlet with XSLT Transformation</link>.
         </p>
       </answer>
     </faq>
@@ -637,16 +637,7 @@ See <link href="#usercfg">loading the user configuration file</link> for further
       <question>How do I set the baseDir property in a servlet environment?</question>
       <answer>
         <p>
-          Use:
-        </p>
-        <source>org.apache.fop.configuration.Configuration.put("baseDir","/my/base/dir");</source>
-        <p>
-          or
-        </p>
-        <source>org.apache.fop.configuration.Configuration.put("baseDir","C:\my\base\dir");</source>
-        <p>
-          See <link href="#usercfg">using a user configuration file</link>
-          for caveats.
+          See <link href="embedding.html#config-internal">Setting the Configuration Programmatically</link>.
         </p>
       </answer>
     </faq>
@@ -654,18 +645,7 @@ See <link href="#usercfg">loading the user configuration file</link> for further
       <question>How do I use a user configuration file from a servlet?</question>
       <answer>
         <p>
-          Use:
-        </p>
-        <source>org.apache.fop.apps.Options options = new Options(new File("userconfig.xml"));</source>
-        <p>
-          No further reference to the <code>options</code> variable is
-          necessary. It is recommended to load the user configuration file only
-          once, preferably in the <code>init()</code> method of the servlet. If
-          you have multiple servlets running FOP, or if you have to change the
-          configuration often, it is best to place the configuration changing
-          code and the FOP driver call into a synchronized method, or perhaps a
-          singleton class, in order to avoid problems in multithreaded
-          environments.
+          See <link href="embedding.html#config-external">Using a Configuration File in an Embedded App</link>.
         </p>
       </answer>
     </faq>
@@ -674,59 +654,14 @@ See <link href="#usercfg">loading the user configuration file</link> for further
         get FOP working for various servlet engines?</question>
       <answer>
         <p>
-          There are various classpath issues, and possible conflicts with
-          existing XML/XSLT libraries. Because servlet containers often use
-          their own classloaders for loading webapps, bugs and security problems
-          can be bothersome as well.
-        </p>
-        <p>
-          Tomcat comes with detailed instructions for installing FOP and Cocoon,
-          check the documentation. There are known bugs to be circumvented, in
-          particular in Tomcat 4.0.3.
-        </p>
-        <p>
-          Websphere 3.5: See next question.
-        </p>
-      </answer>
-    </faq>
-    <faq id="websphere_3_5">
-      <question>FOP in IBM Websphere 3.5</question>
-      <answer>
-        <p>
-          Put a copy of a working parser in some directory where WebSphere can
-          access it, for example, if /usr/webapps/yourapp/servlets is the
-          classpath for your servlets, copy the Xerces jar into it (any other
-          directory would also be fine). Do not add the jar to the servlet
-          classpath, but add it to the classpath of the application server which
-          contains your web application. In the WebSphere administration
-          console, click on the "environment" button in the "general" tab. Fill
-          CLASSPATH in the "variable name" box and
-          /usr/webapps/yourapp/servlets/Xerces.jar (or whatever your complete
-          path is) in the value box, press "OK", then apply the change and
-          restart the application server.
+          See <link href="embedding.html#servlet-engine">Servlet Engines</link>.
         </p>
       </answer>
     </faq>
     <faq id="multithreaded">
       <question>Can FOP be used in multithreaded environments?</question>
       <answer>
-        <p>
-          FOP is not completely thread safe. At the very least you'll have to
-          create a Driver object for every thread unless you prefer your threads
-          being blocked.
-        </p>
-        <p>
-          Even though the relevant methods of the Driver object are
-          synchronized, there are still problems because FOP uses static
-          variables for configuration data and loading images. Be sure not
-          to change the configuration data while there is a Driver object
-          rendering. It is recommended to setup the configuration only
-          once while initialising the servlet. If you have to change the
-          configuration data more often, or if you have several servlets
-          within the same webapp using FOP, consider implementing a
-          singleton class encapsulating both the configuration settings
-          and running FOP in synchronized methods.
-        </p>
+        <p></p>
       </answer>
     </faq>
   </part>
