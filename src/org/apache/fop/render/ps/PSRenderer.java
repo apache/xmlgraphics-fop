@@ -625,7 +625,7 @@ public class PSRenderer extends AbstractRenderer {
             write(x + " " + (y - h) + " translate");
             write(w + " " + h + " scale");
 
-            write("mark {{");
+            write("{{");
             // Template: (RawData is used for the EOF signal only)
             // write("/RawData currentfile <first filter> filter def");
             // write("/Data RawData <second filter> <third filter> [...] def");
@@ -668,7 +668,6 @@ public class PSRenderer extends AbstractRenderer {
              * write("RawData flushfile");
              */
             write("} stopped {handleerror} if");
-            write("  cleartomark");
             write("  RawData flushfile");
             write("} exec");
 
