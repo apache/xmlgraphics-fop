@@ -160,7 +160,9 @@ public class TableCell extends FObj {
 		    return new Status(Status.AREA_FULL_SOME);
 		}
 	    }
-	    height += blockArea.getHeight();
+	    // bug fix from Eric Schaeffer
+	    // height += blockArea.getHeight();
+	    height = blockArea.getHeight();
 
 	}
 	blockArea.end();
