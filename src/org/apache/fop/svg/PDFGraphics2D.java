@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,30 +42,64 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.svg;
 
 import org.apache.fop.datatypes.ColorSpace;
-import org.apache.fop.image.*;
-import org.apache.fop.layout.*;
-import org.apache.fop.pdf.*;
+import org.apache.fop.image.JpegImage;
+import org.apache.fop.image.FopImage;
+import org.apache.fop.image.FopImageException;
+import org.apache.fop.layout.FontState;
+import org.apache.fop.layout.LinkSet;
+import org.apache.fop.pdf.PDFDocument;
+import org.apache.fop.pdf.PDFAnnotList;
+import org.apache.fop.pdf.PDFColor;
+import org.apache.fop.pdf.PDFFilter;
+import org.apache.fop.pdf.PDFNumber;
+import org.apache.fop.pdf.PDFFunction;
+import org.apache.fop.pdf.PDFPattern;
 import org.apache.fop.render.pdf.CIDFont;
 import org.apache.fop.render.pdf.fonts.LazyFont;
 
-import org.apache.batik.ext.awt.g2d.*;
+import org.apache.batik.ext.awt.g2d.AbstractGraphics2D;
+import org.apache.batik.ext.awt.g2d.GraphicContext;
 
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Shape;
+import java.awt.Dimension;
+import java.awt.Color;
+import java.awt.Paint;
+import java.awt.Stroke;
+import java.awt.GraphicsConfiguration;
+import java.awt.Graphics2D;
+import java.awt.FontMetrics;
+import java.awt.Rectangle;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsConfigTemplate;
+import java.awt.AlphaComposite;
+import java.awt.GradientPaint;
+import java.awt.TexturePaint;
+import java.awt.BasicStroke;
+import java.awt.Transparency;
 import java.awt.Font;
 import java.awt.Image;
-import java.awt.geom.*;
-import java.awt.image.*;
-import java.awt.image.renderable.*;
-import java.io.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
+import java.awt.image.ImageObserver;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.Raster;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferInt;
+import java.awt.image.renderable.RenderableImage;
+import java.io.StringWriter;
 import java.text.AttributedCharacterIterator;
 import java.text.CharacterIterator;
 import java.util.List;

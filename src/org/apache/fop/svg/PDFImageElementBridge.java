@@ -50,9 +50,9 @@
  */
 package org.apache.fop.svg;
 
-import org.apache.batik.bridge.*;
+import org.apache.batik.bridge.SVGImageElementBridge;
 
-import org.apache.fop.image.*;
+import org.apache.fop.image.JpegImage;
 
 import java.awt.Shape;
 import java.awt.Graphics2D;
