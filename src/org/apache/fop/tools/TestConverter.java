@@ -1,4 +1,5 @@
 /*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -73,8 +74,7 @@ public class TestConverter {
         tc.runTests(testFile, "results", null);
     }
 
-    public TestConverter() {
-    }
+    public TestConverter() {}
 
     public void setOutputPDF(boolean pdf) {
         outputPDF = pdf;
@@ -94,7 +94,7 @@ public class TestConverter {
      * The document is read as a dom and each testcase is covered.
      */
     public Hashtable runTests(String fname, String dest, String compDir) {
-        //System.out.println("running tests in file:" + fname);
+        // System.out.println("running tests in file:" + fname);
         try {
             if (compDir != null) {
                 compare = new File(baseDir + "/" + compDir);
@@ -103,7 +103,7 @@ public class TestConverter {
             destdir.mkdirs();
             File f = new File(baseDir + "/" + fname);
             DocumentBuilderFactory factory =
-              DocumentBuilderFactory.newInstance();
+                DocumentBuilderFactory.newInstance();
             DocumentBuilder db = factory.newDocumentBuilder();
             Document doc = db.parse(f);
 
@@ -116,9 +116,9 @@ public class TestConverter {
             testsuite = doc.getDocumentElement();
 
             if (testsuite.hasAttributes()) {
-                String profile = testsuite.getAttributes().getNamedItem(
-                                   "profile").getNodeValue();
-                //System.out.println("testing test suite:" + profile);
+                String profile =
+                    testsuite.getAttributes().getNamedItem("profile").getNodeValue();
+                // System.out.println("testing test suite:" + profile);
             }
             NodeList testcases = testsuite.getChildNodes();
             for (int count = 0; count < testcases.getLength(); count++) {
@@ -141,9 +141,9 @@ public class TestConverter {
      */
     protected void runTestCase(Node tcase) {
         if (tcase.hasAttributes()) {
-            String profile = tcase.getAttributes().getNamedItem(
-                               "profile").getNodeValue();
-            //System.out.println("testing profile:" + profile);
+            String profile =
+                tcase.getAttributes().getNamedItem("profile").getNodeValue();
+            // System.out.println("testing profile:" + profile);
         }
         NodeList cases = tcase.getChildNodes();
         for (int count = 0; count < cases.getLength(); count++) {
@@ -153,8 +153,7 @@ public class TestConverter {
                 runTestCase(node);
             } else if (nodename.equals("test")) {
                 runTest(tcase, node);
-            } else if (nodename.equals("result")) {
-            }
+            } else if (nodename.equals("result")) {}
         }
 
     }
@@ -171,8 +170,8 @@ public class TestConverter {
         Node result = locateResult(testcase, id);
         boolean pass = false;
         if (result != null) {
-            String agreement = result.getAttributes().getNamedItem(
-                                 "agreement").getNodeValue();
+            String agreement =
+                result.getAttributes().getNamedItem("agreement").getNodeValue();
             pass = agreement.equals("full");
         }
 
@@ -180,15 +179,14 @@ public class TestConverter {
             return;
         }
 
-        String xml =
-          test.getAttributes().getNamedItem("xml").getNodeValue();
+        String xml = test.getAttributes().getNamedItem("xml").getNodeValue();
         Node xslNode = test.getAttributes().getNamedItem("xsl");
         String xsl = null;
         if (xslNode != null) {
             xsl = xslNode.getNodeValue();
         }
-        //System.out.println("converting xml:" + xml + " and xsl:" +
-        //                   xsl + " to area tree");
+        // System.out.println("converting xml:" + xml + " and xsl:" +
+        // xsl + " to area tree");
 
         try {
             File xmlFile = new File(baseDir + "/" + xml);
@@ -205,7 +203,8 @@ public class TestConverter {
                 inputHandler = new FOInputHandler(xmlFile);
             } else {
                 inputHandler = new XSLTInputHandler(xmlFile,
-                                                    new File(baseDir + "/" + xsl));
+                                                    new File(baseDir + "/"
+                                                    + xsl));
             }
 
             XMLReader parser = inputHandler.getParser();
@@ -229,9 +228,9 @@ public class TestConverter {
             if (outname.endsWith(".xml")) {
                 outname = outname.substring(0, outname.length() - 4);
             }
-            driver.setOutputStream( new FileOutputStream(
-                                      new File(destdir, outname + (outputPDF ? ".pdf" : ".at.xml"))));
-            //System.out.println("ddir:" + destdir + " on:" + outname + ".pdf");
+            driver.setOutputStream(new FileOutputStream(new File(destdir,
+                    outname + (outputPDF ? ".pdf" : ".at.xml"))));
+            // System.out.println("ddir:" + destdir + " on:" + outname + ".pdf");
             driver.render();
 
             // check difference
@@ -265,19 +264,17 @@ public class TestConverter {
                     return false;
                 }
             }
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {}
         return false;
     }
 
-    public void setParserFeatures (XMLReader parser) throws FOPException {
+    public void setParserFeatures(XMLReader parser) throws FOPException {
         try {
             parser.setFeature("http://xml.org/sax/features/namespace-prefixes",
                               true);
         } catch (SAXException e) {
-            throw new FOPException(
-              "Error in setting up parser feature namespace-prefixes\n" +
-              "You need a parser which supports SAX version 2",e);
+            throw new FOPException("Error in setting up parser feature namespace-prefixes\n"
+                                   + "You need a parser which supports SAX version 2", e);
         }
     }
 
@@ -287,8 +284,8 @@ public class TestConverter {
             Node node = cases.item(count);
             String nodename = node.getNodeName();
             if (nodename.equals("result")) {
-                String resultid = node.getAttributes().getNamedItem(
-                                    "id").getNodeValue();
+                String resultid =
+                    node.getAttributes().getNamedItem("id").getNodeValue();
                 if (id.equals(resultid)) {
                     return node;
                 }
@@ -296,4 +293,5 @@ public class TestConverter {
         }
         return null;
     }
+
 }

@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -28,9 +29,9 @@ public class LeaderArea extends InlineArea {
         this.leaderPattern = leaderPattern;
         this.leaderLengthOptimum = leaderLengthOptimum;
         this.ruleStyle = ruleStyle;
-        //following the xsl spec rule: if rule-style="none" set thickness to 0;
-        //actually in pdf this doesn't work, because a very thin line is still shown
-        //this is handled in the pdf renderer
+        // following the xsl spec rule: if rule-style="none" set thickness to 0;
+        // actually in pdf this doesn't work, because a very thin line is still shown
+        // this is handled in the pdf renderer
         if (ruleStyle == org.apache.fop.fo.properties.RuleStyle.NONE) {
             ruleThickness = 0;
         }
@@ -40,15 +41,19 @@ public class LeaderArea extends InlineArea {
     public void render(Renderer renderer) {
         renderer.renderLeaderArea(this);
     }
+
     public int getRuleThickness() {
         return this.ruleThickness;
     }
+
     public int getRuleStyle() {
         return this.ruleStyle;
     }
+
     public int getLeaderPattern() {
         return this.leaderPattern;
     }
+
     public int getLeaderLength() {
         return this.contentRectangleWidth;
     }

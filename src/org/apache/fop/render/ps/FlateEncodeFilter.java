@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -11,8 +12,7 @@ import java.util.zip.DeflaterOutputStream;
 
 public class FlateEncodeFilter implements Filter {
 
-    protected FlateEncodeFilter() {
-    }
+    protected FlateEncodeFilter() {}
 
     private long copyStream(InputStream in, OutputStream out,
                             int bufferSize) throws IOException {
@@ -30,7 +30,7 @@ public class FlateEncodeFilter implements Filter {
                          OutputStream out) throws IOException {
         DeflaterOutputStream dout = new DeflaterOutputStream(out);
         copyStream(in, dout, 2048);
-        //dout.flush();
+        // dout.flush();
         dout.close();
     }
 
@@ -38,4 +38,5 @@ public class FlateEncodeFilter implements Filter {
         FlateEncodeFilter myfilter = new FlateEncodeFilter();
         return FilterThread.filter(in, myfilter);
     }
+
 }

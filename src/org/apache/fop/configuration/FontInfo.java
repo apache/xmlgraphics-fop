@@ -1,7 +1,8 @@
 /*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
- * LICENSE file included with these sources."
+ * LICENSE file included with these sources.
  */
 
 
@@ -18,8 +19,8 @@ public class FontInfo {
     private boolean kerning;
     private Vector fontTriplets;
 
-    public FontInfo (String name, String metricsFile, boolean kerning,
-                     Vector fontTriplets, String embedFile) {
+    public FontInfo(String name, String metricsFile, boolean kerning,
+                    Vector fontTriplets, String embedFile) {
         this.name = name;
         this.metricsFile = metricsFile;
         this.embedFile = embedFile;
@@ -30,12 +31,15 @@ public class FontInfo {
     public String getMetricsFile() {
         return metricsFile;
     }
+
     public String getEmbedFile() {
         return embedFile;
     }
+
     public boolean getKerning() {
         return kerning;
     }
+
     public Vector getFontTriplets() {
         return fontTriplets;
     }

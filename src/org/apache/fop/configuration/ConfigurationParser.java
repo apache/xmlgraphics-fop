@@ -1,4 +1,5 @@
 /*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -7,16 +8,16 @@
 
 package org.apache.fop.configuration;
 
-//sax
+// sax
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 
-//java
+// java
 import java.util.Hashtable;
 import java.util.Vector;
 
-//fop
+// fop
 import org.apache.fop.messaging.MessageHandler;
 
 
@@ -39,58 +40,64 @@ public class ConfigurationParser extends DefaultHandler {
     private final int LIST = 1;
     private final int MAP = 2;
 
-    //state of parser
+    // state of parser
     private int status = OUT;
     private int datatype = -1;
 
-    //store the result configuration
+    // store the result configuration
     private static Hashtable configuration;
     private static Hashtable activeConfiguration;
 
-    //stores key for new config entry
+    // stores key for new config entry
     private String key = "";
     private Vector keyStack = new Vector();
 
-    //stores string value
+    // stores string value
     private String value = "";
 
-    //stores key for new config entry
+    // stores key for new config entry
     private String subkey = "";
 
-    //stores list value
-    private Vector list = new Vector (15);
+    // stores list value
+    private Vector list = new Vector(15);
 
-    //stores hashtable value
+    // stores hashtable value
     private Hashtable map = new Hashtable(15);
 
-    /** locator for line number information */
+    /**
+     * locator for line number information
+     */
     private Locator locator;
 
-    /** determines role / target of configuration information, default is standard */
+    /**
+     * determines role / target of configuration information, default is standard
+     */
     private String role = "standard";
 
-    //stores fonts
+    // stores fonts
     private Vector fontList = null;
 
-    //stores information on one font
+    // stores information on one font
     private FontInfo fontInfo = null;
 
-    //stores information on a font triplet
+    // stores information on a font triplet
     private FontTriplet fontTriplet = null;
 
-    //information on a font
+    // information on a font
     private String fontName, metricsFile, embedFile, kerningAsString;
     private boolean kerning;
     private Vector fontTriplets;
 
-    //information on a font triplet
+    // information on a font triplet
     private String fontTripletName, weight, style;
 
     public void startDocument() {
         configuration = Configuration.getConfiguration();
     }
 
-    /** get locator for position information */
+    /**
+     * get locator for position information
+     */
     public void setDocumentLocator(Locator locator) {
         this.locator = locator;
     }
@@ -98,8 +105,8 @@ public class ConfigurationParser extends DefaultHandler {
     /**
      * extracts the element and attribute name and sets the fitting status and datatype values
      */
-    public void startElement(String uri, String localName,
-                             String qName, Attributes attributes) {
+    public void startElement(String uri, String localName, String qName,
+                             Attributes attributes) {
         if (localName.equals("key")) {
             status += IN_KEY;
         } else if (localName.equals("value")) {
@@ -109,16 +116,16 @@ public class ConfigurationParser extends DefaultHandler {
         } else if (localName.equals("subentry")) {
             status += IN_SUBENTRY;
         } else if (localName.equals("entry")) {
-            //role=standard as default
+            // role=standard as default
             if (attributes.getLength() == 0) {
                 role = "standard";
-                //retrieve attribute value for "role" which determines configuration target
+                // retrieve attribute value for "role" which determines configuration target
             } else {
                 role = attributes.getValue("role");
             }
-        } else if (localName.equals("configuration")) {
-        } else if (localName.equals("fonts")) { //list of fonts starts
-            fontList = new Vector (10);
+        } else if (localName.equals("configuration")) {}
+        else if (localName.equals("fonts")) {    // list of fonts starts
+            fontList = new Vector(10);
         } else if (localName.equals("font")) {
             kerningAsString = attributes.getValue("kerning");
             if (kerningAsString.equalsIgnoreCase("yes")) {
@@ -137,11 +144,11 @@ public class ConfigurationParser extends DefaultHandler {
             fontTriplet = new FontTriplet(fontTripletName, weight, style);
             fontTriplets.addElement(fontTriplet);
         } else {
-            //to make sure that user knows about false tag
-            MessageHandler.errorln(
-              "Unknown tag in configuration file: " + localName);
+            // to make sure that user knows about false tag
+            MessageHandler.errorln("Unknown tag in configuration file: "
+                                   + localName);
         }
-    } //end startElement
+    }                                            // end startElement
 
     /**
      * stores subentries or entries into their hashes (map for subentries, configuration for entry)
@@ -149,14 +156,14 @@ public class ConfigurationParser extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) {
         if (localName.equals("entry")) {
             switch (datatype) {
-                case STRING:
-                    this.store(role, key, value);
-                    break;
-                case LIST:
-                    this.store(role, key, list);
-                    break;
-                case MAP:
-                    this.store(role, key, map);
+            case STRING:
+                this.store(role, key, value);
+                break;
+            case LIST:
+                this.store(role, key, list);
+                break;
+            case MAP:
+                this.store(role, key, map);
             }
             status = OUT;
             role = "standard";
@@ -164,7 +171,7 @@ public class ConfigurationParser extends DefaultHandler {
                 keyStack.removeElementAt(keyStack.size() - 1);
             }
             if (keyStack.size() > 0) {
-                key = (String) keyStack.elementAt(keyStack.size() - 1);
+                key = (String)keyStack.elementAt(keyStack.size() - 1);
             } else {
                 key = "";
             }
@@ -176,7 +183,7 @@ public class ConfigurationParser extends DefaultHandler {
                 keyStack.removeElementAt(keyStack.size() - 1);
             }
             if (keyStack.size() > 0) {
-                key = (String) keyStack.elementAt(keyStack.size() - 1);
+                key = (String)keyStack.elementAt(keyStack.size() - 1);
             } else {
                 key = "";
             }
@@ -200,8 +207,7 @@ public class ConfigurationParser extends DefaultHandler {
             embedFile = null;
             fontName = null;
             kerningAsString = "";
-        } else if (localName.equals("font-triplet")) {
-        }
+        } else if (localName.equals("font-triplet")) {}
     }
 
     /**
@@ -209,30 +215,30 @@ public class ConfigurationParser extends DefaultHandler {
      * variables
      */
     public void characters(char[] ch, int start, int length) {
-        char characters [] = new char [length];
+        char characters[] = new char[length];
         System.arraycopy(ch, start, characters, 0, length);
         String text = new String(characters);
         switch (status) {
-            case IN_KEY:
-                key = text;
-                break;
-            case IN_LIST + IN_SUBENTRY + IN_KEY:
-                subkey = text;
-                break;
-            case IN_VALUE:
-                value = text;
-                datatype = STRING;
-                break;
-            case IN_LIST + IN_VALUE:
-                list.addElement(text);
-                datatype = LIST;
-                break;
-            case IN_LIST + IN_SUBENTRY + IN_VALUE:
-                value = text;
-                datatype = MAP;
-                break;
+        case IN_KEY:
+            key = text;
+            break;
+        case IN_LIST + IN_SUBENTRY + IN_KEY:
+            subkey = text;
+            break;
+        case IN_VALUE:
+            value = text;
+            datatype = STRING;
+            break;
+        case IN_LIST + IN_VALUE:
+            list.addElement(text);
+            datatype = LIST;
+            break;
+        case IN_LIST + IN_SUBENTRY + IN_VALUE:
+            value = text;
+            datatype = MAP;
+            break;
         }
-    } //end characters
+    }    // end characters
 
     /**
      * stores configuration entry into configuration hashtable according to the role
@@ -241,14 +247,16 @@ public class ConfigurationParser extends DefaultHandler {
      * @param key a string containing the key value for the configuration
      * @param value a string containing the value for the configuration
      */
-    private void store (String role, String key, Object value) {
-        activeConfiguration = (Hashtable) configuration.get(role);
+    private void store(String role, String key, Object value) {
+        activeConfiguration = (Hashtable)configuration.get(role);
         if (activeConfiguration != null) {
             activeConfiguration.put(key, value);
         } else {
-            MessageHandler.errorln("Unknown role >" + role +
-                                   "< for new configuration entry. \n" +
-                                   "Putting configuration with key:" + key + " into standard configuration.");
+            MessageHandler.errorln("Unknown role >" + role
+                                   + "< for new configuration entry. \n"
+                                   + "Putting configuration with key:" + key
+                                   + " into standard configuration.");
         }
     }
+
 }

@@ -1,4 +1,5 @@
-/*-- $Id$ --
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -23,14 +24,15 @@ public class MultiPropertySet extends ToBeImplementedElement {
                          PropertyList propertyList) throws FOPException {
             return new MultiPropertySet(parent, propertyList);
         }
+
     }
 
     public static FObj.Maker maker() {
         return new MultiPropertySet.Maker();
     }
 
-    protected MultiPropertySet(FObj parent,
-                   PropertyList propertyList) throws FOPException {
+    protected MultiPropertySet(FObj parent, PropertyList propertyList)
+            throws FOPException {
         super(parent, propertyList);
         this.name = "fo:multi-property-set";
     }

@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -28,7 +29,7 @@ public abstract class Starter {
     InputHandler inputHandler;
 
     public Starter() throws FOPException {
-        options = new Options ();
+        options = new Options();
     }
 
     public void setInputHandler(InputHandler inputHandler) {
@@ -37,15 +38,15 @@ public abstract class Starter {
 
     abstract public void run() throws FOPException;
 
-            // setting the parser features
-    public void setParserFeatures (XMLReader parser) throws FOPException {
+    // setting the parser features
+    public void setParserFeatures(XMLReader parser) throws FOPException {
         try {
             parser.setFeature("http://xml.org/sax/features/namespace-prefixes",
                               true);
         } catch (SAXException e) {
-            throw new FOPException(
-              "Error in setting up parser feature namespace-prefixes\n" +
-              "You need a parser which supports SAX version 2",e);
+            throw new FOPException("Error in setting up parser feature namespace-prefixes\n"
+                                   + "You need a parser which supports SAX version 2", e);
         }
     }
+
 }

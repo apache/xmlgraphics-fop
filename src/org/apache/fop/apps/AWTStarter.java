@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -6,11 +7,10 @@
 
 package org.apache.fop.apps;
 /*
-  originally contributed by
-  Juergen Verwohlt: Juergen.Verwohlt@jCatalog.com,
-  Rainer Steinkuhle: Rainer.Steinkuhle@jCatalog.com,
-  Stanislav Gorkhover: Stanislav.Gorkhover@jCatalog.com
-
+ * originally contributed by
+ * Juergen Verwohlt: Juergen.Verwohlt@jCatalog.com,
+ * Rainer Steinkuhle: Rainer.Steinkuhle@jCatalog.com,
+ * Stanislav Gorkhover: Stanislav.Gorkhover@jCatalog.com
  */
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.viewer.*;
@@ -50,20 +50,20 @@ public class AWTStarter extends CommandLineStarter {
 
     PreviewDialog frame;
     AWTRenderer renderer;
-    public static String TRANSLATION_PATH = "/org/apache/fop/viewer/resources/";
+    public static String TRANSLATION_PATH =
+        "/org/apache/fop/viewer/resources/";
 
     private Translator resource;
 
-    public AWTStarter (CommandLineOptions commandLineOptions)
-    throws FOPException {
+    public AWTStarter(CommandLineOptions commandLineOptions)
+            throws FOPException {
         super(commandLineOptions);
         init();
     }
 
-    private void init () {
+    private void init() {
         try {
-            UIManager.setLookAndFeel(
-              new javax.swing.plaf.metal.MetalLookAndFeel());
+            UIManager.setLookAndFeel(new javax.swing.plaf.metal.MetalLookAndFeel());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -73,12 +73,12 @@ public class AWTStarter extends CommandLineStarter {
         if (language == null)
             language = System.getProperty("user.language");
 
-        resource = getResourceBundle(TRANSLATION_PATH + "resources." +
-                                     language);
+        resource = getResourceBundle(TRANSLATION_PATH + "resources."
+                                     + language);
 
-        UserMessage.setTranslator(
-          getResourceBundle(TRANSLATION_PATH + "messages." +
-                            language));
+        UserMessage.setTranslator(getResourceBundle(TRANSLATION_PATH
+                                                    + "messages."
+                                                    + language));
 
         resource.setMissingEmphasized(false);
         renderer = new AWTRenderer(resource);
@@ -90,13 +90,13 @@ public class AWTStarter extends CommandLineStarter {
     }
 
 
-    public void run () throws FOPException {
+    public void run() throws FOPException {
         Driver driver = new Driver();
         if (errorDump) {
             driver.setErrorDump(true);
         }
 
-        //init parser
+        // init parser
         frame.progress(resource.getString("Init parser") + " ...");
         XMLReader parser = inputHandler.getParser();
 
@@ -126,7 +126,7 @@ public class AWTStarter extends CommandLineStarter {
 
         } catch (Exception e) {
             if (e instanceof FOPException) {
-                throw (FOPException) e;
+                throw (FOPException)e;
             }
             throw new FOPException(e);
         }
@@ -134,7 +134,7 @@ public class AWTStarter extends CommandLineStarter {
     }
 
     protected PreviewDialog createPreviewDialog(AWTRenderer renderer,
-            Translator res) {
+                                                Translator res) {
         PreviewDialog frame = new PreviewDialog(renderer, res);
         frame.validate();
 
@@ -160,11 +160,12 @@ public class AWTStarter extends CommandLineStarter {
             URL url = getClass().getResource(path);
             in = url.openStream();
         } catch (Exception ex) {
-            MessageHandler.logln("Can't find URL to: <" + path + "> " +
-                                 ex.getMessage());
+            MessageHandler.logln("Can't find URL to: <" + path + "> "
+                                 + ex.getMessage());
         }
         return new SecureResourceBundle(in);
     }
+
 }
 
 

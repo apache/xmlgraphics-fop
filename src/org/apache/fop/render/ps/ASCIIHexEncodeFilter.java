@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -14,8 +15,7 @@ public class ASCIIHexEncodeFilter implements Filter {
     private static final String ASCIIHEX_EOD = ">";
     private static final String ENCODING = "US-ASCII";
 
-    protected ASCIIHexEncodeFilter() {
-    }
+    protected ASCIIHexEncodeFilter() {}
 
     public long write(OutputStream out, byte[] buf, int len,
                       long bw) throws IOException {
@@ -25,7 +25,7 @@ public class ASCIIHexEncodeFilter implements Filter {
         while (rest > 0) {
             int restofline = 80 - (int)((bw + pos) % 80);
             if (rest < restofline) {
-                //last line
+                // last line
                 restofline = rest;
                 last = true;
             }
@@ -54,8 +54,8 @@ public class ASCIIHexEncodeFilter implements Filter {
                     sb.append("0");
                 sb.append(Integer.toHexString(val));
             }
-            bw = write(out, sb.toString().getBytes(ENCODING),
-                       bytes_read * 2, bw);
+            bw = write(out, sb.toString().getBytes(ENCODING), bytes_read * 2,
+                       bw);
         }
         byte[] eod = ASCIIHEX_EOD.getBytes(ENCODING);
         bw = write(out, eod, eod.length, bw);
@@ -65,4 +65,5 @@ public class ASCIIHexEncodeFilter implements Filter {
         ASCIIHexEncodeFilter myfilter = new ASCIIHexEncodeFilter();
         return FilterThread.filter(in, myfilter);
     }
+
 }

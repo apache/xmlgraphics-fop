@@ -1,4 +1,5 @@
-/*-- $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -20,14 +21,15 @@ import java.util.Enumeration;
 public class ListItem extends FObj {
 
     public static class Maker extends FObj.Maker {
-				public FObj make(FObj parent, PropertyList propertyList)
-						throws FOPException {
-						return new ListItem(parent, propertyList);
-				}
+        public FObj make(FObj parent,
+                         PropertyList propertyList) throws FOPException {
+            return new ListItem(parent, propertyList);
+        }
+
     }
 
     public static FObj.Maker maker() {
-				return new ListItem.Maker();
+        return new ListItem.Maker();
     }
 
     int align;
@@ -41,109 +43,107 @@ public class ListItem extends FObj {
     int spaceAfter;
     String id;
     BlockArea blockArea;
-    
+
     public ListItem(FObj parent, PropertyList propertyList) {
-				super(parent, propertyList);
-				this.name = "fo:list-item";
+        super(parent, propertyList);
+        this.name = "fo:list-item";
     }
 
     public Status layout(Area area) throws FOPException {
-				if (this.marker == START) {
-						
-						this.align = this.properties.get("text-align").getEnum();
-						this.alignLast =
-								this.properties.get("text-align-last").getEnum();
-						this.lineHeight =
-								this.properties.get("line-height").getLength().mvalue();
-						this.spaceBefore =
-								this.properties.get("space-before.optimum").getLength().mvalue();
-						this.spaceAfter =
-								this.properties.get("space-after.optimum").getLength().mvalue();
-            this.id =
-                this.properties.get("id").getString();
+        if (this.marker == START) {
+
+            this.align = this.properties.get("text-align").getEnum();
+            this.alignLast = this.properties.get("text-align-last").getEnum();
+            this.lineHeight =
+                this.properties.get("line-height").getLength().mvalue();
+            this.spaceBefore =
+                this.properties.get("space-before.optimum").getLength().mvalue();
+            this.spaceAfter =
+                this.properties.get("space-after.optimum").getLength().mvalue();
+            this.id = this.properties.get("id").getString();
 
             area.getIDReferences().createID(id);
 
-						this.marker = 0;
-				}
+            this.marker = 0;
+        }
 
-				/* not sure this is needed given we know area is from list block */
-				if (area instanceof BlockArea) {
-						area.end();
-				}
+        /* not sure this is needed given we know area is from list block */
+        if (area instanceof BlockArea) {
+            area.end();
+        }
 
-				if (spaceBefore != 0) {
-						area.addDisplaySpace(spaceBefore);
-				}
+        if (spaceBefore != 0) {
+            area.addDisplaySpace(spaceBefore);
+        }
 
-				this.blockArea =
-						new BlockArea(propMgr.getFontState(area.getFontInfo()), area.getAllocationWidth(),
-													area.spaceLeft(), 0, 0,
-													0, align, alignLast, lineHeight);
-				this.blockArea.setGeneratedBy(this);
-				this.areasGenerated++;
-				if (this.areasGenerated == 1)
-					this.blockArea.isFirst(true);
-				// for normal areas this should be the only pair
-				this.blockArea.addLineagePair(this, this.areasGenerated);
-				
-				// markers
-				if (this.hasMarkers())
-					this.blockArea.addMarkers(this.getMarkers());
-					
-				blockArea.setPage(area.getPage());
-				blockArea.start();
+        this.blockArea =
+            new BlockArea(propMgr.getFontState(area.getFontInfo()),
+                          area.getAllocationWidth(), area.spaceLeft(), 0, 0,
+                          0, align, alignLast, lineHeight);
+        this.blockArea.setGeneratedBy(this);
+        this.areasGenerated++;
+        if (this.areasGenerated == 1)
+            this.blockArea.isFirst(true);
+            // for normal areas this should be the only pair
+        this.blockArea.addLineagePair(this, this.areasGenerated);
 
-        		blockArea.setAbsoluteHeight(area.getAbsoluteHeight());
-        		blockArea.setIDReferences(area.getIDReferences());
+        // markers
+        if (this.hasMarkers())
+            this.blockArea.addMarkers(this.getMarkers());
 
-				int numChildren = this.children.size();
-				if (numChildren != 2) {
-					throw new FOPException("list-item must have exactly two children");
-				}
-				ListItemLabel label = (ListItemLabel) children.elementAt(0);
-				ListItemBody body = (ListItemBody) children.elementAt(1);
+        blockArea.setPage(area.getPage());
+        blockArea.start();
 
-				Status status;
-				
-				// what follows doesn't yet take into account whether the
-				// body failed completely or only got some text in
+        blockArea.setAbsoluteHeight(area.getAbsoluteHeight());
+        blockArea.setIDReferences(area.getIDReferences());
 
-				if (this.marker == 0) {
-            		// configure id
-            		area.getIDReferences().configureID(id,area);
+        int numChildren = this.children.size();
+        if (numChildren != 2) {
+            throw new FOPException("list-item must have exactly two children");
+        }
+        ListItemLabel label = (ListItemLabel)children.elementAt(0);
+        ListItemBody body = (ListItemBody)children.elementAt(1);
 
-					status = label.layout(blockArea);
-					if (status.isIncomplete()) {
-							return status;
-					}
-				}
+        Status status;
 
-				status = body.layout(blockArea);
-				if (status.isIncomplete()) {
-						blockArea.end();
-						area.addChild(blockArea);
-						area.increaseHeight(blockArea.getHeight());
-            			area.setAbsoluteHeight(blockArea.getAbsoluteHeight());
-						this.marker = 1;
-						return status;
-				}
+        // what follows doesn't yet take into account whether the
+        // body failed completely or only got some text in
 
-				blockArea.end();
-				area.addChild(blockArea);
-				area.increaseHeight(blockArea.getHeight());
-        		area.setAbsoluteHeight(blockArea.getAbsoluteHeight());
+        if (this.marker == 0) {
+            // configure id
+            area.getIDReferences().configureID(id, area);
 
-				if (spaceAfter != 0) {
-						area.addDisplaySpace(spaceAfter);
-				}
+            status = label.layout(blockArea);
+            if (status.isIncomplete()) {
+                return status;
+            }
+        }
 
-				/* not sure this is needed given we know area is from list block */
-				if (area instanceof BlockArea) {
-						area.start();
-				}
-				this.blockArea.isLast(true);
-				return new Status(Status.OK);
+        status = body.layout(blockArea);
+        if (status.isIncomplete()) {
+            blockArea.end();
+            area.addChild(blockArea);
+            area.increaseHeight(blockArea.getHeight());
+            area.setAbsoluteHeight(blockArea.getAbsoluteHeight());
+            this.marker = 1;
+            return status;
+        }
+
+        blockArea.end();
+        area.addChild(blockArea);
+        area.increaseHeight(blockArea.getHeight());
+        area.setAbsoluteHeight(blockArea.getAbsoluteHeight());
+
+        if (spaceAfter != 0) {
+            area.addDisplaySpace(spaceAfter);
+        }
+
+        /* not sure this is needed given we know area is from list block */
+        if (area instanceof BlockArea) {
+            area.start();
+        }
+        this.blockArea.isLast(true);
+        return new Status(Status.OK);
     }
 
     /**
@@ -151,8 +151,9 @@ public class ListItem extends FObj {
      */
     public int getContentWidth() {
         if (blockArea != null)
-            return blockArea.getContentWidth(); //getAllocationWidth()??
-        else return 0;  // not laid out yet
+            return blockArea.getContentWidth();    // getAllocationWidth()??
+        else
+            return 0;                              // not laid out yet
     }
 
 }

@@ -1,3 +1,10 @@
+/*
+ * $Id$
+ * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * For details on use and redistribution please refer to the
+ * LICENSE file included with these sources.
+ */
+
 package org.apache.fop.viewer;
 
 import java.lang.Exception;
@@ -15,54 +22,57 @@ import java.lang.Exception;
  */
 public class MessageException extends Exception {
 
-  /** Angabe der auslösenden Exception, wie z.B. NullPointerException.
-    * Dieses Feld ist optional.
-    */
-  protected Exception exception;
+    /**
+     * Angabe der auslösenden Exception, wie z.B. NullPointerException.
+     * Dieses Feld ist optional.
+     */
+    protected Exception exception;
 
-  /**
-   * ID der Meldung, die für diese Exception ausgegeben werden soll
-   */
-  protected String    messageId;
+    /**
+     * ID der Meldung, die für diese Exception ausgegeben werden soll
+     */
+    protected String messageId;
 
-  /**
-   * Parameterliste zur Meldung
-   */
-  protected String[]  parameterList;
+    /**
+     * Parameterliste zur Meldung
+     */
+    protected String[] parameterList;
 
 
-  // Konstruktoren
+    // Konstruktoren
 
-  public MessageException() {
-    this("UNKNOWN_EXCEPTION");
-  }
+    public MessageException() {
+        this("UNKNOWN_EXCEPTION");
+    }
 
-  public MessageException(String aMessageId) {
-    this(aMessageId, null);
-  }
+    public MessageException(String aMessageId) {
+        this(aMessageId, null);
+    }
 
-  public MessageException(String aMessageId, String[] aParameterList) {
-    this(aMessageId, aParameterList, null);
-  }
+    public MessageException(String aMessageId, String[] aParameterList) {
+        this(aMessageId, aParameterList, null);
+    }
 
-  public MessageException(String aMessageId, String[] aParameterList, Exception anException) {
-    super(aMessageId);
-    messageId     = aMessageId;
-    parameterList = aParameterList;
-    exception     = anException;
-  }
+    public MessageException(String aMessageId, String[] aParameterList,
+                            Exception anException) {
+        super(aMessageId);
+        messageId = aMessageId;
+        parameterList = aParameterList;
+        exception = anException;
+    }
 
-  // Zugriffsmethoden
+    // Zugriffsmethoden
 
-  public String getMessageId() {
-    return messageId;
-  }
+    public String getMessageId() {
+        return messageId;
+    }
 
-  public String[] getParameterList() {
-    return parameterList;
-  }
+    public String[] getParameterList() {
+        return parameterList;
+    }
 
-  public Exception getException() {
-    return exception;
-  }
+    public Exception getException() {
+        return exception;
+    }
+
 }

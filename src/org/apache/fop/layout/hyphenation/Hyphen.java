@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -21,37 +22,35 @@ import java.io.Serializable;
  * @author Carlos Villegas <cav@uniscope.co.jp>
  */
 
-public class Hyphen implements Serializable
-{
-      public String preBreak;
-      public String noBreak;
-      public String postBreak;
+public class Hyphen implements Serializable {
+    public String preBreak;
+    public String noBreak;
+    public String postBreak;
 
-      Hyphen(String pre, String no, String post)
-      {
-         preBreak = pre;
-         noBreak = no;
-         postBreak = post;
-      }
+    Hyphen(String pre, String no, String post) {
+        preBreak = pre;
+        noBreak = no;
+        postBreak = post;
+    }
 
-      Hyphen(String pre)
-      {
-         preBreak = pre;
-         noBreak = null;
-         postBreak = null;
-      }
-      
-      public String toString()
-      {
-         if ( noBreak == null && postBreak == null && preBreak != null && preBreak.equals("-") )
+    Hyphen(String pre) {
+        preBreak = pre;
+        noBreak = null;
+        postBreak = null;
+    }
+
+    public String toString() {
+        if (noBreak == null && postBreak == null && preBreak != null
+                && preBreak.equals("-"))
             return "-";
-         StringBuffer res = new StringBuffer("{");
-         res.append(preBreak);
-         res.append("}{");
-         res.append(postBreak);
-         res.append("}{");
-         res.append(noBreak);
-         res.append('}');
-         return res.toString();
-      }
+        StringBuffer res = new StringBuffer("{");
+        res.append(preBreak);
+        res.append("}{");
+        res.append(postBreak);
+        res.append("}{");
+        res.append(noBreak);
+        res.append('}');
+        return res.toString();
+    }
+
 }

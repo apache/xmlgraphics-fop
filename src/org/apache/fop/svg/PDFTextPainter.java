@@ -1,10 +1,9 @@
-/*****************************************************************************
- * Copyright (C) The Apache Software Foundation. All rights reserved.        *
- * ------------------------------------------------------------------------- *
- * This software is published under the terms of the Apache Software License *
- * version 1.1, a copy of which has been included with this distribution in  *
- * the LICENSE file.                                                         *
- *****************************************************************************/
+/*
+ * $Id$
+ * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * For details on use and redistribution please refer to the
+ * LICENSE file included with these sources.
+ */
 
 package org.apache.fop.svg;
 
@@ -56,12 +55,12 @@ public class PDFTextPainter implements TextPainter {
      */
     public void paint(TextNode node, Graphics2D g2d,
                       GraphicsNodeRenderContext context) {
-        //System.out.println("PDFText paint");
+        // System.out.println("PDFText paint");
         String txt = node.getText();
         Point2D loc = node.getLocation();
 
         AttributedCharacterIterator aci =
-          node.getAttributedCharacterIterator();
+            node.getAttributedCharacterIterator();
         // reset position to start of char iterator
         if (aci.getBeginIndex() == aci.getEndIndex()) {
             return;
@@ -70,46 +69,46 @@ public class PDFTextPainter implements TextPainter {
         if (ch == AttributedCharacterIterator.DONE) {
             return;
         }
-        TextNode.Anchor anchor = (TextNode.Anchor) aci.getAttribute(
-                                   GVTAttributedCharacterIterator.TextAttribute.ANCHOR_TYPE);
+        TextNode.Anchor anchor =
+            (TextNode.Anchor)aci.getAttribute(GVTAttributedCharacterIterator.TextAttribute.ANCHOR_TYPE);
 
-        Vector gvtFonts = (Vector) aci.getAttribute(
-                            GVTAttributedCharacterIterator.TextAttribute.GVT_FONT_FAMILIES);
-        Paint forg = (Paint) aci.getAttribute(TextAttribute.FOREGROUND);
-        Float size = (Float) aci.getAttribute(TextAttribute.SIZE);
-        Stroke stroke = (Stroke) aci.getAttribute(
-                          GVTAttributedCharacterIterator.TextAttribute.STROKE);
-        Float xpos = (Float) aci.getAttribute(
-                       GVTAttributedCharacterIterator.TextAttribute.X);
-        Float ypos = (Float) aci.getAttribute(
-                       GVTAttributedCharacterIterator.TextAttribute.Y);
+        Vector gvtFonts =
+            (Vector)aci.getAttribute(GVTAttributedCharacterIterator.TextAttribute.GVT_FONT_FAMILIES);
+        Paint forg = (Paint)aci.getAttribute(TextAttribute.FOREGROUND);
+        Float size = (Float)aci.getAttribute(TextAttribute.SIZE);
+        Stroke stroke =
+            (Stroke)aci.getAttribute(GVTAttributedCharacterIterator.TextAttribute.STROKE);
+        Float xpos =
+            (Float)aci.getAttribute(GVTAttributedCharacterIterator.TextAttribute.X);
+        Float ypos =
+            (Float)aci.getAttribute(GVTAttributedCharacterIterator.TextAttribute.Y);
 
-        Float posture = (Float) aci.getAttribute(TextAttribute.POSTURE);
-        Float taWeight = (Float) aci.getAttribute(TextAttribute.WEIGHT);
+        Float posture = (Float)aci.getAttribute(TextAttribute.POSTURE);
+        Float taWeight = (Float)aci.getAttribute(TextAttribute.WEIGHT);
 
         if (forg instanceof Color) {
-            g2d.setColor((Color) forg);
+            g2d.setColor((Color)forg);
         }
         g2d.setPaint(forg);
         g2d.setStroke(stroke);
 
-        String style = ((posture != null) && (posture.floatValue() > 0.0)) ?
-                       "italic" : "normal";
-        String weight = ((taWeight != null) &&
-                         (taWeight.floatValue() > 1.0)) ? "bold" : "normal";
+        String style = ((posture != null) && (posture.floatValue() > 0.0))
+                       ? "italic" : "normal";
+        String weight = ((taWeight != null) && (taWeight.floatValue() > 1.0))
+                        ? "bold" : "normal";
 
         FontInfo fi = fontState.getFontInfo();
         boolean found = false;
         if (gvtFonts != null) {
-            for (Enumeration e = gvtFonts.elements();
-                    e.hasMoreElements();) {
-                GVTFontFamily fam = (GVTFontFamily) e.nextElement();
+            for (Enumeration e = gvtFonts.elements(); e.hasMoreElements(); ) {
+                GVTFontFamily fam = (GVTFontFamily)e.nextElement();
                 String name = fam.getFamilyName();
                 if (fi.hasFont(name, weight, style)) {
                     try {
-                        int fsize = (int) size.floatValue();
+                        int fsize = (int)size.floatValue();
                         fontState = new FontState(fontState.getFontInfo(),
-                                                  name, style, weight, fsize * 1000, 0);
+                                                  name, style, weight,
+                                                  fsize * 1000, 0);
                     } catch (org.apache.fop.apps.FOPException fope) {
                         fope.printStackTrace();
                     }
@@ -120,7 +119,7 @@ public class PDFTextPainter implements TextPainter {
         }
         if (!found) {
             try {
-                int fsize = (int) size.floatValue();
+                int fsize = (int)size.floatValue();
                 fontState = new FontState(fontState.getFontInfo(), "any",
                                           style, weight, fsize * 1000, 0);
             } catch (org.apache.fop.apps.FOPException fope) {
@@ -151,11 +150,11 @@ public class PDFTextPainter implements TextPainter {
         float tx = 0;
         if (anchor != null) {
             switch (anchor.getType()) {
-                case TextNode.Anchor.ANCHOR_MIDDLE:
-                    tx = -advance / 2;
-                    break;
-                case TextNode.Anchor.ANCHOR_END:
-                    tx = -advance;
+            case TextNode.Anchor.ANCHOR_MIDDLE:
+                tx = -advance / 2;
+                break;
+            case TextNode.Anchor.ANCHOR_END:
+                tx = -advance;
             }
         }
         g2d.drawString(txt, (float)(loc.getX() + tx), (float)(loc.getY()));
@@ -184,17 +183,16 @@ public class PDFTextPainter implements TextPainter {
      * Initiates a text selection on a particular AttributedCharacterIterator,
      * using the text/font metrics employed by this TextPainter instance.
      * @param x the x coordinate, in the text layout's coordinate system,
-     *       of the selection event.
+     * of the selection event.
      * @param y the y coordinate, in the text layout's coordinate system,
-     *       of the selection event.
+     * of the selection event.
      * @param aci the AttributedCharacterIterator describing the text
      * @param context the GraphicsNodeRenderContext to use when doing text layout.
      * @return an instance of Mark which encapsulates the state necessary to
      * implement hit testing and text selection.
      */
-    public Mark selectAt(double x, double y,
-                         AttributedCharacterIterator aci, TextNode node,
-                         GraphicsNodeRenderContext context) {
+    public Mark selectAt(double x, double y, AttributedCharacterIterator aci,
+                         TextNode node, GraphicsNodeRenderContext context) {
         System.out.println("PDFText selectAt");
         return null;
     }
@@ -203,9 +201,9 @@ public class PDFTextPainter implements TextPainter {
      * Continues a text selection on a particular AttributedCharacterIterator,
      * using the text/font metrics employed by this TextPainter instance.
      * @param x the x coordinate, in the text layout's coordinate system,
-     *       of the selection event.
+     * of the selection event.
      * @param y the y coordinate, in the text layout's coordinate system,
-     *       of the selection event.
+     * of the selection event.
      * @param aci the AttributedCharacterIterator describing the text
      * @param context the GraphicsNodeRenderContext to use when doing text layout.
      * @return an instance of Mark which encapsulates the state necessary to
@@ -222,9 +220,9 @@ public class PDFTextPainter implements TextPainter {
      * Select all of the text represented by an AttributedCharacterIterator,
      * using the text/font metrics employed by this TextPainter instance.
      * @param x the x coordinate, in the text layout's coordinate system,
-     *       of the selection event.
+     * of the selection event.
      * @param y the y coordinate, in the text layout's coordinate system,
-     *       of the selection event.
+     * of the selection event.
      * @param aci the AttributedCharacterIterator describing the text
      * @param context the GraphicsNodeRenderContext to use when doing text layout.
      * @return an instance of Mark which encapsulates the state necessary to
@@ -268,8 +266,8 @@ public class PDFTextPainter implements TextPainter {
      * selectTo(), since the TextPainter implementation may rely on hidden
      * implementation details of its own Mark implementation.
      */
-    public int[] getSelected(AttributedCharacterIterator aci,
-                             Mark start, Mark finish) {
+    public int[] getSelected(AttributedCharacterIterator aci, Mark start,
+                             Mark finish) {
         System.out.println("PDFText getSelected");
         return null;
     }
@@ -294,9 +292,9 @@ public class PDFTextPainter implements TextPainter {
      * @param node the TextNode to measure
      * @param frc the font rendering context.
      * @param includeDecoration whether to include text decoration
-     *            outlines.
+     * outlines.
      * @param includeStroke whether to create the "stroke shape outlines"
-     *            instead of glyph outlines.
+     * instead of glyph outlines.
      */
     public Shape getShape(TextNode node, FontRenderContext frc) {
         System.out.println("PDFText getShape");
@@ -308,9 +306,9 @@ public class PDFTextPainter implements TextPainter {
      * @param node the TextNode to measure
      * @param frc the font rendering context.
      * @param includeDecoration whether to include text decoration
-     *            outlines.
+     * outlines.
      * @param includeStroke whether to create the "stroke shape outlines"
-     *            instead of glyph outlines.
+     * instead of glyph outlines.
      */
     public Shape getDecoratedShape(TextNode node, FontRenderContext frc) {
         System.out.println("PDFText getDecoratedShape");
@@ -353,8 +351,9 @@ public class PDFTextPainter implements TextPainter {
      */
     public Rectangle2D getPaintedBounds(TextNode node,
                                         FontRenderContext frc) {
-        //System.out.println("PDFText getPaintedBounds");
+        // System.out.println("PDFText getPaintedBounds");
         return null;
     }
+
 }
 

@@ -1,8 +1,8 @@
-/*-- $Id$ --
- *
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
- * LICENSE file included with these sources."
+ * LICENSE file included with these sources.
  */
 
 package org.apache.fop.render.pdf;
@@ -25,20 +25,20 @@ import org.apache.fop.apps.FOPException;
 /**
  * Class for reading a metric.xml file and creating a font object.
  * Typical usage:
- <pre>
- FontReader reader = new FontReader(<path til metrics.xml>);
- reader.setFontEmbedPath(<path to a .ttf or .pfb file or null to diable embedding>);
- reader.useKerning(true);
- Font f = reader.getFont();
- </pre>
-*/
+ * <pre>
+ * FontReader reader = new FontReader(<path til metrics.xml>);
+ * reader.setFontEmbedPath(<path to a .ttf or .pfb file or null to diable embedding>);
+ * reader.useKerning(true);
+ * Font f = reader.getFont();
+ * </pre>
+ */
 public class FontReader extends DefaultHandler {
     private Locator locator = null;
     private boolean isCID = false;
     private MultiByteFont multiFont = null;
     private SingleByteFont singleFont = null;
     private Font returnFont = null;
-    //private SingleByteFont singleFont = null;
+    // private SingleByteFont singleFont = null;
     private String text = null;
 
     private Vector cidWidths = null;
@@ -57,8 +57,8 @@ public class FontReader extends DefaultHandler {
             parser.setFeature("http://xml.org/sax/features/namespace-prefixes",
                               false);
         } catch (SAXException e) {
-            throw new FOPException (
-              "You need a SAX parser which supports SAX version 2",e);
+            throw new FOPException("You need a SAX parser which supports SAX version 2",
+                                   e);
         }
 
         parser.setContentHandler(this);
@@ -67,16 +67,15 @@ public class FontReader extends DefaultHandler {
             parser.parse(path);
         } catch (SAXException e) {
             throw new FOPException(e);
+        } catch (IOException e) {
+            throw new FOPException(e);
         }
-	catch (IOException e) {
-	    throw new FOPException(e);
-	}
-	
+
     }
 
     /**
-      * Sets the path to embed a font. a null value disables font embedding
-      */
+     * Sets the path to embed a font. a null value disables font embedding
+     */
     public void setFontEmbedPath(String path) {
         if (isCID)
             multiFont.embedFileName = path;
@@ -85,8 +84,8 @@ public class FontReader extends DefaultHandler {
     }
 
     /**
-      * Enable/disable use of kerning for the font
-      */
+     * Enable/disable use of kerning for the font
+     */
     public void useKerning(boolean kern) {
         if (isCID)
             multiFont.useKerning = true;
@@ -96,29 +95,28 @@ public class FontReader extends DefaultHandler {
 
 
     /**
-      * Get the generated font object
-      */
+     * Get the generated font object
+     */
     public Font getFont() {
         return returnFont;
     }
 
     /**
-      * Construct a FontReader object from a path to a metric.xml file
-      * and read metric data
-      */
+     * Construct a FontReader object from a path to a metric.xml file
+     * and read metric data
+     */
     public FontReader(String path) throws FOPException {
         createFont(path);
     }
 
-    public void startDocument() {
-    }
+    public void startDocument() {}
 
     public void setDocumentLocator(Locator locator) {
         this.locator = locator;
     }
 
-    public void startElement(String uri, String localName,
-                             String qName, Attributes attributes) {
+    public void startElement(String uri, String localName, String qName,
+                             Attributes attributes) {
         if (localName.equals("font-metrics")) {
             if ("TYPE0".equals(attributes.getValue("type"))) {
                 multiFont = new MultiByteFont();
@@ -151,13 +149,11 @@ public class FontReader extends DefaultHandler {
         } else if ("kerning".equals(localName)) {
             currentKerning = new Hashtable();
             if (isCID)
-                multiFont.kerning.put(
-                  new Integer(attributes.getValue("kpx1")),
-                  currentKerning);
+                multiFont.kerning.put(new Integer(attributes.getValue("kpx1")),
+                                      currentKerning);
             else
-                singleFont.kerning.put(
-                  new Integer(attributes.getValue("kpx1")),
-                  currentKerning);
+                singleFont.kerning.put(new Integer(attributes.getValue("kpx1")),
+                                       currentKerning);
         } else if ("bfranges".equals(localName)) {
             bfranges = new Vector();
         } else if ("bf".equals(localName)) {
@@ -172,16 +168,15 @@ public class FontReader extends DefaultHandler {
             singleFont.width = new int[256];
         } else if ("char".equals(localName)) {
             try {
-                singleFont.width[
-                  Integer.parseInt(attributes.getValue("idx"))] =
+                singleFont.width[Integer.parseInt(attributes.getValue("idx"))] =
                     Integer.parseInt(attributes.getValue("wdt"));
             } catch (NumberFormatException ne) {
-                System.out.println("Malformed width in metric file: " +
-                                   ne.getMessage());
+                System.out.println("Malformed width in metric file: "
+                                   + ne.getMessage());
             }
         } else if ("pair".equals(localName)) {
-            currentKerning.put( new Integer(attributes.getValue("kpx2")),
-                                new Integer(attributes.getValue("kern")));
+            currentKerning.put(new Integer(attributes.getValue("kpx2")),
+                               new Integer(attributes.getValue("kern")));
         }
     }
 
@@ -274,8 +269,8 @@ public class FontReader extends DefaultHandler {
             int[] wds = new int[cidWidths.size()];
             int j = 0;
             for (Enumeration e = cidWidths.elements();
-                    e.hasMoreElements();) {
-                Integer i = (Integer) e.nextElement();
+                    e.hasMoreElements(); ) {
+                Integer i = (Integer)e.nextElement();
                 wds[j++] = i.intValue();
             }
 

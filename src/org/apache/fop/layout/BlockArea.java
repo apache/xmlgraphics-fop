@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -54,21 +55,21 @@ public class BlockArea extends Area {
     /* have any line areas been used? */
     protected boolean hasLines = false;
 
-    /*hyphenation*/
+    /* hyphenation */
     protected HyphenationProps hyphProps;
 
     protected Vector pendingFootnotes = null;
 
-    public BlockArea(FontState fontState, int allocationWidth,
-                     int maxHeight, int startIndent, int endIndent,
-                     int textIndent, int align, int alignLastLine, int lineHeight) {
+    public BlockArea(FontState fontState, int allocationWidth, int maxHeight,
+                     int startIndent, int endIndent, int textIndent,
+                     int align, int alignLastLine, int lineHeight) {
         super(fontState, allocationWidth, maxHeight);
 
         this.startIndent = startIndent;
         this.endIndent = endIndent;
         this.textIndent = textIndent;
-        this.contentRectangleWidth =
-          allocationWidth - startIndent - endIndent;
+        this.contentRectangleWidth = allocationWidth - startIndent
+                                     - endIndent;
         this.align = align;
         this.alignLastLine = alignLastLine;
         this.lineHeight = lineHeight;
@@ -101,8 +102,8 @@ public class BlockArea extends Area {
         // add pending footnotes
         if (pendingFootnotes != null) {
             for (Enumeration e = pendingFootnotes.elements();
-                    e.hasMoreElements();) {
-                FootnoteBody fb = (FootnoteBody) e.nextElement();
+                    e.hasMoreElements(); ) {
+                FootnoteBody fb = (FootnoteBody)e.nextElement();
                 Page page = getPage();
                 if (!Footnote.layoutFootnote(page, fb, this)) {
                     page.addPendingFootnote(fb);
@@ -122,7 +123,7 @@ public class BlockArea extends Area {
      * @return the line area to be used to add inlie objects
      */
     public LineArea getCurrentLineArea() {
-	if (currentHeight + lineHeight > maxHeight) {
+        if (currentHeight + lineHeight > maxHeight) {
             return null;
         }
         this.currentLineArea.changeHyphenation(hyphProps);
@@ -145,9 +146,10 @@ public class BlockArea extends Area {
             this.currentLineArea.align(this.align);
             this.addLineArea(this.currentLineArea);
         }
-        this.currentLineArea =
-          new LineArea(fontState, lineHeight, halfLeading,
-                       allocationWidth, startIndent, endIndent, currentLineArea);
+        this.currentLineArea = new LineArea(fontState, lineHeight,
+                                            halfLeading, allocationWidth,
+                                            startIndent, endIndent,
+                                            currentLineArea);
         this.currentLineArea.changeHyphenation(hyphProps);
         if (currentHeight + lineHeight > maxHeight) {
             return null;
@@ -177,7 +179,9 @@ public class BlockArea extends Area {
 
     public void start() {
         currentLineArea = new LineArea(fontState, lineHeight, halfLeading,
-                                       allocationWidth, startIndent + textIndent, endIndent, null);
+                                       allocationWidth,
+                                       startIndent + textIndent, endIndent,
+                                       null);
     }
 
     public int getEndIndent() {
@@ -186,15 +190,15 @@ public class BlockArea extends Area {
 
     // KL: I think we should just return startIndent here!
     public int getStartIndent() {
-      //return startIndent + paddingLeft + borderWidthLeft;
-      return startIndent ;
+        // return startIndent + paddingLeft + borderWidthLeft;
+        return startIndent;
     }
 
     public void setIndents(int startIndent, int endIndent) {
         this.startIndent = startIndent;
         this.endIndent = endIndent;
-        this.contentRectangleWidth =
-          allocationWidth - startIndent - endIndent;
+        this.contentRectangleWidth = allocationWidth - startIndent
+                                     - endIndent;
     }
 
     public int spaceLeft() {
@@ -215,4 +219,5 @@ public class BlockArea extends Area {
         }
         pendingFootnotes.addElement(fb);
     }
+
 }

@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -48,6 +49,7 @@ public class SVGElement extends Svg {
                          PropertyList propertyList) throws FOPException {
             return new SVGElement(parent, propertyList);
         }
+
     }
 
     /**
@@ -103,27 +105,29 @@ public class SVGElement extends Svg {
         try {
             String baseDir = Configuration.getStringValue("baseDir");
             ((SVGOMDocument)doc).setURLObject(new URL(baseDir));
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {}
 
         DefaultSVGContext dc = new DefaultSVGContext() {
-                                   public float getPixelToMM() {
-                                       return 0.264583333333333333333f;
-                                       // 72 dpi
-                                   }
-                                   public float getViewportWidth() {
-                                       return 100;
-                                   }
-                                   public float getViewportHeight() {
-                                       return 100;
-                                   }
-                               };
+            public float getPixelToMM() {
+                return 0.264583333333333333333f;
+                // 72 dpi
+            }
+
+            public float getViewportWidth() {
+                return 100;
+            }
+
+            public float getViewportHeight() {
+                return 100;
+            }
+
+        };
         ((SVGOMDocument)doc).setSVGContext(dc);
         buildTopLevel(doc, svgRoot);
-        float width = ((SVGSVGElement) svgRoot).getWidth().getBaseVal().
-                      getValue();
-        float height = ((SVGSVGElement) svgRoot).getHeight().getBaseVal().
-                       getValue();
+        float width =
+            ((SVGSVGElement)svgRoot).getWidth().getBaseVal().getValue();
+        float height =
+            ((SVGSVGElement)svgRoot).getHeight().getBaseVal().getValue();
         SVGArea svg = new SVGArea(fs, width, height);
         svg.setSVGDocument(doc);
         svg.start();
@@ -132,7 +136,7 @@ public class SVGElement extends Svg {
         svg.end();
 
         /* add the SVG area to the containing area */
-        ForeignObjectArea foa = (ForeignObjectArea) area;
+        ForeignObjectArea foa = (ForeignObjectArea)area;
         foa.setObject(svg);
         foa.setIntrinsicWidth(svg.getWidth());
         foa.setIntrinsicHeight(svg.getHeight());
@@ -140,4 +144,5 @@ public class SVGElement extends Svg {
         /* return status */
         return new Status(Status.OK);
     }
+
 }

@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -30,9 +31,9 @@ public class SVGArea extends Area {
      * @param height the height of the area
      */
     public SVGArea(FontState fontState, float width, float height) {
-        super(fontState, (int) width * 1000, (int) height * 1000);
-        currentHeight = (int) height * 1000;
-        contentRectangleWidth = (int) width * 1000;
+        super(fontState, (int)width * 1000, (int)height * 1000);
+        currentHeight = (int)height * 1000;
+        contentRectangleWidth = (int)width * 1000;
     }
 
     public void setSVGDocument(Document doc) {
@@ -44,7 +45,7 @@ public class SVGArea extends Area {
     }
 
     public int getWidth() {
-        //        return getSVGDocument().getRootElement().getWidth().getBaseVal().getValue();
+        // return getSVGDocument().getRootElement().getWidth().getBaseVal().getValue();
         return contentRectangleWidth;
     }
 
@@ -56,4 +57,5 @@ public class SVGArea extends Area {
     public void render(Renderer renderer) {
         renderer.renderSVGArea(this);
     }
+
 }

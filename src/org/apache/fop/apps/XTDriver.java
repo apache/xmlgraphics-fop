@@ -1,52 +1,8 @@
-/*-- $Id$ -- 
-
- ============================================================================
-                   The Apache Software License, Version 1.1
- ============================================================================
- 
-    Copyright (C) 1999 The Apache Software Foundation. All rights reserved.
- 
- Redistribution and use in source and binary forms, with or without modifica-
- tion, are permitted provided that the following conditions are met:
- 
- 1. Redistributions of  source code must  retain the above copyright  notice,
-    this list of conditions and the following disclaimer.
- 
- 2. Redistributions in binary form must reproduce the above copyright notice,
-    this list of conditions and the following disclaimer in the documentation
-    and/or other materials provided with the distribution.
- 
- 3. The end-user documentation included with the redistribution, if any, must
-    include  the following  acknowledgment:  "This product includes  software
-    developed  by the  Apache Software Foundation  (http://www.apache.org/)."
-    Alternately, this  acknowledgment may  appear in the software itself,  if
-    and wherever such third-party acknowledgments normally appear.
- 
- 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
-    endorse  or promote  products derived  from this  software without  prior
-    written permission. For written permission, please contact
-    apache@apache.org.
- 
- 5. Products  derived from this software may not  be called "Apache", nor may
-    "Apache" appear  in their name,  without prior written permission  of the
-    Apache Software Foundation.
- 
- THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
- INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- FITNESS  FOR A PARTICULAR  PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL  THE
- APACHE SOFTWARE  FOUNDATION  OR ITS CONTRIBUTORS  BE LIABLE FOR  ANY DIRECT,
- INDIRECT, INCIDENTAL, SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL  DAMAGES (INCLU-
- DING, BUT NOT LIMITED TO, PROCUREMENT  OF SUBSTITUTE GOODS OR SERVICES; LOSS
- OF USE, DATA, OR  PROFITS; OR BUSINESS  INTERRUPTION)  HOWEVER CAUSED AND ON
- ANY  THEORY OF LIABILITY,  WHETHER  IN CONTRACT,  STRICT LIABILITY,  OR TORT
- (INCLUDING  NEGLIGENCE OR  OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
- THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- 
- This software  consists of voluntary contributions made  by many individuals
- on  behalf of the Apache Software  Foundation and was  originally created by
- James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
- Software Foundation, please see <http://www.apache.org/>.
- 
+/*
+ * $Id$
+ * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * For details on use and redistribution please refer to the
+ * LICENSE file included with these sources.
  */
 
 package org.apache.fop.apps;
@@ -102,41 +58,55 @@ import java.io.*;
  * <P>Here is an example use of Driver from CommandLine.java:
  *
  * <PRE>
- *   Driver driver = new Driver();
- *   driver.setRenderer("org.apache.fop.render.pdf.PDFRenderer", version);
- *   driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");
- *   driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
- *   driver.setWriter(new PrintWriter(new FileWriter(args[1])));
- *   driver.buildFOTree(parser, fileInputSource(args[0]));
- *   driver.format();
- *   driver.render();
+ * Driver driver = new Driver();
+ * driver.setRenderer("org.apache.fop.render.pdf.PDFRenderer", version);
+ * driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");
+ * driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
+ * driver.setWriter(new PrintWriter(new FileWriter(args[1])));
+ * driver.buildFOTree(parser, fileInputSource(args[0]));
+ * driver.format();
+ * driver.render();
  * </PRE>
  */
 public class XTDriver {
 
-    /** the FO tree builder */
+    /**
+     * the FO tree builder
+     */
     protected XTFOTreeBuilder treeBuilder;
 
-    /** the area tree that is the result of formatting the FO tree */
+    /**
+     * the area tree that is the result of formatting the FO tree
+     */
     protected AreaTree areaTree;
 
-    /** the renderer to use to output the area tree */
+    /**
+     * the renderer to use to output the area tree
+     */
     protected Renderer renderer;
 
-    /** the PrintWriter to use to output the results of the renderer */
+    /**
+     * the PrintWriter to use to output the results of the renderer
+     */
     protected PrintWriter writer;
 
-    /** the stream to use to output the results of the renderer */
+    /**
+     * the stream to use to output the results of the renderer
+     */
     protected OutputStream stream;
 
-    /** create a new Driver */
+    /**
+     * create a new Driver
+     */
     public XTDriver() {
-	this.treeBuilder = new XTFOTreeBuilder();
+        this.treeBuilder = new XTFOTreeBuilder();
     }
-   
-    /** set the Renderer to use */
+
+    /**
+     * set the Renderer to use
+     */
     public void setRenderer(Renderer renderer) {
-	this.renderer = renderer;
+        this.renderer = renderer;
     }
 
     /**
@@ -144,8 +114,8 @@ public class XTDriver {
      * producer string for those renderers that can make use of it
      */
     public void setRenderer(String rendererClassName, String producer) {
-	this.renderer = createRenderer(rendererClassName);
-	this.renderer.setProducer(producer);
+        this.renderer = createRenderer(rendererClassName);
+        this.renderer.setProducer(producer);
     }
 
     /**
@@ -153,38 +123,37 @@ public class XTDriver {
      * instantiate the Renderer class
      */
     protected Renderer createRenderer(String rendererClassName) {
-    MessageHandler.logln("using renderer " + rendererClassName);
+        MessageHandler.logln("using renderer " + rendererClassName);
 
-	try {
-	    return (Renderer)
-		Class.forName(rendererClassName).newInstance();
-	} catch (ClassNotFoundException e) {
-	    MessageHandler.errorln("Could not find " + rendererClassName);
-	} catch (InstantiationException e) {
-	    MessageHandler.errorln("Could not instantiate "
-			       + rendererClassName);
-	} catch (IllegalAccessException e) {
-	    MessageHandler.errorln("Could not access " + rendererClassName);
-	} catch (ClassCastException e) {
-	    MessageHandler.errorln(rendererClassName + " is not a renderer"); 
-	}
-	return null;
+        try {
+            return (Renderer)Class.forName(rendererClassName).newInstance();
+        } catch (ClassNotFoundException e) {
+            MessageHandler.errorln("Could not find " + rendererClassName);
+        } catch (InstantiationException e) {
+            MessageHandler.errorln("Could not instantiate "
+                                   + rendererClassName);
+        } catch (IllegalAccessException e) {
+            MessageHandler.errorln("Could not access " + rendererClassName);
+        } catch (ClassCastException e) {
+            MessageHandler.errorln(rendererClassName + " is not a renderer");
+        }
+        return null;
     }
-    
+
     /**
      * add the given element mapping.
      *
      * an element mapping maps element names to Java classes
      */
     public void addElementMapping(ElementMapping mapping) {
-	mapping.addToBuilder(this.treeBuilder);
+        mapping.addToBuilder(this.treeBuilder);
     }
-    
+
     /**
      * add the element mapping with the given class name
      */
     public void addElementMapping(String mappingClassName) {
-	createElementMapping(mappingClassName).addToBuilder(this.treeBuilder);
+        createElementMapping(mappingClassName).addToBuilder(this.treeBuilder);
     }
 
     /**
@@ -192,29 +161,29 @@ public class XTDriver {
      * instantiate element mapping class
      */
     protected ElementMapping createElementMapping(String mappingClassName) {
-    MessageHandler.logln("using element mapping " + mappingClassName);
+        MessageHandler.logln("using element mapping " + mappingClassName);
 
-	try {
-	    return (ElementMapping)
-		Class.forName(mappingClassName).newInstance();
-	} catch (ClassNotFoundException e) {
-	    MessageHandler.errorln("Could not find " + mappingClassName);
-	} catch (InstantiationException e) {
-	    MessageHandler.errorln("Could not instantiate "
-			       + mappingClassName);
-	} catch (IllegalAccessException e) {
-	    MessageHandler.errorln("Could not access " + mappingClassName);
-	} catch (ClassCastException e) {
-	    MessageHandler.errorln(mappingClassName + " is not an element mapping"); 
-	}
-	return null;
+        try {
+            return (ElementMapping)Class.forName(mappingClassName).newInstance();
+        } catch (ClassNotFoundException e) {
+            MessageHandler.errorln("Could not find " + mappingClassName);
+        } catch (InstantiationException e) {
+            MessageHandler.errorln("Could not instantiate "
+                                   + mappingClassName);
+        } catch (IllegalAccessException e) {
+            MessageHandler.errorln("Could not access " + mappingClassName);
+        } catch (ClassCastException e) {
+            MessageHandler.errorln(mappingClassName
+                                   + " is not an element mapping");
+        }
+        return null;
     }
 
     /**
      * add the element mapping with the given class name
      */
     public void addPropertyList(String listClassName) {
-	createPropertyList(listClassName).addToBuilder(this.treeBuilder);
+        createPropertyList(listClassName).addToBuilder(this.treeBuilder);
     }
 
     /**
@@ -222,22 +191,21 @@ public class XTDriver {
      * instantiate list mapping class
      */
     protected PropertyListMapping createPropertyList(String listClassName) {
-    MessageHandler.logln("using property list mapping " + listClassName);
+        MessageHandler.logln("using property list mapping " + listClassName);
 
-	try {
-	    return (PropertyListMapping)
-		Class.forName(listClassName).newInstance();
-	} catch (ClassNotFoundException e) {
-	    MessageHandler.errorln("Could not find " + listClassName);
-	} catch (InstantiationException e) {
-	    MessageHandler.errorln("Could not instantiate "
-			       + listClassName);
-	} catch (IllegalAccessException e) {
-	    MessageHandler.errorln("Could not access " + listClassName);
-	} catch (ClassCastException e) {
-	    MessageHandler.errorln(listClassName + " is not an property list"); 
-	}
-	return null;
+        try {
+            return (PropertyListMapping)Class.forName(listClassName).newInstance();
+        } catch (ClassNotFoundException e) {
+            MessageHandler.errorln("Could not find " + listClassName);
+        } catch (InstantiationException e) {
+            MessageHandler.errorln("Could not instantiate " + listClassName);
+        } catch (IllegalAccessException e) {
+            MessageHandler.errorln("Could not access " + listClassName);
+        } catch (ClassCastException e) {
+            MessageHandler.errorln(listClassName
+                                   + " is not an property list");
+        }
+        return null;
     }
 
     /**
@@ -248,116 +216,115 @@ public class XTDriver {
      * events but isn't a SAX Parser itself.
      */
     public DocumentHandler getDocumentHandler() {
-	return this.treeBuilder;
+        return this.treeBuilder;
     }
 
     /**
      * build the formatting object tree using the given SAX Parser and
      * SAX InputSource
      */
-    public void buildFOTree(Parser parser, InputSource source)
-		throws FOPException {
+    public void buildFOTree(Parser parser,
+                            InputSource source) throws FOPException {
 
-	parser.setDocumentHandler(this.treeBuilder);
-	try {
-	    parser.parse(source);
-	} catch (SAXException e) {
-	    if (e.getException() instanceof FOPException)
-		throw (FOPException) e.getException();
-	    else
-		throw new FOPException(e.getMessage());
-	} catch (IOException e) {
-	    throw new FOPException(e.getMessage());
-	}
+        parser.setDocumentHandler(this.treeBuilder);
+        try {
+            parser.parse(source);
+        } catch (SAXException e) {
+            if (e.getException() instanceof FOPException)
+                throw (FOPException)e.getException();
+            else
+                throw new FOPException(e.getMessage());
+        } catch (IOException e) {
+            throw new FOPException(e.getMessage());
+        }
     }
 
     /**
      * build the formatting object tree using the given DOM Document
      */
-    public void buildFOTree(Document document) 
-	throws FOPException {
+    public void buildFOTree(Document document) throws FOPException {
 
-	/* most of this code is modified from John Cowan's */
+        /* most of this code is modified from John Cowan's */
 
-	Node currentNode;
-	AttributesImpl currentAtts;
-	
-	/* temporary array for making Strings into character arrays */
-	char[] array = null;
+        Node currentNode;
+        AttributesImpl currentAtts;
 
-	currentAtts = new AttributesImpl();
-	
-	/* start at the document element */
-	currentNode = document;
+        /* temporary array for making Strings into character arrays */
+        char[] array = null;
 
-	try {
-	    while (currentNode != null) {
-		switch (currentNode.getNodeType()) {
-		case Node.DOCUMENT_NODE:
-		    this.treeBuilder.startDocument();
-		    break;
-		case Node.CDATA_SECTION_NODE:
-		case Node.TEXT_NODE:
-		    String data = currentNode.getNodeValue();
-		    int datalen = data.length();
-		    if (array == null || array.length < datalen) {
-			/* if the array isn't big enough, make a new
-			   one */
-			array = new char[datalen];
-		    }
-		    data.getChars(0, datalen, array, 0);
-		    this.treeBuilder.characters(array, 0, datalen);
-		    break;
-		case Node.PROCESSING_INSTRUCTION_NODE:
-		    this.treeBuilder.processingInstruction(
-	  	        currentNode.getNodeName(),
-			currentNode.getNodeValue());
-		    break;
-		case Node.ELEMENT_NODE:
-		    NamedNodeMap map = currentNode.getAttributes();
-		    currentAtts.clear();
-		    for (int i = map.getLength() - 1; i >= 0; i--) {
-			Attr att = (Attr)map.item(i);
-			currentAtts.addAttribute("",
-                         att.getName(),
-                         "",
-                         "CDATA",
-                         att.getValue());
-		    }
-		    this.treeBuilder.startElement(
-			"", currentNode.getNodeName(), "", currentAtts);
-		    break;
-		}
-		
-		Node nextNode = currentNode.getFirstChild();
-		if (nextNode != null) {
-		    currentNode = nextNode;
-		    continue;
-		}
-		
-		while (currentNode != null) {
-		    switch (currentNode.getNodeType()) {
-		    case Node.DOCUMENT_NODE:
-			this.treeBuilder.endDocument();
-			break;
-		    case Node.ELEMENT_NODE:
-			this.treeBuilder.endElement(
-			    "", currentNode.getNodeName(), "" );
-			break;
-		    }
-		    
-		    nextNode = currentNode.getNextSibling();
-		    if (nextNode != null) {
-			currentNode = nextNode;
-			break;
-		    }
-		    
-		    currentNode = currentNode.getParentNode();
-		}
-	    }
-	} catch (SAXException e) {
-	    throw new FOPException(e.getMessage());
-	}
+        currentAtts = new AttributesImpl();
+
+        /* start at the document element */
+        currentNode = document;
+
+        try {
+            while (currentNode != null) {
+                switch (currentNode.getNodeType()) {
+                case Node.DOCUMENT_NODE:
+                    this.treeBuilder.startDocument();
+                    break;
+                case Node.CDATA_SECTION_NODE:
+                case Node.TEXT_NODE:
+                    String data = currentNode.getNodeValue();
+                    int datalen = data.length();
+                    if (array == null || array.length < datalen) {
+                        /*
+                         * if the array isn't big enough, make a new
+                         * one
+                         */
+                        array = new char[datalen];
+                    }
+                    data.getChars(0, datalen, array, 0);
+                    this.treeBuilder.characters(array, 0, datalen);
+                    break;
+                case Node.PROCESSING_INSTRUCTION_NODE:
+                    this.treeBuilder.processingInstruction(currentNode.getNodeName(),
+                                                           currentNode.getNodeValue());
+                    break;
+                case Node.ELEMENT_NODE:
+                    NamedNodeMap map = currentNode.getAttributes();
+                    currentAtts.clear();
+                    for (int i = map.getLength() - 1; i >= 0; i--) {
+                        Attr att = (Attr)map.item(i);
+                        currentAtts.addAttribute("", att.getName(), "",
+                                                 "CDATA", att.getValue());
+                    }
+                    this.treeBuilder.startElement("",
+                                                  currentNode.getNodeName(),
+                                                  "", currentAtts);
+                    break;
+                }
+
+                Node nextNode = currentNode.getFirstChild();
+                if (nextNode != null) {
+                    currentNode = nextNode;
+                    continue;
+                }
+
+                while (currentNode != null) {
+                    switch (currentNode.getNodeType()) {
+                    case Node.DOCUMENT_NODE:
+                        this.treeBuilder.endDocument();
+                        break;
+                    case Node.ELEMENT_NODE:
+                        this.treeBuilder.endElement("",
+                                                    currentNode.getNodeName(),
+                                                    "");
+                        break;
+                    }
+
+                    nextNode = currentNode.getNextSibling();
+                    if (nextNode != null) {
+                        currentNode = nextNode;
+                        break;
+                    }
+
+                    currentNode = currentNode.getParentNode();
+                }
+            }
+        } catch (SAXException e) {
+            throw new FOPException(e.getMessage());
+        }
     }
 
     /**
@@ -365,13 +332,13 @@ public class XTDriver {
      * (if applicable)
      */
     public void setWriter(PrintWriter writer) {
-	this.writer = writer;
+        this.writer = writer;
     }
 
     /**
-       * set the OutputStream to use to output the result of the Renderer
-       * (if applicable)
-       */
+     * set the OutputStream to use to output the result of the Renderer
+     * (if applicable)
+     */
     public void setOutputStream(OutputStream stream) {
         this.stream = stream;
     }
@@ -379,22 +346,21 @@ public class XTDriver {
     /**
      * format the formatting object tree into an area tree
      */
-    public void format()
-	throws FOPException {
-	FontInfo fontInfo = new FontInfo();
-	this.renderer.setupFontInfo(fontInfo);
+    public void format() throws FOPException {
+        FontInfo fontInfo = new FontInfo();
+        this.renderer.setupFontInfo(fontInfo);
 
-	this.areaTree = new AreaTree();
-	this.areaTree.setFontInfo(fontInfo);
+        this.areaTree = new AreaTree();
+        this.areaTree.setFontInfo(fontInfo);
 
-	this.treeBuilder.format(areaTree);
+        this.treeBuilder.format(areaTree);
     }
 
     /**
      * render the area tree to the output form
      */
-    public void render()
-	throws IOException, FOPException {
-	this.renderer.render(areaTree, this.stream);
+    public void render() throws IOException, FOPException {
+        this.renderer.render(areaTree, this.stream);
     }
+
 }

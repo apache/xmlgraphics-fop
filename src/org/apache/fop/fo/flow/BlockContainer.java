@@ -1,8 +1,8 @@
-//-- $Id$ --
-/* 
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the 
- * LICENSE file included with these sources."
+ * For details on use and redistribution please refer to the
+ * LICENSE file included with these sources.
  */
 
 package org.apache.fop.fo.flow;
@@ -21,139 +21,135 @@ import java.util.Enumeration;
 
 public class BlockContainer extends FObj {
 
-		ColorType backgroundColor;
-		int position;
+    ColorType backgroundColor;
+    int position;
 
-		int top;
-		int bottom;
-		int left;
-		int right;
-		int width;
-		int height;
+    int top;
+    int bottom;
+    int left;
+    int right;
+    int width;
+    int height;
 
-	int span;
+    int span;
 
-		AreaContainer areaContainer;
+    AreaContainer areaContainer;
 
-		public static class Maker extends FObj.Maker {
-	public FObj make(FObj parent, PropertyList propertyList)
-			throws FOPException {
-			return new BlockContainer(parent, propertyList);
-	}
-		}
+    public static class Maker extends FObj.Maker {
+        public FObj make(FObj parent,
+                         PropertyList propertyList) throws FOPException {
+            return new BlockContainer(parent, propertyList);
+        }
 
-		public static FObj.Maker maker() {
-	return new BlockContainer.Maker();
-		}
-
-		PageSequence pageSequence;
-
-		protected BlockContainer(FObj parent, PropertyList propertyList)
-	throws FOPException {
-	super(parent, propertyList);
-				this.name =  "fo:block-container";
-				this.span = this.properties.get("span").getEnum();
-		}
-
-  public Status layout(Area area) throws FOPException {
-    if (this.marker == START) {
-      this.marker = 0;
-
-      this.backgroundColor =
-	this.properties.get("background-color").getColorType();
-
-      this.position =
-	this.properties.get("position").getEnum();
-      this.top =
-	this.properties.get("top").getLength().mvalue();
-      this.bottom =
-	this.properties.get("bottom").getLength().mvalue();
-      this.left =
-	this.properties.get("left").getLength().mvalue();
-      this.right =
-	this.properties.get("right").getLength().mvalue();
-      this.width =
-	this.properties.get("width").getLength().mvalue();
-      this.height =
-	this.properties.get("height").getLength().mvalue();
-      span = this.properties.get("span").getEnum();
-
-      // initialize id
-      String id = this.properties.get("id").getString();
-      area.getIDReferences().initializeID(id,area);
     }
 
-    boolean prevChildMustKeepWithNext = false;
+    public static FObj.Maker maker() {
+        return new BlockContainer.Maker();
+    }
 
-	AreaContainer container = (AreaContainer)area;
-	if ((this.width == 0) && (this.height == 0)) {
-	  width = right - left;
-	  height = bottom - top;
-	}
+    PageSequence pageSequence;
 
-	this.areaContainer =
-	  new AreaContainer(propMgr.getFontState(container.getFontInfo()),
-			    container.getXPosition() + left,
-			    container.getYPosition() - top, width, height,
-			    position);
+    protected BlockContainer(FObj parent,
+                             PropertyList propertyList) throws FOPException {
+        super(parent, propertyList);
+        this.name = "fo:block-container";
+        this.span = this.properties.get("span").getEnum();
+    }
 
-	areaContainer.setPage(area.getPage());
-	areaContainer.setBackgroundColor(backgroundColor);
-	areaContainer.setBorderAndPadding(propMgr.getBorderAndPadding());
-	areaContainer.start();
-	
-	areaContainer.setAbsoluteHeight(area.getAbsoluteHeight());
-	areaContainer.setIDReferences(area.getIDReferences());
+    public Status layout(Area area) throws FOPException {
+        if (this.marker == START) {
+            this.marker = 0;
 
-	int numChildren = this.children.size();
-	for (int i = this.marker; i < numChildren; i++) {
-			FObj fo = (FObj) children.elementAt(i);
-			Status status;
-			if ((status = fo.layout(areaContainer)).isIncomplete()) {
-							/*
-		if ((prevChildMustKeepWithNext) && (status.laidOutNone())) {
-				this.marker = i - 1;
-				FObj prevChild = (FObj) children.elementAt(this.marker);
-				prevChild.removeAreas();
-				prevChild.resetMarker();
-				return new Status(Status.AREA_FULL_SOME);
-				// should probably return AREA_FULL_NONE if first
-				// or perhaps an entirely new status code
-		} else {
-				this.marker = i;
-				return status;
-		}
-							*/
-			}
-			if (status.getCode() == Status.KEEP_WITH_NEXT) {
-		prevChildMustKeepWithNext = true;
-			}
-	}
-				area.setAbsoluteHeight(areaContainer.getAbsoluteHeight());
+            this.backgroundColor =
+                this.properties.get("background-color").getColorType();
 
-	areaContainer.end();
-				if (position == Position.ABSOLUTE)
-					areaContainer.setHeight(height);
-	area.addChild(areaContainer);
+            this.position = this.properties.get("position").getEnum();
+            this.top = this.properties.get("top").getLength().mvalue();
+            this.bottom = this.properties.get("bottom").getLength().mvalue();
+            this.left = this.properties.get("left").getLength().mvalue();
+            this.right = this.properties.get("right").getLength().mvalue();
+            this.width = this.properties.get("width").getLength().mvalue();
+            this.height = this.properties.get("height").getLength().mvalue();
+            span = this.properties.get("span").getEnum();
 
-	return new Status(Status.OK);
-		}
+            // initialize id
+            String id = this.properties.get("id").getString();
+            area.getIDReferences().initializeID(id, area);
+        }
 
-	/**
-	 * Return the content width of the boxes generated by this block
-	 * container FO.
-	 */
-	public int getContentWidth() {
-		if (areaContainer != null)
-			return areaContainer.getContentWidth(); //getAllocationWidth()??
-		else return 0;  // not laid out yet
-	}
+        boolean prevChildMustKeepWithNext = false;
 
-	public boolean generatesReferenceAreas() {
-	return true;
-	}
+        AreaContainer container = (AreaContainer)area;
+        if ((this.width == 0) && (this.height == 0)) {
+            width = right - left;
+            height = bottom - top;
+        }
 
-	public int getSpan() {
-		return this.span;
-	}
+        this.areaContainer =
+            new AreaContainer(propMgr.getFontState(container.getFontInfo()),
+                              container.getXPosition() + left,
+                              container.getYPosition() - top, width, height,
+                              position);
+
+        areaContainer.setPage(area.getPage());
+        areaContainer.setBackgroundColor(backgroundColor);
+        areaContainer.setBorderAndPadding(propMgr.getBorderAndPadding());
+        areaContainer.start();
+
+        areaContainer.setAbsoluteHeight(area.getAbsoluteHeight());
+        areaContainer.setIDReferences(area.getIDReferences());
+
+        int numChildren = this.children.size();
+        for (int i = this.marker; i < numChildren; i++) {
+            FObj fo = (FObj)children.elementAt(i);
+            Status status;
+            if ((status = fo.layout(areaContainer)).isIncomplete()) {
+                /*
+                 * if ((prevChildMustKeepWithNext) && (status.laidOutNone())) {
+                 * this.marker = i - 1;
+                 * FObj prevChild = (FObj) children.elementAt(this.marker);
+                 * prevChild.removeAreas();
+                 * prevChild.resetMarker();
+                 * return new Status(Status.AREA_FULL_SOME);
+                 * // should probably return AREA_FULL_NONE if first
+                 * // or perhaps an entirely new status code
+                 * } else {
+                 * this.marker = i;
+                 * return status;
+                 * }
+                 */
+            }
+            if (status.getCode() == Status.KEEP_WITH_NEXT) {
+                prevChildMustKeepWithNext = true;
+            }
+        }
+        area.setAbsoluteHeight(areaContainer.getAbsoluteHeight());
+
+        areaContainer.end();
+        if (position == Position.ABSOLUTE)
+            areaContainer.setHeight(height);
+        area.addChild(areaContainer);
+
+        return new Status(Status.OK);
+    }
+
+    /**
+     * Return the content width of the boxes generated by this block
+     * container FO.
+     */
+    public int getContentWidth() {
+        if (areaContainer != null)
+            return areaContainer.getContentWidth();    // getAllocationWidth()??
+        else
+            return 0;    // not laid out yet
+    }
+
+    public boolean generatesReferenceAreas() {
+        return true;
+    }
+
+    public int getSpan() {
+        return this.span;
+    }
+
 }

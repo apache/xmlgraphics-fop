@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -54,8 +55,8 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
      * @param width the width of the document
      * @param height the height of the document
      */
-    public PDFDocumentGraphics2D(boolean textAsShapes,
-                                 OutputStream stream, int width, int height) {
+    public PDFDocumentGraphics2D(boolean textAsShapes, OutputStream stream,
+                                 int width, int height) {
         super(textAsShapes);
 
         if (!textAsShapes) {
@@ -64,8 +65,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
             try {
                 fontState = new FontState(fontInfo, "Helvetica", "normal",
                                           "normal", 12, 0);
-            } catch (FOPException e) {
-            }
+            } catch (FOPException e) {}
         }
         standalone = true;
         this.stream = stream;
@@ -99,8 +99,8 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
      * The result is scaled so that the svg fits correctly inside the pdf document.
      */
     public void setSVGDimension(float w, float h) {
-        currentStream.write("" + PDFNumber.doubleOut(width / w) +
-                            " 0 0 " + PDFNumber.doubleOut(height / h) + " 0 0 cm\n");
+        currentStream.write("" + PDFNumber.doubleOut(width / w) + " 0 0 "
+                            + PDFNumber.doubleOut(height / h) + " 0 0 cm\n");
     }
 
     /**
@@ -129,9 +129,8 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
     public void finish() throws IOException {
         pdfStream.add(getString());
         PDFResources pdfResources = this.pdfDoc.getResources();
-        PDFPage currentPage =
-          this.pdfDoc.makePage(pdfResources, pdfStream, width,
-                               height, null);
+        PDFPage currentPage = this.pdfDoc.makePage(pdfResources, pdfStream,
+                                                   width, height, null);
         if (fontInfo != null) {
             FontSetup.addToResources(this.pdfDoc, fontInfo);
         }
@@ -154,7 +153,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
      * Creates a new <code>Graphics</code> object that is
      * a copy of this <code>Graphics</code> object.
      * @return     a new graphics context that is a copy of
-     *             this graphics context.
+     * this graphics context.
      */
     public Graphics create() {
         return new PDFDocumentGraphics2D(this);
@@ -171,5 +170,6 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
             super.drawString(s, x, y);
         }
     }
+
 }
 

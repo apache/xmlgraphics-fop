@@ -1,7 +1,8 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
- * LICENSE file included with these sources."
+ * LICENSE file included with these sources.
  */
 
 package org.apache.fop.render.ps;
@@ -44,24 +45,36 @@ import java.util.Vector;
 public class PSGraphics2D extends AbstractGraphics2D {
     boolean standalone = false;
 
-    /** the PDF Document being created */
+    /**
+     * the PDF Document being created
+     */
     protected PSRenderer psRenderer;
 
     protected FontState fontState;
 
-    /** the current (internal) font name */
+    /**
+     * the current (internal) font name
+     */
     protected String currentFontName;
 
-    /** the current font size in millipoints */
+    /**
+     * the current font size in millipoints
+     */
     protected int currentFontSize;
 
-    /** the current vertical position in millipoints from bottom */
+    /**
+     * the current vertical position in millipoints from bottom
+     */
     protected int currentYPosition = 0;
 
-    /** the current horizontal position in millipoints from left */
+    /**
+     * the current horizontal position in millipoints from left
+     */
     protected int currentXPosition = 0;
 
-    /** the current colour for use in svg */
+    /**
+     * the current colour for use in svg
+     */
     PDFColor currentColour = new PDFColor(0, 0, 0);
 
     FontInfo fontInfo;
@@ -71,8 +84,8 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * This is used to create a Graphics object for use inside an already
      * existing document.
      */
-    public PSGraphics2D(boolean textAsShapes, FontState fs,
-                         PSRenderer ren, String font, int size, int xpos, int ypos) {
+    public PSGraphics2D(boolean textAsShapes, FontState fs, PSRenderer ren,
+                        String font, int size, int xpos, int ypos) {
         super(textAsShapes);
         psRenderer = ren;
         currentFontName = font;
@@ -101,7 +114,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * Creates a new <code>Graphics</code> object that is
      * a copy of this <code>Graphics</code> object.
      * @return     a new graphics context that is a copy of
-     *             this graphics context.
+     * this graphics context.
      */
     public Graphics create() {
         return new PSGraphics2D(this);
@@ -126,14 +139,14 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * @param    x   the <i>x</i> coordinate.
      * @param    y   the <i>y</i> coordinate.
      * @param    observer    object to be notified as more of
-     *                          the image is converted.
+     * the image is converted.
      * @see      java.awt.Image
      * @see      java.awt.image.ImageObserver
      * @see      java.awt.image.ImageObserver#imageUpdate(java.awt.Image, int, int, int, int, int)
      */
     public boolean drawImage(Image img, int x, int y,
                              ImageObserver observer) {
-        //System.err.println("drawImage:x, y");
+        // System.err.println("drawImage:x, y");
 
         final int width = img.getWidth(observer);
         final int height = img.getHeight(observer);
@@ -156,10 +169,8 @@ public class PSGraphics2D extends AbstractGraphics2D {
         }
         g.dispose();
 
-        final byte[] result =
-          new byte[buf.getWidth() * buf.getHeight() * 3];
-        final byte[] mask =
-          new byte[buf.getWidth() * buf.getHeight()];
+        final byte[] result = new byte[buf.getWidth() * buf.getHeight() * 3];
+        final byte[] mask = new byte[buf.getWidth() * buf.getHeight()];
 
         Raster raster = buf.getData();
         DataBuffer bd = raster.getDataBuffer();
@@ -167,28 +178,26 @@ public class PSGraphics2D extends AbstractGraphics2D {
         int count = 0;
         int maskpos = 0;
         switch (bd.getDataType()) {
-            case DataBuffer.TYPE_INT:
-                int[][] idata = ((DataBufferInt) bd).getBankData();
-                for (int i = 0; i < idata.length; i++) {
-                    for (int j = 0; j < idata[i].length; j++) {
-                        //mask[maskpos++] = (byte)((idata[i][j] >> 24) & 0xFF);
-                        if(((idata[i][j] >> 24) & 0xFF) != 255) {
-                            result[count++] = (byte)0xFF;
-                            result[count++] = (byte)0xFF;
-                            result[count++] = (byte)0xFF;
-                        } else {
-                            result[count++] =
-                              (byte)((idata[i][j] >> 16) & 0xFF);
-                            result[count++] =
-                              (byte)((idata[i][j] >> 8) & 0xFF);
-                            result[count++] = (byte)((idata[i][j]) & 0xFF);
-                        }
+        case DataBuffer.TYPE_INT:
+            int[][] idata = ((DataBufferInt)bd).getBankData();
+            for (int i = 0; i < idata.length; i++) {
+                for (int j = 0; j < idata[i].length; j++) {
+                    // mask[maskpos++] = (byte)((idata[i][j] >> 24) & 0xFF);
+                    if (((idata[i][j] >> 24) & 0xFF) != 255) {
+                        result[count++] = (byte)0xFF;
+                        result[count++] = (byte)0xFF;
+                        result[count++] = (byte)0xFF;
+                    } else {
+                        result[count++] = (byte)((idata[i][j] >> 16) & 0xFF);
+                        result[count++] = (byte)((idata[i][j] >> 8) & 0xFF);
+                        result[count++] = (byte)((idata[i][j]) & 0xFF);
                     }
                 }
-                break;
-            default:
-                // error
-                break;
+            }
+            break;
+        default:
+            // error
+            break;
         }
 
         try {
@@ -197,12 +206,12 @@ public class PSGraphics2D extends AbstractGraphics2D {
             double[] matrix = new double[6];
             at.getMatrix(matrix);
             psRenderer.write("gsave");
-			Shape imclip = getClip();
-			writeClip(imclip);
-            //psRenderer.write("" + matrix[0] + " " + matrix[1] +
-            //                    " " + matrix[2] + " " + matrix[3] + " " +
-            //                    matrix[4] + " " + matrix[5] + " cm\n");
-psRenderer.renderBitmap(fopimg, x, y, width, height);
+            Shape imclip = getClip();
+            writeClip(imclip);
+            // psRenderer.write("" + matrix[0] + " " + matrix[1] +
+            // " " + matrix[2] + " " + matrix[3] + " " +
+            // matrix[4] + " " + matrix[5] + " cm\n");
+            psRenderer.renderBitmap(fopimg, x, y, width, height);
             psRenderer.write("grestore");
         } catch (Exception e) {
             e.printStackTrace();
@@ -225,14 +234,14 @@ psRenderer.renderBitmap(fopimg, x, y, width, height);
         byte[] m_mask;
         PDFColor transparent = new PDFColor(255, 255, 255);
 
-        TempImage(int width, int height,
-                  byte[] result, byte[] mask) throws FopImageException {
+        TempImage(int width, int height, byte[] result,
+                  byte[] mask) throws FopImageException {
             this.m_height = height;
             this.m_width = width;
             this.m_bitsPerPixel = 8;
             this.m_colorSpace = new ColorSpace(ColorSpace.DEVICE_RGB);
-            //this.m_isTransparent = false;
-            //this.m_bitmapsSize = this.m_width * this.m_height * 3;
+            // this.m_isTransparent = false;
+            // this.m_bitmapsSize = this.m_width * this.m_height * 3;
             this.m_bitmaps = result;
             this.m_mask = mask;
         }
@@ -264,18 +273,22 @@ psRenderer.renderBitmap(fopimg, x, y, width, height);
         public boolean isTransparent() throws FopImageException {
             return transparent != null;
         }
+
         public PDFColor getTransparentColor() throws FopImageException {
             return transparent;
         }
-        public byte[] getMask()  throws FopImageException {
+
+        public byte[] getMask() throws FopImageException {
             return m_mask;
         }
+
         // get the image bytes, and bytes properties
 
         // get uncompressed image bytes
         public byte[] getBitmaps() throws FopImageException {
             return m_bitmaps;
         }
+
         // width * (bitsPerPixel / 8) * height, no ?
         public int getBitmapsSize() throws FopImageException {
             return m_width * m_height * 3;
@@ -287,9 +300,11 @@ psRenderer.renderBitmap(fopimg, x, y, width, height);
         public byte[] getRessourceBytes() throws FopImageException {
             return null;
         }
+
         public int getRessourceBytesSize() throws FopImageException {
             return 0;
         }
+
         // return null if no corresponding PDFFilter
         public PDFFilter getPDFFilter() throws FopImageException {
             return null;
@@ -329,13 +344,13 @@ psRenderer.renderBitmap(fopimg, x, y, width, height);
      * @param    width  the width of the rectangle.
      * @param    height the height of the rectangle.
      * @param    observer    object to be notified as more of
-     *                          the image is converted.
+     * the image is converted.
      * @see      java.awt.Image
      * @see      java.awt.image.ImageObserver
      * @see      java.awt.image.ImageObserver#imageUpdate(java.awt.Image, int, int, int, int, int)
      */
-    public boolean drawImage(Image img, int x, int y, int width,
-                             int height, ImageObserver observer) {
+    public boolean drawImage(Image img, int x, int y, int width, int height,
+                             ImageObserver observer) {
         System.out.println("drawImage");
         return true;
     }
@@ -368,7 +383,7 @@ psRenderer.renderBitmap(fopimg, x, y, width, height);
      * @see         java.awt.Graphics#create
      */
     public void dispose() {
-        //System.out.println("dispose");
+        // System.out.println("dispose");
         psRenderer = null;
         fontState = null;
         currentFontName = null;
@@ -393,12 +408,13 @@ psRenderer.renderBitmap(fopimg, x, y, width, height);
      * @see #setComposite
      */
     public void draw(Shape s) {
-        //System.out.println("draw(Shape)");
-            psRenderer.write("gsave");
-			Shape imclip = getClip();
-			writeClip(imclip);
+        // System.out.println("draw(Shape)");
+        psRenderer.write("gsave");
+        Shape imclip = getClip();
+        writeClip(imclip);
         Color c = getColor();
-        psRenderer.write(c.getRed() + " " + c.getGreen() + " " + c.getBlue() + " setrgbcolor");
+        psRenderer.write(c.getRed() + " " + c.getGreen() + " " + c.getBlue()
+                         + " setrgbcolor");
 
         applyPaint(getPaint(), false);
         applyStroke(getStroke());
@@ -409,38 +425,41 @@ psRenderer.renderBitmap(fopimg, x, y, width, height);
             double vals[] = new double[6];
             int type = iter.currentSegment(vals);
             switch (type) {
-                case PathIterator.SEG_CUBICTO:
-                    psRenderer.write(PDFNumber.doubleOut(1000 * vals[0]) +
-                                        " " + PDFNumber.doubleOut(1000 * vals[1]) + " " +
-                                        PDFNumber.doubleOut(1000 * vals[2]) + " " +
-                                        PDFNumber.doubleOut(1000 * vals[3]) + " " +
-                                        PDFNumber.doubleOut(1000 * vals[4]) + " " +
-                                        PDFNumber.doubleOut(1000 * vals[5]) + " curveto");
-                    break;
-                case PathIterator.SEG_LINETO:
-                    psRenderer.write(PDFNumber.doubleOut(1000 * vals[0]) +
-                                        " " + PDFNumber.doubleOut(1000 * vals[1]) + " lineto");
-                    break;
-                case PathIterator.SEG_MOVETO:
-                    psRenderer.write(PDFNumber.doubleOut(1000 * vals[0]) +
-                                        " " + PDFNumber.doubleOut(1000 * vals[1]) + " M");
-                    break;
-                case PathIterator.SEG_QUADTO:
-//                    psRenderer.write((1000 * PDFNumber.doubleOut(vals[0])) +
-//                                        " " + (1000 * PDFNumber.doubleOut(vals[1])) + " " +
-//                                        (1000 * PDFNumber.doubleOut(vals[2])) + " " +
-//                                        (1000 * PDFNumber.doubleOut(vals[3])) + " y\n");
-                    break;
-                case PathIterator.SEG_CLOSE:
-                    psRenderer.write("closepath");
-                    break;
-                default:
-                    break;
+            case PathIterator.SEG_CUBICTO:
+                psRenderer.write(PDFNumber.doubleOut(1000 * vals[0]) + " "
+                                 + PDFNumber.doubleOut(1000 * vals[1]) + " "
+                                 + PDFNumber.doubleOut(1000 * vals[2]) + " "
+                                 + PDFNumber.doubleOut(1000 * vals[3]) + " "
+                                 + PDFNumber.doubleOut(1000 * vals[4]) + " "
+                                 + PDFNumber.doubleOut(1000 * vals[5])
+                                 + " curveto");
+                break;
+            case PathIterator.SEG_LINETO:
+                psRenderer.write(PDFNumber.doubleOut(1000 * vals[0]) + " "
+                                 + PDFNumber.doubleOut(1000 * vals[1])
+                                 + " lineto");
+                break;
+            case PathIterator.SEG_MOVETO:
+                psRenderer.write(PDFNumber.doubleOut(1000 * vals[0]) + " "
+                                 + PDFNumber.doubleOut(1000 * vals[1])
+                                 + " M");
+                break;
+            case PathIterator.SEG_QUADTO:
+                // psRenderer.write((1000 * PDFNumber.doubleOut(vals[0])) +
+                // " " + (1000 * PDFNumber.doubleOut(vals[1])) + " " +
+                // (1000 * PDFNumber.doubleOut(vals[2])) + " " +
+                // (1000 * PDFNumber.doubleOut(vals[3])) + " y\n");
+                break;
+            case PathIterator.SEG_CLOSE:
+                psRenderer.write("closepath");
+                break;
+            default:
+                break;
             }
             iter.next();
         }
         doDrawing(false, true, false);
-            psRenderer.write("grestore");
+        psRenderer.write("grestore");
     }
 
     protected void writeClip(Shape s) {
@@ -450,42 +469,45 @@ psRenderer.renderBitmap(fopimg, x, y, width, height);
             double vals[] = new double[6];
             int type = iter.currentSegment(vals);
             switch (type) {
-                case PathIterator.SEG_CUBICTO:
-                    psRenderer.write(PDFNumber.doubleOut(1000 * vals[0]) +
-                                        " " + PDFNumber.doubleOut(1000 * vals[1]) + " " +
-                                        PDFNumber.doubleOut(1000 * vals[2]) + " " +
-                                        PDFNumber.doubleOut(1000 * vals[3]) + " " +
-                                        PDFNumber.doubleOut(1000 * vals[4]) + " " +
-                                        PDFNumber.doubleOut(1000 * vals[5]) + " curveto");
-                    break;
-                case PathIterator.SEG_LINETO:
-                    psRenderer.write(PDFNumber.doubleOut(1000 * vals[0]) +
-                                        " " + PDFNumber.doubleOut(1000 * vals[1]) + " lineto");
-                    break;
-                case PathIterator.SEG_MOVETO:
-                    psRenderer.write(PDFNumber.doubleOut(1000 * vals[0]) +
-                                        " " + PDFNumber.doubleOut(1000 * vals[1]) + " M");
-                    break;
-                case PathIterator.SEG_QUADTO:
-//                    psRenderer.write(1000 * PDFNumber.doubleOut(vals[0]) +
-//                                        " " + 1000 * PDFNumber.doubleOut(vals[1]) + " " +
-//                                        1000 * PDFNumber.doubleOut(vals[2]) + " " +
-//                                        1000 * PDFNumber.doubleOut(vals[3]) + " y\n");
-                    break;
-                case PathIterator.SEG_CLOSE:
-                    psRenderer.write("closepath");
-                    break;
-                default:
-                    break;
+            case PathIterator.SEG_CUBICTO:
+                psRenderer.write(PDFNumber.doubleOut(1000 * vals[0]) + " "
+                                 + PDFNumber.doubleOut(1000 * vals[1]) + " "
+                                 + PDFNumber.doubleOut(1000 * vals[2]) + " "
+                                 + PDFNumber.doubleOut(1000 * vals[3]) + " "
+                                 + PDFNumber.doubleOut(1000 * vals[4]) + " "
+                                 + PDFNumber.doubleOut(1000 * vals[5])
+                                 + " curveto");
+                break;
+            case PathIterator.SEG_LINETO:
+                psRenderer.write(PDFNumber.doubleOut(1000 * vals[0]) + " "
+                                 + PDFNumber.doubleOut(1000 * vals[1])
+                                 + " lineto");
+                break;
+            case PathIterator.SEG_MOVETO:
+                psRenderer.write(PDFNumber.doubleOut(1000 * vals[0]) + " "
+                                 + PDFNumber.doubleOut(1000 * vals[1])
+                                 + " M");
+                break;
+            case PathIterator.SEG_QUADTO:
+                // psRenderer.write(1000 * PDFNumber.doubleOut(vals[0]) +
+                // " " + 1000 * PDFNumber.doubleOut(vals[1]) + " " +
+                // 1000 * PDFNumber.doubleOut(vals[2]) + " " +
+                // 1000 * PDFNumber.doubleOut(vals[3]) + " y\n");
+                break;
+            case PathIterator.SEG_CLOSE:
+                psRenderer.write("closepath");
+                break;
+            default:
+                break;
             }
             iter.next();
         }
         // clip area
-		psRenderer.write("clippath");
+        psRenderer.write("clippath");
     }
 
     protected void applyPaint(Paint paint, boolean fill) {
-        if(paint instanceof GradientPaint) {
+        if (paint instanceof GradientPaint) {
             GradientPaint gp = (GradientPaint)paint;
             Color c1 = gp.getColor1();
             Color c2 = gp.getColor2();
@@ -493,54 +515,55 @@ psRenderer.renderBitmap(fopimg, x, y, width, height);
             Point2D p2 = gp.getPoint2();
             boolean cyclic = gp.isCyclic();
 
-			Vector theCoords = new Vector();
-						theCoords.addElement( new Double(p1.getX()));
-            theCoords.addElement( new Double(p1.getY()));
-            theCoords.addElement( new Double(p2.getX()));
-            theCoords.addElement( new Double(p2.getY()));
+            Vector theCoords = new Vector();
+            theCoords.addElement(new Double(p1.getX()));
+            theCoords.addElement(new Double(p1.getY()));
+            theCoords.addElement(new Double(p2.getX()));
+            theCoords.addElement(new Double(p2.getY()));
 
-				Vector theExtend = new Vector();
-				theExtend.addElement(new Boolean(true));
-				theExtend.addElement(new Boolean(true));
+            Vector theExtend = new Vector();
+            theExtend.addElement(new Boolean(true));
+            theExtend.addElement(new Boolean(true));
 
-				Vector theDomain = new Vector();
-				theDomain.addElement(new Double(0));
-				theDomain.addElement(new Double(1));
+            Vector theDomain = new Vector();
+            theDomain.addElement(new Double(0));
+            theDomain.addElement(new Double(1));
 
-				Vector theEncode = new Vector();
-				theEncode.addElement(new Double(0));
-				theEncode.addElement(new Double(1));
-				theEncode.addElement(new Double(0));
-				theEncode.addElement(new Double(1));
+            Vector theEncode = new Vector();
+            theEncode.addElement(new Double(0));
+            theEncode.addElement(new Double(1));
+            theEncode.addElement(new Double(0));
+            theEncode.addElement(new Double(1));
 
-				Vector theBounds = new Vector();
-				theBounds.addElement(new Double(0));
-				theBounds.addElement(new Double(1));
+            Vector theBounds = new Vector();
+            theBounds.addElement(new Double(0));
+            theBounds.addElement(new Double(1));
 
-				Vector theFunctions = new Vector();
+            Vector theFunctions = new Vector();
 
             Vector someColors = new Vector();
 
-            PDFColor color1 = new PDFColor(c1.getRed(), c1.getGreen(), c1.getBlue());
+            PDFColor color1 = new PDFColor(c1.getRed(), c1.getGreen(),
+                                           c1.getBlue());
             someColors.addElement(color1);
-            PDFColor color2 = new PDFColor(c2.getRed(), c2.getGreen(), c2.getBlue());
+            PDFColor color2 = new PDFColor(c2.getRed(), c2.getGreen(),
+                                           c2.getBlue());
             someColors.addElement(color2);
 
             ColorSpace aColorSpace = new ColorSpace(ColorSpace.DEVICE_RGB);
-        } else if(paint instanceof TexturePaint) {
-        }
+        } else if (paint instanceof TexturePaint) {}
     }
 
     protected void applyStroke(Stroke stroke) {
-        if(stroke instanceof BasicStroke) {
+        if (stroke instanceof BasicStroke) {
             BasicStroke bs = (BasicStroke)stroke;
 
             float[] da = bs.getDashArray();
-            if(da != null) {
+            if (da != null) {
                 psRenderer.write("[");
-                for(int count = 0; count < da.length; count++) {
+                for (int count = 0; count < da.length; count++) {
                     psRenderer.write("" + (1000 * (int)da[count]));
-                    if(count < da.length - 1) {
+                    if (count < da.length - 1) {
                         psRenderer.write(" ");
                     }
                 }
@@ -549,35 +572,37 @@ psRenderer.renderBitmap(fopimg, x, y, width, height);
                 psRenderer.write((1000 * (int)offset) + " setdash");
             }
             int ec = bs.getEndCap();
-            switch(ec) {
-                case BasicStroke.CAP_BUTT:
-                    psRenderer.write(0 + " setlinecap");
+            switch (ec) {
+            case BasicStroke.CAP_BUTT:
+                psRenderer.write(0 + " setlinecap");
                 break;
-                case BasicStroke.CAP_ROUND:
-                    psRenderer.write(1 + " setlinecap");
+            case BasicStroke.CAP_ROUND:
+                psRenderer.write(1 + " setlinecap");
                 break;
-                case BasicStroke.CAP_SQUARE:
-                    psRenderer.write(2 + " setlinecap");
+            case BasicStroke.CAP_SQUARE:
+                psRenderer.write(2 + " setlinecap");
                 break;
             }
 
             int lj = bs.getLineJoin();
-            switch(lj) {
-                case BasicStroke.JOIN_MITER:
-                    psRenderer.write(0 + " setlinejoin");
+            switch (lj) {
+            case BasicStroke.JOIN_MITER:
+                psRenderer.write(0 + " setlinejoin");
                 break;
-                case BasicStroke.JOIN_ROUND:
-                    psRenderer.write(1 + " setlinejoin");
+            case BasicStroke.JOIN_ROUND:
+                psRenderer.write(1 + " setlinejoin");
                 break;
-                case BasicStroke.JOIN_BEVEL:
-                    psRenderer.write(2 + " setlinejoin");
+            case BasicStroke.JOIN_BEVEL:
+                psRenderer.write(2 + " setlinejoin");
                 break;
             }
             float lw = bs.getLineWidth();
-            psRenderer.write(PDFNumber.doubleOut(1000 * lw) + " setlinewidth");
+            psRenderer.write(PDFNumber.doubleOut(1000 * lw)
+                             + " setlinewidth");
 
             float ml = bs.getMiterLimit();
-            psRenderer.write(PDFNumber.doubleOut(1000 * ml) + " setmiterlimit");  
+            psRenderer.write(PDFNumber.doubleOut(1000 * ml)
+                             + " setmiterlimit");
         }
     }
 
@@ -601,8 +626,7 @@ psRenderer.renderBitmap(fopimg, x, y, width, height);
      * @see #clip
      * @see #setClip
      */
-    public void drawRenderedImage(RenderedImage img,
-                                  AffineTransform xform) {
+    public void drawRenderedImage(RenderedImage img, AffineTransform xform) {
         System.out.println("drawRenderedImage");
     }
 
@@ -619,7 +643,7 @@ psRenderer.renderBitmap(fopimg, x, y, width, height);
      * <code>Transform</code>, and <code>Composite</code> attributes. Note
      * that no rendering is done if the specified transform is
      * noninvertible.
-     *<p>
+     * <p>
      * Rendering hints set on the <code>Graphics2D</code> object might
      * be used in rendering the <code>RenderableImage</code>.
      * If explicit control is required over specific hints recognized by a
@@ -627,7 +651,7 @@ psRenderer.renderBitmap(fopimg, x, y, width, height);
      * are used is required, then a <code>RenderedImage</code> should be
      * obtained directly from the <code>RenderableImage</code>
      * and rendered using
-     *{@link #drawRenderedImage(RenderedImage, AffineTransform) drawRenderedImage}.
+     * {@link #drawRenderedImage(RenderedImage, AffineTransform) drawRenderedImage}.
      * @param img the image to be rendered
      * @param xform the transformation from image space into user space
      * @see #transform
@@ -667,20 +691,24 @@ psRenderer.renderBitmap(fopimg, x, y, width, height);
     public void drawString(String s, float x, float y) {
         System.out.println("drawString(String)");
         psRenderer.write("BT");
-      Shape imclip = getClip();
-      writeClip(imclip);
+        Shape imclip = getClip();
+        writeClip(imclip);
         Color c = getColor();
-        psRenderer.write(c.getRed() + " " + c.getGreen() + " " + c.getBlue() + " setrgbcolor");
+        psRenderer.write(c.getRed() + " " + c.getGreen() + " " + c.getBlue()
+                         + " setrgbcolor");
 
         AffineTransform trans = getTransform();
         trans.translate(x, y);
         double[] vals = new double[6];
         trans.getMatrix(vals);
 
-        psRenderer.write(PDFNumber.doubleOut(vals[0]) + " " + PDFNumber.doubleOut(vals[1]) + " "
-+ PDFNumber.doubleOut(vals[2]) + " " + PDFNumber.doubleOut(vals[3]) + " " + PDFNumber.doubleOut(vals[4])
-+ " " + PDFNumber.doubleOut(vals[5]) + " " +
-                           PDFNumber.doubleOut(vals[6]) + " Tm [" + s + "]");
+        psRenderer.write(PDFNumber.doubleOut(vals[0]) + " "
+                         + PDFNumber.doubleOut(vals[1]) + " "
+                         + PDFNumber.doubleOut(vals[2]) + " "
+                         + PDFNumber.doubleOut(vals[3]) + " "
+                         + PDFNumber.doubleOut(vals[4]) + " "
+                         + PDFNumber.doubleOut(vals[5]) + " "
+                         + PDFNumber.doubleOut(vals[6]) + " Tm [" + s + "]");
 
         psRenderer.write("ET");
     }
@@ -708,13 +736,13 @@ psRenderer.renderBitmap(fopimg, x, y, width, height);
      * @see #setComposite
      * @see #setClip
      */
-    public void drawString(AttributedCharacterIterator iterator,
-                           float x, float y) {
+    public void drawString(AttributedCharacterIterator iterator, float x,
+                           float y) {
         System.err.println("drawString(AttributedCharacterIterator)");
 
         psRenderer.write("BT");
-      Shape imclip = getClip();
-      writeClip(imclip);
+        Shape imclip = getClip();
+        writeClip(imclip);
         Color c = getColor();
         currentColour = new PDFColor(c.getRed(), c.getGreen(), c.getBlue());
         psRenderer.write(currentColour.getColorSpaceOut(true));
@@ -727,13 +755,18 @@ psRenderer.renderBitmap(fopimg, x, y, width, height);
         double[] vals = new double[6];
         trans.getMatrix(vals);
 
-        for(char ch = iterator.first(); ch != CharacterIterator.DONE; ch = iterator.next()) {
+        for (char ch = iterator.first(); ch != CharacterIterator.DONE;
+                ch = iterator.next()) {
             Map attr = iterator.getAttributes();
 
-            psRenderer.write(PDFNumber.doubleOut(vals[0]) + " " + PDFNumber.doubleOut(vals[1]) + " "
-+ PDFNumber.doubleOut(vals[2]) + " " + PDFNumber.doubleOut(vals[3]) + " " + PDFNumber.doubleOut(vals[4])
-+ " " + PDFNumber.doubleOut(vals[5]) + " " +
-                           PDFNumber.doubleOut(vals[6]) + " Tm [" + ch + "]");
+            psRenderer.write(PDFNumber.doubleOut(vals[0]) + " "
+                             + PDFNumber.doubleOut(vals[1]) + " "
+                             + PDFNumber.doubleOut(vals[2]) + " "
+                             + PDFNumber.doubleOut(vals[3]) + " "
+                             + PDFNumber.doubleOut(vals[4]) + " "
+                             + PDFNumber.doubleOut(vals[5]) + " "
+                             + PDFNumber.doubleOut(vals[6]) + " Tm [" + ch
+                             + "]");
         }
 
         psRenderer.write("ET");
@@ -754,12 +787,13 @@ psRenderer.renderBitmap(fopimg, x, y, width, height);
      * @see #setClip
      */
     public void fill(Shape s) {
-        //System.err.println("fill");
-            psRenderer.write("gsave");
-			Shape imclip = getClip();
-			writeClip(imclip);
+        // System.err.println("fill");
+        psRenderer.write("gsave");
+        Shape imclip = getClip();
+        writeClip(imclip);
         Color c = getColor();
-        psRenderer.write(c.getRed() + " " + c.getGreen() + " " + c.getBlue() + " setrgbcolor");
+        psRenderer.write(c.getRed() + " " + c.getGreen() + " " + c.getBlue()
+                         + " setrgbcolor");
 
         applyPaint(getPaint(), true);
 
@@ -769,43 +803,45 @@ psRenderer.renderBitmap(fopimg, x, y, width, height);
             double vals[] = new double[6];
             int type = iter.currentSegment(vals);
             switch (type) {
-                case PathIterator.SEG_CUBICTO:
-                    psRenderer.write(PDFNumber.doubleOut(1000 * vals[0]) +
-                                        " " + PDFNumber.doubleOut(1000 * vals[1]) + " " +
-                                        PDFNumber.doubleOut(1000 * vals[2]) + " " +
-                                        PDFNumber.doubleOut(1000 * vals[3]) + " " +
-                                        PDFNumber.doubleOut(1000 * vals[4]) + " " +
-                                        PDFNumber.doubleOut(1000 * vals[5]) + " curveto");
-                    break;
-                case PathIterator.SEG_LINETO:
-                    psRenderer.write(PDFNumber.doubleOut(1000 * vals[0]) +
-                                        " " + PDFNumber.doubleOut(1000 * vals[1]) + " lineto");
-                    break;
-                case PathIterator.SEG_MOVETO:
-                    psRenderer.write(PDFNumber.doubleOut(1000 * vals[0]) +
-                                        " " + PDFNumber.doubleOut(1000 * vals[1]) + " M");
-                    break;
-                case PathIterator.SEG_QUADTO:
-                    //psRenderer.write(1000 * PDFNumber.doubleOut(vals[0]) +
-                    //                    " " + 1000 * PDFNumber.doubleOut(vals[1]) + " " +
-                    //                    1000 * PDFNumber.doubleOut(vals[2]) + " " +
-                    //                    1000 * PDFNumber.doubleOut(vals[3]) + " y\n");
-                    break;
-                case PathIterator.SEG_CLOSE:
-                    psRenderer.write("closepath");
-                    break;
-                default:
-                    break;
+            case PathIterator.SEG_CUBICTO:
+                psRenderer.write(PDFNumber.doubleOut(1000 * vals[0]) + " "
+                                 + PDFNumber.doubleOut(1000 * vals[1]) + " "
+                                 + PDFNumber.doubleOut(1000 * vals[2]) + " "
+                                 + PDFNumber.doubleOut(1000 * vals[3]) + " "
+                                 + PDFNumber.doubleOut(1000 * vals[4]) + " "
+                                 + PDFNumber.doubleOut(1000 * vals[5])
+                                 + " curveto");
+                break;
+            case PathIterator.SEG_LINETO:
+                psRenderer.write(PDFNumber.doubleOut(1000 * vals[0]) + " "
+                                 + PDFNumber.doubleOut(1000 * vals[1])
+                                 + " lineto");
+                break;
+            case PathIterator.SEG_MOVETO:
+                psRenderer.write(PDFNumber.doubleOut(1000 * vals[0]) + " "
+                                 + PDFNumber.doubleOut(1000 * vals[1])
+                                 + " M");
+                break;
+            case PathIterator.SEG_QUADTO:
+                // psRenderer.write(1000 * PDFNumber.doubleOut(vals[0]) +
+                // " " + 1000 * PDFNumber.doubleOut(vals[1]) + " " +
+                // 1000 * PDFNumber.doubleOut(vals[2]) + " " +
+                // 1000 * PDFNumber.doubleOut(vals[3]) + " y\n");
+                break;
+            case PathIterator.SEG_CLOSE:
+                psRenderer.write("closepath");
+                break;
+            default:
+                break;
             }
             iter.next();
         }
         doDrawing(true, false,
                   iter.getWindingRule() == PathIterator.WIND_EVEN_ODD);
-            psRenderer.write("grestore");
+        psRenderer.write("grestore");
     }
 
-    protected void doDrawing(boolean fill, boolean stroke,
-                             boolean nonzero) {
+    protected void doDrawing(boolean fill, boolean stroke, boolean nonzero) {
         if (fill) {
             if (stroke) {
                 if (!nonzero)
@@ -819,7 +855,7 @@ psRenderer.renderBitmap(fopimg, x, y, width, height);
                     psRenderer.write("fill");
             }
         } else {
-            //if(stroke)
+            // if(stroke)
             psRenderer.write("stroke");
         }
     }
@@ -829,9 +865,8 @@ psRenderer.renderBitmap(fopimg, x, y, width, height);
      * <code>Graphics2D</code>.
      */
     public GraphicsConfiguration getDeviceConfiguration() {
-        //System.out.println("getDeviceConviguration");
-        return GraphicsEnvironment.getLocalGraphicsEnvironment().
-               getDefaultScreenDevice().getDefaultConfiguration();
+        // System.out.println("getDeviceConviguration");
+        return GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
     }
 
     /**
@@ -840,8 +875,8 @@ psRenderer.renderBitmap(fopimg, x, y, width, height);
     private Graphics2D fmg;
 
     {
-        BufferedImage bi =
-          new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage bi = new BufferedImage(1, 1,
+                                             BufferedImage.TYPE_INT_ARGB);
 
         fmg = bi.createGraphics();
     }

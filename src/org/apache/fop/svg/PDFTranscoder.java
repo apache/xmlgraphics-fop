@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -130,7 +131,9 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
     public static final TranscodingHints.Key KEY_STROKE_TEXT =
         new StringKey();
 
-    /** The user agent dedicated to an <tt>ImageTranscoder</tt>. */
+    /**
+     * The user agent dedicated to an <tt>ImageTranscoder</tt>.
+     */
     protected UserAgent userAgent = new ImageTranscoderUserAgent();
 
     /**
@@ -156,21 +159,20 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
                              TranscoderOutput output) throws TranscoderException {
 
         if (!(document instanceof SVGOMDocument)) {
-            throw new TranscoderException(
-              Messages.formatMessage("notsvg", null));
+            throw new TranscoderException(Messages.formatMessage("notsvg",
+                    null));
         }
-        SVGDocument svgDoc = (SVGDocument) document;
+        SVGDocument svgDoc = (SVGDocument)document;
         SVGSVGElement root = svgDoc.getRootElement();
         // initialize the SVG document with the appropriate context
-        String parserClassname =
-          (String) hints.get(KEY_XML_PARSER_CLASSNAME);
+        String parserClassname = (String)hints.get(KEY_XML_PARSER_CLASSNAME);
         DefaultSVGContext svgCtx = new DefaultSVGContext();
         svgCtx.setPixelToMM(userAgent.getPixelToMM());
-        ((SVGOMDocument) document).setSVGContext(svgCtx);
+        ((SVGOMDocument)document).setSVGContext(svgCtx);
 
         boolean stroke = true;
         if (hints.containsKey(KEY_STROKE_TEXT)) {
-            stroke = ((Boolean) hints.get(KEY_STROKE_TEXT)).booleanValue();
+            stroke = ((Boolean)hints.get(KEY_STROKE_TEXT)).booleanValue();
         }
 
         // build the GVT tree
@@ -187,21 +189,21 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
             throw new TranscoderException(ex);
         }
         // get the 'width' and 'height' attributes of the SVG document
-        float docWidth = (float) ctx.getDocumentSize().getWidth();
-        float docHeight = (float) ctx.getDocumentSize().getHeight();
+        float docWidth = (float)ctx.getDocumentSize().getWidth();
+        float docHeight = (float)ctx.getDocumentSize().getHeight();
         ctx = null;
         builder = null;
 
         // compute the image's width and height according the hints
         float imgWidth = -1;
         if (hints.containsKey(ImageTranscoder.KEY_WIDTH)) {
-            imgWidth = ((Float) hints.get(ImageTranscoder.KEY_WIDTH)).
-                       floatValue();
+            imgWidth =
+                ((Float)hints.get(ImageTranscoder.KEY_WIDTH)).floatValue();
         }
         float imgHeight = -1;
         if (hints.containsKey(ImageTranscoder.KEY_HEIGHT)) {
-            imgHeight = ((Float) hints.get(ImageTranscoder.KEY_HEIGHT)).
-                        floatValue();
+            imgHeight =
+                ((Float)hints.get(ImageTranscoder.KEY_HEIGHT)).floatValue();
         }
         float width, height;
         if (imgWidth > 0 && imgHeight > 0) {
@@ -242,8 +244,7 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         }
         // take the AOI into account if any
         if (hints.containsKey(ImageTranscoder.KEY_AOI)) {
-            Rectangle2D aoi =
-              (Rectangle2D) hints.get(ImageTranscoder.KEY_AOI);
+            Rectangle2D aoi = (Rectangle2D)hints.get(ImageTranscoder.KEY_AOI);
             // transform the AOI into the image's coordinate system
             aoi = Px.createTransformedShape(aoi).getBounds2D();
             AffineTransform Mx = new AffineTransform();
@@ -258,11 +259,11 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
             Px.preConcatenate(Mx);
         }
         // prepare the image to be painted
-        int w = (int) width;
-        int h = (int) height;
+        int w = (int)width;
+        int h = (int)height;
 
         PDFDocumentGraphics2D graphics = new PDFDocumentGraphics2D(stroke,
-                                         output.getOutputStream(), w, h);
+                output.getOutputStream(), w, h);
         graphics.setSVGDimension(docWidth, docHeight);
 
         if (!stroke) {
@@ -273,11 +274,9 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
 
         pdfAElementBridge.setPDFGraphics2D(graphics);
         if (hints.containsKey(ImageTranscoder.KEY_BACKGROUND_COLOR)) {
-            graphics.setBackgroundColor( (Color) hints.get(
-                                           ImageTranscoder.KEY_BACKGROUND_COLOR));
+            graphics.setBackgroundColor((Color)hints.get(ImageTranscoder.KEY_BACKGROUND_COLOR));
         }
-        graphics.setGraphicContext(
-          new org.apache.batik.ext.awt.g2d.GraphicContext());
+        graphics.setGraphicContext(new org.apache.batik.ext.awt.g2d.GraphicContext());
         graphics.setRenderingHints(rc.getRenderingHints());
 
         gvtRoot.paint(graphics, rc);
@@ -301,18 +300,18 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
                       RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
             FontRenderContext fontRenderContext =
-              new FontRenderContext(new AffineTransform(), true,
-                                    true);
+                new FontRenderContext(new AffineTransform(), true, true);
 
             TextPainter textPainter = null;
             textPainter = new StrokingTextPainter();
 
             GraphicsNodeRableFactory gnrFactory =
-              new ConcreteGraphicsNodeRableFactory();
+                new ConcreteGraphicsNodeRableFactory();
 
-            nodeRenderContext = new GraphicsNodeRenderContext(
-                                  new AffineTransform(), null, hints,
-                                  fontRenderContext, textPainter, gnrFactory);
+            nodeRenderContext =
+                new GraphicsNodeRenderContext(new AffineTransform(), null,
+                                              hints, fontRenderContext,
+                                              textPainter, gnrFactory);
         }
 
         return nodeRenderContext;
@@ -326,8 +325,8 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
      * @param domImpl the DOM Implementation (not used)
      * @param parserClassname the XML parser classname
      */
-    protected DocumentFactory createDocumentFactory(
-      DOMImplementation domImpl, String parserClassname) {
+    protected DocumentFactory createDocumentFactory(DOMImplementation domImpl,
+            String parserClassname) {
         return new SAXSVGDocumentFactory(parserClassname);
     }
 
@@ -374,8 +373,7 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
          */
         public void displayMessage(String message) {
             try {
-                getErrorHandler().warning(
-                  new TranscoderException(message));
+                getErrorHandler().warning(new TranscoderException(message));
             } catch (TranscoderException ex) {
                 throw new RuntimeException();
             }
@@ -386,13 +384,11 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
          * <tt>TranscodingHints</tt> or 0.3528 if any.
          */
         public float getPixelToMM() {
-            if (getTranscodingHints().containsKey(
-                      ImageTranscoder.KEY_PIXEL_TO_MM)) {
-                return ( (Float) getTranscodingHints().get(
-                           ImageTranscoder.KEY_PIXEL_TO_MM)).floatValue();
+            if (getTranscodingHints().containsKey(ImageTranscoder.KEY_PIXEL_TO_MM)) {
+                return ((Float)getTranscodingHints().get(ImageTranscoder.KEY_PIXEL_TO_MM)).floatValue();
             } else {
                 // return 0.3528f; // 72 dpi
-                return 0.26458333333333333333333333333333f; // 96dpi
+                return 0.26458333333333333333333333333333f;    // 96dpi
             }
         }
 
@@ -401,10 +397,8 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
          * <tt>TranscodingHints</tt> or "en" (english) if any.
          */
         public String getLanguages() {
-            if (getTranscodingHints().containsKey(
-                      ImageTranscoder.KEY_LANGUAGE)) {
-                return (String) getTranscodingHints().get(
-                         ImageTranscoder.KEY_LANGUAGE);
+            if (getTranscodingHints().containsKey(ImageTranscoder.KEY_LANGUAGE)) {
+                return (String)getTranscodingHints().get(ImageTranscoder.KEY_LANGUAGE);
             } else {
                 return "en";
             }
@@ -415,18 +409,15 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
          * <tt>TranscodingHints</tt> or null if any.
          */
         public String getUserStyleSheetURI() {
-            return (String) getTranscodingHints().get(
-                     ImageTranscoder.KEY_USER_STYLESHEET_URI);
+            return (String)getTranscodingHints().get(ImageTranscoder.KEY_USER_STYLESHEET_URI);
         }
 
         /**
          * Returns the XML parser to use from the TranscodingHints.
          */
         public String getXMLParserClassName() {
-            if (getTranscodingHints().containsKey(
-                      KEY_XML_PARSER_CLASSNAME)) {
-                return (String) getTranscodingHints().get(
-                         KEY_XML_PARSER_CLASSNAME);
+            if (getTranscodingHints().containsKey(KEY_XML_PARSER_CLASSNAME)) {
+                return (String)getTranscodingHints().get(KEY_XML_PARSER_CLASSNAME);
             } else {
                 return XMLResourceDescriptor.getXMLParserClassName();
             }
@@ -442,17 +433,17 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         /**
          * Unsupported operation.
          */
-        public void openLink(SVGAElement elt) { }
+        public void openLink(SVGAElement elt) {}
 
         /**
          * Unsupported operation.
          */
-        public void setSVGCursor(Cursor cursor) { }
+        public void setSVGCursor(Cursor cursor) {}
 
         /**
          * Unsupported operation.
          */
-        public void runThread(Thread t) { }
+        public void runThread(Thread t) {}
 
         /**
          * Unsupported operation.
@@ -484,8 +475,8 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
             return false;
         }
 
-        public void registerExtension(BridgeExtension be) {
-        }
+        public void registerExtension(BridgeExtension be) {}
+
     }
 
     protected final static Set FEATURES = new HashSet();

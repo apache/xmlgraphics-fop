@@ -1,9 +1,10 @@
-/*-- $Id$ --
- *
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
- * LICENSE file included with these sources."
+ * LICENSE file included with these sources.
  */
+
 package org.apache.fop.fonts.apps;
 
 import java.io.*;
@@ -25,23 +26,21 @@ import java.util.Enumeration;
 public class PFMReader {
     private boolean invokedStandalone = false;
 
-    public PFMReader() {
-    }
+    public PFMReader() {}
 
 
     /**
-      * Parse commandline arguments. put options in the Hashtable and return
-      * arguments in the String array
-      * the arguments: -fn Perpetua,Bold -cn PerpetuaBold per.ttf Perpetua.xml
-      * returns a String[] with the per.ttf and Perpetua.xml. The hash
-      * will have the (key, value) pairs: (-fn, Perpetua) and (-cn, PerpetuaBold)
-      */
-    private static String[] parseArguments(Hashtable options,
-                                           String[] args) {
+     * Parse commandline arguments. put options in the Hashtable and return
+     * arguments in the String array
+     * the arguments: -fn Perpetua,Bold -cn PerpetuaBold per.ttf Perpetua.xml
+     * returns a String[] with the per.ttf and Perpetua.xml. The hash
+     * will have the (key, value) pairs: (-fn, Perpetua) and (-cn, PerpetuaBold)
+     */
+    private static String[] parseArguments(Hashtable options, String[] args) {
         Vector arguments = new Vector();
         for (int i = 0; i < args.length; i++) {
             if (args[i].startsWith("-")) {
-                if ((i + 1) < args.length && !args[i + 1].startsWith("-")) {
+                if ((i + 1) < args.length &&!args[i + 1].startsWith("-")) {
                     options.put(args[i], args[i + 1]);
                     i++;
                 } else {
@@ -61,32 +60,32 @@ public class PFMReader {
         System.out.println(" java org.apache.fop.fonts.apps.PFMReader [options] metricfile.pfm xmlfile.xml\n");
         System.out.println(" where options can be:\n");
         System.out.println(" -fn <fontname>\n");
-        System.out.println("     default is to use the fontname in the .ttf file, but\n"+
-                           "     you can override that name to make sure that the\n");
+        System.out.println("     default is to use the fontname in the .ttf file, but\n"
+                           + "     you can override that name to make sure that the\n");
         System.out.println("     embedded font is used (if you're embedding fonts)\n");
         System.out.println("     instead of installed fonts when viewing documents with Acrobat Reader.\n");
     }
 
 
     /**
-      * The main method for the PFM reader tool.
-      *
-      * @param  args Command-line arguments: [options] metricfile.pfm xmlfile.xml
-      * where options can be:
-      * -fn <fontname>
-      *     default is to use the fontname in the .pfm file, but you can override
-      *     that name to make sure that the embedded font is used instead of installed
-      *     fonts when viewing documents with Acrobat Reader.
-      * -cn <classname>
-      *     default is to use the fontname
-      * -ef <path to the Type1 .pfb fontfile>
-      *     will add the possibility to embed the font. When running fop, fop will look
-      *     for this file to embed it
-      * -er <path to Type1 fontfile relative to org/apache/fop/render/pdf/fonts>
-      *     you can also include the fontfile in the fop.jar file when building fop.
-      *     You can use both -ef and -er. The file specified in -ef will be searched first,
-      *     then the -er file.
-      */
+     * The main method for the PFM reader tool.
+     *
+     * @param  args Command-line arguments: [options] metricfile.pfm xmlfile.xml
+     * where options can be:
+     * -fn <fontname>
+     * default is to use the fontname in the .pfm file, but you can override
+     * that name to make sure that the embedded font is used instead of installed
+     * fonts when viewing documents with Acrobat Reader.
+     * -cn <classname>
+     * default is to use the fontname
+     * -ef <path to the Type1 .pfb fontfile>
+     * will add the possibility to embed the font. When running fop, fop will look
+     * for this file to embed it
+     * -er <path to Type1 fontfile relative to org/apache/fop/render/pdf/fonts>
+     * you can also include the fontfile in the fop.jar file when building fop.
+     * You can use both -ef and -er. The file specified in -ef will be searched first,
+     * then the -er file.
+     */
     public static void main(String[] args) {
         String embFile = null;
         String embResource = null;
@@ -103,29 +102,27 @@ public class PFMReader {
         System.out.println();
 
         if (options.get("-ef") != null)
-            embFile = (String) options.get("-ef");
+            embFile = (String)options.get("-ef");
 
         if (options.get("-er") != null)
-            embResource = (String) options.get("-er");
+            embResource = (String)options.get("-er");
 
         if (options.get("-fn") != null)
-            fontName = (String) options.get("-fn");
+            fontName = (String)options.get("-fn");
 
         if (options.get("-cn") != null)
-            className = (String) options.get("-cn");
+            className = (String)options.get("-cn");
 
-        if (arguments.length != 2 || options.get("-h") != null ||
-                options.get("-help") != null ||
-                options.get("--help") != null)
+        if (arguments.length != 2 || options.get("-h") != null
+            || options.get("-help") != null || options.get("--help") != null)
             displayUsage();
         else {
             PFMFile pfm = app.loadPFM(arguments[0]);
             if (pfm != null) {
                 app.preview(pfm);
 
-                org.w3c.dom.Document doc =
-                  app.constructFontXML(pfm, fontName, className,
-                                       embResource, embFile);
+                org.w3c.dom.Document doc = app.constructFontXML(pfm,
+                        fontName, className, embResource, embFile);
 
                 app.writeFontXML(doc, arguments[1]);
             }
@@ -134,11 +131,11 @@ public class PFMReader {
 
 
     /**
-      * Read a PFM file and returns it as an object.
-      *
-      * @param   filename The filename of the PFM file.
-      * @return  The PFM as an object.
-      */
+     * Read a PFM file and returns it as an object.
+     *
+     * @param   filename The filename of the PFM file.
+     * @return  The PFM as an object.
+     */
     public PFMFile loadPFM(String filename) {
         try {
             System.out.println("Reading " + filename + "...");
@@ -154,10 +151,10 @@ public class PFMReader {
     }
 
     /**
-      * Displays a preview of the PFM file on the console.
-      *
-      * @param   pfm The PFM file to preview.
-      */
+     * Displays a preview of the PFM file on the console.
+     *
+     * @param   pfm The PFM file to preview.
+     */
     public void preview(PFMFile pfm) {
         PrintStream out = System.out;
 
@@ -190,20 +187,20 @@ public class PFMReader {
     }
 
     /**
-      * Writes the generated DOM Document to a file.
-      *
-      * @param   doc The DOM Document to save.
-      * @param   target The target filename for the XML file.
-      */
+     * Writes the generated DOM Document to a file.
+     *
+     * @param   doc The DOM Document to save.
+     * @param   target The target filename for the XML file.
+     */
     public void writeFontXML(org.w3c.dom.Document doc, String target) {
         System.out.println("Writing xml font file " + target + "...");
         System.out.println();
 
         try {
-            OutputFormat format = new OutputFormat(doc); //Serialize DOM
-            FileWriter out = new FileWriter(target); //Writer will be a String
+            OutputFormat format = new OutputFormat(doc);    // Serialize DOM
+            FileWriter out = new FileWriter(target);    // Writer will be a String
             XMLSerializer serial = new XMLSerializer(out, format);
-            serial.asDOMSerializer(); // As a DOM Serializer
+            serial.asDOMSerializer();                       // As a DOM Serializer
 
             serial.serialize(doc.getDocumentElement());
             out.close();
@@ -213,14 +210,13 @@ public class PFMReader {
     }
 
     /**
-      * Generates the font metrics file from the PFM file.
-      *
-      * @param   pfm The PFM file to generate the font metrics from.
-      * @return  The DOM document representing the font metrics file.
-      */
+     * Generates the font metrics file from the PFM file.
+     *
+     * @param   pfm The PFM file to generate the font metrics from.
+     * @return  The DOM document representing the font metrics file.
+     */
     public org.w3c.dom.Document constructFontXML(PFMFile pfm,
-            String fontName, String className, String resource,
-            String file) {
+            String fontName, String className, String resource, String file) {
         System.out.println("Creating xml font file...");
         System.out.println();
 
@@ -276,7 +272,9 @@ public class PFMReader {
         Element bbox = doc.createElement("bbox");
         root.appendChild(bbox);
         int[] bb = pfm.getFontBBox();
-        String[] names = {"left","bottom","right","top"};
+        String[] names = {
+            "left", "bottom", "right", "top"
+        };
         for (int i = 0; i < 4; i++) {
             el = doc.createElement(names[i]);
             bbox.appendChild(el);
@@ -323,19 +321,19 @@ public class PFMReader {
 
         // Get kerning
         for (Enumeration enum = pfm.getKerning().keys();
-                enum.hasMoreElements();) {
-            Integer kpx1 = (Integer) enum.nextElement();
+                enum.hasMoreElements(); ) {
+            Integer kpx1 = (Integer)enum.nextElement();
             el = doc.createElement("kerning");
             el.setAttribute("kpx1", kpx1.toString());
             root.appendChild(el);
             Element el2 = null;
 
-            Hashtable h2 = (Hashtable) pfm.getKerning().get(kpx1);
-            for (Enumeration enum2 = h2.keys(); enum2.hasMoreElements();) {
-                Integer kpx2 = (Integer) enum2.nextElement();
+            Hashtable h2 = (Hashtable)pfm.getKerning().get(kpx1);
+            for (Enumeration enum2 = h2.keys(); enum2.hasMoreElements(); ) {
+                Integer kpx2 = (Integer)enum2.nextElement();
                 el2 = doc.createElement("pair");
                 el2.setAttribute("kpx2", kpx2.toString());
-                Integer val = (Integer) h2.get(kpx2);
+                Integer val = (Integer)h2.get(kpx2);
                 el2.setAttribute("kern", val.toString());
                 el.appendChild(el2);
             }
@@ -356,6 +354,7 @@ public class PFMReader {
 
         return esc.toString();
     }
+
 }
 
 

@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -13,31 +14,30 @@ import org.apache.fop.apps.FOPException;
  *
  */
 public class TextState {
-	
+
     protected boolean underlined;
     protected boolean overlined;
     protected boolean linethrough;
 
-    public TextState() throws FOPException {
-    }
+    public TextState() throws FOPException {}
 
     /**
      * @return true if text should be underlined
-	 */
+     */
     public boolean getUnderlined() {
         return underlined;
     }
 
     /**
      * set text as underlined
-	 */
+     */
     public void setUnderlined(boolean ul) {
         this.underlined = ul;
     }
 
     /**
      * @return true if text should be overlined
-	 */
+     */
     public boolean getOverlined() {
         return overlined;
     }

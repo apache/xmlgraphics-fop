@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -37,7 +38,7 @@ public class FopImageFactory {
      * @exception FopImageException an error occured during construction
      */
     public static FopImage Make(String href)
-        throws MalformedURLException, FopImageException {
+            throws MalformedURLException, FopImageException {
 
         // Get the absolute URL
         URL absoluteURL = null;
@@ -51,92 +52,90 @@ public class FopImageFactory {
             }
             imgIS = absoluteURL.openStream();
         } catch (MalformedURLException e_context) {
-            throw new FopImageException("Error with image URL: " +
-                                        e_context.getMessage());
-        }
-        catch (Exception e) {
+            throw new FopImageException("Error with image URL: "
+                                        + e_context.getMessage());
+        } catch (Exception e) {
             // maybe relative
             URL context_url = null;
             try {
-                absoluteURL = new URL(
-                                Configuration.getStringValue("baseDir") +
-                                absoluteURL.getFile());
+                absoluteURL = new URL(Configuration.getStringValue("baseDir")
+                                      + absoluteURL.getFile());
             } catch (MalformedURLException e_context) {
                 // pb context url
-                throw new FopImageException(
-                  "Invalid Image URL - error on relative URL : " +
-                  e_context.getMessage());
+                throw new FopImageException("Invalid Image URL - error on relative URL : "
+                                            + e_context.getMessage());
             }
         }
 
         // check if already created
-        FopImage imageObject =
-          (FopImage) m_urlMap.get(absoluteURL.toString());
+        FopImage imageObject = (FopImage)m_urlMap.get(absoluteURL.toString());
         if (imageObject != null)
             return imageObject;
 
-        // If not, check image type
+            // If not, check image type
         ImageReader imgReader = null;
         try {
             if (imgIS == null) {
                 imgIS = absoluteURL.openStream();
             }
-            imgReader = ImageReaderFactory.Make(
-                          absoluteURL.toExternalForm(), imgIS);
+            imgReader = ImageReaderFactory.Make(absoluteURL.toExternalForm(),
+                                                imgIS);
         } catch (Exception e) {
-            throw new FopImageException(
-              "Error while recovering Image Informations (" +
-              absoluteURL.toString() + ") : " + e.getMessage());
+            throw new FopImageException("Error while recovering Image Informations ("
+                                        + absoluteURL.toString() + ") : "
+                                        + e.getMessage());
         }
-        finally { if (imgIS != null) {
-                  try {
-                          imgIS.close();
-                  } catch (IOException e) {}
-                  }
-            } if (imgReader == null)
-            throw new FopImageException(
-              "No ImageReader for this type of image (" +
-              absoluteURL.toString() + ")");
-        // Associate mime-type to FopImage class
+        finally {
+            if (imgIS != null) {
+                try {
+                    imgIS.close();
+                } catch (IOException e) {}
+            }
+        }
+        if (imgReader == null)
+            throw new FopImageException("No ImageReader for this type of image ("
+                                        + absoluteURL.toString() + ")");
+            // Associate mime-type to FopImage class
         String imgMimeType = imgReader.getMimeType();
         String imgClassName = null;
         if ("image/gif".equals(imgMimeType)) {
             imgClassName = "org.apache.fop.image.GifJpegImage";
-            //      imgClassName = "org.apache.fop.image.JAIImage";
+            // imgClassName = "org.apache.fop.image.JAIImage";
         } else if ("image/jpeg".equals(imgMimeType)) {
             imgClassName = "org.apache.fop.image.GifJpegImage";
-            //      imgClassName = "org.apache.fop.image.JAIImage";
+            // imgClassName = "org.apache.fop.image.JAIImage";
         } else if ("image/bmp".equals(imgMimeType)) {
             imgClassName = "org.apache.fop.image.BmpImage";
-            //      imgClassName = "org.apache.fop.image.JAIImage";
+            // imgClassName = "org.apache.fop.image.JAIImage";
         } else if ("image/png".equals(imgMimeType)) {
             imgClassName = "org.apache.fop.image.JimiImage";
-            //      imgClassName = "org.apache.fop.image.JAIImage";
+            // imgClassName = "org.apache.fop.image.JAIImage";
         } else if ("image/tga".equals(imgMimeType)) {
             imgClassName = "org.apache.fop.image.JimiImage";
-            //      imgClassName = "org.apache.fop.image.JAIImage";
+            // imgClassName = "org.apache.fop.image.JAIImage";
         } else if ("image/tiff".equals(imgMimeType)) {
             imgClassName = "org.apache.fop.image.JimiImage";
-            //      imgClassName = "org.apache.fop.image.JAIImage";
+            // imgClassName = "org.apache.fop.image.JAIImage";
         } else if ("image/svg+xml".equals(imgMimeType)) {
             imgClassName = "org.apache.fop.image.SVGImage";
         }
         if (imgClassName == null)
-            throw new FopImageException("Unsupported image type (" +
-                                        absoluteURL.toString() + ") : " + imgMimeType);
+            throw new FopImageException("Unsupported image type ("
+                                        + absoluteURL.toString() + ") : "
+                                        + imgMimeType);
 
-        // load the right image class
-        // return new <FopImage implementing class>
+            // load the right image class
+            // return new <FopImage implementing class>
         Object imageInstance = null;
         Class imageClass = null;
         try {
             imageClass = Class.forName(imgClassName);
             Class[] imageConstructorParameters = new Class[2];
             imageConstructorParameters[0] = Class.forName("java.net.URL");
-            imageConstructorParameters[1] = Class.forName("org.apache.fop.image.analyser.ImageReader");
+            imageConstructorParameters[1] =
+                Class.forName("org.apache.fop.image.analyser.ImageReader");
             Constructor imageConstructor =
-              imageClass.getDeclaredConstructor(
-                imageConstructorParameters);
+                imageClass.getDeclaredConstructor(imageConstructorParameters);
             Object[] initArgs = new Object[2];
             initArgs[0] = absoluteURL;
             initArgs[1] = imgReader;
@@ -149,24 +148,24 @@ public class FopImageFactory {
             } else {
                 msg = ex.getMessage();
             }
-            throw new FopImageException(
-              "Error creating FopImage object (" +
-              absoluteURL.toString() + ") : " + msg);
+            throw new FopImageException("Error creating FopImage object ("
+                                        + absoluteURL.toString() + ") : "
+                                        + msg);
+        } catch (Exception ex) {
+            throw new FopImageException("Error creating FopImage object ("
+                                        + "Error creating FopImage object ("
+                                        + absoluteURL.toString() + ") : "
+                                        + ex.getMessage());
         }
-        catch (Exception ex) {
-            throw new FopImageException(
-              "Error creating FopImage object (" +
-              "Error creating FopImage object (" +
-              absoluteURL.toString() + ") : " + ex.getMessage());
-        }
-        if (! (imageInstance instanceof org.apache.fop.image.FopImage)) {
-            throw new FopImageException(
-              "Error creating FopImage object (" +
-              absoluteURL.toString() + ") : " + "class " +
-              imageClass.getName() + " doesn't implement org.apache.fop.image.FopImage interface");
+        if (!(imageInstance instanceof org.apache.fop.image.FopImage)) {
+            throw new FopImageException("Error creating FopImage object ("
+                                        + absoluteURL.toString() + ") : "
+                                        + "class " + imageClass.getName()
+                                        + " doesn't implement org.apache.fop.image.FopImage interface");
         }
         m_urlMap.put(absoluteURL.toString(), imageInstance);
-        return (FopImage) imageInstance;
+        return (FopImage)imageInstance;
     }
+
 }
 

@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -32,12 +33,14 @@ import java.util.Enumeration;
 
 /**
  * Renderer that renders areas to PCL
-
-	Created by Arthur E Welch III while at M&I EastPoint Technology
-	Donated by EastPoint to the Apache FOP project March 2, 2001.
+ * Created by Arthur E Welch III while at M&I EastPoint Technology
+ * Donated by EastPoint to the Apache FOP project March 2, 2001.
  */
 public class PCLRenderer extends PrintRenderer {
-    /** the current stream to add PCL commands to */
+
+    /**
+     * the current stream to add PCL commands to
+     */
     public PCLStream currentStream;
 
     private int pageHeight = 7920;
@@ -45,24 +48,27 @@ public class PCLRenderer extends PrintRenderer {
     // These variables control the virtual paggination functionality.
     public int curdiv = 0;
     private int divisions = -1;
-    public int paperheight = -1; // Paper height in decipoints?
-    public int orientation = -1; // -1=default/unknown, 0=portrait, 1=landscape.
-    public int topmargin = -1; // Top margin in decipoints?
-    public int leftmargin = -1; // Left margin in decipoints?
+    public int paperheight = -1;    // Paper height in decipoints?
+    public int orientation =
+        -1;                         // -1=default/unknown, 0=portrait, 1=landscape.
+    public int topmargin = -1;      // Top margin in decipoints?
+    public int leftmargin = -1;     // Left margin in decipoints?
     private int fullmargin = 0;
     private final boolean debug = false;
 
-    private int xoffset = -180; // X Offset to allow for PCL implicit 1/4" left margin.
+    private int xoffset =
+        -180;                       // X Offset to allow for PCL implicit 1/4" left margin.
 
     private java.util.Hashtable options;
 
     /**
      * Create the PCL renderer
      */
-    public PCLRenderer() {
-    }
+    public PCLRenderer() {}
 
-    /** set up renderer options */
+    /**
+     * set up renderer options
+     */
     public void setOptions(java.util.Hashtable options) {
         this.options = options;
     }
@@ -72,8 +78,7 @@ public class PCLRenderer extends PrintRenderer {
      *
      * @param producer string indicating application producing PCL
      */
-    public void setProducer(String producer) {
-    }
+    public void setProducer(String producer) {}
 
     /**
      * render the areas into PCL
@@ -85,8 +90,8 @@ public class PCLRenderer extends PrintRenderer {
                        OutputStream stream) throws IOException, FOPException {
         MessageHandler.logln("rendering areas to PCL");
         idReferences = areaTree.getIDReferences();
-        //this.pdfResources = this.pdfDoc.getResources();
-        //this.pdfDoc.setIDReferences(idReferences);
+        // this.pdfResources = this.pdfDoc.getResources();
+        // this.pdfDoc.setIDReferences(idReferences);
         Enumeration e = areaTree.getPages().elements();
 
         currentStream = new PCLStream(stream);
@@ -106,12 +111,12 @@ public class PCLRenderer extends PrintRenderer {
 
 
         while (e.hasMoreElements()) {
-            this.renderPage((Page) e.nextElement());
+            this.renderPage((Page)e.nextElement());
         }
         if (!idReferences.isEveryIdValid()) {
-            //throw new FOPException("The following id's were referenced but not found: "+idReferences.getInvalidIds()+"\n");
-            MessageHandler.errorln("Warning: The following id's were referenced but not found: "+
-                                   idReferences.getInvalidIds() + "\n");
+            // throw new FOPException("The following id's were referenced but not found: "+idReferences.getInvalidIds()+"\n");
+            MessageHandler.errorln("Warning: The following id's were referenced but not found: "
+                                   + idReferences.getInvalidIds() + "\n");
         }
 
         MessageHandler.logln("writing out PCL");
@@ -147,24 +152,24 @@ public class PCLRenderer extends PrintRenderer {
      * @param rs the rule style
      * @param stroke the line color
      */
-    protected void addLine(int x1, int y1, int x2, int y2, int th,
-                           int rs, PDFPathPaint stroke) {
+    protected void addLine(int x1, int y1, int x2, int y2, int th, int rs,
+                           PDFPathPaint stroke) {
         int dashon = 0;
         int dashoff = 0;
-        //if ( rs != null && rs.length() > 5 && rs.charAt(0) == '[' && rs.charAt(1) != ']' && rs.charAt(4) == ']' )
-        //{
-        //	dashon = rs.charAt(1) - '0';
-        //	dashoff = rs.charAt(3) - '0';
-        //}
+        // if ( rs != null && rs.length() > 5 && rs.charAt(0) == '[' && rs.charAt(1) != ']' && rs.charAt(4) == ']' )
+        // {
+        // dashon = rs.charAt(1) - '0';
+        // dashoff = rs.charAt(3) - '0';
+        // }
         switch (rs) {
-            case org.apache.fop.fo.properties.RuleStyle.DASHED:
-                dashon = 3;
-                dashoff = 3;
-                break;
-            case org.apache.fop.fo.properties.RuleStyle.DOTTED:
-                dashon = 1;
-                dashoff = 3;
-                break;
+        case org.apache.fop.fo.properties.RuleStyle.DASHED:
+            dashon = 3;
+            dashoff = 3;
+            break;
+        case org.apache.fop.fo.properties.RuleStyle.DOTTED:
+            dashon = 1;
+            dashoff = 3;
+            break;
         }
         if (x1 == x2) {
             if (dashon > 0 && dashoff > 0) {
@@ -202,8 +207,7 @@ public class PCLRenderer extends PrintRenderer {
      * @param h the height in millipoints
      * @param stroke the stroke color/gradient
      */
-    protected void addRect(int x, int y, int w, int h,
-                           PDFPathPaint stroke) {
+    protected void addRect(int x, int y, int w, int h, PDFPathPaint stroke) {
         if (h < 0)
             h *= -1;
 
@@ -231,23 +235,27 @@ public class PCLRenderer extends PrintRenderer {
      * @param fill the fill color/gradient
      * @param stroke the stroke color/gradient
      */
-    protected void addRect(int x, int y, int w, int h,
-                           PDFPathPaint stroke, PDFPathPaint fill) {
+    protected void addRect(int x, int y, int w, int h, PDFPathPaint stroke,
+                           PDFPathPaint fill) {
         if ((w == 0) || (h == 0))
             return;
         if (h < 0)
             h *= -1;
 
-        PDFColor sc = (PDFColor) stroke;
-        PDFColor fc = (PDFColor) fill;
+        PDFColor sc = (PDFColor)stroke;
+        PDFColor fc = (PDFColor)fill;
 
         sc.setColorSpace(ColorSpace.DEVICE_RGB);
         fc.setColorSpace(ColorSpace.DEVICE_RGB);
 
-        int lineshade = (int)(100 - ((0.3f * sc.red() + 0.59f * sc.green() +
-                                      0.11f * sc.blue()) * 100f));
-        int fillshade = (int)(100 - ((0.3f * fc.red() + 0.59f * fc.green() +
-                                      0.11f * fc.blue()) * 100f));
+        int lineshade =
+            (int)(100
+                  - ((0.3f * sc.red() + 0.59f * sc.green() + 0.11f * sc.blue())
+                     * 100f));
+        int fillshade =
+            (int)(100
+                  - ((0.3f * fc.red() + 0.59f * fc.green() + 0.11f * fc.blue())
+                     * 100f));
 
         int xpos = xoffset + (x / 100);
         if (xpos < 0) {
@@ -255,21 +263,21 @@ public class PCLRenderer extends PrintRenderer {
             MessageHandler.errorln("PCLRenderer.addRect() WARNING: Horizontal position out of bounds.");
         }
 
-        currentStream.add("\033*v1O\033&a" + xpos + "h" +
-                          (pageHeight - (y / 100)) + "V" + "\033*c" +
-                          (w / 100) + "h" + (h / 100) + "V" + "\033*c" +
-                          lineshade + "G" + "\033*c2P");
+        currentStream.add("\033*v1O\033&a" + xpos + "h"
+                          + (pageHeight - (y / 100)) + "V" + "\033*c"
+                          + (w / 100) + "h" + (h / 100) + "V" + "\033*c"
+                          + lineshade + "G" + "\033*c2P");
         if (fillshade != lineshade && (w >= 720 || h >= 720)) {
             xpos = xoffset + ((x + 240) / 100);
             if (xpos < 0) {
                 xpos = 0;
                 MessageHandler.errorln("PCLRenderer.addRect() WARNING: Horizontal position out of bounds.");
             }
-            currentStream.add("\033&a" + xpos + "h" +
-                              (pageHeight - ((y + 240)) / 100) + "V" +
-                              "\033*c" + ((w - 480) / 100) + "h" +
-                              ((h - 480) / 100) + "V" + "\033*c" + fillshade +
-                              "G" + "\033*c2P");
+            currentStream.add("\033&a" + xpos + "h"
+                              + (pageHeight - ((y + 240)) / 100) + "V"
+                              + "\033*c" + ((w - 480) / 100) + "h"
+                              + ((h - 480) / 100) + "V" + "\033*c"
+                              + fillshade + "G" + "\033*c2P");
         }
         // Reset pattern transparency mode.
         currentStream.add("\033*v0O");
@@ -298,8 +306,8 @@ public class PCLRenderer extends PrintRenderer {
         int cg = 0;
         int cb = 0;
         int grey = 0;
-        boolean iscolor = img.getColorSpace().getColorSpace() !=
-                          ColorSpace.DEVICE_GRAY;
+        boolean iscolor = img.getColorSpace().getColorSpace()
+                          != ColorSpace.DEVICE_GRAY;
         int dcount = 0;
         int xres = (iw * 72000) / w;
         int yres = (ih * 72000) / h;
@@ -318,24 +326,23 @@ public class PCLRenderer extends PrintRenderer {
         else
             resolution = 75;
         if (debug)
-            System.out.println("PCLRenderer.printBMP() iscolor = " +
-                               iscolor);
-        // Setup for graphics
+            System.out.println("PCLRenderer.printBMP() iscolor = " + iscolor);
+            // Setup for graphics
         currentStream.add("\033*t" + resolution + "R\033*r0F\033*r1A");
 
         // Transfer graphics data
-        for (iy = 0 ; iy < ih ; iy++) {
+        for (iy = 0; iy < ih; iy++) {
             ib = 0;
-            //int	padding = iw % 8;
-            //if ( padding != 0 )
-            //	padding = 8 - padding;
-            //padding = 0;
-            //indx = (ih - iy - 1 + padding) * iw;
+            // int	padding = iw % 8;
+            // if ( padding != 0 )
+            // padding = 8 - padding;
+            // padding = 0;
+            // indx = (ih - iy - 1 + padding) * iw;
             indx = iy * iw;
             if (iscolor)
                 indx *= 3;
-            //currentStream.add("\033*b" + bytewidth + "W");
-            for (ix = 0 ; ix < iw ; ix++) {
+                // currentStream.add("\033*b" + bytewidth + "W");
+            for (ix = 0; ix < iw; ix++) {
                 if (iscolor) {
                     cr = imgmap[indx++] & 0xFF;
                     cg = imgmap[indx++] & 0xFF;
@@ -352,7 +359,7 @@ public class PCLRenderer extends PrintRenderer {
                                 lastcount++;
                             else {
                                 ic[icwidth++] = (char)(lastcount & 0xFF);
-                                ic[icwidth++] = (char) lastbyte;
+                                ic[icwidth++] = (char)lastbyte;
                                 lastbyte = ib;
                                 lastcount = 0;
                             }
@@ -362,12 +369,12 @@ public class PCLRenderer extends PrintRenderer {
                         }
                         if (lastcount == 255 || ((ix + 1) == iw)) {
                             ic[icwidth++] = (char)(lastcount & 0xFF);
-                            ic[icwidth++] = (char) lastbyte;
+                            ic[icwidth++] = (char)lastbyte;
                             lastbyte = 0;
                             lastcount = -1;
                         }
                     }
-                    icu[ix / 8] = (char) ib;
+                    icu[ix / 8] = (char)ib;
                     ib = 0;
                 }
             }
@@ -386,7 +393,7 @@ public class PCLRenderer extends PrintRenderer {
         currentStream.add("\033*rB");
 
 
-        return(true);
+        return (true);
     }
 
     /**
@@ -410,76 +417,77 @@ public class PCLRenderer extends PrintRenderer {
             MessageHandler.errorln("PCLRenderer.renderImageArea() WARNING: Horizontal position out of bounds.");
         }
 
-        currentStream.add("\033&a" + xpos + "h" +
-                          (pageHeight - (y / 100)) + "V");
+        currentStream.add("\033&a" + xpos + "h" + (pageHeight - (y / 100))
+                          + "V");
 
         try {
             printBMP(img, x, y, w, h);
         } catch (FopImageException e) {
-            //e.printStackTrace(System.out);
-            MessageHandler.errorln(
-              "PCLRenderer.renderImageArea() Error printing BMP (" +
-              e.toString() + ")");
+            // e.printStackTrace(System.out);
+            MessageHandler.errorln("PCLRenderer.renderImageArea() Error printing BMP ("
+                                   + e.toString() + ")");
         }
     }
 
-    /** render a foreign object area */
+    /**
+     * render a foreign object area
+     */
     public void renderForeignObjectArea(ForeignObjectArea area) {
         // if necessary need to scale and align the content
         this.currentXPosition = this.currentXPosition + area.getXOffset();
         this.currentYPosition = this.currentYPosition;
         switch (area.getAlign()) {
-            case TextAlign.START:
-                break;
-            case TextAlign.END:
-                break;
-            case TextAlign.CENTER:
-            case TextAlign.JUSTIFY:
-                break;
+        case TextAlign.START:
+            break;
+        case TextAlign.END:
+            break;
+        case TextAlign.CENTER:
+        case TextAlign.JUSTIFY:
+            break;
         }
         switch (area.getVerticalAlign()) {
-            case VerticalAlign.BASELINE:
-                break;
-            case VerticalAlign.MIDDLE:
-                break;
-            case VerticalAlign.SUB:
-                break;
-            case VerticalAlign.SUPER:
-                break;
-            case VerticalAlign.TEXT_TOP:
-                break;
-            case VerticalAlign.TEXT_BOTTOM:
-                break;
-            case VerticalAlign.TOP:
-                break;
-            case VerticalAlign.BOTTOM:
-                break;
+        case VerticalAlign.BASELINE:
+            break;
+        case VerticalAlign.MIDDLE:
+            break;
+        case VerticalAlign.SUB:
+            break;
+        case VerticalAlign.SUPER:
+            break;
+        case VerticalAlign.TEXT_TOP:
+            break;
+        case VerticalAlign.TEXT_BOTTOM:
+            break;
+        case VerticalAlign.TOP:
+            break;
+        case VerticalAlign.BOTTOM:
+            break;
         }
         // in general the content will not be text
 
         // align and scale
 
         switch (area.scalingMethod()) {
-            case Scaling.UNIFORM:
-                break;
-            case Scaling.NON_UNIFORM:
-                break;
+        case Scaling.UNIFORM:
+            break;
+        case Scaling.NON_UNIFORM:
+            break;
         }
         // if the overflow is auto (default), scroll or visible
         // then the contents should not be clipped, since this
         // is considered a printing medium.
         switch (area.getOverflow()) {
-            case Overflow.VISIBLE:
-            case Overflow.SCROLL:
-            case Overflow.AUTO:
-                break;
-            case Overflow.HIDDEN:
-                break;
+        case Overflow.VISIBLE:
+        case Overflow.SCROLL:
+        case Overflow.AUTO:
+            break;
+        case Overflow.HIDDEN:
+            break;
         }
         area.getObject().render(this);
 
         this.currentXPosition += area.getEffectiveWidth();
-        //    this.currentYPosition -= area.getEffectiveHeight();
+        // this.currentYPosition -= area.getEffectiveHeight();
     }
 
     /**
@@ -493,7 +501,7 @@ public class PCLRenderer extends PrintRenderer {
         int x = this.currentXPosition;
         int y = this.currentYPosition;
         SVGSVGElement svg =
-          ((SVGDocument) area.getSVGDocument()).getRootElement();
+            ((SVGDocument)area.getSVGDocument()).getRootElement();
         int w = (int)(svg.getWidth().getBaseVal().getValue() * 1000);
         int h = (int)(svg.getHeight().getBaseVal().getValue() * 1000);
 
@@ -505,9 +513,9 @@ public class PCLRenderer extends PrintRenderer {
 
         // TODO - translate and clip to viewbox
 
-        //currentStream.add(svgRenderer.getString());
+        // currentStream.add(svgRenderer.getString());
 
-        //currentStream.add("Q\n");
+        // currentStream.add("Q\n");
     }
 
     public void setFont(String name, float size) {
@@ -520,62 +528,70 @@ public class PCLRenderer extends PrintRenderer {
             }
         }
         switch (fontcode) {
-            case 1: // F1 = Helvetica
-                //currentStream.add("\033(8U\033(s1p" + (size / 1000) + "v0s0b24580T");
-                // Arial is more common among PCL5 printers than Helvetica - so use Arial
-                currentStream.add("\033(0N\033(s1p" + (size / 1000) + "v0s0b16602T");
-                break;
-            case 2: // F2 = Helvetica Oblique
-                currentStream.add("\033(0N\033(s1p" + (size / 1000) + "v1s0b16602T");
-                break;
-            case 3: // F3 = Helvetica Bold
-                currentStream.add("\033(0N\033(s1p" + (size / 1000) + "v0s3b16602T");
-                break;
-            case 4: // F4 = Helvetica Bold Oblique
-                currentStream.add("\033(0N\033(s1p" + (size / 1000) + "v1s3b16602T");
-                break;
-            case 5: // F5 = Times Roman
-                //currentStream.add("\033(8U\033(s1p" + (size / 1000) + "v0s0b25093T");
-                // Times New is more common among PCL5 printers than Times - so use Times New
-                currentStream.add("\033(0N\033(s1p" + (size / 1000) + "v0s0b16901T");
-                break;
-            case 6: // F6 = Times Italic
-                currentStream.add("\033(0N\033(s1p" + (size / 1000) + "v1s0b16901T");
-                break;
-            case 7: // F7 = Times Bold
-                currentStream.add("\033(0N\033(s1p" + (size / 1000) + "v0s3b16901T");
-                break;
-            case 8: // F8 = Times Bold Italic
-                currentStream.add("\033(0N\033(s1p" + (size / 1000) + "v1s3b16901T");
-                break;
-            case 9: // F9 = Courier
-                currentStream.add("\033(0N\033(s0p" +
-                                  (120.01f / (size / 1000.00f)) + "h0s0b4099T");
-                break;
-            case 10: // F10 = Courier Oblique
-                currentStream.add("\033(0N\033(s0p" +
-                                  (120.01f / (size / 1000.00f)) + "h1s0b4099T");
-                break;
-            case 11: // F11 = Courier Bold
-                currentStream.add("\033(0N\033(s0p" +
-                                  (120.01f / (size / 1000.00f)) + "h0s3b4099T");
-                break;
-            case 12: // F12 = Courier Bold Oblique
-                currentStream.add("\033(0N\033(s0p" +
-                                  (120.01f / (size / 1000.00f)) + "h1s3b4099T");
-                break;
-            case 13: // F13 = Symbol
-                currentStream.add("\033(19M\033(s1p" + (size / 1000) +
-                                  "v0s0b16686T");
-                //currentStream.add("\033(9U\033(s1p" + (size / 1000) + "v0s0b25093T"); // ECMA Latin 1 Symbol Set in Times Roman???
-                break;
-            case 14: // F14 = Zapf Dingbats
-                currentStream.add("\033(14L\033(s1p" + (size / 1000) +
-                                  "v0s0b45101T");
-                break;
-            default:
-                currentStream.add("\033(0N\033(s" + (size / 1000) + "V");
-                break;
+        case 1:     // F1 = Helvetica
+            // currentStream.add("\033(8U\033(s1p" + (size / 1000) + "v0s0b24580T");
+            // Arial is more common among PCL5 printers than Helvetica - so use Arial
+            currentStream.add("\033(0N\033(s1p" + (size / 1000)
+                              + "v0s0b16602T");
+            break;
+        case 2:     // F2 = Helvetica Oblique
+            currentStream.add("\033(0N\033(s1p" + (size / 1000)
+                              + "v1s0b16602T");
+            break;
+        case 3:     // F3 = Helvetica Bold
+            currentStream.add("\033(0N\033(s1p" + (size / 1000)
+                              + "v0s3b16602T");
+            break;
+        case 4:     // F4 = Helvetica Bold Oblique
+            currentStream.add("\033(0N\033(s1p" + (size / 1000)
+                              + "v1s3b16602T");
+            break;
+        case 5:     // F5 = Times Roman
+            // currentStream.add("\033(8U\033(s1p" + (size / 1000) + "v0s0b25093T");
+            // Times New is more common among PCL5 printers than Times - so use Times New
+            currentStream.add("\033(0N\033(s1p" + (size / 1000)
+                              + "v0s0b16901T");
+            break;
+        case 6:     // F6 = Times Italic
+            currentStream.add("\033(0N\033(s1p" + (size / 1000)
+                              + "v1s0b16901T");
+            break;
+        case 7:     // F7 = Times Bold
+            currentStream.add("\033(0N\033(s1p" + (size / 1000)
+                              + "v0s3b16901T");
+            break;
+        case 8:     // F8 = Times Bold Italic
+            currentStream.add("\033(0N\033(s1p" + (size / 1000)
+                              + "v1s3b16901T");
+            break;
+        case 9:     // F9 = Courier
+            currentStream.add("\033(0N\033(s0p"
+                              + (120.01f / (size / 1000.00f)) + "h0s0b4099T");
+            break;
+        case 10:    // F10 = Courier Oblique
+            currentStream.add("\033(0N\033(s0p"
+                              + (120.01f / (size / 1000.00f)) + "h1s0b4099T");
+            break;
+        case 11:    // F11 = Courier Bold
+            currentStream.add("\033(0N\033(s0p"
+                              + (120.01f / (size / 1000.00f)) + "h0s3b4099T");
+            break;
+        case 12:    // F12 = Courier Bold Oblique
+            currentStream.add("\033(0N\033(s0p"
+                              + (120.01f / (size / 1000.00f)) + "h1s3b4099T");
+            break;
+        case 13:    // F13 = Symbol
+            currentStream.add("\033(19M\033(s1p" + (size / 1000)
+                              + "v0s0b16686T");
+            // currentStream.add("\033(9U\033(s1p" + (size / 1000) + "v0s0b25093T"); // ECMA Latin 1 Symbol Set in Times Roman???
+            break;
+        case 14:    // F14 = Zapf Dingbats
+            currentStream.add("\033(14L\033(s1p" + (size / 1000)
+                              + "v0s0b45101T");
+            break;
+        default:
+            currentStream.add("\033(0N\033(s" + (size / 1000) + "V");
+            break;
         }
     }
 
@@ -591,16 +607,17 @@ public class PCLRenderer extends PrintRenderer {
         float red = area.getRed();
         float green = area.getGreen();
         float blue = area.getBlue();
-        PDFColor theAreaColor = new PDFColor((double) area.getRed(),
-                                             (double) area.getGreen(), (double) area.getBlue());
+        PDFColor theAreaColor = new PDFColor((double)area.getRed(),
+                                             (double)area.getGreen(),
+                                             (double)area.getBlue());
 
-        //currentStream.add("\033*c" + (int)(100 - ((0.3f * red + 0.59f * green + 0.11f * blue) * 100f)) + "G\033*v2T");
-        currentStream.add("\033*v1O\033*c" + (int)(100 -
-                          ((0.3f * red + 0.59f * green + 0.11f * blue) * 100f))
+        // currentStream.add("\033*c" + (int)(100 - ((0.3f * red + 0.59f * green + 0.11f * blue) * 100f)) + "G\033*v2T");
+        currentStream.add("\033*v1O\033*c"
+                          + (int)(100 - ((0.3f * red + 0.59f * green + 0.11f * blue) * 100f))
                           + "G\033*v2T");
 
-        if ((!name.equals(this.currentFontName)) ||
-                (size != this.currentFontSize)) {
+        if ((!name.equals(this.currentFontName))
+                || (size != this.currentFontSize)) {
             this.currentFontName = name;
             this.currentFontSize = size;
             setFont(name, size);
@@ -628,8 +645,8 @@ public class PCLRenderer extends PrintRenderer {
             xpos = 0;
             MessageHandler.errorln("PCLRenderer.renderWordArea() WARNING: Horizontal position out of bounds.");
         }
-        currentStream.add("\033&a" + xpos + "h" +
-                          (pageHeight - (bl / 100)) + "V" + s);
+        currentStream.add("\033&a" + xpos + "h" + (pageHeight - (bl / 100))
+                          + "V" + s);
 
         this.currentXPosition += area.getContentWidth();
     }
@@ -641,9 +658,8 @@ public class PCLRenderer extends PrintRenderer {
      */
     public void renderPage(Page page) {
         if (debug)
-            System.out.println(
-              "PCLRenderer.renderPage() page.Height() = " +
-              page.getHeight());
+            System.out.println("PCLRenderer.renderPage() page.Height() = "
+                               + page.getHeight());
         BodyAreaContainer body;
         AreaContainer before, after, start, end;
 
@@ -651,32 +667,32 @@ public class PCLRenderer extends PrintRenderer {
             divisions = paperheight / (page.getHeight() / 100);
 
         if (debug)
-            System.out.println( "PCLRenderer.renderPage() paperheight=" +
-                                paperheight + " divisions=" + divisions);
+            System.out.println("PCLRenderer.renderPage() paperheight="
+                               + paperheight + " divisions=" + divisions);
 
-        // Set top margin.
-        //float fullmargin = 0;
+            // Set top margin.
+            // float fullmargin = 0;
         if (divisions > 0)
             fullmargin = paperheight * curdiv / divisions;
         if (topmargin > 0)
             fullmargin += topmargin;
         if (debug)
-            System.out.println("PCLRenderer.renderPage() curdiv=" +
-                               curdiv + " fullmargin=" + fullmargin);
-        //if ( fullmargin > 0 )
-        //	currentStream.add("\033&l" + (fullmargin / 15f) + "c1e8C");
-        //this.currentYPosition = fullmargin * 100;
+            System.out.println("PCLRenderer.renderPage() curdiv=" + curdiv
+                               + " fullmargin=" + fullmargin);
+            // if ( fullmargin > 0 )
+            // currentStream.add("\033&l" + (fullmargin / 15f) + "c1e8C");
+            // this.currentYPosition = fullmargin * 100;
 
         if (paperheight > 0)
             pageHeight = (paperheight / divisions) + fullmargin;
         else
             pageHeight = page.getHeight() / 100;
         if (debug)
-            System.out.println(
-              "PCLRenderer.renderPage() Set currentYPosition=" +
-              this.currentYPosition);
+            System.out.println("PCLRenderer.renderPage() Set currentYPosition="
+                               + this.currentYPosition);
         if (leftmargin > 0 && curdiv == 0)
-            currentStream.add("\033&k" + (leftmargin / 6f) + "H\033&a1L\033&k12H");
+            currentStream.add("\033&k" + (leftmargin / 6f)
+                              + "H\033&a1L\033&k12H");
 
         body = page.getBody();
         before = page.getBefore();
@@ -701,7 +717,7 @@ public class PCLRenderer extends PrintRenderer {
         if (end != null)
             renderAreaContainer(end);
 
-        // End page.
+            // End page.
         if (++curdiv == divisions || divisions == -1) {
             curdiv = 0;
             currentStream.add("\f");
@@ -709,31 +725,29 @@ public class PCLRenderer extends PrintRenderer {
 
         // Links, etc not implemented...
         /*
-        currentPage = this.pdfDoc.makePage(this.pdfResources, currentStream,
-        			 page.getWidth()/1000, page.getHeight()/1000, page);
-
-        if (page.hasLinks()) {
-        	currentAnnotList = this.pdfDoc.makeAnnotList();
-        	currentPage.setAnnotList(currentAnnotList);
-
-        	Enumeration e = page.getLinkSets().elements();
-        	while (e.hasMoreElements()) {
-        	LinkSet linkSet = (LinkSet) e.nextElement();
-
-        	linkSet.align();
-        	String dest = linkSet.getDest();
-                       int linkType = linkSet.getLinkType();
-        	Enumeration f = linkSet.getRects().elements();
-        	while (f.hasMoreElements()) {
-        		LinkedRectangle lrect = (LinkedRectangle) f.nextElement();
-        		currentAnnotList.addLink(
-        			this.pdfDoc.makeLink(lrect.getRectangle(), dest, linkType));
-        	}
-        	}
-    } else {
-        	// just to be on the safe side
-        	currentAnnotList = null;
-    }
+         * currentPage = this.pdfDoc.makePage(this.pdfResources, currentStream,
+         * page.getWidth()/1000, page.getHeight()/1000, page);
+         * if (page.hasLinks()) {
+         * currentAnnotList = this.pdfDoc.makeAnnotList();
+         * currentPage.setAnnotList(currentAnnotList);
+         * Enumeration e = page.getLinkSets().elements();
+         * while (e.hasMoreElements()) {
+         * LinkSet linkSet = (LinkSet) e.nextElement();
+         * linkSet.align();
+         * String dest = linkSet.getDest();
+         * int linkType = linkSet.getLinkType();
+         * Enumeration f = linkSet.getRects().elements();
+         * while (f.hasMoreElements()) {
+         * LinkedRectangle lrect = (LinkedRectangle) f.nextElement();
+         * currentAnnotList.addLink(
+         * this.pdfDoc.makeLink(lrect.getRectangle(), dest, linkType));
+         * }
+         * }
+         * } else {
+         * // just to be on the safe side
+         * currentAnnotList = null;
+         * }
          */
     }
+
 }

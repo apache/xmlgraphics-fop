@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -12,7 +13,7 @@ import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.layout.FontDescriptor;
 import org.apache.fop.mif.MIFDocument;
-//import org.apache.fop.pdf.PDFResources;
+// import org.apache.fop.pdf.PDFResources;
 
 // Java
 import java.util.Enumeration;
@@ -22,7 +23,7 @@ import java.util.Hashtable;
  * sets up the PDF fonts.
  *
  * Assigns the font (with metrics) to internal names like "F1" and
- *  assigns family-style-weight triplets to the fonts
+ * assigns family-style-weight triplets to the fonts
  */
 public class FontSetup {
 
@@ -52,10 +53,10 @@ public class FontSetup {
         fontInfo.addMetrics("F13", new Symbol());
         fontInfo.addMetrics("F14", new ZapfDingbats());
 
-        //Custom type 1 fonts step 1/2
-        //    fontInfo.addMetrics("F15", new OMEP());
-        //    fontInfo.addMetrics("F16", new GaramondLightCondensed());
-        //    fontInfo.addMetrics("F17", new BauerBodoniBoldItalic());
+        // Custom type 1 fonts step 1/2
+        // fontInfo.addMetrics("F15", new OMEP());
+        // fontInfo.addMetrics("F16", new GaramondLightCondensed());
+        // fontInfo.addMetrics("F17", new BauerBodoniBoldItalic());
 
         /* any is treated as serif */
         fontInfo.addFontProperties("F5", "any", "normal", "normal");
@@ -105,10 +106,10 @@ public class FontSetup {
         fontInfo.addFontProperties("F13", "Symbol", "normal", "normal");
         fontInfo.addFontProperties("F14", "ZapfDingbats", "normal", "normal");
 
-        //Custom type 1 fonts step 2/2
-        //    fontInfo.addFontProperties("F15", "OMEP", "normal", "normal");
-        //    fontInfo.addFontProperties("F16", "Garamond-LightCondensed", "normal", "normal");
-        //    fontInfo.addFontProperties("F17", "BauerBodoni", "italic", "bold");
+        // Custom type 1 fonts step 2/2
+        // fontInfo.addFontProperties("F15", "OMEP", "normal", "normal");
+        // fontInfo.addFontProperties("F16", "Garamond-LightCondensed", "normal", "normal");
+        // fontInfo.addFontProperties("F17", "BauerBodoni", "italic", "bold");
 
         /* for compatibility with PassiveTex */
         fontInfo.addFontProperties("F5", "Times-Roman", "normal", "normal");
@@ -139,18 +140,21 @@ public class FontSetup {
         Hashtable fonts = fontInfo.getFonts();
         Enumeration e = fonts.keys();
         while (e.hasMoreElements()) {
-            String f = (String) e.nextElement();
-            Font font = (Font) fonts.get(f);
+            String f = (String)e.nextElement();
+            Font font = (Font)fonts.get(f);
             FontDescriptor desc = null;
             if (font instanceof FontDescriptor) {
-                desc = (FontDescriptor) font;
+                desc = (FontDescriptor)font;
             }
-            /* mifDoc.makeFont(f,font.fontName(),
-                          font.encoding(),
-                          font,
-                          desc
-                          );  */
+            /*
+             * mifDoc.makeFont(f,font.fontName(),
+             * font.encoding(),
+             * font,
+             * desc
+             * );
+             */
 
         }
     }
+
 }

@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -26,11 +27,11 @@ public class ExtensionElementMapping implements ElementMapping {
                                 ExtensionPropertyMapping.getGenericMappings());
         /* Add any element mappings */
         for (Enumeration e = ExtensionPropertyMapping.getElementMappings();
-                e.hasMoreElements();) {
-            String elem = (String) e.nextElement();
-            builder.addElementPropertyList(ExtensionElementMapping.URI,
-                                           elem, ExtensionPropertyMapping.getElementMapping(
-                                             elem));
+                e.hasMoreElements(); ) {
+            String elem = (String)e.nextElement();
+            builder.addElementPropertyList(ExtensionElementMapping.URI, elem,
+                                           ExtensionPropertyMapping.getElementMapping(elem));
         }
     }
+
 }

@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -14,8 +15,8 @@ import org.apache.fop.apps.FOPException;
 
 public class FontInfo {
     Hashtable usedFonts;
-    Hashtable triplets; // look up a font-triplet to find a font-name
-    Hashtable fonts; // look up a font-name to get a font (that implements FontMetric at least)
+    Hashtable triplets;    // look up a font-triplet to find a font-name
+    Hashtable fonts;    // look up a font-name to get a font (that implements FontMetric at least)
 
     public FontInfo() {
         this.triplets = new Hashtable();
@@ -23,10 +24,12 @@ public class FontInfo {
         this.usedFonts = new Hashtable();
     }
 
-    public void addFontProperties(String name, String family,
-                                  String style, String weight) {
-        /* add the given family, style and weight as a lookup for the font
-            with the given name */
+    public void addFontProperties(String name, String family, String style,
+                                  String weight) {
+        /*
+         * add the given family, style and weight as a lookup for the font
+         * with the given name
+         */
 
         String key = createFontKey(family, style, weight);
         this.triplets.put(key, name);
@@ -45,19 +48,20 @@ public class FontInfo {
 
     public String fontLookup(String key) throws FOPException {
 
-        String f = (String) this.triplets.get(key);
+        String f = (String)this.triplets.get(key);
         if (f == null) {
             int i = key.indexOf(',');
-            String s = "any"+key.substring(i);
-            f = (String) this.triplets.get(s);
+            String s = "any" + key.substring(i);
+            f = (String)this.triplets.get(s);
             if (f == null) {
-                f = (String) this.triplets.get("any,normal,normal");
+                f = (String)this.triplets.get("any,normal,normal");
                 if (f == null) {
                     throw new FOPException("no default font defined by OutputConverter");
                 }
                 MessageHandler.errorln("WARNING: defaulted font to any,normal,normal");
             }
-            MessageHandler.errorln("WARNING: unknown font "+key + " so defaulted font to any");
+            MessageHandler.errorln("WARNING: unknown font " + key
+                                   + " so defaulted font to any");
         }
 
         usedFonts.put(f, fonts.get(f));
@@ -100,7 +104,7 @@ public class FontInfo {
 
     public FontMetric getMetricsFor(String fontName) throws FOPException {
         usedFonts.put(fontName, fonts.get(fontName));
-        return (FontMetric) fonts.get(fontName);
+        return (FontMetric)fonts.get(fontName);
     }
 
 }
