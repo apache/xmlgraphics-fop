@@ -220,6 +220,36 @@ public class Block extends FObjMixed {
         return breakBefore;
     }
 
+    /** @return the "keep-with-next" property.  */
+    public KeepProperty getKeepWithNext() {
+        return keepWithNext;
+    }
+
+    /** @return the "keep-with-previous" property.  */
+    public KeepProperty getKeepWithPrevious() {
+        return keepWithPrevious;
+    }
+
+    /** @return the "keep-together" property.  */
+    public KeepProperty getKeepTogether() {
+        return keepTogether;
+    }
+
+    /** @return the "orphans" property.  */
+    public int getOrphans() {
+        return orphans.getValue();
+    }
+
+    /** @return the "widows" property.  */
+    public int getWidows() {
+        return widows.getValue();
+    }
+
+    /** @return the "line-stacking-strategy" property.  */
+    public int getLineStackingStrategy() {
+        return lineStackingStrategy;
+    }
+
     /**
      * Return the "color" property.
      */
