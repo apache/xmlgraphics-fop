@@ -102,7 +102,7 @@ public class AWTPrintRenderer extends AWTRenderer {
         }
     }
 
-    private int getIntProperty(String name, int def) {
+    public static int getIntProperty(String name, int def) {
         String propValue = System.getProperty(name);
         if (propValue != null) {
             try {

@@ -81,6 +81,7 @@ public class CommandLineStarter extends Starter {
      * @exception FOPException if there is an error during processing
      */
     public void run() throws FOPException {
+        BufferedOutputStream bos = null;
         String version = Version.getVersion();
         getLogger().info(version);
         Driver driver = new Driver();
@@ -88,17 +89,23 @@ public class CommandLineStarter extends Starter {
 
         try {
             driver.setRenderer(commandLineOptions.getRenderer());
-            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(
-                                      commandLineOptions.getOutputFile()));
+
             try {
-                driver.setOutputStream(bos);
+                if (commandLineOptions.getOutputFile() != null) {
+                    bos = new BufferedOutputStream(new FileOutputStream(
+                        commandLineOptions.getOutputFile()));
+                    driver.setOutputStream(bos);
+                }
+
                 if (driver.getRenderer() != null) {
                     driver.getRenderer().setOptions(
                   commandLineOptions.getRendererOptions());
                 }
                 driver.render(inputHandler);
             } finally {
-                bos.close();
+                if (bos != null) {
+                    bos.close();
+                }
             }
             System.exit(0);
         } catch (Exception e) {

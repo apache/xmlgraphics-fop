@@ -50,6 +50,9 @@
  */
 package org.apache.fop.apps;
 
+// Java
+import java.awt.print.PrinterJob;
+
 // FOP
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FOTreeBuilder;
@@ -58,6 +61,7 @@ import org.apache.fop.fo.StructureHandler;
 import org.apache.fop.layoutmgr.LayoutHandler;
 import org.apache.fop.mif.MIFHandler;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.render.awt.AWTPrintRenderer;
 import org.apache.fop.rtf.renderer.RTFHandler;
 import org.apache.fop.tools.DocumentInputSource;
 import org.apache.fop.tools.DocumentReader;
@@ -407,7 +411,17 @@ public class Driver implements LogEnabled {
         case RENDER_AWT:
             throw new IllegalArgumentException("Use renderer form of setRenderer() for AWT");
         case RENDER_PRINT:
-            throw new IllegalArgumentException("Use renderer form of setRenderer() for PRINT");
+            // a PrinterJob object is needed to create this renderer
+            PrinterJob pj = PrinterJob.getPrinterJob();
+            int copies = AWTPrintRenderer.getIntProperty("copies", 1);
+            pj.setCopies(copies);
+            if (System.getProperty("dialog") != null) {
+                if (!pj.printDialog()) {
+                    throw new IllegalArgumentException("Printing cancelled by operator");
+                }
+            }
+            setRenderer(new AWTPrintRenderer(pj));
+            break;
         case RENDER_PCL:
             setRenderer("org.apache.fop.render.pcl.PCLRenderer");
             break;
@@ -439,6 +453,7 @@ public class Driver implements LogEnabled {
      * @param renderer the renderer instance to use (Note: Logger must be set at this point)
      */
     public void setRenderer(Renderer renderer) {
+        renderer.setProducer(Version.getVersion());
         renderer.setUserAgent(getUserAgent());
         this.renderer = renderer;
     }
@@ -528,8 +543,11 @@ public class Driver implements LogEnabled {
         if (!isInitialized()) {
             initialize();
         }
-        validateOutputStream();
-
+        
+        if (rendererType != RENDER_PRINT && rendererType != RENDER_AWT) {
+           validateOutputStream();
+        }
+       
         // TODO: - do this stuff in a better way
         // PIJ: I guess the structure handler should be created by the renderer.
         if (rendererType == RENDER_MIF) {
