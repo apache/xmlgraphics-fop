@@ -618,7 +618,7 @@ public class Property {
             }
             ListProperty listprop;
             int n = shorthands.length;
-            for (int i = 0; i < n; i++) {
+            for (int i = 0; i < n && shorthands[i] != null; i++) {
                 Property.Maker shorthand = shorthands[i];
                 listprop = (ListProperty)propertyList.getExplicit(shorthand.propId);
                 if (listprop != null) {
