@@ -26,6 +26,10 @@
 
 package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.render.rtf.FOPRtfAttributes;
+
 /** Constants for RTF border attribute names, and a static method for converting
  *  fo attribute strings. */
 
@@ -81,6 +85,8 @@ public class BorderAttributesConverter {
     public static final String BORDER_EMBOSS = "brdremboss";
     /** Constant for an engraved border */
     public static final String BORDER_ENGRAVE = "brdrengrave";
+    /** Constant for an nil border */
+    public static final String BORDER_NIL = "brdrnil";
     /** Constant for border color */
     public static final String BORDER_COLOR = "brdrcf";
     /** Constant for border space */
@@ -103,48 +109,73 @@ public class BorderAttributesConverter {
     };
 
     /**
-    * BorderAttributesConverter: Static Method for converting FO strings
-    * to RTF control words
-    * @param value FO string
-    * @return RTF control word
-    */
-    public static String convertAttributetoRtf(String value) {
-        // Added by Normand Masse
-        // "solid" is interpreted like "thin"
-        if (value.equals("thin") || value.equals("solid")) {
-            return BORDER_SINGLE_THICKNESS;
-        } else if (value.equals("thick")) {
-            return BORDER_DOUBLE_THICKNESS;
-        } else if (value.equals("shadowed")) {
-            return BORDER_SHADOWED;
-        } else if (value.equals("double")) {
-            return BORDER_DOUBLE;
-        } else if (value.equals("dotted")) {
-            return BORDER_DOTTED;
-        } else if (value.equals("dash")) {
-            return BORDER_DASH;
-        } else if (value.equals("hairline")) {
-            return BORDER_HAIRLINE;
-        } else if (value.equals("dot-dash")) {
-            return BORDER_DOT_DASH;
-        } else if (value.equals("dot-dot-dash")) {
-            return BORDER_DOT_DOT_DASH;
-        } else if (value.equals("triple")) {
-            return BORDER_TRIPLE;
-        } else if (value.equals("wavy")) {
-            return BORDER_WAVY;
-        } else if (value.equals("wavy-double")) {
-            return BORDER_WAVY_DOUBLE;
-        } else if (value.equals("striped")) {
-            return BORDER_STRIPED;
-        } else if (value.equals("emboss")) {
-            return BORDER_EMBOSS;
-        } else if (value.equals("engrave")) {
-            return BORDER_ENGRAVE;
-        } else {
-            return null;
+     * Create a border control word in attributes, with border properties 
+     * as specified in color, style and width.
+     * @param propList The property list to get properties from.
+     * @param attributes The attributes list to set the border control word.
+     * @param controlWord The border control word.
+     * @param color The PR_BORDER_X_COLOR constants for the color,
+     * @param style The PR_BORDER_X_STYLE constants for the border style.
+     * @param width The PR_BORDER_X_WIDTH constants for the width.
+     */
+    public static void makeBorder(PropertyList propList, 
+            RtfAttributes attributes, String controlWord,
+            int color, int style, int width) {
+        int styleEnum = propList.get(style).getEnum();
+        if (styleEnum != Constants.NONE) {
+            FOPRtfAttributes attrs = new FOPRtfAttributes();
+            attrs.set(BORDER_COLOR, propList.get(color).getColorType());
+            attrs.set(convertAttributetoRtf(styleEnum));
+            attrs.set(BORDER_WIDTH, propList.get(width).getLength());
+            attributes.set(controlWord, attrs);
         }
     }
 
+    /**
+    *
+    * @param iBorderStyle the border style to be converted
+    * @return String with the converted border style
+    */
+   public static String convertAttributetoRtf(int iBorderStyle) {
+       // Added by Normand Masse
+       // "solid" is interpreted like "thin"
+       if (iBorderStyle == Constants.NONE) {
+           return BorderAttributesConverter.BORDER_NIL;
+       } else if (iBorderStyle == Constants.SOLID) {
+           return BorderAttributesConverter.BORDER_SINGLE_THICKNESS;
+/*        } else if (iBorderStyle==Constants.THIN) {
+                       return BorderAttributesConverter.BORDER_SINGLE_THICKNESS;
+       } else if (iBorderStyle==Constants.THICK) {
+           return BorderAttributesConverter.BORDER_DOUBLE_THICKNESS;
+       } else if (iBorderStyle==Constants. value.equals("shadowed")) {
+           return BorderAttributesConverter.BORDER_SHADOWED;*/
+       } else if (iBorderStyle == Constants.DOUBLE) {
+           return BorderAttributesConverter.BORDER_DOUBLE;
+       } else if (iBorderStyle == Constants.DOTTED) {
+           return BorderAttributesConverter.BORDER_DOTTED;
+       } else if (iBorderStyle == Constants.DASHED) {
+           return BorderAttributesConverter.BORDER_DASH;
+/*        } else if (iBorderStyle==Constants value.equals("hairline")) {
+           return BorderAttributesConverter.BORDER_HAIRLINE;*/
+/*        } else if (iBorderStyle==Constant value.equals("dot-dash")) {
+           return BorderAttributesConverter.BORDER_DOT_DASH;
+       } else if (iBorderStyle==Constant value.equals("dot-dot-dash")) {
+           return BorderAttributesConverter.BORDER_DOT_DOT_DASH;
+       } else if (iBorderStyle==Constant value.equals("triple")) {
+           return BorderAttributesConverter.BORDER_TRIPLE;
+       } else if (iBorderStyle==Constant value.equals("wavy")) {
+           return BorderAttributesConverter.BORDER_WAVY;
+       } else if (iBorderStyle==Constant value.equals("wavy-double")) {
+           return BorderAttributesConverter.BORDER_WAVY_DOUBLE;
+       } else if (iBorderStyle==Constant value.equals("striped")) {
+           return BorderAttributesConverter.BORDER_STRIPED;
+       } else if (iBorderStyle==Constant value.equals("emboss")) {
+           return BorderAttributesConverter.BORDER_EMBOSS;
+       } else if (iBorderStyle==Constant value.equals("engrave")) {
+           return BorderAttributesConverter.BORDER_ENGRAVE;*/
+       } else {
+           return null;
+       }
 
+   }
 }
