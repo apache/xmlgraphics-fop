@@ -91,8 +91,7 @@ public class FoStaticContent extends FOPageSeqNode {
 
     /**
      * Construct an fo:static-content node, and buffer the contents for later
-* parsing
-     * subtree.
+     * parsing.
      * <p>Content model for fo:static-content: (%block;)+
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
@@ -109,9 +108,11 @@ public class FoStaticContent extends FOPageSeqNode {
             ncName = (NCName)(getPropertyValue(PropNames.FLOW_NAME));
         } catch (PropertyException e) {
             throw new FOPException(
-                    "Cannot find marker-class-name in fo:marker", e);
+                    "Cannot find flow-name in fo:static-content", e);
         } catch (ClassCastException e) {
-            throw new FOPException("Wrong PropertyValue type in fo:marker", e);
+            throw new FOPException
+            ("Wrong PropertyValue type for flow-name in fo:static-content",
+                    e);
         }
         flowName = ncName.getNCName();
         
@@ -132,11 +133,23 @@ public class FoStaticContent extends FOPageSeqNode {
     }
     
     /**
+     * Gets the buffer of <code>XmlEvent</code>s from this
+     * <b>fo:static-content</b> subtree
+     * 
      * @return the static-content subtree buffer
      */
     public XmlEventsArrayBuffer getEventBuffer() {
         return buffer;
     }
 
+    /**
+     * Gets the <b>flow-name</b> with which this <b>fo:static-content</b>
+     * is associated
+     * 
+     * @return the flow-name
+     */
+    public String getFlowName() {
+        return flowName;
+    }
     
 }
