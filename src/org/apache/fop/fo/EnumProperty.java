@@ -23,7 +23,7 @@ public class EnumProperty extends Property {
          * Called by subclass if no match found.
          */
         public Property checkEnumValues(String value) {
-            MessageHandler.errorln("WARNING: Unknown enumerated value for property '"
+            MessageHandler.errorln("Unknown enumerated value for property '"
                                    + getPropName() + "': " + value);
             return null;
         }

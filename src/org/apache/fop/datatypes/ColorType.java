@@ -68,13 +68,13 @@ public class ColorType {
                     this.red = 0;
                     this.green = 0;
                     this.blue = 0;
-                    MessageHandler.errorln("ERROR: unknown colour format. Must be #RGB or #RRGGBB");
+                    MessageHandler.errorln("unknown colour format. Must be #RGB or #RRGGBB");
                 }
             } catch (Exception e) {
                 this.red = 0;
                 this.green = 0;
                 this.blue = 0;
-                MessageHandler.errorln("ERROR: unknown colour format. Must be #RGB or #RRGGBB");
+                MessageHandler.errorln("unknown colour format. Must be #RGB or #RRGGBB");
             }
         } else if (value.startsWith("rgb(")) {
             int poss = value.indexOf("(");
@@ -117,7 +117,7 @@ public class ColorType {
                     this.red = 0;
                     this.green = 0;
                     this.blue = 0;
-                    MessageHandler.errorln("ERROR: unknown colour format. Must be #RGB or #RRGGBB");
+                    MessageHandler.errorln("unknown colour format. Must be #RGB or #RRGGBB");
                 }
             }
         } else if (value.startsWith("url(")) {
@@ -143,7 +143,7 @@ public class ColorType {
                     this.red = 0;
                     this.green = 0;
                     this.blue = 0;
-                    MessageHandler.errorln("ERROR: unknown colour name: "
+                    MessageHandler.errorln("unknown colour name: "
                                            + value);
                 }
             }

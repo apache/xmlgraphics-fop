@@ -18,12 +18,12 @@ public class Fop {
             Starter starter = options.getStarter();
             starter.run();
         } catch (FOPException e) {
-            MessageHandler.errorln("ERROR: " + e.getMessage());
+            MessageHandler.errorln("" + e.getMessage());
             if (options != null && options.isDebugMode().booleanValue()) {
                 e.printStackTrace();
             }
         } catch (java.io.FileNotFoundException e) {
-            MessageHandler.errorln("ERROR: " + e.getMessage());
+            MessageHandler.errorln("" + e.getMessage());
             if (options != null && options.isDebugMode().booleanValue()) {
                 e.printStackTrace();
             }

@@ -56,7 +56,7 @@ public class SVGReader extends AbstractImageReader {
             MessageHandler.errorln("Batik not in class path");
             return false;
         } catch (Exception e) {
-            MessageHandler.errorln("ERROR LOADING EXTERNAL SVG: "
+            MessageHandler.errorln("Could not load external SVG: "
                                    + e.getMessage());
             // assuming any exception means this document is not svg
             // or could not be loaded for some reason

@@ -146,20 +146,20 @@ public class StreamRenderer {
         long memoryNow = runtime.totalMemory() - runtime.freeMemory();
         long memoryUsed = (memoryNow - initialMemory) / 1024L;
 
-        log.info("Initial heap size: " + (initialMemory/1024L) + "Kb");
-        log.info("Current heap size: " + (memoryNow/1024L) + "Kb");
-        log.info("Total memory used: " + memoryUsed + "Kb");
+        log.debug("Initial heap size: " + (initialMemory/1024L) + "Kb");
+        log.debug("Current heap size: " + (memoryNow/1024L) + "Kb");
+        log.debug("Total memory used: " + memoryUsed + "Kb");
 
         if (!MEM_PROFILE_WITH_GC) {
-            log.info("  Memory use is indicative; no GC was performed");
-            log.info("  These figures should not be used comparatively");
+            log.debug("  Memory use is indicative; no GC was performed");
+            log.debug("  These figures should not be used comparatively");
         }
 
         long timeUsed = System.currentTimeMillis() - startTime;
 
-        log.info("Total time used: " + timeUsed + "ms");
-        log.info("Pages rendererd: " + pageCount);
-        log.info("Avg render time: " + (timeUsed / pageCount) + "ms/page");
+        log.debug("Total time used: " + timeUsed + "ms");
+        log.debug("Pages rendererd: " + pageCount);
+        log.debug("Avg render time: " + (timeUsed / pageCount) + "ms/page");
     }
 
     /**

@@ -147,7 +147,7 @@ public class ConditionalPageMasterReference extends FObj {
                 (RepeatablePageMasterAlternatives)parent;
 
             if (getMasterName() == null) {
-                log.error("WARNING: single-page-master-reference"
+                log.warn("single-page-master-reference"
                                        + "does not have a master-name and so is being ignored");
             } else {
                 this.repeatablePageMasterAlternatives.addConditionalPageMasterReference(this);

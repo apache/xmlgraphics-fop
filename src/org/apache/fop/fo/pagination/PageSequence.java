@@ -199,7 +199,7 @@ public class PageSequence extends FObj {
             throw new FOPException("flow-names must be unique within an fo:page-sequence");
         }
         if (!this.layoutMasterSet.regionNameExists(flow.getFlowName())) {
-            log.error("WARNING: region-name '"
+            log.error("region-name '"
                                    + flow.getFlowName()
                                    + "' doesn't exist in the layout-master-set.");
         }
@@ -272,7 +272,7 @@ public class PageSequence extends FObj {
             currentPage.setFormattedNumber(formattedPageNumber);
             this.root.setRunningPageNumberCounter(this.currentPageNumber);
 
-            log.info(" [" + currentPageNumber);
+            log.info("[" + currentPageNumber + "]");
 
             if ((status.getCode() == Status.FORCE_PAGE_BREAK_EVEN)
                 && ((currentPageNumber % 2) == 1)) {}
@@ -301,7 +301,7 @@ public class PageSequence extends FObj {
             currentPage.setPageSequence(this);
             formatStaticContent(areaTree);
 
-            log.info("]");
+            //log.info("]");
             areaTree.addPage(currentPage);
             this.pageCount++;    // used for 'force-page-count' calculations
         }
@@ -412,7 +412,7 @@ public class PageSequence extends FObj {
             AreaContainer beforeArea = currentPage.getBefore();
             ((StaticContent)flow).layout(area, region);
         } else {
-            log.error("WARNING: " + region.getName()
+            log.error("" + region.getName()
                                    + " only supports static-content flows currently. Cannot use flow named '"
                                    + flow.getFlowName() + "'");
         }
@@ -476,7 +476,7 @@ public class PageSequence extends FObj {
             SubSequenceSpecifier nextSubsequence =
                 getNextSubsequence(sequenceMaster);
             if (nextSubsequence == null) {
-                log.error("\nWARNING: Page subsequences exhausted. Using previous subsequence.");
+                log.error("Page subsequences exhausted. Using previous subsequence.");
                 thisIsFirstPage =
                     true;    // this becomes the first page in the new (old really) page master
                 currentSubsequence.reset();

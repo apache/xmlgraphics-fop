@@ -11,6 +11,9 @@ import org.apache.fop.apps.*;
 import org.apache.fop.configuration.*;
 
 import org.apache.log.*;
+import org.apache.log.format.*;
+import org.apache.log.output.io.*;
+import org.apache.log.output.*;
 
 import java.io.*;
 import java.util.*;
@@ -85,7 +88,16 @@ public class TestConverter {
     }
 
     private void setupLogging() {
-        log = Hierarchy.getDefaultHierarchy().getLoggerFor("test");
+        Hierarchy hierarchy = Hierarchy.getDefaultHierarchy();
+        PatternFormatter formatter = new PatternFormatter(
+           "[%{priority}]: %{message}\n%{throwable}" );
+
+        LogTarget target = null;
+        target = new StreamTarget(System.out, formatter);
+
+        hierarchy.setDefaultLogTarget(target);
+        log = hierarchy.getLoggerFor("test");
+        log.setPriority(Priority.ERROR);
     }
 
     public void setOutputPDF(boolean pdf) {

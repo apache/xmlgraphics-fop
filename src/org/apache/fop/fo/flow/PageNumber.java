@@ -46,7 +46,7 @@ public class PageNumber extends FObj {
 
     public Status layout(Area area) throws FOPException {
         if (!(area instanceof BlockArea)) {
-            log.error("WARNING: page-number outside block area");
+            log.warn("page-number outside block area");
             return new Status(Status.OK);
         }
         if (this.marker == START) {

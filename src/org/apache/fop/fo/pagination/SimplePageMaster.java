@@ -57,7 +57,7 @@ public class SimplePageMaster extends FObj {
             this.layoutMasterSet = (LayoutMasterSet)parent;
             masterName = this.properties.get("master-name").getString();
             if (masterName == null) {
-                log.error("WARNING: simple-page-master does not have "
+                log.warn("simple-page-master does not have "
                                        + "a master-name and so is being ignored");
             } else {
                 this.layoutMasterSet.addSimplePageMaster(this);
@@ -98,7 +98,7 @@ public class SimplePageMaster extends FObj {
                                           contentRectangleHeight);
             this.pageMaster.addBody(body);
         } else {
-            log.error("ERROR: simple-page-master must have a region of class "
+            log.error("simple-page-master must have a region of class "
                                    + RegionBody.REGION_CLASS);
         }
 
