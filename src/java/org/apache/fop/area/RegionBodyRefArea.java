@@ -31,9 +31,9 @@ import org.apache.fop.fo.flow.FoPageSequence;
 public class RegionBodyRefArea
 extends RegionRefArea
 implements ReferenceArea {
-    //private BeforeFloat beforeFloat;
     private MainReferenceArea mainReference;
-    //private Footnote footnote;
+    private BeforeFloatRefArea beforeFloatRefArea;
+    private FootnoteRefArea footnoteRefArea;
     private int columnGap = 0;
     private int columnCount = 1;
 
@@ -68,6 +68,10 @@ implements ReferenceArea {
             new RegionBodyRefArea(pageSeq, parent, sync);
         bodyRef.setMainReference(MainReferenceArea.nullMainRefArea(
                 pageSeq, pageSeq, bodyRef, sync));
+        bodyRef.setBeforeFloatRefArea(
+                new BeforeFloatRefArea(pageSeq, pageSeq, bodyRef, sync));
+        bodyRef.setFootnoteRefArea(
+                new FootnoteRefArea(pageSeq, pageSeq, bodyRef, sync));
         return bodyRef;
     }
     /**
@@ -115,11 +119,11 @@ implements ReferenceArea {
     /**
      * Set the before float area.
      *
-     * @param bf the before float area
+     * @param bf the before float reference area
      */
-//    public void setBeforeFloat(BeforeFloat bf) {
-//        beforeFloat = bf;
-//    }
+    public void setBeforeFloatRefArea(BeforeFloatRefArea bf) {
+        beforeFloatRefArea = bf;
+    }
 
     /**
      * Set the main reference area.
@@ -135,20 +139,20 @@ implements ReferenceArea {
     /**
      * Set the footnote area.
      *
-     * @param foot the footnote area
+     * @param foot the footnote reference area
      */
-//    public void setFootnote(Footnote foot) {
-//        footnote = foot;
-//    }
+    public void setFootnoteRefArea(FootnoteRefArea foot) {
+        footnoteRefArea = foot;
+    }
 
     /**
      * Get the before float area.
      *
      * @return the before float area
      */
-//    public BeforeFloat getBeforeFloat() {
-//        return beforeFloat;
-//    }
+    public BeforeFloatRefArea getBeforeFloatRefArea() {
+        return beforeFloatRefArea;
+    }
 
     /**
      * Get the main reference area.
@@ -166,9 +170,9 @@ implements ReferenceArea {
      *
      * @return the footnote area
      */
-//    public Footnote getFootnote() {
-//        return footnote;
-//    }
+    public FootnoteRefArea getFootnoteRefArea() {
+        return footnoteRefArea;
+    }
 
     /**
      * Clone this object.
@@ -180,9 +184,9 @@ implements ReferenceArea {
             RegionBodyRefArea br = (RegionBodyRefArea)(super.clone());
             br.columnGap = columnGap;
             br.columnCount = columnCount;
-            //br.beforeFloat = beforeFloat;
+            br.beforeFloatRefArea = beforeFloatRefArea;
             br.mainReference = mainReference;
-            //br.footnote = footnote;
+            br.footnoteRefArea = footnoteRefArea;
             return br;
         }
     }
