@@ -721,7 +721,7 @@ Get it from http://checkstyle.sourceforge.net</fail>
       <fileset dir="${build.dir}" defaultexcludes="no">
         <exclude name="**/CVS"/>
         <exclude name="**CVS/*"/>
-        <exclude name=".cvsignore"/>
+        <exclude name="**/.cvsignore"/>
       </fileset>
     </delete>
   </target>
