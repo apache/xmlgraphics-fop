@@ -30,7 +30,7 @@ import org.xml.sax.SAXParseException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOElementMapping;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -693,10 +693,10 @@ public class PageSequence extends FObj {
 
     /**
      * Hook for Visitor objects accessing the FO Tree.
-     * @param fotv the FOTreeVisitor object accessing this node of the FO Tree
+     * @param aLMV the AddLMVisitor object that can access this object.
      */
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.servePageSequence(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.servePageSequence(this);
     }
 
     /**

@@ -25,7 +25,7 @@ import org.xml.sax.Attributes;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 
 /**
  * Base PageMasterReference class. Provides implementation for handling the
@@ -86,8 +86,8 @@ public abstract class PageMasterReference extends FObj
         }
     }
 
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.servePageMasterReference(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.servePageMasterReference(this);
     }
 
     public String getName() {

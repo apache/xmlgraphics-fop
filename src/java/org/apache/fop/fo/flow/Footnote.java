@@ -26,7 +26,7 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.FObj;
 
 /**
@@ -75,8 +75,8 @@ public class Footnote extends FObj {
         return inlineFO;
     }
 
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveFootnote(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.serveFootnote(this);
     }
     
     protected void endOfNode() throws SAXParseException {

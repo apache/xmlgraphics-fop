@@ -31,7 +31,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOElementMapping;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -195,8 +195,8 @@ public class PageSequenceMaster extends FObj {
         return pageMaster;
     }
 
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.servePageSequenceMaster(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.servePageSequenceMaster(this);
     }
 
     public String getName() {

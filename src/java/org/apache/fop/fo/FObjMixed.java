@@ -19,6 +19,7 @@
 package org.apache.fop.fo;
 
 import org.xml.sax.Locator;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 
 /**
  * Base class for representation of mixed content formatting objects
@@ -74,13 +75,12 @@ public class FObjMixed extends FObj {
     }
 
     /**
-     * This is a hook for an FOTreeVisitor subclass to be able to access
+     * This is a hook for the AddLMVisitor class to be able to access
      * this object.
-     * @param fotv the FOTreeVisitor subclass that can access this object.
-     * @see org.apache.fop.fo.FOTreeVisitor
+     * @param aLMV the AddLMVisitor object that can access this object.
      */
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveFObjMixed(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.serveFObjMixed(this);
     }
 }
 

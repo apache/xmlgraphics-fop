@@ -19,7 +19,7 @@
 package org.apache.fop.fo.extensions;
 
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.apps.FOPException;
 
 import java.util.ArrayList;
@@ -89,8 +89,8 @@ public class Outline extends ExtensionObj {
         return label == null ? "" : label.toString();
     }
 
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveOutline(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.serveOutline(this);
     }
 
     public String getInternalDestination() {

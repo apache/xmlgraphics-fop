@@ -21,7 +21,7 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ToBeImplementedElement;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 
 /**
  * fo:float element.
@@ -43,8 +43,8 @@ public class Float extends ToBeImplementedElement {
 
     }
 
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveFloat(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.serveFloat(this);
     }
 
     public String getName() {

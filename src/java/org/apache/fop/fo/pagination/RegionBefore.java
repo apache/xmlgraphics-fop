@@ -21,7 +21,7 @@ package org.apache.fop.fo.pagination;
 // FOP
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 
 // Java
 import java.awt.Rectangle;
@@ -75,13 +75,12 @@ public class RegionBefore extends RegionBA {
     }
 
     /**
-     * This is a hook for an FOTreeVisitor subclass to be able to access
+     * This is a hook for the AddLMVisitor class to be able to access
      * this object.
-     * @param fotv the FOTreeVisitor subclass that can access this object.
-     * @see org.apache.fop.fo.FOTreeVisitor
+     * @param aLMV the AddLMVisitor object that can access this object.
      */
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveRegionBefore(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.serveRegionBefore(this);
     }
 
     public String getName() {

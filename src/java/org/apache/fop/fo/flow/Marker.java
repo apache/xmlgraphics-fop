@@ -25,7 +25,7 @@ import org.xml.sax.Attributes;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 
 /**
  * Marker formatting object.
@@ -63,8 +63,8 @@ public class Marker extends FObjMixed {
         return markerClassName;
     }
 
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveMarker(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.serveMarker(this);
     }
 
     public String getName() {

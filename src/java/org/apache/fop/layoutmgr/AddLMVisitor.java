@@ -43,7 +43,6 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
-import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.TextInfo;
@@ -132,14 +131,12 @@ import org.apache.fop.layoutmgr.table.TableLayoutManager;
 import org.apache.fop.traits.MinOptMax;
 
 /**
- * Concrete implementation of FOTreeVisitor for the purpose of adding
- * Layout Managers for nodes in the FOTree.
- * Each method is responsible to return a LayoutManager responsible for laying
- * out this FObj's content.
- * @see org.apache.fop.fo.FOTreeVisitor
+ * Visitor pattern for the purpose of adding
+ * Layout Managers to nodes in the FOTree.
+ * Each method is responsible to return a LayoutManager 
+ * responsible for laying out this FObj's content.
  */
-
-public class AddLMVisitor implements FOTreeVisitor {
+public class AddLMVisitor {
 
     /** The List object to which methods in this class should add Layout
      *  Managers */

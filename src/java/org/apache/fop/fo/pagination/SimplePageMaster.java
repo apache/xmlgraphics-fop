@@ -29,7 +29,7 @@ import org.xml.sax.Attributes;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -153,13 +153,12 @@ public class SimplePageMaster extends FObj {
     }
 
     /**
-     * This is a hook for an FOTreeVisitor subclass to be able to access
+     * This is a hook for the AddLMVisitor class to be able to access
      * this object.
-     * @param fotv the FOTreeVisitor subclass that can access this object.
-     * @see org.apache.fop.fo.FOTreeVisitor
+     * @param aLMV the AddLMVisitor object that can access this object.
      */
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveSimplePageMaster(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.serveSimplePageMaster(this);
     }
 
     public String getName() {

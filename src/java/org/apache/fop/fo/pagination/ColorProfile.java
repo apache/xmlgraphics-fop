@@ -33,7 +33,7 @@ import org.xml.sax.SAXParseException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 
 /**
  * The fo:color-profile formatting object.
@@ -112,8 +112,8 @@ public class ColorProfile extends FObj {
         }
     }
 
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveColorProfile(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.serveColorProfile(this);
     }
 
     public String getName() {

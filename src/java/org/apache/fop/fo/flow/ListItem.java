@@ -25,7 +25,7 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
@@ -142,8 +142,8 @@ public class ListItem extends FObj {
         return body;
     }
 
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveListItem(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.serveListItem(this);
     }
 
     protected void endOfNode() throws SAXParseException {

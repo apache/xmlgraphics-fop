@@ -25,7 +25,7 @@ import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.ToBeImplementedElement;
 
 /**
@@ -55,8 +55,8 @@ public class MultiPropertySet extends ToBeImplementedElement {
         // this.propertyList.get("active-state");
     }
 
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveMultiPropertySet(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.serveMultiPropertySet(this);
     }
 
     public String getName() {

@@ -26,7 +26,7 @@ import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.pagination.Root;
 
 /**
@@ -64,8 +64,8 @@ public class Bookmarks extends ExtensionObj {
         ((Root) parent).setBookmarks(this);
     }
 
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveBookmarks(this);
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.serveBookmarks(this);
     }
 
     public ArrayList getOutlines() {
