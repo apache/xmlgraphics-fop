@@ -68,7 +68,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
      */
     public AbstractLayoutManager(FObj fo) {
         setFObj(fo);
-        setUserAgent(fo.getUserAgent());
     }
 
     /**
@@ -99,24 +98,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
      * based on Properties set on its FO.
      */
     protected void initProperties() {
-    }
-
-    /**
-     * Set the user agent.
-     *
-     * @param ua the user agent
-     */
-    public void setUserAgent(FOUserAgent ua) {
-        userAgent = ua;
-    }
-
-    /**
-     * Get the user agent.
-     *
-     * @see org.apache.fop.layoutmgr.LayoutManager#getUserAgent()
-     */
-    public FOUserAgent getUserAgent() {
-        return userAgent;
     }
 
     public void setParent(LayoutManager lm) {
@@ -185,7 +166,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
         }
         while (childLMiter.hasNext()) {
             curChildLM = (LayoutManager) childLMiter.next();
-            curChildLM.setUserAgent(getUserAgent());
             curChildLM.setParent(this);
             curChildLM.initialize();
             return curChildLM;

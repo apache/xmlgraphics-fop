@@ -162,7 +162,6 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
         }
         MinOptMax headerSize = null;
         if (tableHeader != null) {
-            tableHeader.setUserAgent(getUserAgent());
             tableHeader.resetPosition(null);
             headerBreak = getHeight(tableHeader, context);
             headerSize = headerBreak.getStackingSize();
@@ -171,7 +170,6 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
 
         MinOptMax footerSize = null;
         if (tableFooter != null) {
-            tableFooter.setUserAgent(getUserAgent());
             tableFooter.resetPosition(null);
             footerBreak = getHeight(tableFooter, context);
             footerSize = footerBreak.getStackingSize();

@@ -43,20 +43,6 @@ public interface LayoutManager {
     void setFObj(FObj obj);
 
     /**
-     * Set the user agent. For resolving user agent values.
-     *
-     * @param ua the user agent
-     */
-    void setUserAgent(FOUserAgent ua);
-
-    /**
-     * Get the user agent.
-     *
-     * @return the user agent
-     */
-    FOUserAgent getUserAgent();
-    
-    /**
      * Set the parent layout manager.
      * The parent layout manager is required for adding areas.
      *

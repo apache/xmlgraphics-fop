@@ -94,7 +94,6 @@ public class Row extends BlockStackingLayoutManager {
         // add cells to list
         while (childLMiter.hasNext()) {
             curChildLM = (LayoutManager) childLMiter.next();
-            curChildLM.setUserAgent(getUserAgent());
             curChildLM.setParent(this);
             curChildLM.initialize();
             cellList.add(curChildLM);
