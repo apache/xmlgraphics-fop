@@ -63,7 +63,7 @@ public class LengthBase implements PercentBase {
     public static final int CUSTOM_BASE = 0;
     /** constant for a font-size percent-based length */
     public static final int FONTSIZE = 1;
-    /** constant for an inh (??) font-size percent-based length */
+    /** constant for an inh font-size percent-based length */
     public static final int INH_FONTSIZE = 2;
     /** constant for a containing box percent-based length */
     public static final int CONTAINING_BOX = 3;
