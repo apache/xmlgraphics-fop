@@ -36,7 +36,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 //FOP
-import org.apache.fop.apps.Version;
+import org.apache.fop.apps.Fop;
 import org.apache.fop.fonts.type1.PFMFile;
 
 /**
@@ -144,7 +144,7 @@ public class PFMReader {
 
         PFMReader app = new PFMReader();
 
-        System.out.println("PFM Reader for Apache FOP " + Version.getVersion() + "\n");
+        System.out.println("PFM Reader for Apache FOP " + Fop.getVersion() + "\n");
 
         if (options.get("-ef") != null) {
             embFile = (String)options.get("-ef");

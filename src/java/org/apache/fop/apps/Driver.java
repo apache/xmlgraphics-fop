@@ -350,8 +350,8 @@ public class Driver {
         if (renderer instanceof AWTRenderer) {
             rendererType = RENDER_AWT;
         }
-        renderer.setProducer(Version.getVersion());
         renderer.setUserAgent(getUserAgent());
+        userAgent.setProducer("FOP Version" + Fop.getVersion());
         this.renderer = renderer;
     }
 
@@ -375,8 +375,8 @@ public class Driver {
                 throws IllegalArgumentException {
         try {
             renderer = (Renderer)Class.forName(rendererClassName).newInstance();
-            renderer.setProducer(Version.getVersion());
             renderer.setUserAgent(getUserAgent());
+            userAgent.setProducer("FOP Version" + Fop.getVersion());
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Could not find "
                                                + rendererClassName);

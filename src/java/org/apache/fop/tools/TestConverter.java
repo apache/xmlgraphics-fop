@@ -317,7 +317,7 @@ public class TestConverter {
 
             userAgent.getRendererOptions().put("fineDetail", new Boolean(false));
             userAgent.getRendererOptions().put("consistentOutput", new Boolean(true));
-            driver.getRenderer().setProducer("Testsuite Converter");
+            userAgent.setProducer("Testsuite Converter");
 
             String outname = res;
             if (outname.endsWith(".xml") || outname.endsWith(".pdf")) {

@@ -320,7 +320,7 @@ public class PSRenderer extends AbstractRenderer {
 
         //PostScript Header
         writeln(DSCConstants.PS_ADOBE_30);
-        gen.writeDSCComment(DSCConstants.CREATOR, new String[] {"FOP " + this.producer});
+        gen.writeDSCComment(DSCConstants.CREATOR, new String[] { userAgent.getProducer() });
         gen.writeDSCComment(DSCConstants.CREATION_DATE, new Object[] {new java.util.Date()});
         gen.writeDSCComment(DSCConstants.LANGUAGE_LEVEL, new Integer(gen.getPSLevel()));
         gen.writeDSCComment(DSCConstants.PAGES, new Object[] {PSGenerator.ATEND});

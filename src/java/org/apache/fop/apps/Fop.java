@@ -39,7 +39,6 @@ public class Fop {
         CommandLineOptions options = null;
         InputHandler inputHandler = null;
         BufferedOutputStream bos = null;
-        String version = Version.getVersion();
 
         try {
             Driver driver = new Driver();
@@ -95,6 +94,14 @@ public class Fop {
             }
             System.exit(1);
         }
+    }
+
+    /**
+     * Get the version of FOP
+     * @return the version string
+     */
+    public static String getVersion() {
+        return "1.0dev";
     }
 }
 

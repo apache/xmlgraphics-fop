@@ -19,6 +19,7 @@
 package org.apache.fop.apps;
 
 // Java
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.io.IOException;
@@ -57,6 +58,69 @@ public class FOUserAgent {
     private PDFEncryptionParams pdfEncryptionParams;
     private float px2mm = 0.35277777777777777778f; //72dpi (=25.4/dpi)
     private HashMap rendererOptions = new java.util.HashMap();
+
+    /** Producer:  Metadata element for the system/software that produces
+     * the document. (Some renderers can store this in the document.)
+     */
+    protected String producer = "FOP " + Fop.getVersion();
+
+    /** Creator:  Metadata element for the user that created the
+     * document. (Some renderers can store this in the document.)
+     */
+    protected String creator = null;
+
+    /** Creation Date:  Override of the date the document was created. 
+     * (Some renderers can store this in the document.)
+     */
+    protected Date creationDate = null;
+    
+    /**
+     * Sets the producer of the document.  
+     * @param producer source of document
+     */
+    public void setProducer(String producer) {
+        this.producer = producer;
+    }
+
+    /**
+     * Returns the producer of the document
+     * @return producer name
+     */
+    public String getProducer() {
+        return producer;
+    }
+
+    /**
+     * Sets the creator of the document.  
+     * @param creator of document
+     */
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
+
+    /**
+     * Returns the creator of the document
+     * @return creator name
+     */
+    public String getCreator() {
+        return creator;
+    }
+
+    /**
+     * Sets the creation date of the document.  
+     * @param creation date of document
+     */
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    /**
+     * Returns the creation date of the document
+     * @return creation date of document
+     */
+    public Date getCreationDate() {
+        return creationDate;
+    }
 
     /**
      * Returns the renderer options
