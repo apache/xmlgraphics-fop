@@ -158,7 +158,7 @@ public class SVGUserAgent extends UserAgentAdapter {
      * @return the XML parser class name
      */
     public String getXMLParserClassName() {
-        return org.apache.fop.apps.FOInputHandler.getParserClassName();
+        return org.apache.fop.apps.FOFileHandler.getParserClassName();
     }
 
     /**

@@ -51,7 +51,7 @@
 package org.apache.fop.tools;
 
 import org.apache.fop.apps.Driver;
-import org.apache.fop.apps.FOInputHandler;
+import org.apache.fop.apps.FOFileHandler;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.InputHandler;
 import org.apache.fop.apps.XSLTInputHandler;
@@ -278,7 +278,7 @@ public class TestConverter extends AbstractLogEnabled {
 
             InputHandler inputHandler = null;
             if (xsl == null) {
-                inputHandler = new FOInputHandler(xmlFile);
+                inputHandler = new FOFileHandler(xmlFile);
             } else {
                 inputHandler = new XSLTInputHandler(xmlFile,
                                                     new File(baseDir + "/"
