@@ -33,11 +33,6 @@
     <value>userconfig.xml</value>
   </entry>
 
-  <entry>
-    <key>languageConfigFileName</key>
-    <value>xml-lang.xml</value>
-  </entry>
-
   <!-- stream-filter-list provides the default filters that are applied to all
   stream objects within the PDF file. These are normally used for 
   compression -->
