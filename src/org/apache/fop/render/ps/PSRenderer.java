@@ -99,9 +99,6 @@ public class PSRenderer extends AbstractRenderer {
     private int currentFontSize;
     private int pageHeight;
     private int pageWidth;
-    private int currentXPosition = 0;
-    private int currentYPosition = 0;
-    private int currentAreaContainerXPosition = 0;
     private float currRed;
     private float currGreen;
     private float currBlue;
