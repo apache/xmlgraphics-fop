@@ -370,7 +370,7 @@ public class AddLMVisitor extends FOTreeVisitor {
      }
 
      public void serveVisitor(Character node) {
-         InlineArea inline = node.getInlineArea();
+         InlineArea inline = getCharacterInlineArea(node);
          if (inline != null) {
              LeafNodeLayoutManager lm = new LeafNodeLayoutManager();
              lm.setUserAgent(node.getUserAgent());
@@ -378,6 +378,17 @@ public class AddLMVisitor extends FOTreeVisitor {
              lm.setCurrentArea(inline);
              currentLMList.add(lm);
          }
+     }
+
+     public InlineArea getCharacterInlineArea(Character node) {
+         String str = node.properties.get("character").getString();
+         if (str.length() == 1) {
+             org.apache.fop.area.inline.Character ch =
+               new org.apache.fop.area.inline.Character(
+                 str.charAt(0));
+             return ch;
+         }
+         return null;
      }
 
      /**

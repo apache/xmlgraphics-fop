@@ -94,17 +94,6 @@ public class Character extends FObj {
         super(parent);
     }
 
-    public InlineArea getInlineArea() {
-        String str = this.properties.get("character").getString();
-        if (str.length() == 1) {
-            org.apache.fop.area.inline.Character ch =
-              new org.apache.fop.area.inline.Character(
-                str.charAt(0));
-            return ch;
-        }
-        return null;
-    }
-
     private void setup() throws FOPException {
 
         // Common Aural Properties
