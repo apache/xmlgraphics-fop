@@ -489,7 +489,7 @@ public class LayoutHandler extends StructureHandler {
     /**
      * @see org.apache.fop.apps.StructureHandler#characters(char[], int, int)
      */
-    public void characters(char data[], int start, int length) {
+    public void characters(char[] data, int start, int length) {
     }
 
     /**
