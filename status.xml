@@ -76,9 +76,30 @@ inactive??
 
   <changes>
    <release version="?" date="2002">
+    <action dev="KLL" type="update" context="docs"
+            due-to="Victor Mote" due-to-email="vic@outfitr.com">
+      Copies across overview for javadocs build.
+      chmod antRun in build.sh.
+    </action>
+    <action dev="KLL" type="update" context="code"
+            due-to="Kevin O'Neill" due-to-email="kevin@rocketred.com.au">
+      Minor patch for the TTFReader to remove an unreachable statement
+      compiler warning
+    </action>
+    <action dev="KLL" type="update" context="code"
+            due-to="Torsten Erler" due-to-email="erlto@net-linx.de">
+      workaround for eps files that have invalid float bounding box values
+      float values are rounded off according to the spec the
+      %%HiResBoundingBox should be used instead for floating position
+      values
+    </action>
+    <action dev="JP" type="update" context="code">
+      Simplified ASCII85Filter computation, thereby hopefully
+      working around JVM bugs
+    </action>
     <action dev="KLL" type="add" context="docs"
             due-to="Cyril Rognon" due-to-email="crognon@objectiva.fr">
-      added layout manager info
+      added understanding layout manager document
     </action>
     <action dev="KLL" type="update" context="docs"
             due-to="Peter Kullmann" due-to-email="p.kullmann@arenae.ch">
