@@ -62,8 +62,8 @@
       PDF encryption</link> for details about installation and usage.
     </li>
     <li>The behaviour of leader has changed. See
-      <link href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=19341">bug #19341</link>,
-      <link href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=19465">bug #19465</link>
+      <link href="http://issues.apache.org/bugzilla/show_bug.cgi?id=19341">bug #19341</link>,
+      <link href="http://issues.apache.org/bugzilla/show_bug.cgi?id=19465">bug #19465</link>
       and <code>leader.fo</code> (examples).
     </li>
     <li>
