@@ -42,7 +42,7 @@ public class InitialPropertySet extends ToBeImplementedElement {
         RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
 
         // this.properties.get("color");
-        // this.properties.get("id");
+        setupID();
         // this.properties.get("letter-spacing");
         // this.properties.get("line-height");
         // this.properties.get("line-height-shift-adjustment");

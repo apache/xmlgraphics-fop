@@ -190,7 +190,7 @@ public class InstreamForeignObject extends FObj {
             // this.properties.get("display-align");
             // this.properties.get("dominant-baseline");
             // this.properties.get("height");  
-            // this.properties.get("id");
+            setupID();
             // this.properties.get("inline-progression-dimension");
             // this.properties.get("keep-with-next");
             // this.properties.get("keep-with-previous");
@@ -203,7 +203,6 @@ public class InstreamForeignObject extends FObj {
             // this.properties.get("width");
 
             /* retrieve properties *
-            String id = this.properties.get("id").getString();
             int align = this.properties.get("text-align").getEnum();
             int valign = this.properties.get("vertical-align").getEnum();
             int overflow = this.properties.get("overflow").getEnum();

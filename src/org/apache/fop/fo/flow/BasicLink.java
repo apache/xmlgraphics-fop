@@ -56,7 +56,7 @@ public class BasicLink extends Inline {
         // this.properties.get("destination-place-offset");
         // this.properties.get("dominant-baseline");
         // this.properties.get("external-destination");        
-        // this.properties.get("id");
+        setupID();
         // this.properties.get("indicate-destination");  
         // this.properties.get("internal-destination");  
         // this.properties.get("keep-together");
@@ -81,7 +81,6 @@ public class BasicLink extends Inline {
 
         if (this.marker == START) {
             // initialize id
-            String id = this.properties.get("id").getString();
             area.getIDReferences().initializeID(id, area);
             this.marker = 0;
         }

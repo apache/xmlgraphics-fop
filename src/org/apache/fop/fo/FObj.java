@@ -11,7 +11,7 @@ package org.apache.fop.fo;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.AreaClass;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.IDReferences;
+import org.apache.fop.apps.StreamRenderer;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.fo.properties.FOPropertyMapping;
 import org.apache.fop.layout.Area;
@@ -28,14 +28,17 @@ import java.util.ListIterator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * base class for representation of formatting objects and their processing
  */
 public class FObj extends FONode {
+    protected StreamRenderer streamRenderer;
     public PropertyList properties;
     protected PropertyManager propMgr;
     protected String areaClass = AreaClass.UNASSIGNED;
+    protected String id = null;
 
     /**
      * value of marker before layout begins
@@ -132,6 +135,10 @@ public class FObj extends FONode {
         children.add(child);
     }
 
+    public void setStreamRenderer(StreamRenderer st) {
+        streamRenderer = st;
+    }
+
     /**
      * lets outside sources access the property list
      * first used by PageNumberCitation to find the "id" property
@@ -140,6 +147,22 @@ public class FObj extends FONode {
      */
     public Property getProperty(String name) {
         return (properties.get(name));
+    }
+
+    protected void setupID() {
+        Property prop = this.properties.get("id");
+        if(prop != null) {
+            String str = prop.getString();
+            if(str != null && !str.equals("")) {
+                HashSet idrefs = streamRenderer.getIDReferences();
+                if(!idrefs.contains(str)) {
+                    id = str;
+                    idrefs.add(id);
+                } else {
+                    log.warn("duplicate id:" + str + " ignored");
+                }
+            }
+        }
     }
 
     /**
@@ -154,25 +177,6 @@ public class FObj extends FONode {
      */
     public int getContentWidth() {
         return 0;
-    }
-
-    /**
-     * removes property id
-     * @param idReferences the id to remove
-     */
-    public void removeID(IDReferences idReferences) {
-        if (((FObj) this).properties.get("id") == null ||
-                ((FObj) this).properties.get("id").getString() == null)
-            return;
-        idReferences.removeID(
-          ((FObj) this).properties.get("id").getString());
-        int numChildren = this.children.size();
-        for (int i = 0; i < numChildren; i++) {
-            FONode child = (FONode) children.get(i);
-            if ((child instanceof FObj)) {
-                ((FObj) child).removeID(idReferences);
-            }
-        }
     }
 
     public boolean generatesReferenceAreas() {

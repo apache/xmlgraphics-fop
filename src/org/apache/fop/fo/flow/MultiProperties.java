@@ -27,7 +27,7 @@ public class MultiProperties extends ToBeImplementedElement {
         // Common Accessibility Properties
         AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
 
-        // this.properties.get("id");
+        setupID();
 
         return super.layout(area);
     }

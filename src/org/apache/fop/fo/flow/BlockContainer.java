@@ -43,6 +43,7 @@ public class BlockContainer extends FObj {
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
         this.span = this.properties.get("span").getEnum();
+        setupID();
     }
 
     public Status layout(Area area) throws FOPException {

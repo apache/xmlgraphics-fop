@@ -39,7 +39,7 @@ public class TableCaption extends ToBeImplementedElement {
 
         // this.properties.get("block-progression-dimension");
         // this.properties.get("height");
-        // this.properties.get("id");
+        setupID();
         // this.properties.get("inline-progression-dimension");
         // this.properties.get("keep-togethe");
         // this.properties.get("width");

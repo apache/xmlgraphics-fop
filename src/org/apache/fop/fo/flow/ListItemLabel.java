@@ -32,12 +32,11 @@ public class ListItemLabel extends FObj {
 
         // Common Accessibility Properties
         AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
-     
-        // this.properties.get("id");
+
+        setupID();
         // this.properties.get("keep-together");
 
         // initialize id
-        String id = this.properties.get("id").getString();
         area.getIDReferences().initializeID(id, area);
 
         Block block = (Block)children.get(0);

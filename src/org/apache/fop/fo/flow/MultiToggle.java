@@ -27,7 +27,7 @@ public class MultiToggle extends ToBeImplementedElement {
         // Common Accessibility Properties
         AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
 
-        // this.properties.get("id");
+        setupID();
         // this.properties.get("switch-to");
 
         return super.layout(area);

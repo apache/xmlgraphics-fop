@@ -83,7 +83,7 @@ public class PageNumber extends FObj {
             // this.properties.get("alignment-baseline");
             // this.properties.get("baseline-shift");
             // this.properties.get("dominant-baseline");
-            // this.properties.get("id");
+            setupID();
             // this.properties.get("keep-with-next");
             // this.properties.get("keep-with-previous");
             // this.properties.get("letter-spacing");
@@ -107,7 +107,6 @@ public class PageNumber extends FObj {
             this.marker = 0;
 
             // initialize id
-            String id = this.properties.get("id").getString();
             area.getIDReferences().initializeID(id, area);
         }
 

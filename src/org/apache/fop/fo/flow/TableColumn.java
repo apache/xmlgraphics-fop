@@ -84,7 +84,7 @@ public class TableColumn extends FObj {
 	this.columnWidth = columnWidthPropVal.mvalue();
 
         // initialize id
-        String id = this.properties.get("id").getString();
+        setupID();
         area.getIDReferences().initializeID(id, area);
 
         setup = true;

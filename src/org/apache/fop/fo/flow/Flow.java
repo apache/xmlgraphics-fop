@@ -161,7 +161,6 @@ public class Flow extends FObj {
                     FObj prevChild = (FObj) children.get(this.marker);
                     prevChild.removeAreas();
                     prevChild.resetMarker();
-                    prevChild.removeID(area.getIDReferences());
                     _status = new Status(Status.AREA_FULL_SOME);
                     return _status;
                     // should probably return AREA_FULL_NONE if first

@@ -85,6 +85,8 @@ public class Block extends FObjMixed {
            == Constants.TRUE);
         this.lfTreatment =
           this.properties.get("linefeed-treatment").getEnum();
+
+        setupID();
     }
 
     public Status layout(Area area) throws FOPException {

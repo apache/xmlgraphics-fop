@@ -22,7 +22,6 @@ public class TableCell extends FObj {
     // int spaceAfter;
     ColorType backgroundColor;
 
-    String id;
     int numColumnsSpanned;
     int numRowsSpanned;
     int iColNumber = -1;    // uninitialized
@@ -144,7 +143,7 @@ public class TableCell extends FObj {
         // this.properties.get("empty-cells");
         // this.properties.get("ends-row");
         // this.properties.get("height");
-        // this.properties.get("id");
+        setupID();
         // this.properties.get("number-columns-spanned");
         // this.properties.get("number-rows-spanned");
         // this.properties.get("starts-row");
@@ -168,8 +167,6 @@ public class TableCell extends FObj {
 
         this.backgroundColor =
             this.properties.get("background-color").getColorType();
-
-        this.id = this.properties.get("id").getString();
 
         bSepBorders = (this.properties.get("border-collapse").getEnum()
                        == BorderCollapse.SEPARATE);

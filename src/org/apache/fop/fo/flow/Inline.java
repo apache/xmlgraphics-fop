@@ -62,7 +62,7 @@ public class Inline extends FObjMixed {
         // this.properties.get("baseline-shift");
         // this.properties.get("color");
         // this.properties.get("dominant-baseline");
-        // this.properties.get("id");
+        setupID();
         // this.properties.get("keep-together");
         // this.properties.get("keep-with-next");
         // this.properties.get("keep-with-previous");

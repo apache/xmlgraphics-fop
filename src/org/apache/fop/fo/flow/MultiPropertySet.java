@@ -24,7 +24,7 @@ public class MultiPropertySet extends ToBeImplementedElement {
 
     public Status layout(Area area) throws FOPException {
 
-        // this.properties.get("id");
+        setupID();
         // this.properties.get("active-state");
 
         return super.layout(area);

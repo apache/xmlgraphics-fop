@@ -58,7 +58,7 @@ public class ListBlock extends FObj {
 
             // this.properties.get("break-after");
             // this.properties.get("break-before");
-            // this.properties.get("id");
+            setupID();
             // this.properties.get("keep-together");
             // this.properties.get("keep-with-next");
             // this.properties.get("keep-with-previous");
@@ -98,7 +98,6 @@ public class ListBlock extends FObj {
             }
 
             // initialize id
-            String id = this.properties.get("id").getString();
             area.getIDReferences().initializeID(id, area);
         }
 

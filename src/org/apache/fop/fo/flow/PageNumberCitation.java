@@ -84,7 +84,6 @@ public class PageNumberCitation extends FObj {
     Area area;
     String pageNumber;
     String refId;
-    String id;
     TextState ts;
 
 
@@ -138,7 +137,7 @@ public class PageNumberCitation extends FObj {
             // this.properties.get("alignment-baseline");
             // this.properties.get("baseline-shift");
             // this.properties.get("dominant-baseline");
-            // this.properties.get("id");
+            setupID();
             // this.properties.get("keep-with-next");
             // this.properties.get("keep-with-previous");
             // this.properties.get("letter-spacing");
@@ -167,7 +166,6 @@ public class PageNumberCitation extends FObj {
             }
 
             // create id
-            this.id = this.properties.get("id").getString();
             idReferences.createID(id);
             ts = new TextState();
 
