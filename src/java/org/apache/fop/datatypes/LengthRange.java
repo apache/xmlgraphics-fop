@@ -227,5 +227,12 @@ public class LengthRange implements CompoundDatatype {
         return this.optimum;
     }
 
+    public String toString() {
+        return "LengthRange[" +
+            "min:" + getMinimum().getObject() + 
+            ", max:" + getMaximum().getObject() + 
+            ", opt:" + getOptimum().getObject() + "]";
+    }
+    
 }
 

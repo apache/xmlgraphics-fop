@@ -119,5 +119,9 @@ public class CondLength implements CompoundDatatype {
         return this.length.getLength().getValue();
     }
 
+    public String toString() {
+        return "CondLength[" + (isDiscard() ? "discard, " : "") +
+                length.getObject().toString() + "]";
+    }
 }
 
