@@ -110,12 +110,14 @@
              configuration option.</li>
           </ul>
         </li>
-        <warning>Either of these three options will ensure hyphenation is working when using
+      </ol>
+      <warning>
+        Either of these three options will ensure hyphenation is working when using
         FOP from the command-line. If FOP is being embedded, remember to add the location(s)
         of the hyphenation JAR(s) to the CLASSPATH (option 1 and 2) or to set the 
         <link href="configuration.html#hyphenation-dir">&lt;hyphenation-dir&gt;</link> 
-        configuration option programmatically (option 3).</warning>
-      </ol>
+        configuration option programmatically (option 3).
+      </warning>
     </section>
   </section>
   <section id="patterns">
