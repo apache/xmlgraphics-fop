@@ -20,7 +20,7 @@
   <title>Introduction</title>
 <p>
 The overall process is controlled by <em>org.apache.fop.apps.Driver</em>.
-This class handles the FO Tree building, renderers, output and logging.
+This class handles the FO Tree building, structure handler, renderers, output and logging.
 </p>
 <p>
 The process in general is that the FO document is sent to the tree
@@ -39,22 +39,55 @@ actually constructing the FO tree. The key SAX events used are </p>
 <p><code>startElement()</code>,</p>
 <p><code>endElement()</code> and <code>characters()</code>.</p>
 
-<p>All formatting objects derive from abstract class
-<em>org.apache.fop.fo.FONode</em>. The other FO classes inherit from
-<em>FONode</em> as follows:</p>
-
 </section>
+
+<section>
+  <title>Layout</title>
+<p>
+The layout managers handle the layout. They take an FO tree and construct
+the area tree.
+The layout process involves finding out where line breaks and page
+breaks should be made. The areas are then added to the page. The
+static areas can the be done for all the static regions.
+Completed pages are then added to the area tree, the area tree can
+then deal with the page.
+</p>
+</section>
+
+<section>
+  <title>Area Tree</title>
+<p>
+The area tree is a data structure designed to hold the page areas.
+These pages are then filled with the page regions and various areas.
+The area tree is used primarily as a minimal structure that can be rendered
+by the renderers.
+</p>
+<p>
+The area tree is supported by an area tree model. This model
+handles the adding of pages to the area tree. It also handles
+page sequence starts, document level extensions, id references
+and unresolved id areas. This model allows the pages to be handled
+directly by a renderer or to store the pages for later use.
+</p>
+</section>
+
 
 <section>
   <title>Rendering</title>
 <p>
-This is a separate process. The <code>render()</code> method in
-<em>Driver</em> is invoked (say,
-by <em>CommandLine</em>) with the laid-out <em>AreaTree</em> and a
-<em>PrintWriter</em> as arguments.
-This actually calls the <code>render()</code> method in a specific implementation of
-the <em>Renderer</em> interface, typically <em>PDFRenderer</em> or
-<em>AWTRenderer</em>.
+The renderer receives pages from the area tree and renders those pages.
+If a renderer supports out of order rendering then it will either
+render or prepare a page in the correct order. Otherwise the
+pages are rendered in order.
+The task of the renderer is to take the pages and output them to
+the requested type.
+In the case of the AWTRenderer it needs to be able to view any page.
+</p>
+<p>
+When rendering a page it takes the page and renders each page region.
+The main work for a renderer implementation is to handle the viewports
+and inline areas. The inline areas need to be dran on the page in the
+correct place.
 </p>
 </section>
 

@@ -15,15 +15,16 @@
 <section>
   <title>Area Tree</title>
 <p>
-The code to implement the area tree will attempt to match the areas
-defined in the specification. A number of optimisations may be possible
-for similar areas and groups of areas.
+The code to implement the area tree matches the areas
+defined in the specification. This makes it easier to understand and
+correspond with the specification.
   </p>
   <p>
-Since the area tree will be used during the layout by the layout managers
-it will need to store information that affects the layout. The information
-such as spacing and keeps will be held in such a way that it can be
-discarded once the layout is finalised.
+The area tree is created by the layout managers once the layout is decided
+for a page. Once a completed page is finished it can then be added to the
+area tree. The area tree model can then handle the new page. The data in
+the area tree must be minimal and independant. This means that the data
+uses less memory and can be serialized to an output stream if needed.
   </p>
 <section>
   <title>Structure</title>
@@ -31,7 +32,7 @@ discarded once the layout is finalised.
 The area tree is a root element that has a list of page-viewport-areas.
 Each page viewport has a page-reference-area which holds the contents of
 the page. To handle the processing better FOP does not maintain a list
-at the root level but lets another class handle each page as it is added.
+at the root level but lets the area tree model handle each page as it is added.
   </p>
   </section>
 <section>
@@ -52,25 +53,18 @@ reference areas.
 Since the layout is done inside a page, the page is created from the
 pagemaster with all the appropriate areas. The layout manager then
 uses the page to add areas into the normal flow reference areas
-and floats and footnotes. After the layout of the body region
-is complete then the other regions can be done.
+and floats and footnotes. After adding the areas for the body region
+then the other regions can be done layed out and added.
   </p>
   </section>
 <section>
   <title>Block Areas</title>
 <p>
 Block areas are created and/or returned by all top level elements
-in the flow. These areas have keep and spacing information that
-needs to be retained until the page is finalised. A block area
-is stacked with other block areas in a particular direction, it
-has a size and it contains either line areas made from a group
-of inline areas or block areas.
-  </p>
-  <p>
-A block area can also be split into two block areas by splitting
-between two line areas or splitting between two block areas (or
-groups) that are stacked in the block progression direction of
-the page. The split may also be in a child block area.
+in the flow. The spacing between block areas is handled by an
+empty block area. A block area is stacked with other block
+areas in a particular direction, it has a size and it contains
+line areas made from a group of inline areas and/or block areas.
   </p>
   </section>
 <section>
@@ -78,22 +72,22 @@ the page. The split may also be in a child block area.
 <p>
 A line areas is simply a collection of inline areas that are stacked
 in the inline progression direction. A line area has a height and
-width. It also contains information about floats and footnotes
-that are associated with the inline areas.
+a start position. The line area is rendered by handling each inline
+area.
   </p>
   <p>
 A line area gets a set of inline areas added until complete then
-it is justified and vertically aligned. If the line area contains
-unresolved areas it will retain the justification information
-until all areas are resolved.
+it is justified and vertically alignedi when adding the areas.
+If the line area contains unresolved areas then there will
+be a line resolver that retains the justification information until
+all areas in the line are resolved.
   </p>
   </section>
 <section>
   <title>Inline Areas</title>
 <p>
 There are a few different types of inline areas. All inline areas
-have a height. Their width may be variable until the line is
-finalised.
+have a height and width.
   </p>
   <p>
 Unresolved areas can reserve some space to allow for possible
@@ -102,15 +96,13 @@ and finalised.
   </p>
   </section>
 <section>
-  <title>Cloning</title>
+  <title>Repeated Areas</title>
 <p>
-Any subtree of the area tree should be cloneable so that for
-areas that are repeated the area tree can simply be copied rather
-than going through the layout again. This will only work if the
-width is the same.
-  </p>
-  <p>
-Resolveable areas may be converted into an unresolved form.
+There are cases where the same subtree could be repeated in the area
+tree. These areas will be returned by the same layout managers.
+So it is possible to put a flag on the created areas so that
+the subtree data can be cached in the output. Examples of this are:
+static areas, table header/footer, svg.
   </p>
   </section>
 <section>
@@ -130,23 +122,24 @@ flow areas added.
 <section>
   <title>Block Area Classes</title>
 <p>
-The block areas typically hold either a set of line areas or a set of
-block areas. The child areas are usually stacked in a particular
-direction.
+The block areas hold other block areas and/or line areas. The
+child areas are stacked in a particular direction.
   </p>
   <p>
-Areas for tables and lists have their child block areas stacked
-in different ways. Lists also can have spacing between the block
-areas.
+Areas for tables, lists and block container have their child
+block areas stacked in different ways. These areas a placed
+with an absolute positioning. The absolute positioning is where
+the blocks are placed with an offset from the parent reference area.
   </p>
   </section>
 <section>
   <title>Inline Area Classes</title>
 <p>
 The inline areas are used to make up a line area. An inline area
-typically has a height, width and some content. The alignment is
-used for block progression direction displacement and to determine
-the height of a line.
+typically has a height, width and some content. The inline area
+is offset from the baseline of the current line area. The content
+of the inline area can be other inline areas or a simple atomic
+object.
   </p>
   </section>
   </section>
@@ -169,7 +162,7 @@ Line
 Inline
   </p>
   <p>
-The renderer will need to be able to:
+A renderer implementation does the following:
   </p>
        <ul>
        <li>render each individual page</li>

@@ -28,6 +28,18 @@ of a server side application such as <jump href="http://xml.apache.org/cocoon/in
 <section>
   <title>User Agent</title>
 <p>
+Possible meanings for a user agent:
+</p>
+<ul>
+<li>something that makes decisions where the specifiction indicates
+that the user agent should decide</li>
+<li>Fop as the user agent, represented by a class that handles
+various setup and decision values</li>
+<li>an class that handles context for a particular Fop conversion
+that can be configured/overridden when embedding</li>
+</ul>
+
+<p>
 The user agent is responsible for supplying user or context
 specific information. The list of user agent values can be found on the
 <jump href="useragent.html">User Agent</jump> page.
@@ -52,10 +64,9 @@ specific information. The list of user agent values can be found on the
 <section>
   <title>general options</title>
 <ul>
-<li>base directory</li>
+<li>base url</li>
 <li>uri resolvers</li>
-<li>which implementation of a particular</li>
-<li>LayoutManager to use</li>
+<li>which implementation of a particular LayoutManager to use</li>
 </ul>
   </section>
 <section>
@@ -75,21 +86,25 @@ for the PS renderer (eventually):
 </ul>
   </section>
 <section>
-  <title>User Agent</title>
+  <title>Render Results</title>
 <p>
-Output from FOP:
-- Generation statistics: Number of pages total, Number of pages of each
-  page-sequence, page-master used for each page (could be used to
-  control the paper bin to get paper from, important for me in
-  conjunction with PS Renderer).
+Generate Output statistics from FOP:
    </p>
+<ul>
+<li>Number of pages total</li>
+<li>Number of pages of each page-sequence</li>
+<li>page-master used for each page (could be used to control
+the paper bin to get paper from, important for me in conjunction
+with PS Renderer)</li>
+<li>recoverable errors such as overflow</li>
+</ul>
   </section>
 <section>
   <title>Setting Up</title>
 <p>
 The Driver handles the XML input.
 The user agent information is through the FOUserAgent.
-We could handle logging through the user agent.
+Handle logging through the user agent.
 Options could also be handled through the user agent, using mime type
 selection for renderer options.
 </p>
@@ -97,10 +112,13 @@ selection for renderer options.
 <section>
   <title>Others</title>
 <p>
-render to more than one renderer at once (maybe not from the command line).
+Render to more than one renderer at once (maybe not from the command line).
 For example you could generate a PDF for the archive
 and the PS for the printer in one run. It would probably be faster than
 converting the PDF to PostScript afterwards.
+Make the fo tree reuseable.
+If the fonts are the same then use the
+same area tree to output to different renderers.
 </p>
 <p>
 Several code pieces for resolving URLs and/or
