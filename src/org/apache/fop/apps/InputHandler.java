@@ -26,6 +26,7 @@ abstract public class InputHandler {
 
     abstract public InputSource getInputSource();
     abstract public XMLReader getParser() throws FOPException;
+    abstract public void run(Driver driver) throws FOPException;
 
 
     static public InputSource urlInputSource(URL url) {

@@ -40,5 +40,9 @@ public class FOInputHandler extends InputHandler {
         return super.createParser();
     }
 
+    public void run(Driver driver) throws FOPException {
+        throw new FOPException("not implemented: FOInputHandler.run(Driver)");
+    }
+
 }
 
