@@ -64,17 +64,17 @@ import java.io.IOException;
 /** The opposite of RtfAfter */
 public class RtfBefore extends RtfAfterBeforeBase {
     /**RtfBefore attributes*/
-    public final static String HEADER = "header";
+    public static final String HEADER = "header";
 
-    public final static String[] HEADER_ATTR = new String[]{
+    public static final String[] HEADER_ATTR = new String[]{
         HEADER
     };
 
     RtfBefore(RtfSection parent, Writer w, RtfAttributes attrs) throws IOException {
-        super(parent,w,attrs);
+        super(parent, w, attrs);
     }
 
     protected void writeMyAttributes() throws IOException {
-        writeAttributes(m_attrib,HEADER_ATTR);
+        writeAttributes(m_attrib, HEADER_ATTR);
     }
 }

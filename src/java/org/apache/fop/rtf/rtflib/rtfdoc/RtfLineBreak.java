@@ -65,23 +65,19 @@ import java.io.IOException;
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
 
-public class RtfLineBreak extends RtfElement
-{
+public class RtfLineBreak extends RtfElement {
     /** Create an RTF paragraph as a child of given container with default attributes */
-    RtfLineBreak(IRtfTextContainer parent, Writer w) throws IOException
-    {
-        super((RtfContainer)parent,w);
+    RtfLineBreak(IRtfTextContainer parent, Writer w) throws IOException {
+        super((RtfContainer)parent, w);
     }
 
     /** overridden to write our attributes before our content */
-    protected void writeRtfContent() throws IOException
-    {
+    protected void writeRtfContent() throws IOException {
         writeControlWord("line");
     }
 
     /** true if this element would generate no "useful" RTF content */
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return false;
     }
 }

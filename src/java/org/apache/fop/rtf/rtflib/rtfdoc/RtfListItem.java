@@ -60,7 +60,6 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import java.io.Writer;
 import java.io.IOException;
-import java.io.*;
 
 /**  Model of an RTF list item, which can contain RTF paragraphs
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
@@ -75,22 +74,22 @@ implements IRtfParagraphContainer {
     /** special RtfParagraph that writes list item setup code before its content */
     private class RtfListItemParagraph extends RtfParagraph {
 
-        RtfListItemParagraph(RtfListItem rli,RtfAttributes attrs)
+        RtfListItemParagraph(RtfListItem rli, RtfAttributes attrs)
         throws IOException {
-            super(rli,rli.m_writer,attrs);
+            super(rli, rli.m_writer, attrs);
         }
 
         protected void writeRtfPrefix() throws IOException {
             super.writeRtfPrefix();
             // for bulleted list, add list item setup group before paragraph contents
-            if(m_parentList.isBulletedList()) {
+            if (m_parentList.isBulletedList()) {
                 writeGroupMark(true);
                 writeControlWord("pntext");
                 writeControlWord("f" + RtfFontManager.getInstance().getFontNumber("Symbol"));
                 writeControlWord("'b7");
                 writeControlWord("tab");
                 writeGroupMark(false);
-            }else{
+            } else {
                 writeGroupMark(true);
                 writeControlWord("pntext");
                 writeGroupMark(false);
@@ -101,21 +100,23 @@ implements IRtfParagraphContainer {
 
     /** Create an RTF list item as a child of given container with default attributes */
     RtfListItem(RtfList parent, Writer w) throws IOException {
-        super((RtfContainer)parent,w);
+        super((RtfContainer)parent, w);
         m_parentList = parent;
     }
 
     /** Create an RTF list item as a child of given container with given attributes */
     RtfListItem(RtfList parent, Writer w, RtfAttributes attr) throws IOException {
-        super((RtfContainer)parent,w,attr);
+        super((RtfContainer)parent, w, attr);
         m_parentList = parent;
     }
 
     /** close current paragraph and start a new one */
     /** close current paragraph if any and start a new one */
     public RtfParagraph newParagraph(RtfAttributes attrs) throws IOException {
-        if(m_paragraph != null) m_paragraph.close();
-        m_paragraph = new RtfListItemParagraph(this,attrs);
+        if (m_paragraph != null) {
+            m_paragraph.close();
+        }
+        m_paragraph = new RtfListItemParagraph(this, attrs);
         return m_paragraph;
     }
 

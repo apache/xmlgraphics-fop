@@ -59,7 +59,9 @@
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import java.io.Writer;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Iterator;
 import java.io.IOException;
 import org.apache.fop.rtf.rtflib.exceptions.RtfStructureException;
 
@@ -74,12 +76,12 @@ public class RtfContainer extends RtfElement {
 
     /** Create an RTF container as a child of given container */
     RtfContainer(RtfContainer parent, Writer w) throws IOException {
-        this(parent,w,null);
+        this(parent, w, null);
     }
 
     /** Create an RTF container as a child of given container with given attributes */
-    RtfContainer(RtfContainer parent, Writer w,RtfAttributes attr) throws IOException {
-        super(parent,w,attr);
+    RtfContainer(RtfContainer parent, Writer w, RtfAttributes attr) throws IOException {
+        super(parent, w, attr);
         m_children = new LinkedList();
     }
 
@@ -91,7 +93,7 @@ public class RtfContainer extends RtfElement {
     /** add a child element to this */
     protected void addChild(RtfElement e)
     throws RtfStructureException {
-        if(isClosed()) {
+        if (isClosed()) {
             // No childs should be added to a container that has been closed
             final StringBuffer sb = new StringBuffer();
             sb.append("addChild: container already closed (parent=");
@@ -132,10 +134,8 @@ public class RtfContainer extends RtfElement {
      * Add by Boris Poudérous on 07/22/2002
      * Set the children list
      */
-    public boolean setChildren (List children)
-    {
-      if (children instanceof LinkedList)
-        {
+    public boolean setChildren (List children) {
+      if (children instanceof LinkedList) {
           this.m_children = (LinkedList)children;
           return true;
         }
@@ -146,7 +146,7 @@ public class RtfContainer extends RtfElement {
     /** write RTF code of all our children */
     protected void writeRtfContent()
     throws IOException {
-        for(Iterator it = m_children.iterator(); it.hasNext(); ) {
+        for (Iterator it = m_children.iterator(); it.hasNext();) {
             final RtfElement e = (RtfElement)it.next();
             e.writeRtf();
         }
@@ -160,27 +160,29 @@ public class RtfContainer extends RtfElement {
     /** true if this (recursively) contains at least one RtfText object */
     boolean containsText() {
         boolean result = false;
-        for(Iterator it = m_children.iterator(); it.hasNext(); ) {
+        for (Iterator it = m_children.iterator(); it.hasNext();) {
             final RtfElement e = (RtfElement)it.next();
-            if(e instanceof RtfText) {
+            if (e instanceof RtfText) {
                 result = !e.isEmpty();
-            } else if(e instanceof RtfContainer) {
-                if(((RtfContainer)e).containsText()) {
+            } else if (e instanceof RtfContainer) {
+                if (((RtfContainer)e).containsText()) {
                     result = true;
                 }
             }
-            if(result) break;
+            if (result) {
+                break;
+            }
         }
         return result;
     }
 
     /** debugging to given Writer */
-    void dump(Writer w,int indent)
+    void dump(Writer w, int indent)
     throws IOException {
-        super.dump(w,indent);
-        for(Iterator it = m_children.iterator(); it.hasNext(); ) {
+        super.dump(w, indent);
+        for (Iterator it = m_children.iterator(); it.hasNext();) {
             final RtfElement e = (RtfElement)it.next();
-            e.dump(w,indent + 1);
+            e.dump(w, indent + 1);
         }
     }
 
@@ -192,7 +194,7 @@ public class RtfContainer extends RtfElement {
     /** don't write any RTF if empty of if our options block it */
     protected boolean okToWriteRtf() {
         boolean result = super.okToWriteRtf() && !isEmpty();
-        if(result && !m_options.renderContainer(this)) {
+        if (result && !m_options.renderContainer(this)) {
             result = false;
         }
         return result;
@@ -201,12 +203,11 @@ public class RtfContainer extends RtfElement {
     /** true if this element would generate no "useful" RTF content.
      *  For an RtfContainer, true if it has no children where isEmpty() is false
      */
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         boolean result = true;
-        for(Iterator it = m_children.iterator(); it.hasNext(); ) {
+        for (Iterator it = m_children.iterator(); it.hasNext();) {
             final RtfElement e = (RtfElement)it.next();
-            if(!e.isEmpty()) {
+            if (!e.isEmpty()) {
                 result = false;
                 break;
             }

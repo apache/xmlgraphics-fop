@@ -58,7 +58,8 @@
 
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
-import java.util.*;
+import java.util.Map;
+import java.util.HashMap;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -77,13 +78,13 @@ public class RtfStringConverter {
     /** List of characters to escape with corresponding replacement strings */
     static {
         m_specialChars = new HashMap();
-        m_specialChars.put(new Character('\t'),"tab");
-        m_specialChars.put(new Character('\n'),"line");
-        m_specialChars.put(new Character('\''),"rquote");
-        m_specialChars.put(new Character('\"'),"rdblquote");
-        m_specialChars.put(new Character('\\'),"\\");
-        m_specialChars.put(new Character('{'),"{");
-        m_specialChars.put(new Character('}'),"}");
+        m_specialChars.put(new Character('\t'), "tab");
+        m_specialChars.put(new Character('\n'), "line");
+        m_specialChars.put(new Character('\''), "rquote");
+        m_specialChars.put(new Character('\"'), "rdblquote");
+        m_specialChars.put(new Character('\\'), "\\");
+        m_specialChars.put(new Character('{'), "{");
+        m_specialChars.put(new Character('}'), "}");
     }
 
     /** singleton pattern */
@@ -96,37 +97,40 @@ public class RtfStringConverter {
     }
 
     /** write given String to given Writer, converting characters as required by RTF spec */
-    public void writeRtfString(Writer w,String str) throws IOException {
-        if(str == null) return;
+    public void writeRtfString(Writer w, String str) throws IOException {
+        if (str == null) {
+            return;
+        }
 
         // TODO: could be made more efficient (binary lookup, etc.)
-        for(int i=0; i < str.length(); i++) {
+        for (int i = 0; i < str.length(); i++) {
             final Character c = new Character(str.charAt(i));
             Character d;
             String replacement;
-            if(i!= 0) {
-                d=new Character(str.charAt(i-1));
+            if (i != 0) {
+                d = new Character(str.charAt(i - 1));
             } else {
-                d=new Character(str.charAt(i));
+                d = new Character(str.charAt(i));
             }
 
             //This section modified by Chris Scott
             //add "smart" quote recognition
-            if(c.equals((Object)DBLQUOTE) && d.equals((Object)SPACE)) {
+            if (c.equals((Object)DBLQUOTE) && d.equals((Object)SPACE)) {
                 replacement = "ldblquote";
-            } else if(c.equals((Object)QUOTE) && d.equals((Object)SPACE)) {
+            } else if (c.equals((Object)QUOTE) && d.equals((Object)SPACE)) {
                 replacement = "lquote";
             } else {
                 replacement = (String)m_specialChars.get(c);
             }
 
-            if(replacement != null) {
+            if (replacement != null) {
                 // RTF-escaped char
                 w.write('\\');
                 w.write(replacement);
                 w.write(' ');
             } else if (c.charValue() > 255) {
-                // write unicode representation - contributed by Michel Jacobson <jacobson@idf.ext.jussieu.fr>
+                // write unicode representation - contributed by Michel Jacobson
+                // <jacobson@idf.ext.jussieu.fr>
                 w.write("\\u");
                 w.write(Integer.toString((int)c.charValue()));
                 w.write("\\\'3f");

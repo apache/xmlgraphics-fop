@@ -58,7 +58,8 @@
 
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
-import java.util.*;
+import java.util.Date;
+import java.util.Random;
 import java.io.Writer;
 import java.io.IOException;
 //import org.apache.fop.rtf.rtflib.jfor.main.JForVersionInfo;
@@ -68,7 +69,7 @@ import java.io.IOException;
  * esp. Adobe FrameMaker read lists from RTF.
  * @author Christopher Scott, scottc@westinghouse.com
  */
-public class RtfListTable extends RtfContainer{
+public class RtfListTable extends RtfContainer {
 
     //number of list in document
     private Integer listNum;
@@ -91,7 +92,7 @@ public class RtfListTable extends RtfContainer{
     public static final String LIST_NUM_POSITION = "levelnumbers";
     public static final String LIST_NAME = "listname ;";
     public static final String LIST_ID = "listid";
-    public static final String LIST_FONT_TYPE ="f";
+    public static final String LIST_FONT_TYPE = "f";
 
     public static final String LIST_OVR_TABLE = "listoverridetable";
     public static final String LIST_OVR = "listoverride";
@@ -110,16 +111,16 @@ public class RtfListTable extends RtfContainer{
     /**RtfListTable Constructor: sets the number of the list, and allocates
      * for the RtfAttributes */
     public RtfListTable(RtfContainer parent, Writer w, Integer num, RtfAttributes attrs)
-    throws IOException{
+    throws IOException {
         super(parent, w, attrs);
         listNum = new Integer(num.intValue());
         //random number generator for ids
         Date runTime = new Date();
         Random listIdGenerator = new Random(runTime.getTime());
         listId = new Integer(listIdGenerator.nextInt());
-        m_attrib.set(LIST_ID,listId.toString());
+        m_attrib.set(LIST_ID, listId.toString());
         listTemplateId = new Integer(listIdGenerator.nextInt());
-        m_attrib.set(LIST_NUMBER_TYPE,0);
+        m_attrib.set(LIST_NUMBER_TYPE, 0);
     }
 
     public void setParentList(RtfList parent) {
@@ -133,19 +134,19 @@ public class RtfListTable extends RtfContainer{
     /** Set whether the list is a bulleted list not, and set attributes
      * accordingly */
     private void setListType() {
-        if(parentList.isBulletedList()){
+        if (parentList.isBulletedList()) {
             // bullet definition for bulleted lists
             // Chris Scott's version was "\\\'01\\u-3913 ?;"
             // 'b7 is what was used in jfor V0.5.2
-            m_attrib.set(LIST_TEXT_FORM,"\\\'01\\'b7 ?;");
+            m_attrib.set(LIST_TEXT_FORM, "\\\'01\\'b7 ?;");
             m_attrib.set(LIST_NUM_POSITION);
-            m_attrib.set(LIST_NUMBER_TYPE,23);
-            m_attrib.set(LIST_FONT_TYPE,2);
-        }else{
+            m_attrib.set(LIST_NUMBER_TYPE, 23);
+            m_attrib.set(LIST_FONT_TYPE, 2);
+        } else {
             m_attrib.set(LIST_TEXT_FORM, "\\\'03\\\'00. ;");
             m_attrib.set(LIST_NUM_POSITION, "\\\'01;");
-            m_attrib.set(LIST_NUMBER_TYPE,0);
-            m_attrib.set(LIST_FONT_TYPE,0);
+            m_attrib.set(LIST_NUMBER_TYPE, 0);
+            m_attrib.set(LIST_FONT_TYPE, 0);
         }
     }
 
@@ -156,37 +157,37 @@ public class RtfListTable extends RtfContainer{
         writeGroupMark(true);
 
         writeControlWordNS(LIST);
-        writeOneAttributeNS(LIST_TEMPLATE_ID,listTemplateId.toString());
-        writeOneAttributeNS(LIST,m_attrib.getValue(LIST));
+        writeOneAttributeNS(LIST_TEMPLATE_ID, listTemplateId.toString());
+        writeOneAttributeNS(LIST, m_attrib.getValue(LIST));
         writeGroupMark(true);
         writeControlWordNS(LIST_LEVEL);
-        writeOneAttributeNS(LIST_NUMBER_TYPE,m_attrib.getValue(LIST_NUMBER_TYPE));
-        writeOneAttributeNS(LIST_JUSTIFICATION,m_attrib.getValue(LIST_JUSTIFICATION));
-        writeOneAttributeNS(LIST_FOLLOWING_CHAR,m_attrib.getValue(LIST_FOLLOWING_CHAR));
-        writeOneAttributeNS(LIST_START_AT,m_attrib.getValue(LIST_START_AT));
-        writeOneAttributeNS(LIST_SPACE,new Integer(0));
-        writeOneAttributeNS(LIST_INDENT,m_attrib.getValue(LIST_INDENT));
+        writeOneAttributeNS(LIST_NUMBER_TYPE, m_attrib.getValue(LIST_NUMBER_TYPE));
+        writeOneAttributeNS(LIST_JUSTIFICATION, m_attrib.getValue(LIST_JUSTIFICATION));
+        writeOneAttributeNS(LIST_FOLLOWING_CHAR, m_attrib.getValue(LIST_FOLLOWING_CHAR));
+        writeOneAttributeNS(LIST_START_AT, m_attrib.getValue(LIST_START_AT));
+        writeOneAttributeNS(LIST_SPACE, new Integer(0));
+        writeOneAttributeNS(LIST_INDENT, m_attrib.getValue(LIST_INDENT));
         writeGroupMark(true);
-        writeOneAttributeNS(LIST_TEXT_FORM,m_attrib.getValue(LIST_TEXT_FORM));
+        writeOneAttributeNS(LIST_TEXT_FORM, m_attrib.getValue(LIST_TEXT_FORM));
         writeGroupMark(false);
         writeGroupMark(true);
-        writeOneAttributeNS(LIST_NUM_POSITION,m_attrib.getValue(LIST_NUM_POSITION));
+        writeOneAttributeNS(LIST_NUM_POSITION, m_attrib.getValue(LIST_NUM_POSITION));
         writeGroupMark(false);
-        writeOneAttributeNS(LIST_FONT_TYPE,m_attrib.getValue(LIST_FONT_TYPE));
+        writeOneAttributeNS(LIST_FONT_TYPE, m_attrib.getValue(LIST_FONT_TYPE));
         writeGroupMark(false);
         writeGroupMark(true);
         writeControlWordNS(LIST_NAME);
         writeGroupMark(false);
-        writeOneAttributeNS(LIST_ID,listId.toString());
+        writeOneAttributeNS(LIST_ID, listId.toString());
         writeGroupMark(false);
         writeGroupMark(false);
         writeGroupMark(true);
         writeStarControlWordNS(LIST_OVR_TABLE);
         writeGroupMark(true);
         writeControlWordNS(LIST_OVR);
-        writeOneAttributeNS(LIST_ID,listId.toString());
-        writeOneAttributeNS(LIST_OVR_COUNT,new Integer(0));
-        writeOneAttributeNS(LIST_NUMBER,listNum.toString());
+        writeOneAttributeNS(LIST_ID, listId.toString());
+        writeOneAttributeNS(LIST_OVR_COUNT, new Integer(0));
+        writeOneAttributeNS(LIST_NUMBER, listNum.toString());
         writeGroupMark(false);
         writeGroupMark(false);
     }

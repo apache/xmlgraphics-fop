@@ -58,7 +58,10 @@
 
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
-import java.util.*;
+//import java.util.*;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.io.Writer;
 import java.io.IOException;
 //import org.apache.fop.rtf.rtflib.jfor.main.JForVersionInfo;
@@ -73,9 +76,9 @@ class RtfHeader extends RtfContainer {
     private final Map m_userProperties = new HashMap();
 
     /** Create an RTF header */
-    RtfHeader(RtfFile f,Writer w) throws IOException {
-        super(f,w);
-        new RtfFontTable(this,w);
+    RtfHeader(RtfFile f, Writer w) throws IOException {
+        super(f, w);
+        new RtfFontTable(this, w);
 //        m_userProperties.put("jforVersion",JForVersionInfo.getLongVersionInfo());
     }
 
@@ -92,19 +95,21 @@ class RtfHeader extends RtfContainer {
 
     /** write user properties if any */
     private void writeUserProperties() throws IOException {
-        if(m_userProperties.size() > 0) {
+        if (m_userProperties.size() > 0) {
             writeGroupMark(true);
             writeStarControlWord("userprops");
-            for(Iterator it = m_userProperties.entrySet().iterator(); it.hasNext(); ) {
+            for (Iterator it = m_userProperties.entrySet().iterator(); it.hasNext();) {
                 final Map.Entry entry = (Map.Entry)it.next();
                 writeGroupMark(true);
                 writeControlWord("propname");
-                RtfStringConverter.getInstance().writeRtfString(m_writer,entry.getKey().toString());
+                RtfStringConverter.getInstance().writeRtfString(m_writer,
+                        entry.getKey().toString());
                 writeGroupMark(false);
                 writeControlWord("proptype30");
                 writeGroupMark(true);
                 writeControlWord("staticval");
-                RtfStringConverter.getInstance().writeRtfString(m_writer,entry.getValue().toString());
+                RtfStringConverter.getInstance().writeRtfString(m_writer,
+                        entry.getValue().toString());
                 writeGroupMark(false);
             }
             writeGroupMark(false);
@@ -121,6 +126,6 @@ class RtfHeader extends RtfContainer {
 
     /** write to our Writer using an RtfStringConverter */
     void writeRtfString(String toWrite) throws IOException {
-        RtfStringConverter.getInstance().writeRtfString(m_writer,toWrite);
+        RtfStringConverter.getInstance().writeRtfString(m_writer, toWrite);
     }
 }

@@ -62,8 +62,7 @@ import java.io.Writer;
 import java.io.IOException;
 
 /* @author Christopher Scott, scottc@westinghouse.com */
-public class RtfPageNumber extends RtfContainer
-{
+public class RtfPageNumber extends RtfContainer {
     /** RtfText attributes: fields */
     //must be carefull of group markings and star control
     //ie page field:
@@ -73,18 +72,16 @@ public class RtfPageNumber extends RtfContainer
     public static String RTF_FIELD_RESULT = "fldrslt";
 
     /** Create an RTF paragraph as a child of given container with default attributes */
-    RtfPageNumber(IRtfPageNumberContainer parent, Writer w) throws IOException
-    {
-        super((RtfContainer)parent,w);
+    RtfPageNumber(IRtfPageNumberContainer parent, Writer w) throws IOException {
+        super((RtfContainer)parent, w);
     }
 
     /** Create an RTF page number as a child of given paragraph,
      *  copying the paragraph attributes
      */
-     RtfPageNumber(RtfParagraph parent, Writer w) throws IOException
-     {
+     RtfPageNumber(RtfParagraph parent, Writer w) throws IOException {
          // Adds the attributes of the parent paragraph
-         super((RtfContainer)parent,w, parent.m_attrib);
+         super((RtfContainer)parent, w, parent.m_attrib);
 
          // copy parent's text attributes
          if (parent.getTextAttributes() != null) {
@@ -93,12 +90,11 @@ public class RtfPageNumber extends RtfContainer
      }
 
     /** write our attributes and content */
-    protected void writeRtfContent() throws IOException
-    {
+    protected void writeRtfContent() throws IOException {
         writeGroupMark(true);
         writeControlWord(RTF_FIELD);
         writeGroupMark(true);
-        writeAttributes(m_attrib,RtfText.ATTR_NAMES); // Added by Boris Poudérous
+        writeAttributes(m_attrib, RtfText.ATTR_NAMES); // Added by Boris Poudérous
         writeStarControlWord(RTF_FIELD_PAGE);
         writeGroupMark(false);
         writeGroupMark(true);
@@ -108,8 +104,7 @@ public class RtfPageNumber extends RtfContainer
     }
 
     /** true if this element would generate no "useful" RTF content */
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return false;
     }
 }

@@ -59,8 +59,6 @@
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import java.io.Writer;
-import java.io.*;
-import java.util.*;
 import java.io.IOException;
 import org.apache.fop.rtf.rtflib.interfaces.ITableColumnsInfo;
 
@@ -78,8 +76,7 @@ implements
     IRtfBeforeContainer,
     IRtfParagraphKeepTogetherContainer,
     IRtfAfterContainer,
-    IRtfJforCmdContainer
-{
+    IRtfJforCmdContainer {
     private RtfParagraph m_paragraph;
     private RtfTable m_table;
     private RtfList m_list;
@@ -90,20 +87,20 @@ implements
 
     /** Create an RTF container as a child of given container */
     RtfSection(RtfDocumentArea parent, Writer w) throws IOException {
-        super(parent,w);
+        super(parent, w);
     }
 
     /** start a new external graphic after closing current paragraph, list and table */
     public RtfExternalGraphic newImage() throws IOException {
         closeAll();
-        m_externalGraphic = new RtfExternalGraphic(this,m_writer);
+        m_externalGraphic = new RtfExternalGraphic(this, m_writer);
         return m_externalGraphic;
     }
 
     /** start a new paragraph after closing current paragraph, list and table */
     public RtfParagraph newParagraph(RtfAttributes attrs) throws IOException {
         closeAll();
-        m_paragraph = new RtfParagraph(this,m_writer,attrs);
+        m_paragraph = new RtfParagraph(this, m_writer, attrs);
         return m_paragraph;
     }
 
@@ -114,52 +111,53 @@ implements
 
     /** close current paragraph if any and start a new one */
     public RtfParagraphKeepTogether newParagraphKeepTogether() throws IOException {
-        return new RtfParagraphKeepTogether(this,m_writer);
+        return new RtfParagraphKeepTogether(this, m_writer);
     }
 
     /** start a new table after closing current paragraph, list and table
-   * @param tc Table context used for number-columns-spanned attribute (added by Boris Poudérous on july 2002)
+   * @param tc Table context used for number-columns-spanned attribute (added by
+   *  Boris Poudérous on july 2002)
    */
     public RtfTable newTable(ITableColumnsInfo tc) throws IOException {
         closeAll();
-        m_table = new RtfTable(this,m_writer,tc);
+        m_table = new RtfTable(this, m_writer, tc);
         return m_table;
     }
 
     /** start a new table after closing current paragraph, list and table
-   * @param tc Table context used for number-columns-spanned attribute (added by Boris Poudérous on july 2002)
+   * @param tc Table context used for number-columns-spanned attribute (added by
+   *  Boris Poudérous on july 2002)
    */
-    public RtfTable newTable(RtfAttributes attrs, ITableColumnsInfo tc) throws IOException
-    {
+    public RtfTable newTable(RtfAttributes attrs, ITableColumnsInfo tc) throws IOException {
         closeAll();
-        m_table = new RtfTable(this,m_writer, attrs, tc);
+        m_table = new RtfTable(this, m_writer, attrs, tc);
         return m_table;
     }
 
     /** start a new list after closing current paragraph, list and table */
     public RtfList newList(RtfAttributes attrs) throws IOException {
         closeAll();
-        m_list = new RtfList(this,m_writer, attrs);
+        m_list = new RtfList(this, m_writer, attrs);
         return m_list;
     }
 
     /** IRtfBeforeContainer */
     public RtfBefore newBefore(RtfAttributes attrs) throws IOException {
         closeAll();
-        m_before = new RtfBefore(this,m_writer,attrs);
+        m_before = new RtfBefore(this, m_writer, attrs);
         return m_before;
     }
 
     /** IRtfAfterContainer */
     public RtfAfter newAfter(RtfAttributes attrs) throws IOException {
         closeAll();
-        m_after = new RtfAfter(this,m_writer,attrs);
+        m_after = new RtfAfter(this, m_writer, attrs);
         return m_after;
     }
 
 
     public RtfJforCmd newJforCmd(RtfAttributes attrs) throws IOException {
-        m_jforCmd  = new RtfJforCmd(this,m_writer,attrs);
+        m_jforCmd  = new RtfJforCmd(this, m_writer, attrs);
         return m_jforCmd;
     }
 
@@ -176,23 +174,33 @@ implements
     }
 
     private void closeCurrentTable() throws IOException {
-        if(m_table != null) m_table.close();
+        if (m_table != null) {
+            m_table.close();
+        }
     }
 
     private void closeCurrentParagraph() throws IOException {
-        if(m_paragraph!=null) m_paragraph.close();
+        if (m_paragraph != null) {
+            m_paragraph.close();
+        }
     }
 
     private void closeCurrentList() throws IOException {
-        if(m_list!=null) m_list.close();
+        if (m_list != null) {
+            m_list.close();
+        }
     }
 
     private void closeCurrentExternalGraphic() throws IOException {
-        if(m_externalGraphic!=null) m_externalGraphic.close();
+        if (m_externalGraphic != null) {
+            m_externalGraphic.close();
+        }
     }
 
     private void closeCurrentBefore() throws IOException {
-        if(m_before!=null) m_before.close();
+        if (m_before != null) {
+            m_before.close();
+        }
     }
 
     private void closeAll()

@@ -66,8 +66,7 @@ import java.io.IOException;
  * @author Boris Pouderous, boris.pouderous@free.fr
  */
 
-public class RtfPageNumberCitation extends RtfContainer
-{
+public class RtfPageNumberCitation extends RtfContainer {
     // Page field :
     //  "{\field {\*\fldinst {PAGEREF xx}} {\fldrslt}}" where xx represents the
     // 'id' of the referenced page
@@ -79,34 +78,32 @@ public class RtfPageNumberCitation extends RtfContainer
     private String id = null;
 
   /** Create an RTF page number citation as a child of given container with default attributes */
-  RtfPageNumberCitation (IRtfPageNumberCitationContainer parent, Writer w, String id) throws IOException
-  {
-     super((RtfContainer)parent,w);
+  RtfPageNumberCitation (IRtfPageNumberCitationContainer parent, Writer w, String id)
+          throws IOException {
+     super((RtfContainer)parent, w);
      this.id = id;
   }
 
   /** Create an RTF page number citation as a child of given
    *    paragraph, copying its attributes */
   RtfPageNumberCitation (RtfParagraph parent, Writer w, String id)
-    throws IOException
-  {
+    throws IOException {
       // add the attributes ant text attributes of the parent paragraph
-      super((RtfContainer)parent,w, parent.m_attrib);
+      super((RtfContainer)parent, w, parent.m_attrib);
       if (parent.getTextAttributes() != null) {
           m_attrib.set(parent.getTextAttributes());
       }
       this.id = id;
   }
 
-    protected void writeRtfContent() throws IOException
-    {
+    protected void writeRtfContent() throws IOException {
         // If we have a valid ID
         if (isValid()) {
             // Build page reference field
             String pageRef = RTF_FIELD_PAGEREF_MODEL;
             final int insertionIndex = pageRef.indexOf("}");
             pageRef =
-                pageRef.substring(0,insertionIndex) + "\"" + id + "\"" + " "
+                pageRef.substring(0, insertionIndex) + "\"" + id + "\"" + " "
                 + pageRef.substring(insertionIndex, pageRef.length())
             ;
             id = null;
@@ -115,7 +112,7 @@ public class RtfPageNumberCitation extends RtfContainer
             writeGroupMark(true);
             writeControlWord(RTF_FIELD);
             writeGroupMark(true);
-            writeAttributes(m_attrib,RtfText.ATTR_NAMES); // Added by Boris Poudérous
+            writeAttributes(m_attrib, RtfText.ATTR_NAMES); // Added by Boris Poudérous
             writeStarControlWord(pageRef);
             writeGroupMark(false);
             writeGroupMark(true);
@@ -126,17 +123,16 @@ public class RtfPageNumberCitation extends RtfContainer
     }
 
   /** checks that the 'ref-id' attribute exists */
-  private boolean isValid()
-  {
-    if (id != null)
+  private boolean isValid() {
+    if (id != null) {
       return true;
-    else
+    } else {
       return false;
+    }
   }
 
   /** true if this element would generate no "useful" RTF content */
-  public boolean isEmpty()
-  {
+  public boolean isEmpty() {
       return false;
   }
 }

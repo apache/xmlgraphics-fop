@@ -66,8 +66,7 @@ import java.util.Vector;
  *   RTF font table
  *  @author Andreas Putz a.putz@skynamics.com
  */
-public class RtfFontManager
-{
+public class RtfFontManager {
     //////////////////////////////////////////////////
     // @@ Members
     //////////////////////////////////////////////////
@@ -88,8 +87,7 @@ public class RtfFontManager
     /**
      * Constructor.
      */
-    private RtfFontManager ()
-    {
+    private RtfFontManager () {
         fontTable = new Vector ();
         fontIndex = new Hashtable ();
 
@@ -101,10 +99,8 @@ public class RtfFontManager
      *
      * @return The instance of RtfFontManager
      */
-    public static RtfFontManager getInstance ()
-    {
-        if (instance == null)
-        {
+    public static RtfFontManager getInstance () {
+        if (instance == null) {
             instance = new RtfFontManager ();
         }
 
@@ -119,8 +115,7 @@ public class RtfFontManager
     /**
      * Initialize the font table.
      */
-    private void init ()
-    {
+    private void init () {
 
 //        getFontNumber ("Helvetica");
         //Chanded by R.Marra default font Arial
@@ -152,21 +147,17 @@ public class RtfFontManager
      *
      * @return The number of the font in the table
      */
-    public int getFontNumber (String family)
-    {
+    public int getFontNumber (String family) {
 
         family = family.toLowerCase ();
         Object o = fontIndex.get (family);
         int retVal;
 
-        if (o == null)
-        {
+        if (o == null) {
             addFont (family);
 
             retVal = fontTable.size () - 1;
-        }
-        else
-        {
+        } else {
             retVal = ((Integer) o).intValue ();
         }
 
@@ -180,10 +171,8 @@ public class RtfFontManager
      *
      * @throws IOException On error
      */
-    public void writeFonts (RtfHeader header) throws IOException
-    {
-        if (fontTable == null || fontTable.size () == 0)
-        {
+    public void writeFonts (RtfHeader header) throws IOException {
+        if (fontTable == null || fontTable.size () == 0) {
             return;
         }
 
@@ -192,8 +181,7 @@ public class RtfFontManager
 
         int len = fontTable.size ();
 
-        for (int i = 0; i < len; i++)
-        {
+        for (int i = 0; i < len; i++) {
             header.writeGroupMark (true);
             header.write ("\\f" + i);
             header.write (" " + (String) fontTable.elementAt (i));
@@ -213,8 +201,7 @@ public class RtfFontManager
      *
      * @param i Identifier of font
      */
-    private void addFont (String family)
-    {
+    private void addFont (String family) {
         fontIndex.put (family, new Integer (fontTable.size ()));
         fontTable.addElement (family);
     }

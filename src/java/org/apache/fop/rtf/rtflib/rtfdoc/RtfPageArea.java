@@ -60,36 +60,31 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import java.io.Writer;
 import java.io.IOException;
-import java.io.*;
 
 /* @author Christopher Scott, scottc@westinghouse.com */
 
 public class RtfPageArea
-extends RtfContainer
-{
+extends RtfContainer {
     private RtfPage m_currentPage;
     private RtfNull nullChild;
     private RtfAttributes childAttributes;
 
     /** Create an RTF element as a child of given container */
-    RtfPageArea(RtfFile f,Writer w) throws IOException
-    {
-        super(f,w);
+    RtfPageArea(RtfFile f, Writer w) throws IOException {
+        super(f, w);
     }
 
     /** close current Rtfpage if any and create a new one */
-    public RtfPage newPage(RtfAttributes attr) throws IOException
-    {
-        if(m_currentPage != null){
+    public RtfPage newPage(RtfAttributes attr) throws IOException {
+        if (m_currentPage != null) {
             m_currentPage.close();
         }
-        m_currentPage = new RtfPage(this,m_writer,attr);
+        m_currentPage = new RtfPage(this, m_writer, attr);
 
         return m_currentPage;
     }
 
-    protected boolean okToWriteRtf()
-    {
+    protected boolean okToWriteRtf() {
         return true;
     }
 }
