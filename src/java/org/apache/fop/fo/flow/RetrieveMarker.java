@@ -18,12 +18,16 @@
 
 package org.apache.fop.fo.flow;
 
+// XML
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXParseException;
+
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.FOTreeVisitor;
- import org.xml.sax.Attributes;
 
 /**
  * The retrieve-marker formatting object.
@@ -43,6 +47,15 @@ public class RetrieveMarker extends FObjMixed {
      */
     public RetrieveMarker(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: empty
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
+            invalidChildError(loc, nsURI, localName);
     }
 
     /**
