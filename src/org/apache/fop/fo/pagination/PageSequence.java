@@ -70,16 +70,16 @@ public class PageSequence extends FObj
 
     /** Map of flows to their flow name (flow-name, Flow) */
     private Hashtable _flowMap;
-        
+
     /** the "master-name" attribute */
     private String masterName;
-	
+
 	// according to communication from Paul Grosso (XSL-List,
 	// 001228, Number 406), confusion in spec section 6.4.5 about
 	// multiplicity of fo:flow in XSL 1.0 is cleared up - one (1)
 	// fo:flow per fo:page-sequence only.
 	private boolean isFlowSet = false;
-	
+
     //
     // state attributes used during layout
     //
@@ -89,20 +89,20 @@ public class PageSequence extends FObj
     private int currentPageNumber = 0;
 
     /** keeps count of page number from previous PageSequence */
-    private static int runningPageNumberCounter = 0; 
+    private int runningPageNumberCounter = 0;
 
     /** specifies page numbering type (auto|auto-even|auto-odd|explicit) */
-    private int pageNumberType;  
+    private int pageNumberType;
 
     /** used to determine whether to calculate auto, auto-even, auto-odd */
-    private boolean thisIsFirstPage; 
+    private boolean thisIsFirstPage;
 
     /** the current subsequence while formatting a given page sequence */
     private SubSequenceSpecifier currentSubsequence;
 
     /** the current index in the subsequence list */
     private int currentSubsequenceNumber = -1; // starting case is -1 so that first getNext increments to 0
-    
+
     /** the name of the current page master */
     private String currentPageMasterName;
 
