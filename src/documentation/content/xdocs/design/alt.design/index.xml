@@ -2,83 +2,126 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 
+<!-- $Id$ -->
+
 <document>
-    <header>
+  <header>
     <title>FOP Alternative Design</title>
     <subtitle>Alternative Design Approach to FOP</subtitle>
     <version>$Revision$ $Name$</version>
     <authors>
       <person name="Peter B. West" email="pbwest@powerup.com.au"/>
     </authors>
-    </header>
-    <body>
+  </header>
+  
+  <body>
     <section>
       <title>Alternative Design</title>
       <p>
-  This section of the FOP web site contains notes on approaches
-  to an alternative design for FOP.  The individual documents
-  here are fragmentary, being notes of particular issues,
-  without an overall framework as yet. 
+	This section of the FOP web site contains notes on approaches
+	to an alternative design for FOP.  The individual documents
+	here are fragmentary, being notes of particular issues,
+	without an overall framework as yet.
       </p>
       <p>
-  The main aims of this redesign effort are:
+	The main aims of this redesign effort are:
       </p>
       <ul>
-  <li>full conformance with the Recommendation</li>
-  <li>increased performance</li> 
-  <li>reduced memory footprint</li> 
-  <li>no limitation on the size of files</li>
+	<li>full conformance with the Recommendation</li>
+	<li>no limitation on the size of files</li>
+	<li>increased performance</li>
+	<li>reduced memory footprint</li>
       </ul>
       <p>
-  In order to achieve these aims, the primary areas
-  of design interest are:
+	Secondary aims include:
       </p>
       <ul>
-  <li>
-    Representing properties, for most purposes, as integers.
-  </li>
-  <li>
-    Distributing FOP processing over a number of threads with
-    single-point downstream communication and flow control by
-    means of traditional producer/consumer queues.  The threads
-    so far under consideration are:
-    <ul>
-      <li>XML parser</li>
-      <li>FO tree builder</li>
-      <li>layout engine</li>
-      <li>Area tree builder</li>
-    </ul>
-  </li>
-  <li>
-    Representing trees with explicit Tree objects, rather than
-    as implicit relationships among other objects.
-  </li>
-  <li>
-    Caching integrated into the tree node access methods.
-  </li>
+	<li>increased performance</li>
+	<li>reduced memory footprint</li>
+      </ul>
+      <p>
+	In order to achieve these aims, the primary areas
+	of design interest are:
+      </p>
+      <ul>
+	<li>
+	  Representing properties, for most purposes, as integers.
+	</li>
+        <li>
+          Implementing a top-down processing model for each of the
+          processing components.
+        </li>
+	<li>
+	  Distributing FOP processing over a number of threads with
+	  single-point downstream communication and flow control by
+	  means of traditional producer/consumer queues.  The threads
+	  so far under consideration are:
+	  <ul>
+	    <li>XML parser</li>
+	    <li>FO tree builder</li>
+	    <li>layout engine</li>
+	    <li>Area tree builder</li>
+	  </ul>
+	</li>
+        <li>
+          Redesigning XML parsing and FO tree building using a
+          <strong>pull-parsing</strong> methodology with integrated FO
+          input validation.
+        </li>
+        <li>
+          Representing vital relationships among the elements with
+          appropriate data structures.  These include:
+          <ul>
+            <li>
+              Representing trees with explicit Tree objects, rather than
+              as implicit relationships among other objects.
+            </li>
+            <li>
+              Drawing threads through the tree nodes to
+              represent linear layout relationships for resolving
+              keeps, breaks and space specifiers. 
+            </li>
+          </ul>
+        </li>
+	<li>
+	  Caching integrated into the tree node access methods.
+	</li>
       </ul>
       <section>
-        <title>Status and availability</title> 
-  <p>
-    The <em>ALT DESIGN</em> effort is not taking place on the
-    main line of development, represented by the <em>HEAD</em>
-    tag on the CVS trunk.  The source is available via the
-    FOP_0-20-0_Alt-Design tag.  This code has only a crude,
-    non-<em>Ant</em> build environment, and is expected only to
-    compile at this stage.  Only the parser stage and the first
-    stage of FO tree building is present.  However, the first
-    example of producer/consumer binding is working, the Tree
-    class with inner Tree.Node and inner
-    Tree.Node.<em>iterators</em> classes are available and
-    working.  Property handling is quite advanced, and is likely
-    to be almost complete some time in July, 2002.
-  </p>
-  <p>
-    Only <link href="mailto:pbwest@powerup.com.au">Peter
-    West</link> is working on the ALT DESIGN sub-project.
-  </p>
+        <title>Status and availability</title>
+	<p>
+	  The <em>ALT DESIGN</em> effort is not taking place on the
+	  main line of development, represented by the <em>HEAD</em>
+	  tag on the CVS trunk.  The source is available via the
+	  FOP_0-20-0_Alt-Design tag.  This code has only a
+	  non-<em>Ant</em> build environment based on some small unix
+	  shell scripts and the <em>jikes</em> compiler.  The parser
+	  stage and the FO tree building code is present.  The first
+	  example of producer/consumer binding is working, the Tree
+	  class and the Node class with inner <em>iterator</em>
+	  classes are available and working.  Property handling is
+	  almost complete, and all FO classes are present and
+          sufficiently complete to allow for FO tree building.
+	</p>
+        <p>
+          <link href=
+          "http://marc.theaimsgroup.com/%3Fl=fop-dev%26m=103890259919360%26w=2"
+          >Preliminary results</link> and <link href=
+          "http://marc.theaimsgroup.com/%3Fl=fop-dev%26m=103918886413611%26w=2"
+          >follow-up testing</link> of FO tree building shows memory
+          reductions of almost 50% compared to the most recently tuned
+          version of the maintenance version of the code (FOP 0.20.5
+          RC).  Alt-Design FO tree building was also slightly faster,
+          in spite of the use of pull parsing implemented on top of
+          SAX.
+        </p>
+	<p>
+	  Currently, only <link href="mailto:pbwest@powerup.com.au">Peter
+	  West</link> is working on the ALT DESIGN sub-project.
+	</p>
       </section>
     </section>
-    </body>
+
+  </body>
 </document>
 
