@@ -323,18 +323,41 @@ public class PDFRenderer extends PrintRenderer {
 				    FopImage image,
 				    FontState fs) {
 	
-	PDFRectangle clip = new PDFRectangle(clipX / 1000,
-					     clipY / 1000,
-					     (clipX + clipW) / 1000,
-					     (clipY + clipW) / 1000);
+	float cx1 = ((float)x) / 1000f;
+	float cy1 = ((float)y - clipH) / 1000f;
+	
+	float cx2 = ((float)x + clipW) / 1000f;
+	float cy2 = ((float)y) / 1000f;
+
+	int imgX = x - clipX;
+	int imgY = y - clipY;
+
+	int imgW;
+	int imgH;
+	try {
+	    // XXX: do correct unit conversion here..
+	    imgW = image.getWidth() * 1000;
+	    imgH = image.getHeight() * 1000;
+	}
+	catch (FopImageException fie) {
+	    log.error("Error obtaining image width and height", fie);
+	    return;
+	}
 
 	if (image instanceof SVGImage) {
 	    try {
 		closeText();
   
 		SVGDocument svg = ((SVGImage)image).getSVGDocument();
-		currentStream.add("ET\nq\n");
-		renderSVGDocument(svg, x, y, fs);
+		currentStream.add("ET\nq\n" +
+		                  // clipping
+		                  cx1 + " " + cy1 + " m\n" +
+				  cx2 + " " + cy1 + " l\n" +
+				  cx2 + " " + cy2 + " l\n" +
+				  cx1 + " " + cy2 + " l\n" +	
+				  "W\n" +
+				  "n\n");
+		renderSVGDocument(svg, imgX, imgY, fs);
 		currentStream.add("Q\nBT\n");
 	    } catch (FopImageException e) {}
   
@@ -342,11 +365,18 @@ public class PDFRenderer extends PrintRenderer {
 	    int xObjectNum = this.pdfDoc.addImage(image);
 	    closeText();
 	    currentStream.add("ET\nq\n" +
+ 			      // clipping
+			      cx1 + " " + cy1 + " m\n" +
+			      cx2 + " " + cy1 + " l\n" +
+			      cx2 + " " + cy2 + " l\n" +
+			      cx1 + " " + cy2 + " l\n" +	
+		              "W\n" +
+ 		              "n\n" +
 			      // image matrix
-			      (((float)clipW) / 1000f) + " 0 0 " +
-			      (((float)clipH) / 1000f) + " " +
-		              (((float)x) / 1000f) + " " +
-			      (((float)y - clipH) / 1000f) + " cm\n" +
+			      (((float)imgW) / 1000f) + " 0 0 " +
+			      (((float)imgH) / 1000f) + " " +
+		              (((float)imgX) / 1000f) + " " +
+			      (((float)imgY - imgH) / 1000f) + " cm\n" +
 			      "s\n" +
 			      // the image itself
 			      "/Im" + xObjectNum + " Do\nQ\nBT\n");
