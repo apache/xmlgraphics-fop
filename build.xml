@@ -322,7 +322,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <echo message="Copying doc files "/>
     <copydir src="${docs.dir}" dest="${build.docs}" />
     <copydir src="${lib.dir}" dest="${build.dir}/${lib.dir}" />
-    <copyfile src="build.xml" dest="${build.dir}/build.xml" /> -->
+    <copyfile src="build.xml" dest="${build.dir}/build.xml" /> 
     <copyfile src="${basedir}/README" dest="${build.dir}/README" />
     <copyfile src="${basedir}/STATUS" dest="${build.dir}/STATUS" />
     <copyfile src="${basedir}/LICENSE" dest="${build.dir}/LICENSE" />
