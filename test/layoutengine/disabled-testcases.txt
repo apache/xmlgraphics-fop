@@ -2,3 +2,4 @@ breaks1.xml
 breaks2.xml
 markers5a.xml
 table-cell3a.xml
+table-fixed2.xml
