@@ -61,14 +61,15 @@ public class ColorCommon extends Property  {
      * The argument must be either a ColorType already, in which case
      * it is returned unchanged, or an NCName whose string value is a
      * standard color or 'transparent'.
+     * @param propindex the index of the property to which this value is
+     * being applied.
      * @param value <tt>PropertyValue</tt>
      * @return <tt>ColorValue</tt> equivalent of the argument
      * @exception <tt>PropertyException</tt>
      */
-    protected static ColorType getColor(PropertyValue value)
+    protected static ColorType getColor(int property, PropertyValue value)
             throws PropertyException
     {
-        int property = value.getProperty();
         int type = value.getType();
         if (type == PropertyValue.COLOR_TYPE) return (ColorType)value;
         // Must be a color enum
@@ -147,7 +148,7 @@ public class ColorCommon extends Property  {
         case PropertyValue.COLOR_TYPE:
             return value;
         case PropertyValue.NCNAME:
-            return getColor(value);
+            return getColor(propindex, value);
         default:
             PropertyValue pv;
             switch (type) {
