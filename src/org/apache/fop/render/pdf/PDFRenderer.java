@@ -36,8 +36,6 @@ import java.util.Hashtable;
  */
 public class PDFRenderer extends PrintRenderer {
 
-    private static final boolean OPTIMIZE_TEXT = true;
-
     /** the PDF Document being created */
     protected PDFDocument pdfDoc;
 
@@ -53,6 +51,8 @@ public class PDFRenderer extends PrintRenderer {
     /** the current page to add annotations to */
     PDFPage currentPage;
 
+    PDFColor currentColor;
+    
     /** true if a TJ command is left to be written */
     boolean textOpen = false;
 
@@ -69,6 +69,9 @@ public class PDFRenderer extends PrintRenderer {
 
     private PDFOutline rootOutline;
 
+    /** reusable word area string buffer to reduce memory usage */
+    private StringBuffer _wordAreaPDF = new StringBuffer();
+    
     /**
      * create the PDF renderer
      */
@@ -373,182 +376,167 @@ public class PDFRenderer extends PrintRenderer {
         * @param area inline area to render
         */
     public void renderWordArea(WordArea area) {
-        //  char ch;
-        StringBuffer pdf = new StringBuffer();
+	synchronized (_wordAreaPDF) {
+	    StringBuffer pdf = _wordAreaPDF;
+	    pdf.setLength(0);
+	
+	    Hashtable kerning = null;
+	    boolean kerningAvailable = false;
 
-        Hashtable kerning = null;
-        boolean kerningAvailable = false;
+	    kerning = area.getFontState().getKerning();
+	    if (kerning != null && !kerning.isEmpty()) {
+		kerningAvailable = true;
+	    }
 
-        kerning = area.getFontState().getKerning();
-        if (kerning != null && !kerning.isEmpty()) {
-            kerningAvailable = true;
-        }
+	    String name = area.getFontState().getFontName();
+	    int size = area.getFontState().getFontSize();
 
-        String name = area.getFontState().getFontName();
-        int size = area.getFontState().getFontSize();
-
-        // This assumes that *all* CIDFonts use a /ToUnicode mapping
-        boolean useMultiByte = false;
-        Font f = (Font) area.getFontState().getFontInfo().getFonts().get(
-                   name);
-        if (f instanceof CIDFont)
-            useMultiByte = true;
-        //String startText = useMultiByte ? "<FEFF" : "(";
-        String startText = useMultiByte ? "<" : "(";
-        String endText = useMultiByte ? ">" : ")";
-
-        PDFColor theAreaColor = new PDFColor((double) area.getRed(),
-                                             (double) area.getGreen(), (double) area.getBlue());
-
-        if ((!name.equals(this.currentFontName)) ||
+	    // This assumes that *all* CIDFonts use a /ToUnicode mapping
+	    boolean useMultiByte = false;
+	    Font f = (Font) area.getFontState().getFontInfo().getFonts().get(
+									     name);
+	    if (f instanceof CIDFont)
+		useMultiByte = true;
+	    //String startText = useMultiByte ? "<FEFF" : "(";
+	    String startText = useMultiByte ? "<" : "(";
+	    String endText = useMultiByte ? "> " : ") ";
+	
+	    if ((!name.equals(this.currentFontName)) ||
                 (size != this.currentFontSize)) {
-            closeText();
+		closeText();
 
-            this.currentFontName = name;
-            this.currentFontSize = size;
-            pdf = pdf.append("/" + name + " " + (size / 1000) + " Tf\n");
-        }
+		this.currentFontName = name;
+		this.currentFontSize = size;
+		pdf = pdf.append("/" + name + " " + (size / 1000) + " Tf\n");
+	    }
+	
+	    PDFColor areaColor = null;
+	    if (this.currentFill instanceof PDFColor) {
+		areaColor = (PDFColor)this.currentFill;
+	    }
+	
+	    if (areaColor == null ||
+		areaColor.red()   != (double)area.getRed() ||
+		areaColor.green() != (double)area.getGreen() ||
+		areaColor.blue()  != (double)area.getBlue()) {
 
+		areaColor = new PDFColor((double) area.getRed(),
+					 (double) area.getGreen(), 
+					 (double) area.getBlue());
+	    
 
-        if (!(theAreaColor.equals(this.currentFill))) {
-            closeText();
-            this.currentFill = theAreaColor;
-            pdf.append(this.currentFill.getColorSpaceOut(true));
-        }
-
-
-        int rx = this.currentXPosition;
-        int bl = this.currentYPosition;
-
-        addWordLines(area, rx, bl, size, theAreaColor);
-
-        if (OPTIMIZE_TEXT) {
-            if (!textOpen || bl != prevWordY) {
-                closeText();
-
-                pdf.append("1 0 0 1 " +(rx / 1000f) + " " +
-                           (bl / 1000f) + " Tm [" + startText);
-                prevWordY = bl;
-                textOpen = true;
-            } else {
-                // express the space between words in thousandths of an em
-                int space = prevWordX - rx + prevWordWidth;
-                float emDiff =
-                  (float) space / (float) currentFontSize * 1000f;
-                pdf.append(emDiff + " " + startText);
-            }
-            prevWordWidth = area.getContentWidth();
-            prevWordX = rx;
-
-        } else {
-            // original text render code sets the text transformation matrix
-            // for every word.
-            pdf.append("1 0 0 1 " +(rx / 1000f) + " " + (bl / 1000f) +
-                       " Tm ");
-            if (kerningAvailable) {
-                pdf.append(" [" + startText);
-            } else {
-                pdf.append(" " + startText);
-            }
-        }
-
-        String s;
-        if (area.getPageNumberID() != null) { // this text is a page number, so resolve it
-            s = idReferences.getPageNumber(area.getPageNumberID());
-            if (s == null) {
-                s = "";
-            }
-        } else {
-            s = area.getText();
-        }
-
-        int l = s.length();
-
-        for (int i = 0; i < l; i++) {
-            char ch = s.charAt(i);
-            String prepend = "";
-
-            if (!useMultiByte) {
-                if (ch > 127) {
-                    pdf.append("\\");
-                    pdf.append(Integer.toOctalString((int) ch));
-                } else {
-                    switch (ch) {
-                        case '(':
-                        case ')':
-                        case '\\':
-                            prepend = "\\";
-                            break;
-                    }
-                    pdf.append(
-                      getUnicodeString(prepend + ch, useMultiByte));
-                }
-            } else {
-                pdf.append(getUnicodeString(prepend + ch, useMultiByte));
-            }
-
-            if (kerningAvailable && (i + 1) < l) {
-                addKerning(pdf, (new Integer((int) ch)),
-                           (new Integer((int) s.charAt(i + 1))), kerning,
-                           startText, endText);
-            }
-
-        }
-        pdf.append(endText + " ");
-        if (!OPTIMIZE_TEXT) {
-            if (kerningAvailable) {
-                pdf.append("] TJ\n");
-            } else {
-                pdf.append("Tj\n");
-            }
-
-        }
+		closeText();
+		this.currentFill = areaColor;
+		pdf.append(this.currentFill.getColorSpaceOut(true));
+	    }
 
 
+	    int rx = this.currentXPosition;
+	    int bl = this.currentYPosition;
 
-        currentStream.add(pdf.toString());
+	    addWordLines(area, rx, bl, size, areaColor);
 
-        this.currentXPosition += area.getContentWidth();
+     
+	    if (!textOpen || bl != prevWordY) {
+		closeText();
+	    
+		pdf.append("1 0 0 1 " +(rx / 1000f) + " " +
+			   (bl / 1000f) + " Tm [" + startText);
+		prevWordY = bl;
+		textOpen = true;
+	    } else {
+		// express the space between words in thousandths of an em
+		int space = prevWordX - rx + prevWordWidth;
+		float emDiff =
+		    (float) space / (float) currentFontSize * 1000f;
+		pdf.append(Float.toString(emDiff));
+		pdf.append(" ");
+		pdf.append(startText);
+	    }
+	    prevWordWidth = area.getContentWidth();
+	    prevWordX = rx;
+	
+	
+	    String s;
+	    if (area.getPageNumberID() != null) { // this text is a page number, so resolve it
+		s = idReferences.getPageNumber(area.getPageNumberID());
+		if (s == null) {
+		    s = "";
+		}
+	    } else {
+		s = area.getText();
+	    }
 
+	    int l = s.length();
+
+	    for (int i = 0; i < l; i++) {
+		char ch = s.charAt(i);
+
+		if (!useMultiByte) {
+		    if (ch > 127) {
+			pdf.append("\\");
+			pdf.append(Integer.toOctalString((int) ch));
+		    
+		    } else {
+			switch (ch) {
+			case '(':
+			case ')':
+			case '\\':
+			    pdf.append("\\");
+			    break;
+			}
+			pdf.append(ch);
+		    }
+		}
+		else {
+		    pdf.append(getUnicodeString(ch));
+		}
+	    
+		if (kerningAvailable && (i + 1) < l) {
+		    addKerning(pdf, (new Integer((int) ch)),
+			       (new Integer((int) s.charAt(i + 1))), kerning,
+			       startText, endText);
+		}
+
+	    }
+	    pdf.append(endText);
+
+	    currentStream.add(pdf.toString());
+
+	    this.currentXPosition += area.getContentWidth();
+
+	}
     }
-
+    
 
     /**
-      * Convert a string to a unicode hex representation
+      * Convert a char to a multibyte hex representation
       */
-    private String getUnicodeString(StringBuffer str,
-                                    boolean useMultiByte) {
-        return getUnicodeString(str.toString(), useMultiByte);
-    }
+    private String getUnicodeString(char c) {
 
-    /**
-      * Convert a string to a multibyte hex representation
-      */
-    private String getUnicodeString(String str, boolean useMultiByte) {
-        if (!useMultiByte) {
-            return str;
-        } else {
-            StringBuffer buf = new StringBuffer(str.length() * 4);
-            byte[] uniBytes = null;
-            try {
-                uniBytes = str.getBytes("UnicodeBigUnmarked");
-            } catch (Exception e) {
-                // This should never fail
-            }
-
-            for (int i = 0; i < uniBytes.length; i++) {
-                int b = (uniBytes[i] < 0) ? (int)(256 + uniBytes[i]) :
-                        (int) uniBytes[i];
-
-                String hexString = Integer.toHexString(b);
-                if (hexString.length() == 1)
-                    buf = buf.append("0"+hexString);
-                else
-                    buf = buf.append(hexString);
-            }
-
-            return buf.toString();
-        }
+	StringBuffer buf = new StringBuffer(4);
+	
+	byte[] uniBytes = null;
+	try {
+	    char[] a = {c};
+	    uniBytes = new String(a).getBytes("UnicodeBigUnmarked");
+	} catch (Exception e) {
+	    // This should never fail
+	}
+	
+	for (int i = 0; i < uniBytes.length; i++) {
+	    int b = (uniBytes[i] < 0) ? (int)(256 + uniBytes[i]) :
+		(int) uniBytes[i];
+	    
+	    String hexString = Integer.toHexString(b);
+	    if (hexString.length() == 1)
+		buf = buf.append("0"+hexString);
+	    else
+		buf = buf.append(hexString);
+	}
+	
+	return buf.toString();
+        
     }
 
 
@@ -556,7 +544,7 @@ public class PDFRenderer extends PrintRenderer {
       * still and writes out the TJ command to the stream if we do
       */
     private void closeText() {
-        if (OPTIMIZE_TEXT && textOpen) {
+        if  (textOpen) {
             currentStream.add("] TJ\n");
             textOpen = false;
             prevWordX = 0;
@@ -566,22 +554,23 @@ public class PDFRenderer extends PrintRenderer {
 
     private void addKerning(StringBuffer buf, Integer ch1, Integer ch2,
                             Hashtable kerning, String startText, String endText) {
-        Hashtable h2 = (Hashtable) kerning.get(ch1);
+        Hashtable kernPair = (Hashtable) kerning.get(ch1);
 
-        if (h2 != null) {
-            Integer wdt = (Integer) h2.get(ch2);
-            if (wdt != null) {
-                buf.append(endText).append(' ').append(-
-                                                       wdt.intValue()).append(' ').append(startText);
+        if (kernPair != null) {
+            Integer width = (Integer) kernPair.get(ch2);
+            if (width != null) {
+                buf.append(endText)
+		    .append(-(width.intValue()))
+		    .append(' ').append(startText);
             }
         }
     }
 
     /**
-        * render page into PDF
-        *
-        * @param page page to render
-        */
+     * render page into PDF
+     *
+     * @param page page to render
+     */
     public void renderPage(Page page) {
         BodyAreaContainer body;
         AreaContainer before, after, start, end;
