@@ -6,6 +6,7 @@
 </fo:layout-master-set>
 <fo:page-sequence master-name="one">
 <fo:flow flow-name="xsl-region-body">
+<fo:instream-foreign-object>
 <svg:svg xml:space="preserve" width="570.129" height="754.902">
 <svg:g id="Layer_x0020_1">
 	<svg:path style="fill-rule:nonzero;fill:#0086B3;stroke:#000000;stroke-width:2.8346;stroke-miterlimit:4;" d="M568.712,753.485H1.417V1.417h567.295v752.068z"/>
@@ -439,6 +440,7 @@
 	</svg:g>
 </svg:g>
 </svg:svg>
+</fo:instream-foreign-object>
 </fo:flow>
 </fo:page-sequence>
 </fo:root>

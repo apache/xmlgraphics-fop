@@ -131,12 +131,14 @@
 ]]>
 </fo:block>
       <fo:block break-before="page" font-size="24pt" line-height="28pt" space-before.optimum="12pt" space-after.optimum="12pt">Embedded SVG</fo:block>
-      <svg:svg width="400pt" height="200pt">
-        <svg:rect x="20pt" y="20pt" width="100pt" height="100pt"/>
-        <svg:line x1="20pt" y1="20pt" x2="120pt" y2="120pt"/>
-        <svg:line x1="120pt" y1="20pt" x2="20pt" y2="120pt"/>
-        <svg:text x="20pt" y="150pt">Hello SVG!</svg:text>
-      </svg:svg>
+      <fo:instream-foreign-object>
+        <svg:svg width="400pt" height="200pt">
+          <svg:rect x="20pt" y="20pt" width="100pt" height="100pt"/>
+          <svg:line x1="20pt" y1="20pt" x2="120pt" y2="120pt"/>
+          <svg:line x1="120pt" y1="20pt" x2="20pt" y2="120pt"/>
+          <svg:text x="20pt" y="150pt">Hello SVG!</svg:text>
+        </svg:svg>
+      </fo:instream-foreign-object>
       <fo:block>The above is an example of an SVG graphic</fo:block>
     </fo:flow>
   </fo:page-sequence>
