@@ -94,7 +94,6 @@ public class PageNumberCitation extends FObj {
     private float green;
     private float blue;
     private int wrapOption;
-    private int whiteSpaceCollapse;
     private String pageNumber;
     private String refId;
     private TextState ts;
@@ -231,9 +230,6 @@ public class PageNumberCitation extends FObj {
         this.blue = c.getBlue();
 
         this.wrapOption = this.properties.get("wrap-option").getEnum();
-        this.whiteSpaceCollapse =
-          this.properties.get("white-space-collapse").getEnum();
-
         this.refId = this.properties.get("ref-id").getString();
 
         if (this.refId.equals("")) {
