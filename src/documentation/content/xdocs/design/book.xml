@@ -26,7 +26,6 @@ understanding/book.xml, WHICH SEE FOR AN EXPLANATION.
       <menu-item label="Introduction" href="understanding/index.html"/>
       <menu-item label="XML Parsing" href="understanding/xml_parsing.html"/>
       <menu-item label="FO Tree" href="understanding/fo_tree.html"/>
-      <menu-item label="Properties" href="understanding/properties.html"/>
     </menu>
     <menu label="Extras">
       <menu-item label="Images" href="understanding/images.html"/>
