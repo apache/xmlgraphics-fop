@@ -323,7 +323,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <!-- copy src files -->
     <copydir src="${src.dir}"
              dest="${build.src}"
-             excludes="**/Makefile*, **/package.html, **/XT*,**/PDFOutputHandler.java,**/${jimi},**/${jai},**/${pfmreader}"/>
+             excludes="**/Makefile*, **/package.html, **/XT*,**/PDFOutputHandler.java,**/${jimi},**/${jai},**/${pfmreader},**/${xsltransform},**/${trax},**/${xalan1}"/>
   </target>
 
   <!-- =================================================================== -->
