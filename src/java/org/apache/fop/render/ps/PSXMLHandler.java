@@ -34,6 +34,7 @@ import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.ViewBox;
 import org.apache.batik.gvt.GraphicsNode;
 // FOP
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.svg.SVGUserAgent;
@@ -116,7 +117,7 @@ public class PSXMLHandler implements XMLHandler {
     public static PSInfo getPSInfo(RendererContext context) {
         PSInfo psi = new PSInfo();
         psi.psGenerator = (PSGenerator)context.getProperty(PS_GENERATOR);
-        psi.fontInfo = (org.apache.fop.apps.Document)context.getProperty(PS_FONT_INFO);
+        psi.fontInfo = (org.apache.fop.fonts.FontInfo) context.getProperty(PS_FONT_INFO);
         psi.width = ((Integer)context.getProperty(PS_WIDTH)).intValue();
         psi.height = ((Integer)context.getProperty(PS_HEIGHT)).intValue();
         psi.currentXPosition = ((Integer)context.getProperty(PS_XPOS)).intValue();
@@ -132,7 +133,7 @@ public class PSXMLHandler implements XMLHandler {
         /** see PS_GENERATOR */
         private PSGenerator psGenerator;
         /** see PS_FONT_INFO */
-        private org.apache.fop.apps.Document fontInfo;
+        private org.apache.fop.fonts.FontInfo fontInfo;
         /** see PS_PAGE_WIDTH */
         private int width;
         /** see PS_PAGE_HEIGHT */
@@ -161,7 +162,7 @@ public class PSXMLHandler implements XMLHandler {
          * Returns the fontInfo.
          * @return FontInfo
          */
-        public org.apache.fop.apps.Document getFontInfo() {
+        public FontInfo getFontInfo() {
             return fontInfo;
         }
 
@@ -169,7 +170,7 @@ public class PSXMLHandler implements XMLHandler {
          * Sets the fontInfo.
          * @param fontInfo The fontInfo to set
          */
-        public void setFontInfo(org.apache.fop.apps.Document fontInfo) {
+        public void setFontInfo(FontInfo fontInfo) {
             this.fontInfo = fontInfo;
         }
 

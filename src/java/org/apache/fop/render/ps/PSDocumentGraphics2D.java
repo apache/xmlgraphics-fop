@@ -24,8 +24,8 @@ import java.io.OutputStream;
 import java.io.IOException;
 
 //FOP
-import org.apache.fop.apps.Document;
 import org.apache.fop.apps.Version;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
 
 /**
@@ -56,8 +56,8 @@ public class PSDocumentGraphics2D extends AbstractPSDocumentGraphics2D {
         super(textAsShapes);
 
         if (!textAsShapes) {
-            this.document = new Document(null);
-            FontSetup.setup(this.document.getFontInfo(), null);
+            fontInfo = new FontInfo();
+            FontSetup.setup(fontInfo, null);
         }
     }
 
@@ -113,8 +113,8 @@ public class PSDocumentGraphics2D extends AbstractPSDocumentGraphics2D {
         gen.writeDSCComment(DSCConstants.BEGIN_SETUP);
         PSProcSets.writeFOPStdProcSet(gen);
         PSProcSets.writeFOPEPSProcSet(gen);
-        if (document != null) {
-            PSProcSets.writeFontDict(gen, document.getFontInfo());
+        if (fontInfo != null) {
+            PSProcSets.writeFontDict(gen, fontInfo);
         }
         gen.writeDSCComment(DSCConstants.END_SETUP);
     }
@@ -130,7 +130,7 @@ public class PSDocumentGraphics2D extends AbstractPSDocumentGraphics2D {
         gen.writeln("/PageSize [" + width + " " + height + "]");
         gen.writeln("/ImagingBBox null");
         gen.writeln(">> setpagedevice");
-        if (this.document != null) {         
+        if (fontInfo != null) {         
             gen.writeln("FOPFonts begin");
         }
     }

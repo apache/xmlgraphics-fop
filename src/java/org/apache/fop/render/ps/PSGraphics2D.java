@@ -60,8 +60,8 @@ import org.apache.commons.logging.LogFactory;
 
 //FOP
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.image.FopImage;
-import org.apache.fop.apps.Document;
 
 /**
  * This concrete implementation of <tt>AbstractGraphics2D</tt> is a
@@ -103,7 +103,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
     protected Color currentColour = new Color(0, 0, 0);
 
     /** FontInfo containing all available fonts */
-    protected Document document;
+    protected FontInfo fontInfo;
 
     /**
      * Create a new Graphics2D that generates PostScript code.
@@ -157,6 +157,14 @@ public class PSGraphics2D extends AbstractGraphics2D {
      */
     public Graphics create() {
         return new PSGraphics2D(this);
+    }
+
+    /**
+     * Return the font information associated with this object
+     * @return the FontInfo object
+     */
+    public FontInfo getFontInfo() {
+        return fontInfo;
     }
 
     /**
@@ -454,7 +462,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
         this.gen = null;
         this.font = null;
         this.currentColour = null;
-        this.document = null;
+        this.fontInfo = null;
     }
 
     /**
@@ -873,13 +881,11 @@ public class PSGraphics2D extends AbstractGraphics2D {
         String style = f.isItalic() ? "italic" : "normal";
         int weight = f.isBold() ? Font.BOLD : Font.NORMAL;
                 
-        String fontKey = this.document.getFontInfo().findAdjustWeight(fontFamily, style, weight);
+        String fontKey = fontInfo.findAdjustWeight(fontFamily, style, weight);
         if (fontKey == null) {
-            fontKey = this.document.getFontInfo().findAdjustWeight("sans-serif", style, weight);
+            fontKey = fontInfo.findAdjustWeight("sans-serif", style, weight);
         }
-        return new Font(fontKey, 
-                this.document.getFontInfo().getMetricsFor(fontKey), 
-                fontSize);
+        return new Font(fontKey, fontInfo.getMetricsFor(fontKey), fontSize);
     }
 
     private void establishCurrentFont() throws IOException {

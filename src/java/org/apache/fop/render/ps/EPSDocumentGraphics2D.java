@@ -69,8 +69,8 @@ public class EPSDocumentGraphics2D extends AbstractPSDocumentGraphics2D {
         gen.writeDSCComment(DSCConstants.BEGIN_PROLOG);
         PSProcSets.writeFOPStdProcSet(gen);
         PSProcSets.writeFOPEPSProcSet(gen);
-        if (document != null) {
-            PSProcSets.writeFontDict(gen, document.getFontInfo());
+        if (fontInfo != null) {
+            PSProcSets.writeFontDict(gen, fontInfo);
         }
         gen.writeDSCComment(DSCConstants.END_PROLOG);
     }
@@ -82,7 +82,7 @@ public class EPSDocumentGraphics2D extends AbstractPSDocumentGraphics2D {
         gen.writeDSCComment(DSCConstants.PAGE_BBOX, new Object[]
                 {ZERO, ZERO, new Integer(width), new Integer(height)});
         gen.writeDSCComment(DSCConstants.BEGIN_PAGE_SETUP);
-        if (this.document != null) {         
+        if (fontInfo != null) {         
             gen.writeln("FOPFonts begin");
         }
     }

@@ -26,7 +26,7 @@ import java.io.OutputStream;
 import java.io.IOException;
 
 //FOP
-import org.apache.fop.apps.Document;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
 
 /**
@@ -68,8 +68,8 @@ public abstract class AbstractPSDocumentGraphics2D extends PSGraphics2D {
         super(textAsShapes);
 
         if (!textAsShapes) {
-            this.document = new Document(null);
-            FontSetup.setup(this.document.getFontInfo(), null);
+            fontInfo = new FontInfo();
+            FontSetup.setup(fontInfo, null);
         }
     }
 
@@ -113,14 +113,6 @@ public abstract class AbstractPSDocumentGraphics2D extends PSGraphics2D {
                                  int width, int height) throws IOException {
         this(textAsShapes);
         setupDocument(stream, width, height);
-    }
-
-    /**
-     * Get the context document.
-     * @return the context document
-     */
-    public Document getDocument() {
-        return this.document;
     }
 
     /**
