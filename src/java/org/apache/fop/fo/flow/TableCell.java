@@ -118,14 +118,11 @@ public class TableCell extends FObj {
     }
 
     /**
-     * Overriden from FObj.
-     * @param attlist Collection of attributes passed to us from the parser.
-     * @throws FOPException for FO errors
+     * @see org.apache.fop.fo.FObj#addProperties
      */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
+    protected void addProperties(Attributes attlist) throws FOPException {
+        super.addProperties(attlist);
         doSetup();    // init some basic property values
-
         getFOTreeControl().getFOInputHandler().startCell(this);
     }
 

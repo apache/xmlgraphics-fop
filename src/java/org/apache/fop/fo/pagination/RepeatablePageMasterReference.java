@@ -49,11 +49,10 @@ public class RepeatablePageMasterReference extends PageMasterReference
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#handleAttrs(Attributes)
+     * @see org.apache.fop.fo.FObj#addProperties
      */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
-
+    protected void addProperties(Attributes attlist) throws FOPException {
+        super.addProperties(attlist);
         String mr = getProperty(PR_MAXIMUM_REPEATS).getString();
         if (mr.equals("no-limit")) {
             this.maximumRepeats = INFINITE;

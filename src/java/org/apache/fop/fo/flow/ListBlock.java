@@ -59,6 +59,14 @@ public class ListBlock extends FObj {
         super(parent);
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#addProperties
+     */
+    protected void addProperties(Attributes attlist) throws FOPException {
+        super.addProperties(attlist);
+        getFOTreeControl().getFOInputHandler().startList(this);
+    }
+
     private void setup() throws FOPException {
 
             // Common Accessibility Properties
@@ -128,15 +136,6 @@ public class ListBlock extends FObj {
         fotv.serveListBlock(this);
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#handleAttrs
-     */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
-
-        getFOTreeControl().getFOInputHandler().startList(this);
-    }
-    
     protected void end() {
         super.end();
         

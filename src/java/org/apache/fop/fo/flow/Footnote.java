@@ -44,6 +44,14 @@ public class Footnote extends FObj {
     }
 
     /**
+     * @see org.apache.fop.fo.FObj#addProperties
+     */
+    protected void addProperties(Attributes attlist) throws FOPException {
+        super.addProperties(attlist);
+        getFOTreeControl().getFOInputHandler().startFootnote(this);
+    }
+
+    /**
      * @param child child FONode to be added to this object
      */
     public void addChild(FONode child) {
@@ -69,18 +77,8 @@ public class Footnote extends FObj {
         fotv.serveFootnote(this);
     }
     
-    /**
-     * @see org.apache.fop.fo.FObj#handleAttrs
-     */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
-
-        getFOTreeControl().getFOInputHandler().startFootnote(this);
-    }
-
     protected void end() {
         super.end();
-        
         getFOTreeControl().getFOInputHandler().endFootnote(this);
     }
 }

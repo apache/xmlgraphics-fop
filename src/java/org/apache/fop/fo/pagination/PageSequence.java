@@ -130,16 +130,10 @@ public class PageSequence extends FObj {
     }
 
     /**
-     * Handle the attributes for this xml element.
-     * For the page sequence this gets all the appropriate properties
-     * for dealing with the page sequence.
-     *
-     * @param attlist the attribute list
-     * @throws FOPException if there is an error with the properties
+     * @see org.apache.fop.fo.FObj#addProperties
      */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
-
+    protected void addProperties(Attributes attlist) throws FOPException {
+        super.addProperties(attlist);
         if (parent.getName().equals("fo:root")) {
             this.root = (Root)parent;
             // this.root.addPageSequence(this);

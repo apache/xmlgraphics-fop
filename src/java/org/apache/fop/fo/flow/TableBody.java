@@ -51,6 +51,15 @@ public class TableBody extends FObj {
         super(parent);
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#addProperties
+     */
+    protected void addProperties(Attributes attlist) throws FOPException {
+        super.addProperties(attlist);
+        setupID();
+        getFOTreeControl().getFOInputHandler().startBody(this);
+    }
+
     private void setup() throws FOPException {
         // Common Accessibility Properties
         CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
@@ -92,17 +101,6 @@ public class TableBody extends FObj {
      */
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveTableBody(this);
-    }
-
-    /**
-     * @see org.apache.fop.fo.FObj#handleAttrs
-     */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
-
-        setupID();
-
-        getFOTreeControl().getFOInputHandler().startBody(this);
     }
 
     protected void end() {

@@ -48,13 +48,12 @@ public class Outline extends ExtensionObj {
     }
 
     /**
-     * The attribues on the outline object are the internal and external
+     * The attributes on the outline object are the internal and external
      * destination. One of these is required.
      *
-     * @param attlist the attribute list
-     * @throws FOPException a fop exception if there is an error
+     * @see org.apache.fop.fo.FObj#addProperties
      */
-    public void handleAttrs(Attributes attlist) throws FOPException {
+    protected void addProperties(Attributes attlist) throws FOPException {
         internalDestination =
             attlist.getValue("internal-destination");
         externalDestination =

@@ -44,10 +44,11 @@ public class PlanElement extends PlanObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#handleAttrs(Attributes)
+     * @see org.apache.fop.fo.FONode#processNode
      */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
+    public void processNode(String elementName, Locator locator, 
+                            Attributes attlist) throws FOPException {
+        super.processNode(elementName, locator, attlist);
         createBasicDocument();
     }
 

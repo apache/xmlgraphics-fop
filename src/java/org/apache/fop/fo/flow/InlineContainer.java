@@ -45,10 +45,10 @@ public class InlineContainer extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#handleAttrs
+     * @see org.apache.fop.fo.FObj#addProperties
      */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
+    protected void addProperties(Attributes attlist) throws FOPException {
+        super.addProperties(attlist);
         // Common Border, Padding, and Background Properties
         CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
         CommonBackground bProps = propMgr.getBackgroundProps();

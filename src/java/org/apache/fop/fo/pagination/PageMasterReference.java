@@ -44,10 +44,10 @@ public abstract class PageMasterReference extends FObj
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#handleAttrs(Attributes)
+     * @see org.apache.fop.fo.FObj#addProperties
      */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
+    protected void addProperties(Attributes attlist) throws FOPException {
+        super.addProperties(attlist);
         if (getProperty(PR_MASTER_REFERENCE) != null) {
             this.masterName = getProperty(PR_MASTER_REFERENCE).getString();
         }

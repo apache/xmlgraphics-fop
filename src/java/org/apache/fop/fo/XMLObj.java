@@ -39,8 +39,10 @@ public abstract class XMLObj extends FONode {
 
     // temp reference for attributes
     private Attributes attr = null;
+
     /** DOM element representing this node */
     protected Element element;
+
     /** DOM document containing this node */
     protected Document doc;
 
@@ -53,18 +55,10 @@ public abstract class XMLObj extends FONode {
     }
 
     /**
-     * @param str name of the element
+     * @see org.apache.fop.fo.FONode#processNode
      */
-    public void setName(String str) {
-        name = str;
-    }
-
-    /**
-     * Store the attributes for this element
-     * @param attlist Collection of attributes passed to us from the parser.
-     * @throws FOPException for errors in the attributes
-     */
-    public void handleAttrs(Attributes attlist) throws FOPException {
+    public void processNode(String elementName, Locator locator, Attributes attlist) throws FOPException {
+        name = elementName;
         attr = attlist;
     }
 

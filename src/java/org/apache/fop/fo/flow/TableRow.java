@@ -63,6 +63,15 @@ public class TableRow extends FObj {
     }
 
     /**
+     * @see org.apache.fop.fo.FObj#addProperties
+     */
+    protected void addProperties(Attributes attlist) throws FOPException {
+        super.addProperties(attlist);
+        setupID();
+        getFOTreeControl().getFOInputHandler().startRow(this);
+    }
+
+    /**
      * @return keepWithPrevious
      */
     public KeepValue getKeepWithPrevious() {
@@ -133,17 +142,6 @@ public class TableRow extends FObj {
      */
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveTableRow(this);
-    }
-
-    /**
-     * @see org.apache.fop.fo.FObj#handleAttrs
-     */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
-
-        setupID();
-
-        getFOTreeControl().getFOInputHandler().startRow(this);
     }
 
     protected void end() {

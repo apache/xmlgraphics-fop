@@ -49,6 +49,14 @@ public class BasicLink extends Inline {
         super(parent);
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#addProperties
+     */
+    protected void addProperties(Attributes attlist) throws FOPException {
+        super.addProperties(attlist);
+        getFOTreeControl().getFOInputHandler().startLink(this);
+    }
+
     public void setup() {
         String destination;
         int linkType;
@@ -129,15 +137,6 @@ public class BasicLink extends Inline {
         fotv.serveBasicLink(this);
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#handleAttrs
-     */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
-
-        getFOTreeControl().getFOInputHandler().startLink(this);
-    }
-    
     /**
      * @see org.apache.fop.fo.FONode#end
      */

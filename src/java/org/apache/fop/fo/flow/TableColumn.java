@@ -55,6 +55,15 @@ public class TableColumn extends FObj {
     }
 
     /**
+     * @see org.apache.fop.fo.FObj#addProperties
+     */
+    protected void addProperties(Attributes attlist) throws FOPException {
+        super.addProperties(attlist);
+        initialize();    // init some basic property values
+        getFOTreeControl().getFOInputHandler().startColumn(this);
+    }
+
+    /**
      * @return Length object containing column width
      */
     public Length getColumnWidth() {
@@ -112,18 +121,6 @@ public class TableColumn extends FObj {
      */
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveTableColumn(this);
-    }
-
-    /**
-     * Overriden from FObj.
-     * @param attlist Collection of attributes passed to us from the parser.
-     * @throws FOPException for FO errors
-     */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
-        initialize();    // init some basic property values
-
-        getFOTreeControl().getFOInputHandler().startColumn(this);
     }
 
     protected void end() {

@@ -63,12 +63,10 @@ public class Flow extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#handleAttrs
-     * @param attlist Collection of attributes passed to us from the parser.
-     * @throws FOPException if parent is not a page-sequence object
+     * @see org.apache.fop.fo.FObj#addProperties
      */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
+    protected void addProperties(Attributes attlist) throws FOPException {
+        super.addProperties(attlist);
         if (parent.getName().equals("fo:page-sequence")) {
             this.pageSequence = (PageSequence) parent;
         } else {

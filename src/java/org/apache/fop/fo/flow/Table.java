@@ -76,6 +76,15 @@ public class Table extends FObj {
     }
 
     /**
+     * @see org.apache.fop.fo.FObj#addProperties
+     */
+    protected void addProperties(Attributes attlist) throws FOPException {
+        super.addProperties(attlist);
+        setupID();
+        getFOTreeControl().getFOInputHandler().startTable(this);
+    }
+
+    /**
      * Overrides FObj.
      * @param child FONode child object to be added
      */
@@ -191,17 +200,6 @@ public class Table extends FObj {
      */
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveTable(this);
-    }
-
-    /**
-     * @see org.apache.fop.fo.FObj#handleAttrs
-     */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
-
-        setupID();
-
-        getFOTreeControl().getFOInputHandler().startTable(this);
     }
 
     protected void end() {
