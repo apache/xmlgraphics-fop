@@ -1,5 +1,4 @@
 /*
- * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -58,71 +57,44 @@
 
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
-import java.io.Writer;
 import java.io.IOException;
+import java.io.Writer;
 
-/**
- * @author Christopher Scott, scottc@westinghouse.com
+/** Plain text in a RTF file, without any formatings.
+ *  @author Peter Herweg, pherweg@web.de
  */
-public class RtfPageNumber extends RtfContainer {
-    /* RtfText attributes: fields
-       must be carefull of group markings and star control
-       ie page field:
-           "{\field {\*\fldinst {PAGE}} {\fldrslt}}"
+
+public class RtfString extends RtfElement
+{
+    String text="";
+        
+    RtfString(RtfContainer parent, Writer w, String s)
+    throws IOException {
+        super(parent, w);
+            
+        text=s;
+    }
+        
+    /**
+    * @return true if this element would generate no "useful" RTF content
     */
-
-    /** constant for field */
-    public static final String RTF_FIELD = "field";
-    /** constant for field on page */
-    public static final String RTF_FIELD_PAGE = "fldinst { PAGE }";
-    /** constant for field result */
-    public static final String RTF_FIELD_RESULT = "fldrslt";
-
-    /** Create an RTF paragraph as a child of given container with default attributes */
-    RtfPageNumber(IRtfPageNumberContainer parent, Writer w) throws IOException {
-        super((RtfContainer)parent, w);
-    }
-
-    /** Create an RTF page number as a child of given container with given attributes */
-     RtfPageNumber(RtfContainer parent, Writer w, RtfAttributes attrs) throws IOException {
-         // Adds the attributes of the parent paragraph
-         super(parent, w, attrs);
-     }
-
-    /** Create an RTF page number as a child of given paragraph,
-     *  copying the paragraph attributes
-     */
-     RtfPageNumber(RtfParagraph parent, Writer w) throws IOException {
-         // Adds the attributes of the parent paragraph
-         super((RtfContainer)parent, w, parent.attrib);
-
-         // copy parent's text attributes
-         if (parent.getTextAttributes() != null) {
-             attrib.set(parent.getTextAttributes());
-         }
-     }
-
-    /**
-     * Write our attributes and content
-     * @throws IOException for I/O problems
-     */
-    protected void writeRtfContent() throws IOException {
-        writeGroupMark(true);
-        writeControlWord(RTF_FIELD);
-        writeGroupMark(true);
-        writeAttributes(attrib, RtfText.ATTR_NAMES); // Added by Boris Poudérous
-        writeStarControlWord(RTF_FIELD_PAGE);
-        writeGroupMark(false);
-        writeGroupMark(true);
-        writeControlWord(RTF_FIELD_RESULT);
-        writeGroupMark(false);
-        writeGroupMark(false);
-    }
-
-    /**
-     * @return true if this element would generate no "useful" RTF content
-     */
     public boolean isEmpty() {
-        return false;
+        return text.trim().equals("");
+    }
+        
+    /**
+    * write RTF code of all our children
+    * @throws IOException for I/O problems
+    */
+    protected void writeRtfContent() throws IOException {
+        RtfStringConverter.getInstance().writeRtfString(writer, text);
+    }
+        
+    public String getText() {
+        return text;
+    }
+        
+    public void setText(String s) {
+        text=s;
     }
 }

@@ -1,5 +1,4 @@
 /*
- * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -49,80 +48,27 @@
  * Software Foundation, please see <http://www.apache.org/>.
  */
 
+
 /*
- * This file is part of the RTF library of the FOP project, which was originally
- * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and by other
- * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
- * the FOP project.
+ * This file is part of the RTF library of the FOP project.
  */
+
 
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
-import java.io.Writer;
 import java.io.IOException;
+import java.io.Writer;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Iterator;
+import java.io.IOException;
+import org.apache.fop.rtf.rtflib.exceptions.RtfStructureException;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfTextrun;
 
-/**
- * @author Christopher Scott, scottc@westinghouse.com
+/**  Interface which enables an implementing class to contain linear text runs.
+ *  @author Peter Herweg, pherweg@web.de
  */
-public class RtfPageNumber extends RtfContainer {
-    /* RtfText attributes: fields
-       must be carefull of group markings and star control
-       ie page field:
-           "{\field {\*\fldinst {PAGE}} {\fldrslt}}"
-    */
 
-    /** constant for field */
-    public static final String RTF_FIELD = "field";
-    /** constant for field on page */
-    public static final String RTF_FIELD_PAGE = "fldinst { PAGE }";
-    /** constant for field result */
-    public static final String RTF_FIELD_RESULT = "fldrslt";
-
-    /** Create an RTF paragraph as a child of given container with default attributes */
-    RtfPageNumber(IRtfPageNumberContainer parent, Writer w) throws IOException {
-        super((RtfContainer)parent, w);
-    }
-
-    /** Create an RTF page number as a child of given container with given attributes */
-     RtfPageNumber(RtfContainer parent, Writer w, RtfAttributes attrs) throws IOException {
-         // Adds the attributes of the parent paragraph
-         super(parent, w, attrs);
-     }
-
-    /** Create an RTF page number as a child of given paragraph,
-     *  copying the paragraph attributes
-     */
-     RtfPageNumber(RtfParagraph parent, Writer w) throws IOException {
-         // Adds the attributes of the parent paragraph
-         super((RtfContainer)parent, w, parent.attrib);
-
-         // copy parent's text attributes
-         if (parent.getTextAttributes() != null) {
-             attrib.set(parent.getTextAttributes());
-         }
-     }
-
-    /**
-     * Write our attributes and content
-     * @throws IOException for I/O problems
-     */
-    protected void writeRtfContent() throws IOException {
-        writeGroupMark(true);
-        writeControlWord(RTF_FIELD);
-        writeGroupMark(true);
-        writeAttributes(attrib, RtfText.ATTR_NAMES); // Added by Boris Poudérous
-        writeStarControlWord(RTF_FIELD_PAGE);
-        writeGroupMark(false);
-        writeGroupMark(true);
-        writeControlWord(RTF_FIELD_RESULT);
-        writeGroupMark(false);
-        writeGroupMark(false);
-    }
-
-    /**
-     * @return true if this element would generate no "useful" RTF content
-     */
-    public boolean isEmpty() {
-        return false;
-    }
+public interface IRtfTextrunContainer {
+    public RtfTextrun getTextrun()  throws IOException;
 }

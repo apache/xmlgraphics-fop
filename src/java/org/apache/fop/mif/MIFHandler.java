@@ -60,6 +60,7 @@ import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.ExternalGraphic;
 import org.apache.fop.fo.flow.InstreamForeignObject;
+import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.fo.flow.ListItem;
@@ -220,6 +221,20 @@ public class MIFHandler extends FOInputHandler {
     public void endBlock(Block bl) {
         para.finish(true);
         para = null;
+    }
+
+    /**
+     *
+     * @param inl Inline that is starting.
+     */
+    public void startInline(Inline inl){
+    }
+
+    /**
+     *
+     * @param inl Inline that is ending.
+     */
+    public void endInline(Inline inl){
     }
 
     /**

@@ -76,7 +76,8 @@ implements
     IRtfBeforeContainer,
     IRtfParagraphKeepTogetherContainer,
     IRtfAfterContainer,
-    IRtfJforCmdContainer {
+    IRtfJforCmdContainer,
+    IRtfTextrunContainer {
     private RtfParagraph paragraph;
     private RtfTable table;
     private RtfList list;
@@ -261,5 +262,10 @@ implements
         closeCurrentList();
         closeCurrentExternalGraphic();
         closeCurrentBefore();
+    }
+    
+    public RtfTextrun getTextrun()
+    throws IOException {
+        return RtfTextrun.getTextrun(this, writer, null);
     }
 }

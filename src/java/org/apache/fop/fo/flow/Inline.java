@@ -146,6 +146,8 @@ public class Inline extends FObjMixed {
         if (textDecoration == TextDecoration.LINE_THROUGH) {
             this.lineThrough = true;
         }
+        
+        getFOTreeControl().getFOInputHandler().startInline(this);
     }
 
     /**
@@ -164,6 +166,13 @@ public class Inline extends FObjMixed {
 
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveInline(this);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#end
+     */
+    public void end() {
+        getFOTreeControl().getFOInputHandler().endInline(this);
     }
 
 }
