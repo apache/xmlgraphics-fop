@@ -40,9 +40,11 @@ public class BlockArea extends Area {
             Node parent,
             Object sync) {
         super(pageSeq, generatedBy, parent, sync);
-        // TODO Auto-generated constructor stub
+        // Setup the allocation-rectangle
+        allocation = new BlockAllocationRectangle();
     }
 
+    private BlockAllocationRectangle allocation;
     /** The page space allocation for layout of the block */
     private Rectangle2D pageSpace = new Rectangle2D.Double();
     /** The content space equivalent to the pageSpace */
@@ -142,7 +144,7 @@ public class BlockArea extends Area {
      * @version $Revision$ $Name$
      */
     public class BlockAllocationRectangle extends AreaFrame implements
-            AllocationRectangle {
+            AllocationRectangle, AreaListener {
 
         private PaddingRectangle padding;
         private BorderRectangle borders;
@@ -167,16 +169,23 @@ public class BlockArea extends Area {
             padding = BlockArea.this.getPadding();
             borders = BlockArea.this.getBorders();
             spaces = BlockArea.this.getSpaces();
+            // Register the listener
+            spaces.registerAreaListener(this);
             setAllocationFrame();
         }
 
         public void setAllocationFrame() {
+            // TODO synchronize this
             setStart(spaces.getStart() + borders.getStart() + padding.getStart());
             setEnd(spaces.getEnd() + borders.getEnd() + padding.getEnd());
             setBefore(borders.getBefore() + padding.getBefore());
             setAfter(borders.getAfter() + padding.getAfter());
         }
 
+        public void setDimensions(Rectangle2D geometry) {
+            setAllocationFrame();
+        }
+        
     }
 
 }
