@@ -58,6 +58,8 @@ public class FONode extends FOTree.Node{
     protected XMLEvent event;
     /** The buffer from which parser events are drawn. */
     protected SyncedCircularBuffer xmlevents;
+    /** The FO type. */
+    public final int type;
     /** The node identifier obtained from <tt>foTree</tt>. */
     public final int id;
     /** The array of property value stacks */
@@ -68,19 +70,26 @@ public class FONode extends FOTree.Node{
     public HashMap foProperties = null;
     /** The property expression parser in the FOTree. */
     protected PropertyParser exprParser;
+    /** Ancestor reference area of this FONode. */
+    protected FONode ancestorRefArea = null;
 
     /**
      * @param foTree an <tt>FOTree</tt> to which this node belongs
+     * @param type the fo type of this FONode.
      * @param parent an <tt>FONode</tt>, the parent node of this node in
      * <i>foTree</i>
      * @param event the <tt>XMLEvent</tt> that triggered the creation of this
+     * @param attrSet the set of attributes relevant at this point in the
+     * tree.
      * node
      */
-    public FONode (FOTree foTree, FONode parent, XMLEvent event, int attrSet)
+    public FONode
+        (FOTree foTree, int type, FONode parent, XMLEvent event, int attrSet)
         throws Tree.TreeException, FOPException, PropertyException
     {
         foTree.super(parent);
         this.foTree = foTree;
+        this.type = type;
         this.event = event;
         xmlevents = foTree.xmlevents;
         propertyStacks = foTree.propertyStacks;
