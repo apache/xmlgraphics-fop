@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 
 package org.apache.fop.fo.properties;
 
-import java.util.Enumeration;
+import java.util.Iterator;
 
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
@@ -37,7 +37,7 @@ public class GenericShorthandParser implements ShorthandParser {
      */
     protected Property getElement(Property list, int index) {
         if (list.getList().size() > index) {
-            return (Property) list.getList().elementAt(index);
+            return (Property) list.getList().get(index);
         } else {
             return null;
         }
@@ -49,9 +49,7 @@ public class GenericShorthandParser implements ShorthandParser {
                                         Property property,
                                         PropertyMaker maker,
                                         PropertyList propertyList)
-        throws PropertyException
-    {
-        Property prop = null;
+                    throws PropertyException {
         // Check for keyword "inherit"
         if (property.getList().size() == 1) {
             String sval = getElement(property, 0).getString();
@@ -75,13 +73,12 @@ public class GenericShorthandParser implements ShorthandParser {
                                                Property property,
                                                PropertyMaker maker,
                                                PropertyList propertyList)
-        throws PropertyException
-    {
+                    throws PropertyException {
         Property prop = null;
         // Try each of the stored values in turn
-        Enumeration eprop = property.getList().elements();
-        while (eprop.hasMoreElements() && prop == null) {
-            Property p = (Property) eprop.nextElement();
+        Iterator iprop = property.getList().iterator();
+        while (iprop.hasNext() && prop == null) {
+            Property p = (Property)iprop.next();
             prop = maker.convertShorthandProperty(propertyList, p, null);
         }
         return prop;

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 
 package org.apache.fop.fo.properties;
 
-import java.util.Vector;
+import java.util.List;
 
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
@@ -34,7 +34,7 @@ public class ListProperty extends Property {
     public static class Maker extends PropertyMaker {
 
         /**
-         * @param name name of property for which Maker should be created
+         * @param propId ID of the property for which Maker should be created
          */
         public Maker(int propId) {
             super(propId);
@@ -55,14 +55,21 @@ public class ListProperty extends Property {
     }
 
     /** Vector containing the list of sub-properties */
-    protected Vector list;
+    protected List list = new java.util.Vector();
 
+    /**
+     * Simple constructor used by subclasses to do some special processing.
+     */
+    protected ListProperty() {
+        //nop
+    }
+    
     /**
      * @param prop the first Property to be added to the list
      */
     public ListProperty(Property prop) {
-        list = new Vector();
-        list.addElement(prop);
+        this();
+        addProperty(prop);
     }
 
     /**
@@ -70,13 +77,13 @@ public class ListProperty extends Property {
      * @param prop Property to be added to the list
      */
     public void addProperty(Property prop) {
-        list.addElement(prop);
+        list.add(prop);
     }
 
     /**
      * @return this.list
      */
-    public Vector getList() {
+    public List getList() {
         return list;
     }
 

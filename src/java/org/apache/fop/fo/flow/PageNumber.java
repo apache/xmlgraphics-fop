@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,6 @@
 
 package org.apache.fop.fo.flow;
 
-// Java
-import java.util.List;
-
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
@@ -35,9 +32,9 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
+import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.SpaceProperty;
-import org.apache.fop.layoutmgr.PageNumberLayoutManager;
 
 /**
  * Class modelling the fo:page-number object.
@@ -61,7 +58,8 @@ public class PageNumber extends FObj {
     private Length lineHeight;
     private int scoreSpaces;
     private Length textAltitude;
-    private int textDecoration;
+    /** Holds the text decoration values. May be null */
+    private CommonTextDecoration textDecoration;
     private Length textDepth;
     // private ToBeImplementedProperty textShadow;
     private int textTransform;
@@ -98,7 +96,7 @@ public class PageNumber extends FObj {
         lineHeight = pList.get(PR_LINE_HEIGHT).getLength();
         scoreSpaces = pList.get(PR_SCORE_SPACES).getEnum();
         textAltitude = pList.get(PR_TEXT_ALTITUDE).getLength();
-        textDecoration = pList.get(PR_TEXT_DECORATION).getEnum();
+        textDecoration = pList.getTextDecorationProps();
         textDepth = pList.get(PR_TEXT_DEPTH).getLength();
         // textShadow = pList.get(PR_TEXT_SHADOW);
         textTransform = pList.get(PR_TEXT_TRANSFORM).getEnum();
@@ -146,17 +144,10 @@ public class PageNumber extends FObj {
     }
 
     /**
-     * Return the "id" property.
+     * @return the "id" property.
      */
     public String getId() {
         return id;
-    }
-
-    /**
-     * Return the "text-decoration" property.
-     */
-    public int getTextDecoration() {
-        return textDecoration; 
     }
 
     /**
@@ -172,4 +163,10 @@ public class PageNumber extends FObj {
     public int getNameId() {
         return FO_PAGE_NUMBER;
     }
+    
+    /** @return the "text-decoration" property. */
+    public CommonTextDecoration getTextDecoration() {
+        return textDecoration; 
+    }
+
 }

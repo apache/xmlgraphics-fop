@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonHyphenation;
+import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.layoutmgr.TextLayoutManager;
@@ -110,6 +111,9 @@ public class FOText extends FONode {
      */
     private Block ancestorBlock = null;
 
+    /** Holds the text decoration values. May be null */
+    private CommonTextDecoration textDecoration;
+    
     private static final int IS_WORD_CHAR_FALSE = 0;
     private static final int IS_WORD_CHAR_TRUE = 1;
     private static final int IS_WORD_CHAR_MAYBE = 2;
@@ -144,6 +148,7 @@ public class FOText extends FONode {
         textTransform = pList.get(Constants.PR_TEXT_TRANSFORM).getEnum();
         wordSpacing = pList.get(Constants.PR_WORD_SPACING);
         wrapOption = pList.get(Constants.PR_WRAP_OPTION).getEnum();
+        textDecoration = pList.getTextDecorationProps();
     }
 
     protected void startOfNode() {
@@ -520,51 +525,57 @@ public class FOText extends FONode {
     }
 
     /**
-     * Return the Common Font Properties.
+     * @return the Common Font Properties.
      */
     public CommonFont getCommonFont() {
         return commonFont;
     }
 
     /**
-     * Return the Common Hyphenation Properties.
+     * @return the Common Hyphenation Properties.
      */
     public CommonHyphenation getCommonHyphenation() {
         return commonHyphenation;
     }
 
     /**
-     * Return the "color" property.
+     * @return the "color" property.
      */
     public ColorType getColor() {
         return color;
     }
 
     /**
-     * Return the "letter-spacing" property.
+     * @return the "letter-spacing" property.
      */
     public Property getLetterSpacing() {
         return letterSpacing; 
     }
     
     /**
-     * Return the "line-height" property.
+     * @return the "line-height" property.
      */
     public SpaceProperty getLineHeight() {
         return lineHeight;
     }
     
     /**
-     * Return the "word-spacing" property.
+     * @return the "word-spacing" property.
      */
     public Property getWordSpacing() {
         return wordSpacing; 
     }
     
     /**
-     * Return the "wrap-option" property.
+     * @return the "wrap-option" property.
      */
     public int getWrapOption() {
         return wrapOption; 
     }
+    
+    /** @return the "text-decoration" property. */
+    public CommonTextDecoration getTextDecoration() {
+        return textDecoration; 
+    }
+    
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
+import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyMaker;
 
@@ -396,6 +397,7 @@ abstract public class PropertyList {
     /**
      * @param propId ID of property
      * @return new Property object
+     * @throws PropertyException if there's a problem while processing the property
      */
     private Property getShorthand(int propId) throws PropertyException {
         PropertyMaker propertyMaker = findMaker(propId);
@@ -411,7 +413,7 @@ abstract public class PropertyList {
     /**
      * @param propID ID of property
      * @return new Property object
-     * @throws FOPException for errors in the input
+     * @throws PropertyException if there's a problem while processing the property
      */
     private Property makeProperty(int propId) throws PropertyException {
         PropertyMaker propertyMaker = findMaker(propId);
@@ -457,16 +459,17 @@ abstract public class PropertyList {
     /**
      * Constructs a BorderAndPadding object.
      * @return a BorderAndPadding object
+     * @throws PropertyException if there's a problem while processing the properties
      */
-    public CommonBorderPaddingBackground getBorderPaddingBackgroundProps() throws PropertyException {
+    public CommonBorderPaddingBackground getBorderPaddingBackgroundProps() 
+                throws PropertyException {
         return new CommonBorderPaddingBackground(this, getFObj());
     }
-    
-
     
     /**
      * Constructs a HyphenationProps objects.
      * @return a HyphenationProps object
+     * @throws PropertyException if there's a problem while processing the properties
      */
     public CommonHyphenation getHyphenationProps() throws PropertyException {
         return new CommonHyphenation(this);
@@ -475,6 +478,7 @@ abstract public class PropertyList {
     /**
      * Constructs a MarginProps objects.
      * @return a MarginProps object
+     * @throws PropertyException if there's a problem while processing the properties
      */
     public CommonMarginBlock getMarginBlockProps() throws PropertyException {
         return new CommonMarginBlock(this);
@@ -483,6 +487,7 @@ abstract public class PropertyList {
     /**
      * Constructs a MarginInlineProps objects.
      * @return a MarginInlineProps object
+     * @throws PropertyException if there's a problem while processing the properties
      */
     public CommonMarginInline getMarginInlineProps() throws PropertyException {
         return new CommonMarginInline(this);
@@ -491,6 +496,7 @@ abstract public class PropertyList {
     /**
      * Constructs a AccessibilityProps objects. 
      * @return a AccessibilityProps object
+     * @throws PropertyException if there's a problem while processing the properties
      */
     public CommonAccessibility getAccessibilityProps() throws PropertyException {
         return new CommonAccessibility(this);
@@ -499,6 +505,7 @@ abstract public class PropertyList {
     /**
      * Constructs a AuralProps objects.
      * @return a AuralProps object
+     * @throws PropertyException if there's a problem while processing the properties
      */
     public CommonAural getAuralProps() throws PropertyException {
         CommonAural props = new CommonAural(this);
@@ -508,6 +515,7 @@ abstract public class PropertyList {
     /**
      * Constructs a RelativePositionProps objects.
      * @return a RelativePositionProps object
+     * @throws PropertyException if there's a problem while processing the properties
      */
     public CommonRelativePosition getRelativePositionProps() throws PropertyException {
         return new CommonRelativePosition(this);
@@ -516,6 +524,7 @@ abstract public class PropertyList {
     /**
      * Constructs a AbsolutePositionProps objects.
      * @return a AbsolutePositionProps object
+     * @throws PropertyException if there's a problem while processing the properties
      */
     public CommonAbsolutePosition getAbsolutePositionProps() throws PropertyException {
         return new CommonAbsolutePosition(this);
@@ -525,9 +534,19 @@ abstract public class PropertyList {
     /**
      * Constructs a CommonFont object. 
      * @return A CommonFont object
+     * @throws PropertyException if there's a problem while processing the properties
      */
     public CommonFont getFontProps() throws PropertyException {
         return new CommonFont(this);
+    }
+    
+    /**
+     * Constructs a CommonTextDecoration object.
+     * @return a CommonTextDecoration object
+     * @throws PropertyException if there's a problem while processing the properties
+     */
+    public CommonTextDecoration getTextDecorationProps() throws PropertyException {
+        return CommonTextDecoration.createFromPropertyList(this);
     }
 }
 

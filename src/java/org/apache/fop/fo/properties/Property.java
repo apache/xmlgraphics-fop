@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 
 package org.apache.fop.fo.properties;
 
-import java.util.Vector;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,6 +31,8 @@ import org.apache.fop.datatypes.Numeric;
  * @author unascribed
  */
 public class Property {
+    
+    /** Logger for all property classes */
     protected static Log log = LogFactory.getLog(PropertyMaker.class);
 
     /**
@@ -136,7 +138,7 @@ public class Property {
      * This method expects to be overridden by subclasses
      * @return collection of other property (sub-property) objects
      */
-    public Vector getList() {
+    public List getList() {
         return null;
     }
 
@@ -180,10 +182,7 @@ public class Property {
         return null;
     }
 
-    /**
-     * Return a string representation of the property value. Only used
-     * for debugging.
-     */
+    /** @see java.lang.Object#toString() */
     public String toString() {
         Object obj = getObject();
         if (obj != this) {

@@ -94,7 +94,8 @@ class TextAttributesConverter {
         FOPRtfAttributes attrib = new FOPRtfAttributes();
         attrFont(fobj.getCommonFont(), attrib);
         attrFontColor(fobj.getColor(), attrib);
-        attrTextDecoration(fobj.getTextDecoration(), attrib);
+        //TODO Fix text-decoration here!
+        //attrTextDecoration(fobj.getTextDecoration(), attrib);
 
         attrBackgroundColor(fobj.getCommonBorderPaddingBackground(), attrib);
         return attrib;
@@ -109,7 +110,8 @@ class TextAttributesConverter {
 
         FOPRtfAttributes attrib = new FOPRtfAttributes();
         attrFont(fobj.getCommonFont(), attrib);
-        attrTextDecoration(fobj.getTextDecoration(), attrib);
+        //TODO Fix text-decoration here!
+        //attrTextDecoration(fobj.getTextDecoration(), attrib);
         attrBackgroundColor(fobj.getCommonBorderPaddingBackground(), attrib);
         return attrib;
     }
@@ -124,7 +126,8 @@ class TextAttributesConverter {
         FOPRtfAttributes attrib = new FOPRtfAttributes();
         attrFont(fobj.getCommonFont(), attrib);
         attrFontColor(fobj.getColor(), attrib);
-        attrTextDecoration(fobj.getTextDecoration(), attrib);
+        //TODO Fix text-decoration here!
+        //attrTextDecoration(fobj.getTextDecoration(), attrib);
         attrBackgroundColor(fobj.getCommonBorderPaddingBackground(), attrib);
         return attrib;
     }

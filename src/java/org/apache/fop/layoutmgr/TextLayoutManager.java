@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -619,6 +619,7 @@ public class TextLayoutManager extends AbstractLayoutManager
         t.setTextLetterSpaceAdjust(iLetterSpaceDim);
         t.setTextWordSpaceAdjust(iWordSpaceDim - spaceCharIPD
                                  - 2 * t.getTextLetterSpaceAdjust());
+        
         word = t;
         if (word != null) {
             parentLM.addChild(word);
@@ -659,6 +660,9 @@ public class TextLayoutManager extends AbstractLayoutManager
         textArea.addTrait(Trait.FONT_NAME, fs.getFontName());
         textArea.addTrait(Trait.FONT_SIZE, new Integer(fs.getFontSize()));
         textArea.addTrait(Trait.COLOR, foText.getColor());
+        
+        TraitSetter.addTextDecoration(textArea, foText.getTextDecoration());
+        
         return textArea;
     }
 

@@ -50,6 +50,7 @@ import org.apache.fop.area.Trait;
 import org.apache.fop.area.OffDocumentItem;
 import org.apache.fop.area.BookmarkData;
 import org.apache.fop.area.inline.Character;
+import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.ForeignObject;
@@ -1041,6 +1042,8 @@ public class PDFRenderer extends PrintRenderer {
 
         currentStream.add(pdf.toString());
 
+        renderTextDecoration(fs, ch, bl, rx);
+        
         super.renderCharacter(ch);
     }
 
@@ -1053,7 +1056,7 @@ public class PDFRenderer extends PrintRenderer {
 
         String name = (String) text.getTrait(Trait.FONT_NAME);
         int size = ((Integer) text.getTrait(Trait.FONT_SIZE)).intValue();
-
+        
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
         Typeface f = (Typeface) fontInfo.getFonts().get(name);
         boolean useMultiByte = f.isMultiByte();
@@ -1112,7 +1115,41 @@ public class PDFRenderer extends PrintRenderer {
 
         currentStream.add(pdf.toString());
 
+        renderTextDecoration(fs, text, bl, rx);
+        
         super.renderText(text);
+    }
+    
+    /**
+     * Paints the text decoration marks.
+     * @param fs Current font
+     * @param inline inline area to paint the marks for
+     * @param baseline position of the baseline
+     * @param startx start IPD
+     */
+    protected void renderTextDecoration(Font fs, InlineArea inline, 
+                    int baseline, int startx) {
+        boolean hasTextDeco = inline.hasUnderline() 
+                || inline.hasOverline() 
+                || inline.hasLineThrough();
+        if (hasTextDeco) {
+            endTextObject();
+            updateLineStyle(Constants.EN_SOLID);
+            updateLineWidth(fs.getDescender() / -8 / 1000f);
+            float endx = (startx + inline.getIPD()) / 1000f;
+            if (inline.hasUnderline()) {
+                float y = baseline - fs.getDescender() / 2;
+                drawLine(startx / 1000f, y / 1000f, endx, y / 1000f);
+            }
+            if (inline.hasOverline()) {
+                float y = (float)(baseline - (1.1 * fs.getCapHeight()));
+                drawLine(startx / 1000f, y / 1000f, endx, y / 1000f);
+            }
+            if (inline.hasLineThrough()) {
+                float y = (float)(baseline - (0.45 * fs.getCapHeight()));
+                drawLine(startx / 1000f, y / 1000f, endx, y / 1000f);
+            }
+        }
     }
 
     /**

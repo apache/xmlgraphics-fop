@@ -46,6 +46,7 @@ import org.apache.fop.fo.properties.PropertyMaker;
 import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.fo.properties.SpacingPropertyMaker;
 import org.apache.fop.fo.properties.StringProperty;
+import org.apache.fop.fo.properties.TextDecorationProperty;
 import org.apache.fop.fo.properties.ToBeImplementedProperty;
 
 /**
@@ -1701,7 +1702,8 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("suppress-at-line-break", m);
 
         // text-decoration
-        m  = new EnumProperty.Maker(PR_TEXT_DECORATION);
+        //m  = new EnumProperty.Maker(PR_TEXT_DECORATION);
+        m  = new TextDecorationProperty.Maker(PR_TEXT_DECORATION);
         m.setInherited(false);
         m.addEnum("none", getEnumProperty(EN_NONE, "NONE"));
         m.addEnum("underline", getEnumProperty(EN_UNDERLINE, "UNDERLINE"));

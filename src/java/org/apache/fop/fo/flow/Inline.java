@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@
 
 package org.apache.fop.fo.flow;
 
-import java.util.List;
-
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
@@ -30,9 +28,9 @@ import org.apache.fop.fo.InlineCharIterator;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonRelativePosition;
+import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
-import org.apache.fop.layoutmgr.InlineLayoutManager;
 
 /**
  * Class modelling the fo:inline formatting object.
@@ -52,7 +50,6 @@ public class Inline extends InlineLevel {
     private KeepProperty keepTogether;
     private KeepProperty keepWithNext;
     private KeepProperty keepWithPrevious;
-    private int textDecoration;
     private int verticalAlign;
     private Length width;
     private int wrapOption;
@@ -86,7 +83,6 @@ public class Inline extends InlineLevel {
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
-        textDecoration = pList.get(PR_TEXT_DECORATION).getEnum();
         verticalAlign = pList.get(PR_VERTICAL_ALIGN).getEnum();
         width = pList.get(PR_WIDTH).getLength();
         wrapOption = pList.get(PR_WRAP_OPTION).getEnum();
@@ -158,13 +154,6 @@ public class Inline extends InlineLevel {
      */
     public String getId() {
         return id;
-    }
-
-    /**
-     * Return the "text-decoration" property.
-     */
-    public int getTextDecoration() {
-        return textDecoration; 
     }
 
     /**

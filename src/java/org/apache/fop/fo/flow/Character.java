@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,6 @@
 
 package org.apache.fop.fo.flow;
 
-// Java
-import java.util.List;
-
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
@@ -38,9 +35,9 @@ import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
+import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.Property;
-import org.apache.fop.layoutmgr.CharacterLayoutManager;
 
 /**
  * This class represents the flow object 'fo:character'. Its use is defined by
@@ -81,7 +78,8 @@ public class Character extends FObj {
     private Length lineHeight;
     private int scoreSpaces;
     private int suppressAtLineBreak;
-    private int textDecoration;
+    /** Holds the text decoration values. May be null */
+    private CommonTextDecoration textDecoration;
     // private ToBeImplementedProperty textShadow;
     private int textTransform;
     private int verticalAlign;
@@ -130,7 +128,7 @@ public class Character extends FObj {
         lineHeight = pList.get(PR_LINE_HEIGHT).getLength();
         scoreSpaces = pList.get(PR_SCORE_SPACES).getEnum();
         suppressAtLineBreak = pList.get(PR_SUPPRESS_AT_LINE_BREAK).getEnum();
-        textDecoration = pList.get(PR_TEXT_DECORATION).getEnum();
+        textDecoration = pList.getTextDecorationProps();
         // textShadow = pList.get(PR_TEXT_SHADOW);
         textTransform = pList.get(PR_TEXT_TRANSFORM).getEnum();
         verticalAlign = pList.get(PR_VERTICAL_ALIGN).getEnum();
@@ -164,70 +162,68 @@ public class Character extends FObj {
     }
 
     /**
-     * Return the Common Border, Padding, and Background Properties.
+     * @return the Common Border, Padding, and Background Properties.
      */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
     }
 
     /**
-     * Return the Common Font Properties.
+     * @return the Common Font Properties.
      */
     public CommonFont getCommonFont() {
         return commonFont;
     }
 
     /**
-     * Return the Common Hyphenation Properties.
+     * @return the Common Hyphenation Properties.
      */
     public CommonHyphenation getCommonHyphenation() {
         return commonHyphenation;
     }
 
     /**
-     * Return the "character" property.
+     * @return the "character" property.
      */
     public char getCharacter() {
         return character;
     }
 
     /**
-     * Return the "color" property.
+     * @return the "color" property.
      */
     public ColorType getColor() {
         return color;
     }
 
     /**
-     * Return the "id" property.
+     * @return the "id" property.
      */
     public String getId() {
         return id;
     }
 
     /**
-     * Return the "letter-spacing" property.
+     * @return the "letter-spacing" property.
      */
     public Property getLetterSpacing() {
         return letterSpacing; 
     }
 
-    /**
-     * Return the "text-decoration" property.
-     */
-    public int getTextDecoration() {
+    /** @return the "text-decoration" property. */
+    public CommonTextDecoration getTextDecoration() {
         return textDecoration; 
     }
-
+    
     /**
-     * Return the "word-spacing" property.
+     * @return the "word-spacing" property.
      */
     public Property getWordSpacing() {
         return wordSpacing; 
     }
 
     /**
-     * Return the "vertical-align" property.
+     * @return the "vertical-align" property.
      */
     public int getVerticalAlign() {
         return verticalAlign; 
@@ -246,4 +242,5 @@ public class Character extends FObj {
     public int getNameId() {
         return FO_CHARACTER;
     }
+    
 }
