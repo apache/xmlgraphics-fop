@@ -32,7 +32,7 @@ import org.apache.fop.fonts.Font;
  */
 public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
 
-    PageNumberCitation pncNode;
+    PageNumberCitation fobj;
     Font font = null;
     
     // whether the page referred to by the citation has been resolved yet
@@ -46,8 +46,8 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
      */
     public PageNumberCitationLayoutManager(PageNumberCitation node) {
         super(node);
-        font = node.getPropertyManager().getFontState(node.getFOEventHandler().getFontInfo());
-        pncNode = node;
+        fobj = node;
+        font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo());
     }
 
     public InlineArea get(LayoutContext context) {
@@ -58,8 +58,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
     public void addAreas(PositionIterator posIter, LayoutContext context) {
         super.addAreas(posIter, context);
         if (!resolved) {
-            parentLM.addUnresolvedArea(pncNode.getPropString(PR_REF_ID),
-                (Resolveable) curArea);
+            parentLM.addUnresolvedArea(fobj.getRefId(), (Resolveable) curArea);
         }
     }
     
@@ -72,7 +71,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
      * return a resolveable area
      */
     private InlineArea getPageNumberCitationInlineArea(LayoutManager parentLM) {
-        PageViewport page = parentLM.resolveRefID(pncNode.getPropString(PR_REF_ID));
+        PageViewport page = parentLM.resolveRefID(fobj.getRefId());
         InlineArea inline = null;
         if (page != null) {
             String str = page.getPageNumber();
@@ -91,7 +90,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
             resolved = true;
         } else {
             resolved = false;
-            inline = new UnresolvedPageNumber(pncNode.getPropString(PR_REF_ID));
+            inline = new UnresolvedPageNumber(fobj.getRefId());
             String str = "MMM"; // reserve three spaces for page number
             int width = getStringWidth(str);
             inline.setIPD(width);

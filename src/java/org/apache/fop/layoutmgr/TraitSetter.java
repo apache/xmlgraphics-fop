@@ -19,7 +19,6 @@
 package org.apache.fop.layoutmgr;
 
 import org.apache.fop.traits.BorderProps;
-import org.apache.fop.traits.LayoutProps;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Trait;
 import org.apache.fop.fo.properties.CommonMarginBlock;
@@ -184,14 +183,14 @@ public class TraitSetter {
     public static void addMargins(Area curBlock,
                                   CommonBorderPaddingBackground bpProps,
                                   CommonMarginBlock marginProps) {
-        int spaceStart = marginProps.startIndent 
+        int spaceStart = marginProps.startIndent.getValue() 
                             - bpProps.getBorderStartWidth(false)
                             - bpProps.getPaddingStart(false);
         if (spaceStart != 0) {
             curBlock.addTrait(Trait.SPACE_START, new Integer(spaceStart));
         }
 
-        int spaceEnd = marginProps.endIndent
+        int spaceEnd = marginProps.endIndent.getValue()
                             - bpProps.getBorderEndWidth(false)
                             - bpProps.getPaddingEnd(false);
         if (spaceEnd != 0) {
@@ -199,8 +198,8 @@ public class TraitSetter {
         }
     }
 
-    public static void addBreaks(Area curArea, LayoutProps layoutProps) {
-        curArea.addTrait(Trait.BREAK_AFTER, new Integer(layoutProps.breakAfter));
-        curArea.addTrait(Trait.BREAK_BEFORE, new Integer(layoutProps.breakBefore));
+    public static void addBreaks(Area curArea,  int breakBefore, int breakAfter) {
+        curArea.addTrait(Trait.BREAK_AFTER, new Integer(breakAfter));
+        curArea.addTrait(Trait.BREAK_BEFORE, new Integer(breakBefore));
     }
 }
