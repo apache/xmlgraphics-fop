@@ -30,7 +30,6 @@ public class TableColumn extends FObj {
 
     public TableColumn(FONode parent) {
         super(parent);
-        this.name = "fo:table-column";
     }
 
     public Length getColumnWidthAsLength() {

@@ -132,7 +132,7 @@ public class Property {
                     return setSubprop(baseProp, partName, p);
                 }
             } else {
-                //MessageHandler.errorln("compound property component "
+                //log.error("compound property component "
                 //                       + partName + " unknown.");
             }
             return baseProp;
@@ -223,10 +223,10 @@ public class Property {
                 }
             } catch (FOPException e) {
 
-                //MessageHandler.errorln("convertShorthandProperty caught FOPException "
+                //log.error("convertShorthandProperty caught FOPException "
                 //                       + e);
             } catch (org.apache.fop.fo.expr.PropertyException propEx) {
-                //MessageHandler.errorln("convertShorthandProperty caught PropertyException "
+                //log.error("convertShorthandProperty caught PropertyException "
                 //                       + propEx);
             }
             if (pret != null) {
@@ -332,7 +332,7 @@ public class Property {
                             return make(propertyList, specVal,
                                         propertyList.getParentFObj());
                         } catch (FOPException e) {
-                            //MessageHandler.errorln("Error computing property value for "
+                            //log.error("Error computing property value for "
                             //                       + propName + " from "
                             //                       + specVal);
                             return null;

@@ -32,13 +32,11 @@ import javax.swing.*;
 
 import org.apache.fop.layout.*;
 import org.apache.fop.render.awt.*;
-import org.apache.fop.messaging.*;
 
 /**
  * Frame and User Interface for Preview
  */
-public class PreviewDialog extends JFrame implements ProgressListener,
-        MessageListener {
+public class PreviewDialog extends JFrame implements ProgressListener {
 
     protected Translator res;
 
@@ -554,11 +552,11 @@ public class PreviewDialog extends JFrame implements ProgressListener,
 
 
     /**
-     * Called by MessageHandler if an error message or a
+     * Called by logger if an error message or a
      * log message is received.
      */
-    public void processMessage(MessageEvent event) {
-        String error = event.getMessage();
+    public void processMessage() {
+/*        String error = event.getMessage();
         String text = processStatus.getText();
         FontMetrics fmt =
             processStatus.getFontMetrics(processStatus.getFont());
@@ -623,16 +621,12 @@ public class PreviewDialog extends JFrame implements ProgressListener,
                     progress(event.getMessage());
                 }
             }
-        }
+        }*/
     }
-
 
     public void dispose() {
         System.exit(0);
     }
 
 }    // class PreviewDialog
-
-
-
 

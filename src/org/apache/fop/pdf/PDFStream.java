@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import org.apache.fop.configuration.Configuration;
-import org.apache.fop.messaging.MessageHandler;
 
 /**
  * class representing a PDF stream.
@@ -87,8 +86,8 @@ public class PDFStream extends PDFObject {
         } else if (filterType.equals("")) {
             return;
         } else {
-            MessageHandler.errorln("Unsupported filter type in stream-filter-list: "
-                                   + filterType);
+            //log.error("Unsupported filter type in stream-filter-list: "
+            //                       + filterType);
         }
     }
 

@@ -34,7 +34,6 @@ public class ListItem extends FObj {
 
     public ListItem(FONode parent) {
         super(parent);
-        this.name = "fo:list-item";
     }
 
     public Status layout(Area area) throws FOPException {

@@ -10,14 +10,19 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.*;
-import org.apache.fop.layout.inline.*;
-import org.apache.fop.layout.BlockArea;
+import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.inline.Viewport;
+import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.layout.FontState;
+import org.apache.fop.layout.AccessibilityProps;
+import org.apache.fop.layout.AuralProps;
+import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.layout.BackgroundProps;
+import org.apache.fop.layout.MarginInlineProps;
+import org.apache.fop.layout.RelativePositionProps;
 import org.apache.fop.apps.FOPException;
 
-// Java
-import java.util.Enumeration;
+import org.w3c.dom.Document;
 
 public class InstreamForeignObject extends FObj {
 
@@ -37,7 +42,7 @@ public class InstreamForeignObject extends FObj {
     int startIndent;
     int endIndent;
 
-    ForeignObjectArea areaCurrent;
+    Viewport areaCurrent;
 
     /**
      * constructs an instream-foreign-object object (called by Maker).
@@ -50,12 +55,70 @@ public class InstreamForeignObject extends FObj {
     }
 
     /**
+     * Get the inline area created by this element.
+     */
+    protected InlineArea getInlineArea() {
+        if (children == null) {
+            return areaCurrent;
+        }
+
+        if (this.children.size() != 1) {
+            // error
+        }
+        FONode fo = (FONode)children.get(0);
+        if(!(fo instanceof XMLObj)) {
+            // error
+        }
+        XMLObj child = (XMLObj)fo;
+
+        // Common Accessibility Properties
+        AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
+
+        // Common Aural Properties
+        AuralProps mAurProps = propMgr.getAuralProps();
+
+        // Common Border, Padding, and Background Properties
+        BorderAndPadding bap = propMgr.getBorderAndPadding();
+        BackgroundProps bProps = propMgr.getBackgroundProps();
+
+        // Common Margin Properties-Inline
+        MarginInlineProps mProps = propMgr.getMarginInlineProps();
+
+        // Common Relative Position Properties
+        RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
+
+        // viewport size is determined by block-progression-dimension
+        // and inline-progression-dimension
+
+        // if replaced then use height then ignore block-progression-dimension
+        //int h = this.properties.get("height").getLength().mvalue();
+
+        // use line-height then ignore dimension in height direction
+        int lh = this.properties.get("line-height").getLength().mvalue();
+
+        int bpd = this.properties.get("block-progression-dimension").getLength().mvalue();
+        int ipd = this.properties.get("inline-progression-dimension").getLength().mvalue();
+
+        // if auto then use the intrinsic size of the content scaled
+        // to the content-height and content-width
+
+        Document doc = child.getDocument();
+        String ns = child.getNameSpace();
+
+        children = null;
+        ForeignObject foreign = new ForeignObject(doc, ns);
+
+        areaCurrent = new Viewport(foreign);
+        return areaCurrent;
+    }
+
+    /**
      * layout this formatting object.
      *
      * @param area the area to layout the object into
      *
      * @return the status of the layout
-     */
+     *
     public Status layout(Area area) throws FOPException {
 
         if (this.marker == BREAK_AFTER) {
@@ -102,7 +165,7 @@ public class InstreamForeignObject extends FObj {
             // this.properties.get("text-align");
             // this.properties.get("width");
 
-            /* retrieve properties */
+            /* retrieve properties *
             String id = this.properties.get("id").getString();
             int align = this.properties.get("text-align").getEnum();
             int valign = this.properties.get("vertical-align").getEnum();
@@ -159,7 +222,7 @@ public class InstreamForeignObject extends FObj {
                 if (numChildren > 1) {
                     throw new FOPException("Only one child element is allowed in an instream-foreign-object");
                 }
-                /* layout foreign object */
+                /* layout foreign object *
                 if (this.children.size() > 0) {
                     FONode fo = (FONode)children.get(0);
                     Status status;
@@ -168,7 +231,7 @@ public class InstreamForeignObject extends FObj {
                         return status;
                     }
 
-                    /* finish off the foreign object area */
+                    /* finish off the foreign object area *
                     this.areaCurrent.end();
                 }
             }
@@ -218,29 +281,29 @@ public class InstreamForeignObject extends FObj {
             /*
              * endIndent = areaCurrent.getEffectiveWidth() - forcedWidth -
              * forcedStartOffset;
-             */
+             *
         }
 
         areaCurrent.setStartIndent(startIndent);
         // areaCurrent.setEndIndent(endIndent);
 
-        /* if there is a space-before */
+        /* if there is a space-before *
         if (spaceBefore != 0) {
-            /* add a display space */
+            /* add a display space *
             // area.addDisplaySpace(spaceBefore);
         }
 
-        /* add the SVG area to the containing area */
+        /* add the SVG area to the containing area *
         // area.addChild(areaCurrent);
 
         areaCurrent.setPage(area.getPage());
 
-        /* increase the height of the containing area accordingly */
+        /* increase the height of the containing area accordingly *
         // area.increaseHeight(areaCurrent.getEffectiveHeight());
 
-        /* if there is a space-after */
+        /* if there is a space-after *
         if (spaceAfter != 0) {
-            /* add a display space */
+            /* add a display space *
             // area.addDisplaySpace(spaceAfter);
         }
 
@@ -261,8 +324,8 @@ public class InstreamForeignObject extends FObj {
         }
 
         areaCurrent = null;
-        /* return status */
+        /* return status *
         return new Status(Status.OK);
     }
-
+*/
 }

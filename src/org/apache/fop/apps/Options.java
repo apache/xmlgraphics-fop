@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.InputStream;
 
 // fop
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.configuration.ConfigurationReader;
 
@@ -44,7 +43,7 @@ public class Options {
     // initializing option settings
     void initOptions() {
         if (Configuration.getBooleanValue("quiet").booleanValue()) {
-            MessageHandler.setQuiet(true);
+            //MessageHandler.setQuiet(true);
         }
         if (Configuration.getBooleanValue("debugMode").booleanValue()) {
             errorDump = true;
@@ -84,7 +83,7 @@ public class Options {
 
         // quiet mode
         if (clOptions.isQuiet() != null) {
-            MessageHandler.setQuiet(clOptions.isQuiet().booleanValue());
+            //MessageHandler.setQuiet(clOptions.isQuiet().booleanValue());
         }
 
         // set base directory
@@ -97,7 +96,7 @@ public class Options {
             } catch (Exception e) {}
         }
         if (errorDump) {
-            MessageHandler.logln("base directory: " + baseDir);
+            //log.debug("base directory: " + baseDir);
         }
     }
 
@@ -130,7 +129,7 @@ public class Options {
             throw new FOPException("can't find default configuration file");
         }
         if (errorDump) {
-            MessageHandler.logln("reading default configuration file");
+            //log.error("reading default configuration file");
         }
         ConfigurationReader reader =
             new ConfigurationReader(new InputSource(configfile));
@@ -148,7 +147,7 @@ public class Options {
     public void loadUserconfiguration(File userConfigFile) {
         // read user configuration file
         if (userConfigFile != null) {
-            MessageHandler.logln("reading user configuration file");
+            //log.debug("reading user configuration file");
             ConfigurationReader reader =
                 new ConfigurationReader(InputHandler.fileInputSource(userConfigFile));
             if (errorDump) {
@@ -157,10 +156,10 @@ public class Options {
             try {
                 reader.start();
             } catch (org.apache.fop.apps.FOPException error) {
-                MessageHandler.errorln("Could not load user configuration file "
-                                       + userConfigFile + " - error: "
-                                       + error.getMessage());
-                MessageHandler.errorln("using default values");
+                //log.error("Could not load user configuration file "
+                //                       + userConfigFile + " - error: "
+                //                       + error.getMessage());
+                //log.error("using default values");
                 if (errorDump) {
                     reader.dumpError(error);
                 }

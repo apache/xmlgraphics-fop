@@ -76,9 +76,8 @@ public class FlateFilter extends PDFFilter {
             compressedStream.flush();
             compressedStream.close();
         } catch (IOException e) {
-            org.apache.fop.messaging.MessageHandler.error("Fatal error: "
-                    + e.getMessage());
-            e.printStackTrace();
+            //log.error("Fatal error: "
+            //        + e.getMessage(), e);
         }
 
         return outArrayStream.toByteArray();

@@ -86,8 +86,9 @@ public class EPSImage extends AbstractFopImage {
     }
     
     public byte[] getEPSImage() throws FopImageException {
-       	if (epsImage == null)
-            MessageHandler.errorln("ERROR LOADING EXTERNAL EPS");
+       	if (epsImage == null) {
+            //log.error("ERROR LOADING EXTERNAL EPS");
+        }
         return epsImage;
     }
     

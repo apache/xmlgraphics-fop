@@ -16,7 +16,6 @@ import java.net.URL;
 import java.io.File;
 
 // FOP
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.configuration.Configuration;
 
 
@@ -60,7 +59,7 @@ abstract public class InputHandler {
      */
     protected static XMLReader createParser() throws FOPException {
         String parserClassName = Driver.getParserClassName();
-        MessageHandler.logln("using SAX parser " + parserClassName);
+        //log.debug("using SAX parser " + parserClassName);
 
         try {
             return (XMLReader)Class.forName(parserClassName).newInstance();

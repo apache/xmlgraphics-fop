@@ -8,7 +8,6 @@
 package org.apache.fop.fo;
 
 import java.util.HashMap;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.properties.WritingMode;
 import org.apache.fop.apps.FOPException;
 
@@ -160,8 +159,8 @@ public class PropertyList extends HashMap {
                     return builder.makeProperty(this, namespace, element,
                                                 propertyName);
                 } catch (org.apache.fop.apps.FOPException e) {
-                    MessageHandler.errorln("Exception in getInherited(): property="
-                                           + propertyName + " : " + e);
+                    //log.error("Exception in getInherited(): property="
+                    //                       + propertyName + " : " + e);
                 }
             }
         }
@@ -233,9 +232,9 @@ public class PropertyList extends HashMap {
     private Property get(String propertyName, boolean bTryInherit,
                          boolean bTryDefault) {
 
-        if (builder == null)
-            MessageHandler.errorln("OH OH, builder has not been set");
-
+        if (builder == null) {
+            //log.error("OH OH, builder has not been set");
+        }
             /* Handle request for one part of a compound property */
         int sepchar = propertyName.indexOf('.');
         String subpropName = null;
@@ -301,8 +300,8 @@ public class PropertyList extends HashMap {
                 p = this.builder.makeProperty(this, namespace, element,
                                               propertyName);
             } catch (FOPException e) {
-                MessageHandler.errorln("Exception in getNearestSpecified(): property="
-                                       + propertyName + " : " + e);
+                //log.error("Exception in getNearestSpecified(): property="
+                //                       + propertyName + " : " + e);
             }
         }
         return p;
@@ -324,8 +323,8 @@ public class PropertyList extends HashMap {
                 return builder.makeProperty(this, namespace, element,
                                             propertyName);
             } catch (org.apache.fop.apps.FOPException e) {
-                MessageHandler.errorln("Exception in getFromParent(): property="
-                                       + propertyName + " : " + e);
+                //log.error("Exception in getFromParent(): property="
+                //                       + propertyName + " : " + e);
             }
         }
         return null;    // No builder or exception in makeProperty!

@@ -88,7 +88,6 @@ public class TableCell extends FObj {
 
     public TableCell(FONode parent) {
         super(parent);
-        this.name = "fo:table-cell";
     }
 
     public void handleAttrs(Attributes attlist) throws FOPException {

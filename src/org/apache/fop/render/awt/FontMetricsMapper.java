@@ -8,7 +8,6 @@
 package org.apache.fop.render.awt;
 
 // FOP
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.layout.FontDescriptor;
 import org.apache.fop.layout.FontState;

@@ -20,7 +20,6 @@ public class MultiSwitch extends ToBeImplementedElement {
 
     public MultiSwitch(FONode parent) {
         super(parent);
-        this.name = "fo:multi-switch";
     }
 
     public Status layout(Area area) throws FOPException {

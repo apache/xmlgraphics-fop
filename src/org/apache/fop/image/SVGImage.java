@@ -13,7 +13,6 @@ import org.w3c.dom.svg.SVGDocument;
 
 // FOP
 import org.apache.fop.apps.Driver;
-import org.apache.fop.messaging.*;
 import org.apache.fop.datatypes.ColorSpace;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.image.analyser.ImageReader;
@@ -56,8 +55,8 @@ public class SVGImage extends AbstractFopImage {
                 new SAXSVGDocumentFactory(SVGImage.getParserName());
             doc = factory.createDocument(this.m_href.toExternalForm());
         } catch (Exception e) {
-            MessageHandler.errorln("Could not load external SVG: "
-                                   + e.getMessage());
+            //log.error("Could not load external SVG: "
+            //                       + e.getMessage());
         }
     }
 

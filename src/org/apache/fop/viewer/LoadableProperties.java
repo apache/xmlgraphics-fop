@@ -8,7 +8,6 @@
 package org.apache.fop.viewer;
 
 import java.io.*;
-import org.apache.fop.messaging.MessageHandler;
 import java.util.*;
 
 /**
@@ -67,9 +66,9 @@ public class LoadableProperties extends Hashtable {
         if (index > 0 && str.length() > index) {
             return true;
         } else {
-            MessageHandler.logln(getClass().getName()
-                                 + ": load(): invalid line " + str + "."
-                                 + " Character '=' missed.");
+            //log.debug(getClass().getName()
+            //                     + ": load(): invalid line " + str + "."
+            //                     + " Character '=' missed.");
             return false;
         }
     }

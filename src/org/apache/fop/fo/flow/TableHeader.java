@@ -18,7 +18,6 @@ public class TableHeader extends TableBody {
 
     public TableHeader(FONode parent) {
         super(parent);
-        this.name = "fo:table-header";
     }
 
 }

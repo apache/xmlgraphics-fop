@@ -41,7 +41,6 @@ import java.net.URL;
 import java.util.*;
 
 
-
 /**
  * initialize AWT previewer
  */
@@ -161,6 +160,4 @@ public class AWTStarter extends CommandLineStarter {
     }
 
 }
-
-
 

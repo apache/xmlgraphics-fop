@@ -9,7 +9,6 @@ package org.apache.fop.render.mif;
 
 // FOP
 import org.apache.fop.render.mif.fonts.*;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.layout.FontDescriptor;
 import org.apache.fop.mif.MIFDocument;
@@ -36,7 +35,6 @@ public class FontSetup {
      * @param fontInfo the font info object to set up
      */
     public static void setup(FontInfo fontInfo) {
-        MessageHandler.logln("setting up fonts");
 
         fontInfo.addMetrics("F1", new Helvetica());
         fontInfo.addMetrics("F2", new HelveticaOblique());

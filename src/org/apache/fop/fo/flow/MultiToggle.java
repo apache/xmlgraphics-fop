@@ -20,7 +20,6 @@ public class MultiToggle extends ToBeImplementedElement {
 
     public MultiToggle(FONode parent) {
         super(parent);
-        this.name = "fo:multi-toggle";
     }
 
     public Status layout(Area area) throws FOPException {

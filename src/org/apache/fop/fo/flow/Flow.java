@@ -54,7 +54,6 @@ public class Flow extends FObj {
 
     public Flow(FONode parent) {
         super(parent);
-        this.name = getElementName();
     }
 
     public void handleAttrs(Attributes attlist) throws FOPException {
@@ -89,7 +88,7 @@ public class Flow extends FObj {
     protected void setFlowName(String name) throws FOPException {
         if (name == null || name.equals("")) {
             log.warn("A 'flow-name' is required for "
-                                   + getElementName()
+                                   + getName()
                                    + ". This constraint will be enforced in future versions of FOP");
             _flowName = "xsl-region-body";
         } else {
@@ -211,14 +210,9 @@ public class Flow extends FObj {
 	return this.contentWidth;
     }
 
-    protected String getElementName() {
-        return "fo:flow";
-    }
-
     public Status getStatus() {
         return _status;
     }
-
 
     public boolean generatesReferenceAreas() {
         return true;

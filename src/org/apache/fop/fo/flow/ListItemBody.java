@@ -21,7 +21,6 @@ public class ListItemBody extends FObj {
 
     public ListItemBody(FONode parent) {
         super(parent);
-        this.name = "fo:list-item-body";
     }
 
     public Status layout(Area area) throws FOPException {

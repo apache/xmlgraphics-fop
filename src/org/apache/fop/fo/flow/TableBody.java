@@ -32,7 +32,6 @@ public class TableBody extends FObj {
 
     public TableBody(FONode parent) {
         super(parent);
-        this.name = "fo:table-body";
     }
 
     public void setColumns(ArrayList columns) {

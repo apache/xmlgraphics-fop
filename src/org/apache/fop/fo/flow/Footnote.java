@@ -21,7 +21,6 @@ public class Footnote extends FObj {
 
     public Footnote(FONode parent) {
         super(parent);
-        this.name = "fo:footnote";
     }
 
     public Status layout(Area area) throws FOPException {

@@ -18,7 +18,6 @@ import org.apache.fop.pdf.PDFCIDFont;
 import org.apache.fop.render.pdf.CIDFont;
 import org.apache.fop.render.pdf.CMap;
 import org.apache.fop.pdf.PDFTTFStream;
-import org.apache.fop.messaging.MessageHandler;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.FileInputStream;
@@ -205,8 +204,8 @@ public class MultiByteFont extends CIDFont implements FontDescriptor {
             embeddedFont.addFilter("ascii-85");
             embeddedFont.setData(subsetFont, subsetFont.length);
         } catch (IOException ioe) {
-            MessageHandler.errorln("Failed to embed font [" + i + "] "
-                                   + fontName + ": " + ioe.getMessage());
+            //log.error("Failed to embed font [" + i + "] "
+            //                       + fontName + ": " + ioe.getMessage());
             return (PDFStream)null;
         }
 

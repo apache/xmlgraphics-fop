@@ -10,7 +10,6 @@ import java.io.*;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.ArrayList;
-import org.apache.fop.messaging.MessageHandler;
 
 /**
  * Reads a TrueType file and generates a subset
@@ -462,10 +461,10 @@ public class TTFSubSetFile extends TTFFile {
             if (newIdx == null) {
                 // This errormessage would look much better
                 // if the fontname was printed to
-                MessageHandler.error("An embedded font "
-                                     + "contains bad glyph data. "
-                                     + "Characters might not display "
-                                     + "correctly.");
+                //log.error("An embedded font "
+                //                     + "contains bad glyph data. "
+                //                     + "Characters might not display "
+                //                     + "correctly.");
                 moreComposites = false;
                 continue;
             }
@@ -603,35 +602,35 @@ public class TTFSubSetFile extends TTFFile {
             createCvt(in);    // copy the cvt table
         } catch (IOException ex) {
             // Cvt is optional (only required for OpenType (MS) fonts)
-            MessageHandler.errorln("TrueType warning: " + ex.getMessage());
+            //log.error("TrueType warning: " + ex.getMessage());
         }
 
         try {
             createFpgm(in);    // copy fpgm table
         } catch (IOException ex) {
             // Fpgm is optional (only required for OpenType (MS) fonts)
-            MessageHandler.errorln("TrueType warning: " + ex.getMessage());
+            //log.error("TrueType warning: " + ex.getMessage());
         }
 
         try {
             createPrep(in);    // copy prep table
         } catch (IOException ex) {
             // Prep is optional (only required for OpenType (MS) fonts)
-            MessageHandler.errorln("TrueType warning: " + ex.getMessage());
+            //log.error("TrueType warning: " + ex.getMessage());
         }
 
         try {
             createLoca(glyphs.size());    // create empty loca table
         } catch (IOException ex) {
             // Loca is optional (only required for OpenType (MS) fonts)
-            MessageHandler.errorln("TrueType warning: " + ex.getMessage());
+            //log.error("TrueType warning: " + ex.getMessage());
         }
 
         try {
             createGlyf(in, glyphs);
         } catch (IOException ex) {
             // Glyf is optional (only required for OpenType (MS) fonts)
-            MessageHandler.errorln("TrueType warning: " + ex.getMessage());
+            //log.error("TrueType warning: " + ex.getMessage());
         }
 
         pad4();

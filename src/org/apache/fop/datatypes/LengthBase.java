@@ -10,7 +10,6 @@ package org.apache.fop.datatypes;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.messaging.MessageHandler;
 
 public class LengthBase implements PercentBase {
     // Standard kinds of percent-based length
@@ -83,10 +82,10 @@ public class LengthBase implements PercentBase {
             return 0;
         }
         case CUSTOM_BASE:
-            MessageHandler.errorln("!!! LengthBase.getBaseLength() called on CUSTOM_BASE type !!!");
+            //log.debug("!!! LengthBase.getBaseLength() called on CUSTOM_BASE type !!!");
             return 0;
         default:
-            MessageHandler.errorln("Unknown base type for LengthBase.");
+            //log.error("Unknown base type for LengthBase.");
             return 0;
         }
     }

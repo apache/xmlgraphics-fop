@@ -33,8 +33,6 @@ import java.util.Vector;
 import org.apache.fop.render.awt.AWTRenderer;
 import org.apache.fop.layout.AreaTree;
 import org.apache.fop.layout.Page;
-import org.apache.fop.messaging.MessageHandler;
-
 
 /**
  * This class prints a xsl-fo dokument without interaction.
@@ -60,7 +58,7 @@ public class PrintStarter extends CommandLineStarter {
         }
 
         String version = Version.getVersion();
-        MessageHandler.errorln(version);
+        //log.debug(version);
 
         XMLReader parser = inputHandler.getParser();
 

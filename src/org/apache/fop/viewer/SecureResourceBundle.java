@@ -8,7 +8,6 @@
 package org.apache.fop.viewer;
 
 import java.util.*;
-import org.apache.fop.messaging.MessageHandler;
 import java.io.*;
 
 
@@ -44,7 +43,7 @@ public class SecureResourceBundle extends ResourceBundle
         try {
             lookup.load(in);
         } catch (Exception ex) {
-            MessageHandler.logln("Abgefangene Exception: " + ex.getMessage());
+            //log.error("Abgefangene Exception: " + ex.getMessage());
             isSourceFound = false;
         }
     }
@@ -79,8 +78,8 @@ public class SecureResourceBundle extends ResourceBundle
             return obj;
         else {
             if (isMissingEmphasized) {
-                MessageHandler.logln(getClass().getName() + ": missing key: "
-                                     + key);
+                //log.debug(getClass().getName() + ": missing key: "
+                //                     + key);
                 return getMissedRepresentation(key.toString());
             } else
                 return key.toString();

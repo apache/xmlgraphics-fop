@@ -8,7 +8,6 @@
 package org.apache.fop.fo;
 
 import org.apache.fop.fo.properties.*;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.svg.*;
 import org.apache.fop.datatypes.*;
 
@@ -51,14 +50,14 @@ public class PropertyListBuilder {
             try {
                 p = propertyMaker.compute(propertyList);
             } catch (FOPException e) {
-                MessageHandler.errorln("exception occurred while computing"
-                                       + " value of property '"
-                                       + propertyName + "': "
-                                       + e.getMessage());
+                //log.error("exception occurred while computing"
+                //                       + " value of property '"
+                //                       + propertyName + "': "
+                //                       + e.getMessage());
             }
         } else {
-            MessageHandler.errorln("property " + propertyName
-                                   + " ignored");
+            //log.error("property " + propertyName
+            //                       + " ignored");
         }
         return p;
     }
@@ -72,7 +71,7 @@ public class PropertyListBuilder {
         if (propertyMaker != null) {
             b = propertyMaker.isInherited();
         } else {
-            // MessageHandler.errorln("Unknown property " + propertyName);
+            // log.error("Unknown property " + propertyName);
             b = true;
         }
         return b;
@@ -166,12 +165,13 @@ public class PropertyListBuilder {
                         p.put(propName, propVal);
                     }
                 } catch (FOPException e) { /* Do other props. */
-                    MessageHandler.errorln(e.getMessage());
+                    //log.error(e.getMessage());
                 }
             } else {
-                if (!attributeName.startsWith("xmlns"))
-                    MessageHandler.errorln("property '"
-                                           + attributeName + "' ignored");
+                if (!attributeName.startsWith("xmlns")) {
+                    //log.error("property '"
+                    //                       + attributeName + "' ignored");
+                }
             }
         }
 
@@ -197,7 +197,7 @@ public class PropertyListBuilder {
         if (propertyMaker != null) {
             return propertyMaker.isCorrespondingForced(propertyList);
         } else {
-            MessageHandler.errorln("no Maker for " + propertyName);
+            //log.error("no Maker for " + propertyName);
         }
         return false;
     }
@@ -209,7 +209,7 @@ public class PropertyListBuilder {
         if (propertyMaker != null) {
             return propertyMaker.getShorthand(propertyList);
         } else {
-            MessageHandler.errorln("no Maker for " + propertyName);
+            //log.error("no Maker for " + propertyName);
             return null;
         }
     }
@@ -226,8 +226,8 @@ public class PropertyListBuilder {
         if (propertyMaker != null) {
             p = propertyMaker.make(propertyList);
         } else {
-            MessageHandler.errorln("property " + propertyName
-                                   + " ignored");
+            //log.error("property " + propertyName
+            //                       + " ignored");
         }
         return p;
     }
