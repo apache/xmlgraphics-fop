@@ -1002,8 +1002,41 @@
 	<default>default</default> 
   </property>
   <property>
+	<name>spreadMethod</name>
+	<class-name>SpreadMethod</class-name>
+	<inherited>false</inherited>
+	<datatype>
+      <enumeration>
+        <value const="PAD">pad</value>
+        <value const="REFLECT">reflect</value>
+        <value const="REPEAT">repeat</value>
+      </enumeration>
+  </datatype>
+	<default>pad</default> 
+  </property>
+  <property>
+	<name>gradientUnits</name>
+	<class-name>GradientUnits</class-name>
+	<inherited>false</inherited>
+	<datatype>
+      <enumeration>
+        <value const="USER_SPACE_ON_USE">userSpaceOnUse</value>
+        <value const="USER_SPACE">userSpace</value>
+        <value const="OBJECT_BOUNDING_BOX">objectBoundingBox</value>
+      </enumeration>
+  </datatype>
+	<default>pad</default> 
+  </property>
+  <property>
     <name>viewBox</name>
     <class-name>ViewBox</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default>
+  </property>
+  <property>
+    <name>gradientTransform</name>
+    <class-name>GradientTransform</class-name>
     <inherited>false</inherited>
     <datatype>String</datatype>
     <default></default>
