@@ -345,6 +345,8 @@ Here are some tips to mitigate these problems:
         class to encapsulate the configuration settings and to run FOP in synchronized methods.
       </li>
     </ul>
+    <p>There is also a known issue with fonts being jumbled between threads when using the AWT renderer (which is used by the -awt and -print output options).
+In general, you cannot safely run multiple threads through the AWT renderer.</p>
   </section>
 <section id="examples">
   <title>Examples</title>
