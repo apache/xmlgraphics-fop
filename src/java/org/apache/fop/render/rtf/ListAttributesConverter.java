@@ -20,10 +20,7 @@ package org.apache.fop.render.rtf;
 
 //FOP
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.FObj;
-
-//RTF
+import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListTable;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfText;
@@ -42,15 +39,13 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfText;
 public class ListAttributesConverter {
     
     
-    static RtfAttributes convertAttributes(FObj fobj)
+    static RtfAttributes convertAttributes(ListBlock fobj)
     throws FOPException {
         
         FOPRtfAttributes attrib = new FOPRtfAttributes();
         
-        attrib.set(RtfListTable.LIST_INDENT, 
-                fobj.getProperty(Constants.PR_START_INDENT).getLength());
-        attrib.set(RtfText.LEFT_INDENT_BODY,
-                fobj.getProperty(Constants.PR_END_INDENT).getLength());
+        attrib.set(RtfListTable.LIST_INDENT, fobj.getCommonMarginBlock().startIndent);
+        attrib.set(RtfText.LEFT_INDENT_BODY, fobj.getCommonMarginBlock().endIndent);
         
         /*
          * set list table defaults

@@ -53,11 +53,7 @@ import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.SimplePageMaster;
-import org.apache.fop.fo.properties.EnumProperty;
-import org.apache.fop.fo.properties.FixedLength;
-import org.apache.fop.fo.properties.LengthProperty;
 import org.apache.fop.fo.properties.Property;
-import org.apache.fop.fo.properties.StringProperty;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableAttributes;
@@ -175,19 +171,17 @@ public class RTFHandler extends FOEventHandler {
             sect = docArea.newSection();
 
             //read page size and margins, if specified
-            Property prop;
-            if ((prop = pageSeq.getProperty(Constants.PR_MASTER_REFERENCE)) != null) {
-                String reference = prop.getString();
+            
+            String reference = pageSeq.getMasterReference();
 
-                SimplePageMaster pagemaster 
+            SimplePageMaster pagemaster 
                     = pageSeq.getRoot().getLayoutMasterSet().getSimplePageMaster(reference);
 
-                //only simple-page-master supported, so pagemaster may be null
-                if (pagemaster != null) {
-                    sect.getRtfAttributes().set(
-                        PageAttributesConverter.convertPageAttributes(
-                                pagemaster));
-                }
+            //only simple-page-master supported, so pagemaster may be null
+            if (pagemaster != null) {
+                sect.getRtfAttributes().set(
+                    PageAttributesConverter.convertPageAttributes(
+                            pagemaster));
             }
 
             builderContext.pushContainer(sect);
@@ -221,7 +215,7 @@ public class RTFHandler extends FOEventHandler {
         }
 
         try {
-            if (fl.getPropString(Constants.PR_FLOW_NAME).equals("xsl-region-body")) {
+            if (fl.getFlowName().equals("xsl-region-body")) {
                 // if there is no header in current page-sequence but there has been
                 // a header in a previous page-sequence, insert an empty header.
                 if (bPrevHeaderSpecified && !bHeaderSpecified) {
@@ -246,7 +240,7 @@ public class RTFHandler extends FOEventHandler {
                     contAfter.newAfter(attr);
                 }
 
-            } else if (fl.getPropString(Constants.PR_FLOW_NAME).equals("xsl-region-before")) {
+            } else if (fl.getFlowName().equals("xsl-region-before")) {
                 bHeaderSpecified = true;
                 bPrevHeaderSpecified = true;
 
@@ -263,7 +257,7 @@ public class RTFHandler extends FOEventHandler {
 
                 RtfBefore before = c.newBefore(beforeAttributes);
                 builderContext.pushContainer(before);
-            } else if (fl.getPropString(Constants.PR_FLOW_NAME).equals("xsl-region-after")) {
+            } else if (fl.getFlowName().equals("xsl-region-after")) {
                 bFooterSpecified = true;
                 bPrevFooterSpecified = true;
 
@@ -300,11 +294,11 @@ public class RTFHandler extends FOEventHandler {
         }
 
         try {
-            if (fl.getPropString(Constants.PR_FLOW_NAME).equals("xsl-region-body")) {
+            if (fl.getFlowName().equals("xsl-region-body")) {
                 //just do nothing
-            } else if (fl.getPropString(Constants.PR_FLOW_NAME).equals("xsl-region-before")) {
+            } else if (fl.getFlowName().equals("xsl-region-before")) {
                 builderContext.popContainer();
-            } else if (fl.getPropString(Constants.PR_FLOW_NAME).equals("xsl-region-after")) {
+            } else if (fl.getFlowName().equals("xsl-region-after")) {
                 builderContext.popContainer();
             }
         } catch (Exception e) {
@@ -618,8 +612,7 @@ public class RTFHandler extends FOEventHandler {
         }
 
         try {
-            RtfAttributes atts = TableAttributesConverter.convertRowAttributes (tb,
-                   null);
+            RtfAttributes atts = TableAttributesConverter.convertTableBodyAttributes(tb);
 
             RtfTable tbl = (RtfTable)builderContext.getContainer(RtfTable.class, true, this);
             tbl.setHeaderAttribs(atts);
@@ -719,16 +712,16 @@ public class RTFHandler extends FOEventHandler {
             RtfTableCell cell = row.newTableCell((int)width, atts);
 
             //process number-rows-spanned attribute
-            Property p = null;
-            if ((p = tc.getProperty(Constants.PR_NUMBER_ROWS_SPANNED)) != null) {
+            int numberRowsSpanned = tc.getNumberRowsSpanned();
+            if (numberRowsSpanned > 1) {
                 // Start vertical merge
                 cell.setVMerge(RtfTableCell.MERGE_START);
 
                 // set the number of rows spanned
-                tctx.setCurrentColumnRowSpanning(new Integer(p.getNumber().intValue()),
+                tctx.setCurrentColumnRowSpanning(new Integer(numberRowsSpanned),
                         cell.getRtfAttributes());
             } else {
-                tctx.setCurrentColumnRowSpanning(new Integer(1), null);
+                tctx.setCurrentColumnRowSpanning(new Integer(numberRowsSpanned), null);
             }
 
             builderContext.pushContainer(cell);
@@ -914,15 +907,10 @@ public class RTFHandler extends FOEventHandler {
             
             RtfHyperLink link=textrun.addHyperlink(new RtfAttributes());
             
-            StringProperty internal
-                = (StringProperty)basicLink.getProperty(Constants.PR_INTERNAL_DESTINATION);
-            StringProperty external
-                = (StringProperty)basicLink.getProperty(Constants.PR_EXTERNAL_DESTINATION);
-            
-            if(external != null) {
-                link.setExternalURL(external.getString());
-            } else if(internal != null) {
-                link.setInternalURL(internal.getString());
+            if (basicLink.getExternalDestination() != null) {
+                link.setExternalURL(basicLink.getExternalDestination());
+            } else {
+                link.setInternalURL(basicLink.getInternalDestination());
             }
             
             builderContext.pushContainer(link);
@@ -967,40 +955,18 @@ public class RTFHandler extends FOEventHandler {
             Property p = null; 
                
             //get source file
-            if ((p = eg.getProperty(Constants.PR_SRC)) != null) {
-                newGraphic.setURL (p.getString());
-            } else {
-                log.error("The attribute 'src' of <fo:external-graphic> is required.");
-                return;
-            }
+            newGraphic.setURL(eg.getSrc());
             
             //get scaling
-            if ((p = eg.getProperty(Constants.PR_SCALING)) != null) {
-                EnumProperty e = (EnumProperty)p;
-                if (p.getEnum() == Constants.UNIFORM) {
-                    newGraphic.setScaling ("uniform");
-                }
+            if (eg.getScaling() == Constants.UNIFORM) {
+                newGraphic.setScaling ("uniform");
             }
             
             //get width
-            if ((p = eg.getProperty(Constants.PR_WIDTH)) != null) {
-                LengthProperty lengthProp = (LengthProperty)p;
-                if (lengthProp.getLength() instanceof FixedLength) {
-                    Float f = new Float(lengthProp.getLength().getValue() / 1000f);
-                    String sValue = f.toString() + "pt";
-                    newGraphic.setWidth(sValue);
-                }
-            }
+            newGraphic.setWidth(eg.getWidth().getValue() / 1000f + "pt");
             
             //get height
-            if ((p = eg.getProperty(Constants.PR_HEIGHT)) != null) {
-                LengthProperty lengthProp = (LengthProperty)p;
-                if (lengthProp.getLength() instanceof FixedLength) {
-                    Float f = new Float(lengthProp.getLength().getValue() / 1000f);
-                    String sValue = f.toString() + "pt";
-                    newGraphic.setHeight(sValue);
-                }
-            }
+            newGraphic.setHeight(eg.getHeight().getValue() / 1000f + "pt");
 
             //TODO: make this configurable:
             //      int compression = m_context.m_options.getRtfExternalGraphicCompressionRate ();
@@ -1037,9 +1003,6 @@ public class RTFHandler extends FOEventHandler {
         }
 
         try {
-            RtfAttributes rtfAttr
-                = TextAttributesConverter.convertAttributes(footnote);
-                    
             IRtfTextrunContainer container 
                 = (IRtfTextrunContainer)builderContext.getContainer(
                     IRtfTextrunContainer.class,
@@ -1146,7 +1109,7 @@ public class RTFHandler extends FOEventHandler {
             RtfTextrun textrun = container.getTextrun();
             
             textrun.pushAttributes(rtfAttr);            
-            textrun.addString(c.getPropString(Constants.PR_CHARACTER));
+            textrun.addString(new String(new char[] { c.getCharacter() }));
             textrun.popAttributes();
          } catch (IOException ioe) {
             // FIXME could we throw Exception in all FOEventHandler events?
