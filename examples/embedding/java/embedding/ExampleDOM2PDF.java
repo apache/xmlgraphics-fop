@@ -115,7 +115,6 @@ public class ExampleDOM2PDF {
             // Create a sample XSL-FO DOM document
             Document foDoc = null;
             Element root = null, ele1 = null, ele2 = null, ele3 = null;
-            Text elementText = null;
             
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);

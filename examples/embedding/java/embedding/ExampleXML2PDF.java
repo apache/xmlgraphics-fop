@@ -20,7 +20,6 @@ package embedding;
 
 //Java
 import java.io.File;
-import java.io.IOException;
 import java.io.OutputStream;
 
 //JAXP
@@ -33,7 +32,6 @@ import javax.xml.transform.sax.SAXResult;
 
 //FOP
 import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.FOPException;
 
 /**
  * This class demonstrates the conversion of an XML file to PDF using 
