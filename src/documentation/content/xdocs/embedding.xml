@@ -319,7 +319,8 @@ pages of each document.
         the XSL transformation.
       </li>
       <li>
-        Use an XSLT compiler like XSLTC that comes with Xalan-J.
+        Use an XSLT compiler like <fork href="http://xml.apache.org/xalan-j/xsltc_usage.html">XSLTC</fork>
+        that comes with Xalan-J.
       </li>
     </ul>
   </section>
