@@ -20,12 +20,13 @@ public class FObjMixed extends FObj {
     // Textdecoration
     protected TextState ts;
 
+    private StringBuffer textBuffer;
+
     public static class Maker extends FObj.Maker {
         public FObj make(FObj parent,
                          PropertyList propertyList) throws FOPException {
             return new FObjMixed(parent, propertyList);
         }
-
     }
 
     public static FObj.Maker maker() {
@@ -41,18 +42,38 @@ public class FObjMixed extends FObj {
     }
 
     protected void addCharacters(char data[], int start, int length) {
-        // addChild(new FOText(data, start, length, this));
-        FOText ft = new FOText(data, start, length, this);
-        ft.setLogger(log);
-        if (ts != null) {
-            ft.setUnderlined(ts.getUnderlined());
-            ft.setOverlined(ts.getOverlined());
-            ft.setLineThrough(ts.getLineThrough());
+        if ( textBuffer==null ) {
+          textBuffer = new StringBuffer();
         }
-        addChild(ft);
-
+        textBuffer.append(data,start,length);
     }
 
+    private final void finalizeText() {
+        if (textBuffer!=null) {
+            FOText ft = new FOText(textBuffer, this);
+            ft.setLogger(log);
+            if (ts != null) {
+              ft.setUnderlined(ts.getUnderlined());
+              ft.setOverlined(ts.getOverlined());
+              ft.setLineThrough(ts.getLineThrough());
+            }
+            super.addChild(ft);
+            textBuffer.setLength(0);
+        }
+    }
+
+    protected void end() {
+        finalizeText();
+        textBuffer=null;
+    }
+
+    protected void addChild(FONode child) {
+        finalizeText();
+        super.addChild(child);
+    }
+
+
+  
     public Status layout(Area area) throws FOPException {
 
         if (this.properties != null) {

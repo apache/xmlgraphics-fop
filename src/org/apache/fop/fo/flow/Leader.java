@@ -146,16 +146,6 @@ public class Leader extends FObjMixed {
         }
     }
 
-    /*
-     * //should only be necessary for use-content
-     * protected void addCharacters(char data[], int start, int length) {
-     * FOText textNode = new FOText(data,start,length, this);
-     * textNode.setLogger(log);
-     * children.addElement(textNode);
-     * }
-     */
-
-
     /**
      * adds a leader to current line area of containing block area
      * the actual leader area is created in the line area

@@ -77,14 +77,4 @@ public class Inline extends FObjMixed {
         ts = propMgr.getTextDecoration(parent);
 
     }
-
-    protected void addCharacters(char data[], int start, int length) {
-        FOText ft = new FOText(data, start, length, this);
-        ft.setLogger(log);
-        ft.setUnderlined(ts.getUnderlined());
-        ft.setOverlined(ts.getOverlined());
-        ft.setLineThrough(ts.getLineThrough());
-        children.addElement(ft);
-    }
-
 }

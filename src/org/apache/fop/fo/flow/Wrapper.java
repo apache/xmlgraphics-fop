@@ -28,7 +28,6 @@ public class Wrapper extends FObjMixed {
                          PropertyList propertyList) throws FOPException {
             return new Wrapper(parent, propertyList);
         }
-
     }
 
     public static FObj.Maker maker() {
@@ -38,12 +37,6 @@ public class Wrapper extends FObjMixed {
     public Wrapper(FObj parent, PropertyList propertyList) {
         super(parent, propertyList);
         // check that this occurs inside an fo:flow
-    }
-
-    protected void addCharacters(char data[], int start, int length) {
-        FOText ft = new FOText(data, start, length, this);
-        ft.setLogger(log);
-        children.addElement(ft);
     }
 
 }
