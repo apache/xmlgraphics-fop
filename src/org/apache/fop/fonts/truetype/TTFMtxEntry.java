@@ -30,7 +30,7 @@ class TTFMtxEntry {
      * @return String String representation
      */
     public String toString(TTFFile t) {
-        return "Glyph " + name + " index: " + index + " bbox [ "
+        return "Glyph " + name + " index: " + getIndexAsString() + " bbox ["
              + t.convertTTFUnit2PDFUnit(boundingBox[0]) + " "
              + t.convertTTFUnit2PDFUnit(boundingBox[1]) + " "
              + t.convertTTFUnit2PDFUnit(boundingBox[2]) + " "
@@ -68,6 +68,27 @@ class TTFMtxEntry {
      */
     public int getIndex() {
         return index;
+    }
+        
+    /**
+     * Determines whether this index represents a reserved character.
+     * @return True if it is reserved
+     */
+    public boolean isIndexReserved() {
+        return (getIndex() >= 32768) && (getIndex() <= 65535);
+    }
+    
+    /**
+     * Returns a String representation of the index taking into account if
+     * the index is in the reserved range.
+     * @return index as String
+     */
+    public String getIndexAsString() {
+        if (isIndexReserved()) {
+            return Integer.toString(getIndex()) + " (reserved)";
+        } else {
+            return Integer.toString(getIndex());
+        }
     }
 
     /**

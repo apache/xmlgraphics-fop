@@ -172,10 +172,12 @@ public class TTFFile extends AbstractLogEnabled {
             int cmapEntrySelector = in.readTTFUShort();
             int cmapRangeShift = in.readTTFUShort();
 
-            getLogger().debug("segCountX2   : " + cmapSegCountX2);
-            getLogger().debug("searchRange  : " + cmapSearchRange);
-            getLogger().debug("entrySelector: " + cmapEntrySelector);
-            getLogger().debug("rangeShift   : " + cmapRangeShift);
+            if (getLogger().isDebugEnabled()) {
+                getLogger().debug("segCountX2   : " + cmapSegCountX2);
+                getLogger().debug("searchRange  : " + cmapSearchRange);
+                getLogger().debug("entrySelector: " + cmapEntrySelector);
+                getLogger().debug("rangeShift   : " + cmapRangeShift);
+            }
 
 
             int cmapEndCounts[] = new int[cmapSegCountX2 / 2];
@@ -247,36 +249,44 @@ public class TTFFile extends AbstractLogEnabled {
                                     ansiWidth[aIdx.intValue()] =
                                         mtxTab[glyphIdx].getWx();
 
-                                    getLogger().debug("Added width "
-                                        + mtxTab[glyphIdx].getWx()
-                                        + " uni: " + j
-                                        + " ansi: " + aIdx.intValue());
+                                    if (getLogger().isDebugEnabled()) {
+                                        getLogger().debug("Added width "
+                                            + mtxTab[glyphIdx].getWx()
+                                            + " uni: " + j
+                                            + " ansi: " + aIdx.intValue());
+                                    }
                                 }
                             }
 
-                            getLogger().debug("Idx: "
-                                + glyphIdx
-                                + " Delta: " + cmapDeltas[i]
-                                + " Unicode: " + j
-                                + " name: " + mtxTab[glyphIdx].getName());
+                            if (getLogger().isDebugEnabled()) {
+                                getLogger().debug("Idx: "
+                                    + glyphIdx
+                                    + " Delta: " + cmapDeltas[i]
+                                    + " Unicode: " + j
+                                    + " name: " + mtxTab[glyphIdx].getName());
+                            }
                         } else {
                             glyphIdx = (j + cmapDeltas[i]) & 0xffff;
 
                             if (glyphIdx < mtxTab.length) {
                                 mtxTab[glyphIdx].getUnicodeIndex().add(new Integer(j));
                             } else {
-                                getLogger().debug("Glyph " + glyphIdx
+                                if (getLogger().isDebugEnabled()) {
+                                    getLogger().debug("Glyph " + glyphIdx
                                                    + " out of range: "
                                                    + mtxTab.length);
+                                }
                             }
 
                             unicodeMapping.add(new UnicodeMapping(glyphIdx, j));
                             if (glyphIdx < mtxTab.length) {
                                 mtxTab[glyphIdx].getUnicodeIndex().add(new Integer(j));
                             } else {
-                                getLogger().debug("Glyph " + glyphIdx
+                                if (getLogger().isDebugEnabled()) {
+                                    getLogger().debug("Glyph " + glyphIdx
                                                    + " out of range: "
                                                    + mtxTab.length);
+                                }
                             }
 
                             // Also add winAnsiWidth
@@ -393,7 +403,7 @@ public class TTFFile extends AbstractLogEnabled {
         readHorizontalHeader(in);
         readHorizontalMetrics(in);
         initAnsiWidths();
-        readPostscript(in);
+        readPostScript(in);
         readOS2(in);
         readIndexToLocation(in);
         readGlyf(in);
@@ -453,7 +463,7 @@ public class TTFFile extends AbstractLogEnabled {
      * Returns the PostScript name of the font.
      * @return String The PostScript name
      */
-    public String getPostscriptName() {
+    public String getPostScriptName() {
         if ("Regular".equals(subFamilyName) || "Roman".equals(subFamilyName)) {
             return familyName;
         } else {
@@ -715,7 +725,7 @@ public class TTFFile extends AbstractLogEnabled {
             throws IOException {
         seekTab(in, "hmtx", 0);
 
-        int mtxSize = (numberOfGlyphs > nhmtx) ? numberOfGlyphs : nhmtx;
+        int mtxSize = Math.max(numberOfGlyphs, nhmtx);
         mtxTab = new TTFMtxEntry[mtxSize];
 
         getLogger().debug("*** Widths array: \n");
@@ -726,8 +736,10 @@ public class TTFFile extends AbstractLogEnabled {
             mtxTab[i].setWx(in.readTTFUShort());
             mtxTab[i].setLsb(in.readTTFUShort());
 
-            getLogger().debug("   width[" + i + "] = "
-                + convertTTFUnit2PDFUnit(mtxTab[i].getWx()) + ";");
+            if (getLogger().isDebugEnabled()) {
+                getLogger().debug("   width[" + i + "] = "
+                    + convertTTFUnit2PDFUnit(mtxTab[i].getWx()) + ";");
+            }
         }
 
         if (nhmtx < mtxSize) {
@@ -743,12 +755,9 @@ public class TTFFile extends AbstractLogEnabled {
 
     /**
      * Read the "post" table
-     * containing the postscript names of the glyphs.
+     * containing the PostScript names of the glyphs.
      */
-    private final void readPostscript(FontFileReader in) throws IOException {
-        String[] psGlyphsBuffer;
-        int i, k, l;
-
+    private final void readPostScript(FontFileReader in) throws IOException {
         seekTab(in, "post", 0);
         postFormat = in.readTTFLong();
         italicAngle = in.readTTFULong();
@@ -756,60 +765,74 @@ public class TTFFile extends AbstractLogEnabled {
         underlineThickness = in.readTTFShort();
         isFixedPitch = in.readTTFULong();
 
+        //Skip memory usage values
         in.skip(4 * 4);
 
-        getLogger().debug("Post format: " + postFormat);
+        getLogger().debug("PostScript format: " + postFormat);
         switch (postFormat) {
         case 0x00010000:
-            getLogger().debug("Postscript format 1");
-            for (i = 0; i < Glyphs.MAC_GLYPH_NAMES.length; i++) {
+            getLogger().debug("PostScript format 1");
+            for (int i = 0; i < Glyphs.MAC_GLYPH_NAMES.length; i++) {
                 mtxTab[i].setName(Glyphs.MAC_GLYPH_NAMES[i]);
             }
             break;
         case 0x00020000:
-            getLogger().debug("Postscript format 2");
+            getLogger().debug("PostScript format 2");
             int numGlyphStrings = 0;
-            l = in.readTTFUShort();      // Num Glyphs
-            // short minIndex=256;
-            for (i = 0; i < l; i++) {    // Read indexes
+            
+            // Read Number of Glyphs
+            int l = in.readTTFUShort();      
+            
+            // Read indexes
+            for (int i = 0; i < l; i++) {    
                 mtxTab[i].setIndex(in.readTTFUShort());
-                // if (minIndex > mtxTab[i].index)
-                // minIndex=(short)mtxTab[i].index;
 
                 if (mtxTab[i].getIndex() > 257) {
+                    //Index is not in the Macintosh standard set
                     numGlyphStrings++;
                 }
 
-                getLogger().debug("Post index: " + mtxTab[i].getIndex());
+                if (getLogger().isDebugEnabled()) {
+                    getLogger().debug("PostScript index: " + mtxTab[i].getIndexAsString());
+                }
             }
+            
             // firstChar=minIndex;
-            psGlyphsBuffer = new String[numGlyphStrings];
-            getLogger().debug("Reading " + numGlyphStrings
-                + " glyphnames" + ", was n num glyphs=" + l);
-            for (i = 0; i < psGlyphsBuffer.length; i++) {
+            String[] psGlyphsBuffer = new String[numGlyphStrings];
+            if (getLogger().isDebugEnabled()) {
+                getLogger().debug("Reading " + numGlyphStrings
+                        + " glyphnames, that are not in the standard Macintosh"
+                        + " set. Total number of glyphs=" + l);
+            }
+            for (int i = 0; i < psGlyphsBuffer.length; i++) {
                 psGlyphsBuffer[i] = in.readTTFString(in.readTTFUByte());
             }
 
-            for (i = 0; i < l; i++) {
+            //Set glyph names
+            for (int i = 0; i < l; i++) {
                 if (mtxTab[i].getIndex() < NMACGLYPHS) {
                     mtxTab[i].setName(Glyphs.MAC_GLYPH_NAMES[mtxTab[i].getIndex()]);
                 } else {
-                    k = mtxTab[i].getIndex() - NMACGLYPHS;
+                    if (!mtxTab[i].isIndexReserved()) {
+                        int k = mtxTab[i].getIndex() - NMACGLYPHS;
 
-                    getLogger().debug(k + " i=" + i + " mtx=" + mtxTab.length
-                        + " ps=" + psGlyphsBuffer.length);
+                        if (getLogger().isDebugEnabled()) {
+                            getLogger().debug(k + " i=" + i + " mtx=" + mtxTab.length
+                                + " ps=" + psGlyphsBuffer.length);
+                        }
 
-                    mtxTab[i].setName(psGlyphsBuffer[k]);
+                        mtxTab[i].setName(psGlyphsBuffer[k]);
+                    }
                 }
             }
 
             break;
         case 0x00030000:
-            // Postscript format 3 contains no glyph names
-            getLogger().debug("Postscript format 3");
+            // PostScript format 3 contains no glyph names
+            getLogger().debug("PostScript format 3");
             break;
         default:
-            getLogger().error("Unknown Postscript format: " + postFormat);
+            getLogger().error("Unknown PostScript format: " + postFormat);
         }
     }
 
