@@ -11,9 +11,14 @@ jefft@apache.org
 
   <!ENTITY % links.att 'name CDATA #REQUIRED'>
   <!ENTITY % link.att 'name CDATA #REQUIRED href CDATA #REQUIRED'>
-  <!ELEMENT skinconfig (disable-search?, searchsite-domain?, searchsite-name?, project-name, project-url, project-logo, group-name?, group-url?, group-logo?, host-logo?, year?, vendor?, trail?, credits?)*>
+  <!ELEMENT skinconfig (disable-search?, searchsite-domain?, searchsite-name?,
+  project-name, project-url, project-logo, group-name?, group-url?, group-logo?,
+  host-url?, host-logo?, year?, vendor?, trail?, credits?)*>
   <!ELEMENT credits (credit*)>
-  <!ELEMENT credit (name, url, image, width?, height?)>
+  <!ELEMENT credit (name, url, image?, width?, height?)>
+  <!-- id uniquely identifies the tool, and role indicates its function -->
+  <!ATTLIST credit id   CDATA #IMPLIED
+                   role CDATA #IMPLIED>
   <!ELEMENT disable-search (#PCDATA)>
   <!ELEMENT searchsite-domain (#PCDATA)>
   <!ELEMENT searchsite-name (#PCDATA)>
@@ -23,6 +28,7 @@ jefft@apache.org
   <!ELEMENT group-name (#PCDATA)>
   <!ELEMENT group-url (#PCDATA)>
   <!ELEMENT group-logo (#PCDATA)>
+  <!ELEMENT host-url (#PCDATA)>
   <!ELEMENT host-logo (#PCDATA)>
   <!ELEMENT year (#PCDATA)>
   <!ELEMENT vendor (#PCDATA)>
@@ -60,7 +66,7 @@ jefft@apache.org
   <host-logo></host-logo>
 
   <!-- The following used to construct a copyright statement -->
-  <year>1999-2002</year>
+  <year>1999-2003</year>
   <vendor>The Apache Software Foundation.</vendor>
 
   <!-- Some skins use this to form a 'breadcrumb trail' of links. If you don't
@@ -75,7 +81,7 @@ jefft@apache.org
   <!-- Credits are typically rendered as a set of small clickable images in the
   page footer -->
   <credits>
-    <credit>
+    <!--<credit>
       <name>Built with Cocoon</name>
       <url>http://xml.apache.org/cocoon/</url>
       <image>skin/images/built-with-cocoon.gif</image>
@@ -86,6 +92,13 @@ jefft@apache.org
       <name>Krysalis Centipede</name>
       <url>http://www.krysalis.org/centipede/</url>
       <image>skin/images/centipede-logo-small.gif</image>
+      <width>138</width>
+      <height>31</height>
+    </credit>-->
+    <credit role="pdf">
+      <name>Created by: FOP 1.0dev</name>
+      <url>http://xml.apache.org/fop/dev</url>
+      <image>images/logo.jpg</image>
       <width>138</width>
       <height>31</height>
     </credit>

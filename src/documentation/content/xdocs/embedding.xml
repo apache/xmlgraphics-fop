@@ -7,15 +7,16 @@
 <document>
     <header>
         <title>Embedding FOP</title>
-        <subtitle>Notes about embedding FOP in your Java application</subtitle>
+        <subtitle>How to Embed FOP in a Java application</subtitle>
     </header>
 
     <body>
-<section>
-  <title>Embedding FOP</title>
-  <section>
+  <section id="overview">
     <title>Overview</title>
-  <p>Instantiate org.apache.fop.apps.Driver. Once this class is
+    <p>Review <link href="running.html">Running FOP</link> for important information that applies to embedded applications as well as command-line use, such as options and performance.
+    </p>
+  <p>To embed FOP in your application, instantiate org.apache.fop.apps.Driver.
+     Once this class is
      instantiated, methods are called to set the
      Renderer to use
      and the OutputStream to use to output the results of the
@@ -26,7 +27,7 @@
      enables runtime determination of Renderer and ElementMapping(s).
   </p>
   </section>
-  <section>
+  <section id="basics">
     <title>Basics</title>
   <p>The simplest way to use Driver is to instantiate it with the
      InputSource and OutputStream, then set the renderer desired and
@@ -36,9 +37,9 @@
   </p>
     <source><![CDATA[
    import org.apache.fop.apps.Driver;
-   
-   /*..*/ 
-    
+
+   /*..*/
+
    Driver driver = new Driver(new InputSource(args[0]),
                               new FileOutputStream(args[1]));
    driver.setRenderer(Driver.RENDER_PDF);
@@ -47,7 +48,6 @@
 In the example above, args[0] contains the path to an XSL-FO file, while 
 args[1] contains a path for the target PDF file.
   </p>
-
   <p>You also need to set up logging. Global logging for all FOP
     processes is managed by MessageHandler. Per-instance logging
     is handled by Driver. You want to set both using an implementation
@@ -149,30 +149,29 @@ issues should be fixed in the upcoming JDK 1.4</note>
   <p>If you want FOP to be totally silent you can also set an org.apache.avalon.framework.logger.NullLogger instance.</p>
   <p>If you want to use yet another logging facility you simply have to create a class that implements org.apache.avalon.framework.logging.Logger
   and set it on the Driver object. See the existing implementations in Avalon Framework for examples.</p>
-
   </section>
-  <section>
-    <title>Hints</title>
-    <section>
-     <title>XML/XSL/DOM Inputs</title>
+    <section id="input">
+      <title>Input Sources</title>
+      <p>The input XSL-FO document is always handled internally as SAX (see the <link href="design/parsing.html">Parsing Design Document</link> for the rationale).
+However, the input itself can be provided in a variety of ways to FOP, which normalizes the input (if necessary) into SAX events:</p>
+      <ul>
+        <li><strong>SAX Events through SAX Handler</strong>: <code>FOTreeBuilder</code> is the SAX Handler which is obtained through <code>getContentHandler</code> on <code>Driver</code>.</li>
+        <li><strong>DOM (which is converted into SAX Events)</strong>: The conversion of a DOM tree is done via the <code>render(Document)</code> method on <code>Driver</code>.</li>
+        <li><strong>Data Source (which is parsed and converted into SAX Events)</strong>: The <code>Driver</code> can take an <code>InputSource</code> as input.
+This can use a <code>Stream</code>, <code>String</code> etc.</li>
+        <li><strong>XML+XSLT Transformation</strong> (which is transformed using an XSLT Processor and the result is fired as SAX Events: <code>XSLTInputHandler</code> is used as an <code>InputSource</code> in the render(<code>XMLReader</code>, <code>InputSource</code>) method on <code>Driver</code>.</li>
+      </ul>
+      <p>There are a variety of upstream data manipulations possible.
+For example, you may have a DOM and an XSL stylesheet; or you may want to
+set variables in the stylesheet.
+Interface documentation and some cookbook solutions to these situations are provided in <fork href="http://xml.apache.org/xalan-j/usagepatterns.html">Xalan Basic Usage Patterns</fork>.</p>
      <p>
-You may want to supply you input to FOP from different data sources.
-For example you may have a DOM and XSL stylesheet or you may want to
-set variables in the stylesheet. The page here:
-<fork href="http://xml.apache.org/xalan-j/usagepatterns.html">
-http://xml.apache.org/xalan-j/usagepatterns.html</fork> describes
-how you can do these things.
-     </p>
-     <p>
-You can use the content handler from the driver to create a SAXResult.
-The transformer then can fire SAX events on the content handler which
-will in turn create the rendered output.
-     </p>
-     <p>
-Examples showing this can be found at the bott
+See the <link href="#examples">Examples</link> for some variations on input. 
      </p>
     </section>
-    <section>
+  <section id="hints">
+    <title>Hints</title>
+    <section id="object-reuse">
       <title>Object reuse</title>
      <p>
 If FOP is going to be used multiple times within your application
@@ -186,7 +185,7 @@ You will need to setup the driver again with a new OutputStream,
 IntputStream and renderer.
      </p>
     </section>
-    <section>
+    <section id="render-info">
       <title>Getting information on the rendering process</title>
       <p>
 To get the number of pages that were rendered by FOP you can call 
@@ -199,31 +198,149 @@ pages of each document.
       </p>
     </section>
   </section>
-  <section>
-    <title>Using FOP in a servlet</title>
-     <p>
-In the directory xml-fop/examples/servlet you can find a working example how
-to use FOP in a servlet. After building the servlet you can drop the fop.war 
-into the webapps directory of Tomcat, then go to a URL like this:
+  <section id="servlet">
+    <title>Using FOP in a Servlet</title>
+      <p>
+        Here is a minimal code snippet to demonstrate the basics:
+      </p>
+      <source>response.setContentType("application/pdf");
+Driver driver=new Driver( new InputSource("foo.fo"),
+                          response.getOutputStream());
+driver.setRenderer(Driver.RENDER_PDF);
+driver.run();</source>
+      <p>
+There are numerous problems with the code snippet above.
+Its purpose is only to demonstrate the basic concepts.
+See xml-fop/examples/servlet for a working example of FOP used in a servlet.
+After building the servlet, drop the fop.war into the webapps directory of Tomcat.
+Then access a URL as follows:
      </p>
      <p>http://localhost:8080/fop/fop?fo=/home/path/to/fofile.fo</p>
      <p>http://localhost:8080/fop/fop?xml=/home/path/to/xmlfile.xml&amp;xsl=/home/path/to/xslfile.xsl</p>
      <p>The source code for the servlet can be found under xml-fop/examples/servlet/src/FopServlet.java.</p>
-     <note>
-         Some browsers have problems handling the PDF result sent back to
-         the browser. IE is particularly bad and different versions behave
-         differently. Having a ".pdf" on the end of the URL may help.
-     </note>
+      <note>
+        Some versions of Internet Explorer will not automatically show the PDF.
+This is well-known to be a limitation of Internet Explorer, and is not a problem with the servlet.
+However, Internet Explorer can still be used to download the PDF so that it can be viewed later. Also, appending ".pdf" to the end of the URL may help.
+      </note>
   </section>
-</section>
-<section>
+  <section id="servlet-transform">
+    <title>Using FOP in a Servlet with an XSLT Transformation</title>
+    <p>
+      If both the source XML and XSL are read from files, use the TraxInputHandler:
+    </p>
+    <source>response.setContentType("application/pdf");
+XSLTInputHandler input
+  =new XSLTInputHandler(new File("foo.xml"), new File("foo.xsl"));
+Driver driver=new Driver();
+driver.setOutputStream(response.getOutputStream());
+driver.setRenderer(Driver.RENDER_PDF);
+driver.render(input.getParser(), input.getInputSource());</source>
+    <p>
+      This code snippet has the same problems as the one from the <link href="#servlet">section above</link>.
+    </p>
+    <p>
+      If your source XML is generated on the fly (for example from a database, a web service, or another servlet), create a transformer object explicitly, and use a SAX event stream to feed the transformation result into FOP:
+    </p>
+    <source>response.setContentType("application/pdf");
+Driver driver =new Driver();
+driver.setOutputStream(response.getOutputStream());
+driver.setRenderer(Driver.RENDER_PDF);
+Transformer transformer=TransformerFactory.newInstance()
+        .newTransformer(new StreamSource("foo.xsl"));
+transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</source>
+    <p>
+      You don't have to call run() or render() on the driver object.
+    </p>
+    <p>
+      The <code>xmlsource</code> is a placeholder for your actual XML source.
+If you have to read the XML from a string, supply a <code>new StreamSource(new StringReader(xmlstring))</code>.
+Constructing and reparsing an XML string is generally less desirable than using a SAXSource if you generate your XML.
+You can alternatively supply a DOMSource as well.
+You may also use dynamically generated XSL if you like.
+    </p>
+    <p>
+      Because you have an explicit transformer object, you can also use it to explicitly set parameters for the transformation run.
+    </p>
+  </section>
+  <section id="config-external">
+    <title>Using a Configuration File</title>
+    <p>
+      To access an external configuration:
+    </p>
+    <source>org.apache.fop.apps.Options options = new Options(new File("userconfig.xml"));</source>
+    <p>
+      No further reference to the <code>options</code> variable is necessary.
+    </p>
+    <p>
+      See <link href="#multithreading">Multithreading FOP</link> for issues related to changing configuration in a multithreaded environment.
+    </p>
+  </section>
+  <section id="config-internal">
+    <title>Setting the Configuration Programmatically</title>
+    <p>
+      If you wish to set configuration options from within your embedded application, use the <code>Configuration.put</code> method. Here is an example that sets the "baseDir" configuration in a Unix environment:
+    </p>
+    <source>org.apache.fop.configuration.Configuration.put("baseDir","/my/base/dir");</source>
+    <p>
+      Here is another that sets baseDir in a Windows environment:
+    </p>
+    <source>org.apache.fop.configuration.Configuration.put("baseDir","C:\my\base\dir");</source>
+    <p>
+      See <link href="#multithreading">Multithreading FOP</link> for issues related to changing configuration in a multithreaded environment.
+    </p>
+  </section>
+  <section id="multithreading">
+    <title>Multithreading FOP</title>
+    <p>
+      FOP is not currently completely thread safe.
+Although the relevant methods of the Driver object are synchronized, FOP uses static
+variables for configuration data and loading images.
+Here are some tips to mitigate these problems:
+    </p>
+    <ul>
+      <li>To avoid having your threads blocked, create a Driver object for each thread.</li>
+      <li>If possible, do not change the configuration data while there is a Driver object rendering.
+Setup the configuration only once, preferably in the <code>init()</code> method of the servlet.
+      </li>
+      <li>If you must change the configuration data more often, or if you have multiple servlets within the same webapp using FOP, consider implementing a singleton class to encapsulate the configuration settings and to run FOP in synchronized methods.
+      </li>
+    </ul>
+  </section>
+  <section id="servlet-engine">
+    <title>Servlet Engines</title>
+    <p>
+      When using a servlet engine, there are potential CLASSPATH issues, and potential conflicts with existing XML/XSLT libraries.
+Servlet containers also often use their own classloaders for loading webapps, which can cause bugs and security problems.
+    </p>
+    <section id="tomcat">
+      <title>Tomcat</title>
+        <p>
+          Check Tomcat's documentation for detailed instructions about installing FOP and Cocoon.
+There are known bugs that must be addressed, particularly for Tomcat 4.0.3.
+        </p>
+    </section>
+    <section id="websphere">
+      <title>WebSphere 3.5</title>
+      <p>
+        Put a copy of a working parser in some directory where WebSphere can access it.
+For example, if /usr/webapps/yourapp/servlets is the CLASSPATH for your servlets, copy the Xerces jar into it (any other directory would also be fine).
+Do not add the jar to the servlet CLASSPATH, but add it to the CLASSPATH of the application server which contains your web application.
+In the WebSphere administration console, click on the "environment" button in the "general" tab.
+In the "variable name" box, enter "CLASSPATH".
+In the "value" box, enter the correct path to the parser jar file (/usr/webapps/yourapp/servlets/Xerces.jar in our example here).
+Press "OK", then apply the change and restart the application server.
+      </p>
+    </section>
+  </section>
+<section id="examples">
   <title>Examples</title>
   <p>
 The directory "xml-fop/examples/embedding" contains several working examples. 
 In contrast of the examples above the examples here primarily use JAXP for 
 XML access. This may be easier to understand for people familiar with JAXP.
   </p>
-  <section>
+  <section id="ExampleFO2PDF">
     <title>ExampleFO2PDF.java</title>
     <p>
 This example demonstrates the basic usage pattern to transform an XSL-FO
@@ -231,7 +348,7 @@ file to PDF using FOP.
     </p>
     <figure src="images/EmbeddingExampleFO2PDF.png" alt="Example XSL-FO to PDF"/>
   </section>
-  <section>
+  <section id="ExampleXML2FO">
     <title>ExampleXML2FO.java</title>
     <p>
 This example has nothing to do with FOP. It is there to show you how an XML 
@@ -241,7 +358,7 @@ classpath (ex. <fork href="http://xml.apache.org/xalan-j">Xalan</fork>).
     </p>
     <figure src="images/EmbeddingExampleXML2FO.png" alt="Example XML to XSL-FO"/>
   </section>
-  <section>
+  <section id="ExampleXML2PDF">
     <title>ExampleXML2PDF.java</title>
     <p>
 This example demonstrates how you can convert an arbitrary XML file to PDF 
@@ -259,7 +376,7 @@ strongly discourage you to do this if it isn't absolutely necessary. The
 performance is significantly higher with SAX.
     </p>
   </section>
-  <section>
+  <section id="ExampleObj2XML">
     <title>ExampleObj2XML.java</title>
     <p>
 This example is a preparatory example for the next one. It's an example that 
@@ -290,7 +407,7 @@ used. For more detailed information see other resources on JAXP (ex.
 <fork href="http://java.sun.com/xml/jaxp/dist/1.1/docs/tutorial/xslt/3_generate.html">An older JAXP tutorial</fork>).
     </p>
   </section>
-  <section>
+  <section id="ExampleObj2PDF">
     <title>ExampleObj2PDF.java</title>
     <p>
 The last example here combines the previous and the third to demonstrate 
@@ -301,7 +418,7 @@ using FOP as before.
     </p>
     <figure src="images/EmbeddingExampleObj2PDF.png" alt="Example Java object to PDF (via XML and XSL-FO)"/>
   </section>
-  <section>
+  <section id="example-notes">
     <title>Final notes</title>
     <p>
 These examples should give you an idea of what's possible. It should be easy 

@@ -421,20 +421,6 @@ This document can be used either to validate against the FO standard, or against
 See the notes near the beginning of the document for instructions on how to use it.
           </p>
       </section>
-      <section id="landscape">
-        <title>Producing landscape pages</title>
-        <p>
-          Pages in landscape format can easily be produced by exchanging the page-height and page-width values of a simple-page-master element.
-        </p>
-        <source><![CDATA[<fo:layout-master-set>
-  <fo:simple-page-master master-name="A4-portrait" page-height="29.7cm" page-width="21cm" [..]>
-    <fo:region-body/>
-  </fo:simple-page-master>
-  <fo:simple-page-master master-name="A4-landscape" page-height="21cm" page-width="29.7cm" [..]>
-    <fo:region-body/>
-  </fo:simple-page-master>
-</fo:layout-master-set>]]></source>
-      </section>
     </section>
   </body>
 </document>

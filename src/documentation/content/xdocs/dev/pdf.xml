@@ -1,0 +1,21 @@
+<?xml version="1.0" standalone="no"?>
+
+<!-- $Id$ -->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
+
+<document>
+  <header>
+    <title>PDF (Developer Information)</title>
+  </header>
+  <body>
+    <section>
+      <title>Resources</title>
+      <ul>
+        <li><link href="http://partners.adobe.com/asn/developer/technotes/acrobatpdf.html">Acrobat/PDF Technical Notes</link></li>
+      </ul>
+    </section>
+  </body>
+</document>
+
+<!-- Last Line of $RCSfile$ -->

@@ -3,9 +3,9 @@
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/faq-v11.dtd">
 
 <faqs title="FOP FAQ">
-  <part>
+  <part id="part-general">
     <title>General questions</title>
-    <faq>
+    <faq id="fop-general">
       <question>What is FOP?</question>
       <answer>
       <p>
@@ -19,7 +19,7 @@
       </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="fop-functions">
       <question>What can I do with FOP?</question>
       <answer>
         <p>
@@ -36,7 +36,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="fop-acronym">
       <question>What does "FOP" stand for?</question>
       <answer>
         <p>
@@ -45,7 +45,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="fop-other-apache">
       <question>How does FOP interact with other Apache Projects?</question>
       <answer>
         <p>
@@ -61,7 +61,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="xsl-def">
       <question>What is XSL?</question>
       <answer>
         <p>
@@ -73,8 +73,8 @@
         </p>
       </answer>
     </faq>
-    <faq id="XSLFO">
-      <question>What is XSLFO?</question>
+    <faq id="xslfo">
+      <question>What is XSL-FO?</question>
       <answer>
         <p>
           XSLFO is an XML vocabulary that is used to specify a pagination and
@@ -110,44 +110,18 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="contribute">
       <question>How can I contribute?</question>
       <answer>
         <p>
-          There is always plenty of things to do. See
-          <link href="involved.html">getting involved</link>.
+          There are numerous ways that you can help. They are outlined in the <link href="dev/index.html">Developer's Introduction</link>.
         </p>
       </answer>
     </faq>
   </part>
-  <part>
-    <title>Common stumbling blocks</title>
-    <faq>
-      <question>Why does FOP insert a blank page between my page sequences?</question>
-      <answer>
-        <p>
-          This is because spec conformance has been improved.
-        </p>
-        <p>
-          The <link
-          href="http://www.w3.org/TR/xsl/slice7.html#force-page-count">force-page-count
-          property</link> controls how a FO processor pads page sequences in
-          order to get certain page counts or last page numbers. The default is
-          "<code>auto</code>". With this setting, if the next page sequence
-          begins with an odd page number because you set the
-          initial-page-number, and the current page sequence also ends with an
-          odd page number, the processor inserts a blank page to keep odd and
-          even page numbers alternating (similar for the case the current page
-          sequence ends with an even page number and the next page sequence
-          starts with an even page number.
-        </p>
-        <p>
-          If you don't want to have this blank page, use
-          <code>force-page-count="no-force"</code>.
-        </p>
-      </answer>
-    </faq>
-    <faq>
+  <part id="part-running">
+    <title>Problems running FOP</title>
+    <faq id="no-page-master">
       <question>I get the error: [ERROR]: 'master-reference' for
       'fo:page-sequence'matches no 'simple-page-master' or
       'page-sequence-master'</question>
@@ -168,26 +142,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
-      <question>My PNG images don't work.</question>
-      <answer>
-        <p>
-          The Jimi image library, which is by default used for processing
-          images in PNG and other formats, was removed from the distribution
-          for licensing reasons. You have to <fork
-            href="http://java.sun.com/products/jimi">download</fork>
-          and install it by yourself.
-        </p>
-        <p>
-          Extract the file "JimiProClasses.zip" from the archive you've downloaded, rename it to "jimi-1.0.jar" and move it to FOP's lib directory.
-        </p>
-        <p>
-          An alternative to Jimi is to use Sun's JAI. It is much faster, but
-          not available for all platforms.
-        </p>
-      </answer>
-    </faq>
-    <faq>
+    <faq id="NoClassDefFound">
       <question>I get a NoClassDefFound exception.</question>
       <answer>
         <p>
@@ -212,7 +167,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="NoSuchMethodException">
       <question>I get a NoSuchMethodException or a NoSuchFieldException
       exception.</question>
       <answer>
@@ -228,77 +183,15 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="OutOfMemoryException">
       <question>I get an OutOfMemoryException.</question>
       <answer>
         <p>
-          FOP can consume quite a bit of memory, even though this has been
-          continually improved. The memory consumption is partially inherent to
-          the formatting process and partially caused by implementation
-          choices. For certain layouts, all FO processors currently on the
-          market have memory problems.
-        </p>
-        <p>
-          Some hints regarding your document structure:
-        </p>
-        <ul>
-          <li>
-            Increase memory settings of the JVM, see for example <link
-              href="http://java.sun.com/j2se/1.3/docs/tooldocs/solaris/java.html">the
-              -Xmx option</link>. Be aware that it is usually unwise to
-            increase the memory allocated to the JVM beyond the amount of
-            physical RAM, it will significantly slow down. YMMV.
-          </li>
-          <li>
-            Avoid forward references, that is page number citations to pages to
-            places on pages which follow the citation. Forward references cause
-            all pages from the page with the reference on to be held in memory
-            until the page with the referenced element is encountered. Common
-            forward references are table of contents at the beginning of the
-            document and the <link href="#pagenum">"page N of TOTAL"</link> in
-            footers. Forward references may be required by the task, however,
-            if you are getting a memory overflow you should at least check
-            whether this is really as necessary as claimed. A TOC, for example,
-            could often be placed at the end of the document without dimishing
-            it's value too much, the paper can be reshuffled after printing,
-            and you can use bookmarks in PDF.
-          </li>
-          <li>
-            Avoid large images, especially if they are scaled down. Scale them
-            outside of FOP and use the already scaled images for the FOP
-            run. For many image formats it is mainly the size of the image file
-            which matters, not width*height, so you can try other means like
-            using a higher compression rate.
-          </li>
-          <li>
-            Use multiple page sequences. FOP starts rendering after the end of
-            a page sequence is encountered. While the actual rendering is done
-            page by page, some additional memory allocated for other purposes
-            could be freed after the page sequence has been rendered.
-          </li>
-          <li>
-            Break down large tables. If you don't use table headers and
-            footers, just start a new table every N rows. With headers and
-            footers, consider integrating them as normal table rows, or, if
-            they are used at page breaks, try to put the information into
-            static content. You can use markers to change them.
-          </li>
-        </ul>
-        <p>
-          There are also some bugs which cause FOP to go into an nonterminating
-          loop, which also often results in a memory overflow. A characteristic
-          symptom are continuous <link href="#boxoverflow">box
-          overflows</link>. Most of them are triggered by elements not fitting
-          in the available space, like big images and improperly specified width
-          of nested block elements. Look for such stuff and correct it.
-        </p>
-        <p>
-          Reducing memory consumption in general and squishing bugs is an
-          ongoing effort, partially addressed in the redesign.
+          See <link href="running.html#memory">FOP Memory</link>.
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="MalformedURLException">
       <question>I get a MalformedURLException.</question>
       <answer>
         <anchor id="MalformedURL"/>
@@ -333,7 +226,7 @@
         </p-->
       </answer>
     </faq>
-    <faq>
+    <faq id="NullPointerException">
       <question>I get an "[ERROR]: null", or a NullPointerException.</question>
       <answer>
         <p>
@@ -365,7 +258,13 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="not-implemented">
+      <question>FOP returns the message "[ERROR] <em>object|property - 'x'</em> is not implemented yet." When will it be implemented?</question>
+      <answer>
+        <p>See the article "<link href="gethelp.html#compliance">Review FOP's Standards Compliance</link>".</p>
+      </answer>
+    </faq>
+    <faq id="fop-hangs">
       <question>FOP hangs. FOP does not exit.</question>
       <answer>
         <p>
@@ -405,7 +304,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="cannot-find-external-graphics">
       <question>FOP cannot find a file for fo:external-graphics.</question>
       <answer>
         <p>
@@ -426,7 +325,7 @@
         </p-->
       </answer>
     </faq>
-    <faq>
+    <faq id="fonts-not-found">
       <question>FOP does not find my fonts.</question>
       <answer>
         <p>
@@ -442,7 +341,69 @@
         </p>
       </answer>
     </faq>
-    <faq>
+  </part>
+  <part id="part-output">
+    <title>Problems with FOP output</title>
+    <faq id="blank-page-between-page-sequences">
+      <question>Why does FOP insert a blank page between my page sequences?</question>
+      <answer>
+        <p>
+          This is because spec conformance has been improved.
+        </p>
+        <p>
+          The <link
+          href="http://www.w3.org/TR/xsl/slice7.html#force-page-count">force-page-count
+          property</link> controls how a FO processor pads page sequences in
+          order to get certain page counts or last page numbers. The default is
+          "<code>auto</code>". With this setting, if the next page sequence
+          begins with an odd page number because you set the
+          initial-page-number, and the current page sequence also ends with an
+          odd page number, the processor inserts a blank page to keep odd and
+          even page numbers alternating (similar for the case the current page
+          sequence ends with an even page number and the next page sequence
+          starts with an even page number.
+        </p>
+        <p>
+          If you don't want to have this blank page, use
+          <code>force-page-count="no-force"</code>.
+        </p>
+      </answer>
+    </faq>
+    <faq id="graphic-not-displayed">
+      <question>Why is my graphic not rendered?</question>
+      <answer>
+        <p>Most commonly, the external file is not being found by FOP.
+Check the following:</p>
+        <ul>
+          <li>Empty or wrong baseDir setting.</li>
+          <li>Spelling errors in the file name (including using the wrong case).</li>
+          <li>Security Problems (i.e. image was not delivered because FOP is not allowed to read the file).
+This is especially a problem if the external file is retrieved over HTTP.
+Possible issues include security settings on the server, server configuration, and missing cookies or other authorization information.
+Any easy way to check this is to cut&amp;paste the source URL from the fo:external-graphic into the Location field of a browser <strong>on the machine where the FOP process will be running</strong>.</li>
+        </ul>
+        <p>Other possibilities:</p>
+        <ul>
+          <li>The image format is not supported or not supported completely. See <link href="graphics.html">FOP Graphics Formats</link> for a list of supported formats and related issues.</li>
+          <li>The graphic may be too large to fit into the intended space.</li>
+          <li>There may be something (static content) that is obscuring the graphic. (This is very rare).
+          </li>
+        </ul>
+      </answer>
+    </faq>
+    <faq id="png-fails">
+      <question>My graphical images do not work properly.</question>
+      <answer>
+        <p>See <link href="graphics.html">FOP Graphics Formats</link> for a list of supported formats and related issues.</p>
+      </answer>
+    </faq>
+    <faq id="graphic-resolution">
+      <question>Why is my graphic rendered at a different resolution than it was created?</question>
+      <answer>
+        <p>See <link href="graphics.html#resolution">Graphics Resolution</link>.</p>
+      </answer>
+    </faq>
+    <faq id="keep-with">
       <question>Keep-with-next, keep-with-previous, keep-together
       don't work.</question>
       <answer>
@@ -477,7 +438,7 @@
 </fo:table>]]></source>
       </answer>
     </faq>
-    <faq>
+    <faq id="table-missing">
       <question>My tables are missing, or missing their content.</question>
       <answer>
         <p>
@@ -493,7 +454,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="cells-overflow">
       <question>Text overflowing table cells and the like is not clipped. Long
         text flows into adjacent cells/block, obscuring stuff there.</question>
       <answer>
@@ -523,7 +484,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="page-number-align">
       <question>Page numbers are not properly right aligned.</question>
       <answer>
         <p>
@@ -540,43 +501,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
-      <question>A graphic is not displayed.</question>
-      <answer>
-        <p>
-          The most common reason is that the file is not found because of an
-          empty or wrong baseDir setting, spelling errors in the file name, in
-          particular using the wrong case, or, if the image is retrieved over
-          HTTP, the image was not delivered because of security settings in the
-          server, missing cookies or other authorization information, or
-          because of server misconfigurations.  One way to check this is to
-          cut&amp;paste the source URL from the fo:external-graphic into the
-          Location field of a browser <strong>on the machine where the FOP
-          process will be running</strong>.
-        </p>
-        <p>
-          Several other possibilities:
-        </p>
-        <ul>
-          <li>
-            The graphic is too large to fit into the intended space.
-          </li>
-          <li>
-            Some image format subclasses can't be handled, try to convert the
-            graphic to a format subclass known to work. (Sorry, no list of
-            formats known to work)
-          </li>
-          <li>
-            Something else obscures the graphic, for example stuff from a
-            static content (very rare, but has happened).
-          </li>
-        </ul>
-        <!-- p>
-          See also supported image formats.
-        </p -->
-      </answer>
-    </faq>
-    <faq>
+    <faq id="hypenation-fails">
       <question>Hyphenation does not work.</question>
       <answer>
         <p>
@@ -587,120 +512,48 @@
       </answer>
     </faq>
   </part>
-  <part>
+  <part id="part-embedding">
     <title>Embedding FOP. Using FOP in a servlet.</title>
-    <faq>
+    <faq id="servlet">
       <question>How do I use FOP in a servlet?</question>
       <answer>
-        <p>Look at the servlet example.</p>
         <p>
-          A rather minimal code snippet to demonstrate the basics:
-        </p>
-        <source>response.setContentType("application/pdf");
-Driver driver=new Driver( new InputSource("foo.fo"),
-                          response.getOutputStream());
-driver.setRenderer(Driver.RENDER_PDF);
-driver.run();</source>
-        <p>
-          Caveat: Internet Explorer will not automatically show the PDF. Thats a
-          well known IEx problem, not with the servlet. You can download the PDF
-          with IEx and view it later. There are other problems with this code.
-        </p>
-        <p>
-          Please look into <link href="embedding.html">Embedding FOP</link>
-          for all kinds of details.
+          See <link href="embedding.html#servlet">Using FOP in a Servlet</link>.
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="servlet-with-xslt">
       <question>How do I use FOP in a servlet with an XSLT
       transformation?</question>
       <answer>
         <p>
-          Use the TraxInputHandler if both the source XML and XSL are read from
-          files.
-        </p>
-        <p>
-          A demonstration:
-        </p>
-        <source>response.setContentType("application/pdf");
-XSLTInputHandler input
-  =new XSLTInputHandler(new File("foo.xml"), new File("foo.xsl"));
-Driver driver=new Driver();
-driver.setOutputStream(response.getOutputStream());
-driver.setRenderer(Driver.RENDER_PDF);
-driver.render(input.getParser(), input.getInputSource());</source>
-        <p>
-          This minimal code snippet has the same problems as the one from the
-          question above. Please inform yourself about the details.
-        </p>
-        <p>
-          If your source XML is generated on the fly, for example from a
-          database, a web service, or another servlet, you have to create a
-          transformer object explicitely and use a SAX event stream to feed the
-          transformation result into FOP.
-        </p>
-        <p>
-          A demonstration:
-        </p>
-        <source>response.setContentType("application/pdf");
-Driver driver =new Driver();
-driver.setOutputStream(response.getOutputStream());
-driver.setRenderer(Driver.RENDER_PDF);
-Transformer transformer=TransformerFactory.newInstance()
-        .newTransformer(new StreamSource("foo.xsl"));
-transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</source>
-        <p>
-         You don't have to call run() or render() on the driver object.
-        </p>
-        <p>
-          The <code>xmlsource</code> is a placeholder for your actual XML
-          source. You can supply a <code>new StreamSource( new
-          StringReader(xmlstring))</code> if you have to read the XML from a
-          string. Constructing an XML string and reparse it is not always a
-          good idea, consider to use a SAXSource if you generate your XML. You
-          can, of course, supply a DOMSource or whatever you like. You can also
-          use dynamically generated XSL if you want to.
-        </p>
-        <p>
-          Because you have an explicit transformer object, you can set
-          parameters for the transformation run too.
+          See <link href="embedding.html#servlet-transform">Using FOP in a Servlet with XSLT Transformation</link>.
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="servlet-xslt-params">
       <question>How do I pass parameters to the XSLT transformation?</question>
       <answer>
         <p>
-          See the end of the answer for the question above.
+          See <link href="embedding.html#servlet-transform">Using FOP in a Servlet with XSLT Transformation</link>.
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="servlet-nonstd-fonts">
       <question>How do I use my own fonts when running FOP from a
       servlet?</question>
       <answer>
         <p>
-          Declare the fonts in the <code>userconfig.xml</code> file as
-          usual. See <link href="#usercfg">loading the user configuration
-          file</link> for further steps.
+          Declare the fonts in the <code>userconfig.xml</code> file as usual.
+See <link href="#usercfg">loading the user configuration file</link> for further details.
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="servlet-baseDir">
       <question>How do I set the baseDir property in a servlet environment?</question>
       <answer>
         <p>
-          Use:
-        </p>
-        <source>org.apache.fop.configuration.Configuration.put("baseDir","/my/base/dir");</source>
-        <p>
-          or
-        </p>
-        <source>org.apache.fop.configuration.Configuration.put("baseDir","C:\my\base\dir");</source>
-        <p>
-          See <link href="#usercfg">using a user configuration file</link>
-          for caveats.
+          See <link href="embedding.html#config-internal">Setting the Configuration Programmatically</link>.
         </p>
       </answer>
     </faq>
@@ -708,144 +561,41 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
       <question>How do I use a user configuration file from a servlet?</question>
       <answer>
         <p>
-          Use:
-        </p>
-        <source>org.apache.fop.apps.Options options = new Options(new File("userconfig.xml"));</source>
-        <p>
-          No further reference to the <code>options</code> variable is
-          necessary. It is recommended to load the user configuration file only
-          once, preferably in the <code>init()</code> method of the servlet. If
-          you have multiple servlets running FOP, or if you have to change the
-          configuration often, it is best to place the configuration changing
-          code and the FOP driver call into a synchronized method, or perhaps a
-          singleton class, in order to avoid problems in multithreaded
-          environments.
+          See <link href="embedding.html#config-external">Using a Configuration File in an Embedded App</link>.
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="servlet-NoClassDefFound">
       <question>I keep getting NoClassDefFound and other exceptions. How do I
         get FOP working for various servlet engines?</question>
       <answer>
         <p>
-          There are various classpath issues, and possible conflicts with
-          existing XML/XSLT libraries. Because servlet containers often use
-          their own classloaders for loading webapps, bugs and security problems
-          can be bothersome as well.
-        </p>
-        <p>
-          Tomcat comes with detailed instructions for installing FOP and Cocoon,
-          check the documentation. There are known bugs to be circumvented, in
-          particular in Tomcat 4.0.3.
-        </p>
-        <p>
-          Websphere 3.5: See next question.
+          See <link href="embedding.html#servlet-engine">Servlet Engines</link>.
         </p>
       </answer>
     </faq>
-    <faq>
-      <question>FOP in IBM Websphere 3.5</question>
-      <answer>
-        <p>
-          Put a copy of a working parser in some directory where WebSphere can
-          access it, for example, if /usr/webapps/yourapp/servlets is the
-          classpath for your servlets, copy the Xerces jar into it (any other
-          directory would also be fine). Do not add the jar to the servlet
-          classpath, but add it to the classpath of the application server which
-          contains your web application. In the WebSphere administration
-          console, click on the "environment" button in the "general" tab. Fill
-          CLASSPATH in the "variable name" box and
-          /usr/webapps/yourapp/servlets/Xerces.jar (or whatever your complete
-          path is) in the value box, press "OK", then apply the change and
-          restart the application server.
-        </p>
-      </answer>
-    </faq>
-    <faq>
+    <faq id="multithreaded">
       <question>Can FOP be used in multithreaded environments?</question>
       <answer>
         <p>
-          FOP is not completely thread safe. At the very least you'll have to
-          create a Driver object for every thread unless you prefer your threads
-          being blocked.
-        </p>
-        <p>
-          Even though the relevant methods of the Driver object are
-          synchronized, there are still problems because FOP uses static
-          variables for configuration data and loading images. Be sure not
-          to change the configuration data while there is a Driver object
-          rendering. It is recommended to setup the configuration only
-          once while initialising the servlet. If you have to change the
-          configuration data more often, or if you have several servlets
-          within the same webapp using FOP, consider implementing a
-          singleton class encapsulating both the configuration settings
-          and running FOP in synchronized methods.
+          See <link href="embedding.html#multithreading">Multithreading FOP</link>.
         </p>
       </answer>
     </faq>
   </part>
-  <part>
-    <title>Batik/SVG specific questions</title>
-    <faq>
-      <question>SVG text rendered in bad quality. How do I put SVG text as text
-      into PDF?</question>
+  <part id="part-svg">
+    <title>SVG specific questions</title>
+    <faq id="svg-text">
+      <question>The rendering of SVG text in my PDF is of poor quality.
+Can I control this?</question>
       <answer>
-        <p>
-          The svg text is rendered as shapes, the Acrobat viewer displays it
-          with bad quality unless you turn on smooth line art in the Acrobat
-          preferences. The printout is always ok, it's only the screen view
-          which is of bad quality by default.
-        </p>
-        <p>
-          You can force Batik not to render SVG text by setting the
-          strokeSVGText property to false. You can do this in the user
-          configuration file:
-        </p>
-        <source><![CDATA[<entry>
-  <key>strokeSVGText</key>
-  <value>false</value>
-</entry>]]></source>
-        <p>
-          In a servlet environment, you can set it directly:
-        </p>
-        <source>org.apache.fop.configuration.Configuration.put("strokeSVGText", Boolean.FALSE);</source>
-        <p>
-          See also <link href="#usercfg">using a user configuration file</link>
-          in a servlet.
-        </p>
-        <p>
-          This does not work for other renderers.
-        </p>
+        <p>See <link href="graphics.html#svg-pdf-text">Placing SVG Text into PDF</link>.</p>
       </answer>
     </faq>
-    <faq>
+    <faq id="svg-headless">
       <question>How do I use FOP with SVG on headless servers?</question>
       <answer>
-        <p>
-          Batik uses AWT classes for rendering SVG, which in turn needs an X
-          server on Unixish systems. If you run a server without X, or if you
-          can't connect to the X server due to security restrictions or
-          policies, SVG rendering will fail.
-        </p>
-        <p>
-          There are still several options:
-        </p>
-        <ul>
-          <li>
-            If you are using JDK 1.4, start it with the -Djava.awt.headless=true
-            command line option.
-          </li>
-          <li>
-            Install a X server which provides an im-memory framebuffer without
-            actually using a screen device or any display hardware, like Xvfb.
-          </li>
-          <li>
-            Use a toolkit which emulates AWT without the need of an underlying X
-            server, like <link
-            href="http://www.eteks.com/pja/en">PJA</link>. The PJA toolkit is
-            free and comes with detailed installation instructions.
-          </li>
-        </ul>
+        <p>See <link href="graphics.html#batik">FOP: Graphics (Batik)</link>.</p>
       </answer>
     </faq>
     <faq id="svghangs">
@@ -858,7 +608,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="svg-url">
       <question>I have problems with SVG referring to gradients etc. using
         "uri(#stuff)". I get a MalformedURLException.</question>
       <answer>
@@ -905,10 +655,16 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
         <p>See also <link href="#MalformedURL">MalformedURLException</link></p>
       </answer>
     </faq>
+    <faq id="svg-scaling">
+      <question>Why is my SVG rendered at a size different from that specified in my fo:external-graphic element?</question>
+      <answer>
+        <p>See <link href="graphics.html#svg-scaling">SVG Scaling</link>.</p>
+      </answer>
+    </faq>
   </part>
-  <part>
+  <part id="part-pdf">
     <title>PDF specific (includes Acrobat peculiarities)</title>
-    <faq>
+    <faq id="pdf-embed-font">
       <question>How do I embed fonts in PDF?</question>
       <answer>
         <p>
@@ -917,7 +673,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="pdf-characters">
       <question>Some characters are not displayed, or displayed incorrectly, or
       displayed as &#8220;#&#8221;.</question>
       <answer>
@@ -943,25 +699,10 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
         <source><![CDATA[<fo:inline font-family="Helvetica">&#x2205;</fo:inline>]]></source>
       </answer>
     </faq>
-    <faq id="PDF-postprocess">
+    <faq id="pdf-postprocess">
       <question>What tools are available for post-processing my PDF document?</question>
       <answer>
-        <ul>
-          <li>
-            The most popular one that we are aware of is <link
-              href="http://www.lowagie.com/iText">iText</link>, which has tools
-            for adding security features, document properties, watermarks, and
-            many other features to PDF files. FOP and iText can be integrated
-            into one Java application, see sample code for <link
-              href="pdf-security">encryption</link>.
-            The bad news is that iText swallows PDF bookmarks.
-          </li>
-          
-          <li>
-            You can use Adobe Acrobat (the full version, not the Reader) to
-            process the file manually or with scripting that it supports.
-          </li>
-        </ul>
+        <p>See <link href="output.html#pdf-postprocess">PDF Post-processing</link>.</p>
       </answer>
     </faq>
     <faq id="pdf-security">
@@ -969,97 +710,25 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
       to my PDF document?</question>
       <answer>
         <p>
-          FOP does not currently support this feature. Possible workarounds
-          include those mentioned in the <link href="#PDF-postprocess">PDF
-            Post-Processing FAQ</link>.
-        </p>
-        <p>
-          Some sample code for encrypting a FOP generated PDF with iText to
-          get you started:
-        </p>
-        <source><![CDATA[public static void main(String args[]) {
-  try {
-    ByteArrayOutputStream fopout=new ByteArrayOutputStream();
-    FileOutputStream outfile=new FileOutputStream(args[2]);
-    Driver driver =new Driver();
-    driver.setOutputStream(fopout);
-    driver.setRenderer(Driver.RENDER_PDF);
-    Transformer transformer=TransformerFactory
-      .newInstance().newTransformer(new StreamSource(new File(args[1])));
-    transformer.transform(new StreamSource(new File(args[0])),
-       new SAXResult(driver.getContentHandler()));
-    PdfReader reader = new PdfReader(fopout.toByteArray());
-    int n = reader.getNumberOfPages();
-    Document document = new Document(reader.getPageSizeWithRotation(1));
-    PdfWriter writer = PdfWriter.getInstance(document, outfile);
-    writer.setEncryption(PdfWriter.STRENGTH40BITS, "pdf", null, 
-      PdfWriter.AllowCopy);
-    document.open();
-    PdfContentByte cb = writer.getDirectContent();
-    PdfImportedPage page;
-    int rotation;
-    int i = 0;
-    while (i < n) {
-      i++;
-      document.setPageSize(reader.getPageSizeWithRotation(i));
-      document.newPage();
-      page = writer.getImportedPage(reader, i);
-      rotation = reader.getPageRotation(i);
-      if (rotation == 90 || rotation == 270) {
-        cb.addTemplate(page, 0, -1f, 1f, 0, 0,
-         reader.getPageSizeWithRotation(i).height());  }
-      else {
-        cb.addTemplate(page, 1f, 0, 0, 1f, 0, 0);
-      }
-      System.out.println("Processed page " + i);
-    }
-    document.close();
-  }
-  catch( Exception e) {
-    e.printStackTrace();
-  }
-}]]></source>
-        <p>
-          Check the iText tutorial and documentation for setting access flags,
-          password, encryption strength and other parameters.
+          See <link href="pdfencryption.html">PDF Encryption</link>.
+          See also <link href="output.html#pdf-postprocess">PDF Post-processing</link>.
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="pdf-doc-properties">
       <question>How do I add document properties (title, author, etc.) to my
       PDF document?</question>
       <answer>
-        <p>FOP does not currently support this feature. Possible workarounds
-        include those mentioned in the <link href="#PDF-postprocess">PDF
-        Post-Processing FAQ</link>.</p>
+        <p>See <link href="output.html#pdf-postprocess">PDF Post-processing</link>.</p>
       </answer>
     </faq>
-    <faq>
+    <faq id="pdf-watermark">
       <question>How do I add watermarks to my PDF document?</question>
       <answer>
-        <p>FOP does not currently support this feature. Possible
-        workarounds:</p>
-        <ul>
-          <li>
-            Use a background image for the body region.
-          </li>
-          <li>
-            See the <link href="#PDF-postprocess">PDF Post-Processing
-              FAQ</link>.
-          </li>
-          <li>
-            (submitted by Trevor_Campbell@kaz.com.au) Place an image in a
-            region that overlaps the flowing text. For example, make
-            region-before large enough to contain your image. Then include a
-            block (if necessary, use an absolutely positioned block-container)
-            containing the watermark image in the static-content for the
-            region-before. Note that the image will be drawn on top of the
-            normal content.
-          </li>
-        </ul>
+        <p>See <link href="output.html#pdf-watermark">PDF Watermarks</link>.</p>
       </answer>
     </faq>
-    <faq>
+    <faq id="pdf-print-contortion">
       <question>The PDF is printed contorted!</question>
       <answer>
         <p>
@@ -1071,7 +740,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="pdf-bookmark-display">
       <question>How do I control the Acrobat bookmark display?</question>
       <answer>
         <p>
@@ -1082,9 +751,9 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
       </answer>
     </faq>
   </part>
-  <part>
+  <part id="part-iex">
     <title>IEx specific stuff</title>
-    <faq>
+    <faq id="iex-servlet-multiple">
       <question>The FOP servlet is called multiple times!</question>
       <answer>
         <p>
@@ -1116,7 +785,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
         </ul>
       </answer>
     </faq>
-    <faq>
+    <faq id="iex-pdf-print-from-browser">
       <question>How do I print PDF directly from the browser?</question>
       <answer>
         <p>
@@ -1140,89 +809,31 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
       </answer>
     </faq>
   </part>
-  <part>
-    <title>More general questions regarding XSLT and XSLFO and basic XML</title>
-    <faq>
+  <part id="part-input">
+    <title>General questions regarding XSLT, XSLFO, and basic XML</title>
+    <faq id="fo-center">
       <question>(FO) How do I vertically center an image or a table (or
       whatever)?</question>
       <answer>
         <p>
-          Use display-align="center". FOP implements this for block containers
-          and table cell. A small self-contained document centering an image on
-          a page:
+          See <link href="fo.html#fo-center-vertical">XSL-FO Vertical Centering</link>.
         </p>
-        <source><![CDATA[<?xml version="1.0"?>
-<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
-  <fo:layout-master-set>
-    <fo:simple-page-master master-name="content"
-      page-width="210mm" page-height="297mm">
-      <fo:region-body/>
-    </fo:simple-page-master>
-  </fo:layout-master-set>
-  <fo:page-sequence master-reference="content">
-    <fo:flow flow-name="xsl-region-body">
-      <fo:table table-layout="fixed" width="100%">
-        <fo:table-column column-width="proportional-column-width(1)"/>
-        <fo:table-body>
-          <fo:table-row height="297mm">
-            <fo:table-cell display-align="center">
-              <fo:block text-align="center">
-                <fo:external-graphic src="fop.jpg"/>
-              </fo:block>
-            </fo:table-cell>
-          </fo:table-row>
-        </fo:table-body>
-      </fo:table>
-    </fo:flow>
-  </fo:page-sequence>
-</fo:root>]]></source>
       </answer>
     </faq>
-    <faq>
+    <faq id="fo-center-table-horizon">
       <question>(FO) How do I center a table horizontally?</question>
       <answer>
         <p>
-          You can add a column left and right wich pad the table so that the visible part is centered.
-        </p>
-        <source><![CDATA[<?xml version="1.0"?>
-<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
-  <fo:layout-master-set>
-    <fo:simple-page-master master-name="content"
-      page-width="210mm" page-height="297mm">
-      <fo:region-body/>
-    </fo:simple-page-master>
-  </fo:layout-master-set>
-  <fo:page-sequence master-reference="content">
-    <fo:flow flow-name="xsl-region-body">
-      <fo:table table-layout="fixed" width="100%">
-        <fo:table-column column-width="proportional-column-width(1)"/>
-        <fo:table-column column-width="100mm"/>
-        <fo:table-column column-width="proportional-column-width(1)"/>
-        <fo:table-body>
-          <fo:table-row>
-            <fo:table-cell/>
-            <fo:table-cell>
-              <fo:block>foo</fo:block>
-            </fo:table-cell>
-            <fo:table-cell/>
-          </fo:table-row>
-        </fo:table-body>
-      </fo:table>
-    </fo:flow>
-  </fo:page-sequence>
-</fo:root>]]></source>
-        <p>
-          If your table is more complicated, or if defining borders on individual cells becomes too much work, use the code above and nest your table within the moddle cell.
+          See <link href="fo.html#fo-center-table-horizon">XSL-FO Horizontal Centering (Tables)</link>.
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="fo-page-outer">
       <question>(FO) How to get page numbers printed on the "outer side" of the
         page (for books, for example)?</question>
       <answer>
         <p>
-          Place different static content on <link href="#oddeven">odd and even
-          pages</link>.
+          See <link href="fo.html#fo-oddeven">Recto/Verso Static Content Differences</link>.
         </p>
       </answer>
     </faq>
@@ -1231,462 +842,161 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
       pages?</question>
       <answer>
         <p>
-          There are examples in the FO distribution and in the <link
-          href="http://www.dpawson.co.uk/xsl/sect3/index.html">XSL FAQ FO
-          section</link>.
+          See <link href="fo.html#fo-oddeven">Recto/Verso Static Content Differences</link>.
         </p>
-        <p>
-          Define a page master with alternating pages masters for odd and even
-          pages, specify appropriate regions in these page masters, and be sure
-          to give them different names. You use these names to put different
-          static content in these regions. A self contained document
-          demonstrating this:
-        </p>
-        <source><![CDATA[<?xml version="1.0"?>
-<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
-  <fo:layout-master-set>
-    <fo:simple-page-master master-name="even"
-      page-height="297mm" page-width="210mm"
-      margin-top="20mm" margin-bottom="20mm"
-      margin-left="25mm" margin-right="25mm">
-      <fo:region-body margin-bottom="20mm"/>
-      <fo:region-after region-name="footer-even" extent="20mm"/>
-    </fo:simple-page-master>
-    <fo:simple-page-master master-name="odd"
-      page-height="297mm" page-width="210mm"
-      margin-top="20mm" margin-bottom="20mm"
-      margin-left="25mm" margin-right="25mm">
-      <fo:region-body margin-bottom="20mm"/>
-      <fo:region-after region-name="footer-odd" extent="20mm"/>
-    </fo:simple-page-master>
-    <fo:page-sequence-master master-name="document">
-      <fo:repeatable-page-master-alternatives>
-        <fo:conditional-page-master-reference odd-or-even="even"
-          master-reference="even"/>
-        <fo:conditional-page-master-reference odd-or-even="odd"
-          master-reference="odd"/>
-      </fo:repeatable-page-master-alternatives>
-    </fo:page-sequence-master>
-  </fo:layout-master-set>
-  <fo:page-sequence master-reference="document">
-    <fo:static-content flow-name="footer-even">
-      <fo:block text-align="start"><fo:page-number/></fo:block>
-    </fo:static-content>
-    <fo:static-content flow-name="footer-odd">
-      <fo:block text-align-last="end"><fo:page-number/></fo:block>
-    </fo:static-content>
-    <fo:flow flow-name="xsl-region-body">
-      <fo:block/>
-      <fo:block break-before="page"/>
-    </fo:flow>
-  </fo:page-sequence>
-</fo:root>]]></source>
       </answer>
     </faq>
-    <faq>
+    <faq id="fo-first-page-header">
       <question>(FO) How do I get a special header on the first page?</question>
       <answer>
         <p>
-          You can insert it into the flow instead of the static content.
-          Alternatively, use a page master referring to different page masters
-          for the first page and the rest. It is quite similar to the odd/even
-          page mechanism. A code sample:
+          See <link href="fo.html#fo-first-page">Making the First Page Special</link>.
         </p>
-        <source><![CDATA[<?xml version="1.0"?>
-<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
-  <fo:layout-master-set>
-    <fo:simple-page-master master-name="first"
-      page-height="297mm" page-width="210mm"
-      margin-top="20mm" margin-bottom="20mm"
-      margin-left="25mm" margin-right="25mm">
-      <fo:region-body margin-bottom="20mm"/>
-      <fo:region-after region-name="footer-first" extent="20mm"/>
-    </fo:simple-page-master>
-    <fo:simple-page-master master-name="rest"
-      page-height="297mm" page-width="210mm"
-      margin-top="20mm" margin-bottom="20mm"
-      margin-left="25mm" margin-right="25mm">
-      <fo:region-body margin-bottom="20mm"/>
-      <fo:region-after region-name="footer-rest" extent="20mm"/>
-    </fo:simple-page-master>
-    <fo:page-sequence-master master-name="document">
-      <fo:repeatable-page-master-alternatives>
-        <fo:conditional-page-master-reference page-position="first"
-          master-reference="first"/>
-        <fo:conditional-page-master-reference page-position="rest"
-          master-reference="rest"/>
-      </fo:repeatable-page-master-alternatives>
-    </fo:page-sequence-master>
-  </fo:layout-master-set>
-  <fo:page-sequence master-reference="document">
-    <fo:static-content flow-name="footer-first">
-      <fo:block text-align="center">First page.</fo:block>
-    </fo:static-content>
-    <fo:static-content flow-name="footer-rest">
-      <fo:block text-align-last="center">Other page.</fo:block>
-    </fo:static-content>
-    <fo:flow flow-name="xsl-region-body">
-      <fo:block/>
-      <fo:block break-before="page"/>
-      <fo:block break-before="page"/>
-    </fo:flow>
-  </fo:page-sequence>
-</fo:root>]]></source>
       </answer>
     </faq>
-    <faq>
+    <faq id="fo-omit-headers">
       <question>(FO) How do I omit my headers on a blank page? How do I write
       "This page is left blank" on an intentionally blank page?</question>
       <answer>
         <p>
-          A blank page can be forced by a <code>break-before="page-even"</code>
-          or similar properties, or by a force-page-count="end-on-odd" on a page
-          sequence, which ensures a new chapter or something starts on the
-          preferred page.
+          See <link href="fo.html#fo-blank-pages">Blank Pages</link>.
         </p>
-        <p>
-          You can define a conditional page master with a page master specific
-          for blank pages. This allows you to specify static content for blank
-          pages (by definition, a page is blank if no content from a flow is
-          rendered on the page). You can omit your normal headers and footers,
-          and use for example an extended header to print the "..left blank"
-          statement.
-        </p>
-        <source><![CDATA[<?xml version="1.0"?>
-<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
-  <fo:layout-master-set>
-    <fo:simple-page-master master-name="normal"
-      page-height="297mm" page-width="210mm"
-      margin-top="20mm" margin-bottom="20mm"
-      margin-left="25mm" margin-right="25mm">
-      <fo:region-body margin-bottom="20mm"/>
-      <fo:region-after region-name="footer-normal" extent="20mm"/>
-    </fo:simple-page-master>
-    <fo:simple-page-master master-name="blank"
-      page-height="297mm" page-width="210mm"
-      margin-top="20mm" margin-bottom="20mm"
-      margin-left="25mm" margin-right="25mm">
-      <fo:region-body/>
-      <fo:region-before region-name="header-blank" extent="297mm"/>
-    </fo:simple-page-master>
-    <fo:page-sequence-master master-name="document">
-      <fo:repeatable-page-master-alternatives>
-        <fo:conditional-page-master-reference blank-or-not-blank="not-blank"
-          master-reference="normal"/>
-        <fo:conditional-page-master-reference blank-or-not-blank="blank"
-          master-reference="blank"/>
-      </fo:repeatable-page-master-alternatives>
-    </fo:page-sequence-master>
-  </fo:layout-master-set>
-  <fo:page-sequence master-reference="document" force-page-count="end-on-even">
-    <fo:static-content flow-name="footer-normal">
-      <fo:block text-align="center">Normal footer</fo:block>
-    </fo:static-content>
-    <fo:static-content flow-name="header-blank">
-      <fo:block space-before="100mm" text-align-last="center">
-        Intentionally left blank.</fo:block>
-    </fo:static-content>
-    <fo:flow flow-name="xsl-region-body">
-      <fo:block/>
-    </fo:flow>
-  </fo:page-sequence>
-</fo:root>]]></source>
       </answer>
     </faq>
-    <faq>
+    <faq id="fo-special-symbols">
       <question>(FO) How do I print an Euro sign, a checkbox or other some other
       special symbols?</question>
       <answer>
         <p>
-          Try to look the character up in the Unicode reference at the <link
-            href="http://www.unicode.org">Unicode Consortium</link>, in
-            particular search the <link
-            href="http://www.unicode.org/charts/charindex.html">reference by
-            name</link>.
-        </p>
-        <p>
-          Use <link
-            href="http://www.w3.org/TR/2000/REC-xml-20001006#sec-references">XML
-            character references</link> to put the character into your source
-          XML, XSLT or FO.
-        </p>
-        <p>
-          For example, the following will result in an Euro sign:
-        </p>
-        <source><![CDATA[&#x20AC;]]></source>
-        <p>
-          The selected font family must have a glyph for the character you want
-          to show. This is actually a somewhat tricky issue, especially for
-          symbol characters.
-        </p>
-        <p>
-          Some environments provide also a character table utility (like Win2K
-          or WinXP), which can also help you to get an idea what glyphs are
-          available in a certain font.
-        </p>
-        <p>
-          Alternative: Use an embedded graphic: GIF, PNG, SVG, whatever.
+          See <link href="fo.html#xml-special-chars">Special Characters</link>.
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="fo-preformat">
       <question>(FO) How do I keep linebreaks and hard spaces? How do I get
         preformatted text displayed as expected?</question>
       <answer>
         <p>
-          The specification provides some properties for this: <link
-          href="http://www.w3.org/TR/xsl/slice7.html#white-space-collapse">white
-          space collapsing</link> and <link
-          href="http://www.w3.org/TR/xsl/slice7.html#linefeed-treatment">line
-          feed treatment</link>. In FOP, use white-space-collapse="false" on an
-          enclosing block. This will also preserve line breaks (which is
-          actually a bug, expect this to be changed).
+          See <link href="fo.html#fo-preformat">Preformatting Content</link>.
         </p>
       </answer>
     </faq>
-    <faq>
-      <question>(FO) How do I print the total number of pages, like in "page 1
+    <faq id="fo-total-pages">
+      <question>(FO) How do I print the total number of pages, for example "page 1
       of 12"</question>
       <answer>
-        <anchor id="pagenum"/>
         <p>
-          This is an XSL FAQ.
-        </p>
-        <p>
-          Put an empty block with an id at the end of the flow:
-        </p>
-        <source><![CDATA[<fo:flow ...>
-    ...
-  <fo:block id="last-page"/>
-</fo:flow>]]></source>
-        <p>
-          Get the number of the last page as follows:
-        </p>
-        <source><![CDATA[ <fo:page-nuber-citation ref-id="last-page"/>]]></source>
-        <p>
-          This does not work for all problems, for example if you have multiple
-          page sequences, an initial page number different from 1, or if you
-          force a certain page count, thereby producing blank pages at the end.
-        </p>
-        <p>
-          There is no reliable way to get the real total page count with FO
-          mechanisms, you can only get <em>page numbers</em>.
-        </p>
-        <p>
-          The FOP library provides a method to get the total page count after a
-          FO document has been rendered. You can implement your own wrapper to
-          do a dummy rendering, inquire the total page count and the perform the
-          real rendering, passing the total page count to the XSLT processor to
-          splice it into the generated FO. A sample code:
-        </p>
-        <source><![CDATA[import org.apache.fop.apps.*;
-import org.xml.sax.*;
-import java.io.*;
-import javax.xml.transform.*;
-import javax.xml.transform.sax.*;
-import javax.xml.transform.stream.*;
-
-class rendtest {
-
-  public static void main(String args[]) {
-    try {
-      Driver driver=new Driver();
-      driver.setOutputStream(new FileOutputStream(args[2]));
-      driver.setRenderer(Driver.RENDER_PDF);
-      Transformer transformer=TransformerFactory.newInstance()
-        .newTransformer(new StreamSource(new File(args[1])));
-      transformer.setParameter("page-count","#");
-      transformer.transform(new StreamSource(new File(args[0])),
-        new SAXResult(driver.getContentHandler()));
-      String pageCount=Integer.toString(driver.getResults().getPageCount());
-      driver=new Driver();
-      driver.setOutputStream(new FileOutputStream(args[2]));
-      driver.setRenderer(Driver.RENDER_PDF);
-      transformer=TransformerFactory.newInstance()
-        .newTransformer(new StreamSource(new File(args[1])));
-      transformer.setParameter("page-count",pageCount);
-      transformer.transform(new StreamSource(new File(args[0])),
-        new SAXResult(driver.getContentHandler()));
-    }
-    catch( Exception e) {
-      e.printStackTrace();
-    }
-  }
-}]]></source>
-        <p>
-          Declare and use the parameter "page-count" in your XSLT. Be aware you
-          may run into convergence problems: replacing the "#" placeholder from
-          the first run by the actual page count may change it.
+          See <link href="fo.html#fo-total-pages">Total Document Pages</link>.
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="fo-region-overlap">
       <question>(FO) The header overlaps body content. The body extends into
       the footer.</question>
       <answer>
         <p>
-          Contrary to popular opinion, the regions on a page may overlap.
-          Defining a certain body region does not automatically constrain other
-          regions, this has to be done explicitely.
-        </p>
-        <p>
-          If you have a header region with an extent of 20mm, you should define
-          a margin for the body region of at least 20mm too, otherwise the
-          header content may overwrite some stuff in the body region. This
-          applies similarly to the extent of the after region and the bottom
-          margin of the body region.
-        </p>
-        <p>
-          The overlap effect can be used creatively for some purposes.
+          See <link href="fo.html#fo-region-align">Aligning Regions</link>.
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="fo-lines">
       <question>(FO) How do I get lines in the document, as separators, side
       bars or folding marks?</question>
       <answer>
         <p>
-          Several possibilities:
+          See <link href="fo.html#fo-lines">Drawing Lines</link>.
         </p>
-        <ul>
-          <li>
-            Use fo:leader (look up the details in the <link
-            href="http://www.w3.org/TR/xsl/slice6.html#fo_leader">XSLFO
-            specification</link>, or use a book). For horizontal lines only.
-          </li>
-          <li>
-            Use a solid border on a suitable fo:block. Horizontal and vertical
-            lines only.
-          </li>
-          <li>
-            Insert a graphic. GIF, PNG SVG, whatever.
-          </li>
-        </ul>
       </answer>
     </faq>
-    <faq id="FO-validate">
+    <faq id="fo-validate">
       <question>(FO) How do I validate my FO document?</question>
       <answer>
         <p>
-          <link href="http://www.renderx.com">RenderX</link> has provided an
-          <link
-            href="http://www.renderx.com/Tests/validator/fo.dtd.html">Unofficial
-            DTD for FO Documents</link>. This document may be helpful in
-          validating general FO issues.
-        </p>
-        <p>
-          FOP also maintains an <link
-            href="http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-fop/docs/foschema/fop.xsd?rev=HEAD&amp;content-type=text/plain">Unofficial
-            FOP Schema</link> in the FOP CVS Repository. This document can be
-          used either to validate against the FO standard, or against the
-          actual FOP implementation. See the notes near the beginning of the
-          document for instructions on how to use it.
+          See <link href="fo.html#fo-validate">Validating XSL-FO</link>.
         </p>
       </answer>
     </faq>
-    <faq>
-      <question>(XML) There are complaints about <code>&amp;nbsp;</code>. How
-        do I get a non-breaking space in FO?</question>
+    <faq id="xml-non-breaking-space">
+      <question>(XML) How do I get a non-breaking space in FO? There are complaints about <code>&amp;nbsp;</code>.</question>
       <answer>
         <p>
-          Use &amp;#160; everywhere. In your own XML, you could also use a DTD
-          which declares the entity.
+          See <link href="fo.html#xml-special-chars">XML Special Characters</link>.
         </p>
       </answer>
     </faq>
-    <faq>
-      <question>(XML) There are complaints about undefined entities, for example
-        about <code>&amp;uuml;</code> which used to work in HTML. How do I enter
-        special characters like in HTML?</question>
+    <faq id="xml-undefined-entities">
+      <question>(XML) How do I enter special characters in XML? There are complaints about undefined entities, such as <code>&amp;uuml;</code>, which work in HTML. </question>
       <answer>
         <p>
-          Don't use names as in HTML, use numbers (unless you have a DTD which
-          declares the entities). For predefined HTML entities and their Unicode
-          codepoints see <link
-          href="http://www.w3.org/TR/html4/sgml/entities.html">Character entity
-          references in HTML 4</link>
+          See <link href="fo.html#xml-special-chars">XML Special Characters</link>.
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="xml-illegal-entities">
       <question>(XML) There are complaints about illegal characters and entities
       in the input.</question>
       <answer>
         <p>
-          Make sure ampersands in text and attributes are written as &amp;amp;,
-          "&lt;" is written as &amp;lt; and ">" as &amp;gt;. It's not necessary
-          everywhere but do it just to be sure.
-        </p>
-        <p>
-          The XML parser should give the proper line and possibly column for
-          offending characters.
-        </p>
-        <p>
-          Refer to the <link href="http://www.w3.org/XML/">XML
-            specification</link> or to a good tutorial for details of the XML
-            file format.
+          See <link href="fo.html#xml-entity-chars">XML Entity Characters</link>.
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="xml-illegal-chars">
       <question>(XML) There are complaints about illegal bytes or characters in
       the input. There are odd characters in the result.</question>
       <answer>
         <p>
-          Usually, this is a character encoding problem. See <link
-          href="http://www.dpawson.co.uk/xsl">XSL FAQ</link>. Many software
-          packages producing XML, in particular most XSLT processors, produce by
-          default UTF-8 encoded files. If you view them with something not aware
-          of the encoding, like Notepad for Win95/98/ME/NT, funny characters are
-          displayed. A &#197; is a giveaway.
+          See <link href="fo.html#xml-encoding">XML Encoding Issues</link>.
         </p>
       </answer>
     </faq>
   </part>
-  <part>
-    <title>General Developer Questions</title>
-    <faq id="javadoc_location">
-      <question>How do I get the javadocs for FOP?</question>
-      <answer>
-        <p>Currently, the only way to get FOP javadocs is to <link href="download.html">
-        Download the source code</link> and then <link href="compiling.html">Build
-        FOP</link> using the ant build task "javadocs".</p>
-      </answer>
-    </faq>
-  </part>
-  <part>
+  <part id="part-help">
     <title>General suggestions. How to solve problems.</title>
-    <faq>
-      <question>Where to post bugs.</question>
+    <faq id="bugs">
+      <question>I think I have found a bug in FOP. What should I do?</question>
       <answer>
         <p>
-          See <link href="bugs.html">documentation</link>. See also
-          <link href="#postquestions">"where to post
-          questions"</link>.
+          See <link href="bugs.html">the Bugs page</link> for information about
+          bugs already reported and how to report new ones.
         </p>
       </answer>
     </faq>
     <faq id="postquestions">
-      <question>Where to post questions.</question>
+      <question>I have questions that are not addressed in this FAQ. Where
+      should I post them?</question>
       <answer>
-        <p>
-          Decide where to post:
-        </p>
         <ul>
+          <li>If your question is a development-related question, please see the <link href="dev/faq.html">Developer FAQs</link>.</li>
           <li>
-            You get exceptions. First, check the FAQ whether the exception is
-            mentioned. ClassNotFoundException, NoSuchMethodException and
-            NoSuchFieldException problems are almost always a problem with the
-            local environment, try to get local help first. Check <link
-            href="http://nagoya.apache.org">bugzilla</link>. If still not found,
-            post to fop-dev.
+            If you have a runtime exception or other runtime problem:
+            <ul>
+              <li>
+                double-check the <link href="#part-running">Runtime FAQs</link>.
+              </li>
+              <li>
+                ClassNotFoundException, NoSuchMethodException and
+                NoSuchFieldException problems are almost always a problem with
+                the local environment. Try to get local help first.
+              </li>
+              <li>
+                Check <link href="bugs.html#issues_existing">Reported Issues</link>
+                to see if this is a known problem.
+              </li>
+              <li>If none of the above apply, post a question to the fop-dev
+                mailing list.
+              </li>
+            </ul>
           </li>
           <li>
-            Something doesn't work with FOP but works with another formatter
-            (AntennaHouse, PassiveTex). Check whether this is already mentioned
-            in the release notes, the FOP limitations document or the FAQ. Post
-            to fop-dev or open a bug on <link
-            href="http://nagoya.apache.org">bugzilla</link>.
+            In the case where something works properly with another formatter,
+            (AntennaHouse, PassiveTex, etc.) but doesn't work with FOP, please
+            check the <link href="relnotes.html">Release Notes</link>, the
+            <link href="compliance.html">FOP Standards Compliance</link> document,
+            and the remaining FAQ in this document. If not found there, look at the
+            list of <link href="bugs.html#issues_existing">Bugs Already Reported</link>.
+            If not found there, please post a question on the fop-user mailing list
+            or <link href="bugs.html#issues_new">Open a New Bug</link>.
           </li>
           <li>
             Question about how to use FOP, how to perform certain tasks with FOP

@@ -8,6 +8,19 @@
   </header>
   <body>
     <section>
+      <title>18 February 2003 - FOP 0.20.5 Release Candidate 2 available</title>
+      <p>
+      See the full text of the <link
+      href="http://archives.apache.org/eyebrowse/ReadMsg?listName=fop-dev@xml.apache.org&amp;msgNo=4509">announcement</link>.
+      </p>
+    </section>
+    <section>
+      <title>2 February 2003 - New XML PMC</title>
+      <p>
+      Jeremias Maerki and Peter B. West are now representing FOP on the XML PMC.
+      </p>
+    </section>
+    <section>
 	    <title>28 January 2003 - FOP logo contest</title>
 		<p>We are looking for a new logo. FOP <link href="logocontest.html">logo
            contest</link> is started!</p>
@@ -44,7 +57,7 @@
   <p>Welcome Oleg Tkachenko!</p>
  </section>
     <section>
-      <title>7 Jul 2002 FOP 0.20.4 released</title>
+      <title>7 July 2002 FOP 0.20.4 released</title>
       <p>
   Changes since 0.20.3 include:
       </p>
@@ -58,7 +71,7 @@
     The following JARs have been updated: Xerces to version
     2.0.1, Xalan to version 2.3.1 and Batik to version 1.5beta2.
   </li>
-  <li>Fop has been compiled with Jimi support</li>
+  <li>FOP has been compiled with Jimi support</li>
   <li>
     Logging has been changed from LogKit to Avalon's Logger
     Interface
@@ -82,7 +95,7 @@
       </p>
     </section>
     <section>
-      <title>13 Jun 2002 FOP 0.20.4 Release Candidate available</title>
+      <title>13 June 2002 FOP 0.20.4 Release Candidate available</title>
       <p>
   See the full text of the <link href=
   "http://marc.theaimsgroup.com/?l=fop-dev&amp;m=102398470424177&amp;w=4"
@@ -94,7 +107,7 @@
   <p>Welcome Jeremias Maerki, Joerg Pietschmann and Peter B. West!</p>
  </section>
 <section>
-  <title>11 March 2002 - Fop 0.20.3 released</title>
+  <title>11 March 2002 - FOP 0.20.3 released</title>
   <p>This is a maintenance release, the first version which supports the XSL-FO
    Recommendation syntax. See the
    <link href="http://marc.theaimsgroup.com/?l=xml-apache-announce&amp;m=101588818821794">
