@@ -39,6 +39,7 @@ import org.w3c.dom.Document;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 
 // FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.AreaTree;
 import org.apache.fop.area.AreaTreeModel;
@@ -67,6 +68,7 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.TextArea;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.Renderer;
@@ -150,31 +152,33 @@ public class AreaTreeBuilder {
      * @param out output filename
      */
     protected void runTest(String in, String type, String out) {
-        Renderer rend = null;
+        int renderType = Constants.NOT_SET;
         if ("xml".equals(type)) {
-            rend = new XMLRenderer();
+            renderType = Constants.RENDER_XML;
         } else if ("pdf".equals(type)) {
-            rend = new PDFRenderer();
+            renderType = Constants.RENDER_PDF;
         } else if ("svg".equals(type)) {
-            rend = new SVGRenderer();
+            renderType = Constants.RENDER_SVG;
         }
 
         FontInfo fontInfo = new FontInfo();
-        rend.setupFontInfo(fontInfo);
         FOUserAgent ua = new FOUserAgent();
-        rend.setUserAgent(ua);
 
-        StorePagesModel sm = AreaTree.createStorePagesModel();
-        TreeLoader tl = new TreeLoader(rend, fontInfo);
-        tl.setLogger(logger);
-        tl.setTreeModel(sm);
         try {
+            OutputStream os =
+              new java.io.BufferedOutputStream(new java.io.FileOutputStream(out));
+    
+            StorePagesModel sm = AreaTree.createStorePagesModel();
+            TreeLoader tl = new TreeLoader(ua, renderType, fontInfo, os);
+            tl.setLogger(logger);
+            tl.setTreeModel(sm);
             InputStream is =
               new java.io.BufferedInputStream(new java.io.FileInputStream(in));
             tl.buildAreaTree(is);
-            renderAreaTree(sm, rend, out);
-        } catch (IOException e) {
-            logger.error("error reading file" + e.getMessage(), e);
+            renderAreaTree(sm, tl.getAreaTree().getRenderer());
+            os.close();
+        } catch (Exception e) {
+            logger.error("Error processing file: " + e.getMessage(), e);
         }
     }
 
@@ -182,16 +186,10 @@ public class AreaTreeBuilder {
      * Renders an area tree to a target format using a renderer.
      * @param sm area tree pages
      * @param rend renderer to use for output
-     * @param out target filename
      */
     protected void renderAreaTree(StorePagesModel sm,
-                                  Renderer rend, String out) {
+                                  Renderer rend) {
         try {
-            OutputStream os =
-              new java.io.BufferedOutputStream(new java.io.FileOutputStream(out));
-
-            rend.startRenderer(os);
-
             int count = 0;
             int seqc = sm.getPageSequenceCount();
             while (count < seqc) {
@@ -223,7 +221,6 @@ public class AreaTreeBuilder {
             }
 
             rend.stopRenderer();
-            os.close();
         } catch (Exception e) {
             logger.error("error rendering output", e);
         }
@@ -241,10 +238,15 @@ class TreeLoader {
     private FontInfo fontInfo;
     private Font currentFontState;
     private Log logger = null;
-
-    TreeLoader(Renderer renderer, FontInfo fontInfo) {
-        this.renderer = renderer;
+    private FOUserAgent foUserAgent = null;
+    private int renderType = Constants.NOT_SET;
+    private OutputStream outputStream;
+    
+    TreeLoader(FOUserAgent userAgent, int rendType, FontInfo fontInfo, OutputStream os) {
+        this.foUserAgent = userAgent;
+        this.renderType = rendType;
         this.fontInfo = fontInfo;
+        this.outputStream = os;
     }
 
     /**
@@ -255,11 +257,15 @@ class TreeLoader {
         this.logger = logger;
     }
 
+    public AreaTree getAreaTree() {
+        return areaTree;
+    }
+
     public void setTreeModel(AreaTreeModel mo) {
         model = mo;
     }
 
-    public void buildAreaTree(InputStream is) {
+    public void buildAreaTree(InputStream is) throws FOPException {
         Document doc = null;
         try {
             DocumentBuilderFactory fact =
@@ -272,7 +278,7 @@ class TreeLoader {
         Element root = null;
         root = doc.getDocumentElement();
 
-        areaTree = new AreaTree(renderer);
+        areaTree = new AreaTree(foUserAgent, renderType, fontInfo, outputStream);
         areaTree.setTreeModel(model);
 
         readAreaTree(root);

@@ -313,7 +313,7 @@ public class Driver implements Constants {
             }
 
             foInputHandler = new FOTreeHandler(foUserAgent, rendererType, 
-                stream, true);
+                stream);
         }
 
         treeBuilder.setFOInputHandler(foInputHandler);

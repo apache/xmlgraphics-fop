@@ -15,14 +15,11 @@
  */
 
 /* $Id$ */
-
 package org.apache.fop.area;
 
-import org.apache.fop.area.extensions.BookmarkData;
-import org.apache.fop.fo.extensions.Outline;
-import org.apache.fop.fo.extensions.Bookmarks;
-import org.apache.fop.render.Renderer;
-
+// Java
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +28,18 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Iterator;
 
-// Commons-Logging
+// XML
+import org.xml.sax.SAXException;
+
+// Apache
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.area.extensions.BookmarkData;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.extensions.Outline;
+import org.apache.fop.fo.extensions.Bookmarks;
+import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.render.Renderer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -65,14 +73,83 @@ public class AreaTree {
 
     private static Log log = LogFactory.getLog(AreaTree.class);
 
+    private FOUserAgent foUserAgent;
+
+    /**
+     * the renderer to use to output the area tree
+     */
+    private Renderer renderer;
+
     /**
      * Constructor.
      */
-    public AreaTree (Renderer renderer) {
+    public AreaTree (FOUserAgent userAgent, int renderType, 
+        FontInfo fontInfo, OutputStream stream) throws FOPException {
+
+        foUserAgent = userAgent;
+
+        if (foUserAgent.getRendererOverride() != null) {
+            renderer = foUserAgent.getRendererOverride();
+        } else {
+            renderer = createRenderer(renderType);
+            renderer.setUserAgent(foUserAgent);
+        }
+
+        try {
+            renderer.setupFontInfo(fontInfo);
+            // check that the "any,normal,400" font exists
+            if (!fontInfo.isSetupValid()) {
+                throw new FOPException(
+                    "No default font defined by OutputConverter");
+            }
+            renderer.startRenderer(stream);
+        } catch (IOException e) {
+            throw new FOPException(e);
+        }
+
         // this.atModel = new CachedRenderPagesModel(renderer);
         setTreeModel(new RenderPagesModel(renderer));
     }
 
+
+    /**
+     * Creates a Renderer object based on render-type desired
+     * @param renderType the type of renderer to use
+     * @return Renderer the new Renderer instance
+     * @throws IllegalArgumentException if an unsupported renderer type was requested
+     */
+    private Renderer createRenderer(int renderType) throws IllegalArgumentException {
+
+        switch (renderType) {
+        case Constants.RENDER_PDF:
+            return new org.apache.fop.render.pdf.PDFRenderer();
+        case Constants.RENDER_AWT:
+            return new org.apache.fop.render.awt.AWTRenderer();
+        case Constants.RENDER_PRINT:
+            return new org.apache.fop.render.awt.AWTPrintRenderer();
+        case Constants.RENDER_PCL:
+            return new org.apache.fop.render.pcl.PCLRenderer();
+        case Constants.RENDER_PS:
+            return new org.apache.fop.render.ps.PSRenderer();
+        case Constants.RENDER_TXT:
+            return new org.apache.fop.render.txt.TXTRenderer();
+        case Constants.RENDER_XML:
+            return new org.apache.fop.render.xml.XMLRenderer();
+        case Constants.RENDER_SVG:
+            return new org.apache.fop.render.svg.SVGRenderer();
+        default:
+            throw new IllegalArgumentException("Invalid renderer type " 
+                + renderType);
+        }
+    }
+
+    /**
+     * Temporary accessor for renderer for tools.AreaTreeBuilder
+     * @return renderer The renderer being used by this area tree
+     */
+    public Renderer getRenderer() {
+        return renderer;
+    }
 
     /**
      * Create a new store pages model.
@@ -208,7 +285,7 @@ public class AreaTree {
      * This indicates that the document is complete and any unresolved
      * reference can be dealt with.
      */
-    public void endDocument() {
+    public void endDocument() throws SAXException {
         for (Iterator iter = resolve.keySet().iterator(); iter.hasNext();) {
             String id = (String)iter.next();
             Set list = (Set)resolve.get(id);
@@ -220,6 +297,11 @@ public class AreaTree {
             }
         }
         model.endDocument();
+        try {
+            renderer.stopRenderer();
+        } catch (IOException ex) {
+            throw new SAXException(ex);
+        }        
     }
 
     /**
