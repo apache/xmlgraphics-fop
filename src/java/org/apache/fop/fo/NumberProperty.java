@@ -72,7 +72,7 @@ public class NumberProperty extends Property {
         }
 
         /**
-         * @see Property#convertProperty
+         * @see Property.Maker#convertProperty
          */
         public Property convertProperty(Property p,
                                         PropertyList propertyList, FObj fo) {

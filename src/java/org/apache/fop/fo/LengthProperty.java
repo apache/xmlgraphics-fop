@@ -89,7 +89,7 @@ public class LengthProperty extends Property {
         }
 
         /**
-         * @see Property#convertProperty
+         * @see Property.Maker#convertProperty
          */
         public Property convertProperty(Property p,
                                         PropertyList propertyList,
