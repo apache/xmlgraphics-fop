@@ -840,6 +840,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             //boolean cyclic = (cycenum == MultipleGradientPaint.REPEAT);
             AffineTransform transform = graphicsState.getTransform();
             transform.concatenate(gp.getTransform());
+            transform.concatenate(getTransform());
 
             p1 = transform.transform(p1, null);
             p2 = transform.transform(p2, null);
