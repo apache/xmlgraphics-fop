@@ -19,10 +19,10 @@
 package org.apache.fop.fo.extensions.svg;
 
 import java.util.HashMap;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ElementMapping;
-import org.apache.fop.apps.FOFileHandler;
 
 import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
@@ -40,6 +40,20 @@ public class SVGElementMapping extends ElementMapping {
         namespaceURI = URI;
     }
 
+    /**
+     * Returns the fully qualified classname of an XML parser for
+     * Batik classes that apparently need it (error messages, perhaps)
+     * @return an XML parser classname
+     */
+    private final String getAParserClassName() {
+        try {
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            return factory.newSAXParser().getXMLReader().getClass().getName();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     protected void initialize() {
         if (foObjs == null && batik == true) {
             // this sets the parser that will be used
@@ -47,7 +61,7 @@ public class SVGElementMapping extends ElementMapping {
             // normally the user agent value is used
             try {
                 XMLResourceDescriptor.setXMLParserClassName(
-                  FOFileHandler.getParserClassName());
+                  getAParserClassName());
 
                 foObjs = new HashMap();
                 foObjs.put("svg", new SE());

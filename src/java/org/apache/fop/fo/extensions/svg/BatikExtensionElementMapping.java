@@ -19,9 +19,9 @@
 package org.apache.fop.fo.extensions.svg;
 
 import java.util.HashMap;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.batik.util.XMLResourceDescriptor;
-import org.apache.fop.apps.FOFileHandler;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FONode;
 
@@ -37,6 +37,20 @@ public class BatikExtensionElementMapping extends ElementMapping {
         namespaceURI = URI;
     }
 
+    /**
+     * Returns the fully qualified classname of an XML parser for
+     * Batik classes that apparently need it (error messages, perhaps)
+     * @return an XML parser classname
+     */
+    private final String getAParserClassName() {
+        try {
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            return factory.newSAXParser().getXMLReader().getClass().getName();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     protected void initialize() {
         if (foObjs == null && batikAvail == true) {
             // this sets the parser that will be used
@@ -44,7 +58,7 @@ public class BatikExtensionElementMapping extends ElementMapping {
             // normally the user agent value is used
             try {
                 XMLResourceDescriptor.setXMLParserClassName(
-                  FOFileHandler.getParserClassName());
+                  getAParserClassName());
 
                 foObjs = new HashMap();
                 foObjs.put("batik", new SE());
