@@ -143,31 +143,6 @@ public class FONode extends SyncedNode{
     /** BitSet of properties which have been specified on this node. */
     private BitSet specifiedProps =
                                 new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
-    /** BitSet of corresponding properties set on this mode. */
-    private BitSet correspondingProps =
-        new BitSet(PropNames.LAST_CORRESPONDING_INDEX + 1);
-    /**
-     * Indicate that the corresponding <code>property</code> has been set on
-     * this node
-     * @param property
-     */
-    public void setCorresponding(int property) throws PropertyException {
-        if (correspondingProps != null) {
-            correspondingProps.set(property);
-        }
-        throw new PropertyException("No corresponding BitSet");
-    }
-    /**
-     * Has the corresponding <code>property</code> been set on this node?
-     * @param property
-     * @return
-     */
-    public boolean correspondingSet(int property) throws PropertyException {
-        if (correspondingProps != null) {
-            return correspondingProps.get(property);
-        }
-        throw new PropertyException("No corresponding BitSet");
-    }
 
     /** The property set for this node.  This reference has two lives.
         During FO subtree building, it holds all values which may potentially
@@ -314,30 +289,12 @@ public class FONode extends SyncedNode{
         specifiedProps.set(property);
         // Handle corresponding properties here
         if (tempP instanceof CorrespondingProperty) {
-            // is this property already set?
-            if ( ! correspondingProps.get(property)) {
-                // Update the propertySet
-                propertySet[property] = propval;
-                correspondingProps.set(property);
-                // find corresponding properties, and check whether
-                // already set
-                // TODO Can a property have more than one
-                // coresponding?  I don't think so.  I think this
-                // is dealt with in shorthand/compound handling
-                int corresP =
-                    ((CorrespondingProperty)tempP)
-                    .getCorrespondingProperty(this);
-                if ( ! correspondingProps.get(corresP)) {
-                    propertySet[corresP] = propval;
-                    correspondingProps.set(corresP);
-                } // else this property's corresponding property
-                  // already set.  Presumably it has already been
-                  // encountered in the set of attributes, e.g.
-                  // the absolute property is set.  Ignore this
-                  // value.
-            } // this property already set by its corresponding
-              // property.  E.g. this is a relative property.
-              // Ignore this value.
+            // Update the propertySet
+            propertySet[property] = propval;
+            int corresP =
+                ((CorrespondingProperty)tempP)
+                .getCorrespondingProperty(this);
+            propertySet[corresP] = propval;
         }
         else {
             // Not a corresponding property
@@ -379,7 +336,6 @@ public class FONode extends SyncedNode{
         // Clean up structures that are no longer needed
         propertySet = null;
         specifiedProps = null;
-        correspondingProps = null;
         attrBitSet = null;
         foKeys = null;
         foProperties = null;
