@@ -67,7 +67,7 @@ public class FObjects {
      * @throws FOPException
      */
     public static Object makePageSeqFOChild(
-            FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+            FOTree foTree, FoPageSequence pageSequence, FOPageSeqNode parent,
             FoXmlEvent event, int stateFlags)
         throws FOPException
     {
@@ -169,7 +169,8 @@ public class FObjects {
      * @return
      * @throws FOPException
      */
-    public static Object makePageSeqFOChild(FOTree foTree, FONode pageSequence,
+    public static Object makePageSeqFOChild(
+            FOTree foTree, FoPageSequence pageSequence,
             FOPageSeqNode parent, XmlEvent event, int stateFlags)
     throws FOPException
     {
