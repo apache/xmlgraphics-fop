@@ -36,8 +36,8 @@ public abstract class RegionSE extends Region {
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
-    protected RegionSE(FONode parent, int regionId) {
-        super(parent, regionId);
+    protected RegionSE(FONode parent) {
+        super(parent);
     }
 
     protected void addProperties(Attributes attlist) throws SAXParseException {

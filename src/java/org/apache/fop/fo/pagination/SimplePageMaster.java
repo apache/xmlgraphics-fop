@@ -182,7 +182,7 @@ public class SimplePageMaster extends FObj {
 
     /**
      * Returns the region for a given region class.
-     * @param regionClass region class to lookup
+     * @param regionId Constants ID of the FO representing the region
      * @return the region, null if it doesn't exist
      */
     public Region getRegion(int regionId) {

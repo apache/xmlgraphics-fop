@@ -34,7 +34,7 @@ public class RegionAfter extends RegionBA {
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public RegionAfter(FONode parent) {
-        super(parent, FO_REGION_AFTER);
+        super(parent);
     }
 
     /**

@@ -36,7 +36,6 @@ import org.apache.fop.fo.FObj;
 public abstract class Region extends FObj {
 
     private SimplePageMaster layoutMaster;
-    private int regionId = -1;
     private String regionName;
 
     /** Holds the overflow attribute */
@@ -49,9 +48,8 @@ public abstract class Region extends FObj {
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
-    protected Region(FONode parent, int id) {
+    protected Region(FONode parent) {
         super(parent);
-        regionId = id;
     }
 
     /**
@@ -156,7 +154,7 @@ public abstract class Region extends FObj {
 
     /**
      * Returns a sibling region for this region.
-     * @param regionClass the class of the requested region
+     * @param regionId the Constants ID of the FO representing the region
      * @return the requested region
      */
     protected Region getSiblingRegion(int regionId) {

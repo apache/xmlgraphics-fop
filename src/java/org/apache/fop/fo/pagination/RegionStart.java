@@ -34,7 +34,7 @@ public class RegionStart extends RegionSE {
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public RegionStart(FONode parent) {
-        super(parent, FO_REGION_START);
+        super(parent);
     }
 
     /**

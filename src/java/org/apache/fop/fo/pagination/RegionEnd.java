@@ -35,7 +35,7 @@ public class RegionEnd extends RegionSE {
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public RegionEnd(FONode parent) {
-        super(parent, FO_REGION_END);
+        super(parent);
     }
 
     /**
