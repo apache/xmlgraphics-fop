@@ -52,8 +52,17 @@
 
 package org.apache.fop.apps;
 
+/**
+ * A vestigal class left after initial alt.design hacking.
+ * @author pbw
+ */
 public class CommandLineStarter {
 
+    /**
+     * Empty constructor.
+     * 
+     * @throws FOPException
+     */
     public CommandLineStarter() throws FOPException {
     }
 

@@ -65,48 +65,48 @@ public class Fop {
 
     public static void main(String[] args) {
 
-	long endtotal, endfree, gctotal, gcfree;
+        long endtotal, endfree, gctotal, gcfree;
         Driver driver;
         Boolean bool = null;
 
-	runtime = Runtime.getRuntime();
-	startTotal = runtime.totalMemory();
-	startFree = runtime.freeMemory();
-	startTime = System.currentTimeMillis();
+        runtime = Runtime.getRuntime();
+        startTotal = runtime.totalMemory();
+        startFree = runtime.freeMemory();
+        startTime = System.currentTimeMillis();
 
         try {
             Options.configure(args);
             driver = new Driver();
             driver.run();
             System.out.println("Back from driver.run()");
-	    System.out.println("Elapsed time: " +
-				(System.currentTimeMillis() - startTime));
-	    endtotal = runtime.totalMemory();
-	    endfree = runtime.freeMemory();
-	    System.gc();
-	    gctotal = runtime.totalMemory();
-	    gcfree = runtime.freeMemory();
-	    System.out.println("Total memory before run : " + startTotal);
-	    System.out.println("Total memory after run  : " + endtotal);
-	    System.out.println("Total memory after GC   : " + gctotal);
-	    System.out.println("Diff before/after total : "
+            System.out.println("Elapsed time: " +
+                                (System.currentTimeMillis() - startTime));
+            endtotal = runtime.totalMemory();
+            endfree = runtime.freeMemory();
+            System.gc();
+            gctotal = runtime.totalMemory();
+            gcfree = runtime.freeMemory();
+            System.out.println("Total memory before run : " + startTotal);
+            System.out.println("Total memory after run  : " + endtotal);
+            System.out.println("Total memory after GC   : " + gctotal);
+            System.out.println("Diff before/after total : "
                                                    + (endtotal - startTotal));
-	    System.out.println("Diff before/GC total    : "
+            System.out.println("Diff before/GC total    : "
                                                    + (gctotal - startTotal));
-	    System.out.println("Diff after/GC total     : "
+            System.out.println("Diff after/GC total     : "
                                                    + (gctotal - endtotal));
-	    System.out.println("Free memory before run  : " + startFree);
-	    System.out.println("Free memory after run   : " + endfree);
-	    System.out.println("Free memory after GC    : " + gcfree);
-	    System.out.println("Diff before/after free  : "
+            System.out.println("Free memory before run  : " + startFree);
+            System.out.println("Free memory after run   : " + endfree);
+            System.out.println("Free memory after GC    : " + gcfree);
+            System.out.println("Diff before/after free  : "
                                                    + (endfree - startFree));
-	    System.out.println("Diff before/GC free     : "
+            System.out.println("Diff before/GC free     : "
                                                    + (gcfree - startFree));
-	    System.out.println("Diff after/GC free      : "
+            System.out.println("Diff after/GC free      : "
                                                    + (gcfree - endfree));
-	    System.out.println("cg() freed              : "
+            System.out.println("cg() freed              : "
                                                     + (gcfree - endfree));
-	    //System.out.println("PC time     : " + (endPCi - startPCi));
+            //System.out.println("PC time     : " + (endPCi - startPCi));
             
         } catch (FOPException e) {
             MessageHandler.errorln("ERROR: " + e.getMessage());
@@ -121,6 +121,9 @@ public class Fop {
                 e.printStackTrace();
             }
         }
+    }
+
+    private Fop() {
     }
 
 }
