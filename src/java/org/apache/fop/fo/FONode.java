@@ -55,6 +55,7 @@ import java.util.ListIterator;
 
 // XML
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 
 // Avalon
 import org.apache.avalon.framework.logger.Logger;
@@ -90,6 +91,14 @@ public abstract class FONode {
         name = str;
     }
 
+    /**
+     * Sets the name of the node.
+     * @param str the name
+     */
+    public void setLocation(Locator locator) {
+        // do nothing by default
+    }
+    
     /**
      * Returns the logger for the node.
      * @return the logger
@@ -127,8 +136,10 @@ public abstract class FONode {
      * @param data text
      * @param start start position
      * @param length length of the text
+     * @param locator location in fo source file. 
      */
-    protected void addCharacters(char data[], int start, int length) {
+    protected void addCharacters(char data[], int start, int length,
+                                 Locator locator) {
         // ignore
     }
 

@@ -61,6 +61,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.properties.FOPropertyMapping;
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 
 /**
  * Base class for representation of formatting objects and their processing.
@@ -130,6 +131,12 @@ public class FObj extends FONode {
         name = "fo:" + str;
     }
 
+    public void setLocation(Locator locator) {
+        line = locator.getLineNumber();
+        column = locator.getColumnNumber();
+        systemId = locator.getSystemId();
+    }
+    
     /**
      * Handle the attributes for this element.
      * The attributes must be used immediately as the sax attributes
@@ -420,5 +427,13 @@ public class FObj extends FONode {
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveFObj(this);
     }
+    
+    /**
+     * Return a string representation of the fo element. 
+     */
+    public String toString() {
+        return getName() + " at line " + line + ":" + column;
+    }
+    
 }
 

@@ -50,6 +50,8 @@
  */
 package org.apache.fop.fo.extensions;
 
+import org.xml.sax.Locator;
+
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
 
@@ -77,8 +79,10 @@ public class Label extends ExtensionObj {
      * @param data the character data
      * @param start the start position in the data array
      * @param end the end position in the character array
+     * @param locator location in fo source file.
      */
-    protected void addCharacters(char data[], int start, int end) {
+    protected void addCharacters(char data[], int start, int end,
+                                 Locator locator) {
         label += new String(data, start, end - start);
     }
 

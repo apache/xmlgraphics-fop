@@ -50,6 +50,8 @@
  */
 package org.apache.fop.fo;
 
+import org.xml.sax.Locator;
+
 /**
  * Class for handling generic XML from a namespace not recognized by FOP
  */
@@ -111,11 +113,12 @@ public class UnknownXMLObj extends XMLObj {
     /**
      *  @see XMLObj#addCharacters
      */
-    protected void addCharacters(char data[], int start, int length) {
+    protected void addCharacters(char data[], int start, int length,
+                                 Locator locator) {
         if (doc == null) {
             createBasicDocument();
         }
-        super.addCharacters(data, start, length);
+        super.addCharacters(data, start, length, locator);
     }
 
     /**
