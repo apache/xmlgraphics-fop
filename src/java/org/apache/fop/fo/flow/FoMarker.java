@@ -1,6 +1,4 @@
 /*
- * $Id$
- * 
  * ============================================================================
  *                   The Apache Software License, Version 1.1
  * ============================================================================
@@ -47,9 +45,8 @@
  * on  behalf of the Apache Software  Foundation and was  originally created by
  * James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
  * Software Foundation, please see <http://www.apache.org/>.
- *  
- *
- * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
+ * 
+ * $Id$
  */
 
 package org.apache.fop.fo.flow;
@@ -73,6 +70,7 @@ import org.apache.fop.xml.UnexpectedStartElementException;
 
 /**
  * Implements the fo:marker flow object.
+ * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
  */
 public class FoMarker extends FONode {
 
@@ -137,7 +135,6 @@ public class FoMarker extends FONode {
                     ev = xmlevents.expectOutOfLinePcdataOrInlineOrBlock();
                 if (ev != null) {
                     // Generate the flow object
-                    //System.out.println("Generating flow object for " + ev);
                     FObjects.fobjects.makeFlowObject(
                             foTree, this, ev, stateFlags);
                     if (ev.getType() != XmlEvent.CHARACTERS) {
