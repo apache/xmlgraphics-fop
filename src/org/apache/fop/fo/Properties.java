@@ -35,6 +35,7 @@ import org.apache.fop.fo.expr.SystemFontFunction;
 import org.apache.fop.datastructs.ROStringArray;
 import org.apache.fop.datastructs.ROIntArray;
 import org.apache.fop.datatypes.Ints;
+import org.apache.fop.datatypes.NoType;
 import org.apache.fop.datatypes.StringType;
 import org.apache.fop.datatypes.NCName;
 import org.apache.fop.datatypes.CountryType;
@@ -557,7 +558,7 @@ public abstract class Properties {
                  + PropNames.getPropertyName(property));
         switch (initialValueType) {
         case NOTYPE_IT:
-            return null;
+            return new NoType(property);
         case AUTO_IT:
             return new Auto(property);
         case NONE_IT:
