@@ -84,7 +84,6 @@ import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.Constants;
 import org.apache.fop.fo.properties.Overflow;
-import org.apache.fop.traits.BorderProps;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -475,29 +474,8 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         RegionViewport rv = curPage.getPage().getRegionViewport(
                     Region.BODY_CODE);
         curBody = (BodyRegion) rv.getRegion();
-        flowBPD = (int) rv.getViewArea().getHeight();
-        
-        // adjust flowBPD for borders and padding
-        BorderProps bps = (BorderProps) rv.getTrait(Trait.BORDER_BEFORE);
-        if (bps != null) {
-            flowBPD -= bps.width;
-        }
-
-        bps = (BorderProps) rv.getTrait(Trait.BORDER_AFTER);
-        if (bps != null) {
-            flowBPD -= bps.width;
-        }
-
-        java.lang.Integer padWidth = (java.lang.Integer) rv.getTrait(Trait.PADDING_BEFORE);
-        if (padWidth != null) {
-            flowBPD -= padWidth.intValue();
-        }
-
-        padWidth = (java.lang.Integer) rv.getTrait(Trait.PADDING_AFTER);
-        if (padWidth != null) {
-            flowBPD -= padWidth.intValue();
-        }
-
+        flowBPD = (int) rv.getViewArea().getHeight() -
+            rv.getMarginBeforeWidth() - rv.getMarginAfterWidth();
         return curPage;
     }
 
@@ -735,29 +713,9 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         // get Width or Height as IPD for span
         
         RegionViewport rv = curPage.getPage().getRegionViewport(Region.BODY_CODE);
-        int ipdWidth = (int) rv.getViewArea().getWidth();
-        
-        // adjust IPD for borders and padding
-        BorderProps bps = (BorderProps) rv.getTrait(Trait.BORDER_START);
-        if (bps != null) {
-            ipdWidth -= bps.width;
-        }
+        int ipdWidth = (int) rv.getViewArea().getWidth() -
+            rv.getMarginStartWidth() - rv.getMarginEndWidth();
 
-        bps = (BorderProps) rv.getTrait(Trait.BORDER_END);
-        if (bps != null) {
-            ipdWidth -= bps.width;
-        }
-
-        java.lang.Integer padWidth = (java.lang.Integer) rv.getTrait(Trait.PADDING_START);
-        if (padWidth != null) {
-            ipdWidth -= padWidth.intValue();
-        }
-
-        padWidth = (java.lang.Integer) rv.getTrait(Trait.PADDING_END);
-        if (padWidth != null) {
-            ipdWidth -= padWidth.intValue();
-        }
-                          
         curSpan.setIPD(ipdWidth);
         //curSpan.setPosition(BPD, newpos);
         curBody.getMainReference().addSpan(curSpan);

@@ -128,7 +128,7 @@ background pattern
 writing mode
 text decoration
 
- */
+*/
 
 /**
  * Renderer that renders areas to PDF
@@ -511,10 +511,10 @@ public class PDFRenderer extends PrintRenderer {
      * @param block the block to render the traits
      */
     protected void handleBlockTraits(Block block) {
-        float startx = currentIPPosition / 1000f;
-        float starty = currentBPPosition / 1000f;
+        float startx = (currentIPPosition + IPMarginOffset)/ 1000f;
+        float starty = (currentBPPosition + BPMarginOffset)/ 1000f;
         drawBackAndBorders(block, startx, starty,
-                           block.getWidth() / 1000f, block.getHeight() / 1000f);
+            block.getWidth() / 1000f, block.getHeight() / 1000f);
     }
 
     /**
@@ -537,29 +537,8 @@ public class PDFRenderer extends PrintRenderer {
 
         if (region.getRegion().getRegionClass() == org.apache.fop.fo.pagination.Region.BODY_CODE)
         {   
-            // need to collect vertical and horizontal offsets
-            // for body-region (for rendering of text)
-            BorderProps bps = (BorderProps) region.getTrait(Trait.BORDER_BEFORE);
-            if (bps != null) {
-                BPMarginOffset = bps.width;
-            }
-                              
-            bps = (BorderProps) region.getTrait(Trait.BORDER_START);
-            if (bps != null) {
-                IPMarginOffset = bps.width;
-            }
-            
-            java.lang.Integer padWidth = (java.lang.Integer) 
-                region.getTrait(Trait.PADDING_BEFORE);
-            if (padWidth != null) {
-                BPMarginOffset += padWidth.intValue();
-            }
-                              
-            padWidth = (java.lang.Integer) 
-                region.getTrait(Trait.PADDING_START);
-            if (padWidth != null) {
-                IPMarginOffset += padWidth.intValue();
-            }
+            BPMarginOffset = region.getMarginBeforeWidth();
+            IPMarginOffset = region.getMarginStartWidth();
         }
 
         drawBackAndBorders(region, startx, starty, width, height);

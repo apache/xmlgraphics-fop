@@ -54,6 +54,8 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.apache.fop.traits.BorderProps;
+
 /**
  * Region Viewport reference area.
  * This area is the viewport for a region and contains a region area.
@@ -107,6 +109,91 @@ public class RegionViewport extends Area implements Cloneable {
      */
     public Rectangle2D getViewArea() {
         return viewArea;
+    }
+
+    /**
+     * Return the margin-before offset for printing text
+     *  (sum of region border and padding)
+     *
+     * @return margin-before offset, in millipoints
+     */
+    public int getMarginBeforeWidth() {
+        int margin = 0;
+        BorderProps bps = (BorderProps) getTrait(Trait.BORDER_BEFORE);
+        if (bps != null) {
+            margin = bps.width;
+        }
+        
+        Integer padWidth = (Integer) getTrait(Trait.PADDING_BEFORE);
+        if (padWidth != null) {
+            margin += padWidth.intValue();
+        }
+
+        return margin;
+    }
+    
+    /**
+     * Return the margin-after offset for printing text
+     *  (sum of region border and padding)
+     *
+     * @return margin-after offset, in millipoints
+     */
+    public int getMarginAfterWidth() {
+        int margin = 0;
+        
+        BorderProps bps = (BorderProps) getTrait(Trait.BORDER_AFTER);
+        if (bps != null) {
+            margin = bps.width;
+        }
+        
+        Integer padWidth = (Integer) getTrait(Trait.PADDING_AFTER);
+        if (padWidth != null) {
+            margin += padWidth.intValue();
+        }
+
+        return margin;
+    }
+
+    /**
+     * Return the margin-start offset for printing text
+     *  (sum of region border and padding)
+     *
+     * @return margin-start offset, in millipoints
+     */
+    public int getMarginStartWidth() {
+        int margin = 0;
+        BorderProps bps = (BorderProps) getTrait(Trait.BORDER_START);
+        if (bps != null) {
+            margin = bps.width;
+        }
+        
+        Integer padWidth = (Integer) getTrait(Trait.PADDING_START);
+        if (padWidth != null) {
+            margin += padWidth.intValue();
+        }
+
+        return margin;
+    }
+
+    /**
+     * Return the margin-end offset for printing text
+     *  (sum of region border and padding)
+     *
+     * @return margin-end offset, in millipoints
+     */
+    public int getMarginEndWidth() {
+        int margin = 0;
+        BorderProps bps = (BorderProps) getTrait(Trait.BORDER_END);
+        if (bps != null) {
+            margin = bps.width;
+        }
+        
+        Integer padWidth = (Integer) getTrait(Trait.PADDING_END);
+        if (padWidth != null) {
+            margin += padWidth.intValue();
+        }
+
+        return margin;
     }
 
     private void writeObject(java.io.ObjectOutputStream out)
