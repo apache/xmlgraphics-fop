@@ -311,31 +311,44 @@ public class TTFSubSetFile extends TTFFile {
             pad4();
             start = currentPos;
 
+            /* Loca table must be in order by glyph index, so build
+             * an array first and then write the glyph info and
+             * location offset.
+             */
+            int[] origIndexes = new int[glyphs.size()];
+
             for (Iterator e = glyphs.keySet().iterator(); e.hasNext(); ) {
-                int glyphLength = 0;
                 Integer origIndex = (Integer)e.next();
                 Integer subsetIndex = (Integer)glyphs.get(origIndex);
+                origIndexes[subsetIndex.intValue()] = origIndex.intValue();
+            }
 
+            for (int i=0;i<origIndexes.length;i++) {
+                int glyphLength = 0;
                 int nextOffset = 0;
-                if (origIndex.intValue() >= (mtx_tab.length - 1))
+                int origGlyphIndex = origIndexes[i];
+                if (origGlyphIndex >= (mtx_tab.length - 1)) {
                     nextOffset = (int)lastLoca;
-                else
+                }
+                else {
                     nextOffset =
-                        (int)mtx_tab[origIndex.intValue() + 1].offset;
-
+                        (int)mtx_tab[origGlyphIndex + 1].offset;
+                }
                 glyphLength = nextOffset
-                              - (int)mtx_tab[origIndex.intValue()].offset;
+                              - (int)mtx_tab[origGlyphIndex].offset;
 
                 // Copy glyph
-                System.arraycopy(in.getBytes((int)entry.offset + (int)mtx_tab[origIndex.intValue()].offset, glyphLength),
+                System.arraycopy(in.getBytes((int)entry.offset +
+                                       (int)mtx_tab[origGlyphIndex].offset,
+                                       glyphLength),
                                  0, output, currentPos, glyphLength);
 
 
                 // Update loca table
-                writeULong(locaOffset + subsetIndex.intValue() * 4,
-                           currentPos - start);
-                if ((currentPos - start + glyphLength) > endOffset)
+                writeULong(locaOffset + i * 4, currentPos - start);
+                if ((currentPos - start + glyphLength) > endOffset) {
                     endOffset = (currentPos - start + glyphLength);
+                }
 
                 currentPos += glyphLength;
                 realSize += glyphLength;
@@ -426,17 +439,21 @@ public class TTFSubSetFile extends TTFFile {
                 offset += 2;
             }
 
-            if ((flags & 8) > 0)
+            if ((flags & 8) > 0) {
                 offset += 2;    // WE_HAVE_A_SCALE
-            else if ((flags & 64) > 0)
+            }
+            else if ((flags & 64) > 0) {
                 offset += 4;    // WE_HAVE_AN_X_AND_Y_SCALE
-            else if ((flags & 128) > 0)
+            }
+            else if ((flags & 128) > 0) {
                 offset += 8;    // WE_HAVE_A_TWO_BY_TWO
-
-            if ((flags & 32) > 0)
+            }
+            if ((flags & 32) > 0) {
                 moreComposites = true;
-            else
+            }
+            else {
                 moreComposites = false;
+            }
         }
 
         return ret;
@@ -491,10 +508,12 @@ public class TTFSubSetFile extends TTFFile {
                 offset += 8;    // WE_HAVE_A_TWO_BY_TWO
             }
 
-            if ((flags & 32) > 0)
+            if ((flags & 32) > 0) {
                 moreComposites = true;
-            else
+            }
+            else {
                 moreComposites = false;
+            }
         }
     }
 
@@ -576,8 +595,9 @@ public class TTFSubSetFile extends TTFFile {
          * Check if TrueType collection, and that the name
          * exists in the collection
          */
-        if (!checkTTC(in, name, false))
+        if (!checkTTC(in, name, false)) {
             throw new IOException("Failed to read font");
+        }
 
         output = new byte[in.getFileSize()];
 
@@ -733,8 +753,9 @@ public class TTFSubSetFile extends TTFFile {
      */
     private int readUShort(int pos) {
         int ret = (int)output[pos];
-        if (ret < 0)
+        if (ret < 0) {
             ret += 256;
+        }
         ret = ret << 8;
         if ((int)output[pos + 1] < 0) {
             ret |= (int)output[pos + 1] + 256;
@@ -780,8 +801,9 @@ public class TTFSubSetFile extends TTFFile {
         // All the tables here are aligned on four byte boundaries
         // Add remainder to size if it's not a multiple of 4
         int remainder = size % 4;
-        if (remainder != 0)
+        if (remainder != 0) {
             size += remainder;
+        }
 
         long sum = 0;
 
@@ -791,8 +813,9 @@ public class TTFSubSetFile extends TTFFile {
             l += (int)(output[start + i + 2] << 16);
             l += (int)(output[start + i + 3] << 16);
             sum += l;
-            if (sum > 0xffffffff)
+            if (sum > 0xffffffff) {
                 sum = sum - 0xffffffff;
+            }
         }
 
         return sum;
