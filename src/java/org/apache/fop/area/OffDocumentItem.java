@@ -19,28 +19,39 @@
 package org.apache.fop.area;
 
 /**
- * Interface for objects that are processed by the renderer outside
+ * Abstract base class for objects that are processed by the renderer outside
  * of the actual document.
  * This object can be handled by the renderer according to three
  * possibilities, IMMEDIATELY, AFTER_PAGE, or END_OF_DOC.
  */
-public interface OffDocumentItem {
+public abstract class OffDocumentItem {
+
     /**
-     * Render this extension immediately when
+     * Process this extension immediately when
      * being handled by the area tree.
      */
     public static final int IMMEDIATELY = 0;
 
     /**
-     * Render this extension after the next page is rendered
+     * Process this extension after the next page is rendered
      * or prepared when being handled by the area tree.
      */
     public static final int AFTER_PAGE = 1;
 
     /**
-     * Render this extension at the end of the document once
+     * Process this extension at the end of the document once
      * all pages have been fully rendered.
      */
     public static final int END_OF_DOC = 2;
 
+
+    protected int whenToProcess = IMMEDIATELY;
+    
+    /**
+     * Get an indicator of when this item should be processed
+     * @return int constant (IMMEDIATELY, AFTER_PAGE, END_OF_DOC)
+     */
+    public int getWhenToProcess() {
+        return whenToProcess;
+    }
 }

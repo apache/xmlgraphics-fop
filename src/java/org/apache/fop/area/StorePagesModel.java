@@ -33,7 +33,7 @@ import org.xml.sax.SAXException;
 public class StorePagesModel extends AreaTreeModel {
     private List pageSequence = null;
     private List currSequence;
-    private List extensions = new java.util.ArrayList();
+    private List offDocumentItems = new java.util.ArrayList();
 
     /**
      * Create a new store pages model
@@ -92,11 +92,11 @@ public class StorePagesModel extends AreaTreeModel {
     }
 
     /**
-     * @see org.apache.fop.area.AreaTreeModel#handleOffDocumentItem(OffDocumentItem, int)
+     * @see org.apache.fop.area.AreaTreeModel#handleOffDocumentItem(OffDocumentItem)
      */
-    public void handleOffDocumentItem(OffDocumentItem ext, int when) {
+    public void handleOffDocumentItem(OffDocumentItem ext) {
         int seq, page;
-        switch(when) {
+        switch(ext.getWhenToProcess()) {
             case OffDocumentItem.IMMEDIATELY:
                 seq = pageSequence == null ? 0 : pageSequence.size();
                 page = currSequence == null ? 0 : currSequence.size();
@@ -106,26 +106,26 @@ public class StorePagesModel extends AreaTreeModel {
             case OffDocumentItem.END_OF_DOC:
                 break;
         }
-        extensions.add(ext);
+        offDocumentItems.add(ext);
     }
 
     /**
-     * Get the list of extensions that apply at a particular
+     * Get the list of OffDocumentItems that apply at a particular
      * position in the document.
      * @param seq the page sequence number
      * @param count the page count in the sequence
-     * @return the list of extensions
+     * @return the list of OffDocumentItems
      */
-    public List getExtensions(int seq, int count) {
+    public List getOffDocumentItems(int seq, int count) {
         return null;
     }
 
     /**
-     * Get the end of document extensions for this stroe pages model.
-     * @return the list of end extensions
+     * Get the end of document OffDocumentItems for this store pages model.
+     * @return the list of end OffDocumentItems
      */
-    public List getEndExtensions() {
-        return extensions;
+    public List getEndOffDocumentItems() {
+        return offDocumentItems;
     }
 
     /**

@@ -52,8 +52,8 @@ public class RenderPagesModel extends StorePagesModel {
      * Pages that have been prepared but not rendered yet.
      */
     protected List prepared = new java.util.ArrayList();
-    private List pendingExt = new java.util.ArrayList();
-    private List endDocExt = new java.util.ArrayList();
+    private List pendingODI = new java.util.ArrayList();
+    private List endDocODI = new java.util.ArrayList();
 
     /**
      * Create a new render pages model with the given renderer.
@@ -126,8 +126,8 @@ public class RenderPagesModel extends StorePagesModel {
         boolean cont = checkPreparedPages(page);
 
         if (cont) {
-            processOffDocumentItems(pendingExt);
-            pendingExt.clear();
+            processOffDocumentItems(pendingODI);
+            pendingODI.clear();
         }
     }
 
@@ -175,41 +175,40 @@ public class RenderPagesModel extends StorePagesModel {
     }
 
     /**
-     * @see org.apache.fop.area.AreaTreeModel#handleOffDocumentItem(OffDocumentItem, int)
+     * @see org.apache.fop.area.AreaTreeModel#handleOffDocumentItem(OffDocumentItem)
      */
-    public void handleOffDocumentItem(OffDocumentItem ext, int when) {
-        switch(when) {
+    public void handleOffDocumentItem(OffDocumentItem oDI) {
+        switch(oDI.getWhenToProcess()) {
             case OffDocumentItem.IMMEDIATELY:
-                renderer.processOffDocumentItem(ext);
+                renderer.processOffDocumentItem(oDI);
                 break;
             case OffDocumentItem.AFTER_PAGE:
-                pendingExt.add(ext);
+                pendingODI.add(oDI);
                 break;
             case OffDocumentItem.END_OF_DOC:
-                endDocExt.add(ext);
+                endDocODI.add(oDI);
                 break;
         }
     }
 
     private void processOffDocumentItems(List list) {
         for (int count = 0; count < list.size(); count++) {
-            OffDocumentItem ext = (OffDocumentItem)list.get(count);
-            renderer.processOffDocumentItem(ext);
+            OffDocumentItem oDI = (OffDocumentItem)list.get(count);
+            renderer.processOffDocumentItem(oDI);
         }
     }
 
     /**
-     * End the document. Render any end document extensions.
+     * End the document. Render any end document OffDocumentItems
      * @see org.apache.fop.area.AreaTreeModel#endDocument()
      */
     public void endDocument() throws SAXException {
         // render any pages that had unresolved ids
         checkPreparedPages(null);
 
-        processOffDocumentItems(pendingExt);
-        pendingExt.clear();
-
-        processOffDocumentItems(endDocExt);
+        processOffDocumentItems(pendingODI);
+        pendingODI.clear();
+        processOffDocumentItems(endDocODI);
         
         try {
             renderer.stopRenderer();

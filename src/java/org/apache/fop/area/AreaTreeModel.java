@@ -45,9 +45,8 @@ public abstract class AreaTreeModel {
     /**
      * Handle an OffDocumentItem 
      * @param ext the extension to handle
-     * @param when when the extension should be handled
      */
-    public abstract void handleOffDocumentItem(OffDocumentItem ext, int when);
+    public abstract void handleOffDocumentItem(OffDocumentItem ext);
 
     /**
      * Signal the end of the document for any processing.
