@@ -6,6 +6,8 @@
  */
 package org.apache.fop.render;
 
+import org.apache.fop.fo.FOUserAgent;
+
 import org.apache.log.Logger;
 
 import java.util.HashMap;
@@ -17,7 +19,7 @@ import java.util.HashMap;
  */
 public class RendererContext {
     String mime;
-    Logger log;
+    FOUserAgent userAgent;
     HashMap props = new HashMap();
 
     public RendererContext(String m) {
@@ -28,12 +30,12 @@ public class RendererContext {
         return mime;
     }
 
-    public void setLogger(Logger logger) {
-        log = logger;
+    public void setUserAgent(FOUserAgent ua) {
+        userAgent = ua;
     }
 
-    public Logger getLogger() {
-        return log;
+    public FOUserAgent getUserAgent() {
+        return userAgent;
     }
 
     public void setProperty(String name, Object val) {

@@ -8,6 +8,7 @@
 package org.apache.fop.layoutmgr;
 
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.TextInfo;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockParent;
 import org.apache.fop.area.Block;
@@ -26,17 +27,21 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         super(fobj);
     }
 
-    // DESIGN. Potential alternative to getParentArea() scheme
-    //     /**
-    //      * Called by child layout manager to get the available space for
-    //      * content in the inline progression direction.
-    //      * Note that a manager may need to ask its parent for this.
-    //      * For a block area, available IPD is determined by indents.
-    //      */
-    //     public int getContentIPD() {
-    // 	getArea(); // make if not existing
-    // 	return blockArea.getIPD();
-    //     }
+    public void setBlockTextInfo(TextInfo ti) {
+
+    }
+
+    /**
+     * Called by child layout manager to get the available space for
+     * content in the inline progression direction.
+     * Note that a manager may need to ask its parent for this.
+     * For a block area, available IPD is determined by indents.
+     */
+    public int getContentIPD() {
+        // adjust for side floats and indents
+        //getParentArea(null); // make if not existing
+        return curBlockArea.getIPD();
+    }
 
     /**
      * Generate areas by tellings all layout managers for its FO's
@@ -77,8 +82,9 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             curBlockArea = new Block();
             // Set up dimensions
             // Must get dimensions from parent area
-            //MinOptMax referenceIPD = parentLM.getReferenceIPD();
             Area parentArea = parentLM.getParentArea(curBlockArea);
+            int referenceIPD = parentArea.getIPD();
+            curBlockArea.setIPD(referenceIPD);
             // Get reference IPD from parentArea
             setCurrentArea(curBlockArea); // ??? for generic operations
         }

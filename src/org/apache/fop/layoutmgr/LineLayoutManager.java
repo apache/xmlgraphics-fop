@@ -15,6 +15,8 @@ import org.apache.fop.area.MinOptMax;
 import org.apache.fop.area.inline.InlineArea;
 
 import java.util.ListIterator;
+import java.util.List;
+import java.util.Iterator;
 
 /**
  * LayoutManager for lines. It builds one or more lines containing
@@ -29,6 +31,7 @@ public class LineLayoutManager extends AbstractLayoutManager {
     private boolean bFirstLine;
     private LayoutManager curLM;
     private MinOptMax remainingIPD;
+    private int lineHeight = 14000;
 
     public LineLayoutManager(ListIterator fobjIter) {
         super(null);
@@ -68,7 +71,17 @@ public class LineLayoutManager extends AbstractLayoutManager {
         if (lineArea != null) {
             // Adjust spacing as necessary
             // Calculate height, based on content (or does the Area do this?)
-            lineArea.setHeight(14000);
+            int maxHeight = lineHeight;
+            List inlineAreas = lineArea.getInlineAreas();
+            for(Iterator iter = inlineAreas.iterator(); iter.hasNext(); ) {
+                InlineArea inline = (InlineArea)iter.next();
+                int h = inline.getHeight();
+                if(h > maxHeight) {
+                    maxHeight = h;
+                }
+            }
+            lineArea.setHeight(maxHeight);
+
             parentLM.addChild(lineArea);
             lineArea = null;
         }
@@ -96,8 +109,7 @@ public class LineLayoutManager extends AbstractLayoutManager {
         // lineArea.setContentIPD(parent.getContentIPD());
         // remainingIPD = parent.getContentIPD();
         // OR???
-        // remainingIPD = parentLM.getContentIPD();
-        remainingIPD = new MinOptMax(300000); // TESTING!!!
+        remainingIPD = new MinOptMax(parentLM.getContentIPD());
         this.bFirstLine = false;
     }
 

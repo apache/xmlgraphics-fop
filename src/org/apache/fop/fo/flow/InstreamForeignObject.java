@@ -133,6 +133,10 @@ public class InstreamForeignObject extends FObj {
         ForeignObject foreign = new ForeignObject(doc, ns);
 
         areaCurrent = new Viewport(foreign);
+        areaCurrent.setWidth((int)size.getX() * 1000);
+        areaCurrent.setHeight((int)size.getY() * 1000);
+        areaCurrent.setOffset(0);
+
         return areaCurrent;
     }
 

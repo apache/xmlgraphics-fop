@@ -44,12 +44,23 @@ public class FOUserAgent {
         return log;
     }
 
-    public void setBaseDirectory(String b) {
+    public void setBaseURL(String b) {
         base = b;
     }
 
-    public String getBaseDirectory() {
+    public String getBaseURL() {
         return base;
+    }
+
+    public float getPixelToMM() {
+        return 0.35277777777777777778f;
+    }
+
+    /**
+     * If to create hot links to footnotes and before floats.
+     */
+    public boolean linkToFootnotes() {
+        return true;
     }
 
     /**
@@ -92,10 +103,11 @@ public class FOUserAgent {
                 handler.handleXML(ctx, doc, namespace);
             } catch (Throwable t) {
                 // could not handle document
-                ctx.getLogger().error("Could not render XML", t);
+                log.error("Could not render XML", t);
             }
         } else {
             // no handler found for document
+            log.debug("No handler defined for XML: " + namespace);
         }
     }
 }

@@ -20,4 +20,5 @@ public interface LayoutManager {
     public void addChild (Area childArea);
     public boolean splitArea(Area areaToSplit, SplitContext context);
     public void setParentLM(LayoutManager lm);
+    public int getContentIPD();
 }

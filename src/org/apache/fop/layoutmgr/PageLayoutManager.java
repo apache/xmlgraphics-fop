@@ -130,13 +130,12 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         // for a float. When?
     }
 
-
-
     private PageViewport makeNewPage(boolean bIsBlank, boolean bIsLast) {
         finishPage();
         try {
             curPage = ((PageSequence) fobj).createPage(bIsBlank, bIsLast);
         } catch (FOPException fopex) { /* ???? */
+            fopex.printStackTrace();
         }
         curBody = (BodyRegion) curPage.getPage(). getRegion(
                     RegionReference.BODY).getRegion();
@@ -306,10 +305,9 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         curBody.setMainReference(new MainReference());
     }
 
-
-
     private Flow createFlow() {
         curFlow = new Flow();
+        curFlow.setIPD(curSpan.getIPD()); // adjust for columns
         // Set IPD and max BPD on the curFlow from curBody
         curSpan.addFlow(curFlow);
         return curFlow;
@@ -328,6 +326,10 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         // 	}
         // 	else newpos = new MinOptMax();
         curSpan = new Span(numCols);
+        // get Width or Height as IPD for span
+        curSpan.setIPD((int) curPage.getPage(). getRegion(
+                    RegionReference.BODY).getViewArea().getWidth());
+
         //curSpan.setPosition(BPD, newpos);
         curBody.getMainReference().addSpan(curSpan);
         createFlow();

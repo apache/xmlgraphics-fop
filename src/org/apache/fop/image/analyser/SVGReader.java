@@ -164,8 +164,7 @@ public class SVGReader implements ImageReader {
                 Element e = ((SVGDocument) doc).getRootElement();
                 String s;
                 SVGUserAgent userAg =
-                  new SVGUserAgent(new AffineTransform());
-                userAg.setLogger(ua.getLogger());
+                  new SVGUserAgent(ua, new AffineTransform());
                 BridgeContext ctx = new BridgeContext(userAg);
                 UnitProcessor.Context uctx =
                   UnitProcessor.createContext(ctx, e);

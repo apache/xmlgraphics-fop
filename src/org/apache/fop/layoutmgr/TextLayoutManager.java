@@ -8,9 +8,9 @@
 package org.apache.fop.layoutmgr;
 
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.FOText; // For TextInfo: TODO: make independent!
+import org.apache.fop.fo.TextInfo;
 import org.apache.fop.area.Area;
-import org.apache.fop.area.Property;
+import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.Word;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.util.CharUtilities;
@@ -26,7 +26,7 @@ import java.util.ListIterator;
 public class TextLayoutManager extends LeafNodeLayoutManager {
 
     private char[] chars;
-    private FOText.TextInfo textInfo;
+    private TextInfo textInfo;
 
     private static final char NEWLINE = '\n';
     private static final char RETURN = '\r';
@@ -42,7 +42,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     protected static final int TEXT = 2;
 
     public TextLayoutManager(FObj fobj, char[] chars,
-                             FOText.TextInfo textInfo) {
+                             TextInfo textInfo) {
         super(fobj);
         this.chars = chars;
         this.textInfo = textInfo;
@@ -72,7 +72,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         // With CID fonts, space isn't neccesary currentFontState.width(32)
         int whitespaceWidth = CharUtilities.getCharWidth(' ', textInfo.fs);
 
-        int wordStart = 0;
+        int wordStart = -1;
         int wordLength = 0;
         int wordWidth = 0;
         int spaceWidth = 0;
@@ -152,15 +152,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         // spaces. Split the word and add Space
                         // as necessary. All spaces inside the word
                         // Have a fixed width.
-                        Word curWordArea = new Word();
-                        curWordArea.setWidth(wordWidth);
-                        curWordArea.setWord( new String(chars, wordStart + 1,
-                                                        wordLength));
-                        Property prop = new Property();
-                        prop.propType = Property.FONT_STATE;
-                        prop.data = textInfo.fs;
-                        curWordArea.addProperty(prop);
-                        parentLM.addChild(curWordArea);
+                        parentLM.addChild(createWord(new String(chars, wordStart + 1,
+                                                        wordLength), wordWidth));
 
                         // reset word width
                         wordWidth = 0;
@@ -221,19 +214,25 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 wordLength = chars.length - 1 - wordStart;
             }
 
-            Word curWordArea = new Word();
-            curWordArea.setWidth(wordWidth);
-            curWordArea.setWord(
-              new String(chars, wordStart + 1, wordLength));
-            Property prop = new Property();
-            prop.propType = Property.FONT_STATE;
-            prop.data = textInfo.fs;
-            curWordArea.addProperty(prop);
-            parentLM.addChild(curWordArea);
+            parentLM.addChild(createWord(new String(chars, wordStart + 1, wordLength), wordWidth));
 
         }
 
         chars = null;
+    }
+
+    protected Word createWord(String str, int width) {
+        Word curWordArea = new Word();
+        curWordArea.setWidth(width);
+        curWordArea.setHeight(textInfo.fs.getAscender() - textInfo.fs.getDescender());
+        curWordArea.setOffset(textInfo.fs.getAscender());
+
+        curWordArea.setWord(str);
+        Trait prop = new Trait();
+        prop.propType = Trait.FONT_STATE;
+        prop.data = textInfo.fs;
+        curWordArea.addTrait(prop);
+        return curWordArea;
     }
 
     /** Try to split the word area by hyphenating the word. */

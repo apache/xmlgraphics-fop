@@ -20,7 +20,7 @@ import org.apache.fop.datatypes.ColorType;
  * and their processing
  */
 public class FObjMixed extends FObj {
-    FOText.TextInfo textInfo = null;
+    TextInfo textInfo = null;
     FontInfo fontInfo=null;
 
     public FObjMixed(FONode parent) {
@@ -33,7 +33,7 @@ public class FObjMixed extends FObj {
 
     protected void addCharacters(char data[], int start, int length) {
         if(textInfo == null) {
-	    textInfo = new FOText.TextInfo();
+	    textInfo = new TextInfo();
 
 	    try {
 		textInfo.fs = propMgr.getFontState(fontInfo);
@@ -43,9 +43,7 @@ public class FObjMixed extends FObj {
 	    }
 
             ColorType c = getProperty("color").getColorType();
-            textInfo.red = c.red();
-            textInfo.green = c.green();
-            textInfo.blue = c.blue();
+            textInfo.color = c;
 
             textInfo.verticalAlign =
                 getProperty("vertical-align").getEnum();
@@ -97,8 +95,6 @@ public class FObjMixed extends FObj {
     public CharIterator charIterator() {
 	return new RecursiveCharIterator(this);
     }
-
-
 
 }
 
