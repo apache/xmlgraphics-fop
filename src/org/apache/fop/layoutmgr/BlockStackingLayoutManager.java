@@ -30,12 +30,10 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
         super(fobj);
     }
 
-
-
     public boolean splitArea(Area area, SplitContext splitContext) {
         // Divide area so that it will be within targetLength if possible
         // If not, it can be shorter, but not longer.
-        /* Iterate over contents of the area. */
+        /* Iterate over contents of the area. *
 
         // Need to figure out if we can do this generically
         // Logically a BlockStacking LM only handles Block-type areas
@@ -66,13 +64,13 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
                         /* Split 'area', placing all children after
                          * minBreakCost.getArea() into a new area,
                          * which we store in the splitContext.
-                         */
+                         *
                         // splitContext.nextArea = area.splitAfter(minBreakCost.getArea());
                     } else {
                         /* This area will be shorter than the desired minimum.
                          * Split before the current childArea (which will be
                          * the first area in the newly created Area.
-                         */
+                         *
                         //splitContext.nextArea = area.splitBefore(childArea);
                     }
                 } else
@@ -94,7 +92,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
         }
         // True if some part of area can be placed, false if none is placed
         return (splitContext.nextArea != area);
-
+        */
+        return false;
     }
 
     private BreakCost evaluateBreakCost(Area parent, Area child) {
@@ -136,11 +135,11 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
      * @param childArea the area to add: will be some block-stacked Area.
      * @param parentArea the area in which to add the childArea
      */
-    protected void addChildToArea(Area childArea, BlockParent parentArea) {
+    protected boolean addChildToArea(Area childArea, BlockParent parentArea) {
         // This should be a block-level Area (Block in the generic sense)
         if (!(childArea instanceof Block)) {
             System.err.println("Child not a Block in BlockStackingLM!");
-            return;
+            return false;
         }
 
         // See if the whole thing fits, including space before
@@ -151,23 +150,28 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
         if (targetDim.max >= childArea.getAllocationBPD().min) {
             //parentArea.addBlock(new InterBlockSpace(spaceBefore));
             parentArea.addBlock((Block) childArea);
-            return;
+            return false;
         } else {
+            parentArea.addBlock((Block) childArea);
+            flush(); // hand off current area to parent
             // Probably need something like max BPD so we don't get into
             // infinite loops with large unbreakable chunks
-            SplitContext splitContext = new SplitContext(targetDim);
+            //SplitContext splitContext = new SplitContext(targetDim);
 
-            LayoutManager childLM =
+            /*LayoutManager childLM =
               childArea.getGeneratingFObj(). getLayoutManager();
             if (childLM.splitArea(childArea, splitContext)) {
                 //parentArea.addBlock(new InterBlockSpace(spaceBefore));
                 parentArea.addBlock((Block) childArea);
-            }
-            flush(); // hand off current area to parent
-            getParentArea(splitContext.nextArea);
+            }*/
+            //flush(); // hand off current area to parent
+            //getParentArea(splitContext.nextArea);
+            //getParentArea(childArea);
             // Check that reference IPD hasn't changed!!!
             // If it has, we must "reflow" the content
-            addChild(splitContext.nextArea);
+            //addChild(splitContext.nextArea);
+            //addChild(childArea);
+            return true;
         }
     }
 
@@ -180,17 +184,18 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
      * If so, add it. Otherwise initiate breaking.
      * @param childArea the area to add: will be some block-stacked Area.
      */
-    public void addChild(Area childArea) {
-        addChildToArea(childArea, getCurrentArea());
+    public boolean addChild(Area childArea) {
+        return addChildToArea(childArea, getCurrentArea());
     }
 
     /**
      * Force current area to be added to parent area.
      */
-    protected void flush() {
+    protected boolean flush() {
         if (getCurrentArea() != null)
-            parentLM.addChild(getCurrentArea());
+            return parentLM.addChild(getCurrentArea());
+        return false;
     }
 
-
 }
+

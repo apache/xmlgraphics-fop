@@ -38,8 +38,8 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
      * area class. A Flow can fill at most one area container of any class
      * at any one time. The actual work is done by BlockStackingLM.
      */
-    public void addChild(Area childArea) {
-        addChildToArea(childArea,
+    public boolean addChild(Area childArea) {
+        return addChildToArea(childArea,
                        this.currentAreas[childArea.getAreaClass()]);
     }
 

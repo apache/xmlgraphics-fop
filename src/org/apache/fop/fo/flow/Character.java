@@ -24,6 +24,7 @@ import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
 
+import java.util.List;
 
 /**
  * this class represents the flow object 'fo:character'. Its use is defined by
@@ -48,13 +49,23 @@ public class Character extends FObj {
         super(parent);
     }
 
-    public LayoutManager getLayoutManager() {
-        LeafNodeLayoutManager lm = new LeafNodeLayoutManager(this);
-        lm.setCurrentArea(getInlineArea());
-        return lm;
+    public void addLayoutManager(List list) {
+        InlineArea inline = getInlineArea();
+        if (inline != null) {
+            LeafNodeLayoutManager lm = new LeafNodeLayoutManager(this);
+            lm.setCurrentArea(inline);
+            list.add(lm);
+        }
     }
 
     protected InlineArea getInlineArea() {
+        String str = this.properties.get("character").getString();
+        if (str.length() == 1) {
+            org.apache.fop.area.inline.Character ch =
+              new org.apache.fop.area.inline.Character(
+                str.charAt(0));
+            return ch;
+        }
         return null;
     }
 
@@ -77,7 +88,8 @@ public class Character extends FObj {
         MarginInlineProps mProps = propMgr.getMarginInlineProps();
 
         // Common Relative Position Properties
-        RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
+        RelativePositionProps mRelProps =
+          propMgr.getRelativePositionProps();
 
         // this.properties.get("alignment-adjust");
         // this.properties.get("treat-as-word-space");
@@ -105,8 +117,8 @@ public class Character extends FObj {
     }
 
     public CharIterator charIterator() {
-	return new OneCharIterator(characterValue);
-	// But what it the character is ignored due to white space handling?
+        return new OneCharIterator(characterValue);
+        // But what it the character is ignored due to white space handling?
     }
 
 

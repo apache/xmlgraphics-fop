@@ -14,10 +14,10 @@ import org.apache.fop.area.Area;
  * The interface for all LayoutManagers.
  */
 public interface LayoutManager {
-    public void generateAreas();
-    //public boolean generatesInlineAreas();
+    public boolean generateAreas();
+    public boolean generatesInlineAreas();
     public Area getParentArea (Area childArea);
-    public void addChild (Area childArea);
+    public boolean addChild (Area childArea);
     public boolean splitArea(Area areaToSplit, SplitContext context);
     public void setParentLM(LayoutManager lm);
     public int getContentIPD();

@@ -11,6 +11,7 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.TextInfo;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Trait;
+import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Word;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.util.CharUtilities;
@@ -19,6 +20,7 @@ import org.apache.fop.fo.properties.VerticalAlign;
 import org.apache.fop.fo.properties.*;
 
 import java.util.ListIterator;
+import java.util.ArrayList;
 
 /**
  * LayoutManager for text (a sequence of characters) which generates one
@@ -28,6 +30,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
     private char[] chars;
     private TextInfo textInfo;
+
+    ArrayList words = new ArrayList();
 
     private static final char NEWLINE = '\n';
     private static final char RETURN = '\r';
@@ -49,29 +53,36 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         this.textInfo = textInfo;
     }
 
+    public int size() {
+        parseChars();
+        return words.size();
+    }
+
+    public InlineArea get(int index) {
+        parseChars();
+        return (InlineArea)words.get(index);
+    }
+
     /**
      * Generate inline areas for words in text.
      */
-    public void generateAreas() {
+    public boolean generateAreas() {
         // Handle white-space characteristics. Maybe there is no area to
         // generate....
 
         // Iterate over characters and make text areas.
         // Add each one to parent. Handle word-space.
-        //        Word curWordArea = new Word();
-        //        curWordArea.setWord(new String(chars));
-        //System.out.println("word:" + new String(chars));
-        //parentLM.addChild(curWordArea);
-        parseChars();
-
-        //setCurrentArea(curWordArea);
-        //flush();
+        return false;
     }
 
     protected void parseChars() {
+        if(chars == null) {
+            return;
+        }
 
+    int whitespaceWidth;
         // With CID fonts, space isn't neccesary currentFontState.width(32)
-        int whitespaceWidth = CharUtilities.getCharWidth(' ', textInfo.fs);
+        whitespaceWidth = CharUtilities.getCharWidth(' ', textInfo.fs);
 
         int wordStart = -1;
         int wordLength = 0;
@@ -79,9 +90,10 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         int spaceWidth = 0;
 
         int prev = NOTHING;
+    int i = 0;
 
         /* iterate over each character */
-        for (int i = 0; i < chars.length; i++) {
+        for (; i < chars.length; i++) {
             int charWidth;
             /* get the character */
             char c = chars[i];
@@ -115,8 +127,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                             if (spaceWidth > 0) {
                                 Space is = new Space();
                                 is.setWidth(spaceWidth);
-                                parentLM.addChild(is);
                                 spaceWidth = 0;
+                                words.add(is);
                             }
                         } else if (c == TAB) {
                             spaceWidth += 8 * whitespaceWidth;
@@ -127,8 +139,10 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         if (spaceWidth > 0) {
                             Space is = new Space();
                             is.setWidth(spaceWidth);
-                            parentLM.addChild(is);
+                            is.info = new LayoutInfo();
+                            is.info.breakAfter = true;
                             spaceWidth = 0;
+                            words.add(is);
                         }
                     }
 
@@ -142,8 +156,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                     if (spaceWidth > 0) {
                         Space is = new Space();
                         is.setWidth(spaceWidth);
-                        parentLM.addChild(is);
                         spaceWidth = 0;
+                        words.add(is);
                     }
 
                     // add the current word
@@ -153,7 +167,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         // spaces. Split the word and add Space
                         // as necessary. All spaces inside the word
                         // Have a fixed width.
-                        parentLM.addChild(createWord(new String(chars, wordStart + 1,
+                        words.add(createWord(new String(chars, wordStart + 1,
                                                         wordLength), wordWidth));
 
                         // reset word width
@@ -190,7 +204,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                             // textdecoration not used because spaceWidth is 0
                             Space is = new Space();
                             is.setWidth(spaceWidth);
-                            parentLM.addChild(is);
+                            words.add(is);
                         } else if (c == TAB) {
                             prev = WHITESPACE;
                             spaceWidth = 8 * whitespaceWidth;
@@ -215,8 +229,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 wordLength = chars.length - 1 - wordStart;
             }
 
-            parentLM.addChild(createWord(new String(chars, wordStart + 1, wordLength), wordWidth));
-
+            words.add(createWord(new String(chars, wordStart + 1, wordLength), wordWidth));
         }
 
         chars = null;

@@ -97,6 +97,10 @@ public class SVGElement extends SVGObj {
                 return new AffineTransform();
             }
 
+            public AffineTransform getGlobalTransform() {
+                return new AffineTransform();
+            }
+
             public float getViewportWidth() {
                 return (float)view.getX();
             }

@@ -22,6 +22,7 @@ import org.apache.fop.area.inline.Viewport;
 // Java
 import java.net.URL;
 import java.net.MalformedURLException;
+import java.util.List;
 
 public class ExternalGraphic extends FObj {
     String url;
@@ -41,10 +42,10 @@ public class ExternalGraphic extends FObj {
         super(parent);
     }
 
-    public LayoutManager getLayoutManager() {
+    public void addLayoutManager(List list) {
         LeafNodeLayoutManager lm = new LeafNodeLayoutManager(this);
         lm.setCurrentArea(getInlineArea());
-        return lm;
+        list.add(lm);
     }
 
     protected InlineArea getInlineArea() {

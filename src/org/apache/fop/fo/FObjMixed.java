@@ -14,6 +14,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.StreamRenderer;
 import org.apache.fop.datatypes.ColorType;
 
+import java.util.List;
 
 /**
  * base class for representation of mixed content formatting objects
@@ -21,37 +22,48 @@ import org.apache.fop.datatypes.ColorType;
  */
 public class FObjMixed extends FObj {
     TextInfo textInfo = null;
-    protected FontInfo fontInfo=null;
+    protected FontInfo fontInfo = null;
 
     public FObjMixed(FONode parent) {
         super(parent);
     }
 
     public void setStreamRenderer(StreamRenderer st) {
-	fontInfo = st.getFontInfo();
+        fontInfo = st.getFontInfo();
+    }
+
+    public void addLayoutManager(List lms) {
+        // set start and end properties for this element, id, etc.
+        int numChildren = this.children.size();
+        for (int i = 0; i < numChildren; i++) {
+            Object o = children.get(i);
+            if (o instanceof FObj) {
+                FObj fo = (FObj) o;
+                fo.addLayoutManager(lms);
+            }
+        }
     }
 
     protected void addCharacters(char data[], int start, int length) {
-        if(textInfo == null) {
-	    textInfo = new TextInfo();
+        if (textInfo == null) {
+            textInfo = new TextInfo();
 
-	    try {
-		textInfo.fs = propMgr.getFontState(fontInfo);
-	    } catch (FOPException fopex) {
-		log.error("Error setting FontState for characters: " +
-			  fopex.getMessage());
-	    }
+            try {
+                textInfo.fs = propMgr.getFontState(fontInfo);
+            } catch (FOPException fopex) {
+                log.error("Error setting FontState for characters: " +
+                          fopex.getMessage());
+            }
 
             ColorType c = getProperty("color").getColorType();
             textInfo.color = c;
 
             textInfo.verticalAlign =
-                getProperty("vertical-align").getEnum();
+              getProperty("vertical-align").getEnum();
 
-            textInfo.wrapOption =
-                getProperty("wrap-option").getEnum();
+            textInfo.wrapOption = getProperty("wrap-option").getEnum();
             textInfo.whiteSpaceCollapse =
-                getProperty("white-space-collapse").getEnum();
+              getProperty("white-space-collapse").getEnum();
 
         }
 
@@ -82,7 +94,7 @@ public class FObjMixed extends FObj {
 
         int numChildren = this.children.size();
         for (int i = this.marker; i < numChildren; i++) {
-            FONode fo = (FONode)children.get(i);
+            FONode fo = (FONode) children.get(i);
             Status status;
             if ((status = fo.layout(area)).isIncomplete()) {
                 this.marker = i;
@@ -93,7 +105,7 @@ public class FObjMixed extends FObj {
     }
 
     public CharIterator charIterator() {
-	return new RecursiveCharIterator(this);
+        return new RecursiveCharIterator(this);
     }
 
 }

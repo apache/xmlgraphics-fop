@@ -15,8 +15,12 @@ import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
 
+import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
+import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.inline.Word;
+
 // Java
-import java.util.Enumeration;
+import java.util.List;
 
 public class PageNumber extends FObj {
 
@@ -29,6 +33,24 @@ public class PageNumber extends FObj {
 
     public PageNumber(FONode parent) {
         super(parent);
+    }
+
+    public void addLayoutManager(List lms) {
+        lms.add(new LeafNodeLayoutManager(this) {
+            public InlineArea get(int index) {
+                if(index > 0)
+                    return null;
+                // get page string from parent, build area
+                Word inline = new Word();
+                //String parentLM.getCurrentPageNumber();
+                inline.setWord("01");
+                return inline;
+            }
+
+            public boolean resolved() {
+                return true;
+            }
+        });
     }
 
     public Status layout(Area area) throws FOPException {

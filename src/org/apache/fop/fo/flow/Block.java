@@ -20,6 +20,8 @@ import org.apache.fop.apps.StreamRenderer;
 
 import org.xml.sax.Attributes;
 
+import java.util.List;
+
 /*
   Modified by Mark Lillywhite mark-fop@inomial.com. The changes
   here are based on memory profiling and do not change functionality.
@@ -31,9 +33,9 @@ import org.xml.sax.Attributes;
   the reference to BlockArea was made local, the required information
   is now stored (instead of a reference to the complex BlockArea object)
   and it appears that there are a lot of changes in this file, in fact
-  there are only a few sematic changes; mostly I just got rid of 
+  there are only a few sematic changes; mostly I just got rid of
   "this." from blockArea since BlockArea is now local.
-  */
+ */
 
 public class Block extends FObjMixed {
 
@@ -76,10 +78,13 @@ public class Block extends FObjMixed {
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
         this.span = this.properties.get("span").getEnum();
-        this.wsTreatment = this.properties.get("white-space-treatment").getEnum();
-        this.bWScollapse = (this.properties.get("white-space-collapse").getEnum() ==
-	    Constants.TRUE);
-	this.lfTreatment = this.properties.get("linefeed-treatment").getEnum();
+        this.wsTreatment =
+          this.properties.get("white-space-treatment").getEnum();
+        this.bWScollapse =
+          (this.properties.get("white-space-collapse").getEnum()
+           == Constants.TRUE);
+        this.lfTreatment =
+          this.properties.get("linefeed-treatment").getEnum();
     }
 
     public Status layout(Area area) throws FOPException {
@@ -114,7 +119,8 @@ public class Block extends FObjMixed {
             MarginProps mProps = propMgr.getMarginProps();
 
             // Common Relative Position Properties
-            RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
+            RelativePositionProps mRelProps =
+              propMgr.getRelativePositionProps();
 
             // this.properties.get("break-after");
             // this.properties.get("break-before");
@@ -145,29 +151,30 @@ public class Block extends FObjMixed {
             // this.properties.get("z-index");
 
             this.align = this.properties.get("text-align").getEnum();
-            this.alignLast = this.properties.get("text-align-last").getEnum();
+            this.alignLast =
+              this.properties.get("text-align-last").getEnum();
             this.breakAfter = this.properties.get("break-after").getEnum();
-            this.lineHeight =
-                this.properties.get("line-height").getLength().mvalue();
-            this.startIndent =
-                this.properties.get("start-indent").getLength().mvalue();
-            this.endIndent =
-                this.properties.get("end-indent").getLength().mvalue();
-            this.spaceBefore =
-                this.properties.get("space-before.optimum").getLength().mvalue();
-            this.spaceAfter =
-                this.properties.get("space-after.optimum").getLength().mvalue();
-            this.textIndent =
-                this.properties.get("text-indent").getLength().mvalue();
+            this.lineHeight = this.properties.get(
+                                "line-height").getLength().mvalue();
+            this.startIndent = this.properties.get(
+                                 "start-indent").getLength().mvalue();
+            this.endIndent = this.properties.get(
+                               "end-indent").getLength().mvalue();
+            this.spaceBefore = this.properties.get(
+                                 "space-before.optimum").getLength().mvalue();
+            this.spaceAfter = this.properties.get(
+                                "space-after.optimum").getLength().mvalue();
+            this.textIndent = this.properties.get(
+                                "text-indent").getLength().mvalue();
             this.keepWithNext =
-                this.properties.get("keep-with-next").getEnum();
-            this.backgroundColor =
-                this.properties.get("background-color").getColorType();
+              this.properties.get("keep-with-next").getEnum();
+            this.backgroundColor = this.properties.get(
+                                     "background-color").getColorType();
 
             this.blockWidows =
-                this.properties.get("widows").getNumber().intValue();
+              this.properties.get("widows").getNumber().intValue();
             this.blockOrphans =
-                this.properties.get("orphans").getNumber().intValue();
+              this.properties.get("orphans").getNumber().intValue();
 
             this.id = this.properties.get("id").getString();
 
@@ -189,9 +196,9 @@ public class Block extends FObjMixed {
 
             int numChildren = this.children.size();
             for (int i = 0; i < numChildren; i++) {
-                FONode fo = (FONode)children.get(i);
+                FONode fo = (FONode) children.get(i);
                 if (fo instanceof FOText) {
-                    if (((FOText)fo).willCreateArea()) {
+                    if (((FOText) fo).willCreateArea()) {
                         //fo.setWidows(blockWidows);
                         break;
                     } else {
@@ -206,9 +213,9 @@ public class Block extends FObjMixed {
             }
 
             for (int i = numChildren - 1; i >= 0; i--) {
-                FONode fo = (FONode)children.get(i);
+                FONode fo = (FONode) children.get(i);
                 if (fo instanceof FOText) {
-                    if (((FOText)fo).willCreateArea()) {
+                    if (((FOText) fo).willCreateArea()) {
                         //fo.setOrphans(blockOrphans);
                         break;
                     }
@@ -232,11 +239,10 @@ public class Block extends FObjMixed {
         }
 
         int spaceLeft = area.spaceLeft();
-        blockArea =
-            new BlockArea(propMgr.getFontState(area.getFontInfo()),
-                          area.getAllocationWidth(), area.spaceLeft(),
-                          startIndent, endIndent, textIndent, align,
-                          alignLast, lineHeight);
+        blockArea = new BlockArea( propMgr.getFontState(area.getFontInfo()),
+                                   area.getAllocationWidth(), area.spaceLeft(),
+                                   startIndent, endIndent, textIndent, align, alignLast,
+                                   lineHeight);
         blockArea.setGeneratedBy(this);
         this.areasGenerated++;
         if (this.areasGenerated == 1)
@@ -246,9 +252,9 @@ public class Block extends FObjMixed {
 
         // markers
         //if (this.hasMarkers())
-            //blockArea.addMarkers(this.getMarkers());
+        //blockArea.addMarkers(this.getMarkers());
 
-        blockArea.setParent(area);    // BasicLink needs it
+        blockArea.setParent(area); // BasicLink needs it
         blockArea.setPage(area.getPage());
         blockArea.setBackgroundColor(backgroundColor);
         blockArea.setBorderAndPadding(propMgr.getBorderAndPadding());
@@ -262,7 +268,7 @@ public class Block extends FObjMixed {
 
         int numChildren = this.children.size();
         for (int i = this.marker; i < numChildren; i++) {
-            FONode fo = (FONode)children.get(i);
+            FONode fo = (FONode) children.get(i);
             Status status;
             if ((status = fo.layout(blockArea)).isIncomplete()) {
                 this.marker = i;
@@ -280,14 +286,15 @@ public class Block extends FObjMixed {
                     if ((i != 0)) {
                         status = new Status(Status.AREA_FULL_SOME);
                         area.addChild(blockArea);
-                        area.setMaxHeight(area.getMaxHeight() - spaceLeft
-                                          + blockArea.getMaxHeight());
+                        area.setMaxHeight(area.getMaxHeight() -
+                                          spaceLeft + blockArea.getMaxHeight());
                         area.increaseHeight(blockArea.getHeight());
-                        area.setAbsoluteHeight(blockArea.getAbsoluteHeight());
+                        area.setAbsoluteHeight(
+                          blockArea.getAbsoluteHeight());
                         anythingLaidOut = true;
 
                         return status;
-                    } else    // i == 0 nothing was laid out..
+                    } else // i == 0 nothing was laid out..
                     {
                         anythingLaidOut = false;
                         return status;
@@ -296,8 +303,8 @@ public class Block extends FObjMixed {
 
                 // blockArea.end();
                 area.addChild(blockArea);
-                area.setMaxHeight(area.getMaxHeight() - spaceLeft
-                                  + blockArea.getMaxHeight());
+                area.setMaxHeight(area.getMaxHeight() - spaceLeft +
+                                  blockArea.getMaxHeight());
                 area.increaseHeight(blockArea.getHeight());
                 area.setAbsoluteHeight(blockArea.getAbsoluteHeight());
                 anythingLaidOut = true;
@@ -308,8 +315,8 @@ public class Block extends FObjMixed {
 
         blockArea.end();
 
-        area.setMaxHeight(area.getMaxHeight() - spaceLeft
-                          + blockArea.getMaxHeight());
+        area.setMaxHeight(area.getMaxHeight() - spaceLeft +
+                          blockArea.getMaxHeight());
 
         area.addChild(blockArea);
 
@@ -327,8 +334,8 @@ public class Block extends FObjMixed {
         }
         // This is not needed any more and it consumes a LOT
         // of memory. So we release it for the GC.
-        areaHeight= blockArea.getHeight();
-        contentWidth= blockArea.getContentWidth();
+        areaHeight = blockArea.getHeight();
+        contentWidth = blockArea.getContentWidth();
 
         // no break if last in area tree, or trailing in context
         // area
@@ -359,7 +366,7 @@ public class Block extends FObjMixed {
      * Return the content width of the boxes generated by this FO.
      */
     public int getContentWidth() {
-        return contentWidth;    // getAllocationWidth()??
+        return contentWidth; // getAllocationWidth()??
     }
 
 
@@ -367,26 +374,25 @@ public class Block extends FObjMixed {
         return this.span;
     }
 
-    public LayoutManager getLayoutManager() {
-BlockLayoutManager blm = new BlockLayoutManager(this);
-TextInfo ti = new TextInfo();
+    public void addLayoutManager(List list) {
+        BlockLayoutManager blm = new BlockLayoutManager(this);
+        TextInfo ti = new TextInfo();
 
-      try {
-    ti.fs = propMgr.getFontState(fontInfo);
-      } catch (FOPException fopex) {
-    log.error("Error setting FontState for characters: " +
-        fopex.getMessage());
-      }
-            ti.lineHeight = this.lineHeight;
+        try {
+            ti.fs = propMgr.getFontState(fontInfo);
+        } catch (FOPException fopex) {
+            log.error("Error setting FontState for characters: " +
+                      fopex.getMessage());
+        }
+        ti.lineHeight = this.lineHeight;
 
-            ColorType c = getProperty("color").getColorType();
-            ti.color = c;
+        ColorType c = getProperty("color").getColorType();
+        ti.color = c;
 
-            ti.verticalAlign =
-                getProperty("vertical-align").getEnum();
+        ti.verticalAlign = getProperty("vertical-align").getEnum();
 
-blm.setBlockTextInfo(ti);
-	return blm;
+        blm.setBlockTextInfo(ti);
+        list.add(blm);
     }
 
     public boolean generatesInlineAreas() {
@@ -394,144 +400,142 @@ blm.setBlockTextInfo(ti);
     }
 
     public void addChild(FONode child) {
-	// Handle whitespace based on values of properties
-	// Handle a sequence of inline-producing children in
-	// one pass
-	if (((FObj)child).generatesInlineAreas()) {
-	    if (firstInlineChild == null) {
-		firstInlineChild = child;
-	    }
-	    // lastInlineChild = children.size();
-	}
-	else {
-	    // Handle whitespace in preceeding inline areas if any
-	    handleWhiteSpace();
-	}
-	super.addChild(child);
+        // Handle whitespace based on values of properties
+        // Handle a sequence of inline-producing children in
+        // one pass
+        if (((FObj) child).generatesInlineAreas()) {
+            if (firstInlineChild == null) {
+                firstInlineChild = child;
+            }
+            // lastInlineChild = children.size();
+        } else {
+            // Handle whitespace in preceeding inline areas if any
+            handleWhiteSpace();
+        }
+        super.addChild(child);
     }
 
     public void end() {
-	handleWhiteSpace();
+        handleWhiteSpace();
     }
 
     private void handleWhiteSpace() {
-	log.debug("fo:block: handleWhiteSpace");
-	if (firstInlineChild != null) {
-	    boolean bInWS=false;
-	    boolean bPrevWasLF=false;
-	    RecursiveCharIterator charIter =
-		new RecursiveCharIterator(this, firstInlineChild);
-	    LFchecker lfCheck = new LFchecker(charIter);
+        log.debug("fo:block: handleWhiteSpace");
+        if (firstInlineChild != null) {
+            boolean bInWS = false;
+            boolean bPrevWasLF = false;
+            RecursiveCharIterator charIter =
+              new RecursiveCharIterator(this, firstInlineChild);
+            LFchecker lfCheck = new LFchecker(charIter);
 
-	    while (charIter.hasNext()) {
-		switch (CharUtilities.classOf(charIter.nextChar())) {
-		case CharUtilities.XMLWHITESPACE:
-		    /* Some kind of whitespace character, except linefeed. */
-		    boolean bIgnore=false;
-		    
-		    switch (wsTreatment) {
-		    case Constants.IGNORE:
-			bIgnore=true;
-			break;
-		    case Constants.IGNORE_IF_BEFORE_LINEFEED:
-			bIgnore = lfCheck.nextIsLF();
-			break;
-		    case Constants.IGNORE_IF_SURROUNDING_LINEFEED:
-			bIgnore = (bPrevWasLF || lfCheck.nextIsLF());
-			break;
-		    case Constants.IGNORE_IF_AFTER_LINEFEED:
-			bIgnore = bPrevWasLF;
-			break;
-		    }
-		    // Handle ignore
-		    if (bIgnore) {
-			charIter.remove();
-		    }
-		    else if (bWScollapse) {
-			if (bInWS || (lfTreatment == Constants.PRESERVE && 
-				      (bPrevWasLF || lfCheck.nextIsLF()))) {
-			    charIter.remove();
-			}
-			else {
-			    bInWS = true;
-			}
-		    }
-		    break;
+            while (charIter.hasNext()) {
+                switch (CharUtilities.classOf(charIter.nextChar())) {
+                    case CharUtilities.XMLWHITESPACE:
+                        /* Some kind of whitespace character, except linefeed. */
+                        boolean bIgnore = false;
 
-		case CharUtilities.LINEFEED:
-		    /* A linefeed */
-		    lfCheck.reset();
-		    bPrevWasLF=true; // for following whitespace
+                        switch (wsTreatment) {
+                            case Constants.IGNORE:
+                                bIgnore = true;
+                                break;
+                            case Constants.IGNORE_IF_BEFORE_LINEFEED:
+                                bIgnore = lfCheck.nextIsLF();
+                                break;
+                            case Constants.IGNORE_IF_SURROUNDING_LINEFEED:
+                                bIgnore = (bPrevWasLF ||
+                                           lfCheck.nextIsLF());
+                                break;
+                            case Constants.IGNORE_IF_AFTER_LINEFEED:
+                                bIgnore = bPrevWasLF;
+                                break;
+                        }
+                        // Handle ignore
+                        if (bIgnore) {
+                            charIter.remove();
+                        } else if (bWScollapse) {
+                            if (bInWS || (lfTreatment ==
+                                          Constants.PRESERVE &&
+                                          (bPrevWasLF || lfCheck.nextIsLF()))) {
+                                charIter.remove();
+                            } else {
+                                bInWS = true;
+                            }
+                        }
+                        break;
 
-		    switch (lfTreatment) {
-		    case Constants.IGNORE:
-			charIter.remove();
-			break;
-		    case Constants.TREAT_AS_SPACE:
-			if (bInWS) {
-			    // only if bWScollapse=true
-			    charIter.remove();
-			}
-			else {
-			    if (bWScollapse) bInWS=true;
-			    charIter.replaceChar('\u0020');
-			}
-			break;
-		    case Constants.TREAT_AS_ZERO_WIDTH_SPACE:
-			charIter.replaceChar('\u200b');
-			// Fall through: this isn't XML whitespace
-		    case Constants.PRESERVE:
-			bInWS=false;
-			break;
-		    }
-		    break;
+                    case CharUtilities.LINEFEED:
+                        /* A linefeed */
+                        lfCheck.reset();
+                        bPrevWasLF = true; // for following whitespace
 
-		case CharUtilities.EOT:
-		    //   A "boundary" objects such as non-character inline
-		    // or nested block object was encountered.
-		    // If any whitespace run in progress, finish it.
-		    // FALL THROUGH
+                        switch (lfTreatment) {
+                            case Constants.IGNORE:
+                                charIter.remove();
+                                break;
+                            case Constants.TREAT_AS_SPACE:
+                                if (bInWS) {
+                                    // only if bWScollapse=true
+                                    charIter.remove();
+                                } else {
+                                    if (bWScollapse)
+                                        bInWS = true;
+                                    charIter.replaceChar('\u0020');
+                                }
+                                break;
+                            case Constants.TREAT_AS_ZERO_WIDTH_SPACE:
+                                charIter.replaceChar('\u200b');
+                                // Fall through: this isn't XML whitespace
+                            case Constants.PRESERVE:
+                                bInWS = false;
+                                break;
+                        }
+                        break;
 
-		case CharUtilities.UCWHITESPACE: // Non XML-whitespace
-		case CharUtilities.NONWHITESPACE:
-		    /* Any other character */
-		    bInWS = bPrevWasLF=false;
-		    lfCheck.reset();
-		    break;
-		}
-	    }
-	    firstInlineChild = null;
-	}
+                    case CharUtilities.EOT:
+                        //   A "boundary" objects such as non-character inline
+                        // or nested block object was encountered.
+                        // If any whitespace run in progress, finish it.
+                        // FALL THROUGH
+
+                    case CharUtilities.UCWHITESPACE: // Non XML-whitespace
+                    case CharUtilities.NONWHITESPACE:
+                        /* Any other character */
+                        bInWS = bPrevWasLF = false;
+                        lfCheck.reset();
+                        break;
+                }
+            }
+            firstInlineChild = null;
+        }
     }
 
     private static class LFchecker {
-	private boolean bNextIsLF=false;
-	private RecursiveCharIterator charIter;
-	
-	LFchecker(RecursiveCharIterator charIter) {
-	    this.charIter = charIter;
-	}
+        private boolean bNextIsLF = false;
+        private RecursiveCharIterator charIter;
 
-	boolean nextIsLF() {
-	    if (bNextIsLF==false) {
-		CharIterator lfIter = charIter.mark();
-		while (lfIter.hasNext()) {
-		    char c = lfIter.nextChar();
-		    if (c == '\n') {
-			bNextIsLF=true;
-			break;
-		    }
-		    else if (CharUtilities.classOf(c) !=
-			     CharUtilities.XMLWHITESPACE) {
-			break;
-		    }
-		}
-	    }
-	    return bNextIsLF;
-	}
+        LFchecker(RecursiveCharIterator charIter) {
+            this.charIter = charIter;
+        }
 
-	void reset() {
-	    bNextIsLF=false;
-	}
+        boolean nextIsLF() {
+            if (bNextIsLF == false) {
+                CharIterator lfIter = charIter.mark();
+                while (lfIter.hasNext()) {
+                    char c = lfIter.nextChar();
+                    if (c == '\n') {
+                        bNextIsLF = true;
+                        break;
+                    } else if (CharUtilities.classOf(c) !=
+                        CharUtilities.XMLWHITESPACE) {
+                        break;
+                    }
+                }
+            }
+            return bNextIsLF;
+        }
+
+        void reset() {
+            bNextIsLF = false;
+        }
     }
 }

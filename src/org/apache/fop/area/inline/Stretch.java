@@ -7,11 +7,21 @@
 
 package org.apache.fop.area.inline;
 
+import org.apache.fop.area.MinOptMax;
+
 public class Stretch extends InlineArea {
+    MinOptMax contentIPD;
 
-    // min size
-    // set size
-    // get size
-    // height 0
+    public void setAllocationIPD(MinOptMax mom) {
+        contentIPD = mom;
+    }
 
+    public MinOptMax getAllocationIPD() {
+        // Should also account for any borders and padding in the
+        // inline progression dimension
+        if (contentIPD != null) {
+            return contentIPD;
+        }
+        return super.getAllocationIPD();
+    }
 }

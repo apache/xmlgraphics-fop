@@ -12,6 +12,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.area.Area;
 
 import java.util.ListIterator;
+import java.util.ArrayList;
 
 /**
  * The base class for all LayoutManagers.
@@ -20,6 +21,12 @@ public abstract class AbstractLayoutManager implements LayoutManager {
     protected LayoutManager parentLM;
     protected FObj fobj;
 
+    protected LayoutPos curPos = new LayoutPos();
+
+    static class LayoutPos {
+        int lmIndex = 0;
+        int subIndex = 0;
+    }
 
     public AbstractLayoutManager(FObj fobj) {
         this.fobj = fobj;
@@ -39,19 +46,27 @@ public abstract class AbstractLayoutManager implements LayoutManager {
      * children of its FO, asks each for its LayoutManager and calls
      * its generateAreas method.
      */
-    public void generateAreas() {
-        ListIterator children = fobj.getChildren();
-        while (children.hasNext()) {
-            FONode node = (FONode) children.next();
-            if (node instanceof FObj) {
-                LayoutManager lm = ((FObj) node).getLayoutManager();
-                if (lm != null) {
-                    lm.setParentLM(this);
-                    lm.generateAreas();
+    public boolean generateAreas() {
+        ArrayList lms = new ArrayList();
+        if (fobj != null) {
+            ListIterator children = fobj.getChildren();
+            while (children.hasNext()) {
+                FONode node = (FONode) children.next();
+                if (node instanceof FObj) {
+                    ((FObj) node).addLayoutManager(lms);
                 }
             }
+            fobj = null;
         }
-        flush(); // Add last area to parent
+
+        for (int count = 0; count < lms.size(); count++) {
+            LayoutManager lm = (LayoutManager) lms.get(count);
+            lm.setParentLM(this);
+            if (lm.generateAreas()) {
+                break;
+            }
+        }
+        return flush(); // Add last area to parent
     }
 
     //     /**
@@ -77,7 +92,7 @@ public abstract class AbstractLayoutManager implements LayoutManager {
     /**
      * Force current area to be added to parent area.
      */
-    abstract protected void flush();
+    abstract protected boolean flush();
 
 
     /**
@@ -93,18 +108,16 @@ public abstract class AbstractLayoutManager implements LayoutManager {
     abstract public Area getParentArea(Area childArea);
 
 
-
-    //     public boolean generatesInlineAreas() {
-    // 	return false;
-    //     }
-
+    public boolean generatesInlineAreas() {
+        return false;
+    }
 
     /**
      * Add a child area to the current area. If this causes the maximum
      * dimension of the current area to be exceeded, the parent LM is called
      * to add it.
      */
-    abstract public void addChild(Area childArea);
+    abstract public boolean addChild(Area childArea);
 
     /** Do nothing */
     public boolean splitArea(Area areaToSplit, SplitContext context) {

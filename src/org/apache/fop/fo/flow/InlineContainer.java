@@ -13,15 +13,26 @@ import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
+import org.apache.fop.area.inline.InlineArea;
 
 import org.xml.sax.Attributes;
 
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  */
-public class InlineContainer extends ToBeImplementedElement {
+public class InlineContainer extends FObj {
 
     public InlineContainer(FONode parent) {
         super(parent);
+    }
+
+    public void addLayoutManager(List lms) {
+        ArrayList childList = new ArrayList();
+        super.addLayoutManager(childList);
+        lms.add(new ICLayoutManager(this, childList));
     }
 
     public void handleAttrs(Attributes attlist) throws FOPException {
@@ -34,7 +45,8 @@ public class InlineContainer extends ToBeImplementedElement {
         MarginInlineProps mProps = propMgr.getMarginInlineProps();
 
         // Common Relative Position Properties
-        RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
+        RelativePositionProps mRelProps =
+          propMgr.getRelativePositionProps();
 
         // this.properties.get("alignment-adjust");
         // this.properties.get("alignment-baseline");
@@ -57,4 +69,21 @@ public class InlineContainer extends ToBeImplementedElement {
         // this.properties.get("writing-mode");
     }
 
+    /**
+     * This creates a single inline container area after
+     * laying out the child block areas. All footnotes, floats
+     * and id areas are maintained for later retrieval.
+     */
+    class ICLayoutManager extends LeafNodeLayoutManager {
+        List childrenLM;
+
+        ICLayoutManager(FObj obj, List childLM) {
+            super(obj);
+            childrenLM = childLM;
+        }
+
+        public InlineArea get(int index) {
+            return null;
+        }
+    }
 }

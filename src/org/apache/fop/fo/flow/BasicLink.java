@@ -17,11 +17,17 @@ import org.apache.fop.datatypes.ColorType;
 // Java
 import java.util.Enumeration;
 import java.awt.Rectangle;
+import java.util.List;
 
 public class BasicLink extends Inline {
 
     public BasicLink(FONode parent) {
         super(parent);
+    }
+
+    // add start and end properties for the link
+    public void addLayoutManager(List lms) {
+       super.addLayoutManager(lms);
     }
 
     public Status layout(Area area) throws FOPException {
