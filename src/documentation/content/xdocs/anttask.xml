@@ -1,0 +1,40 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
+
+<document>
+  <header>
+    <title>Ant task</title>
+  </header>
+  <body>
+    <p>
+    FOP has also an ANT task for integration into your build process.
+    </p>  
+    <section><title>Parameter</title>
+    </section>
+    <section>
+    <title>Examples</title>
+    <p>
+    
+    </p>
+    <source><![CDATA[
+  <target name="examples" depends="package" description="Generates example PDF files">
+    <taskdef name="fop" classname="org.apache.fop.tools.anttasks.Fop"
+             classpathref="libs-run-classpath"/>
+    <mkdir dir="${build.examples.dir}"/>
+    <fop format="${build.property.examples.mime.type}" outdir="${build.examples.dir}"
+         messagelevel="debug" basedir="${fo.examples.dir}">
+      <fileset dir="${fo.examples.dir}">
+        <include name="**/*.fo"/>
+      </fileset>
+    </fop>
+  </target>
+  ]]></source>
+      <p>
+      See the full text of the <link
+      href="http://archives.apache.org/eyebrowse/ReadMsg?listName=fop-dev@xml.apache.org&amp;msgNo=4509">announcement</link>.
+      </p>
+    </section>
+    </body>
+</document>
+
