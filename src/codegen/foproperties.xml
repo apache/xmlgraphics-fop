@@ -967,6 +967,14 @@
     <default>none</default>
   </property>
 
+  <property>
+    <name>character</name>
+    <class-name>Character</class-name>
+    <inherited>false</inherited>
+    <datatype>Character</datatype>
+    <default>none</default>
+  </property>
+
  </generic-property-list>
 </property-list>
 

@@ -30,29 +30,31 @@ Jon Smirl
 
 Done since 0.15 release
 
-- added vertical alignment for table cell contents [Marcus Crafter]
+- added: fo:character and property 'character' [Fotis Jannidis]
+         (limitation: not included into hyphenation)
+- added vertical alignment for table cell contents [Keiron Liddle]
 - added: Finnish hyphenation patterns [Jarno Elovirta]
 - added: hyphenation package (Carlos Villegas), integration into Fop [Fotis Jannidis]
 - added: interim configuration package [Fotis Jannidis]
 - added: FopImage class that uses JAI [Eric Schaeffer] and JAI compile target [Kelly Campbell]
 - added: support for rule-style [Fotis Jannidis]
 - updated tables to handle headers, footers, keep-with, colspan 
-          is partly done [Marcus Crafter]
+          is partly done [Keiron Liddle]
 - updated: svg stuff for the latest java bindings [Keiron Liddle]
 - fixed: enhanced error messages for page layout (region names, master) [Norm Walsh]
 - fixed: infinite looping bug when TableCell or TableRow is larger than a page [Hani Elabed]
 - fixed: corrected the size of the "-" char [Marcus Crafter]
 - fixed: check for unnecessary whitespace at end of line [Marcus Crafter]
-- fixed: moves table completely to next page if first row doesn't fit into last page [Marcus Crafter]
+- fixed: moves table completely to next page if first row doesn't fit into last page [Keiron Liddle]
 - fixed: problem where id's where being setup twice for
          table row going over the page  [Kelly Campbell]
 - fixed colspanning so that the cell state keeps track of the
-        width so far properly [Marcus Crafter]
+        width so far properly [Keiron Liddle]
 - fix to allow JDK 1.1 users to compile and use FOP [Mikko Honkala] 
 - fix: removing duplicate character mappings [Dharamveer Salecha]
 - fix: NullPointerException in FopImageFactory [Kelly Campbell] 
-- fixed: space after's where not being removed if table row was being removed [Marcus Crafter]
-- fixed problem with keep-with not storing the correct rows [Marcus Crafter]
+- fixed: space after's where not being removed if table row was being removed [Keiron Liddle]
+- fixed problem with keep-with not storing the correct rows [Keiron Liddle]
 
 
 Done since 0.14 release
@@ -146,7 +148,6 @@ first target is basic conformance
 1.One category of tasks will be to implement missing formatting objects. 
 
 basic
-  fo:character 
   fo:declarations
   fo:multi-case 
   fo:table-and-caption 
@@ -194,7 +195,6 @@ extended
    border-before-precedence
    border-end-precedence
    border-start-precedence
-   character                                              
    clip                                                   
    column-number                                          
    content-type                                           
@@ -218,7 +218,6 @@ extended
    reference-orientation         
    relative-align                
    role                          
-   rule-style                    
    source-document               
    space-after (full)
    space-before (full)
