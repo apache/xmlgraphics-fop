@@ -58,7 +58,7 @@ public class FoRoot extends FONode {
     /**
      * Process the FO tree, starting with this fo:root element.
      * N.B. the FO tree is a collection of trees.
-     * Trees only occur with fo:flow and fo:static-content.  These will
+     * Layout trees only occur with fo:flow and fo:static-content.  These will
      * be built at the appropriate places as part of the FO tree processing.
      * Terminates at the completion of FO tree processing.
      * <p>
@@ -87,7 +87,7 @@ public class FoRoot extends FONode {
             ev = xmlevents.expectStartElement
                     (XMLNamespaces.XSLNSpaceIndex, "layout-master-set");
         } catch (NoSuchElementException e) {
-            throw new FOPException(e.getMessage());
+            throw new FOPException(e);
         }
         // Process the layout-master-set
         try {
