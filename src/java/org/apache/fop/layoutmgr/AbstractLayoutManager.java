@@ -394,6 +394,29 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     }
 
     /**
+     * Handles retrieve-marker nodes as they occur.
+     * @param foNode FO node to check
+     * @return the original foNode or in case of a retrieve-marker the replaced
+     *     FO node. null if the the replacement results in no nodes to be 
+     *     processed.
+     */
+    private FONode handleRetrieveMarker(FONode foNode) {
+        if (foNode instanceof RetrieveMarker) {
+            RetrieveMarker rm = (RetrieveMarker) foNode;
+            Marker marker = retrieveMarker(rm.getRetrieveClassName(),
+                                           rm.getRetrievePosition(),
+                                           rm.getRetrieveBoundary());
+            if (marker == null) {
+                return null;
+            }
+            rm.bindMarker(marker);
+            return rm;
+        } else {
+            return foNode;
+        }
+    }
+    
+    /**
      * Convenience method: preload a number of child LMs
      * @param size the requested number of child LMs
      * @return the list with the preloaded child LMs
@@ -407,19 +430,11 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
             Object theobj = fobjIter.next();
             if (theobj instanceof FONode) {
                 FONode foNode = (FONode) theobj;
-                if (foNode instanceof RetrieveMarker) {
-                    RetrieveMarker rm = (RetrieveMarker) foNode;
-                    Marker marker = retrieveMarker(rm.getRetrieveClassName(),
-                                                   rm.getRetrievePosition(),
-                                                   rm.getRetrieveBoundary());
-                    if (marker == null) {
-                        continue;
-                    }
-                    rm.bindMarker(marker);
-                    foNode = rm;
+                foNode = handleRetrieveMarker(foNode);
+                if (foNode != null) {
+                    getAreaTreeHandler().getLayoutManagerMaker().
+                        makeLayoutManagers(foNode, newLMs);
                 }
-                getAreaTreeHandler().getLayoutManagerMaker().
-                    makeLayoutManagers(foNode, newLMs);
             }
         }
         return newLMs;
