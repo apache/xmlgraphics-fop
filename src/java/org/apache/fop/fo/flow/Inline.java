@@ -18,6 +18,8 @@
 
 package org.apache.fop.fo.flow;
 
+import java.util.List;
+
 // XML
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
@@ -38,6 +40,7 @@ import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
+import org.apache.fop.layoutmgr.InlineLayoutManager;
 
 /**
  * Class modelling the fo:inline formatting object.
@@ -216,7 +219,17 @@ public class Inline extends FObjMixed {
      * @see org.apache.fop.fo.FObjMixed#charIterator
      */
     public CharIterator charIterator() {
-        return new InlineCharIterator(this, propMgr.getBorderAndPadding());
+        return new InlineCharIterator(this, commonBorderPaddingBackground);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#addLayoutManager(List)
+     */
+    public void addLayoutManager(List list) {    
+        if (getChildNodes() != null) {
+            InlineLayoutManager lm = new InlineLayoutManager(this);
+            list.add(lm);
+        }
     }
 
     /**

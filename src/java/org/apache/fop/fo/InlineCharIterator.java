@@ -18,7 +18,7 @@
 
 package org.apache.fop.fo;
 
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.util.CharUtilities;
 import java.util.NoSuchElementException;
 
@@ -30,19 +30,19 @@ public class InlineCharIterator extends RecursiveCharIterator {
     /**
      * @param fobj the object for whose character contents and for whose
      * descendant's character contents should be iterated
-     * @param bap the CommonBorderAndPadding properties to be applied
+     * @param bpb the CommonBorderPaddingBackground properties to be applied
      */
-    public InlineCharIterator(FObj fobj, CommonBorderAndPadding bap) {
+    public InlineCharIterator(FObj fobj, CommonBorderPaddingBackground bpb) {
         super(fobj);
-        checkBoundaries(bap);
+        checkBoundaries(bpb);
     }
 
 
-    private void checkBoundaries(CommonBorderAndPadding bap) {
-        bStartBoundary = (bap.getBorderStartWidth(false) > 0
-                       || bap.getPaddingStart(false) > 0);
-        bEndBoundary = (bap.getBorderEndWidth(false) > 0
-                     || bap.getPaddingEnd(false) > 0);
+    private void checkBoundaries(CommonBorderPaddingBackground bpb) {
+        bStartBoundary = (bpb.getBorderStartWidth(false) > 0
+                       || bpb.getPaddingStart(false) > 0);
+        bEndBoundary = (bpb.getBorderEndWidth(false) > 0
+                     || bpb.getPaddingEnd(false) > 0);
     }
 
     /**
