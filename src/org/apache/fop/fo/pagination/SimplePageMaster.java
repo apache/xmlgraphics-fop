@@ -85,7 +85,7 @@ public class SimplePageMaster extends FObj {
 	 * The media rectangle itself is (0,0,pageWidth,pageHeight).
 	 */
 	Rectangle pageRefRect =
-	    new Rectangle(mProps.marginLeft, mProps.marginBottom,
+	    new Rectangle(mProps.marginLeft, mProps.marginTop,
 			  pageWidth - mProps.marginLeft - mProps.marginRight,
 			  pageHeight - mProps.marginTop - mProps.marginBottom);
 
