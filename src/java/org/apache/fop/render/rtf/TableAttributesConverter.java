@@ -118,7 +118,6 @@ public class TableAttributesConverter {
             }
 
         }
-/*
         BorderAttributesConverter.makeBorder(propList, attrib, ITableAttributes.CELL_BORDER_TOP,
                 Constants.PR_BORDER_TOP_COLOR, 
                 Constants.PR_BORDER_TOP_STYLE, 
@@ -135,7 +134,7 @@ public class TableAttributesConverter {
                 Constants.PR_BORDER_RIGHT_COLOR, 
                 Constants.PR_BORDER_RIGHT_STYLE, 
                 Constants.PR_BORDER_RIGHT_WIDTH);
-*/
+
         int n = fobj.getProperty(Constants.PR_NUMBER_COLUMNS_SPANNED).getNumber().intValue();
         // Column spanning :
         if (n > 1) {
@@ -215,7 +214,6 @@ public class TableAttributesConverter {
          * place.
          */
         PropertyList propList = fobj.getPropertyList();
-/*
         BorderAttributesConverter.makeBorder(propList, attrib, ITableAttributes.CELL_BORDER_TOP,
                 Constants.PR_BORDER_TOP_COLOR, 
                 Constants.PR_BORDER_TOP_STYLE, 
@@ -232,7 +230,6 @@ public class TableAttributesConverter {
                 Constants.PR_BORDER_RIGHT_COLOR, 
                 Constants.PR_BORDER_RIGHT_STYLE, 
                 Constants.PR_BORDER_RIGHT_WIDTH);
-*/
 /*
         ep = (EnumProperty)fobj.getProperty(Constants.PR_BORDER_TOP_STYLE);
         if (ep != null && ep.getEnum() != Constants.NONE) {
