@@ -50,8 +50,7 @@ public class FoTableRow extends FOPageSeqNode {
 
     /** Map of <tt>Integer</tt> indices of <i>sparsePropsSet</i> array.
         It is indexed by the FO index of the FO associated with a given
-        position in the <i>sparsePropsSet</i> array. See
-        {@link org.apache.fop.fo.FONode#sparsePropsSet FONode.sparsePropsSet}.
+        position in the <i>sparsePropsSet</i> array.
      */
     private static final int[] sparsePropsMap;
 
