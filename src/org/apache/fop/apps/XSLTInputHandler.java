@@ -98,8 +98,6 @@ public class XSLTInputHandler extends InputHandler {
 	    Object obj = getFilterMethod.invoke(null,args);
 	    if (obj instanceof XMLReader) {
 		result = (XMLReader)obj;
-		System.out.println("result OK = "+result);
-		
 	    }
 	}
 	catch (ClassNotFoundException ex){
