@@ -151,7 +151,7 @@ public class Hyphenator {
         if (hyphenFile.exists()) {
             ObjectInputStream ois = null;
             try {
-                ois = new ObjectInputStream(new FileInputStream(hyphenFile));
+                ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(hyphenFile)));
                 hTree = (HyphenationTree)ois.readObject();
             } catch (Exception e) {
                 e.printStackTrace();
