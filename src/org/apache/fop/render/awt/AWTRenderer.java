@@ -161,18 +161,57 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
      * @param g the green component
      * @param b the blue component
      */
+     
+     // corrected 7/13/01 aml,rlc to properly handle thickness
+     //
     protected void addLine(int x1, int y1, int x2, int y2, int th,
-                           float r, float g, float b) {
+                           float r, float g, float b) 
+      {
         graphics.setColor(new Color (r, g, b));
-        // graphics.setColor(Color.red);
-        graphics.drawLine((int)(x1 / 1000f),
-                          pageHeight - (int)(y1 / 1000f), (int)(x2 / 1000f),
-                          pageHeight - (int)(y2 / 1000f));
+        int x = x1;
+        int y = y1;
+        int height, width;
+        if (x1 == x2) //vertical line
+        {
+          height = y2 - y1;
+          if (height > 0)  //y coordinates are reversed between fo and AWT
+          {
+            height = -height;
+            y = y2;
+          }
+          width = th;
+          if (width < 0)
+          {
+            width = -width;
+            x -= width;
+          }
+        }
+        else //horizontal line
+        {
+          width = x2 - x1;
+          if (width < 0)
+          {
+            width = -width;
+            x = x2;
+          }
+          height = th;
+          if (height > 0) //y coordinates are reversed between fo and AWT
+          {
+            height = -height;
+            y -= height;
+          }
+        }
+        addRect (x, y, width, height, false);
+        
+//        // graphics.setColor(Color.red);
+//        graphics.drawLine((int)(x1 / 1000f),
+//                          pageHeight - (int)(y1 / 1000f), (int)(x2 / 1000f),
+//                          pageHeight - (int)(y2 / 1000f));
     }
 
 
     /**
-     * draw a filled rectangle
+     * draw a rectangle
      *
      * @param x the x position of left edge in millipoints
      * @param y the y position of top edge in millipoints
@@ -182,15 +221,17 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
      * @param g the green component
      * @param b the blue component
      */
+     
+     // changed by aml/rlc to use helper function that
+     // corrects for integer roundoff, and to remove 3D effect
+     
     protected void addRect(int x, int y, int w, int h, float r,
                            float g, float b) {
         graphics.setColor(new Color (r, g, b));
         // graphics.setColor(Color.green);
-        graphics.drawRect((int)(x / 1000f),
-                          pageHeight - (int)(y / 1000f), (int)(w / 1000f),
-                          -(int)(h / 1000f));
+        addRect (x, y, w, h, true);
     }
-
+    
     /**
      * draw a filled rectangle
      *
@@ -205,12 +246,40 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
      * @param fg the green component of the fill
      * @param fb the blue component of the fill
      */
+     
+     // changed by aml/rlc to use helper function that
+     // corrects for integer roundoff
     protected void addRect(int x, int y, int w, int h, float r,
-                           float g, float b, float fr, float fg, float fb) {
+                           float g, float b, float fr, float fg, float fb) 
+     {        
         graphics.setColor(new Color (r, g, b));
-        graphics.fill3DRect((int)(x / 1000f),
-                            pageHeight - (int)(y / 1000f), (int)(w / 1000f),
-                            -(int)(h / 1000f), true);
+        addRect (x, y, w, h, true);
+        graphics.setColor(new Color (fr, fg, fb));
+        addRect (x, y, w, h, false);
+    }
+
+    /**
+     * draw a filled rectangle in the current color
+     *
+     * @param x the x position of left edge in millipoints
+     * @param y the y position of top edge in millipoints
+     * @param w the width in millipoints
+     * @param h the height in millipoints
+     * @param drawAsOutline true for draw, false for fill
+     */
+     
+     // helper function by aml/rlc to correct integer roundoff problems
+     //
+    protected void addRect(int x, int y, int w, int h, boolean drawAsOutline) 
+    {
+        int startx = (x + 500)/ 1000;
+        int starty = pageHeight - ((y + 500) / 1000);
+        int endx = (x + w + 500) / 1000;
+        int endy = pageHeight - ((y + h + 500) / 1000);
+        if (drawAsOutline)
+          graphics.drawRect(startx, starty, endx - startx, endy - starty);
+        else
+          graphics.fillRect(startx, starty, endx - startx, endy - starty);
     }
 
     /**
@@ -220,8 +289,8 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
      * Zoom factor
      * Page format  / Landscape or Portrait
      **/
-    public void transform(Graphics2D g2d, double zoomPercent,
-                          double angle) {
+    public void transform(Graphics2D g2d, double zoomPercent,double angle) 
+    {
         AffineTransform at = g2d.getTransform();
         at.rotate(angle);
         at.scale(zoomPercent / 100.0, zoomPercent / 100.0);
@@ -280,8 +349,8 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         tree = areaTree;
         Page page = (Page) areaTree.getPages().elementAt(aPageNumber);
 
-        pageWidth = (int)((float) page.getWidth() / 1000f);
-        pageHeight = (int)((float) page.getHeight() / 1000f);
+        pageWidth = (int)((float) page.getWidth() / 1000f + .5);
+        pageHeight = (int)((float) page.getHeight() / 1000f + .5);
 
 
         pageImage = new BufferedImage(
@@ -429,7 +498,8 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 
         if (area.getBorderTopWidth() != 0) {
             borderColor = bp.getBorderColor(BorderAndPadding.TOP);
-            addLine(rx, ry, rx + w, ry, area.getBorderTopWidth(),
+ //         addLine(rx, ry, rx + w, ry, area.getBorderTopWidth(),   // corrected aml/rlc
+            addLine(rx, ry, rx + w, ry, -area.getBorderTopWidth(),
                     borderColor.red(), borderColor.green(),
                     borderColor.blue());
         }
@@ -444,7 +514,8 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         if (area.getBorderRightWidth() != 0) {
             borderColor = bp.getBorderColor(BorderAndPadding.RIGHT);
             addLine(rx + w, ry, rx + w, ry - h,
-                    area.getBorderRightWidth(), borderColor.red(),
+//                   area.getBorderRightWidth(), borderColor.red(), // corrected aml/rlc
+                    -area.getBorderRightWidth(), borderColor.red(),
                     borderColor.green(), borderColor.blue());
         }
 
@@ -498,7 +569,10 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
     }
 
 
-    public void renderImageArea(ImageArea area) {
+    // correct integer roundoff    (aml/rlc)
+
+    public void renderImageArea(ImageArea area) 
+    {
 
         int x = currentAreaContainerXPosition +
                 area.getXOffset();
@@ -511,14 +585,27 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 
         if (img == null) {
             MessageHandler.logln("Error while loading image : area.getImage() is null");
-            graphics.drawRect(x / 1000, pageHeight - y / 1000,
-                              w / 1000, h / 1000);
+            
+  //        correct integer roundoff  
+  //        graphics.drawRect(x / 1000, pageHeight - y / 1000,
+  //                          w / 1000, h / 1000);            
+            addRect (x, y, w, h, true);   // use helper function 
+            
+            
             java.awt.Font f = graphics.getFont();
             java.awt.Font smallFont =
               new java.awt.Font(f.getFontName(), f.getStyle(), 8);
+              
             graphics.setFont(smallFont);
-            graphics.drawString("area.getImage() is null", x / 1000,
-                                pageHeight - y / 1000);
+            
+  //        correct integer roundoff   // aml/rlc
+  //        graphics.drawString("area.getImage() is null", x / 1000,
+  //                              pageHeight - y / 1000);
+            
+            graphics.drawString("area.getImage() is null", (x + 500) / 1000,
+                                pageHeight - (y + 500) / 1000);
+                                
+                                
             graphics.setFont(f);
         } else {
             if (img instanceof SVGImage) {
@@ -535,10 +622,20 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 
                     ImageIcon icon = new ImageIcon(url);
                     Image image = icon.getImage();
-
-                    graphics.drawImage(image, x / 1000,
-                                       pageHeight - y / 1000, w / 1000, h / 1000,
-                                       null);
+                    
+//                  correct integer roundoff      aml/rlc                    
+//                  graphics.drawImage(image, x / 1000,
+//                                     pageHeight - y / 1000, w / 1000, h / 1000,
+//                                     null);
+                    
+                    int startx = (x + 500)/ 1000;
+                    int starty = pageHeight - ((y + 500) / 1000);
+                    int endx = (x + w + 500) / 1000;
+                    int endy = pageHeight - ((y + h + 500) / 1000);
+                    
+                    //reverse start and end y because h is positive
+                    graphics.drawImage(image, startx, starty, endx - startx, starty - endy, null);
+                    
                 } catch (MalformedURLException mue) {
                     // cannot normally occur because, if URL is wrong, constructing FopImage
                     // will already have failed earlier on
@@ -619,8 +716,13 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
                              TextAttribute.UNDERLINE_ON);
         }
         AttributedCharacterIterator iter = ats.getIterator();
-        graphics.drawString(iter, rx / 1000f,
-                            (int)(pageHeight - bl / 1000f));
+        
+//      correct integer roundoff        
+//      graphics.drawString(iter, rx / 1000f,
+//                         (int)(pageHeight - bl / 1000f));
+        
+        graphics.drawString(iter, (rx + 500) / 1000,
+                            (int)(pageHeight - (bl + 500) / 1000));
 
         graphics.setColor(oldColor);
         this.currentXPosition += area.getContentWidth();
@@ -663,6 +765,9 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
      *
      * @param area area to render
      */
+     
+     // call to addRect corrected by aml/rlc  
+     
     public void renderLeaderArea(LeaderArea area) {
 
         int rx = this.currentXPosition;
@@ -677,9 +782,14 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         Color oldColor = graphics.getColor();
 
         graphics.setColor(new Color(r, g, b));
-        graphics.fillRect((int)(rx / 1000f),
-                          (int)(pageHeight - ry / 1000f), (int)(w / 1000f),
-                          (int)(th / 1000f));
+        
+//      use helper function to correct integer roundoff   - aml/rlc        
+//      graphics.fillRect((int)(rx / 1000f),
+//                        (int)(pageHeight - ry / 1000f), (int)(w / 1000f),
+//                        (int)(th / 1000f));      
+        
+        addRect (rx, ry, w, -th, false);  // NB addRect expects negative height
+        
         graphics.setColor(oldColor);
         this.currentXPosition += area.getContentWidth();
     }
@@ -703,7 +813,11 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         GraphicsNodeRenderContext rc = getRenderContext();
         BridgeContext ctx = new BridgeContext(userAgent, rc);
         GraphicsNode root;
-        graphics.translate(x / 1000f, pageHeight - y / 1000f);
+        
+  //    correct integer roundoff     aml/rlc      
+  //    graphics.translate(x / 1000f, pageHeight - y / 1000f);
+        graphics.translate((x + 500) / 1000, pageHeight - (y + 500) / 1000);
+        
         graphics.setRenderingHints(rc.getRenderingHints());
         try {
             root = builder.build(ctx, doc);
@@ -711,7 +825,11 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        graphics.translate(-x / 1000f, y / 1000f - pageHeight);
+        
+  //    correct integer roundoff     aml/rlc      
+//      graphics.translate(-x / 1000f, y / 1000f - pageHeight);
+        graphics.translate(-(x + 500) / 1000, (y + 500) / 1000 - pageHeight);
+        
     }
 
     public GraphicsNodeRenderContext getRenderContext() {
