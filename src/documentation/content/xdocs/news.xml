@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no"?>
 <!--
-  Copyright 1999-2004 The Apache Software Foundation
+  Copyright 1999-2005 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -24,6 +24,17 @@
     <version>$Revision$</version>
   </header>
   <body>
+    <section>
+      <title>20 October 2004 - Creation of the Apache XML Graphics project</title>
+      <p>
+        The Apache Board of Directors agreed to the creation of the 
+        <link href="http://xmlgrapics.apache.org">Apache XML Graphics</link>
+        project which will be comprised of Batik and FOP. Both former 
+        Apache XML subprojects are in this way complying with the Board's desire
+        to improve project oversight. Both project teams also see additional
+        benefits of working more closely together.
+      </p>
+    </section>
     <section>
       <title>8 October 2004 - New Committer</title>
       <p>Welcome Luca Furini!</p>
