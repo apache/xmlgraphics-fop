@@ -39,6 +39,7 @@ public class PageSet implements PageListElement {
     private ArrayList pageset;
     /** The id of this list. As with <code>Page</code>s, 0 is not valid. */
     private final long id;
+    private int currElement = 0;
 
     public PageSet(PageSetElement element) {
         pageset = new ArrayList();
@@ -60,6 +61,26 @@ public class PageSet implements PageListElement {
         return id;
     }
 
+    /**
+     * Get the index of the current element
+     * @return the index
+     */
+    public int getCurrentElement() {
+        return currElement;
+    }
+
+    /**
+     * Sets the current element of the set
+     * @param elindex the index of the element to set
+     * @throws IndexOutOfBoundsException if <code>elindex</code> put of bounds
+     */
+    public void setCurrentElement(int elindex)
+    throws IndexOutOfBoundsException {
+        if (elindex < 0 || elindex >= pageset.size()) {
+            throw new IndexOutOfBoundsException(
+                    "Index " + elindex + "; size " + pageset.size());
+        }
+    }
     /**
      * Gets the element at the specified index position
      * @param index position of the element to get
