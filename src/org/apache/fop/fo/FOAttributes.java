@@ -64,10 +64,10 @@ public class FOAttributes {
 
     private int DefAttrNSIndex = XMLEvent.DefAttrNSIndex;
 
+    private FONode foNode;
+
     /**
-     * Construct an <i>FOAttributes</i> object from the <i>startElement</i>
-     * <tt>XMLEvent</tt> which triggered the construction of its parent
-     * element.
+     * Construct an <i>FOAttributes</i> object.
      * <p>The <tt>Attributes</tt> object on the event is scanned, and each
      * attribute is examined.  If the attribute is in the default namespace
      * for fo: attributes, it is an fo: property, and its value is entered
@@ -77,15 +77,20 @@ public class FOAttributes {
      * value is entered into the appropriate <tt>HashMap</tt> in the
      * <tt>ArrayList</tt> <i>nSpaceAttrMaps</i>, indexed by the attribute's
      * local name.
-     * <p>
+     * @param event - the XML event which triggered construction of the parent
+     * <tt>FONode</tt>.
+     * @param foNode - the <tt>FONode</tt> with which these attributes are
+     * associated.
      */
-    public FOAttributes (XMLEvent event) throws FOPException {
+    public FOAttributes (XMLEvent event, FONode foNode) throws FOPException {
         // If the event is null, there is no event associated with this
         // node, probably because this is a manufactured node; e.g.,
         // an "invented" FopageSequenceMaster.  The default initialisation
         // includes an empty foAttrMap HashMap.
         if (event == null) return;
-            
+
+        this.foNode = foNode;
+
         // Create the foAttrMap.
         Attributes attributes = event.attributes;
         if (attributes == null) throw new FOPException
