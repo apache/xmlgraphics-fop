@@ -45,6 +45,9 @@ public abstract class AbstractPSDocumentGraphics2D extends PSGraphics2D {
     
     protected int width;
     protected int height;
+    
+    protected float viewportWidth;
+    protected float viewportHeight;
 
     protected int pagecount;
     protected boolean pagePending;
@@ -126,9 +129,12 @@ public abstract class AbstractPSDocumentGraphics2D extends PSGraphics2D {
      * @throws IOException in case of an I/O problem
      */
     public void setSVGDimension(float w, float h) throws IOException {
+        this.viewportWidth = w;
+        this.viewportHeight = h;
+        /*
         if (w != this.width || h != this.height) {
             gen.concatMatrix(width / w, 0, 0, height / h, 0, 0);
-        }
+        }*/
     }
 
     /**
@@ -213,7 +219,15 @@ public abstract class AbstractPSDocumentGraphics2D extends PSGraphics2D {
           
         writePageHeader();
         gen.writeln("0.001 0.001 scale");
-        gen.concatMatrix(1, 0, 0, -1, 0, this.height * 1000);
+        if ((this.viewportWidth != this.width 
+                || this.viewportHeight != this.height)
+                && (this.viewportWidth > 0) && (this.viewportHeight > 0)){
+            gen.concatMatrix(this.width / this.viewportWidth, 0, 
+                       0, -1 * (this.height / this.viewportHeight), 
+                       0, this.height * 1000);
+        } else {
+            gen.concatMatrix(1, 0, 0, -1, 0, this.height * 1000);
+        }
         gen.writeDSCComment(DSCConstants.END_PAGE_SETUP);
         this.pagePending = true;
     }

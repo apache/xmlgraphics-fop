@@ -62,8 +62,10 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
 
     private PDFPage currentPage;
     private PDFStream pdfStream;
+
     private int width;
     private int height;
+    
     private List fontList;
 
     private Log logger;

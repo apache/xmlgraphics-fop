@@ -26,6 +26,7 @@ import java.io.IOException;
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.container.ContainerUtil;
 import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderOutput;
 
@@ -34,6 +35,7 @@ import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.fop.svg.AbstractFOPTranscoder;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.svg.SVGLength;
 
 /**
  * This class enables to transcode an input to a PostScript document.
@@ -77,21 +79,6 @@ public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
 
     protected abstract AbstractPSDocumentGraphics2D createDocumentGraphics2D();
 
-    protected BridgeContext createBridgeContext() {
-        /*boolean stroke = true;
-        if (hints.containsKey(KEY_STROKE_TEXT)) {
-            stroke = ((Boolean)hints.get(KEY_STROKE_TEXT)).booleanValue();
-        }*/
-
-        BridgeContext ctx = new BridgeContext(userAgent);
-        PSTextPainter textPainter = new PSTextPainter(graphics.getFontInfo());
-        ctx.setTextPainter(textPainter);
-        ctx.putBridge(new PSTextElementBridge(textPainter));
-
-        //ctx.putBridge(new PSImageElementBridge());
-        return ctx;
-    }
-
     /**
      * Transcodes the specified Document as an image in the specified output.
      *
@@ -118,9 +105,19 @@ public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
 
         super.transcode(document, uri, output);
 
+        getLogger().trace("document size: " + width + " x " + height);
+        
         // prepare the image to be painted
-        int w = (int)(width + 0.5);
-        int h = (int)(height + 0.5);
+        UnitProcessor.Context uctx = UnitProcessor.createContext(ctx, 
+                    document.getDocumentElement());
+        float widthInPt = UnitProcessor.userSpaceToSVG(width, SVGLength.SVG_LENGTHTYPE_PT, 
+                    UnitProcessor.HORIZONTAL_LENGTH, uctx);
+        int w = (int)(widthInPt + 0.5);
+        float heightInPt = UnitProcessor.userSpaceToSVG(height, SVGLength.SVG_LENGTHTYPE_PT, 
+                UnitProcessor.HORIZONTAL_LENGTH, uctx);
+        int h = (int)(heightInPt + 0.5);
+        getLogger().trace("document size: " + w + "pt x " + h + "pt");
+        
 
         try {
             graphics.setupDocument(output.getOutputStream(), w, h);
@@ -140,6 +137,21 @@ public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
         } catch (IOException ex) {
             throw new TranscoderException(ex);
         }
+    }
+
+    protected BridgeContext createBridgeContext() {
+        /*boolean stroke = true;
+        if (hints.containsKey(KEY_STROKE_TEXT)) {
+            stroke = ((Boolean)hints.get(KEY_STROKE_TEXT)).booleanValue();
+        }*/
+
+        BridgeContext ctx = new BridgeContext(userAgent);
+        PSTextPainter textPainter = new PSTextPainter(graphics.getFontInfo());
+        ctx.setTextPainter(textPainter);
+        ctx.putBridge(new PSTextElementBridge(textPainter));
+
+        //ctx.putBridge(new PSImageElementBridge());
+        return ctx;
     }
 
 
