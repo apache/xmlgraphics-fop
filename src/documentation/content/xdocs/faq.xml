@@ -595,31 +595,7 @@ Can I control this?</question>
     <faq id="svg-headless">
       <question>How do I use FOP with SVG on headless servers?</question>
       <answer>
-        <p>
-          Batik uses AWT classes for rendering SVG, which in turn needs an X
-          server on Unixish systems. If you run a server without X, or if you
-          can't connect to the X server due to security restrictions or
-          policies, SVG rendering will fail.
-        </p>
-        <p>
-          There are still several options:
-        </p>
-        <ul>
-          <li>
-            If you are using JDK 1.4, start it with the -Djava.awt.headless=true
-            command line option.
-          </li>
-          <li>
-            Install a X server which provides an im-memory framebuffer without
-            actually using a screen device or any display hardware, like Xvfb.
-          </li>
-          <li>
-            Use a toolkit which emulates AWT without the need of an underlying X
-            server, like <link
-            href="http://www.eteks.com/pja/en">PJA</link>. The PJA toolkit is
-            free and comes with detailed installation instructions.
-          </li>
-        </ul>
+        <p>See <link href="graphics.html#batik">FOP: Graphics (Batik)</link>.</p>
       </answer>
     </faq>
     <faq id="svghangs">

@@ -134,7 +134,19 @@ JAI is much faster than JIMI, but is not available for all platforms. See <link 
       </section>
       <section id="batik">
         <title>Batik</title>
-        <p>Current FOP distributions include a distribution of the Apache Software Foundation's <jump href="http://xml.apache.org/batik">Batik</jump> version 1.5beta4. No installation is required. Because Batik's API changes frequently, it is highly recommended that you use this version with FOP.</p>
+        <p>Current FOP distributions include a distribution of the Apache Software Foundation's <jump href="http://xml.apache.org/batik">Batik</jump> version 1.5beta4.
+It is automatically installed with FOP.
+Because Batik's API changes frequently, it is highly recommended that you use the version that ships with FOP, at least when running FOP.</p>
+        <warning>Batik must be run in a graphical environment.</warning>
+        <p>Batik must be run in a graphical environment.
+It uses AWT classes for rendering SVG, which in turn require an X server on Unixish systems.
+If you run a server without X, or if you can't connect to the X server due to security restrictions or policies (a so-called "headless" environment), SVG rendering will fail.</p>
+        <p>Here are some workarounds:</p>
+        <ul>
+          <li>If you are using JDK 1.4, start it with the <code>-Djava.awt.headless=true</code> command line option.</li>
+          <li>Install an X server which provides an in-memory framebuffer without actually using a screen device or any display hardware. One example is Xvfb.</li>
+          <li>Install a toolkit which emulates AWT without the need for an underlying X server. One example is the <link href="http://www.eteks.com/pja/en">PJA toolkit</link>, which is free and comes with detailed installation instructions.</li>
+        </ul>
       </section>
     </section>
     <section id="eps">
