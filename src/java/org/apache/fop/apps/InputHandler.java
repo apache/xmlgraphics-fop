@@ -23,22 +23,29 @@ import java.io.File;
 import java.util.Vector;
 
 // Imported TraX classes
+import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Class for handling files input from command line
  * either with XML and XSLT files (and optionally xsl
  * parameters) or FO File input alone
  */
-public class InputHandler {
+public class InputHandler implements ErrorListener {
     private File sourcefile = null;  // either FO or XML/XSLT usage
     private File stylesheet = null;  // for XML/XSLT usage
     private Vector xsltParams = null; // for XML/XSLT usage
+
+    protected Log log = LogFactory.getLog(InputHandler.class);
     
     /**
      * Constructor for XML->XSLT->FO input
@@ -101,6 +108,7 @@ public class InputHandler {
                     }
                 }
             }
+            transformer.setErrorListener(this);
 
             // Create a SAXSource from the input Source file
             Source src = new StreamSource(sourcefile);
@@ -114,5 +122,27 @@ public class InputHandler {
         } catch (Exception e) {
             throw new FOPException(e);
         }
+    }
+    
+    /**
+     * Implementation of the ErrorListener interface.
+     */
+    public void warning(TransformerException exc) {
+        log.warn(exc.toString());
+    }
+
+    /**
+     * Implementation of the ErrorListener interface.
+     */
+    public void error(TransformerException exc) {
+        log.error(exc.toString());
+    }
+
+    /**
+     * Implementation of the ErrorListener interface.
+     */
+    public void fatalError(TransformerException exc)
+            throws TransformerException {
+        throw exc;
     }
 }
