@@ -432,7 +432,7 @@ public abstract class Properties {
         // associated property indices, as expanded from the
         // border-right shorthand.
         if (style != null) newlist.add(style);
-        if (color != null) newlist.add(style);
+        if (color != null) newlist.add(color);
         if (width != null) newlist.add(width);
         return newlist;
     }
@@ -2416,21 +2416,19 @@ public abstract class Properties {
                         " object for border-spacing");
             } else {
                 // Must be a pair of Lengths
-                if (((PropertyValueList)value).size() != 2)
+                PropertyValueList list = (PropertyValueList)value;
+                if (list.size() != 2)
                     throw new PropertyException
-                        ("List of " + ((PropertyValueList)value).size() +
-                            " for BorderSpacing");
-                PropertyValue len1
-                    = (PropertyValue)(((PropertyValueList)value).getFirst());
-                PropertyValue len2
-                    = (PropertyValue)(((PropertyValueList)value).getLast());
+                        ("List of " + list.size() + " for border-spacing");
+                PropertyValue len1 = (PropertyValue)(list.getFirst());
+                PropertyValue len2 = (PropertyValue)(list.getLast());
                 // Note that this test excludes (deliberately) ems relative
                 // lengths.  I don't know whether this exclusion is valid.
                 if ( ! (len1 instanceof Numeric && len2 instanceof Numeric
                     && ((Numeric)len1).isLength()
                     && ((Numeric)len2).isLength()))
                     throw new PropertyException
-                        ("2 values to BorderSpacing are not Lengths");
+                        ("Values to border-spacing are not both Lengths");
                 // Set the individual expanded properties of the
                 // border-separation compound property
                 // Should I clone these values?
@@ -3156,6 +3154,56 @@ public abstract class Properties {
         public static final int traitMapping = SHORTHAND_MAP;
         public static final int initialValueType = AURAL_IT;
         public static final int inherited = NO;
+
+        /**
+         * 'value' is a PropertyValueList or an individual PropertyValue.
+         *
+         * <p>If 'value' is an individual PropertyValue, it must contain
+         * either
+         *   a parsed UriType value,
+         *   a FromParent value,
+         *   a FromNearestSpecified value,
+         *   or an Inherit value.
+         *
+         * <p>If 'value' is a PropertyValueList, it contains a list of
+         * 2 parsed UriType values.
+         *
+         * <p>The value(s) provided, if valid, are converted into a list
+         * containing the expansion of the shorthand.
+         * The first element is a value for cue-before,
+         * the second element is a value for cue-after.
+         */
+        public static PropertyValue complex(PropertyValue value)
+                    throws PropertyException
+        {
+            if ( ! (value instanceof PropertyValueList)) {
+                if (value instanceof Inherit
+                    || value instanceof FromParent
+                    || value instanceof FromNearestSpecified
+                    || value instanceof UriType
+                    )
+                    return PropertySets.expandAndCopySHand(value);
+            } else {
+                // List may contain only 2 uri specifiers
+                PropertyValueList list = (PropertyValueList)value;
+                if (list.size() != 2)
+                    throw new PropertyException
+                        ("List of " + list.size() + " for cue");
+                PropertyValue cue1 = (PropertyValue)(list.getFirst());
+                PropertyValue cue2 = (PropertyValue)(list.getLast());
+
+                if ( ! ((cue1 instanceof UriType) &&
+                        (cue2 instanceof UriType)))
+                    throw new PropertyException
+                        ("Values to cue are not both URIs");
+                // Set the individual expanded properties of the
+                // cue compound property
+                // Should I clone these values?
+                cue1.setProperty(PropNames.CUE_BEFORE);
+                cue2.setProperty(PropNames.CUE_AFTER);
+                return value;
+            }
+        }
     }
 
     public static class CueAfter extends Properties {
