@@ -50,6 +50,19 @@
   driver.setOutputStream(new FileOutputStream(args[1]));
   driver.render();
 ]]></source>
+  <p>You can also specify an xml and xsl file for the input.
+  </p>
+  <p>Here is an example use of Driver with the XSLTInputHandler:</p>
+  <source><![CDATA[
+  Driver driver = new Driver();
+  driver.setRenderer(Driver.RENDER_PDF);
+  InputHandler inputHandler = new XSLTInputHandler(xmlFile, xslFile);
+  XMLReader parser = inputHandler.getParser();
+  driver.buildFOTree(parser, inputHandler);
+  driver.format();
+  driver.setOutputStream(new FileOutputStream(outFile));
+  driver.render();
+]]></source>
   <p>Have a look at the classes CommandLineStarter or FopServlet for complete examples.</p>
   </s2>
   <s2 title="Using Fop in a servlet">  
