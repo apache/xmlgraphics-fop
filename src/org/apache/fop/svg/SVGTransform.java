@@ -55,6 +55,8 @@ import org.apache.fop.fo.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.apps.FOPException;
 
+import org.w3c.dom.svg.SVGAnimatedTransformList;
+
 import java.util.*;
 
 /**
@@ -120,7 +122,7 @@ public class SVGTransform extends Property {
 	 *
 	 * @return the length as a Length object
 	 */
-	public Vector oldgetTransform() {
-		return this.trans.oldgetTransform();
+	public SVGAnimatedTransformList getTransform() {
+		return this.trans.getTransform();
 	}
 }

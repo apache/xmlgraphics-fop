@@ -62,7 +62,7 @@ import org.apache.fop.dom.svg.SVGArea;
 /**
  *
  */
-public class Symbol extends FObj {
+public class Symbol extends SVGObj {
 
 	/**
 	 * inner class for making Symbol objects.
@@ -101,28 +101,5 @@ public class Symbol extends FObj {
 	protected Symbol(FObj parent, PropertyList propertyList) {
 		super(parent, propertyList);
 		this.name = "svg:symbol";
-	}
-
-	/**
-	 * layout this formatting object.
-	 *
-	 * @param area the area to layout the object into
-	 *
-	 * @return the status of the layout
-	 */
-	public Status layout(Area area) throws FOPException {
-
-		/* retrieve properties */
-		/* if the area this is being put into is an SVGArea */
-		if (area instanceof SVGArea) {
-			/* add a line to the SVGArea */
-			((SVGArea) area).addGraphic(new SVGSymbolElementImpl());
-		} else {
-			/* otherwise generate a warning */
-			System.err.println("WARNING: svg:symbol outside svg:svg");
-		}
-
-		/* return status */
-		return new Status(Status.OK);
 	}
 }

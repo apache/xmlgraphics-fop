@@ -63,7 +63,7 @@ import org.apache.fop.dom.svg.SVGArea;
  * class representing svg:Style pseudo flow object.
  *
  */
-public class Style extends FObj {
+public class Style extends SVGObj {
 
 	/**
 	 * inner class for making Style objects.
@@ -102,28 +102,5 @@ public class Style extends FObj {
 	protected Style(FObj parent, PropertyList propertyList) {
 		super(parent, propertyList);
 		this.name = "svg:style";
-	}
-
-	/**
-	 * layout this formatting object.
-	 *
-	 * @param area the area to layout the object into
-	 *
-	 * @return the status of the layout
-	 */
-	public Status layout(Area area) throws FOPException {
-
-		/* retrieve properties */		
-		/* if the area this is being put into is an SVGArea */
-		if (area instanceof SVGArea) {
-			/* add a Style to the SVGArea */
-			((SVGArea) area).addGraphic(new SVGStyleElementImpl());
-		} else {
-			/* otherwise generate a warning */
-			System.err.println("WARNING: svg:style outside svg:svg");
-		}
-
-		/* return status */
-		return new Status(Status.OK);
 	}
 }

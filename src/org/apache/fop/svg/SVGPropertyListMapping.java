@@ -53,14 +53,15 @@ package org.apache.fop.svg;
 
 import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
+import org.apache.fop.dom.svg.SVGDocumentImpl;
 
 import java.util.Hashtable;
 
 public class SVGPropertyListMapping implements PropertyListMapping {
 
-    public void addToBuilder(FOTreeBuilder builder) {
+    public void addToBuilder(TreeBuilder builder) {
 
-	String uri = "http://www.w3.org/TR/2000/CR-SVG-20000802/DTD/svg-20000802.dtd";
+	String uri = SVGDocumentImpl.namespaceURI;
 	Hashtable propertyTable = new Hashtable();
 		propertyTable.put("height",SVGLengthProperty.maker());
 		propertyTable.put("width",SVGLengthProperty.maker());
@@ -93,6 +94,7 @@ public class SVGPropertyListMapping implements PropertyListMapping {
 		propertyTable.put("d",SVGD.maker());
 		propertyTable.put("points",SVGPoints.maker());
 //		propertyTable.put("viewBox",SVGBox.maker());
+		propertyTable.put("xml:space",XMLSpace.maker());
 
 	propertyTable.put("font-family",FontFamily.maker());
 	propertyTable.put("font-style",FontStyle.maker());

@@ -60,7 +60,7 @@ import org.apache.fop.apps.FOPException;
 /**
  *
  */
-public class Title extends FObj {
+public class Title extends SVGObj {
 
 	/**
 	 * inner class for making Title objects.

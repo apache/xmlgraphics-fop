@@ -58,95 +58,45 @@ import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.dom.svg.*;
-import org.apache.fop.dom.svg.SVGArea;
 
 import org.w3c.dom.svg.SVGElement;
 
 /**
- * class representing svg:tspan pseudo flow object.
- *
+ * Since SVG objects are not layed out then this class checks
+ * that this element is not being layed out inside some incorrect
+ * element.
  */
-public class TSpan extends SVGObj implements TextElement {
+public abstract class SVGObj extends FObj implements GraphicsCreator {
 
 	/**
-	 * inner class for making tspan objects.
-	 */
-	public static class Maker extends FObj.Maker {
-
-		/**
-		 * make a Line object.
-		 *
-		 * @param parent the parent formatting object
-		 * @param propertyList the explicit properties of this object
-		 *
-		 * @return the Line object
-		 */
-		public FObj make(FObj parent, PropertyList propertyList) throws FOPException
-		{
-			return new TSpan(parent, propertyList);
-		}
-	}
-
-	/**
-	 * returns the maker for this object.
-	 *
-	 * @return the maker for Line objects
-	 */
-	public static FObj.Maker maker() {
-		return new TSpan.Maker();
-	}
-
-	SVGTSpanElementImpl tspan = new SVGTSpanElementImpl();
-	String text = "";
-	/**
-	 * add characters to the string to display.
-	 *
-	 * @param data array of characters
-	 * @param start start offset in character array
-	 * @param length number of characters to add
-	 */
-	protected void addCharacters(char data[], int start, int length)
-	{
-		this.text += new String(data, start, length - start);
-		tspan.str = this.text;
-	}
-
-	/**
-	 * constructs a TSpan object (called by Maker).
 	 *
 	 * @param parent the parent formatting object
 	 * @param propertyList the explicit properties of this object
 	 */
-	protected TSpan(FObj parent, PropertyList propertyList) {
+	public SVGObj(FObj parent, PropertyList propertyList) {
 		super(parent, propertyList);
-		this.name = "svg:tspan";
 	}
 
-	public SVGElement createTextElement()
+	public SVGElement createGraphic()
 	{
-		tspan.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
-//		tspan.dx = ((SVGLengthProperty)this.properties.get("dx")).getSVGLength().mvalue();
-//		tspan.dy = ((SVGLengthProperty)this.properties.get("dy")).getSVGLength().mvalue();
-//		tspan.x = ((SVGLengthListProperty)this.properties.get("x")).getSVGLength().mvalue();
-//		tspan.y = ((SVGLengthProperty)this.properties.get("y")).getSVGLength().mvalue();
-		Property prop;
-		prop = this.properties.get("x");
-		// bit of a hack, but otherwise the svg:text x element coud be
-		// returned which is not a list
-//		if(prop instanceof SVGLengthListProperty)
-			tspan.xlist = ((SVGLengthListProperty)prop).getSVGLengthList();
-		prop = this.properties.get("y");
-//		if(prop instanceof SVGLengthListProperty)
-			tspan.ylist = ((SVGLengthListProperty)prop).getSVGLengthList();
-		prop = this.properties.get("dx");
-//		if(prop instanceof SVGLengthListProperty)
-			tspan.dxlist = ((SVGLengthListProperty)prop).getSVGLengthList();
-		prop = this.properties.get("dy");
-//		if(prop instanceof SVGLengthListProperty)
-			tspan.dylist = ((SVGLengthListProperty)prop).getSVGLengthList();
-//		tspan.xlist = ((SVGLengthListProperty)this.properties.get("x")).getSVGLengthList();
-//		tspan.dxlist = ((SVGLengthProperty)this.properties.get("dx")).getSVGLength().valueList();
-		tspan.setId(this.properties.get("id").getString());
-		return tspan;
+		return null;
+	}
+
+	/**
+	 * layout this formatting object.
+	 *
+	 * @param area the area to layout the object into
+	 * @return the status of the layout
+	 */
+	public Status layout(Area area) throws FOPException
+	{
+		if (area instanceof SVGArea) {
+		} else {
+			/* otherwise generate a warning */
+			System.err.println("WARNING: " + this.name + " outside svg:svg");
+		}
+
+		/* return status */
+		return new Status(Status.OK);
 	}
 }

@@ -67,7 +67,7 @@ import org.w3c.dom.svg.SVGLength;
  * class representing svg:Stop pseudo flow object.
  *
  */
-public class Stop extends FObj {
+public class Stop extends SVGObj {
 
 	/**
 	 * inner class for making Stop objects.

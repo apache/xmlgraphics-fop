@@ -63,7 +63,7 @@ import org.apache.fop.dom.svg.SVGArea;
  * class representing svg:Pattern pseudo flow object.
  *
  */
-public class Pattern extends FObj {
+public class Pattern extends SVGObj {
 
 	/**
 	 * inner class for making Pattern objects.
@@ -102,29 +102,5 @@ public class Pattern extends FObj {
 	protected Pattern(FObj parent, PropertyList propertyList) {
 		super(parent, propertyList);
 		this.name = "svg:pattern";
-	}
-
-	/**
-	 * layout this formatting object.
-	 *
-	 * @param area the area to layout the object into
-	 *
-	 * @return the status of the layout
-	 */
-	public Status layout(Area area) throws FOPException {
-
-		/* retrieve properties */
-		
-		/* if the area this is being put into is an SVGArea */
-		if (area instanceof SVGArea) {
-			/* add a Pattern to the SVGArea */
-			((SVGArea) area).addGraphic(new SVGPatternElementImpl());
-		} else {
-			/* otherwise generate a warning */
-			System.err.println("WARNING: svg:pattern outside svg:svg");
-		}
-
-		/* return status */
-		return new Status(Status.OK);
 	}
 }

@@ -62,7 +62,7 @@ import org.apache.fop.dom.svg.SVGArea;
 /**
  *
  */
-public class Cursor extends FObj {
+public class Cursor extends SVGObj {
 
 	/**
 	 * inner class for making Cursor objects.
@@ -101,28 +101,5 @@ public class Cursor extends FObj {
 	protected Cursor(FObj parent, PropertyList propertyList) {
 		super(parent, propertyList);
 		this.name = "svg:cursor";
-	}
-
-	/**
-	 * layout this formatting object.
-	 *
-	 * @param area the area to layout the object into
-	 *
-	 * @return the status of the layout
-	 */
-	public Status layout(Area area) throws FOPException {
-
-		/* retrieve properties */		
-		/* if the area this is being put into is an SVGArea */
-		if (area instanceof SVGArea) {
-			/* add a line to the SVGArea */
-			((SVGArea) area).addGraphic(new SVGCursorElementImpl());
-		} else {
-			/* otherwise generate a warning */
-			System.err.println("WARNING: svg:cursor outside svg:svg");
-		}
-
-		/* return status */
-		return new Status(Status.OK);
 	}
 }

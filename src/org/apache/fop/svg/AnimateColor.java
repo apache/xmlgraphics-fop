@@ -63,7 +63,7 @@ import org.apache.fop.dom.svg.*;
  * class representing svg:AnimateColor pseudo flow object.
  *
  */
-public class AnimateColor extends FObj {
+public class AnimateColor extends SVGObj {
 
 	/**
 	 * inner class for making AnimateColor objects.
@@ -102,27 +102,5 @@ public class AnimateColor extends FObj {
 	protected AnimateColor(FObj parent, PropertyList propertyList) {
 		super(parent, propertyList);
 		this.name = "svg:animateColor";
-	}
-
-	/**
-	 * layout this formatting object.
-	 *
-	 * @param area the area to layout the object into
-	 *
-	 * @return the status of the layout
-	 */
-	public Status layout(Area area) throws FOPException {
-
-		/* if the area this is being put into is an SVGArea */
-		if (area instanceof SVGArea) {
-			/* add a AnimateColor to the SVGArea */
-//			((SVGArea) area).addGraphic(new AnimateColorGraphic(x1, y1, x2, y2));
-		} else {
-			/* otherwise generate a warning */
-			System.err.println("WARNING: svg:animateColor outside svg:svg");
-		}
-
-		/* return status */
-		return new Status(Status.OK);
 	}
 }

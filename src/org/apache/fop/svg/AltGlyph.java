@@ -63,7 +63,7 @@ import org.apache.fop.dom.svg.*;
  * class representing svg:altGlyph pseudo flow object.
  *
  */
-public class AltGlyph extends FObj {
+public class AltGlyph extends SVGObj {
 
 	/**
 	 * inner class for making AltGlyph objects.
@@ -102,27 +102,5 @@ public class AltGlyph extends FObj {
 	protected AltGlyph(FObj parent, PropertyList propertyList) {
 		super(parent, propertyList);
 		this.name = "svg:altGlyph";
-	}
-
-	/**
-	 * layout this formatting object.
-	 *
-	 * @param area the area to layout the object into
-	 *
-	 * @return the status of the layout
-	 */
-	public Status layout(Area area) throws FOPException {
-		
-		/* if the area this is being put into is an SVGArea */
-		if (area instanceof SVGArea) {
-			/* add a line to the SVGArea */
-//			((SVGArea) area).addGraphic(new AltGlyphGraphic(x1, y1, x2, y2));
-		} else {
-			/* otherwise generate a warning */
-			System.err.println("WARNING: svg:altGlyph outside svg:svg");
-		}
-
-		/* return status */
-		return new Status(Status.OK);
 	}
 }

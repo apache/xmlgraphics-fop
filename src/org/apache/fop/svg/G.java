@@ -59,11 +59,14 @@ import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.dom.svg.*;
 import org.apache.fop.dom.svg.SVGArea;
+
+import org.w3c.dom.svg.SVGElement;
+
 /**
  * class representing svg:G pseudo flow object.
  *
  */
-public class G extends FObj implements GraphicsCreator {
+public class G extends SVGObj {
 
 	/**
 	 * inner class for making G objects.
@@ -106,44 +109,23 @@ public class G extends FObj implements GraphicsCreator {
 
 	SVGGElementImpl ggraphic = new SVGGElementImpl();
 
-	public GraphicImpl createGraphic()
+	public SVGElement createGraphic()
 	{
-		ggraphic.setTransform(((SVGTransform)this.properties.get("transform")).oldgetTransform());
+		ggraphic.setTransform(((SVGTransform)this.properties.get("transform")).getTransform());
 		ggraphic.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
 		ggraphic.setId(this.properties.get("id").getString());
 		int numChildren = this.children.size();
 		for (int i = 0; i < numChildren; i++) {
 			FONode child = (FONode) children.elementAt(i);
 			if(child instanceof GraphicsCreator) {
-				GraphicImpl impl = ((GraphicsCreator)child).createGraphic();
-				ggraphic.addGraphic(impl);
+				SVGElement impl = ((GraphicsCreator)child).createGraphic();
+				if(impl != null)
+					ggraphic.appendChild(impl);
 			} else if(child instanceof Defs) {
 //				System.out.println(child);
-				ggraphic.addDefs(((Defs)child).createDefs());
+//				ggraphic.addDefs(((Defs)child).createDefs());
 			}
 		}
 		return ggraphic;
-	}
-
-	/**
-	 * layout this formatting object.
-	 *
-	 * @param area the area to layout the object into
-	 *
-	 * @return the status of the layout
-	 */
-	public Status layout(Area area) throws FOPException
-	{		
-		/* if the area this is being put into is an SVGArea */
-		if (area instanceof SVGArea) {
-			/* add a G to the SVGArea */
-			((SVGArea) area).addGraphic(createGraphic());
-		} else {
-			/* otherwise generate a warning */
-			System.err.println("WARNING: svg:g outside svg:svg");
-		}
-
-		/* return status */
-		return new Status(Status.OK);
 	}
 }

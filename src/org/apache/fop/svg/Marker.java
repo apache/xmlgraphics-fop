@@ -63,7 +63,7 @@ import org.apache.fop.dom.svg.SVGArea;
  * class representing svg:Marker pseudo flow object.
  *
  */
-public class Marker extends FObj {
+public class Marker extends SVGObj {
 
 	/**
 	 * inner class for making Marker objects.
@@ -102,28 +102,5 @@ public class Marker extends FObj {
 	protected Marker(FObj parent, PropertyList propertyList) {
 		super(parent, propertyList);
 		this.name = "svg:marker";
-	}
-
-	/**
-	 * layout this formatting object.
-	 *
-	 * @param area the area to layout the object into
-	 *
-	 * @return the status of the layout
-	 */
-	public Status layout(Area area) throws FOPException {
-
-		/* retrieve properties */		
-		/* if the area this is being put into is an SVGArea */
-		if (area instanceof SVGArea) {
-			/* add a line to the SVGArea */
-			((SVGArea) area).addGraphic(new SVGMarkerElementImpl());
-		} else {
-			/* otherwise generate a warning */
-			System.err.println("WARNING: svg:marker outside svg:svg");
-		}
-
-		/* return status */
-		return new Status(Status.OK);
 	}
 }

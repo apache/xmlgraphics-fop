@@ -59,11 +59,14 @@ import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.dom.svg.*;
 import org.apache.fop.dom.svg.SVGArea;
+
+import org.w3c.dom.svg.SVGElement;
+
 /**
  * class representing svg:Image pseudo flow object.
  *
  */
-public class Image extends FObj implements GraphicsCreator {
+public class Image extends SVGObj {
 
 	/**
 	 * inner class for making Image objects.
@@ -104,7 +107,7 @@ public class Image extends FObj implements GraphicsCreator {
 		this.name = "svg:image";
 	}
 
-	public GraphicImpl createGraphic()
+	public SVGElement createGraphic()
 	{
 		String link = this.properties.get("xlink:href").getString();
 		float x = ((SVGLengthProperty)this.properties.get("x")).getSVGLength().getValue();
@@ -115,26 +118,5 @@ public class Image extends FObj implements GraphicsCreator {
 		graph.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
 		graph.setId(this.properties.get("id").getString());
 		return graph;
-	}
-
-	/**
-	 * layout this formatting object.
-	 *
-	 * @param area the area to layout the object into
-	 *
-	 * @return the status of the layout
-	 */
-	public Status layout(Area area) throws FOPException {
-		/* if the area this is being put into is an SVGArea */
-		if (area instanceof SVGArea) {
-			/* add a Image to the SVGArea */
-			((SVGArea) area).addGraphic(createGraphic());
-		} else {
-			/* otherwise generate a warning */
-			System.err.println("WARNING: svg:image outside svg:svg");
-		}
-
-		/* return status */
-		return new Status(Status.OK);
 	}
 }

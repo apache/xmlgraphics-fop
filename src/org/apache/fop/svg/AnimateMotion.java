@@ -63,7 +63,7 @@ import org.apache.fop.dom.svg.*;
  * class representing svg:AnimateMotion pseudo flow object.
  *
  */
-public class AnimateMotion extends FObj {
+public class AnimateMotion extends SVGObj {
 
 	/**
 	 * inner class for making AnimateMotion objects.
@@ -102,27 +102,5 @@ public class AnimateMotion extends FObj {
 	protected AnimateMotion(FObj parent, PropertyList propertyList) {
 		super(parent, propertyList);
 		this.name = "svg:animateMotion";
-	}
-
-	/**
-	 * layout this formatting object.
-	 *
-	 * @param area the area to layout the object into
-	 *
-	 * @return the status of the layout
-	 */
-	public Status layout(Area area) throws FOPException {
-
-		/* if the area this is being put into is an SVGArea */
-		if (area instanceof SVGArea) {
-			/* add a AnimateMotion to the SVGArea */
-//			((SVGArea) area).addGraphic(new AnimateMotionGraphic(x1, y1, x2, y2));
-		} else {
-			/* otherwise generate a warning */
-			System.err.println("WARNING: svg:animateMotion outside svg:svg");
-		}
-
-		/* return status */
-		return new Status(Status.OK);
 	}
 }

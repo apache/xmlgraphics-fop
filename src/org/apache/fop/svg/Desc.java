@@ -61,7 +61,7 @@ import org.apache.fop.apps.FOPException;
  * class representing svg:Desc pseudo flow object.
  *
  */
-public class Desc extends FObj {
+public class Desc extends SVGObj {
 
 	/**
 	 * inner class for making Desc objects.

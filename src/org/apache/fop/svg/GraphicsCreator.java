@@ -53,9 +53,11 @@ package org.apache.fop.svg;
 
 import org.apache.fop.dom.svg.*;
 
+import org.w3c.dom.svg.SVGElement;
+
 /**
  *
  */
 public interface GraphicsCreator {
-	public GraphicImpl createGraphic();
+	public SVGElement createGraphic();
 }

@@ -59,11 +59,14 @@ import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.dom.svg.*;
 import org.apache.fop.dom.svg.SVGArea;
+
+import org.w3c.dom.svg.SVGElement;
+
 /**
  * class representing svg:TextPath pseudo flow object.
  *
  */
-public class TextPath extends FObj implements TextElement {
+public class TextPath extends SVGObj implements TextElement {
 
 	/**
 	 * inner class for making TextPath objects.
@@ -110,33 +113,12 @@ public class TextPath extends FObj implements TextElement {
 		text += new String(data, start, length - start);
 	}
 
-	public GraphicImpl createTextElement()
+	public SVGElement createTextElement()
 	{
 		SVGTextPathElementImpl graph = null;
 		String link = this.properties.get("xlink:href").getString();
 		graph = new SVGTextPathElementImpl(link, text.trim());
 		graph.setId(this.properties.get("id").getString());
 		return graph;
-	}
-
-	/**
-	 * layout this formatting object.
-	 *
-	 * @param area the area to layout the object into
-	 *
-	 * @return the status of the layout
-	 */
-	public Status layout(Area area) throws FOPException {
-		
-		/* if the area this is being put into is an SVGArea */
-		if (area instanceof SVGArea) {
-			/* add a TextPath to the SVGArea */
-		} else {
-			/* otherwise generate a warning */
-			System.err.println("WARNING: svg:textPath outside svg:svg");
-		}
-
-		/* return status */
-		return new Status(Status.OK);
 	}
 }

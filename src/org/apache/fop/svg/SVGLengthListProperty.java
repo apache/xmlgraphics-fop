@@ -94,7 +94,7 @@ public class SVGLengthListProperty extends Property {
 	 * @param propertyList the property list the property is a member of
 	 */
 	public Property make(PropertyList propertyList) throws FOPException {
-		return make(propertyList, "0pt");
+		return make(propertyList, "");
 	}
 	}
 
