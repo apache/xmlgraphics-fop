@@ -146,27 +146,17 @@ public class PropertyListBuilder {
         PropertyList p = new PropertyList(parentProperties, nameSpaceURIToUse,
                                           elementName);
         p.setBuilder(this);
-        HashMap table;
-        table = (HashMap)elementTable.get(elementName);
+        HashMap validProperties;
+        validProperties = (HashMap)elementTable.get(elementName);
 
         /*
          * If font-size is set on this FO, must set it first, since
          * other attributes specified in terms of "ems" depend on it.
-         * When we do "shorthand" properties, must handle the "font"
+         */
+        /** @todo When we do "shorthand" properties, must handle the "font"
          * property as well to see if font-size is set.
          */
-        String fontsizeval = attributes.getValue(FONTSIZEATTR);
-        if (fontsizeval != null) {
-            Property.Maker propertyMaker = findMaker(table, FONTSIZEATTR);
-            if (propertyMaker != null) {
-                try {
-                    p.put(FONTSIZEATTR,
-                          propertyMaker.make(p, fontsizeval, parentFO));
-                } catch (FOPException e) {
-                    /**@todo log this exception */
-                }
-            }
-        }
+        convertAttributeToProperty(attributes, FONTSIZEATTR, validProperties, p, parentFO);
 
         for (int i = 0; i < attributes.getLength(); i++) {
             String attributeName = attributes.getQName(i);
@@ -175,7 +165,7 @@ public class PropertyListBuilder {
             String subPropName = findSubPropertyName(attributeName);
             Property propVal = null;
 
-            Property.Maker propertyMaker = findMaker(table, basePropName);
+            Property.Maker propertyMaker = findMaker(validProperties, basePropName);
 
             if (propertyMaker != null) {
                 try {
@@ -214,6 +204,37 @@ public class PropertyListBuilder {
         }
 
         return p;
+    }
+
+    /**
+     *
+     * @param attributes Collection of attributes
+     * @param attributeName Attribute name to convert
+     * @param validProperties Collection of valid properties
+     * @param propList PropertyList in which to add the newly created Property
+     * @param parentFO Parent FO of the object for which this property is being
+     *     built
+     */
+    private void convertAttributeToProperty(Attributes attributes,
+                                            String attributeName,
+                                            HashMap validProperties,
+                                            PropertyList propList,
+                                            FObj parentFO) {
+        String attributeValue = attributes.getValue(attributeName);
+        if (attributeValue == null) {
+            return;
+        }
+        Property.Maker propertyMaker = findMaker(validProperties, attributeName);
+        if (propertyMaker == null) {
+            return;
+        }
+        try {
+            propList.put(attributeName,
+                propertyMaker.make(propList, attributeValue, parentFO));
+        }
+        catch (FOPException e) {
+            /**@todo log this exception */
+        }
     }
 
     /**
