@@ -53,6 +53,8 @@ package org.apache.fop.render.xml;
 // FOP
 import org.apache.fop.svg.*;
 import org.apache.fop.messaging.MessageHandler;
+import org.apache.fop.dom.svg.*;
+import org.apache.fop.dom.svg.SVGArea;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.image.ImageArea;
 import org.apache.fop.layout.*;
