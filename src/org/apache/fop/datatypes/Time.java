@@ -1,40 +1,31 @@
-
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.expr.PropertyException;
-//import org.apache.fop.fo.Properties;
-//import org.apache.fop.fo.PropertyConsts;
-//import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.expr.AbstractPropertyValue;
+import org.apache.fop.fo.Properties;
 
 /*
  * Time.java
  * $Id$
- * Created: Wed Nov 21 15:39:30 2001
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
  * @version $Revision$ $Name$
  */
-/**
- * Time is a front for the manufacture of <tt>Numeric</tt> objects.
- * Because Numerics are so malleable, it makes no sense to tie
- * a Numeric object to any particular type by subclassing <tt>Numeric</tt>.
- * Instead, each of the Numeric types provides static methods to generate
- * a Numeric representing, as originally created, a particular type of
- * number or measure.  The constructor for this class is <tt>private</tt>.
- */
 
-public class Time {
+public class Time extends AbstractPropertyValue {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
     /*
-     * Constants for UnitNames
+     * Constant for Unit name
      */
-    public static final int NOUNIT = 0;
-    public static final int MSEC = 1;
-    public static final int SEC = 2;
+    public static final int
+        NOUNIT = 0
+         ,MSEC = 1
+          ,SEC = 2
+            ;
 
     /**
      * Array of constant conversion factors from unit to milliseconds,
@@ -47,41 +38,71 @@ public class Time {
         ,1000.0
     };
 
-    /**
-     * Private constructor - don't instantiate a <i>Time</i> object.
-     */
-    private Time() {}
+    private double time = 0.0;
+    private int units = 0;
 
     /**
-     * Construct a <tt>Numeric</tt> with a given unit and quantity.
-     * The unit power is assumed as 1.  The base unit is milliseconds.
-     * @param property the index of the property with which this value
-     * is associated.
-     * @param value the number of units.
-     * @param unit an integer constant representing the unit
-     * @return a <tt>Numeric</tt> representing this <i>Time</i>.
+     * @param property the <tt>int</tt> index of the property on which
+     * this value is being defined.
+     * @param unit the <tt>int</tt> unit name code, as defined in the
+     * constants of this class.
+     * @param value the <tt>double</tt> value.
+     * @exception PropertyException
      */
-    public static Numeric makeTime(int property, double value, int unit)
+    public Time(int property, int unit, double value)
         throws PropertyException
     {
-        return new Numeric(property, value * msPerUnit[unit],
-                           Numeric.MILLISECS, 1, unit);
+        super(property);
+        units = unit;
+        time = value * msPerUnit[unit];
     }
 
     /**
-     * Construct a <tt>Numeric</tt> with a given unit and quantity.
-     * The unit power is assumed as 1.  The base unit is milliseconds.
-     * @param propertyName the name of the property with which this value
-     * is associated.
-     * @param value the number of units.
-     * @param unit an integer constant representing the unit
-     * @return a <tt>Numeric</tt> representing this <i>Time</i>.
+     * @param propertyName the <tt>String</tt< name of the property on which
+     * this value is being defined.
+     * @param unit the <tt>int</tt> unit name code, as defined in the
+     * constants of this class.
+     * @param value the <tt>double</tt> value.
+     * @exception PropertyException
      */
-    public static Numeric makeTime(String propertyName, double value, int unit)
+    public Time(String propertyName, int unit, double value)
         throws PropertyException
     {
-        return new Numeric(propertyName, value * msPerUnit[unit],
-                           Numeric.MILLISECS, 1, unit);
+        super(propertyName);
+        units = unit;
+        time = value * msPerUnit[unit];
+    }
+
+    /**
+     * @return <tt>double</tt> time in millisecs
+     */
+    public double getTime() {
+        return time;
+    }
+
+    /**
+     * @param <tt>int</tt> unit as per constants defined in this class
+     * @return <tt>double</tt> time value
+     */
+    public double getTime(int unit) {
+        return time / msPerUnit[unit];
+    }
+
+    /**
+     * @param <tt>int</tt> unit as per constants defined in this class
+     * @param <tt>double</tt> time in specified units
+     */
+    public void setTime(int unit, double value) {
+        units = unit;
+        time = value * msPerUnit[unit];
+    }
+
+    /**
+     * @param <tt>double</tt> time in millisecs
+     */
+    public void setTime(double time) {
+        units = MSEC;
+        this.time = time;
     }
 
     /**
@@ -97,6 +118,17 @@ public class Time {
         default:
             return "";
         }
+    }
+
+    /**
+     * validate the <i>Time</i> against the associated property.
+     */
+    public void validate() throws PropertyException {
+        super.validate(Properties.TIME);
+    }
+
+    public String toString() {
+        return "" + time + getUnitName(units) + "\n" + super.toString();
     }
 
 }

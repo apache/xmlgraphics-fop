@@ -1,36 +1,33 @@
-
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.expr.AbstractPropertyValue;
+import org.apache.fop.fo.Properties;
 
 /*
  * Angle.java
  * $Id$
- * Created: Wed Nov 21 15:39:30 2001
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
-/**
- * Constructor class for Angle datatype.  Constructs a <tt>Numeric</tt>.
- * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
- * @version $Revision$ $Name$
- */
 
-public class Angle {
+public class Angle extends AbstractPropertyValue {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
-    /*
-     * Constants for UnitNames
+    /**
+     * Constant for Unit name
      */
-    public static final int NOUNIT = 0;
-    public static final int DEG = 1;
-    public static final int GRAD = 2;
-    public static final int RAD = 3;
+    public static final int
+        NOUNIT = 0
+          ,DEG = 1
+         ,GRAD = 2
+          ,RAD = 3
+            ;
 
     /**
-     * Array of constant conversion factors from unit to milliseconds,
+     * Array of constant conversion factors from unit to degrees,
      * indexed by integer unit constant.  Keep this array in sync with
      * the integer constants or bear the consequences.
      */
@@ -41,41 +38,71 @@ public class Angle {
         ,63.661977      // Degrees per radian
     };
 
-    /**
-     * Private constructor - don't instantiate a <i>Time</i> object.
-     */
-    private Angle() {}
+    private double degrees = 0.0;
+    private int units = 0;
 
     /**
-     * Construct a <tt>Numeric</tt> with a given unit and quantity.
-     * The unit power is
-     * assumed as 1.  The base unit is degrees.
-     * @param property <tt>int</tt> index of the property.
-     * @param value the number of units.
-     * @param unit an integer value representing the unit of definition.
+     * @param property the <tt>int</tt> index of the property on which
+     * this value is being defined.
+     * @param unit the <tt>int</tt> unit name code, as defined in the
+     * constants of this class.
+     * @param value the <tt>double</tt> value.
+     * @exception PropertyException
      */
-    public static Numeric makeAngle(int property, double value, int unit)
+    public Angle(int property, int unit, double value)
         throws PropertyException
     {
-        return new Numeric(property, value * degPerUnit[unit],
-                           Numeric.DEGREES, 1, unit);
+        super(property);
+        units = unit;
+        degrees = value * degPerUnit[unit];
     }
 
     /**
-     * Construct a <tt>Numeric</tt> with a given unit and quantity.
-     * The unit power is
-     * assumed as 1.  The base unit is degrees.
-     * @param propertyName the name of the property with which this value
-     * is associated.
-     * @param value the number of units.
-     * @param unit an integer value representing the unit of definition.
+     * @param propertyName the <tt>String</tt< name of the property on which
+     * this value is being defined.
+     * @param unit the <tt>int</tt> unit name code, as defined in the
+     * constants of this class.
+     * @param value the <tt>double</tt> value.
+     * @exception PropertyException
      */
-    public static Numeric makeAngle
-        (String propertyName, double value, int unit)
+    public Angle(String propertyName, int unit, double value)
         throws PropertyException
     {
-        return new Numeric(propertyName, value * degPerUnit[unit],
-                           Numeric.DEGREES, 1, unit);
+        super(propertyName);
+        units = unit;
+        degrees = value * degPerUnit[unit];
+    }
+
+    /**
+     * @return <tt>double</tt> angle in degrees
+     */
+    public double getAngle() {
+        return degrees;
+    }
+
+    /**
+     * @param <tt>int</tt> unit as per constants defined in this class
+     * @return <tt>double</tt> degrees value
+     */
+    public double getAngle(int unit) {
+        return degrees / degPerUnit[unit];
+    }
+
+    /**
+     * @param <tt>int</tt> unit as per constants defined in this class
+     * @param <tt>double</tt> angle in specified units
+     */
+    public void setAngle(int unit, double value) {
+        units = unit;
+        degrees = value * degPerUnit[unit];
+    }
+
+    /**
+     * @param <tt>double</tt> angle in degrees
+     */
+    public void setAngle(double degrees) {
+        units = DEG;
+        this.degrees = degrees;
     }
 
     /**
@@ -97,15 +124,14 @@ public class Angle {
     }
 
     /**
-     * Normalize the angle value in the range 0 <= angle <= 360
-     * @param numeric a <tt>Numeric</tt> representing the value to be
-     * normalized.
-     * @return a <tt>double</tt> containing the normalized value.
+     * validate the <i>Angle</i> against the associated property.
      */
-    public static double normalize(Numeric numeric) {
-        if (numeric.power == 1)
-            return numeric.value % 360;  // Negative angles still negative
-        return numeric.value;
+    public void validate() throws PropertyException {
+        super.validate(Properties.ANGLE);
+    }
+
+    public String toString() {
+        return "" + degrees + getUnitName(units) + "\n" + super.toString();
     }
 
 }
