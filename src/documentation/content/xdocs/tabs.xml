@@ -9,7 +9,8 @@
   
   <tab label="Home" dir=""/>
   <tab label="Development" dir="dev/"/>
+  <!--
   <tab label="Design" dir="design/"/>
   <tab label="Alt Design" dir="design/alt.design/"/>
-  
+  -->
 </tabs>

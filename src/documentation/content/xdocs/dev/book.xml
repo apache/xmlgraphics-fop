@@ -11,7 +11,8 @@
       <menu-item label="Basics" href="index.html"/>
     </menu>
     <menu label="Design">
-      <menu-item label="Resolved" href="../design/index.html"/>
+      <!--<menu-item label="Resolved" href="../design/index.html"/>-->
+      <menu-item label="Resolved" href="http://xml.apache.org/fop/design/index.html"/>
       <external label="Unresolved (Wiki)" href="http://nagoya.apache.org/wiki/apachewiki.cgi?FOPProjectPages"/>
       <menu-item label="SVG" href="svg.html"/>
       <menu-item label="Fonts" href="fonts.html"/>
