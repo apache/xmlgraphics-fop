@@ -213,7 +213,18 @@ public class CommonBorderAndPadding implements Cloneable {
             return padding[side].iLength;
         }
     }
-    
+
+    /**
+     * Return all the border and padding height in the block progression 
+     * dimension.
+     * @param bDiscard the discard flag.
+     * @return all the padding and border height.
+     */
+    public int getBPPaddingAndBorder(boolean bDiscard) {
+        return getPaddingBefore(bDiscard) + getPaddingAfter(bDiscard) +
+               getBorderBeforeWidth(bDiscard) + getBorderAfterWidth(bDiscard);        
+    }
+
     public String toString() {
         return "CommonBordersAndPadding (Before, After, Start, End):\n" +
         "Borders: (" + getBorderBeforeWidth(false) + ", " + getBorderAfterWidth(false) + ", " +
