@@ -220,7 +220,9 @@ public class Row extends BlockStackingLayoutManager {
                 
                 //Ending grid unit for current cell
                 GridUnit ending = null;
-                pos += starting.layoutManager.getFObj().getNumberColumnsSpanned() - 1;
+                if (starting.layoutManager != null) {
+                    pos += starting.layoutManager.getFObj().getNumberColumnsSpanned() - 1;
+                }
                 ending = (GridUnit)gridUnits.get(pos - 1);
                 
                 //Neighbouring grid unit at end edge 

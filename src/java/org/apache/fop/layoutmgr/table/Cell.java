@@ -324,6 +324,10 @@ public class Cell extends BlockStackingLayoutManager {
                     int lastRowHeight = 0;
                     for (int x = 0; x < gridUnits.size(); x++) {
                         GridUnit gu = (GridUnit)gridUnits.get(x);
+                        if (!gu.effBorders.hasBorder()) {
+                            continue;
+                        }
+                        
                         //Blocks for painting grid unit borders
                         Block block = new Block();
                         block.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
