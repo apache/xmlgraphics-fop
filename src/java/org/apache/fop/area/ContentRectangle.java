@@ -34,8 +34,9 @@ public class ContentRectangle extends AreaGeometry {
     /**
      * @param writingMode
      */
-    public ContentRectangle(Area area, int writingMode) {
-        area.super(writingMode);
+    public ContentRectangle(Area area) {
+        area.super(area.contentWritingMode);
+        padding = new PaddingRectangle(area, this);
     }
 
     /**
