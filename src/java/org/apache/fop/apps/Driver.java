@@ -579,7 +579,6 @@ public class Driver implements LogEnabled {
     public synchronized void render(InputHandler inputHandler)
                 throws FOPException {
         XMLReader parser = inputHandler.getParser();
-        inputHandler.setParserFeatures(parser);
         render(parser, inputHandler.getInputSource());
     }
 
@@ -660,15 +659,8 @@ public class Driver implements LogEnabled {
 
         if (reader == null) {
             if (!(source instanceof DocumentInputSource)) {
-                try {
-                    SAXParserFactory spf = javax.xml.parsers.SAXParserFactory.newInstance();
-                    spf.setNamespaceAware(true);
-                    reader = spf.newSAXParser().getXMLReader();
-                } catch (SAXException e) {
-                    throw new FOPException(e);
-                } catch (ParserConfigurationException e) {
-                    throw new FOPException(e);
-                }
+                //TODO: (gm) rename to FOFileHandler or similar
+                reader = org.apache.fop.apps.FOInputHandler.createParser();
             }
         }
 
@@ -678,6 +670,5 @@ public class Driver implements LogEnabled {
             render(reader, source);
         }
     }
-
 }
 

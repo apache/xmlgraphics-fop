@@ -170,7 +170,7 @@ public class XSLTInputHandler extends InputHandler {
                     saxTFactory.newXMLFilter(xsltSource);
 
                 // Create an XMLReader.
-                XMLReader parser = createParser();
+                XMLReader parser = FOInputHandler.createParser();
                 if (parser == null) {
                     throw new FOPException("Unable to create SAX parser");
                 }
