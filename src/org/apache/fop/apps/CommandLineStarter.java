@@ -66,8 +66,10 @@ public class CommandLineStarter extends Starter {
             BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(
                                       commandLineOptions.getOutputFile()));
             driver.setOutputStream(bos);
-            driver.getRenderer().setOptions(
+            if(driver.getRenderer() != null) {
+                driver.getRenderer().setOptions(
               commandLineOptions.getRendererOptions());
+            }
             driver.render(parser, inputHandler.getInputSource());
             bos.close();
             System.exit(0);

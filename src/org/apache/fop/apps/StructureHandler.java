@@ -11,7 +11,9 @@ package org.apache.fop.apps;
 import java.util.HashSet;
 
 import org.apache.avalon.framework.logger.Logger;
-import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fo.pagination.*;
+import org.apache.fop.fo.flow.*;
+import org.apache.fop.fo.*;
 import org.apache.fop.layout.FontInfo;
 
 import org.xml.sax.SAXException;
@@ -52,7 +54,7 @@ public class StructureHandler {
 
     }
 
-    public void startPageSequence() {
+    public void startPageSequence(PageSequence pageSeq, LayoutMasterSet lms) {
 
     }
 
@@ -60,83 +62,87 @@ public class StructureHandler {
 
     }
 
-    public void setPageInfo() {
+    public void startFlow(Flow fl) {
 
     }
 
-    public void startBlock() {
+    public void endFlow(Flow fl) {
 
     }
 
-    public void endBlock() {
+    public void startBlock(Block bl) {
+
+    }
+
+    public void endBlock(Block bl) {
 
     }
 
 
     // Tables
-    public void startTable() {
+    public void startTable(Table tbl) {
 
     }
 
-    public void endTable() {
+    public void endTable(Table tbl) {
 
     }
 
-    public void startHeader() {
+    public void startHeader(TableHeader th) {
 
     }
 
-    public void endHeader() {
+    public void endHeader(TableHeader th) {
 
     }
 
-    public void startFooter() {
+    public void startFooter(TableFooter tf) {
 
     }
 
-    public void endFooter() {
+    public void endFooter(TableFooter tf) {
 
     }
 
-    public void startBody() {
+    public void startBody(TableBody tb) {
 
     }
 
-    public void endBody() {
+    public void endBody(TableBody tb) {
 
     }
 
-    public void startRow() {
+    public void startRow(TableRow tr) {
 
     }
 
-    public void endRow() {
+    public void endRow(TableRow tr) {
 
     }
 
-    public void startCell() {
+    public void startCell(TableCell tc) {
 
     }
 
-    public void endCell() {
+    public void endCell(TableCell tc) {
 
     }
 
 
     // Lists
-    public void startList() {
+    public void startList(ListBlock lb) {
 
     }
 
-    public void endList() {
+    public void endList(ListBlock lb) {
 
     }
 
-    public void startListItem() {
+    public void startListItem(ListItem li) {
 
     }
 
-    public void endListItem() {
+    public void endListItem(ListItem li) {
 
     }
 
@@ -185,7 +191,7 @@ public class StructureHandler {
     }
 
 
-    public void image() {
+    public void image(ExternalGraphic eg) {
 
     }
 
@@ -193,7 +199,7 @@ public class StructureHandler {
 
     }
 
-    public void foreignObject() {
+    public void foreignObject(InstreamForeignObject ifo) {
 
     }
 
@@ -201,12 +207,12 @@ public class StructureHandler {
 
     }
 
-    public void leader() {
+    public void leader(Leader l) {
 
     }
 
 
-    public void characters() {
+    public void characters(char data[], int start, int length) {
 
     }
 

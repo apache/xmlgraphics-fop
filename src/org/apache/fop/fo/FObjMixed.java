@@ -59,6 +59,7 @@ public class FObjMixed extends FObj {
 
         FOText ft = new FOText(data, start, length, textInfo);
         ft.setLogger(log);
+        ft.setStructHandler(structHandler);
         addChild(ft);
     }
 

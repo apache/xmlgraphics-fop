@@ -83,6 +83,12 @@ public class Flow extends FObj {
         setFlowName(getProperty("flow-name").getString());
         // Now done in addChild of page-sequence
         //pageSequence.addFlow(this);
+
+        structHandler.startFlow(this);
+    }
+
+    public void end() {
+        structHandler.endFlow(this);
     }
 
     protected void setFlowName(String name) throws FOPException {

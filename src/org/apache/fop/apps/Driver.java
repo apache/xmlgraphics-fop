@@ -149,6 +149,11 @@ public class Driver {
     private Renderer _renderer;
 
     /**
+     * the structure handler
+     */ 
+    private StructureHandler structHandler;
+
+    /**
      * the source of the FO file
      */
     private InputSource _source;
@@ -339,7 +344,7 @@ public class Driver {
             setRenderer(new org.apache.fop.render.txt.TXTRenderer());
             break;
         case RENDER_MIF:
-            setRenderer(new org.apache.fop.render.mif.MIFRenderer());
+            //structHandler = new org.apache.fop.mif.MIFHandler(_stream);
             break;
         case RENDER_XML:
             setRenderer(new org.apache.fop.render.xml.XMLRenderer());
@@ -453,11 +458,16 @@ public class Driver {
      * events but isn't a SAX Parser itself.
      */
     public ContentHandler getContentHandler() {
-        StructureHandler handler = new LayoutHandler(_stream, _renderer, true);
-        handler.setLogger(getLogger());
+        // TODO - do this stuff in a better way
+        if(_renderer != null) {
+            structHandler = new LayoutHandler(_stream, _renderer, true);
+        } else {
+            structHandler = new org.apache.fop.mif.MIFHandler(_stream);
+        }
+        structHandler.setLogger(getLogger());
         _treeBuilder.setLogger(getLogger());
         _treeBuilder.setUserAgent(getUserAgent());
-        _treeBuilder.setStructHandler(handler);
+        _treeBuilder.setStructHandler(structHandler);
 
         return _treeBuilder;
     }
