@@ -504,6 +504,12 @@ public class LineArea extends Area {
         } else if ((leaderLengthOptimum > leaderLengthMaximum) && (leaderLengthOptimum < remainingWidth)) {
             leaderLength = leaderLengthOptimum;
         }
+
+		//stop if leader-length is too small
+		if (leaderLength <= 0 ) {
+			return;
+		}
+
         switch (leaderPattern) {
             case LeaderPattern.SPACE:
                 //whitespace setting must be false for this
