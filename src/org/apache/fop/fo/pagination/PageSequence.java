@@ -4,11 +4,6 @@
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
-/*
- Modified by Mark Lillywhite mark-fop@inomial.com. Does not add
- itself to the root any more. Does not hang onto currentPage
- pointer, which caused GC issues.
- */
 
 package org.apache.fop.fo.pagination;
 
@@ -57,10 +52,6 @@ public class PageSequence extends FObj {
     private static final int AUTO_EVEN = 2;
     private static final int AUTO_ODD = 3;
 
-    //
-    // associations
-    //
-
     /**
      * The parent root object
      */
@@ -78,8 +69,15 @@ public class PageSequence extends FObj {
 
     /**
      * Map of flows to their flow name (flow-name, Flow)
+     * Does only contain flows for static content!
      */
-    private Hashtable _flowMap;
+    private Hashtable flowMap;
+
+    // according to communication from Paul Grosso (XSL-List,
+    // 001228, Number 406), confusion in spec section 6.4.5 about
+    // multiplicity of fo:flow in XSL 1.0 is cleared up - one (1)
+    // fo:flow per fo:page-sequence only.
+    private Flow flow = null;
 
     /**
      * the "master-reference" attribute,
@@ -88,22 +86,11 @@ public class PageSequence extends FObj {
      */
     private String masterName;
 
-    // according to communication from Paul Grosso (XSL-List,
-    // 001228, Number 406), confusion in spec section 6.4.5 about
-    // multiplicity of fo:flow in XSL 1.0 is cleared up - one (1)
-    // fo:flow per fo:page-sequence only.
-    private boolean isFlowSet = false;
-
-    //
-    // state attributes used during layout
-    //
-
     // page number and related formatting variables
     private int firstPageNumber = 0;
     private PageNumberGenerator pageNumberGenerator;
 
 
-    private int forcePageCount;
     private int pageCount = 0;
     private int currentPageNumber;
 
@@ -111,6 +98,8 @@ public class PageSequence extends FObj {
      * specifies page numbering type (auto|auto-even|auto-odd|explicit)
      */
     private int pageNumberType;
+
+    private int forcePageCountType;
 
     /**
      * the current page master
@@ -135,7 +124,7 @@ public class PageSequence extends FObj {
         // best time to run some checks on LayoutMasterSet
         layoutMasterSet.checkRegionNames();
 
-        _flowMap = new Hashtable();
+        flowMap = new Hashtable();
 
         String ipnValue = this.properties.get("initial-page-number").getString();
 
@@ -168,7 +157,7 @@ public class PageSequence extends FObj {
                                     this.properties.get("grouping-size").getNumber().intValue(),
                                     this.properties.get("letter-value").getEnum());
 
-        this.forcePageCount =
+        this.forcePageCountType =
             this.properties.get("force-page-count").getEnum();
 
         // this.properties.get("country");
@@ -181,16 +170,31 @@ public class PageSequence extends FObj {
     }
 
     public void addFlow(Flow flow) throws FOPException {
-        if (_flowMap.containsKey(flow.getFlowName())) {
+        if (this.flow!=null) {
+            throw new FOPException("Only a single fo:flow permitted per fo:page-sequence");
+        }
+        if (flowMap.containsKey(flow.getFlowName())) {
             throw new FOPException("flow-names must be unique within an fo:page-sequence");
         }
-        if (!this.layoutMasterSet.regionNameExists(flow.getFlowName())) {
+        this.flow = flow;
+    }
+
+
+    public void addStaticContent(StaticContent staticContent) throws FOPException {
+        if (this.flow!=null) {
+            throw new FOPException("Static content ('"
+                                   + staticContent.getFlowName()
+                                   + "') is not allowed after fo:flow");
+        }
+        if (flowMap.containsKey(staticContent.getFlowName())) {
+            throw new FOPException("flow-names must be unique within an fo:page-sequence");
+        }
+        if (!this.layoutMasterSet.regionNameExists(staticContent.getFlowName())) {
             log.error("region-name '"
-                      + flow.getFlowName()
+                      + staticContent.getFlowName()
                       + "' doesn't exist in the layout-master-set.");
         }
-        _flowMap.put(flow.getFlowName(), flow);
-        setIsFlowSet(true);
+        flowMap.put(staticContent.getFlowName(), staticContent);
     }
 
 
@@ -200,7 +204,7 @@ public class PageSequence extends FObj {
     public void format(AreaTree areaTree) throws FOPException {
         PageSequence previousPageSequence=this.root.getPageSequence();
         if( previousPageSequence!=null ) {
-            if (previousPageSequence.forcePageCount == ForcePageCount.AUTO) {
+            if (previousPageSequence.forcePageCountType == ForcePageCount.AUTO) {
                 if (pageNumberType == AUTO_ODD) {
                     if (previousPageSequence.currentPageNumber % 2 == 0) {
                         previousPageSequence.makePage(areaTree,true,null);
@@ -247,11 +251,19 @@ public class PageSequence extends FObj {
                                        + "' for fo:page-sequence matches no simple-page-master or page-sequence-master");
             }
             pageSequenceMaster.reset();
+        } else {
+            Region region = currentSimplePageMaster
+              .getRegion(RegionBody.REGION_CLASS);
+            if (!flow.getFlowName().equals(region.getRegionName())) {
+                throw new FOPException("Flow '" + flow.getFlowName()
+                                       + "' does not map to the region-body in page-master '"
+                                       + currentSimplePageMaster.getMasterName() + "'");
+            }
         }
 
         // make pages and layout content
         Status status = new Status(Status.OK);
-        Page lastPage = null;
+        Page currentPage = null;
         do {
             boolean isBlankPage = false;
 
@@ -266,29 +278,25 @@ public class PageSequence extends FObj {
                    isBlankPage = true;
                 } 
             }
-            lastPage = makePage(areaTree, isBlankPage, lastPage);
-            // Hackery, should use special variable for flow
-            Region region = currentSimplePageMaster
-              .getRegion(RegionBody.REGION_CLASS);
-            Flow flow = (Flow)_flowMap.get(region.getRegionName());
+            currentPage = makePage(areaTree, isBlankPage, currentPage);
             status = flow.getStatus();
-        } while (flowsAreIncomplete());
+        } while (status.isIncomplete());
 
         // handle cases of 'force-page-count' which do not depend
         // on the presence of a following page sequence
-        if (this.forcePageCount == ForcePageCount.EVEN) {
+        if (this.forcePageCountType == ForcePageCount.EVEN) {
             if (this.pageCount % 2 != 0) {
                 makePage(areaTree,true, null);
             }
-        } else if (this.forcePageCount == ForcePageCount.ODD) {
+        } else if (this.forcePageCountType == ForcePageCount.ODD) {
             if (this.pageCount % 2 != 1) {
                 makePage(areaTree,true, null);
             }
-        } else if (this.forcePageCount == ForcePageCount.END_ON_EVEN) {
+        } else if (this.forcePageCountType == ForcePageCount.END_ON_EVEN) {
             if (this.currentPageNumber % 2 == 0) {
                 makePage(areaTree,true, null);
             }
-        } else if (this.forcePageCount == ForcePageCount.END_ON_ODD) {
+        } else if (this.forcePageCountType == ForcePageCount.END_ON_ODD) {
             if (this.currentPageNumber % 2 == 1) {
                 makePage(areaTree,true, null);
             }
@@ -302,18 +310,25 @@ public class PageSequence extends FObj {
      * @return a Page layout object based on the page master selected from the params
      */
     private Page makePage(AreaTree areaTree,
-                          boolean isBlankPage,
-                          Page lastPage)
+                              boolean isBlankPage,
+                              Page currentPage)
       throws FOPException {
         if (this.pageSequenceMaster!=null) {
             this.currentSimplePageMaster=this.pageSequenceMaster
               .getNextSimplePageMaster(((this.currentPageNumber % 2)==1),
                                        isBlankPage);
+            Region region = currentSimplePageMaster
+              .getRegion(RegionBody.REGION_CLASS);
+            if (!flow.getFlowName().equals(region.getRegionName())) {
+                throw new FOPException("Flow '" + flow.getFlowName()
+                                       + "' does not map to the region-body in page-master '"
+                                       + currentSimplePageMaster.getMasterName() + "'");
+            }
         }
         Page newPage = this.currentSimplePageMaster.getPageMaster()
           .makePage(areaTree);
-        if (lastPage != null) {
-            Vector foots = lastPage.getPendingFootnotes();
+        if (currentPage != null) {
+            Vector foots = currentPage.getPendingFootnotes();
             newPage.setPendingFootnotes(foots);
         }
         newPage.setNumber(this.currentPageNumber);
@@ -321,20 +336,13 @@ public class PageSequence extends FObj {
           pageNumberGenerator.makeFormattedPageNumber(this.currentPageNumber);
         newPage.setFormattedNumber(formattedPageNumber);
         newPage.setPageSequence(this);
-        log.info("[" + currentPageNumber + (isBlankPage?"(forced)]":"]"));
         if (!isBlankPage) {
+            log.info("[" + currentPageNumber + "]");
             BodyAreaContainer bodyArea = newPage.getBody();
             bodyArea.setIDReferences(areaTree.getIDReferences());
-
-            Region region = currentSimplePageMaster
-              .getRegion(RegionBody.REGION_CLASS);
-            Flow flow = (Flow)_flowMap.get(region.getRegionName());
-            if (flow != null) {
-                flow.layout(bodyArea);
-            } else {
-                throw new FOPException("No flow found for region-body in page-master '"
-                                       + currentSimplePageMaster.getMasterName() + "'");
-            }
+            flow.layout(bodyArea);
+        } else {
+            log.info("[" + currentPageNumber + " (blank)]");
         }
         // because of markers, do after fo:flow (likely also
         // justifiable because of spec)
@@ -354,8 +362,8 @@ public class PageSequence extends FObj {
 
         if (simpleMaster.getRegion(RegionBefore.REGION_CLASS) != null
                 && (page.getBefore() != null)) {
-            Flow staticFlow =
-                (Flow)_flowMap.get(simpleMaster.getRegion(RegionBefore.REGION_CLASS).getRegionName());
+            StaticContent staticFlow =
+                (StaticContent)flowMap.get(simpleMaster.getRegion(RegionBefore.REGION_CLASS).getRegionName());
             if (staticFlow != null) {
                 AreaContainer beforeArea = page.getBefore();
                 beforeArea.setIDReferences(areaTree.getIDReferences());
@@ -367,8 +375,8 @@ public class PageSequence extends FObj {
 
         if (simpleMaster.getRegion(RegionAfter.REGION_CLASS) != null
                 && (page.getAfter() != null)) {
-            Flow staticFlow =
-                (Flow)_flowMap.get(simpleMaster.getRegion(RegionAfter.REGION_CLASS).getRegionName());
+            StaticContent staticFlow =
+                (StaticContent)flowMap.get(simpleMaster.getRegion(RegionAfter.REGION_CLASS).getRegionName());
             if (staticFlow != null) {
                 AreaContainer afterArea = page.getAfter();
                 afterArea.setIDReferences(areaTree.getIDReferences());
@@ -380,8 +388,8 @@ public class PageSequence extends FObj {
 
         if (simpleMaster.getRegion(RegionStart.REGION_CLASS) != null
                 && (page.getStart() != null)) {
-            Flow staticFlow =
-                (Flow)_flowMap.get(simpleMaster.getRegion(RegionStart.REGION_CLASS).getRegionName());
+            StaticContent staticFlow =
+                (StaticContent)flowMap.get(simpleMaster.getRegion(RegionStart.REGION_CLASS).getRegionName());
             if (staticFlow != null) {
                 AreaContainer startArea = page.getStart();
                 startArea.setIDReferences(areaTree.getIDReferences());
@@ -393,8 +401,8 @@ public class PageSequence extends FObj {
 
         if (simpleMaster.getRegion(RegionEnd.REGION_CLASS) != null
                 && (page.getEnd() != null)) {
-            Flow staticFlow =
-                (Flow)_flowMap.get(simpleMaster.getRegion(RegionEnd.REGION_CLASS).getRegionName());
+            StaticContent staticFlow =
+                (StaticContent)flowMap.get(simpleMaster.getRegion(RegionEnd.REGION_CLASS).getRegionName());
             if (staticFlow != null) {
                 AreaContainer endArea = page.getEnd();
                 endArea.setIDReferences(areaTree.getIDReferences());
@@ -406,39 +414,12 @@ public class PageSequence extends FObj {
 
     }
 
-    private void layoutStaticContent(Flow flow, Region region,
+    private void layoutStaticContent(StaticContent flow, Region region,
                                      AreaContainer area) throws FOPException {
-        if (flow instanceof StaticContent) {
-            ((StaticContent)flow).layout(area, region);
-        } else {
-            log.error("The region '" + region.getRegionName()
-                      + "' only supports static-content. Cannot use flow named '"
-                      + flow.getFlowName() + "'");
-        }
-    }
-
-    /**
-     * Returns true when there are more flow elements left to lay out.
-     */
-    private boolean flowsAreIncomplete() {
-        for (Enumeration e = _flowMap.elements(); e.hasMoreElements(); ) {
-            Flow flow = (Flow)e.nextElement();
-            if (flow instanceof StaticContent) {
-                continue;
-            }
-            if (flow.getStatus().isIncomplete()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean isFlowSet() {
-        return isFlowSet;
-    }
-
-    public void setIsFlowSet(boolean isFlowSet) {
-        this.isFlowSet = isFlowSet;
+        flow.layout(area, region);
+//              log.error("The region '" + region.getRegionName()
+//                        + "' only supports static-content. Cannot use flow named '"
+//                        + flow.getFlowName() + "'");
     }
 
     public int getCurrentPageNumber() {
