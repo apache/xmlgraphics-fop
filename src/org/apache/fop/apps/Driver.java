@@ -528,11 +528,6 @@ public class Driver {
         }
     }
 
-    /* Set up the system buffers */
-
-    public void setBufferFile(File bufferFile) {
-    }
-
     /**
      * Runs the formatting and renderering process using the previously set
      * inputsource and outputstream

@@ -49,39 +49,31 @@ public class CommandLineOptions {
     private static final int TXT_OUTPUT = 7;
     /* output: svg file */
     private static final int SVG_OUTPUT = 8;
-
-    /* System buffers */
-    private static final int BUFFER_FILE = 8;
-
-    /* System buffers */
+    /* output: XML area tree */
     private static final int AREA_OUTPUT = 9;
 
     /* use debug mode */
-    Boolean errorDump = new Boolean(false);
+    Boolean errorDump = Boolean.FALSE;
     /* show configuration information */
-    Boolean dumpConfiguration = new Boolean(false);
+    Boolean dumpConfiguration = Boolean.FALSE;
     /* suppress any progress information */
-    Boolean quiet = new Boolean(false);
+    Boolean quiet = Boolean.FALSE;
     /* for area tree XML output, only down to block area level */
-    Boolean suppressLowLevelAreas = new Boolean(false);
-    /* name of user configuration file */
+    Boolean suppressLowLevelAreas = Boolean.FALSE;
+    /* user configuration file */
     File userConfigFile = null;
-    /* name of input fo file */
+    /* input fo file */
     File fofile = null;
-    /* name of xsltfile (xslt transformation as input) */
+    /* xsltfile (xslt transformation as input) */
     File xsltfile = null;
-    /* name of xml file (xslt transformation as input) */
+    /* xml file (xslt transformation as input) */
     File xmlfile = null;
-    /* name of output file */
+    /* output file */
     File outfile = null;
-    /* name of buffer file */
-    File bufferFile = null;
     /* input mode */
     int inputmode = NOT_SET;
     /* output mode */
     int outputmode = NOT_SET;
-    /* buffer mode */
-    int buffermode = NOT_SET;
     /* language for user information */
     String language = null;
 
@@ -122,13 +114,13 @@ public class CommandLineOptions {
     private boolean parseOptions(String args[]) throws FOPException {
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-d") || args[i].equals("--full-error-dump")) {
-                errorDump = new Boolean(true);
+                errorDump = Boolean.TRUE;
                 log = new ConsoleLogger(ConsoleLogger.LEVEL_DEBUG);
             } else if (args[i].equals("-x")
                        || args[i].equals("--dump-config")) {
-                dumpConfiguration = new Boolean(true);
+                dumpConfiguration = Boolean.TRUE;
             } else if (args[i].equals("-q") || args[i].equals("--quiet")) {
-                quiet = new Boolean(true);
+                quiet = Boolean.TRUE;
                 log = new ConsoleLogger(ConsoleLogger.LEVEL_ERROR);
             } else if (args[i].equals("-c")) {
                 if ((i + 1 == args.length)
@@ -147,7 +139,7 @@ public class CommandLineOptions {
                     i++;
                 }
             } else if (args[i].equals("-s")) {
-                suppressLowLevelAreas = new Boolean(true);
+                suppressLowLevelAreas = Boolean.TRUE;
             } else if (args[i].equals("-fo")) {
                 inputmode = FO_INPUT;
                 if ((i + 1 == args.length)
@@ -249,21 +241,6 @@ public class CommandLineOptions {
                 } else {
                     throw new FOPException("Don't know what to do with "
                                            + args[i]);
-                }
-            } else if (args[i].equals("-buf")) {
-                if (buffermode == NOT_SET) {
-                    buffermode = BUFFER_FILE;
-                } else {
-                    log.error("you can only set one buffer method");
-                    printUsage();
-                }
-                if ((i + 1 == args.length)
-                        || (args[i + 1].charAt(0) == '-')) {
-                    log.error("you must specify the buffer output file");
-                    printUsage();
-                } else {
-                    bufferFile = new File(args[i + 1]);
-                    i++;
                 }
             } else if (args[i].equals("-at")) {
                 setOutputMode(AREA_OUTPUT);
@@ -465,10 +442,6 @@ public class CommandLineOptions {
 
     public String getLanguage() {
         return language;
-    }
-
-    public File getBufferFile() {
-        return bufferFile;
     }
 
     public Boolean isQuiet() {

@@ -54,7 +54,6 @@ public class CommandLineStarter extends Starter {
 
         Driver driver = new Driver();
         driver.setLogger(log);
-        driver.setBufferFile(commandLineOptions.getBufferFile());
         driver.initialize();
 
         if (errorDump) {
