@@ -115,8 +115,8 @@ import org.apache.fop.fo.flow.MultiSwitch;
 import org.apache.fop.fo.flow.MultiToggle;
 import org.apache.fop.fo.flow.TableAndCaption;
 import org.apache.fop.fo.flow.TableCaption;
-import org.apache.fop.svg.SVGObj;
-import org.apache.fop.svg.SVGElement;
+import org.apache.fop.fo.extensions.svg.SVGObj;
+import org.apache.fop.fo.extensions.svg.SVGElement;
 
 /**
  * <p>Implements the GoF Visitor design pattern to allow access to the FOTree

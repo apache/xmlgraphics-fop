@@ -1,5 +1,5 @@
 /*
- * $Id: SVGElement.java,v 1.34 2003/03/05 15:08:45 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,7 +48,7 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.svg;
+package org.apache.fop.fo.extensions.svg;
 
 // FOP
 import org.apache.fop.fo.FONode;
@@ -74,6 +74,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import org.apache.fop.apps.*;
+import org.apache.fop.svg.*;
 
 /**
  * class representing the SVG root element

@@ -71,7 +71,7 @@ import org.apache.batik.gvt.TextPainter;
 import org.apache.fop.apps.Document;
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.render.RendererContext;
-import org.apache.fop.svg.SVGUserAgent;
+import org.apache.fop.fo.extensions.svg.SVGUserAgent;
 import org.apache.fop.apps.*;
 
 /**

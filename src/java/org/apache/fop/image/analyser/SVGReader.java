@@ -70,7 +70,7 @@ import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.fop.image.XMLImage;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.svg.SVGUserAgent;
+import org.apache.fop.fo.extensions.svg.SVGUserAgent;
 
 /** 
  * ImageReader object for SVG document image type.
