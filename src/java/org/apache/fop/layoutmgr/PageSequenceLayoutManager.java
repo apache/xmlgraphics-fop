@@ -53,10 +53,8 @@ import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.pagination.Title;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 import java.awt.Rectangle;
 import java.util.Iterator;
 import java.awt.geom.Rectangle2D;
@@ -122,7 +120,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * The collection of StaticContentLayoutManager objects that are associated
      * with this Page Sequence, keyed by flow-name.
      */
-    private HashMap staticContentLMs = new HashMap(4);
+    //private HashMap staticContentLMs = new HashMap(4);
 
     /**
      * This is the top level layout manager.
@@ -320,7 +318,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * @param bbp the block break position
      */
     public void addAreas(BlockBreakPosition bbp) {
-        List list = new ArrayList();
+        List list = new java.util.ArrayList();
         list.add(bbp.breakps);
         bbp.getLM().addAreas(new BreakPossPosIter(list, 0,
                               1), null);
@@ -534,7 +532,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         while (!lm.isFinished()) {
             BreakPoss bp = lm.getNextBreakPoss(childLC);
             if (bp != null) {
-                List vecBreakPoss = new ArrayList();
+                List vecBreakPoss = new java.util.ArrayList();
                 vecBreakPoss.add(bp);
                 lm.addAreas(new BreakPossPosIter(vecBreakPoss, 0,
                                                  vecBreakPoss.size()), null);
@@ -944,13 +942,13 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      */
     private StaticContentLayoutManager getStaticContentLayoutManager(StaticContent sc)
         throws FOPException {
-        StaticContentLayoutManager lm =
-            (StaticContentLayoutManager) staticContentLMs.get(sc.getFlowName());
-        if (lm == null) {
+        StaticContentLayoutManager lm;
+        //lm = (StaticContentLayoutManager) staticContentLMs.get(sc.getFlowName());
+        //if (lm == null) {
             lm = (StaticContentLayoutManager)
                 getAreaTreeHandler().getLayoutManagerMaker().makeLayoutManager(sc);
-            staticContentLMs.put(sc.getFlowName(), lm);
-        }
+            //staticContentLMs.put(sc.getFlowName(), lm);
+        //}
         return lm;
     }
 }
