@@ -106,7 +106,8 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
 
     public void setUserAgent(FOUserAgent foUserAgent) {
         super.setUserAgent(foUserAgent);
-        createPreviewDialog(foUserAgent.getInputHandler());
+        userAgent.setRendererOverride(this); // for document regeneration
+        createPreviewDialog();
     }
 
     public FOUserAgent getUserAgent() {
@@ -180,8 +181,8 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         return 0;
     }
 
-    private PreviewDialog createPreviewDialog(InputHandler handler) {
-        frame = new PreviewDialog(this, handler);
+    private PreviewDialog createPreviewDialog() {
+        frame = new PreviewDialog(userAgent);
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosed(WindowEvent we) {
                 System.exit(0);

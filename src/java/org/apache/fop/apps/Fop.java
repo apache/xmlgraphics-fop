@@ -41,11 +41,10 @@ public class Fop {
         BufferedOutputStream bos = null;
 
         try {
-            Driver driver = new Driver();
             options = new CommandLineOptions(args);
-
             foUserAgent = options.getFOUserAgent();
-            driver.setUserAgent(foUserAgent);
+            
+            Driver driver = new Driver(foUserAgent);
             driver.setRenderer(options.getRenderer());
 
             try {
