@@ -82,7 +82,7 @@ This favors a clearer design and makes switching between implementations easier 
           <li>Avoid using exceptions for flow control.</li>
           <li>Try to catch exceptions as much as possible and rethrow higher level exceptions (meaning hiding the low level detailed and putting a message that is more related to the function of your code).</li> 
           <li>It is important not to lose the stack trace which contains important information.
-Use chained exception for that. Avalon Framework provides [CascadingException] (and similar) for this.
+Use chained exception for that. Avalon Framework provides <jump href="http://jakarta.apache.org/avalon/api/org/apache/avalon/framework/CascadingException.htm">CascadingException</jump> (and similar) for this.
 Exception class names and stack traces must be treated like gold.
 Do whatever is required so that this information is not lost.
 Printing error messages to System.err or System.out is useless in a server-side environment where this info is usually lost.</li>
