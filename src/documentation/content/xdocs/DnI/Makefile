@@ -14,7 +14,7 @@
 
 # $Id$ 
 
-BOOK=book.xml
+BOOK=DnI.xml
 CHAPTERS=addareas.xml areatree.xml configuration.xml fonts.xml \
 	foptrees.xml fotree.xml getnextbreakposs.xml overview.xml \
 	preparation.xml properties.xml rendering.xml
@@ -27,7 +27,7 @@ STYLESHEETS=$(CUSTOM_DOCBOOK_XHTML_STYLESHEET) \
 BOOKMAKER=BookMaker.java
 
 # destinations
-BUILD_DIR=../../../../../build/
+BUILD_DIR=../../../../../build
 BOOKMAKERCLASSPATH=$(BUILD_DIR)/classes
 BOOKMAKER_CLASS=$(BOOKMAKERCLASSPATH)/BookMaker.class
 DNI_BUILD_DIR=$(BUILD_DIR)/site/DnI
@@ -45,30 +45,30 @@ CLICLASSPATH=$(JAVACLASSES)/commons-cli-1.0.jar
 
 all: xhtml html pdf
 
-xhtml: $(XHTML_DIR)/book-xhtml.xml
-html: $(HTML_DIR)/book.html
-fo: $(PDF_DIR)/book.fo
-pdf: $(PDF_DIR)/book.pdf
+xhtml: $(XHTML_DIR)/DnI-xhtml.xml
+html: $(HTML_DIR)/DnI.html
+fo: $(PDF_DIR)/DnI.fo
+pdf: $(PDF_DIR)/DnI.pdf
 
-$(XHTML_DIR)/book-xhtml.xml: $(BOOK) $(CHAPTERS) $(CUSTOM_DOCBOOK_XHTML_STYLESHEET) $(BOOKMAKER_CLASS)
+$(XHTML_DIR)/DnI-xhtml.xml: $(BOOK) $(CHAPTERS) $(CUSTOM_DOCBOOK_XHTML_STYLESHEET) $(BOOKMAKER_CLASS)
 	[ -d $(XHTML_DIR) ] || mkdir -p $(XHTML_DIR)
 	java $(JAVAFLAGS) \
 		-classpath $(XERCESCLASSPATH):$(SAXONCLASSPATH):$(AVALONCLASSPATH):$(RESOLVERCLASSPATH):$(CLICLASSPATH):$(BOOKMAKERCLASSPATH):$(CLASSPATH) \
 		BookMaker $(PROGOPTS) --parameter base.dir $(XHTML_DIR)/ -xml $< -xsl $(CUSTOM_DOCBOOK_XHTML_STYLESHEET) -out $@
 
-$(HTML_DIR)/book.html: $(BOOK) $(CHAPTERS) $(CUSTOM_DOCBOOK_HTML_STYLESHEET) $(BOOKMAKER_CLASS)
+$(HTML_DIR)/DnI.html: $(BOOK) $(CHAPTERS) $(CUSTOM_DOCBOOK_HTML_STYLESHEET) $(BOOKMAKER_CLASS)
 	[ -d $(HTML_DIR) ] || mkdir -p $(HTML_DIR)
 	java $(JAVAFLAGS) \
 		-classpath $(XERCESCLASSPATH):$(SAXONCLASSPATH):$(AVALONCLASSPATH):$(RESOLVERCLASSPATH):$(CLICLASSPATH):$(BOOKMAKERCLASSPATH):$(CLASSPATH) \
 		BookMaker $(PROGOPTS) --parameter base.dir $(HTML_DIR)/ -xml $< -xsl $(CUSTOM_DOCBOOK_HTML_STYLESHEET) -out $@
 
-$(PDF_DIR)/book.fo:  $(BOOK) $(CHAPTERS) $(CUSTOM_DOCBOOK_FO_STYLESHEET) $(BOOKMAKER_CLASS)
+$(PDF_DIR)/DnI.fo:  $(BOOK) $(CHAPTERS) $(CUSTOM_DOCBOOK_FO_STYLESHEET) $(BOOKMAKER_CLASS)
 	[ -d $(PDF_DIR) ] || mkdir -p $(PDF_DIR)
 	java $(JAVAFLAGS) \
 		-classpath $(XERCESCLASSPATH):$(SAXONCLASSPATH):$(AVALONCLASSPATH):$(RESOLVERCLASSPATH):$(CLICLASSPATH):$(BOOKMAKERCLASSPATH):$(CLASSPATH) \
 		BookMaker $(PROGOPTS) -xml $< -xsl $(CUSTOM_DOCBOOK_FO_STYLESHEET) -out $@
 
-$(PDF_DIR)/book.pdf: $(BOOK) $(CHAPTERS) $(CUSTOM_DOCBOOK_FO_STYLESHEET) $(BOOKMAKER_CLASS)
+$(PDF_DIR)/DnI.pdf: $(BOOK) $(CHAPTERS) $(CUSTOM_DOCBOOK_FO_STYLESHEET) $(BOOKMAKER_CLASS)
 	[ -d $(PDF_DIR) ] || mkdir -p $(PDF_DIR)
 	java $(JAVAFLAGS) \
 		-classpath $(XERCESCLASSPATH):$(SAXONCLASSPATH):$(FOPCLASSPATH):$(AVALONCLASSPATH):$(RESOLVERCLASSPATH):$(CLICLASSPATH):$(BOOKMAKERCLASSPATH):$(CLASSPATH) \
