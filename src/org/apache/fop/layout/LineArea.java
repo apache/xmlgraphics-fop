@@ -125,7 +125,7 @@ public class LineArea extends Area {
 
     public LineArea(FontState fontState, int lineHeight, int
 		    halfLeading, int allocationWidth, int startIndent,
-		    int endIndent) { 
+		    int endIndent,LineArea prevLineArea) { 
 	super(fontState);        
 	
 	this.currentFontState = fontState;
@@ -145,6 +145,13 @@ public class LineArea extends Area {
 	this.startIndent = startIndent;
 	this.endIndent = endIndent;
 	
+        if(prevLineArea != null){
+	    Enumeration e=prevLineArea.pendingAreas.elements();
+            while( e.hasMoreElements() ){
+		pendingAreas.addElement(e.nextElement());
+	    }
+            pendingWidth=prevLineArea.getPendingWidth();         
+	}
     }
     
     public void render(Renderer renderer) {

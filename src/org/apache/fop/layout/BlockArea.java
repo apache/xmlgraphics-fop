@@ -167,9 +167,11 @@ public class BlockArea extends Area {
 	while (ts != -1) {
 	    this.currentLineArea.align(this.align);
 	    this.addLineArea(this.currentLineArea);
+            
 	    this.currentLineArea = new
 		LineArea(fontState, lineHeight, halfLeading,
-			 allocationWidth, startIndent, endIndent);  
+			 allocationWidth, startIndent, endIndent,
+                         currentLineArea);  
 	    if (currentHeight + currentLineArea.getHeight() >
 		this.maxHeight) {
 		return ts;
@@ -199,7 +201,7 @@ public class BlockArea extends Area {
 	currentLineArea = new LineArea(fontState, lineHeight,
 				       halfLeading, allocationWidth,
 				       startIndent + textIndent,
-				       endIndent);
+				       endIndent,null);
     }
 
     public int getEndIndent() {
