@@ -277,7 +277,7 @@ public class XMLRenderer extends AbstractRenderer {
 
     protected void renderBlock(Block block) {
         String prop = "";
-        List list = block.getPropertyList();
+        List list = block.getTraitList();
         if (list != null) {
             prop = " props=\"" + getPropString(list) + "\"";
         }
@@ -288,7 +288,7 @@ public class XMLRenderer extends AbstractRenderer {
 
     protected void renderLineArea(LineArea line) {
         String prop = "";
-        List list = line.getPropertyList();
+        List list = line.getTraitList();
         if (list != null) {
             prop = " props=\"" + getPropString(list) + "\"";
         }
@@ -326,7 +326,7 @@ public class XMLRenderer extends AbstractRenderer {
 
     public void renderCharacter(org.apache.fop.area.inline.Character ch) {
         String prop = "";
-        List list = ch.getPropertyList();
+        List list = ch.getTraitList();
         if (list != null) {
             prop = " props=\"" + getPropString(list) + "\"";
         }
@@ -339,7 +339,7 @@ public class XMLRenderer extends AbstractRenderer {
 
     public void renderWord(Word word) {
         String prop = "";
-        List list = word.getPropertyList();
+        List list = word.getTraitList();
         if (list != null) {
             prop = " props=\"" + getPropString(list) + "\"";
         }
@@ -376,45 +376,45 @@ public class XMLRenderer extends AbstractRenderer {
     protected String getPropString(List list) {
         String str = "";
         for (int count = 0; count < list.size(); count++) {
-            Property prop = (Property) list.get(count);
+            Trait prop = (Trait) list.get(count);
             switch (prop.propType) {
-                case Property.INTERNAL_LINK:
+                case Trait.INTERNAL_LINK:
                     str += "internal-link:" + prop.data;
                     break;
-                case Property.EXTERNAL_LINK:
+                case Trait.EXTERNAL_LINK:
                     str += "external-link:" + prop.data;
                     break;
-                case Property.FONT_FAMILY:
+                case Trait.FONT_FAMILY:
                     str += "font-family:" + prop.data;
                     break;
-                case Property.FONT_SIZE:
+                case Trait.FONT_SIZE:
                     str += "font-size:" + prop.data;
                     break;
-                case Property.FONT_WEIGHT:
+                case Trait.FONT_WEIGHT:
                     str += "font-weight:" + prop.data;
                     break;
-                case Property.FONT_STYLE:
+                case Trait.FONT_STYLE:
                     str += "font-style:" + prop.data;
                     break;
-                case Property.COLOR:
+                case Trait.COLOR:
                     str += "color:" + prop.data;
                     break;
-                case Property.BACKGROUND:
+                case Trait.BACKGROUND:
                     str += "background:" + prop.data;
                     break;
-                case Property.UNDERLINE:
+                case Trait.UNDERLINE:
                     str += "underline:" + prop.data;
                     break;
-                case Property.OVERLINE:
+                case Trait.OVERLINE:
                     str += "overline:" + prop.data;
                     break;
-                case Property.LINETHROUGH:
+                case Trait.LINETHROUGH:
                     str += "linethrough:" + prop.data;
                     break;
-                case Property.OFFSET:
+                case Trait.OFFSET:
                     str += "offset:" + prop.data;
                     break;
-                case Property.SHADOW:
+                case Trait.SHADOW:
                     str += "shadow:" + prop.data;
                     break;
                 default:

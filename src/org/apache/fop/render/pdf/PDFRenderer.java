@@ -266,10 +266,10 @@ public class PDFRenderer extends PrintRenderer {
 
             FontState fs = null;
 
-            List props = word.getPropertyList();
+            List props = word.getTraitList();
             for(int count = 0; count < props.size(); count++) {
-                Property pro = (Property)props.get(count);
-                if(pro.propType == Property.FONT_STATE) {
+                Trait pro = (Trait)props.get(count);
+                if(pro.propType == Trait.FONT_STATE) {
                     fs = (FontState)pro.data;
                 }
             }
@@ -289,7 +289,7 @@ public class PDFRenderer extends PrintRenderer {
 
             int rx = currentBlockIPPosition;
             // int bl = pageHeight - currentBPPosition;
-            int bl = currentBPPosition;
+            int bl = currentBPPosition + word.getOffset();
 
             // Set letterSpacing
             //float ls = fs.getLetterSpacing() / this.currentFontSize;
@@ -530,7 +530,7 @@ public class PDFRenderer extends PrintRenderer {
     public void renderDocument(Document doc, String ns) {
         RendererContext context;
         context = new RendererContext(mimeType);
-        context.setLogger(log);
+        context.setUserAgent(userAgent);
 
         context.setProperty(PDFXMLHandler.PDF_DOCUMENT, pdfDoc);
         context.setProperty(PDFXMLHandler.PDF_STREAM, currentStream);

@@ -428,7 +428,7 @@ class TreeLoader {
                 Block block = new Block();
                 List props = getProperties((Element) obj);
                 for (int count = 0; count < props.size(); count++) {
-                    block.addProperty((Property) props.get(count));
+                    block.addTrait((Trait) props.get(count));
                 }
                 addBlockChildren(block, (Element) obj);
                 list.add(block);
@@ -457,7 +457,7 @@ class TreeLoader {
                 LineArea line = new LineArea();
                 List props = getProperties((Element) obj);
                 for (int count = 0; count < props.size(); count++) {
-                    line.addProperty((Property) props.get(count));
+                    line.addTrait((Trait) props.get(count));
                 }
                 String height = ((Element) obj).getAttribute("height");
                 int h = Integer.parseInt(height);
@@ -521,10 +521,10 @@ class TreeLoader {
                     e.printStackTrace();
                 }
                 Word word = getWord((Element) obj);
-                Property prop = new Property();
-                prop.propType = Property.FONT_STATE;
+                Trait prop = new Trait();
+                prop.propType = Trait.FONT_STATE;
                 prop.data = currentFontState;
-                word.addProperty(prop);
+                word.addTrait(prop);
                 if (word != null) {
                     list.add(word);
                 }
@@ -672,7 +672,7 @@ class TreeLoader {
     public void addProperties(Element ele, InlineArea inline) {
         List props = getProperties(ele);
         for (int count = 0; count < props.size(); count++) {
-            inline.addProperty((Property) props.get(count));
+            inline.addTrait((Trait) props.get(count));
         }
         String str = ele.getAttribute("width");
 
@@ -687,57 +687,57 @@ class TreeLoader {
             int index = tok.indexOf(":");
             String id = tok.substring(0, index);
             String val = tok.substring(index + 1);
-            Property prop = new Property();
+            Trait prop = new Trait();
             if ("internal-link".equals(id)) {
-                prop.propType = Property.INTERNAL_LINK;
+                prop.propType = Trait.INTERNAL_LINK;
                 prop.data = val;
                 list.add(prop);
             } else if ("external-link".equals(id)) {
-                prop.propType = Property.EXTERNAL_LINK;
+                prop.propType = Trait.EXTERNAL_LINK;
                 prop.data = val;
                 list.add(prop);
             } else if ("font-family".equals(id)) {
-                prop.propType = Property.FONT_FAMILY;
+                prop.propType = Trait.FONT_FAMILY;
                 prop.data = val;
                 list.add(prop);
             } else if ("font-size".equals(id)) {
-                prop.propType = Property.FONT_SIZE;
+                prop.propType = Trait.FONT_SIZE;
                 prop.data = Integer.valueOf(val);
                 list.add(prop);
             } else if ("font-weight".equals(id)) {
-                prop.propType = Property.FONT_WEIGHT;
+                prop.propType = Trait.FONT_WEIGHT;
                 prop.data = val;
                 list.add(prop);
             } else if ("font-style".equals(id)) {
-                prop.propType = Property.FONT_STYLE;
+                prop.propType = Trait.FONT_STYLE;
                 prop.data = val;
                 list.add(prop);
             } else if ("color".equals(id)) {
-                prop.propType = Property.COLOR;
+                prop.propType = Trait.COLOR;
                 prop.data = val;
                 list.add(prop);
             } else if ("background".equals(id)) {
-                prop.propType = Property.BACKGROUND;
+                prop.propType = Trait.BACKGROUND;
                 prop.data = val;
                 list.add(prop);
             } else if ("underline".equals(id)) {
-                prop.propType = Property.UNDERLINE;
+                prop.propType = Trait.UNDERLINE;
                 prop.data = new Boolean(val);
                 list.add(prop);
             } else if ("overline".equals(id)) {
-                prop.propType = Property.OVERLINE;
+                prop.propType = Trait.OVERLINE;
                 prop.data = new Boolean(val);
                 list.add(prop);
             } else if ("linethrough".equals(id)) {
-                prop.propType = Property.LINETHROUGH;
+                prop.propType = Trait.LINETHROUGH;
                 prop.data = new Boolean(val);
                 list.add(prop);
             } else if ("offset".equals(id)) {
-                prop.propType = Property.OFFSET;
+                prop.propType = Trait.OFFSET;
                 prop.data = Integer.valueOf(val);
                 list.add(prop);
             } else if ("shadow".equals(id)) {
-                prop.propType = Property.SHADOW;
+                prop.propType = Trait.SHADOW;
                 prop.data = val;
                 list.add(prop);
             }

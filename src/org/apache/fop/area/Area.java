@@ -46,6 +46,7 @@ public class Area implements Serializable {
 
     private int areaClass=CLASS_NORMAL;
     private FObj genFObj;
+    private int ipd;
 
     protected Area parent =null; // Doesn't need to be saved in serialization
 
@@ -55,6 +56,14 @@ public class Area implements Serializable {
 
     public void setAreaClass(int areaClass) {
 	this.areaClass = areaClass;
+    }
+
+    public void setIPD(int i) {
+        ipd = i;
+    }
+
+    public int getIPD() {
+        return ipd;
     }
 
     /**
