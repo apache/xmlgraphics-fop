@@ -223,7 +223,7 @@ public class AreaFrame extends AreaGeometry {
         }
     }
 
-    private void setAbsoluteEdgeWidth(int edge, double width) {
+    public void setAbsoluteEdgeWidth(int edge, double width) {
         switch (edge) {
         case WritingMode.TOP:
             setTop(width);
@@ -299,6 +299,38 @@ public class AreaFrame extends AreaGeometry {
     public void setRight(double right) {
         double diff = right - (getX() - contentOffset.getX() - contents.getX());
         setRect(getX(), getY(), getWidth() + diff, getHeight());
+    }
+
+    public double getAbsoluteEdgeWidth(int edge) {
+        switch (edge) {
+        case WritingMode.TOP:
+            return getTop();
+        case WritingMode.BOTTOM:
+            return getBottom();
+        case WritingMode.LEFT:
+            return getLeft();
+        case WritingMode.RIGHT:
+            return getRight();
+        default:
+            throw new RuntimeException(
+                    "Invalid absolute writing mode: " + edge);
+        }
+    }
+
+    public double getTop() {
+        return contentOffset.getY();
+    }
+
+    public double getLeft() {
+        return contentOffset.getX();
+    }
+
+    public double getBottom() {
+        return getHeight() - contentOffset.getY() - contents.getHeight(); 
+    }
+
+    public double getRight() {
+        return getWidth() - contentOffset.getX() - contents.getWidth();
     }
 
 }
