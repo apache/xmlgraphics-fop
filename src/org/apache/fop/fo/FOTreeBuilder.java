@@ -137,7 +137,9 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
      * SAX Handler for characters
      */
     public void characters(char data[], int start, int length) {
-        currentFObj.addCharacters(data, start, start + length);
+        if(currentFObj != null) {
+            currentFObj.addCharacters(data, start, start + length);
+        }
     }
 
     /**
@@ -207,6 +209,9 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
                                                 (currentFObj == null) ? null
                                                 : currentFObj.properties, currentFObj);
             } else {
+                if(currentFObj == null) {
+                    throw new FOPException("Invalid XML or missing namespace");
+                }
                 list = currentFObj.properties;
             }
             fobj = fobjMaker.make(currentFObj, list);
