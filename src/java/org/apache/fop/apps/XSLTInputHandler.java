@@ -191,14 +191,5 @@ public class XSLTInputHandler extends InputHandler {
         }
     }
 
-    /**
-     * Sets an XSLT parameter.
-     * @param name the name of the parameter
-     * @param value the value of the parameter
-     */
-    public void setParameter(String name, Object value) {
-        transformer.setParameter(name, value);
-    }
-
 }
 
