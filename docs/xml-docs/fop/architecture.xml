@@ -1,6 +1,15 @@
 <?xml version="1.0" standalone="no"?>
 
 <!-- by Arved Sandstrom -->
+<document>
+    <header>
+        <title>Architecture</title>
+        <subtitle>Architecture information for FOP</subtitle>
+        <authors>
+        </authors>
+    </header>
+
+    <body>
 
 <s1 title="FOP Mechanics">
 
@@ -36,56 +45,6 @@ constructing the FO tree. The key SAX events used are </p>
 <p><code>&#160;&#160;&#160;&#160;|&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;|</code></p>
 <p><code>&#160;&#160;FObjMixed&#160;&#160;&#160;&#160;&#160;&#160;SequenceSpecifier
 </code></p>
-
-<p>FO's extending FObj:</p>
-
-<p>Package org.apache.fop.fo.pagination:</p>
-
-
-<p><code>       LayoutMasterSet</code></p>
-<p><code>       PageSequence</code></p>
-<p><code>       RegionAfter</code></p>
-<p><code>       RegionBefore</code></p>
-<p><code>       RegionBody</code></p>
-<p><code>       Root</code></p>
-<p><code>       SequenceSpecification</code></p>
-<p><code>       SimplePageMaster</code></p>
-
-
-   <p>Package org.apache.fop.fo.flow:</p>
-
-
-<p><code>BlockContainer</code></p>
-<p><code>DisplayGraphic</code></p>
-<p><code>DisplayRule</code></p>
-<p><code>DisplaySequence</code></p>
-<p><code>Flow</code></p>
-<p><code>InlineGraphic</code></p>
-<p><code>ListBlock</code></p>
-<p><code>ListItem</code></p>
-<p><code>ListItemBody</code></p>
-<p><code>ListItemLabel</code></p>
-<p><code>PageNumber</code></p>
-<p><code>StaticContent</code></p>
-<p><code>Table</code></p>
-<p><code>TableBody</code></p>
-<p><code>TableCell</code></p>
-<p><code>TableColumn</code></p>
-<p><code>TableRow</code></p>
-
-<p>FO's extending SequenceSpecifier:</p>
-
-   <p>Package org.apache.fop.fo.pagination:</p>
-
-
-<p><code>SequenceSpecifierAlternating</code></p>
-<p><code>SequenceSpecifierRepeating</code></p>
-<p><code>SequenceSpecifierSingle</code></p>
-
-<p>FO's extending FObjMixed:</p>
-
-   <p>Package org.apache.fop.fo.flow:</p>
-
 
 <p><code>Block</code></p>
 <p><code>Inline</code></p>
@@ -343,3 +302,6 @@ For more information see the SVG documentation.
 </p>
 </s2>
 </s1>
+    </body>
+</document>
+

@@ -81,6 +81,16 @@
   driver.setOutputStream(new FileOutputStream(outFile));
   driver.render(parser, inputHandler.getInputSource());]]></source>
   <p>Have a look at the classes CommandLineStarter or FopServlet for complete examples.</p>
+<p>
+<note>If your FO files contain SVG then batik will be used. When batik is
+initialised it uses certain classes in <code>java.awt</code> that
+intialises the java AWT classes. This means that a daemon thread
+is created by the jvm and on unix it will need to connect to a
+DISPLAY.
+The thread means that the java application will not automatically quit
+when finished, you will need to call <code>System.exit</code>. These
+issues should be fixed in the upcoming JDK1.4</note>
+</p>
   </s2>
   <s2 title="Hints">
      <p>

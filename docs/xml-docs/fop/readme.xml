@@ -13,18 +13,18 @@
     <body>
 <s1 title="FOP">
 <p>
-        <figure src="title.jpg" alt="FOP Title" />
+        <figure width="300" height="100" src="title.jpg" alt="FOP Title" />
 </p>
     <p>FOP is the world's first print formatter driven by XSL formatting
-       objects and the world's first output indepent formatter. It is a
+       objects and the world's first output independent formatter. It is a
        Java application that reads a formatting object tree and then
        renders the resulting pages to a specified output. Output formats
        currently supported are PDF, PCL, SVG, XML (area tree representation),
-       Print, AWT and TXT.
+       Print, AWT, MIF and TXT.
        The primary output target is PDF.
     </p>
 <p>
-        <figure src="document.jpg" alt="Render Diagram" />
+        <figure width="480" height="260" src="document.jpg" alt="Render Diagram" />
 </p>
     <p>The latest version of Fop is 0.20.2 and it supports the xsl:fo candidate release.
        You can <jump href="download.html">download</jump> 
@@ -45,7 +45,7 @@ Here you can find information about using and developing with FOP.
 
   <s1 title="Formatting">
 <p>
-        <figure src="layout.jpg" alt="Formatting Diagram" />
+        <figure width="480" height="260" src="layout.jpg" alt="Formatting Diagram" />
 </p>
 <p>
 This image is a demonstration of a two page document. The xml data on the left
