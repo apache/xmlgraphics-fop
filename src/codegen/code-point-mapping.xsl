@@ -5,9 +5,9 @@
                 select="document('glyphlist.xml')/glyphlist-set"/>
 
   <xsl:template match="encoding-set">
-package org.apache.fop.render.pdf;
+package org.apache.fop.fonts;
+
 import java.util.Map;
-import java.util.HashMap;
 import java.util.Collections;
 
 public class CodePointMapping {
@@ -65,7 +65,7 @@ public class CodePointMapping {
 
     private static Map mappings;
     static {
-        mappings = Collections.synchronizedMap(new HashMap());
+        mappings = Collections.synchronizedMap(new java.util.HashMap());
     }
     public static CodePointMapping getMapping(String encoding) {
         CodePointMapping mapping = (CodePointMapping) mappings.get(encoding);
