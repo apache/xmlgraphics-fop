@@ -194,7 +194,7 @@ public class PropertyManager {
         borderAndPadding.setPadding(whichSide,
                                     properties.get(
                                       MSGFMT_PADDING.format(saSide)).getCondLength());
-        // If style = none, force width to 0, don't get Color
+        // If style = none, force width to 0, don't get Color (spec 7.7.20)
         int style = properties.get(MSGFMT_STYLE.format(saSide)).getEnum();
         if (style != Constants.NONE) {
             borderAndPadding.setBorder(whichSide, style,
