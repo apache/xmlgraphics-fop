@@ -101,7 +101,7 @@ public class Document implements FOTreeControl, FOTreeListener {
     public AreaTree areaTree;
     public AreaTreeModel atModel;
 
-    private Bookmarks bookmarks;
+    private Bookmarks bookmarks = null;
 
     /**
      * Main constructor
