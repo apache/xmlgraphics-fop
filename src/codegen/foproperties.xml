@@ -1389,6 +1389,7 @@
         <value const="VISIBLE">visible</value>
         <value const="HIDDEN">hidden</value>
         <value const="SCROLL">scroll</value>
+        <value const="ERROR_IF_OVERFLOW">error-if-overflow</value>
         <value const="AUTO">auto</value>
       </enumeration>
     <default>auto</default>
