@@ -19,6 +19,8 @@
  */
 package org.apache.fop.area;
 
+import java.util.logging.Logger;
+
 import org.apache.fop.datastructs.Node;
 import org.apache.fop.datastructs.SyncedNode;
 import org.apache.fop.fo.FONode;
@@ -37,10 +39,12 @@ public abstract class AreaNode extends SyncedNode implements Cloneable {
     protected FoPageSequence pageSeq = null;
     /** The FO node that generated this node. */
     protected FONode generatedBy = null;
+    protected Logger log;
 
     private void setup(FoPageSequence pageSeq, FONode generatedBy) {
         this.pageSeq = pageSeq;
         this.generatedBy = generatedBy;
+        log = generatedBy.getLogger();
     }
     
     /**
