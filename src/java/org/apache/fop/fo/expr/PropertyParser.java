@@ -314,8 +314,7 @@ public class PropertyParser extends PropertyTokenizer {
                         ((Numeric)prop).add((Numeric)pv);
                         break inner;
                     case PropertyValue.INTEGER:
-                        ((Numeric)prop).add((double)
-                                            (((IntegerType)pv).getInt()));
+                        ((Numeric)prop).add(((IntegerType)pv).getInt());
                         break inner;
                     default:
                         throw new PropertyException(arithErrorStr());
@@ -328,8 +327,7 @@ public class PropertyParser extends PropertyTokenizer {
                         ((Numeric)prop).subtract((Numeric)pv);
                         break inner;
                     case PropertyValue.INTEGER:
-                        ((Numeric)prop).subtract((double)
-                                             (((IntegerType)pv).getInt()));
+                        ((Numeric)prop).subtract(((IntegerType)pv).getInt());
                         break inner;
                     default:
                         throw new PropertyException(arithErrorStr());
@@ -346,7 +344,7 @@ public class PropertyParser extends PropertyTokenizer {
                     pv = parseMultiplicativeExpr();
                     switch (pv.getType()) {
                     case PropertyValue.NUMERIC:
-                        prop = ((Numeric)pv).add((double)intVal);
+                        prop = ((Numeric)pv).add(intVal);
                         break inner;
                     case PropertyValue.INTEGER:
                         ((IntegerType)prop).setInt(intVal +
@@ -360,7 +358,7 @@ public class PropertyParser extends PropertyTokenizer {
                     pv = parseMultiplicativeExpr();
                     switch (pv.getType()) {
                     case PropertyValue.NUMERIC:
-                        ((Numeric)pv).add((double)(-intVal));
+                        ((Numeric)pv).add(-intVal);
                         prop = ((Numeric)pv).negate();
                         break inner;
                     case PropertyValue.INTEGER:
@@ -405,8 +403,7 @@ public class PropertyParser extends PropertyTokenizer {
                     pv = parseUnaryExpr();
                     switch (pv.getType()) {
                     case PropertyValue.INTEGER:
-                        ((Numeric)prop).divide
-                                        ((double)(((IntegerType)pv).getInt()));
+                        ((Numeric)prop).divide(((IntegerType)pv).getInt());
                         break inner;
                     case PropertyValue.NUMERIC:
                         ((Numeric)prop).divide((Numeric)pv);
@@ -419,8 +416,7 @@ public class PropertyParser extends PropertyTokenizer {
                     pv = parseUnaryExpr();
                     switch (pv.getType()) {
                     case PropertyValue.INTEGER:
-                        ((Numeric)prop).mod
-                                        ((double)(((IntegerType)pv).getInt()));
+                        ((Numeric)prop).mod(((IntegerType)pv).getInt());
                         break inner;
                     case PropertyValue.NUMERIC:
                         ((Numeric)prop).mod((Numeric)pv);
@@ -433,8 +429,7 @@ public class PropertyParser extends PropertyTokenizer {
                     pv = parseUnaryExpr();
                     switch (pv.getType()) {
                     case PropertyValue.INTEGER:
-                        ((Numeric)prop).multiply
-                                        ((double)(((IntegerType)pv).getInt()));
+                        ((Numeric)prop).multiply(((IntegerType)pv).getInt());
                         break inner;
                     case PropertyValue.NUMERIC:
                         ((Numeric)prop).multiply((Numeric)pv);
