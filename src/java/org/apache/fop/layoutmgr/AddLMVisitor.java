@@ -278,7 +278,7 @@ public class AddLMVisitor extends FOTreeVisitor {
              }
 
              protected MinOptMax getAllocationIPD(int refIPD) {
-                return node.getAllocIPD(refIPD);
+                return getLeaderAllocIPD(node, refIPD);
              }
 
              /*protected void offsetArea(LayoutContext context) {
@@ -291,6 +291,15 @@ public class AddLMVisitor extends FOTreeVisitor {
          lm.setFObj(node);
          lm.setAlignment(node.properties.get("leader-alignment").getEnum());
          currentLMList.add(lm);
+     }
+
+     public MinOptMax getLeaderAllocIPD(Leader node, int ipd) {
+         // length of the leader
+         int opt = node.getLength("leader-length.optimum", ipd);
+         int min = node.getLength("leader-length.minimum", ipd);
+         int max = node.getLength("leader-length.maximum", ipd);
+
+         return new MinOptMax(min, opt, max);
      }
 
      private InlineArea getLeaderInlineArea(Leader node) {

@@ -67,7 +67,6 @@ import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
-import org.apache.fop.layoutmgr.MinOptMax;
 
 /**
  * Class modelling fo:leader object. See Sec. 6.6.9 of the XSL-FO Standard.
@@ -178,16 +177,7 @@ public class Leader extends FObjMixed {
 
     }
 
-    public MinOptMax getAllocIPD(int ipd) {
-        // length of the leader
-        int opt = getLength("leader-length.optimum", ipd);
-        int min = getLength("leader-length.minimum", ipd);
-        int max = getLength("leader-length.maximum", ipd);
-
-        return new MinOptMax(min, opt, max);
-    }
-
-    protected int getLength(String prop, int dim) {
+    public int getLength(String prop, int dim) {
         int length;
         Length maxlength = properties.get(prop).getLength();
         if (maxlength instanceof PercentLength) {
