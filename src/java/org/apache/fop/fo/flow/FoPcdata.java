@@ -21,7 +21,11 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import java.awt.Font;
+import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
+import java.awt.font.TextMeasurer;
+import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -152,6 +156,8 @@ public class FoPcdata extends FOPageSeqNode {
         return characters;
     }
 
+    public static final boolean IS_ANTI_ALIASED = true;
+    public static final boolean USES_FRACTIONAL_METRICS = true;
     // PCDATA provides sequences of inline-areas to fill line-areas in the
     // parent block area.
     // Generate a text-layout for the PCDATA.
@@ -178,6 +184,13 @@ public class FoPcdata extends FOPageSeqNode {
         }
         AttributedString attText =
             new AttributedString(characters, attributes);
+        AttributedCharacterIterator iter = attText.getIterator();
+        FontRenderContext identityFRC =
+            new FontRenderContext(
+                    null, IS_ANTI_ALIASED, USES_FRACTIONAL_METRICS);
+        TextMeasurer measurer = new TextMeasurer(iter, identityFRC);
+        TextLayout layout = new TextLayout(iter, identityFRC);
+        // Find minima and maxima for this text
     }
 
 }
