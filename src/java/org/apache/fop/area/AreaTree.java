@@ -18,7 +18,6 @@
 package org.apache.fop.area;
 
 // Java
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,11 +34,9 @@ import org.xml.sax.SAXException;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.extensions.BookmarkData;
-import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.Outline;
 import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.render.Renderer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -52,12 +49,12 @@ import org.apache.commons.logging.LogFactory;
  * The area tree needs to be simple to render and follow the spec
  * closely.
  * This area tree has the concept of page sequences.
- * Where ever possible information is discarded or optimised to
- * keep memory use low. The data is also organised to make it
- * possible for renderers to minimise their output.
+ * Where ever possible information is discarded or optimized to
+ * keep memory use low. The data is also organized to make it
+ * possible for renderers to minimize their output.
  * A page can be saved if not fully resolved and once rendered
  * a page contains only size and id reference information.
- * The area tree pages are organised in a model that depends on the
+ * The area tree pages are organized in a model that depends on the
  * type of renderer.
  */
 public class AreaTree {
@@ -67,8 +64,10 @@ public class AreaTree {
 
     // hashmap of arraylists containing pages with id area
     private Map idLocations = new HashMap();
+
     // list of id's yet to be resolved and arraylists of pages
     private Map resolve = new HashMap();
+
     private List treeExtensions = new ArrayList();
 
     private static Log log = LogFactory.getLog(AreaTree.class);
@@ -76,97 +75,22 @@ public class AreaTree {
     private FOUserAgent foUserAgent;
 
     /**
-     * the renderer to use to output the area tree
-     */
-    private Renderer renderer;
-
-    /**
      * Constructor.
+     * @param userAgent FOUserAgent object for process
+     * @param renderType Desired fo.Constants output type (RENDER_PDF, 
+     *   RENDER_PS, etc.)
+     * @param fontInfo FontInfo object
+     * @param stream OutputStream
      */
     public AreaTree (FOUserAgent userAgent, int renderType, 
         FontInfo fontInfo, OutputStream stream) throws FOPException {
 
         foUserAgent = userAgent;
-
-        if (foUserAgent.getRendererOverride() != null) {
-            renderer = foUserAgent.getRendererOverride();
-        } else {
-            renderer = createRenderer(renderType);
-            renderer.setUserAgent(foUserAgent);
-        }
-
-        try {
-            renderer.setupFontInfo(fontInfo);
-            // check that the "any,normal,400" font exists
-            if (!fontInfo.isSetupValid()) {
-                throw new FOPException(
-                    "No default font defined by OutputConverter");
-            }
-            renderer.startRenderer(stream);
-        } catch (IOException e) {
-            throw new FOPException(e);
-        }
-
-        // this.atModel = new CachedRenderPagesModel(renderer);
-        setTreeModel(new RenderPagesModel(renderer));
-    }
-
-
-    /**
-     * Creates a Renderer object based on render-type desired
-     * @param renderType the type of renderer to use
-     * @return Renderer the new Renderer instance
-     * @throws IllegalArgumentException if an unsupported renderer type was requested
-     */
-    private Renderer createRenderer(int renderType) throws IllegalArgumentException {
-
-        switch (renderType) {
-        case Constants.RENDER_PDF:
-            return new org.apache.fop.render.pdf.PDFRenderer();
-        case Constants.RENDER_AWT:
-            return new org.apache.fop.render.awt.AWTRenderer();
-        case Constants.RENDER_PRINT:
-            return new org.apache.fop.render.awt.AWTPrintRenderer();
-        case Constants.RENDER_PCL:
-            return new org.apache.fop.render.pcl.PCLRenderer();
-        case Constants.RENDER_PS:
-            return new org.apache.fop.render.ps.PSRenderer();
-        case Constants.RENDER_TXT:
-            return new org.apache.fop.render.txt.TXTRenderer();
-        case Constants.RENDER_XML:
-            return new org.apache.fop.render.xml.XMLRenderer();
-        case Constants.RENDER_SVG:
-            return new org.apache.fop.render.svg.SVGRenderer();
-        default:
-            throw new IllegalArgumentException("Invalid renderer type " 
-                + renderType);
-        }
-    }
-
-    /**
-     * Temporary accessor for renderer for tools.AreaTreeBuilder
-     * @return renderer The renderer being used by this area tree
-     */
-    public Renderer getRenderer() {
-        return renderer;
-    }
-
-    /**
-     * Create a new store pages model.
-     * @return StorePagesModel the new model
-     */
-    public static StorePagesModel createStorePagesModel() {
-        return new StorePagesModel();
-    }
-
-    /**
-     * Set the tree model to use for this area tree.
-     * The different models can have different behaviour
-     * when pages area added and other changes.
-     * @param m the area tree model
-     */
-    public void setTreeModel(AreaTreeModel m) {
-        model = m;
+        
+        // model = new CachedRenderPagesModel(userAgent, renderType,
+        //  fontInfo, stream);
+        model = new RenderPagesModel(userAgent, renderType, fontInfo,
+            stream);
     }
 
     /**
@@ -297,11 +221,6 @@ public class AreaTree {
             }
         }
         model.endDocument();
-        try {
-            renderer.stopRenderer();
-        } catch (IOException ex) {
-            throw new SAXException(ex);
-        }        
     }
 
     /**
