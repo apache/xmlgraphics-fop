@@ -25,6 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.area.Area;
 import org.apache.fop.datastructs.ROBitSet;
 import org.apache.fop.datastructs.SyncedNode;
 import org.apache.fop.datastructs.TreeException;
@@ -615,5 +616,9 @@ public class FONode extends SyncedNode{
             throw new PropertyException("Clone not supported.");
         }
     }
-    
+
+    public Area getReferenceRectangle() throws FOPException {
+        throw new FOPException("Called from FONode");
+    }
+
 }// FONode
