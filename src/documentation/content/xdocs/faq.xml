@@ -5,7 +5,7 @@
 <faqs title="FOP FAQ">
   <part>
     <title>General questions</title>
-    <faq>
+    <faq id="fop_general">
       <question>What is FOP?</question>
       <answer>
       <p>
@@ -19,7 +19,7 @@
       </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="fop_functions">
       <question>What can I do with FOP?</question>
       <answer>
         <p>
@@ -36,7 +36,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="fop_acronym">
       <question>What does "FOP" stand for?</question>
       <answer>
         <p>
@@ -45,7 +45,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="fop_other_apache">
       <question>How does FOP interact with other Apache Projects?</question>
       <answer>
         <p>
@@ -61,7 +61,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="xsl_def">
       <question>What is XSL?</question>
       <answer>
         <p>
@@ -110,7 +110,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="contribute">
       <question>How can I contribute?</question>
       <answer>
         <p>
@@ -122,7 +122,7 @@
   </part>
   <part>
     <title>Common stumbling blocks</title>
-    <faq>
+    <faq id="blank_page_between_page_sequences">
       <question>Why does FOP insert a blank page between my page sequences?</question>
       <answer>
         <p>
@@ -147,7 +147,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="no_page_master">
       <question>I get the error: [ERROR]: 'master-reference' for
       'fo:page-sequence'matches no 'simple-page-master' or
       'page-sequence-master'</question>
@@ -168,7 +168,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="png_fails">
       <question>My PNG images don't work.</question>
       <answer>
         <p>
@@ -187,7 +187,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="NoClassDefFound">
       <question>I get a NoClassDefFound exception.</question>
       <answer>
         <p>
@@ -212,7 +212,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="NoSuchMethodException">
       <question>I get a NoSuchMethodException or a NoSuchFieldException
       exception.</question>
       <answer>
@@ -228,7 +228,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="OutOfMemoryException">
       <question>I get an OutOfMemoryException.</question>
       <answer>
         <p>
@@ -299,7 +299,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="MalformedURLException">
       <question>I get a MalformedURLException.</question>
       <answer>
         <anchor id="MalformedURL"/>
@@ -334,7 +334,7 @@
         </p-->
       </answer>
     </faq>
-    <faq>
+    <faq id="NullPointerException">
       <question>I get an "[ERROR]: null", or a NullPointerException.</question>
       <answer>
         <p>
@@ -366,7 +366,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="fop_hangs">
       <question>FOP hangs. FOP does not exit.</question>
       <answer>
         <p>
@@ -406,7 +406,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="cannot_find_external-graphics">
       <question>FOP cannot find a file for fo:external-graphics.</question>
       <answer>
         <p>
@@ -427,7 +427,7 @@
         </p-->
       </answer>
     </faq>
-    <faq>
+    <faq id="fonts_not_found">
       <question>FOP does not find my fonts.</question>
       <answer>
         <p>
@@ -443,7 +443,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="keep-with">
       <question>Keep-with-next, keep-with-previous, keep-together
       don't work.</question>
       <answer>
@@ -478,7 +478,7 @@
 </fo:table>]]></source>
       </answer>
     </faq>
-    <faq>
+    <faq id="table_missing">
       <question>My tables are missing, or missing their content.</question>
       <answer>
         <p>
@@ -494,7 +494,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="cells_overflow">
       <question>Text overflowing table cells and the like is not clipped. Long
         text flows into adjacent cells/block, obscuring stuff there.</question>
       <answer>
@@ -524,7 +524,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="page_number_align">
       <question>Page numbers are not properly right aligned.</question>
       <answer>
         <p>
@@ -541,7 +541,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="graphic_not_displayed">
       <question>A graphic is not displayed.</question>
       <answer>
         <p>
@@ -577,7 +577,7 @@
         </p -->
       </answer>
     </faq>
-    <faq>
+    <faq id="hypenation_fails">
       <question>Hyphenation does not work.</question>
       <answer>
         <p>
@@ -590,7 +590,7 @@
   </part>
   <part>
     <title>Embedding FOP. Using FOP in a servlet.</title>
-    <faq>
+    <faq id="servlet">
       <question>How do I use FOP in a servlet?</question>
       <answer>
         <p>Look at the servlet example.</p>
@@ -613,7 +613,7 @@ driver.run();</source>
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="servlet_with_xslt">
       <question>How do I use FOP in a servlet with an XSLT
       transformation?</question>
       <answer>
@@ -669,7 +669,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="servlet_xslt_params">
       <question>How do I pass parameters to the XSLT transformation?</question>
       <answer>
         <p>
@@ -677,7 +677,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="servlet_nonstd_fonts">
       <question>How do I use my own fonts when running FOP from a
       servlet?</question>
       <answer>
@@ -688,7 +688,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="servlet_baseDir">
       <question>How do I set the baseDir property in a servlet environment?</question>
       <answer>
         <p>
@@ -724,7 +724,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="servlet_NoClassDefFound">
       <question>I keep getting NoClassDefFound and other exceptions. How do I
         get FOP working for various servlet engines?</question>
       <answer>
@@ -744,7 +744,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="websphere_3_5">
       <question>FOP in IBM Websphere 3.5</question>
       <answer>
         <p>
@@ -762,7 +762,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="multithreaded">
       <question>Can FOP be used in multithreaded environments?</question>
       <answer>
         <p>
@@ -787,7 +787,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
   </part>
   <part>
     <title>Batik/SVG specific questions</title>
-    <faq>
+    <faq id="svg_text">
       <question>SVG text rendered in bad quality. How do I put SVG text as text
       into PDF?</question>
       <answer>
@@ -819,7 +819,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="svg_headless">
       <question>How do I use FOP with SVG on headless servers?</question>
       <answer>
         <p>
@@ -859,7 +859,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="svg_url">
       <question>I have problems with SVG referring to gradients etc. using
         "uri(#stuff)". I get a MalformedURLException.</question>
       <answer>
@@ -909,7 +909,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
   </part>
   <part>
     <title>PDF specific (includes Acrobat peculiarities)</title>
-    <faq>
+    <faq id="pdf_embed_font">
       <question>How do I embed fonts in PDF?</question>
       <answer>
         <p>
@@ -918,7 +918,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="pdf_characters">
       <question>Some characters are not displayed, or displayed incorrectly, or
       displayed as &#8220;#&#8221;.</question>
       <answer>
@@ -1026,7 +1026,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="pdf_doc_properties">
       <question>How do I add document properties (title, author, etc.) to my
       PDF document?</question>
       <answer>
@@ -1035,7 +1035,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
         Post-Processing FAQ</link>.</p>
       </answer>
     </faq>
-    <faq>
+    <faq id="pdf_watermark">
       <question>How do I add watermarks to my PDF document?</question>
       <answer>
         <p>FOP does not currently support this feature. Possible
@@ -1060,7 +1060,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
         </ul>
       </answer>
     </faq>
-    <faq>
+    <faq id="pdf_print_contortion">
       <question>The PDF is printed contorted!</question>
       <answer>
         <p>
@@ -1072,7 +1072,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="pdf_bookmark_display">
       <question>How do I control the Acrobat bookmark display?</question>
       <answer>
         <p>
@@ -1085,7 +1085,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
   </part>
   <part>
     <title>IEx specific stuff</title>
-    <faq>
+    <faq id="iex_servlet_multiple">
       <question>The FOP servlet is called multiple times!</question>
       <answer>
         <p>
@@ -1117,7 +1117,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
         </ul>
       </answer>
     </faq>
-    <faq>
+    <faq id="iex_pdf_print_from_browser">
       <question>How do I print PDF directly from the browser?</question>
       <answer>
         <p>
@@ -1143,7 +1143,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
   </part>
   <part>
     <title>More general questions regarding XSLT and XSLFO and basic XML</title>
-    <faq>
+    <faq id="fo_center">
       <question>(FO) How do I vertically center an image or a table (or
       whatever)?</question>
       <answer>
@@ -1179,7 +1179,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
 </fo:root>]]></source>
       </answer>
     </faq>
-    <faq>
+    <faq id="fo_center_table_horizon">
       <question>(FO) How do I center a table horizontally?</question>
       <answer>
         <p>
@@ -1217,7 +1217,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="fo_page_outer">
       <question>(FO) How to get page numbers printed on the "outer side" of the
         page (for books, for example)?</question>
       <answer>
@@ -1284,7 +1284,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
 </fo:root>]]></source>
       </answer>
     </faq>
-    <faq>
+    <faq id="fo_first_page_header">
       <question>(FO) How do I get a special header on the first page?</question>
       <answer>
         <p>
@@ -1335,7 +1335,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
 </fo:root>]]></source>
       </answer>
     </faq>
-    <faq>
+    <faq id="fo_omit_headers">
       <question>(FO) How do I omit my headers on a blank page? How do I write
       "This page is left blank" on an intentionally blank page?</question>
       <answer>
@@ -1394,7 +1394,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
 </fo:root>]]></source>
       </answer>
     </faq>
-    <faq>
+    <faq id="fo_special_symbols">
       <question>(FO) How do I print an Euro sign, a checkbox or other some other
       special symbols?</question>
       <answer>
@@ -1430,7 +1430,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="fo_preformat">
       <question>(FO) How do I keep linebreaks and hard spaces? How do I get
         preformatted text displayed as expected?</question>
       <answer>
@@ -1445,7 +1445,7 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="fo_total_pages">
       <question>(FO) How do I print the total number of pages, like in "page 1
       of 12"</question>
       <answer>
@@ -1521,7 +1521,7 @@ class rendtest {
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="fo_region_overlap">
       <question>(FO) The header overlaps body content. The body extends into
       the footer.</question>
       <answer>
@@ -1542,7 +1542,7 @@ class rendtest {
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="fo_lines">
       <question>(FO) How do I get lines in the document, as separators, side
       bars or folding marks?</question>
       <answer>
@@ -1585,7 +1585,7 @@ class rendtest {
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="xml_non-breaking_space">
       <question>(XML) There are complaints about <code>&amp;nbsp;</code>. How
         do I get a non-breaking space in FO?</question>
       <answer>
@@ -1595,7 +1595,7 @@ class rendtest {
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="xml_undefined_entities">
       <question>(XML) There are complaints about undefined entities, for example
         about <code>&amp;uuml;</code> which used to work in HTML. How do I enter
         special characters like in HTML?</question>
@@ -1609,7 +1609,7 @@ class rendtest {
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="xml_illegal_entities">
       <question>(XML) There are complaints about illegal characters and entities
       in the input.</question>
       <answer>
@@ -1629,7 +1629,7 @@ class rendtest {
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="xml_illegal_chars">
       <question>(XML) There are complaints about illegal bytes or characters in
       the input. There are odd characters in the result.</question>
       <answer>
@@ -1657,7 +1657,7 @@ class rendtest {
   </part>
   <part>
     <title>General suggestions. How to solve problems.</title>
-    <faq>
+    <faq id="bugs">
       <question>Where to post bugs.</question>
       <answer>
         <p>
