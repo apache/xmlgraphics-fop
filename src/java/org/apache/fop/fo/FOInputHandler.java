@@ -19,7 +19,10 @@
 package org.apache.fop.fo;
 
 // FOP
+import org.apache.fop.apps.Document;
+import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.area.AreaTree;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.ExternalGraphic;
@@ -54,10 +57,11 @@ import org.xml.sax.SAXException;
  * as our MIF and RTF output targets.
  */
 public abstract class FOInputHandler {
+    
     /**
-     * The FOTreeControl object that is controlling the FO Tree being built
+     * The Document object that is controlling the FO Tree being built
      */
-    public FOTreeControl foTreeControl = null;
+    public Document doc = null;
 
     /**
      * logging instance
@@ -66,11 +70,11 @@ public abstract class FOInputHandler {
 
     /**
      * Main constructor
-     * @param foTreeControl the FOTreeControl implementation that is controlling
+     * @param document the apps.Document implementation that is controlling
      * the FO Tree being built
      */
-    public FOInputHandler(FOTreeControl foTreeControl) {
-        this.foTreeControl = foTreeControl;
+    public FOInputHandler(Document document) {
+        doc = document;
     }
 
     /**
@@ -90,11 +94,26 @@ public abstract class FOInputHandler {
     }
 
     /**
-     * Returns the FontInfo object associated with this FOInputHandler.
-     * @return the FontInof object
+     * Returns the FOTreeControl object associated with this FOInputHandler.
+     * @return the FOTreeControl object
      */
-    public FOTreeControl getFontInfo() {
-        return null;
+    public Document getDocument() {
+        return doc;
+    }
+
+    /**   
+      * @return the current Area Tree object
+      */   
+     public AreaTree getAreaTree() {
+        return doc.getAreaTree();
+     } 
+    
+    /**
+     * Returns the Driver object associated with this FOInputHandler.
+     * @return the Driver object
+     */
+    public Driver getDriver() {
+        return doc.getDriver();
     }
 
     /**

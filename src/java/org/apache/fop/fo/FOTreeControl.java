@@ -72,5 +72,5 @@ public interface FOTreeControl {
      * @return the FontInfo object associated with this FOTree
      */
     FontInfo getFontInfo();
-
+    
 }

@@ -19,6 +19,7 @@
 package org.apache.fop.fo;
 
 // Java
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -26,7 +27,11 @@ import java.util.Iterator;
 import org.xml.sax.SAXException;
 
 // FOP
+import org.apache.fop.apps.Document;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.area.AreaTree;
+import org.apache.fop.area.Title;
+import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.ExternalGraphic;
@@ -45,6 +50,11 @@ import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.layoutmgr.ContentLayoutManager;
+import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
+import org.apache.fop.layoutmgr.LMiter;
+import org.apache.fop.layoutmgr.PageLayoutManager;
+
 
 /**
  * Defines how SAX events specific to XSL-FO input should be handled when
@@ -81,20 +91,14 @@ public class FOTreeHandler extends FOInputHandler {
     private long startTime;
 
     /**
-     * Collection of objects that have registered to be notified about
-     * FOTreeEvent firings.
-     */
-    private HashSet foTreeListeners = new HashSet();
-
-    /**
      * Main constructor
      * @param foTreeControl the FOTreeControl implementation that governs this
      * FO Tree
      * @param store if true then use the store pages model and keep the
      *              area tree in memory
      */
-    public FOTreeHandler(FOTreeControl foTreeControl, boolean store) {
-        super(foTreeControl);
+    public FOTreeHandler(Document doc, boolean store) {
+        super(doc);
         if (collectStatistics) {
             runtime = Runtime.getRuntime();
         }
@@ -125,7 +129,12 @@ public class FOTreeHandler extends FOInputHandler {
      * @throws SAXException if there is some error
      */
     public void endDocument() throws SAXException {
-        notifyDocumentComplete();
+        try {
+            getAreaTree().endDocument();
+            getDriver().getRenderer().stopRenderer();
+        } catch (IOException ex) {
+            throw new SAXException(ex);
+        }
 
         if (collectStatistics) {
             if (MEM_PROFILE_WITH_GC) {
@@ -184,7 +193,9 @@ public class FOTreeHandler extends FOInputHandler {
                 logger.debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
             }
         }
-        notifyPageSequenceComplete(pageSequence);
+
+        getAreaTree().addBookmarksToAreaTree();
+        formatPageSequence(pageSequence, getAreaTree());
     }
 
     /**
@@ -457,66 +468,88 @@ public class FOTreeHandler extends FOInputHandler {
      * @return the font information
      */
     public FOTreeControl getFontInfo() {
-        return foTreeControl;
+        return doc;
     }
 
     /**
-     * Add an object to the collection of objects that should be notified about
-     * FOTreeEvent firings.
-     * @param listener the Object which should be notified
+     * Runs the formatting of this page sequence into the given area tree
+     *
+     * @param pageSeq the PageSequence to be formatted
+     * @param areaTree the area tree to format this page sequence into
+     * @throws FOPException if there is an error formatting the contents
      */
-    public void addFOTreeListener (FOTreeListener listener) {
-        if (listener == null) {
-            return;
-        }
-        foTreeListeners.add(listener);
-    }
-
-    /**
-     * Remove an object from the collection of objects that should be notified
-     * about FOTreeEvent firings.
-     * @param listener the Object which should no longer be notified
-     */
-    public void removeFOTreeListener (FOTreeListener listener) {
-        if (listener == null) {
-            return;
-        }
-        foTreeListeners.remove(listener);
-    }
-
-    /**
-     * Notify all objects in the foTreeListeners that a "Page Sequence Complete"
-     * FOTreeEvent has been fired.
-     * @param eventType integer indicating which type of event is created
-     * @param event the Event object that should be passed to the listeners
-     */
-    private void notifyPageSequenceComplete(PageSequence pageSequence)
+    private void formatPageSequence(PageSequence pageSeq, AreaTree areaTree) 
             throws FOPException {
-        FOTreeEvent event = new FOTreeEvent(this);
-        event.setPageSequence(pageSequence);
-        Iterator iterator = foTreeListeners.iterator();
-        FOTreeListener foTreeListenerItem = null;
-        while (iterator.hasNext()) {
-            foTreeListenerItem = (FOTreeListener)iterator.next();
-            foTreeListenerItem.foPageSequenceComplete(event);
+        Title title = null;
+        if (pageSeq.getTitleFO() != null) {
+            title = getTitleArea(pageSeq.getTitleFO());
         }
+        areaTree.startPageSequence(title);
+        // Make a new PageLayoutManager and a FlowLayoutManager
+        // Run the PLM in a thread
+        // Wait for them to finish.
+
+        // If no main flow, nothing to layout!
+        if (pageSeq.getMainFlow() == null) {
+            return;
+        }
+
+        // Initialize if already used?
+        //    this.layoutMasterSet.resetPageMasters();
+        if (pageSeq.getPageSequenceMaster() != null) {
+            pageSeq.getPageSequenceMaster().reset();
+        }
+
+        pageSeq.initPageNumber();
+
+        // This will layout pages and add them to the area tree
+        PageLayoutManager pageLM = new PageLayoutManager(areaTree, pageSeq, 
+            getDocument());
+        pageLM.setPageCounting(pageSeq.getCurrentPageNumber(),
+                               pageSeq.getPageNumberGenerator());
+
+        // For now, skip the threading and just call run directly.
+        pageLM.run();
+
+        // Thread layoutThread = new Thread(pageLM);
+        //  layoutThread.start();
+        // log.debug("Layout thread started");
+        
+        // // wait on both managers
+        // try {
+        //     layoutThread.join();
+        //     log.debug("Layout thread done");
+        // } catch (InterruptedException ie) {
+        //     log.error("PageSequence.format() interrupted waiting on layout");
+        // }
+        
+        pageSeq.setCurrentPageNumber(pageLM.getPageCount());
+        // Tell the root the last page number we created.
+        pageSeq.getRoot().setRunningPageNumberCounter(pageSeq.getCurrentPageNumber());
     }
 
     /**
-     * Notify all objects in the foTreeListeners that a "Document Complete"
-     * FOTreeEvent has been fired.
-     * @param eventType integer indicating which type of event is created
-     * @param event the Event object that should be passed to the listeners
+     * @return the Title area
      */
-    private void notifyDocumentComplete()
-            throws SAXException {
-        FOTreeEvent event = new FOTreeEvent(this);
-        Iterator iterator = foTreeListeners.iterator();
-        FOTreeListener foTreeListenerItem = null;
-        while (iterator.hasNext()) {
-            foTreeListenerItem = (FOTreeListener)iterator.next();
-            foTreeListenerItem.foDocumentComplete(event);
-        }
+    private org.apache.fop.area.Title getTitleArea(org.apache.fop.fo.pagination.Title foTitle) {
+        // use special layout manager to add the inline areas
+        // to the Title.
+        InlineStackingLayoutManager lm;
+        lm = new InlineStackingLayoutManager(foTitle);
+        lm.setLMiter(new LMiter(lm, foTitle.children.listIterator()));
+        lm.initialize();
+
+        // get breaks then add areas to title
+        org.apache.fop.area.Title title =
+                 new org.apache.fop.area.Title();
+
+        ContentLayoutManager clm = new ContentLayoutManager(title);
+        clm.setUserAgent(foTitle.getUserAgent());
+        lm.setParent(clm);
+
+        clm.fillArea(lm);
+
+        return title;
     }
 
     /**
