@@ -242,7 +242,7 @@ public class Driver {
         userAgent = agent;
     }
 
-    protected FOUserAgent getUserAgent() {
+    public FOUserAgent getUserAgent() {
         if (userAgent == null) {
             userAgent = new FOUserAgent();
             userAgent.setLogger(getLogger());
@@ -498,9 +498,9 @@ public class Driver {
             //this.atModel = new CachedRenderPagesModel(renderer);
             currentDocument.areaTree.setTreeModel(currentDocument.atModel);
             try {
-                renderer.setupFontInfo(currentDocument);
+                renderer.setupFontInfo(currentDocument.getFontInfo());
                 // check that the "any,normal,400" font exists
-                if (!currentDocument.isSetupValid()) {
+                if (!currentDocument.getFontInfo().isSetupValid()) {
                     throw new FOPException(
                             "No default font defined by OutputConverter");
                 }

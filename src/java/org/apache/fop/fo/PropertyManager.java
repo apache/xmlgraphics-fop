@@ -127,9 +127,9 @@ public class PropertyManager implements Constants {
             // various kinds of keywords too
             int fontSize = propertyList.get(PR_FONT_SIZE).getLength().getValue();
             //int fontVariant = propertyList.get("font-variant").getEnum();
-            String fname = foTreeControl.fontLookup(fontFamily, fontStyle,
+            String fname = foTreeControl.getFontInfo().fontLookup(fontFamily, fontStyle,
                                                fontWeight);
-            FontMetrics metrics = foTreeControl.getMetricsFor(fname);
+            FontMetrics metrics = foTreeControl.getFontInfo().getMetricsFor(fname);
             fontState = new Font(fname, metrics, fontSize);
         }
         return fontState;

@@ -19,7 +19,7 @@
 package org.apache.fop.render.awt;
 
 // FOP
-import org.apache.fop.apps.Document;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.Font;
 
 // Java
@@ -43,7 +43,7 @@ public class FontSetup {
      * @param fontInfo the font info object to set up
      * @param graphics needed for acces to font metrics
      */
-    public static void setup(Document fontInfo, Graphics2D graphics) {
+    public static void setup(FontInfo fontInfo, Graphics2D graphics) {
         FontMetricsMapper metric;
         int normal, bold, bolditalic, italic;
 

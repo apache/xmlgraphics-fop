@@ -70,7 +70,7 @@ public class EPSDocumentGraphics2D extends AbstractPSDocumentGraphics2D {
         PSProcSets.writeFOPStdProcSet(gen);
         PSProcSets.writeFOPEPSProcSet(gen);
         if (document != null) {
-            PSProcSets.writeFontDict(gen, document);
+            PSProcSets.writeFontDict(gen, document.getFontInfo());
         }
         gen.writeDSCComment(DSCConstants.END_PROLOG);
     }

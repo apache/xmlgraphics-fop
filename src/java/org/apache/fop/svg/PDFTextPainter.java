@@ -43,7 +43,7 @@ import org.apache.batik.gvt.renderer.StrokingTextPainter;
 
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.Font;
-import org.apache.fop.apps.Document;
+import org.apache.fop.fonts.FontInfo;
 
 /**
  * Renders the attributed character iterator of a <tt>TextNode</tt>.
@@ -60,7 +60,7 @@ import org.apache.fop.apps.Document;
  * @version $Id: PDFTextPainter.java,v 1.16 2003/03/07 09:51:25 jeremias Exp $
  */
 public class PDFTextPainter implements TextPainter {
-    private Document fontInfo;
+    private FontInfo fontInfo;
 
     /**
      * Use the stroking text painter to get the bounds and shape.
@@ -73,7 +73,7 @@ public class PDFTextPainter implements TextPainter {
      * Create a new PDF text painter with the given font information.
      * @param fi the fint info
      */
-    public PDFTextPainter(Document fi) {
+    public PDFTextPainter(FontInfo fi) {
         fontInfo = fi;
     }
 
@@ -164,7 +164,7 @@ public class PDFTextPainter implements TextPainter {
                        : Font.NORMAL;
 
         Font fontState = null;
-        Document fi = fontInfo;
+        FontInfo fi = fontInfo;
         boolean found = false;
         String fontFamily = null;
         if (gvtFonts != null) {

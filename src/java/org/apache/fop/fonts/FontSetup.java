@@ -61,7 +61,7 @@ public class FontSetup {
      * @param fontInfo the font info object to set up
      * @param embedList ???
      */
-    public static void setup(Document fontInfo, List embedList) {
+    public static void setup(FontInfo fontInfo, List embedList) {
 
         fontInfo.addMetrics("F1", new Helvetica());
         fontInfo.addMetrics("F2", new HelveticaOblique());
@@ -163,16 +163,16 @@ public class FontSetup {
      * @param fontInfos ???
      * @param num starting index for internal font numbering
      */
-    public static void addConfiguredFonts(Document fontInfo, List fontInfos, int num) {
-        if (fontInfos == null) {
+    public static void addConfiguredFonts(FontInfo fontInfo, List fontInfoList, int num) {
+        if (fontInfoList == null) {
             return; //No fonts to process
         }
 
         String internalName = null;
         //FontReader reader = null;
 
-        for (int i = 0; i < fontInfos.size(); i++) {
-            EmbedFontInfo configFontInfo = (EmbedFontInfo)fontInfos.get(i);
+        for (int i = 0; i < fontInfoList.size(); i++) {
+            EmbedFontInfo configFontInfo = (EmbedFontInfo) fontInfoList.get(i);
 
             String metricsFile = configFontInfo.getMetricsFile();
             if (metricsFile != null) {
@@ -191,7 +191,7 @@ public class FontSetup {
 
                 List triplets = configFontInfo.getFontTriplets();
                 for (int c = 0; c < triplets.size(); c++) {
-                    FontTriplet triplet = (FontTriplet)triplets.get(c);
+                    FontTriplet triplet = (FontTriplet) triplets.get(c);
 
                     int weight = FontUtil.parseCSS2FontWeight(triplet.getWeight());
                     //System.out.println("Registering: "+triplet+" weight="+weight);

@@ -69,7 +69,7 @@ public abstract class AbstractPSDocumentGraphics2D extends PSGraphics2D {
 
         if (!textAsShapes) {
             this.document = new Document(null);
-            FontSetup.setup(this.document, null);
+            FontSetup.setup(this.document.getFontInfo(), null);
         }
     }
 

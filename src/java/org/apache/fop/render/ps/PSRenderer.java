@@ -41,7 +41,7 @@ import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.Typeface;
-import org.apache.fop.apps.Document;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.fo.FOTreeControl;
@@ -50,8 +50,7 @@ import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.traits.BorderProps;
 
-/* org.w3c.dom.Document is not imported to avoid conflict with
-   org.apache.fop.control.Document */
+import org.w3c.dom.Document;
 
 /**
  * Renderer that renders to PostScript.
@@ -93,7 +92,7 @@ public class PSRenderer extends AbstractRenderer {
     private float currGreen;
     private float currBlue;
 
-    private Document fontInfo;
+    private FontInfo fontInfo;
 
     /**
      * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
@@ -229,9 +228,9 @@ public class PSRenderer extends AbstractRenderer {
      *
      * @param foTreeControl the font info object to set up
      */
-    public void setupFontInfo(FOTreeControl foTreeControl) {
-        FontSetup.setup((Document) foTreeControl, null);
-        this.fontInfo = (Document) foTreeControl;
+    public void setupFontInfo(FontInfo inFontInfo) {
+        this.fontInfo = inFontInfo;
+        FontSetup.setup(fontInfo, null);
     }
 
     /**
@@ -451,7 +450,7 @@ public class PSRenderer extends AbstractRenderer {
         int fontsize = area.getTraitAsInteger(Trait.FONT_SIZE);
 
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
-        Typeface f = (Typeface)fontInfo.getFonts().get(fontname);
+        Typeface f = (Typeface) fontInfo.getFonts().get(fontname);
 
         //Determine position
         int rx = currentBlockIPPosition;
@@ -809,7 +808,7 @@ public class PSRenderer extends AbstractRenderer {
      * @see org.apache.fop.render.AbstractRenderer#renderForeignObject(ForeignObject, Rectangle2D)
      */
     public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
-        org.w3c.dom.Document doc = fo.getDocument();
+        Document doc = fo.getDocument();
         String ns = fo.getNameSpace();
         renderDocument(doc, ns, pos);
     }
@@ -820,7 +819,7 @@ public class PSRenderer extends AbstractRenderer {
      * @param ns Namespace for the XML document
      * @param pos Position for the generated graphic/image
      */
-    public void renderDocument(org.w3c.dom.Document doc, String ns, Rectangle2D pos) {
+    public void renderDocument(Document doc, String ns, Rectangle2D pos) {
         RendererContext context;
         context = new RendererContext(MIME_TYPE);
         context.setUserAgent(userAgent);

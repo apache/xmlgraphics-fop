@@ -38,14 +38,13 @@ import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fo.FOTreeEvent;
 import org.apache.fop.fo.FOTreeListener;
 import org.apache.fop.fo.pagination.PageSequence;
-import org.apache.fop.fonts.Font;
-import org.apache.fop.fonts.FontMetrics;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.layout.LayoutStrategy;
+
+import org.apache.commons.logging.Log;
 
 // SAX
 import org.xml.sax.SAXException;
-
-import org.apache.commons.logging.Log;
 
 /**
  * Class storing information for the FOP Document being processed, and managing
@@ -53,19 +52,13 @@ import org.apache.commons.logging.Log;
  */
 public class Document implements FOTreeControl, FOTreeListener,
         AreaTreeControl {
-
+            
     /** The parent Driver object */
     private Driver driver;
 
-    /** Map containing fonts that have been used */
-    private Map usedFonts;
-
-    /** look up a font-triplet to find a font-name */
-    private Map triplets;
-
-    /** look up a font-name to get a font (that implements FontMetrics at least) */
-    private Map fonts;
-
+    /** The Font information relevant for this document */
+    private FontInfo fontInfo;
+    
     /**
      * the LayoutStrategy to be used to process this document
      * TODO: this actually belongs in the RenderContext class, when it is
@@ -75,6 +68,7 @@ public class Document implements FOTreeControl, FOTreeListener,
 
     /** The current AreaTree for the PageSequence being rendered. */
     public AreaTree areaTree;
+
     /** The AreaTreeModel for the PageSequence being rendered. */
     public AreaTreeModel atModel;
 
@@ -98,186 +92,15 @@ public class Document implements FOTreeControl, FOTreeListener,
      */
     public Document(Driver driver) {
         this.driver = driver;
-        this.triplets = new java.util.HashMap();
-        this.fonts = new java.util.HashMap();
-        this.usedFonts = new java.util.HashMap();
+        this.fontInfo = new FontInfo();
     }
 
     /**
-     * Checks if the font setup is valid (At least the ultimate fallback font
-     * must be registered.)
-     * @return True if valid
+     * Retrieve the font information for this document
+     * @return the FontInfo instance for this document
      */
-    public boolean isSetupValid() {
-        return triplets.containsKey(Font.DEFAULT_FONT);
-    }
-
-    /**
-     * Adds a new font triplet.
-     * @param name internal key
-     * @param family font family name
-     * @param style font style (normal, italic, oblique...)
-     * @param weight font weight
-     */
-    public void addFontProperties(String name, String family, String style,
-                                  int weight) {
-        /*
-         * add the given family, style and weight as a lookup for the font
-         * with the given name
-         */
-
-        String key = createFontKey(family, style, weight);
-        this.triplets.put(key, name);
-    }
-
-    /**
-     * Adds font metrics for a specific font.
-     * @param name internal key
-     * @param metrics metrics to register
-     */
-    public void addMetrics(String name, FontMetrics metrics) {
-        // add the given metrics as a font with the given name
-
-        this.fonts.put(name, metrics);
-    }
-
-    /**
-     * Lookup a font.
-     * <br>
-     * Locate the font name for a given family, style and weight.
-     * The font name can then be used as a key as it is unique for
-     * the associated document.
-     * This also adds the font to the list of used fonts.
-     * @param family font family
-     * @param style font style
-     * @param weight font weight
-     * @return internal key
-     */
-    public String fontLookup(String family, String style,
-                             int weight) {
-        String key;
-        // first try given parameters
-        key = createFontKey(family, style, weight);
-        String f = (String)triplets.get(key);
-        if (f == null) {
-            // then adjust weight, favouring normal or bold
-            f = findAdjustWeight(family, style, weight);
-
-            // then try any family with orig weight
-            if (f == null) {
-                key = createFontKey("any", style, weight);
-                f = (String)triplets.get(key);
-            }
-
-            // then try any family with adjusted weight
-            if (f == null) {
-                f = findAdjustWeight(family, style, weight);
-            }
-
-            // then use default
-            if (f == null) {
-                f = (String)triplets.get(Font.DEFAULT_FONT);
-            }
-
-        }
-
-        usedFonts.put(f, fonts.get(f));
-        return f;
-    }
-
-    /**
-     * Find a font with a given family and style by trying
-     * different font weights according to the spec.
-     * @param family font family
-     * @param style font style
-     * @param weight font weight
-     * @return internal key
-     */
-    public String findAdjustWeight(String family, String style,
-                             int weight) {
-        String key;
-        String f = null;
-        int newWeight = weight;
-        if (newWeight < 400) {
-            while (f == null && newWeight > 0) {
-                newWeight -= 100;
-                key = createFontKey(family, style, newWeight);
-                f = (String)triplets.get(key);
-            }
-        } else if (newWeight == 500) {
-            key = createFontKey(family, style, 400);
-            f = (String)triplets.get(key);
-        } else if (newWeight > 500) {
-            while (f == null && newWeight < 1000) {
-                newWeight += 100;
-                key = createFontKey(family, style, newWeight);
-                f = (String)triplets.get(key);
-            }
-            newWeight = weight;
-            while (f == null && newWeight > 400) {
-                newWeight -= 100;
-                key = createFontKey(family, style, newWeight);
-                f = (String)triplets.get(key);
-            }
-        }
-        if (f == null) {
-            key = createFontKey(family, style, 400);
-            f = (String)triplets.get(key);
-        }
-
-        return f;
-    }
-
-    /**
-     * Determines if a particular font is available.
-     * @param family font family
-     * @param style font style
-     * @param weight font weight
-     * @return True if available
-     */
-    public boolean hasFont(String family, String style, int weight) {
-        String key = createFontKey(family, style, weight);
-        return this.triplets.containsKey(key);
-    }
-
-    /**
-     * Creates a key from the given strings.
-     * @param family font family
-     * @param style font style
-     * @param weight font weight
-     * @return internal key
-     */
-    public static String createFontKey(String family, String style,
-                                       int weight) {
-        return family + "," + style + "," + weight;
-    }
-
-    /**
-     * Gets a Map of all registred fonts.
-     * @return a read-only Map with font key/FontMetrics pairs
-     */
-    public Map getFonts() {
-        return java.util.Collections.unmodifiableMap(this.fonts);
-    }
-
-    /**
-     * This is used by the renderers to retrieve all the
-     * fonts used in the document.
-     * This is for embedded font or creating a list of used fonts.
-     * @return a read-only Map with font key/FontMetrics pairs
-     */
-    public Map getUsedFonts() {
-        return this.usedFonts;
-    }
-
-    /**
-     * Returns the FontMetrics for a particular font
-     * @param fontName internal key
-     * @return font metrics
-     */
-    public FontMetrics getMetricsFor(String fontName) {
-        usedFonts.put(fontName, fonts.get(fontName));
-        return (FontMetrics)fonts.get(fontName);
+    public FontInfo getFontInfo() {
+        return this.fontInfo;
     }
 
     /**
@@ -370,20 +193,6 @@ public class Document implements FOTreeControl, FOTreeListener,
      */
     public FOInputHandler getFOInputHandler() {
         return foInputHandler;
-    }
-
-    /**
-     * @return the Logger to be used for processing this Document
-     */
-    public Log getLogger() {
-        return getDriver().getLogger();
-    }
-
-    /**
-     * @return the FOUserAgent used for processing this document
-     */
-    public FOUserAgent getUserAgent() {
-        return getDriver().getUserAgent();
     }
 
 }

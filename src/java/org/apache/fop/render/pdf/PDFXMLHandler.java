@@ -30,7 +30,7 @@ import org.apache.fop.svg.PDFTextElementBridge;
 import org.apache.fop.svg.PDFAElementBridge;
 import org.apache.fop.svg.PDFGraphics2D;
 import org.apache.fop.svg.SVGUserAgent;
-import org.apache.fop.apps.Document;
+import org.apache.fop.fonts.FontInfo;
 
 /* org.w3c.dom.Document is not imported to avoid conflict with
    org.apache.fop.control.Document */
@@ -163,7 +163,7 @@ public class PDFXMLHandler implements XMLHandler {
         pdfi.currentStream = (PDFStream)context.getProperty(PDF_STREAM);
         pdfi.width = ((Integer)context.getProperty(PDF_WIDTH)).intValue();
         pdfi.height = ((Integer)context.getProperty(PDF_HEIGHT)).intValue();
-        pdfi.fi = (Document)context.getProperty(PDF_FONT_INFO);
+        pdfi.fi = (FontInfo) context.getProperty(PDF_FONT_INFO);
         pdfi.currentFontName = (String)context.getProperty(PDF_FONT_NAME);
         pdfi.currentFontSize = ((Integer)context.getProperty(PDF_FONT_SIZE)).intValue();
         pdfi.currentXPosition = ((Integer)context.getProperty(PDF_XPOS)).intValue();
@@ -192,7 +192,7 @@ public class PDFXMLHandler implements XMLHandler {
         /** see PDF_HEIGHT */
         public int height;
         /** see PDF_FONT_INFO */
-        public Document fi;
+        public FontInfo fi;
         /** see PDF_FONT_NAME */
         public String currentFontName;
         /** see PDF_FONT_SIZE */

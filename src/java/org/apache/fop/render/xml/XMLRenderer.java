@@ -27,16 +27,13 @@ import java.util.Map;
 import java.util.Iterator;
 import java.awt.geom.Rectangle2D;
 
-// XML
-/* org.w3c.dom.Document is not imported to avoid conflict with
-   org.apache.fop.control.Document */
+import org.w3c.dom.Document;
 
 // FOP
 import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.Document;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.BeforeFloat;
 import org.apache.fop.area.Block;
@@ -61,6 +58,7 @@ import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.fonts.FontSetup;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fo.pagination.Region;
 
@@ -178,8 +176,8 @@ public class XMLRenderer extends AbstractRenderer {
      *
      * @param fontInfo the font info object to set up
      */
-    public void setupFontInfo(FOTreeControl foTreeControl) {
-        FontSetup.setup((Document) foTreeControl, null);
+    public void setupFontInfo(FontInfo fontInfo) {
+        FontSetup.setup(fontInfo, null);
     }
 
     private boolean isCoarseXml() {
@@ -393,7 +391,7 @@ public class XMLRenderer extends AbstractRenderer {
      */
     public void renderForeignObject(ForeignObject fo) {
         writeStartTag("<foreignObject>");
-        org.w3c.dom.Document doc = fo.getDocument();
+        Document doc = fo.getDocument();
         String ns = fo.getNameSpace();
         context.setProperty(XMLXMLHandler.WRITER, writer);
         renderXML(userAgent, context, doc, ns);

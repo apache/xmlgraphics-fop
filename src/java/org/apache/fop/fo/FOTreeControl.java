@@ -24,11 +24,10 @@ import java.util.Map;
 import java.util.Set;
 
 // FOP
-import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.Driver;
 import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fonts.FontMetrics;
-
-import org.apache.commons.logging.Log;
+import org.apache.fop.fonts.FontInfo;
 
 /**
  * An interface for classes that are conceptually the parent class of the
@@ -39,32 +38,6 @@ import org.apache.commons.logging.Log;
  * information.
  */
 public interface FOTreeControl {
-
-    /**
-     * @param family the font family
-     * @param style the font style
-     * @param weight the font weight
-     * @return the String font name matching the parameters
-     */
-    String fontLookup(String family, String style,
-                             int weight);
-
-    /**
-     * @param fontName the String containing the font name for which a
-     * FontMetrics object is desired
-     * @return the FontMetrics object matching the fontName parameter
-     */
-    FontMetrics getMetricsFor(String fontName);
-
-    /**
-     * @return true if the default font has been properly setup
-     */
-    boolean isSetupValid();
-
-    /**
-     * @return a Map containing the Fonts used in this FO Tree
-     */
-    Map getFonts();
 
     /**
      * Sets the Bookmark object which encapsulates the bookmarks for the FO
@@ -91,13 +64,13 @@ public interface FOTreeControl {
     FOInputHandler getFOInputHandler();
 
     /**
-     * @return the Logger being used with this FO Tree
+     * @return the Driver associated with this FO Tree
      */
-    Log getLogger();
-
+    Driver getDriver();
+    
     /**
-     * @return the FOUserAgent used for processing this FO Tree
+     * @return the FontInfo object associated with this FOTree
      */
-    FOUserAgent getUserAgent();
+    FontInfo getFontInfo();
 
 }

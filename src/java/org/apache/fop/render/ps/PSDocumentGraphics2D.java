@@ -57,7 +57,7 @@ public class PSDocumentGraphics2D extends AbstractPSDocumentGraphics2D {
 
         if (!textAsShapes) {
             this.document = new Document(null);
-            FontSetup.setup(this.document, null);
+            FontSetup.setup(this.document.getFontInfo(), null);
         }
     }
 
@@ -114,7 +114,7 @@ public class PSDocumentGraphics2D extends AbstractPSDocumentGraphics2D {
         PSProcSets.writeFOPStdProcSet(gen);
         PSProcSets.writeFOPEPSProcSet(gen);
         if (document != null) {
-            PSProcSets.writeFontDict(gen, document);
+            PSProcSets.writeFontDict(gen, document.getFontInfo());
         }
         gen.writeDSCComment(DSCConstants.END_SETUP);
     }

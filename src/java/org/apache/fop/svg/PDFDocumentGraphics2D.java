@@ -28,6 +28,7 @@ import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.fonts.FontSetup;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.avalon.framework.CascadingRuntimeException;
 import org.apache.avalon.framework.activity.Initializable;
 import org.apache.avalon.framework.configuration.Configurable;
@@ -35,7 +36,6 @@ import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.commons.logging.Log;
-import org.apache.fop.apps.Document;
 
 import java.awt.Graphics;
 import java.awt.Font;
@@ -86,7 +86,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
         super(textAsShapes);
 
         if (!textAsShapes) {
-            fontInfo = new Document(null);
+            fontInfo = new FontInfo();
             FontSetup.setup(fontInfo, null);
             //FontState fontState = new FontState("Helvetica", "normal",
             //                          FontInfo.NORMAL, 12, 0);
@@ -160,7 +160,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
      */
     public void initialize() throws Exception {
         if (this.fontInfo == null) {
-            fontInfo = new Document(null);
+            fontInfo = new FontInfo();
             FontSetup.setup(fontInfo, this.fontList);
             //FontState fontState = new FontState("Helvetica", "normal",
             //                          FontInfo.NORMAL, 12, 0);
@@ -209,7 +209,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
      * Get the font info for this pdf document.
      * @return the font information
      */
-    public Document getFontInfo() {
+    public FontInfo getFontInfo() {
         return fontInfo;
     }
 

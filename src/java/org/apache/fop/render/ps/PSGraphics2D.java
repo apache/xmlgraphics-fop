@@ -873,12 +873,12 @@ public class PSGraphics2D extends AbstractGraphics2D {
         String style = f.isItalic() ? "italic" : "normal";
         int weight = f.isBold() ? Font.BOLD : Font.NORMAL;
                 
-        String fontKey = this.document.findAdjustWeight(fontFamily, style, weight);
+        String fontKey = this.document.getFontInfo().findAdjustWeight(fontFamily, style, weight);
         if (fontKey == null) {
-            fontKey = this.document.findAdjustWeight("sans-serif", style, weight);
+            fontKey = this.document.getFontInfo().findAdjustWeight("sans-serif", style, weight);
         }
         return new Font(fontKey, 
-                this.document.getMetricsFor(fontKey), 
+                this.document.getFontInfo().getMetricsFor(fontKey), 
                 fontSize);
     }
 

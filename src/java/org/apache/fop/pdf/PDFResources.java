@@ -18,7 +18,7 @@
  
 package org.apache.fop.pdf;
 
-import org.apache.fop.apps.Document;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.FontDescriptor;
 
@@ -88,7 +88,7 @@ public class PDFResources extends PDFObject {
      * @param doc PDF document to add fonts to
      * @param fontInfo font info object to get font information from
      */
-   public void addFonts(PDFDocument doc, Document fontInfo) {
+   public void addFonts(PDFDocument doc, FontInfo fontInfo) {
         Map fonts = fontInfo.getUsedFonts();
         Iterator e = fonts.keySet().iterator();
         while (e.hasNext()) {

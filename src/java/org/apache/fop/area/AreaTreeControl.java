@@ -21,8 +21,7 @@ package org.apache.fop.area;
 
 // FOP
 import org.apache.fop.fo.extensions.Bookmarks;
-
-import org.apache.commons.logging.Log;
+import org.apache.fop.apps.Driver;
 
 // Java
 import java.util.Set;
@@ -42,9 +41,9 @@ public interface AreaTreeControl {
     Bookmarks getBookmarks();
 
     /**
-     * @return the Logger being used with this FO Tree
+     * @return the Driver instance being used with this FO Tree
      */
-    Log getLogger();
+    Driver getDriver();
 
     /**
      * The current set of IDs in the document.
