@@ -47,6 +47,9 @@ public class LabelEndFunction extends FunctionBase {
         labelEnd.addTerm(-1.0, distance);
         labelEnd.addTerm(-1.0, startIndent);
         labelEnd.addTerm(1.0, separation);
+        
+        // make sure value gets calculated
+        labelEnd.computeValue();
 
         return new LengthProperty(labelEnd);
     }
