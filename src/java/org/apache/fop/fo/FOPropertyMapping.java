@@ -2062,8 +2062,11 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("force-page-count", m);
 
         // initial-page-number
-        m  = new StringProperty.Maker(PR_INITIAL_PAGE_NUMBER);
+        m  = new NumberProperty.Maker(PR_INITIAL_PAGE_NUMBER);
         m.setInherited(false);
+        m.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
+        m.addEnum("auto-odd", makeEnumProperty(AUTO_ODD, "AUTO_ODD"));
+        m.addEnum("auto-even", makeEnumProperty(AUTO_EVEN, "AUTO_EVEN"));
         m.setDefault("auto");
         addPropertyMaker("initial-page-number", m);
 

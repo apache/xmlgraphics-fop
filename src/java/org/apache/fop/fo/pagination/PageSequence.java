@@ -29,6 +29,7 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.properties.Property;
 
 /**
  * This provides pagination of flows onto pages. Much of the
@@ -40,9 +41,6 @@ public class PageSequence extends FObj {
     // initial-page-number types
     //
     public static final int EXPLICIT = 0;
-    public static final int AUTO = 1;
-    public static final int AUTO_EVEN = 2;
-    public static final int AUTO_ODD = 3;
 
     /**
      * The parent root object
@@ -74,7 +72,6 @@ public class PageSequence extends FObj {
     //
 
     // page number and related formatting variables
-    private String ipnValue;
     public int currentPageNumber = 0;
     private int explicitFirstNumber = 0; // explicitly specified
     public int firstPageNumber = 0; // actual
@@ -134,23 +131,15 @@ public class PageSequence extends FObj {
 
         // we are now on the first page of the page sequence
         thisIsFirstPage = true;
-        ipnValue = getPropString(PR_INITIAL_PAGE_NUMBER);
+        Property ipnValue = getProperty(PR_INITIAL_PAGE_NUMBER);
 
-        if (ipnValue.equals("auto")) {
-            pageNumberType = AUTO;
-        } else if (ipnValue.equals("auto-even")) {
-            pageNumberType = AUTO_EVEN;
-        } else if (ipnValue.equals("auto-odd")) {
-            pageNumberType = AUTO_ODD;
+        if (ipnValue.getEnum() != 0) {
+            // auto | auto-odd | auto-even.
+            pageNumberType = ipnValue.getEnum();
         } else {
             pageNumberType = EXPLICIT;
-            try {
-                int pageStart = new Integer(ipnValue).intValue();
-                this.explicitFirstNumber = (pageStart > 0) ? pageStart : 1;
-            } catch (NumberFormatException nfe) {
-                throw new SAXParseException("\"" + ipnValue
-                    + "\" is not a valid value for initial-page-number", locator);
-            }
+            int pageStart = ipnValue.getNumber().intValue();
+            this.explicitFirstNumber = (pageStart > 0) ? pageStart : 1;
         }
 
         String masterName = getPropString(PR_MASTER_REFERENCE);
@@ -533,15 +522,6 @@ public class PageSequence extends FObj {
 //      public void setIsFlowSet(boolean isFlowSet) {
 //          this.isFlowSet = isFlowSet;
 //      }
-
-    /**
-     * Get the "initial-page-number" value.
-     *
-     * @return the initial-page-number property value
-     */
-    public String getIpnValue() {
-        return ipnValue;
-    }
 
     /**
      * Get the current page number for this page sequence.
