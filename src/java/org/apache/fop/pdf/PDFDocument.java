@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,12 +42,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.pdf;
 
 // Java
@@ -88,7 +88,7 @@ import org.apache.avalon.framework.logger.Logger;
  *
  */
 public class PDFDocument implements LogEnabled {
-    
+
     private static final Integer LOCATION_PLACEHOLDER = new Integer(0);
     /**
      * the version of PDF supported which is 1.4
@@ -234,11 +234,11 @@ public class PDFDocument implements LogEnabled {
 
 
     private PDFFactory factory;
-    
+
     private boolean encodingOnTheFly = true;
 
     /**
-     * creates an empty PDF document <p>
+     * Creates an empty PDF document.
      *
      * The constructor creates a /Root and /Pages object to
      * track the document but does not write these objects until
@@ -293,7 +293,7 @@ public class PDFDocument implements LogEnabled {
 
     /**
      * Helper method to allow sub-classes to aquire logger.
-     * 
+     *
      * <p>There is no performance penalty as this is a final method
      * and will be inlined by the JVM.</p>
      * @return the Logger
@@ -312,7 +312,7 @@ public class PDFDocument implements LogEnabled {
             return text.getBytes(ENCODING);
         } catch (UnsupportedEncodingException uee) {
             return text.getBytes();
-        }       
+        }
     }
 
     /**
@@ -378,7 +378,7 @@ public class PDFDocument implements LogEnabled {
     }
 
     /**
-     * Registers a PDFObject in this PDF document. The PDF is assigned a new 
+     * Registers a PDFObject in this PDF document. The PDF is assigned a new
      * object number.
      * @param obj PDFObject to add
      * @return PDFObject the PDFObject added (its object number set)
@@ -390,7 +390,7 @@ public class PDFDocument implements LogEnabled {
     }
 
     /**
-     * Assigns the PDFObject a object number and sets the parent of the 
+     * Assigns the PDFObject a object number and sets the parent of the
      * PDFObject to this PDFDocument.
      * @param obj PDFObject to assign a number to
      */
@@ -407,7 +407,7 @@ public class PDFDocument implements LogEnabled {
             throw new IllegalStateException("Error registering a PDFObject: "
                 + "PDFObject already has a parent PDFDocument");
         }
-        
+
         obj.setObjectNumber(++this.objectcount);
 
         if (currentParent == null) {
@@ -431,9 +431,9 @@ public class PDFDocument implements LogEnabled {
 
         //Add object to list
         this.objects.add(obj);
-        
+
         //System.out.println("Registering: "+obj);
-        
+
         //Add object to special lists where necessary
         if (obj instanceof PDFFunction) {
             this.functions.add(obj);
@@ -460,7 +460,7 @@ public class PDFDocument implements LogEnabled {
         }
         if (obj instanceof PDFLink) {
             this.links.add(obj);
-        }            
+        }
         if (obj instanceof PDFFileSpec) {
             this.filespecs.add(obj);
         }
@@ -478,10 +478,10 @@ public class PDFDocument implements LogEnabled {
      */
     public void addTrailerObject(PDFObject obj) {
         this.trailerObjects.add(obj);
-        
+
         if (obj instanceof PDFGoTo) {
             this.gotos.add(obj);
-        }            
+        }
     }
 
     /**
@@ -509,8 +509,8 @@ public class PDFDocument implements LogEnabled {
                 + "generated without encryption.");
         }
     }
-    
-    
+
+
     /**
      * Indicates whether encryption is active for this PDF or not.
      * @return boolean True if encryption is active
@@ -518,7 +518,7 @@ public class PDFDocument implements LogEnabled {
     public boolean isEncryptionActive() {
         return this.encryption != null;
     }
-    
+
     /**
      * Returns the active Encryption object.
      * @return the Encryption object
@@ -613,7 +613,7 @@ public class PDFDocument implements LogEnabled {
     protected PDFGoTo findGoTo(PDFGoTo compare) {
         return (PDFGoTo)findPDFObject(gotos, compare);
     }
-    
+
     /**
      * Looks for an existing GState to use
      * @param wanted requested features
@@ -680,7 +680,7 @@ public class PDFDocument implements LogEnabled {
      * @throws java.io.FileNotFoundException if the URI could not be resolved
      * @return the InputStream from the URI.
      */
-    protected InputStream resolveURI(String uri) 
+    protected InputStream resolveURI(String uri)
                 throws java.io.FileNotFoundException {
         try {
             /**@todo Temporary hack to compile, improve later */
@@ -738,12 +738,12 @@ public class PDFDocument implements LogEnabled {
         return xObject;
     }
 
-    /** 
+    /**
      * Add a form XObject to the PDF document.
      * This adds a Form XObject to the PDF objects.
      * If a Form XObject with the same key already exists it will return the
      * old PDFFormXObject.
-     *  
+     *
      * @param res the PDF resource context to add to, may be null
      * @param cont the PDF Stream contents of the Form XObject
      * @param formres the PDF Resources for the Form XObject data
@@ -833,7 +833,7 @@ public class PDFDocument implements LogEnabled {
     }
 
     /**
-     * write the PDF header <P>
+     * Write the PDF header.
      *
      * This method must be called prior to formatting
      * and outputting AreaTrees.
@@ -886,8 +886,8 @@ public class PDFDocument implements LogEnabled {
         /* construct the trailer */
         String pdf = "trailer\n" + "<<\n"
                      + "/Size " + (this.objectcount + 1) + "\n"
-                     + "/Root " + this.root.referencePDF() + "\n" 
-                     + "/Info " + this.info.referencePDF() + "\n" 
+                     + "/Root " + this.root.referencePDF() + "\n"
+                     + "/Info " + this.info.referencePDF() + "\n"
                      + encryptEntry
                      + ">>\n" + "startxref\n" + this.xref
                      + "\n" + "%%EOF\n";
