@@ -154,7 +154,7 @@ public class Table extends FObj {
 	blockArea.setPage(area.getPage());
 	blockArea.start();
 
-	// added by Eric Shaeffer
+	// added by Eric Schaeffer
 	currentColumnNumber = 0;
 
 	int numChildren = this.children.size();
