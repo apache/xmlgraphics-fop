@@ -743,7 +743,8 @@ public class PDFRenderer implements Renderer {
 			FopImage img = FopImageFactory.Make(href);
 			if(img != null) {
 				int xObjectNum = this.pdfDoc.addImage(img);
-				currentStream.add("q\n" + width + " 0 0 " +
+				currentStream.add("q\n1 0 0 -1 " + 0
+				          + " " + (y + height) + " cm\n" + width + " 0 0 " +
 						  height + " " +
 						  x + " " +
 						  y + " cm\n" +
@@ -765,7 +766,6 @@ public class PDFRenderer implements Renderer {
 		int y = this.currentYPosition;
 		int w = area.getContentWidth();
 		int h = area.getHeight();
-		this.currentYPosition -= h;
 
 		currentStream.add("ET\n");
 		/*
@@ -797,6 +797,7 @@ public class PDFRenderer implements Renderer {
 
 		currentStream.add("Q\n");
 		currentStream.add("BT\n");
+		this.currentYPosition -= h;
 	}
 
 	void handleGradient(String sp, boolean fill, GraphicImpl area)
