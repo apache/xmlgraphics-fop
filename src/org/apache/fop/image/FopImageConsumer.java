@@ -57,7 +57,8 @@ public class FopImageConsumer implements ImageConsumer {
          */
         synchronized (this.imageStatus) {
             // Need to stop status if image done
-            if (this.imageStatus.intValue() != ImageConsumer.STATICIMAGEDONE)
+            if (imageStatus.intValue() != ImageConsumer.STATICIMAGEDONE
+                && imageStatus.intValue() != ImageConsumer.SINGLEFRAMEDONE)
                 this.imageStatus = new Integer(status);
         }
     }
@@ -96,7 +97,8 @@ public class FopImageConsumer implements ImageConsumer {
             if (this.imageStatus.intValue() == ImageConsumer.IMAGEERROR)
                 throw new Exception("Image error");
 
-            if (this.imageStatus.intValue() == ImageConsumer.STATICIMAGEDONE)
+            if (imageStatus.intValue() == ImageConsumer.STATICIMAGEDONE
+                || imageStatus.intValue() == ImageConsumer.SINGLEFRAMEDONE)
                 return true;
 
             return false;
