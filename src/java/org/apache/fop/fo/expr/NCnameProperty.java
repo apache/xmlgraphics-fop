@@ -86,6 +86,13 @@ public class NCnameProperty extends Property {
     }
 
     /**
+     * @return the name as an Object.
+     */
+    public Object getObject() {
+        return this.ncName;
+    }
+    
+    /**
      * @return ncName for this
      */
     public String getNCname() {
