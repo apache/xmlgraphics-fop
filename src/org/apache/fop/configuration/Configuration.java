@@ -7,9 +7,9 @@
 
 package org.apache.fop.configuration;
 
-import java.util.Vector;
-import java.util.Hashtable;
-import java.util.Enumeration;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import org.apache.fop.messaging.MessageHandler;
 
 /**
@@ -31,18 +31,17 @@ public class Configuration {
     /**
      * stores the configuration information
      */
-    private static Hashtable standardConfiguration = new Hashtable(30);
-    ;
-    private static Hashtable pdfConfiguration = new Hashtable(20);
-    private static Hashtable awtConfiguration = new Hashtable(20);
+    private static HashMap standardConfiguration = new HashMap(30);
+    private static HashMap pdfConfiguration = new HashMap(20);
+    private static HashMap awtConfiguration = new HashMap(20);
 
     /**
-     * contains a Hashtable of existing Hashtables
+     * contains a HashMap of existing HashMaps
      */
-    private static Hashtable configuration = new Hashtable(3);
+    private static HashMap configuration = new HashMap(3);
 
     /**
-     * loads the configuration types into the configuration Hashtable
+     * loads the configuration types into the configuration HashMap
      */
     static {
         configuration.put("standard", standardConfiguration);
@@ -50,7 +49,7 @@ public class Configuration {
         configuration.put("awt", awtConfiguration);
     }
 
-    public static Hashtable getConfiguration() {
+    public static HashMap getConfiguration() {
         return configuration;
     }
 
@@ -76,8 +75,6 @@ public class Configuration {
         }
     }
 
-    ;
-
     /**
      * convenience methods to access strings values in the configuration
      * @param key a string containing the key value for the configuration value
@@ -94,8 +91,6 @@ public class Configuration {
         }
     }
 
-    ;
-
     /**
      * convenience methods to access int values in the configuration
      * @param key a string containing the key value for the configuration value
@@ -111,8 +106,6 @@ public class Configuration {
             return -1;
         }
     }
-
-    ;
 
     /**
      * convenience methods to access boolean values in the configuration
@@ -132,44 +125,37 @@ public class Configuration {
         }
     }
 
-    ;
-
     /**
      * convenience methods to access list values in the configuration
      * @param key a string containing the key value for the configuration value
      * role detemines the configuration target
-     * @return Vector a Vector containing the values
+     * @return ArrayList a ArrayList containing the values
      * null   if the key is not defined.
      */
-    public static Vector getListValue(String key, int role) {
+    public static ArrayList getListValue(String key, int role) {
         Object obj = Configuration.getValue(key, role);
-        if (obj instanceof Vector) {
-            return (Vector)obj;
+        if (obj instanceof ArrayList) {
+            return (ArrayList)obj;
         } else {
             return null;
         }
     }
-
-    ;
 
     /**
-     * convenience methods to access map/hashtable values in the configuration
+     * convenience methods to access hashmap values in the configuration
      * @param key a string containing the key value for the configuration value
      * role detemines the configuration target
-     * @return Hashtable a Hashtable containing the values
+     * @return HashMap a HashMap containing the values
      * null   if the key is not defined.
      */
-    public static Hashtable getHashtableValue(String key, int role) {
+    public static HashMap getHashMapValue(String key, int role) {
         Object obj = Configuration.getValue(key, role);
-        if (obj instanceof Hashtable) {
-            return (Hashtable)obj;
+        if (obj instanceof HashMap) {
+            return (HashMap)obj;
         } else {
             return null;
         }
     }
-
-    ;
-
 
     /**
      * convenience method which retrieves some configuration information
@@ -221,22 +207,22 @@ public class Configuration {
      * convenience methods to access list values in the standard configuration
      *
      * @param key a string containing the key value for the configuration value
-     * @return Vector a Vector containing the values
+     * @return ArrayList a ArrayList containing the values
      * null   if the key is not defined.
      */
-    public static Vector getListValue(String key) {
+    public static ArrayList getListValue(String key) {
         return Configuration.getListValue(key, Configuration.STANDARD);
     }
 
     /**
-     * convenience methods to access map/hashtable values in the standard configuration
+     * convenience methods to access hashmap values in the standard configuration
      *
      * @param key a string containing the key value for the configuration value
-     * @return Hashtable a Hashtable containing the values
+     * @return HashMap a HashMap containing the values
      * null   if the key is not defined.
      */
-    public static Hashtable getHashtableValue(String key) {
-        return Configuration.getHashtableValue(key, Configuration.STANDARD);
+    public static HashMap getHashMapValue(String key) {
+        return Configuration.getHashMapValue(key, Configuration.STANDARD);
     }
 
 
@@ -244,11 +230,11 @@ public class Configuration {
      * method to access fonts values in the standard configuration
      *
      * @param key a string containing the key value for the configuration value
-     * @return Hashtable a Hashtable containing the values
+     * @return HashMap a HashMap containing the values
      * null   if the key is not defined.
      */
-    public static Vector getFonts() {
-        return (Vector)Configuration.getValue("fonts",
+    public static ArrayList getFonts() {
+        return (ArrayList)Configuration.getValue("fonts",
                                               Configuration.STANDARD);
     }
 
@@ -256,7 +242,7 @@ public class Configuration {
      * initializes this configuration
      * @param config contains the configuration information
      */
-    public static void setup(int role, Hashtable config) {
+    public static void setup(int role, HashMap config) {
         switch (role) {
         case Configuration.STANDARD:
             standardConfiguration = config;
@@ -273,11 +259,11 @@ public class Configuration {
     }
 
     /**
-     * adds information to the configuration map/hashtable in key,value form
+     * adds information to the configuration hashmap in key,value form
      * @param key a string containing the key value for the configuration value
      * value the configuration information
      * role detemines the configuration target
-     * @param value an Object containing the value; can be a String, a Vector or a Hashtable
+     * @param value an Object containing the value; can be a String, a ArrayList or a HashMap
      */
     public static void put(String key, Object value, int role) {
         switch (role) {
@@ -301,11 +287,11 @@ public class Configuration {
     ;
 
     /**
-     * adds information to the standard configuration map/hashtable in key,value form
+     * adds information to the standard configuration hashmap in key,value form
      * @param key a string containing the key value for the configuration value
      * value the configuration information
      * role detemines the configuration target
-     * @param value an Object containing the value; can be a String, a Vector or a Hashtable
+     * @param value an Object containing the value; can be a String, a ArrayList or a HashMap
      */
 
     public static void put(String key, Object value) {
@@ -318,38 +304,36 @@ public class Configuration {
     public static void dumpConfiguration() {
         String key;
         Object value;
-        Vector list;
-        Hashtable map, configuration;
-        Enumeration enum;
+        ArrayList list;
+        HashMap map, configuration;
         String tmp;
         System.out.println("Dumping configuration: ");
-        Hashtable[] configs = {
+        HashMap[] configs = {
             standardConfiguration, pdfConfiguration, awtConfiguration
         };
         for (int i = 0; i < configs.length; i++) {
             MessageHandler.logln("----------------------");
             configuration = configs[i];
-            Enumeration enumeration = configuration.keys();
-            while (enumeration.hasMoreElements()) {
-                key = (String)enumeration.nextElement();
+            Iterator iterator = configuration.keySet().iterator();
+            while (iterator.hasNext()) {
+                key = (String)iterator.next();
                 MessageHandler.logln("key: " + key);
                 value = configuration.get(key);
                 if (value instanceof String) {
                     MessageHandler.logln("   value: " + value);
-                } else if (value instanceof Vector) {
-                    list = (Vector)value;
-                    enum = list.elements();
+                } else if (value instanceof ArrayList) {
+                    list = (ArrayList)value;
                     MessageHandler.log("   values: ");
-                    while (enum.hasMoreElements()) {
-                        MessageHandler.log(enum.nextElement() + " - ");
+                    for (int count = 0; count < list.size(); count++) {
+                        MessageHandler.log(list.get(count) + " - ");
                     }
                     MessageHandler.logln("");
-                } else if (value instanceof Hashtable) {
-                    map = (Hashtable)value;
-                    enum = map.keys();
+                } else if (value instanceof HashMap) {
+                    map = (HashMap)value;
+                    Iterator iter = map.keySet().iterator();
                     MessageHandler.log("   values: ");
-                    while (enum.hasMoreElements()) {
-                        tmp = (String)enum.nextElement();
+                    while (iter.hasNext()) {
+                        tmp = (String)iter.next();
                         MessageHandler.log(" " + tmp + ":" + map.get(tmp));
                     }
                     MessageHandler.logln("");

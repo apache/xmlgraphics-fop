@@ -17,6 +17,7 @@ import org.apache.fop.datatypes.IDReferences;
 
 import org.w3c.dom.*;
 import org.xml.sax.Attributes;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import java.util.*;
 
@@ -105,12 +106,10 @@ public abstract class XMLObj extends FObj {
 
         element = null;
         try {
-            // DOMImplementation impl = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().getDOMImplementation();
-            // String ns = GraphElementMapping.URI;
-            // doc = impl.createDocument(ns, "graph", null);
-            doc =
-                javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-            Element el = doc.createElement("graph");
+            DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
+            fact.setNamespaceAware(true);
+            doc = fact.newDocumentBuilder().newDocument();
+            Element el = doc.createElement(tagName);
             doc.appendChild(el);
 
             element = doc.getDocumentElement();

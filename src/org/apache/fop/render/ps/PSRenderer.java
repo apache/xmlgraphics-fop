@@ -42,9 +42,8 @@ import java.io.*;
 import java.util.*;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.HashMap;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
 import java.awt.Point;
@@ -204,18 +203,18 @@ public class PSRenderer extends AbstractRenderer {
 
         // write("/gfF1{/Helvetica findfont} bd");
         // write("/gfF3{/Helvetica-Bold findfont} bd");
-        Hashtable fonts = fontInfo.getFonts();
-        Enumeration enum = fonts.keys();
-        while (enum.hasMoreElements()) {
-            String key = (String)enum.nextElement();
+        HashMap fonts = fontInfo.getFonts();
+        Iterator enum = fonts.keySet().iterator();
+        while (enum.hasNext()) {
+            String key = (String)enum.next();
             Font fm = (Font)fonts.get(key);
             write("/" + key + " /" + fm.fontName() + " def");
         }
         write("end def");
         write("%%EndResource");
-        enum = fonts.keys();
-        while (enum.hasMoreElements()) {
-            String key = (String)enum.nextElement();
+        enum = fonts.keySet().iterator();
+        while (enum.hasNext()) {
+            String key = (String)enum.next();
             Font fm = (Font)fonts.get(key);
             write("/" + fm.fontName() + " findfont");
             write("dup length dict begin");

@@ -27,7 +27,7 @@ import org.apache.fop.layout.FontDescriptor;
 // Java
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.awt.Rectangle;
@@ -71,10 +71,10 @@ public class PDFDocument {
     /**
      * the character position of each object
      */
-    protected Vector location = new Vector();
+    protected ArrayList location = new ArrayList();
 
     /** List of objects to write in the trailer */
-    private Vector trailerObjects = new Vector();
+    private ArrayList trailerObjects = new ArrayList();
 
     /**
      * the counter for object numbering
@@ -84,7 +84,7 @@ public class PDFDocument {
     /**
      * the objects themselves
      */
-    protected Vector objects = new Vector();
+    protected ArrayList objects = new ArrayList();
 
     /**
      * character position of xref table
@@ -141,7 +141,7 @@ public class PDFDocument {
     /**
      * the XObjects
      */
-    protected Vector xObjects = new Vector();
+    protected ArrayList xObjects = new ArrayList();
 
     /**
      * the XObjects Map.
@@ -152,7 +152,7 @@ public class PDFDocument {
     /**
      * the objects themselves
      */
-    protected Vector pendingLinks = null;
+    protected ArrayList pendingLinks = null;
 
     /**
      * creates an empty PDF document <p>
@@ -238,20 +238,20 @@ public class PDFDocument {
         PDFInfo pdfInfo = new PDFInfo(++this.objectcount);
         // set the default producer
         pdfInfo.setProducer(org.apache.fop.apps.Version.getVersion());
-        this.objects.addElement(pdfInfo);
+        this.objects.add(pdfInfo);
         return pdfInfo;
     }
 
     /**
      * Make a Type 0 sampled function
      *
-     * @param theDomain Vector objects of Double objects.
+     * @param theDomain ArrayList objects of Double objects.
      * This is the domain of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theRange Vector objects of Double objects.
+     * @param theRange ArrayList objects of Double objects.
      * This is the Range of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theSize A Vector object of Integer objects.
+     * @param theSize A ArrayList object of Integer objects.
      * This is the number of samples in each input dimension.
      * I can't imagine there being more or less than two input dimensions,
      * so maybe this should be an array of length 2.
@@ -266,14 +266,14 @@ public class PDFDocument {
      * This attribute is optional.
      *
      * See page 265 in the PDF 1.3 spec.
-     * @param theEncode Vector objects of Double objects.
+     * @param theEncode ArrayList objects of Double objects.
      * This is the linear mapping of input values intop the domain
      * of the function's sample table. Default is hard to represent in
      * ascii, but basically [0 (Size0 1) 0 (Size1 1)...].
      * This attribute is optional.
      *
      * See page 265 in the PDF 1.3 spec.
-     * @param theDecode Vector objects of Double objects.
+     * @param theDecode ArrayList objects of Double objects.
      * This is a linear mapping of sample values into the range.
      * The default is just the range.
      *
@@ -295,12 +295,12 @@ public class PDFDocument {
      * @param theFunctionType This is the type of function (0,2,3, or 4).
      * It should be 0 as this is the constructor for sampled functions.
      */
-    public PDFFunction makeFunction(int theFunctionType, Vector theDomain,
-                                    Vector theRange, Vector theSize,
+    public PDFFunction makeFunction(int theFunctionType, ArrayList theDomain,
+                                    ArrayList theRange, ArrayList theSize,
                                     int theBitsPerSample, int theOrder,
-                                    Vector theEncode, Vector theDecode,
+                                    ArrayList theEncode, ArrayList theDecode,
                                     StringBuffer theFunctionDataStream,
-                                    Vector theFilter) {    // Type 0 function
+                                    ArrayList theFilter) {    // Type 0 function
         PDFFunction function = new PDFFunction(++this.objectcount,
                                                theFunctionType, theDomain,
                                                theRange, theSize,
@@ -309,7 +309,7 @@ public class PDFDocument {
                                                theFunctionDataStream,
                                                theFilter);
 
-        this.objects.addElement(function);
+        this.objects.add(function);
         return (function);
     }
 
@@ -317,10 +317,10 @@ public class PDFDocument {
      * make a type Exponential interpolation function
      * (for shading usually)
      *
-     * @param theDomain Vector objects of Double objects.
+     * @param theDomain ArrayList objects of Double objects.
      * This is the domain of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theRange Vector of Doubles that is the Range of the function.
+     * @param theRange ArrayList of Doubles that is the Range of the function.
      * See page 264 of the PDF 1.3 Spec.
      * @param theCZero This is a vector of Double objects which defines the function result
      * when x=0.
@@ -338,29 +338,29 @@ public class PDFDocument {
      * PDF Spec page 268
      * @param theFunctionType The type of the function, which should be 2.
      */
-    public PDFFunction makeFunction(int theFunctionType, Vector theDomain,
-                                    Vector theRange, Vector theCZero,
-                                    Vector theCOne,
+    public PDFFunction makeFunction(int theFunctionType, ArrayList theDomain,
+                                    ArrayList theRange, ArrayList theCZero,
+                                    ArrayList theCOne,
                                     double theInterpolationExponentN) {    // type 2
         PDFFunction function = new PDFFunction(++this.objectcount,
                                                theFunctionType, theDomain,
                                                theRange, theCZero, theCOne,
                                                theInterpolationExponentN);
 
-        this.objects.addElement(function);
+        this.objects.add(function);
         return (function);
     }
 
     /**
      * Make a Type 3 Stitching function
      *
-     * @param theDomain Vector objects of Double objects.
+     * @param theDomain ArrayList objects of Double objects.
      * This is the domain of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theRange Vector objects of Double objects.
+     * @param theRange ArrayList objects of Double objects.
      * This is the Range of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theFunctions A Vector of the PDFFunction objects that the stitching function stitches.
+     * @param theFunctions A ArrayList of the PDFFunction objects that the stitching function stitches.
      *
      * This attributed is required.
      * It is described on page 269 of the PDF spec.
@@ -373,7 +373,7 @@ public class PDFDocument {
      *
      * This attributed is required.
      * It's described on page 269 of the PDF 1.3 spec.
-     * @param theEncode Vector objects of Double objects.
+     * @param theEncode ArrayList objects of Double objects.
      * This is the linear mapping of input values intop the domain
      * of the function's sample table. Default is hard to represent in
      * ascii, but basically [0 (Size0 1) 0 (Size1 1)...].
@@ -383,17 +383,17 @@ public class PDFDocument {
      * @param theFunctionType This is the function type. It should be 3,
      * for a stitching function.
      */
-    public PDFFunction makeFunction(int theFunctionType, Vector theDomain,
-                                    Vector theRange, Vector theFunctions,
-                                    Vector theBounds,
-                                    Vector theEncode) {    // Type 3
+    public PDFFunction makeFunction(int theFunctionType, ArrayList theDomain,
+                                    ArrayList theRange, ArrayList theFunctions,
+                                    ArrayList theBounds,
+                                    ArrayList theEncode) {    // Type 3
 
         PDFFunction function = new PDFFunction(++this.objectcount,
                                                theFunctionType, theDomain,
                                                theRange, theFunctions,
                                                theBounds, theEncode);
 
-        this.objects.addElement(function);
+        this.objects.add(function);
         return (function);
     }
 
@@ -407,14 +407,14 @@ public class PDFDocument {
      * @param theFunctionDataStream
      */
     public PDFFunction makeFunction(int theNumber, int theFunctionType,
-                                    Vector theDomain, Vector theRange,
+                                    ArrayList theDomain, ArrayList theRange,
                                     StringBuffer theFunctionDataStream) {    // Type 4
         PDFFunction function = new PDFFunction(++this.objectcount,
                                                theFunctionType, theDomain,
                                                theRange,
                                                theFunctionDataStream);
 
-        this.objects.addElement(function);
+        this.objects.add(function);
         return (function);
 
     }
@@ -428,13 +428,13 @@ public class PDFDocument {
      * @param theBackground An array of color components appropriate to the
      * colorspace key specifying a single color value.
      * This key is used by the f operator buy ignored by the sh operator.
-     * @param theBBox Vector of double's representing a rectangle
+     * @param theBBox ArrayList of double's representing a rectangle
      * in the coordinate space that is current at the
      * time of shading is imaged. Temporary clipping
      * boundary.
      * @param theAntiAlias Whether or not to anti-alias.
      * @param theDomain Optional vector of Doubles specifying the domain.
-     * @param theMatrix Vector of Doubles specifying the matrix.
+     * @param theMatrix ArrayList of Doubles specifying the matrix.
      * If it's a pattern, then the matrix maps it to pattern space.
      * If it's a shading, then it maps it to current user space.
      * It's optional, the default is the identity matrix
@@ -442,9 +442,9 @@ public class PDFDocument {
      */
     public PDFShading makeShading(int theShadingType,
                                   ColorSpace theColorSpace,
-                                  Vector theBackground, Vector theBBox,
-                                  boolean theAntiAlias, Vector theDomain,
-                                  Vector theMatrix,
+                                  ArrayList theBackground, ArrayList theBBox,
+                                  boolean theAntiAlias, ArrayList theDomain,
+                                  ArrayList theMatrix,
                                   PDFFunction theFunction) {    // make Shading of Type 1
         String theShadingName = new String("Sh" + (++this.shadingCount));
 
@@ -453,7 +453,7 @@ public class PDFDocument {
                                             theColorSpace, theBackground,
                                             theBBox, theAntiAlias, theDomain,
                                             theMatrix, theFunction);
-        this.objects.addElement(shading);
+        this.objects.add(shading);
 
         // add this shading to resources
         this.resources.addShading(shading);
@@ -469,23 +469,23 @@ public class PDFDocument {
      * @param theBackground theBackground An array of color components appropriate to the
      * colorspace key specifying a single color value.
      * This key is used by the f operator buy ignored by the sh operator.
-     * @param theBBox Vector of double's representing a rectangle
+     * @param theBBox ArrayList of double's representing a rectangle
      * in the coordinate space that is current at the
      * time of shading is imaged. Temporary clipping
      * boundary.
      * @param theAntiAlias Default is false
-     * @param theCoords Vector of four (type 2) or 6 (type 3) Double
-     * @param theDomain Vector of Doubles specifying the domain
+     * @param theCoords ArrayList of four (type 2) or 6 (type 3) Double
+     * @param theDomain ArrayList of Doubles specifying the domain
      * @param theFunction the Stitching (PDFfunction type 3) function, even if it's stitching a single function
-     * @param theExtend Vector of Booleans of whether to extend teh start and end colors past the start and end points
+     * @param theExtend ArrayList of Booleans of whether to extend teh start and end colors past the start and end points
      * The default is [false, false]
      */
     public PDFShading makeShading(int theShadingType,
                                   ColorSpace theColorSpace,
-                                  Vector theBackground, Vector theBBox,
-                                  boolean theAntiAlias, Vector theCoords,
-                                  Vector theDomain, PDFFunction theFunction,
-                                  Vector theExtend) {    // make Shading of Type 2 or 3
+                                  ArrayList theBackground, ArrayList theBBox,
+                                  boolean theAntiAlias, ArrayList theCoords,
+                                  ArrayList theDomain, PDFFunction theFunction,
+                                  ArrayList theExtend) {    // make Shading of Type 2 or 3
         String theShadingName = new String("Sh" + (++this.shadingCount));
 
         PDFShading shading = new PDFShading(++this.objectcount,
@@ -497,7 +497,7 @@ public class PDFDocument {
 
         this.resources.addShading(shading);
 
-        this.objects.addElement(shading);
+        this.objects.add(shading);
         return (shading);
     }
 
@@ -512,7 +512,7 @@ public class PDFDocument {
      * @param theBackground theBackground An array of color components appropriate to the
      * colorspace key specifying a single color value.
      * This key is used by the f operator buy ignored by the sh operator.
-     * @param theBBox Vector of double's representing a rectangle
+     * @param theBBox ArrayList of double's representing a rectangle
      * in the coordinate space that is current at the
      * time of shading is imaged. Temporary clipping
      * boundary.
@@ -520,16 +520,16 @@ public class PDFDocument {
      * @param theBitsPerCoordinate 1,2,4,8,12,16,24 or 32.
      * @param theBitsPerComponent 1,2,4,8,12, and 16
      * @param theBitsPerFlag 2,4,8.
-     * @param theDecode Vector of Doubles see PDF 1.3 spec pages 303 to 312.
+     * @param theDecode ArrayList of Doubles see PDF 1.3 spec pages 303 to 312.
      * @param theFunction the PDFFunction
      */
     public PDFShading makeShading(int theShadingType,
                                   ColorSpace theColorSpace,
-                                  Vector theBackground, Vector theBBox,
+                                  ArrayList theBackground, ArrayList theBBox,
                                   boolean theAntiAlias,
                                   int theBitsPerCoordinate,
                                   int theBitsPerComponent,
-                                  int theBitsPerFlag, Vector theDecode,
+                                  int theBitsPerFlag, ArrayList theDecode,
                                   PDFFunction theFunction) {    // make Shading of type 4,6 or 7
         String theShadingName = new String("Sh" + (++this.shadingCount));
 
@@ -544,7 +544,7 @@ public class PDFDocument {
 
         this.resources.addShading(shading);
 
-        this.objects.addElement(shading);
+        this.objects.add(shading);
         return (shading);
     }
 
@@ -557,23 +557,23 @@ public class PDFDocument {
      * @param theBackground theBackground An array of color components appropriate to the
      * colorspace key specifying a single color value.
      * This key is used by the f operator buy ignored by the sh operator.
-     * @param theBBox Vector of double's representing a rectangle
+     * @param theBBox ArrayList of double's representing a rectangle
      * in the coordinate space that is current at the
      * time of shading is imaged. Temporary clipping
      * boundary.
      * @param theAntiAlias Default is false
      * @param theBitsPerCoordinate 1,2,4,8,12,16, 24, or 32
      * @param theBitsPerComponent 1,2,4,8,12,24,32
-     * @param theDecode Vector of Doubles. See page 305 in PDF 1.3 spec.
+     * @param theDecode ArrayList of Doubles. See page 305 in PDF 1.3 spec.
      * @param theVerticesPerRow number of vertices in each "row" of the lattice.
      * @param theFunction The PDFFunction that's mapped on to this shape
      */
     public PDFShading makeShading(int theShadingType,
                                   ColorSpace theColorSpace,
-                                  Vector theBackground, Vector theBBox,
+                                  ArrayList theBackground, ArrayList theBBox,
                                   boolean theAntiAlias,
                                   int theBitsPerCoordinate,
-                                  int theBitsPerComponent, Vector theDecode,
+                                  int theBitsPerComponent, ArrayList theDecode,
                                   int theVerticesPerRow,
                                   PDFFunction theFunction) {    // make shading of Type 5
         String theShadingName = new String("Sh" + (++this.shadingCount));
@@ -588,7 +588,7 @@ public class PDFDocument {
 
         this.resources.addShading(shading);
 
-        this.objects.addElement(shading);
+        this.objects.add(shading);
 
         return (shading);
     }
@@ -600,17 +600,17 @@ public class PDFDocument {
      * @param theResources the resources associated with this pattern
      * @param thePaintType 1 or 2, colored or uncolored.
      * @param theTilingType 1, 2, or 3, constant spacing, no distortion, or faster tiling
-     * @param theBBox Vector of Doubles: The pattern cell bounding box
+     * @param theBBox ArrayList of Doubles: The pattern cell bounding box
      * @param theXStep horizontal spacing
      * @param theYStep vertical spacing
-     * @param theMatrix Optional Vector of Doubles transformation matrix
+     * @param theMatrix Optional ArrayList of Doubles transformation matrix
      * @param theXUID Optional vector of Integers that uniquely identify the pattern
      * @param thePatternDataStream The stream of pattern data to be tiled.
      */
     public PDFPattern makePattern(int thePatternType,    // 1
                                   PDFResources theResources, int thePaintType, int theTilingType,
-                                  Vector theBBox, double theXStep, double theYStep, Vector theMatrix,
-                                  Vector theXUID, StringBuffer thePatternDataStream) {
+                                  ArrayList theBBox, double theXStep, double theYStep, ArrayList theMatrix,
+                                  ArrayList theXUID, StringBuffer thePatternDataStream) {
         String thePatternName = new String("Pa" + (++this.patternCount));
         // int theNumber, String thePatternName,
         // PDFResources theResources
@@ -622,7 +622,7 @@ public class PDFDocument {
                                             thePatternDataStream);
 
         this.resources.addPattern(pattern);
-        this.objects.addElement(pattern);
+        this.objects.add(pattern);
 
         return (pattern);
     }
@@ -634,11 +634,11 @@ public class PDFDocument {
      * @param theShading the PDF Shading object that comprises this pattern
      * @param theXUID optional:the extended unique Identifier if used.
      * @param theExtGState optional: the extended graphics state, if used.
-     * @param theMatrix Optional:Vector of Doubles that specify the matrix.
+     * @param theMatrix Optional:ArrayList of Doubles that specify the matrix.
      */
     public PDFPattern makePattern(int thePatternType, PDFShading theShading,
-                                  Vector theXUID, StringBuffer theExtGState,
-                                  Vector theMatrix) {
+                                  ArrayList theXUID, StringBuffer theExtGState,
+                                  ArrayList theMatrix) {
         String thePatternName = new String("Pa" + (++this.patternCount));
 
         PDFPattern pattern = new PDFPattern(++this.objectcount,
@@ -646,7 +646,7 @@ public class PDFDocument {
                                             theXUID, theExtGState, theMatrix);
 
         this.resources.addPattern(pattern);
-        this.objects.addElement(pattern);
+        this.objects.add(pattern);
 
         return (pattern);
     }
@@ -662,17 +662,17 @@ public class PDFDocument {
 
     public PDFPattern createGradient(boolean radial,
                                      ColorSpace theColorspace,
-                                     Vector theColors, Vector theBounds,
-                                     Vector theCoords) {
+                                     ArrayList theColors, ArrayList theBounds,
+                                     ArrayList theCoords) {
         PDFShading myShad;
         PDFFunction myfunky;
         PDFFunction myfunc;
-        Vector theCzero;
-        Vector theCone;
+        ArrayList theCzero;
+        ArrayList theCone;
         PDFPattern myPattern;
         ColorSpace theColorSpace;
         double interpolation = (double)1.000;
-        Vector theFunctions = new Vector();
+        ArrayList theFunctions = new ArrayList();
 
         int currentPosition;
         int lastPosition = theColors.size() - 1;
@@ -685,8 +685,8 @@ public class PDFDocument {
         for (currentPosition = 0; currentPosition < lastPosition;
                 currentPosition++) {    // for every consecutive color pair
             PDFColor currentColor =
-                (PDFColor)theColors.elementAt(currentPosition);
-            PDFColor nextColor = (PDFColor)theColors.elementAt(currentPosition
+                (PDFColor)theColors.get(currentPosition);
+            PDFColor nextColor = (PDFColor)theColors.get(currentPosition
                                  + 1);
             // colorspace must be consistant
             if (this.colorspace.getColorSpace()
@@ -702,7 +702,7 @@ public class PDFDocument {
             myfunc = this.makeFunction(2, null, null, theCzero, theCone,
                                        interpolation);
 
-            theFunctions.addElement(myfunc);
+            theFunctions.add(myfunc);
 
         }                               // end of for every consecutive color pair
 
@@ -717,13 +717,13 @@ public class PDFDocument {
             } else {    // if the center x, center y, and radius specifiy
                 // the gradient, then assume the same center x, center y,
                 // and radius of zero for the other necessary component
-                Vector newCoords = new Vector();
-                newCoords.addElement(theCoords.elementAt(0));
-                newCoords.addElement(theCoords.elementAt(1));
-                newCoords.addElement(theCoords.elementAt(2));
-                newCoords.addElement(theCoords.elementAt(0));
-                newCoords.addElement(theCoords.elementAt(1));
-                newCoords.addElement(new Double(0.0));
+                ArrayList newCoords = new ArrayList();
+                newCoords.add(theCoords.get(0));
+                newCoords.add(theCoords.get(1));
+                newCoords.add(theCoords.get(2));
+                newCoords.add(theCoords.get(0));
+                newCoords.add(theCoords.get(1));
+                newCoords.add(new Double(0.0));
 
                 myShad = this.makeShading(3, this.colorspace, null, null,
                                           false, newCoords, null, myfunky,
@@ -756,7 +756,7 @@ public class PDFDocument {
          */
         PDFEncoding encoding = new PDFEncoding(++this.objectcount,
                                                encodingName);
-        this.objects.addElement(encoding);
+        this.objects.add(encoding);
         return encoding;
     }
 
@@ -782,7 +782,7 @@ public class PDFDocument {
         if (descriptor == null) {
             PDFFont font = new PDFFont(++this.objectcount, fontname,
                                        PDFFont.TYPE1, basefont, encoding);
-            this.objects.addElement(font);
+            this.objects.add(font);
             return font;
         } else {
             byte subtype = PDFFont.TYPE1;
@@ -804,7 +804,7 @@ public class PDFDocument {
                  * "Identity",
                  * 0));
                  * cmap.addContents();
-                 * this.objects.addElement(cmap);
+                 * this.objects.add(cmap);
                  */
                 font =
                     (PDFFontNonBase14)PDFFont.createFont(++this.objectcount,
@@ -818,7 +818,7 @@ public class PDFDocument {
                                                          fontname, subtype,
                                                          basefont, encoding);
             }
-            this.objects.addElement(font);
+            this.objects.add(font);
 
             font.setDescriptor(pdfdesc);
 
@@ -839,7 +839,7 @@ public class PDFDocument {
                                    cidMetrics.getDefaultWidth(),
                                    cidMetrics.getWidths(), sysInfo,
                                    (PDFCIDFontDescriptor)pdfdesc);
-                this.objects.addElement(cidFont);
+                this.objects.add(cidFont);
 
                 // ((PDFFontType0)font).setCMAP(cmap);
 
@@ -885,7 +885,7 @@ public class PDFDocument {
                                          desc.getStemV(),
                                          desc.getItalicAngle());
         }
-        this.objects.addElement(font);
+        this.objects.add(font);
 
         // Check if the font is embeddable
         if (desc.isEmbeddable()) {
@@ -893,7 +893,7 @@ public class PDFDocument {
             if (stream != null) {
                 this.objectcount++;
                 font.setFontFile(desc.getSubType(), stream);
-                this.objects.addElement(stream);
+                this.objects.add(stream);
             }
         }
         return font;
@@ -906,7 +906,7 @@ public class PDFDocument {
     public PDFArray makeArray(int[] values) {
 
         PDFArray array = new PDFArray(++this.objectcount, values);
-        this.objects.addElement(array);
+        this.objects.add(array);
         return array;
     }
 
@@ -920,8 +920,8 @@ public class PDFDocument {
         // else, create a new one
         xObject = new PDFXObject(++this.objectcount, ++this.xObjectCount,
                                  img);
-        this.objects.addElement(xObject);
-        this.xObjects.addElement(xObject);
+        this.objects.add(xObject);
+        this.xObjects.add(xObject);
         this.xObjectsMap.put(url, xObject);
         return xObjectCount;
     }
@@ -947,8 +947,8 @@ public class PDFDocument {
                                    pagewidth, pageheight);
 
         if(pendingLinks != null) {
-            for(Enumeration e = pendingLinks.elements(); e.hasMoreElements(); ) {
-                PendingLink pl = (PendingLink)e.nextElement();
+            for(int count = 0; count < pendingLinks.size(); count++) {
+                PendingLink pl = (PendingLink)pendingLinks.get(count);
                 PDFGoTo gt = new PDFGoTo(++this.objectcount,
                                          page.referencePDF());
                 gt.setDestination(pl.dest);
@@ -970,7 +970,7 @@ public class PDFDocument {
         }
 */
         /* add it to the list of objects */
-        this.objects.addElement(page);
+        this.objects.add(page);
 
         /* add the page to the Root */
         this.root.addPage(page);
@@ -993,16 +993,16 @@ public class PDFDocument {
         PDFAction action;
 
         PDFLink link = new PDFLink(++this.objectcount, rect);
-        this.objects.addElement(link);
+        this.objects.add(link);
 
         if (linkType == LinkSet.EXTERNAL) {
             // check destination
             if (destination.endsWith(".pdf")) {    // FileSpec
                 PDFFileSpec fileSpec = new PDFFileSpec(++this.objectcount,
                                                        destination);
-                this.objects.addElement(fileSpec);
+                this.objects.add(fileSpec);
                 action = new PDFGoToRemote(++this.objectcount, fileSpec);
-                this.objects.addElement(action);
+                this.objects.add(action);
                 link.setAction(action);
             } else {                               // URI
                 PDFUri uri = new PDFUri(destination);
@@ -1044,7 +1044,7 @@ public class PDFDocument {
     }
 
     public void addTrailerObject(PDFObject object) {
-        this.trailerObjects.addElement(object);
+        this.trailerObjects.add(object);
     }
 
     class PendingLink {
@@ -1054,21 +1054,21 @@ public class PDFDocument {
 
     public PDFLink makeLinkCurrentPage(Rectangle rect, String dest) {
         PDFLink link = new PDFLink(++this.objectcount, rect);
-        this.objects.addElement(link);
+        this.objects.add(link);
         PendingLink pl = new PendingLink();
         pl.link = link;
         pl.dest = dest;
         if(pendingLinks == null) {
-            pendingLinks = new Vector();
+            pendingLinks = new ArrayList();
         }
-        pendingLinks.addElement(pl);
+        pendingLinks.add(pl);
 
         return link;
     }
 
     public PDFLink makeLink(Rectangle rect, String page, String dest) {
         PDFLink link = new PDFLink(++this.objectcount, rect);
-        this.objects.addElement(link);
+        this.objects.add(link);
 
         PDFGoTo gt = new PDFGoTo(++this.objectcount, page);
         gt.setDestination(dest);
@@ -1085,7 +1085,7 @@ public class PDFDocument {
      */
     private void prepareLocations() {
         while(location.size() < objectcount)
-            location.addElement(locationPlaceholder);
+            location.add(locationPlaceholder);
     }
 
     /**
@@ -1103,7 +1103,7 @@ public class PDFDocument {
         PDFStream obj = new PDFStream(++this.objectcount);
         obj.addDefaultFilters();
 
-        this.objects.addElement(obj);
+        this.objects.add(obj);
         return obj;
     }
 
@@ -1120,7 +1120,7 @@ public class PDFDocument {
          * to the list of objects
          */
         PDFAnnotList obj = new PDFAnnotList(++this.objectcount);
-        this.objects.addElement(obj);
+        this.objects.add(obj);
         return obj;
     }
 
@@ -1155,7 +1155,7 @@ public class PDFDocument {
         if (parent != null) {
             parent.addOutline(obj);
         }
-        this.objects.addElement(obj);
+        this.objects.add(obj);
         return obj;
 
     }
@@ -1178,17 +1178,16 @@ public class PDFDocument {
 
         prepareLocations();
 
-        Enumeration en = this.objects.elements();
-        while (en.hasMoreElements()) {
+        for (int count = 0; count < this.objects.size(); count++) {
             /* retrieve the object with the current number */
-            PDFObject object = (PDFObject)en.nextElement();
+            PDFObject object = (PDFObject)this.objects.get(count);
 
             /*
              * add the position of this object to the list of object
              * locations
              */
-            location.setElementAt(
-                new Integer(this.position),object.getNumber() - 1);
+            location.set(object.getNumber() - 1, 
+                         new Integer(this.position));
 
             /*
              * output the object and increment the character position
@@ -1236,11 +1235,10 @@ public class PDFDocument {
     public void outputTrailer(OutputStream stream)
     throws IOException {
         output(stream);
-        Enumeration e = trailerObjects.elements();
-        while(e.hasMoreElements()) {
-            PDFObject o = (PDFObject) e.nextElement();
-            this.location.setElementAt(
-                new Integer(this.position), o.getNumber() - 1);
+        for(int count = 0; count < trailerObjects.size(); count++) {
+            PDFObject o = (PDFObject) trailerObjects.get(count);
+            this.location.set(o.getNumber() - 1, 
+                              new Integer(this.position));
             this.position += o.output(stream);
         }
         /* output the xref table and increment the character position
@@ -1279,9 +1277,8 @@ public class PDFDocument {
                                             + (this.objectcount + 1)
                                             + "\n0000000000 65535 f \n");
 
-        Enumeration en = this.location.elements();
-        while (en.hasMoreElements()) {
-            String x = en.nextElement().toString();
+        for (int count = 0; count < this.location.size(); count++) {
+            String x = this.location.get(count).toString();
 
             /* contruct xref entry for object */
             String padding = "0000000000";

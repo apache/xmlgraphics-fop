@@ -8,7 +8,7 @@
 package org.apache.fop.pdf;
 
 // Java
-import java.util.Vector;
+import java.util.ArrayList;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -65,21 +65,21 @@ public class PDFColor extends PDFPathPaint {
     }
 
 
-    public Vector getVector() {    // return a vector representation of the color
+    public ArrayList getVector() {    // return a vector representation of the color
         // in the appropriate colorspace.
-        Vector theColorVector = new Vector();
+        ArrayList theColorVector = new ArrayList();
         if (this.colorSpace.getColorSpace() == ColorSpace.DEVICE_RGB) {    // RGB
-            theColorVector.addElement(new Double(this.red));
-            theColorVector.addElement(new Double(this.green));
-            theColorVector.addElement(new Double(this.blue));
+            theColorVector.add(new Double(this.red));
+            theColorVector.add(new Double(this.green));
+            theColorVector.add(new Double(this.blue));
         } else if (this.colorSpace.getColorSpace()
                    == ColorSpace.DEVICE_CMYK) {    // CMYK
-            theColorVector.addElement(new Double(this.cyan));
-            theColorVector.addElement(new Double(this.magenta));
-            theColorVector.addElement(new Double(this.yellow));
-            theColorVector.addElement(new Double(this.black));
+            theColorVector.add(new Double(this.cyan));
+            theColorVector.add(new Double(this.magenta));
+            theColorVector.add(new Double(this.yellow));
+            theColorVector.add(new Double(this.black));
         } else {                                   // GRAY
-            theColorVector.addElement(new Double(this.black));
+            theColorVector.add(new Double(this.black));
         }
         return (theColorVector);
     }

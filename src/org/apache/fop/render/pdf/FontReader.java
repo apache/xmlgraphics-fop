@@ -15,7 +15,7 @@ import org.xml.sax.Locator;
 import org.xml.sax.Attributes;
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import org.apache.fop.pdf.PDFWArray;
 import org.apache.fop.pdf.PDFCIDFont;
@@ -41,12 +41,12 @@ public class FontReader extends DefaultHandler {
     // private SingleByteFont singleFont = null;
     private String text = null;
 
-    private Vector cidWidths = null;
+    private ArrayList cidWidths = null;
     private int cidWidthIndex = 0;
 
     private Hashtable currentKerning = null;
 
-    private Vector bfranges = null;
+    private ArrayList bfranges = null;
 
     private void createFont(String path) throws FOPException {
         XMLReader parser = ConfigurationReader.createParser();
@@ -145,7 +145,7 @@ public class FontReader extends DefaultHandler {
             }
         } else if ("cid-widths".equals(localName)) {
             cidWidthIndex = getInt(attributes.getValue("start-index"));
-            cidWidths = new Vector();
+            cidWidths = new ArrayList();
         } else if ("kerning".equals(localName)) {
             currentKerning = new Hashtable();
             if (isCID)
@@ -155,15 +155,15 @@ public class FontReader extends DefaultHandler {
                 singleFont.kerning.put(new Integer(attributes.getValue("kpx1")),
                                        currentKerning);
         } else if ("bfranges".equals(localName)) {
-            bfranges = new Vector();
+            bfranges = new ArrayList();
         } else if ("bf".equals(localName)) {
             BFEntry entry = new BFEntry();
             entry.unicodeStart = getInt(attributes.getValue("us"));
             entry.unicodeEnd = getInt(attributes.getValue("ue"));
             entry.glyphStartIndex = getInt(attributes.getValue("gi"));
-            bfranges.addElement(entry);
+            bfranges.add(entry);
         } else if ("wx".equals(localName)) {
-            cidWidths.addElement(new Integer(attributes.getValue("w")));
+            cidWidths.add(new Integer(attributes.getValue("w")));
         } else if ("widths".equals(localName)) {
             singleFont.width = new int[256];
         } else if ("char".equals(localName)) {
@@ -268,9 +268,8 @@ public class FontReader extends DefaultHandler {
         } else if ("cid-widths".equals(localName)) {
             int[] wds = new int[cidWidths.size()];
             int j = 0;
-            for (Enumeration e = cidWidths.elements();
-                    e.hasMoreElements(); ) {
-                Integer i = (Integer)e.nextElement();
+            for (int count = 0; count < cidWidths.size(); count++) {
+                Integer i = (Integer)cidWidths.get(count);
                 wds[j++] = i.intValue();
             }
 
@@ -278,9 +277,7 @@ public class FontReader extends DefaultHandler {
             multiFont.width = wds;
 
         } else if ("bfranges".equals(localName)) {
-            BFEntry[] entries = new BFEntry[bfranges.size()];
-            bfranges.copyInto(entries);
-            multiFont.bfentries = entries;
+            multiFont.bfentries = (BFEntry[])bfranges.toArray(new BFEntry[0]);
         }
 
     }

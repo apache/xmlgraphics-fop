@@ -39,7 +39,7 @@ public class CompileXMLFiles extends Task
     private String configFile, outFile;
     private String[] filenameList;
     private String filenames;
-    private Vector files = new Vector();
+    private ArrayList files = new ArrayList();
 
     // sets name of configuration file, which must
     // be an xml file conforming to the book.dtd used by xml-site
@@ -110,15 +110,14 @@ public class CompileXMLFiles extends Task
     public void endDocument() throws SAXException {
         String line, filename;
         BufferedReader in;
-        Enumeration iterator = files.elements();
         try {
             BufferedWriter out =
                 new BufferedWriter(new FileWriter("compileXMLFiles-tmp.xml"));
             out.write("<?xml version=\"1.0\"?>\n"
                       + "<!DOCTYPE documentation [\n"
                       + "<!ENTITY nbsp \" \">\n" + "]>\n<documentation>");
-            while (iterator.hasMoreElements()) {
-                filename = (String)iterator.nextElement();
+            for(int count = 0; count < files.size(); count++) {
+                filename = (String)files.get(count);
                 in = new BufferedReader(new FileReader(filename));
                 while ((line = in.readLine()) != null) {
                     // kill the lines pointing to the sbk protocol and the xml declaration
@@ -143,7 +142,7 @@ public class CompileXMLFiles extends Task
         String id, label, source;
         if (name.equals("document") || name.equals("entry")) {
             source = atts.getValue("source");
-            files.addElement(source);
+            files.add(source);
         }
     }
 

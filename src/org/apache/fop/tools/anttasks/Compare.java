@@ -48,12 +48,12 @@ public class Compare {
 
     public void setFilenames(String filenames) {
         StringTokenizer tokens = new StringTokenizer(filenames, ",");
-        Vector filenameListTmp = new Vector(20);
+        ArrayList filenameListTmp = new ArrayList(20);
         while (tokens.hasMoreTokens()) {
-            filenameListTmp.addElement(tokens.nextToken());
+            filenameListTmp.add(tokens.nextToken());
         }
         filenameList = new String[filenameListTmp.size()];
-        filenameListTmp.copyInto((String[])filenameList);
+        filenameList = (String[])filenameListTmp.toArray(new String[0]);
     }
 
     private boolean compareBytes(File oldFile, File newFile) {
