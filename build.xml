@@ -135,6 +135,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
        <include name="lib/xalan-2.0.0.jar"/>
        <include name="lib/xalanj1compat.jar"/>
        <include name="lib/batik.jar"/>
+       <include name="lib/logkit-1.0b4.jar"/>
        <include name="lib/jimi*"/>
     </fileset>
 
@@ -277,7 +278,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <taskdef name="runTest" classname="org.apache.fop.tools.anttasks.RunTest"/>
 
     <property name="main.class" value="org.apache.fop.apps.Fop"/>
-    <property name="runtime.classpath" value="lib/xerces-1.2.3.jar lib/xalan-2.0.0.jar lib/xalanj1compat.jar lib/batik.jar lib/jimi-1.0.jar"/>
+    <property name="runtime.classpath" value="lib/xerces-1.2.3.jar lib/xalan-2.0.0.jar lib/xalanj1compat.jar lib/batik.jar lib/jimi-1.0.jar lib/logkit-1.0b4.jar"/>
    
     <filter filtersfile="${build.src}/codegen/filter"/>
 
