@@ -132,12 +132,18 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
     <fileset dir="${basedir}" id="dist.bin.lib">
        <include name="lib/xerces-1.2.3.jar"/>
+       <include name="lib/xerces.LICENSE.txt"/>
        <include name="lib/xalan-2.0.0.jar"/>
        <include name="lib/xalanj1compat.jar"/>
+       <include name="lib/xalan.LICENSE.txt"/>
        <include name="lib/batik.jar"/>
+       <include name="lib/batik.LICENSE.txt"/>
        <include name="lib/logkit-1.0b4.jar"/>
+       <include name="lib/logkit.LICENSE.txt"/>
        <include name="lib/avalon-framework-4.0.jar"/>
-       <include name="lib/jimi*"/>
+       <include name="lib/avalon.LICENSE.txt"/>
+       <include name="lib/ant.jar"/>
+       <include name="lib/ant.license.txt"/>
     </fileset>
 
     <fileset dir="${basedir}" id="dist.src">
@@ -206,8 +212,8 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 	<!-- <property name="dist.dir" value="./dist"/> -->
     <property name="dist.bin.dir" value="./dist-bin"/>
     <property name="dist.src.dir" value="./dist-src"/>
-    <property name="dist.bin.result.dir" value="${dist.bin.dir}/${Name}-${version}"/>
-    <property name="dist.src.result.dir" value="${dist.src.dir}/${Name}-${version}"/>
+    <property name="dist.bin.result.dir" value="${dist.bin.dir}/${name}-${version}"/>
+    <property name="dist.src.result.dir" value="${dist.src.dir}/${name}-${version}"/>
 
     <property name="properties.dir" value="org/apache/fop/fo/properties"/>
     <property name="fonts.dir" value="org/apache/fop/render/pdf/fonts"/>
@@ -302,7 +308,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <target name="usage">
     <echo message=""/>
     <echo message=""/>
-    <echo message="${Name} Build file"/>
+    <echo message="${name} Build file"/>
     <echo message="-------------------------------------------------------------"/>
     <echo message=""/>
     <echo message=" available targets are:"/>
@@ -650,10 +656,10 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <copy todir="${dist.bin.result.dir}/build" file="build/fop.jar"/>
     <chmod file="${dist.bin.result.dir}/fop.sh" perm="ugo+rx" />
       
-    <zip zipfile="${Name}-${version}-bin.zip" basedir="${dist.bin.dir}" includes="**"/>
-    <tar tarfile="${Name}-${version}-bin.tar" basedir="${dist.bin.dir}" includes="**"/>
-    <gzip zipfile="${Name}-${version}-bin.tar.gz" src="${Name}-${version}-bin.tar" />
-    <delete file="${Name}-${version}-bin.tar"/>
+    <zip zipfile="${name}-${version}-bin.zip" basedir="${dist.bin.dir}" includes="**"/>
+    <tar tarfile="${name}-${version}-bin.tar" basedir="${dist.bin.dir}" includes="**"/>
+    <gzip zipfile="${name}-${version}-bin.tar.gz" src="${name}-${version}-bin.tar" />
+    <delete file="${name}-${version}-bin.tar"/>
 
   </target>
 
@@ -672,10 +678,10 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <chmod file="${dist.src.result.dir}/build.sh" perm="ugo+rx" />
     <chmod file="${dist.src.result.dir}/fop.sh" perm="ugo+rx" />
 
-    <zip zipfile="${Name}-${version}-src.zip" basedir="${dist.src.dir}" includes="**"/>
-    <tar tarfile="${Name}-${version}-src.tar" basedir="${dist.src.dir}" includes="**"/>
-    <gzip zipfile="${Name}-${version}-src.tar.gz" src="${Name}-${version}-src.tar" />
-    <delete file="${Name}-${version}-src.tar"/>
+    <zip zipfile="${name}-${version}-src.zip" basedir="${dist.src.dir}" includes="**"/>
+    <tar tarfile="${name}-${version}-src.tar" basedir="${dist.src.dir}" includes="**"/>
+    <gzip zipfile="${name}-${version}-src.tar.gz" src="${name}-${version}-src.tar" />
+    <delete file="${name}-${version}-src.tar"/>
 
   </target>
 
@@ -690,8 +696,8 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <delete dir="${dist.src.dir}"/>
     <delete dir="${dist.bin.dir}"/>
     <delete>
-       <fileset dir="${basedir}" includes="${Name}-*.tar.gz"/>
-       <fileset dir="${basedir}" includes="${Name}-*.zip"/>
+       <fileset dir="${basedir}" includes="${name}-*.tar.gz"/>
+       <fileset dir="${basedir}" includes="${name}-*.zip"/>
     </delete>
   </target>
 
