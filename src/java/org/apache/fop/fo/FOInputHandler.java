@@ -50,10 +50,6 @@
  */
 package org.apache.fop.fo;
 
-// Java
-import java.util.Set;
-import java.util.HashSet;
-
 // Avalon
 import org.apache.avalon.framework.logger.AbstractLogEnabled;
 
@@ -87,12 +83,6 @@ import org.xml.sax.SAXException;
  */
 public abstract class FOInputHandler extends AbstractLogEnabled {
     /**
-     * The current set of id's in the FO tree.
-     * This is used so we know if the FO tree contains duplicates.
-     */
-    private Set idReferences = new HashSet();
-
-    /**
      * The FOTreeControl object that is controlling the FO Tree being built
      */
     public FOTreeControl foTreeControl = null;
@@ -104,14 +94,6 @@ public abstract class FOInputHandler extends AbstractLogEnabled {
      */
     public FOInputHandler(FOTreeControl foTreeControl) {
         this.foTreeControl = foTreeControl;
-    }
-
-    /**
-     * Retuns the set of ID references.
-     * @return the ID references
-     */
-    public Set getIDReferences() {
-        return idReferences;
     }
 
     /**
