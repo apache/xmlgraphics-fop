@@ -87,10 +87,11 @@ import org.apache.fop.util.CharUtilities;
  * The following patterns are treated: rule, space, dots and use-content.
  */
 public class Leader extends FObjMixed {
-    int ruleStyle;
-    int ruleThickness;
-    int leaderPattern;
-    int patternWidth;
+    
+    private int ruleStyle;
+    private int ruleThickness;
+    private int leaderPattern;
+    private int patternWidth;
     protected FontInfo fontInfo = null;
     protected FontState fontState;
     protected InlineArea leaderArea = null;

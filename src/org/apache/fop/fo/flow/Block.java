@@ -50,6 +50,12 @@
  */ 
 package org.apache.fop.fo.flow;
 
+// Java
+import java.util.List;
+
+// XML
+import org.xml.sax.Attributes;
+
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
@@ -70,10 +76,6 @@ import org.apache.fop.layout.RelativePositionProps;
 import org.apache.fop.layoutmgr.BlockLayoutManager;
 import org.apache.fop.util.CharUtilities;
 
-import org.xml.sax.Attributes;
-
-import java.util.List;
-
 /*
   Modified by Mark Lillywhite mark-fop@inomial.com. The changes
   here are based on memory profiling and do not change functionality.
@@ -88,31 +90,30 @@ import java.util.List;
   there are only a few sematic changes; mostly I just got rid of
   "this." from blockArea since BlockArea is now local.
  */
-
 public class Block extends FObjMixed {
 
-    int align;
-    int alignLast;
-    int breakAfter;
-    int lineHeight;
-    int startIndent;
-    int endIndent;
-    int spaceBefore;
-    int spaceAfter;
-    int textIndent;
-    int keepWithNext;
-    ColorType backgroundColor;
-    int blockWidows;
-    int blockOrphans;
+    private int align;
+    private int alignLast;
+    private int breakAfter;
+    private int lineHeight;
+    private int startIndent;
+    private int endIndent;
+    private int spaceBefore;
+    private int spaceAfter;
+    private int textIndent;
+    private int keepWithNext;
+    private ColorType backgroundColor;
+    private int blockWidows;
+    private int blockOrphans;
 
-    String id;
-    int span;
+    private String id;
+    private int span;
     private int wsTreatment; //ENUMERATION
     private int lfTreatment; //ENUMERATION
     private boolean bWScollapse; //true if white-space-collapse=true
 
     // this may be helpful on other FOs too
-    boolean anythingLaidOut = false;
+    private boolean anythingLaidOut = false;
 
     /**
      * Index of first inline-type FO seen in a sequence.

@@ -68,17 +68,17 @@ import org.apache.fop.layoutmgr.list.ListBlockLayoutManager;
 
 public class ListBlock extends FObj {
 
-    int align;
-    int alignLast;
-    int breakBefore;
-    int breakAfter;
-    int lineHeight;
-    int startIndent;
-    int endIndent;
-    int spaceBefore;
-    int spaceAfter;
-    int spaceBetweenListRows = 0;
-    ColorType backgroundColor;
+    private int align;
+    private int alignLast;
+    private int breakBefore;
+    private int breakAfter;
+    private int lineHeight;
+    private int startIndent;
+    private int endIndent;
+    private int spaceBefore;
+    private int spaceAfter;
+    private int spaceBetweenListRows = 0;
+    private ColorType backgroundColor;
 
     public ListBlock(FONode parent) {
         super(parent);
