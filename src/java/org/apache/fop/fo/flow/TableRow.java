@@ -133,17 +133,16 @@ public class TableRow extends FObj {
         this.backgroundColor =
             this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
 
-        this.keepTogether = getKeepValue("keep-together.within-column");
-        this.keepWithNext = getKeepValue("keep-with-next.within-column");
+        this.keepTogether = getKeepValue(PR_KEEP_TOGETHER | CP_WITHIN_COLUMN);
+        this.keepWithNext = getKeepValue(PR_KEEP_WITH_NEXT | CP_WITHIN_COLUMN);
         this.keepWithPrevious =
-            getKeepValue("keep-with-previous.within-column");
+            getKeepValue(PR_KEEP_WITH_PREVIOUS | CP_WITHIN_COLUMN);
 
         this.minHeight = this.propertyList.get(PR_HEIGHT).getLength().getValue();
         setup = true;
     }
 
-    private KeepValue getKeepValue(String sPropName) {
-        int propId = FOPropertyMapping.getPropertyId(sPropName);
+    private KeepValue getKeepValue(int propId) {
         Property p = this.propertyList.get(propId);
         Number n = p.getNumber();
         if (n != null) {

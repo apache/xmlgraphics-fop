@@ -122,7 +122,7 @@ public class Flow extends FObj {
                     }
                 }
          */
-        setFlowName(getProperty("flow-name").getString());
+        setFlowName(getProperty(PR_FLOW_NAME).getString());
         // Now done in addChild of page-sequence
         //pageSequence.addFlow(this);
 

@@ -89,18 +89,18 @@ public class RegionBody extends Region {
         * set but indent is explicitly set, it will return that.
         */
         CommonMarginBlock mProps = propMgr.getMarginProps();
-        int start = getRelMargin(PropertyList.START, "start-indent");
+        int start = getRelMargin(PropertyList.START, PR_START_INDENT);
         Rectangle vpRect;
         if (this.wm == WritingMode.LR_TB || this.wm == WritingMode.RL_TB) {
             vpRect = new Rectangle(start, mProps.spaceBefore,
                     reldims.ipd - start
-                        - getRelMargin(PropertyList.END, "end-indent"),
+                        - getRelMargin(PropertyList.END, PR_END_INDENT),
                     reldims.bpd - mProps.spaceBefore - mProps.spaceAfter);
         } else {
             vpRect = new Rectangle(start, mProps.spaceBefore,
                     reldims.bpd - mProps.spaceBefore - mProps.spaceAfter,
                     reldims.ipd - start
-                        - getRelMargin(PropertyList.END, "end-indent"));
+                        - getRelMargin(PropertyList.END, PR_END_INDENT));
         }
         return vpRect;
     }
@@ -109,15 +109,14 @@ public class RegionBody extends Region {
      * Get the relative margin using parent's writing mode, not own
      * writing mode.
      */
-    private int getRelMargin(int reldir, String sRelPropName) {
+    private int getRelMargin(int reldir, int relPropId) {
         FObj parent = (FObj) getParent();
         String sPropName = "margin-"
                 + parent.propertyList.wmRelToAbs(reldir);
         int propId = FOPropertyMapping.getPropertyId(sPropName);
         Property prop = propertyList.getExplicitBaseProp(propId);
         if (prop == null) {
-            propId = FOPropertyMapping.getPropertyId(sRelPropName);
-            prop = propertyList.getExplicitBaseProp(propId);
+            prop = propertyList.getExplicitBaseProp(relPropId);
         }
         return ((prop != null) ? prop.getLength().getValue() : 0);
     }

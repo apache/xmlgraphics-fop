@@ -56,6 +56,7 @@ import java.io.OutputStream;
 
 import org.apache.fop.apps.Document;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
@@ -144,7 +145,7 @@ public class MIFHandler extends FOInputHandler {
     public void startPageSequence(PageSequence pageSeq) {
         // get the layout master set
         // setup the pages for this sequence
-        String name = pageSeq.getProperty("master-reference").getString();
+        String name = pageSeq.getProperty(Constants.PR_MASTER_REFERENCE).getString();
         SimplePageMaster spm = pageSeq.getLayoutMasterSet().getSimplePageMaster(name);
         if (spm == null) {
             PageSequenceMaster psm = pageSeq.getLayoutMasterSet().getPageSequenceMaster(name);
