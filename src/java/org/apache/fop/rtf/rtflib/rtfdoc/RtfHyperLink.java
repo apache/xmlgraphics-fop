@@ -212,10 +212,10 @@ public class RtfHyperLink extends RtfContainer implements IRtfTextContainer {
      */
     public void setInternalURL (String jumpTo) {
         int now = jumpTo.length ();
-        int max = RtfBookmark.maxBookmarkLength;
+        int max = RtfBookmark.MAX_BOOKMARK_LENGTH;
         this.url = "#" + jumpTo.substring (0, now > max ? max : now);
-        this.url = this.url.replace ('.', RtfBookmark.replaceCharacter);
-        this.url = this.url.replace (' ', RtfBookmark.replaceCharacter);
+        this.url = this.url.replace ('.', RtfBookmark.REPLACE_CHARACTER);
+        this.url = this.url.replace (' ', RtfBookmark.REPLACE_CHARACTER);
     }
 
     public boolean isEmpty () {
