@@ -195,7 +195,8 @@ public abstract class Region extends FObj {
      */
     protected void setRegionPosition(RegionReference r, Rectangle2D absRegVPRect) {
         FODimension reldims = new FODimension(0, 0);
-        r.setCTM(CTM.getCTMandRelDims(propMgr, absRegVPRect, reldims));
+        r.setCTM(CTM.getCTMandRelDims(propMgr.getAbsRefOrient(),
+                propMgr.getWritingMode(), absRegVPRect, reldims));
     }
 
     /**

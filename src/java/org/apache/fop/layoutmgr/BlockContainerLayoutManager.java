@@ -100,7 +100,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                                 abProps.top, abProps.right - abProps.left,
                                 abProps.bottom - abProps.top);
             relDims = new FODimension(0, 0);
-            absoluteCTM = CTM.getCTMandRelDims(pm, rect, relDims);
+            absoluteCTM = CTM.getCTMandRelDims(pm.getAbsRefOrient(),
+                pm.getWritingMode(), rect, relDims);
         }
     }
 
@@ -121,7 +122,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         Rectangle2D rect = new Rectangle2D.Double(0, 0, context.getRefIPD(),
                                                   context.getStackLimit().opt);
         relDims = new FODimension(0, 0);
-        absoluteCTM = CTM.getCTMandRelDims(propManager, rect, relDims);
+        absoluteCTM = CTM.getCTMandRelDims(propManager.getAbsRefOrient(),
+                propManager.getWritingMode(), rect, relDims);
         double[] vals = absoluteCTM.toArray();
 
         MinOptMax stackLimit;

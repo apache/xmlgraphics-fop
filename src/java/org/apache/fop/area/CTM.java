@@ -285,12 +285,13 @@ public class CTM implements Serializable {
      * @param reldims relative dimensions
      * @return CTM the coordinate transformation matrix (CTM)
      */
-    public static CTM getCTMandRelDims(PropertyManager pm, Rectangle2D absVPrect,
-                                FODimension reldims) {
+    public static CTM getCTMandRelDims(int absRefOrient,
+                                       int writingMode,
+                                       Rectangle2D absVPrect,
+                                       FODimension reldims) {
         int width, height;
         // We will use the absolute reference-orientation to set up the CTM.
         // The value here is relative to its ancestor reference area.
-        int absRefOrient = pm.getAbsRefOrient();
         if (absRefOrient % 180 == 0) {
             width = (int) absVPrect.getWidth();
             height = (int) absVPrect.getHeight();
@@ -326,13 +327,12 @@ public class CTM implements Serializable {
             }
             ctm = ctm.rotate(absRefOrient);
         }
-        int wm = pm.getWritingMode();
         /* Since we've already put adjusted width and height values for the
          * top and left positions implied by the reference-orientation, we
          * can set ipd and bpd appropriately based on the writing mode.
          */
 
-        if (wm == WritingMode.LR_TB || wm == WritingMode.RL_TB) {
+        if (writingMode == WritingMode.LR_TB || writingMode == WritingMode.RL_TB) {
             reldims.ipd = width;
             reldims.bpd = height;
         } else {
@@ -341,7 +341,7 @@ public class CTM implements Serializable {
         }
         // Set a rectangle to be the writing-mode relative version???
         // Now transform for writing mode
-        return ctm.multiply(CTM.getWMctm(wm, reldims.ipd, reldims.bpd));
+        return ctm.multiply(CTM.getWMctm(writingMode, reldims.ipd, reldims.bpd));
     }
 
 }
