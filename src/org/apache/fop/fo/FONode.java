@@ -65,7 +65,8 @@ import java.util.Vector;
 abstract public class FONode {
 
     protected FObj parent;
-    protected Vector children = new Vector();
+
+    public Vector children = new Vector();		// made public for searching for id's
 
     /** value of marker before layout begins */
     public final static int START = -1000;
@@ -199,4 +200,17 @@ abstract public class FONode {
 
     abstract public Status layout(Area area)
 	throws FOPException;
+	
+    /**
+    * lets outside sources access the property list
+    * first used by PageNumberCitation to find the "id" property
+    * returns null by default, overide this function when there is a property list
+    *@param name - the name of the desired property to obtain
+    * @returns the property 
+    */
+    public Property getProperty(String name)
+    {
+    	return(null);
+    }
+
 }

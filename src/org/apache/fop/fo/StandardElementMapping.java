@@ -88,6 +88,7 @@ public class StandardElementMapping implements ElementMapping {
 			   ListItemLabel.maker()); 
 	builder.addMapping(uri, "list-item-body", ListItemBody.maker());
 	builder.addMapping(uri, "page-number", PageNumber.maker());
+	builder.addMapping(uri, "page-number-citation", PageNumberCitation.maker());
 	builder.addMapping(uri, "display-sequence",
 			   DisplaySequence.maker()); 
 	builder.addMapping(uri, "inline-sequence",

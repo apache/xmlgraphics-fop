@@ -93,6 +93,7 @@ public class StaticContent extends FObj {
     }
     
     public Status layout(Area area) throws FOPException {
+
 	int numChildren = this.children.size();
 	// Set area absolute height so that link rectangles will be drawn correctly in xsl-before and xsl-after
 	String flowName = this.properties.get("flow-name").getString();
@@ -107,7 +108,16 @@ public class StaticContent extends FObj {
        
 	for (int i = 0; i < numChildren; i++) {
 	    FObj fo = (FObj) children.elementAt(i);
-	    fo.layout(area);
+	    
+		Status status;
+		if ((status = fo.layout(area)).isIncomplete()) {
+			this.marker = i;
+			if ((i != 0) && (status.getCode() == Status.AREA_FULL_NONE)) {
+			    status = new Status(Status.AREA_FULL_SOME);
+			}
+			return(status);
+		}
+//	    fo.layout(area);
 	}
 	resetMarker();
 	return new Status(Status.OK);

@@ -75,7 +75,9 @@ public class FObj extends FONode {
 	return new Maker();
     }
 
-    protected PropertyList properties;
+//    protected PropertyList properties;
+    public PropertyList properties;
+
     protected String name;
 
     protected FObj(FObj parent, PropertyList propertyList) {
@@ -92,6 +94,20 @@ public class FObj extends FONode {
 	// should always be overridden
 	return new Status(Status.OK);
     }
+    
+
+	/**
+	* performs layout tasks which are global to all layout objects
+	* all subclasses of FObj which override layout should call layoutStart
+	* @param area - the current area being layed out
+	*/
+	public Status layoutStart(Area area)
+	{
+	
+ 		pageNumber = area.getPage().getNumber();
+		return new Status(Status.OK);
+ 	}
+
 
     public String getName() {
 	return this.name;
@@ -103,6 +119,24 @@ public class FObj extends FONode {
 
     protected void end() {
 	// do nothing by default
+    }
+    
+    /**
+    * lets outside sources access the property list
+    * first used by PageNumberCitation to find the "id" property
+    *@param name - the name of the desired property to obtain
+    * @returns the property 
+    */
+    public Property getProperty(String name)
+    {
+    	return(properties.get(name));
+    }
+
+    protected int pageNumber = -1;
+    
+    public int getPageNumber()
+    {
+    	return(pageNumber);
     }
 }
 

@@ -303,7 +303,7 @@
     <class-name>HRef</class-name>
     <inherited>false</inherited>
     <datatype>String</datatype>
-    <default></default>
+    <default></default> 
   </property>
   <property>
     <name>column-width</name>
@@ -799,5 +799,21 @@
     <datatype>String</datatype>
     <default>auto</default>
   </property>
+	<property>
+		<name>ref-id</name>
+		<class-name>RefId</class-name>
+		<inherited>false</inherited>
+		<datatype>String</datatype>
+		<default></default> 
+	</property>
+	<property>
+		<name>id</name>
+		<class-name>Id</class-name>
+		<inherited>false</inherited>
+		<datatype>String</datatype>
+		<default></default> 
+	</property>
+
+
 </property-list>
 

@@ -163,6 +163,9 @@ public class PropertyListBuilder {
 	propertyTable.put("top",Top.maker());
 	propertyTable.put("width",Width.maker());
 	propertyTable.put("initial-page-number",InitialPageNumber.maker());
+	propertyTable.put("ref-id",RefId.maker());  // used by page-number-citation
+	propertyTable.put("id",Id.maker());			// attribute for objects, used by page-number-citation
+
     }
 
     public Property computeProperty(PropertyList propertyList, String propertyName) {
