@@ -90,7 +90,6 @@ import org.xml.sax.SAXException;
  */
 public class RTFHandler extends FOInputHandler {
 
-    private Document fontInfo = new Document();
     private RtfFile rtfFile;
     private final OutputStream os;
     private RtfSection sect;
@@ -111,19 +110,12 @@ public class RTFHandler extends FOInputHandler {
      * Creates a new RTF structure handler.
      * @param os OutputStream to write to
      */
-    public RTFHandler(Driver driver, OutputStream os) {
-        super(driver);
+    public RTFHandler(Document doc, OutputStream os) {
+        super(doc);
         this.os = os;
         // use pdf fonts for now, this is only for resolving names
-        org.apache.fop.render.pdf.FontSetup.setup(fontInfo, null);
+        org.apache.fop.render.pdf.FontSetup.setup(doc, null);
         System.err.println(ALPHA_WARNING);
-    }
-
-    /**
-     * @see org.apache.fop.fo.FOInputHandler#getFontInfo()
-     */
-    public Document getFontInfo() {
-        return this.fontInfo;
     }
 
     /**

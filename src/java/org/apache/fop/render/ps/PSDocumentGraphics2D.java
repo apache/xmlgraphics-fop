@@ -94,7 +94,7 @@ public class PSDocumentGraphics2D extends PSGraphics2D {
         super(textAsShapes);
 
         if (!textAsShapes) {
-            fontInfo = new Document();
+            fontInfo = new Document(null);
             FontSetup.setup(fontInfo, null);
             //FontState fontState = new FontState("Helvetica", "normal",
             //                          FontInfo.NORMAL, 12, 0);

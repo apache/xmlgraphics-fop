@@ -128,11 +128,6 @@ public class FOTreeHandler extends FOInputHandler {
     private Renderer renderer;
 
     /**
-     * The FontInfo for this renderer.
-     */
-    private Document fontInfo = new Document();
-
-    /**
      * Collection of objects that have registered to be notified about
      * FOTreeEvent firings.
      */
@@ -145,9 +140,9 @@ public class FOTreeHandler extends FOInputHandler {
      * @param store if true then use the store pages model and keep the
      *              area tree in memory
      */
-    public FOTreeHandler(Driver driver, OutputStream outputStream, Renderer renderer,
+    public FOTreeHandler(Document document, OutputStream outputStream, Renderer renderer,
                          boolean store) {
-        super(driver);
+        super(document);
         if (collectStatistics) {
             runtime = Runtime.getRuntime();
         }
@@ -174,9 +169,9 @@ public class FOTreeHandler extends FOInputHandler {
             startTime = System.currentTimeMillis();
         }
         try {
-            renderer.setupFontInfo(fontInfo);
+            renderer.setupFontInfo(doc);
             // check that the "any,normal,400" font exists
-            if (!fontInfo.isSetupValid()) {
+            if (!doc.isSetupValid()) {
                 throw new SAXException(new FOPException(
                         "No default font defined by OutputConverter"));
             }
@@ -478,7 +473,7 @@ public class FOTreeHandler extends FOInputHandler {
      * @return the font information
      */
     public Document getFontInfo() {
-        return this.fontInfo;
+        return this.doc;
     }
 
     /**
