@@ -114,7 +114,7 @@ public class RunTest extends Task {
         //} else {
         try {
             ClassLoader loader = new URLClassLoader(
-                                   new URL[]{new URL("file:" + basedir + referenceJar)});
+                                   new URL[]{new URL("file:" + referenceJar)});
             boolean failed = false;
 
             try {

@@ -572,8 +572,22 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
   <target name="test" depends="package">
     <echo message="Testing build in jar file ${build.dir}/${name}.jar against reference"/>
-    <runTest testSuite="basictests.xml" basedir="test/" reference="reference/fop.jar"
+    <runTest testSuite="basictests.xml" basedir="test/" reference="test/reference/fop.jar"
          refVersion="FOP 0.19.0-CVS"/>
+    <runTest testSuite="bugtests.xml" basedir="test/" reference="test/reference/fop.jar"
+         refVersion="FOP 0.19.0-CVS"/>
+<!--
+    <runTest testSuite="testsuite.xml" basedir="TestSuite/NIST/" reference="test/reference/fop.jar"
+         refVersion="FOP 0.19.0-CVS"/>
+    <runTest testSuite="testsuite.xml" basedir="TestSuite/contrib/IBM/" reference="test/reference/fop.jar"
+         refVersion="FOP 0.19.0-CVS"/>
+    <runTest testSuite="testsuite.xml" basedir="TestSuite/contrib/FOP/" reference="test/reference/fop.jar"
+         refVersion="FOP 0.19.0-CVS"/>
+    <runTest testSuite="testsuite.xml" basedir="TestSuite/contrib/XEP/" reference="test/reference/fop.jar"
+         refVersion="FOP 0.19.0-CVS"/>
+    <runTest testSuite="testsuite.xml" basedir="TestSuite/contrib/XSLFormatter/" reference="test/reference/fop.jar"
+         refVersion="FOP 0.19.0-CVS"/>
+-->
   </target>
 
   <target name="all" depends="package"/> <!-- "all" target for us Makefile converts ;-) -->
