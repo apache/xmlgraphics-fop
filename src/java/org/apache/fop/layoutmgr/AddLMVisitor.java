@@ -251,7 +251,7 @@ public class AddLMVisitor implements FOTreeVisitor {
             for (int count = childList.size() - 1; count >= 0; count--) {
                 LayoutProcessor lm = (LayoutProcessor) childList.get(count);
                 if (lm.generatesInlineAreas()) {
-                    LayoutProcessor blm = new BidiLayoutManager((LeafNodeLayoutManager) lm);
+                    LayoutProcessor blm = new BidiLayoutManager((InlineStackingLayoutManager) lm);
                     blm.setFObj(node);
                     currentLMList.add(blm);
                 } else {

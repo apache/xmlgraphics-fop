@@ -65,7 +65,7 @@ class BidiLayoutManager extends LeafNodeLayoutManager {
 
     private List children;
 
-    BidiLayoutManager(LeafNodeLayoutManager cLM) {
+    BidiLayoutManager(InlineStackingLayoutManager cLM) {
         children = new ArrayList();
 /*
         for (int count = cLM.size() - 1; count >= 0; count--) {
