@@ -140,6 +140,17 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
         }
     }
 
+    public void addPropertyListBuilder(String namespaceURI,
+                                       PropertyListBuilder propbuilder) {
+        PropertyListBuilder plb;
+        plb = (PropertyListBuilder)this.propertylistTable.get(namespaceURI);
+        if (plb == null) {
+            this.propertylistTable.put(namespaceURI, propbuilder);
+        } else {
+            // Error already added
+        }
+    }
+
     /**
      * SAX Handler for characters
      */

@@ -32,7 +32,7 @@ import java.util.ArrayList;
 /**
  * class representing svg:svg pseudo flow object.
  */
-public class SVGElement extends Svg {
+public class SVGElement extends SVGObj {
 
     /**
      * inner class for making SVG objects.
@@ -72,7 +72,8 @@ public class SVGElement extends Svg {
      * @param propertyList the explicit properties of this object
      */
     public SVGElement(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+        super(parent, propertyList, "svg");
+        init();
     }
 
     /**
@@ -96,19 +97,7 @@ public class SVGElement extends Svg {
         }
 
         /* create an SVG area */
-        /* if width and height are zero, may want to get the bounds of the content. */
-
-        DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
-        String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
-        Document doc = impl.createDocument(svgNS, "svg", null);
-
-        final Element svgRoot = doc.getDocumentElement();
-
-        try {
-            String baseDir = Configuration.getStringValue("baseDir");
-            ((SVGOMDocument)doc).setURLObject(new URL(baseDir));
-        } catch (Exception e) {}
-
+        /* if width and height are zero, get the bounds of the content. */
         DefaultSVGContext dc = new DefaultSVGContext() {
             public float getPixelToMM() {
                 // 72 dpi
@@ -116,7 +105,7 @@ public class SVGElement extends Svg {
             }
 
             public float getViewportWidth(Element e) throws IllegalStateException {
-                if(e == svgRoot) {
+                if(e == element) {
                     ForeignObjectArea foa = (ForeignObjectArea)area;
                     if(!foa.isContentWidthAuto()) {
                         return foa.getContentWidth();
@@ -126,7 +115,7 @@ public class SVGElement extends Svg {
             }
 
             public float getViewportHeight(Element e) throws IllegalStateException {
-                if(e == svgRoot) {
+                if(e == element) {
                     ForeignObjectArea foa = (ForeignObjectArea)area;
                     if(!foa.isContentHeightAuto()) {
                         return foa.getContentHeight();
@@ -140,11 +129,11 @@ public class SVGElement extends Svg {
             }
         };
         ((SVGOMDocument)doc).setSVGContext(dc);
-        buildTopLevel(doc, svgRoot);
+
         float width =
-            ((SVGSVGElement)svgRoot).getWidth().getBaseVal().getValue();
+            ((SVGSVGElement)element).getWidth().getBaseVal().getValue();
         float height =
-            ((SVGSVGElement)svgRoot).getHeight().getBaseVal().getValue();
+            ((SVGSVGElement)element).getHeight().getBaseVal().getValue();
         SVGArea svg = new SVGArea(fs, width, height);
         svg.setSVGDocument(doc);
         svg.start();
@@ -160,6 +149,22 @@ public class SVGElement extends Svg {
 
         /* return status */
         return new Status(Status.OK);
+    }
+
+    private void init() {
+        DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
+        String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
+        doc = impl.createDocument(svgNS, "svg", null);
+
+        element = doc.getDocumentElement();
+
+        try {
+            String baseDir = Configuration.getStringValue("baseDir");
+            ((SVGOMDocument)doc).setURLObject(new URL(baseDir));
+        } catch (Exception e) {
+            log.error("Could not set base URL for svg", e);
+        }
+        buildTopLevel(doc, element);
     }
 
     public final static List FONT_FAMILY;

@@ -7,21 +7,8 @@
 
 package org.apache.fop.fo;
 
-// FOP
-import org.apache.fop.layout.AreaTree;
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.pagination.Root;
-
-// SAX
-import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.InputSource;
-import org.xml.sax.Attributes;
-
 // Java
 import java.util.Hashtable;
-import java.util.Stack;
-import java.io.IOException;
 
 /**
  */
@@ -46,6 +33,8 @@ public interface TreeBuilder {
      * @param maker Maker for class representing formatting object
      */
     public void addPropertyList(String namespaceURI, Hashtable list);
+
+    public void addPropertyListBuilder(String namespaceURI, PropertyListBuilder list);
 
     /**
      * add a mapping from element name to maker.
