@@ -601,15 +601,15 @@ public class PropertyMaker implements Cloneable {
         if (shorthands == null) {
             return null;
         }
-        ListProperty listprop;
+        Property prop;
         int n = shorthands.length;
         for (int i = 0; i < n && shorthands[i] != null; i++) {
             PropertyMaker shorthand = shorthands[i];
-            listprop = (ListProperty)propertyList.getExplicit(shorthand.propId);
-            if (listprop != null) {
+            prop = propertyList.getExplicit(shorthand.propId);
+            if (prop != null) {
                 ShorthandParser parser = shorthand.datatypeParser;
                 Property p = parser.getValueForProperty(getPropId(),
-                                        listprop, this, propertyList);
+                                        prop, this, propertyList);
                 if (p != null) {
                     return p;
                 }
