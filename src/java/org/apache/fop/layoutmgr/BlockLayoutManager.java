@@ -33,6 +33,9 @@ import org.apache.fop.traits.MinOptMax;
  * LayoutManager for a block FO.
  */
 public class BlockLayoutManager extends BlockStackingLayoutManager {
+    
+    private static final int FINISHED_LEAF_POS = -2;
+    
     private org.apache.fop.fo.flow.Block fobj;
     
     private Block curBlockArea;
@@ -270,7 +273,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             }
         }
         setFinished(true);
-        BreakPoss breakPoss = new BreakPoss(new LeafPosition(this, -2));
+        BreakPoss breakPoss = new BreakPoss(new LeafPosition(this, FINISHED_LEAF_POS));
         breakPoss.setStackingSize(stackSize);
         return breakPoss;
     }
@@ -290,34 +293,32 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         addID(fobj.getId());
         addMarkers(true, true);
 
-        LayoutManager childLM;
-        LayoutContext lc = new LayoutContext(0);
-        while (parentIter.hasNext()) {
-            LeafPosition lfp = (LeafPosition) parentIter.next();
-            if (lfp.getLeafPos() == -2) {
-                curBlockArea = null;
-                flush();
-                return;
+        try {
+            LayoutManager childLM;
+            LayoutContext lc = new LayoutContext(0);
+            while (parentIter.hasNext()) {
+                LeafPosition lfp = (LeafPosition) parentIter.next();
+                if (lfp.getLeafPos() == FINISHED_LEAF_POS) {
+                    return;
+                }
+                // Add the block areas to Area
+                PositionIterator breakPosIter 
+                    = new BreakPossPosIter(childBreaks, iStartPos,
+                                       lfp.getLeafPos() + 1);
+                iStartPos = lfp.getLeafPos() + 1;
+                while ((childLM = breakPosIter.getNextChildLM()) != null) {
+                    childLM.addAreas(breakPosIter, lc);
+                }
             }
-            // Add the block areas to Area
-            PositionIterator breakPosIter =
-              new BreakPossPosIter(childBreaks, iStartPos,
-                                   lfp.getLeafPos() + 1);
-            iStartPos = lfp.getLeafPos() + 1;
-            while ((childLM = breakPosIter.getNextChildLM()) != null) {
-                childLM.addAreas(breakPosIter, lc);
-            }
+        } finally {
+            addMarkers(false, true);
+            flush();
+
+            // if adjusted space after
+            foBlockSpaceAfter = new SpaceVal(fobj.getCommonMarginBlock().spaceAfter).getSpace();
+            addBlockSpacing(adjust, foBlockSpaceAfter);
+            curBlockArea = null;
         }
-
-        addMarkers(false, true);
-
-        flush();
-
-        // if adjusted space after
-        foBlockSpaceAfter = new SpaceVal(fobj.getCommonMarginBlock().spaceAfter).getSpace();
-        addBlockSpacing(adjust, foBlockSpaceAfter);
-
-        curBlockArea = null;
     }
 
     /**
