@@ -21,6 +21,8 @@ package org.apache.fop.pdf;
 // Java
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -220,6 +222,22 @@ public abstract class PDFObject {
         } else {
             return buf;
         }*/
+    }
+    
+    /** Formatting pattern for PDF date */
+    protected static final SimpleDateFormat DATE_FORMAT 
+            = new SimpleDateFormat("'D:'yyyyMMddHHmmssZ");
+
+    /**
+     * Formats a date/time according to the PDF specification 
+     * (D:YYYYMMDDHHmmSSOHH'mm').
+     * @param time date/time value to format
+     * @return the requested String representation
+     */
+    protected String formatDateTime(Date time) {
+        String s = DATE_FORMAT.format(time);
+        int i = s.length() - 2;
+        return s.substring(0, i) + "'" + s.substring(i) + "'";
     }
 
 }
