@@ -210,8 +210,8 @@ public class PropertyConsts {
     {
         if (initialValues[propindex] != null)
             return initialValues[propindex];
-        System.out.println("PropertyConts.getInitialValue(" + propindex
-                           + ") " + PropNames.getPropertyName(propindex));
+        //System.out.println("PropertyConts.getInitialValue(" + propindex
+                           //+ ") " + PropNames.getPropertyName(propindex));
         return
             (initialValues[propindex] =
                     setupProperty(propindex).getInitialValue(propindex));
