@@ -199,6 +199,9 @@ public class LineArea extends Area {
        */
     public int addText(char odata[], int start, int end, LinkSet ls,
                        boolean ul) {
+        // this prevents an array index out of bounds
+        // which occurs when some text is laid out again.
+        if(start == -1) return -1;
         boolean overrun = false;
 
         wordStart = start;
