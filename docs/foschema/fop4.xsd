@@ -81,6 +81,10 @@
       This declaration assumes that all <fo:color-profile/> elements must come before other stuff, 
       which is not required by spec, but I cannot see any way to express such constraints in schema, 
       one could use <xs:choice/> instead of <xs:sequence/>, but this way we lose control over (color-profile)+ constraint.
+      
+      VCP 21-Oct-2002 
+        Updated all (px|pt|mm|cm|in|em) to (px|pt|mm|cm|in|em|%) to allow percentage types.
+        Updated the restriction base of those types from NMTOKEN to string
 
     </documentation>
   </annotation>
@@ -785,8 +789,8 @@
         <enumeration value = "1em"/>
       </documentation>
     </annotation>
-    <restriction base = "NMTOKEN">
-      <pattern value = "[+-]?\d+\.?\d*(px|pt|mm|cm|in|em)"/>
+    <restriction base = "string">
+      <pattern value = "[+-]?\d+\.?\d*(px|pt|mm|cm|in|em|%)"/>
     </restriction>
   </simpleType>
   <simpleType name = "length_range_Type">
@@ -831,7 +835,7 @@
       </documentation>
     </annotation>
     <restriction base = "string">
-      <pattern value = "\+?\d+\.?\d*(px|pt|mm|cm|in|em) (retain|discard)"/>
+      <pattern value = "\+?\d+\.?\d*(px|pt|mm|cm|in|em|%) (retain|discard)"/>
     </restriction>
   </simpleType>
   <xs:simpleType name = "length_bp_ip_direction_Type">
@@ -865,7 +869,7 @@
       </documentation>
     </annotation>
     <restriction base = "string">
-      <pattern value = "([ ]?\+?\d+\.?\d*(px|pt|mm|cm|in|em)){1,3}( \+?\d+| force)?( retain| discard)?"/>
+      <pattern value = "([ ]?\+?\d+\.?\d*(px|pt|mm|cm|in|em|%)){1,3}( \+?\d+| force)?( retain| discard)?"/>
     </restriction>
   </simpleType>
   <simpleType name = "angle_Type">
@@ -1051,7 +1055,7 @@
           length_Type{1,2}
         </documentation>
       </annotation>
-      <pattern value = "(rect\((\+?\d+\.?\d*(px|pt|mm|cm|in|em)|auto),(\+?\d+\.?\d*(px|pt|mm|cm|in|em)|auto),(\+?\d+\.?\d*(px|pt|mm|cm|in|em)|auto),(\+?\d+\.?\d*(px|pt|mm|cm|in|em)|auto)\)|auto|inherit)"/>
+      <pattern value = "(rect\((\+?\d+\.?\d*(px|pt|mm|cm|in|em|%)|auto),(\+?\d+\.?\d*(px|pt|mm|cm|in|em|%)|auto),(\+?\d+\.?\d*(px|pt|mm|cm|in|em|%)|auto),(\+?\d+\.?\d*(px|pt|mm|cm|in|em|%)|auto)\)|auto|inherit)"/>
     </restriction>
   </simpleType>
   
@@ -1734,13 +1738,13 @@
     </restriction>
   </simpleType>
   <simpleType name = "positive_length_Type">
-    <restriction base = "NMTOKEN">
-      <pattern value = "\+?\d+\.?\d*(px|pt|mm|cm|in|em)"/>
+    <restriction base = "string">
+      <pattern value = "\+?\d+\.?\d*(px|pt|mm|cm|in|em|%)"/>
     </restriction>
   </simpleType>
   <simpleType name = "negative_length_Type">
-    <restriction base = "NMTOKEN">
-      <pattern value = "-\d+\.?\d*(px|pt|mm|cm|in|em)"/>
+    <restriction base = "string">
+      <pattern value = "-\d+\.?\d*(px|pt|mm|cm|in|em|%)"/>
     </restriction>
   </simpleType>
   <simpleType name = "integer_Force_Type">
@@ -2917,7 +2921,7 @@
       </documentation>
     </annotation>
     <restriction base = "string">
-      <pattern value = "(none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset) \+?\d+\.?\d*(px|pt|mm|cm|in|em) (#[0-9A-F]{6}|[a-z]{3,16})"/>
+      <pattern value = "(none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset) \+?\d+\.?\d*(px|pt|mm|cm|in|em|%) (#[0-9A-F]{6}|[a-z]{3,16})"/>
     </restriction>
   </simpleType>
   <simpleType name = "font_size_Type">
