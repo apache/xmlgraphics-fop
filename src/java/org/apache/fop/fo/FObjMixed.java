@@ -28,9 +28,6 @@ import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
  * (i.e., those that can contain both child FO's and text nodes/PCDATA)
  */
 public class FObjMixed extends FObj {
-    /** TextInfo for this object */
-    protected TextInfo textInfo = null;
-
     /**
      * @param parent FONode that is the parent of this object
      */
@@ -45,16 +42,12 @@ public class FObjMixed extends FObj {
      * @param locator location in fo source file. 
      */
     protected void addCharacters(char data[], int start, int length,
+                                 PropertyList pList,
                                  Locator locator) throws SAXParseException {
-        if (textInfo == null) {
-            // Really only need one of these, but need to get fontInfo
-            // stored in propMgr for later use.
-            propMgr.setFontInfo(getFOEventHandler().getFontInfo());
-            textInfo = propMgr.getTextLayoutProps(getFOEventHandler().getFontInfo());
-        }
-
-        FOText ft = new FOText(data, start, length, textInfo, this);
+        FOText ft = new FOText(data, start, length, this);
         ft.setLocator(locator);
+        ft.bind(pList);
+        ft.startOfNode();
         
         getFOEventHandler().characters(ft.ca, ft.startIndex, ft.endIndex);
         addChildNode(ft);

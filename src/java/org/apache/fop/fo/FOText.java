@@ -83,11 +83,6 @@ public class FOText extends FONode {
     // End of property values
 
     /**
-     * The TextInfo object attached to the text
-     */
-    public TextInfo textInfo;
-
-    /**
      * Keeps track of the last FOText object created within the current
      * block. This is used to create pointers between such objects.
      * TODO: As soon as the control hierarchy is straightened out, this static
@@ -114,6 +109,7 @@ public class FOText extends FONode {
      */
     private Block ancestorBlock = null;
 
+    public TextInfo textInfo;
     private static final int IS_WORD_CHAR_FALSE = 0;
     private static final int IS_WORD_CHAR_TRUE = 1;
     private static final int IS_WORD_CHAR_MAYBE = 2;
@@ -124,18 +120,16 @@ public class FOText extends FONode {
      * be a superset of the text in this object)
      * @param start starting index into char[] for the text in this object
      * @param end ending index into char[] for the text in this object
-     * @param ti TextInfo object for the text in this object
      * @param parent FONode that is the parent of this object
      */
-    public FOText(char[] chars, int start, int end, TextInfo ti, FONode parent) {
+    public FOText(char[] chars, int start, int end, FObj parent) {
         super(parent);
         endIndex = end - start;
         this.ca = new char[endIndex];
         System.arraycopy(chars, start, ca, 0, endIndex);
 //      System.out.println("->" + new String(ca) + "<-");
-        textInfo = ti;
-        createBlockPointers();
-        textTransform();
+        textInfo = parent.propMgr.getTextLayoutProps(parent.getFOEventHandler().getFontInfo());
+
     }
 
     /**
@@ -154,6 +148,11 @@ public class FOText extends FONode {
         wrapOption = pList.get(Constants.PR_WRAP_OPTION).getEnum();
     }
 
+    protected void startOfNode() {
+        createBlockPointers();
+        textTransform();
+    }
+
     /**
      * Check if this text node will create an area.
      * This means either there is non-whitespace or it is
@@ -164,7 +163,7 @@ public class FOText extends FONode {
      * @return true if this will create an area in the output
      */
     public boolean willCreateArea() {
-        if (textInfo.whiteSpaceCollapse == Constants.WhiteSpaceCollapse.FALSE
+        if (whiteSpaceCollapse == Constants.WhiteSpaceCollapse.FALSE
                 && endIndex - startIndex > 0) {
             return true;
         }
@@ -227,7 +226,7 @@ public class FOText extends FONode {
      * text-transform property.
      */
     private void textTransform() {
-        if (textInfo.textTransform == Constants.TextTransform.NONE) {
+        if (textTransform == Constants.TextTransform.NONE) {
             return;
         }
         for (int i = 0; i < endIndex; i++) {
@@ -354,7 +353,7 @@ public class FOText extends FONode {
      * @return char with transformed value
      */
     private char charTransform(int i) {
-        switch (textInfo.textTransform) {
+        switch (textTransform) {
         /* put NONE first, as this is probably the common case */
         case Constants.TextTransform.NONE:
             return ca[i];
@@ -375,8 +374,7 @@ public class FOText extends FONode {
                 return Character.toLowerCase(ca[i]);
             }
         default:
-            getLogger().warn("Invalid text-tranform value: "
-                    + textInfo.textTransform);
+            getLogger().warn("Invalid text-tranform value: " + textTransform);
             return ca[i];
         }
     }
