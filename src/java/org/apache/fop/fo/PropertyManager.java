@@ -380,13 +380,7 @@ public class PropertyManager implements Constants {
      * @return a AbsolutePositionProps object
      */
     public CommonAbsolutePosition getAbsolutePositionProps() {
-        CommonAbsolutePosition props = new CommonAbsolutePosition();
-        props.absolutePosition =
-          this.propertyList.get(PR_ABSOLUTE_POSITION).getEnum();
-        props.top = this.propertyList.get(PR_TOP).getLength().getValue();
-        props.bottom = this.propertyList.get(PR_BOTTOM).getLength().getValue();
-        props.left = this.propertyList.get(PR_LEFT).getLength().getValue();
-        props.right = this.propertyList.get(PR_RIGHT).getLength().getValue();
+        CommonAbsolutePosition props = new CommonAbsolutePosition(propertyList);
         return props;
     }
 
