@@ -1,85 +1,129 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.layout;
 
-import java.util.HashMap;
-import org.apache.fop.render.pdf.CodePointMapping;
+import java.util.Map;
 
+import org.apache.fop.fonts.CodePointMapping;
+import org.apache.fop.fonts.FontMetrics;
+
+/**
+ * This class holds font state information and provides access to the font 
+ * metrics.
+ */
 public class FontState {
 
-    private String _fontName;
-    private int _fontSize;
-    private String _fontFamily;
-    private String _fontStyle;
-    private int _fontWeight;
+    private String fontName;
+    private int fontSize;
+    //private String fontFamily;
+    //private String fontStyle;
+    //private int fontWeight;
 
     /**
      * normal or small-caps font
      */
-    private int _fontVariant;
+    //private int fontVariant;
 
-    private FontMetric _metric;
+    private FontMetrics metric;
 
-    private static HashMap EMPTY_HASHMAP = new HashMap();
-
-
-    public FontState(String key, FontMetric met, int fontSize) {
-        _fontSize = fontSize;
-        _fontName = key;
-        _metric = met;
-    }
-
-    public int getAscender() {
-        return _metric.getAscender(_fontSize) / 1000;
-    }
-
-    public int getCapHeight() {
-        return _metric.getCapHeight(_fontSize) / 1000;
-    }
-
-    public int getDescender() {
-        return _metric.getDescender(_fontSize) / 1000;
-    }
-
-    public String getFontName() {
-        return _fontName;
-    }
-
-    public int getFontSize() {
-        return _fontSize;
-    }
-
-    public int getXHeight() {
-        return _metric.getXHeight(_fontSize) / 1000;
-    }
-
-    public HashMap getKerning() {
-        if (_metric instanceof FontDescriptor) {
-            HashMap ret = ((FontDescriptor)_metric).getKerningInfo();
-            if (ret != null)
-                return ret;
-        }
-        return EMPTY_HASHMAP;
-    }
-
-    public int width(int charnum) {
-        // returns width of given character number in millipoints
-        return (_metric.width(charnum, _fontSize) / 1000);
+    /**
+     * Main constructor
+     * @param key key of the font
+     * @param met font metrics
+     * @param fontSize font size
+     */
+    public FontState(String key, FontMetrics met, int fontSize) {
+        this.fontName = key;
+        this.metric = met;
+        this.fontSize = fontSize;
     }
 
     /**
-     * Map a java character (unicode) to a font character
-     * Default uses CodePointMapping
+     * Returns the font's ascender.
+     * @return the ascender
+     */
+    public int getAscender() {
+        return metric.getAscender(fontSize) / 1000;
+    }
+
+    /**
+     * Returns the font's CapHeight.
+     * @return the capital height
+     */
+    public int getCapHeight() {
+        return metric.getCapHeight(fontSize) / 1000;
+    }
+
+    /**
+     * Returns the font's Descender.
+     * @return the descender
+     */
+    public int getDescender() {
+        return metric.getDescender(fontSize) / 1000;
+    }
+
+    /**
+     * Returns the font's name.
+     * @return the font name
+     */
+    public String getFontName() {
+        return fontName;
+    }
+
+    /**
+     * Returns the font size
+     * @return the font size
+     */
+    public int getFontSize() {
+        return fontSize;
+    }
+
+    /**
+     * Returns the XHeight
+     * @return the XHeight
+     */
+    public int getXHeight() {
+        return metric.getXHeight(fontSize) / 1000;
+    }
+
+    /**
+     * Returns the font's kerning table
+     * @return the kerning table
+     */
+    public Map getKerning() {
+        Map ret = metric.getKerningInfo();
+        if (ret != null) {
+            return ret;
+        } else {
+            return java.util.Collections.EMPTY_MAP;
+        }
+    }
+
+    /**
+     * Returns the width of a character
+     * @param charnum character to look up
+     * @return width of the character
+     */
+    public int getWidth(int charnum) {
+        // returns width of given character number in millipoints
+        return (metric.getWidth(charnum, fontSize) / 1000);
+    }
+
+    /**
+     * Map a java character (unicode) to a font character.
+     * Default uses CodePointMapping.
+     * @param c character to map
+     * @return the mapped character
      */
     public char mapChar(char c) {
 
-        if (_metric instanceof org.apache.fop.render.pdf.Font) {
-            return ((org.apache.fop.render.pdf.Font)_metric).mapChar(c);
+        if (metric instanceof org.apache.fop.fonts.Font) {
+            return ((org.apache.fop.fonts.Font)metric).mapChar(c);
         }
 
         // Use default CodePointMapping
@@ -93,18 +137,23 @@ public class FontState {
         return c;
     }
 
+    /**
+     * @see java.lang.Object#toString()
+     */
     public String toString() {
         StringBuffer sbuf = new StringBuffer();
         sbuf.append('(');
-        sbuf.append(_fontFamily);
+        /*
+        sbuf.append(fontFamily);
+        sbuf.append(',');*/
+        sbuf.append(fontName);
         sbuf.append(',');
-        sbuf.append(_fontName);
+        sbuf.append(fontSize);
+        /*
         sbuf.append(',');
-        sbuf.append(_fontSize);
+        sbuf.append(fontStyle);
         sbuf.append(',');
-        sbuf.append(_fontStyle);
-        sbuf.append(',');
-        sbuf.append(_fontWeight);
+        sbuf.append(fontWeight);*/
         sbuf.append(')');
         return sbuf.toString();
     }
