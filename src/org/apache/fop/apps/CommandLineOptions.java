@@ -50,11 +50,7 @@ public class CommandLineOptions {
     private static final int TXT_OUTPUT = 7;
     /* output: svg file */
     private static final int SVG_OUTPUT = 8;
-
-    /* System buffers */
-    private static final int BUFFER_FILE = 8;
-
-    /* System buffers */
+    /* output: XML area tree */
     private static final int AREA_OUTPUT = 9;
 
     /* use debug mode */
@@ -75,14 +71,10 @@ public class CommandLineOptions {
     File xmlfile = null;
     /* output file */
     File outfile = null;
-    /* buffer file */
-    File bufferFile = null;
     /* input mode */
     int inputmode = NOT_SET;
     /* output mode */
     int outputmode = NOT_SET;
-    /* buffer mode */
-    int buffermode = NOT_SET;
     /* language for user information */
     String language = null;
 
@@ -250,21 +242,6 @@ public class CommandLineOptions {
                 } else {
                     throw new FOPException("Don't know what to do with "
                                            + args[i]);
-                }
-            } else if (args[i].equals("-buf")) {
-                if (buffermode == NOT_SET) {
-                    buffermode = BUFFER_FILE;
-                } else {
-                    log.error("you can only set one buffer method");
-                    printUsage();
-                }
-                if ((i + 1 == args.length)
-                        || (args[i + 1].charAt(0) == '-')) {
-                    log.error("you must specify the buffer output file");
-                    printUsage();
-                } else {
-                    bufferFile = new File(args[i + 1]);
-                    i++;
                 }
             } else if (args[i].equals("-at")) {
                 setOutputMode(AREA_OUTPUT);
@@ -471,10 +448,6 @@ public class CommandLineOptions {
 
     public String getLanguage() {
         return language;
-    }
-
-    public File getBufferFile() {
-        return bufferFile;
     }
 
     public Boolean isQuiet() {
