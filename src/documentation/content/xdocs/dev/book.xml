@@ -26,5 +26,6 @@
     <menu label="Developers">
       <external label="FOP Wiki" href="http://nagoya.apache.org/wiki/apachewiki.cgi?FOPProjectPages"/>
       <menu-item label="Design" href="../design/index.html"/>
+      <menu-item label="Tools" href="tools.html"/>
     </menu>
 </book>
