@@ -514,6 +514,7 @@ public class LineArea extends Area {
                 MessageHandler.errorln("bad align: "+textAlign);
             break;
             }
+            aligned = true;
         }
         renderer.renderLineArea(this);
     }
