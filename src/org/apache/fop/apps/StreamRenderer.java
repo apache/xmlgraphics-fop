@@ -271,4 +271,45 @@ public class StreamRenderer extends Object {
             return true;
         }
     }
+    
+       public Page getNextPage(Page current, boolean isWithinPageSequence,
+                            boolean isFirstCall) {
+        Page nextPage = null;
+        int pageIndex = 0;
+        if (isFirstCall)
+            pageIndex = renderQueue.size();
+        else
+            pageIndex = renderQueue.indexOf(current);
+        if ((pageIndex + 1) < renderQueue.size()) {
+            nextPage = (Page)renderQueue.elementAt(pageIndex + 1);
+            if (isWithinPageSequence
+                    &&!nextPage.getPageSequence().equals(current.getPageSequence())) {
+                nextPage = null;
+            }
+        }
+        return nextPage;
+    }
+
+    public Page getPreviousPage(Page current, boolean isWithinPageSequence,
+                                boolean isFirstCall) {
+        Page previousPage = null;
+        int pageIndex = 0;
+        if (isFirstCall)
+            pageIndex = renderQueue.size();
+        else
+            pageIndex = renderQueue.indexOf(current);
+        // System.out.println("Page index = " + pageIndex);
+        if ((pageIndex - 1) >= 0) {
+            previousPage = (Page)renderQueue.elementAt(pageIndex - 1);
+            PageSequence currentPS = current.getPageSequence();
+            // System.out.println("Current PS = '" + currentPS + "'");
+            PageSequence previousPS = previousPage.getPageSequence();
+            // System.out.println("Previous PS = '" + previousPS + "'");
+            if (isWithinPageSequence &&!previousPS.equals(currentPS)) {
+                // System.out.println("Outside page sequence");
+                previousPage = null;
+            }
+        }
+        return previousPage;
+    }
 }
