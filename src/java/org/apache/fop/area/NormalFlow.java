@@ -26,9 +26,11 @@ package org.apache.fop.area;
 public class NormalFlow extends BlockParent {
     /**
      * Constructor.
+     * @param ipd of Normal flow object
      */
-    public NormalFlow() {
+    public NormalFlow(int ipd) {
         addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
+        setIPD(ipd);
     }
 }
 
