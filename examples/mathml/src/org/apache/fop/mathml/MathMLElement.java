@@ -31,6 +31,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.dom.svg.SVGDOMImplementation;

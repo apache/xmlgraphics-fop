@@ -25,6 +25,7 @@ import org.apache.fop.apps.FOPException;
 
 import org.w3c.dom.Document;
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 
 /**
  * This class defines the plan element.
