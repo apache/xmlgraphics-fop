@@ -7,7 +7,7 @@
   <s2 title="Specifications">
   <ul>
     <li><jump href="http://www.w3.org/TR/2000/CR-xsl-20001121/">XSL-FO Candidate Recommendation (21 November 2000)</jump></li>
-    <li><jump href="http://www.renderx.com/Tests/validator/fo2000.dtd.html">A dtd for the XSL-FO WD from October provided by N. Grigoriev from RenderX</jump></li>
+    <li><jump href="http://www.renderx.com/Tests/validator/fo2000.dtd.html">A dtd for the XSL-FO CR from November provided by N. Grigoriev from RenderX</jump></li>
     <li><jump href="http://www.w3.org/TR/2000/CR-SVG-20001102/">Supported SVG Candidate Recommendation (02 November 2000)</jump></li>
     <li><jump href="http://www.w3.org/TR/REC-xml">XML Recommendation</jump></li>
     <li><jump href="http://www.w3.org/TR/xslt">XSLT Recommendation</jump></li>
