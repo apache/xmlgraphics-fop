@@ -62,7 +62,7 @@
 	<!-- =================================================================== -->
 	<!-- Creates the class package                                           -->
 	<!-- =================================================================== -->
-	<target name="package" depends="compile">
+	<target name="package" depends="compile" description="Builds the FOP servlet WAR file">
 		<echo message="Creating the WAR file"/>
 		<war warfile="${build.dir}/fop.war" webxml="${conf.dir}/web.xml">
 			<lib dir="${fop.lib.dir}">
@@ -80,7 +80,7 @@
 	<!-- =================================================================== -->
 	<!-- Clean targets                                                       -->
 	<!-- =================================================================== -->
-	<target name="clean" depends="init">
+	<target name="clean" depends="init" description="Cleans the build directory">
 		<delete dir="${build.dir}"/>
 	</target>
 </project>
