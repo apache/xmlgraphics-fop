@@ -8,9 +8,10 @@ import org.apache.fop.fo.expr.PropertyParser;
 import org.apache.fop.fo.expr.PropertyValue;
 import org.apache.fop.fo.expr.PropertyValueList;
 import org.apache.fop.datastructs.Tree;
-import org.apache.fop.datastructs.SyncedCircularBuffer;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.SyncedXmlEventsBuffer;
+import org.apache.fop.xml.XMLNamespaces;
 
 import org.xml.sax.Attributes;
 
@@ -57,7 +58,9 @@ public class FONode extends FOTree.Node{
     /** The <tt>XMLEvent</tt> which triggered this node. */
     protected XMLEvent event;
     /** The buffer from which parser events are drawn. */
-    protected SyncedCircularBuffer xmlevents;
+    protected SyncedXmlEventsBuffer xmlevents;
+    /** The namespaces object associated with <i>xmlevents</i>. */
+    protected XMLNamespaces namespaces;
     /** The FO type. */
     public final int type;
     /** The node identifier obtained from <tt>foTree</tt>. */
@@ -92,6 +95,7 @@ public class FONode extends FOTree.Node{
         this.type = type;
         this.event = event;
         xmlevents = foTree.xmlevents;
+        namespaces = xmlevents.getNamespaces();
         propertyStacks = foTree.propertyStacks;
         exprParser = foTree.exprParser;
         id = foTree.nextNodeID();
