@@ -3,6 +3,21 @@
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/faq-v11.dtd">
 
 <faqs title="FOP Developer FAQ">
+  <part id="part_general">
+    <title>General Questions</title>
+    <faq>
+      <question>How can I contribute?</question>
+      <answer>
+        <p>There are many ways that you can help:</p>
+        <ul>
+          <li>You can help us implement missing features that are needed in order to comply with the standard. See the <link href="../compliance.html">Standards Compliance</link> for more details.</li>
+          <li>You can help us address bug reports. See <link href="../resources.html">bugzilla</link> for more information.</li>
+          <li>You can help support our user base by answering questions on the fop-user mailing list.</li>
+          <li>You can help us document FOP better.</li>
+        </ul>
+      </answer>
+    </faq>
+  </part>
   <part id="part_documentation">
     <title>Documentation</title>
     <faq id="javadoc_location">
