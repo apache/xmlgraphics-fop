@@ -58,7 +58,6 @@ import java.util.HashSet;
 import org.apache.avalon.framework.logger.AbstractLogEnabled;
 
 // FOP
-import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.ExternalGraphic;
@@ -72,7 +71,6 @@ import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
-import org.apache.fop.fo.FOTreeControl;
 
 import org.xml.sax.SAXException;
 
@@ -94,12 +92,15 @@ public abstract class FOInputHandler extends AbstractLogEnabled {
      */
     private Set idReferences = new HashSet();
 
-//    public Driver driver = null;
-
+    /**
+     * The FOTreeControl object that is controlling the FO Tree being built
+     */
     public FOTreeControl foTreeControl = null;
 
     /**
      * Main constructor
+     * @param foTreeControl the FOTreeControl implementation that is controlling
+     * the FO Tree being built
      */
     public FOInputHandler(FOTreeControl foTreeControl) {
         this.foTreeControl = foTreeControl;
