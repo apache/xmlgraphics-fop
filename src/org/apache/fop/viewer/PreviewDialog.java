@@ -163,7 +163,9 @@ public class PreviewDialog extends JFrame implements ProgressListener {
         // menu.addSeparator();
         menu.add(new Command(res.getString("Print")) {public void doit(){print();}});
         menu.addSeparator();
-        menu.add(new Command(res.getString("Exit")){ public void doit() {dispose();}} );
+        menu.add(new Command(res.getString("Close")){ public void doit() {dispose();}} );
+        menu.addSeparator();
+        menu.add(new Command(res.getString("Exit")){ public void doit() {System.exit(0);}} );
       menuBar.add(menu);
       menu = new JMenu(res.getString("View"));
         menu.add(new Command(res.getString("First page")) { public void doit() {goToFirstPage(null);}} );
@@ -190,10 +192,6 @@ public class PreviewDialog extends JFrame implements ProgressListener {
         menu.add(new Command(res.getString("About")){ public void doit() {startHelpAbout(null);}} );
       menuBar.add(menu);
     return menuBar;
-  }
-
-  public void dispose() {
-    System.exit(0);
   }
 
   //Aktion Hilfe | Info durchgeführt
