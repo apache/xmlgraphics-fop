@@ -12,6 +12,7 @@ import org.apache.fop.fo.FOText; // For TextInfo: TODO: make independent!
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Property;
 import org.apache.fop.area.inline.Word;
+import org.apache.fop.area.inline.Space;
 import org.apache.fop.util.CharUtilities;
 
 import org.apache.fop.fo.properties.*;
@@ -26,6 +27,14 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
     private char[] chars;
     private FOText.TextInfo textInfo;
+
+    private static final char NEWLINE = '\n';
+    private static final char RETURN = '\r';
+    private static final char TAB = '\t';
+    private static final char LINEBREAK = '\u2028';
+    private static final char ZERO_WIDTH_SPACE = '\u200B';
+    // byte order mark
+    private static final char ZERO_WIDTH_NOBREAK_SPACE = '\uFEFF';
 
     /* values that prev (below) may take */
     protected static final int NOTHING = 0;
@@ -48,11 +57,11 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
         // Iterate over characters and make text areas.
         // Add each one to parent. Handle word-space.
-//        Word curWordArea = new Word();
-//        curWordArea.setWord(new String(chars));
-//System.out.println("word:" + new String(chars));
+        //        Word curWordArea = new Word();
+        //        curWordArea.setWord(new String(chars));
+        //System.out.println("word:" + new String(chars));
         //parentLM.addChild(curWordArea);
-parseChars();
+        parseChars();
 
         //setCurrentArea(curWordArea);
         //flush();
@@ -65,62 +74,59 @@ parseChars();
 
         int wordStart = 0;
         int wordLength = 0;
-        int wordWidth = 0; 
+        int wordWidth = 0;
         int spaceWidth = 0;
 
         int prev = NOTHING;
 
-        boolean isText = false;
-
-        /* iterate over each character */ 
+        /* iterate over each character */
         for (int i = 0; i < chars.length; i++) {
             int charWidth;
             /* get the character */
             char c = chars[i];
-            if (!(CharUtilities.isSpace(c) || (c == '\n') || (c == '\r') || (c == '\t')
-                    || (c == '\u2028'))) {
+            if (!(CharUtilities.isSpace(c) || (c == NEWLINE) ||
+                    (c == RETURN) || (c == TAB) || (c == LINEBREAK))) {
                 charWidth = CharUtilities.getCharWidth(c, textInfo.fs);
-                isText = true; 
                 prev = TEXT;
-wordLength++;
-wordWidth += charWidth;
+                wordLength++;
+                wordWidth += charWidth;
                 // Add support for zero-width spaces
-                if (charWidth <= 0 && c != '\u200B' && c != '\uFEFF')
+                if (charWidth <= 0 && c != ZERO_WIDTH_SPACE &&
+                                 c != ZERO_WIDTH_NOBREAK_SPACE)
                     charWidth = whitespaceWidth;
             } else {
-                if ((c == '\n') || (c == '\r') || (c == '\t'))
+                if ((c == NEWLINE) || (c == RETURN) || (c == TAB))
                     charWidth = whitespaceWidth;
                 else
                     charWidth = CharUtilities.getCharWidth(c, textInfo.fs);
-
-                isText = false;
 
                 if (prev == WHITESPACE) {
 
                     // if current & previous are WHITESPACE
 
-                    if (textInfo.whiteSpaceCollapse == WhiteSpaceCollapse.FALSE) {
-                        if (CharUtilities.isSpace(c)) { 
-                            spaceWidth += CharUtilities.getCharWidth(c, textInfo.fs);
-                        } else if (c == '\n' || c == '\u2028') {
-                            // force line break 
+                    if (textInfo.whiteSpaceCollapse ==
+                            WhiteSpaceCollapse.FALSE) {
+                        if (CharUtilities.isSpace(c)) {
+                            spaceWidth += CharUtilities.getCharWidth(c,
+                                          textInfo.fs);
+                        } else if (c == NEWLINE || c == LINEBREAK) {
+                            // force line break
                             if (spaceWidth > 0) {
-                                /*InlineSpace is = new InlineSpace(spaceWidth);
-                                addChild(is);*/
+                                Space is = new Space();
+                                is.setWidth(spaceWidth);
+                                parentLM.addChild(is);
                                 spaceWidth = 0;
                             }
-                        } else if (c == '\t') {
+                        } else if (c == TAB) {
                             spaceWidth += 8 * whitespaceWidth;
                         }
-                    } else if (c == '\u2028') {
+                    } else if (c == LINEBREAK) {
                         // Line separator
                         // Breaks line even if WhiteSpaceCollapse = True
                         if (spaceWidth > 0) {
-                            /*InlineSpace is = new InlineSpace(spaceWidth);
-                            is.setUnderlined(textState.getUnderlined());
-                            is.setOverlined(textState.getOverlined());
-                            is.setLineThrough(textState.getLineThrough());
-                            addChild(is);*/
+                            Space is = new Space();
+                            is.setWidth(spaceWidth);
+                            parentLM.addChild(is);
                             spaceWidth = 0;
                         }
                     }
@@ -133,17 +139,9 @@ wordWidth += charWidth;
                     // was some)
 
                     if (spaceWidth > 0) {
-                        /*InlineSpace is = new InlineSpace(spaceWidth);
-                        if (prevUlState) {
-                            is.setUnderlined(textState.getUnderlined());
-                        }
-                        if (prevOlState) {
-                            is.setOverlined(textState.getOverlined());
-                        }
-                        if (prevLTState) {
-                            is.setLineThrough(textState.getLineThrough());
-                        }
-                        addChild(is);*/
+                        Space is = new Space();
+                        is.setWidth(spaceWidth);
+                        parentLM.addChild(is);
                         spaceWidth = 0;
                     }
 
@@ -151,17 +149,18 @@ wordWidth += charWidth;
 
                     if (wordLength > 0) {
                         // The word might contain nonbreaking
-                        // spaces. Split the word and add InlineSpace
+                        // spaces. Split the word and add Space
                         // as necessary. All spaces inside the word
                         // Have a fixed width.
-        Word curWordArea = new Word(); 
-curWordArea.setWidth(wordWidth);
-        curWordArea.setWord(new String(chars, wordStart, wordLength + 1));
-Property prop = new Property();
-prop.propType = Property.FONT_STATE;
-prop.data = textInfo.fs;
-curWordArea.addProperty(prop);
-        parentLM.addChild(curWordArea);
+                        Word curWordArea = new Word();
+                        curWordArea.setWidth(wordWidth);
+                        curWordArea.setWord( new String(chars, wordStart + 1,
+                                                        wordLength));
+                        Property prop = new Property();
+                        prop.propType = Property.FONT_STATE;
+                        prop.data = textInfo.fs;
+                        curWordArea.addProperty(prop);
+                        parentLM.addChild(curWordArea);
 
                         // reset word width
                         wordWidth = 0;
@@ -173,28 +172,32 @@ curWordArea.addProperty(prop);
 
                     spaceWidth = CharUtilities.getCharWidth(c, textInfo.fs);
 
-                    if (textInfo.whiteSpaceCollapse == WhiteSpaceCollapse.FALSE) {
-                        if (c == '\n' || c == '\u2028') {
+                    if (textInfo.whiteSpaceCollapse ==
+                            WhiteSpaceCollapse.FALSE) {
+                        if (c == NEWLINE || c == LINEBREAK) {
                             // force a line break
-                        } else if (c == '\t') {
+                        } else if (c == TAB) {
                             spaceWidth = whitespaceWidth;
                         }
-                    } else if (c == '\u2028') {
+                    } else if (c == LINEBREAK) {
                     }
                 } else {
 
                     // if current is WHITESPACE and no previous
 
-                    if (textInfo.whiteSpaceCollapse == WhiteSpaceCollapse.FALSE) {
+                    if (textInfo.whiteSpaceCollapse ==
+                            WhiteSpaceCollapse.FALSE) {
                         if (CharUtilities.isSpace(c)) {
                             prev = WHITESPACE;
-                            spaceWidth = CharUtilities.getCharWidth(c, textInfo.fs);
-                        } else if (c == '\n') {
+                            spaceWidth = CharUtilities.getCharWidth(c,
+                                                                    textInfo.fs);
+                        } else if (c == NEWLINE) {
                             // force line break
                             // textdecoration not used because spaceWidth is 0
-                            /*InlineSpace is = new InlineSpace(spaceWidth);
-                            addChild(is);*/
-                        } else if (c == '\t') {
+                            Space is = new Space();
+                            is.setWidth(spaceWidth);
+                            parentLM.addChild(is);
+                        } else if (c == TAB) {
                             prev = WHITESPACE;
                             spaceWidth = 8 * whitespaceWidth;
                         }
@@ -204,27 +207,28 @@ curWordArea.addProperty(prop);
                         wordStart++;
                     }
                 }
-                        wordStart = i;
-wordLength = 0;
+                wordStart = i;
+                wordLength = 0;
             }
         } // end of iteration over text
 
         if (wordLength > 0) {
             // The word might contain nonbreaking
-            // spaces. Split the word and add InlineSpace
+            // spaces. Split the word and add Space
             // as necessary. All spaces inside the word
             // Have a fixed width.
-if(wordStart + wordLength > chars.length - 1) {
-wordLength = chars.length - 1 - wordStart;
-}
+            if (wordStart + wordLength > chars.length - 1) {
+                wordLength = chars.length - 1 - wordStart;
+            }
 
             Word curWordArea = new Word();
-curWordArea.setWidth(wordWidth);
-            curWordArea.setWord(new String(chars, wordStart, wordLength + 1));
-Property prop = new Property();
-prop.propType = Property.FONT_STATE;
-prop.data = textInfo.fs;
-curWordArea.addProperty(prop);
+            curWordArea.setWidth(wordWidth);
+            curWordArea.setWord(
+              new String(chars, wordStart + 1, wordLength));
+            Property prop = new Property();
+            prop.propType = Property.FONT_STATE;
+            prop.data = textInfo.fs;
+            curWordArea.addProperty(prop);
             parentLM.addChild(curWordArea);
 
         }

@@ -42,4 +42,7 @@ public abstract class CIDFont extends Font {
         return null;
     }
 
+    public boolean isMultiByte() {
+        return true;
+    }
 }

@@ -335,12 +335,3 @@ public class MultiByteFont extends CIDFont implements FontDescriptor {
 
 }
 
-
-
-
-
-
-
-
-
-
