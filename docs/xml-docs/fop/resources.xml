@@ -56,7 +56,7 @@
     <li><jump href="http://www.w3.org/TR/SVG/">Supported SVG Recommendation (04 September 2001)</jump></li>
     <li><jump href="http://www.w3.org/TR/REC-xml">XML Recommendation</jump></li>
     <li><jump href="http://www.w3.org/TR/xslt">XSLT Recommendation</jump></li>
-    <li><jump href="http://partners.adobe.com/asn/developer/acrosdk/DOCS/pdfspec.pdf">Portable Document Format (PDF) 1.3 Reference Manual </jump></li>
+    <li><jump href="http://partners.adobe.com/asn/developer/acrosdk/docs/filefmtspecs/PDFReference.pdf">Portable Document Format (PDF) 1.4 Reference Manual </jump></li>
     <li><jump href="http://sax.sourceforge.net/">Simple API for XML (SAX)</jump></li>
     <li><jump href="http://www.w3.org/TR/REC-DOM-Level-1">Document Object Model (DOM)</jump></li>
     <li><jump href="http://www.w3.org/TR/REC-xml-names/">Namespaces in XML Recommendation</jump></li>
