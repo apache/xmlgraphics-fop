@@ -33,6 +33,7 @@ public class XSLTInputHandler extends InputHandler {
 
     File xmlfile, xsltfile;
     boolean useOldTransform = false;
+    boolean gotParser = false;
 
     public XSLTInputHandler(File xmlfile, File xsltfile) {
         this.xmlfile = xmlfile;
@@ -43,6 +44,9 @@ public class XSLTInputHandler extends InputHandler {
      * overwrites the method of the super class to return the xmlfile
      */
     public InputSource getInputSource() {
+        if(!gotParser) {
+            throw new IllegalStateException("The method getParser() must be called and the parser used when using XSLTInputHandler");
+        }
         if (useOldTransform) {
             try {
                 java.io.Writer writer;
@@ -88,6 +92,8 @@ public class XSLTInputHandler extends InputHandler {
      *
      */
     public XMLReader getParser() throws FOPException {
+        gotParser = true;
+
         XMLReader result = null;
         try {
             // try trax first
