@@ -54,6 +54,8 @@ package org.apache.fop.apps;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 
+// FOP
+import org.apache.fop.render.awt.AWTRenderer;
 
 /**
  * super class for all classes which start Fop from the commandline
@@ -88,7 +90,11 @@ public class CommandLineStarter extends Starter {
         setupLogger(driver);
 
         try {
-            driver.setRenderer(commandLineOptions.getRenderer());
+            if (commandLineOptions.getOutputMode() == CommandLineOptions.AWT_OUTPUT) {
+                driver.setRenderer(new AWTRenderer(inputHandler));
+            } else { 
+                driver.setRenderer(commandLineOptions.getRenderer());
+            }
 
             try {
                 if (commandLineOptions.getOutputFile() != null) {
@@ -107,7 +113,6 @@ public class CommandLineStarter extends Starter {
                     bos.close();
                 }
             }
-            System.exit(0);
         } catch (Exception e) {
             if (e instanceof FOPException) {
                 throw (FOPException) e;

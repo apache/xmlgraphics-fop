@@ -57,10 +57,15 @@ package org.apache.fop.render.awt;
  * Stanislav Gorkhover: Stanislav.Gorkhover@jCatalog.com
  */
 
+// Java
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Pageable;
@@ -70,6 +75,8 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
+// FOP
+import org.apache.fop.apps.InputHandler;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.viewer.PreviewDialog;
@@ -87,6 +94,12 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     protected List pageList = new java.util.Vector();
     //protected ProgressListener progressListener = null;
 
+    /** 
+        The InputHandler associated with this Renderer.  
+        Sent to the PreviewDialog for document reloading.
+    */
+    protected InputHandler inputHandler;
+    
     /**
      * The resource bundle used for AWT messages.
      */
@@ -127,8 +140,15 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
      */
     protected PreviewDialog frame;
     
+    public AWTRenderer(InputHandler handler) {
+        inputHandler = handler;
+        translator = new Translator();
+        createPreviewDialog(inputHandler);
+    }
+
     public AWTRenderer() {
         translator = new Translator();
+        createPreviewDialog(null);
     }
 
     public Translator getTranslator() {
@@ -144,15 +164,6 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         BufferedImage fontImage =
             new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
         FontSetup.setup(fontInfo, fontImage.createGraphics());
-    }
-
-    /**
-     * Sets the preview dialog frame used for display of the documents.
-     * @param frame the PreviewDialog frame
-     */
-    public void setPreviewDialog(PreviewDialog frame) {
-        this.frame = frame;
-        frame.setStatus(translator.getString("Status.Build.FO.tree"));
     }
 
     public int getPageNumber() {
@@ -200,5 +211,29 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
 
     public int print(Graphics g, PageFormat format, int pos) {
         return 0;
+    }
+    
+    private PreviewDialog createPreviewDialog(InputHandler handler) {
+        frame = new PreviewDialog(this, handler);
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowClosed(WindowEvent we) {
+                System.exit(0);
+            }
+        });
+
+        //Centers the window
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension frameSize = frame.getSize();
+        if (frameSize.height > screenSize.height) {
+            frameSize.height = screenSize.height;
+        }
+        if (frameSize.width > screenSize.width) {
+            frameSize.width = screenSize.width;
+        }
+        frame.setLocation((screenSize.width - frameSize.width) / 2,
+                          (screenSize.height - frameSize.height) / 2);
+        frame.setVisible(true);
+        frame.setStatus(translator.getString("Status.Build.FO.tree"));        
+        return frame;
     }
 }
