@@ -67,6 +67,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.ElementMapping.Maker;
 import org.apache.fop.fo.pagination.Root;
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -110,6 +111,9 @@ public class FOTreeBuilder extends DefaultHandler {
     /** The FOTreeControl object managing the FO Tree that is being built */
     public FOTreeControl foTreeControl;
 
+    /** The SAX locator object maneging the line and column counters */
+    private Locator locator; 
+    
     /**
      * Default constructor
      */
@@ -205,12 +209,20 @@ public class FOTreeBuilder extends DefaultHandler {
     }
 
     /**
+     * SAX Handler for locator
+     * @see org.xml.sax.ContentHandler#setDocumentLocator(Locator)
+     */
+    public void setDocumentLocator(Locator locator) {
+        this.locator = locator;
+    }
+    
+    /**
      * SAX Handler for characters
      * @see org.xml.sax.ContentHandler#characters(char[], int, int)
      */
     public void characters(char data[], int start, int length) {
         if (currentFObj != null) {
-            currentFObj.addCharacters(data, start, start + length);
+            currentFObj.addCharacters(data, start, start + length, locator);
         }
     }
 
@@ -264,6 +276,7 @@ public class FOTreeBuilder extends DefaultHandler {
         try {
             fobj = fobjMaker.make(currentFObj);
             fobj.setName(localName);
+            fobj.setLocation(locator);
             fobj.handleAttrs(attlist);
         } catch (FOPException e) {
             throw new SAXException(e);

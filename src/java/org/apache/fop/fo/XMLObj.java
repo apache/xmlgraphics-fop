@@ -57,6 +57,7 @@ import java.util.HashMap;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 // FOP
@@ -224,8 +225,10 @@ public abstract class XMLObj extends FONode {
      * @param data array of characters contaning the text to add
      * @param start starting array element to add
      * @param length number of characters from the array to add
+     * @param locator location in fo source file.
      */
-    protected void addCharacters(char data[], int start, int length) {
+    protected void addCharacters(char data[], int start, int length,
+                                 Locator locator) {
         String str = new String(data, start, length - start);
         org.w3c.dom.Text text = doc.createTextNode(str);
         element.appendChild(text);

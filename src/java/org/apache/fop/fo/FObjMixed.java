@@ -50,6 +50,8 @@
  */
 package org.apache.fop.fo;
 
+import org.xml.sax.Locator;
+
 /**
  * Base class for representation of mixed content formatting objects
  * and their processing
@@ -69,8 +71,10 @@ public class FObjMixed extends FObj {
      * @param data array of characters containing text to be added
      * @param start starting array element to add
      * @param length number of characters to add
+     * @param locator location in fo source file. 
      */
-    protected void addCharacters(char data[], int start, int length) {
+    protected void addCharacters(char data[], int start, int length,
+                                 Locator locator) {
         if (textInfo == null) {
             // Really only need one of these, but need to get fontInfo
             // stored in propMgr for later use.
@@ -79,6 +83,8 @@ public class FObjMixed extends FObj {
         }
 
         FOText ft = new FOText(data, start, length, textInfo, this);
+        ft.setLocation(locator);
+        ft.setName("text");
         
         /* characters() processing empty for FOTreeHandler, not empty for RTF & MIFHandlers */
         getFOTreeControl().getFOInputHandler().characters(ft.ca, ft.start, ft.length);
