@@ -37,7 +37,7 @@ import org.apache.fop.util.CharUtilities;
 /**
  * base class for nodes in the XML tree
  */
-public abstract class FONode {
+public abstract class FONode implements Cloneable {
 
     protected static String FO_URI = FOElementMapping.URI;
 
@@ -60,6 +60,34 @@ public abstract class FONode {
      */
     protected FONode(FONode parent) {
         this.parent = parent;
+    }
+
+    /**
+     * Perform a shallow cloning operation,
+     * set its parent, and optionally clean the list of child nodes
+     * @param parent the intended parent of the clone
+     * @param removeChildren if true, clean the list of child nodes
+     * @return the cloned FO node
+     */
+    public FONode clone(FONode parent, boolean removeChildren)
+        throws FOPException {
+        FONode foNode = (FONode) clone();
+        foNode.parent = parent;
+        parent.addChildNode(foNode);
+        return foNode;
+    }
+
+    /**
+     * Perform a shallow cloning operation
+     * 
+     * @see java.lang.Object#clone()
+     * @return the cloned object
+     */
+    protected Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) { }
+        return null;
     }
 
     /**

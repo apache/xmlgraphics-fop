@@ -45,9 +45,8 @@ public class Marker extends FObjMixed {
     private String markerClassName;
     // End of property values
 
-    private MarkerPropertyList propertyList;
     private PropertyListMaker savePropertyListMaker;
-    private HashMap children = new HashMap();
+    private HashMap descPLists = new HashMap();
 
     /**
      * Create a marker fo.
@@ -65,27 +64,16 @@ public class Marker extends FObjMixed {
     }
     
     /**
-     * Rebind the marker and all the children using the specified 
-     * parentPropertyList which comes from the fo:retrieve-marker element.
-     * @param parentPropertyList The property list from fo:retrieve-marker.
+     * retrieve the property list of foNode
+     * @param foNode the FO node whose property list is requested
+     * @return the MarkerPropertyList of foNode
      */
-    public void rebind(PropertyList parentPropertyList) throws FOPException {
-        // Set a new parent property list and bind all the children again.
-        propertyList.setParentPropertyList(parentPropertyList);
-        for (Iterator i = children.keySet().iterator(); i.hasNext(); ) {
-            FONode child = (FONode) i.next();
-            PropertyList childList = (PropertyList) children.get(child);
-            if (child instanceof FObj) {
-                ((FObj) child).bind(childList);
-            } else if (child instanceof FOText) {
-                ((FOText) child).bind(childList);
-            }
-        }
+    protected MarkerPropertyList getPList(FONode foNode) {
+        return (MarkerPropertyList) descPLists.get(foNode);
     }
 
     protected PropertyList createPropertyList(PropertyList parent, FOEventHandler foEventHandler) throws FOPException {
-        propertyList = new MarkerPropertyList(this, parent);
-        return propertyList;
+        return new MarkerPropertyList(this, parent);
     }
 
     protected void startOfNode() {
@@ -95,23 +83,28 @@ public class Marker extends FObjMixed {
         foEventHandler.setPropertyListMaker(new PropertyListMaker() {
             public PropertyList make(FObj fobj, PropertyList parentPropertyList) {
                 PropertyList pList = new MarkerPropertyList(fobj, parentPropertyList);
-                children.put(fobj, pList);
+                descPLists.put(fobj, pList);
                 return pList;
             }
         });
-    }
-
-    protected void addChildNode(FONode child) throws FOPException {
-        if (!children.containsKey(child)) {
-            children.put(child, propertyList);
-        }
-        super.addChildNode(child);
     }
 
     protected void endOfNode() {
         // Pop the MarkerPropertyList maker.
         getFOEventHandler().setPropertyListMaker(savePropertyListMaker);
         savePropertyListMaker = null;
+        // unparent the child property lists
+        Iterator iter = getChildNodes();
+        if (iter != null) {
+            while (iter.hasNext()) {
+                FONode child = (FONode) iter.next();
+                MarkerPropertyList pList
+                    = (MarkerPropertyList) descPLists.get(child);
+                if (pList != null) {
+                    pList.setParentPropertyList(null);
+                }
+            }
+        }
     }
 
     /**
@@ -131,17 +124,9 @@ public class Marker extends FObjMixed {
 
     /**
      * @see org.apache.fop.fo.FONode#addLayoutManager(List)
-     * @todo remove null check when vCN() & endOfNode() implemented
      */
     public void addLayoutManager(List list) {
-        ListIterator baseIter = getChildNodes();
-        if (baseIter == null) {
-            return;
-        }
-        while (baseIter.hasNext()) {
-            FONode child = (FONode) baseIter.next();
-            child.addLayoutManager(list);
-        }
+        // no layout manager
     }
 
     /**

@@ -86,6 +86,18 @@ public class FObj extends FONode implements Constants {
     }
 
     /**
+     * @see org.apache.fop.fo.FONode#clone(FONode, boolean)
+     */
+    public FONode clone(FONode parent, boolean removeChildren)
+        throws FOPException {
+        FObj fobj = (FObj) super.clone(parent, removeChildren);
+        if (removeChildren) {
+            fobj.childNodes = null;
+        }
+        return fobj;
+    }
+
+    /**
      * @see org.apache.fop.fo.FONode#processNode
      */
     public void processNode(String elementName, Locator locator, 
