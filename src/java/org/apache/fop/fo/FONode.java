@@ -294,7 +294,11 @@ public abstract class FONode {
      * @return String opening error text
      */
     protected static String errorText(Locator loc) {
-        return "Error(" + loc.getLineNumber() + "/" + loc.getColumnNumber() + "): ";
+        if (loc == null) {
+            return "Error(Unknown location): ";
+        } else {
+            return "Error(" + loc.getLineNumber() + "/" + loc.getColumnNumber() + "): ";
+        }
     }
     
     /**
