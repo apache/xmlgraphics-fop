@@ -41,8 +41,6 @@ import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.Typeface;
-import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.render.PrintRenderer;
 import org.apache.fop.render.RendererContext;
 
