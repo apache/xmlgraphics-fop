@@ -18,6 +18,8 @@
  
 package org.apache.fop.layoutmgr.table;
 
+import java.util.List;
+
 import org.apache.fop.fo.flow.TableBody;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
@@ -32,9 +34,6 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.traits.MinOptMax;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * LayoutManager for a table-header, table-footer and table body FO.
  * These fo objects have either rows or cells underneath.
@@ -43,19 +42,19 @@ import java.util.List;
 public class Body extends BlockStackingLayoutManager {
     private TableBody fobj;
     
-    private boolean rows = true;
     private List columns;
 
     private int xoffset;
     private int yoffset;
     private int bodyHeight;
 
-    private Block curBlockArea;
+    //private Block curBlockArea;
 
-    private List childBreaks = new ArrayList();
+    private List childBreaks = new java.util.ArrayList();
 
     /**
      * Create a new body layout manager.
+     * @param node the table-body FO
      */
     public Body(TableBody node) {
         super(node);
@@ -83,12 +82,6 @@ public class Body extends BlockStackingLayoutManager {
 
         MinOptMax stackSize = new MinOptMax();
         BreakPoss lastPos = null;
-
-        if (columns == null) {
-            setFinished(true);
-            log.warn("ignoring fo:table-body with undefined fo:table-columns");
-            return null;
-        }
 
         while ((curLM = (Row)getChildLM()) != null) {
             // Make break positions
@@ -151,7 +144,7 @@ public class Body extends BlockStackingLayoutManager {
     /**
      * Set the x offset of this body within the table.
      * This is used to set the row offsets.
-     * @param value
+     * @param off the x offset
      */
     public void setXOffset(int off) {
         xoffset = off;
@@ -185,8 +178,8 @@ public class Body extends BlockStackingLayoutManager {
         while (parentIter.hasNext()) {
             LeafPosition lfp = (LeafPosition) parentIter.next();
             // Add the block areas to Area
-            PositionIterator breakPosIter =
-              new BreakPossPosIter(childBreaks, iStartPos,
+            PositionIterator breakPosIter 
+                = new BreakPossPosIter(childBreaks, iStartPos,
                                    lfp.getLeafPos() + 1);
             iStartPos = lfp.getLeafPos() + 1;
             int lastheight = 0;
@@ -203,7 +196,7 @@ public class Body extends BlockStackingLayoutManager {
         flush();
 
         childBreaks.clear();
-        curBlockArea = null;
+        //curBlockArea = null;
     }
 
     /**

@@ -24,6 +24,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.StaticPropertyList;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
@@ -73,6 +74,11 @@ public class Table extends FObj {
     private TableBody tableHeader = null;
     private TableBody tableFooter = null;
 
+    /** 
+     * Default table-column used when no columns are specified. It is used
+     * to handle inheritance (especially visibility) and defaults properly. */
+    private TableColumn defaultColumn;
+    
     /**
      * @param parent FONode that is the parent of this object
      */
@@ -110,6 +116,12 @@ public class Table extends FObj {
         tableOmitHeaderAtBreak = pList.get(PR_TABLE_OMIT_HEADER_AT_BREAK).getEnum();
         //width = pList.get(PR_WIDTH).getLength();
         writingMode = pList.get(PR_WRITING_MODE).getEnum();
+        
+        //Create default column in case no table-columns will be defined.
+        defaultColumn = new TableColumn(this);
+        PropertyList colPList = new StaticPropertyList(defaultColumn, pList);
+        colPList.setWritingMode();
+        defaultColumn.bind(colPList);
     }
 
     /**
@@ -149,6 +161,11 @@ public class Table extends FObj {
     /** @return true of table-layout="auto" */
     public boolean isAutoLayout() {
         return (tableLayout != EN_FIXED);
+    }
+    
+    /** @return the default table column */
+    public TableColumn getDefaultColumn() {
+        return this.defaultColumn;
     }
     
     public List getColumns() {
