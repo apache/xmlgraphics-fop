@@ -1,6 +1,4 @@
 /*
- * $Id$
- * 
  * ============================================================================
  *                   The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,6 +46,7 @@
  * James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
  * Software Foundation, please see <http://www.apache.org/>.
  *  
+ * $Id$
  */
 
 package org.apache.fop.configuration;
@@ -56,6 +55,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Logger;
+
+import org.apache.fop.apps.Fop;
 
 /**
  * a configuration class for all general configuration aspects except those
@@ -66,7 +67,7 @@ import java.util.logging.Logger;
  */
 public class Configuration {
 
-    protected static final Logger logger = Logger.getLogger("org.apache.fop");
+    protected static final Logger logger = Logger.getLogger(Fop.fopPackage);
     /**
      * defines role types
      */

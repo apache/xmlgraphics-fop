@@ -61,6 +61,7 @@ import java.util.Iterator;
 import java.util.logging.Logger;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.Fop;
 import org.apache.fop.datastructs.Node;
 import org.apache.fop.datastructs.ROBitSet;
 import org.apache.fop.datastructs.TreeException;
@@ -88,7 +89,7 @@ public class FONode extends Node{
     private static final String tag = "$Name:  $";
     private static final String revision = "$Revision: 1.19.2.33 $";
 
-    protected static final Logger logger = Logger.getLogger("org.apache.fop");
+    protected static final Logger logger = Logger.getLogger(Fop.fopPackage);
     /**
      * State flags: a bit set of states applicable during FO tree build.
      * N.B. States must be powers of 2.

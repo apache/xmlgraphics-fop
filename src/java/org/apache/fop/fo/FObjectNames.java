@@ -1,6 +1,4 @@
 /*
- * $Id$
- * 
  * ============================================================================
  *                   The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,9 +46,7 @@
  * James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
  * Software Foundation, please see <http://www.apache.org/>.
  *  
- *
- * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
- * @version $Rev$ $Name$
+ * $Id$
  */
 
 package org.apache.fop.fo;
@@ -63,6 +59,9 @@ import org.apache.fop.datatypes.Ints;
 /**
  * Data class containing the Flow Object names and associated integer
  * constants.
+ *
+ * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
+ * @version $Rev$ $Name$
  */
 
 public class FObjectNames {
@@ -143,7 +142,7 @@ public class FObjectNames {
      * Array containing the local names of all of the elements in the
      * <i>FO</i> namespace and the package name suffix of the Object
      * representing the FO.  The current package name prefix is
-     * "org.apache.fop", but this may be varied without affecting the array.
+     * Fop.fopPackage, but this may be varied without affecting the array.
      * The array is effectively 1-based as the zero
      * index does not correspond to any FO element.  The list of
      * <tt>int</tt> constants must be kept in sync with this array, as the

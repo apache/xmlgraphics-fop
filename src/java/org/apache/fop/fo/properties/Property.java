@@ -1,6 +1,4 @@
 /*
- * $Id$
- * 
  * ============================================================================
  *                   The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,9 +46,7 @@
  * James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
  * Software Foundation, please see <http://www.apache.org/>.
  *  
- *
- * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
- * @version $Revision$ $Name$
+ * $Id$
  */
 
 package org.apache.fop.fo.properties;
@@ -59,6 +55,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.apache.fop.apps.Fop;
 import org.apache.fop.datatypes.Auto;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.CountryType;
@@ -86,6 +83,9 @@ import org.apache.fop.fo.expr.PropertyNotImplementedException;
 /**
  * Parent class for all of the individual property classes.  It also contains
  * sets of integer constants for various types of data.
+ *
+ * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
+ * @version $Revision$ $Name$
  */
 
 public /*abstract*/ class Property {
@@ -93,7 +93,7 @@ public /*abstract*/ class Property {
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
     
-    protected static final Logger logger = Logger.getLogger("org.apache.fop");
+    protected static final Logger logger = Logger.getLogger(Fop.fopPackage);
 
     /*
      * The list of property data types.  These are used to form a bitmap of
