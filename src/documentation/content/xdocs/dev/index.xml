@@ -25,42 +25,96 @@ This certainly includes programmers, but may also include those contributing to 
     </section>
     <section>
       <title>Getting Involved</title>
-      <p>Review the <link href="http://xml.apache.org/roles.html">Apache Project Roles and Responsibilities</link> document for an understanding of the various roles of contributors within the community.</p>
-      <p>There are many different ways that you can help with FOP development.
-The development of FOP and the related plans and tasks are discussed on the dev mailing list.
-Users can help or get issues resolved by contributing information and examples to the developers.
-      </p>
-      <section>
-        <title>Get familiar with the FOP-related standards</title>
-        <p>At the moment FOP is mainly a tool to render XSL-FO files to pdf. Therefore if you want to contribute to FOP you should become familiar with these standards. You can find links at <link href="../resources.html#specs">Specifications</link>.</p>
+      <section id="apache-roles">
+        <title>Understand Apache Roles</title>
+        <p>Review the <link href="http://xml.apache.org/roles.html">Apache Project Roles and Responsibilities</link> document for an understanding of the various roles of contributors within the community.</p>
       </section>
       <section>
-        <title>FOP's Design</title>
+        <title>Understand FOP Development Tasks</title>
+        <p>There are many different ways that you can help with FOP development. The following is a non-exhaustive list of ways that <em>non-programmers</em> can help. Remember that an hour spent on the tasks below is an hour that a programmer can devote to fixing bugs or adding features instead:</p>
+        <ul>
+          <li>Answer questions on the fop-user mailing list.</li>
+          <li>Contribute examples that are useful to other users.</li>
+          <li>Contribute test cases.</li>
+          <li>Submit well-written feature requests.</li>
+          <li>Submit well-written bug reports.</li>
+          <li>Review open issues to see if you have any insight into them that might help a programmer solve the problem faster. Add comments and test cases as appropriate.</li>
+          <li>Test newly-closed issues to make sure they are truly closed.</li>
+          <li>Submit patches to the documentation.</li>
+        </ul>
+        <p>Of course, we're glad to have programmers help as well. Here are some additional tasks that would require programming ability:</p>
+        <ul>
+          <li>Fixing bugs.</li>
+          <li>Implementing new features.</li>
+        </ul>
+      </section>
+      <section>
+        <title>Understand FOP-related standards</title>
+        <p>At the moment FOP is mainly a tool to render XSL-FO files to pdf. Therefore if you want to contribute to FOP you should become familiar with these standards. You can find links at <link href="../resources.html#specs">Specifications</link>.</p>
+      </section>
+      <section id="doc">
+        <title>Review the Developer Documentation</title>
+      </section>
+      <section id="design">
+        <title>Understand FOP's Design</title>
         <p>The design for FOP is specified under the <link href="../design/index.html">Design</link> section. This is where the information on how FOP is developed and designed
 internally will be kept.
     </p>
       </section>
-      <section>
-        <title>Subscribe to the fop developers list</title>
-        <p>You can subscribe to fop-dev@xml.apache.org by sending an email
-        to <link href="mailto:fop-dev-subscribe@xml.apache.org">fop-dev-subscribe@xml.apache.org</link>
+      <section id="mail-fop-dev">
+        <title>Subscribe to the fop-dev Mailing List</title>
+        <p>
+Use this forum to discuss topics related to FOP development,
+including patch submissions, bug reports, and design issues.
         </p>
-        <p>Sending bug reports and feature requests to the list is a welcome and important contribution to
-     developing FOP.  </p>
-        <p>Read also the <link href="http://marc.theaimsgroup.com/?l=fop-dev&amp;r=1&amp;w=2">archive</link>
-     of the discussion list fop-dev to get an idea of the issues being discussed. </p>
+        <ul>
+          <li>
+To review the archives, you have several options:
+            <ul>
+              <li>The <link href="http://marc.theaimsgroup.com/?l=fop-dev&amp;r=1&amp;w=2">Mailing list ARChives</link> (MARC) at the AIMS group (search).
+              </li>
+              <li>
+The <link href="http://nagoya.apache.org/eyebrowse/SummarizeList?listName=fop-dev@xml.apache.org">Apache Eyebrowse</link> archive (search, list by date, author, subject, or thread).
+              </li>
+              <li>
+The <link href="http://xml.apache.org/mail/fop-dev/">Apache Mailing List archive</link>.
+              </li>
+            </ul>
+          </li>
+          <li>Before posting questions to any list, see "<link href="../resources.html#mailing-lists-general">General Information</link>".</li>
+          <li>
+See <link href="http://xml.apache.org/mail.html#fop-dev_fop-cvs">Apache XML Mailing Lists</link>
+for detailed subscription information.
+          </li>
+          <li>
+To subscribe (digest only): Send email to <link href="mailto:fop-dev-digest-subscribe@xml.apache.org">fop-dev-digest-subscribe@xml.apache.org</link>.
+          </li>
+          <li>
+To subscribe fully: Send email to <link href="mailto:fop-dev-subscribe@xml.apache.org">fop-dev-subscribe@xml.apache.org</link>.
+          </li>
+          <li>
+For standard help: Send email to <link href="mailto:fop-dev-help@xml.apache.org">fop-dev-help@xml.apache.org</link>.
+          </li>
+          <li>
+To unsubscribe: Send email to <link href="mailto:fop-dev-unsubscribe@xml.apache.org">fop-dev-unsubscribe@xml.apache.org</link>.
+          </li>
+        </ul>
+      </section>
+      <section id="mail-fop-cvs">
+        <title>Subscribe to the fop-cvs Mailing List</title>
+        <p>When changes are committed to the code repository, a record of the diffs is emailed to the fop-cvs mailing list. FOP developers are encouraged to subscribe to this list because it helps in following the progress of the project.
+        </p>
+        <ul>
+          <li>Subscribe by sending an email to <link href="mailto:fop-cvs-subscribe@xml.apache.org">fop-cvs-subscribe@xml.apache.org</link>.</li>
+        </ul>
       </section>
       <section>
-        <title>Look at the developer's code using cvs</title>
+        <title>Download and Use the Developers' Code Using CVS</title>
         <p>Between releases the newest code can be accessed via cvs. To do this you need to install a cvs
      client on your computer, if it is not already there. An explanation how to connect to the
      FOP source repository can be found at <link href="http://xml.apache.org/cvs.html">http://xml.apache.org/cvs.html</link>.
      An introduction into cvs and the cvs manual can be found in the
      <link href="http://xml.apache.org/library.html">reference library</link>.</p>
-        <p>All changes to the code repository are sent to a special mailing list. After a cvs commit the diffs are automatically sent to this list. You can subscribe
-     to fop-cvs@xml.apache.org by sending an email to <link href="mailto:fop-cvs-subscribe@xml.apache.org">
-     fop-cvs-subscribe@xml.apache.org</link>. If you want to contribute to the development of FOP you should subscribe,
-     because it is important that you follow changes being made. </p>
       </section>
       <section id="patches">
         <title>Submitting Patches</title>
