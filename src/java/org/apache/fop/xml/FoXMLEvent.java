@@ -57,6 +57,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FObjectNames;
+import org.apache.fop.pool.Poolable;
 
 /**
  * This is a data class to encapsulate the data of an individual XML
@@ -71,15 +72,16 @@ public class FoXMLEvent extends XMLEvent {
     private static final String revision = "$Revision$";
 
     /** The FO type, as defined in FObjectNames, of fo: XML events. */
-    protected int foType = FObjectNames.NO_FO;
+    private int foType = FObjectNames.NO_FO;
 
     /**
-     * The one-argument constructor uses the default initialization values:
-     * NOEVENT for the event <i>type</i>, and null references for all others
-     * except <i>namespaces</i>.
+     * @param namespaces the <code>XMLNamespaces</code> object
+     * @param sequence the sequence number of the event within its
+     * namespace
+     * @param uriIndex the namesopace index
      */
-    public FoXMLEvent (XMLNamespaces namespaces, int sequence) {
-        super(namespaces, sequence);
+    public FoXMLEvent (XMLNamespaces namespaces, int sequence, int uriIndex) {
+        super(namespaces, sequence, uriIndex);
     }
 
     /**
@@ -100,20 +102,22 @@ public class FoXMLEvent extends XMLEvent {
     /**
      * The cloning constructor takes a reference to an existing
      * <tt>FoXMLEvent</tt> object.
+     * @param ev the event to clone
+     * @param sequence number of the clone
      */
-    public FoXMLEvent(FoXMLEvent ev) throws FOPException {
-        super(ev);
+    public FoXMLEvent(FoXMLEvent ev, int sequence) {
+        super(ev, sequence);
         foType = ev.foType;
     }
 
     public FoXMLEvent(XMLNamespaces namespaces, int sequence,
-            int type, String chars) {
-        super(namespaces, sequence, type, chars);
+            int uriIndex, int type, String chars) {
+        super(namespaces, sequence, uriIndex, type, chars);
     }
 
     public FoXMLEvent(XMLNamespaces namespaces, int sequence,
             int type, int uriIndex, AttributesImpl attributes, int foType) {
-        super(namespaces, sequence);
+        super(namespaces, sequence, uriIndex);
         this.type = type;
         this.uriIndex = uriIndex;
         this.attributes = attributes;
@@ -125,7 +129,7 @@ public class FoXMLEvent extends XMLEvent {
      * Neither the <i>namespaces</i> nor the <i>id</i> field is cleared.
      * @return the cleared <tt>XMLEvent</tt> event.
      */
-    public XMLEvent clear() {
+    public Poolable clear() {
         foType = FObjectNames.NO_FO;
         return super.clear();
     }
