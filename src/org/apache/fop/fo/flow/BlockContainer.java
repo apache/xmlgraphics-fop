@@ -15,10 +15,6 @@ import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.*;
 
-// Java
-import java.util.Hashtable;
-import java.util.Enumeration;
-
 public class BlockContainer extends FObj {
 
     int position;
@@ -127,13 +123,13 @@ public class BlockContainer extends FObj {
 
         int numChildren = this.children.size();
         for (int i = this.marker; i < numChildren; i++) {
-            FObj fo = (FObj)children.elementAt(i);
+            FObj fo = (FObj)children.get(i);
             Status status;
             if ((status = fo.layout(areaContainer)).isIncomplete()) {
                 /*
                  * if ((prevChildMustKeepWithNext) && (status.laidOutNone())) {
                  * this.marker = i - 1;
-                 * FObj prevChild = (FObj) children.elementAt(this.marker);
+                 * FObj prevChild = (FObj) children.get(this.marker);
                  * prevChild.removeAreas();
                  * prevChild.resetMarker();
                  * return new Status(Status.AREA_FULL_SOME);

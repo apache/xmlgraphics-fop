@@ -11,7 +11,6 @@ import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.ExtensionPropertyMapping;
 import org.apache.fop.fo.TreeBuilder;
 
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 

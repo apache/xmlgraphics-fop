@@ -7,34 +7,32 @@
 
 package org.apache.fop.svg;
 
-import org.apache.fop.pdf.*;
-import org.apache.fop.layout.*;
-import org.apache.fop.fonts.*;
-import org.apache.fop.render.pdf.*;
-import org.apache.fop.image.*;
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorSpace;
+import org.apache.fop.fonts.*;
+import org.apache.fop.image.*;
+import org.apache.fop.layout.*;
+import org.apache.fop.pdf.*;
+import org.apache.fop.render.pdf.*;
 import org.apache.fop.render.pdf.CIDFont;
 import org.apache.fop.render.pdf.fonts.LazyFont;
-import org.apache.fop.apps.FOPException;
 
 import org.apache.batik.ext.awt.g2d.*;
 import org.apache.batik.ext.awt.image.GraphicsUtil;
 
-import java.text.AttributedCharacterIterator;
-import java.text.CharacterIterator;
 import java.awt.*;
 import java.awt.Font;
 import java.awt.Image;
-import java.awt.image.*;
 import java.awt.font.*;
 import java.awt.geom.*;
+import java.awt.image.*;
 import java.awt.image.renderable.*;
 import java.io.*;
-
-import java.util.Map;
+import java.text.AttributedCharacterIterator;
+import java.text.CharacterIterator;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Vector;
-import java.util.Hashtable;
+import java.util.Map;
 
 /**
  * This concrete implementation of <tt>AbstractGraphics2D</tt> is a
@@ -681,40 +679,40 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             Point2D p2 = gp.getPoint2();
             boolean cyclic = gp.isCyclic();
 
-            Vector theCoords = new Vector();
-            theCoords.addElement(new Double(p1.getX()));
-            theCoords.addElement(new Double(p1.getY()));
-            theCoords.addElement(new Double(p2.getX()));
-            theCoords.addElement(new Double(p2.getY()));
+            ArrayList theCoords = new ArrayList();
+            theCoords.add(new Double(p1.getX()));
+            theCoords.add(new Double(p1.getY()));
+            theCoords.add(new Double(p2.getX()));
+            theCoords.add(new Double(p2.getY()));
 
-            Vector theExtend = new Vector();
-            theExtend.addElement(new Boolean(true));
-            theExtend.addElement(new Boolean(true));
+            ArrayList theExtend = new ArrayList();
+            theExtend.add(new Boolean(true));
+            theExtend.add(new Boolean(true));
 
-            Vector theDomain = new Vector();
-            theDomain.addElement(new Double(0));
-            theDomain.addElement(new Double(1));
+            ArrayList theDomain = new ArrayList();
+            theDomain.add(new Double(0));
+            theDomain.add(new Double(1));
 
-            Vector theEncode = new Vector();
-            theEncode.addElement(new Double(0));
-            theEncode.addElement(new Double(1));
-            theEncode.addElement(new Double(0));
-            theEncode.addElement(new Double(1));
+            ArrayList theEncode = new ArrayList();
+            theEncode.add(new Double(0));
+            theEncode.add(new Double(1));
+            theEncode.add(new Double(0));
+            theEncode.add(new Double(1));
 
-            Vector theBounds = new Vector();
-            theBounds.addElement(new Double(0));
-            theBounds.addElement(new Double(1));
+            ArrayList theBounds = new ArrayList();
+            theBounds.add(new Double(0));
+            theBounds.add(new Double(1));
 
-            Vector theFunctions = new Vector();
+            ArrayList theFunctions = new ArrayList();
 
-            Vector someColors = new Vector();
+            ArrayList someColors = new ArrayList();
 
             PDFColor color1 = new PDFColor(c1.getRed(), c1.getGreen(),
                                            c1.getBlue());
-            someColors.addElement(color1);
+            someColors.add(color1);
             PDFColor color2 = new PDFColor(c2.getRed(), c2.getGreen(),
                                            c2.getBlue());
-            someColors.addElement(color2);
+            someColors.add(color2);
 
             PDFFunction myfunc = this.pdfDoc.makeFunction(2, theDomain, null,
                     color1.getVector(), color2.getVector(), 1.0);
@@ -911,7 +909,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
         currentStream.write("BT\n");
 
-        Hashtable kerning = null;
+        HashMap kerning = null;
         boolean kerningAvailable = false;
 
         kerning = fontState.getKerning();
@@ -988,9 +986,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     }
 
     private void addKerning(StringWriter buf, Integer ch1, Integer ch2,
-                            Hashtable kerning, String startText,
+                            HashMap kerning, String startText,
                             String endText) {
-        Hashtable kernPair = (Hashtable)kerning.get(ch1);
+        HashMap kernPair = (HashMap)kerning.get(ch1);
 
         if (kernPair != null) {
             Integer width = (Integer)kernPair.get(ch2);

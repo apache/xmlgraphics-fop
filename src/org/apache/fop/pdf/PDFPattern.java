@@ -7,12 +7,12 @@
 
 package org.apache.fop.pdf;
 
-// Java...
-import java.io.UnsupportedEncodingException;
-import java.util.Vector;
-
 // FOP...
 import org.apache.fop.datatypes.ColorSpace;
+
+// Java...
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 
 /**
  * class representing a PDF Function.
@@ -54,9 +54,9 @@ public class PDFPattern extends PDFPathPaint {
     protected int tilingType = 1;
 
     /**
-     * Vector of Doubles representing the Bounding box rectangle
+     * ArrayList of Doubles representing the Bounding box rectangle
      */
-    protected Vector bBox = null;
+    protected ArrayList bBox = null;
 
     /**
      * Horizontal spacing
@@ -74,9 +74,9 @@ public class PDFPattern extends PDFPathPaint {
     protected PDFShading shading = null;
 
     /**
-     * Vector of Integers represetning the Extended unique Identifier
+     * ArrayList of Integers represetning the Extended unique Identifier
      */
-    protected Vector xUID = null;
+    protected ArrayList xUID = null;
 
     /**
      * String representing the extended Graphics state.
@@ -86,9 +86,9 @@ public class PDFPattern extends PDFPathPaint {
         null;                                                           // eventually, need a PDFExtGSState object... but not now.
 
     /**
-     * Vector of Doubles representing the Transformation matrix.
+     * ArrayList of Doubles representing the Transformation matrix.
      */
-    protected Vector matrix = null;
+    protected ArrayList matrix = null;
 
     /**
      * The stream of a pattern
@@ -105,17 +105,17 @@ public class PDFPattern extends PDFPathPaint {
      * @param thePatternType the type of pattern, which is 1 for tiling.
      * @param thePaintType 1 or 2, colored or uncolored.
      * @param theTilingType 1, 2, or 3, constant spacing, no distortion, or faster tiling
-     * @param theBBox Vector of Doubles: The pattern cell bounding box
+     * @param theBBox ArrayList of Doubles: The pattern cell bounding box
      * @param theXStep horizontal spacing
      * @param theYStep vertical spacing
-     * @param theMatrix Optional Vector of Doubles transformation matrix
-     * @param theXUID Optional vector of Integers that uniquely identify the pattern
+     * @param theMatrix Optional ArrayList of Doubles transformation matrix
+     * @param theXUID Optional ArrayList of Integers that uniquely identify the pattern
      * @param thePatternDataStream The stream of pattern data to be tiled.
      */
     public PDFPattern(int theNumber, String thePatternName,
                       PDFResources theResources, int thePatternType,    // 1
-    int thePaintType, int theTilingType, Vector theBBox, double theXStep,
-    double theYStep, Vector theMatrix, Vector theXUID,
+    int thePaintType, int theTilingType, ArrayList theBBox, double theXStep,
+    double theYStep, ArrayList theMatrix, ArrayList theXUID,
     StringBuffer thePatternDataStream) {
         super(theNumber);
         this.patternName = thePatternName;
@@ -144,12 +144,12 @@ public class PDFPattern extends PDFPathPaint {
      * @param theShading the PDF Shading object that comprises this pattern
      * @param theXUID optional:the extended unique Identifier if used.
      * @param theExtGState optional: the extended graphics state, if used.
-     * @param theMatrix Optional:Vector of Doubles that specify the matrix.
+     * @param theMatrix Optional:ArrayList of Doubles that specify the matrix.
      */
     public PDFPattern(int theNumber, String thePatternName,
                       int thePatternType, PDFShading theShading,
-                      Vector theXUID, StringBuffer theExtGState,
-                      Vector theMatrix) {
+                      ArrayList theXUID, StringBuffer theExtGState,
+                      ArrayList theMatrix) {
         super(theNumber);
 
         this.patternName = thePatternName;
@@ -215,7 +215,7 @@ public class PDFPattern extends PDFPathPaint {
                 vectorSize = this.bBox.size();
                 p.append("/BBox [ ");
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.bBox.elementAt(tempInt)));
+                    p.append(PDFNumber.doubleOut((Double)this.bBox.get(tempInt)));
                     p.append(" ");
                 }
                 p.append("] \n");
@@ -229,7 +229,7 @@ public class PDFPattern extends PDFPathPaint {
                 vectorSize = this.matrix.size();
                 p.append("/Matrix [ ");
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.matrix.elementAt(tempInt)));
+                    p.append(PDFNumber.doubleOut((Double)this.matrix.get(tempInt)));
                     p.append(" ");
                 }
                 p.append("] \n");
@@ -239,7 +239,7 @@ public class PDFPattern extends PDFPathPaint {
                 vectorSize = this.xUID.size();
                 p.append("/XUID [ ");
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(((Integer)this.xUID.elementAt(tempInt)) + " ");
+                    p.append(((Integer)this.xUID.get(tempInt)) + " ");
                 }
                 p.append("] \n");
             }
@@ -259,7 +259,7 @@ public class PDFPattern extends PDFPathPaint {
                 vectorSize = this.xUID.size();
                 p.append("/XUID [ ");
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(((Integer)this.xUID.elementAt(tempInt)) + " ");
+                    p.append(((Integer)this.xUID.get(tempInt)) + " ");
                 }
                 p.append("] \n");
             }
@@ -273,7 +273,7 @@ public class PDFPattern extends PDFPathPaint {
                 vectorSize = this.matrix.size();
                 p.append("/Matrix [ ");
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.matrix.elementAt(tempInt)));
+                    p.append(PDFNumber.doubleOut((Double)this.matrix.get(tempInt)));
                     p.append(" ");
                 }
                 p.append("] \n");

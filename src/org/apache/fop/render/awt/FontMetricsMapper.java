@@ -14,8 +14,6 @@ import org.apache.fop.layout.FontDescriptor;
 import org.apache.fop.layout.FontState;
 
 // Java
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.awt.Graphics2D;
 import java.awt.Font;
 

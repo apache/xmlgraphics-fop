@@ -10,9 +10,6 @@ package org.apache.fop.layout.inline;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.layout.*;
 
-import java.util.Vector;
-import java.util.Enumeration;
-
 public class LeaderArea extends InlineArea {
 
     int ruleThickness;

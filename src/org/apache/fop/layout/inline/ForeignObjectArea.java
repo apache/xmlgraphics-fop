@@ -11,10 +11,6 @@ package org.apache.fop.layout.inline;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.layout.*;
 
-// Java
-import java.util.Vector;
-import java.util.Enumeration;
-
 public class ForeignObjectArea extends InlineArea {
 
     protected int xOffset = 0;

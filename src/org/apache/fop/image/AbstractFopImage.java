@@ -7,16 +7,15 @@
 
 package org.apache.fop.image;
 
-// Java
-import java.util.Hashtable;
-import java.net.URL;
-
 // FOP
 import org.apache.fop.datatypes.ColorSpace;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFFilter;
 import org.apache.fop.image.analyser.ImageReaderFactory;
 import org.apache.fop.image.analyser.ImageReader;
+
+// Java
+import java.net.URL;
 
 /**
  * Base class to implement the FopImage interface.

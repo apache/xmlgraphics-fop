@@ -30,9 +30,7 @@ import org.w3c.dom.svg.SVGDocument;
 // Java
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.Hashtable;
+import java.util.ArrayList;
 
 /**
  * Renderer that renders areas to plain text
@@ -296,7 +294,7 @@ public class TXTRenderer extends PrintRenderer {
          */
     }
 
-    private void xferLineBytes(int startpos, int bitcount, Vector save,
+    private void xferLineBytes(int startpos, int bitcount, ArrayList save,
                                int start2) {
         /*
          * Not yet implemented
@@ -403,7 +401,7 @@ public class TXTRenderer extends PrintRenderer {
          * {
          * String line = "\033*b" + dlen + "W" + new String(bytes, 0, dlen);
          * //currentStream.add(line);
-         * save.addElement(line);
+         * save.add(line);
          * }
          */
     }
@@ -662,7 +660,7 @@ public class TXTRenderer extends PrintRenderer {
          * long	dx = 0;
          * long	dy = TwoAsquared * b;
          * int		rectlen = iw - 2 * irx;
-         * Vector	bottomlines = new Vector();
+         * ArrayList	bottomlines = new ArrayList();
          * int x0 = tx;
          * // Set Transparency modes and select shading.
          * currentStream.add("\033*v0n1O\033*c" + (int)(100 - ((0.3f * thecolor.red() + 0.59f * thecolor.green() + 0.11f * thecolor.blue()) * 100f)) + "G\033*v2T");
@@ -720,7 +718,7 @@ public class TXTRenderer extends PrintRenderer {
          * }
          * // Draw the bottom.
          * for ( int countr = bottomlines.size() - 1 ; countr >= 0 ; countr-- )
-         * currentStream.add((String)bottomlines.elementAt(countr));
+         * currentStream.add((String)bottomlines.get(countr));
          * // End raster graphics
          * currentStream.add("\033*rB");
          * // Return to regular print mode.
@@ -733,7 +731,7 @@ public class TXTRenderer extends PrintRenderer {
     }
 
     // Add a polyline or polygon. Does not support fills yet!!!
-    protected void addPolyline(Vector points, int posx, int posy,
+    protected void addPolyline(ArrayList points, int posx, int posy,
                                PDFColor fc, PDFColor sc, float sw,
                                boolean close) {}
 
@@ -1265,7 +1263,7 @@ public class TXTRenderer extends PrintRenderer {
      * float ty = tg.y;
      * float currentX = x + tx;
      * float currentY = y + ty;
-     * Vector list = tg.textList;
+     * ArrayList list = tg.textList;
      * for ( Enumeration e = list.elements() ; e.hasMoreElements() ; )
      * {
      * Object o = e.nextElement();
@@ -1395,13 +1393,13 @@ public class TXTRenderer extends PrintRenderer {
      * xpos = currentX;
      * ypos = currentY;
      * if ( tsg.ylist.size() > charPos )
-     * ypos = y + ty + ((Float)tsg.ylist.elementAt(charPos)).floatValue();
+     * ypos = y + ty + ((Float)tsg.ylist.get(charPos)).floatValue();
      * if ( tsg.dylist.size() > charPos )
-     * ypos = ypos + ((Float)tsg.dylist.elementAt(charPos)).floatValue();
+     * ypos = ypos + ((Float)tsg.dylist.get(charPos)).floatValue();
      * if ( tsg.xlist.size() > charPos )
-     * xpos = x + tx + ((Float)tsg.xlist.elementAt(charPos)).floatValue();
+     * xpos = x + tx + ((Float)tsg.xlist.get(charPos)).floatValue();
      * if ( tsg.dxlist.size() > charPos )
-     * xpos = xpos + ((Float)tsg.dxlist.elementAt(charPos)).floatValue();
+     * xpos = xpos + ((Float)tsg.dxlist.get(charPos)).floatValue();
      * switch (ch)
      * {
      * case '	':

@@ -11,7 +11,7 @@ import org.apache.fop.fo.*;
 import org.apache.fop.apps.FOPException;
 
 // Java
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class RepeatablePageMasterAlternatives extends FObj
     implements SubSequenceSpecifier {
@@ -40,7 +40,7 @@ public class RepeatablePageMasterAlternatives extends FObj
     private int maximumRepeats;
     private int numberConsumed = 0;
 
-    private Vector conditionalPageMasterRefs;
+    private ArrayList conditionalPageMasterRefs;
 
     public RepeatablePageMasterAlternatives(FObj parent, PropertyList propertyList)
             throws FOPException {
@@ -70,7 +70,7 @@ public class RepeatablePageMasterAlternatives extends FObj
                                        + "'maximum-repeats' property");
             }
         }
-        conditionalPageMasterRefs = new Vector();
+        conditionalPageMasterRefs = new ArrayList();
     }
 
     public String getName() {
@@ -78,7 +78,7 @@ public class RepeatablePageMasterAlternatives extends FObj
     }
 
     public void addConditionalPageMasterReference(ConditionalPageMasterReference cpmr) {
-        this.conditionalPageMasterRefs.addElement(cpmr);
+        this.conditionalPageMasterRefs.add(cpmr);
     }
 
     public String getNextPageMasterName(boolean isOddPage,
@@ -94,8 +94,7 @@ public class RepeatablePageMasterAlternatives extends FObj
 
         for (int i = 0; i < conditionalPageMasterRefs.size(); i++) {
             ConditionalPageMasterReference cpmr =
-                (ConditionalPageMasterReference)conditionalPageMasterRefs
-              .elementAt(i);
+                (ConditionalPageMasterReference)conditionalPageMasterRefs.get(i);
             if (cpmr.isValid(isOddPage, isFirstPage, isEmptyPage)) {
                 return cpmr.getMasterName();
             }

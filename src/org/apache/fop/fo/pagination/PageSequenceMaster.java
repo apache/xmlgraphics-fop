@@ -14,7 +14,7 @@ import org.apache.fop.layout.PageMaster;
 import org.apache.fop.apps.FOPException;
 
 // Java
-import java.util.*;
+import java.util.ArrayList;
 
 public class PageSequenceMaster extends FObj {
 
@@ -30,11 +30,11 @@ public class PageSequenceMaster extends FObj {
         return new PageSequenceMaster.Maker();
     }
 
-    LayoutMasterSet layoutMasterSet;
-    Vector subSequenceSpecifiers;
+    private LayoutMasterSet layoutMasterSet;
+    private ArrayList subSequenceSpecifiers;
     private SubSequenceSpecifier currentSubSequence;
-    int currentSubSequenceNumber;
-    String masterName;
+    private int currentSubSequenceNumber;
+    private String masterName;
 
     // The terminology may be confusing. A 'page-sequence-master' consists
     // of a sequence of what the XSL spec refers to as
@@ -60,13 +60,13 @@ public class PageSequenceMaster extends FObj {
                                    + "of fo:layout-master-set, not "
                                    + parent.getName());
         }
-        subSequenceSpecifiers = new Vector();
+        subSequenceSpecifiers = new ArrayList();
         currentSubSequenceNumber = -1;
         currentSubSequence = null;
     }
 
     protected void addSubsequenceSpecifier(SubSequenceSpecifier pageMasterReference) {
-        subSequenceSpecifiers.addElement(pageMasterReference);
+        subSequenceSpecifiers.add(pageMasterReference);
     }
 
     protected SubSequenceSpecifier getNextSubSequence() {
@@ -74,7 +74,7 @@ public class PageSequenceMaster extends FObj {
         if (currentSubSequenceNumber >= 0
             && currentSubSequenceNumber < subSequenceSpecifiers.size()) {
             return (SubSequenceSpecifier)subSequenceSpecifiers
-              .elementAt(currentSubSequenceNumber);
+              .get(currentSubSequenceNumber);
         }
         return null;
     }
@@ -82,9 +82,8 @@ public class PageSequenceMaster extends FObj {
     public void reset() {
         currentSubSequenceNumber = -1;
         currentSubSequence = null;
-        for (Enumeration e = subSequenceSpecifiers.elements();
-                e.hasMoreElements(); ) {
-            ((SubSequenceSpecifier)e.nextElement()).reset();
+        for (int i = 0; i< subSequenceSpecifiers.size(); i++ ) {
+            ((SubSequenceSpecifier)subSequenceSpecifiers.get(i)).reset();
         }
     }
 
@@ -109,12 +108,12 @@ public class PageSequenceMaster extends FObj {
             if (nextSubSequence==null) {
                 if (!canRecover) {
                     throw new FOPException("subsequences exhausted in page-sequence-master '"
-                                           +masterName
-                                           +"', cannot recover");
+                                           + masterName
+                                           + "', cannot recover");
                 }
                 log.warn("subsequences exhausted in page-sequence-master '"
-                         +masterName
-                         +"', use previous subsequence");
+                         + masterName
+                         + "', use previous subsequence");
                 currentSubSequence.reset();
                 canRecover = false;
             } else {

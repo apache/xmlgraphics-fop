@@ -19,7 +19,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.avalon.framework.logger.Logger;
 
 // Java
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class Property {
 
@@ -424,7 +424,7 @@ public class Property {
         return 0;
     }
 
-    public Vector getList() {
+    public ArrayList getList() {
         return null;
     }    // List of Property objects
 

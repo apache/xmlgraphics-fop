@@ -13,9 +13,6 @@ import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.*;
 
-// Java
-import java.util.Enumeration;
-
 public class Inline extends FObjMixed {
 
     public static class Maker extends FObj.Maker {

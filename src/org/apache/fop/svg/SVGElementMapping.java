@@ -7,9 +7,6 @@
 
 package org.apache.fop.svg;
 
-import java.util.Enumeration;
-import java.util.HashMap;
-
 import org.apache.fop.fo.DirectPropertyListBuilder;
 import org.apache.fop.fo.TreeBuilder;
 import org.apache.fop.fo.FOTreeBuilder;
@@ -17,6 +14,8 @@ import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.apps.Driver;
 
 import org.apache.batik.util.XMLResourceDescriptor;
+
+import java.util.HashMap;
 
 public class SVGElementMapping implements ElementMapping {
 

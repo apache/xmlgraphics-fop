@@ -11,7 +11,7 @@ import org.apache.fop.render.pdf.Font;
 import org.apache.fop.layout.FontDescriptor;
 import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.messaging.MessageHandler;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 import org.apache.fop.render.pdf.FontReader;
 
@@ -158,7 +158,7 @@ public class LazyFont extends Font implements FontDescriptor {
         return realFontDescriptor.hasKerningInfo();
     }
     
-    public Hashtable getKerningInfo(){
+    public HashMap getKerningInfo(){
         load();
         return realFontDescriptor.getKerningInfo();
     }

@@ -8,7 +8,7 @@
 package org.apache.fop.fonts;
 
 import java.io.*;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 /**
  * This class represents a PFM file (or parts of it) as a Java object.
@@ -42,9 +42,9 @@ public class PFMFile {
     // Extent table
     private int[] extentTable;
 
-    private Hashtable kerningTab;
+    private HashMap kerningTab;
     public PFMFile() {
-        kerningTab = new Hashtable();
+        kerningTab = new HashMap();
     }
 
     /**
@@ -160,9 +160,9 @@ public class PFMFile {
             String glyph1 = Glyphs.tex8r[g1];
             String glyph2 = Glyphs.tex8r[g2];
 
-            Hashtable adjTab = (Hashtable)kerningTab.get(new Integer(g1));
+            HashMap adjTab = (HashMap)kerningTab.get(new Integer(g1));
             if (adjTab == null)
-                adjTab = new Hashtable();
+                adjTab = new HashMap();
             adjTab.put(new Integer(g2), new Integer(adj));
             kerningTab.put(new Integer(g1), adjTab);
         }
@@ -208,11 +208,11 @@ public class PFMFile {
     }
 
     /**
-     * Return the kerning table. The kerning table is a hastable with
-     * strings with glyphnames as keys, containing hashtables as value.
-     * The value hashtable contain a glyph name string key and an Integer value
+     * Return the kerning table. The kerning table is a hashmap with
+     * strings with glyphnames as keys, containing hashmaps as value.
+     * The value hashmaps contain a glyph name string key and an Integer value
      */
-    public Hashtable getKerning() {
+    public HashMap getKerning() {
         return kerningTab;
     }
 

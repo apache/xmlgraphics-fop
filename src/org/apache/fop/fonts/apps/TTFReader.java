@@ -9,9 +9,9 @@ package org.apache.fop.fonts.apps;
 import java.io.*;
 import org.w3c.dom.*;
 import org.apache.fop.fonts.*;
-import java.util.Hashtable;
-import java.util.Vector;
-import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * A tool which reads TTF files and generates
@@ -26,14 +26,14 @@ public class TTFReader {
 
 
     /**
-     * Parse commandline arguments. put options in the Hashtable and return
+     * Parse commandline arguments. put options in the HashMap and return
      * arguments in the String array
      * the arguments: -fn Perpetua,Bold -cn PerpetuaBold per.ttf Perpetua.xml
      * returns a String[] with the per.ttf and Perpetua.xml. The hash
      * will have the (key, value) pairs: (-fn, Perpetua) and (-cn, PerpetuaBold)
      */
-    private static String[] parseArguments(Hashtable options, String[] args) {
-        Vector arguments = new Vector();
+    private static String[] parseArguments(HashMap options, String[] args) {
+        ArrayList arguments = new ArrayList();
         for (int i = 0; i < args.length; i++) {
             if (args[i].startsWith("-")) {
                 if ((i + 1) < args.length &&!args[i + 1].startsWith("-")) {
@@ -43,12 +43,12 @@ public class TTFReader {
                     options.put(args[i], "");
                 }
             } else {
-                arguments.addElement(args[i]);
+                arguments.add(args[i]);
             }
         }
 
         String[] argStrings = new String[arguments.size()];
-        arguments.copyInto(argStrings);
+        arguments.toArray(argStrings);
         return argStrings;
     }
 
@@ -103,7 +103,7 @@ public class TTFReader {
         String ttcName = null;
         boolean isCid = true;
 
-        Hashtable options = new Hashtable();
+        HashMap options = new HashMap();
         String[] arguments = parseArguments(options, args);
 
         TTFReader app = new TTFReader();
@@ -328,9 +328,9 @@ public class TTFReader {
 
             el = doc.createElement("bfranges");
             mel.appendChild(el);
-            for (Enumeration e = ttf.getCMaps().elements();
-                    e.hasMoreElements(); ) {
-                TTFCmapEntry ce = (TTFCmapEntry)e.nextElement();
+            ArrayList cmaps = ttf.getCMaps();
+            for (int i = 0;i < cmaps.size(); i++) {
+                TTFCmapEntry ce = (TTFCmapEntry)cmaps.get(i);
                 Element el2 = doc.createElement("bf");
                 el.appendChild(el2);
                 el2.setAttribute("us", String.valueOf(ce.unicodeStart));
@@ -379,28 +379,28 @@ public class TTFReader {
         }
 
         // Get kerning
-        Enumeration enum;
+        Iterator enum;
         if (isCid)
-            enum = ttf.getKerning().keys();
+            enum = ttf.getKerning().keySet().iterator();
         else
-            enum = ttf.getAnsiKerning().keys();
+            enum = ttf.getAnsiKerning().keySet().iterator();
 
-        while (enum.hasMoreElements()) {
-            Integer kpx1 = (Integer)enum.nextElement();
+        while (enum.hasNext()) {
+            Integer kpx1 = (Integer)enum.next();
 
             el = doc.createElement("kerning");
             el.setAttribute("kpx1", kpx1.toString());
             root.appendChild(el);
             Element el2 = null;
 
-            Hashtable h2;
+            HashMap h2;
             if (isCid)
-                h2 = (Hashtable)ttf.getKerning().get(kpx1);
+                h2 = (HashMap)ttf.getKerning().get(kpx1);
             else
-                h2 = (Hashtable)ttf.getAnsiKerning().get(kpx1);
+                h2 = (HashMap)ttf.getAnsiKerning().get(kpx1);
 
-            for (Enumeration enum2 = h2.keys(); enum2.hasMoreElements(); ) {
-                Integer kpx2 = (Integer)enum2.nextElement();
+            for (Iterator enum2 = h2.keySet().iterator(); enum2.hasNext(); ) {
+                Integer kpx2 = (Integer)enum2.next();
                 if (isCid || kpx2.intValue() < 256) {
                     el2 = doc.createElement("pair");
                     el2.setAttribute("kpx2", kpx2.toString());

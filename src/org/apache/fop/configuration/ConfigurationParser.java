@@ -14,8 +14,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 
 // java
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.HashMap;
+import java.util.ArrayList;
 
 // fop
 import org.apache.fop.messaging.MessageHandler;
@@ -45,12 +45,12 @@ public class ConfigurationParser extends DefaultHandler {
     private int datatype = -1;
 
     // store the result configuration
-    private static Hashtable configuration;
-    private static Hashtable activeConfiguration;
+    private static HashMap configuration;
+    private static HashMap activeConfiguration;
 
     // stores key for new config entry
     private String key = "";
-    private Vector keyStack = new Vector();
+    private ArrayList keyStack = new ArrayList();
 
     // stores string value
     private String value = "";
@@ -59,10 +59,10 @@ public class ConfigurationParser extends DefaultHandler {
     private String subkey = "";
 
     // stores list value
-    private Vector list = new Vector(15);
+    private ArrayList list = new ArrayList(15);
 
-    // stores hashtable value
-    private Hashtable map = new Hashtable(15);
+    // stores HashMap value
+    private HashMap map = new HashMap(15);
 
     /**
      * locator for line number information
@@ -75,7 +75,7 @@ public class ConfigurationParser extends DefaultHandler {
     private String role = "standard";
 
     // stores fonts
-    private Vector fontList = null;
+    private ArrayList fontList = null;
 
     // stores information on one font
     private FontInfo fontInfo = null;
@@ -86,7 +86,7 @@ public class ConfigurationParser extends DefaultHandler {
     // information on a font
     private String fontName, metricsFile, embedFile, kerningAsString;
     private boolean kerning;
-    private Vector fontTriplets;
+    private ArrayList fontTriplets;
 
     // information on a font triplet
     private String fontTripletName, weight, style;
@@ -125,7 +125,7 @@ public class ConfigurationParser extends DefaultHandler {
             }
         } else if (localName.equals("configuration")) {}
         else if (localName.equals("fonts")) {    // list of fonts starts
-            fontList = new Vector(10);
+            fontList = new ArrayList(10);
         } else if (localName.equals("font")) {
             kerningAsString = attributes.getValue("kerning");
             if (kerningAsString.equalsIgnoreCase("yes")) {
@@ -136,13 +136,13 @@ public class ConfigurationParser extends DefaultHandler {
             metricsFile = attributes.getValue("metrics-file");
             embedFile = attributes.getValue("embed-file");
             fontName = attributes.getValue("name");
-            fontTriplets = new Vector(5);
+            fontTriplets = new ArrayList(5);
         } else if (localName.equals("font-triplet")) {
             fontTripletName = attributes.getValue("name");
             weight = attributes.getValue("weight");
             style = attributes.getValue("style");
             fontTriplet = new FontTriplet(fontTripletName, weight, style);
-            fontTriplets.addElement(fontTriplet);
+            fontTriplets.add(fontTriplet);
         } else {
             // to make sure that user knows about false tag
             MessageHandler.errorln("Unknown tag in configuration file: "
@@ -168,10 +168,10 @@ public class ConfigurationParser extends DefaultHandler {
             status = OUT;
             role = "standard";
             if (keyStack.size() > 0) {
-                keyStack.removeElementAt(keyStack.size() - 1);
+                keyStack.remove(keyStack.size() - 1);
             }
             if (keyStack.size() > 0) {
-                key = (String)keyStack.elementAt(keyStack.size() - 1);
+                key = (String)keyStack.get(keyStack.size() - 1);
             } else {
                 key = "";
             }
@@ -180,17 +180,17 @@ public class ConfigurationParser extends DefaultHandler {
             map.put(subkey, value);
             status -= IN_SUBENTRY;
             if (keyStack.size() > 0) {
-                keyStack.removeElementAt(keyStack.size() - 1);
+                keyStack.remove(keyStack.size() - 1);
             }
             if (keyStack.size() > 0) {
-                key = (String)keyStack.elementAt(keyStack.size() - 1);
+                key = (String)keyStack.get(keyStack.size() - 1);
             } else {
                 key = "";
             }
             value = "";
         } else if (localName.equals("key")) {
             status -= IN_KEY;
-            keyStack.addElement(key);
+            keyStack.add(key);
         } else if (localName.equals("list")) {
             status -= IN_LIST;
             value = "";
@@ -201,7 +201,7 @@ public class ConfigurationParser extends DefaultHandler {
         } else if (localName.equals("font")) {
             fontInfo = new FontInfo(fontName, metricsFile, kerning,
                                     fontTriplets, embedFile);
-            fontList.addElement(fontInfo);
+            fontList.add(fontInfo);
             fontTriplets = null;
             metricsFile = null;
             embedFile = null;
@@ -230,7 +230,7 @@ public class ConfigurationParser extends DefaultHandler {
             datatype = STRING;
             break;
         case IN_LIST + IN_VALUE:
-            list.addElement(text);
+            list.add(text);
             datatype = LIST;
             break;
         case IN_LIST + IN_SUBENTRY + IN_VALUE:
@@ -241,14 +241,14 @@ public class ConfigurationParser extends DefaultHandler {
     }    // end characters
 
     /**
-     * stores configuration entry into configuration hashtable according to the role
+     * stores configuration entry into configuration HashMap according to the role
      *
      * @param role a string containing the role / target for this configuration information
      * @param key a string containing the key value for the configuration
      * @param value a string containing the value for the configuration
      */
     private void store(String role, String key, Object value) {
-        activeConfiguration = (Hashtable)configuration.get(role);
+        activeConfiguration = (HashMap)configuration.get(role);
         if (activeConfiguration != null) {
             activeConfiguration.put(key, value);
         } else {

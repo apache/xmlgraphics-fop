@@ -7,8 +7,7 @@
 
 package org.apache.fop.datatypes;
 
-import java.util.Vector;
-import java.util.Enumeration;
+import java.util.ArrayList;
 
 import org.apache.fop.fo.expr.Numeric;
 import org.apache.fop.fo.expr.PropertyException;
@@ -20,18 +19,17 @@ import org.apache.fop.fo.expr.PropertyException;
  */
 public class MixedLength extends Length {
 
-    private Vector lengths ;
+    private ArrayList lengths ;
 
-    public MixedLength(Vector lengths) {
+    public MixedLength(ArrayList lengths) {
 	this.lengths = lengths;
     }
 
     protected void computeValue() {
 	int computedValue =0;
 	boolean bAllComputed = true;
-	Enumeration e = lengths.elements();
-	while (e.hasMoreElements()) {
-	    Length l = (Length)e.nextElement();
+	for (int i = 0; i < lengths.size(); i++) {
+	    Length l = (Length)lengths.get(i);
 	    computedValue += l.mvalue();
 	    if (! l.isComputed()) {
 		bAllComputed = false;
@@ -40,43 +38,38 @@ public class MixedLength extends Length {
         setComputedValue(computedValue, bAllComputed);
     }
 
-
     public double getTableUnits() {
 	double tableUnits = 0.0;
-	Enumeration e = lengths.elements();
-	while (e.hasMoreElements()) {
-	    tableUnits += ((Length)e.nextElement()).getTableUnits();
+	for (int i = 0; i < lengths.size(); i++) {
+	    tableUnits += ((Length)lengths.get(i)).getTableUnits();
         }
         return tableUnits;
     }
 
     public void resolveTableUnit(double dTableUnit) {
-	Enumeration e = lengths.elements();
-	while (e.hasMoreElements()) {
-	    ((Length)e.nextElement()).resolveTableUnit(dTableUnit);
+	for (int i = 0; i < lengths.size(); i++) {
+	    ((Length)lengths.get(i)).resolveTableUnit(dTableUnit);
         }
     }
 
     public String toString() {
         StringBuffer sbuf = new StringBuffer();
-	Enumeration e = lengths.elements();
-	while (e.hasMoreElements()) {
+	for (int i = 0; i < lengths.size(); i++) {
 	    if (sbuf.length()>0) {
 		sbuf.append('+');
 	    }
-	    sbuf.append(e.nextElement().toString());
+	    sbuf.append(lengths.get(i).toString());
         }
 	return sbuf.toString();
     }
 
     public Numeric asNumeric() {
 	Numeric numeric = null;
-	for (Enumeration e = lengths.elements(); e.hasMoreElements();) {
-	    Length l = (Length)e.nextElement();
+	for (int i = 0; i < lengths.size(); i++) {
+	    Length l = (Length)lengths.get(i);
 	    if (numeric == null) {
 		numeric = l.asNumeric();
-	    }
-	    else {
+	    } else {
 		try {
 		    Numeric sum = numeric.add(l.asNumeric());
 		    numeric = sum;

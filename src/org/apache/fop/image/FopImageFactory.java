@@ -7,6 +7,11 @@
 
 package org.apache.fop.image;
 
+// FOP
+import org.apache.fop.image.analyser.ImageReaderFactory;
+import org.apache.fop.image.analyser.ImageReader;
+import org.apache.fop.configuration.Configuration;
+
 // Java
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,12 +19,7 @@ import java.io.File;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.lang.reflect.Constructor;
-import java.util.Hashtable;
-
-// FOP
-import org.apache.fop.image.analyser.ImageReaderFactory;
-import org.apache.fop.image.analyser.ImageReader;
-import org.apache.fop.configuration.Configuration;
+import java.util.HashMap;
 
 /**
  * create FopImage objects (with a configuration file - not yet implemented).
@@ -27,7 +27,7 @@ import org.apache.fop.configuration.Configuration;
  */
 public class FopImageFactory {
 
-    private static Hashtable m_urlMap = new Hashtable();
+    private static HashMap m_urlMap = new HashMap();
 
     /**
      * create an FopImage objects.
@@ -36,7 +36,7 @@ public class FopImageFactory {
      * @exception java.net.MalformedURLException bad URL
      * @exception FopImageException an error occured during construction
      */
-    public static FopImage Make(String href)
+    public static synchronized FopImage Make(String href)
             throws MalformedURLException, FopImageException {
 
         /*
@@ -84,7 +84,7 @@ public class FopImageFactory {
             URL context_url = null;
             String base = Configuration.getStringValue("baseDir");
 
-            if(base == null) {
+            if (base == null) {
                 throw new FopImageException("Error with image URL: "
                                              + e.getMessage()
                                              + " and no base directory is specified");
@@ -100,7 +100,7 @@ public class FopImageFactory {
             }
         }
 
-            // If not, check image type
+        // If not, check image type
         ImageReader imgReader = null;
         try {
             if (imgIS == null) {

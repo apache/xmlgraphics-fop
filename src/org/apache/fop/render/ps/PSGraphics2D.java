@@ -28,7 +28,7 @@ import java.awt.image.renderable.*;
 import java.io.*;
 
 import java.util.Map;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * This concrete implementation of <tt>AbstractGraphics2D</tt> is a
@@ -518,40 +518,40 @@ return false;
             Point2D p2 = gp.getPoint2();
             boolean cyclic = gp.isCyclic();
 
-            Vector theCoords = new Vector();
-            theCoords.addElement(new Double(p1.getX()));
-            theCoords.addElement(new Double(p1.getY()));
-            theCoords.addElement(new Double(p2.getX()));
-            theCoords.addElement(new Double(p2.getY()));
+            ArrayList theCoords = new ArrayList();
+            theCoords.add(new Double(p1.getX()));
+            theCoords.add(new Double(p1.getY()));
+            theCoords.add(new Double(p2.getX()));
+            theCoords.add(new Double(p2.getY()));
 
-            Vector theExtend = new Vector();
-            theExtend.addElement(new Boolean(true));
-            theExtend.addElement(new Boolean(true));
+            ArrayList theExtend = new ArrayList();
+            theExtend.add(new Boolean(true));
+            theExtend.add(new Boolean(true));
 
-            Vector theDomain = new Vector();
-            theDomain.addElement(new Double(0));
-            theDomain.addElement(new Double(1));
+            ArrayList theDomain = new ArrayList();
+            theDomain.add(new Double(0));
+            theDomain.add(new Double(1));
 
-            Vector theEncode = new Vector();
-            theEncode.addElement(new Double(0));
-            theEncode.addElement(new Double(1));
-            theEncode.addElement(new Double(0));
-            theEncode.addElement(new Double(1));
+            ArrayList theEncode = new ArrayList();
+            theEncode.add(new Double(0));
+            theEncode.add(new Double(1));
+            theEncode.add(new Double(0));
+            theEncode.add(new Double(1));
 
-            Vector theBounds = new Vector();
-            theBounds.addElement(new Double(0));
-            theBounds.addElement(new Double(1));
+            ArrayList theBounds = new ArrayList();
+            theBounds.add(new Double(0));
+            theBounds.add(new Double(1));
 
-            Vector theFunctions = new Vector();
+            ArrayList theFunctions = new ArrayList();
 
-            Vector someColors = new Vector();
+            ArrayList someColors = new ArrayList();
 
             PDFColor color1 = new PDFColor(c1.getRed(), c1.getGreen(),
                                            c1.getBlue());
-            someColors.addElement(color1);
+            someColors.add(color1);
             PDFColor color2 = new PDFColor(c2.getRed(), c2.getGreen(),
                                            c2.getBlue());
-            someColors.addElement(color2);
+            someColors.add(color2);
 
             ColorSpace aColorSpace = new ColorSpace(ColorSpace.DEVICE_RGB);
         } else if (paint instanceof TexturePaint) {}

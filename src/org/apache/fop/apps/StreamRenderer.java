@@ -8,8 +8,8 @@ package org.apache.fop.apps;
 
 import java.io.OutputStream;
 import java.io.IOException;
-import java.util.Vector;
-import java.util.Enumeration;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.xml.sax.SAXException;
 
@@ -84,7 +84,7 @@ public class StreamRenderer {
     /**
       The list of pages waiting to be renderered.
     */
-    private Vector renderQueue = new Vector();
+    private ArrayList renderQueue = new ArrayList();
 
     /**
       The current set of IDReferences, passed to the
@@ -96,7 +96,7 @@ public class StreamRenderer {
     /**
      * The list of extensions.
      */
-    private Vector extensions = new Vector();
+    private ArrayList extensions = new ArrayList();
 
     private Logger log;
 
@@ -118,7 +118,7 @@ public class StreamRenderer {
     }
 
     public void addExtension(ExtensionObj ext) {
-        extensions.addElement(ext);
+        extensions.add(ext);
     }
 
     public void startRenderer()
@@ -197,8 +197,8 @@ public class StreamRenderer {
         AreaTree a = new AreaTree(this);
         a.setFontInfo(fontInfo);
 
-        for(Enumeration e = extensions.elements(); e.hasMoreElements(); ) {
-            ExtensionObj ext = (ExtensionObj)e.nextElement();
+        for(int i = 0; i < extensions.size(); i++ ) {
+            ExtensionObj ext = (ExtensionObj)extensions.get(i);
             try {
                 ext.format(a);
             } catch (FOPException fope) {
@@ -234,7 +234,7 @@ public class StreamRenderer {
     private synchronized void addToRenderQueue(Page page)
     throws FOPException, IOException {
         RenderQueueEntry entry = new RenderQueueEntry(page);
-        renderQueue.addElement(entry);
+        renderQueue.add(entry);
 
         /*
           The just-added entry could (possibly) resolve the
@@ -252,20 +252,12 @@ public class StreamRenderer {
     private synchronized void processQueue(boolean force)
     throws FOPException, IOException {
         while (renderQueue.size() > 0) {
-            RenderQueueEntry entry = (RenderQueueEntry) renderQueue.elementAt(0);
+            RenderQueueEntry entry = (RenderQueueEntry) renderQueue.get(0);
             if ((!force) && (!entry.isResolved()))
                 break;
 
             renderer.render(entry.getPage(), outputStream);
-
-            /* TODO
-            Enumeration rootEnumeration =
-            entry.getAreaTree().getExtensions().elements();
-            while (rootEnumeration.hasMoreElements())
-            renderTree.addExtension((ExtensionObj) rootEnumeration.nextElement());
-            */
-
-            renderQueue.removeElementAt(0);
+            renderQueue.remove(0);
         }
     }
 
@@ -283,14 +275,14 @@ public class StreamRenderer {
         /*
           A list of ID references (names).
         */
-        private Vector unresolvedIdReferences = new Vector();
+        private ArrayList unresolvedIdReferences = new ArrayList();
 
         public RenderQueueEntry(Page page) {
             this.page = page;
 
-            Enumeration e = idReferences.getInvalidElements();
-            while (e.hasMoreElements())
-                unresolvedIdReferences.addElement(e.nextElement());
+            Iterator e = idReferences.getInvalidElements();
+            while (e.hasNext())
+                unresolvedIdReferences.add(e.next());
         }
 
         public Page getPage() {
@@ -308,12 +300,11 @@ public class StreamRenderer {
             //
             // See if any of the unresolved references are still unresolved.
             //
-            Enumeration e = unresolvedIdReferences.elements();
-            while (e.hasMoreElements())
-                if (!idReferences.doesIDExist((String) e.nextElement()))
+            for (int i = 0; i< unresolvedIdReferences.size(); i++)
+                if (!idReferences.doesIDExist((String)unresolvedIdReferences.get(i)))
                     return false;
 
-            unresolvedIdReferences.removeAllElements();
+            unresolvedIdReferences.clear();
             return true;
         }
     }
@@ -329,7 +320,7 @@ public class StreamRenderer {
 //              pageIndex = renderQueue.indexOf(current);
 //          if ((pageIndex + 1) < renderQueue.size()) {
 //              nextPage = ((RenderQueueEntry)renderQueue
-//                          .elementAt(pageIndex + 1)).getPage();
+//                          .get(pageIndex + 1)).getPage();
 //              if (isWithinPageSequence
 //                      &&!nextPage.getPageSequence().equals(current.getPageSequence())) {
 //                  nextPage = null;
@@ -344,7 +335,7 @@ public class StreamRenderer {
             int pageIndex = renderQueue.size();
             if (pageIndex > 0) {
                 Page previousPage = ((RenderQueueEntry)renderQueue
-                                     .elementAt(pageIndex - 1)).getPage();
+                                     .get(pageIndex - 1)).getPage();
                 PageSequence currentPS = current.getPageSequence();
                 PageSequence previousPS = previousPage.getPageSequence();
                 if (!isWithinPageSequence || previousPS.equals(currentPS)) {
@@ -354,10 +345,10 @@ public class StreamRenderer {
         } else {
             for (int pageIndex=renderQueue.size()-1;pageIndex>0;pageIndex--) {
                 Page page = ((RenderQueueEntry)renderQueue
-                             .elementAt(pageIndex)).getPage();
+                             .get(pageIndex)).getPage();
                 if (current.equals(page)) {
                     Page previousPage = ((RenderQueueEntry)renderQueue
-                                         .elementAt(pageIndex - 1)).getPage();
+                                         .get(pageIndex - 1)).getPage();
                     PageSequence currentPS = current.getPageSequence();
                     PageSequence previousPS = previousPage.getPageSequence();
                     if (!isWithinPageSequence || previousPS.equals(currentPS)) {

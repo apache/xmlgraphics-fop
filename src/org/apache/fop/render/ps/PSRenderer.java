@@ -42,9 +42,9 @@ import java.io.*;
 import java.util.*;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
 import java.awt.Point;
@@ -239,10 +239,10 @@ public class PSRenderer extends AbstractRenderer {
         write("/FOPFonts 100 dict dup begin");
         // write("/gfF1{/Helvetica findfont} bd");
         // write("/gfF3{/Helvetica-Bold findfont} bd");
-        Hashtable fonts = fontInfo.getFonts();
-        Enumeration enum = fonts.keys();
-        while (enum.hasMoreElements()) {
-            String key = (String)enum.nextElement();
+        HashMap fonts = fontInfo.getFonts();
+        Iterator enum = fonts.keySet().iterator();
+        while (enum.hasNext()) {
+            String key = (String)enum.next();
             Font fm = (Font)fonts.get(key);
             write("/" + key + " /" + fm.fontName() + " def");
         }
@@ -250,9 +250,9 @@ public class PSRenderer extends AbstractRenderer {
         write("%%EndResource");
 
         //Rewrite font encodings
-        enum = fonts.keys();
-        while (enum.hasMoreElements()) {
-            String key = (String)enum.nextElement();
+        enum = fonts.keySet().iterator();
+        while (enum.hasNext()) {
+            String key = (String)enum.next();
             Font fm = (Font)fonts.get(key);
             write("/" + fm.fontName() + " findfont");
             write("dup length dict begin");
@@ -770,9 +770,9 @@ public class PSRenderer extends AbstractRenderer {
 
         String fontWeight = area.getFontState().getFontWeight();
         //comment("% --- LineArea begin font-weight="+fontWeight);
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
+        ArrayList children = area.getChildren();
+        for (int i = 0; i < children.size(); i++) {
+            Box b = (Box)children.get(i);
             this.currentYPosition = ry - area.getPlacementOffset();
             b.render(this);
         }

@@ -11,8 +11,7 @@ package org.apache.fop.image.analyser;
 import java.io.InputStream;
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.ArrayList;
 
 // FOP
 import org.apache.fop.image.FopImageException;
@@ -23,7 +22,7 @@ import org.apache.fop.image.FopImageException;
  * @version 1.0
  */
 public class ImageReaderFactory {
-    static protected Vector formats = null;
+    static protected ArrayList formats = null;
 
     /**
      * ImageReader maker.
@@ -36,22 +35,21 @@ public class ImageReaderFactory {
                                    InputStream in) throws FopImageException {
 
         // need to use a config file and remove static methods
-        formats = new Vector();
-        formats.addElement(new JPEGReader());
-        formats.addElement(new BMPReader());
-        formats.addElement(new GIFReader());
-        formats.addElement(new PNGReader());
-        formats.addElement(new TIFFReader());
-        formats.addElement(new EPSReader());
-        formats.addElement(new SVGReader());
+        formats = new ArrayList();
+        formats.add(new JPEGReader());
+        formats.add(new BMPReader());
+        formats.add(new GIFReader());
+        formats.add(new PNGReader());
+        formats.add(new TIFFReader());
+        formats.add(new EPSReader());
+        formats.add(new SVGReader());
         //
 
         ImageReader reader;
         BufferedInputStream bis = new BufferedInputStream(in);
-        Enumeration itr = formats.elements();
         try {
-            while (itr.hasMoreElements()) {
-                reader = (ImageReader)itr.nextElement();
+            for (int i = 0; i< formats.size(); i++) {
+                reader = (ImageReader)formats.get(i);
                 if (reader.verifySignature(uri, bis)) {
                     return reader;
                 }

@@ -7,8 +7,6 @@
 
 package org.apache.fop.layout.hyphenation;
 
-import java.util.Vector;
-
 /**
  * This class represents a hyphenated word.
  *

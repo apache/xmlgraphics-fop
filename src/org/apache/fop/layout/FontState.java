@@ -7,12 +7,12 @@
 
 package org.apache.fop.layout;
 
-import java.util.Hashtable;
-import java.util.StringTokenizer;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.FontVariant;
 import org.apache.fop.render.pdf.CodePointMapping;
+
+import java.util.HashMap;
+import java.util.StringTokenizer;
 
 public class FontState {
 
@@ -27,7 +27,7 @@ public class FontState {
     private FontMetric _metric;
     private int _letterSpacing;
 
-    private static Hashtable EMPTY_HASHTABLE = new Hashtable();
+    private static HashMap EMPTY_HASHMAP = new HashMap();
 
 
     public FontState(FontInfo fontInfo, String fontFamily, String fontStyle,
@@ -146,13 +146,13 @@ public class FontState {
         return _metric.getXHeight(_fontSize) / 1000;
     }
 
-    public Hashtable getKerning() {
+    public HashMap getKerning() {
         if (_metric instanceof FontDescriptor) {
-            Hashtable ret = ((FontDescriptor)_metric).getKerningInfo();
+            HashMap ret = ((FontDescriptor)_metric).getKerningInfo();
             if (ret != null)
                 return ret;
         }
-        return EMPTY_HASHTABLE;
+        return EMPTY_HASHMAP;
     }
 
     public int width(int charnum) {

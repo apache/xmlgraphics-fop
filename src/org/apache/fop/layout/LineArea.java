@@ -27,8 +27,7 @@ import org.apache.fop.layout.hyphenation.Hyphenator;
 import org.apache.fop.configuration.Configuration;
 
 // java
-import java.util.Vector;
-import java.util.Enumeration;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.awt.Rectangle;
 
@@ -90,7 +89,7 @@ public class LineArea extends Area {
      * because subsequent characters to come (in a different addText)
      * may be part of the same word
      */
-    protected Vector pendingAreas = new Vector();
+    protected ArrayList pendingAreas = new ArrayList();
 
     /* the width of the pendingAreas */
     protected int pendingWidth = 0;
@@ -123,39 +122,30 @@ public class LineArea extends Area {
         this.endIndent = endIndent;
 
         if (prevLineArea != null) {
-            Enumeration e = prevLineArea.pendingAreas.elements();
-            Box b = null;
             // There might be InlineSpaces at the beginning
             // that should not be there - eat them
             boolean eatMoreSpace = true;
-            int eatenWidth = 0;
+            pendingWidth = prevLineArea.pendingWidth;
 
-            while (eatMoreSpace) {
-                if (e.hasMoreElements()) {
-                    b = (Box)e.nextElement();
+            for (int i = 0; i < prevLineArea.pendingAreas.size(); i++) {
+                Object b = prevLineArea.pendingAreas.get(i);
+                if (eatMoreSpace) {
                     if (b instanceof InlineSpace) {
                         InlineSpace is = (InlineSpace)b;
-                        if (is.isEatable())
-                            eatenWidth += is.getSize();
-                        else
+                        if (is.isEatable()) {
+                            pendingWidth -= is.getSize();
+                        } else {
                             eatMoreSpace = false;
+                            pendingAreas.add(b);
+                        }
                     } else {
                         eatMoreSpace = false;
+                        pendingAreas.add(b);
                     }
                 } else {
-                    eatMoreSpace = false;
-                    b = null;
+                    pendingAreas.add(b);
                 }
             }
-
-            while (b != null) {
-                pendingAreas.addElement(b);
-                if (e.hasMoreElements())
-                    b = (Box)e.nextElement();
-                else
-                    b = null;
-            }
-            pendingWidth = prevLineArea.pendingWidth - eatenWidth;
             prevLineArea.pendingWidth=0;
             prevLineArea.pendingAreas=null;
         }
@@ -182,7 +172,7 @@ public class LineArea extends Area {
                 this.red, this.green, this.blue, refid, width);
 
         pia.setYOffset(placementOffset);
-        pendingAreas.addElement(pia);
+        pendingAreas.add(pia);
         pendingWidth += width;
         prev = TEXT;
 
@@ -296,9 +286,8 @@ public class LineArea extends Area {
 
                     // add any pending areas
 
-                    Enumeration e = pendingAreas.elements();
-                    while (e.hasMoreElements()) {
-                        Box box = (Box)e.nextElement();
+                    for (int j = 0; j < pendingAreas.size(); j++ ) {
+                        Box box = (Box)pendingAreas.get(j);
                         if (box instanceof InlineArea) {
                             if (ls != null) {
                                 Rectangle lr =
@@ -315,7 +304,7 @@ public class LineArea extends Area {
 
                     // reset pending areas array
                     pendingWidth = 0;
-                    pendingAreas = new Vector();
+                    pendingAreas = new ArrayList();
 
                     // add the current word
 
@@ -409,10 +398,10 @@ public class LineArea extends Area {
                     wordStart = i;
                     wordLength = 1;
                 } else if (prev == TEXT || prev == MULTIBYTECHAR ) {
-					if ( prev == TEXT && curr == TEXT || ! canBreakMidWord()) {
-	                    wordLength++;
+                    if ( prev == TEXT && curr == TEXT || ! canBreakMidWord()) {
+                        wordLength++;
     	                wordWidth += charWidth;
-					} else {
+                    } else {
 
 //                    if (spaceWidth > 0) { // for text-align="justify"
                         InlineSpace is = new InlineSpace(spaceWidth);
@@ -430,46 +419,45 @@ public class LineArea extends Area {
                         spaceWidth = 0;
 //                    }
 
-                    // add any pending areas
-
-                    Enumeration e = pendingAreas.elements();
-                    while (e.hasMoreElements()) {
-                        Box box = (Box)e.nextElement();
-                        if (box instanceof InlineArea) {
-                            if (ls != null) {
-                                Rectangle lr =
+                        // add any pending areas
+                        
+                        for (int j = 0; j < pendingAreas.size(); j++ ) {
+                            Box box = (Box)pendingAreas.get(j);
+                            if (box instanceof InlineArea) {
+                              if (ls != null) {
+                                  Rectangle lr =
                                     new Rectangle(finalWidth, 0,
                                                   ((InlineArea)box).getContentWidth(),
                                                   fontState.getFontSize());
-                                ls.addRect(lr, this, (InlineArea)box);
+                                  ls.addRect(lr, this, (InlineArea)box);
+                              }
                             }
+                            addChild(box);
                         }
-                        addChild(box);
+
+                        finalWidth += pendingWidth;
+
+                        // reset pending areas array
+                        pendingWidth = 0;
+                        pendingAreas = new ArrayList();
+
+                        // add the current word
+
+                        if (wordLength > 0) {
+                            // The word might contain nonbreaking
+                            // spaces. Split the word and add InlineSpace
+                            // as necessary. All spaces inside the word
+                            // have a fixed width.
+                            addSpacedWord(new String(data, wordStart, wordLength),
+                                          ls, finalWidth, 0, textState, false);
+                            finalWidth += wordWidth;
+                        }
+                        spaceWidth = 0;
+                        wordStart = i;
+                        wordLength = 1;
+                        wordWidth = charWidth;
                     }
-
-                    finalWidth += pendingWidth;
-
-                    // reset pending areas array
-                    pendingWidth = 0;
-                    pendingAreas = new Vector();
-
-                    // add the current word
-
-                    if (wordLength > 0) {
-                        // The word might contain nonbreaking
-                        // spaces. Split the word and add InlineSpace
-                        // as necessary. All spaces inside the word
-                        // Have a fixed width.
-                        addSpacedWord(new String(data, wordStart, wordLength),
-                                      ls, finalWidth, 0, textState, false);
-                        finalWidth += wordWidth;
-					}
-						spaceWidth = 0;
-						wordStart = i;
-						wordLength = 1;
-	                    wordWidth = charWidth;
-					}
-					prev = curr;
+                    prev = curr;
                 } else {                         // nothing previous
 
                     prev = curr;
@@ -557,7 +545,7 @@ public class LineArea extends Area {
                 if (prevLTState) {
                     pis.setLineThrough(textState.getLineThrough());
                 }
-                pendingAreas.addElement(pis);
+                pendingAreas.add(pis);
                 pendingWidth += spaceWidth;
                 spaceWidth = 0;
             }
@@ -618,7 +606,7 @@ public class LineArea extends Area {
         switch (leaderPattern) {
         case LeaderPattern.SPACE:
             InlineSpace spaceArea = new InlineSpace(leaderLength);
-            pendingAreas.addElement(spaceArea);
+            pendingAreas.add(spaceArea);
             break;
         case LeaderPattern.RULE:
             LeaderArea leaderArea = new LeaderArea(fontState, red, green,
@@ -626,7 +614,7 @@ public class LineArea extends Area {
                                                    leaderPattern,
                                                    ruleThickness, ruleStyle);
             leaderArea.setYOffset(placementOffset);
-            pendingAreas.addElement(leaderArea);
+            pendingAreas.add(leaderArea);
             break;
         case LeaderPattern.DOTS:
             // if the width of a dot is larger than leader-pattern-width
@@ -636,20 +624,20 @@ public class LineArea extends Area {
             }
             // if value of leader-pattern-width is 'use-font-metrics' (0)
             if (leaderPatternWidth == 0) {
-                pendingAreas.addElement(this.buildSimpleLeader(dot,
-                        leaderLength));
+                pendingAreas.add(this.buildSimpleLeader(dot, leaderLength));
             } else {
-                // if leader-alignment is used, calculate space to insert before leader
-                // so that all dots will be parallel.
+                // if leader-alignment is used, calculate space to
+                // insert before leader so that all dots will be
+                // parallel.
                 if (leaderAlignment == LeaderAlignment.REFERENCE_AREA) {
                     int spaceBeforeLeader =
                         this.getLeaderAlignIndent(leaderLength,
                                                   leaderPatternWidth);
-                    // appending indent space leader-alignment
-                    // setting InlineSpace to false, so it is not used in line justification
+                    // appending indent space leader-alignment setting
+                    // InlineSpace to false, so it is not used in line
+                    // justification
                     if (spaceBeforeLeader != 0) {
-                        pendingAreas.addElement(new InlineSpace(spaceBeforeLeader,
-                                                                false));
+                        pendingAreas.add(new InlineSpace(spaceBeforeLeader, false));
                         pendingWidth += spaceBeforeLeader;
                         // shorten leaderLength, otherwise - in case of
                         // leaderLength=remaining length - it will cut off the end of
@@ -674,11 +662,11 @@ public class LineArea extends Area {
                 // add combination of dot + space to fill leader
                 // is there a way to do this in a more effective way?
                 for (int i = 0; i < dotsFactor; i++) {
-                    pendingAreas.addElement(leaderPatternArea);
-                    pendingAreas.addElement(spaceBetweenDots);
+                    pendingAreas.add(leaderPatternArea);
+                    pendingAreas.add(spaceBetweenDots);
                 }
                 // append at the end some space to fill up to leader length
-                pendingAreas.addElement(new InlineSpace(leaderLength
+                pendingAreas.add(new InlineSpace(leaderLength
                                                         - dotsFactor
                                                           * leaderPatternWidth));
             }
@@ -708,9 +696,8 @@ public class LineArea extends Area {
             spaceWidth = 0;
         }
 
-        Enumeration e = pendingAreas.elements();
-        while (e.hasMoreElements()) {
-            Box box = (Box)e.nextElement();
+        for (int i = 0; i < pendingAreas.size(); i++ ) {
+            Box box = (Box)pendingAreas.get(i);
             addChild(box);
         }
 
@@ -718,7 +705,7 @@ public class LineArea extends Area {
 
         // reset pending areas array
         pendingWidth = 0;
-        pendingAreas = new Vector();
+        pendingAreas = new ArrayList();
     }
 
     /**
@@ -727,7 +714,6 @@ public class LineArea extends Area {
      */
     public void align(int type) {
         int padding = 0;
-
         switch (type) {
         case TextAlign.START:      // left
             padding = this.getContentWidth() - finalWidth;
@@ -745,9 +731,8 @@ public class LineArea extends Area {
         case TextAlign.JUSTIFY:    // justify
             // first pass - count the spaces
             int spaceCount = 0;
-            Enumeration e = children.elements();
-            while (e.hasMoreElements()) {
-                Box b = (Box)e.nextElement();
+            for (int i = 0; i < children.size(); i++ ) {
+                Box b = (Box)children.get(i);
                 if (b instanceof InlineSpace) {
                     InlineSpace space = (InlineSpace)b;
                     if (space.getResizeable()) {
@@ -762,9 +747,8 @@ public class LineArea extends Area {
             }
             // second pass - add additional space
             spaceCount = 0;
-            e = children.elements();
-            while (e.hasMoreElements()) {
-                Box b = (Box)e.nextElement();
+            for (int i = 0; i < children.size(); i++) {
+                Box b = (Box)children.get(i);
                 if (b instanceof InlineSpace) {
                     InlineSpace space = (InlineSpace)b;
                     if (space.getResizeable()) {
@@ -785,9 +769,8 @@ public class LineArea extends Area {
     public void verticalAlign() {
         int superHeight = -this.placementOffset;
         int maxHeight = this.allocationHeight;
-        Enumeration e = children.elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
+        for (int i = 0; i < children.size(); i++ ) {
+            Box b = (Box)children.get(i);
             if (b instanceof InlineArea) {
                 InlineArea ia = (InlineArea)b;
                 if (ia instanceof WordArea) {
@@ -1103,7 +1086,7 @@ public class LineArea extends Area {
                               width);
             ia.setYOffset(placementOffset);
             ia.setUnderlined(ul);
-            pendingAreas.addElement(ia);
+            pendingAreas.add(ia);
             if (Character.isSpaceChar(data)) {
                 this.spaceWidth = +width;
                 prev = LineArea.WHITESPACE;
@@ -1141,9 +1124,8 @@ public class LineArea extends Area {
 
         // add any pending areas
 
-        Enumeration e = pendingAreas.elements();
-        while (e.hasMoreElements()) {
-            Box box = (Box)e.nextElement();
+        for (int i = 0; i < pendingAreas.size(); i++ ) {
+            Box box = (Box)pendingAreas.get(i);
             if (box instanceof InlineArea) {
                 if (ls != null) {
                     Rectangle lr =
@@ -1160,7 +1142,7 @@ public class LineArea extends Area {
 
         // reset pending areas array
         pendingWidth = 0;
-        pendingAreas = new Vector();
+        pendingAreas = new ArrayList();
         String word = (wordBuf != null) ? wordBuf.toString() : "";
         int wordWidth = this.getWordWidth(word);
         WordArea hia = new WordArea(currentFontState,
@@ -1281,7 +1263,6 @@ public class LineArea extends Area {
                     width = getCharWidth(' ') * 2;
             }
         }
-
         return width;
     }
 
@@ -1361,7 +1342,7 @@ public class LineArea extends Area {
                     }
 
                     if (addToPending) {
-                        pendingAreas.addElement(is);
+                        pendingAreas.add(is);
                         pendingWidth += spaceWidth;
                     } else {
                         addChild(is);
@@ -1383,7 +1364,7 @@ public class LineArea extends Area {
                 ia.setVerticalAlign(vAlign);
 
                 if (addToPending) {
-                    pendingAreas.addElement(ia);
+                    pendingAreas.add(ia);
                     pendingWidth += wordWidth;
                 } else {
                     addChild(ia);

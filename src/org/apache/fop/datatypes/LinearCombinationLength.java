@@ -7,21 +7,21 @@
 
 package org.apache.fop.datatypes;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class LinearCombinationLength extends Length {
 
-    protected Vector factors;
-    protected Vector lengths;
+    protected ArrayList factors;
+    protected ArrayList lengths;
 
     public LinearCombinationLength() {
-        factors = new Vector();
-        lengths = new Vector();
+        factors = new ArrayList();
+        lengths = new ArrayList();
     }
 
     public void addTerm(double factor, Length length) {
-        factors.addElement(new Double(factor));
-        lengths.addElement(length);
+        factors.add(new Double(factor));
+        lengths.add(length);
     }
 
     /**
@@ -32,8 +32,8 @@ public class LinearCombinationLength extends Length {
         int numFactors = factors.size();
         for (int i = 0; i < numFactors; ++i) {
             result +=
-                (int)(((Double)factors.elementAt(i)).doubleValue()
-                      * (double)((Length)lengths.elementAt(i)).mvalue());
+                (int)(((Double)factors.get(i)).doubleValue()
+                      * (double)((Length)lengths.get(i)).mvalue());
         }
         setComputedValue(result);
     }

@@ -7,7 +7,7 @@
 
 package org.apache.fop.fo;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class ListProperty extends Property {
 
@@ -27,18 +27,18 @@ public class ListProperty extends Property {
 
     }
 
-    protected Vector list;
+    protected ArrayList list;
 
     public ListProperty(Property prop) {
-        list = new Vector();
-        list.addElement(prop);
+        list = new ArrayList();
+        list.add(prop);
     }
 
     public void addProperty(Property prop) {
-        list.addElement(prop);
+        list.add(prop);
     }
 
-    public Vector getList() {
+    public ArrayList getList() {
         return list;
     }
 

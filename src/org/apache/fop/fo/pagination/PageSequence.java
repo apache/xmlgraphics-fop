@@ -21,8 +21,8 @@ import org.apache.fop.layout.PageMaster;
 import org.apache.fop.apps.FOPException;
 
 // Java
-import java.util.*;
-
+import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * This provides pagination of flows onto pages. Much of the logic for paginating
@@ -71,7 +71,7 @@ public class PageSequence extends FObj {
      * Map of flows to their flow name (flow-name, Flow)
      * Does only contain flows for static content!
      */
-    private Hashtable flowMap;
+    private HashMap flowMap;
 
     // according to communication from Paul Grosso (XSL-List,
     // 001228, Number 406), confusion in spec section 6.4.5 about
@@ -124,7 +124,7 @@ public class PageSequence extends FObj {
         // best time to run some checks on LayoutMasterSet
         layoutMasterSet.checkRegionNames();
 
-        flowMap = new Hashtable();
+        flowMap = new HashMap();
 
         String ipnValue = this.properties.get("initial-page-number").getString();
 
@@ -331,7 +331,7 @@ public class PageSequence extends FObj {
         Page newPage = this.currentSimplePageMaster.getPageMaster()
           .makePage(areaTree);
         if (currentPage != null) {
-            Vector foots = currentPage.getPendingFootnotes();
+            ArrayList foots = currentPage.getPendingFootnotes();
             newPage.setPendingFootnotes(foots);
         }
         newPage.setNumber(this.currentPageNumber);

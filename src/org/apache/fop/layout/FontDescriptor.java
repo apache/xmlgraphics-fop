@@ -20,7 +20,7 @@ public interface FontDescriptor {
     public int getStemV();
 
     public boolean hasKerningInfo();
-    public java.util.Hashtable getKerningInfo();
+    public java.util.HashMap getKerningInfo();
     public boolean isEmbeddable();
     public byte getSubType();
     public org.apache.fop.pdf.PDFStream getFontFile(int objNum);

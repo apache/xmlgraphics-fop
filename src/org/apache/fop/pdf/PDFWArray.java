@@ -9,7 +9,7 @@ package org.apache.fop.pdf;
 
 // Java
 import java.io.UnsupportedEncodingException;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * class representing a <b>W</b> array for CID fonts.
@@ -19,10 +19,10 @@ public class PDFWArray {
     /**
      * the metrics
      */
-    private Vector entries;
+    private ArrayList entries;
 
     public PDFWArray() {
-        entries = new Vector();
+        entries = new ArrayList();
     }
 
     /**
@@ -33,7 +33,7 @@ public class PDFWArray {
      * @param metrics the metrics array.
      */
     public void addEntry(int start, int[] metrics) {
-        entries.addElement(new Entry(start, metrics));
+        entries.add(new Entry(start, metrics));
     }
 
     /**
@@ -44,7 +44,7 @@ public class PDFWArray {
      * @param width the width for all CIDs in the range
      */
     public void addEntry(int first, int last, int width) {
-        entries.addElement(new int[] {
+        entries.add(new int[] {
             first, last, width
         });
     }
@@ -59,7 +59,7 @@ public class PDFWArray {
      * @param posY the y component for the vertical position vector
      */
     public void addEntry(int first, int last, int width, int posX, int posY) {
-        entries.addElement(new int[] {
+        entries.add(new int[] {
             first, last, width, posX, posY
         });
     }
@@ -77,7 +77,7 @@ public class PDFWArray {
         p.append("[ ");
         int len = entries.size();
         for (int i = 0; i < len; i++) {
-            Object entry = entries.elementAt(i);
+            Object entry = entries.get(i);
             if (entry instanceof int[]) {
                 int[] line = (int[])entry;
                 for (int j = 0; j < line.length; j++) {

@@ -19,10 +19,7 @@ import org.apache.fop.fo.pagination.PageSequence;
 
 // Java
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Enumeration;
-import java.util.Stack;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /*
  * Modified by Mark Lillywhite, mark-fop@inomial.com. No longer keeps
@@ -47,7 +44,7 @@ public class AreaTree {
     /**
      * List of root extension objects
      */
-    Vector rootExtensions = null;
+    ArrayList rootExtensions = null;
 
     private StreamRenderer streamRenderer;
 
@@ -89,9 +86,10 @@ public class AreaTree {
     }
 
     public void addExtension(ExtensionObj obj) {
-        if(rootExtensions ==null)
-            rootExtensions = new Vector();
-        rootExtensions.addElement(obj);
+        if(rootExtensions ==null) {
+            rootExtensions = new ArrayList();
+        }
+        rootExtensions.add(obj);
     }
 
 }

@@ -13,9 +13,6 @@ import org.apache.fop.layout.inline.*;
 
 import org.apache.fop.render.Renderer;
 
-import java.util.Vector;
-import java.util.Enumeration;
-
 public class ImageArea extends InlineArea {
 
     protected int xOffset = 0;

@@ -17,7 +17,7 @@ import java.util.*;
 
 public class Outline extends ExtensionObj {
     private Label _label;
-    private Vector _outlines = new Vector();
+    private ArrayList _outlines = new ArrayList();
 
     private String _internalDestination;
     private String _externalDestination;
@@ -73,7 +73,7 @@ public class Outline extends ExtensionObj {
         if (obj instanceof Label) {
             _label = (Label)obj;
         } else if (obj instanceof Outline) {
-            _outlines.addElement(obj);
+            _outlines.add(obj);
         }
         super.addChild(obj);
     }
@@ -95,7 +95,7 @@ public class Outline extends ExtensionObj {
         return _label == null ? new Label(this, this.properties) : _label;
     }
 
-    public Vector getOutlines() {
+    public ArrayList getOutlines() {
         return _outlines;
     }
 

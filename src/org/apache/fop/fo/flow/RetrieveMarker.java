@@ -15,7 +15,7 @@ import org.apache.fop.datatypes.*;
 import org.apache.fop.apps.FOPException;
 
 // Java
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class RetrieveMarker extends FObj {
 
@@ -92,7 +92,7 @@ public class RetrieveMarker extends FObj {
 
     private Marker searchPage(Page page,
                               boolean isContainingPage) throws FOPException {
-        Vector pageMarkers = page.getMarkers();
+        ArrayList pageMarkers = page.getMarkers();
         if (pageMarkers.isEmpty()) {
             // System.out.println("No markers on page");
             return null;
@@ -102,7 +102,7 @@ public class RetrieveMarker extends FObj {
         // being processed), grab the last qualifying marker on this one
         if (!isContainingPage) {
             for (int c = pageMarkers.size(); c > 0; c--) {
-                Marker currentMarker = (Marker)pageMarkers.elementAt(c - 1);
+                Marker currentMarker = (Marker)pageMarkers.get(c - 1);
                 if (currentMarker.getMarkerClassName().equals(retrieveClassName)) {
                     return currentMarker;
                 }
@@ -113,25 +113,23 @@ public class RetrieveMarker extends FObj {
         // 'first-including-carryover'
         if (retrievePosition == RetrievePosition.FIC) {
             for (int c = 0; c < pageMarkers.size(); c++) {
-                Marker currentMarker = (Marker)pageMarkers.elementAt(c);
+                Marker currentMarker = (Marker)pageMarkers.get(c);
                 if (currentMarker.getMarkerClassName().equals(retrieveClassName)) {
                     return currentMarker;
                 }
             }
-
         } else if (retrievePosition == RetrievePosition.FSWP) {
-            for (int c = 0; c < pageMarkers.size(); c++) {
-                Marker currentMarker = (Marker)pageMarkers.elementAt(c);
+            for (int i = 0; i < pageMarkers.size(); i++) {
+                Marker currentMarker = (Marker)pageMarkers.get(i);
                 if (currentMarker.getMarkerClassName().equals(retrieveClassName)) {
                     if (currentMarker.getRegistryArea().isFirst()) {
                         return currentMarker;
                     }
                 }
             }
-
         } else if (retrievePosition == RetrievePosition.LSWP) {
-            for (int c = pageMarkers.size(); c > 0; c--) {
-                Marker currentMarker = (Marker)pageMarkers.elementAt(c - 1);
+            for (int i = pageMarkers.size(); i > 0; i--) {
+                Marker currentMarker = (Marker)pageMarkers.get(i - 1);
                 if (currentMarker.getMarkerClassName().equals(retrieveClassName)) {
                     if (currentMarker.getRegistryArea().isFirst()) {
                         return currentMarker;
@@ -141,7 +139,7 @@ public class RetrieveMarker extends FObj {
 
         } else if (retrievePosition == RetrievePosition.LEWP) {
             for (int c = pageMarkers.size(); c > 0; c--) {
-                Marker currentMarker = (Marker)pageMarkers.elementAt(c - 1);
+                Marker currentMarker = (Marker)pageMarkers.get(c - 1);
                 if (currentMarker.getMarkerClassName().equals(retrieveClassName)) {
                     if (currentMarker.getRegistryArea().isLast()) {
                         return currentMarker;

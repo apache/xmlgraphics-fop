@@ -28,7 +28,7 @@ import java.awt.Graphics;
 import java.awt.print.*;
 import java.io.OutputStream;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.apache.fop.render.awt.AWTRenderer;
 import org.apache.fop.layout.AreaTree;
@@ -132,8 +132,6 @@ public class PrintStarter extends CommandLineStarter {
 
         }
 
-
-
         public void stopRenderer(OutputStream outputStream)
         throws IOException {
             super.stopRenderer(outputStream);
@@ -141,9 +139,9 @@ public class PrintStarter extends CommandLineStarter {
             if(endNumber == -1)
                 endNumber = getPageCount();
 
-            Vector numbers = getInvalidPageNumbers();
+            ArrayList numbers = getInvalidPageNumbers();
             for (int i = numbers.size() - 1; i > -1; i--)
-                removePage(Integer.parseInt((String)numbers.elementAt(i)));
+                removePage(Integer.parseInt((String)numbers.get(i)));
 
             try {
                 printerJob.print();
@@ -162,9 +160,8 @@ public class PrintStarter extends CommandLineStarter {
         }
 
 
-        private Vector getInvalidPageNumbers() {
-
-            Vector vec = new Vector();
+        private ArrayList getInvalidPageNumbers() {
+            ArrayList vec = new ArrayList();
             int max = getPageCount();
             boolean isValid;
             for (int i = 0; i < max; i++) {
@@ -188,7 +185,7 @@ public class PrintStarter extends CommandLineStarter {
         /* TODO: I'm totally not sure that this is necessary -Mark
         void setCopies(int val) {
             copies = val;
-            Vector copie = tree.getPages();
+            ArrayList copie = tree.getPages();
             for (int i = 1; i < copies; i++) {
                 tree.getPages().addAll(copie);
             }

@@ -8,16 +8,13 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.pdf.PDFGoTo;
+import org.apache.fop.layout.Area;
 import org.apache.fop.layout.AreaContainer;
-
+import org.apache.fop.apps.FOPException;
 
 // Java
-import java.util.Hashtable;
-import java.util.Vector;
-import java.util.Enumeration;
-import java.util.NoSuchElementException;
-import org.apache.fop.layout.Area;
-import org.apache.fop.apps.FOPException;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
   IDReferences contains a map of IDs and the objects to which
@@ -25,7 +22,7 @@ import org.apache.fop.apps.FOPException;
   have yet to be encountered.
   
   Modified by Mark Lillywhite mark-fop@inomial.com. Added
-  getInvalidElements() so that StreamRenderer cna tell what
+  getInvalidElements() so that StreamRenderer can tell what
   hasn't been determined yet.
 
   Modified by lmckenzi@ca.ibm.com
@@ -35,7 +32,7 @@ import org.apache.fop.apps.FOPException;
    
   */
 public class IDReferences {
-    private Hashtable idReferences, idValidation, idUnvalidated;
+    private HashMap idReferences, idValidation, idUnvalidated;
 
     final static int ID_PADDING = 5000;    // space to add before id y position
 
@@ -43,9 +40,9 @@ public class IDReferences {
      * Constructor for IDReferences
      */
     public IDReferences() {
-        idReferences = new Hashtable();
-        idValidation = new Hashtable();
-        idUnvalidated = new Hashtable();
+        idReferences = new HashMap();
+        idValidation = new HashMap();
+        idUnvalidated = new HashMap();
     }
 
 
@@ -142,7 +139,7 @@ public class IDReferences {
      * @param area   The area where the id was encountered
      */
     public void configureID(String id, Area area) {
-        if (id != null &&!id.equals("")) {
+        if (id != null && !id.equals("")) {
             setPosition(id,
                         area.getPage().getBody().getXPosition()
                         + area.getTableCellXOffset() - ID_PADDING,
@@ -154,10 +151,10 @@ public class IDReferences {
     }
 
     /**
-     * Adds id to validation list to be validated .  This should be used if it is unsure whether the id is valid
+     * Adds id to validation list to be validated.  This should be
+     * used if it is unsure whether the id is valid.
      *
-     * @param id     id to be added
-     */
+     * @param id id to be added */
     public void addToIdValidationList(String id) {
         idValidation.put(id, "");
     }
@@ -203,9 +200,9 @@ public class IDReferences {
      */
     public String getInvalidIds() {
         StringBuffer list = new StringBuffer();
-        Enumeration enum = idValidation.keys();
-        while (enum.hasMoreElements()) {
-            list.append("\n\"").append(enum.nextElement().toString()).append("\" ");
+        Iterator iterator = idValidation.keySet().iterator();
+        while (iterator.hasNext()) {
+            list.append("\n\"").append(iterator.next().toString()).append("\" ");
         }
         return list.toString();
     }
@@ -345,7 +342,7 @@ public class IDReferences {
         node.setPosition(x, y);
     }
 
-    public Enumeration getInvalidElements() {
-        return idValidation.keys();
+    public Iterator getInvalidElements() {
+        return idValidation.keySet().iterator();
     }
 }

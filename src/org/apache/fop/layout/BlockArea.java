@@ -13,11 +13,10 @@ import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.*;
 import org.apache.fop.apps.*;
 import org.apache.fop.fo.properties.*;
+import org.apache.fop.messaging.MessageHandler;
 
 // Java
-import java.util.Vector;
-import java.util.Enumeration;
-import org.apache.fop.messaging.MessageHandler;
+import java.util.ArrayList;
 
 /**
  * This class represents a Block Area.
@@ -58,7 +57,7 @@ public class BlockArea extends Area {
     /* hyphenation */
     protected HyphenationProps hyphProps;
 
-    protected Vector pendingFootnotes = null;
+    protected ArrayList pendingFootnotes = null;
 
     public BlockArea(FontState fontState, int allocationWidth, int maxHeight,
                      int startIndent, int endIndent, int textIndent,
@@ -101,9 +100,8 @@ public class BlockArea extends Area {
         }
         // add pending footnotes
         if (pendingFootnotes != null) {
-            for (Enumeration e = pendingFootnotes.elements();
-                    e.hasMoreElements(); ) {
-                FootnoteBody fb = (FootnoteBody)e.nextElement();
+            for (int i = 0; i< pendingFootnotes.size(); i++) {
+                FootnoteBody fb = (FootnoteBody)pendingFootnotes.get(i);
                 Page page = getPage();
                 if (!Footnote.layoutFootnote(page, fb, this)) {
                     page.addPendingFootnote(fb);
@@ -225,9 +223,9 @@ public class BlockArea extends Area {
 
     public void addFootnote(FootnoteBody fb) {
         if (pendingFootnotes == null) {
-            pendingFootnotes = new Vector();
+            pendingFootnotes = new ArrayList();
         }
-        pendingFootnotes.addElement(fb);
+        pendingFootnotes.add(fb);
     }
 
 }

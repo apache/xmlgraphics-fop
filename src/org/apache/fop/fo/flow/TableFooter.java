@@ -14,10 +14,6 @@ import org.apache.fop.datatypes.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
 
-// Java
-import java.util.Vector;
-import java.util.Enumeration;
-
 public class TableFooter extends AbstractTableBody {
 
     public static class Maker extends FObj.Maker {

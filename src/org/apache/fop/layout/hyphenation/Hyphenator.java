@@ -8,7 +8,7 @@
 package org.apache.fop.layout.hyphenation;
 
 import java.io.*;
-import java.util.Hashtable;
+import java.util.HashMap;
 import org.apache.fop.configuration.*;
 import org.apache.fop.messaging.MessageHandler;
 
@@ -19,7 +19,7 @@ import org.apache.fop.messaging.MessageHandler;
  * @author Carlos Villegas <cav@uniscope.co.jp>
  */
 public class Hyphenator {
-    static Hashtable hyphenTrees = new Hashtable();
+    static HashMap hyphenTrees = new HashMap();
 
     private HyphenationTree hyphenTree = null;
     private int remainCharCount = 2;

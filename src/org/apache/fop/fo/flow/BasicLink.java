@@ -15,7 +15,6 @@ import org.apache.fop.layout.*;
 import org.apache.fop.datatypes.ColorType;
 
 // Java
-import java.util.Enumeration;
 import java.awt.Rectangle;
 
 public class BasicLink extends Inline {
@@ -108,7 +107,7 @@ public class BasicLink extends Inline {
 
         int numChildren = this.children.size();
         for (int i = this.marker; i < numChildren; i++) {
-            FONode fo = (FONode)children.elementAt(i);
+            FONode fo = (FONode)children.get(i);
             fo.setLinkSet(ls);
 
             Status status;

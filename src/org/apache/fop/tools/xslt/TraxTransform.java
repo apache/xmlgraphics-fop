@@ -13,7 +13,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Writer;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import org.w3c.dom.Document;
 
 /**
@@ -25,7 +25,7 @@ public class TraxTransform {
     /**
      * Cache of compiled stylesheets (filename, StylesheetRoot)
      */
-    private static Hashtable _stylesheetCache = new Hashtable();
+    private static HashMap _stylesheetCache = new HashMap();
 
     public static Transformer getTransformer(String xsltFilename,
                                              boolean cache) {

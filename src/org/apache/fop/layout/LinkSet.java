@@ -7,21 +7,11 @@
 
 package org.apache.fop.layout;
 
-// Java
-import java.util.Vector;
-import java.util.Enumeration;
-import java.awt.Rectangle;
-
 import org.apache.fop.layout.inline.InlineArea;
 
-import org.apache.fop.fo.properties.WrapOption;       // for enumerated
-// values
-// import org.apache.fop.fo.properties.WhiteSpaceCollapse; // for
-// enumerated values
-import org.apache.fop.fo.properties.TextAlign;        // for enumerated
-// values
-import org.apache.fop.fo.properties.TextAlignLast;    // for enumerated
-// values
+// Java
+import java.util.ArrayList;
+import java.awt.Rectangle;
 
 /**
  * a set of rectangles on a page that are linked to a common
@@ -37,7 +27,7 @@ public class LinkSet {
     /**
      * the set of rectangles
      */
-    Vector rects = new Vector();
+    ArrayList rects = new ArrayList();
 
     private int xoffset = 0;
     private int yoffset = 0;
@@ -72,7 +62,7 @@ public class LinkSet {
         if (this.yoffset > maxY) {
             maxY = this.yoffset;
         }
-        rects.addElement(linkedRectangle);
+        rects.add(linkedRectangle);
     }
 
     public void setYOffset(int y) {
@@ -90,9 +80,8 @@ public class LinkSet {
     public void applyAreaContainerOffsets(AreaContainer ac, Area area) {
         int height = area.getAbsoluteHeight();
         BlockArea ba = (BlockArea)area;
-        Enumeration re = rects.elements();
-        while (re.hasMoreElements()) {
-            LinkedRectangle r = (LinkedRectangle)re.nextElement();
+        for (int i = 0; i < rects.size(); i++ ) {
+            LinkedRectangle r = (LinkedRectangle)rects.get(i);
             r.setX(r.getX() + ac.getXPosition() + area.getTableCellXOffset());
             r.setY(ac.getYPosition() - height + (maxY - r.getY())
                    - ba.getHalfLeading());
@@ -106,31 +95,30 @@ public class LinkSet {
             return;
 
         LinkedRectangle curRect =
-    new LinkedRectangle((LinkedRectangle)rects.elementAt(0));
-        Vector nv = new Vector();
+    new LinkedRectangle((LinkedRectangle)rects.get(0));
+        ArrayList nv = new ArrayList();
 
         for (int ri = 1; ri < numRects; ri++) {
-            LinkedRectangle r = (LinkedRectangle)rects.elementAt(ri);
+            LinkedRectangle r = (LinkedRectangle)rects.get(ri);
 
             // yes, I'm really happy with comparing refs...
             if (r.getLineArea() == curRect.getLineArea()) {
                 curRect.setWidth(r.getX() + r.getWidth() - curRect.getX());
             } else {
-                nv.addElement(curRect);
+                nv.add(curRect);
                 curRect = new LinkedRectangle(r);
             }
 
             if (ri == numRects - 1)
-                nv.addElement(curRect);
+                nv.add(curRect);
         }
 
         rects = nv;
     }
 
     public void align() {
-        Enumeration re = rects.elements();
-        while (re.hasMoreElements()) {
-            LinkedRectangle r = (LinkedRectangle)re.nextElement();
+        for (int i = 0; i < rects.size(); i++ ) {
+            LinkedRectangle r = (LinkedRectangle)rects.get(i);
             r.setX(r.getX() + r.getLineArea().getStartIndent()
                    + r.getInlineArea().getXOffset());
         }
@@ -140,7 +128,7 @@ public class LinkSet {
         return this.destination;
     }
 
-    public Vector getRects() {
+    public ArrayList getRects() {
         return this.rects;
     }
 

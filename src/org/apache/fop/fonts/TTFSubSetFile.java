@@ -6,11 +6,13 @@
  */
 
 package org.apache.fop.fonts;
-import java.io.*;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
+
 import org.apache.fop.messaging.MessageHandler;
+
+import java.io.*;
+import java.util.Iterator;
+import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * Reads a TrueType file and generates a subset
@@ -300,7 +302,7 @@ public class TTFSubSetFile extends TTFFile {
      * Create the glyf table and fill in loca table
      */
     private void createGlyf(FontFileReader in,
-                            Hashtable glyphs) throws IOException {
+                            HashMap glyphs) throws IOException {
         TTFDirTabEntry entry = (TTFDirTabEntry)dirTabs.get("glyf");
         int size = 0;
         int start = 0;
@@ -309,9 +311,9 @@ public class TTFSubSetFile extends TTFFile {
             pad4();
             start = currentPos;
 
-            for (Enumeration e = glyphs.keys(); e.hasMoreElements(); ) {
+            for (Iterator e = glyphs.keySet().iterator(); e.hasNext(); ) {
                 int glyphLength = 0;
-                Integer origIndex = (Integer)e.nextElement();
+                Integer origIndex = (Integer)e.next();
                 Integer subsetIndex = (Integer)glyphs.get(origIndex);
 
                 int nextOffset = 0;
@@ -362,12 +364,12 @@ public class TTFSubSetFile extends TTFFile {
 
     /**
      * Create the hmtx table by copying metrics from original
-     * font to subset font. The glyphs hashtable contains an
+     * font to subset font. The glyphs HashMap contains an
      * Integer key and Integer value that maps the original
      * metric (key) to the subset metric (value)
      */
     private void createHmtx(FontFileReader in,
-                            Hashtable glyphs) throws IOException {
+                            HashMap glyphs) throws IOException {
         TTFDirTabEntry entry = (TTFDirTabEntry)dirTabs.get("hmtx");
 
         int longHorMetricSize = glyphs.size() * 2;
@@ -377,8 +379,8 @@ public class TTFSubSetFile extends TTFFile {
         if (entry != null) {
             pad4();
             int offset = (int)entry.offset;
-            for (Enumeration e = glyphs.keys(); e.hasMoreElements(); ) {
-                Integer origIndex = (Integer)e.nextElement();
+            for (Iterator e = glyphs.keySet().iterator(); e.hasNext(); ) {
+                Integer origIndex = (Integer)e.next();
                 Integer subsetIndex = (Integer)glyphs.get(origIndex);
 
                 writeUShort(currentPos + subsetIndex.intValue() * 4,
@@ -399,13 +401,13 @@ public class TTFSubSetFile extends TTFFile {
     }
 
     /**
-     * Returns a Vector containing the glyph itself plus all glyphs
+     * Returns a ArrayList containing the glyph itself plus all glyphs
      * that this composite glyph uses
      */
-    private Vector getIncludedGlyphs(FontFileReader in, int glyphOffset,
+    private ArrayList getIncludedGlyphs(FontFileReader in, int glyphOffset,
                                      Integer glyphIdx) throws IOException {
-        Vector ret = new Vector();
-        ret.addElement(glyphIdx);
+        ArrayList ret = new ArrayList();
+        ret.add(glyphIdx);
         int offset = glyphOffset + (int)mtx_tab[glyphIdx.intValue()].offset
                      + 10;
         Integer compositeIdx = null;
@@ -414,7 +416,7 @@ public class TTFSubSetFile extends TTFFile {
         while (moreComposites) {
             flags = in.readTTFUShort(offset);
             compositeIdx = new Integer(in.readTTFUShort(offset + 2));
-            ret.addElement(compositeIdx);
+            ret.add(compositeIdx);
 
             offset += 4;
             if ((flags & 1) > 0) {
@@ -445,7 +447,7 @@ public class TTFSubSetFile extends TTFFile {
      * Rewrite all compositepointers in glyphindex glyphIdx
      *
      */
-    private void remapComposite(FontFileReader in, Hashtable glyphs,
+    private void remapComposite(FontFileReader in, HashMap glyphs,
                                 int glyphOffset,
                                 Integer glyphIdx) throws IOException {
         int offset = glyphOffset + (int)mtx_tab[glyphIdx.intValue()].offset
@@ -503,38 +505,36 @@ public class TTFSubSetFile extends TTFFile {
      * mapping
      */
     private void scanGlyphs(FontFileReader in,
-                            Hashtable glyphs) throws IOException {
+                            HashMap glyphs) throws IOException {
         TTFDirTabEntry entry = (TTFDirTabEntry)dirTabs.get("glyf");
-        Hashtable newComposites = null;
-        Hashtable allComposites = new Hashtable();
+        HashMap newComposites = null;
+        HashMap allComposites = new HashMap();
 
         int newIndex = glyphs.size();
 
         if (entry != null) {
             while (newComposites == null || newComposites.size() > 0) {
                 // Inefficient to iterate through all glyphs
-                newComposites = new Hashtable();
+                newComposites = new HashMap();
 
-                for (Enumeration e = glyphs.keys(); e.hasMoreElements(); ) {
-                    Integer origIndex = (Integer)e.nextElement();
+                for (Iterator e = glyphs.keySet().iterator(); e.hasNext(); ) {
+                    Integer origIndex = (Integer)e.next();
 
                     if (in.readTTFShort(entry.offset
                                         + mtx_tab[origIndex.intValue()].offset) < 0) {
                         // origIndex is a composite glyph
                         allComposites.put(origIndex, glyphs.get(origIndex));
-                        Vector composites =
+                        ArrayList composites =
                             getIncludedGlyphs(in, (int)entry.offset,
                                               origIndex);
 
                         // Iterate through all composites pointed to
                         // by this composite and check if they exists
                         // in the glyphs map, add them if not.
-                        for (Enumeration cps = composites.elements();
-                                cps.hasMoreElements(); ) {
-
-                            Integer cIdx = (Integer)cps.nextElement();
+                        for (int i = 0; i < composites.size(); i++ ) {
+                            Integer cIdx = (Integer)composites.get(i);
                             if (glyphs.get(cIdx) == null
-                                    && newComposites.get(cIdx) == null) {
+                                && newComposites.get(cIdx) == null) {
                                 newComposites.put(cIdx,
                                                   new Integer(newIndex));
                                 newIndex++;
@@ -544,23 +544,21 @@ public class TTFSubSetFile extends TTFFile {
                 }
 
                 // Add composites to glyphs
-                for (Enumeration m = newComposites.keys();
-                        m.hasMoreElements(); ) {
-                    Integer im = (Integer)m.nextElement();
+                for (Iterator m = newComposites.keySet().iterator(); m.hasNext(); ) {
+                    Integer im = (Integer)m.next();
                     glyphs.put(im, newComposites.get(im));
                 }
             }
 
             // Iterate through all composites to remap their composite index
 
-            for (Enumeration ce = allComposites.keys();
-                    ce.hasMoreElements(); ) {
+            for (Iterator ce = allComposites.keySet().iterator(); ce.hasNext(); ) {
                 remapComposite(in, glyphs, (int)entry.offset,
-                               (Integer)ce.nextElement());
+                               (Integer)ce.next());
             }
 
         } else {
-            throw new IOException("Can't find glyf table");
+            throw new IOException("Can't find glyph table");
         }
     }
 
@@ -572,7 +570,7 @@ public class TTFSubSetFile extends TTFFile {
      */
 
     public byte[] readFont(FontFileReader in, String name,
-                           Hashtable glyphs) throws IOException {
+                           HashMap glyphs) throws IOException {
 
         /*
          * Check if TrueType collection, and that the name

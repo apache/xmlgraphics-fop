@@ -70,7 +70,7 @@ public class StaticContent extends AbstractFlow {
 	setContentWidth(area.getContentWidth());
 
         for (int i = 0; i < numChildren; i++) {
-            FObj fo = (FObj)children.elementAt(i);
+            FObj fo = (FObj)children.get(i);
 
             Status status;
             if ((status = fo.layout(area)).isIncomplete()) {

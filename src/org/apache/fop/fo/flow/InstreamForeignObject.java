@@ -16,9 +16,6 @@ import org.apache.fop.layout.BlockArea;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 
-// Java
-import java.util.Enumeration;
-
 public class InstreamForeignObject extends FObj {
 
     /**
@@ -194,7 +191,7 @@ public class InstreamForeignObject extends FObj {
                 }
                 /* layout foreign object */
                 if (this.children.size() > 0) {
-                    FONode fo = (FONode)children.elementAt(0);
+                    FONode fo = (FONode)children.get(0);
                     Status status;
                     // currently FONode must be an SVG
                     if ((status =

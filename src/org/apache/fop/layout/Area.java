@@ -13,8 +13,8 @@ import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.layout.inline.InlineSpace;
 
 // Java
-import java.util.Vector;
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 abstract public class Area extends Box {
 
@@ -25,7 +25,7 @@ abstract public class Area extends Box {
     protected FontState fontState;
     protected BorderAndPadding bp = null;
 
-    protected Vector children = new Vector();
+    protected ArrayList children = new ArrayList();
 
     /* max size in line-progression-direction */
     protected int maxHeight;
@@ -52,11 +52,11 @@ abstract public class Area extends Box {
 
     private IDReferences idReferences;
 
-    protected Vector markers;
+    protected ArrayList markers;
 
     // as defined in Section 6.1.1
     protected org.apache.fop.fo.FObj generatedBy;    // corresponds to 'generated-by' trait
-    protected Hashtable returnedBy;
+    protected HashMap returnedBy;
 
     // as defined in Section 6.1.1
     protected String areaClass;
@@ -75,8 +75,8 @@ abstract public class Area extends Box {
 
     public Area(FontState fontState) {
         setFontState(fontState);
-        this.markers = new Vector();
-        this.returnedBy = new Hashtable();
+        this.markers = new ArrayList();
+        this.returnedBy = new HashMap();
     }
 
     /**
@@ -93,8 +93,8 @@ abstract public class Area extends Box {
         this.allocationWidth = allocationWidth;
         this.contentRectangleWidth = allocationWidth;
         this.maxHeight = maxHeight;
-        this.markers = new Vector();
-        this.returnedBy = new Hashtable();
+        this.markers = new ArrayList();
+        this.returnedBy = new HashMap();
     }
 
     private void setFontState(FontState fontState) {
@@ -103,12 +103,12 @@ abstract public class Area extends Box {
     }
 
     public void addChild(Box child) {
-        this.children.addElement(child);
+        this.children.add(child);
         child.parent = this;
     }
 
     public void addChildAtStart(Box child) {
-        this.children.insertElementAt(child, 0);
+        this.children.add(0, child);
         child.parent = this;
     }
 
@@ -151,7 +151,7 @@ abstract public class Area extends Box {
         this.contentRectangleWidth = this.allocationWidth;
     }
 
-    public Vector getChildren() {
+    public ArrayList getChildren() {
         return this.children;
     }
 
@@ -274,13 +274,13 @@ abstract public class Area extends Box {
     public void removeChild(Area area) {
         this.currentHeight -= area.getHeight();
         this.absoluteHeight -= area.getHeight();
-        this.children.removeElement(area);
+        this.children.remove(area);
     }
 
     public void removeChild(DisplaySpace spacer) {
         this.currentHeight -= spacer.getSize();
         this.absoluteHeight -= spacer.getSize();
-        this.children.removeElement(spacer);
+        this.children.remove(spacer);
     }
 
     public void remove() {
@@ -372,10 +372,10 @@ abstract public class Area extends Box {
     }
 
     public void addMarker(Marker marker) {
-        markers.addElement(marker);
+        markers.add(marker);
     }
 
-    public void addMarkers(Vector markers) {
+    public void addMarkers(ArrayList markers) {
         markers.addAll(markers);
     }
 
@@ -383,7 +383,7 @@ abstract public class Area extends Box {
         returnedBy.put(fo, new Integer(areaPosition));
     }
 
-    public Vector getMarkers() {
+    public ArrayList getMarkers() {
         return markers;
     }
 

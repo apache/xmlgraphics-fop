@@ -668,7 +668,7 @@ public class PreviewDialog extends JFrame implements ProgressListener,
                 labels.add(buffer.toString());
                 list = new String[labels.size()];
                 for (int i = 0; i < labels.size(); i++) {
-                    list[i] = labels.elementAt(i).toString();
+                    list[i] = labels.get(i).toString();
                 }
                 showIt = new showProgress(list, true);
             }

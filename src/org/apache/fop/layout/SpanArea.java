@@ -13,8 +13,7 @@ import org.apache.fop.fo.properties.Position;
 import org.apache.fop.datatypes.IDReferences;
 
 // Java
-import java.util.Vector;
-import java.util.Enumeration;
+import java.util.Iterator;
 
 public class SpanArea extends AreaContainer {
 
@@ -77,7 +76,7 @@ public class SpanArea extends AreaContainer {
     }
 
     public AreaContainer getCurrentColumnArea() {
-        return (AreaContainer)getChildren().elementAt(currentColumn - 1);
+        return (AreaContainer)getChildren().get(currentColumn - 1);
     }
 
     public boolean isBalanced() {
@@ -90,19 +89,17 @@ public class SpanArea extends AreaContainer {
 
     public int getTotalContentHeight() {
         int totalContentHeight = 0;
-        for (Enumeration e = getChildren().elements();
-                e.hasMoreElements(); ) {
+        for (Iterator e = getChildren().iterator(); e.hasNext(); ) {
             totalContentHeight +=
-                ((AreaContainer)e.nextElement()).getContentHeight();
+                ((AreaContainer)e.next()).getContentHeight();
         }
         return totalContentHeight;
     }
 
     public int getMaxContentHeight() {
         int maxContentHeight = 0;
-        for (Enumeration e = getChildren().elements();
-                e.hasMoreElements(); ) {
-            AreaContainer nextElm = (AreaContainer)e.nextElement();
+        for (Iterator e = getChildren().iterator(); e.hasNext(); ) {
+            AreaContainer nextElm = (AreaContainer)e.next();
             if (nextElm.getContentHeight() > maxContentHeight)
                 maxContentHeight = nextElm.getContentHeight();
         }
@@ -111,9 +108,8 @@ public class SpanArea extends AreaContainer {
 
     public void setPage(Page page) {
         this.page = page;
-        for (Enumeration e = getChildren().elements();
-                e.hasMoreElements(); ) {
-            ((AreaContainer)e.nextElement()).setPage(page);
+        for (Iterator e = getChildren().iterator(); e.hasNext(); ) {
+            ((AreaContainer)e.next()).setPage(page);
         }
     }
 

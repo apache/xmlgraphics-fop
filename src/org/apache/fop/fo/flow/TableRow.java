@@ -15,8 +15,7 @@ import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
 
 // Java
-import java.util.Vector;
-import java.util.Enumeration;
+import java.util.ArrayList;
 
 public class TableRow extends FObj {
 
@@ -44,7 +43,7 @@ public class TableRow extends FObj {
     int widthOfCellsSoFar = 0;
     int largestCellHeight = 0;
     int minHeight = 0;    // force row height
-    Vector columns;
+    ArrayList columns;
 
     AreaContainer areaContainer;
 
@@ -128,46 +127,6 @@ public class TableRow extends FObj {
             }
             return rslt;
         }
-
-        // private class EnumCells implements Enumeration {
-        // private int iNextIndex=0;
-        // private Object nextCell = null;
-        // EnumCells() {
-        // findNextCell();
-        // }
-
-        // private void findNextCell() {
-        // for (; iNextIndex < cells.length; iNextIndex++) {
-        // if (states[iNextIndex] == CELLSTART) {
-        // nextCell = cells[iNextIndex];
-        // return;
-        // }
-        // }
-        // nextCell = null;
-        // }
-
-        // public boolean hasMoreElements() {
-        // return (nextCell != null);
-        // }
-
-        // public Object nextElement() {
-        // if (nextCell != null) {
-        // Object cell = nextCell;
-        // findNextCell();
-        // return cell;
-        // }
-        // else throw new java.util.NoSuchElementException("No more cells");
-        // }
-        // }
-
-        // /**
-        // * Return an enumeration over all cells in this row
-        // * Return each element in cells whose state is CELLSTART or EMPTY?
-        // * Skip spanning elements.
-        // */
-        // Enumeration getCells() {
-        // return new EnumCells();
-        // }
     }
 
 
@@ -185,7 +144,7 @@ public class TableRow extends FObj {
         return "fo:table-row";
     }
 
-    public void setColumns(Vector columns) {
+    public void setColumns(ArrayList columns) {
         this.columns = columns;
     }
 
@@ -311,18 +270,16 @@ public class TableRow extends FObj {
          */
         int offset = 0;       // Offset of each cell from table start edge
         int iColIndex = 0;    // 1-based column index
-        Enumeration eCols = columns.elements();
         /*
          * Ideas: set offset on each column when they are initialized
          * no need to calculate for each row.
          * Pass column object to cell to get offset and width and border
          * info if borders are "collapsed".
          */
-
-        while (eCols.hasMoreElements()) {
+        for (int i = 0; i < columns.size(); i++) {
             TableCell cell;
             ++iColIndex;
-            TableColumn tcol = (TableColumn)eCols.nextElement();
+            TableColumn tcol = (TableColumn)columns.get(i);
             int colWidth = tcol.getColumnWidth();
             if (cellArray.getCellType(iColIndex) == CellArray.CELLSTART) {
                 cell = cellArray.getCell(iColIndex);
@@ -490,13 +447,12 @@ public class TableRow extends FObj {
     private void initCellArray() {
         cellArray = new CellArray(rowSpanMgr, columns.size());
         int colNum = 1;
-        Enumeration eCells = children.elements();
-        while (eCells.hasMoreElements()) {
+        for (int i = 0; i< children.size(); i++) {
             colNum = cellArray.getNextFreeCell(colNum);
             // If off the end, the rest of the cells had better be
             // explicitly positioned!!! (returns -1)
 
-            TableCell cell = (TableCell)eCells.nextElement();
+            TableCell cell = (TableCell)children.get(i);
             int numCols = cell.getNumColumnsSpanned();
             int numRows = cell.getNumRowsSpanned();
             int cellColNum = cell.getColumnNumber();
@@ -541,7 +497,7 @@ public class TableRow extends FObj {
     private int getCellWidth(int startCol, int numCols) {
         int width = 0;
         for (int count = 0; count < numCols; count++) {
-            width += ((TableColumn)columns.elementAt(startCol + count
+            width += ((TableColumn)columns.get(startCol + count
                                                      - 1)).getColumnWidth();
         }
         return width;

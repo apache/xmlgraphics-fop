@@ -8,7 +8,6 @@
 package org.apache.fop.fo.flow;
 
 import org.apache.fop.layout.Area;
-import java.util.Enumeration;
 
 public class RowSpanMgr {
     class SpanInfo {

@@ -38,9 +38,8 @@ import org.w3c.dom.svg.SVGLength;
 // Java
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
 import java.awt.Point;
@@ -123,7 +122,7 @@ public class PDFRenderer extends PrintRenderer {
      */
     protected java.util.HashMap options;
 
-    protected Vector extensions = null;
+    protected ArrayList extensions = null;
 
     /**
      * create the PDF renderer
@@ -590,7 +589,7 @@ public class PDFRenderer extends PrintRenderer {
             StringBuffer pdf = _wordAreaPDF;
             pdf.setLength(0);
 
-            Hashtable kerning = null;
+            HashMap kerning = null;
             boolean kerningAvailable = false;
 
             kerning = area.getFontState().getKerning();
@@ -783,9 +782,9 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     private void addKerning(StringBuffer buf, Integer ch1, Integer ch2,
-            Hashtable kerning, String startText,
+            HashMap kerning, String startText,
             String endText) {
-        Hashtable kernPair = (Hashtable) kerning.get(ch1);
+        HashMap kernPair = (HashMap) kerning.get(ch1);
 
         if (kernPair != null) {
             Integer width = (Integer) kernPair.get(ch2);
@@ -813,7 +812,7 @@ public class PDFRenderer extends PrintRenderer {
         this.pdfDoc.setIDReferences(idReferences);
         this.renderPage(page);
 
-        Vector exts = page.getExtensions();
+        ArrayList exts = page.getExtensions();
         if (exts != null) {
             extensions = exts;
         }
@@ -853,16 +852,16 @@ public class PDFRenderer extends PrintRenderer {
             }
             currentPage.setAnnotList(currentAnnotList);
 
-            Enumeration e = page.getLinkSets().elements();
-            while (e.hasMoreElements()) {
-                LinkSet linkSet = (LinkSet) e.nextElement();
+            ArrayList linkSets = page.getLinkSets();
+            for (int i = 0; i < linkSets.size(); i++) {
+                LinkSet linkSet = (LinkSet)linkSets.get(i);
 
                 linkSet.align();
                 String dest = linkSet.getDest();
                 int linkType = linkSet.getLinkType();
-                Enumeration f = linkSet.getRects().elements();
-                while (f.hasMoreElements()) {
-                    LinkedRectangle lrect = (LinkedRectangle) f.nextElement();
+                ArrayList linkRects = linkSet.getRects();
+                for (int j = 0; j < linkRects.size(); j++) {
+                    LinkedRectangle lrect = (LinkedRectangle)linkRects.get(j);
                     currentAnnotList.addLink(
                             this.pdfDoc.makeLink(lrect.getRectangle(),
                             dest, linkType));
@@ -910,11 +909,10 @@ public class PDFRenderer extends PrintRenderer {
      *
      * @param exts  the list of root extensions to process
      */
-    protected void renderRootExtensions(Vector exts) {
-        if (exts != null) {
-            Enumeration e = exts.elements();
-            while (e.hasMoreElements()) {
-                ExtensionObj ext = (ExtensionObj) e.nextElement();
+    protected void renderRootExtensions(ArrayList extensions) {
+        if (extensions != null) {
+            for (int i = 0; i < extensions.size(); i++) {
+                ExtensionObj ext = (ExtensionObj) extensions.get(i);
                 if (ext instanceof Outline) {
                     renderOutline((Outline) ext);
                 }
@@ -947,10 +945,9 @@ public class PDFRenderer extends PrintRenderer {
         outline.setRendererObject(pdfOutline);
 
         // handle sub outlines
-        Vector v = outline.getOutlines();
-        Enumeration e = v.elements();
-        while (e.hasMoreElements()) {
-            renderOutline((Outline) e.nextElement());
+        ArrayList v = outline.getOutlines();
+        for (int i = 0; i < v.size(); i++) {
+            renderOutline((Outline) v.get(i));
         }
     }
 

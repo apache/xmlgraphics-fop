@@ -7,7 +7,7 @@
 
 package org.apache.fop.pdf;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 
 /**
  * class representing a /CharProcs dictionary for Type3 fonts.
@@ -23,10 +23,10 @@ public class PDFCharProcs extends PDFObject {
     /**
      * the (character name, drawing stream) pairs for a Type3 font
      */
-    protected Hashtable keys;
+    protected HashMap keys;
 
     public PDFCharProcs() {
-        keys = new Hashtable();
+        keys = new HashMap();
     }
 
     /**

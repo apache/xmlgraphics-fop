@@ -189,7 +189,7 @@ public class MessageHandler {
      * @param MessageListener the listener to add
      */
     public static void addListener(MessageListener listener) {
-        listeners.addElement(listener);
+        listeners.add(listener);
     }
 
     /**

@@ -15,9 +15,6 @@ import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
 
-// Java
-import java.util.Enumeration;
-
 public class PageNumber extends FObj {
 
     public static class Maker extends FObj.Maker {

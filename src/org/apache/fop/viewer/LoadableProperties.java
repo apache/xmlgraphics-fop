@@ -7,8 +7,9 @@
 
 package org.apache.fop.viewer;
 
-import java.io.*;
 import org.apache.fop.messaging.MessageHandler;
+
+import java.io.*;
 import java.util.*;
 
 /**

@@ -14,9 +14,6 @@ import org.apache.fop.layout.*;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 
-// Java
-import java.util.Enumeration;
-
 public class ListItemLabel extends FObj {
 
     public static class Maker extends FObj.Maker {
@@ -56,7 +53,7 @@ public class ListItemLabel extends FObj {
         String id = this.properties.get("id").getString();
         area.getIDReferences().initializeID(id, area);
 
-        Block block = (Block)children.elementAt(0);
+        Block block = (Block)children.get(0);
 
         /*
          * For calculating the lineage - The fo:list-item-label formatting object

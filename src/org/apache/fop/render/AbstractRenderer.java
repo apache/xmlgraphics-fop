@@ -24,8 +24,7 @@ import org.apache.avalon.framework.logger.Logger;
 // Java
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Enumeration;
-
+import java.util.ArrayList;
 /**
  * Abstract base class for all renderers.
  * 
@@ -53,9 +52,9 @@ public abstract class AbstractRenderer implements Renderer {
     }
 
     public void renderSpanArea(SpanArea area) {
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
+        ArrayList children = area.getChildren();
+        for (int i = 0; i < children.size(); i++) {
+            Box b = (Box)children.get(i);
             b.render(this);    // column areas
         }
 
@@ -322,18 +321,18 @@ public abstract class AbstractRenderer implements Renderer {
         renderAreaContainer(area.getFootnoteReferenceArea());
 
         // main reference area
-        Enumeration e = area.getMainReferenceArea().getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
+        ArrayList children = area.getMainReferenceArea().getChildren();
+        for (int i = 0; i < children.size(); i++) {
+            Box b = (Box)children.get(i);
             b.render(this);    // span areas
         }
-
 
         if (area.getPosition() != Position.STATIC) {
             this.currentYPosition = saveY;
             this.currentAreaContainerXPosition = saveX;
-        } else
+        } else {
             this.currentYPosition -= area.getHeight();
+        }
 
     }
 
@@ -363,9 +362,9 @@ public abstract class AbstractRenderer implements Renderer {
 
         doBackground(area, rx, ry, w, h);
 
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
+        ArrayList children = area.getChildren();
+        for (int i = 0; i < children.size(); i++) {
+            Box b = (Box)children.get(i);
             b.render(this);    // span areas
         }
 
@@ -405,9 +404,9 @@ public abstract class AbstractRenderer implements Renderer {
         this.currentXPosition = this.currentAreaContainerXPosition;
         doFrame(area);
 
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
+        ArrayList children = area.getChildren();
+        for (int i = 0; i < children.size(); i++) {
+            Box b = (Box)children.get(i);
             b.render(this);
         }
         // Restore previous origin
@@ -439,9 +438,9 @@ public abstract class AbstractRenderer implements Renderer {
         this.currentYPosition -= (area.getPaddingTop()
                                   + area.getBorderTopWidth());
         doFrame(area);
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
+        ArrayList children = area.getChildren();
+        for (int i = 0; i < children.size(); i++) {
+            Box b = (Box)children.get(i);
             b.render(this);
         }
         this.currentYPosition -= (area.getPaddingBottom()
@@ -464,9 +463,9 @@ public abstract class AbstractRenderer implements Renderer {
 
         int bl = this.currentYPosition;
 
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
+        ArrayList children = area.getChildren();
+        for (int i = 0; i < children.size(); i++) {
+            Box b = (Box)children.get(i);
             if (b instanceof InlineArea) {
                 InlineArea ia = (InlineArea)b;
                 this.currentYPosition = ry - ia.getYOffset();
