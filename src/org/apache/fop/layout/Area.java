@@ -9,7 +9,7 @@ package org.apache.fop.layout;
 
 // FOP
 import org.apache.fop.datatypes.*;
-import org.apache.fop.fo.flow.Marker;
+//import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.layout.inline.InlineSpace;
 
 // Java
@@ -55,11 +55,11 @@ abstract public class Area extends Box {
 
     private IDReferences idReferences;
 
-    protected ArrayList markers;
+//    protected ArrayList markers;
 
     // as defined in Section 6.1.1
     protected org.apache.fop.fo.FObj generatedBy;    // corresponds to 'generated-by' trait
-    protected HashMap returnedBy;
+//    protected HashMap returnedBy;
 
     // as defined in Section 6.1.1
     protected String areaClass;
@@ -78,8 +78,8 @@ abstract public class Area extends Box {
 
     public Area(FontState fontState) {
         setFontState(fontState);
-        this.markers = new ArrayList();
-        this.returnedBy = new HashMap();
+//        this.markers = new ArrayList();
+//        this.returnedBy = new HashMap();
     }
 
     /**
@@ -96,8 +96,8 @@ abstract public class Area extends Box {
         this.allocationWidth = allocationWidth;
         this.contentRectangleWidth = allocationWidth;
         this.maxHeight = maxHeight;
-        this.markers = new ArrayList();
-        this.returnedBy = new HashMap();
+//        this.markers = new ArrayList();
+//        this.returnedBy = new HashMap();
     }
 
     private void setFontState(FontState fontState) {
@@ -399,21 +399,21 @@ abstract public class Area extends Box {
         return bp;
     }
 
-    public void addMarker(Marker marker) {
-        markers.add(marker);
-    }
+//     public void addMarker(Marker marker) {
+//         markers.add(marker);
+//     }
 
-    public void addMarkers(ArrayList markers) {
-        markers.addAll(markers);
-    }
+//     public void addMarkers(ArrayList markers) {
+//         markers.addAll(markers);
+//     }
 
-    public void addLineagePair(org.apache.fop.fo.FObj fo, int areaPosition) {
-        returnedBy.put(fo, new Integer(areaPosition));
-    }
+//     public ArrayList getMarkers() {
+//         return markers;
+//     }
 
-    public ArrayList getMarkers() {
-        return markers;
-    }
+//     public void addLineagePair(org.apache.fop.fo.FObj fo, int areaPosition) {
+//         returnedBy.put(fo, new Integer(areaPosition));
+//     }
 
     public void setGeneratedBy(org.apache.fop.fo.FObj generatedBy) {
         this.generatedBy = generatedBy;

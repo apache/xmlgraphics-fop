@@ -113,11 +113,11 @@ public class ListItem extends FObj {
         if (this.areasGenerated == 1)
             this.blockArea.isFirst(true);
             // for normal areas this should be the only pair
-        this.blockArea.addLineagePair(this, this.areasGenerated);
+//        this.blockArea.addLineagePair(this, this.areasGenerated);
 
         // markers
-        if (this.hasMarkers())
-            this.blockArea.addMarkers(this.getMarkers());
+//         if (this.hasMarkers())
+//             this.blockArea.addMarkers(this.getMarkers());
 
         blockArea.setParent(area);
         blockArea.setPage(area.getPage());

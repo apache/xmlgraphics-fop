@@ -216,6 +216,10 @@ public class Page {
         markers.add(marker);
     }
 
+    public void unregisterMarker(Marker marker) {
+        markers.remove(marker);
+    }
+
     public ArrayList getMarkers() {
         return this.markers;
     }

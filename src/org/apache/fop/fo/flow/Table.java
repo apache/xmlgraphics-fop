@@ -200,6 +200,10 @@ public class Table extends FObj {
         
         for (int i = this.marker; i < numChildren; i++) {
             FONode fo = (FONode)children.get(i);
+            if (fo instanceof Marker) {
+                 ((Marker)fo).layout(area);
+                 continue;
+             }
             if (fo instanceof TableHeader) {
                 if (columns.size() == 0) {
                     log.warn("current implementation of tables requires a table-column for each column, indicating column-width");
@@ -342,11 +346,6 @@ public class Table extends FObj {
         }
 
         return Status.OK;
-    }
-
-    public void resetMarker() {
-        this.areasGenerated=0;
-        super.resetMarker();
     }
 
     protected void setupColumnHeights() {

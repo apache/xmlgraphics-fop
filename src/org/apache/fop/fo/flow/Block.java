@@ -181,11 +181,11 @@ public class Block extends FObjMixed {
         if (this.areasGenerated == 1)
             blockArea.isFirst(true);
         // for normal areas this should be the only pair
-        blockArea.addLineagePair(this, this.areasGenerated);
+//        blockArea.addLineagePair(this, this.areasGenerated);
 
         // markers
-        if (this.hasMarkers())
-            blockArea.addMarkers(this.getMarkers());
+//         if (this.hasMarkers())
+//             blockArea.addMarkers(this.getMarkers());
 
         blockArea.setParent(area);    // BasicLink needs it
         blockArea.setPage(area.getPage());

@@ -1285,9 +1285,11 @@ System.out.println("getting getNormalizingTransform");
         }
 
         // needed for compiling under jdk1.4
+        @jdk14codestart@
         public java.awt.image.VolatileImage createCompatibleVolatileImage(int width, int height) {
             return null;
         }
+        @jdk14codeend@
     }
 
     /**

@@ -273,22 +273,22 @@ public class XMLRenderer implements Renderer {
         writeStartTag(baText.toString());
 
         // write out marker info
-        List markers = area.getMarkers();
-        if (!markers.isEmpty()) {
-            writeStartTag("<Markers>");
-            for (int i = 0; i < markers.size(); i++) {
-                org.apache.fop.fo.flow.Marker marker =
-                    (org.apache.fop.fo.flow.Marker)markers.get(i);
-                StringBuffer maText = new StringBuffer();
-                maText.append("<Marker marker-class-name=\""
-                              + marker.getMarkerClassName() + "\"");
-                maText.append(" RegisteredArea=\"" + marker.getRegistryArea()
-                              + "\"");
-                maText.append("/>");
-                writeEmptyElementTag(maText.toString());
-            }
-            writeEndTag("</Markers>");
-        }
+//         List markers = area.getMarkers();
+//         if (!markers.isEmpty()) {
+//             writeStartTag("<Markers>");
+//             for (int i = 0; i < markers.size(); i++) {
+//                 org.apache.fop.fo.flow.Marker marker =
+//                     (org.apache.fop.fo.flow.Marker)markers.get(i);
+//                 StringBuffer maText = new StringBuffer();
+//                 maText.append("<Marker marker-class-name=\""
+//                               + marker.getMarkerClassName() + "\"");
+//                 maText.append(" RegisteredArea=\"" + marker.getRegistryArea()
+//                               + "\"");
+//                 maText.append("/>");
+//                 writeEmptyElementTag(maText.toString());
+//             }
+//             writeEndTag("</Markers>");
+//         }
 
         List children = area.getChildren();
         for (int i = 0; i < children.size(); i++) {
@@ -311,22 +311,22 @@ public class XMLRenderer implements Renderer {
         writeStartTag(iaText.toString());
 
         // write out marker info
-        List markers = area.getMarkers();
-        if (!markers.isEmpty()) {
-            writeStartTag("<Markers>");
-            for (int i = 0; i < markers.size(); i++) {
-                org.apache.fop.fo.flow.Marker marker =
-                    (org.apache.fop.fo.flow.Marker)markers.get(i);
-                StringBuffer maText = new StringBuffer();
-                maText.append("<Marker marker-class-name=\""
-                              + marker.getMarkerClassName() + "\"");
-                maText.append(" RegisteredArea=\"" + marker.getRegistryArea()
-                              + "\"");
-                maText.append("/>");
-                writeEmptyElementTag(maText.toString());
-            }
-            writeEndTag("</Markers>");
-        }
+//         List markers = area.getMarkers();
+//         if (!markers.isEmpty()) {
+//             writeStartTag("<Markers>");
+//             for (int i = 0; i < markers.size(); i++) {
+//                 org.apache.fop.fo.flow.Marker marker =
+//                     (org.apache.fop.fo.flow.Marker)markers.get(i);
+//                 StringBuffer maText = new StringBuffer();
+//                 maText.append("<Marker marker-class-name=\""
+//                               + marker.getMarkerClassName() + "\"");
+//                 maText.append(" RegisteredArea=\"" + marker.getRegistryArea()
+//                               + "\"");
+//                 maText.append("/>");
+//                 writeEmptyElementTag(maText.toString());
+//             }
+//             writeEndTag("</Markers>");
+//         }
 
         List children = area.getChildren();
         for (int i = 0; i < children.size(); i++) {

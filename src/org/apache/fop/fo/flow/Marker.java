@@ -18,6 +18,8 @@ public class Marker extends FObjMixed {
 
     private String markerClassName;
     private Area registryArea;
+    private boolean isFirst;
+    private boolean isLast;
 
     public static class Maker extends FObj.Maker {
         public FObj make(FObj parent,
@@ -42,7 +44,7 @@ public class Marker extends FObjMixed {
 
         // check to ensure that no other marker with same parent
         // has this 'marker-class-name' is in addMarker() method
-        parent.addMarker(this);
+        parent.addMarker(this.markerClassName);
     }
 
     public String getName() {
@@ -52,9 +54,7 @@ public class Marker extends FObjMixed {
     public int layout(Area area) throws FOPException {
         // no layout action desired
         this.registryArea = area;
-        area.addMarker(this);
         area.getPage().registerMarker(this);
-        // System.out.println("Marker being registered in area '" + area + "'");
         return Status.OK;
     }
 
@@ -87,4 +87,33 @@ public class Marker extends FObjMixed {
     public boolean mayPrecedeMarker() {
         return true;
     }  
+
+    // The page the marker was registered is put into the renderer
+    // queue. The marker is transferred to it's own marker list,
+    // release the area for GC. We also know now whether the area is
+    // first/last.
+    public void releaseRegistryArea() {
+        isFirst = registryArea.isFirst();
+        isLast = registryArea.isLast();
+        registryArea = null;
+    }
+    
+    // This has actually nothing to do with resseting this marker,
+    // but the 'marker' from FONode, marking layout status.
+    // Called in case layout is to be rolled back. Unregister this
+    // marker from the page, it isn't laid aout anyway.
+    public void resetMarker() {
+        if (registryArea != null ) {
+            Page page=registryArea.getPage();
+            if (page != null) {
+                page.unregisterMarker(this);
+            }
+        }
+    }
+
+    // More hackery: reset layout status marker. Called before the
+    // content is laid out from RetrieveMarker.
+    public void resetMarkerContent() {
+        super.resetMarker();
+    }
 }
