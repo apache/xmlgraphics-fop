@@ -15,7 +15,6 @@ import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGSVGElement;
 
 // FOP
-import org.apache.fop.messaging.*;
 import org.apache.fop.image.SVGImage;
 
 import org.xml.sax.InputSource;

@@ -15,7 +15,6 @@ import java.io.IOException;
 
 // FOP
 import org.apache.fop.apps.Driver;
-import org.apache.fop.messaging.*;
 import org.apache.fop.datatypes.ColorSpace;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.image.analyser.ImageReader;

@@ -12,7 +12,6 @@ import org.apache.fop.fo.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.*;
-import org.apache.fop.messaging.*;
 
 // Java
 import java.util.ArrayList;
