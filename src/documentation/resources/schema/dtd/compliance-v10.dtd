@@ -19,6 +19,7 @@
   extURL CDATA #IMPLIED
   citation CDATA #IMPLIED
   compliance-item-desc CDATA #REQUIRED
+  ref-name CDATA #IMPLIED
 >
 <!ELEMENT explanatory (p*)>
 <!ELEMENT level-2 (level-3+)>
@@ -26,6 +27,7 @@
   name CDATA #REQUIRED
   extURL CDATA #IMPLIED
   citation CDATA #IMPLIED
+  ref-name CDATA #IMPLIED
 >
 <!ELEMENT level-3 (comment*)>
 <!ATTLIST level-3
@@ -34,6 +36,7 @@
   citation CDATA #IMPLIED
   compliance-level (1 | 2 | 3) #REQUIRED
   comply (yes | no | na | partial) #REQUIRED
+  ref-name CDATA #IMPLIED
 >
 <!ELEMENT comment (#PCDATA)>
 <!ELEMENT p (#PCDATA)>
