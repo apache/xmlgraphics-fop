@@ -23,7 +23,7 @@ understanding/book.xml, WHICH SEE FOR AN EXPLANATION.
       <menu-item label="Renderers" href="renderers.html"/>
     </menu>
     <menu label="Understanding">
-      <menu-item label="Instroduction" href="understanding/index.html"/>
+      <menu-item label="Introduction" href="understanding/index.html"/>
       <menu-item label="XML Parsing" href="understanding/xml_parsing.html"/>
       <menu-item label="FO Tree" href="understanding/fo_tree.html"/>
       <menu-item label="Properties" href="understanding/properties.html"/>

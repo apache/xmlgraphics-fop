@@ -27,7 +27,7 @@ PARENT DIRECTORY!
       <menu-item label="Renderers" href="../renderers.html"/>
     </menu>
     <menu label="Understanding">
-      <menu-item label="Instroduction" href="index.html"/>
+      <menu-item label="Introduction" href="index.html"/>
       <menu-item label="XML Parsing" href="xml_parsing.html"/>
       <menu-item label="FO Tree" href="fo_tree.html"/>
       <menu-item label="Properties" href="properties.html"/>
