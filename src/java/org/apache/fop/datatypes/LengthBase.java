@@ -51,6 +51,7 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
 
 /**
@@ -139,7 +140,7 @@ public class LengthBase implements PercentBase {
     public int getBaseLength() {
         switch (iBaseType) {
         case FONTSIZE:
-            return propertyList.get("font-size").getLength().getValue();
+            return propertyList.get(Constants.PR_FONT_SIZE).getLength().getValue();
         case INH_FONTSIZE:
             return propertyList.getInherited("font-size").getLength().getValue();
         //case CONTAINING_BOX:

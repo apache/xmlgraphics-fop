@@ -55,10 +55,11 @@ import org.apache.avalon.framework.logger.ConsoleLogger;
 
 //FOP
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.Property;
+import org.apache.fop.fo.PropertyList;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfPage;
-import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.Property;
 
 
 /**  Converts simple-page-master attributes into strings as defined in RtfPage.
@@ -83,32 +84,32 @@ class PageAttributesConverter {
                 attrib = new RtfAttributes();
             }
 
-            if ((p = props.get("page-width")) != null) {
+            if ((p = props.get(Constants.PR_PAGE_WIDTH)) != null) {
                 Float f = new Float(p.getLength().getValue() / 1000f);
                 attrib.set(RtfPage.PAGE_WIDTH,
                     (int)FoUnitsConverter.getInstance().convertToTwips(f.toString() + "pt"));
             }
-            if ((p = props.get("page-height")) != null) {
+            if ((p = props.get(Constants.PR_PAGE_HEIGHT)) != null) {
                 Float f = new Float(p.getLength().getValue() / 1000f);
                 attrib.set(RtfPage.PAGE_HEIGHT,
                     (int)FoUnitsConverter.getInstance().convertToTwips(f.toString() + "pt"));
             }
-            if ((p = props.get("margin-top")) != null) {
+            if ((p = props.get(Constants.PR_MARGIN_TOP)) != null) {
                 Float f = new Float(p.getLength().getValue() / 1000f);
                 attrib.set(RtfPage.MARGIN_TOP,
                     (int)FoUnitsConverter.getInstance().convertToTwips(f.toString() + "pt"));
             }
-            if ((p = props.get("margin-bottom")) != null) {
+            if ((p = props.get(Constants.PR_MARGIN_BOTTOM)) != null) {
                 Float f = new Float(p.getLength().getValue() / 1000f);
                 attrib.set(RtfPage.MARGIN_BOTTOM,
                     (int)FoUnitsConverter.getInstance().convertToTwips(f.toString() + "pt"));
             }
-            if ((p = props.get("margin-left")) != null) {
+            if ((p = props.get(Constants.PR_MARGIN_LEFT)) != null) {
                 Float f = new Float(p.getLength().getValue() / 1000f);
                 attrib.set(RtfPage.MARGIN_LEFT,
                     (int)FoUnitsConverter.getInstance().convertToTwips(f.toString() + "pt"));
             }
-            if ((p = props.get("margin-right")) != null) {
+            if ((p = props.get(Constants.PR_MARGIN_RIGHT)) != null) {
                 Float f = new Float(p.getLength().getValue() / 1000f);
                 attrib.set(RtfPage.MARGIN_RIGHT,
                     (int)FoUnitsConverter.getInstance().convertToTwips(f.toString() + "pt"));

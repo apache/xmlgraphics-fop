@@ -128,16 +128,16 @@ public class TableRow extends FObj {
         // this.propertyList.get("keep-with-previous");
 
 
-        this.breakAfter = this.propertyList.get("break-after").getEnum();
+        this.breakAfter = this.propertyList.get(PR_BREAK_AFTER).getEnum();
         this.backgroundColor =
-            this.propertyList.get("background-color").getColorType();
+            this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
 
         this.keepTogether = getKeepValue("keep-together.within-column");
         this.keepWithNext = getKeepValue("keep-with-next.within-column");
         this.keepWithPrevious =
             getKeepValue("keep-with-previous.within-column");
 
-        this.minHeight = this.propertyList.get("height").getLength().getValue();
+        this.minHeight = this.propertyList.get(PR_HEIGHT).getLength().getValue();
         setup = true;
     }
 
