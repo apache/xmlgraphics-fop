@@ -67,6 +67,7 @@ import org.apache.batik.transcoder.keys.PaintKey;
 import org.apache.batik.transcoder.keys.Rectangle2DKey;
 import org.apache.batik.transcoder.keys.StringKey;
 import org.apache.batik.transcoder.*;
+import org.apache.batik.transcoder.image.*;
 
 import org.apache.batik.util.SVGConstants;
 
@@ -96,7 +97,7 @@ import org.w3c.dom.svg.SVGSVGElement;
 import org.apache.batik.gvt.renderer.StaticRendererFactory;
 
 /**
- * This class enables to transcode an input to an image of any format.
+ * This class enables to transcode an input to a pdf document.
  *
  * <p>Two transcoding hints (<tt>KEY_WIDTH</tt> and
  * <tt>KEY_HEIGHT</tt>) can be used to respectively specify the image
@@ -119,7 +120,7 @@ import org.apache.batik.gvt.renderer.StaticRendererFactory;
  * stylesheet, and <tt>KEY_PIXEL_TO_MM</tt> to specify the pixel to
  * millimeter conversion factor.
  *
- * @author <a href="mailto:Thierry.Kormann@sophia.inria.fr">Thierry Kormann</a>
+ * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
  * @version $Id$
  */
 public class PDFTranscoder extends XMLAbstractTranscoder {
@@ -133,8 +134,7 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
     public PDFTranscoder() {
         hints.put(KEY_DOCUMENT_ELEMENT_NAMESPACE_URI,
                   SVGConstants.SVG_NAMESPACE_URI);
-        hints.put(KEY_DOCUMENT_ELEMENT,
-                  SVGConstants.SVG_SVG_TAG);
+        hints.put(KEY_DOCUMENT_ELEMENT, SVGConstants.SVG_SVG_TAG);
         hints.put(KEY_DOM_IMPLEMENTATION,
                   SVGDOMImplementation.getDOMImplementation());
     }
@@ -147,22 +147,21 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
      * @param output the ouput where to transcode
      * @exception TranscoderException if an error occured while transcoding
      */
-    protected void transcode(Document document,
-                             String uri,
-                             TranscoderOutput output)
-            throws TranscoderException {
+    protected void transcode(Document document, String uri,
+                             TranscoderOutput output) throws TranscoderException {
 
         if (!(document instanceof SVGOMDocument)) {
             throw new TranscoderException(
-                Messages.formatMessage("notsvg", null));
+              Messages.formatMessage("notsvg", null));
         }
-        SVGDocument svgDoc = (SVGDocument)document;
+        SVGDocument svgDoc = (SVGDocument) document;
         SVGSVGElement root = svgDoc.getRootElement();
         // initialize the SVG document with the appropriate context
-        String parserClassname = (String)hints.get(KEY_XML_PARSER_CLASSNAME);
+        String parserClassname =
+          (String) hints.get(KEY_XML_PARSER_CLASSNAME);
         DefaultSVGContext svgCtx = new DefaultSVGContext();
         svgCtx.setPixelToMM(userAgent.getPixelToMM());
-        ((SVGOMDocument)document).setSVGContext(svgCtx);
+        ((SVGOMDocument) document).setSVGContext(svgCtx);
 
         // build the GVT tree
         GVTBuilder builder = new GVTBuilder();
@@ -176,19 +175,19 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
             throw new TranscoderException(ex);
         }
         // get the 'width' and 'height' attributes of the SVG document
-        float docWidth = (float)ctx.getDocumentSize().getWidth();
-        float docHeight = (float)ctx.getDocumentSize().getHeight();
+        float docWidth = (float) ctx.getDocumentSize().getWidth();
+        float docHeight = (float) ctx.getDocumentSize().getHeight();
         ctx = null;
         builder = null;
 
         // compute the image's width and height according the hints
         float imgWidth = -1;
-        if (hints.containsKey(KEY_WIDTH)) {
-            imgWidth = ((Float)hints.get(KEY_WIDTH)).floatValue();
+        if (hints.containsKey(ImageTranscoder.KEY_WIDTH)) {
+            imgWidth = ((Float) hints.get(ImageTranscoder.KEY_WIDTH)).floatValue();
         }
         float imgHeight = -1;
-        if (hints.containsKey(KEY_HEIGHT)) {
-            imgHeight = ((Float)hints.get(KEY_HEIGHT)).floatValue();
+        if (hints.containsKey(ImageTranscoder.KEY_HEIGHT)) {
+            imgHeight = ((Float) hints.get(ImageTranscoder.KEY_HEIGHT)).floatValue();
         }
         float width, height;
         if (imgWidth > 0 && imgHeight > 0) {
@@ -224,12 +223,12 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
             // we want to keep the document size ratio
             float d = Math.max(docWidth, docHeight);
             float dd = Math.max(width, height);
-            float scale = dd/d;
+            float scale = dd / d;
             Px = AffineTransform.getScaleInstance(scale, scale);
         }
         // take the AOI into account if any
-        if (hints.containsKey(KEY_AOI)) {
-            Rectangle2D aoi = (Rectangle2D)hints.get(KEY_AOI);
+        if (hints.containsKey(ImageTranscoder.KEY_AOI)) {
+            Rectangle2D aoi = (Rectangle2D) hints.get(ImageTranscoder.KEY_AOI);
             // transform the AOI into the image's coordinate system
             aoi = Px.createTransformedShape(aoi).getBounds2D();
             AffineTransform Mx = new AffineTransform();
@@ -244,48 +243,28 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
             Px.preConcatenate(Mx);
         }
         // prepare the image to be painted
-        int w = (int)width;
-        int h = (int)height;
+        int w = (int) width;
+        int h = (int) height;
 
-        PDFDocumentGraphics2D graphics = new PDFDocumentGraphics2D(true, output.getOutputStream(), w, h);
-		//        GraphicsNodeRenderContext rc = getRenderContext();
-        graphics.setGraphicContext(new org.apache.batik.ext.awt.g2d.GraphicContext());
+        PDFDocumentGraphics2D graphics = new PDFDocumentGraphics2D(true,
+                                         output.getOutputStream(), w, h);
+        graphics.setSVGDimension(docWidth, docHeight);
+        if (hints.containsKey(ImageTranscoder.KEY_BACKGROUND_COLOR)) {
+            graphics.setBackgroundColor((Color) hints.get(ImageTranscoder.KEY_BACKGROUND_COLOR));
+        }
+        //        GraphicsNodeRenderContext rc = getRenderContext();
+        graphics.setGraphicContext(
+          new org.apache.batik.ext.awt.g2d.GraphicContext());
         graphics.setRenderingHints(rc.getRenderingHints());
 
         gvtRoot.paint(graphics, rc);
 
         try {
-			graphics.finish();
+            graphics.finish();
         } catch (Exception ex) {
-			ex.printStackTrace();
+            ex.printStackTrace();
             throw new TranscoderException(ex);
         }
-		/*
-        // paint the SVG document using the bridge package
-        // create the appropriate renderer
-        ImageRenderer renderer = rendFactory.createImageRenderer();
-        renderer.updateOffScreen(w, h);
-        renderer.setTransform(Px);
-        renderer.setTree(gvtRoot);
-        gvtRoot = null; // We're done with it...
-
-        try {
-            // now we are sure that the aoi is the image size
-            Shape raoi = new Rectangle2D.Float(0, 0, width, height);
-            // Warning: the renderer's AOI must be in user space
-            renderer.repaint(Px.createInverse().createTransformedShape(raoi));
-            BufferedImage rend = renderer.getOffScreen();
-            renderer = null; // We're done with it...
-
-			//            BufferedImage dest = createImage(w, h);
-
-            //Graphics2D g2d = GraphicsUtil.createGraphics(dest);
-
-            //g2d.drawRenderedImage(rend, new AffineTransform());
-        } catch (Exception ex) {
-            throw new TranscoderException(ex);
-        }
-		*/
     }
 
     public GraphicsNodeRenderContext getRenderContext() {
@@ -293,28 +272,25 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         if (nodeRenderContext == null) {
             RenderingHints hints = new RenderingHints(null);
             hints.put(RenderingHints.KEY_ANTIALIASING,
-                  RenderingHints.VALUE_ANTIALIAS_ON);
+                      RenderingHints.VALUE_ANTIALIAS_ON);
 
             hints.put(RenderingHints.KEY_INTERPOLATION,
-                  RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                      RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
             FontRenderContext fontRenderContext =
-                new FontRenderContext(new AffineTransform(), true, true);
+              new FontRenderContext(new AffineTransform(), true,
+                                    true);
 
             TextPainter textPainter = new StrokingTextPainter();
 
             GraphicsNodeRableFactory gnrFactory =
-                new ConcreteGraphicsNodeRableFactory();
+              new ConcreteGraphicsNodeRableFactory();
 
-            nodeRenderContext =
-                new GraphicsNodeRenderContext(new AffineTransform(),
-                                          null,
-                                          hints,
-                                          fontRenderContext,
-                                          textPainter,
-                                          gnrFactory);
-                nodeRenderContext.setTextPainter(textPainter);
-            }
+            nodeRenderContext = new GraphicsNodeRenderContext(
+                                  new AffineTransform(), null, hints,
+                                  fontRenderContext, textPainter, gnrFactory);
+            nodeRenderContext.setTextPainter(textPainter);
+        }
 
         return nodeRenderContext;
     }
@@ -327,8 +303,8 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
      * @param domImpl the DOM Implementation (not used)
      * @param parserClassname the XML parser classname
      */
-    protected DocumentFactory createDocumentFactory(DOMImplementation domImpl,
-                                                    String parserClassname) {
+    protected DocumentFactory createDocumentFactory(
+      DOMImplementation domImpl, String parserClassname) {
         return new SAXSVGDocumentFactory(parserClassname);
     }
 
@@ -375,7 +351,8 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
          */
         public void displayMessage(String message) {
             try {
-                getErrorHandler().warning(new TranscoderException(message));
+                getErrorHandler().warning(
+                  new TranscoderException(message));
             } catch (TranscoderException ex) {
                 throw new RuntimeException();
             }
@@ -386,8 +363,9 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
          * <tt>TranscodingHints</tt> or 0.3528 if any.
          */
         public float getPixelToMM() {
-            if (getTranscodingHints().containsKey(KEY_PIXEL_TO_MM)) {
-                return ((Float)getTranscodingHints().get(KEY_PIXEL_TO_MM)).floatValue();
+            if (getTranscodingHints().containsKey(ImageTranscoder.KEY_PIXEL_TO_MM)) {
+                return ( (Float) getTranscodingHints().get(
+                           ImageTranscoder.KEY_PIXEL_TO_MM)).floatValue();
             } else {
                 // return 0.3528f; // 72 dpi
                 return 0.26458333333333333333333333333333f; // 96dpi
@@ -399,8 +377,8 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
          * <tt>TranscodingHints</tt> or "en" (english) if any.
          */
         public String getLanguages() {
-            if (getTranscodingHints().containsKey(KEY_LANGUAGE)) {
-                return (String)getTranscodingHints().get(KEY_LANGUAGE);
+            if (getTranscodingHints().containsKey(ImageTranscoder.KEY_LANGUAGE)) {
+                return (String) getTranscodingHints().get(ImageTranscoder.KEY_LANGUAGE);
             } else {
                 return "en";
             }
@@ -411,14 +389,16 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
          * <tt>TranscodingHints</tt> or null if any.
          */
         public String getUserStyleSheetURI() {
-            return (String)getTranscodingHints().get(KEY_USER_STYLESHEET_URI);
+            return (String) getTranscodingHints().get(
+                     ImageTranscoder.KEY_USER_STYLESHEET_URI);
         }
 
         /**
          * Returns the XML parser to use from the TranscodingHints.
          */
         public String getXMLParserClassName() {
-            return (String)getTranscodingHints().get(KEY_XML_PARSER_CLASSNAME);
+            return (String) getTranscodingHints().get(
+                     KEY_XML_PARSER_CLASSNAME);
         }
 
         /**
@@ -473,9 +453,8 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
             return false;
         }
 
-        public void registerExtension(BridgeExtension be)
-        {    
-        }    
+        public void registerExtension(BridgeExtension be) {
+        }
     }
 
     protected final static Set FEATURES = new HashSet();
@@ -484,174 +463,4 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         FEATURES.add(SVGConstants.SVG_ORG_W3C_SVG_LANG_FEATURE);
         FEATURES.add(SVGConstants.SVG_ORG_W3C_SVG_STATIC_FEATURE);
     }
-
-    // --------------------------------------------------------------------
-    // Keys definition
-    // --------------------------------------------------------------------
-
-    /**
-     * The image width key.
-     * <TABLE BORDER="0" CELLSPACING="0" CELLPADDING="1">
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Key: </TH>
-     * <TD VALIGN="TOP">KEY_WIDTH</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Value: </TH>
-     * <TD VALIGN="TOP">Float</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Default: </TH>
-     * <TD VALIGN="TOP">The width of the top most svg element</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Required: </TH>
-     * <TD VALIGN="TOP">No</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Description: </TH>
-     * <TD VALIGN="TOP">Specify the width of the image to create.</TD></TR>
-     * </TABLE> */
-    public static final TranscodingHints.Key KEY_WIDTH
-        = new LengthKey();
-
-    /**
-     * The image height key.
-     * <TABLE BORDER="0" CELLSPACING="0" CELLPADDING="1">
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Key: </TH>
-     * <TD VALIGN="TOP">KEY_HEIGHT</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Value: </TH>
-     * <TD VALIGN="TOP">Float</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Default: </TH>
-     * <TD VALIGN="TOP">The height of the top most svg element</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Required: </TH>
-     * <TD VALIGN="TOP">No</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Description: </TH>
-     * <TD VALIGN="TOP">Specify the height of the image to create.</TD></TR>
-     * </TABLE> */
-    public static final TranscodingHints.Key KEY_HEIGHT
-        = new LengthKey();
-
-    /**
-     * The area of interest key.
-     * <TABLE BORDER="0" CELLSPACING="0" CELLPADDING="1">
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Key: </TH>
-     * <TD VALIGN="TOP">KEY_AOI</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Value: </TH>
-     * <TD VALIGN="TOP">Rectangle2D</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Default: </TH>
-     * <TD VALIGN="TOP">The document's size</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Required: </TH>
-     * <TD VALIGN="TOP">No</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Description: </TH>
-     * <TD VALIGN="TOP">Specify the area of interest to render. The
-     * rectangle coordinates must be specified in pixels and in the
-     * document coordinates system.</TD></TR>
-     * </TABLE>
-     */
-    public static final TranscodingHints.Key KEY_AOI
-        = new Rectangle2DKey();
-
-    /**
-     * The language key.
-     * <TABLE BORDER="0" CELLSPACING="0" CELLPADDING="1">
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Key: </TH>
-     * <TD VALIGN="TOP">KEY_LANGUAGE</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Value: </TH>
-     * <TD VALIGN="TOP">String</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Default: </TH>
-     * <TD VALIGN="TOP">"en"</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Required: </TH>
-     * <TD VALIGN="TOP">No</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Description: </TH>
-     * <TD VALIGN="TOP">Specify the preferred language of the document.
-     * </TD></TR>
-     * </TABLE>
-     */
-    public static final TranscodingHints.Key KEY_LANGUAGE
-        = new StringKey();
-
-    /**
-     * The user stylesheet URI key.
-     * <TABLE BORDER="0" CELLSPACING="0" CELLPADDING="1">
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Key: </TH>
-     * <TD VALIGN="TOP">KEY_USER_STYLESHEET_URI</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Value: </TH>
-     * <TD VALIGN="TOP">String</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Default: </TH>
-     * <TD VALIGN="TOP">null</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Required: </TH>
-     * <TD VALIGN="TOP">No</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Description: </TH>
-     * <TD VALIGN="TOP">Specify the user style sheet.</TD></TR>
-     * </TABLE>
-     */
-    public static final TranscodingHints.Key KEY_USER_STYLESHEET_URI
-        = new StringKey();
-
-    /**
-     * The pixel to millimeter conversion factor key.
-     * <TABLE BORDER="0" CELLSPACING="0" CELLPADDING="1">
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Key: </TH>
-     * <TD VALIGN="TOP">KEY_PIXEL_TO_MM</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Value: </TH>
-     * <TD VALIGN="TOP">Float</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Default: </TH>
-     * <TD VALIGN="TOP">0.33</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Required: </TH>
-     * <TD VALIGN="TOP">No</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Description: </TH>
-     * <TD VALIGN="TOP">Specify the pixel to millimeter conversion factor.
-     * </TD></TR>
-     * </TABLE>
-     */
-    public static final TranscodingHints.Key KEY_PIXEL_TO_MM
-        = new FloatKey();
-
-    /**
-     * The image background paint key.
-     * <TABLE BORDER="0" CELLSPACING="0" CELLPADDING="1">
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Key: </TH>
-     * <TD VALIGN="TOP">KEY_BACKGROUND_COLOR</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Value: </TH>
-     * <TD VALIGN="TOP">Paint</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Default: </TH>
-     * <TD VALIGN="TOP">null</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Required: </TH>
-     * <TD VALIGN="TOP">No</TD></TR>
-     * <TR>
-     * <TH VALIGN="TOP" ALIGN="RIGHT"><P ALIGN="RIGHT">Description: </TH>
-     * <TD VALIGN="TOP">Specify the background color to use.
-     * The color is required by opaque image formats and is used by
-     * image formats that support alpha channel.</TD></TR>
-     * </TABLE>
-     */
-    public static final TranscodingHints.Key KEY_BACKGROUND_COLOR
-        = new PaintKey();
-
 }

@@ -35,7 +35,7 @@ import java.util.Map;
  * is <tt>AbstractGraphics2D</tt> and makes it easy to start
  * implementing a <tt>Graphic2D</tt> piece-meal.
  *
- * @author <a href="mailto:vincent.hardy@eng.sun.com">Vincent Hardy</a>
+ * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
  * @version $Id$
  * @see org.apache.batik.ext.awt.g2d.AbstractGraphics2D
  */
