@@ -5,7 +5,7 @@
 <configuration>
   <entry>
     <key>version</key>
-    <value>Fop 0.16.0 dev</value>
+    <value>FOP 0.16.0 DEV</value>
   </entry>
 
   <!-- stream-filter-list provides the default filters that are applied to all
@@ -19,7 +19,7 @@
       
       <!-- encodes binary data into printable ascii characters (default off)
            This provides about a 4:5 expansion of data size -->
-      <!-- <value>ascii-85</value> -->
+      <value>ascii-85</value>
 
       <!-- encodes binary data with hex representation (default off)
            This filter is not recommended as it doubles the data size -->
