@@ -99,21 +99,23 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
         int cheight = -1;
         Length ch = fobj.getContentHeight();
         if (ch.getEnum() != AUTO) {
-            /*if (ch.scaleToFit()) {
+            if (ch.getEnum() == SCALE_TO_FIT) {
                 if (viewHeight != -1) {
                     cheight = viewHeight;
                 }
-            } else {*/
-            cheight = ch.getValue();
+            } else {
+                cheight = ch.getValue();
+            }
         }
         Length cw = fobj.getContentWidth();
         if (cw.getEnum() != AUTO) {
-            /*if (cw.scaleToFit()) {
+            if (cw.getEnum() == SCALE_TO_FIT) {
                 if (viewWidth != -1) {
                     cwidth = viewWidth;
                 }
-            } else {*/
-            cwidth = cw.getValue();
+            } else {
+                cwidth = cw.getValue();
+            }
         }
 
         int scaling = fobj.getScaling();
