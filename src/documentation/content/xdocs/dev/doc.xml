@@ -67,10 +67,23 @@ Maintenance branch releases either copy the trunk content to the maintenance bra
           </tr>
           <tr>
             <td>Developer commits code to FOP repository.</td>
-            <td>FOP source repository (cvs) at icarus.apache.org/home/cvs/xml-fop</td>
+            <td>FOP repository (cvs) at cvs.apache.org/home/cvs/xml-fop</td>
             <td>Raw XML and other content</td>
             <td><link href="http://cvs.apache.org/viewcvs.cgi/xml-fop/src/documentation/content/xdocs/">ViewCVS</link></td>
           </tr>
+          <tr>
+            <td>Developer builds documentation and commits it to xml-site.</td>
+            <td>xml-site repository (cvs) at cvs.apache.org/home/cvs/xml-site</td>
+            <td>web-ready</td>
+            <td><link href="http://cvs.apache.org/viewcvs.cgi/xml-site/targets/fop/">ViewCVS</link></td>
+          </tr>
+          <tr>
+            <td>Developer publishes website.</td>
+            <td>FOP live web site, /www/xml.apache.org/fop on www.apache.org</td>
+            <td>web-ready</td>
+            <td><link href="http://xml.apache.org/fop">FOP Web Site</link></td>
+          </tr>
+<!--
           <tr>
             <td>
               <link href="#forrestbot-refresh">Forrestbot "refresh"</link>. Automatically done every six hours. Can be manually refreshed by authorized users at <link href="http://forrestbot.cocoondev.org">the Forrestbot Web Interface</link>.
@@ -91,8 +104,11 @@ Maintenance branch releases either copy the trunk content to the maintenance bra
             <td>web-ready</td>
             <td><link href="http://xml.apache.org/fop">FOP Web Site</link></td>
           </tr>
+-->
         </table>
+        <note>Forrestbot is currently not available for website publishing.</note>
       </section>
+<!--
       <section id="web-forrestbot-refresh">
         <title>Forrestbot "refresh" Step-by-Step</title>
         <note>The Forrestbot "refresh" is automatically run on the server every six hours. Only follow the steps below if you need to check the results more promptly than that allows, or if you need to "refresh" in preparation for a "publish".</note>
@@ -119,6 +135,8 @@ On-screen instructions tell you how to view the log as the build progresses.</li
           <li>Wait for the next 6-hour live-site update cycle and check your changes.</li>
         </ul>
       </section>
+-->
+<!--
       <section id="web-live-update">
         <title>Live Site Update</title>
         <p>If there are problems with the live site update (the process of copying the web site contents from the FOP web repository to the live site:</p>
@@ -129,31 +147,34 @@ Review the most recent log file for clues.</li>
 Contact him for further help.</li>
         </ul>
       </section>
+-->
       <section id="web-local-forrest">
         <title>Using a Local Forrest</title>
+<!--        
         <note>Most documentation content changes do not require a local copy of Forrest.
 In general, use the Forrestbot instead. Forrestbot is easy to use, always uses the "approved" methodology, and has fewer error-prone manual steps.</note>
         <p>There are some situations where you may want to have a local Forrest installation. For example, you do not want to tie up server resources testing major changes, such as sitemap building, that may require many edit/build/test/debug cycles. After you are done testing, use the forrestbot to "refresh" and "publish" the site.</p>
         <note>Forrest needs to be run on a machine with a graphical environment.
 It will fail in a headless environment when it tries to use FOP to generate the PDF files.</note>
+-->
         <p>To use a local Forrest:</p>
         <ul>
-          <li>checkout the xml-forrest module (same repository as xml-fop)</li>
+          <!--<li>checkout the xml-forrest module (same repository as xml-fop)</li>-->
+          <li><link href="http://forrest.apache.org/mirrors.cgi#closest">download</link> latest the Forrest release</li>
           <li>checkout the xml-site/targets/fop module (same repository as xml-fop)</li>
-          <li>you will also need access to a current xml-fop sandbox (you probably already
-    have one)</li>
-          <li>cd to xml-forrest</li>
-          <li>run: build.sh(bat) dist to build forrest</li>
-          <li>set environment variable FORREST_HOME=~/xml-forrest/build/dist/shbat where ~ is the directory in which xml-forrest is installed (see http://xml.apache.org/forrest/your-project.html for details)</li>
+          <li>set environment variable FORREST_HOME=~/apache-forrest-0.6/src/core where ~ is the directory where Forrest is installed
+              (see <link href="http://forrest.apache.org/docs/your-project.html">http://forrest.apache.org/docs/your-project.html</link> for details)</li>
           <li>set environment variable PATH=$PATH:$FORREST_HOME/bin</li>
           <li>cd to xml-fop directory</li>
           <li>run forrest(.bat), which will build the web-site documents in xml-fop/build/site.</li>
         </ul>
       </section>
       <section id="web-manual">
-        <title>Updating the FOP Web Repository Manually (Deprecated)</title>
-        <warning>The steps in this section should not ordinarily be used. They are documented here for historical reasons, and for emergencies.
+        <title>Updating the FOP Web Repository Manually</title>
+<!--
+<warning>The steps in this section should not ordinarily be used. They are documented here for historical reasons, and for emergencies.
 See <link href="#delete">manually deleting retired files</link> for an exception to this rule.</warning>
+-->
         <ul>
           <li>Copy (or sym-link) the documents generated by Forrest (in xml-fop/build/site) to xml-site/targets/fop on your local machine.</li>
           <li>Commit xml-site/targets/fop.</li>
@@ -163,6 +184,16 @@ See <link href="#delete">manually deleting retired files</link> for an exception
         <title>Deleting Documentation Files</title>
         <p>The one place where manual updates of the web cvs repository are required is when a document is retired. At this point, it will no longer be generated. However, it will still exist in the web cvs repository. You will need to use a cvs client to remove the files, then commit the changes to keep them from continuing to exist on the live site.</p>
       </section>
+      <section id="publish">
+        <title>Publish the Website</title>
+        <ul>
+          <li>ssh to www.apache.org</li>
+          <li>cd /www/xml.apache.org/fop</li>
+          <li>make sure your umask is 0002 (to make the files group writeable)</li>
+          <li>cvs up -Pd</li>
+        </ul>
+      </section>
+      
     </section>
   </body>
 </document>
