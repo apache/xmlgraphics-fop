@@ -103,6 +103,7 @@ list of possible build targets.
     <exclude name="dist/**"/>
     <exclude name="build/**"/>
     <exclude name="lib/**"/>
+    <exclude name="**/userconfig.xml>
   </fileset>
 
   <fileset dir="${basedir}" id="dist.bin.lib">
@@ -118,6 +119,7 @@ list of possible build targets.
     <exclude name="build/**"/>
     <include name="src/**"/>
     <include name="conf/**"/>
+    <exclude name="**/userconfig.xml"/>
     <include name="docs/**"/>
     <include name="lib/**"/>
     <include name="CHANGES"/>
@@ -561,7 +563,7 @@ list of possible build targets.
       "[${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}]"/>
 
     <jar jarfile="${build.dir}/${name}.jar" basedir="${build.dest}"
-                        includes="org/**">
+                        includes="org/**,conf/**">
       <manifest>
         <attribute name="Main-Class" value="${main.class}"/>
         <attribute name="Class-Path" value="${manifest-classpath}"/>
