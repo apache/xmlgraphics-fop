@@ -57,7 +57,7 @@ public class FObjMixed extends FObj {
         /* characters() processing empty for FOTreeHandler, not empty for RTF & MIFHandlers */
         getFOInputHandler().characters(ft.ca, ft.startIndex, ft.endIndex);
 
-        addChild(ft);
+        addChildNode(ft);
     }
 
     private void setup() {

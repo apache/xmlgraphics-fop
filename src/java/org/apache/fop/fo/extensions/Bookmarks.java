@@ -44,12 +44,9 @@ public class Bookmarks extends ExtensionObj {
     }
 
     /**
-     * Add the child to the top level.
-     * This handles all Outline objects added and ignores others.
-     *
-     * @param obj the child to add
+     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
-    protected void addChild(FONode obj) {
+    protected void addChildNode(FONode obj) {
         if (obj instanceof Outline) {
             outlines.add(obj);
         }

@@ -276,7 +276,7 @@ public class FOTreeBuilder extends DefaultHandler {
             rootFObj = (Root) foNode;
             rootFObj.setFOInputHandler(foInputHandler);
         } else {
-            currentFObj.addChild(foNode);
+            currentFObj.addChildNode(foNode);
         }
 
         currentFObj = foNode;

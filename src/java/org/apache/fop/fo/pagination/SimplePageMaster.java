@@ -92,9 +92,9 @@ public class SimplePageMaster extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#addChild(FONode)
+     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
-    protected void addChild(FONode child) {
+    protected void addChildNode(FONode child) {
         if (child instanceof Region) {
             addRegion((Region)child);
         } else {
