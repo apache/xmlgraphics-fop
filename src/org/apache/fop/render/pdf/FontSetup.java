@@ -156,11 +156,17 @@ public class FontSetup {
                 if (metricsFile != null) {
                     internalName = "F" + num;
                     num++;
+                    /*
                     reader = new FontReader(metricsFile);
                     reader.useKerning(configFontInfo.getKerning());
                     reader.setFontEmbedPath(configFontInfo.getEmbedFile());
                     fontInfo.addMetrics(internalName, reader.getFont());
-
+                    */
+                    LazyFont font = new LazyFont(configFontInfo.getEmbedFile(),
+                                                 metricsFile,
+                                                 configFontInfo.getKerning());
+                    fontInfo.addMetrics(internalName, font);
+                    
                     Vector triplets = configFontInfo.getFontTriplets();
                     for (Enumeration t = triplets.elements();
                             t.hasMoreElements(); ) {
