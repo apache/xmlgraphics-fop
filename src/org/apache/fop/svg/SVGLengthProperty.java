@@ -82,7 +82,7 @@ public class SVGLengthProperty extends Property {
          * @param value the explicit string value of the property
          */
         public Property make(PropertyList propertyList,
-                             String value) throws FOPException {
+                             String value, FObj fo) throws FOPException {
             SVGLengthImpl len = new SVGLengthImpl();
             len.setValueAsString(value);
             return new SVGLengthProperty(propertyList, len);
@@ -106,6 +106,16 @@ public class SVGLengthProperty extends Property {
      */
     public static Property.Maker maker() {
         return new SVGLengthProperty.Maker();
+    }
+
+    /**
+     * returns the maker for this object.
+     * @param propName the name of the property (used with new
+     * property mapping scheme)
+     * @return the maker for SVG Length objects
+     */
+    public static Property.Maker maker(String propName) {
+	return new SVGLengthProperty.Maker();
     }
 
     /** the length as a Length object */

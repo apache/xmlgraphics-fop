@@ -82,7 +82,7 @@ public class SVGStyle extends Property {
 	 * @param propertyList the property list this is a member of
 	 * @param value the explicit string value of the property
 	 */
-	public Property make(PropertyList propertyList, String value)
+	public Property make(PropertyList propertyList, String value, FObj fo)
 		throws FOPException {
 		return new SVGStyle(propertyList, new StyleData(value));
 	}
@@ -93,7 +93,7 @@ public class SVGStyle extends Property {
 	 * @param propertyList the property list the property is a member of
 	 */
 	public Property make(PropertyList propertyList) throws FOPException {
-		return make(propertyList, "");
+		return make(propertyList, "", null);
 	}
 	}
 
@@ -102,7 +102,7 @@ public class SVGStyle extends Property {
 	 *
 	 * @return the maker for SVG Length objects
 	 */
-	public static Property.Maker maker() {
+	public static Property.Maker maker(String propName) {
 	return new SVGStyle.Maker();
 	}
 
