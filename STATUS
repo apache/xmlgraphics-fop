@@ -11,8 +11,25 @@ Get images working
 [PARTIAL] Implement basic keeps
 [DONE]Incorporate Eric Schaeffer's fix to tables in static-content
 [DONE] Incorporate Kelly Campell's fixes to GifJpegImage
+Incorporate Eric Schaeffer's further table fixes
+Incorporate Eric Schaeffer's background colour implementation
 
 Other Bugs to fix:
 
 colour not continued onto subsequent pages if coloured block goes over page
+
+Todo's and problems with AWT Previewer:
+
+- currently the layout process uses PDF fonts. This gives sometimes
+  trouble with java.awt.Font 
+- we need some progress messages even if the process itself is fast
+- GIF format is supported by the viewer, but disabled in FOP. BMP is
+  not done, because there are no standard libraries.
+- more comments/english comments
+- print output using AWT
+- i18n for the user interface (yes, now we need this stuff)
+- toolbar images directory is not configurable
+- first preview is painted twice (flashing screen)
+- should "preview" be an option when calling FOP instead of having
+  it's own main method?
 

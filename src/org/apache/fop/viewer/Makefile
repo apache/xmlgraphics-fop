@@ -5,15 +5,11 @@ include $(BASEDIR)/Makefile.rules
 
 SUBDIRS=
 
-SOURCES=AWTCommandLine.java \
-	CommandLine.java \
-	Driver.java \
-	ErrorHandler.java \
-	FOPException.java \
-	Version.java \
-	XTCommandLine.java
-
-
+SOURCES=Command.java \
+	DocumentPanel.java \
+	IconToolBar.java \
+	PreviewDialog.java \
+	PreviewDialogAboutBox.java
 
 CLASSES=$(SOURCES:.java=.class)
 
