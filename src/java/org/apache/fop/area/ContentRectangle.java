@@ -31,11 +31,14 @@ import org.apache.fop.area.Area.AreaGeometry;
  */
 public class ContentRectangle extends AreaGeometry {
 
+    private final Area area;
+
     /**
      * @param writingMode
      */
     public ContentRectangle(Area area) {
         area.super(area.contentWritingMode);
+        this.area = area;
         padding = new PaddingRectangle(area, this);
     }
 
@@ -50,27 +53,68 @@ public class ContentRectangle extends AreaGeometry {
             double ipOrigin, double bpOrigin, double ipDim, double bpDim) {
         area.super(area.contentWritingMode, ipOrigin, bpOrigin, ipDim, bpDim);
         // Get the padding writing mode
+        this.area = area;
         padding = new PaddingRectangle(area, this);
     }
 
+    /**
+     * Gets the writing-mode applicable to the content-rectangle
+     * @see org.apache.fop.area.Area.AreaGeometry#getWritingMode()
+     */
     public int getWritingMode() {
         return getContentWritingMode();
     }
 
+    /** The <code>PaddingRectangle</code> <code>AreaFrame</code> around
+     * <code>this</code> */
     private PaddingRectangle padding = null;
 
+    /**
+     * Gets the containing <code>PaddingRectangle</code>
+     * @return the padding-ractangle
+     */
     public PaddingRectangle getPadding() {
         return padding;
     }
 
+    /**
+     * Sets the containing <code>PaddingRectangle</code> to the argument
+     * @param padding the padding-rectangle
+     */
     public void setPadding(PaddingRectangle padding) {
         this.padding = padding; 
     }
 
+    /**
+     * Sets the offset and dimensions for this<i>content-rectangle</i>, and
+     * then sets <code>this</code> as the contents of the <code>padding</code>
+     * <code>AreaFrame</code>
+     * @param ipOrigin {@inheritDoc}
+     * @param bpOrigin {@inheritDoc}
+     * @param ipDim {@inheritDoc}
+     * @param bpDim {@inheritDoc}
+     * @see org.apache.fop.area.Area.AreaGeometry#setRect(double, double, double, double)
+     */
     public void setRect(
             double ipOrigin, double bpOrigin, double ipDim, double bpDim) {
         super.setRect(ipOrigin, bpOrigin, ipDim, bpDim);
         padding.setContents(this);
     }
 
+    /* (non-Javadoc)
+     * @see org.apache.fop.area.Area.AreaGeometry#getFrameRelativeDimensions()
+     */
+    public DimensionDbl getFrameRelativeDimensions() {
+        switch (getRotationToFrame()) {
+        case 0:
+        case 180:
+            return super.getFrameRelativeDimensions();
+        case 90:
+        case 270:
+            return new DimensionDbl(getHeight(), getWidth());
+        default:
+            area.log.warning("Illegal rotation: " + getRotationToFrame());
+            return super.getFrameRelativeDimensions();
+        }
+    }
 }
