@@ -48,54 +48,79 @@
  Software Foundation, please see <http://www.apache.org/>.
 
  */
-package org.apache.fop.layout;
+package org.apache.fop.layout.inline;
 
 import org.apache.fop.render.Renderer;
+import org.apache.fop.layout.Area;
+import org.apache.fop.layout.FontState;
+import org.apache.fop.layout.*;
 
-import java.util.Vector;
-import java.util.Enumeration;
+public abstract class InlineArea extends Area {
 
-public class LeaderArea extends InlineArea {
+    private int yOffset = 0;
+    private int height = 0;
+    private int verticalAlign = 0;
+    protected String pageNumberId = null;
+    private float red, green, blue;
 
-    int ruleThickness;
-    int leaderLengthOptimum;
-    int leaderPattern;
-    int ruleStyle;
+    // Textdecoration
+    protected boolean underlined = false;
+    protected boolean overlined = false;
+    protected boolean lineThrough = false;
 
-    float red, green, blue;
-    public LeaderArea(FontState fontState, float red, float green,
-                      float blue, String text, int leaderLengthOptimum,
-                      int leaderPattern, int ruleThickness, int ruleStyle) {
-        super(fontState, red, green, blue, text, leaderLengthOptimum);
 
-        this.leaderPattern = leaderPattern;
-        this.leaderLengthOptimum = leaderLengthOptimum;
-        this.ruleStyle = ruleStyle;
-        //following the xsl spec rule: if rule-style="none" set thickness to 0;
-        //actually in pdf this doesn't work, because a very thin line is still shown
-        //this is handled in the pdf renderer
-        if (ruleStyle == org.apache.fop.fo.properties.RuleStyle.NONE) {
-            ruleThickness = 0;
-        }
-        this.ruleThickness = ruleThickness;
+    public InlineArea(FontState fontState, int width, float red, float green,
+                      float blue) {
+        super(fontState);
+        this.contentRectangleWidth = width;
     }
 
-    public void render(Renderer renderer) {
-        renderer.renderLeaderArea(this);
-    }
-    public int getRuleThickness() {
-        return this.ruleThickness;
-    }
-    public int getRuleStyle() {
-        return this.ruleStyle;
-    }
-    public int getLeaderPattern() {
-        return this.leaderPattern;
-    }
-    public int getLeaderLength() {
-        return this.contentRectangleWidth;
+    public float getBlue() {
+        return this.blue;
     }
 
+    public float getGreen() {
+        return this.green;
+    }
 
+    public float getRed() {
+        return this.red;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public int getHeight() {
+        return this.height;
+    }
+
+    public void setVerticalAlign(int align) {
+        this.verticalAlign = align;
+    }
+
+    public int getVerticalAlign() {
+        return this.verticalAlign;
+    }
+
+    public void setYOffset(int yOffset) {
+        this.yOffset = yOffset;
+    }
+
+    public int getYOffset() {
+        return this.yOffset;
+    }
+
+    public String getPageNumberID() {
+        return pageNumberId;
+    }
+
+    public void setUnderlined(boolean ul) {
+        this.underlined = ul;
+    }
+
+    public boolean getUnderlined() {
+        return this.underlined;
+    }
 
 }
