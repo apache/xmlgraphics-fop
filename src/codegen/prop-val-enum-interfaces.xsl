@@ -92,7 +92,7 @@ import org.apache.fop.fo.Constants;
       <xsl:text>
     public interface </xsl:text>
       <xsl:value-of select="$classname"/>
-      <xsl:if test="use-generic and $bEnum='true'">
+      <xsl:if test="use-generic">
         <xsl:text> extends </xsl:text>
         <xsl:value-of select="use-generic"/>
         <xsl:text>.Enums</xsl:text>
@@ -106,9 +106,6 @@ import org.apache.fop.fo.Constants;
         <xsl:value-of select="@const"/>
         <xsl:text>;</xsl:text>
       </xsl:for-each>
-      <xsl:if test="contains($bSubpropEnum, 'true')">
-        <xsl:call-template name="genSubpropEnum"/>
-      </xsl:if>
       <xsl:text> }
 </xsl:text>
     </redirect:write>
