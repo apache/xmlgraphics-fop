@@ -14,6 +14,7 @@ import org.apache.fop.render.RendererContext;
 import org.apache.fop.fo.FOUserAgent;
 import org.apache.fop.image.*;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.Version;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.pdf.*;
@@ -158,7 +159,7 @@ public class PDFRenderer extends PrintRenderer {
 
     public void startRenderer(OutputStream stream) throws IOException {
         ostream = stream;
-        this.pdfDoc = new PDFDocument();
+        this.pdfDoc = new PDFDocument(Version.getVersion());
         this.pdfDoc.setProducer(producer);
         pdfDoc.outputHeader(stream);
     }

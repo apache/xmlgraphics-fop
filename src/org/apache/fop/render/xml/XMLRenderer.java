@@ -148,7 +148,7 @@ public class XMLRenderer extends AbstractRenderer {
     public void setupFontInfo(FontInfo fontInfo) {
 
         /* use PDF's font setup to get PDF metrics */
-        org.apache.fop.render.pdf.FontSetup.setup(fontInfo);
+        org.apache.fop.render.pdf.FontSetup.setup(fontInfo, org.apache.fop.configuration.Configuration.getFonts());
     }
 
     private boolean isCoarseXml() {

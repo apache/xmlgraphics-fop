@@ -8,6 +8,9 @@
 
 package org.apache.fop.configuration;
 
+import org.apache.fop.render.pdf.EmbedFontInfo;
+import org.apache.fop.render.pdf.FontTriplet;
+
 // sax
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.Attributes;
@@ -74,7 +77,7 @@ public class ConfigurationParser extends DefaultHandler {
     private ArrayList fontList = null;
 
     // stores information on one font
-    private FontInfo fontInfo = null;
+    private EmbedFontInfo fontInfo = null;
 
     // stores information on a font triplet
     private FontTriplet fontTriplet = null;
@@ -195,7 +198,7 @@ public class ConfigurationParser extends DefaultHandler {
         } else if (localName.equals("fonts")) {
             this.store("standard", "fonts", fontList);
         } else if (localName.equals("font")) {
-            fontInfo = new FontInfo(fontName, metricsFile, kerning,
+            fontInfo = new EmbedFontInfo(fontName, metricsFile, kerning,
                                     fontTriplets, embedFile);
             fontList.add(fontInfo);
             fontTriplets = null;
