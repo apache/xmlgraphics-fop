@@ -26,6 +26,7 @@ import org.apache.fop.apps.*;
 
 import org.w3c.dom.svg.*;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import org.apache.batik.bridge.*;
 import org.apache.batik.swing.svg.*;
@@ -1094,6 +1095,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 
         public void registerExtension(BridgeExtension be) {}
 
+        public void handleElement(Element elt, Object data) {}
 
     }
 
