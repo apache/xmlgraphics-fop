@@ -69,9 +69,6 @@ import org.apache.fop.apps.FOUserAgent;
  *
  */
 public abstract class FONode {
-
-    /** FO User Agent for this node (for logger etc.)*/
-    protected FOUserAgent userAgent;
     /** Parent FO node */
     protected FONode parent;
     /** Name of the node */
@@ -98,15 +95,7 @@ public abstract class FONode {
      * @return the logger
      */
     public Logger getLogger() {
-        return userAgent.getLogger();
-    }
-
-    /**
-     * Sets the user agent for the node.
-     * @param ua the user agent
-     */
-    public void setUserAgent(FOUserAgent ua) {
-        userAgent = ua;
+        return getFOTreeControl().getLogger();
     }
 
     /**
@@ -114,7 +103,7 @@ public abstract class FONode {
      * @return FOUserAgent
      */
     public FOUserAgent getUserAgent() {
-        return userAgent;
+        return getFOTreeControl().getUserAgent();
     }
 
     /**

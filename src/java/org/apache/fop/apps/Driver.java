@@ -274,7 +274,7 @@ public class Driver implements LogEnabled {
         userAgent = agent;
     }
 
-    private FOUserAgent getUserAgent() {
+    protected FOUserAgent getUserAgent() {
         if (userAgent == null) {
             userAgent = new FOUserAgent();
             userAgent.enableLogging(getLogger());

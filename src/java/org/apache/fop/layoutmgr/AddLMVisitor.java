@@ -176,6 +176,7 @@ public class AddLMVisitor extends FOTreeVisitor {
         if (node.getChildren() != null) {
             InlineStackingLayoutManager lm;
             lm = new InlineStackingLayoutManager();
+            Document doc = (Document)node.getFOTreeControl();
             lm.setUserAgent(node.getUserAgent());
             lm.setFObj(node);
             lm.setLMiter(new LMiter(node.getChildren()));

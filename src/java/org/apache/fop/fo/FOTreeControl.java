@@ -56,8 +56,12 @@ import java.util.Map;
 import java.util.Set;
 
 // FOP
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fonts.FontMetrics;
+
+// Avalon
+import org.apache.avalon.framework.logger.Logger;
 
 /**
  * An interface for classes that are conceptually the parent class of the
@@ -118,4 +122,15 @@ public interface FOTreeControl {
      * @return the FOInputHandler for parsing this FO Tree
      */
     FOInputHandler getFOInputHandler();
+
+    /**
+     * @return the Logger being used with this FO Tree
+     */
+    Logger getLogger();
+
+    /**
+     * @return the FOUserAgent used for processing this FO Tree
+     */
+    FOUserAgent getUserAgent();
+
 }

@@ -151,14 +151,14 @@ public class ExternalGraphic extends FObj {
         int scaling = properties.get("scaling").getEnum();
         if ((scaling == Scaling.UNIFORM) || (cwidth == -1) || cheight == -1) {
             ImageFactory fact = ImageFactory.getInstance();
-            fopimage = fact.getImage(url, userAgent);
+            fopimage = fact.getImage(url, getUserAgent());
             if (fopimage == null) {
                 // error
                 url = null;
                 return;
             }
             // load dimensions
-            if (!fopimage.load(FopImage.DIMENSIONS, userAgent)) {
+            if (!fopimage.load(FopImage.DIMENSIONS, getUserAgent())) {
                 // error
                 url = null;
                 return;

@@ -278,11 +278,6 @@ public class FOTreeBuilder extends DefaultHandler {
         try {
             fobj = fobjMaker.make(currentFObj);
             fobj.setName(localName);
-            // set the user agent for resolving user agent values
-            fobj.setUserAgent(userAgent);
-            // set the structure handler so that appropriate
-            // elements can signal structure events
-
             fobj.handleAttrs(attlist);
         } catch (FOPException e) {
             throw new SAXException(e);
