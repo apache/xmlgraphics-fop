@@ -44,32 +44,6 @@ public class AreaFrame extends AreaGeometry {
     /** The offset from <code>this</code> origin to the origin of the framed
      * rectangle */
     protected Point2D contentOffset = new Point2D.Double();
-//
-//    /**
-//     * Instantiates an <code>AreaFrame</code> with zero dimensions and offset,
-//     * with <code>contents</code> of zero dimensions and contentOffsets of
-//     * zero.  The <i>writing-mode</i> and <i>reference-orientation</i> are
-//     * assumed to be the same as the containing frame.
-//     * @param area the <code>Area</code> on which this <code>AreaFrame</code>
-//     * is being defined
-//     */
-//    public AreaFrame(Area area) {
-//        area.super(area.frameWritingMode);
-//        contents = area.new AreaGeometry(area.frameWritingMode);
-//        contentOffset = new Point2D.Double();
-//    }
-
-//    /**
-//     * Instantiates an <code>AreaFrame</code> with the given relative
-//     * origin and dimensions, with 
-//     * Contents and offset remain null
-//     */
-//    public AreaFrame(Area area,
-//            double ipOrigin, double bpOrigin, double ipDim, double bpDim) {
-//        area.super(area.frameWritingMode, ipOrigin, bpOrigin, ipDim, bpDim);
-//        contents = area.new AreaGeometry(area.frameWritingMode);
-//        contentOffset = new Point2D.Double();
-//    }
 
     /**
      * Instantiates a frame with 0-width edges around the given
@@ -78,10 +52,9 @@ public class AreaFrame extends AreaGeometry {
      */
     public AreaFrame(Area area, AreaGeometry contents) {
         area.super(area.frameWritingMode);
-        // TODO - check that this can be eliminated
-        //setRect(contents);
+        // At this point, the frame is a point at offset 0,0
         setContents(contents);
-        this.contentOffset = new Point2D.Double();
+        // The offset to the frame is the default 0,0
     }
 
     /**
@@ -97,7 +70,7 @@ public class AreaFrame extends AreaGeometry {
      * @param h height of the framing rectangle in user space units
      * @param contents the framed rectangle
      * @param contentOffset the offset to the origin point of the framed
-     * rectangle from the origin point of <code>this</code> framing rectangle.
+     * rectangle from the origin point of <code>this</code> framing rectangle. 
      */
     public AreaFrame(Area area,
             double ipOrigin, double bpOrigin, double ipDim, double bpDim,
@@ -105,7 +78,7 @@ public class AreaFrame extends AreaGeometry {
         area.super(area.frameWritingMode, ipOrigin, bpOrigin, ipDim,  bpDim);
         // TODO check this against the handling of the contents rectangle
         // Should this initialize with the contents and then set the edges? 
-        setContents(contents);
+        this.contents = contents;
         this.contentOffset = contentOffset;
     }
 
@@ -124,7 +97,7 @@ public class AreaFrame extends AreaGeometry {
             Rectangle2D rect, AreaGeometry contents,
             Point2D contentOffset) {
         area.super(area.frameWritingMode, rect);
-        setContents(contents);
+        this.contents = contents;
         this.contentOffset = contentOffset;
     }
 
@@ -140,14 +113,15 @@ public class AreaFrame extends AreaGeometry {
             setRect(getX(), getY(),
                     getWidth() + contents.getFrameRelativeWidth(),
                     getHeight() + contents.getFrameRelativeHeight());
+        } else {
+            setRect(getX(), getY(),
+                    getWidth() + (
+                            contents.getFrameRelativeWidth() -
+                            this.contents.getFrameRelativeWidth()),
+                            getHeight() + (
+                                    contents.getFrameRelativeHeight() -
+                                    this.contents.getFrameRelativeHeight()));
         }
-        setRect(getX(), getY(),
-                getWidth() + (
-                        contents.getFrameRelativeWidth() -
-                        this.contents.getFrameRelativeWidth()),
-                getHeight() + (
-                        contents.getFrameRelativeHeight() -
-                        this.contents.getFrameRelativeHeight()));
         this.contents = contents;
     }
 
@@ -165,8 +139,8 @@ public class AreaFrame extends AreaGeometry {
      * @param offset the new offset to the framed rectangle
      */
     public void setContentOffset(Point2D offset) {
-        setStart(offset.getX());
-        setBefore(offset.getY());
+        setLeft(offset.getX());
+        setTop(offset.getY());
         contentOffset = offset;
     }
 
@@ -345,9 +319,8 @@ public class AreaFrame extends AreaGeometry {
      * @param top
      */
     public void setTop(double top) {
-        double diff = top - contentOffset.getY();
-        setRect(getX(), getY(),
-                getWidth(), getHeight() + diff);
+        setRect(getX(), getY(), getWidth(),
+                getHeight() + (top - getTop()));
         contentOffset.setLocation(contentOffset.getX(), top);
     }
 
@@ -369,10 +342,10 @@ public class AreaFrame extends AreaGeometry {
      * @param left
      */
     public void setLeft(double left) {
-        double diff = left - contentOffset.getY();
         setRect(getX(), getY(),
-                getWidth() + diff, getHeight());
-        contentOffset.setLocation(left, contentOffset.getX());
+                getWidth() + (left - getLeft()),
+                getHeight());
+        contentOffset.setLocation(left, contentOffset.getY());
     }
 
     /**
@@ -392,8 +365,8 @@ public class AreaFrame extends AreaGeometry {
      * @param bottom
      */
     public void setBottom(double bottom) {
-        double diff = bottom - (getY() - contentOffset.getY() - contents.getY());
-        setRect(getX(), getY(), getWidth(), getHeight() + diff);
+        setRect(getX(), getY(), getWidth(),
+                getHeight() + (bottom - getBottom()));
     }
 
     /**
@@ -401,7 +374,9 @@ public class AreaFrame extends AreaGeometry {
      * @return the width in user co-ordinate units (points)
      */
     public double getBottom() {
-        return getHeight() - contentOffset.getY() - contents.getHeight(); 
+        return (getHeight()
+                - contentOffset.getY()
+                - contents.getFrameRelativeHeight()); 
     }
 
     /**
@@ -413,8 +388,9 @@ public class AreaFrame extends AreaGeometry {
      * @param right
      */
     public void setRight(double right) {
-        double diff = right - (getX() - contentOffset.getX() - contents.getX());
-        setRect(getX(), getY(), getWidth() + diff, getHeight());
+        setRect(getX(), getY(),
+                getWidth() + (right - getRight()),
+                getHeight());
     }
 
     /**
@@ -422,7 +398,9 @@ public class AreaFrame extends AreaGeometry {
      * @return the width in user co-ordinate units (points)
      */
     public double getRight() {
-        return getWidth() - contentOffset.getX() - contents.getWidth();
+        return (getWidth()
+                - contentOffset.getX()
+                - contents.getFrameRelativeWidth());
     }
 
     public double getAbsoluteEdgeWidth(int edge) {
