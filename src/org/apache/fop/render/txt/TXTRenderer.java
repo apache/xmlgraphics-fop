@@ -59,6 +59,9 @@ public class TXTRenderer extends PrintRenderer
 	int	maxY = (int)(11f * textLPI + 1);
 	float	xFactor;
 	float	yFactor;
+ 	public String lineEnding = "\r\n"; // Every line except the last line on a page (which will end with pageEnding) will be terminated with this string.
+ 	public String pageEnding = "\f"; // Every page except the last one will end with this string.
+ 	public boolean suppressGraphics = false; // If true then graphics/decorations will not be rendered - text only.
 
     /**
      * create the TXT renderer
@@ -96,10 +99,10 @@ public class TXTRenderer extends PrintRenderer
 			if ( first )
 				first = false;
 			else
-				currentStream.add("\f");
+				currentStream.add(pageEnding);
 		    this.renderPage((Page) e.nextElement());
 		}
-		currentStream.add("\n");
+		currentStream.add(lineEnding);
         if ( !idReferences.isEveryIdValid() )
         {
             //throw new FOPException("The following id's were referenced but not found: "+idReferences.getInvalidIds()+"\n");
@@ -114,6 +117,8 @@ public class TXTRenderer extends PrintRenderer
 	{
 if ( debug )
 System.out.println("TXTRenderer.addStr(" + row + ", " + col + ", \"" + str + "\", " + ischar + ")");
+ 		if ( suppressGraphics && ! ischar )
+ 			return;
 		StringBuffer sb;
 		if ( row < 0 )
 			row = 0;
@@ -1734,7 +1739,7 @@ System.out.println("TXTRenderer.renderPage() maxX=" + maxX + " maxY=" + maxY + "
 			if ( outr != null )
 				currentStream.add(outr.toString());
  			if ( row < maxY )
-				currentStream.add("\n");
+				currentStream.add(lineEnding);
 		}
 
 		// End page.
