@@ -113,12 +113,11 @@
       <fo:block space-before.optimum="12pt">This is a rather long sentence that is going to keep on going and going, not really to demonstrate anything other that normal wrapping because the following paragraph will show what happens when wrap-option is set to no-wrap.</fo:block>
       <fo:block space-before.optimum="12pt" wrap-option="no-wrap">This is a rather long sentence that is going to keep on going and going to demonstrate what happens when wrap-option is set to no-wrap which is unlike the preceding sentence where it defaults to wrap.</fo:block>
       <fo:block space-before.optimum="12pt" wrap-option="wrap">This is a rather long sentence that is going to keep on going and going, not really to demonstrate anything other that normal wrapping but it differs from the first of these three sentences in that wrap is set explicitly.</fo:block>
-<!--       <fo:block font-size="24pt" line-height="28pt" space-before.optimum="12pt" space-after.optimum="12pt">White Space Treatment</fo:block>
+      <fo:block font-size="24pt" line-height="28pt" space-before.optimum="12pt" space-after.optimum="12pt">White Space Collapse</fo:block>
 <fo:block>This            is            default!</fo:block>
-<fo:block white-space-treatment="preserve">This            is            preserve!</fo:block>
-<fo:block white-space-treatment="collapse">This            is            collapse!</fo:block>
-<fo:block white-space-treatment="ignore">This            is            ignore!</fo:block>
-<fo:block font-family="monospace" white-space-treatment="preserve"> 
+<fo:block white-space-collapse="false">This            is            false!</fo:block>
+<fo:block white-space-collapse="true">This            is            true!</fo:block>
+<fo:block font-family="monospace" white-space-collapse="false"> 
 <![CDATA[
 <?xml version="1.0"?>
 <document>
