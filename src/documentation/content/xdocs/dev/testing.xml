@@ -17,8 +17,16 @@
         <li><link href="http://gump.cocoondev.org/xml-fop-maintenance.html">Gump build for the Maintenance Branch</link></li>
       </ul>
     </section>
+    <section id="basic">
+      <title>Basic/API Testing</title>
+      <p>There is a group of basic API tests that are included in the build process.
+For these tests to occur, JUnit must be available to Ant (simply copy junit.jar into Ant's lib directory).
+The build will then report error(s) if the high-level APIs for Driver and the Transcoders fail.
+The tests do not check the output, but only ensure that something is generated and without exceptions.</p>
+    </section>
 <section id="functional">
   <title>Functional Testing</title>
+  <warning>The "functional" testing section on this page is currently inoperative.</warning>
   <section>
     <title>Running and Using Tests</title>
     <p>
