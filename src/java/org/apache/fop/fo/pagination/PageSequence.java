@@ -808,10 +808,18 @@ public class PageSequence extends FObj {
         return (StaticContent)flowMap.get(name);
     }
 
+    /**
+     * Accessor method for layoutMasterSet
+     * @return layoutMasterSet for this object
+     */
     public LayoutMasterSet getLayoutMasterSet() {
         return layoutMasterSet;
     }
 
+    /**
+     * Accessor method for titleFO
+     * @return titleFO for this object
+     */
     public Title getTitleFO() {
         return titleFO;
     }
