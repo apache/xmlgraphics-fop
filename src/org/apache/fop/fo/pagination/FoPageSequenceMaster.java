@@ -27,7 +27,7 @@ import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.datastructs.Tree;
+import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.NCName;
 import org.apache.fop.datatypes.Ints;
@@ -188,7 +188,7 @@ public class FoPageSequenceMaster extends FONode {
     };
 
     public FoPageSequenceMaster(FOTree foTree, FONode parent, FoXMLEvent event)
-        throws Tree.TreeException, FOPException, PropertyException
+        throws TreeException, FOPException, PropertyException
     {
         super(foTree, FObjectNames.PAGE_SEQUENCE_MASTER, parent, event,
               FOPropertySets.SEQ_MASTER_SET, sparsePropsMap, sparseIndices,
@@ -241,7 +241,7 @@ public class FoPageSequenceMaster extends FONode {
 
         public FoSinglePageMasterReference
                             (FOTree foTree, FONode parent, FoXMLEvent event)
-            throws Tree.TreeException, FOPException, PropertyException
+            throws TreeException, FOPException, PropertyException
         {
             super(foTree, FObjectNames.SINGLE_PAGE_MASTER_REFERENCE, parent,
                     event, FOPropertySets.SEQ_MASTER_SET, s_p_m_r_PropsMap,
@@ -263,7 +263,7 @@ public class FoPageSequenceMaster extends FONode {
 
         public FoRepeatablePageMasterReference
                             (FOTree foTree, FONode parent, FoXMLEvent event)
-            throws Tree.TreeException, FOPException, PropertyException
+            throws TreeException, FOPException, PropertyException
         {
             super(foTree, FObjectNames.REPEATABLE_PAGE_MASTER_REFERENCE,
                     parent, event, FOPropertySets.SEQ_MASTER_SET,
@@ -289,7 +289,7 @@ public class FoPageSequenceMaster extends FONode {
 
         public FoRepeatablePageMasterAlternatives
                             (FOTree foTree, FONode parent, FoXMLEvent event)
-            throws Tree.TreeException, FOPException, PropertyException
+            throws TreeException, FOPException, PropertyException
         {
             super(foTree, FObjectNames.REPEATABLE_PAGE_MASTER_ALTERNATIVES,
                     parent, event, FOPropertySets.SEQ_MASTER_SET,
@@ -322,7 +322,7 @@ public class FoPageSequenceMaster extends FONode {
 
             public FoConditionalPageMasterReference
                             (FOTree foTree, FONode parent, FoXMLEvent event)
-            throws Tree.TreeException, FOPException, PropertyException
+            throws TreeException, FOPException, PropertyException
             {
                 super(foTree, FObjectNames.CONDITIONAL_PAGE_MASTER_REFERENCE,
                         parent, event, FOPropertySets.SEQ_MASTER_SET,

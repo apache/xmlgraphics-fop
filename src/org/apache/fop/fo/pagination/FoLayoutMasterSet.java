@@ -17,7 +17,7 @@ import org.apache.fop.xml.XMLEvent;
 import org.apache.fop.xml.UriLocalName;
 import org.apache.fop.xml.XMLNamespaces;
 import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
-import org.apache.fop.datastructs.Tree;
+import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.pagination.FoPageSequenceMaster;
 import org.apache.fop.fo.pagination.PageSequenceMaster;
 
@@ -102,7 +102,7 @@ public class FoLayoutMasterSet extends FONode {
      */
     public FoLayoutMasterSet
         (FOTree foTree, FONode parent, FoXMLEvent event)
-        throws Tree.TreeException, FOPException, PropertyException
+        throws TreeException, FOPException, PropertyException
     {
         super(foTree, FObjectNames.LAYOUT_MASTER_SET, parent, event,
               FOPropertySets.LAYOUT_SET, sparsePropsMap, sparseIndices,
@@ -157,7 +157,7 @@ public class FoLayoutMasterSet extends FONode {
                     try {
                         foPageSeq =
                                 new FoPageSequenceMaster(foTree, this, ev);
-                    } catch (Tree.TreeException e) {
+                    } catch (TreeException e) {
                         throw new FOPException
                                 ("TreeException: " + e.getMessage());
                     }
@@ -184,7 +184,7 @@ public class FoLayoutMasterSet extends FONode {
         catch (PropertyException e) {
             throw new FOPException(e);
         }
-        catch (Tree.TreeException e) {
+        catch (TreeException e) {
             throw new FOPException(e);
         }
         if (pageMasters.size() == 0)

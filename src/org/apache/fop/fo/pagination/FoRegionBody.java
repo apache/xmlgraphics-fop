@@ -20,7 +20,7 @@ import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXMLEvent;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datastructs.Tree;
+import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.Ints;
 
@@ -89,7 +89,7 @@ public class FoRegionBody extends FONode {
      * this node
      */
     public FoRegionBody(FOTree foTree, FONode parent, FoXMLEvent event)
-        throws Tree.TreeException, FOPException
+        throws TreeException, FOPException
     {
         super(foTree, FObjectNames.REGION_BODY, parent, event,
               FOPropertySets.LAYOUT_SET, sparsePropsMap, sparseIndices,

@@ -16,7 +16,7 @@ import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXMLEvent;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datastructs.Tree;
+import org.apache.fop.datastructs.TreeException;
 
 
 /**
@@ -34,7 +34,7 @@ public class FoRegionEnd extends FoRegionStartEnd {
      * this node
      */
     public FoRegionEnd(FOTree foTree, FONode parent, FoXMLEvent event)
-        throws Tree.TreeException, FOPException
+        throws TreeException, FOPException
     {
         super(foTree, FObjectNames.REGION_END, parent, event);
         makeSparsePropsSet();
