@@ -115,6 +115,11 @@ public class SVGElement extends SVGObj {
                 return 0.35277777777777777778f;
             }
 
+            public float getPixelUnitToMillimeter() {
+                // 72 dpi
+                return 0.35277777777777777778f;
+            }
+
             public Rectangle2D getBBox() {
                 return new Rectangle2D.Double(0, 0, foa.getContentWidth(), foa.getContentHeight());
             }
