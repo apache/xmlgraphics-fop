@@ -34,7 +34,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.FOInputHandler;
-import org.apache.fop.fo.FOTreeHandler;
+import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.render.awt.AWTRenderer;
 import org.apache.fop.render.mif.MIFHandler;
 import org.apache.fop.render.rtf.RTFHandler;
@@ -314,7 +314,7 @@ public class Driver implements Constants {
                         "Renderer must be set using setRenderer(int renderType)");
             }
 
-            foInputHandler = new FOTreeHandler(foUserAgent, rendererType, 
+            foInputHandler = new AreaTreeHandler(foUserAgent, rendererType, 
                 stream);
         }
 

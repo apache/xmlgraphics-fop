@@ -26,7 +26,6 @@ import org.xml.sax.SAXException;
 // Apache
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.area.AreaTree;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.ExternalGraphic;
@@ -127,38 +126,44 @@ public abstract class FOInputHandler {
      * This method is called to indicate the start of a new document run.
      * @throws SAXException In case of a problem
      */
-    public abstract void startDocument() throws SAXException;
+    public void startDocument() throws SAXException {
+    }
 
     /**
      * This method is called to indicate the end of a document run.
      * @throws SAXException In case of a problem
      */
-    public abstract void endDocument() throws SAXException;
+    public void endDocument() throws SAXException {
+    }
 
     /**
      *
      * @param pageSeq PageSequence that is starting.
      */
-    public abstract void startPageSequence(PageSequence pageSeq);
+    public void startPageSequence(PageSequence pageSeq) {
+    }
 
     /**
      *
      * @param pageSeq PageSequence that is ending.
      * @throws FOPException For errors encountered.
      */
-    public abstract void endPageSequence(PageSequence pageSeq) throws FOPException;
+    public void endPageSequence(PageSequence pageSeq) throws FOPException {
+    }
 
     /**
      *
      * @param pagenum PageNumber that is starting.
      */
-    public abstract void startPageNumber(PageNumber pagenum);
+    public void startPageNumber(PageNumber pagenum) {
+    }
 
     /**
      *
      * @param pagenum PageNumber that is ending.
      */
-    public abstract void endPageNumber(PageNumber pagenum);
+    public void endPageNumber(PageNumber pagenum) {
+    }
 
     /**
      * This method is called to indicate the start of a new fo:flow or fo:static-content.
@@ -167,122 +172,142 @@ public abstract class FOInputHandler {
      *
      * @param fl Flow that is starting.
      */
-    public abstract void startFlow(Flow fl);
+    public void startFlow(Flow fl) {
+    }
 
     /**
      *
      * @param fl Flow that is ending.
      */
-    public abstract void endFlow(Flow fl);
+    public void endFlow(Flow fl) {
+    }
 
     /**
      *
      * @param bl Block that is starting.
      */
-    public abstract void startBlock(Block bl);
+    public void startBlock(Block bl) {
+    }
 
     /**
      *
      * @param bl Block that is ending.
      */
-    public abstract void endBlock(Block bl);
+    public void endBlock(Block bl) {
+    }
 
     /**
      *
      * @param inl Inline that is starting.
      */
-    public abstract void startInline(Inline inl);
+    public void startInline(Inline inl) {
+    }
 
     /**
      *
      * @param inl Inline that is ending.
      */
-    public abstract void endInline(Inline inl);
+    public void endInline(Inline inl) {
+    }
 
     // Tables
     /**
      *
      * @param tbl Table that is starting.
      */
-    public abstract void startTable(Table tbl);
+    public void startTable(Table tbl) {
+    }
 
     /**
      *
      * @param tbl Table that is ending.
      */
-    public abstract void endTable(Table tbl);
+    public void endTable(Table tbl) {
+    }
 
     /**
      *
      * @param tc TableColumn that is starting;
      */
-    public abstract void startColumn(TableColumn tc);
+    public void startColumn(TableColumn tc) {
+    }
 
     /**
      *
      * @param tc TableColumn that is ending;
      */
-    public abstract void endColumn(TableColumn tc);
+    public void endColumn(TableColumn tc) {
+    }
 
     /**
      *
      * @param th TableBody that is starting;
      */
-    public abstract void startHeader(TableBody th);
+    public void startHeader(TableBody th) {
+    }
 
     /**
      *
      * @param th TableBody that is ending.
      */
-    public abstract void endHeader(TableBody th);
+    public void endHeader(TableBody th) {
+    }
 
     /**
      *
      * @param tf TableFooter that is starting.
      */
-    public abstract void startFooter(TableBody tf);
+    public void startFooter(TableBody tf) {
+    }
 
     /**
      *
      * @param tf TableFooter that is ending.
      */
-    public abstract void endFooter(TableBody tf);
+    public void endFooter(TableBody tf) {
+    }
 
     /**
      *
      * @param tb TableBody that is starting.
      */
-    public abstract void startBody(TableBody tb);
+    public void startBody(TableBody tb) {
+    }
 
     /**
      *
      * @param tb TableBody that is ending.
      */
-    public abstract void endBody(TableBody tb);
+    public void endBody(TableBody tb) {
+    }
 
     /**
      *
      * @param tr TableRow that is starting.
      */
-    public abstract void startRow(TableRow tr);
+    public void startRow(TableRow tr) {
+    }
 
     /**
      *
      * @param tr TableRow that is ending.
      */
-    public abstract void endRow(TableRow tr);
+    public void endRow(TableRow tr) {
+    }
 
     /**
      *
      * @param tc TableCell that is starting.
      */
-    public abstract void startCell(TableCell tc);
+    public void startCell(TableCell tc) {
+    }
 
     /**
      *
      * @param tc TableCell that is ending.
      */
-    public abstract void endCell(TableCell tc);
+    public void endCell(TableCell tc) {
+    }
 
 
     // Lists
@@ -290,124 +315,147 @@ public abstract class FOInputHandler {
      *
      * @param lb ListBlock that is starting.
      */
-    public abstract void startList(ListBlock lb);
+    public void startList(ListBlock lb) {
+    }
 
     /**
      *
      * @param lb ListBlock that is ending.
      */
-    public abstract void endList(ListBlock lb);
+    public void endList(ListBlock lb) {
+    }
 
     /**
      *
      * @param li ListItem that is starting.
      */
-    public abstract void startListItem(ListItem li);
+    public void startListItem(ListItem li) {
+    }
 
     /**
      *
      * @param li ListItem that is ending.
      */
-    public abstract void endListItem(ListItem li);
+    public void endListItem(ListItem li) {
+    }
 
     /**
      * Process start of a ListLabel.
      */
-    public abstract void startListLabel();
+    public void startListLabel() {
+    }
 
     /**
      * Process end of a ListLabel.
      */
-    public abstract void endListLabel();
+    public void endListLabel() {
+    }
 
     /**
      * Process start of a ListBody.
      */
-    public abstract void startListBody();
+    public void startListBody() {
+    }
 
     /**
      * Process end of a ListBody.
      */
-    public abstract void endListBody();
+    public void endListBody() {
+    }
 
     // Static Regions
     /**
      * Process start of a Static.
      */
-    public abstract void startStatic();
+    public void startStatic() {
+    }
 
     /**
      * Process end of a Static.
      */
-    public abstract void endStatic();
+    public void endStatic() {
+    }
+
 
     /**
      * Process start of a Markup.
      */
-    public abstract void startMarkup();
+    public void startMarkup() {
+    }
 
     /**
      * Process end of a Markup.
      */
-    public abstract void endMarkup();
+    public void endMarkup() {
+    }
 
     /**
      * Process start of a Link.
      * @param basicLink BasicLink that is ending
      */
-    public abstract void startLink(BasicLink basicLink);
+    public void startLink(BasicLink basicLink) {
+    }
 
     /**
      * Process end of a Link.
      */
-    public abstract void endLink();
+    public void endLink() {
+    }
 
     /**
      * Process an ExternalGraphic.
      * @param eg ExternalGraphic to process.
      */
-    public abstract void image(ExternalGraphic eg);
+    public void image(ExternalGraphic eg) {
+    }
 
     /**
      * Process a pageRef.
      */
-    public abstract void pageRef();
+    public void pageRef() {
+    }
 
     /**
      * Process an InstreamForeignObject.
      * @param ifo InstreamForeignObject to process.
      */
-    public abstract void foreignObject(InstreamForeignObject ifo);
+    public void foreignObject(InstreamForeignObject ifo) {
+    }
 
     /**
      * Process the start of a footnote.
      * @param footnote Footnote that is starting
      */
-    public abstract void startFootnote(Footnote footnote);
+    public void startFootnote(Footnote footnote) {
+    }
     
     /**
      * Process the ending of a footnote.
      * @param footnote Footnote that is ending
      */
-    public abstract void endFootnote(Footnote footnote);
+    public void endFootnote(Footnote footnote) {
+    }
 
     /**
      * Process the start of a footnote body.
      * @param body FootnoteBody that is starting
      */
-    public abstract void startFootnoteBody(FootnoteBody body);
+    public void startFootnoteBody(FootnoteBody body) {
+    }
     
     /**
      * Process the ending of a footnote body.
      * @param body FootnoteBody that is ending
      */
-    public abstract void endFootnoteBody(FootnoteBody body);
+    public void endFootnoteBody(FootnoteBody body) {
+    }
 
     /**
      * Process a Leader.
      * @param l Leader to process.
      */
-    public abstract void leader(Leader l);
+    public void leader(Leader l) {
+    }
 
     /**
      * Process character data.
@@ -415,7 +463,8 @@ public abstract class FOInputHandler {
      * @param start Offset for characters to process.
      * @param length Portion of array to process.
      */
-    public abstract void characters(char data[], int start, int length);
+    public void characters(char data[], int start, int length) {
+    }
 
 }
 
