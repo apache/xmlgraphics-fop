@@ -69,6 +69,13 @@ import org.apache.fop.configuration.Configuration;
 import org.apache.fop.extensions.*;
 import org.apache.fop.datatypes.IDReferences;
 
+import org.apache.batik.bridge.*;
+import org.apache.batik.swing.svg.*;
+import org.apache.batik.swing.gvt.*;
+import org.apache.batik.gvt.*;
+import org.apache.batik.gvt.renderer.*;
+import org.apache.batik.gvt.filter.*;
+
 import org.w3c.dom.*;
 import org.w3c.dom.svg.*;
 import org.w3c.dom.css.*;
@@ -81,6 +88,12 @@ import java.util.Enumeration;
 import java.awt.Rectangle;
 import java.util.Vector;
 import java.util.Hashtable;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Dimension2D;
+import java.awt.Point;
+import java.awt.RenderingHints;
+import java.awt.font.FontRenderContext;
+import java.awt.Dimension;
 
 /**
  * Renderer that renders areas to PDF
@@ -585,24 +598,6 @@ public class PDFRenderer implements Renderer {
 	float sx = 1, sy = -1;
 	int xOffset = x, yOffset = y;
 
-	// translate and scale according to viewbox.
-/*	if (svg.getViewBox () != null) {
-	    SVGRect view = svg.getViewBox().getBaseVal();
-
-	    // TODO take aspect constraints (attribute preserveAspectRatio)
-	    // into account.
-	    // Viewbox coordinates are all relative to the viewport
-	    // (ie. the x,y,w and h values calculated above).
-	    sx = svg.getWidth().getBaseVal().getValue() / view.getWidth ();
-	    sy = svg.getHeight().getBaseVal().getValue() / view.getHeight ();
-
-	    // move the origin
-	    xOffset -= (int)(sx * view.getX () * 1000f);
-	    yOffset -= (int)(sy * view.getY () * 1000f);
-
-	    sy = -sy;
-	}
-*/
         /*
          * Clip to the svg area.
          * Note: To have the svg overlay (under) a text area then use
@@ -624,14 +619,58 @@ public class PDFRenderer implements Renderer {
         currentStream.add(sx + " 0 0 " + sy + " " +
                           xOffset / 1000f + " " + yOffset / 1000f + " cm\n");
 
-        SVGRenderer svgRenderer =
-          new SVGRenderer(area.getFontState(), pdfDoc,
+
+        SVGDocument doc = area.getSVGDocument();
+
+        UserAgent userAgent = new MUserAgent(new AffineTransform());
+
+        GVTBuilder builder = new GVTBuilder();
+        GraphicsNodeRenderContext rc = getRenderContext();
+        BridgeContext ctx = new BridgeContext(userAgent, rc);
+        GraphicsNode root;
+        PDFGraphics2D graphics = new PDFGraphics2D(true, area.getFontState(), pdfDoc,
                           currentFontName, currentFontSize, currentXPosition,
                           currentYPosition);
-        svgRenderer.renderSVG(svg, 0, 0);
-        currentStream.add(svgRenderer.getString());
+        graphics.setGraphicContext(new org.apache.batik.ext.awt.g2d.GraphicContext());
+        try {
+            root = builder.build(ctx, doc);
+            root.paint(graphics, rc);
+            currentStream.add(graphics.getString());
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
 
         currentStream.add("Q\n");
+    }
+
+    public GraphicsNodeRenderContext getRenderContext() {
+        GraphicsNodeRenderContext nodeRenderContext = null;
+        if (nodeRenderContext == null) {
+            RenderingHints hints = new RenderingHints(null);
+            hints.put(RenderingHints.KEY_ANTIALIASING,
+                  RenderingHints.VALUE_ANTIALIAS_ON);
+
+            hints.put(RenderingHints.KEY_INTERPOLATION,
+                  RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+
+            FontRenderContext fontRenderContext =
+                new FontRenderContext(new AffineTransform(), true, true);
+
+            TextPainter textPainter = new StrokingTextPainter();
+
+            GraphicsNodeRableFactory gnrFactory =
+                new ConcreteGraphicsNodeRableFactory();
+
+            nodeRenderContext =
+                new GraphicsNodeRenderContext(new AffineTransform(),
+                                          null,
+                                          hints,
+                                          fontRenderContext,
+                                          textPainter,
+                                          gnrFactory);
+            }
+
+        return nodeRenderContext;
     }
 
     /**
@@ -1144,4 +1183,98 @@ public class PDFRenderer implements Renderer {
 	}
     }
  
+    protected class MUserAgent implements UserAgent {
+        AffineTransform currentTransform = null;
+        /**
+         * Creates a new SVGUserAgent.
+         */
+        protected MUserAgent(AffineTransform at) {
+            currentTransform = at;
+        }
+
+        /**
+         * Displays an error message.
+         */
+        public void displayError(String message) {
+            System.err.println(message);
+        }
+    
+        /**
+         * Displays an error resulting from the specified Exception.
+         */
+        public void displayError(Exception ex) {
+            ex.printStackTrace(System.err);
+        }
+
+        /**
+         * Displays a message in the User Agent interface.
+         * The given message is typically displayed in a status bar.
+         */
+        public void displayMessage(String message) {
+            System.out.println(message);
+        }
+
+        /**
+         * Returns a customized the pixel to mm factor.
+         */
+        public float getPixelToMM() {
+            return 0.264583333333333333333f; // 72 dpi
+        }
+
+        /**
+         * Returns the language settings.
+         */
+        public String getLanguages() {
+            return "en";//userLanguages;
+        }
+
+        /**
+         * Returns the user stylesheet uri.
+         * @return null if no user style sheet was specified.
+         */
+        public String getUserStyleSheetURI() {
+            return null;//userStyleSheetURI;
+        }
+
+        /**
+         * Returns the class name of the XML parser.
+         */
+        public String getXMLParserClassName() {
+	String parserClassName =
+	    System.getProperty("org.xml.sax.parser");
+	if (parserClassName == null) {
+	    parserClassName = "org.apache.xerces.parsers.SAXParser";
+	}
+            return parserClassName;//application.getXMLParserClassName();
+        }
+
+        /**
+         * Opens a link in a new component.
+         * @param doc The current document.
+         * @param uri The document URI.
+         */
+        public void openLink(SVGAElement elt)
+        {
+            //application.openLink(uri);
+        }
+
+        public Point getClientAreaLocationOnScreen()
+        {
+            return new Point(0, 0);
+        }
+
+        public void setSVGCursor(java.awt.Cursor cursor)
+        {
+        }
+
+        public AffineTransform getTransform()
+        {
+            return currentTransform;
+        }
+
+        public Dimension2D getViewportSize()
+        {
+            return new Dimension(100, 100);
+        }
+    }
 }

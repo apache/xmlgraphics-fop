@@ -689,51 +689,16 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         GraphicsNodeRenderContext rc = getRenderContext();
         BridgeContext ctx = new BridgeContext(userAgent, rc);
         GraphicsNode root;
+        graphics.translate(x / 1000f, pageHeight - y / 1000f);
         try {
             root = builder.build(ctx, doc);
-            //rc.setTransform(new AffineTransform(1, 0, x, 0, 1, y));
-            graphics.translate(x / 1000f, pageHeight - y / 1000f);
             root.paint(graphics, rc);
-            graphics.translate(-x / 1000f, y / 1000f - pageHeight);
         } catch(Exception e) {
             e.printStackTrace();
         }
+        graphics.translate(-x / 1000f, y / 1000f - pageHeight);
         this.currentXPosition += area.getContentWidth();
 
-/*        final JSVGComponent svgComponent = new JSVGComponent(userAgent, true, true);
-//        JFrame frame = new JFrame();
-//        frame.setSize(300, 300);
-//        frame.getContentPane().add(svgComponent);
-//        frame.setVisible(true);
-        svgComponent.setSVGDocument(doc);
-
-        svgComponent.addGVTTreeRendererListener(new GVTTreeRendererListener() {
-            public void gvtRenderingPrepare(GVTTreeRendererEvent e)
-            {
-                System.out.println("rendering prepare:" + e);
-            }
-
-            public void gvtRenderingStarted(GVTTreeRendererEvent e)
-            {
-                System.out.println("rendering started:" + e);
-            }
-
-            public void gvtRenderingCancelled(GVTTreeRendererEvent e)
-            {
-            }
-
-            public void gvtRenderingFailed(GVTTreeRendererEvent e)
-            {
-            }
-
-            public void gvtRenderingCompleted(GVTTreeRendererEvent e)
-            {
-                System.out.println("rendering complete:" + e);
-                Object src = e.getSource();
-                Image im = e.getImage();
-                svgComponent.paint(graphics);
-            }
-        });*/
     }
 
     public GraphicsNodeRenderContext getRenderContext() {
