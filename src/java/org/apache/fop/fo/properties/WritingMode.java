@@ -20,8 +20,6 @@
  */
 package org.apache.fop.fo.properties;
 
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 
 import org.apache.fop.datastructs.ROIntArray;
@@ -362,97 +360,6 @@ public class WritingMode extends Property  {
                     "Writing mode out of range:" + writingMode);
         }
         return leftToRight[writingMode];
-    }
-
-    /**
-     * Returns a <code>Rectangle2D</code> constructed from the normailized
-     * values of offset and dimensions expressed in terms of 
-     * <i>inline-progression-direction</i> and
-     * <i>block-progression-direction</i>
-     * @param ipOffset
-     * @param bpOffset
-     * @param ipDim the <i>inline-progression-dimension</i>
-     * @param bpDim the <i>block-progression-dimension</i>
-     * @param wMode
-     * @return
-     * @throws PropertyException
-     */
-    public static Rectangle2D.Double rectRelToAbs(
-            double ipOffset, double bpOffset, double ipDim, double bpDim,
-            int wMode) throws PropertyException {
-        if (isHorizontal(wMode)) {
-            return new Rectangle2D.Double(ipOffset, bpOffset, ipDim, bpDim);
-        }
-        return new Rectangle2D.Double(bpOffset, ipOffset, bpDim, ipDim);
-    }
-
-    /**
-     * Normalizes a pair of values representing an
-     * <i>inline-progression-dimension</i> and a
-     * <i>block-progression-dimension</i> by converting them to a
-     * <i>Point2D</i> representing the corresponding X and Y values in
-     * Java 2D user co-ordinates.
-     * @param ipDim the <i>inline-progression-dimension</i>
-     * @param bpDim the <i>block-progression-dimension</i>
-     * @param writingMode
-     * @return the corresponding x, y values
-     * @throws PropertyException
-     */
-    public static Point2D dimsRelToAbs (
-            double ipDim, double bpDim, int writingMode)
-    throws PropertyException {
-        if (isHorizontal(writingMode)) {
-            return new Point2D.Double(ipDim, bpDim);
-        }
-        return new Point2D.Double(bpDim, ipDim);
-    }
-
-    /**
-     * Normalizes a pair of values representing an
-     * <i>inline-progression-dimension</i> and a
-     * <i>block-progression-dimension</i> by converting them to a
-     * <code>Point2D</code> representing the corresponding X and Y values in
-     * Java 2D user co-ordinates.
-     * @param ipDim the <i>inline-progression-dimension</i>
-     * @param bpDim the <i>block-progression-dimension</i>
-     * @param writingMode
-     * @return the corresponding x, y values
-     * @throws PropertyException
-     */
-    public static Point2D dimsRelToAbs (Point2D in, int writingMode)
-    throws PropertyException {
-        if (isHorizontal(writingMode)) {
-            return in;
-        }
-        double x, y;
-        x = in.getX();
-        y = in.getY();
-        in.setLocation(y, x);
-        return in;
-    }
-
-    /**
-     * Normalizes a pair of values representing an
-     * <i>inline-progression-dimension</i> and a
-     * <i>block-progression-dimension</i> by converting them to a
-     * <code>Point2D</code> representing the corresponding X and Y values in
-     * Java 2D user co-ordinates.
-     * @param ipDim the <i>inline-progression-dimension</i>
-     * @param bpDim the <i>block-progression-dimension</i>
-     * @param writingMode
-     * @return the corresponding x, y values
-     * @throws PropertyException
-     */
-    public static Rectangle2D dimsRelToAbs (
-            Point2D offset, Point2D wideHigh, int writingMode)
-    throws PropertyException {
-        if (isHorizontal(writingMode)) {
-            return new Rectangle2D.Double(
-                    offset.getX(), offset.getY(),
-                    wideHigh.getX(), wideHigh.getY());
-        }
-        return new Rectangle2D.Double(
-                offset.getY(), offset.getX(), wideHigh.getY(), wideHigh.getX());
     }
 
 }
