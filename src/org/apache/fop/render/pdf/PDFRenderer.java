@@ -582,10 +582,8 @@ public class PDFRenderer implements Renderer {
        * @param area the SVG area to render
        */
     public void renderSVGArea(SVGArea area) {
-	// Buggy: Will align to the beginning of the last text
-        //int x = this.currentXPosition;
-	// Buggy: Will always left align
-        int x = this.currentAreaContainerXPosition;
+        // place at the current instream offset
+        int x = this.currentXPosition;
 	// Buggy: Method getXOffset() not found in class org.apache.fop.dom.svg.SVGArea
         //int x = this.currentAreaContainerXPosition + area.getXOffset();
         int y = this.currentYPosition;
@@ -598,13 +596,6 @@ public class PDFRenderer implements Renderer {
 	// translate and scale according to viewbox.
 	if (svg.getViewBox () != null) {
 	    SVGRect view = svg.getViewBox().getBaseVal();
-        /*
-	    System.out.println ("viewbox=\""+
-		view.getX()+" "+
-		view.getY()+" "+
-		view.getWidth()+" "+
-		view.getHeight()+"\"");
-	    */
 
 	    // TODO take aspect constraints (attribute preserveAspectRatio)
 	    // into account.
@@ -620,13 +611,6 @@ public class PDFRenderer implements Renderer {
 	    sy = -sy;
 	}
 
-	System.out.println ("viewBox: offsets="+
-	    xOffset+" (x="+x+") "+
-	    yOffset+" (y="+y+") scale="+
-	    sx+" "+
-	    sy+" w="+w+" h="+h
-	);
-	
         /*
          * Clip to the svg area.
          * Note: To have the svg overlay (under) a text area then use
