@@ -579,7 +579,7 @@ list of possible build targets.
         windowtitle="${Name} API"
         doctitle="${Name}"
         bottom="Copyright &#169; ${year} Apache Software Foundation. All Rights Reserved."
-        overview="${src.dir}/overview.html"
+        overview="${src.dir}/java/org/apache/fop/overview.html"
         failonerror="true">
       <sourcepath>
         <pathelement path="${src.java}"/>
