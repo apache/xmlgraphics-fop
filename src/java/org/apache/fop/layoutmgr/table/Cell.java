@@ -342,7 +342,7 @@ public class Cell extends BlockStackingLayoutManager {
                         block.setXOffset(dx + borderStartWidth);
                         block.setYOffset(dy);
                         TraitSetter.addCollapsingBorders(block, gu.effBorders, outer);
-                        parentLM.addChild(block);
+                        parentLM.addChildArea(block);
                         dx += gu.column.getWidth().getValue();
                     }
                     dy += lastRowHeight;
@@ -443,7 +443,7 @@ public class Cell extends BlockStackingLayoutManager {
      *
      * @param childArea the child to add to the cell
      */
-    public void addChild(Area childArea) {
+    public void addChildArea(Area childArea) {
         if (curBlockArea != null) {
             curBlockArea.addBlock((Block) childArea);
         }

@@ -305,7 +305,7 @@ public class Area implements Serializable {
      *
      * @param child the child area to add
      */
-    public void addChild(Area child) {
+    public void addChildArea(Area child) {
     }
 
     /**

@@ -531,7 +531,7 @@ public class Row extends BlockStackingLayoutManager {
                 rowArea.setIPD(referenceIPD);
                 rowArea.setXOffset(xoffset);
                 rowArea.setYOffset(yoffset);
-                parentLM.addChild(rowArea);
+                parentLM.addChildArea(rowArea);
             }
 
             for (Iterator iter = lfp.cellBreaks.iterator(); iter.hasNext();) {
@@ -586,8 +586,8 @@ public class Row extends BlockStackingLayoutManager {
      *
      * @param childArea the child area
      */
-    public void addChild(Area childArea) {
-        parentLM.addChild(childArea);
+    public void addChildArea(Area childArea) {
+        parentLM.addChildArea(childArea);
     }
 
     /**

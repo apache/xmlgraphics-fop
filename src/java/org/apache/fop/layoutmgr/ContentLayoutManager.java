@@ -182,9 +182,11 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
         return holder;
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public void addChild(Area childArea) {
-        holder.addChild(childArea);
+    /** 
+     * @see org.apache.fop.layoutmgr.LayoutManager#addChildArea(Area)
+     **/
+    public void addChildArea(Area childArea) {
+        holder.addChildArea(childArea);
     }
 
     /**

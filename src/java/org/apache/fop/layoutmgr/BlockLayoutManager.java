@@ -396,9 +396,9 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#addChild(org.apache.fop.area.Area)
+     * @see org.apache.fop.layoutmgr.LayoutManager#addChildArea(Area)
      */
-    public void addChild(Area childArea) {
+    public void addChildArea(Area childArea) {
         if (curBlockArea != null) {
             if (childArea instanceof LineArea) {
                 curBlockArea.addLineArea((LineArea) childArea);

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -498,7 +498,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
         }
         setTraits(bAreaCreated, !bIsLast);
         
-        parentLM.addChild(getCurrentArea());
+        parentLM.addChildArea(getCurrentArea());
         context.setFlags(LayoutContext.LAST_AREA, bIsLast);
         bAreaCreated = true;
     }
@@ -515,7 +515,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
         
     }
 
-    public void addChild(Area childArea) {
+    public void addChildArea(Area childArea) {
         // Make sure childArea is inline area
         if (childArea instanceof InlineArea) {
             Area parent = getCurrentArea();
@@ -524,7 +524,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
                          getContext().getLeadingSpace().resolve(false),
                          getContext().getSpaceAdjust());
             }
-            parent.addChild(childArea);
+            parent.addChildArea(childArea);
         }
     }
 
@@ -554,7 +554,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
                 //getLogger().debug("Add leading space: " + iAdjust);
                 Space ls = new Space();
                 ls.setIPD(iAdjust);
-                parentArea.addChild(ls);
+                parentArea.addChildArea(ls);
             }
         }
     }

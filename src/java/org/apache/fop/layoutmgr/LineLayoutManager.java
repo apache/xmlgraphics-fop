@@ -932,7 +932,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                 addSpace(lineArea, lc.getTrailingSpace().resolve(true),
                          lc.getSpaceAdjust());
             }
-            parentLM.addChild(lineArea);
+            parentLM.addChildArea(lineArea);
         }
         setCurrentArea(null); // ?? necessary
     }

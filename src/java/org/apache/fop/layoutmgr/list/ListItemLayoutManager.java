@@ -325,7 +325,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
      *
      * @param childArea the child area
      */
-    public void addChild(Area childArea) {
+    public void addChildArea(Area childArea) {
         if (curBlockArea != null) {
             curBlockArea.addBlock((Block) childArea);
         }
