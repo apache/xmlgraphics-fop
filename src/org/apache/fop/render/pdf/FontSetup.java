@@ -95,7 +95,8 @@ public class FontSetup {
     fontInfo.addMetrics("F12", new CourierBoldOblique());
     fontInfo.addMetrics("F13", new Symbol());
     fontInfo.addMetrics("F14", new ZapfDingbats());
-    fontInfo.addMetrics("F15", new URWPalladioLRoma());
+
+    //Custom type 1 fonts step 1/2
 //    fontInfo.addMetrics("F15", new OMEP());
 //    fontInfo.addMetrics("F16", new GaramondLightCondensed());
 //    fontInfo.addMetrics("F17", new BauerBodoniBoldItalic());
@@ -176,8 +177,7 @@ public class FontSetup {
     fontInfo.addFontProperties("F14", "ZapfDingbats", "normal",
                    "normal");
 
-    fontInfo.addFontProperties("F15", "URWPalladioLRoma", "normal", "normal");
-    //Custom type 1 fonts
+    //Custom type 1 fonts step 2/2
 //    fontInfo.addFontProperties("F15", "OMEP", "normal", "normal");
 //    fontInfo.addFontProperties("F16", "Garamond-LightCondensed", "normal", "normal");
 //    fontInfo.addFontProperties("F17", "BauerBodoni", "italic", "bold");
