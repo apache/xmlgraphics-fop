@@ -114,7 +114,15 @@ inactive??
   </todo>
 
   <changes>
-   <release version="?" date="2003">
+   <release version="2003" date="2003">
+    <action context="code" dev="JM" type="update">
+      Enhanced PDF encryption support so it is optional depending on the 
+      availability of JCE and/or cryptographic algorithms.
+    </action>
+   	<action context="code" dev="JM" type="add"
+            due-to="Patrick C. Lankswert" due-to-email="PLankswert@InsightBB.COM">
+      Added PDF encryption support (40bit RC4, PDF 1.3 level).
+    </action>
     <action context="code" dev="JM" type="update">
       Moved all sources from src/org/** to src/java/org/**.
     </action>
@@ -146,7 +154,7 @@ inactive??
       org.apache.fop.fonts.truetype.
     </action>
    </release>
-   <release version="?" date="2002">
+   <release version="2002" date="2002">
     <action context="code" dev="JM" type="update">
       Moved all Adobe Type 1 font related classes to 
       org.apache.fop.fonts.type1. Added a PFB parser for proper decoding of
