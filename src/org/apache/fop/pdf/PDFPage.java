@@ -88,8 +88,7 @@ public class PDFPage extends PDFObject {
      * @param pageheight the page's height in points
      */
     public PDFPage(int number, PDFResources resources,
-                   PDFStream contents,
-		   int pagewidth,
+		   PDFStream contents, int pagewidth,
 		   int pageheight) {
 
 	/* generic creation of object */
@@ -112,7 +111,7 @@ public class PDFPage extends PDFObject {
     public void setParent(PDFPages parent) {
 	this.parent = parent;
     }
-
+	
     /**
      * set this page's annotation list
      *
@@ -131,6 +130,9 @@ public class PDFPage extends PDFObject {
 	return this.annotList;
     }
 
+	public void addShading(PDFShading shading) {
+		this.resources.addShading(shading);
+	}
     /**
      * represent this object as PDF
      *
