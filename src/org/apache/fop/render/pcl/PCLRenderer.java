@@ -48,8 +48,7 @@ public class PCLRenderer extends PrintRenderer {
     public int curdiv = 0;
     private int divisions = -1;
     public int paperheight = -1;    // Paper height in decipoints?
-    public int orientation =
-        -1;                         // -1=default/unknown, 0=portrait, 1=landscape.
+    public int orientation = 0;     // 0=default/portrait, 1=landscape.
     public int topmargin = -1;      // Top margin in decipoints?
     public int leftmargin = -1;     // Left margin in decipoints?
     private int fullmargin = 0;
@@ -677,6 +676,18 @@ public class PCLRenderer extends PrintRenderer {
             System.out.println("PCLRenderer.renderPage() page.Height() = "
                                + page.getHeight());
 
+        // FIXME: Set orientation. We made this assumption. It's not always correct but we need a
+        // method to generate landscape pages
+        if (page.getHeight() < page.getWidth()) {
+             orientation = 1;
+        }
+        currentStream.add("\033&l" + orientation + "O");
+        if (orientation == 1 || orientation == 3) {
+            xoffset = -144;
+        } else {
+            xoffset = -180;
+        }
+                               
         if (paperheight > 0 && divisions == -1)
             divisions = paperheight / (page.getHeight() / 100);
 
@@ -749,16 +760,6 @@ public class PCLRenderer extends PrintRenderer {
     throws IOException {
         log.info("rendering areas to PCL");
         currentStream = new PCLStream(outputStream);
-
-        // Set orientation.
-        if (orientation > -1)
-            currentStream.add("\033&l" + orientation + "O");
-        else
-            currentStream.add("\033&l0O");
-        if (orientation == 1 || orientation == 3)
-            xoffset = -144;
-        else
-            xoffset = -180;
 
         // Reset the margins.
         currentStream.add("\033" + "9\033&l0E");

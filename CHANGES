@@ -1,6 +1,8 @@
 ==============================================================================
 Done since 0.20.4 release
 
+- Added autoselecting  portrait/landscape on PCL Renderer (see bug #6638)
+  Submitted by: vicentesalvador@netscape.net (Vicente Salvador)
 - Improved AWT Font-measuring/rendering (see bug #14657)
   Submitted by: Ralph LaChance <Ralph_LaChance@compuserve.com>
 - Updated examples/fo files to remove all errors and warnings during build
