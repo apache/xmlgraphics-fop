@@ -201,5 +201,22 @@ public class Area implements Serializable {
     public Object getTrait(Object oTraitCode) {
         return (props != null ? props.get(oTraitCode) : null);
     }
+    
+    /**
+     * Get a trait from this area as an integer.
+     *
+     * @param oTraitCode the trait key
+     * @return the trait value
+     */
+    public int getTraitAsInteger(Object oTraitCode) {
+        final Object obj = getTrait(oTraitCode);
+        if (obj instanceof Integer) {
+            return ((Integer)obj).intValue();
+        } else {
+            throw new IllegalArgumentException("Trait " 
+                    + oTraitCode.getClass().getName() 
+                    + " could not be converted to an integer");
+        }
+    }
 }
 
