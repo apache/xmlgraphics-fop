@@ -11,7 +11,6 @@ import org.apache.fop.pdf.*;
 import org.apache.fop.fonts.*;
 import org.apache.fop.render.pdf.FontSetup;
 import org.apache.fop.layout.*;
-import org.apache.fop.apps.FOPException;
 
 import java.awt.Graphics;
 import java.awt.Font;
@@ -44,8 +43,6 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
     int width;
     int height;
 
-    FontInfo fontInfo = null;
-
     /**
      * Create a new PDFDocumentGraphics2D.
      * This is used to create a new pdf document, the height,
@@ -63,10 +60,8 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         if(!textAsShapes) {
             fontInfo = new FontInfo();
             FontSetup.setup(fontInfo);
-            try {
-                fontState = new FontState(fontInfo, "Helvetica", "normal",
-                                          "normal", 12, 0);
-            } catch (FOPException e) {}
+            //FontState fontState = new FontState("Helvetica", "normal",
+            //                          FontInfo.NORMAL, 12, 0);
         }
 
         standalone = true;
@@ -117,8 +112,8 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         setupDocument(stream, width, height);
     }
 
-    public FontState getFontState() {
-        return fontState;
+    public FontInfo getFontInfo() {
+        return fontInfo;
     }
 
     public PDFDocument getPDFDocument() {
@@ -160,6 +155,8 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
      * This will then write the results to the output stream.
      */
     public void finish() throws IOException {
+        // restorePDFState();
+
         pdfStream.add(getString());
         this.pdfDoc.addStream(pdfStream);
         currentPage.setContents(pdfStream);

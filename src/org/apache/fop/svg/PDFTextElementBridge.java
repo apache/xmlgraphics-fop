@@ -13,7 +13,7 @@ import org.apache.batik.bridge.*;
 import org.apache.batik.gvt.CompositeGraphicsNode;
 import org.apache.batik.gvt.GraphicsNode;
 
-import org.apache.fop.layout.FontState;
+import org.apache.fop.layout.FontInfo;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -33,8 +33,8 @@ public class PDFTextElementBridge extends SVGTextElementBridge {
     /**
      * Constructs a new bridge for the &lt;text> element.
      */
-    public PDFTextElementBridge(FontState fs) {
-        pdfTextPainter = new PDFTextPainter(fs);
+    public PDFTextElementBridge(FontInfo fi) {
+        pdfTextPainter = new PDFTextPainter(fi);
     }
 
     public GraphicsNode createGraphicsNode(BridgeContext ctx, Element e) {
