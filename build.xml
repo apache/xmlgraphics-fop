@@ -112,11 +112,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <include name="build/site/**"/>
     <include name="conf/**"/>
     <include name="docs/xslfoRef.pdf"/>
-    <include name="docs/examples/**"/>
-    <exclude name="docs/examples/build.xml"/>
-    <exclude name="docs/examples/runtests.*"/>
-    <exclude name="docs/examples/results.html"/>
-    <include name="docs/graphics/**"/>
     <include name="docs/foschema/**"/>
     <include name="examples/**"/>
     <exclude name="examples/build.xml"/>
@@ -725,7 +720,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <copy todir="${dist.src.result.dir}/build" file="build/fop.jar"/>
     <chmod file="${dist.src.result.dir}/build.sh" perm="ugo+rx" />
     <chmod file="${dist.src.result.dir}/fop.sh" perm="ugo+rx" />
-    <chmod file="${dist.src.result.dir}/docs/examples/runtests.sh" perm="ugo+rx" />
+    <chmod file="${dist.src.result.dir}/examples/fo/runtests.sh" perm="ugo+rx" />
 
     <zip zipfile="${name}-${version}-src.zip" basedir="${dist.src.dir}" includes="**"/>
 
