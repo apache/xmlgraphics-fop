@@ -151,15 +151,10 @@ public class FObj extends FONode {
      * The attributes must be used immediately as the sax attributes
      * will be altered for the next element.
      * @param attlist Collection of attributes passed to us from the parser.
+     * @throws FOPException
      */
     public void handleAttrs(Attributes attlist) throws FOPException {
-        FObj par = findNearestAncestorFObj();
-        PropertyList props = null;
-        if (par != null) {
-            props = par.properties;
-        }
-        properties = getListBuilder().makeList(FO_URI, name, attlist, props,
-                                               par);
+        properties = getListBuilder().makeList(FO_URI, name, attlist, this);
         properties.setFObj(this);
         this.propMgr = makePropertyManager(properties);
         setWritingMode();
