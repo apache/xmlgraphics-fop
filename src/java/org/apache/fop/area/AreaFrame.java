@@ -33,7 +33,14 @@ public class AreaFrame extends Rectangle2D.Double {
 	/**
 	 * 
 	 */
-	private AreaFrame() {}
+	public AreaFrame() {}
+
+    public AreaFrame(Rectangle2D contents) {
+        super();
+        setRect(contents);
+        this.contents = contents;
+        this.contentOffset = new Point2D.Double();
+    }
 
 	/**
 	 * Instantiates a new framing rectangle with the given origin point, the
@@ -58,10 +65,10 @@ public class AreaFrame extends Rectangle2D.Double {
 	}
 
 	/** The framed rectangle */
-	private Rectangle2D contents = null;
+	protected Rectangle2D contents = null;
 	/** The offset from <code>this</code> origin to the origin of the framed
 	 * rectangle */
-	private Point2D contentOffset = null;
+	protected Point2D contentOffset = null;
 
 	/**
 	 * Instantiates a new framing rectangle from the given rectangle, given
@@ -94,7 +101,11 @@ public class AreaFrame extends Rectangle2D.Double {
 		contents = this.contents;
 	}
 
-	/**
+    public Rectangle2D getContents() {
+        return contents;
+    }
+
+    /**
 	 * Sets the offset from the origin of <code>this</code> to the origin of
 	 * the framed contents rectangle.  The dimensions of the framed contents
 	 * are not affected, but the dimensions of <code>this</code> are changed
@@ -102,13 +113,17 @@ public class AreaFrame extends Rectangle2D.Double {
 	 * X and Y axes.
 	 * @param offset the new offset to the framed rectangle
 	 */
-	public void setContentsOffset(Point2D offset) {
+	public void setContentOffset(Point2D offset) {
 		setStart(offset.getX());
 		setBefore(offset.getY());
 		contentOffset = offset;
 	}
 
-	/**
+    public Point2D getContentOffset() {
+        return contentOffset;
+    }
+
+    /**
 	 * Sets the before edge width of the frame.  The <code>contents</code> size
 	 * is unaffected, but the size of the frame (<code>this</code>) will
 	 * change.  The height will vary by the difference between the previous and
