@@ -308,6 +308,10 @@ abstract public class PropertyList {
                 Property baseProperty = findBaseProperty(attributes,
                         parentFO, propId, basePropertyName, propertyMaker);
                 int subpropId = FOPropertyMapping.getSubPropertyId(subPropertyName);
+                if (subpropId == -1) {
+                    handleInvalidProperty(attributeName);
+                    return;
+                }
                 prop = propertyMaker.make(baseProperty, subpropId,
                         this, attributeValue, parentFO);
             }
@@ -353,8 +357,7 @@ abstract public class PropertyList {
 
     private void handleInvalidProperty(String attributeName) {
         if (!attributeName.startsWith("xmlns")) {
-            //log.error("property '"
-            //                       + attributeName + "' ignored");
+            log.error("property '" + attributeName + "' ignored");
         }
     }
 
