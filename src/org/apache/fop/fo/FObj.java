@@ -91,6 +91,18 @@ public abstract class FObj extends FONode {
         setWritingMode();
     }
 
+    public String getSystemId() {
+        return systemId;
+    }
+  
+    public int getLine() {
+        return line;
+    }
+  
+    public int getColumn() {
+        return column;
+    }
+  
     protected PropertyManager makePropertyManager(PropertyList propertyList) {
         return new PropertyManager(propertyList);
     }
