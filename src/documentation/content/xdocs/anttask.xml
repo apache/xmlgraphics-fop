@@ -8,17 +8,33 @@
   </header>
   <body>
     <p>
-    FOP provides an Ant task for integration into the build process.</p>
+    FOP provides an Ant task for automating the document build process.</p>
     <section><title>Description</title>
     <p>
-    FOP Ant task converts xsl-fo documents to PDF/PS/PCL/MIF/RTF output
+    The FOP Ant task will convert XSL-FO documents to PDF/PS/PCL/MIF/RTF output
     (see <link href="output.html">Output formats</link> for available formats).</p>
     <p>
-    FileSets are used to select files to render.</p>
+	To call FOP tasks within Ant, first add a FOP task definition to your Ant build file.
+	One method of defining the task is as follows:
+	</p>
+	<source><![CDATA[
+<property name="fop.dir" value="....path to your FOP jar files..."/>
+
+<taskdef name="fop" 
+         classname="org.apache.fop.tools.anttasks.Fop">
+         <classpath>
+            <pathelement location="${fop.dir}\fop.jar"/>
+            <pathelement location="${fop.dir}\avalon.jar"/>
+            <pathelement location="${fop.dir}\batik.jar"/>
+         </classpath>
+</taskdef>
+	]]></source>
+<p>
+	Then create FOP tasks within your Ant build file, using the FOP task parameters listed below.</p>
     </section>
     <!-- TODO: Installation/Configuration -->
-    <section><title>Parameters</title>
-     <table><caption>parameters for FOP Ant task</caption> 
+    <section><title>Parameters for FOP Ant task</title>
+     <table><caption>Parameters specified as attributes</caption> 
       <tr> 
        <th>Attribute</th> 
        <th>Description</th> 
@@ -27,16 +43,16 @@
       <tr> 
        <td>fofile</td> 
        <td>XSL-FO file to be rendered</td> 
-       <td>Only if there's no fileset</td> 
+       <td>Yes, if no fileset nested element is used</td> 
       </tr> 
       <tr> 
        <td>outfile</td> 
        <td>Output filename</td> 
-       <td>Only when fofile is used (if there's no fileset)</td> 
+       <td>Yes, when fofile is used.  (This attribute is not valid for filesets.)</td> 
       </tr> 
       <tr> 
        <td>format</td> 
-       <td>Possible ouput formats:<br/>
+       <td>Possible output formats:<br/>
          <code>application/pdf</code><br/>
          <code>application/postscript</code><br/>
          <code>application/vnd.mif</code><br/>
@@ -44,70 +60,78 @@
          <code>application/vnd.hp-PCL</code><br/>
          <code>text/plain</code><br/>
          <code>text/xml</code><br/>
-         Defaults to <code>application/pdf</code>
        </td> 
-       <td>No, default is <code>application/pdf</code></td> 
+       <td>No, defaults to <code>application/pdf</code></td> 
       </tr> 
       <tr> 
        <td>outdir</td> 
        <td>Output directory</td> 
-       <td>Yes</td> 
+       <td>Required if a fileset is used to specify the files to render; optional for fofile. (Can alternatively specify the full path in the fofile value.)</td> 
       </tr> 
-      <tr> 
+      <!--tr  Commented out; attribute is currently unimplemented according to the code> 
        <td>basedir</td> 
        <td>Directory to work from</td> 
        <td>Yes</td> 
-      </tr> 
+      </tr--> 
       <tr> 
        <td>userconfig</td> 
-       <td>File with user configuration (same as the "-c" command line option)</td> 
+       <td>User configuration file (same as the FOP "-c" command line option)</td> 
        <td>No</td> 
       </tr> 
       <tr> 
        <td>messagelevel</td> 
        <td>Logging level<br/>
-       Possible values: error, warn, info, verbose, debug</td> 
-       <td>No; defaults to verbose</td> 
+       Possible values: <code>error</code>, <code>warn</code>, <code>info</code>, <code>verbose</code>, <code>debug</code></td> 
+       <td>No, defaults to <code>verbose</code></td> 
       </tr> 
       <tr> 
        <td>logFiles</td> 
-       <td>Controls whether the names of the files that are processed are logged or not</td> 
-       <td>No; default is true</td> 
+       <td>Controls whether the names of the files that are processed are logged 
+	   		(<code>true</code>) or not (<code>false</code>)</td> 
+       <td>No, default is <code>true</code></td> 
       </tr> 
-     </table> 
-     <section><title>Parameters specified as nested elements</title>
-      <section><title>fileset</title>
-      <p>
-      FileSets are used to select files that will be rendered to the
-      selected output format.</p>
-      </section>
-     </section>
+     </table>
+	 <p/>
+	 <table><caption>Parameters specified as nested elements</caption>
+      <tr> 
+       <th>Attribute</th> 
+       <th>Description</th> 
+       <th>Required</th> 
+      </tr> 
+      <tr> 
+       <td>fileset</td> 
+       <td><link href="http://ant.apache.org/manual/CoreTypes/fileset.html">FileSets</link> 
+	   		are used to specify multiple XSL-FO files to be rendered.</td> 
+       <td>Yes, if no fofile attribute is supplied</td> 
+      </tr> 
+	  </table>
     </section>
     <section>
     <title>Examples</title>
     <p>
-    Converts one XSL-FO file to PDF:
+    The following example converts a single XSL-FO file to a PDF document:
     </p>
+
     <source><![CDATA[
-<target name="generate-pdf" depends="init" description="Generates PDF file">
-
-  <taskdef name="fop" classname="org.apache.fop.tools.anttasks.Fop"
-           classpathref="libs-run-classpath"/>
-
-  <fop fofile="examples/fo/basic/extensive.fo" outfile="${build.dir}/extensive.pdf"/>
-
+<target name="generate-pdf" description="Generates a single PDF file">
+   <fop format="application/pdf" 
+        fofile="c:\working\foDirectory\foDocument.fo"
+        outfile="c:\working\pdfDirectory\pdfDocument.pdf" />
 </target>
     ]]></source>
     <p>
-    Converts a whole directory of XSL-FO files to PostScript:
+    This example converts all XSL-FO files within an entire directory to PostScript:
     </p>
     <source><![CDATA[
-<fop format="application/postscript" outdir="${build.dir}"
-     messagelevel="debug" basedir="${fo.examples.dir}">
-  <fileset dir="${fo.examples.dir}">
-    <include name="**/*.fo"/>
-  </fileset>
-</fop>
+<target name="generate-multiple-ps" 
+        description="Generates multiple PostScript files">
+   <fop format="application/postscript" 
+        outdir="${build.dir}" messagelevel="debug">
+        <fileset dir="${fo.examples.dir}">
+           <include name="*.fo"/>
+        </fileset>
+   </fop>
+</target>
     ]]></source>
     </section>
     </body>
