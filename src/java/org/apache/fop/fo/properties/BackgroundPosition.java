@@ -145,7 +145,7 @@ public class BackgroundPosition extends Property  {
     {
         int property = value.getProperty();
         PropertyValueList newlist = new PropertyValueList(property);
-        // Can only be Inherit, NCName (i.e. enum token)
+        // Can only be Inherit, NCName (i.e. ENUM token)
         // or Numeric (i.e. Length or Percentage)
         int type = value.getType();
         if ( ! nested) {
@@ -180,10 +180,10 @@ public class BackgroundPosition extends Property  {
                 enumIndex = getEnumIndex(enumval);
             } catch (PropertyException e) {
                 throw new PropertyException(
-                        "Invalid enum value for BackgroundPosition: "
+                        "Invalid ENUM value for BackgroundPosition: "
                         + enumval);
             }
-            // Found an enum
+            // Found an ENUM
             double horiz = 50.0, vert = 50.0;
             switch (enumIndex) {
             case LEFT:
@@ -228,7 +228,7 @@ public class BackgroundPosition extends Property  {
                     ("Other than 2 elements in BackgroundPosition list.");
         // Analyse the list data.
         // Can be a pair of Numeric values, Length or Percentage,
-        // or a pair of enum tokens.  One is from the set
+        // or a pair of ENUM tokens.  One is from the set
         // [top center bottom]; the other is from the set
         // [left center right].
         Iterator positions = value.iterator();

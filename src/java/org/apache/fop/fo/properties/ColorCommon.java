@@ -88,7 +88,7 @@ public class ColorCommon extends Property  {
     {
         int type = value.getType();
         if (type == PropertyValue.COLOR_TYPE) return (ColorType)value;
-        // Must be a color enum
+        // Must be a color enumval
         if (type != PropertyValue.NCNAME)
             throw new PropertyException
                 (value.getClass().getName() + " instead of color for "
@@ -96,12 +96,12 @@ public class ColorCommon extends Property  {
         // We have an NCName - hope it''s a color
         NCName ncname = (NCName)value;
         // Must be a standard color
-        EnumType enum = null;
+        EnumType enumval = null;
         ColorType color = null;
         String name = ncname.getNCName();
         try {
             try {
-                enum = new EnumType(property, name);
+                enumval = new EnumType(property, name);
             } catch (PropertyException e) {
                 System.out.println("PropertyException: " + e.getMessage());
                 logger.warning(name +
@@ -109,8 +109,8 @@ public class ColorCommon extends Property  {
                                 + PropNames.getPropertyName(property)
                                          + "'. Trying as a system-color.");
             }
-            if (enum != null)
-                color = new ColorType(property, enum.getEnumValue());
+            if (enumval != null)
+                color = new ColorType(property, enumval.getEnumValue());
             else
                 color = new ColorType(property, name);
         } catch (PropertyException e) {

@@ -116,7 +116,7 @@ public class Background extends Property  {
             throws PropertyException
     {
 	// Can be Inherit, ColorType, UriType, None, Numeric, or an
-	// NCName (i.e. enum token)
+	// NCName (i.e. enumval token)
 	int type = value.getType();
 	if (type == PropertyValue.INHERIT ||
 		type == PropertyValue.FROM_PARENT ||
@@ -235,16 +235,16 @@ public class Background extends Property  {
 		}
 
 		// Is it an attachment mode?
-		EnumType enum = null;
+		EnumType enumval = null;
 		try {
-		    enum = new EnumType
+		    enumval = new EnumType
 			    (PropNames.BACKGROUND_ATTACHMENT, ncname);
 		} catch (PropertyException e) {}
-		if (enum != null) {
+		if (enumval != null) {
 		    if (attachment != null)
 			    logger.info("background: duplicate" +
 			    "attachment overrides previous attachment");
-		    attachment = enum;
+		    attachment = enumval;
 		    continue scanning_elements;
 		}
 

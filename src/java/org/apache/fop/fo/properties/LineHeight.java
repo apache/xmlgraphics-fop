@@ -59,22 +59,22 @@ public class LineHeight extends Property  {
         ,"normal"
     };
 
-    public int getEnumIndex(String enum) throws PropertyException {
-        if (enum.equals("normal")) return 1;
-        throw new PropertyException("Invalid enumeration: " + enum);
+    public int getEnumIndex(String enumval) throws PropertyException {
+        if (enumval.equals("normal")) return 1;
+        throw new PropertyException("Invalid enumeration: " + enumval);
     }
 
     public String getEnumText(int index) throws PropertyException {
         if (index == 1) return "normal";
-        throw new PropertyException("Invalid enum index: " + index);
+        throw new PropertyException("Invalid enumval index: " + index);
     }
 
-    public Numeric getMappedLength(FONode node, int enum)
+    public Numeric getMappedLength(FONode node, int enumval)
         throws PropertyException
     {
-        if (enum != NORMAL)
-            throw new PropertyException("Invalid MAPPED_LENGTH enum: "
-                                        + enum);
+        if (enumval != NORMAL)
+            throw new PropertyException("Invalid MAPPED_LENGTH ENUM: "
+                                        + enumval);
         return Ems.makeEms(node, PropNames.LINE_HEIGHT, 1.2d); // normal
     }
 }

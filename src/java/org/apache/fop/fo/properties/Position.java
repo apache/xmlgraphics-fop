@@ -94,17 +94,17 @@ public class Position extends Property  {
                                 ShorthandPropSets.expandAndCopySHand(value));
         }
         if (value instanceof NCName) {
-            EnumType enum = null;
+            EnumType enumval = null;
             String ncname = ((NCName)value).getNCName();
             try {
-                enum = new EnumType(value.getProperty(), ncname);
+                enumval = new EnumType(value.getProperty(), ncname);
             } catch (PropertyException e) {
                 throw new PropertyException
                 ("Unrecognized NCName in position: " + ncname);
             }
             PropertyValueList list =
                         new PropertyValueList(PropNames.POSITION);
-            switch (enum.getEnumValue()) {
+            switch (enumval.getEnumValue()) {
             case STATIC:
                 list.add(new EnumType
                             (PropNames.RELATIVE_POSITION, "static"));
@@ -134,8 +134,8 @@ public class Position extends Property  {
             ("Invalid value for 'position': "
                 + value.getClass().getName());
     }
-    public int getEnumIndex(String enum) throws PropertyException {
-        return enumValueToIndex(enum, rwEnums);
+    public int getEnumIndex(String enumval) throws PropertyException {
+        return enumValueToIndex(enumval, rwEnums);
     }
     public String getEnumText(int index) {
         return rwEnums[index];

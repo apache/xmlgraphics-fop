@@ -62,8 +62,8 @@ public class TargetPresentationContext extends Property  {
         null
         ,"use-target-processing-context"
     };
-    public int getEnumIndex(String enum) throws PropertyException {
-        return enumValueToIndex(enum, rwEnums);
+    public int getEnumIndex(String enumval) throws PropertyException {
+        return enumValueToIndex(enumval, rwEnums);
     }
     public String getEnumText(int index) {
         return rwEnums[index];

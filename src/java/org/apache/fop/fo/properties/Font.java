@@ -265,15 +265,15 @@ public class Font extends Property  {
         FontFamilySet family = null;
         if (type == PropertyValue.NCNAME) {
             // Is it a system font enumeration?
-            EnumType enum = null;
+            EnumType enumval = null;
             String ncname = ((NCName)value).getNCName();
             try {
-                enum = new EnumType(value.getProperty(), ncname);
+                enumval = new EnumType(value.getProperty(), ncname);
             } catch (PropertyException e) {
                 throw new PropertyException
                     ("Unrecognized NCName in font expression: " + ncname);
             }
-            // A system font enum
+            // A system font enumval
             // System font characteristics should require no further
             // refinement
             return SystemFontFunction.expandFontSHand

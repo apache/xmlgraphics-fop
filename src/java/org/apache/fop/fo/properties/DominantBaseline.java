@@ -84,12 +84,12 @@ public class DominantBaseline extends Property  {
                                 Ints.consts.get(i));
         }
     }
-    public int getEnumIndex(String enum)
+    public int getEnumIndex(String enumval)
         throws PropertyException
     {
-        Integer ii = (Integer)(rwEnumHash.get(enum));
+        Integer ii = (Integer)(rwEnumHash.get(enumval));
         if (ii == null)
-            throw new PropertyException("Unknown enum value: " + enum);
+            throw new PropertyException("Unknown ENUM value: " + enumval);
         return ii.intValue();
     }
     public String getEnumText(int index)

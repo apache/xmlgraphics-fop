@@ -59,12 +59,12 @@ public class WordSpacing extends WordSpacingCommon  {
     }
 
 
-    public Numeric getMappedLength(FONode node, int enum)
+    public Numeric getMappedLength(FONode node, int enumval)
         throws PropertyException
     {
-        if (enum != NORMAL)
-            throw new PropertyException("Invalid MAPPED_LENGTH enum: "
-                                        + enum);
+        if (enumval != NORMAL)
+            throw new PropertyException("Invalid MAPPED_LENGTH ENUM: "
+                                        + enumval);
         return Length.makeLength(PropNames.WORD_SPACING, 0d, Length.PT);
     }
 }
