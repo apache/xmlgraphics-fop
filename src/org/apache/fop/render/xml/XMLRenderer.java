@@ -338,6 +338,16 @@ public class XMLRenderer extends AbstractRenderer {
         writeElement("<space width=\"" + space.getWidth() + "\"/>");
     }
 
+    public void renderWord(Word word) {
+        String prop = "";
+        List list = word.getPropertyList();
+        if (list != null) {
+            prop = " props=\"" + getPropString(list) + "\"";
+        }
+        writeElement("<word" + prop + ">" + word.getWord() + "</word>");
+        super.renderWord(word);
+    }
+
     public void renderLeader(Leader area) {
         String style = "solid";
         switch (area.getRuleStyle()) {
