@@ -116,6 +116,8 @@ import org.w3c.dom.svg.SVGSVGElement;
  */
 public class PSTranscoder extends AbstractFOPTranscoder {
 
+    protected PSDocumentGraphics2D graphics = null;
+
     /**
      * Constructs a new <tt>PSTranscoder</tt>.
      */
@@ -132,21 +134,38 @@ public class PSTranscoder extends AbstractFOPTranscoder {
      * @exception TranscoderException if an error occured while transcoding
      */
     protected void transcode(Document document, String uri,
-                             TranscoderOutput output) throws TranscoderException {
+                             TranscoderOutput output) 
+        throws TranscoderException {
 
-        if (!(document instanceof SVGOMDocument)) {
-            throw new TranscoderException(Messages.formatMessage("notsvg",
-                    null));
+        graphics = new PSDocumentGraphics2D(false);
+
+        super.transcode(document, uri, output);
+
+        // prepare the image to be painted
+        int w = (int)(width+.5);
+        int h = (int)(height+.5);
+
+        try {
+            graphics.setupDocument(output.getOutputStream(), w, h);
+            graphics.setSVGDimension(width, height);
+
+            if (hints.containsKey(ImageTranscoder.KEY_BACKGROUND_COLOR)) {
+                graphics.setBackgroundColor
+                    ((Color)hints.get(ImageTranscoder.KEY_BACKGROUND_COLOR));
         }
-        SVGDocument svgDoc = (SVGDocument)document;
-        SVGSVGElement root = svgDoc.getRootElement();
-        // initialize the SVG document with the appropriate context
-        String parserClassname = (String)hints.get(KEY_XML_PARSER_CLASSNAME);
+            graphics.setGraphicContext
+                (new org.apache.batik.ext.awt.g2d.GraphicContext());
+            graphics.setTransform(curTxf);
 
-        PSDocumentGraphics2D graphics = new PSDocumentGraphics2D(false);
+            this.root.paint(graphics);
 
-        // build the GVT tree
-        GVTBuilder builder = new GVTBuilder();
+            graphics.finish();
+        } catch (IOException ex) {
+            throw new TranscoderException(ex);
+        }
+    }
+
+    protected BridgeContext createBridgeContext() {
         BridgeContext ctx = new BridgeContext(userAgent);
         TextPainter textPainter = null;
         textPainter = new StrokingTextPainter();
@@ -162,102 +181,7 @@ public class PSTranscoder extends AbstractFOPTranscoder {
         //ctx.putBridge(pdfAElementBridge);
 
         //ctx.putBridge(new PSImageElementBridge());
-        GraphicsNode gvtRoot;
-        try {
-            gvtRoot = builder.build(ctx, svgDoc);
-        } catch (BridgeException ex) {
-            throw new TranscoderException(ex);
-        }
-        // get the 'width' and 'height' attributes of the SVG document
-        float docWidth = (float)ctx.getDocumentSize().getWidth();
-        float docHeight = (float)ctx.getDocumentSize().getHeight();
-        ctx = null;
-        builder = null;
-
-        // compute the image's width and height according the hints
-        float imgWidth = -1;
-        if (hints.containsKey(ImageTranscoder.KEY_WIDTH)) {
-            imgWidth =
-                ((Float)hints.get(ImageTranscoder.KEY_WIDTH)).floatValue();
-        }
-        float imgHeight = -1;
-        if (hints.containsKey(ImageTranscoder.KEY_HEIGHT)) {
-            imgHeight =
-                ((Float)hints.get(ImageTranscoder.KEY_HEIGHT)).floatValue();
-        }
-        float width, height;
-        if (imgWidth > 0 && imgHeight > 0) {
-            width = imgWidth;
-            height = imgHeight;
-        } else if (imgHeight > 0) {
-            width = (docWidth * imgHeight) / docHeight;
-            height = imgHeight;
-        } else if (imgWidth > 0) {
-            width = imgWidth;
-            height = (docHeight * imgWidth) / docWidth;
-        } else {
-            width = docWidth;
-            height = docHeight;
-        }
-        // compute the preserveAspectRatio matrix
-        AffineTransform px;
-        String ref = null;
-        try {
-            ref = new URL(uri).getRef();
-        } catch (MalformedURLException ex) {
-            // nothing to do, catched previously
-        }
-
-        try {
-            px = ViewBox.getViewTransform(ref, root, width, height);
-        } catch (BridgeException ex) {
-            throw new TranscoderException(ex);
-        }
-
-        if (px.isIdentity() && (width != docWidth || height != docHeight)) {
-            // The document has no viewBox, we need to resize it by hand.
-            // we want to keep the document size ratio
-            float d = Math.max(docWidth, docHeight);
-            float dd = Math.max(width, height);
-            float scale = dd / d;
-            px = AffineTransform.getScaleInstance(scale, scale);
-        }
-        // take the AOI into account if any
-        if (hints.containsKey(ImageTranscoder.KEY_AOI)) {
-            Rectangle2D aoi = (Rectangle2D)hints.get(ImageTranscoder.KEY_AOI);
-            // transform the AOI into the image's coordinate system
-            aoi = px.createTransformedShape(aoi).getBounds2D();
-            AffineTransform mx = new AffineTransform();
-            double sx = width / aoi.getWidth();
-            double sy = height / aoi.getHeight();
-            mx.scale(sx, sy);
-            double tx = -aoi.getX();
-            double ty = -aoi.getY();
-            mx.translate(tx, ty);
-            // take the AOI transformation matrix into account
-            // we apply first the preserveAspectRatio matrix
-            px.preConcatenate(mx);
-        }
-        // prepare the image to be painted
-        int w = (int)width;
-        int h = (int)height;
-
-        try {
-            graphics.setupDocument(output.getOutputStream(), w, h);
-            graphics.setSVGDimension(docWidth, docHeight);
-
-            if (hints.containsKey(ImageTranscoder.KEY_BACKGROUND_COLOR)) {
-                graphics.setBackgroundColor((Color)hints.get(ImageTranscoder.KEY_BACKGROUND_COLOR));
-            }
-            graphics.setGraphicContext(new org.apache.batik.ext.awt.g2d.GraphicContext());
-            graphics.setTransform(px);
-
-            gvtRoot.paint(graphics);
-
-            graphics.finish();
-        } catch (IOException ex) {
-            throw new TranscoderException(ex);
-        }
+        return ctx;
     }
 
 }
