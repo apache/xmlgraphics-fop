@@ -15,25 +15,28 @@ import java.util.*;
  * The class MessageHandler contains the static methods log and error which
  * should be used for any end user information instead of System.out.print() or
  * System.err.print(). The class defines several output methods:
- * writing to the screen (default), logging to a file, creating message events and repressing all
- * output. If you don't want to change the default behaviour, you should be
+ * writing to the screen (default), logging to a file, creating message events
+ * and repressing all output.
+ * If you don't want to change the default behaviour, you should be
  * happy with MessageHandler.log(message) and MessageHandler.error(message)<br>
- * The class MessageHandler also supports the setting of an id. If set every message
- * has as a prefix an identifying string. That way Fop probably can also be used in
- * environments, where more than one Fop instance are running in same  JVM.<br>
+ * The class MessageHandler also supports the setting of an id.
+ * If set every message has as a prefix an identifying string.
+ * That way Fop probably can also be used in
+ * environments where more than one Fop instance are running in same  JVM.<br>
  * If Fop is embedded in a gui application or for any reasons the existing
  * messaging system doesn't meet the programmer's requirements, one can add
  * a MessageEvent listener to MessageHandler and handle the incoming messages
- * in an appropriate way. See the class DefaultMessageListener, which is a trivial
- * implementation of the MessageListener.
- * Here is an example how to configure MessageHandler for the DefaultMessageListener (anybody
+ * in an appropriate way. See the class DefaultMessageListener, which is a
+ * trivial implementation of the MessageListener.
+ * Here is an example how to configure MessageHandler for the
+ * DefaultMessageListener (anybody
  * can provide his own listener by extending MessageListener<br>
  * <code>
  * MessageHandler.setOutputMethod(MessageHandler.EVENT);
  * MessageHandler.addListener(new DefaultMessageListener());
  * </code><br>
- * This examples shows, how to redirect the messages to a log file called fop.log.
- * All messages are appended to this file.
+ * This examples shows how to redirect the messages to a log file called
+ * fop.log. All messages are appended to this file.
  * <code>
  * MessageHandler.setOutputMethod(MessageHandler.FILE);
  * MessageHandler.setLogfileName("\\fop.log",true);
@@ -104,7 +107,9 @@ public class MessageHandler {
                 setMessage(message);
                 Enumeration enum = listeners.elements();
                 while (enum.hasMoreElements()) {
-                    ((MessageListener)enum.nextElement()).processMessage(new MessageEvent(getMessage()));
+                    ((MessageListener)enum.nextElement()).processMessage(
+                                                new MessageEvent(getMessage())
+                    );
                 }
                 break;
             case NONE:
