@@ -18,15 +18,18 @@
 
 package org.apache.fop.fo.flow;
 
+// Java
+import java.util.List;
+
 // FOP
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginBlock;
+import org.apache.fop.layoutmgr.BlockContainerLayoutManager;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
@@ -131,12 +134,12 @@ public class BlockContainer extends FObj {
     }
 
     /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
+     * @param list the list to which the layout manager(s) should be added
      */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveBlockContainer(this);
+    public void addLayoutManager(List list) { 	 
+        BlockContainerLayoutManager blm = new BlockContainerLayoutManager(this);
+        blm.setOverflow(getProperty(PR_OVERFLOW).getEnum());
+        list.add(blm);
     }
 
     public String getName() {

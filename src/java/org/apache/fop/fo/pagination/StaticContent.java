@@ -26,7 +26,6 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 
 /**
  * Class modelling the fo:static-content object. See Sec. 6.4.19 of the XSL-FO
@@ -80,15 +79,6 @@ public class StaticContent extends Flow {
             super.setFlowName(name);
         }
 
-    }
-
-    /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
-     */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveStaticContent(this);
     }
 
     public String getName() {

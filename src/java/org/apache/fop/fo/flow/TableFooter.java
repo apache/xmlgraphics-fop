@@ -21,12 +21,13 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.layoutmgr.AddLMVisitor;
+import org.apache.fop.fo.LMVisited;
 
 /**
  * Class modelling the fo:table-footer object. See Sec. 6.7.7 of the XSL-FO
  * Standard.
  */
-public class TableFooter extends TableBody {
+public class TableFooter extends TableBody implements LMVisited {
 
     /**
      * @param parent FONode that is the parent of this object

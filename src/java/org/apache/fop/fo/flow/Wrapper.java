@@ -22,6 +22,7 @@ package org.apache.fop.fo.flow;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.layoutmgr.AddLMVisitor;
+import org.apache.fop.fo.LMVisited;
 
 /**
  * Implementation for fo:wrapper formatting object.
@@ -31,7 +32,7 @@ import org.apache.fop.layoutmgr.AddLMVisitor;
  * Content: (#PCDATA|%inline;|%block;)*
  * Properties: id
  */
-public class Wrapper extends FObjMixed {
+public class Wrapper extends FObjMixed implements LMVisited {
 
     /**
      * @param parent FONode that is the parent of this object

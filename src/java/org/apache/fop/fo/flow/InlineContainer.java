@@ -18,14 +18,19 @@
 
 package org.apache.fop.fo.flow;
 
+// Java
+import java.util.List;
+import java.util.ArrayList;
+
 // XML
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
 // FOP
+import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.ICLayoutManager;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginInline;
@@ -89,12 +94,13 @@ public class InlineContainer extends FObj {
     }
 
     /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
+     * @param list the list to which the layout manager(s) should be added
      */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveInlineContainer(this);
+    public void addLayoutManager(List list) { 	 
+        ArrayList childList = new ArrayList();
+        super.addLayoutManager(childList);
+        LayoutManager lm = new ICLayoutManager(this, childList);
+        list.add(lm);
     }
 
     public String getName() {

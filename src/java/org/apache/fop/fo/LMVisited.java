@@ -16,31 +16,11 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutmgr;
+package org.apache.fop.fo;
 
-// Java
-import java.util.List;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 
-// FOP
-import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.fo.FObj;
-
-/**
- * This creates a single inline container area after
- * laying out the child block areas. All footnotes, floats
- * and id areas are maintained for later retrieval.
- */
-public class ICLayoutManager extends LeafNodeLayoutManager {
-
-    private List childrenLM;
-
-    public ICLayoutManager(FObj node, List childLM) {
-        super(node);
-        childrenLM = childLM;
-    }
-
-    public InlineArea get(int index) {
-        return null;
-    }
-
+public interface LMVisited {
+    public void acceptVisitor(AddLMVisitor aLMV);
 }
+

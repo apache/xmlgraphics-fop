@@ -35,12 +35,14 @@ import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fo.LMVisited;
+
 
 /**
  * Class modelling the fo:page-number object. See Sec. 6.6.10 of the XSL-FO
  * Standard.
  */
-public class PageNumber extends FObj {
+public class PageNumber extends FObj implements LMVisited {
     /** FontState for this object */
     protected Font fontState;
 

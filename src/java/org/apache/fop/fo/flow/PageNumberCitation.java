@@ -34,6 +34,7 @@ import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fo.LMVisited;
 
 
 /**
@@ -43,7 +44,7 @@ import org.apache.fop.fonts.Font;
  * The page number used is the page that contains the start of the
  * block referenced with the ref-id attribute.
  */
-public class PageNumberCitation extends FObj {
+public class PageNumberCitation extends FObj implements LMVisited {
     /** Fontstate for this object **/
     protected Font fontState;
 

@@ -33,12 +33,13 @@ import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonRelativePosition;
+import org.apache.fop.fo.LMVisited;
 
 /**
  * Class modelling the fo:list-item object. See Sec. 6.8.3 of the XSL-FO
  * Standard.
  */
-public class ListItem extends FObj {
+public class ListItem extends FObj implements LMVisited {
 
     private ListItemLabel label = null;
     private ListItemBody body = null;

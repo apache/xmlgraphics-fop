@@ -33,13 +33,14 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.xml.sax.Attributes;
+import org.apache.fop.fo.LMVisited;
 
 /**
  * External graphic formatting object.
  * This FO node handles the external graphic. It creates an image
  * inline area that can be added to the area tree.
  */
-public class ExternalGraphic extends FObj {
+public class ExternalGraphic extends FObj implements LMVisited {
     private String url;
     private int breakAfter;
     private int breakBefore;

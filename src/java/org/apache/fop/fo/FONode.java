@@ -33,9 +33,6 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.extensions.svg.SVGElementMapping;
-import org.apache.fop.layoutmgr.AddLMVisitor;
-
-
 
 /**
  * base class for nodes in the XML tree
@@ -195,15 +192,6 @@ public abstract class FONode {
      */
     public CharIterator charIterator() {
         return new OneCharIterator(CharUtilities.CODE_EOT);
-    }
-
-    /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
-     */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveFONode(this);
     }
 
     /**

@@ -18,6 +18,9 @@
 
 package org.apache.fop.fo.flow;
 
+// Java
+import java.util.List;
+
 // XML
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -30,7 +33,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.RecursiveCharIterator;
-import org.apache.fop.layoutmgr.AddLMVisitor;
+import org.apache.fop.layoutmgr.BlockLayoutManager;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
@@ -337,15 +340,14 @@ public class Block extends FObjMixed {
     }
 
     /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
+     * @param list the list to which the layout manager(s) should be added
      */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveBlock(this);
+    public void addLayoutManager(List list) { 	 
+        BlockLayoutManager blm = new BlockLayoutManager(this);
+        list.add(blm);
     }
-
-    public String getName() {
+     
+   public String getName() {
         return "fo:block";
     }
 

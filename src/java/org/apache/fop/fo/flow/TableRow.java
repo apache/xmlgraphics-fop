@@ -18,6 +18,9 @@
 
 package org.apache.fop.fo.flow;
 
+// Java
+import java.util.List;
+
 // XML
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
@@ -27,7 +30,7 @@ import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.KeepValue;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.layoutmgr.AddLMVisitor;
+import org.apache.fop.layoutmgr.table.Row;
 import org.apache.fop.fo.Constants;
 
 import org.apache.fop.fo.properties.CommonAccessibility;
@@ -135,15 +138,14 @@ public class TableRow extends FObj {
     }
 
     /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
+     * @param list the list to which the layout manager(s) should be added
      */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveTableRow(this);
+    public void addLayoutManager(List list) { 	 
+        Row rlm = new Row(this);
+        list.add(rlm); 	 
     }
 
-    protected void endOfNode() throws SAXParseException {
+     protected void endOfNode() throws SAXParseException {
         getFOInputHandler().endRow(this);
     }
     

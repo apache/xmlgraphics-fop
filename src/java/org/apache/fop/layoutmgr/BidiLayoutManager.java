@@ -29,11 +29,11 @@ import org.apache.fop.area.inline.InlineArea;
  * ltr or rtl than its parent writing mode then this
  * reverses the inline areas (at the character level).
  */
-class BidiLayoutManager extends LeafNodeLayoutManager {
+public class BidiLayoutManager extends LeafNodeLayoutManager {
 
     private List children;
 
-    BidiLayoutManager(InlineStackingLayoutManager cLM) {
+    public BidiLayoutManager(InlineStackingLayoutManager cLM) {
         children = new ArrayList();
 /*
         for (int count = cLM.size() - 1; count >= 0; count--) {

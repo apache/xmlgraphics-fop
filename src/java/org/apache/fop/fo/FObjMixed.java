@@ -18,8 +18,10 @@
 
 package org.apache.fop.fo;
 
+import java.util.List;
 import org.xml.sax.Locator;
-import org.apache.fop.layoutmgr.AddLMVisitor;
+import org.apache.fop.layoutmgr.LMiter;
+import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
 
 /**
  * Base class for representation of mixed content formatting objects
@@ -74,12 +76,16 @@ public class FObjMixed extends FObj {
     }
 
     /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
+     * @param list the list to which the layout manager(s) should be added
      */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveFObjMixed(this);
+    public void addLayoutManager(List list) { 	 
+        if (getChildNodes() != null) {
+            InlineStackingLayoutManager lm;
+            lm = new InlineStackingLayoutManager(this);
+            lm.setLMiter(new LMiter(lm, getChildNodes()));
+            list.add(lm);
+        }
     }
+    
 }
 
