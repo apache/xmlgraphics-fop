@@ -65,6 +65,8 @@ import java.io.IOException;
  */
 
 public interface IRtfPageBreakContainer {
-    /** add a page break */
+    /** add a page break
+     * @throws IOException for I/O problems
+     */
     void newPageBreak() throws IOException;
 }

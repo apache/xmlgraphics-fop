@@ -60,12 +60,16 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import java.io.IOException;
 
-
+/**
+ * Interface for classes containing templates.
+ */
 public interface IrtfTemplateContainer {
 
     /**
      * Creates a new Template.
-     *
+     * @param str description of Template
+     * @param attr attributes of Template
+     * @return new Template object
      * @exception IOException on error
      */
     RtfTemplate newTemplate (String str, RtfAttributes attr) throws IOException;

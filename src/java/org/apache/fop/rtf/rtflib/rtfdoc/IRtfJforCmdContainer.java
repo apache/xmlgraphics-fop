@@ -61,6 +61,15 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import java.io.IOException;
 
+/**
+ * Interface for objects containing Commands
+ */
 public interface IRtfJforCmdContainer {
+    /**
+     *
+     * @param attr Attributes for the command
+     * @return new Command object
+     * @throws IOException for I/O problems
+     */
     RtfJforCmd newJforCmd(RtfAttributes attr) throws IOException;
 }
