@@ -190,7 +190,7 @@ public class CommonBorderPaddingBackground implements Cloneable {
         if (borderInfo[side] != null) {
             return borderInfo[side].mStyle;
         } else {
-            return 0;
+            return Constants.NONE;
         }
     }
 
