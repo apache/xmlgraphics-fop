@@ -31,9 +31,7 @@ import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FObjMixed;
-import org.apache.fop.fo.XMLObj;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.BidiOverride;
 import org.apache.fop.fo.flow.Block;
@@ -48,8 +46,6 @@ import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.fo.flow.ListItem;
-import org.apache.fop.fo.flow.ListItemBody;
-import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.PageNumberCitation;
 import org.apache.fop.fo.flow.RetrieveMarker;
@@ -66,7 +62,6 @@ import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.pagination.Title;
 
-import org.apache.fop.layoutmgr.list.Item;
 import org.apache.fop.layoutmgr.list.ListBlockLayoutManager;
 import org.apache.fop.layoutmgr.list.ListItemLayoutManager;
 import org.apache.fop.layoutmgr.table.Body;
@@ -317,16 +312,46 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     }
 
     public static class TableLayoutManagerMaker extends Maker {
+        
+        private List getColumnLayoutManagerList(Table table) {
+            List columnLMs = null;
+            List columns = table.getColumns();
+            if (columns != null) {
+                columnLMs = new java.util.ArrayList();
+                int colnum = 1;
+                ListIterator iter = columns.listIterator();
+                while (iter.hasNext()) {
+                    TableColumn col = (TableColumn)iter.next();
+                    if (col.hasColumnNumber()) {
+                        colnum = col.getColumnNumber();
+                    }
+                    for (int i = 0; i < col.getNumberColumnsRepeated(); i++) {
+                        while (colnum > columnLMs.size()) {
+                            columnLMs.add(null);
+                        }
+                        columnLMs.set(colnum - 1, new Column(col));
+                        colnum++;
+                    }
+                }
+                //Post-processing the list (looking for gaps)
+                int pos = 1;
+                ListIterator ppIter = columnLMs.listIterator();
+                while (ppIter.hasNext()) {
+                    Column col = (Column)ppIter.next();
+                    if (col == null) {
+                        log.error("Found a gap in the table-columns at position " + pos);
+                    }
+                    pos++;
+                }
+            }
+            return columnLMs;
+        }
+        
         public void make(FONode node, List lms) {
             Table table = (Table) node;
             TableLayoutManager tlm = new TableLayoutManager(table);
-            List columns = table.getColumns();
-            if (columns != null) {
-                ArrayList columnLMs = new ArrayList();
-                ListIterator iter = columns.listIterator();
-                while (iter.hasNext()) {
-                    columnLMs.add(new Column((TableColumn) iter.next()));
-                }
+            List columnLMs = getColumnLayoutManagerList(table);
+            if (columnLMs != null) {
                 tlm.setColumns(columnLMs);
             }
             if (table.getTableHeader() != null) {
