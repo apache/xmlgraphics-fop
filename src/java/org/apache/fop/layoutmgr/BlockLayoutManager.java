@@ -22,13 +22,9 @@ import java.util.ListIterator;
 import java.util.List;
 
 import org.apache.fop.datatypes.PercentBase;
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
-import org.apache.fop.area.BlockParent;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.traits.MinOptMax;
@@ -54,6 +50,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     */
     private MinOptMax foBlockSpaceBefore = null;
     // need to retain foBlockSpaceAfter from previous instantiation
+    //TODO this is very bad for multi-threading. fix me!
     private static MinOptMax foBlockSpaceAfter = null;
     private MinOptMax prevFoBlockSpaceAfter = null;
 
