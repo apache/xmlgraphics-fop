@@ -6,7 +6,7 @@ implementation'.
 The book is structured according to the Docbook XML DTD version 4.2,
 top-level element book.
 
-The top level file is book.xml. It calls in the various chapter files.
+The top level file is DnI.xml. It calls in the various chapter files.
 
 The book can be converted to XHTML, HTML and FO using the Docbook XSL
 stylesheets. For each of these formats there are customization XSL
@@ -59,17 +59,17 @@ java, possibly none.
 java $JAVAFLAGS -cp "$SAXONCLASSPATH:$CLASSPATH" \
 	com.icl.saxon.StyleSheet \
 	-o ../documentation-xhtml/book-xhtml.xml \
-	book.xml cust-xhtml-docbook.xsl
+	DnI.xml cust-xhtml-docbook.xsl
 
 java $JAVAFLAGS -cp "$SAXONCLASSPATH:$CLASSPATH" \
 	com.icl.saxon.StyleSheet \
 	-o ../documentation-html/book.html \
-	book.xml cust-html-docbook.xsl
+	DnI.xml cust-html-docbook.xsl
 
 java $JAVAFLAGS \
 	-cp $SAXONCLASSPATH:$FOPCLASSPATH:$AVALONCLASSPATH:$CLASSPATH \
 	org.apache.fop.apps.Fop \
-	-xml book.xml -xsl cust-html-docbook.xsl -pdf book.pdf
+	-xml DnI.xml -xsl cust-html-docbook.xsl -pdf book.pdf
 
 I will try to construct an ant build file and an XML catalog which
 make conversion with your own XML and Java system easier.
