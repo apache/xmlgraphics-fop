@@ -3,10 +3,9 @@
     <META http-equiv="Content-Type" content="text/html;
                                                 charset=ISO-8859-1" />
     <title>Property Expression Parsing</title>
-    <script type="text/javascript" src="scripts/codedisplay.js">
-    </script>
   </head>
   <body marginheight="0" marginwidth="0" topmargin="0" leftmargin="0" text="#000000" bgcolor="#FFFFFF">
+    <script type="text/javascript" src="codedisplay.js" />
     <div class="content">
       <h1>Property Expression Parsing</h1>
       <p>
@@ -31,16 +30,20 @@
       
       <a name="N10014"></a>
       <h3>Property expression parsing</h3>
+      <!-- N.B. height for toggleCode changed from 50% to 400 because
+          Mozilla seems to get confused by percentage heights within
+          table elements.
+      -->
       <p>
         The parsing of property value expressions is handled by two
         closely related classes: <span id = "span00" ></span ><a href=
         "javascript:toggleCode( 'span00',
-        'PropertyTokenizer.html#PropertyTokenizerClass', '50%', '100%'
+        'PropertyTokenizer.html#PropertyTokenizerClass', '400', '100%'
         )" ><span class= "codefrag"
         >org.apache.fop.fo.expr.PropertyTokenizer</span></a> and its
         subclass, <span id = "span01" ></span ><a href=
         "javascript:toggleCode( 'span01',
-        'PropertyParser.html#PropertyParserClass', '50%', '100%' )"
+        'PropertyParser.html#PropertyParserClass', '400', '100%' )"
         ><span class= "codefrag"
         >org.apache.fop.fo.expr.PropertyParser</span></a>, and by
         <span class= "codefrag" >refineParsing(int, FONode,
@@ -49,16 +52,16 @@
         as the name suggests, handles the tokenizing of the
         expression, handing <span id = "span02" ></span ><a href=
         "javascript:toggleCode( 'span02',
-        'PropertyTokenizer.html#EOF', '50%', '100%' )"
+        'PropertyTokenizer.html#EOF', '400', '100%' )"
         ><em>tokens</em></a> back to its subclass, <span class=
         "codefrag" >PropertyParser</span>. <span class= "codefrag"
         >PropertyParser</span>, in turn, returns a <span id = "span03"
         ></span ><a href= "javascript:toggleCode( 'span03',
-        'PropertyValueList.html#PropertyValueListClass', '50%', '100%'
+        'PropertyValueList.html#PropertyValueListClass', '400', '100%'
         )" ><span class= "codefrag">PropertyValueList</span></a>, a
         list of <span id = "span04" ></span ><a href=
         "javascript:toggleCode( 'span04',
-        'PropertyValue.html#PropertyValueInterface', '50%', '100%' )"
+        'PropertyValue.html#PropertyValueInterface', '400', '100%' )"
         ><span class= "codefrag">PropertyValue</span></a>s.
       </p>
       <p>
@@ -66,7 +69,7 @@
         definitions from the <span class= "codefrag"
         >org.apache.fop.datatypes</span> package, which include the
         <span id = "span05" ></span ><a href= "javascript:toggleCode(
-        'span05', 'PropertyValue.html#NO_TYPE', '50%', '100%' )"
+        'span05', 'PropertyValue.html#NO_TYPE', '400', '100%' )"
         ><span class= "codefrag" >PropertyValue</span> datatype
         constant definitions</a>.
       </p>
@@ -333,7 +336,7 @@
         As mentioned above, the <span class= "codefrag"
         >PropertyTokenizer</span> hands <span id = "span06" ></span
         ><a href= "javascript:toggleCode( 'span06',
-        'PropertyTokenizer.html#EOF', '50%', '100%' )"
+        'PropertyTokenizer.html#EOF', '400', '100%' )"
         ><em>tokens</em></a> back to its subclass, <span class=
         "codefrag" >PropertyParser</span>.  Most of these tokens are
         self-explanatory, but a few need further comment.
@@ -389,11 +392,11 @@
       <p>
         The parser returns a <span id = "span07" ></span ><a href=
         "javascript:toggleCode( 'span07',
-        'PropertyValueList.html#PropertyValueListClass', '50%', '100%'
+        'PropertyValueList.html#PropertyValueListClass', '400', '100%'
         )" ><span class= "codefrag" >PropertyValueList</span ></a>,
         necessary because of the possibility that a list of <span id =
         "span08" ></span ><a href= "javascript:toggleCode( 'span08',
-        'PropertyValue.html#PropertyValueInterface', '50%', '100%' )"
+        'PropertyValue.html#PropertyValueInterface', '400', '100%' )"
         ><span class= "codefrag" >PropertyValue</span ></a> elements
         may be returned from the expressions of some properties.
       </p>
