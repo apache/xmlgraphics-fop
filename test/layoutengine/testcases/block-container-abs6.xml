@@ -25,7 +25,7 @@
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
       <fo:layout-master-set>
         <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in" margin="20pt">
-          <fo:region-body margin="0pt" background-color="lightgreen"/> <!-- border="solid 5pt"/-->
+          <fo:region-body margin="0pt" background-color="lightgreen"/>
         </fo:simple-page-master>
       </fo:layout-master-set>
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
