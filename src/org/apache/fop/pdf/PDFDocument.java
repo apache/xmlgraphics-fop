@@ -1,49 +1,49 @@
 /*-- $Id$ -- 
 
  ============================================================================
-                   The Apache Software License, Version 1.1
+				   The Apache Software License, Version 1.1
  ============================================================================
  
-    Copyright (C) 1999 The Apache Software Foundation. All rights reserved.
+	Copyright (C) 1999 The Apache Software Foundation. All rights reserved.
  
  Redistribution and use in source and binary forms, with or without modifica-
  tion, are permitted provided that the following conditions are met:
  
- 1. Redistributions of  source code must  retain the above copyright  notice,
-    this list of conditions and the following disclaimer.
+ 1. Redistributions of	source code must  retain the above copyright  notice,
+	this list of conditions and the following disclaimer.
  
  2. Redistributions in binary form must reproduce the above copyright notice,
-    this list of conditions and the following disclaimer in the documentation
-    and/or other materials provided with the distribution.
+	this list of conditions and the following disclaimer in the documentation
+	and/or other materials provided with the distribution.
  
  3. The end-user documentation included with the redistribution, if any, must
-    include  the following  acknowledgment:  "This product includes  software
-    developed  by the  Apache Software Foundation  (http://www.apache.org/)."
-    Alternately, this  acknowledgment may  appear in the software itself,  if
-    and wherever such third-party acknowledgments normally appear.
+	include  the following	acknowledgment:  "This product includes  software
+	developed  by the  Apache Software Foundation  (http://www.apache.org/)."
+	Alternately, this  acknowledgment may  appear in the software itself,  if
+	and wherever such third-party acknowledgments normally appear.
  
  4. The names "FOP" and  "Apache Software Foundation"  must not be used to
-    endorse  or promote  products derived  from this  software without  prior
-    written permission. For written permission, please contact
-    apache@apache.org.
+	endorse  or promote  products derived  from this  software without	prior
+	written permission. For written permission, please contact
+	apache@apache.org.
  
  5. Products  derived from this software may not  be called "Apache", nor may
-    "Apache" appear  in their name,  without prior written permission  of the
-    Apache Software Foundation.
+	"Apache" appear  in their name,  without prior written permission  of the
+	Apache Software Foundation.
  
  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- FITNESS  FOR A PARTICULAR  PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL  THE
+ FITNESS  FOR A PARTICULAR	PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL  THE
  APACHE SOFTWARE  FOUNDATION  OR ITS CONTRIBUTORS  BE LIABLE FOR  ANY DIRECT,
  INDIRECT, INCIDENTAL, SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL  DAMAGES (INCLU-
- DING, BUT NOT LIMITED TO, PROCUREMENT  OF SUBSTITUTE GOODS OR SERVICES; LOSS
- OF USE, DATA, OR  PROFITS; OR BUSINESS  INTERRUPTION)  HOWEVER CAUSED AND ON
- ANY  THEORY OF LIABILITY,  WHETHER  IN CONTRACT,  STRICT LIABILITY,  OR TORT
- (INCLUDING  NEGLIGENCE OR  OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
+ DING, BUT NOT LIMITED TO, PROCUREMENT	OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ OF USE, DATA, OR  PROFITS; OR BUSINESS  INTERRUPTION)	HOWEVER CAUSED AND ON
+ ANY  THEORY OF LIABILITY,	WHETHER  IN CONTRACT,  STRICT LIABILITY,  OR TORT
+ (INCLUDING  NEGLIGENCE OR	OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  
- This software  consists of voluntary contributions made  by many individuals
- on  behalf of the Apache Software  Foundation and was  originally created by
+ This software	consists of voluntary contributions made  by many individuals
+ on  behalf of the Apache Software	Foundation and was	originally created by
  James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
  Software Foundation, please see <http://www.apache.org/>.
  
@@ -56,6 +56,8 @@ package org.apache.fop.pdf;
 // images are the one place that FOP classes outside this package get
 // referenced and I'd rather not do it
 import org.apache.fop.image.FopImage;
+
+import org.apache.fop.datatypes.ColorSpace;
 
 // Java
 import java.io.IOException;
@@ -78,71 +80,75 @@ import java.awt.Rectangle;
  */
 public class PDFDocument {
 
-    /** the version of PDF supported */
-    protected static final String pdfVersion = "1.3";
+	/** the version of PDF supported */
+	protected static final String pdfVersion = "1.3";
 
-    /** the current character position */
-    protected int position = 0;
+	/** the current character position */
+	protected int position = 0;
 
-    /** the character position of each object */
-    protected Vector location = new Vector();
+	/** the character position of each object */
+	protected Vector location = new Vector();
 
-    /** the counter for object numbering */
-    protected int objectcount = 0;
+	/** the counter for object numbering */
+	protected int objectcount = 0;
+		
+	/** the objects themselves */
+	protected Vector objects = new Vector();
 
-    /** the objects themselves */
-    protected Vector objects = new Vector();
+	/** character position of xref table */
+	protected int xref;
 
-    /** character position of xref table */
-    protected int xref;
+	/** the /Root object */
+	protected PDFRoot root;
 
-    /** the /Root object */
-    protected PDFRoot root;
+	/** the /Info object */
+	protected PDFInfo info;
 
-    /** the /Info object */
-    protected PDFInfo info;
+	/** the /Resources object */
+	protected PDFResources resources;
 
-    /** the /Resources object */
-    protected PDFResources resources;
+	/** the colorspace (0=RGB, 1=CMYK) **/
+	//protected int colorspace = 0;
+	protected ColorSpace colorspace = new ColorSpace(ColorSpace.DEVICE_RGB);
+	
+	/** the counter for Pattern name numbering (e.g. 'Pattern1')*/
+	protected int patternCount = 0;
+	
+	/** the counter for Shading name numbering */
+	protected int shadingCount = 0;
+	
+	/** the counter for XObject numbering */
+	protected int xObjectCount = 0;
 
-    /** the counter for Pattern name numbering (e.g. 'Pattern1')*/
-    protected int patternCount = 0;
-    
-    /** the counter for Shading name numbering */
-    protected int shadingCount = 0;
-    
-    /** the counter for XObject numbering */
-    protected int xObjectCount = 0;
+	/** the XObjects */
+	protected Vector xObjects = new Vector();
 
-    /** the XObjects */
-    protected Vector xObjects = new Vector();
-
-    /**
-     * creates an empty PDF document
-     */
-    public PDFDocument() {
+	/**
+	 * creates an empty PDF document
+	 */
+	public PDFDocument() {
 
 		/* create the /Root, /Info and /Resources objects */
 		this.root = makeRoot();
 		this.info = makeInfo();
 		this.resources = makeResources();
-    }
-    
-    /**
-     * set the producer of the document
-     *
-     * @param producer string indicating application producing the PDF
-     */
-    public void setProducer(String producer) {
+	}
+	
+	/**
+	 * set the producer of the document
+	 *
+	 * @param producer string indicating application producing the PDF
+	 */
+	public void setProducer(String producer) {
 	this.info.setProducer(producer);
-    }
+	}
 
-    /**
-     * make /Root object as next object
-     *
-     * @return the created /Root object
-     */
-    protected PDFRoot makeRoot() {
+	/**
+	 * make /Root object as next object
+	 *
+	 * @return the created /Root object
+	 */
+	protected PDFRoot makeRoot() {
 
 	/* create a PDFRoot with the next object number and add to
 	   list of objects */
@@ -157,36 +163,36 @@ public class PDFDocument {
 	/* inform the /Root object of the /Pages root */
 	pdfRoot.setRootPages(rootPages);
 	return pdfRoot;
-    }
+	}
 
-    /**
-     * make an /Info object
-     *
-     * @param producer string indicating application producing the PDF
-     * @return the created /Info object
-     */
-    protected PDFInfo makeInfo() {
+	/**
+	 * make an /Info object
+	 *
+	 * @param producer string indicating application producing the PDF
+	 * @return the created /Info object
+	 */
+	protected PDFInfo makeInfo() {
 
 	/* create a PDFInfo with the next object number and add to
 	   list of objects */
 	PDFInfo pdfInfo = new PDFInfo(++this.objectcount);
 	this.objects.addElement(pdfInfo);
 	return pdfInfo;
-    }
+	}
 
-    /**
-     * make a /Resources object
-     *
-     * @return the created /Resources object
-     */
-    private PDFResources makeResources() {
+	/**
+	 * make a /Resources object
+	 *
+	 * @return the created /Resources object
+	 */
+	private PDFResources makeResources() {
 
 	/* create a PDFResources with the next object number and add
 	   to list of objects */
 	PDFResources pdfResources = new PDFResources(++this.objectcount);
 	this.objects.addElement(pdfResources);
 	return pdfResources;
-    }
+	}
 	
 	/**
 	 * Make a Type 0 sampled function
@@ -252,7 +258,7 @@ public class PDFDocument {
 			theDomain, theRange,	theSize,
 			theBitsPerSample,	theOrder,
 			theEncode, theDecode,
-			theFunctionDataStream,  theFilter);
+			theFunctionDataStream,	theFilter);
 
 		this.objects.addElement(function);
 		return(function);
@@ -343,7 +349,7 @@ public class PDFDocument {
 			theFunctionType,
 			theDomain, theRange,
 			theFunctions, theBounds,
-			theEncode); 			
+			theEncode);			
 		
 		this.objects.addElement(function);
 		return(function);	
@@ -394,7 +400,7 @@ public class PDFDocument {
 	 * It's optional, the default is the identity matrix
 	 * @param theFunction The PDF Function that maps an (x,y) location to a color
 	 */
-	public PDFShading makeShading(int theShadingType, StringBuffer theColorSpace,
+	public PDFShading makeShading(int theShadingType, ColorSpace theColorSpace,
 		Vector theBackground, Vector theBBox, boolean theAntiAlias,
 		Vector theDomain, Vector theMatrix, PDFFunction theFunction)
 	{	//make Shading of Type 1
@@ -412,8 +418,8 @@ public class PDFDocument {
 	}
 	
    /**
-    * Make an axial or radial shading object.
-    * 
+	* Make an axial or radial shading object.
+	* 
 		 * @param theShadingType 2 or 3 for axial or radial shading
 		 * @param theColorSpace "DeviceRGB" or similar.
 		 * @param theBackground theBackground An array of color components appropriate to the
@@ -429,10 +435,10 @@ public class PDFDocument {
 		 * @param theFunction the Stitching (PDFfunction type 3) function, even if it's stitching a single function
 		 * @param theExtend Vector of Booleans of whether to extend teh start and end colors past the start and end points
 		 * The default is [false, false]
-    */
+	*/
    public PDFShading makeShading(int theShadingType,
-   	StringBuffer theColorSpace, Vector theBackground,
-   	Vector theBBox, boolean theAntiAlias,
+	ColorSpace theColorSpace, Vector theBackground,
+	Vector theBBox, boolean theAntiAlias,
 		Vector theCoords, Vector theDomain,
 		PDFFunction theFunction, Vector theExtend)
 	{ //make Shading of Type 2 or 3
@@ -471,14 +477,14 @@ public class PDFDocument {
 	 * @param theDecode Vector of Doubles see PDF 1.3 spec pages 303 to 312.
 	 * @param theFunction the PDFFunction
 	 */
-	public PDFShading makeShading(int theShadingType, StringBuffer theColorSpace,
+	public PDFShading makeShading(int theShadingType, ColorSpace theColorSpace,
 		Vector theBackground, Vector theBBox, boolean theAntiAlias,
 		int theBitsPerCoordinate, int theBitsPerComponent,
 		int theBitsPerFlag, Vector theDecode, PDFFunction theFunction)
 	{ //make Shading of type 4,6 or 7
 		String theShadingName = new String("Sh"+(++this.shadingCount));
 		
-		PDFShading shading= new PDFShading(++this.objectcount, theShadingName,
+		PDFShading shading = new PDFShading(++this.objectcount, theShadingName,
 			theShadingType, theColorSpace,
 			theBackground, theBBox, theAntiAlias,
 			theBitsPerCoordinate,theBitsPerComponent,
@@ -510,7 +516,7 @@ public class PDFDocument {
 	 * @param theVerticesPerRow number of vertices in each "row" of the lattice.
 	 * @param theFunction The PDFFunction that's mapped on to this shape
 	 */
-	public PDFShading makeShading(int theShadingType, StringBuffer theColorSpace,
+	public PDFShading makeShading(int theShadingType, ColorSpace theColorSpace,
 		Vector theBackground, Vector theBBox, boolean theAntiAlias,
 		int theBitsPerCoordinate, int theBitsPerComponent,
 		Vector theDecode, int theVerticesPerRow, PDFFunction theFunction)
@@ -592,16 +598,127 @@ public class PDFDocument {
 		return(pattern);
 	}
 
-    /**
-     * make a Type1 /Font object
-     * 
-     * @param fontname internal name to use for this font (eg "F1")
-     * @param basefont name of the base font (eg "Helvetica")
-     * @param encoding character encoding scheme used by the font
-     * @return the created /Font object
-     */
-    public PDFFont makeFont(String fontname, String basefont,
-			    String encoding) {
+	public int getColorSpace()
+	{
+		return(this.colorspace.getColorSpace());
+	}
+	
+	public void setColorSpace(int theColorspace)
+	{
+		this.colorspace.setColorSpace(theColorspace);
+		return;
+	}
+	
+	public PDFPattern createGradient(boolean radial,
+									ColorSpace theColorspace,
+									Vector theColors,
+									Vector theBounds,
+									Vector theCoords)
+	{
+		PDFShading myShad;
+		PDFFunction myfunky;
+		PDFFunction myfunc;
+		Vector theCzero;
+		Vector theCone;
+		PDFPattern myPattern;
+		ColorSpace theColorSpace;
+		double interpolation = (double) 1.000;
+		Vector theFunctions = new Vector();
+
+	  int currentPosition;
+	  int lastPosition = theColors.size()-2;
+	  
+	  
+	  //if 5 elements, the penultimate element is 3.
+	  //do not go beyond that, because you always need
+	  //to have a next color when creating the function.
+
+	  for(currentPosition=0;
+		currentPosition < lastPosition;
+		currentPosition++)
+	  {//for every consecutive color pair
+		PDFColor currentColor = 
+				(PDFColor)theColors.elementAt(currentPosition);
+		PDFColor nextColor = 
+				(PDFColor)theColors.elementAt(currentPosition+1);
+			//colorspace must be consistant
+			if (this.colorspace.getColorSpace() != currentColor.getColorSpace())
+				currentColor.setColorSpace(this.colorspace.getColorSpace());
+			
+			if (this.colorspace.getColorSpace() != nextColor.getColorSpace())
+				nextColor.setColorSpace(this.colorspace.getColorSpace());
+						
+			theCzero = currentColor.getVector();
+			theCone = nextColor.getVector();
+			
+			myfunc = this.makeFunction(
+				2, null, null,
+				theCzero, theCone,
+				interpolation);
+			
+			theFunctions.addElement(myfunc);
+		
+		}//end of for every consecutive color pair
+		
+		myfunky = this.makeFunction(3,
+			null, null,
+			theFunctions, theBounds,
+			null);
+			
+		if(radial)
+		{
+			if(theCoords.size() ==6)
+			{
+				myShad = this.makeShading(
+				3, this.colorspace,
+				null, null, false,
+				theCoords, null, myfunky, null);
+			}
+			else
+			{ //if the center x, center y, and radius specifiy
+			//the gradient, then assume the same center x, center y,
+			//and radius of zero for the other necessary component
+				Vector newCoords = new Vector();
+				newCoords.addElement(theCoords.elementAt(0));
+				newCoords.addElement(theCoords.elementAt(1));
+				newCoords.addElement(theCoords.elementAt(2));
+				newCoords.addElement(theCoords.elementAt(0));
+				newCoords.addElement(theCoords.elementAt(1));
+				newCoords.addElement(new Double(0.0));
+
+				myShad = this.makeShading(
+				3, this.colorspace,
+				null, null, false,
+				newCoords, null, myfunky, null);
+				
+			}
+		}
+		else
+		{
+		myShad = this.makeShading(
+			2, this.colorspace,
+			null, null, false,
+			theCoords, null, myfunky, null);
+			
+		}
+		
+		myPattern = this.makePattern(
+		2, myShad, null, null, null);
+		
+		return(myPattern);
+	}
+
+
+	/**
+	 * make a Type1 /Font object
+	 * 
+	 * @param fontname internal name to use for this font (eg "F1")
+	 * @param basefont name of the base font (eg "Helvetica")
+	 * @param encoding character encoding scheme used by the font
+	 * @return the created /Font object
+	 */
+	public PDFFont makeFont(String fontname, String basefont,
+				String encoding) {
 
 	/* create a PDFFont with the next object number and add to the
 	   list of objects */
@@ -609,30 +726,30 @@ public class PDFDocument {
 				   basefont, encoding);
 	this.objects.addElement(font);
 	return font;
-    }
+	}
 
-    public int addImage(FopImage img) {
+	public int addImage(FopImage img) {
 	PDFXObject xObject = new PDFXObject(++this.objectcount,
-					    ++this.xObjectCount, img);
+						++this.xObjectCount, img);
 	this.objects.addElement(xObject);
 	this.xObjects.addElement(xObject);
 	return xObjectCount;
-    }
+	}
 
-    /**
-     * make a /Page object
-     *
-     * @param resources resources object to use
-     * @param contents stream object with content
-     * @param pagewidth width of the page in points
-     * @param pageheight height of the page in points
-     *
-     * @return the created /Page object
-     */
-    public PDFPage makePage(PDFResources resources,
-			    PDFStream contents,
-			    int pagewidth,
-			    int pageheight)  {
+	/**
+	 * make a /Page object
+	 *
+	 * @param resources resources object to use
+	 * @param contents stream object with content
+	 * @param pagewidth width of the page in points
+	 * @param pageheight height of the page in points
+	 *
+	 * @return the created /Page object
+	 */
+	public PDFPage makePage(PDFResources resources,
+				PDFStream contents,
+				int pagewidth,
+				int pageheight)  {
 
 	/* create a PDFPage with the next object number, the given
 	   resources, contents and dimensions */
@@ -647,23 +764,23 @@ public class PDFDocument {
 	this.root.addPage(page);
 
 	return page;
-    }
+	}
 
-    /**
-     * make a link object
-     *
-     * @param rect the clickable rectangle
-     * @param destination the destination file
-     * 
-     * @return the PDFLink object created
-     */
-    public PDFLink makeLink(Rectangle rect, String destination) {
+	/**
+	 * make a link object
+	 *
+	 * @param rect the clickable rectangle
+	 * @param destination the destination file
+	 * 
+	 * @return the PDFLink object created
+	 */
+	public PDFLink makeLink(Rectangle rect, String destination) {
 
 	PDFLink link = new PDFLink(++this.objectcount, rect);
 	this.objects.addElement(link);
 
 	PDFFileSpec fileSpec = new PDFFileSpec(++this.objectcount,
-					       destination);
+						   destination);
 	this.objects.addElement(fileSpec);
 
 	PDFAction action = new PDFAction(++this.objectcount,
@@ -672,51 +789,52 @@ public class PDFDocument {
 	link.setAction(action);
 
 	return link;
-    }
+	}
 
-    /**
-     * make a stream object
-     *
-     * @return the stream object created
-     */
-    public PDFStream makeStream() {
-    
+	/**
+	 * make a stream object
+	 *
+	 * @return the stream object created
+	 */
+	public PDFStream makeStream() {
+	
 	/* create a PDFStream with the next object number and add it
+
 	   to the list of objects */
 	PDFStream obj = new PDFStream(++this.objectcount);
 	this.objects.addElement(obj);
 	return obj;
-    }
-    
-    /**
-     * make an annotation list object
-     *
-     * @return the annotation list object created
-     */
-    public PDFAnnotList makeAnnotList() {
-    
+	}
+	
+	/**
+	 * make an annotation list object
+	 *
+	 * @return the annotation list object created
+	 */
+	public PDFAnnotList makeAnnotList() {
+	
 	/* create a PDFAnnotList with the next object number and add it
 	   to the list of objects */
 	PDFAnnotList obj = new PDFAnnotList(++this.objectcount);
 	this.objects.addElement(obj);
 	return obj;
-    }
+	}
 
-    /**
-     * get the /Resources object for the document
-     *
-     * @return the /Resources object
-     */
-    public PDFResources getResources() {
+	/**
+	 * get the /Resources object for the document
+	 *
+	 * @return the /Resources object
+	 */
+	public PDFResources getResources() {
 	return this.resources;
-    }
+	}
 
-    /**
-     * write the entire document out
-     *
-     * @param writer the PrinterWriter to output the document to
-     */
-    public void output(PrintWriter writer) throws IOException {
+	/**
+	 * write the entire document out
+	 *
+	 * @param writer the PrinterWriter to output the document to
+	 */
+	public void output(PrintWriter writer) throws IOException {
 
 	/* output the header and increment the character position by
 	   the header's length */
@@ -727,16 +845,16 @@ public class PDFDocument {
 	/* loop through the object numbers */
 	for (int i=1; i <= this.objectcount; i++) {
 
-	    /* add the position of this object to the list of object
-	       locations */
-	    this.location.addElement(new Integer(this.position));
+		/* add the position of this object to the list of object
+		   locations */
+		this.location.addElement(new Integer(this.position));
 
-	    /* retrieve the object with the current number */
-	    PDFObject object = (PDFObject)this.objects.elementAt(i-1);
+		/* retrieve the object with the current number */
+		PDFObject object = (PDFObject)this.objects.elementAt(i-1);
 
-	    /* output the object and increment the character position
-	       by the object's length */
-	    this.position += object.output(writer);
+		/* output the object and increment the character position
+		   by the object's length */
+		this.position += object.output(writer);
 	}
 
 	/* output the xref table and increment the character position
@@ -746,67 +864,67 @@ public class PDFDocument {
 	/* output the trailer and flush the Writer */
 	outputTrailer(writer);
 	writer.flush();
-    }
+	}
 
-    /**
-     * write the PDF header
-     *
-     * @param writer the PrintWriter to write the header to
-     * @return the number of characters written
-     */
-    protected int outputHeader(PrintWriter writer) throws IOException {
+	/**
+	 * write the PDF header
+	 *
+	 * @param writer the PrintWriter to write the header to
+	 * @return the number of characters written
+	 */
+	protected int outputHeader(PrintWriter writer) throws IOException {
 	String pdf = "%PDF-" + this.pdfVersion + "\n";
 	writer.write(pdf);
 	return pdf.length();
-    }
+	}
 
-    /**
-     * write the trailer
-     *
-     * @param writer the PrintWriter to write the trailer to
-     */
-    protected void outputTrailer(PrintWriter writer) throws IOException {
+	/**
+	 * write the trailer
+	 *
+	 * @param writer the PrintWriter to write the trailer to
+	 */
+	protected void outputTrailer(PrintWriter writer) throws IOException {
 
 	/* construct the trailer */
 	String pdf = "trailer\n<<\n/Size " + (this.objectcount+1)
-	    + "\n/Root " + this.root.number + " " + this.root.generation
-	    + " R\n/Info " + this.info.number + " " 
-	    + this.info.generation + " R\n>>\nstartxref\n" + this.xref 
-	    + "\n%%EOF\n";
+		+ "\n/Root " + this.root.number + " " + this.root.generation
+		+ " R\n/Info " + this.info.number + " " 
+		+ this.info.generation + " R\n>>\nstartxref\n" + this.xref 
+		+ "\n%%EOF\n";
 
 	/* write the trailer */
 	writer.write(pdf);
-    }
+	}
 
-    /**
-     * write the xref table
-     *
-     * @param writer the PrintWriter to write the xref table to
-     * @return the number of characters written
-     */
-    private int outputXref(PrintWriter writer) throws IOException {
+	/**
+	 * write the xref table
+	 *
+	 * @param writer the PrintWriter to write the xref table to
+	 * @return the number of characters written
+	 */
+	private int outputXref(PrintWriter writer) throws IOException {
 
 	/* remember position of xref table */
 	this.xref = this.position;
 
 	/* construct initial part of xref */
 	StringBuffer pdf = new StringBuffer("xref\n0 " + (this.objectcount+1) 
-	    + "\n0000000000 65535 f \n");
+		+ "\n0000000000 65535 f \n");
 
 	/* loop through object numbers */
 	for (int i=1; i < this.objectcount+1; i++) {
 
-	    /* contruct xref entry for object */
-	    String padding = "0000000000";
-	    String x = this.location.elementAt(i-1).toString();
-	    String loc = padding.substring(x.length()) + x;
+		/* contruct xref entry for object */
+		String padding = "0000000000";
+		String x = this.location.elementAt(i-1).toString();
+		String loc = padding.substring(x.length()) + x;
 
-	    /* append to xref table */
-	    pdf = pdf.append(loc + " 00000 n \n");
+		/* append to xref table */
+		pdf = pdf.append(loc + " 00000 n \n");
 	}
 
 	/* write the xref table and return the character length */
 	writer.write(pdf.toString());
 	return pdf.length();
-    }
+	}
 }
