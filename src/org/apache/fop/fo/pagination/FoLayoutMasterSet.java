@@ -6,7 +6,7 @@ import java.util.NoSuchElementException;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.xml.XMLEvent;
-import org.apache.fop.fo.FObjects;
+import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FONode;
@@ -62,7 +62,7 @@ public class FoLayoutMasterSet extends FONode {
         throws Tree.TreeException, FOPException, PropertyException
     {
         super(foTree, FObjectNames.LAYOUT_MASTER_SET, parent, event,
-              FObjects.LAYOUT_SET);
+              FOPropertySets.LAYOUT_SET);
     }
 
     /**
