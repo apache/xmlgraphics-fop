@@ -175,8 +175,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         PageBreaker breaker = new PageBreaker(this);
         breaker.doLayout(flowBPD);
         
-        // TODO: Don't decrement currentPageNum when no pages are generated
-        currentPageNum--;
         finishPage();
         pageSeq.getRoot().notifyPageSequenceFinished(currentPageNum,
                 (currentPageNum - startPageNum) + 1);

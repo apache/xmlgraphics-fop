@@ -1060,7 +1060,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
      * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepTogether()
      */
     public boolean mustKeepTogether() {
-        return !fobj.getKeepTogether().getWithinPage().isAuto();
+        return ((BlockLevelLayoutManager)getParent()).mustKeepTogether() 
+                || !fobj.getKeepTogether().getWithinPage().isAuto();
     }
 
     /**
