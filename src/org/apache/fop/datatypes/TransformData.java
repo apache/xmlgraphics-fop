@@ -66,7 +66,7 @@ import java.util.*;
  * modified Nov 14,2000 Mike Crowe <crowe@psilongbeach.com>
  */
 public class TransformData {
-    SVGAnimatedTransformList trans;
+    SVGAnimatedTransformListImpl trans;
 
     /**
      * set the TransformData given a particular String specifying TransformData and units

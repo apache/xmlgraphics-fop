@@ -100,6 +100,10 @@
     <use-generic ispropclass="true">SVGTransform</use-generic>
   </property>
   <property>
+    <name>gradientTransform</name>
+    <use-generic ispropclass="true">SVGTransform</use-generic>
+  </property>
+  <property>
     <name>d</name>
     <use-generic ispropclass="true">SVGD</use-generic>
   </property>
@@ -183,27 +187,35 @@
 	<default>pad</default> 
   </property>
   <property>
-	<name>gradientUnits</name>
-	<class-name>GradientUnits</class-name>
+    <name>gradientUnits</name>
+    <use-generic>GenericUnits</use-generic>
+  </property>
+  <property>
+    <name>patternUnits</name>
+    <use-generic>GenericUnits</use-generic>
+  </property>
+  <property>
+    <name>patternContentUnits</name>
+    <use-generic>GenericUnits</use-generic>
+  </property>
+  <property>
+    <name>clipPathUnits</name>
+    <use-generic>GenericUnits</use-generic>
+  </property>
+  <property type="generic">
+	<name>GenericUnits</name>
+	<class-name>GenericUnits</class-name>
 	<inherited>false</inherited>
 	<datatype>Enum</datatype>
       <enumeration>
         <value const="USER_SPACE_ON_USE">userSpaceOnUse</value>
-        <value const="USER_SPACE">userSpace</value>
         <value const="OBJECT_BOUNDING_BOX">objectBoundingBox</value>
       </enumeration>
-	<default>userSpace</default> 
+	<default>userSpaceOnUse</default> 
   </property>
   <property>
     <name>viewBox</name>
     <class-name>ViewBox</class-name>
-    <inherited>false</inherited>
-    <datatype>String</datatype>
-    <default></default>
-  </property>
-  <property>
-    <name>gradientTransform</name>
-    <class-name>GradientTransform</class-name>
     <inherited>false</inherited>
     <datatype>String</datatype>
     <default></default>

@@ -58,16 +58,16 @@ import org.w3c.dom.svg.*;
  */
 public class SVGGradientElementImpl extends SVGURIReferenceImpl implements SVGGradientElement {
     /*
-     SVG_SPREADMETHOD_UNKNOWN;
-     SVG_SPREADMETHOD_PAD;
-     SVG_SPREADMETHOD_REFLECT;
-     SVG_SPREADMETHOD_REPEAT;
+      SVG_SPREADMETHOD_UNKNOWN;
+      SVG_SPREADMETHOD_PAD;
+      SVG_SPREADMETHOD_REFLECT;
+      SVG_SPREADMETHOD_REPEAT;
      */
     SVGAnimatedEnumeration spreadMethod =
       new SVGAnimatedEnumerationImpl(SVG_SPREADMETHOD_UNKNOWN);
     SVGAnimatedEnumeration units =
       new SVGAnimatedEnumerationImpl(SVG_UNIT_TYPE_UNKNOWN);
-
+    SVGAnimatedTransformList gradientTransform;
 
     public SVGGradientElementImpl() {
     }
@@ -81,11 +81,12 @@ public class SVGGradientElementImpl extends SVGURIReferenceImpl implements SVGGr
     }
 
     public SVGAnimatedTransformList getGradientTransform() {
-        return null;
+        return gradientTransform;
     }
 
     public void setGradientTransform(
       SVGAnimatedTransformList gradientTransform) {
+        this.gradientTransform = gradientTransform;
     }
 
     public SVGAnimatedEnumeration getSpreadMethod() {
