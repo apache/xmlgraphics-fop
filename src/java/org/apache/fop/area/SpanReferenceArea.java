@@ -32,7 +32,7 @@ import org.apache.fop.fo.flow.FoPageSequence;
  * This is a reference area block area with 0 border and padding
  */
 public class SpanReferenceArea
-extends AbstractReferenceArea
+extends BlockReferenceArea
 implements ReferenceArea, Serializable {
     
     // the list of normal-flow-reference-areas in this span area

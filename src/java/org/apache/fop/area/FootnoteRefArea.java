@@ -28,7 +28,7 @@ import org.apache.fop.fo.flow.FoPageSequence;
  * @version $Revision$ $Name$
  */
 public class FootnoteRefArea
-    extends AbstractReferenceArea
+    extends BlockReferenceArea
     implements ReferenceArea {
 
     /**

@@ -32,7 +32,7 @@ import org.apache.fop.fo.flow.FoPageSequence;
  * The children of this area are span-reference-areas.
  */
 public class MainReferenceArea
-extends AbstractReferenceArea
+extends BlockReferenceArea
 implements ReferenceArea {
     private List spanAreas = new ArrayList();
     private SpanReferenceArea currentSpan = null;

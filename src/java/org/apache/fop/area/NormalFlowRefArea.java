@@ -27,7 +27,7 @@ import org.apache.fop.fo.flow.FoPageSequence;
  * @author pbw
  * @version $Revision$ $Name$
  */
-public class NormalFlowRefArea extends AbstractReferenceArea
+public class NormalFlowRefArea extends BlockReferenceArea
         implements
             ReferenceArea {
     /**
