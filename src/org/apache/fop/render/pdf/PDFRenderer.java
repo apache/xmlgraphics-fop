@@ -165,7 +165,7 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     public void stopRenderer() throws IOException {
-        FontSetup.addToResources(this.pdfDoc, fontInfo);
+        FontSetup.addToResources(pdfDoc, pdfDoc.getResources(), fontInfo);
         pdfDoc.outputTrailer(ostream);
 
         this.pdfDoc = null;
@@ -217,7 +217,7 @@ public class PDFRenderer extends PrintRenderer {
                                            (int) Math.round(w / 1000), (int) Math.round(h / 1000));
             pageReferences.put(page, currentPage.referencePDF());
         }
-        currentStream = this.pdfDoc.makeStream();
+        currentStream = this.pdfDoc.makeStream(PDFStream.CONTENT_FILTER);
 
         currentState = new PDFState();
         currentState.setTransform(new AffineTransform(1, 0, 0, -1, 0, (int) Math.round(pageHeight / 1000)));
@@ -498,21 +498,21 @@ public class PDFRenderer extends PrintRenderer {
                 return;
             }
             FopPDFImage pdfimage = new FopPDFImage(fopimage);
-            int xobj = pdfDoc.addImage(pdfimage).getXNumber();
+            int xobj = pdfDoc.addImage(null, pdfimage).getXNumber();
             fact.releaseImage(url, userAgent);
         } else if("image/jpg".equals(mime)) {
             if(!fopimage.load(FopImage.ORIGINAL_DATA, userAgent)) {
                 return;
             }
             FopPDFImage pdfimage = new FopPDFImage(fopimage);
-            int xobj = pdfDoc.addImage(pdfimage).getXNumber();
+            int xobj = pdfDoc.addImage(null, pdfimage).getXNumber();
             fact.releaseImage(url, userAgent);
         } else {
             if(!fopimage.load(FopImage.BITMAP, userAgent)) {
                 return;
             }
             FopPDFImage pdfimage = new FopPDFImage(fopimage);
-            int xobj = pdfDoc.addImage(pdfimage).getXNumber();
+            int xobj = pdfDoc.addImage(null, pdfimage).getXNumber();
             fact.releaseImage(url, userAgent);
 
             closeText();

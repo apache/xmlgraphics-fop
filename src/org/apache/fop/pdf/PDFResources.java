@@ -37,10 +37,8 @@ public class PDFResources extends PDFObject {
      * @param number the object's number
      */
     public PDFResources(int number) {
-
         /* generic creation of object */
         super(number);
-
     }
 
     /**
@@ -131,7 +129,7 @@ public class PDFResources extends PDFObject {
 
         p.append("/ProcSet [ /PDF /ImageC /Text ]\n");
 
-        if (!this.xObjects.isEmpty()) {
+        if (this.xObjects != null && !this.xObjects.isEmpty()) {
             p = p.append("/XObject <<");
             for (int i = 1; i <= this.xObjects.size(); i++) {
                 p = p.append("/Im" + i + " "
@@ -147,9 +145,9 @@ public class PDFResources extends PDFObject {
                 PDFGState gs = (PDFGState)this.gstates.get(i);
                 p = p.append("/" + gs.getName() + " "
                              + gs.referencePDF()
-                             + "\n");
+                             + " ");
             }
-            p = p.append(" >>\n");
+            p = p.append(">>\n");
         }
 
         p = p.append(">>\nendobj\n");

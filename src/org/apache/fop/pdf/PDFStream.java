@@ -11,8 +11,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Enumeration;
-import org.apache.fop.configuration.Configuration;
 
 /**
  * class representing a PDF stream.
@@ -23,6 +23,11 @@ import org.apache.fop.configuration.Configuration;
  * length.
  */
 public class PDFStream extends PDFObject {
+    public static final String DEFAULT_FILTER = "default";
+    public static final String CONTENT_FILTER = "content";
+    public static final String IMAGE_FILTER = "image";
+    public static final String JPEG_FILTER = "jpeg";
+    public static final String FONT_FILTER = "font";
 
     /**
      * the stream of PDF commands
@@ -95,28 +100,21 @@ public class PDFStream extends PDFObject {
         }
     }
 
-
-    public void addDefaultFilters() {
-        ArrayList filters = Configuration.getListValue("stream-filter-list",
-                                                    Configuration.PDF);
-        if (filters == null) {
-            // try getting it as a String
-            String filter = Configuration.getStringValue("stream-filter-list",
-                    Configuration.PDF);
-            if (filter == null) {
-                // built-in default to flate
-                addFilter(new FlateFilter());
-            } else {
-                addFilter(filter);
-            }
+    public void addDefaultFilters(HashMap filters, String type) {
+        ArrayList filterset = (ArrayList)filters.get(type);
+        if(filterset == null) {
+            filterset = (ArrayList)filters.get(DEFAULT_FILTER);
+        }
+        if(filterset == null || filterset.size() == 0) {
+            // built-in default to flate
+            addFilter(new FlateFilter());
         } else {
-            for (int i = 0; i < filters.size(); i++) {
-                String v = (String)filters.get(i);
+            for (int i = 0; i < filterset.size(); i++) {
+                String v = (String)filterset.get(i);
                 addFilter(v);
             }
         }
     }
-
 
     /**
      * append an array of xRGB pixels, ASCII Hex Encoding it first
@@ -174,8 +172,6 @@ public class PDFStream extends PDFObject {
             return 0;
         }
     }
-
-
 
     /**
      * represent as PDF.
@@ -235,7 +231,6 @@ public class PDFStream extends PDFObject {
         return length;
 
     }
-
 
     /**
      * Apply the filters to the data

@@ -189,10 +189,9 @@ public class FontSetup {
      * @param doc PDF document to add fonts to
      * @param fontInfo font info object to get font information from
      */
-    public static void addToResources(PDFDocument doc, FontInfo fontInfo) {
+    public static void addToResources(PDFDocument doc, PDFResources resources, FontInfo fontInfo) {
         HashMap fonts = fontInfo.getUsedFonts();
         Iterator e = fonts.keySet().iterator();
-        PDFResources resources = doc.getResources();
         while (e.hasNext()) {
             String f = (String)e.next();
             Font font = (Font)fonts.get(f);

@@ -136,9 +136,16 @@ public class PDFDocument {
     protected HashMap xObjectsMap = new HashMap();
 
     /**
+     * the Font Map.
+     */
+    protected HashMap fontMap = new HashMap();
+
+    /**
      * the objects themselves
      */
     protected ArrayList pendingLinks = null;
+
+    protected HashMap filterMap = new HashMap();
 
     /**
      * creates an empty PDF document <p>
@@ -174,6 +181,14 @@ public class PDFDocument {
      */
     public void setProducer(String producer) {
         this.info.setProducer(producer);
+    }
+
+    public void setFilterMap(HashMap map) {
+        filterMap = map;
+    }
+
+    public HashMap getFilterMap() {
+        return filterMap;
     }
 
     /**
@@ -426,7 +441,7 @@ public class PDFDocument {
      * It's optional, the default is the identity matrix
      * @param theFunction The PDF Function that maps an (x,y) location to a color
      */
-    public PDFShading makeShading(int theShadingType,
+    public PDFShading makeShading(PDFResourceContext res, int theShadingType,
                                   PDFColorSpace theColorSpace,
                                   ArrayList theBackground, ArrayList theBBox,
                                   boolean theAntiAlias, ArrayList theDomain,
@@ -442,7 +457,11 @@ public class PDFDocument {
         this.objects.add(shading);
 
         // add this shading to resources
-        this.resources.addShading(shading);
+        if(res != null) {
+            res.getPDFResources().addShading(shading);
+        } else {
+            this.resources.addShading(shading);
+        }
 
         return (shading);
     }
@@ -466,7 +485,7 @@ public class PDFDocument {
      * @param theExtend ArrayList of Booleans of whether to extend teh start and end colors past the start and end points
      * The default is [false, false]
      */
-    public PDFShading makeShading(int theShadingType,
+    public PDFShading makeShading(PDFResourceContext res, int theShadingType,
                                   PDFColorSpace theColorSpace,
                                   ArrayList theBackground, ArrayList theBBox,
                                   boolean theAntiAlias, ArrayList theCoords,
@@ -481,8 +500,11 @@ public class PDFDocument {
                                             theDomain, theFunction,
                                             theExtend);
 
-        this.resources.addShading(shading);
-
+        if(res != null) {
+            res.getPDFResources().addShading(shading);
+        } else {
+            this.resources.addShading(shading);
+        }
         this.objects.add(shading);
         return (shading);
     }
@@ -509,7 +531,7 @@ public class PDFDocument {
      * @param theDecode ArrayList of Doubles see PDF 1.3 spec pages 303 to 312.
      * @param theFunction the PDFFunction
      */
-    public PDFShading makeShading(int theShadingType,
+    public PDFShading makeShading(PDFResourceContext res, int theShadingType,
                                   PDFColorSpace theColorSpace,
                                   ArrayList theBackground, ArrayList theBBox,
                                   boolean theAntiAlias,
@@ -528,7 +550,11 @@ public class PDFDocument {
                                             theBitsPerFlag, theDecode,
                                             theFunction);
 
-        this.resources.addShading(shading);
+        if(res != null) {
+            res.getPDFResources().addShading(shading);
+        } else {
+            this.resources.addShading(shading);
+        }
 
         this.objects.add(shading);
         return (shading);
@@ -554,7 +580,7 @@ public class PDFDocument {
      * @param theVerticesPerRow number of vertices in each "row" of the lattice.
      * @param theFunction The PDFFunction that's mapped on to this shape
      */
-    public PDFShading makeShading(int theShadingType,
+    public PDFShading makeShading(PDFResourceContext res, int theShadingType,
                                   PDFColorSpace theColorSpace,
                                   ArrayList theBackground, ArrayList theBBox,
                                   boolean theAntiAlias,
@@ -572,7 +598,11 @@ public class PDFDocument {
                                             theBitsPerComponent, theDecode,
                                             theVerticesPerRow, theFunction);
 
-        this.resources.addShading(shading);
+        if(res != null) {
+            res.getPDFResources().addShading(shading);
+        } else {
+            this.resources.addShading(shading);
+        }
 
         this.objects.add(shading);
 
@@ -593,7 +623,7 @@ public class PDFDocument {
      * @param theXUID Optional vector of Integers that uniquely identify the pattern
      * @param thePatternDataStream The stream of pattern data to be tiled.
      */
-    public PDFPattern makePattern(int thePatternType,    // 1
+    public PDFPattern makePattern(PDFResourceContext res, int thePatternType,    // 1
                                   PDFResources theResources, int thePaintType, int theTilingType,
                                   ArrayList theBBox, double theXStep, double theYStep, ArrayList theMatrix,
                                   ArrayList theXUID, StringBuffer thePatternDataStream) {
@@ -607,7 +637,11 @@ public class PDFDocument {
                                             theMatrix, theXUID,
                                             thePatternDataStream);
 
-        this.resources.addPattern(pattern);
+        if(res != null) {
+            res.getPDFResources().addPattern(pattern);
+        } else {
+            this.resources.addPattern(pattern);
+        }
         this.objects.add(pattern);
 
         return (pattern);
@@ -622,7 +656,7 @@ public class PDFDocument {
      * @param theExtGState optional: the extended graphics state, if used.
      * @param theMatrix Optional:ArrayList of Doubles that specify the matrix.
      */
-    public PDFPattern makePattern(int thePatternType, PDFShading theShading,
+    public PDFPattern makePattern(PDFResourceContext res, int thePatternType, PDFShading theShading,
                                   ArrayList theXUID, StringBuffer theExtGState,
                                   ArrayList theMatrix) {
         String thePatternName = new String("Pa" + (++this.patternCount));
@@ -631,7 +665,11 @@ public class PDFDocument {
                                             thePatternName, 2, theShading,
                                             theXUID, theExtGState, theMatrix);
 
-        this.resources.addPattern(pattern);
+        if(res != null) {
+            res.getPDFResources().addPattern(pattern);
+        } else {
+            this.resources.addPattern(pattern);
+        }
         this.objects.add(pattern);
 
         return (pattern);
@@ -646,7 +684,7 @@ public class PDFDocument {
         return;
     }
 
-    public PDFPattern createGradient(boolean radial,
+    public PDFPattern createGradient(PDFResourceContext res, boolean radial,
                                      PDFColorSpace theColorspace,
                                      ArrayList theColors, ArrayList theBounds,
                                      ArrayList theCoords) {
@@ -697,7 +735,7 @@ public class PDFDocument {
 
         if (radial) {
             if (theCoords.size() == 6) {
-                myShad = this.makeShading(3, this.colorspace, null, null,
+                myShad = this.makeShading(res, 3, this.colorspace, null, null,
                                           false, theCoords, null, myfunky,
                                           null);
             } else {    // if the center x, center y, and radius specifiy
@@ -711,18 +749,18 @@ public class PDFDocument {
                 newCoords.add(theCoords.get(1));
                 newCoords.add(new Double(0.0));
 
-                myShad = this.makeShading(3, this.colorspace, null, null,
+                myShad = this.makeShading(res, 3, this.colorspace, null, null,
                                           false, newCoords, null, myfunky,
                                           null);
 
             }
         } else {
-            myShad = this.makeShading(2, this.colorspace, null, null, false,
+            myShad = this.makeShading(res, 2, this.colorspace, null, null, false,
                                       theCoords, null, myfunky, null);
 
         }
 
-        myPattern = this.makePattern(2, myShad, null, null, null);
+        myPattern = this.makePattern(res, 2, myShad, null, null, null);
 
         return (myPattern);
     }
@@ -757,8 +795,11 @@ public class PDFDocument {
         this.objects.add(iccStream);
         return iccStream;
     }
-    
-    
+
+    public HashMap getFontMap() {
+        return fontMap;
+    }
+
     /**
      * make a Type1 /Font object
      *
@@ -772,6 +813,9 @@ public class PDFDocument {
     public PDFFont makeFont(String fontname, String basefont,
                             String encoding, FontMetric metrics,
                             FontDescriptor descriptor) {
+        if(fontMap.containsKey(basefont)) {
+            return (PDFFont)fontMap.get(basefont);
+        }
 
         /*
          * create a PDFFont with the next object number and add to the
@@ -918,7 +962,11 @@ public class PDFDocument {
         return gstate;
     }
 
-    public PDFXObject addImage(PDFImage img) {
+    public PDFXObject addImage(PDFResourceContext res, PDFImage img) {
+        if(res != null) {
+            res.getPDFResources().setXObjects(xObjects);
+        }
+
         // check if already created
         String key = img.getKey();
         PDFXObject xObject = (PDFXObject)xObjectsMap.get(key);
@@ -1092,7 +1140,7 @@ public class PDFDocument {
      *
      * @return the stream object created
      */
-    public PDFStream makeStream() {
+    public PDFStream makeStream(String type) {
 
         /*
          * create a PDFStream with the next object number and add it
@@ -1100,7 +1148,7 @@ public class PDFDocument {
          * to the list of objects
          */
         PDFStream obj = new PDFStream(++this.objectcount);
-        obj.addDefaultFilters();
+        obj.addDefaultFilters(filterMap, type);
 
         this.objects.add(obj);
         return obj;

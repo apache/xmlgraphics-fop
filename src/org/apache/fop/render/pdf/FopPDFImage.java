@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
+import java.util.HashMap;
 
 public class FopPDFImage implements PDFImage {
     FopImage fopImage;
@@ -32,6 +33,7 @@ public class FopPDFImage implements PDFImage {
     String maskRef;
     String softMaskRef;
     boolean isPS = false;
+    HashMap filters;
 
     public FopPDFImage(FopImage im) {
         fopImage = im;
@@ -44,7 +46,7 @@ public class FopPDFImage implements PDFImage {
     }
 
     public void setup(PDFDocument doc) {
-
+        filters = doc.getFilterMap();
         if ("image/jpeg".equals(fopImage.getMimeType())) {
             pdfFilter = new DCTFilter();
             pdfFilter.setApplied(true);
@@ -55,7 +57,7 @@ public class FopPDFImage implements PDFImage {
             if (prof != null) {
                 pdfICCStream = doc.makePDFICCStream();
                 pdfICCStream.setColorSpace(prof, pdfCS);
-                pdfICCStream.addDefaultFilters();
+                pdfICCStream.addDefaultFilters(filters, PDFStream.CONTENT_FILTER);
             }
         }
     }
@@ -116,7 +118,7 @@ public class FopPDFImage implements PDFImage {
                 imgStream.addFilter(pdfFilter);
             }
 
-            imgStream.addDefaultFilters();
+            imgStream.addDefaultFilters(filters, PDFStream.IMAGE_FILTER);
             return imgStream;
         }
     }
@@ -170,7 +172,7 @@ public class FopPDFImage implements PDFImage {
 
 
         imgStream.setData(imgData);
-        imgStream.addDefaultFilters();
+        imgStream.addDefaultFilters(filters, PDFStream.CONTENT_FILTER);
 
         return imgStream;
     }

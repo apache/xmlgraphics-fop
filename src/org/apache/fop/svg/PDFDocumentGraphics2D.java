@@ -37,6 +37,7 @@ import org.apache.batik.ext.awt.g2d.GraphicContext;
 public class PDFDocumentGraphics2D extends PDFGraphics2D {
     OutputStream stream;
 
+    PDFPage currentPage;
     PDFStream pdfStream;
     int width;
     int height;
@@ -69,7 +70,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         standalone = true;
         this.pdfDoc = new PDFDocument();
         this.pdfDoc.setProducer("FOP SVG Renderer");
-        pdfStream = this.pdfDoc.makeStream();
+        pdfStream = this.pdfDoc.makeStream(PDFStream.CONTENT_FILTER);
 
         graphicsState = new PDFState();
 
@@ -87,6 +88,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         PDFResources pdfResources = this.pdfDoc.getResources();
         currentPage = this.pdfDoc.makePage(pdfResources,
                                                    width, height);
+        resourceContext = currentPage;
         currentStream.write("1 0 0 -1 0 " + height + " cm\n");
     }
 
@@ -156,7 +158,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         currentPage.setContents(pdfStream);
         this.pdfDoc.addPage(currentPage);
         if (fontInfo != null) {
-            FontSetup.addToResources(this.pdfDoc, fontInfo);
+            FontSetup.addToResources(pdfDoc, pdfDoc.getResources(), fontInfo);
         }
         pdfDoc.outputHeader(stream);
         this.pdfDoc.output(stream);

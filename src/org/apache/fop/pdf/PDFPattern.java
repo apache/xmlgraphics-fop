@@ -9,6 +9,9 @@ package org.apache.fop.pdf;
 
 // Java...
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /**
  * class representing a PDF Function.
@@ -32,7 +35,7 @@ public class PDFPattern extends PDFPathPaint {
     /**
      * Either one (1) for tiling, or two (2) for shading.
      */
-    protected int patternType = 2;                                      // Default
+    protected int patternType = 2;      // Default
 
     /**
      * The name of the pattern such as "Pa1" or "Pattern1"
@@ -75,11 +78,11 @@ public class PDFPattern extends PDFPathPaint {
     protected ArrayList xUID = null;
 
     /**
+     * TODO use PDFGState
      * String representing the extended Graphics state.
      * Probably will never be used like this.
      */
     protected StringBuffer extGState = null;
-    // eventually, need a PDFExtGSState object... but not now.
 
     /**
      * ArrayList of Doubles representing the Transformation matrix.
@@ -128,7 +131,6 @@ public class PDFPattern extends PDFPathPaint {
         this.yStep = theYStep;
         this.matrix = theMatrix;
         this.xUID = theXUID;
-        // TODO filter this stream
         this.patternDataStream = thePatternDataStream;
     }
 
@@ -198,11 +200,13 @@ public class PDFPattern extends PDFPathPaint {
         p.append(this.number + " " + this.generation
                  + " obj\n<< \n/Type /Pattern \n");
 
-        if (this.resources != null) {
+        if(this.resources != null) {
             p.append("/Resources " + this.resources.referencePDF() + " \n");
         }
 
         p.append("/PatternType " + this.patternType + " \n");
+
+        PDFStream dataStream = null;
 
         if (this.patternType == 1) {
             p.append("/PaintType " + this.paintType + " \n");
@@ -240,9 +244,19 @@ public class PDFPattern extends PDFPathPaint {
                 }
                 p.append("] \n");
             }
+
             // don't forget the length of the stream.
             if (this.patternDataStream != null) {
-                p.append("/Length " + (this.patternDataStream.length() + 1)
+                dataStream = new PDFStream(0);
+                dataStream.add(this.patternDataStream.toString());
+                // TODO get the filters from the doc
+                dataStream.addDefaultFilters(new HashMap(), PDFStream.CONTENT_FILTER);
+                try {
+                    p.append(dataStream.applyFilters());
+                } catch(IOException e) {
+
+                }
+                p.append("/Length " + (dataStream.getDataLength() + 1)
                          + " \n");
             }
 
@@ -261,8 +275,7 @@ public class PDFPattern extends PDFPathPaint {
                 p.append("] \n");
             }
 
-            if (this.extGState
-                    != null) {    // will probably have to change this if it's used.
+            if (this.extGState != null) {
                 p.append("/ExtGState " + this.extGState + " \n");
             }
 
@@ -280,8 +293,17 @@ public class PDFPattern extends PDFPathPaint {
         p.append(">> \n");
 
         // stream representing the function
-        if (this.patternDataStream != null) {
-            p.append("stream\n" + this.patternDataStream + "\nendstream\n");
+        if (dataStream != null) {
+            try {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                baos.write(p.toString().getBytes());
+                int length = dataStream.outputStreamData(baos);
+
+                baos.write(("endobj\n").getBytes());
+                return baos.toByteArray();
+            } catch(IOException e) {
+
+            }
         }
 
         p.append("endobj\n");

@@ -8,7 +8,7 @@
 package org.apache.fop.pdf;
 
 import java.io.IOException;
-
+import java.util.HashMap;
 public class BitmapImage implements PDFImage {
         int m_height;
         int m_width;
@@ -18,6 +18,7 @@ public class BitmapImage implements PDFImage {
         String maskRef;
         PDFColor transparent = null;
         String key;
+        HashMap filters;
 
         public BitmapImage(String k, int width, int height, byte[] result,
                   String mask) {
@@ -31,6 +32,7 @@ public class BitmapImage implements PDFImage {
         }
 
         public void setup(PDFDocument doc) {
+            filters = doc.getFilterMap();
         }
 
         public String getKey() {
@@ -87,7 +89,7 @@ public class BitmapImage implements PDFImage {
 
             imgStream.setData(m_bitmaps);
 
-            imgStream.addDefaultFilters();
+            imgStream.addDefaultFilters(filters, PDFStream.CONTENT_FILTER);
             return imgStream;
         }
 
