@@ -1,5 +1,5 @@
 /*
- * $Id: LayoutHandler.java,v 1.12 2003/02/27 10:13:06 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,7 +48,7 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.apps;
+package org.apache.fop.layoutmgr;
 
 // Java
 import java.io.IOException;
@@ -59,11 +59,13 @@ import java.util.List;
 import org.xml.sax.SAXException;
 
 // FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.AreaTree;
 import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.StorePagesModel;
 import org.apache.fop.area.Title;
 import org.apache.fop.area.TreeExt;
+import org.apache.fop.fo.StructureHandler;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.render.Renderer;

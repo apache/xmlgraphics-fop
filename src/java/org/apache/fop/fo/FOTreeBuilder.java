@@ -52,7 +52,6 @@ package org.apache.fop.fo;
 
 // FOP
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.StructureHandler;
 
 // Java
 import java.util.HashMap;

@@ -65,7 +65,6 @@ import org.apache.fop.layout.RelativePositionProps;
 import org.apache.fop.layout.TextState;
 import org.apache.fop.util.CharUtilities;
 
-import org.apache.fop.apps.StructureHandler;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
 import org.apache.fop.layoutmgr.LayoutContext;
@@ -74,6 +73,7 @@ import org.apache.fop.area.inline.Word;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.StructureHandler;
 import org.apache.fop.area.Trait;
 
 public class PageNumber extends FObj {

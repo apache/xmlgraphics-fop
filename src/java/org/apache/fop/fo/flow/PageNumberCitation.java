@@ -54,7 +54,6 @@ package org.apache.fop.fo.flow;
 import java.util.List;
 
 // FOP
-import org.apache.fop.apps.StructureHandler;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Resolveable;
 import org.apache.fop.area.Trait;
@@ -64,6 +63,7 @@ import org.apache.fop.area.inline.Word;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.StructureHandler;
 import org.apache.fop.layout.AccessibilityProps;
 import org.apache.fop.layout.AuralProps;
 import org.apache.fop.layout.BackgroundProps;

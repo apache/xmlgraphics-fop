@@ -61,7 +61,6 @@ import org.apache.avalon.framework.logger.Logger;
 
 // FOP
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.StructureHandler;
 import org.apache.fop.util.CharUtilities;
 
 /**

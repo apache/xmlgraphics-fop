@@ -54,10 +54,13 @@ package org.apache.fop.apps;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.fo.StructureHandler;
+import org.apache.fop.layoutmgr.LayoutHandler;
+import org.apache.fop.mif.MIFHandler;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.rtf.renderer.RTFHandler;
 import org.apache.fop.tools.DocumentInputSource;
 import org.apache.fop.tools.DocumentReader;
-
 
 // Avalon
 import org.apache.avalon.framework.logger.ConsoleLogger;
@@ -582,9 +585,9 @@ public class Driver implements LogEnabled {
         // TODO: - do this stuff in a better way
         // PIJ: I guess the structure handler should be created by the renderer.
         if (rendererType == RENDER_MIF) {
-            structHandler = new org.apache.fop.mif.MIFHandler(stream);
+            structHandler = new MIFHandler(stream);
         } else if (rendererType == RENDER_RTF) {
-            structHandler = new org.apache.fop.rtf.renderer.RTFHandler(stream);
+            structHandler = new RTFHandler(stream);
         } else {
             if (renderer == null) {
                 throw new IllegalStateException(

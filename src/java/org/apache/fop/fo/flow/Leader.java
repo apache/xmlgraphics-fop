@@ -54,7 +54,6 @@ package org.apache.fop.fo.flow;
 import java.util.List;
 
 // FOP
-import org.apache.fop.apps.StructureHandler;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.FilledArea;
 import org.apache.fop.area.inline.InlineArea;
@@ -65,6 +64,7 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentLength;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
+import org.apache.fop.fo.StructureHandler;
 import org.apache.fop.fo.properties.LeaderPattern;
 import org.apache.fop.layout.AccessibilityProps;
 import org.apache.fop.layout.AuralProps;

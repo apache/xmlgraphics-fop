@@ -58,7 +58,6 @@ import java.util.List;
 import org.apache.fop.layout.TextState;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.TextLayoutManager;
-import org.apache.fop.apps.StructureHandler;
 import org.apache.fop.fo.properties.WhiteSpaceCollapse;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.pagination.Root;

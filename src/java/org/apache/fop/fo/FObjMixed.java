@@ -51,7 +51,6 @@
 package org.apache.fop.fo;
 
 import org.apache.fop.layout.FontInfo;
-import org.apache.fop.apps.StructureHandler;
 import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
 import org.apache.fop.layoutmgr.LMiter;
 
