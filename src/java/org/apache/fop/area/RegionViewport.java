@@ -39,6 +39,7 @@ public class RegionViewport extends Area implements Cloneable {
      */
     public RegionViewport(Rectangle2D viewArea) {
         this.viewArea = viewArea;
+        addTrait(Trait.IS_VIEWPORT_AREA, Boolean.TRUE);
     }
 
     /**

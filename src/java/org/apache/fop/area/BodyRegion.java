@@ -38,6 +38,7 @@ public class BodyRegion extends RegionReference {
      */
     public BodyRegion() {
         super(Constants.FO_REGION_BODY);
+        addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
     }
 
     /**

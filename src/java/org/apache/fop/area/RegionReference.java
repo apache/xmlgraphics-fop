@@ -43,6 +43,7 @@ public class RegionReference extends Area implements Cloneable {
      */
     public RegionReference(int type) {
         regionClass = type;
+        addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
     }
 
     /**
