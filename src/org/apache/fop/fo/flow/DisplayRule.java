@@ -115,6 +115,23 @@ public class DisplayRule extends FObj {
 	    area.addDisplaySpace(spaceBefore);
 	}
 
+	if (this.isInLabel) {
+	    startIndent += bodyIndent;
+	    endIndent += (area.getAllocationWidth() -
+			  distanceBetweenStarts - startIndent) +
+		labelSeparation;
+	}
+
+	if (this.isInListBody) {
+	    startIndent += bodyIndent + distanceBetweenStarts;
+	}
+
+	if (this.isInTableCell) {
+	    startIndent += forcedStartOffset;
+	    endIndent += area.getAllocationWidth() - forcedWidth -
+		forcedStartOffset;
+	}
+
 	RuleArea ruleArea = new RuleArea(fs,
 					 area.getAllocationWidth(),
 					 area.spaceLeft(),

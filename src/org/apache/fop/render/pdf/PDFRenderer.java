@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
+ 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -48,6 +48,7 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+
 package org.apache.fop.render.pdf;
 
 // FOP
@@ -55,6 +56,7 @@ import org.apache.fop.render.Renderer;
 import org.apache.fop.image.ImageArea;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.layout.*;
+import org.apache.fop.datatypes.*;
 import org.apache.fop.svg.*;
 import org.apache.fop.pdf.*;
 
@@ -123,7 +125,8 @@ public class PDFRenderer implements Renderer {
      * @param areaTree the laid-out area tree
      * @param writer the PrintWriter to write the PDF with
      */
-    public void render(AreaTree areaTree, PrintWriter writer) throws IOException {
+    public void render(AreaTree areaTree, PrintWriter writer)
+	throws IOException {
 	System.err.println("rendering areas to PDF");
 	this.pdfResources = this.pdfDoc.getResources();
 	Enumeration e = areaTree.getPages().elements();
@@ -233,6 +236,12 @@ public class PDFRenderer implements Renderer {
 	int ry = this.currentYPosition;
 	int w = area.getContentWidth();
 	int h = area.getHeight();
+	ColorType bg = area.getBackgroundColor();
+	if (bg.alpha() == 0) {
+	    this.addRect(rx, ry, w, -h,
+			 bg.red(), bg.green(), bg.blue(),
+			 bg.red(), bg.green(), bg.blue());
+	}
 	Enumeration e = area.getChildren().elements();
 	while (e.hasMoreElements()) {
 	    Box b = (Box) e.nextElement();

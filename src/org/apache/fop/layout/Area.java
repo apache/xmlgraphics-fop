@@ -51,6 +51,9 @@
 
 package org.apache.fop.layout;
 
+// FOP
+import org.apache.fop.datatypes.*;
+
 // Java
 import java.util.Vector;
 
@@ -76,6 +79,8 @@ abstract public class Area extends Box {
 
     /* the page this area is on */
     protected Page page;
+
+    protected ColorType backgroundColor;
 
     public Area (FontState fontState) {
 	this.fontState = fontState;
@@ -137,6 +142,10 @@ abstract public class Area extends Box {
 	return this.page;
     }
 
+    public ColorType getBackgroundColor() {
+	return this.backgroundColor;
+    }
+
     public void increaseHeight(int amount) {
 	this.currentHeight += amount;
     }
@@ -152,6 +161,10 @@ abstract public class Area extends Box {
 
     public void setPage(Page page) {
 	this.page = page;
+    }
+
+    public void setBackgroundColor(ColorType bgColor) {
+	this.backgroundColor = bgColor;
     }
 
     public int spaceLeft() {

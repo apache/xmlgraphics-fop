@@ -55,6 +55,7 @@ import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.*;
 
 public class TableCell extends FObj {
 
@@ -74,6 +75,7 @@ public class TableCell extends FObj {
     int endIndent;
     int spaceBefore;
     int spaceAfter;
+    ColorType backgroundColor;
 
     protected int startOffset;
     protected int width;
@@ -119,6 +121,9 @@ public class TableCell extends FObj {
 		this.properties.get("space-before.optimum").getLength().mvalue();  
 	    this.spaceAfter =
 		this.properties.get("space-after.optimum").getLength().mvalue(); 
+	    this.backgroundColor =
+		this.properties.get("background-color").getColorType();
+
 	    if (area instanceof BlockArea) {
 		area.end();
 	    }
@@ -140,6 +145,7 @@ public class TableCell extends FObj {
 			  area.spaceLeft(), startIndent, endIndent, 0,
 			  0, 0, 0);
 	blockArea.setPage(area.getPage());
+	blockArea.setBackgroundColor(backgroundColor);
 	blockArea.start();
 
 	// added by Eric Schaeffer

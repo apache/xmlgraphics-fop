@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
+ 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -63,6 +63,9 @@ public class ColorType {
 
     /** the blue component */
     protected float blue;
+
+    /** the alpha component */
+    protected float alpha = 0;
 
     /**
      * set the colour given a particular String specifying either a
@@ -163,6 +166,11 @@ public class ColorType {
 		this.red = 0.7f;
 		this.green = 0.5f;
 		this.blue = 0;
+	    } else if (value.toLowerCase().equals("transparent")) {
+		this.red = 0;
+		this.green = 0;
+		this.blue = 0;
+		this.alpha = 1;
 	    } else {
 		this.red = 0;
 		this.green = 0;
@@ -182,5 +190,9 @@ public class ColorType {
 	
     public float red() {
 	return this.red;
+    }
+
+    public float alpha() {
+	return this.alpha;
     }
 }
