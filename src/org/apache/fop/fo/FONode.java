@@ -71,8 +71,8 @@ public class FONode extends FOTree.Node{
     protected PropertyParser exprParser;
     /** The property set for this node. */
     protected PropertyValue[] propertySet;
-    /** BitSet of properties for which specified values have been stacked. */
-    private BitSet stackedProps =
+    /** BitSet of properties for which have been specified on this node. */
+    private BitSet specifiedProps =
                                 new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
     /** The <i>attrSet</i> argument. */
     public final int attrSet;
@@ -120,18 +120,16 @@ public class FONode extends FOTree.Node{
         }
         // Set up the remaining properties.
         for (int prop = inheritedBitSet.nextSetBit(0);
-             prop >= 0;
-             prop = inheritedBitSet.nextSetBit(++prop))
-        {
-            if (parent != null)
-                propertySet[prop] = parent.propertySet[prop];
-            else
-                propertySet[prop] = foTree.getInitialValue(prop);
-        }
+                 prop >= 0;
+                 prop = inheritedBitSet.nextSetBit(++prop)) {
+            System.out.println("...Setting inherited prop " + prop
+                               + " " + PropNames.getPropertyName(prop));
+            propertySet[prop] = fromParent(prop);  
+        }         
 
         for (int prop = nonInheritedBitSet.nextSetBit(0);
-             prop >= 0;
-             prop = inheritedBitSet.nextSetBit(++prop))
+                 prop >= 0;
+                 prop = inheritedBitSet.nextSetBit(++prop))
         {
             propertySet[prop] = foTree.getInitialValue(prop);
         }
@@ -210,28 +208,19 @@ public class FONode extends FOTree.Node{
             foTree.popPropertyValue(property);
         value.setStackedBy(this);
         foTree.pushPropertyValue(value);
-        stackedProps.set(property);
+        specifiedProps.set(property);
     }
 
     private void unstackValues() throws PropertyException {
-        for (int prop = stackedProps.nextSetBit(0);
+        for (int prop = specifiedProps.nextSetBit(0);
              prop >=0;
-             prop = stackedProps.nextSetBit(++prop)
+             prop = specifiedProps.nextSetBit(++prop)
              ) {
             PropertyValue value = foTree.popPropertyValue(prop);
             if (value.getStackedBy() != this)
                 throw new PropertyException
                         ("Unstacked property not stacked by this node.");
         }
-    }
-
-    /**
-     * Get the parent's <tt>PropertyValue</tt> for the given property.
-     * @param property - the property of interest.
-     * @return the <tt>PropertyValue</tt> of the parent node.
-     */
-    public PropertyValue getParentPropertyValue(int property) {
-        return parent.propertySet[property];
     }
 
     /**
@@ -296,12 +285,12 @@ public class FONode extends FOTree.Node{
     }
 
     /**
-     * Get the computed value from the parent FO of the source property.
+     * Get the adjusted value from the parent FO of the source property.
+     * @see #fromParent(init,int)
+     * @see #getPropertyValue(int)
      * @param property - the index of both target and source properties.
-     * @return - the computed value from the parent FO node, if it exists.
-     * If not, get the computed initial value.  If no computed
-     * value is available, return an <tt>Inherit</tt> object with a reference
-     * to the PropertyTriplet.
+     * @return - the adjusted value from the parent FO node, if it exists.
+     * If not, get the adjusted initial value.
      */
     public PropertyValue fromParent(int property)
                 throws PropertyException
@@ -310,25 +299,75 @@ public class FONode extends FOTree.Node{
     }
 
     /**
-     * Get the computed value from the parent FO of the source property.
+     * Get the adjusted <tt>PropertyValue</tt> for the given source property
+     * on the parent <tt>FONode</tt>. If this node is not the root,
+     * call the <i>getPropertyValue</i> method in the parent node, adjust that
+     * that value, and return the adjusted value. Do not set the current
+     * value of the property on this node.
+     * <p>If this is the root node, return the adjusted initial value for the
+     * property.  Do not set the current value of the property on this node.
+     * <p>The <b>adjusted value</b> is either the value itself, or, if the
+     * value is an unresolved relative length, an <tt>IndirectValue</tt>
+     * referring to that unresolved length.
+     * Cf. {@link #getPropertyValue(int)}.
      * @param property - the index of the target property.
      * @param sourceProperty - the index of the source property.
      * @return - the computed value from the parent FO node, if it exists.
-     * If not, get the computed initial value.  If no computed
-     * value is available, return an <tt>Inherit</tt> object with a reference
-     * to the PropertyTriplet.
+     * If not, get the adjusted initial value.
      */
     public PropertyValue fromParent(int property, int sourceProperty)
                 throws PropertyException
     {
-        PropertyValue value = getParentPropertyValue(sourceProperty);
-        if (value == null) {
-            // No computed value is available.  Use an IndirectValue
-            Inherit inherit = new Inherit(property, sourceProperty);
-            inherit.setInheritedValue(value);
-            return inherit;
-        }
-        return value;
+        if (parent != null)
+            return IndirectValue.adjustedPropertyValue
+                                    (parent.getPropertyValue(sourceProperty));
+        else // root
+            return IndirectValue.adjustedPropertyValue
+                                    (foTree.getInitialValue(sourceProperty));
     }
-    
+
+    public PropertyValue currentFontSize() throws PropertyException {
+        return getPropertyValue(PropNames.FONT_SIZE);
+    }
+
+
+    /**
+     * Get the adjusted <tt>PropertyValue</tt> for the given property index.
+     * <pre>
+     * If the property has a value in the node, return that adjusted value.
+     * If not, and
+     *     if this node is not the root,
+     *                     and the property is an inherited property,
+     *         call this method in the parent node,
+     *         adjust that that value,
+     *         set this node's value to the adjusted value,
+     *         and return the adjusted value.
+     *     else this node is the root, or the property is not inherited
+     *         get the adjusted initial value of the property
+     *         set the property value in this node to that value,
+     *         and return that value.
+     * <pre>
+     * <p>The <b>adjusted value</b> is either the value itself, or, if the
+     * value is an unresolved relative length, an <tt>IndirectValue</tt>
+     * referring to that unresolved length.
+     * @param index - the property index.
+     * @return a <tt>PropertyValue</tt> containing the adjusted property
+     * value for the indexed property.
+     */
+    public PropertyValue getPropertyValue(int property)
+                throws PropertyException
+    {
+        PropertyValue pval;
+        if ((pval = propertySet[property]) != null) 
+            return IndirectValue.adjustedPropertyValue(pval);
+        if (parent != null && PropertyConsts.inheritedProps.get(property))
+            return (propertySet[property] =
+                               IndirectValue.adjustedPropertyValue
+                                        (parent.getPropertyValue(property)));
+        else // root
+            return (propertySet[property] =
+                        IndirectValue.adjustedPropertyValue
+                                        (foTree.getInitialValue(property)));
+    }
+
 }// FONode
