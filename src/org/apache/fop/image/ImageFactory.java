@@ -98,8 +98,6 @@ public class ImageFactory {
      * create an FopImage objects.
      * @param href image URL as a String
      * @return a new FopImage object
-     * @exception java.net.MalformedURLException bad URL
-     * @exception FopImageException an error occured during construction
      */
     protected static FopImage loadImage(String href, String baseURL,
                                         FOUserAgent ua) {
