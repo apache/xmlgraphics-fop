@@ -200,7 +200,16 @@ public class Row extends BlockStackingLayoutManager {
 
         MinOptMax rowSize = new MinOptMax(min, opt, max);
 
-        setFinished(true);
+        boolean fin = true;
+        cellcount = 0;
+        while ((curLM = getCellLM(cellcount++)) != null) {
+            if (!curLM.isFinished()) {
+                fin = false;
+                break;
+            }
+        }
+
+        setFinished(fin);
         RowPosition rp = new RowPosition(this, breakList.size() - 1, breakList);
         BreakPoss breakPoss = new BreakPoss(rp);
         if (over) {
