@@ -142,7 +142,7 @@ public abstract class PrintRenderer implements Renderer
                            PDFPathPaint stroke);
 
     /**
-       * add a filled rectangle to the current stream
+       * add a filled and stroked rectangle to the current stream
        *
        * @param x the x position of left edge in millipoints
        * @param y the y position of top edge in millipoints
@@ -153,6 +153,22 @@ public abstract class PrintRenderer implements Renderer
        */
     protected abstract void addRect(int x, int y, int w, int h,
                            PDFPathPaint stroke, PDFPathPaint fill);
+
+    /**
+       * Add a filled rectangle to the current stream
+       * This default implementation calls addRect
+       * using the same color for fill and border.
+       *
+       * @param x the x position of left edge in millipoints
+       * @param y the y position of top edge in millipoints
+       * @param w the width in millipoints
+       * @param h the height in millipoints
+       * @param fill the fill color/gradient
+       */
+    protected void addFilledRect(int x, int y, int w, int h,
+                            PDFPathPaint fill) {
+	addRect(x,y,w,h,fill,fill);
+    }
 
     /**
        * render area container
@@ -174,8 +190,8 @@ public abstract class PrintRenderer implements Renderer
         } else if (area.getPosition() == Position.STATIC) {
             this.currentYPosition -=
               area.getPaddingTop() + area.getBorderTopWidth();
-            this.currentAreaContainerXPosition +=
-              area.getPaddingLeft() + area.getBorderLeftWidth();
+	    /*     this.currentAreaContainerXPosition +=
+		   area.getPaddingLeft() + area.getBorderLeftWidth();*/
         }
 
         this.currentXPosition = this.currentAreaContainerXPosition;
@@ -274,7 +290,7 @@ public abstract class PrintRenderer implements Renderer
         // I'm not sure I should have to check for bg being null
         // but I do
         if ((bg != null) && (bg.alpha() == 0)) {
-            this.addRect(rx, ry, w, -h, new PDFColor(bg), new PDFColor(bg));
+            this.addFilledRect(rx, ry, w, -h, new PDFColor(bg));
         }
 
         //rx = rx - area.getBorderLeftWidth();
@@ -285,23 +301,41 @@ public abstract class PrintRenderer implements Renderer
 	// Handle line style
 	// Offset for haft the line width!
 	BorderAndPadding bp = area.getBorderAndPadding();
-	int left = rx - area.getBorderLeftWidth() / 2;
-	int right = rx + w + area.getBorderRightWidth() / 2;
-	int top = ry + area.getBorderTopWidth() / 2;
-	int bottom = ry - h - area.getBorderBottomWidth() / 2;
-        if (area.getBorderTopWidth() != 0)
-            addLine(left, top, right, top, area.getBorderTopWidth(),
+// 	int left = rx - area.getBorderLeftWidth() / 2;
+// 	int right = rx + w + area.getBorderRightWidth() / 2;
+// 	int top = ry + area.getBorderTopWidth() / 2;
+// 	int bottom = ry - h - area.getBorderBottomWidth() / 2;
+//         if (area.getBorderTopWidth() != 0)
+//             addLine(left, top, right, top, area.getBorderTopWidth(),
+//                     new PDFColor(bp.getBorderColor(BorderAndPadding.TOP)));
+//         if (area.getBorderLeftWidth() != 0)
+//             addLine(left, ry + area.getBorderTopWidth(), left, bottom, area.getBorderLeftWidth(),
+//                     new PDFColor(bp.getBorderColor(BorderAndPadding.LEFT)));
+//         if (area.getBorderRightWidth() != 0)
+//             addLine(right, ry + area.getBorderTopWidth(), right, bottom, area.getBorderRightWidth(),
+//                     new PDFColor(bp.getBorderColor(BorderAndPadding.RIGHT)));
+//         if (area.getBorderBottomWidth() != 0)
+//             addLine(rx - area.getBorderLeftWidth(), bottom, rx + w + area.getBorderRightWidth(), bottom, area.getBorderBottomWidth(),
+//                     new PDFColor(bp.getBorderColor(BorderAndPadding.BOTTOM)));
+	// Try using rectangles instead of lines. Line style will be a
+	// problem though?
+	int left = area.getBorderLeftWidth();
+	int right = area.getBorderRightWidth();
+	int top = area.getBorderTopWidth();
+	int bottom = area.getBorderBottomWidth() ;
+	// If style is solid, use filled rectangles
+        if (top != 0)
+            addFilledRect(rx, ry, w, top,
                     new PDFColor(bp.getBorderColor(BorderAndPadding.TOP)));
-        if (area.getBorderLeftWidth() != 0)
-            addLine(left, ry + area.getBorderTopWidth(), left, bottom, area.getBorderLeftWidth(),
+        if (left != 0)
+            addFilledRect(rx-left, ry-h-bottom, left, h+top+bottom,
                     new PDFColor(bp.getBorderColor(BorderAndPadding.LEFT)));
-        if (area.getBorderRightWidth() != 0)
-            addLine(right, ry + area.getBorderTopWidth(), right, bottom, area.getBorderRightWidth(),
+        if (right != 0)
+            addFilledRect(rx+w, ry-h-bottom, right, h+top+bottom,
                     new PDFColor(bp.getBorderColor(BorderAndPadding.RIGHT)));
-        if (area.getBorderBottomWidth() != 0)
-            addLine(rx - area.getBorderLeftWidth(), bottom, rx + w + area.getBorderRightWidth(), bottom, area.getBorderBottomWidth(),
+        if (bottom != 0)
+            addFilledRect(rx, ry-h-bottom, w, bottom,
                     new PDFColor(bp.getBorderColor(BorderAndPadding.BOTTOM)));
-
     }
 
 
