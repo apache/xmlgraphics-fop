@@ -220,13 +220,13 @@ public class HyphenationTree extends TernaryTree
          char sp = word[i];
          p = root;
 
-         while( p != 0 ) {
+         while( p > 0 && p < sc.length){
             if (sc[p] == 0xFFFF) {
                if ( hstrcmp(word, i, kv.getArray(), lo[p]) == 0 ) {
                   values = getValues(eq[p]);  // data pointer is in eq[]
                   int j=index;
                   for(int k=0; k<values.length; k++) {
-                     if ( values[k] > il[j] )
+                     if ( j < il.length && values[k] > il[j] )
                         il[j] = values[k];
                      j++;
                   }
@@ -235,17 +235,19 @@ public class HyphenationTree extends TernaryTree
             }
             int d = sp - sc[p];
             if ( d == 0 ) {
-               if ( sp == 0 )
-                  break;
+                if ( sp == 0 ) {
+                    break;
+                }
                sp = word[++i];
                p = eq[p];
                q = p;
 
                // look for a pattern ending at this position by searching for
                // the null char ( splitchar == 0 )
-               while ( q != 0 ) {
-                  if ( sc[q] == 0xFFFF ) // stop at compressed branch
+               while ( q > 0 && q < sc.length ) {
+                  if ( sc[q] == 0xFFFF ) {// stop at compressed branch
                      break;
+                  }
                   if ( sc[q] == 0 ) {
                      values = getValues(eq[q]);
                      int j=index;
