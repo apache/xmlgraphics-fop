@@ -487,11 +487,11 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
 
     public void renderImageArea(ImageArea area) {
 
-        int x = currentAreaContainerXPosition + area.getXOffset();
-
+        int x = currentXPosition + area.getXOffset();
         int y = currentYPosition;
         int w = area.getContentWidth();
         int h = area.getHeight();
+        this.currentYPosition -= h;
 
         FopImage img = area.getImage();
 
@@ -557,7 +557,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
             }
         }
 
-        currentYPosition -= h;
+        this.currentXPosition += area.getContentWidth();
     }
 
     public void renderWordArea(WordArea area) {
@@ -699,18 +699,34 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         GVTBuilder builder = new GVTBuilder();
         BridgeContext ctx = new BridgeContext(userAgent);
         GraphicsNode root;
+        root = builder.build(ctx, doc);
+        float w = (float)ctx.getDocumentSize().getWidth() * 1000f;
+        float h = (float)ctx.getDocumentSize().getHeight() * 1000f;
 
         // correct integer roundoff     aml/rlc
         // graphics.translate(x / 1000f, pageHeight - y / 1000f);
         graphics.translate((x + 500) / 1000, pageHeight - (y + 500) / 1000);
 
+        SVGSVGElement svg = ((SVGDocument)doc).getRootElement();
+        AffineTransform at = ViewBox.getPreserveAspectRatioTransform(svg, w / 1000f, h / 1000f);
+        AffineTransform inverse = null;
         try {
-            root = builder.build(ctx, doc);
+            inverse = at.createInverse();
+        } catch(NoninvertibleTransformException e) {
+        }
+        if(!at.isIdentity()) {
+            graphics.transform(at);
+        }
+
+        try {
             root.paint(graphics);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+        if(inverse != null && !inverse.isIdentity()) {
+            graphics.transform(inverse);
+        }
         // correct integer roundoff     aml/rlc
         // graphics.translate(-x / 1000f, y / 1000f - pageHeight);
         graphics.translate(-(x + 500) / 1000, (y + 500) / 1000 - pageHeight);
