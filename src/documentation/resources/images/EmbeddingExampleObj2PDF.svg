@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20000303 Stylable//EN" "http://www.w3.org/TR/2000/03/WD-SVG-20000303/DTD/svg-20000303-stylable.dtd">
+<svg xml:space="preserve" x="-3.11174in" y="-1.90795in" width="3.74316in" height="0.317961in" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality" viewBox="-7904 0 9508 808">
+  <g id="Ebene 1">
+    <g>
+      <rect id="46471616" style="fill:none;stroke:#1F1A17;stroke-width:8" x="-7900" y="4" width="1380" height="800"/>
+      <text x="-7650" y="556" style="fill:#1F1A17;font-weight:normal;font-size:423;font-family:Helvetica,Arial,sans-serif">Java</text>
+    </g>
+    <g>
+      <path id="46471528" style="fill:none;stroke:#1F1A17;stroke-width:8" d="M-6520 404l1140 0m-570 0"/>
+      <path id="46471528" style="fill:#1F1A17" d="M-5549 311l169 93 -169 93 0 -186 169 93z"/>
+    </g>
+    <text x="-6284" y="304" style="fill:#1F1A17;font-weight:normal;font-size:284;font-family:Helvetica,Arial,sans-serif">SAX</text>
+    <g>
+      <rect id="46471880" style="fill:none;stroke:#1F1A17;stroke-width:8" x="-5380" y="4" width="1380" height="800"/>
+      <text x="-5117" y="556" style="fill:#1F1A17;font-weight:normal;font-size:423;font-family:Helvetica,Arial,sans-serif">XML</text>
+    </g>
+    <g>
+      <path id="46472144" style="fill:none;stroke:#1F1A17;stroke-width:8" d="M-4000 404l1200 0m-600 0"/>
+      <path id="46472144" style="fill:#1F1A17" d="M-2969 311l169 93 -169 93 0 -186 169 93z"/>
+    </g>
+    <text x="-3745" y="304" style="fill:#1F1A17;font-weight:normal;font-size:284;font-family:Helvetica,Arial,sans-serif">XSLT</text>
+    <text x="-3755" y="704" style="fill:#1F1A17;font-weight:normal;font-size:284;font-family:Helvetica,Arial,sans-serif">JAXP</text>
+    <g>
+      <path id="46471088" style="fill:none;stroke:#1F1A17;stroke-width:8" d="M-900 404l0 0 0 0 0 0m0 0m0 0m0 0"/>
+      <rect id="46471176" style="fill:none;stroke:#1F1A17;stroke-width:8" x="-2800" y="4" width="1900" height="800"/>
+      <text x="-2605" y="556" style="fill:#1F1A17;font-weight:normal;font-size:423;font-family:Helvetica,Arial,sans-serif">XSL-FO</text>
+    </g>
+    <g>
+      <path id="46470736" style="fill:none;stroke:#1F1A17;stroke-width:8" d="M-900 404l1100 0m-550 0"/>
+      <path id="46470736" style="fill:#1F1A17" d="M31 311l169 93 -169 93 0 -186 169 93z"/>
+    </g>
+    <text x="-692" y="304" style="fill:#1F1A17;font-weight:normal;font-size:284;font-family:Helvetica,Arial,sans-serif">FOP</text>
+    <g>
+      <text x="486" y="556" style="fill:#1F1A17;font-weight:normal;font-size:423;font-family:Helvetica,Arial,sans-serif">PDF</text>
+      <rect id="46470912" style="fill:none;stroke:#1F1A17;stroke-width:8" x="200" y="4" width="1400" height="800"/>
+    </g>
+  </g>
+</svg>
