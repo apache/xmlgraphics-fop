@@ -100,7 +100,15 @@ public class BasicLink extends Inline {
 
         Page p = area.getPage();
 
-        AreaContainer ac = p.getBody().getCurrentColumnArea();
+        //AreaContainer ac = p.getBody().getCurrentColumnArea();
+        AreaContainer ac = area.getNearestAncestorAreaContainer();
+	while (ac!=null && ac.getPosition()!=Position.ABSOLUTE) {
+	    ac = ac.getNearestAncestorAreaContainer();
+	}
+	if (ac == null) {
+	    ac = p.getBody().getCurrentColumnArea();
+	    //System.err.println("Using currentColumnArea as AC for link");
+	}
         if (ac == null) {
             throw new FOPException("Couldn't get ancestor AreaContainer when processing basic-link");
         }
@@ -121,7 +129,7 @@ public class BasicLink extends Inline {
 
         // pass on command line
         String mergeLinks = System.getProperty("links.merge");
-        if ((null != mergeLinks) &&!mergeLinks.equalsIgnoreCase("no")) {
+        if ((null == mergeLinks) || mergeLinks.equalsIgnoreCase("yes")) {
             ls.mergeLinks();
         }
 

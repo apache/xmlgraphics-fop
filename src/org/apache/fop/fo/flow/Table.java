@@ -172,6 +172,7 @@ public class Table extends FObj {
 
         areaContainer.foCreator = this;    // G Seshadri
         areaContainer.setPage(area.getPage());
+        areaContainer.setParent(area);
         areaContainer.setBackground(propMgr.getBackgroundProps());
         areaContainer.setBorderAndPadding(propMgr.getBorderAndPadding());
         areaContainer.start();
@@ -256,7 +257,6 @@ public class Table extends FObj {
                     if (areaContainer.getContentHeight() > 0) {
                         area.addChild(areaContainer);
                         area.increaseHeight(areaContainer.getHeight());
-                        area.setAbsoluteHeight(areaContainer.getAbsoluteHeight());
                         if (this.omitHeaderAtBreak) {
                             // remove header, no longer needed
                             tableHeader = null;
@@ -295,7 +295,6 @@ public class Table extends FObj {
                 log.warn("footer could not fit on page, moving last body row to next page");
                 area.addChild(areaContainer);
                 area.increaseHeight(areaContainer.getHeight());
-                area.setAbsoluteHeight(areaContainer.getAbsoluteHeight());
                 if (this.omitHeaderAtBreak) {
                     // remove header, no longer needed
                     tableHeader = null;
@@ -316,8 +315,6 @@ public class Table extends FObj {
 
         /* should this be combined into above? */
         area.increaseHeight(areaContainer.getHeight());
-
-        area.setAbsoluteHeight(areaContainer.getAbsoluteHeight());
 
         if (spaceAfter != 0) {
             area.addDisplaySpace(spaceAfter);

@@ -250,6 +250,7 @@ public class TableRow extends FObj {
                               Position.RELATIVE);
         areaContainer.foCreator = this;    // G Seshadri
         areaContainer.setPage(area.getPage());
+	areaContainer.setParent(area);
 
         areaContainer.setBackground(propMgr.getBackgroundProps());
         areaContainer.start();

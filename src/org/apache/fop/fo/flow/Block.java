@@ -210,7 +210,6 @@ public class Block extends FObjMixed {
                         area.setMaxHeight(area.getMaxHeight() - spaceLeft
                                           + blockArea.getMaxHeight());
                         area.increaseHeight(blockArea.getHeight());
-                        area.setAbsoluteHeight(blockArea.getAbsoluteHeight());
                         anythingLaidOut = true;
 
                         return status;
@@ -226,7 +225,6 @@ public class Block extends FObjMixed {
                 area.setMaxHeight(area.getMaxHeight() - spaceLeft
                                   + blockArea.getMaxHeight());
                 area.increaseHeight(blockArea.getHeight());
-                area.setAbsoluteHeight(blockArea.getAbsoluteHeight());
                 anythingLaidOut = true;
                 return status;
             }
@@ -242,8 +240,6 @@ public class Block extends FObjMixed {
 
         /* should this be combined into above? */
         area.increaseHeight(blockArea.getHeight());
-
-        area.setAbsoluteHeight(blockArea.getAbsoluteHeight());
 
         if (spaceAfter != 0) {
             area.addDisplaySpace(spaceAfter);
@@ -292,6 +288,11 @@ public class Block extends FObjMixed {
 
     public int getSpan() {
         return this.span;
+    }
+
+    public void resetMarker() {
+	anythingLaidOut = false;
+        super.resetMarker();
     }
 
 }

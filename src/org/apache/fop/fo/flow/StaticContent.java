@@ -62,11 +62,8 @@ public class StaticContent extends AbstractFlow {
         if (area instanceof org.apache.fop.layout.AreaContainer)
             ((org.apache.fop.layout.AreaContainer)area).setAreaName(regionClass);
 
-        if (regionClass.equals(RegionBefore.REGION_CLASS)) {
-            area.setAbsoluteHeight(-area.getMaxHeight());
-        } else if (regionClass.equals(RegionAfter.REGION_CLASS)) {
-            area.setAbsoluteHeight(area.getPage().getBody().getMaxHeight());
-        }
+	area.setAbsoluteHeight(0); // Ytop relative to self!
+
 	setContentWidth(area.getContentWidth());
 
         for (int i = 0; i < numChildren; i++) {

@@ -118,7 +118,8 @@ public class BlockContainer extends FObj {
         areaContainer.setBorderAndPadding(propMgr.getBorderAndPadding());
         areaContainer.start();
 
-        areaContainer.setAbsoluteHeight(area.getAbsoluteHeight());
+        //areaContainer.setAbsoluteHeight(top);
+        areaContainer.setAbsoluteHeight(0);
         areaContainer.setIDReferences(area.getIDReferences());
 
         int numChildren = this.children.size();
@@ -145,7 +146,6 @@ public class BlockContainer extends FObj {
                 prevChildMustKeepWithNext = true;
             }
         }
-        area.setAbsoluteHeight(areaContainer.getAbsoluteHeight());
 
         areaContainer.end();
         if (position == Position.ABSOLUTE)

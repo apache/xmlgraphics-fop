@@ -551,7 +551,7 @@ public class LineArea extends Area {
             }
 
             addSpacedWord(new String(data, wordStart, wordLength), ls,
-                          finalWidth + spaceWidth + embeddedLinkStart,
+                          finalWidth + pendingWidth,
                           spaceWidth, textState, true);
 
             embeddedLinkStart += wordWidth;
@@ -1051,9 +1051,14 @@ public class LineArea extends Area {
 
     public void setLinkSet(LinkSet ls) {}
 
-    public void addInlineArea(Area box) {
+    public void addInlineArea(InlineArea box, LinkSet ls) {
         addPending();
         addChild(box);
+	if (ls != null) {
+	    Rectangle lr=new Rectangle(finalWidth, 0,box.getContentWidth(),
+				       box.getContentHeight());
+	    ls.addRect(lr, this, box);
+	}
         prev = TEXT;
         finalWidth += box.getContentWidth();
     }
@@ -1405,4 +1410,5 @@ public class LineArea extends Area {
     }
 
 }
+
 

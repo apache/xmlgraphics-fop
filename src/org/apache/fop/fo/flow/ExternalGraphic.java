@@ -218,7 +218,7 @@ public class ExternalGraphic extends FObj {
                         return new Status(Status.AREA_FULL_NONE);
                     }
                 }
-                la.addInlineArea(imageArea);
+                la.addInlineArea(imageArea, this.getLinkSet());
             } else {
                 area.addChild(imageArea);
                 area.increaseHeight(imageArea.getContentHeight());

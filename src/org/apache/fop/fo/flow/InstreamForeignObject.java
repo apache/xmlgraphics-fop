@@ -238,7 +238,7 @@ public class InstreamForeignObject extends FObj {
                     return new Status(Status.AREA_FULL_NONE);
                 }
             }
-            la.addInlineArea(areaCurrent);
+            la.addInlineArea(areaCurrent, this.getLinkSet());
         } else {
             area.addChild(areaCurrent);
             area.increaseHeight(areaCurrent.getEffectiveHeight());
@@ -297,3 +297,4 @@ public class InstreamForeignObject extends FObj {
     }
 
 }
+

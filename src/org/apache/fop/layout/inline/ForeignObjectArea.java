@@ -62,6 +62,10 @@ public class ForeignObjectArea extends InlineArea {
         return getEffectiveHeight();
     }
 
+    public int getContentHeight() {
+        return getEffectiveHeight();
+    }
+
     public int getXOffset() {
         return this.xOffset;
     }
