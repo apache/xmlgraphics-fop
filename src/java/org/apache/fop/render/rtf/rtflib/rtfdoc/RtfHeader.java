@@ -68,6 +68,7 @@ import java.io.IOException;
 /**  RTF file header, contains style, font and other document-level information.
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  *  @author Andreas Putz a.putz@skynamics.com
+ *  @author Marc Wilhelm Kuester
  */
 
 class RtfHeader extends RtfContainer {
@@ -87,9 +88,9 @@ class RtfHeader extends RtfContainer {
         writeUserProperties();
         RtfColorTable.getInstance().writeColors(this);
         super.writeRtfContent();
-         RtfTemplate.getInstance().writeTemplate(this);
-           RtfStyleSheetTable.getInstance().writeStyleSheet(this);
-
+        RtfTemplate.getInstance().writeTemplate(this);
+        RtfStyleSheetTable.getInstance().writeStyleSheet(this);
+        writeFootnoteProperties();
     }
 
     /** write user properties if any */
@@ -126,5 +127,15 @@ class RtfHeader extends RtfContainer {
     /** write to our Writer using an RtfStringConverter */
     void writeRtfString(String toWrite) throws IOException {
         RtfStringConverter.getInstance().writeRtfString(writer, toWrite);
+    }
+
+    /**
+     *write properties for footnote handling
+     */
+    private void writeFootnoteProperties() throws IOException {
+    writeControlWord("fet0");  //footnotes, not endnotes
+    writeControlWord("ftnbj"); //place footnotes at the end of the
+                               //page (should be the default, but
+                               //Word 2000 thinks otherwise)
     }
 }

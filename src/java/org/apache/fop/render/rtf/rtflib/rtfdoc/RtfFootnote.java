@@ -60,23 +60,28 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun;
 
 /**  Model of an RTF footnote
  *  @author Peter Herweg, pherweg@web.de
+ *  @author Marc Wilhelm Kuester
  */
 public class RtfFootnote extends RtfContainer
-        implements IRtfTextrunContainer {
+        implements IRtfTextrunContainer, IRtfListContainer {
     RtfTextrun textrunInline = null;
-    RtfTextrun textrunBody = null;
+    RtfContainer body = null;
+    RtfList list = null;
     boolean bBody = false;
 
     /** Create an RTF list item as a child of given container with default attributes */
     RtfFootnote(RtfContainer parent, Writer w) throws IOException {
         super(parent, w);
         textrunInline = new RtfTextrun(this, writer, null);
-        textrunBody = new RtfTextrun(this, writer, null);
+        body = new RtfContainer(this, writer);
     }
 
     public RtfTextrun getTextrun() throws IOException {
         if (bBody) {
-            return textrunBody;
+            RtfTextrun textrun = RtfTextrun.getTextrun(body, writer, null);
+            textrun.setSuppressLastPar(true);
+            
+            return textrun;
         } else {
             return textrunInline;
         }
@@ -91,9 +96,21 @@ public class RtfFootnote extends RtfContainer
         
         writeGroupMark(true);
         writeControlWord("footnote");
-        writeControlWord("ftnalt");      
-        textrunBody.writeRtfContent();
+        writeControlWord("ftnallt");      
+        
+        body.writeRtfContent();
+        
         writeGroupMark(false);
+    }
+    
+    public RtfList newList(RtfAttributes attrs) throws IOException {
+        if (list != null) {
+            list.close();
+        }
+
+        list = new RtfList(body, writer, attrs);
+
+        return list;
     }
     
     public void startBody() {
