@@ -115,7 +115,9 @@ want it to.</comment>
           <level-3 name="role" citation="§7.4.2" extURL="slice7.html#role" compliance-level="1" comply="na"/>
         </level-2>
         <level-2 name="Common Absolute Position Properties" citation="§7.5" extURL="slice7.html#common-absolute-position-properties" ref-name="commonabspos">
-          <level-3 name="absolute-position" citation="§7.5.1" extURL="slice7.html#absolute-position" compliance-level="3" comply="no"/>
+          <level-3 name="absolute-position" citation="§7.5.1" extURL="slice7.html#absolute-position" compliance-level="3" comply="no">
+            <comment>Use shorthand position="absolute" as a workaround.</comment>
+          </level-3>
           <level-3 name="top" citation="§7.5.2" extURL="slice7.html#top" compliance-level="2" comply="yes"/>
           <level-3 name="right" citation="§7.5.3" extURL="slice7.html#right" compliance-level="2" comply="yes"/>
           <level-3 name="bottom" citation="§7.5.4" extURL="slice7.html#bottom" compliance-level="2" comply="yes"/>
