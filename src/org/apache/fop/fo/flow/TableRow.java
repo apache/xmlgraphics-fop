@@ -113,6 +113,7 @@ public class TableRow extends FObj {
     DisplaySpace spacer = null;
     boolean hasAddedSpacer = false;
     DisplaySpace spacerAfter = null;
+    boolean areaAdded = false;
 
     /**
      * The list of cell states for this row. This is the location of
@@ -482,11 +483,14 @@ public class TableRow extends FObj {
                     }
                 } else {
                     // added on 11/28/2000, by Dresdner Bank, Germany
-                    if (hasAddedSpacer && spacer != null)
+                    if (spacer != null) {
                         area.removeChild(spacer);
+                        spacer = null;
+                    }
                     hasAddedSpacer = false;
                     if(spacerAfter != null)
                         area.removeChild(spacerAfter);
+                    spacerAfter = null;
 
                     // removing something that was added by succession
                     // of cell.layout()
@@ -524,6 +528,7 @@ public class TableRow extends FObj {
         }
 
         area.addChild(areaContainer);
+        areaAdded = true;
         areaContainer.end();
         area.addDisplaySpace(largestCellHeight +
                              areaContainer.getPaddingTop() +
@@ -548,8 +553,8 @@ public class TableRow extends FObj {
 
         if (!someCellDidNotLayoutCompletely && spaceAfter != 0) {
             spacerAfter = new DisplaySpace(spaceAfter);
-            area.increaseHeight(spaceAfter);
             area.addChild(spacerAfter);
+            area.increaseHeight(spaceAfter);
         }
 
         if (area instanceof BlockArea) {
@@ -582,11 +587,12 @@ public class TableRow extends FObj {
                 area.increaseHeight(-spaceBefore);
             }
         }
-        hasAddedSpacer = false;
         if(spacerAfter != null)
             area.removeChild(spacerAfter);
         //area.increaseHeight(areaContainer.getHeight());
-        area.removeChild(areaContainer);
+        if(areaAdded)
+            area.removeChild(areaContainer);
+        areaAdded = false;
         this.resetMarker();
         cells = null;
         this.removeID(area.getIDReferences());
