@@ -63,7 +63,7 @@ public class Page {
     private int height;
     private int width;
 
-    private AreaContainer body;
+    private BodyAreaContainer body;
     private AreaContainer before;
     private AreaContainer after;
     private AreaContainer start;
@@ -101,11 +101,19 @@ public class Page {
 	area.setPage(this);
     }
 
-    void addBody(AreaContainer area) {
+	/**
+	 * Ensure that page is set not only on B.A.C. but also on the
+	 * three top-level reference areas.
+	 * @param area The region-body area container (special)
+	 */
+    public void addBody(BodyAreaContainer area) {
 	this.body = area;
 	area.setPage(this);
+	((BodyAreaContainer)area).getMainReferenceArea().setPage(this);
+	((BodyAreaContainer)area).getBeforeFloatReferenceArea().setPage(this);
+	((BodyAreaContainer)area).getFootnoteReferenceArea().setPage(this);
     }
-	
+		
     void addEnd(AreaContainer area) {
 	this.end = area;
 	area.setPage(this);
@@ -128,7 +136,7 @@ public class Page {
 	return this.before;
     }
 
-    public AreaContainer getBody() {
+    public BodyAreaContainer getBody() {
 	return this.body;
     }
 
