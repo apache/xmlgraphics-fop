@@ -63,6 +63,7 @@ import org.apache.fop.area.LineArea;
 import org.apache.fop.traits.LayoutProps;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonBackground;
+import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -75,6 +76,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     private LayoutProps layoutProps;
     private CommonBorderAndPadding borderProps;
     private CommonBackground backgroundProps;
+    private CommonMarginBlock marginProps;
 
     /* holds the (one-time use) fo:block space-before
        and -after properties.  Large fo:blocks are split 
@@ -182,6 +184,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         layoutProps = pm.getLayoutProps();
         borderProps = pm.getBorderAndPadding();
         backgroundProps = pm.getBackgroundProps();
+        marginProps = pm.getMarginProps();
         foBlockSpaceBefore = layoutProps.spaceBefore.getSpace();
         prevFoBlockSpaceAfter = foBlockSpaceAfter;
     }
@@ -190,8 +193,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         LayoutProcessor curLM; // currently active LM
 
         int ipd = context.getRefIPD();
-        int iIndents = borderProps.getPaddingStart(false) 
-            + borderProps.getPaddingEnd(false);
+        int iIndents = marginProps.startIndent + marginProps.endIndent; 
+        int bIndents = borderProps.getBPPaddingAndBorder(false);
         ipd -= iIndents;
 
         MinOptMax stackSize = new MinOptMax();
@@ -206,7 +209,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             // resetting foBlockSpaceBefore = null in addAreas()
             stackSize.add(foBlockSpaceBefore);
         }
-        
+
         BreakPoss lastPos = null;
 
         while ((curLM = getChildLM()) != null) {
@@ -313,6 +316,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             }
         }
 
+        int bIndents = borderProps.getBPPaddingAndBorder(false);
+        curBlockArea.setHeight(curBlockArea.getHeight() + bIndents);
 
         addMarkers(false, true);
 
@@ -342,6 +347,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             // set traits
             TraitSetter.addBorders(curBlockArea, borderProps);
             TraitSetter.addBackground(curBlockArea, backgroundProps);
+            TraitSetter.addMargins(curBlockArea, borderProps, marginProps);
 
             // Set up dimensions
             // Must get dimensions from parent area

@@ -58,6 +58,8 @@ import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.Block;
 import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
+import org.apache.fop.fo.properties.CommonBorderAndPadding;
+import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.area.CTM;
 import org.apache.fop.datatypes.FODimension;
@@ -75,6 +77,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
     private List childBreaks = new java.util.ArrayList();
 
     private CommonAbsolutePosition abProps;
+    private CommonBorderAndPadding borderProps;
+    private CommonMarginBlock marginProps;
     private FODimension relDims;
     private CTM absoluteCTM;
     private boolean clip = false;
@@ -105,6 +109,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             absoluteCTM = CTM.getCTMandRelDims(pm.getAbsRefOrient(),
                 pm.getWritingMode(), rect, relDims);
         }
+        marginProps = pm.getMarginProps();
+        borderProps = pm.getBorderAndPadding();
         height = pm.getPropertyList().get(PR_HEIGHT).getLength();
         width = pm.getPropertyList().get(PR_WIDTH).getLength();
     }
@@ -123,19 +129,24 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             return getAbsoluteBreakPoss(context);
         }
 
+        int bIndents = borderProps.getBPPaddingAndBorder(false);
+        int iIndents = marginProps.startIndent + marginProps.endIndent; 
+
         int ipd = context.getRefIPD();
         int bpd = context.getStackLimit().opt;
         if (!width.isAuto()) {
-            ipd = width.getValue();
+            ipd = width.getValue() + iIndents;
         }
         if (!height.isAuto()) {
-            bpd = height.getValue();
+            bpd = height.getValue() + bIndents;
         }
         Rectangle2D rect = new Rectangle2D.Double(0, 0, ipd, bpd);
         relDims = new FODimension(0, 0);
         absoluteCTM = CTM.getCTMandRelDims(propManager.getAbsRefOrient(),
                 propManager.getWritingMode(), rect, relDims);
         double[] vals = absoluteCTM.toArray();
+
+        ipd -= iIndents;
 
         MinOptMax stackLimit;
         boolean rotated = vals[0] == 0.0;
