@@ -241,6 +241,7 @@ public class PageSequence extends FObj
             else
             {
                 AreaContainer bodyArea = currentPage.getBody();
+                bodyArea.setIDReferences(areaTree.getIDReferences());
                 status = this.flow.layout(bodyArea);
             }
             System.err.print("]");
