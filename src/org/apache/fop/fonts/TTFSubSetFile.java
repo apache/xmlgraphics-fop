@@ -577,7 +577,7 @@ public class TTFSubSetFile extends TTFFile {
          * Check if TrueType collection, and that the name
          * exists in the collection
          */
-        if (!checkTTC(in, name, false))
+        if (!checkTTC(in, name))
             throw new IOException("Failed to read font");
 
         output = new byte[in.getFileSize()];
