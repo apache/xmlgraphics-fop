@@ -9,7 +9,13 @@ package org.apache.fop.traits;
 
 import org.apache.fop.datatypes.ColorType;
 
-public class BorderProps {
+import java.io.Serializable;
+
+/**
+ * Border properties.
+ * Class to store border trait propties for the area tree.
+ */
+public class BorderProps implements Serializable {
     public int style; // Enum for border style
     public ColorType color; // Border color
     public int width; // Border width

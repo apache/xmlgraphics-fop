@@ -90,6 +90,17 @@ public class PageViewport implements Resolveable, Cloneable {
     }
 
     /**
+     * Get the key for this page viewport.
+     * This is used so that a serializable key can be used to
+     * lookup the page or some other reference.
+     *
+     * @return a unique page viewport key for this area tree
+     */
+    public String getKey() {
+        return toString();
+    }
+
+    /**
      * Add an unresolved id to this page.
      * All unresolved ids for the contents of this page are
      * added to this page. This is so that the resolvers can be

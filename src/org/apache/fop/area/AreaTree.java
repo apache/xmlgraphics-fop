@@ -397,23 +397,31 @@ public class AreaTree {
         public void addPage(PageViewport page) {
             super.addPage(page);
 
-            // check prepared pages
-            boolean cont = checkPreparedPages();
-
-            // if page finished
-            if (cont && page.isResolved()) {
+            // for links the renderer needs to prepare the page
+            // it is more appropriate to do this after queued pages but
+            // it will mean that the renderer has not prepared a page that
+            // could be referenced
+            boolean done = renderer.supportsOutOfOrder() && page.isResolved();
+            if (done) {
                 try {
                     renderer.renderPage(page);
                 } catch (Exception e) {
                     // use error handler to handle this FOP or IO Exception
+                    e.printStackTrace();
                 }
                 page.clear();
             } else {
                 preparePage(page);
             }
 
-            renderExtensions(pendingExt);
-            pendingExt.clear();
+
+            // check prepared pages
+            boolean cont = checkPreparedPages(page);
+
+            if (cont) {
+                renderExtensions(pendingExt);
+                pendingExt.clear();
+            }
         }
 
         /**
@@ -422,7 +430,7 @@ public class AreaTree {
          *         false if the renderer doesn't support out of order
          *         rendering and there are pending pages
          */
-        protected boolean checkPreparedPages() {
+        protected boolean checkPreparedPages(PageViewport newpage) {
             for (Iterator iter = prepared.iterator(); iter.hasNext();) {
                 PageViewport p = (PageViewport)iter.next();
                 if (p.isResolved()) {
@@ -430,6 +438,7 @@ public class AreaTree {
                         renderer.renderPage(p);
                     } catch (Exception e) {
                         // use error handler to handle this FOP or IO Exception
+                        e.printStackTrace();
                     }
                     p.clear();
                     iter.remove();
@@ -491,7 +500,11 @@ public class AreaTree {
          */
         public void endDocument() {
             // render any pages that had unresolved ids
-            checkPreparedPages();
+            checkPreparedPages(null);
+
+            renderExtensions(pendingExt);
+            pendingExt.clear();
+
             renderExtensions(endDocExt);
         }
     }

@@ -109,6 +109,7 @@ public class PDFRenderer extends PrintRenderer {
      * for pdf this means we need the pdf page reference
      */
     protected HashMap pageReferences = new HashMap();
+    protected HashMap pvReferences = new HashMap();
 
     private String producer;
 
@@ -273,14 +274,18 @@ public class PDFRenderer extends PrintRenderer {
     private void renderOutline(BookmarkData outline, PDFOutline parentOutline) {
         PDFOutline outlineRoot = pdfDoc.getOutlineRoot();
         PDFOutline pdfOutline = null;
-        String intDest = (String)pageReferences.get(outline.getPage());
+        PageViewport pv = outline.getPage();
+        Rectangle2D bounds = pv.getViewArea();
+        double h = bounds.getHeight();
+        float yoffset = (float)h / 1000f;
+        String intDest = (String)pageReferences.get(pv.getKey());
         if (parentOutline == null) {
             pdfOutline = pdfDoc.makeOutline(outlineRoot,
-                                    outline.getLabel(), intDest);
+                                    outline.getLabel(), intDest, yoffset);
         } else {
             PDFOutline pdfParentOutline = parentOutline;
             pdfOutline = pdfDoc.makeOutline(pdfParentOutline,
-                                    outline.getLabel(), intDest);
+                                    outline.getLabel(), intDest, yoffset);
         }
 
         for (int i = 0; i < outline.getCount(); i++) {
@@ -315,7 +320,8 @@ public class PDFRenderer extends PrintRenderer {
             pages = new HashMap();
         }
         pages.put(page, currentPage);
-        pageReferences.put(page, currentPage.referencePDF());
+        pageReferences.put(page.getKey(), currentPage.referencePDF());
+        pvReferences.put(page.getKey(), page);
     }
 
     /**
@@ -339,7 +345,8 @@ public class PDFRenderer extends PrintRenderer {
             pageHeight = (int) h;
             currentPage = this.pdfDoc.makePage(this.pdfResources,
                               (int) Math.round(w / 1000), (int) Math.round(h / 1000));
-            pageReferences.put(page, currentPage.referencePDF());
+            pageReferences.put(page.getKey(), currentPage.referencePDF());
+            pvReferences.put(page.getKey(), page);
         }
         currentStream =
           this.pdfDoc.makeStream(PDFStream.CONTENT_FILTER, false);
@@ -678,12 +685,19 @@ public class PDFRenderer extends PrintRenderer {
         Object tr = ip.getTrait(Trait.INTERNAL_LINK);
         boolean internal = false;
         String dest = null;
+        float yoffset = 0;
         if (tr == null) {
             dest = (String)ip.getTrait(Trait.EXTERNAL_LINK);
         } else {
-            PageViewport pv = (PageViewport)tr;
-            dest = (String)pageReferences.get(pv);
-            internal = true;
+            String pvKey = (String)tr;
+            dest = (String)pageReferences.get(pvKey);
+            if(dest != null) {
+                PageViewport pv = (PageViewport)pvReferences.get(pvKey);
+                Rectangle2D bounds = pv.getViewArea();
+                double h = bounds.getHeight();
+                yoffset = (float)h / 1000f;
+                internal = true;
+            }
         }
         if (dest != null) {
             // add link to pdf document
@@ -693,7 +707,7 @@ public class PDFRenderer extends PrintRenderer {
             rect = transform.createTransformedShape(rect).getBounds();
 
             int type = internal ? PDFLink.INTERNAL : PDFLink.EXTERNAL;
-            PDFLink pdflink = pdfDoc.makeLink(rect, dest, type);
+            PDFLink pdflink = pdfDoc.makeLink(rect, dest, type, yoffset);
             currentPage.addAnnotation(pdflink);
         }
     }

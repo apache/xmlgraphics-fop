@@ -277,7 +277,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             resourceContext.addAnnotation(pdfDoc.makeLink(rect, pageRef, pdfdest));
         } else {
             resourceContext.addAnnotation(pdfDoc.makeLink(rect,
-                                                 dest, linkType));
+                                                 dest, linkType, 0));
         }
     }
 

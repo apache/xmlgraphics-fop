@@ -1229,7 +1229,7 @@ public class PDFDocument {
      * @return the PDFLink object created
      */
     public PDFLink makeLink(Rectangle2D rect, String destination,
-                            int linkType) {
+                            int linkType, float yoffset) {
 
         PDFLink linkObject;
         PDFAction action;
@@ -1240,7 +1240,10 @@ public class PDFDocument {
 
         if (linkType == PDFLink.EXTERNAL) {
             // check destination
-            if (destination.endsWith(".pdf")) {    // FileSpec
+            if (destination.startsWith("http://")) {
+                PDFUri uri = new PDFUri(destination);
+                link.setAction(uri);
+            } else if (destination.endsWith(".pdf")) {    // FileSpec
                 PDFFileSpec fileSpec = new PDFFileSpec(++this.objectcount,
                                                        destination);
                 this.objects.add(fileSpec);
@@ -1267,17 +1270,19 @@ public class PDFDocument {
                 PDFUri uri = new PDFUri(destination);
                 link.setAction(uri);
             }
-        } else {                                   // linkType is internal
-            String goToReference = getGoToReference(destination);
+        } else {
+            // linkType is internal
+            String goToReference = getGoToReference(destination, yoffset);
             PDFInternalLink internalLink = new PDFInternalLink(goToReference);
             link.setAction(internalLink);
         }
         return link;
     }
 
-    private String getGoToReference(String destination) {
+    private String getGoToReference(String destination, float yoffset) {
         String goToReference = null;
         PDFGoTo gt = new PDFGoTo(++this.objectcount, destination);
+        gt.setYPosition(yoffset);
         goToReference = gt.referencePDF();
         addTrailerObject(gt);
         return goToReference;
@@ -1383,8 +1388,8 @@ public class PDFDocument {
      * @return the new PDF outline object
      */
     public PDFOutline makeOutline(PDFOutline parent, String label,
-                                  String destination) {
-        String goToRef = getGoToReference(destination);
+                                  String destination, float yoffset) {
+        String goToRef = getGoToReference(destination, yoffset);
 
         PDFOutline obj = new PDFOutline(++this.objectcount, label, goToRef);
 

@@ -121,7 +121,6 @@ public class PDFPage extends PDFResourceContext {
         }
 
         sb = sb.append(">>\nendobj\n");
-
         return sb.toString().getBytes();
     }
 
