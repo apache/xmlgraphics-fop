@@ -1,7 +1,4 @@
-/**
- * Provides a Read-Only <tt>int</tt> array.
- *
- * 
+/*
  * ============================================================================
  *                   The Apache Software License, Version 1.1
  * ============================================================================
@@ -56,6 +53,11 @@
 // $Id$
 package org.apache.fop.datastructs;
 
+/**
+ * Provides a Read-Only <tt>int</tt> array.
+ * 
+ * @author pbw
+ */
 public class ROIntArray {
     
     private int[] iarray;
@@ -103,5 +105,14 @@ public class ROIntArray {
      */
     public int get(int index) {
         return iarray[index];
+    }
+    
+    /**
+     * @return a copy of the array
+     */
+    public int[] copyarray() {
+        int[] tmp = null;
+        System.arraycopy(iarray, 0, tmp, 0, iarray.length);
+        return tmp;
     }
 }
