@@ -26,6 +26,8 @@ import java.text.MessageFormat;
 import java.text.FieldPosition;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.ColumnArea;
+import org.apache.fop.layout.TextState;
+import org.apache.fop.fo.properties.TextDecoration;
 
 public class PropertyManager {
 
@@ -247,4 +249,29 @@ public class PropertyManager {
         AbsolutePositionProps props = new AbsolutePositionProps();
         return props;
     }
+
+    public TextState getTextDecoration() throws FOPException {
+        TextState ts = new TextState();
+
+        int textDecoration = this.properties.get("text-decoration").getEnum();
+
+        switch (textDecoration) {
+        case TextDecoration.UNDERLINE:
+            ts.setUnderlined(true);
+            break;
+        case TextDecoration.OVERLINE:
+            ts.setOverlined(true);
+            break;
+        case TextDecoration.LINE_THROUGH:
+            ts.setLineThrough(true);
+            break;
+        case TextDecoration.NONE:
+            ts.setUnderlined(false);
+            ts.setOverlined(false);
+            ts.setLineThrough(false);
+        }
+
+        return ts;
+    }
+
 }

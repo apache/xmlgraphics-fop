@@ -66,10 +66,13 @@ public class Block extends FObjMixed {
     // this may be helpful on other FOs too
     boolean anythingLaidOut = false;
 
-    public Block(FObj parent, PropertyList propertyList) {
+    public Block(FObj parent, PropertyList propertyList)
+        throws FOPException {
+
         super(parent, propertyList);
         this.name = "fo:block";
         this.span = this.properties.get("span").getEnum();
+        ts = propMgr.getTextDecoration();
     }
 
     public Status layout(Area area) throws FOPException {
