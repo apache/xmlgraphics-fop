@@ -1691,6 +1691,12 @@
     <default></default>
   </property>
   <property>
+    <name>master-reference</name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default>
+  </property>
+  <property>
   <name>maximum-repeats</name>
   <inherited>false</inherited>
   <datatype>String</datatype>
