@@ -47,17 +47,16 @@ public class FootnoteBody extends FObj {
         super(parent);
     }
 
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveFootnoteBody(this);
+    /**
+     * @see org.apache.fop.fo.FObj#addProperties
+     */
+    protected void addProperties(Attributes attlist) throws FOPException {
+        super.addProperties(attlist);
+        getFOTreeControl().getFOInputHandler().startFootnoteBody(this);
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#handleAttrs
-     */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
-
-        getFOTreeControl().getFOInputHandler().startFootnoteBody(this);
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveFootnoteBody(this);
     }
 
     protected void end() {

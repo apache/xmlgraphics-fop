@@ -32,7 +32,6 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.ElementMapping.Maker;
 import org.apache.fop.fo.pagination.Root;
 import org.xml.sax.Attributes;
@@ -65,14 +64,14 @@ public class FOTreeBuilder extends DefaultHandler {
     protected Set namespaces = new java.util.HashSet();
 
     /**
-     * Current formatting object being handled
-     */
-    protected FONode currentFObj = null;
-
-    /**
      * The root of the formatting object tree
      */
     protected Root rootFObj = null;
+
+    /**
+     * Current formatting object being handled
+     */
+    protected FONode currentFObj = null;
 
     /**
      * The class that handles formatting and rendering to a stream
@@ -80,12 +79,10 @@ public class FOTreeBuilder extends DefaultHandler {
      */
     private FOInputHandler foInputHandler;
 
-    private FOUserAgent userAgent;
-
     /** The FOTreeControl object managing the FO Tree that is being built */
     private FOTreeControl foTreeControl;
 
-    /** The SAX locator object maneging the line and column counters */
+    /** The SAX locator object managing the line and column counters */
     private Locator locator; 
     
     /**
@@ -93,22 +90,6 @@ public class FOTreeBuilder extends DefaultHandler {
      */
     public FOTreeBuilder() {
         setupDefaultMappings();
-    }
-
-    private Log getLogger() {
-        return log;
-    }
-
-    /**
-     * Sets the user agent
-     * @param ua the user agent
-     */
-    public void setUserAgent(FOUserAgent ua) {
-        userAgent = ua;
-    }
-
-    private FOUserAgent getUserAgent() {
-        return userAgent;
     }
 
     /**
@@ -146,7 +127,7 @@ public class FOTreeBuilder extends DefaultHandler {
                 try {
                     addElementMapping(str);
                 } catch (IllegalArgumentException e) {
-                    getLogger().warn("Error while adding element mapping", e);
+                    log.warn("Error while adding element mapping", e);
                 }
 
             }
@@ -209,23 +190,13 @@ public class FOTreeBuilder extends DefaultHandler {
     }
 
     /**
-     * SAX Handler for the end of an element
-     * @see org.xml.sax.ContentHandler#endElement(String, String, String)
-     */
-    public void endElement(String uri, String localName, String rawName)
-                throws SAXException {
-        currentFObj.end();
-        currentFObj = currentFObj.getParent();
-    }
-
-    /**
      * SAX Handler for the start of the document
      * @see org.xml.sax.ContentHandler#startDocument()
      */
     public void startDocument() throws SAXException {
         rootFObj = null;    // allows FOTreeBuilder to be reused
-        if (getLogger().isDebugEnabled()) {
-            getLogger().debug("Building formatting object tree");
+        if (log.isDebugEnabled()) {
+            log.debug("Building formatting object tree");
         }
         foInputHandler.startDocument();
     }
@@ -237,8 +208,8 @@ public class FOTreeBuilder extends DefaultHandler {
     public void endDocument() throws SAXException {
         rootFObj = null;
         currentFObj = null;
-        if (getLogger().isDebugEnabled()) {
-            getLogger().debug("Parsing of document complete");
+        if (log.isDebugEnabled()) {
+            log.debug("Parsing of document complete");
         }
         foInputHandler.endDocument();
     }
@@ -249,8 +220,9 @@ public class FOTreeBuilder extends DefaultHandler {
      */
     public void startElement(String namespaceURI, String localName, String rawName,
                              Attributes attlist) throws SAXException {
-        /* the formatting object started */
-        FONode fobj;
+
+        /* the node found in the FO document */
+        FONode foNode;
 
         /* the maker for the formatting object started */
         ElementMapping.Maker fobjMaker = findFOMaker(namespaceURI, localName);
@@ -258,27 +230,35 @@ public class FOTreeBuilder extends DefaultHandler {
 //      System.out.println("found a " + fobjMaker.toString());
 
         try {
-            fobj = fobjMaker.make(currentFObj);
-            fobj.setName(localName);
-            fobj.setLocation(locator);
-            fobj.handleAttrs(attlist);
+            foNode = fobjMaker.make(currentFObj);
+            foNode.processNode(localName, locator, attlist);
         } catch (FOPException e) {
             throw new SAXException(e);
         }
 
         if (rootFObj == null) {
-            if (!fobj.getName().equals("fo:root")) {
+            if (!foNode.getName().equals("fo:root")) {
                 throw new SAXException(new FOPException("Root element must"
                                                         + " be fo:root, not "
-                                                        + fobj.getName()));
+                                                        + foNode.getName()));
             }
-            rootFObj = (Root)fobj;
+            rootFObj = (Root) foNode;
             rootFObj.setFOTreeControl(foTreeControl);
         } else {
-            currentFObj.addChild(fobj);
+            currentFObj.addChild(foNode);
         }
 
-        currentFObj = fobj;
+        currentFObj = foNode;
+    }
+
+    /**
+     * SAX Handler for the end of an element
+     * @see org.xml.sax.ContentHandler#endElement(String, String, String)
+     */
+    public void endElement(String uri, String localName, String rawName)
+                throws SAXException {
+        currentFObj.end();
+        currentFObj = currentFObj.getParent();
     }
 
     /**
@@ -299,8 +279,8 @@ public class FOTreeBuilder extends DefaultHandler {
       }
 
       if (fobjMaker == null) {
-          if (getLogger().isWarnEnabled()) {
-              getLogger().warn("Unknown formatting object " + namespaceURI + "^" + localName);
+          if (log.isWarnEnabled()) {
+              log.warn("Unknown formatting object " + namespaceURI + "^" + localName);
           }
           if (namespaces.contains(namespaceURI.intern())) {
               // fall back
@@ -350,7 +330,7 @@ class Service {
         }
         String serviceFile = "META-INF/services/" + cls.getName();
 
-        // getLogger().debug("File: " + serviceFile);
+        // log.debug("File: " + serviceFile);
 
         List lst = (List)providerMap.get(serviceFile);
         if (lst != null) {
@@ -370,7 +350,7 @@ class Service {
         while (e.hasMoreElements()) {
             try {
                 java.net.URL u = (java.net.URL)e.nextElement();
-                //getLogger().debug("URL: " + u);
+                //log.debug("URL: " + u);
 
                 InputStream is = u.openStream();
                 Reader r = new InputStreamReader(is, "UTF-8");
@@ -393,7 +373,7 @@ class Service {
                             line = br.readLine();
                             continue;
                         }
-                        // getLogger().debug("Line: " + line);
+                        // log.debug("Line: " + line);
 
                         // Try and load the class
                         // Object obj = cl.loadClass(line).newInstance();

@@ -62,10 +62,10 @@ public abstract class Region extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#handleAttrs(Attributes)
+     * @see org.apache.fop.fo.FObj#addProperties
      */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
+    protected void addProperties(Attributes attlist) throws FOPException {
+        super.addProperties(attlist);
 
         // regions may have name, or default
         if (null == this.propertyList.get(PR_REGION_NAME)) {

@@ -69,6 +69,15 @@ public class FObj extends FONode implements Constants {
      */
     protected Map layoutDimension = null;
 
+    /** Marks input file containing this object **/
+    public String systemId;
+
+    /** Marks line number of this object in the input file **/
+    public int line;
+
+    /** Marks column number of this object in the input file **/
+    public int column;
+
     /**
      * Create a new formatting object.
      * All formatting object classes extend this class.
@@ -88,12 +97,39 @@ public class FObj extends FONode implements Constants {
         }
     }
 
-    /** Marks input file containing this object **/
-    public String systemId;
-    /** Marks line number of this object in the input file **/
-    public int line;
-    /** Marks column number of this object in the input file **/
-    public int column;
+    /**
+     * @see org.apache.fop.fo.FONode#processNode
+     */
+    public void processNode(String elementName, Locator locator, 
+                            Attributes attlist) throws FOPException {
+        name = "fo:" + elementName;
+
+        if (locator != null) {
+            line = locator.getLineNumber();
+            column = locator.getColumnNumber();
+            systemId = locator.getSystemId();
+        }
+
+        addProperties(attlist);
+    }
+
+    /**
+     * Set properties for this FO based on node attributes
+     * @param attlist Collection of attributes passed to us from the parser.
+     */
+    protected void addProperties(Attributes attlist) throws FOPException {
+        FObj parentFO = findNearestAncestorFObj();
+        PropertyList parentPropertyList = null;
+        if (parentFO != null) {
+            parentPropertyList = parentFO.getPropertiesForNamespace(FO_URI);
+        }
+
+        propertyList = new PropertyList(this, parentPropertyList, FO_URI,
+            name);
+        propertyList.addAttributesToList(attlist);
+        this.propMgr = makePropertyManager(propertyList);
+        setWritingMode();
+    }
 
     /**
      * Set the name of this element.
@@ -112,29 +148,8 @@ public class FObj extends FONode implements Constants {
             systemId = locator.getSystemId();
         }
     }
-    
-    /**
-     * Handle the attributes for this element.
-     * The attributes must be used immediately as the sax attributes
-     * will be altered for the next element.
-     * @param attlist Collection of attributes passed to us from the parser.
-     * @throws FOPException for invalid FO data
-     */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        FObj parentFO = findNearestAncestorFObj();
-        PropertyList parentPropertyList = null;
-        if (parentFO != null) {
-            parentPropertyList = parentFO.getPropertiesForNamespace(FO_URI);
-        }
 
-        propertyList = new PropertyList(this, parentPropertyList, FO_URI,
-            name);
-        propertyList.addAttributesToList(attlist);
-        this.propMgr = makePropertyManager(propertyList);
-        setWritingMode();
-    }
-
-    /**
+   /**
      * Find the nearest parent, grandparent, etc. FONode that is also an FObj
      * @return FObj the nearest ancestor FONode that is an FObj
      */

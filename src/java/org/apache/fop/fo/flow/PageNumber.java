@@ -55,6 +55,15 @@ public class PageNumber extends FObj {
         super(parent);
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#addProperties
+     */
+    protected void addProperties(Attributes attlist) throws FOPException {
+        super.addProperties(attlist);
+        setup();
+        getFOTreeControl().getFOInputHandler().startPageNumber(this);
+    }
+
     public void setup() {
 
         // Common Accessibility Properties
@@ -117,17 +126,6 @@ public class PageNumber extends FObj {
      */
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.servePageNumber(this);
-    }
-
-    /**
-     * @see org.apache.fop.fo.FObj#handleAttrs
-     */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
-
-        setup();
-
-        getFOTreeControl().getFOInputHandler().startPageNumber(this);
     }
 
     protected void end() {

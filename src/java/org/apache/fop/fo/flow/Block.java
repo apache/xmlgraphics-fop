@@ -96,10 +96,10 @@ public class Block extends FObjMixed {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#handleAttrs
+     * @see org.apache.fop.fo.FObj#addProperties
      */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
+    protected void addProperties(Attributes attlist) throws FOPException {
+        super.addProperties(attlist);
         this.span = this.propertyList.get(PR_SPAN).getEnum();
         this.wsTreatment =
           this.propertyList.get(PR_WHITE_SPACE_TREATMENT).getEnum();

@@ -56,10 +56,10 @@ public class Inline extends FObjMixed {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#handleAttrs
+     * @see org.apache.fop.fo.FObj#addProperties
      */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
+    protected void addProperties(Attributes attlist) throws FOPException {
+        super.addProperties(attlist);
 
         if (parent.getName().equals("fo:flow")) {
             throw new FOPException("inline formatting objects cannot"

@@ -37,8 +37,10 @@ import org.apache.fop.apps.FOUserAgent;
  *
  */
 public abstract class FONode {
+
     /** Parent FO node */
     protected FONode parent;
+
     /** Name of the node */
     protected String name;
 
@@ -51,21 +53,13 @@ public abstract class FONode {
     }
 
     /**
-     * Sets the name of the node.
-     * @param str the name
+     * Returns the user agent for the node.
+     * @return FOUserAgent
      */
-    public void setName(String str) {
-        name = str;
+    public FOUserAgent getUserAgent() {
+        return getFOTreeControl().getDriver().getUserAgent();
     }
 
-    /**
-     * Sets the name of the node.
-     * @param str the name
-     */
-    public void setLocation(Locator locator) {
-        // do nothing by default
-    }
-    
     /**
      * Returns the logger for the node.
      * @return the logger
@@ -75,19 +69,16 @@ public abstract class FONode {
     }
 
     /**
-     * Returns the user agent for the node.
-     * @return FOUserAgent
-     */
-    public FOUserAgent getUserAgent() {
-        return getFOTreeControl().getDriver().getUserAgent();
-    }
-
-    /**
-     * Do something with the attributes for this element
+     * Initialize the node with its name, location information, and attributes
+     * The attributes must be used immediately as the sax attributes
+     * will be altered for the next element.
+     * @param elementName element name (e.g., "fo:block")
+     * @param locator Locator object (ignored by default)
      * @param attlist Collection of attributes passed to us from the parser.
      * @throws FOPException for errors or inconsistencies in the attributes
-     */
-    public void handleAttrs(Attributes attlist) throws FOPException {
+    */
+    public void processNode(String elementName, Locator locator, Attributes attlist) throws FOPException {
+        this.name = elementName;
     }
 
     /**

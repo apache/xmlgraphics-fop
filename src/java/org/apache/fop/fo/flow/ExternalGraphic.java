@@ -59,6 +59,14 @@ public class ExternalGraphic extends FObj {
     }
 
     /**
+     * @see org.apache.fop.fo.FObj#addProperties
+     */
+    protected void addProperties(Attributes attlist) throws FOPException {
+        super.addProperties(attlist);
+        getFOTreeControl().getFOInputHandler().image(this);
+    }
+
+    /**
      * Setup this image.
      * This gets the sizes for the image and the dimensions and clipping.
      */
@@ -234,12 +242,4 @@ public class ExternalGraphic extends FObj {
         return placement;
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#handleAttrs
-     */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
-
-        getFOTreeControl().getFOInputHandler().image(this);
-    }
 }

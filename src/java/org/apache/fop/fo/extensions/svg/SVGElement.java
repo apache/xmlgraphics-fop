@@ -30,6 +30,7 @@ import org.apache.batik.dom.util.XMLSupport;
 import org.w3c.dom.Element;
 import org.w3c.dom.svg.SVGDocument;
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.util.SVGConstants;
 
@@ -58,12 +59,11 @@ public class SVGElement extends SVGObj {
     }
 
     /**
-     * Handle the xml attributes from SAX.
-     * @param attlist the attribute list
-     * @throws FOPException not thrown from here
+     * @see org.apache.fop.fo.FONode#processNode
      */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
+    public void processNode(String elementName, Locator locator, 
+                            Attributes attlist) throws FOPException {
+        super.processNode(elementName, locator, attlist);
         init();
     }
 

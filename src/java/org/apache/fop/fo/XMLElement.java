@@ -20,6 +20,7 @@ package org.apache.fop.fo;
 
 // XML
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 
 // FOP
 import org.apache.fop.apps.FOPException;
@@ -41,13 +42,11 @@ public class XMLElement extends XMLObj {
     }
 
     /**
-     * Process the attributes for this element.
-     * @param attlist the attribute list for this element returned by the SAX
-     * parser
-     * @throws FOPException for invalid attributes
+     * @see org.apache.fop.fo.FONode#processNode
      */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
+    public void processNode(String elementName, Locator locator, 
+                            Attributes attlist) throws FOPException {
+        super.processNode(elementName, locator, attlist);
         init();
     }
 

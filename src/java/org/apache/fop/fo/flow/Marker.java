@@ -46,16 +46,10 @@ public class Marker extends FObjMixed {
     }
 
     /**
-     * Handle the attributes for this marker.
-     * This gets the marker-class-name and attempts to add itself
-     * to the parent formatting object.
-     *
-     * @param attlist the attribute list
-     * @throws FOPException if there is an exception
+     * @see org.apache.fop.fo.FObj#addProperties
      */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
-
+    protected void addProperties(Attributes attlist) throws FOPException {
+        super.addProperties(attlist);
         this.markerClassName =
             this.propertyList.get(PR_MARKER_CLASS_NAME).getString();
     }

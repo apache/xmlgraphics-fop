@@ -229,7 +229,6 @@ public class Driver {
             throw new IllegalStateException("Driver already initialized");
         }
         treeBuilder = new FOTreeBuilder();
-        treeBuilder.setUserAgent(getUserAgent());
     }
 
     /**
@@ -511,7 +510,6 @@ public class Driver {
 
         foInputHandler.setLogger(getLogger());
 
-        treeBuilder.setUserAgent(getUserAgent());
         treeBuilder.setFOInputHandler(foInputHandler);
         treeBuilder.setFOTreeControl(currentDocument);
 

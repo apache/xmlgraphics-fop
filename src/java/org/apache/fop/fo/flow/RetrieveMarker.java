@@ -46,12 +46,10 @@ public class RetrieveMarker extends FObjMixed {
     }
 
     /**
-     * Handle the attributes for the retrieve-marker.
-     *
-     * @see org.apache.fop.fo.FONode#handleAttrs(Attributes)
+     * @see org.apache.fop.fo.FObj#addProperties
      */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
+    protected void addProperties(Attributes attlist) throws FOPException {
+        super.addProperties(attlist);
         this.retrieveClassName =
             this.propertyList.get(PR_RETRIEVE_CLASS_NAME).getString();
         this.retrievePosition =

@@ -53,10 +53,10 @@ public class SimplePageMaster extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#handleAttrs(Attributes)
+     * @see org.apache.fop.fo.FObj#addProperties
      */
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
+    protected void addProperties(Attributes attlist) throws FOPException {
+        super.addProperties(attlist);
 
         if (parent.getName().equals("fo:layout-master-set")) {
             LayoutMasterSet layoutMasterSet = (LayoutMasterSet)parent;
