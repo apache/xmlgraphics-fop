@@ -38,7 +38,7 @@ public class Tree {
     /**
      * Count of the nodes in this tree.
      */
-    protected int nodeCount = 0;
+    //protected int nodeCount = 0;
     
     /**
      * The root node of this tree.
@@ -46,6 +46,11 @@ public class Tree {
     protected Node root = null;
 
     public Tree() {}
+
+    public Tree(Node subtree) {
+        subtree.setSubTreeTree(this);
+        root = subtree;
+    }
 
     public int modified() {
         // In the Tree class, this function updates the modCount
@@ -82,9 +87,11 @@ public class Tree {
      * Get the number of nodes in the tree.
      * @return the number of nodes.
      */
+    /*
     public int size() {
         return nodeCount;
     }
+    */
 
     /**
      * Is the tree empty?
