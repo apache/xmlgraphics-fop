@@ -232,8 +232,6 @@ public class PageSequence extends FObj {
                     getLogger().warn("fo:title should be first in page-sequence");
                 } else {
                     this.titleFO = (Title)child;
-                    structHandler.startPageSequence(this, titleFO, layoutMasterSet);
-                    sequenceStarted = true;
                 }
             } else if (childName.equals("fo:flow")) {
                 if (this.mainFlow != null) {
