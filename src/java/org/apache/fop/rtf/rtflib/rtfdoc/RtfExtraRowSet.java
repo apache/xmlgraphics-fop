@@ -68,16 +68,18 @@ import java.util.Collections;
 import org.apache.fop.rtf.rtflib.interfaces.ITableColumnsInfo;
 
 
-/**  Used to add extra table rows after a row that contains a nested table:
- *  <li> created by RtfTableRow before generating RTF code
- *  <li> an RtfTableCell that contains a nested table can ask this to put
- *          some of its children in extra rows that after the current row
- *  <li> once RtfTableRow is done rendering its children, it renders this,
- *          causing extra rows to be generated, with content that can come
- *          from several RtfTableCells
+/**
+ * Used to add extra table rows after a row that contains a nested table:
+ * <li> created by RtfTableRow before generating RTF code
+ * <li> an RtfTableCell that contains a nested table can ask this to put
+ *         some of its children in extra rows that after the current row
+ * <li> once RtfTableRow is done rendering its children, it renders this,
+ *         causing extra rows to be generated, with content that can come
+ *         from several RtfTableCells
  *
- *  @see org.apache.fop.rtf.rtflib.testdocs.NestedTable
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
+ * See org.apache.fop.rtf.rtflib.testdocs.NestedTable for an example of
+ * usage.
+ * @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
 
 public class RtfExtraRowSet extends RtfContainer {
