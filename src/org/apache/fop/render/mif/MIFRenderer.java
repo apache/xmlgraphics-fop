@@ -80,7 +80,7 @@ public class MIFRenderer extends AbstractRenderer {
     /**
      * options
      */
-    protected Hashtable options;
+    protected java.util.HashMap options;
 
     /**
      * create the MIF renderer
@@ -92,7 +92,7 @@ public class MIFRenderer extends AbstractRenderer {
     /**
      * set up renderer options
      */
-    public void setOptions(Hashtable options) {
+    public void setOptions(java.util.HashMap options) {
         this.options = options;
     }
 

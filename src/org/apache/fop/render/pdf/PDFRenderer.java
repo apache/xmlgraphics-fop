@@ -121,7 +121,7 @@ public class PDFRenderer extends PrintRenderer {
     /**
      * options
      */
-    protected Hashtable options;
+    protected java.util.HashMap options;
 
     protected Vector extensions = null;
 
@@ -137,7 +137,7 @@ public class PDFRenderer extends PrintRenderer {
      *
      * @param options  Options for the renderer
      */
-    public void setOptions(Hashtable options) {
+    public void setOptions(java.util.HashMap options) {
         this.options = options;
     }
 

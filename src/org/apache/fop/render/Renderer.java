@@ -41,7 +41,7 @@ public interface Renderer {
     /**
      * set up renderer options
      */
-    public void setOptions(java.util.Hashtable options);
+    public void setOptions(java.util.HashMap options);
 
     /**
      * set the producer of the rendering

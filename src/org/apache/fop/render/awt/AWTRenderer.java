@@ -115,12 +115,12 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     /**
      * options
      */
-    protected Hashtable options;
+    protected java.util.HashMap options;
 
     /**
      * set up renderer options
      */
-    public void setOptions(Hashtable options) {
+    public void setOptions(java.util.HashMap options) {
         this.options = options;
     }
 

@@ -120,7 +120,7 @@ public class PSRenderer extends AbstractRenderer {
 
     protected IDReferences idReferences;
 
-    protected Hashtable options;
+    protected java.util.HashMap options;
 
 
     /**
@@ -136,7 +136,7 @@ public class PSRenderer extends AbstractRenderer {
     /**
      * set up renderer options
      */
-    public void setOptions(Hashtable options) {
+    public void setOptions(java.util.HashMap options) {
         this.options = options;
     }
 
