@@ -9,7 +9,6 @@ package org.apache.fop.fo;
 
 import org.apache.fop.fo.*;
 import org.apache.fop.layout.FontState;
-import org.apache.fop.layout.inline.*;
 import org.apache.fop.apps.FOPException;
 
 import org.w3c.dom.Element;
