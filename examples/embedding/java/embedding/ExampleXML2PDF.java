@@ -32,7 +32,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.sax.SAXResult;
 
 //FOP
-import org.apache.fop.apps.Driver;
+import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -66,15 +66,15 @@ public class ExampleXML2PDF {
             System.out.println();
             System.out.println("Transforming...");
             
-            // Construct driver with desired output format
-            Driver driver = new Driver(Driver.RENDER_PDF);
+            // Construct fop with desired output format
+            Fop fop = new Fop(Fop.RENDER_PDF);
             
             // Setup output
             OutputStream out = new java.io.FileOutputStream(pdffile);
             out = new java.io.BufferedOutputStream(out);
             
             try {
-                driver.setOutputStream(out);
+                fop.setOutputStream(out);
     
                 // Setup XSLT
                 TransformerFactory factory = TransformerFactory.newInstance();
@@ -87,7 +87,7 @@ public class ExampleXML2PDF {
                 Source src = new StreamSource(xmlfile);
             
                 // Resulting SAX events (the generated FO) must be piped through to FOP
-                Result res = new SAXResult(driver.getDefaultHandler());
+                Result res = new SAXResult(fop.getDefaultHandler());
     
                 // Start XSLT transformation and FOP processing
                 transformer.transform(src, res);

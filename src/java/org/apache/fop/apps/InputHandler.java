@@ -44,11 +44,11 @@ public abstract class InputHandler {
     }
 
     /**
-     * Generate a document, given an initialized Driver object
-     * @param driver -- Driver object
+     * Generate a document, given an initialized Fop object
+     * @param fop -- Fop object
      * @throws FOPException in case of an error during processing
      */
-    public void render(Driver driver) throws FOPException {}
+    public void render(Fop fop) throws FOPException {}
 
     /**
      * Creates an InputSource from a URL.

@@ -453,31 +453,23 @@ public class CommandLineOptions implements Constants {
      * @return the type chosen renderer
      * @throws FOPException for invalid output modes
      */
-    public int getRenderer() throws FOPException {
+    protected int getRenderer() throws FOPException {
         switch (outputmode) {
-        case NOT_SET:
-            throw new FOPException("Renderer has not been set!");
         case RENDER_PDF:
-            return Driver.RENDER_PDF;
         case RENDER_AWT:
-            return Driver.RENDER_AWT;
         case RENDER_MIF:
-            return Driver.RENDER_MIF;
         case RENDER_PRINT:
-            return Driver.RENDER_PRINT;
         case RENDER_PCL:
-            return Driver.RENDER_PCL;
         case RENDER_PS:
-            return Driver.RENDER_PS;
         case RENDER_TXT:
-            return Driver.RENDER_TXT;
         case RENDER_SVG:
-            return Driver.RENDER_SVG;
+        case RENDER_RTF:
+            return outputmode;
         case RENDER_XML:
             foUserAgent.getRendererOptions().put("fineDetail", isCoarseAreaXml());
-            return Driver.RENDER_XML;
-        case RENDER_RTF:
-            return Driver.RENDER_RTF;
+            return RENDER_XML;
+        case NOT_SET:
+            throw new FOPException("Renderer has not been set!");
         default:
             throw new FOPException("Invalid Renderer setting!");
         }

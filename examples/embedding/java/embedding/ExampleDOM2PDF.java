@@ -40,7 +40,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 
 // FOP
-import org.apache.fop.apps.Driver;
+import org.apache.fop.apps.Fop;
 
 
 /**
@@ -61,15 +61,15 @@ public class ExampleDOM2PDF {
      */
     public void convertDOM2PDF(Document xslfoDoc, File pdf) {
         try {
-            // Construct driver with desired output format
-            Driver driver = new Driver(Driver.RENDER_PDF);
+            // Construct fop with desired output format
+            Fop fop = new Fop(Fop.RENDER_PDF);
             
             // Setup output
             OutputStream out = new java.io.FileOutputStream(pdf);
             out = new java.io.BufferedOutputStream(out);
     
             try {
-                driver.setOutputStream(out);
+                fop.setOutputStream(out);
                 
                 // Setup Identity Transformer
                 TransformerFactory factory = TransformerFactory.newInstance();
@@ -79,7 +79,7 @@ public class ExampleDOM2PDF {
                 Source src = new DOMSource(xslfoDoc);
                 
                 // Resulting SAX events (the generated FO) must be piped through to FOP
-                Result res = new SAXResult(driver.getDefaultHandler());
+                Result res = new SAXResult(fop.getDefaultHandler());
                 
                 // Start XSLT transformation and FOP processing
                 transformer.transform(src, res);

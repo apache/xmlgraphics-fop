@@ -76,13 +76,13 @@ public class FOFileHandler extends InputHandler {
     }
 
     /**
-     * @see org.apache.fop.apps.InputHandler#render(Driver)
+     * @see org.apache.fop.apps.InputHandler#render(Fop)
      */
-    public void render(Driver driver) throws FOPException {
+    public void render(Fop fop) throws FOPException {
 
         // temporary until baseURL removed from inputHandler objects
-        if (driver.getUserAgent().getBaseURL() == null) {
-            driver.getUserAgent().setBaseURL(getBaseURL());
+        if (fop.getUserAgent().getBaseURL() == null) {
+            fop.getUserAgent().setBaseURL(getBaseURL());
         }
 
         try {
@@ -94,7 +94,7 @@ public class FOFileHandler extends InputHandler {
             Source src = new SAXSource(getInputSource());
 
             // Resulting SAX events (the generated FO) must be piped through to FOP
-            Result res = new SAXResult(driver.getDefaultHandler());
+            Result res = new SAXResult(fop.getDefaultHandler());
             
             // Start XSLT transformation and FOP processing
             transformer.transform(src, res);
