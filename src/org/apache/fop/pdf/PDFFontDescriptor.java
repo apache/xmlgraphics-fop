@@ -91,9 +91,12 @@ public class PDFFontDescriptor extends PDFObject {
 	 * @param italicAngle the angle of the vertical dominant strokes
 	 * @param stemV the width of the dominant vertical stems of glyphs
 	 */
-	public PDFFontDescriptor(int number, String basefont, int ascent,
-            int descent, int capHeight, int flags, PDFRectangle fontBBox,
-			int italicAngle, int stemV) {
+	public PDFFontDescriptor(int number, 
+				 String basefont, 
+				 int ascent, int descent, 
+				 int capHeight, int flags,
+				 PDFRectangle fontBBox,
+				 int italicAngle, int stemV) {
 
 		/* generic creation of PDF object */
 		super(number);
@@ -145,7 +148,7 @@ public class PDFFontDescriptor extends PDFObject {
 				+ " obj\n<< /Type /FontDescriptor"
 				+ "\n/FontName /" + this.basefont);
 
-		p.append("\n/FontBBox ");    p.append(fontBBox.toPDF());
+		p.append("\n/FontBBox ");    p.append(fontBBox.toPDFString());
 		p.append("\n/Flags ");       p.append(flags);
 		p.append("\n/CapHeight ");   p.append(capHeight);
 		p.append("\n/Ascent ");      p.append(ascent);

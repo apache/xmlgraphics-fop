@@ -50,58 +50,95 @@
  */
 package org.apache.fop.pdf;
 
+import java.util.Vector;
+
 /**
- * class representing a rectangle
- *
- * Rectangles are specified on page 183 of the PDF 1.3 spec.
+ * class representing a <b>W</b> array for CID fonts.
  */
-public class PDFRectangle {
-	/** lower left x coordinate */
-	protected int llx;
-	/** lower left y coordinate */
-	protected int lly;
-	/** upper right x coordinate */
-	protected int urx;
-	/** upper right y coordinate */
-	protected int ury;
+public class PDFWArray {
 
-	/**
-	 * create a rectangle giving the four separate values
-	 *
-	 * @param llx  lower left x coordinate
-	 * @param lly  lower left y coordinate
-	 * @param urx  upper right x coordinate
-	 * @param ury  upper right y coordinate
-	 */
-	public PDFRectangle(int llx, int lly, int urx, int ury) {
-		this.llx = llx;
-		this.lly = lly;
-		this.urx = urx;
-		this.ury = ury;
+	/** the metrics */
+	private Vector entries;
+
+	public PDFWArray() {
+		entries = new Vector();
 	}
 
 	/**
-	 * create a rectangle giving an array of four values
+	 * add an entry for single starting CID.
+	 * i.e. in the form "c [w ...]"
 	 *
-	 * @param array values in the order llx, lly, urx, ury
+	 * @param start the starting CID value.
+	 * @param metrics the metrics array.
 	 */
-	public PDFRectangle(int[] array) {
-		this.llx = array[0];
-		this.lly = array[1];
-		this.urx = array[2];
-		this.ury = array[3];
+	public void addEntry(int start, int[] metrics) {
+		entries.add(new Entry(start, metrics));
 	}
 
 	/**
-	 * produce the PDF representation for the object
+	 * add an entry for a range of CIDs (/W element on p 213)
 	 *
-	 * @return the PDF
+	 * @param first the first CID in the range
+	 * @param last the last CID in the range
+	 * @param width the width for all CIDs in the range
 	 */
-   public byte[] toPDF() {
-      return toPDFString().getBytes();
-   }
-   
-   public String toPDFString() {
-      return new String(" [" + llx + " " + lly + " " + urx + " " + ury + "] ");
-   }
+	public void addEntry(int first, int last, int width) {
+		entries.add(new int[] {first, last, width});
+	}
+
+	/**
+	 * add an entry for a range of CIDs (/W2 element on p 210)
+	 *
+	 * @param first the first CID in the range
+	 * @param last the last CID in the range
+	 * @param width the width for all CIDs in the range
+	 * @param posX the x component for the vertical position vector
+	 * @param posY the y component for the vertical position vector
+	 */
+	public void addEntry(int first, int last, int width, int posX, int posY) {
+		entries.add(new int[] {first, last, width, posX, posY});
+	}
+
+	public byte[] toPDF() {
+		return toPDFString().getBytes();
+	}
+
+	public String toPDFString() {
+		StringBuffer p = new StringBuffer();
+		p.append("[ ");
+		int len = entries.size();
+		for (int i = 0; i<len; i++) {
+			Object entry = entries.elementAt(i);
+			if (entry instanceof int[]) {
+				int[] line = (int[])entry;
+				for (int j = 0; j<line.length; j++) {
+					p.append(line[j]); p.append(" ");
+				}
+			} else {
+				((Entry)entry).fillInPDF(p);
+			}
+		}
+		p.append("]");
+		return p.toString();
+	}
+
+	/** inner class for entries in the form "c [w ...]" */
+	private static class Entry {
+		private static final StringBuffer p = new StringBuffer();
+		private int start;
+		private int[] metrics;
+		public Entry (int s, int[] m) {
+			start = s;
+			metrics = m;
+		}
+		public void fillInPDF(StringBuffer p) {
+			p.setLength(0);
+			p.append(start); p.append(" [");
+			for (int i = 0; i < metrics.length; i++) {
+				p.append(this.metrics[i]);
+				p.append(" ");
+			}
+			p.append("] ");
+		}
+	}
 }

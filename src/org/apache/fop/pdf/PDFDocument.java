@@ -756,9 +756,13 @@ public class PDFDocument {
             this.objects.addElement(font);
             return font;
         } else {
+           byte subtype=PDFFont.TYPE1;
+           if (metrics instanceof org.apache.fop.render.pdf.Font)
+              subtype=((org.apache.fop.render.pdf.Font)metrics).getSubType();
+           
             PDFFontNonBase14 font = (PDFFontNonBase14)PDFFont.createFont(
                     ++this.objectcount, fontname,
-                    PDFFont.TYPE1, basefont, encoding);
+                    subtype, basefont, encoding);
             this.objects.addElement(font);
             PDFFontDescriptor pdfdesc = makeFontDescriptor(descriptor);
             font.setDescriptor(pdfdesc);
@@ -776,12 +780,28 @@ public class PDFDocument {
 
     	/* create a PDFFontDescriptor with the next object number and add to
            the list of objects */
-    	PDFFontDescriptor font = new PDFFontDescriptor(++this.objectcount,
-                desc.fontName(), desc.getAscender(), desc.getDescender(),
-                desc.getCapHeight(), desc.getFlags(),
-                new PDFRectangle(desc.getFontBBox()), desc.getStemV(),
-                desc.getItalicAngle());
-	    this.objects.addElement(font);
+           PDFFontDescriptor font =
+              new PDFFontDescriptor(++this.objectcount,
+                                    desc.fontName(), desc.getAscender(), desc.getDescender(),
+                                    desc.getCapHeight(), desc.getFlags(),
+                                    new PDFRectangle(desc.getFontBBox()), desc.getStemV(),
+                                    desc.getItalicAngle());
+           
+               // Check if embedding of this font is enabled in the configurationfile
+               // and that the font is embeddable
+           java.util.Vector cfgv=
+              org.apache.fop.configuration.Configuration.getListValue("embed-fonts", 0);
+           if (cfgv!=null && cfgv.contains(desc.fontName()) && desc.isEmbeddable()) {
+              PDFStream stream=desc.getFontFile(this.objectcount+1);
+              if (stream!=null) {
+                 this.objectcount++;
+                 font.setFontFile(desc.getSubType(), stream);
+                 this.objects.addElement(font);
+                 this.objects.addElement(stream);
+              }
+           } else {
+              this.objects.addElement(font);
+           }
     	return font;
 	}
 

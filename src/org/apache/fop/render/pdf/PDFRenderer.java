@@ -65,6 +65,7 @@ import org.apache.fop.svg.PathPoint;
 import org.apache.fop.pdf.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.image.*;
+import org.apache.fop.configuration.Configuration;
 
 import org.w3c.dom.*;
 import org.w3c.dom.svg.*;
@@ -143,7 +144,7 @@ public class PDFRenderer implements Renderer {
 
     /** the current colour for use in svg */
     private PDFColor currentColour = new PDFColor(0, 0, 0);
- 
+
     // previous values used for text-decoration drawing
     int prevUnderlineXEndPos;
     int prevUnderlineYEndPos;
@@ -160,23 +161,30 @@ public class PDFRenderer implements Renderer {
 
     /** true if a TJ command is left to be written */
     boolean textOpen = false;
+
     /** the previous Y coordinate of the last word written.
       Used to decide if we can draw the next word on the same line. */
     int prevWordY = 0;
+
     /** the previous X coordinate of the last word written.
      used to calculate how much space between two words */
     int prevWordX = 0;
+
     /** The  width of the previous word. Used to calculate space between */
     int prevWordWidth = 0;
+
     /** a number formatter to trim off extra precision we don't need*/
     static java.text.NumberFormat numFormat;
     
+    
+    boolean useKerning;
+    
+
     // initialize the static number formatter
     static {
 	numFormat = java.text.NumberFormat.getNumberInstance();
 	numFormat.setMaximumFractionDigits(2);
 	numFormat.setGroupingUsed(false);
-	
     }
     
 	
@@ -185,6 +193,10 @@ public class PDFRenderer implements Renderer {
      */
     public PDFRenderer() {
         this.pdfDoc = new PDFDocument();
+
+	String cfgKern = Configuration.getStringValue("use-kerning");
+	useKerning = ("yes".equals(cfgKern) || "true".equals(cfgKern));
+
     }
 
     /**
@@ -357,7 +369,7 @@ public class PDFRenderer implements Renderer {
             this.currentYPosition -= area.getYPosition();
             this.currentAreaContainerXPosition += area.getXPosition();
         }
-		
+
         this.currentXPosition = this.currentAreaContainerXPosition;
         int w, h;
         int rx = this.currentAreaContainerXPosition;
@@ -375,13 +387,13 @@ public class PDFRenderer implements Renderer {
 		// floats & footnotes stuff
 		renderAreaContainer(area.getBeforeFloatReferenceArea());
   		renderAreaContainer(area.getFootnoteReferenceArea());
-		
+
 		// main reference area
 		Enumeration e = area.getMainReferenceArea().getChildren().elements();
 		while (e.hasMoreElements()) {
 			Box b = (Box) e.nextElement();
 			b.render(this);	// span areas
-		}		
+		}
 
         if (area.getPosition() != Position.STATIC) {
             this.currentYPosition = saveY;
@@ -396,9 +408,9 @@ public class PDFRenderer implements Renderer {
 		while (e.hasMoreElements()) {
 			Box b = (Box) e.nextElement();
 			b.render(this);	// column areas
-		}				
+		}
 	}
-	
+
     private void doFrame(Area area) {
         int w, h;
         int rx = this.currentAreaContainerXPosition;
@@ -620,14 +632,25 @@ public class PDFRenderer implements Renderer {
        * @param area inline area to render
        */
     public void renderWordArea(WordArea area) {
-        char ch;
+	//  char ch;
         StringBuffer pdf = new StringBuffer();
 
+	Hashtable kerning = null;
+	boolean kerningAvailable = false;
+	
+	if (useKerning) {
+	     kerning = area.getFontState().getKerning();
+	     if (kerning != null && !kerning.isEmpty()) {
+		 kerningAvailable = true;
+	     }
+	}
+	
         String name = area.getFontState().getFontName();
         int size = area.getFontState().getFontSize();
 
         PDFColor theAreaColor = new PDFColor((double) area.getRed(),
-                                             (double) area.getGreen(), (double) area.getBlue());
+                                             (double) area.getGreen(), 
+					     (double) area.getBlue());
 
         if ((!name.equals(this.currentFontName)) ||
                 (size != this.currentFontSize)) {
@@ -638,11 +661,13 @@ public class PDFRenderer implements Renderer {
             pdf = pdf.append("/" + name + " " + (size / 1000) + " Tf\n");
         }
 
+
         if (!(theAreaColor.equals(this.currentFill))) {
 	    closeText();
 	    this.currentFill = theAreaColor;
 	    pdf.append(this.currentFill.getColorSpaceOut(true));
         }
+
 
         int rx = this.currentXPosition;
         int bl = this.currentYPosition;
@@ -671,8 +696,8 @@ public class PDFRenderer implements Renderer {
 
         if (area.getLineThrough()) {
             int yPos = bl + area.getFontState().getAscender() * 3/8;
-		    addLine(rx, yPos, rx + area.getContentWidth(),
-		            yPos, size/14, theAreaColor);
+            addLine(rx, yPos, rx + area.getContentWidth(),
+                    yPos, size/14, theAreaColor);
             prevLineThroughXEndPos = rx + area.getContentWidth();
             prevLineThroughYEndPos = yPos;
             prevLineThroughSize = size/14;
@@ -702,8 +727,13 @@ public class PDFRenderer implements Renderer {
 	else {
 	    // original text render code sets the text transformation matrix
 	    // for every word.
-	    pdf.append("1 0 0 1 " +(rx / 1000f) + " " + (bl / 1000f) +
-		       " Tm (");
+	    pdf.append("1 0 0 1 " +(rx / 1000f) + " " + (bl / 1000f) + " Tm ");
+	    if (kerningAvailable) {
+		pdf.append(" [(");
+	    }
+	    else {
+		pdf.append(" (");
+	    }
 	}
 	
         String s;
@@ -719,30 +749,38 @@ public class PDFRenderer implements Renderer {
         int l = s.length();
 
         for (int i = 0; i < l; i++) {
-            ch = s.charAt(i);
+            char ch = s.charAt(i);
+	    String prepend = "";
+	    
             if (ch > 127) {
 		pdf.append("\\");
                 pdf.append(Integer.toOctalString((int) ch));
             } else {
                 switch (ch) {
-                    case '(' :
-                        pdf.append("\\(");
-                        break;
-                    case ')' :
-                        pdf.append("\\)");
-                        break;
-                    case '\\' :
-                        pdf.append("\\\\");
-                        break;
-                    default :
-                        pdf.append(ch);
-                        break;
+		case '(':
+		case ')':
+		case '\\':
+		    prepend = "\\";
+		    break;
                 }
-            }
+		pdf.append(prepend+ch);
+	    }
+	    if (kerningAvailable && (i+1) < l) {
+		pdf.append(addKerning((new Character(ch)).toString(),
+				      (new Character(s.charAt(i+1))).toString(),
+				      kerning));
+	    }
+	    
         }
 	pdf.append(") ");
 	if (!OPTIMIZE_TEXT) {
-	    pdf.append("Tj\n");
+	    if (kerningAvailable) {
+		pdf.append("] TJ\n");
+	    }
+	    else {
+		pdf.append("Tj\n");
+	    }
+	    
 	}
 	
 
@@ -830,6 +868,22 @@ public class PDFRenderer implements Renderer {
         this.currentYPosition = ry - h;
         this.currentXPosition = rx;
     }
+
+
+   private StringBuffer addKerning(String ch1, String ch2, Hashtable kerning) {
+      Hashtable h2=(Hashtable)kerning.get(ch1);
+      int pwdt=0;
+      StringBuffer buf=new StringBuffer("");
+
+      if (h2!=null) {
+         Integer wdt=(Integer)h2.get(ch2);
+         if (wdt!=null) {
+            pwdt=-wdt.intValue();
+            buf=buf.append(") " + pwdt + " (");
+         }
+      }
+      return buf;
+   }
 
     /**
        * render page into PDF

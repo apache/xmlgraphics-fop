@@ -40,4 +40,34 @@ basedir: normally the base directory is the directory where the fo file is
   </entry>
 -->
 
+<!--
+************************************************************************
+  Use kerning, default is to noe use kerning, uncomment to use kerning
+************************************************************************
+-->
+
+  <entry>
+    <key>use-kerning</key>
+    <value>yes</value>
+  </entry>
+
+
+<!--
+************************************************************************
+   Font embedding, only the fonts mentioned here is embedded 
+   The value is the name of the font (the name is what is returned by
+   the font's fontName() method
+************************************************************************
+-->
+  <entry>
+    <key>embed-fonts</key>
+    <list>
+       <value>Perpetua</value>
+       <value>Perpetua,Bold</value>
+    </list>
+  </entry>
+
 </configuration>
+
+
+

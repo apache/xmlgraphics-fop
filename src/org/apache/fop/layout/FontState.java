@@ -118,6 +118,17 @@ public class FontState {
 		public int getXHeight() {
 	return metric.getXHeight(fontSize) / 1000;
 		}
+   public java.util.Hashtable getKerning() {
+      java.util.Hashtable ret=new java.util.Hashtable();
+      try {
+         FontMetric fm=fontInfo.getMetricsFor(fontFamily, fontStyle, fontWeight);
+         if (fm instanceof org.apache.fop.layout.FontDescriptor) {
+            org.apache.fop.layout.FontDescriptor fdes=(org.apache.fop.layout.FontDescriptor)fm;
+            ret=fdes.getKerningInfo();
+         }
+      } catch (Exception e) {}
+      return ret;
+   }
 
 		public int width(int charnum) {
 	// returns width of given character number in millipoints

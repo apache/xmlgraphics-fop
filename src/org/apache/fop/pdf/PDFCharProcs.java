@@ -50,58 +50,39 @@
  */
 package org.apache.fop.pdf;
 
+import java.util.Hashtable;
+
 /**
- * class representing a rectangle
+ * class representing a /CharProcs dictionary for Type3 fonts.
  *
- * Rectangles are specified on page 183 of the PDF 1.3 spec.
+ * <p><b>CAUTION: this is not yet fully implemented!!!!!!!</b>
+ * I miss an exemple of <i>how</i> to output this dictionary.
+ * </p>
+ *
+ * Type3 fonts are specified on page 206 and onwards of the PDF 1.3 spec.
  */
-public class PDFRectangle {
-	/** lower left x coordinate */
-	protected int llx;
-	/** lower left y coordinate */
-	protected int lly;
-	/** upper right x coordinate */
-	protected int urx;
-	/** upper right y coordinate */
-	protected int ury;
+public class PDFCharProcs extends PDFObject {
 
-	/**
-	 * create a rectangle giving the four separate values
-	 *
-	 * @param llx  lower left x coordinate
-	 * @param lly  lower left y coordinate
-	 * @param urx  upper right x coordinate
-	 * @param ury  upper right y coordinate
-	 */
-	public PDFRectangle(int llx, int lly, int urx, int ury) {
-		this.llx = llx;
-		this.lly = lly;
-		this.urx = urx;
-		this.ury = ury;
+	/** the (character name, drawing stream) pairs for a Type3 font */
+	protected Hashtable keys;
+
+	public PDFCharProcs() {
+		keys = new Hashtable();
 	}
 
 	/**
-	 * create a rectangle giving an array of four values
+	 * add a character definition in the dictionary
 	 *
-	 * @param array values in the order llx, lly, urx, ury
+	 * @param name the character name
+	 * @param stream the stream that draws the character
 	 */
-	public PDFRectangle(int[] array) {
-		this.llx = array[0];
-		this.lly = array[1];
-		this.urx = array[2];
-		this.ury = array[3];
+	public void addCharacter(String name, PDFStream stream) {
+		keys.put(name, stream);
 	}
 
-	/**
-	 * produce the PDF representation for the object
-	 *
-	 * @return the PDF
-	 */
-   public byte[] toPDF() {
-      return toPDFString().getBytes();
-   }
-   
-   public String toPDFString() {
-      return new String(" [" + llx + " " + lly + " " + urx + " " + ury + "] ");
-   }
+	/** not done yet */
+	public byte[] toPDF() {
+		//TODO: implement this org.apache.fop.pdf.PDFObject abstract method
+		return new byte[0];
+	}
 }

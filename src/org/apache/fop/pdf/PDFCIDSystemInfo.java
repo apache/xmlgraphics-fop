@@ -50,58 +50,43 @@
  */
 package org.apache.fop.pdf;
 
+// based on work by Takayuki Takeuchi
 /**
- * class representing a rectangle
+ * class representing system information for "character identifier" fonts.
  *
- * Rectangles are specified on page 183 of the PDF 1.3 spec.
+ * this small object is used in the CID fonts and in the CMaps.
  */
-public class PDFRectangle {
-	/** lower left x coordinate */
-	protected int llx;
-	/** lower left y coordinate */
-	protected int lly;
-	/** upper right x coordinate */
-	protected int urx;
-	/** upper right y coordinate */
-	protected int ury;
+public class PDFCIDSystemInfo extends PDFObject {
+	private static final StringBuffer p = new StringBuffer();
+	protected String registry;
+	protected String ordering;
+	protected int supplement;
 
-	/**
-	 * create a rectangle giving the four separate values
-	 *
-	 * @param llx  lower left x coordinate
-	 * @param lly  lower left y coordinate
-	 * @param urx  upper right x coordinate
-	 * @param ury  upper right y coordinate
-	 */
-	public PDFRectangle(int llx, int lly, int urx, int ury) {
-		this.llx = llx;
-		this.lly = lly;
-		this.urx = urx;
-		this.ury = ury;
+	public PDFCIDSystemInfo(String registry, String ordering, int supplement) {
+		this.registry = registry;
+		this.ordering = ordering;
+		this.supplement = supplement;
 	}
 
 	/**
-	 * create a rectangle giving an array of four values
+	 * produce the PDF representation for the object.
 	 *
-	 * @param array values in the order llx, lly, urx, ury
-	 */
-	public PDFRectangle(int[] array) {
-		this.llx = array[0];
-		this.lly = array[1];
-		this.urx = array[2];
-		this.ury = array[3];
-	}
-
-	/**
-	 * produce the PDF representation for the object
+	 * unlike the other objects, the CIDSystemInfo is written directly inside
+	 * the referencing object
 	 *
 	 * @return the PDF
 	 */
-   public byte[] toPDF() {
-      return toPDFString().getBytes();
-   }
-   
-   public String toPDFString() {
-      return new String(" [" + llx + " " + lly + " " + urx + " " + ury + "] ");
-   }
+	public byte[] toPDF() {
+		return toPDFString().getBytes();
+	}
+
+	public String toPDFString() {
+		p.setLength(0);
+		p.append("/CIDSystemInfo << /Registry ("); p.append(registry);
+		p.append(")/Ordering ("); p.append(ordering);
+		p.append(")/Supplement "); p.append(supplement);
+		p.append(" >>");
+		return p.toString();
+	}
 }
+

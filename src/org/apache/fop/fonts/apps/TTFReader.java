@@ -1,4 +1,4 @@
-/*-- $Id$ --
+/* -- $Id$ --
 
  ============================================================================
                    The Apache Software License, Version 1.1
@@ -59,21 +59,19 @@ import org.apache.fop.fonts.*;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Enumeration;
-
 /**
- * A tool which reads PFM files from Adobe Type 1 fonts and creates
+ * A tool which reads TTF files and generates
  * XML font metrics file for use in FOP.
  *
- * @author  jeremias.maerki@outline.ch
  */
-public class PFMReader {
+public class TTFReader {
 
-    static private final String XSL_POSTPROCESS = "FontPostProcess.xsl";
-    static private final String XSL_SORT        = "FontPostProcessSort.xsl";
+    static private final String XSL_POSTPROCESS = "TTFPostProcess.xsl";
+    static private final String XSL_SORT        = "TTFPostProcessSort.xsl";
 
     private boolean invokedStandalone = false;
 
-    public PFMReader() {
+    public TTFReader() {
     }
 
 
@@ -97,46 +95,47 @@ public class PFMReader {
             arguments.addElement(args[i]);
          }
       }
-      
+
       String[] argStrings=new String[arguments.size()];
       arguments.copyInto(argStrings);
       return argStrings;
    }
 
+
    private final static void displayUsage() {
-      System.out.println(" java org.apache.fop.fonts.apps.PFMReader [options] metricfile.pfm xmlfile.xml\n");
+      System.out.println(" java org.apache.fop.fonts.apps.TTFReader [options] fontfile.ttf xmlfile.xml\n");
       System.out.println(" where options can be:\n");
       System.out.println(" -fn <fontname>\n");
-      System.out.println("     default is to use the fontname in the .pfm file, but you can override\n");
+      System.out.println("     default is to use the fontname in the .ttf file, but you can override\n");
       System.out.println("     that name to make sure that the embedded font is used instead of installed\n");
       System.out.println("     fonts when viewing documents with Acrobat Reader.\n");
       System.out.println(" -cn <classname>\n");
       System.out.println("     default is to use the fontname\n");
-      System.out.println(" -ef <path to the Type1 .pfb fontfile>\n");
+      System.out.println(" -ef <path to the truetype fontfile>\n");
       System.out.println("     will add the possibility to embed the font. When running fop, fop will look\n");
       System.out.println("     for this file to embed it\n");
-      System.out.println(" -er <path to Type1 fontfile relative to org/apache/fop/render/pdf/fonts>\n");
+      System.out.println(" -er <path to truetype fontfile relative to org/apache/fop/render/pdf/fonts>\n");
       System.out.println("     you can also include the fontfile in the fop.jar file when building fop.\n");
       System.out.println("     You can use both -ef and -er. The file specified in -ef will be searched first,\n");
       System.out.println("     then the -er file.\n");
    }
       
-   
+      
     /**
      * The main method for the PFM reader tool.
      * 
-     * @param  args Command-line arguments: [options] metricfile.pfm xmlfile.xml
+     * @param  args Command-line arguments: [options] fontfile.ttf xmlfile.xml
      * where options can be:
      * -fn <fontname>
-     *     default is to use the fontname in the .pfm file, but you can override
+     *     default is to use the fontname in the .ttf file, but you can override
      *     that name to make sure that the embedded font is used instead of installed
      *     fonts when viewing documents with Acrobat Reader.
      * -cn <classname>
      *     default is to use the fontname
-     * -ef <path to the Type1 .pfb fontfile>
+     * -ef <path to the truetype fontfile>
      *     will add the possibility to embed the font. When running fop, fop will look
      *     for this file to embed it
-     * -er <path to Type1 fontfile relative to org/apache/fop/render/pdf/fonts>
+     * -er <path to truetype fontfile relative to org/apache/fop/render/pdf/fonts>
      *     you can also include the fontfile in the fop.jar file when building fop.
      *     You can use both -ef and -er. The file specified in -ef will be searched first,
      *     then the -er file.
@@ -150,10 +149,10 @@ public class PFMReader {
        Hashtable options=new Hashtable();
        String[] arguments=parseArguments(options, args);
        
-       PFMReader app = new PFMReader();
+       TTFReader app = new TTFReader();
        app.invokedStandalone = true;
        
-       System.out.println("PFM Reader v1.1");
+       System.out.println("TTF Reader v1.0");
        System.out.println();
 
        if (options.get("-ef") != null)
@@ -174,16 +173,16 @@ public class PFMReader {
            options.get("--help") != null)
           displayUsage();
        else {
-          PFMFile pfm = app.loadPFM(arguments[0]);
-          if (pfm != null) {
-             app.preview(pfm);
-
-             org.w3c.dom.Document doc = app.constructFontXML(pfm,
+          TTFFile ttf = app.loadTTF(arguments[0]);
+          if (ttf != null) {
+             app.preview(ttf);
+             
+             org.w3c.dom.Document doc = app.constructFontXML(ttf,
                                                              fontName,
                                                              className,
                                                              embResource,
                                                              embFile);
-
+             
              doc = app.postProcessXML(doc);
              if (doc != null) {
                 app.writeFontXML(doc, arguments[1]);
@@ -191,61 +190,66 @@ public class PFMReader {
           }
        }
     }
+   
+       /**
+        * Read a TTF file and returns it as an object.
+        *
+        * @param   filename The filename of the PFM file.
+        * @return  The PFM as an object.
+        */
+   public TTFFile loadTTF(String filename) {
+      TTFFile ttfFile=new TTFFile();
+      try {
+         System.out.println("Reading " + filename + "...");
+         System.out.println();
 
-    /**
-     * Read a PFM file and returns it as an object.
-     *
-     * @param   filename The filename of the PFM file.
-     * @return  The PFM as an object.
-     */
-    public PFMFile loadPFM(String filename) {
-        try {
-            System.out.println("Reading " + filename + "...");
-            System.out.println();
-            FileInputStream in = new FileInputStream(filename);
-            PFMFile pfm = new PFMFile();
-            pfm.load(in);
-            return pfm;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+         FontFileReader reader = new FontFileReader(filename);
+         ttfFile.readFont(reader);
+      } catch (Exception e) {
+         e.printStackTrace();
+         return null;
+      }
+      return ttfFile;
     }
 
     /**
-     * Displays a preview of the PFM file on the console.
+     * Displays a preview of the TTF file on the console.
      * 
-     * @param   pfm The PFM file to preview.
+     * @param   ttf The TTF file to preview.
      */
-    public void preview(PFMFile pfm) {
+    public void preview(TTFFile ttf) {
         PrintStream out = System.out;
 
         out.print("Font: ");
-        out.println(pfm.getWindowsName());
+        out.println(ttf.getWindowsName());
         out.print("Name: ");
-        out.println(pfm.getPostscriptName());
+        out.println(ttf.getPostscriptName());
         out.print("CharSet: ");
-        out.println(pfm.getCharSetName());
+        out.println(ttf.getCharSetName());
         out.print("CapHeight: ");
-        out.println(pfm.getCapHeight());
+        out.println(ttf.getCapHeight());
         out.print("XHeight: ");
-        out.println(pfm.getXHeight());
+        out.println(ttf.getXHeight());
         out.print("LowerCaseAscent: ");
-        out.println(pfm.getLowerCaseAscent());
+        out.println(ttf.getLowerCaseAscent());
         out.print("LowerCaseDescent: ");
-        out.println(pfm.getLowerCaseDescent());
+        out.println(ttf.getLowerCaseDescent());
         out.print("Having widths for ");
-        out.print(pfm.getLastChar()-pfm.getFirstChar());
+        out.print(ttf.getLastChar()-ttf.getFirstChar());
         out.print(" characters (");
-        out.print(pfm.getFirstChar());
+        out.print(ttf.getFirstChar());
         out.print("-");
-        out.print(pfm.getLastChar());
+        out.print(ttf.getLastChar());
         out.println(").");
         out.print("for example: Char ");
-        out.print(pfm.getFirstChar());
+        out.print(ttf.getFirstChar());
         out.print(" has a width of ");
-        out.println(pfm.getCharWidth(pfm.getFirstChar()));
+        out.println(ttf.getCharWidth(ttf.getFirstChar()));
         out.println();
+        if (ttf.isEmbeddable())
+           out.println("This font might be embedded");
+        else
+           out.println("This font might not be embedded");
     }
 
     /**
@@ -277,7 +281,7 @@ public class PFMReader {
      * @param   pfm The PFM file to generate the font metrics from.
      * @return  The DOM document representing the font metrics file.
      */
-    public org.w3c.dom.Document constructFontXML(PFMFile pfm, String fontName,
+    public org.w3c.dom.Document constructFontXML(TTFFile ttf, String fontName,
                                                  String className, String resource,
                                                  String file) {
         System.out.println("Creating xml font file...");
@@ -289,17 +293,26 @@ public class PFMReader {
 
         Element el = doc.createElement("font-name");
         root.appendChild(el);
-        el.appendChild(doc.createTextNode(pfm.getPostscriptName()));
 
-        String s = pfm.getPostscriptName();
+            // Note that the PostScript name usually is something like
+            // "Perpetua-Bold", but the TrueType spec says that in the ttf file
+            // it should be "Perpetua,Bold".
+
+        String s = ttf.getPostscriptName();
+
+        if (fontName != null)
+           el.appendChild(doc.createTextNode(fontName));
+        else
+           el.appendChild(doc.createTextNode(s.replace('-', ',')));
+
         int pos = s.indexOf("-");
         if (pos >= 0) {
-	    char sb[] = new char[s.length() - 1];
-	    s.getChars(0, pos, sb, 0);
-	    s.getChars(pos + 1, s.length(), sb, pos);
-            s = new String(sb);
+           char sb[] = new char[s.length() - 1];
+           s.getChars(0, pos, sb, 0);
+           s.getChars(pos + 1, s.length(), sb, pos);
+           s = new String(sb);
         }
-
+        
         el = doc.createElement("class-name");
         root.appendChild(el);
         if (className != null)
@@ -309,6 +322,7 @@ public class PFMReader {
 
         el = doc.createElement("embedFile");
         root.appendChild(el);
+            //if (file==null || !ttf.isEmbeddable())
         if (file==null)
            el.appendChild(doc.createTextNode("null"));
         else
@@ -316,42 +330,43 @@ public class PFMReader {
         
         el = doc.createElement("embedResource");
         root.appendChild(el);
+            //if (resource==null || !ttf.isEmbeddable())
         if (resource==null)
            el.appendChild(doc.createTextNode("null"));
         else
            el.appendChild(doc.createTextNode("\""+escapeString(resource)+"\""));
-        
+
         el = doc.createElement("subtype");
         root.appendChild(el);
-        el.appendChild(doc.createTextNode("Type1"));
+        el.appendChild(doc.createTextNode("TRUETYPE"));
 
         el = doc.createElement("encoding");
         root.appendChild(el);
-        el.appendChild(doc.createTextNode(pfm.getCharSetName()+"Encoding"));
+        el.appendChild(doc.createTextNode(ttf.getCharSetName()+"Encoding"));
 
         el = doc.createElement("cap-height");
         root.appendChild(el);
-        Integer value = new Integer(pfm.getCapHeight());
+        Integer value = new Integer(ttf.getCapHeight());
         el.appendChild(doc.createTextNode(value.toString()));
 
         el = doc.createElement("x-height");
         root.appendChild(el);
-        value = new Integer(pfm.getXHeight());
+        value = new Integer(ttf.getXHeight());
         el.appendChild(doc.createTextNode(value.toString()));
 
         el = doc.createElement("ascender");
         root.appendChild(el);
-        value = new Integer(pfm.getLowerCaseAscent());
+        value = new Integer(ttf.getLowerCaseAscent());
         el.appendChild(doc.createTextNode(value.toString()));
 
         el = doc.createElement("descender");
         root.appendChild(el);
-        value = new Integer(-pfm.getLowerCaseDescent());
+        value = new Integer(ttf.getLowerCaseDescent());
         el.appendChild(doc.createTextNode(value.toString()));
 
         Element bbox = doc.createElement("bbox");
         root.appendChild(bbox);
-        int[] bb = pfm.getFontBBox();
+        int[] bb = ttf.getFontBBox();
         String[] names = {"left","bottom","right","top"};
         for (int i=0; i<4; i++) {
             el = doc.createElement(names[i]);
@@ -362,49 +377,51 @@ public class PFMReader {
 
         el = doc.createElement("flags");
         root.appendChild(el);
-        value = new Integer(pfm.getFlags());
+        value = new Integer(ttf.getFlags());
         el.appendChild(doc.createTextNode(value.toString()));
 
         el = doc.createElement("stemv");
         root.appendChild(el);
-        value = new Integer(pfm.getStemV());
+        value = new Integer(ttf.getStemV());
         el.appendChild(doc.createTextNode(value.toString()));
 
         el = doc.createElement("italicangle");
         root.appendChild(el);
-        value = new Integer(pfm.getItalicAngle());
+        value = new Integer(ttf.getItalicAngle());
         el.appendChild(doc.createTextNode(value.toString()));
 
         el = doc.createElement("first-char");
         root.appendChild(el);
-        value = new Integer(pfm.getFirstChar());
+        value = new Integer(ttf.getFirstChar());
         el.appendChild(doc.createTextNode(value.toString()));
 
         el = doc.createElement("last-char");
         root.appendChild(el);
-        value = new Integer(pfm.getLastChar());
+        value = new Integer(ttf.getLastChar());
         el.appendChild(doc.createTextNode(value.toString()));
 
         Element widths = doc.createElement("widths");
         root.appendChild(widths);
 
-        for (short i = pfm.getFirstChar(); i < pfm.getLastChar(); i++) {
+        for (short i = ttf.getFirstChar(); i < ttf.getLastChar(); i++) {
             el = doc.createElement("char");
             widths.appendChild(el);
-            el.setAttribute("ansichar", "0x00" + Integer.toHexString(i).toUpperCase());
-            el.setAttribute("width", new Integer(pfm.getCharWidth(i)).toString());
+                //el.setAttribute("ansichar", "0x00" + Integer.toHexString(i).toUpperCase());
+            el.setAttribute("name", "0x00" +
+                            Integer.toHexString(i).toUpperCase());
+            el.setAttribute("width",
+                            new Integer(ttf.getCharWidth(i)).toString());
         }
 
-
             // Get kerning
-        for (Enumeration enum=pfm.getKerning().keys(); enum.hasMoreElements();) {
+        for (Enumeration enum=ttf.getKerning().keys(); enum.hasMoreElements();) {
            String kpx1=(String)enum.nextElement();
            el=doc.createElement("kerning");
            el.setAttribute("kpx1", kpx1);
            root.appendChild(el);
            Element el2=null;
            
-           Hashtable h2=(Hashtable)pfm.getKerning().get(kpx1);
+           Hashtable h2=(Hashtable)ttf.getKerning().get(kpx1);
            for (Enumeration enum2=h2.keys(); enum2.hasMoreElements(); ) {
               String kpx2=(String)enum2.nextElement();
               el2=doc.createElement("pair");
@@ -425,7 +442,9 @@ public class PFMReader {
      * @return  A DOM document representing the processed font metrics file.
      */
     public org.w3c.dom.Document postProcessXML(org.w3c.dom.Document doc) {
- try {
+       if (true)
+          return doc;
+        try {
             OutputFormat format = new OutputFormat(doc);     //Serialize DOM
             XMLSerializer serial = new XMLSerializer(System.out, format);
             serial.asDOMSerializer();                        // As a DOM Serializer
@@ -469,7 +488,6 @@ public class PFMReader {
         }
     }
 
-   
    private String escapeString(String str) {
       StringBuffer esc=new StringBuffer();
       
@@ -483,3 +501,4 @@ public class PFMReader {
       return esc.toString();
    }
 }
+

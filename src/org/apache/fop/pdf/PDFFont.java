@@ -146,9 +146,9 @@ public class PDFFont extends PDFObject {
             /*
             case TYPE3 :
                 return new PDFFontType3(number, fontname, subtype, basefont, encoding);
+            */
             case TRUETYPE :
                 return new PDFFontTrueType(number, fontname, subtype, basefont, encoding);
-            */
         }
         return null;    // should not happend
     }
@@ -184,13 +184,13 @@ public class PDFFont extends PDFObject {
                 return font;
             case TYPE3 :
                 return null;    // should not happend
-            /*
+
             case TRUETYPE :
-                font = new PDFFontTrueType(number, fontname, subtype, basefont, encoding);
-                font.setWidthMetrics(firstChar, lastChar, widths);
-                font.setDescriptor(descriptor);
-                return font;
-            */
+               font = new PDFFontTrueType(number, fontname, subtype, basefont, encoding);
+               font.setWidthMetrics(firstChar, lastChar, widths);
+               font.setDescriptor(descriptor);
+               return font;
+
         }
         return null;    // should not happend
     }
