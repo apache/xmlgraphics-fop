@@ -1,5 +1,5 @@
 #!/bin/sh
-# This should be executable.
+# This file should be executable.
 echo
 echo "Fop Build System"
 echo "----------------"
