@@ -68,13 +68,12 @@ public class PDFFormXObject extends PDFXObject {
      * create a FormXObject with the given number and name and load the
      * image in the object
      *
-     * @param number the pdf object number
      * @param xnumber the pdf object X number
      * @param cont the pdf stream contents
      * @param ref the resource PDF reference
      */
-    public PDFFormXObject(int number, int xnumber, PDFStream cont, String ref) {
-        super(number, xnumber, null);
+    public PDFFormXObject(int xnumber, PDFStream cont, String ref) {
+        super(xnumber, null);
         contents = cont;
         resRef = ref;
     }
@@ -91,36 +90,50 @@ public class PDFFormXObject extends PDFXObject {
     protected int output(OutputStream stream) throws IOException {
         int length = 0;
 
-        String dictEntries = contents.applyFilters();
+        String dictEntries = getFilterList().buildFilterDictEntries();
 
-        String p = this.number + " " + this.generation + " obj\n";
-        p = p + "<</Type /XObject\n";
-        p = p + "/Subtype /Form\n";
-        p = p + "/FormType 1\n";
-        p = p + "/BBox [0 0 1000 1000]\n";
-        p = p + "/Matrix [1 0 0 1 0 0]\n";
-        p = p + "/Resources " + resRef + "\n";
-        p = p + "/Length " + (contents.getDataLength() + 1) + "\n";
+        final StreamCache encodedStream = encodeStream();        
 
-        p = p + dictEntries;
-        p = p + ">>\n";
+        StringBuffer sb = new StringBuffer(128);
+        sb.append(getObjectID());
+        sb.append("<</Type /XObject\n");
+        sb.append("/Subtype /Form\n");
+        sb.append("/FormType 1\n");
+        sb.append("/BBox [0 0 1000 1000]\n");
+        sb.append("/Matrix [1 0 0 1 0 0]\n");
+        sb.append("/Resources " + resRef + "\n");
+        sb.append("/Length " + (encodedStream.getSize() + 1) + "\n");
+
+        sb.append(dictEntries);
+        sb.append(">>\n");
 
         // push the pdf dictionary on the writer
-        byte[] pdfBytes = p.getBytes();
+        byte[] pdfBytes = encode(sb.toString());
         stream.write(pdfBytes);
         length += pdfBytes.length;
-        // push all the image data on the writer
-        // and takes care of length for trailer
-        length += contents.outputStreamData(stream);
 
-        pdfBytes = ("endobj\n").getBytes();
+        //Send encoded stream to target OutputStream
+        length += outputStreamData(encodedStream, stream);
+        encodedStream.clear(); //Encoded stream can now be discarded
+
+        pdfBytes = encode("endobj\n");
         stream.write(pdfBytes);
         length += pdfBytes.length;
+        
         // let it gc
         // this object is retained as a reference to inserting
         // the same image but the image data is no longer needed
         contents = null;
         return length;
     }
+    
+    /**
+     * @see org.apache.fop.pdf.PDFStream#outputRawStreamData(OutputStream)
+     */
+    protected void outputRawStreamData(OutputStream out) throws IOException {
+        contents.outputRawStreamData(out);
+    }
+
+    
 }
 

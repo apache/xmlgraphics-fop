@@ -67,7 +67,8 @@ import java.io.OutputStream;
  * This is used as a reference for inserting the same image in the
  * document in another place.
  */
-public class PDFXObject extends PDFObject {
+public class PDFXObject extends AbstractPDFStream {
+    
     private PDFImage pdfimage;
     private int xnum;
 
@@ -75,12 +76,11 @@ public class PDFXObject extends PDFObject {
      * create an XObject with the given number and name and load the
      * image in the object
      *
-     * @param number the pdf object number
      * @param xnumber the pdf object X number
      * @param img the pdf image that contains the image data
      */
-    public PDFXObject(int number, int xnumber, PDFImage img) {
-        super(number);
+    public PDFXObject(int xnumber, PDFImage img) {
+        super();
         this.xnum = xnumber;
         pdfimage = img;
     }
@@ -103,73 +103,8 @@ public class PDFXObject extends PDFObject {
      * @return the length of the data written
      */
     protected int output(OutputStream stream) throws IOException {
-        int length = 0;
-        int i = 0;
-
-        if (pdfimage.isPS()) {
-            length = outputEPSImage(stream);
-        } else {
-
-            PDFStream imgStream = pdfimage.getDataStream();
-
-            String dictEntries = imgStream.applyFilters();
-
-            String p = this.number + " " + this.generation + " obj\n";
-            p = p + "<</Type /XObject\n";
-            p = p + "/Subtype /Image\n";
-            p = p + "/Name /Im" + xnum + "\n";
-            p = p + "/Length " + (imgStream.getDataLength() + 1) + "\n";
-            p = p + "/Width " + pdfimage.getWidth() + "\n";
-            p = p + "/Height " + pdfimage.getHeight() + "\n";
-            p = p + "/BitsPerComponent " + pdfimage.getBitsPerPixel()
-                  + "\n";
-
-            PDFICCStream pdfICCStream = pdfimage.getICCStream();
-            if (pdfICCStream != null) {
-                p = p + "/ColorSpace [/ICCBased "
-                    + pdfICCStream.referencePDF() + "]\n";
-            } else {
-                PDFColorSpace cs = pdfimage.getColorSpace();
-                p = p + "/ColorSpace /" + cs.getColorSpacePDFString()
-                      + "\n";
-            }
-
-            /* PhotoShop generates CMYK values that's inverse,
-               this will invert the values - too bad if it's not
-               a PhotoShop image...
-             */
-            if (pdfimage.getColorSpace().getColorSpace()
-                    == PDFColorSpace.DEVICE_CMYK) {
-                p = p + "/Decode [ 1.0 0.0 1.0 0.0 1.0 0.0 1.1 0.0 ]\n";
-            }
-
-            if (pdfimage.isTransparent()) {
-                PDFColor transp = pdfimage.getTransparentColor();
-                p = p + "/Mask [" + transp.red255() + " "
-                    + transp.red255() + " " + transp.green255()
-                    + " " + transp.green255() + " "
-                    + transp.blue255() + " " + transp.blue255() + "]\n";
-            }
-            String ref = pdfimage.getSoftMask();
-            if (ref != null) {
-                p = p + "/SMask " + ref + "\n";
-            }
-
-            p = p + dictEntries;
-            p = p + ">>\n";
-
-            // push the pdf dictionary on the writer
-            byte[] pdfBytes = p.getBytes();
-            stream.write(pdfBytes);
-            length += pdfBytes.length;
-            // push all the image data on the writer
-            // and takes care of length for trailer
-            length += imgStream.outputStreamData(stream);
-
-            pdfBytes = ("endobj\n").getBytes();
-            stream.write(pdfBytes);
-            length += pdfBytes.length;
-        }
+        int length = super.output(stream);
+        
         // let it gc
         // this object is retained as a reference to inserting
         // the same image but the image data is no longer needed
@@ -177,37 +112,118 @@ public class PDFXObject extends PDFObject {
         return length;
     }
 
-    byte[] toPDF() {
-        return null;
+    /**
+     * @see org.apache.fop.pdf.AbstractPDFStream#buildStreamDict(String)
+     */
+    protected String buildStreamDict(String lengthEntry) {
+        String dictEntries = getFilterList().buildFilterDictEntries();
+        if (pdfimage.isPS()) {
+            return buildDictionaryFromPS(lengthEntry, dictEntries);
+        } else {
+            return buildDictionaryFromImage(lengthEntry, dictEntries);
+        }
+    }
+    
+    private String buildDictionaryFromPS(String lengthEntry, 
+                                         String dictEntries) {
+        StringBuffer sb = new StringBuffer(128);
+        sb.append(getObjectID());
+        sb.append("<</Type /XObject\n");
+        sb.append("/Subtype /PS\n");
+        sb.append("/Length " + lengthEntry);
+
+        sb.append(dictEntries);
+        sb.append("\n>>\n");
+        return sb.toString();
     }
 
-    private int outputEPSImage(OutputStream stream) throws IOException {
-        int length = 0;
-        int i = 0;
+    private String buildDictionaryFromImage(String lengthEntry,
+                                            String dictEntries) {
+        StringBuffer sb = new StringBuffer(128);
+        sb.append(getObjectID());
+        sb.append("<</Type /XObject\n");
+        sb.append("/Subtype /Image\n");
+        sb.append("/Name /Im" + xnum + "\n");
+        sb.append("/Length " + lengthEntry + "\n");
+        sb.append("/Width " + pdfimage.getWidth() + "\n");
+        sb.append("/Height " + pdfimage.getHeight() + "\n");
+        sb.append("/BitsPerComponent " + pdfimage.getBitsPerPixel() + "\n");
 
-        PDFStream imgStream = pdfimage.getDataStream();
-        String dictEntries = imgStream.applyFilters();
+        PDFICCStream pdfICCStream = pdfimage.getICCStream();
+        if (pdfICCStream != null) {
+            sb.append("/ColorSpace [/ICCBased "
+                + pdfICCStream.referencePDF() + "]\n");
+        } else {
+            PDFColorSpace cs = pdfimage.getColorSpace();
+            sb.append("/ColorSpace /" + cs.getColorSpacePDFString()
+                  + "\n");
+        }
 
-        String p = this.number + " " + this.generation + " obj\n";
-        p = p + "<</Type /XObject\n";
-        p = p + "/Subtype /PS\n";
-        p = p + "/Length " + (imgStream.getDataLength() + 1);
+        /* PhotoShop generates CMYK values that's inverse,
+           this will invert the values - too bad if it's not
+           a PhotoShop image...
+         */
+        if (pdfimage.getColorSpace().getColorSpace()
+                == PDFColorSpace.DEVICE_CMYK) {
+            sb.append("/Decode [ 1.0 0.0 1.0 0.0 1.0 0.0 1.1 0.0 ]\n");
+        }
 
-        p = p + dictEntries;
-        p = p + ">>\n";
+        if (pdfimage.isTransparent()) {
+            PDFColor transp = pdfimage.getTransparentColor();
+            sb.append("/Mask [" 
+                + transp.red255() + " "
+                + transp.red255() + " " 
+                + transp.green255() + " " 
+                + transp.green255() + " "
+                + transp.blue255() + " " 
+                + transp.blue255() + "]\n");
+        }
+        String ref = pdfimage.getSoftMask();
+        if (ref != null) {
+            sb.append("/SMask " + ref + "\n");
+        }
 
-        // push the pdf dictionary on the writer
-        byte[] pdfBytes = p.getBytes();
-        stream.write(pdfBytes);
-        length += pdfBytes.length;
-        // push all the image data on  the writer and takes care of length for trailer
-        length += imgStream.outputStreamData(stream);
-
-        pdfBytes = ("endobj\n").getBytes();
-        stream.write(pdfBytes);
-        length += pdfBytes.length;
-
-        return length;
+        sb.append(dictEntries);
+        sb.append("\n>>\n");
+        return sb.toString();
     }
+    
+    /**
+     * @see org.apache.fop.pdf.PDFStream#outputRawStreamData(OutputStream)
+     */
+    protected void outputRawStreamData(OutputStream out) throws IOException {
+        pdfimage.outputContents(out);
+    }
+
+    /**
+     * @see org.apache.fop.pdf.AbstractPDFStream#getSizeHint()
+     */
+    protected int getSizeHint() throws IOException {
+        return 0;
+    }
+
+    /**
+     * @see org.apache.fop.pdf.AbstractPDFStream#prepareImplicitFilters()
+     */
+    protected void prepareImplicitFilters() {
+        if (pdfimage.isDCT()) {
+            getFilterList().ensureDCTFilterInPlace();
+        }
+    }
+    
+    /**
+     * This sets up the default filters for XObjects. It uses the PDFImage
+     * instance to determine what default filters to apply.
+     * @see org.apache.fop.pdf.AbstractPDFStream#setupFilterList()
+     */
+    protected void setupFilterList() {
+        if (!getFilterList().isInitialized()) {
+            getFilterList().addDefaultFilters(
+                getDocumentSafely().getFilterMap(), 
+                pdfimage.getFilterHint());
+        }
+        super.setupFilterList();
+    }
+    
 
 }
