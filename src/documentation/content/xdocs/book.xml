@@ -11,6 +11,7 @@
         <menu label="About">
           <menu-item label="Index" href="index.html"/>
           <menu-item label="News" href="news.html"/>
+          <menu-item label="Logo contest" href="logocontest.html"/>
           <menu-item label="FAQs" href="faq.html"/>
           <menu-item label="Download" href="download.html"/>
           <menu-item label="Release Notes" href="relnotes.html"/>
