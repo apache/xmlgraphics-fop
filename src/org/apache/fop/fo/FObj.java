@@ -153,7 +153,7 @@ public class FObj extends FONode {
                     id = str;
                     idrefs.add(id);
                 } else {
-                    log.warn("duplicate id:" + str + " ignored");
+                    getLogger().warn("duplicate id:" + str + " ignored");
                 }
             }
         }
@@ -348,7 +348,7 @@ public class FObj extends FONode {
         if (!markers.containsKey(mcname) && children.isEmpty()) {
             markers.put(mcname, marker);
         } else {
-            log.error("fo:marker must be an initial child," + "and 'marker-class-name' must be unique for same parent");
+            getLogger().error("fo:marker must be an initial child," + "and 'marker-class-name' must be unique for same parent");
             throw new FOPException(
               "fo:marker must be an initial child," + "and 'marker-class-name' must be unique for same parent");
         }

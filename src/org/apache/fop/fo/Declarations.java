@@ -45,11 +45,11 @@ public class Declarations extends FObj {
                     }
                     if(colorProfiles.get(cp.getProfileName()) != null) {
                         // duplicate names
-                        log.warn("Duplicate fo:color-profile profile name : " + cp.getProfileName());
+                        getLogger().warn("Duplicate fo:color-profile profile name : " + cp.getProfileName());
                     }
                     colorProfiles.put(cp.getProfileName(), cp);
                 } else {
-                    log.warn("color-profile-name required for color profile");
+                    getLogger().warn("color-profile-name required for color profile");
                 }
             } else if(node instanceof XMLObj) {
                 if(external == null) {
@@ -57,7 +57,7 @@ public class Declarations extends FObj {
                 }
                 external.add(node);
             } else {
-                log.warn("invalid element " + node.getName() + "inside declarations");
+                getLogger().warn("invalid element " + node.getName() + "inside declarations");
             }
         }
         children = null;

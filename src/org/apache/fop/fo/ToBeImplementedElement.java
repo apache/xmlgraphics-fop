@@ -22,7 +22,7 @@ public class ToBeImplementedElement extends FObj {
     }
 
     public void setup() {
-        log.debug("This element \"" + this.name
+        getLogger().debug("This element \"" + this.name
                              + "\" is not yet implemented.");
     }
 

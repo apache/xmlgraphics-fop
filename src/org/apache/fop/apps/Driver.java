@@ -22,6 +22,8 @@ import org.apache.fop.render.pdf.PDFRenderer;
 // Avalon
 import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.avalon.framework.logger.Logger;
+import org.apache.avalon.framework.logger.LogEnabled;
+import org.apache.avalon.framework.logger.AbstractLogEnabled;
 
 // DOM
 import org.w3c.dom.Document;
@@ -52,6 +54,7 @@ import java.util.*;
  * <PRE>
  * Driver driver = new Driver(new InputSource (args[0]),
  * new FileOutputStream(args[1]));
+ * driver.enableLogging(myLogger); //optional
  * driver.setRenderer(RENDER_PDF);
  * driver.run();
  * </PRE>
@@ -81,11 +84,12 @@ import java.util.*;
  *
  * <PRE>
  * Driver driver = new Driver();
+ * driver.enableLogging(myLogger); //optional
  * driver.setRenderer(new org.apache.fop.render.awt.AWTRenderer(translator));
  * driver.render(parser, fileInputSource(args[0]));
  * </PRE>
  */
-public class Driver {
+public class Driver implements LogEnabled {
 
     /**
      * Render to PDF. OutputStream must be set
@@ -144,7 +148,7 @@ public class Driver {
 
     /**
      * the structure handler
-     */ 
+     */
     private StructureHandler structHandler;
 
     /**
@@ -170,11 +174,11 @@ public class Driver {
     /**
      * the system resources that FOP will use
      */
-    private Logger log;
+    private Logger log = null;
     private FOUserAgent userAgent = null;
 
     public static final String getParserClassName() {
-        try { 
+        try {
             return javax.xml.parsers.SAXParserFactory.newInstance().newSAXParser().getXMLReader().getClass().getName();
         } catch (javax.xml.parsers.ParserConfigurationException e) {
             return null;
@@ -198,7 +202,7 @@ public class Driver {
 
     public void initialize() {
         _stream = null;
-        _treeBuilder = new FOTreeBuilder(); 
+        _treeBuilder = new FOTreeBuilder();
         _treeBuilder.setUserAgent(getUserAgent());
         setupDefaultMappings();
     }
@@ -210,24 +214,29 @@ public class Driver {
     private FOUserAgent getUserAgent() {
         if(userAgent == null) {
             userAgent = new FOUserAgent();
-            userAgent.setLogger(getLogger());
+            userAgent.enableLogging(getLogger());
             String base = org.apache.fop.configuration.Configuration.getStringValue("baseDir");
             userAgent.setBaseURL(base);
         }
         return userAgent;
     }
 
-    public void setLogger(Logger logger) {
-        log = logger;
+    public void enableLogging(Logger log) {
+        if (this.log == null) {
+            this.log = log;
+        } else {
+            getLogger().warn("Logger is already set! Won't use the new logger.");
+        }
     }
 
-    private Logger getLogger() {
-        if(log == null) {
-	    log = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
-	    log.error("Logger not set");
-	}
 
-        return log;
+    protected Logger getLogger() {
+        if(this.log == null) {
+            this.log = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
+            this.log.error("Logger not set. Using ConsoleLogger as default.");
+        }
+
+        return this.log;
     }
 
     /**
@@ -321,42 +330,40 @@ public class Driver {
     public void setRenderer(int renderer) throws IllegalArgumentException {
         switch (renderer) {
         case RENDER_PDF:
-            setRenderer(new org.apache.fop.render.pdf.PDFRenderer());
+            setRenderer("org.apache.fop.render.pdf.PDFRenderer");
             break;
         case RENDER_AWT:
             throw new IllegalArgumentException("Use renderer form of setRenderer() for AWT");
         case RENDER_PRINT:
             throw new IllegalArgumentException("Use renderer form of setRenderer() for PRINT");
         case RENDER_PCL:
-            setRenderer(new org.apache.fop.render.pcl.PCLRenderer());
+            setRenderer("org.apache.fop.render.pcl.PCLRenderer");
             break;
         case RENDER_PS:
-            setRenderer(new org.apache.fop.render.ps.PSRenderer());
+            setRenderer("org.apache.fop.render.ps.PSRenderer");
             break;
         case RENDER_TXT:
-            setRenderer(new org.apache.fop.render.txt.TXTRenderer());
+            setRenderer("org.apache.fop.render.txt.TXTRenderer()");
             break;
         case RENDER_MIF:
             //structHandler = new org.apache.fop.mif.MIFHandler(_stream);
             break;
         case RENDER_XML:
-            setRenderer(new org.apache.fop.render.xml.XMLRenderer());
+            setRenderer("org.apache.fop.render.xml.XMLRenderer");
             break;
         case RENDER_SVG:
-            setRenderer(new org.apache.fop.render.svg.SVGRenderer());
+            setRenderer("org.apache.fop.render.svg.SVGRenderer");
             break;
         default:
             throw new IllegalArgumentException("Unknown renderer type");
         }
-
     }
 
     /**
-     * Set the Renderer to use
-     * @param renderer the renderer instance to use
+     * Set the Renderer to use.
+     * @param renderer the renderer instance to use (Note: Logger must be set at this point)
      */
     public void setRenderer(Renderer renderer) {
-        renderer.setLogger(getLogger());
         renderer.setUserAgent(getUserAgent());
         _renderer = renderer;
     }
@@ -387,6 +394,9 @@ public class Driver {
         try {
             _renderer =
                 (Renderer)Class.forName(rendererClassName).newInstance();
+            if (_renderer instanceof LogEnabled) {
+                ((LogEnabled)_renderer).enableLogging(getLogger());
+            }
             _renderer.setProducer(Version.getVersion());
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Could not find "
@@ -457,8 +467,8 @@ public class Driver {
         } else {
             structHandler = new org.apache.fop.mif.MIFHandler(_stream);
         }
-        structHandler.setLogger(getLogger());
-        _treeBuilder.setLogger(getLogger());
+        structHandler.enableLogging(getLogger());
+
         _treeBuilder.setUserAgent(getUserAgent());
         _treeBuilder.setStructHandler(structHandler);
 
@@ -511,19 +521,18 @@ public class Driver {
      */
     public void dumpError(Exception e) {
         if (_errorDump) {
-            Logger log = getLogger();
             if (e instanceof SAXException) {
-                log.error("", e);
+                getLogger().error("", e);
                 if (((SAXException)e).getException() != null) {
-                    log.error("", ((SAXException)e).getException());
+                    getLogger().error("", ((SAXException)e).getException());
                 }
             } else if (e instanceof FOPException) {
                 e.printStackTrace();
                 if (((FOPException)e).getException() != null) {
-                    log.error("", ((FOPException)e).getException());
+                    getLogger().error("", ((FOPException)e).getException());
                 }
             } else {
-                log.error("", e);
+                getLogger().error("", e);
             }
         }
     }
@@ -575,7 +584,7 @@ class Service {
         }
         String serviceFile = "META-INF/services/" + cls.getName();
 
-        // System.out.println("File: " + serviceFile);
+        // getLogger().debug("File: " + serviceFile);
 
         Vector v = (Vector)providerMap.get(serviceFile);
         if (v != null)
@@ -594,7 +603,7 @@ class Service {
         while (e.hasMoreElements()) {
             try {
                 java.net.URL u = (java.net.URL)e.nextElement();
-                // System.out.println("URL: " + u);
+                //getLogger().debug("URL: " + u);
 
                 InputStream is = u.openStream();
                 Reader r = new InputStreamReader(is, "UTF-8");
@@ -616,7 +625,7 @@ class Service {
                             line = br.readLine();
                             continue;
                         }
-                        // System.out.println("Line: " + line);
+                        // getLogger().debug("Line: " + line);
 
                         // Try and load the class
                         // Object obj = cl.loadClass(line).newInstance();

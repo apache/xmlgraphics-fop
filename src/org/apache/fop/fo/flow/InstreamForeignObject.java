@@ -157,7 +157,7 @@ public class InstreamForeignObject extends FObj {
                 }
             } else {*/
             cheight = len.mvalue();
-        } 
+        }
 
         Point2D csize = new Point2D.Float(cwidth == -1 ? -1 : cwidth / 1000f, cheight == -1 ? -1 : cheight / 1000f);
         Point2D size = child.getDimension(csize);
@@ -197,7 +197,7 @@ public class InstreamForeignObject extends FObj {
             if(overflow == Overflow.HIDDEN) {
                 clip = true;
             } else if(overflow == Overflow.ERROR_IF_OVERFLOW) {
-                log.error("Instream foreign object overflows the viewport");
+                getLogger().error("Instream foreign object overflows the viewport");
                 clip = true;
             }
         }
@@ -262,7 +262,7 @@ public class InstreamForeignObject extends FObj {
 
             // Common Accessibility Properties
             AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
-        
+
             // Common Aural Properties
             AuralProps mAurProps = propMgr.getAuralProps();
 
@@ -285,7 +285,7 @@ public class InstreamForeignObject extends FObj {
             // this.properties.get("content-width");
             // this.properties.get("display-align");
             // this.properties.get("dominant-baseline");
-            // this.properties.get("height");  
+            // this.properties.get("height");
             setupID();
             // this.properties.get("inline-progression-dimension");
             // this.properties.get("keep-with-next");

@@ -289,7 +289,7 @@ public class PSRenderer extends AbstractRenderer {
     */
     public void startRenderer(OutputStream outputStream)
     throws IOException {
-        log.debug("rendering areas to PostScript");
+        getLogger().debug("rendering areas to PostScript");
 
         this.out = new PSStream(outputStream);
         write("%!PS-Adobe-3.0");
@@ -307,7 +307,7 @@ public class PSRenderer extends AbstractRenderer {
         /* Write proc for including EPS */
         write("%%BeginResource: procset EPSprocs");
         write("%%Title: EPS encapsulation procs");
-        
+
         write("/BeginEPSF { %def");
         write("/b4_Inc_state save def         % Save state for cleanup");
         write("/dict_count countdictstack def % Count objects on dict stack");
@@ -324,14 +324,14 @@ public class PSRenderer extends AbstractRenderer {
         write("} if");
         write("} if");
         write("} bind def");
-        
+
         write("/EndEPSF { %def");
         write("count op_count sub {pop} repeat            % Clean up stacks");
         write("countdictstack dict_count sub {end} repeat");
         write("b4_Inc_state restore");
         write("} bind def");
         write("%%EndResource");
-        
+
         write("%%EndSetup");
         write("FOPFonts begin");
     }

@@ -8,7 +8,7 @@
 package org.apache.fop.apps;
 
 // Avalon
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.avalon.framework.logger.AbstractLogEnabled;
 
 // SAX
 import org.xml.sax.XMLReader;
@@ -23,18 +23,13 @@ import java.net.URL;
  * Creates a SAX Parser (defaulting to Xerces).
  *
  */
-public abstract class Starter {
+public abstract class Starter extends AbstractLogEnabled {
 
     Options options;
     InputHandler inputHandler;
-    protected Logger log;
 
     public Starter() throws FOPException {
         options = new Options();
-    }
-
-    public void setLogger(Logger logger) {
-        log = logger;
     }
 
     public void setInputHandler(InputHandler inputHandler) {

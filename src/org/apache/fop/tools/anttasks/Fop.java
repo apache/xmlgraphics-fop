@@ -177,6 +177,7 @@ public class Fop extends Task {
     public void execute() throws BuildException {
         try {
             Starter starter = new FOPTaskStarter(this);
+            starter.enableLogging(new ConsoleLogger(ConsoleLogger.LEVEL_INFO));
             starter.run();
         } catch (FOPException ex) {
             throw new BuildException(ex);
@@ -188,12 +189,9 @@ public class Fop extends Task {
 
 class FOPTaskStarter extends Starter {
     Fop task;
-    Logger log;
 
     FOPTaskStarter(Fop task) throws FOPException {
         this.task = task;
-
-	log = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
     }
 
     private int determineRenderer(String format) {
@@ -219,7 +217,7 @@ class FOPTaskStarter extends Starter {
             return Driver.RENDER_XML;
         } else {
             String err = "Couldn't determine renderer to use: "+format;
-            log.error(err);
+            getLogger().error(err);
             throw new BuildException(err);
         }
     }
@@ -240,7 +238,7 @@ class FOPTaskStarter extends Starter {
                 return ".xml";
             default:
                 String err = "Unknown renderer: "+renderer;
-                log.error(err);
+                getLogger().error(err);
                 throw new BuildException(err);
         }
     }
@@ -267,7 +265,7 @@ class FOPTaskStarter extends Starter {
                                   toExternalForm());
             }
         } catch (Exception e) {
-            log.error("Error setting base directory",e);
+            getLogger().error("Error setting base directory", e);
         }
 
         task.log("Using base directory: " +
@@ -337,7 +335,7 @@ class FOPTaskStarter extends Starter {
         try {
             out = new FileOutputStream(outFile);
         } catch (Exception ex) {
-            log.error("Failed to open " + outFile);
+            getLogger().error("Failed to open " + outFile);
             throw new BuildException(ex);
         }
 
@@ -345,18 +343,18 @@ class FOPTaskStarter extends Starter {
 
         try {
             Driver driver = new Driver(inputHandler.getInputSource(), out);
-            driver.setLogger(log);
+            setupLogger(driver);
             driver.setRenderer(renderer);
-	    if (renderer == Driver.RENDER_XML) {
-		HashMap rendererOptions = new HashMap();
-		rendererOptions.put("fineDetail", new Boolean(true));
-		driver.getRenderer().setOptions(rendererOptions);
-	    }
+        if (renderer == Driver.RENDER_XML) {
+        HashMap rendererOptions = new HashMap();
+        rendererOptions.put("fineDetail", new Boolean(true));
+        driver.getRenderer().setOptions(rendererOptions);
+        }
             driver.setXMLReader(parser);
             driver.run();
             out.close();
         } catch (Exception ex) {
-            log.error("Couldn't render file: " + ex.getMessage());
+            getLogger().error("Couldn't render file: " + ex.getMessage());
             throw new BuildException(ex);
         }
     }

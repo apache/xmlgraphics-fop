@@ -159,7 +159,7 @@ public class XMLRenderer extends AbstractRenderer {
      */
     public void startRenderer(OutputStream outputStream)
     throws IOException {
-        log.debug("rendering areas to XML");
+        getLogger().debug("rendering areas to XML");
         this.writer = new PrintWriter(outputStream);
         this.writer.write( "<?xml version=\"1.0\"?>\n<!-- produced by " +
                            this.producer + " -->\n");
@@ -172,7 +172,7 @@ public class XMLRenderer extends AbstractRenderer {
         writeEndTag("</pageSequence>");
         writeEndTag("</areaTree>");
         this.writer.flush();
-        log.debug("written out XML");
+        getLogger().debug("written out XML");
     }
 
     public void renderPage(PageViewport page) throws IOException,
@@ -346,7 +346,7 @@ public class XMLRenderer extends AbstractRenderer {
             prop = " props=\"" + getPropString(map) + "\"";
         }
         writeElement("<word wsadjust=\"" + word.getWSadjust() + "\"" +
-		     prop + ">" + word.getWord() + "</word>");
+             prop + ">" + word.getWord() + "</word>");
         super.renderWord(word);
     }
 
@@ -358,7 +358,7 @@ public class XMLRenderer extends AbstractRenderer {
         }
         writeStartTag("<inlineparent" + prop + ">");
         super.renderInlineParent(ip);
-	writeEndTag("</inlineparent>");
+    writeEndTag("</inlineparent>");
     }
 
     public void renderLeader(Leader area) {
@@ -389,15 +389,15 @@ public class XMLRenderer extends AbstractRenderer {
 
     protected String getPropString(Map traitMap) {
         StringBuffer strbuf = new StringBuffer();
-	Iterator iter = traitMap.entrySet().iterator();
-	while (iter.hasNext()) {
+    Iterator iter = traitMap.entrySet().iterator();
+    while (iter.hasNext()) {
             Map.Entry traitEntry = (Map.Entry) iter.next();
-	    strbuf.append(Trait.getTraitName(traitEntry.getKey()));
-	    strbuf.append(':');
-	    strbuf.append(traitEntry.getValue().toString());
-	    strbuf.append(';');
-	}
-	return strbuf.toString();
+        strbuf.append(Trait.getTraitName(traitEntry.getKey()));
+        strbuf.append(':');
+        strbuf.append(traitEntry.getValue().toString());
+        strbuf.append(';');
+    }
+    return strbuf.toString();
     }
 
 }

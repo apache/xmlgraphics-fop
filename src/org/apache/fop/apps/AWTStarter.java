@@ -94,7 +94,7 @@ public class AWTStarter extends CommandLineStarter {
 
     public void run() throws FOPException {
         Driver driver = new Driver();
-        driver.setLogger(log);
+        setupLogger(driver);
         if (errorDump) {
             driver.setErrorDump(true);
         }
@@ -160,7 +160,7 @@ public class AWTStarter extends CommandLineStarter {
             URL url = getClass().getResource(path);
             in = url.openStream();
         } catch (Exception ex) {
-            log.error("Can't find URL to: <" + path + "> "
+            getLogger().error("Can't find URL to: <" + path + "> "
                                  + ex.getMessage(), ex);
         }
         return new SecureResourceBundle(in);

@@ -408,7 +408,7 @@ public class CommandLineOptions {
         default:
             starter = new CommandLineStarter(this);
         }
-        starter.setLogger(log);
+        starter.enableLogging(log);
         return starter;
     }
 

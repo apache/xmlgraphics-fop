@@ -15,7 +15,7 @@ import org.apache.fop.area.inline.Character;
 import org.apache.fop.fo.FOUserAgent;
 
 // Avalon
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.avalon.framework.logger.AbstractLogEnabled;
 
 // Java
 import java.awt.geom.Rectangle2D;
@@ -32,8 +32,7 @@ import java.util.Iterator;
  * viewports. This keeps track of the current block and inline
  * position.
  */
-public abstract class AbstractRenderer implements Renderer {
-    protected Logger log;
+public abstract class AbstractRenderer extends AbstractLogEnabled implements Renderer {
     protected FOUserAgent userAgent;
     protected HashMap options;
 
@@ -44,10 +43,6 @@ public abstract class AbstractRenderer implements Renderer {
     protected int currentIPPosition = 0;
 
     protected int currentBlockIPPosition = 0;
-
-    public void setLogger(Logger logger) {
-        log = logger;
-    }
 
     public void setUserAgent(FOUserAgent agent) {
         userAgent = agent;
@@ -133,21 +128,21 @@ public abstract class AbstractRenderer implements Renderer {
     protected void renderRegionViewport(RegionViewport port) {
         if (port != null) {
             Rectangle2D view = port.getViewArea();
-	    // The CTM will transform coordinates relative to
-	    // this region-reference area into page coords, so
-	    // set origin for the region to 0,0.
+        // The CTM will transform coordinates relative to
+        // this region-reference area into page coords, so
+        // set origin for the region to 0,0.
             currentBPPosition = 0; // (int) (view.getY() / 1000);
             currentIPPosition = 0; // (int) (view.getX() / 1000);
             currentBlockIPPosition = currentIPPosition;
 
             RegionReference region = port.getRegion();
-	    startVParea(region.getCTM());
+        startVParea(region.getCTM());
             if (region.getRegionClass() == RegionReference.BODY) {
                 renderBodyRegion((BodyRegion) region);
             } else {
                 renderRegion(region);
             }
-	    endVParea();
+        endVParea();
         }
     }
 
@@ -310,8 +305,8 @@ public abstract class AbstractRenderer implements Renderer {
 
     public void renderInlineParent(InlineParent ip) {
         // currentBlockIPPosition += ip.getWidth();
-	Iterator iter = ip.getChildAreas().iterator();
-	while (iter.hasNext()) {
+    Iterator iter = ip.getChildAreas().iterator();
+    while (iter.hasNext()) {
             ((InlineArea)iter.next()).render(this);
         }
     }

@@ -22,7 +22,7 @@ import org.apache.fop.layout.FontMetric;
 import org.apache.fop.fo.FOUserAgent;
 
 import org.apache.avalon.framework.logger.ConsoleLogger;
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.avalon.framework.logger.AbstractLogEnabled;
 
 import java.io.*;
 import java.util.*;
@@ -49,13 +49,13 @@ import org.apache.batik.dom.util.DOMUtilities;
  * Tests: different renderers, saving and loading pages with serialization
  * out of order rendering
  */
-public class AreaTreeBuilder {
-    private Logger log = new ConsoleLogger(ConsoleLogger.LEVEL_DEBUG);
+public class AreaTreeBuilder extends AbstractLogEnabled {
 
     /**
      */
     public static void main(String[] args) {
         AreaTreeBuilder atb = new AreaTreeBuilder();
+        atb.enableLogging(new ConsoleLogger(ConsoleLogger.LEVEL_DEBUG));
 
         atb.runTests(args[0], args[1], args[2]);
         System.exit(0);
@@ -65,9 +65,9 @@ public class AreaTreeBuilder {
      *
      */
     protected void runTests(String in, String type, String out) {
-        log.debug("Starting tests");
+        getLogger().debug("Starting tests");
         runTest(in, type, out);
-        log.debug("Finished");
+        getLogger().debug("Finished");
     }
 
     /**
@@ -81,9 +81,12 @@ public class AreaTreeBuilder {
         } else if ("svg".equals(type)) {
             rend = new SVGRenderer();
         }
+        setupLogger(rend);
         FontInfo fi = new FontInfo();
         rend.setupFontInfo(fi);
-        rend.setUserAgent(new FOUserAgent());
+        FOUserAgent ua = new FOUserAgent();
+        setupLogger(ua);
+        rend.setUserAgent(ua);
 
         AreaTree.StorePagesModel sm = AreaTree.createStorePagesModel();
         TreeLoader tl = new TreeLoader(fi);
@@ -94,7 +97,7 @@ public class AreaTreeBuilder {
             tl.buildAreaTree(is);
             renderAreaTree(sm, rend, out);
         } catch (IOException e) {
-            log.error("error reading file" + e.getMessage(), e);
+            getLogger().error("error reading file" + e.getMessage(), e);
         }
     }
 
@@ -104,7 +107,6 @@ public class AreaTreeBuilder {
             OutputStream os =
               new BufferedOutputStream(new FileOutputStream(out));
 
-            rend.setLogger(log);
             rend.startRenderer(os);
 
             int count = 0;
@@ -124,7 +126,7 @@ public class AreaTreeBuilder {
                     page.savePage(tempstream);
                     tempstream.close();
                     File temp = new File("temp.ser");
-                    log.debug("page serialized to: " + temp.length());
+                    getLogger().debug("page serialized to: " + temp.length());
                     temp = null;
                     ObjectInputStream in = new ObjectInputStream(
                                              new BufferedInputStream(
@@ -140,7 +142,7 @@ public class AreaTreeBuilder {
             rend.stopRenderer();
             os.close();
         } catch (Exception e) {
-            log.error("error rendering output", e);
+            getLogger().error("error rendering output", e);
         }
     }
 
@@ -410,7 +412,7 @@ class TreeLoader {
             Node obj = childs.item(i);
             if (obj.getNodeName().equals("block")) {
                 Block block = new Block();
-		addTraits((Element)obj, block);
+        addTraits((Element)obj, block);
                 addBlockChildren(block, (Element) obj);
                 list.add(block);
             }
@@ -436,7 +438,7 @@ class TreeLoader {
                     // error
                 }
                 LineArea line = new LineArea();
-		addTraits((Element) obj, line);
+        addTraits((Element) obj, line);
                 String height = ((Element) obj).getAttribute("height");
                 int h = Integer.parseInt(height);
                 line.setHeight(h);
@@ -549,7 +551,7 @@ class TreeLoader {
         for (int i = 0; i < childs.getLength(); i++) {
             Node obj = childs.item(i);
             if (obj instanceof Element) {
-                //System.out.println(obj.getNodeName());
+                //getLogger().debug(obj.getNodeName());
                 Element rootEle = (Element) obj;
                 String space = rootEle.getAttribute("xmlns");
                 if (svgNS.equals(space)) {
@@ -649,15 +651,15 @@ class TreeLoader {
             String tok = st.nextToken();
             int index = tok.indexOf(":");
             String id = tok.substring(0, index);
-	    Object traitCode = Trait.getTraitCode(id);
-	    if (traitCode != null) {
-		area.addTrait(traitCode,
-			      Trait.makeTraitValue(traitCode,
-						   tok.substring(index + 1)));
-	    }
-	    else {
-		System.err.println("Unknown trait: " + id );
-	    }
+        Object traitCode = Trait.getTraitCode(id);
+        if (traitCode != null) {
+        area.addTrait(traitCode,
+                  Trait.makeTraitValue(traitCode,
+                           tok.substring(index + 1)));
+        }
+        else {
+        System.err.println("Unknown trait: " + id );
+        }
         }
     }
 

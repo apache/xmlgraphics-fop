@@ -65,9 +65,9 @@ public class ColorProfile extends FObj {
             ICC_Profile iccProfile = ICC_Profile.getInstance(is);
             colorSpace = new ICC_ColorSpace(iccProfile);
         } catch(IOException ioe) {
-            log.error("Could not read Color Profile src", ioe);
+            getLogger().error("Could not read Color Profile src", ioe);
         } catch(IllegalArgumentException iae) {
-            log.error("Color Profile src not an ICC Profile", iae);
+            getLogger().error("Color Profile src not an ICC Profile", iae);
         }
     }
 }

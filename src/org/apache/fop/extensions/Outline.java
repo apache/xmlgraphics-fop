@@ -31,11 +31,11 @@ public class Outline extends ExtensionObj {
         externalDestination =
             attlist.getValue("external-destination");
         if (externalDestination != null &&!externalDestination.equals("")) {
-            log.warn("fox:outline external-destination not supported currently.");
+            getLogger().warn("fox:outline external-destination not supported currently.");
         }
 
         if (internalDestination == null || internalDestination.equals("")) {
-            log.warn("fox:outline requires an internal-destination.");
+            getLogger().warn("fox:outline requires an internal-destination.");
         }
 
     }

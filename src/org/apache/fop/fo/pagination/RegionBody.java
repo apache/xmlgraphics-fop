@@ -34,20 +34,20 @@ public class RegionBody extends Region {
 
     protected Rectangle getViewportRectangle (FODimension reldims)
     {
-	/*
-	 * Use space-before and space-after which will use corresponding
-	 * absolute margin properties if specified. For indents:
-	 * try to get corresponding absolute margin property using the
-	 * writing-mode on the page (not on the region-body!). If that's not
-	 * set but indent is explicitly set, it will return that.
-	 */
+    /*
+     * Use space-before and space-after which will use corresponding
+     * absolute margin properties if specified. For indents:
+     * try to get corresponding absolute margin property using the
+     * writing-mode on the page (not on the region-body!). If that's not
+     * set but indent is explicitly set, it will return that.
+     */
         MarginProps mProps = propMgr.getMarginProps();
-	int start = getRelMargin(PropertyList.START, "start-indent");
-	return new Rectangle( start, mProps.spaceBefore,
-			      reldims.ipd - start -
-			      getRelMargin(PropertyList.END, "end-indent"),
-			      reldims.bpd - mProps.spaceBefore -
-			      mProps.spaceAfter);
+    int start = getRelMargin(PropertyList.START, "start-indent");
+    return new Rectangle( start, mProps.spaceBefore,
+                  reldims.ipd - start -
+                  getRelMargin(PropertyList.END, "end-indent"),
+                  reldims.bpd - mProps.spaceBefore -
+                  mProps.spaceAfter);
     }
 
     /**
@@ -55,18 +55,18 @@ public class RegionBody extends Region {
      * writing mode.
      */
     private int getRelMargin(int reldir, String sRelPropName) {
-	FObj parent = (FObj) getParent();
-	String sPropName = "margin-" +
-	    parent.properties.wmRelToAbs(reldir);
-	Property prop = properties.getExplicitBaseProp(sPropName);
-	if (prop == null) {
-	   prop = properties.getExplicitBaseProp(sRelPropName);
-	}
-	return ((prop != null)? prop.getLength().mvalue() : 0);
+    FObj parent = (FObj) getParent();
+    String sPropName = "margin-" +
+        parent.properties.wmRelToAbs(reldir);
+    Property prop = properties.getExplicitBaseProp(sPropName);
+    if (prop == null) {
+       prop = properties.getExplicitBaseProp(sRelPropName);
+    }
+    return ((prop != null)? prop.getLength().mvalue() : 0);
     }
 
     protected void setRegionTraits(RegionReference r, Rectangle2D absRegVPRect) {
-	super.setRegionTraits(r, absRegVPRect);
+    super.setRegionTraits(r, absRegVPRect);
 
 //         r.setBackgroundColor(backgroundColor);
     }
@@ -88,24 +88,24 @@ public class RegionBody extends Region {
      * Override the inherited method.
      */
     public RegionReference makeRegionReferenceArea(Rectangle2D absRegVPRect) {
-	// Should set some column stuff here I think, or put it elsewhere
-	BodyRegion body = new BodyRegion();
-	setRegionTraits(body, absRegVPRect);
+    // Should set some column stuff here I think, or put it elsewhere
+    BodyRegion body = new BodyRegion();
+    setRegionTraits(body, absRegVPRect);
         int columnCount=
             this.properties.get("column-count").getNumber().intValue();
         if ((columnCount > 1) && (overflow == Overflow.SCROLL)) {
             // recover by setting 'column-count' to 1. This is allowed but
             // not required by the spec.
-            log.error("Setting 'column-count' to 1 because "
+            getLogger().error("Setting 'column-count' to 1 because "
                                    + "'overflow' is set to 'scroll'");
             columnCount = 1;
         }
-	body.setColumnCount(columnCount);
+    body.setColumnCount(columnCount);
 
         int columnGap =
              this.properties.get("column-gap").getLength().mvalue();
-	body.setColumnGap(columnGap);
-	return body;
+    body.setColumnGap(columnGap);
+    return body;
     }
 
 }

@@ -36,7 +36,7 @@ public class FObjMixed extends FObj {
 
     public void addLayoutManager(List lms) {
          lms.add(new InlineStackingBPLayoutManager(this,
-			         new LMiter(children.listIterator())));
+                     new LMiter(children.listIterator())));
       // set start and end properties for this element, id, etc.
 //         int numChildren = this.children.size();
 //         for (int i = 0; i < numChildren; i++) {
@@ -50,14 +50,14 @@ public class FObjMixed extends FObj {
 
     protected void addCharacters(char data[], int start, int length) {
         if(textInfo == null) {
-	    // Really only need one of these, but need to get fontInfo
-	    // stored in propMgr for later use.
-	    propMgr.setFontInfo(fontInfo);
-	    textInfo = propMgr.getTextLayoutProps(fontInfo);
+        // Really only need one of these, but need to get fontInfo
+        // stored in propMgr for later use.
+        propMgr.setFontInfo(fontInfo);
+        textInfo = propMgr.getTextLayoutProps(fontInfo);
         }
 
         FOText ft = new FOText(data, start, length, textInfo);
-        ft.setLogger(log);
+        ft.setUserAgent(userAgent);
         ft.setStructHandler(structHandler);
         addChild(ft);
     }

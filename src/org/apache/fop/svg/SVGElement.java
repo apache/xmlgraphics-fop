@@ -76,7 +76,7 @@ public class SVGElement extends SVGObj {
                 ((SVGOMDocument)doc).setURLObject(new URL(baseDir));
             }
         } catch (Exception e) {
-            log.error("Could not set base URL for svg", e);
+            getLogger().error("Could not set base URL for svg", e);
         }
 
         Element e = ((SVGDocument)doc).getRootElement();
@@ -142,7 +142,7 @@ public class SVGElement extends SVGObj {
         str = svgRoot.getAttributeNS(null, SVGConstants.SVG_WIDTH_ATTRIBUTE);
         if (str.length() == 0) str = "100%";
         float width = UnitProcessor.svgHorizontalLengthToUserSpace
-            (str, SVGConstants.SVG_WIDTH_ATTRIBUTE, ctx); 
+            (str, SVGConstants.SVG_WIDTH_ATTRIBUTE, ctx);
 
         str = svgRoot.getAttributeNS(null, SVGConstants.SVG_HEIGHT_ATTRIBUTE);
         if (str.length() == 0) str = "100%";
@@ -163,7 +163,7 @@ public class SVGElement extends SVGObj {
         protected int fontSize;
         float pixeltoMM;
 
-        public PDFUnitContext(int size, Element e, float ptmm) { 
+        public PDFUnitContext(int size, Element e, float ptmm) {
             this.e  = e;
             this.fontSize = size;
         }
