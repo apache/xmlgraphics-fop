@@ -20,8 +20,7 @@ package org.apache.fop.layoutmgr.table;
 
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentBase;
-import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.PropertyManager;
+import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.properties.TableColLength;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManager;
@@ -35,8 +34,6 @@ import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.traits.MinOptMax;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonBackground;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -51,12 +48,11 @@ import java.util.List;
  * the render background.
  */
 public class TableLayoutManager extends BlockStackingLayoutManager {
+    private Table fobj;
+    
     private List columns = null;
     private Body tableHeader = null;
     private Body tableFooter = null;
-
-    private CommonBorderAndPadding borderProps = null;
-    private CommonBackground backgroundProps;
 
     private Block curBlockArea;
 
@@ -76,17 +72,9 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
      * Create a new table layout manager.
      *
      */
-    public TableLayoutManager(FObj node) {
+    public TableLayoutManager(Table node) {
         super(node);
-    }
-
-    /**
-     * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
-     */
-    protected void initProperties() {
-        PropertyManager pm = fobj.getPropertyManager();
-        borderProps = pm.getBorderAndPadding();
-        backgroundProps = pm.getBackgroundProps();
+        fobj = node;
     }
 
     /**
@@ -284,7 +272,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
-        addID();
+        addID(fobj.getId());
 
         // add column, body then row areas
 
@@ -332,12 +320,8 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
 
         curBlockArea.setBPD(tableHeight);
 
-        if (borderProps != null) {
-            TraitSetter.addBorders(curBlockArea, borderProps);
-        }
-        if (backgroundProps != null) {
-            TraitSetter.addBackground(curBlockArea, backgroundProps);
-        }
+        TraitSetter.addBorders(curBlockArea, fobj.getCommonBorderPaddingBackground());
+        TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
 
         flush();
 

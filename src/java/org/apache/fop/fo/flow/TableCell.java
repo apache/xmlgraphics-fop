@@ -38,7 +38,6 @@ import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.LengthPairProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.layoutmgr.table.Cell;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
 
 /**
  * Class modelling the fo:table-cell object.
@@ -193,7 +192,7 @@ public class TableCell extends FObj {
      * Calculate cell border and padding, including offset of content
      * rectangle from the theoretical grid position.
      */
-    private void calcBorders(CommonBorderAndPadding bp) {
+    private void calcBorders(CommonBorderPaddingBackground bp) {
         if (this.borderCollapse == BorderCollapse.SEPARATE) {
             /*
              * Easy case.

@@ -21,7 +21,6 @@ package org.apache.fop.layoutmgr.list;
 import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
-import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafPosition;
@@ -33,8 +32,6 @@ import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.traits.MinOptMax;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonBackground;
 
 import java.util.Iterator;
 import java.util.ArrayList;
@@ -52,8 +49,6 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
 
     private List cellList = null;
     private int listItemHeight;
-    private CommonBorderAndPadding borderProps = null;
-    private CommonBackground backgroundProps;
 
     private class ItemPosition extends LeafPosition {
         protected List cellBreaks;
@@ -71,15 +66,6 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         super(node);
         setLabel(node.getLabel());
         setBody(node.getBody());
-    }
-
-    /**
-     * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
-     */
-    protected void initProperties() {
-        PropertyManager pm = fobj.getPropertyManager();
-        borderProps = pm.getBorderAndPadding();
-        backgroundProps = pm.getBackgroundProps();
     }
 
     /**

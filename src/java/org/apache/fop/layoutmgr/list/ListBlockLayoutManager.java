@@ -18,8 +18,7 @@
  
 package org.apache.fop.layoutmgr.list;
 
-import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.PropertyManager;
+import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafPosition;
@@ -32,8 +31,6 @@ import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.traits.MinOptMax;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonBackground;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,9 +41,8 @@ import java.util.List;
  * the list block area..
  */
 public class ListBlockLayoutManager extends BlockStackingLayoutManager {
-    private CommonBorderAndPadding borderProps = null;
-    private CommonBackground backgroundProps;
-
+    private ListBlock fobj;
+    
     private Block curBlockArea;
 
     private List bodyBreaks = new ArrayList();
@@ -63,17 +59,9 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
      * Create a new table layout manager.
      *
      */
-    public ListBlockLayoutManager(FObj node) {
+    public ListBlockLayoutManager(ListBlock node) {
         super(node);
-    }
-
-    /**
-     * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
-     */
-    protected void initProperties() {
-        PropertyManager pm = fobj.getPropertyManager();
-        borderProps = pm.getBorderAndPadding();
-        backgroundProps = pm.getBackgroundProps();
+        fobj = node;
     }
 
     /**
@@ -178,12 +166,8 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
             }
         }
 
-        if (borderProps != null) {
-            TraitSetter.addBorders(curBlockArea, borderProps);
-        }
-        if (backgroundProps != null) {
-            TraitSetter.addBackground(curBlockArea, backgroundProps);
-        }
+        TraitSetter.addBorders(curBlockArea, fobj.getCommonBorderPaddingBackground());
+        TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
 
         flush();
 

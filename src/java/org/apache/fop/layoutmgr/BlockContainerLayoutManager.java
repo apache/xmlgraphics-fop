@@ -24,11 +24,8 @@ import java.awt.geom.Rectangle2D;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.Block;
-import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.PropertyManager;
+import org.apache.fop.fo.flow.BlockContainer;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.area.CTM;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.Length;
@@ -39,20 +36,17 @@ import org.apache.fop.traits.MinOptMax;
  * LayoutManager for a block FO.
  */
 public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
-
+    private BlockContainer fobj;
+    
     private BlockViewport viewportBlockArea;
     private Block curBlockArea;
 
     private List childBreaks = new java.util.ArrayList();
 
     private CommonAbsolutePosition abProps;
-    private CommonBorderAndPadding borderProps;
-    private CommonMarginBlock marginProps;
     private FODimension relDims;
     private CTM absoluteCTM;
     private boolean clip = false;
-    private int overflow;
-    private PropertyManager propManager;
     private Length width;
     private Length height;
 
@@ -62,41 +56,31 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
     /**
      * Create a new block container layout manager.
      */
-    public BlockContainerLayoutManager(FObj node) {
+    public BlockContainerLayoutManager(BlockContainer node) {
         super(node);
+        fobj = node;
     }
 
     /**
      * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
      */
     protected void initProperties() {
-        propManager = fobj.getPropertyManager();
-
-        abProps = propManager.getAbsolutePositionProps();
+        abProps = fobj.getCommonAbsolutePosition();
         if (abProps.absolutePosition == AbsolutePosition.ABSOLUTE) {
-            Rectangle2D rect = new Rectangle2D.Double(abProps.left,
-                                abProps.top, abProps.right - abProps.left,
-                                abProps.bottom - abProps.top);
+            Rectangle2D rect = new Rectangle2D.Double(abProps.left.getValue(),
+                                abProps.top.getValue(), abProps.right.getValue() - abProps.left.getValue(),
+                                abProps.bottom.getValue() - abProps.top.getValue());
             relDims = new FODimension(0, 0);
-            absoluteCTM = CTM.getCTMandRelDims(propManager.getAbsRefOrient(),
-                propManager.getWritingMode(), rect, relDims);
+            absoluteCTM = CTM.getCTMandRelDims(fobj.getReferenceOrientation(),
+                fobj.getWritingMode(), rect, relDims);
         }
-        
-        marginProps = propManager.getMarginProps();
-        borderProps = propManager.getBorderAndPadding();
-        height = fobj.getPropertyList().get(
-            PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange().getOptimum().getLength();
-        width = fobj.getPropertyList().get(
-            PR_INLINE_PROGRESSION_DIMENSION).getLengthRange().getOptimum().getLength();
-    }
-
-    public void setOverflow(int of) {
-        overflow = of;
+ 
+        height = fobj.getBlockProgressionDimension().getOptimum().getLength();
+        width = fobj.getInlineProgressionDimension().getOptimum().getLength();
     }
 
     protected int getRotatedIPD() {
-        return fobj.getPropLength(PR_INLINE_PROGRESSION_DIMENSION 
-            | CP_OPTIMUM);
+        return fobj.getInlineProgressionDimension().getOptimum().getLength().getValue();
     }
 
     public BreakPoss getNextBreakPoss(LayoutContext context) {
@@ -115,8 +99,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         }
         Rectangle2D rect = new Rectangle2D.Double(0, 0, ipd, bpd);
         relDims = new FODimension(0, 0);
-        absoluteCTM = CTM.getCTMandRelDims(propManager.getAbsRefOrient(),
-                propManager.getWritingMode(), rect, relDims);
+        absoluteCTM = CTM.getCTMandRelDims(fobj.getReferenceOrientation(),
+                fobj.getWritingMode(), rect, relDims);
         double[] vals = absoluteCTM.toArray();
 
         MinOptMax stackLimit;
@@ -241,9 +225,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         breakPoss.setStackingSize(new MinOptMax(0));
 
         if (stackSize.opt > relDims.bpd) {
-            if (overflow == Overflow.HIDDEN) {
+            if (fobj.getOverflow() == Overflow.HIDDEN) {
                 clip = true;
-            } else if (overflow == Overflow.ERROR_IF_OVERFLOW) {
+            } else if (fobj.getOverflow() == Overflow.ERROR_IF_OVERFLOW) {
                 log.error("contents overflows block-container viewport: clipping");
                 clip = true;
             }
@@ -256,7 +240,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                          LayoutContext layoutContext) {
         getParentArea(null);
 
-        addID();
+        addID(fobj.getId());
         addMarkers(true, true);
 
         LayoutManager childLM;
@@ -292,16 +276,14 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
     public Area getParentArea(Area childArea) {
         if (curBlockArea == null) {
             viewportBlockArea = new BlockViewport();
-            TraitSetter.addBorders(viewportBlockArea,
-                                   propManager.getBorderAndPadding());
-            TraitSetter.addBackground(viewportBlockArea,
-                                      propManager.getBackgroundProps());
+            TraitSetter.addBorders(viewportBlockArea, fobj.getCommonBorderPaddingBackground());
+            TraitSetter.addBackground(viewportBlockArea, fobj.getCommonBorderPaddingBackground());
             
             if (abProps.absolutePosition == AbsolutePosition.ABSOLUTE) {
-                viewportBlockArea.setXOffset(abProps.left);
-                viewportBlockArea.setYOffset(abProps.top);
-                viewportBlockArea.setIPD(abProps.right - abProps.left);
-                viewportBlockArea.setBPD(abProps.bottom - abProps.top);
+                viewportBlockArea.setXOffset(abProps.left.getValue());
+                viewportBlockArea.setYOffset(abProps.top.getValue());
+                viewportBlockArea.setIPD(abProps.right.getValue() - abProps.left.getValue());
+                viewportBlockArea.setBPD(abProps.bottom.getValue() - abProps.top.getValue());
 
                 viewportBlockArea.setCTM(absoluteCTM);
                 viewportBlockArea.setClip(clip);

@@ -19,8 +19,6 @@
 package org.apache.fop.layoutmgr.table;
 
 import org.apache.fop.datatypes.Length;
-import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.layoutmgr.AbstractLayoutManager;
 import org.apache.fop.layoutmgr.BreakPoss;
 import org.apache.fop.layoutmgr.LayoutContext;
@@ -29,8 +27,6 @@ import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.fo.flow.TableColumn;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonBackground;
 
 /**
  * LayoutManager for a table-column FO.
@@ -39,23 +35,15 @@ import org.apache.fop.fo.properties.CommonBackground;
  * column properties.
  */
 public class Column extends AbstractLayoutManager {
-    private CommonBorderAndPadding borderProps = null;
-    private CommonBackground backgroundProps;
+    private TableColumn fobj;
+    
 
     /**
      * Create a new column layout manager.
      */
-    public Column(FObj node) {
+    public Column(TableColumn node) {
          super(node);
-    }
-
-    /**
-     * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
-     */
-    protected void initProperties() {
-        PropertyManager pm = fobj.getPropertyManager();
-        borderProps = pm.getBorderAndPadding();
-        backgroundProps = pm.getBackgroundProps();
+         fobj = node;
     }
 
     /**
@@ -99,7 +87,7 @@ public class Column extends AbstractLayoutManager {
      * @return the width of the column
      */
     public Length getWidth() {
-        return ((TableColumn)fobj).getColumnWidth();
+        return fobj.getColumnWidth();
     }
 
     /**
@@ -112,9 +100,7 @@ public class Column extends AbstractLayoutManager {
     public Area createColumnArea() {
         Area curBlockArea = new Block();
 
-        if (backgroundProps != null) {
-            TraitSetter.addBackground(curBlockArea, backgroundProps);
-        }
+        TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
         return curBlockArea;
     }
 }

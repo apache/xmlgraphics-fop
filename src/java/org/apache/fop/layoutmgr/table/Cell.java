@@ -18,8 +18,7 @@
  
 package org.apache.fop.layoutmgr.table;
 
-import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.PropertyManager;
+import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafPosition;
@@ -32,8 +31,6 @@ import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.traits.MinOptMax;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonBackground;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,10 +40,8 @@ import java.util.List;
  * A cell contains blocks. These blocks fill the cell.
  */
 public class Cell extends BlockStackingLayoutManager {
-
-    private CommonBorderAndPadding borderProps = null;
-    private CommonBackground backgroundProps;
-
+    private TableCell fobj;
+    
     private Block curBlockArea;
 
     private List childBreaks = new ArrayList();
@@ -59,17 +54,15 @@ public class Cell extends BlockStackingLayoutManager {
     /**
      * Create a new Cell layout manager.
      */
-    public Cell(FObj node) {
+    public Cell(TableCell node) {
         super(node);
+        fobj = node;
     }
 
     /**
      * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
      */
     protected void initProperties() {
-        PropertyManager pm = fobj.getPropertyManager();
-        borderProps = pm.getBorderAndPadding();
-        backgroundProps = pm.getBackgroundProps();
     }
 
     /**
@@ -187,7 +180,7 @@ public class Cell extends BlockStackingLayoutManager {
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
-        addID();
+        addID(fobj.getId());
 
         LayoutManager childLM;
         int iStartPos = 0;
@@ -204,13 +197,9 @@ public class Cell extends BlockStackingLayoutManager {
             }
         }
 
-        if (borderProps != null) {
-            TraitSetter.addBorders(curBlockArea, borderProps);
-        }
-        if (backgroundProps != null) {
-            TraitSetter.addBackground(curBlockArea, backgroundProps);
-        }
-
+        TraitSetter.addBorders(curBlockArea, fobj.getCommonBorderPaddingBackground());
+        TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
+        
         curBlockArea.setBPD(height);
 
         flush();

@@ -50,8 +50,6 @@ import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.pagination.Title;
-import org.apache.fop.fo.properties.CommonBackground;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 
 import java.util.ArrayList;
@@ -846,10 +844,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
      */
     private void setRegionViewportTraits(Region r, RegionViewport rv) {
         // Common Border, Padding, and Background Properties
-        CommonBorderAndPadding bap = r.getPropertyManager().getBorderAndPadding();
-        CommonBackground bProps = r.getPropertyManager().getBackgroundProps();
-        TraitSetter.addBorders(rv, bap);
-        TraitSetter.addBackground(rv, bProps);
+        TraitSetter.addBorders(rv, r.getCommonBorderPaddingBackground());
+        TraitSetter.addBackground(rv, r.getCommonBorderPaddingBackground());
     }
 
     private RegionReference makeRegionBodyReferenceArea(Region r,

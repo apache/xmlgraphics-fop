@@ -18,8 +18,7 @@
  
 package org.apache.fop.layoutmgr.table;
 
-import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.PropertyManager;
+import org.apache.fop.fo.flow.TableBody;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LeafPosition;
@@ -32,8 +31,6 @@ import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.traits.MinOptMax;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonBackground;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,9 +41,8 @@ import java.util.List;
  * Cells are organised into rows.
  */
 public class Body extends BlockStackingLayoutManager {
-    private CommonBorderAndPadding borderProps = null;
-    private CommonBackground backgroundProps;
-
+    private TableBody fobj;
+    
     private boolean rows = true;
     private List columns;
 
@@ -60,17 +56,9 @@ public class Body extends BlockStackingLayoutManager {
     /**
      * Create a new body layout manager.
      */
-    public Body(FObj node) {
+    public Body(TableBody node) {
         super(node);
-    }
-
-    /**
-     * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
-     */
-    protected void initProperties() {
-        PropertyManager pm = fobj.getPropertyManager();
-        borderProps = pm.getBorderAndPadding();
-        backgroundProps = pm.getBackgroundProps();
+        fobj = node;
     }
 
     /**
@@ -266,9 +254,7 @@ public class Body extends BlockStackingLayoutManager {
     public Area createColumnArea() {
         Area curBlockArea = new Block();
 
-        if (backgroundProps != null) {
-            TraitSetter.addBackground(curBlockArea, backgroundProps);
-        }
+        TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
         return curBlockArea;
     }
 }
