@@ -76,6 +76,17 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     private CommonBorderAndPadding borderProps;
     private CommonBackground backgroundProps;
 
+    /* holds the (one-time use) fo:block space-before
+       and -after properties.  Large fo:blocks are split 
+       into multiple Area.Blocks to accomodate the subsequent
+       regions (pages) they are placed on.  space-before 
+       is applied at the beginning of the first
+       Block and space-after at the end of the last Block
+       used in rendering the fo:block.
+    */
+    private MinOptMax foBlockSpaceBefore = null;
+    private MinOptMax foBlockSpaceAfter = null;  // not currently implemented
+
     private int lead = 12000;
     private int lineHeight = 14000;
     private int follow = 2000;
@@ -169,6 +180,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         layoutProps = pm.getLayoutProps();
         borderProps = pm.getBorderAndPadding();
         backgroundProps = pm.getBackgroundProps();
+        foBlockSpaceBefore = layoutProps.spaceBefore.getSpace();
     }
 
     public BreakPoss getNextBreakPoss(LayoutContext context) {
@@ -177,9 +189,13 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         int ipd = context.getRefIPD();
 
         MinOptMax stackSize = new MinOptMax();
-        // if starting add space before
-        stackSize.add(layoutProps.spaceBefore.getSpace());
 
+        if (foBlockSpaceBefore != null) {
+            // this function called before addAreas(), so
+            // setting foBlockSpaceBefore = null *in* addAreas()
+            stackSize.add(foBlockSpaceBefore);
+        }
+        
         BreakPoss lastPos = null;
 
         while ((curLM = getChildLM()) != null) {
@@ -261,8 +277,9 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
         // if adjusted space before
         double adjust = layoutContext.getSpaceAdjust();
-        addBlockSpacing(adjust, layoutProps.spaceBefore.getSpace());
-
+        addBlockSpacing(adjust, foBlockSpaceBefore);
+        foBlockSpaceBefore = null;
+        
         addID();
         addMarkers(true, true);
 
