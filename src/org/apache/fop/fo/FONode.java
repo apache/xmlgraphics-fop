@@ -123,8 +123,8 @@ public class FONode extends FOTree.Node{
     {
         // parse the expression
         exprParser.resetParser();
-        foTree.args[0] = foTree;
-        foTree.args[1] = exprParser.parse(property, attrValue);
+        foTree.args[0] = this;
+        foTree.args[1] = exprParser.parse(this, property, attrValue);
         try {
             return (PropertyValue)
                     (((Method)PropertyConsts.refineParsingMethods
