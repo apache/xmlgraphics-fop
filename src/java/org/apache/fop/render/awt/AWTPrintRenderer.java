@@ -1,5 +1,5 @@
 /*
- * $Id: PrintStarter.java,v 1.14 2003/02/27 10:13:06 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,79 +48,60 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */ 
-package org.apache.fop.apps;
-/*
- * originally contributed by
- * Stanislav Gorkhover: stanislav.gorkhover@jcatalog.com
- * jCatalog Software AG
- *
- * Updated by Mark Lillywhite, mark-fop@inomial.com. Modified to
- * handle the print job better, added -Ddialog option, removed
- * (apparently) redundant copies code, generally cleaned up, and
- * added interfaces to the new Render API.
- */
-import org.xml.sax.XMLReader;
+package org.apache.fop.render.awt;
+
+import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-import org.apache.fop.render.awt.AWTPrintRenderer;
+import java.io.IOException;
+import java.util.Vector;
 
-/**
- * This class prints a XSL-FO dokument without interaction.
- * At the moment java has not the possibility to configure the printer and it's
- * options without interaction (30.03.2000).
- * This class allows to print a set of pages (from-to), even/odd pages and many copies.
- * - Print from page xxx: property name - start, value int
- * - Print to page xxx: property name - end, value int
- * - Print even/odd pages: property name - even, value boolean
- * - Print xxx copies: property name - copies, value int
- */
-public class PrintStarter extends CommandLineStarter {
+public class AWTPrintRenderer extends AWTRenderer {
 
-    /**
-     * @see org.apache.fop.apps.CommandLineStarter#CommandLineStarter(CommandLineOptions)
-     */
-    public PrintStarter(CommandLineOptions options) throws FOPException {
-        super(options);
+    private static final int EVEN_AND_ALL = 0;
+    private static final int EVEN = 1;
+    private static final int ODD = 2;
+    
+    private int startNumber;
+    private int endNumber;
+    private int mode = EVEN_AND_ALL;
+    private int copies = 1;
+    private PrinterJob printerJob;
+
+    public AWTPrintRenderer(PrinterJob printerJob) {
+        super(null);
+        this.printerJob = printerJob;
+        startNumber = getIntProperty("start", 1) - 1;
+        endNumber = getIntProperty("end", -1);
+        printerJob.setPageable(this);
+        mode = EVEN_AND_ALL;
+        String str = System.getProperty("even");
+        if (str != null) {
+            mode = Boolean.valueOf(str).booleanValue() ? EVEN : ODD;
+        }
     }
 
-    /**
-     * @see org.apache.fop.apps.Starter#run()
-     */
-    public void run() throws FOPException {
-        Driver driver = new Driver();
+    public void stopRenderer() throws IOException {
+        super.stopRenderer();
 
-        String version = Version.getVersion();
-        //log.debug(version);
-
-        XMLReader parser = inputHandler.getParser();
-
-        setParserFeatures(parser);
-
-        PrinterJob pj = PrinterJob.getPrinterJob();
-        if (System.getProperty("dialog") != null) {
-            if (!pj.printDialog()) {
-                throw new FOPException("Printing cancelled by operator");
-            }
+        if (endNumber == -1) {
+            endNumber = getPageCount();
         }
 
-        AWTPrintRenderer renderer = new AWTPrintRenderer(pj);
-        int copies = getIntProperty("copies", 1);
-        pj.setCopies(copies);
-
-        //renderer.setCopies(copies);
+        Vector numbers = getInvalidPageNumbers();
+        for (int i = numbers.size() - 1; i > -1; i--) {
+            // removePage(Integer.parseInt((String)numbers.elementAt(i)));
+        }
 
         try {
-            driver.setRenderer(renderer);
-            driver.render(parser, inputHandler.getInputSource());
-        } catch (Exception e) {
-            if (e instanceof FOPException) {
-                throw (FOPException)e;
-            }
-            throw new FOPException(e);
+            printerJob.print();
+        } catch (PrinterException e) {
+            e.printStackTrace();
+            throw new IOException("Unable to print: " 
+                + e.getClass().getName()
+                + ": " + e.getMessage());
         }
-
-        System.exit(0);
     }
-	
+
     private int getIntProperty(String name, int def) {
         String propValue = System.getProperty(name);
         if (propValue != null) {
@@ -133,5 +114,37 @@ public class PrintStarter extends CommandLineStarter {
             return def;
         }
     }
-} // class PrintStarter
+
+    private Vector getInvalidPageNumbers() {
+        Vector vec = new Vector();
+        int max = getPageCount();
+        boolean isValid;
+        for (int i = 0; i < max; i++) {
+            isValid = true;
+            if (i < startNumber || i > endNumber) {
+                isValid = false;
+            } else if (mode != EVEN_AND_ALL) {
+                if (mode == EVEN && ((i + 1) % 2 != 0)) {
+                    isValid = false;
+                } else if (mode == ODD && ((i + 1) % 2 != 1)) {
+                    isValid = false;
+                }
+            }
+
+            if (!isValid) {
+                vec.add(i + "");
+            }
+        }
+        return vec;
+    }
+
+    /* TODO: I'm not totally sure that this is necessary -Mark
+	void setCopies(int val) {
+		copies = val;
+		Vector copie = tree.getPages();
+		for (int i = 1; i < copies; i++) {
+			tree.getPages().addAll(copie);
+		}
+    } */
+} // class AWTPrintRenderer
 
