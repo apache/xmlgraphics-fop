@@ -56,6 +56,8 @@ import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.dom.svg.*;
 import org.apache.fop.dom.svg.SVGTransformImpl;
 
+import org.w3c.dom.svg.*;
+
 import java.util.*;
 /**
  * a TransformData quantity in XSL
@@ -63,7 +65,7 @@ import java.util.*;
  * @author Keiron Liddle <keiron@aftexsw.com>
  */
 public class TransformData {
-	Vector list = new Vector();
+	SVGAnimatedTransformList trans;
 
 	/**
 	 * set the TransformData given a particular String specifying TransformData and units
@@ -72,7 +74,9 @@ public class TransformData {
 		convert(len);
 	}
 
-	protected void convert(String len) {
+	protected void convert(String len)
+	{
+		Vector list = new Vector();
 		StringTokenizer st = new StringTokenizer(len, "()");
 		// need to check for unbalanced brackets
 		while(st.hasMoreTokens()) {
@@ -81,7 +85,7 @@ public class TransformData {
 			String value;
 			if(st.hasMoreTokens()) {
 				value = st.nextToken().trim();
-				SVGTransformImpl transform = new SVGTransformImpl();
+				SVGTransform transform = new SVGTransformImpl();
 				if(type.equals("translate")) {
 					float xlen = 0;
 					float ylen = 0;
@@ -122,8 +126,11 @@ public class TransformData {
 							ylen = Float.valueOf(value.substring(pos + 1, value.length()).trim()).floatValue();
 //						} catch(Exception e) {
 //						}
+						transform.setScale(xlen, ylen);
+					} else {
+						xlen = Float.valueOf(value).floatValue();
+						transform.setScale(xlen, xlen);
 					}
-					transform.setScale(xlen, ylen);
 					list.addElement(transform);
 				} else if(type.equals("rotate")) {
 	//				SVGAngleImpl angle = new SVGAngleImpl();
@@ -132,7 +139,7 @@ public class TransformData {
 					transform.setRotate(angle, 0, 0);
 					list.addElement(transform);
 				} else if(type.equals("matrix")) {
-					SVGMatrixImpl matrix = new SVGMatrixImpl();
+					SVGMatrix matrix = new SVGMatrixImpl();
 					StringTokenizer mt = new StringTokenizer(value, " ,\r\n-", true);
 					// need to handle negatives
 					String tok;
@@ -243,10 +250,18 @@ public class TransformData {
 				}
 			}
 		}
+		if(list != null) {
+			SVGTransformList stl = new SVGTransformListImpl();
+			for(Enumeration e = list.elements(); e.hasMoreElements(); ) {
+				stl.appendItem((SVGTransform)e.nextElement());
+			}
+			trans = new SVGAnimatedTransformListImpl();
+			trans.setBaseVal(stl);
+		}
 	}
 
-	public Vector oldgetTransform()
+	public SVGAnimatedTransformList getTransform()
 	{
-		return list;
+		return trans;
 	}
 }
