@@ -2391,11 +2391,12 @@ public class SVGRenderer {
 								// PDF stream...
 								StringWriter oldStream = currentStream;
 								currentStream = new StringWriter ();
-								
+								FontState saveFS = fs;
 								_renderText (te, 0f, true);
 
 								float width = currentX - te.x;
 								currentStream = oldStream;
+								fs = saveFS;
 
 								if (te.anchor.getEnum() == TextAnchor.END) {
 										xoffset = -width;
@@ -2717,7 +2718,7 @@ public class SVGRenderer {
 										//				currentFontName = fs.getFontName();
 										//				currentFontSize = fs.getFontSize();
 										currentStream.write("/" + fs.getFontName() + " " +
-																				(fs.getFontSize() / 1000) + " Tf\n");
+																				(fs.getFontSize() / 1000f) + " Tf\n");
 								}
 						}
 						return changed;
