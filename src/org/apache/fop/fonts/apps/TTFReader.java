@@ -13,13 +13,13 @@ import java.util.List;
 import java.util.Iterator;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 //Avalon
-import org.apache.avalon.framework.CascadingRuntimeException;
 import org.apache.avalon.framework.logger.AbstractLogEnabled;
 import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.avalon.framework.logger.Logger;
@@ -130,7 +130,7 @@ public class TTFReader extends AbstractLogEnabled {
         TTFReader app = new TTFReader();
         app.enableLogging(log);
 
-        log.info("TTF Reader v1.1.3");
+        log.info("TTF Reader v1.1.4");
 
         if (options.get("-enc") != null) {
             String enc = (String)options.get("-enc");
@@ -222,19 +222,15 @@ public class TTFReader extends AbstractLogEnabled {
      * @param   doc The DOM Document to save.
      * @param   target The target filename for the XML file.
      */
-    public void writeFontXML(org.w3c.dom.Document doc, String target) {
+    public void writeFontXML(org.w3c.dom.Document doc, String target) 
+                throws TransformerException {
         getLogger().info("Writing xml font file " + target + "...");
 
-        try {
-            TransformerFactory factory = TransformerFactory.newInstance();
-            Transformer transformer = factory.newTransformer();
-            transformer.transform(
-                    new javax.xml.transform.dom.DOMSource(doc),
-                    new javax.xml.transform.stream.StreamResult(new File(target)));
-        } catch (Exception e) {
-            throw new CascadingRuntimeException(
-                    "Error while serializing XML font metrics file", e);
-        }
+        TransformerFactory factory = TransformerFactory.newInstance();
+        Transformer transformer = factory.newTransformer();
+        transformer.transform(
+                new javax.xml.transform.dom.DOMSource(doc),
+                new javax.xml.transform.stream.StreamResult(new File(target)));
     }
 
     /**
@@ -277,7 +273,7 @@ public class TTFReader extends AbstractLogEnabled {
         // "Perpetua-Bold", but the TrueType spec says that in the ttf file
         // it should be "Perpetua,Bold".
 
-        String s = stripWhiteSpace(ttf.getPostscriptName());
+        String s = stripWhiteSpace(ttf.getPostScriptName());
 
         if (fontName != null) {
             el.appendChild(doc.createTextNode(stripWhiteSpace(fontName)));
