@@ -1,5 +1,8 @@
 Content of the directory xml-fop/docs
 
+xslfoRef.xml  a short xsl:fo reference
+xml2pdf.xsl   a stylesheet, to convert xslfoRef.xml to pdf
+
 html-docs     Fop documentation in html files
 xml-docs      Fop documentation in xml files and a script to create pdf documentation
 
