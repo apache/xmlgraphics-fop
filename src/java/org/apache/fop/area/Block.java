@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,12 @@ public class Block extends BlockParent {
      * Used for block-container, tables and lists.
      */
     public static final int ABSOLUTE = 2;
+
+    /**
+     * Relative to a viewport/page but not effecting the stacking
+     * Used for block-container.
+     */
+    public static final int FIXED = 3;
 
     private int stacking = TB;
     private int positioning = STACK;
@@ -111,5 +117,13 @@ public class Block extends BlockParent {
         return positioning;
     }
 
+    /**
+     * @return the start-indent trait
+     */
+    public int getStartIndent() {
+        Integer startIndent = (Integer)getTrait(Trait.START_INDENT);
+        return (startIndent != null ? startIndent.intValue() : 0);
+    }
+    
 }
 
