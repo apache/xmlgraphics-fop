@@ -91,6 +91,36 @@ Apart from this external svg images should behave in the same way that other typ
 external graphics do.
       </fo:block>
 
+      <fo:block space-before.optimum="10pt">
+The following example shows how you could scale an external svg file.
+      </fo:block>
+
+      <fo:block>
+<fo:instream-foreign-object>
+<svg xmlns="http://www.w3.org/2000/svg" width="20mm" height="20mm" xml:space="preserve">
+  <svg viewBox="0 0 20 20" preserveAspectRatio="none">
+     <image xlink:href="file:boxes.svg" x="0" y="0" width="20mm" height="20mm"/>
+  </svg>
+</svg>
+</fo:instream-foreign-object>
+and
+<fo:instream-foreign-object>
+<svg xmlns="http://www.w3.org/2000/svg" width="20mm" height="20mm" xml:space="preserve">
+  <g transform="scale(3.7)">
+     <image xlink:href="file:boxes.svg" x="0" y="0" width="20mm" height="20mm"/>
+  </g>
+</svg>
+</fo:instream-foreign-object>
+and
+<fo:instream-foreign-object>
+<svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" width="20mm" height="20mm" xml:space="preserve">
+   <image preserveAspectRatio="xMidYMid" xlink:href="file:boxes.svg" x="0" y="0" width="10mm" height="10mm"/>
+</svg>
+</fo:instream-foreign-object>
+
+      </fo:block>
+
+
     </fo:flow>
   </fo:page-sequence>
 </fo:root>

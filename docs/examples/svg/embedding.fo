@@ -783,6 +783,9 @@ There are a couple of ways to specify the XML for embedding.
 There are a number of factors which specify exactly how the SVG image will be rendered, such as size, clipping etc.
       </fo:block>
 
+      <fo:block>
+Note: if you want to know about SVG itself you should consult the appropriate SVG resource. The <fo:inline color="blue"><fo:basic-link external-destination="http://xml.apache.org/batik">Batik Project</fo:basic-link></fo:inline> is a good resource for information about SVG and samples etc.
+      </fo:block>
 
       <fo:block space-before.optimum="5pt" space-after.optimum="5pt" font-weight="bold" font-size="12pt">
 XML Syntax
