@@ -35,6 +35,9 @@ public class SVGElementMapping implements ElementMapping {
             foObjs.put("line", SVGObj.maker("line"));
             foObjs.put("text", SVGObj.maker("text"));
 
+            foObjs.put("font-face", SVGObj.maker("font-face"));
+            foObjs.put("font-face-uri", SVGObj.maker("font-face-uri"));
+            foObjs.put("font-face-src", SVGObj.maker("font-face-src"));
             foObjs.put("desc", SVGObj.maker("desc"));
             foObjs.put("title", SVGObj.maker("title"));
             foObjs.put("circle", SVGObj.maker("circle"));
