@@ -138,7 +138,8 @@ public class Fop implements Constants {
         BufferedOutputStream bos = null;
 
         try {
-            options = new CommandLineOptions(args);
+            options = new CommandLineOptions();
+            options.parse(args);
             foUserAgent = options.getFOUserAgent();
             
             Fop fop = new Fop(options.getRenderer(), foUserAgent);
