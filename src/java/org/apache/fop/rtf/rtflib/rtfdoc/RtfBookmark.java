@@ -75,9 +75,9 @@ public class RtfBookmark extends RtfElement {
     /** Name of the bokkmark */
     private String bookmark = null;
     /** Word 2000 supports a length of 40 characters only */
-    public static int maxBookmarkLength = 40;
+    public static final int MAX_BOOKMARK_LENGTH = 40;
     /** Word 2000 converts '.' in bookmarks to "_", thats why we control this replacement. */
-    public static char replaceCharacter = '_';
+    public static final char REPLACE_CHARACTER = '_';
 
 
     //////////////////////////////////////////////////
@@ -96,9 +96,10 @@ public class RtfBookmark extends RtfElement {
 
         int now = bookmark.length ();
 
-        this.bookmark = bookmark.substring (0, now < maxBookmarkLength ? now : maxBookmarkLength);
-        this.bookmark = this.bookmark.replace ('.', replaceCharacter);
-        this.bookmark = this.bookmark.replace (' ', replaceCharacter);
+        this.bookmark = bookmark.substring (0,
+                now < MAX_BOOKMARK_LENGTH ? now : MAX_BOOKMARK_LENGTH);
+        this.bookmark = this.bookmark.replace ('.', REPLACE_CHARACTER);
+        this.bookmark = this.bookmark.replace (' ', REPLACE_CHARACTER);
     }
 
 
