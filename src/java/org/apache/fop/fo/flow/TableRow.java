@@ -23,6 +23,7 @@ import java.util.List;
 
 // XML
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
@@ -37,7 +38,6 @@ import org.apache.fop.fo.properties.Property;
 
 /**
  * Class modelling the fo:table-row object.
- * @todo implement validateChildNode()
  */
 public class TableRow extends FObj {
 
@@ -67,8 +67,24 @@ public class TableRow extends FObj {
         getFOEventHandler().startRow(this);
     }
 
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: (table-cell+)
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
+        if (!(nsURI == FO_URI && localName.equals("table-cell"))) {
+            invalidChildError(loc, nsURI, localName);
+        }
+    }
 
+    /**
+     * @see org.apache.fop.fo.FONode#end
+     */
     protected void endOfNode() throws SAXParseException {
+        if (childNodes == null) {
+            missingChildElementError("(table-cell+)");
+        }
         getFOEventHandler().endRow(this);
     }
 
@@ -79,6 +95,9 @@ public class TableRow extends FObj {
         return keepWithPrevious;
     }
 
+    /**
+     * @todo see if should remove, or move code to addProperties()
+     */
     private void doSetup() {
         this.breakAfter = getPropEnum(PR_BREAK_AFTER);
         this.backgroundColor =
