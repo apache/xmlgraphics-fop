@@ -71,6 +71,7 @@ public class AreaContainer extends Area {
         this.xPosition = xPosition;
         this.yPosition = yPosition;
         this.position = position;
+	//setIsReferenceArea(true); // Should always be true!
     }
 
     public void render(Renderer renderer) {
@@ -82,7 +83,8 @@ public class AreaContainer extends Area {
     }
 
     public int getXPosition() {
-        return xPosition + getPaddingLeft() + getBorderLeftWidth();
+        //return xPosition + getPaddingLeft() + getBorderLeftWidth();
+        return xPosition ;
     }
 
     public void setXPosition(int value) {
@@ -90,7 +92,8 @@ public class AreaContainer extends Area {
     }
 
     public int getYPosition() {
-        return yPosition + getPaddingTop() + getBorderTopWidth();
+        //return yPosition + getPaddingTop() + getBorderTopWidth();
+        return yPosition ;
     }
 
     public int getCurrentYPosition() {
@@ -99,5 +102,9 @@ public class AreaContainer extends Area {
 
     public void setYPosition(int value) {
         yPosition = value;
+    }
+
+    public void shiftYPosition(int value) {
+        yPosition += value;
     }
 }
