@@ -77,13 +77,13 @@ public class RtfStyleSheetTable {
     private static int startIndex = 15;
 
     /** OK status value for attribute handling */
-    public static int STATUS_OK = 0;
+    public static final int STATUS_OK = 0;
     /** Status value for attribute handling, if the stylesheet not found and
      *  the stylesheet set to the default stylesheet */
-    public static int STATUS_DEFAULT = 1;
+    public static final int STATUS_DEFAULT = 1;
 
     /** Standard style name */
-    private static String STANDARD_STYLE = "Standard";
+    private static final String STANDARD_STYLE = "Standard";
 
 
     //////////////////////////////////////////////////
