@@ -119,6 +119,33 @@ public class PropertyConsts {
     }
 
     /**
+     * @param property <tt>int</tt> index of the property
+     * @return <tt>PropertyValue</tt> from property's <i>getInitialValue</i>
+     * method
+     * @exception <tt>PropertyException</tt>
+     */
+    public static PropertyValue getInitialValue(int property)
+        throws PropertyException
+    {
+        Method method = null;
+        try {
+            method = classes[property].getMethod
+                    ("getInitialValue", new Class[] {int.class});
+            return (PropertyValue)
+                    (method.invoke
+                     (null, new Object[] {Ints.consts.get(property)}));
+        } catch (NoSuchMethodException nsme) {
+            throw new PropertyException
+                    ("No getInitialValue method in "
+                     + classes[property].getName() + ": " + nsme.getMessage());
+        } catch (IllegalAccessException iae) {
+            throw new PropertyException(iae.getMessage());
+        } catch (InvocationTargetException ite) {
+            throw new PropertyException(ite.getMessage());
+        }
+    }
+
+    /**
      * @param property String name of the FO property
      * @return int type of inheritance for this property
      * (See constants defined in Properties.)
@@ -274,35 +301,6 @@ public class PropertyConsts {
     }
 
     /**
-     * @param property <tt>int</tt> property index.
-     * @param enumIndex int containing the enumeration index.
-     * @return <tt>String</tt> containing the mapped enumeration value.
-     * @exception PropertyException
-     */
-    public static String getMappedEnumValue(int property, int enumIndex)
-                    throws PropertyException
-    {
-        // Get the object represented by the enumMappings field in the
-        // property class
-        Object values;
-        try {
-            values =
-                classes[property].getField("enumMappings").get(null);
-        }
-        catch (NoSuchFieldException e) {
-            throw new PropertyException(
-                        "Missing field \"" + e.getMessage() + "\""
-                        + " in class " + classNames[property]);
-        }
-        catch (IllegalAccessException e) {
-            throw new PropertyException(
-                "Illegal access on \"" + e.getMessage() + "\" in class " +
-                classNames[property]);
-        }
-        return enumIndexToMapping(enumIndex, (ROStringArray)values);
-    }
-
-    /**
      * A String[] array of the property class names.  This array is
      * effectively 1-based, with the first element being unused.
      * The array is initialized in a static initializer by converting the FO
@@ -348,24 +346,12 @@ public class PropertyConsts {
     private static final HashMap toIndex;
 
     /**
-     * An unmodifiable Map of property name to property index.  It is derived 
-     * from the <tt>HashMap</tt> toIndex, above.
-     */
-    //public static final Map propertyToIndex;
-
-    /**
      * A HashMap whose elements are an integer index value keyed by the name
      * of a property class.  the index value is the index of the property
      * class name in the classNames[] array.  It is initialized in a
      * static initializer.
      */
     private static final HashMap classToIndex;
-
-    /**
-     * An unmodifiable Map of property class name to property index.  It is
-     * derived from the <tt>HashMap</tt> classToIndex, above.
-     */
-    //public static final Map propertyClassToIndex;
 
     /** <p>
      * An int[] array of values specifying the type of inheritance of a
@@ -456,22 +442,18 @@ public class PropertyConsts {
     public static final List complexMethods;
 
     /**
-     * A sparsely populated array of <tt>Method</tt> objects.  Although this
-     * array has a slot for every property, only positions corresponding to
-     * properties which have a <i>setInitialValue()</i> method for creating
-     * initial property value objects, will hold a valid
-     * <tt>Method</tt> object.
+     * A <tt>HashMap</tt> of <tt>Method</tt> objects.  It contains the
+     * <em>getMappedNumMap</em> methods from properties which support a
+     * <tt>MAPPED_NUMERIC</tt> datatype.  The map is indexed by the
+     * integer index of the property.
      */
-    private static final Method[] initialvaluemethods;
+    private static final HashMap mappednummethods;
 
     /**
-     * An unmodifiable List of the property <i>setInitialValue</i> methods.
-     * This random access list is derived from <i>initialvaluemethods</i>,
-     * above.
-     * It can be indexed by the property name constants defined in
-     * the PropNames class.
+     * An unmodifiable map of the property <i>getMappedNumMap</i> methods.
+     * It is derived from the <i>mappednummethods</i> map, above.
      */
-    public static final List initialValueMethods;
+    public static final Map mappedNumMethods;
 
     static {
         String prefix = packageName + "." + "Properties" + "$";
@@ -487,7 +469,7 @@ public class PropertyConsts {
         datatypes          = new int[PropNames.LAST_PROPERTY_INDEX + 1];
         classes            = new Class[PropNames.LAST_PROPERTY_INDEX + 1];
         complexmethods     = new Method[PropNames.LAST_PROPERTY_INDEX + 1];
-        initialvaluemethods = new Method[PropNames.LAST_PROPERTY_INDEX + 1];
+        mappednummethods   = new HashMap();
 
         for (int i = 0; i <= PropNames.LAST_PROPERTY_INDEX; i++) {
             cname = "";
@@ -558,15 +540,12 @@ public class PropertyConsts {
                     complexmethods[i] =
                             classes[i].getMethod
                                         ("complex", new Class[]
-                                                    {int.class,
+                                            {org.apache.fop.fo.FOTree.class,
                                                      PropertyValue.class});
-                if ((initialValueTypes[i] & Properties.USE_SET_FUNCTION_IT)
-                                        != 0)
-                    initialvaluemethods[i] =
-                            classes[i].getMethod
-                                    ("getInitialValue",
-                                     new Class[]
-                                        {org.apache.fop.fo.FOTree.class});
+                if ((datatypes[i] & Properties.MAPPED_NUMERIC) != 0)
+                    mappednummethods.put(Ints.consts.get(i),
+                                     classes[i].getMethod
+                                     ("getMappedNumArray", new Class[] {}));
             }
             catch (NoSuchFieldException e) {
                 throw new RuntimeException(
@@ -594,8 +573,7 @@ public class PropertyConsts {
         dataTypes           = new ROIntArray(datatypes);
         complexMethods      = Collections.unmodifiableList
                                         (Arrays.asList(complexmethods));
-        initialValueMethods = Collections.unmodifiableList
-                                        (Arrays.asList(initialvaluemethods));
+        mappedNumMethods    = Collections.unmodifiableMap(mappednummethods);
 
     }
 
