@@ -591,6 +591,13 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 
   }
 
+    /** render a foreign object area */
+    public void renderForeignObjectArea(ForeignObjectArea area)
+    {
+        // if necessary need to scale and align the content
+        area.getObject().render(this);
+    }
+
   public void renderSVGArea(SVGArea area) {
     int x = this.currentAreaContainerXPosition;
     int y = this.currentYPosition;

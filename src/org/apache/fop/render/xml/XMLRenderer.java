@@ -217,6 +217,13 @@ public class XMLRenderer implements Renderer {
 			     + space.getSize() +"\"/>");
     }
 
+    /** render a foreign object area */
+    public void renderForeignObjectArea(ForeignObjectArea area)
+    {
+        // if necessary need to scale and align the content
+        area.getObject().render(this);
+    }
+
     /**
      * render an SVG area to XML
      *
