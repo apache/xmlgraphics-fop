@@ -155,7 +155,7 @@ class TextAttributesConverter {
 
     private static void attrBlockFontColor(PropertyList propertyList, RtfAttributes rtfAttr) {
         // Cell background color
-        ColorTypeProperty colorTypeProp = (ColorTypeProperty)propertyList.get("color");
+        ColorTypeProperty colorTypeProp = (ColorTypeProperty)propertyList.get(Constants.PR_COLOR);
         if (colorTypeProp != null) {
             ColorType colorType = colorTypeProp.getColorType();
             if (colorType != null) {
@@ -222,7 +222,7 @@ class TextAttributesConverter {
         }
 
         //space-after
-        spaceProp = (SpaceProperty)propertyList.get("space-after");
+        spaceProp = (SpaceProperty)propertyList.get(Constants.PR_SPACE_AFTER);
         if (spaceProp != null) {
             Float f = new Float(
                 spaceProp.getLengthRange().getOptimum().getLength().getValue() / 1000f);
@@ -243,7 +243,7 @@ class TextAttributesConverter {
             LengthProperty lengthProp = null;
 
             // margin-left
-            lengthProp = (LengthProperty)propertyList.get("margin-left");
+            lengthProp = (LengthProperty)propertyList.get(Constants.PR_MARGIN_LEFT);
             if (lengthProp != null) {
                 Float f = new Float(lengthProp.getLength().getValue() / 1000f);
                 String sValue = f.toString() + "pt";
@@ -256,7 +256,7 @@ class TextAttributesConverter {
             }
 
             // margin-right
-            lengthProp = (LengthProperty)propertyList.get("margin-right");
+            lengthProp = (LengthProperty)propertyList.get(Constants.PR_MARGIN_RIGHT);
             if (lengthProp != null) {
                 Float f = new Float(lengthProp.getLength().getValue() / 1000f);
                 String sValue = f.toString() + "pt";

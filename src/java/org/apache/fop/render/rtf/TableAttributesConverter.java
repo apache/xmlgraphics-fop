@@ -229,25 +229,25 @@ public class TableAttributesConverter {
             isBorderPresent=true;
             */
         }
-        ep = (EnumProperty)props.get("border-top-style");
+        ep = (EnumProperty)props.get(Constants.PR_BORDER_TOP_STYLE);
         if (ep != null && ep.getEnum() != Constants.NONE) {
             attrib.set(ITableAttributes.CELL_BORDER_TOP,   "\\"
                        + convertAttributetoRtf(ep.getEnum()));
             isBorderPresent = true;
         }
-        ep = (EnumProperty)props.get("border-bottom-style");
+        ep = (EnumProperty)props.get(Constants.PR_BORDER_BOTTOM_STYLE);
         if (ep != null && ep.getEnum() != Constants.NONE) {
             attrib.set(ITableAttributes.CELL_BORDER_BOTTOM, "\\"
                        + convertAttributetoRtf(ep.getEnum()));
             isBorderPresent = true;
         }
-        ep = (EnumProperty)props.get("border-left-style");
+        ep = (EnumProperty)props.get(Constants.PR_BORDER_LEFT_STYLE);
         if (ep != null && ep.getEnum() != Constants.NONE) {
             attrib.set(ITableAttributes.CELL_BORDER_LEFT,  "\\"
                        + convertAttributetoRtf(ep.getEnum()));
             isBorderPresent = true;
         }
-        ep = (EnumProperty)props.get("border-right-style");
+        ep = (EnumProperty)props.get(Constants.PR_BORDER_RIGHT_STYLE);
         if (ep != null && ep.getEnum() != Constants.NONE) {
             attrib.set(ITableAttributes.CELL_BORDER_RIGHT, "\\"
                        + convertAttributetoRtf(ep.getEnum()));
@@ -272,7 +272,7 @@ public class TableAttributesConverter {
 
 
         // Column spanning :
-        NumberProperty n = (NumberProperty)props.get("number-columns-spanned");
+        NumberProperty n = (NumberProperty)props.get(Constants.PR_NUMBER_COLUMNS_SPANNED);
         if (n != null && n.getNumber().intValue() > 1) {
             attrib.set(ITableAttributes.COLUMN_SPAN, n.getNumber().intValue());
         }
@@ -371,7 +371,7 @@ public class TableAttributesConverter {
             isBorderPresent=true;
 */
         }
-        ep = (EnumProperty)props.get("border-top-style");
+        ep = (EnumProperty)props.get(Constants.PR_BORDER_TOP_STYLE);
         if (ep != null && ep.getEnum() != Constants.NONE) {
             attrib.set(ITableAttributes.ROW_BORDER_TOP,       "\\"
                        + convertAttributetoRtf(ep.getEnum()));
@@ -379,7 +379,7 @@ public class TableAttributesConverter {
                        + convertAttributetoRtf(ep.getEnum()));
             isBorderPresent = true;
         }
-        ep = (EnumProperty)props.get("border-bottom-style");
+        ep = (EnumProperty)props.get(Constants.PR_BORDER_BOTTOM_STYLE);
         if (ep != null && ep.getEnum() != Constants.NONE) {
             attrib.set(ITableAttributes.ROW_BORDER_BOTTOM,    "\\"
                        + convertAttributetoRtf(ep.getEnum()));
@@ -387,7 +387,7 @@ public class TableAttributesConverter {
                        + convertAttributetoRtf(ep.getEnum()));
             isBorderPresent = true;
         }
-        ep = (EnumProperty)props.get("border-left-style");
+        ep = (EnumProperty)props.get(Constants.PR_BORDER_LEFT_STYLE);
         if (ep != null && ep.getEnum() != Constants.NONE) {
             attrib.set(ITableAttributes.ROW_BORDER_LEFT,     "\\"
                        + convertAttributetoRtf(ep.getEnum()));
@@ -395,7 +395,7 @@ public class TableAttributesConverter {
                        + convertAttributetoRtf(ep.getEnum()));
             isBorderPresent = true;
         }
-        ep = (EnumProperty)props.get("border-right-style");
+        ep = (EnumProperty)props.get(Constants.PR_BORDER_RIGHT_STYLE);
         if (ep != null && ep.getEnum() != Constants.NONE) {
             attrib.set(ITableAttributes.ROW_BORDER_RIGHT,    "\\"
                        + convertAttributetoRtf(ep.getEnum()));
