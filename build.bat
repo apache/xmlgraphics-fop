@@ -7,7 +7,7 @@ if "%JAVA_HOME%" == "" goto error
 
 set LIBDIR=lib
 set LOCALCLASSPATH=%JAVA_HOME%\lib\tools.jar;%JAVA_HOME%\lib\classes.zip;%LIBDIR%\ant.jar;%LIBDIR%\batik.jar;%LIBDIR%\buildtools.jar;%LIBDIR%\xerces-1.2.3.jar;%LIBDIR%\xalan-2.0.0.jar;%LIBDIR%\xalanj1compat.jar;%LIBDIR%\bsf.jar
-set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\jimi-1.0.jar;%LIBDIR&\logkit-1.0b4.jar;%LIBDIR%\avalon-framework-4.0.jar
+set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\jimi-1.0.jar;%LIBDIR%\logkit-1.0b4.jar;%LIBDIR%\avalon-framework-4.0.jar
 
 set ANT_HOME=%LIBDIR%
 
