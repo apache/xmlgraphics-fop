@@ -28,7 +28,7 @@ Below fo:root there is always
 									margin-bottom="2cm"
 									margin-left="2.5cm"
 									margin-right="2.5cm">
-			<fo:region-body margin-top="3cm"/>
+			<fo:region-body margin-top="3cm" margin-bottom="1.5cm"/>
 			<fo:region-before extent="3cm"/>
 			<fo:region-after extent="1.5cm"/>
 		</fo:simple-page-master>
@@ -41,7 +41,7 @@ Below fo:root there is always
 									margin-bottom="2cm"
 									margin-left="2.5cm"
 									margin-right="2.5cm">
-			<fo:region-body margin-top="2.5cm"/>
+			<fo:region-body margin-top="2.5cm" margin-bottom="1.5cm"/>
 			<fo:region-before extent="2.5cm"/>
 			<fo:region-after extent="1.5cm"/>
 		</fo:simple-page-master>

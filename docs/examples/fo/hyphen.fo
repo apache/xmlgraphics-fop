@@ -25,7 +25,7 @@
                   margin-bottom="2cm" 
                   margin-left="7cm" 
                   margin-right="3cm">
-      <fo:region-body margin-top="3cm"/>
+      <fo:region-body margin-top="3cm" margin-bottom="1.5cm"/>
       <fo:region-before extent="3cm"/>
       <fo:region-after extent="1.5cm"/>
     </fo:simple-page-master>

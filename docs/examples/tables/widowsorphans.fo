@@ -9,8 +9,8 @@
 	page-width="21cm"
 	page-height="17cm"
 	master-name="first">
+      <fo:region-body column-count="3" margin-top="1cm" margin-bottom="1.5cm"/>
       <fo:region-before extent="1cm"/>
-      <fo:region-body column-count="3" margin-top="1cm"/>
       <fo:region-after extent="1.5cm"/>
     </fo:simple-page-master>
   </fo:layout-master-set>
