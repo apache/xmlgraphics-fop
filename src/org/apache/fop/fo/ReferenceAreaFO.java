@@ -54,7 +54,6 @@
  */
 package org.apache.fop.fo;
 
-import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * Base interface for all FOs which are generate reference areas.

@@ -55,17 +55,15 @@
  */
 package org.apache.fop.xml;
 
-import org.apache.fop.datastructs.SyncedCircularBuffer;
+import java.util.BitSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
+
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datastructs.SyncedCircularBuffer;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FObjectSets;
-
-import org.apache.fop.xml.FoXMLEventPool;
-
-import java.util.NoSuchElementException;
-import java.util.LinkedList;
-import java.util.Iterator;
-import java.util.BitSet;
 
 /**
  * A synchronized circular buffer for FoXMLEvents.

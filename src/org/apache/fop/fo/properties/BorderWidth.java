@@ -51,18 +51,17 @@
  */
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.datatypes.PropertyValue;
-import org.apache.fop.datatypes.PropertyValueList;
-import org.apache.fop.datatypes.Numeric;
+import java.util.Iterator;
+
 import org.apache.fop.datatypes.MappedNumeric;
 import org.apache.fop.datatypes.NCName;
-import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.datatypes.PropertyValue;
+import org.apache.fop.datatypes.PropertyValueList;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.ShorthandPropSets;
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.properties.Property;
-
-import java.util.Iterator;
+import org.apache.fop.fo.expr.PropertyException;
 
 public class BorderWidth extends BorderCommonWidth {
     // Below is a special case defying the general rule that shorthands do

@@ -57,24 +57,19 @@
  */
 package org.apache.fop.fo;
 
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.PropertyConsts;
-import org.apache.fop.fo.FObjectNames;
-import org.apache.fop.datatypes.Ints;
-import org.apache.fop.messaging.MessageHandler;
-import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.XMLNamespaces;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.xml.sax.Attributes;
 
-import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Collections;
-import java.util.Arrays;
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.Ints;
+import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.XMLNamespaces;
 
 /**
  * The FO Attributes data structures and methods needed to manage the

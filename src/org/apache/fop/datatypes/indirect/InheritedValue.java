@@ -54,12 +54,10 @@
  */
 package org.apache.fop.datatypes.indirect;
 
-import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.datatypes.PropertyValue;
-import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.PropertyConsts;
-import org.apache.fop.datatypes.indirect.IndirectValue;
+import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.properties.Property;
 
 /**
  * A class representing an unresolved inherited value.  It may be created as

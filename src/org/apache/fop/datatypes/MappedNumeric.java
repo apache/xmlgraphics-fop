@@ -55,12 +55,9 @@
  */
 package org.apache.fop.datatypes;
 
-import org.apache.fop.datatypes.EnumType;
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.datatypes.PropertyValue;
-import org.apache.fop.fo.PropertyConsts;
-import org.apache.fop.fo.properties.*;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.properties.Property;
 
 /**
  * Class to represent an enumerated type whose values map onto a

@@ -52,8 +52,6 @@
 
 package org.apache.fop.configuration;
 
-// sax
-import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.XMLReader;
 import org.xml.sax.SAXException;
 import java.io.IOException;
@@ -63,7 +61,6 @@ import org.xml.sax.InputSource;
 import org.apache.fop.apps.Driver;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.configuration.Configuration;
 
 /**
  * entry class for reading configuration from file and creating a configuration

@@ -55,22 +55,20 @@
 package org.apache.fop.fo.flow;
 
 // FOP
-import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.PropertySets;
-import org.apache.fop.fo.FObjectNames;
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOTree;
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.xml.XMLEvent;
-import org.apache.fop.xml.FoXMLEvent;
+import java.util.Arrays;
+import java.util.BitSet;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
-import org.apache.fop.datatypes.PropertyValue;
-import org.apache.fop.datatypes.Ints;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.BitSet;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOTree;
+import org.apache.fop.fo.FObjectNames;
+import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.PropertySets;
+import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
+import org.apache.fop.xml.XMLEvent;
 
 /**
  * Implements the fo:multi-switch flow object.
@@ -147,7 +145,7 @@ public class FoMultiSwitch extends FONode {
                    != null) {
                 new FoMultiCase(getFOTree(), this, ev, stateFlags);
                 numCases++;
-                ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+                ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
                 pool.surrenderEvent(ev);
             }
 

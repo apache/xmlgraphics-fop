@@ -53,12 +53,10 @@
  */
 package org.apache.fop.xml;
 
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.xml.XMLEvent;
-import org.apache.fop.messaging.MessageHandler;
-
 import java.util.ArrayList;
 import java.util.BitSet;
+
+import org.apache.fop.messaging.MessageHandler;
 
 /**
  * This class provides a pool of <tt>XMLEvent</tt> objects.

@@ -1,8 +1,5 @@
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.properties.Property;
-import org.apache.fop.datastructs.ROStringArray;
 
 public class NoProperty extends Property  {
     // dataTypes was set to ANY_TYPE.  This meant that any property

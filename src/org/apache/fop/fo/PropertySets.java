@@ -1,4 +1,4 @@
-/**
+/*
  * $Id$
  * 
  * ============================================================================
@@ -57,7 +57,6 @@ package org.apache.fop.fo;
 
 import java.util.BitSet;
 
-import org.apache.fop.fo.PropNames;
 import org.apache.fop.datastructs.ROBitSet;
 
 /**

@@ -51,12 +51,10 @@
  */
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.datastructs.ROStringArray;
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.EnumType;
+import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.properties.Property;
+import org.apache.fop.fo.expr.PropertyException;
 
 public class TargetStylesheet extends Property  {
     public static final int dataTypes = URI_SPECIFICATION | ENUM;

@@ -51,13 +51,11 @@
  */
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.Ems;
-import org.apache.fop.datastructs.ROStringArray;
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.PropNames;
+import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.properties.Property;
+import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.expr.PropertyException;
 
 public class LineHeight extends Property  {
     public static final int dataTypes =

@@ -54,10 +54,10 @@
 
 package org.apache.fop.datatypes;
 
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertyConsts;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * Constructor class for relative lengths measured in <i>ems</i>.  Constructs

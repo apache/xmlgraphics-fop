@@ -55,23 +55,9 @@
 
 package org.apache.fop.fo;
 
-import java.lang.Character;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.StringTokenizer;
-
-// Only for tree property set partitions
 import java.util.BitSet;
-import java.util.Iterator;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.FObjectNames;
-import org.apache.fop.fo.PropertySets;
-import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.FONode;
-import org.apache.fop.datatypes.Ints;
-import org.apache.fop.datastructs.ROIntArray;
 import org.apache.fop.datastructs.ROBitSet;
 
 /**

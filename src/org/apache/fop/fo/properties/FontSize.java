@@ -51,21 +51,16 @@
  */
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.datatypes.Numeric;
-import org.apache.fop.datastructs.ROStringArray;
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.datatypes.PropertyValue;
-import org.apache.fop.datatypes.Numeric;
-import org.apache.fop.datatypes.Ems;
-import org.apache.fop.datatypes.Length;
-import org.apache.fop.datatypes.Ints;
-import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.properties.Property;
-
-import java.util.Map;
 import java.util.HashMap;
-import java.util.Collections;
+
+import org.apache.fop.datatypes.Ems;
+import org.apache.fop.datatypes.Ints;
+import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.datatypes.PropertyValue;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.expr.PropertyException;
 
 public class FontSize extends Property  {
     public static final int dataTypes =

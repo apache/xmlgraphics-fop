@@ -7,14 +7,10 @@
  */
 package org.apache.fop.fo.expr;
 
-import org.apache.fop.fo.properties.Font;
-import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.ShorthandPropSets;
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.expr.FunctionNotImplementedException;
 import org.apache.fop.datastructs.ROIntArray;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.PropertyValueList;
+import org.apache.fop.fo.ShorthandPropSets;
 
 /**
  * Implement the system font function.

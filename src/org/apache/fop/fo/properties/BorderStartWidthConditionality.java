@@ -51,11 +51,10 @@
  */
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.EnumType;
+import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.properties.Conditionality;
+import org.apache.fop.fo.expr.PropertyException;
 
 public class BorderStartWidthConditionality extends Conditionality {
     public static final int dataTypes = ENUM;

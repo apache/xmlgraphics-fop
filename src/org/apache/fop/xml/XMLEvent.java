@@ -53,8 +53,6 @@
  */
 package org.apache.fop.xml;
 
-import org.apache.fop.apps.FOPException;
-
 import org.xml.sax.helpers.AttributesImpl;
 
 /**
@@ -257,9 +255,9 @@ public class XMLEvent {
 
     /**
      * Set the qualified name of this event.
-     * @param QName - the qualified name.
+     * @param qName - the qualified name.
      */
-    public void setQName(String QName) {
+    public void setQName(String qName) {
         this.qName = qName;
     }
 

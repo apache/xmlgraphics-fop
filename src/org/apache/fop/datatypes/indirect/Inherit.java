@@ -56,11 +56,9 @@
  */
 package org.apache.fop.datatypes.indirect;
 
-import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.datatypes.PropertyValue;
+import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.Property;
-import org.apache.fop.fo.FONode;
-import org.apache.fop.datatypes.indirect.IndirectValue;
 
 /**
  * A class representing the <tt>inherit</tt> keyword.  This keyword is

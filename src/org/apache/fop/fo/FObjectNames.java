@@ -55,10 +55,10 @@
 
 package org.apache.fop.fo;
 
+import java.util.HashMap;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Ints;
-
-import java.util.HashMap;
 
 /**
  * Data class containing the Flow Object names and associated integer

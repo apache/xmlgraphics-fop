@@ -58,7 +58,6 @@
 package org.apache.fop.datastructs;
 
 import java.util.NoSuchElementException;
-import java.lang.IndexOutOfBoundsException;
 
 /**
  * A general circular buffer class.  It stores and returns <tt>Object</tt>

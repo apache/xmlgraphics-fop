@@ -1,5 +1,6 @@
 package org.apache.fop.fo.properties;
 
+
 import org.apache.fop.fo.properties.AbsolutePosition;
 import org.apache.fop.fo.properties.ActiveState;
 import org.apache.fop.fo.properties.AlignmentAdjust;

@@ -1,4 +1,4 @@
-/**
+/*
  * $Id$
  * 
  * ============================================================================
@@ -55,26 +55,17 @@
 
 package org.apache.fop.fo;
 
-import java.lang.CloneNotSupportedException;
-
-import java.util.Set;
 import java.util.BitSet;
-import java.util.HashSet;
 import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.Iterator;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.ListIterator;
 
-import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.datastructs.ROBitSet;
+import org.apache.fop.datastructs.ROIntArray;
+import org.apache.fop.datatypes.Ints;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.PropertyValueList;
-import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.PropertyConsts;
-import org.apache.fop.datastructs.ROIntArray;
-import org.apache.fop.datastructs.ROBitSet;
-import org.apache.fop.datatypes.Ints;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * This class contains <tt>ROIntArray</tt>s which encode the various sets of

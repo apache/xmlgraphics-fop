@@ -51,11 +51,10 @@
  */
 package org.apache.fop.datatypes.indirect;
 
-import org.apache.fop.datatypes.indirect.IndirectValue;
 import org.apache.fop.datatypes.PropertyValue;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.Property;
-import org.apache.fop.fo.FONode;
 
 /**
  * A pseudo-class to represent a call to the core function

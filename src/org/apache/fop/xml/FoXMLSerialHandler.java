@@ -54,23 +54,18 @@
  */
 package org.apache.fop.xml;
 
-import org.apache.fop.fo.FObjectNames;
-import org.apache.fop.xml.XMLNamespaces;
-import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
-import org.apache.fop.xml.FoXMLEventPool;
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.Driver;
-import org.apache.fop.configuration.Configuration;
-
-import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.Attributes;
-import org.xml.sax.helpers.AttributesImpl;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.InputSource;
-
-import java.io.IOException;
 import java.util.NoSuchElementException;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.AttributesImpl;
+import org.xml.sax.helpers.DefaultHandler;
+
+import org.apache.fop.apps.Driver;
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.configuration.Configuration;
+import org.apache.fop.fo.FObjectNames;
 
 /**
  * <tt>FoXMLSerialHandler</tt> is the <tt>ContentHandler</tt> for the

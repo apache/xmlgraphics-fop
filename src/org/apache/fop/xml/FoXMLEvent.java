@@ -53,10 +53,10 @@
  */
 package org.apache.fop.xml;
 
+import org.xml.sax.helpers.AttributesImpl;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FObjectNames;
-
-import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * This is a data class to encapsulate the data of an individual XML

@@ -55,27 +55,21 @@
 package org.apache.fop.fo.pagination;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.BitSet;
 import java.util.NoSuchElementException;
 
-// FOP
-import org.apache.fop.fo.FOAttributes;
-import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.XMLEvent;
-import org.apache.fop.xml.XMLNamespaces;
-import org.apache.fop.xml.UriLocalName;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.properties.Property;
-import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.FObjectNames;
-import org.apache.fop.fo.FOTree;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.datastructs.TreeException;
-import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.NCName;
-import org.apache.fop.datatypes.Ints;
+import org.apache.fop.datatypes.PropertyValue;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOTree;
+import org.apache.fop.fo.FObjectNames;
+import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
+import org.apache.fop.xml.XMLEvent;
 
 /**
  * Implements the fo:page-sequence-master flow object.  These Fos are
@@ -258,7 +252,7 @@ public class FoPageSequenceMaster extends FONode {
                 } else
                     throw new FOPException
                             ("Aargh! expectStartElement(events, list)");
-                ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+                ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
                 pool.surrenderEvent(ev);
             } while (true);
         } catch (NoSuchElementException e) {
@@ -349,7 +343,7 @@ public class FoPageSequenceMaster extends FONode {
                     //    ("Found conditional-page-master-reference");
                     new FoConditionalPageMasterReference(foTree, this, ev);
                     ev = this.xmlevents.getEndElement
-                                            (this.xmlevents.DISCARD_EV, ev);
+                                            (SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
                     this.pool.surrenderEvent(ev);
                 } while (true);
             } catch (NoSuchElementException e) {

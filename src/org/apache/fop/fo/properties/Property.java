@@ -55,63 +55,33 @@
 
 package org.apache.fop.fo.properties;
 
-import java.lang.Class;
-import java.lang.reflect.Method;
-
 import java.util.Iterator;
-import java.util.ListIterator;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.LinkedList;
-import java.util.Collections;
 
-import org.apache.fop.messaging.MessageHandler;
-
+import org.apache.fop.datatypes.Auto;
+import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.datatypes.CountryType;
+import org.apache.fop.datatypes.EnumType;
+import org.apache.fop.datatypes.LanguageType;
+import org.apache.fop.datatypes.MappedNumeric;
+import org.apache.fop.datatypes.NCName;
+import org.apache.fop.datatypes.NoType;
+import org.apache.fop.datatypes.None;
+import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.datatypes.PropertyValue;
+import org.apache.fop.datatypes.PropertyValueList;
+import org.apache.fop.datatypes.ScriptType;
+import org.apache.fop.datatypes.indirect.FromNearestSpecified;
+import org.apache.fop.datatypes.indirect.FromParent;
+import org.apache.fop.datatypes.indirect.Inherit;
+import org.apache.fop.datatypes.indirect.InheritedValue;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.ShorthandPropSets;
-import org.apache.fop.fo.FOTree;
-import org.apache.fop.fo.FOPropertySets;
-import org.apache.fop.datatypes.PropertyValue;
-import org.apache.fop.datatypes.AbstractPropertyValue;
-import org.apache.fop.datatypes.PropertyValueList;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.PropertyNotImplementedException;
-import org.apache.fop.fo.expr.SystemFontFunction;
-import org.apache.fop.datastructs.ROStringArray;
-import org.apache.fop.datastructs.ROIntArray;
-import org.apache.fop.datatypes.Ints;
-import org.apache.fop.datatypes.NoType;
-import org.apache.fop.datatypes.StringType;
-import org.apache.fop.datatypes.NCName;
-import org.apache.fop.datatypes.CountryType;
-import org.apache.fop.datatypes.LanguageType;
-import org.apache.fop.datatypes.ScriptType;
-import org.apache.fop.datatypes.UriType;
-import org.apache.fop.datatypes.MimeType;
-import org.apache.fop.datatypes.Length;
-import org.apache.fop.datatypes.Ems;
-import org.apache.fop.datatypes.Percentage;
-import org.apache.fop.datatypes.Angle;
-import org.apache.fop.datatypes.EnumType;
-import org.apache.fop.datatypes.MappedNumeric;
-import org.apache.fop.datatypes.IntegerType;
-import org.apache.fop.datatypes.Numeric;
-import org.apache.fop.datatypes.Bool;
-import org.apache.fop.datatypes.Literal;
-import org.apache.fop.datatypes.Auto;
-import org.apache.fop.datatypes.None;
-import org.apache.fop.datatypes.ColorType;
-import org.apache.fop.datatypes.FontFamilySet;
-import org.apache.fop.datatypes.TextDecorations;
-import org.apache.fop.datatypes.TextDecorator;
-import org.apache.fop.datatypes.ShadowEffect;
-import org.apache.fop.datatypes.Slash;
-import org.apache.fop.datatypes.indirect.Inherit;
-import org.apache.fop.datatypes.indirect.InheritedValue;
-import org.apache.fop.datatypes.indirect.FromParent;
-import org.apache.fop.datatypes.indirect.FromNearestSpecified;
+import org.apache.fop.messaging.MessageHandler;
 
 /**
  * Parent class for all of the individual property classes.  It also contains

@@ -53,11 +53,7 @@
  */
 package org.apache.fop.xml;
 
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FObjectNames;
-import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.XMLNamespaces;
-import org.apache.fop.xml.XMLEventPool;
 
 /**
  * This class provides a pool of <tt>FoXMLEvent</tt> objects.

@@ -51,7 +51,6 @@
  */
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.fo.properties.PrecedenceCommon;
 
 public class BorderAfterPrecedence extends PrecedenceCommon {
     public static final int dataTypes = INTEGER | ENUM | INHERIT;

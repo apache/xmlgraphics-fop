@@ -53,25 +53,16 @@
 package org.apache.fop.apps;
 
 // FOP
-import org.apache.fop.fo.FOTree;
-import org.apache.fop.layout.AreaTree;
-import org.apache.fop.xml.FoXMLSerialHandler;
-import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
-import org.apache.fop.configuration.Configuration;
-import org.apache.fop.messaging.MessageHandler;
-import org.apache.fop.fo.PropertyConsts;
-import org.apache.fop.fo.expr.PropertyException;
-
-// DOM
-
-// SAX
-import org.xml.sax.XMLReader;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
-// Java
-import java.io.*;
-import java.util.*;
+import org.apache.fop.configuration.Configuration;
+import org.apache.fop.fo.FOTree;
+import org.apache.fop.layout.AreaTree;
+import org.apache.fop.messaging.MessageHandler;
+import org.apache.fop.xml.FoXMLSerialHandler;
+import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
 
 public class Driver {
     /**

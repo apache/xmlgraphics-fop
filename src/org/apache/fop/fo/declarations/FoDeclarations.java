@@ -55,20 +55,18 @@
 package org.apache.fop.fo.declarations;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.FObjectNames;
-import org.apache.fop.fo.FOTree;
+import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOTree;
+import org.apache.fop.fo.FObjectNames;
+import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.XMLEvent;
 import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
-import org.apache.fop.datastructs.TreeException;
+import org.apache.fop.xml.XMLEvent;
 
 /**
  * <tt>FoLayoutMasterSet</tt> is the class which processes the
@@ -126,7 +124,7 @@ public class FoDeclarations extends FONode {
                 throw new FOPException
                         ("No fo:color-profile in fo:declarations.");
             new FoColorProfile(foTree, this, ev);
-            ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+            ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
             pool.surrenderEvent(ev);
             do {
                 ev = xmlevents.expectStartElement
@@ -134,7 +132,7 @@ public class FoDeclarations extends FONode {
                 if (ev == null) break; // No instance of these elements found
                 new FoColorProfile(foTree, this, ev);
                 // Flush the master event
-                ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+                ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
                 pool.surrenderEvent(ev);
             } while (true);
         } catch (NoSuchElementException e) {

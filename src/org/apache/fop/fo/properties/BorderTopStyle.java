@@ -51,7 +51,6 @@
  */
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.fo.properties.BorderCommonStyle;
 
 public class BorderTopStyle extends BorderCommonStyle {
     public static final int dataTypes = ENUM | NONE | INHERIT;
