@@ -416,8 +416,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         currentColour = new PDFColor(c.getRed(), c.getGreen(), c.getBlue());
         currentStream.write(currentColour.getColorSpaceOut(false));
 
-        PDFNumber pdfNumber = new PDFNumber();
-
         applyPaint(getPaint(), false);
         applyStroke(getStroke());
 
@@ -427,26 +425,26 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             int type = iter.currentSegment(vals);
             switch (type) {
                 case PathIterator.SEG_CUBICTO:
-                    currentStream.write(pdfNumber.doubleOut(vals[0]) +
-                                        " " + pdfNumber.doubleOut(vals[1]) + " " +
-                                        pdfNumber.doubleOut(vals[2]) + " " +
-                                        pdfNumber.doubleOut(vals[3]) + " " +
-                                        pdfNumber.doubleOut(vals[4]) + " " +
-                                        pdfNumber.doubleOut(vals[5]) + " c\n");
+                    currentStream.write(PDFNumber.doubleOut(vals[0]) +
+                                        " " + PDFNumber.doubleOut(vals[1]) + " " +
+                                        PDFNumber.doubleOut(vals[2]) + " " +
+                                        PDFNumber.doubleOut(vals[3]) + " " +
+                                        PDFNumber.doubleOut(vals[4]) + " " +
+                                        PDFNumber.doubleOut(vals[5]) + " c\n");
                     break;
                 case PathIterator.SEG_LINETO:
-                    currentStream.write(pdfNumber.doubleOut(vals[0]) +
-                                        " " + pdfNumber.doubleOut(vals[1]) + " l\n");
+                    currentStream.write(PDFNumber.doubleOut(vals[0]) +
+                                        " " + PDFNumber.doubleOut(vals[1]) + " l\n");
                     break;
                 case PathIterator.SEG_MOVETO:
-                    currentStream.write(pdfNumber.doubleOut(vals[0]) +
-                                        " " + pdfNumber.doubleOut(vals[1]) + " m\n");
+                    currentStream.write(PDFNumber.doubleOut(vals[0]) +
+                                        " " + PDFNumber.doubleOut(vals[1]) + " m\n");
                     break;
                 case PathIterator.SEG_QUADTO:
-                    currentStream.write(pdfNumber.doubleOut(vals[0]) +
-                                        " " + pdfNumber.doubleOut(vals[1]) + " " +
-                                        pdfNumber.doubleOut(vals[2]) + " " +
-                                        pdfNumber.doubleOut(vals[3]) + " y\n");
+                    currentStream.write(PDFNumber.doubleOut(vals[0]) +
+                                        " " + PDFNumber.doubleOut(vals[1]) + " " +
+                                        PDFNumber.doubleOut(vals[2]) + " " +
+                                        PDFNumber.doubleOut(vals[3]) + " y\n");
                     break;
                 case PathIterator.SEG_CLOSE:
                     currentStream.write("h\n");
@@ -461,34 +459,32 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     }
 
     protected void writeClip(Shape s) {
-        PDFNumber pdfNumber = new PDFNumber();
-
         PathIterator iter = s.getPathIterator(getTransform());
         while (!iter.isDone()) {
             double vals[] = new double[6];
             int type = iter.currentSegment(vals);
             switch (type) {
                 case PathIterator.SEG_CUBICTO:
-                    currentStream.write(pdfNumber.doubleOut(vals[0]) +
-                                        " " + pdfNumber.doubleOut(vals[1]) + " " +
-                                        pdfNumber.doubleOut(vals[2]) + " " +
-                                        pdfNumber.doubleOut(vals[3]) + " " +
-                                        pdfNumber.doubleOut(vals[4]) + " " +
-                                        pdfNumber.doubleOut(vals[5]) + " c\n");
+                    currentStream.write(PDFNumber.doubleOut(vals[0]) +
+                                        " " + PDFNumber.doubleOut(vals[1]) + " " +
+                                        PDFNumber.doubleOut(vals[2]) + " " +
+                                        PDFNumber.doubleOut(vals[3]) + " " +
+                                        PDFNumber.doubleOut(vals[4]) + " " +
+                                        PDFNumber.doubleOut(vals[5]) + " c\n");
                     break;
                 case PathIterator.SEG_LINETO:
-                    currentStream.write(pdfNumber.doubleOut(vals[0]) +
-                                        " " + pdfNumber.doubleOut(vals[1]) + " l\n");
+                    currentStream.write(PDFNumber.doubleOut(vals[0]) +
+                                        " " + PDFNumber.doubleOut(vals[1]) + " l\n");
                     break;
                 case PathIterator.SEG_MOVETO:
-                    currentStream.write(pdfNumber.doubleOut(vals[0]) +
-                                        " " + pdfNumber.doubleOut(vals[1]) + " m\n");
+                    currentStream.write(PDFNumber.doubleOut(vals[0]) +
+                                        " " + PDFNumber.doubleOut(vals[1]) + " m\n");
                     break;
                 case PathIterator.SEG_QUADTO:
-                    currentStream.write(pdfNumber.doubleOut(vals[0]) +
-                                        " " + pdfNumber.doubleOut(vals[1]) + " " +
-                                        pdfNumber.doubleOut(vals[2]) + " " +
-                                        pdfNumber.doubleOut(vals[3]) + " y\n");
+                    currentStream.write(PDFNumber.doubleOut(vals[0]) +
+                                        " " + PDFNumber.doubleOut(vals[1]) + " " +
+                                        PDFNumber.doubleOut(vals[2]) + " " +
+                                        PDFNumber.doubleOut(vals[3]) + " y\n");
                     break;
                 case PathIterator.SEG_CLOSE:
                     currentStream.write("h\n");
@@ -559,7 +555,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     protected void applyStroke(Stroke stroke) {
         if(stroke instanceof BasicStroke) {
             BasicStroke bs = (BasicStroke)stroke;
-            PDFNumber pdfNumber = new PDFNumber();
 
             float[] da = bs.getDashArray();
             if(da != null) {
@@ -600,10 +595,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                 break;
             }
             float lw = bs.getLineWidth();
-            currentStream.write(pdfNumber.doubleOut(lw) + " w\n");
+            currentStream.write(PDFNumber.doubleOut(lw) + " w\n");
 
             float ml = bs.getMiterLimit();
-            currentStream.write(pdfNumber.doubleOut(ml) + " M\n");  
+            currentStream.write(PDFNumber.doubleOut(ml) + " M\n");  
         }
     }
 
@@ -706,12 +701,11 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         trans.translate(x, y);
         double[] vals = new double[6];
         trans.getMatrix(vals);
-        PDFNumber pdfNumber = new PDFNumber();
 
-        currentStream.write(pdfNumber.doubleOut(vals[0]) + " " + pdfNumber.doubleOut(vals[1]) + " "
-+ pdfNumber.doubleOut(vals[2]) + " " + pdfNumber.doubleOut(vals[3]) + " " + pdfNumber.doubleOut(vals[4])
-+ " " + pdfNumber.doubleOut(vals[5]) + " " +
-                           pdfNumber.doubleOut(vals[6]) + " Tm [" + s + "]");
+        currentStream.write(PDFNumber.doubleOut(vals[0]) + " " + PDFNumber.doubleOut(vals[1]) + " "
++ PDFNumber.doubleOut(vals[2]) + " " + PDFNumber.doubleOut(vals[3]) + " " + PDFNumber.doubleOut(vals[4])
++ " " + PDFNumber.doubleOut(vals[5]) + " " +
+                           PDFNumber.doubleOut(vals[6]) + " Tm [" + s + "]");
 
         currentStream.write("ET\n");
     }
@@ -757,15 +751,14 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         trans.translate(x, y);
         double[] vals = new double[6];
         trans.getMatrix(vals);
-        PDFNumber pdfNumber = new PDFNumber();
 
         for(char ch = iterator.first(); ch != CharacterIterator.DONE; ch = iterator.next()) {
             Map attr = iterator.getAttributes();
 
-            currentStream.write(pdfNumber.doubleOut(vals[0]) + " " + pdfNumber.doubleOut(vals[1]) + " "
-+ pdfNumber.doubleOut(vals[2]) + " " + pdfNumber.doubleOut(vals[3]) + " " + pdfNumber.doubleOut(vals[4])
-+ " " + pdfNumber.doubleOut(vals[5]) + " " +
-                           pdfNumber.doubleOut(vals[6]) + " Tm [" + ch + "]");
+            currentStream.write(PDFNumber.doubleOut(vals[0]) + " " + PDFNumber.doubleOut(vals[1]) + " "
++ PDFNumber.doubleOut(vals[2]) + " " + PDFNumber.doubleOut(vals[3]) + " " + PDFNumber.doubleOut(vals[4])
++ " " + PDFNumber.doubleOut(vals[5]) + " " +
+                           PDFNumber.doubleOut(vals[6]) + " Tm [" + ch + "]");
         }
 
         currentStream.write("ET\n");
@@ -799,34 +792,32 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
         applyPaint(getPaint(), true);
 
-        PDFNumber pdfNumber = new PDFNumber();
-
         PathIterator iter = s.getPathIterator(getTransform());
         while (!iter.isDone()) {
             double vals[] = new double[6];
             int type = iter.currentSegment(vals);
             switch (type) {
                 case PathIterator.SEG_CUBICTO:
-                    currentStream.write(pdfNumber.doubleOut(vals[0]) +
-                                        " " + pdfNumber.doubleOut(vals[1]) + " " +
-                                        pdfNumber.doubleOut(vals[2]) + " " +
-                                        pdfNumber.doubleOut(vals[3]) + " " +
-                                        pdfNumber.doubleOut(vals[4]) + " " +
-                                        pdfNumber.doubleOut(vals[5]) + " c\n");
+                    currentStream.write(PDFNumber.doubleOut(vals[0]) +
+                                        " " + PDFNumber.doubleOut(vals[1]) + " " +
+                                        PDFNumber.doubleOut(vals[2]) + " " +
+                                        PDFNumber.doubleOut(vals[3]) + " " +
+                                        PDFNumber.doubleOut(vals[4]) + " " +
+                                        PDFNumber.doubleOut(vals[5]) + " c\n");
                     break;
                 case PathIterator.SEG_LINETO:
-                    currentStream.write(pdfNumber.doubleOut(vals[0]) +
-                                        " " + pdfNumber.doubleOut(vals[1]) + " l\n");
+                    currentStream.write(PDFNumber.doubleOut(vals[0]) +
+                                        " " + PDFNumber.doubleOut(vals[1]) + " l\n");
                     break;
                 case PathIterator.SEG_MOVETO:
-                    currentStream.write(pdfNumber.doubleOut(vals[0]) +
-                                        " " + pdfNumber.doubleOut(vals[1]) + " m\n");
+                    currentStream.write(PDFNumber.doubleOut(vals[0]) +
+                                        " " + PDFNumber.doubleOut(vals[1]) + " m\n");
                     break;
                 case PathIterator.SEG_QUADTO:
-                    currentStream.write(pdfNumber.doubleOut(vals[0]) +
-                                        " " + pdfNumber.doubleOut(vals[1]) + " " +
-                                        pdfNumber.doubleOut(vals[2]) + " " +
-                                        pdfNumber.doubleOut(vals[3]) + " y\n");
+                    currentStream.write(PDFNumber.doubleOut(vals[0]) +
+                                        " " + PDFNumber.doubleOut(vals[1]) + " " +
+                                        PDFNumber.doubleOut(vals[2]) + " " +
+                                        PDFNumber.doubleOut(vals[3]) + " y\n");
                     break;
                 case PathIterator.SEG_CLOSE:
                     currentStream.write("h\n");

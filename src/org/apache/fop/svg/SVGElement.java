@@ -1,7 +1,7 @@
 /* $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
- * LICENSE file included with these sources."
+ * LICENSE file included with these sources.
  */
 
 package org.apache.fop.svg;
@@ -82,10 +82,6 @@ public class SVGElement extends Svg {
             // this is an error
             throw new FOPException("SVG not in fo:instream-foreign-object");
         }
-
-        /*if (this.marker == BREAK_AFTER) {
-            return new Status(Status.OK);
-        }*/
 
         if (this.marker == START) {
             this.fs = area.getFontState();

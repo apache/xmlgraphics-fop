@@ -79,8 +79,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
      * The result is scaled so that the svg fits correctly inside the pdf document.
      */
     public void setSVGDimension(float w, float h) {
-        PDFNumber pdfNumber = new PDFNumber();
-        currentStream.write("" + pdfNumber.doubleOut(width / w) + " 0 0 " + pdfNumber.doubleOut(height / h) + " 0 0 cm\n");
+        currentStream.write("" + PDFNumber.doubleOut(width / w) + " 0 0 " + PDFNumber.doubleOut(height / h) + " 0 0 cm\n");
     }
 
     /**
