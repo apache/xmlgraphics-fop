@@ -5,10 +5,16 @@
 <!-- Limitations --> 
 
 <s1 title="Limitations">
-  <p>The main limitation at the moment is: FOP only supports the XSL working draft 21 Apr 1999, 
-     not the latest from 27 March 2000. FOP implements the fo objects and properties listed 
+  <p>FOP implements the fo objects and properties listed 
      in <jump href="implemented.html">features</jump>, sometimes it does so only in a limited way. 
   </p>
+
+  <s2 title="leader">
+    <p>fo:leader is only supported in a very limited way: you can use it to draw simple rule . 
+       Only the property value leader-pattern="rule" is supported. leader-length can be set, 
+       but the value is not used. You should wrap leader into a block element.
+    </p>
+  </s2>
 
   <s2 title="page-number-citation">
     <p>Only works for table of contents without any problems. The case where the page number doesn't 

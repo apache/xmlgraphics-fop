@@ -14,12 +14,13 @@
     <ul>
       <li>block </li>
       <li>conditional-page-master-reference</li>
-      <li>display-rule </li>
       <li>display-sequence </li>
       <li>external-graphic</li>
       <li>flow</li>
       <li>inline-sequence </li>
+      <li>instream-foreign-object</li>
       <li>layout-master-set </li>
+      <li>leader, but see <jump href="limitations.html">limitations</jump></li>
       <li>list-block </li>
       <li>list-item </li>
       <li>list-item-body </li>
