@@ -8,16 +8,28 @@
 package org.apache.fop.render.ps;
 
 // Java
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 // FOP
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.area.Block;
+import org.apache.fop.area.BlockViewport;
+import org.apache.fop.area.CTM;
+import org.apache.fop.area.PageViewport;
+import org.apache.fop.area.Trait;
+import org.apache.fop.area.inline.ForeignObject;
+import org.apache.fop.area.inline.Word;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.render.AbstractRenderer;
+import org.apache.fop.render.RendererContext;
+import org.w3c.dom.Document;
 
 
 /**
@@ -32,21 +44,27 @@ import org.apache.fop.render.AbstractRenderer;
  * sure to also follow the DSC to make it simpler to programmatically modify
  * the generated Postscript files (ex. extract pages etc.).
  * <br>
+ * The PS renderer operates in millipoints as the layout engine. Since PostScript
+ * initially uses points, scaling is applied as needed.
  * @todo Rebuild the PostScript renderer
+ * 
+ * @author <a href="mailto:fop-dev@xml.apache.org">Apache XML FOP Development Team</a>
+ * @author <a href="mailto:jeremias@apache.org">Jeremias Maerki</a>
+ * @version $Id$
  */
 public class PSRenderer extends AbstractRenderer {
 
-    /**
-     * the application producing the PostScript
-     */
+    /** The MIME type for PostScript */
+    public static final String MIME_TYPE = "application/postscript";
+
+    /** The application producing the PostScript */
     protected String producer;
+    private int currentPageNumber = 0;
 
     private boolean enableComments = true;
 
-    /**
-     * the stream used to output the PostScript
-     */
-    protected PSStream out;
+    /** The PostScript generator used to output the PostScript */
+    protected PSGenerator gen;
     private boolean ioTrouble = false;
 
     private String currentFontName;
@@ -72,13 +90,17 @@ public class PSRenderer extends AbstractRenderer {
      * Write out a command
      * @param cmd PostScript command
      */
-    protected void write(String cmd) {
+    protected void writeln(String cmd) {
         try {
-            out.write(cmd);
-        } catch (IOException e) {
-            if (!ioTrouble) {
-                e.printStackTrace();
-            }
+            gen.writeln(cmd);
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
+        }
+    }
+
+    protected void handleIOTrouble(IOException ioe) {
+        if (!ioTrouble) {
+            getLogger().error("Error while writing to target file", ioe);
             ioTrouble = true;
         }
     }
@@ -89,7 +111,7 @@ public class PSRenderer extends AbstractRenderer {
      */
     protected void comment(String comment) {
         if (this.enableComments) {
-            write(comment);
+            writeln(comment);
         }
     }
 
@@ -98,71 +120,9 @@ public class PSRenderer extends AbstractRenderer {
      * @param fontInfo available fonts
      */
     protected void writeFontDict(FontInfo fontInfo) {
-        write("%%BeginResource: procset FOPFonts");
-        write("%%Title: Font setup (shortcuts) for this file");
-        write("/FOPFonts 100 dict dup begin");
-        write("/bd{bind def}bind def");
-        write("/ld{load def}bd");
-        write("/M/moveto ld");
-        write("/RM/rmoveto ld");
-        write("/t/show ld");
-
-        write("/ux 0.0 def");
-        write("/uy 0.0 def");
-        // write("/cf /Helvetica def");
-        // write("/cs 12000 def");
-
-        // <font> <size> F
-        write("/F {");
-        write("  /Tp exch def");
-        // write("  currentdict exch get");
-        write("  /Tf exch def");
-        write("  Tf findfont Tp scalefont setfont");
-        write("  /cf Tf def  /cs Tp def  /cw ( ) stringwidth pop def");
-        write("} bd");
-
-        write("/ULS {currentpoint /uy exch def /ux exch def} bd");
-        write("/ULE {");
-        write("  /Tcx currentpoint pop def");
-        write("  gsave");
-        write("  newpath");
-        write("  cf findfont cs scalefont dup");
-        write("  /FontMatrix get 0 get /Ts exch def /FontInfo get dup");
-        write("  /UnderlinePosition get Ts mul /To exch def");
-        write("  /UnderlineThickness get Ts mul /Tt exch def");
-        write("  ux uy To add moveto  Tcx uy To add lineto");
-        write("  Tt setlinewidth stroke");
-        write("  grestore");
-        write("} bd");
-
-        write("/OLE {");
-        write("  /Tcx currentpoint pop def");
-        write("  gsave");
-        write("  newpath");
-        write("  cf findfont cs scalefont dup");
-        write("  /FontMatrix get 0 get /Ts exch def /FontInfo get dup");
-        write("  /UnderlinePosition get Ts mul /To exch def");
-        write("  /UnderlineThickness get Ts mul /Tt exch def");
-        write("  ux uy To add cs add moveto Tcx uy To add cs add lineto");
-        write("  Tt setlinewidth stroke");
-        write("  grestore");
-        write("} bd");
-
-        write("/SOE {");
-        write("  /Tcx currentpoint pop def");
-        write("  gsave");
-        write("  newpath");
-        write("  cf findfont cs scalefont dup");
-        write("  /FontMatrix get 0 get /Ts exch def /FontInfo get dup");
-        write("  /UnderlinePosition get Ts mul /To exch def");
-        write("  /UnderlineThickness get Ts mul /Tt exch def");
-        write("  ux uy To add cs 10 mul 26 idiv add moveto "
-                    + "Tcx uy To add cs 10 mul 26 idiv add lineto");
-        write("  Tt setlinewidth stroke");
-        write("  grestore");
-        write("} bd");
-
-
+        writeln("%%BeginResource: procset FOPFonts");
+        writeln("%%Title: Font setup (shortcuts) for this file");
+        writeln("/FOPFonts 100 dict dup begin");
 
         // write("/gfF1{/Helvetica findfont} bd");
         // write("/gfF3{/Helvetica-Bold findfont} bd");
@@ -171,21 +131,21 @@ public class PSRenderer extends AbstractRenderer {
         while (enum.hasNext()) {
             String key = (String)enum.next();
             Font fm = (Font)fonts.get(key);
-            write("/" + key + " /" + fm.getFontName() + " def");
+            writeln("/" + key + " /" + fm.getFontName() + " def");
         }
-        write("end def");
-        write("%%EndResource");
+        writeln("end def");
+        writeln("%%EndResource");
         enum = fonts.keySet().iterator();
         while (enum.hasNext()) {
             String key = (String)enum.next();
             Font fm = (Font)fonts.get(key);
-            write("/" + fm.getFontName() + " findfont");
-            write("dup length dict begin");
-            write("  {1 index /FID ne {def} {pop pop} ifelse} forall");
-            write("  /Encoding ISOLatin1Encoding def");
-            write("  currentdict");
-            write("end");
-            write("/" + fm.getFontName() + " exch definefont pop");
+            writeln("/" + fm.getFontName() + " findfont");
+            writeln("dup length dict begin");
+            writeln("  {1 index /FID ne {def} {pop pop} ifelse} forall");
+            writeln("  /Encoding ISOLatin1Encoding def");
+            writeln("  currentdict");
+            writeln("end");
+            writeln("/" + fm.getFontName() + " exch definefont pop");
         }
     }
 
@@ -193,9 +153,38 @@ public class PSRenderer extends AbstractRenderer {
      * Make sure the cursor is in the right place.
      */
     protected void movetoCurrPosition() {
-        write(this.currentIPPosition + " " + this.currentBPPosition + " M");
+        moveTo(this.currentIPPosition, this.currentBPPosition);
     }
 
+    /**
+     * Moves the cursor.
+     * @param x X coordinate
+     * @param y Y coordinate
+     */
+    protected void moveTo(int x, int y) {
+        writeln(x + " " + y + " M");
+    }
+
+    /** Saves the graphics state of the rendering engine. */
+    protected void saveGraphicsState() {
+        writeln("gsave");
+    }
+    
+    /** Restores the last graphics state of the rendering engine. */
+    protected void restoreGraphicsState() {
+        writeln("grestore");
+    }
+    
+    /** Indicates the beginning of a text object. */
+    protected void beginTextObject() {
+        writeln("BT");
+    }
+        
+    /** Indicates the end of a text object. */
+    protected void endTextObject() {
+        writeln("ET");
+    }
+        
     /**
      * Set up the font info
      *
@@ -215,17 +204,27 @@ public class PSRenderer extends AbstractRenderer {
      * @param h height
      * @param col color to fill with
      */
-    protected void addFilledRect(int x, int y, int w, int h,
+    protected void fillRect(int x, int y, int w, int h,
                                  ColorType col) {
-        write("newpath");
-        write(x + " " + y + " M");
-        write(w + " 0 rlineto");
-        write("0 " + (-h) + " rlineto");
-        write((-w) + " 0 rlineto");
-        write("0 " + h + " rlineto");
-        write("closepath");
         useColor(col);
-        write("fill");
+        writeln(x + " " + y + " " + w + " " + h + " rectfill");
+    }
+
+    protected void drawRect(int x, int y, int w, int h) {
+        writeln(x + " " + y + " " + w + " " + h + " rectstroke");
+    }
+
+    /**
+     * Clip an area.
+     * Write a clipping operation given coordinates in the current
+     * transform.
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @param width the width of the area
+     * @param height the height of the area
+     */
+    protected void clip(float x, float y, float width, float height) {
+        writeln(x + " " + y + " " + width + " " + height + " rectclip");
     }
 
     /**
@@ -235,7 +234,7 @@ public class PSRenderer extends AbstractRenderer {
      */
     public void useFont(String name, int size) {
         if ((currentFontName != name) || (currentFontSize != size)) {
-            write(name + " " + size + " F");
+            writeln(name + " " + size + " F");
             currentFontName = name;
             currentFontSize = size;
         }
@@ -247,7 +246,7 @@ public class PSRenderer extends AbstractRenderer {
 
     private void useColor(float red, float green, float blue) {
         if ((red != currRed) || (green != currGreen) || (blue != currBlue)) {
-            write(red + " " + green + " " + blue + " setrgbcolor");
+            writeln(red + " " + green + " " + blue + " setrgbcolor");
             currRed = red;
             currGreen = green;
             currBlue = blue;
@@ -258,61 +257,327 @@ public class PSRenderer extends AbstractRenderer {
      * @see org.apache.fop.render.Renderer#startRenderer(OutputStream)
      */
     public void startRenderer(OutputStream outputStream)
-    throws IOException {
+                throws IOException {
         getLogger().debug("rendering areas to PostScript");
 
-        this.out = new PSStream(outputStream);
-        write("%!PS-Adobe-3.0");
-        write("%%Creator: " + this.producer);
-        write("%%DocumentProcessColors: Black");
-        write("%%DocumentSuppliedResources: procset FOPFonts");
-        write("%%EndComments");
-        write("%%BeginDefaults");
-        write("%%EndDefaults");
-        write("%%BeginProlog");
-        write("%%EndProlog");
-        write("%%BeginSetup");
+        //Setup for PostScript generation
+        this.gen = new PSGenerator(outputStream);
+        this.currentPageNumber = 0;
+        
+        //PostScript Header
+        writeln(DSCConstants.PS_ADOBE_30);
+        gen.writeDSCComment(DSCConstants.CREATOR, new String[] {"FOP " + this.producer});
+        gen.writeDSCComment(DSCConstants.CREATION_DATE, new Object[] {new java.util.Date()});
+        gen.writeDSCComment(DSCConstants.PAGES, new Object[] {PSGenerator.ATEND});
+        gen.writeDSCComment(DSCConstants.END_COMMENTS);
+        
+        //Defaults
+        gen.writeDSCComment(DSCConstants.BEGIN_DEFAULTS);
+        gen.writeDSCComment(DSCConstants.END_DEFAULTS);
+        
+        //Prolog
+        gen.writeDSCComment(DSCConstants.BEGIN_PROLOG);
+        gen.writeDSCComment(DSCConstants.END_PROLOG);
+        
+        //Setup
+        gen.writeDSCComment(DSCConstants.BEGIN_SETUP);
+        PSProcSets.writeFOPStdProcSet(gen);
+        PSProcSets.writeFOPEPSProcSet(gen);
         writeFontDict(fontInfo);
-
-        /* Write proc for including EPS */
-        write("%%BeginResource: procset EPSprocs");
-        write("%%Title: EPS encapsulation procs");
-
-        write("/BeginEPSF { %def");
-        write("/b4_Inc_state save def         % Save state for cleanup");
-        write("/dict_count countdictstack def % Count objects on dict stack");
-        write("/op_count count 1 sub def      % Count objects on operand stack");
-        write("userdict begin                 % Push userdict on dict stack");
-        write("/showpage { } def              % Redefine showpage, { } = null proc");
-        write("0 setgray 0 setlinecap         % Prepare graphics state");
-        write("1 setlinewidth 0 setlinejoin");
-        write("10 setmiterlimit [ ] 0 setdash newpath");
-        write("/languagelevel where           % If level not equal to 1 then");
-        write("{pop languagelevel             % set strokeadjust and");
-        write("1 ne                           % overprint to their defaults.");
-        write("{false setstrokeadjust false setoverprint");
-        write("} if");
-        write("} if");
-        write("} bind def");
-
-        write("/EndEPSF { %def");
-        write("count op_count sub {pop} repeat            % Clean up stacks");
-        write("countdictstack dict_count sub {end} repeat");
-        write("b4_Inc_state restore");
-        write("} bind def");
-        write("%%EndResource");
-
-        write("%%EndSetup");
-        write("FOPFonts begin");
+        gen.writeDSCComment(DSCConstants.END_SETUP);
     }
 
     /**
      * @see org.apache.fop.render.Renderer#stopRenderer()
      */
     public void stopRenderer() throws IOException {
-        write("%%Trailer");
-        write("%%EOF");
-        this.out.flush();
+        gen.writeDSCComment(DSCConstants.TRAILER);
+        gen.writeDSCComment(DSCConstants.PAGES, new Integer(this.currentPageNumber));
+        gen.writeDSCComment(DSCConstants.EOF);
+        gen.flush();
     }
+
+    /**
+     * @see org.apache.fop.render.Renderer#renderPage(PageViewport)
+     */
+    public void renderPage(PageViewport page)
+            throws IOException, FOPException {
+        getLogger().debug("renderPage(): " + page);
+        
+        this.currentPageNumber++;
+        gen.writeDSCComment(DSCConstants.PAGE, new Object[] 
+                {page.getPageNumber(),
+                 new Integer(this.currentPageNumber)});
+        final Integer zero = new Integer(0);
+        final Long pagewidth = new Long(Math.round(page.getViewArea().getWidth() / 1000f));
+        final Long pageheight = new Long(Math.round(page.getViewArea().getHeight() / 1000f));
+        gen.writeDSCComment(DSCConstants.PAGE_BBOX, new Object[]
+                {zero, zero, pagewidth, pageheight});
+        gen.writeDSCComment(DSCConstants.BEGIN_PAGE_SETUP);         
+        gen.writeln("FOPFonts begin");
+        gen.writeln("[1 0 0 -1 0 " + pageheight + "] concat");
+        gen.writeln("0.001 0.001 scale");
+        gen.writeDSCComment(DSCConstants.END_PAGE_SETUP);         
+        
+        //Process page
+        super.renderPage(page);
+        
+        writeln("showpage");        
+        gen.writeDSCComment(DSCConstants.PAGE_TRAILER);
+        gen.writeDSCComment(DSCConstants.END_PAGE);
+    }
+
+    protected void paintText(int rx, int bl, String text, Font font) {
+        saveGraphicsState();
+        writeln("1 0 0 -1 " + rx + " " + bl + " Tm");
+        
+        int initialSize = text.length();
+        initialSize += initialSize / 2;
+        StringBuffer sb = new StringBuffer(initialSize);
+        sb.append("(");
+        for (int i = 0; i < text.length(); i++) {
+            final char c = text.charAt(i);
+            final char mapped = font.mapChar(c);
+            gen.escapeChar(mapped, sb);
+        }
+        sb.append(") t");
+        writeln(sb.toString());
+        restoreGraphicsState();
+    }
+
+    /**
+     * @see org.apache.fop.render.Renderer#renderWord(Word)
+     */
+    public void renderWord(Word area) {
+        String fontname = (String)area.getTrait(Trait.FONT_NAME);
+        int fontsize = area.getTraitAsInteger(Trait.FONT_SIZE);
+
+        // This assumes that *all* CIDFonts use a /ToUnicode mapping
+        Font f = (Font)fontInfo.getFonts().get(fontname);
+        
+        //Determine position
+        int rx = currentBlockIPPosition;
+        int bl = currentBPPosition + area.getOffset();
+
+        useFont(fontname, fontsize);
+        
+        paintText(rx, bl, area.getWord(), f);
+
+/*
+        String psString = null;
+        if (area.getFontState().getLetterSpacing() > 0) {
+            //float f = area.getFontState().getLetterSpacing() * 1000 / this.currentFontSize;
+            float f = area.getFontState().getLetterSpacing();
+            psString = (new StringBuffer().append(f).append(" 0.0 (")
+              .append(sb.toString()).append(") A")).toString();
+        } else {
+            psString = (new StringBuffer("(").append(sb.toString())
+              .append(") t")).toString();
+        }
+
+
+        // System.out.println("["+s+"] --> ["+sb.toString()+"]");
+
+        // comment("% --- InlineArea font-weight="+fontWeight+": " + sb.toString());
+        useFont(fs.getFontName(), fs.getFontSize());
+        useColor(area.getRed(), area.getGreen(), area.getBlue());
+        if (area.getUnderlined() || area.getLineThrough()
+                || area.getOverlined())
+            write("ULS");
+        write(psString);
+        if (area.getUnderlined())
+            write("ULE");
+        if (area.getLineThrough())
+            write("SOE");
+        if (area.getOverlined())
+            write("OLE");
+        this.currentXPosition += area.getContentWidth();
+        */
+        super.renderWord(area); //Updates IPD
+    }
+
+
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#renderBlockViewport(BlockViewport, List)
+     */
+    protected void renderBlockViewport(BlockViewport bv, List children) {
+        // clip and position viewport if necessary
+
+        // save positions
+        int saveIP = currentIPPosition;
+        int saveBP = currentBPPosition;
+        String saveFontName = currentFontName;
+
+        CTM ctm = bv.getCTM();
+
+        if (bv.getPositioning() == Block.ABSOLUTE) {
+
+            currentIPPosition = 0;
+            currentBPPosition = 0;
+
+            //closeText();
+            endTextObject();
+
+            if (bv.getClip()) {
+                saveGraphicsState();
+                int x = bv.getXOffset() + containingIPPosition;
+                int y = bv.getYOffset() + containingBPPosition;
+                int width = bv.getWidth();
+                int height = bv.getHeight();
+                clip(x, y, width, height);
+            }
+
+            CTM tempctm = new CTM(containingIPPosition, containingBPPosition);
+            ctm = tempctm.multiply(ctm);
+
+            startVParea(ctm);
+            handleBlockTraits(bv);
+            renderBlocks(children);
+            endVParea();
+
+            if (bv.getClip()) {
+                restoreGraphicsState();
+            }
+            beginTextObject();
+
+            // clip if necessary
+
+            currentIPPosition = saveIP;
+            currentBPPosition = saveBP;
+        } else {
+
+            if (ctm != null) {
+                currentIPPosition = 0;
+                currentBPPosition = 0;
+
+                //closeText();
+                endTextObject();
+
+                double[] vals = ctm.toArray();
+                //boolean aclock = vals[2] == 1.0;
+                if (vals[2] == 1.0) {
+                    ctm = ctm.translate(-saveBP - bv.getHeight(), -saveIP);
+                } else if (vals[0] == -1.0) {
+                    ctm = ctm.translate(-saveIP - bv.getWidth(), -saveBP - bv.getHeight());
+                } else {
+                    ctm = ctm.translate(saveBP, saveIP - bv.getWidth());
+                }
+            }
+
+            // clip if necessary
+            if (bv.getClip()) {
+                if (ctm == null) {
+                    //closeText();
+                    endTextObject();
+                }
+                saveGraphicsState();
+                int x = bv.getXOffset();
+                int y = bv.getYOffset();
+                int width = bv.getWidth();
+                int height = bv.getHeight();
+                clip(x, y, width, height);
+            }
+
+            if (ctm != null) {
+                startVParea(ctm);
+            }
+            handleBlockTraits(bv);
+            renderBlocks(children);
+            if (ctm != null) {
+                endVParea();
+            }
+
+            if (bv.getClip()) {
+                restoreGraphicsState();
+                if (ctm == null) {
+                    beginTextObject();
+                }
+            }
+            if (ctm != null) {
+                beginTextObject();
+            }
+
+            currentIPPosition = saveIP;
+            currentBPPosition = saveBP;
+            currentBPPosition += (int)(bv.getHeight());
+        }
+        currentFontName = saveFontName;
+    }
+    
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#startVParea(CTM)
+     */
+    protected void startVParea(CTM ctm) {
+        // Set the given CTM in the graphics state
+        //currentState.push();
+        //currentState.setTransform(new AffineTransform(CTMHelper.toPDFArray(ctm)));
+
+        saveGraphicsState();
+        // multiply with current CTM
+        //currentStream.add(CTMHelper.toPDFString(ctm) + " cm\n");
+        final double matrix[] = ctm.toArray();
+        writeln("[" + gen.formatDouble(matrix[0]) 
+                + " " + gen.formatDouble(matrix[1])
+                + " " + gen.formatDouble(matrix[2]) 
+                + " " + gen.formatDouble(matrix[3])
+                + " " + gen.formatDouble(matrix[4])
+                + " " + gen.formatDouble(matrix[5]) + "] concat");
+        
+        // Set clip?
+        beginTextObject();        
+    }
+
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#endVParea()
+     */
+    protected void endVParea() {
+        endTextObject();
+        restoreGraphicsState();
+        //currentState.pop();
+    }
+
+    
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#renderForeignObject(ForeignObject, Rectangle2D)
+     */
+    public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
+        Document doc = fo.getDocument();
+        String ns = fo.getNameSpace();
+        renderDocument(doc, ns, pos);
+    }
+
+    public void renderDocument(Document doc, String ns, Rectangle2D pos) {
+        RendererContext context;
+        context = new RendererContext(MIME_TYPE);
+        context.setUserAgent(userAgent);
+
+        /*
+        context.setProperty(PDFXMLHandler.PDF_DOCUMENT, pdfDoc);
+        context.setProperty(PDFXMLHandler.OUTPUT_STREAM, ostream);
+        context.setProperty(PDFXMLHandler.PDF_STATE, currentState);
+        context.setProperty(PDFXMLHandler.PDF_PAGE, currentPage);
+        context.setProperty(PDFXMLHandler.PDF_CONTEXT, 
+                    currentContext == null ? currentPage: currentContext);
+        context.setProperty(PDFXMLHandler.PDF_CONTEXT, currentContext);
+        context.setProperty(PDFXMLHandler.PDF_STREAM, currentStream);
+        context.setProperty(PDFXMLHandler.PDF_XPOS,
+                            new Integer(currentBlockIPPosition + (int) pos.getX()));
+        context.setProperty(PDFXMLHandler.PDF_YPOS,
+                            new Integer(currentBPPosition + (int) pos.getY()));
+        context.setProperty(PDFXMLHandler.PDF_FONT_INFO, fontInfo);
+        context.setProperty(PDFXMLHandler.PDF_FONT_NAME, currentFontName);
+        context.setProperty(PDFXMLHandler.PDF_FONT_SIZE,
+                            new Integer(currentFontSize));
+        context.setProperty(PDFXMLHandler.PDF_WIDTH,
+                            new Integer((int) pos.getWidth()));
+        context.setProperty(PDFXMLHandler.PDF_HEIGHT,
+                            new Integer((int) pos.getHeight()));
+        */           
+        userAgent.renderXML(context, doc, ns);
+
+    }
+
+    
+
 
 }
