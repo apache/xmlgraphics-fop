@@ -126,7 +126,7 @@ public class Outline extends ExtensionObj {
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveOutline(this);
     }
 
     public String getInternalDestination() {

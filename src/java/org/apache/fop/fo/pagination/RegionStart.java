@@ -116,7 +116,7 @@ public class RegionStart extends RegionSE {
      * @see org.apache.fop.fo.FOTreeVisitor
      */
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveRegionStart(this);
     }
 
 }

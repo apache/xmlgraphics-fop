@@ -198,7 +198,7 @@ public class PageSequenceMaster extends FObj {
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.servePageSequenceMaster(this);
     }
 
 }

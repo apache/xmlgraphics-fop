@@ -109,7 +109,7 @@ public class Marker extends FObjMixed {
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveMarker(this);
     }
 
 }

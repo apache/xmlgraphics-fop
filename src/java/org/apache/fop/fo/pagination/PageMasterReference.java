@@ -119,7 +119,7 @@ public abstract class PageMasterReference extends FObj
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.servePageMasterReference(this);
     }
 
 }

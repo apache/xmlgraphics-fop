@@ -82,7 +82,7 @@ public class MultiCase extends ToBeImplementedElement {
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveMultiCase(this);
     }
 
 }

@@ -171,7 +171,7 @@ public class PageNumberCitation extends FObj {
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.servePageNumberCitation(this);
     }
 
     public Font getFontState() {

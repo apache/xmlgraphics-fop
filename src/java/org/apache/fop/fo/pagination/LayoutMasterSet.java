@@ -221,7 +221,7 @@ public class LayoutMasterSet extends FObj {
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveLayoutMasterSet(this);
     }
 
 }

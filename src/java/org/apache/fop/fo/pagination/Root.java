@@ -168,7 +168,7 @@ public class Root extends FObj {
      * @param fotv the FOTreeVisitor object accessing this node of the FO Tree
      */
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveRoot(this);
     }
 
 }

@@ -420,7 +420,7 @@ public class FObj extends FONode {
      * @see org.apache.fop.fo.FOTreeVisitor
      */
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveFObj(this);
     }
 }
 

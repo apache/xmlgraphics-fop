@@ -132,7 +132,7 @@ public class ColorProfile extends FObj {
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveColorProfile(this);
     }
 
 }

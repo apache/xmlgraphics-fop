@@ -68,7 +68,7 @@ public class TableHeader extends TableBody {
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveTableHeader(this);
     }
 
 }

@@ -76,7 +76,7 @@ public class FootnoteBody extends FObj {
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveFootnoteBody(this);
     }
 
 }
