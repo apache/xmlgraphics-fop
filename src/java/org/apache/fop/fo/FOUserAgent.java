@@ -63,6 +63,7 @@ import org.apache.avalon.framework.logger.LogEnabled;
 import org.apache.avalon.framework.logger.Logger;
 
 // FOP
+import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.render.RendererContext;
 
@@ -92,6 +93,7 @@ public class FOUserAgent implements LogEnabled {
     private Map defaults = new java.util.HashMap();
     private Map handlers = new java.util.HashMap();
     private String baseURL;
+    private PDFEncryptionParams pdfEncryptionParams;
 
     /**
      * Sets the logger.
@@ -131,6 +133,24 @@ public class FOUserAgent implements LogEnabled {
         }
     }
 
+    /**
+     * Returns the parameters for PDF encryption.
+     * @return the PDF encryption parameters, null if not applicable
+     */
+    public PDFEncryptionParams getPDFEncryptionParams() {
+        return pdfEncryptionParams;
+    }
+
+    /**
+     * Sets the parameters for PDF encryption.
+     * @param pdfEncryptionParams the PDF encryption parameters, null to 
+     * disable PDF encryption
+     */
+    public void setPDFEncryptionParams(PDFEncryptionParams pdfEncryptionParams) {
+        this.pdfEncryptionParams = pdfEncryptionParams;
+    }
+    
+    
     /**
      * Get an input stream for a reference.
      * Temporary solution until API better.
@@ -216,5 +236,6 @@ public class FOUserAgent implements LogEnabled {
                     + "No handler defined for XML: " + namespace);
         }
     }
+
 }
 

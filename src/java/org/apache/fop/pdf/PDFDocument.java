@@ -159,6 +159,11 @@ public class PDFDocument {
     protected PDFResources resources;
 
     /**
+     * the documents encryption, if exists
+     */
+    protected PDFEncryption encryption;
+
+    /**
      * the colorspace (0=RGB, 1=CMYK)
      */
     protected PDFColorSpace colorspace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
@@ -298,6 +303,30 @@ public class PDFDocument {
         return filterMap;
     }
 
+    /**
+     * Enables PDF encryption.
+     * @param params The encryption parameters for the pdf file
+     */
+    public void setEncryption(PDFEncryptionParams params) {
+        this.encryption = PDFEncryptionManager.newInstance(++this.objectcount, params);
+        if (encryption != null) {
+            /**@todo this cast is ugly. PDFObject should be transformed to an interface. */
+            addTrailerObject((PDFObject)this.encryption);
+        } else {
+            System.out.println("PDF encryption is unavailable. PDF will be "
+                + "generated without encryption.");
+        }
+    }
+    
+    
+    /**
+     * Indicates whether encryption is active for this PDF or not.
+     * @return boolean True if encryption is active
+     */
+    public boolean isEncryptionActive() {
+        return this.encryption != null;
+    }
+    
     /**
      * Make a /Catalog (Root) object. This object is written in
      * the trailer.
@@ -1696,7 +1725,7 @@ public class PDFDocument {
     }
 
     /**
-     * make a stream object
+     * Make a stream object
      *
      * @param type the type of stream to be created
      * @param add if true then the stream will be added immediately
@@ -1704,13 +1733,13 @@ public class PDFDocument {
      */
     public PDFStream makeStream(String type, boolean add) {
 
-        /*
-         * create a PDFStream with the next object number and add it
-         *
-         * to the list of objects
-         */
+        // create a PDFStream with the next object number 
+        // and add it to the list of objects
         PDFStream obj = new PDFStream(++this.objectcount);
         obj.addDefaultFilters(filterMap, type);
+        if (isEncryptionActive()) {
+            this.encryption.applyFilter(obj);
+        }
 
         if (add) {
             this.objects.add(obj);
@@ -1841,7 +1870,7 @@ public class PDFDocument {
      * @throws IOException if there is an exception writing to the output stream
      */
     public void outputHeader(OutputStream stream)
-    throws IOException {
+                throws IOException {
         this.position = 0;
 
         byte[] pdf = ("%PDF-" + PDF_VERSION + "\n").getBytes();
@@ -1864,7 +1893,7 @@ public class PDFDocument {
      * @throws IOException if there is an exception writing to the output stream
      */
     public void outputTrailer(OutputStream stream)
-    throws IOException {
+                throws IOException {
         output(stream);
         for (int count = 0; count < trailerObjects.size(); count++) {
             PDFObject o = (PDFObject) trailerObjects.get(count);
@@ -1876,13 +1905,21 @@ public class PDFDocument {
           by the table's length */
         this.position += outputXref(stream);
 
+        // Determine existance of encryption dictionary
+        String encryptEntry = "";
+        if (this.encryption != null) {
+            encryptEntry = this.encryption.getTrailerEntry();
+        }
+
         /* construct the trailer */
         String pdf = "trailer\n" + "<<\n"
                      + "/Size " + (this.objectcount + 1) + "\n"
                      + "/Root " + this.root.number + " "
-                     + this.root.generation + " R\n" + "/Info "
-                     + this.info.number + " " + this.info.generation
-                     + " R\n" + ">>\n" + "startxref\n" + this.xref
+                     + this.root.generation + " R\n" 
+                     + "/Info " + this.info.number + " " 
+                     + this.info.generation + " R\n" 
+                     + encryptEntry
+                     + ">>\n" + "startxref\n" + this.xref
                      + "\n" + "%%EOF\n";
 
         /* write the trailer */
