@@ -21,6 +21,16 @@ public class LineHeight extends Property  {
         ,"normal"
     };
 
+    public int getEnumIndex(String enum) throws PropertyException {
+        if (enum.equals("normal")) return 1;
+        throw new PropertyException("Invalid enumeration: " + enum);
+    }
+
+    public String getEnumText(int index) throws PropertyException {
+        if (index == 1) return "normal";
+        throw new PropertyException("Invalid enum index: " + index);
+    }
+
     public Numeric getMappedLength(FONode node, int enum)
         throws PropertyException
     {
