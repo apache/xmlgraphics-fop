@@ -231,7 +231,7 @@ public class PDFRenderer extends PrintRenderer {
      */
     public void renderImageArea(ImageArea area) {
         // adapted from contribution by BoBoGi
-        int x = this.currentAreaContainerXPosition + area.getXOffset();
+        int x = this.currentXPosition + area.getXOffset();
         int y = this.currentYPosition;
         int w = area.getContentWidth();
         int h = area.getHeight();
@@ -260,6 +260,7 @@ public class PDFRenderer extends PrintRenderer {
                               (((float)(y - h)) / 1000f) + " cm\n" + "/Im" +
                               xObjectNum + " Do\nQ\nBT\n");
         }
+	this.currentXPosition += area.getContentWidth();
     }
 
     /** render a foreign object area */
