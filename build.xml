@@ -130,6 +130,7 @@ list of possible build targets.
     <tstamp/>
     <property name="Name" value="Fop"/>
     <property name="name" value="fop"/>
+    <property name="NAME" value="FOP"/>
     <property name="version" value="1.0dev"/>
     <filter token="version" value="${version}"/>
     <property name="year" value="1999-2003"/>
@@ -576,15 +577,58 @@ list of possible build targets.
         classpathref="libs-build-classpath"
         author="true"
         version="true"
-        windowtitle="${Name} API"
-        doctitle="${Name}"
+        windowtitle="${NAME} API"
+        doctitle="Formatting Objects Processor (FOP)"
         bottom="Copyright &#169; ${year} Apache Software Foundation. All Rights Reserved."
         overview="${src.dir}/java/org/apache/fop/overview.html"
+        use="true"
         failonerror="true">
       <sourcepath>
         <pathelement path="${src.java}"/>
         <pathelement path="${build.gensrc}"/>
       </sourcepath>
+      <group title="Control and Startup">
+        <package name="org.apache.fop.apps"/>
+        <package name="org.apache.fop.configuration"/>
+        <package name="org.apache.fop.messaging"/>
+        <package name="org.apache.fop.servlet"/>
+      </group>
+      <group title="XSL-FO Tree">
+        <package name="org.apache.fop.fo"/>
+        <package name="org.apache.fop.fo.*"/>
+        <package name="org.apache.fop.datatypes"/>
+        <package name="org.apache.fop.extensions"/>
+      </group>
+      <group title="Layout">
+        <package name="org.apache.fop.layoutmgr"/>
+        <package name="org.apache.fop.layoutmgr.*"/>
+        <package name="org.apache.fop.layout"/>
+        <package name="org.apache.fop.layout.*"/>
+      </group>
+      <group title="Area Tree">
+        <package name="org.apache.fop.area"/>
+        <package name="org.apache.fop.area.*"/>
+      </group>
+      <group title="Paginated Rendering">
+        <package name="org.apache.fop.render"/>
+        <package name="org.apache.fop.render.*"/>
+        <package name="org.apache.fop.viewer"/>
+      </group>
+      <group title="Structural Rendering">
+        <package name="org.apache.fop.rtf.renderer"/>
+      </group>
+      <group title="Utility">
+        <package name="org.apache.fop.pdf"/>
+        <package name="org.apache.fop.mif"/>
+        <package name="org.apache.fop.tools"/>
+        <package name="org.apache.fop.tools.*"/>
+        <package name="org.apache.fop.svg"/>
+        <package name="org.apache.fop.image"/>
+        <package name="org.apache.fop.image.*"/>
+        <package name="org.apache.fop.fonts"/>
+        <package name="org.apache.fop.fonts.*"/>
+        <package name="org.apache.fop.util"/>
+      </group>
     </javadoc>
   </target>
 
