@@ -33,9 +33,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.impl.SimpleLog;
+import org.apache.commons.logging.LogFactory;
 
 //FOP
+import org.apache.fop.apps.Version;
 import org.apache.fop.fonts.type1.PFMFile;
 
 /**
@@ -47,23 +48,7 @@ public class PFMReader {
     /**
      * logging instance
      */
-    protected Log logger = null;
-
-    /**
-     * Sets the Commons-Logging instance for this class
-     * @param logger The Commons-Logging instance
-     */
-    public void setLogger(Log logger) {
-        this.logger = logger;
-    }
-
-    /**
-     * Returns the Commons-Logging instance for this class
-     * @return  The Commons-Logging instance
-     */
-    protected Log getLogger(Log logger) {
-        return logger;
-    }
+    protected Log log = LogFactory.getLog(TTFReader.class);
 
     /**
      * Parse commandline arguments. put options in the HashMap and return
@@ -90,18 +75,19 @@ public class PFMReader {
         return (String[])arguments.toArray(new String[arguments.size()]);
     }
 
-    private void displayUsage() {
-        if (logger != null && logger.isInfoEnabled()) {
-            logger.info(
-                " java org.apache.fop.fonts.apps.PFMReader [options] metricfile.pfm xmlfile.xml");
-            logger.info(" where options can be:");
-            logger.info(" -fn <fontname>");
-            logger.info("     default is to use the fontname in the .pfm file, but");
-            logger.info("     you can override that name to make sure that the");
-            logger.info("     embedded font is used (if you're embedding fonts)");
-            logger.info("     instead of installed fonts when viewing documents ");
-            logger.info("     with Acrobat Reader.");
-        }
+    private static void displayUsage() {
+        System.out.println(
+            "java " + PFMReader.class.getName() + " [options] metricfile.pfm xmlfile.xml");
+        System.out.println();
+        System.out.println("where options can be:");
+        System.out.println("-d <WARN|INFO|DEBUG>");
+        System.out.println("    Set debug level (default: WARN).");
+        System.out.println("-fn <fontname>");
+        System.out.println("    default is to use the fontname in the .pfm file, but");
+        System.out.println("    you can override that name to make sure that the");
+        System.out.println("    embedded font is used (if you're embedding fonts)");
+        System.out.println("    instead of installed fonts when viewing documents ");
+        System.out.println("    with Acrobat Reader.");
     }
 
 
@@ -133,19 +119,32 @@ public class PFMReader {
         Map options = new java.util.HashMap();
         String[] arguments = parseArguments(options, args);
 
-        PFMReader app = new PFMReader();
-        Log log;
-        if (options.get("-d") != null) {
-            log = new SimpleLog("FOP/Fonts");
-            ((SimpleLog) log).setLevel(SimpleLog.LOG_LEVEL_DEBUG);
-        } else {
-            log = new SimpleLog("FOP/Fonts");
-            ((SimpleLog) log).setLevel(SimpleLog.LOG_LEVEL_INFO);
-        }
-        app.setLogger(log);
+        //Setup simple logger for this command-line application
+        System.setProperty("org.apache.commons.logging.Log", 
+            "org.apache.commons.logging.impl.SimpleLog");
+        System.setProperty("org.apache.commons.logging.simplelog.showShortLogname", 
+            "false");
 
-        log.info("PFM Reader v1.1a");
-        log.info("");
+        //Determine log level
+        String level;
+        if (options.get("-d") != null) {
+            String lev = (String)options.get("-d");
+            if ("DEBUG".equalsIgnoreCase(lev)) {
+                level = "debug"; 
+            } else if ("INFO".equalsIgnoreCase(lev)) {
+                level = "info";
+            } else {
+                level = "warn";
+            }
+        } else {
+            level = "warn";
+        }
+        System.setProperty("org.apache.commons.logging.simplelog.defaultlog",
+            level); 
+
+        PFMReader app = new PFMReader();
+
+        System.out.println("PFM Reader for Apache FOP " + Version.getVersion() + "\n");
 
         if (options.get("-ef") != null) {
             embFile = (String)options.get("-ef");
@@ -165,9 +164,10 @@ public class PFMReader {
 
         if (arguments.length != 2 || options.get("-h") != null
             || options.get("-help") != null || options.get("--help") != null) {
-            app.displayUsage();
+            displayUsage();
         } else {
             try {
+                System.out.println("Parsing font...");
                 PFMFile pfm = app.loadPFM(arguments[0]);
                 if (pfm != null) {
                     app.preview(pfm);
@@ -177,8 +177,10 @@ public class PFMReader {
     
                     app.writeFontXML(doc, arguments[1]);
                 }
+                System.out.println("\nXML font metrics file successfullly created.");
             } catch (Exception e) {
-                log.error("Error while building XML font metrics file", e);
+                System.err.println("Error while building XML font metrics file");
+                e.printStackTrace(System.err);
                 System.exit(-1);
             }
         }
@@ -193,12 +195,11 @@ public class PFMReader {
      * @throws IOException In case of an I/O problem
      */
     public PFMFile loadPFM(String filename) throws IOException {
-        logger.info("Reading " + filename + "...");
-        logger.info("");
+        log.info("Reading " + filename + "...");
+        log.info("");
         InputStream in = new java.io.FileInputStream(filename);
         try {
             PFMFile pfm = new PFMFile();
-            pfm.setLogger(logger);
             pfm.load(in);
             return pfm;
         } finally {
@@ -212,20 +213,20 @@ public class PFMReader {
      * @param   pfm The PFM file to preview.
      */
     public void preview(PFMFile pfm) {
-        if (logger != null & logger.isInfoEnabled()) {
-            logger.info("Font: " + pfm.getWindowsName());
-            logger.info("Name: " + pfm.getPostscriptName());
-            logger.info("CharSet: " + pfm.getCharSetName());
-            logger.info("CapHeight: " + pfm.getCapHeight());
-            logger.info("XHeight: " + pfm.getXHeight());
-            logger.info("LowerCaseAscent: " + pfm.getLowerCaseAscent());
-            logger.info("LowerCaseDescent: " + pfm.getLowerCaseDescent());
-            logger.info("Having widths for " + (pfm.getLastChar() - pfm.getFirstChar()) 
+        if (log != null & log.isInfoEnabled()) {
+            log.info("Font: " + pfm.getWindowsName());
+            log.info("Name: " + pfm.getPostscriptName());
+            log.info("CharSet: " + pfm.getCharSetName());
+            log.info("CapHeight: " + pfm.getCapHeight());
+            log.info("XHeight: " + pfm.getXHeight());
+            log.info("LowerCaseAscent: " + pfm.getLowerCaseAscent());
+            log.info("LowerCaseDescent: " + pfm.getLowerCaseDescent());
+            log.info("Having widths for " + (pfm.getLastChar() - pfm.getFirstChar()) 
                         + " characters (" + pfm.getFirstChar()
                         + "-" + pfm.getLastChar() + ").");
-            logger.info("for example: Char " + pfm.getFirstChar()
+            log.info("for example: Char " + pfm.getFirstChar()
                         + " has a width of " + pfm.getCharWidth(pfm.getFirstChar()));
-            logger.info("");
+            log.info("");
        }
     }
 
@@ -238,8 +239,8 @@ public class PFMReader {
      */
     public void writeFontXML(org.w3c.dom.Document doc, String target) 
                 throws TransformerException {
-        logger.info("Writing xml font file " + target + "...");
-        logger.info("");
+        log.info("Writing xml font file " + target + "...");
+        log.info("");
 
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer();
@@ -260,15 +261,15 @@ public class PFMReader {
      */
     public org.w3c.dom.Document constructFontXML(PFMFile pfm,
             String fontName, String className, String resource, String file) {
-        logger.info("Creating xml font file...");
-        logger.info("");
+        log.info("Creating xml font file...");
+        log.info("");
 
         Document doc;
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             doc = factory.newDocumentBuilder().newDocument();
         } catch (javax.xml.parsers.ParserConfigurationException e) {
-            logger.error("Can't create DOM implementation", e);
+            log.error("Can't create DOM implementation", e);
             return null;
         }
         Element root = doc.createElement("font-metrics");
@@ -282,7 +283,7 @@ public class PFMReader {
         String s = pfm.getPostscriptName();
         int pos = s.indexOf("-");
         if (pos >= 0) {
-            char sb[] = new char[s.length() - 1];
+            char[] sb = new char[s.length() - 1];
             s.getChars(0, pos, sb, 0);
             s.getChars(pos + 1, s.length(), sb, pos);
             s = new String(sb);
