@@ -874,6 +874,7 @@ public class PSRenderer extends AbstractRenderer {
 
         int bl = this.currentYPosition;
         // method is identical to super method except next line
+        movetoCurrPosition();
 
         String fontWeight = area.getFontState().getFontWeight();
         //comment("% --- LineArea begin font-weight="+fontWeight);
@@ -898,7 +899,7 @@ public class PSRenderer extends AbstractRenderer {
         this.pagecount++;
         this.idReferences = page.getIDReferences();
 
-        write("%%Page: " + page.getNumber() + " " + page.getNumber());
+        write("%%Page: " + page.getNumber() + " " + this.pagecount);
 
         final long pagewidth = page.getWidth();
         final long pageheight = page.getHeight();
@@ -921,8 +922,6 @@ public class PSRenderer extends AbstractRenderer {
         }
 
         write("%%BeginPageSetup");
-        write("FOPprocs begin");
-        write("FOPFonts begin");
         if (rotate) {
             write(Math.round(pspageheight) + " 0 translate");
             write("90 rotate");
@@ -1168,6 +1167,9 @@ public class PSRenderer extends AbstractRenderer {
         write("b4_Inc_state restore");
         write("} bind def");
         write("%%EndResource");
+
+        write("FOPprocs begin");
+        write("FOPFonts begin");
 
         write("%%EndSetup");
     }
