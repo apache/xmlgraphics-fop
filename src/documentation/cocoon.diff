@@ -1,11 +1,11 @@
 Index: src/blocks/fop/java/org/apache/cocoon/serialization/FOPSerializer.java
 ===================================================================
 RCS file: /home/cvspublic/xml-cocoon2/src/blocks/fop/java/org/apache/cocoon/serialization/FOPSerializer.java,v
-retrieving revision 1.3
-diff -u -r1.3 FOPSerializer.java
---- src/blocks/fop/java/org/apache/cocoon/serialization/FOPSerializer.java	23 Sep 2002 03:30:44 -0000	1.3
-+++ src/blocks/fop/java/org/apache/cocoon/serialization/FOPSerializer.java	20 Nov 2002 07:53:48 -0000
-@@ -62,18 +62,28 @@
+retrieving revision 1.4
+diff -u -r1.4 FOPSerializer.java
+--- src/blocks/fop/java/org/apache/cocoon/serialization/FOPSerializer.java	21 Nov 2002 18:18:48 -0000	1.4
++++ src/blocks/fop/java/org/apache/cocoon/serialization/FOPSerializer.java	5 Dec 2002 09:21:13 -0000
+@@ -63,18 +63,28 @@
  import org.apache.cocoon.components.url.URLFactory;
  import org.apache.cocoon.util.ClassUtils;
  import org.apache.cocoon.environment.URLFactorySourceResolver;
@@ -38,7 +38,7 @@ diff -u -r1.3 FOPSerializer.java
  import java.net.MalformedURLException;
  
  /**
-@@ -83,7 +93,7 @@
+@@ -84,7 +94,7 @@
   */
  public class FOPSerializer
  extends AbstractSerializer
@@ -47,7 +47,7 @@ diff -u -r1.3 FOPSerializer.java
  
      /**
       * The Renderer Factory to use
-@@ -96,6 +106,11 @@
+@@ -97,6 +107,11 @@
      protected Driver driver;
  
      /**
@@ -59,7 +59,7 @@ diff -u -r1.3 FOPSerializer.java
       * The current <code>Renderer</code>.
       */
      protected Renderer renderer;
-@@ -144,24 +159,6 @@
+@@ -145,24 +160,6 @@
      public void configure(Configuration conf) throws ConfigurationException {
  
          this.logger = getLogger().getChildLogger("fop");
@@ -84,7 +84,7 @@ diff -u -r1.3 FOPSerializer.java
  
          this.setContentLength = conf.getChild("set-content-length").getValueAsBoolean(true);
  
-@@ -179,28 +176,6 @@
+@@ -180,28 +177,6 @@
              // New syntax: Element user-config contains URL
              configUrl = conf.getChild("user-config").getValue(null);
          }
@@ -113,7 +113,7 @@ diff -u -r1.3 FOPSerializer.java
  
          // Get the mime type.
          this.mimetype = conf.getAttribute("mime-type");
-@@ -232,6 +207,22 @@
+@@ -233,6 +208,22 @@
                  + "no renderer was specified in the sitemap configuration."
              );
          }
@@ -136,7 +136,7 @@ diff -u -r1.3 FOPSerializer.java
      }
  
      /**
-@@ -241,27 +232,40 @@
+@@ -242,27 +233,39 @@
          return mimetype;
      }
  
@@ -152,9 +152,9 @@ diff -u -r1.3 FOPSerializer.java
 +                    ccf = new org.apache.cocoon.components.source.CocoonSourceFactory(null, manager);
 +                    ccf.enableLogging(logger);
 +                    source = ccf.getSource(env, "/" + uri);
-+                    getLogger().error("Loading image from " + source.getSystemId());
++                    getLogger().debug("Loading image from " + source.getSystemId());
 +                    InputStream is = source.getInputStream();
-+                    getLogger().error("input stream: " + is + ":" + is.available());
++                    getLogger().debug("input stream: " + is + ":" + is.available());
 +                    return is;
 +                } catch (Exception e) {
 +                    getLogger().error("Cannot load source", e);
@@ -166,7 +166,6 @@ diff -u -r1.3 FOPSerializer.java
 +        //userAgent.setBaseURL(source.getSystemId());
 +
 +        driver.setUserAgent(userAgent);
-+
 +    }
 +
      /**
@@ -186,14 +185,14 @@ diff -u -r1.3 FOPSerializer.java
 -                if (getLogger().isWarnEnabled()) {
 -                    getLogger().warn("Cannot load  class " + this.rendererName, e);
 -                }
--                throw new RuntimeException("Cannot load class " + this.rendererName + "(" + e + ")");
+-                throw new CascadingRuntimeException("Cannot load class " + this.rendererName, e);
 -            }
 -        }
 -        this.driver.setRenderer(this.renderer);
          this.driver.setOutputStream(out);
          setContentHandler(this.driver.getContentHandler());
      }
-@@ -295,8 +299,7 @@
+@@ -296,8 +299,7 @@
        */
      public void recycle() {
          super.recycle();
@@ -203,7 +202,7 @@ diff -u -r1.3 FOPSerializer.java
      }
  
      /**
-@@ -306,3 +309,4 @@
+@@ -307,3 +309,4 @@
          return this.setContentLength;
      }
  }
@@ -214,7 +213,7 @@ RCS file: /home/cvspublic/xml-cocoon2/src/java/org/apache/cocoon/components/pipe
 retrieving revision 1.24
 diff -u -r1.24 AbstractProcessingPipeline.java
 --- src/java/org/apache/cocoon/components/pipeline/AbstractProcessingPipeline.java	11 Oct 2002 08:36:30 -0000	1.24
-+++ src/java/org/apache/cocoon/components/pipeline/AbstractProcessingPipeline.java	20 Nov 2002 07:53:48 -0000
++++ src/java/org/apache/cocoon/components/pipeline/AbstractProcessingPipeline.java	5 Dec 2002 09:21:13 -0000
 @@ -62,6 +62,7 @@
  import org.apache.cocoon.ConnectionResetException;
  import org.apache.cocoon.ProcessingException;
@@ -231,7 +230,7 @@ diff -u -r1.24 AbstractProcessingPipeline.java
 +            }
 +
 +            // WARNING: quick hack
-+            // setup the generator
++            // setup the serializer
 +            if(this.serializer instanceof RequestLifecycleComponent) {
 +                ((RequestLifecycleComponent)this.serializer).setup(
 +                    environment,
