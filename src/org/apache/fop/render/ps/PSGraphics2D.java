@@ -245,6 +245,9 @@ public class PSGraphics2D extends AbstractGraphics2D {
             this.m_bitmaps = result;
             this.m_mask = mask;
         }
+    public boolean invertImage() {
+return false;
+}
 
         public String getURL() {
             return "" + m_bitmaps;

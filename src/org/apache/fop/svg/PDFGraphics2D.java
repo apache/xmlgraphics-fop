@@ -334,6 +334,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             this.m_mask = mask;
         }
 
+    public boolean invertImage() {
+return false;
+}
+
         public String getURL() {
             return "" + m_bitmaps;
         }
