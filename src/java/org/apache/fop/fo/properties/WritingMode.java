@@ -20,6 +20,7 @@
  */
 package org.apache.fop.fo.properties;
 
+import java.awt.geom.Point2D;
 import java.util.HashMap;
 
 import org.apache.fop.datastructs.ROIntArray;
@@ -362,5 +363,25 @@ public class WritingMode extends Property  {
         return leftToRight[writingMode];
     }
 
+    /**
+     * Normalizes a pair of values representing an
+     * <code>inline-progression-dimension</code> and a
+     * <code>block-progression-dimension</code> by converting them to a
+     * <code>Point2D</code> representing the corresponding X and Y values in
+     * Java 2D user co-ordinates.
+     * @param ipDim the <code>inline-progression-dimension</code>
+     * @param bpDim the <code>block-progression-dimension</code>
+     * @param writingMode
+     * @return the corresponding x, y values
+     * @throws PropertyException
+     */
+    public static Point2D dimsRelToAbs (
+            double ipDim, double bpDim, int writingMode)
+    throws PropertyException {
+        if (isHorizontal(writingMode)) {
+            return new Point2D.Double(ipDim, bpDim);
+        }
+        return new Point2D.Double(bpDim, ipDim);
+    }
 }
 
