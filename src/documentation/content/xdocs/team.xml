@@ -1,0 +1,251 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
+
+<document>
+  <header>
+    <title>FOP: Development Team</title>
+  </header>
+  <body>
+    <p>All lists on this page are in alphabetical order. Some of them may be incomplete. If you know of an error or omission, please send a message to the <link href="mailto:fop-dev@xml.apache.org">fop-dev</link> mailing list.</p>
+    <section id="commit-active">
+      <title>Active Committers</title>
+      <ul>
+        <li id="bd"><link href="mailto:bdelacretaz@apache.org">Bertrand Delacr&#x00E9;taz</link> (BD)</li>
+        <li id="cg"><link href="mailto:chrisg@apache.org">Christian Geisert</link> (CG)</li>
+        <li id="kl"><link href="mailto:klease@apache.org">Karen Lease</link> (KL)</li>
+        <li id="kll"><link href="mailto:keiron@apache.org">Keiron Liddle</link> (KLL)</li>
+        <li id="jm"><link href="mailto:jeremias@apache.org">Jeremias M&#x00E4;rki</link> (JM)
+          is a software engineer from Lucerne, Switzerland. He is currently enjoying a longer period of
+          "independence" and is having fun working on open source projects like Apache FOP. He's also
+          the creator of <fork href="http://www.krysalis.org/barcode">Krysalis Barcode</fork>.
+        </li>
+        <li id="gm"><link href="mailto:gmazza@apache.org">Glen Mazza</link> (GM)</li>
+        <li id="wvm"><link href="mailto:vmote@apache.org">Victor Mote</link> (WVM) is the founder and manager of <jump href="http://www.outfitr.com">Enterprise Outfitters</jump>, a business software company, and of <jump href="http://www.portagepub.com">Portage Publications</jump>, a republisher of old documents. Both are located in Colorado Springs, Colorado, USA.</li>
+        <li id="jp"><link href="mailto:pietsch@apache.org">J&#x00F6;rg Pietschmann</link> (JP)</li>
+        <li id="as"><link href="mailto:arved@apache.org">Arved Sandstrom</link> (AS)</li>
+        <li id="ot"><link href="mailto:olegt@apache.org">Oleg Tkachenko</link> (OT)</li>
+        <li id="pbw"><link href="mailto:pbwest@apache.org">Peter B. West</link> (PBW)</li>
+      </ul>
+    </section>
+    <section id="contribute-active">
+      <title>Active Contributors</title>
+      <ul>
+        <li><link href="mailto:jaccoud@petrobras.com.br">Marcelo Jaccoud Amaral</link></li>
+        <li><link href="mailto:wlight@weatherlight.com">Rhett Aultman</link></li>
+        <li><link href="mailto:cleeds@medata.com">Clay Leeds</link> (CL)
+          is a web/WAP/Palm developer from Laguna Beach, California, USA. A 
+          recent XML/XSL-FO convert, he has been nit-picking FAQs &amp; assorted web 
+          pages since his first webmaster position @brain.com in 1996. Most 
+          important creation? Jeremy Logan Leeds was born June 18, 2002.</li>
+        <li><link href="mailto:atagunov@mail.cnt.ru">Anton Tagunov</link></li>
+        <li><link href="mailto:yidaomao@yahoo.com">Zhong (George) Yi</link></li>
+      </ul>
+    </section>
+    <section id="founder">
+      <title>Founder</title>
+      <p>FOP was originally created and donated to the Apache Software Foundation by <link href="mailto:jtauber@jtauber.com">James Tauber</link>. Information about him can be found at <jump href="http://www.jtauber.com">his website</jump>.</p>
+    </section>
+    <section id="commit-former">
+      <title>Former Committers</title>
+      <ul>
+        <li id="kc"><link href="mailto:kellyc@apache.org">Kelly Campbell</link></li>
+        <li id="sc"><link href="mailto:gears@apache.org">Steven Coffman</link></li>
+        <li id="te"><link href="mailto:tore@apache.org">Tore Engvig</link></li>
+        <li id="sg"><link href="mailto:stanislav@apache.org">Stanislav Gorkhover</link></li>
+        <li id="fj"><link href="mailto:fotis@apache.org">Fotis Jannidis</link></li>
+        <li id="jn"><link href="mailto:jordan@apache.org">Jordan Naftolin</link></li>
+        <li id="es"><link href="mailto:eschaeffer@apache.org">Eric Schaeffer</link></li>
+        <li id="aw"><link href="mailto:artw@apache.org">Art Welch</link></li>
+      </ul>
+    </section>
+    <section id="expertise">
+      <title>Areas of Expertise</title>
+      <table>
+        <tr>
+          <th/>
+          <th>BD </th>
+          <th>CG </th>
+          <th>KL </th>
+          <th>KLL</th>
+          <th>JM </th>
+          <th>GM </th>
+          <th>WVM</th>
+          <th>JP </th>
+          <th>AS </th>
+          <th>OT </th>
+          <th>PBW</th>
+        </tr>
+        <tr>
+          <td>PMC representation</td>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td>X</td>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td>X</td>
+        </tr>
+        <tr>
+          <td>Release manager</td>
+          <td/>
+          <td>X</td>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+        </tr>
+        <tr>
+          <td>XSL-FO tree</td>
+          <td/>
+          <td/>
+          <td/>
+          <td>X</td>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td>X</td>
+        </tr>
+        <tr>
+          <td>Layout</td>
+          <td/>
+          <td/>
+          <td>X</td>
+          <td>X</td>
+          <td/>
+          <td/>
+          <td/>
+          <td>X</td>
+          <td>X</td>
+          <td/>
+          <td/>
+        </tr>
+        <tr>
+          <td>Fonts</td>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td>X</td>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+        </tr>
+        <tr>
+          <td>SVG</td>
+          <td/>
+          <td/>
+          <td/>
+          <td>X</td>
+          <td>X</td>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+        </tr>
+        <tr>
+          <td>Java2D (AWT)</td>
+          <td/>
+          <td/>
+          <td/>
+          <td>X</td>
+          <td>X</td>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+        </tr>
+        <tr>
+          <td>PDF</td>
+          <td/>
+          <td/>
+          <td/>
+          <td>X</td>
+          <td>X</td>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+        </tr>
+        <tr>
+          <td>PostScript</td>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td>X</td>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+        </tr>
+        <tr>
+          <td>PCL</td>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+        </tr>
+        <tr>
+          <td>RTF</td>
+          <td>X</td>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+        </tr>
+        <tr>
+          <td>MIF</td>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+          <td/>
+        </tr>
+      </table>
+    </section>
+  </body>
+</document>
+
