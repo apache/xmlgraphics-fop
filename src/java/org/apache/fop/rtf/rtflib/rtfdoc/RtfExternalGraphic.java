@@ -161,6 +161,11 @@ public class RtfExternalGraphic extends RtfElement {
      */
      protected int graphicCompressionRate = 80;
 
+     /** The image data */
+     private byte[] data = null;
+
+     /** The image type */
+     private int type;
 
     //////////////////////////////////////////////////
     // @@ Construction
@@ -236,7 +241,7 @@ public class RtfExternalGraphic extends RtfElement {
 //        getRtfFile ().getLog ().logInfo ("Writing image '" + url + "'.");
 
 
-        byte[] data = null;
+        data = null;
         try {
             // image reading patch provided by Michael Krause <michakurt@web.de>
             final BufferedInputStream bin = new BufferedInputStream(url.openStream());
@@ -262,7 +267,7 @@ public class RtfExternalGraphic extends RtfElement {
 
         // Determine image file format
         String file = url.getFile ();
-        int type = determineImageType(data, file.substring(file.lastIndexOf(".") + 1));
+        type = determineImageType(data, file.substring(file.lastIndexOf(".") + 1));
 
         if (type >= ImageConstants.I_TO_CONVERT_BASIS) {
             // convert
@@ -311,6 +316,38 @@ public class RtfExternalGraphic extends RtfElement {
 
         writeControlWord(rtfImageCode);
 
+        computeImageSize();
+        writeSizeInfo();
+
+        for (int i = 0; i < data.length; i++) {
+            int iData = data [i];
+
+            // Make positive byte
+            if (iData < 0) {
+                iData += 256;
+            }
+
+            if (iData < 16) {
+                // Set leading zero and append
+                buf.append('0');
+            }
+
+            buf.append(Integer.toHexString(iData));
+        }
+
+        int len = buf.length();
+        char[] chars = new char[len];
+
+        buf.getChars(0, len, chars, 0);
+        writer.write(chars);
+
+        // Writes the end of RTF image
+
+        writeGroupMark(false);
+        writeGroupMark(false);
+    }
+
+    private void computeImageSize () {
         if (type == ImageConstants.I_PNG) {
             width = ImageUtil.getIntFromByteArray(data, 16, 4, true);
             height = ImageUtil.getIntFromByteArray(data, 20, 4, true);
@@ -342,7 +379,9 @@ public class RtfExternalGraphic extends RtfElement {
             width = ImageUtil.getIntFromByteArray(data, 151, 4, false);
             height = ImageUtil.getIntFromByteArray(data, 155, 4, false);
         }
+    }
 
+    private void writeSizeInfo () throws IOException {
         // Set image size
         if (width != -1) {
             writeControlWord("picw" + width);
@@ -382,35 +421,7 @@ public class RtfExternalGraphic extends RtfElement {
                 writeControlWord("picscaley" + widthDesired * 100 / width);
             }
         }
-
-        for (int i = 0; i < data.length; i++) {
-            int iData = data [i];
-
-            // Make positive byte
-            if (iData < 0) {
-                iData += 256;
-            }
-
-            if (iData < 16) {
-                // Set leading zero and append
-                buf.append('0');
-            }
-
-            buf.append(Integer.toHexString(iData));
-        }
-
-        int len = buf.length();
-        char[] chars = new char[len];
-
-        buf.getChars(0, len, chars, 0);
-        writer.write(chars);
-
-        // Writes the end of RTF image
-
-        writeGroupMark(false);
-        writeGroupMark(false);
     }
-
 
     //////////////////////////////////////////////////
     // @@ Member access
