@@ -135,7 +135,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
 
     private ArrayList knuthParagraphs = null;
     private LinkedList activeList = null;
-    private LinkedList inactiveList = null;
     private ArrayList breakpoints = null;
     private int iReturnedLBP = 0;
     private int iStartElement = 0;
@@ -559,7 +558,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         // create an active node representing the starting point
         activeList = new LinkedList();
         activeList.add(new KnuthNode(0, 0, 1, 0, 0, 0, 0, 0, 0, null));
-        inactiveList = new LinkedList();
 
         // main loop
         ListIterator paragraphIterator = par.listIterator();
@@ -600,9 +598,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                 bForced = true;
                 log.error("Could not find a set of breaking points");
             } else {
-                inactiveList.clear();
                 return 0;
-                }
+            }
         }
 
         // there is at least one set of breaking points
@@ -672,7 +669,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             fallback(par, line);
         }
         activeList.clear();
-        inactiveList.clear();
         return line;
     }
 
@@ -794,7 +790,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                         && ((KnuthPenalty) element).getP()
                         == -KnuthElement.INFINITE)
                     && !(activeNode.position == par.indexOf(element))) {
-                    // deactivate activeNode
+                    // deactivate activeNode:
+                    // just remove it from the activeList; as long as there is
+                    // an active node pointing to it, it will not be deleted
                     KnuthNode tempNode
                         = (KnuthNode) activeListIterator.previous();
                     int iCallNext = 0;
@@ -804,7 +802,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                         iCallNext ++;
                     }
                     lastDeactivatedNode = tempNode;
-                    inactiveList.add(tempNode);
                     activeListIterator.remove();
                     for (int i = 0; i < iCallNext; i++) {
                         activeListIterator.next();
