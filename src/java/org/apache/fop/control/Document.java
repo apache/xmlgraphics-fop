@@ -63,7 +63,6 @@ import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fo.FOTreeEvent;
 import org.apache.fop.fo.FOTreeListener;
 import org.apache.fop.fo.pagination.PageSequence;
-import org.apache.fop.area.Title;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.layout.LayoutStrategy;
@@ -94,7 +93,7 @@ public class Document implements FOTreeControl, FOTreeListener {
      * TODO: this actually belongs in the RenderContext class, when it is
      * created
      */
-    private LayoutStrategy ls = null;
+    private LayoutStrategy layoutStrategy = null;
 
     /**
      * The current AreaTree for the PageSequence being rendered.
@@ -294,14 +293,14 @@ public class Document implements FOTreeControl, FOTreeListener {
      * @param ls the LayoutStrategy object to be used to process this Document
      */
     public void setLayoutStrategy(LayoutStrategy ls) {
-        this.ls = ls;
+        this.layoutStrategy = ls;
     }
 
     /**
      * @return this Document's LayoutStrategy object
      */
     public LayoutStrategy getLayoutStrategy () {
-        return ls;
+        return layoutStrategy;
     }
 
     public Driver getDriver() {
@@ -316,12 +315,7 @@ public class Document implements FOTreeControl, FOTreeListener {
      */
     public void foPageSequenceComplete (FOTreeEvent event) throws FOPException {
         PageSequence pageSeq = event.getPageSequence();
-        Title title = null;
-        if (pageSeq.getTitleFO() != null) {
-            title = pageSeq.getTitleFO().getTitleArea();
-        }
-        areaTree.startPageSequence(title);
-        pageSeq.format(areaTree);
+        layoutStrategy.format(pageSeq, areaTree);
     }
 
     /**

@@ -50,7 +50,11 @@
  */
 package org.apache.fop.layoutmgr;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.layout.LayoutStrategy;
+import org.apache.fop.area.AreaTree;
+import org.apache.fop.area.Title;
+import org.apache.fop.fo.pagination.PageSequence;
 
 /**
  * The implementation of LayoutStrategy for the "redesign" or second generation
@@ -59,5 +63,61 @@ import org.apache.fop.layout.LayoutStrategy;
 public class LayoutManagerLS extends LayoutStrategy {
 
     private static String name = "layoutmgr";
+
+    /**
+     * Runs the formatting of this page sequence into the given area tree
+     *
+     * @param areaTree the area tree to format this page sequence into
+     * @throws FOPException if there is an error formatting the contents
+     */
+    public void format(PageSequence pageSeq, AreaTree areaTree) throws FOPException {
+        Title title = null;
+        if (pageSeq.getTitleFO() != null) {
+            title = pageSeq.getTitleFO().getTitleArea();
+        }
+        areaTree.startPageSequence(title);
+        // Make a new PageLayoutManager and a FlowLayoutManager
+        // Run the PLM in a thread
+        // Wait for them to finish.
+
+        // If no main flow, nothing to layout!
+        if (pageSeq.getMainFlow() == null) {
+            return;
+        }
+
+        // Initialize if already used?
+        //    this.layoutMasterSet.resetPageMasters();
+        if (pageSeq.getPageSequenceMaster() != null) {
+            pageSeq.getPageSequenceMaster().reset();
+        }
+
+        int firstAvailPageNumber = 0;
+        pageSeq.initPageNumber();
+
+        // This will layout pages and add them to the area tree
+        PageLayoutManager pageLM = new PageLayoutManager(areaTree, pageSeq);
+        pageLM.setUserAgent(pageSeq.getUserAgent());
+        pageLM.setFObj(pageSeq);
+        pageLM.setPageCounting(pageSeq.getCurrentPageNumber(),
+                               pageSeq.getPageNumberGenerator());
+
+        // For now, skip the threading and just call run directly.
+        pageLM.run();
+
+        // Thread layoutThread = new Thread(pageLM);
+//  layoutThread.start();
+// log.debug("Layout thread started");
+
+// // wait on both managers
+// try {
+//     layoutThread.join();
+//     log.debug("Layout thread done");
+// } catch (InterruptedException ie) {
+//     log.error("PageSequence.format() interrupted waiting on layout");
+// }
+        pageSeq.setCurrentPageNumber(pageLM.getPageCount());
+        // Tell the root the last page number we created.
+        pageSeq.getRoot().setRunningPageNumberCounter(pageSeq.getCurrentPageNumber());
+    }
 
 }

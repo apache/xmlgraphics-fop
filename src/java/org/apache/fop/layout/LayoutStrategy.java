@@ -51,6 +51,10 @@
 
 package org.apache.fop.layout;
 
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.area.AreaTree;
+import org.apache.fop.fo.pagination.PageSequence;
+
 /**
  * Abstract class defining the highest-level information for a layout strategy.
  * Subclasses implement a layout strategy that converts an FO Tree into an
@@ -68,4 +72,6 @@ public abstract class LayoutStrategy {
         return name;
     }
 
+    public abstract void format (PageSequence pageSeq, AreaTree areaTree)
+            throws FOPException;
 }

@@ -358,59 +358,9 @@ public class PageSequence extends FObj {
     }
 
     /**
-     * Runs the formatting of this page sequence into the given area tree
-     *
-     * @param areaTree the area tree to format this page sequence into
-     * @throws FOPException if there is an error formatting the contents
-     */
-    public void format(AreaTree areaTree) throws FOPException {
-        // Make a new PageLayoutManager and a FlowLayoutManager
-        // Run the PLM in a thread
-        // Wait for them to finish.
-
-        // If no main flow, nothing to layout!
-        if (this.mainFlow == null) {
-            return;
-        }
-
-        // Initialize if already used?
-        //    this.layoutMasterSet.resetPageMasters();
-        if (pageSequenceMaster != null) {
-            pageSequenceMaster.reset();
-        }
-
-        int firstAvailPageNumber = 0;
-        initPageNumber();
-
-        // This will layout pages and add them to the area tree
-        PageLayoutManager pageLM = new PageLayoutManager(areaTree, this);
-        pageLM.setUserAgent(getUserAgent());
-        pageLM.setFObj(this);
-        pageLM.setPageCounting(currentPageNumber, pageNumberGenerator);
-
-        // For now, skip the threading and just call run directly.
-        pageLM.run();
-
-        // Thread layoutThread = new Thread(pageLM);
-//  layoutThread.start();
-// log.debug("Layout thread started");
-
-// // wait on both managers
-// try {
-//     layoutThread.join();
-//     log.debug("Layout thread done");
-// } catch (InterruptedException ie) {
-//     log.error("PageSequence.format() interrupted waiting on layout");
-// }
-        this.currentPageNumber = pageLM.getPageCount();
-        // Tell the root the last page number we created.
-        this.root.setRunningPageNumberCounter(this.currentPageNumber);
-    }
-
-    /**
      * Initialize the current page number for the start of the page sequence.
      */
-    private void initPageNumber() {
+    public void initPageNumber() {
         this.currentPageNumber = this.root.getRunningPageNumberCounter() + 1;
 
         if (this.pageNumberType == AUTO_ODD) {
@@ -826,5 +776,23 @@ public class PageSequence extends FObj {
         fotv.serveVisitor(this);
     }
 
-}
+    public Flow getMainFlow() {
+        return mainFlow;
+    }
 
+    public PageSequenceMaster getPageSequenceMaster() {
+        return pageSequenceMaster;
+    }
+
+    public PageNumberGenerator getPageNumberGenerator() {
+        return pageNumberGenerator;
+    }
+
+    public void setCurrentPageNumber(int currentPageNumber) {
+        this.currentPageNumber = currentPageNumber;
+    }
+
+    public Root getRoot() {
+        return root;
+    }
+}
