@@ -374,7 +374,6 @@ public class PDFRenderer extends PrintRenderer {
         GraphicsNodeRenderContext rc = getRenderContext();
         BridgeContext ctx = new BridgeContext(userAgent, rc);
         GraphicsNode root;
-        //System.out.println("creating PDFGraphics2D");
         PDFGraphics2D graphics =
           new PDFGraphics2D(true, fs, pdfDoc,
                             currentFontName, currentFontSize, currentXPosition,
@@ -387,7 +386,7 @@ public class PDFRenderer extends PrintRenderer {
             root.paint(graphics, rc);
             currentStream.add(graphics.getString());
         } catch (Exception e) {
-            e.printStackTrace();
+            MessageHandler.errorln("Error: svg graphic could not be rendered: " + e.getMessage());
         }
 
         currentStream.add("Q\n");
@@ -408,6 +407,7 @@ public class PDFRenderer extends PrintRenderer {
                                     true);
 
             TextPainter textPainter = new StrokingTextPainter();
+            //TextPainter textPainter = new PDFTextPainter();
 
             GraphicsNodeRableFactory gnrFactory =
               new ConcreteGraphicsNodeRableFactory();
@@ -499,9 +499,19 @@ public class PDFRenderer extends PrintRenderer {
                 int space = prevWordX - rx + prevWordWidth;
                 float emDiff =
                   (float) space / (float) currentFontSize * 1000f;
-                pdf.append(Float.toString(emDiff));
-                pdf.append(" ");
-                pdf.append(startText);
+                // this prevents a problem in Acrobat Reader where large
+                // numbers cause text to disappear or default to a limit
+                if(emDiff < -33000) {
+                    closeText();
+
+                    pdf.append("1 0 0 1 " +(rx / 1000f) + " " +
+                               (bl / 1000f) + " Tm [" + startText);
+                    textOpen = true;
+                } else {
+                    pdf.append(Float.toString(emDiff));
+                    pdf.append(" ");
+                    pdf.append(startText);
+                }
             }
             prevWordWidth = area.getContentWidth();
             prevWordX = rx;
