@@ -48,9 +48,12 @@ public class TableCell extends FObj {
 		 */
 		protected int beforeOffset;
 
-		/* ivan demakov */
+		/* For collapsed border style */
 		protected int borderHeight = 0;
-		protected int cellHeight = 0;
+		/**
+		 * Minimum ontent height of cell.
+		 */
+		protected int minCellHeight = 0;
 
 		protected int height = 0;
 		protected int top; // Ypos of cell ???
@@ -126,7 +129,7 @@ public class TableCell extends FObj {
 			}
 			else bRelativeAlign = false; // Align on a per-cell basis
 
-			this.cellHeight = this.properties.get("height").getLength().mvalue();
+			this.minCellHeight = this.properties.get("height").getLength().mvalue();
 		}
 
 
@@ -160,8 +163,8 @@ public class TableCell extends FObj {
 						area.getIDReferences().configureID(id,area);
 				}
 
-				int spaceLeft = area.spaceLeft() - m_borderSeparation/2 + borderHeight/2 ;
-
+				//				int spaceLeft = area.spaceLeft() - m_borderSeparation/2 + borderHeight/2 ;
+				int spaceLeft = area.spaceLeft() - m_borderSeparation ;
 				// The Area position defines the content rectangle! Borders
 				// and padding are outside of this rectangle.
 				this.cellArea =
@@ -210,6 +213,11 @@ public class TableCell extends FObj {
 				cellArea.end();
 				area.addChild(cellArea);
 
+				// Adjust for minimum cell content height
+				if (minCellHeight > cellArea.getContentHeight()) {
+						cellArea.setHeight(minCellHeight);
+				}
+
 				// This is the allocation height of the cell (including borders
 				// and padding
 				// ALSO need to include offsets if using "separate borders"
@@ -225,56 +233,69 @@ public class TableCell extends FObj {
 				return new Status(Status.OK);
 		}
 
-		// TableRow calls this. Anyone else?
+		/**
+		 * Return the allocation height of the cell area.
+		 * Note: called by TableRow.
+		 * We adjust the actual allocation height of the area by the value
+		 * of border separation (for separate borders) or border height
+		 * adjustment for collapse style (because current scheme makes cell
+		 * overestimate the allocation height).
+		 */
 		public int getHeight() {
-				// return cellArea.getHeight() + spaceBefore + spaceAfter;
-				if (cellHeight > 0) return cellHeight;
-				return cellArea.getHeight() + m_borderSeparation - borderHeight/2;
+				return cellArea.getHeight() + m_borderSeparation - borderHeight;
 		}
 
-		/** Called by TableRow to set final size of cell content rectangles and
-		 * to vertically align the actual content within the cell rectangle.
-		 * Passed value is height of this row in the grid : allocation height
-		 * of the cells (including any border separation values).
+		/**
+		 * Set the final size of cell content rectangles to the actual row height
+		 * and to vertically align the actual content within the cell rectangle.
+		 * @param h Height of this row in the grid  which is based on
+		 * the allocation height of all the cells in the row, including any
+		 * border separation values.
 		 */
 		public void setRowHeight(int h) {
-				// This seems wierd. It's very old.
-				// The height passed here is the total row height.
-				// But we need to align the content of the cell.
-				//	cellArea.setMaxHeight(h);
-				// Increase content height by difference of row content height
-				// and current cell allocation height (includes borders & padding)
-				cellArea.increaseHeight(h + borderHeight/2 - cellArea.getHeight());
+				int delta = h - getHeight();
+				//	cellArea.increaseHeight(h + borderHeight/2 - cellArea.getHeight());
 				if (bRelativeAlign) {
 						// Must get info for all cells starting in row!
-						// verticalAlign can be BEFORE or BASELINE
+						// verticalAlign can be BEFORE or BASELINE	
+						// For now just treat like "before"
+						cellArea.increaseHeight(delta);
 				}
-				else {
-						int delta = h - getHeight();
-						if (delta > 0) {
+				else if (delta > 0) {
+						BorderAndPadding cellBP = cellArea.getBorderAndPadding();
 						switch(verticalAlign) {
 						  case DisplayAlign.CENTER:
 								// Increase cell padding before and after and change
 								// "Y" position of content rectangle
-									//	cellArea.getBorderAndPadding().setPaddingBefore(delta/2);
-									//cellArea.getBorderAndPadding().setPaddingAfter(delta-delta/2);
 									cellArea.shiftYPosition(delta/2);
+									cellBP.setPaddingLength(BorderAndPadding.TOP, 
+																					cellBP.getPaddingTop(false)+delta/2);
+									cellBP.setPaddingLength(BorderAndPadding.BOTTOM, 
+																					cellBP.getPaddingBottom(false) +
+																					delta-delta/2);
 								break;
 						  case DisplayAlign.AFTER:
 								// Increase cell padding before and change
 								// "Y" position of content rectangle
-									//cellArea.getBorderAndPadding().setPaddingBefore(delta);
+									cellBP.setPaddingLength(BorderAndPadding.TOP, 
+																					cellBP.getPaddingTop(false)+delta);
 									cellArea.shiftYPosition(delta);
 								break;
 						  case DisplayAlign.BEFORE:
+									//cellArea.increaseHeight(delta);
+									cellBP.setPaddingLength(BorderAndPadding.BOTTOM, 
+																		cellBP.getPaddingBottom(false)+delta);
+
 						  default: // OK
 								break;
-						}
 						}
 				}
 		}
 
-		// Calculate cell border and padding
+		/**
+		 * Calculate cell border and padding, including offset of content
+		 * rectangle from the theoretical grid position.
+		 */
 		private void calcBorders(BorderAndPadding bp) {
 				if (this.bSepBorders) {
 						/* Easy case.
@@ -284,15 +305,15 @@ public class TableCell extends FObj {
 						 * border-separate should only be specified on the table object,
 						 * but it inherits.
 						 */
-						int iSep = properties.get("border-separation.inline-progression-direction").getLength().mvalue()/2;
-						int contentOffset = iSep + bp.getBorderLeftWidth(false) +
+						int iSep = properties.get("border-separation.inline-progression-direction").getLength().mvalue();
+						int contentOffset = iSep/2 + bp.getBorderLeftWidth(false) +
 								bp.getPaddingLeft(false);
 						/*
 						int contentOffset = iSep + bp.getBorderStartWidth(false) +
 								bp.getPaddingStart(false);
 						*/
 						this.startOffset += contentOffset;
-						this.width -= (contentOffset + iSep +
+						this.width -= (contentOffset + iSep - iSep/2 +
 								bp.getBorderRightWidth(false) + bp.getPaddingRight(false));
 						// bp.getBorderEndWidth(false) + bp.getPaddingEnd(false);
 						// Offset of content rectangle in the block-progression direction
@@ -301,10 +322,7 @@ public class TableCell extends FObj {
 						this.beforeOffset = m_borderSeparation/2 +
 								bp.getBorderTopWidth(false) +	bp.getPaddingTop(false);
 						// bp.getBorderBeforeWidth(false) +	bp.getPaddingBefore(false);
-						if (this.cellHeight > 0) {
-								this.cellHeight += this.beforeOffset + m_borderSeparation/2 +
-										bp.getBorderBottomWidth(false) + bp.getPaddingBottom(false);
-						}
+
 				}
 				else {
 						//System.err.println("Collapse borders");
@@ -313,26 +331,44 @@ public class TableCell extends FObj {
 						 * border for edge cells. Also seems to border values specified
 						 * on row and column FO in the table (if I read CR correclty.)
 						 */
-						/*
-							border-start
-							If cell in column 1, then combine with table border-start props
-							else combine with border-end props for preceding cell in this
-							row. Look out for spanning rows.
-							border-end
-							If cell in last column, then combine with table border-end props
-							else combine with border-start props for following cell in this
-							row. Look out for spanning rows.
-							border-before
-							If cell in row 1 (of whole table, not just body),
-							then combine with table border-before props,
-							else combine with border-after props for preceding cell in this
-							column. Look out for spanning columns.
-							border-after
-							If cell in last row (of whole table, not just body),
-							then combine with table border-after props,
-							else combine with border-before props for following cell in this
-							column. Look out for spanning columns.
-						*/
+
+						// Set up before and after borders, taking into account row
+						// and table border properties.
+						// ??? What about table-body, header,footer
+
+						/* We can't calculate before and after because we aren't sure
+						 * whether this row will be the first or last in its area, due
+						 * to redoing break decisions (at least in the "new" architecture.)
+						 * So in the general case, we will calculate two possible values: 
+						 * the first/last one and the "middle" one.
+						 * Example: border-before
+						 * 1. If the cell is in the first row in the first table body, it
+						 *    will combine with the last row of the header, or with the
+						 *    top (before) table border if there is no header.
+						 * 2. Otherwise there are two cases:
+						 * a. the row is first in its (non-first) Area.
+						 *    The border can combine with either:
+						 *    i.  the last row of table-header and its cells, or
+						 *    ii. the table before border (no table-header or it is
+						 *        omitted on non-first Areas).
+						 * b. the row isn't first in its Area.
+						 *    The border combines with the border of the previous 
+						 *    row and the cells which end in that row.
+						 */
+
+						/* if-first
+						 * Calculate the effective border of the cell before-border,
+						 * it's parent row before-border, the last header row after-border,
+						 * the after border of the cell(s) which end in the last header
+						 * row.
+						 */
+						/* if-not-first
+						 * Calculate the effective border of the cell before-border,
+						 * it's parent row before-border, the previous row after-border,
+						 * the after border of the cell(s) which end in the previous
+						 * row.
+						 */
+
 
 						/* ivan demakov */
 						int borderStart  = bp.getBorderLeftWidth(false);
@@ -344,12 +380,11 @@ public class TableCell extends FObj {
 
 						this.startOffset += contentOffset;
 						this.width -= (contentOffset + borderEnd/2 + bp.getPaddingRight(false));
-
 						this.beforeOffset = borderBefore/2 + bp.getPaddingTop(false);
-						this.borderHeight = borderBefore + borderAfter;
-						if (this.cellHeight > 0) {
-								this.cellHeight += this.beforeOffset + borderAfter/2 + bp.getPaddingBottom(false);
-						}
+						// Half border height to fix overestimate of area size!
+						this.borderHeight = (borderBefore + borderAfter)/2;
 				}
 		}
+
+
 }

@@ -350,7 +350,8 @@ public class TableRow extends FObj {
 	// Only do this for "STARTCELL", ending spans are handled separately
 	// What about empty cells? Yes, we should set their height too!
 	for (int iCol = 1; iCol <= columns.size(); iCol++) {
-	    if (cellArray.getCellType(iCol) == CellArray.CELLSTART) {
+	    if (cellArray.getCellType(iCol) == CellArray.CELLSTART &&
+		rowSpanMgr.isSpanned(iCol)==false) {
                 cellArray.getCell(iCol).setRowHeight(largestCellHeight);
             }
 	}

@@ -16,20 +16,31 @@ public class BorderAndPadding {
   public static final int BOTTOM=2;
   public static final int LEFT=3;
 
+  private static class ResolvedCondLength {
+      int iLength; // Resolved length value
+      boolean bDiscard;
+
+      ResolvedCondLength(CondLength length) {
+	  bDiscard = length.isDiscard();
+	  iLength= length.mvalue();
+      }
+
+  }
+      
   public static class BorderInfo {
     private int mStyle; // Enum for border style
-    private CondLength mWidth;
     private ColorType mColor; // Border color
+    private ResolvedCondLength mWidth;
 
     BorderInfo(int style, CondLength width, ColorType color) {
       mStyle = style;
-      mWidth = width;
+      mWidth = new ResolvedCondLength(width);
       mColor = color;
     }
   }
 
   private BorderInfo[] borderInfo = new BorderInfo[4];
-  private CondLength[] padding = new CondLength[4];
+  private ResolvedCondLength[] padding = new ResolvedCondLength[4];
 
   public BorderAndPadding() {
   }
@@ -39,7 +50,15 @@ public class BorderAndPadding {
   }
 
   public void setPadding(int side, CondLength width ) {
-    padding[side] = width;
+    padding[side] = new ResolvedCondLength(width);
+  }
+
+  public void setPaddingLength(int side, int iLength ) {
+      padding[side].iLength = iLength;
+  }
+
+  public void setBorderLength(int side, int iLength ) {
+      borderInfo[side].mWidth.iLength = iLength;
   }
 
   public int getBorderLeftWidth(boolean bDiscard) {
@@ -77,10 +96,10 @@ public class BorderAndPadding {
 
   private int getBorderWidth(int side, boolean bDiscard) {
       if ((borderInfo[side] == null) ||
-	  (bDiscard && borderInfo[side].mWidth.isDiscard())) {
+	  (bDiscard && borderInfo[side].mWidth.bDiscard)) {
 	return 0;
       }
-      else return borderInfo[side].mWidth.mvalue();
+      else return borderInfo[side].mWidth.iLength;
   }
 
   public ColorType getBorderColor(int side) {
@@ -99,9 +118,9 @@ public class BorderAndPadding {
 
   private int getPadding(int side, boolean bDiscard) {
       if ((padding[side] == null) ||
-	  (bDiscard && padding[side].isDiscard())) {
+	  (bDiscard && padding[side].bDiscard)) {
 	return 0;
       }
-      else return padding[side].mvalue();
+      else return padding[side].iLength;
   }
 }
