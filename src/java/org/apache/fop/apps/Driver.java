@@ -62,7 +62,7 @@ import org.apache.fop.fo.FOTree;
 import org.apache.fop.layout.AreaTree;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.version.Version;
-import org.apache.fop.xml.FoXMLSerialHandler;
+import org.apache.fop.xml.FoXmlSerialHandler;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
 
 /**
@@ -80,7 +80,7 @@ public class Driver {
     private XMLReader parser;
     private InputSource source;
 
-    private FoXMLSerialHandler xmlhandler;
+    private FoXmlSerialHandler xmlhandler;
     private SyncedXmlEventsBuffer xmlevents;
     private FOTree foTree;
     private AreaTree areaTree = new AreaTree();
@@ -108,13 +108,13 @@ public class Driver {
      * the input source, the parser, the
      * {@link org.apache.fop.xml.SyncedXmlEventsBuffer SyncedXmlEventsBuffer}
      * (<code>xmlevents</code>), the
-     * {@link org.apache.fop.xml.FoXMLSerialHandler FoXMLSerialHandler}
+     * {@link org.apache.fop.xml.FoXmlSerialHandler FoXmlSerialHandler}
      * (<code>xmlhandler</code>) and the
      * {@link org.apache.fop.fo.FOTree FOTree} (<code>foTree</code>).
      * 
      * <p>The <code>xmlhandler</code> uses the source and the parser to
      * generate XML events which it stores in <code>xmlevents</code>.
-     * <code>FoXMLSerialHandler</code> implements <code>Runnable</code>.
+     * <code>FoXmlSerialHandler</code> implements <code>Runnable</code>.
      * 
      * <p>The <code>foTree</code> reads events from the <code>xmlevents</code>
      * buffer, which it interprets to build the FO tree.  <code>FOTree</code>
@@ -139,7 +139,7 @@ public class Driver {
         //setParserFeatures(parser);
 
         xmlevents = new SyncedXmlEventsBuffer();
-        xmlhandler = new FoXMLSerialHandler(xmlevents, parser, source);
+        xmlhandler = new FoXmlSerialHandler(xmlevents, parser, source);
         foTree = new FOTree(xmlevents);
 
         driverThread = Thread.currentThread();
