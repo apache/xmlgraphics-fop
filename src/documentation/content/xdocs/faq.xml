@@ -555,7 +555,7 @@ Any easy way to check this is to cut&amp;paste the source URL from the fo:extern
       <answer>
         <p>Make sure you have set the language and/or country attributes for an appropriate XSL-FO element (fo:page-sequence, fo:block or fo:character):</p>
         <source><![CDATA[<fo:page-sequence language="fi">]]></source>
-        <p>See <link href="hyphenation.html#std">Standard Hyphenation Support</link> for a list of supported language and country codes, and <link href="hyphenation.html#custom">Custom Hyphenation Support</link> for instructions on adding support for other languages and countries.</p>
+        <p>See <link href="hyphenation.html#support">Hyphenation Support</link> for details and instructions on using hyphenation with FOP.</p>
         <p>Explicitly enable hyphenation for an appropriate XSL-FO element (fo:block, fo:character):</p>
         <source><![CDATA[<fo:block hyphenate="true">]]></source>
       </answer>
