@@ -255,6 +255,8 @@ public class FOTreeBuilder extends DefaultHandler {
         /* the maker for the formatting object started */
         ElementMapping.Maker fobjMaker = findFOMaker(namespaceURI, localName);
 
+//      System.out.println("found a " + fobjMaker.toString());
+
         try {
             fobj = fobjMaker.make(currentFObj);
             fobj.setName(localName);

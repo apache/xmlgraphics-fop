@@ -41,416 +41,422 @@ public class FOElementMapping extends ElementMapping {
             foObjs = new HashMap();
 
             // Declarations and Pagination and Layout Formatting Objects
-            foObjs.put("root", new R());
-            foObjs.put("declarations", new Dec());
-            foObjs.put("color-profile", new CP());
-            foObjs.put("page-sequence", new PS());
-            foObjs.put("layout-master-set", new LMS());
+            foObjs.put("root", new RootMaker());
+            foObjs.put("declarations", new DeclarationsMaker());
+            foObjs.put("color-profile", new ColorProfileMaker());
+            foObjs.put("page-sequence", new PageSequenceMaker());
+            foObjs.put("layout-master-set", new LayoutMasterSetMaker());
             foObjs.put("page-sequence-master",
-                           new PSM());
+                           new PageSequenceMasterMaker());
             foObjs.put("single-page-master-reference",
-                           new SPMR());
+                           new SinglePageMasterReferenceMaker());
             foObjs.put("repeatable-page-master-reference",
-                           new RPMR());
+                           new RepeatablePageMasterReferenceMaker());
             foObjs.put("repeatable-page-master-alternatives",
-                           new RPMA());
+                           new RepeatablePageMasterAlternativesMaker());
             foObjs.put("conditional-page-master-reference",
-                           new CPMR());
+                           new ConditionalPageMasterReferenceMaker());
             foObjs.put("simple-page-master",
-                           new SPM());
-            foObjs.put("region-body", new RB());
-            foObjs.put("region-before", new RBefore());
-            foObjs.put("region-after", new RA());
-            foObjs.put("region-start", new RS());
-            foObjs.put("region-end", new RE());
-            foObjs.put("flow", new Fl());
-            foObjs.put("static-content", new SC());
-            foObjs.put("title", new T());
+                           new SimplePageMasterMaker());
+            foObjs.put("region-body", new RegionBodyMaker());
+            foObjs.put("region-before", new RegionBeforeMaker());
+            foObjs.put("region-after", new RegionAfterMaker());
+            foObjs.put("region-start", new RegionStartMaker());
+            foObjs.put("region-end", new RegionEndMaker());
+            foObjs.put("flow", new FlowMaker());
+            foObjs.put("static-content", new StaticContentMaker());
+            foObjs.put("title", new TitleMaker());
 
             // Block-level Formatting Objects
-            foObjs.put("block", new B());
-            foObjs.put("block-container", new BC());
+            foObjs.put("block", new BlockMaker());
+            foObjs.put("block-container", new BlockContainerMaker());
 
             // Inline-level Formatting Objects
-            foObjs.put("bidi-override", new BO());
+            foObjs.put("bidi-override", new BidiOverrideMaker());
             foObjs.put("character",
-                           new Ch());
+                           new CharacterMaker());
             foObjs.put("initial-property-set",
-                           new IPS());
-            foObjs.put("external-graphic", new EG());
+                           new InitialPropertySetMaker());
+            foObjs.put("external-graphic", new ExternalGraphicMaker());
             foObjs.put("instream-foreign-object",
-                           new IFO());
-            foObjs.put("inline", new In());
-            foObjs.put("inline-container", new IC());
-            foObjs.put("leader", new L());
-            foObjs.put("page-number", new PN());
+                           new InstreamForeignObjectMaker());
+            foObjs.put("inline", new InlineMaker());
+            foObjs.put("inline-container", new InlineContainerMaker());
+            foObjs.put("leader", new LeaderMaker());
+            foObjs.put("page-number", new PageNumberMaker());
             foObjs.put("page-number-citation",
-                           new PNC());
+                           new PageNumberCitationMaker());
 
             // Formatting Objects for Tables
-            foObjs.put("table-and-caption", new TAC());
-            foObjs.put("table", new Ta());
-            foObjs.put("table-column", new TC());
-            foObjs.put("table-caption", new TCaption());
-            foObjs.put("table-header", new TH());
-            foObjs.put("table-footer", new TB());
-            foObjs.put("table-body", new TB());
-            foObjs.put("table-row", new TR());
-            foObjs.put("table-cell", new TCell());
+            foObjs.put("table-and-caption", new TableAndCaptionMaker());
+            foObjs.put("table", new TableMaker());
+            foObjs.put("table-column", new TableColumnMaker());
+            foObjs.put("table-caption", new TableCaptionMaker());
+            foObjs.put("table-header", new TableHeaderMaker());
+            foObjs.put("table-footer", new TableFooterMaker());
+            foObjs.put("table-body", new TableBodyMaker());
+            foObjs.put("table-row", new TableRowMaker());
+            foObjs.put("table-cell", new TableCellMaker());
 
             // Formatting Objects for Lists
-            foObjs.put("list-block", new LB());
-            foObjs.put("list-item", new LI());
-            foObjs.put("list-item-body", new LIB());
-            foObjs.put("list-item-label", new LIL());
+            foObjs.put("list-block", new ListBlockMaker());
+            foObjs.put("list-item", new ListItemMaker());
+            foObjs.put("list-item-body", new ListItemBodyMaker());
+            foObjs.put("list-item-label", new ListItemLabelMaker());
 
             // Dynamic Effects: Link and Multi Formatting Objects
-            foObjs.put("basic-link", new BL());
-            foObjs.put("multi-switch", new MS());
-            foObjs.put("multi-case", new MC());
-            foObjs.put("multi-toggle", new MT());
-            foObjs.put("multi-properties", new MP());
+            foObjs.put("basic-link", new BasicLinkMaker());
+            foObjs.put("multi-switch", new MultiSwitchMaker());
+            foObjs.put("multi-case", new MultiCaseMaker());
+            foObjs.put("multi-toggle", new MultiToggleMaker());
+            foObjs.put("multi-properties", new MultiPropertiesMaker());
             foObjs.put("multi-property-set",
-                           new MPS());
+                           new MultiPropertySetMaker());
 
             // Out-of-Line Formatting Objects
             foObjs.put("float",
-                           new F());
-            foObjs.put("footnote", new Foot());
-            foObjs.put("footnote-body", new FB());
+                           new FloatMaker());
+            foObjs.put("footnote", new FootnoteMaker());
+            foObjs.put("footnote-body", new FootnoteBodyMaker());
 
             // Other Formatting Objects
-            foObjs.put("wrapper", new W());
-            foObjs.put("marker", new M());
-            foObjs.put("retrieve-marker", new RM());
+            foObjs.put("wrapper", new WrapperMaker());
+            foObjs.put("marker", new MarkerMaker());
+            foObjs.put("retrieve-marker", new RetrieveMarkerMaker());
         }
     }
 
-    static class R extends ElementMapping.Maker {
+    static class RootMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.pagination.Root(parent);
         }
     }
 
-    static class Dec extends ElementMapping.Maker {
+    static class DeclarationsMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.pagination.Declarations(parent);
         }
     }
 
-    static class CP extends ElementMapping.Maker {
+    static class ColorProfileMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.pagination.ColorProfile(parent);
         }
     }
 
-    static class PS extends ElementMapping.Maker {
+    static class PageSequenceMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.pagination.PageSequence(parent);
         }
     }
 
-    static class LMS extends ElementMapping.Maker {
+    static class LayoutMasterSetMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.pagination.LayoutMasterSet(parent);
         }
     }
 
-    static class PSM extends ElementMapping.Maker {
+    static class PageSequenceMasterMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.pagination.PageSequenceMaster(parent);
         }
     }
 
-    static class SPMR extends ElementMapping.Maker {
+    static class SinglePageMasterReferenceMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.pagination.SinglePageMasterReference(parent);
         }
     }
 
-    static class RPMR extends ElementMapping.Maker {
+    static class RepeatablePageMasterReferenceMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.pagination.RepeatablePageMasterReference(parent);
         }
     }
 
-    static class RPMA extends ElementMapping.Maker {
+    static class RepeatablePageMasterAlternativesMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.pagination.RepeatablePageMasterAlternatives(parent);
         }
     }
 
-    static class CPMR extends ElementMapping.Maker {
+    static class ConditionalPageMasterReferenceMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.pagination.ConditionalPageMasterReference(parent);
         }
     }
 
-    static class SPM extends ElementMapping.Maker {
+    static class SimplePageMasterMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.pagination.SimplePageMaster(parent);
         }
     }
 
-    static class RB extends ElementMapping.Maker {
+    static class RegionBodyMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.pagination.RegionBody(parent);
         }
     }
 
-    static class RBefore extends ElementMapping.Maker {
+    static class RegionBeforeMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.pagination.RegionBefore(parent);
         }
     }
 
-    static class RA extends ElementMapping.Maker {
+    static class RegionAfterMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.pagination.RegionAfter(parent);
         }
     }
 
-    static class RS extends ElementMapping.Maker {
+    static class RegionStartMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.pagination.RegionStart(parent);
         }
     }
 
-    static class RE extends ElementMapping.Maker {
+    static class RegionEndMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.pagination.RegionEnd(parent);
         }
     }
 
-    static class Fl extends ElementMapping.Maker {
+    static class FlowMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.pagination.Flow(parent);
         }
     }
 
-    static class SC extends ElementMapping.Maker {
+    static class StaticContentMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.pagination.StaticContent(parent);
         }
     }
 
-    static class T extends ElementMapping.Maker {
+    static class TitleMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.pagination.Title(parent);
         }
     }
 
-    static class B extends ElementMapping.Maker {
+    static class BlockMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.Block(parent);
         }
     }
 
-    static class BC extends ElementMapping.Maker {
+    static class BlockContainerMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.BlockContainer(parent);
         }
     }
 
-    static class BO extends ElementMapping.Maker {
+    static class BidiOverrideMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.BidiOverride(parent);
         }
     }
 
-    static class Ch extends ElementMapping.Maker {
+    static class CharacterMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.Character(parent);
         }
     }
 
-    static class IPS extends ElementMapping.Maker {
+    static class InitialPropertySetMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.InitialPropertySet(parent);
         }
     }
 
-    static class EG extends ElementMapping.Maker {
+    static class ExternalGraphicMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.ExternalGraphic(parent);
         }
     }
 
-    static class IFO extends ElementMapping.Maker {
+    static class InstreamForeignObjectMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.InstreamForeignObject(parent);
         }
     }
 
-    static class In extends ElementMapping.Maker {
+    static class InlineMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.Inline(parent);
         }
     }
 
-    static class IC extends ElementMapping.Maker {
+    static class InlineContainerMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.InlineContainer(parent);
         }
     }
 
-    static class L extends ElementMapping.Maker {
+    static class LeaderMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.Leader(parent);
         }
     }
 
-    static class PN extends ElementMapping.Maker {
+    static class PageNumberMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.PageNumber(parent);
         }
     }
 
-    static class PNC extends ElementMapping.Maker {
+    static class PageNumberCitationMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.PageNumberCitation(parent);
         }
     }
 
-    static class TAC extends ElementMapping.Maker {
+    static class TableAndCaptionMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.TableAndCaption(parent);
         }
     }
 
-    static class Ta extends ElementMapping.Maker {
+    static class TableMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.Table(parent);
         }
     }
 
-    static class TC extends ElementMapping.Maker {
+    static class TableColumnMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.TableColumn(parent);
         }
     }
 
-    static class TCaption extends ElementMapping.Maker {
+    static class TableCaptionMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.TableCaption(parent);
         }
     }
 
-    static class TB extends ElementMapping.Maker {
+    static class TableBodyMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.TableBody(parent);
         }
     }
-    
-    static class TH extends ElementMapping.Maker {
+
+    static class TableHeaderMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.TableHeader(parent);
         }
     }
 
-    static class TR extends ElementMapping.Maker {
+    static class TableFooterMaker extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new org.apache.fop.fo.flow.TableFooter(parent);
+        }
+    }
+
+    static class TableRowMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.TableRow(parent);
         }
     }
 
-    static class TCell extends ElementMapping.Maker {
+    static class TableCellMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.TableCell(parent);
         }
     }
 
-    static class LB extends ElementMapping.Maker {
+    static class ListBlockMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.ListBlock(parent);
         }
     }
 
-    static class LI extends ElementMapping.Maker {
+    static class ListItemMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.ListItem(parent);
         }
     }
 
-    static class LIB extends ElementMapping.Maker {
+    static class ListItemBodyMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.ListItemBody(parent);
         }
     }
 
-    static class LIL extends ElementMapping.Maker {
+    static class ListItemLabelMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.ListItemLabel(parent);
         }
     }
 
-    static class BL extends ElementMapping.Maker {
+    static class BasicLinkMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.BasicLink(parent);
         }
     }
 
-    static class MS extends ElementMapping.Maker {
+    static class MultiSwitchMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.MultiSwitch(parent);
         }
     }
 
-    static class MC extends ElementMapping.Maker {
+    static class MultiCaseMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.MultiCase(parent);
         }
     }
 
-    static class MT extends ElementMapping.Maker {
+    static class MultiToggleMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.MultiToggle(parent);
         }
     }
 
-    static class MP extends ElementMapping.Maker {
+    static class MultiPropertiesMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.MultiProperties(parent);
         }
     }
 
-    static class MPS extends ElementMapping.Maker {
+    static class MultiPropertySetMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.MultiPropertySet(parent);
         }
     }
 
-    static class F extends ElementMapping.Maker {
+    static class FloatMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.Float(parent);
         }
     }
 
-    static class Foot extends ElementMapping.Maker {
+    static class FootnoteMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.Footnote(parent);
         }
     }
 
-    static class FB extends ElementMapping.Maker {
+    static class FootnoteBodyMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.FootnoteBody(parent);
         }
     }
 
-    static class W extends ElementMapping.Maker {
+    static class WrapperMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.Wrapper(parent);
         }
     }
 
-    static class M extends ElementMapping.Maker {
+    static class MarkerMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.Marker(parent);
         }
     }
 
-    static class RM extends ElementMapping.Maker {
+    static class RetrieveMarkerMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.flow.RetrieveMarker(parent);
         }
