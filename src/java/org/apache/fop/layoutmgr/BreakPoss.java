@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -258,5 +258,24 @@ public class BreakPoss {
      */
     public void setMiddle(int t) {
         middle = t;
+    }
+    
+    /** @see java.lang.Object#toString() */
+    public String toString() {
+        StringBuffer sb = new StringBuffer("BreakPoss");
+        if (isFirstArea()) {
+            sb.append(", first area");
+        }
+        if (isLastArea()) {
+            sb.append(", last area");
+        }
+        if (isForcedBreak()) {
+            sb.append(", forced break");
+        }
+        sb.append(", stackSize={");
+        sb.append(stackSize);
+        sb.append("}, pos=");
+        sb.append(position);
+        return sb.toString();
     }
 }
