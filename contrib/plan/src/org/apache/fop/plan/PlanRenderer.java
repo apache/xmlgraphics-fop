@@ -13,13 +13,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.font.FontRenderContext;
 
-import org.apache.fop.fo.*;
-import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.*;
-import org.apache.fop.apps.*;
-import org.apache.fop.datatypes.*;
-import org.apache.fop.layout.inline.*;
-import org.apache.fop.svg.*;
 import org.w3c.dom.*;
 import org.w3c.dom.svg.*;
 import org.w3c.dom.css.*;

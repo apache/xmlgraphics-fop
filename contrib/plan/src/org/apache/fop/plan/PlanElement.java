@@ -6,17 +6,12 @@
 
 package org.apache.fop.plan;
 
-import java.util.*;
-import java.awt.*;
 import java.awt.geom.Point2D;
 
-import org.apache.fop.fo.*;
-import org.apache.fop.svg.*;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.apps.FOPException;
 
-import org.w3c.dom.*;
-import org.w3c.dom.svg.*;
-import org.w3c.dom.css.*;
+import org.w3c.dom.Document;
 import org.xml.sax.Attributes;
 
 public class PlanElement extends PlanObj {

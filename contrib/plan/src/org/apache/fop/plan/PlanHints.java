@@ -6,9 +6,6 @@
 
 package org.apache.fop.plan;
 
-import org.apache.fop.fo.*;
-
-
 public class PlanHints {
     public static final String PLAN_BORDER = "border";
     public static final String PLAN_LEGEND = "legend";
