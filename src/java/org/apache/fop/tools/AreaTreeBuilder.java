@@ -107,6 +107,7 @@ import org.apache.fop.render.pdf.PDFRenderer;
 import org.apache.fop.render.svg.SVGRenderer;
 import org.apache.fop.render.xml.XMLRenderer;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.properties.RuleStyle;
 import org.apache.fop.fonts.FontMetrics;
 
@@ -381,20 +382,20 @@ class TreeLoader extends AbstractLogEnabled {
         for (int i = 0; i < childs.getLength(); i++) {
             Node obj = childs.item(i);
             if (obj.getNodeName().equals("regionBefore")) {
-                reg.setRegion(readRegion((Element) obj, RegionReference.BEFORE));
-                page.setRegion(RegionReference.BEFORE, reg);
+                reg.setRegion(readRegion((Element) obj, Region.BEFORE_CODE));
+                page.setRegion(Region.BEFORE_CODE, reg);
             } else if (obj.getNodeName().equals("regionStart")) {
-                reg.setRegion(readRegion((Element) obj, RegionReference.START));
-                page.setRegion(RegionReference.START, reg);
+                reg.setRegion(readRegion((Element) obj, Region.START_CODE));
+                page.setRegion(Region.START_CODE, reg);
             } else if (obj.getNodeName().equals("regionBody")) {
-                reg.setRegion(readRegion((Element) obj, RegionReference.BODY));
-                page.setRegion(RegionReference.BODY, reg);
+                reg.setRegion(readRegion((Element) obj, Region.BODY_CODE));
+                page.setRegion(Region.BODY_CODE, reg);
             } else if (obj.getNodeName().equals("regionEnd")) {
-                reg.setRegion(readRegion((Element) obj, RegionReference.END));
-                page.setRegion(RegionReference.END, reg);
+                reg.setRegion(readRegion((Element) obj, Region.END_CODE));
+                page.setRegion(Region.END_CODE, reg);
             } else if (obj.getNodeName().equals("regionAfter")) {
-                reg.setRegion(readRegion((Element) obj, RegionReference.AFTER));
-                page.setRegion(RegionReference.AFTER, reg);
+                reg.setRegion(readRegion((Element) obj, Region.AFTER_CODE));
+                page.setRegion(Region.AFTER_CODE, reg);
             }
         }
 
@@ -403,7 +404,7 @@ class TreeLoader extends AbstractLogEnabled {
 
     public RegionReference readRegion(Element root, int type) {
         RegionReference reg;
-        if (type == RegionReference.BODY) {
+        if (type == Region.BODY_CODE) {
             BodyRegion br = new BodyRegion();
             NodeList childs = root.getChildNodes();
             for (int i = 0; i < childs.getLength(); i++) {

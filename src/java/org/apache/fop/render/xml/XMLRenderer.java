@@ -94,6 +94,7 @@ import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.Word;
 import org.apache.fop.fo.properties.RuleStyle;
 import org.apache.fop.fo.FOTreeControl;
+import org.apache.fop.fo.pagination.Region;
 
 /**
  * Renderer that renders areas to XML for debugging purposes.
@@ -288,23 +289,23 @@ public class XMLRenderer extends AbstractRenderer {
             writeStartTag("<regionViewport rect=\""
                           + createString(port.getViewArea()) + "\">");
             RegionReference region = port.getRegion();
-            if (region.getRegionClass() == RegionReference.BEFORE) {
+            if (region.getRegionClass() == Region.BEFORE_CODE) {
                 writeStartTag("<regionBefore>");
                 renderRegion(region);
                 writeEndTag("</regionBefore>");
-            } else if (region.getRegionClass() == RegionReference.START) {
+            } else if (region.getRegionClass() == Region.START_CODE) {
                 writeStartTag("<regionStart>");
                 renderRegion(region);
                 writeEndTag("</regionStart>");
-            } else if (region.getRegionClass() == RegionReference.BODY) {
+            } else if (region.getRegionClass() == Region.BODY_CODE) {
                 writeStartTag("<regionBody>");
                 renderBodyRegion((BodyRegion) region);
                 writeEndTag("</regionBody>");
-            } else if (region.getRegionClass() == RegionReference.END) {
+            } else if (region.getRegionClass() == Region.END_CODE) {
                 writeStartTag("<regionEnd>");
                 renderRegion(region);
                 writeEndTag("</regionEnd>");
-            } else if (region.getRegionClass() == RegionReference.AFTER) {
+            } else if (region.getRegionClass() == Region.AFTER_CODE) {
                 writeStartTag("<regionAfter>");
                 renderRegion(region);
                 writeEndTag("</regionAfter>");
