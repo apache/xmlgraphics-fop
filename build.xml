@@ -288,7 +288,7 @@ list of possible build targets.
     <condition property="junit.message" value="JUnit Support PRESENT">
       <equals arg1="${junit.present}" arg2="true"/>
     </condition>
-    <condition property="junit.message" value="JUnit Support NOT Present">
+    <condition property="junit.message" value="JUnit Support NOT Present - Committers are required to have JUnit working">
       <not>
         <equals arg1="${junit.present}" arg2="true"/>
       </not>
@@ -534,9 +534,13 @@ list of possible build targets.
     <patternset id="transcoder-classes">
       <!-- General classes -->
       <patternset>
+        <include name="org/apache/fop/apps/Document*"/>
+        <include name="org/apache/fop/fo/FOTreeControl*"/>
+        <include name="org/apache/fop/fo/FOTreeListener*"/>
+        <include name="org/apache/fop/area/AreaTreeControl*"/>
         <include name="org/apache/fop/svg/**"/>
         <include name="org/apache/fop/fonts/**"/>
-        <include name="org/apache/fop/layout/Font*.class"/>
+        <!--include name="org/apache/fop/layout/Font*.class"/-->
         <include name="org/apache/fop/image/FopImag*.class"/>
         <include name="org/apache/fop/image/Jpeg*"/>
         <include name="org/apache/fop/image/Abstract*"/>
