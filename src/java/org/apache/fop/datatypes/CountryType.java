@@ -55,10 +55,26 @@ public class CountryType extends NCName {
     }
 
     /**
-     * @return the <tt>String</tt> country code.
+     * Gets the ISO 3166 country code
+     * @return the country code
      */
     public String getCountry() {
         return string;
+    }
+
+    /**
+     * Gets the ISO 3166 country code from a PropertyValue
+     * @param pv the property value
+     * @return the country code
+     * @exception PropertyException if the <code>PropertyValue</code> is not
+     * a <code>CountryType</code>
+     */
+    public static String getCountry(PropertyValue pv)
+    throws PropertyException {
+        if (pv.getType() == PropertyValue.COUNTRY) {
+            return ((CountryType)pv).getCountry();
+        }
+        throw new PropertyException("PropertyValue not an COUNTRY type");
     }
 
     /**
