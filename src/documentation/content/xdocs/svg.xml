@@ -6,15 +6,12 @@
 
 <document>
     <header>
-        <title>SVG</title>
-        <subtitle>Embedding SVG in FOP</subtitle>
+        <title>Using SVG with FOP</title>
     </header>
 
     <body>
 
-<section>
-  <title>SVG in FOP</title>
-  <section>
+  <section id="intro">
     <title>Introduction</title>
     <p>
 FOP uses the SVG library from <link href="http://xml.apache.org/batik/">Batik</link> to handle SVG.
@@ -33,7 +30,7 @@ PDF markup which is placed into the current PDF document.
     </p>
   </section>
 
-  <section>
+  <section id="pdf_conversion">
     <title>Converting SVG to a PDF Document</title>
     <p>
 It is possible to convert a standalone SVG document directly into a simple page PDF document.
@@ -58,8 +55,8 @@ how transcoders work.
     </p>
   </section>
 
-  <section>
-    <title>Important Notes</title>
+  <section id="pdf_graphics">
+    <title>Placing SVG Graphics into PDF</title>
     <p>
 The svg is inserted into PDF by using PDF commands to draw and fill
 lines and curves. This means that the graphical objects created with
@@ -70,11 +67,24 @@ There are a number of SVG things that cannot be converted directly into
 PDF. Parts of the graphic such as effects, patterns and images are inserted
 into the PDF as a raster graphic. The resolution of this graphic may not
 be ideal depending on the FOP dpi (72dpi) and the scaling for that graphic.
-This needs to be improved.
-    </p>
+This needs to be improved.</p>
     <p>
-Another important note is that text is converted and drawn as a
-set of shapes by batik. This means that a typical character will
+Currently transparency is not supported in PDF so many svg images that
+contain effects or graphics with transparent areas will not be displayed
+correctly.
+    </p>
+  </section>
+  <section id="pdf_text">
+    <title>Placing SVG Text into PDF</title>
+    <p>If possible, Batik will use normal PDF text when inserting text. It does
+this by checking if the text can be drawn normally and the font is
+supported. This example svg <link href="svg/text.svg">text.svg</link> /
+<link href="dev/svg/text.pdf">text.pdf</link>
+shows how various types and effects with text are handled.
+Note that tspan and outlined text are not yet implemented.</p>
+    <p>
+Otherwise, text is converted and drawn as a set of shapes by batik, using the stroking text painter.
+This means that a typical character will
 have about 10 curves (each curve consists of at least 20 characters).
 This can make the pdf files large and when the pdf is viewed the
 viewer does not normally draw those fine curves very well (turning on
@@ -97,40 +107,40 @@ this workaround. The fonts available are the standard pdf fonts and any
 fonts that you have embedded using FOP. The font sizes will be rounded
 to an integer value. In future this will be improved.
     </p>
-    <p>
-Currently transparency is not supported in PDF so many svg images that
-contain effects or graphics with transparent areas will not be displayed
-correctly.
-    </p>
   </section>
 
-  <section>
-    <title>Classes</title>
-    <p>
-These are the relevant classes, found in the package org.apache.fop.svg :
-    </p>
+          <section>
+            <title>Known Problems</title>
 <ul>
-<li><em>PDFGraphics2D</em>
-<br/>
-used for drawing onto a Graphics2D into an existing pdf document, used
-internally to draw the svg.
+<li>
+soft mask transparency is combined with white so that it looks better
+on pdf 1.3 viewers but this causes the soft mask to be slightly lighter
+or darker on pdf 1.4 viewers
 </li>
-<li><em>PDFDocumentGraphics2D</em>
-<br/>
-used to create a pdf document and inherits from PDFGraphics2D to do the
-rest of the drawing. Used by the transcoder to create a standalone pdf
-document from an svg. Can be used independantly the same as any Graphics2D.
+<li>
+there is some problem with a gradient inside a pattern causing a pdf
+error when viewed in acrobat 5
 </li>
-<li><em>PDFTranscoder</em>
-<br/>
-used by Batik to transcode an svg document into a standalone pdf, via
-PDFDocumentGraphics2D.
+<li>
+text is not always handled correctly, it may select the wrong font
+especially if characters have multiple fonts in the font list
+</li>
+<li>
+more pdf text handling could be implemented
+It could draw the string using the attributed character iterator
+to handle tspans and other simple changes of text.
+</li>
+<li>
+JPEG images are not inserted directly into the pdf document
+This area has not been implemented yet since the appropriate
+method in batik is static
+</li>
+<li>
+Uniform transparency for images and other svg elements that are converted
+into a raster graphic are not drawn properly in PDF. The image is opaque.
 </li>
 </ul>
-
-  </section>
-
-</section>
+          </section>
     </body>
 </document>
 
