@@ -18,7 +18,7 @@
 <testcase>
   <info>
     <p>
-      This test checks keep-with-next.
+      This test checks keep-with-previous.
     </p>
     <p>
       Widows and Orphans are disabled in this test to avoid side-effects.
@@ -35,34 +35,34 @@
         <fo:flow flow-name="xsl-region-body">
           <fo:block>block1</fo:block>
           <fo:block>block2</fo:block>
-          <fo:block keep-with-next.within-page="always">block3</fo:block>
-          <fo:block keep-with-next.within-page="always">block4</fo:block>
-          <fo:block>block5</fo:block>
-          <fo:block keep-with-next.within-page="always">
+          <fo:block>block3</fo:block>
+          <fo:block keep-with-previous.within-page="always">block4</fo:block>
+          <fo:block keep-with-previous.within-page="always">block5</fo:block>
+          <fo:block>
             <fo:block>block6</fo:block>
             <fo:block>block7</fo:block>
             <fo:block>block8</fo:block>
             <fo:block>block9</fo:block>
             <fo:block>block10</fo:block>
           </fo:block>
-          <fo:block>block11</fo:block>
+          <fo:block keep-with-previous.within-page="always">block11</fo:block>
         </fo:flow>
       </fo:page-sequence>
       <fo:page-sequence master-reference="normal">
         <fo:flow flow-name="xsl-region-body">
           <fo:block>block21</fo:block>
           <fo:block>block22</fo:block>
-          <fo:block keep-with-next.within-column="always">block23</fo:block>
-          <fo:block keep-with-next.within-column="always">block24</fo:block>
-          <fo:block>block25</fo:block>
-          <fo:block keep-with-next.within-column="always">
+          <fo:block>block23</fo:block>
+          <fo:block keep-with-previous.within-column="always">block24</fo:block>
+          <fo:block keep-with-previous.within-column="always">block25</fo:block>
+          <fo:block>
             <fo:block>block26</fo:block>
             <fo:block>block27</fo:block>
             <fo:block>block28</fo:block>
             <fo:block>block29</fo:block>
             <fo:block>block30</fo:block>
           </fo:block>
-          <fo:block>block31</fo:block>
+          <fo:block keep-with-previous.within-column="always">block31</fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>

@@ -57,26 +57,48 @@
         <fo:flow flow-name="xsl-region-body">
           <fo:block>block11</fo:block>
           <fo:block>block12</fo:block>
-          <fo:block-container keep-together.within-page="always">
-            <fo:block>block13</fo:block>
-            <fo:block>block14</fo:block>
-            <fo:block>block15</fo:block>
-          </fo:block-container>
-          <fo:block>block16</fo:block>
+          <fo:block keep-together.within-column="always">block13 
+            <fo:inline font-style="italic">
+              The quick brown fox jumps over the lazy dog.
+              The quick brown fox jumps over the lazy dog.
+              The quick brown fox jumps over the lazy dog.
+            </fo:inline>
+          </fo:block>
+          <fo:block>block14</fo:block>
+          <fo:block>block15</fo:block>
+          <fo:block keep-together.within-column="always">
+            <fo:block>block16</fo:block>
+            <fo:block>block17</fo:block>
+            <fo:block>block18</fo:block>
+            <fo:block>block19</fo:block>
+          </fo:block>
+          <fo:block>block20</fo:block>
         </fo:flow>
       </fo:page-sequence>
       <fo:page-sequence master-reference="normal">
         <fo:flow flow-name="xsl-region-body">
           <fo:block>block21</fo:block>
           <fo:block>block22</fo:block>
-          <fo:block keep-together.within-page="always">
-            <fo:block-container>
-              <fo:block>block23</fo:block>
-            </fo:block-container>
+          <fo:block-container keep-together.within-page="always">
+            <fo:block>block23</fo:block>
             <fo:block>block24</fo:block>
             <fo:block>block25</fo:block>
-          </fo:block>
+          </fo:block-container>
           <fo:block>block26</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>block31</fo:block>
+          <fo:block>block32</fo:block>
+          <fo:block keep-together.within-page="always">
+            <fo:block-container>
+              <fo:block>block33</fo:block>
+            </fo:block-container>
+            <fo:block>block34</fo:block>
+            <fo:block>block35</fo:block>
+          </fo:block>
+          <fo:block>block36</fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
@@ -97,14 +119,25 @@
     <eval expected="6" xpath="//lineArea[starts-with(., 'block12')]/ancestor::pageViewport/@nr"/>
     <eval expected="7" xpath="//lineArea[starts-with(., 'block13')]/ancestor::pageViewport/@nr"/>
     <eval expected="7" xpath="//lineArea[starts-with(., 'block14')]/ancestor::pageViewport/@nr"/>
-    <eval expected="7" xpath="//lineArea[starts-with(., 'block15')]/ancestor::pageViewport/@nr"/>
-    <eval expected="7" xpath="//lineArea[starts-with(., 'block16')]/ancestor::pageViewport/@nr"/>
+    <eval expected="8" xpath="//lineArea[starts-with(., 'block15')]/ancestor::pageViewport/@nr"/>
+    <eval expected="9" xpath="//lineArea[starts-with(., 'block16')]/ancestor::pageViewport/@nr"/>
+    <eval expected="9" xpath="//lineArea[starts-with(., 'block17')]/ancestor::pageViewport/@nr"/>
+    <eval expected="9" xpath="//lineArea[starts-with(., 'block18')]/ancestor::pageViewport/@nr"/>
+    <eval expected="9" xpath="//lineArea[starts-with(., 'block19')]/ancestor::pageViewport/@nr"/>
+    <eval expected="10" xpath="//lineArea[starts-with(., 'block20')]/ancestor::pageViewport/@nr"/>
+    
+    <eval expected="11" xpath="//lineArea[starts-with(., 'block21')]/ancestor::pageViewport/@nr"/>
+    <eval expected="11" xpath="//lineArea[starts-with(., 'block22')]/ancestor::pageViewport/@nr"/>
+    <eval expected="12" xpath="//lineArea[starts-with(., 'block23')]/ancestor::pageViewport/@nr"/>
+    <eval expected="12" xpath="//lineArea[starts-with(., 'block24')]/ancestor::pageViewport/@nr"/>
+    <eval expected="12" xpath="//lineArea[starts-with(., 'block25')]/ancestor::pageViewport/@nr"/>
+    <eval expected="12" xpath="//lineArea[starts-with(., 'block26')]/ancestor::pageViewport/@nr"/>
 
-    <eval expected="8" xpath="//lineArea[starts-with(., 'block21')]/ancestor::pageViewport/@nr"/>
-    <eval expected="8" xpath="//lineArea[starts-with(., 'block22')]/ancestor::pageViewport/@nr"/>
-    <eval expected="9" xpath="//lineArea[starts-with(., 'block23')]/ancestor::pageViewport/@nr"/>
-    <eval expected="9" xpath="//lineArea[starts-with(., 'block24')]/ancestor::pageViewport/@nr"/>
-    <eval expected="9" xpath="//lineArea[starts-with(., 'block25')]/ancestor::pageViewport/@nr"/>
-    <eval expected="9" xpath="//lineArea[starts-with(., 'block26')]/ancestor::pageViewport/@nr"/>
+    <eval expected="13" xpath="//lineArea[starts-with(., 'block31')]/ancestor::pageViewport/@nr"/>
+    <eval expected="13" xpath="//lineArea[starts-with(., 'block32')]/ancestor::pageViewport/@nr"/>
+    <eval expected="14" xpath="//lineArea[starts-with(., 'block33')]/ancestor::pageViewport/@nr"/>
+    <eval expected="14" xpath="//lineArea[starts-with(., 'block34')]/ancestor::pageViewport/@nr"/>
+    <eval expected="14" xpath="//lineArea[starts-with(., 'block35')]/ancestor::pageViewport/@nr"/>
+    <eval expected="14" xpath="//lineArea[starts-with(., 'block36')]/ancestor::pageViewport/@nr"/>
   </checks>
 </testcase>
