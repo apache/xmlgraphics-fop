@@ -183,6 +183,7 @@ public class TableBody extends FObj {
         Vector keepWith = new Vector();
         int numChildren = this.children.size();
         TableRow lastRow = null;
+        boolean endKeepGroup = true;
         for (int i = this.marker; i < numChildren; i++) {
             TableRow row = (TableRow) children.elementAt(i);
 
@@ -191,6 +192,11 @@ public class TableBody extends FObj {
             if (row.getKeepWithPrevious().getType() != KeepValue.KEEP_WITH_AUTO && lastRow != null &&
                     keepWith.indexOf(lastRow) == -1) {
                 keepWith.addElement(lastRow);
+                endKeepGroup = false;
+            } else {
+                if(endKeepGroup) {
+                    keepWith = new Vector();
+                }
             }
 
             Status status;
@@ -253,9 +259,10 @@ public class TableBody extends FObj {
                 return status;
             } else if (status.getCode() == Status.KEEP_WITH_NEXT) {
                 keepWith.addElement(row);
+                endKeepGroup = false;
             } else {
                 if (keepWith.size() > 0 && row.getKeepWithPrevious().getType() == KeepValue.KEEP_WITH_AUTO) {
-                    keepWith = new Vector();
+                    endKeepGroup = true;
                 }
             }
             lastRow = row;
