@@ -45,8 +45,8 @@ public class AreaRange {
 
     public AreaRange(
             float iPDimMin, float iPDimMax, float bPDimMin, float bPDimMax) {
-        minima = new Rectangle2D.Float(0, 0, iPDimMin, bPDimMin);
-        maxima = new Rectangle2D.Float(0, 0, iPDimMax, bPDimMax);
+        minima = new Rectangle2D.Double(0, 0, iPDimMin, bPDimMin);
+        maxima = new Rectangle2D.Double(0, 0, iPDimMax, bPDimMax);
     }
 
     public AreaRange(Rectangle2D minima, Rectangle2D maxima) {
@@ -60,12 +60,12 @@ public class AreaRange {
      * N.B. The method is synchronized only on this object.
      * @return the <code>block-progression-dimension</code> maximum value
      */
-    public Float getBPDimMax() {
+    public Double getBPDimMax() {
         synchronized (this) {
             if (maxima == null) {
                 return null;
             }
-            return new Float(maxima.getHeight());
+            return new Double(maxima.getHeight());
         }
     }
 
@@ -76,10 +76,10 @@ public class AreaRange {
      * @param dimMax <code>block-progression-dimension</code> maximum value
      * to set
      */
-    public void setBPDimMax(float dimMax) {
+    public void setBPDimMax(double dimMax) {
         synchronized (this) {
             if (maxima == null) {
-                maxima = new Rectangle2D.Float(0, 0, 0, 0);
+                maxima = new Rectangle2D.Double(0, 0, 0, 0);
             }
             maxima.setRect(
                     maxima.getMinX(), maxima.getMinY(), maxima.getWidth(),
@@ -93,12 +93,12 @@ public class AreaRange {
      * N.B. The method is synchronized only on this object.
      * @return the <code>block-progression-dimension</code> minimum value
      */
-    public Float getBPDimMin() {
+    public Double getBPDimMin() {
         synchronized (this) {
             if (minima == null) {
                 return null;
             }
-            return new Float(minima.getHeight());
+            return new Double(minima.getHeight());
         }
     }
 
@@ -109,12 +109,13 @@ public class AreaRange {
      * @param dimMin <code>block-progression-dimension</code> minimum value
      * to set
      */
-    public void setBPDimMin(float dimMin) {
+    public void setBPDimMin(double dimMin) {
         synchronized (this) {
             if (minima == null) {
-                minima = new Rectangle2D.Float(0, 0, 0, 0);
+                minima = new Rectangle2D.Double(0, 0, 0, 0);
             }
-            minima.setRect(maxima.getMinX(), maxima.getMinY(), maxima.getWidth(),
+            minima.setRect(maxima.getMinX(),
+            		maxima.getMinY(), maxima.getWidth(),
                     dimMin);
         }
     }
@@ -125,12 +126,12 @@ public class AreaRange {
      * N.B. The method is synchronized only on this object.
      * @return the <code>inline-progression-dimension</code> maximum value
      */
-    public Float getIPDimMax() {
+    public Double getIPDimMax() {
         synchronized(this) {
             if (maxima == null) {
                 return null;
             }
-            return new Float(maxima.getWidth());
+            return new Double(maxima.getWidth());
         }
     }
 
@@ -141,13 +142,14 @@ public class AreaRange {
      * @param dimMax <code>inline-progression-dimension</code> maximum value
      * to set
      */
-    public void setIPDimMax(float dimMax) {
+    public void setIPDimMax(double dimMax) {
         synchronized (this) {
             if (maxima == null) {
-                maxima = new Rectangle2D.Float(0, 0, 0, 0);
+                maxima = new Rectangle2D.Double(0, 0, 0, 0);
             }
             maxima.setRect(
-                    maxima.getMinX(), maxima.getMinY(), dimMax, maxima.getHeight());
+                    maxima.getMinX(), maxima.getMinY(),
+					dimMax, maxima.getHeight());
         }
     }
 
@@ -157,12 +159,12 @@ public class AreaRange {
      * N.B. The method is synchronized only on this object.
      * @return the <code>inline-progression-dimension</code> minimum value
      */
-    public Float getIPDimMin() {
+    public Double getIPDimMin() {
         synchronized (this) {
             if (minima == null) {
                 return null;
             }
-            return new Float(minima.getWidth());
+            return new Double(minima.getWidth());
         }
     }
 
@@ -173,13 +175,14 @@ public class AreaRange {
      * @param dimMin <code>inline-progression-dimension</code> minimum value
      * to set
      */
-    public void setIPDimMin(float dimMin) {
+    public void setIPDimMin(double dimMin) {
         synchronized (this) {
             if (minima == null) {
-                minima = new Rectangle2D.Float(0, 0, 0, 0);
+                minima = new Rectangle2D.Double(0, 0, 0, 0);
             }
             minima.setRect(
-                    minima.getMinX(), minima.getMinY(), dimMin, minima.getHeight());
+                    minima.getMinX(), minima.getMinY(),
+					dimMin, minima.getHeight());
         }
     }
 
