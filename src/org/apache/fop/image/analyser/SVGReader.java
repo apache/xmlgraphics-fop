@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -8,49 +8,52 @@
 package org.apache.fop.image.analyser;
 
 // Java
+import java.net.URL;
+import java.util.List;
+import java.io.File;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 
-import org.w3c.dom.svg.SVGDocument;
-import org.w3c.dom.svg.SVGSVGElement;
-
-// FOP
-import org.apache.fop.messaging.*;
-import org.apache.fop.image.SVGImage;
-
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-
-import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
-
-import org.apache.batik.dom.svg.*;
-import org.w3c.dom.*;
-import org.w3c.dom.svg.*;
-import org.w3c.dom.svg.SVGLength;
-import org.apache.batik.bridge.*;
-import org.apache.batik.swing.svg.*;
-import org.apache.batik.swing.gvt.*;
-import org.apache.batik.gvt.*;
-import org.apache.batik.gvt.renderer.*;
-import org.apache.batik.gvt.filter.*;
-import org.apache.batik.gvt.event.*;
-
-import org.w3c.dom.DOMImplementation;
-import org.apache.batik.dom.svg.SVGDOMImplementation;
-
-import java.io.File;
-import java.net.URL;
-import java.util.List;
-import java.util.ArrayList;
 import java.awt.geom.AffineTransform;
 import java.awt.Point;
 import java.awt.geom.Dimension2D;
 import java.awt.Dimension;
 
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.svg.SVGDocument;
+import org.w3c.dom.svg.SVGLength;
+import org.w3c.dom.svg.SVGSVGElement;
+
+// FOP
+import org.apache.fop.messaging.MessageHandler;
+import org.apache.fop.image.SVGImage;
+
+//Batik
+import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.dom.svg.SVGOMDocument;
+import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
+//import org.apache.batik.dom.svg.*;
+import org.apache.batik.bridge.UserAgentAdapter;
+import org.apache.batik.bridge.UserAgent;
+import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.bridge.UnitProcessor;
+//import org.apache.batik.swing.svg.*;
+//import org.apache.batik.swing.gvt.*;
+//import org.apache.batik.gvt.U*;
+//import org.apache.batik.gvt.renderer.*;
+//import org.apache.batik.gvt.filter.*;
+//import org.apache.batik.gvt.event.*;
+
+
 /**
  * ImageReader object for SVG document image type.
  */
 public class SVGReader extends AbstractImageReader {
+
     public boolean verifySignature(String uri,
                                    BufferedInputStream fis) throws IOException {
         this.imageStream = fis;
@@ -70,14 +73,15 @@ public class SVGReader extends AbstractImageReader {
         try {
             SAXSVGDocumentFactory factory =
               new SAXSVGDocumentFactory(SVGImage.getParserName());
-            SVGDocument doc = factory.createDocument(uri, imageStream);
+            SVGDocument doc = (SVGDocument)factory.createDocument(uri, imageStream);
 
-            Element e = ((SVGDocument)doc).getRootElement();
-            String s;
             UserAgent userAgent = new MUserAgent(new AffineTransform());
             BridgeContext ctx = new BridgeContext(userAgent);
+
+            Element e = ((SVGDocument)doc).getRootElement();
             UnitProcessor.Context uctx = UnitProcessor.createContext(ctx, e);
 
+            String s;
             // 'width' attribute - default is 100%
             s = e.getAttributeNS(null, SVGOMDocument.SVG_WIDTH_ATTRIBUTE);
             if (s.length() == 0) {
@@ -98,8 +102,7 @@ public class SVGReader extends AbstractImageReader {
         } catch (NoClassDefFoundError ncdfe) {
             MessageHandler.errorln("Batik not in class path");
             return false;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             MessageHandler.errorln("Could not load external SVG: " +
                                    e.getMessage());
             // assuming any exception means this document is not svg
@@ -122,14 +125,14 @@ public class SVGReader extends AbstractImageReader {
          * Displays an error message.
          */
         public void displayError(String message) {
-            System.err.println(message);
+            MessageHandler.error(message);
         }
 
         /**
          * Displays an error resulting from the specified Exception.
          */
         public void displayError(Exception ex) {
-            ex.printStackTrace(System.err);
+            MessageHandler.error(org.apache.avalon.framework.ExceptionUtil.printStackTrace(ex));
         }
 
         /**
@@ -137,7 +140,7 @@ public class SVGReader extends AbstractImageReader {
          * The given message is typically displayed in a status bar.
          */
         public void displayMessage(String message) {
-            System.out.println(message);
+            MessageHandler.log(message);
         }
 
         /**
@@ -148,6 +151,7 @@ public class SVGReader extends AbstractImageReader {
             return 0.35277777777777777778f; // 72 dpi
             // return 0.26458333333333333333333333333333f;    // 96dpi
         }
+
         public float getPixelUnitToMillimeter() {
             // this is set to 72dpi as the values in fo are 72dpi
             return 0.35277777777777777778f; // 72 dpi
@@ -165,9 +169,9 @@ public class SVGReader extends AbstractImageReader {
             return "print";
         }
 
-public boolean isXMLParserValidating() {
-return true;
-}
+        public boolean isXMLParserValidating() {
+            return true;
+        }
 
         /**
          * Returns the user stylesheet uri.

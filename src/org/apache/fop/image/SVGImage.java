@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -9,6 +9,9 @@ package org.apache.fop.image;
 
 // Java
 import java.net.URL;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
 import org.w3c.dom.svg.SVGDocument;
 
 // FOP
@@ -18,9 +21,7 @@ import org.apache.fop.datatypes.ColorSpace;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.image.analyser.ImageReader;
 
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-
+//Batik
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 
 /**
@@ -28,7 +29,8 @@ import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
  * @see FopImage
  */
 public class SVGImage extends AbstractFopImage {
-    SVGDocument doc;
+
+    private SVGDocument doc;
 
     public SVGImage(URL href) throws FopImageException {
         super(href);
@@ -52,7 +54,7 @@ public class SVGImage extends AbstractFopImage {
         try {
             SAXSVGDocumentFactory factory =
                 new SAXSVGDocumentFactory(SVGImage.getParserName());
-            doc = factory.createDocument(this.m_href.toExternalForm());
+            doc = factory.createSVGDocument(this.m_href.toExternalForm());
         } catch (Exception e) {
             MessageHandler.errorln("Could not load external SVG: "
                                    + e.getMessage());
