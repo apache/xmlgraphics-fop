@@ -62,7 +62,11 @@ public class UnknownXMLObj extends XMLObj {
     protected UnknownXMLObj(FObj parent, PropertyList propertyList, String space, String tag) {
         super(parent, propertyList, tag);
         this.namespace = space;
-        this.name = this.namespace + ":" + tag;
+				if(!"".equals(space)) {
+            this.name = this.namespace + ":" + tag;
+        } else {
+            this.name = "(none):" + tag;
+        }
     }
 
     public String getNameSpace() {
