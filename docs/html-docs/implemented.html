@@ -21,7 +21,7 @@
 <IMG border="0" height="14" hspace="0" src="resources/close.gif" vspace="0" width="120"><BR></TD><TD align="left" valign="top" width="500"><TABLE border="0" cellpadding="3" cellspacing="0"><TR><TD>
   <TABLE border="0" cellpadding="0" cellspacing="0" width="494"><TR><TD bgcolor="666699" colspan="2" width="494"><TABLE border="0" cellpadding="0" cellspacing="0" width="494"><TR><TD bgcolor="#039acc" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#039acc" height="1" width="492"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="492"></TD><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#039acc" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#0086b2" width="492"><FONT color="#ffffff" face="arial,helvetica,sanserif" size="+1"><IMG border="0" height="2" hspace="0" src="resources/void.gif" vspace="0" width="2"><B>What's Implemented?</B></FONT></TD><TD bgcolor="#017299" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#017299" height="1" width="492"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="492"></TD><TD bgcolor="#017299" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR></TABLE></TD></TR><TR><TD width="10">&nbsp;</TD><TD width="484"><FONT color="#000000" face="arial,helvetica,sanserif">
       <P>The following formatting objects and properties of the xsl-fo 
-         working draft (12 October 2000) are implemented.Please have also a look at the 
+         candidate recommendation are implemented.Please have also a look at the 
          section on <A href="limitations.html">limitations</A>
       </P>
   </FONT></TD></TR></TABLE><BR>
@@ -61,7 +61,7 @@
         <LI>external-graphic</LI>
         <LI>inline</LI>
         <LI>instream-foreign-object</LI>
-        <LI>leader, but see <A href="limitations.html">limitations</A></LI>
+        <LI>leader</LI>
         <LI>page-number </LI>
         <LI>page-number-citation, see <A href="limitations.html">limitations</A></LI>
       </UL>
@@ -160,6 +160,10 @@
       <LI>initial-page-number</LI>
       <LI>internal-destination</LI>
       <LI>keep-with-next (broken)</LI>
+      <LI>leader-alignment (not value &quot;page&quot;)</LI>
+      <LI>leader-length (no percentage values)</LI>
+      <LI>leader-pattern (not value &quot;use-content&quot;)</LI>
+      <LI>leader-pattern-width</LI>
       <LI>left</LI>
       <LI>line-height </LI>
       <LI>margin-bottom (only on pages and regions) </LI>
@@ -185,18 +189,19 @@
       <LI>provisional-distance-between-starts </LI>
       <LI>provisional-label-separation </LI>
       <LI>ref-id </LI>
+      <LI>region-name</LI>
       <LI>right</LI>
       <LI>rule-thickness </LI>
       <LI>space-after.optimum </LI>
       <LI>space-before.optimum </LI>
       <LI>src </LI>
       <LI>start-indent </LI>
-      <LI>textdecoration (only value 'underline' is supported)</LI>
+      <LI>textdecoration (only value &quot;underline&quot;)</LI>
       <LI>text-align </LI>
       <LI>text-align-last </LI>
       <LI>text-indent </LI>
       <LI>top</LI>
-      <LI>white-space-treatment (broken)</LI>
+      <LI>white-space-collapse</LI>
       <LI>width</LI>
       <LI>wrap-option</LI>
     </UL>

@@ -46,6 +46,8 @@
   <P><CODE><FONT face="courier, monospaced">driver.setRenderer(&quot;org.apache.fop.render.pdf.PDFRenderer&quot;, version);</FONT></CODE></P>
   <P><CODE><FONT face="courier, monospaced">driver.addElementMapping(&quot;org.apache.fop.fo.StandardElementMapping&quot;);</FONT></CODE></P>
   <P><CODE><FONT face="courier, monospaced">driver.addElementMapping(&quot;org.apache.fop.svg.SVGElementMapping&quot;);</FONT></CODE></P>
+  <P><CODE><FONT face="courier, monospaced">driver.addPropertyList(&quot;org.apache.fop.fo.StandardPropertyListMapping&quot;);</FONT></CODE></P>
+  <P><CODE><FONT face="courier, monospaced">driver.addPropertyList(&quot;org.apache.fop.svg.SVGPropertyListMapping&quot;);</FONT></CODE></P>
   <P><CODE><FONT face="courier, monospaced">driver.setWriter(new PrintWriter(new FileWriter(args[1])));</FONT></CODE></P>
   <P><CODE><FONT face="courier, monospaced">driver.buildFOTree(parser, fileInputSource(args[0]));</FONT></CODE></P>
   <P><CODE><FONT face="courier, monospaced">driver.format();</FONT></CODE></P>

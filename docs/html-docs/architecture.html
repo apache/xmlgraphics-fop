@@ -30,6 +30,8 @@ this class, a typical sequence is:</P>
 <P><CODE><FONT face="courier, monospaced">driver.setRenderer(&quot;org.apache.fop.render.pdf.PDFRenderer&quot;, version);</FONT></CODE></P>
 <P><CODE><FONT face="courier, monospaced">driver.addElementMapping(&quot;org.apache.fop.fo.StandardElementMapping&quot;);</FONT></CODE></P>
 <P><CODE><FONT face="courier, monospaced">driver.addElementMapping(&quot;org.apache.fop.svg.SVGElementMapping&quot;);</FONT></CODE></P>
+<P><CODE><FONT face="courier, monospaced">driver.addPropertyList(&quot;org.apache.fop.fo.StandardPropertyListMapping&quot;);</FONT></CODE></P>
+<P><CODE><FONT face="courier, monospaced">driver.addPropertyList(&quot;org.apache.fop.svg.SVGPropertyListMapping&quot;);</FONT></CODE></P>
 <P><CODE><FONT face="courier, monospaced">driver.setWriter(new PrintWriter(new FileWriter(args[1])));</FONT></CODE></P>
 <P></P>
 <P><CODE><FONT face="courier, monospaced">driver.buildFOTree(parser, fileInputSource(args[0]));</FONT></CODE></P>
@@ -111,8 +113,8 @@ constructing the FO tree. The key SAX events used are </P>
 
 
 <P><CODE><FONT face="courier, monospaced">Block</FONT></CODE></P>
-<P><CODE><FONT face="courier, monospaced">InlineSequence</FONT></CODE></P>
-<P><CODE><FONT face="courier, monospaced">SimpleLink</FONT></CODE></P>
+<P><CODE><FONT face="courier, monospaced">Inline</FONT></CODE></P>
+<P><CODE><FONT face="courier, monospaced">BasicLink</FONT></CODE></P>
 
 </FONT></TD></TR></TABLE><BR>
 
@@ -270,6 +272,31 @@ discusses some issues applicable to rendering.
 </P>
 </FONT></TD></TR></TABLE><BR>
 
+<TABLE border="0" cellpadding="0" cellspacing="0" width="494"><TR><TD bgcolor="666699" colspan="2" width="494"><TABLE border="0" cellpadding="0" cellspacing="0" width="494"><TR><TD bgcolor="#039acc" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#039acc" height="1" width="492"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="492"></TD><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#039acc" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#0086b2" width="492"><FONT color="#ffffff" face="arial,helvetica,sanserif" size="+1"><IMG border="0" height="2" hspace="0" src="resources/void.gif" vspace="0" width="2"><B>SVG</B></FONT></TD><TD bgcolor="#017299" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#017299" height="1" width="492"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="492"></TD><TD bgcolor="#017299" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR></TABLE></TD></TR><TR><TD width="10">&nbsp;</TD><TD width="484"><FONT color="#000000" face="arial,helvetica,sanserif">
+
+<P>
+FOP supports some svg rendering. SVG is supported as an instream-foreign-object
+embedded in an FO document. FOP also supports rendering of an external SVG image.
+</P>
+
+<P>
+Since the intream object that contains the SVG returns a single fo area then
+the construction of the SVG document is handled differently. The SVG is created
+by calling the <CODE><FONT face="courier, monospaced">createGraphic()</FONT></CODE> on each SVG element. The element is then
+responsible for loading the necessary information and child elements and creating
+the corresponding SVG DOM element. When the FO tree is being layed out the
+SVG tree is turned into the SVG DOM document which is stored for later rendering.
+</P>
+
+<P>
+The SVG document is then held as a DOM tree which is then rendered by going through
+the elements of the tree and rendering then in turn.
+</P>
+
+<P>
+For more information see the SVG documentation.
+</P>
+</FONT></TD></TR></TABLE><BR>
 </TD></TR></TABLE></TD></TR></TABLE><BR><TABLE border="0" cellpadding="0" cellspacing="0" width="620"><TR><TD bgcolor="#0086b2"><IMG height="1" src="images/dot.gif" width="1"></TD></TR><TR><TD align="center"><FONT color="#0086b2" size="-1"><I>
               Copyright &copy; 1999 The Apache Software Foundation.
               All Rights Reserved.

@@ -15,14 +15,9 @@
        file with your report, which just demonstrates the problem. Thanks for your help!</p>
   </s2>
   <s2 title="Known bugs">
-    <ul>
-      <li>Colour not continued onto subsequent pages, if coloured block goes over page.</li>
-      <li>SVG linearGradients don't appear the same as in other SVG Viewers</li>
-      <li>colour not continued onto subsequent pages if coloured block goes over page </li>
-      <li>no SVG support in AWTCommandLine </li>
-      <li>keep-next doesn't work and doubles the text lines which should be moved to the next page</li>
-      <li>lists containing list do not keep their indentation correctly over a page boundary</li>
-    </ul>
+    <p>A list of known bugs can be found at the end of the file 
+       <jump href="http://xml.apache.org/websrc/cvsweb.cgi/xml-fop/">Status</jump> in the root 
+       of the Fop distribution.</p>
   </s2>
 </s1>
 

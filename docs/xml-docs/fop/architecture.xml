@@ -98,7 +98,7 @@ constructing the FO tree. The key SAX events used are </p>
 
 <p><code>Block</code></p>
 <p><code>Inline</code></p>
-<p><code>SimpleLink</code></p>
+<p><code>BasicLink</code></p>
 
 </s2>
 
