@@ -58,7 +58,7 @@ public class GifImage extends AbstractFopImage {
      * @param ua the user agent for loading
      * @return True if the load process succeeded
      */
-    protected boolean loadBitmap(Log logger) {
+    protected boolean loadBitmap() {
         int[] tmpMap = null;
         try {
             URLConnection con = new DummyConnection(inputStream);
@@ -81,7 +81,7 @@ public class GifImage extends AbstractFopImage {
             try {
                 tmpMap = consumer.getImage();
             } catch (Exception ex) {
-                logger.error("Image grabbing interrupted : "
+                log.error("Image grabbing interrupted : "
                               + ex.getMessage(), ex);
                 return false;
             }
@@ -146,7 +146,7 @@ public class GifImage extends AbstractFopImage {
                 this.isTransparent = false;
             }
         } catch (Exception ex) {
-            logger.error("Error while loading image "
+            log.error("Error while loading image "
                           + "" + " : "
                           + ex.getClass() + " - "
                           + ex.getMessage(), ex);

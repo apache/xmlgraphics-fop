@@ -23,8 +23,6 @@ import java.util.Map;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.logging.Log;
-
 // FOP
 import org.apache.fop.pdf.PDFEncryptionParams;
 
@@ -50,7 +48,6 @@ import org.apache.fop.pdf.PDFEncryptionParams;
  */
 public class FOUserAgent {
 
-    private Log log;
     /** Map containing various default values */
     public Map defaults = new java.util.HashMap();
     /** Map containing XML handlers for various document types */
@@ -58,22 +55,6 @@ public class FOUserAgent {
     private String baseURL;
     private PDFEncryptionParams pdfEncryptionParams;
     private float px2mm = 0.35277777777777777778f; //72dpi (=25.4/dpi)
-
-    /**
-     * Sets the logger.
-     * @param log Logger to use
-     */
-    public void setLogger(Log log) {
-        this.log = log;
-    }
-
-    /**
-     * Returns the logger to use.
-     * (todo) This breaks IoC/SoC. Should be improved.
-     */
-    public Log getLogger() {
-        return this.log;
-    }
 
     /**
      * Sets the base URL.

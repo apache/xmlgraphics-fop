@@ -27,6 +27,10 @@ import java.util.ArrayList;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.apps.FOUserAgent;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+
 /**
  * Factory for ImageReader objects.
  *
@@ -36,6 +40,8 @@ import org.apache.fop.apps.FOUserAgent;
 public class ImageReaderFactory {
 
     private static ArrayList formats = new ArrayList();
+
+    protected static Log log = LogFactory.getLog(ImageReaderFactory.class);
 
     static {
         registerFormat(new JPEGReader());
@@ -80,9 +86,8 @@ public class ImageReaderFactory {
                 }
             }
         } catch (IOException ex) {
-            ua.getLogger().error(
-                    "Error while recovering Image Informations ("
-                    + uri + ")", ex);
+            log.error("Error while recovering Image Informations ("
+                + uri + ")", ex);
         }
         return null;
     }

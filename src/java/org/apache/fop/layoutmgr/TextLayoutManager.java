@@ -172,7 +172,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
         if (prevPos != null) {
             // ASSERT (prevPos.getLM() == this)
             if (prevPos.getLM() != this) {
-                getLogger().error(
+                log.error(
                   "TextLayoutManager.resetPosition: " + "LM mismatch!!!");
             }
             LeafPosition tbp = (LeafPosition) prevPos;

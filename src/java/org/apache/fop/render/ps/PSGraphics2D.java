@@ -320,7 +320,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
         /**
          * @see org.apache.fop.image.FopImage#load(int, org.apache.commons.logging.Log)
          */
-        public boolean load(int type, Log logger) {
+        public boolean load(int type) {
             switch (type) {
                 case FopImage.DIMENSIONS: break;
                 case FopImage.BITMAP: break;

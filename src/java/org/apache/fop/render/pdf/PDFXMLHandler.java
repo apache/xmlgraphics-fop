@@ -32,8 +32,13 @@ import org.apache.fop.svg.PDFGraphics2D;
 import org.apache.fop.svg.SVGUserAgent;
 import org.apache.fop.fonts.FontInfo;
 
+// Commons-Logging
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+
 /* org.w3c.dom.Document is not imported to avoid conflict with
-   org.apache.fop.control.Document */
+   org.apache.fop.apps.Document */
 
 import java.io.OutputStream;
 
@@ -55,6 +60,12 @@ import java.awt.geom.AffineTransform;
  * The properties from the PDF renderer are subject to change.
  */
 public class PDFXMLHandler implements XMLHandler {
+
+    /**
+     * logging instance
+     */
+    private Log log = LogFactory.getLog(PDFXMLHandler.class);
+
     /**
      * The PDF document that is being drawn into.
      */
@@ -220,8 +231,7 @@ public class PDFXMLHandler implements XMLHandler {
             int yOffset = pdfInfo.currentYPosition;
 
             SVGUserAgent ua
-                 = new SVGUserAgent(context.getUserAgent().getLogger(), 
-                        context.getUserAgent().getPixelUnitToMillimeter(),
+                 = new SVGUserAgent(context.getUserAgent().getPixelUnitToMillimeter(),
                         new AffineTransform());
 
             GVTBuilder builder = new GVTBuilder();
@@ -240,7 +250,7 @@ public class PDFXMLHandler implements XMLHandler {
             try {
                 root = builder.build(ctx, doc);
             } catch (Exception e) {
-                context.getUserAgent().getLogger().error("svg graphic could not be built: "
+                log.error("svg graphic could not be built: "
                                        + e.getMessage(), e);
                 return;
             }
@@ -298,7 +308,7 @@ public class PDFXMLHandler implements XMLHandler {
                 root.paint(graphics);
                 pdfInfo.currentStream.add(graphics.getString());
             } catch (Exception e) {
-                context.getUserAgent().getLogger().error("svg graphic could not be rendered: "
+                log.error("svg graphic could not be rendered: "
                                        + e.getMessage(), e);
             }
 

@@ -458,7 +458,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         }
         RegionViewport reg = curPage.getPage().getRegionViewport(regionClass);
         if (reg == null) {
-            getLogger().error("no region viewport: shouldn't happen");
+            log.error("no region viewport: shouldn't happen");
         }
         StaticContentLayoutManager lm = getStaticContentLayoutManager(flow);
         lm.setUserAgent(getUserAgent());
@@ -476,7 +476,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
                 lm.addAreas(new BreakPossPosIter(vecBreakPoss, 0,
                                                   vecBreakPoss.size()), null);
             } else {
-              getLogger().error("bp==null  cls=" + regionClass);
+              log.error("bp==null  cls=" + regionClass);
             }
         }
         //lm.flush();
@@ -836,7 +836,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         if ((columnCount > 1) && (r.overflow == Overflow.SCROLL)) {
             // recover by setting 'column-count' to 1. This is allowed but
             // not required by the spec.
-            getLogger().error("Setting 'column-count' to 1 because "
+            log.error("Setting 'column-count' to 1 because "
                     + "'overflow' is set to 'scroll'");
             columnCount = 1;
         }

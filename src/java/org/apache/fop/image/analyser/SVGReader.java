@@ -89,7 +89,7 @@ public class SVGReader implements ImageReader {
         if (batik) {
             try {
                 Loader loader = new Loader();
-                return loader.getImage(uri, bis, ua.getLogger(), 
+                return loader.getImage(uri, bis, 
                     ua.getPixelUnitToMillimeter());
             } catch (NoClassDefFoundError e) {
                 batik = false;
@@ -107,7 +107,7 @@ public class SVGReader implements ImageReader {
      */
     class Loader {
         private FopImage.ImageInfo getImage(String uri, InputStream fis,
-                Log logger, float pixelUnitToMM) {
+                float pixelUnitToMM) {
             // parse document and get the size attributes of the svg element
 
             try {
@@ -177,7 +177,7 @@ public class SVGReader implements ImageReader {
 
                 Element e = doc.getRootElement();
                 String s;
-                SVGUserAgent userAg = new SVGUserAgent(logger, pixelUnitToMM,
+                SVGUserAgent userAg = new SVGUserAgent(pixelUnitToMM,
                             new AffineTransform());
                 BridgeContext ctx = new BridgeContext(userAg);
                 UnitProcessor.Context uctx =

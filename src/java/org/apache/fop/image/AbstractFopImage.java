@@ -26,6 +26,7 @@ import java.awt.Color;
 
 // FOP
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Base class to implement the FopImage interface.
@@ -34,6 +35,12 @@ import org.apache.commons.logging.Log;
  * @see FopImage
  */
 public abstract class AbstractFopImage implements FopImage {
+
+    /**
+     * logging instance
+     */
+    protected static Log log = LogFactory.getLog(AbstractFopImage.class);
+
     /**
      * Keeps track of what has been loaded.
      */
@@ -125,13 +132,13 @@ public abstract class AbstractFopImage implements FopImage {
      * @param ua the user agent for handling logging etc.
      * @return true if the loading was successful
      */
-    public synchronized boolean load(int type, Log logger) {
+    public synchronized boolean load(int type) {
         if ((loaded & type) != 0) {
             return true;
         }
         boolean success = true;
         if (((type & DIMENSIONS) != 0) && ((loaded & DIMENSIONS) == 0)) {
-            success = success && loadDimensions(logger);
+            success = success && loadDimensions();
 
             if (!success) {
                 return false;
@@ -139,13 +146,13 @@ public abstract class AbstractFopImage implements FopImage {
             loaded = loaded | DIMENSIONS;
         }
         if (((type & BITMAP) != 0) && ((loaded & BITMAP) == 0)) {
-            success = success && loadBitmap(logger);
+            success = success && loadBitmap();
             if (success) {
                 loaded = loaded | BITMAP;
             }
         }
         if (((type & ORIGINAL_DATA) != 0) && ((loaded & ORIGINAL_DATA) == 0)) {
-            success = success && loadOriginalData(logger);
+            success = success && loadOriginalData();
             if (success) {
                 loaded = loaded | ORIGINAL_DATA;
             }
@@ -161,7 +168,7 @@ public abstract class AbstractFopImage implements FopImage {
      * @param ua the user agent
      * @return true if the loading was successful
      */
-    protected boolean loadDimensions(Log logger) {
+    protected boolean loadDimensions() {
         return false;
     }
 
@@ -173,7 +180,7 @@ public abstract class AbstractFopImage implements FopImage {
      * @param ua the user agent
      * @return true if the loading was successful
      */
-    protected boolean loadBitmap(Log logger) {
+    protected boolean loadBitmap() {
         return false;
     }
 
@@ -185,7 +192,7 @@ public abstract class AbstractFopImage implements FopImage {
      * @param ua the user agent
      * @return true if the loading was successful
      */
-    protected boolean loadOriginalData(Log logger) {
+    protected boolean loadOriginalData() {
         return false;
     }
 

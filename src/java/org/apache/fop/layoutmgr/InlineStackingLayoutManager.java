@@ -267,7 +267,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
 
             // ignore nested blocks for now
             if (!curLM.generatesInlineAreas()) {
-                getLogger().warn("ignoring block inside inline fo");
+                log.warn("ignoring block inside inline fo");
                 curLM.setFinished(true);
                 continue;
             }

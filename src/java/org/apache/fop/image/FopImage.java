@@ -61,10 +61,9 @@ public interface FopImage {
      * the information.
      *
      * @param type the type of loading required
-     * @param logger the Commons-logging component
      * @return boolean true if the information could be loaded
      */
-    boolean load(int type, Log logger);
+    boolean load(int type);
 
     /**
      * Returns the image width.

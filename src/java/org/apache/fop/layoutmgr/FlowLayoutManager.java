@@ -60,7 +60,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
 
         while ((curLM = getChildLM()) != null) {
             if (curLM.generatesInlineAreas()) {
-                getLogger().error("inline area not allowed under flow - ignoring");
+                log.error("inline area not allowed under flow - ignoring");
                 curLM.setFinished(true);
                 continue;
             }
@@ -169,7 +169,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
      */
     public Marker retrieveMarker(String name, int pos, int boundary) {
         // error cannot retrieve markers in flow
-        getLogger().error("Cannot retrieve a marker from the flow");
+        log.error("Cannot retrieve a marker from the flow");
         return null;
     }
 }

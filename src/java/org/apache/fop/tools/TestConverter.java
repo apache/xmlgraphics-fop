@@ -307,7 +307,6 @@ public class TestConverter {
 
             Driver driver = new Driver();
             FOUserAgent userAgent = new FOUserAgent();
-            userAgent.setLogger(getLogger());
             userAgent.setBaseURL(baseURL);
             driver.setUserAgent(userAgent);
             if (outputPDF) {

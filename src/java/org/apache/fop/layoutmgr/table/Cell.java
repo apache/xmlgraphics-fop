@@ -89,7 +89,7 @@ public class Cell extends BlockStackingLayoutManager {
 
         while ((curLM = getChildLM()) != null) {
             if (curLM.generatesInlineAreas()) {
-                getLogger().error("table-cell must contain block areas - ignoring");
+                log.error("table-cell must contain block areas - ignoring");
                 curLM.setFinished(true);
                 continue;
             }
