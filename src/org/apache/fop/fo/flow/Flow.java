@@ -111,7 +111,8 @@ public class Flow extends FObj {
 	// 001228, Number 406), confusion in spec section 6.4.5 about
 	// multiplicity of fo:flow in XSL 1.0 is cleared up - one (1)
 	// fo:flow per fo:page-sequence only.
-	if (!pageSequence.isFlowSet())
+	
+	if (!pageSequence.isFlowSet() || !(this.name.equals("fo:flow")))
 		pageSequence.addFlow(this);
 	else
 		throw new FOPException("Only a single fo:flow permitted"
