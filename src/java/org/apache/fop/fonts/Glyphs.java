@@ -209,7 +209,8 @@ public class Glyphs {
         '\u2022',                                       // bullet
         '\u2013',                                       // endash
         '\u2014',                                       // emdash
-        '~', '\u2022',                                  // bullet
+        '~', 
+        '\u2122',                                       // trademark
         '\u0161', '\u203a', '\u0153', '\u2022', '\u017e', '\u0178', // 0xA0
              ' ', '\u00a1', '\u00a2', '\u00a3', '\u00a4', '\u00a5',
              '\u00a6', '\u00a7', '\u00a8', '\u00a9', '\u00aa', '\u00ab',
@@ -1296,11 +1297,24 @@ public class Glyphs {
     };
 
     /**
+     * Return the glyphname from a character,
+     * eg, charToGlyphName('\\') returns "backslash"
+     *
+     * @param ch glyph to evaluate
+     * @return the name of the glyph
+     */
+    public static final String charToGlyphName(char ch) {
+        return stringToGlyph(Character.toString(ch));
+    }
+    
+    /**
      * Return the glyphname from a string,
      * eg, glyphToString("\\") returns "backslash"
      *
      * @param name glyph to evaluate
      * @return the name of the glyph
+     * TODO: javadocs for glyphToString and stringToGlyph are confused
+     * TODO: Improve method names
      */
     public static final String glyphToString(String name) {
         for (int i = 0; i < UNICODE_GLYPHS.length; i += 2) {
