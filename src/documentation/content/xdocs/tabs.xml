@@ -10,6 +10,6 @@
   <tab label="Home" dir=""/>
   <tab label="Development" dir="dev/"/>
   <tab label="Redesign" dir="design/"/>
-  <tab label="alt design" dir="design/alt.design/"/>
+  <tab label="Alt Design" dir="design/alt.design/"/>
   
 </tabs>
