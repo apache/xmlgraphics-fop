@@ -502,7 +502,17 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
         
         RegionViewport reg = curPage.getPage().getRegionViewport(region.getNameId());
-        StaticContentLayoutManager lm = getStaticContentLayoutManager(flow);
+        StaticContentLayoutManager lm;
+        try {
+            lm = getStaticContentLayoutManager(flow);
+        } catch (FOPException e) {
+            log.error
+                ("Failed to create a StaticContentLayoutManager for flow "
+                 + flow.getFlowName()
+                 + "; no static content will be laid out:");
+            log.error(e.getMessage());
+            return;
+        }
         lm.initialize();
         lm.setRegionReference(reg.getRegion());
         lm.setParent(this);
@@ -515,9 +525,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 List vecBreakPoss = new ArrayList();
                 vecBreakPoss.add(bp);
                 lm.addAreas(new BreakPossPosIter(vecBreakPoss, 0,
-                                                  vecBreakPoss.size()), null);
+                                                 vecBreakPoss.size()), null);
             } else {
-              log.error("bp==null  cls=" + region.getRegionName());
+                log.error("bp==null  cls=" + region.getRegionName());
             }
         }
         //lm.flush();
@@ -905,14 +915,13 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     /**
      * @return a StaticContent layout manager
      */
-    private StaticContentLayoutManager getStaticContentLayoutManager(StaticContent sc) {
+    private StaticContentLayoutManager getStaticContentLayoutManager(StaticContent sc)
+        throws FOPException {
         StaticContentLayoutManager lm =
-            (StaticContentLayoutManager)
-            staticContentLMs.get(sc.getFlowName());
+            (StaticContentLayoutManager) staticContentLMs.get(sc.getFlowName());
         if (lm == null) {
             lm = (StaticContentLayoutManager)
-                getAreaTreeHandler().getLayoutManagerMaker().
-                makeLayoutManager(sc);
+                getAreaTreeHandler().getLayoutManagerMaker().makeLayoutManager(sc);
             staticContentLMs.put(sc.getFlowName(), lm);
         }
         return lm;

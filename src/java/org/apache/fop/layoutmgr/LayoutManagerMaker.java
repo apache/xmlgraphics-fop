@@ -19,14 +19,29 @@ package org.apache.fop.layoutmgr;
 
 import java.util.List;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.apps.FOPException;
 
+/**
+ * The interface for all LayoutManager makers
+ */
 public interface LayoutManagerMaker {
     
+    /**
+     * Make LayoutManagers for the node and add them to the list lms.
+     * @param node the FO node for which the LayoutManagers are made
+     * @param lms the list to which the LayoutManagers are added
+     */
     public void makeLayoutManagers(FONode node, List lms);
 
-    public LayoutManager makeLayoutManager(FONode node);
-
-    public LayoutManager makeLayoutManager(FONode node, boolean checkLength);
+    /**
+     * Make the LayoutManager for the node.
+     * If not exactly one LayoutManagers is made,
+     * a FOPException is thrown.
+     * @param node the FO node for which the LayoutManagers are made
+     * @return The created LayoutManager
+     */
+    public LayoutManager makeLayoutManager(FONode node)
+        throws FOPException;
 
 }
 
