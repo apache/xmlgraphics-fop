@@ -198,9 +198,10 @@ public class TableRow extends FObj {
 		    status = new Status(Status.AREA_FULL_SOME);
 		}
     	        
-                resetMarker();
-                area.removeChild(areaContainer);                
-
+    	        area.removeChild(areaContainer);
+                this.resetMarker();                
+                this.removeID(area.getIDReferences());
+                                
 		return status;
 	    }
 
@@ -230,15 +231,7 @@ public class TableRow extends FObj {
 	}
 
 	return new Status(Status.OK);
-    }
-
-    public void resetMarker() {
-	this.marker = START;
-	int numChildren = this.children.size();
-	for (int i = 0; i < numChildren; i++) {
-	    ((FONode) children.elementAt(i)).resetMarker();
-	}
-    }
+    }   
 
     public int getAreaHeight() {
 	return areaContainer.getHeight();
