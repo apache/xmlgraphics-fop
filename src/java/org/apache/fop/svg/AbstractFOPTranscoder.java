@@ -65,7 +65,7 @@ import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.dom.util.DocumentFactory;
 import org.apache.batik.transcoder.ErrorHandler;
 import org.apache.batik.transcoder.TranscoderException;
-import org.apache.batik.transcoder.XMLAbstractTranscoder;
+import org.apache.batik.transcoder.SVGAbstractTranscoder;
 import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.batik.util.SVGConstants;
 import org.apache.batik.util.XMLResourceDescriptor;
@@ -74,7 +74,7 @@ import org.w3c.dom.DOMImplementation;
 /**
  * This is the common base class of all of FOP's transcoders.
  */
-public abstract class AbstractFOPTranscoder extends XMLAbstractTranscoder
+public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder
             implements LogEnabled {
 
     /**

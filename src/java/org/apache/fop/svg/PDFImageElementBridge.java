@@ -53,12 +53,20 @@ package org.apache.fop.svg;
 import org.apache.batik.bridge.SVGImageElementBridge;
 
 import org.apache.fop.image.JpegImage;
+import org.apache.fop.image.FopImage;
+import org.apache.fop.image.analyser.ImageReaderFactory;
 
 import java.awt.Shape;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.net.URL;
 
+import org.w3c.dom.Element;
+
+import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.gvt.AbstractGraphicsNode;
+import org.apache.batik.gvt.GraphicsNode;
+import org.apache.batik.util.ParsedURL;
 
 /**
  * Bridge class for the &lt;image> element when jpeg images.
@@ -72,7 +80,6 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
      */
     public PDFImageElementBridge() { }
 
-/*
     /**
      * Create the raster image node.
      * THis checks if it is a jpeg file and creates a jpeg node
@@ -81,14 +88,19 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
      * @param e the svg element for the image
      * @param purl the parsed url for the image resource
      * @return a new graphics node
-     *
-    protected GraphicsNode createRasterImageNode(BridgeContext ctx,
-            Element e, ParsedURL purl) {
-
+     */
+    protected GraphicsNode createImageGraphicsNode
+        (BridgeContext ctx, Element e, ParsedURL purl) {
+        GraphicsNode origGN = super.createImageGraphicsNode
+            (ctx, e, purl);
         try {
-            JpegImage jpeg = new JpegImage(new URL(purl.toString()));
-            PDFFilter filter = jpeg.getPDFFilter();
-            PDFJpegNode node = new PDFJpegNode(jpeg);
+            FopImage.ImageInfo ii = ImageReaderFactory.make
+                (purl.toString(), purl.openStream(), null);
+            if (ii.mimeType.toLowerCase() == "image/jpeg") {
+                JpegImage jpeg = new JpegImage(ii);
+                PDFJpegNode node = new PDFJpegNode(jpeg, origGN);
+
+                Rectangle2D imgBounds = getImageBounds(ctx, e);
             Rectangle2D bounds = node.getPrimitiveBounds();
             float [] vb = new float[4];
             vb[0] = 0; // x
@@ -96,17 +108,16 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
             vb[2] = (float) bounds.getWidth(); // width
             vb[3] = (float) bounds.getHeight(); // height
 
-            // handles the 'preserveAspectRatio', 'overflow' and 'clip' and sets the
-            // appropriate AffineTransform to the image node
-            initializeViewport(ctx, e, node, vb, bounds);
-
+                // handles the 'preserveAspectRatio', 'overflow' and 'clip' 
+                // and sets the appropriate AffineTransform to the image node
+                initializeViewport(ctx, e, node, vb, imgBounds);
             return node;
+            }
         } catch (Exception ex) {
         }
 
-        return super.createRasterImageNode(ctx, e, purl);
+        return origGN;
     }
-*/
 
     /**
      * A PDF jpeg node.
@@ -115,14 +126,16 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
      */
     public static class PDFJpegNode extends AbstractGraphicsNode {
         private JpegImage jpeg;
-
+        private GraphicsNode origGraphicsNode ;
         /**
          * Create a new pdf jpeg node for drawing jpeg images
          * into pdf graphics.
          * @param j the jpeg image
          */
-        public PDFJpegNode(JpegImage j) {
+        public PDFJpegNode(JpegImage j,
+                           GraphicsNode origGraphicsNode) {
             jpeg = j;
+            this.origGraphicsNode = origGraphicsNode;
         }
 
         /**
@@ -152,6 +165,10 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            } else {
+                // Not going directly into PDF so use
+                // original implemtation so filters etc work.
+                origGraphicsNode.primitivePaint(g2d);
             }
         }
 
