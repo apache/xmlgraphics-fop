@@ -27,7 +27,7 @@
     <code>static final int</code>, the set of individual
     property stacks can be collected together into one array.
     Where to put such an overall collection?  Creating an 
-    über-class to accommodate everything that applies to
+    &#xFC;ber-class to accommodate everything that applies to
     property classes as a whole allows this array to be defined
     as a <em><code>static final</code> something[]</em>.
   </p>
