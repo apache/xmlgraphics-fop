@@ -95,16 +95,16 @@ public class GifJpegImage implements FopImage {
 	    synchronized (imageWait) {
 		imageWait.wait();
 	    }
-	    /* this only works on windows, not on linux
-	       while ((this.pixelheight = consumer.getHeight())==-1) {}
-	       while ((this.pixelwidth = consumer.getWidth())==-1) {}
-	    */
+
+	    while ((this.pixelheight = consumer.getHeight())==-1) {}
+	    while ((this.pixelwidth = consumer.getWidth())==-1) {}
+
 	    this.tempmap = new int[this.pixelwidth * this.pixelheight];
 
 	    PixelGrabber pg = new
 		PixelGrabber(ip, 0, 0,
 			     this.pixelwidth, this.pixelheight,
-			     this.tempmap, 0, w);
+			     this.tempmap, 0, this.pixelwidth);
 	    try {
 		pg.grabPixels();
 	    } catch (InterruptedException e) {
@@ -204,14 +204,18 @@ public class GifJpegImage implements FopImage {
     public int[] getimagemap() {
 	this.imagemap=new int[this.pixelheight * this.pixelwidth * 3];
 	int count = 0;
-	int i;
-	for(i = 0; i < (this.pixelheight * this.pixelwidth); i++) {
-	    int red   = ((this.tempmap[i]>>16) & 0xff);
-	    int green = ((this.tempmap[i]>> 8) & 0xff);
-	    int blue  = ((this.tempmap[i]    ) & 0xff);
-	    this.imagemap[count++]=red;
-	    this.imagemap[count++]=green;
-	    this.imagemap[count++]=blue;
+        int x = 0;
+        int y = 0;
+
+        for ( y = (this.pixelheight - 1) * this.pixelwidth; y >= 0; y -= this.pixelwidth) {
+            for ( x = 0; x < this.pixelwidth; x++) {
+
+                int p = this.tempmap[y + x];
+
+                this.imagemap[count++] = ((p >>16) & 0xff);
+                this.imagemap[count++] = ((p >> 8) & 0xff);
+                this.imagemap[count++] = (p & 0xff);
+            }    
 	}
 	return imagemap;
     }

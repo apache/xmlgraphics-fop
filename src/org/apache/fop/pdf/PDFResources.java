@@ -174,7 +174,7 @@ public class PDFResources extends PDFObject {
 		if (!this.xObjects.isEmpty())
 		{
 	   	p = p.append("/XObject <<");
-	   	for (int i = 1; i < this.xObjects.size(); i++) {
+	   	for (int i = 1; i <= this.xObjects.size(); i++) {
 			p = p.append("/Im" + i + " " +
 			   	((PDFXObject)
 			      	this.xObjects.elementAt(i -
@@ -182,7 +182,8 @@ public class PDFResources extends PDFObject {
 			   	+
 			   	" \n");
 	   	}
-		}
+		p = p.append(" >>\n");
+		}  
 
 		p = p.append(">> \nendobj\n");
 
