@@ -11,7 +11,7 @@
 				<dictionary>
 					<key>LaunchConfigHandle</key>
 					<value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;launchConfiguration local=&quot;false&quot; path=&quot;/FOP_Alt-Design/.externalToolBuilders/com.atlassw.tools.eclipse.checkstyle.CheckstyleBuilder.launch&quot;/&gt;
+&lt;launchConfiguration local=&quot;false&quot; path=&quot;/FOP_Alt-Design/.externalToolBuilders/Alt-design clean.launch&quot;/&gt;
 </value>
 				</dictionary>
 			</arguments>
@@ -22,7 +22,18 @@
 				<dictionary>
 					<key>LaunchConfigHandle</key>
 					<value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;launchConfiguration local=&quot;false&quot; path=&quot;/FOP_Alt-Design/.externalToolBuilders/Alt-Design build.xml.launch&quot;/&gt;
+&lt;launchConfiguration local=&quot;false&quot; path=&quot;/FOP_Alt-Design/.externalToolBuilders/Alt-design clean build.launch&quot;/&gt;
+</value>
+				</dictionary>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
+			<arguments>
+				<dictionary>
+					<key>LaunchConfigHandle</key>
+					<value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;launchConfiguration local=&quot;false&quot; path=&quot;/FOP_Alt-Design/.externalToolBuilders/Alt-Design build.launch&quot;/&gt;
 </value>
 				</dictionary>
 			</arguments>
