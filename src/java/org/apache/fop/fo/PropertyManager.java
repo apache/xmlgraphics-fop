@@ -35,6 +35,7 @@ import org.apache.fop.traits.BlockProps;
 import org.apache.fop.traits.InlineProps;
 import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.traits.LayoutProps; // keep, break, span, space?
+import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fo.properties.CommonHyphenation;
 import org.xml.sax.Attributes;
@@ -472,8 +473,12 @@ public class PropertyManager implements Constants {
             textInfo.wrapOption = propertyList.get(PR_WRAP_OPTION).getEnum();
             textInfo.bWrap = (textInfo.wrapOption == Constants.WRAP);
 
-            textInfo.wordSpacing = new SpaceVal(
-                                     propertyList.get(PR_WORD_SPACING).getSpace());
+            Property wordSpacing = propertyList.get(PR_WORD_SPACING);
+            if (wordSpacing.getEnum() == NORMAL) {
+                textInfo.wordSpacing = new SpaceVal(new MinOptMax(0), true, true, 0);
+            } else {
+                textInfo.wordSpacing = new SpaceVal(wordSpacing.getSpace());
+            }
 
             /* textInfo.letterSpacing =
                new SpaceVal(propertyList.get("letter-spacing").getSpace());*/

@@ -40,6 +40,7 @@ import org.apache.fop.fo.properties.NumberProperty;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyMaker;
 import org.apache.fop.fo.properties.SpaceProperty;
+import org.apache.fop.fo.properties.SpacingPropertyMaker;
 import org.apache.fop.fo.properties.StringProperty;
 import org.apache.fop.fo.properties.ToBeImplementedProperty;
 
@@ -1586,9 +1587,13 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("character", m);
 
         // letter-spacing
-        m  = new ToBeImplementedProperty.Maker(PR_LETTER_SPACING);
+        m  = new SpacingPropertyMaker(PR_LETTER_SPACING);
+        m.useGeneric(genericSpace);
         m.setInherited(true);
+        m.getSubpropMaker(CP_PRECEDENCE).setDefault("force");
+        m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
         m.setDefault("normal");
+        m.addEnum("normal", makeEnumProperty(NORMAL));
         addPropertyMaker("letter-spacing", m);
 
         // suppress-at-line-break
@@ -1635,12 +1640,13 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("treat-as-word-space", m);
 
         // word-spacing
-        m  = new SpaceProperty.Maker(PR_WORD_SPACING);
+        m  = new SpacingPropertyMaker(PR_WORD_SPACING);
         m.useGeneric(genericSpace);
         m.setInherited(true);
         m.getSubpropMaker(CP_PRECEDENCE).setDefault("force");
         m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
-        m.setDefault("0pt");
+        m.setDefault("normal");
+        m.addEnum("normal", makeEnumProperty(NORMAL));
         addPropertyMaker("word-spacing", m);
     }
     

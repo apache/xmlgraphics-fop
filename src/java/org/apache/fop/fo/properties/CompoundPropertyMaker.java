@@ -122,10 +122,14 @@ public class CompoundPropertyMaker extends PropertyMaker {
      * input value
      */
     protected Property checkEnumValues(String value) {
+        Property result = null;
         if (shorthandMaker != null) {
-            return shorthandMaker.checkEnumValues(value);
+            result = shorthandMaker.checkEnumValues(value);
         }
-        return null;
+        if (result == null) {
+            result = super.checkEnumValues(value);
+        }
+        return result;
     }
 
     /**
@@ -190,7 +194,11 @@ public class CompoundPropertyMaker extends PropertyMaker {
      * @throws FOPException for invalid or inconsisten FO input
      */
     public Property make(PropertyList propertyList) throws FOPException {
-        return makeCompound(propertyList, propertyList.getParentFObj());       
+        if (defaultValue != null) {
+            return make(propertyList, defaultValue, propertyList.getParentFObj());
+        } else {
+            return makeCompound(propertyList, propertyList.getParentFObj());
+        }
     }
     
     /**
