@@ -22,7 +22,6 @@ package org.apache.fop.fo.flow;
 // FOP
 import java.util.Arrays;
 import java.util.BitSet;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
@@ -129,7 +128,6 @@ public class FoPcdata extends FOPageSeqNode {
         super(foTree, FObjectNames.PCDATA, pageSequence, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         characters = event.getChars();
-
         makeSparsePropsSet();
     }
 
@@ -143,4 +141,5 @@ public class FoPcdata extends FOPageSeqNode {
     public String getCharacters() {
         return characters;
     }
+
 }
