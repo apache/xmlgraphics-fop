@@ -79,6 +79,7 @@ import org.apache.fop.fo.properties.RuleStyle;
 import org.apache.fop.fo.properties.BackgroundRepeat;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontMetrics;
+import org.apache.fop.pdf.PDFEncryptionManager;
 import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFInfo;
@@ -240,6 +241,7 @@ public class PDFRenderer extends PrintRenderer {
      * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
      */
     public void configure(Configuration conf) throws ConfigurationException {
+        //PDF filters
         Configuration filters = conf.getChild("filterList");
         Configuration[] filt = filters.getChildren("value");
         List filterList = new java.util.ArrayList();
@@ -250,6 +252,7 @@ public class PDFRenderer extends PrintRenderer {
 
         filterMap.put(PDFStream.DEFAULT_FILTER, filterList);
 
+        //Font configuration
         Configuration[] font = conf.getChildren("font");
         for (int i = 0; i < font.length; i++) {
             Configuration[] triple = font[i].getChildren("font-triplet");
@@ -270,6 +273,7 @@ public class PDFRenderer extends PrintRenderer {
             }
             fontList.add(efi);
         }
+
 
     }
 
@@ -311,7 +315,10 @@ public class PDFRenderer extends PrintRenderer {
         this.pdfDoc = new PDFDocument(producer);
         this.pdfDoc.setCreator(creator);
         this.pdfDoc.setFilterMap(filterMap);
-        pdfDoc.outputHeader(stream);
+        this.pdfDoc.outputHeader(stream);
+        
+        //Setup encryption if necessary
+        PDFEncryptionManager.setupPDFEncryption(userAgent, this.pdfDoc, getLogger());
     }
 
     /**
