@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,24 +42,38 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.fo;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-
+/**
+ * Kind of a super-iterator that iterates through children of an FONode,
+ * in turn managing character iterators for each of them. Caveat: Because this
+ * class is itself a CharIterator, and manages a collection of CharIterators, it
+ * is easy to get confused.
+ */
 public class RecursiveCharIterator extends AbstractCharIterator {
-    private Iterator childIter = null; // Child flow objects
-    private CharIterator curCharIter = null; // Children's characters
+    /** parent node for whose children this iterator iterates */
     private FONode fobj;
-    private FONode curChild;
+    /** iterator for the child nodes */
+    private Iterator childIter = null;
 
+    /** current child object that is being managed by childIter*/
+    private FONode curChild;
+    /** CharIterator for curChild's characters */
+    private CharIterator curCharIter = null;
+
+    /**
+     * Constructor which creates an iterator for all children
+     * @param fobj FONode for which an iterator should be created
+     */
     public RecursiveCharIterator(FObj fobj) {
         // Set up first child iterator
         this.fobj = fobj;
@@ -67,6 +81,11 @@ public class RecursiveCharIterator extends AbstractCharIterator {
         getNextCharIter();
     }
 
+    /**
+     * Constructor which creates an iterator for only some children
+     * @param fobj FObj for which an iterator should be created
+     * @param child FONode of the first child to include in iterator
+     */
     public RecursiveCharIterator(FObj fobj, FONode child) {
         // Set up first child iterator
         this.fobj = fobj;
@@ -74,10 +93,16 @@ public class RecursiveCharIterator extends AbstractCharIterator {
         getNextCharIter();
     }
 
+    /**
+     * @return clone of this, cast as a CharIterator
+     */
     public CharIterator mark() {
         return (CharIterator) this.clone();
     }
 
+    /**
+     * @return a clone of this
+     */
     public Object clone() {
         RecursiveCharIterator ci = (RecursiveCharIterator) super.clone();
         ci.childIter = fobj.getChildren(ci.curChild);
@@ -87,14 +112,23 @@ public class RecursiveCharIterator extends AbstractCharIterator {
         return ci;
     }
 
-
+    /**
+     * Replaces the current character in the CharIterator with a specified
+     * character
+     * @param c the character which should be used to replace the current
+     * character
+     */
     public void replaceChar(char c) {
         if (curCharIter != null) {
             curCharIter.replaceChar(c);
         }
     }
 
-
+    /**
+     * advances curChild to the next child in the collection, and curCharIter
+     * to the CharIterator for that item, or sets them to null if the iterator
+     * has no more items
+     */
     private void getNextCharIter() {
         if (childIter != null && childIter.hasNext()) {
             this.curChild = (FONode) childIter.next();
@@ -105,6 +139,9 @@ public class RecursiveCharIterator extends AbstractCharIterator {
         }
     }
 
+    /**
+     * @return true if there are more items in the CharIterator
+     */
     public boolean hasNext() {
         while (curCharIter != null) {
             if (curCharIter.hasNext() == false) {
@@ -116,6 +153,9 @@ public class RecursiveCharIterator extends AbstractCharIterator {
         return false;
     }
 
+    /**
+     * @see org.apache.fop.fo.CharIterator#nextChar()
+     */
     public char nextChar() throws NoSuchElementException {
         if (curCharIter != null) {
             return curCharIter.nextChar();
@@ -124,7 +164,9 @@ public class RecursiveCharIterator extends AbstractCharIterator {
         }
     }
 
-
+    /**
+     * @see java.util.Iterator#remove
+     */
     public void remove() {
         if (curCharIter != null) {
             curCharIter.remove();
