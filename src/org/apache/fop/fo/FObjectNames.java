@@ -86,68 +86,71 @@ public class FObjectNames {
 
     /**
      * Array containing the local names of all of the elements in the
-     * <i>FO</i> namespace.  The array is effectively 1-based as the zero
+     * <i>FO</i> namespace and the package name suffix of the Object
+     * representing the FO.  The current package name prefix is
+     * "org.apache.fop", but this may be varied without affecting the array.
+     * The array is effectively 1-based as the zero
      * index does not correspond to any FO element.  The list of
      * <tt>int</tt> constants must be kept in sync with this array, as the
      * constants are used to index into the array.
      */
-    public static final String[] foLocalNames = {
-        "no-fo",
-        "basic-link",
-        "bidi-override",
-        "block",
-        "block-container",
-        "character",
-        "color-profile",
-        "conditional-page-master-reference",
-        "declarations",
-        "external-graphic",
-        "float",
-        "flow",
-        "footnote",
-        "footnote-body",
-        "initial-property-set",
-        "inline",
-        "inline-container",
-        "instream-foreign-object",
-        "layout-master-set",
-        "leader",
-        "list-block",
-        "list-item",
-        "list-item-body",
-        "list-item-label",
-        "marker",
-        "multi-case",
-        "multi-properties",
-        "multi-property-set",
-        "multi-switch",
-        "multi-toggle",
-        "page-number",
-        "page-number-citation",
-        "page-sequence",
-        "page-sequence-master",
-        "region-after",
-        "region-before",
-        "region-body",
-        "region-end",
-        "region-start",
-        "repeatable-page-master-alternatives",
-        "repeatable-page-master-reference",
-        "retrieve-marker",
-        "root",
-        "simple-page-master",
-        "single-page-master-reference",
-        "static-content",
-        "table",
-        "table-and-caption",
-        "table-body",
-        "table-caption",
-        "table-cell",
-        "table-column",
-        "table-footer",
-        "table-header",
-        "table-row",
-        "title",
-        "wrapper"
+    public static final String[][] foLocalNames = {
+                                 { "no-fo", ""                }  //0
+                           ,{ "basic-link", "fo.sequences"    }  //1
+                        ,{ "bidi-override", "fo.sequences"    }  //2
+                                ,{ "block", "fo.sequences"    }  //3
+                      ,{ "block-container", "fo.sequences"    }  //4
+                            ,{ "character", "fo.sequences"    }  //5
+                        ,{ "color-profile", "fo.declarations" }  //6
+    ,{ "conditional-page-master-reference", "fo.pagination"   }  //7
+                         ,{ "declarations", "fo.declarations" }  //8
+                     ,{ "external-graphic", "fo.sequences"    }  //9
+                                ,{ "float", "fo.sequences"    }  //10
+                                 ,{ "flow", "fo.sequences"    }  //11
+                             ,{ "footnote", "fo.sequences"    }  //12
+                        ,{ "footnote-body", "fo.sequences"    }  //13
+                 ,{ "initial-property-set", "fo.sequences"    }  //14
+                               ,{ "inline", "fo.sequences"    }  //15
+                     ,{ "inline-container", "fo.sequences"    }  //16
+              ,{ "instream-foreign-object", "fo.sequences"    }  //17
+                    ,{ "layout-master-set", "fo.pagination"   }  //18
+                               ,{ "leader", "fo.sequences"    }  //19
+                           ,{ "list-block", "fo.sequences"    }  //20
+                            ,{ "list-item", "fo.sequences"    }  //21
+                       ,{ "list-item-body", "fo.sequences"    }  //22
+                      ,{ "list-item-label", "fo.sequences"    }  //23
+                               ,{ "marker", "fo.sequences"    }  //24
+                           ,{ "multi-case", "fo.sequences"    }  //25
+                     ,{ "multi-properties", "fo.sequences"    }  //26
+                   ,{ "multi-property-set", "fo.sequences"    }  //27
+                         ,{ "multi-switch", "fo.sequences"    }  //28
+                         ,{ "multi-toggle", "fo.sequences"    }  //29
+                          ,{ "page-number", "fo.sequences"    }  //30
+                 ,{ "page-number-citation", "fo.sequences"    }  //31
+                        ,{ "page-sequence", "fo.sequences"    }  //32
+                 ,{ "page-sequence-master", "fo.pagination"   }  //33
+                         ,{ "region-after", "fo.pagination"   }  //34
+                        ,{ "region-before", "fo.pagination"   }  //35
+                          ,{ "region-body", "fo.pagination"   }  //36
+                           ,{ "region-end", "fo.pagination"   }  //37
+                         ,{ "region-start", "fo.pagination"   }  //38
+  ,{ "repeatable-page-master-alternatives", "fo.pagination"   }  //39
+     ,{ "repeatable-page-master-reference", "fo.pagination"   }  //40
+                      ,{ "retrieve-marker", "fo.sequences"    }  //41
+                                 ,{ "root", "fo"              }  //42
+                   ,{ "simple-page-master", "fo.pagination"   }  //43
+         ,{ "single-page-master-reference", "fo.pagination"   }  //44
+                       ,{ "static-content", "fo.sequences"    }  //45
+                                ,{ "table", "fo.sequences"    }  //46
+                    ,{ "table-and-caption", "fo.sequences"    }  //47
+                           ,{ "table-body", "fo.sequences"    }  //48
+                        ,{ "table-caption", "fo.sequences"    }  //49
+                           ,{ "table-cell", "fo.sequences"    }  //50
+                         ,{ "table-column", "fo.sequences"    }  //51
+                         ,{ "table-footer", "fo.sequences"    }  //52
+                         ,{ "table-header", "fo.sequences"    }  //53
+                            ,{ "table-row", "fo.sequences"    }  //54
+                                ,{ "title", "fo.sequences"    }  //55
+                              ,{ "wrapper", "fo.sequences"    }  //56
     };
 }
