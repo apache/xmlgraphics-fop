@@ -29,11 +29,6 @@ public class Page implements Serializable, Cloneable {
     private RegionViewport regionEnd = null;
     private RegionViewport regionAfter = null;
 
-    // hashmap of markers for this page
-    // start and end are added by the fo that contains the markers
-    private Map markerStart = null;
-    private Map markerEnd = null;
-
     // temporary map of unresolved objects used when serializing the page
     private Map unresolved = null;
 
