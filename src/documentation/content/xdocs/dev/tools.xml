@@ -16,7 +16,7 @@
         <p>Regardless of what platform you develop on, please be sure to submit patches that use Unix line endings. If you are using WinCVS, check code out this way by going to the Admin / Preferences menu item, clicking on the "Globals" tab, then select the "Checkout text files with the Unix LF (0xa)" option. You will also need to use an editor that supports opening and saving files using Unix line endings.</p>
       </section>
       <section id="wincvs_download">
-        <title>Step-by-step instructions for downloading FOP using WinCVS:</title>
+        <title>Step-by-step instructions for downloading FOP using WinCVS</title>
         <ul>
           <li>Select "Create / Checkout Module" menu item.</li>
           <li>“Checkout Settings” Tab:
