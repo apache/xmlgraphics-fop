@@ -44,9 +44,7 @@ package org.apache.fop.fo.flow;
 import org.apache.fop.fo.*;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.Area;
-import org.apache.fop.layout.BlockArea;
-import org.apache.fop.layout.FontState;
+import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.image.*;
 
@@ -58,6 +56,8 @@ import java.net.MalformedURLException;
 
 public class ExternalGraphic extends FObj {
 
+	int breakAfter;
+	int breakBefore;
 	int align;
 	int startIndent;
 	int endIndent;
@@ -103,7 +103,7 @@ public class ExternalGraphic extends FObj {
 			this.id = this.properties.get("id").getString();
 
 			area.getIDReferences().createID(id);
-
+/*
 			if (area instanceof BlockArea) {
 				area.end();
 			}
@@ -114,6 +114,7 @@ public class ExternalGraphic extends FObj {
 						forcedStartOffset;
 			}
 
+*/
 			this.marker = 0;
 		}
 
@@ -172,12 +173,63 @@ public class ExternalGraphic extends FObj {
 
 			imageArea.start();
 			imageArea.end();
-			area.addChild(imageArea);
-			area.increaseHeight(imageArea.getHeight());
+			//area.addChild(imageArea);
+			//area.increaseHeight(imageArea.getHeight());
 
 			if (spaceAfter != 0) {
 				area.addDisplaySpace(spaceAfter);
 			}
+			  if (breakBefore == BreakBefore.PAGE || ((spaceBefore + imageArea.getHeight()) > area.spaceLeft())) 				{
+				return new Status(Status.FORCE_PAGE_BREAK);
+				}
+
+			if (breakBefore == BreakBefore.ODD_PAGE) {
+			return new Status(Status.FORCE_PAGE_BREAK_ODD);
+			}
+
+			if (breakBefore == BreakBefore.EVEN_PAGE) {
+			return new Status(Status.FORCE_PAGE_BREAK_EVEN);
+			}
+	
+
+			if (area instanceof BlockArea) {
+        		    BlockArea ba = (BlockArea)area;
+		            LineArea la = ba.getCurrentLineArea();
+		            if(la == null) {
+                		return new Status(Status.AREA_FULL_NONE);
+			     }
+		            la.addPending();
+        		    if(imageArea.getContentWidth() > la.getRemainingWidth()) {
+                		la = ba.createNextLineArea();
+		                if(la == null) {
+                	    	return new Status(Status.AREA_FULL_NONE);
+                    	     }
+            		}
+	               	la.addInlineArea(imageArea);
+			} else {
+		            area.addChild(imageArea);
+		            area.increaseHeight(imageArea.getContentHeight());
+			}
+			imageArea.setPage(area.getPage());
+
+			if (breakAfter == BreakAfter.PAGE) {
+				this.marker = BREAK_AFTER;
+				return new Status(Status.FORCE_PAGE_BREAK);
+			}
+
+			if (breakAfter == BreakAfter.ODD_PAGE) {
+				this.marker = BREAK_AFTER;
+				return new Status(Status.FORCE_PAGE_BREAK_ODD);
+			}
+
+			if (breakAfter == BreakAfter.EVEN_PAGE) {
+				this.marker = BREAK_AFTER;
+				return new Status(Status.FORCE_PAGE_BREAK_EVEN);
+			}
+
+
+
+
 
 		}
 		catch (MalformedURLException urlex) {
@@ -191,9 +243,9 @@ public class ExternalGraphic extends FObj {
 					imgex.getMessage());
 		}
 
-		if (area instanceof BlockArea) {
-			area.start();
-		}
+		//if (area instanceof BlockArea) {
+		//	area.start();
+		//}
 
 		return new Status(Status.OK);
 	}

@@ -54,24 +54,32 @@ package org.apache.fop.image;
 
 import org.apache.fop.fo.properties.TextAlign;
 import org.apache.fop.layout.*;
+import org.apache.fop.layout.inline.*;
+
 import org.apache.fop.render.Renderer;
 
 import java.util.Vector;
 import java.util.Enumeration;
 
-public class ImageArea extends Area {
+public class ImageArea extends InlineArea {
 
     protected int xOffset = 0;
+    protected int align;
+    protected int valign;
     protected FopImage image;
+    
 
     public ImageArea(FontState fontState, FopImage img,
 		     int AllocationWidth, int width, int height,
 		     int startIndent, int endIndent, int align)  {
-	super(fontState,width,height);
+	super(fontState,width,0,0,0);
 	this.currentHeight = height;
 	this.contentRectangleWidth = width;
+	this.height = height;
 	this.image = img;
+	this.align = align;
 
+/*
 	switch (align) {
 	case TextAlign.START:
 	    xOffset = startIndent;
@@ -90,6 +98,7 @@ public class ImageArea extends Area {
 	    xOffset = startIndent + ((endIndent - startIndent) - width)/2;
 	    break;
 	}
+	*/
     }
 
     public int getXOffset() {
@@ -107,4 +116,34 @@ public class ImageArea extends Area {
     public int getImageHeight() {
 	return currentHeight;
     }
+		
+    public void setAlign(int align)
+    {
+		this.align = align;
+	}
+
+    public int getAlign()
+    {
+		return this.align;
+	}
+
+    public void setVerticalAlign(int align)
+    {
+		this.valign = align;
+	}
+
+    public int getVerticalAlign()
+    {
+		return this.valign;
+	}
+
+ public void setStartIndent(int startIndent)
+   {
+    xOffset = startIndent;
+   }
+
+
+
 }
+
+
