@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- $Id$ -->
+<!--
+<!DOCTYPE document SYSTEM "../xml-docs/dtd/document-v10.dtd">
+-->
+
+<document>
+  <header>
+    <title>Property classes overview</title>
+    <authors>
+      <person id="pbw" name="Peter B. West"
+	      email="pbwest@powerup.com.au"/>
+    </authors>
+  </header>
+  <body>
+    <!-- one of (anchor s1) -->
+    <s1 title="Classes overview">
+      <s2 title="The class of all properties">
+	<p>
+	  If individual properties can have a "virtual reality" on the
+	  stack, where is the stack itself to be instantiated?  One
+	  possibility is to have the stacks as <code>static</code> 
+	  data structures within the individual property classes.
+	  However, the reduction of individual property instances to
+	  stack entries allows the possibility of further
+	  virtualization of property classes.  If the individual
+	  properties can be represented by an integer, i.e. a
+	  <code>static final int</code>, the set of individual
+	  property stacks can be collected together into one array.
+	  Where to put such an overall collection?  Creating an
+	  über-class to accommodate everything that applies to
+	  property classes as a whole allows this array to be defined
+	  as a <em><code>static final</code> something[]</em>.
+	</p>
+      </s2>
+      <s2 title="The overall property classes">
+	<p>
+	  This approach has been taken for the experimental code.
+	  Rather than simply creating a overall class containing
+	  common elements of properties and acting as a superclass,
+	  advantage has been taken of the facility for nesting of
+	  top-level classes.  All of the individual property classes
+	  are nested within the <code>Properties</code> class.
+	  This has advantages and disadvantages.
+	</p>
+	<dl>
+	  <dt>Disadvantages</dt>
+	  <dd>
+	    The file becomes extremely cumbersome.  This can cause
+	    problems with "intelligent" editors.  E.g.
+	    <em>XEmacs</em>  syntax highlighting virtually grinds to a
+	    halt with the current version of this file.<br/> <br/>
+
+	    Possible problems with IDEs.  There may be speed problems
+	    or even overflow problems with various IDEs.  The current
+	    version of this and related files had only been tried with
+	    the <em>[X]Emacs JDE</em>  environment, without difficulties
+	    apart from the editor speed problems mentioned
+	    above.<br/> <br/>
+
+	    Retro look and feel.  Not the done Java thing.<br/> <br/>
+	  </dd>
+	  <dt>Advantages</dt>
+	  <dd>
+	    Everything to do with properties in the one place (more or
+	    less.)<br/> <br/>
+
+	    Eliminates the need for a large part of the (sometimes)
+	    necessary evil of code generation.  The One Big File of
+	    <code>foproperties.xml</code>, with its ancillary xsl, is
+	    absorbed into the One Bigger File of
+	    <code>Properties.java</code>.  The huge advantage of this
+	    is that it <strong>is</strong>  Java.
+	  </dd>
+	</dl>
+      </s2>
+      <s2 title="The property information classes">
+	<p>
+	  In fact, in order to keep the size of the file down to more
+	  a more manageable level, the property information classes of
+	  static data and methods have been split tentatively into
+	  three:
+	</p>
+	<figure src="PropertyStaticsOverview.png" alt="Top level
+		property classes"/>
+	<dl>
+	  <dt><link href="PropNames.html">PropNames</link></dt>
+	  <dd>
+	    Contains an array, <code>propertyNames</code>, of the names of
+	    all properties, and a set of enumeration constants, one
+	    for each property name in the <code>PropertyNames</code> 
+	    array.  These constants index the name of the properties
+	    in <code>propertyNames</code>, and must be manually kept in
+	    sync with the entries in the array. (This was the last of
+	    the classes split off from the original single class;
+	    hence the naming tiredness.)
+	    <br/> <br/>
+	  </dd>
+	  <dt><link href="PropertyConsts.html">PropertyConsts</link></dt>
+	  <dd>
+	    Contains two basic sets of data:<br/>
+	    Property-indexed arrays and property set
+	    definitions.<br/> <br/>
+
+	    <strong>Property-indexed arrays</strong>  are elaborations
+	    of the property indexing idea discussed in relation to the
+	    arrays of property stacks.  One of the arrays is<br/> <br/>
+
+	    <code>public static final LinkedList[]
+	    propertyStacks</code><br/> <br/>
+
+	    This is an array of stacks, implemented as
+	    <code>LinkedList</code>s, one for each property.<br/> <br/>
+
+	    The other arrays provide indexed access to fields which
+	    are, in most cases, common to all of the properties.  An
+	    exception is<br/> <br/>
+
+	    <code>public static final Method[]
+	      complexMethods</code><br/> <br/>
+
+	    which contains a reference to the method
+	    <code>complex()</code>  which is only defined for
+	    properties which have complex value parsing requirements.
+	    It is likely that a similar array will be defined for
+	    properties which allow a value of <em>auto</em>.<br/> <br/>
+
+	    The property-indexed arrays are initialized by
+	    <code>static</code>  initializers in this class.  The
+	    <code>PropNames</code>  class and
+	    <code>Properties</code> 
+	    nested classes are scanned in order to obtain or derive
+	    the data necessary for initialization.<br/> <br/>
+
+	    <strong>Property set definitions</strong>  are
+	    <code>HashSet</code>s of properties (represented by
+	    integer constants) which belong to each of the categories
+	    of properties defined.  They are used to simplify the
+	    assignment of property sets to individual FOs.
+	    Representative <code>HashSet</code>s include
+	    <em>backgroundProps</em>  and
+	    <em>tableProps</em>.<br/> <br/>
+	  </dd>
+	  <dt><link href="Properties.html">Properties</link></dt>
+	  <dd>
+	     <br/>
+	    This class contains only sets of constants for use by the
+	    individual property classes, but it also importantly
+	    serves as a container for all of the property classes, and
+	    some convenience pseudo-property classes.<br/> <br/>
+
+	    <strong>Constants sets</strong>  include:<br/> <br/>
+
+	    <em>Datatype constants</em>. A bitmap set of
+	    integer constants over a possible range of 2^0 to 2^31
+	    (represented as -2147483648).  E.g.<br/>
+	    INTEGER = 1<br/>
+	    ENUM = 524288<br/> <br/>
+	    Some of the definitions are bit-ORed
+	    combinations of the basic values.  Used to set the
+	    <em>dataTypes</em>  field of the property
+	    classes.<br/> <br/>
+
+	    <em>Trait mapping constants</em>. A bitmap set of
+	    integer constants over a possible range of 2^0 to 2^31
+	    (represented as -2147483648), representing the manner in
+	    which a property maps into a <em>trait</em>.  Used to set
+	    the <code>traitMapping</code>  field of the property
+	    classes.<br/> <br/>
+
+	    <em>Initial value constants</em>. A sequence of
+	    integer constants representing the datatype of the initial
+	    value of a property.  Used to set the
+	    <code>initialValueType</code>  field of the property
+	    classes.<br/> <br/>
+
+	    <em>Inheritance value constants</em>. A sequence
+	    of integer constants representing the way in which the
+	    property is normally inherited.  Used to set the
+	    <code>inherited</code>  field of the property
+	    classes.<br/> <br/>
+
+	    <strong>Nested property classes</strong>.  The
+	    <em>Properties</em>  class serves as the holding pen for
+	    all of the individual property classes, and for property
+	    pseudo-classes which contain data common to a number of
+	    actual properties, e.g. <em>ColorCommon</em>.
+	  </dd>
+	</dl>
+      </s2>
+      <p>
+	<strong>Previous:</strong> <link href=
+	"alt.properties.html" >alt.properties</link>
+      </p>
+      <p>
+	<strong>Next:</strong> <link href=
+	"properties-classes.html" >Properties classes</link>
+      </p>
+    </s1>
+  </body>
+</document>
