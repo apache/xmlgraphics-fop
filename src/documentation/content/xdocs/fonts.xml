@@ -79,7 +79,7 @@ java -cp build/fop.jar:lib/avalon-framework.jar:lib/xml-apis.jar:
       </p>
 <source><![CDATA[<font metrics-file="FTL_____.xml" kerning="yes"
       embed-file="C:\myfonts\FTL_____.pfb">
-  <font-triplet name="FrutigerLight" style="normal" weight="normal">
+  <font-triplet name="FrutigerLight" style="normal" weight="normal"/>
 </font>]]></source>
       <note>
         Starting from FOP version 0.20.5 you can use URLs for the paths to the font files. Relative URLs are resolved 
@@ -157,7 +157,7 @@ java -cp build\fop.jar;lib\avalon-framework.jar;lib\xml-apis.jar;
         </p>
 <source><![CDATA[<font metrics-file="cyberbit.xml" kerning="yes"
       embed-file="C:\WINNT\Fonts\Cyberbit.ttf">
-  <font-triplet name="Cyberbit" style="normal" weight="normal">
+  <font-triplet name="Cyberbit" style="normal" weight="normal"/>
 </font>]]></source>
       </section>
 
