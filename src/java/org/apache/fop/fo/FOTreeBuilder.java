@@ -130,7 +130,7 @@ public class FOTreeBuilder extends DefaultHandler {
 
         if (addlEMs != null) {
             for (int i = 0; i < addlEMs.size(); i++) {
-                addElementMapping((String) addlEMs.get(i));
+                addElementMapping((ElementMapping) addlEMs.get(i));
             }
         }
     }

@@ -35,6 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 // FOP
+import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.render.Renderer;
 
@@ -113,11 +114,11 @@ public class FOUserAgent {
      * Add the element mapping with the given class name.
      * @param mappingClassName the class name representing the element mapping.
      */
-    public void addElementMapping(String mappingClassName) {
+    public void addElementMapping(ElementMapping elementMapping) {
         if (additionalElementMappings == null) {
             additionalElementMappings = new ArrayList();
         }
-        additionalElementMappings.add(mappingClassName);
+        additionalElementMappings.add(elementMapping);
     }
 
     /**
