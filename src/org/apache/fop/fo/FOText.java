@@ -15,7 +15,6 @@ import org.apache.fop.layout.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.system.BufferManager;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.TextLayoutManager;
 
