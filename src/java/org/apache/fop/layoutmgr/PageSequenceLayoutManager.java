@@ -153,7 +153,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         return areaTreeHandler;
     }
 
-
     /**
      * Set the page counting for this page sequence.
      * This sets the initial page number and the page number formatter.
@@ -497,6 +496,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         if (log.isDebugEnabled()) {
             log.debug("[" + curPage.getPageNumber() + "]");
         }
+        areaTreeHandler.notifyNewPage(curPage.getPageNumber());
         RegionViewport rv = curPage.getPage().getRegionViewport(
                     FO_REGION_BODY);
         curBody = (BodyRegion) rv.getRegion();
