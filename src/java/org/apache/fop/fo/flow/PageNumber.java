@@ -60,7 +60,6 @@ import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
-import org.apache.fop.layout.TextState;
 
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
@@ -81,7 +80,6 @@ public class PageNumber extends FObj {
     private float green;
     private float blue;
     private int wrapOption;
-    private TextState ts;
 
     /**
      * @param parent FONode that is the parent of this object
@@ -142,7 +140,6 @@ public class PageNumber extends FObj {
         this.blue = c.getBlue();
 
         this.wrapOption = this.properties.get("wrap-option").getEnum();
-        ts = new TextState();
 
     }
 
