@@ -24,6 +24,7 @@ import org.xml.sax.XMLReader;
 
 // Java
 import java.net.URL;
+import java.util.logging.Logger;
 import java.io.File;
 
 /**
@@ -33,6 +34,7 @@ import java.io.File;
  */
 public abstract class InputHandler {
 
+    protected Logger log = Logger.getLogger(Fop.fopPackage);
     /**
      * Get the input source associated with this input handler.
      * @return the input source
@@ -74,6 +76,34 @@ public abstract class InputHandler {
             return new InputSource(new URL("file", null, path).toString());
         } catch (java.net.MalformedURLException e) {
             throw new Error("unexpected MalformedURLException");
+        }
+    }
+
+    /**
+     * creates a SAX parser, using the value of org.xml.sax.parser
+     * defaulting to org.apache.xerces.parsers.SAXParser
+     *
+     * @return the created SAX parser
+     */
+    protected XMLReader createParser() throws FOPException {
+        String parserClassName = System.getProperty("org.xml.sax.parser");
+        if (parserClassName == null) {
+            parserClassName = "org.apache.xerces.parsers.SAXParser";
+        }
+        log.config("using SAX parser " + parserClassName);
+
+        try {
+            return (XMLReader)Class.forName(parserClassName).newInstance();
+        } catch (ClassNotFoundException e) {
+            throw new FOPException(e);
+        } catch (InstantiationException e) {
+            throw new FOPException("Could not instantiate "
+                                   + parserClassName, e);
+        } catch (IllegalAccessException e) {
+            throw new FOPException("Could not access " + parserClassName, e);
+        } catch (ClassCastException e) {
+            throw new FOPException(parserClassName + " is not a SAX driver",
+                                   e);
         }
     }
 

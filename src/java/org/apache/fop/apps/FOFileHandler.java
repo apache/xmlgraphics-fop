@@ -29,7 +29,7 @@ import java.net.URL;
  * Manages input if it is an XSL-FO file.
  */
 public class FOFileHandler extends InputHandler {
-    
+
     private File fofile = null;
     private URL foURL = null;
 
@@ -68,39 +68,11 @@ public class FOFileHandler extends InputHandler {
     }
 
     /**
-     * creates a SAX parser, using the value of org.xml.sax.parser
-     * defaulting to org.apache.xerces.parsers.SAXParser
-     *
-     * @return the created SAX parser
-     */
-    protected static XMLReader createParser() throws FOPException {
-        String parserClassName = System.getProperty("org.xml.sax.parser");
-        if (parserClassName == null) {
-            parserClassName = "org.apache.xerces.parsers.SAXParser";
-        }
-        Fop.logger.config("using SAX parser " + parserClassName);
-
-        try {
-            return (XMLReader)Class.forName(parserClassName).newInstance();
-        } catch (ClassNotFoundException e) {
-            throw new FOPException(e);
-        } catch (InstantiationException e) {
-            throw new FOPException("Could not instantiate "
-                                   + parserClassName, e);
-        } catch (IllegalAccessException e) {
-            throw new FOPException("Could not access " + parserClassName, e);
-        } catch (ClassCastException e) {
-            throw new FOPException(parserClassName + " is not a SAX driver",
-                                   e);
-        }
-    }
-
-    /**
      * Returns the fully qualified classname of the standard XML parser for FOP
      * to use.
      * @return the XML parser classname
      */
-    public static final String getParserClassName() {
+    public String getParserClassName() {
         try {
             return createParser().getClass().getName();
         } catch (FOPException e) {
