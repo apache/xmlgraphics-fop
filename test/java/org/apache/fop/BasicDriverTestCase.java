@@ -33,9 +33,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.xml.sax.InputSource;
 
-import org.apache.avalon.framework.container.ContainerUtil;
-import org.apache.avalon.framework.logger.Logger;
-import org.apache.avalon.framework.logger.NullLogger;
+import org.apache.commons.logging.impl.NoOpLog;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.InputHandler;
@@ -49,7 +47,7 @@ import org.w3c.dom.Document;
  */
 public class BasicDriverTestCase extends AbstractFOPTestCase {
 
-    private Logger logger = new NullLogger();
+    private NoOpLog logger = new NoOpLog();
 
     /**
      * @see junit.framework.TestCase#TestCase(String)
@@ -68,7 +66,7 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
         Driver driver = new Driver(
             new InputSource(foFile.toURL().toExternalForm()),
             baout);
-        //Use deprecated method with purpose to validate backwards-compatibility.
+
         driver.setLogger(this.logger);
         driver.setRenderer(Driver.RENDER_PDF);
         driver.run();
@@ -83,7 +81,7 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
         File foFile = new File(getBaseDir(), "test/xml/bugtests/block.fo");
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
         Driver driver = new Driver();
-        //Use deprecated method with purpose to validate backwards-compatibility.
+
         driver.setLogger(this.logger);
         driver.setInputSource(new InputSource(foFile.toURL().toExternalForm()));
         driver.setOutputStream(baout);
@@ -110,7 +108,7 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
         File foFile = new File(getBaseDir(), "test/xml/bugtests/block.fo");
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
         Driver driver = new Driver();
-        //Use deprecated method with purpose to validate backwards-compatibility.
+
         driver.setLogger(this.logger);
         driver.setOutputStream(baout);
         driver.setRenderer(Driver.RENDER_PDF);
@@ -126,7 +124,7 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
         File foFile = new File(getBaseDir(), "test/xml/bugtests/block.fo");
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
         Driver driver = new Driver();
-        //Use deprecated method with purpose to validate backwards-compatibility.
+
         driver.setLogger(this.logger);
         driver.setOutputStream(baout);
         driver.setRenderer(Driver.RENDER_PDF);
@@ -147,7 +145,7 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
         File foFile = new File(getBaseDir(), "test/xml/bugtests/block.fo");
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
         Driver driver = new Driver();
-        ContainerUtil.enableLogging(driver, this.logger);
+        driver.setLogger(this.logger);
         driver.setOutputStream(baout);
         driver.setRenderer(Driver.RENDER_PDF);
         
@@ -168,7 +166,7 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
         File foFile = new File(getBaseDir(), "test/xml/bugtests/block.fo");
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
         Driver driver = new Driver();
-        ContainerUtil.enableLogging(driver, this.logger);
+        driver.setLogger(this.logger);
         driver.setOutputStream(baout);
         driver.setRenderer(Driver.RENDER_PS);
         
@@ -189,7 +187,7 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
         File foFile = new File(getBaseDir(), "test/xml/bugtests/block.fo");
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
         Driver driver = new Driver();
-        ContainerUtil.enableLogging(driver, this.logger);
+        driver.setLogger(this.logger);
         driver.setOutputStream(baout);
         driver.setRenderer(Driver.RENDER_RTF);
         
@@ -211,7 +209,7 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
         File xsltFile = new File(getBaseDir(), "test/xsl/doc.xsl");
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
         Driver driver = new Driver();
-        ContainerUtil.enableLogging(driver, this.logger);
+        driver.setLogger(this.logger);
         driver.setOutputStream(baout);
         driver.setRenderer(Driver.RENDER_PDF);
         
