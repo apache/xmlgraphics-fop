@@ -6,6 +6,10 @@
  */
 
 package org.apache.fop.pdf;
+
+// Java
+import java.io.UnsupportedEncodingException;
+// Fop
 import org.apache.fop.datatypes.ColorSpace;
 
 public class PDFICCStream extends PDFStream {
@@ -45,11 +49,20 @@ public class PDFICCStream extends PDFStream {
 
         pb.append("/Length ").append((_data.size() + 1)).append(" ").append(filterEntry);
         pb.append(" >>\n");
-        byte[] p = pb.toString().getBytes();
+        byte[] p;
+        try {
+            p = pb.toString().getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            p = pb.toString().getBytes();
+        }       
         stream.write(p);
         length += p.length;
         length += outputStreamData(stream);
-        p = "endobj\n".getBytes();
+        try {
+            p = "endobj\n".getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            p = "endobj\n".getBytes();
+        }       
         stream.write(p);
         length += p.length;
         return length;

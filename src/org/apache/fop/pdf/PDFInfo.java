@@ -9,6 +9,7 @@ package org.apache.fop.pdf;
 
 // Java
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.io.PrintWriter;
 
 /**
@@ -48,7 +49,11 @@ public class PDFInfo extends PDFObject {
         String p = this.number + " " + this.generation
                    + " obj\n<< /Type /Info\n/Producer (" + this.producer
                    + ") >>\nendobj\n";
-        return p.getBytes();
+        try {
+            return p.getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            return p.getBytes();
+        }       
     }
 
 }

@@ -9,8 +9,10 @@ package org.apache.fop.pdf;
 
 // Java
 import java.io.PrintWriter;
-import org.apache.fop.messaging.MessageHandler;
+import java.io.UnsupportedEncodingException;
 import java.util.Vector;
+// Fop
+import org.apache.fop.messaging.MessageHandler;
 
 /**
  * class representing a /Pages object.
@@ -88,7 +90,12 @@ public class PDFPages extends PDFObject {
             p = p.append(kids.elementAt(i) + " ");
         }
         p = p.append("] >>\nendobj\n");
-        return p.toString().getBytes();
+
+        try {
+            return p.toString().getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            return p.toString().getBytes();
+        }       
     }
 
 }

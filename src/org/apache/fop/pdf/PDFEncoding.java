@@ -8,6 +8,7 @@
 package org.apache.fop.pdf;
 
 // Java
+import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -106,7 +107,12 @@ public class PDFEncoding extends PDFObject {
             p.append(" ]");
         }
         p.append(" >>\nendobj\n");
-        return p.toString().getBytes();
+
+        try {
+            return p.toString().getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            return p.toString().getBytes();
+        }       
     }
 
     /*

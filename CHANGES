@@ -18,6 +18,10 @@ Done since 0.20.3 release
   Submitted by: Michal Buchtik <BuchtikM@dlsystem.cz>
 - Added support for background-image
   Submitted by: Michael Gratton <mjg@recalldesign.com>
+- Fixed PDF-Renderer to work on EBCDIC systems 
+  (Actually on systems where file.encoding != ASCII/ISO-8859)
+  Submitted by: Jason West <Jason.West@mail.state.ky.us>
+  
 ==============================================================================
 Done since 0.20.2 release
 *** General

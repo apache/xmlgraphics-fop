@@ -12,11 +12,12 @@ package org.apache.fop.pdf;
 
 // Java
 import java.io.IOException;
-import org.apache.fop.messaging.MessageHandler;
+import java.io.UnsupportedEncodingException;
 import java.io.OutputStream;
 
 // FOP
 import org.apache.fop.datatypes.ColorSpace;
+import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFICCStream;
 import org.apache.fop.image.FopImage;
@@ -119,8 +120,18 @@ public class PDFXObject extends PDFObject {
                 post.append("PreEPS_state restore\n");
                 post.append("end % userdict\n");
 
-                byte[] preBytes = preamble.toString().getBytes();
-                byte[] postBytes = post.toString().getBytes();
+                byte[] preBytes;
+                try {
+                    preBytes = preamble.toString().getBytes(PDFDocument.ENCODING);
+                } catch (UnsupportedEncodingException ue) {
+                    preBytes = preamble.toString().getBytes();
+                }       
+                byte[] postBytes;
+                try {
+                    postBytes = post.toString().getBytes(PDFDocument.ENCODING);
+                } catch (UnsupportedEncodingException ue) {
+                    postBytes = post.toString().getBytes();
+                }       
                 byte[] imgData = new byte[preBytes.length + postBytes.length + fopimage.getBitmaps().length];
 
                 System.arraycopy (preBytes, 0, imgData, 0, preBytes.length);
@@ -145,13 +156,22 @@ public class PDFXObject extends PDFObject {
                 p = p + ">>\n";
 
                 // push the pdf dictionary on the writer
-                byte[] pdfBytes = p.getBytes();
+                byte[] pdfBytes;
+                try {
+                    pdfBytes = p.getBytes(PDFDocument.ENCODING);
+                } catch (UnsupportedEncodingException ue) {
+                    pdfBytes = p.getBytes();
+                }       
                 stream.write(pdfBytes);
                 length += pdfBytes.length;
                 // push all the image data on  the writer and takes care of length for trailer
                 length += imgStream.outputStreamData(stream);
 
-                pdfBytes = ("endobj\n").getBytes();
+                try {
+                    pdfBytes = ("endobj\n").getBytes(PDFDocument.ENCODING);
+                } catch (UnsupportedEncodingException ue) {
+                    pdfBytes = ("endobj\n").getBytes();
+                }       
                 stream.write(pdfBytes);
                 length += pdfBytes.length;
 
@@ -210,13 +230,22 @@ public class PDFXObject extends PDFObject {
                 fopimage.close();
 
                 // push the pdf dictionary on the writer
-                byte[] pdfBytes = p.getBytes();
+                byte[] pdfBytes;
+                try {
+                    pdfBytes = p.getBytes(PDFDocument.ENCODING);
+                } catch (UnsupportedEncodingException ue) {
+                    pdfBytes = p.getBytes();
+                }       
                 stream.write(pdfBytes);
                 length += pdfBytes.length;
                 // push all the image data on  the writer and takes care of length for trailer
                 length += imgStream.outputStreamData(stream);
 
-                pdfBytes = ("endobj\n").getBytes();
+                try {
+                    pdfBytes = ("endobj\n").getBytes(PDFDocument.ENCODING);
+                } catch (UnsupportedEncodingException ue) {
+                    pdfBytes = ("endobj\n").getBytes();
+                }       
                 stream.write(pdfBytes);
                 length += pdfBytes.length;
             }

@@ -7,6 +7,9 @@
 
 package org.apache.fop.pdf;
 
+// Java
+import java.io.UnsupportedEncodingException;
+
 /**
  * class representing a font descriptor.
  *
@@ -162,7 +165,12 @@ public class PDFFontDescriptor extends PDFObject {
         // CID optional field
         fillInPDF(p);
         p.append("\n >>\nendobj\n");
-        return p.toString().getBytes();
+
+        try {
+            return p.toString().getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            return p.toString().getBytes();
+        }       
     }
 
     /**
