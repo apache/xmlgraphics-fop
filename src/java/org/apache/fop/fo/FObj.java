@@ -172,6 +172,23 @@ public class FObj extends FONode {
       return (FObj)par;
     }
 
+    /**
+     * Find nearest ancestor, including self, which generates
+     * reference areas.
+     * If no such ancestor is found, use the value on the root FO.
+     *
+     * @return FObj of the nearest ancestor that generates Reference Areas
+     */
+    private FObj findNearestAncestorGeneratingRAs() {
+        FObj p;
+        FONode parent;
+        for (p = this; !p.generatesReferenceAreas()
+                && (parent = p.getParent()) != null
+                && (parent instanceof FObj); p = (FObj) parent) {
+        }
+        return p;
+    }
+
     public PropertyList getPropertiesForNamespace(String nameSpaceURI) {
         if (this.properties == null) {
             return null;
@@ -283,17 +300,11 @@ public class FObj extends FONode {
 
     /**
      * Set writing mode for this FO.
-     * Find nearest ancestor, including self, which generates
-     * reference areas and use the value of its writing-mode property.
-     * If no such ancestor is found, use the value on the root FO.
+     * Use that from the nearest ancestor, including self, which generates
+     * reference areas, or from root FO if no ancestor found.
      */
     protected void setWritingMode() {
-        FObj p;
-        FONode parent;
-        for (p = this; !p.generatesReferenceAreas()
-                && (parent = p.getParent()) != null
-                && (parent instanceof FObj); p = (FObj) parent) {
-        }
+        FObj p = findNearestAncestorGeneratingRAs();
         this.properties.setWritingMode(
           p.getProperty("writing-mode").getEnum());
     }
@@ -339,6 +350,7 @@ public class FObj extends FONode {
      * If this object can contain markers it checks that the marker
      * has a unique class-name for this object and that it is
      * the first child.
+     * @param marker Marker to add.
      */
     public void addMarker(Marker marker) {
         String mcname = marker.getMarkerClassName();
