@@ -117,12 +117,20 @@ To use it, run the class org.apache.fop.fonts.apps.PFMReader:</p>
         <p>Windows:</p>
         <source>java -cp build\fop.jar;lib\avalon-framework.jar;lib\xml-apis.jar;
          lib\xercesImpl.jar;lib\xalan.jar
-           org.apache.fop.fonts.apps.PFMReader pfm-file xml-file</source>
+           org.apache.fop.fonts.apps.PFMReader [options] pfm-file xml-file</source>
         <p>Unix:</p>
         <source>java -cp build/fop.jar:lib/avalon-framework.jar:lib/xml-apis.jar:
          lib/xercesImpl.jar:lib/xalan.jar
-           org.apache.fop.fonts.apps.PFMReader pfm-file xml-file</source>
-        <note>The classpath in the above example has been simplified for readibity.
+           org.apache.fop.fonts.apps.PFMReader [options] pfm-file xml-file</source>
+        <p>PFMReader [options]:</p>
+        <ul>
+          <li><strong>-fn &lt;fontname&gt;</strong> By default, FOP uses the fontname from the
+.pfm file when embedding the font. Use the "-fn" option to override this name with one you have
+chosen. This may be useful in some cases to ensure that applications using the output document
+(Acrobat Reader for example) use the embedded font instead of a local font with the same
+name.</li>
+        </ul>
+        <note>The classpath in the above example has been simplified for readability.
 You will have to adjust the classpath to the names of the actual JAR files in the lib directory.
 avalon-framework.jar is necessary only for versions 0.20.5 or later.
 xml-apis.jar, xercesImpl.jar and xalan.jar are not necessary for JDK version 1.4 or later.</note>
@@ -138,8 +146,53 @@ Use it in a similar manner to PFMReader.
 For example, to create such a metcis file in Windows from the TrueType font at c:\myfonts\cmr10.ttf:</p>
         <source>java -cp build\fop.jar;lib\avalon-framework.jar;lib\xml-apis.jar;
          lib\xercesImpl.jar;lib\xalan.jar
-           org.apache.fop.fonts.apps.TTFReader
+           org.apache.fop.fonts.apps.TTFReader [options]
              C:\myfonts\cmr10.ttf ttfcm.xml</source>
+        <p>TTFReader [options]:</p>
+        <ul>
+          <li><strong>-d &lt;DEBUG | INFO &gt;</strong> Sets the debug level (default is
+INFO).</li>
+          <li><strong>-fn &lt;fontname&gt;</strong> Same as for PFMReader.</li>
+          <li><strong>-ttcname &lt;fontname&gt;</strong> If you're reading data from a
+TrueType Collection (.ttc file) you must specify which font from the collection you will read
+metrics from.
+If you read from a .ttc file without this option, the fontnames will be listed for you.</li>
+          <li><strong>-enc ansi</strong> Creates a WinAnsi-encoded font metrics file.
+Without this option, a CID-keyed font metrics file is created.
+The table below summarizes the differences between these two encoding options as currently
+used within FOP.
+Please note that this information only applies to TrueType fonts and TrueType collections:</li>
+        </ul>
+        <table id="ttf-encoding">
+          <tr>
+            <th>Issue</th>
+            <th>WinAnsi</th>
+            <th>CID-keyed</th>
+          </tr>
+          <tr>
+            <td>Usable Character Set</td>
+            <td>Limited to WinAnsi character set, which is roughly equivalent to iso-8889-1.</td>
+            <td>Limited only by the characters in the font itself.</td>
+          </tr>
+          <tr>
+            <td>Character Encoding in the Output Document.</td>
+            <td>Correct.</td>
+            <td>Never correct. Search, index, and cut-and-paste operations in the output document
+will produce incorrect results.</td>
+          </tr>
+          <tr>
+            <td>Character Display</td>
+            <td>Correct.</td>
+            <td>Correct if and only if the font is embedded in the output. (This is possible
+because, although the underlying characters are encoded incorrectly, the embedded font is
+also encoded incorreclty).</td>
+          </tr>
+        </table>
+        <warning id="cid-keyed-encoding-ttf">As shown in the above table, regardless of
+whether the font is embedded or not, text generated from a CID-keyed font metrics file
+will <em>never </em>be encoded properly.
+Further, if the related font is not embedded, it cannot even be displayed properly.
+Obviously, this behavior is not desirable, and we hope to correct it in upcoming releases.</warning>
       </section>
       <section id="truetype-collections-metrics">
         <title>TrueType Collections Font Metrics</title>
@@ -175,16 +228,17 @@ Relative URLs are resolved relative to the fontBaseDir property (or baseDir) if 
         <note>The font is simply embedded into the PDF file, it is not converted.</note>
         <p>Font embedding is enabled in the userconfig.xml file and controlled by the embed-file attribute.
 If you don't specify the embed-file attribute the font will not be embedded, but will only be referenced.</p>
-        <p>When FOP embeds a font, it scrambles its fontname by inserting a prefix that ensures that the fontname will not match the fontname of an installed font.
+        <p>When FOP embeds a font, it adds a prefix to the fontname to ensure that the name will not match the fontname of an installed font.
 This is helpful with older versions of Acrobat Reader that preferred installed fonts over embedded fonts.</p>
         <p>When embedding PostScript fonts, the entire font is always embedded.</p>
-        <p>When embedding TrueType fonts (ttf) or TrueType Collections (ttc), a new font, containing only the glyphs used, is created from the original font and embedded in the pdf.
+        <p>When embedding TrueType fonts (ttf) or TrueType Collections (ttc), a subset of the original font, containing only the glyphs used, is embedded in the output document.
 Currently, this embedded font contains only the minimum data needed to be embedded in a pdf document, and does not contain any codepage information.
 The PDF document contains indexes to the glyphs in the font instead of to encoded characters.
 While the document will be displayed correctly, the net effect of this is that searching, indexing, and cut-and-paste will not work properly.</p>
-        <p>One workaround for this behavior is to use the -ansi option when generating metrics with TTFReader.
+        <p>One workaround for this behavior is to use the "-enc ansi" option when generating metrics with TTFReader.
 This will cause the whole font to be embedded in the pdf document.
-Characters will be WinAnsi encoded (as specified in the PDF spec), so you lose the ability to use characters from other character sets.</p>
+Characters will be WinAnsi encoded (as specified in the PDF spec), so you lose the ability to use characters from other character sets.
+See <link href="ttf-encoding">Table of TTF Encoding Options</link> for more details.</p>
       </section>
     </section>
   </body>
