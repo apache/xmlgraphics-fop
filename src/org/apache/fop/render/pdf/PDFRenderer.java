@@ -333,7 +333,7 @@ public class PDFRenderer implements Renderer {
 	int w = area.getContentWidth();
 	int h = area.getHeight();
 
-	this.currentYPosition -= h*1000;
+	this.currentYPosition -= h;
 
 	FopImage img = area.getImage();
 
