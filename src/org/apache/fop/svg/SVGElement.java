@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -8,40 +8,27 @@
 package org.apache.fop.svg;
 
 // FOP
-import org.apache.fop.fo.*;
-import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.FontState;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.apps.FOPException;
 
-import org.apache.batik.dom.svg.*;
+import org.apache.batik.dom.svg.SVGOMDocument;
+import org.apache.batik.dom.svg.SVGOMElement;
+import org.apache.batik.dom.svg.SVGContext;
 import org.apache.batik.dom.util.XMLSupport;
-import org.w3c.dom.*;
-import org.w3c.dom.svg.*;
-import org.w3c.dom.svg.SVGLength;
+import org.w3c.dom.Element;
+import org.w3c.dom.svg.SVGDocument;
 import org.xml.sax.Attributes;
-import org.apache.batik.bridge.*;
-import org.apache.batik.swing.svg.*;
-import org.apache.batik.swing.gvt.*;
-import org.apache.batik.gvt.*;
-import org.apache.batik.gvt.renderer.*;
-import org.apache.batik.gvt.filter.*;
-import org.apache.batik.gvt.event.*;
 import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.util.SVGConstants;
 
 import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.css.CSSPrimitiveValue;
 
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 
-import java.io.File;
 import java.net.URL;
-import java.util.List;
-import java.util.ArrayList;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.Dimension;
 
 /**
  * class representing svg:svg pseudo flow object.
@@ -150,6 +137,7 @@ public class SVGElement extends SVGObj {
             (str, SVGConstants.SVG_HEIGHT_ATTRIBUTE, ctx);
         return new Point2D.Float(width, height);
     }
+
     /**
      * This class is the default context for a particular
      * element. Informations not available on the element are get from
