@@ -84,7 +84,6 @@ import org.apache.fop.render.PrintRenderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.properties.ColorTypeProperty;
 
 
 /*
@@ -253,6 +252,9 @@ public class PDFRenderer extends PrintRenderer {
                 userAgent.getProducer() != null ? userAgent.getProducer() : "");
         this.pdfDoc.setCreator(userAgent.getCreator());
         this.pdfDoc.setCreationDate(userAgent.getCreationDate());
+        this.pdfDoc.getInfo().setAuthor(userAgent.getAuthor());
+        this.pdfDoc.getInfo().setTitle(userAgent.getTitle());
+        this.pdfDoc.getInfo().setKeywords(userAgent.getKeywords());
         this.pdfDoc.setFilterMap(filterMap);
         this.pdfDoc.outputHeader(stream);
 
@@ -390,7 +392,9 @@ public class PDFRenderer extends PrintRenderer {
         if (seqTitle != null) {
             String str = convertTitleToString(seqTitle);
             PDFInfo info = this.pdfDoc.getInfo();
-            info.setTitle(str);
+            if (info.getTitle() == null) {
+                info.setTitle(str);
+            }
         }
     }
 
