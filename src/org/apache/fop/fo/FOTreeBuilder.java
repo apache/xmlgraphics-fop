@@ -79,6 +79,10 @@ public class FOTreeBuilder extends DefaultHandler {
         log = logger;
     }
 
+    public void setUserAgent(FOUserAgent ua) {
+        userAgent = ua;
+    }
+
     public void setStreamRenderer(StreamRenderer streamRenderer) {
         this.streamRenderer = streamRenderer;
     }

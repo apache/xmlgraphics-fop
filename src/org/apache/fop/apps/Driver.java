@@ -456,6 +456,7 @@ public class Driver {
         StreamRenderer streamRenderer = new StreamRenderer(_stream, _renderer);
         streamRenderer.setLogger(getLogger());
         _treeBuilder.setLogger(getLogger());
+        _treeBuilder.setUserAgent(getUserAgent());
         _treeBuilder.setStreamRenderer(streamRenderer);
 
         return _treeBuilder;
