@@ -55,7 +55,7 @@ The most common method is to convert semantic XML to XSL-FO, using an XSLT trans
    <p>The FOP layout system is currently being rewritten to better support the XSL-FO standard.</p>
   </section>
   <note>
-    The PDF files on this site are created using the latest development version of FOP.
+    The PDF files on this site are created using FOP.
   </note>
   </body>
 </document>

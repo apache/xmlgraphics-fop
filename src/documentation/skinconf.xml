@@ -96,8 +96,8 @@ jefft@apache.org
       <height>31</height>
     </credit>-->
     <credit role="pdf">
-      <name>Created by: FOP 1.0dev</name>
-      <url>http://xml.apache.org/fop/dev</url>
+      <name>PDF created by FOP</name>
+      <url>http://xml.apache.org/fop</url>
       <image>images/logo.jpg</image>
       <width>138</width>
       <height>31</height>
