@@ -58,7 +58,7 @@ import java.io.IOException;
 import org.apache.fop.area.AreaTree;
 import org.apache.fop.area.AreaTreeModel;
 
-
+import org.apache.fop.extensions.Bookmarks;
 import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fo.FOTreeEvent;
 import org.apache.fop.fo.FOTreeListener;
@@ -100,6 +100,8 @@ public class Document implements FOTreeControl, FOTreeListener {
      */
     public AreaTree areaTree;
     public AreaTreeModel atModel;
+
+    private Bookmarks bookmarks;
 
     /**
      * Main constructor
@@ -346,6 +348,14 @@ public class Document implements FOTreeControl, FOTreeListener {
      */
     public AreaTree getAreaTree() {
         return areaTree;
+    }
+
+    public void setBookmarks(Bookmarks bookmarks) {
+        this.bookmarks = bookmarks;
+    }
+
+    public Bookmarks getBookmarks() {
+        return bookmarks;
     }
 
 }

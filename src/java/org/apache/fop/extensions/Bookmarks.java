@@ -50,11 +50,8 @@
  */
 package org.apache.fop.extensions;
 
-import org.apache.fop.fo.FOTreeHandler;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
-import org.apache.fop.area.AreaTree;
-import org.apache.fop.apps.Document;
 
 import java.util.ArrayList;
 
@@ -65,7 +62,6 @@ import java.util.ArrayList;
  */
 public class Bookmarks extends ExtensionObj {
     private ArrayList outlines = new ArrayList();
-    private BookmarkData data;
 
     /**
      * Create a new Bookmarks object.
@@ -89,39 +85,20 @@ public class Bookmarks extends ExtensionObj {
     }
 
     /**
-     * Get the data created for this bookmark.
-     *
-     * @return the bookmark data
-     */
-    public BookmarkData getData() {
-        return data;
-    }
-
-    /**
      * When this element is finished then it can create
      * the bookmark data from the child elements and add
      * the extension to the area tree.
      */
     public void end() {
-        getLogger().debug("adding bookmarks to area tree");
-        data = new BookmarkData();
-        for (int count = 0; count < outlines.size(); count++) {
-            Outline out = (Outline)outlines.get(count);
-            data.addSubData(out.getData());
-        }
-        // add data to area tree for resolving and handling
-        if (foInputHandler instanceof FOTreeHandler) {
-            FOTreeHandler foth = (FOTreeHandler)foInputHandler;
-            Document doc = (Document)foth.foTreeControl;
-            AreaTree at = doc.getAreaTree();
-            at.addTreeExtension(data);
-            data.setAreaTree(at);
-        }
+        getFOTreeControl().setBookmarks(this);
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveVisitor(this);
     }
 
-}
+    public ArrayList getOutlines() {
+        return outlines;
+    }
 
+}

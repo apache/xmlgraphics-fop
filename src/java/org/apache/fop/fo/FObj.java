@@ -260,6 +260,10 @@ public class FObj extends FONode {
         foInputHandler = foih;
     }
 
+    public FOInputHandler getFOInputHandler() {
+        return foInputHandler;
+    }
+
     /**
      * lets outside sources access the property list
      * first used by PageNumberCitation to find the "id" property
