@@ -543,14 +543,25 @@ Any easy way to check this is to cut&amp;paste the source URL from the fo:extern
         </p>
       </answer>
     </faq>
-    <faq id="hypenation-fails">
+    <faq id="hyphenation-fails">
       <question>Hyphenation does not work.</question>
       <answer>
         <p>
-          Set the language attribute somewhere. Check whether you use a language
-          for which hyphenation is supported. Supported languages can be deduced
-          from the files in the hyph directory of the FOP source distribution.
+          Set the language attribute somewhere and explicitly enable hyphenation. 
+          Check whether you use a language for which hyphenation is supported. 
+          Supported languages can be deduced from the files in the {fop-dir}/src/hyph
+          directory of the FOP source distribution. If you want to use a language
+          FOP currently doesn't hyphenate, please see the 
+          <link href="configuration.html#hyphenation">Configuration page</link>.
         </p>
+        <p>
+          Set the language (on fo:page-sequence, fo:block or fo:character):
+        </p>
+        <source><![CDATA[<fo:page-sequence language="fi">]]></source>
+        <p>
+          Enable hyphenation on a block:
+        </p>
+        <source><![CDATA[<fo:block hyphenate="true">]]></source>
       </answer>
     </faq>
   </part>
