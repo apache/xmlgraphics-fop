@@ -43,7 +43,7 @@ public abstract class RegionSE extends Region {
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
         
-        this.extent = this.propertyList.get(PR_EXTENT).getLength().getValue();
+        this.extent = getPropLength(PR_EXTENT);
     }
 
     /**

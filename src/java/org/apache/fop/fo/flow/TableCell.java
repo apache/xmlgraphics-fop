@@ -202,8 +202,7 @@ public class TableCell extends FObj {
             bRelativeAlign = false;    // Align on a per-cell basis
         }
 
-        this.minCellHeight =
-            this.propertyList.get(PR_HEIGHT).getLength().getValue();
+        this.minCellHeight = getPropLength(PR_HEIGHT);
     }
 
     /**
@@ -220,8 +219,8 @@ public class TableCell extends FObj {
              * border-separate should only be specified on the table object,
              * but it inherits.
              */
-            int iSep = propertyList.get(
-                    PR_BORDER_SEPARATION | CP_INLINE_PROGRESSION_DIRECTION).getLength().getValue();
+            int iSep = getPropLength(PR_BORDER_SEPARATION | 
+                CP_INLINE_PROGRESSION_DIRECTION);
             this.startAdjust = iSep / 2 + bp.getBorderStartWidth(false)
                                + bp.getPaddingStart(false);
 
@@ -230,8 +229,8 @@ public class TableCell extends FObj {
                                + bp.getPaddingEnd(false);
 
             // Offset of content rectangle in the block-progression direction
-            borderSeparation = propertyList.get(
-                    PR_BORDER_SEPARATION | CP_BLOCK_PROGRESSION_DIRECTION).getLength().getValue();
+            borderSeparation = getPropLength(PR_BORDER_SEPARATION | 
+                CP_BLOCK_PROGRESSION_DIRECTION);
             this.beforeOffset = borderSeparation / 2
                                 + bp.getBorderBeforeWidth(false)
                                 + bp.getPaddingBefore(false);

@@ -75,8 +75,7 @@ public class Leader extends FObjMixed {
             case LeaderPattern.RULE:
                 // the following properties only apply
                 // for leader-pattern = "rule"
-                ruleThickness =
-                         propertyList.get(PR_RULE_THICKNESS).getLength().getValue();
+                ruleThickness = getPropLength(PR_RULE_THICKNESS);
                 ruleStyle = propertyList.get(PR_RULE_STYLE).getEnum();
             break;
             case LeaderPattern.DOTS:
@@ -88,9 +87,7 @@ public class Leader extends FObjMixed {
         }
 
         // if leaderPatternWidth = 0 = default = use-font-metric
-        patternWidth =
-            this.propertyList.get(PR_LEADER_PATTERN_WIDTH).getLength().getValue();
-
+        patternWidth = getPropLength(PR_LEADER_PATTERN_WIDTH);
     }
 
     /**

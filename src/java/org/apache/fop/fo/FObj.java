@@ -188,7 +188,7 @@ public class FObj extends FONode implements Constants {
     }
 
     /**
-     * Helper method to quickly obtain the String value of a property
+     * Convenience method to quickly obtain the String value of a property
      * for this FO, without querying for the propertyList first.
      * Meaningful only for properties having a string representation
      * @param propId - the Constants ID of the desired property to obtain
@@ -196,6 +196,17 @@ public class FObj extends FONode implements Constants {
      */
     public String getPropString(int propId) {
         return propertyList.get(propId).getString();
+    }
+
+    /**
+     * Convenience method to quickly obtain the length value of a property
+     * for this FO, without querying for the propertyList first.
+     * Meaningful only for properties having a length representation
+     * @param propId - the Constants ID of the desired property to obtain
+     * @return the length value of the property value
+     */
+    public int getPropLength(int propId) {
+        return propertyList.get(propId).getLength().getValue();
     }
 
     /**

@@ -86,15 +86,13 @@ public class Table extends FObj {
         super.addProperties(attlist);
         this.breakBefore = this.propertyList.get(PR_BREAK_BEFORE).getEnum();
         this.breakAfter = this.propertyList.get(PR_BREAK_AFTER).getEnum();
-        this.spaceBefore = this.propertyList.get(
-                             PR_SPACE_BEFORE | CP_OPTIMUM).getLength().getValue();
-        this.spaceAfter = this.propertyList.get(
-                            PR_SPACE_AFTER | CP_OPTIMUM).getLength().getValue();
+        this.spaceBefore = getPropLength(PR_SPACE_BEFORE | CP_OPTIMUM);
+        this.spaceAfter = getPropLength(PR_SPACE_AFTER | CP_OPTIMUM);
         this.backgroundColor =
           this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
         this.ipd = this.propertyList.get(
                      PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
-        this.height = this.propertyList.get(PR_HEIGHT).getLength().getValue();
+        this.height = getPropLength(PR_HEIGHT);
         this.bAutoLayout = (this.propertyList.get(
                 PR_TABLE_LAYOUT).getEnum() == TableLayout.AUTO);
 

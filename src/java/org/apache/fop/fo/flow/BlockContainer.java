@@ -64,8 +64,8 @@ public class BlockContainer extends FObj {
         this.backgroundColor =
             this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
 
-        this.width = this.propertyList.get(PR_WIDTH).getLength().getValue();
-        this.height = this.propertyList.get(PR_HEIGHT).getLength().getValue();
+        this.width = getPropLength(PR_WIDTH);
+        this.height = getPropLength(PR_HEIGHT);
     }
 
     /**
