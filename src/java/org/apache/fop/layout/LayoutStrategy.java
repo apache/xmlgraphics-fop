@@ -86,4 +86,14 @@ public abstract class LayoutStrategy {
      */
     public abstract void format (PageSequence pageSeq, AreaTree areaTree)
             throws FOPException;
+
+    /**
+     * Indicates whether an FO Tree should be built for this layout strategy.
+     * Override this in subclasses if an FO Tree is not needed.
+     * @return true if an FO Tree is needed, false otherwise
+     */
+    public boolean foTreeNeeded() {
+        return true;
+    }
+
 }
