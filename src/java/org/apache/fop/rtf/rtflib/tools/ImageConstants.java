@@ -85,8 +85,11 @@ public class ImageConstants {
             "emfblip", "pngblip", "jpegblip"
         };
 
+    /** constant for image conversion basis (??) */
     public static final int I_TO_CONVERT_BASIS = 50;
+    /** Integer equivalent for GIF */
     public static final int I_GIF = 50;
+    /** Integer equivalent for JPEG C (??) */
     public static final int I_JPG_C = 51;
 
     /** Defines the types for converting rtf supported image types */

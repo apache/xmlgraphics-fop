@@ -95,9 +95,9 @@ public class RtfTemplate  {
 
 
     /**
-     *Set the template file and adjust tha path separator
-     *
-     *@param templateFilePath The full path of the template
+     * Set the template file and adjust tha path separator
+     * @param templateFilePath The full path of the template
+     * @throws IOException for I/O problems
      **/
     public void setTemplateFilePath(String templateFilePath) throws IOException {
         // no validity checks here - leave this to the RTF client
