@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The Apache Software Foundation.
+ * Copyright 2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,9 +50,13 @@ public class KnuthPenalty extends KnuthElement {
      * @param bAux is this penalty auxiliary?
      */
     public KnuthPenalty(int w, int p, boolean f, Position pos, boolean bAux) {
-        super(KNUTH_PENALTY, w, pos, bAux);
+        super(w, pos, bAux);
         penalty = p;
         bFlagged = f;
+    }
+
+    public boolean isPenalty() {
+        return true;
     }
 
     /**
@@ -67,5 +71,9 @@ public class KnuthPenalty extends KnuthElement {
      */
     public boolean isFlagged() {
         return bFlagged;
+    }
+
+    public boolean isForcedBreak() {
+        return penalty == -KnuthElement.INFINITE;
     }
 }

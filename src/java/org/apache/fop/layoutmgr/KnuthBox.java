@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The Apache Software Foundation.
+ * Copyright 2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,10 +47,14 @@ public class KnuthBox extends KnuthElement {
      * @param bAux is this box auxiliary?
      */
     public KnuthBox(int w, int l, int t, int m, Position pos, boolean bAux) {
-        super(KNUTH_BOX, w, pos, bAux);
+        super(w, pos, bAux);
         lead = l;
         total = t;
         middle = m;
+    }
+
+    public boolean isBox() {
+        return true;
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,6 +61,19 @@ public class MinOptMax implements java.io.Serializable, Cloneable {
     }
 
     /**
+     * New min/opt/max with the three values.
+     *
+     * @param min the minimum value
+     * @param opt the optimum value
+     * @param max the maximum value
+     */
+    public MinOptMax(MinOptMax op) {
+        this.min = op.min;
+        this.opt = op.opt;
+        this.max = op.max;
+    }
+
+    /**
      * @see java.lang.Object#clone()
      */
     public Object clone() {
@@ -114,6 +127,27 @@ public class MinOptMax implements java.io.Serializable, Cloneable {
         opt += op.opt;
         max += op.max;
     }
+
+    /**
+     * Adds another MinOptMax instance to this one.
+     * @param op the other instance
+     */
+    public void add(int min, int opt, int max) {
+        this.min += min;
+        this.opt += opt;
+        this.max += max;
+    }
+
+    /**
+     * Adds another MinOptMax instance to this one.
+     * @param op the other instance
+     */
+    public void add(int len) {
+        this.min += len;
+        this.opt += len;
+        this.max += len;
+    }
+
 
     /**
      * Subtracts from this instance using another.

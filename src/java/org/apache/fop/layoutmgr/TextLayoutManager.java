@@ -793,8 +793,7 @@ public class TextLayoutManager extends AbstractLayoutManager
                         && textArray[iTempStart] != NBSPACE
                         && textArray[iTempStart] != NEWLINE;
                         iTempStart++) {
-                    wordIPD.add(
-                        new MinOptMax(fs.getCharWidth(textArray[iTempStart])));
+                    wordIPD.add(fs.getCharWidth(textArray[iTempStart]));
                 }
                 wordIPD.add(MinOptMax.multiply(letterSpaceIPD, (iTempStart - iThisStart - 1)));
                 vecAreaInfo.add

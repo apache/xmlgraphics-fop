@@ -133,153 +133,22 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
     // offset of the middle baseline with respect to the main baseline
     private int middleShift;
 
-    // inline start pos when adding areas
-    private int iStartPos = 0;
-
     private ArrayList knuthParagraphs = null;
-    private LinkedList activeList = null;
     private ArrayList breakpoints = null;
     private int iReturnedLBP = 0;
     private int iStartElement = 0;
     private int iEndElement = 0;
 
-    private KnuthNode bestDeactivatedNode = null;
-
     //     parameters of Knuth's algorithm:
     // penalty value for flagged penalties
     private int flaggedPenalty = 50;
-    // demerit for consecutive lines ending at flagged penalties
-    private int repeatedFlaggedDemerit = 50;
-    // demerit for consecutive lines belonging to incompatible fitness classes 
-    private int incompatibleFitnessDemerit = 50;
-    // suggested modification to the "optimum" number of lines
-    private int looseness = 0;
 
     // this constant is used to create elements when text-align is center:
     // every TextLM descendant of LineLM must use the same value, 
     // otherwise the line breaking algorithm does not find the right
     // break point
     public static final int DEFAULT_SPACE_WIDTH = 3336;
-    private static final int INFINITE_RATIO = 1000;
-    private static final int MAX_DEMERITS_INCREASE = 1000;
-    // constants identifying the line breaking algorithm used
-    private static final int KNUTH_ALGORITHM = 0;
-    private static final int FIRST_FIT_ALGORITHM = 1;
 
-    // this class represent a feasible breaking point
-    private class KnuthNode {
-        // index of the breakpoint represented by this node
-        public int position;
-
-        // number of the line ending at this breakpoint
-        public int line;
-
-        // fitness class of the line ending at his breakpoint
-        public int fitness;
-
-        // accumulated width of the KnuthElements
-        public int totalWidth;
-
-        // accumulated stretchability of the KnuthElements
-        public int totalStretch;
-
-        // accumulated shrinkability of the KnuthElements
-        public int totalShrink;
-
-        // adjustment ratio if the line ends at this breakpoint
-        public double adjustRatio;
-
-        // difference between target and actual line width
-        public int difference;
-
-        // minimum total demerits up to this breakpoint
-        public double totalDemerits;
-
-        // best node for the preceding breakpoint
-        public KnuthNode previous;
-
-        public KnuthNode(int position, int line, int fitness,
-                         int totalWidth, int totalStretch, int totalShrink,
-                         double adjustRatio, int difference,
-                         double totalDemerits, KnuthNode previous) {
-            this.position = position;
-            this.line = line;
-            this.fitness = fitness;
-            this.totalWidth = totalWidth;
-            this.totalStretch = totalStretch;
-            this.totalShrink = totalShrink;
-            this.adjustRatio = adjustRatio;
-            this.difference = difference;
-            this.totalDemerits = totalDemerits;
-            this.previous = previous;
-        }
-    }
-
-    // this class stores information about how the nodes
-    // which could start a line
-    // ending at the current element
-    private class BestRecords {
-        private static final double INFINITE_DEMERITS = 1E11;
-
-        private double bestDemerits[] = {
-            INFINITE_DEMERITS, INFINITE_DEMERITS,
-            INFINITE_DEMERITS, INFINITE_DEMERITS
-        };
-        private KnuthNode bestNode[] = {null, null, null, null};
-        private double bestAdjust[] = {0.0, 0.0, 0.0, 0.0};
-        private int bestDifference[] = {0, 0, 0, 0};
-        private int bestIndex = -1;
-
-        public BestRecords() {
-        }
-
-        public void addRecord(double demerits, KnuthNode node, double adjust,
-                              int difference, int fitness) {
-            if (demerits > bestDemerits[fitness]) {
-                log.error("New demerits value greter than the old one");
-            }
-            bestDemerits[fitness] = demerits;
-            bestNode[fitness] = node;
-            bestAdjust[fitness] = adjust;
-            bestDifference[fitness] = difference;
-            if (bestIndex == -1 || demerits < bestDemerits[bestIndex]) {
-                bestIndex = fitness;
-            }
-        }
-
-        public boolean hasRecords() {
-            return (bestIndex != -1);
-        }
-
-        public boolean notInfiniteDemerits(int fitness) {
-            return (bestDemerits[fitness] != INFINITE_DEMERITS);
-        }
-
-        public double getDemerits(int fitness) {
-            return bestDemerits[fitness];
-        }
-
-        public KnuthNode getNode(int fitness) {
-            return bestNode[fitness];
-        }
-
-        public double getAdjust(int fitness) {
-            return bestAdjust[fitness];
-        }
-
-        public int getDifference(int fitness) {
-            return bestDifference[fitness];
-        }
-
-        public double getMinDemerits() {
-            if (bestIndex != -1) {
-                return getDemerits(bestIndex);
-            } else {
-                // anyway, this should never happen
-                return INFINITE_DEMERITS;
-            }
-        }
-    }
 
     // this class is used to remember
     // which was the first element in the paragraph
@@ -295,7 +164,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
     }
 
     // this class represents a paragraph
-    private class Paragraph extends LinkedList {
+    public class Paragraph extends ArrayList {
         // number of KnuthElements added by the LineLayoutManager
         public int ignoreAtStart = 0;
         public int ignoreAtEnd = 0;
@@ -362,6 +231,22 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                 knuthParagraphs.add(this);
             }
         }
+
+        public KnuthElement getLast() {
+            int idx = size();
+            if (idx == 0) {
+                return null; 
+            }
+            return (KnuthElement) get(idx - 1);
+        }
+
+        public KnuthElement removeLast() {
+            int idx = size();
+            if (idx == 0) {
+                return null; 
+            }
+            return (KnuthElement) remove(idx - 1);
+        }
     }
 
 
@@ -376,10 +261,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         // Get a break from currently active child LM
         // Set up constraints for inline level managers
         InlineLevelLayoutManager curLM ; // currently active LM
-        BreakPoss prev = null;
-        BreakPoss bp = null; // proposed BreakPoss
-
-        ArrayList vecPossEnd = new ArrayList();
 
         // IPD remaining in line
         MinOptMax availIPD = context.getStackLimit();
@@ -427,7 +308,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                         if (!prevBox.isAuxiliary()) {
                             // if letter spacing is constant,
                             // only prevBox needs to be replaced;
-                            knuthPar.addLast(((InlineLevelLayoutManager)
+                            knuthPar.add(((InlineLevelLayoutManager)
                                               prevBox.getLayoutManager())
                                              .addALetterSpaceTo(prevBox));
                         } else {
@@ -442,11 +323,11 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                             KnuthPenalty auxPenalty
                                 = (KnuthPenalty) knuthPar.removeLast();
                             prevBox = (KnuthBox) knuthPar.getLast();
-                            knuthPar.addLast(auxPenalty);
-                            knuthPar.addLast(((InlineLevelLayoutManager)
+                            knuthPar.add(auxPenalty);
+                            knuthPar.add(((InlineLevelLayoutManager)
                                               prevBox.getLayoutManager())
                                              .addALetterSpaceTo(prevBox));
-                            knuthPar.addLast(auxBox);
+                            knuthPar.add(auxBox);
                         }
                     }
 
@@ -545,8 +426,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         float maxAdjustment = 1;
 
         // first try
-        if (!findBreakingPoints(par, lineWidth,
-                                maxAdjustment, KNUTH_ALGORITHM)) {
+        if (!findBreakingPoints(par, lineWidth, maxAdjustment, false)) {
             // the first try failed, now try something different
             log.debug("No set of breaking points found with maxAdjustment = " + maxAdjustment);
             if (hyphProps.hyphenate == Constants.EN_TRUE) {
@@ -557,182 +437,55 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                 maxAdjustment = 5;
             }
 
-            if (!findBreakingPoints(par, lineWidth,
-                                    maxAdjustment, KNUTH_ALGORITHM)) {
+            if (!findBreakingPoints(par, lineWidth, maxAdjustment, false)) {
                 // the second try failed too, try with a huge threshold;
                 // if this fails too, use a different algorithm
                 log.debug("No set of breaking points found with maxAdjustment = " + maxAdjustment
                           + (hyphProps.hyphenate == Constants.EN_TRUE ? " and hyphenation" : ""));
                 maxAdjustment = 20;
-                if (!findBreakingPoints(par, lineWidth,
-                                        maxAdjustment, KNUTH_ALGORITHM)) {
+                if (!findBreakingPoints(par, lineWidth, maxAdjustment, true)) {
                     log.debug("No set of breaking points found, using first-fit algorithm");
-                    findBreakingPoints(par, lineWidth,
-                                       maxAdjustment, FIRST_FIT_ALGORITHM);
                 }
             }
         }
-
-        // now:
-        // * if the Knuth's algorithm found at least a set of breaking point,
-        //   activeList.size() >= 1 and bestDeactivatedNode == null
-        // * if the Knuth's algorithm failed, and the first-fit algorithm was 
-        //   called, activeList.size() == 1 and bestDeactivatedNode != null
-
-        // number of lines that will be created
-        int line = 0;
-        // node representing the chosen last breakpoint
-        KnuthNode bestActiveNode = null;
-
-        // if there are different sets of breaking points
-        // choose the active node with fewest total demerits
-        ListIterator activeListIterator = activeList.listIterator();
-        KnuthNode tempNode = null;
-        double bestDemerits = BestRecords.INFINITE_DEMERITS;
-        while (activeListIterator.hasNext()) {
-            tempNode = (KnuthNode) activeListIterator.next();
-            if (tempNode.totalDemerits < bestDemerits) {
-                bestActiveNode = tempNode;
-                bestDemerits = bestActiveNode.totalDemerits;
-            }
+    }
+    
+    private boolean findBreakingPoints(Paragraph par, int lineWidth,
+            double threshold, boolean force) {
+        KnuthParagraph knuthPara = new KnuthParagraph(par);
+        int lines = knuthPara.findBreakPoints(lineWidth, threshold, force);
+        if (lines == 0) {
+            return false;
         }
-        line = bestActiveNode.line;
-
-        if (looseness != 0) {
-            // choose the appropriate active node
-            activeListIterator = activeList.listIterator();
-            int s = 0;
-            while (activeListIterator.hasNext()) {
-                tempNode = (KnuthNode) activeListIterator.next();
-                int delta = tempNode.line - line;
-                if (looseness <= delta && delta < s
-                    || s < delta && delta <= looseness) {
-                    s = delta;
-                    bestActiveNode = tempNode;
-                    bestDemerits = tempNode.totalDemerits;
-                } else if (delta == s
-                           && tempNode.totalDemerits < bestDemerits) {
-                    bestActiveNode = tempNode;
-                    bestDemerits = tempNode.totalDemerits;
-                }
+        
+        for (int i = lines-1; i >= 0; i--) {
+            int line = i+1;
+            if (log.isTraceEnabled()) {
+                log.trace("Making line from " + knuthPara.getStart(i) + " to " + 
+                           knuthPara.getEnd(i));
             }
-            line = bestActiveNode.line;
-        }
-
-        // use the chosen node to determine the optimum breakpoints
-        for (int i = line; i > 0; i--) {
             // compute indent and adjustment ratio, according to
             // the value of text-align and text-align-last
-            int indent = 0;
-            int difference = (bestActiveNode.line < line)
-                ? bestActiveNode.difference
-                : bestActiveNode.difference + par.lineFillerWidth;
-            int textAlign = (bestActiveNode.line < line)
+
+            int difference = knuthPara.getDifference(i);
+            if (line == lines) {
+                difference += par.lineFillerWidth;
+            }    
+            int textAlign = (line < lines)
                 ? bTextAlignment : bTextAlignmentLast;
-            indent += (textAlign == EN_CENTER)
+            int indent = (textAlign == EN_CENTER)
                 ? difference / 2
                 : (textAlign == EN_END) ? difference : 0;
-            indent += (bestActiveNode.line == 1
-                       && knuthParagraphs.indexOf(par) == 0)
+            indent += (line == 1 && knuthParagraphs.indexOf(par) == 0)
                 ? textIndent.getValue() : 0;
             double ratio = (textAlign == EN_JUSTIFY)
-                ? bestActiveNode.adjustRatio : 0;
+                ? knuthPara.getAdjustRatio(i) : 0;
 
-            makeLineBreakPosition(par,
-                                  (i > 1 ? bestActiveNode.previous.position + 1: 0),
-                                  bestActiveNode.position,
-                                  0, ratio, indent);
-
-            bestActiveNode = bestActiveNode.previous;
+            int start = knuthPara.getStart(i);
+            int end = knuthPara.getEnd(i);
+            makeLineBreakPosition(par, start, end, 0, ratio, indent);
         }
-        activeList.clear();
-    }
-
-    /**
-     * Perform a line-breaking algorithm.
-     * 
-     * @param par       the list of elements that must be parted
-     *                  into lines
-     * @param lineWidth the desired length ot the lines
-     * @param threshold the maximum adjustment ratio permitted
-     * @param algorithm a constant identifying the algorithm to perform
-     * @return          true if the algorithm succeeded, false if it failed
-     */
-    private boolean findBreakingPoints(Paragraph par, int lineWidth,
-                                       double threshold, int algorithm) {
-        int totalWidth = 0;
-        int totalStretch = 0;
-        int totalShrink = 0;
-
-        // current element in the paragraph
-        KnuthElement thisElement = null;
-        // previous element in the paragraph is a KnuthBox
-        boolean previousIsBox = false;
-
-        // create an active node representing the starting point
-        activeList = new LinkedList();
-        if (algorithm == KNUTH_ALGORITHM) {
-            bestDeactivatedNode = null;
-            activeList.add(new KnuthNode(0, 0, 1, 0, 0, 0, 0, 0, 0, null));
-        } else {
-            activeList.add(new KnuthNode(bestDeactivatedNode.position,
-                                         bestDeactivatedNode.line,
-                                         1, 0, 0, 0, 
-                                         bestDeactivatedNode.adjustRatio,
-                                         bestDeactivatedNode.difference, 0,
-                                         bestDeactivatedNode.previous));
-        }
-
-        // main loop
-        ListIterator paragraphIterator = par.listIterator();
-        while (paragraphIterator.hasNext()) {
-            thisElement = (KnuthElement) paragraphIterator.next();
-            if (thisElement.isBox()) {
-                // a KnuthBox object is not a legal line break
-                totalWidth += thisElement.getW();
-                previousIsBox = true;
-            } else if (thisElement.isGlue()) {
-                // a KnuthGlue object is a legal line break
-                // only if the previous object is a KnuthBox
-                if (previousIsBox) {
-                    if (algorithm == KNUTH_ALGORITHM) {
-                        considerLegalBreakKnuth(par, lineWidth, thisElement,
-                                                totalWidth, totalStretch, totalShrink,
-                                                threshold);
-                    } else {
-                        considerLegalBreakFirstFit(par, lineWidth, thisElement,
-                                                   totalWidth, totalStretch, totalShrink,
-                                                   threshold);
-                    }
-                }
-                totalWidth += thisElement.getW();
-                totalStretch += ((KnuthGlue) thisElement).getY();
-                totalShrink += ((KnuthGlue) thisElement).getZ();
-                previousIsBox = false;
-            } else {
-                // a KnuthPenalty is a legal line break
-                // only if its penalty is not infinite
-                if (((KnuthPenalty) thisElement).getP()
-                    < KnuthElement.INFINITE) {
-                    if (algorithm == KNUTH_ALGORITHM) {
-                        considerLegalBreakKnuth(par, lineWidth, thisElement,
-                                                totalWidth, totalStretch, totalShrink,
-                                                threshold);
-                    } else {
-                        considerLegalBreakFirstFit(par, lineWidth, thisElement,
-                                                   totalWidth, totalStretch, totalShrink,
-                                                   threshold);
-                    }
-                }
-                previousIsBox = false;
-            }
-        }
-
-        if (algorithm == KNUTH_ALGORITHM && activeList.size() > 0) {
-            // bestDeactivatedNode is useless, as the algorithm did not fail
-            bestDeactivatedNode = null;
-        }
-        return (activeList.size() > 0);
+        return true;        
     }
 
     private void makeLineBreakPosition(Paragraph par,
@@ -785,307 +538,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                                               lineLead));
     }
 
-    private void considerLegalBreakKnuth(LinkedList par, int lineWidth,
-                                         KnuthElement element,
-                                         int totalWidth, int totalStretch,
-                                         int totalShrink, double threshold) {
-        KnuthNode activeNode = null;
 
-        ListIterator activeListIterator = activeList.listIterator();
-        if (activeListIterator.hasNext()) {
-            activeNode = (KnuthNode) activeListIterator.next();
-        } else {
-            activeNode = null;
-        }
-
-        while (activeNode != null) {
-            BestRecords best = new BestRecords();
-
-            // these are the new values that must be computed
-            // in order to define a new active node
-            int newLine = 0;
-            int newFitnessClass = 0;
-            int newWidth = 0;
-            int newStretch = 0;
-            int newShrink = 0;
-            double newIPDAdjust = 0;
-            double newDemerits = 0;
-
-            while (activeNode != null) {
-                // compute the line number
-                newLine = activeNode.line + 1;
-
-                // compute the adjustment ratio
-                int actualWidth = totalWidth - activeNode.totalWidth;
-                if (element.isPenalty()) {
-                    actualWidth += element.getW();
-                }
-                int neededAdjustment = lineWidth - actualWidth;
-                int maxAdjustment = 0;
-                if (neededAdjustment > 0) {
-                    maxAdjustment = totalStretch - activeNode.totalStretch;
-                    if (maxAdjustment > 0) {
-                        newIPDAdjust
-                            = (double) neededAdjustment / maxAdjustment;
-                    } else {
-                        newIPDAdjust = INFINITE_RATIO;
-                    }
-                } else if (neededAdjustment < 0) {
-                    maxAdjustment = totalShrink - activeNode.totalShrink;
-                    if (maxAdjustment > 0) {
-                        newIPDAdjust
-                            = (double) neededAdjustment / maxAdjustment;
-                    } else {
-                        newIPDAdjust = INFINITE_RATIO;
-                    }
-                } else {
-                    // neededAdjustment == 0
-                    newIPDAdjust = 0;
-                }
-                if (newIPDAdjust < -1
-                    || (element.isPenalty()
-                        && ((KnuthPenalty) element).getP()
-                        == -KnuthElement.INFINITE)
-                    && !(activeNode.position == par.indexOf(element))) {
-                    // deactivate activeNode:
-                    // just remove it from the activeList; as long as there is
-                    // an active node pointing to it, it will not be deleted
-                    KnuthNode tempNode
-                        = (KnuthNode) activeListIterator.previous();
-                    int iCallNext = 0;
-                    while (tempNode != activeNode) {
-                        // this is not the node we meant to remove!
-                        tempNode = (KnuthNode) activeListIterator.previous();
-                        iCallNext ++;
-                    }
-                    // use bestDeactivatedNode to keep a pointer to a "good"
-                    // node that could be used if the algorithm fails
-                    if (bestDeactivatedNode == null
-                        || tempNode.line == bestDeactivatedNode.line
-                           && tempNode.totalDemerits < bestDeactivatedNode.totalDemerits
-                        || tempNode.line > bestDeactivatedNode.line
-                           && tempNode.totalDemerits < bestDeactivatedNode.totalDemerits + MAX_DEMERITS_INCREASE) {
-                        bestDeactivatedNode = tempNode;
-                    }
-                    activeListIterator.remove();
-                    for (int i = 0; i < iCallNext; i++) {
-                        activeListIterator.next();
-                    }
-                }
-
-                if ((-1 <= newIPDAdjust) && (newIPDAdjust <= threshold)) {
-                    // compute demerits and fitness class
-                    if (element.isPenalty()
-                        && ((KnuthPenalty) element).getP() >= 0) {
-                        newDemerits
-                            = Math.pow((1
-                                        + 100 * Math.pow(Math.abs(newIPDAdjust), 3)
-                                        + ((KnuthPenalty) element).getP()), 2);
-                    } else if (element.isPenalty()
-                               && ((KnuthPenalty) element).getP()
-                               > -INFINITE_RATIO) {
-                        newDemerits
-                            = Math.pow((1
-                                        + 100 * Math.pow(Math.abs(newIPDAdjust), 3)), 2)
-                            - Math.pow(((KnuthPenalty) element).getP(), 2);
-                    } else {
-                        newDemerits
-                            = Math.pow((1
-                                        + 100 * Math.pow(Math.abs(newIPDAdjust), 3)), 2);
-                    }
-                    if (element.isPenalty()
-                        && ((KnuthPenalty) element).isFlagged()
-                        && ((KnuthElement) par.get(activeNode.position)).isPenalty()
-                        && ((KnuthPenalty) par.get(activeNode.position)).isFlagged()) {
-                        // add demerit for consecutive breaks at flagged penalties
-                        newDemerits += repeatedFlaggedDemerit;
-                    }
-                    if (newIPDAdjust < -0.5) {
-                        newFitnessClass = 0;
-                    } else if (newIPDAdjust <= 0.5) {
-                        newFitnessClass = 1;
-                    } else if (newIPDAdjust <= 1) {
-                        newFitnessClass = 2;
-                    } else {
-                        newFitnessClass = 3;
-                    }
-                    if (Math.abs(newFitnessClass - activeNode.fitness) > 1) {
-                        // add demerit for consecutive breaks
-                        // with very different fitness classes
-                        newDemerits += incompatibleFitnessDemerit;
-                    }
-                    newDemerits += activeNode.totalDemerits;
-                    if (newDemerits < best.getDemerits(newFitnessClass)) {
-                        // updates best demerits data
-                        best.addRecord(newDemerits, activeNode, newIPDAdjust,
-                                       neededAdjustment, newFitnessClass);
-                    }
-                }
-
-                 
-                if (activeListIterator.hasNext()) {
-                    activeNode = (KnuthNode) activeListIterator.next();
-                } else {
-                    activeNode = null;
-                    break;
-                }
-                if (activeNode.line >= newLine) {
-                    break;
-                }
-            } // end of the inner while
-
-            if (best.hasRecords()) {
-                // compute width, stratchability and shrinkability
-                newWidth = totalWidth;
-                newStretch = totalStretch;
-                newShrink = totalShrink;
-                ListIterator tempIterator
-                    = par.listIterator(par.indexOf(element));
-                while (tempIterator.hasNext()) {
-                    KnuthElement tempElement
-                        = (KnuthElement) tempIterator.next();
-                    if (tempElement.isBox()) {
-                        break;
-                    } else if (tempElement.isGlue()) {
-                        newWidth += ((KnuthGlue) tempElement).getW();
-                        newStretch += ((KnuthGlue) tempElement).getY();
-                        newShrink += ((KnuthGlue) tempElement).getZ();
-                    } else if (((KnuthPenalty) tempElement).getP()
-                               == -KnuthElement.INFINITE
-                               && tempElement != element) {
-                        break;
-                    }
-                }
-
-                // add nodes to the active nodes list
-                for (int i = 0; i <= 3; i++) {
-                    if (best.notInfiniteDemerits(i)
-                        && best.getDemerits(i)
-                        <= (best.getMinDemerits()
-                            + incompatibleFitnessDemerit)) {
-                        // the nodes in activeList must be ordered
-                        // by line number and position;
-                        // so:
-                        // 1) advance in the list until the end,
-                        // or a node with a higher line number, is reached
-                        int iStepsForward = 0;
-                        KnuthNode tempNode;
-                        while (activeListIterator.hasNext()) {
-                            iStepsForward ++;
-                            tempNode = (KnuthNode) activeListIterator.next();
-                            if (tempNode.line > (best.getNode(i).line + 1)) {
-                                activeListIterator.previous();
-                                iStepsForward --;
-                                break;
-                            }
-                        }
-                        // 2) add the new node
-                        activeListIterator.add
-                            (new KnuthNode(par.indexOf(element),
-                                           best.getNode(i).line + 1, i,
-                                           newWidth, newStretch, newShrink,
-                                           best.getAdjust(i),
-                                           best.getDifference(i),
-                                           best.getDemerits(i),
-                                           best.getNode(i)));
-                        // 3) go back
-                        for (int j = 0;
-                             j <= iStepsForward;
-                             j ++) {
-                            activeListIterator.previous();
-                        }
-                    }
-                }
-            }
-            if (activeNode == null) {
-                break;
-            }
-        } // end of the outer while
-    }
-
-    private void considerLegalBreakFirstFit(LinkedList par, int lineWidth,
-                                            KnuthElement element,
-                                            int totalWidth, int totalStretch,
-                                            int totalShrink, double threshold) {
-        KnuthNode startNode;
-        KnuthNode endNode;
-        endNode = (KnuthNode) activeList.getFirst();
-        if (endNode.previous != null) {
-            startNode = endNode.previous;
-        } else {
-            startNode = endNode;
-            endNode = null;
-        }
-
-        // these are the new values that must be computed
-        // in order to define a new active node
-        int newWidth;
-        int newStretch;
-        int newShrink;
-        int newDifference;
-        double newRatio;
-
-        // compute width, stretch and shrink of the new node
-        newWidth = totalWidth;
-        newStretch = totalStretch;
-        newShrink = totalShrink;
-        ListIterator tempIterator = par.listIterator(par.indexOf(element));
-        while (tempIterator.hasNext()) {
-            KnuthElement tempElement = (KnuthElement)tempIterator.next();
-            if (tempElement.isBox()) {
-                break;
-            } else if (tempElement.isGlue()) {
-                newWidth += ((KnuthGlue) tempElement).getW();
-                newStretch += ((KnuthGlue) tempElement).getY();
-                newShrink += ((KnuthGlue) tempElement).getZ();
-            } else if (((KnuthPenalty) tempElement).getP()
-                       == -KnuthElement.INFINITE
-                       && tempElement != element) {
-                break;
-            }
-        }
-
-        if (endNode == null
-            || totalWidth + (element.isPenalty() ? element.getW() : 0) - startNode.totalWidth <= lineWidth
-            || bTextAlignment == EN_JUSTIFY
-               && totalWidth  + (element.isPenalty() ? element.getW() : 0)- startNode.totalWidth - (totalShrink - startNode.totalShrink) <= lineWidth) {
-            // add content to the same line
-            // compute difference and ratio
-            int actualWidth = totalWidth - startNode.totalWidth;
-            if (element.isPenalty()) {
-                actualWidth += element.getW();
-            }
-            newDifference = lineWidth - actualWidth;
-            int available = newDifference >= 0 ? totalStretch - startNode.totalStretch
-                                               : totalShrink - startNode.totalShrink;
-            newRatio = available != 0 ? (float) newDifference / available
-                                      : 0;
-
-            activeList.removeFirst();
-            activeList.add(new KnuthNode(par.indexOf(element), startNode.line + 1, 0,
-                                         newWidth, newStretch, newShrink,
-                                         newRatio, newDifference, 0.0,
-                                         startNode));
-        } else {
-            // start a new line
-            // compute difference and ratio
-            int actualWidth = totalWidth - endNode.totalWidth;
-            if (element.isPenalty()) {
-                actualWidth += element.getW();
-            }
-            newDifference = lineWidth - actualWidth;
-            int available = newDifference >= 0 ? totalStretch - endNode.totalStretch
-                                               : totalShrink - endNode.totalShrink;
-            newRatio = available != 0 ? (float) newDifference / available
-                                      : 0;
-
-            activeList.removeFirst();
-            activeList.add(new KnuthNode(par.indexOf(element), endNode.line + 1, 0,
-                                         newWidth, newStretch, newShrink,
-                                         newRatio, newDifference, 0.0,
-                                         endNode));
-        }
-    }
 
     /**
      * find hyphenation points for every word int the current paragraph
@@ -1174,9 +627,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         // create iterator for the updateList
         ListIterator updateListIterator = updateList.listIterator();
         Update currUpdate = null;
-        int iPreservedElements = 0;
+        //int iPreservedElements = 0;
         int iAddedElements = 0;
-        int iRemovedElements = 0;
+        //int iRemovedElements = 0;
 
         while (updateListIterator.hasNext()) {
             // ask the LMs to apply the changes and return 
@@ -1250,7 +703,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         }
     }
 
-    private BreakPoss getBestBP(ArrayList vecPossEnd) {
+    private BreakPoss getBestBP(List vecPossEnd) {
         if (vecPossEnd.size() == 1) {
             return ((BreakCost) vecPossEnd.get(0)).getBP();
         }
