@@ -1,6 +1,6 @@
-/* 
+/*
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the 
+ * For details on use and redistribution please refer to the
  * LICENSE file included with these sources."
  */
 
@@ -69,16 +69,16 @@ public class CommandLineOptions {
     }
 
     /**
-      *  parses the commandline arguments
-      */
+       *  parses the commandline arguments
+       */
     private void parseOptions (String args[]) {
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-d") || args[i].equals("--full-error-dump")) {
                 errorDump = new Boolean(true);
             } else if (args[i].equals("-x") || args[i].equals("--dump-config")) {
-                dumpConfiguration =  new Boolean(true);
+                dumpConfiguration = new Boolean(true);
             } else if (args[i].equals("-q") || args[i].equals("--quiet")) {
-                quiet =  new Boolean(true);
+                quiet = new Boolean(true);
             } else if (args[i].equals("-c")) {
                 if ((i + 1 == args.length) ||
                         (args[i + 1].charAt(0) == '-')) {
@@ -278,14 +278,14 @@ public class CommandLineOptions {
     }
 
     /**
-      *
-      **/
+       *
+       **/
     public InputHandler getInputHandler () {
         switch (inputmode) {
             case FO_INPUT:
                 return new FOInputHandler(fofile);
             case XSLT_INPUT:
-                return new XSLTInputHandler(xmlfile,xsltfile);
+                return new XSLTInputHandler(xmlfile, xsltfile);
             default:
                 return new FOInputHandler(fofile);
         }
@@ -297,11 +297,34 @@ public class CommandLineOptions {
             case PDF_OUTPUT:
                 return new CommandLineStarter(this);
             case AWT_OUTPUT:
-                return new AWTStarter(this);
+                try {
+                    return((Starter) Class.forName(
+                             "org.apache.fop.apps.AWTStarter").
+                           getConstructor(
+                             new Class[]{CommandLineOptions.class}).
+                           newInstance(new Object[]{this}));
+                } catch (Exception e) {
+                    MessageHandler.errorln(
+                      "ERROR: AWTStarter could not be loaded. " +
+                      e.toString());
+                    return(null);
+                }
             case MIF_OUTPUT:
                 return new CommandLineStarter(this);
             case PRINT_OUTPUT:
-                return new PrintStarter(this);
+                try {
+                    return((Starter) Class.forName(
+                             "org.apache.fop.apps.PrintStarter").
+                           getConstructor(
+                             new Class[]{CommandLineOptions.class}).
+                           newInstance(new Object[]{this}));
+                } catch (Exception e) {
+                    MessageHandler.errorln(
+                      "ERROR: PrintStarter could not be loaded. " +
+                      e.toString());
+                    return(null);
+                }
+
             default:
                 return new CommandLineStarter(this);
         }
@@ -343,18 +366,18 @@ public class CommandLineOptions {
         return quiet;
     }
 
-	public Boolean dumpConfiguration() {
-		return dumpConfiguration;
-	}
+    public Boolean dumpConfiguration() {
+        return dumpConfiguration;
+    }
 
     public Boolean isDebugMode() {
         return errorDump;
     }
 
-	
+
     /**
-      * return either the fofile or the xmlfile
-      */
+       * return either the fofile or the xmlfile
+       */
     public File getInputFile() {
         switch (inputmode) {
             case FO_INPUT:
@@ -368,8 +391,8 @@ public class CommandLineOptions {
 
 
     /**
-      *	 shows the commandline syntax including a summary of all available options and some examples
-      */
+       *	 shows the commandline syntax including a summary of all available options and some examples
+       */
     public static void printUsage() {
         MessageHandler.logln(
           "\nUSAGE\nFop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-print] <outfile>\n" +
@@ -399,8 +422,8 @@ public class CommandLineOptions {
     }
 
     /**
-      *	shows the options for print output
-      */
+       *	shows the options for print output
+       */
     public void printUsagePrintOutput() {
         MessageHandler.errorln(
           "USAGE: -print [-Dstart=i] [-Dend=i] [-Dcopies=i] [-Deven=true|false] " +
@@ -411,8 +434,8 @@ public class CommandLineOptions {
 
 
     /**
-      * debug mode. outputs all commandline settings
-      */
+       * debug mode. outputs all commandline settings
+       */
     private void debug () {
         System.out.print("Input mode: ");
         switch (inputmode) {
@@ -493,9 +516,9 @@ public class CommandLineOptions {
     //debug: create class and output all settings
     public static void main (String args[]) {
         /*
-         for (int i = 0; i < args.length; i++) {
-         	MessageHandler.logln(">"+args[i]+"<");
-         }*/
+          for (int i = 0; i < args.length; i++) {
+          	MessageHandler.logln(">"+args[i]+"<");
+          }*/
 
         CommandLineOptions options = new CommandLineOptions (args);
         //options.debug();
