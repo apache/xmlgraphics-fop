@@ -125,7 +125,7 @@ public class Time extends AbstractPropertyValue {
     }
 
     /**
-     * @param <tt>int</tt> unit as per constants defined in this class
+     * @param unit type of unit as per constants defined in this class
      * @return <tt>double</tt> time value
      */
     public double getTime(int unit) {
@@ -133,8 +133,8 @@ public class Time extends AbstractPropertyValue {
     }
 
     /**
-     * @param <tt>int</tt> unit as per constants defined in this class
-     * @param <tt>double</tt> time in specified units
+     * @param unit  type of unit as per constants defined in this class
+     * @param value  time in specified units
      */
     public void setTime(int unit, double value) {
         units = unit;
@@ -142,7 +142,7 @@ public class Time extends AbstractPropertyValue {
     }
 
     /**
-     * @param <tt>double</tt> time in millisecs
+     * @param time  in millisecs
      */
     public void setTime(double time) {
         units = MSEC;

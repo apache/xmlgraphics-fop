@@ -105,7 +105,6 @@ public class Ems {
      * @param node - the <tt>FONode</tt> with reference to which this
      * <i>EM</i> value is being consructed.  A null value imples the
      * construction of an <i>initial value</i>.
-     * @param property the index of the property with which this value
      * @param propertyName the name of the property with which this value
      * is associated.
      * @param value the number of units.

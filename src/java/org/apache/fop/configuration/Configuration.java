@@ -324,7 +324,6 @@ public class Configuration {
     /**
      * method to access fonts values in the standard configuration
      *
-     * @param key a string containing the key for the configuration value
      * @return HashMap a HashMap containing the values
      * null   if the key is not defined.
      */
