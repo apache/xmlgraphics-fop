@@ -433,7 +433,10 @@ public class Driver {
      * events but isn't a SAX Parser itself.
      */
     public ContentHandler getContentHandler() {
-        if (_stream == null) throw new NullPointerException("OutputStream has not been set. Set before getting the ContentHandler");
+        if (!(_renderer instanceof org.apache.fop.render.awt.AWTRenderer
+              || _renderer instanceof org.apache.fop.render.PrintRenderer)) {
+            if (_stream == null) throw new NullPointerException("OutputStream has not been set. Set before getting the ContentHandler");
+        }
         if (_renderer == null) throw new NullPointerException("The renderer has not been set. Set before getting the ContentHandler");
         StreamRenderer streamRenderer = new StreamRenderer(_stream, _renderer);
         streamRenderer.setLogger(getLogger());
