@@ -24,6 +24,7 @@ import org.apache.fop.fo.FObj;
 
 /**
  * Class modelling the fo:table-and-caption property.
+ * @todo implement validateChildNode()
  */
 public class TableAndCaption extends FObj {
 

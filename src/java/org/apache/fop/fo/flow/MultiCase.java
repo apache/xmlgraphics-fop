@@ -24,6 +24,7 @@ import org.apache.fop.fo.FObj;
 
 /**
  * Class modelling the fo:multi-case object.
+ * @todo implement validateChildNode()
  */
 public class MultiCase extends FObj {
 

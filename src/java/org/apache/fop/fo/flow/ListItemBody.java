@@ -23,8 +23,8 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 
 /**
- * Class modelling the fo:list-item-body object. See Sec. 6.8.4 of the XSL-FO
- * Standard.
+ * Class modelling the fo:list-item-body object.
+ * @todo implement validateChildNode()
  */
 public class ListItemBody extends FObj {
 

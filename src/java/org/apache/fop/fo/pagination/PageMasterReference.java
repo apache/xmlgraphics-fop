@@ -66,11 +66,11 @@ public abstract class PageMasterReference extends FObj
      * Checks that the parent is the right element. The default implementation
      * checks for fo:page-sequence-master.
      * @param parent parent node
-     * @throws FOPException If the parent is invalid.
+     * @throws SAXParseException If the parent is invalid.
      */
     protected void validateParent(FONode parent) throws SAXParseException {
         if (parent.getName().equals("fo:page-sequence-master")) {
-            PageSequenceMaster pageSequenceMaster = (PageSequenceMaster)parent;
+            PageSequenceMaster pageSequenceMaster = (PageSequenceMaster) parent;
 
             if (getMasterName() == null) {
                 getLogger().warn(getName()

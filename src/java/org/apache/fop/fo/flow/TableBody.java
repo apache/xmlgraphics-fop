@@ -33,8 +33,8 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.table.Body;
 
 /**
- * Class modelling the fo:table-body object. See Sec. 6.7.8 of the XSL-FO
- * Standard.
+ * Class modelling the fo:table-body object.
+ * @todo implement validateChildNode()
  */
 public class TableBody extends FObj {
 

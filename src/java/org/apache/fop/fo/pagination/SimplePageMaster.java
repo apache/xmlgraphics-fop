@@ -25,6 +25,7 @@ import java.util.Map;
 
 // XML
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
@@ -44,6 +45,13 @@ public class SimplePageMaster extends FObj {
 
     private String masterName;
 
+    // used for node validation
+    private boolean hasRegionBody = false;
+    private boolean hasRegionBefore = false;
+    private boolean hasRegionAfter = false;
+    private boolean hasRegionStart = false;
+    private boolean hasRegionEnd = false;
+
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
@@ -57,27 +65,88 @@ public class SimplePageMaster extends FObj {
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
 
-        if (parent.getName().equals("fo:layout-master-set")) {
-            LayoutMasterSet layoutMasterSet = (LayoutMasterSet)parent;
-            masterName = this.propertyList.get(PR_MASTER_NAME).getString();
-            if (masterName == null) {
-                getLogger().warn("simple-page-master does not have "
-                        + "a master-name and so is being ignored");
-            } else {
-                try {
-                    layoutMasterSet.addSimplePageMaster(this);
-                } catch (Exception e) {
-                    throw new SAXParseException("Error with adding Page Sequence Master: " 
-                        + e.getMessage(), locator);
-                }
-            }
+        LayoutMasterSet layoutMasterSet = (LayoutMasterSet) parent;
+
+        if (getPropString(PR_MASTER_NAME) == null) {
+            missingPropertyError("master-name");
         } else {
-            throw new SAXParseException("fo:simple-page-master must be child "
-                    + "of fo:layout-master-set, not "
-                    + parent.getName(), locator);
+            layoutMasterSet.addSimplePageMaster(this);
         }
+
         //Well, there are only 5 regions so we can save a bit of memory here
         regions = new HashMap(5);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: (region-body,region-before?,region-after?,region-start?,region-end?)
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
+            if (nsURI == FO_URI && localName.equals("region-body")) {
+                if (hasRegionBody) {
+                    tooManyNodesError(loc, "fo:region-body");
+                } else {
+                    hasRegionBody = true;
+                }
+            } else if (nsURI == FO_URI && localName.equals("region-before")) {
+                if (!hasRegionBody) {
+                    nodesOutOfOrderError(loc, "fo:region-body", "fo:region-before");
+                } else if (hasRegionBefore) {
+                    tooManyNodesError(loc, "fo:region-before");
+                } else if (hasRegionAfter) {
+                    nodesOutOfOrderError(loc, "fo:region-before", "fo:region-after");
+                } else if (hasRegionStart) {
+                    nodesOutOfOrderError(loc, "fo:region-before", "fo:region-start");
+                } else if (hasRegionEnd) {
+                    nodesOutOfOrderError(loc, "fo:region-before", "fo:region-end");
+                } else {
+                    hasRegionBody = true;
+                }
+            } else if (nsURI == FO_URI && localName.equals("region-after")) {
+                if (!hasRegionBody) {
+                    nodesOutOfOrderError(loc, "fo:region-body", "fo:region-after");
+                } else if (hasRegionAfter) {
+                    tooManyNodesError(loc, "fo:region-after");
+                } else if (hasRegionStart) {
+                    nodesOutOfOrderError(loc, "fo:region-after", "fo:region-start");
+                } else if (hasRegionEnd) {
+                    nodesOutOfOrderError(loc, "fo:region-after", "fo:region-end");
+                } else {
+                    hasRegionAfter = true;
+                }
+            } else if (nsURI == FO_URI && localName.equals("region-start")) {
+                if (!hasRegionBody) {
+                    nodesOutOfOrderError(loc, "fo:region-body", "fo:region-start");
+                } else if (hasRegionStart) {
+                    tooManyNodesError(loc, "fo:region-start");
+                } else if (hasRegionEnd) {
+                    nodesOutOfOrderError(loc, "fo:region-start", "fo:region-end");
+                } else {
+                    hasRegionStart = true;
+                }
+            } else if (nsURI == FO_URI && localName.equals("region-end")) {
+                if (!hasRegionBody) {
+                    nodesOutOfOrderError(loc, "fo:region-body", "fo:region-end");
+                } else if (hasRegionEnd) {
+                    tooManyNodesError(loc, "fo:region-end");
+                } else {
+                    hasRegionEnd = true;
+                }
+            } else {
+                invalidChildError(loc, nsURI, localName);
+            }
+    }
+
+    /**
+     * Make sure content model satisfied.
+     * @see org.apache.fop.fo.FONode#end
+     */
+    protected void endOfNode() throws SAXParseException {
+        if (!hasRegionBody) {
+            missingChildElementError("(region-body, region-before?," +
+                " region-after?, region-start?, region-end?)");
+        }
     }
 
     /**
@@ -92,19 +161,14 @@ public class SimplePageMaster extends FObj {
      * @return the page master name
      */
     public String getMasterName() {
-        return masterName;
+        return getPropString(PR_MASTER_NAME);
     }
 
     /**
      * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
     protected void addChildNode(FONode child) {
-        if (child instanceof Region) {
-            addRegion((Region)child);
-        } else {
-            getLogger().error("SimplePageMaster cannot have child of type "
-                    + child.getName());
-        }
+        addRegion((Region)child);
     }
 
     /**
@@ -113,13 +177,7 @@ public class SimplePageMaster extends FObj {
      */
     protected void addRegion(Region region) {
         String key = String.valueOf(region.getRegionClassCode());
-        if (regions.containsKey(key)) {
-            getLogger().error("Only one region of class " + region.getRegionName()
-                    + " allowed within a simple-page-master. The duplicate"
-                    + " region (" + region.getName() + ") is ignored.");
-        } else {
-            regions.put(key, region);
-        }
+        regions.put(key, region);
     }
 
     /**
@@ -148,7 +206,7 @@ public class SimplePageMaster extends FObj {
     protected boolean regionNameExists(String regionName) {
         for (Iterator regenum = regions.values().iterator();
                 regenum.hasNext();) {
-            Region r = (Region)regenum.next();
+            Region r = (Region) regenum.next();
             if (r.getRegionName().equals(regionName)) {
                 return true;
             }
@@ -156,6 +214,9 @@ public class SimplePageMaster extends FObj {
         return false;
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:simple-page-master";
     }

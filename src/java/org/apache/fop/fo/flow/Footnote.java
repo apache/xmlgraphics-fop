@@ -31,8 +31,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 
 /**
- * Class modelling the fo:footnote object. See Sec. 6.10.3 of the XSL-FO
- * Standard.
+ * Class modelling the fo:footnote object.
  */
 public class Footnote extends FObj {
 

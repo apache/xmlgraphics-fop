@@ -53,7 +53,7 @@ import org.apache.fop.util.CharUtilities;
   "this." from blockArea since BlockArea is now local.
  */
  /**
-  * Class modelling the fo:block object. See Sec. 6.5.2 of the XSL-FO Standard.
+  * Class modelling the fo:block object.
   */
 public class Block extends FObjMixed {
 

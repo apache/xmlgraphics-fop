@@ -33,8 +33,8 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 
 /**
- * Class modelling the fo:inline-container object. See Sec. 6.6.8 of the XSL-FO
- * Standard.
+ * Class modelling the fo:inline-container object.
+ * @todo implement validateChildNode()
  */
 public class InlineContainer extends FObj {
 

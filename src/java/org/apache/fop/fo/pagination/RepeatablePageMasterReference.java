@@ -31,8 +31,7 @@ import org.apache.fop.fo.FONode;
  * This handles a reference with a specified number of repeating
  * instances of the referenced page master (may have no limit).
  */
-public class RepeatablePageMasterReference extends PageMasterReference
-            implements SubSequenceSpecifier {
+public class RepeatablePageMasterReference extends PageMasterReference {
 
     private static final int INFINITE = -1;
 

@@ -33,8 +33,7 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.list.ListBlockLayoutManager;
 
 /**
- * Class modelling the fo:list-block object. See Sec. 6.8.2 of the XSL-FO
- * Standard.
+ * Class modelling the fo:list-block object.
  */
 public class ListBlock extends FObj {
 

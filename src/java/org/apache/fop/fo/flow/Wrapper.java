@@ -34,6 +34,7 @@ import org.apache.fop.fo.FObjMixed;
  *
  * Content: (#PCDATA|%inline;|%block;)*
  * Properties: id
+ * @todo implement validateChildNode()
  */
 public class Wrapper extends FObjMixed {
 

@@ -100,12 +100,7 @@ public class PageSequenceMaster extends FObj {
                 getLogger().warn("page-sequence-master does not have "
                                        + "a master-name and so is being ignored");
             } else {
-                try {
-                    this.layoutMasterSet.addPageSequenceMaster(masterName, this);
-                } catch (Exception e) {
-                    throw new SAXParseException("Error with adding Page Sequence Master: " 
-                        + e.getMessage(), locator);
-                }
+                this.layoutMasterSet.addPageSequenceMaster(masterName, this);
             }
         } else {
             throw new SAXParseException("fo:page-sequence-master must be child "

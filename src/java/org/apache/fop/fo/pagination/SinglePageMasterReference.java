@@ -31,8 +31,7 @@ import org.apache.fop.fo.FONode;
  * This is a reference for a single page. It returns the
  * master name only once until reset.
  */
-public class SinglePageMasterReference extends PageMasterReference
-            implements SubSequenceSpecifier {
+public class SinglePageMasterReference extends PageMasterReference {
 
     private static final int FIRST = 0;
     private static final int DONE = 1;

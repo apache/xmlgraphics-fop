@@ -34,8 +34,8 @@ import org.apache.fop.layoutmgr.table.Cell;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 
 /**
- * Class modelling the fo:table-cell object. See Sec. 6.7.10 of the XSL-FO
- * Standard.
+ * Class modelling the fo:table-cell object.
+ * @todo implement validateChildNode()
  */
 public class TableCell extends FObj {
 
