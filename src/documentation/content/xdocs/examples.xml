@@ -6,17 +6,31 @@
   <header>
     <title>Examples</title>
   </header>
-<body>
-<section>
-  <title>Examples</title>
-    <p>Examples for the use of xsl:fo can be found in the Fop distribution in
-       the subdirectory xml-fop/docs/examples/fo. You can start transformation of all fo files into pdf
-       files by starting xml-fop/docs/examples/runtests (only source distribution). The resulting test
-       files can be found in xml-fop/docs/examples/tests
+  <body>
+    <table>
+      <caption>Generated examples</caption>
+      <tr>
+        <th>Description</th>
+        <th>XSL-FO file</th>
+        <th>PDF result</th>
+      </tr>
+      <tr>
+        <td>default font characters</td>
+        <td><link href="fo/fonts.fo">fonts.fo</link></td>
+        <td><link href="fo/fonts.fo.pdf">fonts.fo.pdf</link></td>
+      </tr>
+    </table>
+
+    <section>
+      <title>Examples in the distribution</title>
+    <p>Examples for the use of XSL-FO can be found in the FOP distribution in
+       the subdirectory xml-fop/examples/fo. You can start transformation of all fo files into pdf
+       files by starting xml-fop/examples/fo/runtests (only source distribution). The resulting test
+       files can be found in xml-fop/examples/fo/tests
     </p>
     <p>At the moment the following files are part of the distribution:</p>
     <ul>
-      <li>simple.fo - a very simple file which gives use a first impression of the structure of an fo file
+      <li>simple.fo - a very simple file which gives use a first impression of the structure of an XSL-FO file
       </li>
       <li>normal.fo - a simple file showing the use of a 2 level of headings, normal text and a header.
       </li>
@@ -24,12 +38,12 @@
       </li>
       <li>list.fo - a short tutorial how to use list fo's and properties
       </li>
-      <li>images.fo - shows how to embed gif and jpg images into the xsl:fo file using external-graphic.
+      <li>images.fo - shows how to embed GIF and JPEG images into the XSL-FO file using external-graphic.
       </li>
       <li>border.fo - a not so simple example how to use borders in tables
       </li>
       <li>extensive.fo - a longer test file containing a lot of different flow objects and properties.
-          A good candidate to test your bugfix or new Fop code.
+          A good candidate to test your bugfix or new FOP code.
       </li>
       <li>leader.fo - shows different uses of fo:leader, p.e. as rule or in a table of content
       </li>
@@ -37,24 +51,24 @@
       </li>
       <li>inhprop.fo - shows the use of inherited property values
       </li>
-      <li>instream.fo - shows the use of fo:instream-foreign-object together with svg
+      <li>instream.fo - shows the use of fo:instream-foreign-object together with SVG
       </li>
-      <li>textdeko.fo - shows the use of the property textdecoration
+      <li>textdeko.fo - shows the use of the property text-decoration
       </li>
-      <li>readme.fo - uses an old version of Fop documentation for a longer example
+      <li>readme.fo - uses an old version of FOP documentation for a longer example
       </li>
 
-      <li>Look also into the directory examples/svg. There you find some very extensive svg examples.
-          Just start makedoc.
+      <li>Look also into the directory examples/fo/svg. There you find some very extensive SVG examples.
       </li>
-      <li>In the directory examples/pagination you find a suite of examples showing the use
-          of xsl:fo pagination.
+      <li>In the directory examples/fo/pagination you find a suite of examples showing the use
+          of XSL-FO pagination.
       </li>
     </ul>
-      <p>Developers will find the first steps to a test suite for all implemented formatting objects and
-       properties in xml-fop/test/xml/.</p>
-
-</section>
-</body>
+      <p>
+Developers will find the first steps to a test suite for all implemented
+formatting objects and properties in xml-fop/test/xml/.
+      </p>
+    </section>
+  </body>
 </document>
 

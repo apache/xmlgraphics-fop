@@ -4,36 +4,39 @@
 
 <document>
   <header>
-    <title>FOP</title>
+    <title>Extensions</title>
   </header>
   <body>
-<section>
-  <title>Extensions to FOP</title>
-  <p>Sometimes it is desirable to have extensions to xsl:fo in order to support some feature of the
-     output format which isn't covered by the xsl:fo specification.
-     </p>
-  <section>
-    <title>Default Extensions</title>
-<p>
+    <p>
+Sometimes it is desirable to have extensions to XSL-FO in order to support
+some feature of the output format which isn't covered by the XSL-FO
+specification.
+    </p>
+    <section>
+      <title>Default Extensions</title>
+      <p>
 These extension are available by default. They are automatically loaded
 and you only need to provide the correct namespace for your embedded
-xml markup.
-</p>
-  <section>
-    <title>SVG</title>
-<p>
+XML markup.
+      </p>
+      <section>
+        <title>SVG</title>
+        <p>
 Please see the <link href="svg.html">SVG page</link> for more details.
-</p>
-  </section>
-  <section>
-    <title>Bookmarks</title>
-     <p>To use this standard Fop extension, you need to add a namespace entry for
-     http://xml.apache.org/fop/extensions on the root element. </p>
-
-    <p>You can provide outlines inside the root object (but outside
-       any page-sequences or
-       other formatting objects). Here's an example of an outline entry:</p>
-    <source>
+        </p>
+      </section>
+      <section>
+        <title>Bookmarks</title>
+        <p>
+To use this standard FOP extension, you need to add a namespace entry for
+http://xml.apache.org/fop/extensions on the root element.
+        </p>
+        <p>
+You can provide outlines inside the root object (but outside any
+page-sequences or other formatting objects). Here's an example of an outline
+entry:
+        </p>
+        <source>
 <![CDATA[<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
                xmlns:fox="http://xml.apache.org/fop/extensions">
   <fox:outline internal-destination="sec3">
@@ -44,32 +47,45 @@ Please see the <link href="svg.html">SVG page</link> for more details.
     </fox:outline>
   <fox:outline>
 </fo:root>]]></source>
-    <p>It works similarly to a basic-link. There is also an external-destination
-       property, but it isn't supported currently. See the pdfoutline.fo file in
-      docs/examples/fo for a more complete example.</p>
-  </section>
-  </section>
-  <section>
-    <title>Adding Your Own</title>
-<p>
+        <p>
+It works similarly to a basic-link. There is also an external-destination
+property, but it isn't supported currently. See the pdfoutline.fo file in
+examples/fo/basic for a more complete example.
+        </p>
+      </section>
+      <section>
+        <title>Continued-label (for table-header/-footer</title>
+        <p>
+Please see examples/fo/basic/contlabel.fo
+        </p>
+      </section>
+    </section>
+    <section>
+      <title>Adding Your Own</title>
+        <p>
 To add your own extension you need to do the following things.
-</p>
-<p>
-Write code that implements your extension functionality.
-The easiest place to start is by looking at the code in org.apache.fop.extension.
-</p>
-<p>
-Create a jar file with your classes, it must also include the following file "/META-INF/services/org.apache.fop.fo.ElementMapping". In this file you need to put the fully qualified classname of your element mappings class. This class must implement the "org.apache.fop.fo.ElementMapping" interface.
-</p>
-<p>
-Create your fo file with the extra xml data embedded in the file with the correct name space. The examples for svg and pdfoutline.fo show how this can be done.
-</p>
-<p>
-Put your jar file in the classpath and then run fop over the fo file.
-</p>
-
-  </section>
-</section>
-</body>
+        </p>
+        <ol>
+          <li>
+Write code that implements your extension functionality. The easiest place to
+start is by looking at the code in org.apache.fop.extension.
+          </li>
+          <li>
+Create a jar file with your classes, it must also include the following file
+"/META-INF/services/org.apache.fop.fo.ElementMapping". In this file you need
+to put the fully qualified classname of your element mappings class. This
+class must implement the "org.apache.fop.fo.ElementMapping" interface.
+          </li>
+          <li>
+Create your XSL-FO file with the extra XML data embedded in the file with the
+correct name space. The examples for SVG and pdfoutline.fo show how this can
+be done.
+          </li>
+          <li>
+Put your jar file in the classpath and then run fop over the XSL-FO file.
+          </li>
+        </ol>
+    </section>
+  </body>
 </document>
 
