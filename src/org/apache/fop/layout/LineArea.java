@@ -665,10 +665,10 @@ public class LineArea extends Area {
                 int vert = ia.getVerticalAlign();
                 if(vert == VerticalAlign.SUPER) {
                     int fh = fontState.getAscender();
-                    ia.setYOffset((int)(placementOffset - (fh / 3.0)));
+                    ia.setYOffset((int)(placementOffset - (2 * fh / 3.0)));
                 } else if(vert == VerticalAlign.SUB) {
                     int fh = fontState.getAscender();
-                    ia.setYOffset((int)(placementOffset + (fh / 3.0)));
+                    ia.setYOffset((int)(placementOffset + (2 * fh / 3.0)));
                 }
             } else {
             }
