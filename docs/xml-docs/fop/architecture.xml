@@ -16,7 +16,7 @@ this class, a typical sequence is:</p>
 <p><code>driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");</code></p>
 <p><code>driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");</code></p>
 <p><code>driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");</code></p>
-<p><code>driver.setWriter(new PrintWriter(new FileWriter(args[1])));</code></p>
+  <p><code>driver.setOutputStream(new FileOutputStream(args[1]));</code></p>
 <p></p>
 <p><code>driver.buildFOTree(parser, fileInputSource(args[0]));</code></p>
 <p></p>
@@ -262,6 +262,11 @@ Rendering will not be discussed further in this document, as most of our
 current effort must concentrate on layout. Section 4.12 in the XSL WD
 discusses some issues applicable to rendering.
 </p>
+
+<p>
+You can find UML diagramms for all Fop packages (latest release version) 
+<jump href="http://xml.apache.org/dist/fop-uml.zip">here</jump>.</p>
+
 </s2>
 
 <s2 title="SVG">

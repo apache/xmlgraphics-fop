@@ -41,7 +41,7 @@
      Management Committee' (An explanation of these roles can be found <jump href="http://xml.apache.org/roles.html">here</jump>).</p>
   </s2>
   <s2 title="Get familiar with the Fop related standards">
-  <p>At the moment Fop is mainly a tools to render XSL:FO files to pdf. Therefore if you want to contribute to Fop you should become
+  <p>At the moment Fop is mainly a tool to render XSL:FO files to pdf. Therefore if you want to contribute to Fop you should become
      familiar with these standards. You can find their internet addresses on our <jump href="specs.html">website</jump>.</p>
   </s2>
   <s2 title="Fop's architecture">
