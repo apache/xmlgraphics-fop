@@ -24,6 +24,7 @@ import org.apache.fop.layout.RelativePositionProps;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
+import org.apache.fop.layoutmgr.LayoutInfo;
 
 import org.w3c.dom.Document;
 
@@ -136,6 +137,9 @@ public class InstreamForeignObject extends FObj {
         areaCurrent.setWidth((int)size.getX() * 1000);
         areaCurrent.setHeight((int)size.getY() * 1000);
         areaCurrent.setOffset(0);
+        areaCurrent.info = new LayoutInfo();
+        areaCurrent.info.alignment = properties.get("vertical-align").getEnum();
+        areaCurrent.info.lead = areaCurrent.getHeight();
 
         return areaCurrent;
     }

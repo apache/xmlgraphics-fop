@@ -13,6 +13,10 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.MinOptMax;
 import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.fo.properties.VerticalAlign;
+
+import org.apache.fop.area.inline.Word;
+import org.apache.fop.area.inline.Character;
 
 import java.util.ListIterator;
 import java.util.List;
@@ -31,11 +35,18 @@ public class LineLayoutManager extends AbstractLayoutManager {
     private boolean bFirstLine;
     private LayoutManager curLM;
     private MinOptMax remainingIPD;
-    private int lineHeight = 14000;
+    // the following values must be set by the block
+    // these are the dominant basline and lineheight values
+    private int lineHeight;
+    private int lead;
+    private int follow;
 
-    public LineLayoutManager(ListIterator fobjIter) {
+    public LineLayoutManager(ListIterator fobjIter, int lh, int l, int f) {
         super(null);
         this.fobjIter = fobjIter;
+        lineHeight = lh;
+        lead = l;
+        follow = f;
     }
 
     /**
@@ -70,20 +81,112 @@ public class LineLayoutManager extends AbstractLayoutManager {
     public void flush() {
         if (lineArea != null) {
             // Adjust spacing as necessary
-            // Calculate height, based on content (or does the Area do this?)
-            int maxHeight = lineHeight;
-            List inlineAreas = lineArea.getInlineAreas();
-            for(Iterator iter = inlineAreas.iterator(); iter.hasNext(); ) {
-                InlineArea inline = (InlineArea)iter.next();
-                int h = inline.getHeight();
-                if(h > maxHeight) {
-                    maxHeight = h;
-                }
-            }
-            lineArea.setHeight(maxHeight);
+
+            verticalAlign();
 
             parentLM.addChild(lineArea);
             lineArea = null;
+        }
+    }
+
+    private void verticalAlign() {
+        int maxHeight = lineHeight;
+        List inlineAreas = lineArea.getInlineAreas();
+
+        // get smallest possible offset to before edge
+        // this depends on the height of no and middle alignments
+        int before = lead;
+        int after = follow;
+        for(Iterator iter = inlineAreas.iterator(); iter.hasNext(); ) {
+            InlineArea inline = (InlineArea)iter.next();
+            LayoutInfo info = inline.info;
+            int al;
+            int ld = inline.getHeight();
+            if(info != null) {
+                al = info.alignment;
+                ld = info.lead;
+            } else {
+                al = VerticalAlign.BASELINE;
+            }
+            if(al == VerticalAlign.BASELINE) {
+                if(ld > before) {
+                    before = ld;
+                }
+                if(inline.getHeight() > before) {
+                    before = inline.getHeight();
+                }
+            } else if(al == VerticalAlign.MIDDLE) {
+                if(inline.getHeight() / 2  + lead / 2 > before) {
+                    before = inline.getHeight() / 2 + lead / 2;
+                }
+                if(inline.getHeight() / 2 - lead / 2 > after) {
+                    after = inline.getHeight() / 2 - lead / 2;
+                }
+            } else if(al == VerticalAlign.TOP) {
+            } else if(al == VerticalAlign.BOTTOM) {
+            }
+        }
+
+        // then align all before, no and middle alignment
+        for(Iterator iter = inlineAreas.iterator(); iter.hasNext(); ) {
+            InlineArea inline = (InlineArea)iter.next();
+            LayoutInfo info = inline.info;
+            int al;
+            int ld = inline.getHeight();
+            boolean bloffset = false;
+            if(info != null) {
+                al = info.alignment;
+                ld = info.lead;
+                bloffset = info.blOffset;
+            } else {
+                al = VerticalAlign.BASELINE;
+            }
+            if(al == VerticalAlign.BASELINE) {
+                // the offset position for text is the baseline
+                if(bloffset) {
+                    inline.setOffset(before);
+                } else {
+                    inline.setOffset(before - ld);
+                }
+                if(inline.getHeight() - ld > after) {
+                    after = inline.getHeight() - ld;
+                }
+            } else if(al == VerticalAlign.MIDDLE) {
+                inline.setOffset(before - inline.getHeight() / 2 - lead / 2);
+            } else if(al == VerticalAlign.TOP) {
+                inline.setOffset(0);
+                if(inline.getHeight() - before > after) {
+                    after = inline.getHeight() - before;
+                }
+            } else if(al == VerticalAlign.BOTTOM) {
+                if(inline.getHeight() - before > after) {
+                    after = inline.getHeight() - before;
+                }
+            }
+        }
+
+        // after alignment depends on maximum height of before
+        // and middle alignments
+        for(Iterator iter = inlineAreas.iterator(); iter.hasNext(); ) {
+            InlineArea inline = (InlineArea)iter.next();
+            LayoutInfo info = inline.info;
+            int al; 
+            if(info != null) {
+                al = info.alignment;
+            } else {
+                al = VerticalAlign.BASELINE;
+            }
+            if(al == VerticalAlign.BASELINE) {
+            } else if(al == VerticalAlign.MIDDLE) {
+            } else if(al == VerticalAlign.TOP) {
+            } else if(al == VerticalAlign.BOTTOM) {
+                inline.setOffset(before + after - inline.getHeight());
+            }
+        }
+        if(before + after > maxHeight) {
+            lineArea.setHeight(before + after);
+        } else {
+            lineArea.setHeight(maxHeight); 
         }
     }
 

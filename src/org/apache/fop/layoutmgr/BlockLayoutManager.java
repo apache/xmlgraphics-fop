@@ -23,12 +23,18 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
     private Block curBlockArea;
 
+    int lead = 12000;
+    int lineHeight = 14000;
+    int follow = 2000;
+
     public BlockLayoutManager(FObj fobj) {
         super(fobj);
     }
 
     public void setBlockTextInfo(TextInfo ti) {
-
+        lead = ti.fs.getAscender();
+        follow = ti.fs.getDescender();
+        lineHeight = ti.lineHeight;
     }
 
     /**
@@ -54,7 +60,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             FObj childFO = (FObj) children.next();
             if (childFO.generatesInlineAreas()) {
                 children.previous();
-                lm = new LineLayoutManager(children);
+                lm = new LineLayoutManager(children, lineHeight, lead, follow);
             } else {
                 lm = childFO.getLayoutManager();
             }

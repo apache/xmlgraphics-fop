@@ -28,6 +28,7 @@ import java.util.NoSuchElementException;
         public int wrapOption;
         public int whiteSpaceCollapse;
         public int verticalAlign;
+        public int lineHeight;
 
         // Textdecoration
         public boolean underlined = false;

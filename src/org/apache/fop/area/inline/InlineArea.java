@@ -12,6 +12,8 @@ import org.apache.fop.area.MinOptMax;
 import org.apache.fop.area.Trait;
 import org.apache.fop.render.Renderer;
 
+import org.apache.fop.layoutmgr.LayoutInfo;
+
 import java.util.List;
 import java.util.ArrayList;
 
@@ -28,6 +30,7 @@ public class InlineArea extends Area {
     // position within the line area, either top or baseline
     int verticalPosition;
     // width, height, vertical alignment
+    public LayoutInfo info = null;
 
     // store properties in array list, need better solution
     ArrayList props = null;

@@ -21,7 +21,7 @@ import org.apache.fop.datatypes.ColorType;
  */
 public class FObjMixed extends FObj {
     TextInfo textInfo = null;
-    FontInfo fontInfo=null;
+    protected FontInfo fontInfo=null;
 
     public FObjMixed(FONode parent) {
         super(parent);

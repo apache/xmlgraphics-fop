@@ -254,6 +254,8 @@ public abstract class AbstractRenderer implements Renderer {
 
     public void renderViewport(Viewport viewport) {
         Area content = viewport.getContent();
+        int saveBP = currentBPPosition;
+        currentBPPosition += viewport.getOffset();
         if (content instanceof Image) {
             renderImage((Image) content);
         } else if (content instanceof Container) {
@@ -262,6 +264,7 @@ public abstract class AbstractRenderer implements Renderer {
             renderForeignObject((ForeignObject) content);
         }
         currentBlockIPPosition += viewport.getWidth();
+        currentBPPosition = saveBP;
     }
 
     public void renderImage(Image image) {

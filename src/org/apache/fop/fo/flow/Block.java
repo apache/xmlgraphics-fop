@@ -16,6 +16,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.BlockLayoutManager;
 import org.apache.fop.util.CharUtilities;
+import org.apache.fop.apps.StreamRenderer;
 
 import org.xml.sax.Attributes;
 
@@ -370,12 +371,13 @@ public class Block extends FObjMixed {
 BlockLayoutManager blm = new BlockLayoutManager(this);
 TextInfo ti = new TextInfo();
 
-/*      try {
+      try {
     ti.fs = propMgr.getFontState(fontInfo);
       } catch (FOPException fopex) {
     log.error("Error setting FontState for characters: " +
         fopex.getMessage());
-      }*/
+      }
+            ti.lineHeight = this.lineHeight;
 
             ColorType c = getProperty("color").getColorType();
             ti.color = c;
