@@ -77,15 +77,15 @@ public class FontFamilySet extends AbstractPropertyValue {
      * An array of <tt>String</tt>s containing a prioritized list of
      * font family or generic font family names.
      */
-    private String[] fontFamilyNames;
+    protected final String[] fontFamilyNames;
 
     /**
      * @param property <tt>int</tt> index of the property.
-     * @param fontNames an array of <tt>String</tt>s containing a
+     * @param fontFamilyNames  contains a
      * prioritized list of font names, as literals or <tt>NCName</tt>s,
      * being either the full name of a font, or an enumeration token
      * representing a font family.
-     * @exception PropertyException.
+     * @exception PropertyException
      */
     public FontFamilySet(int property, String[] fontFamilyNames)
         throws PropertyException
@@ -96,11 +96,11 @@ public class FontFamilySet extends AbstractPropertyValue {
 
     /**
      * @param propertyName <tt>String</tt> name of the property.
-     * @param fontNames an array of <tt>String</tt>s containing a
+     * @param fontFamilyNames  contains a
      * prioritized list of font names, as literals or <tt>NCName</tt>s,
      * being either the full name of a font, or an enumeration token
      * representing a font family.
-     * @exception PropertyException.
+     * @exception PropertyException
      */
     public FontFamilySet(String propertyName, String[] fontFamilyNames)
         throws PropertyException
@@ -132,7 +132,7 @@ public class FontFamilySet extends AbstractPropertyValue {
         }
 
         public Object next() {
-            if (hasNext()) return (Object)fontFamilyNames[index++];
+            if (hasNext()) return fontFamilyNames[index++];
             throw new NoSuchElementException();
         }
 
