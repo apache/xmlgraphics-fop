@@ -16,14 +16,6 @@ import org.apache.fop.apps.FOPException;
 
 public class TableFooter extends TableBody {
 
-    public int getYPosition() {
-        return areaContainer.getCurrentYPosition() - spaceBefore;
-    }
-
-    public void setYPosition(int value) {
-        areaContainer.setYPosition(value + 2 * spaceBefore);
-    }
-
     public TableFooter(FONode parent) {
         super(parent);
     }

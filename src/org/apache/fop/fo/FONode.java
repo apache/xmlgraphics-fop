@@ -10,7 +10,6 @@ package org.apache.fop.fo;
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.StructureHandler;
-import org.apache.fop.layout.Area;
 import org.apache.fop.util.CharUtilities;
 
 // Avalon
@@ -70,18 +69,6 @@ abstract public class FONode {
      */
     protected void addCharacters(char data[], int start, int length) {
         // ignore
-    }
-
-    /**
-     * generates the area or areas for this formatting object
-     * and adds these to the area. This method should always be
-     * overridden by all sub classes
-     *
-     * @param area
-     */
-    public Status layout(Area area) throws FOPException {
-        // should always be overridden
-        return new Status(Status.OK);
     }
 
     /**

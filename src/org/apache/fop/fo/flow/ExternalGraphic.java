@@ -16,6 +16,7 @@ import org.apache.fop.image.*;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
+import org.apache.fop.layoutmgr.LayoutInfo;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.Viewport;
 
@@ -36,7 +37,6 @@ public class ExternalGraphic extends FObj {
     String src;
     int height;
     int width;
-    String id;
 
     public ExternalGraphic(FONode parent) {
         super(parent);
@@ -57,14 +57,24 @@ public class ExternalGraphic extends FObj {
         // if we need to load this image to get its size
         ImageFactory fact = ImageFactory.getInstance();
         FopImage fopimage = fact.getImage(url, userAgent);
-        // if(fopimage == null) {
-        // error
-        // }
-        // if(!fopimage.load(FopImage.DIMENSIONS)) {
-        // error
-        // }
+        if(fopimage == null) {
+            // error
+            return null;
+        }
+        // load dimensions
+        if(!fopimage.load(FopImage.DIMENSIONS, userAgent)) {
+            // error
+            return null;
+        }
         Image imArea = new Image(url);
         Viewport vp = new Viewport(imArea);
+        vp.setWidth((int)fopimage.getWidth() * 1000);
+        vp.setHeight((int)fopimage.getHeight() * 1000);
+        vp.setOffset(0);
+        vp.info = new LayoutInfo();
+        vp.info.alignment = properties.get("vertical-align").getEnum();
+        vp.info.lead = vp.getHeight();
+
         return vp;
     }
 

@@ -35,8 +35,6 @@ import org.apache.fop.layout.HyphenationProps;
 import org.apache.fop.apps.FOPException;
 import java.text.MessageFormat;
 import java.text.FieldPosition;
-import org.apache.fop.layout.Area;
-import org.apache.fop.layout.ColumnArea;
 
 public class PropertyManager {
 
@@ -133,7 +131,7 @@ public class PropertyManager {
         return hyphProps;
     }
 
-    public int checkBreakBefore(Area area) {
+    /*public int checkBreakBefore(Area area) {
         if (!(area instanceof ColumnArea)) {
             switch (properties.get("break-before").getEnum()) {
             case BreakBefore.PAGE:
@@ -197,7 +195,7 @@ public class PropertyManager {
         default:
             return Status.OK;
         }
-    }
+    }*/
 
 
     public MarginProps getMarginProps() {

@@ -26,8 +26,6 @@ public class TableColumn extends FObj {
 
     boolean setup = false;
 
-    AreaContainer areaContainer;
-
     public TableColumn(FONode parent) {
         super(parent);
     }
@@ -56,7 +54,7 @@ public class TableColumn extends FObj {
         return numColumnsRepeated;
     }
 
-    public void doSetup(Area area) throws FOPException {
+    public void doSetup() throws FOPException {
 
         // Common Border, Padding, and Background Properties
         // only background apply, border apply if border-collapse
@@ -85,45 +83,8 @@ public class TableColumn extends FObj {
 
         // initialize id
         setupID();
-        area.getIDReferences().initializeID(id, area);
 
         setup = true;
-    }
-
-    public Status layout(Area area) throws FOPException {
-        if (this.marker == BREAK_AFTER) {
-            return new Status(Status.OK);
-        }
-
-        if (this.marker == START) {
-            if (!setup) {
-                doSetup(area);
-            }
-        }
-	if (columnWidth > 0) {
-	    this.areaContainer =
-		new AreaContainer(propMgr.getFontState(area.getFontInfo()),
-				  columnOffset, 0, columnWidth,
-				  area.getContentHeight(), Position.RELATIVE);
-	    areaContainer.foCreator = this;    // G Seshadri
-	    areaContainer.setPage(area.getPage());
-	    areaContainer.setBorderAndPadding(propMgr.getBorderAndPadding());
-	    areaContainer.setBackgroundColor(this.backgroundColor);
-	    areaContainer.setHeight(area.getHeight());
-	    area.addChild(areaContainer);
-	}
-        return new Status(Status.OK);
-    }
-
-    public void setColumnOffset(int columnOffset) {
-        this.columnOffset = columnOffset;
-    }
-
-    public void setHeight(int height) {
-	if (areaContainer != null) {
-	    areaContainer.setMaxHeight(height);
-	    areaContainer.setHeight(height);
-	}
     }
 
 }

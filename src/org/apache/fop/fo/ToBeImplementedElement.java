@@ -11,7 +11,6 @@ package org.apache.fop.fo;
 import org.apache.fop.fo.*;
 import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.Area;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -22,10 +21,9 @@ public class ToBeImplementedElement extends FObj {
         super(parent);
     }
 
-    public Status layout(Area area) throws FOPException {
+    public void setup() {
         log.debug("This element \"" + this.name
                              + "\" is not yet implemented.");
-        return new Status(Status.OK);
     }
 
 }

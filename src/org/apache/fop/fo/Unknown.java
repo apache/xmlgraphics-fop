@@ -12,7 +12,6 @@ import org.apache.fop.fo.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.AreaTree;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -33,8 +32,7 @@ public class Unknown extends FONode {
         super(parent);
     }
 
-    public Status layout(Area area) throws FOPException {
+    public void setup() {
         log.debug("Layout Unknown element");
-        return new Status(Status.OK);
     }
 }

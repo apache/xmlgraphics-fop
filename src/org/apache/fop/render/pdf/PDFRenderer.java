@@ -519,7 +519,7 @@ public class PDFRenderer extends PrintRenderer {
             currentStream.add("ET\nq\n" + ((float)w) + " 0 0 "
                               + ((float)-h) + " "
                               + (((float)currentBlockIPPosition) / 1000f) + " "
-                              + (((float)(currentBPPosition - 1000 * h)) / 1000f) + " cm\n" + "/Im"
+                              + (((float)(currentBPPosition + 1000 * h)) / 1000f) + " cm\n" + "/Im"
                               + xobj + " Do\nQ\nBT\n");
         }
 

@@ -23,23 +23,13 @@ public class ListItemLabel extends FObj {
         super(parent);
     }
 
-    public Status layout(Area area) throws FOPException {
-        int numChildren = this.children.size();
-
-        if (numChildren != 1) {
-            throw new FOPException("list-item-label must have exactly one block in this version of FOP");
-        }
+    public void setup() throws FOPException {
 
         // Common Accessibility Properties
         AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
 
         setupID();
         // this.properties.get("keep-together");
-
-        // initialize id
-        area.getIDReferences().initializeID(id, area);
-
-        Block block = (Block)children.get(0);
 
         /*
          * For calculating the lineage - The fo:list-item-label formatting object
@@ -48,10 +38,6 @@ public class ListItemLabel extends FObj {
          * of areas returned by each of the children of the fo:list-item-label.
          */
 
-        Status status;
-        status = block.layout(area);
-        area.addDisplaySpace(-block.getAreaHeight());
-        return status;
     }
 
 }

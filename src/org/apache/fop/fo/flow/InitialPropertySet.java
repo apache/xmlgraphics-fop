@@ -12,7 +12,6 @@ import org.apache.fop.fo.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.AreaTree;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -23,7 +22,7 @@ public class InitialPropertySet extends ToBeImplementedElement {
         super(parent);
     }
 
-    public Status layout(Area area) throws FOPException {
+    public void setup() {
 
         // Common Accessibility Properties
         AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
@@ -52,6 +51,5 @@ public class InitialPropertySet extends ToBeImplementedElement {
         // this.properties.get("text-transform");
         // this.properties.get("word-spacing");
 
-        return super.layout(area);
     }
 }

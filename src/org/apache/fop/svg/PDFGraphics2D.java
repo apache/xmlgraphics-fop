@@ -166,7 +166,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         Rectangle rect = b.getBounds();
         rect.height = -rect.height;
 
-        if(linkType != LinkSet.EXTERNAL) {
+        if(linkType != PDFLink.EXTERNAL) {
             String pdfdest = "/FitR " + dest;
             currentPage.addAnnotation(pdfDoc.makeLinkCurrentPage(rect, pdfdest));
         } else {

@@ -8,7 +8,6 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.pdf.PDFGoTo;
-import org.apache.fop.layout.AreaContainer;
 
 
 // Java
@@ -16,7 +15,6 @@ import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Enumeration;
 import java.util.NoSuchElementException;
-import org.apache.fop.layout.Area;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -47,20 +45,6 @@ public class IDReferences {
         idValidation = new Hashtable();
         idUnvalidated = new Hashtable();
     }
-
-
-    /**
-     * Creates and configures the specified id.
-     *
-     * @param id     The id to initialize
-     * @param area   The area where this id was encountered
-     * @exception FOPException
-     */
-    public void initializeID(String id, Area area) throws FOPException {
-        createID(id);
-        configureID(id, area);
-    }
-
 
     /**
      * Creates id entry
@@ -132,24 +116,6 @@ public class IDReferences {
      */
     public boolean doesUnvalidatedIDExist(String id) {
         return idUnvalidated.containsKey(id);
-    }
-
-    /**
-     * Configures this id
-     *
-     * @param id     The id to configure
-     * @param area   The area where the id was encountered
-     */
-    public void configureID(String id, Area area) {
-        if (id != null &&!id.equals("")) {
-            setPosition(id,
-                        area.getPage().getBody().getXPosition()
-                        + area.getTableCellXOffset() - ID_PADDING,
-                        area.getPage().getBody().getYPosition()
-                        - area.getAbsoluteHeight() + ID_PADDING);
-            setPageNumber(id, area.getPage().getNumber());
-            area.getPage().addToIDList(id);
-        }
     }
 
     /**

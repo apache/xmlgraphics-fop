@@ -7,7 +7,6 @@
 
 package org.apache.fop.fo;
 
-import org.apache.fop.layout.Area;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.apps.FOPException;
@@ -63,34 +62,11 @@ public class FObjMixed extends FObj {
         addChild(ft);
     }
 
-    public Status layout(Area area) throws FOPException {
+    public void setup() {
 
         if (this.properties != null) {
             setupID();
-            if (id != null) {
-                if (this.marker == START) {
-                    if (area.getIDReferences() != null)
-                        area.getIDReferences().createID(id);
-                    this.marker = 0;
-                }
-
-                if (this.marker == 0) {
-                    if (area.getIDReferences() != null)
-                        area.getIDReferences().configureID(id, area);
-                }
-            }
         }
-
-        int numChildren = this.children.size();
-        for (int i = this.marker; i < numChildren; i++) {
-            FONode fo = (FONode) children.get(i);
-            Status status;
-            if ((status = fo.layout(area)).isIncomplete()) {
-                this.marker = i;
-                return status;
-            }
-        }
-        return new Status(Status.OK);
     }
 
     public CharIterator charIterator() {

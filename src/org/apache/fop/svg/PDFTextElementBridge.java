@@ -98,3 +98,4 @@ public class PDFTextElementBridge extends SVGTextElementBridge {
         return true;
     }
 }
+

@@ -55,10 +55,10 @@ public class PDFANode extends CompositeGraphicsNode {
             super.paint(g2d);
             if(g2d instanceof PDFGraphics2D) {
                 PDFGraphics2D pdfg = (PDFGraphics2D)g2d;
-                int type = org.apache.fop.layout.LinkSet.EXTERNAL;
+                int type = org.apache.fop.pdf.PDFLink.EXTERNAL;
                 Shape outline = getOutline();
                 if(destination.startsWith("#svgView(viewBox(")) {
-                    type = org.apache.fop.layout.LinkSet.INTERNAL;
+                    type = org.apache.fop.pdf.PDFLink.INTERNAL;
                     String nums = destination.substring(17, destination.length() - 2);
                     float x = 0;
                     float y = 0;

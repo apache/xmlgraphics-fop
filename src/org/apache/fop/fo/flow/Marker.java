@@ -19,7 +19,6 @@ import org.xml.sax.Attributes;
 public class Marker extends FObjMixed {
 
     private String markerClassName;
-    private Area registryArea;
 
     public Marker(FONode parent) {
         super(parent);
@@ -42,39 +41,9 @@ public class Marker extends FObjMixed {
         }
     }
 
-    public Status layout(Area area) throws FOPException {
-        // no layout action desired
-        this.registryArea = area;
-        area.addMarker(this);
-        area.getPage().registerMarker(this);
-        // System.out.println("Marker being registered in area '" + area + "'");
-        return new Status(Status.OK);
-    }
-
-    public Status layoutMarker(Area area) throws FOPException {
-        if (this.marker == START)
-            this.marker = 0;
-
-        int numChildren = this.children.size();
-        for (int i = this.marker; i < numChildren; i++) {
-            FONode fo = (FONode)children.get(i);
-
-            Status status;
-            if ((status = fo.layout(area)).isIncomplete()) {
-                this.marker = i;
-                return status;
-            }
-        }
-
-        return new Status(Status.OK);
-    }
-
     public String getMarkerClassName() {
         return markerClassName;
     }
 
-    public Area getRegistryArea() {
-        return registryArea;
-    }
 
 }

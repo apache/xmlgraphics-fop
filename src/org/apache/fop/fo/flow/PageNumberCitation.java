@@ -81,7 +81,6 @@ public class PageNumberCitation extends FObj {
     float blue;
     int wrapOption;
     int whiteSpaceCollapse;
-    Area area;
     String pageNumber;
     String refId;
     TextState ts;
@@ -103,15 +102,7 @@ public class PageNumberCitation extends FObj {
         return null;
     }
 
-    public Status layout(Area area) throws FOPException {
-        if (!(area instanceof BlockArea)) {
-            log.warn("page-number-citation outside block area");
-            return new Status(Status.OK);
-        }
-
-        IDReferences idReferences = area.getIDReferences();
-        this.area = area;
-        if (this.marker == START) {
+    public void setup() {
 
             // Common Accessibility Properties
             AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
@@ -162,56 +153,8 @@ public class PageNumberCitation extends FObj {
             this.refId = this.properties.get("ref-id").getString();
 
             if (this.refId.equals("")) {
-                throw new FOPException("page-number-citation must contain \"ref-id\"");
+                //throw new FOPException("page-number-citation must contain \"ref-id\"");
             }
-
-            // create id
-            idReferences.createID(id);
-            ts = new TextState();
-
-            this.marker = 0;
-        }
-
-        if (marker == 0) {
-            idReferences.configureID(id, area);
-        }
-
-
-        pageNumber = idReferences.getPageNumber(refId);
-
-        if (pageNumber != null) { // if we already know the page number
-            this.marker = FOText.addText((BlockArea) area,
-                                         propMgr.getFontState(area.getFontInfo()), red,
-                                         green, blue, wrapOption, null, whiteSpaceCollapse,
-                                         pageNumber.toCharArray(), 0, pageNumber.length(),
-                                         ts, VerticalAlign.BASELINE);
-        } else { // add pageNumberCitation to area to be resolved during rendering
-            BlockArea blockArea = (BlockArea) area;
-            LineArea la = blockArea.getCurrentLineArea();
-            if (la == null) {
-                return new Status(Status.AREA_FULL_NONE);
-            }
-            la.changeFont(propMgr.getFontState(area.getFontInfo()));
-            la.changeColor(red, green, blue);
-            la.changeWrapOption(wrapOption);
-            la.changeWhiteSpaceCollapse(whiteSpaceCollapse);
-            /*
-             * la.changeHyphenation(language, country, hyphenate,
-             * hyphenationChar, hyphenationPushCharacterCount,
-             * hyphenationRemainCharacterCount);
-             */
-
-            // blockArea.setupLinkSet(null);
-            la.addPageNumberCitation(refId, null);
-            this.marker = -1;
-        }
-
-
-        if (this.marker == -1) {
-            return new Status(Status.OK);
-        } else {
-            return new Status(Status.AREA_FULL_NONE);
-        }
 
     }
 

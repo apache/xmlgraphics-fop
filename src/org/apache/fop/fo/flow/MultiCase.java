@@ -22,7 +22,7 @@ public class MultiCase extends ToBeImplementedElement {
         super(parent);
     }
 
-    public Status layout(Area area) throws FOPException {
+    public void setup() {
 
         // Common Accessibility Properties
         AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
@@ -32,6 +32,5 @@ public class MultiCase extends ToBeImplementedElement {
         // this.properties.get("case-name");
         // this.properties.get("case-title");
 
-        return super.layout(area);
     }
 }

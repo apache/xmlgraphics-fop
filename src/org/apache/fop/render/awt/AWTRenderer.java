@@ -72,7 +72,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
 
     /**
      * Image Object and Graphics Object. The Graphics Object is the Graphics
-     * object that is contained withing the Image Object.
+     * object that is contained within the Image Object.
      */
     private BufferedImage pageImage = null;
     private Graphics2D graphics = null;

@@ -12,7 +12,6 @@ import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.layout.*;
-import org.apache.fop.layout.BlockArea;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 
@@ -37,8 +36,7 @@ public class ListBlock extends FObj {
         super(parent);
     }
 
-    public Status layout(Area area) throws FOPException {
-        if (this.marker == START) {
+    public void setup() throws FOPException {
 
             // Common Accessibility Properties
             AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
@@ -81,86 +79,6 @@ public class ListBlock extends FObj {
             this.backgroundColor =
                 this.properties.get("background-color").getColorType();
 
-            this.marker = 0;
-
-            if (area instanceof BlockArea) {
-                area.end();
-            }
-
-            if (spaceBefore != 0) {
-                area.addDisplaySpace(spaceBefore);
-            }
-
-            if (this.isInTableCell) {
-                startIndent += forcedStartOffset;
-                endIndent += area.getAllocationWidth() - forcedWidth
-                             - forcedStartOffset;
-            }
-
-            // initialize id
-            area.getIDReferences().initializeID(id, area);
-        }
-
-        BlockArea blockArea =
-            new BlockArea(propMgr.getFontState(area.getFontInfo()),
-                          area.getAllocationWidth(), area.spaceLeft(),
-                          startIndent, endIndent, 0, align, alignLast,
-                          lineHeight);
-        blockArea.setGeneratedBy(this);
-        this.areasGenerated++;
-        if (this.areasGenerated == 1)
-            blockArea.isFirst(true);
-            // for normal areas this should be the only pair
-        blockArea.addLineagePair(this, this.areasGenerated);
-
-        // markers
-        //if (this.hasMarkers())
-            //blockArea.addMarkers(this.getMarkers());
-
-
-        blockArea.setPage(area.getPage());
-        blockArea.setBackgroundColor(backgroundColor);
-        blockArea.start();
-
-        blockArea.setAbsoluteHeight(area.getAbsoluteHeight());
-        blockArea.setIDReferences(area.getIDReferences());
-
-        int numChildren = this.children.size();
-        for (int i = this.marker; i < numChildren; i++) {
-            if (!(children.get(i) instanceof ListItem)) {
-                log.error("children of list-blocks must be list-items");
-                return new Status(Status.OK);
-            }
-            ListItem listItem = (ListItem)children.get(i);
-            Status status;
-            if ((status = listItem.layout(blockArea)).isIncomplete()) {
-                if (status.getCode() == Status.AREA_FULL_NONE && i > 0) {
-                    status = new Status(Status.AREA_FULL_SOME);
-                }
-                this.marker = i;
-                blockArea.end();
-                area.addChild(blockArea);
-                area.increaseHeight(blockArea.getHeight());
-                area.setAbsoluteHeight(blockArea.getAbsoluteHeight());
-                return status;
-            }
-        }
-
-        blockArea.end();
-        area.addChild(blockArea);
-        area.increaseHeight(blockArea.getHeight());
-        area.setAbsoluteHeight(blockArea.getAbsoluteHeight());
-
-        if (spaceAfter != 0) {
-            area.addDisplaySpace(spaceAfter);
-        }
-
-        if (area instanceof BlockArea) {
-            area.start();
-        }
-
-        blockArea.isLast(true);
-        return new Status(Status.OK);
     }
 
     public boolean generatesInlineAreas() {

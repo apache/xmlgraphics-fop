@@ -9,10 +9,8 @@ package org.apache.fop.fo;
 
 // FOP
 import org.apache.fop.fo.*;
-import org.apache.fop.layout.Area;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.layout.LinkSet;
 import org.apache.fop.datatypes.IDReferences;
 
 import org.w3c.dom.*;
@@ -151,18 +149,5 @@ public abstract class XMLObj extends FONode {
         element.appendChild(text);
     }
 
-    /**
-     * layout this formatting object.
-     *
-     * @param area the area to layout the object into
-     * @return the status of the layout
-     */
-    public Status layout(Area area) throws FOPException {
-        /* generate a warning */
-        log.warn("" + this.name + " outside foreign xml");
-
-        /* return status */
-        return new Status(Status.OK);
-    }
 }
 

@@ -14,7 +14,6 @@ package org.apache.fop.pdf;
 // referenced and I'd rather not do it
 import org.apache.fop.image.FopImage;
 
-import org.apache.fop.layout.LinkSet;
 import org.apache.fop.datatypes.ColorSpace;
 
 import org.apache.fop.render.pdf.CIDFont;
@@ -60,7 +59,7 @@ public class PDFDocument {
     /**
      * the version of PDF supported
      */
-    protected static final String pdfVersion = "1.3";
+    protected static final String pdfVersion = "1.4";
 
     /**
      * the current character position
@@ -999,7 +998,7 @@ public class PDFDocument {
         PDFLink link = new PDFLink(++this.objectcount, rect);
         this.objects.add(link);
 
-        if (linkType == LinkSet.EXTERNAL) {
+        if (linkType == PDFLink.EXTERNAL) {
             // check destination
             if (destination.endsWith(".pdf")) {    // FileSpec
                 PDFFileSpec fileSpec = new PDFFileSpec(++this.objectcount,

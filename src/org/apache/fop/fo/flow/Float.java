@@ -23,11 +23,10 @@ public class Float extends ToBeImplementedElement {
         this.name = "fo:float";
     }
 
-    public Status layout(Area area) throws FOPException {
+    public void setup() {
 
         // this.properties.get("float");
         // this.properties.get("clear");
 
-        return super.layout(area);
     }
 }

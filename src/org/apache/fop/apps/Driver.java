@@ -11,7 +11,6 @@ package org.apache.fop.apps;
 import org.apache.fop.fo.FOUserAgent;
 import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.ElementMapping;
-import org.apache.fop.layout.AreaTree;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.configuration.ConfigurationReader;
 import org.apache.fop.configuration.Configuration;
@@ -139,11 +138,6 @@ public class Driver {
     private FOTreeBuilder _treeBuilder;
 
     /**
-     * the area tree that is the result of formatting the FO tree
-     */
-    private AreaTree _areaTree;
-
-    /**
      * the renderer to use to output the area tree
      */
     private Renderer _renderer;
@@ -242,7 +236,6 @@ public class Driver {
      * The output stream is cleared. The renderer is cleared.
      */
     public synchronized void reset() {
-        _areaTree = null;
         _source = null;
         _stream = null;
         _reader = null;

@@ -22,13 +22,12 @@ public class MultiProperties extends ToBeImplementedElement {
         super(parent);
     }
 
-    public Status layout(Area area) throws FOPException {
+    public void setup() {
 
         // Common Accessibility Properties
         AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
 
         setupID();
 
-        return super.layout(area);
     }
 }

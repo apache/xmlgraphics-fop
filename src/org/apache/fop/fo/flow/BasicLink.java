@@ -30,7 +30,7 @@ public class BasicLink extends Inline {
        super.addLayoutManager(lms);
     }
 
-    public Status layout(Area area) throws FOPException {
+    public void setup() {
         String destination;
         int linkType;
 
@@ -69,56 +69,6 @@ public class BasicLink extends Inline {
         // this.properties.get("target-presentation-context");  
         // this.properties.get("target-stylesheet");  
 
-        if (!(destination =
-                this.properties.get("internal-destination").getString()).equals("")) {
-            linkType = LinkSet.INTERNAL;
-        } else if (!(destination =
-        this.properties.get("external-destination").getString()).equals("")) {
-            linkType = LinkSet.EXTERNAL;
-        } else {
-            throw new FOPException("internal-destination or external-destination must be specified in basic-link");
-        }
-
-        if (this.marker == START) {
-            // initialize id
-            area.getIDReferences().initializeID(id, area);
-            this.marker = 0;
-        }
-
-        // new LinkedArea to gather up inlines
-        LinkSet ls = new LinkSet(destination, area, linkType);
-
-        Page p = area.getPage();
-
-        AreaContainer ac = p.getBody().getCurrentColumnArea();
-        if (ac == null) {
-            throw new FOPException("Couldn't get ancestor AreaContainer when processing basic-link");
-        }
-
-        int numChildren = this.children.size();
-        for (int i = this.marker; i < numChildren; i++) {
-            FONode fo = (FONode)children.get(i);
-            if(fo instanceof FObj)
-                ((FObj)fo).setLinkSet(ls);
-
-            Status status;
-            if ((status = fo.layout(area)).isIncomplete()) {
-                this.marker = i;
-                return status;
-            }
-        }
-
-        ls.applyAreaContainerOffsets(ac, area);
-
-        // pass on command line
-        String mergeLinks = System.getProperty("links.merge");
-        if ((null != mergeLinks) &&!mergeLinks.equalsIgnoreCase("no")) {
-            ls.mergeLinks();
-        }
-
-        p.addLinkSet(ls);
-
-        return new Status(Status.OK);
     }
 
 }

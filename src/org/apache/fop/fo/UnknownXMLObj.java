@@ -8,7 +8,6 @@
 package org.apache.fop.fo;
 
 import org.apache.fop.fo.*;
-import org.apache.fop.layout.Area;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.layout.inline.*;
 import org.apache.fop.apps.FOPException;
@@ -59,15 +58,5 @@ public class UnknownXMLObj extends XMLObj {
         super.addCharacters(data, start, length);
     }
 
-    public Status layout(Area area) throws FOPException {
-        if(!"".equals(this.namespace)) {
-            log.error("no handler defined for " + this.namespace + ":" + this.name + " foreign xml");
-        } else {
-            log.error("no handler defined for (none):" + this.name + " foreign xml");
-        }
-
-        /* return status */
-        return new Status(Status.OK);
-    }
 }
 
