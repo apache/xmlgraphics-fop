@@ -29,7 +29,6 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.CharIterator;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;

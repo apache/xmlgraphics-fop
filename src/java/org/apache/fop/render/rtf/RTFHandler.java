@@ -29,7 +29,6 @@ import org.apache.commons.logging.Log;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.FOEventHandler;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;

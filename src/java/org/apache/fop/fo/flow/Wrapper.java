@@ -24,7 +24,6 @@ import java.util.ListIterator;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FObjMixed;
 
 /**
