@@ -301,7 +301,34 @@ public class PDFRenderer implements Renderer {
     }
 
 	public void renderBodyAreaContainer(BodyAreaContainer area) {
-  		renderAreaContainer(area.getBeforeFloatReferenceArea());
+        int saveY = this.currentYPosition;
+        int saveX = this.currentAreaContainerXPosition;
+
+        if (area.getPosition() == Position.ABSOLUTE) {
+            // Y position is computed assuming positive Y axis, adjust for negative postscript one
+            this.currentYPosition = area.getYPosition();
+            this.currentAreaContainerXPosition = area.getXPosition();
+        } else if (area.getPosition() == Position.RELATIVE) {
+            this.currentYPosition -= area.getYPosition();
+            this.currentAreaContainerXPosition += area.getXPosition();
+        }
+		
+        this.currentXPosition = this.currentAreaContainerXPosition;
+        int w, h;
+        int rx = this.currentAreaContainerXPosition;
+        w = area.getContentWidth();
+        h = area.getContentHeight();
+        int ry = this.currentYPosition;
+        ColorType bg = area.getBackgroundColor();
+
+        // I'm not sure I should have to check for bg being null
+        // but I do
+        if ((bg != null) && (bg.alpha() == 0)) {
+            this.addRect(rx, ry, w, -h, new PDFColor(bg), new PDFColor(bg));
+        }
+
+		// floats & footnotes stuff
+		renderAreaContainer(area.getBeforeFloatReferenceArea());
   		renderAreaContainer(area.getFootnoteReferenceArea());
 		
 		// main reference area
@@ -310,6 +337,13 @@ public class PDFRenderer implements Renderer {
 			Box b = (Box) e.nextElement();
 			b.render(this);	// span areas
 		}		
+
+        if (area.getPosition() != Position.STATIC) {
+            this.currentYPosition = saveY;
+            this.currentAreaContainerXPosition = saveX;
+        } else
+            this.currentYPosition -= area.getHeight();
+
 	}
 
 	public void renderSpanArea(SpanArea area) {
