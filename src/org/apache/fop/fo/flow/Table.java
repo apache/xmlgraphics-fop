@@ -218,9 +218,11 @@ public class Table extends FObj {
 			status = new Status(Status.AREA_FULL_SOME);
 		    }
 		    //areaContainer.end();
-		    area.addChild(areaContainer);
-		    area.increaseHeight(areaContainer.getHeight());
-                    area.setAbsoluteHeight(areaContainer.getAbsoluteHeight()); 
+    		if(!(/*(i == 0) && */(areaContainer.getContentHeight() <= 0))) {
+	    	    area.addChild(areaContainer);
+		        area.increaseHeight(areaContainer.getHeight());
+                    area.setAbsoluteHeight(areaContainer.getAbsoluteHeight());
+            }
 		    return status;
 		}
 	    }

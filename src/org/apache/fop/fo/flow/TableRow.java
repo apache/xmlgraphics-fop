@@ -104,6 +104,7 @@ public class TableRow extends FObj {
     Vector columns;
 
     AreaContainer areaContainer;
+    DisplaySpace spacer = null;
 
     public TableRow(FObj parent, PropertyList propertyList) {
 	super(parent, propertyList);
@@ -211,7 +212,8 @@ public class TableRow extends FObj {
 	}
 
 	if ((spaceBefore != 0) && (this.marker ==0)) {
-	    area.addDisplaySpace(spaceBefore);
+	    spacer = new DisplaySpace(spaceBefore);
+	    area.increaseHeight(spaceBefore);
 	}
 
         if ( marker==0 ) {
@@ -267,6 +269,8 @@ public class TableRow extends FObj {
 		    status = new Status(Status.AREA_FULL_SOME);
 		}
     	        
+    	        if(spacer != null)
+        	        area.removeChild(spacer);
     	        area.removeChild(areaContainer);
                 this.resetMarker();                
                 this.removeID(area.getIDReferences());
@@ -284,6 +288,8 @@ public class TableRow extends FObj {
             cell.setHeight(largestCellHeight);
 	}
 
+    if(spacer != null)
+        area.addChild(spacer);
 	area.addChild(areaContainer);
 	areaContainer.end();
         area.addDisplaySpace(largestCellHeight
