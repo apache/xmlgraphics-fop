@@ -11,7 +11,7 @@ the build directory.
 The environment for the build can be set up by copying the xml-fop
 tree from the web page, and adding the support jars to the xml-fop/lib
 directory.  I am currently building with the set of jars that were
-current at fop 0.19.
+current at fop 0.20.0.
 
 To build, set the environment variables FOPDEV and JAVA_HOME.
 JAVA_HOME should be the directory under which the jre directory
@@ -26,13 +26,22 @@ directory, in order
 These are designed as Bourne and up shell files.  Unix only, I'm
 afraid.
 
-The fopcomp script is designed to execute from anywhere in the source
-tree where .java files may be found.  Make sure fopcomp is accessible
-via your PATH.  Then, e.g.,
+The fopcomp script (found in the bin directory) is designed to execute
+from anywhere in the source tree where .java files may be found.
+Make sure fopcomp is accessible via your PATH.  Then, e.g.,
 
 cd src/org/apache/fop/apps
 fopcomp Fop.java
 
+N.B. fopcomp shebangs /bin/ksh.  As an alternative, try the
+fopcomp-bash script, which is identical except for #!/bin/bash.  It
+will work with any modern (ksh-style) sh which supports the `typeset'
+method of specifying local shell variables.
+
+Note that, for now, the files from the conf directory are also
+installed in the build/classes conf directory.  This messiness
+will be cleaned up when I get to the point of setting up an
+ant build environment.
 
 Running.
 
