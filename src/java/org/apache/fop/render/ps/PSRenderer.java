@@ -107,7 +107,6 @@ public class PSRenderer extends AbstractRenderer {
     public static final String MIME_TYPE = "application/postscript";
 
     /** The application producing the PostScript */
-    protected String producer;
     private int currentPageNumber = 0;
 
     private boolean enableComments = true;
@@ -133,15 +132,6 @@ public class PSRenderer extends AbstractRenderer {
         this.autoRotateLandscape = cfg.getChild("auto-rotate-landscape").getValueAsBoolean(false);
     }
     
-    /**
-     * Set the document's producer
-     *
-     * @param producer string indicating application producing the PostScript
-     */
-    public void setProducer(String producer) {
-        this.producer = producer;
-    }
-
     /**
      * @see org.apache.fop.render.Renderer#setUserAgent(FOUserAgent)
      */

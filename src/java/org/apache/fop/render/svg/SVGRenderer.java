@@ -175,12 +175,6 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#setProducer(String)
-     */
-    public void setProducer(String producer) {
-    }
-
-    /**
      * @see org.apache.fop.render.Renderer#startRenderer(OutputStream)
      */
     public void startRenderer(OutputStream outputStream)

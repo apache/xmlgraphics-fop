@@ -53,13 +53,13 @@ package org.apache.fop.render;
 // Java
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Map;
 import java.util.List;
 import java.util.Iterator;
 
 // FOP
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.FOUserAgent;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BeforeFloat;
 import org.apache.fop.area.Block;
@@ -87,6 +87,8 @@ import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.Word;
 import org.apache.fop.area.inline.Character;
+import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.layout.FontInfo;
 
 // Avalon
 import org.apache.avalon.framework.logger.AbstractLogEnabled;
@@ -106,6 +108,16 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
      * user agent
      */
     protected FOUserAgent userAgent;
+
+    /**
+     * producer (usually "FOP")
+     */
+    protected String producer = "FOP";
+
+    /**
+     * creator of document
+     */
+    protected String creator = null;
 
     /**
      * renderer configuration
@@ -146,12 +158,17 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
     }
 
     /** @see org.apache.fop.render.Renderer */
-    public void setProducer(String producer) {
+    public void setProducer(String inProducer) {
+        producer = inProducer;
     }
 
     /** @see org.apache.fop.render.Renderer */
-    public void setCreator(String creator) {
+    public void setCreator(String inCreator) {
+        creator = inCreator;
     }
+
+    /** @see org.apache.fop.render.Renderer */
+    public abstract void setupFontInfo(FontInfo fontInfo);
 
     /** @see org.apache.fop.render.Renderer */
     public void setUserAgent(FOUserAgent agent) {
@@ -162,6 +179,14 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
     public void setOptions(Map opt) {
         options = opt;
     }
+
+    /** @see org.apache.fop.render.Renderer */
+    public void startRenderer(OutputStream outputStream)
+        throws IOException { }
+
+    /** @see org.apache.fop.render.Renderer */
+    public void stopRenderer()
+        throws IOException { }
 
     /**
      * Check if this renderer supports out of order rendering. If this renderer
