@@ -14,4 +14,4 @@ set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\avalon-framework-cvs-20020806.jar
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\jimi-1.0.jar
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\jai_core.jar
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\jai_codec.jar
-java -cp %LOCALCLASSPATH% org.apache.fop.apps.Fop %1 %2 %3 %4 %5 %6 %7 %8
+java -cp "%LOCALCLASSPATH%" org.apache.fop.apps.Fop %1 %2 %3 %4 %5 %6 %7 %8
