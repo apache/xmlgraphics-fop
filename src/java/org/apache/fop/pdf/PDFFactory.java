@@ -1023,7 +1023,7 @@ public class PDFFactory {
                     new PDFCIDFont(basefont,
                                    cidMetrics.getCIDType(),
                                    cidMetrics.getDefaultWidth(),
-                                   cidMetrics.getWidths(), sysInfo,
+                                   cidMetrics.getSubsetWidths(), sysInfo,
                                    (PDFCIDFontDescriptor)pdfdesc);
                 getDocument().registerObject(cidFont);
 
