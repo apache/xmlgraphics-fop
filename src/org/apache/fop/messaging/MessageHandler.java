@@ -87,42 +87,43 @@ public class MessageHandler {
      * @param message the message for the user
      */
     public static void log(String message) {
-        if (quiet)
-	    return;
+        if (quiet) {
+            return;
+        }
 
-	if (logger == null) {
-	    logger = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
-	    logger.warn("Screen logger not set.");
-	}
-	
-	setMessage(message);
-	switch (outputMethod) {
-	case SCREEN:
-	    logger.debug(getMessage());
-	    break;
-	case FILE:
-	    if (fileOpened) {
-		writer.print(getMessage());
-		writer.flush();
-	    } else {
-		openFile();
-		writer.print(getMessage());
-		writer.flush();
-	    }
-	    break;
-	case EVENT:
-	    setMessage(message);
-	    Enumeration enum = listeners.elements();
-	    while (enum.hasMoreElements()) {
-		((MessageListener)enum.nextElement()).processMessage(new MessageEvent(getMessage()));
-	    }
-	    break;
-	case NONE:
-	    // do nothing
-	    break;
-	default:
-	    logger.debug(message);
-	}
+        if (logger == null) {
+            logger = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
+            logger.warn("Screen logger not set.");
+        }
+
+        setMessage(message);
+        switch (outputMethod) {
+        case SCREEN:
+            logger.info(getMessage());
+            break;
+        case FILE:
+            if (fileOpened) {
+                writer.print(getMessage());
+                writer.flush();
+            } else {
+                openFile();
+                writer.print(getMessage());
+                writer.flush();
+            }
+            break;
+        case EVENT:
+            setMessage(message);
+            Enumeration enum = listeners.elements();
+            while (enum.hasMoreElements()) {
+                ((MessageListener)enum.nextElement()).processMessage(new MessageEvent(getMessage()));
+            }
+            break;
+        case NONE:
+            // do nothing
+            break;
+        default:
+            logger.info(message);
+        }
     }
 
     /**
@@ -139,10 +140,10 @@ public class MessageHandler {
      */
 
     public static void error(String errorMessage) {
-	if (logger == null) {
-	    logger = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
-	    logger.warn("Screen logger not set.");
-	}
+        if (logger == null) {
+            logger = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
+            logger.warn("Screen logger not set.");
+        }
 
         setMessage(errorMessage);
         switch (outputMethod) {
@@ -205,9 +206,9 @@ public class MessageHandler {
      * @param newLogger a logger for screen output. This may not be null.
      */
     public static void setScreenLogger(Logger newLogger) {
-	if (newLogger == null)
-	    throw new NullPointerException();
-	logger = newLogger;
+        if (newLogger == null)
+            throw new NullPointerException();
+        logger = newLogger;
     }
 
     /**

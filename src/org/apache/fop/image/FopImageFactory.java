@@ -30,6 +30,13 @@ public class FopImageFactory {
     private static Map m_urlMap = new java.util.HashMap();
 
     /**
+     * The class name of the generic image handler.
+     * Will be either jimi or jai depending on what
+     * is available.
+     */
+    private static String m_genericImageClassName = null;
+
+    /**
      * create an FopImage objects.
      * @param href image URL as a String
      * @return a new FopImage object
@@ -126,24 +133,18 @@ public class FopImageFactory {
         String imgClassName = null;
         if ("image/gif".equals(imgMimeType)) {
             imgClassName = "org.apache.fop.image.GifImage";
-            // imgClassName = "org.apache.fop.image.JAIImage";
         } else if ("image/jpeg".equals(imgMimeType)) {
             imgClassName = "org.apache.fop.image.JpegImage";
-            // imgClassName = "org.apache.fop.image.JAIImage";
         } else if ("image/bmp".equals(imgMimeType)) {
             imgClassName = "org.apache.fop.image.BmpImage";
-            // imgClassName = "org.apache.fop.image.JAIImage";
         } else if ("image/png".equals(imgMimeType)) {
-            imgClassName = "org.apache.fop.image.JimiImage";
-            // imgClassName = "org.apache.fop.image.JAIImage";
+            imgClassName = getGenericImageClassName();
         } else if ("image/tga".equals(imgMimeType)) {
-            imgClassName = "org.apache.fop.image.JimiImage";
-            // imgClassName = "org.apache.fop.image.JAIImage";
+            imgClassName = getGenericImageClassName();
         } else if ("image/eps".equals(imgMimeType)) {
             imgClassName = "org.apache.fop.image.EPSImage";
         } else if ("image/tiff".equals(imgMimeType)) {
-            imgClassName = "org.apache.fop.image.JimiImage";
-            // imgClassName = "org.apache.fop.image.JAIImage";
+            imgClassName = getGenericImageClassName();
         } else if ("image/svg+xml".equals(imgMimeType)) {
             imgClassName = "org.apache.fop.image.SVGImage";
         }
@@ -152,8 +153,8 @@ public class FopImageFactory {
                                         + absoluteURL.toString() + ") : "
                                         + imgMimeType);
 
-            // load the right image class
-            // return new <FopImage implementing class>
+        // load the right image class
+        // return new <FopImage implementing class>
         Object imageInstance = null;
         Class imageClass = null;
         try {
@@ -194,6 +195,27 @@ public class FopImageFactory {
         m_urlMap.put(href, imageInstance);
         return (FopImage)imageInstance;
     }
+
+
+    /**
+     * Determines the class name of the generic image handler
+     * This should really come from a config file but we leave this
+     * to some future time.
+     */
+    private static String getGenericImageClassName() {
+
+        if (m_genericImageClassName == null) {
+            try {
+                Class.forName("org.apache.fop.image.JAIImage");
+                m_genericImageClassName = "org.apache.fop.image.JAIImage";
+            } catch (Exception ex) {
+                /* on any exception assume Jai is not present and use Jimi instead */
+                m_genericImageClassName = "org.apache.fop.image.JimiImage";
+            }
+        }
+        return m_genericImageClassName;
+    }
+
 
     /**
      * Clear the image cache.

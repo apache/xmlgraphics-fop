@@ -194,8 +194,8 @@ class FOPTaskStarter extends Starter {
     FOPTaskStarter(Fop task) throws FOPException {
         this.task = task;
 
-	log = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
-	MessageHandler.setScreenLogger(log);
+    log = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
+    MessageHandler.setScreenLogger(log);
     }
 
     private int determineRenderer(String format) {
@@ -264,16 +264,21 @@ class FOPTaskStarter extends Starter {
 
         try {
             if (task.getFofile() != null) {
-                Configuration.put("baseDir",
-                                  task.getFofile().getParentFile().toURL().
-                                  toExternalForm());
+                if (task.getBasedir() != null) {
+                    Configuration.put("baseDir",
+                                      task.getBasedir().toURL().
+                                      toExternalForm());
+                } else {
+                    Configuration.put("baseDir",
+                                      task.getFofile().getParentFile().toURL().
+                                      toExternalForm());
+                }
             }
+            task.log("Using base directory: " +
+                     Configuration.getValue("baseDir"), Project.MSG_DEBUG);
         } catch (Exception e) {
             log.error("Error setting base directory",e);
         }
-
-        task.log("Using base directory: " +
-                 Configuration.getValue("baseDir"), Project.MSG_DEBUG);
 
         int rint = determineRenderer(task.getFormat());
         String newExtension = determineExtension(rint);
@@ -308,13 +313,19 @@ class FOPTaskStarter extends Starter {
                     outf = new File(task.getOutdir(), outf.getName());
                 }
                 try {
-                    Configuration.put("baseDir",
-                                      fs.getDir(task.getProject()).toURL().
-                                      toExternalForm());
-
+                    if (task.getBasedir() != null) {
+                        Configuration.put("baseDir",
+                                          task.getBasedir().toURL().
+                                          toExternalForm());
+                    } else {
+                        Configuration.put("baseDir",
+                                          fs.getDir(task.getProject()).toURL().
+                                          toExternalForm());
+                    }
+                    task.log("Using base directory: " +
+                             Configuration.getValue("baseDir"), Project.MSG_DEBUG);
                 } catch (Exception e) {
-                    task.log("Error setting base directory",
-                             Project.MSG_DEBUG);
+                    log.error("Error setting base directory", e);
                 }
 
                 render(f, outf, rint);
@@ -348,11 +359,11 @@ class FOPTaskStarter extends Starter {
             Driver driver = new Driver(inputHandler.getInputSource(), out);
             driver.setLogger(log);
             driver.setRenderer(renderer);
-	    if (renderer == Driver.RENDER_XML) {
-		HashMap rendererOptions = new HashMap();
-		rendererOptions.put("fineDetail", new Boolean(true));
-		driver.getRenderer().setOptions(rendererOptions);
-	    }
+            if (renderer == Driver.RENDER_XML) {
+                HashMap rendererOptions = new HashMap();
+                rendererOptions.put("fineDetail", new Boolean(true));
+                driver.getRenderer().setOptions(rendererOptions);
+            }
             driver.setXMLReader(parser);
             driver.run();
             out.close();

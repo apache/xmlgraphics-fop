@@ -37,6 +37,8 @@ LOCALCLASSPATH=$LOCALCLASSPATH:$LIBDIR/batik.jar
 LOCALCLASSPATH=$LOCALCLASSPATH:$LIBDIR/avalon-framework-cvs-20020806.jar
 LOCALCLASSPATH=$LOCALCLASSPATH:$LIBDIR/bsf.jar
 LOCALCLASSPATH=$LOCALCLASSPATH:$LIBDIR/jimi-1.0.jar
+LOCALCLASSPATH=$LOCALCLASSPATH:$LIBDIR/jai_core.jar
+LOCALCLASSPATH=$LOCALCLASSPATH:$LIBDIR/jai_codec.jar
 
 # antRun must be executable (can't do this in build.xml because Ant uses antRun
 # to do the chmod)
