@@ -20,7 +20,7 @@ package org.apache.fop.render.svg;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.Title;
+import org.apache.fop.area.LineArea;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.TextArea;
@@ -78,7 +78,7 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
     private Element pagesGroup = null;
 
     // first sequence title
-    private Title docTitle = null;
+    private LineArea docTitle = null;
 
     private RendererContext context;
 
@@ -205,7 +205,7 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
     /**
      * @see org.apache.fop.render.Renderer#startPageSequence(Title)
      */
-    public void startPageSequence(Title seqTitle) {
+    public void startPageSequence(LineArea seqTitle) {
         totalWidth += sequenceWidth;
         if (sequenceHeight > totalHeight) {
             totalHeight = sequenceHeight;

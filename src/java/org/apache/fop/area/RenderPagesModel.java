@@ -142,7 +142,7 @@ public class RenderPagesModel extends StorePagesModel {
      * started with the given title.
      * @param title the title of the new page sequence
      */
-    public void startPageSequence(Title title) {
+    public void startPageSequence(LineArea title) {
         super.startPageSequence(title);
         renderer.startPageSequence(title);
     }

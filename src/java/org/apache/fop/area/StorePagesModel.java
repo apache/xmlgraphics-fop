@@ -47,7 +47,7 @@ public class StorePagesModel extends AreaTreeModel {
      * This creates a new list for the pages in the new page sequence.
      * @param title the title of the page sequence.
      */
-    public void startPageSequence(Title title) {
+    public void startPageSequence(LineArea title) {
         titles.add(title);
         if (pageSequence == null) {
             pageSequence = new java.util.ArrayList();
@@ -139,8 +139,8 @@ public class StorePagesModel extends AreaTreeModel {
      * @param count the page sequence count      
      * @return the title of the page sequence    
      */      
-    public Title getTitle(int count) {   
-        return (Title) titles.get(count);
+    public LineArea getTitle(int count) {   
+        return (LineArea) titles.get(count);
     }
      
     /**

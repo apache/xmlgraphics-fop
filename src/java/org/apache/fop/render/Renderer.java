@@ -25,7 +25,7 @@ import java.io.IOException;
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.Title;
+import org.apache.fop.area.LineArea;
 import org.apache.fop.area.TreeExt;
 import org.apache.fop.area.inline.Container;
 import org.apache.fop.fonts.FontInfo;
@@ -124,7 +124,7 @@ public interface Renderer {
      *
      * @param seqTitle  The title of the page sequence
      */
-    void startPageSequence(Title seqTitle);
+    void startPageSequence(LineArea seqTitle);
 
     /**
      * Tells the renderer to render a particular page. A renderer typically
