@@ -60,7 +60,7 @@ import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
-import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.XmlEvent;
 
 /**
  * Implements the fo:simple-page-master flow object
@@ -73,10 +73,10 @@ public class FoRegionAfter extends FoRegionBeforeAfter {
     /**
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
-     * @param event the <tt>XMLEvent</tt> that triggered the creation of
+     * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
      */
-    public FoRegionAfter(FOTree foTree, FONode parent, XMLEvent event)
+    public FoRegionAfter(FOTree foTree, FONode parent, XmlEvent event)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.REGION_AFTER, parent, event);

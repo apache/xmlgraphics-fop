@@ -67,7 +67,7 @@ import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
 
 /**
@@ -138,7 +138,7 @@ public class FoListItem extends FONode {
      * (marker*, list-item-label,list-item-body)
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
-     * @param event the <tt>XMLEvent</tt> that triggered the creation of
+     * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
      * @param stateFlags - passed down from the parent.  Includes the
      * attribute set information.
@@ -149,12 +149,12 @@ public class FoListItem extends FONode {
     {
         super(foTree, FObjectNames.LIST_ITEM, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
-        XMLEvent ev;
+        XmlEvent ev;
         // Look for zero or more markers
         String nowProcessing = "marker";
         try {
             while ((ev = xmlevents.expectStartElement
-                    (FObjectNames.MARKER, XMLEvent.DISCARD_W_SPACE))
+                    (FObjectNames.MARKER, XmlEvent.DISCARD_W_SPACE))
                    != null) {
                 new FoMarker(getFOTree(), this, (FoXMLEvent)ev, stateFlags);
                 numMarkers++;
@@ -165,7 +165,7 @@ public class FoListItem extends FONode {
             // Look for one list-item-label
             nowProcessing = "list-item-label";
             if ((ev = xmlevents.expectStartElement
-                    (FObjectNames.LIST_ITEM_LABEL, XMLEvent.DISCARD_W_SPACE))
+                    (FObjectNames.LIST_ITEM_LABEL, XmlEvent.DISCARD_W_SPACE))
                    == null)
                 throw new FOPException
                         ("No list-item-label in list-item.");
@@ -177,7 +177,7 @@ public class FoListItem extends FONode {
             // Look for one list-item-body
             nowProcessing = "list-item-body";
             if ((ev = xmlevents.expectStartElement
-                    (FObjectNames.LIST_ITEM_BODY, XMLEvent.DISCARD_W_SPACE))
+                    (FObjectNames.LIST_ITEM_BODY, XmlEvent.DISCARD_W_SPACE))
                    == null)
                 throw new FOPException
                         ("No list-item-body in list-item.");

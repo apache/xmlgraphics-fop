@@ -68,7 +68,7 @@ import org.xml.sax.Attributes;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Ints;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.Namespaces;
 
 /**
@@ -135,7 +135,7 @@ public class FOAttributes {
      * @param foNode - the <tt>FONode</tt> with which these attributes are
      * associated.
      */
-    public FOAttributes(XMLEvent event, FONode foNode) throws FOPException {
+    public FOAttributes(XmlEvent event, FONode foNode) throws FOPException {
 
         // If the event is null, there is no event associated with this
         // node, probably because this is a manufactured node; e.g.,
@@ -143,13 +143,13 @@ public class FOAttributes {
         // includes an empty foAttrMap HashMap.
         if (event == null) return;
 
-        if (event.getType() == XMLEvent.CHARACTERS)
+        if (event.getType() == XmlEvent.CHARACTERS)
             return;  // go with the empty foAttrMap
 
         // Create the foAttrMap.
         Attributes attributes = event.getAttributes();
         if (attributes == null) throw new FOPException
-                                       ("No Attributes in XMLEvent");
+                                       ("No Attributes in XmlEvent");
         for (int i = 0; i < attributes.getLength(); i++) {
             String attrUri = attributes.getURI(i);
             String attrLocalname = attributes.getLocalName(i);
@@ -265,7 +265,7 @@ public class FOAttributes {
      * Get an unmodifiable <tt>Map</tt> of the attribute values for a
      * particular namespace.
      * @param uriIndex an <tt>int</tt> containing the index of the attribute
-     * values namespace, maintained in an <tt>XMLEvent</tt> <tt>static</tt>
+     * values namespace, maintained in an <tt>XmlEvent</tt> <tt>static</tt>
      * array.
      * @return an unmodifiable <tt>Map</tt> of the attribute values
      * within the indexed namespace, for this attribute list, indexed by the
@@ -287,7 +287,7 @@ public class FOAttributes {
     /**
      * Get the value of an attribute in a particular namespace.
      * @param uriIndex an <tt>int</tt> index of the URIs maintained
-     * by <tt>XMLEvent</tt>.
+     * by <tt>XmlEvent</tt>.
      * @param localName a <tt>String</tt> with the local name of the
      * attribute.  In the case of the default attribute namespace, this
      * will be the fo property name.

@@ -66,7 +66,7 @@ import org.apache.fop.pool.Poolable;
  * The <tt>XMLSerialHandler</tt> methods set the values directly.
  */
 
-public class FoXMLEvent extends XMLEvent {
+public class FoXMLEvent extends XmlEvent {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -127,7 +127,7 @@ public class FoXMLEvent extends XMLEvent {
     /**
      * Clear the fields of this event.  Provided for pool operations.
      * Neither the <i>namespaces</i> nor the <i>id</i> field is cleared.
-     * @return the cleared <tt>XMLEvent</tt> event.
+     * @return the cleared <tt>XmlEvent</tt> event.
      */
     public Poolable clear() {
         foType = FObjectNames.NO_FO;
@@ -137,7 +137,7 @@ public class FoXMLEvent extends XMLEvent {
     /**
      * Clear the fields of this event.  Provided for pool operations.
      * Neither the <i>namespaces</i> nor the <i>id</i> field is cleared.
-     * @return the cleared <tt>XMLEvent</tt> event.
+     * @return the cleared <tt>XmlEvent</tt> event.
      */
     public FoXMLEvent clearFo() {
         return (FoXMLEvent)clear();
@@ -148,10 +148,10 @@ public class FoXMLEvent extends XMLEvent {
      * Provided for pool operations.
      * Neither the <i>namespaces</i> nor the <i>id</i> field is copied.
      * The <i>namespaces</i> field is not cleared.
-     * @param ev the <tt>XMLEvent</tt> to copy.
-     * @return the copied <tt>XMLEvent</tt> event.
+     * @param ev the <tt>XmlEvent</tt> to copy.
+     * @return the copied <tt>XmlEvent</tt> event.
      */
-    public XMLEvent copyEvent(FoXMLEvent ev) {
+    public XmlEvent copyEvent(FoXMLEvent ev) {
         foType = ev.foType;
         return super.copyEvent(ev);
     }
@@ -161,7 +161,7 @@ public class FoXMLEvent extends XMLEvent {
      * Provided for pool operations.
      * Neither the <i>namespaces</i> nor the <i>id</i> field is copied.
      * The <i>namespaces</i> field is not cleared.
-     * @return the copied <tt>XMLEvent</tt> event.
+     * @return the copied <tt>XmlEvent</tt> event.
      */
     public FoXMLEvent copyFoEvent(FoXMLEvent ev) {
         return (FoXMLEvent)copyEvent(ev);

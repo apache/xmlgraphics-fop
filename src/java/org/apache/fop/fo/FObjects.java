@@ -64,7 +64,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Ints;
 import org.apache.fop.fo.flow.FoPcdata;
 import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.XmlEvent;
 
 /**
  * Data class for common data and methods relating to Flow Objects.
@@ -234,7 +234,7 @@ public class FObjects {
 
     /**
      * This method generates generates new FO objects, except for FoPcdata
-     * objects, which require an XMLEvent argument.  Use only when it is
+     * objects, which require an XmlEvent argument.  Use only when it is
      * known that no CHARACTERS event will be passed.
      * @param foTree
      * @param parent
@@ -283,27 +283,27 @@ public class FObjects {
      * This method generates generates new FO objects, including FoPcdata
      * objects.  It is more general in this sense than the overloaded
      * version which takes the <code>FoXMLEvent event</code> parameter.
-     * objects, which require an XMLEvent argument.
+     * objects, which require an XmlEvent argument.
      * @param foTree
      * @param parent
-     * @param event the <code>XMLEvent</code> which triggered the generation
+     * @param event the <code>XmlEvent</code> which triggered the generation
      * of this fo
      * @param stateFlags
      * @return
      * @throws FOPException
      */
     public Object makeFlowObject(FOTree foTree,
-            FONode parent, XMLEvent event, int stateFlags)
+            FONode parent, XmlEvent event, int stateFlags)
     throws FOPException
     {
         if (event instanceof FoXMLEvent) {
             return makeFlowObject(
                     foTree, parent, (FoXMLEvent)event, stateFlags);
         }
-        if (event.getType() != XMLEvent.CHARACTERS) {
+        if (event.getType() != XmlEvent.CHARACTERS) {
             throw new FOPException(
-                    "Attempt to makeFlowObject() with XMLEvent for event type "
-                    + XMLEvent.eventTypeName(event.getType()));
+                    "Attempt to makeFlowObject() with XmlEvent for event type "
+                    + XmlEvent.eventTypeName(event.getType()));
         }
         return new FoPcdata(foTree, parent, event, stateFlags);
     }

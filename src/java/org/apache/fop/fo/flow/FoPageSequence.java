@@ -67,7 +67,7 @@ import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
 
 /**
@@ -134,7 +134,7 @@ public class FoPageSequence extends FONode {
     /**
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
-     * @param event the <tt>XMLEvent</tt> that triggered the creation of
+     * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
      */
     public FoPageSequence(FOTree foTree, FONode parent, FoXMLEvent event)
@@ -142,12 +142,12 @@ public class FoPageSequence extends FONode {
     {
         super(foTree, FObjectNames.PAGE_SEQUENCE, parent, event,
               FONode.PAGESEQ_SET, sparsePropsMap, sparseIndices);
-        XMLEvent ev;
+        XmlEvent ev;
         // Look for optional title
         String nowProcessing = "title";
         try {
             ev = xmlevents.expectStartElement
-                        (FObjectNames.TITLE, XMLEvent.DISCARD_W_SPACE);
+                        (FObjectNames.TITLE, XmlEvent.DISCARD_W_SPACE);
             if (ev != null) {
                 // process the title
                 title = numChildren();
@@ -159,7 +159,7 @@ public class FoPageSequence extends FONode {
             // Look for zero or more static-content
             nowProcessing = "static-content";
             while ((ev = xmlevents.expectStartElement
-                    (FObjectNames.STATIC_CONTENT, XMLEvent.DISCARD_W_SPACE))
+                    (FObjectNames.STATIC_CONTENT, XmlEvent.DISCARD_W_SPACE))
                    != null) {
                 // Loop over remaining fo:static-content
                 if (firstStaticContent != -1)
@@ -173,7 +173,7 @@ public class FoPageSequence extends FONode {
             // must have at least one
             nowProcessing = "flow";
             ev = xmlevents.expectStartElement
-                        (FObjectNames.FLOW, XMLEvent.DISCARD_W_SPACE);
+                        (FObjectNames.FLOW, XmlEvent.DISCARD_W_SPACE);
             if (ev == null)
                 throw new FOPException("No flow found.");
             firstFlow = numChildren();
@@ -181,7 +181,7 @@ public class FoPageSequence extends FONode {
             ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
             namespaces.surrenderEvent(ev);
             while ((ev = xmlevents.expectStartElement
-                            (FObjectNames.FLOW, XMLEvent.DISCARD_W_SPACE))
+                            (FObjectNames.FLOW, XmlEvent.DISCARD_W_SPACE))
                    != null) {
                 // Loop over remaining fo:page-sequences
                 new FoFlow(getFOTree(), this, (FoXMLEvent)ev);

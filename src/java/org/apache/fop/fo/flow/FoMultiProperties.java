@@ -67,7 +67,7 @@ import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
 
 /**
@@ -136,12 +136,12 @@ public class FoMultiProperties extends FONode {
     {
         super(foTree, FObjectNames.MULTI_PROPERTIES, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
-        XMLEvent ev;
+        XmlEvent ev;
         try {
             // Look for one or more multi-property-set
             while ((ev = xmlevents.expectStartElement
                     (FObjectNames.MULTI_PROPERTY_SET,
-                                                 XMLEvent.DISCARD_W_SPACE))
+                                                 XmlEvent.DISCARD_W_SPACE))
                    != null) {
                 new FoMultiPropertySet(
                         getFOTree(), this, (FoXMLEvent)ev, stateFlags);
@@ -157,7 +157,7 @@ public class FoMultiProperties extends FONode {
 
             // Look for the wrapper
             if ((ev = xmlevents.expectStartElement
-                    (FObjectNames.WRAPPER, XMLEvent.DISCARD_W_SPACE))
+                    (FObjectNames.WRAPPER, XmlEvent.DISCARD_W_SPACE))
                    == null)
                 throw new FOPException
                         ("No wrapper in multi-properties.");

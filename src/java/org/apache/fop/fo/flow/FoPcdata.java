@@ -65,7 +65,7 @@ import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
-import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.XmlEvent;
 
 /**
  * Implements #PcdATA within page-sequence flow objects.
@@ -151,13 +151,13 @@ public class FoPcdata extends FONode {
      * specification.
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
-     * @param event the <tt>XMLEvent</tt> that triggered the creation of
+     * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
      * @param stateFlags - passed down from the parent.  Includes the
      * attribute set information.
      */
     public FoPcdata
-            (FOTree foTree, FONode parent, XMLEvent event, int stateFlags)
+            (FOTree foTree, FONode parent, XmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.PCDATA, parent, event,

@@ -67,7 +67,7 @@ import org.apache.fop.fo.flow.FoPageSequence;
 import org.apache.fop.fo.pagination.FoLayoutMasterSet;
 import org.apache.fop.xml.FoXMLEvent;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
-import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.Namespaces;
 
 /**
@@ -125,11 +125,11 @@ public class FoRoot extends FONode {
 
     /**
      * @param foTree the FO tree being built
-     * @param event the <tt>XMLEvent</tt> that triggered the creation of this
+     * @param event the <tt>XmlEvent</tt> that triggered the creation of this
      * node
      */
     public FoRoot
-        (FOTree foTree, XMLEvent event)
+        (FOTree foTree, XmlEvent event)
         throws TreeException, FOPException, PropertyException
     {
         // This is the root node of the tree; hence the null argument
@@ -162,14 +162,14 @@ public class FoRoot extends FONode {
      * in the page-sequence-sequence.
      */
     public void buildFoTree() throws FOPException{
-        XMLEvent ev;
+        XmlEvent ev;
         String nowProcessing;
         //System.out.println("buildFoTree: " + event);
         nowProcessing = "layout-master-set";
         try {
             // Look for layout-master-set.  Must be one.
             ev = xmlevents.expectStartElement
-                (FObjectNames.LAYOUT_MASTER_SET, XMLEvent.DISCARD_W_SPACE);
+                (FObjectNames.LAYOUT_MASTER_SET, XmlEvent.DISCARD_W_SPACE);
             // Process the layout-master-set
             FoLayoutMasterSet layoutMasters =
                                 new FoLayoutMasterSet(getFOTree(), this, ev);
@@ -182,7 +182,7 @@ public class FoRoot extends FONode {
             // Look for optional declarations
             nowProcessing = "declarations";
             ev = xmlevents.expectStartElement
-                        (FObjectNames.DECLARATIONS, XMLEvent.DISCARD_W_SPACE);
+                        (FObjectNames.DECLARATIONS, XmlEvent.DISCARD_W_SPACE);
             if (ev != null) {
                 // process the declarations
                 declarations = numChildren();
@@ -195,7 +195,7 @@ public class FoRoot extends FONode {
             // must have at least one
             nowProcessing = "page-sequence";
             ev = xmlevents.expectStartElement
-                        (FObjectNames.PAGE_SEQUENCE, XMLEvent.DISCARD_W_SPACE);
+                        (FObjectNames.PAGE_SEQUENCE, XmlEvent.DISCARD_W_SPACE);
             if (ev == null)
                 throw new FOPException("No page-sequence found.");
             firstPageSeq = numChildren();
@@ -203,7 +203,7 @@ public class FoRoot extends FONode {
             ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
             namespaces.surrenderEvent(ev);
             while ((ev = xmlevents.expectStartElement
-                    (FObjectNames.PAGE_SEQUENCE, XMLEvent.DISCARD_W_SPACE))
+                    (FObjectNames.PAGE_SEQUENCE, XmlEvent.DISCARD_W_SPACE))
                    != null) {
                 // Loop over remaining fo:page-sequences
                 new FoPageSequence(getFOTree(), this, (FoXMLEvent)ev);

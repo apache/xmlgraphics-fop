@@ -63,7 +63,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
-import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.XmlEvent;
 
 /**
  * Implements the fo:simple-page-master flow object
@@ -118,7 +118,7 @@ public class FoColorProfile extends FONode {
      * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
      * this node
      */
-    public FoColorProfile(FOTree foTree, FONode parent, XMLEvent event)
+    public FoColorProfile(FOTree foTree, FONode parent, XmlEvent event)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.COLOR_PROFILE, parent, event,

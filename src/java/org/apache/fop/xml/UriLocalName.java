@@ -59,7 +59,7 @@ import org.apache.fop.pool.Poolable;
 
 /**
  * A class for holding and passing a URI index and local name
- * pair, as used in the <tt>XMLEvent</tt> class.
+ * pair, as used in the <tt>XmlEvent</tt> class.
  */
 public class UriLocalName extends Poolable {
     protected int uriIndex;

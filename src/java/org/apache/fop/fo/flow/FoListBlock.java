@@ -67,7 +67,7 @@ import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
 
 /**
@@ -144,7 +144,7 @@ public class FoListBlock extends FONode {
      * <p>Content model for fo:list-block: (marker*, list-item+)
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
-     * @param event the <tt>XMLEvent</tt> that triggered the creation of
+     * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
      * @param stateFlags - passed down from the parent.  Includes the
      * attribute set information.
@@ -155,12 +155,12 @@ public class FoListBlock extends FONode {
     {
         super(foTree, FObjectNames.LIST_BLOCK, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
-        XMLEvent ev;
+        XmlEvent ev;
         // Look for zero or more markers
         String nowProcessing = "marker";
         try {
             while ((ev = xmlevents.expectStartElement
-                    (FObjectNames.MARKER, XMLEvent.DISCARD_W_SPACE))
+                    (FObjectNames.MARKER, XmlEvent.DISCARD_W_SPACE))
                    != null) {
                 new FoMarker(getFOTree(), this, (FoXMLEvent)ev, stateFlags);
                 numMarkers++;
@@ -172,7 +172,7 @@ public class FoListBlock extends FONode {
             // Look for one or more table-rows
             nowProcessing = "list-item";
             while ((ev = xmlevents.expectStartElement
-                    (FObjectNames.LIST_ITEM, XMLEvent.DISCARD_W_SPACE))
+                    (FObjectNames.LIST_ITEM, XmlEvent.DISCARD_W_SPACE))
                    != null) {
                 new FoListItem(getFOTree(), this, (FoXMLEvent)ev, stateFlags);
                 numItems++;

@@ -57,7 +57,7 @@ import org.apache.fop.pool.*;
  *  <tt>XMLSerialHandler</tt>.
  * One instance of <i>Namespaces</i> is maintained across all documents
  * that may be processed in a single invocation of <tt>XMLSerialhandler</tt>.
- * A reference to that instance is kept with every instance of <tt>XMLEvent</tt>.
+ * A reference to that instance is kept with every instance of <tt>XmlEvent</tt>.
  * An <code>XMLEventPool</code> pool of event objects is maintained for every
  * namesapce encountered in parsing. The pool for the
  * http://www.w3.org/1999/XSL/Format (XSL_FO) namespace is created immediately;
@@ -133,10 +133,10 @@ public class Namespaces {
     private UriLocalNamePool uriLocalNamePool;
 
     /**
-     * Sequenced objects for use by <tt>XMLEvent</tt>s. Because an
-     * <tt>XMLEvent</tt> object must always be associated with an
+     * Sequenced objects for use by <tt>XmlEvent</tt>s. Because an
+     * <tt>XmlEvent</tt> object must always be associated with an
      * <i>XMLNamespace</i> object, this namespace object will act as a
-     * singleton for <tt>XMLEvent</tt>s. This field provides a counter for
+     * singleton for <tt>XmlEvent</tt>s. This field provides a counter for
      * those objects. The range of values which may be assigned to
      * <i>nsSequences</i> is restricted by <i>nsSeqMasks</i>.
      */
@@ -267,15 +267,15 @@ public class Namespaces {
     }
 
     /**
-     * Generate a new XMLEvent, based on the uriIndex argument. The uriIndex
+     * Generate a new XmlEvent, based on the uriIndex argument. The uriIndex
      * must be valid for this Namespaces object; i.e. it must correspond to
      * a namespace being tracked in this object.
      * 
      * @param nsIndex
      *            the namespace index
-     * @return an appropriate <code>XMLEvent</code>
+     * @return an appropriate <code>XmlEvent</code>
      */
-    public XMLEvent makeXMLEvent(int nsIndex) throws FOPException {
+    public XmlEvent makeXMLEvent(int nsIndex) throws FOPException {
         if (nsIndex < 0 | nsIndex >= (uris.length)) {
             throw new FOPException("URI index out or range");
         }
@@ -283,24 +283,24 @@ public class Namespaces {
     }
 
     /**
-     * Generate a new XMLEvent, based on the uriIndex argument. This
+     * Generate a new XmlEvent, based on the uriIndex argument. This
      * private method is for interanl use when the <code>nsIndex</code> is
      * known to be in range.
      * 
      * @param nsIndex
      *            the namespace index
-     * @return an appropriate <code>XMLEvent</code>
+     * @return an appropriate <code>XmlEvent</code>
      */
-    private XMLEvent newXMLEvent(int nsIndex) {
-        // The only currently known subclass of XMLEvent is FoXMLEvent
+    private XmlEvent newXMLEvent(int nsIndex) {
+        // The only currently known subclass of XmlEvent is FoXMLEvent
         switch (nsIndex) {
         case DefAttrNSIndex :
-            // Produce an XMLEvent, e.g. for START_DOCUMENT and, more
+            // Produce an XmlEvent, e.g. for START_DOCUMENT and, more
             // importantly, CHARACTERS.
             synchronized (nsSequences) {
                 nsSequences[nsIndex] =
                     ++nsSequences[nsIndex] & nsSeqMasks[nsIndex];
-                return new XMLEvent(this, nsSequences[nsIndex], nsIndex);
+                return new XmlEvent(this, nsSequences[nsIndex], nsIndex);
             }
         case XSLNSpaceIndex :
             // Make an FoXMLEvent
@@ -314,11 +314,11 @@ public class Namespaces {
         case SVGNSpaceIndex :
             // No SvgXMLEvent defined - don't break, but fall through
         default :
-            // Just produce a raw XMLEvent
+            // Just produce a raw XmlEvent
             synchronized (nsSequences) {
                 nsSequences[nsIndex] =
                     ++nsSequences[nsIndex] & nsSeqMasks[nsIndex];
-                return new XMLEvent(this, nsSequences[nsIndex], nsIndex);
+                return new XmlEvent(this, nsSequences[nsIndex], nsIndex);
             }
         }
     }
@@ -326,13 +326,13 @@ public class Namespaces {
     /**
      * Acquire an event.
      * 
-     * @return an <tt>XMLEvent</tt>.
+     * @return an <tt>XmlEvent</tt>.
      */
-    public XMLEvent acquireXMLEvent(int nsIndex) throws FOPException {
+    public XmlEvent acquireXMLEvent(int nsIndex) throws FOPException {
         if (nsIndex < 0 || nsIndex > uris.length) {
             throw new FOPException("URI index out of range: " + nsIndex);
         }
-        XMLEvent ev;
+        XmlEvent ev;
         if ((ev = pools[nsIndex].acquireXMLEvent()) != null) {
             return ev;
         }
@@ -346,7 +346,7 @@ public class Namespaces {
      * the pool.
      * @param event to surrender
      */
-    public void surrenderEvent(XMLEvent event) {
+    public void surrenderEvent(XmlEvent event) {
         pools[event.uriIndex].surrenderPoolable(event);
     }
 

@@ -53,10 +53,10 @@
  */
 package org.apache.fop.pool;
 
-import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.XmlEvent;
 
 /**
- * This class provides a pool of <tt>XMLEvent</tt> objects.
+ * This class provides a pool of <tt>XmlEvent</tt> objects.
  */
 
 public class XMLEventPool extends FopPool {
@@ -64,7 +64,7 @@ public class XMLEventPool extends FopPool {
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
 
-    /** Required argument for constructing new <tt>XMLEvent</tt>s. */
+    /** Required argument for constructing new <tt>XmlEvent</tt>s. */
     //protected final Namespaces namespaces;
     /**
      * The zero-argument constructor
@@ -81,11 +81,11 @@ public class XMLEventPool extends FopPool {
     }
 
     /**
-     * Acquire an <tt>XMLEvent</tt>.
-     * @return an <tt>XMLEvent</tt>.
+     * Acquire an <tt>XmlEvent</tt>.
+     * @return an <tt>XmlEvent</tt>.
      */
-    public synchronized XMLEvent acquireXMLEvent() {
-        return (XMLEvent)acquirePoolable();
+    public synchronized XmlEvent acquireXMLEvent() {
+        return (XmlEvent)acquirePoolable();
     }
 
 }

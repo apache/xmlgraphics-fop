@@ -67,7 +67,7 @@ import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
 
 /**
@@ -137,11 +137,11 @@ public class FoMultiSwitch extends FONode {
     {
         super(foTree, FObjectNames.MULTI_SWITCH, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
-        XMLEvent ev;
+        XmlEvent ev;
         try {
             // Look for one or more multi-case
             while ((ev = xmlevents.expectStartElement
-                    (FObjectNames.MULTI_CASE, XMLEvent.DISCARD_W_SPACE))
+                    (FObjectNames.MULTI_CASE, XmlEvent.DISCARD_W_SPACE))
                    != null) {
                 new FoMultiCase(
                         getFOTree(), this, (FoXMLEvent)ev, stateFlags);
