@@ -6,20 +6,22 @@
   <fo:layout-master-set>
 
     <!-- layout for the first page -->
-      <fo:simple-page-master master-name="repeating"
+    <fo:simple-page-master master-name="singleSPM"
             page-height="21.7cm"
             page-width="16cm"
             margin-top="1cm"
             margin-bottom="1cm"
             margin-left="2.5cm"
             margin-right="2.5cm">
-      <fo:region-body margin-top="2cm" margin-bottom="2cm"/>
-      <fo:region-before extent="2cm"/>
-      <fo:region-after extent="2cm"/>
+        <fo:region-body margin-top="2cm" margin-bottom="2cm"/>
+        <fo:region-before extent="2cm"/>
+        <fo:region-after extent="2cm"/>
     </fo:simple-page-master>
 
     <fo:page-sequence-master master-name="repeating_pm">
-      <fo:repeatable-page-master-reference master-reference="repeating"/>
+      <!-- note for fo:repeatable-page-master-reference, if maximum-repeats
+            property unspecified, as here, "no-limit" is the default value -->
+      <fo:repeatable-page-master-reference master-reference="singleSPM"/>
     </fo:page-sequence-master>
   </fo:layout-master-set>
   <!-- end: defines page layout -->
@@ -73,7 +75,7 @@ Conclusion.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -98,7 +100,7 @@ barren grounds to Fort Enterprise.
         </fo:block>
 
     <fo:block font-size="8pt"
-          font-family="serif"
+            font-family="serif"
             font-style="italic"
             line-height="10pt"
             space-before.optimum="3pt"
@@ -108,7 +110,7 @@ barren grounds to Fort Enterprise.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -142,7 +144,7 @@ remained.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -173,7 +175,7 @@ dinnerless to bed.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -190,7 +192,7 @@ eastward.
         </fo:block>
 
     <fo:block font-size="8pt"
-          font-family="serif"
+            font-family="serif"
             font-style="italic"
             line-height="10pt"
             space-before.optimum="3pt"
@@ -200,7 +202,7 @@ eastward.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -222,7 +224,7 @@ to the reader an accurate idea of the peril of our situation.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -241,7 +243,7 @@ the second canoe, which was easily repaired.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -257,7 +259,7 @@ commenced.
         </fo:block>
 
     <fo:block font-size="8pt"
-          font-family="serif"
+            font-family="serif"
             font-style="italic"
             line-height="10pt"
             space-before.optimum="3pt"
@@ -267,7 +269,7 @@ commenced.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -286,7 +288,7 @@ were found here imbedded in the amygdaloidal rock.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -302,7 +304,7 @@ eighteen miles.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -319,7 +321,7 @@ females with their young, and all of them very lean.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -341,7 +343,7 @@ novelty.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -357,7 +359,7 @@ named in honour of His Royal Highness the Duke of York.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -370,7 +372,7 @@ be attributed to the north-west gales.
         </fo:block>
 
     <fo:block font-size="8pt"
-          font-family="serif"
+            font-family="serif"
             font-style="italic"
             line-height="10pt"
             space-before.optimum="3pt"
@@ -380,7 +382,7 @@ be attributed to the north-west gales.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -396,7 +398,7 @@ intended to pursue towards Slave Lake.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -419,7 +421,7 @@ made to-day was not more than six miles.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -452,7 +454,7 @@ combined in the annexed plate.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -468,7 +470,7 @@ finished, we prepared for our departure on the following day.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -490,7 +492,7 @@ as possible.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -517,7 +519,7 @@ it could be re-pitched.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -546,7 +548,7 @@ exhibited but little naked rock; they were covered with lichens.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -576,7 +578,7 @@ a few grasses, and on the drier spots with lichens.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -605,7 +607,7 @@ felt from hunger.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -625,7 +627,7 @@ out of his mittens.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -680,7 +682,7 @@ route across the barren grounds.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -698,7 +700,7 @@ afterwards adopted throughout the journey.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -734,7 +736,7 @@ cold, though the thermometer was at 17 deg.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -791,7 +793,7 @@ Islands.
         </fo:block>
 
     <fo:block font-size="8pt"
-          font-family="serif"
+            font-family="serif"
             font-style="italic"
             line-height="10pt"
             space-before.optimum="3pt"
@@ -801,7 +803,7 @@ Islands.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -848,7 +850,7 @@ could not get near them.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -861,7 +863,7 @@ rest, and there was only meat remaining sufficient for the next day.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -882,7 +884,7 @@ consumed the last of our meat.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -925,7 +927,7 @@ who was very eager in the chase, and often successful.
         </fo:block>
 
     <fo:block font-size="8pt"
-          font-family="serif"
+            font-family="serif"
             font-style="italic"
             line-height="10pt"
             space-before.optimum="3pt"
@@ -935,7 +937,7 @@ who was very eager in the chase, and often successful.
 
     <!-- Normal text -->
     <fo:block font-size="11pt"
-          font-family="serif"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
