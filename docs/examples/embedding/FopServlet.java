@@ -114,17 +114,9 @@ public class FopServlet extends HttpServlet
 	    
 	    response.setContentType("application/pdf");
 	    
-	    Driver driver = new Driver();
-	    driver.setRenderer("org.apache.fop.render.pdf.PDFRenderer", 
-			       Version.getVersion());
-	    driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");
-	    driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
-	    driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");
-	    driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
-	    driver.setOutputStream(out);
-	    driver.buildFOTree(createParser(), foFile);
-	    driver.format();
-	    driver.render();
+	    Driver driver = new Driver(foFile, out);
+	    driver.run();
+
 	    byte[] content = out.toByteArray();
 	    response.setContentLength(content.length);
 	    response.getOutputStream().write(content);

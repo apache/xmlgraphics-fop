@@ -65,10 +65,6 @@ public class PrintStarter extends CommandLineStarter {
 
         try {
             driver.setRenderer(renderer);
-            driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");
-            driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
-            driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");
-            driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
             driver.buildFOTree(parser, inputHandler.getInputSource());
             driver.format();
             driver.render();

@@ -90,7 +90,7 @@ public class AWTStarter extends CommandLineStarter {
 
 
     public void run () {
-		Driver driver = new Driver();
+	Driver driver = new Driver();
         if (errorDump) {
             driver.setErrorDump(true);
         }
@@ -108,14 +108,6 @@ public class AWTStarter extends CommandLineStarter {
 
         try {
             driver.setRenderer(renderer);
-
-            // init mappings: time
-            frame.progress(resource.getString("Init mappings") + " ...");
-
-            driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");
-            driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
-            driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");
-            driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
 
             // build FO tree: time
             frame.progress(resource.getString("Build FO tree") + " ...");

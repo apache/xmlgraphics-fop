@@ -11,6 +11,8 @@ package org.apache.fop.apps;
  */
 public class FOPException extends Exception {
 
+    private Throwable _exception;
+    
     /**
      * create a new FOP Exception
      *
@@ -18,5 +20,14 @@ public class FOPException extends Exception {
      */
     public FOPException(String message) {
         super(message);
+    }
+    public FOPException(Throwable e) {
+        super(e.getMessage());
+	_exception = e;
+    }
+    
+    public Throwable getException() 
+    {
+	return _exception;
     }
 }

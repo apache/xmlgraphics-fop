@@ -260,18 +260,18 @@ public class CommandLineOptions {
     /**
      *  returns the chosen renderer, throws FOPException
      */
-    public String getRenderer () throws FOPException {
+    public int getRenderer () throws FOPException {
         switch (outputmode) {
             case NOT_SET:
                 throw new FOPException("Renderer has not been set!");
             case PDF_OUTPUT:
-                return "org.apache.fop.render.pdf.PDFRenderer";
+                return Driver.RENDER_PDF;
             case AWT_OUTPUT:
-                return "org.apache.fop.render.awt.AWTRenderer";
+                return Driver.RENDER_AWT;
             case MIF_OUTPUT:
-                return "org.apache.fop.render.mif.MIFRenderer";
+                return Driver.RENDER_MIF;
             case PRINT_OUTPUT:
-                return "org.apache.fop.render.awt.PrintRenderer";
+                return Driver.RENDER_PRINT;
             default:
                 throw new FOPException("Invalid Renderer setting!");
         }
