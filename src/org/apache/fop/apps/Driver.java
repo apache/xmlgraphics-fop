@@ -10,7 +10,6 @@ package org.apache.fop.apps;
 // FOP
 import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.ElementMapping;
-import org.apache.fop.layout.AreaTree;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.configuration.ConfigurationReader;
 import org.apache.fop.configuration.Configuration;
@@ -25,16 +24,12 @@ import org.apache.avalon.framework.logger.Logger;
 
 // DOM
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Attr;
 
 // SAX
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
 
 // Java
 import java.io.*;
@@ -56,26 +51,22 @@ import java.util.*;
  * driver.run();
  * </PRE>
  * If neccessary, calling classes can call into the lower level
- * methods to setup and
- * render. Methods can be called to set the
- * Renderer to use, the (possibly multiple) ElementMapping(s) to
- * use and the OutputStream to use to output the results of the
- * rendering (where applicable). In the case of the Renderer and
+ * methods to setup and render. Methods can be called to set the
+ * Renderer to use, the (possibly multiple) ElementMapping(s) to use
+ * and the OutputStream to use to output the results of the rendering
+ * (where applicable). In the case of the Renderer and
  * ElementMapping(s), the Driver may be supplied either with the
  * object itself, or the name of the class, in which case Driver will
  * instantiate the class itself. The advantage of the latter is it
  * enables runtime determination of Renderer and ElementMapping(s).
  * <P>
- * Once the Driver is set up, the render method
- * is called. Depending on whether DOM or SAX is being used, the
- * invocation of the method is either render(Document) or
- * buildFOTree(Parser, InputSource) respectively.
+ * Once the Driver is set up, the render method is called. Depending
+ * on whether DOM or SAX is being used, the invocation of the method
+ * is either render(Document) or render(Parser, InputSource)
+ * respectively.
  * <P>
- * A third possibility may be used to build the FO Tree, namely
- * calling getContentHandler() and firing the SAX events yourself.
- * <P>
- * Once the FO Tree is built, the format() and render() methods may be
- * called in that order.
+ * A third possibility is to call getContentHandler() and firing
+ * the SAX events yourself.
  * <P>
  * Here is an example use of Driver which outputs to AWT:
  *
@@ -83,8 +74,7 @@ import java.util.*;
  * Driver driver = new Driver();
  * driver.setRenderer(new org.apache.fop.render.awt.AWTRenderer(translator));
  * driver.render(parser, fileInputSource(args[0]));
- * </PRE>
- */
+ * </PRE> */
 public class Driver {
 
     /**
@@ -136,11 +126,6 @@ public class Driver {
      * the FO tree builder
      */
     private FOTreeBuilder _treeBuilder;
-
-    /**
-     * the area tree that is the result of formatting the FO tree
-     */
-    private AreaTree _areaTree;
 
     /**
      * the renderer to use to output the area tree
@@ -216,7 +201,6 @@ public class Driver {
      * The output stream is cleared. The renderer is cleared.
      */
     public synchronized void reset() {
-        _areaTree = null;
         _source = null;
         _stream = null;
         _reader = null;
