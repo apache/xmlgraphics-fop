@@ -1,9 +1,5 @@
-<HTML>
-  <head>
-    <META http-equiv="Content-Type" content="text/html;
-                                        charset=ISO-8859-1" />
-    <title>Generating Initial Values</title>
-  </head>
+<?xml version="1.0"?>
+<html>
   <body marginheight="0" marginwidth="0" topmargin="0" leftmargin="0" text="#000000" bgcolor="#FFFFFF">
     <script type="text/javascript" src="codedisplay.js" />
     <div class="content">
@@ -17,7 +13,7 @@
         </li>
         <li>
           <a href="#N10021">
-            Generating &amp; Accessing Initial Values
+            Generating and Accessing Initial Values
           </a>
           <ul class="minitoc">
             <li>
@@ -39,7 +35,7 @@
       
       <a name="N10021"></a>
       <h3>
-        Generating &amp; Accessing Initial Values
+        Generating and Accessing Initial Values
       </h3>
       <!-- N.B. height for toggleCode changed from 50% to 400 because
           Mozilla seems to get confused by percentage heights within
@@ -145,4 +141,4 @@
       
     </div>
   </body>
-</HTML>
+</html>
