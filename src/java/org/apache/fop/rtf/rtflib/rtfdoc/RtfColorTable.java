@@ -131,14 +131,14 @@ public class RtfColorTable {
      * Initialize the color table.
      */
     private void init () {
-        addNamedColor("black", getColorNumber (0, 0, 0));
-        addNamedColor("white", getColorNumber (255, 255, 255));
-        addNamedColor("red", getColorNumber (255, 0, 0));
-        addNamedColor("green", getColorNumber (0, 255, 0));
-        addNamedColor("blue", getColorNumber (0, 0, 255));
-        addNamedColor("cyan", getColorNumber (0, 255, 255));
-        addNamedColor("magenta", getColorNumber (255, 0, 255));
-        addNamedColor("yellow", getColorNumber (255, 255, 0));
+        addNamedColor("black", getColorNumber (0, 0, 0).intValue());
+        addNamedColor("white", getColorNumber (255, 255, 255).intValue());
+        addNamedColor("red", getColorNumber (255, 0, 0).intValue());
+        addNamedColor("green", getColorNumber (0, 255, 0).intValue());
+        addNamedColor("blue", getColorNumber (0, 0, 255).intValue());
+        addNamedColor("cyan", getColorNumber (0, 255, 255).intValue());
+        addNamedColor("magenta", getColorNumber (255, 0, 255).intValue());
+        addNamedColor("yellow", getColorNumber (255, 255, 0).intValue());
 
         getColorNumber (0, 0, 128);
         getColorNumber (0, 128, 128);
@@ -150,7 +150,7 @@ public class RtfColorTable {
 
          // Added by Normand Masse
           // Gray color added
-        addNamedColor("gray", getColorNumber(128, 128, 128));
+        addNamedColor("gray", getColorNumber(128, 128, 128).intValue());
 
         getColorNumber (192, 192, 192);
     }
@@ -168,8 +168,8 @@ public class RtfColorTable {
          * @param name a named color
          * @return the RTF number of a named color, or null if name not found
          */
-    public int getColorNumber (String name) {
-        return ((Integer)namedColors.get(name.toLowerCase())).intValue();
+    public Integer getColorNumber (String name) {
+        return ((Integer)namedColors.get(name.toLowerCase()));
     }
 
     /**
@@ -181,7 +181,7 @@ public class RtfColorTable {
      *
      * @return The number of the color in the table
      */
-    public int getColorNumber (int red, int green, int blue) {
+    public Integer getColorNumber (int red, int green, int blue) {
         Integer identifier = new Integer (determineIdentifier (red, green, blue));
         Object o = colorIndex.get (identifier);
         int retVal;
@@ -194,7 +194,7 @@ public class RtfColorTable {
             retVal = ((Integer) o).intValue ();
         }
 
-        return retVal + 1;
+        return new Integer(retVal + 1);
     }
 
     /**
