@@ -834,18 +834,18 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 			String ref = ug.link;
 			ref = ref.substring(1, ref.length());
 			GraphicImpl graph = null;
-			graph = area.locateDef(ref);
+//			graph = area.locateDef(ref);
 			if(graph != null) {
 				// probably not the best way to do this, should be able
 				// to render without the style being set.
-				GraphicImpl parent = graph.getGraphicParent();
-				graph.setParent(area);
+//				GraphicImpl parent = graph.getGraphicParent();
+//				graph.setParent(area);
 				// need to clip (if necessary) to the use area
 				// the style of the linked element is as if is was
 				// a direct descendant of the use element.
 
 				renderElement(svgarea, graph, posx, posy, trans);
-				graph.setParent(parent);
+//				graph.setParent(parent);
 			}
 		}  else if (area instanceof SVGPolylineElementImpl) {
 		   graphics.setColor(c);
@@ -906,15 +906,16 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
   public void renderGArea(SVGArea svgarea, SVGGElementImpl area, int posx, int posy, Vector v) {
 
 
-  Vector trans = new Vector(area.oldgetTransform());
-  trans.addAll(0, v);
-		Enumeration e = area.getChildren().elements();
+  Vector trans = null;
+//    trans = new Vector(area.oldgetTransform());
+//  trans.addAll(0, v);
+/*		Enumeration e = area.getChildren().elements();
 		while (e.hasMoreElements()) {
 			Object o = e.nextElement();
 			if(o instanceof GraphicImpl) {
 				renderElement(svgarea, (GraphicImpl)o, posx, posy, trans);
 			}
-		}
+		}*/
   }
 	public void renderGArea(SVGArea svgarea, SVGGElementImpl area, int posx, int posy)
 	{
