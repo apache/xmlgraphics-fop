@@ -500,14 +500,6 @@ public class CommandLineOptions implements Constants {
     }
 
     /**
-     * Returns the input mode (type of input data, ex. NOT_SET or FO_INPUT)
-     * @return the input mode
-     */
-    public int getInputMode() {
-        return inputmode;
-    }
-
-    /**
      * Returns the output mode (output format, ex. NOT_SET or RENDER_PDF)
      * @return the output mode
      */
@@ -556,7 +548,7 @@ public class CommandLineOptions implements Constants {
     }
 
     /**
-     * Indicates whether the XML renderer should generate course area XML
+     * Indicates whether the XML renderer should generate coarse area XML
      * @return true if coarse area XML is desired
      */
     public Boolean isCoarseAreaXml() {
@@ -596,8 +588,8 @@ public class CommandLineOptions implements Constants {
             + "  -fo  infile       xsl:fo input file  \n"
             + "  -xml infile       xml input file, must be used together with -xsl \n"
             + "  -xsl stylesheet   xslt stylesheet \n \n"
-/*            + "  -param name value <value> to use for parameter <name> in xslt stylesheet\n"
-            + "                    (repeat '-param name value' for each parameter)\n \n" */
+            + "  -param name value <value> to use for parameter <name> in xslt stylesheet\n"
+            + "                    (repeat '-param name value' for each parameter)\n \n" 
             + " [OUTPUT] \n"
             + "  outfile           input will be rendered as pdf file into outfile \n"
             + "  -pdf outfile      input will be rendered as pdf file (outfile req'd) \n"
