@@ -58,9 +58,11 @@ import org.apache.fop.apps.FOPException;
 public class PropertyList extends Hashtable {
   private PropertyListBuilder builder;
   private PropertyList parentPropertyList = null;
+  String namespace = "";
 
-  public PropertyList(PropertyList parentPropertyList) {
+  public PropertyList(PropertyList parentPropertyList, String space) {
     this.parentPropertyList = parentPropertyList;
+    this.namespace = space;
   }
 
   public Property get(String propertyName) {
@@ -89,4 +91,9 @@ public class PropertyList extends Hashtable {
   public void setBuilder(PropertyListBuilder builder) {
     this.builder = builder;
   }
+
+	public String getNameSpace()
+	{
+		return namespace;
+	}
 }

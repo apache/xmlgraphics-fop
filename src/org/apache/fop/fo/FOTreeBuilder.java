@@ -223,7 +223,7 @@ public class FOTreeBuilder extends DefaultHandler {
 	}
 	
 	try {
-		PropertyList list = this.propertyListBuilder.makeList(attlist,  
+		PropertyList list = this.propertyListBuilder.makeList(fullName, attlist,  
 		     (currentFObj == null) ? null : currentFObj.properties);
 	    fobj = fobjMaker.make(currentFObj, list);
 	} catch (FOPException e) {
