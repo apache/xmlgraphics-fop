@@ -27,6 +27,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
@@ -96,18 +97,23 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
     }
 
     /**
-     * Tests Driver with Document and OutputStream.
+     * Tests DOM with JAXP and OutputStream generating PostScript.
      * @throws Exception if anything fails
      */
     public void testFO2PDFWithDOM() throws Exception {
         File foFile = new File(getBaseDir(), "test/xml/bugtests/block.fo");
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
         Driver driver = new Driver();
-
         driver.setOutputStream(baout);
         driver.setRenderer(Driver.RENDER_PDF);
-        driver.render(loadDocument(foFile));
-        assertTrue("Generated PDF has zero length", baout.size() > 0);
+        
+        TransformerFactory factory = TransformerFactory.newInstance();
+        Transformer transformer = factory.newTransformer(); //Identity transf.
+        Source src = new DOMSource(loadDocument(foFile));
+        Result res = new SAXResult(driver.getContentHandler());
+        transformer.transform(src, res);
+        
+        assertTrue("Generated PostScript has zero length", baout.size() > 0);
     }
 
     /**
