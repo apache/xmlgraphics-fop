@@ -57,10 +57,9 @@ import org.apache.fop.messaging.MessageHandler;
  * a length quantity in XSL
  */
 public class Length {
-  public static final Length AUTO ;
+  public static final Length AUTO = new Length(0);
 
   static {
-    AUTO = new Length(0);
     AUTO.bAuto = true;
   }
 

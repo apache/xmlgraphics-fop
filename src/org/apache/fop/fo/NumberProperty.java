@@ -72,7 +72,7 @@ public class NumberProperty extends Property {
     }
   }
 
-  private final Number number;
+  private Number number;
 
   public NumberProperty(Number number) {
     this.number = number;
