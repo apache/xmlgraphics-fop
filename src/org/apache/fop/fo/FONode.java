@@ -7,6 +7,7 @@ import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.PropertyParser;
+import org.apache.fop.datatypes.Ints;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.PropertyValueList;
 import org.apache.fop.datatypes.Numeric;
@@ -62,31 +63,62 @@ public class FONode extends FOTree.Node{
     protected XMLNamespaces namespaces;
     /** The FO type. */
     public final int type;
-    /** The attributes defined on this node. */
+
+    /** The attributes defined on this node. When the FO subtree of this
+     * node has been constructed, it will be deleted. */
     public FOAttributes foAttributes;
-    /** The unmodifiable map of properties defined on this node. */
+    /** The map of properties specified on this node. N.B. This
+      * <tt>HashMap</tt> starts life in FOAttributes.  It is modifiable, and
+      * will be modified when is contains shorthands or compounds.
+      * When the FO subtree of this node has been constructed, and the
+      * <i>propertySet</i> is complete, it will be deleted. */
     public HashMap foProperties = null;
     /** The sorted keys of <i>foProperties</i>. */
     protected Integer[] foKeys = null;
     /** The size of <i>foKeys</i>. */
     private int numAttrs = 0;
-    /** The property expression parser in the FOTree. */
-    protected PropertyParser exprParser;
-    /** The property set for this node. */
-    protected PropertyValue[] propertySet;
-    /** BitSet of properties for which have been specified on this node. */
+    /** BitSet of properties which have been specified on this node. */
     private BitSet specifiedProps =
                                 new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
+
+    /** The property set for this node.  This reference has two lives.
+        During FO subtree building, it holds all values which may potentially
+        be defined on the node.  It must, therefore, be able to accommodate
+        every property.  When FO subtree construction is completed, the
+        <i>sparsePropsSet</i> array is constructed for use during Area
+        tree building, and <i>propertySet</i> is nullified.
+        While <i>sparsePropsSet</i> is null,
+        this variable will be a reference to the complete property set. */
+    private PropertyValue[] propertySet;
+    /** The set of properties directly applicable to this node.  Its size is
+        determined by the <i>numProps</i> value passed in to the constructor.
+        */
+    private PropertyValue[] sparsePropsSet;
+    /** Map of <tt>Integer</tt> indices of <i>sparsePropsSet</i> array.
+        It is indexed by the FO index of the FO associated with a given
+        position in the <i>propertySet</i> array. */
+    private final HashMap sparsePropsMap;
+    /** An array of of the applicable property indices, in property index
+        order. */
+    private final int[] sparseIndices;
+    /** The number of applicable properties. Size of <i>sparsePropsSet</i>. */
+    private final int numProps;
+
+    /** The property expression parser in the FOTree. */
+    protected PropertyParser exprParser;
+
     /** The <i>attrSet</i> argument. */
     public final int attrSet;
     /** The <tt>ROBitSet</tt> of the <i>attrSet</i> argument. */
     protected ROBitSet attrBitSet;
+
     /** The <tt>ROBitSet</tt> of inherited properties for the
         <i>attrSet</i> argument. */
     //protected ROBitSet inheritedBitSet;
     /** The <tt>ROBitSet</tt> of non-inherited properties for the
         <i>attrSet</i> argument. */
     //protected ROBitSet nonInheritedBitSet;
+
     /** Ancestor reference area of this FONode. */
     protected FONode ancestorRefArea = null;
 
@@ -101,7 +133,8 @@ public class FONode extends FOTree.Node{
      * node
      */
     public FONode
-        (FOTree foTree, int type, FONode parent, FoXMLEvent event, int attrSet)
+        (FOTree foTree, int type, FONode parent, FoXMLEvent event, int attrSet,
+            HashMap sparsePropsMap, int[] sparseIndices, int numProps)
         throws Tree.TreeException, FOPException, PropertyException
     {
         foTree.super(parent);
@@ -110,6 +143,9 @@ public class FONode extends FOTree.Node{
         this.parent = parent;
         this.event = event;
         this.attrSet = attrSet;
+        this.sparsePropsMap = sparsePropsMap;
+        this.sparseIndices = sparseIndices;
+        this.numProps = numProps;
         attrBitSet = FOPropertySets.getAttrROBitSet(attrSet);
         //inheritedBitSet = FOPropertySets.getInheritedROBitSet(attrSet);
         //nonInheritedBitSet = FOPropertySets.getNonInheritedROBitSet(attrSet);
@@ -182,9 +218,25 @@ public class FONode extends FOTree.Node{
         return prop.refineParsing(pv.getProperty(), this, pv);
     }
 
+    public void makeSparsePropsSet() throws PropertyException {
+        sparsePropsSet = new PropertyValue[numProps];
+        // Scan the sparseIndices array, and copy the PropertyValue from
+        // propertySet[], if it exists.  Else generate the pertinent value
+        // for that property.
+        for (int i = 0; i < numProps; i++)
+            sparsePropsSet[i] = getPropertyValue(sparseIndices[i]);
+        // Clean up structures that are no longer needed
+        propertySet = null;
+        specifiedProps = null;
+        attrBitSet = null;
+        foKeys = null;
+        foProperties = null;
+        foAttributes = null;
+    }
+
     /**
      * Get the eclosing <tt>FOTree</tt> instance of this <tt>FONode</tt>.
-     * @return the <tt.FOTree</tt>.
+     * @return the <tt>FOTree</tt>.
      */
     public FOTree getFOTree() {
         return foTree;
@@ -335,16 +387,32 @@ public class FONode extends FOTree.Node{
                 throws PropertyException
     {
         PropertyValue pval;
+        if (propertySet == null) {
+            return IndirectValue.adjustedPropertyValue
+                                            (getSparsePropValue(property));
+        }
         if ((pval = propertySet[property]) != null) 
             return IndirectValue.adjustedPropertyValue(pval);
         if (parent != null && PropertyConsts.pconsts.isInherited(property))
             return (propertySet[property] =
-                               IndirectValue.adjustedPropertyValue
+                           IndirectValue.adjustedPropertyValue
                                         (parent.getPropertyValue(property)));
         else // root
             return (propertySet[property] =
-                        IndirectValue.adjustedPropertyValue
+                    IndirectValue.adjustedPropertyValue
                         (PropertyConsts.pconsts.getInitialValue(property)));
+    }
+
+    /**
+     * Get the property value for the given property from the
+     * <i>sparsePropsSet</i> array.
+     * @param prop - the <tt>int</tt> property index.
+     * @return the <tt>PropertyValue</tt> for the specified property.
+     */
+    public PropertyValue getSparsePropValue(int prop) {
+        return sparsePropsSet[
+            ((Integer)(sparsePropsMap.get(Ints.consts.get(prop)))).intValue()
+                            ];
     }
 
 
