@@ -23,7 +23,7 @@ package org.apache.fop.area;
  * @author pbw
  * @version $Revision$ $Name$
  */
-public interface Viewport extends Cloneable {
+public interface Viewport {
     
     /**
      * Sets the reference-area of this viewport/reference pair
