@@ -27,6 +27,16 @@ Jon Smirl
 
 **** HISTORY **** 
 
+Done since 0.15 release
+- added: FopImage class that uses JAI [Eric Schaeffer] and JAI compile target [Kelly Campbell]
+- updated: svg stuff for the latest java bindings [Keiron Liddle]
+- fixed: enhanced error messages for page layout (region names, master) [Norm Walsh]
+- fixed: infinite looping bug when TableCell or TableRow is larger than a page [Hani Elabed]
+- fixed: corrected the size of the "-" char [Marcus Crafter]
+- fixed: check for unnecessary whitespace at end of line [Marcus Crafter]
+- fixed: moves table completely to next page if first row doesn't fit into last page [Marcus Crafter]
+
+
 Done since 0.14 release
 - added region-name support, refactoring of region, PageSequence, 
         PageMasterReference, flow/static [Kelly Campbell, Arved Sandstrom]
@@ -212,6 +222,8 @@ extended
 - keep-next doesn't work and doubles the text lines which should be moved to the next page
 - border width in fo:table is added to the start position of the next block or
   table (see page 6 in table.fo for a test case)
+
+
 
 SVG 
 - SVG linearGradients don't appear the same as in other SVG Viewers
