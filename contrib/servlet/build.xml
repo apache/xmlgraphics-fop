@@ -2,7 +2,7 @@
 <project default="package" basedir=".">
 	<property name="Name" value="Fop Servlet"/>
 	<property name="name" value="fopservlet"/>
-	<property name="version" value="0.20.4cvs"/>
+	<property name="version" value="0.2cvs"/>
 	<!-- compiler switches -->
 	<property name="build.compiler" value="classic"/>
 	<property name="debug" value="off"/>
