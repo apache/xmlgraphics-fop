@@ -26,7 +26,7 @@
         copy JimiProClasses.zip to FOP's lib dir and rename it to jimi-1.0.jar.
     </li>
     <li>Fop has been compiled with
-        <link href="http://java.sun.com/products/java-media/jai/JAI">JAI</link>
+        <link href="http://java.sun.com/products/java-media/jai">JAI</link>
         support. For using JAI you just need to install it.
     </li>
     <li>Links in PDF won't generate multiple link rectangles anymore. If this causes
