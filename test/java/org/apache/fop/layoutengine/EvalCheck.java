@@ -63,10 +63,11 @@ public class EvalCheck implements LayoutEngineCheck {
         } catch (TransformerException e) {
             throw new RuntimeException("XPath evaluation failed: " + e.getMessage());
         }
-        if (!expected.equals(res.str())) {
+        String actual = res.str(); //Second str() seems to fail. D'oh!
+        if (!expected.equals(actual)) {
             throw new RuntimeException(
                     "Expected XPath expression to evaluate to '" + expected + "', but got '" 
-                    + res + "' (" + this + ")");
+                    + actual + "' (" + this + ")");
         }
 
     }
