@@ -115,10 +115,10 @@ public class XSLTInputHandler extends InputHandler {
     }
 
     /**
-     * @see org.apache.fop.apps.InputHandler#run(Session)
+     * @see org.apache.fop.apps.InputHandler#run(Driver)
      */
-    public void run(Session session) throws FOPException {
-        traxInputHandler.run(session);
+    public void run(Driver driver) throws FOPException {
+        traxInputHandler.run(driver);
     }
 
     /**
