@@ -72,51 +72,51 @@ public class CommonTextDecoration {
         Iterator i = list.iterator();
         while (i.hasNext()) {
             Property prop = (Property)i.next(); 
-            int enum = prop.getEnum();
-            if (enum == Constants.EN_NONE) {
+            int prop_enum = prop.getEnum();
+            if (prop_enum == Constants.EN_NONE) {
                 if (deco != null) {
                     deco.decoration = 0;
                 }
                 return deco;
-            } else if (enum == Constants.EN_UNDERLINE) {
+            } else if (prop_enum == Constants.EN_UNDERLINE) {
                 if (deco == null) {
                     deco = new CommonTextDecoration();
                 }
                 deco.decoration |= UNDERLINE;
                 deco.underColor = pList.get(Constants.PR_COLOR).getColorType();
-            } else if (enum == Constants.EN_NO_UNDERLINE) {
+            } else if (prop_enum == Constants.EN_NO_UNDERLINE) {
                 if (deco != null) {
                     deco.decoration &= OVERLINE | LINE_THROUGH | BLINK;
                     deco.underColor = pList.get(Constants.PR_COLOR).getColorType();
                 }
-            } else if (enum == Constants.EN_OVERLINE) {
+            } else if (prop_enum == Constants.EN_OVERLINE) {
                 if (deco == null) {
                     deco = new CommonTextDecoration();
                 }
                 deco.decoration |= OVERLINE;
                 deco.overColor = pList.get(Constants.PR_COLOR).getColorType();
-            } else if (enum == Constants.EN_NO_OVERLINE) {
+            } else if (prop_enum == Constants.EN_NO_OVERLINE) {
                 if (deco != null) {
                     deco.decoration &= UNDERLINE | LINE_THROUGH | BLINK;
                     deco.overColor = pList.get(Constants.PR_COLOR).getColorType();
                 }
-            } else if (enum == Constants.EN_LINE_THROUGH) {
+            } else if (prop_enum == Constants.EN_LINE_THROUGH) {
                 if (deco == null) {
                     deco = new CommonTextDecoration();
                 }
                 deco.decoration |= LINE_THROUGH;
                 deco.throughColor = pList.get(Constants.PR_COLOR).getColorType();
-            } else if (enum == Constants.EN_NO_LINE_THROUGH) {
+            } else if (prop_enum == Constants.EN_NO_LINE_THROUGH) {
                 if (deco != null) {
                     deco.decoration &= UNDERLINE | OVERLINE | BLINK;
                     deco.throughColor = pList.get(Constants.PR_COLOR).getColorType();
                 }
-            } else if (enum == Constants.EN_BLINK) {
+            } else if (prop_enum == Constants.EN_BLINK) {
                 if (deco == null) {
                     deco = new CommonTextDecoration();
                 }
                 deco.decoration |= BLINK;
-            } else if (enum == Constants.EN_NO_BLINK) {
+            } else if (prop_enum == Constants.EN_NO_BLINK) {
                 if (deco != null) {
                     deco.decoration &= UNDERLINE | OVERLINE | LINE_THROUGH;
                 }

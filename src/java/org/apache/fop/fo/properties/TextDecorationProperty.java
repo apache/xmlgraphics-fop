@@ -71,11 +71,11 @@ public class TextDecorationProperty extends ListProperty {
                 if (prop instanceof EnumProperty) {
                     //skip
                 } else if (prop instanceof NCnameProperty) {
-                    Property enum = checkEnumValues(((NCnameProperty)prop).getString());
-                    if (enum == null) {
+                    Property prop_enum = checkEnumValues(((NCnameProperty)prop).getString());
+                    if (prop_enum == null) {
                         throw new PropertyException("Illegal enum value: " + prop.getString());
                     }
-                    l.set(i, enum);
+                    l.set(i, prop_enum);
                 } else {
                     throw new PropertyException("Invalid content for text-decoration "
                             + "property: " + prop);
