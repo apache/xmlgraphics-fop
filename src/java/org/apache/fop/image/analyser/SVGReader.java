@@ -27,6 +27,9 @@ import java.awt.geom.AffineTransform;
 import org.w3c.dom.Element;
 import org.w3c.dom.svg.SVGDocument;
 
+// Avalon
+import org.apache.avalon.framework.logger.Logger;
+
 // Batik
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 import org.apache.batik.dom.svg.SVGOMDocument;
@@ -87,7 +90,8 @@ public class SVGReader implements ImageReader {
         if (batik) {
             try {
                 Loader loader = new Loader();
-                return loader.getImage(uri, bis, ua);
+                return loader.getImage(uri, bis, ua.getLogger(), 
+                    ua.getPixelUnitToMillimeter());
             } catch (NoClassDefFoundError e) {
                 batik = false;
                 //ua.getLogger().error("Batik not in class path", e);
@@ -104,7 +108,7 @@ public class SVGReader implements ImageReader {
      */
     class Loader {
         private FopImage.ImageInfo getImage(String uri, InputStream fis,
-                FOUserAgent ua) {
+                Logger logger, float pixelUnitToMM) {
             // parse document and get the size attributes of the svg element
 
             try {
@@ -174,8 +178,8 @@ public class SVGReader implements ImageReader {
 
                 Element e = doc.getRootElement();
                 String s;
-                SVGUserAgent userAg =
-                        new SVGUserAgent(ua, new AffineTransform());
+                SVGUserAgent userAg = new SVGUserAgent(logger, pixelUnitToMM,
+                            new AffineTransform());
                 BridgeContext ctx = new BridgeContext(userAg);
                 UnitProcessor.Context uctx =
                         UnitProcessor.createContext(ctx, e);

@@ -18,7 +18,7 @@
  
 package org.apache.fop.svg;
 
-import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FOFileHandler;
 import org.apache.batik.bridge.UserAgentAdapter;
 import org.apache.avalon.framework.logger.Logger;
 
@@ -34,16 +34,20 @@ import java.awt.Dimension;
  */
 public class SVGUserAgent extends UserAgentAdapter {
     private AffineTransform currentTransform = null;
-    private FOUserAgent userAgent;
+    private Logger logger;
+    private float pixelUnitToMillimeter = 0.0f;
 
     /**
      * Creates a new SVGUserAgent.
-     * @param ua the FO user agent
+     * @param log an Avalon logging instance
+     * @param pixelUnitToMM The pixel to millimeter conversion factor 
+     *                  currently in effect
      * @param at the current transform
      */
-    public SVGUserAgent(FOUserAgent ua, AffineTransform at) {
+    public SVGUserAgent(Logger log, float pixelUnitToMM, AffineTransform at) {
+        logger = log;
+        pixelUnitToMillimeter = pixelUnitToMM;
         currentTransform = at;
-        userAgent = ua;
     }
 
     /**
@@ -51,7 +55,7 @@ public class SVGUserAgent extends UserAgentAdapter {
      * @return Logger the logger
      */
     protected final Logger getLogger() {
-        return this.userAgent.getLogger();
+        return logger;
     }
 
     /**
@@ -59,7 +63,7 @@ public class SVGUserAgent extends UserAgentAdapter {
      * @param message the message to display
      */
     public void displayError(String message) {
-        getLogger().error(message);
+        logger.error(message);
     }
 
     /**
@@ -67,7 +71,7 @@ public class SVGUserAgent extends UserAgentAdapter {
      * @param ex the exception to display
      */
     public void displayError(Exception ex) {
-        getLogger().error("SVG Error" + ex.getMessage(), ex);
+        logger.error("SVG Error" + ex.getMessage(), ex);
     }
 
     /**
@@ -76,7 +80,7 @@ public class SVGUserAgent extends UserAgentAdapter {
      * @param message the message to display
      */
     public void displayMessage(String message) {
-        getLogger().info(message);
+        logger.info(message);
     }
 
     /**
@@ -84,7 +88,7 @@ public class SVGUserAgent extends UserAgentAdapter {
      * @param message the message to display
      */
     public void showAlert(String message) {
-        getLogger().warn(message);
+        logger.warn(message);
     }
 
     /**
@@ -92,7 +96,7 @@ public class SVGUserAgent extends UserAgentAdapter {
      * @return the pixel unit to millimeter conversion factor
      */
     public float getPixelUnitToMillimeter() {
-        return userAgent.getPixelUnitToMillimeter();
+        return pixelUnitToMillimeter;
     }
 
     /**
@@ -124,7 +128,7 @@ public class SVGUserAgent extends UserAgentAdapter {
      * @return the XML parser class name
      */
     public String getXMLParserClassName() {
-        return org.apache.fop.apps.FOFileHandler.getParserClassName();
+        return FOFileHandler.getParserClassName();
     }
 
     /**

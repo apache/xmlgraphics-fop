@@ -257,8 +257,9 @@ public class PSXMLHandler implements XMLHandler {
             PSGenerator gen = psInfo.psGenerator;
 
             SVGUserAgent ua
-                 = new SVGUserAgent(context.getUserAgent(), new AffineTransform());
-
+                 = new SVGUserAgent(context.getUserAgent().getLogger(), 
+                        context.getUserAgent().getPixelUnitToMillimeter(),
+                        new AffineTransform());
 
             GVTBuilder builder = new GVTBuilder();
             BridgeContext ctx = new BridgeContext(ua);
