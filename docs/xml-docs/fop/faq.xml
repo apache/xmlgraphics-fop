@@ -101,6 +101,24 @@ author XSL FO documents or the XML and XSLT documents.
 </faq>
 
 <faq>
+    <question>How can I insert special character "X"?</question>
+    <answer>
+      <p>
+All the characters you need are available at
+<jump href="http://www.unicode.org/charts/">http://www.unicode.org/charts/</jump>.
+If you need a character it will be there. Once you have found the hex
+or decimal code for the character then you can use this in you xml
+document. It will be in the form &amp;#&lt;decimal value&gt;; or 
+&amp;#x&lt;hex value&gt;;.
+      </p>
+      <p>
+You must have a font that supports the character you need otherwise
+it will replace it with a "#" in the output.
+      </p>
+  </answer>
+</faq>
+
+<faq>
     <question>How can I see a demo?</question>
     <answer>
       <p>
