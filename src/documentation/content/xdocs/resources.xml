@@ -76,6 +76,15 @@ To review the archive: <link href="http://lists.w3.org/Archives/Public/www-xsl-f
 Subscription administration information can be found at <link href="http://www.w3.org/Mail/Request">W3C Mailing List Administrativia</link>. After reviewing the instructions there, send your subscribe or unsubscribe request to <link href="mailto:www-xsl-fo-request@w3.org">www-xsl-fo-request@w3.org</link>.
             </li>
       </ul>
+    </section>
+    <section id="mailing-lists-yahoogroups-xslfo">
+      <title>XSL-FO Mailing List (at YahooGroups)</title>
+      <p>Use this forum to ask general XSL-FO questions.</p>
+      <ul>
+        <li>Before posting questions to any list, see "<link href="#mailing-lists-general">General Information</link>".</li>
+        <li>The home page for this groups is <jump href="http://groups.yahoo.com/group/XSL-FO">XSL-FO - discussion of XSL Formatting Objects</jump>.</li>
+      </ul>
+    </section>
       <section id="mailing-lists-xslt-mulberry">
         <title>XSLT List (Mulberry Tech)</title>
         <ul>
@@ -83,7 +92,6 @@ Subscription administration information can be found at <link href="http://www.w
           <li>Information for using and subscribing can be found at <jump href="http://www.mulberrytech.com/xsl/xsl-list">XSL-List -- Open Forum on XSL</jump>.</li>
         </ul>
       </section>
-    </section>
   </section>
   <section id="specs">
     <title>Specifications</title>
