@@ -80,12 +80,13 @@ public class TableFooter extends AbstractTableBody {
         return "fo:table-footer";
     }
 
+    // FIXME: this seems odd.
     public int getYPosition() {
-        return areaContainer.getCurrentYPosition() - spaceBefore;
+        return super.getYPosition() - spaceBefore;
     }
 
     public void setYPosition(int value) {
-        areaContainer.setYPosition(value + 2 * spaceBefore);
+        super.setYPosition(value + 2 * spaceBefore);
     }
 
 }

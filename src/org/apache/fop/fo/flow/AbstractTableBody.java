@@ -69,7 +69,8 @@ public abstract class AbstractTableBody extends FObj {
     ArrayList columns;
     RowSpanMgr rowSpanMgr;    // manage information about spanning rows
 
-    AreaContainer areaContainer;
+    // public AreaContainer areaContainer;
+    public java.lang.ref.WeakReference areaContainerRef;
 
     public AbstractTableBody(FObj parent, PropertyList propertyList,
                              String systemId, int line, int column)
@@ -87,15 +88,15 @@ public abstract class AbstractTableBody extends FObj {
     }
 
     public void setYPosition(int value) {
-        areaContainer.setYPosition(value);
+        ((AreaContainer)areaContainerRef.get()).setYPosition(value);
     }
 
     public int getYPosition() {
-        return areaContainer.getCurrentYPosition();
+        return ((AreaContainer)areaContainerRef.get()).getCurrentYPosition();
     }
 
     public int getHeight() {
-        return areaContainer.getHeight() + spaceBefore + spaceAfter;
+      return ((AreaContainer)areaContainerRef.get()).getHeight() + spaceBefore + spaceAfter;
     }
 
     public int layout(Area area) throws FOPException {
@@ -170,7 +171,7 @@ public abstract class AbstractTableBody extends FObj {
          * of the containing table area, and its relative position is 0,0.
          * Strictly speaking (CR), this FO should generate no areas!
          */
-        this.areaContainer =
+        AreaContainer areaContainer =
             new AreaContainer(propMgr.getFontState(area.getFontInfo()), 0,
                               area.getContentHeight(),
                               area.getContentWidth(),    // IPD
@@ -184,6 +185,8 @@ public abstract class AbstractTableBody extends FObj {
 
         areaContainer.setAbsoluteHeight(area.getAbsoluteHeight());
         areaContainer.setIDReferences(area.getIDReferences());
+
+        this.areaContainerRef = new java.lang.ref.WeakReference(areaContainer);
 
         ArrayList keepWith = new ArrayList();
         int numChildren = this.children.size();
@@ -292,7 +295,7 @@ public abstract class AbstractTableBody extends FObj {
             }
             lastRow = row;
             area.setMaxHeight(area.getMaxHeight() - spaceLeft
-                              + this.areaContainer.getMaxHeight());
+                              + areaContainer.getMaxHeight());
             spaceLeft = area.spaceLeft();
         }
         area.addChild(areaContainer);
@@ -313,8 +316,8 @@ public abstract class AbstractTableBody extends FObj {
     }
 
     public void removeLayout(Area area) {
-        if (areaContainer != null) {
-            area.removeChild(areaContainer);
+        if (areaContainerRef != null) {
+            area.removeChild((AreaContainer)areaContainerRef.get());
         }
         if (spaceBefore != 0) {
             area.increaseHeight(-spaceBefore);

@@ -136,7 +136,8 @@ public class TableCell extends FObj {
      */
     int m_borderSeparation = 0;
 
-    AreaContainer cellArea;
+    // public AreaContainer cellArea;
+    public java.lang.ref.WeakReference areaContainerRef;
 
     public TableCell(FObj parent, PropertyList propertyList,
                         String systemId, int line, int column)
@@ -288,7 +289,7 @@ public class TableCell extends FObj {
         int spaceLeft = area.spaceLeft() - m_borderSeparation;
         // The Area position defines the content rectangle! Borders
         // and padding are outside of this rectangle.
-        this.cellArea =
+        AreaContainer cellArea =
             new AreaContainer(propMgr.getFontState(area.getFontInfo()),
                               startOffset + startAdjust, beforeOffset,
                               width - widthAdjust, spaceLeft,
@@ -311,6 +312,8 @@ public class TableCell extends FObj {
         cellArea.setIDReferences(area.getIDReferences());
         // Add adjust for padding and border to fix link alignment!
         cellArea.setTableCellXOffset(startOffset + startAdjust);
+        
+        this.areaContainerRef = new java.lang.ref.WeakReference(cellArea);
 
         int numChildren = this.children.size();
         for (int i = this.marker; bDone==false && i < numChildren; i++) {
@@ -336,7 +339,7 @@ public class TableCell extends FObj {
             }
 
             area.setMaxHeight(area.getMaxHeight() - spaceLeft
-                              + this.cellArea.getMaxHeight());
+                              + cellArea.getMaxHeight());
         }
         this.bDone=true;
         cellArea.end();
@@ -371,7 +374,7 @@ public class TableCell extends FObj {
      * overestimate the allocation height).
      */
     public int getHeight() {
-        return cellArea.getHeight() + m_borderSeparation - borderHeight;
+        return ((AreaContainer)areaContainerRef.get()).getHeight() + m_borderSeparation - borderHeight;
     }
 
     /**
@@ -388,14 +391,14 @@ public class TableCell extends FObj {
             // Must get info for all cells starting in row!
             // verticalAlign can be BEFORE or BASELINE
             // For now just treat like "before"
-            cellArea.increaseHeight(delta);
+            ((AreaContainer)areaContainerRef.get()).increaseHeight(delta);
         } else if (delta > 0) {
-            BorderAndPadding cellBP = cellArea.getBorderAndPadding();
+            BorderAndPadding cellBP = ((AreaContainer)areaContainerRef.get()).getBorderAndPadding();
             switch (verticalAlign) {
             case DisplayAlign.CENTER:
                 // Increase cell padding before and after and change
                 // "Y" position of content rectangle
-                cellArea.shiftYPosition(delta / 2);
+                ((AreaContainer)areaContainerRef.get()).shiftYPosition(delta / 2);
                 cellBP.setPaddingLength(BorderAndPadding.TOP,
                                         cellBP.getPaddingTop(false)
                                         + delta / 2);
@@ -408,7 +411,7 @@ public class TableCell extends FObj {
                 // "Y" position of content rectangle
                 cellBP.setPaddingLength(BorderAndPadding.TOP,
                                         cellBP.getPaddingTop(false) + delta);
-                cellArea.shiftYPosition(delta);
+                ((AreaContainer)areaContainerRef.get()).shiftYPosition(delta);
                 break;
             case DisplayAlign.BEFORE:
                 // cellArea.increaseHeight(delta);
@@ -463,7 +466,7 @@ public class TableCell extends FObj {
             this.beforeOffset = m_borderSeparation / 2
                                 + bp.getBorderTopWidth(false)
                                 + bp.getPaddingTop(false);
-            // bp.getBorderBeforeWidth(false) + bp.getPaddingBefore(false);
+            // bp.getBorderBeforeWidth(false) +	bp.getPaddingBefore(false);
 
         } else {
             // System.err.println("Collapse borders");
