@@ -193,7 +193,9 @@ public class PDFDocument {
         /* create a PDFInfo with the next object number and add to
            list of objects */
         PDFInfo pdfInfo = new PDFInfo(++this.objectcount);
-        this.objects.addElement(pdfInfo);
+	// set the default producer
+	pdfInfo.setProducer(org.apache.fop.apps.Version.getVersion());
+	this.objects.addElement(pdfInfo);
         return pdfInfo;
     }
 
