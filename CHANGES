@@ -1,6 +1,8 @@
 ==============================================================================
 Done since 0.20.4 release
 
+- Fix bug in LinkSet.mergeLinks() (ArrayOutOfBoundsException when number of 
+  rects is zero) (Jeremias Maerki)
 - Removed the necessity for a buildtools.jar (Jeremias Maerki)
 - Updated several JARs: Ant 1.5.1, Xerces 2.2.0, Xalan 2.4.1 (Jeremias Maerki)
 - Fixed some multi-threading issues (NPEs)
