@@ -13,16 +13,19 @@ package org.apache.fop.fo.pagination;
 import org.apache.fop.fo.FOAttributes;
 import org.apache.fop.xml.XMLEvent;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.datastructs.Tree;
-import org.apache.fop.datastructs.SyncedCircularBuffer;
 
 /**
  * Implements the fo:simple-page-master flow object
  */
 public class FoSimplePageMaster extends FONode {
+
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
 
     private String masterName;
 
@@ -35,7 +38,8 @@ public class FoSimplePageMaster extends FONode {
     public FoSimplePageMaster(FOTree foTree, FONode parent, XMLEvent event)
         throws Tree.TreeException, FOPException, PropertyException
     {
-        super(foTree, parent, event, FONode.LAYOUT);
+        super(foTree, FObjectNames.SIMPLE_PAGE_MASTER, parent, event,
+              FONode.LAYOUT);
         System.out.println("FOAttributes: " + event);
         try {
             masterName = foAttributes.getFoAttrValue("master-name");
@@ -43,7 +47,7 @@ public class FoSimplePageMaster extends FONode {
             throw new FOPException(e.getMessage());
         }
         // Process regions here
-        XMLEvent ev = XMLEvent.getEndElement(xmlevents, event);
+        XMLEvent ev = xmlevents.getEndElement(event);
     }
 
     /**

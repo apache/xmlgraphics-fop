@@ -16,9 +16,11 @@ import java.util.NoSuchElementException;
 // FOP
 import org.apache.fop.fo.FOAttributes;
 import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.XMLNamespaces;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.datastructs.Tree;
@@ -32,6 +34,9 @@ import org.apache.fop.datastructs.Tree;
  */
 public class FoPageSequenceMaster extends FONode {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     private String masterName;
 
     private ArrayList subSequenceList = new ArrayList(1);
@@ -40,14 +45,16 @@ public class FoPageSequenceMaster extends FONode {
         (FOTree foTree, FONode parent, String masterName)
         throws Tree.TreeException, FOPException, PropertyException
     {
-        super(foTree, parent, null, FONode.NONE);
+        super(foTree, FObjectNames.PAGE_SEQUENCE_MASTER, parent, null,
+              FONode.LAYOUT);
         this.masterName = masterName;
     }
 
     public FoPageSequenceMaster(FOTree foTree, FONode parent, XMLEvent event)
         throws Tree.TreeException, FOPException, PropertyException
     {
-        super(foTree, parent, event, FONode.LAYOUT);
+        super(foTree, FObjectNames.PAGE_SEQUENCE_MASTER, parent, event,
+              FONode.LAYOUT);
         if (event == null) {
             System.out.println("Null event; throwing FOPException");
             throw new FOPException
@@ -60,27 +67,26 @@ public class FoPageSequenceMaster extends FONode {
         }
         // Process sequence members here
         LinkedList list = new LinkedList();
+        list.add((Object)(new XMLEvent.UriLocalName
+          (XMLNamespaces.XSLNSpaceIndex, "single-page-master-reference")));
+        list.add((Object)(new XMLEvent.UriLocalName
+                          (XMLNamespaces.XSLNSpaceIndex,
+                                        "repeatable-page-master-reference")));
         list.add((Object)
                  (new XMLEvent.UriLocalName
-                  (XMLEvent.XSLNSpaceIndex, "single-page-master-reference")));
-        list.add((Object)
-                 (new XMLEvent.UriLocalName
-                  (XMLEvent.XSLNSpaceIndex,
-                   "repeatable-page-master-reference")));
-        list.add((Object)
-                 (new XMLEvent.UriLocalName
-                  (XMLEvent.XSLNSpaceIndex,
-                   "repeatable-page-master-alternatives")));
+                          (XMLNamespaces.XSLNSpaceIndex,
+                                   "repeatable-page-master-alternatives")));
         try {
             do {
-                XMLEvent ev = XMLEvent.expectStartElement(xmlevents, list);
-                if (ev.localName.equals("single-page-master-reference")) {
+                XMLEvent ev = xmlevents.expectStartElement(list);
+                String localName = ev.getLocalName();
+                if (localName.equals("single-page-master-reference")) {
                     System.out.println("Found single-page-master-reference");
-                } else if (ev.localName.equals
+                } else if (localName.equals
                            ("repeatable-page-master-reference")) {
                     System.out.println
                             ("Found repeatable-page-master-reference");
-                } else if (ev.localName.equals
+                } else if (localName.equals
                            ("repeatable-page-master-alternatives")) {
                     System.out.println
                             ("Found repeatable-page-master-reference");
@@ -91,7 +97,7 @@ public class FoPageSequenceMaster extends FONode {
         } catch (NoSuchElementException e) {
             // sub-sequence specifiers exhausted
         }
-        XMLEvent ev = XMLEvent.getEndElement(xmlevents, event);
+        XMLEvent ev = xmlevents.getEndElement(event);
     }
 
     /**
