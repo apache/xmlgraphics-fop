@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
+ 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -48,80 +48,81 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+
 package org.apache.fop.svg;
 
 // FOP
 import org.apache.fop.fo.*;
-import org.apache.fop.datatypes.*;
+import org.apache.fop.layout.Area;
+import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 
+import org.apache.fop.dom.svg.*;
+
 /**
- * a class representing all the length properties in SVG
+ * class representing svg:altGlyph pseudo flow object.
+ *
  */
-public class SVGLength extends Property {
-	
-    /**
-     * inner class for making SVG Length objects.
-     */
-    public static class Maker extends Property.Maker {
+public class AltGlyph extends FObj {
 
 	/**
-	 * whether this property is inherited or not.
-	 *
-	 * @return is this inherited?
+	 * inner class for making AltGlyph objects.
 	 */
-	public boolean isInherited() { return false; }
-	
-	/**
-	 * make an SVG Length property with the given value.
-	 *
-	 * @param propertyList the property list this is a member of
-	 * @param value the explicit string value of the property
-	 */
-	public Property make(PropertyList propertyList, String value)
-	    throws FOPException {
-	    return new SVGLength(propertyList, new Length(value));
+	public static class Maker extends FObj.Maker {
+
+		/**
+		 * make a AltGlyph object.
+		 *
+		 * @param parent the parent formatting object
+		 * @param propertyList the explicit properties of this object
+		 *
+		 * @return the AltGlyph object
+		 */
+		public FObj make(FObj parent, PropertyList propertyList) throws FOPException
+		{
+			return new AltGlyph(parent, propertyList);
+		}
 	}
+
+	/**
+	 * returns the maker for this object.
+	 *
+	 * @return the maker for AltGlyph objects
+	 */
+	public static FObj.Maker maker() {
+		return new AltGlyph.Maker();
+	}
+
+	/**
+	 * constructs a AltGlyph object (called by Maker).
+	 *
+	 * @param parent the parent formatting object
+	 * @param propertyList the explicit properties of this object
+	 */
+	protected AltGlyph(FObj parent, PropertyList propertyList) {
+		super(parent, propertyList);
+		this.name = "svg:altGlyph";
+	}
+
+	/**
+	 * layout this formatting object.
+	 *
+	 * @param area the area to layout the object into
+	 *
+	 * @return the status of the layout
+	 */
+	public Status layout(Area area) throws FOPException {
 		
-	/** 
-	 * make an SVG Length property with the default value.
-	 *
-	 * @param propertyList the property list the property is a member of
-	 */
-	public Property make(PropertyList propertyList) throws FOPException {
-	    return make(propertyList, "0pt");
+		/* if the area this is being put into is an SVGArea */
+		if (area instanceof SVGArea) {
+			/* add a line to the SVGArea */
+//			((SVGArea) area).addGraphic(new AltGlyphGraphic(x1, y1, x2, y2));
+		} else {
+			/* otherwise generate a warning */
+			System.err.println("WARNING: svg:altGlyph outside svg:svg");
+		}
+
+		/* return status */
+		return new Status(Status.OK);
 	}
-    }
-
-    /**
-     * returns the maker for this object.
-     *
-     * @return the maker for SVG Length objects
-     */
-    public static Property.Maker maker() {
-	return new SVGLength.Maker();
-    }
-
-    /** the length as a Length object */
-    protected Length value;
-	
-    /**
-     * construct an SVG length (called by the Maker).
-     *
-     * @param propertyList the property list this is a member of
-     * @param explicitValue the explicit value as a Length object
-     */
-    protected SVGLength(PropertyList propertyList, Length explicitValue) {
-	this.propertyList = propertyList;
-	this.value = explicitValue;
-    }
-
-    /**
-     * get the length
-     *
-     * @return the length as a Length object
-     */
-    public Length getLength() {
-        return this.value;
-    }
 }

@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
+ 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -48,37 +48,82 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+
 package org.apache.fop.svg;
 
+// FOP
+import org.apache.fop.fo.*;
+import org.apache.fop.layout.Area;
+import org.apache.fop.layout.FontState;
+import org.apache.fop.apps.FOPException;
+
+import org.apache.fop.dom.svg.*;
+import org.apache.fop.dom.svg.SVGArea;
 /**
- * class representing a rectangle in an SVG Area
+ * class representing svg:Font pseudo flow object.
+ *
  */
-public class RectGraphic extends Graphic {
+public class Font extends FObj {
 
-    /** x-coordinate of corner */
-    public int x;
+	/**
+	 * inner class for making Font objects.
+	 */
+	public static class Maker extends FObj.Maker {
 
-    /** y-coordinate of corner */
-    public int y;
+		/**
+		 * make a Font object.
+		 *
+		 * @param parent the parent formatting object
+		 * @param propertyList the explicit properties of this object
+		 *
+		 * @return the Font object
+		 */
+		public FObj make(FObj parent, PropertyList propertyList) throws FOPException
+		{
+			return new Font(parent, propertyList);
+		}
+	}
 
-    /** width of rectangle */
-    public int width;
+	/**
+	 * returns the maker for this object.
+	 *
+	 * @return the maker for Font objects
+	 */
+	public static FObj.Maker maker() {
+		return new Font.Maker();
+	}
 
-    /** height of rectangle */
-    public int height;
+	/**
+	 * constructs a Font object (called by Maker).
+	 *
+	 * @param parent the parent formatting object
+	 * @param propertyList the explicit properties of this object
+	 */
+	protected Font(FObj parent, PropertyList propertyList) {
+		super(parent, propertyList);
+		this.name = "svg:font";
+	}
 
-    /**
-     * construct a rectangle graphic.
-     *
-     * @param x x-coordinate of corner
-     * @param y y-coordinate of corner
-     * @param width width of rectangle
-     * @param height height of rectangle
-     */
-    public RectGraphic(int x, int y, int width, int height) {
-	this.x = x;
-	this.y = y;
-	this.width = width;
-	this.height = height;
-    }
+	/**
+	 * layout this formatting object.
+	 *
+	 * @param area the area to layout the object into
+	 *
+	 * @return the status of the layout
+	 */
+	public Status layout(Area area) throws FOPException {
+
+		/* retrieve properties */		
+		/* if the area this is being put into is an SVGArea */
+		if (area instanceof SVGArea) {
+			/* add a line to the SVGArea */
+			((SVGArea) area).addGraphic(new SVGFontElementImpl());
+		} else {
+			/* otherwise generate a warning */
+			System.err.println("WARNING: svg:font outside svg:svg");
+		}
+
+		/* return status */
+		return new Status(Status.OK);
+	}
 }

@@ -50,60 +50,12 @@
  */
 package org.apache.fop.svg;
 
-import org.apache.fop.fo.FOTreeBuilder;
-import org.apache.fop.fo.ElementMapping;
-
-public class SVGElementMapping implements ElementMapping {
-
-	public void addToBuilder(FOTreeBuilder builder) {
-		String uri = "http://www.w3.org/TR/2000/03/WD-SVG-20000303/DTD/svg-20000303-stylable.dtd";
-		builder.addMapping(uri, "svg", SVG.maker());
-		builder.addMapping(uri, "rect", Rect.maker());
-		builder.addMapping(uri, "line", Line.maker());
-		builder.addMapping(uri, "text", Text.maker());
-
-		builder.addMapping(uri, "desc", Desc.maker());
-		builder.addMapping(uri, "title", Title.maker());
-		builder.addMapping(uri, "circle", Circle.maker());
-		builder.addMapping(uri, "ellipse", Ellipse.maker());
-		builder.addMapping(uri, "g", G.maker());
-		builder.addMapping(uri, "polyline", Polyline.maker());
-		builder.addMapping(uri, "polygon", Polygon.maker());
-		builder.addMapping(uri, "defs", Defs.maker());
-		builder.addMapping(uri, "path", Path.maker());
-		builder.addMapping(uri, "use", Use.maker());
-		builder.addMapping(uri, "tspan", TSpan.maker());
-		builder.addMapping(uri, "tref", TRef.maker());
-		builder.addMapping(uri, "image", Image.maker());
-
-// elements in progress
-		builder.addMapping(uri, "textPath", TextPath.maker());
-		builder.addMapping(uri, "clipPath", ClipPath.maker());
-		builder.addMapping(uri, "mask", Mask.maker());
-		builder.addMapping(uri, "linearGradient", LinearGradient.maker());
-		builder.addMapping(uri, "radialGradient", RadialGradient.maker());
-		builder.addMapping(uri, "stop", Stop.maker());
-
-// elements below will not work
-		builder.addMapping(uri, "a", A.maker());
-		builder.addMapping(uri, "pattern", Pattern.maker());
-
-		builder.addMapping(uri, "marker", Marker.maker());
-		builder.addMapping(uri, "switch", Switch.maker());
-		builder.addMapping(uri, "animate", Animate.maker());
-		builder.addMapping(uri, "altGlyph", AltGlyph.maker());
-		builder.addMapping(uri, "font", Font.maker());
-		builder.addMapping(uri, "glyph", Glyph.maker());
-		builder.addMapping(uri, "missing-glyph", MissingGlyph.maker());
-		builder.addMapping(uri, "hkern", HKern.maker());
-		builder.addMapping(uri, "vkern", VKern.maker());
-		builder.addMapping(uri, "symbol", Symbol.maker());
-		builder.addMapping(uri, "set", Set.maker());
-		builder.addMapping(uri, "animateMotion", AnimateMotion.maker());
-		builder.addMapping(uri, "animateColor", AnimateColor.maker());
-		builder.addMapping(uri, "animateTransform", AnimateTransform.maker());
-		builder.addMapping(uri, "style", Style.maker());
-		builder.addMapping(uri, "cursor", Cursor.maker());
-		builder.addMapping(uri, "filter", Filter.maker());
+public class PathPoint {
+	public float x;
+	public float y;
+	public PathPoint(float p1, float p2)
+	{
+		x = p1;
+		y = p2;
 	}
 }

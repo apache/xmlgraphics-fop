@@ -54,20 +54,27 @@ package org.apache.fop.svg;
 // FOP
 import org.apache.fop.fo.*;
 import org.apache.fop.messaging.MessageHandler;
-import org.apache.fop.fo.properties.*;
+//import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 
+import org.apache.fop.dom.svg.*;
+//import org.apache.fop.dom.svg.Graphic;
+import org.apache.fop.dom.svg.SVGRectElementImpl;
+import org.apache.fop.dom.svg.SVGArea;
+
+import org.w3c.dom.svg.SVGLength;
+
 /**
  * class representing svg:rect pseudo flow object.
  */
-public class Rect extends FObj {
+public class Rect extends FObj implements GraphicsCreator {
 
-    /**
-     * inner class for making Rect objects.
-     */
-    public static class Maker extends FObj.Maker {
+	/**
+	 * inner class for making Rect objects.
+	 */
+	public static class Maker extends FObj.Maker {
 
 	/**
 	 * make a Rect object.
@@ -78,56 +85,68 @@ public class Rect extends FObj {
 	 * @return the Rect object
 	 */
 	public FObj make(FObj parent, PropertyList propertyList)
-	    throws FOPException {
-	    return new Rect(parent, propertyList);
+		throws FOPException {
+		return new Rect(parent, propertyList);
 	}
-    }
+	}
 
-    /**
-     * returns the maker for this object.
-     *
-     * @return the maker for Rect objects
-     */
-    public static FObj.Maker maker() {
+	/**
+	 * returns the maker for this object.
+	 *
+	 * @return the maker for Rect objects
+	 */
+	public static FObj.Maker maker() {
 	return new Rect.Maker();
-    }
+	}
 
-    /**
-     * constructs a Rect object (called by Maker).
-     *
-     * @param parent the parent formatting object
-     * @param propertyList the explicit properties of this object
-     */
-    protected Rect(FObj parent, PropertyList propertyList) {
+	/**
+	 * constructs a Rect object (called by Maker).
+	 *
+	 * @param parent the parent formatting object
+	 * @param propertyList the explicit properties of this object
+	 */
+	protected Rect(FObj parent, PropertyList propertyList) {
 	super(parent, propertyList);
 	this.name = "svg:rect";
-    }
+	}
 
-    /**
-     * layout this formatting object.
-     *
-     * @param area the area to layout the object into
-     *
-     * @return the status of the layout
-     */
-    public Status layout(Area area) throws FOPException {
+	public GraphicImpl createGraphic()
+	{
+		/* retrieve properties */
+		SVGLength width = ((SVGLengthProperty)this.properties.get("width")).getSVGLength();
+		SVGLength height = ((SVGLengthProperty)this.properties.get("height")).getSVGLength();
+		SVGLength x = ((SVGLengthProperty)this.properties.get("x")).getSVGLength();
+		SVGLength y = ((SVGLengthProperty)this.properties.get("y")).getSVGLength();
+		SVGRectElementImpl graph = new SVGRectElementImpl();
+		graph.setX(x);
+		graph.setY(y);
+		graph.setWidth(width);
+		graph.setHeight(height);
+		graph.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
+		graph.setTransform(((SVGTransform)this.properties.get("transform")).oldgetTransform());
+		graph.setId(this.properties.get("id").getString());
+		return graph;
+	}
 
-	/* retrieve properties */
-	int width = this.properties.get("width").getLength().mvalue();
-	int height = this.properties.get("height").getLength().mvalue();
-	int x = this.properties.get("x").getLength().mvalue();
-	int y = this.properties.get("y").getLength().mvalue();
+	/**
+	 * layout this formatting object.
+	 *
+	 * @param area the area to layout the object into
+	 *
+	 * @return the status of the layout
+	 */
+	public Status layout(Area area) throws FOPException {
 	
 	/* if the area this is being put into is an SVGArea */
 	if (area instanceof SVGArea) {
-	    /* add a rectangle to the SVGArea */
-	    ((SVGArea) area).addGraphic(new RectGraphic(x, y, width, height));
+		/* add a rectangle to the SVGArea */
+		((SVGArea) area).addGraphic(createGraphic());
 	} else {
-	    /* otherwise generate a warning */
+		/* otherwise generate a warning */
 	    MessageHandler.errorln("WARNING: svg:rect outside svg:svg");
 	}
 
 	/* return status */
 	return new Status(Status.OK);
-    }
+	}
 }

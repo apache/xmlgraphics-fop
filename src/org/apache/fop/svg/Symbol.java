@@ -48,11 +48,81 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+
 package org.apache.fop.svg;
 
+// FOP
+import org.apache.fop.fo.*;
+import org.apache.fop.layout.Area;
+import org.apache.fop.layout.FontState;
+import org.apache.fop.apps.FOPException;
+
+import org.apache.fop.dom.svg.*;
+import org.apache.fop.dom.svg.SVGArea;
 /**
- * base class for SVG graphic objects.
  *
- * Graphic objects include rectangles, lines and text
  */
-public abstract class Graphic {}
+public class Symbol extends FObj {
+
+	/**
+	 * inner class for making Symbol objects.
+	 */
+	public static class Maker extends FObj.Maker {
+
+		/**
+		 * make a Symbol object.
+		 *
+		 * @param parent the parent formatting object
+		 * @param propertyList the explicit properties of this object
+		 *
+		 * @return the Symbol object
+		 */
+		public FObj make(FObj parent, PropertyList propertyList) throws FOPException
+		{
+			return new Symbol(parent, propertyList);
+		}
+	}
+
+	/**
+	 * returns the maker for this object.
+	 *
+	 * @return the maker for Symbol objects
+	 */
+	public static FObj.Maker maker() {
+		return new Symbol.Maker();
+	}
+
+	/**
+	 * constructs a Symbol object (called by Maker).
+	 *
+	 * @param parent the parent formatting object
+	 * @param propertyList the explicit properties of this object
+	 */
+	protected Symbol(FObj parent, PropertyList propertyList) {
+		super(parent, propertyList);
+		this.name = "svg:symbol";
+	}
+
+	/**
+	 * layout this formatting object.
+	 *
+	 * @param area the area to layout the object into
+	 *
+	 * @return the status of the layout
+	 */
+	public Status layout(Area area) throws FOPException {
+
+		/* retrieve properties */
+		/* if the area this is being put into is an SVGArea */
+		if (area instanceof SVGArea) {
+			/* add a line to the SVGArea */
+			((SVGArea) area).addGraphic(new SVGSymbolElementImpl());
+		} else {
+			/* otherwise generate a warning */
+			System.err.println("WARNING: svg:symbol outside svg:svg");
+		}
+
+		/* return status */
+		return new Status(Status.OK);
+	}
+}

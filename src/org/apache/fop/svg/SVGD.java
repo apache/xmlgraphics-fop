@@ -50,60 +50,80 @@
  */
 package org.apache.fop.svg;
 
-import org.apache.fop.fo.FOTreeBuilder;
-import org.apache.fop.fo.ElementMapping;
+// FOP
+import org.apache.fop.fo.*;
+import org.apache.fop.datatypes.*;
+import org.apache.fop.apps.FOPException;
 
-public class SVGElementMapping implements ElementMapping {
+import java.util.*;
 
-	public void addToBuilder(FOTreeBuilder builder) {
-		String uri = "http://www.w3.org/TR/2000/03/WD-SVG-20000303/DTD/svg-20000303-stylable.dtd";
-		builder.addMapping(uri, "svg", SVG.maker());
-		builder.addMapping(uri, "rect", Rect.maker());
-		builder.addMapping(uri, "line", Line.maker());
-		builder.addMapping(uri, "text", Text.maker());
+/**
+ *
+ */
+public class SVGD extends Property {
+	
+	/**
+	 * inner class for making SVG Length objects.
+	 */
+	public static class Maker extends Property.Maker {
 
-		builder.addMapping(uri, "desc", Desc.maker());
-		builder.addMapping(uri, "title", Title.maker());
-		builder.addMapping(uri, "circle", Circle.maker());
-		builder.addMapping(uri, "ellipse", Ellipse.maker());
-		builder.addMapping(uri, "g", G.maker());
-		builder.addMapping(uri, "polyline", Polyline.maker());
-		builder.addMapping(uri, "polygon", Polygon.maker());
-		builder.addMapping(uri, "defs", Defs.maker());
-		builder.addMapping(uri, "path", Path.maker());
-		builder.addMapping(uri, "use", Use.maker());
-		builder.addMapping(uri, "tspan", TSpan.maker());
-		builder.addMapping(uri, "tref", TRef.maker());
-		builder.addMapping(uri, "image", Image.maker());
+	/**
+	 * whether this property is inherited or not.
+	 *
+	 * @return is this inherited?
+	 */
+	public boolean isInherited() { return false; }
+	
+	/**
+	 * make an SVG Length property with the given value.
+	 *
+	 * @param propertyList the property list this is a member of
+	 * @param value the explicit string value of the property
+	 */
+	public Property make(PropertyList propertyList, String value)
+		throws FOPException {
+		return new SVGD(propertyList, new PathData(value));
+	}
+		
+	/** 
+	 * make an SVG Length property with the default value.
+	 *
+	 * @param propertyList the property list the property is a member of
+	 */
+	public Property make(PropertyList propertyList) throws FOPException {
+		return make(propertyList, "");
+	}
+	}
 
-// elements in progress
-		builder.addMapping(uri, "textPath", TextPath.maker());
-		builder.addMapping(uri, "clipPath", ClipPath.maker());
-		builder.addMapping(uri, "mask", Mask.maker());
-		builder.addMapping(uri, "linearGradient", LinearGradient.maker());
-		builder.addMapping(uri, "radialGradient", RadialGradient.maker());
-		builder.addMapping(uri, "stop", Stop.maker());
+	/**
+	 * returns the maker for this object.
+	 *
+	 * @return the maker for SVG Length objects
+	 */
+	public static Property.Maker maker() {
+	return new SVGD.Maker();
+	}
 
-// elements below will not work
-		builder.addMapping(uri, "a", A.maker());
-		builder.addMapping(uri, "pattern", Pattern.maker());
+	protected PathData style;
+	
+	/**
+	 * construct an SVG length (called by the Maker).
+	 *
+	 * @param propertyList the property list this is a member of
+	 * @param explicitValue the explicit value as a Length object
+	 */
+	protected SVGD(PropertyList propertyList, PathData explicitValue) {
+	this.propertyList = propertyList;
+	this.style = explicitValue;
+	}
 
-		builder.addMapping(uri, "marker", Marker.maker());
-		builder.addMapping(uri, "switch", Switch.maker());
-		builder.addMapping(uri, "animate", Animate.maker());
-		builder.addMapping(uri, "altGlyph", AltGlyph.maker());
-		builder.addMapping(uri, "font", Font.maker());
-		builder.addMapping(uri, "glyph", Glyph.maker());
-		builder.addMapping(uri, "missing-glyph", MissingGlyph.maker());
-		builder.addMapping(uri, "hkern", HKern.maker());
-		builder.addMapping(uri, "vkern", VKern.maker());
-		builder.addMapping(uri, "symbol", Symbol.maker());
-		builder.addMapping(uri, "set", Set.maker());
-		builder.addMapping(uri, "animateMotion", AnimateMotion.maker());
-		builder.addMapping(uri, "animateColor", AnimateColor.maker());
-		builder.addMapping(uri, "animateTransform", AnimateTransform.maker());
-		builder.addMapping(uri, "style", Style.maker());
-		builder.addMapping(uri, "cursor", Cursor.maker());
-		builder.addMapping(uri, "filter", Filter.maker());
+	/**
+	 * get the length
+	 *
+	 * @return the length as a Length object
+	 */
+	public Vector getPath()
+	{
+		return this.style.getPath();
 	}
 }
