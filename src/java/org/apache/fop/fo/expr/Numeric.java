@@ -72,9 +72,13 @@ import org.apache.fop.datatypes.PercentBase;
  */
 public class Numeric {
     // Bit fields
-    public static final int ABS_LENGTH = 1;     // abs units (or number)
-    public static final int PC_LENGTH = 2;      // Percentage
-    public static final int TCOL_LENGTH = 4;    // Table units
+
+    /** constant for a length of absolute units (or number) */
+    public static final int ABS_LENGTH = 1;
+    /** constant for a percentage */
+    public static final int PC_LENGTH = 2;
+    /** constant for table units */
+    public static final int TCOL_LENGTH = 4;
 
     private int valType;
     private double absValue;
@@ -156,7 +160,7 @@ public class Numeric {
 
 
     /**
-     * Return the current value as a Length if possible. This constructs
+     * @return the current value as a Length if possible. This constructs
      * a new Length or Length subclass based on the current value type
      * of the Numeric.
      * If the stored value has a unit dimension other than 1, null
@@ -187,13 +191,16 @@ public class Numeric {
     }
 
     /**
-     * Return the current value as a Number if possible.
+     * @return the current value as a Number if possible.
      * Calls asDouble().
      */
     public Number asNumber() {
         return asDouble();
     }
 
+    /**
+     * @return the current value as a Double
+     */
     public Double asDouble() {
         if (dim == 0 && valType == ABS_LENGTH) {
             return new Double(absValue);
@@ -365,7 +372,8 @@ public class Numeric {
     }
 
     /**
-     * Return a Numeric which is the maximum of the current value and the
+     * @param op the operand to which the current value should be compared
+     * @return a Numeric which is the maximum of the current value and the
      * operand.
      * @throws PropertyException If the dimensions or value types of the
      * object and the operand are different.
@@ -391,7 +399,8 @@ public class Numeric {
     }
 
     /**
-     * Return a Numeric which is the minimum of the current value and the
+     * @param op the operand to which the current value should be compared
+     * @return a Numeric which is the minimum of the current value and the
      * operand.
      * @throws PropertyException If the dimensions or value types of the
      * object and the operand are different.
