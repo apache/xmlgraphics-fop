@@ -6,10 +6,12 @@ import java.util.NoSuchElementException;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.datastructs.SyncedCircularBuffer;
+import org.apache.fop.xml.XMLNamespaces;
+import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.datastructs.Tree;
 import org.apache.fop.fo.pagination.FoPageSequenceMaster;
 import org.apache.fop.fo.pagination.FoPageSequenceMaster.SubSequenceSpecifier;
@@ -17,13 +19,10 @@ import org.apache.fop.fo.pagination
     .FoPageSequenceMaster.SubSequenceSpecifier.ConditionalPageMasterReference;
 
 /*
- * FoLayoutMasterSet.java
  * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
- * 
- * Created: Mon Nov 12 23:30:51 2001
  * 
  * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
  * @version $Revision$ $Name$
@@ -35,6 +34,9 @@ import org.apache.fop.fo.pagination
  */
 
 public class FoLayoutMasterSet extends FONode {
+
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
 
     /**
      * Hash of SimplePageMaster and PageSequenceMaster objects,
@@ -58,7 +60,8 @@ public class FoLayoutMasterSet extends FONode {
         (FOTree foTree, FONode parent, XMLEvent event)
         throws Tree.TreeException, FOPException, PropertyException
     {
-        super(foTree, parent, event, FONode.LAYOUT);
+        super(foTree, FObjectNames.LAYOUT_MASTER_SET, parent, event,
+              FONode.LAYOUT);
     }
 
     /**
@@ -71,17 +74,18 @@ public class FoLayoutMasterSet extends FONode {
         // Set up a list with the two possibilities
         LinkedList list = new LinkedList();
         list.add((Object)(new XMLEvent.UriLocalName
-                          (XMLEvent.XSLNSpaceIndex, "simple-page-master")));
+                      (XMLNamespaces.XSLNSpaceIndex, "simple-page-master")));
         list.add((Object)(new XMLEvent.UriLocalName
-                         (XMLEvent.XSLNSpaceIndex, "page-sequence-master")));
+                     (XMLNamespaces.XSLNSpaceIndex, "page-sequence-master")));
         try {
             do {
                 FoSimplePageMaster simple;
                 String simpleName;
+                String localName;
                 FoPageSequenceMaster pageSeq;
-                XMLEvent ev =
-                        XMLEvent.expectStartElement(xmlevents, list);
-                if (ev.localName.equals("simple-page-master")) {
+                XMLEvent ev = xmlevents.expectStartElement(list);
+                localName = ev.getLocalName();
+                if (localName.equals("simple-page-master")) {
                     System.out.println("Found simple-page-master");
                     try {
                         simple = new FoSimplePageMaster(foTree, this, ev);
@@ -123,7 +127,7 @@ public class FoLayoutMasterSet extends FONode {
                     ConditionalPageMasterReference cond = subSeq.new
                             ConditionalPageMasterReference(simpleName);
                     pageMasters.put(simpleName, seqMaster);
-                } else if (ev.localName.equals("page-sequence-master")) {
+                } else if (localName.equals("page-sequence-master")) {
                     System.out.println("Found page-sequence-master");
                     try {
                         pageSeq = new FoPageSequenceMaster(foTree, this, ev);
