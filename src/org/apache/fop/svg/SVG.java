@@ -96,12 +96,8 @@ public class SVG extends FObj implements GraphicsCreator {
 	}
 
 	FontState fs;
-	int breakBefore;
-	int breakAfter;
 	float width;
 	float height;
-	int spaceBefore;
-	int spaceAfter;
 
 	/**
 	 * constructs an SVG object (called by Maker).
@@ -191,42 +187,10 @@ public class SVG extends FObj implements GraphicsCreator {
 		this.fs = new FontState(area.getFontInfo(), fontFamily,
 					 fontStyle, fontWeight, fontSize);
 		
-		this.breakBefore = this.properties.get("break-before").getEnum();
-		this.breakAfter = this.properties.get("break-after").getEnum();
-		Property prop = this.properties.get("width");
 		this.width = ((SVGLengthProperty)this.properties.get("width")).getSVGLength().getValue();
-		prop = this.properties.get("height");
 		this.height = ((SVGLengthProperty)this.properties.get("height")).getSVGLength().getValue();
 		
-		this.spaceBefore =
-		this.properties.get("space-before.optimum").getLength().mvalue();
-		this.spaceAfter =
-		this.properties.get("space-after.optimum").getLength().mvalue();
-		/* if the SVG is embedded in a block area */
-//		if (area instanceof BlockArea) {
-		/* temporarily end the block area */
-//		area.end();
-//		}
-		
 		this.marker = 0;
-
-/*		if (breakBefore == BreakBefore.PAGE || ((this.height * 1000 + area.getHeight()) > area.getMaxHeight())) {
-		return new Status(Status.FORCE_PAGE_BREAK);
-		}
-
-		if (breakBefore == BreakBefore.ODD_PAGE) {
-		return new Status(Status.FORCE_PAGE_BREAK_ODD);
-		}
-
-		if (breakBefore == BreakBefore.EVEN_PAGE) {
-		return new Status(Status.FORCE_PAGE_BREAK_EVEN);
-		}*/
-	}
-	   
-	/* if there is a space-before */
-	if (spaceBefore != 0) {
-		/* add a display space */
-		area.addDisplaySpace(spaceBefore);
 	}
 
 	/* create an SVG area */
@@ -253,35 +217,8 @@ public class SVG extends FObj implements GraphicsCreator {
 	svg.end();
 
 	/* increase the height of the containing area accordingly */
-	area.setHeight(svg.getHeight());
+	area.increaseHeight(svg.getHeight());
 //	area.setWidth(svg.getWidth());
-
-	/* if there is a space-after */
-//	if (spaceAfter != 0) {
-		/* add a display space */
-//		area.addDisplaySpace(spaceAfter);
-//	}
-
-	/* if the SVG is embedded in a block area */
-//	if (area instanceof BlockArea) {
-		/* re-start the block area */
-//		area.start();
-//	}
-	
-/*	if (breakAfter == BreakAfter.PAGE) {
-		this.marker = BREAK_AFTER;
-		return new Status(Status.FORCE_PAGE_BREAK);
-	}
-
-	if (breakAfter == BreakAfter.ODD_PAGE) {
-		this.marker = BREAK_AFTER;
-		return new Status(Status.FORCE_PAGE_BREAK_ODD);
-	}
-	
-	if (breakAfter == BreakAfter.EVEN_PAGE) {
-		this.marker = BREAK_AFTER;
-		return new Status(Status.FORCE_PAGE_BREAK_EVEN);
-	}*/
 
 	/* return status */
 	return new Status(Status.OK);

@@ -164,12 +164,43 @@ public class InstreamForeignObject extends FObj {
 		/* temporarily end the block area */
 		area.end();
 		}
-		
+		if(this.areaCurrent == null) {
+		this.areaCurrent =
+		    new ForeignObjectArea(fs, area.getAllocationWidth(), 
+	                          area.spaceLeft(), 0);
+
+		this.areaCurrent.start();
+		areaCurrent.setPage(area.getPage());
+
+		/* iterate over the child formatting objects and lay them out
+		   into the SVG area */
+		int numChildren = this.children.size();
+		if(numChildren > 1) {
+		    throw new FOPException("Only one child element is allowed in an instream-foreign-object");
+		}
+		if(this.children.size() > 0) {
+			FONode fo = (FONode) children.elementAt(0);
+			Status status;
+			// currently FONode must be an SVG
+			if ((status = fo.layout(this.areaCurrent)).isIncomplete()) {
+				return status;
+			}
+
+			/* finish off the foreign object area */
+			this.areaCurrent.end();
+		}
+		}
+
 		this.marker = 0;
 
-		// this doesn't work for auto sizes
-		if (breakBefore == BreakBefore.PAGE || ((this.height + area.getHeight()) > area.getMaxHeight())) {
-		return new Status(Status.FORCE_PAGE_BREAK);
+		if(this.hauto) {
+			if (breakBefore == BreakBefore.PAGE || ((spaceBefore + areaCurrent.getHeight()) > area.spaceLeft())) {
+				return new Status(Status.FORCE_PAGE_BREAK);
+			}
+		} else {
+			if (breakBefore == BreakBefore.PAGE || (this.height > area.spaceLeft())) {
+				return new Status(Status.FORCE_PAGE_BREAK);
+			}
 		}
 
 		if (breakBefore == BreakBefore.ODD_PAGE) {
@@ -180,43 +211,22 @@ public class InstreamForeignObject extends FObj {
 		return new Status(Status.FORCE_PAGE_BREAK_EVEN);
 		}
 	}
-	   
+
 	/* if there is a space-before */
 	if (spaceBefore != 0) {
 		/* add a display space */
 		area.addDisplaySpace(spaceBefore);
 	}
 
-	this.areaCurrent =
-	    new ForeignObjectArea(fs, area.getAllocationWidth(), 
-                          area.spaceLeft(), 0);
+	/* add the SVG area to the containing area */
+	area.addChild(areaCurrent);
+
 	areaCurrent.setPage(area.getPage());
 	/* layout foreign object */
 //	svg.start();
 
-	/* add the SVG area to the containing area */
-	area.addChild(areaCurrent);
-
-	/* iterate over the child formatting objects and lay them out
-	   into the SVG area */
-	int numChildren = this.children.size();
-	if(numChildren > 1) {
-	    // error
-	}
-	if(this.children.size() > 0) {
-	FONode fo = (FONode) children.elementAt(0);
-	Status status;
-	// currently FONode must be an SVG
-	if ((status = fo.layout(this.areaCurrent)).isIncomplete()) {
-	return status;
-	}
-
-	/* finish off the SVG area */
-//	svg.end();
-
 	/* increase the height of the containing area accordingly */
 	area.increaseHeight(areaCurrent.getHeight());
-	}
 
 	/* if there is a space-after */
 	if (spaceAfter != 0) {
