@@ -21,6 +21,7 @@ package org.apache.fop.fo.pagination;
 // XML
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
+import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.fo.FONode;
@@ -51,7 +52,8 @@ public class SinglePageMasterReference extends PageMasterReference
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
      * XSL/FOP Content Model: empty
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) {
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
        invalidChildError(loc, nsURI, localName);
     }
 

@@ -255,8 +255,8 @@ public class FOTreeBuilder extends DefaultHandler {
         } else { // check that incoming node is valid for currentFObj
             try {
                 currentFObj.validateChildNode(locator, namespaceURI, localName);
-            } catch (IllegalArgumentException e) {
-                throw new SAXException(e);
+            } catch (SAXParseException e) {
+                throw e;
             }
         }
         
@@ -287,11 +287,11 @@ public class FOTreeBuilder extends DefaultHandler {
      * @see org.xml.sax.ContentHandler#endElement(String, String, String)
      */
     public void endElement(String uri, String localName, String rawName)
-                throws SAXException {
+                throws SAXParseException {
         try {
             currentFObj.endOfNode();
-        } catch (IllegalArgumentException e) {
-            throw new SAXException(e);
+        } catch (SAXParseException e) {
+            throw e;
         }
 
         currentFObj = currentFObj.getParent();

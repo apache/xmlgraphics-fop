@@ -24,6 +24,7 @@ import java.util.HashMap;
 // XML
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
+import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.fo.FONode;
@@ -136,7 +137,8 @@ public class PageSequence extends FObj {
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
         XSL/FOP Content Model: (title?,static-content*,flow)
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) {
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
         if (nsURI == FOElementMapping.URI) {
             if (localName.equals("title")) {
                 if (titleFO != null) {
@@ -167,7 +169,7 @@ public class PageSequence extends FObj {
      * This passes the end page sequence to the structure handler
      * so it can act upon that.
      */
-    protected void endOfNode() {
+    protected void endOfNode() throws SAXParseException {
         if (mainFlow == null) {
            missingChildElementError("(title?,static-content*,flow)");
         }

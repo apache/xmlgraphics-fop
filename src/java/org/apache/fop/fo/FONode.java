@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 // XML
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
+import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.apps.FOPException;
@@ -134,9 +135,10 @@ public abstract class FONode {
      * called within FObj constructor
      * @param namespaceURI namespace of incoming node
      * @param localName (e.g. "table" for "fo:table")
-     * @throws IllegalArgumentException if incoming node not valid for parent
+     * @throws SAXParseException if incoming node not valid for parent
      */
-    protected void validateChildNode(Locator loc, String namespaceURI, String localName) {}
+    protected void validateChildNode(Locator loc, String namespaceURI, String localName) 
+        throws SAXParseException {}
 
     /**
      * Adds characters (does nothing here)
@@ -160,7 +162,7 @@ public abstract class FONode {
     /**
      *
      */
-    protected void endOfNode() {
+    protected void endOfNode() throws SAXParseException {
         // do nothing by default
     }
 
@@ -242,10 +244,10 @@ public abstract class FONode {
      * @param loc org.xml.sax.Locator object of the error (*not* parent node)
      * @param offendingNode incoming node that would cause a duplication.
      */
-    protected void tooManyNodesError(Locator loc, String offendingNode) {
-        throw new IllegalArgumentException(
-            errorText(loc) + getName() + ", only one " 
-            + offendingNode + " may be declared.");
+    protected void tooManyNodesError(Locator loc, String offendingNode) 
+        throws SAXParseException {
+        throw new SAXParseException (errorText(loc) + getName() + ", only one " 
+            + offendingNode + " may be declared.", loc);
     }
 
     /**
@@ -256,10 +258,9 @@ public abstract class FONode {
      * @param tooEarlyNode string name of node that should be later in document
      */
     protected void nodesOutOfOrderError(Locator loc, String tooLateNode, 
-        String tooEarlyNode) {
-        throw new IllegalArgumentException(
-            errorText(loc) + "For " + getName() + ", " + tooLateNode 
-            + " must be declared before " + tooEarlyNode + ".");
+        String tooEarlyNode) throws SAXParseException {
+        throw new SAXParseException (errorText(loc) + "For " + getName() + ", " + tooLateNode 
+            + " must be declared before " + tooEarlyNode + ".", loc);
     }
     
     /**
@@ -269,10 +270,10 @@ public abstract class FONode {
      * @param nsURI namespace URI of incoming invalid node
      * @param lName local name (i.e., no prefix) of incoming node 
      */
-    protected void invalidChildError(Locator loc, String nsURI, String lName) {
-        throw new IllegalArgumentException(
-            errorText(loc) + getNodeString(nsURI, lName) + 
-            " is not a valid child element of " + getName() + ".");
+    protected void invalidChildError(Locator loc, String nsURI, String lName) 
+        throws SAXParseException {
+        throw new SAXParseException (errorText(loc) + getNodeString(nsURI, lName) + 
+            " is not a valid child element of " + getName() + ".", loc);
     }
     
     /**
@@ -281,10 +282,11 @@ public abstract class FONode {
      * @param contentModel The XSL Content Model for the fo: object.
      * or a similar description indicating child elements needed.
      */
-    protected void missingChildElementError(String contentModel) {
-        throw new IllegalArgumentException(
-            errorText(line, column) + getName() + " is missing child elements. \n" + 
-            "Required Content Model: " + contentModel);
+    protected void missingChildElementError(String contentModel)
+        throws SAXParseException {
+        throw new SAXParseException(errorText(line, column) + getName() + 
+            " is missing child elements. \nRequired Content Model: " 
+            + contentModel, null, null, line, column);
     }
 
     /**

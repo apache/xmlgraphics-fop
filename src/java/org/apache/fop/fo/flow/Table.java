@@ -23,6 +23,7 @@ import java.util.ArrayList;
 
 // XML
 import org.xml.sax.Attributes;
+import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.apps.FOPException;
@@ -201,7 +202,7 @@ public class Table extends FObj {
         fotv.serveTable(this);
     }
 
-    protected void endOfNode() {
+    protected void endOfNode() throws SAXParseException {
         getFOInputHandler().endTable(this);
     }
 

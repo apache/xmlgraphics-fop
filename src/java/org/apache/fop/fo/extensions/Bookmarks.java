@@ -21,6 +21,9 @@ package org.apache.fop.fo.extensions;
 // Java
 import java.util.ArrayList;
 
+// XML
+import org.xml.sax.SAXParseException;
+
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
@@ -57,7 +60,7 @@ public class Bookmarks extends ExtensionObj {
      * the bookmark data from the child elements and add
      * the extension to the area tree.
      */
-    protected void endOfNode() {
+    protected void endOfNode() throws SAXParseException {
         ((Root) parent).setBookmarks(this);
     }
 
