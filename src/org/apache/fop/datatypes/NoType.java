@@ -3,7 +3,7 @@ package org.apache.fop.datatypes;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.AbstractPropertyValue;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.properties.*;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertyConsts;
 
@@ -54,10 +54,10 @@ public class NoType extends AbstractPropertyValue {
      * validate the <i>None</i> against the associated property.
      */
     public void validate() throws PropertyException {
-        if ((PropertyConsts.dataTypes.get(property) & Properties.AURAL) != 0)
+        if ((propertyConsts.getDataTypes(property) & Property.AURAL) != 0)
             return;
-        if (PropertyConsts.getInitialValueType(property)
-                                                    == Properties.NOTYPE_IT)
+        if (propertyConsts.getInitialValueType(property)
+                                                    == Property.NOTYPE_IT)
             return;
         throw new PropertyException
                 ("NoType property is invalid for property "

@@ -3,7 +3,7 @@ package org.apache.fop.datatypes;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.AbstractPropertyValue;
-import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.properties.*;
 
 /*
  * Time.java
@@ -125,7 +125,7 @@ public class Time extends AbstractPropertyValue {
      * validate the <i>Time</i> against the associated property.
      */
     public void validate() throws PropertyException {
-        super.validate(Properties.TIME);
+        super.validate(Property.TIME);
     }
 
     public String toString() {

@@ -3,7 +3,7 @@ package org.apache.fop.datatypes;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.datatypes.AbstractPropertyValue;
 import org.apache.fop.datatypes.PropertyValue;
-import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.properties.*;
 
 /*
  * MimeType.java
@@ -70,7 +70,7 @@ public class MimeType extends AbstractPropertyValue {
      * validate the <i>MimeType</i> against the associated property.
      */
     public void validate() throws PropertyException {
-        super.validate(Properties.MIMETYPE);
+        super.validate(Property.MIMETYPE);
     }
 
 }

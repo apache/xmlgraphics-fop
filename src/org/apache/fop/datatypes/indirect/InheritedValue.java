@@ -2,7 +2,7 @@ package org.apache.fop.datatypes.indirect;
 
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.datatypes.PropertyValue;
-import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.datatypes.indirect.IndirectValue;
@@ -50,7 +50,7 @@ public class InheritedValue extends IndirectValue {
         throws PropertyException
     {
         super(property, PropertyValue.INHERIT, sourceProperty);
-        if (PropertyConsts.nonInheritedProps.get(sourceProperty))
+        if ( ! propertyConsts.isInherited(sourceProperty))
             throw new PropertyException
                     ("Non-inherited property "
                      + PropNames.getPropertyName(sourceProperty));
@@ -78,8 +78,8 @@ public class InheritedValue extends IndirectValue {
         throws PropertyException
     {
         super(propertyName, PropertyValue.INHERIT, sourcePropertyName);
-        if (PropertyConsts.nonInheritedProps.get(
-                    PropertyConsts.getPropertyIndex(sourcePropertyName)))
+        if ( ! propertyConsts.isInherited(
+                    PropNames.getPropertyIndex(sourcePropertyName)))
             throw new PropertyException
                     ("Non-inherited property " + sourcePropertyName);
     }
@@ -105,7 +105,7 @@ public class InheritedValue extends IndirectValue {
         String propStr = "Unknown";
         String spropStr = "Unknown";
         // Property must be inheritable
-        if (PropertyConsts.inheritance(sourceProperty) == Properties.NO) {
+        if (! propertyConsts.isInherited(sourceProperty)) {
             try {
                 propStr = PropNames.getPropertyName(property);
                 spropStr = PropNames.getPropertyName(sourceProperty);
@@ -121,7 +121,7 @@ public class InheritedValue extends IndirectValue {
      * validate the <i>InheritedValue</i> against the <i>source</i> property.
      */
     public void validate() throws PropertyException {
-        validate(Properties.ANY_TYPE);
+        validate(Property.ANY_TYPE);
     }
 
 }

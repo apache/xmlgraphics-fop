@@ -2,8 +2,9 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertyConsts;
-import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.properties.*;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.datatypes.PropertyValue;
 
@@ -37,7 +38,7 @@ public class CountryType extends NCName {
     public CountryType(String propertyName, String countryCode)
         throws PropertyException
     {
-        this(PropertyConsts.getPropertyIndex(propertyName), countryCode);
+        this(PropNames.getPropertyIndex(propertyName), countryCode);
     }
 
     /**
@@ -51,7 +52,7 @@ public class CountryType extends NCName {
      * Validate the <i>CountryType</i> against the associated property.
      */
     public void validate() throws PropertyException {
-        super.validate(Properties.COUNTRY_T);
+        super.validate(Property.COUNTRY_T);
     }
 
 }

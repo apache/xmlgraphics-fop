@@ -2,8 +2,9 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertyConsts;
-import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.properties.*;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.datatypes.PropertyValue;
 
@@ -40,14 +41,14 @@ public class LanguageType extends NCName {
     public LanguageType(String propertyName, String languageCode)
         throws PropertyException
     {
-        this(PropertyConsts.getPropertyIndex(propertyName), languageCode);
+        this(PropNames.getPropertyIndex(propertyName), languageCode);
     }
 
     /**
      * Validate the <i>LanguageType</i> against the associated property.
      */
     public void validate() throws PropertyException {
-        super.validate(Properties.LANGUAGE_T);
+        super.validate(Property.LANGUAGE_T);
     }
 
     /**

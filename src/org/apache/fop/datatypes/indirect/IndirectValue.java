@@ -4,8 +4,8 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.datatypes.AbstractPropertyValue;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.Numeric;
-import org.apache.fop.fo.Properties;
-import org.apache.fop.fo.PropertyConsts;
+import org.apache.fop.fo.properties.Property;
+import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.FONode;
 
 /*
@@ -92,7 +92,7 @@ public class IndirectValue extends AbstractPropertyValue {
         throws PropertyException
     {
         super(propertyName, type);
-        sourceProperty = PropertyConsts.getPropertyIndex(sourcePropertyName);
+        sourceProperty = PropNames.getPropertyIndex(sourcePropertyName);
     }
 
     /**

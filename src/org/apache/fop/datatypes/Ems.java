@@ -2,6 +2,7 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertyConsts;
 
 /*
@@ -54,7 +55,7 @@ public class Ems {
     public static Numeric makeEms (String propertyName, double value)
         throws PropertyException
     {
-        return makeEms(PropertyConsts.getPropertyIndex(propertyName), value);
+        return makeEms(PropNames.getPropertyIndex(propertyName), value);
     }
 
 }

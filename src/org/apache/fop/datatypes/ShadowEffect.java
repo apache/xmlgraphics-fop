@@ -4,7 +4,7 @@ import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.AbstractPropertyValue;
 import org.apache.fop.datatypes.PropertyValueList;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.properties.*;
 import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.PropNames;
 
@@ -119,7 +119,7 @@ public class ShadowEffect extends AbstractPropertyValue {
     public ShadowEffect(String propertyName, PropertyValueList list)
         throws PropertyException
     {
-        this(PropertyConsts.getPropertyIndex(propertyName), list);
+        this(PropNames.getPropertyIndex(propertyName), list);
     }
 
     /**
@@ -175,7 +175,7 @@ public class ShadowEffect extends AbstractPropertyValue {
         } else if (entry instanceof NCName) {
             color = new ColorType
                     (property,
-                     PropertyConsts.getEnumIndex
+                     propertyConsts.getEnumIndex
                      (PropNames.TEXT_SHADOW, ((NCName)entry).getNCName()));
         }
     }

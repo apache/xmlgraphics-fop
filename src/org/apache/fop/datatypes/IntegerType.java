@@ -4,7 +4,7 @@ package org.apache.fop.datatypes;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.datatypes.AbstractPropertyValue;
 import org.apache.fop.datatypes.PropertyValue;
-import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.properties.*;
 
 /*
  * IntegerType.java
@@ -70,7 +70,7 @@ public class IntegerType extends AbstractPropertyValue {
      * validate the <i>IntegerType</i> against the associated property.
      */
     public void validate() throws PropertyException {
-        super.validate(Properties.INTEGER);
+        super.validate(Property.INTEGER);
     }
 
     public String toString() {
