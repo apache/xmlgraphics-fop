@@ -206,4 +206,8 @@ public class CTM implements Serializable {
     public String toString() {
 	return "[" + a + " " + b + " " + c + " " + d + " " + e + " " + f + "]";
     }
+
+    public String toPDFctm() {
+	return a + " " + b + " " + c + " " + d + " " + e/1000f + " " + f/1000f;
+    }
 }
