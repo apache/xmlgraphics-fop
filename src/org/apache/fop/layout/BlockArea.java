@@ -122,7 +122,7 @@ public class BlockArea extends Area {
      * @return the line area to be used to add inlie objects
      */
     public LineArea getCurrentLineArea() {
-        if (currentHeight + this.currentLineArea.getHeight() > maxHeight) {
+	if (currentHeight + lineHeight > maxHeight) {
             return null;
         }
         this.currentLineArea.changeHyphenation(hyphProps);
