@@ -54,27 +54,22 @@
  */
 package org.apache.fop.fo.pagination;
 
-import java.util.Collection;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.FObjectNames;
-import org.apache.fop.fo.FOTree;
+import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOTree;
+import org.apache.fop.fo.FObjectNames;
+import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.XMLEvent;
-import org.apache.fop.xml.UriLocalName;
-import org.apache.fop.xml.XMLNamespaces;
 import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
-import org.apache.fop.datastructs.TreeException;
-import org.apache.fop.fo.pagination.FoPageSequenceMaster;
-import org.apache.fop.fo.pagination.PageSequenceMaster;
+import org.apache.fop.xml.XMLEvent;
 
 /**
  * <tt>FoLayoutMasterSet</tt> is the class which processes the
@@ -220,7 +215,7 @@ public class FoLayoutMasterSet extends FONode {
                     throw new FOPException
                             ("Aargh! expectStartElement(events, list)");
                 // Flush the master event
-                ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+                ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
                 pool.surrenderEvent(ev);
             } while (true);
         } catch (NoSuchElementException e) {

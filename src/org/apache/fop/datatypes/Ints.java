@@ -57,9 +57,9 @@
 
 package org.apache.fop.datatypes;
 
-import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.datastructs.ROIntegerArray;
+import org.apache.fop.fo.FObjectNames;
+import org.apache.fop.fo.PropNames;
 
 /**
  * Data class of pre-initialised Integer objects.

@@ -54,13 +54,12 @@
  */
 package org.apache.fop.datatypes.indirect;
 
-import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.datatypes.AbstractPropertyValue;
-import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.Numeric;
-import org.apache.fop.fo.properties.Property;
-import org.apache.fop.fo.PropNames;
+import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * A superclass for objects which may have deferred <tt>PropertyValue</tt>

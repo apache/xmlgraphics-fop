@@ -51,14 +51,10 @@
  */
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.datastructs.ROStringArray;
-import org.apache.fop.datatypes.Ints;
-import org.apache.fop.fo.properties.Property;
-
-import java.util.Map;
 import java.util.HashMap;
-import java.util.Collections;
+
+import org.apache.fop.datatypes.Ints;
+import org.apache.fop.fo.expr.PropertyException;
 
 public class RenderingIntent extends Property  {
     public static final int dataTypes = AUTO | ENUM | INHERIT;

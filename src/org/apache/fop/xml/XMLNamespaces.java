@@ -53,10 +53,10 @@
  */
 package org.apache.fop.xml;
 
-import org.apache.fop.datatypes.Ints;
-
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.apache.fop.datatypes.Ints;
 
 /**
  * Maintains the namespaces encountered by an invocation of

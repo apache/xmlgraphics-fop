@@ -55,23 +55,20 @@
 package org.apache.fop.fo.flow;
 
 // FOP
-import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.PropertySets;
-import org.apache.fop.fo.FObjectNames;
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOTree;
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.xml.XMLEvent;
-import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.datastructs.TreeException;
-import org.apache.fop.datatypes.PropertyValue;
-import org.apache.fop.datatypes.Ints;
-
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.BitSet;
 import java.util.NoSuchElementException;
+
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.datastructs.TreeException;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOTree;
+import org.apache.fop.fo.FObjectNames;
+import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
+import org.apache.fop.xml.XMLEvent;
 
 /**
  * Implements the fo:simple-page-master flow object
@@ -155,7 +152,7 @@ public class FoPageSequence extends FONode {
                 // process the title
                 title = numChildren();
                 new FoTitle(getFOTree(), this, ev);
-                ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+                ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
                 pool.surrenderEvent(ev);
             } // else ignore
 
@@ -168,7 +165,7 @@ public class FoPageSequence extends FONode {
                 if (firstStaticContent != -1)
                     firstStaticContent = numChildren();
                 new FoStaticContent(getFOTree(), this, ev);
-                ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+                ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
                 pool.surrenderEvent(ev);
             }
 
@@ -181,14 +178,14 @@ public class FoPageSequence extends FONode {
                 throw new FOPException("No flow found.");
             firstFlow = numChildren();
             new FoFlow(getFOTree(), this, ev);
-            ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+            ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
             pool.surrenderEvent(ev);
             while ((ev = xmlevents.expectStartElement
                             (FObjectNames.FLOW, XMLEvent.DISCARD_W_SPACE))
                    != null) {
                 // Loop over remaining fo:page-sequences
                 new FoFlow(getFOTree(), this, ev);
-                ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+                ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
                 pool.surrenderEvent(ev);
             }
         } catch (NoSuchElementException e) {

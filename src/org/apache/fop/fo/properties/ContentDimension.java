@@ -52,7 +52,6 @@
 package org.apache.fop.fo.properties;
 
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.properties.Property;
 
 public class ContentDimension extends Property  {
     public static final int SCALE_TO_FIT = 1;

@@ -51,11 +51,10 @@
  */
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.datatypes.Ints;
-import org.apache.fop.fo.properties.Property;
-
 import java.util.HashMap;
+
+import org.apache.fop.datatypes.Ints;
+import org.apache.fop.fo.expr.PropertyException;
 
 public class BreakCommon extends Property  {
     public static final int COLUMN = 1;

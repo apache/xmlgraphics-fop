@@ -51,32 +51,23 @@
  */
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.datatypes.PropertyValueList;
-import org.apache.fop.datatypes.Length;
-import org.apache.fop.datatypes.NCName;
+import java.util.HashMap;
+
 import org.apache.fop.datatypes.EnumType;
-import org.apache.fop.datatypes.Numeric;
-import org.apache.fop.datatypes.MappedNumeric;
-import org.apache.fop.datatypes.Ems;
-import org.apache.fop.datatypes.IntegerType;
-import org.apache.fop.datatypes.StringType;
 import org.apache.fop.datatypes.FontFamilySet;
 import org.apache.fop.datatypes.Ints;
-import org.apache.fop.datastructs.ROStringArray;
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.expr.SystemFontFunction;
+import org.apache.fop.datatypes.MappedNumeric;
+import org.apache.fop.datatypes.NCName;
+import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PropertyValue;
+import org.apache.fop.datatypes.PropertyValueList;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertyConsts;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ShorthandPropSets;
-import org.apache.fop.fo.properties.Property;
+import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.expr.SystemFontFunction;
 import org.apache.fop.messaging.MessageHandler;
-
-import java.util.Iterator;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Collections;
 
 public class Font extends Property  {
     public static final int dataTypes = SHORTHAND;

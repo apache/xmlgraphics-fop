@@ -56,9 +56,8 @@
  */
 package org.apache.fop.datatypes;
 
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.datastructs.ROStringArray;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * Base interface for all property value types.

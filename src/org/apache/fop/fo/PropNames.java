@@ -56,8 +56,8 @@ package org.apache.fop.fo;
 
 import java.util.HashMap;
 
-import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.datatypes.Ints;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * A class of constants; an array of all property names and the constants

@@ -53,14 +53,10 @@
 package org.apache.fop.apps;
 
 // Imported SAX classes
+import java.io.File;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
-
-// fop
-import org.apache.fop.messaging.MessageHandler;
-
-// java
-import java.io.File;
 
 /**
  * Manages input if it is an xsl:fo file

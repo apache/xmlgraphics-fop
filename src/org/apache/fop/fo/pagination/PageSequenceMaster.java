@@ -55,33 +55,23 @@
 package org.apache.fop.fo.pagination;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Set;
-import java.util.Iterator;
 
-// FOP
-import org.apache.fop.fo.properties.Property;
-import org.apache.fop.fo.properties.*;
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.EnumType;
+import org.apache.fop.datatypes.IntegerType;
+import org.apache.fop.datatypes.NCName;
+import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
-import org.apache.fop.datatypes.PropertyValue;
-import org.apache.fop.datatypes.NCName;
-import org.apache.fop.datatypes.Numeric;
-import org.apache.fop.datatypes.EnumType;
-import org.apache.fop.datatypes.IntegerType;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.pagination.FoPageSequenceMaster;
-import org.apache.fop.fo.pagination.FoPageSequenceMaster
-                                                .FoSinglePageMasterReference;
-import org.apache.fop.fo.pagination.FoPageSequenceMaster
-                                            .FoRepeatablePageMasterReference;
-import org.apache.fop.fo.pagination.FoPageSequenceMaster
-                                        .FoRepeatablePageMasterAlternatives;
-import org.apache.fop.fo.pagination.FoPageSequenceMaster
-        .FoRepeatablePageMasterAlternatives.FoConditionalPageMasterReference;
+import org.apache.fop.fo.pagination.FoPageSequenceMaster.FoRepeatablePageMasterAlternatives.FoConditionalPageMasterReference;
+import org.apache.fop.fo.properties.BlankOrNotBlank;
+import org.apache.fop.fo.properties.MaximumRepeats;
+import org.apache.fop.fo.properties.OddOrEven;
+import org.apache.fop.fo.properties.PagePosition;
 
 /**
  * Encodes an <b>fo:page-sequence-master</b> and associated

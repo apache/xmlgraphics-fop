@@ -51,7 +51,6 @@
  */
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.fo.properties.Property;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;

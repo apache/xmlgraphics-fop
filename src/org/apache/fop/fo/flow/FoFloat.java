@@ -55,23 +55,19 @@
 package org.apache.fop.fo.flow;
 
 // FOP
-import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.PropertySets;
-import org.apache.fop.fo.FObjectNames;
-import org.apache.fop.fo.FObjects;
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOTree;
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.UnexpectedStartElementException;
+import java.util.Arrays;
+import java.util.BitSet;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
-import org.apache.fop.datatypes.PropertyValue;
-import org.apache.fop.datatypes.Ints;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.BitSet;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOTree;
+import org.apache.fop.fo.FObjectNames;
+import org.apache.fop.fo.FObjects;
+import org.apache.fop.fo.PropNames;
+import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
+import org.apache.fop.xml.UnexpectedStartElementException;
 
 /**
  * Implements the fo:float flow object.
@@ -152,7 +148,7 @@ public class FoFloat extends FONode {
             FObjects.fobjects.makeFlowObject
                     (foTree, this, ev, stateFlags | FONode.MC_FLOAT);
             // Clear the blockage
-            ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+            ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
             pool.surrenderEvent(ev);
             // Get the rest of the %block;s
             do {
@@ -164,7 +160,7 @@ public class FoFloat extends FONode {
                     // Generate the flow object
                     FObjects.fobjects.makeFlowObject
                             (foTree, this, ev, stateFlags | FONode.MC_FLOAT);
-                    ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+                    ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
                     pool.surrenderEvent(ev);
                 }
             } while (ev != null);

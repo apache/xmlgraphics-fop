@@ -51,19 +51,18 @@
  */
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.datatypes.PropertyValueList;
+import java.util.Iterator;
+
 import org.apache.fop.datatypes.Numeric;
-import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.datatypes.PropertyValue;
-import org.apache.fop.datatypes.indirect.Inherit;
-import org.apache.fop.datatypes.indirect.FromParent;
+import org.apache.fop.datatypes.PropertyValueList;
 import org.apache.fop.datatypes.indirect.FromNearestSpecified;
+import org.apache.fop.datatypes.indirect.FromParent;
+import org.apache.fop.datatypes.indirect.Inherit;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.ShorthandPropSets;
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.properties.Property;
-
-import java.util.Iterator;
+import org.apache.fop.fo.expr.PropertyException;
 
 public class Padding extends Property  {
     public static final int dataTypes = SHORTHAND;

@@ -51,11 +51,10 @@
  */
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.properties.Property;
-import org.apache.fop.datatypes.Ints;
-
 import java.util.HashMap;
+
+import org.apache.fop.datatypes.Ints;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * Pseudo-property class for common border style values occurring in a

@@ -55,13 +55,12 @@
 package org.apache.fop.fo.pagination;
 
 // FOP
-import org.apache.fop.fo.FObjectNames;
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOTree;
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.xml.FoXMLEvent;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOTree;
+import org.apache.fop.fo.FObjectNames;
+import org.apache.fop.xml.FoXMLEvent;
 
 
 /**

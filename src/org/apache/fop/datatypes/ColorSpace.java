@@ -126,11 +126,11 @@ public class ColorSpace {
 
         // shouldn't this be a select-case? I can never remember
         // the syntax for that.
-        if (this.currentColorSpace == this.DEVICE_RGB) {
+        if (this.currentColorSpace == ColorSpace.DEVICE_RGB) {
             return ("DeviceRGB");
-        } else if (this.currentColorSpace == this.DEVICE_CMYK) {
+        } else if (this.currentColorSpace == ColorSpace.DEVICE_CMYK) {
             return ("DeviceCMYK");
-        } else if (this.currentColorSpace == this.DEVICE_GRAY) {
+        } else if (this.currentColorSpace == ColorSpace.DEVICE_GRAY) {
             return ("DeviceGray");
         } else {    // unknown... Error. Tell them it's RGB and hope they don't notice.
             return ("DeviceRGB");

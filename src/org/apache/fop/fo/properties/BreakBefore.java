@@ -51,8 +51,6 @@
  */
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.properties.BreakCommon;
 
 public class BreakBefore extends BreakCommon {
     public static final int dataTypes = AUTO | ENUM | INHERIT;

@@ -52,9 +52,8 @@
 
 package org.apache.fop.tools;
 
-import java.util.*;
-import org.w3c.dom.*;
-import org.xml.sax.*;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 
 /**
  * This is an InputSource to be used with DocumentReader.

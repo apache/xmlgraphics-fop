@@ -68,7 +68,6 @@ import org.apache.fop.configuration.ConfigurationReader;
 import java.io.IOException;
 
 import java.util.HashMap;
-import java.util.ArrayList;
 
 /**
  */

@@ -56,32 +56,15 @@
  */
 package org.apache.fop.fo;
 
-import org.apache.fop.datastructs.Tree;
-import org.apache.fop.datastructs.Node;
-import org.apache.fop.datastructs.Node.*;
-import org.apache.fop.datatypes.Ints;
-import org.apache.fop.datatypes.Numeric;
-import org.apache.fop.datatypes.CountryLanguageScript;
-import org.apache.fop.datatypes.PropertyValue;
-import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.XMLNamespaces;
-import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
 import org.apache.fop.apps.Driver;
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.configuration.Configuration;
-import org.apache.fop.fo.PropertyConsts;
-import org.apache.fop.fo.PropNames;
+import org.apache.fop.datastructs.Tree;
+import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.PropertyParser;
-
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-
-import java.util.HashMap;
-import java.util.ArrayList;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
 
 /**
  * <tt>FOTree</tt> is the class that generates and maintains the FO Tree.
@@ -175,7 +158,7 @@ public class FOTree extends Tree implements Runnable {
             foRoot.buildFoTree();
             System.out.println("Back from buildFoTree");
             // Clean up the fo:root event
-            event = xmlevents.getEndElement(xmlevents.DISCARD_EV, event);
+            event = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, event);
             // Get the end of document
             xmlevents.getEndDocument();
         } catch (Exception e) {

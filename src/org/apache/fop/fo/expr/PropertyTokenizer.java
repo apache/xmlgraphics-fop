@@ -52,9 +52,8 @@
 
 package org.apache.fop.fo.expr;
 
-import org.apache.fop.datatypes.Numeric;
-import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Frequency;
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Time;
 
 /**

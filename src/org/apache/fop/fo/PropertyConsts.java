@@ -1,4 +1,4 @@
-/**
+/*
  * $Id$
  * 
  * ============================================================================
@@ -55,30 +55,16 @@
 
 package org.apache.fop.fo;
 
-import java.lang.Character;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.BitSet;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 
-import org.apache.fop.fo.FOTree;
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.properties.Property;
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.datatypes.Numeric;
-import org.apache.fop.datatypes.Ints;
-import org.apache.fop.datastructs.ROIntArray;
 import org.apache.fop.datastructs.ROStringArray;
-import org.apache.fop.datastructs.ROBitSet;
+import org.apache.fop.datatypes.Ints;
+import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PropertyValue;
+import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.properties.Property;
 
 /**
  * This class contains a number of arrays containing values indexed by the

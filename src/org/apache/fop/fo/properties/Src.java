@@ -51,8 +51,6 @@
  */
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.properties.Property;
 
 public class Src extends Property  {
     public static final int dataTypes = URI_SPECIFICATION | INHERIT;

@@ -55,19 +55,12 @@
 
 package org.apache.fop.fo;
 
-import java.lang.Character;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
-// Only for tree property set partitions
-
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.FObjectNames;
-import org.apache.fop.fo.PropertySets;
-import org.apache.fop.fo.PropNames;
 import org.apache.fop.datatypes.Ints;
 import org.apache.fop.xml.FoXMLEvent;
 

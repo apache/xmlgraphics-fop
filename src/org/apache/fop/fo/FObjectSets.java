@@ -55,10 +55,9 @@
 
 package org.apache.fop.fo;
 
-import org.apache.fop.fo.FObjectNames;
-import org.apache.fop.datastructs.ROBitSet;
-
 import java.util.BitSet;
+
+import org.apache.fop.datastructs.ROBitSet;
 
 /**
  * Data class containing sets of Flow Objects included in certain FO set

@@ -53,16 +53,13 @@
 package org.apache.fop.apps;
 
 // SAX
+import java.io.File;
+import java.net.URL;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
-// Java
-import java.net.URL;
-import java.io.File;
-
-// FOP
 import org.apache.fop.messaging.MessageHandler;
-import org.apache.fop.configuration.Configuration;
 
 
 abstract public class InputHandler {

@@ -56,40 +56,28 @@
  */
 package org.apache.fop.fo;
 
-import org.apache.fop.fo.FOTree;
-import org.apache.fop.fo.FOAttributes;
-import org.apache.fop.fo.FObjectNames;
-import org.apache.fop.fo.FOPropertySets;
-import org.apache.fop.fo.properties.Property;
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.expr.PropertyParser;
-import org.apache.fop.fo.expr.FunctionNotImplementedException;
-import org.apache.fop.datatypes.Ints;
+import java.util.BitSet;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.datastructs.Node;
+import org.apache.fop.datastructs.ROBitSet;
+import org.apache.fop.datastructs.TreeException;
+import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.PropertyValueList;
-import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.TextDecorations;
-import org.apache.fop.datatypes.indirect.Inherit;
 import org.apache.fop.datatypes.indirect.IndirectValue;
-import org.apache.fop.datastructs.Node;
-import org.apache.fop.datastructs.Node.*;
-import org.apache.fop.datastructs.TreeException;
-import org.apache.fop.datastructs.ROBitSet;
-import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.expr.FunctionNotImplementedException;
+import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.expr.PropertyParser;
+import org.apache.fop.fo.properties.Property;
+import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.xml.FoXMLEvent;
 import org.apache.fop.xml.FoXMLEventPool;
 import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
 import org.apache.fop.xml.XMLNamespaces;
-import org.apache.fop.messaging.MessageHandler;
-
-import org.xml.sax.Attributes;
-
-import java.util.BitSet;
-import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Class for nodes in the FO tree.

@@ -51,20 +51,18 @@
  */
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.datatypes.PropertyValueList;
-import org.apache.fop.datatypes.NCName;
-import org.apache.fop.datatypes.EnumType;
-import org.apache.fop.datastructs.ROStringArray;
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.Auto;
-import org.apache.fop.datatypes.indirect.Inherit;
-import org.apache.fop.datatypes.indirect.FromParent;
+import org.apache.fop.datatypes.EnumType;
+import org.apache.fop.datatypes.NCName;
+import org.apache.fop.datatypes.PropertyValue;
+import org.apache.fop.datatypes.PropertyValueList;
 import org.apache.fop.datatypes.indirect.FromNearestSpecified;
+import org.apache.fop.datatypes.indirect.FromParent;
+import org.apache.fop.datatypes.indirect.Inherit;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.ShorthandPropSets;
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.properties.Property;
+import org.apache.fop.fo.expr.PropertyException;
 
 public class Position extends Property  {
     public static final int dataTypes = SHORTHAND | ENUM | INHERIT;

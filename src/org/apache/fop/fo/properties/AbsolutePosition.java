@@ -52,8 +52,6 @@
 package org.apache.fop.fo.properties;
 
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.properties.Property;
-import org.apache.fop.datastructs.ROStringArray;
 
 public class AbsolutePosition extends Property  {
     public static final int dataTypes = AUTO | ENUM | INHERIT;

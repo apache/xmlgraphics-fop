@@ -51,8 +51,6 @@
  */
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.properties.Property;
 
 public class GroupingSeparator extends Property  {
     public static final int dataTypes = CHARACTER_T;

@@ -55,24 +55,21 @@
 package org.apache.fop.fo.flow;
 
 // FOP
-import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.PropertySets;
-import org.apache.fop.fo.FObjectNames;
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOTree;
-import org.apache.fop.fo.FObjects;
-import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.UnexpectedStartElementException;
+import java.util.Arrays;
+import java.util.BitSet;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
-import org.apache.fop.datatypes.PropertyValue;
-import org.apache.fop.datatypes.Ints;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOTree;
+import org.apache.fop.fo.FObjectNames;
+import org.apache.fop.fo.FObjects;
+import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.PropertySets;
 import org.apache.fop.messaging.MessageHandler;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.BitSet;
+import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
+import org.apache.fop.xml.UnexpectedStartElementException;
 
 /**
  * Implements the fo:bidi-override flow object.
@@ -158,7 +155,7 @@ public class FoBidiOverride extends FONode {
                     FObjects.fobjects.makeFlowObject
                                 (foTree, this, ev, stateFlags);
                     if (ev.getFoType() != FObjectNames.PCDATA)
-                        ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+                        ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
                     pool.surrenderEvent(ev);
                 }
             } catch(UnexpectedStartElementException e) {
@@ -166,7 +163,7 @@ public class FoBidiOverride extends FONode {
                 MessageHandler.logln
                         ("Ignoring unexpected Start Element: "
                                                          + ev.getQName());
-                ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+                ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
                 pool.surrenderEvent(ev);
             }
         } while (ev != null);
