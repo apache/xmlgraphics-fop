@@ -72,14 +72,14 @@ public class RtfParagraph extends RtfBookmarkContainerImpl
 implements IRtfTextContainer, IRtfPageBreakContainer, IRtfHyperLinkContainer,
         IRtfExternalGraphicContainer, IRtfPageNumberContainer,
         IRtfPageNumberCitationContainer {
-    private RtfText m_text;
-    private RtfHyperLink m_hyperlink;
-    private RtfExternalGraphic m_externalGraphic;
-    private RtfPageNumber m_pageNumber;
-    private RtfPageNumberCitation m_pageNumberCitation;
+    private RtfText text;
+    private RtfHyperLink hyperlink;
+    private RtfExternalGraphic externalGraphic;
+    private RtfPageNumber pageNumber;
+    private RtfPageNumberCitation pageNumberCitation;
     // Above line added by Boris POUDEROUS on 2002/07/09
-    private boolean m_keepn = false;
-    private boolean m_resetProperties = false;
+    private boolean keepn = false;
+    private boolean resetProperties = false;
 
     /* needed for importing Rtf into FrameMaker
        FrameMaker is not as forgiving as word in rtf
@@ -102,21 +102,28 @@ implements IRtfTextContainer, IRtfPageBreakContainer, IRtfHyperLinkContainer,
         super((RtfContainer)parent, w, attr);
     }
 
+    /**
+     * Accessor for the paragraph text
+     * @return the paragraph text
+     */
     public String getText() {
-        return (m_text.getText());
+        return (text.getText());
     }
 
     /** Set the keepn attribute for this paragraph */
     public void setKeepn() {
-        this.m_keepn = true;
+        this.keepn = true;
     }
 
     /** Force reset properties */
     public void setResetProperties() {
-        this.m_resetProperties = true;
+        this.resetProperties = true;
     }
 
-    /** IRtfTextContainer requirement: return a copy of our attributes */
+    /**
+     * IRtfTextContainer requirement: return a copy of our attributes
+     * @return a copy of this paragraphs attributes
+     */
     public RtfAttributes getTextContainerAttributes() {
         if (attrib == null) {
             return null;
@@ -124,7 +131,10 @@ implements IRtfTextContainer, IRtfPageBreakContainer, IRtfHyperLinkContainer,
         return (RtfAttributes)this.attrib.clone();
     }
 
-    /** overridden to write our attributes before our content */
+    /**
+     * Overridden to write our attributes before our content
+     * @throws IOException for I/O problems
+     */
     protected void writeRtfPrefix() throws IOException {
         // collapse whitespace before writing out
         // TODO could be made configurable
@@ -135,7 +145,7 @@ implements IRtfTextContainer, IRtfPageBreakContainer, IRtfHyperLinkContainer,
         }
 
         //Reset paragraph properties if needed
-           if (m_resetProperties) {
+           if (resetProperties) {
                writeControlWord("pard");
            }
 
@@ -149,7 +159,7 @@ implements IRtfTextContainer, IRtfPageBreakContainer, IRtfHyperLinkContainer,
         }
 
         //Set keepn if needed (Keep paragraph with the next paragraph)
-        if (m_keepn) {
+        if (keepn) {
             writeControlWord("keepn");
         }
 
@@ -177,7 +187,10 @@ implements IRtfTextContainer, IRtfPageBreakContainer, IRtfHyperLinkContainer,
 
     }
 
-    /** overridden to close paragraph */
+    /**
+     * Overridden to close paragraph
+     * @throws IOException for I/O problems
+     */
     protected void writeRtfSuffix() throws IOException {
         // sometimes the end of paragraph mark must be suppressed in table cells
         boolean writeMark = true;
@@ -195,68 +208,99 @@ implements IRtfTextContainer, IRtfPageBreakContainer, IRtfHyperLinkContainer,
 
     }
 
-    /** close current text run if any and start a new one with default attributes
-     *  @param str if not null, added to the RtfText created
+    /**
+     * Close current text run if any and start a new one with default attributes
+     * @param str if not null, added to the RtfText created
+     * @return the new RtfText object
+     * @throws IOException for I/O problems
      */
     public RtfText newText(String str) throws IOException {
         return newText(str, null);
     }
 
-    /** close current text run if any and start a new one
-     *  @param str if not null, added to the RtfText created
+    /**
+     * Close current text run if any and start a new one
+     * @param str if not null, added to the RtfText created
+     * @param attr attributes of the text
+     * @return the new RtfText object
+     * @throws IOException for I/O problems
      */
     public RtfText newText(String str, RtfAttributes attr) throws IOException {
         closeAll();
-        m_text = new RtfText(this, writer, str, attr);
-        return m_text;
+        text = new RtfText(this, writer, str, attr);
+        return text;
     }
 
-    /** add a page break */
+    /**
+     * add a page break
+     * @throws IOException for I/O problems
+     */
     public void newPageBreak() throws IOException {
         writeForBreak = true;
         new RtfPageBreak(this, writer);
     }
 
-    /** add a line break */
+    /**
+     * add a line break
+     * @throws IOException for I/O problems
+     */
     public void newLineBreak() throws IOException {
         new RtfLineBreak(this, writer);
     }
 
+    /**
+     * Add a page number
+     * @return new RtfPageNumber object
+     * @throws IOException for I/O problems
+     */
     public RtfPageNumber newPageNumber()throws IOException {
-        m_pageNumber = new RtfPageNumber(this, writer);
-        return m_pageNumber;
+        pageNumber = new RtfPageNumber(this, writer);
+        return pageNumber;
     }
 
     /**
      * Added by Boris POUDEROUS on 2002/07/09
+     * @param id string containing the citation text
+     * @return the new RtfPageNumberCitation object
+     * @throws IOException for I/O problems
      */
     public RtfPageNumberCitation newPageNumberCitation(String id) throws IOException {
-       m_pageNumberCitation = new RtfPageNumberCitation(this, writer, id);
-       return m_pageNumberCitation;
+       pageNumberCitation = new RtfPageNumberCitation(this, writer, id);
+       return pageNumberCitation;
     }
 
-    /** Creates a new hyperlink. */
+    /**
+     * Creates a new hyperlink.
+     * @param str string containing the hyperlink text
+     * @param attr attributes of new hyperlink
+     * @return the new RtfHyperLink object
+     * @throws IOException for I/O problems
+     */
     public RtfHyperLink newHyperLink(String str, RtfAttributes attr) throws IOException {
-        m_hyperlink = new RtfHyperLink(this, writer, str, attr);
-        return m_hyperlink;
+        hyperlink = new RtfHyperLink(this, writer, str, attr);
+        return hyperlink;
     }
 
-    /** start a new external graphic after closing all other elements */
+    /**
+     * Start a new external graphic after closing all other elements
+     * @return the new RtfExternalGraphic
+     * @throws IOException for I/O problems
+     */
     public RtfExternalGraphic newImage() throws IOException {
         closeAll();
-        m_externalGraphic = new RtfExternalGraphic(this, writer);
-        return m_externalGraphic;
+        externalGraphic = new RtfExternalGraphic(this, writer);
+        return externalGraphic;
     }
 
     private void closeCurrentText() throws IOException {
-        if (m_text != null) {
-            m_text.close();
+        if (text != null) {
+            text.close();
         }
     }
 
     private void closeCurrentHyperLink() throws IOException {
-        if (m_hyperlink != null) {
-            m_hyperlink.close();
+        if (hyperlink != null) {
+            hyperlink.close();
         }
     }
 
@@ -265,7 +309,10 @@ implements IRtfTextContainer, IRtfPageBreakContainer, IRtfHyperLinkContainer,
         closeCurrentHyperLink();
     }
 
-    /** depending on RtfOptions, do not emit any RTF for empty paragraphs */
+    /**
+     * Depending on RtfOptions, do not emit any RTF for empty paragraphs
+     * @return true if RTF should be written
+     */
     protected boolean okToWriteRtf() {
         boolean result = super.okToWriteRtf();
 
@@ -313,11 +360,14 @@ implements IRtfTextContainer, IRtfPageBreakContainer, IRtfHyperLinkContainer,
         return getChildCount() > 0;
     }
 
-    /** get the attributes of our text */
+    /**
+     * accessor for text attributes
+     * @return attributes of the text
+     */
     public RtfAttributes getTextAttributes() {
-        if (m_text == null) {
+        if (text == null) {
             return null;
         }
-        return m_text.getTextAttributes();
+        return text.getTextAttributes();
     }
 }
