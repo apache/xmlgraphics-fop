@@ -97,9 +97,32 @@ public class FopImageFactory {
             }
 
             try {
-                absoluteURL = new URL(baseURL, absoluteURL.getFile());
+                /*
+                    This piece of code is based on the following statement in RFC2396 section 5.2:
+
+                    3) If the scheme component is defined, indicating that the reference
+                       starts with a scheme name, then the reference is interpreted as an
+                       absolute URI and we are done.  Otherwise, the reference URI's
+                       scheme is inherited from the base URI's scheme component.
+
+                       Due to a loophole in prior specifications [RFC1630], some parsers
+                       allow the scheme name to be present in a relative URI if it is the
+                       same as the base URI scheme.  Unfortunately, this can conflict
+                       with the correct parsing of non-hierarchical URI.  For backwards
+                       compatibility, an implementation may work around such references
+                       by removing the scheme if it matches that of the base URI and the
+                       scheme is known to always use the <hier_part> syntax.
+
+                    The URL class does not implement this work around, so we do.
+                */
+
+                String scheme = baseURL.getProtocol() + ":";
+                if (href.startsWith(scheme)) {
+                    href = href.substring(scheme.length());
+                }
+                absoluteURL = new URL(baseURL, href);
+                System.out.println("baseURL=" + baseURL.toString() + " href=" + href + " absoluteURL=" + absoluteURL.toString());
             } catch (MalformedURLException e_context) {
-                // pb context url
                 throw new FopImageException("Invalid Image URL - error on relative URL : "
                                             + e_context.getMessage());
             }
