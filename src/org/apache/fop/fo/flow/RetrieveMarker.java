@@ -79,7 +79,7 @@ public class RetrieveMarker extends FObj {
                 }
             } else if (retrieveBoundary == RetrieveBoundary.DOCUMENT) {
                 return layoutBestMarker(areaTree.getDocumentMarkers(),area);
-            } else {
+            } else if (retrieveBoundary != RetrieveBoundary.PAGE) {
                 throw new FOPException("Illegal 'retrieve-boundary' value");
             }
         } else if (bestMarker != null) {
