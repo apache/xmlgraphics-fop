@@ -95,7 +95,6 @@ public class StandardElementMapping implements ElementMapping {
 			   DisplaySequence.maker()); 
 	builder.addMapping(uri, "inline-sequence",
 			   InlineSequence.maker()); 
-	builder.addMapping(uri, "display-rule", DisplayRule.maker()); 
   builder.addMapping(uri, "external-graphic",
                            ExternalGraphic.maker());
 	builder.addMapping(uri, "table", Table.maker());
