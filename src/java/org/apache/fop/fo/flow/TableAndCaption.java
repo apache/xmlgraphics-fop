@@ -48,7 +48,7 @@ public class TableAndCaption extends FObj {
     private int breakBefore;
     private int captionSide;
     private String id;
-    // private ToBeImplementedProperty intrusionDisplace;
+    private int intrusionDisplace;
     private KeepProperty keepTogether;
     private KeepProperty keepWithNext;
     private KeepProperty keepWithPrevious;
@@ -86,7 +86,7 @@ public class TableAndCaption extends FObj {
         breakBefore = pList.get(PR_BREAK_BEFORE).getEnum();
         captionSide = pList.get(PR_CAPTION_SIDE).getEnum();
         id = pList.get(PR_ID).getString();
-        // intrusionDisplace = pList.get(PR_INTRUSION_DISPLACE);
+        intrusionDisplace = pList.get(PR_INTRUSION_DISPLACE).getEnum();
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();

@@ -32,8 +32,8 @@ import org.apache.fop.fo.ValidationException;
  */
 public class Float extends FObj {
     // The value of properties relevant for fo:float.
-    // private ToBeImplementedProperty float;
-    // private ToBeImplementedProperty clear;
+    private int float_;
+    private int clear;
     // End of property values
 
     static boolean notImplementedWarningGiven = false;
@@ -54,8 +54,8 @@ public class Float extends FObj {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
-        // float = pList.get(PR_FLOAT);
-        // clear = pList.get(PR_CLEAR);
+        float_ = pList.get(PR_FLOAT).getEnum();
+        clear = pList.get(PR_CLEAR).getEnum();
     }
 
     /**

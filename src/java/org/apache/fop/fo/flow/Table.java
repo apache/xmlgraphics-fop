@@ -61,7 +61,7 @@ public class Table extends FObj {
     private int breakBefore;
     private String id;
     private LengthRangeProperty inlineProgressionDimension;
-    // private ToBeImplementedProperty intrusionDisplace;
+    private int intrusionDisplace;
     private Length height;
     private KeepProperty keepTogether;
     private KeepProperty keepWithNext;
@@ -107,7 +107,7 @@ public class Table extends FObj {
         breakBefore = pList.get(PR_BREAK_BEFORE).getEnum();
         id = pList.get(PR_ID).getString();
         inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
-        // intrusionDisplace = pList.get(PR_INTRUSION_DISPLACE);
+        intrusionDisplace = pList.get(PR_INTRUSION_DISPLACE).getEnum();
         height = pList.get(PR_HEIGHT).getLength();
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();

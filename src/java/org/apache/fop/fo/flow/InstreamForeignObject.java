@@ -50,8 +50,8 @@ public class InstreamForeignObject extends FObj {
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonMarginInline commonMarginInline;
     private CommonRelativePosition commonRelativePosition;
-    // private ToBeImplementedProperty alignmentAdjust;
-    // private ToBeImplementedProperty alignmentBaseline;
+    private Length alignmentAdjust;
+    private int alignmentBaseline;
     private Length baselineShift;
     private LengthRangeProperty blockProgressionDimension;
     // private ToBeImplementedProperty clip;
@@ -59,7 +59,7 @@ public class InstreamForeignObject extends FObj {
     // private ToBeImplementedProperty contentType;
     private Length contentWidth;
     private int displayAlign;
-    // private ToBeImplementedProperty dominantBaseline;
+    private int dominantBaseline;
     private Length height;
     private String id;
     private LengthRangeProperty inlineProgressionDimension;
@@ -68,7 +68,7 @@ public class InstreamForeignObject extends FObj {
     private Length lineHeight;
     private int overflow;
     private int scaling;
-    // private ToBeImplementedProperty scalingMethod;
+    private int scalingMethod;
     private int textAlign;
     private int verticalAlign; // shorthand!!!
     private Length width;
@@ -92,8 +92,8 @@ public class InstreamForeignObject extends FObj {
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonMarginInline = pList.getMarginInlineProps();
         commonRelativePosition = pList.getRelativePositionProps();
-        // alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST);
-        // alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE);
+        alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
+        alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
         baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
         blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
         // clip = pList.get(PR_CLIP);
@@ -101,7 +101,7 @@ public class InstreamForeignObject extends FObj {
         // contentType = pList.get(PR_CONTENT_TYPE);
         contentWidth = pList.get(PR_CONTENT_WIDTH).getLength();
         displayAlign = pList.get(PR_DISPLAY_ALIGN).getEnum();
-        // dominantBaseline = pList.get(PR_DOMINANT_BASELINE);
+        dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
         height = pList.get(PR_HEIGHT).getLength();
         id = pList.get(PR_ID).getString();
         inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
@@ -110,7 +110,7 @@ public class InstreamForeignObject extends FObj {
         lineHeight = pList.get(PR_LINE_HEIGHT).getLength();
         overflow = pList.get(PR_OVERFLOW).getEnum();
         scaling = pList.get(PR_SCALING).getEnum();
-        // scalingMethod = pList.get(PR_SCALING_METHOD);
+        scalingMethod = pList.get(PR_SCALING_METHOD).getEnum();
         textAlign = pList.get(PR_TEXT_ALIGN).getEnum();
         verticalAlign = pList.get(PR_VERTICAL_ALIGN).getEnum();
         width = pList.get(PR_WIDTH).getLength();

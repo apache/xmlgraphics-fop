@@ -58,14 +58,14 @@ public class TableCell extends FObj {
     private Numeric columnNumber;
     private int displayAlign;
     private int relativeAlign;
-    // private ToBeImplementedProperty emptyCells;
-    // private ToBeImplementedProperty endsRow;
+    private int emptyCells;
+    private int endsRow;
     private Length height;
     private String id;
     private LengthRangeProperty inlineProgressionDimension;
     private Numeric numberColumnsSpanned;
     private Numeric numberRowsSpanned;
-    // private ToBeImplementedProperty startsRow;
+    private int startsRow;
     private Length width;
     // End of property values
 
@@ -132,14 +132,14 @@ public class TableCell extends FObj {
         columnNumber = pList.get(PR_COLUMN_NUMBER).getNumeric();
         displayAlign = pList.get(PR_DISPLAY_ALIGN).getEnum();
         relativeAlign = pList.get(PR_RELATIVE_ALIGN).getEnum();
-        // emptyCells = pList.get(PR_EMPTY_CELLS);
-        // endsRow = pList.get(PR_ENDS_ROW);
+        emptyCells = pList.get(PR_EMPTY_CELLS).getEnum();
+        endsRow = pList.get(PR_ENDS_ROW).getEnum();
         height = pList.get(PR_HEIGHT).getLength();
         id = pList.get(PR_ID).getString();
         inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
         numberColumnsSpanned = pList.get(PR_NUMBER_COLUMNS_SPANNED).getNumeric();
         numberRowsSpanned = pList.get(PR_NUMBER_ROWS_SPANNED).getNumeric();
-        // startsRow = pList.get(PR_STARTS_ROW);
+        startsRow = pList.get(PR_STARTS_ROW).getEnum();
         width = pList.get(PR_WIDTH).getLength();
     }
 

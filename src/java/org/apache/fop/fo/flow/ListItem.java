@@ -49,7 +49,7 @@ public class ListItem extends FObj {
     private int breakAfter;
     private int breakBefore;
     private String id;
-    // private ToBeImplementedProperty intrusionDisplace;
+    private int intrusionDisplace;
     private KeepProperty keepTogether;
     private KeepProperty keepWithNext;
     private KeepProperty keepWithPrevious;
@@ -78,7 +78,7 @@ public class ListItem extends FObj {
         breakAfter = pList.get(PR_BREAK_AFTER).getEnum();
         breakBefore = pList.get(PR_BREAK_BEFORE).getEnum();
         id = pList.get(PR_ID).getString();
-        // intrusionDisplace = pList.get(PR_INTRUSION_DISPLACE);
+        intrusionDisplace = pList.get(PR_INTRUSION_DISPLACE).getEnum();
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
