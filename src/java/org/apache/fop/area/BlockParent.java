@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,13 +32,15 @@ public class BlockParent extends Area {
 
     /**
      * The x offset position of this block parent.
-     * Used for relative and absolute positioning.
+     * Used for relative (serves as left-offset trait) and absolute positioning
+     * (serves as left-position trait).
      */
     protected int xOffset = 0;
 
     /**
      * The y offset position of this block parent.
-     * Used for relative and absolute positioning.
+     * Used for relative (serves as top-offset trait) and absolute positioning
+     * (serves as top-position trait).
      */
     protected int yOffset = 0;
 
