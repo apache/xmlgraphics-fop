@@ -742,26 +742,29 @@ public class PDFRenderer extends PrintRenderer {
 
         if (bv.getPositioning() == Block.ABSOLUTE) {
 
-            currentIPPosition = 0;
-            currentBPPosition = 0;
-
             closeText();
-            endTextObject();
-
-            if (bv.getClip()) {
-                saveGraphicsState();
-                float x = (float)(bv.getXOffset() + containingIPPosition) / 1000f;
-                float y = (float)(bv.getYOffset() + containingBPPosition) / 1000f;
-                float width = (float)bv.getWidth() / 1000f;
-                float height = (float)bv.getHeight() / 1000f;
-                clip(x, y, width, height);
-            }
 
             CTM tempctm = new CTM(containingIPPosition, containingBPPosition);
             ctm = tempctm.multiply(ctm);
 
+            float x = (float)(bv.getXOffset() + containingIPPosition) / 1000f;
+            float y = (float)(bv.getYOffset() + containingBPPosition) / 1000f;
+            float width = (float)bv.getWidth() / 1000f;
+            float height = (float)bv.getHeight() / 1000f;
+            
+            drawBackAndBorders(bv, x, y, width, height);
+            
+            endTextObject();
+            if (bv.getClip()) {
+                saveGraphicsState();
+                clip(x, y, width, height);
+            }
+
             startVParea(ctm);
-            handleBlockTraits(bv);
+
+            currentIPPosition = 0;
+            currentBPPosition = 0;
+
             renderBlocks(bv, children);
             endVParea();
 
@@ -777,11 +780,7 @@ public class PDFRenderer extends PrintRenderer {
         } else {
 
             if (ctm != null) {
-                currentIPPosition = 0;
-                currentBPPosition = 0;
-
                 closeText();
-                endTextObject();
 
                 double[] vals = ctm.toArray();
                 //boolean aclock = vals[2] == 1.0;
@@ -798,7 +797,6 @@ public class PDFRenderer extends PrintRenderer {
             if (bv.getClip()) {
                 if (ctm == null) {
                     closeText();
-                    endTextObject();
                 }
                 saveGraphicsState();
                 float x = (float)bv.getXOffset() / 1000f;
@@ -808,10 +806,13 @@ public class PDFRenderer extends PrintRenderer {
                 clip(x, y, width, height);
             }
 
-            if (ctm != null) {
-                startVParea(ctm);
-            }
             handleBlockTraits(bv);
+            if (ctm != null) {
+                endTextObject();
+                startVParea(ctm);
+                currentIPPosition = 0;
+                currentBPPosition = 0;
+            }
             renderBlocks(bv, children);
             if (ctm != null) {
                 endVParea();
