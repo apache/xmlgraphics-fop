@@ -1582,6 +1582,17 @@ public class FOPropertyMapping implements Constants {
         m.setDefault("treat-as-space");
         addPropertyMaker("linefeed-treatment", m);
 
+        // white-space-treatment
+        m  = new EnumProperty.Maker(PR_WHITE_SPACE_TREATMENT);
+        m.setInherited(true);
+        m.addEnum("ignore", makeEnumProperty(IGNORE, "IGNORE"));
+        m.addEnum("preserve", makeEnumProperty(PRESERVE, "PRESERVE"));
+        m.addEnum("ignore-if-before-linefeed", makeEnumProperty(IGNORE_IF_BEFORE_LINEFEED, "IGNORE_IF_BEFORE_LINEFEED"));
+        m.addEnum("ignore-if-after-linefeed", makeEnumProperty(IGNORE_IF_AFTER_LINEFEED, "IGNORE_IF_AFTER_LINEFEED"));
+        m.addEnum("ignore-if-surrounding-linefeed", makeEnumProperty(IGNORE_IF_SURROUNDING_LINEFEED, "IGNORE_IF_SURROUNDING_LINEFEED"));
+        m.setDefault("ignore-if-surrounding-linefeed");
+        addPropertyMaker("white-space-treatment", m);
+
         // text-align TODO: make it a StringProperty with enums.
         m  = new EnumProperty.Maker(PR_TEXT_ALIGN);
         m.setInherited(true);
@@ -2660,17 +2671,6 @@ public class FOPropertyMapping implements Constants {
         m.addEnum("bottom", makeEnumProperty(BOTTOM, "BOTTOM"));
         m.setDefault("baseline");
         addPropertyMaker("vertical-align", m);
-
-        // white-space-treatment
-        m  = new EnumProperty.Maker(PR_WHITE_SPACE_TREATMENT);
-        m.setInherited(true);
-        m.addEnum("ignore", makeEnumProperty(IGNORE, "IGNORE"));
-        m.addEnum("preserve", makeEnumProperty(PRESERVE, "PRESERVE"));
-        m.addEnum("ignore-if-before-linefeed", makeEnumProperty(IGNORE_IF_BEFORE_LINEFEED, "IGNORE_IF_BEFORE_LINEFEED"));
-        m.addEnum("ignore-if-after-linefeed", makeEnumProperty(IGNORE_IF_AFTER_LINEFEED, "IGNORE_IF_AFTER_LINEFEED"));
-        m.addEnum("ignore-if-surrounding-linefeed", makeEnumProperty(IGNORE_IF_SURROUNDING_LINEFEED, "IGNORE_IF_SURROUNDING_LINEFEED"));
-        m.setDefault("ignore-if-surrounding-linefeed");
-        addPropertyMaker("white-space-treatment", m);
 
         // xml:lang
         m  = new ToBeImplementedProperty.Maker(PR_XML_LANG);
