@@ -9,7 +9,7 @@
       >
   <menu label="Index">
     <menu-item label="FOP Home" href="../index.html"/>
-    <menu-item label="Properties details" href="properties/index.html"/>
+    <menu-item label="Properties details" href="properties/introduction.html"/>
   </menu>
   <menu label="Alt Design">
     <menu-item label="Introduction" href="index.html"/>
@@ -23,7 +23,7 @@
     <menu-item label="XML parsing" href="xml-parsing.html"/>
   </menu>
   <menu label="Properties">
-    <menu-item label="alt.properties" href="properties/index.html"/>
+    <menu-item label="alt.properties" href="properties/introduction.html"/>
   </menu>
   <menu label="Other">
     <menu-item label="Traits" href="traits.html"/>
