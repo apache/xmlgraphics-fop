@@ -27,10 +27,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.FOFileHandler;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.InputHandler;
-import org.apache.fop.apps.XSLTInputHandler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -296,11 +294,11 @@ public class TestConverter {
 
             InputHandler inputHandler = null;
             if (xsl == null) {
-                inputHandler = new FOFileHandler(xmlFile);
+                inputHandler = new InputHandler(xmlFile);
             } else {
-                inputHandler = new XSLTInputHandler(xmlFile,
-                                                    new File(baseDir + "/"
-                                                             + xsl), null);
+                inputHandler = new InputHandler(xmlFile,
+                                                new File(baseDir + "/"
+                                                         + xsl), null);
             }
 
             FOUserAgent userAgent = new FOUserAgent();

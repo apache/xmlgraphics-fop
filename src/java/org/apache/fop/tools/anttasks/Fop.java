@@ -35,7 +35,6 @@ import java.util.List;
 
 // FOP
 import org.apache.fop.apps.InputHandler;
-import org.apache.fop.apps.FOFileHandler;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -517,7 +516,7 @@ class FOPTaskStarter {
 
     private void render(File foFile, File outFile,
                         int renderer) throws FOPException {
-        InputHandler inputHandler = new FOFileHandler(foFile);
+        InputHandler inputHandler = new InputHandler(foFile);
 
         OutputStream out = null;
         try {

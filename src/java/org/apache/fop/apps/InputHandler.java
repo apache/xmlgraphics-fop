@@ -18,19 +18,47 @@
 
 package org.apache.fop.apps;
 
-/**
- * Abstract super class for input handlers.
- */
-public abstract class InputHandler {
+// Imported java.io classes
+import java.io.File;
+import java.util.Vector;
 
-    protected String baseURL = null;
+// Imported TraX classes
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamSource;
+
+/**
+ * Class for handling files input from command line
+ * either with XML and XSLT files (and optionally xsl
+ * parameters) or FO File input alone
+ */
+public class InputHandler {
+    private File sourcefile = null;  // either FO or XML/XSLT usage
+    private File stylesheet = null;  // for XML/XSLT usage
+    private Vector xsltParams = null; // for XML/XSLT usage
     
     /**
-     * Get the base URL associated with this input source
-     * @return the input source
+     * Constructor for XML->XSLT->FO input
+     * @param xmlfile XML file
+     * @param xsltfile XSLT file
+     * @param params Vector of command-line parameters (name, value, 
+     *      name, value, ...) for XSL stylesheet, null if none
      */
-    public String getBaseURL() {
-        return baseURL;
+    public InputHandler(File xmlfile, File xsltfile, Vector params) {
+        sourcefile  = xmlfile;
+        stylesheet = xsltfile;
+        xsltParams = params;
+    }
+
+    /**
+     * Constructor for FO input
+     * @param fofile the file to read the FO document.
+     */
+    public InputHandler(File fofile) {
+        sourcefile = fofile;
     }
 
     /**
@@ -38,6 +66,53 @@ public abstract class InputHandler {
      * @param fop -- Fop object
      * @throws FOPException in case of an error during processing
      */
-    public void render(Fop fop) throws FOPException {}
+    public void render(Fop fop) throws FOPException {
 
+        // if base URL was not explicitly set in FOUserAgent, obtain here
+        if (fop.getUserAgent().getBaseURL() == null) {
+            String baseURL = null;
+
+            try {
+                baseURL =
+                    new File(sourcefile.getAbsolutePath()).
+                        getParentFile().toURL().toExternalForm();
+            } catch (Exception e) {
+                baseURL = "";
+            }
+            fop.getUserAgent().setBaseURL(baseURL);
+        }
+
+        try {
+            // Setup XSLT
+            TransformerFactory factory = TransformerFactory.newInstance();
+            Transformer transformer;
+            
+            if (stylesheet == null) {   // FO Input
+                transformer = factory.newTransformer();
+            } else {    // XML/XSLT input
+                transformer = factory.newTransformer(new StreamSource(
+                    stylesheet));
+            
+                // Set the value of parameters, if any, defined for stylesheet
+                if (xsltParams != null) { 
+                    for (int i = 0; i < xsltParams.size(); i += 2) {
+                        transformer.setParameter((String) xsltParams.elementAt(i),
+                            (String) xsltParams.elementAt(i + 1));
+                    }
+                }
+            }
+
+            // Create a SAXSource from the input Source file
+            Source src = new StreamSource(sourcefile);
+
+            // Resulting SAX events (the generated FO) must be piped through to FOP
+            Result res = new SAXResult(fop.getDefaultHandler());
+
+            // Start XSLT transformation and FOP processing
+            transformer.transform(src, res);
+
+        } catch (Exception e) {
+            throw new FOPException(e);
+        }
+    }
 }
