@@ -18,13 +18,13 @@
 
 package org.apache.fop.fo.pagination;
 
+// Java
+import java.awt.Rectangle;
+
 // FOP
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.layoutmgr.AddLMVisitor;
-
-// Java
-import java.awt.Rectangle;
 
 /**
  * The fo:region-before element.

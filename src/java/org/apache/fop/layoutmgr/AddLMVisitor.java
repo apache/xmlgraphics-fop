@@ -105,7 +105,6 @@ import org.apache.fop.fo.pagination.PageSequenceMaster;
 import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.RegionAfter;
 import org.apache.fop.fo.pagination.RegionBA;
-import org.apache.fop.fo.pagination.RegionBASE;
 import org.apache.fop.fo.pagination.RegionBefore;
 import org.apache.fop.fo.pagination.RegionBody;
 import org.apache.fop.fo.pagination.RegionEnd;
@@ -965,17 +964,10 @@ public class AddLMVisitor {
     }
 
     /**
-     * @param node RegionBASE object to process
-     */
-    public void serveRegionBASE(RegionBASE node) {
-        serveRegion((Region)node);
-    }
-
-    /**
      * @param node RegionBA object to process
      */
     public void serveRegionBA(RegionBA node) {
-        serveRegionBASE((RegionBASE)node);
+        serveRegion((Region)node);
     }
 
     /**
@@ -996,7 +988,7 @@ public class AddLMVisitor {
      * @param node RegionSE object to process
      */
     public void serveRegionSE(RegionSE node) {
-        serveRegionBASE((RegionBASE)node);
+        serveRegion((Region)node);
     }
 
     /**
