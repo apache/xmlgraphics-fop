@@ -330,7 +330,7 @@
 
       <!-- this defines a title -->
       <fo:block font-size="12pt" 
-            font-family="Palatino" 
+            font-family="sans-serif" 
             line-height="12pt"
             background-color="blue"
             color="white"

@@ -42,14 +42,14 @@ This files shows next to the trivial usage of fo:block and fo:inline examples of
     </fo:simple-page-master>
 
 <fo:page-sequence-master master-name="basicPSM" >
-	<fo:repeatable-page-master-alternatives>
-		<fo:conditional-page-master-reference master-reference="first"
-			page-position="first" />
-		<fo:conditional-page-master-reference master-reference="rest"
-			page-position="rest" />
-		<!-- recommended fallback procedure -->
-		<fo:conditional-page-master-reference master-reference="rest" />
-	</fo:repeatable-page-master-alternatives>
+    <fo:repeatable-page-master-alternatives>
+        <fo:conditional-page-master-reference master-reference="first"
+            page-position="first" />
+        <fo:conditional-page-master-reference master-reference="rest"
+            page-position="rest" />
+        <!-- recommended fallback procedure -->
+        <fo:conditional-page-master-reference master-reference="rest" />
+    </fo:repeatable-page-master-alternatives>
 </fo:page-sequence-master>
 
   </fo:layout-master-set>
@@ -881,34 +881,34 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
     </fo:block>
     <fo:block space-after.optimum="3pt" font-family="serif">A working basic example of a table looks like this: </fo:block>  
     <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">&lt;fo:table&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">		&lt;fo:table-column column-width="150pt"/&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">		&lt;fo:table-column column-width="150pt"/&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">	&lt;fo:table-body font-size="10pt" font-family="sans-serif"&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">		&lt;fo:table-row&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">			&lt;fo:table-cell&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">				&lt;fo:block&gt;text&lt;/fo:block&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">			&lt;/fo:table-cell&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">			&lt;fo:table-cell&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">				&lt;fo:block&gt;text&lt;/fo:block&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">			&lt;/fo:table-cell&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">		&lt;/fo:table-row&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">		&lt;fo:table-row&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">			&lt;fo:table-cell&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">				&lt;fo:block&gt;text&lt;/fo:block&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">			&lt;/fo:table-cell&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">			&lt;fo:table-cell&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">				&lt;fo:block&gt;text&lt;/fo:block&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">			&lt;/fo:table-cell&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">		&lt;/fo:table-row&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">		&lt;fo:table-row&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">			&lt;fo:table-cell&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">				&lt;fo:block&gt;text&lt;/fo:block&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">			&lt;/fo:table-cell&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">			&lt;fo:table-cell&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">				&lt;fo:block&gt;text&lt;/fo:block&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">			&lt;/fo:table-cell&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">		&lt;/fo:table-row&gt;</fo:block>
-    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">	&lt;/fo:table-body&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">     &lt;fo:table-column column-width="150pt"/&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">     &lt;fo:table-column column-width="150pt"/&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt"> &lt;fo:table-body font-size="10pt" font-family="sans-serif"&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">     &lt;fo:table-row&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">         &lt;fo:table-cell&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">             &lt;fo:block&gt;text&lt;/fo:block&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">         &lt;/fo:table-cell&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">         &lt;fo:table-cell&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">             &lt;fo:block&gt;text&lt;/fo:block&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">         &lt;/fo:table-cell&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">     &lt;/fo:table-row&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">     &lt;fo:table-row&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">         &lt;fo:table-cell&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">             &lt;fo:block&gt;text&lt;/fo:block&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">         &lt;/fo:table-cell&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">         &lt;fo:table-cell&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">             &lt;fo:block&gt;text&lt;/fo:block&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">         &lt;/fo:table-cell&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">     &lt;/fo:table-row&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">     &lt;fo:table-row&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">         &lt;fo:table-cell&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">             &lt;fo:block&gt;text&lt;/fo:block&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">         &lt;/fo:table-cell&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">         &lt;fo:table-cell&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">             &lt;fo:block&gt;text&lt;/fo:block&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">         &lt;/fo:table-cell&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">     &lt;/fo:table-row&gt;</fo:block>
+    <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt"> &lt;/fo:table-body&gt;</fo:block>
     <fo:block font-size="10pt" font-family="monospace" line-height="12pt" space-before.optimum="0pt" space-after.optimum="0pt">&lt;/fo:table&gt;</fo:block>
   
 
@@ -1137,9 +1137,9 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 
   <fo:block  id="sec11" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" >K) 
       Licence</fo:block>
-  <fo:block space-after.optimum="3pt" font-family="serif"> ============================================================================</fo:block>
-  <fo:block space-after.optimum="3pt" font-family="serif">                   The Apache Software License, Version 1.1</fo:block>
-  <fo:block space-after.optimum="3pt" font-family="serif"> ============================================================================</fo:block>
+  <fo:block space-after.optimum="3pt" font-family="serif">==================================================================</fo:block>
+  <fo:block space-after.optimum="3pt" font-family="serif" text-align="center">The Apache Software License, Version 1.1</fo:block>
+  <fo:block space-after.optimum="3pt" font-family="serif">==================================================================</fo:block>
   <fo:block space-after.optimum="3pt" font-family="serif">    Copyright (C) 1999 The Apache Software Foundation. All rights reserved.</fo:block>
   <fo:block space-after.optimum="3pt" font-family="serif"> Redistribution and use in source and binary forms, with or without modification, 
       are permitted provided that the following conditions are met:</fo:block>
@@ -1173,8 +1173,8 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
      INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
      FITNESS  FOR A PARTICULAR  PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL  THE
      APACHE SOFTWARE  FOUNDATION  OR ITS CONTRIBUTORS  BE LIABLE FOR  ANY DIRECT,
-     INDIRECT, INCIDENTAL, SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL  DAMAGES (INCLU-
-     DING, BUT NOT LIMITED TO, PROCUREMENT  OF SUBSTITUTE GOODS OR SERVICES; LOSS
+     INDIRECT, INCIDENTAL, SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL  DAMAGES (INCLUDING, 
+     BUT NOT LIMITED TO, PROCUREMENT  OF SUBSTITUTE GOODS OR SERVICES; LOSS
      OF USE, DATA, OR  PROFITS; OR BUSINESS  INTERRUPTION)  HOWEVER CAUSED AND ON
      ANY  THEORY OF LIABILITY,  WHETHER  IN CONTRACT,  STRICT LIABILITY,  OR TORT
      (INCLUDING  NEGLIGENCE OR  OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
@@ -1194,7 +1194,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 <fo:block font-size="14pt" font-family="sans-serif" line-height="10pt" space-after.optimum="15pt" font-weight="bold" start-indent="15pt" break-before="page">
             Content
          </fo:block>
-<fo:table>
+<fo:table table-layout="fixed">
 <fo:table-column column-width="1cm"/>
 <fo:table-column column-width="12cm"/>
 <fo:table-column column-width="1cm"/>

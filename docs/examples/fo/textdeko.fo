@@ -33,14 +33,14 @@
     </fo:simple-page-master>
 
 <fo:page-sequence-master master-name="basicPSM" >
-	<fo:repeatable-page-master-alternatives>
-		<fo:conditional-page-master-reference master-reference="first"
-			page-position="first" />
-		<fo:conditional-page-master-reference master-reference="rest"
-			page-position="rest" />
-		<!-- recommended fallback procedure -->
-		<fo:conditional-page-master-reference master-reference="rest" />
-	</fo:repeatable-page-master-alternatives>
+    <fo:repeatable-page-master-alternatives>
+        <fo:conditional-page-master-reference master-reference="first"
+            page-position="first" />
+        <fo:conditional-page-master-reference master-reference="rest"
+            page-position="rest" />
+        <!-- recommended fallback procedure -->
+        <fo:conditional-page-master-reference master-reference="rest" />
+    </fo:repeatable-page-master-alternatives>
 </fo:page-sequence-master>
 
   </fo:layout-master-set>
@@ -202,6 +202,7 @@
 
       </fo:list-block>
 
+      <!-- as this doesn't work its commented out to avoid user confusion
       <fo:block font-size="12pt" space-after.optimum="3pt">
       <fo:inline text-decoration="underline overline">Combination</fo:inline> of property
       values should also be possible, but does not work in FOP at the moment.
@@ -211,7 +212,7 @@
       <fo:inline font-family="monospace"><![CDATA[<fo:inline text-decoration="underline overline">
       Combination</fo:inline>]]></fo:inline>
       </fo:block>
-
+      -->
 
       <fo:block space-after.optimum="13pt">
         And now <fo:inline text-decoration="underline">more than a word...</fo:inline>

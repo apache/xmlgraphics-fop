@@ -49,7 +49,7 @@
     </fo:block>
     
     <!-- table start -->
-    <fo:table>
+    <fo:table table-layout="fixed">
       <fo:table-column column-width="50mm"/>
       <fo:table-column column-width="50mm"/>
       <fo:table-column column-width="50mm"/>
@@ -102,7 +102,7 @@
     
     
     <!-- table start -->
-    <fo:table border-width="0.5mm" border-style="solid" background-color="yellow">
+    <fo:table table-layout="fixed" border-width="0.5mm" border-style="solid" background-color="yellow">
       <fo:table-column column-width="50mm"/>
       <fo:table-column column-width="50mm"/>
       <fo:table-column column-width="50mm"/>
@@ -156,7 +156,7 @@
     
     
     <!-- table start -->
-    <fo:table border-width="3mm" border-style="solid" background-color="yellow">
+    <fo:table table-layout="fixed" border-width="3mm" border-style="solid" background-color="yellow">
       <fo:table-column column-width="50mm"/>
       <fo:table-column column-width="50mm"/>
       <fo:table-column column-width="50mm"/>
@@ -210,7 +210,7 @@
     
     
     <!-- table start -->
-    <fo:table border-collapse="separate">
+    <fo:table table-layout="fixed" border-collapse="separate">
       <fo:table-column column-width="50mm"/>
       <fo:table-column column-width="50mm"/>
       <fo:table-column column-width="50mm"/>
@@ -263,7 +263,7 @@
     
     
     <!-- table start -->
-    <fo:table border-collapse="separate">
+    <fo:table table-layout="fixed" border-collapse="separate">
       <fo:table-column column-width="50mm"/>
       <fo:table-column column-width="50mm"/>
       <fo:table-column column-width="50mm"/>
@@ -298,7 +298,7 @@
     </fo:block>
 
     <!-- table start -->
-    <fo:table border-collapse="separate">
+    <fo:table table-layout="fixed" border-collapse="separate">
       <fo:table-column column-width="50mm"/>
       <fo:table-column column-width="50mm"/>
       <fo:table-column column-width="50mm"/>
@@ -350,7 +350,7 @@
     </fo:block>
     
 
-      <fo:table border-width="1.5mm" border-style="solid" background-color="rgb(100,210,250)">
+      <fo:table table-layout="fixed" border-width="1.5mm" border-style="solid" background-color="rgb(100,210,250)">
         <fo:table-column column-width="150mm"/>
         <fo:table-body>
           <fo:table-row>
@@ -360,7 +360,7 @@
       </fo:table>
 
 
-      <fo:table border-width="1.5mm" border-style="solid" background-color="rgb(100,210,250)" >
+      <fo:table table-layout="fixed" border-width="1.5mm" border-style="solid" background-color="rgb(100,210,250)" >
         <fo:table-column column-width="150mm"/>
         <fo:table-body>
           <fo:table-row>
@@ -370,7 +370,7 @@
       </fo:table>
 
     
-      <fo:table border-width="1.5mm" border-style="solid" background-color="rgb(100,210,250)" >
+      <fo:table table-layout="fixed" border-width="1.5mm" border-style="solid" background-color="rgb(100,210,250)" >
         <fo:table-column column-width="150mm"/>
         <fo:table-body>
           <fo:table-row>
@@ -379,7 +379,7 @@
         </fo:table-body>
       </fo:table>
 
-      <fo:table border-width="1.5mm" border-style="solid" background-color="rgb(100,210,250)">
+      <fo:table table-layout="fixed" border-width="1.5mm" border-style="solid" background-color="rgb(100,210,250)">
         <fo:table-column column-width="150mm"/>
         <fo:table-body>
           <fo:table-row>
@@ -405,7 +405,7 @@
       </fo:block>
 
       <!-- Here starts the table -->
-      <fo:table>
+      <fo:table table-layout="fixed">
         <fo:table-column column-width="1cm"/>
         <fo:table-column column-width="15cm"/>
         <fo:table-body font-size="10pt" font-family="sans-serif">
