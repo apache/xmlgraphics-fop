@@ -80,12 +80,30 @@
       fop foo.fo -print or Fop -print foo.fo
       fop foo.fo -awt</source>
       <p>PDF encryption is only available if FOP was compiled with encryption support <strong>and</strong> if compatible encryption support is availabe at run time. Currently, only the JCE is supported. Check the <link href="pdfencryption.html">Details</link>.</p>
-  </section>
-
-  <section>
-    <title>Problems</title>
-    <p>If you have problems running FOP, please have a look at the <jump href="gethelp.html">"How to get Help" page</jump>.</p>
-  </section>
-
-</body>
+    </section>
+    <section id="running_xalan">
+      <title>Running Xalan</title>
+      <p>
+        The FOP distribution provicdes a Xalan.bat and a Xalan.sh
+        script for conveniently running an XSL transformation without
+        formatting. This can be useful for tracking down problems
+        introduced during transformation and for preparing FO files
+        for all kinds of purposes, including for inquiring help on the
+        mailing lists.
+      </p>
+      <p>
+        The scripts are invoked the same way <link href="http://xml.apache.org/xalan-j/commandline.html">Xalan</link> is, in short:
+      </p>
+      <p>
+        <code>xalan -in xmlfile -xsl file -out outfile</code>
+      </p>
+      <p>
+        Note that there are subtle differences to the FOP command line.
+      </p>
+    </section>
+    <section>
+      <title>Problems</title>
+      <p>If you have problems running FOP, please have a look at the <jump href="gethelp.html">"How to get Help" page</jump>.</p>
+    </section>
+  </body>
 </document>
