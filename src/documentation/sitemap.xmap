@@ -60,6 +60,13 @@
        <parameter name="quality" type="float" value="1.0"/>
    </map:serializer>
    <map:serializer name="svg2png" mime-type="image/png"       src="org.apache.cocoon.serialization.SVGSerializer"/>
+
+<!-- ========================== FOP Additions ========================== -->
+
+   <map:serializer name="svg2pdf" mime-type="application/pdf"       src="org.apache.cocoon.serialization.SVGSerializer"/>
+
+<!-- ======================= End FOP Additions ======================== -->
+
   </map:serializers>
 
   <map:matchers default="wildcard">
@@ -151,13 +158,10 @@
     <map:generate src="content/xdocs/{1}/svg/{2}.svg"/>
     <map:serialize type="svg2png"/>
    </map:match>
-<!--
-this matcher causes a problem??
    <map:match pattern="*/svg/*.pdf">
     <map:generate src="content/xdocs/{1}/svg/{2}.svg"/>
     <map:serialize type="svg2pdf"/>
    </map:match>
--->
 
    <map:match pattern="*/fo/*.fo">
     <map:read src="content/xdocs/{1}/fo/{2}.fo" mime-type="text/xml"/>
