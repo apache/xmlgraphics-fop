@@ -155,14 +155,24 @@ public class Xslt extends Task {
      */
     private void transform() {
         try {
-            org.w3c.dom.Document source = buildDocument(infile);
+	    org.w3c.dom.Document source = null;
+	    if (mergefile != null && !mergefile.equals("")) {
+               source = buildDocument(infile);
+	    }
             // Perform the transformation.
             System.out.println("============================");
             System.out.println("xslt \nin: " + infile + "\nstyle: "
                                + xsltfile + "\nout: " + outfile);
             System.out.println("============================");
-            org.apache.fop.tools.xslt.XSLTransform.transform(source,
+	    if (source != null) {
+                org.apache.fop.tools.xslt.XSLTransform.transform(source,
                     xsltfile, outfile);
+	    }
+	    else {
+		// Read the xml file directly
+		org.apache.fop.tools.xslt.XSLTransform.transform(infile,
+                    xsltfile, outfile);
+	    }
 
 
         } catch (org.xml.sax.SAXException saxerror) {
