@@ -7,7 +7,7 @@
 
 <xsl:template match="font-metrics">
 <xsl:variable name="class-name" select="class-name"/>
-<redirect:write select="concat('org/apache/fop/render/pdf/fonts/', $class-name, '.java')">
+<!--<redirect:write select="concat('org/apache/fop/render/pdf/fonts/', $class-name, '.java')">-->
 package org.apache.fop.render.pdf.fonts;
 
 import org.apache.fop.render.pdf.Font;
@@ -55,7 +55,7 @@ public class <xsl:value-of select="class-name"/> extends Font {
         return width[i];
     }
 }
-</redirect:write>
+<!--</redirect:write>-->
 </xsl:template>
 </xsl:stylesheet>
 
