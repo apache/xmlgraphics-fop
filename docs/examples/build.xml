@@ -55,6 +55,8 @@
     <fop fofile="${foDir}/textdeko.fo"   pdffile="${testDir}/textdeko.pdf"/> 
     <fop fofile="${foDir}/inhprop.fo" pdffile="${testDir}/inhprop.pdf"/>
     <fop fofile="${foDir}/normalex.fo" pdffile="${testDir}/normalex.pdf"/>
+    <fop fofile="${foDir}/simple.fo" pdffile="${testDir}/simple.pdf"/>
+    <fop fofile="${foDir}/list2.fo" pdffile="${testDir}/list2.pdf"/>
   </target>
 
 
@@ -68,7 +70,7 @@
   <target name="compare" depends ="creating new test pdf files">
     <compare referenceDirectory  = "${referenceDir}" 
              testDirectory       = "${testDir}" 
-             filenames           = "normal.pdf,table.pdf,list.pdf,link.pdf,border.pdf,images.pdf,extensive.pdf,readme.pdf,fonts.pdf"/>
+             filenames           = "normal.pdf,table.pdf,list.pdf,link.pdf,border.pdf,images.pdf,extensive.pdf,readme.pdf,fonts.pdf,list2.pdf"/>
   </target>
 
   <!-- =================================================================== -->
@@ -86,6 +88,7 @@
     <fop fofile="${foDir}/fonts.fo"   pdffile="${referenceDir}/fonts.pdf"/>     
     <fop fofile="${foDir}/leader.fo"   pdffile="${referenceDir}/leader.pdf"/> 
     <fop fofile="${foDir}/textdeko.fo"   pdffile="${referenceDir}/textdeko.pdf"/> 
+    <fop fofile="${foDir}/list2.fo"   pdffile="${referenceDir}/list2.pdf"/> 
   </target>
 
 
