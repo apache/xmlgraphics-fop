@@ -16,11 +16,9 @@
 
 /* $Id$ */
 
-package org.apache.fop.fo;
+package org.apache.fop.fo.properties;
 
-import org.apache.fop.fo.properties.ListProperty;
-import org.apache.fop.fo.properties.Property;
-import org.apache.fop.fo.properties.PropertyMaker;
+import org.apache.fop.fo.PropertyList;
 
 /**
  * Interface used to provide parsing capabilities to Properties with shorthand

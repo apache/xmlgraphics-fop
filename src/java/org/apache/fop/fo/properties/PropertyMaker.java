@@ -28,7 +28,6 @@ import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.FOPropertyMapping;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.ShorthandParser;
 import org.apache.fop.fo.expr.PropertyInfo;
 import org.apache.fop.fo.expr.PropertyParser;
 

@@ -16,13 +16,10 @@
 
 /* $Id$ */
 
-package org.apache.fop.fo;
+package org.apache.fop.fo.properties;
 
 import java.util.Enumeration;
-
-import org.apache.fop.fo.properties.ListProperty;
-import org.apache.fop.fo.properties.Property;
-import org.apache.fop.fo.properties.PropertyMaker;
+import org.apache.fop.fo.PropertyList;
 
 public class GenericShorthandParser implements ShorthandParser {
 
