@@ -65,8 +65,6 @@ import org.apache.fop.fo.properties.Scaling;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.datatypes.Length;
-import org.apache.fop.datatypes.LengthRange;
-
 // Java
 import java.awt.geom.Rectangle2D;
 
