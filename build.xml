@@ -487,6 +487,30 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     </jar>
   </target>
 
+  <target name="pdf-transcoder" depends="compile">
+    <echo message="Creating the jar file ${build.dir}/pdf-transcoder.jar"/>
+
+    <property name="pdf-transcoder.name" value="FOP PDF Transcoder"/>
+    <property name="pdf-transcoder.version" value="1.0beta2"/>
+
+    <tstamp>
+      <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
+    </tstamp>
+    <jar jarfile="${build.dir}/pdf-transcoder.jar">
+    <fileset dir="${build.dest}" includes="org/apache/fop/pdf/**"/>
+    <fileset dir="${build.dest}" includes="org/apache/fop/svg/**"/>
+    <fileset dir="${build.dest}" includes="org/apache/fop/render/pdf/**"
+             excludes="org/apache/fop/render/pdf/PDFRenderer.class,org/apache/fop/render/pdf/PDFXMLHandler*"/>
+    <fileset dir="${build.dest}" includes="org/apache/fop/layout/Font*.class,org/apache/fop/apps/FOPException.class,org/apache/fop/apps/Version.class,org/apache/fop/image/FopImag*.class,org/apache/fop/image/Jpeg*,org/apache/fop/image/Abstract*,org/apache/fop/configuration/**,org/apache/fop/util/StreamUtilities.class"/>
+    <manifest>
+        <attribute name="Implementation-Title" value="${pdf-transcoder.name}"/>
+        <attribute name="Implementation-Version" value="${pdf-transcoder.version}"/>
+        <attribute name="Implementation-Vendor" value="Apache Software Foundation (http://xml.apache.org/fop/)"/>
+        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}])"/>
+    </manifest>
+    </jar>
+  </target>
+
   <target name="test" depends="package">
     <echo message="Testing build in jar file ${build.dir}/${name}.jar against reference"/>
     <runTest testSuite="basictests.xml" basedir="test/" reference="test/reference/fop.jar"
