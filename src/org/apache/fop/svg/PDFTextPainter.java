@@ -56,14 +56,20 @@ public class PDFTextPainter implements TextPainter {
      */
     public void paint(TextNode node, Graphics2D g2d,
                       GraphicsNodeRenderContext context) {
-        System.out.println("PDFText paint");
+        //System.out.println("PDFText paint");
         String txt = node.getText();
         Point2D loc = node.getLocation();
 
         AttributedCharacterIterator aci =
           node.getAttributedCharacterIterator();
         // reset position to start of char iterator
-        aci.first();
+        if (aci.getBeginIndex() == aci.getEndIndex()) {
+            return;
+        }
+        char ch = aci.first();
+        if (ch == AttributedCharacterIterator.DONE) {
+            return;
+        }
         TextNode.Anchor anchor = (TextNode.Anchor) aci.getAttribute(
                                    GVTAttributedCharacterIterator.TextAttribute.ANCHOR_TYPE);
 
@@ -81,36 +87,35 @@ public class PDFTextPainter implements TextPainter {
         Float posture = (Float) aci.getAttribute(TextAttribute.POSTURE);
         Float taWeight = (Float) aci.getAttribute(TextAttribute.WEIGHT);
 
-        Set set = aci.getAllAttributeKeys();
-        for (Iterator iter = set.iterator(); iter.hasNext();) {
-            System.out.println(iter.next());
-        }
-
         if (forg instanceof Color) {
             g2d.setColor((Color) forg);
         }
         g2d.setPaint(forg);
         g2d.setStroke(stroke);
 
-        String style = posture.floatValue() > 0.0 ? "italic" : "normal";
-        String weight = taWeight.floatValue() > 1.0 ? "bold" : "normal";
+        String style = ((posture != null) && (posture.floatValue() > 0.0)) ?
+                       "italic" : "normal";
+        String weight = ((taWeight != null) &&
+                         (taWeight.floatValue() > 1.0)) ? "bold" : "normal";
 
         FontInfo fi = fontState.getFontInfo();
         boolean found = false;
-        for (Enumeration e = gvtFonts.elements(); e.hasMoreElements();) {
-            GVTFontFamily fam = (GVTFontFamily) e.nextElement();
-            String name = fam.getFamilyName();
-            System.out.println(name);
-            if (fi.hasFont(name, weight, style)) {
-                try {
-                    int fsize = (int) size.floatValue();
-                    fontState = new FontState(fontState.getFontInfo(),
-                                              name, style, weight, fsize * 1000, 0);
-                } catch (org.apache.fop.apps.FOPException fope) {
-                    fope.printStackTrace();
+        if (gvtFonts != null) {
+            for (Enumeration e = gvtFonts.elements();
+                    e.hasMoreElements();) {
+                GVTFontFamily fam = (GVTFontFamily) e.nextElement();
+                String name = fam.getFamilyName();
+                if (fi.hasFont(name, weight, style)) {
+                    try {
+                        int fsize = (int) size.floatValue();
+                        fontState = new FontState(fontState.getFontInfo(),
+                                                  name, style, weight, fsize * 1000, 0);
+                    } catch (org.apache.fop.apps.FOPException fope) {
+                        fope.printStackTrace();
+                    }
+                    found = true;
+                    break;
                 }
-                found = true;
-                break;
             }
         }
         if (!found) {
@@ -143,8 +148,6 @@ public class PDFTextPainter implements TextPainter {
 
 
         float advance = getStringWidth(txt);
-        System.out.println("ad:" + advance + " a:" + anchor + " ind:" +
-                           aci.getIndex());
         float tx = 0;
         if (anchor != null) {
             switch (anchor.getType()) {
@@ -350,7 +353,7 @@ public class PDFTextPainter implements TextPainter {
      */
     public Rectangle2D getPaintedBounds(TextNode node,
                                         FontRenderContext frc) {
-        System.out.println("PDFText getPaintedBounds");
+        //System.out.println("PDFText getPaintedBounds");
         return null;
     }
 }
