@@ -150,6 +150,11 @@ public class PageNumber extends FObj {
         return id;
     }
 
+    /** @return the "text-decoration" property. */
+    public CommonTextDecoration getTextDecoration() {
+        return textDecoration; 
+    }
+
     /**
      * @see org.apache.fop.fo.FONode#getName()
      */
@@ -163,10 +168,4 @@ public class PageNumber extends FObj {
     public int getNameId() {
         return FO_PAGE_NUMBER;
     }
-    
-    /** @return the "text-decoration" property. */
-    public CommonTextDecoration getTextDecoration() {
-        return textDecoration; 
-    }
-
 }

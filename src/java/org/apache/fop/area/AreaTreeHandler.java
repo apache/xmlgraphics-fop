@@ -77,9 +77,6 @@ public class AreaTreeHandler extends FOEventHandler {
     // the LayoutManager maker
     private LayoutManagerMaker lmMaker;
 
-    // count of number of pages rendered
-    private int pageCount;
-
     // AreaTreeModel in use
     private AreaTreeModel model;
 
@@ -209,7 +206,6 @@ public class AreaTreeHandler extends FOEventHandler {
     public void startDocument() throws SAXException {
         //Initialize statistics
         if (outputStatistics) {
-            pageCount = 0;
             initialMemory = runtime.totalMemory() - runtime.freeMemory();
             startTime = System.currentTimeMillis();
         }
@@ -268,11 +264,12 @@ public class AreaTreeHandler extends FOEventHandler {
             long memoryNow = runtime.totalMemory() - runtime.freeMemory();
             long memoryUsed = (memoryNow - initialMemory) / 1024L;
             long timeUsed = System.currentTimeMillis() - startTime;
+            int pageCount = rootFObj.getRunningPageNumberCounter();
             log.debug("Initial heap size: " + (initialMemory / 1024L) + "Kb");
             log.debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
             log.debug("Total memory used: " + memoryUsed + "Kb");
             log.debug("Total time used: " + timeUsed + "ms");
-            log.debug("Pages rendered: " + rootFObj.getRunningPageNumberCounter());
+            log.debug("Pages rendered: " + pageCount);
             if (pageCount > 0) {
                 log.debug("Avg render time: " + (timeUsed / pageCount) + "ms/page");
             }
@@ -305,15 +302,6 @@ public class AreaTreeHandler extends FOEventHandler {
         } else {
             model.handleOffDocumentItem(odi);
         }
-    }
-
-    /**
-     * Called by the PageSequenceLayoutManager to notify the AreaTreeHandler
-     * of a new page being started.
-     * @param pageNumber page number
-     */
-    public void notifyNewPage(String pageNumber) {
-        pageCount++;
     }
 }
 
