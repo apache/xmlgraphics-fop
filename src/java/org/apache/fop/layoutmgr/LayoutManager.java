@@ -27,7 +27,6 @@ import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Resolvable;
 import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.fo.FObj;
 
 /**
@@ -226,9 +225,9 @@ public interface LayoutManager {
     Marker retrieveMarker(String name, int pos, int boundary);
 
     /**
-     * @return the AreaTreeHandler object.
+     * @return the LayoutManagerMaker object.
      */
-    AreaTreeHandler getAreaTreeHandler();
+    LayoutManagerMaker getLayoutManagerMaker();
 
     /**
      * Load next child LMs, up to child LM index pos
