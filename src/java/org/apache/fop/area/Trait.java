@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-/* $Id$ */
- 
+/* $Id: Trait.java,v 1.4 2004/02/27 17:41:26 jeremias Exp $ */
+
 package org.apache.fop.area;
 
 import org.apache.fop.datatypes.ColorType;
@@ -149,21 +149,31 @@ public class Trait implements Serializable {
      */
     public static final Integer SPACE_END  = new Integer(24);
 
+    /**
+     * break before
+     */
+    public static final Integer BREAK_BEFORE = new Integer(25);
+
+    /**
+     * break after
+     */
+    public static final Integer BREAK_AFTER = new Integer(26);
+
     private static final Map TRAIT_INFO = new HashMap();
 
     private static class TraitInfo {
         private String name;
         private Class clazz; // Class of trait data
-        
+
         public TraitInfo(String name, Class clazz) {
             this.name = name;
             this.clazz = clazz;
         }
-        
+
         public String getName() {
             return this.name;
         }
-        
+
         public Class getClazz() {
             return this.clazz;
         }
@@ -212,6 +222,12 @@ public class Trait implements Serializable {
                           new TraitInfo("space-start", Integer.class));
         TRAIT_INFO.put(SPACE_END,
                           new TraitInfo("space-end", Integer.class));
+        TRAIT_INFO.put(BREAK_BEFORE,
+                          new TraitInfo("break-before", Integer.class));
+        TRAIT_INFO.put(BREAK_AFTER,
+                          new TraitInfo("break-after", Integer.class));
+
+
     }
 
     /**
@@ -337,11 +353,11 @@ public class Trait implements Serializable {
             Object o = tclass.newInstance();
             //return o.fromString(sTraitValue);
         } catch (IllegalAccessException e1) {
-            System.err.println("Can't create instance of " 
+            System.err.println("Can't create instance of "
                                + tclass.getName());
             return null;
         } catch (InstantiationException e2) {
-            System.err.println("Can't create instance of " 
+            System.err.println("Can't create instance of "
                                + tclass.getName());
             return null;
         }
@@ -355,7 +371,7 @@ public class Trait implements Serializable {
      * Used for storing back trait information which are related.
      */
     public static class Background implements Serializable {
-        
+
         /** The background color if any. */
         private ColorType color = null;
 
@@ -370,7 +386,7 @@ public class Trait implements Serializable {
 
         /** Background vertical offset for images. */
         private int vertical;
-        
+
         /**
          * Returns the background color.
          * @return background color, null if n/a

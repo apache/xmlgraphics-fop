@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-/* $Id$ */
- 
+/* $Id: TraitSetter.java,v 1.6 2004/02/27 17:49:25 jeremias Exp $ */
+
 package org.apache.fop.layoutmgr;
 
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.traits.BorderProps;
+import org.apache.fop.traits.LayoutProps;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Trait;
 import org.apache.fop.fo.properties.CommonBackground;
@@ -78,7 +79,7 @@ public class TraitSetter {
      * @param bpProps border and padding properties
      */
     private static void addBorderTrait(Area area,
-                                       CommonBorderAndPadding bpProps, 
+                                       CommonBorderAndPadding bpProps,
                                        boolean bDiscard, int iSide,
                                        Object oTrait) {
         int iBP = bpProps.getBorderWidth(iSide, bDiscard);
@@ -117,12 +118,12 @@ public class TraitSetter {
         if (bps.width != 0) {
             curBlock.addTrait(Trait.BORDER_END, bps);
         }
-        
+
         int padding = bordProps.getPadding(CommonBorderAndPadding.START, false);
         if (padding != 0) {
             curBlock.addTrait(Trait.PADDING_START, new java.lang.Integer(padding));
         }
-        
+
         padding = bordProps.getPadding(CommonBorderAndPadding.END, false);
         if (padding != 0) {
             curBlock.addTrait(Trait.PADDING_END, new java.lang.Integer(padding));
@@ -132,7 +133,7 @@ public class TraitSetter {
         if (padding != 0) {
             curBlock.addTrait(Trait.PADDING_BEFORE, new java.lang.Integer(padding));
         }
-        
+
         padding = bordProps.getPadding(CommonBorderAndPadding.AFTER, false);
         if (padding != 0) {
             curBlock.addTrait(Trait.PADDING_AFTER, new java.lang.Integer(padding));
@@ -182,9 +183,9 @@ public class TraitSetter {
      * @param marginProps the margin properties.
      */
     public static void addMargins(Area curBlock,
-                                  CommonBorderAndPadding bpProps, 
+                                  CommonBorderAndPadding bpProps,
                                   CommonMarginBlock marginProps) {
-        int spaceStart = marginProps.startIndent - 
+        int spaceStart = marginProps.startIndent -
                             bpProps.getBorderStartWidth(false) -
                             bpProps.getPaddingStart(false);
         if (spaceStart != 0) {
@@ -197,5 +198,10 @@ public class TraitSetter {
         if (spaceEnd != 0) {
             curBlock.addTrait(Trait.SPACE_END, new Integer(spaceEnd));
         }
+    }
+
+    public static void addBreaks(Area curArea, LayoutProps layoutProps) {
+    	curArea.addTrait(Trait.BREAK_AFTER, new Integer(layoutProps.breakAfter));
+        curArea.addTrait(Trait.BREAK_BEFORE, new Integer(layoutProps.breakBefore));
     }
 }

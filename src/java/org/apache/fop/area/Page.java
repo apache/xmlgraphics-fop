@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: Page.java,v 1.4 2004/02/27 17:41:26 jeremias Exp $ */
 
 package org.apache.fop.area;
 
@@ -84,6 +84,21 @@ public class Page implements Serializable, Cloneable {
             return regionAfter;
         }
         return null;
+    }
+
+    /**
+     * indicates whether any FOs have been added to the body region
+     *
+     * @return whether any FOs have been added to the body region
+     */
+    public boolean isEmpty() {
+        if (regionBody == null) {
+            return true;
+        }
+        else {
+            BodyRegion body = (BodyRegion)regionBody.getRegion();
+            return body.isEmpty();
+        }
     }
 
     /**
