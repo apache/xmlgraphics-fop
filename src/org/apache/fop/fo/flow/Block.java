@@ -224,15 +224,14 @@ public class Block extends FObjMixed {
 	    if (area instanceof BlockArea) {
 		area.end();
 	    }
-	    if (this.isInLabel) {
-		startIndent += bodyIndent;
-		endIndent += (area.getAllocationWidth()
+        if (this.isInLabel) {
+			startIndent += bodyIndent;
+			endIndent += (area.getAllocationWidth()
 			      - distanceBetweenStarts - startIndent)
 		    + labelSeparation;
 	    }
-
-	    if (this.isInListBody) {
-		startIndent += bodyIndent + distanceBetweenStarts;
+	    else if (this.isInListBody) {
+			startIndent += bodyIndent + distanceBetweenStarts;
 	    }
 
             area.getIDReferences().createID(id); 
