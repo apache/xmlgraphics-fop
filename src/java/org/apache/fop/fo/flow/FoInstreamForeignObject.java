@@ -65,7 +65,7 @@ import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
-import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.FoXmlEvent;
 
 /**
  * Implements the fo:instream-foreign-object flow object.
@@ -150,7 +150,7 @@ public class FoInstreamForeignObject extends FONode {
      * attribute set information.
      */
     public FoInstreamForeignObject
-            (FOTree foTree, FONode parent, FoXMLEvent event, int stateFlags)
+            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.INSTREAM_FOREIGN_OBJECT, parent, event,

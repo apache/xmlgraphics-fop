@@ -292,7 +292,7 @@ public class Namespaces {
      * @return an appropriate <code>XmlEvent</code>
      */
     private XmlEvent newXMLEvent(int nsIndex) {
-        // The only currently known subclass of XmlEvent is FoXMLEvent
+        // The only currently known subclass of XmlEvent is FoXmlEvent
         switch (nsIndex) {
         case DefAttrNSIndex :
             // Produce an XmlEvent, e.g. for START_DOCUMENT and, more
@@ -303,11 +303,11 @@ public class Namespaces {
                 return new XmlEvent(this, nsSequences[nsIndex], nsIndex);
             }
         case XSLNSpaceIndex :
-            // Make an FoXMLEvent
+            // Make an FoXmlEvent
             synchronized (nsSequences) {
                 nsSequences[nsIndex] =
                     ++nsSequences[nsIndex] & nsSeqMasks[nsIndex];
-                return new FoXMLEvent(this, nsSequences[nsIndex], nsIndex);
+                return new FoXmlEvent(this, nsSequences[nsIndex], nsIndex);
             }
         case FOXNSpaceIndex :
             // No FoxXMLEvent defined - don't break, but fall through

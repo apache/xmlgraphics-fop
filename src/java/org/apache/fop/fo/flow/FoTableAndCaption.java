@@ -66,7 +66,7 @@ import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
 
@@ -152,7 +152,7 @@ public class FoTableAndCaption extends FONode {
      * attribute set information.
      */
     public FoTableAndCaption
-            (FOTree foTree, FONode parent, FoXMLEvent event, int stateFlags)
+            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.TABLE_AND_CAPTION, parent, event,
@@ -164,7 +164,7 @@ public class FoTableAndCaption extends FONode {
             while ((ev = xmlevents.expectStartElement
                     (FObjectNames.MARKER, XmlEvent.DISCARD_W_SPACE))
                    != null) {
-                new FoMarker(getFOTree(), this, (FoXMLEvent)ev, stateFlags);
+                new FoMarker(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
                 numMarkers++;
                 ev = xmlevents.getEndElement(
                         SyncedXmlEventsBuffer.DISCARD_EV, ev);
@@ -177,7 +177,7 @@ public class FoTableAndCaption extends FONode {
                     (FObjectNames.TABLE_CAPTION, XmlEvent.DISCARD_W_SPACE))
                    != null) {
                 new FoTableCaption(
-                        getFOTree(), this, (FoXMLEvent)ev, stateFlags);
+                        getFOTree(), this, (FoXmlEvent)ev, stateFlags);
                 captionOffset = numMarkers;
                 ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
                 namespaces.surrenderEvent(ev);
@@ -190,7 +190,7 @@ public class FoTableAndCaption extends FONode {
             if (ev == null)
                 throw new FOPException("No table found.");
             tableOffset = numChildren();
-            new FoTable(getFOTree(), this, (FoXMLEvent)ev, stateFlags);
+            new FoTable(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
             ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
             namespaces.surrenderEvent(ev);
 

@@ -66,7 +66,7 @@ import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
 
@@ -144,7 +144,7 @@ public class FoListItem extends FONode {
      * attribute set information.
      */
     public FoListItem
-            (FOTree foTree, FONode parent, FoXMLEvent event, int stateFlags)
+            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.LIST_ITEM, parent, event,
@@ -156,7 +156,7 @@ public class FoListItem extends FONode {
             while ((ev = xmlevents.expectStartElement
                     (FObjectNames.MARKER, XmlEvent.DISCARD_W_SPACE))
                    != null) {
-                new FoMarker(getFOTree(), this, (FoXMLEvent)ev, stateFlags);
+                new FoMarker(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
                 numMarkers++;
                 ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
                 namespaces.surrenderEvent(ev);
@@ -170,7 +170,7 @@ public class FoListItem extends FONode {
                 throw new FOPException
                         ("No list-item-label in list-item.");
             new FoListItemLabel(
-                    getFOTree(), this, (FoXMLEvent)ev, stateFlags);
+                    getFOTree(), this, (FoXmlEvent)ev, stateFlags);
             ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
             namespaces.surrenderEvent(ev);
 
@@ -181,7 +181,7 @@ public class FoListItem extends FONode {
                    == null)
                 throw new FOPException
                         ("No list-item-body in list-item.");
-            new FoListItemBody(getFOTree(), this, (FoXMLEvent)ev, stateFlags);
+            new FoListItemBody(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
             ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
             namespaces.surrenderEvent(ev);
 

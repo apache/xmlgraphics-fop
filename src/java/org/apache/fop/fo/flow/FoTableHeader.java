@@ -66,7 +66,7 @@ import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
 
@@ -153,7 +153,7 @@ public class FoTableHeader extends FONode {
      * attribute set information.
      */
     public FoTableHeader
-            (FOTree foTree, FONode parent, FoXMLEvent event, int stateFlags)
+            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.TABLE_HEADER, parent, event,
@@ -165,7 +165,7 @@ public class FoTableHeader extends FONode {
             while ((ev = xmlevents.expectStartElement
                     (FObjectNames.MARKER, XmlEvent.DISCARD_W_SPACE))
                    != null) {
-                new FoMarker(getFOTree(), this, (FoXMLEvent)ev, stateFlags);
+                new FoMarker(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
                 numMarkers++;
                 ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
                 namespaces.surrenderEvent(ev);
@@ -176,7 +176,7 @@ public class FoTableHeader extends FONode {
             while ((ev = xmlevents.expectStartElement
                     (FObjectNames.TABLE_ROW, XmlEvent.DISCARD_W_SPACE))
                    != null) {
-                new FoTableRow(getFOTree(), this, (FoXMLEvent)ev, stateFlags);
+                new FoTableRow(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
                 numRows++;
                 ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
                 namespaces.surrenderEvent(ev);
@@ -191,7 +191,7 @@ public class FoTableHeader extends FONode {
                         (FObjectNames.TABLE_CELL, XmlEvent.DISCARD_W_SPACE))
                        != null) {
                     new FoTableCell(
-                            getFOTree(), this, (FoXMLEvent)ev, stateFlags);
+                            getFOTree(), this, (FoXmlEvent)ev, stateFlags);
                     numCells++;
                     ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
                     namespaces.surrenderEvent(ev);

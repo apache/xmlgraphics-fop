@@ -64,7 +64,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
-import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.FoXmlEvent;
 
 /**
  * Implements the fo:multi-property-set flow object.
@@ -122,7 +122,7 @@ public class FoMultiPropertySet extends FONode {
      * attribute set information.
      */
     public FoMultiPropertySet
-            (FOTree foTree, FONode parent, FoXMLEvent event, int stateFlags)
+            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.MULTI_PROPERTY_SET, parent, event,

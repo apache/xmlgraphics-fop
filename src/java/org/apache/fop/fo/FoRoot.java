@@ -65,7 +65,7 @@ import org.apache.fop.fo.declarations.FoDeclarations;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.flow.FoPageSequence;
 import org.apache.fop.fo.pagination.FoLayoutMasterSet;
-import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.Namespaces;
@@ -199,14 +199,14 @@ public class FoRoot extends FONode {
             if (ev == null)
                 throw new FOPException("No page-sequence found.");
             firstPageSeq = numChildren();
-            new FoPageSequence(getFOTree(), this, (FoXMLEvent)ev);
+            new FoPageSequence(getFOTree(), this, (FoXmlEvent)ev);
             ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
             namespaces.surrenderEvent(ev);
             while ((ev = xmlevents.expectStartElement
                     (FObjectNames.PAGE_SEQUENCE, XmlEvent.DISCARD_W_SPACE))
                    != null) {
                 // Loop over remaining fo:page-sequences
-                new FoPageSequence(getFOTree(), this, (FoXMLEvent)ev);
+                new FoPageSequence(getFOTree(), this, (FoXmlEvent)ev);
                 ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
                 namespaces.surrenderEvent(ev);
             }

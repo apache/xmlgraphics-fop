@@ -63,7 +63,7 @@ import java.util.StringTokenizer;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Ints;
 import org.apache.fop.fo.flow.FoPcdata;
-import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
 
 /**
@@ -150,7 +150,7 @@ public class FObjects {
         new Class[] {
             FOTree.class
             ,FONode.class
-            ,FoXMLEvent.class
+            ,FoXmlEvent.class
             ,int.class
     };
     
@@ -238,14 +238,14 @@ public class FObjects {
      * known that no CHARACTERS event will be passed.
      * @param foTree
      * @param parent
-     * @param event the <code>FoXMLEvent</code> event that triggered the
+     * @param event the <code>FoXmlEvent</code> event that triggered the
      * generation of this FO
      * @param stateFlags
      * @return the new FO node
      * @throws FOPException
      */
     public Object makeFlowObject(FOTree foTree,
-                             FONode parent, FoXMLEvent event, int stateFlags)
+                             FONode parent, FoXmlEvent event, int stateFlags)
         throws FOPException
     {
         Class foclass;
@@ -282,7 +282,7 @@ public class FObjects {
     /**
      * This method generates generates new FO objects, including FoPcdata
      * objects.  It is more general in this sense than the overloaded
-     * version which takes the <code>FoXMLEvent event</code> parameter.
+     * version which takes the <code>FoXmlEvent event</code> parameter.
      * objects, which require an XmlEvent argument.
      * @param foTree
      * @param parent
@@ -296,9 +296,9 @@ public class FObjects {
             FONode parent, XmlEvent event, int stateFlags)
     throws FOPException
     {
-        if (event instanceof FoXMLEvent) {
+        if (event instanceof FoXmlEvent) {
             return makeFlowObject(
-                    foTree, parent, (FoXMLEvent)event, stateFlags);
+                    foTree, parent, (FoXmlEvent)event, stateFlags);
         }
         if (event.getType() != XmlEvent.CHARACTERS) {
             throw new FOPException(

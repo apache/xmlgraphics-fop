@@ -65,7 +65,7 @@ import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FObjects;
 import org.apache.fop.fo.PropNames;
-import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.xml.UnexpectedStartElementException;
@@ -117,7 +117,7 @@ public class FoFlow extends FONode {
      * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
      */
-    public FoFlow(FOTree foTree, FONode parent, FoXMLEvent event)
+    public FoFlow(FOTree foTree, FONode parent, FoXmlEvent event)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.FLOW, parent, event,
@@ -130,7 +130,7 @@ public class FoFlow extends FONode {
             // Generate the flow object
             //System.out.println("Generating first block for flow.");
             FObjects.fobjects.makeFlowObject(
-                    foTree, this, (FoXMLEvent)ev, FONode.FLOW_SET);
+                    foTree, this, (FoXmlEvent)ev, FONode.FLOW_SET);
             // Clear the blockage
             ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
             namespaces.surrenderEvent(ev);
@@ -142,7 +142,7 @@ public class FoFlow extends FONode {
                     //System.out.println
                             //("Generating subsequent block for flow.");
                     FObjects.fobjects.makeFlowObject(
-                            foTree, this, (FoXMLEvent)ev, FONode.FLOW_SET);
+                            foTree, this, (FoXmlEvent)ev, FONode.FLOW_SET);
                     ev = xmlevents.getEndElement(
                             SyncedXmlEventsBuffer.DISCARD_EV, ev);
                     namespaces.surrenderEvent(ev);

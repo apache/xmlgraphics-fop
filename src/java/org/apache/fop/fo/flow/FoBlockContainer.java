@@ -66,7 +66,7 @@ import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FObjects;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
-import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.xml.UnexpectedStartElementException;
@@ -150,7 +150,7 @@ public class FoBlockContainer extends FONode {
      * attribute set information.
      */
     public FoBlockContainer
-            (FOTree foTree, FONode parent, FoXMLEvent event, int stateFlags)
+            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.BLOCK_CONTAINER, parent, event,
@@ -171,7 +171,7 @@ public class FoBlockContainer extends FONode {
                         ("%block; not found in fo:block-container");
             // Generate the flow object
             FObjects.fobjects.makeFlowObject(
-                    foTree, this, (FoXMLEvent)ev, stateFlags);
+                    foTree, this, (FoXmlEvent)ev, stateFlags);
             // Clear the blockage
             ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
             namespaces.surrenderEvent(ev);
@@ -184,7 +184,7 @@ public class FoBlockContainer extends FONode {
                 if (ev != null) {
                     // Generate the flow object
                     FObjects.fobjects.makeFlowObject(
-                            foTree, this, (FoXMLEvent)ev, stateFlags);
+                            foTree, this, (FoXmlEvent)ev, stateFlags);
                     ev = xmlevents.getEndElement(
                             SyncedXmlEventsBuffer.DISCARD_EV, ev);
                     namespaces.surrenderEvent(ev);
