@@ -119,7 +119,7 @@ public class BasicLink extends FObjMixed {
 
 	// assumption - AS
 	// should be able to retrieve this from somewhere - JT
-	AreaContainer ac = p.getBody();
+	AreaContainer ac = p.getBody().getMainReferenceArea();
 
 	int numChildren = this.children.size();
 	for (int i = this.marker; i < numChildren; i++) {

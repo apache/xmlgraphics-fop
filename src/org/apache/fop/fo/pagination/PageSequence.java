@@ -59,6 +59,7 @@ import org.apache.fop.fo.flow.Flow;
 import org.apache.fop.fo.flow.StaticContent;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.AreaContainer;
+import org.apache.fop.layout.BodyAreaContainer;
 import org.apache.fop.layout.AreaTree;
 import org.apache.fop.layout.Page;
 import org.apache.fop.layout.PageMaster;
@@ -299,7 +300,7 @@ public class PageSequence extends FObj
             }
             else
             {
-                AreaContainer bodyArea = currentPage.getBody();
+                BodyAreaContainer bodyArea = currentPage.getBody();
                 bodyArea.setIDReferences(areaTree.getIDReferences());
 		
 		Flow flow = getCurrentFlow(RegionBody.REGION_CLASS);
