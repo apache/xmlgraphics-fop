@@ -5,7 +5,7 @@
  * LICENSE file included with these sources.
  */
 
-package org.apache.fop.layoutmgr.table;
+package org.apache.fop.layoutmgr.list;
 
 import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
@@ -28,35 +28,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * LayoutManager for a table-row FO.
- * The row contains cells that are organised according to the columns.
- * A break in a table row will contain breaks for each table cell.
- * If there are row spanning cells then these cells belong to this row
- * but effect the occupied columns of future rows.
+ * LayoutManager for a list-item FO.
+ * The list item contains a list item label and a list item body.
  */
-public class Row extends BlockStackingLayoutManager {
+public class ListItemLayoutManager extends BlockStackingLayoutManager {
+    private Item label;
+    private Item body;
+
+    private Block curBlockArea;
 
     private List cellList = null;
     private List columns = null;
-    private int rowHeight;
+    private int listItemHeight;
     private int yoffset;
     private BorderAndPadding borderProps = null;
     private BackgroundProps backgroundProps;
 
-    private class RowPosition extends LeafPosition {
+    private class ItemPosition extends LeafPosition {
         protected List cellBreaks;
-        protected RowPosition(LayoutManager lm, int pos, List l) {
+        protected ItemPosition(LayoutManager lm, int pos, List l) {
             super(lm, pos);
             cellBreaks = l;
         }
     }
 
     /**
-     * Create a new row layout manager.
+     * Create a new list item layout manager.
      *
-     * @param fobj the table-row formatting object
+     * @param fobj the list-item formatting object
      */
-    public Row(FObj fobj) {
+    public ListItemLayoutManager(FObj fobj) {
         super(fobj);
     }
 
@@ -65,52 +66,24 @@ public class Row extends BlockStackingLayoutManager {
         backgroundProps = propMgr.getBackgroundProps();
     }
 
-    /**
-     * Set the columns from the table.
-     *
-     * @param cols the list of columns for this table
-     */
-    public void setColumns(List cols) {
-        columns = cols;
+    public void setLabel(Item item) {
+        label = item;
+        label.setParentLM(this);
     }
 
-    private void setupCells() {
-        cellList = new ArrayList();
-        // add cells to list
-        while (m_childLMiter.hasNext()) {
-            m_curChildLM = (LayoutManager) m_childLMiter.next();
-            m_curChildLM.setParentLM(this);
-            m_curChildLM.init();
-            cellList.add(m_curChildLM);
-        }
-    }
-
-    /**
-     * Get the layout manager for a cell.
-     *
-     * @param pos the position of the cell
-     * @return the cell layout manager
-     */
-    protected Cell getCellLM(int pos) {
-        if (cellList == null) {
-            setupCells();
-        }
-        if (pos < cellList.size()) {
-            return (Cell)cellList.get(pos);
-        }
-        return null;
+    public void setBody(Item item) {
+        body = item;
+        body.setParentLM(this);
     }
 
     /**
      * Get the next break possibility.
-     * A row needs to get the possible breaks for each cell
-     * in the row and find a suitable break across all cells.
      *
      * @param context the layout context for getting breaks
      * @return the next break possibility
      */
     public BreakPoss getNextBreakPoss(LayoutContext context) {
-        LayoutManager curLM; // currently active LM
+        Item curLM; // currently active LM
 
         BreakPoss lastPos = null;
         ArrayList breakList = new ArrayList();
@@ -119,9 +92,15 @@ public class Row extends BlockStackingLayoutManager {
         int opt = 0;
         int max = 0;
 
-        int cellcount = 0;
-        while ((curLM = getCellLM(cellcount++)) != null) {
-
+        int stage = 0;
+        while (true) {
+            if(stage == 0) {
+                curLM = label;
+            } else if (stage == 1) {
+                curLM = body;
+            } else {
+                break;
+            }
             ArrayList childBreaks = new ArrayList();
             MinOptMax stackSize = new MinOptMax();
 
@@ -134,23 +113,19 @@ public class Row extends BlockStackingLayoutManager {
             childLC.setStackLimit(
                   MinOptMax.subtract(context.getStackLimit(),
                                      stackSize));
-
-            int size = columns.size();
-            Column col;
-            if (cellcount > size - 1) {
-                col = (Column)columns.get(size - 1);
-            } else {
-                col = (Column)columns.get(cellcount - 1);
+            if (stage == 0) {
+                childLC.setRefIPD(24000);
+            } else if (stage == 1) {
+                childLC.setRefIPD(context.getRefIPD() - 24000);
             }
-            childLC.setRefIPD(col.getWidth());
-
+            stage++;
             while (!curLM.isFinished()) {
                 if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
                     stackSize.add(bp.getStackingSize());
                     if (stackSize.min > context.getStackLimit().max) {
                         // reset to last break
                         if (lastPos != null) {
-                            reset(lastPos.getPosition());
+                            curLM.resetPosition(lastPos.getPosition());
                         } else {
                             curLM.resetPosition(null);
                         }
@@ -163,14 +138,14 @@ public class Row extends BlockStackingLayoutManager {
                                              context.getStackLimit(), stackSize));
                 }
             }
-            // the min is the maximum min of all cells
+            // the min is the maximum min of the label and body
             if (stackSize.min > min) {
                 min = stackSize.min;
             }
             // the optimum is the minimum of all optimums
             if (stackSize.opt > opt) {
                 opt = stackSize.opt;
-            }   
+            }
             // the maximum is the largest maximum
             if (stackSize.max > max) {
                 max = stackSize.max;
@@ -178,20 +153,20 @@ public class Row extends BlockStackingLayoutManager {
 
             breakList.add(childBreaks);
         }
-        rowHeight = opt;
+        listItemHeight = opt;
 
-        MinOptMax rowSize = new MinOptMax(min, opt, max);
+        MinOptMax itemSize = new MinOptMax(min, opt, max);
 
         setFinished(true);
-        RowPosition rp = new RowPosition(this, breakList.size() - 1, breakList);
+        ItemPosition rp = new ItemPosition(this, breakList.size() - 1, breakList);
         BreakPoss breakPoss = new BreakPoss(rp);
-        breakPoss.setStackingSize(rowSize);
+        breakPoss.setStackingSize(itemSize);
         return breakPoss;
     }
 
     /**
-     * Set the y position offset of this row.
-     * This is used to set the position of the areas returned by this row.
+     * Set the y position offset of this list item.
+     * This is used to set the position of the areas returned by this list item.
      *
      * @param off the y offset
      */
@@ -211,14 +186,13 @@ public class Row extends BlockStackingLayoutManager {
         getParentArea(null);
         addID();
 
-        Cell childLM;
+        Item childLM;
         int iStartPos = 0;
         LayoutContext lc = new LayoutContext(0);
         while (parentIter.hasNext()) {
-            RowPosition lfp = (RowPosition) parentIter.next();
+            ItemPosition lfp = (ItemPosition) parentIter.next();
             // Add the block areas to Area
 
-            int cellcount = 0;
             int xoffset = 0;
             for (Iterator iter = lfp.cellBreaks.iterator(); iter.hasNext();) {
                 List cellsbr = (List)iter.next();
@@ -226,36 +200,30 @@ public class Row extends BlockStackingLayoutManager {
                 breakPosIter = new BreakPossPosIter(cellsbr, 0, cellsbr.size());
                 iStartPos = lfp.getLeafPos() + 1;
 
-                int size = columns.size();
-                Column col;
-                if (cellcount > size - 1) {
-                   col = (Column)columns.get(size - 1);
-                } else {
-                    col = (Column)columns.get(cellcount);
-                    cellcount++;
-                }
-
-                while ((childLM = (Cell)breakPosIter.getNextChildLM()) != null) {
-                    childLM.setXOffset(xoffset);
-                    childLM.setYOffset(yoffset);
+                while ((childLM = (Item)breakPosIter.getNextChildLM()) != null) {
+                    if(childLM == body) {
+                        childLM.setXOffset(24000);
+                    }
                     childLM.addAreas(breakPosIter, lc);
                 }
-                xoffset += col.getWidth();
+                xoffset += 100000;
             }
         }
+
+        curBlockArea.setHeight(listItemHeight);
 
         flush();
 
     }
 
     /**
-     * Get the row height of the row after adjusting.
-     * Should only be called after adding the row areas.
+     * Get the height of the list item after adjusting.
+     * Should only be called after adding the list item areas.
      *
-     * @return the row height of this row after adjustment
+     * @return the height of this list item after adjustment
      */
-    public int getRowHeight() {
-        return rowHeight;
+    public int getListItemHeight() {
+        return listItemHeight;
     }
 
     /**
@@ -272,7 +240,18 @@ public class Row extends BlockStackingLayoutManager {
      * @return the parent are for the child
      */
     public Area getParentArea(Area childArea) {
-        return parentLM.getParentArea(childArea);
+        if (curBlockArea == null) {
+            curBlockArea = new Block();
+
+            // Set up dimensions
+            Area parentArea = parentLM.getParentArea(curBlockArea);
+            int referenceIPD = parentArea.getIPD();
+            curBlockArea.setIPD(referenceIPD);
+            curBlockArea.setWidth(referenceIPD);
+            // Get reference IPD from parentArea
+            setCurrentArea(curBlockArea); // ??? for generic operations
+        }
+        return curBlockArea;
     }
 
     /**
@@ -284,7 +263,11 @@ public class Row extends BlockStackingLayoutManager {
      * @return unused
      */
     public boolean addChild(Area childArea) {
-        return parentLM.addChild(childArea);
+        if (curBlockArea != null) {
+            curBlockArea.addBlock((Block) childArea);
+            return false;
+        }
+        return false;
     }
 
     /**
@@ -296,20 +279,6 @@ public class Row extends BlockStackingLayoutManager {
         if (resetPos == null) {
             reset(null);
         }
-    }
-
-
-    /**
-     * Get the area for this row for background.
-     *
-     * @return the row area
-     */
-    public Area getRowArea() {
-        Area block = new Block();
-        if(backgroundProps != null) {
-            addBackground(block, backgroundProps);
-        }
-        return block;
     }
 }
 

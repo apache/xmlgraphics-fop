@@ -13,6 +13,7 @@ import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.layoutmgr.list.Item;
 
 // Java
 import java.util.Enumeration;
@@ -23,7 +24,12 @@ public class ListItemLabel extends FObj {
         super(parent);
     }
 
-    public void setup() throws FOPException {
+    public Item getItemLayoutManager() {
+        Item itemLabel = new Item(this);
+        return itemLabel;
+    }
+
+    public void setup() {
 
         // Common Accessibility Properties
         AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
