@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
+<document>
+  <header>
+    <title>FOP Development: Coding Conventions</title>
+  </header>
+  <body>
+    <section id="java">
+      <title>Java</title>
+      <section id="java-style">
+        <title>Java Style</title>
+        <p>In order to facilitate the human reading of FOP source code, the FOP developers have agreed on a set of coding conventions.
+The basis of these coding conventions is documented in the <link href="http://xml.apache.org/source.html">Apache XML Project Guidelines</link>, which requires that <strong>all Java Language source code in the repository must be written in conformance to Sun's</strong> <link href="http://java.sun.com/docs/codeconv/html/CodeConvTOC.doc.html">Code Conventions for the Java Programming Language</link>.
+In addition, other conventions have been applied to the FOP project, which are summarized in the following table:</p>
+        <table>
+          <tr>
+            <th>Convention</th>
+            <th>Rationale</th>
+            <th>Enforced By</th>
+          </tr>
+          <tr>
+            <td>No tabs in content</td>
+            <td>Programmers should not have to adjust the tab settings in their editor to be able to read the source code.</td>
+            <td>checkstyle</td>
+          </tr>
+          <tr>
+            <th>Indentation of 4 spaces per level</th>
+            <th>Maximize readability.</th>
+            <th>Not enforced</th>
+          </tr>
+        </table>
+        <p>For developers that dislike these conventions, one workaround is to develop using their own style, then use a formatting tool like <link href="http://astyle.sourceforge.net/">astyle</link> (Artistic Style) before committing.</p>
+      </section>
+    </section>
+  </body>
+</document>

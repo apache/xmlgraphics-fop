@@ -126,17 +126,6 @@ To unsubscribe: Send email to <link href="mailto:fop-dev-unsubscribe@xml.apache.
         </ul>
         <p>One of the committers will test your patch and consider its implications for the project. They will then either commit it to the repository or explain on the issue why they did not. Depending on the work load and skill-sets of the various committers, it may take some time before a a submitted patch is addressed.</p>
       </section>
-      <section id="code-conventions">
-        <title>Coding Conventions</title>
-        <p>As mentioned in <link href="http://xml.apache.org/source.html">Apache XML Project Guidelines</link>,
-  <strong>all Java Language source code in the repository must be written in conformance to the</strong>
-          <link href="http://java.sun.com/docs/codeconv/html/CodeConvTOC.doc.html">Code Conventions
-  for the Java Programming Language</link> as published by Sun. Additionally we agreed on 4
-  spaces (no tabs) for indenting.</p>
-        <p>If you don't like those conventions, just use your own standards while developing and reformat the source before
-  committing with a tool like <link href="http://astyle.sourceforge.net/">astyle</link> (Artistic Style).
-  </p>
-      </section>
     </section>
   </body>
 </document>
