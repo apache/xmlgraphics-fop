@@ -39,6 +39,7 @@ import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.render.mif.MIFHandler;
 import org.apache.fop.render.rtf.RTFHandler;
 import org.apache.fop.fo.ElementMapping.Maker;
+import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.pagination.Root;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
@@ -255,7 +256,8 @@ public class FOTreeBuilder extends DefaultHandler {
                     "Error:  First element must be fo:root formatting object"));
             }
         } else { // check that incoming node is valid for currentFObj
-            if (namespaceURI.equals(FOElementMapping.URI)) {
+            if (namespaceURI.equals(FOElementMapping.URI) || 
+                namespaceURI.equals(ExtensionElementMapping.URI)) {
                 try {
                     currentFObj.validateChildNode(locator, namespaceURI, localName);
                 } catch (SAXParseException e) {
