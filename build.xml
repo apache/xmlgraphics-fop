@@ -171,6 +171,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="charlist.xml" value="${build.codegen}/charlist.xml"/>
     <property name="charlist.xsl" value="${build.codegen}/code-point-mapping.xsl"/>  
     <property name="fontfile.xsl" value="${build.codegen}/font-file.xsl"/>  
+    <property name="t1fontfile.xsl" value="${build.codegen}/t1font-file.xsl"/>
     <property name="Courier.xml" value="${build.codegen}/Courier.xml"/>  
     <property name="Courier-Oblique.xml" value="${build.codegen}/Courier-Oblique.xml"/>
     <property name="Courier-Bold.xml" value="${build.codegen}/Courier-Bold.xml"/>  
@@ -185,6 +186,11 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="Times-BoldItalic.xml" value="${build.codegen}/Times-BoldItalic.xml"/>
     <property name="ZapfDingbats.xml" value="${build.codegen}/ZapfDingbats.xml"/>
     <property name="Symbol.xml" value="${build.codegen}/Symbol.xml"/>
+
+    <!-- insert custom font information here (step 1 of 2) -->
+    <!-- use this as a template 
+    <property name="myfont.xml" value="${build.codegen}/myfont.xml"/>
+    -->
 
     <taskdef name="xslt" classname="Xslt"/>
     <available property="xt.present" classname="com.jclark.xsl.sax.XSLProcessor"/>
@@ -305,6 +311,12 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
         outfile="${build.src}/${replacestring}/render/pdf/fonts/ZapfDingbats.java" smart="yes"/>
     <xslt infile="${Symbol.xml}" xsltfile="${fontfile.xsl}"
         outfile="${build.src}/${replacestring}/render/pdf/fonts/Symbol.java" smart="yes"/>
+
+    <!-- custom fonts (Use t1fontfile.xsl instead of fontfile.xsl for Type 1 fonts!) step 2/2 -->
+    <!-- use this as a template 
+    <xslt infile="${myfont.xml}" xsltfile="${t1fontfile.xsl}"
+        outfile="${build.src}/${replacestring}/render/pdf/fonts/myfont.java" smart="yes"/>
+    -->
 
 
   </target>

@@ -191,6 +191,13 @@ public class NodeImpl implements Node {
 		return false;
 	}
 
+    public boolean isSupported(String feature,
+                                 String version)
+	{
+		return false;
+	}
+
+
     public String getNamespaceURI()
 	{
 		return "";

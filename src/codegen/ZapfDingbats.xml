@@ -6,6 +6,8 @@
   <x-height>426</x-height>
   <ascender>820</ascender>
   <descender>-143</descender>
+  <first-char>32</first-char>
+  <last-char>255</last-char>
   <widths>
     <char name="space" width="278"/>
     <char name="a1" width="974"/>

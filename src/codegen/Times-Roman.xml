@@ -7,6 +7,8 @@
    <x-height>450</x-height>
    <ascender>683</ascender>
    <descender>-217</descender>
+   <first-char>32</first-char>
+   <last-char>255</last-char>
    <widths>
       <char name="A" width="722"/>
       <char name="AE" width="889"/>

@@ -1,4 +1,4 @@
-/*-- $Id$ -- 
+/*-- $Id$ --
 
  ============================================================================
                    The Apache Software License, Version 1.1
@@ -50,23 +50,20 @@
  */
 package org.apache.fop.layout;
 
-/**
- * interface for font metric classes
- */
-public interface FontMetric {
 
-    public int getAscender();
-    public int getCapHeight();
-    public int getDescender();
-    public int getXHeight();
+public interface FontDescriptor {
 
-    public int getFirstChar();
-    public int getLastChar();
+    //Required
+    public int getAscender(); //Ascent in pdf spec
+	public int getCapHeight();
+    public int getDescender(); //Descent in pdf spec
+	public int getFlags();
+    public int[] getFontBBox();
+    public String fontName(); //should be getFontName(). not?
+	public int getItalicAngle();
+	public int getStemV();
 
-    /**
-     * return width (in 1/1000ths of point size) of character at
-     * code point i
-     */
-    public int width(int i);
-    public int[] getWidths();
+    //Optional
+    //public int getXHeight();
+
 }

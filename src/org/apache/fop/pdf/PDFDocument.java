@@ -1,4 +1,4 @@
-/*-- $Id$ -- 
+/*-- $Id$ --
 
  ============================================================================
                    The Apache Software License, Version 1.1
@@ -41,15 +41,16 @@
  ANY  THEORY OF LIABILITY,	WHETHER  IN CONTRACT,  STRICT LIABILITY,  OR TORT
  (INCLUDING  NEGLIGENCE OR	OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- 
+
  This software	consists of voluntary contributions made  by many individuals
  on  behalf of the Apache Software	Foundation and was	originally created by
- James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
+ James Tauber <jtauber@jtauber.com>. For more  information on the Apache
  Software Foundation, please see <http://www.apache.org/>.
- 
+
  */
 
 /* image support modified from work of BoBoGi */
+/* font support based on work by Takayuki Takeuchi */
 
 package org.apache.fop.pdf;
 
@@ -62,6 +63,8 @@ import org.apache.fop.datatypes.ColorSpace;
 
 import org.apache.fop.datatypes.IDReferences;
 import org.apache.fop.layout.Page;
+import org.apache.fop.layout.FontMetric;
+import org.apache.fop.layout.FontDescriptor;
 // Java
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -71,7 +74,7 @@ import java.util.Enumeration;
 import java.awt.Rectangle;
 
 /**
- * class representing a PDF document. 
+ * class representing a PDF document.
  *
  * The document is built up by calling various methods and then finally
  * output to given filehandle using output method.
@@ -716,24 +719,83 @@ public class PDFDocument {
     }
 
 
+	/**
+	 * make a /Encoding object
+	 *
+	 * @param encodingName character encoding scheme name
+	 * @return the created /Encoding object
+	 */
+	public PDFEncoding makeEncoding(String encodingName) {
+
+	    /* create a PDFEncoding with the next object number and add to the
+    	   list of objects */
+        PDFEncoding encoding = new PDFEncoding(++this.objectcount, encodingName);
+    	this.objects.addElement(encoding);
+    	return encoding;
+	}
+
+
     /**
      * make a Type1 /Font object
-     * 
+     *
      * @param fontname internal name to use for this font (eg "F1")
      * @param basefont name of the base font (eg "Helvetica")
      * @param encoding character encoding scheme used by the font
+     * @param metrics additional information about the font
+     * @param descriptor additional information about the font
      * @return the created /Font object
      */
     public PDFFont makeFont(String fontname, String basefont,
-    String encoding) {
+    String encoding, FontMetric metrics, FontDescriptor descriptor) {
 
         /* create a PDFFont with the next object number and add to the
            list of objects */
-        PDFFont font = new PDFFont(++this.objectcount, fontname,
-        basefont, encoding);
-        this.objects.addElement(font);
-        return font;
+        if (descriptor == null) {
+            PDFFont font = new PDFFont(++this.objectcount, fontname, PDFFont.TYPE1,
+                    basefont, encoding);
+            this.objects.addElement(font);
+            return font;
+        } else {
+            PDFFontNonBase14 font = (PDFFontNonBase14)PDFFont.createFont(
+                    ++this.objectcount, fontname,
+                    PDFFont.TYPE1, basefont, encoding);
+            this.objects.addElement(font);
+            PDFFontDescriptor pdfdesc = makeFontDescriptor(descriptor);
+            font.setDescriptor(pdfdesc);
+            font.setWidthMetrics(metrics.getFirstChar(), metrics.getLastChar(),
+                    makeArray(metrics.getWidths()));
+            return font;
+        }
     }
+
+
+	/**
+	 * make a /FontDescriptor object for a CID font
+	 */
+	public PDFFontDescriptor makeFontDescriptor(FontDescriptor desc) {
+
+    	/* create a PDFFontDescriptor with the next object number and add to
+           the list of objects */
+    	PDFFontDescriptor font = new PDFFontDescriptor(++this.objectcount,
+                desc.fontName(), desc.getAscender(), desc.getDescender(),
+                desc.getCapHeight(), desc.getFlags(),
+                new PDFRectangle(desc.getFontBBox()), desc.getStemV(),
+                desc.getItalicAngle());
+	    this.objects.addElement(font);
+    	return font;
+	}
+
+
+	/**
+	 * make an Array object (ex. Widths array for a font)
+	 */
+	public PDFArray makeArray(int[] values) {
+
+        PDFArray array = new PDFArray(++this.objectcount, values);
+	    this.objects.addElement(array);
+    	return array;
+	}
+
 
     public int addImage(FopImage img) {
         // check if already created

@@ -6,6 +6,8 @@
   <x-height>520</x-height>
   <ascender>1010</ascender>
   <descender>-293</descender>
+  <first-char>32</first-char>
+  <last-char>255</last-char>
   <widths>
     <char name="space" width="250"/>
     <char name="exclam" width="333"/>

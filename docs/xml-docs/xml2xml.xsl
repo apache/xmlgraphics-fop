@@ -9,6 +9,7 @@
     <xsl:copy-of select="document('fop/running.xml')"/>
     <xsl:copy-of select="document('fop/implemented.xml')"/>
     <xsl:copy-of select="document('fop/limitations.xml')"/>
+    <xsl:copy-of select="document('fop/fonts.xml')"/>
     <xsl:copy-of select="document('fop/bugs.xml')"/>
     <xsl:copy-of select="document('fop/examples.xml')"/>
     <xsl:copy-of select="document('fop/compiling.xml')"/>
