@@ -93,6 +93,7 @@ public class ExampleSVG2PDF {
             
             //Setup output
             OutputStream out = new java.io.FileOutputStream(pdf);
+            out = new java.io.BufferedOutputStream(out);
             try {
                 TranscoderOutput output = new TranscoderOutput(out);
                 
