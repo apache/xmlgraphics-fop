@@ -220,6 +220,17 @@ public class Configuration {
 
 
     /**
+       *  method to access fonts values in the standard configuration
+       *
+       *  @param key a string containing the key value for the configuration value
+       *  @return Hashtable a Hashtable containing the values
+       *          null   if the key is not defined.
+       */
+	public static Vector getFonts() {
+		return (Vector) Configuration.getValue("fonts", Configuration.STANDARD);
+	}
+	
+    /**
        * initializes this configuration
        * @param config contains the configuration information
        */

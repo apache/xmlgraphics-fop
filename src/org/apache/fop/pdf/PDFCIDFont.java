@@ -69,6 +69,7 @@ public class PDFCIDFont extends PDFObject {
 	protected PDFWArray w2;
 	protected PDFCIDSystemInfo systemInfo;
 	protected PDFCIDFontDescriptor descriptor;
+        protected PDFCMap cmap;
 	/**
 	 * /CIDToGIDMap (only for CIDFontType2, see p 212)
 	 * can be either "Identity" (default) or a PDFStream
@@ -79,14 +80,15 @@ public class PDFCIDFont extends PDFObject {
 	/**
 	 * create the /Font object
 	 */
-	public PDFCIDFont(int number, String basefont, String cidtype,
-			int dw, int[] w, String registry, String ordering, int supplement,
-			PDFCIDFontDescriptor descriptor) {
+	public PDFCIDFont(int number, String basefont, byte cidtype,
+                          int dw, int[] w,
+                          String registry, String ordering, int supplement,
+                          PDFCIDFontDescriptor descriptor) {
 
 		super(number);
 
 		this.basefont = basefont;
-		this.cidtype = cidtype;
+		this.cidtype = TYPE_NAMES[(int)cidtype];
 		this.dw = new Integer(dw);
 		this.w = new PDFWArray();
 		this.w.addEntry(0, w);
@@ -95,19 +97,20 @@ public class PDFCIDFont extends PDFObject {
 		this.systemInfo = new PDFCIDSystemInfo(registry, ordering, supplement);
 		this.descriptor = descriptor;
 		this.cidMap = null;
+                this.cmap = null;
 	}
 
 	/**
 	 * create the /Font object
 	 */
-	public PDFCIDFont(int number, String basefont, String cidtype,
+	public PDFCIDFont(int number, String basefont, byte cidtype,
 			int dw, PDFWArray w, PDFCIDSystemInfo systemInfo,
 			PDFCIDFontDescriptor descriptor) {
 
 		super(number);
 
 		this.basefont = basefont;
-		this.cidtype = cidtype;
+		this.cidtype = TYPE_NAMES[(int)cidtype];
 		this.dw = new Integer(dw);
 		this.w = w;
 		this.dw2 = null;
@@ -115,6 +118,7 @@ public class PDFCIDFont extends PDFObject {
 		this.systemInfo = systemInfo;
 		this.descriptor = descriptor;
 		this.cidMap = null;
+                this.cmap = null;
 	}
 
 	/** set the /DW attribute */
@@ -137,6 +141,13 @@ public class PDFCIDFont extends PDFObject {
 		this.dw2 = new int[] {posY, displacementY};
 	}
 
+        /**
+         * Set the CMap used as /ToUnicode cmap
+         */
+    public void setCMAP(PDFCMap cmap) {
+        this.cmap = cmap;
+    }
+    
 	/** set the /W2 array */
 	public void setW2(PDFWArray w2) {
 	    this.w2 = w2;
@@ -172,16 +183,20 @@ public class PDFCIDFont extends PDFObject {
 			p.append(cidMap.referencePDF());
 		}
 		p.append(" \n/Subtype /"); p.append(this.cidtype);
-		p.append("\n"); p.append(systemInfo.toPDF());
+		p.append("\n"); p.append(systemInfo.toPDFString());
 		p.append("\n/FontDescriptor ");
 		p.append(this.descriptor.referencePDF());
+
+                if (cmap != null) {
+                    p.append("\n/ToUnicode ");
+                    p.append(cmap.referencePDF());
+                }
 		if (dw != null) {
 			p.append("\n/DW "); p.append(this.dw);
 		}
 		if (w != null) {
 			p.append("\n/W ");
-			p.append(w.toPDF());
-			p.append(" \n>>\nendobj\n");
+			p.append(w.toPDFString());
 		}
 		if (dw2 != null) {
 			p.append("\n/DW2 ["); // always two values, see p 211
@@ -191,9 +206,11 @@ public class PDFCIDFont extends PDFObject {
 		}
 		if (w2 != null) {
 			p.append("\n/W2 ");
-			p.append(w2.toPDF());
+			p.append(w2.toPDFString());
 			p.append(" \n>>\nendobj\n");
 		}
+                p.append(" \n>>\nendobj\n");
 		return p.toString();
 	}
 }
+

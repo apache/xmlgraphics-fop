@@ -147,6 +147,8 @@ public class PDFRenderer implements Renderer {
     /** the current colour for use in svg */
     private PDFColor currentColour = new PDFColor(0, 0, 0);
 
+    private FontInfo fontInfo;
+    
     // previous values used for text-decoration drawing
     int prevUnderlineXEndPos;
     int prevUnderlineYEndPos;
@@ -175,8 +177,6 @@ public class PDFRenderer implements Renderer {
     /** The  width of the previous word. Used to calculate space between */
     int prevWordWidth = 0;
 
-    boolean useKerning;
-    
     private PDFOutline rootOutline;
 	
     /**
@@ -184,10 +184,6 @@ public class PDFRenderer implements Renderer {
      */
     public PDFRenderer() {
         this.pdfDoc = new PDFDocument();
-
-	String cfgKern = Configuration.getStringValue("use-kerning");
-	useKerning = ("yes".equals(cfgKern) || "true".equals(cfgKern));
-
     }
 
     /**
@@ -224,6 +220,8 @@ public class PDFRenderer implements Renderer {
         }
 	renderRootExtensions(areaTree);
 	
+        FontSetup.addToResources(this.pdfDoc, fontInfo);
+        
         MessageHandler.logln("writing out PDF");
         this.pdfDoc.output(stream);
     }
@@ -654,16 +652,23 @@ public class PDFRenderer implements Renderer {
 	Hashtable kerning = null;
 	boolean kerningAvailable = false;
 	
-	if (useKerning) {
-	     kerning = area.getFontState().getKerning();
-	     if (kerning != null && !kerning.isEmpty()) {
-		 kerningAvailable = true;
-	     }
-	}
-	
+        kerning = area.getFontState().getKerning();
+        if (kerning != null && !kerning.isEmpty()) {
+            kerningAvailable = true;
+        }
+
         String name = area.getFontState().getFontName();
         int size = area.getFontState().getFontSize();
 
+            // This assumes that *all* CIDFonts use a /ToUnicode mapping
+        boolean useMultiByte = false;
+        Font f = (Font)area.getFontState().getFontInfo().getFonts().get(name);
+        if (f instanceof CIDFont)
+            useMultiByte=true;
+            //String startText = useMultiByte ? "<FEFF" : "(";
+        String startText = useMultiByte ? "<" : "(";
+        String endText = useMultiByte ? ">" : ")";
+        
         PDFColor theAreaColor = new PDFColor((double) area.getRed(),
                                              (double) area.getGreen(), 
 					     (double) area.getBlue());
@@ -726,7 +731,7 @@ public class PDFRenderer implements Renderer {
 		closeText();
 		
 		pdf.append("1 0 0 1 " +(rx / 1000f) + " " + 
-			   (bl / 1000f) + " Tm [(");
+			   (bl / 1000f) + " Tm [" + startText);
 		prevWordY = bl;
 		textOpen = true;
 	    }
@@ -734,7 +739,7 @@ public class PDFRenderer implements Renderer {
 		// express the space between words in thousandths of an em
 		int space = prevWordX - rx + prevWordWidth;
 		float emDiff = (float)space / (float)currentFontSize * 1000f;
-		pdf.append(emDiff + " (");
+		pdf.append(emDiff + " " + startText);
 	    }
 	    prevWordWidth = area.getContentWidth();
 	    prevWordX = rx;
@@ -745,10 +750,10 @@ public class PDFRenderer implements Renderer {
 	    // for every word.
 	    pdf.append("1 0 0 1 " +(rx / 1000f) + " " + (bl / 1000f) + " Tm ");
 	    if (kerningAvailable) {
-		pdf.append(" [(");
+		pdf.append(" [" + startText);
 	    }
 	    else {
-		pdf.append(" (");
+		pdf.append(" " + startText);
 	    }
 	}
 	
@@ -768,27 +773,33 @@ public class PDFRenderer implements Renderer {
             char ch = s.charAt(i);
 	    String prepend = "";
 	    
-            if (ch > 127) {
-		pdf.append("\\");
-                pdf.append(Integer.toOctalString((int) ch));
-            } else {
-                switch (ch) {
-		case '(':
-		case ')':
-		case '\\':
-		    prepend = "\\";
-		    break;
+            if (!useMultiByte) {
+                if(ch > 127) {
+                    pdf.append("\\");
+                    pdf.append(Integer.toOctalString((int) ch));
+                } else {
+                    switch (ch) {
+                        case '(':
+                        case ')':
+                        case '\\':
+                            prepend = "\\";
+                            break;
+                    }
+                    pdf.append(getUnicodeString(prepend+ch, useMultiByte));
                 }
-		pdf.append(prepend+ch);
-	    }
+	    } else {
+                    pdf.append(getUnicodeString(prepend+ch, useMultiByte));
+            }                
+
 	    if (kerningAvailable && (i+1) < l) {
-		pdf.append(addKerning((new Character(ch)).toString(),
-				      (new Character(s.charAt(i+1))).toString(),
-				      kerning));
-	    }
-	    
+		pdf.append(addKerning((new Integer((int)ch)),
+                                                       (new Integer((int)s.charAt(i+1))),
+                                                       kerning,
+                                                       startText, endText));
+            }
+            
         }
-	pdf.append(") ");
+        pdf.append(endText + " ");
 	if (!OPTIMIZE_TEXT) {
 	    if (kerningAvailable) {
 		pdf.append("] TJ\n");
@@ -807,6 +818,45 @@ public class PDFRenderer implements Renderer {
 	
     }
 
+
+        /**
+         * Convert a string to a unicode hex representation
+         */
+    private String getUnicodeString(StringBuffer str, boolean useMultiByte) {
+        return getUnicodeString(str.toString(), useMultiByte);
+    }
+    
+        /**
+         * Convert a string to a multibyte hex representation
+         */
+    private String getUnicodeString(String str, boolean useMultiByte) {
+        if (!useMultiByte) {
+            return str;
+        } else {
+            StringBuffer buf = new StringBuffer(str.length()*4);
+            byte[] uniBytes = null;
+            try {
+                uniBytes = str.getBytes("UnicodeBigUnmarked");
+            } catch (Exception e) {
+                    // This should never fail
+            }
+            
+            for (int i = 0; i < uniBytes.length; i++) {
+                int b = (uniBytes[i] < 0) ? (int)(256+uniBytes[i])
+                    : (int)uniBytes[i];
+                
+                String hexString=Integer.toHexString(b);
+                if (hexString.length()==1)
+                    buf=buf.append("0"+hexString);
+                else
+                    buf=buf.append(hexString);
+            }
+
+            return buf.toString();
+        }
+    }
+    
+    
     /** Checks to see if we have some text rendering commands open
      * still and writes out the TJ command to the stream if we do
      */
@@ -886,7 +936,9 @@ public class PDFRenderer implements Renderer {
     }
 
 
-   private StringBuffer addKerning(String ch1, String ch2, Hashtable kerning) {
+   private StringBuffer addKerning(Integer ch1, Integer ch2,
+                                   Hashtable kerning, String startText,
+                                   String endText) {
       Hashtable h2=(Hashtable)kerning.get(ch1);
       int pwdt=0;
       StringBuffer buf=new StringBuffer("");
@@ -895,7 +947,7 @@ public class PDFRenderer implements Renderer {
          Integer wdt=(Integer)h2.get(ch2);
          if (wdt!=null) {
             pwdt=-wdt.intValue();
-            buf=buf.append(") " + pwdt + " (");
+            buf=buf.append(endText + " " + pwdt + " " + startText);
          }
       }
       return buf;
@@ -1021,8 +1073,8 @@ public class PDFRenderer implements Renderer {
        * @param fontInfo font info to set up
        */
     public void setupFontInfo(FontInfo fontInfo) {
+        this.fontInfo = fontInfo;
         FontSetup.setup(fontInfo);
-        FontSetup.addToResources(this.pdfDoc, fontInfo);
     }
 
     /**

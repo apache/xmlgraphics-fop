@@ -49,17 +49,18 @@
 
  */
 package org.apache.fop.pdf;
-
 /**
  * class representing a Type0 font.
  *
  * Type0 fonts are specified on page 208 and onwards of the PDF 1.3 spec.
  */
-public class PDFFontType0 extends PDFFont {
+public class PDFFontType0 extends PDFFontNonBase14 {
 
 	/** this should be an array of CIDFont but only the first one is used */
 	protected PDFCIDFont descendantFonts;
 
+    protected PDFCMap cmap;
+    
 	/**
 	 * create the /Font object
 	 *
@@ -78,6 +79,7 @@ public class PDFFontType0 extends PDFFont {
 
 		/* set fields using paramaters */
 		this.descendantFonts = null;
+                cmap=null;
 	}
 
 	/**
@@ -111,13 +113,19 @@ public class PDFFontType0 extends PDFFont {
 		this.descendantFonts = descendantFonts;
 	}
 
+    public void setCMAP(PDFCMap cmap) {
+        this.cmap=cmap;
+    }
 	/**
 	 * fill in the specifics for the font's subtype
 	 */
-	protected void fillInPDF(StringBuffer p) {
-		if (descendantFonts != null) {
-			p.append("\n/DescendantFonts [ "+ this.descendantFonts.referencePDF() + " ] ");
-		}
-
-	}
+    protected void fillInPDF(StringBuffer p) {
+        if (descendantFonts != null) {
+            p.append("\n/DescendantFonts [ " +
+                     this.descendantFonts.referencePDF() + " ] ");
+        }
+        if (cmap != null) {
+            p.append("\n/ToUnicode "+cmap.referencePDF());
+        }
+    }
 }

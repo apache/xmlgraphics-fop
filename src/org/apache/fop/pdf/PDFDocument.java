@@ -61,6 +61,8 @@ import org.apache.fop.image.FopImage;
 import org.apache.fop.layout.LinkSet;
 import org.apache.fop.datatypes.ColorSpace;
 
+import org.apache.fop.render.pdf.CIDFont; 
+
 import org.apache.fop.datatypes.IDReferences;
 import org.apache.fop.layout.Page;
 import org.apache.fop.layout.FontMetric;
@@ -751,59 +753,119 @@ public class PDFDocument {
         /* create a PDFFont with the next object number and add to the
            list of objects */
         if (descriptor == null) {
-            PDFFont font = new PDFFont(++this.objectcount, fontname, PDFFont.TYPE1,
-                    basefont, encoding);
+            PDFFont font = new PDFFont(++this.objectcount, fontname,
+                                       PDFFont.TYPE1,
+                                       basefont, encoding);
             this.objects.addElement(font);
             return font;
         } else {
-           byte subtype=PDFFont.TYPE1;
-           if (metrics instanceof org.apache.fop.render.pdf.Font)
-              subtype=((org.apache.fop.render.pdf.Font)metrics).getSubType();
-           
-            PDFFontNonBase14 font = (PDFFontNonBase14)PDFFont.createFont(
+            byte subtype=PDFFont.TYPE1;
+            if (metrics instanceof org.apache.fop.render.pdf.Font)
+                subtype=((org.apache.fop.render.pdf.Font)metrics).getSubType();
+            
+            PDFFontDescriptor pdfdesc = makeFontDescriptor(descriptor,
+                                                           subtype);
+                
+            PDFFontNonBase14 font = null;
+            if (subtype == PDFFont.TYPE0) {
+                PDFCMap cmap = new PDFCMap(++this.objectcount,
+                                           "fop-ucs-H",
+                                           new PDFCIDSystemInfo("Adobe",
+                                                                "Identity",
+                                                                0));
+                cmap.addContents();
+                this.objects.addElement(cmap);
+            
+                font = (PDFFontNonBase14)PDFFont.createFont(
+                    ++this.objectcount, fontname,
+                    subtype, basefont, cmap);
+            } else {
+            
+                font = (PDFFontNonBase14)PDFFont.createFont(
                     ++this.objectcount, fontname,
                     subtype, basefont, encoding);
+            }
             this.objects.addElement(font);
-            PDFFontDescriptor pdfdesc = makeFontDescriptor(descriptor);
+            
             font.setDescriptor(pdfdesc);
-            font.setWidthMetrics(metrics.getFirstChar(), metrics.getLastChar(),
-                    makeArray(metrics.getWidths(1)));
+            
+            if (subtype == PDFFont.TYPE0) {
+                CIDFont cidMetrics = (CIDFont)metrics;
+                PDFCIDSystemInfo sysInfo =
+                    new PDFCIDSystemInfo(cidMetrics.getRegistry(),
+                                         cidMetrics.getOrdering(),
+                                         cidMetrics.getSupplement());
+                PDFCIDFont cidFont =
+                    new PDFCIDFont(++this.objectcount, basefont,
+                                   cidMetrics.getCidType(),
+                                   cidMetrics.getDefaultWidth(),
+                                   cidMetrics.getWidths(),
+                                   sysInfo, (PDFCIDFontDescriptor)pdfdesc);
+                this.objects.addElement(cidFont);
+                
+                    //((PDFFontType0)font).setCMAP(cmap);
+                
+                ((PDFFontType0)font).setDescendantFonts(cidFont);
+            } else {
+                font.setWidthMetrics(metrics.getFirstChar(),
+                                     metrics.getLastChar(),
+                                     makeArray(metrics.getWidths(1)));
+            }
+            
             return font;
         }
     }
 
 
 	/**
-	 * make a /FontDescriptor object for a CID font
+	 * make a /FontDescriptor object
 	 */
-	public PDFFontDescriptor makeFontDescriptor(FontDescriptor desc) {
-
-    	/* create a PDFFontDescriptor with the next object number and add to
-           the list of objects */
-           PDFFontDescriptor font =
-              new PDFFontDescriptor(++this.objectcount,
-                                    desc.fontName(), desc.getAscender(), desc.getDescender(),
-                                    desc.getCapHeight(), desc.getFlags(),
-                                    new PDFRectangle(desc.getFontBBox()), desc.getStemV(),
-                                    desc.getItalicAngle());
-           
-               // Check if embedding of this font is enabled in the configurationfile
-               // and that the font is embeddable
-           java.util.Vector cfgv=
-              org.apache.fop.configuration.Configuration.getListValue("embed-fonts", 0);
-           if (cfgv!=null && cfgv.contains(desc.fontName()) && desc.isEmbeddable()) {
-              PDFStream stream=desc.getFontFile(this.objectcount+1);
-              if (stream!=null) {
-                 this.objectcount++;
-                 font.setFontFile(desc.getSubType(), stream);
-                 this.objects.addElement(font);
-                 this.objects.addElement(stream);
-              }
-           } else {
-              this.objects.addElement(font);
-           }
+    public PDFFontDescriptor makeFontDescriptor(FontDescriptor desc,
+                                                byte subtype) {
+        PDFFontDescriptor font = null;
+        
+        if (subtype == PDFFont.TYPE0) {
+                // CID Font
+            font =
+                new PDFCIDFontDescriptor(++this.objectcount,
+                                         desc.fontName(),
+                                         desc.getFontBBox(),
+                                             //desc.getAscender(),
+                                             //desc.getDescender(),
+                                         desc.getCapHeight(),
+                                         desc.getFlags(),
+                                             //new PDFRectangle(desc.getFontBBox()),
+                                         desc.getItalicAngle(),
+                                         desc.getStemV(),
+                                         null); //desc.getLang(),
+                //null);//desc.getPanose());
+        } else {
+                // Create normal FontDescriptor
+            font =
+                new PDFFontDescriptor(++this.objectcount,
+                                      desc.fontName(),
+                                      desc.getAscender(),
+                                      desc.getDescender(),
+                                      desc.getCapHeight(),
+                                      desc.getFlags(),
+                                      new PDFRectangle(desc.getFontBBox()),
+                                      desc.getStemV(),
+                                      desc.getItalicAngle());
+        }
+            // Check if the font is embeddable
+        if (desc.isEmbeddable()) {
+            PDFStream stream=desc.getFontFile(this.objectcount+1);
+            if (stream!=null) {
+                this.objectcount++;
+                font.setFontFile(desc.getSubType(), stream);
+                this.objects.addElement(font);
+                this.objects.addElement(stream);
+            }
+        } else {
+            this.objects.addElement(font);
+        }
     	return font;
-	}
+    }
 
 
 	/**

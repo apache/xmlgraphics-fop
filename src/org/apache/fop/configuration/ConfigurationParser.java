@@ -7,13 +7,18 @@
 
 package org.apache.fop.configuration;
 
+//sax
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
+
+//java
 import java.util.Hashtable;
 import java.util.Vector;
 
+//fop
 import org.apache.fop.messaging.MessageHandler;
+
 
 /**
  * SAX2 Handler which retrieves the configuration information and stores them in Configuration.
@@ -28,6 +33,8 @@ public class ConfigurationParser extends DefaultHandler {
     private final int IN_LIST = 8;
     private final int IN_SUBENTRY = 16;
     private final int IN_SUBKEY = 32;
+	private final int IN_FONTS = 64;
+	private final int IN_FONT = 128;
 
     private final int STRING = 0;
     private final int LIST = 1;
@@ -62,6 +69,23 @@ public class ConfigurationParser extends DefaultHandler {
     /** determines role / target of configuration information, default is standard */
     private String role = "standard";
 
+    //stores fonts
+    private Vector fontList = null;
+	
+    //stores information on one font
+    private FontInfo fontInfo = null;
+
+	//stores information on a font triplet
+	private FontTriplet fontTriplet = null;
+	
+	//information on a font
+	private String fontName, metricsFile, embedFile, kerningAsString;
+	private boolean kerning;
+	private Vector fontTriplets;
+	
+	//information on a font triplet
+	private String fontTripletName, weight, style;
+	
     public void startDocument() {
         configuration = Configuration.getConfiguration();
     }
@@ -93,6 +117,25 @@ public class ConfigurationParser extends DefaultHandler {
                 role = attributes.getValue("role");
             }
         } else if (localName.equals("configuration") ) {
+		} else if (localName.equals("fonts") ) {  //list of fonts starts
+			fontList = new Vector (10);
+		} else if (localName.equals("font") ) {
+			kerningAsString = attributes.getValue("kerning");
+			if (kerningAsString.equalsIgnoreCase("yes")) {
+				kerning = true;
+			} else {
+				kerning = false;
+			}
+			metricsFile = attributes.getValue("metrics-file");
+			embedFile = attributes.getValue("embed-file");
+			fontName = attributes.getValue("name");
+			fontTriplets = new Vector(5);
+		} else if (localName.equals("font-triplet") ) {			
+			fontTripletName = attributes.getValue("name");
+			weight = attributes.getValue("weight"); 
+			style = attributes.getValue("style");
+			fontTriplet = new FontTriplet(fontTripletName,weight,style);
+			fontTriplets.addElement(fontTriplet);
         } else {
             //to make sure that user knows about false tag
             MessageHandler.errorln(
@@ -117,20 +160,31 @@ public class ConfigurationParser extends DefaultHandler {
             }
             status = OUT;
             role = "standard";
-	    key = "";
-	    value = "";
-	} else if (localName.equals("subentry")) {
-            map.put(subkey, value);
-            status -= IN_SUBENTRY;
-	    key = "";
-	    value = "";
-        } else if (localName.equals("key")) {
-            status -= IN_KEY;
-        } else if (localName.equals("list")) {
-            status -= IN_LIST;
-	    value = "";
-	} else if (localName.equals("value")) {
-            status -= IN_VALUE;
+		    key = "";
+		    value = "";
+		} else if (localName.equals("subentry")) {
+	            map.put(subkey, value);
+	            status -= IN_SUBENTRY;
+		    key = "";
+		    value = "";
+	        } else if (localName.equals("key")) {
+	            status -= IN_KEY;
+	        } else if (localName.equals("list")) {
+	            status -= IN_LIST;
+		    value = "";
+		} else if (localName.equals("value")) {
+	            status -= IN_VALUE;
+		} else if (localName.equals("fonts") ) {
+			this.store("standard", "fonts", fontList);
+		} else if (localName.equals("font") ) {			
+			fontInfo = new FontInfo(fontName,metricsFile,kerning,fontTriplets,embedFile);
+			fontList.addElement(fontInfo);
+			fontTriplets = null;
+			metricsFile = null;
+			embedFile = null;
+			fontName = null;
+			kerningAsString = "";			
+		} else if (localName.equals("font-triplet") ) {			
         }
     }
 

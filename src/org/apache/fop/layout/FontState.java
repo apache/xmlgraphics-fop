@@ -54,17 +54,17 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.FontVariant;
 
 public class FontState {
-
-		protected FontInfo fontInfo;
-		private String fontName;
-		private int fontSize;
-		private String fontFamily;
-		private String fontStyle;
-		private String fontWeight;
-		private FontMetric metric;
-		private int fontVariant;
-
-		public FontState(FontInfo fontInfo, String fontFamily, String fontStyle, String fontWeight, int fontSize, int fontVariant) throws FOPException {
+    
+    protected FontInfo fontInfo;
+    private String fontName;
+    private int fontSize;
+    private String fontFamily;
+    private String fontStyle;
+    private String fontWeight;
+    private FontMetric metric;
+    private int fontVariant;
+    
+    public FontState(FontInfo fontInfo, String fontFamily, String fontStyle, String fontWeight, int fontSize, int fontVariant) throws FOPException {
 	this.fontInfo = fontInfo;
 	this.fontFamily = fontFamily;
 	this.fontStyle = fontStyle;
@@ -73,65 +73,99 @@ public class FontState {
 	this.fontName = fontInfo.fontLookup(fontFamily,fontStyle,fontWeight);
 	this.metric = fontInfo.getMetricsFor(fontName);
 	this.fontVariant = fontVariant;
-		}
-
-		public int getAscender() {
+    }
+    
+    public int getAscender() {
 	return  metric.getAscender(fontSize) / 1000;
-		}
-
-		public int getCapHeight() {
+    }
+    
+    public int getCapHeight() {
 	return metric.getCapHeight(fontSize) / 1000;
-		}
-
-		public int getDescender() {
+    }
+    
+    public int getDescender() {
 	return metric.getDescender(fontSize) / 1000;
-		}
-
-		public String getFontName() {
+    }
+    
+    public String getFontName() {
 	return this.fontName;
-		}
-
-		public int getFontSize() {
+    }
+    
+    public int getFontSize() {
 	return this.fontSize;
-		}
-
-		public String getFontWeight() {
+    }
+    
+    public String getFontWeight() {
 	return this.fontWeight;
-		}
-
-		public String getFontFamily() {
+    }
+    
+    public String getFontFamily() {
 	return this.fontFamily;
-		}
-
-		public String getFontStyle() {
+    }
+    
+    public String getFontStyle() {
 	return this.fontStyle;
-		}
-
-		public int getFontVariant() {
+    }
+    
+    public int getFontVariant() {
 	return this.fontVariant;
-		}
-
-		public FontInfo getFontInfo() {
+    }
+    
+    public FontInfo getFontInfo() {
 	return this.fontInfo;
-		}
-
-		public int getXHeight() {
+    }
+    
+    public int getXHeight() {
 	return metric.getXHeight(fontSize) / 1000;
-		}
-   public java.util.Hashtable getKerning() {
-      java.util.Hashtable ret=new java.util.Hashtable();
-      try {
-         FontMetric fm=fontInfo.getMetricsFor(fontFamily, fontStyle, fontWeight);
-         if (fm instanceof org.apache.fop.layout.FontDescriptor) {
-            org.apache.fop.layout.FontDescriptor fdes=(org.apache.fop.layout.FontDescriptor)fm;
-            ret=fdes.getKerningInfo();
-         }
-      } catch (Exception e) {}
-      return ret;
-   }
-
-		public int width(int charnum) {
-	// returns width of given character number in millipoints
+    }
+    
+    public java.util.Hashtable getKerning() {
+        java.util.Hashtable ret=new java.util.Hashtable();
+        try {
+            FontMetric fm=fontInfo.getMetricsFor(fontFamily, fontStyle,
+                                                 fontWeight);
+            if (fm instanceof org.apache.fop.layout.FontDescriptor) {
+                org.apache.fop.layout.FontDescriptor fdes=
+                    (org.apache.fop.layout.FontDescriptor)fm;
+                ret=fdes.getKerningInfo();
+            }
+        } catch (Exception e) {}
+        return ret;
+    }
+    
+    public int width(int charnum) {
+            // returns width of given character number in millipoints
 	return (metric.width(charnum, fontSize) / 1000);
-		}
+    }
+    
+        /**
+         * Map a java character (unicode) to a font character
+         * Default uses CodePointMapping
+         */
+    public char mapChar(char c) {
+        try {
+            FontMetric fm=fontInfo.getMetricsFor(fontFamily, fontStyle,
+                                                 fontWeight);
+            if (fm instanceof org.apache.fop.render.pdf.Font) {
+                org.apache.fop.render.pdf.Font f=
+                    (org.apache.fop.render.pdf.Font)fm;
+                return f.mapChar(c);
+            }
+        } catch (Exception e) {}
+
+            // Use default CodePointMapping
+        if (c > 127) {
+            char d = org.apache.fop.render.pdf.CodePointMapping.map[c];
+            if (d != 0) {
+                c = d;
+            } else {
+                c = '#';
+            }
+        }
+        
+        return c;
+    }
 }
+
+
+

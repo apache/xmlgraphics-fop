@@ -132,7 +132,7 @@ public class PDFWArray {
 			metrics = m;
 		}
 		public void fillInPDF(StringBuffer p) {
-			p.setLength(0);
+			//p.setLength(0);
 			p.append(start); p.append(" [");
 			for (int i = 0; i < metrics.length; i++) {
 				p.append(this.metrics[i]);

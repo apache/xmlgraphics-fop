@@ -57,10 +57,13 @@ import org.apache.fop.layout.FontInfo;
 import org.apache.fop.layout.FontDescriptor;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFResources;
+import org.apache.fop.configuration.Configuration;
+import org.apache.fop.configuration.FontTriplet;
 
 // Java
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * sets up the PDF fonts.
@@ -95,7 +98,7 @@ public class FontSetup {
     fontInfo.addMetrics("F12", new CourierBoldOblique());
     fontInfo.addMetrics("F13", new Symbol());
     fontInfo.addMetrics("F14", new ZapfDingbats());
-
+    
     //Custom type 1 fonts step 1/2
 //    fontInfo.addMetrics("F15", new OMEP());
 //    fontInfo.addMetrics("F16", new GaramondLightCondensed());
@@ -209,8 +212,53 @@ public class FontSetup {
                    "bold"); 
     fontInfo.addFontProperties("F9", "Computer-Modern-Typewriter",
                    "normal", "normal");
+
+        /* Add configured fonts */
+    addConfiguredFonts(fontInfo, 15);
     }
 
+        /**
+         * Add fonts from configuration file starting with
+         * internalnames F<num>
+         */
+    public static void addConfiguredFonts(FontInfo fontInfo, int num) {
+
+        String internalName=null;
+        FontReader reader = null;
+
+        Vector fontInfos = Configuration.getFonts();
+        for (Enumeration e = fontInfos.elements(); e.hasMoreElements();) {
+            org.apache.fop.configuration.FontInfo configFontInfo =
+                (org.apache.fop.configuration.FontInfo)e.nextElement();
+            
+        try {
+            String metricsFile = configFontInfo.getMetricsFile();
+            if (metricsFile != null) {
+                internalName = "F"+num;
+                num++;
+                reader = new FontReader(metricsFile);
+                reader.useKerning(configFontInfo.getKerning());
+                reader.setFontEmbedPath(configFontInfo.getEmbedFile());
+                fontInfo.addMetrics(internalName, reader.getFont());
+                
+                Vector triplets = configFontInfo.getFontTriplets();
+                for (Enumeration t = triplets.elements(); t.hasMoreElements();) {
+                    FontTriplet triplet = (FontTriplet)t.nextElement();
+                    
+                    fontInfo.addFontProperties(internalName,
+                                               triplet.getName(),
+                                               triplet.getStyle(),
+                                               triplet.getWeight());
+                }
+            }
+        } catch (Exception ex) {
+            MessageHandler.error("Failed to read font metrics file " +
+                                 configFontInfo.getMetricsFile() +
+                                 " : " + ex.getMessage());
+        }
+        }
+    }
+    
     /**
      * add the fonts in the font info to the PDF document
      *
@@ -218,7 +266,7 @@ public class FontSetup {
      * @param fontInfo font info object to get font information from
      */
     public static void addToResources(PDFDocument doc, FontInfo fontInfo) {
-    Hashtable fonts = fontInfo.getFonts();
+    Hashtable fonts = fontInfo.getUsedFonts();
     Enumeration e = fonts.keys();
     PDFResources resources = doc.getResources();
     while (e.hasMoreElements()) {

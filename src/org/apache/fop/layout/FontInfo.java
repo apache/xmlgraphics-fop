@@ -57,13 +57,14 @@ import java.util.Enumeration;
 import org.apache.fop.apps.FOPException;
 
 public class FontInfo {
-
+  Hashtable usedFonts;
   Hashtable triplets; // look up a font-triplet to find a font-name
   Hashtable fonts; // look up a font-name to get a font (that implements FontMetric at least)
 
   public FontInfo() {
     this.triplets = new Hashtable(); 
-    this.fonts = new Hashtable(); 
+    this.fonts = new Hashtable();
+    this.usedFonts = new Hashtable();
   }
 
   public void addFontProperties(String name, String family, String style, String weight) {
@@ -109,6 +110,8 @@ public class FontInfo {
       }
       MessageHandler.errorln("WARNING: unknown font "+family+" so defaulted font to any");
     }
+
+    usedFonts.put(f, fonts.get(f)); 
     return f;
   }
 
@@ -116,13 +119,17 @@ public class FontInfo {
     return this.fonts;
   }
 
+  public Hashtable getUsedFonts() {
+    return this.usedFonts;
+  }
+
   public FontMetric getMetricsFor(String fontName) throws FOPException {
-    return (FontMetric)fonts.get(fontName);
+      usedFonts.put(fontName, fonts.get(fontName));
+      return (FontMetric)fonts.get(fontName);
   }
 
   public FontMetric getMetricsFor(String family, String style, String weight) throws FOPException {
     // given a family, style and weight, return the metric
-
-    return (FontMetric)fonts.get(fontLookup(family,style,weight));
+      return (FontMetric)fonts.get(fontLookup(family,style,weight));
   }
 }

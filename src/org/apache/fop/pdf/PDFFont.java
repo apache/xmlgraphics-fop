@@ -136,10 +136,9 @@ public class PDFFont extends PDFObject {
     public static PDFFont createFont(int number, String fontname,
             byte subtype, String basefont, Object encoding) {
         switch (subtype) {
-            /*
             case TYPE0 :
-                return new PDFFontType0(number, fontname, subtype, basefont, encoding);
-            */
+                return new PDFFontType0(number, fontname, subtype,
+                                        basefont, encoding);
             case TYPE1 :
             case MMTYPE1 :
                 return new PDFFontType1(number, fontname, subtype, basefont, encoding);
@@ -175,7 +174,10 @@ public class PDFFont extends PDFObject {
         PDFFontNonBase14 font;
         switch (subtype) {
             case TYPE0 :
-                return null;    // should not happend
+                font = new PDFFontType0(number, fontname, subtype,
+                                        basefont, encoding);
+                font.setDescriptor(descriptor);
+                return font;
             case TYPE1 :
             case MMTYPE1 :
                 font = new PDFFontType1(number, fontname, subtype, basefont, encoding);
