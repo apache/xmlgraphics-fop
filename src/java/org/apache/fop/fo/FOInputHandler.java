@@ -80,7 +80,7 @@ import org.xml.sax.SAXException;
  * Sub-classes can then implement various methods to handle
  * the FO Tree when the SAX events occur.
  */
-public abstract class StructureHandler extends AbstractLogEnabled {
+public abstract class FOInputHandler extends AbstractLogEnabled {
     /**
      * The current set of id's in the FO tree.
      * This is used so we know if the FO tree contains duplicates.
@@ -90,7 +90,7 @@ public abstract class StructureHandler extends AbstractLogEnabled {
     /**
      * Main constructor
      */
-    public StructureHandler() {
+    public FOInputHandler() {
     }
 
     /**
@@ -102,7 +102,7 @@ public abstract class StructureHandler extends AbstractLogEnabled {
     }
 
     /**
-     * Returns the FontInfo object associated with this StructureHandler.
+     * Returns the FontInfo object associated with this FOInputHandler.
      * @return the FontInof object
      */
     public FontInfo getFontInfo() {

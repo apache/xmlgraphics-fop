@@ -64,7 +64,7 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentLength;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
-import org.apache.fop.fo.StructureHandler;
+import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.fo.properties.LeaderPattern;
 import org.apache.fop.layout.AccessibilityProps;
 import org.apache.fop.layout.AuralProps;
@@ -213,11 +213,11 @@ public class Leader extends FObjMixed {
     }
 
     /**
-     * @param st StructureHandler to set
+     * @param foih FOInputHandler to set
      */
-    public void setStructHandler(StructureHandler st) {
-        super.setStructHandler(st);
-        fontInfo = st.getFontInfo();
+    public void setFOInputHandler(FOInputHandler foih) {
+        super.setFOInputHandler(foih);
+        fontInfo = foih.getFontInfo();
     }
 
     private void setup() {

@@ -63,7 +63,7 @@ import org.apache.fop.area.inline.Word;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.StructureHandler;
+import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.layout.AccessibilityProps;
 import org.apache.fop.layout.AuralProps;
 import org.apache.fop.layout.BackgroundProps;
@@ -113,9 +113,9 @@ public class PageNumberCitation extends FObj {
     /**
      * @param st StuctureHandler object to set
      */
-    public void setStructHandler(StructureHandler st) {
-        super.setStructHandler(st);
-        fontInfo = st.getFontInfo();
+    public void setFOInputHandler(FOInputHandler foih) {
+        super.setFOInputHandler(foih);
+        fontInfo = foih.getFontInfo();
     }
 
     /**

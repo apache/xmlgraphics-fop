@@ -111,7 +111,7 @@ public class FOTreeBuilder extends DefaultHandler {
      * The class that handles formatting and rendering to a stream
      * (mark-fop@inomial.com)
      */
-    private StructureHandler structHandler;
+    private FOInputHandler foInputHandler;
 
     private FOUserAgent userAgent;
 
@@ -140,10 +140,10 @@ public class FOTreeBuilder extends DefaultHandler {
 
     /**
      * Sets the structure handler to receive events.
-     * @param sh StructureHandler instance
+     * @param foih FOInputHandler instance
      */
-    public void setStructHandler(StructureHandler sh) {
-        this.structHandler = sh;
+    public void setFOInputHandler(FOInputHandler foih) {
+        this.foInputHandler = foih;
     }
 
     /**
@@ -237,7 +237,7 @@ public class FOTreeBuilder extends DefaultHandler {
         if (getLogger().isDebugEnabled()) {
             getLogger().debug("Building formatting object tree");
         }
-        structHandler.startDocument();
+        foInputHandler.startDocument();
     }
 
     /**
@@ -250,7 +250,7 @@ public class FOTreeBuilder extends DefaultHandler {
         if (getLogger().isDebugEnabled()) {
             getLogger().debug("Parsing of document complete");
         }
-        structHandler.endDocument();
+        foInputHandler.endDocument();
     }
 
     /**
@@ -272,7 +272,7 @@ public class FOTreeBuilder extends DefaultHandler {
             fobj.setUserAgent(userAgent);
             // set the structure handler so that appropriate
             // elements can signal structure events
-            fobj.setStructHandler(structHandler);
+            fobj.setFOInputHandler(foInputHandler);
 
             fobj.handleAttrs(attlist);
         } catch (FOPException e) {
@@ -330,7 +330,7 @@ public class FOTreeBuilder extends DefaultHandler {
     public void reset() {
         currentFObj = null;
         rootFObj = null;
-        structHandler = null;
+        foInputHandler = null;
     }
 
     /**

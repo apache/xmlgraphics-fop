@@ -57,7 +57,7 @@ import java.awt.print.PrinterJob;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.FOUserAgent;
-import org.apache.fop.fo.StructureHandler;
+import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.layoutmgr.LayoutHandler;
 import org.apache.fop.mif.MIFHandler;
 import org.apache.fop.render.Renderer;
@@ -203,7 +203,7 @@ public class Driver implements LogEnabled {
     /**
      * the structure handler
      */
-    private StructureHandler structHandler;
+    private FOInputHandler foInputHandler;
 
     /**
      * the source of the FO file
@@ -432,7 +432,7 @@ public class Driver implements LogEnabled {
             setRenderer("org.apache.fop.render.txt.TXTRenderer()");
             break;
         case RENDER_MIF:
-            //structHandler will be set later
+            //foInputHandler will be set later
             break;
         case RENDER_XML:
             setRenderer("org.apache.fop.render.xml.XMLRenderer");
@@ -441,7 +441,7 @@ public class Driver implements LogEnabled {
             setRenderer("org.apache.fop.render.svg.SVGRenderer");
             break;
         case RENDER_RTF:
-            //structHandler will be set later
+            //foInputHandler will be set later
             break;
         default:
             throw new IllegalArgumentException("Unknown renderer type");
@@ -543,29 +543,29 @@ public class Driver implements LogEnabled {
         if (!isInitialized()) {
             initialize();
         }
-        
+
         if (rendererType != RENDER_PRINT && rendererType != RENDER_AWT) {
            validateOutputStream();
         }
-       
+
         // TODO: - do this stuff in a better way
         // PIJ: I guess the structure handler should be created by the renderer.
         if (rendererType == RENDER_MIF) {
-            structHandler = new MIFHandler(stream);
+            foInputHandler = new MIFHandler(stream);
         } else if (rendererType == RENDER_RTF) {
-            structHandler = new RTFHandler(stream);
+            foInputHandler = new RTFHandler(stream);
         } else {
             if (renderer == null) {
                 throw new IllegalStateException(
-                        "Renderer not set when using standard structHandler");
+                        "Renderer not set when using standard foInputHandler");
             }
-            structHandler = new LayoutHandler(stream, renderer, true);
+            foInputHandler = new LayoutHandler(stream, renderer, true);
         }
 
-        structHandler.enableLogging(getLogger());
+        foInputHandler.enableLogging(getLogger());
 
         treeBuilder.setUserAgent(getUserAgent());
-        treeBuilder.setStructHandler(structHandler);
+        treeBuilder.setFOInputHandler(foInputHandler);
 
         return treeBuilder;
     }

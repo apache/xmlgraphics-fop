@@ -118,9 +118,9 @@ public abstract class FONode {
 
     /**
      * Sets the structure handler to send events to.
-     * @param st StructureHandler instance
+     * @param foih FOInputHandler instance
      */
-    public void setStructHandler(StructureHandler st) {
+    public void setFOInputHandler(FOInputHandler foih) {
     }
 
     /**

@@ -57,7 +57,7 @@ import java.io.OutputStreamWriter;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
-import org.apache.fop.fo.StructureHandler;
+import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.ExternalGraphic;
 import org.apache.fop.fo.flow.InstreamForeignObject;
@@ -87,7 +87,7 @@ import org.xml.sax.SAXException;
  *
  * @author bdelacretaz@apache.org
  */
-public class RTFHandler extends StructureHandler {
+public class RTFHandler extends FOInputHandler {
 
     private FontInfo fontInfo = new FontInfo();
     private RtfFile rtfFile;
@@ -118,14 +118,14 @@ public class RTFHandler extends StructureHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#getFontInfo()
+     * @see org.apache.fop.fo.FOInputHandler#getFontInfo()
      */
     public FontInfo getFontInfo() {
         return this.fontInfo;
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startDocument()
+     * @see org.apache.fop.fo.FOInputHandler#startDocument()
      */
     public void startDocument() throws SAXException {
         // FIXME sections should be created
@@ -133,25 +133,25 @@ public class RTFHandler extends StructureHandler {
             rtfFile = new RtfFile(new OutputStreamWriter(os));
             docArea = rtfFile.startDocumentArea();
         } catch (IOException ioe) {
-            // FIXME could we throw Exception in all StructureHandler events?
+            // FIXME could we throw Exception in all FOInputHandler events?
             throw new SAXException("IOException: " + ioe);
         }
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endDocument()
+     * @see org.apache.fop.fo.FOInputHandler#endDocument()
      */
     public void endDocument() throws SAXException {
         try {
             rtfFile.flush();
         } catch (IOException ioe) {
-            // FIXME could we throw Exception in all StructureHandler events?
+            // FIXME could we throw Exception in all FOInputHandler events?
             throw new SAXException("IOException: " + ioe);
         }
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler
+     * @see org.apache.fop.fo.FOInputHandler
      */
     public void startPageSequence(PageSequence pageSeq)  {
         try {
@@ -161,31 +161,31 @@ public class RTFHandler extends StructureHandler {
                 warned = true;
             }
         } catch (IOException ioe) {
-            // FIXME could we throw Exception in all StructureHandler events?
+            // FIXME could we throw Exception in all FOInputHandler events?
             throw new Error("IOException: " + ioe);
         }
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endPageSequence(PageSequence)
+     * @see org.apache.fop.fo.FOInputHandler#endPageSequence(PageSequence)
      */
     public void endPageSequence(PageSequence pageSeq) throws FOPException {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startFlow(Flow)
+     * @see org.apache.fop.fo.FOInputHandler#startFlow(Flow)
      */
     public void startFlow(Flow fl) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endFlow(Flow)
+     * @see org.apache.fop.fo.FOInputHandler#endFlow(Flow)
      */
     public void endFlow(Flow fl) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startBlock(Block)
+     * @see org.apache.fop.fo.FOInputHandler#startBlock(Block)
      */
     public void startBlock(Block bl) {
         try {
@@ -194,214 +194,214 @@ public class RTFHandler extends StructureHandler {
             attrBlockBackgroundColor(bl, rtfAttr);
             para = sect.newParagraph(rtfAttr);
         } catch (IOException ioe) {
-            // FIXME could we throw Exception in all StructureHandler events?
+            // FIXME could we throw Exception in all FOInputHandler events?
             throw new Error("IOException: " + ioe);
         }
     }
 
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endBlock(Block)
+     * @see org.apache.fop.fo.FOInputHandler#endBlock(Block)
      */
     public void endBlock(Block bl) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startTable(Table)
+     * @see org.apache.fop.fo.FOInputHandler#startTable(Table)
      */
     public void startTable(Table tbl) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endTable(Table)
+     * @see org.apache.fop.fo.FOInputHandler#endTable(Table)
      */
     public void endTable(Table tbl) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startHeader(TableBody)
+     * @see org.apache.fop.fo.FOInputHandler#startHeader(TableBody)
      */
     public void startHeader(TableBody th) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endHeader(TableBody)
+     * @see org.apache.fop.fo.FOInputHandler#endHeader(TableBody)
      */
     public void endHeader(TableBody th) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startFooter(TableBody)
+     * @see org.apache.fop.fo.FOInputHandler#startFooter(TableBody)
      */
     public void startFooter(TableBody tf) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endFooter(TableBody)
+     * @see org.apache.fop.fo.FOInputHandler#endFooter(TableBody)
      */
     public void endFooter(TableBody tf) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startBody(TableBody)
+     * @see org.apache.fop.fo.FOInputHandler#startBody(TableBody)
      */
     public void startBody(TableBody tb) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endBody(TableBody)
+     * @see org.apache.fop.fo.FOInputHandler#endBody(TableBody)
      */
     public void endBody(TableBody tb) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startRow(TableRow)
+     * @see org.apache.fop.fo.FOInputHandler#startRow(TableRow)
      */
     public void startRow(TableRow tr) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endRow(TableRow)
+     * @see org.apache.fop.fo.FOInputHandler#endRow(TableRow)
      */
     public void endRow(TableRow tr) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startCell(TableCell)
+     * @see org.apache.fop.fo.FOInputHandler#startCell(TableCell)
      */
     public void startCell(TableCell tc) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endCell(TableCell)
+     * @see org.apache.fop.fo.FOInputHandler#endCell(TableCell)
      */
     public void endCell(TableCell tc) {
     }
 
     // Lists
     /**
-     * @see org.apache.fop.fo.StructureHandler#startList(ListBlock)
+     * @see org.apache.fop.fo.FOInputHandler#startList(ListBlock)
      */
     public void startList(ListBlock lb) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endList(ListBlock)
+     * @see org.apache.fop.fo.FOInputHandler#endList(ListBlock)
      */
     public void endList(ListBlock lb) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startListItem(ListItem)
+     * @see org.apache.fop.fo.FOInputHandler#startListItem(ListItem)
      */
     public void startListItem(ListItem li) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endListItem(ListItem)
+     * @see org.apache.fop.fo.FOInputHandler#endListItem(ListItem)
      */
     public void endListItem(ListItem li) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startListLabel()
+     * @see org.apache.fop.fo.FOInputHandler#startListLabel()
      */
     public void startListLabel() {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endListLabel()
+     * @see org.apache.fop.fo.FOInputHandler#endListLabel()
      */
     public void endListLabel() {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startListBody()
+     * @see org.apache.fop.fo.FOInputHandler#startListBody()
      */
     public void startListBody() {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endListBody()
+     * @see org.apache.fop.fo.FOInputHandler#endListBody()
      */
     public void endListBody() {
     }
 
     // Static Regions
     /**
-     * @see org.apache.fop.fo.StructureHandler#startStatic()
+     * @see org.apache.fop.fo.FOInputHandler#startStatic()
      */
     public void startStatic() {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endStatic()
+     * @see org.apache.fop.fo.FOInputHandler#endStatic()
      */
     public void endStatic() {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startMarkup()
+     * @see org.apache.fop.fo.FOInputHandler#startMarkup()
      */
     public void startMarkup() {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endMarkup()
+     * @see org.apache.fop.fo.FOInputHandler#endMarkup()
      */
     public void endMarkup() {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startLink()
+     * @see org.apache.fop.fo.FOInputHandler#startLink()
      */
     public void startLink() {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endLink()
+     * @see org.apache.fop.fo.FOInputHandler#endLink()
      */
     public void endLink() {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#image(ExternalGraphic)
+     * @see org.apache.fop.fo.FOInputHandler#image(ExternalGraphic)
      */
     public void image(ExternalGraphic eg) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#pageRef()
+     * @see org.apache.fop.fo.FOInputHandler#pageRef()
      */
     public void pageRef() {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#foreignObject(InstreamForeignObject)
+     * @see org.apache.fop.fo.FOInputHandler#foreignObject(InstreamForeignObject)
      */
     public void foreignObject(InstreamForeignObject ifo) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#footnote()
+     * @see org.apache.fop.fo.FOInputHandler#footnote()
      */
     public void footnote() {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#leader(Leader)
+     * @see org.apache.fop.fo.FOInputHandler#leader(Leader)
      */
     public void leader(Leader l) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#characters(char[], int, int)
+     * @see org.apache.fop.fo.FOInputHandler#characters(char[], int, int)
      */
     public void characters(char data[], int start, int length) {
         try {
             para.newText(new String(data, start, length));
          } catch (IOException ioe) {
-            // FIXME could we throw Exception in all StructureHandler events?
+            // FIXME could we throw Exception in all FOInputHandler events?
             throw new Error("IOException: " + ioe);
         }
     }
