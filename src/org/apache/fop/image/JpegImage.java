@@ -29,14 +29,27 @@ import org.apache.fop.fo.FOUserAgent;
  * @see FopImage
  */
 public class JpegImage extends AbstractFopImage {
-    ICC_Profile iccProfile = null;
-    boolean found_icc_profile = false;
-    boolean found_dimensions = false;
+    private ICC_Profile iccProfile = null;
+    private boolean found_icc_profile = false;
+    private boolean found_dimensions = false;
 
-    public JpegImage(FopImage.ImageInfo imgReader) {
-        super(imgReader);
+    /**
+     * Create a jpeg image with the info.
+     *
+     * @param imgInfo the image info for this jpeg
+     */
+    public JpegImage(FopImage.ImageInfo imgInfo) {
+        super(imgInfo);
     }
 
+    /**
+     * Load the original jpeg data.
+     * This loads the original jpeg data and reads the color space,
+     * and icc profile if any.
+     *
+     * @param ua the user agent
+     * @return true if loaded false for any error
+     */
     protected boolean loadOriginalData(FOUserAgent ua) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ByteArrayOutputStream iccStream = new ByteArrayOutputStream();
@@ -120,12 +133,8 @@ public class JpegImage extends AbstractFopImage {
                                               this.m_bitmaps[index + 2],
                                               this.m_bitmaps[index + 3]) + 2;
 
-                            if (iccStream.size() == 0)
-                                iccStream.write(this.m_bitmaps,
-                                                index + 18, chunkSize - 20);
-                            else
-                                iccStream.write(this.m_bitmaps,
-                                                index + 16, chunkSize - 18);
+                            iccStream.write(this.m_bitmaps,
+                                            index + 18, chunkSize - 18);
 
                         }
 
@@ -141,9 +150,8 @@ public class JpegImage extends AbstractFopImage {
                 }
             }
         } else {
-            ua.getLogger().error( "1 Error while loading image " +
-                                          "" +
-                                          " : JpegImage - Invalid JPEG Header.");
+            ua.getLogger().error("Error while loading "
+                                          + "JpegImage - Invalid JPEG Header.");
             return false;
         }
         if (iccStream.size() > 0) {
@@ -151,20 +159,29 @@ public class JpegImage extends AbstractFopImage {
             try {
                 iccStream.write(align);
             } catch (Exception e) {
-                ua.getLogger().error( "1 Error while loading image " +
-                                              "" + " : " +
-                                              e.getMessage(), e);
+                ua.getLogger().error("Error while loading image "
+                                              + " : "
+                                              + e.getMessage(), e);
                 return false;
             }
-            iccProfile = ICC_Profile.getInstance(iccStream.toByteArray());
+            try {
+                iccProfile = ICC_Profile.getInstance(iccStream.toByteArray());
+            } catch (Exception e) {
+                ua.getLogger().error("Invalid ICC profile: " + e, e);
+                return false;
+            }
         } else if(this.m_colorSpace == null) {
-            ua.getLogger().error("ColorSpace not specified for image: "
-                                     + "");
+            ua.getLogger().error("ColorSpace not specified for JPEG image");
             return false;
         }
         return true;
     }
 
+    /**
+     * Get the ICC profile for this Jpeg image.
+     *
+     * @return the icc profile or null if not found
+     */
     public ICC_Profile getICCProfile() {
         return iccProfile;
     }
