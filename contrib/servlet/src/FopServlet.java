@@ -93,7 +93,7 @@ public class FopServlet extends HttpServlet {
             response.setContentType("application/pdf");
 
             Driver driver = new Driver(foFile, out);
-            driver.setLogger(log);
+            driver.enableLogging(log);
             driver.setRenderer(Driver.RENDER_PDF);
             driver.run();
 
@@ -119,7 +119,7 @@ public class FopServlet extends HttpServlet {
             response.setContentType("application/pdf");
 
             Driver driver = new Driver();
-            driver.setLogger(log);
+            driver.enableLogging(log);
             driver.setRenderer(Driver.RENDER_PDF);
             driver.setOutputStream(out);
             driver.render(input.getParser(), input.getInputSource());
