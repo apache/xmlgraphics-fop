@@ -27,9 +27,7 @@ import java.awt.geom.Rectangle2D;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.Block;
-import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Trait;
-import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.BlockContainer;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
 import org.apache.fop.area.CTM;
@@ -96,21 +94,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         fobj = node;
     }
     
-    /**
-     * @return the currently applicable page viewport
-     */
-    protected PageViewport getPageViewport() {
-        LayoutManager lm = this;
-        while (lm != null && !(lm instanceof PageSequenceLayoutManager)) {
-            lm = lm.getParent();
-        }
-        if (lm == null) {
-            return null;
-        } else {
-            return ((PageSequenceLayoutManager)lm).getCurrentPageViewport();
-        }
-    }
-
     /**
      * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
      */
@@ -376,7 +359,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             allocBPD = 0;
             if (abProps.bottom.getEnum() != EN_AUTO) {
                 if (isFixed()) {
-                    allocBPD = (int)getPageViewport().getViewArea().getHeight();
+                    allocBPD = (int)getCurrentPageViewport().getViewArea().getHeight();
                 } else {
                     allocBPD = context.getStackLimit().opt; 
                 }
@@ -393,7 +376,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             allocIPD += getIPIndents();
         } else {
             if (isFixed()) {
-                allocIPD = (int)getPageViewport().getViewArea().getWidth(); 
+                allocIPD = (int)getCurrentPageViewport().getViewArea().getWidth(); 
             } else {
                 allocIPD = context.getRefIPD();
             }
@@ -767,7 +750,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             allocBPD = 0;
             if (abProps.bottom.getEnum() != EN_AUTO) {
                 if (isFixed()) {
-                    allocBPD = (int)getPageViewport().getViewArea().getHeight();
+                    allocBPD = (int)getCurrentPageViewport().getViewArea().getHeight();
                 } else {
                     allocBPD = context.getStackLimit().opt; 
                 }
@@ -784,7 +767,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             allocIPD += getIPIndents();
         } else {
             if (isFixed()) {
-                allocIPD = (int)getPageViewport().getViewArea().getWidth(); 
+                allocIPD = (int)getCurrentPageViewport().getViewArea().getWidth(); 
             } else {
                 allocIPD = context.getRefIPD();
             }

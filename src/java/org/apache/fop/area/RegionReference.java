@@ -31,7 +31,6 @@ import org.apache.fop.fo.Constants;
 public class RegionReference extends Area implements Cloneable {
     private int regionClass = Constants.FO_REGION_BEFORE;
     private CTM ctm;
-    private int bpd;
 
     // the list of block areas from the static flow
     private List blocks = new ArrayList();
@@ -104,24 +103,6 @@ public class RegionReference extends Area implements Cloneable {
      */
     public void addBlock(Block block) {
         blocks.add(block);
-    }
-
-    /**
-     * Set the block-progression-dimension.
-     *
-     * @return the footnote area
-     */
-    public void setBPD(int bpd) {
-        this.bpd = bpd;
-    }
-
-    /**
-     * Set the block-progression-dimension.
-     *
-     * @return the footnote area
-     */
-    public int getBPD() {
-        return bpd;
     }
 
     /**
