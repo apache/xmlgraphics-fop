@@ -34,7 +34,7 @@
       no, sk, tr) have been removed due to licensing reasons
       (en_GB hyphenation has been renamed to en).
       We're still working on this issue
-      (see <link href="http://nagoya.apache.org/wiki/apachewiki.cgi?FOPAudits/March2003">
+      (see <link href="http://wiki.apache.org/xmlgraphics-fop/FOPAudits/March2003">
       Wiki</link> for details).
     </li>
     <li>Documentation is now built with <link href="http://xml.apache.org/forrest/">
