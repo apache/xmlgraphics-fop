@@ -6,7 +6,7 @@
 <xsl:output method="text" />
 
 <xsl:template match="font-mappings">
-<redirect:write file="org/apache/fop/render/pdf/CodePointMapping.java">
+<!-- <redirect:write file="org/apache/fop/render/pdf/CodePointMapping.java"> -->
 package org.apache.fop.render.pdf;
 
 public class CodePointMapping {
@@ -18,7 +18,7 @@ public class CodePointMapping {
 </xsl:for-each>
         }
 }
-</redirect:write>
+<!-- </redirect:write>-->
 </xsl:template>
 </xsl:stylesheet>
 

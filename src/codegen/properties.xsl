@@ -7,7 +7,7 @@
 
 <xsl:template match="property" priority="-1">
 <xsl:variable name="classname" select="class-name"/>
-<redirect:write select="concat('org/apache/fop/fo/properties/', $classname, '.java')">
+<redirect:write select="concat('@org/apache/fop@/fo/properties/', $classname, '.java')">
 package org.apache.fop.fo.properties;
 
 import org.apache.fop.datatypes.*;
@@ -74,7 +74,7 @@ public class <xsl:value-of select="class-name"/> extends Property {
 
 <xsl:template match="property[datatype/enumeration]">
 <xsl:variable name="classname" select="class-name"/>
-<redirect:write select="concat('org/apache/fop/fo/properties/', $classname, '.java')">
+<redirect:write select="concat('@org/apache/fop@/fo/properties/', $classname, '.java')">
 package org.apache.fop.fo.properties;
 
 import org.apache.fop.datatypes.*;
@@ -139,4 +139,5 @@ public class <xsl:value-of select="class-name"/> extends Property {
 </redirect:write>
 </xsl:template>
 </xsl:stylesheet>
+
 
