@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-
 import org.apache.fop.area.LinkResolver;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Resolveable;
@@ -48,10 +47,6 @@ import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.TextInfo;
 import org.apache.fop.fo.ToBeImplementedElement;
 import org.apache.fop.fo.XMLObj;
-import org.apache.fop.fo.extensions.Bookmarks;
-import org.apache.fop.fo.extensions.ExtensionObj;
-import org.apache.fop.fo.extensions.Label;
-import org.apache.fop.fo.extensions.Outline;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.BidiOverride;
 import org.apache.fop.fo.flow.Block;
@@ -59,7 +54,6 @@ import org.apache.fop.fo.flow.BlockContainer;
 import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fo.flow.ExternalGraphic;
 import org.apache.fop.fo.flow.Footnote;
-import org.apache.fop.fo.flow.FootnoteBody;
 import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fo.flow.InlineContainer;
 import org.apache.fop.fo.flow.InstreamForeignObject;
@@ -68,7 +62,6 @@ import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
-import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.PageNumberCitation;
 import org.apache.fop.fo.flow.RetrieveMarker;
@@ -81,27 +74,7 @@ import org.apache.fop.fo.flow.TableFooter;
 import org.apache.fop.fo.flow.TableHeader;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.flow.Wrapper;
-import org.apache.fop.fo.pagination.ColorProfile;
-import org.apache.fop.fo.pagination.ConditionalPageMasterReference;
-import org.apache.fop.fo.pagination.Declarations;
 import org.apache.fop.fo.pagination.Flow;
-import org.apache.fop.fo.pagination.LayoutMasterSet;
-import org.apache.fop.fo.pagination.PageMasterReference;
-import org.apache.fop.fo.pagination.PageSequence;
-import org.apache.fop.fo.pagination.PageSequenceMaster;
-import org.apache.fop.fo.pagination.Region;
-import org.apache.fop.fo.pagination.RegionAfter;
-import org.apache.fop.fo.pagination.RegionBA;
-import org.apache.fop.fo.pagination.RegionBefore;
-import org.apache.fop.fo.pagination.RegionBody;
-import org.apache.fop.fo.pagination.RegionEnd;
-import org.apache.fop.fo.pagination.RegionSE;
-import org.apache.fop.fo.pagination.RegionStart;
-import org.apache.fop.fo.pagination.RepeatablePageMasterAlternatives;
-import org.apache.fop.fo.pagination.RepeatablePageMasterReference;
-import org.apache.fop.fo.pagination.Root;
-import org.apache.fop.fo.pagination.SimplePageMaster;
-import org.apache.fop.fo.pagination.SinglePageMasterReference;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.pagination.Title;
 import org.apache.fop.fo.properties.CommonBackground;
@@ -811,55 +784,6 @@ public class AddLMVisitor {
     }
     
     /**
-     * @param node ColorProfile object to process
-     */
-    public void serveColorProfile(ColorProfile node) {
-        serveFObj((FObj)node);
-    }
-
-    /**
-     * @param node ConditionalPageMasterReference object to process
-     */
-    public void serveConditionalPageMasterReference(ConditionalPageMasterReference node) {
-        serveFObj((FObj)node);
-    }
-
-    /**
-     * @param node Declarations object to process
-     */
-    public void serveDeclarations(Declarations node) {
-        serveFObj((FObj)node);
-    }
-
-    /**
-     * @param node ExtensionObj object to process
-     */
-    public void serveExtensionObj(ExtensionObj node) {
-        serveFObj((FObj)node);
-    }
-
-    /**
-     * @param node Bookmarks object to process
-     */
-    public void serveBookmarks(Bookmarks node) {
-        serveExtensionObj((ExtensionObj)node);
-    }
-
-    /**
-     * @param node Label object to process
-     */
-    public void serveLabel(Label node) {
-        serveExtensionObj((ExtensionObj)node);
-    }
-
-    /**
-     * @param node Outline object to process
-     */
-    public void serveOutline(Outline node) {
-        serveExtensionObj((ExtensionObj)node);
-    }
-
-    /**
      * @param node StaticContent object to process
      */
     public void serveStaticContent(StaticContent node) {
@@ -867,157 +791,10 @@ public class AddLMVisitor {
     }
 
     /**
-     * @param node Marker object to process
-     */
-    public void serveMarker(Marker node) {
-        serveFObjMixed((FObjMixed)node);
-    }
-
-    /**
      * @param node Title object to process
      */
     public void serveTitle(Title node) {
         serveFObjMixed((FObjMixed)node);
-    }
-
-    /**
-     * @param node FootnoteBody object to process
-     */
-    public void serveFootnoteBody(FootnoteBody node) {
-        serveFObj((FObj)node);
-    }
-
-    /**
-     * @param node LayoutMasterSet object to process
-     */
-    public void serveLayoutMasterSet(LayoutMasterSet node) {
-        serveFObj((FObj)node);
-    }
-
-    /**
-     * @param node ListItemBody object to process
-     */
-    public void serveListItemBody(ListItemBody node) {
-        serveFObj((FObj)node);
-    }
-
-    /**
-     * @param node ListItemLabel object to process
-     */
-    public void serveListItemLabel(ListItemLabel node) {
-        serveFObj((FObj)node);
-    }
-
-    /**
-     * @param node PageMasterReference object to process
-     */
-    public void servePageMasterReference(PageMasterReference node) {
-        serveFObj((FObj)node);
-    }
-
-    /**
-     * @param node RepeatablePageMasterReference object to process
-     */
-    public void serveRepeatablePageMasterReference(RepeatablePageMasterReference node) {
-        servePageMasterReference((PageMasterReference)node);
-    }
-
-    /**
-     * @param node SinglePageMasterReference object to process
-     */
-    public void serveSinglePageMasterReference(SinglePageMasterReference node) {
-        servePageMasterReference((PageMasterReference)node);
-    }
-
-    /**
-     * @param node PageSequence object to process
-     */
-    public void servePageSequence(PageSequence node) {
-        serveFObj((FObj)node);
-    }
-
-    /**
-     * @param node PageSequenceMaster object to process
-     */
-    public void servePageSequenceMaster(PageSequenceMaster node) {
-        serveFObj((FObj)node);
-    }
-
-    /**
-     * @param node Region object to process
-     */
-    public void serveRegion(Region node) {
-        serveFObj((FObj)node);
-    }
-
-    /**
-     * @param node RegionBA object to process
-     */
-    public void serveRegionBA(RegionBA node) {
-        serveRegion((Region)node);
-    }
-
-    /**
-     * @param node RegionAfter object to process
-     */
-    public void serveRegionAfter(RegionAfter node) {
-        serveRegionBA((RegionBA)node);
-    }
-
-    /**
-     * @param node RegionBefore object to process
-     */
-    public void serveRegionBefore(RegionBefore node) {
-        serveRegionBA((RegionBA)node);
-    }
-
-    /**
-     * @param node RegionSE object to process
-     */
-    public void serveRegionSE(RegionSE node) {
-        serveRegion((Region)node);
-    }
-
-    /**
-     * @param node RegionEnd object to process
-     */
-    public void serveRegionEnd(RegionEnd node) {
-        serveRegionSE((RegionSE)node);
-    }
-
-    /**
-     * @param node RegionStart object to process
-     */
-    public void serveRegionStart(RegionStart node) {
-        serveRegionSE((RegionSE)node);
-    }
-
-    /**
-     * @param node RegionBody object to process
-     */
-    public void serveRegionBody(RegionBody node) {
-        serveRegion((Region)node);
-    }
-
-    /**
-     * @param node RepeatablePageMasterAlternatives object to process
-     */
-    public void serveRepeatablePageMasterAlternatives(RepeatablePageMasterAlternatives node) {
-        serveFObj((FObj)node);
-    }
-
-    /**
-     * @param node Root object to process
-     */
-    public void serveRoot(Root node) {
-        serveFObj((FObj)node);
-    }
-
-    /**
-     * @param node SimplePageMaster object to process
-     */
-    public void serveSimplePageMaster(SimplePageMaster node) {
-        serveFObj((FObj)node);
     }
 
     /**
@@ -1032,12 +809,5 @@ public class AddLMVisitor {
      */
     public void serveTableHeader(TableHeader node) {
         serveTableBody((TableBody)node);
-    }
-
-    /**
-     * @param node TableColumn object to process
-     */
-    public void serveTableColumn(TableColumn node) {
-        serveFObj((FObj)node);
     }
 }

@@ -26,7 +26,6 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 
 /**
  * A conditional-page-master-reference formatting object.
@@ -171,10 +170,6 @@ public class ConditionalPageMasterReference extends FObj {
                                    + "of fo:repeatable-page-master-alternatives, not "
                                    + parent.getName(), locator);
         }
-    }
-
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveConditionalPageMasterReference(this);
     }
 
     public String getName() {

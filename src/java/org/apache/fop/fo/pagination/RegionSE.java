@@ -27,7 +27,6 @@ import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 
 /**
  * Abstract base class for fo:region-start and fo:region-end.

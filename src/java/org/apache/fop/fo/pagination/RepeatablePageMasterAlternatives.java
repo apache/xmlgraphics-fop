@@ -30,7 +30,6 @@ import org.xml.sax.SAXParseException;
 import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 
 /**
  * A repeatable-page-master-alternatives formatting object.
@@ -154,10 +153,6 @@ public class RepeatablePageMasterAlternatives extends FObj
      */
     public void reset() {
         this.numberConsumed = 0;
-    }
-
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveRepeatablePageMasterAlternatives(this);
     }
 
     public String getName() {

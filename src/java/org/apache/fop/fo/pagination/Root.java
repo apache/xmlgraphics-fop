@@ -224,14 +224,6 @@ public class Root extends FObj {
         return foInputHandler;
     }
 
-    /**
-     * Hook for Visitor objects accessing the FO Tree.
-     * @param aLMV the AddLMVisitor object that can access this object.
-     */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveRoot(this);
-    }
-
     public String getName() {
         return "fo:root";
     }

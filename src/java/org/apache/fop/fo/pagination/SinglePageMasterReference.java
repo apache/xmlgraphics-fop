@@ -25,7 +25,6 @@ import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 
 /**
  * A single-page-master-reference formatting object.
@@ -76,10 +75,6 @@ public class SinglePageMasterReference extends PageMasterReference
      */
     public void reset() {
         this.state = FIRST;
-    }
-
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveSinglePageMasterReference(this);
     }
 
     public String getName() {

@@ -31,7 +31,6 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOElementMapping;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -690,14 +689,6 @@ public class PageSequence extends FObj {
      */
     public Title getTitleFO() {
         return titleFO;
-    }
-
-    /**
-     * Hook for Visitor objects accessing the FO Tree.
-     * @param aLMV the AddLMVisitor object that can access this object.
-     */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.servePageSequence(this);
     }
 
     /**

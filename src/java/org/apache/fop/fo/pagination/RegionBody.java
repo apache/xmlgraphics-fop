@@ -28,7 +28,6 @@ import org.xml.sax.Attributes;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.CommonMarginBlock;
@@ -105,15 +104,6 @@ public class RegionBody extends Region {
      */
     public int getRegionClassCode() {
         return Region.BODY_CODE;
-    }
-
-    /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
-     */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveRegionBody(this);
     }
 
     public String getName() {

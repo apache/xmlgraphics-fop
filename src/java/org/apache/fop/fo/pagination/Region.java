@@ -28,7 +28,6 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.FObj;
 
 /**
