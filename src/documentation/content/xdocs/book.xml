@@ -42,10 +42,6 @@
           <menu-item label="Configuration" href="configuration.html"/>
         </menu>
 
-        <menu label="Developing">
-          <menu-item label="Testing" href="testing.html"/>
-        </menu>
-
         <menu label="Resources">
           <menu-item label="Getting Help" href="gethelp.html"/>
           <menu-item label="FAQs" href="faq.html"/>
