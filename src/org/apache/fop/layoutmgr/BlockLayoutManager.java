@@ -44,14 +44,17 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
      */
     public void generateAreas() {
 	ListIterator children = fobj.getChildren();
+	LayoutManager lm=null;
 	while (children.hasNext()) {
-	    LayoutManager lm = ((FObj)children.next()).getLayoutManager();
- 	    if (lm != null) {
-		if (lm.generatesInlineAreas()) {
-		    // Back up one
-		    children.previous();
-		    lm = new LineLayoutManager(children);
-		}
+	    FObj childFO = (FObj)children.next();
+	    if (childFO.generatesInlineAreas()) {
+		children.previous();
+		lm = new LineLayoutManager(children);
+	    }
+	    else {
+		lm = childFO.getLayoutManager();
+	    }
+	    if (lm != null) {
 		lm.setParentLM(this);
 		lm.generateAreas();
 	    }
