@@ -64,9 +64,6 @@ public class FontState {
 		private FontMetric metric;
 		private int fontVariant;
 
-		public FontState(FontInfo fontInfo, String fontFamily, String fontStyle, String fontWeight, int fontSize) throws FOPException {
-			this(fontInfo, fontFamily, fontStyle, fontWeight, fontSize, FontVariant.NORMAL);
-		}
 		public FontState(FontInfo fontInfo, String fontFamily, String fontStyle, String fontWeight, int fontSize, int fontVariant) throws FOPException {
 	this.fontInfo = fontInfo;
 	this.fontFamily = fontFamily;
