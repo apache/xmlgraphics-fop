@@ -21,6 +21,7 @@ import org.apache.fop.layout.PageMaster;
 import org.apache.fop.area.AreaTree;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.StreamRenderer;
 
 import org.apache.fop.layoutmgr.PageLayoutManager;
 
@@ -46,6 +47,10 @@ public class PageSequence extends FObj {
     //
     // associations
     //
+    /**
+     * Use to layout and render the page sequence.
+     */
+    private StreamRenderer streamRenderer;
 
     /**
      * The parent root object
@@ -266,12 +271,14 @@ public class PageSequence extends FObj {
 	}
     }
 
+
+    public void setStreamRenderer(StreamRenderer st) {
+	this.streamRenderer = st;
+    }
+
     public void end() {
 	try {
-	    AreaTree at = new AreaTree();
-	    at.setTreeModel(AreaTree.createStorePagesModel());
-	    at.startPageSequence(null);
-	    format(at);
+	    this.streamRenderer.render(this);
 	} catch (FOPException fopex) {
 	    log.error("Error in PageSequence.end(): " +
 		      fopex.getMessage());
@@ -313,6 +320,8 @@ public class PageSequence extends FObj {
 	
 	// If no main flow, nothing to layout!
 	if (this.mainFlow == null) return;
+
+	areaTree.startPageSequence(null);
 
 	// Initialize if already used?
         this.layoutMasterSet.resetPageMasters();

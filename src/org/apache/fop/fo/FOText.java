@@ -56,8 +56,7 @@ public class FOText extends FObj {
         super(null);
         this.start = 0;
         this.ca = new char[e - s];
-        for (int i = s; i < e; i++)
-            ca[i - s] = chars[i];
+	System.arraycopy(chars, s, ca, 0, e-s);
         this.length = e - s;
         textInfo = ti;
     }
@@ -78,166 +77,19 @@ public class FOText extends FObj {
         return false;
     }
 
-    public Status layout(Area area) throws FOPException {
-        if (!(area instanceof BlockArea)) {
-            log.error("text outside block area"
-                                   + new String(ca, start, length));
-            return new Status(Status.OK);
-        }
-        if (this.marker == START) {
-            this.ts = new TextState();
-            ts.setUnderlined(textInfo.underlined);
-            ts.setOverlined(textInfo.overlined);
-            ts.setLineThrough(textInfo.lineThrough);
+    // Just to keep PageNumber and PageNumber citation happy for now.
+    // The real code is moved to TextLayoutManager!
 
-            this.marker = this.start;
-        }
-        int orig_start = this.marker;
-        this.marker = addText((BlockArea)area, textInfo.fs, textInfo.red, textInfo.green, textInfo.blue,
-                              textInfo.wrapOption, this.getLinkSet(),
-                              textInfo.whiteSpaceCollapse, ca, this.marker, length,
-                              ts, textInfo.verticalAlign);
-        if (this.marker == -1) {
-
-
-            // commented out by Hani Elabed, 11/28/2000
-            // if this object has been laid out
-            // successfully, leave it alone....
-            // Now, to prevent the array index out of
-            // bound of LineArea.addText(), I have added
-            // the following test at the beginning of that method.
-            // if( start == -1 ) return -1;
-            // see LineArea.addText()
-
-            // this.marker = 0;
-            return new Status(Status.OK);
-        } else if (this.marker != orig_start) {
-            return new Status(Status.AREA_FULL_SOME);
-        } else {
-            return new Status(Status.AREA_FULL_NONE);
-        }
-    }
-
-    // font-variant support : addText is a wrapper for addRealText
-    // added by Eric SCHAEFFER
     public static int addText(BlockArea ba, FontState fontState, float red,
                               float green, float blue, int wrapOption,
                               LinkSet ls, int whiteSpaceCollapse,
                               char data[], int start, int end,
                               TextState textState, int vAlign) {
-        if (fontState.getFontVariant() == FontVariant.SMALL_CAPS) {
-            FontState smallCapsFontState;
-            try {
-                int smallCapsFontHeight =
-                    (int)(((double)fontState.getFontSize()) * 0.8d);
-                smallCapsFontState = new FontState(fontState.getFontInfo(),
-                                                   fontState.getFontFamily(),
-                                                   fontState.getFontStyle(),
-                                                   fontState.getFontWeight(),
-                                                   smallCapsFontHeight,
-                                                   FontVariant.NORMAL);
-            } catch (FOPException ex) {
-                smallCapsFontState = fontState;
-                //log.error("Error creating small-caps FontState: "
-                //                       + ex.getMessage());
-            }
-
-            // parse text for upper/lower case and call addRealText
-            char c;
-            boolean isLowerCase;
-            int caseStart;
-            FontState fontStateToUse;
-            for (int i = start; i < end; ) {
-                caseStart = i;
-                c = data[i];
-                isLowerCase = (java.lang.Character.isLetter(c)
-                               && java.lang.Character.isLowerCase(c));
-                while (isLowerCase
-                        == (java.lang.Character.isLetter(c)
-                            && java.lang.Character.isLowerCase(c))) {
-                    if (isLowerCase) {
-                        data[i] = java.lang.Character.toUpperCase(c);
-                    }
-                    i++;
-                    if (i == end)
-                        break;
-                    c = data[i];
-                }
-                if (isLowerCase) {
-                    fontStateToUse = smallCapsFontState;
-                } else {
-                    fontStateToUse = fontState;
-                }
-                int index = addRealText(ba, fontStateToUse, red, green, blue,
-                                        wrapOption, ls, whiteSpaceCollapse,
-                                        data, caseStart, i, textState,
-                                        vAlign);
-                if (index != -1) {
-                    return index;
-                }
-            }
-
-            return -1;
-        }
-
-        // font-variant normal
-        return addRealText(ba, fontState, red, green, blue, wrapOption, ls,
-                           whiteSpaceCollapse, data, start, end, textState,
-                           vAlign);
-    }
-
-    protected static int addRealText(BlockArea ba, FontState fontState,
-                                     float red, float green, float blue,
-                                     int wrapOption, LinkSet ls,
-                                     int whiteSpaceCollapse, char data[],
-                                     int start, int end, TextState textState,
-                                     int vAlign) {
-        int ts, te;
-        char[] ca;
-
-        ts = start;
-        te = end;
-        ca = data;
-
-        LineArea la = ba.getCurrentLineArea();
-        if (la == null) {
-            return start;
-        }
-
-        la.changeFont(fontState);
-        la.changeColor(red, green, blue);
-        la.changeWrapOption(wrapOption);
-        la.changeWhiteSpaceCollapse(whiteSpaceCollapse);
-        la.changeVerticalAlign(vAlign);
-        // la.changeHyphenation(language, country, hyphenate,
-        // hyphenationChar, hyphenationPushCharacterCount,
-        // hyphenationRemainCharacterCount);
-        ba.setupLinkSet(ls);
-
-        ts = la.addText(ca, ts, te, ls, textState);
-        // this.hasLines = true;
-
-        while (ts != -1) {
-            la = ba.createNextLineArea();
-            if (la == null) {
-                return ts;
-            }
-            la.changeFont(fontState);
-            la.changeColor(red, green, blue);
-            la.changeWrapOption(wrapOption);
-            la.changeWhiteSpaceCollapse(whiteSpaceCollapse);
-            // la.changeHyphenation(language, country, hyphenate,
-            // hyphenationChar, hyphenationPushCharacterCount,
-            // hyphenationRemainCharacterCount);
-            ba.setupLinkSet(ls);
-
-            ts = la.addText(ca, ts, te, ls, textState);
-        }
-        return -1;
+	return 0;
     }
 
     public LayoutManager getLayoutManager() {
-	return new TextLayoutManager(this, ca);
+	return new TextLayoutManager(this, ca, textInfo);
     }
 }
 

@@ -22,9 +22,9 @@ public class RegionBefore extends RegionBA {
         super(parent);
     }
 
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
-    }
+//     public void handleAttrs(Attributes attlist) throws FOPException {
+//         super.handleAttrs(attlist);
+//     }
 
 
     protected String getDefaultRegionName() {

@@ -9,7 +9,9 @@ package org.apache.fop.fo;
 
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.FontState;
+import org.apache.fop.layout.FontInfo;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.StreamRenderer;
 import org.apache.fop.datatypes.ColorType;
 
 /**
@@ -18,30 +20,26 @@ import org.apache.fop.datatypes.ColorType;
  */
 public class FObjMixed extends FObj {
     FOText.TextInfo textInfo = null;
+    FontInfo fontInfo=null;
 
     public FObjMixed(FONode parent) {
         super(parent);
     }
 
+    public void setStreamRenderer(StreamRenderer st) {
+	fontInfo = st.getFontInfo();
+    }
+
     protected void addCharacters(char data[], int start, int length) {
         if(textInfo == null) {
 	    textInfo = new FOText.TextInfo();
-            String fontFamily =
-                getProperty("font-family").getString();
-            String fontStyle =
-                getProperty("font-style").getString();
-            String fontWeight =
-                getProperty("font-weight").getString();
-            int fontSize =
-                getProperty("font-size").getLength().mvalue();
-            // font-variant support
-            // added by Eric SCHAEFFER
-            int fontVariant =
-                getProperty("font-variant").getEnum();
 
-            //textInfo.fs = new FontState(area.getFontInfo(), fontFamily,
-            //                        fontStyle, fontWeight, fontSize,
-            //                        fontVariant);
+	    try {
+		textInfo.fs = propMgr.getFontState(fontInfo);
+	    } catch (FOPException fopex) {
+		log.error("Error setting FontState for characters: " +
+			  fopex.getMessage());
+	    }
 
             ColorType c = getProperty("color").getColorType();
             textInfo.red = c.red();

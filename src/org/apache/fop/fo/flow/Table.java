@@ -511,6 +511,11 @@ public class Table extends FObj {
             return 0;    // not laid out yet
     }
 
+    public boolean generatesInlineAreas() {
+        return false;
+    }
+
+
     /**
      * Initialize table inline-progression-properties values
      */

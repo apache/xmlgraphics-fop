@@ -164,4 +164,9 @@ public class ListBlock extends FObj {
         return new Status(Status.OK);
     }
 
+    public boolean generatesInlineAreas() {
+        return false;
+    }
+
+
 }
