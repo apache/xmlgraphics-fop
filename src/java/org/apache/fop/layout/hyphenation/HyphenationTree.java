@@ -530,7 +530,6 @@ public class HyphenationTree extends TernaryTree
                 token = in.readLine().trim();
                 long starttime = 0;
                 int counter = 0;
-                ;
                 try {
                     BufferedReader reader =
                         new BufferedReader(new FileReader(token));
