@@ -148,6 +148,26 @@ public class TraitSetter {
         if (bps.width != 0) {
             curBlock.addTrait(Trait.BORDER_END, bps);
         }
+        
+        int padding = bordProps.getPadding(CommonBorderAndPadding.START, false);
+        if (padding != 0) {
+            curBlock.addTrait(Trait.PADDING_START, new java.lang.Integer(padding));
+        }
+        
+        padding = bordProps.getPadding(CommonBorderAndPadding.END, false);
+        if (padding != 0) {
+            curBlock.addTrait(Trait.PADDING_END, new java.lang.Integer(padding));
+        }
+
+        padding = bordProps.getPadding(CommonBorderAndPadding.BEFORE, false);
+        if (padding != 0) {
+            curBlock.addTrait(Trait.PADDING_BEFORE, new java.lang.Integer(padding));
+        }
+        
+        padding = bordProps.getPadding(CommonBorderAndPadding.AFTER, false);
+        if (padding != 0) {
+            curBlock.addTrait(Trait.PADDING_AFTER, new java.lang.Integer(padding));
+        }
     }
 
     private static BorderProps getBorderProps(CommonBorderAndPadding bordProps, int side) {
