@@ -146,11 +146,4 @@ public class BidiOverride extends FObjMixed {
     public int getNameId() {
         return FO_BIDI_OVERRIDE;
     }
-
-    /**
-     * @return true (BidiOverride can contain Markers)
-     */
-    protected boolean containsMarkers() {
-        return true;
-    }
 }

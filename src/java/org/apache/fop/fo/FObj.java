@@ -92,7 +92,7 @@ public class FObj extends FONode implements Constants {
             for (int i = 1; i < list.length; i++) {
                 if (list[i] != null)
                     propertyListTable[i] = list[i]; 
-            }    
+            }
         }
     }
 
@@ -163,7 +163,8 @@ public class FObj extends FONode implements Constants {
      * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
     protected void addChildNode(FONode child) {
-        if (containsMarkers() && "fo:marker".equals(child.getName())) {
+        if (PropertySets.canHaveMarkers(getNameId()) && 
+                "fo:marker".equals(child.getName())) {
             addMarker((Marker) child);
         } else {
             if (childNodes == null) {
@@ -332,16 +333,6 @@ public class FObj extends FONode implements Constants {
      */
     public boolean generatesInlineAreas() {
         return true;
-    }
-
-    /**
-     * Check if this formatting object may contain markers.
-     *
-     * @return true if this can contain markers
-     * @todo confirm if still needed after validateChildNode() fully implemented
-     */
-    protected boolean containsMarkers() {
-        return false;
     }
 
     /**

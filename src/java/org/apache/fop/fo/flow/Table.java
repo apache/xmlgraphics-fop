@@ -173,13 +173,6 @@ public class Table extends FObj implements LMVisited {
         return false;
     }
 
-    /**
-     * @return true (Table contains Markers)
-     */
-    protected boolean containsMarkers() {
-        return true;
-    }
-
     public ArrayList getColumns() {
         return columns;
     }

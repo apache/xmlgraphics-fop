@@ -350,11 +350,4 @@ public class Block extends FObjMixed {
     public int getNameId() {
         return FO_BLOCK;
     }
-
-    /**
-     * @return true (Block can contain Markers)
-     */
-    protected boolean containsMarkers() {
-        return true;
-    }
 }

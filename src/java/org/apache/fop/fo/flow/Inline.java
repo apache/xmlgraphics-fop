@@ -94,13 +94,6 @@ public class Inline extends FObjMixed {
     }
 
     /**
-     * @return true (Inline can contain Markers)
-     */
-    protected boolean containsMarkers() {
-        return true;
-    }
-
-    /**
      * @see org.apache.fop.fo.FObjMixed#charIterator
      */
     public CharIterator charIterator() {

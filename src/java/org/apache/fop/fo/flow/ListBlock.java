@@ -95,13 +95,6 @@ public class ListBlock extends FObj {
     }
 
     /**
-     * @return true (ListBlock can contain Markers)
-     */
-    protected boolean containsMarkers() {
-        return true;
-    }
-
-    /**
      * @see org.apache.fop.fo.FObj#addLayoutManager(List)
      */
     public void addLayoutManager(List list) { 	 

@@ -65,13 +65,6 @@ public class ListItemLabel extends FObj {
 
     }
 
-    /**
-     * @return true (ListItemLabel may contain Markers)
-     */
-    protected boolean containsMarkers() {
-        return true;
-    }
-
     protected void endOfNode() throws SAXParseException {
         super.endOfNode();
         getFOInputHandler().endListLabel();

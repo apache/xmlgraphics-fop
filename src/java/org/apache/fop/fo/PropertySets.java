@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 public class PropertySets {
     private static short[][] mapping = null;
+    private static BitSet can_have_markers = null;
 
     private Element[] elements = new Element[Constants.ELEMENT_COUNT+1];
     private BitSet block_elems = new BitSet();
@@ -998,7 +999,6 @@ public class PropertySets {
         return indices;
     }
 
-
     public static short[] getPropertySet(int elementId) {
         if (mapping == null) {
             mapping = new short[Constants.ELEMENT_COUNT+1][];
@@ -1010,6 +1010,35 @@ public class PropertySets {
         return mapping[elementId];
     }
 
+    /**
+     * Determines if fo:markers are allowed as children for the given FO
+     * @param elementId Constants enumeration ID of the FO (e.g., FO_ROOT)
+     * @return true if fo:markers allowed, false otherwise
+     * @todo check if still needed after validateChildNode() fully implemented
+     */
+    public static boolean canHaveMarkers(int elementId) {
+        if (can_have_markers == null) {
+            can_have_markers = new BitSet();
+            can_have_markers.set(Constants.FO_BASIC_LINK);
+            can_have_markers.set(Constants.FO_BIDI_OVERRIDE);
+            can_have_markers.set(Constants.FO_BLOCK);
+            can_have_markers.set(Constants.FO_BLOCK_CONTAINER);
+            can_have_markers.set(Constants.FO_INLINE);
+            can_have_markers.set(Constants.FO_INLINE_CONTAINER);
+            can_have_markers.set(Constants.FO_LIST_BLOCK);
+            can_have_markers.set(Constants.FO_LIST_ITEM);
+            can_have_markers.set(Constants.FO_LIST_ITEM_BODY);
+            can_have_markers.set(Constants.FO_LIST_ITEM_LABEL);
+            can_have_markers.set(Constants.FO_TABLE);
+            can_have_markers.set(Constants.FO_TABLE_BODY);
+            can_have_markers.set(Constants.FO_TABLE_CELL);
+            can_have_markers.set(Constants.FO_TABLE_AND_CAPTION);
+            can_have_markers.set(Constants.FO_TABLE_CAPTION);
+            can_have_markers.set(Constants.FO_WRAPPER);
+        }
+        return can_have_markers.get(elementId);
+    }
+    
     /**
      * An object that represent the properties and contents of a fo element
      */

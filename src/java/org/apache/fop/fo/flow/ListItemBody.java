@@ -53,13 +53,6 @@ public class ListItemBody extends FObj {
 
     }
 
-    /**
-     * @return true (ListItemBody can contain Markers)
-     */
-    protected boolean containsMarkers() {
-        return true;
-    }
-
     public String getName() {
         return "fo:list-item-body";
     }
