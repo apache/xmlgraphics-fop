@@ -62,6 +62,8 @@ import org.apache.batik.dom.svg.*;
 import org.w3c.dom.svg.*;
 import org.w3c.dom.*;
 
+import java.util.*;
+
 /**
  * Since SVG objects are not layed out then this class checks
  * that this element is not being layed out inside some incorrect
@@ -80,14 +82,28 @@ public abstract class SVGObj extends FObj implements GraphicsCreator {
 		super(parent, propertyList);
 	}
 
+    protected static Hashtable ns = new Hashtable();
+
     public void addGraphic(Document doc, Element parent) {
         Element element = doc.createElementNS("http://www.w3.org/2000/svg", tagName);
 //        Element element = doc.createElement(tagName);
         for(int count = 0; count < props.length; count++) {
             if(this.properties.get(props[count]) != null) {
                 String rf = this.properties.get(props[count]).getString();
-                if(rf != null)
-                    element.setAttribute(props[count], rf);
+                if(rf != null) {
+                    if(props[count].indexOf(":") == -1) {
+                        element.setAttribute(props[count], rf);
+                    } else {
+                        String pref = props[count].substring(0, props[count].indexOf(":"));
+System.out.println(pref);
+                        if(pref.equals("xmlns")) {
+                            ns.put(props[count].substring(props[count].indexOf(":") + 1), rf);
+System.out.println(ns);
+                        }
+                        ns.put("xlink", "http://www.w3.org/1999/xlink");
+                        element.setAttributeNS((String)ns.get(pref), props[count], rf);
+                    }
+                }
             }
         }
         parent.appendChild(element);

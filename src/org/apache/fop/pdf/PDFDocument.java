@@ -915,11 +915,13 @@ public class PDFDocument {
         contents,
         pagewidth, pageheight);
 
+		if(currentPage != null) {
         Enumeration enum=currentPage.getIDList().elements();        
         while ( enum.hasMoreElements() ) {
             String id=enum.nextElement().toString();                                    
             idReferences.setInternalGoToPageReference(id,page.referencePDF());
         }
+		}
 
         /* add it to the list of objects */
         this.objects.addElement(page);

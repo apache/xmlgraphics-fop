@@ -75,6 +75,7 @@ import org.apache.batik.swing.gvt.*;
 import org.apache.batik.gvt.*;
 import org.apache.batik.gvt.renderer.*;
 import org.apache.batik.gvt.filter.*;
+import org.apache.batik.gvt.event.*;
 
 import org.w3c.dom.*;
 import org.w3c.dom.svg.*;
@@ -574,6 +575,7 @@ public class PDFRenderer implements Renderer {
             case Overflow.HIDDEN:
                 break;
         }
+
         area.getObject().render(this);
         currentStream.add("Q\n");
         currentStream.add("BT\n");
@@ -628,10 +630,12 @@ public class PDFRenderer implements Renderer {
         GraphicsNodeRenderContext rc = getRenderContext();
         BridgeContext ctx = new BridgeContext(userAgent, rc);
         GraphicsNode root;
+		//System.out.println("creating PDFGraphics2D");
         PDFGraphics2D graphics = new PDFGraphics2D(true, area.getFontState(), pdfDoc,
                           currentFontName, currentFontSize, currentXPosition,
                           currentYPosition);
         graphics.setGraphicContext(new org.apache.batik.ext.awt.g2d.GraphicContext());
+        graphics.setRenderingHints(rc.getRenderingHints());
         try {
             root = builder.build(ctx, doc);
             root.paint(graphics, rc);
@@ -1277,5 +1281,20 @@ public class PDFRenderer implements Renderer {
         {
             return new Dimension(100, 100);
         }
+
+        public EventDispatcher getEventDispatcher()
+        {
+            return null;
+        }
+
+        public boolean supportExtension(String str)
+	{
+	    return false;
+	}
+
+        public boolean hasFeature(String str)
+	{
+            return false;
+	}
     }
 }

@@ -106,5 +106,11 @@ public class SVGElementMapping implements ElementMapping {
 		builder.addMapping(uri, "animateTransform", AnimateTransform.maker());
 		builder.addMapping(uri, "cursor", Cursor.maker());
 		builder.addMapping(uri, "filter", Filter.maker());
+
+                builder.addMapping(uri, "feFlood", FeFlood.maker());
+                builder.addMapping(uri, "feGaussianBlur", FeGaussianBlur.maker());
+                builder.addMapping(uri, "feOffset", FeOffset.maker());
+                builder.addMapping(uri, "feMerge", FeMerge.maker());
+                builder.addMapping(uri, "feMergeNode", FeMergeNode.maker());
 	}
 }

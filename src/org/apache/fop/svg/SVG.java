@@ -64,6 +64,8 @@ import org.w3c.dom.*;
 import org.w3c.dom.svg.*;
 import org.w3c.dom.svg.SVGLength;
 
+import java.io.File;
+
 /**
  * class representing svg:svg pseudo flow object.
  */
@@ -329,6 +331,10 @@ public class SVG extends SVGObj implements GraphicsCreator {
 				/* create an SVG area */
 				/* if width and height are zero, may want to get the bounds of the content. */
 				SVGOMDocument doc = new SVGOMDocument(null, SVGDOMImplementation.getDOMImplementation());
+                                try {
+                                    doc.setURLObject(new File(".").toURL());
+                                } catch(Exception e) {
+                                }
 
                 DefaultSVGContext dc = new DefaultSVGContext() {
                         public float getPixelToMM() {
