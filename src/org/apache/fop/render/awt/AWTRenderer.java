@@ -373,6 +373,11 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
 
         graphics = pageImage.createGraphics();
 
+        // Nov 18, 2002 - [aml/rlc] eliminates layout problems at various scaling
+        
+        graphics.setRenderingHint (RenderingHints.KEY_FRACTIONALMETRICS,
+                                   RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+
         transform(graphics, scaleFactor, 0);
         drawFrame();
 
@@ -859,6 +864,12 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         int oldPageNumber = pageNumber;
 
         graphics = (Graphics2D)g;
+        
+        // Nov 18, 2002 - [aml/rlc] eliminates layout problems at various scaling
+        
+        graphics.setRenderingHint (RenderingHints.KEY_FRACTIONALMETRICS,
+                                   RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+
         Page aPage = (Page)pageList.get(pageIndex);
         renderPage(aPage);
         graphics = oldGraphics;

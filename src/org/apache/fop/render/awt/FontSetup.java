@@ -20,6 +20,7 @@ import org.apache.fop.apps.FOPException;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.util.List;
+import java.awt.RenderingHints ;
 import java.net.URL;
 
 /**
@@ -46,8 +47,8 @@ public class FontSetup {
      * triplets for lookup
      *
      * @param fontInfo the font info object to set up
-     * @param graphics Graphics2D to work on
-     * @throws FOPException in case of an error during font setup
+     * @param parent needed, since a live AWT component is needed
+     * to get a valid java.awt.FontMetrics object
      */
     public static void setup(FontInfo fontInfo, Graphics2D graphics)
         throws FOPException {
@@ -55,6 +56,12 @@ public class FontSetup {
         FontMetricsMapper metric;
 
         MessageHandler.logln("setting up fonts");
+
+        // Nov 18, 2002 - [aml/rlc] eliminates layout problems at various scaling
+        
+        graphics.setRenderingHint (RenderingHints.KEY_FRACTIONALMETRICS,
+                                   RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+
 
         /*
          * available java fonts are:

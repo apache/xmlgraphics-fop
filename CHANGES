@@ -1,6 +1,8 @@
 ==============================================================================
 Done since 0.20.4 release
 
+- Improved AWT Font-measuring/rendering (see bug #14657)
+  Submitted by: Ralph LaChance <Ralph_LaChance@compuserve.com>
 - Updated examples/fo files to remove all errors and warnings during build
   Submitted by: Manuel Mall <mm@arcus.com.au> (see bug #13867)
 - Perfomance tuning (reduced object creation etc.) (see bug #14103)
