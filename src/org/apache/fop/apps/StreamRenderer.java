@@ -1,3 +1,9 @@
+/*
+ * $Id$
+ * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * For details on use and redistribution please refer to the
+ * LICENSE file included with these sources.
+ */
 package org.apache.fop.apps;
 
 import java.io.OutputStream;
@@ -23,7 +29,7 @@ import org.apache.avalon.framework.logger.Logger;
   PageSequences up until all the IDs required by them
   are satisfied, at which time it will render the
   pages.<P>
- 
+
   StreamRenderer is created by Driver and called from
   FOTreeBuilder when a PageSequence is created,
   and AreaTree when a Page is formatted.<P>
@@ -169,8 +175,10 @@ public class StreamRenderer {
         long timeUsed = System.currentTimeMillis() - startTime;
 
         log.debug("Total time used: " + timeUsed + "ms");
-        log.debug("Pages rendererd: " + pageCount);
-        log.debug("Avg render time: " + (timeUsed / pageCount) + "ms/page");
+        log.debug("Pages rendered: " + pageCount);
+        if (pageCount != 0) {
+            log.debug("Avg render time: " + (timeUsed / pageCount) + "ms/page");
+        }
     }
 
     /**
@@ -309,7 +317,7 @@ public class StreamRenderer {
             return true;
         }
     }
-    
+
        public Page getNextPage(Page current, boolean isWithinPageSequence,
                             boolean isFirstCall) {
         Page nextPage = null;
