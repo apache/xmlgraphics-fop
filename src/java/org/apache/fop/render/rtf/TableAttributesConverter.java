@@ -79,7 +79,7 @@ public class TableAttributesConverter {
     static RtfAttributes convertTableAttributes(Table fobj)
             throws FOPException {
         FOPRtfAttributes attrib = new FOPRtfAttributes();
-        attrib.set(ITableAttributes.ATTR_ROW_LEFT_INDENT, fobj.getCommonMarginBlock().marginLeft);
+        attrib.setTwips(ITableAttributes.ATTR_ROW_LEFT_INDENT, fobj.getCommonMarginBlock().marginLeft);
         return attrib;
     }
 
