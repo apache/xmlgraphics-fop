@@ -50,16 +50,19 @@
  */ 
 package org.apache.fop.fo.pagination;
 
-// Avalon
-import org.apache.avalon.framework.logger.AbstractLogEnabled;
+import java.util.logging.Logger;
+
+import org.apache.fop.apps.Fop;
 
 /**
  * This class uses the 'format', 'groupingSeparator', 'groupingSize',
  * and 'letterValue' properties on fo:page-sequence to return a String
  * corresponding to the supplied integer page number.
  */
-public class PageNumberGenerator extends AbstractLogEnabled {
+public class PageNumberGenerator {
 
+    protected static final Logger logger = Logger.getLogger(Fop.fopPackage);
+    
     private String format;
     private char groupingSeparator;
     private int groupingSize;
@@ -113,7 +116,7 @@ public class PageNumberGenerator extends AbstractLogEnabled {
                 formatType = UPPERROMAN;
             } else {
                 // token not handled
-                //getLogger().debug("'format' token not recognized; using '1'");
+                logger.warning("'format' token not recognized; using '1'");
                 formatType = DECIMAL;
                 minPadding = 0;
             }
@@ -121,9 +124,11 @@ public class PageNumberGenerator extends AbstractLogEnabled {
             // only accepted token is '0+1'at this stage. Because of the
             // wonderful regular expression support in Java, we will resort to a
             // loop
+            // TODO fix for later Java regex support.  Note: this probably
+            // applies to the whole method.
             for (int i = 0; i < fmtLen - 1; i++) {
                 if (format.charAt(i) != '0') {
-                    //getLogger().debug("'format' token not recognized; using '1'");
+                    logger.warning("'format' token not recognized; using '1'");
                     formatType = DECIMAL;
                     minPadding = 0;
                 } else {
