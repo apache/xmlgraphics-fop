@@ -9,6 +9,36 @@
        new ColorType(strval)</datatype-conversion>
   </property>
   <property type="generic">
+    <name>generic-boolean</name>
+    <class-name>GenericBoolean</class-name>
+    <datatype>Enum</datatype>
+      <enumeration>
+        <value const="TRUE">true</value>
+        <value const="FALSE">false</value>
+      </enumeration>
+  </property>
+  <property type="generic">
+    <name>generic-keep</name>
+    <class-name>GenericKeep</class-name>
+    <datatype>Number</datatype>
+    <keyword-equiv match="auto" eval="true">0</keyword-equiv>
+    <keyword-equiv match="always" eval="true">-1</keyword-equiv>
+<!--    <compound>
+      <subproperty>
+        <name>within-page</name>
+        <datatype>Number</datatype>
+      </subproperty>
+      <subproperty>
+        <name>within-line</name>
+        <datatype>Number</datatype>
+      </subproperty>
+      <subproperty>
+        <name>within-column</name>
+        <datatype>Number</datatype>
+      </subproperty>
+    </compound>-->
+  </property>
+  <property type="generic">
     <name>conditional-length-template</name>
     <class-name>GenericCondLength</class-name>
     <datatype>CondLength</datatype>
@@ -300,11 +330,7 @@
   <property>
     <name>white-space-collapse</name>
     <inherited>true</inherited>
-    <datatype>Enum</datatype>
-      <enumeration>
-        <value const="TRUE">true</value>
-        <value const="FALSE">false</value>
-      </enumeration>
+    <use-generic>GenericBoolean</use-generic>
     <default>true</default>
   </property>
   <property>
@@ -376,12 +402,20 @@
   <property>
     <name>keep-with-next</name>
     <inherited>false</inherited>
-    <datatype>Enum</datatype>
-      <enumeration>
-        <value const="TRUE">true</value>
-        <value const="FALSE">false</value>
-      </enumeration>
-    <default>false</default>
+    <use-generic>GenericKeep</use-generic>
+    <default>auto</default>
+  </property>
+  <property>
+    <name>keep-with-previous</name>
+    <inherited>false</inherited>
+    <use-generic>GenericKeep</use-generic>
+    <default>auto</default>
+  </property>
+  <property>
+    <name>keep-together</name>
+    <inherited>false</inherited>
+    <use-generic>GenericKeep</use-generic>
+    <default>auto</default>
   </property>
   <property>
     <name>background-color</name>
@@ -856,6 +890,18 @@
     <inherited>false</inherited>
     <datatype>Number</datatype>
     <default>1</default>
+  </property>
+  <property>
+    <name>widows</name>
+    <inherited>true</inherited>
+    <datatype>Number</datatype>
+    <default>2</default>
+  </property>
+  <property>
+    <name>orphans</name>
+    <inherited>true</inherited>
+    <datatype>Number</datatype>
+    <default>2</default>
   </property>
 
   <property>

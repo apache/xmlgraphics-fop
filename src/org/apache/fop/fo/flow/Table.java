@@ -87,6 +87,8 @@ public class Table extends FObj {
     int borderWidth;
     int borderStyle;
     String id;
+    TableHeader tableHeader = null;
+    TableFooter tableFooter = null;
 
     Vector columns = new Vector();
     int currentColumnNumber = 0;
@@ -203,30 +205,69 @@ public class Table extends FObj {
                 c.setColumnOffset(offset);
 		fo.layout(areaContainer);
                 offset += c.getColumnWidth();
+	    } else if (fo instanceof TableHeader) {
+		if (columns.size() == 0) {
+		    MessageHandler.errorln("WARNING: current implementation of tables requires a table-column for each column, indicating column-width");
+		    return new Status(Status.OK);
+		}
+		tableHeader = (TableHeader)fo;
+		tableHeader.setColumns(columns);
+	    } else if (fo instanceof TableFooter) {
+		if (columns.size() == 0) {
+		    MessageHandler.errorln("WARNING: current implementation of tables requires a table-column for each column, indicating column-width");
+		    return new Status(Status.OK);
+		}
+		tableFooter = (TableFooter)fo;
+		tableFooter.setColumns(columns);
 	    } else if (fo instanceof TableBody) {
 		if (columns.size() == 0) {
 		    MessageHandler.errorln("WARNING: current implementation of tables requires a table-column for each column, indicating column-width");
 		    return new Status(Status.OK);
 		}
-		
+		Status status;
+		if(tableHeader != null) {
+    		if ((status = tableHeader.layout(areaContainer)).isIncomplete()) {
+    		    return new Status(Status.AREA_FULL_NONE);
+    		}
+    		tableHeader.resetMarker();
+		}
+		if(tableFooter != null) {
+    		if ((status = tableFooter.layout(areaContainer)).isIncomplete()) {
+    		    return new Status(Status.AREA_FULL_NONE);
+    		}
+    		tableFooter.resetMarker();
+		}
+		fo.setWidows(widows);
+		fo.setOrphans(orphans);
 		((TableBody) fo).setColumns(columns);
 
-		Status status;
 		if ((status = fo.layout(areaContainer)).isIncomplete()) {
 		    this.marker = i;
-		    if ((i != 0) && (status.getCode() == Status.AREA_FULL_NONE)) {
-			status = new Status(Status.AREA_FULL_SOME);
+		    if (/*(i != 0) && */(status.getCode() == Status.AREA_FULL_NONE)) {
+//			status = new Status(Status.AREA_FULL_SOME);
 		    }
 		    //areaContainer.end();
     		if(!(/*(i == 0) && */(areaContainer.getContentHeight() <= 0))) {
 	    	    area.addChild(areaContainer);
 		        area.increaseHeight(areaContainer.getHeight());
                     area.setAbsoluteHeight(areaContainer.getAbsoluteHeight());
+                if(tableFooter != null) {
+                    // move footer to bottom of area and move up body
+                    ((TableBody) fo).setYPosition(tableFooter.getYPosition());
+                    tableFooter.setYPosition(tableFooter.getYPosition() + ((TableBody) fo).getHeight());
+                }
             }
 		    return status;
 		}
+        if(tableFooter != null) {
+            // move footer to bottom of area and move up body
+            // space before and after footer will make this wrong
+            ((TableBody) fo).setYPosition(tableFooter.getYPosition());
+            tableFooter.setYPosition(tableFooter.getYPosition() + ((TableBody) fo).getHeight());
+        }
 	    }
 	}
+
         if (height != 0)
           areaContainer.setHeight(height);
 

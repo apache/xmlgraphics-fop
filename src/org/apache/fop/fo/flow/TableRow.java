@@ -75,6 +75,8 @@ public class TableRow extends FObj {
 	return new TableRow.Maker();
     }
 
+    boolean setup = false;
+
     FontState fs;
     int spaceBefore;
     int spaceAfter;
@@ -97,6 +99,8 @@ public class TableRow extends FObj {
     int paddingBottom;
     int paddingLeft;
     int paddingRight;
+    int keepWithNext;
+    int keepWithPrevious;
 
     int widthOfCellsSoFar = 0;
     int largestCellHeight = 0;
@@ -155,6 +159,7 @@ public class TableRow extends FObj {
 	  /** the width of the cell so far.*/
 	  private 	int     widthOfCellSoFar;
 
+      private int column = 0;
 
 	  /**
 	  * simple no args constructor.
@@ -223,6 +228,11 @@ public class TableRow extends FObj {
 	  public final void setWidthOfCellSoFar(int aWidth) 
 	  { widthOfCellSoFar = aWidth; }
 
+      public int getColumn()
+      { return column; }
+
+      public void setColumn(int col)
+      { column = col; }
    } 
 
 
@@ -235,12 +245,13 @@ public class TableRow extends FObj {
 	this.columns = columns;
     }
 
-    public Status layout(Area area) throws FOPException {
-	if (this.marker == BREAK_AFTER) {
-	    return new Status(Status.OK);
-	}
+    public int getKeepWithPrevious()
+    {
+        return keepWithPrevious;
+    }
 
-	if (this.marker == START) {
+    public void doSetup(Area area) throws FOPException
+    {
 	    String fontFamily =
 		this.properties.get("font-family").getString(); 
 	    String fontStyle =
@@ -303,6 +314,10 @@ public class TableRow extends FObj {
 		this.borderRightStyle = 
 		    this.properties.get("border-right-style").getEnum();
 	    }
+	    this.keepWithNext = 
+		this.properties.get("keep-with-next").getNumber().intValue();
+	    this.keepWithPrevious = 
+		this.properties.get("keep-with-previous").getNumber().intValue();
 	    this.paddingTop =
 		this.properties.get("padding").getLength().mvalue();
             this.paddingLeft = this.paddingTop;
@@ -320,6 +335,17 @@ public class TableRow extends FObj {
             }
             this.id=
                  this.properties.get("id").getString();
+         setup = true;
+    }
+
+    public Status layout(Area area) throws FOPException {
+	if (this.marker == BREAK_AFTER) {
+	    return new Status(Status.OK);
+	}
+
+	if (this.marker == START) {
+	    if(!setup)
+	        doSetup(area);
 
 	    if (area instanceof BlockArea) {
 		area.end();
@@ -386,10 +412,10 @@ public class TableRow extends FObj {
         areaContainer.setIDReferences(area.getIDReferences());
 
 	int numChildren = this.children.size();
-	if (numChildren != columns.size()) {
-	    MessageHandler.errorln("WARNING: Number of children under table-row not equal to number of table-columns");
-	    return new Status(Status.OK);
-	}
+//	if (numChildren != columns.size()) {
+//	    MessageHandler.errorln("WARNING: Number of children under table-row not equal to number of table-columns");
+//	    return new Status(Status.OK);
+//	}
 
 	// added by Eric Schaeffer
 	widthOfCellsSoFar = 0;
@@ -398,12 +424,19 @@ public class TableRow extends FObj {
 		// added by Hani Elabed 11/27/2000
 	boolean someCellDidNotLayoutCompletely = false;
 	
-	
+	int colCount = -1;
 	for (int i = this.marker; i < numChildren; i++) {
 	    TableCell cell = (TableCell) children.elementAt(i);
 
 			// added by Hani Elabed 11/22/2000
 		CellState cellState = (CellState) cells.elementAt( i );
+
+	    if(colCount == -1) {
+	        colCount = cellState.getColumn();
+	    }
+	    cell.doSetup(areaContainer);
+	    int numCols = cell.getNumColumnsSpanned();
+	    int numRows = cell.getNumRowsSpanned();
 
 
 	    //if (this.isInListBody) {
@@ -419,7 +452,12 @@ public class TableRow extends FObj {
 		//cell.setStartOffset(widthOfCellsSoFar);
 		cell.setStartOffset( cellState.getWidthOfCellSoFar() );
 
-	    int width = ((TableColumn) columns.elementAt(i)).getColumnWidth();
+	    int width = 0;
+	    cellState.setColumn(colCount);
+	    for(int count = 0; count < numCols && count < columns.size(); count++) {
+	        width += ((TableColumn) columns.elementAt(colCount)).getColumnWidth();
+	        colCount++;
+	    }
 
 	    cell.setWidth(width);
 	    widthOfCellsSoFar += width;
@@ -428,10 +466,10 @@ public class TableRow extends FObj {
 	    if ((status = cell.layout(areaContainer)).isIncomplete()) 
 	    {
 			this.marker = i;
-			if ((i != 0) && (status.getCode() == Status.AREA_FULL_NONE)) 
+/*			if ((i != 0) && (status.getCode() == Status.AREA_FULL_NONE)) 
 			{
 			    status = new Status(Status.AREA_FULL_SOME);
-			}
+			}*/
 
 
 			if( status.getCode() == Status.AREA_FULL_SOME )
@@ -464,6 +502,7 @@ public class TableRow extends FObj {
 					// removing something that was added by succession
 					// of cell.layout()
 					// just to keep my sanity here, Hani
+    	        area.increaseHeight(areaContainer.getHeight());
     	        area.removeChild(areaContainer);
                 this.resetMarker();                
                 this.removeID(area.getIDReferences());
@@ -495,8 +534,10 @@ public class TableRow extends FObj {
 	}
 
 		// added by Dresdner Bank, Germany
-    if(spacer != null)
+    if(spacer != null) {
         area.addChild(spacer);
+        spacer = null;
+    }
 
 	area.addChild(areaContainer);
 	areaContainer.end();
@@ -544,6 +585,9 @@ public class TableRow extends FObj {
 	}
 	else
 	{
+	    if (keepWithNext != 0) {
+	        return new Status(Status.KEEP_WITH_NEXT);
+    	}
 		return new Status(Status.OK);
 	}
 	
@@ -551,5 +595,20 @@ public class TableRow extends FObj {
 
     public int getAreaHeight() {
 	return areaContainer.getHeight();
+    }
+
+    public void removeLayout(Area area)
+    {
+        if(spacer != null)
+	        area.removeChild(spacer);
+
+			// removing something that was added by succession
+			// of cell.layout()
+			// just to keep my sanity here, Hani
+//    	        area.increaseHeight(areaContainer.getHeight());
+        area.removeChild(areaContainer);
+        this.resetMarker();                
+        this.removeID(area.getIDReferences());
+        marker = 0;
     }
 }

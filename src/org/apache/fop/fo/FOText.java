@@ -95,6 +95,23 @@ public class FOText extends FONode {
         this.underlined = ul;
     }
 
+    public boolean willCreateArea()
+    {
+        this.whiteSpaceCollapse = this.parent.properties.get(
+                                    "white-space-collapse").getEnum();
+        if(this.whiteSpaceCollapse == WhiteSpaceCollapse.FALSE && length > 0) {
+            return true;
+        }
+        for (int i = start; i < start + length - 1; i++) {
+            char ch = ca[i];
+            if (!((ch == ' ') || (ch == '\n') || (ch == '\r') ||
+                    (ch == '\t'))) { // whitespace
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Status layout(Area area) throws FOPException {
         if (!(area instanceof BlockArea)) {
             MessageHandler.errorln("WARNING: text outside block area" +
