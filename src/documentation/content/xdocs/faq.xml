@@ -1660,11 +1660,14 @@ class rendtest {
             </ul>
           </li>
           <li>
-            Something doesn't work with FOP but works with another formatter
-            (AntennaHouse, PassiveTex). Check whether this is already mentioned
-            in the release notes, the FOP limitations document or the FAQ. Post
-            to fop-dev or open a bug on <link
-            href="http://nagoya.apache.org">bugzilla</link>.
+            In the case where something works properly with another formatter,
+            (AntennaHouse, PassiveTex, etc.) but doesn't work with FOP, please
+            check the <link href="relnotes.html">Release Notes</link>, the
+            <link href="compliance.html">FOP Standards Compliance</link> document,
+            and the remaining FAQ in this document. If not found there, look at the
+            list of <link href="bugs.html#issues_existing">Bugs Already Reported</link>.
+            If not found there, please post a question on the fop-user mailing list
+            or <link href="bugs.html#issues_new">Open a New Bug</link>.
           </li>
           <li>
             Question about how to use FOP, how to perform certain tasks with FOP
