@@ -105,6 +105,7 @@ public class Fop extends Task {
     File userConfig;
     int messageType = Project.MSG_VERBOSE;
     boolean logFiles = true;
+    private boolean force = false;
 
     /**
      * Sets the input file
@@ -134,6 +135,24 @@ public class Fop extends Task {
      */
     public void addFileset(FileSet set) {
         filesets.add(set);
+    }
+
+    /**
+     * Set whether to check dependencies, or to always generate;
+     * optional, default is false.
+     *
+     * @param force true if always generate.
+     */
+    public void setForce(boolean force) {
+        this.force = force;
+    }
+
+    /**
+     * Gets the force attribute
+     * @return the force attribute
+     */
+    public boolean getForce() {
+        return force;
     }
 
     /**
@@ -357,7 +376,10 @@ class FOPTaskStarter extends Starter {
         int rint = determineRenderer(task.getFormat());
         String newExtension = determineExtension(rint);
 
+        // actioncount = # of fofiles actually processed through FOP
         int actioncount = 0;
+        // skippedcount = # of fofiles which haven't changed (force = "false")
+        int skippedcount = 0; 
 
         // deal with single source file
         if (task.getFofile() != null) {
@@ -369,8 +391,17 @@ class FOPTaskStarter extends Starter {
                 if (task.getOutdir() != null) {
                     outf = new File(task.getOutdir(), outf.getName());
                 }
-                render(task.getFofile(), outf, rint);
-                actioncount++;
+
+                // Render if "force" flag is set OR 
+                // OR output file doesn't exist OR
+                // output file is older than input file
+                if (task.getForce() || !outf.exists() 
+                    || (task.getFofile().lastModified() > outf.lastModified() )) {
+                    render(task.getFofile(), outf, rint);
+                    actioncount++;
+                } else if (outf.exists() && (task.getFofile().lastModified() <= outf.lastModified() )) {
+                    skippedcount++;
+                }
             }
         }
 
@@ -413,15 +444,27 @@ class FOPTaskStarter extends Starter {
                     task.log("Error setting base directory: " + e, Project.MSG_ERR);
                 }
 
-                render(f, outf, rint);
-                actioncount++;
+                // Render if "force" flag is set OR 
+                // OR output file doesn't exist OR
+                // output file is older than input file
+                if (task.getForce() || !outf.exists() 
+                    || (f.lastModified() > outf.lastModified() )) {
+                    render(f, outf, rint);
+                    actioncount++;
+                } else if (outf.exists() && (f.lastModified() <= outf.lastModified() )) {
+                    skippedcount++;
+                }
+                
             }
         }
 
-        if (actioncount == 0) {
-            task.log(
-              "No files processed. No files were selected by the filesets and no fofile was set." ,
-              Project.MSG_WARN);
+        if (actioncount + skippedcount == 0) {
+            task.log("No files processed. No files were selected by the filesets "
+                + "and no fofile was set." , Project.MSG_WARN);
+        } else if (skippedcount > 0) {  
+            task.log(skippedcount + " xslfo file(s) skipped (no change found"
+                + " since last generation; set force=\"true\" to override)."
+                , Project.MSG_INFO);
         }
     }
 
