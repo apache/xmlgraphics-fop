@@ -180,35 +180,6 @@ public class XTDriver {
     }
 
     /**
-     * add the element mapping with the given class name
-     */
-    public void addPropertyList(String listClassName) {
-        createPropertyList(listClassName).addToBuilder(this.treeBuilder);
-    }
-
-    /**
-     * protected method used by addPropertyList(String) to
-     * instantiate list mapping class
-     */
-    protected PropertyListMapping createPropertyList(String listClassName) {
-        MessageHandler.logln("using property list mapping " + listClassName);
-
-        try {
-            return (PropertyListMapping)Class.forName(listClassName).newInstance();
-        } catch (ClassNotFoundException e) {
-            MessageHandler.errorln("Could not find " + listClassName);
-        } catch (InstantiationException e) {
-            MessageHandler.errorln("Could not instantiate " + listClassName);
-        } catch (IllegalAccessException e) {
-            MessageHandler.errorln("Could not access " + listClassName);
-        } catch (ClassCastException e) {
-            MessageHandler.errorln(listClassName
-                                   + " is not an property list");
-        }
-        return null;
-    }
-
-    /**
      * return the tree builder (a SAX DocumentHandler).
      *
      * used in situations where SAX is used but not via a FOP-invoked
