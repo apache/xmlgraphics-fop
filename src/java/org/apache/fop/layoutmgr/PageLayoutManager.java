@@ -467,61 +467,61 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     }
 
     private void layoutStaticContent(Region region, int regionClass) {
-        if (region != null) {
-            StaticContent flow = pageSequence
-              .getStaticContent(region.getRegionName());
-            if (flow != null) {
-                RegionViewport reg = curPage.getPage()
-                  .getRegion(regionClass);
-                reg.getRegion().setIPD((int)reg.getViewArea().getWidth());
-                if (reg == null) {
-                    getLogger().error("no region viewport: shouldn't happen");
-                }
-                StaticContentLayoutManager lm = flow.getLayoutManager();
-                lm.setUserAgent(getUserAgent());
-                lm.init();
-                lm.setRegionReference(reg.getRegion());
-                lm.setParent(this);
-                LayoutContext childLC = new LayoutContext(0);
-                childLC.setStackLimit(new MinOptMax((int)curPage.getViewArea().getHeight()));
-                childLC.setRefIPD((int)reg.getViewArea().getWidth());
-
-                while (!lm.isFinished()) {
-                    BreakPoss bp = lm.getNextBreakPoss(childLC);
-                    if (bp != null) {
-                        List vecBreakPoss = new ArrayList();
-                        vecBreakPoss.add(bp);
-                        lm.addAreas(new BreakPossPosIter(vecBreakPoss, 0,
-                                                          vecBreakPoss.size()), null);
-                    } else {
-                      getLogger().error("bp==null  cls=" + regionClass);
-                    }
-                }
-                //lm.flush();
-                lm.reset(null);
+        if (region == null) {
+            return;
+        }
+        StaticContent flow = pageSequence.getStaticContent(region.getRegionName());
+        if (flow == null) {
+            return;
+        }
+        RegionViewport reg = curPage.getPage().getRegion(regionClass);
+        reg.getRegion().setIPD((int)reg.getViewArea().getWidth());
+        if (reg == null) {
+            getLogger().error("no region viewport: shouldn't happen");
+        }
+        StaticContentLayoutManager lm = flow.getLayoutManager();
+        lm.setUserAgent(getUserAgent());
+        lm.init();
+        lm.setRegionReference(reg.getRegion());
+        lm.setParent(this);
+        LayoutContext childLC = new LayoutContext(0);
+        childLC.setStackLimit(new MinOptMax((int)curPage.getViewArea().getHeight()));
+        childLC.setRefIPD((int)reg.getViewArea().getWidth());
+        while (!lm.isFinished()) {
+            BreakPoss bp = lm.getNextBreakPoss(childLC);
+            if (bp != null) {
+                List vecBreakPoss = new ArrayList();
+                vecBreakPoss.add(bp);
+                lm.addAreas(new BreakPossPosIter(vecBreakPoss, 0,
+                                                  vecBreakPoss.size()), null);
+            } else {
+              getLogger().error("bp==null  cls=" + regionClass);
             }
         }
+        //lm.flush();
+        lm.reset(null);
     }
 
     private void finishPage() {
-        if (curPage != null) {
-            // Layout static content into the regions
-            // Need help from pageseq for this
-            layoutStaticContent(currentSimplePageMaster.getRegion(Region.BEFORE),
-                                Region.BEFORE_CODE);
-            layoutStaticContent(currentSimplePageMaster.getRegion(Region.AFTER),
-                                Region.AFTER_CODE);
-            layoutStaticContent(currentSimplePageMaster.getRegion(Region.START),
-                                Region.START_CODE);
-            layoutStaticContent(currentSimplePageMaster.getRegion(Region.END),
-                                Region.END_CODE);
-            // Queue for ID resolution and rendering
-            areaTree.addPage(curPage);
-            curPage = null;
-            curBody = null;
-            curSpan = null;
-            curFlow = null;
+        if (curPage == null) {
+            return;
         }
+        // Layout static content into the regions
+        // Need help from pageseq for this
+        layoutStaticContent(currentSimplePageMaster.getRegion(Region.BEFORE),
+                            Region.BEFORE_CODE);
+        layoutStaticContent(currentSimplePageMaster.getRegion(Region.AFTER),
+                            Region.AFTER_CODE);
+        layoutStaticContent(currentSimplePageMaster.getRegion(Region.START),
+                            Region.START_CODE);
+        layoutStaticContent(currentSimplePageMaster.getRegion(Region.END),
+                            Region.END_CODE);
+        // Queue for ID resolution and rendering
+        areaTree.addPage(curPage);
+        curPage = null;
+        curBody = null;
+        curSpan = null;
+        curFlow = null;
     }
 
     /**
