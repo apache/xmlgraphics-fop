@@ -20,7 +20,6 @@ package org.apache.fop.apps;
 
 // FOP
 import org.apache.fop.fo.FOInputHandler;
-import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.Renderer;
 
 // SAX
@@ -35,9 +34,6 @@ public class Document {
     /** The parent Driver object */
     private Driver driver;
 
-    /** The Font information relevant for this document */
-    private FontInfo fontInfo;
-    
     /** The Renderer being used for this document */
     protected Renderer renderer;
 
@@ -53,15 +49,6 @@ public class Document {
      */
     public Document(Driver driver) {
         this.driver = driver;
-        this.fontInfo = new FontInfo();
-    }
-
-    /**
-     * Retrieve the font information for this document
-     * @return the FontInfo instance for this document
-     */
-    public FontInfo getFontInfo() {
-        return this.fontInfo;
     }
 
     /**
@@ -74,7 +61,6 @@ public class Document {
 
     /**
      * Get the renderer for this document
-     *
      * @return the renderer for this document
      */
     public Renderer getRenderer() {

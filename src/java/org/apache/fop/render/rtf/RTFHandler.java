@@ -131,7 +131,7 @@ public class RTFHandler extends FOInputHandler {
         bDefer = false;
         bDeferredExecution = false;
         iNestCount=0;
-        FontSetup.setup(doc.getFontInfo(), null);
+        FontSetup.setup(fontInfo, null);
         log.warn(ALPHA_WARNING);
     }
 

@@ -74,7 +74,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         childLMiter = new BlockLMiter(this, childLMiter);
         userAgent = inBlock.getUserAgent();
         setBlockTextInfo(inBlock.getPropertyManager().getTextLayoutProps(
-            inBlock.getFOInputHandler().getDocument()));
+            inBlock.getFOInputHandler().getFontInfo()));
     }
 
     private void setBlockTextInfo(TextInfo ti) {

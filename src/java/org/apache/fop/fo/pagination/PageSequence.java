@@ -23,10 +23,12 @@ import java.util.HashMap;
 
 // XML
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.apps.FOPException;
 
@@ -131,6 +133,103 @@ public class PageSequence extends FObj {
     }
 
     /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+        XSL/FOP Content Model: (title?,static-content*,flow)
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) {
+        if (nsURI == FOElementMapping.URI) {
+            if (localName.equals("title")) {
+                if (titleFO != null) {
+                    tooManyNodesError(loc, "fo:title");
+                } else if (flowMap.size() > 0) {
+                    nodesOutOfOrderError(loc, "fo:title", "fo:static-content");
+                } else if (mainFlow != null) {
+                    nodesOutOfOrderError(loc, "fo:title", "fo:flow");
+                }
+            } else if (localName.equals("static-content")) {
+                if (mainFlow != null) {
+                    nodesOutOfOrderError(loc, "fo:static-content", "fo:flow");
+                }                
+            } else if (localName.equals("flow")) {
+                if (mainFlow != null) {
+                    tooManyNodesError(loc, "fo:flow");
+                }
+            } else {
+                invalidChildError(loc, nsURI, localName);
+            }
+        } else {
+            invalidChildError(loc, nsURI, localName);
+        }
+    }
+
+    /**
+     * Signal end of this xml element.
+     * This passes the end page sequence to the structure handler
+     * so it can act upon that.
+     */
+    protected void end() {
+        if (mainFlow == null) {
+           missingChildElementError("(title?,static-content*,flow)");
+        }
+        try {
+            getFOInputHandler().endPageSequence(this);
+        } catch (FOPException fopex) {
+            getLogger().error("Error in PageSequence.end(): "
+              + fopex.getMessage(), fopex);
+        }
+    }
+
+    /**
+     * Validate the child being added and initialize internal variables.
+     * XSL content model for page-sequence:
+     * <pre>(title?,static-content*,flow)</pre>
+     *
+     * @param child The flow object child to be added to the PageSequence.
+     */
+    public void addChild(FONode child) {
+        try {
+            String childName = child.getName();
+            if (childName.equals("fo:title")) {
+               this.titleFO = (Title)child;
+            } else if (childName.equals("fo:flow")) {
+                this.mainFlow = (Flow)child;
+                String flowName = this.mainFlow.getFlowName();
+                if (flowMap.containsKey(flowName)) {
+                    throw new FOPException("flow-name "
+                        + flowName
+                        + " is not unique within an fo:page-sequence");
+                }
+                if (!this.layoutMasterSet.regionNameExists(flowName)) {
+                    getLogger().error("region-name '"
+                        + flowName
+                        + "' doesn't exist in the layout-master-set.");
+                }
+                // Don't add main flow to the flow map
+//              addFlow(mainFlow);
+                startStructuredPageSequence();
+                super.addChild(child); // For getChildren
+            } else if (childName.equals("fo:static-content")) {
+                String flowName = ((StaticContent)child).getFlowName();
+                if (flowMap.containsKey(flowName)) {
+                    throw new FOPException("flow-name " + flowName
+                              + " is not unique within an fo:page-sequence");
+                }
+                if (!this.layoutMasterSet.regionNameExists(flowName)) {
+                    throw new FOPException("region-name '" + flowName
+                              + "' doesn't exist in the layout-master-set.");
+                }
+                flowMap.put(flowName, child);
+//              addFlow((Flow)child);
+                startStructuredPageSequence();
+            } 
+        } catch (FOPException fopex) {
+            getLogger().error("Error in PageSequence.addChild(): "
+                + fopex.getMessage(), fopex);
+        }
+    }
+
+
+    /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
     protected void addProperties(Attributes attlist) throws FOPException {
@@ -221,73 +320,6 @@ public class PageSequence extends FObj {
 
 
     /**
-     * Validate the child being added and initialize internal variables.
-     * XSL content model for page-sequence:
-     * <pre>(title?,static-content*,flow)</pre>
-     *
-     * @param child The flow object child to be added to the PageSequence.
-     */
-    public void addChild(FONode child) {
-        try {
-            String childName = child.getName();
-            if (childName.equals("fo:title")) {
-                if (this.flowMap.size() > 0) {
-                    getLogger().warn("fo:title should be first in page-sequence");
-                } else {
-                    this.titleFO = (Title)child;
-                }
-            } else if (childName.equals("fo:flow")) {
-                if (this.mainFlow != null) {
-                    throw new FOPException("Only a single fo:flow permitted"
-                                           + " per fo:page-sequence");
-                } else {
-                    this.mainFlow = (Flow)child;
-                    String flowName = this.mainFlow.getFlowName();
-                    if (flowMap.containsKey(flowName)) {
-                        throw new FOPException("flow-name "
-                                               + flowName
-                                               + " is not unique within an fo:page-sequence");
-                    }
-                    if (!this.layoutMasterSet.regionNameExists(flowName)) {
-                        getLogger().error("region-name '"
-                                          + flowName
-                                          + "' doesn't exist in the layout-master-set.");
-                    }
-                    // Don't add main flow to the flow map
-//                    addFlow(mainFlow);
-                    startStructuredPageSequence();
-                    super.addChild(child); // For getChildren
-                }
-            } else if (childName.equals("fo:static-content")) {
-                if (this.mainFlow != null) {
-                  throw new FOPException(childName
-                                         + " must precede fo:flow; ignoring");
-                }
-                String flowName = ((StaticContent)child).getFlowName();
-                if (flowMap.containsKey(flowName)) {
-                  throw new FOPException("flow-name " + flowName
-                                         + " is not unique within an fo:page-sequence");
-                }
-                if (!this.layoutMasterSet.regionNameExists(flowName)) {
-                    getLogger().error("region-name '" + flowName
-                                      + "' doesn't exist in the layout-master-set.");
-                }
-                flowMap.put(flowName, child);
-//                    addFlow((Flow)child);
-                startStructuredPageSequence();
-            } else {
-                // Ignore it!
-                getLogger().warn("FO '" + childName
-                    + "' not a legal page-sequence child.");
-                return;
-            }
-        } catch (FOPException fopex) {
-            getLogger().error("Error in PageSequence.addChild(): "
-                + fopex.getMessage(), fopex);
-        }
-    }
-
-    /**
      * Start the page-sequence logic in the Structured Handler
      */
     private void startStructuredPageSequence() {
@@ -297,19 +329,6 @@ public class PageSequence extends FObj {
         }
     }
 
-    /**
-     * Signal end of this xml element.
-     * This passes the end page sequence to the structure handler
-     * so it can act upon that.
-     */
-    protected void end() {
-        try {
-            getFOInputHandler().endPageSequence(this);
-        } catch (FOPException fopex) {
-            getLogger().error("Error in PageSequence.end(): "
-              + fopex.getMessage(), fopex);
-        }
-    }
 
     /**
      * Initialize the current page number for the start of the page sequence.

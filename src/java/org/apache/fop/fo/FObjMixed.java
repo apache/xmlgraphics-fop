@@ -46,8 +46,8 @@ public class FObjMixed extends FObj {
         if (textInfo == null) {
             // Really only need one of these, but need to get fontInfo
             // stored in propMgr for later use.
-            propMgr.setFontInfo(getFOInputHandler().getDocument());
-            textInfo = propMgr.getTextLayoutProps(getFOInputHandler().getDocument());
+            propMgr.setFontInfo(getFOInputHandler().getFontInfo());
+            textInfo = propMgr.getTextLayoutProps(getFOInputHandler().getFontInfo());
         }
 
         FOText ft = new FOText(data, start, length, textInfo, this);

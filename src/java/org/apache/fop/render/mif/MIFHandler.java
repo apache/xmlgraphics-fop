@@ -75,7 +75,7 @@ public class MIFHandler extends FOInputHandler {
     public MIFHandler(Document doc, OutputStream os) {
         super(doc);
         outStream = os;
-        FontSetup.setup(doc.getFontInfo(), null);
+        FontSetup.setup(fontInfo, null);
     }
 
     /**
