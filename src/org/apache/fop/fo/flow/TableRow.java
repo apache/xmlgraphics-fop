@@ -209,8 +209,6 @@ public class TableRow extends FObj {
     }
 
     public Status layout(Area area) throws FOPException {
-        boolean configID = false;
-
         if (this.marker == BREAK_AFTER) {
             return new Status(Status.OK);
         }
@@ -226,9 +224,9 @@ public class TableRow extends FObj {
                 initCellArray();
                 // check to make sure this row hasn't been partially
                 // laid out yet (with an id created already)
-                area.getIDReferences().createID(id);
-                configID = true;
             }
+            // create ID also in case the row has been reset
+            area.getIDReferences().createID(id);
 
             this.marker = 0;
             int breakStatus = propMgr.checkBreakBefore(area);
@@ -236,7 +234,6 @@ public class TableRow extends FObj {
                 return new Status(breakStatus);
         }
 
-        // if (marker == 0 && configID) {
         if (marker == 0) {    // KDL: need to do this if thrown or if split?
             // configure id
             area.getIDReferences().configureID(id, area);
