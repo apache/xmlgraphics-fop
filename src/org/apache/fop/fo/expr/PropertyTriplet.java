@@ -32,6 +32,7 @@ public class PropertyTriplet {
     private PropertyValue computed;
     private PropertyValue actual;
     private String expression;
+    private boolean wasSpecified;
 
     public PropertyTriplet() {
         // PropertyValues and expression are null
@@ -167,6 +168,11 @@ public class PropertyTriplet {
 
     public PropertyValue getActual() {
         return actual;
+    }
+
+    public PropertyValue getComputedOrSpecified() {
+        return computed != null ? computed
+                : specified != null ? specified : null;
     }
 
     public int getProperty() {
