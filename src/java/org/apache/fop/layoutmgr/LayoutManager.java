@@ -27,7 +27,7 @@ import org.apache.fop.area.Resolveable;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.FOTreeHandler;
+import org.apache.fop.area.AreaTreeHandler;
 
 /**
  * The interface for all LayoutManagers.
@@ -58,10 +58,10 @@ public interface LayoutManager {
     LayoutManager getParent();
 
     /**
-     * Get the FOTreeHandler object that is activating the LM Tree
-     * @return the FOTreeHandler object
+     * Get the AreaTreeHandler object that is activating the LM Tree
+     * @return the AreaTreeHandler object
      */
-    FOTreeHandler getFOTreeHandler();
+    AreaTreeHandler getAreaTreeHandler();
 
     /**
      * Initialize this layout manager.

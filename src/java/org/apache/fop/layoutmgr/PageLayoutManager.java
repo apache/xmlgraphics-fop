@@ -21,7 +21,7 @@ package org.apache.fop.layoutmgr;
 import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.area.CTM;
-import org.apache.fop.area.AreaTree;
+import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.PageViewport;
@@ -41,7 +41,6 @@ import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.datatypes.FODimension;
 
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.FOTreeHandler;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.pagination.PageNumberGenerator;
@@ -108,9 +107,8 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      * laid out and ready for rendering, except for resolution of ID
      * references?
      */
-    private AreaTree areaTree;
+    private AreaTreeHandler areaTreeHandler;
     private PageSequence pageSequence;
-    private FOTreeHandler foTreeHandler;
 
     /**
      * This is the SimplePageMaster that should be used to create the page. It
@@ -133,12 +131,10 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      * @param areaTree the area tree to add pages to
      * @param pageseq the page sequence fo
      */
-    public PageLayoutManager(AreaTree areaTree, PageSequence pageseq,
-        FOTreeHandler foTreeHandler) {
+    public PageLayoutManager(AreaTreeHandler areaTreeHandler, PageSequence pageseq) {
         super(pageseq);
-        this.areaTree = areaTree;
+        this.areaTreeHandler = areaTreeHandler;
         pageSequence = pageseq;
-        this.foTreeHandler = foTreeHandler;
     }
 
     /**
@@ -262,7 +258,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      * @return the first page viewport that contains the reference
      */
     public PageViewport resolveRefID(String ref) {
-        List list = areaTree.getIDReferences(ref);
+        List list = areaTreeHandler.getIDReferences(ref);
         if (list != null && list.size() > 0) {
             return (PageViewport)list.get(0);
         }
@@ -292,7 +288,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      * @param id the ID reference to add
      */
     public void addIDToPage(String id) {
-        areaTree.addIDRef(id, curPage);
+        areaTreeHandler.addIDRef(id, curPage);
     }
 
     /**
@@ -310,7 +306,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         // add unresolved to tree
         // adds to the page viewport so it can serialize
         curPage.addUnresolvedID(id, res);
-        areaTree.addUnresolvedID(id, curPage);
+        areaTreeHandler.addUnresolvedID(id, curPage);
     }
 
     /**
@@ -345,7 +341,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
             // go back over pages until mark found
             // if document boundary then keep going
             boolean doc = boundary == RetrieveBoundary.DOCUMENT;
-            AreaTreeModel atm = areaTree.getAreaTreeModel();
+            AreaTreeModel atm = areaTreeHandler.getAreaTreeModel();
             int seq = atm.getPageSequenceCount();
             int page = atm.getPageCount(seq) - 1;
             while (page >= 0) {
@@ -503,7 +499,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         layoutStaticContent(currentSimplePageMaster.getRegion(Region.END_CODE),
                             Region.END_CODE);
         // Queue for ID resolution and rendering
-        areaTree.addPage(curPage);
+        areaTreeHandler.addPage(curPage);
         curPage = null;
         curBody = null;
         curSpan = null;
@@ -903,7 +899,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     /**
      * @return the apps.FOTreeHandler object controlling this generation
      */
-    public FOTreeHandler getFOTreeHandler() {
-        return foTreeHandler;
+    public AreaTreeHandler getAreaTreeHandler() {
+        return areaTreeHandler;
     }
 }
