@@ -9,7 +9,7 @@
 	<separator/>
 	<page id="running" label="Running FOP" source="fop/running.xml"/>
 	<page id="embedding" label="Embedding" source="fop/embedding.xml"/>
-	<page id="output" label="Ouput Formats" source="fop/output.xml"/>
+	<page id="output" label="Output Formats" source="fop/output.xml"/>
 	<page id="implemented" label="Features" source="fop/implemented.xml"/>
 	<page id="todo" label="TODO" source="fop/todo.xml"/>
 	<page id="limitations" label="Limitations" source="fop/limitations.xml"/>
