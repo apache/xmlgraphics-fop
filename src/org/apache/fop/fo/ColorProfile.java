@@ -35,6 +35,10 @@ public class ColorProfile extends ToBeImplementedElement {
                    PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
         this.name = "fo:color-profile";
+
+      //this.properties.get("src");
+      //this.properties.get("color-profile-name");
+      //this.properties.get("rendering-intent");
     }
 
 }

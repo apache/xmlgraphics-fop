@@ -2,7 +2,7 @@
  *
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the 
- * LICENSE file included with these sources."
+ * LICENSE file included with these sources.
  */
 package org.apache.fop.fo.pagination;
 
@@ -10,6 +10,8 @@ package org.apache.fop.fo.pagination;
 import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.RegionArea;
+import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.layout.BackgroundProps;
 import org.apache.fop.apps.FOPException;				   
 
 public class RegionBefore extends Region {
@@ -40,7 +42,19 @@ public class RegionBefore extends Region {
 		      int allocationRectangleYPosition,
 		      int allocationRectangleWidth,
 		      int allocationRectangleHeight) {
-	int extent = this.properties.get("extent").getLength().mvalue();
+
+// Common Border, Padding, and Background Properties
+BorderAndPadding bap = propMgr.getBorderAndPadding();
+BackgroundProps bProps = propMgr.getBackgroundProps();
+
+      //this.properties.get("clip");
+      //this.properties.get("display-align");
+  int extent = this.properties.get("extent").getLength().mvalue();
+      //this.properties.get("overflow");
+      //this.properties.get("precedence");
+      //this.properties.get("region-name");
+      //this.properties.get("reference-orientation");
+      //this.properties.get("writing-mode");
 		
 	return new RegionArea(allocationRectangleXPosition,
 			  allocationRectangleYPosition,

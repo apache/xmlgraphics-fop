@@ -47,6 +47,8 @@ public class Root extends FObj {
         super(parent, propertyList);
         this.name = "fo:root";
 
+      //this.properties.get("media-usage");
+
         pageSequences = new Vector();
 		
         if (parent != null) {

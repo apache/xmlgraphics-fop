@@ -9,6 +9,8 @@ package org.apache.fop.fo;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.layout.MarginProps;
+import org.apache.fop.layout.BackgroundProps;
 import org.apache.fop.fo.properties.BreakAfter;
 import org.apache.fop.fo.properties.BreakBefore;
 import org.apache.fop.fo.properties.Constants;
@@ -184,5 +186,29 @@ public class PropertyManager {
                 return Status.OK;
         }
     }
+
+public MarginProps getMarginProps()
+{
+MarginProps props = new MarginProps();
+
+// Common Margin Properties-Block
+  props.marginTop = this.properties.get("margin-top").getLength().mvalue();
+  props.marginBottom = this.properties.get("margin-bottom").getLength().mvalue();
+  props.marginLeft = this.properties.get("margin-left").getLength().mvalue();
+  props.marginRight = this.properties.get("margin-right").getLength().mvalue();
+/*
+// need to get opt, min and max
+  props.spaceBefore = this.properties.get("space-before").getLength().mvalue();
+  props.spaceAfter = this.properties.get("space-after").getLength().mvalue();
+  props.startIndent = this.properties.get("start-indent").getLength().mvalue();
+  props.endIndent = this.properties.get("end-indent").getLength().mvalue();
+*/
+return props;
+}
+
+public BackgroundProps getBackgroundProps() {
+BackgroundProps bp = new BackgroundProps();
+return bp;
+}
 
 }

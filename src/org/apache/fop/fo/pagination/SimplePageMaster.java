@@ -1,5 +1,4 @@
 /*-- $Id$ --
- *
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the 
  * LICENSE file included with these sources."
@@ -14,6 +13,7 @@ import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.PageMaster;
 import org.apache.fop.layout.RegionArea;
 import org.apache.fop.layout.BodyRegionArea;
+import org.apache.fop.layout.MarginProps;
 import org.apache.fop.apps.FOPException;				   
 
 import java.util.*;
@@ -71,16 +71,16 @@ public class SimplePageMaster extends FObj {
     protected void end() {
 	int pageWidth = this.properties.get("page-width").getLength().mvalue();
 	int pageHeight = this.properties.get("page-height").getLength().mvalue();
+      //this.properties.get("reference-orientation");
+      //this.properties.get("writing-mode");
 
-	int marginTop = this.properties.get("margin-top").getLength().mvalue();
-	int marginBottom = this.properties.get("margin-bottom").getLength().mvalue();
-	int marginLeft = this.properties.get("margin-left").getLength().mvalue();
-	int marginRight = this.properties.get("margin-right").getLength().mvalue();
+// Common Margin Properties-Block
+MarginProps mProps = propMgr.getMarginProps();
 
-	int contentRectangleXPosition = marginLeft;
-	int contentRectangleYPosition = pageHeight - marginTop;
-	int contentRectangleWidth = pageWidth - marginLeft - marginRight;
-	int contentRectangleHeight = pageHeight - marginTop - marginBottom;
+	int contentRectangleXPosition = mProps.marginLeft;
+	int contentRectangleYPosition = pageHeight - mProps.marginTop;
+	int contentRectangleWidth = pageWidth - mProps.marginLeft - mProps.marginRight;
+	int contentRectangleHeight = pageHeight - mProps.marginTop - mProps.marginBottom;
 		
 	this.pageMaster = new PageMaster(pageWidth, pageHeight);
 	if (getRegion(RegionBody.REGION_CLASS) != null) {
