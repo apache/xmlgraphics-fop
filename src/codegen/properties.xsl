@@ -8,6 +8,124 @@
 
 <xsl:output method="text" />
 
+
+<!-- Content of element is code to calculate the base length -->
+<xsl:template match="percent-ok">
+    /** Return object used to calculate base Length
+     * for percent specifications.
+     */
+    public PercentBase getPercentBase(final FObj fo, final PropertyList propertyList) {
+     <xsl:choose>
+       <xsl:when test="@base">
+	return new LengthBase(fo, propertyList, LengthBase.<xsl:value-of select="@base"/>);
+       </xsl:when>
+       <xsl:otherwise>
+	return (new LengthBase(fo, propertyList, LengthBase.CUSTOM_BASE ) {
+ 	  public int getBaseLength() {
+	    return (<xsl:value-of select="."/>);
+          }
+	});
+      </xsl:otherwise>
+    </xsl:choose>
+    }
+</xsl:template>
+
+<!-- Look for "auto" length keyword -->
+<xsl:template match="auto-ok">
+    protected boolean isAutoLengthAllowed() {
+      return true;
+    }
+</xsl:template>
+
+<!-- Look for keyword equivalents. Value is the new expression  -->
+<xsl:template match="keyword-equiv[1]">
+    protected String checkValueKeywords(String value) {
+  <xsl:for-each select="../keyword-equiv">
+      if (value.equals("<xsl:value-of select="@match"/>")) {
+	return new String("<xsl:value-of select="."/>");
+      }
+  </xsl:for-each>
+      return super.checkValueKeywords(value);
+    }
+</xsl:template>
+
+<xsl:template match="keyword-equiv[position()>1]"/>
+
+<!-- Generate code to convert from other datatypes to property datatype -->
+<xsl:template match='datatype-conversion[1]'>
+  <xsl:variable name="propclass">
+    <xsl:choose>
+      <xsl:when test="../compound">
+        <xsl:call-template name="propclass">
+          <xsl:with-param name="prop"
+		select="../compound/subproperty[@set-by-shorthand]"/>
+        </xsl:call-template>
+      </xsl:when><xsl:otherwise>
+        <xsl:call-template name="propclass">
+          <xsl:with-param name="prop" select=".."/>
+        </xsl:call-template>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
+    // See if other value types are acceptable
+    protected Property convertPropertyDatatype(Property p,
+	PropertyList propertyList, FObj fo) {
+      <xsl:for-each select="../datatype-conversion">
+      {
+        <xsl:variable name="dtc">
+          <xsl:choose>
+	    <xsl:when test="@vartype">
+	       <xsl:value-of select="@vartype"/>
+	    </xsl:when><xsl:otherwise>
+	      <xsl:value-of select="@from-type"/>
+	    </xsl:otherwise>
+	  </xsl:choose>
+	</xsl:variable>
+	<xsl:value-of select="$dtc"/><xsl:text> </xsl:text> <xsl:value-of select="@varname"/> = 
+		p.get<xsl:value-of select="@from-type"/>();
+	if (<xsl:value-of select="@varname"/> != null) {
+	    return new <xsl:value-of select="$propclass"/>(
+		    <xsl:value-of select='.'/>);
+        }
+      }
+      </xsl:for-each>
+      return super.convertPropertyDatatype(p, propertyList, fo);
+    }
+</xsl:template>
+
+<xsl:template match="datatype-conversion[position()>1]"/>
+
+<!-- generate getDefaultForXXX for property components -->
+<xsl:template match="default[@subproperty]" priority="2">
+      <xsl:variable name="spname">
+	<xsl:call-template name="makeClassName">
+	  <xsl:with-param name="propstr" select="@subproperty"/>
+	</xsl:call-template>
+      </xsl:variable>
+    protected String getDefaultFor<xsl:value-of  select='$spname'/>() {
+	return "<xsl:value-of  select='.'/>";
+    }
+</xsl:template>
+
+<!-- generate default "make" method for non-compound properties -->
+<xsl:template match="default[not(../compound)]" priority="1">
+  <xsl:if test='not(@contextdep = "true")'>
+    private Property m_defaultProp=null;
+  </xsl:if>
+    public Property make(PropertyList propertyList) throws FOPException {
+      <xsl:choose><xsl:when test='@contextdep="true"'>
+        return make(propertyList, "<xsl:value-of select='.'/>", propertyList.getParentFObj());
+	</xsl:when><xsl:otherwise>
+        if (m_defaultProp == null) {
+            m_defaultProp=make(propertyList, "<xsl:value-of select='.'/>", propertyList.getParentFObj());
+	}
+        return m_defaultProp;
+	</xsl:otherwise></xsl:choose>
+    }
+</xsl:template>
+
+<xsl:template match="text()"/>
+
 <!-- Ignore properties which reference others. Only for mapping! -->
 <xsl:template match="property[@type='ref']"/>
 
@@ -92,9 +210,31 @@ public class <xsl:value-of select="$classname"/> extends  <xsl:value-of select="
 <!-- Look for compound properties -->
 <xsl:if test="compound">
     <xsl:for-each select="compound/subproperty">
-    final private static Property.Maker s_<xsl:value-of select="name"/>Maker =
+      <xsl:variable name="spname">
+	<xsl:call-template name="makeClassName">
+          <xsl:with-param name="propstr" select="name"/>
+        </xsl:call-template>
+      </xsl:variable>
+
+      <xsl:choose>
+        <xsl:when test='*[local-name(.)!="name" and local-name(.)!="datatype"]'>
+    static private class SP_<xsl:value-of select="$spname"/>Maker 
+	extends <xsl:value-of select="datatype"/>Property.Maker {
+	   SP_<xsl:value-of select="$spname"/>Maker(String sPropName) {
+	     super(sPropName);
+           }
+	<xsl:apply-templates select="percent-ok|auto-ok|keyword-equiv|datatype-conversion"/>
+    }
+    final private static Property.Maker s_<xsl:value-of select="$spname"/>Maker =
+	new SP_<xsl:value-of select="$spname"/>Maker(
+	     "<xsl:value-of select='../../name'/>.<xsl:value-of select='name'/>");
+        </xsl:when>
+        <xsl:otherwise>
+    final private static Property.Maker s_<xsl:value-of select="$spname"/>Maker =
 	new <xsl:value-of select="datatype"/>Property.Maker(
 	     "<xsl:value-of select='../../name'/>.<xsl:value-of select='name'/>");
+	</xsl:otherwise>
+      </xsl:choose>
     </xsl:for-each>
 </xsl:if>
 
@@ -109,8 +249,13 @@ public class <xsl:value-of select="$classname"/> extends  <xsl:value-of select="
 <xsl:if test="compound">
     protected Property.Maker getSubpropMaker(String subprop) {
     <xsl:for-each select="compound/subproperty">
+      <xsl:variable name="spname">
+	<xsl:call-template name="makeClassName">
+          <xsl:with-param name="propstr" select="name"/>
+        </xsl:call-template>
+      </xsl:variable>
 	if (subprop.equals("<xsl:value-of select='name'/>"))
-	  return s_<xsl:value-of select="name"/>Maker;
+	  return s_<xsl:value-of select="$spname"/>Maker;
     </xsl:for-each>
 	return super.getSubpropMaker(subprop);
     }
@@ -120,13 +265,13 @@ public class <xsl:value-of select="$classname"/> extends  <xsl:value-of select="
       <xsl:value-of select="datatype"/> val = 
 	((<xsl:value-of select="$propclass"/>)baseProp).get<xsl:value-of select="datatype"/>();
     <xsl:for-each select="compound/subproperty">
-      <xsl:variable name="capname">
-	<xsl:call-template name="capfirst">
-          <xsl:with-param name="str" select="name"/>
+      <xsl:variable name="spname">
+	<xsl:call-template name="makeClassName">
+          <xsl:with-param name="propstr" select="name"/>
         </xsl:call-template>
       </xsl:variable>
 	if (subpropName.equals("<xsl:value-of select='name'/>"))
-	  val.set<xsl:value-of select='$capname'/>(subProp.get<xsl:value-of select='datatype'/>());
+	  val.set<xsl:value-of select='$spname'/>(subProp.get<xsl:value-of select='datatype'/>(), false);
 	else
     </xsl:for-each>
 	  return super.setSubprop(baseProp, subpropName, subProp);
@@ -137,22 +282,110 @@ public class <xsl:value-of select="$classname"/> extends  <xsl:value-of select="
       <xsl:value-of select="datatype"/> val = 
 	((<xsl:value-of select="$propclass"/>)baseProp).get<xsl:value-of select="datatype"/>();
     <xsl:for-each select="compound/subproperty">
-      <xsl:variable name="capname">
-	<xsl:call-template name="capfirst">
-          <xsl:with-param name="str" select="name"/>
+      <xsl:variable name="spname">
+	<xsl:call-template name="makeClassName">
+          <xsl:with-param name="propstr" select="name"/>
         </xsl:call-template>
       </xsl:variable>
 	if (subpropName.equals("<xsl:value-of select='name'/>"))
 	  return new <xsl:value-of select='datatype'/>Property(
-	val.get<xsl:value-of select='$capname'/>());
+	val.get<xsl:value-of select='$spname'/>());
     </xsl:for-each>
 	 return super.getSubpropValue(baseProp, subpropName);
     }
-</xsl:if>
-
-<xsl:if test='not(default/@contextdep = "true")'>
+<xsl:choose>  
+<!-- some subproperty default is context dependent; don't cache default! -->  
+<xsl:when test='.//default[@contextdep="true"]'>
+    public Property make(PropertyList propertyList) throws FOPException {
+        return makeCompound(propertyList, propertyList.getParentFObj());
+    }
+</xsl:when>
+<xsl:otherwise>
     private Property m_defaultProp=null;
-</xsl:if>
+    public Property make(PropertyList propertyList) throws FOPException {
+        if (m_defaultProp == null) {
+            m_defaultProp=makeCompound(propertyList, propertyList.getParentFObj());
+	}
+        return m_defaultProp;
+    }
+</xsl:otherwise>
+</xsl:choose>
+
+    protected Property makeCompound(PropertyList pList, FObj fo) throws FOPException {
+	<xsl:value-of select="datatype"/> p = new <xsl:value-of select="datatype"/>();
+	Property subProp;
+    <xsl:for-each select="compound/subproperty/name">
+      <xsl:variable name="spname">
+	<xsl:call-template name="makeClassName">
+	  <xsl:with-param name="propstr" select="."/>
+	</xsl:call-template>
+      </xsl:variable>
+	 // set default for subprop <xsl:value-of select="."/>
+	 subProp = getSubpropMaker("<xsl:value-of select='.'/>").make(pList,
+	  getDefaultFor<xsl:value-of select='$spname'/>(), fo);
+	  p.set<xsl:value-of select='$spname'/>(subProp.get<xsl:value-of select='../datatype'/>(), true);
+    </xsl:for-each>
+	return new <xsl:value-of select="$propclass"/>(p);
+    }
+
+    <!-- generate a "getDefaultForXXX" for each subproperty XXX -->
+    <xsl:for-each select="compound/subproperty">
+      <xsl:variable name="spname">
+	<xsl:call-template name="makeClassName">
+	  <xsl:with-param name="propstr" select="name"/>
+	</xsl:call-template>
+      </xsl:variable>
+    protected String getDefaultFor<xsl:value-of  select='$spname'/>() {
+      <xsl:choose><xsl:when test="default">
+	return "<xsl:value-of  select='default'/>";
+        </xsl:when><xsl:otherwise>
+	return "";
+	</xsl:otherwise>
+      </xsl:choose>
+    }
+    </xsl:for-each>
+
+    /** Set the appropriate components when the "base" property is set. */
+    protected Property convertProperty(Property p, PropertyList pList,FObj fo)
+	throws FOPException
+    {
+<xsl:variable name="spdt">
+  <xsl:call-template name="check-subprop-datatype">
+    <xsl:with-param name="dtlist"
+	 select="compound/subproperty[@set-by-shorthand='true']/datatype"/>
+  </xsl:call-template>
+</xsl:variable>
+<!--
+        Property sub= getSubpropMaker("<xsl:value-of select='compound/subproperty[@set-by-shorthand="true"]/name'/>").convertProperty(p,pList,fo);
+	if (sub != null) {
+          <xsl:value-of select='$spdt'/> spval=sub.get<xsl:value-of select='$spdt'/>();
+-->
+        <xsl:value-of select='$spdt'/> spval=p.get<xsl:value-of select='$spdt'/>();
+	if (spval == null) {
+	  // NOTE: must convert to the component datatype, not compound!
+	  Property pconv = convertPropertyDatatype(p, pList, fo);
+	  if (pconv != null) {
+	    spval=pconv.get<xsl:value-of select='$spdt'/>();
+          }
+        }
+	if (spval != null) {
+	  Property prop = makeCompound(pList, fo);
+	  <xsl:value-of select='datatype'/> pval = prop.get<xsl:value-of select='datatype'/>();
+<xsl:for-each select="compound/subproperty[@set-by-shorthand='true']">
+      <xsl:variable name="spname"><xsl:call-template name="makeClassName">
+          <xsl:with-param name="propstr" select="name"/>
+        </xsl:call-template></xsl:variable>
+	  pval.set<xsl:value-of select='$spname'/>(spval, false);
+</xsl:for-each>
+          return prop;
+        }
+        else {
+	  // throw some kind of exception!
+	  throw new FOPException("Can't convert value to <xsl:value-of select='$spdt'/> type");
+        }
+    }
+
+</xsl:if> <!-- property/compound -->
 
 <xsl:if test="inherited">
    public boolean isInherited() { return <xsl:value-of select="inherited"/>; }
@@ -165,55 +398,6 @@ public class <xsl:value-of select="$classname"/> extends  <xsl:value-of select="
    }
 </xsl:if>
 
-<!-- Content of element is code to calculate the base length -->
-<xsl:if test="percent-ok">
-    static class PropLengthBase extends LengthBase {
-	private FObj fo;
-	private PropertyList propertyList ;
-
-	public PropLengthBase(FObj fo, PropertyList plist) {
-	  this.fo = fo;
-	// get from FO????
-	  this.propertyList = plist;
-	  //this.propertyList = fo.getProperties();
-        }
-
- 	public int getBaseLength() {
-<xsl:choose>
-  <xsl:when test="percent-ok/@base='FONTSIZE'">
-	return propertyList.get("font-size").getLength().mvalue();
-  </xsl:when>
-  <xsl:when test="percent-ok/@base='INH-FONTSIZE'">
-	return propertyList.getInherited("font-size").getLength().mvalue();
-  </xsl:when>
-  <xsl:when test="percent-ok/@base='CONTAINING-BOX'">
-	<!-- should probably distinguish width and height... -->
-	return fo.getContainingWidth();
-  </xsl:when>
-  <xsl:otherwise>
-	return <xsl:value-of select="percent-ok"/>;
-  </xsl:otherwise>
-</xsl:choose>
-        }
-    }
-
-    /** Return instance of internal class to calculate base Length
-     * for percent specifications.
-     */
-    public PercentBase getPercentBase(final FObj fo,
-	final PropertyList propertyList) {
-	return new PropLengthBase(fo, propertyList);
-    }
-</xsl:if>
-
-<!-- Look for "auto" length keyword -->
-<xsl:if test="auto-ok">
-    protected boolean isAutoLengthAllowed() {
-      return true;
-    }
-</xsl:if>
-
-
 <!-- Handle enumerated values -->
 <xsl:if test="enumeration/value">
     protected Property findConstant(String value) {
@@ -221,62 +405,6 @@ public class <xsl:value-of select="$classname"/> extends  <xsl:value-of select="
       if (value.equals("<xsl:value-of select="."/>")) { return s_prop<xsl:value-of select="@const"/>; }
     </xsl:for-each>
 	return super.findConstant(value);
-    }
-</xsl:if>
-
-<!-- Look for keyword equivalents. Value is the new expression  -->
-<xsl:if test="keyword-equiv">
-    protected String checkValueKeywords(String value) {
-  <xsl:for-each select="keyword-equiv">
-      if (value.equals("<xsl:value-of select="@match"/>")) {
-	return new String("<xsl:value-of select="."/>");
-      }
-  </xsl:for-each>
-      return super.checkValueKeywords(value);
-    }
-</xsl:if>
-
-<!-- Generate code to convert from other datatypes to property datatype -->
-<xsl:if test='datatype-conversion'>
-    // See if other value types are acceptable
-    protected Property convertPropertyDatatype(Property p,
-	PropertyList propertyList, FObj fo) {
-      <xsl:for-each select="datatype-conversion">
-      {
-        <xsl:variable name="dtc">
-          <xsl:choose>
-	    <xsl:when test="@vartype">
-	       <xsl:value-of select="@vartype"/>
-	    </xsl:when><xsl:otherwise>
-	      <xsl:value-of select="@type"/>
-	    </xsl:otherwise>
-	  </xsl:choose>
-	</xsl:variable>
-	<xsl:value-of select="$dtc"/><xsl:text> </xsl:text> <xsl:value-of select="@varname"/> = 
-		p.get<xsl:value-of select="@type"/>();
-	if (<xsl:value-of select="@varname"/> != null) {
-	    return new <xsl:value-of select="$propclass"/>(
-		    <xsl:value-of select='.'/>);
-        }
-      }
-      </xsl:for-each>
-      return super.convertPropertyDatatype(p, propertyList, fo);
-    }
-</xsl:if>
-
-<xsl:if test="default">
-    public Property make(PropertyList propertyList, boolean bForceNew) throws FOPException {
-      <xsl:choose><xsl:when test='default/@contextdep="true"'>
-        return make(propertyList, "<xsl:value-of select="default"/>", null);
-	</xsl:when><xsl:otherwise>
-	if (bForceNew) {
-	    // Make a new property instead of using the static default
-            return make(propertyList, "<xsl:value-of select="default"/>", null);
-        }
-        if (m_defaultProp == null)
-            m_defaultProp=make(propertyList, "<xsl:value-of select="default"/>", null);
-        return m_defaultProp;
-	</xsl:otherwise></xsl:choose>
     }
 </xsl:if>
 
@@ -296,6 +424,7 @@ public class <xsl:value-of select="$classname"/> extends  <xsl:value-of select="
       return computedProperty;
     }
 </xsl:if>
+<xsl:apply-templates select="percent-ok|auto-ok|default|keyword-equiv|datatype-conversion"/>
 }
 </redirect:write>
 </xsl:if> <!-- need to create a class -->
@@ -304,6 +433,22 @@ public class <xsl:value-of select="$classname"/> extends  <xsl:value-of select="
 <!-- avoid unwanted output to placeholder file -->
 <xsl:template match="localname"/>
 
+<!-- Check that each member of the nodeset dtlist has the same value.
+     Print a message if any member of dtlist is different 
+     from the first member. Return the first member.
+ -->
+<xsl:template name="check-subprop-datatype">
+    <xsl:param name="dtlist"/>
+    <xsl:variable name="dt"><xsl:value-of select='$dtlist[1]'/></xsl:variable>
+    <xsl:for-each select="$dtlist">
+	<xsl:if test=". != $dt">
+	    <xsl:message>
+	        <xsl:text>Conflict between subproperty datatypes: </xsl:text>
+		<xsl:value-of select='.'/> != <xsl:value-of select='$dt'/>
+	    </xsl:message>
+	</xsl:if>
+    </xsl:for-each>
+    <xsl:value-of select='$dt'/>
+</xsl:template>
+
 </xsl:stylesheet>
-
-
