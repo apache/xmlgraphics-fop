@@ -58,12 +58,12 @@ basedir: normally the base directory is the directory where the fo file is
     <font-triplet name="ArialMT" style="normal" weight="bold"/>
  </font>
  <font metrics-file="ariali.xml" kerning="yes" embed-file="ariali.ttf">
-    <font-triplet name="Arial" style="italics" weight="normal"/>
-    <font-triplet name="ArialMT" style="italics" weight="normal"/>
+    <font-triplet name="Arial" style="italic" weight="normal"/>
+    <font-triplet name="ArialMT" style="italic" weight="normal"/>
  </font>
  <font metrics-file="arialbi.xml" kerning="yes" embed-file="arialbi.ttf">
-    <font-triplet name="Arial" style="italics" weight="bold"/>
-    <font-triplet name="ArialMT" style="italics" weight="bold"/>
+    <font-triplet name="Arial" style="italic" weight="bold"/>
+    <font-triplet name="ArialMT" style="italic" weight="bold"/>
  </font>
  -->
 </fonts>
