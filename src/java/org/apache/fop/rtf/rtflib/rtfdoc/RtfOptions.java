@@ -58,14 +58,26 @@
 
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
-/**  Simplistic options definitions for RTF generation
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
+/**
+ * Simplistic options definitions for RTF generation
+ * @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
-
 public class RtfOptions {
-    /** if true, RtfParagraphs that have no children do not generate any RTF code */
-    public boolean ignoreEmptyParagraphs() { return true; }
+    /**
+     * If this returns true, RtfParagraphs that have no children will not
+     * generate any RTF code
+     * @return true
+     */
+    public boolean ignoreEmptyParagraphs() {
+        return true;
+    }
 
-    /** RtfContainer does not generate any RTF is this returns false */
-    public boolean renderContainer(RtfContainer c) { return true; }
+    /**
+     * If this returns false, RtfContainer will not generate any RTF
+     * @param c RtfContainer to be tested
+     * @return true
+     */
+    public boolean renderContainer(RtfContainer c) {
+        return true;
+    }
 }

@@ -64,41 +64,61 @@ import java.io.Writer;
 import java.io.IOException;
 //import org.apache.fop.rtf.rtflib.jfor.main.JForVersionInfo;
 
-/**RtfListTable: used to make the list table in the header section of the RtfFile.
+/**
+ * RtfListTable: used to make the list table in the header section of the RtfFile.
  * This is the method that Word uses to make lists in RTF and the way most RTF readers,
  * esp. Adobe FrameMaker read lists from RTF.
  * @author Christopher Scott, scottc@westinghouse.com
  */
 public class RtfListTable extends RtfContainer {
 
-    //number of list in document
+    /** number of list in document */
     private Integer listNum;
-    //id of list
+    /** id of list */
     private Integer listId;
     private Integer listTemplateId;
     private RtfList parentList;
-    //static data members
+//static data members
+    /** constant for a list table */
     public static final String LIST_TABLE = "listtable";
+    /** constant for a list */
     public static final String LIST = "list";
+    /** constant for a list template id */
     public static final String LIST_TEMPLATE_ID = "listtemplateid";
+    /** constant for a list level */
     public static final String LIST_LEVEL = "listlevel";
+    /** constant for a list number type */
     public static final String LIST_NUMBER_TYPE = "levelnfc";
+    /** constant for a list justification */
     public static final String LIST_JUSTIFICATION = "leveljc";
+    /** constant for list following character */
     public static final String LIST_FOLLOWING_CHAR = "levelfollow";
+    /** constant for list start at */
     public static final String LIST_START_AT = "levelstartat";
+    /** constant for list space */
     public static final String LIST_SPACE = "levelspace";
+    /** constant for list indentation */
     public static final String LIST_INDENT = "levelindent";
+    /** constant for list text format */
     public static final String LIST_TEXT_FORM = "leveltext";
+    /** constant for list number positioning */
     public static final String LIST_NUM_POSITION = "levelnumbers";
+    /** constant for list name */
     public static final String LIST_NAME = "listname ;";
+    /** constant for list ID */
     public static final String LIST_ID = "listid";
+    /** constant for list font type */
     public static final String LIST_FONT_TYPE = "f";
-
+    /** constant for list override table */
     public static final String LIST_OVR_TABLE = "listoverridetable";
+    /** constant for list override */
     public static final String LIST_OVR = "listoverride";
+    /** constant for list override count */
     public static final String LIST_OVR_COUNT = "listoverridecount";
+    /** constant for list number */
     public static final String LIST_NUMBER = "ls";
 
+    /** String array of list table attributes */
     public static final String [] LIST_TABLE_ATTR = {
         LIST_TABLE,             LIST,                   LIST_TEMPLATE_ID,
         LIST_NUMBER_TYPE,       LIST_JUSTIFICATION,     LIST_FOLLOWING_CHAR,
@@ -108,8 +128,15 @@ public class RtfListTable extends RtfContainer {
         LIST_NUMBER,            LIST_LEVEL
     };
 
-    /**RtfListTable Constructor: sets the number of the list, and allocates
-     * for the RtfAttributes */
+    /**
+     * RtfListTable Constructor: sets the number of the list, and allocates
+     * for the RtfAttributes
+     * @param parent RtfContainer holding this RtfListTable
+     * @param w Writer
+     * @param num number of the list in the document
+     * @param attrs attributes of new RtfListTable
+     * @throws IOException for I/O problems
+     */
     public RtfListTable(RtfContainer parent, Writer w, Integer num, RtfAttributes attrs)
     throws IOException {
         super(parent, w, attrs);
@@ -123,10 +150,18 @@ public class RtfListTable extends RtfContainer {
         attrib.set(LIST_NUMBER_TYPE, 0);
     }
 
+    /**
+     * Set parentList
+     * @param parent parentList to set
+     */
     public void setParentList(RtfList parent) {
         parentList = parent;
     }
 
+    /**
+     * Accessor for listNum
+     * @return listNum
+     */
     public Integer getListNumber() {
         return listNum;
     }
@@ -150,6 +185,10 @@ public class RtfListTable extends RtfContainer {
         }
     }
 
+    /**
+     * Write the content
+     * @throws IOException for I/O problems
+     */
     public void writeRtfContent() throws IOException {
         setListType();
         writeGroupMark(true);
@@ -192,8 +231,11 @@ public class RtfListTable extends RtfContainer {
         writeGroupMark(false);
     }
 
-    //since this has no text content we have to overwrite isEmpty to print
-    //the table
+    /**
+     * Since this has no text content we have to overwrite isEmpty to print
+     * the table
+     * @return false (always)
+     */
     public boolean isEmpty() {
         return false;
     }
