@@ -1,7 +1,0 @@
-<font-metrics>
-    <class-name>MSMinchoBoldItalicAlias</class-name>
-    <extends-name>MSMinchoBoldItalic</extends-name>
-
-    <font-name>MS-Mincho,BoldItalic</font-name>
-    <cid-basefont>MS-Mincho,BoldItalic</cid-basefont>
-</font-metrics>

@@ -1,7 +1,0 @@
-<font-metrics>
-    <class-name>MSGothicBoldItalicAlias</class-name>
-    <extends-name>MSGothicBoldItalic</extends-name>
-
-    <font-name>MS-Gothic,BoldItalic</font-name>
-    <cid-basefont>MS-Gothic,BoldItalic</cid-basefont>
-</font-metrics>
