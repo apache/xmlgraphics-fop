@@ -436,7 +436,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public boolean drawImage(Image img, int x, int y, int width, int height,
                                ImageObserver observer) {
-        System.out.println("drawImage x=" + x + " y=" + y + " width=" + width + " height=" + height + " image=" + img.toString());
+        //System.out.println("drawImage x=" + x + " y=" + y + " width=" + width + " height=" + height + " image=" + img.toString());
         // first we look to see if we've already added this image to
         // the pdf document. If so, we just reuse the reference;
         // otherwise we have to build a FopImage and add it to the pdf
@@ -1102,7 +1102,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @see #setClip
      */
     public void drawRenderedImage(RenderedImage img, AffineTransform xform) {
-        System.out.println("drawRenderedImage");
+        //System.out.println("drawRenderedImage");
     }
 
     /**
@@ -1137,7 +1137,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public void drawRenderableImage(RenderableImage img,
                                     AffineTransform xform) {
-        System.out.println("drawRenderableImage");
+        //System.out.println("drawRenderableImage");
     }
 
     /**
@@ -1579,7 +1579,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @param     c1 the XOR alternation color
      */
     public void setXORMode(Color c1) {
-        System.out.println("setXORMode");
+        //System.out.println("setXORMode");
     }
 
 
@@ -1604,7 +1604,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public void copyArea(int x, int y, int width, int height, int dx,
                          int dy) {
-        System.out.println("copyArea");
+        //System.out.println("copyArea");
     }
 
 }
