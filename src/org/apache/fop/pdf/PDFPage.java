@@ -132,6 +132,10 @@ public class PDFPage extends PDFObject {
         this.annotList.addAnnot(annot);
     }
 
+    public void addGState(PDFGState gstate) {
+        this.resources.addGState(gstate);
+    }
+
     public void addShading(PDFShading shading) {
         this.resources.addShading(shading);
     }

@@ -920,6 +920,15 @@ public class PDFDocument {
         return array;
     }
 
+    /**
+     * make an ExtGState for extra graphics options
+     */
+    public PDFGState makeGState() {
+
+        PDFGState gstate = new PDFGState(++this.objectcount);
+        this.objects.add(gstate);
+        return gstate;
+    }
 
     public int addImage(FopImage img) {
         // check if already created

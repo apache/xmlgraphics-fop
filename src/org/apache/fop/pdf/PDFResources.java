@@ -29,6 +29,7 @@ public class PDFResources extends PDFObject {
     protected ArrayList xObjects = null;
     protected ArrayList patterns = new ArrayList();
     protected ArrayList shadings = new ArrayList();
+    protected ArrayList gstates = new ArrayList();
 
     /**
      * create a /Resources object.
@@ -49,6 +50,10 @@ public class PDFResources extends PDFObject {
      */
     public void addFont(PDFFont font) {
         this.fonts.put(font.getName(), font);
+    }
+
+    public void addGState(PDFGState gs) {
+        this.gstates.add(gs);
     }
 
     public void addShading(PDFShading theShading) {
@@ -100,7 +105,7 @@ public class PDFResources extends PDFObject {
                          + currentShading.referencePDF() + " ");    // \n ??????
             }
 
-            p.append(">> \n");
+            p.append(">>\n");
         }
         // "free" the memory. Sorta.
         currentShading = null;
@@ -124,19 +129,30 @@ public class PDFResources extends PDFObject {
         // "free" the memory. Sorta.
         currentPattern = null;
 
-        p.append("/ProcSet [ /PDF /ImageC /Text ] ");
+        p.append("/ProcSet [ /PDF /ImageC /Text ]\n");
 
         if (!this.xObjects.isEmpty()) {
             p = p.append("/XObject <<");
             for (int i = 1; i <= this.xObjects.size(); i++) {
                 p = p.append("/Im" + i + " "
                              + ((PDFXObject)this.xObjects.get(i - 1)).referencePDF()
-                             + " \n");
+                             + "\n");
             }
             p = p.append(" >>\n");
         }
 
-        p = p.append(">> \nendobj\n");
+        if (!this.gstates.isEmpty()) {
+            p = p.append("/ExtGState <<");
+            for (int i = 0; i < this.gstates.size(); i++) {
+                PDFGState gs = (PDFGState)this.gstates.get(i);
+                p = p.append("/" + gs.getName() + " "
+                             + gs.referencePDF()
+                             + "\n");
+            }
+            p = p.append(" >>\n");
+        }
+
+        p = p.append(">>\nendobj\n");
 
         return p.toString().getBytes();
     }
