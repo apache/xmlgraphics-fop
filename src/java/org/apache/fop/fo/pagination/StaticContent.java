@@ -63,6 +63,7 @@ public class StaticContent extends Flow {
         if (children == null) {
             missingChildElementError("(%block;)+");
         }
+        getFOInputHandler().endFlow(this);
     }
 
     /**
