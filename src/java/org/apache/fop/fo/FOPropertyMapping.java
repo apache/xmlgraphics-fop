@@ -1188,24 +1188,28 @@ public class FOPropertyMapping implements Constants {
         m  = new LengthProperty.Maker(PR_MARGIN_TOP);
         m.setInherited(false);
         m.setDefault("0pt");
+        m.addShorthand(s_generics[PR_MARGIN]);
         addPropertyMaker("margin-top", m);
 
         // margin-bottom
         m  = new LengthProperty.Maker(PR_MARGIN_BOTTOM);
         m.setInherited(false);
         m.setDefault("0pt");
+        m.addShorthand(s_generics[PR_MARGIN]);
         addPropertyMaker("margin-bottom", m);
 
         // margin-left
         m  = new LengthProperty.Maker(PR_MARGIN_LEFT);
         m.setInherited(false);
         m.setDefault("0pt");
+        m.addShorthand(s_generics[PR_MARGIN]);
         addPropertyMaker("margin-left", m);
 
         // margin-right
         m  = new LengthProperty.Maker(PR_MARGIN_RIGHT);
         m.setInherited(false);
         m.setDefault("0pt");
+        m.addShorthand(s_generics[PR_MARGIN]);
         addPropertyMaker("margin-right", m);
 
         // space-before
@@ -2468,9 +2472,10 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("font", m);
 
         // margin
-        m  = new ToBeImplementedProperty.Maker(PR_MARGIN);
+        m  = new ListProperty.Maker(PR_MARGIN);
         m.setInherited(false);
         m.setDefault("");
+        m.setDatatypeParser(new BoxPropShorthandParser());
         addPropertyMaker("margin", m);
 
         // padding
