@@ -320,6 +320,7 @@ public class TableContentLayoutManager {
         PrimaryGridUnit[] gridUnits = new PrimaryGridUnit[colCount];
         int[] start = new int[colCount];
         int[] end = new int[colCount];
+        int[] partLength = new int[colCount];
         
         //Iterate over all steps
         while (parentIter.hasNext()) {
@@ -356,6 +357,7 @@ public class TableContentLayoutManager {
                                 + start[i] + "-" + end[i]);
                         int len = calcCellHeightFromContents(
                                 gridUnits[i].getElements(), start[i], end[i]);
+                        partLength[i] = len;
                         log.debug("len of part: " + len);
                         maxLen = Math.max(maxLen, len);
                         maxLen = Math.max(maxLen, getExplicitCellHeight(gridUnits[i]));
@@ -368,7 +370,7 @@ public class TableContentLayoutManager {
                         log.debug("flushing..." + i + " " 
                                 + start[i] + "-" + end[i]);
                         addAreasForCell(gridUnits[i], start[i], end[i], 
-                                layoutContext, lastRow, yoffset, maxLen);
+                                layoutContext, lastRow, yoffset, partLength[i], maxLen);
                         gridUnits[i] = null;
                         start[i] = 0;
                         end[i] = 0;
@@ -382,6 +384,7 @@ public class TableContentLayoutManager {
             if (gridUnits[i] != null) {
                 int len = calcCellHeightFromContents(
                         gridUnits[i].getElements(), start[i], end[i]);
+                partLength[i] = len;
                 log.debug("len of part: " + len);
                 maxLen = Math.max(maxLen, len);
                 maxLen = Math.max(maxLen, getExplicitCellHeight(gridUnits[i]));
@@ -391,7 +394,7 @@ public class TableContentLayoutManager {
             if (gridUnits[i] != null) {
                 log.debug("final flushing " + i + " " + start[i] + "-" + end[i]);
                 addAreasForCell(gridUnits[i], start[i], end[i], 
-                        layoutContext, lastRow, yoffset, maxLen);
+                        layoutContext, lastRow, yoffset, partLength[i], maxLen);
             }
         }
         
@@ -413,10 +416,11 @@ public class TableContentLayoutManager {
     
     private void addAreasForCell(PrimaryGridUnit gu, int start, int end, 
             LayoutContext layoutContext, TableRowIterator.EffRow row, 
-            int yoffset, int rowHeight) {
+            int yoffset, int contentHeight, int rowHeight) {
         Cell cellLM = gu.getCellLM();
         cellLM.setXOffset(getXOffsetOfGridUnit(gu));
         cellLM.setYOffset(yoffset);
+        cellLM.setContentHeight(contentHeight);
         cellLM.setRowHeight(rowHeight);
         //cellLM.setRowHeight(row.getHeight().opt);
         cellLM.addAreas(new KnuthPossPosIter(gu.getElements(), 

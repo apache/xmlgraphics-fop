@@ -386,6 +386,16 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
     }
     
     /**
+     * Set the content height for this cell. This method is used during
+     * addAreas() stage.
+     *
+     * @param h the height of the contents of this cell
+     */
+    public void setContentHeight(int h) {
+        usedBPD = h;
+    }
+    
+    /**
      * Set the row height that contains this cell. This method is used during
      * addAreas() stage.
      *
