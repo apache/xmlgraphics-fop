@@ -19,6 +19,38 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public interface PropertyValue {
 
+    public static final int
+                        NO_TYPE = 0
+                         ,ANGLE = 1
+                          ,AUTO = 1
+                          ,BOOL = 1
+                    ,COLOR_TYPE = 1
+                       ,COUNTRY = 1
+                          ,ENUM = 1
+                   ,FONT_FAMILY = 1
+                     ,FREQUENCY = 1
+        ,FROM_NEAREST_SPECIFIED = 1
+                   ,FROM_PARENT = 1
+                       ,INHERIT = 1
+                       ,INTEGER = 1
+                      ,LANGUAGE = 1
+                       ,LITERAL = 1
+                ,MAPPED_NUMERIC = 1
+                     ,MIME_TYPE = 1
+                        ,NCNAME = 1
+                          ,NONE = 1
+                       ,NUMERIC = 1
+                        ,SCRIPT = 1
+                 ,SHADOW_EFFECT = 1
+                         ,SLASH = 1
+              ,TEXT_DECORATIONS = 1
+                ,TEXT_DECORATOR = 1
+                          ,TIME = 1
+                      ,URI_TYPE = 1
+                          ,LIST = 2
+
+            ,LAST_PROPERTY_TYPE = LIST;
+
     /**
      * @return <tt>int</tt> property index.
      */

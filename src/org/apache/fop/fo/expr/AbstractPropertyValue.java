@@ -30,23 +30,37 @@ public abstract class AbstractPropertyValue
     protected int property;
 
     /**
-     * N.B. Constructor allows for property 0, which is a dummy
-     * property number.
-     * @param index <tt>int</tt> index of the property in the property arrays.
+     * An integer property type.
      */
-    public AbstractPropertyValue(int index) throws PropertyException {
-        if (index < 0 || index > PropNames.LAST_PROPERTY_INDEX)
+    public final int type;
+
+    /**
+     * @param index index of the property in the property arrays.
+     * @param type of this value
+     */
+    public AbstractPropertyValue(int index, int type)
+        throws PropertyException
+     {
+        if (index < 1 || index > PropNames.LAST_PROPERTY_INDEX)
             throw new PropertyException("Invalid property index: " + index);
+        if (type < 1 || type > PropertyValue.LAST_PROPERTY_TYPE)
+            throw new PropertyException("Invalid property type: " + type);
         property = index;
+        this.type = type;
     }
 
     /**
      * @param propertyName a <tt>String</tt> containing the property name.
      */
-    public AbstractPropertyValue(String propertyName)
+    public AbstractPropertyValue(String propertyName, int type)
         throws PropertyException
     {
         property = PropertyConsts.getPropertyIndex(propertyName);
+        if (property < 1 || property > PropNames.LAST_PROPERTY_INDEX)
+            throw new PropertyException("Invalid property index: " + property);
+        if (type < 1 || type > PropertyValue.LAST_PROPERTY_TYPE)
+            throw new PropertyException("Invalid property type: " + type);
+        this.type = type;
     }
 
     /**

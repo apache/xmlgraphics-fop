@@ -33,11 +33,19 @@ public class PropertyValueList extends LinkedList implements PropertyValue {
     protected int property;
 
     /**
+     * An integer property type.
+     */
+    public final int type;
+
+    /**
      * @param property <tt>int</tt> index of the property.
      */
-    public PropertyValueList(int property) {
+    public PropertyValueList(int property) throws PropertyException {
         super();
+        if (property < 1 || property > PropNames.LAST_PROPERTY_INDEX)
+            throw new PropertyException("Invalid property index: " + property);
         this.property = property;
+        type = PropertyValue.LIST;
     }
 
     /**
@@ -48,6 +56,9 @@ public class PropertyValueList extends LinkedList implements PropertyValue {
     {
         super();
         property = PropertyConsts.getPropertyIndex(propertyName);
+        if (property < 1 || property > PropNames.LAST_PROPERTY_INDEX)
+            throw new PropertyException("Invalid property index: " + property);
+        type = PropertyValue.LIST;
     }
 
     /**
@@ -59,14 +70,19 @@ public class PropertyValueList extends LinkedList implements PropertyValue {
      * @exception IllegalArgumentException if the <tt>Collection</tt> is
      * not a <i>PropertyValueList</i>.
      */
-    public PropertyValueList(int property, Collection c) {
+    public PropertyValueList(int property, Collection c)
+        throws PropertyException
+    {
         super(c);
         // This test only follows the super() call because that call must
         // be the first in a constructor.
         if (! (c instanceof PropertyValueList))
             throw new IllegalArgumentException
                     ("Collection is not a PropertyValueList.");
+        if (property < 1 || property > PropNames.LAST_PROPERTY_INDEX)
+            throw new PropertyException("Invalid property index: " + property);
         this.property = property;
+        type = PropertyValue.LIST;
     }
 
     /**
@@ -88,6 +104,9 @@ public class PropertyValueList extends LinkedList implements PropertyValue {
             throw new IllegalArgumentException
                     ("Collection is not a PropertyValueList.");
         property = PropertyConsts.getPropertyIndex(propertyName);
+        if (property < 1 || property > PropNames.LAST_PROPERTY_INDEX)
+            throw new PropertyException("Invalid property index: " + property);
+        type = PropertyValue.LIST;
     }
 
     /**
