@@ -61,43 +61,47 @@ import org.apache.fop.apps.FOPException;
 public class FObjMixed extends FObj {
 
     public static class Maker extends FObj.Maker {
-	public FObj make(FObj parent, PropertyList propertyList)
-	    throws FOPException {
-	    return new FObjMixed(parent, propertyList);
-	}
+        public FObj make(FObj parent, PropertyList propertyList)
+        throws FOPException {
+            return new FObjMixed(parent, propertyList);
+        }
     }
 
     public static FObj.Maker maker() {
-	return new FObjMixed.Maker();
+        return new FObjMixed.Maker();
     }
 
     protected FObjMixed(FObj parent, PropertyList propertyList) {
-	super(parent, propertyList);
+        super(parent, propertyList);
     }
 
     protected void addCharacters(char data[], int start, int length) { 
-	children.addElement(new FOText(data,start,length,this));
+        children.addElement(new FOText(data,start,length,this));
     }
 
     public Status layout(Area area) throws FOPException {
 
-	if (this.marker == START) {
-	    this.marker = 0;
-            // initialize id                       
-            String id = this.properties.get("id").getString();            
-            area.getIDReferences().initializeID(id,area);                                
-	}
+        String id = this.properties.get("id").getString();
 
-	int numChildren = this.children.size();
-	for (int i = this.marker; i < numChildren; i++) {
-	    FONode fo = (FONode) children.elementAt(i);
-	    Status status;
-	    if ((status = fo.layout(area)).isIncomplete()) {
-		this.marker = i;
-		return status;
-	    }
-	}
-	return new Status(Status.OK);
+        if ( this.marker == START ) {
+            area.getIDReferences().createID(id);                                
+            this.marker = 0;
+        }
+
+        if ( this.marker == 0 ) {
+            area.getIDReferences().configureID(id,area);                                
+        }
+
+        int numChildren = this.children.size();
+        for ( int i = this.marker; i < numChildren; i++ ) {
+            FONode fo = (FONode) children.elementAt(i);
+            Status status;
+            if ( (status = fo.layout(area)).isIncomplete() ) {
+                this.marker = i;
+                return status;
+            }
+        }
+        return new Status(Status.OK);
     }
 }
 
