@@ -195,7 +195,7 @@ class FOPTaskStarter extends Starter {
     FOPTaskStarter(Fop task) throws FOPException {
         this.task = task;
 
-        Hierarchy hierarchy = new Hierarchy();
+	Hierarchy hierarchy = Hierarchy.getDefaultHierarchy();
         // PatternFormatter formatter = new PatternFormatter(
         //   "[%{priority}] %{category}: %{message}\n%{throwable}" );
         PatternFormatter formatter = new PatternFormatter("%{message}\n%{throwable}");
@@ -287,7 +287,7 @@ class FOPTaskStarter extends Starter {
                                   toExternalForm());
             }
         } catch (Exception e) {
-            task.log("Error setting base directory", Project.MSG_DEBUG);
+            log.error("Error setting base directory",e);
         }
 
         task.log("Using base directory: " +
@@ -367,6 +367,11 @@ class FOPTaskStarter extends Starter {
             Driver driver = new Driver(inputHandler.getInputSource(), out);
             driver.setLogger(log);
             driver.setRenderer(renderer);
+	    if (renderer == Driver.RENDER_XML) {
+		Hashtable rendererOptions = new Hashtable();
+		rendererOptions.put("fineDetail", new Boolean(true));
+		driver.getRenderer().setOptions(rendererOptions);
+	    }
             driver.setXMLReader(parser);
             driver.run();
             out.close();
