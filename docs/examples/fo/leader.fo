@@ -319,7 +319,7 @@
 
 
     <!-- table start -->
-    <fo:table>
+    <fo:table table-layout="fixed">
       <fo:table-column column-width="20mm"/>
       <fo:table-column column-width="60mm"/>
       <fo:table-column column-width="50mm"/>
@@ -383,7 +383,7 @@
 
 
       <!-- Here starts the table -->
-      <fo:table>
+      <fo:table table-layout="fixed">
         <fo:table-column column-width="1cm"/>
         <fo:table-column column-width="14.2cm"/>
         <fo:table-column column-width="0.3cm"/>

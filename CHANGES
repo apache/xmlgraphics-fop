@@ -1,6 +1,8 @@
 ==============================================================================
 Done since 0.20.4 release
 
+- Updated examples/fo files to remove all errors and warnings during build
+  Submitted by: Manuel Mall <mm@arcus.com.au> (see bug #13867)
 - Perfomance tuning (reduced object creation etc.) (see bug #14103)
   Submitted by: Henrik Olsson <henrik.olsson@intentia.se> 
 - Update to Xerces 2.2.1 (Jeremias Maerki)
