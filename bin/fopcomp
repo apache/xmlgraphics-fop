@@ -1,13 +1,23 @@
-#!/bin/ksh
+#!/bin/sh
 function prefix {
     typeset path
     path=`pwd`
     expr $path : '\(.*\)src/org/apache/fop/.*'
 }
-set -x
-if [ $1 = "-j" ]; then
-  shift
-  javac -verbose -d `prefix`build/classes -sourcepath `prefix`src "$@"
-else
-  jikes -verbose +F -d `prefix`build/classes -sourcepath `prefix`src "$@"
-fi
+#set -x
+compiler="jikes"
+until case "$1" in
+	-j) compiler=javac
+	    echo Using javac
+	    false
+	    ;;
+	-g) debug="-g"
+	    echo Debugging on
+	    false
+	    ;;
+	esac
+do
+    shift
+done
+
+$compiler $debug -verbose -d `prefix`build/classes -sourcepath `prefix`src "$@"
