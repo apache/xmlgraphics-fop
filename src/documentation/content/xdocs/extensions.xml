@@ -14,7 +14,7 @@ By having a mechanism for supporting extensions, FOP is able to add features tha
       <section id="svg">
         <title>SVG</title>
         <p>
-Please see the <link href="svg.html#svg">SVG documentation</link> for more details.
+Please see the <link href="graphics.html#svg">SVG documentation</link> for more details.
         </p>
       </section>
       <section id="bookmarks">
