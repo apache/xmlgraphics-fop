@@ -13,8 +13,8 @@
         	margin-bottom="1cm"
         	margin-left="3.5cm"
         	margin-right="1.5cm">
-			<fo:region-before extent="2cm"/>
 			<fo:region-body margin-top="2cm" margin-bottom="2cm"/>
+			<fo:region-before extent="2cm"/>
 			<fo:region-after extent="2cm"/>
 		</fo:simple-page-master>
 
@@ -25,8 +25,8 @@
         	margin-bottom="1cm"
         	margin-left="1.5cm"
         	margin-right="3.5cm">
-			<fo:region-before extent="2cm"/>
 			<fo:region-body margin-top="2cm" margin-bottom="2cm"/>
+			<fo:region-before extent="2cm"/>
 			<fo:region-after extent="2cm"/>
 		</fo:simple-page-master>
 	
@@ -37,8 +37,8 @@
         	margin-bottom="1cm"
         	margin-left="2.5cm"
         	margin-right="2.5cm">
-			<fo:region-before extent="2cm"/>
 			<fo:region-body margin-top="2cm" margin-bottom="2cm"/>
+			<fo:region-before extent="2cm"/>
 			<fo:region-after extent="2cm"/>
 		</fo:simple-page-master>
 	
