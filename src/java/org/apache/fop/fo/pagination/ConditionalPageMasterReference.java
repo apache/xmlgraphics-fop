@@ -26,6 +26,7 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
 
 /**
  * A conditional-page-master-reference formatting object.
@@ -36,20 +37,39 @@ import org.apache.fop.fo.FObj;
  * element.
  */
 public class ConditionalPageMasterReference extends FObj {
-
-    private RepeatablePageMasterAlternatives repeatablePageMasterAlternatives;
-
-    private String masterName;
-
+    // The value of properties relevant for fo:conditional-page-master-reference.
+    private String masterReference;
     private int pagePosition;
     private int oddOrEven;
     private int blankOrNotBlank;
+    // End of property values
+    
+    private RepeatablePageMasterAlternatives repeatablePageMasterAlternatives;
+
+    private String masterName;
 
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public ConditionalPageMasterReference(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        masterReference = pList.get(PR_MASTER_REFERENCE).getString();
+        pagePosition = pList.get(PR_PAGE_POSITION).getEnum();
+        oddOrEven = pList.get(PR_ODD_OR_EVEN).getEnum();
+        blankOrNotBlank = pList.get(PR_BLANK_OR_NOT_BLANK).getEnum();
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     */
+    protected void startOfNode() throws SAXParseException {
+        validateParent(parent);
     }
 
     /**
@@ -172,6 +192,13 @@ public class ConditionalPageMasterReference extends FObj {
         }
     }
 
+    /**
+     * Returns the "master-reference" property.
+     */
+    public String getMasterReference() {
+        return masterReference;
+    }
+    
     /**
      * @see org.apache.fop.fo.FObj#getName()
      */

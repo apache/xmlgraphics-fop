@@ -25,11 +25,16 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
 
 /**
  * fo:float element.
  */
 public class Float extends FObj {
+    // The value of properties relevant for fo:float.
+    // private ToBeImplementedProperty float;
+    // private ToBeImplementedProperty clear;
+    // End of property values
 
     static boolean notImplementedWarningGiven = false;
     
@@ -43,6 +48,14 @@ public class Float extends FObj {
             getLogger().warn("fo:float is not yet implemented.");
             notImplementedWarningGiven = true;
         }
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        // float = pList.get(PR_FLOAT);
+        // clear = pList.get(PR_CLEAR);
     }
 
     /**

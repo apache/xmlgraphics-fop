@@ -28,8 +28,15 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.ColorTypeProperty;
+import org.apache.fop.fo.properties.CommonAural;
+import org.apache.fop.fo.properties.CommonFont;
+import org.apache.fop.fo.properties.CommonRelativePosition;
+import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.layoutmgr.BidiLayoutManager;
 import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManager;
@@ -42,6 +49,19 @@ public class BidiOverride extends FObjMixed {
     // used for FO validation
     private boolean blockOrInlineItemFound = false;
     private boolean canHaveBlockLevelChildren = true;
+
+    // The value of properties relevant for fo:bidi-override.
+    private CommonAural commonAural;
+    private CommonFont commonFont;
+    private CommonRelativePosition commonRelativePosition;
+    private ColorTypeProperty prColor;
+    // private ToBeImplementedProperty prDirection;
+    // private ToBeImplementedProperty prLetterSpacing;
+    private Length prLineHeight;
+    // private ToBeImplementedProperty prScoreSpaces;
+    // private ToBeImplementedProperty prUnicodeBidi;
+    private SpaceProperty prWordSpacing;
+    // End of property values
 
     /**
      * @param parent FONode that is the parent of this object
@@ -69,6 +89,22 @@ public class BidiOverride extends FObjMixed {
            }
        }
 
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        commonAural = pList.getAuralProps();
+        commonFont = pList.getFontProps();
+        commonRelativePosition = pList.getRelativePositionProps();
+        prColor = pList.get(PR_COLOR).getColorType();
+        // prDirection = pList.get(PR_DIRECTION);
+        // prLetterSpacing = pList.get(PR_LETTER_SPACING);
+        prLineHeight = pList.get(PR_LINE_HEIGHT).getLength();
+        // prScoreSpaces = pList.get(PR_SCORE_SPACES);
+        // prUnicodeBidi = pList.get(PR_UNICODE_BIDI);
+        prWordSpacing = pList.get(PR_WORD_SPACING).getSpace();
     }
 
     /**

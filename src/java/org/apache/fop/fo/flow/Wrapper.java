@@ -22,9 +22,13 @@ package org.apache.fop.fo.flow;
 import java.util.List;
 import java.util.ListIterator;
 
+// XML
+import org.xml.sax.SAXParseException;
+ 
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
+import org.apache.fop.fo.PropertyList;
 
 /**
  * Implementation for fo:wrapper formatting object.
@@ -36,12 +40,36 @@ import org.apache.fop.fo.FObjMixed;
  * @todo implement validateChildNode()
  */
 public class Wrapper extends FObjMixed {
-
+    // The value of properties relevant for fo:wrapper.
+    private String id;
+    // End of property values
+    
     /**
      * @param parent FONode that is the parent of this object
      */
     public Wrapper(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        id = pList.get(PR_ID).getString();
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     */
+    protected void startOfNode() throws SAXParseException {
+        checkId(id);
+    }
+
+    /**
+     * Return the "id" property.
+     */
+    public String getId() {
+        return id;
     }
 
     /**

@@ -23,8 +23,16 @@ import java.util.List;
 
 // FOP
 import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.CommonAbsolutePosition;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.CommonMarginBlock;
+import org.apache.fop.fo.properties.KeepProperty;
+import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.layoutmgr.BlockContainerLayoutManager;
 
 import org.xml.sax.Attributes;
@@ -35,6 +43,29 @@ import org.xml.sax.SAXParseException;
  * @todo implement validateChildNode()
  */
 public class BlockContainer extends FObj {
+    // The value of properties relevant for fo:block-container.
+    private CommonAbsolutePosition commonAbsolutePosition ;
+    private CommonBorderPaddingBackground commonBorderPaddingBackground;
+    private CommonMarginBlock commonMarginBlock;
+    private LengthRangeProperty blockProgressionDimension;
+    private int breakAfter;
+    private int breakBefore;
+    // private ToBeImplementedProperty clip;
+    private int displayAlign;
+    private Length height;
+    private String id;
+    private LengthRangeProperty inlineProgressionDimension;
+    // private ToBeImplementedProperty intrusionDisplace;
+    private KeepProperty keepTogether;
+    private KeepProperty keepWithNext;
+    private KeepProperty keepWithPrevious;
+    private int overflow;
+    private Numeric referenceOrientation;
+    private int span;
+    private Length width;
+    private int writingMode;
+    // private ToBeImplementedProperty zIndex;
+    // End of property values
 
     private ColorType backgroundColor;
     private int position;
@@ -43,16 +74,50 @@ public class BlockContainer extends FObj {
     private int bottom;
     private int left;
     private int right;
-    private int width;
-    private int height;
+    private int _width;
+    private int _height;
 
-    private int span;
 
     /**
      * @param parent FONode that is the parent of this object
      */
     public BlockContainer(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        commonAbsolutePosition = pList.getAbsolutePositionProps();
+        commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
+        commonMarginBlock = pList.getMarginBlockProps();
+        blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
+        breakAfter = pList.get(PR_BREAK_AFTER).getEnum();
+        breakBefore = pList.get(PR_BREAK_BEFORE).getEnum();
+        // clip = pList.get(PR_CLIP);
+        displayAlign = pList.get(PR_DISPLAY_ALIGN).getEnum();
+        height = pList.get(PR_HEIGHT).getLength();
+        id = pList.get(PR_ID).getString();
+        inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
+        // intrusionDisplace = pList.get(PR_INTRUSION_DISPLACE);
+        keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
+        keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
+        keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
+        overflow = pList.get(PR_OVERFLOW).getEnum();
+        referenceOrientation = pList.get(PR_REFERENCE_ORIENTATION).getNumeric();
+        span = pList.get(PR_SPAN).getEnum();
+        width = pList.get(PR_WIDTH).getLength();
+        writingMode = pList.get(PR_WRITING_MODE).getEnum();
+        // zIndex = pList.get(PR_Z_INDEX);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     */
+    protected void startOfNode() throws SAXParseException {
+        checkId(id);
+        getFOEventHandler().startBlockContainer(this);
     }
 
     /**
@@ -64,8 +129,8 @@ public class BlockContainer extends FObj {
         this.backgroundColor =
             this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
 
-        this.width = getPropLength(PR_WIDTH);
-        this.height = getPropLength(PR_HEIGHT);
+        this._width = getPropLength(PR_WIDTH);
+        this._height = getPropLength(PR_HEIGHT);
         getFOEventHandler().startBlockContainer(this);
     }
     
@@ -84,10 +149,73 @@ public class BlockContainer extends FObj {
     }
 
     /**
-     * @return the span for this object
+     * Return the Common Absolute Position Properties.
+     */
+    public CommonAbsolutePosition getCommonAbsolutePosition() {
+        return commonAbsolutePosition;
+    }
+    
+    /**
+     * Return the Common Margin Properties-Block.
+     */
+    public CommonMarginBlock getCommonMarginBlock() {
+        return commonMarginBlock;
+    }
+
+    /**
+     * Return the Common Border, Padding, and Background Properties.
+     */
+    public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
+        return commonBorderPaddingBackground;
+    }
+
+    /**
+     * Return the "block-progression-dimension" property.
+     */
+    public LengthRangeProperty getBlockProgressionDimension() {
+        return blockProgressionDimension;
+    }
+
+    /**
+     * Return the "id" property.
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Return the "inline-progression-dimension" property.
+     */
+    public LengthRangeProperty getInlineProgressionDimension() {
+        return inlineProgressionDimension;
+    }
+
+    /**
+     * Return the "overflow" property.
+     */
+    public int getOverflow() {
+        return overflow;
+    }
+
+    /**
+     * Return the "reference-orientation" property.
+     */
+    public int getReferenceOrientation() {
+        return referenceOrientation.getValue();
+    }
+
+    /**
+     * Return the "span" property.
      */
     public int getSpan() {
         return this.span;
+    }
+
+    /**
+     * Return the "writing-mode" property.
+     */
+    public int getWritingMode() {
+        return writingMode;
     }
 
     /**

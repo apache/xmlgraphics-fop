@@ -27,19 +27,28 @@ import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.datatypes.FODimension;
+import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 
 /**
  * This is an abstract base class for pagination regions
  */
 public abstract class Region extends FObj {
-
-    private SimplePageMaster layoutMaster;
+    // The value of properties relevant for fo:region
+    private CommonBorderPaddingBackground commonBorderPaddingBackground;
+    // private ToBeImplementedProperty clip
+    private int displayAlign;
+    private int overflow;
     private String regionName;
+    private Numeric referenceOrientation;
+    private int writingMode;
+    // End of property values
+    
+    private SimplePageMaster layoutMaster;
 
-    /** Holds the overflow attribute */
-    public int overflow;
     /** Holds the writing mode */
     protected int wm;
 
@@ -49,6 +58,35 @@ public abstract class Region extends FObj {
     protected Region(FONode parent) {
         super(parent);
         layoutMaster = (SimplePageMaster) parent;
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) throws SAXParseException {
+        commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
+        // clip = pList.get(PR_CLIP);
+        displayAlign = pList.get(PR_DISPLAY_ALIGN).getEnum();
+        overflow = pList.get(PR_OVERFLOW).getEnum();
+        regionName = pList.get(PR_REGION_NAME).getString();
+        referenceOrientation = pList.get(PR_REFERENCE_ORIENTATION).getNumeric();
+        writingMode = pList.getWritingMode();
+        
+        // regions may have name, or default
+        if (null == regionName) {
+            setRegionName(getDefaultRegionName());
+        } else if (regionName.equals("")) {
+            setRegionName(getDefaultRegionName());
+        } else {
+            setRegionName(regionName);
+            // check that name is OK. Not very pretty.
+            if (isReserved(getRegionName())
+                    && !getRegionName().equals(getDefaultRegionName())) {
+                throw new SAXParseException("region-name '" + regionName
+                        + "' for " + this.getName()
+                        + " is not permitted.", locator);
+            }
+        }
     }
 
     /**
@@ -95,15 +133,7 @@ public abstract class Region extends FObj {
      */
     protected abstract String getDefaultRegionName();
 
-    /**
-     * Returns the name of this region.
-     * @return the region name
-     */
-    public String getRegionName() {
-        return this.regionName;
-    }
-
-    /**
+     /**
      * Sets the name of the region.
      * @param name the name
      */
@@ -141,5 +171,40 @@ public abstract class Region extends FObj {
     protected Region getSiblingRegion(int regionId) {
         // Ask parent for region
         return layoutMaster.getRegion(regionId);
+    }
+
+    /**
+     * Return the Common Border, Padding, and Background Properties.
+     */
+    public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
+        return commonBorderPaddingBackground; 
+    }
+
+    /**
+     * Return the "region-name" property.
+     */
+    public String getRegionName() {
+        return this.regionName;
+    }
+
+    /**
+     * Return the "writing-mode" property.
+     */
+    public int getWritingMode() {
+        return writingMode;
+    }
+
+    /**
+     * Return the "overflow" property.
+     */
+    public int getOverflow() {
+        return overflow;
+    }
+    
+    /**
+     * Return the "reference-orientation" property.
+     */
+    public int getReferenceOrientation() {
+        return referenceOrientation.getValue();
     }
 }

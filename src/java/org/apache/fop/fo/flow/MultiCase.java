@@ -18,15 +18,27 @@
 
 package org.apache.fop.fo.flow;
 
+// XML
+import org.xml.sax.SAXParseException;
+
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.CommonAccessibility;
 
 /**
  * Class modelling the fo:multi-case object.
  * @todo implement validateChildNode()
  */
 public class MultiCase extends FObj {
+    // The value of properties relevant for fo:multi-case.
+    private CommonAccessibility commonAccessibility;
+    private String id;
+    // private ToBeImplementedProperty startingState;
+    // private ToBeImplementedProperty caseName;
+    // private ToBeImplementedProperty caseTitle;
+    // End of property values
 
     static boolean notImplementedWarningGiven = false;
 
@@ -40,6 +52,24 @@ public class MultiCase extends FObj {
             getLogger().warn("fo:multi-case is not yet implemented.");
             notImplementedWarningGiven = true;
         }
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        commonAccessibility = pList.getAccessibilityProps();
+        id = pList.get(PR_ID).getString();
+        // startingState = pList.get(PR_STARTING_STATE);
+        // caseName = pList.get(PR_CASE_NAME);
+        // caseTitle = pList.get(PR_CASE_TITLE);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     */
+    protected void startOfNode() throws SAXParseException {
+        checkId(id);
     }
 
     /**

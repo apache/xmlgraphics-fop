@@ -29,6 +29,7 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
+import org.apache.fop.fo.PropertyList;
 import org.apache.fop.layoutmgr.RetrieveMarkerLayoutManager;
 
 
@@ -38,10 +39,11 @@ import org.apache.fop.layoutmgr.RetrieveMarkerLayoutManager;
  * a marker based on the information.
  */
 public class RetrieveMarker extends FObjMixed {
-
+    // The value of properties relevant for fo:retrieve-marker.
     private String retrieveClassName;
     private int retrievePosition;
     private int retrieveBoundary;
+    // End of property values
 
     /**
      * Create a retrieve marker object.
@@ -52,6 +54,15 @@ public class RetrieveMarker extends FObjMixed {
         super(parent);
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        retrieveClassName = pList.get(PR_RETRIEVE_CLASS_NAME).getString();
+        retrievePosition = pList.get(PR_RETRIEVE_POSITION).getEnum();
+        retrieveBoundary = pList.get(PR_RETRIEVE_BOUNDARY).getEnum();
+    }
+    
     /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
@@ -71,17 +82,27 @@ public class RetrieveMarker extends FObjMixed {
             invalidChildError(loc, nsURI, localName);
     }
 
+    /**
+     * Return the "retrieve-class-name" property.
+     */
     public String getRetrieveClassName() {
         return retrieveClassName;
     }
 
+    /**
+     * Return the "retrieve-position" property.
+     */
     public int getRetrievePosition() {
         return retrievePosition;
     }
 
+    /**
+     * Return the "retrieve-boundry" property.
+     */
     public int getRetrieveBoundary() {
         return retrieveBoundary;
     }
+
 
     /**
      * @see org.apache.fop.fo.FONode#addLayoutManager(List)

@@ -29,6 +29,7 @@ import org.xml.sax.SAXParseException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOEventHandler;
+import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.extensions.Bookmarks;
 
@@ -36,6 +37,10 @@ import org.apache.fop.fo.extensions.Bookmarks;
  * The fo:root formatting object. Contains page masters, page-sequences.
  */
 public class Root extends FObj {
+    // The value of properties relevant for fo:root.
+    // private ToBeImplementedProperty mediaUsage;
+    // End of property values
+
     private LayoutMasterSet layoutMasterSet;
     private Declarations declarations;
     private Bookmarks bookmarks = null;
@@ -63,6 +68,23 @@ public class Root extends FObj {
         pageSequences = new java.util.ArrayList();
         if (parent != null) {
             //throw new FOPException("root must be root element");
+        }
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        // prMediaUsage = pList.get(PR_MEDIA_USAGE);
+    }
+
+    /**
+     * Signal end of this xml element.
+     */
+    protected void endOfNode() throws SAXParseException {
+        if (!pageSequenceFound || layoutMasterSet == null) {
+            missingChildElementError("(layout-master-set, declarations?, " + 
+                "fox:bookmarks?, page-sequence+)");
         }
     }
 
@@ -109,16 +131,6 @@ public class Root extends FObj {
             }
         } else {
             invalidChildError(loc, nsURI, localName);
-        }
-    }
-
-    /**
-     * Signal end of this xml element.
-     */
-    protected void endOfNode() throws SAXParseException {
-        if (!pageSequenceFound || layoutMasterSet == null) {
-            missingChildElementError("(layout-master-set, declarations?, " + 
-                "fox:bookmarks?, page-sequence+)");
         }
     }
 

@@ -25,13 +25,36 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAural;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.CommonMarginBlock;
+import org.apache.fop.fo.properties.CommonRelativePosition;
+import org.apache.fop.fo.properties.KeepProperty;
 
 /**
  * Class modelling the fo:table-and-caption property.
  * @todo needs implementation
  */
 public class TableAndCaption extends FObj {
-
+    // The value of properties relevant for fo:table-and-caption.
+    private CommonAccessibility commonAccessibility;
+    private CommonAural commonAural;
+    private CommonBorderPaddingBackground commonBorderPaddingBackground;
+    private CommonMarginBlock commonMarginBlock;
+    private CommonRelativePosition commonRelativePosition;
+    private int breakAfter;
+    private int breakBefore;
+    private int captionSide;
+    private String id;
+    // private ToBeImplementedProperty intrusionDisplace;
+    private KeepProperty keepTogether;
+    private KeepProperty keepWithNext;
+    private KeepProperty keepWithPrevious;
+    private int textAlign;
+    // End of property values
+    
     static boolean notImplementedWarningGiven = false;
 
     /** used for FO validation */
@@ -51,35 +74,30 @@ public class TableAndCaption extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
-     * XSL Content Model: marker* table-caption? table
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+    public void bind(PropertyList pList) {
+        commonAccessibility = pList.getAccessibilityProps();
+        commonAural = pList.getAuralProps();
+        commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
+        commonMarginBlock = pList.getMarginBlockProps();
+        commonRelativePosition = pList.getRelativePositionProps();
+        breakAfter = pList.get(PR_BREAK_AFTER).getEnum();
+        breakBefore = pList.get(PR_BREAK_BEFORE).getEnum();
+        captionSide = pList.get(PR_CAPTION_SIDE).getEnum();
+        id = pList.get(PR_ID).getString();
+        // intrusionDisplace = pList.get(PR_INTRUSION_DISPLACE);
+        keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
+        keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
+        keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
+        textAlign = pList.get(PR_TEXT_ALIGN).getEnum();
+    }
 
-            if (nsURI == FO_URI && localName.equals("marker")) {
-                if (tableCaptionFound) {
-                    nodesOutOfOrderError(loc, "fo:marker", "fo:table-caption");
-                } else if (tableFound) {
-                    nodesOutOfOrderError(loc, "fo:marker", "fo:table");
-                }
-            } else if (nsURI == FO_URI && localName.equals("table-caption")) {
-                if (tableCaptionFound) {
-                    tooManyNodesError(loc, "fo:table-caption");
-                } else if (tableFound) {
-                    nodesOutOfOrderError(loc, "fo:table-caption", "fo:table");
-                } else {
-                    tableCaptionFound = true;
-                }
-            } else if (nsURI == FO_URI && localName.equals("table")) {
-                if (tableFound) {
-                    tooManyNodesError(loc, "fo:table");
-                } else {
-                    tableFound = true;
-                }
-            } else {
-                invalidChildError(loc, nsURI, localName);
-            }
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     */
+    protected void startOfNode() throws SAXParseException {
+        checkId(id);
     }
 
     /**
@@ -91,6 +109,45 @@ public class TableAndCaption extends FObj {
         if (!tableFound) {
             missingChildElementError("marker* table-caption? table");
         }
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: marker* table-caption? table
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
+
+        if (nsURI == FO_URI && localName.equals("marker")) {
+            if (tableCaptionFound) {
+                nodesOutOfOrderError(loc, "fo:marker", "fo:table-caption");
+            } else if (tableFound) {
+                nodesOutOfOrderError(loc, "fo:marker", "fo:table");
+            }
+        } else if (nsURI == FO_URI && localName.equals("table-caption")) {
+            if (tableCaptionFound) {
+                tooManyNodesError(loc, "fo:table-caption");
+            } else if (tableFound) {
+                nodesOutOfOrderError(loc, "fo:table-caption", "fo:table");
+            } else {
+                tableCaptionFound = true;
+            }
+        } else if (nsURI == FO_URI && localName.equals("table")) {
+            if (tableFound) {
+                tooManyNodesError(loc, "fo:table");
+            } else {
+                tableFound = true;
+            }
+        } else {
+            invalidChildError(loc, nsURI, localName);
+        }
+    }
+
+    /**
+     * Return the "id" property.
+     */
+    public String getId() {
+        return id;
     }
 
     /**

@@ -30,6 +30,7 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.XMLObj;
 
 
@@ -51,6 +52,13 @@ public class Declarations extends FObj {
     public Declarations(FONode parent) {
         super(parent);
         ((Root) parent).setDeclarations(this);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        // No properties defined for fo:declarations
     }
 
     /**

@@ -26,9 +26,18 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.fo.FONode;
-import org.apache.fop.layoutmgr.InstreamForeignObjectLM;
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAural;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.CommonMarginInline;
+import org.apache.fop.fo.properties.CommonRelativePosition;
+import org.apache.fop.fo.properties.KeepProperty;
+import org.apache.fop.fo.properties.LengthRangeProperty;
+import org.apache.fop.layoutmgr.InstreamForeignObjectLM;
 
 /**
  * The instream-foreign-object flow formatting object.
@@ -36,6 +45,35 @@ import org.apache.fop.fo.FObj;
  * xml data.
  */
 public class InstreamForeignObject extends FObj {
+    // The value of properties relevant for fo:instream-foreign-object.
+    private CommonAccessibility commonAccessibility;
+    private CommonAural commonAural;
+    private CommonBorderPaddingBackground commonBorderPaddingBackground;
+    private CommonMarginInline commonMarginInline;
+    private CommonRelativePosition commonRelativePosition;
+    // private ToBeImplementedProperty alignmentAdjust;
+    // private ToBeImplementedProperty alignmentBaseline;
+    private Length baselineShift;
+    private LengthRangeProperty blockProgressionDimension;
+    // private ToBeImplementedProperty clip;
+    private Length contentHeight;
+    // private ToBeImplementedProperty contentType;
+    private Length contentWidth;
+    private int displayAlign;
+    // private ToBeImplementedProperty dominantBaseline;
+    private Length height;
+    private String id;
+    private LengthRangeProperty inlineProgressionDimension;
+    private KeepProperty keepWithNext;
+    private KeepProperty keepWithPrevious;
+    private Length lineHeight;
+    private int overflow;
+    private int scaling;
+    // private ToBeImplementedProperty scalingMethod;
+    private int textAlign;
+    private int verticalAlign; // shorthand!!!
+    private Length width;
+    // End of property values
 
     /**
      * constructs an instream-foreign-object object (called by Maker).
@@ -44,6 +82,57 @@ public class InstreamForeignObject extends FObj {
      */
     public InstreamForeignObject(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        commonAccessibility = pList.getAccessibilityProps();
+        commonAural = pList.getAuralProps();
+        commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
+        commonMarginInline = pList.getMarginInlineProps();
+        commonRelativePosition = pList.getRelativePositionProps();
+        // alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST);
+        // alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE);
+        baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
+        blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
+        // clip = pList.get(PR_CLIP);
+        contentHeight = pList.get(PR_CONTENT_HEIGHT).getLength();
+        // contentType = pList.get(PR_CONTENT_TYPE);
+        contentWidth = pList.get(PR_CONTENT_WIDTH).getLength();
+        displayAlign = pList.get(PR_DISPLAY_ALIGN).getEnum();
+        // dominantBaseline = pList.get(PR_DOMINANT_BASELINE);
+        height = pList.get(PR_HEIGHT).getLength();
+        id = pList.get(PR_ID).getString();
+        inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
+        keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
+        keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
+        lineHeight = pList.get(PR_LINE_HEIGHT).getLength();
+        overflow = pList.get(PR_OVERFLOW).getEnum();
+        scaling = pList.get(PR_SCALING).getEnum();
+        // scalingMethod = pList.get(PR_SCALING_METHOD);
+        textAlign = pList.get(PR_TEXT_ALIGN).getEnum();
+        verticalAlign = pList.get(PR_VERTICAL_ALIGN).getEnum();
+        width = pList.get(PR_WIDTH).getLength();
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#start
+     */
+    protected void startOfNode() throws SAXParseException {
+        checkId(id);
+    }
+
+    /**
+     * Make sure content model satisfied, if so then tell the
+     * FOEventHandler that we are at the end of the flow.
+     * @see org.apache.fop.fo.FONode#endOfNode
+     */
+    protected void endOfNode() throws SAXParseException {
+        if (childNodes.size() != 1) {
+            missingChildElementError("one (1) non-XSL namespace child");
+        }
     }
 
     /**
@@ -56,17 +145,6 @@ public class InstreamForeignObject extends FObj {
             invalidChildError(loc, nsURI, localName);
         } else if (childNodes != null) {
             tooManyNodesError(loc, "child element");
-        }
-    }
-
-    /**
-     * Make sure content model satisfied, if so then tell the
-     * FOEventHandler that we are at the end of the flow.
-     * @see org.apache.fop.fo.FONode#endOfNode
-     */
-    protected void endOfNode() throws SAXParseException {
-        if (childNodes.size() != 1) {
-            missingChildElementError("one (1) non-XSL namespace child");
         }
     }
 
@@ -106,6 +184,83 @@ public class InstreamForeignObject extends FObj {
                 break;
         }
         return yoffset;
+    }
+
+    /**
+     * Return the "id" property.
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Return the "line-height" property.
+     */
+    public Length getLineHeight() {
+        return lineHeight;
+    }
+
+    /**
+     * Return the "inline-progression-dimension" property.
+     */
+    public LengthRangeProperty getInlineProgressionDimension() {
+        return inlineProgressionDimension;
+    }
+
+    /**
+     * Return the "block-progression-dimension" property.
+     */
+    public LengthRangeProperty getBlockProgressionDimension() {
+        return blockProgressionDimension;
+    }
+
+    /**
+     * Return the "height" property.
+     */
+    public Length getHeight() {
+        return height;
+    }
+
+    /**
+     * Return the "width" property.
+     */
+    public Length getWidth() {
+        return width;
+    }
+
+    /**
+     * Return the "content-height" property.
+     */
+    public Length getContentHeight() {
+        return contentHeight;
+    }
+
+    /**
+     * Return the "content-width" property.
+     */
+    public Length getContentWidth() {
+        return contentWidth;
+    }
+
+    /**
+     * Return the "scaling" property.
+     */
+    public int getScaling() {
+        return scaling;
+    }
+
+    /**
+     * Return the "vertical-align" property.
+     */
+    public int getVerticalAlign() {
+        return verticalAlign;
+    }
+
+    /**
+     * Return the "overflow" property.
+     */
+    public int getOverflow() {
+        return overflow;
     }
 
     /**

@@ -859,7 +859,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
         setRegionPosition(r, body, absRegVPRect);
         int columnCount =
                 r.getProperty(PR_COLUMN_COUNT).getNumber().intValue();
-        if ((columnCount > 1) && (r.overflow == Overflow.SCROLL)) {
+        if ((columnCount > 1) && (r.getOverflow() == Overflow.SCROLL)) {
             // recover by setting 'column-count' to 1. This is allowed but
             // not required by the spec.
             log.error("Setting 'column-count' to 1 because "

@@ -38,14 +38,14 @@ public class StaticContent extends Flow {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
-     * XSL Content Model: (%block;)+
+     * @see org.apache.fop.fo.FONode#startOfNode()
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
-        if (!isBlockItem(nsURI, localName)) {
-            invalidChildError(loc, nsURI, localName);
+    protected void startOfNode() throws SAXParseException {
+        if (getFlowName() == null || getFlowName().equals("")) {
+            throw new SAXParseException("A 'flow-name' is required for "
+                                   + getName() + ".", locator);
         }
+        getFOEventHandler().startFlow(this);
     }
 
     /**
@@ -58,6 +58,17 @@ public class StaticContent extends Flow {
             missingChildElementError("(%block;)+");
         }
         getFOEventHandler().endFlow(this);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: (%block;)+
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
+        if (!isBlockItem(nsURI, localName)) {
+            invalidChildError(loc, nsURI, localName);
+        }
     }
 
     /**

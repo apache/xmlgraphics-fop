@@ -23,6 +23,15 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
+import org.apache.fop.datatypes.Length;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.ColorTypeProperty;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAural;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.CommonFont;
+import org.apache.fop.fo.properties.CommonRelativePosition;
+import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 
@@ -30,12 +39,55 @@ import org.apache.fop.fo.FObj;
  * Class modelling the fo:initial-property-set object.
  */
 public class InitialPropertySet extends FObj {
+    // The value of properties relevant for fo:initial-property-set.
+    private CommonAccessibility commonAccessibility;
+    private CommonAural commonAural;
+    private CommonBorderPaddingBackground commonBorderPaddingBackground;
+    private CommonFont commonFont;
+    private CommonRelativePosition commonRelativePosition;
+    private ColorTypeProperty color;
+    private String id;
+    // private ToBeImplementedProperty letterSpacing;
+    private Length lineHeight;
+    // private ToBeImplementedProperty scoreSpaces;
+    private int textDecoration;
+    // private ToBeImplementedProperty textShadow;
+    private int textTransform;
+    private SpaceProperty wordSpacing;
+    // End of property values
 
     /**
      * @param parent FONode that is the parent of this object
      */
     public InitialPropertySet(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        commonAccessibility = pList.getAccessibilityProps();
+        commonAural = pList.getAuralProps();
+        commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
+        commonFont = pList.getFontProps();
+        commonRelativePosition = pList.getRelativePositionProps();
+        color = pList.get(PR_COLOR).getColorType();
+        id = pList.get(PR_ID).getString();
+        // letterSpacing = pList.get(PR_LETTER_SPACING);
+        lineHeight = pList.get(PR_LINE_HEIGHT).getLength();
+        // scoreSpaces = pList.get(PR_SCORE_SPACES);
+        textDecoration = pList.get(PR_TEXT_DECORATION).getEnum();
+        // textShadow = pList.get(PR_TEXT_SHADOW);
+        textTransform = pList.get(PR_TEXT_TRANSFORM).getEnum();
+        wordSpacing = pList.get(PR_WORD_SPACING).getSpace();
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     */
+    protected void startOfNode() throws SAXParseException {
+        checkId(id);
     }
 
     /**

@@ -30,6 +30,7 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
 
 /**
  * The layout-master-set formatting object.
@@ -50,6 +51,36 @@ public class LayoutMasterSet extends FObj {
      */
     public LayoutMasterSet(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        // No properties in layout-master-set.
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     */
+    protected void startOfNode() throws SAXParseException {
+        if (parent.getName().equals("fo:root")) {
+            Root root = (Root)parent;
+            root.setLayoutMasterSet(this);
+        } else {
+            throw new SAXParseException("fo:layout-master-set must be child of fo:root, not "
+                                   + parent.getName(), locator);
+        }
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#endOfNode
+     */
+    protected void endOfNode() throws SAXParseException {
+        if (childNodes == null) {
+            missingChildElementError("(simple-page-master|page-sequence-master)+");
+        }
+        checkRegionNames();
     }
 
     /**
@@ -84,16 +115,6 @@ public class LayoutMasterSet extends FObj {
         } else {
             invalidChildError(loc, nsURI, localName);
         }
-    }
-
-    /**
-     * @see org.apache.fop.fo.FONode#endOfNode
-     */
-    protected void endOfNode() throws SAXParseException {
-        if (childNodes == null) {
-            missingChildElementError("(simple-page-master|page-sequence-master)+");
-        }
-        checkRegionNames();
     }
 
     /**

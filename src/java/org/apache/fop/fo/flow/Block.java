@@ -28,12 +28,24 @@ import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.CharIterator;
-import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
+import org.apache.fop.fo.FObjMixed;
+import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.RecursiveCharIterator;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAural;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.CommonFont;
+import org.apache.fop.fo.properties.CommonHyphenation;
+import org.apache.fop.fo.properties.CommonMarginBlock;
+import org.apache.fop.fo.properties.CommonRelativePosition;
+import org.apache.fop.fo.properties.KeepProperty;
+import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.layoutmgr.BlockLayoutManager;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.util.CharUtilities;
@@ -61,22 +73,56 @@ public class Block extends FObjMixed {
     private boolean blockOrInlineItemFound = false;
     private boolean initialPropertySetFound = false;
 
+    // The value of properties relevant for fo:block.
+    private CommonAccessibility commonAccessibility;
+    private CommonAural commonAural;
+    private CommonBorderPaddingBackground commonBorderPaddingBackground;
+    private CommonFont commonFont;
+    private CommonHyphenation commonHyphenation;
+    private CommonMarginBlock commonMarginBlock;
+    private CommonRelativePosition commonRelativePosition;
+    private int breakAfter;
+    private int breakBefore;
+    private ColorType color;
+    // private ToBeImplementedProperty textDepth;
+    // private ToBeImplementedProperty textAltitude;
+    // private ToBeImplementedProperty hyphenationKeep;
+    // private ToBeImplementedProperty hyphenationLadderCount;
+    private String id;
+    // private ToBeImplementedProperty intrusionDisplace;
+    private KeepProperty keepTogether;
+    private KeepProperty keepWithNext;
+    private KeepProperty keepWithPrevious;
+    // private ToBeImplementedProperty lastLineEndIndent;
+    private int linefeedTreatment;
+    private SpaceProperty lineHeight;
+    // private ToBeImplementedProperty lineHeightShiftAdjustment;
+    // private ToBeImplementedProperty lineStackingStrategy;
+    private Numeric orphans;
+    private int whiteSpaceTreatment;
+    private int span;
+    private int textAlign;
+    private int textAlignLast;
+    private Length textIndent;
+    // private ToBeImplementedProperty visibility;
+    private int whiteSpaceCollapse;
+    private Numeric widows;
+    private int wrapOption;
+    // End of property values
+    
     private int align;
     private int alignLast;
-    private int breakAfter;
-    private int lineHeight;
+    private int _lineHeight;
     private int startIndent;
     private int endIndent;
     private int spaceBefore;
     private int spaceAfter;
-    private int textIndent;
-    private int keepWithNext;
+    private int _textIndent;
+    private int _keepWithNext;
     private ColorType backgroundColor;
     private int blockWidows;
     private int blockOrphans;
 
-    private String id;
-    private int span;
     private int wsTreatment; //ENUMERATION
     private int lfTreatment; //ENUMERATION
     private boolean bWScollapse; //true if white-space-collapse=true
@@ -99,6 +145,154 @@ public class Block extends FObjMixed {
     }
 
     /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) throws SAXParseException {
+        commonAccessibility = pList.getAccessibilityProps();
+        commonAural = pList.getAuralProps();
+        commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
+        commonFont = pList.getFontProps();
+        commonHyphenation = pList.getHyphenationProps();
+        commonMarginBlock = pList.getMarginBlockProps();
+        commonRelativePosition = pList.getRelativePositionProps();
+
+        breakAfter = pList.get(PR_BREAK_AFTER).getEnum();
+        breakBefore = pList.get(PR_BREAK_BEFORE).getEnum();
+        color = pList.get(PR_COLOR).getColorType();
+        // textDepth = pList.get(PR_TEXT_DEPTH);
+        // textAltitude = pList.get(PR_TEXT_ALTITUDE);
+        // hyphenationKeep = pList.get(PR_HYPHENATION_KEEP);
+        // hyphenationLadderCount = pList.get(PR_HYPHENATION_LADDER_COUNT);
+        id = pList.get(PR_ID).getString();
+        // intrusionDisplace = pList.get(PR_INTRUSION_DISPLACE);
+        keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
+        keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
+        keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
+        // lastLineEndIndent = pList.get(PR_LAST_LINE_END_INDENT);
+        linefeedTreatment = pList.get(PR_LINEFEED_TREATMENT).getEnum();
+        lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
+        // lineHeightShiftAdjustment = pList.get(PR_LINE_HEIGHT_SHIFT_ADJUSTMENT);
+        // lineStackingStrategy = pList.get(PR_LINE_STACKING_STRATEGY);
+        orphans = pList.get(PR_ORPHANS).getNumeric();
+        whiteSpaceTreatment = pList.get(PR_WHITE_SPACE_TREATMENT).getEnum();
+        span = pList.get(PR_SPAN).getEnum();
+        textAlign = pList.get(PR_TEXT_ALIGN).getEnum();
+        textAlignLast = pList.get(PR_TEXT_ALIGN_LAST).getEnum();
+        textIndent = pList.get(PR_TEXT_INDENT).getLength();
+        // visibility = pList.get(PR_VISIBILITY);
+        whiteSpaceCollapse = pList.get(PR_WHITE_SPACE_COLLAPSE).getEnum();
+        widows = pList.get(PR_WIDOWS).getNumeric();
+        wrapOption = pList.get(PR_WRAP_OPTION).getEnum();
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     */
+    protected void startOfNode() throws SAXParseException {
+        checkId(id);
+        getFOEventHandler().startBlock(this);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#endOfNode
+     */
+    protected void endOfNode() throws SAXParseException {
+        handleWhiteSpace();
+        getFOEventHandler().endBlock(this);
+    }
+
+    /**
+     * Return the Common Margin Properties-Block.
+     */
+    public CommonMarginBlock getCommonMarginBlock() {
+        return commonMarginBlock;
+    }
+
+    /**
+     * Return the Common Border, Padding, and Background Properties.
+     */
+    public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
+        return commonBorderPaddingBackground;
+    }
+
+    /**
+     * Return the Common Font Properties.
+     */
+    public CommonFont getCommonFont() {
+        return commonFont;
+    }
+
+    /**
+     * Return the Common Hyphenation Properties.
+     */
+    public CommonHyphenation getCommonHyphenation() {
+        return commonHyphenation;
+    }
+
+    /**
+     * Return the "break-after" property.
+     */
+    public int getBreakAfter() {
+        return breakAfter;
+    }
+
+    /**
+     * Return the "break-before" property.
+     */
+    public int getBreakBefore() {
+        return breakBefore;
+    }
+
+    /**
+     * Return the "color" property.
+     */
+    public ColorType getColor() {
+        return color;
+    }
+
+    /**
+     * Return the "id" property.
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Return the "line-height" property.
+     */
+    public SpaceProperty getLineHeight() {
+        return lineHeight;
+    }
+
+    /**
+     * Return the "span" property.
+     */
+    public int getSpan() {
+        return this.span;
+    }
+
+    /**
+     * Return the "text-align" property.
+     */
+    public int getTextAlign() {
+        return textAlign;
+    }
+
+    /**
+     * Return the "text-align-last" property.
+     */
+    public int getTextAlignLast() {
+        return textAlignLast;
+    }
+
+    /**
+     * Return the "text-indent" property.
+     */
+    public Length getTextIndent() {
+        return textIndent;
+    }
+
+    /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
@@ -110,13 +304,13 @@ public class Block extends FObjMixed {
         this.align = getPropEnum(PR_TEXT_ALIGN);
         this.alignLast = getPropEnum(PR_TEXT_ALIGN_LAST);
         this.breakAfter = getPropEnum(PR_BREAK_AFTER);
-        this.lineHeight = getPropLength(PR_LINE_HEIGHT);
+        this._lineHeight = getPropLength(PR_LINE_HEIGHT);
         this.startIndent = getPropLength(PR_START_INDENT);
         this.endIndent = getPropLength(PR_END_INDENT);
         this.spaceBefore = getPropLength(PR_SPACE_BEFORE | CP_OPTIMUM);
         this.spaceAfter = getPropLength(PR_SPACE_AFTER | CP_OPTIMUM);
-        this.textIndent = getPropLength(PR_TEXT_INDENT);
-        this.keepWithNext = getPropEnum(PR_KEEP_WITH_NEXT);
+        this._textIndent = getPropLength(PR_TEXT_INDENT);
+        this._keepWithNext = getPropEnum(PR_KEEP_WITH_NEXT);
         this.blockWidows =
           this.propertyList.get(PR_WIDOWS).getNumber().intValue();
         this.blockOrphans =
@@ -157,13 +351,6 @@ public class Block extends FObjMixed {
     }
 
     /**
-     * @return span for this Block, in millipoints (??)
-     */
-    public int getSpan() {
-        return this.span;
-    }
-
-    /**
      * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
     public void addChildNode(FONode child) throws SAXParseException {
@@ -181,14 +368,6 @@ public class Block extends FObjMixed {
             handleWhiteSpace();
         }
         super.addChildNode(child);
-    }
-
-    /**
-     * @see org.apache.fop.fo.FONode#endOfNode
-     */
-    protected void endOfNode() throws SAXParseException {
-        handleWhiteSpace();
-        getFOEventHandler().endBlock(this);
     }
 
     private void handleWhiteSpace() {

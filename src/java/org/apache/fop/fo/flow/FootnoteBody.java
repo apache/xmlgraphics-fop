@@ -26,17 +26,48 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.CommonAccessibility;
 
 /**
  * Class modelling the fo:footnote-body object.
  */
 public class FootnoteBody extends FObj {
+    // The value of properties relevant for fo:footnote-body.
+    private CommonAccessibility commonAccessibility;
+    // End of property values
 
     /**
      * @param parent FONode that is the parent of this object
      */
     public FootnoteBody(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * Make sure content model satisfied, if so then tell the
+     * FOEventHandler that we are at the end of the flow.
+     * @see org.apache.fop.fo.FONode#endOfNode
+     */
+    protected void endOfNode() throws SAXParseException {
+        if (childNodes == null) {
+            missingChildElementError("(%block;)+");
+        }
+        getFOEventHandler().endFootnoteBody(this);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        commonAccessibility = pList.getAccessibilityProps();
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     */
+    protected void startOfNode() throws SAXParseException {
+        getFOEventHandler().startFootnoteBody(this);
     }
 
     /**
@@ -56,18 +87,6 @@ public class FootnoteBody extends FObj {
             if (!isBlockItem(nsURI, localName)) {
                 invalidChildError(loc, nsURI, localName);
             }
-    }
-
-    /**
-     * Make sure content model satisfied, if so then tell the
-     * FOEventHandler that we are at the end of the flow.
-     * @see org.apache.fop.fo.FONode#endOfNode
-     */
-    protected void endOfNode() throws SAXParseException {
-        if (childNodes == null) {
-            missingChildElementError("(%block;)+");
-        }
-        getFOEventHandler().endFootnoteBody(this);
     }
 
     /**

@@ -21,16 +21,27 @@ package org.apache.fop.fo.pagination;
 // Java
 import java.awt.Rectangle;
 
+// XML
+import org.xml.sax.SAXParseException;
+
 // FOP
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.FODimension;
+import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 
 /**
  * The fo:region-body element.
  */
 public class RegionBody extends Region {
+    // The value of properties relevant for fo:region-body.
+    private CommonMarginBlock commonMarginBlock;
+    private Numeric columnCount;
+    private Length columnGap;
+    // End of property values
 
     private ColorType backgroundColor;
 
@@ -39,6 +50,37 @@ public class RegionBody extends Region {
      */
     public RegionBody(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) throws SAXParseException {
+        super.bind(pList);
+        commonMarginBlock = pList.getMarginBlockProps();
+        columnCount = pList.get(PR_COLUMN_COUNT).getNumeric();
+        columnGap = pList.get(PR_COLUMN_GAP).getLength();
+    }
+
+    /**
+     * Return the Common Margin Properties-Block.
+     */
+    public CommonMarginBlock getCommonMarginBlock() {
+        return commonMarginBlock;
+    }
+
+    /**
+     * Return the "column-count" property.
+     */
+    public int getColumnCount() {
+        return columnCount.getValue();
+    }
+
+    /**
+     * Return the "column-gap" property.
+     */
+    public int getColumnGap() {
+        return columnGap.getValue();
     }
 
     /**

@@ -33,14 +33,20 @@ import org.xml.sax.SAXParseException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
 
 /**
  * The fo:color-profile formatting object.
  * This loads the color profile when needed and resolves a requested color.
  */
 public class ColorProfile extends FObj {
-    private int intent;
+    // The value of properties relevant for fo:color-profile.
     private String src;
+    private String colorProfileName;
+    private int renderingIntent;
+    // End of property values
+    
+    private int intent;
     private String profileName;
     private ICC_ColorSpace colorSpace = null;
 
@@ -52,12 +58,12 @@ public class ColorProfile extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
-        XSL 1.0/FOP: EMPTY (no child nodes permitted)
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
-        invalidChildError(loc, nsURI, localName);
+    public void bind(PropertyList pList) {
+        src = pList.get(PR_SRC).getString();
+        colorProfileName = pList.get(PR_COLOR_PROFILE_NAME).getString();
+        renderingIntent = pList.get(PR_RENDERING_INTENT).getEnum();
     }
 
     /**
@@ -70,6 +76,15 @@ public class ColorProfile extends FObj {
         profileName = getPropString(PR_COLOR_PROFILE_NAME);
         intent = getPropEnum(PR_RENDERING_INTENT);
         this.propertyList = null;
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+        XSL 1.0/FOP: EMPTY (no child nodes permitted)
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
+        invalidChildError(loc, nsURI, localName);
     }
 
     /**

@@ -29,6 +29,7 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.PropertyList;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -37,12 +38,14 @@ import org.apache.fop.apps.FOPException;
  * which are simple or complex references to page-masters.
  */
 public class PageSequenceMaster extends FObj {
-
+    // The value of properties relevant for fo:page-sequence-master.
+    private String masterName;
+    // End of property values
+    
     private LayoutMasterSet layoutMasterSet;
     private List subSequenceSpecifiers;
     private SubSequenceSpecifier currentSubSequence;
     private int currentSubSequenceNumber;
-    private String masterName;
 
     // The terminology may be confusing. A 'page-sequence-master' consists
     // of a sequence of what the XSL spec refers to as
@@ -56,6 +59,43 @@ public class PageSequenceMaster extends FObj {
      */
     public PageSequenceMaster(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        masterName = pList.get(PR_MASTER_NAME).getString();
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode()
+     */
+    protected void startOfNode() throws SAXParseException {
+        subSequenceSpecifiers = new java.util.ArrayList();
+        if (parent.getName().equals("fo:layout-master-set")) {
+            this.layoutMasterSet = (LayoutMasterSet)parent;
+            if (masterName == null) {
+                getLogger().warn("page-sequence-master does not have "
+                                       + "a master-name and so is being ignored");
+            } else {
+                this.layoutMasterSet.addPageSequenceMaster(masterName, this);
+            }
+        } else {
+            throw new SAXParseException("fo:page-sequence-master must be child "
+                                   + "of fo:layout-master-set, not "
+                                   + parent.getName(), locator);
+        }
+    }
+    
+    /**
+     * @see org.apache.fop.fo.FONode#endOfNode()
+     */
+    protected void endOfNode() throws SAXParseException {
+        if (childNodes == null) {
+           missingChildElementError("(single-page-master-reference|" +
+            "repeatable-page-master-reference|repeatable-page-master-alternatives)+");
+        }
     }
 
     /**
@@ -95,13 +135,6 @@ public class PageSequenceMaster extends FObj {
             }
         } else {
             invalidChildError(loc, nsURI, localName);
-        }
-    }
-
-    protected void endOfNode() throws SAXParseException {
-        if (childNodes == null) {
-           missingChildElementError("(single-page-master-reference|" +
-            "repeatable-page-master-reference|repeatable-page-master-alternatives)+");
         }
     }
 

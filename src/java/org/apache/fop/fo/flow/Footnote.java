@@ -29,11 +29,16 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.CommonAccessibility;
 
 /**
  * Class modelling the fo:footnote object.
  */
 public class Footnote extends FObj {
+    // The value of properties relevant for fo:footnote.
+    private CommonAccessibility commonAccessibility;
+    // End of property values
 
     private Inline inlineFO = null;
     private FootnoteBody footnoteBody;
@@ -46,11 +51,38 @@ public class Footnote extends FObj {
     }
 
     /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        commonAccessibility = pList.getAccessibilityProps();
+    }
+    
+    /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
         getFOEventHandler().startFootnote(this);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     */
+    protected void startOfNode() throws SAXParseException {
+        getFOEventHandler().startFootnote(this);
+    }
+
+    /**
+     * Make sure content model satisfied, if so then tell the
+     * FOEventHandler that we are at the end of the flow.
+     * @see org.apache.fop.fo.FONode#endOfNode
+     */
+    protected void endOfNode() throws SAXParseException {
+        super.endOfNode();
+        if (inlineFO == null || footnoteBody == null) {
+            missingChildElementError("(inline,footnote-body)");
+        }
+        getFOEventHandler().endFootnote(this);
     }
 
     /**
@@ -77,19 +109,6 @@ public class Footnote extends FObj {
             } else {
                 invalidChildError(loc, nsURI, localName);
             }
-    }
-
-    /**
-     * Make sure content model satisfied, if so then tell the
-     * FOEventHandler that we are at the end of the flow.
-     * @see org.apache.fop.fo.FONode#endOfNode
-     */
-    protected void endOfNode() throws SAXParseException {
-        super.endOfNode();
-        if (inlineFO == null || footnoteBody == null) {
-            missingChildElementError("(inline,footnote-body)");
-        }
-        getFOEventHandler().endFootnote(this);
     }
 
     /**

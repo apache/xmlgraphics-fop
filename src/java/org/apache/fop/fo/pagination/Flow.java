@@ -30,6 +30,7 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
 import org.apache.fop.layoutmgr.FlowLayoutManager;
 
 /**
@@ -37,7 +38,10 @@ import org.apache.fop.layoutmgr.FlowLayoutManager;
  * @todo check need for markerSnapshot, contentWidth
  */
 public class Flow extends FObj {
-
+    // The value of properties relevant for fo:flow.
+    private String flowName;
+    // End of property values
+    
     /**
      * ArrayList to store snapshot
      */
@@ -56,6 +60,58 @@ public class Flow extends FObj {
      */
     public Flow(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        flowName = pList.get(PR_FLOW_NAME).getString();
+    }
+    
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     */
+    protected void startOfNode() throws SAXParseException {
+        if (!parent.getName().equals("fo:page-sequence")) {
+            throw new SAXParseException("flow must be child of "
+                                 + "page-sequence, not " + parent.getName(), locator);
+        }
+
+        if (flowName == null || flowName.equals("")) {
+            missingPropertyError("flow-name");
+        }
+
+        // according to communication from Paul Grosso (XSL-List,
+        // 001228, Number 406), confusion in spec section 6.4.5 about
+        // multiplicity of fo:flow in XSL 1.0 is cleared up - one (1)
+        // fo:flow per fo:page-sequence only.
+
+        /*        if (pageSequence.isFlowSet()) {
+                    if (this.name.equals("fo:flow")) {
+                        throw new FOPException("Only a single fo:flow permitted"
+                                               + " per fo:page-sequence");
+                    } else {
+                        throw new FOPException(this.name
+                                               + " not allowed after fo:flow");
+                    }
+                }
+         */
+        // Now done in addChild of page-sequence
+        //pageSequence.addFlow(this);
+        getFOEventHandler().startFlow(this);
+    }
+
+    /**
+     * Make sure content model satisfied, if so then tell the
+     * FOEventHandler that we are at the end of the flow.
+     * @see org.apache.fop.fo.FONode#endOfNode
+     */
+    protected void endOfNode() throws SAXParseException {
+        if (!blockItemFound) {
+            missingChildElementError("marker* (%block;)+");
+        }
+        getFOEventHandler().endFlow(this);
     }
 
     /**
@@ -92,18 +148,6 @@ public class Flow extends FObj {
     }
 
     /**
-     * Make sure content model satisfied, if so then tell the
-     * FOEventHandler that we are at the end of the flow.
-     * @see org.apache.fop.fo.FONode#endOfNode
-     */
-    protected void endOfNode() throws SAXParseException {
-        if (!blockItemFound) {
-            missingChildElementError("marker* (%block;)+");
-        }
-        getFOEventHandler().endFlow(this);
-    }
-
-    /**
      * @param contentWidth content width of this flow, in millipoints (??)
      */
     protected void setContentWidth(int contentWidth) {
@@ -123,6 +167,13 @@ public class Flow extends FObj {
      */
     public boolean generatesReferenceAreas() {
         return true;
+    }
+
+    /**
+     * @return the name of this flow
+     */
+    public String getFlowName() {
+        return flowName;
     }
 
     /**

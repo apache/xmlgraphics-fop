@@ -25,11 +25,16 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
 
 /**
  * Class modelling the fo:multi-property-set object.
  */
 public class MultiPropertySet extends FObj {
+    // The value of properties relevant for fo:multi-property-set.
+    private String id;
+    // private ToBeImplementedProperty activeState;
+    // End of property values
 
     static boolean notImplementedWarningGiven = false;
 
@@ -46,12 +51,34 @@ public class MultiPropertySet extends FObj {
     }
 
     /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        id = pList.get(PR_ID).getString();
+        // activeState = pList.get(PR_ACTIVE_STATE);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     */
+    protected void startOfNode() throws SAXParseException {
+        checkId(id);
+    }
+
+    /**
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
      * XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws SAXParseException {
             invalidChildError(loc, nsURI, localName);
+    }
+
+    /**
+     * Return the "id" property.
+     */
+    public String getId() {
+        return id;
     }
 
     /**

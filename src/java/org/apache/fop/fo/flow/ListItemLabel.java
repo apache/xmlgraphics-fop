@@ -25,18 +25,50 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.KeepProperty;
 
 /**
  * Class modelling the fo:list-item-label object.
  * @todo implement validateChildNode()
  */
 public class ListItemLabel extends FObj {
+    // The value of properties relevant for fo:list-item-label.
+    private CommonAccessibility commonAccessibility;
+    private String id;
+    private KeepProperty keepTogether;
+    // End of property values
 
     /**
      * @param parent FONode that is the parent of this object
      */
     public ListItemLabel(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        commonAccessibility = pList.getAccessibilityProps();
+        id = pList.get(PR_ID).getString();
+        keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     */
+    protected void startOfNode() throws SAXParseException {
+        checkId(id);
+        getFOEventHandler().startListLabel();
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#endOfNode
+     */
+    protected void endOfNode() throws SAXParseException {
+        getFOEventHandler().endListLabel();
     }
 
     /**
@@ -53,11 +85,16 @@ public class ListItemLabel extends FObj {
          */
     }
 
-    protected void endOfNode() throws SAXParseException {
-        super.endOfNode();
-        getFOEventHandler().endListLabel();
+    /**
+     * Return the "id" property.
+     */
+    public String getId() {
+        return id;
     }
-    
+
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:list-item-label";
     }

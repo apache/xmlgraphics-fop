@@ -26,6 +26,7 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.Property;
 
 /**
@@ -36,10 +37,15 @@ import org.apache.fop.fo.properties.Property;
 public class RepeatablePageMasterReference extends FObj
     implements SubSequenceSpecifier {
 
+    // The value of properties relevant for fo:repeatable-page-master-reference.
+    private String masterReference;
+    private Property maximumRepeats;
+    // End of property values
+    
     private static final int INFINITE = -1;
 
     private PageSequenceMaster pageSequenceMaster;
-    private int maximumRepeats;
+    private int _maximumRepeats;
     private int numberConsumed = 0;
 
     /**
@@ -47,6 +53,27 @@ public class RepeatablePageMasterReference extends FObj
      */
     public RepeatablePageMasterReference(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        masterReference = pList.get(PR_MASTER_REFERENCE).getString();
+        maximumRepeats = pList.get(PR_MAXIMUM_REPEATS);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     */
+    protected void startOfNode() throws SAXParseException {
+        PageSequenceMaster pageSequenceMaster = (PageSequenceMaster) parent;
+
+        if (masterReference == null) {
+            missingPropertyError("master-reference");
+        } else {
+            pageSequenceMaster.addSubsequenceSpecifier(this);
+        }
     }
 
     /**
@@ -66,13 +93,13 @@ public class RepeatablePageMasterReference extends FObj
         Property mr = getProperty(PR_MAXIMUM_REPEATS);
 
         if (mr.getEnum() == NO_LIMIT) {
-            this.maximumRepeats = INFINITE;
+            this._maximumRepeats = INFINITE;
         } else {
-            this.maximumRepeats = mr.getNumber().intValue();
-            if (this.maximumRepeats < 0) {
+            this._maximumRepeats = mr.getNumber().intValue();
+            if (this._maximumRepeats < 0) {
                 getLogger().debug("negative maximum-repeats: "
                                   + this.maximumRepeats);
-                this.maximumRepeats = 0;
+                this._maximumRepeats = 0;
             }
         }
     }
@@ -92,14 +119,31 @@ public class RepeatablePageMasterReference extends FObj
     public String getNextPageMasterName(boolean isOddPage,
                                         boolean isFirstPage,
                                         boolean isEmptyPage) {
-        if (maximumRepeats != INFINITE) {
-            if (numberConsumed < maximumRepeats) {
+        if (_maximumRepeats != INFINITE) {
+            if (numberConsumed < _maximumRepeats) {
                 numberConsumed++;
             } else {
                 return null;
             }
         }
         return getPropString(PR_MASTER_REFERENCE);
+    }
+
+    /**
+     * Return the "maximum-repeats" property.
+     */
+    public int getMaximumRepeats() {
+        if (maximumRepeats.getEnum() == NO_LIMIT) {
+            return INFINITE;
+        } else {
+            int mr = maximumRepeats.getNumeric().getValue();
+            if (mr < 0) {
+                getLogger().debug("negative maximum-repeats: "
+                        + this.maximumRepeats);
+                mr = 0;
+            }
+            return mr;
+        }
     }
 
     /**
