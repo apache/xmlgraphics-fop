@@ -32,6 +32,9 @@
         <li id="cb"><link href="mailto:bowditch_chris@hotmail.com">Chris Bowditch</link> (CB)
             is a Java/VB Programmer from England.</li>
         <li id="ad"><link href="mailto:adelmelle@apache.org">Andreas Delmelle</link> (AD)</li>
+        <!-- Luca prefers the mail address with "AT", to stop spam, etc. -->
+        <li><link href="mailto:lfurini AT cs.unibo.it">Luca Furini</link>
+           is a student of Computer Studies at the University of Bologna (Italy)</li>
         <li id="cg"><link href="mailto:chrisg@apache.org">Christian Geisert</link> (CG)</li>
         <li id="ph"><link href="mailto:pherweg@web.de">Peter Herweg</link> (PH) is helping to 
             integrate the jfor project's RTF support into the upcoming FOP 1.0 version.
@@ -66,9 +69,6 @@
             Newfoundland.  While developing a taste for good seafood, he still isn't ready
             for seal flipper (even if it's fresh).  He is currently assisting the FOP
             project on memory and performance issues.</li>
-<!-- Luca prefers the mail address with "AT", to stop spam, etc. -->
-          <li><link href="mailto:lfurini AT cs.unibo.it">Luca Furini</link>
-            is a student of Computer Studies at the University of Bologna (Italy)</li>
       </ul>
     </section>
     <section id="founder">
