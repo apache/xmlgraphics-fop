@@ -68,7 +68,7 @@ import java.io.IOException;
 public class RtfNull
 extends RtfContainer{
 
-	RtfNull(RtfPage parent, Writer w) throws IOException {
-		super((RtfContainer)parent,w);
-	}
+    RtfNull(RtfPage parent, Writer w) throws IOException {
+        super((RtfContainer)parent,w);
+    }
 }

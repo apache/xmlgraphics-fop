@@ -71,34 +71,34 @@ import org.apache.fop.rtf.rtflib.rtfdoc.RtfAttributes;
 public class ParagraphAlignment extends TestDocument
 {
 
-	public ParagraphAlignment()
-	{
-	}
-	protected void generateDocument(RtfDocumentArea rda, RtfSection sect) throws java.io.IOException
-	{
-		RtfAttributes attr = new RtfAttributes ();
-		attr.set(RtfText.ALIGN_CENTER);
-		RtfParagraph p = sect.newParagraph (attr);
-		p.newLineBreak();
-		p.newLineBreak();
-		p.newText ("Centered title");
-		p.newLineBreak();
-		p.close();
+    public ParagraphAlignment()
+    {
+    }
+    protected void generateDocument(RtfDocumentArea rda, RtfSection sect) throws java.io.IOException
+    {
+        RtfAttributes attr = new RtfAttributes ();
+        attr.set(RtfText.ALIGN_CENTER);
+        RtfParagraph p = sect.newParagraph (attr);
+        p.newLineBreak();
+        p.newLineBreak();
+        p.newText ("Centered title");
+        p.newLineBreak();
+        p.close();
 
-		attr = new RtfAttributes ();
-		attr.set(RtfText.ALIGN_LEFT);
-		p = sect.newParagraph (attr);
-		p.newLineBreak();
-		p.newText ("This is the left aligned text.");
-		p.newLineBreak();
-		p.close();
+        attr = new RtfAttributes ();
+        attr.set(RtfText.ALIGN_LEFT);
+        p = sect.newParagraph (attr);
+        p.newLineBreak();
+        p.newText ("This is the left aligned text.");
+        p.newLineBreak();
+        p.close();
 
-		attr = new RtfAttributes ();
-		attr.set(RtfText.ALIGN_RIGHT);
-		p = sect.newParagraph (attr);
-		p.newLineBreak();
-		p.newText ("This is the right aligned text.");
-		p.newLineBreak();
-		p.close();
-	}
+        attr = new RtfAttributes ();
+        attr.set(RtfText.ALIGN_RIGHT);
+        p = sect.newParagraph (attr);
+        p.newLineBreak();
+        p.newText ("This is the right aligned text.");
+        p.newLineBreak();
+        p.close();
+    }
 }

@@ -68,17 +68,17 @@ import java.io.IOException;
 
 class RtfFontTable extends RtfElement
 {
-	/** Create an RTF header */
-	RtfFontTable(RtfHeader h, Writer w) throws IOException
-	{
-		super(h,w);
-	}
+    /** Create an RTF header */
+    RtfFontTable(RtfHeader h, Writer w) throws IOException
+    {
+        super(h,w);
+    }
 
-	/** write our contents to m_writer. */
-	protected void writeRtfContent() throws IOException
-	{
-		RtfFontManager.getInstance ().writeFonts ((RtfHeader)m_parent);
-	}
+    /** write our contents to m_writer. */
+    protected void writeRtfContent() throws IOException
+    {
+        RtfFontManager.getInstance ().writeFonts ((RtfHeader)m_parent);
+    }
 
     /** true if this element would generate no "useful" RTF content */
     public boolean isEmpty()

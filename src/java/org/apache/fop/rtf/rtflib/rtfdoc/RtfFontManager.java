@@ -68,154 +68,154 @@ import java.util.Vector;
  */
 public class RtfFontManager
 {
-	//////////////////////////////////////////////////
-	// @@ Members
-	//////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    // @@ Members
+    //////////////////////////////////////////////////
 
-	/** Singelton instance */
-	private static RtfFontManager instance = null;
+    /** Singelton instance */
+    private static RtfFontManager instance = null;
 
-	/** Index table for the fonts */
-	private Hashtable fontIndex = null;
-	/** Used fonts to this vector */
-	private Vector fontTable = null;
-
-
-	//////////////////////////////////////////////////
-	// @@ Construction
-	//////////////////////////////////////////////////
-
-	/**
-	 * Constructor.
-	 */
-	private RtfFontManager ()
-	{
-		fontTable = new Vector ();
-		fontIndex = new Hashtable ();
-
-		init ();
-	}
-
-	/**
-	 * Singelton.
-	 *
-	 * @return The instance of RtfFontManager
-	 */
-	public static RtfFontManager getInstance ()
-	{
-		if (instance == null)
-		{
-			instance = new RtfFontManager ();
-		}
-
-		return instance;
-	}
+    /** Index table for the fonts */
+    private Hashtable fontIndex = null;
+    /** Used fonts to this vector */
+    private Vector fontTable = null;
 
 
-	//////////////////////////////////////////////////
-	// @@ Initializing
-	//////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    // @@ Construction
+    //////////////////////////////////////////////////
 
-	/**
-	 * Initialize the font table.
-	 */
-	private void init ()
-	{
+    /**
+     * Constructor.
+     */
+    private RtfFontManager ()
+    {
+        fontTable = new Vector ();
+        fontIndex = new Hashtable ();
 
-//		getFontNumber ("Helvetica");
-		//Chanded by R.Marra default font Arial
-		getFontNumber ("Arial");
-		getFontNumber ("Symbol"); // used by RtfListItem.java
-		getFontNumber ("Times New Roman");
+        init ();
+    }
+
+    /**
+     * Singelton.
+     *
+     * @return The instance of RtfFontManager
+     */
+    public static RtfFontManager getInstance ()
+    {
+        if (instance == null)
+        {
+            instance = new RtfFontManager ();
+        }
+
+        return instance;
+    }
+
+
+    //////////////////////////////////////////////////
+    // @@ Initializing
+    //////////////////////////////////////////////////
+
+    /**
+     * Initialize the font table.
+     */
+    private void init ()
+    {
+
+//        getFontNumber ("Helvetica");
+        //Chanded by R.Marra default font Arial
+        getFontNumber ("Arial");
+        getFontNumber ("Symbol"); // used by RtfListItem.java
+        getFontNumber ("Times New Roman");
 
 /*
-		{\\f0\\fswiss Helv;}
+        {\\f0\\fswiss Helv;}
 
-		// f1 is used by RtfList and RtfListItem for bullets
+        // f1 is used by RtfList and RtfListItem for bullets
 
-		{\\f1\\froman\\fcharset2 Symbol;}
-		{\\f2\\froman\\fprq2 Times New Roman;}
-		{\\f3\\froman Times New Roman;}
+        {\\f1\\froman\\fcharset2 Symbol;}
+        {\\f2\\froman\\fprq2 Times New Roman;}
+        {\\f3\\froman Times New Roman;}
 */
-	}
+    }
 
 
-	//////////////////////////////////////////////////
-	// @@ Public methods
-	//////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    // @@ Public methods
+    //////////////////////////////////////////////////
 
 
-	/**
-	 * Gets the number of font in the font table
-	 *
-	 * @param family Font family name ('Helvetica')
-	 *
-	 * @return The number of the font in the table
-	 */
-	public int getFontNumber (String family)
-	{
+    /**
+     * Gets the number of font in the font table
+     *
+     * @param family Font family name ('Helvetica')
+     *
+     * @return The number of the font in the table
+     */
+    public int getFontNumber (String family)
+    {
 
-		family = family.toLowerCase ();
-		Object o = fontIndex.get (family);
-		int retVal;
+        family = family.toLowerCase ();
+        Object o = fontIndex.get (family);
+        int retVal;
 
-		if (o == null)
-		{
-			addFont (family);
+        if (o == null)
+        {
+            addFont (family);
 
-			retVal = fontTable.size () - 1;
-		}
-		else
-		{
-			retVal = ((Integer) o).intValue ();
-		}
+            retVal = fontTable.size () - 1;
+        }
+        else
+        {
+            retVal = ((Integer) o).intValue ();
+        }
 
-		return retVal;
-	}
+        return retVal;
+    }
 
-	/**
-	 * Writes the font table in the header.
-	 *
-	 * @param header The header container to write in
-	 *
-	 * @throws IOException On error
-	 */
-	public void writeFonts (RtfHeader header) throws IOException
-	{
-		if (fontTable == null || fontTable.size () == 0)
-		{
-			return;
-		}
+    /**
+     * Writes the font table in the header.
+     *
+     * @param header The header container to write in
+     *
+     * @throws IOException On error
+     */
+    public void writeFonts (RtfHeader header) throws IOException
+    {
+        if (fontTable == null || fontTable.size () == 0)
+        {
+            return;
+        }
 
-		header.writeGroupMark (true);
-		header.writeControlWord ("fonttbl;");
+        header.writeGroupMark (true);
+        header.writeControlWord ("fonttbl;");
 
-		int len = fontTable.size ();
+        int len = fontTable.size ();
 
-		for (int i = 0; i < len; i++)
-		{
-			header.writeGroupMark (true);
-			header.write ("\\f" + i);
-			header.write (" " + (String) fontTable.elementAt (i));
-			header.writeGroupMark (false);
-		}
+        for (int i = 0; i < len; i++)
+        {
+            header.writeGroupMark (true);
+            header.write ("\\f" + i);
+            header.write (" " + (String) fontTable.elementAt (i));
+            header.writeGroupMark (false);
+        }
 
-		header.writeGroupMark (false);
-	}
+        header.writeGroupMark (false);
+    }
 
 
-	//////////////////////////////////////////////////
-	// @@ Private methods
-	//////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    // @@ Private methods
+    //////////////////////////////////////////////////
 
-	/**
-	 * Adds a font to the table.
-	 *
-	 * @param i Identifier of font
-	 */
-	private void addFont (String family)
-	{
-		fontIndex.put (family, new Integer (fontTable.size ()));
-		fontTable.addElement (family);
-	}
+    /**
+     * Adds a font to the table.
+     *
+     * @param i Identifier of font
+     */
+    private void addFont (String family)
+    {
+        fontIndex.put (family, new Integer (fontTable.size ()));
+        fontTable.addElement (family);
+    }
 }

@@ -86,15 +86,15 @@ implements IRtfParagraphContainer {
             if(m_parentList.isBulletedList()) {
                 writeGroupMark(true);
                 writeControlWord("pntext");
-				writeControlWord("f" + RtfFontManager.getInstance().getFontNumber("Symbol"));
+                writeControlWord("f" + RtfFontManager.getInstance().getFontNumber("Symbol"));
                 writeControlWord("'b7");
                 writeControlWord("tab");
                 writeGroupMark(false);
             }else{
-            	writeGroupMark(true);
-        		writeControlWord("pntext");
-        		writeGroupMark(false);
-        	}
+                writeGroupMark(true);
+                writeControlWord("pntext");
+                writeGroupMark(false);
+            }
         }
 
     }

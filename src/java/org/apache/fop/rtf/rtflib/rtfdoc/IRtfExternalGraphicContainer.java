@@ -63,10 +63,10 @@ import java.io.IOException;
 public interface IRtfExternalGraphicContainer
 {
 
-	/**
-	 * Creates a new image on external graphic base.
-	 *
-	 * @exception IOException On error
-	 */
-	RtfExternalGraphic newImage () throws IOException;
+    /**
+     * Creates a new image on external graphic base.
+     *
+     * @exception IOException On error
+     */
+    RtfExternalGraphic newImage () throws IOException;
 }

@@ -66,45 +66,45 @@ import java.io.IOException;
 
 public class RtfParagraphKeepTogether extends RtfContainer{
 
-	public static final int STATUS_NULL=0;
-	public static final int STATUS_OPEN_PARAGRAPH=1;
-	public static final int STATUS_CLOSE_PARAGRAPH=2;
-	private int m_status =STATUS_NULL;
+    public static final int STATUS_NULL=0;
+    public static final int STATUS_OPEN_PARAGRAPH=1;
+    public static final int STATUS_CLOSE_PARAGRAPH=2;
+    private int m_status =STATUS_NULL;
 
 
-	/**	RtfParagraphKeepTogether*/
-	RtfParagraphKeepTogether(IRtfParagraphContainer parent, Writer w) throws IOException {
-		super((RtfContainer)parent,w);
-	}
+    /**    RtfParagraphKeepTogether*/
+    RtfParagraphKeepTogether(IRtfParagraphContainer parent, Writer w) throws IOException {
+        super((RtfContainer)parent,w);
+    }
 
 
-	protected void writeRtfContent() throws IOException {
+    protected void writeRtfContent() throws IOException {
 
-		//First reet paragraph properties
-		// create a new one with keepn
-		if (m_status==STATUS_OPEN_PARAGRAPH) {
-			writeControlWord("pard");
-			writeControlWord("par");
-			writeControlWord("keepn");
-			writeGroupMark(true);
-			m_status = STATUS_NULL;
-		}
-
-
-		if (m_status == STATUS_CLOSE_PARAGRAPH) {
-			writeGroupMark(false);
-			m_status = STATUS_NULL;
-		}
-
-	}
+        //First reet paragraph properties
+        // create a new one with keepn
+        if (m_status==STATUS_OPEN_PARAGRAPH) {
+            writeControlWord("pard");
+            writeControlWord("par");
+            writeControlWord("keepn");
+            writeGroupMark(true);
+            m_status = STATUS_NULL;
+        }
 
 
+        if (m_status == STATUS_CLOSE_PARAGRAPH) {
+            writeGroupMark(false);
+            m_status = STATUS_NULL;
+        }
 
-	public void setStatus(int status) {
-		m_status = status;
-	}
+    }
 
- 	/** true if this element would generate no "useful" RTF content */
+
+
+    public void setStatus(int status) {
+        m_status = status;
+    }
+
+    /** true if this element would generate no "useful" RTF content */
     public boolean isEmpty()
     {
         return false;

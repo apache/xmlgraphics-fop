@@ -69,44 +69,44 @@ import java.io.IOException;
 
 public class BasicLink extends TestDocument
 {
-	//////////////////////////////////////////////////
-	// @@ Construction
-	//////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    // @@ Construction
+    //////////////////////////////////////////////////
 
-	/**
-	 * Default constructor.
-	 */
-	public BasicLink()
-	{
-	}
+    /**
+     * Default constructor.
+     */
+    public BasicLink()
+    {
+    }
 
-	/** generate the body of the test document */
-	protected void generateDocument(RtfDocumentArea rda, RtfSection sect) throws IOException
-	{
-		RtfParagraph p = sect.newParagraph ();
-		p.newLineBreak();
-		p.newLineBreak();
-		p.newLineBreak();
-		p.newText ("external link: ");
-		RtfHyperLink link = p.newHyperLink ("click here to go to the hompage", null);
-		link.setExternalURL ("http://www.skynamics.com");
-		p.close();
+    /** generate the body of the test document */
+    protected void generateDocument(RtfDocumentArea rda, RtfSection sect) throws IOException
+    {
+        RtfParagraph p = sect.newParagraph ();
+        p.newLineBreak();
+        p.newLineBreak();
+        p.newLineBreak();
+        p.newText ("external link: ");
+        RtfHyperLink link = p.newHyperLink ("click here to go to the hompage", null);
+        link.setExternalURL ("http://www.skynamics.com");
+        p.close();
 
-		p = sect.newParagraph ();
-		p.newLineBreak();
-		p.newText ("here we will demonstrate internal link to a bookmark");
-		p.newLineBreak();
-		p.newText ("internal link: ");
-		link = p.newHyperLink ("click here to go to the bookmark", null);
-		link.setInternalURL ("testBookmark");
-		p.close();
+        p = sect.newParagraph ();
+        p.newLineBreak();
+        p.newText ("here we will demonstrate internal link to a bookmark");
+        p.newLineBreak();
+        p.newText ("internal link: ");
+        link = p.newHyperLink ("click here to go to the bookmark", null);
+        link.setInternalURL ("testBookmark");
+        p.close();
 
-		p = sect.newParagraph();
-		p.newLineBreak();
-		p.newLineBreak();
-		p.newLineBreak();
-		p.newPageBreak();
-		p.newBookmark("testBookmark");
-		p.newText("testBookmark");
-	}
+        p = sect.newParagraph();
+        p.newLineBreak();
+        p.newLineBreak();
+        p.newLineBreak();
+        p.newPageBreak();
+        p.newBookmark("testBookmark");
+        p.newText("testBookmark");
+    }
 }

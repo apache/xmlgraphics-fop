@@ -68,15 +68,15 @@ import java.io.IOException;
 
 public class RtfPageNumberCitation extends RtfContainer
 {
-  // Page field :
-	//  "{\field {\*\fldinst {PAGEREF xx}} {\fldrslt}}" where xx represents the
-  // 'id' of the referenced page
-	public static final String RTF_FIELD = "field";
-	public static final String RTF_FIELD_PAGEREF_MODEL = "fldinst { PAGEREF }";
-	public static final String RTF_FIELD_RESULT = "fldrslt";
+    // Page field :
+    //  "{\field {\*\fldinst {PAGEREF xx}} {\fldrslt}}" where xx represents the
+    // 'id' of the referenced page
+    public static final String RTF_FIELD = "field";
+    public static final String RTF_FIELD_PAGEREF_MODEL = "fldinst { PAGEREF }";
+    public static final String RTF_FIELD_RESULT = "fldrslt";
 
-  // The 'id' of the referenced page
-  private String id = null;
+    // The 'id' of the referenced page
+    private String id = null;
 
   /** Create an RTF page number citation as a child of given container with default attributes */
   RtfPageNumberCitation (IRtfPageNumberCitationContainer parent, Writer w, String id) throws IOException

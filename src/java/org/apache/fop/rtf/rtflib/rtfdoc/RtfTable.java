@@ -82,15 +82,15 @@ public class RtfTable extends RtfContainer
         m_table_context = tc;
     }
 
-	/** Create an RTF element as a child of given container
+    /** Create an RTF element as a child of given container
    * Modified by Boris Poudérous in order to process 'number-columns-spanned' attribute
    */
   RtfTable(IRtfTableContainer parent, Writer w, RtfAttributes attrs, ITableColumnsInfo tc) throws IOException
-	{
-		super((RtfContainer)parent,w,attrs);
+    {
+        super((RtfContainer)parent,w,attrs);
     // Line added by Boris Poudérous on 07/22/2002
     m_table_context = tc;
-	}
+    }
 
     /** close current row if any and start a new one */
     public RtfTableRow newTableRow() throws IOException
@@ -135,7 +135,7 @@ public class RtfTable extends RtfContainer
 
     public boolean isHighestRow(int id)
     {
-    	return (highestRow == id) ? true : false;
+        return (highestRow == id) ? true : false;
     }
 
     /** Added by Boris Poudérous on 07/22/2002 */

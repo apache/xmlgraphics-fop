@@ -65,10 +65,10 @@ import java.io.IOException;
  */
 public interface IRtfHyperLinkContainer extends IRtfTextContainer
 {
-	/**
-	 * Creates a new hyperlink.
-	 *
-	 * @exception IOException on error
-	 */
-	public RtfHyperLink newHyperLink (String str, RtfAttributes attr) throws IOException;
+    /**
+     * Creates a new hyperlink.
+     *
+     * @exception IOException on error
+     */
+    public RtfHyperLink newHyperLink (String str, RtfAttributes attr) throws IOException;
 }

@@ -67,63 +67,63 @@ import java.util.Hashtable;
 
 public class ImageConstants
 {
-	//////////////////////////////////////////////////
-	// @@ Symbolic constants
-	//////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    // @@ Symbolic constants
+    //////////////////////////////////////////////////
 
-	/** Defines the case, if image is not supported */
-	public static int I_NOT_SUPPORTED = -1;
+    /** Defines the case, if image is not supported */
+    public static int I_NOT_SUPPORTED = -1;
 
-	public static int I_EMF = 0;
-	public static int I_PNG = 1;
-	public static int I_JPG = 2;
+    public static int I_EMF = 0;
+    public static int I_PNG = 1;
+    public static int I_JPG = 2;
 
-	/** Defines the RTF properties */
-	public static String [] RTF_TAGS = new String []
-		{
-			"emfblip", "pngblip", "jpegblip"
-		};
+    /** Defines the RTF properties */
+    public static String [] RTF_TAGS = new String []
+        {
+            "emfblip", "pngblip", "jpegblip"
+        };
 
-	public static int I_TO_CONVERT_BASIS = 50;
-	public static int I_GIF = 50;
-	public static int I_JPG_C = 51;
+    public static int I_TO_CONVERT_BASIS = 50;
+    public static int I_GIF = 50;
+    public static int I_JPG_C = 51;
 
-	/** Defines the types for converting rtf supported image types */
-	public static int [] CONVERT_TO = new int []
-		{
-			I_JPG, I_JPG
-		};
+    /** Defines the types for converting rtf supported image types */
+    public static int [] CONVERT_TO = new int []
+        {
+            I_JPG, I_JPG
+        };
 
-	/** EMF file extension */
-	public static String EMF_EXT = "emf";
-	/** PNG file extension */
-	public static String PNG_EXT = "png";
-	/** JPG file extension */
-	public static String JPG_EXT = "jpg";
-	/** JPEG file extension */
-	public static String JPEG_EXT = "jpeg";
-	/** GIF file extension */
-	public static String GIF_EXT = "gif";
+    /** EMF file extension */
+    public static String EMF_EXT = "emf";
+    /** PNG file extension */
+    public static String PNG_EXT = "png";
+    /** JPG file extension */
+    public static String JPG_EXT = "jpg";
+    /** JPEG file extension */
+    public static String JPEG_EXT = "jpeg";
+    /** GIF file extension */
+    public static String GIF_EXT = "gif";
 
-	/** Defines the file extensions and the RTF property belongs to */
-	public static Hashtable SUPPORTED_IMAGE_TYPES = new Hashtable ();
-	static
-	{
-		SUPPORTED_IMAGE_TYPES.put (EMF_EXT, new Integer (I_EMF));
-		SUPPORTED_IMAGE_TYPES.put (PNG_EXT, new Integer (I_PNG));
-		SUPPORTED_IMAGE_TYPES.put (JPG_EXT, new Integer (I_JPG_C));
-		SUPPORTED_IMAGE_TYPES.put (JPEG_EXT,new Integer (I_JPG_C));
-		SUPPORTED_IMAGE_TYPES.put (GIF_EXT, new Integer (I_GIF));
-	}
+    /** Defines the file extensions and the RTF property belongs to */
+    public static Hashtable SUPPORTED_IMAGE_TYPES = new Hashtable ();
+    static
+    {
+        SUPPORTED_IMAGE_TYPES.put (EMF_EXT, new Integer (I_EMF));
+        SUPPORTED_IMAGE_TYPES.put (PNG_EXT, new Integer (I_PNG));
+        SUPPORTED_IMAGE_TYPES.put (JPG_EXT, new Integer (I_JPG_C));
+        SUPPORTED_IMAGE_TYPES.put (JPEG_EXT,new Integer (I_JPG_C));
+        SUPPORTED_IMAGE_TYPES.put (GIF_EXT, new Integer (I_GIF));
+    }
 
-	//////////////////////////////////////////////////
-	// @@ Construction
-	//////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    // @@ Construction
+    //////////////////////////////////////////////////
 
-	/**
-	 * Private constructor.
-	 */
-	private ImageConstants()
-	{
-	}
+    /**
+     * Private constructor.
+     */
+    private ImageConstants()
+    {
+    }
 }

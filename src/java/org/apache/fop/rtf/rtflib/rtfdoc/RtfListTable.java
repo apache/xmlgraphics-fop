@@ -99,12 +99,12 @@ public class RtfListTable extends RtfContainer{
     public static final String LIST_NUMBER = "ls";
 
     public static final String [] LIST_TABLE_ATTR = {
-        LIST_TABLE,				LIST,				LIST_TEMPLATE_ID,
-        LIST_NUMBER_TYPE,		LIST_JUSTIFICATION,	LIST_FOLLOWING_CHAR,
-        LIST_START_AT,			LIST_SPACE,			LIST_INDENT,
-        LIST_TEXT_FORM,			LIST_NUM_POSITION,	LIST_ID,
-        LIST_OVR_TABLE,			LIST_OVR,			LIST_OVR_COUNT,
-        LIST_NUMBER,			LIST_LEVEL
+        LIST_TABLE,             LIST,                   LIST_TEMPLATE_ID,
+        LIST_NUMBER_TYPE,       LIST_JUSTIFICATION,     LIST_FOLLOWING_CHAR,
+        LIST_START_AT,          LIST_SPACE,             LIST_INDENT,
+        LIST_TEXT_FORM,         LIST_NUM_POSITION,      LIST_ID,
+        LIST_OVR_TABLE,         LIST_OVR,               LIST_OVR_COUNT,
+        LIST_NUMBER,            LIST_LEVEL
     };
 
     /**RtfListTable Constructor: sets the number of the list, and allocates

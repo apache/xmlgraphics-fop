@@ -63,12 +63,12 @@ import java.io.IOException;
 
 public interface IrtfTemplateContainer {
 
-	/**
-	 * Creates a new Template.
-	 *
-	 * @exception IOException on error
-	 */
-	public RtfTemplate newTemplate (String str, RtfAttributes attr) throws IOException;
+    /**
+     * Creates a new Template.
+     *
+     * @exception IOException on error
+     */
+    public RtfTemplate newTemplate (String str, RtfAttributes attr) throws IOException;
 
 
 }

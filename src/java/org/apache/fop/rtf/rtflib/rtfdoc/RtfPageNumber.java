@@ -65,12 +65,12 @@ import java.io.IOException;
 public class RtfPageNumber extends RtfContainer
 {
     /** RtfText attributes: fields */
-	//must be carefull of group markings and star control
-	//ie page field:
-	//  "{\field {\*\fldinst {PAGE}} {\fldrslt}}"
-	public static String RTF_FIELD = "field";
-	public static String RTF_FIELD_PAGE = "fldinst { PAGE }";
-	public static String RTF_FIELD_RESULT = "fldrslt";
+    //must be carefull of group markings and star control
+    //ie page field:
+    //  "{\field {\*\fldinst {PAGE}} {\fldrslt}}"
+    public static String RTF_FIELD = "field";
+    public static String RTF_FIELD_PAGE = "fldinst { PAGE }";
+    public static String RTF_FIELD_RESULT = "fldrslt";
 
     /** Create an RTF paragraph as a child of given container with default attributes */
     RtfPageNumber(IRtfPageNumberContainer parent, Writer w) throws IOException
@@ -113,5 +113,3 @@ public class RtfPageNumber extends RtfContainer
         return false;
     }
 }
-
-	
