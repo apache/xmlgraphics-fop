@@ -23,8 +23,8 @@ package org.apache.fop.configuration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.apache.fop.apps.Fop;
 
 /**
@@ -36,7 +36,7 @@ import org.apache.fop.apps.Fop;
  */
 public class Configuration {
 
-    protected final Logger logger = Logger.getLogger(Fop.fopPackage);
+    protected Logger logger = Logger.getLogger(Fop.fopPackage);
     /**
      * defines role types
      */
@@ -397,52 +397,50 @@ public class Configuration {
      * debug methods, which writes out all information in this configuration
      */
     public void dumpConfiguration() {
-        String key;
-        Object value;
-        ArrayList list;
-        HashMap map, configuration;
-        Iterator iterator;
-        String tmp;
-        System.out.println("Dumping configuration: ");
+        StringBuffer msg = new StringBuffer();
+        logger.setLevel(Level.CONFIG);
         HashMap[] configs = {
             standardConfiguration, pdfConfiguration, awtConfiguration
         };
         for (int i = 0; i < configs.length; i++) {
-            logger.config("----------------------");
-            configuration = configs[i];
+            msg.append("\n----------------------");
+            HashMap configuration = configs[i];
             Iterator iter = configuration.keySet().iterator();
             while (iter.hasNext()) {
-                key = (String)iter.next();
-                logger.config("key: " + key);
-                value = configuration.get(key);
+                String key = (String)iter.next();
+                msg.append("\nkey: " + key);
+                Object value = configuration.get(key);
                 if (value instanceof String) {
-                    logger.config("   value: " + value);
+                    msg.append("   value: " + value);
                 } else if (value instanceof Boolean) {
-                    logger.config
+                    msg.append
                             ("   value: " + ((Boolean)value).booleanValue());
                 } else if (value instanceof Integer) {
-                    logger.config
+                    msg.append
                                 ("   value: " + ((Integer)value).intValue());
                 } else if (value instanceof ArrayList) {
-                    list = (ArrayList)value;
-                    iterator = list.iterator();
-                    StringBuffer msg = new StringBuffer("   values: ");
-                    while (iterator.hasNext()) {
-                        msg.append(iterator.next() + " - ");
+                    ArrayList list = (ArrayList)value;
+                    Iterator iterator = list.iterator();
+                    msg.append("   values: ");
+                    if (iterator.hasNext()) {
+                        msg.append("<" + iterator.next() + ">");
                     }
-                    logger.config(msg.toString());
+                    while (iterator.hasNext()) {
+                        msg.append(", <" + iterator.next() + ">");
+                    }
                 } else if (value instanceof HashMap) {
-                    map = (HashMap)value;
-                    iterator = map.keySet().iterator();
-                    StringBuffer msg = new StringBuffer("   values: ");
+                    HashMap map = (HashMap)value;
+                    Iterator iterator = map.keySet().iterator();
+                    msg.append("   values: ");
                     while (iterator.hasNext()) {
-                        tmp = (String)iterator.next();
-                        msg.append(" " + tmp + ":" + map.get(tmp));
+                        String tmp = (String)iterator.next();
+                        msg.append("\n    " + tmp + ":" + map.get(tmp));
                     }
-                    logger.config(msg.toString());
                 }
             }
         }
+        msg.append("\n");
+        logger.config(msg.toString());
     }
 
 }
