@@ -400,11 +400,11 @@ public class PropertyMaker implements Cloneable {
                     newProp = getSubprop(newProp, propId & Constants.COMPOUND_MASK);
                 }
             } else {
-                newProp = checkEnumValues(value);
+                // Check for keyword shorthand values to be substituted. 
+                pvalue = checkValueKeywords(pvalue);
+                newProp = checkEnumValues(pvalue);
             }
             if (newProp == null) {
-                // Check for keyword shorthand values to be substituted. 
-                pvalue = checkValueKeywords(value);
                 // Override parsePropertyValue in each subclass of Property.Maker
                 newProp = PropertyParser.parse(pvalue,
                                                   new PropertyInfo(this,
