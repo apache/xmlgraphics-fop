@@ -272,4 +272,11 @@ public class CommonBorderPaddingBackground implements Cloneable {
         "Padding: (" + getPaddingBefore(false) + ", " + getPaddingAfter(false) + ", " +
         getPaddingStart(false) + ", " + getPaddingEnd(false) + ")\n";
     }
+
+    /**
+     * @return true if there is any kind of background to be painted
+     */
+    public boolean hasBackground() {
+        return ((backgroundColor != null || getFopImage() != null));
+    }
 }
