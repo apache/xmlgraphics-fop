@@ -1,3 +1,9 @@
+/*
+ * $Id$
+ * Copyright (C) 2002 The Apache Software Foundation. All rights reserved.
+ * For details on use and redistribution please refer to the
+ * LICENSE file included with these sources.
+ */
 package org.apache.fop.fonts.type1;
 
 import java.io.IOException;
@@ -10,7 +16,7 @@ import org.apache.fop.tools.IOUtil;
 
 /**
  * This class represents a parser for Adobe Type 1 PFB files.
- * 
+ *
  * @see PFBData
  */
 public class PFBParser {
@@ -85,11 +91,10 @@ public class PFBParser {
 
 
     private static int swapInteger(final int value) {
-        return
-            (((value >> 0) & 0xff ) << 24) +
-            (((value >> 8) & 0xff ) << 16) +
-            (((value >> 16) & 0xff ) << 8) +
-            (((value >> 24) & 0xff ) << 0);
+        return (((value >> 0) & 0xff) << 24)
+             + (((value >> 8) & 0xff) << 16)
+             + (((value >> 16) & 0xff) << 8)
+             + (((value >> 24) & 0xff) << 0);
     }
 
 
@@ -100,45 +105,61 @@ public class PFBParser {
 
         //Read first segment
         segmentHead = din.readUnsignedByte();
-        if (segmentHead != 128) throw new IOException("Invalid file format. Expected ASCII 80hex");
+        if (segmentHead != 128) {
+            throw new IOException("Invalid file format. Expected ASCII 80hex");
+        }
         segmentType = din.readUnsignedByte(); //Read
         int len1 = swapInteger(din.readInt());
         byte[] headerSegment = new byte[len1];
         bytesRead = din.read(headerSegment);
-        if (bytesRead != len1) throw new IOException("Could not load the whole segment");
+        if (bytesRead != len1) {
+            throw new IOException("Could not load the whole segment");
+        }
         pfb.setHeaderSegment(headerSegment);
 
         //Read second segment
         segmentHead = din.readUnsignedByte();
-        if (segmentHead != 128) throw new IOException("Invalid file format. Expected ASCII 80hex");
+        if (segmentHead != 128) {
+            throw new IOException("Invalid file format. Expected ASCII 80hex");
+        }
         segmentType = din.readUnsignedByte();
         int len2 = swapInteger(din.readInt());
         byte[] encryptedSegment = new byte[len2];
         bytesRead = din.read(encryptedSegment);
-        if (bytesRead != len2) throw new IOException("Could not load the whole segment");
+        if (bytesRead != len2) {
+            throw new IOException("Could not load the whole segment");
+        }
         pfb.setEncryptedSegment(encryptedSegment);
 
         //Read third segment
         segmentHead = din.readUnsignedByte();
-        if (segmentHead != 128) throw new IOException("Invalid file format. Expected ASCII 80hex");
+        if (segmentHead != 128) {
+            throw new IOException("Invalid file format. Expected ASCII 80hex");
+        }
         segmentType = din.readUnsignedByte();
         int len3 = swapInteger(din.readInt());
         byte[] trailerSegment = new byte[len3];
         bytesRead = din.read(trailerSegment);
-        if (bytesRead != len3) throw new IOException("Could not load the whole segment");
+        if (bytesRead != len3) {
+            throw new IOException("Could not load the whole segment");
+        }
         pfb.setTrailerSegment(trailerSegment);
 
         //Read EOF indicator
         segmentHead = din.readUnsignedByte();
-        if (segmentHead != 128) throw new IOException("Invalid file format. Expected ASCII 80hex");
+        if (segmentHead != 128) {
+            throw new IOException("Invalid file format. Expected ASCII 80hex");
+        }
         segmentType = din.readUnsignedByte();
-        if (segmentType != 3) throw new IOException("Expected segment type 3, but found: "+segmentType);
+        if (segmentType != 3) {
+            throw new IOException("Expected segment type 3, but found: " + segmentType);
+        }
     }
 
 
-    private final static boolean byteCmp(byte[] src, int srcOffset, byte[] cmp) {
+    private static final boolean byteCmp(byte[] src, int srcOffset, byte[] cmp) {
         for (int i = 0; i < cmp.length; i++) {
-            // System.out.println("Compare: "+src[srcOffset+i]+" "+cmp[i]);
+            // System.out.println("Compare: " + src[srcOffset + i] + " " + cmp[i]);
             if (src[srcOffset + i] != cmp[i]) {
                 return false;
             }
@@ -199,11 +220,12 @@ public class PFBParser {
         pfb.setEncryptedSegment(buffer);
 
         buffer = new byte[len3];
-        System.arraycopy(originalData, len1+len2, buffer, 0, len3);
+        System.arraycopy(originalData, len1 + len2, buffer, 0, len3);
         pfb.setTrailerSegment(buffer);
     }
 
-    private void parseRAWFormat(PFBData pfb, BufferedInputStream bin) throws IOException {
+    private void parseRAWFormat(PFBData pfb, BufferedInputStream bin)
+            throws IOException {
         calcLengths(pfb, IOUtil.toByteArray(bin, 32768));
     }
 
