@@ -57,7 +57,7 @@ public class FObj extends FONode implements Constants {
     protected Map layoutDimension = null;
 
     /** During input FO validation, certain FO's are not valid as
-        child nodes if this FO is a descendant of an Out Of Line 
+        child nodes if they would be a descendant of an Out Of Line 
         Formatting Object as defined in specification.
         See Section 6.2 of 1.0/1.2 spec for more information.
     */

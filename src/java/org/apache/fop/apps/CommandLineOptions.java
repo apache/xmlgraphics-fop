@@ -483,9 +483,9 @@ public class CommandLineOptions implements Constants {
     private InputHandler createInputHandler() throws IllegalArgumentException {
         switch (inputmode) {
             case FO_INPUT:
-                return new FOFileHandler(fofile);
+                return new InputHandler(fofile);
             case XSLT_INPUT:
-                return new XSLTInputHandler(xmlfile, xsltfile, xsltParams);
+                return new InputHandler(xmlfile, xsltfile, xsltParams);
             default:
                 throw new IllegalArgumentException("Error creating InputHandler object.");
         }

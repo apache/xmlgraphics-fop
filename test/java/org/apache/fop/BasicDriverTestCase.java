@@ -37,7 +37,6 @@ import org.xml.sax.InputSource;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.InputHandler;
-import org.apache.fop.apps.XSLTInputHandler;
 import org.w3c.dom.Document;
 
 /**
@@ -151,7 +150,7 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
         Fop fop = new Fop(Fop.RENDER_PDF);
         fop.setOutputStream(baout);
         
-        InputHandler handler = new XSLTInputHandler(xmlFile, xsltFile, null);
+        InputHandler handler = new InputHandler(xmlFile, xsltFile, null);
         handler.render(fop);
         
         assertTrue("Generated PDF has zero length", baout.size() > 0);
