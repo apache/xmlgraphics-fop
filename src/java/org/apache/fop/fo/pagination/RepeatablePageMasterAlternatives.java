@@ -27,7 +27,6 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 
@@ -64,7 +63,7 @@ public class RepeatablePageMasterAlternatives extends FObj
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws SAXParseException {
-        if (!(nsURI == FOElementMapping.URI &&
+        if (!(nsURI == FO_URI &&
             localName.equals("conditional-page-master-reference"))) {
                 invalidChildError(loc, nsURI, localName);
         }

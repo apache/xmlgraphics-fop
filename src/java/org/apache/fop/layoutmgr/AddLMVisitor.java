@@ -45,9 +45,6 @@ import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.Leader;
-import org.apache.fop.fo.flow.ListItem;
-import org.apache.fop.fo.flow.ListItemBody;
-import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.RetrieveMarker;
 import org.apache.fop.fo.flow.Table;
@@ -62,8 +59,6 @@ import org.apache.fop.fo.flow.Wrapper;
 import org.apache.fop.fo.pagination.Title;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.layoutmgr.list.Item;
-import org.apache.fop.layoutmgr.list.ListItemLayoutManager;
 import org.apache.fop.layoutmgr.table.Body;
 import org.apache.fop.layoutmgr.table.Column;
 import org.apache.fop.layoutmgr.table.TableLayoutManager;
@@ -420,33 +415,6 @@ public class AddLMVisitor {
          areaCurrent.setOffset(0);
 
          return areaCurrent;
-     }
-
-     public void serveListItem(ListItem node) {
-         if (node.getLabel() != null && node.getBody() != null) {
-             ListItemLayoutManager blm = new ListItemLayoutManager(node);
-             blm.setLabel(getListItemLabelLayoutManager(node.getLabel()));
-             blm.setBody(getListItemBodyLayoutManager(node.getBody()));
-             currentLMList.add(blm);
-         } else {
-             node.getLogger().error("list-item requires list-item-label and list-item-body");
-         }
-     }
-
-     /**
-      * @return this object's Item layout manager
-      */
-     public Item getListItemLabelLayoutManager(ListItemLabel node) {
-         Item itemLabel = new Item(node);
-         return itemLabel;
-     }
-
-     /**
-      * @return Item layout manager
-      */
-     public Item getListItemBodyLayoutManager(ListItemBody node) {
-         Item item = new Item(node);
-         return item;
      }
 
      /**

@@ -18,28 +18,23 @@
 
 package org.apache.fop.fo.flow;
 
+// Java
+import java.util.List;
+
 // XML
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.fo.properties.CommonAural;
-import org.apache.fop.fo.properties.CommonBackground;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonMarginBlock;
-import org.apache.fop.fo.properties.CommonRelativePosition;
-import org.apache.fop.fo.LMVisited;
+import org.apache.fop.layoutmgr.list.ListItemLayoutManager;
 
 /**
  * Class modelling the fo:list-item object. See Sec. 6.8.3 of the XSL-FO
  * Standard.
  */
-public class ListItem extends FObj implements LMVisited {
+public class ListItem extends FObj {
 
     private ListItemLabel label = null;
     private ListItemBody body = null;
@@ -70,31 +65,7 @@ public class ListItem extends FObj implements LMVisited {
     }
 
     private void setup() {
-
-        // Common Accessibility Properties
-        CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
-
-        // Common Aural Properties
-        CommonAural mAurProps = propMgr.getAuralProps();
-
-        // Common Border, Padding, and Background Properties
-        CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
-        CommonBackground bProps = propMgr.getBackgroundProps();
-
-        // Common Margin Properties-Block
-        CommonMarginBlock mProps = propMgr.getMarginProps();
-
-        // Common Relative Position Properties
-        CommonRelativePosition mRelProps = propMgr.getRelativePositionProps();
-
-        // this.propertyList.get("break-after");
-        // this.propertyList.get("break-before");
         setupID();
-        // this.propertyList.get("keep-together");
-        // this.propertyList.get("keep-with-next");
-        // this.propertyList.get("keep-with-previous");
-        // this.propertyList.get("relative-align");
-
         this.align = this.propertyList.get(PR_TEXT_ALIGN).getEnum();
         this.alignLast = this.propertyList.get(PR_TEXT_ALIGN_LAST).getEnum();
         this.lineHeight =
@@ -103,7 +74,6 @@ public class ListItem extends FObj implements LMVisited {
             this.propertyList.get(PR_SPACE_BEFORE | CP_OPTIMUM).getLength().getValue();
         this.spaceAfter =
             this.propertyList.get(PR_SPACE_AFTER | CP_OPTIMUM).getLength().getValue();
-
     }
 
     /**
@@ -135,16 +105,25 @@ public class ListItem extends FObj implements LMVisited {
         return true;
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#addLayoutManager(List)
+     * @todo remove checks for non-nulls after validateChildNode() added
+     */
+    public void addLayoutManager(List list) { 	 
+        if (label != null && body != null) {
+            ListItemLayoutManager blm = new ListItemLayoutManager(this);
+            list.add(blm);
+        } else {
+            getLogger().error("list-item requires list-item-label and list-item-body");
+        }
+    }
+
     public ListItemLabel getLabel() {
         return label;
     }
 
     public ListItemBody getBody() {
         return body;
-    }
-
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveListItem(this);
     }
 
     protected void endOfNode() throws SAXParseException {

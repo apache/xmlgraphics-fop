@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.fo.flow.BidiOverride;
 
 
 /**
@@ -33,8 +34,9 @@ public class BidiLayoutManager extends LeafNodeLayoutManager {
 
     private List children;
 
-    public BidiLayoutManager(InlineStackingLayoutManager cLM) {
+    public BidiLayoutManager(BidiOverride node, InlineStackingLayoutManager cLM) {
         children = new ArrayList();
+        setFObj(node);
 /*
         for (int count = cLM.size() - 1; count >= 0; count--) {
             InlineArea ia = cLM.get(count);

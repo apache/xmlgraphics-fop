@@ -30,7 +30,6 @@ import org.xml.sax.SAXParseException;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -69,7 +68,7 @@ public class PageSequenceMaster extends FObj {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws SAXParseException {
-        if (nsURI == FOElementMapping.URI) {
+        if (nsURI == FO_URI) {
             if (!localName.equals("single-page-master-reference") 
                 && !localName.equals("repeatable-page-master-reference")
                 && !localName.equals("repeatable-page-master-alternatives")) {   
