@@ -58,19 +58,42 @@
 </xsl:template>
 
 <!-- return a boolean value -->
-<xsl:template name="isEnum">
+<xsl:template name="hasEnum">
   <xsl:param name="prop" select="."/>
   <xsl:choose>
-    <xsl:when test="$prop/datatype">
-	<xsl:value-of select="boolean($prop/datatype='Enum')"/>
-    </xsl:when>
+    <xsl:when test="$prop/enumeration">true</xsl:when>
     <xsl:when test="$prop/use-generic">
       <!-- If no datatype child, then the prop must use the same datatype as
            its template. -->
-	<xsl:call-template name="isEnum">
+	<xsl:call-template name="hasEnum">
 	  <xsl:with-param name="prop"
 	   select="key('genericref', $prop/use-generic)"/>
         </xsl:call-template>
+    </xsl:when>
+    <xsl:otherwise>false</xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+<!-- return a boolean value -->
+<xsl:template name="hasSubpropEnum">
+  <xsl:param name="prop" select="."/>
+  <xsl:choose>
+    <xsl:when test="$prop/compound/subproperty/enumeration">true</xsl:when>
+    <xsl:when test="$prop/use-generic">
+      <!-- If no datatype child, then the prop must use the same datatype as
+           its template. -->
+	<xsl:call-template name="hasSubpropEnum">
+	  <xsl:with-param name="prop"
+	   select="key('genericref', $prop/use-generic)"/>
+        </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="$prop/compound/subproperty/use-generic">
+	<xsl:for-each select="$prop/compound/subproperty[use-generic]">
+	  <xsl:call-template name="hasEnum">
+	    <xsl:with-param name="prop"
+	   	select="key('genericref', use-generic)"/>
+          </xsl:call-template>
+	</xsl:for-each>
     </xsl:when>
     <xsl:otherwise>false</xsl:otherwise>
   </xsl:choose>

@@ -20,23 +20,36 @@
   <property type="generic">
     <name>generic-keep</name>
     <class-name>GenericKeep</class-name>
-    <datatype>Number</datatype>
-    <keyword-equiv match="auto" eval="true">0</keyword-equiv>
-    <keyword-equiv match="always" eval="true">-1</keyword-equiv>
-<!--      <compound>
-      <subproperty>
+    <datatype>Keep</datatype> <!-- CompoundDatatype -->
+    <compound>
+      <subproperty set-by-shorthand="true">
         <name>within-page</name>
-        <datatype>Number</datatype>
+    <datatype>Number</datatype>
+    <default>auto</default>
+      <enumeration>
+        <value const="AUTO">auto</value>
+        <value const="ALWAYS">always</value>
+      </enumeration>
       </subproperty>
-      <subproperty>
+      <subproperty set-by-shorthand="true">
         <name>within-line</name>
-        <datatype>Number</datatype>
+    <datatype>Number</datatype>
+    <default>auto</default>
+      <enumeration>
+        <value const="AUTO">auto</value>
+        <value const="ALWAYS">always</value>
+      </enumeration>
       </subproperty>
-      <subproperty>
+      <subproperty set-by-shorthand="true">
         <name>within-column</name>
-        <datatype>Number</datatype>
+    <datatype>Number</datatype>
+    <default>auto</default>
+      <enumeration>
+        <value const="AUTO">auto</value>
+        <value const="ALWAYS">always</value>
+      </enumeration>
       </subproperty>
-    </compound>-->
+    </compound>
   </property>
   <property type="generic">
     <name>conditional-length-template</name>
@@ -49,7 +62,11 @@
       </subproperty>
       <subproperty>
         <name>conditionality</name>
-        <datatype>String</datatype>  <!-- NCName or Enum ??? -->
+        <datatype>Enum</datatype>
+        <enumeration>
+          <value const="DISCARD">discard</value>
+          <value const="RETAIN">retain</value>
+        </enumeration>
       </subproperty>
     </compound>
   </property>
@@ -91,8 +108,12 @@
         <default>medium</default>
       </subproperty>
       <subproperty>
+        <datatype>Enum</datatype>
         <name>conditionality</name>
-        <datatype>String</datatype>  <!-- NCName or Enum ??? -->
+        <enumeration>
+          <value const="DISCARD">discard</value>
+          <value const="RETAIN">retain</value>
+        </enumeration>
       </subproperty>
     </compound>
   </property>
@@ -164,11 +185,18 @@
       <subproperty>
         <name>precedence</name>
         <datatype>Number</datatype>
+        <enumeration>
+          <value const="FORCE">force</value>
+        </enumeration>
         <default>0</default>
       </subproperty>
       <subproperty>
         <name>conditionality</name>
-        <datatype>String</datatype>  <!-- NCName or Enum ??? -->
+        <datatype>Enum</datatype>
+        <enumeration>
+          <value const="DISCARD">discard</value>
+          <value const="RETAIN">retain</value>
+        </enumeration>
         <default>discard</default>
       </subproperty>
     </compound>
@@ -186,6 +214,14 @@
     <inherited>true</inherited>
     <datatype>Length</datatype>
     <default>0pt</default>
+    <corresponding use-if-specified="true">
+      <propval>margin-<wmrel2abs dir="START"/></propval>
+      <propexpr>
+      <propval>margin-<wmrel2abs dir="START"/></propval>+
+      <propval>padding-<wmrel2abs dir="START"/></propval>+
+      <propval>border-<wmrel2abs dir="START"/>-width</propval>
+      </propexpr>
+    </corresponding>
   </property>
   <property>
     <name>font-style</name>
@@ -258,6 +294,14 @@
     <inherited>true</inherited>
     <datatype>Length</datatype>
     <default>0pt</default>
+    <corresponding use-if-specified="true">
+      <propval>margin-<wmrel2abs dir="END"/></propval>
+      <propexpr>
+      <propval>margin-<wmrel2abs dir="END"/></propval>+
+      <propval>padding-<wmrel2abs dir="END"/></propval>+
+      <propval>border-<wmrel2abs dir="END"/>-width</propval>
+      </propexpr>
+    </corresponding>
   </property>
   <property>
     <name>color</name>
@@ -456,37 +500,61 @@
     <name>padding-before</name>
     <use-generic>GenericCondPadding</use-generic>
     <default subproperty="conditionality">retain</default>
+    <corresponding use-if-specified="true">
+      <propval>padding-<wmrel2abs dir="BEFORE"/></propval>
+    </corresponding>
   </property>
   <property>
     <name>padding-after</name>
     <use-generic>GenericCondPadding</use-generic>
     <default subproperty="conditionality">retain</default>
+    <corresponding use-if-specified="true">
+      <propval>padding-<wmrel2abs dir="AFTER"/></propval>
+    </corresponding>
   </property>
   <property>
     <name>padding-start</name>
     <use-generic>GenericCondPadding</use-generic>
     <default subproperty="conditionality">discard</default>
+    <corresponding use-if-specified="true">
+      <propval>padding-<wmrel2abs dir="START"/></propval>
+    </corresponding>
   </property>
   <property>
     <name>padding-end</name>
     <use-generic>GenericCondPadding</use-generic>
     <default subproperty="conditionality">discard</default>
+    <corresponding use-if-specified="true">
+      <propval>padding-<wmrel2abs dir="END"/></propval>
+    </corresponding>
   </property>
   <property>
     <name>padding-top</name>
     <use-generic>GenericPadding</use-generic>
+    <corresponding>
+      <propval>padding-<wmabs2rel dir="TOP"/></propval>
+    </corresponding>
   </property>
   <property>
     <name>padding-left</name>
     <use-generic>GenericPadding</use-generic>
+    <corresponding>
+      <propval>padding-<wmabs2rel dir="LEFT"/></propval>
+    </corresponding>
   </property>
   <property>
     <name>padding-bottom</name>
     <use-generic>GenericPadding</use-generic>
+    <corresponding>
+      <propval>padding-<wmabs2rel dir="BOTTOM"/></propval>
+    </corresponding>
   </property>
   <property>
     <name>padding-right</name>
     <use-generic>GenericPadding</use-generic>
+    <corresponding>
+      <propval>padding-<wmabs2rel dir="RIGHT"/></propval>
+    </corresponding>
   </property>
   <property>
     <name>external-destination</name>
@@ -505,116 +573,188 @@
     <inherited>false</inherited>
     <use-generic>GenericColor</use-generic>
     <default>black</default>
+    <corresponding use-if-specified="true">
+      <propval>border-<wmrel2abs dir="BEFORE"/>-color</propval>
+    </corresponding>
   </property>
   <property>
     <name>border-before-style</name>
     <use-generic>GenericBorderStyle</use-generic>
+    <corresponding use-if-specified="true">
+      <propval>border-<wmrel2abs dir="BEFORE"/>-style</propval>
+    </corresponding>
   </property>
   <property>
     <name>border-before-width</name>
     <use-generic>GenericCondBorderWidth</use-generic>
     <default subproperty="conditionality">retain</default>
+    <corresponding use-if-specified="true">
+      <propval>border-<wmrel2abs dir="BEFORE"/>-width</propval>
+    </corresponding>
   </property>
   <property>
     <name>border-after-color</name>
     <inherited>false</inherited>
     <use-generic>GenericColor</use-generic>
     <default>black</default>
+    <corresponding use-if-specified="true">
+      <propval>border-<wmrel2abs dir="AFTER"/>-color</propval>
+    </corresponding>
   </property>
   <property>
     <name>border-after-style</name>
     <use-generic>GenericBorderStyle</use-generic>
+    <corresponding use-if-specified="true">
+      <propval>border-<wmrel2abs dir="AFTER"/>-style</propval>
+    </corresponding>
   </property>
   <property>
     <name>border-after-width</name>
     <use-generic>GenericCondBorderWidth</use-generic>
     <default subproperty="conditionality">retain</default>
+    <corresponding use-if-specified="true">
+      <propval>border-<wmrel2abs dir="AFTER"/>-width</propval>
+    </corresponding>
   </property>
   <property>
     <name>border-start-color</name>
     <inherited>false</inherited>
     <use-generic>GenericColor</use-generic>
     <default>black</default>
+    <corresponding use-if-specified="true">
+      <propval>border-<wmrel2abs dir="START"/>-color</propval>
+    </corresponding>
   </property>
   <property>
     <name>border-start-style</name>
     <use-generic>GenericBorderStyle</use-generic>
+    <corresponding use-if-specified="true">
+      <propval>border-<wmrel2abs dir="START"/>-style</propval>
+    </corresponding>
   </property>
   <property>
     <name>border-start-width</name>
     <use-generic>GenericCondBorderWidth</use-generic>
     <default subproperty="conditionality">discard</default>
+    <corresponding use-if-specified="true">
+      <propval>border-<wmrel2abs dir="START"/>-width</propval>
+    </corresponding>
   </property>
   <property>
     <name>border-end-color</name>
     <inherited>false</inherited>
     <use-generic>GenericColor</use-generic>
     <default>black</default>
+    <corresponding use-if-specified="true">
+      <propval>border-<wmrel2abs dir="END"/>-color</propval>
+    </corresponding>
   </property>
   <property>
     <name>border-end-style</name>
     <use-generic>GenericBorderStyle</use-generic>
+    <corresponding use-if-specified="true">
+      <propval>border-<wmrel2abs dir="END"/>-style</propval>
+    </corresponding>
   </property>
   <property>
     <name>border-end-width</name>
     <use-generic>GenericCondBorderWidth</use-generic>
     <default subproperty="conditionality">discard</default>
+    <corresponding use-if-specified="true">
+      <propval>border-<wmrel2abs dir="END"/>-width</propval>
+    </corresponding>
   </property>
   <property>
     <name>border-top-color</name>
     <inherited>false</inherited>
     <use-generic>GenericColor</use-generic>
     <default>black</default>
+    <corresponding>
+      <propval>border-<wmabs2rel dir="TOP"/>-color</propval>
+    </corresponding>
   </property>
   <property>
     <name>border-top-style</name>
     <use-generic>GenericBorderStyle</use-generic>
+    <corresponding>
+      <propval>border-<wmabs2rel dir="TOP"/>-style</propval>
+    </corresponding>
   </property>
   <property>
     <name>border-top-width</name>
     <use-generic>GenericBorderWidth</use-generic>
+    <corresponding>
+      <propval>border-<wmabs2rel dir="TOP"/>-width</propval>
+    </corresponding>
   </property>
   <property>
     <name>border-bottom-color</name>
     <inherited>false</inherited>
     <use-generic>GenericColor</use-generic>
+    <corresponding>
+      <propval>border-<wmabs2rel dir="BOTTOM"/>-color</propval>
+    </corresponding>
     <default>black</default>
   </property>
   <property>
     <name>border-bottom-style</name>
     <use-generic>GenericBorderStyle</use-generic>
+    <corresponding>
+      <propval>border-<wmabs2rel dir="BOTTOM"/>-style</propval>
+    </corresponding>
   </property>
   <property>
     <name>border-bottom-width</name>
     <use-generic>GenericBorderWidth</use-generic>
+    <corresponding>
+      <propval>border-<wmabs2rel dir="BOTTOM"/>-width</propval>
+    </corresponding>
   </property>
   <property>
     <name>border-left-color</name>
     <inherited>false</inherited>
     <use-generic>GenericColor</use-generic>
     <default>black</default>
+    <corresponding>
+      <propval>border-<wmabs2rel dir="LEFT"/>-color</propval>
+    </corresponding>
   </property>
   <property>
     <name>border-left-style</name>
     <use-generic>GenericBorderStyle</use-generic>
+    <corresponding>
+      <propval>border-<wmabs2rel dir="LEFT"/>-style</propval>
+    </corresponding>
   </property>
   <property>
     <name>border-left-width</name>
     <use-generic>GenericBorderWidth</use-generic>
+    <corresponding>
+      <propval>border-<wmabs2rel dir="LEFT"/>-width</propval>
+    </corresponding>
   </property>
   <property>
     <name>border-right-color</name>
     <inherited>false</inherited>
     <use-generic>GenericColor</use-generic>
     <default>black</default>
+    <corresponding>
+      <propval>border-<wmabs2rel dir="RIGHT"/>-color</propval>
+    </corresponding>
   </property>
   <property>
     <name>border-right-style</name>
     <use-generic>GenericBorderStyle</use-generic>
+    <corresponding>
+      <propval>border-<wmabs2rel dir="RIGHT"/>-style</propval>
+    </corresponding>
   </property>
   <property>
     <name>border-right-width</name>
     <use-generic>GenericBorderWidth</use-generic>
+    <corresponding>
+      <propval>border-<wmabs2rel dir="RIGHT"/>-width</propval>
+    </corresponding>
   </property>
   <property>
     <name>border-color</name>
@@ -1040,6 +1180,56 @@
     <inherited>false</inherited>
     <datatype>Character</datatype>
     <default>none</default>
+  </property>
+
+  <property>
+    <name>writing-mode</name>
+    <inherited>true</inherited>
+    <datatype>Enum</datatype>
+    <default>lr-tb</default>
+    <enumeration>
+      <value const="LR_TB">lr-tb</value>
+      <value const="RL_TB">rl-tb</value>
+      <value const="TB_RL">tb-rl</value>
+    </enumeration>
+  </property>
+  
+  <property>
+    <name>block-progression-dimension</name>
+    <inherited>false</inherited>
+    <datatype>LengthRange</datatype>
+    <corresponding use-if-specified="true">
+      <propval><wmrel2abs dir="BLOCKPROGDIM"/></propval>
+    </corresponding>>
+    <compound>
+      <subproperty set-by-shorthand="true">
+        <name>minimum</name>
+        <datatype>Length</datatype>
+	<default>auto</default>
+	<auto-ok/>
+	<percent-ok base="CONTAINING_BOX"/>
+        <corresponding>
+          <propval>min-<wmrel2abs dir="BLOCKPROGDIM"/></propval>
+        </corresponding>>
+      </subproperty>
+      <subproperty set-by-shorthand="true">
+        <name>optimum</name>
+        <datatype>Length</datatype>
+	<default>auto</default> 
+	<auto-ok/>
+	<percent-ok base="CONTAINING_BOX"/>
+      </subproperty>
+      <subproperty set-by-shorthand="true">
+        <name>maximum</name>
+        <datatype>Length</datatype>
+	<auto-ok/>
+	<default>auto</default>
+	<percent-ok base="CONTAINING_BOX"/>
+        <corresponding>
+          <propval>max-<wmrel2abs dir="BLOCKPROGDIM"/></propval>
+        </corresponding>>
+      </subproperty>
+    </compound>
   </property>
 
  </generic-property-list>
