@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The Apache Software Foundation.
+ * Copyright 2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -118,7 +118,7 @@ public class RendererFactory {
         } else {
             if (renderType != Constants.RENDER_PRINT 
                     && renderType != Constants.RENDER_AWT) {
-                if (out == null) {
+                if (out == null && userAgent.getRendererOverride() == null) {
                     throw new IllegalStateException(
                         "OutputStream has not been set");
                 }
