@@ -63,10 +63,16 @@ public class LineBPLayoutManager extends
     private int m_iTextIndent = 0;
     private int m_iIndents = 0;
 
+    private int lineHeight;
+    private int lead;
+    private int follow;
 
     public LineBPLayoutManager(FObj fobj, List lms, int lh, int l, int f) {
 	//super(fobj, lms.listIterator(), lh, l, f);
 	super(fobj, lms.listIterator());
+        lineHeight = lh;
+        lead = l;
+        follow = f;
 	init(); // Normally done when started by parent!
     }
 
@@ -245,6 +251,9 @@ public class LineBPLayoutManager extends
 	    // No more content to layout!
 	    setFinished(true);
 	}
+
+if(bp == null) return null;
+
 	// Choose the best break
 	if (!bp.isForcedBreak() && vecPossEnd.size()>0) {
 	    m_prevBP = getBestBP(vecPossEnd);
@@ -383,7 +392,7 @@ public class LineBPLayoutManager extends
 	    while  ((childLM = inlinePosIter.getNextChildLM())!= null) {
 		childLM.addAreas(inlinePosIter);
 	    }
-	    // verticalAlign(m_lineArea);
+	    m_lineArea.verticalAlign(lineHeight, lead, follow);
 	    parentLM.addChild(m_lineArea);
 	}
 	m_lineArea = null;
