@@ -115,7 +115,7 @@ public class EnumProperty extends Property {
      * @return this.value cast as an Object
      */
     public Object getObject() {
-        // FIXME: return String value: property must reference maker
+        // TODO return String value: property must reference maker
         // return maker.getEnumValue(this.value);
         return new Integer(this.value);
     }

@@ -151,13 +151,13 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#startDocument()
      */
     public void startDocument() throws SAXException {
-        // FIXME sections should be created
+        // TODO sections should be created
         try {
             rtfFile = new RtfFile(new OutputStreamWriter(os));
             docArea = rtfFile.startDocumentArea();
         } catch (IOException ioe) {
-            // FIXME could we throw Exception in all FOInputHandler events?
-            throw new SAXException("IOException: " + ioe);
+            // TODO could we throw Exception in all FOInputHandler events?
+            throw new SAXException(ioe);
         }
     }
 
@@ -168,8 +168,8 @@ public class RTFHandler extends FOInputHandler {
         try {
             rtfFile.flush();
         } catch (IOException ioe) {
-            // FIXME could we throw Exception in all FOInputHandler events?
-            throw new SAXException("IOException: " + ioe);
+            // TODO could we throw Exception in all FOInputHandler events?
+            throw new SAXException(ioe);
         }
     }
 
@@ -184,9 +184,9 @@ public class RTFHandler extends FOInputHandler {
             bHeaderSpecified = false;
             bFooterSpecified = false;
         } catch (IOException ioe) {
-            // FIXME could we throw Exception in all FOInputHandler events?
+            // TODO could we throw Exception in all FOInputHandler events?
             log.error("startPageSequence: " + ioe.getMessage());
-            throw new Error("IOException: " + ioe);
+            //TODO throw new FOPException(ioe);
         }
     }
 
@@ -311,7 +311,7 @@ public class RTFHandler extends FOInputHandler {
 
             builderContext.pushContainer(para);
         } catch (IOException ioe) {
-            // FIXME could we throw Exception in all FOInputHandler events?
+            // TODO could we throw Exception in all FOInputHandler events?
             log.error("startBlock: " + ioe.getMessage());
             throw new Error("IOException: " + ioe);
         } catch (Exception e) {

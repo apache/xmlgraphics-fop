@@ -71,7 +71,6 @@ import org.apache.avalon.framework.logger.NullLogger;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.InputHandler;
-import org.apache.fop.apps.TraxInputHandler;
 import org.apache.fop.apps.XSLTInputHandler;
 import org.w3c.dom.Document;
 
@@ -207,29 +206,9 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
         driver.setRenderer(Driver.RENDER_PDF);
         
         InputHandler handler = new XSLTInputHandler(xmlFile, xsltFile);
-        handler.run(driver);
+        driver.render(handler);
         
         assertTrue("Generated PDF has zero length", baout.size() > 0);
     }
-
-    /**
-     * Tests Driver with TraxInputHandler and OutputStream.
-     * @throws Exception if anything fails
-     */
-    public void testFO2PDFWithTraxInputHandler() throws Exception {
-        File xmlFile = new File(getBaseDir(), "test/xml/1.xml");
-        File xsltFile = new File(getBaseDir(), "test/xsl/doc.xsl");
-        ByteArrayOutputStream baout = new ByteArrayOutputStream();
-        Driver driver = new Driver();
-        ContainerUtil.enableLogging(driver, this.logger);
-        driver.setOutputStream(baout);
-        driver.setRenderer(Driver.RENDER_PDF);
-        
-        InputHandler handler = new TraxInputHandler(xmlFile, xsltFile);
-        handler.run(driver);
-        
-        assertTrue("Generated PDF has zero length", baout.size() > 0);
-    }
-
 
 }

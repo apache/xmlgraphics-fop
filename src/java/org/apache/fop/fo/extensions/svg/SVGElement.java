@@ -106,7 +106,7 @@ public class SVGElement extends SVGObj {
      */
     public Point2D getDimension(final Point2D view) {
 
-        // TODO - change so doesn't hold onto fo,area tree
+        // TODO change so doesn't hold onto fo, area tree
         Element svgRoot = element;
         /* create an SVG area */
         /* if width and height are zero, get the bounds of the content. */

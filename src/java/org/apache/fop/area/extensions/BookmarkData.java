@@ -251,8 +251,7 @@ public class BookmarkData implements Resolveable, TreeExt {
             if (pages != null) {
                 pageRef = (PageViewport)pages.get(0);
             }
-            // TODO
-            // get rect area of id on page
+            // TODO get rect area of id on page
 
             idRefs.remove(idRef);
             checkFinish();
