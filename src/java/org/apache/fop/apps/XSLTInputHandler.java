@@ -55,6 +55,7 @@ public class XSLTInputHandler extends InputHandler {
     public XSLTInputHandler(File xmlfile, File xsltfile, Vector params) {
         this.xmlSource  = new StreamSource(xmlfile);
         this.xsltSource = new StreamSource(xsltfile);
+        setBaseURL(xmlfile);
         xsltParams = params;
     }
 
@@ -67,6 +68,7 @@ public class XSLTInputHandler extends InputHandler {
     public XSLTInputHandler(File xmlfile, File xsltfile) {
         this.xmlSource  = new StreamSource(xmlfile);
         this.xsltSource = new StreamSource(xsltfile);
+        setBaseURL(xmlfile);
     }
 
     /**
