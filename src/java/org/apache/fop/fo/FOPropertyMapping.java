@@ -734,7 +734,7 @@ public class FOPropertyMapping implements Constants {
         // border-before-width
         m  = new CondLengthProperty.Maker(PR_BORDER_BEFORE_WIDTH);
         m.useGeneric(genericCondBorderWidth);
-        m.getSubpropMaker(CP_CONDITIONALITY).setDefault("retain");
+        m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_TOP_WIDTH, PR_BORDER_TOP_WIDTH,
                 PR_BORDER_RIGHT_WIDTH);
@@ -764,7 +764,7 @@ public class FOPropertyMapping implements Constants {
         // border-after-width
         m  = new CondLengthProperty.Maker(PR_BORDER_AFTER_WIDTH);
         m.useGeneric(genericCondBorderWidth);
-        m.getSubpropMaker(CP_CONDITIONALITY).setDefault("retain");
+        m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_BOTTOM_WIDTH, PR_BORDER_BOTTOM_WIDTH,
                 PR_BORDER_LEFT_WIDTH);
