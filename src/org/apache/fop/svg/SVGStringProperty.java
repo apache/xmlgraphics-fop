@@ -54,10 +54,8 @@ import java.util.*;
 
 // FOP
 import org.apache.fop.fo.*;
-import org.apache.fop.datatypes.*;
 import org.apache.fop.apps.FOPException;
 
-import org.apache.fop.dom.svg.*;
 /**
  * a class representing all the length properties in SVG
  */
@@ -95,7 +93,7 @@ public class SVGStringProperty extends Property {
          */
         public Property make(PropertyList propertyList)
         throws FOPException {
-            return make(propertyList, "", null);
+            return make(propertyList, null, null);
         }
     }
 
@@ -104,7 +102,7 @@ public class SVGStringProperty extends Property {
      *
      * @return the maker for SVG Length objects
      */
-    public static Property.Maker maker() {
+    public static Property.Maker maker(String name) {
         return new SVGStringProperty.Maker();
     }
 

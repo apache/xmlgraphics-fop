@@ -67,7 +67,7 @@ import org.apache.fop.fo.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.layout.inline.*;
 import org.apache.fop.datatypes.*;
-import org.apache.fop.svg.PathPoint;
+import org.apache.fop.svg.*;
 import org.apache.fop.mif.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.image.*;
@@ -76,12 +76,6 @@ import org.w3c.dom.*;
 import org.w3c.dom.svg.*;
 import org.w3c.dom.css.*;
 import org.w3c.dom.svg.SVGLength;
-
-import org.apache.fop.dom.svg.*;
-import org.apache.fop.dom.svg.SVGRectElementImpl;
-import org.apache.fop.dom.svg.SVGTextElementImpl;
-import org.apache.fop.dom.svg.SVGLineElementImpl;
-import org.apache.fop.dom.svg.SVGArea;
 
 // Java
 import java.io.IOException;

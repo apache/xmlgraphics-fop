@@ -21,7 +21,7 @@ import org.apache.fop.layout.*;
 import org.apache.fop.layout.inline.*;
 import org.apache.fop.image.*;
 
-import org.apache.fop.dom.svg.SVGArea;
+import org.apache.fop.svg.SVGArea;
 import org.w3c.dom.svg.SVGSVGElement;
 
 
@@ -538,9 +538,6 @@ System.out.println("PCLRenderer.renderSVGArea(" + area + ")");
 
         // TODO - translate and clip to viewbox
 
-        PCLSVGRenderer svgRenderer =
-			new PCLSVGRenderer(this, area.getFontState(), currentFontName, currentFontSize, currentXPosition, currentYPosition, pageHeight, xoffset);
-        svgRenderer.renderSVG(svg, x, y);
         //currentStream.add(svgRenderer.getString());
 
         //currentStream.add("Q\n");
