@@ -90,9 +90,10 @@ public class TXTRenderer extends PrintRenderer
 			if ( first )
 				first = false;
 			else
-				currentStream.add("/f");
+				currentStream.add("\f");
 		    this.renderPage((Page) e.nextElement());
 		}
+		currentStream.add("\n");
         if ( !idReferences.isEveryIdValid() )
         {
             //throw new FOPException("The following id's were referenced but not found: "+idReferences.getInvalidIds()+"\n");
@@ -810,17 +811,20 @@ System.out.println("TXTRenderer.addRect(" + x + ", " + y + ", " + w + ", " + h +
 
 	boolean printBMP(FopImage img, int x, int y, int w, int h) throws FopImageException
 	{
+		if ( debug )
+			System.out.println("TXTRenderer.printBMP(" + img + ", " + x + ", "
+			+ y + ", " + w + ", " + h + ")");
 		addRect(x, y, w, h, new PDFColor(1f, 1f, 1f), new PDFColor(0f, 0f, 0f));
 		int	nameh = (int)(h * yFactor / 2);
 		if ( nameh > 0 )
 		{
 			int	namew = (int)(w * xFactor);
 
-			if ( namew > 10 )
+			if ( namew > 4 )
 			{
 				String iname = img.getURL();
 				if ( iname.length() >= namew )
-					addStr((int)((pageHeight - (y / 100))* 100 * yFactor) + nameh, (int)(x * xFactor), iname.substring(namew - iname.length(), namew), true);
+ 					addStr((int)((pageHeight - (y / 100))* 100 * yFactor) + nameh, (int)(x * xFactor), iname.substring(iname.length() - namew), true);
 				else
 					addStr((int)((pageHeight - (y / 100))* 100 * yFactor) + nameh, (int)(x * xFactor + (namew - iname.length()) / 2), iname, true);
 
@@ -1723,7 +1727,8 @@ System.out.println("TXTRenderer.renderPage() maxX=" + maxX + " maxY=" + maxY + "
 
 			if ( outr != null )
 				currentStream.add(outr.toString());
-			currentStream.add("\n");
+ 			if ( row < maxY )
+				currentStream.add("\n");
 		}
 
 		// End page.
