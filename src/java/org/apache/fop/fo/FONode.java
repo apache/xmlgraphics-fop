@@ -258,7 +258,7 @@ public abstract class FONode {
     protected void nodesOutOfOrderError(Locator loc, String tooLateNode, 
         String tooEarlyNode) {
         throw new IllegalArgumentException(
-            errorText(loc) + getName() + ", " + tooLateNode 
+            errorText(loc) + "For " + getName() + ", " + tooLateNode 
             + " must be declared before " + tooEarlyNode + ".");
     }
     
