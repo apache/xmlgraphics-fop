@@ -100,7 +100,6 @@ public class LayoutManagerLS extends LayoutStrategy {
             pageSeq.getPageSequenceMaster().reset();
         }
 
-        int firstAvailPageNumber = 0;
         pageSeq.initPageNumber();
 
         // This will layout pages and add them to the area tree
