@@ -497,7 +497,8 @@ public interface Constants {
     int FONT_HEIGHT = 107;
     int LINE_HEIGHT = 108;
     int MAX_HEIGHT = 109;
-    int ENUM_COUNT = 109;
+    int NO_LIMIT = 110;
+    int ENUM_COUNT = 110;
 
    // Enumeration Interfaces
    
