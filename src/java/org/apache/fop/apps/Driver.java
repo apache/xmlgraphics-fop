@@ -158,7 +158,7 @@ public class Driver implements Constants {
     /**
      * Initializes the Driver object.
      */
-    public void initialize() {
+    private void initialize() {
         if (isInitialized()) {
             throw new IllegalStateException("Driver already initialized");
         }

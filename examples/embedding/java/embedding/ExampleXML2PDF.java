@@ -69,9 +69,6 @@ public class ExampleXML2PDF {
             // Construct driver
             Driver driver = new Driver();
             
-            // Setup logger
-            driver.initialize();
-    
             // Setup Renderer (output format)        
             driver.setRenderer(Driver.RENDER_PDF);
             

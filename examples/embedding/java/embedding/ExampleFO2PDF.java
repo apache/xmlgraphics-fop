@@ -48,9 +48,6 @@ public class ExampleFO2PDF {
         // Construct driver
         Driver driver = new Driver();
         
-        // Setup driver
-        driver.initialize();
-
         // Setup Renderer (output format)        
         driver.setRenderer(Driver.RENDER_PDF);
         
