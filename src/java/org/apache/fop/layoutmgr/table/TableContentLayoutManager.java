@@ -24,8 +24,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import javax.naming.Context;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.area.Block;
+import org.apache.fop.area.Trait;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.layoutmgr.KnuthBox;
@@ -39,6 +43,7 @@ import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
+import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -317,6 +322,7 @@ public class TableContentLayoutManager {
         int colCount = getColumns().getColumnCount();
         TableRowIterator.EffRow lastRow = null;
         int lastRowHeight = 0;
+        TableRow rowFO = null;
         int yoffset = 0;
         
         //These three variables are our buffer to recombine the individual steps into cells
@@ -328,9 +334,7 @@ public class TableContentLayoutManager {
         //Iterate over all steps
         while (parentIter.hasNext()) {
             Position pos = (Position)parentIter.next();
-            //NonLeafPosition nlfp = (NonLeafPosition)pos;
-            //if (nlfp.getPosition() instanceof TableContentPosition) {
-            //    TableContentPosition pos = (TableContentPosition)nlfp.getPosition();
+            rowFO = null;
             if (pos instanceof TableContentPosition) {
                 TableContentPosition tcpos = (TableContentPosition)pos;
                 if (lastRow != tcpos.row && lastRow != null) {
@@ -352,7 +356,13 @@ public class TableContentLayoutManager {
                     } else {
                         end[colIndex] = gup.end;
                     }
+                    if (rowFO == null) {
+                        //Find the row if any
+                        rowFO = gridUnits[colIndex].getRow();
+                    }
                 }
+                
+                //Calculate the height of the row
                 int maxLen = 0;
                 for (int i = 0; i < gridUnits.length; i++) {
                     if ((gridUnits[i] != null) 
@@ -368,6 +378,9 @@ public class TableContentLayoutManager {
                     }
                 }
                 lastRowHeight = maxLen;
+                
+                //Add areas for row
+                addRowBackgroundArea(rowFO, lastRowHeight, layoutContext.getRefIPD(), yoffset);
                 for (int i = 0; i < gridUnits.length; i++) {
                     if ((gridUnits[i] != null) 
                             && (end[i] == gridUnits[i].getElements().size() - 1)) {
@@ -383,6 +396,7 @@ public class TableContentLayoutManager {
             }
         }
         
+        //Calculate the height of the row
         int maxLen = 0;
         for (int i = 0; i < gridUnits.length; i++) {
             if (gridUnits[i] != null) {
@@ -394,6 +408,9 @@ public class TableContentLayoutManager {
                 maxLen = Math.max(maxLen, getExplicitCellHeight(gridUnits[i]));
             }
         }
+        
+        //Add areas now
+        addRowBackgroundArea(rowFO, lastRowHeight, layoutContext.getRefIPD(), yoffset);
         for (int i = 0; i < gridUnits.length; i++) {
             if (gridUnits[i] != null) {
                 log.debug("final flushing " + i + " " + start[i] + "-" + end[i]);
@@ -430,6 +447,36 @@ public class TableContentLayoutManager {
         cellLM.addAreas(new KnuthPossPosIter(gu.getElements(), 
                 start, end + 1), layoutContext);
     }
+    
+    /**
+     * Get the area for a row for background.
+     * @param row the table-row object or null
+     * @return the row area or null if there's no background to paint
+     */
+    public Block getRowArea(TableRow row) {
+        if (row == null || !row.getCommonBorderPaddingBackground().hasBackground()) {
+            return null;
+        } else {
+            Block block = new Block();
+            block.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
+            block.setPositioning(Block.ABSOLUTE);
+            TraitSetter.addBackground(block, row.getCommonBorderPaddingBackground());
+            return block;
+        }
+    }
+
+    public void addRowBackgroundArea(TableRow row, int bpd, int ipd, int yoffset) {
+        //Add row background if any
+        Block rowBackground = getRowArea(row);
+        if (rowBackground != null) {
+            rowBackground.setBPD(bpd);
+            rowBackground.setIPD(ipd);
+            rowBackground.setXOffset(this.startXOffset);
+            rowBackground.setYOffset(yoffset);
+            getTableLM().addChildArea(rowBackground);
+        }
+    }
+    
     
     /**
      * Sets the overall starting x-offset. Used for proper placement of cells.

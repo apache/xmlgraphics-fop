@@ -671,8 +671,9 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             }
         }
 
+        lc.setRefIPD(referenceIPD - getIPIndents());
         contentLM.setStartXOffset(startXOffset);
-        contentLM.addAreas(parentIter, layoutContext);
+        contentLM.addAreas(parentIter, lc);
         tableHeight += contentLM.getUsedBPD();
 
         // add footer areas
