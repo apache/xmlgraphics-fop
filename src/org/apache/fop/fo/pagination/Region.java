@@ -21,7 +21,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.RegionReference;
-import org.apache.fop.layoutmgr.AbstractLayoutManager;
+import org.apache.fop.layoutmgr.TraitSetter;
 
 // SAX
 import org.xml.sax.Attributes;
@@ -101,8 +101,8 @@ public abstract class Region extends FObj {
         // Common Border, Padding, and Background Properties
         BorderAndPadding bap = propMgr.getBorderAndPadding();
         BackgroundProps bProps = propMgr.getBackgroundProps();
-        AbstractLayoutManager.addBorders(r, bap);
-        AbstractLayoutManager.addBackground(r, bProps);
+        TraitSetter.addBorders(r, bap);
+        TraitSetter.addBackground(r, bProps);
 
         // this.properties.get("clip");
         // this.properties.get("display-align");
