@@ -48,16 +48,29 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
-package org.apache.xml.fop.fo.pagination;
+package org.apache.fop.fo.pagination;
 
-import org.apache.xml.fop.fo.*;
-import org.apache.xml.fop.layout.PageMasterFactory;
+
+
+import org.apache.fop.fo.*;
+
+import org.apache.fop.layout.PageMasterFactory;
+
+
 
 abstract public class SequenceSpecifier extends FObj {
+
 	
+
     protected SequenceSpecifier(FObj parent, PropertyList propertyList) {
+
 	super(parent, propertyList);
+
     }
 
+
+
     public abstract PageMasterFactory getPageMasterFactory();
+
 }
+

@@ -48,7 +48,11 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
-package org.apache.xml.fop.apps;
+package org.apache.fop.apps;
+
+
 
 /** not implemented yet */
+
 public interface ErrorHandler {}
+

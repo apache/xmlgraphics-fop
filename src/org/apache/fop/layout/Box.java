@@ -48,12 +48,21 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
-package org.apache.xml.fop.layout;
+package org.apache.fop.layout;
 
-import org.apache.xml.fop.render.Renderer;
+
+
+import org.apache.fop.render.Renderer;
+
+
 
 abstract public class Box {
+
     protected Area parent;
+
     protected AreaTree areaTree;
+
     abstract public void render(Renderer renderer);
+
 }
+
