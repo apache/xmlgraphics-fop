@@ -51,11 +51,12 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.Property;
+import org.apache.fop.fo.Constants;
 
 /**
  * This interface is used as a base for compound datatypes.
  */
-public interface CompoundDatatype {
+public interface CompoundDatatype extends Constants {
     
     /**
      * Sets a component of the compound datatype.
