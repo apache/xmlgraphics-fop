@@ -687,7 +687,7 @@ public class PDFFunction extends PDFObject {
 					for(tempInt =0;tempInt+1 < numberOfFunctions; tempInt++)
 					{
 						
-						p.append( functionsFraction);
+						p.append( functionsFraction + " ");
 					}
 					functionsFraction = null; //clean reference.
 					
