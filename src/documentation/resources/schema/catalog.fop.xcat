@@ -17,10 +17,12 @@
 <!DOCTYPE catalog PUBLIC "-//OASIS//DTD Entity Resolution XML Catalog V1.0//EN"
 "http://www.oasis-open.org/committees/entity/release/1.0/catalog.dtd">
 
-<!-- OASIS XML Catalog for all documents Forrest uses -->
+<!-- OASIS XML Catalog for Forrest Documents -->
 <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog"
          prefer="public">
 
-<nextCatalog catalog="catalog.fop.xcat"/>
+<!-- Compliance  -->
+<public publicId="-//APACHE//DTD Compliance V1.0//EN"
+        uri="dtd/compliance-v10.dtd"/>
 
 </catalog>
