@@ -887,6 +887,30 @@
   </property>
 
   <property>
+	<name>column-count</name>
+	<inherited>false</inherited>
+	<datatype>String</datatype>
+	<default>1</default> 
+   </property>
+  <property>
+	<name>column-gap</name>
+	<inherited>false</inherited>
+	<datatype>Length</datatype>
+	<auto-ok/>
+	<default>0.25in</default> 
+   </property>
+  <property>
+	<name>span</name>
+	<inherited>false</inherited>
+    <datatype>Enum</datatype>
+	  <enumeration>
+        <value const="NONE">none</value>
+        <value const="ALL">all</value>
+      </enumeration>
+	<default>none</default> 
+   </property>
+
+   <property>
     <name>text-decoration</name>
     <inherited>false</inherited>
     <datatype>Enum</datatype>
