@@ -58,12 +58,12 @@ import org.apache.fop.fo.CharIterator;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.OneCharIterator;
-import org.apache.fop.layout.AuralProps;
-import org.apache.fop.layout.BorderAndPadding;
-import org.apache.fop.layout.BackgroundProps;
-import org.apache.fop.layout.HyphenationProps;
-import org.apache.fop.layout.MarginInlineProps;
-import org.apache.fop.layout.RelativePositionProps;
+import org.apache.fop.fo.properties.CommonAural;
+import org.apache.fop.fo.properties.CommonBorderAndPadding;
+import org.apache.fop.fo.properties.CommonBackground;
+import org.apache.fop.fo.properties.CommonHyphenation;
+import org.apache.fop.fo.properties.CommonMarginInline;
+import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
@@ -125,23 +125,23 @@ public class Character extends FObj {
     private void setup() throws FOPException {
 
         // Common Aural Properties
-        AuralProps mAurProps = propMgr.getAuralProps();
+        CommonAural mAurProps = propMgr.getAuralProps();
 
         // Common Border, Padding, and Background Properties
-        BorderAndPadding bap = propMgr.getBorderAndPadding();
-        BackgroundProps bProps = propMgr.getBackgroundProps();
+        CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
+        CommonBackground bProps = propMgr.getBackgroundProps();
 
         // Common Font Properties
         //this.fontState = propMgr.getFontState(area.getFontInfo());
 
         // Common Hyphenation Properties
-        HyphenationProps mHyphProps = propMgr.getHyphenationProps();
+        CommonHyphenation mHyphProps = propMgr.getHyphenationProps();
 
         // Common Margin Properties-Inline
-        MarginInlineProps mProps = propMgr.getMarginInlineProps();
+        CommonMarginInline mProps = propMgr.getMarginInlineProps();
 
         // Common Relative Position Properties
-        RelativePositionProps mRelProps =
+        CommonRelativePosition mRelProps =
           propMgr.getRelativePositionProps();
 
         // this.properties.get("alignment-adjust");

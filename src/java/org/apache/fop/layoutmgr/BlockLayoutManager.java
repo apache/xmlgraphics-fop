@@ -61,8 +61,8 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.traits.LayoutProps;
-import org.apache.fop.layout.BorderAndPadding;
-import org.apache.fop.layout.BackgroundProps;
+import org.apache.fop.fo.properties.CommonBorderAndPadding;
+import org.apache.fop.fo.properties.CommonBackground;
 
 /**
  * LayoutManager for a block FO.
@@ -72,8 +72,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     private Block curBlockArea;
 
     private LayoutProps layoutProps;
-    private BorderAndPadding borderProps;
-    private BackgroundProps backgroundProps;
+    private CommonBorderAndPadding borderProps;
+    private CommonBackground backgroundProps;
 
     private int lead = 12000;
     private int lineHeight = 14000;

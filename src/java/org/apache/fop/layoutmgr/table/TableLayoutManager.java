@@ -63,8 +63,8 @@ import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.layoutmgr.MinOptMax;
-import org.apache.fop.layout.BorderAndPadding;
-import org.apache.fop.layout.BackgroundProps;
+import org.apache.fop.fo.properties.CommonBorderAndPadding;
+import org.apache.fop.fo.properties.CommonBackground;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,8 +82,8 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
     private Body tableHeader = null;
     private Body tableFooter = null;
 
-    private BorderAndPadding borderProps = null;
-    private BackgroundProps backgroundProps;
+    private CommonBorderAndPadding borderProps = null;
+    private CommonBackground backgroundProps;
 
     private Block curBlockArea;
 

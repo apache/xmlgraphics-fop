@@ -60,8 +60,8 @@ import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.fo.flow.TableColumn;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
-import org.apache.fop.layout.BorderAndPadding;
-import org.apache.fop.layout.BackgroundProps;
+import org.apache.fop.fo.properties.CommonBorderAndPadding;
+import org.apache.fop.fo.properties.CommonBackground;
 
 /**
  * LayoutManager for a table-column FO.
@@ -71,8 +71,8 @@ import org.apache.fop.layout.BackgroundProps;
  */
 public class Column extends AbstractLayoutManager {
     private int columnWidth;
-    private BorderAndPadding borderProps = null;
-    private BackgroundProps backgroundProps;
+    private CommonBorderAndPadding borderProps = null;
+    private CommonBackground backgroundProps;
 
     /**
      * Create a new column layout manager.

@@ -57,8 +57,8 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.Property;
 
-import org.apache.fop.layout.BackgroundProps;
-import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.fo.properties.CommonBackground;
+import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.table.Column;
 
@@ -135,8 +135,8 @@ public class TableColumn extends FObj {
         // Common Border, Padding, and Background Properties
         // only background apply, border apply if border-collapse
         // is collapse.
-        BorderAndPadding bap = propMgr.getBorderAndPadding();
-        BackgroundProps bProps = propMgr.getBackgroundProps();
+        CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
+        CommonBackground bProps = propMgr.getBackgroundProps();
 
         // this.properties.get("column-width");
         // this.properties.get("number-columns-repeated");

@@ -64,14 +64,14 @@ import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOInputHandler;
-import org.apache.fop.layout.AccessibilityProps;
-import org.apache.fop.layout.AuralProps;
-import org.apache.fop.layout.BackgroundProps;
-import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAural;
+import org.apache.fop.fo.properties.CommonBackground;
+import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.layout.FontState;
-import org.apache.fop.layout.MarginInlineProps;
-import org.apache.fop.layout.RelativePositionProps;
+import org.apache.fop.fo.properties.CommonMarginInline;
+import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.layout.TextState;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
@@ -205,23 +205,23 @@ public class PageNumberCitation extends FObj {
     private void setup() {
 
         // Common Accessibility Properties
-        AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
+        CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
 
         // Common Aural Properties
-        AuralProps mAurProps = propMgr.getAuralProps();
+        CommonAural mAurProps = propMgr.getAuralProps();
 
         // Common Border, Padding, and Background Properties
-        BorderAndPadding bap = propMgr.getBorderAndPadding();
-        BackgroundProps bProps = propMgr.getBackgroundProps();
+        CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
+        CommonBackground bProps = propMgr.getBackgroundProps();
 
         // Common Font Properties
         this.fontState = propMgr.getFontState(fontInfo);
 
         // Common Margin Properties-Inline
-        MarginInlineProps mProps = propMgr.getMarginInlineProps();
+        CommonMarginInline mProps = propMgr.getMarginInlineProps();
 
         // Common Relative Position Properties
-        RelativePositionProps mRelProps =
+        CommonRelativePosition mRelProps =
           propMgr.getRelativePositionProps();
 
         // this.properties.get("alignment-adjust");

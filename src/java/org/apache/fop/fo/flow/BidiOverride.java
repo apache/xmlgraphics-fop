@@ -53,8 +53,8 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
-import org.apache.fop.layout.AuralProps;
-import org.apache.fop.layout.RelativePositionProps;
+import org.apache.fop.fo.properties.CommonAural;
+import org.apache.fop.fo.properties.CommonRelativePosition;
 
 import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
 import org.apache.fop.layoutmgr.LayoutProcessor;
@@ -100,13 +100,13 @@ public class BidiOverride extends FObjMixed {
     private void setup() {
 
         // Common Aural Properties
-        AuralProps mAurProps = propMgr.getAuralProps();
+        CommonAural mAurProps = propMgr.getAuralProps();
 
         // Common Font Properties
         //this.fontState = propMgr.getFontState(area.getFontInfo());
 
         // Common Margin Properties-Inline
-        RelativePositionProps mProps = propMgr.getRelativePositionProps();
+        CommonRelativePosition mProps = propMgr.getRelativePositionProps();
 
         // this.properties.get("color");
         // this.properties.get("direction");

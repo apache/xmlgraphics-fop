@@ -56,8 +56,8 @@ import java.util.HashMap;
 
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyManager;
-import org.apache.fop.layout.BorderAndPadding;
-import org.apache.fop.layout.BackgroundProps;
+import org.apache.fop.fo.properties.CommonBorderAndPadding;
+import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.traits.InlineProps;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.inline.InlineArea;
@@ -100,8 +100,8 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
 
 
     private InlineProps inlineProps = null;
-    private BorderAndPadding borderProps = null;
-    private BackgroundProps backgroundProps;
+    private CommonBorderAndPadding borderProps = null;
+    private CommonBackground backgroundProps;
 
     private Area currentArea; // LineArea or InlineParent
 
@@ -165,38 +165,38 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
         inlineProps = propMgr.getInlineProps();
         borderProps = propMgr.getBorderAndPadding();
         // Calculdate border and padding size in BPD
-        int iPad = borderProps.getPadding(BorderAndPadding.BEFORE, false);
-        iPad += borderProps.getBorderWidth(BorderAndPadding.BEFORE,
+        int iPad = borderProps.getPadding(CommonBorderAndPadding.BEFORE, false);
+        iPad += borderProps.getBorderWidth(CommonBorderAndPadding.BEFORE,
                                              false);
-        iPad += borderProps.getPadding(BorderAndPadding.AFTER, false);
-        iPad += borderProps.getBorderWidth(BorderAndPadding.AFTER, false);
+        iPad += borderProps.getPadding(CommonBorderAndPadding.AFTER, false);
+        iPad += borderProps.getBorderWidth(CommonBorderAndPadding.AFTER, false);
         extraBPD = new MinOptMax(iPad);
 
         backgroundProps = propMgr.getBackgroundProps();
     }
 
     private MinOptMax getExtraIPD(boolean bNotFirst, boolean bNotLast) {
-        int iBP = borderProps.getPadding(BorderAndPadding.START,
+        int iBP = borderProps.getPadding(CommonBorderAndPadding.START,
                                            bNotFirst);
-        iBP += borderProps.getBorderWidth(BorderAndPadding.START,
+        iBP += borderProps.getBorderWidth(CommonBorderAndPadding.START,
                                             bNotFirst);
-        iBP += borderProps.getPadding(BorderAndPadding.END, bNotLast);
-        iBP += borderProps.getBorderWidth(BorderAndPadding.END, bNotLast);
+        iBP += borderProps.getPadding(CommonBorderAndPadding.END, bNotLast);
+        iBP += borderProps.getBorderWidth(CommonBorderAndPadding.END, bNotLast);
         return new MinOptMax(iBP);
     }
 
 
     protected boolean hasLeadingFence(boolean bNotFirst) {
-        int iBP = borderProps.getPadding(BorderAndPadding.START,
+        int iBP = borderProps.getPadding(CommonBorderAndPadding.START,
                                            bNotFirst);
-        iBP += borderProps.getBorderWidth(BorderAndPadding.START,
+        iBP += borderProps.getBorderWidth(CommonBorderAndPadding.START,
                                             bNotFirst);
         return (iBP > 0);
     }
 
     protected boolean hasTrailingFence(boolean bNotLast) {
-        int iBP = borderProps.getPadding(BorderAndPadding.END, bNotLast);
-        iBP += borderProps.getBorderWidth(BorderAndPadding.END, bNotLast);
+        int iBP = borderProps.getPadding(CommonBorderAndPadding.END, bNotLast);
+        iBP += borderProps.getBorderWidth(CommonBorderAndPadding.END, bNotLast);
         return (iBP > 0);
     }
 

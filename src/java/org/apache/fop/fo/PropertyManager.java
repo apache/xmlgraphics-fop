@@ -59,14 +59,14 @@ import org.apache.fop.area.CTM;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.layout.FontInfo;
-import org.apache.fop.layout.BorderAndPadding;
-import org.apache.fop.layout.MarginProps;
-import org.apache.fop.layout.MarginInlineProps;
-import org.apache.fop.layout.BackgroundProps;
-import org.apache.fop.layout.AccessibilityProps;
-import org.apache.fop.layout.AuralProps;
-import org.apache.fop.layout.RelativePositionProps;
-import org.apache.fop.layout.AbsolutePositionProps;
+import org.apache.fop.fo.properties.CommonBorderAndPadding;
+import org.apache.fop.fo.properties.CommonMarginBlock;
+import org.apache.fop.fo.properties.CommonMarginInline;
+import org.apache.fop.fo.properties.CommonBackground;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAural;
+import org.apache.fop.fo.properties.CommonRelativePosition;
+import org.apache.fop.fo.properties.CommonAbsolutePosition;
 import org.apache.fop.traits.BlockProps;
 import org.apache.fop.traits.InlineProps;
 import org.apache.fop.traits.SpaceVal;
@@ -75,7 +75,7 @@ import org.apache.fop.fo.properties.Constants;
 import org.apache.fop.fo.properties.WritingMode;
 import org.apache.fop.fo.properties.Span;
 import org.apache.fop.fonts.FontMetrics;
-import org.apache.fop.layout.HyphenationProps;
+import org.apache.fop.fo.properties.CommonHyphenation;
 
 /**
  * Helper class for managing groups of properties.
@@ -85,8 +85,8 @@ public class PropertyManager {
     private PropertyList properties;
     private FontInfo fontInfo = null;
     private FontState fontState = null;
-    private BorderAndPadding borderAndPadding = null;
-    private HyphenationProps hyphProps = null;
+    private CommonBorderAndPadding borderAndPadding = null;
+    private CommonHyphenation hyphProps = null;
     private TextInfo textInfo = null;
 
     private static final String[] SA_BEFORE = new String[]{"before"};
@@ -181,14 +181,14 @@ public class PropertyManager {
      * reused.
      * @return a BorderAndPadding object
      */
-    public BorderAndPadding getBorderAndPadding() {
+    public CommonBorderAndPadding getBorderAndPadding() {
         if (borderAndPadding == null) {
-            this.borderAndPadding = new BorderAndPadding();
+            this.borderAndPadding = new CommonBorderAndPadding();
 
-            initBorderInfo(BorderAndPadding.BEFORE, SA_BEFORE);
-            initBorderInfo(BorderAndPadding.AFTER, SA_AFTER);
-            initBorderInfo(BorderAndPadding.START, SA_START);
-            initBorderInfo(BorderAndPadding.END, SA_END);
+            initBorderInfo(CommonBorderAndPadding.BEFORE, SA_BEFORE);
+            initBorderInfo(CommonBorderAndPadding.AFTER, SA_AFTER);
+            initBorderInfo(CommonBorderAndPadding.START, SA_START);
+            initBorderInfo(CommonBorderAndPadding.END, SA_END);
         }
         return borderAndPadding;
     }
@@ -213,9 +213,9 @@ public class PropertyManager {
      * reused.
      * @return a HyphenationProps object
      */
-    public HyphenationProps getHyphenationProps() {
+    public CommonHyphenation getHyphenationProps() {
         if (hyphProps == null) {
-            this.hyphProps = new HyphenationProps();
+            this.hyphProps = new CommonHyphenation();
             hyphProps.hyphenate =
               this.properties.get("hyphenate").getEnum();
             hyphProps.hyphenationChar = this.properties.get(
@@ -305,8 +305,8 @@ public class PropertyManager {
      * reused.
      * @return a MarginProps object
      */
-    public MarginProps getMarginProps() {
-        MarginProps props = new MarginProps();
+    public CommonMarginBlock getMarginProps() {
+        CommonMarginBlock props = new CommonMarginBlock();
 
         // Common Margin Properties-Block
         props.marginTop =
@@ -336,8 +336,8 @@ public class PropertyManager {
      * reused.
      * @return a BackgroundProps object
      */
-    public BackgroundProps getBackgroundProps() {
-        BackgroundProps bp = new BackgroundProps();
+    public CommonBackground getBackgroundProps() {
+        CommonBackground bp = new CommonBackground();
         bp.backAttachment = properties.get("background-attachment").getEnum();
         bp.backColor = properties.get("background-color").getColorType();
         if (bp.backColor.alpha() == 1) {
@@ -367,8 +367,8 @@ public class PropertyManager {
      * reused.
      * @return a MarginInlineProps object
      */
-    public MarginInlineProps getMarginInlineProps() {
-        MarginInlineProps props = new MarginInlineProps();
+    public CommonMarginInline getMarginInlineProps() {
+        CommonMarginInline props = new CommonMarginInline();
         return props;
     }
 
@@ -389,8 +389,8 @@ public class PropertyManager {
      * reused.
      * @return a AccessibilityProps object
      */
-    public AccessibilityProps getAccessibilityProps() {
-        AccessibilityProps props = new AccessibilityProps();
+    public CommonAccessibility getAccessibilityProps() {
+        CommonAccessibility props = new CommonAccessibility();
         String str;
         str = this.properties.get("source-document").getString();
         if (!NONE.equals(str)) {
@@ -408,8 +408,8 @@ public class PropertyManager {
      * reused.
      * @return a AuralProps object
      */
-    public AuralProps getAuralProps() {
-        AuralProps props = new AuralProps();
+    public CommonAural getAuralProps() {
+        CommonAural props = new CommonAural();
         return props;
     }
 
@@ -418,8 +418,8 @@ public class PropertyManager {
      * reused.
      * @return a RelativePositionProps object
      */
-    public RelativePositionProps getRelativePositionProps() {
-        RelativePositionProps props = new RelativePositionProps();
+    public CommonRelativePosition getRelativePositionProps() {
+        CommonRelativePosition props = new CommonRelativePosition();
         return props;
     }
 
@@ -428,8 +428,8 @@ public class PropertyManager {
      * it is reused.
      * @return a AbsolutePositionProps object
      */
-    public AbsolutePositionProps getAbsolutePositionProps() {
-        AbsolutePositionProps props = new AbsolutePositionProps();
+    public CommonAbsolutePosition getAbsolutePositionProps() {
+        CommonAbsolutePosition props = new CommonAbsolutePosition();
         props.absolutePosition =
           this.properties.get("absolute-position").getEnum();
         props.top = this.properties.get("top").getLength().getValue();

@@ -68,7 +68,7 @@ import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Page;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.RegionReference;
-import org.apache.fop.layout.MarginProps;
+import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.layout.PageMaster;
 import org.apache.fop.apps.FOPException;
 
@@ -130,7 +130,7 @@ public class SimplePageMaster extends FObj {
         // this.properties.get("writing-mode");
 
         // Get absolute margin properties (top, left, bottom, right)
-        MarginProps mProps = propMgr.getMarginProps();
+        CommonMarginBlock mProps = propMgr.getMarginProps();
 
         /* Create the page reference area rectangle (0,0 is at top left
         * of the "page media" and y increases

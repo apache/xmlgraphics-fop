@@ -57,7 +57,7 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.Block;
 import org.apache.fop.fo.PropertyManager;
-import org.apache.fop.layout.AbsolutePositionProps;
+import org.apache.fop.fo.properties.CommonAbsolutePosition;
 import org.apache.fop.fo.properties.AbsolutePosition;
 import org.apache.fop.fo.properties.Overflow;
 import org.apache.fop.fo.PropertyList;
@@ -74,7 +74,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
 
     private List childBreaks = new java.util.ArrayList();
 
-    private AbsolutePositionProps abProps;
+    private CommonAbsolutePosition abProps;
     private FODimension relDims;
     private CTM absoluteCTM;
     private boolean clip = false;
