@@ -264,6 +264,7 @@ public class PSRenderer extends AbstractRenderer {
     public void setupFontInfo(FOTreeControl foTreeControl) {
         /* use PDF's font setup to get PDF metrics */
         org.apache.fop.render.pdf.FontSetup.setup((Document)foTreeControl, null);
+        // TODO: what's this?
         this.fontInfo = fontInfo;
     }
 
