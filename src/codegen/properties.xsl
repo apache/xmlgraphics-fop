@@ -301,6 +301,9 @@ public class <xsl:value-of select="$classname"/> extends  <xsl:value-of select="
 </xsl:if> <!-- need to create a class -->
 </xsl:template>
 
+<!-- avoid unwanted output to placeholder file -->
+<xsl:template match="localname"/>
+
 </xsl:stylesheet>
 
 
