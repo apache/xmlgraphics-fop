@@ -116,8 +116,12 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
     <fileset dir="${basedir}" id="dist.bin">
        <include name="conf/**"/>
-       <include name="docs/**"/>
-       <include name="hyph/**"/>
+       <include name="docs/xslfoRef.pdf"/>
+       <include name="docs/examples/**"/>
+       <exclude name="docs/examples/build.xml"/>
+       <exclude name="docs/examples/runtests.*"/>
+       <exclude name="docs/examples/results.html"/>
+       <include name="docs/graphics/**"/>
        <include name="CHANGES"/>
        <include name="LICENSE"/>
        <include name="README"/>
@@ -141,8 +145,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
        <include name="lib/batik.LICENSE.txt"/>
        <include name="lib/avalon-framework-cvs-20020315.jar"/>
        <include name="lib/avalon.LICENSE.txt"/>
-       <include name="lib/ant-1.4.1.jar"/>
-       <include name="lib/ant.license.txt"/>
        <include name="lib/readme"/>
     </fileset>
 
@@ -182,7 +184,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <tstamp/>
     <property name="Name" value="Fop"/>
     <property name="name" value="fop"/>
-    <property name="version" value="0.20.4rc"/>
+    <property name="version" value="0.20.4"/>
     <filter  token="version" value="${version}"/>
     <property name="year" value="1999-2002"/>
 
@@ -681,7 +683,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <mkdir dir="${dist.bin.result.dir}/build"/>
     <copy todir="${dist.bin.result.dir}/build" file="build/fop.jar"/>
     <chmod file="${dist.bin.result.dir}/fop.sh" perm="ugo+rx" />
-    <chmod file="${dist.src.result.dir}/docs/examples/runtests.sh" perm="ugo+rx" />
       
     <zip zipfile="${name}-${version}-bin.zip" basedir="${dist.bin.dir}" includes="**"/>
     <tar tarfile="${name}-${version}-bin.tar" basedir="${dist.bin.dir}" includes="**"/>
@@ -691,15 +692,17 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   </target>
 
 
-  <target name="dist-src" depends="package, javadocs, htmldoc">
+  <target name="dist-src" depends="package, htmldoc">
     <echo message="Building the source distribution files (zip,tar)"/>
     <mkdir dir="${dist.src.result.dir}"/>
     <copy todir="${dist.src.result.dir}">
       <fileset refid="dist.src"/>
     </copy>
+    <!--
     <copy todir="${dist.src.result.dir}/javadocs">
       <fileset dir="${build.javadocs}"/>
     </copy>
+    -->
     <mkdir dir="${dist.src.result.dir}/build"/>
     <copy todir="${dist.src.result.dir}/build" file="build/fop.jar"/>
     <chmod file="${dist.src.result.dir}/build.sh" perm="ugo+rx" />
