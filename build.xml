@@ -669,6 +669,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <zip zipfile="${Name}-${version}-src.zip" basedir="${dist.src.dir}" includes="**"/>
     <tar tarfile="${Name}-${version}-src.tar" basedir="${dist.src.dir}" includes="**"/>
     <gzip zipfile="${Name}-${version}-src.tar.gz" src="${Name}-${version}-src.tar" />
+    <delete file="${Name}-${version}-src.tar"/>
 
   </target>
 
