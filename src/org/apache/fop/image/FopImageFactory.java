@@ -58,6 +58,12 @@ public class FopImageFactory {
                 href = href.substring(1, href.length() - 1);
             }
         }
+
+        // check if already created
+        FopImage imageObject = (FopImage)m_urlMap.get(href);
+        if (imageObject != null)
+            return imageObject;
+
         try {
             // try url as complete first, this can cause
             // a problem with relative uri's if there is an
@@ -93,11 +99,6 @@ public class FopImageFactory {
                                             + e_context.getMessage());
             }
         }
-
-        // check if already created
-        FopImage imageObject = (FopImage)m_urlMap.get(absoluteURL.toString());
-        if (imageObject != null)
-            return imageObject;
 
             // If not, check image type
         ImageReader imgReader = null;
@@ -192,7 +193,7 @@ public class FopImageFactory {
                                         + "class " + imageClass.getName()
                                         + " doesn't implement org.apache.fop.image.FopImage interface");
         }
-        m_urlMap.put(absoluteURL.toString(), imageInstance);
+        m_urlMap.put(href, imageInstance);
         return (FopImage)imageInstance;
     }
 
