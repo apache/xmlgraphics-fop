@@ -70,6 +70,8 @@ import org.apache.batik.gvt.*;
 
 // SVG
 import org.w3c.dom.*;
+import org.w3c.dom.svg.SVGDocument;
+import org.w3c.dom.svg.SVGSVGElement;
 
 // Java
 import java.io.IOException;
@@ -430,6 +432,9 @@ public class PSRenderer extends AbstractRenderer {
         float h = (float)ctx.getDocumentSize().getHeight() * 1000f;
 
         //log.debug("drawing SVG image: "+x+"/"+y+" "+w+"/"+h);
+        SVGSVGElement svg = ((SVGDocument) doc).getRootElement();
+        AffineTransform at = ViewBox.getPreserveAspectRatioTransform(svg,
+                w/1000f , h/1000f );
 
         ctx = null;
         builder = null;
@@ -452,7 +457,9 @@ public class PSRenderer extends AbstractRenderer {
         // and positive is down and to the right. (0,0) is where the
         // viewBox puts it.
         write(xOffset + " " + yOffset + " translate");
-        write(sx + " " + sy + " scale");
+        write((at.getTranslateX() * 1000) + " " 
+            + (-at.getTranslateY() * 1000) + " translate");
+        write(sx * at.getScaleX() + " " + sy * at.getScaleY() + " scale");
 
         PSGraphics2D graphics = new PSGraphics2D(false, fs,
                                 this, currentFontName,
