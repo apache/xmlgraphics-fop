@@ -61,7 +61,7 @@ import org.apache.fop.pdf.PDFFilter;
 // Java
 import java.util.Hashtable;
 import java.net.URL;
-import java.io.IOException;
+import java.io.*;
 //import java.io.PrintWriter;
 import java.awt.image.*;
 import java.awt.*;
@@ -95,7 +95,7 @@ public class JimiImage implements FopImage {
 	protected void getImage() throws FopImageException {
 		int[] tmpMap = null;
 		try {
-			ImageProducer ip = Jimi.getImageProducer(this.m_href, Jimi.SYNCHRONOUS | Jimi.IN_MEMORY);
+			ImageProducer ip = Jimi.getImageProducer(this.m_href.openStream(), Jimi.SYNCHRONOUS | Jimi.IN_MEMORY);
 			FopImageConsumer consumer = new FopImageConsumer(this);
 			ip.startProduction(consumer);
 
