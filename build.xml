@@ -151,7 +151,8 @@ list of possible build targets.
     <property name="lib.dir" value="${basedir}/lib"/>
     <property name="hyph.dir" value="${src.dir}/hyph"/>
     <property name="conf.dir" value="${basedir}/conf"/>
-
+    <property name="resources.dir" value="${basedir}/resources"/>
+    
     <!-- Font generation properties -->
     <property name="fonts.dir" value="${fop.dir}/fonts"/>
     <property name="base14.dir" value="${fonts.dir}/base14"/>
@@ -175,6 +176,7 @@ list of possible build targets.
     <property name="build.dir" value="${basedir}/build"/>
     <property name="build.dest" value="${build.dir}/classes"/>
     <property name="build.conf" value="${build.dest}/conf"/>
+    <property name="build.resources" value="${build.dest}/resources"/>
     <property name="build.tmp" value="${build.dir}/tmp"/>
     <property name="build.javadocs" value="${build.dir}/javadocs"/>
     <property name="build.examples.dir" value="${build.dir}/examples"/>
@@ -210,6 +212,7 @@ list of possible build targets.
     <mkdir dir="${build.dir}"/>
     <mkdir dir="${build.dest}"/>
     <mkdir dir="${build.conf}"/>
+    <mkdir dir="${build.resources}"/>
     <mkdir dir="${build.examples.dir}"/>
     <mkdir dir="${build.javadocs}"/>
     <mkdir dir="${build.tmp}"/>
@@ -471,7 +474,7 @@ list of possible build targets.
   <!-- =================================================================== -->
   <target name="compile" depends="init"
       description=
-            "Compiles Java sources and copies conf and examples directories.">
+        "Compiles Java sources and copies conf, resources and examples directories.">
     <echo message="Compiling the sources "/>
     <!-- Copy the conf directory files into build -->
     <copy todir="${build.conf}">
@@ -483,8 +486,18 @@ list of possible build targets.
       </fileset>
       <mapper type="glob" from="*" to=".*"/>
     </move>
-
-    <!-- Copy the examples directory files into build -->
+    <!-- Copy the resources directory files into build -->
+    <copy todir="${build.resources}">
+      <fileset dir="${resources.dir}"/>
+    </copy>
+    <move todir="${build.resources}">
+      <fileset dir="${build.resources}">
+        <include name="cvsignore"/>
+      </fileset>
+      <mapper type="glob" from="*" to=".*"/>
+    </move>
+    
+        <!-- Copy the examples directory files into build -->
 
     <!-- Set up the examples properties -->
     <property name="examples.cvsignore" value="${examples.dir}/cvsignore"/>
@@ -553,7 +566,7 @@ list of possible build targets.
       "[${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}]"/>
 
     <jar jarfile="${build.dir}/${name}.jar" basedir="${build.dest}"
-                        includes="org/**,conf/**">
+                        includes="org/**,conf/**,resources/**">
       <manifest>
         <attribute name="Main-Class" value="${main.class}"/>
         <attribute name="Class-Path" value="${manifest-classpath}"/>
