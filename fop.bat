@@ -21,6 +21,21 @@ rem This label provides a place for the argument list loop to break out
 rem and for NT handling to skip to.
 :doneStart
 
+set LOGCHOICE=
+rem The default commons logger for JDK1.4 is JDK1.4Logger.
+rem To use a different logger, uncomment the one desired below
+rem set LOGCHOICE=-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.NoOpLog
+rem set LOGCHOICE=-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.SimpleLog
+rem set LOGCHOICE=-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Log4JLogger
+
+set LOGLEVEL=
+rem Logging levels
+rem Below option is only if you are using SimpleLog instead of the default JDK1.4 Logger.
+rem To set logging levels for JDK 1.4 Logger, edit the %JAVA_HOME%\JRE\LIB\logging.properties 
+rem file instead.
+rem Possible SimpleLog values:  "trace", "debug", "info" (default), "warn", "error", or "fatal".
+rem set LOGLEVEL=-Dorg.apache.commons.logging.simplelog.defaultlog=INFO
+
 set LIBDIR=%LOCAL_FOP_HOME%lib
 set LOCALCLASSPATH=%LOCAL_FOP_HOME%build\fop.jar
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\xml-apis.jar
@@ -34,5 +49,5 @@ set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\jimi-1.0.jar
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\jai_core.jar
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\jai_codec.jar
 
-java -cp "%LOCALCLASSPATH%" org.apache.fop.apps.Fop %FOP_CMD_LINE_ARGS%
+java %LOGCHOICE% %LOGLEVEL% -cp "%LOCALCLASSPATH%" org.apache.fop.apps.Fop %FOP_CMD_LINE_ARGS%
 

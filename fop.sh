@@ -100,5 +100,20 @@ if $cygwin; then
   LOCALCLASSPATH=`cygpath --path --windows "$LOCALCLASSPATH"`
 fi
 
-$JAVACMD -classpath "$LOCALCLASSPATH" $FOP_OPTS org.apache.fop.apps.Fop "$@"
+LOGCHOICE=
+# The default commons logger for JDK1.4 is JDK1.4Logger.
+# To use a different logger, uncomment the one desired below
+# LOGCHOICE=-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.NoOpLog
+# LOGCHOICE=-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.SimpleLog
+# LOGCHOICE=-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Log4JLogger
+
+LOGLEVEL=
+# Logging levels
+# Below option is only if you are using SimpleLog instead of the default JDK1.4 Logger.
+# To set logging levels for JDK 1.4 Logger, edit the %JAVA_HOME%/JRE/LIB/logging.properties 
+# file instead.
+# Possible SimpleLog values:  "trace", "debug", "info" (default), "warn", "error", or "fatal".
+# LOGLEVEL=-Dorg.apache.commons.logging.simplelog.defaultlog=INFO
+
+$JAVACMD $LOGCHOICE $LOGLEVEL -classpath "$LOCALCLASSPATH" $FOP_OPTS org.apache.fop.apps.Fop "$@"
 
