@@ -26,12 +26,13 @@ import java.awt.geom.Rectangle2D;
  * @author pbw
  * @version $Revision$ $Name$
  */
-public class BorderRectangle extends AreaFrame {
+public class BorderRectangle extends Area.AreaFrame {
 
-    public BorderRectangle() {
-        contents = new PaddingRectangle();
+    public BorderRectangle(Area area) {
+        area.super();
+        contents = new PaddingRectangle(area);
         contentOffset = new Point2D.Double();
-        spaces = new SpacesRectangle();
+        spaces = new SpacesRectangle(area);
         spaces.setContents(this);
     }
 
@@ -43,10 +44,10 @@ public class BorderRectangle extends AreaFrame {
 	 * @param contents
 	 * @param contentOffset
 	 */
-	public BorderRectangle(double x, double y, double w, double h,
+	public BorderRectangle(Area area, double x, double y, double w, double h,
 			PaddingRectangle contents, Point2D contentOffset) {
-		super(x, y, w, h, contents, contentOffset);
-        spaces = new SpacesRectangle();
+		area.super(x, y, w, h, contents, contentOffset);
+        spaces = new SpacesRectangle(area);
         spaces.setContents(this);
 	}
 
@@ -55,10 +56,10 @@ public class BorderRectangle extends AreaFrame {
 	 * @param contents
 	 * @param contentOffset
 	 */
-	public BorderRectangle(Rectangle2D rect, PaddingRectangle contents,
-			Point2D contentOffset) {
-		super(rect, contents, contentOffset);
-        spaces = new SpacesRectangle();
+	public BorderRectangle(Area area, Rectangle2D rect,
+            PaddingRectangle contents, Point2D contentOffset) {
+		area.super(rect, contents, contentOffset);
+        spaces = new SpacesRectangle(area);
         spaces.setContents(this);
 	}
 
