@@ -18,7 +18,6 @@
 
 package org.apache.fop.area;
 
-import org.apache.fop.apps.Document;
 import org.apache.fop.area.extensions.BookmarkData;
 import org.apache.fop.fo.extensions.Outline;
 import org.apache.fop.fo.extensions.Bookmarks;
@@ -30,6 +29,10 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Iterator;
+
+// Commons-Logging
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Area tree for formatting objects.
@@ -52,7 +55,6 @@ public class AreaTree {
     // allows for different models to deal with adding/rendering
     // in different situations
     private AreaTreeModel model;
-    private Document document;
 
     // hashmap of arraylists containing pages with id area
     private Map idLocations = new HashMap();
@@ -60,12 +62,12 @@ public class AreaTree {
     private Map resolve = new HashMap();
     private List treeExtensions = new ArrayList();
 
+    private static Log log = LogFactory.getLog(AreaTree.class);
+
     /**
      * Constructor.
-     * @param document the apps.Document object controlling this AreaTree
      */
-    public AreaTree (Document document) {
-        this.document = document;
+    public AreaTree () {
     }
 
 
@@ -225,7 +227,7 @@ public class AreaTree {
             return;
         }
 
-        document.getDriver().getLogger().debug("adding bookmarks to area tree");
+        log.debug("adding bookmarks to area tree");
         BookmarkData data = new BookmarkData();
         for (int count = 0; count < bookmarks.getOutlines().size(); count++) {
             Outline out = (Outline)(bookmarks.getOutlines()).get(count);
@@ -252,10 +254,6 @@ public class AreaTree {
             data.addSubData(createBookmarkData(out));
         }
         return data;
-    }
-
-    public Document getDocument() {
-        return document;
     }
 
 }

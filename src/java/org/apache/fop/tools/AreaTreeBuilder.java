@@ -271,7 +271,7 @@ class TreeLoader {
         Element root = null;
         root = doc.getDocumentElement();
 
-        areaTree = new AreaTree(document);
+        areaTree = new AreaTree();
         areaTree.setTreeModel(model);
 
         readAreaTree(root);

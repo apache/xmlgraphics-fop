@@ -490,7 +490,7 @@ public class Driver {
                         "Renderer not set when using standard foInputHandler");
             }
             foInputHandler = new FOTreeHandler(currentDocument, true);
-            currentDocument.areaTree = new AreaTree(currentDocument);
+            currentDocument.areaTree = new AreaTree();
             currentDocument.atModel = new RenderPagesModel(renderer);
             //this.atModel = new CachedRenderPagesModel(renderer);
             currentDocument.areaTree.setTreeModel(currentDocument.atModel);
