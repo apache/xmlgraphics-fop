@@ -122,6 +122,7 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
      * @throws IOException for I/O problems
      */
     protected void writeRtfPrefix() throws IOException {
+        newLine();
         writeGroupMark(true);
     }
 
@@ -276,6 +277,8 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
           index++; // Added by Boris POUDEROUS on 2002/07/02
         }
 
+        newLine();
+        
         // now children can write themselves, we have the correct RTF prefix code
         super.writeRtfContent();
     }

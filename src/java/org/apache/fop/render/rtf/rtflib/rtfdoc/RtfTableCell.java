@@ -226,6 +226,7 @@ implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
      *  @return widthOffset + width of this cell
      */
     int writeCellDef(int widthOffset) throws IOException {
+        newLine();
         this.widthOffset = widthOffset;
 
         // vertical cell merge codes
@@ -268,6 +269,7 @@ implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
 
         writeControlWord("cellx" + xPos);
 
+        //TODO Why is this here, right after an alignment command is written (see above)?
         writeControlWord("ql");
 
         return xPos;

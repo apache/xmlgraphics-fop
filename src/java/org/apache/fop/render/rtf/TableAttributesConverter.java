@@ -116,9 +116,10 @@ public class TableAttributesConverter {
         FOPRtfAttributes attrib = new FOPRtfAttributes();
 
         boolean isBorderPresent = false;
+        CommonBorderPaddingBackground border = fobj.getCommonBorderPaddingBackground();
 
         // Cell background color
-        ColorType color = fobj.getCommonBorderPaddingBackground().backgroundColor;
+        ColorType color = border.backgroundColor;
         if ((color != null) 
                 && (color.getAlpha() != 0
                         || color.getRed() != 0
@@ -127,7 +128,6 @@ public class TableAttributesConverter {
             attrib.set(ITableAttributes.CELL_COLOR_BACKGROUND, color);
         }
 
-        CommonBorderPaddingBackground border = fobj.getCommonBorderPaddingBackground();
         BorderAttributesConverter.makeBorder(border, CommonBorderPaddingBackground.BEFORE,
                 attrib, ITableAttributes.CELL_BORDER_TOP);
         BorderAttributesConverter.makeBorder(border, CommonBorderPaddingBackground.AFTER,
@@ -137,6 +137,44 @@ public class TableAttributesConverter {
         BorderAttributesConverter.makeBorder(border, CommonBorderPaddingBackground.END,
                 attrib,  ITableAttributes.CELL_BORDER_RIGHT);
 
+        int padding;
+        boolean reproduceMSWordBug = true;
+        //TODO Make this configurable
+        if (reproduceMSWordBug) {
+            //MS Word has a bug where padding left and top are exchanged
+            padding = border.getPaddingStart(false);
+            if (padding != 0) {
+                attrib.setTwips(ITableAttributes.ATTR_CELL_PADDING_TOP, padding);
+                attrib.set(ITableAttributes.ATTR_CELL_U_PADDING_TOP, 3 /*=twips*/);
+            }
+            padding = border.getPaddingBefore(false);
+            if (padding != 0) {
+                attrib.setTwips(ITableAttributes.ATTR_CELL_PADDING_LEFT, padding);
+                attrib.set(ITableAttributes.ATTR_CELL_U_PADDING_LEFT, 3 /*=twips*/);
+            }
+        } else {
+            padding = border.getPaddingStart(false);
+            if (padding != 0) {
+                attrib.setTwips(ITableAttributes.ATTR_CELL_PADDING_LEFT, padding);
+                attrib.set(ITableAttributes.ATTR_CELL_U_PADDING_LEFT, 3 /*=twips*/);
+            }
+            padding = border.getPaddingBefore(false);
+            if (padding != 0) {
+                attrib.setTwips(ITableAttributes.ATTR_CELL_PADDING_TOP, padding);
+                attrib.set(ITableAttributes.ATTR_CELL_U_PADDING_TOP, 3 /*=twips*/);
+            }
+        }
+        padding = border.getPaddingEnd(false);
+        if (padding != 0) {
+            attrib.setTwips(ITableAttributes.ATTR_CELL_PADDING_RIGHT, padding);
+            attrib.set(ITableAttributes.ATTR_CELL_U_PADDING_RIGHT, 3 /*=twips*/);
+        }
+        padding = border.getPaddingAfter(false);
+        if (padding != 0) {
+            attrib.setTwips(ITableAttributes.ATTR_CELL_PADDING_BOTTOM, padding);
+            attrib.set(ITableAttributes.ATTR_CELL_U_PADDING_BOTTOM, 3 /*=twips*/);
+        }
+        
         int n = fobj.getNumberColumnsSpanned();
         // Column spanning :
         if (n > 1) {

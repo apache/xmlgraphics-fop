@@ -144,6 +144,7 @@ public class RtfFontManager {
             return;
         }
 
+        header.newLine();
         header.writeGroupMark (true);
         header.writeControlWord ("fonttbl;");
 
@@ -151,11 +152,13 @@ public class RtfFontManager {
 
         for (int i = 0; i < len; i++) {
             header.writeGroupMark (true);
+            header.newLine();
             header.write ("\\f" + i);
             header.write (" " + (String) fontTable.elementAt (i));
             header.writeGroupMark (false);
         }
 
+        header.newLine();
         header.writeGroupMark (false);
     }
 
