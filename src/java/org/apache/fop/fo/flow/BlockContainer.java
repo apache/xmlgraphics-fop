@@ -18,12 +18,15 @@
 
 package org.apache.fop.fo.flow;
 
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonMarginBlock;
@@ -32,7 +35,6 @@ import org.apache.fop.fo.properties.LengthRangeProperty;
 
 /**
  * Class modelling the fo:block-container object.
- * @todo implement validateChildNode()
  */
 public class BlockContainer extends FObj {
     // The value of properties relevant for fo:block-container.
@@ -58,6 +60,9 @@ public class BlockContainer extends FObj {
     private int writingMode;
     private Numeric zIndex;
     // End of property values
+
+    /** used for FO validation */
+    private boolean blockItemFound = false;
 
     /**
      * @param parent FONode that is the parent of this object
@@ -102,9 +107,34 @@ public class BlockContainer extends FObj {
     }
 
     /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: marker* (%block;)+
+     * But: "In addition an fo:block-container that does not generate an 
+     * absolutely positioned area may have a sequence of zero or more 
+     * fo:markers as its initial children."
+     * @todo - implement above restriction if possible
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws ValidationException {
+        if (nsURI == FO_URI && localName.equals("marker")) {
+            if (blockItemFound) {
+               nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
+            }
+        } else if (!isBlockItem(nsURI, localName)) {
+            invalidChildError(loc, nsURI, localName);
+        } else {
+            blockItemFound = true;
+        }
+    }
+
+    /**
      * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws FOPException {
+        if (!blockItemFound) {
+            missingChildElementError("marker* (%block;)+");
+        }
+
         getFOEventHandler().endBlockContainer(this);
     }
 

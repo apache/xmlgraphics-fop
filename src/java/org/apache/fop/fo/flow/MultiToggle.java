@@ -19,15 +19,18 @@
 package org.apache.fop.fo.flow;
 
 // FOP
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonAccessibility;
+
 
 /**
  * Class modelling the fo:multi-toggle property.
- * @todo implement validateChildNode()
  */
 public class MultiToggle extends FObj {
     // The value of properties relevant for fo:multi-toggle.
@@ -56,9 +59,16 @@ public class MultiToggle extends FObj {
         commonAccessibility = pList.getAccessibilityProps();
         // prSwitchTo = pList.get(PR_SWITCH_TO);
 
-        if (!notImplementedWarningGiven) {
-            getLogger().warn("fo:multi-toggle is not yet implemented.");
-            notImplementedWarningGiven = true;
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: (#PCDATA|%inline;|%block;)*
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws ValidationException {
+        if (!isBlockOrInlineItem(nsURI, localName)) {
+            invalidChildError(loc, nsURI, localName);
         }
     }
 

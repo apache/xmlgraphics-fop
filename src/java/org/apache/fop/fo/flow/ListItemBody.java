@@ -23,14 +23,13 @@ import org.xml.sax.Locator;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.KeepProperty;
 
 /**
  * Class modelling the fo:list-item-body object.
- * @todo implement validateChildNode()
  */
 public class ListItemBody extends FObj {
     // The value of properties relevant for fo:list-item-body.
@@ -84,8 +83,6 @@ public class ListItemBody extends FObj {
     }
 
     /**
-     * Make sure content model satisfied, if so then tell the
-     * FOEventHandler that we are at the end of the flow.
      * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws FOPException {
