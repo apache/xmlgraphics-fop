@@ -253,7 +253,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- compiles hyphenation patterns                                       -->
   <!-- =================================================================== -->
 
-  <target name="hyphenation" depends="prepare,compile" >
+  <target name="hyphenation" depends="prepare" >
     <serHyph includes="*.xml" 
              sourceDir="./hyph" 
              targetDir="${build.dest}/hyph" /> 

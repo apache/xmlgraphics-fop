@@ -195,7 +195,10 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
             else
                break;
          if ( space ) {
-            chars.delete(0,i);
+            //chars.delete(0,i);
+			for ( int countr = i ; countr < chars.length() ; countr++ )
+				chars.setCharAt(countr - i, chars.charAt(countr));
+			chars.setLength(chars.length() - i);
             if ( token.length() > 0 ) {
                word = token.toString();
                token.setLength(0);
@@ -209,8 +212,11 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
                break;
             }
          }
-         token.append(chars.substring(0,i));
-         chars.delete(0,i);
+         token.append(chars.toString().substring(0,i));
+         //chars.delete(0,i);
+		 for ( int countr = i ; countr < chars.length() ; countr++ )
+			chars.setCharAt(countr - i, chars.charAt(countr));
+		 chars.setLength(chars.length() - i);
          if ( space ) {
             word = token.toString();
             token.setLength(0);

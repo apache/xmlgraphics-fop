@@ -258,7 +258,8 @@ abstract public class FONode {
 	 */
 	public void rollback(Vector snapshot)
 	{
-		this.marker = ((Integer)snapshot.remove(0)).intValue();
+		this.marker = ((Integer)snapshot.elementAt(0)).intValue();
+		snapshot.removeElementAt(0);
 
 		if (this.marker == START)
 		{

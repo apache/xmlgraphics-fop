@@ -193,7 +193,7 @@ public class ConfigurationParser extends DefaultHandler {
                 datatype = STRING;
                 break;
             case IN_LIST + IN_VALUE:
-                list.add(text);
+                list.addElement(text);
                 datatype = LIST;
                 break;
             case IN_LIST + IN_SUBENTRY + IN_VALUE:

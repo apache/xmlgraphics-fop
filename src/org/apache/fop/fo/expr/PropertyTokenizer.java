@@ -83,7 +83,7 @@ class PropertyTokenizer {
   protected int currentUnitLength = 0;
 
   private int currentTokenStartIndex = 0;
-  private final String expr;
+  private /*final*/ String expr;
   private int exprIndex = 0;
   private int exprLength;
   private boolean recognizeOperator = false;

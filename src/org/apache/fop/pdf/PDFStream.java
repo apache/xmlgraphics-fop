@@ -110,7 +110,7 @@ public class PDFStream extends PDFObject {
     public void addFilter(PDFFilter filter) 
     {
 	if (filter != null) {
-	    _filters.add(filter);
+	    _filters.addElement(filter);
 	}
 
     }
@@ -233,7 +233,7 @@ public class PDFStream extends PDFObject {
     }
     */
     public byte[] toPDF() {
-	throw new UnsupportedOperationException();
+	throw new RuntimeException();
     }
     
 
@@ -301,8 +301,8 @@ public class PDFStream extends PDFObject {
 		    filter.setApplied(true);
 		}
 		// place the names in our local vector in reverse order
-		names.add(0, filter.getName()); 
-		parms.add(0, filter.getDecodeParms());
+		names.insertElementAt(filter.getName(), 0); 
+		parms.insertElementAt(filter.getDecodeParms(), 0);
 	    }
 	    	    
 	    // now build up the filter entries for the dictionary
