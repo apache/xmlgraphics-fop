@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!--
-  * Copyright 2004 The Apache Software Foundation.
+  * Copyright 2004-2005 The Apache Software Foundation.
   * 
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -23,11 +23,11 @@
   version="1.0">
 
   <xsl:import
-    href="http://cvs.sourceforge.net/viewcvs.py/*checkout*/docbook/xsl/html/chunk.xsl"/>
+    href="http://docbook.sourceforge.net/release/xsl/current/html/chunk.xsl"/>
   <!-- Use this import if you do not want chunks -->
   <!-- 
   <xsl:import
-    href="http://cvs.sourceforge.net/viewcvs.py/*checkout*/docbook/xsl/html/docbook.xsl"/> 
+    href="http://docbook.sourceforge.net/release/xsl/current/html/docbook.xsl"/> 
 -->
 
   <xsl:param name="chunk.section.depth" select="2"/>

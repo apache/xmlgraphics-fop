@@ -1,4 +1,4 @@
-# Copyright 2004 The Apache Software Foundation.
+# Copyright 2004-2005 The Apache Software Foundation.
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,13 +35,14 @@ XHTML_DIR=$(DNI_BUILD_DIR)/xhtml
 HTML_DIR=$(DNI_BUILD_DIR)/html
 PDF_DIR=$(DNI_BUILD_DIR)
 
-JAVACLASSES=/usr/local/javaclasses
-FOPCLASSPATH=$(JAVACLASSES)/fop-0.20.5.jar
-AVALONCLASSPATH=$(JAVACLASSES)/avalon-framework-cvs-20020806.jar
-SAXONCLASSPATH=$(JAVACLASSES)/saxon.jar
-RESOLVERCLASSPATH=$(JAVACLASSES)/endorsed/resolver-xml-commons.jar
-XERCESCLASSPATH=$(JAVACLASSES)/endorsed/xml-apis.jar:$(JAVACLASSES)/endorsed/xercesImpl.jar
-CLICLASSPATH=$(JAVACLASSES)/commons-cli-1.0.jar
+JAVACLASSES=/usr/share/java
+LOCALJAVACLASSES=/usr/local/javaclasses
+FOPCLASSPATH=$(JAVACLASSES)/fop.jar:$(LOCALJAVACLASSES)/fop.jar
+AVALONCLASSPATH=$(JAVACLASSES)/avalon-framework.jar:$(LOCALJAVACLASSES)/avalon-framework.jar
+SAXONCLASSPATH=$(JAVACLASSES)/saxon.jar:$(LOCALJAVACLASSES)/saxon.jar
+RESOLVERCLASSPATH=$(JAVACLASSES)/xml-commons-resolver.jar:$(LOCALJAVACLASSES)/xml-commons-resolver.jar
+XERCESCLASSPATH=$(JAVACLASSES)/xml-apis.jar:$(JAVACLASSES)/xercesImpl.jar:$(LOCALJAVACLASSES)/xml-apis.jar:$(LOCALJAVACLASSES)/xercesImpl.jar
+CLICLASSPATH=$(JAVACLASSES)/commons-cli.jar:$(LOCALJAVACLASSES)/commons-cli.jar
 
 all: xhtml html pdf
 
