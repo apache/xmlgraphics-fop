@@ -1,4 +1,4 @@
-html { font-size : 11pt; }
+html { font-size : 10pt; }
 
 body {  background-color: #FFFFFF; margin: 0px 0px 0px 0px; font-family: Verdana, Helvetica, sans-serif;  font-size : 90%;  }
 
@@ -22,7 +22,7 @@ table .title { background-color: #FFFFFF; width:100%; border: 0px; }
 
 .pre { white-space: pre;}
 
-.content { padding: 5px 5px 5px 10px; font : Verdana, Helvetica, sans-serif;  font-size : 90%; }
+.content { padding: 5px 5px 5px 10px; font : small Verdana, Helvetica, sans-serif;  font-size : 90%; }
 .content .ForrestTable { width: 100%; background-color: #7099C5; color: #ffffff; font-size : 90%;}
 .content .ForrestTable caption { text-align: left; color: black; font-weight: bold; }
 .content .ForrestTable th { text-align: center; }
