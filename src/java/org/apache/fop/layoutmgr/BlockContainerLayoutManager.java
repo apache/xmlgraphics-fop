@@ -472,18 +472,19 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         if (referenceArea == null) {
             viewportBlockArea = new BlockViewport();
             viewportBlockArea.addTrait(Trait.IS_VIEWPORT_AREA, Boolean.TRUE);
-            TraitSetter.addBorders(viewportBlockArea, fobj.getCommonBorderPaddingBackground());
-            TraitSetter.addBackground(viewportBlockArea, fobj.getCommonBorderPaddingBackground());
-            TraitSetter.addMargins(viewportBlockArea, null, 
-                    fobj.getCommonBorderPaddingBackground(),
-                    fobj.getCommonMarginBlock());
-            
             viewportBlockArea.setIPD(vpContentIPD);
             if (autoHeight) {
                 viewportBlockArea.setBPD(0);
             } else {
                 viewportBlockArea.setBPD(vpContentBPD);
             }
+
+            TraitSetter.addBorders(viewportBlockArea, fobj.getCommonBorderPaddingBackground());
+            TraitSetter.addBackground(viewportBlockArea, fobj.getCommonBorderPaddingBackground());
+            TraitSetter.addMargins(viewportBlockArea, null, 
+                    fobj.getCommonBorderPaddingBackground(),
+                    fobj.getCommonMarginBlock());
+            
             viewportBlockArea.setCTM(absoluteCTM);
             viewportBlockArea.setClip(clip);
             if (getSpaceBefore() != 0) {
