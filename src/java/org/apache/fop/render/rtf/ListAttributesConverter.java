@@ -22,8 +22,6 @@ package org.apache.fop.render.rtf;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.properties.LengthProperty;
-import org.apache.fop.fo.properties.Property;
 
 //RTF
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
@@ -47,43 +45,12 @@ public class ListAttributesConverter {
     static RtfAttributes convertAttributes(FObj fobj)
     throws FOPException {
         
-        RtfAttributes attrib = new RtfAttributes();
+        FOPRtfAttributes attrib = new FOPRtfAttributes();
         
-        Property prop = null;
-        int iStartIndentInTwips = 0;
-        
-        //start-indent
-        if ((prop = fobj.getProperty(Constants.PR_START_INDENT)) != null) {
-            LengthProperty lengthprop = (LengthProperty)prop;
-
-            Float f = new Float(lengthprop.getLength().getValue() / 1000f);
-            String sValue = f.toString() + "pt";
-            
-            iStartIndentInTwips = (int) FoUnitsConverter.getInstance().convertToTwips(sValue);
-        } else {
-            //set default 
-            iStartIndentInTwips = 360;
-        }
-        attrib.set(RtfListTable.LIST_INDENT, iStartIndentInTwips);
-        
-        //end-indent
-        if ((prop = fobj.getProperty(Constants.PR_END_INDENT)) != null) {
-            LengthProperty lengthprop = (LengthProperty)prop;
-
-            Float f = new Float(lengthprop.getLength().getValue() / 1000f);
-            String sValue = f.toString() + "pt";
-
-            attrib.set(RtfText.LEFT_INDENT_BODY,
-                    (int) FoUnitsConverter.getInstance().convertToTwips(sValue));
-        } else {
-            if (iStartIndentInTwips >= 360) {
-                //if the start indent is greater than default, set to the start indent
-                attrib.set(RtfText.LEFT_INDENT_BODY, iStartIndentInTwips);
-            } else {
-                //else set to default 
-                attrib.set(RtfText.LEFT_INDENT_BODY, 360);
-            }
-        }
+        attrib.set(RtfListTable.LIST_INDENT, 
+                fobj.getProperty(Constants.PR_START_INDENT).getLength());
+        attrib.set(RtfText.LEFT_INDENT_BODY,
+                fobj.getProperty(Constants.PR_END_INDENT).getLength());
         
         /*
          * set list table defaults
