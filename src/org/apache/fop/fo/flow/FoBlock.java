@@ -111,7 +111,7 @@ public class FoBlock extends FONode {
 
     /**
      * Construct an fo:block node, and build the fo:block subtree.
-     * <p>Content model for fo:title: (#PCDATA|%inline;|%block;)*
+     * <p>Content model for fo:inline: (#PCDATA|%inline;|%block;)*
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
      * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
@@ -129,7 +129,7 @@ public class FoBlock extends FONode {
         FoXMLEvent ev = null;
         do {
             try {
-                if ((stateFlags & FONode.OUT_OF_LINE) == 0)
+                if ((stateFlags & FONode.MC_OUT_OF_LINE) == 0)
                     ev = xmlevents.expectPcdataOrInlineOrBlock();
                 else
                     ev = xmlevents.expectOutOfLinePcdataOrInlineOrBlock();

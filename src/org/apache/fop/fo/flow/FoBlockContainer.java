@@ -98,7 +98,7 @@ public class FoBlockContainer extends FONode {
     /**
      * Construct an fo:block-container node, and build the
      * fo:block-container subtree.
-     * <p>Content model for fo:title: (#PCDATA|%inline;|%block;)*
+     * <p>Content model for fo:block-container: (%block;)+
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
      * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
@@ -112,29 +112,42 @@ public class FoBlockContainer extends FONode {
     {
         super(foTree, FObjectNames.BLOCK_CONTAINER, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
+        // N.B. Restrictions apply on block-containers which generate
+        // absolutely positioned areas.  They are not allowed as descendents
+        // of fo:title, fo:float or fo:footnote.  They are not allowed to
+        // have any fo:marker children.
         xmlevents = foTree.getXmlevents();
         FoXMLEvent ev = null;
-        do {
-            try {
-                if ((stateFlags & FONode.OUT_OF_LINE) == 0)
-                    ev = xmlevents.expectPcdataOrInlineOrBlock();
+        try {
+            // Get at least one %block;
+            if ((stateFlags & FONode.MC_OUT_OF_LINE) == 0)
+                ev = xmlevents.expectBlock();
+            else
+                ev = xmlevents.expectOutOfLineBlock();
+            if (ev == null)
+                throw new FOPException
+                        ("%block; not found in fo:block-container");
+            // Generate the flow object
+            FObjects.fobjects.makeFlowObject(foTree, this, ev, stateFlags);
+            // Clear the blockage
+            ev = xmlevents.getEndElement(ev);
+            // Get the rest of the %block;s
+            do {
+                if ((stateFlags & FONode.MC_OUT_OF_LINE) == 0)
+                    ev = xmlevents.expectBlock();
                 else
-                    ev = xmlevents.expectOutOfLinePcdataOrInlineOrBlock();
+                    ev = xmlevents.expectOutOfLineBlock();
                 if (ev != null) {
                     // Generate the flow object
                     FObjects.fobjects.makeFlowObject
-                                (foTree, this, ev, stateFlags);
-                    if (ev.getFoType() != FObjectNames.PCDATA)
-                        ev = xmlevents.getEndElement(ev);
+                                            (foTree, this, ev, stateFlags);
+                    ev = xmlevents.getEndElement(ev);
                 }
-            } catch(UnexpectedStartElementException e) {
-                MessageHandler.logln
-                        ("Ignoring unexpected Start Element: "
-                                                         + ev.getQName());
-                ev = xmlevents.getStartElement();
-                ev = xmlevents.getEndElement(ev);
-            }
-        } while (ev != null);
+            } while (ev != null);
+        } catch(UnexpectedStartElementException e) {
+            throw new FOPException
+            ("Block not found or unexpected non-block in fo:block-container");
+        }
 
         makeSparsePropsSet();
     }

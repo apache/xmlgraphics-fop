@@ -104,7 +104,7 @@ public class FoBidiOverride extends FONode {
         FoXMLEvent ev = null;
         do {
             try {
-                if ((stateFlags & FONode.OUT_OF_LINE) == 0)
+                if ((stateFlags & FONode.MC_OUT_OF_LINE) == 0)
                     ev = xmlevents.expectPcdataOrInlineOrBlock();
                 else
                     ev = xmlevents.expectOutOfLinePcdataOrInlineOrBlock();

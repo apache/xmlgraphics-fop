@@ -100,9 +100,8 @@ public class FoPageSequence extends FONode {
         super(foTree, FObjectNames.PAGE_SEQUENCE, parent, event,
               FONode.PAGESEQ_SET, sparsePropsMap, sparseIndices);
         FoXMLEvent ev;
-        String nowProcessing;
         // Look for optional title
-        nowProcessing = "title";
+        String nowProcessing = "title";
         try {
             ev = xmlevents.expectStartElement
                         (FObjectNames.TITLE, XMLEvent.DISCARD_W_SPACE);

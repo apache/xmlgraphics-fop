@@ -16,6 +16,7 @@ import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.xml.XMLEvent;
 import org.apache.fop.xml.FoXMLEvent;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
@@ -85,21 +86,75 @@ public class FoTableAndCaption extends FONode {
         }
     }
 
+    /** The number of markers on this FO. */
+    private int numMarkers = 0;
+
+    /** The offset of table-caption within the children. */
+    private int captionOffset = -1;
+
+    /** The offset of table within the children. */
+    private int tableOffset = 0;
+
     /**
+     * Construct an fo:table-and-caption node, and build the
+     * fo:table-and-caption subtree.
+     * <p>Content model for fo:table-and-caption:<br>
+     * (marker*, table-caption?, table)
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
      * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
      * this node
-     * @param attrSet the index of the attribute set applying to the node.
+     * @param stateFlags - passed down from the parent.  Includes the
+     * attribute set information.
      */
     public FoTableAndCaption
-                (FOTree foTree, FONode parent, FoXMLEvent event, int attrSet)
+            (FOTree foTree, FONode parent, FoXMLEvent event, int stateFlags)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.TABLE_AND_CAPTION, parent, event,
-                          attrSet, sparsePropsMap, sparseIndices);
+                          stateFlags, sparsePropsMap, sparseIndices);
         FoXMLEvent ev;
-        String nowProcessing;
+        // Look for zero or more markers
+        String nowProcessing = "marker";
+        try {
+            while ((ev = xmlevents.expectStartElement
+                    (FObjectNames.MARKER, XMLEvent.DISCARD_W_SPACE))
+                   != null) {
+                new FoMarker(getFOTree(), this, ev, stateFlags);
+                numMarkers++;
+                xmlevents.getEndElement(FObjectNames.MARKER);
+            }
+
+            // Look for optional table-caption
+            nowProcessing = "table-caption";
+            if ((ev = xmlevents.expectStartElement
+                    (FObjectNames.TABLE_CAPTION, XMLEvent.DISCARD_W_SPACE))
+                   != null) {
+                new FoTableCaption(getFOTree(), this, ev, stateFlags);
+                captionOffset = numMarkers;
+                xmlevents.getEndElement(FObjectNames.TABLE_CAPTION);
+            }
+
+            // Look for one table
+            nowProcessing = "table";
+            ev = xmlevents.expectStartElement
+                        (FObjectNames.TABLE, XMLEvent.DISCARD_W_SPACE);
+            if (ev == null)
+                throw new FOPException("No table found.");
+            tableOffset = numChildren();
+            new FoTable(getFOTree(), this, ev, stateFlags);
+            xmlevents.getEndElement(FObjectNames.TABLE);
+
+            /*
+        } catch (NoSuchElementException e) {
+            throw new FOPException
+                ("Unexpected EOF while processing " + nowProcessing + ".");
+            */
+        } catch(TreeException e) {
+            throw new FOPException("TreeException: " + e.getMessage());
+        } catch(PropertyException e) {
+            throw new FOPException("PropertyException: " + e.getMessage());
+        }
 
         makeSparsePropsSet();
     }

@@ -16,6 +16,7 @@ import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.xml.XMLEvent;
 import org.apache.fop.xml.FoXMLEvent;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
@@ -85,21 +86,72 @@ public class FoListBlock extends FONode {
         }
     }
 
+    /** The number of markers on this FO. */
+    private int numMarkers = 0;
+
+    /** The number of list-items on this FO. */
+    private int numItems = 0;
+
+    /** The offset of 1st table-row within the children. */
+    private int firstItemOffset = -1;
+
     /**
+     * Construct an fo:list-block node, and build the fo:list-block subtree.
+     * <p>Content model for fo:list-block: (marker*, list-item+)
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
      * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
      * this node
-     * @param attrSet the index of the attribute set applying to the node.
+     * @param stateFlags - passed down from the parent.  Includes the
+     * attribute set information.
      */
     public FoListBlock
-                (FOTree foTree, FONode parent, FoXMLEvent event, int attrSet)
+            (FOTree foTree, FONode parent, FoXMLEvent event, int stateFlags)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.LIST_BLOCK, parent, event,
-                          attrSet, sparsePropsMap, sparseIndices);
+                          stateFlags, sparsePropsMap, sparseIndices);
         FoXMLEvent ev;
-        String nowProcessing;
+        xmlevents = foTree.getXmlevents();
+        // Look for zero or more markers
+        String nowProcessing = "marker";
+        try {
+            while ((ev = xmlevents.expectStartElement
+                    (FObjectNames.MARKER, XMLEvent.DISCARD_W_SPACE))
+                   != null) {
+                new FoMarker(getFOTree(), this, ev, stateFlags);
+                numMarkers++;
+                xmlevents.getEndElement(FObjectNames.MARKER);
+            }
+
+            // Look for one or more table-rows
+            nowProcessing = "list-item";
+            while ((ev = xmlevents.expectStartElement
+                    (FObjectNames.LIST_ITEM, XMLEvent.DISCARD_W_SPACE))
+                   != null) {
+                new FoListItem(getFOTree(), this, ev, stateFlags);
+                numItems++;
+                xmlevents.getEndElement(FObjectNames.LIST_ITEM);
+            }
+
+            if (numItems > 0) {
+                firstItemOffset = numMarkers;
+            } else {
+                // No items
+                throw new FOPException
+                            ("No table-row or table-cell in table-body.");
+            }
+
+            /*
+        } catch (NoSuchElementException e) {
+            throw new FOPException
+                ("Unexpected EOF while processing " + nowProcessing + ".");
+            */
+        } catch(TreeException e) {
+            throw new FOPException("TreeException: " + e.getMessage());
+        } catch(PropertyException e) {
+            throw new FOPException("PropertyException: " + e.getMessage());
+        }
 
         makeSparsePropsSet();
     }

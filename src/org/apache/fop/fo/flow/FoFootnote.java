@@ -16,6 +16,7 @@ import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.xml.XMLEvent;
 import org.apache.fop.xml.FoXMLEvent;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
@@ -71,20 +72,52 @@ public class FoFootnote extends FONode {
     }
 
     /**
+     * Construct an fo:footnote node, and build the fo:footnote subtree.
+     * <p>Content model for fo:footnote: (inline,footnote-body)
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
      * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
      * this node
-     * @param attrSet the index of the attribute set applying to the node.
+     * @param stateFlags - passed down from the parent.  Includes the
+     * attribute set information.
      */
     public FoFootnote
-                (FOTree foTree, FONode parent, FoXMLEvent event, int attrSet)
+            (FOTree foTree, FONode parent, FoXMLEvent event, int stateFlags)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.FOOTNOTE, parent, event,
-                          attrSet, sparsePropsMap, sparseIndices);
+                          stateFlags, sparsePropsMap, sparseIndices);
         FoXMLEvent ev;
-        String nowProcessing;
+        xmlevents = foTree.getXmlevents();
+        try {
+            // Look for the inline
+            if ((ev = xmlevents.expectStartElement
+                    (FObjectNames.INLINE, XMLEvent.RETAIN_W_SPACE))
+                   == null)
+                throw new FOPException("No inline in footnote.");
+            new FoInline
+                    (getFOTree(), this, ev, stateFlags | FONode.MC_FOOTNOTE);
+            xmlevents.getEndElement(FObjectNames.INLINE);
+
+            // Look for the footnote-body
+            if ((ev = xmlevents.expectStartElement
+                    (FObjectNames.FOOTNOTE_BODY, XMLEvent.RETAIN_W_SPACE))
+                   == null)
+                throw new FOPException("No footnote-body in footnote.");
+            new FoFootnoteBody
+                    (getFOTree(), this, ev, stateFlags | FONode.MC_FOOTNOTE);
+            xmlevents.getEndElement(FObjectNames.FOOTNOTE_BODY);
+
+            /*
+        } catch (NoSuchElementException e) {
+            throw new FOPException
+                ("Unexpected EOF while processing " + nowProcessing + ".");
+            */
+        } catch(TreeException e) {
+            throw new FOPException("TreeException: " + e.getMessage());
+        } catch(PropertyException e) {
+            throw new FOPException("PropertyException: " + e.getMessage());
+        }
 
         makeSparsePropsSet();
     }

@@ -13,14 +13,17 @@ package org.apache.fop.fo.flow;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.FObjectNames;
+import org.apache.fop.fo.FObjects;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.UnexpectedStartElementException;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.Ints;
+import org.apache.fop.messaging.MessageHandler;
 
 import java.util.HashMap;
 import java.util.BitSet;
@@ -99,20 +102,45 @@ public class FoLeader extends FONode {
     }
 
     /**
+     * Construct an fo:leader node, and build the fo:leader subtree.
+     * <p>Content model for fo:leader: (#PCDATA|%inline;)*
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
      * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
      * this node
-     * @param attrSet the index of the attribute set applying to the node.
+     * @param stateFlags - passed down from the parent.  Includes the
+     * attribute set information.
      */
     public FoLeader
-                (FOTree foTree, FONode parent, FoXMLEvent event, int attrSet)
+            (FOTree foTree, FONode parent, FoXMLEvent event, int stateFlags)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.LEADER, parent, event,
-                          attrSet, sparsePropsMap, sparseIndices);
-        FoXMLEvent ev;
-        String nowProcessing;
+                          stateFlags, sparsePropsMap, sparseIndices);
+        xmlevents = foTree.getXmlevents();
+        FoXMLEvent ev = null;
+        do {
+            try {
+                if ((stateFlags & FONode.MC_OUT_OF_LINE) == 0)
+                    ev = xmlevents.expectPcdataOrInline();
+                else
+                    ev = xmlevents.expectOutOfLinePcdataOrInline();
+                if (ev != null) {
+                    // Generate the flow object
+                    //System.out.println("Generating flow object for " + ev);
+                    FObjects.fobjects.makeFlowObject
+                                            (foTree, this, ev, stateFlags);
+                    if (ev.getFoType() != FObjectNames.PCDATA)
+                        ev = xmlevents.getEndElement(ev);
+                }
+            } catch(UnexpectedStartElementException e) {
+                MessageHandler.logln
+                        ("Ignoring unexpected Start Element: "
+                                                         + ev.getQName());
+                ev = xmlevents.getStartElement();
+                ev = xmlevents.getEndElement(ev);
+            }
+        } while (ev != null);
 
         makeSparsePropsSet();
     }

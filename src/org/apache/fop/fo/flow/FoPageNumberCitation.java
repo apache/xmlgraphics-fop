@@ -98,20 +98,20 @@ public class FoPageNumberCitation extends FONode {
     }
 
     /**
+     * Construct an fo:page-number-citation node.  This node has no children.
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
      * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
      * this node
-     * @param attrSet the index of the attribute set applying to the node.
+     * @param stateFlags - passed down from the parent.  Includes the
+     * attribute set information.
      */
     public FoPageNumberCitation
-                (FOTree foTree, FONode parent, FoXMLEvent event, int attrSet)
+            (FOTree foTree, FONode parent, FoXMLEvent event, int stateFlags)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.PAGE_NUMBER_CITATION, parent, event,
-                          attrSet, sparsePropsMap, sparseIndices);
-        FoXMLEvent ev;
-        String nowProcessing;
+                          stateFlags, sparsePropsMap, sparseIndices);
 
         makeSparsePropsSet();
     }
