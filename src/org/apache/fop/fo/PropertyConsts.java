@@ -235,13 +235,6 @@ public class PropertyConsts {
     }
 
     /**
-     * @return <tt>BitSet</tt> of non-inherited properties
-     */
-    public static BitSet getNonInheritedSet() {
-        return (BitSet)nonInheritedProps.clone();
-    }
-
-    /**
      * @param propertyIndex int index of the FO property
      * @return <tt>boolean</tt> is property a shorthand?
      */
@@ -680,4 +673,3 @@ public class PropertyConsts {
     private PropertyConsts (){}
 
 }
-
