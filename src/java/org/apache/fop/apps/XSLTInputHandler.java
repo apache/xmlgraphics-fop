@@ -23,13 +23,12 @@ import java.io.File;
 import java.util.Vector;
 
 // Imported TraX classes
+import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.transform.Result;
 
 // Imported SAX classes
 import org.xml.sax.InputSource;
@@ -48,7 +47,7 @@ public class XSLTInputHandler extends InputHandler {
      * @param xmlfile XML file
      * @param xsltfile XSLT file
      * @param params Vector of command-line parameters (name, value, 
-     *      name, value, ...) for XSL stylesheet
+     *      name, value, ...) for XSL stylesheet, null if none
      * @throws FOPException if initializing the Transformer fails
      */
     public XSLTInputHandler(File xmlfile, File xsltfile, Vector params) {
@@ -61,47 +60,6 @@ public class XSLTInputHandler extends InputHandler {
             baseURL = "";
         }
         xsltParams = params;
-    }
-
-    /**
-     * Constructor for files as input
-     * @param xmlfile XML file
-     * @param xsltfile XSLT file
-     * @throws FOPException if initializing the Transformer fails
-     */
-    public XSLTInputHandler(File xmlfile, File xsltfile) {
-        this.xmlSource  = new StreamSource(xmlfile);
-        this.xsltSource = new StreamSource(xsltfile);
-        try {
-            baseURL =
-                new File(xmlfile.getAbsolutePath()).getParentFile().toURL().toExternalForm();
-        } catch (Exception e) {
-            baseURL = "";
-        }
-    }
-
-    /**
-     * Constructor with URIs/URLs as input.
-     * @param xmlURL XML URL
-     * @param xsltURL XSLT URL
-     * @throws FOPException if initializing the Transformer fails
-     */
-    public XSLTInputHandler(String xmlURL, String xsltURL) {
-        this.xmlSource  = new StreamSource(xmlURL);
-        this.xsltSource = new StreamSource(xsltURL);
-    }
-
-    /**
-     * Constructor with InputSources as input.
-     * @param xmlSource XML InputSource
-     * @param xsltSource XSLT InputSource
-     * @throws FOPException if initializing the Transformer fails
-     */
-    public XSLTInputHandler(InputSource xmlSource, InputSource xsltSource) {
-        this.xmlSource  = new StreamSource(xmlSource.getByteStream(),
-                                           xmlSource.getSystemId());
-        this.xsltSource = new StreamSource(xsltSource.getByteStream(),
-                                           xsltSource.getSystemId());
     }
 
     /**
