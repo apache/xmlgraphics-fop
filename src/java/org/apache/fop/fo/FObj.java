@@ -37,36 +37,25 @@ import org.xml.sax.Locator;
  */
 public class FObj extends FONode implements Constants {
     private static final String FO_URI = "http://www.w3.org/1999/XSL/Format";
+
     public static PropertyMaker[] propertyListTable = null;
     
-    /**
-     * Formatting properties for this fo element.
-     */
+    /** Formatting properties for this fo element. */
     protected PropertyList propertyList;
 
-    /**
-     * Property manager for handling some common properties.
-     */
+    /** Property manager for providing refined properties/traits. */
     protected PropertyManager propMgr;
 
-    /**
-     * Id of this fo element of null if no id.
-     */
+    /** Id of this fo element of null if no id. */
     protected String id = null;
 
-    /**
-     * The children of this node.
-     */
+    /** The children of this node. */
     public ArrayList children = null;
 
-    /**
-     * Markers added to this element.
-     */
+    /** Markers added to this element. */
     protected Map markers = null;
 
-    /**
-     * Dynamic layout dimension. Used to resolve relative lengths.
-     */
+    /** Dynamic layout dimension. Used to resolve relative lengths. */
     protected Map layoutDimension = null;
 
     /** Marks input file containing this object **/
@@ -102,15 +91,30 @@ public class FObj extends FONode implements Constants {
      */
     public void processNode(String elementName, Locator locator, 
                             Attributes attlist) throws FOPException {
-        name = "fo:" + elementName;
+        setName(elementName);
+        setLocation(locator);
+        addProperties(attlist);
+    }
 
+    /**
+     * Set the name of this element.
+     * The prepends "fo:" to the name to indicate it is in the fo namespace.
+     * @param str the xml element name
+     */
+    public void setName(String str) {
+        name = "fo:" + str;
+    }
+
+    /**
+     * Set the location information for this element
+     * @param locator the org.xml.sax.Locator object
+     */
+    public void setLocation(Locator locator) {
         if (locator != null) {
             line = locator.getLineNumber();
             column = locator.getColumnNumber();
             systemId = locator.getSystemId();
         }
-
-        addProperties(attlist);
     }
 
     /**
@@ -119,34 +123,44 @@ public class FObj extends FONode implements Constants {
      */
     protected void addProperties(Attributes attlist) throws FOPException {
         FObj parentFO = findNearestAncestorFObj();
-        PropertyList parentPropertyList = null;
+        PropertyList parentPL = null;
+
         if (parentFO != null) {
-            parentPropertyList = parentFO.getPropertiesForNamespace(FO_URI);
+            parentPL = parentFO.getPropertiesForNamespace(FO_URI);
         }
 
-        propertyList = new PropertyList(this, parentPropertyList, FO_URI,
-            name);
+        propertyList = new PropertyList(this, parentPL, FO_URI, name);
         propertyList.addAttributesToList(attlist);
-        this.propMgr = makePropertyManager(propertyList);
+        propMgr = new PropertyManager(propertyList);
         setWritingMode();
     }
 
     /**
-     * Set the name of this element.
-     * The prepends "fo:" to the name to indicate it is in the fo namespace.
-     *
-     * @param str the xml element name
+     * Return the PropertyManager object for this FO.  PropertyManager
+     * tends to hold the traits for this FO, and is primarily used in layout.
+     * @return the property manager for this FO
      */
-    public void setName(String str) {
-        name = "fo:" + str;
+    public PropertyManager getPropertyManager() {
+        return propMgr;
     }
 
-    public void setLocation(Locator locator) {
-        if (locator != null) {
-            line = locator.getLineNumber();
-            column = locator.getColumnNumber();
-            systemId = locator.getSystemId();
-        }
+    /**
+     * Return the property list object for this FO.  PropertyList tends
+     * to hold the base, pre-trait properties for this FO, either explicitly
+     * declared in the input XML or from inherited values.
+     */
+    public PropertyList getPropertyList() {
+        return propertyList;
+    }
+
+    /**
+     * Helper method to quickly obtain the value of a property
+     * for this FO, without querying for the propertyList first.
+     * @param name - the name of the desired property to obtain
+     * @return the property
+     */
+    public Property getProperty(int propId) {
+        return propertyList.get(propId);
     }
 
    /**
@@ -216,15 +230,6 @@ public class FObj extends FONode implements Constants {
         return this.propertyList;
     }
 
-    /**
-     * @param propertyList the collection of Property objects to be managed
-     * @return a PropertyManager for the Property objects
-     */
-    protected PropertyManager makePropertyManager(
-            PropertyList propertyList) {
-        return new PropertyManager(propertyList);
-    }
-
     /* This section is the implemenation of the property context. */
 
     /**
@@ -285,57 +290,6 @@ public class FObj extends FONode implements Constants {
         }
     }
 
-    /**
-     * lets outside sources access the property list
-     * first used by PageNumberCitation to find the "id" property
-     * @param name - the name of the desired property to obtain
-     * @return the property
-     */
-    public Property getProperty(int propId) {
-        return propertyList.get(propId);
-    }
-
-    /**
-     * Return the "nearest" specified value for the given property.
-     * Implements the from-nearest-specified-value function.
-     * @param propertyName The name of the property whose value is desired.
-     * @return The computed value if the property is explicitly set on some
-     * ancestor of the current FO, else the initial value.
-     */
-    public Property getNearestSpecifiedProperty(int propId) {
-        return propertyList.getNearestSpecified(propId);
-    }
-
-    /**
-     * Return the value explicitly specified on this FO.
-     * @param propertyName The name of the property whose value is desired.
-     * It may be a compound name, such as space-before.optimum.
-     * @return The value if the property is explicitly set, otherwise null.
-     */
-    public Property getExplicitProperty(int propId) {
-        return propertyList.getExplicit(propId);
-    }
-
-    /**
-     * Uses the stored writingMode.
-     * @param absdir an absolute direction (top, bottom, left, right)
-     * @return the corresponding writing model relative direction name
-     * for the flow object.
-     */
-    public int getWritingMode(int lrtb, int rltb, int tbrl) {
-        return propertyList.getWritingMode(lrtb, rltb, tbrl);
-    }
-        
-        
-    /**
-     * Uses the stored writingMode.
-     * @param relativeWritingMode relative direction (start, end, before, after)
-     * @return the corresponding absolute direction name for the flow object.
-     */
-    public String getAbsoluteWritingMode(int relativeWritingMode) {
-        return propertyList.getAbsoluteWritingMode(relativeWritingMode);
-    }
-        
     /**
      * Setup the id for this formatting object.
      * Most formatting objects can have an id that can be referenced.
@@ -484,14 +438,6 @@ public class FObj extends FONode implements Constants {
      */
     public Map getMarkers() {
         return markers;
-    }
-
-    /**
-     * lets layout managers access FO properties via PropertyManager
-     * @return the property manager for this FO
-     */
-    public PropertyManager getPropertyManager() {
-        return this.propMgr;
     }
 
     /**

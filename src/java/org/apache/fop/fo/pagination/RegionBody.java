@@ -79,7 +79,7 @@ public class RegionBody extends Region {
     private int getRelMargin(int reldir, int relPropId) {
         FObj parent = (FObj) getParent();
         String sPropName = "margin-"
-                + parent.getAbsoluteWritingMode(reldir);
+                + parent.getPropertyList().getAbsoluteWritingMode(reldir);
         int propId = FOPropertyMapping.getPropertyId(sPropName);
         Property prop = propertyList.getExplicitOrShorthand(propId);
         if (prop == null) {
