@@ -1,48 +1,24 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.render.ps;
 
-// FOP
-import org.apache.fop.render.AbstractRenderer;
-import org.apache.fop.render.Renderer;
-import org.apache.fop.image.FopImage;
-import org.apache.fop.layout.*;
-import org.apache.fop.datatypes.*;
-import org.apache.fop.fo.properties.*;
-import org.apache.fop.render.pdf.Font;
-import org.apache.fop.image.*;
-
-import org.apache.batik.bridge.*;
-import org.apache.batik.swing.svg.*;
-import org.apache.batik.swing.gvt.*;
-import org.apache.batik.gvt.*;
-import org.apache.batik.gvt.renderer.*;
-import org.apache.batik.gvt.filter.*;
-import org.apache.batik.gvt.event.*;
-
-// SVG
-import org.w3c.dom.svg.SVGSVGElement;
-import org.w3c.dom.svg.SVGDocument;
-import org.w3c.dom.*;
-import org.w3c.dom.svg.*;
-
 // Java
-import java.io.*;
-import java.util.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
-import java.util.HashMap;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Dimension2D;
-import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.Dimension;
+import java.util.Map;
+
+// FOP
+import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.fonts.Font;
+import org.apache.fop.layout.FontInfo;
+import org.apache.fop.render.AbstractRenderer;
+
 
 /**
  * Renderer that renders to PostScript.
@@ -51,24 +27,12 @@ import java.awt.Dimension;
  * is the FlateEncode filter which is a Level 3 feature. The filters in use
  * are hardcoded at the moment.
  * <br>
- * This class follows the Document Structuring Conventions (DSC) version 3.0
- * (If I did everything right). If anyone modifies this renderer please make
+ * This class follows the Document Structuring Conventions (DSC) version 3.0.
+ * If anyone modifies this renderer please make
  * sure to also follow the DSC to make it simpler to programmatically modify
  * the generated Postscript files (ex. extract pages etc.).
  * <br>
- * TODO: Character size/spacing, SVG Transcoder for Batik, configuration, move
- * to PrintRenderer, maybe improve filters (I'm not very proud of them), add a
- * RunLengthEncode filter (useful for Level 2 Postscript), Improve
- * DocumentProcessColors stuff (probably needs to be configurable, then maybe
- * add a color to grayscale conversion for bitmaps to make output smaller (See
- * PCLRenderer), font embedding, support different character encodings, try to
- * implement image transparency, positioning of images is wrong etc. <P>
- *
- * Modified by Mark Lillywhite mark-fop@inomial.com, to use the new
- * Renderer interface. This PostScript renderer appears to be the
- * most efficient at producing output.
- *
- * @author Jeremias Märki
+ * @todo Rebuild the PostScript renderer
  */
 public class PSRenderer extends AbstractRenderer {
 
@@ -76,8 +40,6 @@ public class PSRenderer extends AbstractRenderer {
      * the application producing the PostScript
      */
     protected String producer;
-
-    int imagecount = 0;    // DEBUG
 
     private boolean enableComments = true;
 
@@ -98,7 +60,7 @@ public class PSRenderer extends AbstractRenderer {
     private FontInfo fontInfo;
 
     /**
-     * set the document's producer
+     * Set the document's producer
      *
      * @param producer string indicating application producing the PostScript
      */
@@ -107,26 +69,34 @@ public class PSRenderer extends AbstractRenderer {
     }
 
     /**
-     * write out a command
+     * Write out a command
+     * @param cmd PostScript command
      */
     protected void write(String cmd) {
         try {
             out.write(cmd);
         } catch (IOException e) {
-            if (!ioTrouble)
+            if (!ioTrouble) {
                 e.printStackTrace();
+            }
             ioTrouble = true;
         }
     }
 
     /**
-     * write out a comment
+     * Write out a comment
+     * @param comment Comment to write
      */
     protected void comment(String comment) {
-        if (this.enableComments)
+        if (this.enableComments) {
             write(comment);
+        }
     }
 
+    /**
+     * Generates the PostScript code for the font dictionary.
+     * @param fontInfo available fonts
+     */
     protected void writeFontDict(FontInfo fontInfo) {
         write("%%BeginResource: procset FOPFonts");
         write("%%Title: Font setup (shortcuts) for this file");
@@ -186,7 +156,8 @@ public class PSRenderer extends AbstractRenderer {
         write("  /FontMatrix get 0 get /Ts exch def /FontInfo get dup");
         write("  /UnderlinePosition get Ts mul /To exch def");
         write("  /UnderlineThickness get Ts mul /Tt exch def");
-        write("  ux uy To add cs 10 mul 26 idiv add moveto Tcx uy To add cs 10 mul 26 idiv add lineto");
+        write("  ux uy To add cs 10 mul 26 idiv add moveto "
+                    + "Tcx uy To add cs 10 mul 26 idiv add lineto");
         write("  Tt setlinewidth stroke");
         write("  grestore");
         write("} bd");
@@ -195,12 +166,12 @@ public class PSRenderer extends AbstractRenderer {
 
         // write("/gfF1{/Helvetica findfont} bd");
         // write("/gfF3{/Helvetica-Bold findfont} bd");
-        HashMap fonts = fontInfo.getFonts();
+        Map fonts = fontInfo.getFonts();
         Iterator enum = fonts.keySet().iterator();
         while (enum.hasNext()) {
             String key = (String)enum.next();
             Font fm = (Font)fonts.get(key);
-            write("/" + key + " /" + fm.fontName() + " def");
+            write("/" + key + " /" + fm.getFontName() + " def");
         }
         write("end def");
         write("%%EndResource");
@@ -208,22 +179,25 @@ public class PSRenderer extends AbstractRenderer {
         while (enum.hasNext()) {
             String key = (String)enum.next();
             Font fm = (Font)fonts.get(key);
-            write("/" + fm.fontName() + " findfont");
+            write("/" + fm.getFontName() + " findfont");
             write("dup length dict begin");
             write("  {1 index /FID ne {def} {pop pop} ifelse} forall");
             write("  /Encoding ISOLatin1Encoding def");
             write("  currentdict");
             write("end");
-            write("/" + fm.fontName() + " exch definefont pop");
+            write("/" + fm.getFontName() + " exch definefont pop");
         }
     }
 
+    /**
+     * Make sure the cursor is in the right place.
+     */
     protected void movetoCurrPosition() {
         write(this.currentIPPosition + " " + this.currentBPPosition + " M");
     }
 
     /**
-     * set up the font info
+     * Set up the font info
      *
      * @param fontInfo the font info object to set up
      */
@@ -233,37 +207,32 @@ public class PSRenderer extends AbstractRenderer {
         this.fontInfo = fontInfo;
     }
 
+    /**
+     * Draws a filled rectangle.
+     * @param x x-coordinate
+     * @param y y-coordinate
+     * @param w width
+     * @param h height
+     * @param col color to fill with
+     */
     protected void addFilledRect(int x, int y, int w, int h,
                                  ColorType col) {
-            write("newpath");
-            write(x + " " + y + " M");
-            write(w + " 0 rlineto");
-            write("0 " + (-h) + " rlineto");
-            write((-w) + " 0 rlineto");
-            write("0 " + h + " rlineto");
-            write("closepath");
-            useColor(col);
-            write("fill");
+        write("newpath");
+        write(x + " " + y + " M");
+        write(w + " 0 rlineto");
+        write("0 " + (-h) + " rlineto");
+        write((-w) + " 0 rlineto");
+        write("0 " + h + " rlineto");
+        write("closepath");
+        useColor(col);
+        write("fill");
     }
 
-    private long copyStream(InputStream in, OutputStream out,
-                            int bufferSize) throws IOException {
-        long bytes_total = 0;
-        byte[] buf = new byte[bufferSize];
-        int bytes_read;
-        while ((bytes_read = in.read(buf)) != -1) {
-            bytes_total += bytes_read;
-            out.write(buf, 0, bytes_read);
-        }
-        return bytes_total;
-    }
-
-
-    private long copyStream(InputStream in,
-                            OutputStream out) throws IOException {
-        return copyStream(in, out, 4096);
-    }
-
+    /**
+     * Changes the currently used font.
+     * @param name name of the font
+     * @param size font size
+     */
     public void useFont(String name, int size) {
         if ((currentFontName != name) || (currentFontSize != size)) {
             write(name + " " + size + " F");
@@ -286,14 +255,15 @@ public class PSRenderer extends AbstractRenderer {
     }
 
     /**
-    */
+     * @see org.apache.fop.render.Renderer#startRenderer(OutputStream)
+     */
     public void startRenderer(OutputStream outputStream)
     throws IOException {
         getLogger().debug("rendering areas to PostScript");
 
         this.out = new PSStream(outputStream);
         write("%!PS-Adobe-3.0");
-        write("%%Creator: "+this.producer);
+        write("%%Creator: " + this.producer);
         write("%%DocumentProcessColors: Black");
         write("%%DocumentSuppliedResources: procset FOPFonts");
         write("%%EndComments");
@@ -337,9 +307,9 @@ public class PSRenderer extends AbstractRenderer {
     }
 
     /**
-    */
-    public void stopRenderer()
-    throws IOException {
+     * @see org.apache.fop.render.Renderer#stopRenderer()
+     */
+    public void stopRenderer() throws IOException {
         write("%%Trailer");
         write("%%EOF");
         this.out.flush();

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -21,21 +21,38 @@ public class CharUtilities {
      */
     public static final char CODE_EOT = 0;
 
-    public static final int UCWHITESPACE = 0; // unicode white space
+    /**
+     * Character class: Unicode white space
+     */
+    public static final int UCWHITESPACE = 0;
+    /**
+     * Character class: Line feed
+     */
     public static final int LINEFEED = 1;
-    public static final int EOT = 2; // Boundary beteween text runs
+    /**
+     * Character class: Boundary between text runs
+     */
+    public static final int EOT = 2;
+    /**
+     * Character class: non-whitespace
+     */
     public static final int NONWHITESPACE = 3;
+    /**
+     * Character class: XML whitespace
+     */
     public static final int XMLWHITESPACE = 4;
 
 
     /**
      * Return the appropriate CharClass constant for the type
      * of the passed character.
+     * @param c character to inspect
+     * @return int the determined character class
      */
     public static int classOf(char c) {
         if (c == CODE_EOT) { return EOT; }
         if (c == '\n') { return LINEFEED; }
-        if (c == ' '|| c == '\r' || c == '\t' ) { return XMLWHITESPACE; }
+        if (c == ' ' || c == '\r' || c == '\t') { return XMLWHITESPACE; }
         if (isAnySpace(c)) { return UCWHITESPACE; }
         return NONWHITESPACE;
     }
@@ -45,6 +62,9 @@ public class CharUtilities {
      * from the current fontstate.
      * This also performs some guessing on widths on various
      * versions of space that might not exists in the font.
+     * @param c character to inspect
+     * @param fs FontState to use
+     * @return int the width of the character
      */
     public static int getCharWidth(char c, FontState fs) {
         int width;
@@ -52,12 +72,12 @@ public class CharUtilities {
         if ((c == '\n') || (c == '\r') || (c == '\t') || (c == '\u00A0')) {
             width = getCharWidth(' ', fs);
         } else {
-            width = fs.width(fs.mapChar(c));
+            width = fs.getWidth(fs.mapChar(c));
             if (width <= 0) {
                 // Estimate the width of spaces not represented in
                 // the font
-                int em = fs.width(fs.mapChar('m'));
-                int en = fs.width(fs.mapChar('n'));
+                int em = fs.getWidth(fs.mapChar('m'));
+                int en = fs.getWidth(fs.mapChar('n'));
                 if (em <= 0) {
                     em = 500 * fs.getFontSize();
                 }
@@ -119,7 +139,9 @@ public class CharUtilities {
     /**
      * Helper method to determine if the character is a
      * space with normal behaviour. Normal behaviour means that
-     * it's not non-breaking
+     * it's not non-breaking.
+     * @param c character to inspect
+     * @return boolean True if the character is a normal space
      */
     public static boolean isSpace(char c) {
         return (c == ' '
@@ -141,6 +163,8 @@ public class CharUtilities {
     /**
      * Method to determine if the character is a nonbreaking
      * space.
+     * @param c character to check
+     * @return boolean True if the character is a nbsp
      */
     public static boolean isNBSP(char c) {
         if (c == '\u00A0' || c == '\u202F'    // narrow no-break space
@@ -153,7 +177,9 @@ public class CharUtilities {
     }
 
     /**
-     * @return true if the character represents any kind of space
+     * Determines if the character represents any kind of space.
+     * @param c character to check
+     * @return True if the character represents any kind of space
      */
     public static boolean isAnySpace(char c) {
         boolean ret = (isSpace(c) || isNBSP(c));

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -22,16 +22,16 @@ import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.BitmapImage;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.layout.FontState;
-import org.apache.fop.layout.FontMetric;
 import org.apache.fop.render.pdf.FontSetup;
+import org.apache.fop.fonts.FontMetrics;
+import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.image.JpegImage;
-import org.apache.fop.render.pdf.CIDFont;
-import org.apache.fop.render.pdf.fonts.LazyFont;
+import org.apache.fop.fonts.CIDFont;
 import org.apache.fop.render.pdf.FopPDFImage;
 
 import org.apache.batik.ext.awt.g2d.AbstractGraphics2D;
 import org.apache.batik.ext.awt.g2d.GraphicContext;
-import org.apache.batik.ext.awt.MultipleGradientPaint;
+//import org.apache.batik.ext.awt.MultipleGradientPaint;
 import org.apache.batik.ext.awt.RadialGradientPaint;
 import org.apache.batik.ext.awt.LinearGradientPaint;
 import org.apache.batik.gvt.PatternPaint;
@@ -60,7 +60,6 @@ import java.awt.image.ImageObserver;
 import java.awt.image.RenderedImage;
 import java.awt.image.Raster;
 import java.awt.image.renderable.RenderableImage;
-import java.awt.FontMetrics;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -70,8 +69,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import java.util.Map;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 
 /**
  * PDF Graphics 2D.
@@ -390,7 +388,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             final byte[] result = new byte[buf.getWidth() * buf.getHeight() * 3];
             byte[] mask = new byte[buf.getWidth() * buf.getHeight()];
             boolean hasMask = false;
-            boolean binaryMask = true;
+            //boolean binaryMask = true;
 
             Raster raster = buf.getData();
             DataBuffer bd = raster.getDataBuffer();
@@ -410,9 +408,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                         mask[maskpos++] = (byte)(alpha & 0xFF);
                         if (alpha != 255) {
                             hasMask = true;
+                            /*
                             if (alpha != 0) {
                                 binaryMask = false;
-                            }
+                            }*/
 
                             // System.out.println("Alpha: " + alpha);
                             // Composite with opaque white...
@@ -465,7 +464,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                                           buf.getHeight(), result, ref);
             fopimg.setTransparent(new PDFColor(255, 255, 255));
             imageInfo = pdfDoc.addImage(resourceContext, fopimg);
-            int xObjectNum = imageInfo.getXNumber();
+            //int xObjectNum = imageInfo.getXNumber();
 
             if (outputStream != null) {
                 try {
@@ -627,8 +626,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         }
 
         if (c.getAlpha() != 255) {
-            HashMap vals = new HashMap();
-            vals.put(PDFGState.CA, new Float(c.getAlpha() / 255f));
+            Map vals = new java.util.HashMap();
+            vals.put(PDFGState.GSTATE_ALPHA_STROKE, new Float(c.getAlpha() / 255f));
             PDFGState gstate = pdfDoc.makeGState(vals, graphicsState.getGState());
             //gstate.setAlpha(c.getAlpha() / 255f, false);
             resourceContext.addGState(gstate);
@@ -830,37 +829,37 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             float[] fractions = gp.getFractions();
             Point2D p1 = gp.getStartPoint();
             Point2D p2 = gp.getEndPoint();
-            MultipleGradientPaint.CycleMethodEnum cycenum = gp.getCycleMethod();
-            boolean cyclic = cycenum == MultipleGradientPaint.REPEAT;
+            //MultipleGradientPaint.CycleMethodEnum cycenum = gp.getCycleMethod();
+            //boolean cyclic = (cycenum == MultipleGradientPaint.REPEAT);
             AffineTransform transform = graphicsState.getTransform();
             transform.concatenate(gp.getTransform());
 
             p1 = transform.transform(p1, null);
             p2 = transform.transform(p2, null);
 
-            ArrayList theCoords = new ArrayList();
+            List theCoords = new java.util.ArrayList();
             theCoords.add(new Double(p1.getX()));
             theCoords.add(new Double(p1.getY()));
             theCoords.add(new Double(p2.getX()));
             theCoords.add(new Double(p2.getY()));
 
-            ArrayList theExtend = new ArrayList();
+            List theExtend = new java.util.ArrayList();
             theExtend.add(new Boolean(true));
             theExtend.add(new Boolean(true));
 
-            ArrayList theDomain = new ArrayList();
+            List theDomain = new java.util.ArrayList();
             theDomain.add(new Double(0));
             theDomain.add(new Double(1));
 
-            ArrayList theEncode = new ArrayList();
+            List theEncode = new java.util.ArrayList();
             theEncode.add(new Double(0));
             theEncode.add(new Double(1));
             theEncode.add(new Double(0));
             theEncode.add(new Double(1));
 
-            ArrayList theBounds = new ArrayList();
+            List theBounds = new java.util.ArrayList();
 
-            ArrayList someColors = new ArrayList();
+            List someColors = new java.util.ArrayList();
 
             for (int count = 0; count < cols.length; count++) {
                 Color c1 = cols[count];
@@ -896,7 +895,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             ac = transform.transform(ac, null);
             af = transform.transform(af, null);
 
-            ArrayList theCoords = new ArrayList();
+            List theCoords = new java.util.ArrayList();
             // the center point af must be within the circle with
             // radius ar centered at ac
             theCoords.add(new Double(af.getX()));
@@ -907,14 +906,14 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             theCoords.add(new Double(ar));
 
             Color[] cols = rgp.getColors();
-            ArrayList someColors = new ArrayList();
+            List someColors = new java.util.ArrayList();
             for (int count = 0; count < cols.length; count++) {
                 Color cc = cols[count];
                 someColors.add(new PDFColor(cc.getRed(), cc.getGreen(), cc.getBlue()));
             }
 
             float[] fractions = rgp.getFractions();
-            ArrayList theBounds = new ArrayList();
+            List theBounds = new java.util.ArrayList();
             for (int count = 1; count < fractions.length - 1; count++) {
                 float offset = fractions[count];
                 theBounds.add(new Double(offset));
@@ -960,13 +959,13 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         pattStream.write(pattGraphic.getString());
         pattStream.write("Q");
 
-        ArrayList bbox = new ArrayList();
+        List bbox = new java.util.ArrayList();
         bbox.add(new Double(0));
         bbox.add(new Double(0));
         bbox.add(new Double(rect.getWidth() + rect.getX()));
         bbox.add(new Double(rect.getHeight() + rect.getY()));
 
-        ArrayList translate = new ArrayList();
+        List translate = new java.util.ArrayList();
         AffineTransform pattt = pp.getPatternTransform();
         pattt.translate(rect.getWidth() + rect.getX(), rect.getHeight() + rect.getY());
         double[] flatmatrix = new double[6];
@@ -1160,10 +1159,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             String style = gFont.isItalic() ? "italic" : "normal";
             int weight = gFont.isBold() ? FontInfo.BOLD : FontInfo.NORMAL;
             String fname = fontInfo.fontLookup(n, style, weight);
-            FontMetric metrics = fontInfo.getMetricsFor(fname);
+            FontMetrics metrics = fontInfo.getMetricsFor(fname);
             fontState = new FontState(fname, metrics, siz * 1000);
         } else {
-            FontMetric metrics = fontInfo.getMetricsFor(ovFontState.getFontName());
+            FontMetrics metrics = fontInfo.getMetricsFor(ovFontState.getFontName());
             fontState = new FontState(ovFontState.getFontName(),
                                       metrics, ovFontState.getFontSize());
             ovFontState = null;
@@ -1190,8 +1189,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         int salpha = c.getAlpha();
 
         if (salpha != 255) {
-            HashMap vals = new HashMap();
-            vals.put(PDFGState.ca, new Float(salpha / 255f));
+            Map vals = new java.util.HashMap();
+            vals.put(PDFGState.GSTATE_ALPHA_NONSTROKE, new Float(salpha / 255f));
             PDFGState gstate = pdfDoc.makeGState(vals, graphicsState.getGState());
             resourceContext.addGState(gstate);
             currentStream.write("/" + gstate.getName() + " gs\n");
@@ -1199,7 +1198,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
         currentStream.write("BT\n");
 
-        HashMap kerning = null;
+        Map kerning = null;
         boolean kerningAvailable = false;
 
         kerning = fontState.getKerning();
@@ -1209,8 +1208,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
         boolean useMultiByte = false;
-        org.apache.fop.render.pdf.Font f =
-            (org.apache.fop.render.pdf.Font)fontInfo.getFonts().get(name);
+        org.apache.fop.fonts.Font f =
+            (org.apache.fop.fonts.Font)fontInfo.getFonts().get(name);
         if (f instanceof LazyFont) {
             if (((LazyFont) f).getRealFont() instanceof CIDFont) {
                 useMultiByte = true;
@@ -1276,9 +1275,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     }
 
     private void addKerning(StringWriter buf, Integer ch1, Integer ch2,
-                            HashMap kerning, String startText,
+                            Map kerning, String startText,
                             String endText) {
-        HashMap kernPair = (HashMap)kerning.get(ch1);
+        Map kernPair = (Map)kerning.get(ch1);
 
         if (kernPair != null) {
             Integer width = (Integer)kernPair.get(ch2);
@@ -1383,7 +1382,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
         for (char ch = iterator.first(); ch != CharacterIterator.DONE;
                 ch = iterator.next()) {
-            Map attr = iterator.getAttributes();
+            //Map attr = iterator.getAttributes();
 
             String name = fontState.getFontName();
             int size = fontState.getFontSize();
@@ -1443,8 +1442,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         }
 
         if (c.getAlpha() != 255) {
-            HashMap vals = new HashMap();
-            vals.put(PDFGState.ca, new Float(c.getAlpha() / 255f));
+            Map vals = new java.util.HashMap();
+            vals.put(PDFGState.GSTATE_ALPHA_NONSTROKE, new Float(c.getAlpha() / 255f));
             PDFGState gstate = pdfDoc.makeGState(vals, graphicsState.getGState());
             resourceContext.addGState(gstate);
             currentStream.write("/" + gstate.getName() + " gs\n");
@@ -1567,7 +1566,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @see       java.awt.FontMetrics
      * @see       java.awt.Graphics#getFontMetrics()
      */
-    public FontMetrics getFontMetrics(Font f) {
+    public java.awt.FontMetrics getFontMetrics(Font f) {
         return fmg.getFontMetrics(f);
     }
 
