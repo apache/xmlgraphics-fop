@@ -323,5 +323,12 @@
     </datatype>
     <default>false</default>
   </property>
+  <property>
+    <name>background-color</name>
+    <class-name>BackgroundColor</class-name>
+    <inherited>false</inherited>
+    <datatype>ColorType</datatype>
+    <default>transparent</default>
+  </property>
 </property-list>
 

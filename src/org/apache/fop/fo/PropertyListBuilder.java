@@ -104,6 +104,7 @@ public class PropertyListBuilder {
 	propertyTable.put("href",HRef.maker());
 	propertyTable.put("column-width",ColumnWidth.maker());
 	propertyTable.put("keep-with-next",KeepWithNext.maker());
+	propertyTable.put("background-color",BackgroundColor.maker());
 
 	propertyTable.put("height",SVGLength.maker());
 	propertyTable.put("width",SVGLength.maker());

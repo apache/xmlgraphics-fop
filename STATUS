@@ -12,7 +12,8 @@ Get images working
 [DONE]Incorporate Eric Schaeffer's fix to tables in static-content
 [DONE] Incorporate Kelly Campell's fixes to GifJpegImage
 [PARTIAL] Incorporate Eric Schaeffer's further table fixes
-Incorporate Eric Schaeffer's background colour implementation
+[DONE] Incorporate Eric Schaeffer's background colour implementation
+	(actually used different approach with background colour as trait)
 
 Other Bugs to fix:
 

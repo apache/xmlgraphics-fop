@@ -144,8 +144,8 @@ public class DisplayGraphic extends FObj {
 
 	    if (this.isInTableCell) {
 		startIndent += forcedStartOffset;
-		endIndent = area.getAllocationWidth() - startIndent -
-		    forcedWidth;
+		endIndent = area.getAllocationWidth() - forcedWidth -
+		    forcedStartOffset;
 	    }
 
 	    this.marker = 0;

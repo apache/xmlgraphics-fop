@@ -55,6 +55,7 @@ package org.apache.fop.fo.flow;
 import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
+import org.apache.fop.datatypes.*;
 import org.apache.fop.apps.FOPException;
 
 public class Block extends FObjMixed {
@@ -82,6 +83,7 @@ public class Block extends FObjMixed {
     int spaceAfter;
     int textIndent;
     int keepWithNext;
+    ColorType backgroundColor;
 
     BlockArea blockArea;
 
@@ -133,6 +135,8 @@ public class Block extends FObjMixed {
 		this.properties.get("text-indent").getLength().mvalue(); 
 	    this.keepWithNext = 
 		this.properties.get("keep-with-next").getEnum();
+	    this.backgroundColor =
+		this.properties.get("background-color").getColorType();
 
 	    if (area instanceof BlockArea) {
 		area.end();
@@ -150,8 +154,8 @@ public class Block extends FObjMixed {
 
 	    if (this.isInTableCell) {
 		startIndent += forcedStartOffset;
-		endIndent = area.getAllocationWidth() - startIndent -
-		    forcedWidth;
+		endIndent = area.getAllocationWidth() - forcedWidth -
+		    forcedStartOffset;
 	    }
 
 	    this.marker = 0;
@@ -182,6 +186,7 @@ public class Block extends FObjMixed {
 			  area.spaceLeft(), startIndent, endIndent,
 			  textIndent, align, alignLast, lineHeight);
 	blockArea.setPage(area.getPage());
+	blockArea.setBackgroundColor(backgroundColor);
 	blockArea.start();
 
 	int numChildren = this.children.size();
