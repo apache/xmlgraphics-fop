@@ -72,6 +72,7 @@ import java.util.Map;
 
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.render.AbstractRenderer;
+import org.apache.fop.viewer.PreviewDialog;
 import org.apache.fop.viewer.Translator;
 
 /**
@@ -85,7 +86,11 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     protected int pageNumber = 0;
     protected List pageList = new java.util.Vector();
     //protected ProgressListener progressListener = null;
-    protected Translator res = null;
+
+    /**
+     * The resource bundle used for AWT messages.
+     */
+    protected Translator translator = null;
 
     protected Map fontNames = new java.util.Hashtable();
     protected Map fontStyles = new java.util.Hashtable();
@@ -100,7 +105,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
 
     /**
      * The current (internal) font name
-     */
+    */
     protected String currentFontName;
 
     /**
@@ -116,14 +121,18 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     protected float currentBlue = 0;
 
     /**
-     * The parent component, used to set up the font.
-     * This is needed as FontSetup needs a live AWT component
-     * in order to generate valid font measures.
+     * The preview dialog frame used for display of the documents.
+     * Also used as the AWT Component for FontSetup in generating
+     * valid font measures.
      */
-    protected Component parent;
+    protected PreviewDialog frame;
+    
+    public AWTRenderer() {
+        translator = new Translator();
+    }
 
-    public AWTRenderer(Translator aRes) {
-        res = aRes;
+    public Translator getTranslator() {
+        return translator;
     }
 
     public int getPageCount() {
@@ -138,13 +147,12 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     }
 
     /**
-     * Sets parent component which is  used to set up the font.
-     * This is needed as FontSetup needs a live AWT component
-     * in order to generate valid font measures.
-     * @param parent the live AWT component reference
+     * Sets the preview dialog frame used for display of the documents.
+     * @param frame the PreviewDialog frame
      */
-    public void setComponent(Component parent) {
-        this.parent = parent;
+    public void setPreviewDialog(PreviewDialog frame) {
+        this.frame = frame;
+        frame.setStatus(translator.getString("Status.Build.FO.tree"));
     }
 
     public int getPageNumber() {
@@ -173,6 +181,8 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
 
     public void stopRenderer()
     throws IOException {
+        frame.setStatus(translator.getString("Status.Show"));
+        frame.showPage();
     }
 
     // Printable Interface

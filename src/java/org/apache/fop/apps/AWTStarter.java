@@ -53,14 +53,12 @@ package org.apache.fop.apps;
 //FOP
 import org.apache.fop.render.awt.AWTRenderer;
 import org.apache.fop.viewer.PreviewDialog;
-import org.apache.fop.viewer.Translator;
 
 //Java
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Locale;
 
 /**
  * AWT Viewer starter.
@@ -72,7 +70,6 @@ import java.util.Locale;
  */
 public class AWTStarter extends CommandLineStarter {
     private PreviewDialog frame;
-    private Translator translator;
     private Driver driver;
 
     /**
@@ -87,10 +84,9 @@ public class AWTStarter extends CommandLineStarter {
     }
 
     private void init() throws FOPException {
-        translator = new Translator();
-        AWTRenderer renderer = new AWTRenderer(translator);
-        frame = createPreviewDialog(renderer, translator);
-        renderer.setComponent(frame);
+        AWTRenderer renderer = new AWTRenderer();
+        frame = createPreviewDialog(renderer);
+        renderer.setPreviewDialog(frame);
         renderer.setOptions(commandLineOptions.getRendererOptions());
         driver = new Driver();
         driver.setRenderer(renderer);
@@ -103,18 +99,14 @@ public class AWTStarter extends CommandLineStarter {
     public void run() throws FOPException {
         driver.reset();
         try {
-            frame.setStatus(translator.getString("Status.Build.FO.tree"));
             driver.render(inputHandler);
-            frame.setStatus(translator.getString("Status.Show"));
-            frame.showPage();
         } catch (Exception e) {
             frame.reportException(e);
         }
     }
 
-    private PreviewDialog createPreviewDialog(AWTRenderer renderer,
-            Translator res) {
-        PreviewDialog frame = new PreviewDialog(this, renderer, res);
+    private PreviewDialog createPreviewDialog(AWTRenderer renderer) {
+        PreviewDialog frame = new PreviewDialog(this, renderer);
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosed(WindowEvent we) {
                 System.exit(0);
