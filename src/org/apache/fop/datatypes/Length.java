@@ -59,9 +59,9 @@ public class Length {
         if (unit.equals("in"))
             dvalue = dvalue * 72;
         else if (unit.equals("cm"))
-            dvalue = dvalue * 28.35;
+            dvalue = dvalue * 28.3464567;
         else if (unit.equals("mm"))
-            dvalue = dvalue * 2.84;
+            dvalue = dvalue * 2.83464567;
         else if (unit.equals("pt"))
             dvalue = dvalue;
         else if (unit.equals("pc"))
