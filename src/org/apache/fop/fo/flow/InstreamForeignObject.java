@@ -203,6 +203,7 @@ public class InstreamForeignObject extends FObj {
 	if(numChildren > 1) {
 	    // error
 	}
+	if(this.children.size() > 0) {
 	FONode fo = (FONode) children.elementAt(0);
 	Status status;
 	// currently FONode must be an SVG
@@ -215,6 +216,7 @@ public class InstreamForeignObject extends FObj {
 
 	/* increase the height of the containing area accordingly */
 	area.increaseHeight(areaCurrent.getHeight());
+	}
 
 	/* if there is a space-after */
 	if (spaceAfter != 0) {
