@@ -171,7 +171,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <!-- Initialization target                                               -->
   <!-- =================================================================== -->
-  <target name="init" depends="init-avail, init-filters-xalan2">
+  <target name="init" depends="init-avail">
     <tstamp/>
     <property name="Name" value="Fop"/>
     <property name="name" value="fop"/>
@@ -215,7 +215,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 	<property name="viewer.resources.dest.dir" value="${build.dest}/org/apache/fop/viewer/resources"/>
 	<property name="viewer.images.dest.dir" value="${build.dest}/org/apache/fop/viewer/Images"/>
 
-	<!-- <property name="dist.dir" value="./dist"/> -->
     <property name="dist.bin.dir" value="./dist-bin"/>
     <property name="dist.src.dir" value="./dist-src"/>
     <property name="dist.bin.result.dir" value="${dist.bin.dir}/${Name}-${version}"/>
@@ -267,8 +266,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="main.class" value="org.apache.fop.apps.Fop"/>
     <property name="runtime.classpath" value="lib/xerces-1.4.3.jar lib/xalan-2.2D11.jar lib/batik.jar lib/jimi-1.0.jar lib/avalon-framework-cvs-20020315.jar"/>
    
-    <filter filtersfile="${build.src}/codegen/filter"/>
-
   </target>
 
   <target name="init-avail">
@@ -276,14 +273,8 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <available property="jai.present" classname="javax.media.jai.JAI"/>
 
     <available property="trax.present" classname="javax.xml.transform.Transformer"/>
-    <filter token="xalan2-replacestring" value="../../"/>
 
   </target>
-
-  <target name="init-filters-xalan2" depends="init-avail" if="trax.present">
-    <copy file="src/codegen/xalan2.filter" toFile="./build/src/codegen/filter" filtering="on"/>
-  </target>
-
 
   <!-- =================================================================== -->
   <!-- Help on usage                                                       -->
@@ -501,7 +492,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <fileset dir="${build.dest}" includes="org/apache/fop/svg/**"/>
     <fileset dir="${build.dest}" includes="org/apache/fop/render/pdf/**"
              excludes="org/apache/fop/render/pdf/PDFRenderer.class,org/apache/fop/render/pdf/PDFXMLHandler*"/>
-    <fileset dir="${build.dest}" includes="org/apache/fop/layout/Font*.class,org/apache/fop/apps/FOPException.class,org/apache/fop/apps/Version.class,org/apache/fop/image/FopImag*.class,org/apache/fop/image/Jpeg*,org/apache/fop/image/Abstract*,org/apache/fop/configuration/**,org/apache/fop/util/StreamUtilities.class"/>
+    <fileset dir="${build.dest}" includes="org/apache/fop/layout/Font*.class,org/apache/fop/apps/Version.class,org/apache/fop/image/FopImag*.class,org/apache/fop/image/Jpeg*,org/apache/fop/image/Abstract*,org/apache/fop/configuration/**,org/apache/fop/util/StreamUtilities.class"/>
     <manifest>
         <attribute name="Implementation-Title" value="${pdf-transcoder.name}"/>
         <attribute name="Implementation-Version" value="${pdf-transcoder.version}"/>
