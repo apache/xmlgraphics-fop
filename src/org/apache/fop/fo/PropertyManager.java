@@ -47,10 +47,10 @@ public class PropertyManager {
     private HyphenationProps hyphProps = null;
     private TextInfo textInfo = null;
 
-    private String[] saLeft;
-    private String[] saRight;
-    private String[] saTop;
-    private String[] saBottom;
+    private static String[] saBefore = new String[] {"before"};
+    private static String[] saAfter = new String[] {"after"};
+    private static String[] saStart = new String[] {"start"};
+    private static String[] saEnd = new String[] {"end"};
 
     private static MessageFormat msgColorFmt =
         new MessageFormat("border-{0}-color");
@@ -69,16 +69,6 @@ public class PropertyManager {
 	m_fontInfo = fontInfo;
     }
 
-    private void initDirections() {
-        saLeft = new String[1];
-        saRight = new String[1];
-        saTop = new String[1];
-        saBottom = new String[1];
-        saTop[0] = properties.wmAbsToRel(PropertyList.TOP);
-        saBottom[0] = properties.wmAbsToRel(PropertyList.BOTTOM);
-        saLeft[0] = properties.wmAbsToRel(PropertyList.LEFT);
-        saRight[0] = properties.wmAbsToRel(PropertyList.RIGHT);
-    }
 
     public FontState getFontState(FontInfo fontInfo) throws FOPException {
         if (fontState == null) {
@@ -106,12 +96,11 @@ public class PropertyManager {
     public BorderAndPadding getBorderAndPadding() {
         if (borderAndPadding == null) {
             this.borderAndPadding = new BorderAndPadding();
-            initDirections();
 
-            initBorderInfo(BorderAndPadding.TOP, saTop);
-            initBorderInfo(BorderAndPadding.BOTTOM, saBottom);
-            initBorderInfo(BorderAndPadding.LEFT, saLeft);
-            initBorderInfo(BorderAndPadding.RIGHT, saRight);
+            initBorderInfo(BorderAndPadding.BEFORE, saBefore);
+            initBorderInfo(BorderAndPadding.AFTER, saAfter);
+            initBorderInfo(BorderAndPadding.START, saStart);
+            initBorderInfo(BorderAndPadding.END, saEnd);
         }
         return borderAndPadding;
     }
