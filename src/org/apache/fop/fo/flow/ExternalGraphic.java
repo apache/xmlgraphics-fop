@@ -143,7 +143,8 @@ public class ExternalGraphic extends FObj {
             double ratio = ((double)width) / ((double)height);
             int areaWidth = area.getAllocationWidth() - startIndent
                             - endIndent;
-            int pageHeight = area.getPage().getHeight();
+            int pageHeight = area.getPage().getBody().getMaxHeight()
+                             - spaceBefore;
             if (height > pageHeight) {
                 height = pageHeight;
                 width = (int)(ratio * ((double)height));
