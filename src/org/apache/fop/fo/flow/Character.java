@@ -57,7 +57,7 @@ import org.apache.fop.fo.properties.*;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.layout.BlockArea;
 import org.apache.fop.layout.Area;
-import org.apache.fop.layout.InlineArea;
+import org.apache.fop.layout.inline.InlineArea;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
