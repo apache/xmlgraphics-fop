@@ -25,12 +25,9 @@
    <property name="hyph"  value="org/apache/fop/layout/hyphenation"/>
    <property name="buildtools.jar" value="./lib/buildtools.jar"/>
 
-   <property name="xalan1" value="Xalan1Transform.java"/>
    <property name="trax" value="TraxTransform.java"/>
 
    <available property="trax.present" classname="javax.xml.transform.Transformer"/>
-   <available property="xalan1.present" classname="org.apache.xalan.xslt.XSLTProcessor"/>
-   </target>
 
    <target name="compile" depends="init,prepare.src">
      <mkdir dir="${build.dest}"/>
@@ -46,19 +43,11 @@
 	  includes="${tools}/**,${hyph}/**"/>
    </target>
 
-   <target name="prepare.src" depends="prepare.xalan1,prepare.trax">
+   <target name="prepare.src" depends="prepare.trax">
      <copy todir="${build.src}">
        <fileset dir="${src.dir}"
 	        includes="${tools}/**,${hyph}/**"
-	        excludes="${tools}/anttasks/Fop.java,${tools}/TestConverter.java,${hyph}/Hyphenator.java,**/${xalan1},**/${trax}"/>
-     </copy>
-   </target>
-
-   <target name="prepare.xalan1" if="xalan1.present">
-     <echo message="Xalan1 is present. Installing Xalan1 support"/>
-     <copy todir="${build.src}">
-	<fileset dir="${src.dir}"
-	      includes="**/${xalan1}"/>
+	        excludes="${tools}/anttasks/Fop.java,${tools}/TestConverter.java,${hyph}/Hyphenator.java,**/${trax}"/>
      </copy>
    </target>
 
