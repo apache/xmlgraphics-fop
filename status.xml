@@ -115,11 +115,14 @@ inactive??
 
   <changes>
    <release version="?" date="2003">
+    <action context="code" dev="JM" type="update">
+      Moved all sources from src/org/** to src/java/org/**.
+    </action>
     <action context="code" dev="JM" type="update"
             due-to="Zhong Yi" due-to-email="yidaomao@yahoo.com">
       Port of the PDF TextPainter to PostScript. Support for SEG_QUADTO (curves).
       Some support for viewport traits (background and borders).
-  	</action>
+    </action>
     <action context="code" dev="JM" type="update">
       Brought back the PostScript renderer. Compared to the branch it
       has a cleaner separation of PostScript generation code from
