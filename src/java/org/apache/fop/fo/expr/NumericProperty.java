@@ -128,10 +128,10 @@ public class NumericProperty extends Property implements Numeric, Length {
      * debugging.
      */
     public String toString() {
-    	if (dim == 1) {
-    		return (int) value + "mpt";
-    	} else {
-    		return value + "^" + dim;
-    	}
+        if (dim == 1) {
+            return (int) value + "mpt";
+        } else {
+            return value + "^" + dim;
+        }
     }
 }
