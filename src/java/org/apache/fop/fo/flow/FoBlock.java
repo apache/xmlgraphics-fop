@@ -24,10 +24,12 @@
 package org.apache.fop.fo.flow;
 
 // FOP
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.Area;
+import org.apache.fop.area.BlockArea;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOPageSeqNode;
@@ -140,7 +142,10 @@ public class FoBlock extends FOPageSeqNode {
                           stateFlags, sparsePropsMap, sparseIndices);
         getMarkers();
         // Generate a block area
-        
+        currentArea = new BlockArea(
+                pageSequence, this, layoutContext, layoutContext.getSync());
+        generated = new ArrayList();
+        generated.add(currentArea);
         XmlEvent ev = null;
         do {
             try {
@@ -150,6 +155,7 @@ public class FoBlock extends FOPageSeqNode {
                     ev = xmlevents.expectOutOfLinePcdataOrInlineOrBlock();
                 if (ev != null) {
                     // Generate the flow object
+                    
                     FObjects.makePageSeqFOChild(
                             foTree, pageSequence, this, ev, stateFlags);
                     // Area generation happening here
