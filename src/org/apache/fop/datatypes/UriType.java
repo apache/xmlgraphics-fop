@@ -21,6 +21,9 @@ import org.apache.fop.fo.Properties;
 
 public class UriType extends AbstractPropertyValue {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     /**
      * A URI Specification
      */

@@ -25,6 +25,9 @@ import org.apache.fop.fo.PropNames;
 
 public class TextDecorator extends AbstractPropertyValue {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     /**
      * OR mask to turn decorations on
      */

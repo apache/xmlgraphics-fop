@@ -22,6 +22,9 @@ import org.apache.fop.fo.Properties;
 
 public class Bool extends AbstractPropertyValue {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     /**
      * The boolean value of the property
      */

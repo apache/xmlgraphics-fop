@@ -19,6 +19,9 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class Length {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     /*
      * Constants for LengthUnitNames
      */

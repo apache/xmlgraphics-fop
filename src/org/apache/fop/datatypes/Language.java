@@ -23,6 +23,9 @@ import org.apache.fop.configuration.Configuration;
 
 public class Language extends NCName {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     public Language(int property, String languageCode) throws PropertyException
     {
         super(property, languageCode);

@@ -21,6 +21,9 @@ import org.apache.fop.datastructs.ROIntegerArray;
  */
 
 public class Ints {
+
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
     /**
      * An <tt>ROIntegerArray</tt> of Integer object constants corresponding
      * to the set of property index values.

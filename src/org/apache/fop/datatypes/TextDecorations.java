@@ -25,6 +25,9 @@ import org.apache.fop.datatypes.TextDecorator;
  */
 
 public class TextDecorations
+
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
     extends AbstractPropertyValue implements Cloneable
 {
 

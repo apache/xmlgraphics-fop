@@ -26,6 +26,9 @@ import java.util.Iterator;
 
 public class ShadowEffect extends AbstractPropertyValue {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     /**
      * The shadow's "horizontal distance to the right of the text" (mandatory).
      */

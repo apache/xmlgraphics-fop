@@ -25,6 +25,9 @@ import org.apache.fop.datatypes.Inherit;
 
 public class InheritCompound extends Inherit {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     /**
      * @param property the <tt>int</tt> index of the property on which
      * this value is being defined.

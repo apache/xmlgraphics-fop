@@ -21,6 +21,9 @@ import org.apache.fop.fo.PropertyConsts;
 
 public class Ems {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     /**
      * Private constructor - don't instantiate a <i>Ems</i> object.
      */

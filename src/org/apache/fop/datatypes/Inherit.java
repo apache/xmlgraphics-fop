@@ -22,6 +22,9 @@ import org.apache.fop.fo.PropertyConsts;
 
 public class Inherit extends AbstractPropertyValue {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     /**
      * The property from which the inherited value is to be derived.  This
      * may be different from the target property.

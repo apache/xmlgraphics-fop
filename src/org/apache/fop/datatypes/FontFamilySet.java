@@ -26,6 +26,9 @@ import org.apache.fop.fo.expr.AbstractPropertyValue;
 
 public class FontFamilySet extends AbstractPropertyValue {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     /**
      * An array of <tt>String</tt>s containing a prioritized list of
      * font family or generic font family names.
