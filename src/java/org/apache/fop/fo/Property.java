@@ -234,26 +234,30 @@ public class Property {
         public Property make(PropertyList propertyList, String value,
                              FObj fo) throws FOPException {
             try {
-                Property pret = null;
+                Property newProp = null;
                 String pvalue = value;
-                pret = checkEnumValues(value);
-                if (pret == null) {
+                if ("inherit".equals(value)) {
+                    newProp = propertyList.getFromParent(this.propId);
+                } else {
+                    newProp = checkEnumValues(value);
+                }
+                if (newProp == null) {
                     /* Check for keyword shorthand values to be substituted. */
                     pvalue = checkValueKeywords(value);
                     // Override parsePropertyValue in each subclass of Property.Maker
                     Property p = PropertyParser.parse(pvalue,
                                                       new PropertyInfo(this,
                                                       propertyList, fo));
-                    pret = convertProperty(p, propertyList, fo);
+                    newProp = convertProperty(p, propertyList, fo);
                 } else if (isCompoundMaker()) {
-                    pret = convertProperty(pret, propertyList, fo);
+                    newProp = convertProperty(newProp, propertyList, fo);
                 }
-                if (pret == null) {
+                if (newProp == null) {
                     throw new org.apache.fop.fo.expr.PropertyException("No conversion defined");
                 } else if (inheritsSpecified()) {
-                    pret.setSpecifiedValue(pvalue);
+                    newProp.setSpecifiedValue(pvalue);
                 }
-                return pret;
+                return newProp;
             } catch (org.apache.fop.fo.expr.PropertyException propEx) {
                 String propName = FOPropertyMapping.getPropertyName(this.propId);
                 throw new FOPException("Error in " + propName 
