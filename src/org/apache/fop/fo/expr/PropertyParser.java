@@ -27,6 +27,7 @@ import org.apache.fop.datatypes.Frequency;
 import org.apache.fop.datatypes.Angle;
 import org.apache.fop.datatypes.Bool;
 import org.apache.fop.datatypes.Inherit;
+import org.apache.fop.datatypes.InheritedValue;
 import org.apache.fop.datatypes.Auto;
 import org.apache.fop.datatypes.None;
 import org.apache.fop.datatypes.Slash;
@@ -481,7 +482,7 @@ public class PropertyParser extends PropertyTokenizer {
                             ("inherited-property-value: "
                              + PropNames.getPropertyName(propindex)
                              + " is not inherited.");
-                prop = new Inherit(property, propindex);
+                prop = new InheritedValue(property, propindex);
             }
             else if (currentTokenValue.equals("label-end")) {
                 PropertyValue[] args = parseArgs(0);
