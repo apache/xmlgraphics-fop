@@ -88,13 +88,7 @@ public class FOFileHandler extends InputHandler {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(true);
-            factory.setFeature(
-                "http://xml.org/sax/features/namespace-prefixes", true);
             return factory.newSAXParser().getXMLReader();
-        } catch (SAXNotSupportedException se) {
-            throw new FOPException("Error: You need a parser which allows the"
-                   + " http://xml.org/sax/features/namespace-prefixes"
-                   + " feature to be set to true to support namespaces", se);
         } catch (SAXException se) {
             throw new FOPException("Couldn't create XMLReader", se);
         } catch (ParserConfigurationException pce) {
