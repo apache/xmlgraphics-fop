@@ -170,6 +170,51 @@ public class PDFRenderer extends PrintRenderer {
      */
     public void setOptions(java.util.Map options) {
         this.options = options;
+
+        // Process encryption options, if any exist
+        boolean encrypt = false;
+        String oPassword = "";
+        String uPassword = "";
+        boolean allowPrint           = true;
+        boolean allowCopyContent     = true;
+        boolean allowEditContent     = true;
+        boolean allowEditAnnotations = true;
+        String option;
+
+        option = (String) options.get("ownerPassword");
+        if (option != null) {
+            encrypt = true;
+            oPassword = option;
+        }
+        option = (String) options.get("userPassword");
+        if (option != null) {
+            encrypt = true;
+            uPassword = option;
+        }
+        option = (String) options.get("allowPrint");
+        if (option != null) {
+            encrypt = true;
+            allowPrint = option.equals("TRUE");
+        }
+        option = (String) options.get("allowCopyContent");
+        if (option != null) {
+            encrypt = true;
+            allowCopyContent = option.equals("TRUE");
+        }
+        option = (String) options.get("allowEditContent");
+        if (option != null) {
+            encrypt = true;
+            allowEditContent = option.equals("TRUE");
+        }
+        option = (String) options.get("allowEditAnnotations");
+        if (option != null) {
+            encrypt = true;
+            allowEditAnnotations = option.equals("TRUE");
+        }
+        if (encrypt) {
+            this.pdfDoc.setEncryption(oPassword,uPassword,allowPrint,allowCopyContent,
+                                      allowEditContent, allowEditAnnotations);
+        }
     }
 
     /**
