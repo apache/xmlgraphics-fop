@@ -26,30 +26,22 @@ import java.awt.geom.Rectangle2D;
  * @author pbw
  * @version $Revision$ $Name$
  */
-public class PaddingRectangle extends Area.AreaFrame {
+public class PaddingRectangle extends AreaFrame {
 
-    public PaddingRectangle(Area area, int writingMode) {
-        area.super(writingMode);
-        contents = new ContentRectangle(area, writingMode);
-        contentOffset = new Point2D.Double();
-        borders = new BorderRectangle(area, writingMode);
-        borders.setContents(this);
+    public PaddingRectangle(Area area, Area.AreaGeometry content) {
+        super(area, content);
+        borders = new BorderRectangle(area, this);
     }
 
     /**
-	 * @param x
-	 * @param y
-	 * @param w
-	 * @param h
 	 * @param contents
 	 * @param contentOffset
 	 */
-	public PaddingRectangle(Area area, int writingMode,
-            double x, double y, double w, double h,
+	public PaddingRectangle(Area area,
+            double ipOffset, double bpOffset, double ipDim, double bpDim,
 			ContentRectangle contents, Point2D contentOffset) {
-		area.super(writingMode, x, y, w, h, contents, contentOffset);
-        borders = new BorderRectangle(area, writingMode);
-        borders.setContents(this);
+		super(area, ipOffset, bpOffset, ipDim, bpDim, contents, contentOffset);
+        borders = new BorderRectangle(area, this);
 	}
 
 	/**
@@ -57,11 +49,10 @@ public class PaddingRectangle extends Area.AreaFrame {
 	 * @param contents
 	 * @param contentOffset
 	 */
-	public PaddingRectangle(Area area, int writingMode, Rectangle2D rect,
+	public PaddingRectangle(Area area, Rectangle2D rect,
             ContentRectangle contents, Point2D contentOffset) {
-		area.super(writingMode, rect, contents, contentOffset);
-        borders = new BorderRectangle(area, writingMode);
-        borders.setContents(this);
+		super(area, rect, contents, contentOffset);
+        borders = new BorderRectangle(area, this);
 	}
 
     private BorderRectangle borders = null;
