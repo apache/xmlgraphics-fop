@@ -169,7 +169,7 @@ public class Flow extends FObj {
    * Return the content width of this flow (really of the region
    * in which it is flowing).
    */
-  protected int getContentWidth() {
+  public int getContentWidth() {
     if (area != null)
       return area.getContentWidth(); //getAllocationWidth()??
     else return 0;  // not laid out yet

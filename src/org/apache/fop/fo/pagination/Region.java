@@ -158,4 +158,8 @@ public abstract class Region extends FObj
 		name.equals( "xsl-footnote-separator" ));
     }
     
+    public boolean generatesReferenceAreas() {
+	return true;
+    }
+    
 }
