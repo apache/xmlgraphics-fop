@@ -82,7 +82,7 @@ import org.apache.fop.rtf.rtflib.interfaces.ITableColumnsInfo;
 
 public class RtfExtraRowSet extends RtfContainer {
     // TODO what is idnum?
-    final int DEFAULT_IDNUM = 0;
+    static final int DEFAULT_IDNUM = 0;
 
     /** Parent table context
      * (added by Boris Poudérous on july 2002 in order to process nested tables)
@@ -93,12 +93,12 @@ public class RtfExtraRowSet extends RtfContainer {
      *  RtfTableCells that must be rendered in extra rows.
      *  This holds a cell with positioning information
      */
-    private final List m_cells = new LinkedList();
+    private final List cells = new LinkedList();
     private static class PositionedCell
     implements Comparable {
-        final RtfTableCell cell;
-        final int xOffset;
-        final int rowIndex;
+        private final RtfTableCell cell;
+        private final int xOffset;
+        private final int rowIndex;
 
         PositionedCell(RtfTableCell c, int index, int offset) {
             cell = c;
@@ -140,7 +140,7 @@ public class RtfExtraRowSet extends RtfContainer {
     }
 
     /** our maximum row index */
-    private int m_maxRowIndex;
+    private int maxRowIndex;
 
     /** an RtfExtraRowSet has no parent, it is only used temporary during
      *  generation of RTF for an RtfTableRow
@@ -162,7 +162,7 @@ public class RtfExtraRowSet extends RtfContainer {
             if (e instanceof RtfTableRow) {
                 addRow((RtfTableRow)e, rowIndex, xOffset);
                 rowIndex++;
-                m_maxRowIndex = Math.max(rowIndex, m_maxRowIndex);
+                maxRowIndex = Math.max(rowIndex, maxRowIndex);
             }
         }
         return rowIndex;
@@ -174,7 +174,7 @@ public class RtfExtraRowSet extends RtfContainer {
             final RtfElement e = (RtfElement)it.next();
             if (e instanceof RtfTableCell) {
                 final RtfTableCell c = (RtfTableCell)e;
-                m_cells.add(new PositionedCell(c, rowIndex, xOffset));
+                cells.add(new PositionedCell(c, rowIndex, xOffset));
                 xOffset += c.getCellWidth();
             }
         }
@@ -189,19 +189,23 @@ public class RtfExtraRowSet extends RtfContainer {
     throws IOException {
         final RtfTableCell c = new RtfTableCell(null, writer, cellWidth,
                 parentCellAttributes, DEFAULT_IDNUM);
-        m_cells.add(new PositionedCell(c, rowIndex, xOffset));
+        cells.add(new PositionedCell(c, rowIndex, xOffset));
         return c;
     }
 
-    /** render extra RtfTableRows containing all the extra RtfTableCells that we contain */
+    /**
+     * render extra RtfTableRows containing all the extra RtfTableCells that we
+     * contain
+     * @throws IOException for I/O problems
+     */
     protected void writeRtfContent() throws IOException {
         // sort cells by rowIndex and xOffset
-        Collections.sort(m_cells);
+        Collections.sort(cells);
 
         // process all extra cells by rendering them into extra rows
         List rowCells = null;
         int rowIndex = -1;
-        for (Iterator it = m_cells.iterator(); it.hasNext();) {
+        for (Iterator it = cells.iterator(); it.hasNext();) {
             final PositionedCell pc = (PositionedCell)it.next();
             if (pc.rowIndex != rowIndex) {
                 // starting a new row, render previous one
@@ -309,9 +313,11 @@ public class RtfExtraRowSet extends RtfContainer {
         return empty;
     }
 
-    /** As this contains cells from several rows, we say that it's empty
-     *  only if we have no cells.
-     *  writeRow makes the decision about rendering specific rows
+    /**
+     * As this contains cells from several rows, we say that it's empty
+     * only if we have no cells.
+     * writeRow makes the decision about rendering specific rows
+     * @return false (always)
      */
     public boolean isEmpty() {
         return false;
@@ -325,6 +331,10 @@ public class RtfExtraRowSet extends RtfContainer {
        return this.parentITableColumnsInfo;
      }
 
+     /**
+      *
+      * @param parentITableColumnsInfo table context to set
+      */
      public void setParentITableColumnsInfo (ITableColumnsInfo parentITableColumnsInfo) {
        this.parentITableColumnsInfo = parentITableColumnsInfo;
      }

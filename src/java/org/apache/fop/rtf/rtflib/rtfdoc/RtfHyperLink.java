@@ -88,9 +88,11 @@ public class RtfHyperLink extends RtfContainer implements IRtfTextContainer {
     /**
      * Default constructor.
      *
-     * @param container a <code>RtfContainer</code> value
+     * @param parent a <code>RtfContainer</code> value
      * @param writer a <code>Writer</code> value
-     * @param attributes a <code>RtfAttributes</code> value
+     * @param str text of the link
+     * @param attr a <code>RtfAttributes</code> value
+     * @throws IOException for I/O problems
      */
     public RtfHyperLink (IRtfTextContainer parent, Writer writer, String str, RtfAttributes attr)
         throws IOException {
@@ -146,15 +148,22 @@ public class RtfHyperLink extends RtfContainer implements IRtfTextContainer {
     // @@ IRtfContainer implementation
     //////////////////////////////////////////////////
 
-    /** close current text run if any and start a new one with default attributes
-     *  @param str if not null, added to the RtfText created
+    /**
+     * close current text run if any and start a new one with default attributes
+     * @param str if not null, added to the RtfText created
+     * @throws IOException for I/O problems
+     * @return new RtfText object
      */
     public RtfText newText (String str) throws IOException {
         return newText (str, null);
     }
 
-    /** close current text run if any and start a new one
-     *  @param str if not null, added to the RtfText created
+    /**
+     * close current text run if any and start a new one
+     * @param str if not null, added to the RtfText created
+     * @param attr attributes of text to add
+     * @throws IOException for I/O problems
+     * @return the new RtfText object
      */
     public RtfText newText (String str, RtfAttributes attr) throws IOException {
         closeAll ();
@@ -162,7 +171,10 @@ public class RtfHyperLink extends RtfContainer implements IRtfTextContainer {
         return mText;
     }
 
-    /** IRtfTextContainer requirement: return a copy of our attributes */
+    /**
+     * IRtfTextContainer requirement:
+     * @return a copy of our attributes
+     */
     public RtfAttributes getTextContainerAttributes() {
         if (attrib == null) {
             return null;
@@ -171,7 +183,10 @@ public class RtfHyperLink extends RtfContainer implements IRtfTextContainer {
     }
 
 
-    /** add a line break */
+    /**
+     * add a line break
+     * @throws IOException for I/O problems
+     */
     public void newLineBreak () throws IOException {
         new RtfLineBreak (this, writer);
     }
@@ -218,6 +233,10 @@ public class RtfHyperLink extends RtfContainer implements IRtfTextContainer {
         this.url = this.url.replace (' ', RtfBookmark.REPLACE_CHARACTER);
     }
 
+    /**
+     *
+     * @return false (always)
+     */
     public boolean isEmpty () {
         return false;
     }

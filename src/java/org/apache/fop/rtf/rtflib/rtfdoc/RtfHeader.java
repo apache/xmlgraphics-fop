@@ -72,8 +72,8 @@ import java.io.IOException;
  */
 
 class RtfHeader extends RtfContainer {
-    private final String m_charset = "ansi";
-    private final Map m_userProperties = new HashMap();
+    private final String charset = "ansi";
+    private final Map userProperties = new HashMap();
 
     /** Create an RTF header */
     RtfHeader(RtfFile f, Writer w) throws IOException {
@@ -84,7 +84,7 @@ class RtfHeader extends RtfContainer {
 
     /** Overridden to write our own data before our children's data */
     protected void writeRtfContent() throws IOException {
-        writeControlWord(m_charset);
+        writeControlWord(charset);
         writeUserProperties();
         RtfColorTable.getInstance().writeColors(this);
         super.writeRtfContent();
@@ -95,10 +95,10 @@ class RtfHeader extends RtfContainer {
 
     /** write user properties if any */
     private void writeUserProperties() throws IOException {
-        if (m_userProperties.size() > 0) {
+        if (userProperties.size() > 0) {
             writeGroupMark(true);
             writeStarControlWord("userprops");
-            for (Iterator it = m_userProperties.entrySet().iterator(); it.hasNext();) {
+            for (Iterator it = userProperties.entrySet().iterator(); it.hasNext();) {
                 final Map.Entry entry = (Map.Entry)it.next();
                 writeGroupMark(true);
                 writeControlWord("propname");
