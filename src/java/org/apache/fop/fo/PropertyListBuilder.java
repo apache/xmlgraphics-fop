@@ -188,10 +188,10 @@ public class PropertyListBuilder {
                                             PropertyList propList,
                                             FObj parentFO) {
         /* Handle "compound" properties, ex. space-before.minimum */
-        String basePropName = findBasePropertyName(attributeName);
-        String subPropName = findSubPropertyName(attributeName);
+        String basePropertyName = findBasePropertyName(attributeName);
+        String subPropertyName = findSubPropertyName(attributeName);
 
-        Property.Maker propertyMaker = findMaker(validProperties, basePropName);
+        Property.Maker propertyMaker = findMaker(validProperties, basePropertyName);
         if (propertyMaker == null) {
             handleInvalidProperty(attributeName);
             return;
@@ -201,14 +201,17 @@ public class PropertyListBuilder {
         }
         try {
             Property prop = null;
-            if (subPropName == null) {
+            if (subPropertyName == null) {
                 prop = propertyMaker.make(propList, attributeValue, parentFO);
             }
             else {
-                prop = findSubPropValue(attributes, propList, parentFO, basePropName, subPropName, prop, propertyMaker, attributeValue);
+                Property baseProperty = findBaseProperty(attributes, propList,
+                        parentFO, basePropertyName, propertyMaker);
+                prop = propertyMaker.make(baseProperty, subPropertyName,
+                        propList, attributeValue, parentFO);
             }
             if (prop != null) {
-                propList.put(basePropName, prop);
+                propList.put(basePropertyName, prop);
             }
         }
         catch (FOPException e) {
@@ -217,28 +220,27 @@ public class PropertyListBuilder {
         }
     }
 
-    private Property findSubPropValue(Attributes attributes,
-                                      PropertyList p,
+    private Property findBaseProperty(Attributes attributes,
+                                      PropertyList propertyList,
                                       FObj parentFO,
                                       String basePropName,
-                                      String subPropName,
-                                      Property propVal,
-                                      Maker propertyMaker,
-                                      String attributeValue)
+                                      Maker propertyMaker)
             throws FOPException {
-        Property baseProp = p.getExplicitBaseProp(basePropName);
-        if (baseProp == null) {
-            // See if it is specified later in this list
-            String baseValue = attributes.getValue(basePropName);
-            if (baseValue != null) {
-                baseProp = propertyMaker.make(p, baseValue,
-                                              parentFO);
-            }
-            // else baseProp = propertyMaker.makeCompound(p, parentFO);
+        // If the baseProperty has already been created, return it
+        Property baseProperty = propertyList.getExplicitBaseProp(basePropName);
+        if (baseProperty != null) {
+            return baseProperty;
         }
-        propVal = propertyMaker.make(baseProp, subPropName, p, attributeValue,
-                                     parentFO);
-        return propVal;
+        // If it is specified later in this list of Attributes, create it
+        String basePropertyValue = attributes.getValue(basePropName);
+        if (basePropertyValue != null) {
+            baseProperty = propertyMaker.make(propertyList, basePropertyValue,
+                    parentFO);
+            return baseProperty;
+        }
+        // Otherwise it is a compound property ??
+        // baseProperty = propertyMaker.makeCompound(propertyList, parentFO);
+        return baseProperty;
     }
 
     private void handleInvalidProperty(String attributeName) {
