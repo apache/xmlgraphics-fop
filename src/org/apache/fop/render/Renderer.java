@@ -57,7 +57,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.layout.*;
 
 // Java
-import java.io.PrintWriter;
+import java.io.OutputStream;
 import java.io.IOException;
 
 /**
@@ -75,7 +75,7 @@ public interface Renderer {
     public void setProducer(String producer);
 
     /** render the given area tree to the given writer */
-    public void render(AreaTree areaTree, PrintWriter writer) throws IOException, FOPException;
+    public void render(AreaTree areaTree, OutputStream stream) throws IOException, FOPException;
  
     /** render the given area container */
     public void renderAreaContainer(AreaContainer area);

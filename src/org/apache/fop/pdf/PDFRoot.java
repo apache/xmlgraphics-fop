@@ -94,10 +94,10 @@ public class PDFRoot extends PDFObject {
      *
      * @return the PDF string
      */
-    public String toPDF() {
+    public byte[] toPDF() {
 	String p = this.number + " " + this.generation
 	    + " obj\n<< /Type /Catalog\n/Pages " 
 	    + this.rootPages.referencePDF() + " >>\nendobj\n";
-	return p;
+	return p.getBytes();
     }
 }

@@ -78,7 +78,7 @@ import org.apache.fop.dom.svg.SVGArea;
 
 // Java
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.OutputStream;
 import java.util.Enumeration;
 import java.awt.Rectangle;
 import java.util.Vector;
@@ -160,10 +160,10 @@ public class PDFRenderer implements Renderer {
        * render the areas into PDF
        *
        * @param areaTree the laid-out area tree
-       * @param writer the PrintWriter to write the PDF with
+       * @param stream the OutputStream to write the PDF to
        */
     public void render(AreaTree areaTree,
-                       PrintWriter writer) throws IOException, FOPException {
+                       OutputStream stream) throws IOException, FOPException {
         MessageHandler.logln("rendering areas to PDF");
         idReferences = areaTree.getIDReferences();
         this.pdfResources = this.pdfDoc.getResources();
@@ -181,7 +181,7 @@ public class PDFRenderer implements Renderer {
         }
 
         MessageHandler.logln("writing out PDF");
-        this.pdfDoc.output(writer);
+        this.pdfDoc.output(stream);
     }
 
     /**

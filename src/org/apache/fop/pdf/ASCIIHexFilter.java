@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
+ 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -48,78 +48,39 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
-
 package org.apache.fop.pdf;
 
-// Java
-import java.util.Vector;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
-/**
- * class representing an object which is a list of annotations.
- *
- * This PDF object is a list of references to /Annot objects. So far we
- * are dealing only with links.
- */
-public class PDFAnnotList extends PDFObject {
+public class ASCIIHexFilter extends PDFFilter
+{
+    private static final String ASCIIHEX_EOD = ">";
+    
 
-    /** the /Annot objects */
-    protected Vector links = new Vector();
-
-    /** the number of /Annot objects */
-    protected int count = 0;
-
-    /**
-     * create a /Annots object.
-     *
-     * @param number the object's number
-     */
-    public PDFAnnotList(int number) {
-
-	/* generic creation of object */
-	super(number);
+    public String getName() 
+    {
+	return "/ASCIIHexDecode";
+    }
+    
+    public String getDecodeParms() 
+    {
+	return null;
     }
 
-    /**
-     * add an /Annot object of /Subtype /Link.
-     *
-     * @param link the PDFLink to add.
-     */
-    public void addLink(PDFLink link) {
-	this.links.addElement(link);
-	this.count++;
-    }
-
-    /**
-     * get the count of /Annot objects
-     *
-     * @return the number of links
-     */
-    public int getCount() {
-	return this.count;
-    }
-
-    /**
-     * represent the object in PDF
-     *
-     * @return the PDF string
-     */
-    public byte[] toPDF() {
-	StringBuffer p = new StringBuffer(this.number + " "
-					  + this.generation
-					  + " obj\n[\n"); 
-	for (int i = 0; i < this.count; i++) {
-	    p = p.append(((PDFObject)
-			  links.elementAt(i)).referencePDF() + "\n");
+    public byte[] encode(byte[] data) 
+    {
+	
+	StringBuffer buffer = new StringBuffer();
+	for (int i = 0; i < data.length; i++) {
+	    int val = (int) (data[i] & 0xFF);
+	    if (val < 16) buffer.append("0");
+	    buffer.append(Integer.toHexString(val));
 	}
-	p = p.append("]\nendobj\n");
-	return p.toString().getBytes();
+	buffer.append(ASCIIHEX_EOD);
+	
+	return buffer.toString().getBytes();
+	
     }
-
-    /* example
-       20 0 obj
-       [ 
-       19 0 R 
-       ]
-       endobj
-    */
+    
 }

@@ -349,7 +349,7 @@ public class PDFShading extends PDFObject {
 	  * 
 	  * @return the PDF string.
 	  */ 
-	public String toPDF() {
+	public byte[] toPDF() {
 		int vectorSize;
 		int tempInt;
 		StringBuffer p = new StringBuffer();
@@ -591,6 +591,6 @@ public class PDFShading extends PDFObject {
 
 		p.append(">> \nendobj\n");
 	
-		return(p.toString());
+		return(p.toString().getBytes());
 	}
 }

@@ -119,12 +119,12 @@ public class PDFGoTo extends PDFObject {
      *
      * @return the PDF string
      */
-    public String toPDF() {
+    public byte[] toPDF() {
 	String p = new String(this.number + " " + this.generation +
 			      " obj\n<<\n/S /GoTo\n" +
 			      "/D [" + this.pageReference + " /XYZ "+xPosition+" "+yPosition+" null]\n" + 
 			      ">>\nendobj\n"); 
-	return p;
+	return p.getBytes();
     }
 
     /* example

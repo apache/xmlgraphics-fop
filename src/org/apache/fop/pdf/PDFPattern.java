@@ -241,7 +241,7 @@ public class PDFPattern extends PDFPathPaint {
 	  *
 	  * @return the PDF string.
 	  */
-	public String toPDF() {
+	public byte[] toPDF() {
 
 
 		int vectorSize=0;
@@ -357,7 +357,7 @@ public class PDFPattern extends PDFPathPaint {
 
 		
 
-		return (p.toString());
+		return (p.toString().getBytes());
 
 	}
 }

@@ -88,14 +88,14 @@ public class PDFGoToRemote extends PDFAction {
      *
      * @return the PDF string
      */
-    public String toPDF() {
+    public byte[] toPDF() {
 	String p = new String(this.number + " " + this.generation +
 			      " obj\n" +
 			      "<<\n/S /GoToR\n" +
 			      "/F " + pdfFileSpec.referencePDF() + "\n" +
 			      "/D [ 0 /XYZ null null null ]" +
 			      " \n>>\nendobj\n"); 
-	return p;
+	return p.getBytes();
     }
 
     

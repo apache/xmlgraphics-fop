@@ -107,7 +107,7 @@ public class PDFResources extends PDFObject {
      *
      * @return the PDF
      */
-	public String toPDF() {
+	public byte[] toPDF() {
 		StringBuffer p = new StringBuffer(this.number + " "
 						+ this.generation
 						+ " obj\n<< \n");
@@ -187,6 +187,6 @@ public class PDFResources extends PDFObject {
 
 		p = p.append(">> \nendobj\n");
 
-		return p.toString();
+		return p.toString().getBytes();
 	}    
 }

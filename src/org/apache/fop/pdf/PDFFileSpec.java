@@ -79,12 +79,12 @@ public class PDFFileSpec extends PDFObject {
      *
      * @return the PDF string
      */
-    public String toPDF() {
+    public byte[] toPDF() {
 	String p = new String(this.number + " " + this.generation +
 			      " obj\n<<\n/Type /FileSpec\n" +
 			      "/F (" + this.filename + ")\n" + 
 			      ">>\nendobj\n"); 
-	return p;
+	return p.getBytes();
     }
 
     /* example

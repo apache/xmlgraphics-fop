@@ -116,7 +116,7 @@ public class PDFPages extends PDFObject {
      *
      * @return the PDF string
      */
-    public String toPDF() {
+    public byte[] toPDF() {
 	StringBuffer p = new StringBuffer(this.number + " "
 					  + this.generation
 					  + " obj\n<< /Type /Pages\n/Count " 
@@ -125,6 +125,6 @@ public class PDFPages extends PDFObject {
 	    p = p.append(((PDFObject)kids.elementAt(i)).referencePDF() + " ");
 	}
 	p = p.append("] >>\nendobj\n");
-	return p.toString();
+	return p.toString().getBytes();
     }
 }

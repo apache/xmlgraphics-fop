@@ -56,7 +56,7 @@ package org.apache.fop.pdf;
 // Java
 import java.io.IOException;
 import org.apache.fop.messaging.MessageHandler;
-import java.io.PrintWriter;
+import java.io.OutputStream;
 
 // FOP
 import org.apache.fop.datatypes.ColorSpace;
@@ -98,21 +98,24 @@ public class PDFXObject extends PDFObject {
     /**
      * represent as PDF
      */
-    protected int output(PrintWriter writer) throws IOException {
+    protected int output(OutputStream stream) throws IOException {
 	int length=0;
 	int i=0;
 	int x,y;
 
 	try {
-		PDFBinaryStream imgStream = new PDFBinaryStream();
+	    // delegate the stream work to PDFStream
+	    PDFStream imgStream = new PDFStream(0);
+	    
 		imgStream.setData(fopimage.getBitmaps());
-		imgStream.encode(new PDFFilter(PDFFilter.FLATE_DECODE));
-		imgStream.encode(new PDFFilter(PDFFilter.ASCII_HEX_DECODE));
+		imgStream.addFilter(new FlateFilter());
+		String dictEntries = imgStream.applyFilters();
 
 		String p = this.number + " " + this.generation + " obj\n";
 		p = p + "<</Type /XObject\n";
 		p = p + "/Subtype /Image\n";
 		p = p + "/Name /Im" + Xnum + "\n";
+		p = p + "/Length " + imgStream.getDataLength();
 		p = p + "/Width " + fopimage.getWidth() + "\n";
 		p = p + "/Height " + fopimage.getHeight() + "\n";
 		p = p + "/BitsPerComponent " + fopimage.getBitsPerPixel() + "\n";
@@ -122,30 +125,30 @@ public class PDFXObject extends PDFObject {
 			PDFColor transp = fopimage.getTransparentColor();
 			p = p + "/Mask [" + transp.red255() + " " + transp.red255() + " " + transp.green255() + " " + transp.green255() + " " + transp.blue255() + " " + transp.blue255() + "]\n";
 		}
-		p = p + imgStream.getPDFDictionary();
+		p = p + dictEntries;
 		p = p + ">>\n";
 
 		// don't know if it's the good place (other objects can have references to it)
 		fopimage.close();
 
 		// push the pdf dictionary on the writer
-		writer.write(p);
-		length += p.length();
+		byte[] pdfBytes = p.getBytes();
+		stream.write(pdfBytes);
+		length += pdfBytes.length;
 		// push all the image data on  the writer and takes care of length for trailer
-		length += imgStream.outputPDFStream(writer);
+		length += imgStream.outputStreamData(stream);
 
-		p = "endobj\n";
-		writer.write(p);
-		length += p.length();
+		pdfBytes = ("endobj\n").getBytes();
+		stream.write(pdfBytes);
+		length += pdfBytes.length;
 	} catch (FopImageException imgex) {
-MessageHandler.errorln("Error in XObject : " + imgex.getMessage());
-	} catch (PDFFilterException filterex) {
-MessageHandler.errorln("Error in XObject : " + filterex.getMessage());
+	    MessageHandler.errorln("Error in XObject : " + imgex.getMessage());
 	}
+
 	return length;
     }
     
-    String toPDF() {
+    byte[] toPDF() {
 /* Not used any more
 	String p = this.number + " " + this.generation + " obj\n";
 	p = p + "<</Type /XObject\n";

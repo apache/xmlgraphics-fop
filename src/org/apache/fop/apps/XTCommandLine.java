@@ -67,12 +67,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 // Java
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.io.IOException;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.net.URL;
 
 /**
@@ -121,7 +116,7 @@ public class XTCommandLine {
 	    driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
 	    driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");
 	    driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
-	    driver.setWriter(new PrintWriter(new FileWriter(args[2])));
+	    driver.setOutputStream(new FileOutputStream(args[2]));
 	    driver.buildFOTree(xslProcessor, fileInputSource(args[0]));
 	    driver.format();
 	    driver.render();

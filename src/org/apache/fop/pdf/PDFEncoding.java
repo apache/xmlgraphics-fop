@@ -115,7 +115,7 @@ public class PDFEncoding extends PDFObject {
 	 *
 	 * @return the PDF
 	 */
-	public String toPDF() {
+	public byte[] toPDF() {
 		StringBuffer p = new StringBuffer();
 		p.append(this.number + " " + this.generation
 				+ " obj\n<< /Type /Encoding");
@@ -137,7 +137,7 @@ public class PDFEncoding extends PDFObject {
 			p.append(" ]");
 		}
 		p.append(" >>\nendobj\n");
-		return p.toString();
+		return p.toString().getBytes();
 	}
 	/* example (p. 214)
 		25 0 obj

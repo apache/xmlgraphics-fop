@@ -14,7 +14,7 @@ import org.xml.sax.SAXParseException;
 
 import java.awt.Graphics;
 import java.awt.print.*;
-import java.io.PrintWriter;
+import java.io.OutputStream;
 import java.io.IOException;
 import java.util.Vector;
 
@@ -142,7 +142,7 @@ public class PrintCommandLine extends CommandLine {
       }
     }
 
-    public void render(AreaTree areaTree, PrintWriter writer) throws IOException {
+    public void render(AreaTree areaTree, OutputStream stream) throws IOException {
       tree = areaTree;
       if (endNumber == -1) {
         endNumber = tree.getPages().size();
