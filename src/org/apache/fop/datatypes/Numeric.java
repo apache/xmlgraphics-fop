@@ -131,6 +131,11 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
     public static final int NOT_NUMBER = UNIT | REL_LENGTH;
 
     /**
+     * Integer constants for distances.
+     */
+    public static final int DISTANCE = MILLIPOINTS | REL_LENGTH;
+
+    /**
      * The numerical contents of this instance.
      */
     protected double value;
@@ -396,6 +401,13 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
      */
     public boolean isLength() {
         return (baseunit == MILLIPOINTS && power == 1);
+    }
+
+    /**
+     * This object is a distance; a absolute or relative length
+     */
+    public boolean isDistance() {
+        return (baseunit & DISTANCE) != 0;
     }
 
     /**
@@ -905,7 +917,7 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
     }
 
     /**
-     * @param unit an <tt>int</tt> encoding a <i>Time</i> unit.
+     * @param unit an <tt>int</tt> encoding a unit.
      * @return the <tt>String</tt> name of the unit.
      */
     public static String getUnitName(int unit) {
