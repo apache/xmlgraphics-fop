@@ -229,28 +229,3 @@ public class NodeImpl implements Node {
         return false;
     }
 }
-
-class NodeListImpl implements NodeList
-{
-	Vector vect = null;
-
-	NodeListImpl(Vector v)
-	{
-		vect = v;
-	}
-
-	public int getLength()
-	{
-		return vect.size();
-	}
-
-	public Node item(int i)
-	{
-		return (Node)vect.elementAt(i);
-	}
-
-	public String toString()
-	{
-		return vect.toString();
-	}
-}
