@@ -1,5 +1,8 @@
 ==============================================================================
 Done since 0.20.4 release
+- Fixed NullPointerException in Label.java experienced by certain DocBook
+  users.
+  Submitted by: Stephan Wiesner <stephan@stephan-wiesner.de>
 - Fixed bug #15877: ArrayIndexOutOfBoundException with certain TrueType fonts.
   Reserved name indexes were not ignored. (Jeremias Maerki)
 - Fixed resolution of relative URLs in FopImageFactory with IBM JDK
