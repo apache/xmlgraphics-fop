@@ -30,6 +30,7 @@ import org.xml.sax.SAXException;
 import org.apache.fop.apps.Document;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.AreaTree;
+import org.apache.fop.area.RenderPagesModel;
 import org.apache.fop.area.Title;
 import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fo.flow.BasicLink;
@@ -76,6 +77,9 @@ public class FOTreeHandler extends FOInputHandler {
      */
     private Runtime runtime;
 
+    /** The current AreaTree for the FOTreeHandler. */
+    public AreaTree areaTree;
+
     /**
      * Keep track of the number of pages rendered.
      */
@@ -105,6 +109,11 @@ public class FOTreeHandler extends FOInputHandler {
      */
     public FOTreeHandler(Document doc, boolean store) {
         super(doc);
+        
+        areaTree = new AreaTree();
+        // this.atModel = new CachedRenderPagesModel(renderer);
+        areaTree.setTreeModel(new RenderPagesModel(doc.getRenderer()));
+        
         if (collectStatistics) {
             runtime = Runtime.getRuntime();
         }
@@ -597,4 +606,12 @@ public class FOTreeHandler extends FOInputHandler {
      */
     public void endPageNumber(PageNumber pagenum) {
     }
+    
+    /**   
+      * @return the current Area Tree object
+      */   
+     public AreaTree getAreaTree() {
+        return areaTree;
+     } 
+    
 }

@@ -19,9 +19,6 @@
 package org.apache.fop.apps;
 
 // FOP
-import org.apache.fop.area.AreaTree;
-import org.apache.fop.area.RenderPagesModel;
-
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FOTreeBuilder;
 
@@ -490,11 +487,9 @@ public class Driver {
                         "Renderer not set when using standard foInputHandler");
             }
 
+            currentDocument.renderer = renderer;
             foInputHandler = new FOTreeHandler(currentDocument, true);
-            currentDocument.areaTree = new AreaTree();
-            currentDocument.atModel = new RenderPagesModel(renderer);
-            //this.atModel = new CachedRenderPagesModel(renderer);
-            currentDocument.areaTree.setTreeModel(currentDocument.atModel);
+
             try {
                 renderer.setupFontInfo(currentDocument.getFontInfo());
                 // check that the "any,normal,400" font exists
