@@ -470,7 +470,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         RegionViewport rv = curPage.getPage().getRegionViewport(
                     Region.BODY_CODE);
         curBody = (BodyRegion) rv.getRegion();
-        flowBPD = (int) rv.getViewArea().getHeight() -
+        flowBPD = (int) curBody.getBPD() -
             rv.getBorderAndPaddingWidthBefore() - rv.getBorderAndPaddingWidthAfter();
 
         return curPage;
@@ -485,7 +485,6 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
             return;
         }
         RegionViewport reg = curPage.getPage().getRegionViewport(regionClass);
-        reg.getRegion().setIPD((int)reg.getViewArea().getWidth());
         if (reg == null) {
             getLogger().error("no region viewport: shouldn't happen");
         }
@@ -496,7 +495,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         lm.setParent(this);
         LayoutContext childLC = new LayoutContext(0);
         childLC.setStackLimit(new MinOptMax((int)curPage.getViewArea().getHeight()));
-        childLC.setRefIPD((int)reg.getViewArea().getWidth());
+        childLC.setRefIPD(reg.getRegion().getIPD());
         while (!lm.isFinished()) {
             BreakPoss bp = lm.getNextBreakPoss(childLC);
             if (bp != null) {
@@ -710,7 +709,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         // get Width or Height as IPD for span
         
         RegionViewport rv = curPage.getPage().getRegionViewport(Region.BODY_CODE);
-        int ipdWidth = (int) rv.getViewArea().getWidth() -
+        int ipdWidth = (int) rv.getRegion().getIPD() -
             rv.getBorderAndPaddingWidthStart() - rv.getBorderAndPaddingWidthEnd();
 
         curSpan.setIPD(ipdWidth);
@@ -898,6 +897,8 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         FODimension reldims = new FODimension(0, 0);
         rr.setCTM(CTM.getCTMandRelDims(r.getPropertyManager().getAbsRefOrient(),
                 r.getPropertyManager().getWritingMode(), absRegVPRect, reldims));
+        rr.setIPD(reldims.ipd);
+        rr.setBPD(reldims.bpd);
     }
 
     /**
