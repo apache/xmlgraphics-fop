@@ -52,8 +52,6 @@
 
 package org.apache.fop.tools;
 
-import java.io.IOException;
-
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -65,7 +63,6 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -132,17 +129,13 @@ public class DocumentReader implements XMLReader {
      * <p>Implementors are free (and encouraged) to invent their own features,
      * using names built on their own URIs.</p>
      *
-     * @param name The feature name, which is a fully-qualified URI.
-     * @return The current state of the feature (true or false).
-     * @exception org.xml.sax.SAXNotRecognizedException When the
-     * XMLReader does not recognize the feature name.
-     * @exception org.xml.sax.SAXNotSupportedException When the
-     * XMLReader recognizes the feature name but
-     * cannot determine its value at this time.
-     * @see #setFeature
+     * @param name  of the feature, which is a fully-qualified URI
+     * @return   the current state of the feature (true or false)
+     * @exception org.xml.sax.SAXNotRecognizedException  thrown when the
+     * XMLReader does not recognize the feature name
      */
     public boolean getFeature(String name)
-            throws SAXNotRecognizedException, SAXNotSupportedException {
+            throws SAXNotRecognizedException {
         if ("http://xml.org/sax/features/namespaces".equals(name)) {
             return _namespaces;
         } else if ("http://xml.org/sax/features/namespace-prefixes".equals(name)) {
@@ -174,24 +167,21 @@ public class DocumentReader implements XMLReader {
      * in specific contexts, such as before, during, or after
      * a parse.</p>
      *
-     * @param name The feature name, which is a fully-qualified URI.
-     * @param state The requested state of the feature (true or false).
-     * @exception org.xml.sax.SAXNotRecognizedException When the
-     * XMLReader does not recognize the feature name.
-     * @exception org.xml.sax.SAXNotSupportedException When the
-     * XMLReader recognizes the feature name but
-     * cannot set the requested value.
-     * @see #getFeature
+     * @param name  of the feature, which is a fully-qualified URI
+     * @param value  of the requested state of the feature (true or false)
+     * @exception org.xml.sax.SAXNotRecognizedException  thrown when the
+     * XMLReader does not recognize the feature name
      */
     public void setFeature(String name, boolean value)
-            throws SAXNotRecognizedException, SAXNotSupportedException {
+            throws SAXNotRecognizedException {
         if ("http://xml.org/sax/features/namespaces".equals(name)) {
             _namespaces = value;
-        } else if ("http://xml.org/sax/features/namespace-prefixes".equals(name)) {
+        } else
+            if ("http://xml.org/sax/features/namespace-prefixes".equals(name)) {
             _namespace_prefixes = value;
         } else {
             throw new SAXNotRecognizedException("Feature '" + name
-                                                + "' not recognized or supported by Document2SAXAdapter");
+                     + "' not recognized or supported by Document2SAXAdapter");
         }
 
     }
@@ -217,19 +207,15 @@ public class DocumentReader implements XMLReader {
      * <p>Implementors are free (and encouraged) to invent their own properties,
      * using names built on their own URIs.</p>
      *
-     * @param name The property name, which is a fully-qualified URI.
-     * @return The current value of the property.
-     * @exception org.xml.sax.SAXNotRecognizedException When the
-     * XMLReader does not recognize the property name.
-     * @exception org.xml.sax.SAXNotSupportedException When the
-     * XMLReader recognizes the property name but
-     * cannot determine its value at this time.
-     * @see #setProperty
+     * @param name  of the property, which is a fully-qualified URI
+     * @return  the current value of the property
+     * @exception org.xml.sax.SAXNotRecognizedException  thrown when the
+     * XMLReader does not recognize the property name
      */
     public Object getProperty(String name)
-            throws SAXNotRecognizedException, SAXNotSupportedException {
+            throws SAXNotRecognizedException {
         throw new SAXNotRecognizedException("Property '" + name
-                                            + "' not recognized or supported by Document2SAXAdapter");
+                     + "' not recognized or supported by Document2SAXAdapter");
     }
 
 
@@ -254,18 +240,15 @@ public class DocumentReader implements XMLReader {
      * <p>This method is also the standard mechanism for setting
      * extended handlers.</p>
      *
-     * @param name The property name, which is a fully-qualified URI.
-     * @param state The requested value for the property.
-     * @exception org.xml.sax.SAXNotRecognizedException When the
-     * XMLReader does not recognize the property name.
-     * @exception org.xml.sax.SAXNotSupportedException When the
-     * XMLReader recognizes the property name but
-     * cannot set the requested value.
+     * @param name  of the property, which is a fully-qualified URI
+     * @param value  the requested value for the property
+     * @exception org.xml.sax.SAXNotRecognizedException thrown when the
+     * XMLReader does not recognize the property name
      */
     public void setProperty(String name, Object value)
-            throws SAXNotRecognizedException, SAXNotSupportedException {
+            throws SAXNotRecognizedException {
         throw new SAXNotRecognizedException("Property '" + name
-                                            + "' not recognized or supported by Document2SAXAdapter");
+                     + "' not recognized or supported by Document2SAXAdapter");
     }
 
 
@@ -292,7 +275,6 @@ public class DocumentReader implements XMLReader {
      * @param resolver The entity resolver.
      * @exception java.lang.NullPointerException If the resolver
      * argument is null.
-     * @see #getEntityResolver
      */
     public void setEntityResolver(EntityResolver resolver) {
         _entityResolver = resolver;
@@ -305,7 +287,6 @@ public class DocumentReader implements XMLReader {
      *
      * @return The current entity resolver, or null if none
      * has been registered.
-     * @see #setEntityResolver
      */
     public EntityResolver getEntityResolver() {
         return _entityResolver;
@@ -326,7 +307,6 @@ public class DocumentReader implements XMLReader {
      * @param handler The DTD handler.
      * @exception java.lang.NullPointerException If the handler
      * argument is null.
-     * @see #getDTDHandler
      */
     public void setDTDHandler(DTDHandler handler) {
         _dtdHandler = handler;
@@ -339,7 +319,6 @@ public class DocumentReader implements XMLReader {
      *
      * @return The current DTD handler, or null if none
      * has been registered.
-     * @see #setDTDHandler
      */
     public DTDHandler getDTDHandler() {
         return _dtdHandler;
@@ -361,8 +340,7 @@ public class DocumentReader implements XMLReader {
      * @param handler The content handler.
      * @exception java.lang.NullPointerException If the handler
      * argument is null.
-     * @see #getContentHandler
-     */
+    */
     public void setContentHandler(ContentHandler handler) {
         _contentHandler = handler;
     }
@@ -374,7 +352,6 @@ public class DocumentReader implements XMLReader {
      *
      * @return The current content handler, or null if none
      * has been registered.
-     * @see #setContentHandler
      */
     public ContentHandler getContentHandler() {
         return _contentHandler;
@@ -398,7 +375,6 @@ public class DocumentReader implements XMLReader {
      * @param handler The error handler.
      * @exception java.lang.NullPointerException If the handler
      * argument is null.
-     * @see #getErrorHandler
      */
     public void setErrorHandler(ErrorHandler handler) {
         _errorHandler = handler;
@@ -409,7 +385,6 @@ public class DocumentReader implements XMLReader {
      *
      * @return The current error handler, or null if none
      * has been registered.
-     * @see #setErrorHandler
      */
     public ErrorHandler getErrorHandler() {
         return _errorHandler;
@@ -426,21 +401,15 @@ public class DocumentReader implements XMLReader {
      *
      *
      *
-     * @param source The input source for the top-level of the
-     * XML document.
+     * @param input  the source for the top-level of the
+     * XML document
      * @exception org.xml.sax.SAXException Any SAX exception, possibly
      * wrapping another exception.
-     * @exception java.io.IOException An IO exception from the parser,
-     * possibly from a byte stream or character stream
      * supplied by the application.
      * @see org.xml.sax.InputSource
      * @see #parse(java.lang.String)
-     * @see #setEntityResolver
-     * @see #setDTDHandler
-     * @see #setContentHandler
-     * @see #setErrorHandler
      */
-    public void parse(InputSource input) throws IOException, SAXException {
+    public void parse(InputSource input) throws SAXException {
         if (input instanceof DocumentInputSource) {
             Document document = ((DocumentInputSource)input).getDocument();
             if (_contentHandler == null) {
@@ -544,12 +513,10 @@ public class DocumentReader implements XMLReader {
      * @param systemId The system identifier (URI).
      * @exception org.xml.sax.SAXException Any SAX exception, possibly
      * wrapping another exception.
-     * @exception java.io.IOException An IO exception from the parser,
-     * possibly from a byte stream or character stream
      * supplied by the application.
      * @see #parse(org.xml.sax.InputSource)
      */
-    public void parse(String systemId) throws IOException, SAXException {
+    public void parse(String systemId) throws SAXException {
         throw new SAXException("DocumentReader only supports parsing of a DocumentInputSource");
     }
 
