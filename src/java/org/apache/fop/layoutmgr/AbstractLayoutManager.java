@@ -20,12 +20,12 @@ package org.apache.fop.layoutmgr;
 
 import org.apache.fop.fo.FObj;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.Document;
-import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Resolveable;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.flow.Marker;
+import org.apache.fop.fo.FOTreeHandler;
 import org.apache.fop.fo.PropertyManager;
 
 import org.apache.commons.logging.Log;
@@ -108,8 +108,8 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
         return this.parentLM;
     }
 
-    public Document getDocument() {
-        return getParent().getDocument();
+    public FOTreeHandler getFOTreeHandler() {
+        return getParent().getFOTreeHandler();
     }
 
     //     /**

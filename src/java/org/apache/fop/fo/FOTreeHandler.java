@@ -50,6 +50,7 @@ import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.layoutmgr.ContentLayoutManager;
 import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
 import org.apache.fop.layoutmgr.LMiter;
@@ -89,6 +90,10 @@ public class FOTreeHandler extends FOInputHandler {
      * Keep track of time used by renderer.
      */
     private long startTime;
+
+    /** Useful only for allowing subclasses of AddLMVisitor to be set by those
+     extending FOP **/
+    private AddLMVisitor addLMVisitor = null;
 
     /**
      * Main constructor
@@ -504,7 +509,7 @@ public class FOTreeHandler extends FOInputHandler {
 
         // This will layout pages and add them to the area tree
         PageLayoutManager pageLM = new PageLayoutManager(areaTree, pageSeq, 
-            getDocument());
+            this);
         pageLM.setPageCounting(pageSeq.getCurrentPageNumber(),
                                pageSeq.getPageNumberGenerator());
 
@@ -550,6 +555,27 @@ public class FOTreeHandler extends FOInputHandler {
         clm.fillArea(lm);
 
         return title;
+    }
+
+    /**
+     * Public accessor to set the AddLMVisitor object that should be used.
+     * This allows subclasses of AddLMVisitor to be used, which can be useful
+     * for extensions to the FO Tree.
+     * @param addLMVisitor the AddLMVisitor object that should be used.
+     */
+    public void setAddLMVisitor(AddLMVisitor addLMVisitor) {
+        this.addLMVisitor = addLMVisitor;
+    }
+
+    /**
+     * Public accessor to get the AddLMVisitor object that should be used.
+     * @return the AddLMVisitor object that should be used.
+     */
+    public AddLMVisitor getAddLMVisitor() {
+        if (this.addLMVisitor == null) {
+            this.addLMVisitor = new AddLMVisitor();
+        }
+        return this.addLMVisitor;
     }
 
     /**

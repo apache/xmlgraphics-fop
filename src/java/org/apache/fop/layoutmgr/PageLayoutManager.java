@@ -18,7 +18,6 @@
 
 package org.apache.fop.layoutmgr;
 
-import org.apache.fop.apps.Document;
 import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.area.CTM;
@@ -42,6 +41,7 @@ import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.datatypes.FODimension;
 
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FOTreeHandler;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.pagination.PageNumberGenerator;
@@ -110,7 +110,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      */
     private AreaTree areaTree;
     private PageSequence pageSequence;
-    private Document doc;
+    private FOTreeHandler foTreeHandler;
 
     /**
      * This is the SimplePageMaster that should be used to create the page. It
@@ -134,11 +134,11 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      * @param pageseq the page sequence fo
      */
     public PageLayoutManager(AreaTree areaTree, PageSequence pageseq,
-        Document doc) {
+        FOTreeHandler foTreeHandler) {
         super(pageseq);
         this.areaTree = areaTree;
         pageSequence = pageseq;
-        this.doc = doc;
+        this.foTreeHandler = foTreeHandler;
     }
 
     /**
@@ -899,9 +899,9 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     }
 
     /**
-     * @return the apps.Document object controlling this generation
+     * @return the apps.FOTreeHandler object controlling this generation
      */
-    public Document getDocument() {
-        return doc;
+    public FOTreeHandler getFOTreeHandler() {
+        return foTreeHandler;
     }
 }

@@ -46,7 +46,7 @@ public class LMiter implements ListIterator {
     }
 
     protected boolean preLoadNext() {
-        AddLMVisitor addLMVisitor = lp.getDocument().getAddLMVisitor();
+        AddLMVisitor addLMVisitor = lp.getFOTreeHandler().getAddLMVisitor();
         // skip over child FObj's that don't add lms
         while (baseIter != null && baseIter.hasNext()) {
             Object theobj = baseIter.next();
