@@ -76,6 +76,23 @@ inactive??
 
   <changes>
    <release version="?" date="2002">
+    <action dev="KLL" type="add" context="docs"
+            due-to="Cyril Rognon" due-to-email="crognon@objectiva.fr">
+      added layout manager info
+    </action>
+    <action dev="KLL" type="update" context="docs"
+            due-to="Peter Kullmann" due-to-email="p.kullmann@arenae.ch">
+      fixed master-name and a test setup problem
+    </action>
+    <action dev="KLL" type="update" context="code">
+      moved embed font info into the render.pdf package
+      reduced dependancy on Configuration
+    </action>
+    <action dev="KLL" type="update" context="code"
+            due-to="Kevin O'Neill" due-to-email="kevin@rocketred.com.au">
+      separated the specific PDFRender functionality from the CTM class
+      and created a small utility class for the renderer to use
+    </action>
     <action dev="KLL" type="update" context="code"> 
       FontState only used for calculations,
       stores font name and size on area tree
