@@ -3,6 +3,7 @@ package org.apache.fop.xml;
 import org.apache.fop.datastructs.SyncedCircularBuffer;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FObjectNames;
+import org.apache.fop.fo.FObjectSets;
 
 import java.util.NoSuchElementException;
 import java.util.LinkedList;
@@ -771,6 +772,7 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
     {
         FoXMLEvent ev;
         do {
+            try {
             ev = expectStartElement(set, discardWhiteSpace);
             if (ev != null) return ev;
             // The non-matching event has been pushed back.
@@ -778,6 +780,9 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
             // getEvent() returns null, the expectStartElement() calls
             // will throw a NoSuchElementException
             ev = getEvent();
+            } catch(UnexpectedStartElementException e) {
+                ev = getEvent();
+            }
         } while (ev != null);
         // Exit from this while loop is only by discovery of null event
         throw new NoSuchElementException
@@ -803,7 +808,7 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
      */
     public FoXMLEvent expectStartElement
                                     (BitSet set, boolean discardWhiteSpace)
-        throws FOPException
+        throws FOPException, UnexpectedStartElementException
     {
         FoXMLEvent ev;
         ev = expectTypedEvent(XMLEvent.STARTELEMENT, discardWhiteSpace);
@@ -813,9 +818,58 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
             if (ev.foType == i)
                 return ev; // Found it!
         }
-        // Not found - push the STARTELEMENT event back
+        // Not found - push the STARTELEMENT event back and throw an
+        // UnexpectedStartElementException
         pushBack(ev);
-        return null;
+        throw new UnexpectedStartElementException
+                ("Unexpected START element: " + ev.getQName());
+    }
+
+    public FoXMLEvent expectBlock()
+        throws FOPException, UnexpectedStartElementException
+    {
+        return expectStartElement
+                (FObjectSets.blockEntity, XMLEvent.DISCARD_W_SPACE);
+    }
+
+    public FoXMLEvent expectNormalPcdataOrInline()
+        throws FOPException, UnexpectedStartElementException
+    {
+        FoXMLEvent ev = expectStartElement
+                (FObjectSets.normalPcdataInlineSet, XMLEvent.RETAIN_W_SPACE);
+        if (ev == null)
+            ev = expectCharacters();
+        return ev;
+    }
+
+    public FoXMLEvent expectOutOfLinePcdataOrInline()
+        throws FOPException, UnexpectedStartElementException
+    {
+        FoXMLEvent ev = expectStartElement
+                    (FObjectSets.inlineEntity, XMLEvent.RETAIN_W_SPACE);
+        if (ev == null)
+            ev = expectCharacters();
+        return ev;
+    }
+
+    public FoXMLEvent expectNormalPcdataOrInlineOrBlock()
+        throws FOPException, UnexpectedStartElementException
+    {
+        FoXMLEvent ev = expectStartElement
+            (FObjectSets.normalPcdataBlockInlineSet, XMLEvent.RETAIN_W_SPACE);
+        if (ev == null)
+            ev = expectCharacters();
+        return ev;
+    }
+
+    public FoXMLEvent expectOutOfLinePcdataOrInlineOrBlock()
+        throws FOPException, UnexpectedStartElementException
+    {
+        FoXMLEvent ev = expectStartElement
+            (FObjectSets.pcdataBlockInlineSet, XMLEvent.RETAIN_W_SPACE);
+        if (ev == null)
+            ev = expectCharacters();
+        return ev;
     }
 
     /**
