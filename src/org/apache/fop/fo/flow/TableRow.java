@@ -197,9 +197,10 @@ public class TableRow extends FObj {
 		if ((i != 0) && (status.getCode() == Status.AREA_FULL_NONE)) {
 		    status = new Status(Status.AREA_FULL_SOME);
 		}
-    	        area.addChild(areaContainer);
-		//areaContainer.end();
-		area.addDisplaySpace(areaContainer.getHeight());
+    	        
+                resetMarker();
+                area.removeChild(areaContainer);                
+
 		return status;
 	    }
 
@@ -229,6 +230,14 @@ public class TableRow extends FObj {
 	}
 
 	return new Status(Status.OK);
+    }
+
+    public void resetMarker() {
+	this.marker = START;
+	int numChildren = this.children.size();
+	for (int i = 0; i < numChildren; i++) {
+	    ((FONode) children.elementAt(i)).resetMarker();
+	}
     }
 
     public int getAreaHeight() {
