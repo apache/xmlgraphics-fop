@@ -128,7 +128,7 @@ public class PageNumber extends FObj {
         fotv.servePageNumber(this);
     }
 
-    protected void end() {
+    protected void endOfNode() {
         getFOInputHandler().endPageNumber(this);
     }
     

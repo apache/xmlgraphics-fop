@@ -65,7 +65,7 @@ public class ColorProfile extends FObj {
      * Extract instance variables from the collection of properties for this
      * object.
      */
-    protected void end() {
+    protected void endOfNode() {
         src = this.propertyList.get(PR_SRC).getString();
         profileName = this.propertyList.get(PR_COLOR_PROFILE_NAME).getString();
         intent = this.propertyList.get(PR_RENDERING_INTENT).getEnum();

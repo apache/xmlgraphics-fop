@@ -145,8 +145,8 @@ public class ListItem extends FObj {
         fotv.serveListItem(this);
     }
 
-    protected void end() {
-        super.end();
+    protected void endOfNode() {
+        super.endOfNode();
         getFOInputHandler().endListItem(this);
     }
 

@@ -57,7 +57,7 @@ public class Bookmarks extends ExtensionObj {
      * the bookmark data from the child elements and add
      * the extension to the area tree.
      */
-    protected void end() {
+    protected void endOfNode() {
         ((Root) parent).setBookmarks(this);
     }
 

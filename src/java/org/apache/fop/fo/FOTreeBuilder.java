@@ -289,7 +289,7 @@ public class FOTreeBuilder extends DefaultHandler {
     public void endElement(String uri, String localName, String rawName)
                 throws SAXException {
         try {
-            currentFObj.end();
+            currentFObj.endOfNode();
         } catch (IllegalArgumentException e) {
             throw new SAXException(e);
         }

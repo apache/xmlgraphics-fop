@@ -160,7 +160,7 @@ public abstract class FONode {
     /**
      *
      */
-    protected void end() {
+    protected void endOfNode() {
         // do nothing by default
     }
 

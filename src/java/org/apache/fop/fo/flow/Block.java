@@ -237,7 +237,7 @@ public class Block extends FObjMixed {
     /**
      * @see org.apache.fop.fo.FONode#end
      */
-    protected void end() {
+    protected void endOfNode() {
         handleWhiteSpace();
         getFOInputHandler().endBlock(this);
     }

@@ -72,7 +72,7 @@ public class Declarations extends FObj {
      * At the end of this element sort out the child into
      * a hashmap of color profiles and a list of external xml.
      */
-    protected void end() {
+    protected void endOfNode() {
         if (childNodes != null) {
             for (Iterator iter = childNodes.iterator(); iter.hasNext();) {
                 FONode node = (FONode)iter.next();

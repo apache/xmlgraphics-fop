@@ -167,14 +167,14 @@ public class PageSequence extends FObj {
      * This passes the end page sequence to the structure handler
      * so it can act upon that.
      */
-    protected void end() {
+    protected void endOfNode() {
         if (mainFlow == null) {
            missingChildElementError("(title?,static-content*,flow)");
         }
         try {
             getFOInputHandler().endPageSequence(this);
         } catch (FOPException fopex) {
-            getLogger().error("Error in PageSequence.end(): "
+            getLogger().error("Error in PageSequence.endOfNode(): "
               + fopex.getMessage(), fopex);
         }
     }

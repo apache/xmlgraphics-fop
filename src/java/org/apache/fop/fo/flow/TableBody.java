@@ -104,7 +104,7 @@ public class TableBody extends FObj {
         fotv.serveTableBody(this);
     }
 
-    protected void end() {
+    protected void endOfNode() {
         getFOInputHandler().endBody(this);
     }
 

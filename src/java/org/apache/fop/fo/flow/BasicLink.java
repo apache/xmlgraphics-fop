@@ -140,8 +140,8 @@ public class BasicLink extends Inline {
     /**
      * @see org.apache.fop.fo.FONode#end
      */
-    protected void end() {
-        super.end();
+    protected void endOfNode() {
+        super.endOfNode();
         getFOInputHandler().endLink();
     }
     
