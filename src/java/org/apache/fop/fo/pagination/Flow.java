@@ -28,6 +28,7 @@ import org.xml.sax.Locator;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.apps.FOPException;
 
@@ -57,6 +58,11 @@ public class Flow extends FObj {
     private int contentWidth;
 
     /**
+     * Content-width of current column area during layout
+     */
+    private boolean blockItemFound = false;
+
+    /**
      * @param parent FONode that is the parent of this object
      */
     public Flow(FONode parent) {
@@ -65,15 +71,19 @@ public class Flow extends FObj {
 
     /**
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
-     * XSL/FOP Content Model: markers* (%block;)+
+     * XSL/FOP Content Model: marker* (%block;)+
      */
-/*  temporarily disabled:  need to account for fo-markers which may be initial children
      protected void validateChildNode(Locator loc, String nsURI, String localName) {
-        if (!isBlockItem(nsURI, localName)) {
+        if (nsURI == FOElementMapping.URI && localName.equals("marker")) {
+            if (blockItemFound) {
+               nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
+            }
+        } else if (!isBlockItem(nsURI, localName)) {
             invalidChildError(loc, nsURI, localName);
+        } else {
+            blockItemFound = true;
         }
     }
-*/
 
     /**
      * Make sure content model satisfied, if so then tell the
@@ -81,8 +91,8 @@ public class Flow extends FObj {
      * @see org.apache.fop.fo.FONode#end
      */
     protected void end() {
-        if (children == null) {
-            missingChildElementError("(%block;)+");
+        if (!blockItemFound) {
+            missingChildElementError("marker* (%block;)+");
         }
         getFOInputHandler().endFlow(this);
     }
