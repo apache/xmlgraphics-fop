@@ -22,6 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 
+import org.apache.fop.fo.extensions.Bookmarks;
+import org.apache.fop.fo.extensions.Outline;
+
 /**
  * An instance of this class is either a PDF bookmark-tree and
  * its child bookmark-items, or a bookmark-item and the child
@@ -46,10 +49,17 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
      * Create a new bookmark data object.
      * This should only be called by the bookmark-tree item because
      * it has no idref item that needs to be resolved.
+     *
+     * @param bookmarks fo:bookmark-tree for this document
      */
-    public BookmarkData() {
+    public BookmarkData(Bookmarks bookmarks) {
         idRef = null;
         whenToProcess = END_OF_DOC;
+        
+        for (int count = 0; count < bookmarks.getOutlines().size(); count++) {
+            Outline out = (Outline)(bookmarks.getOutlines()).get(count);
+            addSubData(createBookmarkData(out));
+        }
     }
 
     /**
@@ -183,5 +193,25 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
     public String getName() {
         return "Bookmarks";
     }
+
+    /**
+     * Create and return the bookmark data for this outline.
+     * This creates a bookmark data with the destination
+     * and adds all the data from child outlines.
+     *
+     * @param outline the Outline object for which a bookmark entry should be
+     * created
+     * @return the new bookmark data
+     */
+    private BookmarkData createBookmarkData(Outline outline) {
+        BookmarkData data = new BookmarkData(outline.getInternalDestination());
+        data.setLabel(outline.getLabel());
+        for (int count = 0; count < outline.getOutlines().size(); count++) {
+            Outline out = (Outline)(outline.getOutlines()).get(count);
+            data.addSubData(createBookmarkData(out));
+        }
+        return data;
+    }
+
 }
 

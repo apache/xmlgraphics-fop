@@ -36,7 +36,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.FOEventHandler;
-import org.apache.fop.fo.extensions.Outline;
 import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Root;
@@ -194,31 +193,6 @@ public class AreaTreeHandler extends FOEventHandler {
     }
 
     /**
-     * End the document.
-     *
-     * @throws SAXException if there is some error
-     */
-    public void endDocument() throws SAXException {
-        addBookmarks(rootFObj.getBookmarks());
-
-        model.endDocument();
-
-        if (outputStatistics) {
-            long memoryNow = runtime.totalMemory() - runtime.freeMemory();
-            long memoryUsed = (memoryNow - initialMemory) / 1024L;
-            long timeUsed = System.currentTimeMillis() - startTime;
-            log.debug("Initial heap size: " + (initialMemory / 1024L) + "Kb");
-            log.debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
-            log.debug("Total memory used: " + memoryUsed + "Kb");
-            log.debug("Total time used: " + timeUsed + "ms");
-            log.debug("Pages rendered: " + pageCount);
-            if (pageCount > 0) {
-                log.debug("Avg render time: " + (timeUsed / pageCount) + "ms/page");
-            }
-        }
-    }
-
-    /**
      * End the PageSequence.
      * The PageSequence formats Pages and adds them to the AreaTree.
      * The area tree then handles what happens with the pages.
@@ -243,38 +217,34 @@ public class AreaTreeHandler extends FOEventHandler {
     }
 
     /**
-     * Create the bookmark data in the area tree.
-     */
-    private void addBookmarks(Bookmarks bookmarks) {
-        if (bookmarks == null) {
-            return;
-        }
-
-        BookmarkData data = new BookmarkData();
-        for (int count = 0; count < bookmarks.getOutlines().size(); count++) {
-            Outline out = (Outline)(bookmarks.getOutlines()).get(count);
-            data.addSubData(createBookmarkData(out));
-        }
-        addOffDocumentItem(data);
-    }
-
-    /**
-     * Create and return the bookmark data for this outline.
-     * This creates a bookmark data with the destination
-     * and adds all the data from child outlines.
+     * End the document.
      *
-     * @param outline the Outline object for which a bookmark entry should be
-     * created
-     * @return the new bookmark data
+     * @throws SAXException if there is some error
      */
-    private BookmarkData createBookmarkData(Outline outline) {
-        BookmarkData data = new BookmarkData(outline.getInternalDestination());
-        data.setLabel(outline.getLabel());
-        for (int count = 0; count < outline.getOutlines().size(); count++) {
-            Outline out = (Outline)(outline.getOutlines()).get(count);
-            data.addSubData(createBookmarkData(out));
+    public void endDocument() throws SAXException {
+
+        // process fo:bookmark-tree
+        Bookmarks bookmarks = rootFObj.getBookmarks();
+        if (bookmarks != null) {
+            BookmarkData data = new BookmarkData(bookmarks);
+            addOffDocumentItem(data);
         }
-        return data;
+
+        model.endDocument();
+
+        if (outputStatistics) {
+            long memoryNow = runtime.totalMemory() - runtime.freeMemory();
+            long memoryUsed = (memoryNow - initialMemory) / 1024L;
+            long timeUsed = System.currentTimeMillis() - startTime;
+            log.debug("Initial heap size: " + (initialMemory / 1024L) + "Kb");
+            log.debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
+            log.debug("Total memory used: " + memoryUsed + "Kb");
+            log.debug("Total time used: " + timeUsed + "ms");
+            log.debug("Pages rendered: " + pageCount);
+            if (pageCount > 0) {
+                log.debug("Avg render time: " + (timeUsed / pageCount) + "ms/page");
+            }
+        }
     }
 
     /**
