@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "document-v11.dtd">
+      <document> 
+        <header> 
+          <title>Configuration</title> 
+        </header> 
+        <body> 
+          <section>
+            <title>Configuring FOP</title>
+            <p>
+In the directory xml-fop/conf you will find an example
+configuration file. It contains the default values of various
+configurable options available in FOP.
+    </p>
+    <p>The file fop.xconf is not read automatically, the user
+       must specify it on the command line or if embedding then
+       configure the appropriate classes.
+    </p>
+  </section>
+  <section>
+    <title>Setting up Hyphenation</title>
+    <p>Fop comes already with some hyphenation patterns. If you
+       need a hyphenation pattern which isn't included in the
+       distribution, do the following:
+    </p>
+    <p>1. get the TeX hyphenation pattern file and turn it into an xml file which conforms
+       to the hyphenation.dtd in the sub directory /hyph
+    </p>
+    <p>2. name this new file following this schema: languageCode_countryCode.xml. If you don't need
+       a country code, leave it out, e.g the file name for an American english hyphenation pattern
+       would look like this: en_US.xml. For an Italian file: it.xml. Language and country codes must be
+       the same as in xsl:fo, that is follow
+       <link href="http://www.ics.uci.edu/pub/ietf/http/related/iso639.txt">ISO 639</link>
+       and <link href="http://www.ics.uci.edu/pub/ietf/http/related/iso3166.txt">ISO 3166</link>
+       respectively. NOTE: The ISO 639/ISO 3166 convention is that language names are
+       written in lower case, while country codes are written in upper case.
+    </p>
+    <p>3. If you have build your new hyphenation pattern file
+          successfully you put the file into the /hyph directoy
+          and rebuild Fop. The file will be picked up and added
+          to the fop.jar.
+    </p>
+          </section>
+        </body>
+    </document>
