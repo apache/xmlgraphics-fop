@@ -125,9 +125,6 @@ public class FoTableBody extends FONode {
         }
     }
 
-    /** The number of markers on this FO. */
-    private int numMarkers = 0;
-
     /** The number of table-rows on this FO. */
     private int numRows = 0;
 
@@ -158,19 +155,11 @@ public class FoTableBody extends FONode {
     {
         super(foTree, FObjectNames.TABLE_BODY, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
-        XmlEvent ev;
         // Look for zero or more markers
-        String nowProcessing = "marker";
+        getMarkers();
+        XmlEvent ev;
+        String nowProcessing;
         try {
-            while ((ev = xmlevents.expectStartElement
-                    (FObjectNames.MARKER, XmlEvent.DISCARD_W_SPACE))
-                   != null) {
-                new FoMarker(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
-                numMarkers++;
-                ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
-                namespaces.relinquishEvent(ev);
-            }
-
             // Look for one or more table-rows
             nowProcessing = "table-row";
             while ((ev = xmlevents.expectStartElement

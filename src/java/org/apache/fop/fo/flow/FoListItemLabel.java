@@ -135,6 +135,7 @@ public class FoListItemLabel extends FONode {
     {
         super(foTree, FObjectNames.LIST_ITEM_LABEL, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
+        getMarkers();
         XmlEvent ev = null;
         try {
             // Get at least one %block;

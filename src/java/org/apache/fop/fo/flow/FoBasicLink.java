@@ -157,6 +157,7 @@ public class FoBasicLink extends FONode {
     {
         super(foTree, FObjectNames.BASIC_LINK, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
+        getMarkers();
         XmlEvent ev = null;
         do {
             try {

@@ -130,9 +130,6 @@ public class FoTableAndCaption extends FONode {
         }
     }
 
-    /** The number of markers on this FO. */
-    private int numMarkers = 0;
-
     /** The offset of table-caption within the children. */
     private int captionOffset = -1;
 
@@ -159,18 +156,10 @@ public class FoTableAndCaption extends FONode {
                           stateFlags, sparsePropsMap, sparseIndices);
         XmlEvent ev;
         // Look for zero or more markers
-        String nowProcessing = "marker";
+        // Markers are cleaned up within the <code>getMarkers</code> method
+        getMarkers();
+        String nowProcessing;
         try {
-            while ((ev = xmlevents.expectStartElement
-                    (FObjectNames.MARKER, XmlEvent.DISCARD_W_SPACE))
-                   != null) {
-                new FoMarker(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
-                numMarkers++;
-                ev = xmlevents.getEndElement(
-                        XmlEventReader.DISCARD_EV, ev);
-                namespaces.relinquishEvent(ev);
-            }
-
             // Look for optional table-caption
             nowProcessing = "table-caption";
             if ((ev = xmlevents.expectStartElement

@@ -138,34 +138,38 @@ public class FoMultiToggle extends FONode {
         super(foTree, FObjectNames.MULTI_TOGGLE, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         XmlEvent ev = null;
-        if ((stateFlags & FONode.MC_MULTI_CASE) != 0)
-        do {
-            try {
-                if ((stateFlags & FONode.MC_OUT_OF_LINE) == 0)
-                    ev = xmlevents.expectPcdataOrInlineOrBlock();
-                else
-                    ev = xmlevents.expectOutOfLinePcdataOrInlineOrBlock();
-                if (ev != null) {
-                    // Generate the flow object
-                    //System.out.println("Generating flow object for " + ev);
-                    FObjects.fobjects.makeFlowObject
-                                (foTree, this, ev, stateFlags);
-                    if (ev.getType() != XmlEvent.CHARACTERS) {
-                        ev = xmlevents.getEndElement(
-                                XmlEventReader.DISCARD_EV, ev);
+        if ((stateFlags & FONode.MC_MULTI_CASE) != 0) {
+            do {
+                try {
+                    if ((stateFlags & FONode.MC_OUT_OF_LINE) == 0)
+                        ev = xmlevents.expectPcdataOrInlineOrBlock();
+                    else
+                        ev = xmlevents.expectOutOfLinePcdataOrInlineOrBlock();
+                    if (ev != null) {
+                        // Generate the flow object
+                        FObjects.fobjects.makeFlowObject
+                        (foTree, this, ev, stateFlags);
+                        if (ev.getType() != XmlEvent.CHARACTERS) {
+                            ev = xmlevents.getEndElement(
+                                    XmlEventReader.DISCARD_EV, ev);
+                        }
+                        namespaces.relinquishEvent(ev);
                     }
+                } catch(UnexpectedStartElementException e) {
+                    ev = xmlevents.getStartElement();
+                    MessageHandler.logln
+                    ("Ignoring unexpected Start Element: "
+                            + ev.getQName());
+                    ev = xmlevents.getEndElement(
+                            XmlEventReader.DISCARD_EV, ev);
                     namespaces.relinquishEvent(ev);
                 }
-            } catch(UnexpectedStartElementException e) {
-                ev = xmlevents.getStartElement();
-                MessageHandler.logln
-                        ("Ignoring unexpected Start Element: "
-                                                         + ev.getQName());
-                ev = xmlevents.getEndElement(
-                        XmlEventReader.DISCARD_EV, ev);
-                namespaces.relinquishEvent(ev);
-            }
-        } while (ev != null);
+            } while (ev != null);
+        } else {
+            throw new FOPException(
+                    "fo:multi-toggle only permitted as a descendant of "
+                    + "fo:multi-case");
+        }
 
         makeSparsePropsSet();
     }

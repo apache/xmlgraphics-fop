@@ -155,10 +155,7 @@ public class FoTableRow extends FONode {
         super(foTree, FObjectNames.TABLE_ROW, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         XmlEvent ev;
-        // Look for zero or more markers
-        String nowProcessing = "table-cell";
         try {
-            nowProcessing = "table-cell";
             if ((ev = xmlevents.expectStartElement
                     (FObjectNames.TABLE_CELL, XmlEvent.DISCARD_W_SPACE))
                    != null) {
@@ -174,11 +171,6 @@ public class FoTableRow extends FONode {
                         ("No table-cell in table-row.");
             firstCellOffset = 0;
 
-            /*
-        } catch (NoSuchElementException e) {
-            throw new FOPException
-                ("Unexpected EOF while processing " + nowProcessing + ".");
-            */
         } catch(TreeException e) {
             throw new FOPException("TreeException: " + e.getMessage());
         } catch(PropertyException e) {

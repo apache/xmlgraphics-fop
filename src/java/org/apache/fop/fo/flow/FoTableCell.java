@@ -154,6 +154,7 @@ public class FoTableCell extends FONode {
     {
         super(foTree, FObjectNames.TABLE_CELL, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
+        getMarkers();
         XmlEvent ev = null;
         try {
             // Get at least one %block;

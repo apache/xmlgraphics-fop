@@ -142,6 +142,10 @@ public class FoTitle extends FONode {
     {
         super(foTree, FObjectNames.TITLE, parent, event,
               FONode.TITLE_SET, sparsePropsMap, sparseIndices);
+        if (getMarkers() != 0) {
+            throw new FOPException(
+            "fo:marker illegal as child of fo:title");
+        }
         XmlEvent ev = null;
         do {
             try {

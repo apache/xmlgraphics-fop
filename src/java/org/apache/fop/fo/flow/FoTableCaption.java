@@ -145,6 +145,7 @@ public class FoTableCaption extends FONode {
     {
         super(foTree, FObjectNames.TABLE_CAPTION, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
+        getMarkers();
         XmlEvent ev = null;
         try {
             // Get at least one %block;

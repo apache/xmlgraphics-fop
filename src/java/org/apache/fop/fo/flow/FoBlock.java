@@ -169,6 +169,7 @@ public class FoBlock extends FONode {
     {
         super(foTree, FObjectNames.BLOCK, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
+        getMarkers();
         XmlEvent ev = null;
         do {
             try {
