@@ -54,11 +54,7 @@
            in this case there is only one target: xsl-region-body
         -->
     <fo:flow flow-name="xsl-region-body" 
-                text-align="justify"
-                language="de"
-                hyphenate="true"
-                hyphenation-push-character-count="2"
-                hyphenation-remain-character-count="2">
+                text-align="justify">
 
       <!-- each paragraph is encapsulated in a block element
            the attributes of the block define
@@ -73,7 +69,17 @@
             color="white"
             text-align="center"
             padding-top="3pt">
-        Der junge Goethe in TEI
+        Hyphenation tests 
+      </fo:block>
+
+      <!-- this defines a title -->
+      <fo:block font-size="12pt" 
+            font-family="sans-serif" 
+            line-height="12pt"
+            background-color="blue"
+            color="white"
+            text-align="start">
+        US English
       </fo:block>
 
       <!-- Normal text -->
@@ -111,6 +117,16 @@
       </fo:block>
 
 
+      <!-- this defines a title -->
+      <fo:block font-size="12pt" 
+            font-family="sans-serif" 
+            line-height="12pt"
+            background-color="blue"
+            color="white"
+            text-align="start">
+        German
+      </fo:block>
+
       <!-- this defines normal text -->
       <fo:block font-size="12pt" 
                 font-family="sans-serif" 
@@ -120,18 +136,36 @@
                 hyphenate="true"
                 hyphenation-push-character-count="2"
                 hyphenation-remain-character-count="2"                >
-1. Warum TEI?
-Die Verwendungszeit elektronischer Editionen wird von mehreren 
-Faktoren verkürzt: der kurzen Lebensdauer der Programme, die zu 
-ihrer Darstellung verwendet werden, der etwas längeren der 
-Betriebssysteme, unter denen die Darstellungsprogramme laufen, 
-der logischen Einrichtung des Datenträgers, auf dem sich die 
-Edition befindet, und dessen physischer Dauer. Um die besonders 
-unangenehme Abhängigkeit elektronischer Texte von bestimmten 
-Programmen und Betriebssystemen zu vermeiden, haben 
-Wissenschaftler ein Textauszeichnungssystem für philologische 
-Belange entwickelt, das nach dem Entwicklerteam "Text Encoding 
-Initiative" (TEI) genannt wird (1). 
+        1. Warum TEI?
+        Die Verwendungszeit elektronischer Editionen wird von mehreren 
+        Faktoren verkürzt: der kurzen Lebensdauer der Programme, die zu 
+        ihrer Darstellung verwendet werden, der etwas längeren der 
+        Betriebssysteme, unter denen die Darstellungsprogramme laufen, 
+        der logischen Einrichtung des Datenträgers, auf dem sich die 
+        Edition befindet, und dessen physischer Dauer. Um die besonders 
+        unangenehme Abhängigkeit elektronischer Texte von bestimmten 
+        Programmen und Betriebssystemen zu vermeiden, haben 
+        Wissenschaftler ein Textauszeichnungssystem für philologische 
+        Belange entwickelt, das nach dem Entwicklerteam "Text Encoding 
+        Initiative" (TEI) genannt wird (1). 
+      </fo:block>
+
+      <fo:block font-size="12pt" 
+                font-family="sans-serif" 
+                line-height="15pt"
+                space-after.optimum="3pt"
+                language="de"
+                hyphenate="true"
+                hyphenation-push-character-count="2"
+                hyphenation-remain-character-count="2"                >
+        Das Auszeichnungssystem TEI ist eine Anwendung der Metasprache 
+        zur Beschreibung programmunabhängiger Auszeichnungssysteme SGML 
+        (Standard Generalized Markup Language), so wie auch HTML, mit 
+        dem die meisten Texte des Internets zur Zeit ausgezeichnet 
+        sind, eine Anwendung von SGML ist. Daten, die entsprechend den 
+        TEI-Richtlinien ausgezeichnet worden sind, können also mit 
+        jedem Programm, das SGML-Daten verarbeiten kann, dargestellt, 
+        umgewandelt oder durchsucht werden. (2)
       </fo:block>
 
       <!-- this defines normal text -->
@@ -139,102 +173,119 @@ Initiative" (TEI) genannt wird (1).
                 font-family="sans-serif" 
                 line-height="15pt"
                 space-after.optimum="3pt">
-Das Auszeichnungssystem TEI ist eine Anwendung der Metasprache 
-zur Beschreibung programmunabhängiger Auszeichnungssysteme SGML 
-(Standard Generalized Markup Language), so wie auch HTML, mit 
-dem die meisten Texte des Internets zur Zeit ausgezeichnet 
-sind, eine Anwendung von SGML ist. Daten, die entsprechend den 
-TEI-Richtlinien ausgezeichnet worden sind, können also mit 
-jedem Programm, das SGML-Daten verarbeiten kann, dargestellt, 
-umgewandelt oder durchsucht werden. (2)
+        Verwendet wurde für die Auszeichnung 'teilite', das eine 
+        Teilmenge des gesamten Auszeichnungssystems TEI bietet, aber 
+        auf einige der komplexeren Merkmale verzichtet und deshalb auch 
+        eine einfache Konvertierung der Daten zu neueren Metasprachen 
+        für Auszeichnungssysteme wie XML, einer Teilmenge von SGML, 
+        ermöglicht.
+        SGML-Programme mit der Leistungsfähigkeit von Folio Views sind 
+        z.Zt. noch relativ teuer, daher wurde für die vorliegende 
+        Edition der Weg gewählt, den Text doppelt auf die CD zu legen: 
+        Einmal für die sofortige Nutzung mit einer komfortablen 
+        Oberfläche und einmal ohne Software in einem Format, das seine 
+        langfristige Verwendbarkeit garantiert. 
+        Das Nachstehende soll einige Hinweise zur Einrichtung der TEI-
+        Dateien geben, um deren weitere Verwendung zu erleichtern. 
       </fo:block>
 
-      <!-- this defines normal text -->
+
+
+      <!-- Finnish example sent in by Jarno  Elovirta -->
       <fo:block font-size="12pt" 
-                font-family="sans-serif" 
-                line-height="15pt"
-                space-after.optimum="3pt">
-Verwendet wurde für die Auszeichnung 'teilite', das eine 
-Teilmenge des gesamten Auszeichnungssystems TEI bietet, aber 
-auf einige der komplexeren Merkmale verzichtet und deshalb auch 
-eine einfache Konvertierung der Daten zu neueren Metasprachen 
-für Auszeichnungssysteme wie XML, einer Teilmenge von SGML, 
-ermöglicht.
-SGML-Programme mit der Leistungsfähigkeit von Folio Views sind 
-z.Zt. noch relativ teuer, daher wurde für die vorliegende 
-Edition der Weg gewählt, den Text doppelt auf die CD zu legen: 
-Einmal für die sofortige Nutzung mit einer komfortablen 
-Oberfläche und einmal ohne Software in einem Format, das seine 
-langfristige Verwendbarkeit garantiert. 
-Das Nachstehende soll einige Hinweise zur Einrichtung der TEI-
-Dateien geben, um deren weitere Verwendung zu erleichtern. 
+            font-family="sans-serif" 
+            line-height="12pt"
+            background-color="blue"
+            color="white"
+            text-align="start">
+        Finnish
       </fo:block>
 
-      <!-- this defines normal text -->
+        <fo:block language="fi"
+                  hyphenate="true">
+          <fo:block font-weight="bold">Internet - tuo kaiken pahan lähde?</fo:block>
+          <fo:block>Internet on saanut nauttia lähes täydellisestä sananvapaudesta koko
+          olemassaolonsa ajan. Parin viimeiksi kuluneen vuoden aikana on kuitenkin
+          julkisuudessa keskusteltu ahkerasti sen rajoittamisesta. Muutamat ilmaista
+          kotisivutilaa tarjoavat palvelut ovatkin jo kieltäneet esimerkiksi natsimia
+          kannattavien sivujen ylläpidon.</fo:block> <fo:block>Astetta pahempaan
+          suuntaan ollaan kuitenkin menossa. Nettihuutokaupoissa tarjotaan kaikkea
+          ihmiselimistä lähtien ja itsemurhiin etsitään avustajia itsemurhia suosivilta
+          nettisivustoilta. Etelä-Koreassa poliisi on pidättänyt 20-vuotiaan miehen,
+          jota epäillään ns. netti-itsemurhassa avustamisesta. Mies oli luvannut noin
+          4000 dollarin korvausta vastaan kuristaa 23-vuotiaan naisen kuoliaaksi. Nainen
+          tuli kuitenkin viime hetkellä toisiin ajatuksiin. Mies väittää kyseessä olleen
+          pelkän vitsin. Viime kuussa Etelä-Koreassa kaksi opiskelijaa myrkytti itsensä
+          netistä löytämiensä ohjeiden avulla.</fo:block> <fo:block>FBI puolestaan
+          tutkii tapausta, jossa äiti oli myynyt kaksostytöt adoptoitavaksi korkeinta
+          tarjousta vastaan nettihuutokaupalla. Tytöt myytiin ensin Kaliforniaan Allenin
+          pariskunnalle, josta äiti kuitenkin kävi ryöstämässä lapset, sillä
+          englantilainen Kilshawin pariskunta oli tarjonnut tytöistä tuplasumman.
+          Kilshawit kuljettivat lapset Englantiin ja nyt tyttöjen perässä ovat sekä
+          kahdet adoptiovanhemmat että iso liuta eri viranomaistahoja. Myös
+          Iso-Britannian pääministeri Tony Blair on pitänyt lehdistötilaisuuden
+          aiheeseen liittyen. Lue juttu.</fo:block> <fo:block>K2, 23:10. Lähde:
+          Newsbytes | 5 kommenttia</fo:block> <fo:block font-weight="bold">Mato ryömii
+          Linux-palvelimiin</fo:block> <fo:block>Internetissä leviää Ramen nimellä
+          tunnettu mato, joka ilmeisesti hyödyntää kahta tunnettua tietoturva-aukkoa Red
+          Hat Linuxin 6.2 ja 7.0 versioissa esiintyvissä wu-ftpd ja RPC.statd
+          -ohjelmissa. Jos mato pääsee sisään järjestelmään, se korvaa palvelimella
+          sijaitsevan HTML-pääsivun tekstillä, jossa kerrotaan hakkereiden pitävän
+          nuudeleista. Madon on todettu leviävän erittäin nopeasti, sillä jos kaistaa
+          riittää se pystyy skannaamaan jopa kaksi B-luokan verkkoa 15 minuutissa. Madon
+          ei ole todettu avaavan palvelimiin takaovia, joiden kautta madon kirjoittaja
+          pääsisi sisään järjestelmään. Lue juttu</fo:block> <fo:block>oma, 20:48.
+          Lähde: ZDNet | 6 kommenttia</fo:block> <fo:block font-weight="bold">Macromedia
+          ja Allaire yhdistyvät</fo:block> <fo:block>Macromedian ja Allairen
+          julkaisemissa lehdistötiedotteissa kerrotaan yhtiöiden
+          yhdistymissuunnitelmista. Macromedialle yrityskauppa maksaa noin 2,2 miljardia
+          markkaa. Uuden yhdistyneen yrityksen nimenä säilyy Macromedia ja sen johdossa
+          jatkaa Macromedian nykyinen toimitusjohtaja Rob Burgess. Yrityksen tuotteisiin
+          lukeutuvat mm. Macromedia Dreamweaver, Macromedia Flash, Allaire ColdFusion ja
+          Allaire JRun. Lue juttu.</fo:block> 
+        </fo:block>
+
+      <!-- Italian example sent in by Stéphane Bline-->
       <fo:block font-size="12pt" 
-                font-family="sans-serif" 
-                line-height="15pt"
-                space-after.optimum="3pt">
-TEI stellt dem Textwissenschaftler mehrere hundert Auszeichner (tags) 
-zur Verfügung, um nahezu jeden gewünschten Aspekt eines Textes
-mit Zusatzinformationen zu versehen. Die exzellenten Handbücher,
-herausgegeben von den Lou Burnard und Michael Sperberg-
-McQueen, und auch die 'Grammatik'-Dateien (DTDs) selbst sind 
-im Internet verfügbar. (2)
+            font-family="sans-serif" 
+            line-height="12pt"
+            background-color="blue"
+            color="white"
+            text-align="start">
+        Italian 
       </fo:block>
 
-      <!-- this defines normal text -->
-      <fo:block font-size="12pt" 
-                font-family="sans-serif" 
-                line-height="15pt"
-                space-after.optimum="3pt">
-Daten, die entsprechend den TEI-Richtlinien ausgezeichnet worden sind, 
-können mit jedem Programm, das SGML-Daten verarbeiten kann, 
-dargestellt, umgewandelt oder durchsucht werden. Vor allem können
-verschiedene Editionen, wenn sie TEI zur Auszeichnung verwendet
-haben, vom Anwender zur Recherche zu einem Korpus
-zusammengeschlossen werden. Wissenschaftler können also, wenn sie sich
-an diesen Richtlinien orientieren, die für ihre Belange geschaffen wurden 
-und auch neueren Anforderungen angepaßt werden können, ihre Daten 
-langfristig und unabhängig von einzelnen Firmen archivieren und dem
-Anwender zur Nutzung zugänglich machen. 
-      </fo:block>
-
-      <!-- this defines normal text -->
-      <fo:block font-size="12pt" 
-                font-family="sans-serif" 
-                line-height="15pt"
-                space-after.optimum="3pt">
-Es wurden nicht alle programmtechnischen Besonderheiten der 
-Folio-Edition in der TEI-Auszeichnung berücksichtigt. Folio 
-Views ermöglicht sogenannte Query-Links, also Hyperlinks, die 
-keine feste Zieladresse haben, sondern einen spezifizierten 
-Suchlauf starten. Diese Query-Links könnten zwar in die Syntax 
-von XREF-Verweisen übersetzt werden, da dort auch ein pattern 
-als Ziel angegeben werden kann; der Mangel an Software, die 
-diese Verweistechnik unterstützt, ließ aber den 
-Konvertierungsaufwand in diesem Punkt ungerechtfertigt 
-erscheinen. 
-      </fo:block>
-
-
-
-      <!-- this defines normal text -->
-      <fo:block font-size="12pt" 
-                font-family="sans-serif" 
-                line-height="15pt"
-                space-after.optimum="3pt">
-2. Inhalt des Unterverzeichnisses \tei
-Die TEI-Version dieser Ausgabe der Werke des jungen Goethe 
-liegt in einem Verzeichnis "auf der CD. In den Verzeichnissen 
-darunter liegen die notwendigen Grafiken. Das 
-Verzeichnis \tei ist selbständig, d.h. es werden keine weiteren 
-Grafik- oder Textdateien benötigt, außer denen, die in \tei 
-liegen, um den Text mit einem SGML-konformen Programm 
-verarbeiten zu können. 
-      </fo:block>
-
-
+        <fo:block language="it"
+                  hyphenate="true">
+        <fo:block
+        space-before.optimum="0.6em" space-before.minimum="0.4em"
+        space-before.maximum="0.8em">Un'applicazione di servizio consiste nell'utilizzo
+        di applicazioni nell'ambito aziendale, senza procedere ad installazioni locali.
+        L'applicazione ha la particolaritàdi essere ospitata "in-house" tramite
+        Intranet o presso un fornitore esterno di applicazioni di servizi (ASP, acronimo
+        di Application Service Provider) e di transitare grazie al protocollo di
+        Internet. Intermediario eventuale tra l'editore di software e il cliente che
+        desidera utilizzarli, il provider permette agli utenti di accedere ai vari
+        programmi, previo contratto d'abbonamento.</fo:block> <fo:block
+        space-before.optimum="0.6em" space-before.minimum="0.4em"
+        space-before.maximum="0.8em">L'utilizzazione in linea rende automatica la
+        manutenzione e l'aggiornamento delle applicazioni. A partire da una semplice
+        interfaccia Web installata su un thin client, l'utente può accedere via
+        Internet o Intranet all'insieme delle applicazioni attraverso il proprio account
+        personale e dedicarsi all'utilizzazione approfondita delle applicazioni
+        professionali.</fo:block> <fo:block font-weight="bold"
+        space-after.optimum="6pt">Esempio 1.1. Esempio di applicazione di
+        servizio</fo:block> <fo:block space-before.optimum="0.6em"
+        space-before.minimum="0.4em" space-before.maximum="0.8em">Si prenda il caso di
+        una societàA che desidera ottimizzare la comunicazione interna e la
+        condivisione delle informazioni. Un fornitore di applicazioni di servizio
+        potràrispondere rapidamente a questa aspettativa. Inoltre, potràproporre
+        servizi complementari che permettono di proteggere i dati di A. Dopo aver
+        studiato l'offerta, un responsabile della società firma con il fornitore B un
+        contratto d'abbonamento a un'applicazione di servizio perfettamente adattata. Le
+        società e B scambiano informazioni relative all'utilizzo online di questa
+        applicazione, come il costo del servizio, le modalitàdi pagamento e la gestione
+        degli account utente come i profili.</fo:block> </fo:block> 
 
     </fo:flow> <!-- closes the flow element-->
   </fo:page-sequence> <!-- closes the page-sequence -->
