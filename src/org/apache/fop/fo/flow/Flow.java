@@ -109,6 +109,7 @@ public class Flow extends FObj {
 		    FObj prevChild = (FObj) children.elementAt(this.marker);
 		    prevChild.removeAreas();
 		    prevChild.resetMarker();
+		    prevChild.removeID(area.getIDReferences());
 		    return new Status(Status.AREA_FULL_SOME);
 		    // should probably return AREA_FULL_NONE if first
 		    // or perhaps an entirely new status code
@@ -120,6 +121,10 @@ public class Flow extends FObj {
 	    if (status.getCode() == Status.KEEP_WITH_NEXT) {
 		prevChildMustKeepWithNext = true;
 	    }
+	    else {
+	    	prevChildMustKeepWithNext = false;
+	    }
+	    
 	}
 	return new Status(Status.OK);
     }
