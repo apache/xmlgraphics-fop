@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.fop.datatypes.PercentBase;
-import org.apache.fop.fo.TextInfo;
 import org.apache.fop.fo.PropertyManager;
+import org.apache.fop.fonts.Font;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockParent;
@@ -39,7 +39,8 @@ import org.apache.fop.traits.MinOptMax;
  * LayoutManager for a block FO.
  */
 public class BlockLayoutManager extends BlockStackingLayoutManager {
-
+    private org.apache.fop.fo.flow.Block fobj;
+    
     private Block curBlockArea;
 
     protected ListIterator proxyLMiter;
@@ -71,17 +72,15 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     protected List childBreaks = new java.util.ArrayList();
 
     public BlockLayoutManager(org.apache.fop.fo.flow.Block inBlock) {
-        super.setFObj(inBlock);
+        super(inBlock);
+        fobj = inBlock;
         proxyLMiter = new ProxyLMiter();
-        userAgent = inBlock.getUserAgent();
-        setBlockTextInfo(inBlock.getPropertyManager().getTextLayoutProps(
-            inBlock.getFOEventHandler().getFontInfo()));
-    }
 
-    private void setBlockTextInfo(TextInfo ti) {
-        lead = ti.fs.getAscender();
-        follow = -ti.fs.getDescender();
-        lineHeight = ti.lineHeight;
+        Font fs = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo());
+        
+        lead = fs.getAscender();
+        follow = -fs.getDescender();
+        lineHeight = fobj.getLineHeight().getOptimum().getLength().getValue();
     }
 
     /**
