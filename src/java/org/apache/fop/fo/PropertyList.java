@@ -52,12 +52,12 @@ package org.apache.fop.fo;
 
 // Java
 import java.util.HashMap;
-import java.util.Iterator;
 import org.xml.sax.Attributes;
 
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Property.Maker;
+import org.apache.fop.fo.properties.FOPropertyMapping;
 import org.apache.fop.fo.properties.WritingMode;
 
 
@@ -486,7 +486,7 @@ public class PropertyList extends HashMap {
         FObj parentFO = fobj.findNearestAncestorFObj();
         
         HashMap validProperties;
-        validProperties = (HashMap) fobj.elementTable.get(element);
+        validProperties = (HashMap) FObj.elementStringTable.get(element);
                                                 
         /* Handle "compound" properties, ex. space-before.minimum */
         String basePropertyName = findBasePropertyName(attributeName);
@@ -667,7 +667,7 @@ public class PropertyList extends HashMap {
      */
     protected Property.Maker findMaker(String space, String elementName,
                                        String propertyName) {
-        return findMaker((HashMap) fobj.elementTable.get(elementName),
+        return findMaker((HashMap) FObj.elementStringTable.get(elementName),
                          propertyName);
     }
 
@@ -686,8 +686,15 @@ public class PropertyList extends HashMap {
             propertyMaker = (Property.Maker) elemTable.get(propertyName);
         }
         if (propertyMaker == null) {
-            propertyMaker =
-                (Property.Maker) fobj.propertyListTable.get(propertyName);
+            int propId = FOPropertyMapping.getPropertyId(propertyName);
+            if (propId != -1) { // -1 w/namespaces (xmlns:fo, xmlns:svg, etc.)
+                propertyMaker = FObj.propertyListTable[propId];
+            }
+            // old string method (retained temporarily for troubleshooting)
+            // propertyMaker =   
+            //     (Property.Maker) FObj.propertyListStringTable.get(propertyName);
+            // System.out.println(propertyName + "= " + propId + " propMaker = "
+            //     + ((propertyMaker != null) ? (propertyMaker.toString()) : "(is null)"));
         }
         return propertyMaker;
     }

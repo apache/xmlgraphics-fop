@@ -209,7 +209,6 @@ list of possible build targets.
     <property name="colorkw.xml" value="${build.codegen}/colorkw.xml"/>
 
     <property name="properties.xsl" value="${build.codegen}/properties.xsl"/>
-    <property name="propmap.xsl" value="${build.codegen}/propmap.xsl"/>
     <property name="enumgen.xsl" value="${build.codegen}/enumgen.xsl"/>
     <property name="propinc.xsl" value="${build.codegen}/propinc.xsl"/>
     <property name="src.charlist.xsl" value="${src.codegen}/code-point-mapping.xsl"/>
@@ -354,7 +353,7 @@ list of possible build targets.
 
     <style in="${foproperties.xml}" style="${properties.xsl}"
         out="${build.gensrc}/${replacestring}/fo/properties/fo_${ignore_this}"/>
-    <style in="${foproperties.xml}" style="${propmap.xsl}"
+    <style in="${foproperties.xml}" style="${build.codegen}/fo-property-mapping.xsl"
         out="${build.gensrc}/${replacestring}/fo/properties/FOPropertyMapping.java"/>
     <style in="${foproperties.xml}" style="${enumgen.xsl}"
         out="${build.gensrc}/${replacestring}/fo/properties/foenums_${ignore_this}"/>

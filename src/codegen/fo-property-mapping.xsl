@@ -76,29 +76,65 @@ Software Foundation, please see <http://www.apache.org/>.
     </xsl:otherwise>
    </xsl:choose>
   </xsl:variable>
-<xsl:text>    </xsl:text><xsl:value-of select="$htname"/>.put("<xsl:value-of select="$prop/name"/>", <xsl:value-of select="$makerclass"/>.maker("<xsl:value-of select="$prop/name"/>"));
+  <xsl:variable name="lcletters" select="'abcdefghijklmnopqrstuvwxyz-:'" />
+  <xsl:variable name="ucletters" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ__'" />
+  <xsl:variable name="enum" select="translate($prop/name, $lcletters, $ucletters)"/>
+<xsl:text>    </xsl:text><xsl:value-of select="$htname"/>String.put("<xsl:value-of select="$prop/name"/>", <xsl:value-of select="$makerclass"/>.maker("<xsl:value-of select="$prop/name"/>"));
+<xsl:text>    </xsl:text><xsl:value-of select="$htname"/>[PR_<xsl:value-of select="$enum"/>] =<xsl:value-of select="$makerclass"/>.maker("<xsl:value-of select="$prop/name"/>");
+<xsl:text>    addPropertyName("</xsl:text><xsl:value-of select="$prop/name"/>", PR_<xsl:value-of select="$enum"/>);
+</xsl:template>
+
+
+<xsl:template name="genenum">
+  <xsl:param name="prop" select="."/>
+  <xsl:variable name="lcletters" select="'abcdefghijklmnopqrstuvwxyz-:'" />
+  <xsl:variable name="ucletters" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ__'" />
+  <xsl:variable name="num" select="count(preceding-sibling::property)"/>
+  <xsl:variable name="enum" select="translate($prop/name, $lcletters, $ucletters)"/>
+<!--
+<xsl:text>  public final static short </xsl:text><xsl:value-of select="$enum"/> = <xsl:value-of select="$num"/>;
+-->
 </xsl:template>
 
 
 <xsl:template match="text()"/>
+<xsl:template match="text()" mode="enums"/>
 
 <xsl:template match="property-list">
 package org.apache.fop.fo.properties;
 
 import java.util.HashMap;
 import java.util.Set;
+import org.apache.fop.fo.Property;
 //import org.apache.fop.svg.*;
 
-public class <xsl:value-of select="@family"/>PropertyMapping {
+public class <xsl:value-of select="@family"/>PropertyMapping implements Constants {
 
-  private static HashMap s_htGeneric = new HashMap();
+  private static Property.Maker[] s_htGeneric = new Property.Maker[PROPERTY_COUNT+1];
+  private static HashMap s_htGenericString = new HashMap();     // temporary
+  private static HashMap s_htElementStringLists = new HashMap();    // temporary
   private static HashMap s_htElementLists = new HashMap();
+  private static HashMap s_htSubPropNames = new HashMap();
+  private static HashMap s_htPropNames = new HashMap();
+  private static HashMap s_htPropIds = new HashMap();
   <xsl:for-each select="element-property-list">
   private static HashMap s_ht<xsl:value-of select="localname[1]"/>;</xsl:for-each>
 
   <xsl:apply-templates/>
 
-  public static HashMap getGenericMappings() {
+  public static HashMap getGenericStringMappings() {
+    return s_htGenericString;
+  }
+
+  public static Set getElementStringMappings() {
+    return s_htElementStringLists.keySet();
+  }
+
+  public static HashMap getElementStringMapping(String elemName) {
+    return (HashMap)s_htElementStringLists.get(elemName);
+  }
+
+  public static Property.Maker[] getGenericMappings() {
     return s_htGeneric;
   }
 
@@ -106,13 +142,57 @@ public class <xsl:value-of select="@family"/>PropertyMapping {
     return s_htElementLists.keySet();
   }
 
-  public static HashMap getElementMapping(String elemName) {
-    return (HashMap)s_htElementLists.get(elemName);
+  public static Property.Maker[] getElementMapping(int elemName) {
+    return (Property.Maker[])s_htElementLists.get(new Integer(elemName));
+  }
+
+  public static int getPropertyId(String name) {
+  	Integer i = (Integer) s_htPropNames.get(name);
+  	if (i == null)
+  		return -1;
+    return i.intValue();
+  }
+
+  public static int getSubPropertyId(String name) {
+  	Integer i = (Integer) s_htSubPropNames.get(name);
+  	if (i == null)
+  		return -1;
+    return i.intValue();
+  }
+  
+  public static String getPropertyName(int id) {
+    return (String) s_htPropIds.get(new Integer(id));
+  }
+
+  static {
+    addSubPropertyName("length", CP_LENGTH);
+    addSubPropertyName("conditionality", CP_CONDITIONALITY);
+    addSubPropertyName("block-progression-direction", CP_BLOCK_PROGRESSION_DIRECTION);
+    addSubPropertyName("inline-progression-direction", CP_INLINE_PROGRESSION_DIRECTION);
+    addSubPropertyName("within-line", CP_WITHIN_LINE);
+    addSubPropertyName("within-column", CP_WITHIN_COLUMN);
+    addSubPropertyName("within-page", CP_WITHIN_PAGE);
+    addSubPropertyName("minimum", CP_MINIMUM);
+    addSubPropertyName("maximum", CP_MAXIMUM);
+    addSubPropertyName("optimum", CP_OPTIMUM);
+    addSubPropertyName("precedence", CP_PRECEDENCE);
+  
+  }
+  
+  public static void addPropertyName(String name, int id) {
+    s_htPropNames.put(name, new Integer(id));
+    s_htPropIds.put(new Integer(id), name);
+  }
+
+  public static void addSubPropertyName(String name, int id) {
+    s_htSubPropNames.put(name, new Integer(id));
+    s_htPropIds.put(new Integer(id), name);
   }
 }
 </xsl:template>
 
 <xsl:template match="generic-property-list">
+  <xsl:apply-templates mode="enums"/>
   static {
     // Generate the generic mapping
 <xsl:apply-templates>
@@ -133,6 +213,34 @@ public class <xsl:value-of select="@family"/>PropertyMapping {
     <xsl:with-param name='htname'>s_ht<xsl:value-of select="$ename"/></xsl:with-param>
     </xsl:apply-templates>
   }
+</xsl:template>
+
+<xsl:template match="property[@type='generic']" mode="enums">
+  /* PROPCLASS = <xsl:call-template name="propclass"/> */
+</xsl:template>
+
+<xsl:template match="property" mode="enums">
+  <xsl:param name="htname"/>
+  <xsl:variable name="refname" select="name"/>
+  <xsl:choose>
+    <xsl:when test="@type='ref'">
+      <xsl:call-template name="genenum">
+        <xsl:with-param name="htname" select="$htname"/>
+        <xsl:with-param name="prop"
+          select='document(concat(@family, "properties.xml"))//property[name=$refname]'/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="not(@type)">
+      <xsl:call-template name="genenum">
+    <xsl:with-param name="htname" select="$htname"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:otherwise/>
+  </xsl:choose>
+</xsl:template>
+
+<xsl:template match="subproperty" mode="enums">
+  <xsl:call-template name="genenum"/>
 </xsl:template>
 
 <xsl:template match="property">
