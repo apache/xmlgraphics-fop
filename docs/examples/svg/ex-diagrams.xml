@@ -166,8 +166,11 @@ points="70,15 75.8,32.2 93.8,32.2 79.4,43
 	</Diagram>
 
 	<Diagram entry="ex-image">
-		<svg:svg width="10cm" height="3cm" viewBox="0 0 1000 300">
-<!--			<svg:image x="200" y="200" width="100px" height="100px" xlink:href="file:image.gif"/>-->
+		<svg:svg width="10cm" height="6cm" viewBox="0 0 1000 300">
+			<svg:image x="50" y="30" width="100px" height="120px" xlink:href="file:image.jpg"/>
+			<svg:g transform="rotate(0.1)">
+				<svg:image x="200" y="100" width="120px" height="100px" xlink:href="file:image.jpg"/>
+			</svg:g>
 		</svg:svg>
 	</Diagram>
 
