@@ -48,50 +48,150 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
-/* modified by JKT to integrate into 0.12.0 */
-
-//Title:        BoBoGi FOP
-//Version:      x
-//Copyright:    Copyright (c) 1999
-//Author:       Sergio Botti
-//Company:      Dibe Elsag
-//Description:  xml to pdf converter
+//Author:       Eric SCHAEFFER
+//Description:  create FopImage objects (with a configuration file)
 
 
 package org.apache.fop.image;
 
-import java.io.FileInputStream;
+// Java
 import java.io.IOException;
+import java.net.*;
+import java.lang.reflect.*;
+import java.util.Hashtable;
 
 public class FopImageFactory {
 
-    public static FopImage Make(String ref,int x,int y, int width, int height) {
+	private static Hashtable m_urlMap = new Hashtable();
 
+	public static FopImage Make(String href) throws MalformedURLException, FopImageException {
 
-	int colorpos=28; //offset positioning for w and height in  bmp files
-	int [] headermap = new int[54];
-	try{
-	    FileInputStream file=new FileInputStream(ref);
-	    boolean eof=false;
-	    int count=0;
-	    while ((!eof) && (count<54) ) {
-		int input =file.read();
-		if (input==-1)
-		    eof=true;
-		else
-		    headermap[count++]=input;
-	    }
-	    file.close();
-	} catch (IOException e) {System.err.println("Image not found");}
-	int bpp=headermap[28];
-	if (bpp==8) {
-	    return (new BmpBwImage(ref,x,y,width,height));
-	}  else if (bpp==24) {
-	    return  (new BmpColImage(ref,x,y,width,height));
+		// Get the absolute URL
+		URL absoluteURL = null;
+//		try {
+			absoluteURL = new URL(href);
+/*
+		}
+		catch (MalformedURLException e) {
+			// maybe relative
+			URL context_url = null;
+			try {
+				context_url = new URL(); // how to get the context URL ?
+				try {
+					absoluteURL = new URL(context_url, ref);
+				}
+				catch (MalformedURLException e_abs) {
+					// not found
+					System.err.println("Invalid Image URL : " + e_abs.getMessage() + "(base URL " + context_url.toString() + ")");
+					return null;
+				}
+			}
+			catch (MalformedURLException e_context) {
+				// pb context url
+				System.err.println("Invalid Image URL - error on relative URL : " + e_context.getMessage());
+				return null;
+			}
+		}
+*/
+
+		// check if already created
+		FopImage imageObject = (FopImage) m_urlMap.get(absoluteURL.toString());
+		if (imageObject != null) return imageObject;
+
+		// If not, check the content type and create a new one
+
+		String contentType = null;
+		// try to get content type by URL
+		try {
+			URLConnection url_conn = absoluteURL.openConnection();
+			contentType = url_conn.getContentType();
+		} catch (IOException e) {
+			throw new FopImageException("Error while recovering Image Type (" + absoluteURL.toString() + ") : " + e.getMessage());
+		}
+
+		// try get content type by extension if the first method failed
+		if (contentType == null) {
+			String stringURL = absoluteURL.toString();
+			int extensionStart = stringURL.lastIndexOf(".");
+			if ( ( extensionStart > 0 ) && ( extensionStart < stringURL.length() - 1 ) ) {
+				String extensionURL = stringURL.substring(extensionStart + 1, stringURL.length());
+
+				// BETTER : use the configuration file to associate an extension to a mime-type
+
+				if ( 	extensionURL.equalsIgnoreCase("gif") ) {
+					contentType = "image/gif";
+				} else if (	( extensionURL.equalsIgnoreCase("jpeg") ) || 
+								( extensionURL.equalsIgnoreCase("jpg") ) || 
+								( extensionURL.equalsIgnoreCase("jpe") ) ) {
+					contentType = "image/jpeg";
+				} else if (	extensionURL.equalsIgnoreCase("png") ) {
+					contentType = "image/png";
+				} else if ( extensionURL.equalsIgnoreCase("tga") ) {
+					contentType = "image/tga";
+				} else if ( extensionURL.equalsIgnoreCase("dib") ) {
+					contentType = "image/dib";
+				} else if ( extensionURL.equalsIgnoreCase("ddb") ) {
+					contentType = "image/ddb";
+				} else if ( extensionURL.equalsIgnoreCase("bmp") ) {
+					contentType = "image/bmp";
+				} else if ( extensionURL.equalsIgnoreCase("pict") ) {
+					contentType = "image/pict";
+				} else if ( extensionURL.equalsIgnoreCase("psd") ) {
+					contentType = "image/jpeg";
+				} else if ( extensionURL.equalsIgnoreCase("ras") ) {
+					contentType = "image/cmu-raster";
+				} else if (	( extensionURL.equalsIgnoreCase("tiff") ) || 
+								( extensionURL.equalsIgnoreCase("tif") ) ) {
+					contentType = "image/tiff";
+				} else if ( extensionURL.equalsIgnoreCase("xbm") ) {
+					contentType = "image/xbm";
+				} else if ( extensionURL.equalsIgnoreCase("xpm") ) {
+					contentType = "image/xpm";
+				} else if ( extensionURL.equalsIgnoreCase("ico") ) {
+					contentType = "image/ico";
+				} else if ( extensionURL.equalsIgnoreCase("cur") ) {
+					contentType = "image/cur";
+				} else if ( extensionURL.equalsIgnoreCase("pcx") ) {
+					contentType = "image/pcx";
+				}
+			}
+		}
+
+		// if content type is still unknown
+		if (contentType == null) {
+			throw new FopImageException("Unknown image type (" + absoluteURL.toString() + ")");
+		}
+
+		// load the right image class (configuration file)
+		// ...
+		// return new <FopImage implementing class>
+		// ...
+		Object imageInstance = null;
+		Class imageClass = null;
+		try {
+			imageClass = Class.forName("org.apache.fop.image.JimiImage"); //ClassNotFoundException
+			Class[] imageConstructorParameters = new Class[1];
+			imageConstructorParameters[0] = Class.forName("java.net.URL");
+			Constructor imageConstructor = imageClass.getDeclaredConstructor(imageConstructorParameters); //NoSuchMethodException, SecurityException
+			Object[] initArgs = new Object[1];
+			initArgs[0] = absoluteURL;
+			imageInstance = imageConstructor.newInstance(initArgs); // InstanciationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
+		} catch (ClassNotFoundException classex) {
+			throw new FopImageException("class " + "org.apache.fop.image.JimiImage" + " not found");
+/*
+		} catch (FopImageException fopex) {
+			throw new FopImageException(fopex.getMessage());
+*/
+		} catch (Exception ex) {
+			throw new FopImageException("class " + imageClass.getName() + " doesn't implement org.apache.fop.image.FopImage interface : " + ex.getMessage());
+		}
+		if (! (imageInstance instanceof org.apache.fop.image.FopImage)) {
+			throw new FopImageException("class " + imageClass.getName() + " doesn't implement org.apache.fop.image.FopImage interface");
+		}
+		m_urlMap.put(absoluteURL.toString(), imageInstance);
+		return (FopImage) imageInstance;
+
+		// if no corresponding image class
+//		throw new FopImageException(contentType + " not supported (" + absoluteURL.toString() + ")");
 	}
-	System.err.println("Unsupported bmp format");
-	
-	return null;
-	
-    }
-} 
+}
