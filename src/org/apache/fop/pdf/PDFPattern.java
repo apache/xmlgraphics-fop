@@ -94,7 +94,6 @@ public class PDFPattern extends PDFPathPaint {
      */
     protected StringBuffer patternDataStream = null;
 
-
     /**
      * Create a tiling pattern (type 1).
      *
@@ -307,5 +306,91 @@ public class PDFPattern extends PDFPathPaint {
     }
 
     public byte[] toPDF() { return null; }
+
+    public boolean equals(Object obj) {
+        if(obj == null) {
+            return false;
+        }
+        if(obj == this) {
+            return true;
+        }
+        if(!(obj instanceof PDFPattern)) {
+            return false;
+        }
+        PDFPattern patt = (PDFPattern)obj;
+        if(patternType != patt.patternType) {
+            return false;
+        }
+        if(paintType != patt.paintType) {
+            return false;
+        }
+        if(tilingType != patt.tilingType) {
+            return false;
+        }
+        if(xStep != patt.xStep) {
+            return false;
+        }
+        if(yStep != patt.yStep) {
+            return false;
+        }
+        if(bBox != null) {
+            if(!bBox.equals(patt.bBox)) {
+                return false;
+            }
+        } else if(patt.bBox != null) {
+            return false;
+        }
+        if(bBox != null) {
+            if(!bBox.equals(patt.bBox)) {
+                return false;
+            }
+        } else if(patt.bBox != null) {
+            return false;
+        }
+        if(xUID != null) {
+            if(!xUID.equals(patt.xUID)) {
+                return false;
+            }
+        } else if(patt.xUID != null) {
+            return false;
+        }
+        if(extGState != null) {
+            if(!extGState.equals(patt.extGState)) {
+                return false;
+            }
+        } else if(patt.extGState != null) {
+            return false;
+        }
+        if(matrix != null) {
+            if(!matrix.equals(patt.matrix)) {
+                return false;
+            }
+        } else if(patt.matrix != null) {
+            return false;
+        }
+        if(resources != null) {
+            if(!resources.equals(patt.resources)) {
+                return false;
+            }
+        } else if(patt.resources != null) {
+            return false;
+        }
+        if(shading != null) {
+            if(!shading.equals(patt.shading)) {
+                return false;
+            }
+        } else if(patt.shading != null) {
+            return false;
+        }
+        if(patternDataStream != null) {
+            if(!patternDataStream.equals(patt.patternDataStream)) {
+                return false;
+            }
+        } else if(patt.patternDataStream != null) {
+            return false;
+        }
+
+        return true;
+    }
 
 }

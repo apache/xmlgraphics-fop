@@ -671,6 +671,9 @@ public class PDFFunction extends PDFObject {
         if(obj == null) {
             return false;
         }
+        if(obj == this) {
+            return true;
+        }
         if(!(obj instanceof PDFFunction)) {
             return false;
         }

@@ -139,6 +139,8 @@ public class PDFDocument {
 
     protected ArrayList gstates = new ArrayList();
     protected ArrayList functions = new ArrayList();
+    protected ArrayList shadings = new ArrayList();
+    protected ArrayList patterns = new ArrayList();
 
     /**
      * creates an empty PDF document <p>
@@ -370,6 +372,32 @@ public class PDFDocument {
         return null;
     }
 
+    private PDFShading findShading(PDFShading compare) {
+        for(Iterator iter = shadings.iterator(); iter.hasNext(); ) {
+            Object shad = iter.next();
+            if(compare.equals(shad)) {
+                return (PDFShading)shad;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Find a previous pattern.
+     * The problem with this is for tiling patterns the pattern
+     * data stream is stored and may use up memory, usually this
+     * would only be a small amount of data.
+     */
+    private PDFPattern findPattern(PDFPattern compare) {
+        for(Iterator iter = patterns.iterator(); iter.hasNext(); ) {
+            Object patt = iter.next();
+            if(compare.equals(patt)) {
+                return (PDFPattern)patt;
+            }
+        }
+        return null;
+    }
+
     /**
      * Make a Type 3 Stitching function
      *
@@ -488,7 +516,16 @@ public class PDFDocument {
                                             theColorSpace, theBackground,
                                             theBBox, theAntiAlias, theDomain,
                                             theMatrix, theFunction);
-        this.objects.add(shading);
+
+        PDFShading oldshad = findShading(shading);
+        if(oldshad == null) {
+            shadings.add(shading);
+            this.objects.add(shading);
+        } else {
+            this.objectcount--;
+            this.shadingCount--;
+            shading = oldshad;
+        }
 
         // add this shading to resources
         if(res != null) {
@@ -534,12 +571,22 @@ public class PDFDocument {
                                             theDomain, theFunction,
                                             theExtend);
 
+        PDFShading oldshad = findShading(shading);
+        if(oldshad == null) {
+            shadings.add(shading);
+            this.objects.add(shading);
+        } else {
+            this.objectcount--;
+            this.shadingCount--;
+            shading = oldshad;
+        }
+
         if(res != null) {
             res.getPDFResources().addShading(shading);
         } else {
             this.resources.addShading(shading);
         }
-        this.objects.add(shading);
+
         return (shading);
     }
 
@@ -584,13 +631,22 @@ public class PDFDocument {
                                             theBitsPerFlag, theDecode,
                                             theFunction);
 
+        PDFShading oldshad = findShading(shading);
+        if(oldshad == null) {
+            shadings.add(shading);
+            this.objects.add(shading);
+        } else {
+            this.objectcount--;
+            this.shadingCount--;
+            shading = oldshad;
+        }
+
         if(res != null) {
             res.getPDFResources().addShading(shading);
         } else {
             this.resources.addShading(shading);
         }
 
-        this.objects.add(shading);
         return (shading);
     }
 
@@ -632,13 +688,21 @@ public class PDFDocument {
                                             theBitsPerComponent, theDecode,
                                             theVerticesPerRow, theFunction);
 
+        PDFShading oldshad = findShading(shading);
+        if(oldshad == null) {
+            shadings.add(shading);
+            this.objects.add(shading);
+        } else {
+            this.objectcount--;
+            this.shadingCount--;
+            shading = oldshad;
+        }
+
         if(res != null) {
             res.getPDFResources().addShading(shading);
         } else {
             this.resources.addShading(shading);
         }
-
-        this.objects.add(shading);
 
         return (shading);
     }
@@ -671,12 +735,21 @@ public class PDFDocument {
                                             theMatrix, theXUID,
                                             thePatternDataStream);
 
+        PDFPattern oldpatt = findPattern(pattern);
+        if(oldpatt == null) {
+            patterns.add(pattern);
+            this.objects.add(pattern);
+        } else {
+            this.objectcount--;
+            this.patternCount--;
+            pattern = oldpatt;
+        }
+
         if(res != null) {
             res.getPDFResources().addPattern(pattern);
         } else {
             this.resources.addPattern(pattern);
         }
-        this.objects.add(pattern);
 
         return (pattern);
     }
@@ -699,12 +772,21 @@ public class PDFDocument {
                                             thePatternName, 2, theShading,
                                             theXUID, theExtGState, theMatrix);
 
+        PDFPattern oldpatt = findPattern(pattern);
+        if(oldpatt == null) {
+            patterns.add(pattern);
+            this.objects.add(pattern);
+        } else {
+            this.objectcount--;
+            this.patternCount--;
+            pattern = oldpatt;
+        }
+
         if(res != null) {
             res.getPDFResources().addPattern(pattern);
         } else {
             this.resources.addPattern(pattern);
         }
-        this.objects.add(pattern);
 
         return (pattern);
     }
