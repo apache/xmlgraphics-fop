@@ -157,6 +157,12 @@ JAI is much faster than JIMI, but is not available for all platforms. See <link 
         <p>FOP uses <link href="#batik">Batik</link> for SVG support.
 This format can be handled as an <code>fo:instream-foreign-object</code> or in a separate
 file referenced with <code>fo:external-graphic</code>.</p>
+      <note>   
+Batik's SVG Rasterizer utility may also be used to convert standalone SVG
+documents into PDF.  For more information please see the
+<link href="http://xml.apache.org/batik/svgrasterizer.html">SVG Rasterizer documentation</link>
+on the Batik site.
+      </note>
       </section>
       <section id="svg-pdf-graphics">
         <title>Placing SVG Graphics into PDF</title>
