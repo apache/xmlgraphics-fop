@@ -89,6 +89,9 @@ public interface Renderer {
     /** render the given SVG area */
     public void renderSVGArea(SVGArea area);
 
+    /** render a foreign object area */
+    public void renderForeignObjectArea(ForeignObjectArea area);
+
     /** render the given image area */
     public void renderImageArea(ImageArea area);
 
