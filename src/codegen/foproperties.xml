@@ -1527,25 +1527,36 @@
   <property>
     <name>marker-class-name</name>
     <inherited>false</inherited>
-    <datatype>ToBeImplemented</datatype>
+    <datatype>String</datatype>
     <default></default>
   </property>
   <property>
     <name>retrieve-class-name</name>
     <inherited>false</inherited>
-    <datatype>ToBeImplemented</datatype>
+    <datatype>String</datatype>
     <default></default>
   </property>
   <property>
     <name>retrieve-position</name>
     <inherited>false</inherited>
-    <datatype>ToBeImplemented</datatype>
+    <datatype>Enum</datatype>
+      <enumeration>
+        <value const="FSWP">first-starting-within-page</value>
+        <value const="FIC">first-including-carryover</value>
+        <value const="LSWP">last-starting-within-page</value>
+        <value const="LEWP">last-ending-within-page</value>
+      </enumeration>
     <default>first-starting-within-page</default>
   </property>
   <property>
     <name>retrieve-boundary</name>
     <inherited>false</inherited>
-    <datatype>ToBeImplemented</datatype>
+    <datatype>Enum</datatype>
+      <enumeration>
+        <value const="PAGE">page</value>
+        <value const="PAGE_SEQUENCE">page-sequence</value>
+        <value const="DOCUMENT">document</value>
+      </enumeration>
     <default>page-sequence</default>
   </property>
 

@@ -159,6 +159,17 @@ public class Block extends FObjMixed {
 				this.blockArea = new BlockArea(propMgr.getFontState(area.getFontInfo()), area.getAllocationWidth(),
 								area.spaceLeft(), startIndent, endIndent, textIndent,
 								align, alignLast, lineHeight);
+				this.blockArea.generatedBy = this;
+				this.areasGenerated++;
+				if (this.areasGenerated == 1)
+					this.blockArea.isFirst = true;
+				// for normal areas this should be the only pair
+				this.blockArea.addLineagePair(this, this.areasGenerated);
+				
+				// markers
+				if (this.hasMarkers())
+					this.blockArea.addMarkers(this.getMarkers());
+					
 				this.blockArea.setParent(area);	// BasicLink needs it
 				blockArea.setPage(area.getPage());
 				blockArea.setBackgroundColor(backgroundColor);
@@ -248,6 +259,7 @@ public class Block extends FObjMixed {
 				}
 
 				//MessageHandler.error(" b:OK" + marker + " ");
+				this.blockArea.isLast = true;
 				return new Status(Status.OK);
 		}
 

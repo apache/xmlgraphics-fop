@@ -158,7 +158,5 @@ public class FObj extends FONode {
 	 p=parent);
     this.properties.setWritingMode(p.getProperty("writing-mode").getEnum());
   }
-
-
 }
 
