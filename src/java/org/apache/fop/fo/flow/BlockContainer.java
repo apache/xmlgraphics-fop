@@ -38,7 +38,7 @@ import org.apache.fop.fo.properties.LengthRangeProperty;
  */
 public class BlockContainer extends FObj {
     // The value of properties relevant for fo:block-container.
-    private CommonAbsolutePosition commonAbsolutePosition ;
+    private CommonAbsolutePosition commonAbsolutePosition;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonMarginBlock commonMarginBlock;
     private LengthRangeProperty blockProgressionDimension;
@@ -146,28 +146,28 @@ public class BlockContainer extends FObj {
     }
 
     /**
-     * Return the Common Absolute Position Properties.
+     * @return the Common Absolute Position Properties.
      */
     public CommonAbsolutePosition getCommonAbsolutePosition() {
         return commonAbsolutePosition;
     }
     
     /**
-     * Return the Common Margin Properties-Block.
+     * @return the Common Margin Properties-Block.
      */
     public CommonMarginBlock getCommonMarginBlock() {
         return commonMarginBlock;
     }
 
     /**
-     * Return the Common Border, Padding, and Background Properties.
+     * @return the Common Border, Padding, and Background Properties.
      */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
     }
 
     /**
-     * Return the "block-progression-dimension" property.
+     * @return the "block-progression-dimension" property.
      */
     public LengthRangeProperty getBlockProgressionDimension() {
         return blockProgressionDimension;
@@ -178,36 +178,61 @@ public class BlockContainer extends FObj {
         return displayAlign;
     }
     
+    /** @return the "break-after" property. */
+    public int getBreakAfter() {
+        return breakAfter;
+    }
+
+    /** @return the "break-before" property. */
+    public int getBreakBefore() {
+        return breakBefore;
+    }
+
+    /** @return the "keep-with-next" property.  */
+    public KeepProperty getKeepWithNext() {
+        return keepWithNext;
+    }
+
+    /** @return the "keep-with-previous" property.  */
+    public KeepProperty getKeepWithPrevious() {
+        return keepWithPrevious;
+    }
+
+    /** @return the "keep-together" property.  */
+    public KeepProperty getKeepTogether() {
+        return keepTogether;
+    }
+
     /**
-     * Return the "id" property.
+     * @return the "id" property.
      */
     public String getId() {
         return id;
     }
 
     /**
-     * Return the "inline-progression-dimension" property.
+     * @return the "inline-progression-dimension" property.
      */
     public LengthRangeProperty getInlineProgressionDimension() {
         return inlineProgressionDimension;
     }
 
     /**
-     * Return the "overflow" property.
+     * @return the "overflow" property.
      */
     public int getOverflow() {
         return overflow;
     }
 
     /**
-     * Return the "reference-orientation" property.
+     * @return the "reference-orientation" property.
      */
     public int getReferenceOrientation() {
         return referenceOrientation.getValue();
     }
 
     /**
-     * Return the "span" property.
+     * @return the "span" property.
      */
     public int getSpan() {
         return this.span;
