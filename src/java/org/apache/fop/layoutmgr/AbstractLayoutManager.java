@@ -67,6 +67,9 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
      * @param fo the formatting object for this layout manager
      */
     public AbstractLayoutManager(FObj fo) {
+        if (fo == null) {
+            throw new IllegalStateException("Null formatting object found.");
+        }
         setFObj(fo);
     }
 

@@ -49,8 +49,6 @@ import org.apache.fop.fo.flow.TableAndCaption;
 import org.apache.fop.fo.flow.TableBody;
 import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableColumn;
-import org.apache.fop.fo.flow.TableFooter;
-import org.apache.fop.fo.flow.TableHeader;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.flow.Wrapper;
 import org.apache.fop.fo.pagination.Title;
@@ -434,26 +432,8 @@ public class AddLMVisitor {
          return clm;
      }
 
-     public void serveTableBody(TableBody node) {
-         currentLMList.add(getTableBodyLayoutManager(node));
-     }
-
      public Body getTableBodyLayoutManager(TableBody node) {
          Body blm = new Body(node);
          return blm;
      }
-
-    /**
-     * @param node TableFooter object to process
-     */
-    public void serveTableFooter(TableFooter node) {
-        serveTableBody((TableBody)node);
-    }
-
-    /**
-     * @param node TableHeader object to process
-     */
-    public void serveTableHeader(TableHeader node) {
-        serveTableBody((TableBody)node);
-    }
 }

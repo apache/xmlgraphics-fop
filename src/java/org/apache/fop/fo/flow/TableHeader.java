@@ -20,14 +20,12 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.layoutmgr.AddLMVisitor;
-import org.apache.fop.fo.LMVisited;
 
 /**
  * Class modelling the fo:table-header object. See Sec. 6.7.6 of the XSL-FO
  * Standard.
  */
-public class TableHeader extends TableBody implements LMVisited {
+public class TableHeader extends TableBody {
 
     /**
      * @param parent FONode that is the parent of this object
@@ -36,10 +34,9 @@ public class TableHeader extends TableBody implements LMVisited {
         super(parent);
     }
 
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveTableHeader(this);
-    }
-
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:table-header";
     }

@@ -39,9 +39,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
      * Constructor
      *
      * @param node the formatting object that creates this area
-     * @todo better null checking of node, font
-     * @todo see if cleaner way to remove redundant pncNode variable (already
-     *  being stored as an FObj in base class)
+     * @todo better null checking font
      */
     public PageNumberCitationLayoutManager(PageNumberCitation node) {
         super(node);
