@@ -133,7 +133,7 @@ public class FopPrintServlet extends HttpServlet {
             } else if ((xmlParam != null) && (xsltParam != null)) {
                 XSLTInputHandler input =
                   new XSLTInputHandler(new File(xmlParam),
-                                       new File(xsltParam));
+                                       new File(xsltParam), null);
                 renderXML(input, response);
             } else {
                 response.setContentType("text/html");

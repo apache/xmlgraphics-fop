@@ -306,7 +306,7 @@ public class TestConverter extends AbstractLogEnabled {
             } else {
                 inputHandler = new XSLTInputHandler(xmlFile,
                                                     new File(baseDir + "/"
-                                                             + xsl));
+                                                             + xsl), null);
             }
 
             Driver driver = new Driver();
