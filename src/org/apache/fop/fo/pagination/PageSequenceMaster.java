@@ -15,7 +15,8 @@ import java.util.Set;
 import java.util.Iterator;
 
 // FOP
-import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.properties.Property;
+import org.apache.fop.fo.properties.*;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
@@ -84,9 +85,9 @@ public class PageSequenceMaster {
             // Create and add a single default PageCondition
             masterAlt.addCondition
                         (masterAlt.new PageCondition(simplePM,
-                                       Properties.BlankOrNotBlank.ANY,
-                                       Properties.OddOrEven.ANY,
-                                       Properties.PagePosition.ANY));
+                                       BlankOrNotBlank.ANY,
+                                       OddOrEven.ANY,
+                                       PagePosition.ANY));
             masters.add(masterAlt);
         }
 	// Process the sequence of masters.
@@ -103,9 +104,9 @@ public class PageSequenceMaster {
                 // Create and add a single default PageCondition
                 masterAlt.addCondition
                             (masterAlt.new PageCondition(simplePM,
-                                           Properties.BlankOrNotBlank.ANY,
-                                           Properties.OddOrEven.ANY,
-                                           Properties.PagePosition.ANY));
+                                           BlankOrNotBlank.ANY,
+                                           OddOrEven.ANY,
+                                           PagePosition.ANY));
                 masters.add(masterAlt);
                 break;
 	    case FObjectNames.REPEATABLE_PAGE_MASTER_REFERENCE:
@@ -118,7 +119,7 @@ public class PageSequenceMaster {
                 switch (pv.getType()) {
                 case PropertyValue.ENUM:
                     enumValue = ((EnumType)pv).getEnumValue();
-                    if (enumValue == Properties.MaximumRepeats.NO_LIMIT) {
+                    if (enumValue == MaximumRepeats.NO_LIMIT) {
                         maxRepeats = NO_LIMIT;
                         break;
                     }
@@ -142,9 +143,9 @@ public class PageSequenceMaster {
                 // Create and add a single default PageCondition
                 masterAlt.addCondition
                             (masterAlt.new PageCondition(simplePM,
-                                           Properties.BlankOrNotBlank.ANY,
-                                           Properties.OddOrEven.ANY,
-                                           Properties.PagePosition.ANY));
+                                           BlankOrNotBlank.ANY,
+                                           OddOrEven.ANY,
+                                           PagePosition.ANY));
                 masters.add(masterAlt);
                 break;
 	    case FObjectNames.REPEATABLE_PAGE_MASTER_ALTERNATIVES:
@@ -154,7 +155,7 @@ public class PageSequenceMaster {
                 switch (pv.getType()) {
                 case PropertyValue.ENUM:
                     enumValue = ((EnumType)pv).getEnumValue();
-                    if (enumValue == Properties.MaximumRepeats.NO_LIMIT) {
+                    if (enumValue == MaximumRepeats.NO_LIMIT) {
                         maxRepeats = NO_LIMIT;
                         break;
                     }
@@ -288,7 +289,7 @@ public class PageSequenceMaster {
 	public PageMasterAlternatives(int minRepeats, int maxRepeats) {
 	    this.minRepeats = minRepeats;
 	    this.maxRepeats = maxRepeats;
-            System.out.println("New PMA: " + minRepeats + " " + maxRepeats);
+            //System.out.println("New PMA: " + minRepeats + " " + maxRepeats);
 	}
 
 	/**
@@ -327,13 +328,13 @@ public class PageSequenceMaster {
             /** The simple page master used when these conditions are true. */
             public final FoSimplePageMaster master;
             /** The blank-or-not-blank condition.
-                Encoded from Properties.BlankOrNotBlank. */
+                Encoded from BlankOrNotBlank. */
             public final int blankOrNot;
             /** The odd-or-even condition.
-                                        Encoded from Properties.OddOrEven. */
+                                        Encoded from OddOrEven. */
             public final int oddOrEven;
             /** The page-position condition.
-                                       Encoded from Properties.pagePosition. */
+                                       Encoded from pagePosition. */
             public final int pagePosition;
 
             /**
@@ -352,9 +353,9 @@ public class PageSequenceMaster {
                 this.blankOrNot   = blankOrNot;
                 this.oddOrEven    = oddOrEven;
                 this.pagePosition = pagePosition;
-                System.out.println("New condition: "
-                                   + blankOrNot
-                                   + " "+ oddOrEven + " " + pagePosition);
+                //System.out.println("New condition: "
+                //                   + blankOrNot
+                //                   + " "+ oddOrEven + " " + pagePosition);
             }
         }
 
