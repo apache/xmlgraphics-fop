@@ -12,7 +12,7 @@ import java.util.List;
 
 // this is a normal flow reference area
 // it containts a list of block areas from the flow
-public class Flow extends Area {
+public class Flow extends BlockParent {
     // the list of blocks created from the flow
     ArrayList blocks = new ArrayList();
     int stacking = TB;
@@ -25,5 +25,14 @@ public class Flow extends Area {
     public List getBlocks() {
         return blocks;
     }
+
+    /**
+     * Maximum block progression dimension for a Flow is
+     * the same as that of its parent Span.
+     */
+    public MinOptMax getMaxBPD() {
+	return parent.getMaxBPD();
+    }
+
 
 }

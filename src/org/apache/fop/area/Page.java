@@ -18,29 +18,29 @@ public class Page implements Serializable {
     RegionViewport regionAfter = null;
 
     public void setRegion(int areaclass, RegionViewport port) {
-        if (areaclass == Region.BEFORE) {
+        if (areaclass == RegionReference.BEFORE) {
             regionBefore = port;
-        } else if (areaclass == Region.START) {
+        } else if (areaclass == RegionReference.START) {
             regionStart = port;
-        } else if (areaclass == Region.BODY) {
+        } else if (areaclass == RegionReference.BODY) {
             regionBody = port;
-        } else if (areaclass == Region.END) {
+        } else if (areaclass == RegionReference.END) {
             regionEnd = port;
-        } else if (areaclass == Region.AFTER) {
+        } else if (areaclass == RegionReference.AFTER) {
             regionAfter = port;
         }
     }
 
     public RegionViewport getRegion(int areaclass) {
-        if (areaclass == Region.BEFORE) {
+        if (areaclass == RegionReference.BEFORE) {
             return regionBefore;
-        } else if (areaclass == Region.START) {
+        } else if (areaclass == RegionReference.START) {
             return regionStart;
-        } else if (areaclass == Region.BODY) {
+        } else if (areaclass == RegionReference.BODY) {
             return regionBody;
-        } else if (areaclass == Region.END) {
+        } else if (areaclass == RegionReference.END) {
             return regionEnd;
-        } else if (areaclass == Region.AFTER) {
+        } else if (areaclass == RegionReference.AFTER) {
             return regionAfter;
         }
         return null;

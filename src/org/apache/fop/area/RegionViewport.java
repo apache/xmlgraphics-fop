@@ -11,45 +11,50 @@ import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 import java.io.IOException;
 
-public class RegionViewport implements Serializable {
+public class RegionViewport extends Area implements Serializable {
     // this rectangle is relative to the page
-    Rectangle2D regionArea;
+    RegionReference region;
+    Rectangle2D viewArea;
     boolean clip = false;
 
-    Region region;
 
-    public RegionViewport(Rectangle2D area) {
-        regionArea = area;
+    public RegionViewport(Rectangle2D viewArea) {
+        this.viewArea =viewArea;
     }
 
-    public void setRegion(Region reg) {
+    public void setRegion(RegionReference reg) {
         region = reg;
+	region.setParent(this);
+    }
+
+    public RegionReference getRegion() {
+        return region;
+    }
+
+    public void setClip(boolean c) {
+        clip = c;
     }
 
     public Rectangle2D getViewArea() {
-        return regionArea;
-    }
-
-    public Region getRegion() {
-        return region;
+        return viewArea;
     }
 
     private void writeObject(java.io.ObjectOutputStream out)
     throws IOException {
-        out.writeFloat((float) regionArea.getX());
-        out.writeFloat((float) regionArea.getY());
-        out.writeFloat((float) regionArea.getWidth());
-        out.writeFloat((float) regionArea.getHeight());
+        out.writeFloat((float) viewArea.getX());
+        out.writeFloat((float) viewArea.getY());
+        out.writeFloat((float) viewArea.getWidth());
+        out.writeFloat((float) viewArea.getHeight());
         out.writeBoolean(clip);
         out.writeObject(region);
     }
 
     private void readObject(java.io.ObjectInputStream in)
     throws IOException, ClassNotFoundException {
-        regionArea = new Rectangle2D.Float(in.readFloat(), in.readFloat(),
-                                           in.readFloat(), in.readFloat());
+        viewArea = new Rectangle2D.Float(in.readFloat(), in.readFloat(),
+					 in.readFloat(), in.readFloat());
         clip = in.readBoolean();
-        region = (Region) in.readObject();
+        setRegion( (RegionReference) in.readObject());
     }
 
 }

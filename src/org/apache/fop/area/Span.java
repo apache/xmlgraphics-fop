@@ -8,6 +8,7 @@
 package org.apache.fop.area;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 // this is a reference area block area with 0 border and padding
 public class Span extends Area {
@@ -34,4 +35,21 @@ public class Span extends Area {
     public Flow getFlow(int count) {
         return (Flow) flowAreas.get(count);
     }
+
+    /**
+     * Maximum available BPD for a Span is the maxBPD for its containing
+     * MainReference less the content BPD of any previous spans
+     */
+    public MinOptMax getMaxBPD() {
+	MinOptMax maxbpd = parent.getMaxBPD();
+	MainReference mainref = (MainReference)parent;
+	Iterator spanIter = mainref.getSpans().iterator();
+	while (spanIter.hasNext()) {
+	    Span s = (Span)spanIter.next();
+	    if (s == this) break;
+	    maxbpd = MinOptMax.subtract(maxbpd, s.getContentBPD());
+	}
+	return maxbpd;
+    }
+
 }

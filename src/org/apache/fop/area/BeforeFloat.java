@@ -10,7 +10,7 @@ package org.apache.fop.area;
 import java.util.List;
 import java.util.ArrayList;
 
-public class BeforeFloat extends Area {
+public class BeforeFloat extends BlockParent {
     // this is an optional block area that will be rendered
     // as the separator only if there are float areas
     Block separator = null;
@@ -47,4 +47,18 @@ public class BeforeFloat extends Area {
         int h = 0;
         return h;
     }
+
+    public MinOptMax getMaxBPD() {
+	MinOptMax maxbpd = parent.getMaxBPD();
+	BodyRegion body = (BodyRegion)parent;
+	Area a =  body.getMainReference();
+	if (a != null) {
+	    maxbpd = MinOptMax.subtract(maxbpd, a.getContentBPD());
+	}
+	if ((a=body.getFootnote()) != null) {
+	    maxbpd = MinOptMax.subtract(maxbpd, a.getContentBPD());
+	}
+	return maxbpd;
+    }
+
 }

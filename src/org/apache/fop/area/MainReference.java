@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // the area that contains the flow via the span areas
-public class MainReference implements Serializable {
+public class MainReference extends Area implements Serializable {
     List spanAreas = new ArrayList();
     int columnGap;
     int width;
@@ -31,5 +31,18 @@ public class MainReference implements Serializable {
 
     public int getWidth() {
         return width;
+    }
+
+    public MinOptMax getMaxBPD() {
+	MinOptMax maxbpd = parent.getMaxBPD();
+	BodyRegion body = (BodyRegion)parent;
+	Area a =  body.getBeforeFloat();
+	if (a != null) {
+	    maxbpd = MinOptMax.subtract(maxbpd, a.getContentBPD());
+	}
+	if ((a=body.getFootnote()) != null) {
+	    maxbpd = MinOptMax.subtract(maxbpd, a.getContentBPD());
+	}
+	return maxbpd;
     }
 }

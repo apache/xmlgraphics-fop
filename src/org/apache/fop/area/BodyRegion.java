@@ -7,25 +7,44 @@
 
 package org.apache.fop.area;
 
-public class BodyRegion extends Region {
+import java.awt.geom.Rectangle2D;
+
+public class BodyRegion extends RegionReference {
     BeforeFloat beforeFloat;
     MainReference mainReference;
     Footnote footnote;
+
+    /** Maximum block progression dimension. Note: min=opt=max */
+    private MinOptMax maxBPD;
+
+    /** Referenc inline progression dimension for the body. */
+    private int refIPD;
 
     public BodyRegion() {
         super(BODY);
     }
 
+    public void setParent(Area area) {
+	super.setParent(area);
+	// Only if not scrolling or overflow !!!
+	Rectangle2D refRect = ((RegionViewport)area).getViewArea();
+	maxBPD = new MinOptMax((int)refRect.getHeight());
+	refIPD = (int)refRect.getWidth();
+    }
+
     public void setBeforeFloat(BeforeFloat bf) {
         beforeFloat = bf;
+	beforeFloat.setParent(this);
     }
 
     public void setMainReference(MainReference mr) {
         mainReference = mr;
+	mainReference.setParent(this);
     }
 
     public void setFootnote(Footnote foot) {
         footnote = foot;
+	footnote.setParent(this);
     }
 
 
@@ -39,5 +58,9 @@ public class BodyRegion extends Region {
 
     public Footnote getFootnote() {
         return footnote;
+    }
+
+    public MinOptMax getMaxBPD() {
+	return maxBPD;
     }
 }
