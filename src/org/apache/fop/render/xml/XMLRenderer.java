@@ -1,53 +1,9 @@
-/*-- $Id$ -- 
-
- ============================================================================
-                   The Apache Software License, Version 1.1
- ============================================================================
- 
-    Copyright (C) 1999 The Apache Software Foundation. All rights reserved.
- 
- Redistribution and use in source and binary forms, with or without modifica-
- tion, are permitted provided that the following conditions are met:
- 
- 1. Redistributions of  source code must  retain the above copyright  notice,
-    this list of conditions and the following disclaimer.
- 
- 2. Redistributions in binary form must reproduce the above copyright notice,
-    this list of conditions and the following disclaimer in the documentation
-    and/or other materials provided with the distribution.
- 
- 3. The end-user documentation included with the redistribution, if any, must
-    include  the following  acknowledgment:  "This product includes  software
-    developed  by the  Apache Software Foundation  (http://www.apache.org/)."
-    Alternately, this  acknowledgment may  appear in the software itself,  if
-    and wherever such third-party acknowledgments normally appear.
- 
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
-    endorse  or promote  products derived  from this  software without  prior
-    written permission. For written permission, please contact
-    apache@apache.org.
- 
- 5. Products  derived from this software may not  be called "Apache", nor may
-    "Apache" appear  in their name,  without prior written permission  of the
-    Apache Software Foundation.
- 
- THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
- INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- FITNESS  FOR A PARTICULAR  PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL  THE
- APACHE SOFTWARE  FOUNDATION  OR ITS CONTRIBUTORS  BE LIABLE FOR  ANY DIRECT,
- INDIRECT, INCIDENTAL, SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL  DAMAGES (INCLU-
- DING, BUT NOT LIMITED TO, PROCUREMENT  OF SUBSTITUTE GOODS OR SERVICES; LOSS
- OF USE, DATA, OR  PROFITS; OR BUSINESS  INTERRUPTION)  HOWEVER CAUSED AND ON
- ANY  THEORY OF LIABILITY,  WHETHER  IN CONTRACT,  STRICT LIABILITY,  OR TORT
- (INCLUDING  NEGLIGENCE OR  OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
- THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- 
- This software  consists of voluntary contributions made  by many individuals
- on  behalf of the Apache Software  Foundation and was  originally created by
- James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
- Software Foundation, please see <http://www.apache.org/>.
- 
+/* $Id$
+ * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * For details on use and redistribution please refer to the
+ * LICENSE file included with these sources."
  */
+
 package org.apache.fop.render.xml;
 
 // FOP
@@ -71,7 +27,7 @@ import java.util.Hashtable;
  * Renderer that renders areas to XML for debugging purposes.
  */
 public class XMLRenderer implements Renderer {
-    
+
     /** indentation to use for pretty-printing the XML */
     protected int indent = 0;
 
@@ -81,24 +37,24 @@ public class XMLRenderer implements Renderer {
     /** the writer used to output the XML */
     protected PrintWriter writer;
 
-	/** options */
-	protected Hashtable options;
-	
-	public XMLRenderer() {
-	}
+    /** options */
+    protected Hashtable options;
 
-	/** set up renderer options */
-	public void setOptions(Hashtable options) {
-		this.options = options;
-	}
-	
+    public XMLRenderer() {
+    }
+
+    /** set up renderer options */
+    public void setOptions(Hashtable options) {
+        this.options = options;
+    }
+
     /**
      * set the document's producer
      *
      * @param producer string indicating application producing the XML
      */
     public void setProducer(String producer) {
-	this.producer = producer;
+        this.producer = producer;
     }
 
     /**
@@ -107,20 +63,20 @@ public class XMLRenderer implements Renderer {
      * @param areaTree the laid-out area tree
      * @param stream the OutputStream to give the XML to
      */
-    public void render(AreaTree areaTree, OutputStream stream)
-	throws IOException {
-	MessageHandler.logln("rendering areas to XML");
-	this.writer = new PrintWriter(stream);
-	this.writer.write("<?xml version=\"1.0\"?>\n<!-- produced by "
-			  + this.producer + " -->\n");
-	writeStartTag("<AreaTree>");
-	Enumeration e = areaTree.getPages().elements();
-	while (e.hasMoreElements()) {
-	    this.renderPage((Page) e.nextElement());
-	}
-	writeEndTag("</AreaTree>");
-	this.writer.flush();
-	MessageHandler.errorln("written out XML");
+    public void render(AreaTree areaTree,
+                       OutputStream stream) throws IOException {
+        MessageHandler.logln("rendering areas to XML");
+        this.writer = new PrintWriter(stream);
+        this.writer.write( "<?xml version=\"1.0\"?>\n<!-- produced by " +
+                           this.producer + " -->\n");
+        writeStartTag("<AreaTree>");
+        Enumeration e = areaTree.getPages().elements();
+        while (e.hasMoreElements()) {
+            this.renderPage((Page) e.nextElement());
+        }
+        writeEndTag("</AreaTree>");
+        this.writer.flush();
+        MessageHandler.errorln("written out XML");
     }
 
     /**
@@ -128,10 +84,10 @@ public class XMLRenderer implements Renderer {
      */
     protected void writeIndent() {
         StringBuffer s = new StringBuffer();
-	for (int i= 0; i<this.indent; i++) {
-	    s = s.append("  ");
-	}
-	this.writer.write(s.toString());
+        for (int i = 0; i < this.indent; i++) {
+            s = s.append("  ");
+        }
+        this.writer.write(s.toString());
     }
 
     /**
@@ -140,8 +96,8 @@ public class XMLRenderer implements Renderer {
      * @param element the full text of the element including tags
      */
     protected void writeElement(String element) {
-	writeIndent();
-        this.writer.write(element+"\n");
+        writeIndent();
+        this.writer.write(element + "\n");
     }
 
     /**
@@ -150,7 +106,7 @@ public class XMLRenderer implements Renderer {
      * @param tag the text of the tag
      */
     protected void writeEmptyElementTag(String tag) {
-	writeIndent();
+        writeIndent();
         this.writer.write(tag + "\n");
     }
 
@@ -160,8 +116,8 @@ public class XMLRenderer implements Renderer {
      * @param tag the text of the tag
      */
     protected void writeEndTag(String tag) {
-	this.indent--;
-	writeIndent();
+        this.indent--;
+        writeIndent();
         this.writer.write(tag + "\n");
     }
 
@@ -171,9 +127,9 @@ public class XMLRenderer implements Renderer {
      * @param tag the text of the tag
      */
     protected void writeStartTag(String tag) {
-	writeIndent();
+        writeIndent();
         this.writer.write(tag + "\n");
-	this.indent++;
+        this.indent++;
     }
 
     /**
@@ -183,8 +139,8 @@ public class XMLRenderer implements Renderer {
      */
     public void setupFontInfo(FontInfo fontInfo) {
 
-	/* use PDF's font setup to get PDF metrics */
-	org.apache.fop.render.pdf.FontSetup.setup(fontInfo);
+        /* use PDF's font setup to get PDF metrics */
+        org.apache.fop.render.pdf.FontSetup.setup(fontInfo);
     }
 
     /**
@@ -193,13 +149,13 @@ public class XMLRenderer implements Renderer {
      * @param area the area container to render
      */
     public void renderAreaContainer(AreaContainer area) {
-	writeStartTag("<AreaContainer>");
-	Enumeration e = area.getChildren().elements();
-	while (e.hasMoreElements()) {
-	    Box b = (Box) e.nextElement();
-	    b.render(this);
-	}
-	writeEndTag("</AreaContainer>");
+        writeStartTag("<AreaContainer>");
+        Enumeration e = area.getChildren().elements();
+        while (e.hasMoreElements()) {
+            Box b = (Box) e.nextElement();
+            b.render(this);
+        }
+        writeEndTag("</AreaContainer>");
     }
 
     /**
@@ -207,30 +163,30 @@ public class XMLRenderer implements Renderer {
      *
      * @param area the body area container to render
      */
-  	public void renderBodyAreaContainer(BodyAreaContainer area) {
-	writeStartTag("<BodyAreaContainer>");
-	Enumeration e = area.getChildren().elements();
-	while (e.hasMoreElements()) {
-	    Box b = (Box) e.nextElement();
-	    b.render(this);
-	}
-	writeEndTag("</BodyAreaContainer>");
-	}
+    public void renderBodyAreaContainer(BodyAreaContainer area) {
+        writeStartTag("<BodyAreaContainer>");
+        Enumeration e = area.getChildren().elements();
+        while (e.hasMoreElements()) {
+            Box b = (Box) e.nextElement();
+            b.render(this);
+        }
+        writeEndTag("</BodyAreaContainer>");
+    }
 
     /**
      * render a span area to XML
      *
      * @param area the span area to render
      */
-	public void renderSpanArea(SpanArea area) {
-	writeStartTag("<SpanArea>");
-	Enumeration e = area.getChildren().elements();
-	while (e.hasMoreElements()) {
-	    Box b = (Box) e.nextElement();
-	    b.render(this);
-	}
-	writeEndTag("</SpanArea>");
-	}
+    public void renderSpanArea(SpanArea area) {
+        writeStartTag("<SpanArea>");
+        Enumeration e = area.getChildren().elements();
+        while (e.hasMoreElements()) {
+            Box b = (Box) e.nextElement();
+            b.render(this);
+        }
+        writeEndTag("</SpanArea>");
+    }
 
     /**
      * render a block area to XML
@@ -238,16 +194,15 @@ public class XMLRenderer implements Renderer {
      * @param area the block area to render
      */
     public void renderBlockArea(BlockArea area) {
-	writeStartTag("<BlockArea start-indent=\""
-		      + area.getStartIndent()
-		      + "\" end-indent=\""
-		      + area.getEndIndent() + "\">");
-	Enumeration e = area.getChildren().elements();
-	while (e.hasMoreElements()) {
-	    Box b = (Box) e.nextElement();
-	    b.render(this);
-	}
-	writeEndTag("</BlockArea>");
+        writeStartTag("<BlockArea start-indent=\"" +
+                      area.getStartIndent() + "\" end-indent=\"" +
+                      area.getEndIndent() + "\">");
+        Enumeration e = area.getChildren().elements();
+        while (e.hasMoreElements()) {
+            Box b = (Box) e.nextElement();
+            b.render(this);
+        }
+        writeEndTag("</BlockArea>");
     }
 
     /**
@@ -256,14 +211,13 @@ public class XMLRenderer implements Renderer {
      * @param space the space to render
      */
     public void renderDisplaySpace(DisplaySpace space) {
-		if (!isCoarseXml())
-			writeEmptyElementTag("<DisplaySpace size=\""
-			     + space.getSize() +"\"/>");
+        if (!isCoarseXml())
+            writeEmptyElementTag("<DisplaySpace size=\"" +
+                                 space.getSize() + "\"/>");
     }
 
     /** render a foreign object area */
-    public void renderForeignObjectArea(ForeignObjectArea area)
-    {
+    public void renderForeignObjectArea(ForeignObjectArea area) {
         // if necessary need to scale and align the content
         area.getObject().render(this);
     }
@@ -274,7 +228,7 @@ public class XMLRenderer implements Renderer {
      * @param area the area to render
      */
     public void renderSVGArea(SVGArea area) {
-	writeEmptyElementTag("<SVG/>");
+        writeEmptyElementTag("<SVG/>");
     }
 
     /**
@@ -283,7 +237,7 @@ public class XMLRenderer implements Renderer {
      * @param area the area to render
      */
     public void renderImageArea(ImageArea area) {
-	writeEmptyElementTag("<ImageArea/>");
+        writeEmptyElementTag("<ImageArea/>");
     }
 
     /**
@@ -292,28 +246,26 @@ public class XMLRenderer implements Renderer {
      * @param area the area to render
      */
     public void renderWordArea(WordArea area) {
-	String fontWeight = area.getFontState().getFontWeight();
-	StringBuffer sb = new StringBuffer();
-	String s = area.getText();
-	int l = s.length();
-	for (int i=0; i < l; i++) {
-	    char ch = s.charAt(i);
-	    if (ch>127)
-		sb = sb.append("&#"+(int)ch+";");
-	    else
-		sb = sb.append(ch);
-	}
-	if (!isCoarseXml()) {
-	writeElement("<WordArea font-weight=\""
-		     + fontWeight + "\" red=\""
-		     + area.getRed() + "\" green=\""
-		     + area.getGreen() + "\" blue = \""
-		     + area.getBlue() + "\" width = \""
-		     + area.getContentWidth() + "\">" + sb.toString()
-		     + "</WordArea>");
-	} else {
-		this.writer.write(sb.toString());
-	}
+        String fontWeight = area.getFontState().getFontWeight();
+        StringBuffer sb = new StringBuffer();
+        String s = area.getText();
+        int l = s.length();
+        for (int i = 0; i < l; i++) {
+            char ch = s.charAt(i);
+            if (ch > 127)
+                sb = sb.append("&#"+(int) ch + ";");
+            else
+                sb = sb.append(ch);
+        }
+        if (!isCoarseXml()) {
+            writeElement("<WordArea font-weight=\"" + fontWeight +
+                         "\" red=\"" + area.getRed() + "\" green=\"" +
+                         area.getGreen() + "\" blue=\"" + area.getBlue() +
+                         "\" width=\"" + area.getContentWidth() + "\">" +
+                         sb.toString() + "</WordArea>");
+        } else {
+            this.writer.write(sb.toString());
+        }
     }
 
     /**
@@ -322,11 +274,11 @@ public class XMLRenderer implements Renderer {
      * @param space the space to render
      */
     public void renderInlineSpace(InlineSpace space) {
-		if (!isCoarseXml())
-			writeEmptyElementTag("<InlineSpace size=\""
-			     + space.getSize() +"\"/>");
-		else
-			this.writer.write(" ");
+        if (!isCoarseXml())
+            writeEmptyElementTag("<InlineSpace size=\"" +
+                                 space.getSize() + "\"/>");
+        else
+            this.writer.write(" ");
     }
 
     /**
@@ -335,20 +287,19 @@ public class XMLRenderer implements Renderer {
      * @param area the area to render
      */
     public void renderLineArea(LineArea area) {
-		if (!isCoarseXml()) {
-			String fontWeight = area.getFontState().getFontWeight();
-			writeStartTag("<LineArea font-weight=\""
-		      + fontWeight + "\">");
-		}
-		Enumeration e = area.getChildren().elements();
-		while (e.hasMoreElements()) {
-			Box b = (Box)e.nextElement();
-			b.render(this);
-		}
-		if (!isCoarseXml())
-			writeEndTag("</LineArea>");
-		else
-			this.writer.write("\n");
+        if (!isCoarseXml()) {
+            String fontWeight = area.getFontState().getFontWeight();
+            writeStartTag("<LineArea font-weight=\"" + fontWeight + "\">");
+        }
+        Enumeration e = area.getChildren().elements();
+        while (e.hasMoreElements()) {
+            Box b = (Box) e.nextElement();
+            b.render(this);
+        }
+        if (!isCoarseXml())
+            writeEndTag("</LineArea>");
+        else
+            this.writer.write("\n");
     }
 
     /**
@@ -357,54 +308,56 @@ public class XMLRenderer implements Renderer {
      * @param page the page to render
      */
     public void renderPage(Page page) {
-	BodyAreaContainer body;
-	AreaContainer before, after;
-	writeStartTag("<Page number=\"" + page.getNumber() + "\">");
-	body = page.getBody();
-	before = page.getBefore();
-	after = page.getAfter();
-	if (before != null) {
-	    renderAreaContainer(before);
-	}
-	renderBodyAreaContainer(body);
-	if (after != null) {
-	    renderAreaContainer(after);
-	}
-	writeEndTag("</Page>");
+        BodyAreaContainer body;
+        AreaContainer before, after;
+        writeStartTag("<Page number=\"" + page.getNumber() + "\">");
+        body = page.getBody();
+        before = page.getBefore();
+        after = page.getAfter();
+        if (before != null) {
+            renderAreaContainer(before);
+        }
+        renderBodyAreaContainer(body);
+        if (after != null) {
+            renderAreaContainer(after);
+        }
+        writeEndTag("</Page>");
     }
 
     /**
-      * render a leader area to XML
-      *
-      * @param area the area to render
-      */
+     * render a leader area to XML
+     *
+     * @param area the area to render
+     */
     public void renderLeaderArea(LeaderArea area) {
-		if (isCoarseXml()) return;
-      String leaderPattern = "";
-      switch (area.getLeaderPattern()) {
-      case LeaderPattern.SPACE:
-        leaderPattern = "space";
-        break;
-      case LeaderPattern.RULE:
-        leaderPattern = "rule";
-        break;
-      case LeaderPattern.DOTS:
-        leaderPattern = "dots";
-        break;
-      case LeaderPattern.USECONTENT:
-        leaderPattern = "use-content";
-        break;
-      }
+        if (isCoarseXml())
+            return;
+        String leaderPattern = "";
+        switch (area.getLeaderPattern()) {
+            case LeaderPattern.SPACE:
+                leaderPattern = "space";
+                break;
+            case LeaderPattern.RULE:
+                leaderPattern = "rule";
+                break;
+            case LeaderPattern.DOTS:
+                leaderPattern = "dots";
+                break;
+            case LeaderPattern.USECONTENT:
+                leaderPattern = "use-content";
+                break;
+        }
 
-        writeEmptyElementTag("<Leader leader-pattern=\"" + leaderPattern +
-                             " leader-length=\"" + area.getLeaderLength()+
-                             "\" rule-thickness=\"" + area.getRuleThickness() +
-                             "\" rule-style=\"" + area.getRuleStyle() +
-                             "\" red=\"" + area.getRed() + "\" green=\"" + area.getGreen() +
-                             "\" blue = \"" + area.getBlue() + "\"/>");
+        writeEmptyElementTag("<Leader leader-pattern=\"" +
+                             leaderPattern + " leader-length=\"" +
+                             area.getLeaderLength() + "\" rule-thickness=\"" +
+                             area.getRuleThickness() + "\" rule-style=\"" +
+                             area.getRuleStyle() + "\" red=\"" + area.getRed() +
+                             "\" green=\"" + area.getGreen() + "\" blue=\"" +
+                             area.getBlue() + "\"/>");
     }
-	
-	private boolean isCoarseXml() {
-		return ((Boolean)options.get("fineDetail")).booleanValue();
-	}
+
+    private boolean isCoarseXml() {
+        return ((Boolean) options.get("fineDetail")).booleanValue();
+    }
 }
