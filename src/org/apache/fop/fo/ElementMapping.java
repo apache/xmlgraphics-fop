@@ -52,5 +52,5 @@ package org.apache.fop.fo;
 
 public interface ElementMapping {
 
-    public void addToBuilder(FOTreeBuilder builder);
+    public void addToBuilder(TreeBuilder builder);
 }

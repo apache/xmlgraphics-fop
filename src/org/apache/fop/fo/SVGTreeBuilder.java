@@ -51,6 +51,8 @@
 package org.apache.fop.fo;
 
 // FOP
+import org.apache.fop.fo.*;
+import org.apache.fop.dom.svg.*;
 import org.apache.fop.layout.AreaTree;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.apps.FOPException;
@@ -62,15 +64,19 @@ import org.xml.sax.SAXException;
 import org.xml.sax.InputSource;
 import org.xml.sax.Attributes;
 
+import org.w3c.dom.svg.*;
+
 // Java
 import java.util.Hashtable;
 import java.util.Stack;
 import java.io.IOException;
 
+// NOTE: This class is here since a number of FObj methods that
+// are called are protected. This should probably be fixed.
 /**
  * SAX Handler that builds the formatting object tree.
  */
-public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
+public class SVGTreeBuilder extends DefaultHandler implements TreeBuilder {
 
     /**
      * table mapping element names to the makers of objects
@@ -99,55 +105,55 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
     protected Hashtable unknownFOs = new Hashtable();
 
     // namespace implementation ideas pinched from John Cowan
-//      protected static class NSMap {
-//  	String prefix;
-//  	String uri;
-//  	int level;
+    protected static class NSMap {
+	String prefix;
+	String uri;
+	int level;
 
-//  	NSMap(String prefix, String uri, int level) {
-//  	    this.prefix = prefix;
-//  	    this.uri = uri;
-//  	    this.level = level;
-//  	}
-//      }
+	NSMap(String prefix, String uri, int level) {
+	    this.prefix = prefix;
+	    this.uri = uri;
+	    this.level = level;
+	}
+    }
 
-//      protected int level = 0;
-//      protected Stack namespaceStack = new Stack();
+    protected int level = 0;
+    protected Stack namespaceStack = new Stack();
 
-//      {
-//  	namespaceStack.push(new NSMap("xml",
-//  				      "http://www.w3.org/XML/1998/namespace",
-//  				      -1));
-//  	namespaceStack.push(new NSMap("", "", -1));
-//      }
+    {
+	namespaceStack.push(new NSMap("xml",
+				      "http://www.w3.org/XML/1998/namespace",
+				      -1));
+	namespaceStack.push(new NSMap("", "http://www.w3.org/TR/2000/CR-SVG-20000802/DTD/svg-20000802.dtd", -1));
+    }
 
-//      protected String findURI(String prefix) {
-//  	for (int i = namespaceStack.size() - 1; i >= 0; i--) {
-//  	    NSMap nsMap = (NSMap) (namespaceStack.elementAt(i));
-//  	    if (prefix.equals(nsMap.prefix)) return nsMap.uri;
-//  	}
-//  	return null;
-//      }
+    protected String findURI(String prefix) {
+	for (int i = namespaceStack.size() - 1; i >= 0; i--) {
+	    NSMap nsMap = (NSMap) (namespaceStack.elementAt(i));
+	    if (prefix.equals(nsMap.prefix)) return nsMap.uri;
+	}
+	return null;
+    }
 
-//      protected String mapName(String name)
-//  	throws SAXException {
-//  	int colon = name.indexOf(':');
-//  	String prefix = "";
-//  	String localPart = name;
-//  	if (colon != -1) {
-//  	    prefix = name.substring(0, colon);
-//  	    localPart = name.substring(colon + 1);
-//  	}
-//  	String uri = findURI(prefix);
-//  	if (uri == null) {
-//  	    if (prefix.equals("")) {
-//  		return name;
-//  	    } else {
-//  		throw new SAXException(new FOPException("Unknown namespace prefix " + prefix));
-//  	    }
-//  	}
-//  	return uri + "^" + localPart;
-//      }
+    protected String mapName(String name)
+	throws SAXException {
+	int colon = name.indexOf(':');
+	String prefix = "";
+	String localPart = name;
+	if (colon != -1) {
+	    prefix = name.substring(0, colon);
+	    localPart = name.substring(colon + 1);
+	}
+	String uri = findURI(prefix);
+	if (uri == null) {
+	    if (prefix.equals("")) {
+		return "http://www.w3.org/TR/2000/CR-SVG-20000802/DTD/svg-20000802.dtd^" + name;
+	    } else {
+		throw new SAXException(new FOPException("Unknown namespace prefix " + prefix));
+	    }
+	}
+	return uri + "^" + localPart;
+    }
 
     /**
      * add a mapping from element name to maker.
@@ -209,15 +215,15 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
 		String uri, String localName, String rawName) {
 	currentFObj.end();
 	currentFObj = (FObj) currentFObj.getParent();
-//      level--;
-//  	while (((NSMap) namespaceStack.peek()).level > level) {
-//  	    namespaceStack.pop();
-//  	}
+	level--;
+	while (((NSMap) namespaceStack.peek()).level > level) {
+	    namespaceStack.pop();
+	}
     }
 
     /** SAX Handler for the start of the document */
     public void startDocument() {
-	MessageHandler.logln("building formatting object tree");
+	MessageHandler.logln("building svg tree");
     }
 
     /** SAX Handler for the start of an element */
@@ -226,30 +232,32 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
 	throws SAXException { 
 	/* the formatting object started */
 	FObj fobj;
+	if(uri.equals("")) {
+		uri = "http://www.w3.org/TR/2000/CR-SVG-20000802/DTD/svg-20000802.dtd";
+	}
 
 	/* the maker for the formatting object started */
 	FObj.Maker fobjMaker;
 
-//  	level++;
-//  	int length = attlist.getLength();
-//  	for (int i = 0; i < length; i++) {
-//  	    String att = attlist.getQName(i);
-//  	    if (att.equals("xmlns")) {
-//  		namespaceStack.push( new NSMap("",
-//  					       attlist.getValue(i),
-//  					       level));
-//  	    } else if (att.startsWith("xmlns:")) {
-//  		String value = attlist.getValue(i);
-//  		namespaceStack.push(new NSMap(att.substring(6), value,
-//  					      level));
-//  	    }
-//  	}
+	level++;
+	int length = attlist.getLength();
+	for (int i = 0; i < length; i++) {
+	    String att = attlist.getQName(i);
+	    if (att.equals("xmlns")) {
+		namespaceStack.push( new NSMap("",
+					       attlist.getValue(i),
+					       level));
+	    } else if (att.startsWith("xmlns:")) {
+		String value = attlist.getValue(i);
+		namespaceStack.push(new NSMap(att.substring(6), value,
+					      level));
+	    }
+	}
 
-	//String fullName = mapName(rawName);
-	String fullName = uri + "^" + localName;
+	String fullName = mapName(rawName);
+
 	fobjMaker = (FObj.Maker) fobjTable.get(fullName);
-	PropertyListBuilder currentListBuilder =
-	  (PropertyListBuilder)this.propertylistTable.get(uri);
+    PropertyListBuilder currentListBuilder = (PropertyListBuilder)this.propertylistTable.get(uri);
 
 	if (fobjMaker == null) {
 	    if (!this.unknownFOs.containsKey(fullName)) {
@@ -263,8 +271,8 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
 	try {
 		PropertyList list = null;
 		if(currentListBuilder != null) {
-		  list = currentListBuilder.makeList(fullName, attlist,  
-			(currentFObj == null) ? null : currentFObj.properties);
+			list = currentListBuilder.makeList(fullName, attlist,  
+			     (currentFObj == null) ? null : currentFObj.properties);
 		}
 	    fobj = fobjMaker.make(currentFObj, list);
 	} catch (FOPException e) {
@@ -273,9 +281,9 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
 
 	if (rootFObj == null) {
 	    rootFObj = fobj;
-	    if (!fobj.getName().equals("fo:root")) {
+	    if (!fobj.getName().equals("svg:svg")) {
 		throw new SAXException(new FOPException("Root element must"
-							+ " be root, not "
+							+ " be svg, not "
 							+ fobj.getName())); 
 	    }
 	} else {
@@ -286,13 +294,12 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
     }
 
     /**
-     * format this formatting object tree
-     *
-     * @param areaTree the area tree to format into
      */
-    public void format(AreaTree areaTree)
-	throws FOPException {
-	MessageHandler.logln("formatting FOs into areas");
-	((Root) this.rootFObj).format(areaTree);
+    public SVGDocument getSVGDocument()
+    {
+    	SVGDocumentImpl doc = new SVGDocumentImpl();
+        SVGSVGElement svg = (SVGSVGElement)((org.apache.fop.svg.SVG)rootFObj).createGraphic();
+        doc.appendChild(svg);
+    	return doc;
     }
 }
