@@ -55,6 +55,8 @@ import java.util.List;
 import java.util.Map;
 import java.io.IOException;
 
+import javax.xml.parsers.SAXParserFactory;
+
 //SAX
 import org.xml.sax.XMLReader;
 import org.xml.sax.SAXException;
@@ -102,7 +104,9 @@ public class FontReader extends DefaultHandler {
         XMLReader parser = null;
 
         try {
-            parser = javax.xml.parsers.SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+            final SAXParserFactory factory = javax.xml.parsers.SAXParserFactory.newInstance();
+            factory.setNamespaceAware(true);
+            parser = factory.newSAXParser().getXMLReader();
         } catch (Exception e) {
             throw new FOPException(e);
         }
