@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -16,9 +16,22 @@ import java.util.List;
  */
 public interface Resolveable {
 
-    public boolean isResolved();
+    /**
+     * Check if this area has been resolved.
+     *
+     * @return true once this area is resolved
+     */
+    boolean isResolved();
 
-    public String[] getIDs();
+    /**
+     * Get the array of id references of this resolveable object.
+     * If this object contains child resolveables that are
+     * resolved through this then it should return the id's of
+     * the child also.
+     *
+     * @return the id references for resolving this object
+     */
+    String[] getIDs();
 
     /**
      * This resolves reference with a list of pages.
@@ -27,5 +40,5 @@ public interface Resolveable {
      * @param pages the list of pages with the id area
      *              may be null if not found
      */
-    public void resolve(String id, List pages);
+    void resolve(String id, List pages);
 }

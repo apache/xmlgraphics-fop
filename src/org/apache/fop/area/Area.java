@@ -105,86 +105,59 @@ public class Area implements Serializable {
 
     private int areaClass = CLASS_NORMAL;
     private int ipd;
+    private HashMap props = null;
 
-    protected Area parent = null; // Doesn't need to be saved in serialization
-
+    /**
+     * Get the area class of this area.
+     *
+     * @return the area class
+     */
     public int getAreaClass() {
         return areaClass;
     }
 
+    /**
+     * Set the area class of this area.
+     *
+     * @param areaClass the area class
+     */
     public void setAreaClass(int areaClass) {
         this.areaClass = areaClass;
     }
 
+    /**
+     * Set the inline progression dimension of this area.
+     *
+     * @param i the new inline progression dimension
+     */
     public void setIPD(int i) {
         ipd = i;
     }
 
+    /**
+     * Get the inline progression dimension of this area.
+     *
+     * @return the inline progression dimension
+     */
     public int getIPD() {
         return ipd;
     }
 
     /**
-     * Return a length range describing the minimum, optimum and maximum
-     * lengths available for content in the block-progression-direction.
-     * This is calculated from the theoretical maximum size of the area
-     * and its current content.
+     * Add a child to this area.
+     * The default is to do nothing. Subclasses must override
+     * to do something if they can have child areas.
+     *
+     * @param child the child area to add
      */
-    public MinOptMax getAvailBPD() {
-        return MinOptMax.subtract(getMaxBPD(), getContentBPD());
-    }
-
-    /**
-     * Return a length range describing the theoretical maximum size of an
-     * area in the block-progression-direction.
-     * For areas holding normal flowing or floating content in paged media,
-     * this depends on the size of the body. In general the answer is the
-     * gotten from the parent. At the body level, the calculation accounts
-     * for the sizes of the conditional areas.
-     */
-    public MinOptMax getMaxBPD() {
-        if (parent != null) {
-            return parent.getMaxBPD();
-        } else {
-            return new MinOptMax();
-        }
-    }
-
-    /**
-     * Return a length range describing the minimum, optimum and maximum
-     * lengths of all area content in the block-progression-direction.
-     * This is based on the allocation rectangles of all content in
-     * the area.
-     */
-    public MinOptMax getContentBPD() {
-        return new MinOptMax();
-    }
-
-    /**
-     * Return a length range describing the minimum, optimum and maximum
-     * lengths of the area's allocation rectangle
-     * in the block-progression-direction.
-     * This is based on the allocation rectangles of all content in
-     * the area.
-     * The default implementation simply returns the same as the content BPD.
-     * If an Area has before or after border and padding, these contribute
-     * to the allocation BPD, depending on conditionality.
-     */
-    public MinOptMax getAllocationBPD() {
-        return getContentBPD();
-    }
-
-    public void setParent(Area parent) {
-        this.parent = parent;
-    }
-
-    // Do nothing! Let subclasses do something if they can have child areas.
     public void addChild(Area child) {
     }
 
-
-    HashMap props = null;
-
+    /**
+     * Add a trait property to this area.
+     *
+     * @param prop the Trait to add
+     */
     public void addTrait(Trait prop) {
         if (props == null) {
             props = new HashMap(20);
@@ -192,6 +165,12 @@ public class Area implements Serializable {
         props.put(prop.propType, prop.data);
     }
 
+    /**
+     * Add a trait to this area.
+     *
+     * @param traitCode the trait key
+     * @param prop the value of the trait
+     */
     public void addTrait(Object traitCode, Object prop) {
         if (props == null) {
             props = new HashMap(20);
@@ -199,10 +178,21 @@ public class Area implements Serializable {
         props.put(traitCode, prop);
     }
 
+    /**
+     * Get the map of all traits on this area.
+     *
+     * @return the map of traits
+     */
     public HashMap getTraits() {
         return this.props;
     }
 
+    /**
+     * Get a trait from this area.
+     *
+     * @param oTraitCode the trait key
+     * @return the trait value
+     */
     public Object getTrait(Object oTraitCode) {
         return (props != null ? props.get(oTraitCode) : null);
     }

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -9,9 +9,6 @@ package org.apache.fop.area;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Iterator;
-import java.awt.geom.Rectangle2D;
 
 // block areas hold either more block areas or line
 // areas can also be used as a block spacer
@@ -19,10 +16,21 @@ import java.awt.geom.Rectangle2D;
 // or by relative to the parent for floats, tables and lists
 // cacheable object
 // has id information
+
+/**
+ * This is the block area class.
+ * It holds child block areas such as other blocks or lines.
+ */
 public class Block extends BlockParent implements Serializable {
-    // normally stacked with other blocks
+    /**
+     * Normally stacked with other blocks.
+     */
     public static final int STACK = 0;
-    // placed relative to the parent area
+
+    /**
+     * Placed relative to the flow position.
+     * This effects the flow placement of stacking normally.
+     */
     public static final int RELATIVE = 1;
 
     /**
@@ -32,19 +40,16 @@ public class Block extends BlockParent implements Serializable {
     public static final int ABSOLUTE = 2;
 
     private int stacking = TB;
-
-    // list of marker fo objects that are associated with this area
-    // if a retrieve marker resolves this area it will format the
-    // available markers, markers are discarded once page complete
-    private ArrayList markers = null;
+    private int positioning = STACK;
 
     // a block with may contain the dominant styling info in
     // terms of most lines or blocks with info
 
-
-    int positioning = STACK;
-
-
+    /**
+     * Add the block to this block area.
+     *
+     * @param block the block area to add
+     */
     public void addBlock(Block block) {
         if (children == null) {
             children = new ArrayList();
@@ -53,6 +58,11 @@ public class Block extends BlockParent implements Serializable {
         children.add(block);
     }
 
+    /**
+     * Add the line area to this block area.
+     *
+     * @param line the line area to add
+     */
     public void addLineArea(LineArea line) {
         if (children == null) {
             children = new ArrayList();
@@ -61,26 +71,23 @@ public class Block extends BlockParent implements Serializable {
         children.add(line);
     }
 
-    public MinOptMax getContentBPD() {
-        MinOptMax bpd = new MinOptMax();
-        if(children != null) {
-        for(Iterator iter = children.iterator(); iter.hasNext(); ) {
-            Area area = (Area)iter.next();
-            MinOptMax mom = area.getContentBPD();
-            bpd.add(mom);
-        }
-        }
-        return bpd;
-    }
-
+    /**
+     * Set the positioning of this area.
+     *
+     * @param pos the positioning to use when rendering this area
+     */
     public void setPositioning(int pos) {
         positioning = pos;
     }
 
+    /**
+     * Get the positioning of this area.
+     *
+     * @return the positioning to use when rendering this area
+     */
     public int getPositioning() {
         return positioning;
     }
-
 
 }
 
