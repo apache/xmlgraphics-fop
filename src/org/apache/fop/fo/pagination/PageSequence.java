@@ -83,9 +83,14 @@ public class PageSequence extends FObj {
 
     private Page currentPage;
 
-	// page number and elated formatting variables
+	// page number and related formatting variables
+	private String ipnValue;
     private int currentPageNumber = 0;
 	private PageNumberGenerator pageNumberGenerator;
+	
+	private int forcePageCount = 0;
+	private int pageCount = 0;
+	private boolean isForcing = false;
 	
     /** specifies page numbering type (auto|auto-even|auto-odd|explicit) */
     private int pageNumberType;
@@ -125,8 +130,7 @@ public class PageSequence extends FObj {
         _flowMap = new Hashtable();
 
         thisIsFirstPage = true; // we are now on the first page of the page sequence
-        String ipnValue =
-          this.properties.get("initial-page-number").getString();
+        ipnValue = this.properties.get("initial-page-number").getString();
 
         if (ipnValue.equals("auto")) {
             pageNumberType = AUTO;
@@ -154,6 +158,8 @@ public class PageSequence extends FObj {
 			this.properties.get("grouping-size").getNumber().intValue(),
 			this.properties.get("letter-value").getEnum()
 		);
+		
+		this.forcePageCount = this.properties.get("force-page-count").getEnum();
     }
 
     public void addFlow(Flow flow) throws FOPException {
@@ -177,11 +183,12 @@ public class PageSequence extends FObj {
 
         this.layoutMasterSet.resetPageMasters();
 
+		int firstAvailPageNumber = 0;
         do {
             // makePage() moved to after the page-number computations,
             // but store the page-number at this point for that method,
             // since we want the 'current' current page-number...
-            int firstAvailPageNumber =
+            firstAvailPageNumber =
               this.root.getRunningPageNumberCounter();
             boolean tempIsFirstPage = false;
 
@@ -260,9 +267,12 @@ public class PageSequence extends FObj {
             }
             MessageHandler.log("]");
             areaTree.addPage(currentPage);
+			this.pageCount++;	// used for 'force-page-count' calculations
         } while (flowsAreIncomplete())
             ;
-
+		// handle the 'force-page-count'
+		forcePage(areaTree, firstAvailPageNumber);
+		
         MessageHandler.logln("");
     }
 
@@ -398,6 +408,12 @@ public class PageSequence extends FObj {
     private SimplePageMaster getNextSimplePageMaster(
       PageSequenceMaster sequenceMaster, int currentPageNumber,
       boolean thisIsFirstPage, boolean isEmptyPage) {
+		  // handle forcing
+		  if (isForcing) {
+        	String nextPageMaster = getNextPageMasterName(sequenceMaster,
+            	currentPageNumber, false, true);
+        	return this.layoutMasterSet.getSimplePageMaster(nextPageMaster);
+		  }
         String nextPageMaster = getNextPageMasterName(sequenceMaster,
                                 currentPageNumber, thisIsFirstPage, isEmptyPage);
         return this.layoutMasterSet.getSimplePageMaster(nextPageMaster);
@@ -522,6 +538,7 @@ public class PageSequence extends FObj {
     private boolean isFlowForMasterNameDone(String masterName) {
         // parameter is master-name of PMR; we need to locate PM
         // referenced by this, and determine whether flow(s) are OK
+		if (isForcing) return false;
         if (masterName != null) {
 
             SimplePageMaster spm =
@@ -545,4 +562,78 @@ public class PageSequence extends FObj {
     public void setIsFlowSet(boolean isFlowSet) {
         this.isFlowSet = isFlowSet;
     }
+	
+	public String getIpnValue() {
+		return ipnValue;
+	}
+	
+	public int getCurrentPageNumber() {
+		return currentPageNumber;
+	}
+	
+	private void forcePage(AreaTree areaTree, int firstAvailPageNumber) {
+		boolean makePage = false;
+		if (this.forcePageCount == ForcePageCount.AUTO) {
+			PageSequence nextSequence =
+				this.root.getSucceedingPageSequence(this);
+			if (nextSequence != null) {
+				if (nextSequence.getIpnValue().equals("auto")) {
+					// do nothing special
+				} else if (nextSequence.getIpnValue().equals("auto-odd")) {
+					if (firstAvailPageNumber % 2 == 0) {
+						makePage = true;
+					}
+				} else if (nextSequence.getIpnValue().equals("auto-even")) {
+					if (firstAvailPageNumber % 2 != 0) {
+						makePage = true;
+					}
+				} else {
+					int nextSequenceStartPageNumber =
+						nextSequence.getCurrentPageNumber();
+					if ((nextSequenceStartPageNumber % 2 == 0) &&
+						(firstAvailPageNumber % 2 == 0)) {
+						makePage = true;
+					} else if ((nextSequenceStartPageNumber % 2 != 0) &&
+						(firstAvailPageNumber % 2 != 0)) {
+						makePage = true;
+					}
+				}
+			}
+		} else if ((this.forcePageCount == ForcePageCount.EVEN) &&
+			(this.pageCount % 2 != 0)) {
+				makePage = true;
+		} else if ((this.forcePageCount == ForcePageCount.ODD) &&
+			(this.pageCount % 2 == 0)) {
+				makePage = true;
+		} else if ((this.forcePageCount == ForcePageCount.END_ON_EVEN) &&
+			(firstAvailPageNumber % 2 == 0)) {
+				makePage = true;
+		} else if ((this.forcePageCount == ForcePageCount.END_ON_ODD) &&
+			(firstAvailPageNumber % 2 != 0)) {
+				makePage = true;
+		} else if (this.forcePageCount == ForcePageCount.NO_FORCE) {
+				// do nothing
+		} 
+		if (makePage) {
+			try
+			{
+			this.isForcing = true;
+            this.currentPageNumber++;
+			firstAvailPageNumber = this.currentPageNumber;
+			currentPage = makePage(areaTree, firstAvailPageNumber,
+            	false, true);
+			String formattedPageNumber =
+				pageNumberGenerator.makeFormattedPageNumber(this.currentPageNumber);
+			currentPage.setFormattedNumber(formattedPageNumber);
+			formatStaticContent(areaTree);
+			MessageHandler.log("[forced-" + firstAvailPageNumber + "]");
+			areaTree.addPage(currentPage);
+            this.root.setRunningPageNumberCounter(this.currentPageNumber);
+			this.isForcing = false;
+			}
+			catch (FOPException fopex) {
+				MessageHandler.log("'force-page-count' failure");
+			}
+		}
+	}
 }

@@ -42,7 +42,6 @@ public class Root extends FObj {
     /** keeps count of page number from over PageSequence instances*/
     private int runningPageNumberCounter = 0;
 
-
     protected Root(FObj parent,
                    PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
@@ -54,16 +53,13 @@ public class Root extends FObj {
         }
     }
 
-
     protected int getRunningPageNumberCounter() {
         return this.runningPageNumberCounter;
     }
 
-
     protected void setRunningPageNumberCounter(int count) {
         this.runningPageNumberCounter = count;
     }
-
 
     /** @deprecated handled by addChild now
      */
@@ -71,7 +67,25 @@ public class Root extends FObj {
         this.pageSequences.addElement(pageSequence);
     }
 
-
+	public int getPageSequenceCount() {
+		return pageSequences.size();
+	}
+	
+	/**
+	 * Some properties, such as 'force-page-count', require a
+	 * page-sequence to know about some properties of the next.
+	 * @returns succeeding PageSequence; null if none
+	*/
+	public PageSequence getSucceedingPageSequence(PageSequence current) {
+		int currentIndex = pageSequences.indexOf(current);
+		if (currentIndex == -1) return null;
+		if (currentIndex < (pageSequences.size()-1)) {
+			return (PageSequence)pageSequences.elementAt(currentIndex+1);
+		} else {
+			return null;
+		}
+	}
+	
     public LayoutMasterSet getLayoutMasterSet() {
         return this.layoutMasterSet;
     }
