@@ -60,6 +60,7 @@ public class CommandLineStarter extends Starter {
             driver.format();
             driver.setOutputStream(new FileOutputStream(commandLineOptions.getOutputFile()));
             driver.render();
+            System.exit(0);
         } catch (Exception e) {
 	    if (e instanceof FOPException) {
 		throw (FOPException) e;
