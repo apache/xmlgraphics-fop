@@ -758,7 +758,19 @@ public class PDFDocument {
         return encoding;
     }
 
-
+        /**
+         * Create a PDFICCStream
+         @see PDFXObject
+         @see org.apache.fop.image.JpegImage
+         @see org.apache.fop.datatypes.ColorSpace
+        */
+    public PDFICCStream makePDFICCStream() {
+        PDFICCStream iccStream = new PDFICCStream(++this.objectcount);
+        this.objects.addElement(iccStream);
+        return iccStream;
+    }
+    
+    
     /**
      * make a Type1 /Font object
      *
@@ -917,7 +929,7 @@ public class PDFDocument {
             return xObject.getXNumber();
         // else, create a new one
         xObject = new PDFXObject(++this.objectcount, ++this.xObjectCount,
-                                 img);
+                                 img, this);
         this.objects.add(xObject);
         this.xObjects.add(xObject);
         this.xObjectsMap.put(url, xObject);
