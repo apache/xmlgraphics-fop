@@ -177,9 +177,6 @@ public class Block extends FObjMixed {
             // Common Font Properties
             //this.fontState = propMgr.getFontState(area.getFontInfo());
 
-            // Common Hyphenation Properties
-            HyphenationProps mHyphProps = propMgr.getHyphenationProps();
-
             // Common Margin Properties-Block
             MarginProps mProps = propMgr.getMarginProps();
 
