@@ -55,7 +55,6 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.layoutmgr.list.Item;
 
 /**
  * Class modelling the fo:list-item-label object. See Sec. 6.8.5 of the XSL-FO
