@@ -116,6 +116,6 @@ public abstract class CollapsingBorderModel {
      * @return the winning BorderInfo
      */
     public abstract BorderInfo determineWinner(
-            GridUnit current, GridUnit neighbour, int side, int flags);
+            OldGridUnit current, OldGridUnit neighbour, int side, int flags);
     
 }

@@ -34,8 +34,8 @@ public class CollapsingBorderModelEyeCatching extends CollapsingBorderModel {
     private static final int START = CommonBorderPaddingBackground.START;
     private static final int END = CommonBorderPaddingBackground.END;
     
-    public BorderInfo determineWinner(GridUnit currentGridUnit, 
-            GridUnit otherGridUnit, int side, int flags) {
+    public BorderInfo determineWinner(OldGridUnit currentGridUnit, 
+            OldGridUnit otherGridUnit, int side, int flags) {
         final boolean vertical = isVerticalRelation(side);
         final int otherSide = getOtherSide(side);
         

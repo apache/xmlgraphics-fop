@@ -18,14 +18,20 @@
  
 package org.apache.fop.layoutmgr.table;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.fop.fo.flow.TableBody;
+import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
+import org.apache.fop.layoutmgr.KnuthElement;
+import org.apache.fop.layoutmgr.KnuthGlue;
+import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.BreakPoss;
 import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.BreakPossPosIter;
 import org.apache.fop.layoutmgr.Position;
@@ -39,7 +45,7 @@ import org.apache.fop.traits.MinOptMax;
  * These fo objects have either rows or cells underneath.
  * Cells are organised into rows.
  */
-public class Body extends BlockStackingLayoutManager {
+public class Body extends BlockStackingLayoutManager implements BlockLevelLayoutManager {
     private TableBody fobj;
     
     private List columns;
@@ -76,13 +82,106 @@ public class Body extends BlockStackingLayoutManager {
     }
 
     /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(org.apache.fop.layoutmgr.LayoutContext, int)
+     */
+    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+        LayoutContext childLC = new LayoutContext(0);
+        childLC.setStackLimit(context.getStackLimit());
+        childLC.setRefIPD(context.getRefIPD());
+
+        LinkedList returnedList = null;
+        LinkedList contentList = new LinkedList();
+        LinkedList returnList = new LinkedList();
+        Position returnPosition = new NonLeafPosition(this, null);
+        
+        Row curLM; // currently active LM
+        Row prevLM = null; // previously active LM
+        while ((curLM = (Row)getChildLM()) != null) {
+
+            // get elements from curLM
+            returnedList = curLM.getNextKnuthElements(childLC, alignment);
+            /*
+            if (returnedList.size() == 1
+                    && ((KnuthElement) returnedList.getFirst()).isPenalty()
+                    && ((KnuthPenalty) returnedList.getFirst()).getP() == -KnuthElement.INFINITE) {
+                // a descendant of this block has break-before
+                if (returnList.size() == 0) {
+                    // the first child (or its first child ...) has
+                    // break-before;
+                    // all this block, including space before, will be put in
+                    // the
+                    // following page
+                    bSpaceBeforeServed = false;
+                }
+                contentList.addAll(returnedList);
+
+                // "wrap" the Position inside each element
+                // moving the elements from contentList to returnList
+                returnedList = new LinkedList();
+                wrapPositionElements(contentList, returnList);
+
+                return returnList;
+            } else*/ {
+                if (prevLM != null) {
+                    // there is a block handled by prevLM
+                    // before the one handled by curLM
+                    if (mustKeepTogether() 
+                            || prevLM.mustKeepWithNext()
+                            || curLM.mustKeepWithPrevious()) {
+                        // add an infinite penalty to forbid a break between
+                        // blocks
+                        contentList.add(new KnuthPenalty(0,
+                                KnuthElement.INFINITE, false,
+                                new Position(this), false));
+                    } else if (!((KnuthElement) contentList.getLast()).isGlue()) {
+                        // add a null penalty to allow a break between blocks
+                        contentList.add(new KnuthPenalty(0, 0, false,
+                                new Position(this), false));
+                    } else {
+                        // the last element in contentList is a glue;
+                        // it is a feasible breakpoint, there is no need to add
+                        // a penalty
+                    }
+                }
+                contentList.addAll(returnedList);
+                if (returnedList.size() == 0) {
+                    //Avoid NoSuchElementException below (happens with empty blocks)
+                    continue;
+                }
+                if (((KnuthElement) returnedList.getLast()).isPenalty()
+                        && ((KnuthPenalty) returnedList.getLast()).getP() == -KnuthElement.INFINITE) {
+                    // a descendant of this block has break-after
+                    if (curLM.isFinished()) {
+                        // there is no other content in this block;
+                        // it's useless to add space after before a page break
+                        setFinished(true);
+                    }
+
+                    returnedList = new LinkedList();
+                    wrapPositionElements(contentList, returnList);
+
+                    return returnList;
+                }
+            }
+            prevLM = curLM;
+        }
+
+        setFinished(true);
+        if (returnList.size() > 0) {
+            return returnList;
+        } else {
+            return null;
+        }
+    }
+    
+    /**
      * Breaks for this layout manager are of the form of before
      * or after a row and inside a row.
      *
      * @param context the layout context for finding the breaks
      * @return the next break possibility
      */
-    public BreakPoss getNextBreakPoss(LayoutContext context) {
+    public BreakPoss getNextBreakPossOLDOLDOLD(LayoutContext context) {
         Row curLM; // currently active LM
 
         MinOptMax stackSize = new MinOptMax();
@@ -264,6 +363,42 @@ public class Body extends BlockStackingLayoutManager {
 
         TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
         return curBlockArea;
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#negotiateBPDAdjustment(int, org.apache.fop.layoutmgr.KnuthElement)
+     */
+    public int negotiateBPDAdjustment(int adj, KnuthElement lastElement) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#discardSpace(org.apache.fop.layoutmgr.KnuthGlue)
+     */
+    public void discardSpace(KnuthGlue spaceGlue) {
+        // TODO Auto-generated method stub
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepTogether()
+     */
+    public boolean mustKeepTogether() {
+        return ((BlockLevelLayoutManager)getParent()).mustKeepTogether();
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithPrevious()
+     */
+    public boolean mustKeepWithPrevious() {
+        return false;
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithNext()
+     */
+    public boolean mustKeepWithNext() {
+        return false;
     }
 
 }

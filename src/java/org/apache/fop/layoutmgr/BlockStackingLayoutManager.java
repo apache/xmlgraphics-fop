@@ -367,10 +367,10 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
         while (listIter.hasNext()) {
             KnuthElement tempElement;
             tempElement = (KnuthElement) listIter.next();
-            //if (tempElement.getLayoutManager() != this) {
-            tempElement.setPosition(new NonLeafPosition(this,
-                    tempElement.getPosition()));
-            //}
+            if (tempElement.getLayoutManager() != this) {
+                tempElement.setPosition(new NonLeafPosition(this,
+                        tempElement.getPosition()));
+            }
             targetList.add(tempElement);
         }
     }

@@ -25,7 +25,10 @@ import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.LengthRangeProperty;
+import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
+import org.apache.fop.layoutmgr.KnuthElement;
+import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.BreakPoss;
@@ -52,7 +55,7 @@ import java.util.ListIterator;
  * If there are row spanning cells then these cells belong to this row
  * but effect the occupied columns of future rows.
  */
-public class Row extends BlockStackingLayoutManager {
+public class Row extends BlockStackingLayoutManager implements BlockLevelLayoutManager {
     
     private TableRow fobj;
     
@@ -156,7 +159,7 @@ public class Row extends BlockStackingLayoutManager {
                 log.error("Overlapping cell at position " + colnum);
             }
             //Add cell info for primary slot
-            GridUnit info = new GridUnit(cellLM);
+            OldGridUnit info = new OldGridUnit(cellLM);
             info.row = this;
             gridUnits.set(colnum - 1, info);
             info.column = getColumn(colnum);
@@ -164,7 +167,7 @@ public class Row extends BlockStackingLayoutManager {
             //Add cell infos on spanned slots if any
             for (int j = 1; j < cell.getNumberColumnsSpanned(); j++) {
                 colnum++;
-                GridUnit infoSpan = new GridUnit(cellLM, j);
+                OldGridUnit infoSpan = new OldGridUnit(cellLM, j);
                 infoSpan.row = this;
                 infoSpan.column = getColumn(colnum);
                 if (colnum > gridUnits.size()) {
@@ -186,12 +189,12 @@ public class Row extends BlockStackingLayoutManager {
 
     private void postProcessGridUnits() {
         for (int pos = 1; pos <= gridUnits.size(); pos++) {
-            GridUnit gu = (GridUnit)gridUnits.get(pos - 1);
+            OldGridUnit gu = (OldGridUnit)gridUnits.get(pos - 1);
             
             //Empty grid units
             if (gu == null) {
                 //Add grid unit
-                gu = new GridUnit(null);
+                gu = new OldGridUnit(null);
                 gu.row = this;
                 gu.column = getColumn(pos);
                 gridUnits.set(pos - 1, gu);
@@ -200,17 +203,17 @@ public class Row extends BlockStackingLayoutManager {
             
         //Border resolution now that the empty grid units are filled
         for (int pos = 1; pos <= gridUnits.size(); pos++) {
-            GridUnit starting = (GridUnit)gridUnits.get(pos - 1);
+            OldGridUnit starting = (OldGridUnit)gridUnits.get(pos - 1);
          
             //Border resolution
             if (getTable().isSeparateBorderModel()) {
                 starting.assignBorder(starting.layoutManager);
             } else {
                 //Neighbouring grid unit at start edge 
-                GridUnit start = null;
+                OldGridUnit start = null;
                 int find = pos - 1;
                 while (find >= 1) {
-                    GridUnit candidate = (GridUnit)gridUnits.get(find - 1);
+                    OldGridUnit candidate = (OldGridUnit)gridUnits.get(find - 1);
                     if (candidate.isLastGridUnitColSpan()) {
                         start = candidate;
                         break;
@@ -219,17 +222,17 @@ public class Row extends BlockStackingLayoutManager {
                 }
                 
                 //Ending grid unit for current cell
-                GridUnit ending = null;
+                OldGridUnit ending = null;
                 if (starting.layoutManager != null) {
                     pos += starting.layoutManager.getFObj().getNumberColumnsSpanned() - 1;
                 }
-                ending = (GridUnit)gridUnits.get(pos - 1);
+                ending = (OldGridUnit)gridUnits.get(pos - 1);
                 
                 //Neighbouring grid unit at end edge 
-                GridUnit end = null;
+                OldGridUnit end = null;
                 find = pos + 1;
                 while (find <= gridUnits.size()) {
-                    GridUnit candidate = (GridUnit)gridUnits.get(find - 1);
+                    OldGridUnit candidate = (OldGridUnit)gridUnits.get(find - 1);
                     if (candidate.isPrimaryGridUnit()) {
                         end = candidate;
                         break;
@@ -237,14 +240,14 @@ public class Row extends BlockStackingLayoutManager {
                     find++;
                 }
                 CommonBorderPaddingBackground borders = new CommonBorderPaddingBackground();
-                GridUnit.resolveBorder(getTable(), borders, starting, 
+                OldGridUnit.resolveBorder(getTable(), borders, starting, 
                         (start != null ? start : null), 
                         CommonBorderPaddingBackground.START);
                 starting.effBorders = borders;
                 if (starting != ending) {
                     borders = new CommonBorderPaddingBackground();
                 }
-                GridUnit.resolveBorder(getTable(), borders, ending, 
+                OldGridUnit.resolveBorder(getTable(), borders, ending, 
                         (end != null ? end : null), 
                         CommonBorderPaddingBackground.END);
                 ending.effBorders = borders;
@@ -260,12 +263,12 @@ public class Row extends BlockStackingLayoutManager {
      * @param pos the position of the cell (must be >= 1)
      * @return the cell info object
      */
-    protected GridUnit getCellInfo(int pos) {
+    protected OldGridUnit getCellInfo(int pos) {
         if (gridUnits == null) {
             prepareGridUnits();
         }
         if (pos <= gridUnits.size()) {
-            return (GridUnit)gridUnits.get(pos - 1);
+            return (OldGridUnit)gridUnits.get(pos - 1);
         } else {
             return null;
         }
@@ -281,7 +284,7 @@ public class Row extends BlockStackingLayoutManager {
      */
     public BreakPoss getNextBreakPoss(LayoutContext context) {
         //LayoutManager curLM; // currently active LM
-        GridUnit curGridUnit; //currently active grid unit
+        OldGridUnit curGridUnit; //currently active grid unit
 
         BreakPoss lastPos = null;
         List breakList = new java.util.ArrayList();
@@ -322,7 +325,7 @@ public class Row extends BlockStackingLayoutManager {
             getGridUnitsForCell(cellLM, startColumn, spannedGridUnits);
             int childRefIPD = 0;
             for (int i = 0; i < spannedGridUnits.size(); i++) {
-                Column col = ((GridUnit)spannedGridUnits.get(i)).column;
+                Column col = ((OldGridUnit)spannedGridUnits.get(i)).column;
                 childRefIPD += col.getWidth().getValue();
             }
             childLC.setRefIPD(childRefIPD);
@@ -455,7 +458,7 @@ public class Row extends BlockStackingLayoutManager {
      */
     protected void reset(Position pos) {
         //LayoutManager curLM; // currently active LM
-        GridUnit curGridUnit;
+        OldGridUnit curGridUnit;
         int cellIndex = 1;
 
         if (pos == null) {
@@ -617,6 +620,48 @@ public class Row extends BlockStackingLayoutManager {
         } else {
             return null;
         }
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#negotiateBPDAdjustment(int, org.apache.fop.layoutmgr.KnuthElement)
+     */
+    public int negotiateBPDAdjustment(int adj, KnuthElement lastElement) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#discardSpace(org.apache.fop.layoutmgr.KnuthGlue)
+     */
+    public void discardSpace(KnuthGlue spaceGlue) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepTogether()
+     */
+    public boolean mustKeepTogether() {
+        //TODO Keeps will have to be more sophisticated sooner or later
+        return ((BlockLevelLayoutManager)getParent()).mustKeepTogether() 
+                || !fobj.getKeepTogether().getWithinPage().isAuto()
+                || !fobj.getKeepTogether().getWithinColumn().isAuto();
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithPrevious()
+     */
+    public boolean mustKeepWithPrevious() {
+        return !fobj.getKeepWithPrevious().getWithinPage().isAuto()
+                || !fobj.getKeepWithPrevious().getWithinColumn().isAuto();
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithNext()
+     */
+    public boolean mustKeepWithNext() {
+        return !fobj.getKeepWithNext().getWithinPage().isAuto()
+                || !fobj.getKeepWithNext().getWithinColumn().isAuto();
     }
 
 }

@@ -18,7 +18,6 @@
 
 package org.apache.fop.layoutmgr;
 
-import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.area.Area;
@@ -152,13 +151,33 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     }*/
 
 
+    /**
+     * "wrap" the Position inside each element moving the elements from 
+     * SourceList to targetList
+     * @param sourceList source list
+     * @param targetList target list receiving the wrapped position elements
+     */
+    protected void wrapPositionElements(List sourceList, List targetList) {
+        ListIterator listIter = sourceList.listIterator();
+        while (listIter.hasNext()) {
+            KnuthElement tempElement;
+            tempElement = (KnuthElement) listIter.next();
+            //if (tempElement.getLayoutManager() != this) {
+            tempElement.setPosition(new NonLeafPosition(this,
+                    tempElement.getPosition()));
+            //}
+            targetList.add(tempElement);
+        }
+    }
+
+    
 //TODO Reintroduce emergency counter (generate error to avoid endless loop)
 //TODO Reintroduce layout dimensions
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         // currently active LM
         BlockLevelLayoutManager curLM;
         BlockLevelLayoutManager prevLM = null;
-        MinOptMax stackSize = new MinOptMax();
+        //MinOptMax stackSize = new MinOptMax();
         LinkedList returnedList;
         LinkedList returnList = new LinkedList();
 
@@ -170,29 +189,20 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
             }
 
             // Set up a LayoutContext
-            MinOptMax bpd = context.getStackLimit();
-            BreakPoss bp;
-            bp = null;
+            //MinOptMax bpd = context.getStackLimit();
 
             LayoutContext childLC = new LayoutContext(0);
-            boolean breakPage = false;
-            childLC.setStackLimit(MinOptMax.subtract(bpd, stackSize));
+            childLC.setStackLimit(context.getStackLimit());
             childLC.setRefIPD(context.getRefIPD());
 
             // get elements from curLM
             returnedList = curLM.getNextKnuthElements(childLC, alignment);
-/*LF*/      //System.out.println("FLM.getNextKnuthElements> returnedList.size() = " + returnedList.size());
+            //log.debug("FLM.getNextKnuthElements> returnedList.size() = " + returnedList.size());
 
             // "wrap" the Position inside each element
             LinkedList tempList = returnedList;
-            KnuthElement tempElement;
             returnedList = new LinkedList();
-            ListIterator listIter = tempList.listIterator();
-            while (listIter.hasNext()) {
-                tempElement = (KnuthElement)listIter.next();
-                tempElement.setPosition(new NonLeafPosition(this, tempElement.getPosition()));
-                returnedList.add(tempElement);
-            }
+            wrapPositionElements(tempList, returnedList);
 
             if (returnedList.size() == 1
                 && ((KnuthElement)returnedList.getFirst()).isPenalty()
@@ -235,31 +245,31 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     }
 
     public int negotiateBPDAdjustment(int adj, KnuthElement lastElement) {
-/*LF*/  System.out.println(" FLM.negotiateBPDAdjustment> " + adj);
+        log.debug(" FLM.negotiateBPDAdjustment> " + adj);
 
-/*LF*/  if (lastElement.getPosition() instanceof NonLeafPosition) {
+        if (lastElement.getPosition() instanceof NonLeafPosition) {
             // this element was not created by this FlowLM
             NonLeafPosition savedPos = (NonLeafPosition)lastElement.getPosition();
             lastElement.setPosition(savedPos.getPosition());
             int returnValue = ((BlockLevelLayoutManager) lastElement.getLayoutManager()).negotiateBPDAdjustment(adj, lastElement);
             lastElement.setPosition(savedPos);
-/*LF*/      System.out.println(" FLM.negotiateBPDAdjustment> gestito " + returnValue);
+            log.debug(" FLM.negotiateBPDAdjustment> result " + returnValue);
             return returnValue;
-/*LF*/  } else {
-/*LF*/      return 0;
-/*LF*/  }
+        } else {
+            return 0;
+        }
     }
 
     public void discardSpace(KnuthGlue spaceGlue) {
-/*LF*/  System.out.println(" FLM.discardSpace> ");
+        log.debug(" FLM.discardSpace> ");
 
-/*LF*/  if (spaceGlue.getPosition() instanceof NonLeafPosition) {
+        if (spaceGlue.getPosition() instanceof NonLeafPosition) {
             // this element was not created by this FlowLM
             NonLeafPosition savedPos = (NonLeafPosition)spaceGlue.getPosition();
             spaceGlue.setPosition(savedPos.getPosition());
             ((BlockLevelLayoutManager) spaceGlue.getLayoutManager()).discardSpace(spaceGlue);
             spaceGlue.setPosition(savedPos);
-/*LF*/  }
+        }
     }
 
     public boolean mustKeepTogether() {

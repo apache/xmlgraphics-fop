@@ -137,11 +137,14 @@ public class TableColumn extends FObj {
         return columnNumber.getValue();
     }
 
-    /**
-     * @return value for number of columns repeated
-     */
+    /** @return value for number-columns-repeated. */
     public int getNumberColumnsRepeated() {
         return numberColumnsRepeated.getValue();
+    }
+    
+    /** @return value for number-columns-spanned. */
+    public int getNumberColumnsSpanned() {
+        return numberColumnsSpanned.getValue();
     }
     
     /** @see org.apache.fop.fo.FONode#getName() */
@@ -152,6 +155,22 @@ public class TableColumn extends FObj {
     /** @see org.apache.fop.fo.FObj#getNameId() */
     public int getNameId() {
         return FO_TABLE_COLUMN;
+    }
+    
+    /** @see java.lang.Object#toString() */
+    public String toString() {
+        StringBuffer sb = new StringBuffer("fo:table-column");
+        if (hasColumnNumber()) {
+            sb.append(" column-number=").append(getColumnNumber());
+        }
+        if (getNumberColumnsRepeated() > 1) {
+            sb.append(" number-columns-repeated=").append(getNumberColumnsRepeated());
+        }
+        if (getNumberColumnsSpanned() > 1) {
+            sb.append(" number-columns-spanned=").append(getNumberColumnsSpanned());
+        }
+        sb.append(" column-width=").append(getColumnWidth());
+        return sb.toString();
     }
 }
 

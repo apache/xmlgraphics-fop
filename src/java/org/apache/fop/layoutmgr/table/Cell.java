@@ -23,12 +23,18 @@ import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.LengthRangeProperty;
+import org.apache.fop.layoutmgr.AreaAdditionUtil;
+import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
+import org.apache.fop.layoutmgr.KnuthElement;
+import org.apache.fop.layoutmgr.KnuthGlue;
+import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.BreakPoss;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.MinOptMaxUtil;
+import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.BreakPossPosIter;
 import org.apache.fop.layoutmgr.Position;
@@ -39,14 +45,17 @@ import org.apache.fop.area.Trait;
 import org.apache.fop.traits.MinOptMax;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
  * LayoutManager for a table-cell FO.
  * A cell contains blocks. These blocks fill the cell.
  */
-public class Cell extends BlockStackingLayoutManager {
+public class Cell extends BlockStackingLayoutManager implements BlockLevelLayoutManager {
+    
     private TableCell fobj;
+    private PrimaryGridUnit gridUnit;
     
     private Block curBlockArea;
 
@@ -65,16 +74,17 @@ public class Cell extends BlockStackingLayoutManager {
     private int borderAndPaddingBPD;
     private boolean emptyCell = true;
 
-    /** List of Lists containing GridUnit instances, one List per row. */
+    /** List of Lists containing OldGridUnit instances, one List per row. */
     private List rows = new java.util.ArrayList(); 
     
     /**
      * Create a new Cell layout manager.
      * @node table-cell FO for which to create the LM
      */
-    public Cell(TableCell node) {
+    public Cell(TableCell node, PrimaryGridUnit pgu) {
         super(node);
         fobj = node;
+        this.gridUnit = pgu;
     }
 
     /** @return the table-cell FO */
@@ -126,10 +136,10 @@ public class Cell extends BlockStackingLayoutManager {
         for (int i = 0; i < rows.size(); i++) {
             List gridUnits = (List)rows.get(i);
             startBorderWidth = Math.max(startBorderWidth, 
-                    ((GridUnit)gridUnits.get(0)).
+                    ((OldGridUnit)gridUnits.get(0)).
                         effBorders.getBorderStartWidth(false));
             endBorderWidth = Math.max(endBorderWidth, 
-                    ((GridUnit)gridUnits.get(gridUnits.size() - 1)).
+                    ((OldGridUnit)gridUnits.get(gridUnits.size() - 1)).
                         effBorders.getBorderEndWidth(false));
         }
         //iIndents += fobj.getCommonBorderPaddingBackground().getBorderStartWidth(false);
@@ -145,6 +155,111 @@ public class Cell extends BlockStackingLayoutManager {
     }
     
     /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(org.apache.fop.layoutmgr.LayoutContext, int)
+     */
+    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+        MinOptMax stackSize = new MinOptMax();
+        MinOptMax stackLimit = new MinOptMax(context.getStackLimit());
+
+        BreakPoss lastPos = null;
+
+        referenceIPD = context.getRefIPD(); 
+        cellIPD = referenceIPD;
+        cellIPD -= getIPIndents();
+        if (fobj.isSeparateBorderModel()) {
+            int borderSep = fobj.getBorderSeparation().getLengthPair()
+                    .getIPD().getLength().getValue();
+            cellIPD -= borderSep;
+        }
+
+        LinkedList returnedList = null;
+        LinkedList contentList = new LinkedList();
+        LinkedList returnList = new LinkedList();
+        Position returnPosition = new NonLeafPosition(this, null);
+
+        BlockLevelLayoutManager curLM; // currently active LM
+        BlockLevelLayoutManager prevLM = null; // previously active LM
+        while ((curLM = (BlockLevelLayoutManager) getChildLM()) != null) {
+            LayoutContext childLC = new LayoutContext(0);
+            // curLM is a ?
+            childLC.setStackLimit(MinOptMax.subtract(context
+                    .getStackLimit(), stackLimit));
+            childLC.setRefIPD(cellIPD);
+
+            // get elements from curLM
+            returnedList = curLM.getNextKnuthElements(childLC, alignment);
+            if (returnedList.size() == 1
+                    && ((KnuthElement) returnedList.getFirst()).isPenalty()
+                    && ((KnuthPenalty) returnedList.getFirst()).getP() == -KnuthElement.INFINITE) {
+                // a descendant of this block has break-before
+                if (returnList.size() == 0) {
+                    // the first child (or its first child ...) has
+                    // break-before;
+                    // all this block, including space before, will be put in
+                    // the
+                    // following page
+                }
+                contentList.addAll(returnedList);
+
+                // "wrap" the Position inside each element
+                // moving the elements from contentList to returnList
+                returnedList = new LinkedList();
+                wrapPositionElements(contentList, returnList);
+
+                return returnList;
+            } else {
+                if (prevLM != null) {
+                    // there is a block handled by prevLM
+                    // before the one handled by curLM
+                    if (mustKeepTogether() 
+                            || prevLM.mustKeepWithNext()
+                            || curLM.mustKeepWithPrevious()) {
+                        // add an infinite penalty to forbid a break between
+                        // blocks
+                        contentList.add(new KnuthPenalty(0,
+                                KnuthElement.INFINITE, false,
+                                new Position(this), false));
+                    } else if (!((KnuthElement) contentList.getLast()).isGlue()) {
+                        // add a null penalty to allow a break between blocks
+                        contentList.add(new KnuthPenalty(0, 0, false,
+                                new Position(this), false));
+                    } else {
+                        // the last element in contentList is a glue;
+                        // it is a feasible breakpoint, there is no need to add
+                        // a penalty
+                    }
+                }
+                contentList.addAll(returnedList);
+                if (returnedList.size() == 0) {
+                    //Avoid NoSuchElementException below (happens with empty blocks)
+                    continue;
+                }
+                if (((KnuthElement) returnedList.getLast()).isPenalty()
+                        && ((KnuthPenalty) returnedList.getLast()).getP() == -KnuthElement.INFINITE) {
+                    // a descendant of this block has break-after
+                    if (curLM.isFinished()) {
+                        // there is no other content in this block;
+                        // it's useless to add space after before a page break
+                        setFinished(true);
+                    }
+
+                    returnedList = new LinkedList();
+                    wrapPositionElements(contentList, returnList);
+
+                    return returnList;
+                }
+            }
+            prevLM = curLM;
+        }
+
+        returnedList = new LinkedList();
+        wrapPositionElements(contentList, returnList);
+        
+        setFinished(true);
+        return returnList;
+    }
+    
+    /**
      * Get the next break possibility for this cell.
      * A cell contains blocks so there are breaks around the blocks
      * and inside the blocks.
@@ -152,7 +267,7 @@ public class Cell extends BlockStackingLayoutManager {
      * @param context the layout context
      * @return the next break possibility
      */
-    public BreakPoss getNextBreakPoss(LayoutContext context) {
+    public BreakPoss getNextBreakPossOLDOLDOLD(LayoutContext context) {
         LayoutManager curLM; // currently active LM
 
         MinOptMax stackSize = new MinOptMax();
@@ -291,8 +406,8 @@ public class Cell extends BlockStackingLayoutManager {
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
-        BreakPoss bp1 = (BreakPoss)parentIter.peekNext();
-        bBogus = !bp1.generatesAreas(); 
+        //BreakPoss bp1 = (BreakPoss)parentIter.peekNext();
+        bBogus = false;//!bp1.generatesAreas(); 
 
         if (!isBogus()) {
             addID(fobj.getId());
@@ -310,7 +425,7 @@ public class Cell extends BlockStackingLayoutManager {
             if (rows.size() == 1 && ((List)rows.get(0)).size() == 1) {
                 //Can set the borders directly if there's no span
                 CommonBorderPaddingBackground effBorders =
-                    ((GridUnit)((List)rows.get(0)).get(0)).effBorders;
+                    ((OldGridUnit)((List)rows.get(0)).get(0)).effBorders;
                 //TODO Next line is a temporary hack!
                 TraitSetter.addCollapsingBorders(curBlockArea, 
                         fobj.getCommonBorderPaddingBackground(), outer);
@@ -323,7 +438,7 @@ public class Cell extends BlockStackingLayoutManager {
                     int dx = xoffset;
                     int lastRowHeight = 0;
                     for (int x = 0; x < gridUnits.size(); x++) {
-                        GridUnit gu = (GridUnit)gridUnits.get(x);
+                        OldGridUnit gu = (OldGridUnit)gridUnits.get(x);
                         if (!gu.effBorders.hasBorder()) {
                             continue;
                         }
@@ -364,9 +479,21 @@ public class Cell extends BlockStackingLayoutManager {
             }
         }
 
+        AreaAdditionUtil.addAreas(parentIter, layoutContext);
+        /*
         LayoutManager childLM;
         int iStartPos = 0;
         LayoutContext lc = new LayoutContext(0);
+        PositionIterator childPosIter;
+        childPosIter = new StackingIter(positionList.listIterator());
+        while ((childLM = childPosIter.getNextChildLM()) != null) {
+            // set last area flag
+            lc.setFlags(LayoutContext.LAST_AREA,
+                    (layoutContext.isLastArea() && childLM == lastLM));
+            lc.setStackLimit(layoutContext.getStackLimit());
+            // Add the line areas to Area
+            childLM.addAreas(childPosIter, lc);
+        }
         while (parentIter.hasNext()) {
             LeafPosition lfp = (LeafPosition) parentIter.next();
             // Add the block areas to Area
@@ -377,7 +504,7 @@ public class Cell extends BlockStackingLayoutManager {
             while ((childLM = breakPosIter.getNextChildLM()) != null) {
                 childLM.addAreas(breakPosIter, lc);
             }
-        }
+        }*/
 
         
         int contentBPD = rowHeight;
@@ -459,6 +586,53 @@ public class Cell extends BlockStackingLayoutManager {
             reset(null);
             childBreaks.clear();
         }
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#negotiateBPDAdjustment(int, org.apache.fop.layoutmgr.KnuthElement)
+     */
+    public int negotiateBPDAdjustment(int adj, KnuthElement lastElement) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#discardSpace(org.apache.fop.layoutmgr.KnuthGlue)
+     */
+    public void discardSpace(KnuthGlue spaceGlue) {
+        // TODO Auto-generated method stub
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepTogether()
+     */
+    public boolean mustKeepTogether() {
+        //TODO Keeps will have to be more sophisticated sooner or later
+        return ((BlockLevelLayoutManager)getParent()).mustKeepTogether()/* 
+                || !fobj.getKeepTogether().getWithinPage().isAuto()
+                || !fobj.getKeepTogether().getWithinColumn().isAuto()*/;
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithPrevious()
+     */
+    public boolean mustKeepWithPrevious() {
+        return false; //TODO FIX ME
+        /*
+        return !fobj.getKeepWithPrevious().getWithinPage().isAuto()
+            || !fobj.getKeepWithPrevious().getWithinColumn().isAuto();
+            */
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithNext()
+     */
+    public boolean mustKeepWithNext() {
+        return false; //TODO FIX ME
+        /*
+        return !fobj.getKeepWithNext().getWithinPage().isAuto()
+            || !fobj.getKeepWithNext().getWithinColumn().isAuto();
+            */
     }
 
 }
