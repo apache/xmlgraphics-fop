@@ -163,8 +163,8 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
                      ,org/apache/fop/viewer/**
                      ,**/GifJpegImage.java
                      ,**/JimiImage.java
-                     ,**/PrintCommandLine.java
-                     ,**/AWTCommandLine.java"/>
+                     ,**/PrintStarter.java
+                     ,**/AWTStarter.java"/>
 
     <property name="xslt" value="org.apache.xalan.xslt.Process"/>
     <property name="src.properties.xsl" value="${src.codegen}/properties.xsl"/>
