@@ -1,4 +1,21 @@
 ==============================================================================
+Done since 0.20.2 release
+*** Tables
+- Implement the proportional-column-width() function in table-column and
+make it possible to specify table width (or inline-progression-dimension)
+using percentage values. (Karen Lease)
+- Fix a bug causing strange layout when a cell containing a nested table
+was laid out again because another cell in the same row was split (David
+Dixon's example). (Karen Lease)
+*** Datatypes
+- Rearrange the Length class hierarchy as part of the table-column proportional
+width work. (Karen Lease)
+*** Areas
+- Fix BlockArea to account for padding and border when calculating space
+remaining for content. (Karen Lease)
+*** Properties
+- Add support for inline-progression-dimension and table-layout. (Karen)
+==============================================================================
 Done since 0.20 release
 
 *** General
