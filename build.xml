@@ -121,7 +121,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <tstamp/>
     <property name="Name" value="Fop"/>
     <property name="name" value="fop"/>
-    <property name="version" value="0.17cvs"/>
+    <property name="version" value="0.17.0"/>
     <property name="year" value="1999-2001"/>
 
     <echo message="------------------- ${Name} ${version} [${year}] ----------------"/>
@@ -135,6 +135,8 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="src.codegen" value="./src/codegen"/>
     <property name="docs.dir" value="./docs"/>
     <property name="lib.dir" value="./lib"/>
+    <property name="hyph.dir" value="./hyph"/>
+    <property name="conf.dir" value="./conf"/>
     <property name="packages" value="org.apache.fop.*"/>
 
     <property name="doc.generator" value="org.apache.stylebook.StyleBook"/>
@@ -509,11 +511,15 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <target name="dist" depends="package, docs, javadocs">
     <echo message="Building the distribution files (zip,tar)"/>
     <mkdir dir="${dist.dir}"/>
+    <mkdir dir="${dist.dir}/conf"/>
+    <mkdir dir="${dist.dir}/hyph"/>
     <copyfile src="${basedir}/build.sh" dest="${dist.dir}/build.sh" />
     <chmod file="${dist.dir}/build.sh" perm="ugo+rx" />
     <copyfile src="${basedir}/build.bat" dest="${dist.dir}/build.bat" />
     <copydir src="${build.dir}" dest="${dist.dir}" 
         excludes="**/classes/**, **/${ignore_this}"/>
+    <copydir src="${hyph.dir}" dest="${dist.dir}/hyph"/>
+    <copydir src="${conf.dir}" dest="${dist.dir}/conf"/>
     <zip zipfile="${Name}-${version}.zip" basedir="${dist.dir}" includes="**"/>
     <tar tarfile="${Name}-${version}.tar" basedir="${dist.dir}" includes="**"/>
     <gzip zipfile="${Name}-${version}.tar.gz" src="${Name}-${version}.tar" />
