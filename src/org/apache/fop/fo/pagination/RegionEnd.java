@@ -43,18 +43,18 @@ public class RegionEnd extends Region {
                               int allocationRectangleWidth,
                               int allocationRectangleHeight,
                               boolean beforePrecedence,
-                              boolean afterPrecedence, int beforeHeight,
-                              int afterHeight) {
+                              boolean afterPrecedence, int beforeExtent,
+                              int afterExtent) {
         int extent = this.properties.get("extent").getLength().mvalue();
 
         int startY = allocationRectangleYPosition;
         int startH = allocationRectangleHeight;
         if (beforePrecedence) {
-            startY -= beforeHeight;
-            startH -= beforeHeight;
+            startY -= beforeExtent;
+            startH -= beforeExtent;
         }
         if (afterPrecedence)
-            startH -= afterHeight;
+            startH -= afterExtent;
         RegionArea area = new RegionArea(allocationRectangleXPosition
 					 + allocationRectangleWidth - extent,
 					 startY, extent, startH);
@@ -98,4 +98,7 @@ public class RegionEnd extends Region {
         return REGION_CLASS;
     }
 
+    public int getExtent() {
+        return properties.get("extent").getLength().mvalue();
+    }
 }

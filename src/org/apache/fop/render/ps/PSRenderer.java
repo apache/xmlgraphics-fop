@@ -791,8 +791,6 @@ public class PSRenderer extends AbstractRenderer {
         this.pagecount++;
         this.idReferences = page.getIDReferences();
 
-        BodyAreaContainer body;
-        AreaContainer before, after;
         write("%%Page: " + page.getNumber() + " " + page.getNumber());
         write("%%PageBoundingBox: 0 0 " +
                 Math.round(page.getWidth() / 1000f) + " " +
@@ -802,16 +800,7 @@ public class PSRenderer extends AbstractRenderer {
         write("FOPFonts begin");
         write("0.001 0.001 scale");
         write("%%EndPageSetup");
-        body = page.getBody();
-        before = page.getBefore();
-        after = page.getAfter();
-        if (before != null) {
-            renderAreaContainer(before);
-        }
-        renderBodyAreaContainer(body);
-        if (after != null) {
-            renderAreaContainer(after);
-        }
+        renderRegions(page);
         write("showpage");
         write("%%PageTrailer");
         write("%%EndPage"); //This is non-standard, but used by Adobe.

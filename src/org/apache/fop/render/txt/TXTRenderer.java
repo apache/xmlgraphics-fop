@@ -1606,8 +1606,6 @@ public class TXTRenderer extends PrintRenderer {
         if (debug)
             System.out.println("TXTRenderer.renderPage() page.getHeight() = "
                                + page.getHeight());
-        BodyAreaContainer body;
-        AreaContainer before, after, start, end;
 
         maxX = (int)(textCPI * page.getWidth() / 72000 + 1);
         maxY = (int)(textLPI * page.getHeight() / 72000 + 1);
@@ -1627,29 +1625,11 @@ public class TXTRenderer extends PrintRenderer {
                                + " yFactor=" + yFactor + " paperHeight="
                                + pageHeight);
 
-        body = page.getBody();
-        before = page.getBefore();
-        after = page.getAfter();
-        start = page.getStart();
-        end = page.getEnd();
-
         this.currentFontName = "";
         this.currentFontSize = 0;
 
         // currentStream.add("BT\n");
-        renderBodyAreaContainer(body);
-
-        if (before != null)
-            renderAreaContainer(before);
-
-        if (after != null)
-            renderAreaContainer(after);
-
-        if (start != null)
-            renderAreaContainer(start);
-
-        if (end != null)
-            renderAreaContainer(end);
+        renderRegions(page);
 
         // Write out the buffers.
         for (int row = 0; row <= maxY; row++) {

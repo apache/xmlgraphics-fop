@@ -20,6 +20,7 @@ public class AreaContainer extends Area {
     private int xPosition;    // should be able to take value 'left' and 'right' too
     private int yPosition;    // should be able to take value 'top' and 'bottom' too
     private int position;
+    private boolean isRegionArea = false;
 
     // use this for identifying the general usage of the area,
     // like 'main-reference-area' or 'region-before'
@@ -34,8 +35,19 @@ public class AreaContainer extends Area {
         // setIsReferenceArea(true); // Should always be true!
     }
 
+    public AreaContainer(FontState fontState, int xPosition, int yPosition,
+                         int allocationWidth, int maxHeight, int position,
+                         boolean isRegionArea) {
+        this(fontState, xPosition, yPosition, allocationWidth, maxHeight,
+           position);
+        this.isRegionArea = isRegionArea;
+    }
+
     public void render(Renderer renderer) {
-        renderer.renderAreaContainer(this);
+        if (isRegionArea)
+            renderer.renderRegionAreaContainer(this);
+        else
+            renderer.renderAreaContainer(this);
     }
 
     public int getPosition() {

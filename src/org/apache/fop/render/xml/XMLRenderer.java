@@ -227,6 +227,15 @@ public class XMLRenderer implements Renderer {
     }
 
     /**
+     * render a region area container to XML
+     *
+     * @param area the region area container to render
+     */
+    public void renderRegionAreaContainer(AreaContainer area) {
+        renderAreaContainer(area);
+    }
+
+    /**
      * render a span area to XML
      *
      * @param area the span area to render
@@ -434,18 +443,21 @@ public class XMLRenderer implements Renderer {
      */
     public void renderPage(Page page) {
         BodyAreaContainer body;
-        AreaContainer before, after;
+        AreaContainer before, after, start, end;
         writeStartTag("<Page number=\"" + page.getFormattedNumber() + "\">");
         body = page.getBody();
         before = page.getBefore();
         after = page.getAfter();
-        if (before != null) {
-            renderAreaContainer(before);
-        }
-        renderBodyAreaContainer(body);
-        if (after != null) {
-            renderAreaContainer(after);
-        }
+        start = page.getStart();
+        end = page.getEnd();
+        if (before != null)
+            before.render(this);
+        if (after != null)
+            after.render(this);
+        if (start != null)
+            start.render(this);
+        if (end != null)
+            end.render(this);
         writeEndTag("</Page>");
     }
 

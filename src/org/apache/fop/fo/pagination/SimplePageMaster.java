@@ -43,10 +43,9 @@ public class SimplePageMaster extends FObj {
     String masterName;
 
     // before and after data as required by start and end
-    boolean beforePrecedence;
-    int beforeHeight;
-    boolean afterPrecedence;
-    int afterHeight;
+    boolean beforePrecedence = false;
+    int beforeExtent, afterExtent, startExtent, endExtent;
+    boolean afterPrecedence = false;
 
     protected SimplePageMaster(FObj parent, PropertyList propertyList)
             throws FOPException {
@@ -88,63 +87,56 @@ public class SimplePageMaster extends FObj {
                                     - mProps.marginRight;
         int contentRectangleHeight = pageHeight - mProps.marginTop
                                      - mProps.marginBottom;
-
         this.pageMaster = new PageMaster(pageWidth, pageHeight);
-        if (getRegion(RegionBody.REGION_CLASS) != null) {
-            BodyRegionArea body =
-                (BodyRegionArea)getRegion(RegionBody.REGION_CLASS).makeRegionArea(contentRectangleXPosition,
-                                          contentRectangleYPosition,
-                                          contentRectangleWidth,
-                                          contentRectangleHeight);
-            this.pageMaster.addBody(body);
-        } else {
+        Region body = getRegion(RegionBody.REGION_CLASS);
+        RegionBefore before = (RegionBefore)getRegion(RegionBefore.REGION_CLASS);
+        RegionAfter after = (RegionAfter)getRegion(RegionAfter.REGION_CLASS);
+        RegionStart start = (RegionStart)getRegion(RegionStart.REGION_CLASS);
+        RegionEnd end = (RegionEnd)getRegion(RegionEnd.REGION_CLASS);
+        if (before != null) {
+            beforePrecedence = before.getPrecedence();
+            beforeExtent = before.getExtent();
+        }
+        if (after != null) {
+            afterPrecedence = after.getPrecedence();
+            afterExtent = after.getExtent();
+        }
+        if (start != null)
+            startExtent = start.getExtent();
+        if (end != null)
+            endExtent = end.getExtent();
+
+        if (body != null)
+            this.pageMaster.addBody((BodyRegionArea)body.makeRegionArea(
+                    contentRectangleXPosition,
+                    contentRectangleYPosition,
+                    contentRectangleWidth,
+                    contentRectangleHeight));
+        else
             log.error("simple-page-master must have a region of class "
                                    + RegionBody.REGION_CLASS);
-        }
 
-        if (getRegion(RegionBefore.REGION_CLASS) != null) {
-            RegionArea before =
-                getRegion(RegionBefore.REGION_CLASS).makeRegionArea(contentRectangleXPosition,
+        if (before != null)
+            this.pageMaster.addBefore(before.makeRegionArea(contentRectangleXPosition,
                           contentRectangleYPosition, contentRectangleWidth,
-                          contentRectangleHeight);
-            this.pageMaster.addBefore(before);
-            beforePrecedence =
-                ((RegionBefore)getRegion(RegionBefore.REGION_CLASS)).getPrecedence();
-            beforeHeight = before.getHeight();
-        } else {
-            beforePrecedence = false;
-        }
+                          contentRectangleHeight, startExtent, endExtent));
 
-        if (getRegion(RegionAfter.REGION_CLASS) != null) {
-            RegionArea after =
-                getRegion(RegionAfter.REGION_CLASS).makeRegionArea(contentRectangleXPosition,
+        if (after != null)
+            this.pageMaster.addAfter(after.makeRegionArea(contentRectangleXPosition,
                           contentRectangleYPosition, contentRectangleWidth,
-                          contentRectangleHeight);
-            this.pageMaster.addAfter(after);
-            afterPrecedence =
-                ((RegionAfter)getRegion(RegionAfter.REGION_CLASS)).getPrecedence();
-            afterHeight = after.getHeight();
-        } else {
-            afterPrecedence = false;
-        }
+                          contentRectangleHeight, startExtent, endExtent));
 
-        if (getRegion(RegionStart.REGION_CLASS) != null) {
-            RegionArea start =
-                ((RegionStart)getRegion(RegionStart.REGION_CLASS)).makeRegionArea(contentRectangleXPosition,
+        if (start != null)
+            this.pageMaster.addStart(start.makeRegionArea(contentRectangleXPosition,
                     contentRectangleYPosition, contentRectangleWidth,
                     contentRectangleHeight, beforePrecedence,
-                    afterPrecedence, beforeHeight, afterHeight);
-            this.pageMaster.addStart(start);
-        }
+                    afterPrecedence, beforeExtent, afterExtent));
 
-        if (getRegion(RegionEnd.REGION_CLASS) != null) {
-            RegionArea end =
-                ((RegionEnd)getRegion(RegionEnd.REGION_CLASS)).makeRegionArea(contentRectangleXPosition,
+        if (end != null)
+            this.pageMaster.addEnd(end.makeRegionArea(contentRectangleXPosition,
                     contentRectangleYPosition, contentRectangleWidth,
                     contentRectangleHeight, beforePrecedence,
-                    afterPrecedence, beforeHeight, afterHeight);
-            this.pageMaster.addEnd(end);
-        }
+                    afterPrecedence, beforeExtent, afterExtent));
     }
 
     public PageMaster getPageMaster() {

@@ -361,7 +361,7 @@ public class MIFRenderer extends AbstractRenderer {
 
         this.mifDoc.createPage();
 
-        renderBodyAreaContainer(body);
+        body.render(this);
 
 
         // If the area is an instance of anything other than body, it goes into the
@@ -371,13 +371,13 @@ public class MIFRenderer extends AbstractRenderer {
         if (before != null) {
 
             this.mifDoc.createTextRect(1);    // Create a rect with one col
-            renderAreaContainer(before);
+            before.render(this);
         }
 
         if (after != null) {
 
             this.mifDoc.createTextRect(1);    // Create a rect with one col
-            renderAreaContainer(after);
+            after.render(this);
         }
 
     }

@@ -338,6 +338,45 @@ public abstract class AbstractRenderer implements Renderer {
     }
 
     /**
+     * render region area container
+     *
+     * @param area the region area container to render
+     */
+    public void renderRegionAreaContainer(AreaContainer area) {
+        int saveY = this.currentYPosition;
+        int saveX = this.currentAreaContainerXPosition;
+
+        if (area.getPosition() == Position.ABSOLUTE) {
+            // Y position is computed assuming positive Y axis, adjust for negative postscript one
+            this.currentYPosition = area.getYPosition();
+            this.currentAreaContainerXPosition = area.getXPosition();
+        } else if (area.getPosition() == Position.RELATIVE) {
+            this.currentYPosition -= area.getYPosition();
+            this.currentAreaContainerXPosition += area.getXPosition();
+        }
+
+        this.currentXPosition = this.currentAreaContainerXPosition;
+        int rx = this.currentAreaContainerXPosition;
+        int ry = this.currentYPosition;
+        int w = area.getAllocationWidth();
+        int h = area.getMaxHeight();
+
+        doBackground(area, rx, ry, w, h);
+
+        Enumeration e = area.getChildren().elements();
+        while (e.hasMoreElements()) {
+            Box b = (Box)e.nextElement();
+            b.render(this);    // span areas
+        }
+
+        if (area.getPosition() != Position.STATIC) {
+            this.currentYPosition = saveY;
+            this.currentAreaContainerXPosition = saveX;
+        } else
+            this.currentYPosition -= area.getHeight();
+    }
+
+    /**
      * render area container
      *
      * @param area the area container to render
@@ -439,5 +478,22 @@ public abstract class AbstractRenderer implements Renderer {
 
         this.currentYPosition = ry - h;
         this.currentXPosition = rx;
+    }
+
+    /**
+     * render region areas
+     *
+     * @param page the page whose regions to render
+     */
+    public void renderRegions(Page page) {
+        page.getBody().render(this);
+        if (page.getBefore() != null)
+            page.getBefore().render(this);
+        if (page.getAfter() != null)
+            page.getAfter().render(this);
+        if (page.getStart() != null)
+            page.getStart().render(this);
+        if (page.getEnd() != null)
+            page.getEnd().render(this);
     }
 }

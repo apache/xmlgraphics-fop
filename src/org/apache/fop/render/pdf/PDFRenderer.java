@@ -828,41 +828,15 @@ public class PDFRenderer extends PrintRenderer {
      * @param page  page to render
      */
     public void renderPage(Page page) {
-        BodyAreaContainer body;
-        AreaContainer before;
-        AreaContainer after;
-        AreaContainer start;
-        AreaContainer end;
-
         currentStream = this.pdfDoc.makeStream();
-        body = page.getBody();
-        before = page.getBefore();
-        after = page.getAfter();
-        start = page.getStart();
-        end = page.getEnd();
 
         this.currentFontName = "";
         this.currentFontSize = 0;
 
         currentStream.add("BT\n");
 
-        renderBodyAreaContainer(body);
+        renderRegions(page);
 
-        if (before != null) {
-            renderAreaContainer(before);
-        }
-
-        if (after != null) {
-            renderAreaContainer(after);
-        }
-
-        if (start != null) {
-            renderAreaContainer(start);
-        }
-
-        if (end != null) {
-            renderAreaContainer(end);
-        }
         closeText();
 
         float w = page.getWidth();

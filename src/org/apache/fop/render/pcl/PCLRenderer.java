@@ -676,8 +676,6 @@ public class PCLRenderer extends PrintRenderer {
         if (debug)
             System.out.println("PCLRenderer.renderPage() page.Height() = "
                                + page.getHeight());
-        BodyAreaContainer body;
-        AreaContainer before, after, start, end;
 
         if (paperheight > 0 && divisions == -1)
             divisions = paperheight / (page.getHeight() / 100);
@@ -710,28 +708,10 @@ public class PCLRenderer extends PrintRenderer {
             currentStream.add("\033&k" + (leftmargin / 6f)
                               + "H\033&a1L\033&k12H");
 
-        body = page.getBody();
-        before = page.getBefore();
-        after = page.getAfter();
-        start = page.getStart();
-        end = page.getEnd();
-
         this.currentFontName = "";
         this.currentFontSize = 0;
 
-        renderBodyAreaContainer(body);
-
-        if (before != null)
-            renderAreaContainer(before);
-
-        if (after != null)
-            renderAreaContainer(after);
-
-        if (start != null)
-            renderAreaContainer(start);
-
-        if (end != null)
-            renderAreaContainer(end);
+        renderRegions(page);
 
         // End page.
         if (++curdiv == divisions || divisions == -1) {
