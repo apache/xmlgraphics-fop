@@ -9,14 +9,13 @@ package org.apache.fop.fo.pagination;
 
 // FOP
 import org.apache.fop.fo.*;
-import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.PageMaster;
 import org.apache.fop.apps.FOPException;
 
 // Java
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 
+// SAX
 import org.xml.sax.Attributes;
 
 /**
@@ -26,7 +25,7 @@ import org.xml.sax.Attributes;
  */
 public class PageSequenceMaster extends FObj {
     LayoutMasterSet layoutMasterSet;
-    ArrayList subSequenceSpecifiers;
+    List subSequenceSpecifiers;
     private SubSequenceSpecifier currentSubSequence;
     private int currentSubSequenceNumber;
     private String masterName;

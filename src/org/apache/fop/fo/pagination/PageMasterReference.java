@@ -7,10 +7,11 @@
 
 package org.apache.fop.fo.pagination;
 
+// FOP
 import org.apache.fop.fo.*;
-import org.apache.fop.fo.properties.*;
 import org.apache.fop.apps.FOPException;
 
+// SAX
 import org.xml.sax.Attributes;
 
 /**

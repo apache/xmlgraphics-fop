@@ -7,14 +7,8 @@
 
 package org.apache.fop.fo.pagination;
 
-// FOP
-import org.apache.fop.fo.properties.*;
-
 // Avalon
 import org.apache.avalon.framework.logger.AbstractLogEnabled;
-
-// Java
-import java.util.*;
 
 /**
  * This class uses the 'format', 'groupingSeparator', 'groupingSize',

@@ -7,12 +7,12 @@
 
 package org.apache.fop.fo.pagination;
 
+// Java
 import java.awt.Rectangle;
 
 // FOP
 import org.apache.fop.fo.*;
 import org.apache.fop.datatypes.FODimension;
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.RegionReference;
 
 

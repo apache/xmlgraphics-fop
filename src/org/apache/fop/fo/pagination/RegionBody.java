@@ -7,11 +7,11 @@
 
 package org.apache.fop.fo.pagination;
 
+// Java
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 // FOP
-
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
@@ -19,7 +19,6 @@ import org.apache.fop.fo.Property;
 import org.apache.fop.fo.properties.Overflow;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.FODimension;
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.BodyRegion;
 import org.apache.fop.layout.MarginProps;

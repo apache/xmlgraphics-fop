@@ -8,13 +8,12 @@
 package org.apache.fop.fo.pagination;
 
 // FOP
-import org.apache.fop.fo.*;
-import org.apache.fop.fo.flow.*;
-import org.apache.fop.fo.properties.*;
-import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FONode;
 
 // Java
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The fo:root formatting object. Contains page masters, page-sequences.
@@ -22,7 +21,7 @@ import java.util.ArrayList;
 public class Root extends FObj {
 
     LayoutMasterSet layoutMasterSet;
-    ArrayList pageSequences;
+    List pageSequences;
 
     /**
      * keeps count of page number from over PageSequence instances
@@ -56,7 +55,7 @@ public class Root extends FObj {
     /**
      * Some properties, such as 'force-page-count', require a
      * page-sequence to know about some properties of the next.
-     * @returns succeeding PageSequence; null if none
+     * @return succeeding PageSequence; null if none
      */
     public PageSequence getSucceedingPageSequence(PageSequence current) {
         int currentIndex = pageSequences.indexOf(current);

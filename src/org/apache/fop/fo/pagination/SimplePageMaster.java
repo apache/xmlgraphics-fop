@@ -9,7 +9,6 @@ package org.apache.fop.fo.pagination;
 
 // FOP
 import org.apache.fop.fo.*;
-import org.apache.fop.fo.properties.*;
 import org.apache.fop.area.CTM;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.area.PageViewport;
@@ -21,9 +20,10 @@ import org.apache.fop.layout.PageMaster;
 import org.apache.fop.apps.FOPException;
 
 import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+
 import org.xml.sax.Attributes;
 
 /**
@@ -35,7 +35,7 @@ public class SimplePageMaster extends FObj {
     /**
      * Page regions (regionClass, Region)
      */
-    private HashMap _regions;
+    private Map _regions;
 
     PageMaster pageMaster;
     String masterName;
@@ -168,7 +168,7 @@ public class SimplePageMaster extends FObj {
         return (Region)_regions.get(regionClass);
     }
 
-    protected HashMap getRegions() {
+    protected Map getRegions() {
         return _regions;
     }
 
