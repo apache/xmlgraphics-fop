@@ -127,8 +127,8 @@ public class Xalan1Transform
 	       org.xml.sax.SAXException
     {
 	// Create the 3 objects the XSLTProcessor needs to perform the transformation.
-        org.apache.xalan.xslt.XSLTInputSource source =
-          new org.apache.xalan.xslt.XSLTInputSource (xmlSource);
+	/*  org.apache.xalan.xslt.XSLTInputSource source =
+	    new org.apache.xalan.xslt.XSLTInputSource (xmlSource); */
         org.apache.xalan.xslt.XSLTResultTarget xmlResult =
           new org.apache.xalan.xslt.XSLTResultTarget (outputFile);
 
@@ -140,5 +140,24 @@ public class Xalan1Transform
 			   xmlSource, xmlResult);
     }
     
-    
+       public static void transform(String  xmlSource, 
+				 String xslURL,
+				 java.io.Writer outputFile) 
+	throws java.io.IOException,
+	       java.net.MalformedURLException, 
+	       org.xml.sax.SAXException
+    {
+	// Create the 3 objects the XSLTProcessor needs to perform the transformation.
+        org.apache.xalan.xslt.XSLTInputSource source =
+          new org.apache.xalan.xslt.XSLTInputSource (xmlSource);
+        org.apache.xalan.xslt.XSLTResultTarget xmlResult =
+          new org.apache.xalan.xslt.XSLTResultTarget (outputFile);
+
+	StylesheetRoot stylesheet = getStylesheet(xslURL,true);
+	
+        // Perform the transformation.
+        stylesheet.process(XSLTProcessorFactory.getProcessor
+			   (new org.apache.xalan.xpath.xdom.XercesLiaison()),
+			  source, xmlResult);
+    }
 }
