@@ -91,8 +91,8 @@ import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.traits.BorderProps;
-import org.apache.fop.viewer.PreviewDialog;
-import org.apache.fop.viewer.Translator;
+import org.apache.fop.render.awt.viewer.PreviewDialog;
+import org.apache.fop.render.awt.viewer.Translator;
 
 /**
  * This is FOP's AWT renderer.
@@ -266,8 +266,8 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         Page page = (Page) pageList.get(pageNum);
 
         Rectangle2D bounds = pageViewport.getViewArea();
-        int pageWidth = (int)((float) bounds.getWidth() / 1000f + .5);
-        int pageHeight = (int)((float) bounds.getHeight() / 1000f + .5);
+        int pageWidth = (int) Math.round(bounds.getWidth() / 1000f );
+        int pageHeight = (int) Math.round(bounds.getHeight() / 1000f );
 /*
         System.out.println("(Page) X, Y, Width, Height: " + bounds.getX()
             + " " + bounds.getY()
@@ -315,18 +315,25 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         currentFontSize = 0;
         Rectangle2D viewArea = region.getViewArea();
 
-        int startX = (int)(((float) viewArea.getX() / 1000f + .5)
+        int startX = (int) Math.round((viewArea.getX() / 1000f)
             * (scaleFactor / 100f));
-        int startY = (int)(((float) viewArea.getY() / 1000f + .5)
+        int startY = (int) Math.round((viewArea.getY() / 1000f)
             * (scaleFactor / 100f));
-        int width = (int)(((float) viewArea.getWidth() / 1000f + .5)
-            * (scaleFactor / 100f));
-        int height = (int)(((float) viewArea.getHeight() / 1000f + .5)
-            * (scaleFactor / 100f));
+        // for rounding to work correctly, need to take into account
+        // fractional portion of X and Y.
+        int width = (int) Math.round(((viewArea.getX() + viewArea.getWidth()) / 1000f)
+            * (scaleFactor / 100f)) - startX;
+        int height = (int) Math.round(((viewArea.getY() + viewArea.getHeight()) / 1000f)
+            * (scaleFactor / 100f)) - startY;
 
         if (region.getRegion() != null) {
             System.out.print("\nRegion type = " + region.getRegion().getRegionClass());
         }
+/*        System.out.println("\nView  X, Width, Y, Height: " + viewArea.getX()
+            + " " + viewArea.getWidth()
+            + " " + viewArea.getY()
+            + " " + viewArea.getHeight()
+            ); */
         System.out.println("  X, Width, Y, Height: " + startX
             + " " + width
             + " " + startY
@@ -382,46 +389,33 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
 
         BorderProps bps = (BorderProps) block.getTrait(Trait.BORDER_BEFORE);
         if (bps != null) {
-            int borderWidth = (int) ((bps.width / 1000f) * (scaleFactor / 100f));
-            System.out.println("Before (color/width) " + bps.color.getAWTColor().toString() + " " + bps.width);
+            int borderWidth = (int) Math.round((bps.width / 1000f) * (scaleFactor / 100f));
             graphics.setColor(bps.color.getAWTColor());
-            // drawLine(x1, y1, x2, y2);
-            System.out.println("Draw from (" + startx + "," + (starty + borderWidth/2) + 
-                ") to (" + (startx+width) + "," + (starty + borderWidth/ 2) + ")");
-            graphics.drawLine(startx, starty + borderWidth / 2, startx + width, 
-                starty + borderWidth / 2);
-        }
-        bps = (BorderProps) block.getTrait(Trait.BORDER_START);
-        if (bps != null) {
-            int borderWidth = (int) ((bps.width / 1000f) * (scaleFactor / 100f));
-            System.out.println("Start (color/width) " + bps.color.getAWTColor().toString() + " " + bps.width);
-            graphics.setColor(bps.color.getAWTColor());
-            System.out.println("Draw from (" + (startx + borderWidth / 2) + "," + starty + 
-                ") to (" + (startx + borderWidth / 2) + "," + (starty + height) + ")");
-            graphics.drawLine(startx + borderWidth / 2, starty, startx + borderWidth / 2, 
-                starty + height);
+//          System.out.println("Border at (" + startx + "," + (starty + height - borderWidth) + 
+//              ") width, height: (" + (width) + "," + (borderWidth) + ")");
+            graphics.fillRect(startx, starty, width, borderWidth);
         }
         bps = (BorderProps) block.getTrait(Trait.BORDER_AFTER);
         if (bps != null) {
-            int borderWidth = (int) ((bps.width / 1000f) * (scaleFactor / 100f));
-            System.out.println("After (color/width) " + bps.color.getAWTColor().toString() + " " + bps.width);
+            int borderWidth = (int) Math.round((bps.width / 1000f) * (scaleFactor / 100f));
             int sy = starty + height;
             graphics.setColor(bps.color.getAWTColor());
-            System.out.println("Draw from (" + startx + "," + (sy - borderWidth / 2) + 
-                ") to (" + (startx+width) + "," + (sy - borderWidth / 2) + ")");
-            graphics.drawLine(startx, sy - borderWidth / 2, startx + width,
-                sy - borderWidth / 2);
+            graphics.fillRect(startx, starty + height - borderWidth, 
+                width, borderWidth);
+        }
+        bps = (BorderProps) block.getTrait(Trait.BORDER_START);
+        if (bps != null) {
+            int borderWidth = (int) Math.round((bps.width / 1000f) * (scaleFactor / 100f));
+            graphics.setColor(bps.color.getAWTColor());
+            graphics.fillRect(startx, starty, borderWidth, height);
         }
         bps = (BorderProps) block.getTrait(Trait.BORDER_END);
         if (bps != null) {
-            int borderWidth = (int) ((bps.width / 1000f) * (scaleFactor / 100f));
-            System.out.println("End (color/width) " + bps.color.getAWTColor().toString() + " " + bps.width);
+            int borderWidth = (int) Math.round((bps.width / 1000f) * (scaleFactor / 100f));
             int sx = startx + width;
             graphics.setColor(bps.color.getAWTColor());
-            System.out.println("Draw from (" + (sx - borderWidth / 2) + "," + starty + 
-                ") to (" + (sx - borderWidth / 2) + "," + (starty + height) + ")");
-            graphics.drawLine(sx - borderWidth / 2, starty, sx - borderWidth / 2, 
-                starty + height);
+            graphics.fillRect(startx + width - borderWidth, starty, 
+                borderWidth, height);
         }
     }
 }
