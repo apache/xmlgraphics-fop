@@ -28,6 +28,8 @@ public class <xsl:value-of select="class-name"/> extends Font {
     private final static int xHeight = <xsl:value-of select="x-height"/>;
     private final static int ascender = <xsl:value-of select="ascender"/>;
     private final static int descender = <xsl:value-of select="descender"/>;
+    private final static int firstChar = <xsl:value-of select="first-char"/>;
+    private final static int lastChar = <xsl:value-of select="last-char"/>;
     private final static int[] width;
 
     static {
@@ -60,8 +62,22 @@ public class <xsl:value-of select="class-name"/> extends Font {
         return xHeight;
     }
 
+    public int getFirstChar() {
+        return firstChar;
+    }
+
+    public int getLastChar() {
+        return lastChar;
+    }
+
     public int width(int i) {
         return width[i];
+    }
+
+    public int[] getWidths() {
+        int[] arr = new int[getLastChar()-getFirstChar()+1];
+        System.arraycopy(width, getFirstChar(), arr, 0, getLastChar()-getFirstChar()+1);
+        return arr;
     }
 }
 <!--</redirect:write>-->

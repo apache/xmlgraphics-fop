@@ -11,6 +11,7 @@
   <document id="limitations"    label="Limitations" source="fop/limitations.xml"    />
   <document id="bugs"           label="Bugs" source="fop/bugs.xml"    />
   <document id="examples"       label="Examples" source="fop/examples.xml"    />
+  <document id="fonts"       label="Fonts" source="fop/fonts.xml"    />
   <separator/>
   <document id="compiling"      label="Compiling" source="fop/compiling.xml"    />
   <document id="embedding"      label="Embedding" source="fop/embedding.xml"    />
