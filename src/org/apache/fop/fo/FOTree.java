@@ -26,8 +26,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /*
- * FOTree.java
- *
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -79,7 +78,6 @@ public class FOTree extends Tree implements Runnable {
         // Set the initial value
         PropertyValue prop =
                 PropertyConsts.pconsts.getInitialValue(PropNames.FONT_SIZE);
-        System.out.println("font-size property: " + prop);
         if ( ! (prop instanceof Numeric) || ! ((Numeric)prop).isLength())
             throw new PropertyException("Initial font-size is not a Length");
 
