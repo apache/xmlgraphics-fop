@@ -10,7 +10,7 @@ FOP readme
     FOP is part of Apache's XML project. The homepage of FOP is 
     http:/xml.apache.org/fop 
 
-    HTML-Documentation can be found in the subdirectory xml-fop/docs/html-docs. 
+    HTML-Documentation can be found in the subdirectory build/site 
 
     The names of the committers of this project and what the developers are working on
     can be found in the file STATUS in root.
@@ -25,6 +25,8 @@ FOP readme
     Archives are available at: http://marc.theaimsgroup.com
 
     Before you post any questions, please have a look at the FAQ at 
-    http://www.owal.co.uk:8090/asf/servlet/asf/
+    build/site/faq.html
+    (or http://xml.apache.org/fop/faq.html for latest version)
+    Another FAQ is available at: http://www.owal.co.uk/cgi-bin/fopfaq.cgi
 
 
