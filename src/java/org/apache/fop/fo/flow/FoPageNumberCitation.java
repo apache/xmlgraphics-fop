@@ -118,7 +118,6 @@ public class FoPageNumberCitation extends FOPageSeqNode {
         propsets.set(PropNames.TEXT_DEPTH);
         propsets.set(PropNames.TEXT_SHADOW);
         propsets.set(PropNames.TEXT_TRANSFORM);
-        propsets.set(PropNames.USAGE_CONTEXT_OF_SUPPRESS_AT_LINE_BREAK);
         propsets.set(PropNames.VISIBILITY);
         propsets.set(PropNames.WORD_SPACING);
         propsets.set(PropNames.WRAP_OPTION);

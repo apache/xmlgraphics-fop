@@ -106,7 +106,8 @@ public class FoPageSequence extends FONode {
         propsets.set(PropNames.INITIAL_PAGE_NUMBER);
         propsets.set(PropNames.FORCE_PAGE_COUNT);
         propsets.set(PropNames.MASTER_REFERENCE);
-
+        propsets.set(PropNames.FLOW_MAP_REFERENCE);
+        
         // Map these properties into sparsePropsSet
         // sparsePropsSet is a HashMap containing the indicies of the
         // sparsePropsSet array, indexed by the FO index of the FO slot

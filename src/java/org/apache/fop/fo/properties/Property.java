@@ -88,7 +88,7 @@ import org.apache.fop.fo.expr.PropertyNotImplementedException;
  * @version $Revision$ $Name$
  */
 
-public /*abstract*/ class Property {
+public class Property {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";

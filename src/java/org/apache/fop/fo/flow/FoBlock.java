@@ -130,7 +130,6 @@ public class FoBlock extends FOPageSeqNode {
         propsets.set(PropNames.TEXT_ALIGN_LAST);
         propsets.set(PropNames.TEXT_INDENT);
         propsets.set(PropNames.VISIBILITY);
-        propsets.set(PropNames.USAGE_CONTEXT_OF_SUPPRESS_AT_LINE_BREAK);
         propsets.set(PropNames.WHITE_SPACE_COLLAPSE);
         propsets.set(PropNames.WIDOWS);
         propsets.set(PropNames.WRAP_OPTION);
