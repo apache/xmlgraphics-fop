@@ -244,8 +244,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                         /* If we are not in justified text, we can end the line at
                          * prevBP.
                          */
-                            vecInlineBreaks.add(bp);
                         if (prevBP == null) {
+                            vecInlineBreaks.add(bp);
                             prevBP = bp;
                         }
                         break;
@@ -313,9 +313,15 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         if (!bp.isForcedBreak() && vecPossEnd.size() > 0) {
             prevBP = getBestBP(vecPossEnd);
         }
-        // Backup child LM if necessary
-        if (bp != prevBP && !prevCouldEndLine(prevBP)) {
-            reset();
+        if (bp != prevBP) {
+            /** Remove BPs after prevBP
+                if condAllAreSuppressible returns true,
+                else backup child LM */
+            if (condAllAreSuppressible(prevBP)) {
+                removeAllBP(prevBP);
+            } else {
+                reset();
+            }
         }
 
         // Don't justify last line in the sequence or if forced line-end
@@ -388,27 +394,18 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         return true;
     }
 
-    /** Test whether all breakposs in vecInlineBreaks
-        back to and including prev could end line */
-    private boolean prevCouldEndLine(BreakPoss prev) {
+    /** Return true if we are at the end of this LM,
+        and BPs after prev have been added to vecInlineBreaks
+        and all breakposs in vecInlineBreaks
+        back to and excluding prev are suppressible */
+    private boolean condAllAreSuppressible(BreakPoss prev) {
         if (!isFinished()) {
             return false;
         }
-        ListIterator bpIter =
-            vecInlineBreaks.listIterator(vecInlineBreaks.size());
-        boolean couldEndLine = true;
-        while (bpIter.hasPrevious()) {
-            BreakPoss bp = (BreakPoss) bpIter.previous();
-            if (bp == prev) {
-                break;
-            } else {
-                couldEndLine = bp.isSuppressible();
-                if (!couldEndLine) {
-                    break;
-                }
-            }
+        if (vecInlineBreaks.get(vecInlineBreaks.size() - 1) == prev) {
+            return false;
         }
-        return couldEndLine;
+        return allAreSuppressible(prev);
     }
 
     /** Test whether all breakposs in vecInlineBreaks
