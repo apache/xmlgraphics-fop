@@ -24,6 +24,8 @@ import org.apache.fop.configuration.Configuration;
 
 /**
  * super class for all classes which start Fop from the commandline
+ *
+ * Modified to use new streaming API by Mark Lillywhite, mark-fop@inomial.com
  */
 
 public class CommandLineStarter extends Starter {
@@ -59,11 +61,9 @@ public class CommandLineStarter extends Starter {
 
         try {
             driver.setRenderer(commandLineOptions.getRenderer());
-            driver.getRenderer().setOptions(commandLineOptions.getRendererOptions());
-            driver.buildFOTree(parser, inputHandler.getInputSource());
-            driver.format();
             driver.setOutputStream(new FileOutputStream(commandLineOptions.getOutputFile()));
-            driver.render();
+            driver.getRenderer().setOptions(commandLineOptions.getRendererOptions());
+            driver.render(parser, inputHandler.getInputSource());
             System.exit(0);
         } catch (Exception e) {
             if (e instanceof FOPException) {

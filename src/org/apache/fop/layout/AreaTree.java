@@ -9,6 +9,7 @@ package org.apache.fop.layout;
 
 // FOP
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.StreamRenderer;
 import org.apache.fop.fo.flow.StaticContent;
 import org.apache.fop.svg.*;
 import org.apache.fop.render.Renderer;
@@ -23,6 +24,18 @@ import java.util.Enumeration;
 import java.util.Stack;
 import java.util.Vector;
 
+/*
+ * Modified by Mark Lillywhite, mark-fop@inomial.com. No longer keeps
+   a list of pages in the tree, instead these are passed to the
+   StreamRenderer. No longer keeps it's own list of IDReferences;
+   these are handled by StreamRenderer. In many ways StreamRenderer
+   has taken over from AreaTree and possibly this might be a better
+   place to deal with things in the future..?<P>
+   
+   Any extensions added to the AreaTree while generating a page
+   are given to the Page for the renderer to deal with.
+  */
+ 
 public class AreaTree {
 
     /**
@@ -31,17 +44,18 @@ public class AreaTree {
      */
     FontInfo fontInfo;
 
-    /* list of all the pages */
-    Vector pageList = new Vector();
-
     /**
      * List of root extension objects
      */
-    Vector rootExtensions = new Vector();
-
-
-    IDReferences idReferences = new IDReferences();
-
+    Vector rootExtensions = null;
+    
+    private StreamRenderer streamRenderer;
+    
+    public AreaTree(StreamRenderer streamRenderer)
+    {
+    	this.streamRenderer = streamRenderer;
+    }
+    
     public void setFontInfo(FontInfo fontInfo) {
         this.fontInfo = fontInfo;
     }
@@ -50,65 +64,39 @@ public class AreaTree {
         return this.fontInfo;
     }
 
-    public void addPage(Page page) {
-        this.pageList.addElement(page);
-    }
-
-    public Vector getPages() {
-        return this.pageList;
-    }
-
-    public IDReferences getIDReferences() {
-        return idReferences;
-    }
-
-    public void addExtension(ExtensionObj obj) {
-        rootExtensions.addElement(obj);
-    }
-
-    public Vector getExtensions() {
-        return rootExtensions;
-    }
-
     public Page getNextPage(Page current, boolean isWithinPageSequence,
                             boolean isFirstCall) {
-        Page nextPage = null;
-        int pageIndex = 0;
-        if (isFirstCall)
-            pageIndex = pageList.size();
-        else
-            pageIndex = pageList.indexOf(current);
-        if ((pageIndex + 1) < pageList.size()) {
-            nextPage = (Page)pageList.elementAt(pageIndex + 1);
-            if (isWithinPageSequence
-                    &&!nextPage.getPageSequence().equals(current.getPageSequence())) {
-                nextPage = null;
-            }
-        }
-        return nextPage;
+        return current;
     }
 
     public Page getPreviousPage(Page current, boolean isWithinPageSequence,
-                                boolean isFirstCall) {
-        Page previousPage = null;
-        int pageIndex = 0;
-        if (isFirstCall)
-            pageIndex = pageList.size();
-        else
-            pageIndex = pageList.indexOf(current);
-        // System.out.println("Page index = " + pageIndex);
-        if ((pageIndex - 1) >= 0) {
-            previousPage = (Page)pageList.elementAt(pageIndex - 1);
-            PageSequence currentPS = current.getPageSequence();
-            // System.out.println("Current PS = '" + currentPS + "'");
-            PageSequence previousPS = previousPage.getPageSequence();
-            // System.out.println("Previous PS = '" + previousPS + "'");
-            if (isWithinPageSequence &&!previousPS.equals(currentPS)) {
-                // System.out.println("Outside page sequence");
-                previousPage = null;
-            }
-        }
-        return previousPage;
+                                boolean isFirstCall) {  
+        return current;
     }
 
+    public void addPage(Page page)
+    throws FOPException
+    {
+        try {
+          page.setExtensions(rootExtensions);
+          rootExtensions = null;
+          streamRenderer.queuePage(page);
+        }
+        catch (IOException e)
+        {
+           throw new FOPException(e);
+        }
+    }
+
+    public IDReferences getIDReferences() {
+        return streamRenderer.getIDReferences();
+    }
+
+    public void addExtension(ExtensionObj obj)
+    {
+      if(rootExtensions ==null)
+        rootExtensions = new Vector();
+      rootExtensions.addElement(obj);
+    }
+    
 }

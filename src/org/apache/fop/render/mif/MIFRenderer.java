@@ -40,6 +40,12 @@ import java.util.Hashtable;
 
 /**
  * Renderer that renders areas to MIF
+ *
+ * Modified by Mark Lillywhite mark-fop@inomial.com. Updated to
+ * collect all the Pages and print them out at the end. This means
+ * that the MIF renderer does not stream, but on the other hand
+ * it should still work. I don't have an MIF view to test it with,
+ * you see.
  */
 public class MIFRenderer implements Renderer {
 
@@ -90,31 +96,6 @@ public class MIFRenderer implements Renderer {
      */
     public void setOptions(Hashtable options) {
         this.options = options;
-    }
-
-    /**
-     * render the areas into MIF
-     *
-     * @param areaTree the laid-out area tree
-     * @param writer the PrintWriter to write the MIF with
-     */
-
-    public void render(AreaTree areaTree,
-                       OutputStream stream) throws IOException, FOPException {
-
-        MessageHandler.logln("rendering areas to MIF");
-        // idReferences=areaTree.getIDReferences();
-        // this.pdfResources = this.pdfDoc.getResources();
-        // this.pdfDoc.setIDReferences(idReferences);
-        Enumeration e = areaTree.getPages().elements();
-        while (e.hasMoreElements()) {
-            this.renderPage((Page)e.nextElement());
-        }
-
-        // MessageHandler.logln("writing out MIF");
-
-        this.mifDoc.output(stream);
-        stream.close();
     }
 
     /**
@@ -496,4 +477,30 @@ public class MIFRenderer implements Renderer {
      */
     public void renderLeaderArea(LeaderArea area) {}
 
+    /**
+      Default start renderer method. This would
+      normally be overridden. (mark-fop@inomial.com).
+    */
+    public void startRenderer(OutputStream outputStream)
+      throws IOException
+    {
+    	MessageHandler.logln("rendering areas to MIF");
+    }
+    
+    /**
+      Default stop renderer method. This would
+      normally be overridden. (mark-fop@inomial.com)
+    */
+    public void stopRenderer(OutputStream outputStream)
+      throws IOException
+    {
+    	MessageHandler.logln("writing out MIF");
+    	this.mifDoc.output(outputStream);
+    	outputStream.flush();
+    }
+
+    public void render(Page page, OutputStream outputStream) {
+       this.renderPage(page);
+    }
 }
+

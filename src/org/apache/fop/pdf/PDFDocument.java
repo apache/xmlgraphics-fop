@@ -43,9 +43,16 @@ import java.awt.Rectangle;
  * positions within the document. For this reason the PDF document must
  * keep track of the character position of each object.  The document
  * also keeps direct track of the /Root, /Info and /Resources objects.
+ *
+ * Modified by Mark Lillywhite, mark-fop@inomial.com. The changes
+ * involve: ability to output pages one-at-a-time in a streaming
+ * fashion (rather than storing them all for output at the end);
+ * ability to write the /Pages object after writing the rest
+ * of the document; ability to write to a stream and flush
+ * the object list; enhanced trailer output; cleanups.
  */
 public class PDFDocument {
-
+    private static final Integer locationPlaceholder = new Integer(0);
     /**
      * the version of PDF supported
      */
@@ -60,6 +67,9 @@ public class PDFDocument {
      * the character position of each object
      */
     protected Vector location = new Vector();
+
+    /** List of objects to write in the trailer */
+      private Vector trailerObjects = new Vector();
 
     /**
      * the counter for object numbering
@@ -81,6 +91,12 @@ public class PDFDocument {
      */
     protected PDFRoot root;
 
+    /** The root outline object */
+    private PDFOutline outlineRoot = null;
+    
+    /** The /Pages object (mark-fop@inomial.com) */
+    private PDFPages pages;
+    
     /**
      * the /Info object
      */
@@ -129,14 +145,30 @@ public class PDFDocument {
     protected Hashtable xObjectsMap = new Hashtable();
 
     /**
-     * creates an empty PDF document
+     * creates an empty PDF document <p>
+     * 
+     * The constructor creates a /Root and /Pages object to
+     * track the document but does not write these objects until
+     * the trailer is written. Note that the object ID of the
+     * pages object is determined now, and the xref table is
+     * updated later. This allows Pages to refer to their
+     * Parent before we write it out. This took me a long
+     * time to work out, and is so obvious now. Sigh.
+     * mark-fop@inomial.com. Maybe I should do a PDF course.
      */
     public PDFDocument() {
 
         /* create the /Root, /Info and /Resources objects */
-        this.root = makeRoot();
-        this.info = makeInfo();
+        this.pages = makePages();
+        
+        // Create the Root object
+        this.root = makeRoot(pages);
+        
+        // Create the Resources object
         this.resources = makeResources();
+        
+        // Make the /Info record
+        this.info = makeInfo();
     }
 
     /**
@@ -149,30 +181,40 @@ public class PDFDocument {
     }
 
     /**
-     * make /Root object as next object
-     *
-     * @return the created /Root object
+     * Make a /Catalog (Root) object. This object is written in
+     * the trailer.
      */
-    protected PDFRoot makeRoot() {
+    public PDFRoot makeRoot(PDFPages pages)
+    {
 
-        /*
-         * create a PDFRoot with the next object number and add to
-         * list of objects
+         /*
+         * Make a /Pages object. This object is written in the trailer.
          */
-        PDFRoot pdfRoot = new PDFRoot(++this.objectcount);
-        this.objects.addElement(pdfRoot);
+         PDFRoot pdfRoot = new PDFRoot(++this.objectcount, pages);
+         addTrailerObject(pdfRoot);
+         return pdfRoot;
+    }       
+ 
+    /**
+     * Make a /Pages object. This object is written in the trailer.
+     */
+     
+     public PDFPages makePages()
+     {
+        PDFPages pdfPages = new PDFPages(++this.objectcount);
+        addTrailerObject(pdfPages);
+        return pdfPages;
+     }
 
-        /*
-         * create a new /Pages object to be root of Pages hierarchy
-         * and add to list of objects
-         */
-        PDFPages rootPages = new PDFPages(++this.objectcount);
-        this.objects.addElement(rootPages);
-
-        /* inform the /Root object of the /Pages root */
-        pdfRoot.setRootPages(rootPages);
-        return pdfRoot;
-    }
+    /**
+     * Make a /Resources object. This object is written in the trailer.
+     */
+     public PDFResources makeResources()
+     {
+     	PDFResources pdfResources = new PDFResources(++this.objectcount);
+     	addTrailerObject(pdfResources);
+     	return pdfResources;
+     }
 
     /**
      * make an /Info object
@@ -191,22 +233,6 @@ public class PDFDocument {
         pdfInfo.setProducer(org.apache.fop.apps.Version.getVersion());
         this.objects.addElement(pdfInfo);
         return pdfInfo;
-    }
-
-    /**
-     * make a /Resources object
-     *
-     * @return the created /Resources object
-     */
-    private PDFResources makeResources() {
-
-        /*
-         * create a PDFResources with the next object number and add
-         * to list of objects
-         */
-        PDFResources pdfResources = new PDFResources(++this.objectcount);
-        this.objects.addElement(pdfResources);
-        return pdfResources;
     }
 
     /**
@@ -973,18 +999,32 @@ public class PDFDocument {
                 goToReference =
                     idReferences.createInternalLinkGoTo(destination,
                                                         ++this.objectcount);
-                this.objects.addElement(idReferences.getPDFGoTo(destination));
+                addTrailerObject(idReferences.getPDFGoTo(destination));
             }
         } else {        // id was not found, so create it
             idReferences.createNewId(destination);
             idReferences.addToIdValidationList(destination);
             goToReference = idReferences.createInternalLinkGoTo(destination,
                     ++this.objectcount);
-            this.objects.addElement(idReferences.getPDFGoTo(destination));
+            addTrailerObject(idReferences.getPDFGoTo(destination));
         }
         return goToReference;
     }
-
+    
+    public void addTrailerObject(PDFObject object)
+    {
+      this.trailerObjects.addElement(object);
+    }
+    
+    /**
+      Ensure there is room in the locations xref for the number of
+      objects that have been created.
+     */
+    private void prepareLocations()
+    {
+      while(location.size() < objectcount)
+        location.addElement(locationPlaceholder);
+    }
 
     /**
      * make a stream object
@@ -1023,14 +1063,18 @@ public class PDFDocument {
     }
 
     /**
-     * Make the root Outlines object
+     * Get the root Outlines object. This method does not write
+     * the outline to the PDF document, it simply creates a
+     * reference for later.
      */
-    public PDFOutline makeOutlineRoot() {
-        PDFOutline obj = new PDFOutline(++this.objectcount, null, null);
-        this.objects.addElement(obj);
-        root.setRootOutline(obj);
-
-        return obj;
+    public PDFOutline getOutlineRoot() {
+      if(outlineRoot != null)
+        return outlineRoot;
+      
+      outlineRoot = new PDFOutline(++this.objectcount, null, null);
+      addTrailerObject(outlineRoot);
+      root.setRootOutline(outlineRoot);
+      return outlineRoot;
     }
 
     /**
@@ -1044,7 +1088,7 @@ public class PDFDocument {
         String goToRef = getGoToReference(destination);
 
         PDFOutline obj = new PDFOutline(++this.objectcount, label, goToRef);
-        // System.out.println("created new outline object");
+        System.out.println("created new outline object");
 
         if (parent != null) {
             parent.addOutline(obj);
@@ -1068,15 +1112,10 @@ public class PDFDocument {
      *
      * @param writer the OutputStream to output the document to
      */
-    public void output(OutputStream stream) throws IOException {
+    public void output(OutputStream stream) throws IOException
+    {
 
-        /*
-         * output the header and increment the character position by
-         * the header's length
-         */
-        this.position += outputHeader(stream);
-
-        this.resources.setXObjects(xObjects);
+        prepareLocations();
 
         Enumeration en = this.objects.elements();
         while (en.hasMoreElements()) {
@@ -1087,7 +1126,8 @@ public class PDFDocument {
              * add the position of this object to the list of object
              * locations
              */
-            this.location.addElement(new Integer(this.position));
+            location.setElementAt(
+             new Integer(this.position),object.getNumber() - 1);
 
             /*
              * output the object and increment the character position
@@ -1096,28 +1136,26 @@ public class PDFDocument {
             this.position += object.output(stream);
         }
 
-        /*
-         * output the xref table and increment the character position
-         * by the table's length
-         */
-        this.position += outputXref(stream);
-
-        /* output the trailer and flush the Stream */
-        outputTrailer(stream);
-        stream.flush();
+        this.objects.clear();
     }
 
     /**
-     * write the PDF header
+     * write the PDF header <P>
+     *
+     * This method must be called prior to formatting
+     * and outputting AreaTrees.
      *
      * @param stream the OutputStream to write the header to
      * @return the number of bytes written
      */
-    protected int outputHeader(OutputStream stream) throws IOException {
-        int length = 0;
+    public void outputHeader(OutputStream stream)
+    throws IOException
+    {
+        this.position=0;
+        
         byte[] pdf = ("%PDF-" + this.pdfVersion + "\n").getBytes();
         stream.write(pdf);
-        length += pdf.length;
+        this.position += pdf.length;
 
         // output a binary comment as recommended by the PDF spec (3.4.1)
         byte[] bin = {
@@ -1125,9 +1163,9 @@ public class PDFDocument {
             (byte)'\n'
         };
         stream.write(bin);
-        length += bin.length;
+        this.position += bin.length;
 
-        return length;
+        this.resources.setXObjects(xObjects);
     }
 
     /**
@@ -1135,14 +1173,33 @@ public class PDFDocument {
      *
      * @param stream the OutputStream to write the trailer to
      */
-    protected void outputTrailer(OutputStream stream) throws IOException {
-
+    public void outputTrailer(OutputStream stream)
+    throws IOException
+    {
+    	output(stream);
+    	Enumeration e = trailerObjects.elements();
+    	while(e.hasMoreElements())
+    	{
+    	  PDFObject o = (PDFObject) e.nextElement();
+    	  this.location.setElementAt(
+    	    new Integer(this.position), o.getNumber() - 1);
+    	  this.position += o.output(stream);
+    	}
+        /* output the xref table and increment the character position
+          by the table's length */
+        this.position += outputXref(stream);
+        
         /* construct the trailer */
-        String pdf = "trailer\n<<\n/Size " + (this.objectcount + 1)
-                     + "\n/Root " + this.root.number + " "
-                     + this.root.generation + " R\n/Info " + this.info.number
-                     + " " + this.info.generation + " R\n>>\nstartxref\n"
-                     + this.xref + "\n%%EOF\n";
+        String pdf = 
+         "trailer\n" +
+         "<<\n" +
+         "/Size " + (this.objectcount + 1) + "\n" +
+         "/Root " + this.root.number + " " + this.root.generation + " R\n" +
+         "/Info " + this.info.number + " " + this.info.generation + " R\n" +
+         ">>\n" +
+         "startxref\n" +
+         this.xref + "\n" +
+         "%%EOF\n";
 
         /* write the trailer */
         stream.write(pdf.getBytes());

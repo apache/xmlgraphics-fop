@@ -35,6 +35,9 @@ import java.util.Hashtable;
 
 /**
  * Renderer that renders areas to plain text
+ *
+ * Modified by Mark Lillywhite mark-fop@inomial.com to use the new
+ * Renderer interface.
  */
 public class TXTRenderer extends PrintRenderer {
 
@@ -71,7 +74,7 @@ public class TXTRenderer extends PrintRenderer {
         "\f";                        // Every page except the last one will end with this string.
     public boolean suppressGraphics =
         false;    // If true then graphics/decorations will not be rendered - text only.
-
+    boolean firstPage = false;
     /**
      * options
      */
@@ -92,39 +95,6 @@ public class TXTRenderer extends PrintRenderer {
      * @param producer string indicating application producing PDF
      */
     public void setProducer(String producer) {}
-
-    /**
-     * render the areas into text
-     *
-     * @param areaTree the laid-out area tree
-     * @param writer the PrintWriter to write the PDF with
-     */
-    public void render(AreaTree areaTree,
-                       OutputStream stream) throws IOException, FOPException {
-        MessageHandler.logln("rendering areas to TEXT");
-        idReferences = areaTree.getIDReferences();
-        Enumeration e = areaTree.getPages().elements();
-        currentStream = new PCLStream(stream);
-
-        boolean first = true;
-
-        while (e.hasMoreElements()) {
-            if (first)
-                first = false;
-            else
-                currentStream.add(pageEnding);
-            this.renderPage((Page)e.nextElement());
-        }
-        currentStream.add(lineEnding);
-        if (!idReferences.isEveryIdValid()) {
-            // throw new FOPException("The following id's were referenced but not found: "+idReferences.getInvalidIds()+"\n");
-            MessageHandler.errorln("Warning: The following id's were referenced but not found: "
-                                   + idReferences.getInvalidIds() + "\n");
-        }
-
-        MessageHandler.logln("writing out TEXT");
-        stream.flush();
-    }
 
     void addStr(int row, int col, String str, boolean ischar) {
         if (debug)
@@ -1702,5 +1672,36 @@ public class TXTRenderer extends PrintRenderer {
          * }
          */
     }
+    public void startRenderer(OutputStream outputStream)
+      throws IOException
+    {
+      MessageHandler.logln("rendering areas to TEXT");
+      currentStream = new PCLStream(outputStream);
+      firstPage=true;
+    }
+    
+   /**
+     * In Mark's patch, this is endRenderer
+     * However, I couldn't see how it builds that way, so
+     * i changed it. - Steve gears@apache.org
+     */
 
+    public void stopRenderer(OutputStream outputStream)
+      throws IOException
+    {
+        MessageHandler.logln("writing out TEXT");
+        outputStream.flush();
+    }
+
+    public void render(Page page, OutputStream outputStream)
+    {
+      idReferences = page.getIDReferences();
+
+      if ( firstPage )
+	firstPage = false;
+      else
+	currentStream.add(pageEnding);
+      this.renderPage(page);
+      currentStream.add(lineEnding);
+     }
 }

@@ -11,6 +11,11 @@ package org.apache.fop.apps;
  * originally contributed by
  * Stanislav Gorkhover: stanislav.gorkhover@jcatalog.com
  * jCatalog Software AG
+ * 
+ * Updated by Mark Lillywhite, mark-fop@inomial.com. Modified to
+ * handle the print job better, added -Ddialog option, removed 
+ * (apparently) redundant copies code, generally cleaned up, and
+ * added interfaces to the new Render API.
  */
 
 
@@ -61,13 +66,20 @@ public class PrintStarter extends CommandLineStarter {
 
         setParserFeatures(parser);
 
-        PrintRenderer renderer = new PrintRenderer();
-
+        PrinterJob pj = PrinterJob.getPrinterJob();
+        if(System.getProperty("dialog") != null)
+          if(!pj.printDialog())
+            throw new FOPException("Printing cancelled by operator");
+            
+        PrintRenderer renderer = new PrintRenderer(pj);
+        int copies = getIntProperty("copies", 1);
+        pj.setCopies(copies);
+        
+        //renderer.setCopies(copies);
+        
         try {
             driver.setRenderer(renderer);
-            driver.buildFOTree(parser, inputHandler.getInputSource());
-            driver.format();
-            driver.render();
+            driver.render(parser, inputHandler.getInputSource());
         } catch (Exception e) {
             if (e instanceof FOPException) {
                 throw (FOPException)e;
@@ -75,37 +87,41 @@ public class PrintStarter extends CommandLineStarter {
             throw new FOPException(e);
         }
 
-        int copies = PrintRenderer.getIntProperty("copies", 1);
-        renderer.setCopies(copies);
-
-        PrinterJob pj = PrinterJob.getPrinterJob();
-        pj.setPageable(renderer);
-
-        pj.setCopies(copies);
-        try {
-            pj.print();
-        } catch (PrinterException pe) {
-            pe.printStackTrace();
+        System.exit(0);
+      }
+        int getIntProperty(String name, int def) {
+          String propValue = System.getProperty(name);
+          if(propValue != null) {
+            try {
+              return Integer.parseInt(propValue);
+            } catch (Exception e) {
+              return def;
+            }
+          } else {
+            return def;
         }
     }
 
+    class PrintRenderer extends AWTRenderer {
 
-    static class PrintRenderer extends AWTRenderer {
+        private static final int EVEN_AND_ALL = 0;
+        private static final int EVEN = 1;
+        private static final int ODD = 2;
 
-        static int EVEN_AND_ALL = 0;
-        static int EVEN = 1;
-        static int ODD = 2;
-
-        int startNumber;
-        int endNumber;
-        int mode = EVEN_AND_ALL;
-        int copies = 1;
-
-        PrintRenderer() {
+        private int startNumber;
+        private int endNumber;
+        private int mode = EVEN_AND_ALL;
+        private int copies = 1;
+        private PrinterJob printerJob;
+        
+        PrintRenderer(PrinterJob printerJob) {
             super(null);
 
+            this.printerJob = printerJob;
             startNumber = getIntProperty("start", 1) - 1;
             endNumber = getIntProperty("end", -1);
+
+            printerJob.setPageable(this);
 
             mode = EVEN_AND_ALL;
             String str = System.getProperty("even");
@@ -118,30 +134,29 @@ public class PrintStarter extends CommandLineStarter {
         }
 
 
-        static int getIntProperty(String name, int def) {
-            String propValue = System.getProperty(name);
-            if (propValue != null) {
-                try {
-                    return Integer.parseInt(propValue);
-                } catch (Exception e) {
-                    return def;
-                }
-            } else {
-                return def;
-            }
-        }
 
-        public void render(AreaTree areaTree,
-                           OutputStream stream) throws IOException {
-            tree = areaTree;
-            if (endNumber == -1) {
-                endNumber = tree.getPages().size();
-            }
-
+       public void stopRenderer(OutputStream outputStream)
+         throws IOException
+       {
+          super.stopRenderer(outputStream);
+          
+          if(endNumber == -1)
+            endNumber = getPageCount();
+            
             Vector numbers = getInvalidPageNumbers();
             for (int i = numbers.size() - 1; i > -1; i--)
-                tree.getPages().removeElementAt(Integer.parseInt((String)numbers.elementAt(i)));
+                removePage(Integer.parseInt((String)numbers.elementAt(i)));
 
+            try {
+              printerJob.print();
+            }
+            catch (PrinterException e)
+            {
+              e.printStackTrace();
+              throw new IOException(
+                 "Unable to print: " + e.getClass().getName() +
+                 ": " + e.getMessage());
+            }
         }
 
         public void renderPage(Page page) {
@@ -154,7 +169,7 @@ public class PrintStarter extends CommandLineStarter {
         private Vector getInvalidPageNumbers() {
 
             Vector vec = new Vector();
-            int max = tree.getPages().size();
+            int max = getPageCount();
             boolean isValid;
             for (int i = 0; i < max; i++) {
                 isValid = true;
@@ -174,6 +189,7 @@ public class PrintStarter extends CommandLineStarter {
             return vec;
         }
 
+        /* TODO: I'm totally not sure that this is necessary -Mark
         void setCopies(int val) {
             copies = val;
             Vector copie = tree.getPages();
@@ -182,7 +198,7 @@ public class PrintStarter extends CommandLineStarter {
             }
 
         }
-
+      */
     }    // class PrintRenderer
 }        // class PrintCommandLine
 

@@ -12,11 +12,17 @@ import org.apache.fop.render.Renderer;
 import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.*;
 import org.apache.fop.apps.*;
+import org.apache.fop.datatypes.IDReferences;
 import org.apache.fop.fo.pagination.PageSequence;
 
 // Java
 import java.util.Vector;
 import java.util.Enumeration;
+
+/*Modified by Mark Lillywhite mark-fop@inomial.com. Added getIDReferences.
+  This is just a convenience method for renderers who no longer have access
+  to the AreaTree when rendering.
+  */
 
 public class Page {
 
@@ -30,7 +36,9 @@ public class Page {
     private AreaContainer end;
 
     private AreaTree areaTree;
-
+    
+    private Vector rootExtensions;
+    
     private PageSequence pageSequence;
 
     protected int pageNumber = 0;
@@ -51,6 +59,11 @@ public class Page {
         markers = new Vector();
     }
 
+    public IDReferences getIDReferences()
+    {
+      return areaTree.getIDReferences();
+    }
+    
     public void setPageSequence(PageSequence pageSequence) {
         this.pageSequence = pageSequence;
     }
@@ -172,6 +185,14 @@ public class Page {
         return footnotes;
     }
 
+    public Vector getExtensions() {
+      return rootExtensions;
+    }
+
+    public void setExtensions(Vector extensions) {
+      this.rootExtensions = extensions;
+    }
+    
     public void setPendingFootnotes(Vector v) {
         footnotes = v;
         if (footnotes != null) {

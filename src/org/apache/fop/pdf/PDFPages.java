@@ -34,13 +34,16 @@ public class PDFPages extends PDFObject {
     // private PDFPages parent;
 
     /**
-     * create a /Pages object.
+     * create a /Pages object. NOTE: The PDFPages
+     * object must be created before the PDF document is
+     * generated, but it is not written to the stream immediately.
+     * It must aslo be allocated an object ID (so that the kids
+     * can refer to the parent) so that the XRef table needs to
+     * be updated before this object is written.
      *
      * @param number the object's number
      */
     public PDFPages(int number) {
-
-        /* generic creation of object */
         super(number);
     }
 
@@ -50,7 +53,7 @@ public class PDFPages extends PDFObject {
      * @param page the PDFPage to add.
      */
     public void addPage(PDFPage page) {
-        this.kids.addElement(page);
+        this.kids.addElement(page.referencePDF());
         page.setParent(this);
         this.incrementCount();
     }
@@ -77,12 +80,13 @@ public class PDFPages extends PDFObject {
      *
      * @return the PDF string
      */
-    public byte[] toPDF() {
+    public byte[] toPDF()
+    {
         StringBuffer p = new StringBuffer(this.number + " " + this.generation
                                           + " obj\n<< /Type /Pages\n/Count "
                                           + this.getCount() + "\n/Kids [");
         for (int i = 0; i < kids.size(); i++) {
-            p = p.append(((PDFObject)kids.elementAt(i)).referencePDF() + " ");
+            p = p.append(kids.elementAt(i) + " ");
         }
         p = p.append("] >>\nendobj\n");
         return p.toString().getBytes();

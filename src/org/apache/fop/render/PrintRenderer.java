@@ -38,6 +38,13 @@ import java.util.Enumeration;
 
 /**
  * Abstract base class of "Print" type renderers.
+ * 
+ * Modified by Mark Lillywhite mark-fop@inomial.com. Removed
+ * the render(AreaTree, OutputStream) method, and added
+ * no-op concrete implementation of startRenderer() and
+ * stopRenderer(). The method render(Page, OutputStream)
+ * is not mentioned in this class but it is inherited from
+ * the Renderer interface.
  */
 public abstract class PrintRenderer implements Renderer {
     // vvv These are not currently referenced by the PrintRenderer, but are common to PCL and PDF renderers - so declare here.
@@ -120,15 +127,6 @@ public abstract class PrintRenderer implements Renderer {
      * @param producer string indicating application producing PDF
      */
     public abstract void setProducer(String producer);
-
-    /**
-     * render the areas
-     * 
-     * @param areaTree the laid-out area tree
-     * @param stream the OutputStream to write to
-     */
-    public abstract void render(AreaTree areaTree, OutputStream stream) 
-            throws IOException, FOPException;
 
     /**
      * add a line to the current stream
@@ -596,5 +594,20 @@ public abstract class PrintRenderer implements Renderer {
         this.fontInfo = fontInfo;
         FontSetup.setup(fontInfo);
     } 
+    
+    /**
+      Default start renderer method. This would
+      normally be overridden. (mark-fop@inomial.com).
+    */
+    public void startRenderer(OutputStream outputStream)
+      throws IOException
+    {
+    }
+    /**
+     Default stop renderer method. This would
+     normally be overridden. (mark-fop@inomial.com).
+    */
+    {
+    }
 
 }

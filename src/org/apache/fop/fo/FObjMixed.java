@@ -33,7 +33,7 @@ public class FObjMixed extends FObj {
     }
 
     protected void addCharacters(char data[], int start, int length) {
-        children.addElement(new FOText(data, start, length, this));
+        addChild(new FOText(data, start, length, this));
     }
 
     public Status layout(Area area) throws FOPException {

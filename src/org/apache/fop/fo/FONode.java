@@ -22,6 +22,13 @@ import java.util.Hashtable;
 
 /**
  * base class for nodes in the formatting object tree
+ *
+ * Modified by Mark Lillywhite mark-fop@inomial.com. Made
+ * Vector a protected member. (/me things this should be
+ * a private member with an API for adding children;
+ * this woudl save a lot of memory because the Vector
+ * would not have to be instantiated unless the node had
+ * children).
  */
 abstract public class FONode {
 
@@ -31,8 +38,7 @@ abstract public class FONode {
 
     public BufferManager bufferManager;
 
-    public Vector children =
-        new Vector();    // made public for searching for id's
+    protected Vector children = new Vector();    // made public for searching for id's
 
     /**
      * value of marker before layout begins
