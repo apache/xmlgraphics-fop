@@ -17,8 +17,8 @@ Introduction
 FOP is the world's first print formatter driven by XSL formatting objects. It 
 is a Java 1.1 application that reads a formatting object tree and then turns 
 it into a PDF document. The formatting object tree, can be in the form of an 
-XML document (output by an XSLT engine like XT or Xalan) or can be passed in 
-memory as a DOM Document or (in the case of XT) SAX events.
+XML document (output by an XSLT engine like Xalan) or can be passed in 
+memory as a DOM Document or SAX events.
     
 FOP is part of Apache's XML project. The homepage of FOP is 
 http:/xml.apache.org/fop 
@@ -101,11 +101,6 @@ The fop build system is very flexible: if a module requires a package that
 is not present in the classpath at build time, the module is skipped but
 the built process is not stopped.
 
-Here is a list of such modules and what you have to download to build them:
-
- org.apache.fop.apps.XTCommandLine ===>
-       James Clark's XT (http://www.jclark.com/)
-
 2) I see a lot of warnings starting like this: "Warning: file modified in the future:"
 Sometimes ant gives out this warnings, but the build is finished without any problems
 
@@ -131,12 +126,10 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     </fileset>
 
     <fileset dir="${basedir}" id="dist.bin.lib">
-       <include name="lib/xerces-1.2.3.jar"/>
-       <include name="lib/xalan-2.0.0.jar"/>
-       <include name="lib/xalanj1compat.jar"/>
+       <include name="lib/xerces-1.4.3.jar"/>
+       <include name="lib/xalan-2.2D11.jar"/>
        <include name="lib/batik.jar"/>
-       <include name="lib/logkit-1.0b4.jar"/>
-       <include name="lib/avalon-framework-4.0.jar"/>
+       <include name="lib/logkit-1.0.jar"/>
        <include name="lib/jimi*"/>
     </fileset>
 
@@ -162,11 +155,11 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <!-- Initialization target                                               -->
   <!-- =================================================================== -->
-  <target name="init" depends="init-avail, init-filters-xalan1, init-filters-xalan2">
+  <target name="init" depends="init-avail, init-filters-xalan2">
     <tstamp/>
     <property name="Name" value="Fop"/>
     <property name="name" value="fop"/>
-    <property name="version" value="0.20.1"/>
+    <property name="version" value="1.0dev"/>
     <filter  token="version" value="${version}"/>
     <property name="year" value="1999-2001"/>
 
@@ -215,14 +208,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="jimi" value="JimiImage.java"/>
     <property name="jai" value="JAIImage.java"/>
 
-    <property name="ignore_jdk11"
-              value="org/apache/fop/render/awt/**
-                     ,org/apache/fop/viewer/**
-                     ,**/GifJpegImage.java
-                     ,**/JimiImage.java
-                     ,**/PrintStarter.java
-                     ,**/AWTStarter.java"/>
-
     <property name="xslt" value="org.apache.xalan.xslt.Process"/>
     <property name="src.properties.xsl" value="${src.codegen}/properties.xsl"/>
     <property name="src.propmaker.xsl" value="${src.codegen}/propmaker.xsl"/>
@@ -257,7 +242,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="ZapfDingbats.xml" value="${build.codegen}/ZapfDingbats.xml"/>
     <property name="Symbol.xml" value="${build.codegen}/Symbol.xml"/>
 
-    <property name="xalan1" value="Xalan1Transform.java"/>
     <property name="trax" value="TraxTransform.java"/>
     <property name="xsltransform" value="XSLTransform.java"/>
 
@@ -275,26 +259,19 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <taskdef name="runTest" classname="org.apache.fop.tools.anttasks.RunTest"/>
 
     <property name="main.class" value="org.apache.fop.apps.Fop"/>
-    <property name="runtime.classpath" value="lib/xerces-1.2.3.jar lib/xalan-2.0.0.jar lib/xalanj1compat.jar lib/batik.jar lib/jimi-1.0.jar lib/logkit-1.0b4.jar lib/avalon-framework-4.0.jar"/>
+    <property name="runtime.classpath" value="lib/xerces-1.4.3.jar lib/xalan-2.2D11.jar lib/batik.jar lib/jimi-1.0.jar lib/logkit-1.0.jar"/>
    
     <filter filtersfile="${build.src}/codegen/filter"/>
 
   </target>
 
   <target name="init-avail">
-    <available property="xt.present" classname="com.jclark.xsl.sax.XSLProcessor"/>
     <available property="jimi.present" classname="com.sun.jimi.core.Jimi"/>
     <available property="jai.present" classname="javax.media.jai.JAI"/>
 
     <available property="trax.present" classname="javax.xml.transform.Transformer"/>
-    <available property="xalan1.present" classname="org.apache.xalan.xslt.XSLTProcessor"/>
-    <filter token="xalan1-replacestring" value="./build/src/org/apache/fop"/>
-    <filter token="xalan2-replacestring" value="../org/apache/fop"/>
+    <filter token="xalan2-replacestring" value="../../"/>
 
-  </target>
-
-  <target name="init-filters-xalan1" depends="init-avail" if="xalan1.present" unless="trax.present">
-    <copy file="src/codegen/xalan1.filter" toFile="./build/src/codegen/filter" filtering="on"/>
   </target>
 
   <target name="init-filters-xalan2" depends="init-avail" if="trax.present">
@@ -347,7 +324,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     </copy>
   </target>
 
-
   <!-- =================================================================== -->
   <!-- compiles hyphenation patterns                                       -->
   <!-- =================================================================== -->
@@ -356,16 +332,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <serHyph includes="*.xml" 
              sourceDir="./hyph" 
              targetDir="${build.dest}/hyph" /> 
-  </target>
-
-
-  <!-- =================================================================== -->
-  <!-- copies some source files if xt is present                           -->
-  <!-- =================================================================== -->
-  <target name="prepare-xt" depends="prepare" if="xt.present">
-    <copy todir="${build.src}">
-      <fileset dir="${src.dir}" includes="**/XT*,**/PDFOutputHandler.java"/>
-    </copy>
   </target>
 
   <!-- =================================================================== -->
@@ -388,14 +354,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     </copy>
   </target>
 
-
-  <target name="prepare-xalan1" if="xalan1.present">
-      <echo message="Xalan1 is present. Installing Xalan1 support"/>
-    <copy todir="${build.src}">
-      <fileset dir="${src.dir}" includes="**/${xsltransform},**/${xalan1}"/>
-    </copy>
-  </target>
- 
   <target name="prepare-trax" if="trax.present">
       <echo message="JAXP1.1 transforms is present. Installing TRaX support"/>
     <copy todir="${build.src}">
@@ -407,11 +365,11 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <!-- Prepares the source code                                            -->
   <!-- =================================================================== -->
-  <target name="prepare-src" depends="prepare, prepare-xt, prepare-jimi, prepare-jai, prepare-xalan1, prepare-trax">
+  <target name="prepare-src" depends="prepare, prepare-jimi, prepare-jai, prepare-trax">
     <!-- copy src files -->
     <copy todir="${build.src}">
       <fileset dir="${src.dir}" 
-         excludes="**/Makefile*, **/package.html, **/XT*,**/PDFOutputHandler.java,**/${jimi},**/${jai},**/${xsltransform},**/${trax},**/${xalan1},**/apps/TraxInputHandler.java"/>
+         excludes="**/Makefile*, **/package.html, **/${jimi},**/${jai},**/${xsltransform},**/${trax},**/apps/TraxInputHandler.java"/>
     </copy>
   </target>
 
@@ -522,19 +480,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
            excludes="**/*${ignore_this},${jimi}"/>
   </target>
 
-  <target name="compile-jdk11" depends="codegen, prepare-src">
-    <echo message="Compiling the sources for JDK1.1"/>
-    <!-- create directories -->
-    <mkdir dir="${build.dest}"/>
-
-    <javac srcdir="${build.src}"
-           destdir="${build.dest}"
-           debug="${debug}"
-           deprecation="${deprecation}"
-           optimize="${optimize}"
-           excludes="**/${ignore_this},${Jimi},${ignore_jdk11}"/>
-  </target>
-
   <!-- =================================================================== -->
   <!-- Creates the class package                                           -->
   <!-- =================================================================== -->
@@ -553,31 +498,24 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <target name="test" depends="package">
     <echo message="Testing build in jar file ${build.dir}/${name}.jar against reference"/>
     <runTest testSuite="basictests.xml" basedir="test/" reference="test/reference/fop.jar"
-         refVersion="FOP 0.20.1"/>
+         refVersion="FOP 1.0dev"/>
     <runTest testSuite="bugtests.xml" basedir="test/" reference="test/reference/fop.jar"
-         refVersion="FOP 0.20.1"/>
+         refVersion="FOP 1.0dev"/>
 <!--
     <runTest testSuite="testsuite.xml" basedir="TestSuite/NIST/" reference="test/reference/fop.jar"
-         refVersion="FOP 0.19.0-CVS"/>
+         refVersion="FOP 1.0dev"/>
     <runTest testSuite="testsuite.xml" basedir="TestSuite/contrib/IBM/" reference="test/reference/fop.jar"
-         refVersion="FOP 0.19.0-CVS"/>
+         refVersion="FOP 1.0dev"/>
     <runTest testSuite="testsuite.xml" basedir="TestSuite/contrib/FOP/" reference="test/reference/fop.jar"
-         refVersion="FOP 0.19.0-CVS"/>
+         refVersion="FOP 1.0dev"/>
     <runTest testSuite="testsuite.xml" basedir="TestSuite/contrib/XEP/" reference="test/reference/fop.jar"
-         refVersion="FOP 0.19.0-CVS"/>
+         refVersion="FOP 1.0dev"/>
     <runTest testSuite="testsuite.xml" basedir="TestSuite/contrib/XSLFormatter/" reference="test/reference/fop.jar"
-         refVersion="FOP 0.19.0-CVS"/>
+         refVersion="FOP 1.0dev"/>
 -->
   </target>
 
   <target name="all" depends="package"/> <!-- "all" target for us Makefile converts ;-) -->
-
-  <target name="package-jdk11" depends="compile-jdk11,hyphenation">
-    <echo message="Creating the jar file ${build.dir}/${name}11.jar"/>
-    <jar jarfile="${build.dir}/${name}-jdk11.jar"
-         basedir="${build.dest}"
-         includes="org/**,conf/**,hyph/**"/>
-  </target>
 
   <!-- =================================================================== -->
   <!-- Prepares the docs                                                   -->
@@ -628,7 +566,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <delete file="${Name}-${version}-bin.tar"/>
 
   </target>
-
 
   <target name="dist-src" depends="package, javadocs">
     <echo message="Building the source distribution files (zip,tar)"/>
