@@ -180,16 +180,20 @@ public class IDReferences {
 
 
     /**
-     * Returns the first invalid id still remaining in the validation list
+     * Returns all invalid id's still remaining in the validation list
      * 
-     * @return first id in validation list
+     * @return invalid ids from validation list
      */
-    public String getNextInvalidId()
+    public String getInvalidIds()
     {
-        Enumeration enum=idValidation.keys();
-        return enum.nextElement().toString();                
+        StringBuffer list=new StringBuffer();
+        Enumeration enum=idValidation.keys();        
+        while(enum.hasMoreElements())
+        {
+            list.append("\n\"").append(enum.nextElement().toString()).append("\" ")  ;
+        }
+        return list.toString();;                
     }
-
 
 
     /**
