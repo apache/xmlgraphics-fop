@@ -30,9 +30,6 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Result;
 import javax.xml.transform.stream.StreamResult;
 
-//Avalon
-import org.apache.avalon.framework.ExceptionUtil;
-
 import embedding.model.ProjectMember;
 import embedding.model.ProjectTeam;
 
@@ -118,7 +115,7 @@ public class ExampleObj2XML {
             
             System.out.println("Success!");
         } catch (Exception e) {
-            System.err.println(ExceptionUtil.printStackTrace(e));
+            e.printStackTrace(System.err);
             System.exit(-1);
         }
     }
