@@ -232,28 +232,28 @@ public class FOPropertyMapping implements Constants {
 
         // GenericBoolean        
         genericBoolean = new EnumProperty.Maker(0);
-        genericBoolean.addEnum("true", makeEnumProperty(TRUE));
-        genericBoolean.addEnum("false", makeEnumProperty(FALSE));
+        genericBoolean.addEnum("true", makeEnumProperty(TRUE, "TRUE"));
+        genericBoolean.addEnum("false", makeEnumProperty(FALSE, "FALSE"));
         
         // GenericKeep
         genericKeep = new KeepProperty.Maker(0);
         sub = new NumberProperty.Maker(CP_WITHIN_PAGE);
         sub.setByShorthand(true);
         sub.setDefault("auto");
-        sub.addEnum("auto", makeEnumProperty(AUTO));
-        sub.addEnum("always", makeEnumProperty(ALWAYS));
+        sub.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
+        sub.addEnum("always", makeEnumProperty(ALWAYS, "ALWAYS"));
         genericKeep.addSubpropMaker(sub); 
         sub = new NumberProperty.Maker(CP_WITHIN_LINE);
         sub.setByShorthand(true);
         sub.setDefault("auto");
-        sub.addEnum("auto", makeEnumProperty(AUTO));
-        sub.addEnum("always", makeEnumProperty(ALWAYS));
+        sub.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
+        sub.addEnum("always", makeEnumProperty(ALWAYS, "ALWAYS"));
         genericKeep.addSubpropMaker(sub); 
         sub = new NumberProperty.Maker(CP_WITHIN_COLUMN);
         sub.setByShorthand(true);
         sub.setDefault("auto");
-        sub.addEnum("auto", makeEnumProperty(AUTO));
-        sub.addEnum("always", makeEnumProperty(ALWAYS));
+        sub.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
+        sub.addEnum("always", makeEnumProperty(ALWAYS, "ALWAYS"));
         genericKeep.addSubpropMaker(sub);
         
         // GenericCondLength
@@ -262,8 +262,8 @@ public class FOPropertyMapping implements Constants {
         sub.setByShorthand(true);
         genericCondLength.addSubpropMaker(sub);
         sub = new EnumProperty.Maker(CP_CONDITIONALITY);
-        sub.addEnum("discard", makeEnumProperty(DISCARD));
-        sub.addEnum("retain", makeEnumProperty(RETAIN));
+        sub.addEnum("discard", makeEnumProperty(DISCARD, "DISCARD"));
+        sub.addEnum("retain", makeEnumProperty(RETAIN, "RETAIN"));
         genericCondLength.addSubpropMaker(sub);
 
         // GenericCondPadding
@@ -293,8 +293,8 @@ public class FOPropertyMapping implements Constants {
         sub.setDefault("medium");
         genericCondBorderWidth.addSubpropMaker(sub);
         sub = new EnumProperty.Maker(CP_CONDITIONALITY);
-        sub.addEnum("discard", makeEnumProperty(DISCARD));
-        sub.addEnum("retain", makeEnumProperty(RETAIN));
+        sub.addEnum("discard", makeEnumProperty(DISCARD, "DISCARD"));
+        sub.addEnum("retain", makeEnumProperty(RETAIN, "RETAIN"));
         genericCondBorderWidth.addSubpropMaker(sub);
         
         // GenericBorderWidth
@@ -310,27 +310,27 @@ public class FOPropertyMapping implements Constants {
         // GenericBorderStyle
         genericBorderStyle = new EnumProperty.Maker(0);
         genericBorderStyle.setInherited(false);
-        genericBorderStyle.addEnum("none", makeEnumProperty(NONE));
-        genericBorderStyle.addEnum("hidden", makeEnumProperty(HIDDEN));
-        genericBorderStyle.addEnum("dotted", makeEnumProperty(DOTTED));
-        genericBorderStyle.addEnum("dashed", makeEnumProperty(DASHED));
-        genericBorderStyle.addEnum("solid", makeEnumProperty(SOLID));
-        genericBorderStyle.addEnum("double", makeEnumProperty(DOUBLE));
-        genericBorderStyle.addEnum("groove", makeEnumProperty(GROOVE));
-        genericBorderStyle.addEnum("ridge", makeEnumProperty(RIDGE));
-        genericBorderStyle.addEnum("inset", makeEnumProperty(INSET));
-        genericBorderStyle.addEnum("outset", makeEnumProperty(OUTSET));
+        genericBorderStyle.addEnum("none", makeEnumProperty(NONE, "NONE"));
+        genericBorderStyle.addEnum("hidden", makeEnumProperty(HIDDEN, "HIDDEN"));
+        genericBorderStyle.addEnum("dotted", makeEnumProperty(DOTTED, "DOTTED"));
+        genericBorderStyle.addEnum("dashed", makeEnumProperty(DASHED, "DASHED"));
+        genericBorderStyle.addEnum("solid", makeEnumProperty(SOLID, "SOLID"));
+        genericBorderStyle.addEnum("double", makeEnumProperty(DOUBLE, "DOUBLE"));
+        genericBorderStyle.addEnum("groove", makeEnumProperty(GROOVE, "GROOVE"));
+        genericBorderStyle.addEnum("ridge", makeEnumProperty(RIDGE, "RIDGE"));
+        genericBorderStyle.addEnum("inset", makeEnumProperty(INSET, "INSET"));
+        genericBorderStyle.addEnum("outset", makeEnumProperty(OUTSET, "OUTSET"));
         genericBorderStyle.setDefault("none");
         genericBorderWidth.addShorthand(s_generics[PR_BORDER_STYLE]);
         
         // GenericBreak
         genericBreak = new EnumProperty.Maker(0);
         genericBreak.setInherited(false);
-        genericBreak.addEnum("auto", makeEnumProperty(AUTO));
-        genericBreak.addEnum("column", makeEnumProperty(COLUMN));
-        genericBreak.addEnum("page", makeEnumProperty(PAGE));
-        genericBreak.addEnum("even-page", makeEnumProperty(EVEN_PAGE));
-        genericBreak.addEnum("odd-page", makeEnumProperty(ODD_PAGE));
+        genericBreak.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
+        genericBreak.addEnum("column", makeEnumProperty(COLUMN, "COLUMN"));
+        genericBreak.addEnum("page", makeEnumProperty(PAGE, "PAGE"));
+        genericBreak.addEnum("even-page", makeEnumProperty(EVEN_PAGE, "EVEN_PAGE"));
+        genericBreak.addEnum("odd-page", makeEnumProperty(ODD_PAGE, "ODD_PAGE"));
         genericBreak.setDefault("auto");
         
         // GenericSpace
@@ -349,12 +349,12 @@ public class FOPropertyMapping implements Constants {
         sub.setByShorthand(true);
         genericSpace.addSubpropMaker(sub);
         sub = new NumberProperty.Maker(CP_PRECEDENCE);
-        sub.addEnum("force", makeEnumProperty(FORCE));
+        sub.addEnum("force", makeEnumProperty(FORCE, "FORCE"));
         sub.setDefault("0");
         genericSpace.addSubpropMaker(sub);
         sub = new EnumProperty.Maker(CP_CONDITIONALITY);
-        sub.addEnum("discard", makeEnumProperty(DISCARD));
-        sub.addEnum("retain", makeEnumProperty(RETAIN));
+        sub.addEnum("discard", makeEnumProperty(DISCARD, "DISCARD"));
+        sub.addEnum("retain", makeEnumProperty(RETAIN, "RETAIN"));
         sub.setDefault("discard");
         genericSpace.addSubpropMaker(sub);
     }
@@ -387,12 +387,12 @@ public class FOPropertyMapping implements Constants {
      * @param enum A enum value from Constants.java.
      * @return An EnumProperty instance.
      */
-    private Property makeEnumProperty(int enumValue) {
+    private Property makeEnumProperty(int enumValue, String text) {
         if (enums == null) {
-            enums = new Property[200];
+            enums = new Property[ENUM_COUNT+1];
         }
         if (enums[enumValue] == null) {
-            enums[enumValue] = new EnumProperty(enumValue);
+            enums[enumValue] = new EnumProperty(enumValue, text);
         }
         return enums[enumValue];
     }
@@ -509,9 +509,9 @@ public class FOPropertyMapping implements Constants {
         // absolute-position
         m  = new EnumProperty.Maker(PR_ABSOLUTE_POSITION);
         m.setInherited(false);
-        m.addEnum("auto", makeEnumProperty(AUTO));
-        m.addEnum("fixed", makeEnumProperty(FIXED));
-        m.addEnum("absolute", makeEnumProperty(ABSOLUTE));
+        m.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
+        m.addEnum("fixed", makeEnumProperty(FIXED, "FIXED"));
+        m.addEnum("absolute", makeEnumProperty(ABSOLUTE, "ABSOLUTE"));
         m.setDefault("auto");
         addPropertyMaker("absolute-position", m);
 
@@ -692,10 +692,10 @@ public class FOPropertyMapping implements Constants {
         // background-repeat
         m  = new EnumProperty.Maker(PR_BACKGROUND_REPEAT);
         m.setInherited(false);
-        m.addEnum("repeat", makeEnumProperty(REPEAT));
-        m.addEnum("repeat-x", makeEnumProperty(REPEATX));
-        m.addEnum("repeat-y", makeEnumProperty(REPEATY));
-        m.addEnum("no-repeat", makeEnumProperty(NOREPEAT));
+        m.addEnum("repeat", makeEnumProperty(REPEAT, "REPEAT"));
+        m.addEnum("repeat-x", makeEnumProperty(REPEATX, "REPEATX"));
+        m.addEnum("repeat-y", makeEnumProperty(REPEATY, "REPEATY"));
+        m.addEnum("no-repeat", makeEnumProperty(NOREPEAT, "NOREPEAT"));
         m.setDefault("repeat");
         addPropertyMaker("background-repeat", m);
 
@@ -1091,8 +1091,8 @@ public class FOPropertyMapping implements Constants {
         // font-variant
         m  = new EnumProperty.Maker(PR_FONT_VARIANT);
         m.setInherited(true);
-        m.addEnum("normal", makeEnumProperty(NORMAL));
-        m.addEnum("small-caps", makeEnumProperty(SMALL_CAPS));
+        m.addEnum("normal", makeEnumProperty(NORMAL, "NORMAL"));
+        m.addEnum("small-caps", makeEnumProperty(SMALL_CAPS, "SMALL_CAPS"));
         m.setDefault("normal");
         addPropertyMaker("font-variant", m);
 
@@ -1129,8 +1129,8 @@ public class FOPropertyMapping implements Constants {
         // hyphenate
         m  = new EnumProperty.Maker(PR_HYPHENATE);
         m.setInherited(true);
-        m.addEnum("true", makeEnumProperty(TRUE));
-        m.addEnum("false", makeEnumProperty(FALSE));
+        m.addEnum("true", makeEnumProperty(TRUE, "TRUE"));
+        m.addEnum("false", makeEnumProperty(FALSE, "FALSE"));
         m.setDefault("false");
         addPropertyMaker("hyphenate", m);
 
@@ -1280,19 +1280,19 @@ public class FOPropertyMapping implements Constants {
         // baseline-shift
         m  = new LengthProperty.Maker(PR_BASELINE_SHIFT);
         m.setInherited(false);
-        m.addEnum("baseline", makeEnumProperty(BASELINE));
-        m.addEnum("sub", makeEnumProperty(SUB));
-        m.addEnum("super", makeEnumProperty(SUPER));
+        m.addEnum("baseline", makeEnumProperty(BASELINE, "BASELINE"));
+        m.addEnum("sub", makeEnumProperty(SUB, "SUB"));
+        m.addEnum("super", makeEnumProperty(SUPER, "SUPER"));
         m.setDefault("baseline");
         addPropertyMaker("baseline-shift", m);
 
         // display-align
         m  = new EnumProperty.Maker(PR_DISPLAY_ALIGN);
         m.setInherited(true);
-        m.addEnum("before", makeEnumProperty(BEFORE));
-        m.addEnum("after", makeEnumProperty(AFTER));
-        m.addEnum("center", makeEnumProperty(CENTER));
-        m.addEnum("auto", makeEnumProperty(AUTO));
+        m.addEnum("before", makeEnumProperty(BEFORE, "BEFORE"));
+        m.addEnum("after", makeEnumProperty(AFTER, "AFTER"));
+        m.addEnum("center", makeEnumProperty(CENTER, "CENTER"));
+        m.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
         m.setDefault("auto");
         addPropertyMaker("display-align", m);
 
@@ -1305,8 +1305,8 @@ public class FOPropertyMapping implements Constants {
         // relative-align
         m  = new EnumProperty.Maker(PR_RELATIVE_ALIGN);
         m.setInherited(true);
-        m.addEnum("before", makeEnumProperty(BEFORE));
-        m.addEnum("after", makeEnumProperty(BASELINE));
+        m.addEnum("before", makeEnumProperty(BEFORE, "BEFORE"));
+        m.addEnum("after", makeEnumProperty(BASELINE, "BASELINE"));
         m.setDefault("before");
         addPropertyMaker("relative-align", m);
     }
@@ -1437,8 +1437,8 @@ public class FOPropertyMapping implements Constants {
         // scaling
         m  = new EnumProperty.Maker(PR_SCALING);
         m.setInherited(true);
-        m.addEnum("uniform", makeEnumProperty(UNIFORM));
-        m.addEnum("non-uniform", makeEnumProperty(NON_UNIFORM));
+        m.addEnum("uniform", makeEnumProperty(UNIFORM, "UNIFORM"));
+        m.addEnum("non-uniform", makeEnumProperty(NON_UNIFORM, "NON_UNIFORM"));
         m.setDefault("uniform");
         addPropertyMaker("scaling", m);
 
@@ -1501,10 +1501,10 @@ public class FOPropertyMapping implements Constants {
         // linefeed-treatment
         m  = new EnumProperty.Maker(PR_LINEFEED_TREATMENT);
         m.setInherited(true);
-        m.addEnum("ignore", makeEnumProperty(IGNORE));
-        m.addEnum("preserve", makeEnumProperty(PRESERVE));
-        m.addEnum("treat-as-space", makeEnumProperty(TREAT_AS_SPACE));
-        m.addEnum("treat-as-zero-width-space", makeEnumProperty(TREAT_AS_ZERO_WIDTH_SPACE));
+        m.addEnum("ignore", makeEnumProperty(IGNORE, "IGNORE"));
+        m.addEnum("preserve", makeEnumProperty(PRESERVE, "PRESERVE"));
+        m.addEnum("treat-as-space", makeEnumProperty(TREAT_AS_SPACE, "TREAT_AS_SPACE"));
+        m.addEnum("treat-as-zero-width-space", makeEnumProperty(TREAT_AS_ZERO_WIDTH_SPACE, "TREAT_AS_ZERO_WIDTH_SPACE"));
         m.setDefault("treat-as-space");
         addPropertyMaker("linefeed-treatment", m);
 
@@ -1519,12 +1519,12 @@ public class FOPropertyMapping implements Constants {
         m.setInherited(true);
         // Note: both 'end' and 'right' are mapped to END
         //       both 'start' and 'left' are mapped to START
-        m.addEnum("center", makeEnumProperty(CENTER));
-        m.addEnum("end", makeEnumProperty(END));
-        m.addEnum("right", makeEnumProperty(END));
-        m.addEnum("start", makeEnumProperty(START));
-        m.addEnum("left", makeEnumProperty(START));
-        m.addEnum("justify", makeEnumProperty(JUSTIFY));
+        m.addEnum("center", makeEnumProperty(CENTER, "CENTER"));
+        m.addEnum("end", makeEnumProperty(END, "END"));
+        m.addEnum("right", makeEnumProperty(END, "END"));
+        m.addEnum("start", makeEnumProperty(START, "START"));
+        m.addEnum("left", makeEnumProperty(START, "START"));
+        m.addEnum("justify", makeEnumProperty(JUSTIFY, "JUSTIFY"));
         m.setDefault("start");
         addPropertyMaker("text-align", m);
 
@@ -1537,23 +1537,23 @@ public class FOPropertyMapping implements Constants {
                 }
                 int correspondingValue = corresponding.getEnum();
                 if (correspondingValue == JUSTIFY) {
-                    return new EnumProperty(START);
+                    return makeEnumProperty(START, "START");
                 } else if (correspondingValue == END) {
-                    return new EnumProperty(END);
+                    return makeEnumProperty(END, "END");
                 } else if (correspondingValue == START) {
-                    return new EnumProperty(START);
+                    return makeEnumProperty(START, "SART");
                 } else if (correspondingValue == CENTER) {
-                    return new EnumProperty(CENTER);
+                    return makeEnumProperty(CENTER, "CENTER");
                 } else {
                     return null;
                 }
             }
         };
         m.setInherited(true);
-        m.addEnum("center", makeEnumProperty(CENTER));
-        m.addEnum("end", makeEnumProperty(END));
-        m.addEnum("start", makeEnumProperty(START));
-        m.addEnum("justify", makeEnumProperty(JUSTIFY));
+        m.addEnum("center", makeEnumProperty(CENTER, "CENTER"));
+        m.addEnum("end", makeEnumProperty(END, "END"));
+        m.addEnum("start", makeEnumProperty(START, "START"));
+        m.addEnum("justify", makeEnumProperty(JUSTIFY, "JUSTIFY"));
         m.setDefault("start");
         addPropertyMaker("text-align-last", m);
 
@@ -1574,8 +1574,8 @@ public class FOPropertyMapping implements Constants {
         // wrap-option
         m  = new EnumProperty.Maker(PR_WRAP_OPTION);
         m.setInherited(true);
-        m.addEnum("wrap", makeEnumProperty(WRAP));
-        m.addEnum("no-wrap", makeEnumProperty(NO_WRAP));
+        m.addEnum("wrap", makeEnumProperty(WRAP, "WRAP"));
+        m.addEnum("no-wrap", makeEnumProperty(NO_WRAP, "NO_WRAP"));
         m.setDefault("wrap");
         addPropertyMaker("wrap-option", m);
     }
@@ -1596,7 +1596,7 @@ public class FOPropertyMapping implements Constants {
         m.getSubpropMaker(CP_PRECEDENCE).setDefault("force");
         m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
         m.setDefault("normal");
-        m.addEnum("normal", makeEnumProperty(NORMAL));
+        m.addEnum("normal", makeEnumProperty(NORMAL, "NORMAL"));
         addPropertyMaker("letter-spacing", m);
 
         // suppress-at-line-break
@@ -1608,15 +1608,15 @@ public class FOPropertyMapping implements Constants {
         // text-decoration
         m  = new EnumProperty.Maker(PR_TEXT_DECORATION);
         m.setInherited(false);
-        m.addEnum("none", makeEnumProperty(NONE));
-        m.addEnum("underline", makeEnumProperty(UNDERLINE));
-        m.addEnum("overline", makeEnumProperty(OVERLINE));
-        m.addEnum("line-through", makeEnumProperty(LINE_THROUGH));
-        m.addEnum("blink", makeEnumProperty(BLINK));
-        m.addEnum("no-underline", makeEnumProperty(NO_UNDERLINE));
-        m.addEnum("no-overline", makeEnumProperty(NO_OVERLINE));
-        m.addEnum("no-line-through", makeEnumProperty(NO_LINE_THROUGH));
-        m.addEnum("no-blink", makeEnumProperty(NO_BLINK));
+        m.addEnum("none", makeEnumProperty(NONE, "NONE"));
+        m.addEnum("underline", makeEnumProperty(UNDERLINE, "UNDERLINE"));
+        m.addEnum("overline", makeEnumProperty(OVERLINE, "OVERLINE"));
+        m.addEnum("line-through", makeEnumProperty(LINE_THROUGH, "LINE_THROUGH"));
+        m.addEnum("blink", makeEnumProperty(BLINK, "BLINK"));
+        m.addEnum("no-underline", makeEnumProperty(NO_UNDERLINE, "NO_UNDERLINE"));
+        m.addEnum("no-overline", makeEnumProperty(NO_OVERLINE, "NO_OVERLINE"));
+        m.addEnum("no-line-through", makeEnumProperty(NO_LINE_THROUGH, "NO_LINE_THROUGH"));
+        m.addEnum("no-blink", makeEnumProperty(NO_BLINK, "NO_BLINK"));
         m.setDefault("none");
         addPropertyMaker("text-decoration", m);
 
@@ -1629,10 +1629,10 @@ public class FOPropertyMapping implements Constants {
         // text-transform
         m  = new EnumProperty.Maker(PR_TEXT_TRANSFORM);
         m.setInherited(true);
-        m.addEnum("none", makeEnumProperty(NONE));
-        m.addEnum("capitalize", makeEnumProperty(CAPITALIZE));
-        m.addEnum("uppercase", makeEnumProperty(UPPERCASE));
-        m.addEnum("lowercase", makeEnumProperty(LOWERCASE));
+        m.addEnum("none", makeEnumProperty(NONE, "NONE"));
+        m.addEnum("capitalize", makeEnumProperty(CAPITALIZE, "CAPITALIZE"));
+        m.addEnum("uppercase", makeEnumProperty(UPPERCASE, "UPPERCASE"));
+        m.addEnum("lowercase", makeEnumProperty(LOWERCASE, "LOWERCASE"));
         m.setDefault("none");
         addPropertyMaker("text-transform", m);
 
@@ -1649,7 +1649,7 @@ public class FOPropertyMapping implements Constants {
         m.getSubpropMaker(CP_PRECEDENCE).setDefault("force");
         m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
         m.setDefault("normal");
-        m.addEnum("normal", makeEnumProperty(NORMAL));
+        m.addEnum("normal", makeEnumProperty(NORMAL, "NORMAL"));
         addPropertyMaker("word-spacing", m);
     }
     
@@ -1672,11 +1672,11 @@ public class FOPropertyMapping implements Constants {
         // rendering-intent
         m  = new EnumProperty.Maker(PR_RENDERING_INTENT);
         m.setInherited(false);
-        m.addEnum("auto", makeEnumProperty(AUTO));
-        m.addEnum("perceptual", makeEnumProperty(PERCEPTUAL));
-        m.addEnum("relative-colorimetric", makeEnumProperty(RELATIVE_COLOMETRIC));
-        m.addEnum("saturation", makeEnumProperty(SATURATION));
-        m.addEnum("absolute-colorimetric", makeEnumProperty(ABSOLUTE_COLORMETRIC));
+        m.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
+        m.addEnum("perceptual", makeEnumProperty(PERCEPTUAL, "PERCEPTUAL"));
+        m.addEnum("relative-colorimetric", makeEnumProperty(RELATIVE_COLOMETRIC, "RELATIVE_COLOMETRIC"));
+        m.addEnum("saturation", makeEnumProperty(SATURATION, "SATURATION"));
+        m.addEnum("absolute-colorimetric", makeEnumProperty(ABSOLUTE_COLORMETRIC, "ABSOLUTE_COLORMETRIC"));
         m.setDefault("auto");
         addPropertyMaker("rendering-intent", m);
     }
@@ -1756,11 +1756,11 @@ public class FOPropertyMapping implements Constants {
         // overflow
         m  = new EnumProperty.Maker(PR_OVERFLOW);
         m.setInherited(false);
-        m.addEnum("visible", makeEnumProperty(VISIBLE));
-        m.addEnum("hidden", makeEnumProperty(HIDDEN));
-        m.addEnum("scroll", makeEnumProperty(SCROLL));
-        m.addEnum("error-if-overflow", makeEnumProperty(ERROR_IF_OVERFLOW));
-        m.addEnum("auto", makeEnumProperty(AUTO));
+        m.addEnum("visible", makeEnumProperty(VISIBLE, "VISIBLE"));
+        m.addEnum("hidden", makeEnumProperty(HIDDEN, "HIDDEN"));
+        m.addEnum("scroll", makeEnumProperty(SCROLL, "SCROLL"));
+        m.addEnum("error-if-overflow", makeEnumProperty(ERROR_IF_OVERFLOW, "ERROR_IF_OVERFLOW"));
+        m.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
         m.setDefault("auto");
         addPropertyMaker("overflow", m);
 
@@ -1773,8 +1773,8 @@ public class FOPropertyMapping implements Constants {
         // span
         m  = new EnumProperty.Maker(PR_SPAN);
         m.setInherited(false);
-        m.addEnum("none", makeEnumProperty(NONE));
-        m.addEnum("all", makeEnumProperty(ALL));
+        m.addEnum("none", makeEnumProperty(NONE, "NONE"));
+        m.addEnum("all", makeEnumProperty(ALL, "ALL"));
         m.setDefault("none");
         addPropertyMaker("span", m);
     }
@@ -1786,19 +1786,19 @@ public class FOPropertyMapping implements Constants {
         // leader-alignment
         m  = new EnumProperty.Maker(PR_LEADER_ALIGNMENT);
         m.setInherited(true);
-        m.addEnum("none", makeEnumProperty(NONE));
-        m.addEnum("reference-area", makeEnumProperty(REFERENCE_AREA));
-        m.addEnum("page", makeEnumProperty(PAGE));
+        m.addEnum("none", makeEnumProperty(NONE, "NONE"));
+        m.addEnum("reference-area", makeEnumProperty(REFERENCE_AREA, "REFERENCE_AREA"));
+        m.addEnum("page", makeEnumProperty(PAGE, "PAGE"));
         m.setDefault("none");
         addPropertyMaker("leader-alignment", m);
 
         // leader-pattern
         m  = new EnumProperty.Maker(PR_LEADER_PATTERN);
         m.setInherited(true);
-        m.addEnum("space", makeEnumProperty(SPACE));
-        m.addEnum("rule", makeEnumProperty(RULE));
-        m.addEnum("dots", makeEnumProperty(DOTS));
-        m.addEnum("use-content", makeEnumProperty(USECONTENT));
+        m.addEnum("space", makeEnumProperty(SPACE, "SPACE"));
+        m.addEnum("rule", makeEnumProperty(RULE, "RULE"));
+        m.addEnum("dots", makeEnumProperty(DOTS, "DOTS"));
+        m.addEnum("use-content", makeEnumProperty(USECONTENT, "USECONTENT"));
         m.setDefault("space");
         addPropertyMaker("leader-pattern", m);
 
@@ -1837,13 +1837,13 @@ public class FOPropertyMapping implements Constants {
         // rule-style
         m  = new EnumProperty.Maker(PR_RULE_STYLE);
         m.setInherited(true);
-        m.addEnum("none", makeEnumProperty(NONE));
-        m.addEnum("dotted", makeEnumProperty(DOTTED));
-        m.addEnum("dashed", makeEnumProperty(DASHED));
-        m.addEnum("solid", makeEnumProperty(SOLID));
-        m.addEnum("double", makeEnumProperty(DOUBLE));
-        m.addEnum("groove", makeEnumProperty(GROOVE));
-        m.addEnum("ridge", makeEnumProperty(RIDGE));
+        m.addEnum("none", makeEnumProperty(NONE, "NONE"));
+        m.addEnum("dotted", makeEnumProperty(DOTTED, "DOTTED"));
+        m.addEnum("dashed", makeEnumProperty(DASHED, "DASHED"));
+        m.addEnum("solid", makeEnumProperty(SOLID, "SOLID"));
+        m.addEnum("double", makeEnumProperty(DOUBLE, "DOUBLE"));
+        m.addEnum("groove", makeEnumProperty(GROOVE, "GROOVE"));
+        m.addEnum("ridge", makeEnumProperty(RIDGE, "RIDGE"));
         m.setDefault("solid");
         addPropertyMaker("rule-style", m);
 
@@ -1960,19 +1960,19 @@ public class FOPropertyMapping implements Constants {
         // retrieve-position
         m  = new EnumProperty.Maker(PR_RETRIEVE_POSITION);
         m.setInherited(false);
-        m.addEnum("first-starting-within-page", makeEnumProperty(FSWP));
-        m.addEnum("first-including-carryover", makeEnumProperty(FIC));
-        m.addEnum("last-starting-within-page", makeEnumProperty(LSWP));
-        m.addEnum("last-ending-within-page", makeEnumProperty(LEWP));
+        m.addEnum("first-starting-within-page", makeEnumProperty(FSWP, "FSWP"));
+        m.addEnum("first-including-carryover", makeEnumProperty(FIC, "FIC"));
+        m.addEnum("last-starting-within-page", makeEnumProperty(LSWP, "LSWP"));
+        m.addEnum("last-ending-within-page", makeEnumProperty(LEWP, "LEWP"));
         m.setDefault("first-starting-within-page");
         addPropertyMaker("retrieve-position", m);
 
         // retrieve-boundary
         m  = new EnumProperty.Maker(PR_RETRIEVE_BOUNDARY);
         m.setInherited(false);
-        m.addEnum("page", makeEnumProperty(PAGE));
-        m.addEnum("page-sequence", makeEnumProperty(PAGE_SEQUENCE));
-        m.addEnum("document", makeEnumProperty(DOCUMENT));
+        m.addEnum("page", makeEnumProperty(PAGE, "PAGE"));
+        m.addEnum("page-sequence", makeEnumProperty(PAGE_SEQUENCE, "PAGE_SEQUENCE"));
+        m.addEnum("document", makeEnumProperty(DOCUMENT, "DOCUMENT"));
         m.setDefault("page-sequence");
         addPropertyMaker("retrieve-boundary", m);
     }
@@ -2001,9 +2001,9 @@ public class FOPropertyMapping implements Constants {
         // letter-value
         m  = new EnumProperty.Maker(PR_LETTER_VALUE);
         m.setInherited(false);
-        m.addEnum("alphabetic", makeEnumProperty(ALPHABETIC));
-        m.addEnum("traditional", makeEnumProperty(TRADITIONAL));
-        m.addEnum("auto", makeEnumProperty(AUTO));
+        m.addEnum("alphabetic", makeEnumProperty(ALPHABETIC, "ALPHABETIC"));
+        m.addEnum("traditional", makeEnumProperty(TRADITIONAL, "TRADITIONAL"));
+        m.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
         m.setDefault("auto");
         addPropertyMaker("letter-value", m);
     }
@@ -2015,9 +2015,9 @@ public class FOPropertyMapping implements Constants {
         // blank-or-not-blank
         m  = new EnumProperty.Maker(PR_BLANK_OR_NOT_BLANK);
         m.setInherited(false);
-        m.addEnum("blank", makeEnumProperty(BLANK));
-        m.addEnum("not-blank", makeEnumProperty(NOT_BLANK));
-        m.addEnum("any", makeEnumProperty(ANY));
+        m.addEnum("blank", makeEnumProperty(BLANK, "BLANK"));
+        m.addEnum("not-blank", makeEnumProperty(NOT_BLANK, "NOT_BLANK"));
+        m.addEnum("any", makeEnumProperty(ANY, "ANY"));
         m.setDefault("any");
         addPropertyMaker("blank-or-not-blank", m);
 
@@ -2049,12 +2049,12 @@ public class FOPropertyMapping implements Constants {
         // force-page-count
         m  = new EnumProperty.Maker(PR_FORCE_PAGE_COUNT);
         m.setInherited(false);
-        m.addEnum("even", makeEnumProperty(EVEN));
-        m.addEnum("odd", makeEnumProperty(ODD));
-        m.addEnum("end-on-even", makeEnumProperty(END_ON_EVEN));
-        m.addEnum("end-on-odd", makeEnumProperty(END_ON_ODD));
-        m.addEnum("no-force", makeEnumProperty(NO_FORCE));
-        m.addEnum("auto", makeEnumProperty(AUTO));
+        m.addEnum("even", makeEnumProperty(EVEN, "EVEN"));
+        m.addEnum("odd", makeEnumProperty(ODD, "ODD"));
+        m.addEnum("end-on-even", makeEnumProperty(END_ON_EVEN, "END_ON_EVEN"));
+        m.addEnum("end-on-odd", makeEnumProperty(END_ON_ODD, "END_ON_ODD"));
+        m.addEnum("no-force", makeEnumProperty(NO_FORCE, "NO_FORCE"));
+        m.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
         m.setDefault("auto");
         addPropertyMaker("force-page-count", m);
 
@@ -2091,9 +2091,9 @@ public class FOPropertyMapping implements Constants {
         // odd-or-even
         m  = new EnumProperty.Maker(PR_ODD_OR_EVEN);
         m.setInherited(false);
-        m.addEnum("odd", makeEnumProperty(ODD));
-        m.addEnum("even", makeEnumProperty(EVEN));
-        m.addEnum("any", makeEnumProperty(ANY));
+        m.addEnum("odd", makeEnumProperty(ODD, "ODD"));
+        m.addEnum("even", makeEnumProperty(EVEN, "EVEN"));
+        m.addEnum("any", makeEnumProperty(ANY, "ANY"));
         m.setDefault("any");
         addPropertyMaker("odd-or-even", m);
 
@@ -2107,10 +2107,10 @@ public class FOPropertyMapping implements Constants {
         // page-position
         m  = new EnumProperty.Maker(PR_PAGE_POSITION);
         m.setInherited(false);
-        m.addEnum("first", makeEnumProperty(FIRST));
-        m.addEnum("last", makeEnumProperty(LAST));
-        m.addEnum("rest", makeEnumProperty(REST));
-        m.addEnum("any", makeEnumProperty(ANY));
+        m.addEnum("first", makeEnumProperty(FIRST, "FIRST"));
+        m.addEnum("last", makeEnumProperty(LAST, "LAST"));
+        m.addEnum("rest", makeEnumProperty(REST, "REST"));
+        m.addEnum("any", makeEnumProperty(ANY, "ANY"));
         m.setDefault("any");
         addPropertyMaker("page-position", m);
 
@@ -2124,8 +2124,8 @@ public class FOPropertyMapping implements Constants {
         // precedence
         m  = new EnumProperty.Maker(PR_PRECEDENCE);
         m.setInherited(false);
-        m.addEnum("true", makeEnumProperty(TRUE));
-        m.addEnum("false", makeEnumProperty(FALSE));
+        m.addEnum("true", makeEnumProperty(TRUE, "TRUE"));
+        m.addEnum("false", makeEnumProperty(FALSE, "FALSE"));
         m.setDefault("false");
         addPropertyMaker("precedence", m);
 
@@ -2156,8 +2156,8 @@ public class FOPropertyMapping implements Constants {
         m  = new EnumProperty.Maker(PR_BORDER_COLLAPSE);
         m.setInherited(true);
         m.setDefault("collapse");
-        m.addEnum("separate", makeEnumProperty(SEPARATE));
-        m.addEnum("collapse", makeEnumProperty(COLLAPSE));
+        m.addEnum("separate", makeEnumProperty(SEPARATE, "SEPARATE"));
+        m.addEnum("collapse", makeEnumProperty(COLLAPSE, "COLLAPSE"));
         addPropertyMaker("border-collapse", m);
 
         // border-end-precedence
@@ -2188,14 +2188,14 @@ public class FOPropertyMapping implements Constants {
         // caption-side
         m  = new EnumProperty.Maker(PR_CAPTION_SIDE);
         m.setInherited(true);
-        m.addEnum("before", makeEnumProperty(BEFORE));
-        m.addEnum("after", makeEnumProperty(AFTER));
-        m.addEnum("start", makeEnumProperty(START));
-        m.addEnum("end", makeEnumProperty(END));
-        m.addEnum("top", makeEnumProperty(TOP));
-        m.addEnum("bottom", makeEnumProperty(BOTTOM));
-        m.addEnum("left", makeEnumProperty(LEFT));
-        m.addEnum("right", makeEnumProperty(RIGHT));
+        m.addEnum("before", makeEnumProperty(BEFORE, "BEFORE"));
+        m.addEnum("after", makeEnumProperty(AFTER, "AFTER"));
+        m.addEnum("start", makeEnumProperty(START, "START"));
+        m.addEnum("end", makeEnumProperty(END, "END"));
+        m.addEnum("top", makeEnumProperty(TOP, "TOP"));
+        m.addEnum("bottom", makeEnumProperty(BOTTOM, "BOTTOM"));
+        m.addEnum("left", makeEnumProperty(LEFT, "LEFT"));
+        m.addEnum("right", makeEnumProperty(RIGHT, "RIGHT"));
         m.setDefault("before");
         addPropertyMaker("caption-side", m);
 
@@ -2252,8 +2252,8 @@ public class FOPropertyMapping implements Constants {
         m  = new EnumProperty.Maker(PR_TABLE_LAYOUT);
         m.setInherited(false);
         m.setDefault("auto");
-        m.addEnum("auto", makeEnumProperty(AUTO));
-        m.addEnum("fixed", makeEnumProperty(FIXED));
+        m.addEnum("auto", makeEnumProperty(AUTO, "AUTO"));
+        m.addEnum("fixed", makeEnumProperty(FIXED, "FIXED"));
         addPropertyMaker("table-layout", m);
 
         // table-omit-footer-at-break
@@ -2314,9 +2314,9 @@ public class FOPropertyMapping implements Constants {
         m  = new EnumProperty.Maker(PR_WRITING_MODE);
         m.setInherited(true);
         m.setDefault("lr-tb");
-        m.addEnum("lr-tb", makeEnumProperty(LR_TB));
-        m.addEnum("rl-tb", makeEnumProperty(RL_TB));
-        m.addEnum("tb-rl", makeEnumProperty(TB_RL));
+        m.addEnum("lr-tb", makeEnumProperty(LR_TB, "LR_TB"));
+        m.addEnum("rl-tb", makeEnumProperty(RL_TB, "RL_TB"));
+        m.addEnum("tb-rl", makeEnumProperty(TB_RL, "TB_RL"));
         addPropertyMaker("writing-mode", m);
     }
     
@@ -2500,10 +2500,10 @@ public class FOPropertyMapping implements Constants {
         // position
         m  = new EnumProperty.Maker(PR_POSITION);
         m.setInherited(false);
-        m.addEnum("static", makeEnumProperty(STATIC));
-        m.addEnum("relative", makeEnumProperty(RELATIVE));
-        m.addEnum("absolute", makeEnumProperty(ABSOLUTE));
-        m.addEnum("fixed", makeEnumProperty(FIXED));
+        m.addEnum("static", makeEnumProperty(STATIC, "STATIC"));
+        m.addEnum("relative", makeEnumProperty(RELATIVE, "RELATIVE"));
+        m.addEnum("absolute", makeEnumProperty(ABSOLUTE, "ABSOLUTE"));
+        m.addEnum("fixed", makeEnumProperty(FIXED, "FIXED"));
         m.setDefault("static");
         addPropertyMaker("position", m);
 
@@ -2516,25 +2516,25 @@ public class FOPropertyMapping implements Constants {
         // vertical-align
         m  = new EnumProperty.Maker(PR_VERTICAL_ALIGN);
         m.setInherited(false);
-        m.addEnum("baseline", makeEnumProperty(BASELINE));
-        m.addEnum("middle", makeEnumProperty(MIDDLE));
-        m.addEnum("sub", makeEnumProperty(SUB));
-        m.addEnum("super", makeEnumProperty(SUPER));
-        m.addEnum("text-top", makeEnumProperty(TEXT_TOP));
-        m.addEnum("text-bottom", makeEnumProperty(TEXT_BOTTOM));
-        m.addEnum("top", makeEnumProperty(TOP));
-        m.addEnum("bottom", makeEnumProperty(BOTTOM));
+        m.addEnum("baseline", makeEnumProperty(BASELINE, "BASELINE"));
+        m.addEnum("middle", makeEnumProperty(MIDDLE, "MIDDLE"));
+        m.addEnum("sub", makeEnumProperty(SUB, "SUB"));
+        m.addEnum("super", makeEnumProperty(SUPER, "SUPER"));
+        m.addEnum("text-top", makeEnumProperty(TEXT_TOP, "TEXT_TOP"));
+        m.addEnum("text-bottom", makeEnumProperty(TEXT_BOTTOM, "TEXT_BOTTOM"));
+        m.addEnum("top", makeEnumProperty(TOP, "TOP"));
+        m.addEnum("bottom", makeEnumProperty(BOTTOM, "BOTTOM"));
         m.setDefault("baseline");
         addPropertyMaker("vertical-align", m);
 
         // white-space-treatment
         m  = new EnumProperty.Maker(PR_WHITE_SPACE_TREATMENT);
         m.setInherited(true);
-        m.addEnum("ignore", makeEnumProperty(IGNORE));
-        m.addEnum("preserve", makeEnumProperty(PRESERVE));
-        m.addEnum("ignore-if-before-linefeed", makeEnumProperty(IGNORE_IF_BEFORE_LINEFEED));
-        m.addEnum("ignore-if-after-linefeed", makeEnumProperty(IGNORE_IF_AFTER_LINEFEED));
-        m.addEnum("ignore-if-surrounding-linefeed", makeEnumProperty(IGNORE_IF_SURROUNDING_LINEFEED));
+        m.addEnum("ignore", makeEnumProperty(IGNORE, "IGNORE"));
+        m.addEnum("preserve", makeEnumProperty(PRESERVE, "PRESERVE"));
+        m.addEnum("ignore-if-before-linefeed", makeEnumProperty(IGNORE_IF_BEFORE_LINEFEED, "IGNORE_IF_BEFORE_LINEFEED"));
+        m.addEnum("ignore-if-after-linefeed", makeEnumProperty(IGNORE_IF_AFTER_LINEFEED, "IGNORE_IF_AFTER_LINEFEED"));
+        m.addEnum("ignore-if-surrounding-linefeed", makeEnumProperty(IGNORE_IF_SURROUNDING_LINEFEED, "IGNORE_IF_SURROUNDING_LINEFEED"));
         m.setDefault("ignore-if-surrounding-linefeed");
         addPropertyMaker("white-space-treatment", m);
 
