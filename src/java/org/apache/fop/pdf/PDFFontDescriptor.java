@@ -75,7 +75,7 @@ public class PDFFontDescriptor extends PDFObject {
     private int avgWidth = 0;
     private int maxWidth = 0;
     private int missingWidth = 0;
-    private PDFStream fontfile;
+    private AbstractPDFStream fontfile;
     // private String charSet = null;
 
     private FontType subtype;
@@ -141,7 +141,7 @@ public class PDFFontDescriptor extends PDFObject {
      * @param subtype the font type defined in the font stream
      * @param fontfile the stream containing an embedded font
      */
-    public void setFontFile(FontType subtype, PDFStream fontfile) {
+    public void setFontFile(FontType subtype, AbstractPDFStream fontfile) {
         this.subtype = subtype;
         this.fontfile = fontfile;
     }
