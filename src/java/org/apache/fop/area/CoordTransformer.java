@@ -254,13 +254,9 @@ public class CoordTransformer implements Serializable {
     }
 
     /**
+     * Construct a coordinate transformation matrix.
      * @param absRefOrient
      * @param writingMode
-     * @param absVPrect
-     * @return
-     */
-    /**
-     * Construct a coordinate transformation matrix.
      * @param absVPrect absolute viewpoint rectangle
      * @param relBPDim the relative block progression dimension
      * @param relIPDim the relative inline progression dimension
