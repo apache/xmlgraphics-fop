@@ -1,7 +1,7 @@
-
 package org.apache.fop.xml;
 
-import org.apache.fop.datastructs.SyncedCircularBuffer;
+import org.apache.fop.xml.XMLNamespaces;
+import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.Driver;
 import org.apache.fop.configuration.Configuration;
@@ -17,9 +17,7 @@ import java.io.IOException;
 import java.util.NoSuchElementException;
 
 /*
- * XMLSerialHandler.java
- * Created: Thu Nov  8 15:41:40 2001
- *
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -34,8 +32,12 @@ import java.util.NoSuchElementException;
 
 public class XMLSerialHandler extends DefaultHandler implements Runnable {
 
-    private SyncedCircularBuffer events;
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
+    private SyncedXmlEventsBuffer events;
     private XMLReader parser;
+    private XMLNamespaces namespaces;
     private InputSource source;
     private Thread foThread;
     private boolean errorDump;
@@ -46,10 +48,11 @@ public class XMLSerialHandler extends DefaultHandler implements Runnable {
      * @param source the parser input source.
      */
     public XMLSerialHandler
-        (SyncedCircularBuffer events, XMLReader parser, InputSource source) {
+        (SyncedXmlEventsBuffer events, XMLReader parser, InputSource source) {
         this.events = events;
         this.parser = parser;
         this.source = source;
+        namespaces = events.getNamespaces();
         parser.setContentHandler(this);
         errorDump = Configuration.getBooleanValue("debugMode").booleanValue();
     }
@@ -79,7 +82,7 @@ public class XMLSerialHandler extends DefaultHandler implements Runnable {
     /**
      * Utility routine for the callback methods.  It captures the
      * <tt>InterruptedException</tt> that is possible from the <i>put</i>
-     * method of a <tt>SyncedCircularBuffer</tt>.
+     * method of a <tt>SyncedXmlEventsBuffer</tt>.
      */
     public void putEvent(XMLEvent event) throws NoSuchElementException {
         synchronized (events) {
@@ -97,7 +100,7 @@ public class XMLSerialHandler extends DefaultHandler implements Runnable {
      */
     public void startDocument() throws NoSuchElementException {
         synchronized (events) {
-            XMLEvent event = new XMLEvent();
+            XMLEvent event = new XMLEvent(namespaces);
             //System.out.println("StartDocument thread "
             //                   + Thread.currentThread().getName());
             event.type = XMLEvent.STARTDOCUMENT;
@@ -111,7 +114,7 @@ public class XMLSerialHandler extends DefaultHandler implements Runnable {
      */
     public void endDocument() throws NoSuchElementException {
         synchronized (events) {
-            XMLEvent event = new XMLEvent();
+            XMLEvent event = new XMLEvent(namespaces);
             //System.out.println("EndDocument thread "
             //                   + Thread.currentThread().getName());
             event.type = XMLEvent.ENDDOCUMENT;
@@ -134,11 +137,11 @@ public class XMLSerialHandler extends DefaultHandler implements Runnable {
         throws NoSuchElementException
     {
         synchronized (events) {
-            XMLEvent event = new XMLEvent();
+            XMLEvent event = new XMLEvent(namespaces);
             //System.out.println("StartElement thread "
             //                   + Thread.currentThread().getName());
             event.type = XMLEvent.STARTELEMENT;
-            event.uriIndex = XMLEvent.getURIIndex(uri);
+            event.uriIndex = namespaces.getURIIndex(uri);
             event.localName = localName;
             event.qName = qName;
             event.attributes = new AttributesImpl(attributes);
@@ -158,11 +161,11 @@ public class XMLSerialHandler extends DefaultHandler implements Runnable {
         throws NoSuchElementException
     {
         synchronized (events) {
-            XMLEvent event = new XMLEvent();
+            XMLEvent event = new XMLEvent(namespaces);
             //System.out.println("EndElement thread "
             //                   + Thread.currentThread().getName());
             event.type = XMLEvent.ENDELEMENT;
-            event.uriIndex = XMLEvent.getURIIndex(uri);
+            event.uriIndex = namespaces.getURIIndex(uri);
             event.localName = localName;
             event.qName = qName;
             putEvent(event);
@@ -180,7 +183,7 @@ public class XMLSerialHandler extends DefaultHandler implements Runnable {
         throws NoSuchElementException
     {
         synchronized (events) {
-            XMLEvent event = new XMLEvent();
+            XMLEvent event = new XMLEvent(namespaces);
             //System.out.println("characters thread "
             //                   + Thread.currentThread().getName());
             event.type = XMLEvent.CHARACTERS;
