@@ -48,6 +48,7 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+/* Modified by Eric SCHAEFFER */
 
 package org.apache.fop.fo.flow;
 
@@ -63,6 +64,8 @@ import org.apache.fop.image.*;
 // Java
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 public class DisplayGraphic extends FObj {
     public static class Maker extends FObj.Maker { 
@@ -151,27 +154,52 @@ public class DisplayGraphic extends FObj {
 	    this.marker = 0;
 	}
 
-	if ((spaceBefore != 0) && (this.marker == 0)) {
-	    area.addDisplaySpace(spaceBefore);
-	}
+	try {
+		FopImage img = FopImageFactory.Make(href);
+		// if width / height needs to be computed
+		if ((width == 0) || (height == 0)) {
+			// aspect ratio
+			double imgWidth = img.getWidth();
+			double imgHeight = img.getHeight();
+			if ((width == 0) && (height == 0)) {
+				width = (int) (imgWidth / 2d * 1000d);
+				height = (int) (imgHeight / 2d * 1000d);
+			} else if (height == 0) {
+				height = (int) (imgHeight / imgWidth * ((double) width));
+			} else if (width == 0) {
+				width = (int) (imgWidth / imgHeight * ((double) height));
+			}
+		}
+		this.imageArea = new ImageArea(
+										fs,
+										img,
+										area.getAllocationWidth(),
+										width,
+										height,
+										startIndent,
+										endIndent,
+										align
+										);
 
-	FopImage img = FopImageFactory.Make(href, 0, 0, width, height);
+		if ((spaceBefore != 0) && (this.marker == 0)) {
+		    area.addDisplaySpace(spaceBefore);
+		}
 
-	this.imageArea = new ImageArea(fs,
-				       img,
-				       area.getAllocationWidth(),
-				       img.getWidth(),
-				       img.getHeight(),
-				       startIndent, endIndent,
-				       align);
+		imageArea.start();
+		imageArea.end();
+		area.addChild(imageArea);
+		area.increaseHeight(imageArea.getHeight());
 
-	imageArea.start();
-	imageArea.end();
-	area.addChild(imageArea);
-	area.increaseHeight(imageArea.getHeight());
+		if (spaceAfter != 0) {
+		    area.addDisplaySpace(spaceAfter);
+		}
 
-	if (spaceAfter != 0) {
-	    area.addDisplaySpace(spaceAfter);
+	} catch (MalformedURLException urlex) {
+		// bad URL
+System.err.println("Error while creating area : " + urlex.getMessage());
+	} catch (FopImageException imgex) {
+		// image error
+System.err.println("Error while creating area : " + imgex.getMessage());
 	}
 
 	if (area instanceof BlockArea) {
