@@ -1,5 +1,7 @@
 ==============================================================================
 Done since 0.20.4 release
+- Fix for bug #19797 (image elements in SVG may produce blank output) (JM)
+  Submitted by: Zhong(George) Yi <yidaomao@yahoo.com>
 - Teach FOP under NT/2000/XP to start when the user is in any directory,
   maybe not FOP's home, like ANT does it. (#19466, JM)
   Submitted by: Anton Tagunov <tagunov@motor.ru>
