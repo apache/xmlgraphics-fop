@@ -10,7 +10,6 @@
 package org.apache.fop.fo.pagination;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 // FOP
 import org.apache.fop.fo.pagination.PageCondition;
@@ -55,10 +54,20 @@ public class PageMasterAlternatives {
     }
 
     /**
-     * Get an <tt>Iterator</tt> over the set of alternative conditions.
-     * @return the <tt>Iterator</tt>.
+     * Get the length of the <i>alternatives</i> <tt>ArrayList</tt>.
+     * @return - the length.
      */
-    public Iterator conditions() {
-	return alternatives.iterator();
+    public int getAlternativesLength() {
+        return alternatives.size();
     }
+
+    /**
+     * Get the indexed <tt>PageMasterAlternatives</tt> master.
+     * @param i - the index of the master to retrieve.
+     * @return - the indexed <tt>PageMasterAlternatives</tt> master.
+     */
+    public PageCondition getAlternative(int i) {
+        return (PageCondition)(alternatives.get(i));
+    }
+
 }
