@@ -66,13 +66,25 @@ public class FOTreeEvent extends EventObject {
 
     private PageSequence pageSeq;
 
+    /**
+     * Constructor captures the object that fired the event.
+     * @param source the Object that fired the event.
+     */
     public FOTreeEvent (Object source) {
         super(source);
     }
 
+    /**
+     * Sets the PageSequence object for this event.
+     * @param pageSeq the PageSequence object attached to this event.
+     */
     public void setPageSequence(PageSequence pageSeq) {
         this.pageSeq = pageSeq;
     }
+
+    /**
+     * @return the PageSequence object attached to this event.
+     */
     public PageSequence getPageSequence () {
         return pageSeq;
     }

@@ -60,15 +60,29 @@ import org.xml.sax.SAXException;
 import org.apache.fop.apps.FOPException;
 
 /**
- * An Event used for notification that various stages of the building of an
- * FO tree have been completed. Specifically, these are currently used to
- * notify Driver when a PageSequence has been completed.
+ * An interface for classes that need to handle FOTreeEvent objects as they
+ * are fired.
+ * The key benefit to using this interface is that the implementation can handle
+ * PageSequence objects at a higher level, rather than dealing directly with
+ * a lower-level SAX event.
+ * @see FOTreeEvent
  */
 
 public interface FOTreeListener extends EventListener {
 
-    abstract void foPageSequenceComplete (FOTreeEvent e) throws FOPException;
-    abstract void foDocumentComplete (FOTreeEvent e) throws SAXException;
+    /**
+     * Method for handling a completed PageSequence object.
+     * @param e the FOTreeEvent that has been fired
+     * @throws FOPException for invalid input
+     */
+    void foPageSequenceComplete (FOTreeEvent e) throws FOPException;
+
+    /**
+     * Method for handling the end of the document.
+     * @param e the FOTreeEvent that has been fired
+     * @throws SAXException for parsing error
+     */
+    void foDocumentComplete (FOTreeEvent e) throws SAXException;
 
 }
 
