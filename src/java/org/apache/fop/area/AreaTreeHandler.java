@@ -33,7 +33,6 @@ import org.xml.sax.SAXException;
 // Apache
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.area.extensions.BookmarkData;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.extensions.Outline;
 import org.apache.fop.fo.extensions.Bookmarks;
@@ -317,7 +316,7 @@ public class AreaTreeHandler extends FOEventHandler {
                 }
             }
         } else {
-            model.handleOffDocumentItem(ext, OffDocumentItem.IMMEDIATELY);
+            model.handleOffDocumentItem(ext);
         }
     }
 }

@@ -16,21 +16,16 @@
 
 /* $Id$ */
  
-package org.apache.fop.area.extensions;
-
-import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.Resolvable;
-import org.apache.fop.area.OffDocumentItem;
-import org.apache.fop.area.AreaTreeModel;
+package org.apache.fop.area;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 
 /**
- * This class holds the PDF bookmark extension data.
+ * This class holds the PDF bookmark OffDocumentItem
  */
-public class BookmarkData implements Resolvable, OffDocumentItem {
+public class BookmarkData extends OffDocumentItem implements Resolvable {
     private ArrayList subData = new ArrayList();
     private HashMap idRefs = new HashMap();
 
@@ -48,6 +43,7 @@ public class BookmarkData implements Resolvable, OffDocumentItem {
      */
     public BookmarkData() {
         idRef = null;
+        whenToProcess = IMMEDIATELY;
     }
 
     /**
@@ -201,7 +197,7 @@ public class BookmarkData implements Resolvable, OffDocumentItem {
         if (idRefs.size() == 0) {
             idRefs = null;
             if (areaTreeModel != null) {
-                areaTreeModel.handleOffDocumentItem(this, OffDocumentItem.AFTER_PAGE);
+                areaTreeModel.handleOffDocumentItem(this);
             }
         }
     }

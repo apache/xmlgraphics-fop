@@ -47,7 +47,7 @@ import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.OffDocumentItem;
-import org.apache.fop.area.extensions.BookmarkData;
+import org.apache.fop.area.BookmarkData;
 import org.apache.fop.area.inline.Character;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.Viewport;
