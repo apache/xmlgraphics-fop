@@ -38,6 +38,7 @@ import java.io.IOException;
  public class RTFHandler extends StructureHandler {
     private FontInfo _fontInfo = new FontInfo();
     private RtfFile _rtfFile;
+    private final OutputStream _os;
     private RtfSection _sect;
     private RtfDocumentArea _docArea;
     private RtfParagraph _para;
@@ -45,8 +46,8 @@ import java.io.IOException;
     
     private static final String ALPHA_WARNING = "WARNING: RTF renderer is veryveryalpha at this time, see class org.apache.fop.rtf.renderer.RTFHandler";
 
-    public RTFHandler(OutputStream os) throws IOException {
-        _rtfFile = new RtfFile(new OutputStreamWriter(os));
+    public RTFHandler(OutputStream os) {
+        _os = os;
         // use pdf fonts for now, this is only for resolving names
         org.apache.fop.render.pdf.FontSetup.setup(_fontInfo, null);
         System.err.println(ALPHA_WARNING);
@@ -59,6 +60,7 @@ import java.io.IOException;
     public void startDocument() throws SAXException {
         // FIXME sections should be created 
         try {
+            _rtfFile = new RtfFile(new OutputStreamWriter(_os));
             _docArea = _rtfFile.startDocumentArea();
         } catch(IOException ioe) {
             // FIXME could we throw Exception in all StructureHandler events?
