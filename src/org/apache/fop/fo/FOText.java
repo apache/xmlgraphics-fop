@@ -18,6 +18,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.TextLayoutManager;
 import org.apache.fop.layoutmgr.TextBPLayoutManager;
+import org.apache.fop.apps.StructureHandler;
 
 import java.util.NoSuchElementException;
 import java.util.List;
@@ -46,6 +47,11 @@ public class FOText extends FObj {
         System.arraycopy(chars, s, ca, 0, e - s);
         this.length = e - s;
         textInfo = ti;
+    }
+
+    public void setStructHandler(StructureHandler st) {
+        super.setStructHandler(st);
+        structHandler.characters(ca, start, length);
     }
 
     public boolean willCreateArea() {

@@ -194,6 +194,8 @@ public class PageSequence extends FObj {
         // this.properties.get("country");
         // this.properties.get("language");
         setupID();
+
+        structHandler.startPageSequence(this, layoutMasterSet);
     }
 
 

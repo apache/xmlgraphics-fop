@@ -74,7 +74,7 @@ public class LayoutMasterSet extends FObj {
      * This is used by the page sequence to get a page master for
      * creating pages.
      */
-    protected SimplePageMaster getSimplePageMaster(String masterName) {
+    public SimplePageMaster getSimplePageMaster(String masterName) {
         return (SimplePageMaster)this.simplePageMasters.get(masterName);
     }
 
@@ -97,7 +97,7 @@ public class LayoutMasterSet extends FObj {
      * This is used by the page sequence to get a page master for 
      * creating pages.
      */
-    protected PageSequenceMaster getPageSequenceMaster(String masterName) {
+    public PageSequenceMaster getPageSequenceMaster(String masterName) {
         return (PageSequenceMaster)this.pageSequenceMasters.get(masterName);
     }
 

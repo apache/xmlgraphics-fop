@@ -86,6 +86,8 @@ public class Block extends FObjMixed {
           this.properties.get("linefeed-treatment").getEnum();
 
         setupID();
+
+        structHandler.startBlock(this);
     }
 
     public Status layout(Area area) throws FOPException {
@@ -404,6 +406,7 @@ public class Block extends FObjMixed {
 
     public void end() {
         handleWhiteSpace();
+        structHandler.endBlock(this);
     }
 
     private void handleWhiteSpace() {
