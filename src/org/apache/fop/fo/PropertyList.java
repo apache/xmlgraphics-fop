@@ -252,16 +252,15 @@ public class PropertyList extends HashMap {
                 // don't know what to do here
             }
         }
-/*
+
         // if value is inherit then get computed value from
         // parent
-        // namespaces??
         if(p != null && "inherit".equals(p.getString())) {
             if (this.parentPropertyList != null) {
                 p = parentPropertyList.get(propertyName, true, false);
             }
         }
-*/
+
         if (subpropName != null && p != null) {
             return this.builder.getSubpropValue(namespace, element,
                                                 propertyName, p, subpropName);
