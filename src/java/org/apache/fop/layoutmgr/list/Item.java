@@ -67,12 +67,6 @@ public class Item extends BlockStackingLayoutManager {
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
-     */
-    protected void initProperties() {
-    }
-
-    /**
      * Get the next break possibility for this cell.
      * A cell contains blocks so there are breaks around the blocks
      * and inside the blocks.
