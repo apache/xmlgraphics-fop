@@ -58,33 +58,47 @@
 
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
-/** Constants for RTF table attribute names */
+/**
+ * Constants for RTF table attribute names
+ * @author unascribed
+ * @author Boris POUDEROUS
+ * @author Chris Scott, Westinghouse
+ */
 public interface ITableAttributes {
-    /**
-     * Added by Boris POUDEROUS on 2002/06/27 in order to
-     * process column/row spanning :
-     */
+    /** to process column spanning */
     public static final String COLUMN_SPAN = "number-columns-spanned";
+    /** to process row spanning */
     public static final String ROW_SPAN = "number-rows-spanned";
 
-    // RTF 1.5 attributes (word 97)
-    // half the space between the cells of a table row in twips
-    String ATTR_RTF_15_TRGAPH = "trgaph";
+// RTF 1.5 attributes (word 97)
 
-    // RTF 1.6 Row and table attributes
-    String ATTR_ROW_PADDING_TOP = "trpaddt";
-    String ATTR_ROW_PADDING_BOTTOM = "trpaddb";
-    String ATTR_ROW_PADDING_LEFT = "trpaddl";
-    String ATTR_ROW_PADDING_RIGHT = "trpaddr";
+    /** half the space between the cells of a table row in twips */
+    public static final String ATTR_RTF_15_TRGAPH = "trgaph";
 
-    String ATTR_ROW_U_PADDING_TOP = "trpaddft";
-    String ATTR_ROW_U_PADDING_BOTTOM = "trpaddfb";
-    String ATTR_ROW_U_PADDING_LEFT = "trpaddfl";
-    String ATTR_ROW_U_PADDING_RIGHT = "trpaddfr";
+// RTF 1.6 Row and table attributes
+    /** table row padding, top */
+    public static final String ATTR_ROW_PADDING_TOP = "trpaddt";
+    /** table row padding, bottom */
+    public static final String ATTR_ROW_PADDING_BOTTOM = "trpaddb";
+    /** table row padding, left */
+    public static final String ATTR_ROW_PADDING_LEFT = "trpaddl";
+    /** table row padding, right */
+    public static final String ATTR_ROW_PADDING_RIGHT = "trpaddr";
 
-    // list of ALL ROW PADDING attributes, used to select them
-    // when writing attributes
-    String[] ATTRIB_ROW_PADDING = {
+    /** table row padding, top */
+    public static final String ATTR_ROW_U_PADDING_TOP = "trpaddft";
+    /** table row padding, bottom */
+    public static final String ATTR_ROW_U_PADDING_BOTTOM = "trpaddfb";
+    /** table row padding, left */
+    public static final String ATTR_ROW_U_PADDING_LEFT = "trpaddfl";
+    /** table row padding, right */
+    public static final String ATTR_ROW_U_PADDING_RIGHT = "trpaddfr";
+
+    /**
+     * List of ALL ROW PADDING attributes, used to select them when writing
+     * attributes
+     */
+    public static final String[] ATTRIB_ROW_PADDING = {
         ATTR_ROW_PADDING_TOP, ATTR_ROW_U_PADDING_TOP,
         ATTR_ROW_PADDING_BOTTOM, ATTR_ROW_U_PADDING_BOTTOM,
         ATTR_ROW_PADDING_LEFT, ATTR_ROW_U_PADDING_LEFT,
@@ -92,68 +106,106 @@ public interface ITableAttributes {
         ATTR_RTF_15_TRGAPH
     };
 
-    // Cell attributes
-    String ATTR_CELL_PADDING_TOP = "clpadt";
-    String ATTR_CELL_PADDING_BOTTOM = "clpadb";
-    String ATTR_CELL_PADDING_LEFT = "clpadl";
-    String ATTR_CELL_PADDING_RIGHT = "clpadr";
+// Cell attributes
+    /** cell padding, top */
+    public static final String ATTR_CELL_PADDING_TOP = "clpadt";
+    /** cell padding, bottom */
+    public static final String ATTR_CELL_PADDING_BOTTOM = "clpadb";
+    /** cell padding, left */
+    public static final String ATTR_CELL_PADDING_LEFT = "clpadl";
+    /** cell padding, right */
+    public static final String ATTR_CELL_PADDING_RIGHT = "clpadr";
 
-    String ATTR_CELL_U_PADDING_TOP = "clpadft";
-    String ATTR_CELL_U_PADDING_BOTTOM = "clpadfb";
-    String ATTR_CELL_U_PADDING_LEFT = "clpadfl";
-    String ATTR_CELL_U_PADDING_RIGHT = "clpadfr";
+    /** cell padding, top */
+    public static final String ATTR_CELL_U_PADDING_TOP = "clpadft";
+    /** cell padding, bottom */
+    public static final String ATTR_CELL_U_PADDING_BOTTOM = "clpadfb";
+    /** cell padding, left */
+    public static final String ATTR_CELL_U_PADDING_LEFT = "clpadfl";
+    /** cell padding, right */
+    public static final String ATTR_CELL_U_PADDING_RIGHT = "clpadfr";
 
-    // These lines added by Chris Scott, Westinghouse
-    // need to make a border style file
+// for border style file
+    /** cell border, top */
+    public static final String CELL_BORDER_TOP = "clbrdrt";
+    /** cell border, bottom */
+    public static final String CELL_BORDER_BOTTOM = "clbrdrb";
+    /** cell border, left */
+    public static final String CELL_BORDER_LEFT = "clbrdrl";
+    /** cell border, right */
+    public static final String CELL_BORDER_RIGHT = "clbrdrr";
 
-    String CELL_BORDER_TOP = "clbrdrt";
-    String CELL_BORDER_BOTTOM = "clbrdrb";
-    String CELL_BORDER_LEFT = "clbrdrl";
-    String CELL_BORDER_RIGHT = "clbrdrr";
-    //Table row border attributes
-    String ROW_BORDER_TOP = "trbrdrt";
-    String ROW_BORDER_BOTTOM = "trbrdrb";
-    String ROW_BORDER_LEFT = "trbrdrl";
-    String ROW_BORDER_RIGHT = "trbrdrr";
-    String ROW_BORDER_HORIZONTAL = "trbrdrh";
-    String ROW_BORDER_VERTICAL = "trbrdrv";
+//Table row border attributes
+    /** row border, top */
+    public static final String ROW_BORDER_TOP = "trbrdrt";
+    /** row border, bottom */
+    public static final String ROW_BORDER_BOTTOM = "trbrdrb";
+    /** row border, left */
+    public static final String ROW_BORDER_LEFT = "trbrdrl";
+    /** row border, right */
+    public static final String ROW_BORDER_RIGHT = "trbrdrr";
+    /** row border, horizontal */
+    public static final String ROW_BORDER_HORIZONTAL = "trbrdrh";
+    /** row border, vertical */
+    public static final String ROW_BORDER_VERTICAL = "trbrdrv";
 
-    //Table row attributes
-    String ROW_KEEP_TOGETHER = "trkeep";
+//Table row attributes
+    /** row attribute, keep-together */
+    public static final String ROW_KEEP_TOGETHER = "trkeep";
 
-    //This control word is nonexistent in RTF, used
-    //to simulate the FO:keep-with-next attribute.
-     String ROW_KEEP_WITH_NEXT = "knext";
+    /**
+     * This control word is nonexistent in RTF, used to simulate the
+     * FO:keep-with-next attribute.
+     */
+    public static final String ROW_KEEP_WITH_NEXT = "knext";
 
-    //This control word is nonexistent in RTF, used
-    //to simulate the FO:keep-with-previous attribute.
-      String ROW_KEEP_WITH_PREVIOUS = "kprevious";
+    /**
+     * This control word is nonexistent in RTF, used to simulate the
+     * FO:keep-with-previous attribute.
+     */
+    public static final String ROW_KEEP_WITH_PREVIOUS = "kprevious";
 
-    //shading and color, all are unit based attributes
-    String CELL_SHADE = "clshdng";
-    String CELL_COLOR_BACKGROUND = "clcbpat";
-    String CELL_COLOR_FOREGROUND = "clcfpat";
+    /** cell shading, a unit-based attribute */
+    public static final String CELL_SHADE = "clshdng";
+    /** cell background color, a unit-based attribute */
+    public static final String CELL_COLOR_BACKGROUND = "clcbpat";
+    /** cell foreground color, a unit-based attribute */
+    public static final String CELL_COLOR_FOREGROUND = "clcfpat";
 
-    // list of ALL CELL PADDING attributes, used to select them
-    // when writing attributes
-    String[] ATTRIB_CELL_PADDING = {
+    /**
+     * List of ALL CELL PADDING attributes, used to select them when writing
+     * attributes
+     */
+    public static final String[] ATTRIB_CELL_PADDING = {
         ATTR_CELL_PADDING_TOP, ATTR_CELL_U_PADDING_TOP,
         ATTR_CELL_PADDING_BOTTOM, ATTR_CELL_U_PADDING_BOTTOM,
         ATTR_CELL_PADDING_LEFT, ATTR_CELL_U_PADDING_LEFT,
         ATTR_CELL_PADDING_RIGHT, ATTR_CELL_U_PADDING_RIGHT,
     };
 
-    String[] CELL_BORDER = {
-        CELL_BORDER_TOP,        CELL_BORDER_BOTTOM,
-        CELL_BORDER_LEFT,        CELL_BORDER_RIGHT
+    /**
+     * List of ALL CELL BORDER attributes, used to select them when writing
+     * attributes
+     */
+    public static final String[] CELL_BORDER = {
+        CELL_BORDER_TOP,    CELL_BORDER_BOTTOM,
+        CELL_BORDER_LEFT,   CELL_BORDER_RIGHT
     };
 
-    String[] ROW_BORDER = {
-        ROW_BORDER_TOP,         ROW_BORDER_BOTTOM,         ROW_BORDER_LEFT,
-        ROW_BORDER_RIGHT,    ROW_BORDER_HORIZONTAL,    ROW_BORDER_VERTICAL
+    /**
+     * List of ALL ROW BORDER attributes, used to select them when writing
+     * attributes
+     */
+    public static final String[] ROW_BORDER = {
+        ROW_BORDER_TOP,     ROW_BORDER_BOTTOM,        ROW_BORDER_LEFT,
+        ROW_BORDER_RIGHT,   ROW_BORDER_HORIZONTAL,    ROW_BORDER_VERTICAL
     };
 
-    String[] CELL_COLOR = {
+    /**
+     * List of ALL CELL SHADING AND COLOR attributes, used to select them when
+     * writing attributes
+     */
+    public static final String[] CELL_COLOR = {
         CELL_SHADE,    CELL_COLOR_BACKGROUND,    CELL_COLOR_FOREGROUND
     };
 }

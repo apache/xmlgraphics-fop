@@ -60,8 +60,15 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import java.io.IOException;
 
+/**
+ * Interface for classes containing Paragraphs with Keep Together
+ */
 public interface IRtfParagraphKeepTogetherContainer {
 
-    /** close current paragraph if any and start a new one */
+    /**
+     * Close current paragraph, if any, and start a new one
+     * @return new paragraph object (with keep together)
+     * @throws IOException for I/O problems
+     */
     RtfParagraphKeepTogether newParagraphKeepTogether() throws IOException;
 }

@@ -62,5 +62,11 @@ import java.io.IOException;
 
 /** interface for RTF objects that can contain footers */
 public interface IRtfAfterContainer {
+    /**
+     *
+     * @param attrs Attributes for new footer
+     * @return RtfAfter for footer
+     * @throws IOException for I/O problems
+     */
     RtfAfter newAfter(RtfAttributes attrs) throws IOException;
 }

@@ -68,12 +68,9 @@ public interface IRtfBookmarkContainer {
 
     /**
      * Create a new RTF bookmark.
-     *
      * @param bookmark Name of the bookmark
-     *
      * @return RTF bookmark
-     *
-     * @throws IOException On eror
+     * @throws IOException for I/O problems
      */
     RtfBookmark newBookmark (String bookmark) throws IOException;
 }

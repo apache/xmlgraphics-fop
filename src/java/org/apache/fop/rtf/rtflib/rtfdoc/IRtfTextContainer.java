@@ -65,21 +65,32 @@ import java.io.IOException;
  */
 
 public interface IRtfTextContainer {
-    /** close current text run if any and start a new one with specified attributes
-     *  @param str if not null, added to the RtfText created
+    /**
+     * Close current text element, if any, and start a new one
+     * @param str if not null, added to the RtfText created
+     * @param attr attributes for text
+     * @return new text object
+     * @throws IOException for I/O problems
      */
     RtfText newText(String str, RtfAttributes attr) throws IOException;
 
-    /** close current text run if any and start a new one with default attributes
-     *  @param str if not null, added to the RtfText created
+    /**
+     * Close current text run, if any, and start a new one with default attributes
+     * @param str if not null, added to the RtfText created
+     * @return a new text object
+     * @throws IOException for I/O problems
      */
     RtfText newText(String str) throws IOException;
 
-    /** add a line break */
+    /**
+     * Add a line break
+     * @throws IOException for I/O problems
+     */
     void newLineBreak() throws IOException;
 
-    /** text containers usually provide default attributes for all texts that they contain.
-     *  This returns a copy of the container's attributes
+    /**
+     * Text containers usually provide default attributes for all texts that they contain.
+     * @return a copy of the container's attributes.
      */
     RtfAttributes getTextContainerAttributes();
 }

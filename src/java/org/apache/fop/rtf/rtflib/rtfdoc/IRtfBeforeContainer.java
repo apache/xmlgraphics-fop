@@ -60,6 +60,16 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import java.io.IOException;
 
+/**
+ * Interface for classes containing headers.
+ */
 public interface IRtfBeforeContainer {
+
+    /**
+     *
+     * @param attrs Attributes of new header
+     * @return RtfBefore for new header object
+     * @throws IOException for I/O problems
+     */
     RtfBefore newBefore(RtfAttributes attrs) throws IOException;
 }

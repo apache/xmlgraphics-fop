@@ -65,10 +65,21 @@ import java.io.IOException;
  */
 
 public interface IRtfParagraphContainer {
-    /** close current paragraph if any and start a new one with default attributes */
+    /**
+     * Close current paragraph, if any, and start a new one with default
+     * attributes.
+     * @throws IOException for I/O problems.
+     * @return new paragraph object
+     */
     RtfParagraph newParagraph() throws IOException;
 
-    /** close current paragraph if any and start a new one with specified attributes */
+    /**
+     * Close current paragraph, if any, and start a new one with specified
+     * attributes
+     * @param attr attributes for new paragraph
+     * @return new paragraph object
+     * @throws IOException for I/O problems.
+     */
     RtfParagraph newParagraph(RtfAttributes attr) throws IOException;
 
 }

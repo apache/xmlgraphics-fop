@@ -61,17 +61,26 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 import java.io.IOException;
 import org.apache.fop.rtf.rtflib.interfaces.ITableColumnsInfo;
 
-/**  Interface for RtfElements that can contain RtfTables
+/**
+ *  Interface for RtfElements that can contain RtfTables
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
+ *  @author Boris Poudérous
  */
-
 public interface IRtfTableContainer {
-    /** close current table if any and start a new one */
+   /**
+    * Close current table, if any, and start a new one
+    * @param tc Table Columns Info
+    * @return new table object
+    * @throws IOException for I/O problems
+    */
     RtfTable newTable(ITableColumnsInfo tc) throws IOException;
 
-    /** close current table if any and start a new one
-   *  @param tc added by Boris Poudérous on july 2002 in order to process
-   *  number-columns-spanned attribute
-   **/
+   /**
+    * Close current table, if any, and start a new one
+    * @param attrs for the Table attributes
+    * @param tc to process number-columns-spanned attribute
+    * @return new table object
+    * @throws IOException for I/O problems
+    */
     RtfTable newTable(RtfAttributes attrs, ITableColumnsInfo tc) throws IOException;
 }
