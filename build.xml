@@ -154,6 +154,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="replacestring" value="org/apache/fop"/>
     <property name="ignore_this" value="ignore_this.java"/>
     <property name="jimi" value="JimiImage.java"/>
+    <property name="jai" value="JAIImage.java"/>
 
     <property name="ignore_jdk11"
               value="org/apache/fop/render/awt/**
@@ -199,6 +200,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <taskdef name="xslt" classname="Xslt"/>
     <available property="xt.present" classname="com.jclark.xsl.sax.XSLProcessor"/>
     <available property="jimi.present" classname="com.sun.jimi.core.Jimi"/>
+    <available property="jai.present" classname="javax.media.jai.JAI"/>
 
     <filter token="${replacestring}" value="${build.src}/${replacestring}"/>
   </target>
@@ -261,14 +263,24 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
              includes="**/${jimi}"/>
   </target>
 
+  <!-- copies special image class only if JAI library is present          -->
+  <!-- =================================================================== -->
+  <target name="prepare-jai" depends="prepare" if="jai.present">
+    <echo message="JAI library is present. Fop installs JAI support."/>
+    <copydir src="${src.dir}"
+             dest="${build.src}"
+             includes="**/${jai}"/>
+  </target>
+
+
   <!-- =================================================================== -->
   <!-- Prepares the source code                                            -->
   <!-- =================================================================== -->
-  <target name="prepare-src" depends="prepare, prepare-xt, prepare-jimi">
+  <target name="prepare-src" depends="prepare, prepare-xt, prepare-jimi, prepare-jai">
     <!-- copy src files -->
     <copydir src="${src.dir}"
              dest="${build.src}"
-             excludes="**/Makefile*, **/package.html, **/XT*,**/PDFOutputHandler.java,**/${jimi}"/>
+             excludes="**/Makefile*, **/package.html, **/XT*,**/PDFOutputHandler.java,**/${jimi},**/${jai}"/>
   </target>
 
   <!-- =================================================================== -->
