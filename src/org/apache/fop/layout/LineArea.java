@@ -23,10 +23,12 @@ import org.apache.fop.fo.properties.LeaderAlignment;
 import org.apache.fop.fo.properties.VerticalAlign;
 import org.apache.fop.layout.hyphenation.Hyphenation;
 import org.apache.fop.layout.hyphenation.Hyphenator;
+import org.apache.fop.configuration.Configuration;
 
 //java
 import java.util.Vector;
 import java.util.Enumeration;
+import java.util.StringTokenizer;
 import java.awt.Rectangle;
 
 public class LineArea extends Area {
@@ -66,7 +68,7 @@ public class LineArea extends Area {
     protected static final int NOTHING = 0;
     protected static final int WHITESPACE = 1;
     protected static final int TEXT = 2;
-
+    
     /* the character type of the previous character */
     protected int prev = NOTHING;
 
@@ -116,10 +118,38 @@ public class LineArea extends Area {
 
         if (prevLineArea != null) {
             Enumeration e = prevLineArea.pendingAreas.elements();
-            while (e.hasMoreElements()) {
-                pendingAreas.addElement(e.nextElement());
+            Box b = null;
+                // There might be InlineSpaces at the beginning
+                // that should not be there - eat them
+            boolean eatMoreSpace = true;
+            int eatenWidth = 0;
+            
+            while (eatMoreSpace) {
+                if (e.hasMoreElements()) {
+                    b = (Box)e.nextElement();
+                    if (b instanceof InlineSpace) {
+                        InlineSpace is = (InlineSpace)b;
+                        if (is.isEatable())
+                            eatenWidth += is.getSize();
+                        else
+                            eatMoreSpace = false;
+                    } else {
+                        eatMoreSpace = false;
+                    }
+                } else {
+                    eatMoreSpace = false;
+                    b = null;
+                }
             }
-            pendingWidth = prevLineArea.getPendingWidth();
+            
+            while (b != null) {
+                pendingAreas.addElement(b);
+                if (e.hasMoreElements())
+                    b = (Box)e.nextElement();
+                else
+                    b = null;
+            }
+            pendingWidth = prevLineArea.getPendingWidth() - eatenWidth;
         }
     }
 
@@ -165,9 +195,8 @@ public class LineArea extends Area {
         int wordStart = start;
         int wordLength = 0;
         int wordWidth = 0;
-            // With CID fonts, space isn't neccecary currentFontState.width(32)
-        int whitespaceWidth =
-            currentFontState.width(currentFontState.mapChar(' '));
+            // With CID fonts, space isn't neccesary currentFontState.width(32)
+        int whitespaceWidth = getCharWidth(' ');
         
         char[] data = new char[odata.length];
         char[] dataCopy = new char[odata.length];
@@ -181,15 +210,19 @@ public class LineArea extends Area {
             int charWidth;
             /* get the character */
             char c = data[i];
-            if (!((c == ' ') || (c == '\n') || (c == '\r') ||
-                  (c == '\t'))) {
-                    //c = data[i] = currentFontState.mapChar(c);
-               charWidth = currentFontState.width(currentFontState.mapChar(c));
+            if (!(isSpace(c) || (c == '\n') || (c == '\r') ||
+                  (c == '\t') || (c == '\u2028'))) {
+               charWidth = getCharWidth(c);
                isText = true;
-               if (charWidth <= 0)
+                   // Add support for zero-width spaces
+               if (charWidth <= 0 && c != '\u200B' && c != '\uFEFF')
                   charWidth = whitespaceWidth;
             } else {
-               charWidth = whitespaceWidth;
+                if ((c == '\n') || (c == '\r') || (c == '\t'))
+                    charWidth = whitespaceWidth;
+                else
+                    charWidth = getCharWidth(c);
+                
                isText = false;
 
                 if (prev == WHITESPACE) {
@@ -198,15 +231,37 @@ public class LineArea extends Area {
 
                     if (this.whiteSpaceCollapse ==
                             WhiteSpaceCollapse.FALSE) {
-                        if (c == ' ') {
-                            spaceWidth += whitespaceWidth;
-                        } else if (c == '\n') {
+                        if (isSpace(c)) {
+                            spaceWidth += getCharWidth(c);
+                        } else if (c == '\n' || c == '\u2028') {
                             // force line break
-                            return i;
+                            if (spaceWidth > 0) {
+                                InlineSpace is = new InlineSpace(spaceWidth);
+                                is.setUnderlined(textState.getUnderlined());
+                                is.setOverlined(textState.getOverlined());
+                                is.setLineThrough(textState.getLineThrough());
+                                addChild(is);
+                                finalWidth += spaceWidth;
+                                spaceWidth = 0;
+                            }
+                            return i+1;
                         } else if (c == '\t') {
                             spaceWidth += 8 * whitespaceWidth;
                         }
-                    } // else ignore it
+                    } else if (c == '\u2028') {
+                            // Line separator
+                            // Breaks line even if WhiteSpaceCollapse = True
+                        if (spaceWidth > 0) {
+                            InlineSpace is = new InlineSpace(spaceWidth);
+                            is.setUnderlined(textState.getUnderlined());
+                            is.setOverlined(textState.getOverlined());
+                            is.setLineThrough(textState.getLineThrough());
+                            addChild(is);
+                            finalWidth += spaceWidth;
+                            spaceWidth = 0;
+                        }
+                        return i+1;
+                    }
 
                 } else if (prev == TEXT) {
 
@@ -257,26 +312,12 @@ public class LineArea extends Area {
                     // add the current word
 
                     if (wordLength > 0) {
-                        WordArea ia = new WordArea(currentFontState,
-                                                       this.red, this.green, this.blue,
-                                                       new String(data, wordStart,
-                                                                  wordLength), wordWidth);
-                        ia.setYOffset(placementOffset);
-                        ia.setUnderlined(textState.getUnderlined());
-                        prevUlState = textState.getUnderlined();
-                        ia.setOverlined(textState.getOverlined());
-                        prevOlState = textState.getOverlined();
-                        ia.setLineThrough(textState.getLineThrough());
-                        prevLTState = textState.getLineThrough();
-                        ia.setVerticalAlign(vAlign);
-
-                        addChild(ia);
-                        if (ls != null) {
-                            Rectangle lr = new Rectangle(finalWidth, 0,
-                                                         ia.getContentWidth(),
-                                                         fontState.getFontSize());
-                            ls.addRect(lr, this, ia);
-                        }
+                            // The word might contain nonbreaking
+                            // spaces. Split the word and add InlineSpace
+                            // as necessary. All spaces inside the word
+                            // Have a fixed width.
+                        addSpacedWord(new String(data, wordStart, wordLength),
+                                      ls, finalWidth, 0, textState, false);
                         finalWidth += wordWidth;
 
                         // reset word width
@@ -285,13 +326,12 @@ public class LineArea extends Area {
 
                     // deal with this new whitespace following the
                     // word we just added
-
                     prev = WHITESPACE;
 
                     embeddedLinkStart = 0; //reset embeddedLinkStart since a space was encountered
 
-                    spaceWidth = whitespaceWidth;
-
+                    spaceWidth = getCharWidth(c);
+                    
                     /*
                     here is the place for space-treatment value 'ignore':
                     if (this.spaceTreatment ==
@@ -306,22 +346,35 @@ public class LineArea extends Area {
 
                     if (this.whiteSpaceCollapse ==
                             WhiteSpaceCollapse.FALSE) {
-                        if (c == '\n') {
+                        if (c == '\n' || c == '\u2028') {
                             // force a line break
-                            return i;
+                            return i+1;
                         } else if (c == '\t') {
                             spaceWidth = whitespaceWidth;
                         }
+                    } else if (c == '\u2028') {
+                        return i+1;
                     }
-
                 } else {
 
                     // if current is WHITESPACE and no previous
 
                     if (this.whiteSpaceCollapse ==
                             WhiteSpaceCollapse.FALSE) {
-                        prev = WHITESPACE;
-                        spaceWidth = whitespaceWidth;
+                        if (isSpace(c)) {
+                            prev = WHITESPACE;
+                            spaceWidth = getCharWidth(c);
+                        } else if (c == '\n') {
+                                // force line break
+                                // textdecoration not used because spaceWidth is 0
+                            InlineSpace is = new InlineSpace(spaceWidth);
+                            addChild(is);
+                            return i+1;
+                        } else if (c == '\t') {
+                             prev = WHITESPACE;
+                             spaceWidth = 8 * whitespaceWidth;
+                        }
+                            
                     } else {
                         // skip over it
                         wordStart++;
@@ -329,6 +382,7 @@ public class LineArea extends Area {
                 }
 
             }
+            
             if(isText) { // current is TEXT
 
                 if (prev == WHITESPACE) {
@@ -340,14 +394,14 @@ public class LineArea extends Area {
                             this.getContentWidth()) {
                         if (overrun)
                             MessageHandler.error(">");
-                        if (this.wrapOption == WrapOption.WRAP)
+                        if (this.wrapOption == WrapOption.WRAP) {
                             return i;
+                        }
                     }
                     prev = TEXT;
                     wordStart = i;
                     wordLength = 1;
                 } else if (prev == TEXT) {
-
                     wordLength++;
                     wordWidth += charWidth;
                 } else { // nothing previous
@@ -362,6 +416,14 @@ public class LineArea extends Area {
                         wordWidth) > this.getContentWidth()) {
 
                     // BREAK MID WORD
+                    if (canBreakMidWord()) {
+                        addSpacedWord(new String(data, wordStart, wordLength-1),
+                                      ls, finalWidth + spaceWidth + embeddedLinkStart,
+                                      spaceWidth, textState, false);
+                        finalWidth += wordWidth;
+                        wordWidth = 0;
+                        return i;
+                    }
                     if (wordStart == start) { // if couldn't even fit
                         // first word
                         overrun = true;
@@ -382,10 +444,14 @@ public class LineArea extends Area {
             }
         } // end of iteration over text
 
+        
         if (prev == TEXT) { 
 
             if (spaceWidth > 0) {
                 InlineSpace pis = new InlineSpace(spaceWidth);
+                    // Make sure that this space doesn't occur as
+                    // first thing in the next line
+                pis.setEatable(true);
                 if (prevUlState) {
                     pis.setUnderlined(textState.getUnderlined());
                 }
@@ -400,29 +466,11 @@ public class LineArea extends Area {
                 spaceWidth = 0;
             }
 
-            WordArea pia = new WordArea(currentFontState, this.red,
-                                            this.green, this.blue,
-                                            new String(data, wordStart, wordLength), wordWidth);
-
-            pia.setYOffset(placementOffset);
-            pia.setUnderlined(textState.getUnderlined());
-            prevUlState = textState.getUnderlined();
-            pia.setOverlined(textState.getOverlined());
-            prevOlState = textState.getOverlined();
-            pia.setLineThrough(textState.getLineThrough());
-            prevLTState = textState.getLineThrough();
-            pia.setVerticalAlign(vAlign);
-
-            if (ls != null) {
-                Rectangle lr = new Rectangle(finalWidth + spaceWidth +
-                                             embeddedLinkStart, spaceWidth,
-                                             pia.getContentWidth(), fontState.getFontSize());
-                ls.addRect(lr, this, pia);
-            }
+            addSpacedWord(new String(data, wordStart, wordLength),
+                          ls, finalWidth + spaceWidth + embeddedLinkStart,
+                          spaceWidth, textState, true);
 
             embeddedLinkStart += wordWidth;
-            pendingAreas.addElement(pia);
-            pendingWidth += wordWidth;
             wordWidth = 0;
         }
 
@@ -941,7 +989,7 @@ public class LineArea extends Area {
             else
                 currentChar=characters[i];
             
-            width += this.currentFontState.width(currentChar);
+            width += getCharWidth(currentChar);
         }
         return width;
     }
@@ -1020,10 +1068,9 @@ public class LineArea extends Area {
     private void addWord (char startChar, StringBuffer wordBuf) {
         String word = (wordBuf != null) ? wordBuf.toString() : ""; 
         WordArea hia;
-        int startCharWidth =
-            this.currentFontState.width(currentFontState.mapChar(startChar));
+        int startCharWidth = getCharWidth(startChar);
 
-        if (startChar == ' ') {
+        if (isAnySpace(startChar)) {
             this.addChild(new InlineSpace(startCharWidth));
         } else {
             hia = new WordArea(currentFontState,
@@ -1063,4 +1110,176 @@ public class LineArea extends Area {
         return index;
     }
 
+        /**
+         * Checks if it's legal to break a word in the middle
+         * based on the current language property.
+         @return true if legal to break word in the middle
+        */
+    private boolean canBreakMidWord() {
+        boolean ret = false;
+        if (hyphProps != null && hyphProps.language != null &&
+            !hyphProps.language.equals("NONE")) {
+            String lang = hyphProps.language.toLowerCase();
+            if ("zh".equals(lang) || "ja".equals(lang) ||
+                "ko".equals(lang) || "vi".equals(lang))
+                ret = true;
+        }
+        return ret;
+    }
+
+        /**
+         * Helper method for getting the width of a unicode char
+         * from the current fontstate.
+         * This also performs some guessing on widths on various
+         * versions of space that might not exists in the font.
+         */
+    private int getCharWidth(char c) {
+        int width =
+            currentFontState.width(currentFontState.mapChar(c));
+        if (width <= 0) {
+                // Estimate the width of spaces not represented in
+                // the font
+            int em = currentFontState.width(currentFontState.mapChar('m'));
+            int en = currentFontState.width(currentFontState.mapChar('n'));
+            if (em <= 0) em = 500*currentFontState.getFontSize();
+            if (en <= 0) en = em-10;
+
+            if (c == ' ') width = em;
+            if (c == '\u2000') width = en;
+            if (c == '\u2001') width = em;
+            if (c == '\u2002') width = em/2;
+            if (c == '\u2003') width = currentFontState.getFontSize();
+            if (c == '\u2004') width = em/3;
+            if (c == '\u2005') width = em/4;
+            if (c == '\u2006') width = em/6;
+            if (c == '\u2007') width = getCharWidth(' ');
+            if (c == '\u2008') width = getCharWidth('.');
+            if (c == '\u2009') width = em/5;
+            if (c == '\u200A') width = 5;
+            if (c == '\u200B') width = 100;
+            if (c == '\u00A0') width = getCharWidth(' ');
+            if (c == '\u202F') width = getCharWidth(' ')/2;
+            if (c == '\u3000') width = getCharWidth(' ')*2;
+            if ((c == '\n') || (c == '\r') || (c == '\t'))
+                width = getCharWidth(' ');
+        }
+        
+        return width;
+    }
+    
+
+        /** Helper method to determine if the character is a
+            space with normal behaviour. Normal behaviour means that
+            it's not non-breaking
+        */
+    private boolean isSpace(char c) {
+        if (c == ' ' ||
+            c == '\u2000' || // en quad
+            c == '\u2001' || // em quad
+            c == '\u2002' || // en space
+            c == '\u2003' || // em space
+            c == '\u2004' || // three-per-em space
+            c == '\u2005' || // four--per-em space
+            c == '\u2006' || // six-per-em space
+            c == '\u2007' || // figure space
+            c == '\u2008' || // punctuation space
+            c == '\u2009' || // thin space
+            c == '\u200A' || // hair space
+            c == '\u200B')   // zero width space
+            return true;
+        else
+            return false;
+    }
+
+
+        /** Method to determine if the character is a nonbreaking
+            space.
+        */
+    private boolean isNBSP(char c) {
+        if (c == '\u00A0' ||
+            c == '\u202F' || // narrow no-break space
+            c == '\u3000' || // ideographic space
+            c == '\uFEFF') { // zero width no-break space
+            return true;
+        } else
+            return false;
+    }
+
+        /**
+         @return true if the character represents any kind of space
+        */
+    private boolean isAnySpace(char c) {
+        boolean ret = (isSpace(c) || isNBSP(c));
+        return ret;
+    }
+
+        /**
+         * Add a word that might contain non-breaking spaces.
+         * Split the word into WordArea and InlineSpace and add it.
+         * If addToPending is true, add to pending areas.
+         */
+    private void addSpacedWord(String word,  LinkSet ls,
+                               int startw, int spacew, TextState textState,
+                               boolean addToPending) {
+        StringTokenizer st = new StringTokenizer(word,
+                                                  "\u00A0\u202F\u3000\uFEFF",
+                                                  true);
+        int extraw = 0;
+        while (st.hasMoreTokens()) {
+            String currentWord = st.nextToken();
+
+            if (currentWord.length() == 1 &&
+                (isNBSP(currentWord.charAt(0)))) {
+                    // Add an InlineSpace
+                int spaceWidth = getCharWidth(currentWord.charAt(0));
+                if (spaceWidth > 0) {
+                    InlineSpace is = new InlineSpace(spaceWidth);
+                    extraw += spaceWidth;
+                    if (prevUlState) {
+                        is.setUnderlined(textState.getUnderlined());
+                    }
+                    if (prevOlState) {
+                        is.setOverlined(textState.getOverlined());
+                    }
+                    if (prevLTState) {
+                        is.setLineThrough(textState.getLineThrough());
+                    }
+
+                    if (addToPending) {
+                        pendingAreas.addElement(is);
+                        pendingWidth += spaceWidth;
+                    } else {
+                        addChild(is);
+                    }
+                }
+            } else {
+                WordArea ia = new WordArea(currentFontState,
+                                           this.red, this.green, this.blue,
+                                           currentWord,
+                                           getWordWidth(currentWord));
+                ia.setYOffset(placementOffset);
+                ia.setUnderlined(textState.getUnderlined());
+                prevUlState = textState.getUnderlined();
+                ia.setOverlined(textState.getOverlined());
+                prevOlState = textState.getOverlined();
+                ia.setLineThrough(textState.getLineThrough());
+                prevLTState = textState.getLineThrough();
+                ia.setVerticalAlign(vAlign);
+                
+                if (addToPending) {
+                    pendingAreas.addElement(ia);
+                    pendingWidth += getWordWidth(currentWord);
+                } else {
+                    addChild(ia);
+                }
+                if (ls != null) {
+                    Rectangle lr = new Rectangle(startw+extraw, spacew,
+                                                 ia.getContentWidth(),
+                                                 fontState.getFontSize());
+                    ls.addRect(lr, this, ia);
+                }
+            }
+        }
+    }
 }
+
