@@ -20,6 +20,7 @@
 package org.apache.fop.xml;
 
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -27,9 +28,8 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
 
-import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.configuration.Configuration;
+import org.apache.fop.apps.Fop;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.xml.Namespaces;
 
@@ -68,7 +68,10 @@ implements Runnable {
         this.source = source;
         namespaces = events.getNamespaces();
         parser.setContentHandler(this);
-        errorDump = Configuration.getBooleanValue("debugMode").booleanValue();
+        Level level = Fop.logger.getLevel();
+        if (level.intValue() <= Level.FINE.intValue()) {
+            errorDump = true;
+        }
     }
 
     public void setFoThread(Thread foThread) {
@@ -83,7 +86,9 @@ implements Runnable {
         try {
             parser.parse(source);
         } catch (Exception e) {
-            if (errorDump) Driver.dumpError(e);
+            if (errorDump) {
+                e.printStackTrace();
+            }
             if (foThread != null) {
                 try {
                     foThread.interrupt();
