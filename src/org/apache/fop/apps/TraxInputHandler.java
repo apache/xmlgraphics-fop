@@ -29,9 +29,6 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.File;
 
-// FOP
-import org.apache.fop.messaging.MessageHandler;
-
 /**
  * XSLTInputHandler basically takes an xmlfile and transforms it with an xsltfile
  * and the resulting xsl:fo document is input for Fop.

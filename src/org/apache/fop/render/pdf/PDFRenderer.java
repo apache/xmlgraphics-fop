@@ -9,7 +9,6 @@ package org.apache.fop.render.pdf;
 
 // FOP
 import org.apache.fop.render.PrintRenderer;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.image.ImageArea;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.apps.FOPException;
@@ -423,8 +422,8 @@ public class PDFRenderer extends PrintRenderer {
             root.paint(graphics, rc);
             currentStream.add(graphics.getString());
         } catch (Exception e) {
-            MessageHandler.errorln("Error: svg graphic could not be rendered: "
-                                   + e.getMessage());
+            log.error("svg graphic could not be rendered: "
+                                   + e.getMessage(), e);
         }
 
         currentAnnotList = graphics.getAnnotList();
@@ -681,7 +680,7 @@ public class PDFRenderer extends PrintRenderer {
 
     public void render(Page page, OutputStream outputStream)
     throws FOPException, IOException {
-        // MessageHandler.logln("rendering single page to PDF");
+        // log.debug("rendering single page to PDF");
         this.idReferences = page.getIDReferences();
         this.pdfResources = this.pdfDoc.getResources();
         this.pdfDoc.setIDReferences(idReferences);
@@ -692,7 +691,7 @@ public class PDFRenderer extends PrintRenderer {
         // TODO: this needs to be implemented
         renderRootExtensions(page);
 
-        // MessageHandler.logln("writing out PDF");
+        // log.debug("writing out PDF");
         this.pdfDoc.output(outputStream);
     }
 
@@ -825,7 +824,7 @@ public class PDFRenderer extends PrintRenderer {
             PDFOutline pdfParentOutline =
                 (PDFOutline)parent.getRendererObject();
             if (pdfParentOutline == null) {
-                MessageHandler.errorln("Error: pdfParentOutline is null");
+                log.error("pdfParentOutline is null");
             } else {
                 pdfOutline =
                     this.pdfDoc.makeOutline(pdfParentOutline,

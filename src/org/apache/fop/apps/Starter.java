@@ -17,9 +17,6 @@ import org.xml.sax.SAXException;
 import java.io.*;
 import java.net.URL;
 
-// FOP
-import org.apache.fop.messaging.MessageHandler;
-
 /**
  * abstract super class
  * Creates a SAX Parser (defaulting to Xerces).

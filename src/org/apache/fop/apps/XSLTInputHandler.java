@@ -19,7 +19,6 @@ import org.xml.sax.XMLReader;
 import java.io.*;
 
 // FOP
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.tools.xslt.XSLTransform;
 
 /**

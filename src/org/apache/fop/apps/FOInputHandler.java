@@ -11,9 +11,6 @@ package org.apache.fop.apps;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
-// fop
-import org.apache.fop.messaging.MessageHandler;
-
 // java
 import java.io.File;
 import java.net.URL;

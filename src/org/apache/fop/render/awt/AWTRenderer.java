@@ -16,7 +16,6 @@ package org.apache.fop.render.awt;
 
 import org.apache.fop.layout.*;
 import org.apache.fop.layout.inline.*;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.image.*;
 import org.apache.fop.svg.*;
@@ -51,7 +50,7 @@ import java.awt.print.*;
 import java.awt.image.BufferedImage;
 import java.text.*;
 
-import org.apache.fop.render.Renderer;
+import org.apache.fop.render.AbstractRenderer;
 
 /**
   Modified by Mark Lillywhite mark-fop@inomial.com. Did lots of
@@ -59,8 +58,7 @@ import org.apache.fop.render.Renderer;
   interface. This class could also do with a general audit,
   and I suspect it's not swing-thread-safe either.
 */
-
-public class AWTRenderer implements Renderer, Printable, Pageable {
+public class AWTRenderer extends AbstractRenderer implements Printable, Pageable {
 
     protected int pageWidth = 0;
     protected int pageHeight = 0;
@@ -603,7 +601,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         FopImage img = area.getImage();
 
         if (img == null) {
-            MessageHandler.logln("Error while loading image : area.getImage() is null");
+            log.error("Error while loading image : area.getImage() is null");
 
             // correct integer roundoff
             // graphics.drawRect(x / 1000, pageHeight - y / 1000,
@@ -984,8 +982,8 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
      * (int) height, imageIcon.getImageObserver());
      * graphics.drawImage(bi, bop, (int) x, (int) y);
      * } catch (Exception ex) {
-     * MessageHandler.errorln("AWTRenderer: renderImage(): " +
-     * ex.getMessage());
+     * log.error("AWTRenderer: renderImage(): " +
+     * ex.getMessage(), ex);
      * }
      * }
      */

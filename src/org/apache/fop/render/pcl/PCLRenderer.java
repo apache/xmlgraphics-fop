@@ -9,7 +9,6 @@ package org.apache.fop.render.pcl;
 
 // FOP
 import org.apache.fop.render.PrintRenderer;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.image.ImageArea;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.apps.FOPException;
@@ -219,7 +218,7 @@ public class PCLRenderer extends PrintRenderer {
         int xpos = xoffset + (x / 100);
         if (xpos < 0) {
             xpos = 0;
-            MessageHandler.errorln("PCLRenderer.addRect() WARNING: Horizontal position out of bounds.");
+            log.error("PCLRenderer.addRect() WARNING: Horizontal position out of bounds.");
         }
 
         currentStream.add("\033*v1O\033&a" + xpos + "h"
@@ -230,7 +229,7 @@ public class PCLRenderer extends PrintRenderer {
             xpos = xoffset + ((x + 240) / 100);
             if (xpos < 0) {
                 xpos = 0;
-                MessageHandler.errorln("PCLRenderer.addRect() WARNING: Horizontal position out of bounds.");
+                log.error("PCLRenderer.addRect() WARNING: Horizontal position out of bounds.");
             }
             currentStream.add("\033&a" + xpos + "h"
                               + (pageHeight - ((y + 240)) / 100) + "V"
@@ -373,7 +372,7 @@ public class PCLRenderer extends PrintRenderer {
         int xpos = xoffset + (x / 100);
         if (xpos < 0) {
             xpos = 0;
-            MessageHandler.errorln("PCLRenderer.renderImageArea() WARNING: Horizontal position out of bounds.");
+            log.error("PCLRenderer.renderImageArea() WARNING: Horizontal position out of bounds.");
         }
 
         currentStream.add("\033&a" + xpos + "h" + (pageHeight - (y / 100))
@@ -383,7 +382,7 @@ public class PCLRenderer extends PrintRenderer {
             printBMP(img, x, y, w, h);
         } catch (FopImageException e) {
             // e.printStackTrace(System.out);
-            MessageHandler.errorln("PCLRenderer.renderImageArea() Error printing BMP ("
+            log.error("PCLRenderer.renderImageArea() Error printing BMP ("
                                    + e.toString() + ")");
         }
     }
@@ -617,7 +616,7 @@ public class PCLRenderer extends PrintRenderer {
         int xpos = xoffset + (rx / 100);
         if (xpos < 0) {
             xpos = 0;
-            MessageHandler.errorln("PCLRenderer.renderWordArea() WARNING: Horizontal position out of bounds.");
+            log.error("PCLRenderer.renderWordArea() WARNING: Horizontal position out of bounds.");
         }
         currentStream.add("\033&a" + xpos + "h" + (pageHeight - (bl / 100))
                           + "V" + s);
@@ -725,7 +724,7 @@ public class PCLRenderer extends PrintRenderer {
     }
     public void startRenderer(OutputStream outputStream)
     throws IOException {
-        MessageHandler.logln("rendering areas to PCL");
+        log.info("rendering areas to PCL");
         currentStream = new PCLStream(outputStream);
 
         // Set orientation.
@@ -744,7 +743,7 @@ public class PCLRenderer extends PrintRenderer {
 
     public void stopRenderer(OutputStream outputStream)
     throws IOException {
-        MessageHandler.logln("writing out PCL");
+        log.info("writing out PCL");
         outputStream.flush();
     }
 
