@@ -718,7 +718,7 @@ public class PropertyList extends HashMap {
      * @param propertyName name of property
      * @return the Property.Maker for this property
      */
-    protected Property.Maker findMaker(String space, String elementName,
+    private Property.Maker findMaker(String space, String elementName,
         String propertyName) {
 
         // convert the string (e.g., "font-size") to its const value (PR_FONT_SIZE).

@@ -67,6 +67,7 @@ public class ToBeImplementedProperty extends Property {
             if (p instanceof ToBeImplementedProperty) {
                 return p;
             }
+
             ToBeImplementedProperty val =
                 new ToBeImplementedProperty(getPropName());
             return val;
@@ -77,7 +78,7 @@ public class ToBeImplementedProperty extends Property {
      * Constructor
      * @param propName name of Property
      */
-    public ToBeImplementedProperty(String propName) {
+    public ToBeImplementedProperty(int propId) {
 
         //XXX: (mjg@recalldesign.com) This is a bit of a kluge, perhaps an
         //UnimplementedPropertyException or something similar should

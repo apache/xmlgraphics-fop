@@ -57,12 +57,12 @@ package org.apache.fop.fo;
 public interface ShorthandParser {
 
     /**
-     * @param propName name of the Property
+     * @param propId the property ID in the Constants interface
      * @param maker Maker object for the Property
      * @param propertyList list of properties
      * @return Property object corresponding to propName
      */
-    Property getValueForProperty(String propName,
+    Property getValueForProperty(int propId,
                                  Property.Maker maker,
                                  PropertyList propertyList);
 }

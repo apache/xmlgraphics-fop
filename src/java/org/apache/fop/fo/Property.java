@@ -81,8 +81,8 @@ public class Property {
         /**
          * @return the name of the property for this Maker
          */
-        protected String getPropName() {
-            return FOPropertyMapping.getPropertyName(this.propId);
+        protected int getPropName() {
+            return propId;
         }
 
         /**

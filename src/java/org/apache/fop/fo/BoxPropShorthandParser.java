@@ -49,6 +49,7 @@
  * Software Foundation, please see <http://www.apache.org/>.
  */
 package org.apache.fop.fo;
+import org.apache.fop.fo.properties.FOPropertyMapping;
 
 /**
  * Shorthand property parser for Box properties
@@ -69,17 +70,18 @@ public class BoxPropShorthandParser extends GenericShorthandParser {
      * @see org.apache.fop.fo.GenericShorthandParser#convertValueForProperty(String,
      * Property.Maker, PropertyList)
      */
-    protected Property convertValueForProperty(String propName,
+    protected Property convertValueForProperty(int propId,
                                                Property.Maker maker,
                                                PropertyList propertyList) {
+        String name = FOPropertyMapping.getPropertyName(propId);
         Property p = null;
-        if (propName.indexOf("-top") >= 0) {
+        if (name.indexOf("-top") >= 0) {
             p = getElement(0);
-        } else if (propName.indexOf("-right") >= 0) {
+        } else if (name.indexOf("-right") >= 0) {
             p = getElement(count() > 1 ? 1 : 0);
-        } else if (propName.indexOf("-bottom") >= 0) {
+        } else if (name.indexOf("-bottom") >= 0) {
             p = getElement(count() > 2 ? 2 : 0);
-        } else if (propName.indexOf("-left") >= 0) {
+        } else if (name.indexOf("-left") >= 0) {
             p = getElement(count() > 3 ? 3 : (count() > 1 ? 1 : 0));
         }
         // if p not null, try to convert it to a value of the correct type
