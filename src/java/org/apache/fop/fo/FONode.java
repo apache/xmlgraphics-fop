@@ -245,6 +245,20 @@ public abstract class FONode {
      * Helper function to standardize "too many" error exceptions
      * (e.g., two fo:declarations within fo:root)
      * @param loc org.xml.sax.Locator object of the error (*not* parent node)
+     * @param nsURI namespace URI of incoming invalid node
+     * @param lName local name (i.e., no prefix) of incoming node 
+     */
+    protected void tooManyNodesError(Locator loc, String nsURI, String lName) 
+        throws SAXParseException {
+        throw new SAXParseException (errorText(loc) + getName() + ", only one " 
+            + getNodeString(nsURI, lName) + " may be declared.", loc);
+    }
+
+    /**
+     * Helper function to standardize "too many" error exceptions
+     * (e.g., two fo:declarations within fo:root)
+     * This overrloaded method helps make the caller code better self-documenting
+     * @param loc org.xml.sax.Locator object of the error (*not* parent node)
      * @param offendingNode incoming node that would cause a duplication.
      */
     protected void tooManyNodesError(Locator loc, String offendingNode) 

@@ -18,7 +18,14 @@
 
 package org.apache.fop.fo.flow;
 
+// XML
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXParseException;
+
+// FOP
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.FObj;
 
@@ -29,6 +36,8 @@ import org.apache.fop.fo.FObj;
  */
 public class InstreamForeignObject extends FObj {
 
+    boolean hasNonXSLNamespaceElement = false;
+
     /**
      * constructs an instream-foreign-object object (called by Maker).
      *
@@ -36,6 +45,32 @@ public class InstreamForeignObject extends FObj {
      */
     public InstreamForeignObject(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: one (1) non-XSL namespace child
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
+        if (nsURI == FOElementMapping.URI) {
+            invalidChildError(loc, nsURI, localName);
+        } else if (hasNonXSLNamespaceElement) {
+            tooManyNodesError(loc, "child element");
+        } else {
+            hasNonXSLNamespaceElement = true;
+        }
+    }
+
+    /**
+     * Make sure content model satisfied, if so then tell the
+     * StructureRenderer that we are at the end of the flow.
+     * @see org.apache.fop.fo.FONode#end
+     */
+    protected void endOfNode() throws SAXParseException {
+        if (!hasNonXSLNamespaceElement) {
+            missingChildElementError("one (1) non-XSL namespace child");
+        }
     }
 
     public int computeXOffset (int ipd, int cwidth) {
@@ -84,79 +119,6 @@ public class InstreamForeignObject extends FObj {
     public boolean generatesInlineAreas() {
         return true;
     }
-
-    /*
-
-            // Common Accessibility Properties
-            AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
-
-            // Common Aural Properties
-            AuralProps mAurProps = propMgr.getAuralProps();
-
-            // Common Border, Padding, and Background Properties
-            BorderAndPadding bap = propMgr.getBorderAndPadding();
-            BackgroundProps bProps = propMgr.getBackgroundProps();
-
-            // Common Margin Properties-Inline
-            MarginInlineProps mProps = propMgr.getMarginInlineProps();
-
-            // Common Relative Position Properties
-            RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
-
-            // this.propertyList.get("alignment-adjust");
-            // this.propertyList.get("alignment-baseline");
-            // this.propertyList.get("baseline-shift");
-            // this.propertyList.get("block-progression-dimension");
-            // this.propertyList.get("content-height");
-            // this.propertyList.get("content-type");
-            // this.propertyList.get("content-width");
-            // this.propertyList.get("display-align");
-            // this.propertyList.get("dominant-baseline");
-            // this.propertyList.get("height");
-            setupID();
-            // this.propertyList.get("inline-progression-dimension");
-            // this.propertyList.get("keep-with-next");
-            // this.propertyList.get("keep-with-previous");
-            // this.propertyList.get("line-height");
-            // this.propertyList.get("line-height-shift-adjustment");
-            // this.propertyList.get("overflow");
-            // this.propertyList.get("scaling");
-            // this.propertyList.get("scaling-method");
-            // this.propertyList.get("text-align");
-            // this.propertyList.get("width");
-
-            /* retrieve properties *
-            int align = this.propertyList.get("text-align").getEnum();
-            int valign = this.propertyList.get("vertical-align").getEnum();
-            int overflow = this.propertyList.get("overflow").getEnum();
-
-            this.breakBefore = this.propertyList.get("break-before").getEnum();
-            this.breakAfter = this.propertyList.get("break-after").getEnum();
-            this.width = this.propertyList.get("width").getLength().mvalue();
-            this.height = this.propertyList.get("height").getLength().mvalue();
-            this.contwidth =
-                this.propertyList.get("content-width").getLength().mvalue();
-            this.contheight =
-                this.propertyList.get("content-height").getLength().mvalue();
-            this.wauto = this.propertyList.get("width").getLength().isAuto();
-            this.hauto = this.propertyList.get("height").getLength().isAuto();
-            this.cwauto =
-                this.propertyList.get("content-width").getLength().isAuto();
-            this.chauto =
-                this.propertyList.get("content-height").getLength().isAuto();
-
-            this.startIndent =
-                this.propertyList.get("start-indent").getLength().mvalue();
-            this.endIndent =
-                this.propertyList.get("end-indent").getLength().mvalue();
-            this.spaceBefore =
-                this.propertyList.get("space-before.optimum").getLength().mvalue();
-            this.spaceAfter =
-                this.propertyList.get("space-after.optimum").getLength().mvalue();
-
-            this.scaling = this.propertyList.get("scaling").getEnum();
-
-*/
 
     /**
      * This is a hook for the AddLMVisitor class to be able to access
