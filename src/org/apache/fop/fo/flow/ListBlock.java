@@ -54,6 +54,7 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
+import org.apache.fop.datatypes.*;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.BlockArea;
 import org.apache.fop.layout.FontState;
@@ -88,6 +89,7 @@ public class ListBlock extends FObj {
     int provisionalDistanceBetweenStarts;
     int provisionalLabelSeparation;
     int spaceBetweenListRows = 0;
+    ColorType backgroundColor;
 
     public ListBlock(FObj parent, PropertyList propertyList) {
 	super(parent, propertyList);
@@ -126,6 +128,8 @@ public class ListBlock extends FObj {
 	    this.provisionalLabelSeparation =
 		this.properties.get("provisional-label-separation").getLength().mvalue(); 
 	    this.spaceBetweenListRows = 0; // not used at present
+	    this.backgroundColor =
+		this.properties.get("background-color").getColorType();
 	    
 	    this.marker = 0;
 
@@ -148,6 +152,7 @@ public class ListBlock extends FObj {
 			  area.spaceLeft(), startIndent, endIndent, 0,
 			  align, alignLast, lineHeight);
 	blockArea.setPage(area.getPage());
+	blockArea.setBackgroundColor(backgroundColor);
 	blockArea.start();
 
 	int numChildren = this.children.size();

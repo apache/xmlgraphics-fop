@@ -36,6 +36,7 @@ Done since 0.12.0 release:
 basic support for padding-{top,left,bottom,right} on blocks.
 implemented simple-link (don't think it works, though)
 XTCommandLine now works again
+background color works on list-block
 
 Done for 0.12.0 release:
 
