@@ -31,6 +31,9 @@ import org.apache.fop.area.Area.AreaGeometry;
  */
 public class ContentRectangle extends AreaGeometry {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     private final Area area;
 
     /**
