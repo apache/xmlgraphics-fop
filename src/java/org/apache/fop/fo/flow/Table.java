@@ -81,7 +81,7 @@ public class Table extends FObj {
     protected void addProperties(Attributes attlist) throws FOPException {
         super.addProperties(attlist);
         setupID();
-        getDocument().getFOInputHandler().startTable(this);
+        getFOInputHandler().startTable(this);
     }
 
     /**
@@ -203,7 +203,7 @@ public class Table extends FObj {
     }
 
     protected void end() {
-        getDocument().getFOInputHandler().endTable(this);
+        getFOInputHandler().endTable(this);
     }
 
     public String getName() {

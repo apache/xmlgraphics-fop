@@ -24,6 +24,7 @@ import java.awt.color.ICC_ColorSpace;
 import java.net.URL;
 import java.io.IOException;
 import java.io.InputStream;
+import org.xml.sax.Locator;
 
 // FOP
 import org.apache.fop.datatypes.ColorType;
@@ -46,6 +47,14 @@ public class ColorProfile extends FObj {
      */
     public ColorProfile(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(String, String)
+        XSL 1.0/FOP: EMPTY (no child nodes permitted)
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) {
+        invalidChildError(loc, nsURI, localName);
     }
 
     /**

@@ -298,7 +298,7 @@ public class FObj extends FONode implements Constants {
         if (prop != null) {
             String str = prop.getString();
             if (str != null && !str.equals("")) {
-                Set idrefs = getDocument().getIDReferences();
+                Set idrefs = getFOInputHandler().getIDReferences();
                 if (!idrefs.contains(str)) {
                     id = str;
                     idrefs.add(id);

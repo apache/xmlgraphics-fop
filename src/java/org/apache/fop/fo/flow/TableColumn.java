@@ -60,7 +60,7 @@ public class TableColumn extends FObj {
     protected void addProperties(Attributes attlist) throws FOPException {
         super.addProperties(attlist);
         initialize();    // init some basic property values
-        getDocument().getFOInputHandler().startColumn(this);
+        getFOInputHandler().startColumn(this);
     }
 
     /**
@@ -124,7 +124,7 @@ public class TableColumn extends FObj {
     }
 
     protected void end() {
-        getDocument().getFOInputHandler().endColumn(this);
+        getFOInputHandler().endColumn(this);
     }
     
     public String getName() {

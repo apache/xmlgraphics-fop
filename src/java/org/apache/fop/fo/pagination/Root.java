@@ -22,13 +22,14 @@ package org.apache.fop.fo.pagination;
 import java.util.List;
 
 // FOP
-import org.apache.fop.apps.Document;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.extensions.Bookmarks;
+import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.fo.FOTreeVisitor;
+import org.xml.sax.Locator;
 
 /**
  * The fo:root formatting object. Contains page masters, page-sequences.
@@ -47,7 +48,10 @@ public class Root extends FObj {
      */
     private int runningPageNumberCounter = 0;
 
-    private Document document = null;
+    /** 
+     * Controlling FOTreeHandler object for this FO Tree
+     */
+    private FOInputHandler foInputHandler = null;
 
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
@@ -66,43 +70,43 @@ public class Root extends FObj {
         XSL 1.0 Spec: (layout-master-set,declarations?,page-sequence+)
         FOP: (layout-master-set, declarations?, fox:bookmarks?, page-sequence+)
      */
-    protected void validateChildNode(String nsURI, String localName) {
+    protected void validateChildNode(Locator loc, String nsURI, String localName) {
         if (nsURI == FOElementMapping.URI) {
             if (localName.equals("layout-master-set")) {   
                 if (layoutMasterSet != null) {
-                    tooManyNodesError("fo:layout-master-set");
+                    tooManyNodesError(loc, "fo:layout-master-set");
                 }
             } else if (localName.equals("declarations")) { 
                 if (layoutMasterSet == null) {
-                    nodesOutOfOrderError("fo:layout-master-set", "fo:declarations");
+                    nodesOutOfOrderError(loc, "fo:layout-master-set", "fo:declarations");
                 } else if (declarations != null) {
-                    tooManyNodesError("fo:declarations");
+                    tooManyNodesError(loc, "fo:declarations");
                 } else if (bookmarks != null) {
-                    nodesOutOfOrderError("fo:declarations", "fox:bookmarks");
+                    nodesOutOfOrderError(loc, "fo:declarations", "fox:bookmarks");
                 } else if (pageSequenceFound) {
-                    nodesOutOfOrderError("fo:declarations", "fo:page-sequence");
+                    nodesOutOfOrderError(loc, "fo:declarations", "fo:page-sequence");
                 }
             } else if (localName.equals("page-sequence")) { 
                 if (layoutMasterSet == null) {
-                    nodesOutOfOrderError("fo:layout-master-set", "fo:page-sequence");
+                    nodesOutOfOrderError(loc, "fo:layout-master-set", "fo:page-sequence");
                 } else {
                     pageSequenceFound = true;
                 }
             } else {
-                invalidChildError(nsURI, localName);
+                invalidChildError(loc, nsURI, localName);
             }
         } else if (nsURI.equals(ExtensionElementMapping.URI)) {
             if (!localName.equals("bookmarks")) {
-                invalidChildError(nsURI, localName);
+                invalidChildError(loc, nsURI, localName);
             } else if (layoutMasterSet == null) {
-                nodesOutOfOrderError("fo:layout-master-set", "fox:bookmarks");
+                nodesOutOfOrderError(loc, "fo:layout-master-set", "fox:bookmarks");
             } else if (bookmarks != null) {
-                tooManyNodesError("fox:bookmarks");
+                tooManyNodesError(loc, "fox:bookmarks");
             } else if (pageSequenceFound) {
-                nodesOutOfOrderError("fox:bookmarks", "fo:page-sequence");
+                nodesOutOfOrderError(loc, "fox:bookmarks", "fo:page-sequence");
             }
         } else {
-            invalidChildError(nsURI, localName);
+            invalidChildError(loc, nsURI, localName);
         }
     }
 
@@ -201,19 +205,19 @@ public class Root extends FObj {
      * @param document the apps.Document implementation to which this Root
      * is attached
      */
-    public void setDocument(Document document) {
-        this.document = document;
+    public void setFOInputHandler(FOInputHandler foInputHandler) {
+        this.foInputHandler = foInputHandler;
     }
 
     /**
      * This method overrides the FONode version. The FONode version calls the
      * method by the same name for the parent object. Since Root is at the top
-     * of the tree, it returns the actual apps.Document object. Thus, any FONode
-     * can use this chain to find which apps.Document it is being built for.
-     * @return the Document implementation that this Root is attached to
+     * of the tree, it returns the actual FOInputHandler object. Thus, any FONode
+     * can use this chain to find which FOInputHandler it is being built for.
+     * @return the FOInputHandler implementation that this Root is attached to
      */
-    public Document getDocument() {
-        return document;
+    public FOInputHandler getFOInputHandler() {
+        return foInputHandler;
     }
 
     /**

@@ -114,7 +114,7 @@ public class Inline extends FObjMixed {
             this.lineThrough = true;
         }
         
-        getDocument().getFOInputHandler().startInline(this);
+        getFOInputHandler().startInline(this);
     }
 
     /**
@@ -139,7 +139,7 @@ public class Inline extends FObjMixed {
      * @see org.apache.fop.fo.FONode#end
      */
     public void end() {
-        getDocument().getFOInputHandler().endInline(this);
+        getFOInputHandler().endInline(this);
     }
 
     public String getName() {

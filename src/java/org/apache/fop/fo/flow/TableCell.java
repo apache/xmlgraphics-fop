@@ -123,7 +123,7 @@ public class TableCell extends FObj {
     protected void addProperties(Attributes attlist) throws FOPException {
         super.addProperties(attlist);
         doSetup();    // init some basic property values
-        getDocument().getFOInputHandler().startCell(this);
+        getFOInputHandler().startCell(this);
     }
 
     /**
@@ -348,7 +348,7 @@ public class TableCell extends FObj {
     }
 
     protected void end() {
-        getDocument().getFOInputHandler().endCell(this);
+        getFOInputHandler().endCell(this);
     }
     
     public String getName() {

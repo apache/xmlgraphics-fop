@@ -18,6 +18,10 @@
 
 package org.apache.fop.fo;
 
+// Java
+import java.util.HashSet;
+import java.util.Set;
+
 // FOP
 import org.apache.fop.apps.Document;
 import org.apache.fop.apps.Driver;
@@ -69,12 +73,26 @@ public abstract class FOInputHandler {
     protected Log logger = null;
 
     /**
+     * The current set of id's in the FO tree.
+     * This is used so we know if the FO tree contains duplicates.
+     */
+    private Set idReferences = new HashSet();
+
+    /**
      * Main constructor
      * @param document the apps.Document implementation that is controlling
      * the FO Tree being built
      */
     public FOInputHandler(Document document) {
         doc = document;
+    }
+
+    /**
+     * Retuns the set of ID references.
+     * @return the ID references
+     */
+    public Set getIDReferences() {
+        return idReferences;
     }
 
     /**

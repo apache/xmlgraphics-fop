@@ -18,19 +18,11 @@
 
 package org.apache.fop.apps;
 
-// Java
-import java.util.Map;
-import java.util.Set;
-import java.util.HashSet;
-
 // FOP
 import org.apache.fop.area.AreaTree;
 import org.apache.fop.area.AreaTreeModel;
-
 import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.fonts.FontInfo;
-
-import org.apache.commons.logging.Log;
 
 // SAX
 import org.xml.sax.SAXException;
@@ -52,12 +44,6 @@ public class Document {
 
     /** The AreaTreeModel for the PageSequence being rendered. */
     public AreaTreeModel atModel;
-
-    /**
-     * The current set of id's in the FO tree.
-     * This is used so we know if the FO tree contains duplicates.
-     */
-    private Set idReferences = new HashSet();
 
     /**
      * Structure handler used to notify structure
@@ -97,14 +83,6 @@ public class Document {
      */
     public AreaTree getAreaTree() {
         return areaTree;
-    }
-
-    /**
-     * Retuns the set of ID references.
-     * @return the ID references
-     */
-    public Set getIDReferences() {
-        return idReferences;
     }
 
     /**
