@@ -35,8 +35,7 @@ import java.util.LinkedList;
  * LayoutManager for the fo:leader formatting object
  */
 public class LeaderLayoutManager extends LeafNodeLayoutManager {
-
-    Leader ldrNode;
+    private Leader fobj;
     Font font = null;
     
     /**
@@ -47,7 +46,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
      */
     public LeaderLayoutManager(Leader node) {
         super(node);
-        ldrNode = node;
+        fobj = node;
         font = node.getFontState();
         setAlignment(node.getLeaderAlignment());
     }
@@ -63,24 +62,24 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
     private MinOptMax getLeaderAllocIPD(int ipd) {
         // length of the leader
         fobj.setLayoutDimension(PercentBase.BLOCK_IPD, ipd);
-        int opt = ldrNode.getLeaderLength().getOptimum().getLength().getValue();
-        int min = ldrNode.getLeaderLength().getMinimum().getLength().getValue();
-        int max = ldrNode.getLeaderLength().getMaximum().getLength().getValue();
+        int opt = fobj.getLeaderLength().getOptimum().getLength().getValue();
+        int min = fobj.getLeaderLength().getMinimum().getLength().getValue();
+        int max = fobj.getLeaderLength().getMaximum().getLength().getValue();
         return new MinOptMax(min, opt, max);
     }
 
     private InlineArea getLeaderInlineArea() {
         InlineArea leaderArea = null;
 
-        if (ldrNode.getLeaderPattern() == LeaderPattern.RULE) {
+        if (fobj.getLeaderPattern() == LeaderPattern.RULE) {
             org.apache.fop.area.inline.Leader leader = 
                 new org.apache.fop.area.inline.Leader();
-            leader.setRuleStyle(ldrNode.getRuleStyle());
-            leader.setRuleThickness(ldrNode.getRuleThickness());
+            leader.setRuleStyle(fobj.getRuleStyle());
+            leader.setRuleThickness(fobj.getRuleThickness());
             leaderArea = leader;
-        } else if (ldrNode.getLeaderPattern() == LeaderPattern.SPACE) {
+        } else if (fobj.getLeaderPattern() == LeaderPattern.SPACE) {
             leaderArea = new Space();
-        } else if (ldrNode.getLeaderPattern() == LeaderPattern.DOTS) {
+        } else if (fobj.getLeaderPattern() == LeaderPattern.DOTS) {
             TextArea t = new TextArea();
             char dot = '.'; // userAgent.getLeaderDotCharacter();
 
@@ -91,10 +90,10 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             t.setOffset(font.getAscender());
             int width = font.getCharWidth(dot);
             Space spacer = null;
-            if (ldrNode.getPatternWidth() > width) {
+            if (fobj.getPatternWidth() > width) {
                 spacer = new Space();
-                spacer.setIPD(ldrNode.getPatternWidth() - width);
-                width = ldrNode.getPatternWidth();
+                spacer.setIPD(fobj.getPatternWidth() - width);
+                width = fobj.getPatternWidth();
             }
             FilledArea fa = new FilledArea();
             fa.setUnitWidth(width);
@@ -105,9 +104,9 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             fa.setBPD(font.getAscender());
 
             leaderArea = fa;
-        } else if (ldrNode.getLeaderPattern() == LeaderPattern.USECONTENT) {
-            if (ldrNode.getChildNodes() == null) {
-                ldrNode.getLogger().error("Leader use-content with no content");
+        } else if (fobj.getLeaderPattern() == LeaderPattern.USECONTENT) {
+            if (fobj.getChildNodes() == null) {
+                fobj.getLogger().error("Leader use-content with no content");
                 return null;
             }
 
@@ -118,20 +117,20 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             FilledArea fa = new FilledArea();
 
             ContentLayoutManager clm = new ContentLayoutManager(fa);
-            clm.setUserAgent(ldrNode.getUserAgent());
+            clm.setUserAgent(fobj.getUserAgent());
             addChildLM(clm);
 
             InlineStackingLayoutManager lm;
-            lm = new InlineStackingLayoutManager(ldrNode);
+            lm = new InlineStackingLayoutManager(fobj);
             clm.addChildLM(lm);
 
             clm.fillArea(lm);
             int width = clm.getStackingSize();
             Space spacer = null;
-            if (ldrNode.getPatternWidth() > width) {
+            if (fobj.getPatternWidth() > width) {
                 spacer = new Space();
-                spacer.setIPD(ldrNode.getPatternWidth() - width);
-                width = ldrNode.getPatternWidth();
+                spacer.setIPD(fobj.getPatternWidth() - width);
+                width = fobj.getPatternWidth();
             }
             fa.setUnitWidth(width);
             if (spacer != null) {
@@ -241,6 +240,6 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
     }
 
     protected void addId() {
-        addID(ldrNode.getId());
+        addID(fobj.getId());
     }
 }

@@ -33,8 +33,7 @@ import org.apache.fop.area.inline.Viewport;
  * LayoutManager for the fo:basic-link formatting object
  */
 public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
-
-    InstreamForeignObject ifoNode;
+    private InstreamForeignObject fobj;
     
     /**
      * Constructor
@@ -42,7 +41,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
      */
     public InstreamForeignObjectLM(InstreamForeignObject node) {
         super(node);
-        ifoNode = node;
+        fobj = node;
         Viewport areaCurrent = getInlineArea();
         setCurrentArea(areaCurrent);
         setAlignment(node.getVerticalAlign());
@@ -55,7 +54,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
      * @return the viewport inline area
      */
     private Viewport getInlineArea() {
-        XMLObj child = (XMLObj) ifoNode.childNodes.get(0);
+        XMLObj child = (XMLObj) fobj.childNodes.get(0);
 
         // viewport size is determined by block-progression-dimension
         // and inline-progression-dimension
@@ -72,27 +71,27 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
         int ipd = -1;
         boolean bpdauto = false;
         if (hasLH) {
-            bpd = ifoNode.getLineHeight().getValue();
+            bpd = fobj.getLineHeight().getValue();
         } else {
             // this property does not apply when the line-height applies
             // isn't the block-progression-dimension always in the same
             // direction as the line height?
-            len = ifoNode.getBlockProgressionDimension().getOptimum().getLength();
+            len = fobj.getBlockProgressionDimension().getOptimum().getLength();
             if (!len.isAuto()) {
                 bpd = len.getValue();
             } else {
-                len = ifoNode.getHeight();
+                len = fobj.getHeight();
                 if (!len.isAuto()) {
                     bpd = len.getValue();
                 }
             }
         }
 
-        len = ifoNode.getInlineProgressionDimension().getOptimum().getLength();
+        len = fobj.getInlineProgressionDimension().getOptimum().getLength();
         if (!len.isAuto()) {
             ipd = len.getValue();
         } else {
-            len = ifoNode.getWidth();
+            len = fobj.getWidth();
             if (!len.isAuto()) {
                 ipd = len.getValue();
             }
@@ -102,7 +101,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
         // to the content-height and content-width
         int cwidth = -1;
         int cheight = -1;
-        len = ifoNode.getContentWidth();
+        len = fobj.getContentWidth();
         if (!len.isAuto()) {
             /*if(len.scaleToFit()) {
                 if(ipd != -1) {
@@ -111,7 +110,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
             } else {*/
             cwidth = len.getValue();
         }
-        len = ifoNode.getContentHeight();
+        len = fobj.getContentHeight();
         if (!len.isAuto()) {
             /*if(len.scaleToFit()) {
                 if(bpd != -1) {
@@ -134,7 +133,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
         if (cheight == -1) {
             cheight = (int)size.getY() * 1000;
         }
-        int scaling = ifoNode.getScaling();
+        int scaling = fobj.getScaling();
         if (scaling == Scaling.UNIFORM) {
             // adjust the larger
             double rat1 = cwidth / (size.getX() * 1000f);
@@ -156,24 +155,24 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
 
         boolean clip = false;
         if (cwidth > ipd || cheight > bpd) {
-            int overflow = ifoNode.getOverflow();
+            int overflow = fobj.getOverflow();
             if (overflow == Overflow.HIDDEN) {
                 clip = true;
             } else if (overflow == Overflow.ERROR_IF_OVERFLOW) {
-                ifoNode.getLogger().error("Instream foreign object overflows the viewport: clipping");
+                fobj.getLogger().error("Instream foreign object overflows the viewport: clipping");
                 clip = true;
             }
         }
 
-        int xoffset = ifoNode.computeXOffset(ipd, cwidth);
-        int yoffset = ifoNode.computeYOffset(bpd, cheight);
+        int xoffset = fobj.computeXOffset(ipd, cwidth);
+        int yoffset = fobj.computeYOffset(bpd, cheight);
 
         Rectangle2D placement = new Rectangle2D.Float(xoffset, yoffset, cwidth, cheight);
 
         org.w3c.dom.Document doc = child.getDOMDocument();
         String ns = child.getDocumentNamespace();
 
-        ifoNode.childNodes = null;
+        fobj.childNodes = null;
         ForeignObject foreign = new ForeignObject(doc, ns);
 
         Viewport areaCurrent = new Viewport(foreign);
@@ -187,7 +186,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
     }
     
     protected void addId() {
-        addID(ifoNode.getId());
+        addID(fobj.getId());
     }
 }
 
