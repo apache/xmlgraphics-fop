@@ -104,7 +104,34 @@ public class TableAttributesConverter {
     //////////////////////////////////////////////////
     // @@ Static converter methods
     //////////////////////////////////////////////////
+    /**
+     * Converts table-only attributes to rtf attributes.
+     * 
+     * @param attrs Given attributes
+     * @param defaultAttributes Default rtf attributes
+     *
+     * @return All valid rtf attributes together
+     *
+     * @throws ConverterException On convertion error
+     */
+    static RtfAttributes convertTableAttributes(PropertyList properties)
+    throws FOPException {
+        RtfAttributes attrib = new RtfAttributes();
 
+        LengthProperty lengthProp=null;
+        // margin-left
+        lengthProp=(LengthProperty)properties.get("margin-left");
+        if (lengthProp != null) {
+            Float f = new Float(lengthProp.getLength().getValue() / 1000f);
+            final String sValue = f.toString() + "pt";
+
+            attrib.set(
+                    ITableAttributes.ATTR_ROW_LEFT_INDENT,
+                    (int)FoUnitsConverter.getInstance().convertToTwips(sValue));
+        }
+
+        return attrib;
+    }
 
     /**
      * Converts cell attributes to rtf attributes.
@@ -115,7 +142,7 @@ public class TableAttributesConverter {
      *
      * @throws ConverterException On convertion error
      */
-    static RtfAttributes convertCellAttributes(PropertyList props, PropertyList defProps)
+    static RtfAttributes convertCellAttributes(PropertyList props)
     throws FOPException {
 
         Property p;
@@ -124,11 +151,7 @@ public class TableAttributesConverter {
 
         RtfAttributes attrib = null;
 
-        if (defProps != null) {
-            attrib = convertCellAttributes(defProps, null);
-        } else {
             attrib = new RtfAttributes();
-        }
 
         boolean isBorderPresent = false;
 
@@ -269,7 +292,7 @@ public class TableAttributesConverter {
      * @throws ConverterException On convertion error
      */
     static RtfAttributes convertRowAttributes(PropertyList props,
-            PropertyList defProps, RtfAttributes rtfatts)
+            RtfAttributes rtfatts)
     throws FOPException {
 
         Property p;
@@ -278,14 +301,10 @@ public class TableAttributesConverter {
 
         RtfAttributes attrib = null;
 
-        if (defProps != null) {
-            attrib = convertRowAttributes(defProps, null, rtfatts);
-        } else {
             if (rtfatts == null) {
                 attrib = new RtfAttributes();
             } else {
                 attrib = rtfatts;
-            }
         }
 
         String attrValue;

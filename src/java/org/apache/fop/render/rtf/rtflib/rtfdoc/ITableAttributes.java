@@ -74,6 +74,7 @@ public interface ITableAttributes {
 
     /** half the space between the cells of a table row in twips */
     public static final String ATTR_RTF_15_TRGAPH = "trgaph";
+    public static final String ATTR_ROW_LEFT_INDENT = "trleft";
 
 // RTF 1.6 Row and table attributes
     /** table row padding, top */
@@ -103,7 +104,7 @@ public interface ITableAttributes {
         ATTR_ROW_PADDING_BOTTOM, ATTR_ROW_U_PADDING_BOTTOM,
         ATTR_ROW_PADDING_LEFT, ATTR_ROW_U_PADDING_LEFT,
         ATTR_ROW_PADDING_RIGHT, ATTR_ROW_U_PADDING_RIGHT,
-        ATTR_RTF_15_TRGAPH
+        ATTR_RTF_15_TRGAPH, ATTR_ROW_LEFT_INDENT
     };
 
 // Cell attributes
