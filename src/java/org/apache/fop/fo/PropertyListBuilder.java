@@ -159,15 +159,14 @@ public class PropertyListBuilder {
          */
         String attributeName = FONTSIZEATTR;
         String attributeValue = attributes.getValue(attributeName);
-        convertAttributeToProperty(attributes, attributeName, validProperties,
-                                   p, parentFO, attributeValue);
+        convertAttributeToProperty(attributes, attributeName, attributeValue,
+                                   validProperties, p, parentFO);
 
         for (int i = 0; i < attributes.getLength(); i++) {
             attributeName = attributes.getQName(i);
             attributeValue = attributes.getValue(i);
-            convertAttributeToProperty(attributes, attributeName,
-                                       validProperties, p, parentFO,
-                                       attributeValue);
+            convertAttributeToProperty(attributes, attributeName, attributeValue,
+                                       validProperties, p, parentFO);
         }
         return p;
     }
@@ -176,6 +175,7 @@ public class PropertyListBuilder {
      *
      * @param attributes Collection of attributes
      * @param attributeName Attribute name to convert
+     * @param attributeValue Attribute value to assign to property
      * @param validProperties Collection of valid properties
      * @param propList PropertyList in which to add the newly created Property
      * @param parentFO Parent FO of the object for which this property is being
@@ -183,10 +183,10 @@ public class PropertyListBuilder {
      */
     private void convertAttributeToProperty(Attributes attributes,
                                             String attributeName,
+                                            String attributeValue,
                                             HashMap validProperties,
-                                            PropertyList p,
-                                            FObj parentFO,
-                                            String attributeValue) {
+                                            PropertyList propList,
+                                            FObj parentFO) {
         /* Handle "compound" properties, ex. space-before.minimum */
         String basePropName = findBasePropertyName(attributeName);
         String subPropName = findSubPropertyName(attributeName);
@@ -202,13 +202,13 @@ public class PropertyListBuilder {
         try {
             Property prop = null;
             if (subPropName == null) {
-                prop = propertyMaker.make(p, attributeValue, parentFO);
+                prop = propertyMaker.make(propList, attributeValue, parentFO);
             }
             else {
-                prop = findSubPropValue(attributes, p, parentFO, basePropName, subPropName, prop, propertyMaker, attributeValue);
+                prop = findSubPropValue(attributes, propList, parentFO, basePropName, subPropName, prop, propertyMaker, attributeValue);
             }
             if (prop != null) {
-                p.put(basePropName, prop);
+                propList.put(basePropName, prop);
             }
         }
         catch (FOPException e) {
@@ -236,9 +236,7 @@ public class PropertyListBuilder {
             }
             // else baseProp = propertyMaker.makeCompound(p, parentFO);
         }
-        propVal = propertyMaker.make(baseProp, subPropName,
-                                     p,
-                                     attributeValue,
+        propVal = propertyMaker.make(baseProp, subPropName, p, attributeValue,
                                      parentFO);
         return propVal;
     }
