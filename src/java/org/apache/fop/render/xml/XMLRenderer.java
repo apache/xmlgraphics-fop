@@ -93,6 +93,7 @@ import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.Word;
 import org.apache.fop.fo.properties.RuleStyle;
+import org.apache.fop.fo.FOTreeControl;
 
 /**
  * Renderer that renders areas to XML for debugging purposes.
@@ -208,10 +209,10 @@ public class XMLRenderer extends AbstractRenderer {
      *
      * @param fontInfo the font info object to set up
      */
-    public void setupFontInfo(Document fontInfo) {
+    public void setupFontInfo(FOTreeControl foTreeControl) {
 
         /* use PDF's font setup to get PDF metrics */
-        org.apache.fop.render.pdf.FontSetup.setup(fontInfo, null);
+        org.apache.fop.render.pdf.FontSetup.setup((Document)foTreeControl, null);
     }
 
     private boolean isCoarseXml() {

@@ -76,6 +76,7 @@ import org.apache.fop.fonts.Typeface;
 import org.apache.fop.control.Document;
 import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.render.RendererContext;
+import org.apache.fop.fo.FOTreeControl;
 
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
@@ -260,9 +261,9 @@ public class PSRenderer extends AbstractRenderer {
      *
      * @param fontInfo the font info object to set up
      */
-    public void setupFontInfo(Document fontInfo) {
+    public void setupFontInfo(FOTreeControl foTreeControl) {
         /* use PDF's font setup to get PDF metrics */
-        org.apache.fop.render.pdf.FontSetup.setup(fontInfo, null);
+        org.apache.fop.render.pdf.FontSetup.setup((Document)foTreeControl, null);
         this.fontInfo = fontInfo;
     }
 

@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,12 +42,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.render.awt;
 
 /*
@@ -78,6 +78,7 @@ import java.util.Map;
 // FOP
 import org.apache.fop.apps.InputHandler;
 import org.apache.fop.control.Document;
+import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.viewer.PreviewDialog;
 import org.apache.fop.viewer.Translator;
@@ -94,12 +95,12 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     protected List pageList = new java.util.Vector();
     //protected ProgressListener progressListener = null;
 
-    /** 
-        The InputHandler associated with this Renderer.  
+    /**
+        The InputHandler associated with this Renderer.
         Sent to the PreviewDialog for document reloading.
     */
     protected InputHandler inputHandler;
-    
+
     /**
      * The resource bundle used for AWT messages.
      */
@@ -139,7 +140,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
      * valid font measures.
      */
     protected PreviewDialog frame;
-    
+
     public AWTRenderer(InputHandler handler) {
         inputHandler = handler;
         translator = new Translator();
@@ -159,11 +160,11 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         return 0;
     }
 
-    public void setupFontInfo(Document fontInfo) {
+    public void setupFontInfo(FOTreeControl foTreeControl) {
         // create a temp Image to test font metrics on
         BufferedImage fontImage =
             new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
-        FontSetup.setup(fontInfo, fontImage.createGraphics());
+        FontSetup.setup((Document)foTreeControl, fontImage.createGraphics());
     }
 
     public int getPageNumber() {
@@ -212,7 +213,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     public int print(Graphics g, PageFormat format, int pos) {
         return 0;
     }
-    
+
     private PreviewDialog createPreviewDialog(InputHandler handler) {
         frame = new PreviewDialog(this, handler);
         frame.addWindowListener(new WindowAdapter() {
@@ -233,7 +234,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         frame.setLocation((screenSize.width - frameSize.width) / 2,
                           (screenSize.height - frameSize.height) / 2);
         frame.setVisible(true);
-        frame.setStatus(translator.getString("Status.Build.FO.tree"));        
+        frame.setStatus(translator.getString("Status.Build.FO.tree"));
         return frame;
     }
 }

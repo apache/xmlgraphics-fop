@@ -60,6 +60,7 @@ import org.apache.fop.svg.SVGUtilities;
 import org.apache.fop.control.Document;
 import org.apache.fop.fo.FOUserAgent;
 import org.apache.fop.fo.properties.RuleStyle;
+import org.apache.fop.fo.FOTreeControl;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.svg.SVGSVGElement;
@@ -167,11 +168,11 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
     /**
      * @see org.apache.fop.render.Renderer#setupFontInfo(FontInfo)
      */
-    public void setupFontInfo(Document fontInfo) {
+    public void setupFontInfo(FOTreeControl foTreeControl) {
         // create a temp Image to test font metrics on
         BufferedImage fontImage =
           new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-        org.apache.fop.render.awt.FontSetup.setup(fontInfo,
+        org.apache.fop.render.awt.FontSetup.setup((Document)foTreeControl,
                 fontImage.createGraphics());
     }
 

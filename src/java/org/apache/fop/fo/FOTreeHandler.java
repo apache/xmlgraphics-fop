@@ -53,7 +53,6 @@ package org.apache.fop.fo;
 // Java
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -61,10 +60,7 @@ import java.util.Iterator;
 import org.xml.sax.SAXException;
 
 // FOP
-import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.area.StorePagesModel;
-import org.apache.fop.area.TreeExt;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.ExternalGraphic;
 import org.apache.fop.fo.flow.InstreamForeignObject;
@@ -77,7 +73,6 @@ import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
-import org.apache.fop.control.Document;
 import org.apache.fop.render.Renderer;
 
 /**
@@ -135,14 +130,16 @@ public class FOTreeHandler extends FOInputHandler {
 
     /**
      * Main constructor
+     * @param foTreeControl the FOTreeControl implementation that governs this
+     * FO Tree
      * @param outputStream the stream that the result is rendered to
      * @param renderer the renderer to call
      * @param store if true then use the store pages model and keep the
      *              area tree in memory
      */
-    public FOTreeHandler(Document document, OutputStream outputStream, Renderer renderer,
-                         boolean store) {
-        super(document);
+    public FOTreeHandler(FOTreeControl foTreeControl, OutputStream outputStream,
+                         Renderer renderer, boolean store) {
+        super(foTreeControl);
         if (collectStatistics) {
             runtime = Runtime.getRuntime();
         }
@@ -169,9 +166,9 @@ public class FOTreeHandler extends FOInputHandler {
             startTime = System.currentTimeMillis();
         }
         try {
-            renderer.setupFontInfo(doc);
+            renderer.setupFontInfo(foTreeControl);
             // check that the "any,normal,400" font exists
-            if (!doc.isSetupValid()) {
+            if (!foTreeControl.isSetupValid()) {
                 throw new SAXException(new FOPException(
                         "No default font defined by OutputConverter"));
             }
@@ -472,8 +469,8 @@ public class FOTreeHandler extends FOInputHandler {
      *
      * @return the font information
      */
-    public Document getFontInfo() {
-        return this.doc;
+    public FOTreeControl getFontInfo() {
+        return foTreeControl;
     }
 
     /**

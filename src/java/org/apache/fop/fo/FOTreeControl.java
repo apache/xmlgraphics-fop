@@ -51,6 +51,10 @@
 
 package org.apache.fop.fo;
 
+// Java
+import java.util.Map;
+
+// FOP
 import org.apache.fop.fonts.FontMetrics;
 
 /**
@@ -68,5 +72,9 @@ public interface FOTreeControl {
                              int weight);
 
     public FontMetrics getMetricsFor(String fontName);
+
+    public boolean isSetupValid();
+
+    public Map getFonts();
 
 }
