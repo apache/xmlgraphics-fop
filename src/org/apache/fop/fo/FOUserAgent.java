@@ -81,7 +81,11 @@ public class FOUserAgent implements LogEnabled {
      * @return the base URL
      */
     public String getBaseURL() {
-        return this.baseURL;
+        if ((this.baseURL == null) || (this.baseURL.trim().equals(""))) {
+            return "file:.";
+        } else {
+            return this.baseURL;
+        }
     }
 
     /**
