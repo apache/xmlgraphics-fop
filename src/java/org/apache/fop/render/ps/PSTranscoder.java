@@ -50,10 +50,8 @@
  */ 
 package org.apache.fop.render.ps;
 
-import java.awt.Dimension;
 
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 
 import java.awt.Color;
@@ -67,31 +65,23 @@ import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.BridgeException;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.SVGTextElementBridge;
-import org.apache.batik.bridge.UserAgent;
-import org.apache.batik.bridge.UserAgentAdapter;
 import org.apache.batik.bridge.ViewBox;
 
-import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
-import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.dom.svg.SVGOMDocument;
-import org.apache.batik.dom.util.DocumentFactory;
 
 import org.apache.batik.gvt.GraphicsNode;
 
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderOutput;
-import org.apache.batik.transcoder.XMLAbstractTranscoder;
 import org.apache.batik.transcoder.image.resources.Messages;
 
 import org.apache.batik.transcoder.image.ImageTranscoder;
 
-import org.apache.batik.util.SVGConstants;
-import org.apache.batik.util.XMLResourceDescriptor;
+import org.apache.fop.svg.AbstractFOPTranscoder;
 
 import org.apache.batik.gvt.TextPainter;
 import org.apache.batik.gvt.renderer.StrokingTextPainter;
 
-import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGSVGElement;
@@ -124,22 +114,13 @@ import org.w3c.dom.svg.SVGSVGElement;
  * @author <a href="mailto:jeremias@apache.org">Jeremias Maerki</a>
  * @version $Id: PDFTranscoder.java,v 1.24 2003/03/07 09:51:26 jeremias Exp $
  */
-public class PSTranscoder extends XMLAbstractTranscoder {
+public class PSTranscoder extends AbstractFOPTranscoder {
 
     /**
-     * The user agent dedicated to an <tt>ImageTranscoder</tt>.
-     */
-    protected UserAgent userAgent = new ImageTranscoderUserAgent();
-
-    /**
-     * Constructs a new <tt>ImageTranscoder</tt>.
+     * Constructs a new <tt>PSTranscoder</tt>.
      */
     public PSTranscoder() {
-        hints.put(KEY_DOCUMENT_ELEMENT_NAMESPACE_URI,
-                  SVGConstants.SVG_NAMESPACE_URI);
-        hints.put(KEY_DOCUMENT_ELEMENT, SVGConstants.SVG_SVG_TAG);
-        hints.put(KEY_DOM_IMPLEMENTATION,
-                  SVGDOMImplementation.getDOMImplementation());
+        super();
     }
 
     /**
@@ -279,147 +260,4 @@ public class PSTranscoder extends XMLAbstractTranscoder {
         }
     }
 
-    /**
-     * Creates a <tt>DocumentFactory</tt> that is used to create an SVG DOM
-     * tree. The specified DOM Implementation is ignored and the Batik
-     * SVG DOM Implementation is automatically used.
-     *
-     * @param domImpl the DOM Implementation (not used)
-     * @param parserClassname the XML parser classname
-     * @return the document factory
-     */
-    protected DocumentFactory createDocumentFactory(DOMImplementation domImpl,
-            String parserClassname) {
-        return new SAXSVGDocumentFactory(parserClassname);
-    }
-
-    // --------------------------------------------------------------------
-    // UserAgent implementation
-    // --------------------------------------------------------------------
-
-    /**
-     * A user agent implementation for <tt>ImageTranscoder</tt>.
-     */
-    protected class ImageTranscoderUserAgent extends UserAgentAdapter {
-
-        /**
-         * Returns the default size of this user agent (400x400).
-         * @return the default viewport size
-         */
-        public Dimension2D getViewportSize() {
-            return new Dimension(400, 400);
-        }
-
-        /**
-         * Displays the specified error message using the <tt>ErrorHandler</tt>.
-         * @param message the message to display
-         */
-        public void displayError(String message) {
-            try {
-                getErrorHandler().error(new TranscoderException(message));
-            } catch (TranscoderException ex) {
-                throw new RuntimeException();
-            }
-        }
-
-        /**
-         * Displays the specified error using the <tt>ErrorHandler</tt>.
-         * @param e the exception to display
-         */
-        public void displayError(Exception e) {
-            try {
-                getErrorHandler().error(new TranscoderException(e));
-            } catch (TranscoderException ex) {
-                throw new RuntimeException();
-            }
-        }
-
-        /**
-         * Displays the specified message using the <tt>ErrorHandler</tt>.
-         * @param message the message to display
-         */
-        public void displayMessage(String message) {
-            try {
-                getErrorHandler().warning(new TranscoderException(message));
-            } catch (TranscoderException ex) {
-                throw new RuntimeException();
-            }
-        }
-
-        /**
-         * Returns the pixel to millimeter conversion factor specified in the
-         * <tt>TranscodingHints</tt> or 0.3528 if any.
-         * @return the pixel unit to millimeter factor
-         */
-        public float getPixelUnitToMillimeter() {
-            Object key = ImageTranscoder.KEY_PIXEL_UNIT_TO_MILLIMETER;
-            if (getTranscodingHints().containsKey(key)) {
-                return ((Float)getTranscodingHints().get(key)).floatValue();
-            } else {
-                // return 0.3528f; // 72 dpi
-                return 0.26458333333333333333333333333333f;    // 96dpi
-            }
-        }
-
-        /**
-         * Returns the user language specified in the
-         * <tt>TranscodingHints</tt> or "en" (english) if any.
-         * @return the languages for the transcoder
-         */
-        public String getLanguages() {
-            Object key = ImageTranscoder.KEY_LANGUAGE;
-            if (getTranscodingHints().containsKey(key)) {
-                return (String)getTranscodingHints().get(key);
-            } else {
-                return "en";
-            }
-        }
-
-        /**
-         * Get the media for this transcoder. Which is always print.
-         * @return PostScript media is "print"
-         */
-        public String getMedia() {
-            return "print";
-        }
-
-        /**
-         * Returns the user stylesheet specified in the
-         * <tt>TranscodingHints</tt> or null if any.
-         * @return the user style sheet URI specified in the hints
-         */
-        public String getUserStyleSheetURI() {
-            return (String)getTranscodingHints()
-                        .get(ImageTranscoder.KEY_USER_STYLESHEET_URI);
-        }
-
-        /**
-         * Returns the XML parser to use from the TranscodingHints.
-         * @return the XML parser class name
-         */
-        public String getXMLParserClassName() {
-            Object key = KEY_XML_PARSER_CLASSNAME;
-            if (getTranscodingHints().containsKey(key)) {
-                return (String)getTranscodingHints().get(key);
-            } else {
-                return XMLResourceDescriptor.getXMLParserClassName();
-            }
-        }
-
-        /**
-         * Check if the XML parser is validating.
-         * @return true if the XML parser is validating
-         */
-        public boolean isXMLParserValidating() {
-            return false;
-        }
-
-        /**
-         * Unsupported operation.
-         * @return null since this is unsupported
-         */
-        public AffineTransform getTransform() {
-            return null;
-        }
-    }
 }
