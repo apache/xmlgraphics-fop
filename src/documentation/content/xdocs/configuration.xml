@@ -28,13 +28,28 @@ Also, since the configuration file is XML, be sure to keep it well-formed.</p>
     </ul>
     <p>See <link href="embedding.html#config-internal">Setting the Configuration Programmatically</link> for instructions on how to do so in an embedded environment.</p>
   </section>
-  <section id="summary">
-    <title>Summary of Configuration Options</title>
+  <section id="summary-key-value">
+    <title>Summary of Key-Value Configuration Options</title>
     <table>
       <tr>
         <th>Option (key)</th>
         <th>Data Type (for the value)</th>
         <th>Default Value</th>
+      </tr>
+      <tr>
+        <td>baseDir</td>
+        <td>URL</td>
+        <td>directory containing the input FO file</td>
+      </tr>
+      <tr>
+        <td>fontBaseDir</td>
+        <td>URL</td>
+        <td>value of baseDir</td>
+      </tr>
+      <tr>
+        <td>hyphenation-dir</td>
+        <td>URL</td>
+        <td>None. This is for custom hyphenation patterns.</td>
       </tr>
       <tr>
         <td><link href="#svg-strokeSVGText">strokeSVGText</link></td>
