@@ -20,12 +20,19 @@ import org.xml.sax.SAXException;
 import org.xml.sax.InputSource;
 import org.xml.sax.Attributes;
 
+import org.apache.batik.dom.svg.*;
+import org.w3c.dom.*;
 import org.w3c.dom.svg.*;
+import org.w3c.dom.svg.SVGLength;
+
+import org.w3c.dom.DOMImplementation;
+import org.apache.batik.dom.svg.SVGDOMImplementation;
 
 // Java
 import java.util.Hashtable;
 import java.util.Stack;
 import java.io.IOException;
+import java.io.File;
 
 // NOTE: This class is here since a number of FObj methods that
 // are called are protected. This should probably be fixed.
@@ -255,10 +262,32 @@ public class SVGTreeBuilder extends DefaultHandler implements TreeBuilder {
     /**
      */
     public SVGDocument getSVGDocument() {
-        SVGDocument doc = null;
-        /*    	doc = new SVGDocumentImpl();
-                 SVGSVGElement svg = (SVGSVGElement)((org.apache.fop.svg.SVG)rootFObj).createGraphic();
-                 doc.appendChild(svg);*/
-        return doc;
+        DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
+        String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
+        Document doc = impl.createDocument(svgNS, "svg", null);
+
+        Element svgRoot = doc.getDocumentElement();
+
+        try {
+            ((SVGOMDocument)doc).setURLObject(new File(".").toURL());
+        } catch (Exception e) {
+        }
+
+        DefaultSVGContext dc = new DefaultSVGContext() {
+                                   public float getPixelToMM() {
+                                       return 0.264583333333333333333f;
+                                       // 72 dpi
+                                   }
+                                   public float getViewportWidth() {
+                                       return 100;
+                                   }
+                                   public float getViewportHeight() {
+                                       return 100;
+                                   }
+                               };
+        ((SVGOMDocument)doc).setSVGContext(dc);
+        ((org.apache.fop.svg.SVGElement)rootFObj).buildTopLevel(doc, svgRoot);
+
+        return (SVGDocument)doc;
     }
 }
