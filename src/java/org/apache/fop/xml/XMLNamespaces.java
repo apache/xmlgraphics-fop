@@ -50,10 +50,11 @@ package org.apache.fop.xml;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.SyncedCircularBuffer;
+import org.apache.fop.pool.*;
 
 /**
- * Maintains the namespaces encountered by an invocation of <tt>XMLSerialHandler</tt>.
- * <p>
+ * Maintains the namespaces encountered by an invocation of
+ *  <tt>XMLSerialHandler</tt>.
  * One instance of <i>XMLNamespaces</i> is maintained across all documents
  * that may be processed in a single invocation of <tt>XMLSerialhandler</tt>.
  * A reference to that instance is kept with every instance of <tt>XMLEvent</tt>.
@@ -84,6 +85,12 @@ public class XMLNamespaces {
     public static final String SVGNamespace = "http://www.w3.org/2000/svg";
 
     public static final int NO_NAMESPACE = -1;
+    
+    /**
+     * Generic undefined type for namespace-specific event types.
+     */
+    public static final int NO_NS_TYPE = -1;
+    
     /** Index for associated namespace */
     public static final int  DefAttrNSIndex = 0
                                ,XSLNSpaceIndex = 1
@@ -119,20 +126,31 @@ public class XMLNamespaces {
      * namespace active in the current document.
      */
     private XMLEventPool[] pools = new XMLEventPool[LAST_NS_INDEX + 1];
+    
+    /**
+     * The pool for <code>UriLocalName</code> objects.
+     */
+    private UriLocalNamePool uriLocalNamePool;
 
     /**
-     * Sequence objects for use by <tt>XMLEvent</tt>s. Because an
+     * Sequenced objects for use by <tt>XMLEvent</tt>s. Because an
      * <tt>XMLEvent</tt> object must always be associated with an
      * <i>XMLNamespace</i> object, this namespace object will act as a
      * singleton for <tt>XMLEvent</tt>s. This field provides a counter for
      * those objects. The range of values which may be assigned to
-     * <i>sequence</i> is restricted by <i>seqMask</i>.
+     * <i>nsSequences</i> is restricted by <i>nsSeqMasks</i>.
      */
-    private int sequence[] = new int[LAST_NS_INDEX + 1];
+    private int nsSequences[] = new int[LAST_NS_INDEX + 1];
+    
+    /**
+     * This field is used to provide sequence numbers for
+     * <code>Poolable UriLocalName</code> objects.
+     */
+    private int uriLocalSeq = 0;
 
     /**
-     * Number of bits in the sequence mask for the associated namespace.
-     * This value will determine the number of sequence values the pool
+     * Number of bits in the nsSequences mask for the associated namespace.
+     * This value will determine the number of nsSequences values the pool
      * for the associated namespace will track.
      */
     private static final int DEF_ATTR_SEQ_BITS = 14
@@ -142,39 +160,46 @@ public class XMLNamespaces {
                                ;
 
     /**
-     * Masks to restrict the range of values within which the sequence value
+     * Masks to restrict the range of values within which the nsSequences value
      * for each namespace may cycle.
      */
-    private final int[] seqMask =
+    private final int[] nsSeqMasks =
         {
             (1 << DEF_ATTR_SEQ_BITS) - 1
             ,(1 << FO_SEQ_BITS) - 1
             ,(1 << FOX_SEQ_BITS) - 1
             ,(1 << SVG_SEQ_BITS) - 1 };
+    
+    /**
+     * Mask to restrict the range of values within which uriLocalSeq will
+     * cycle.
+     */
+    private final int uriLocalSeqMask = (1 << FO_SEQ_BITS) - 1;
 
     public XMLNamespaces() {
         for (int i = 0; i <= LAST_NS_INDEX; i++) {
             pools[i] = null;
-            sequence[i] = 0;
+            nsSequences[i] = 0;
         }
         pools[DefAttrNSIndex] =
-            new XMLEventPool(this, INITIAL_DEF_ATTR_NS_POOL_SIZE);
+            new XMLEventPool(INITIAL_DEF_ATTR_NS_POOL_SIZE);
         pools[XSLNSpaceIndex] =
-            new XMLEventPool(this, INITIAL_XSL_NS_POOL_SIZE);
+            new XMLEventPool(INITIAL_XSL_NS_POOL_SIZE);
         pools[FOXNSpaceIndex] =
-            new XMLEventPool(this, INITIAL_FOX_NS_POOL_SIZE);
+            new XMLEventPool(INITIAL_FOX_NS_POOL_SIZE);
         pools[SVGNSpaceIndex] =
-            new XMLEventPool(this, INITIAL_SVG_NS_POOL_SIZE);
+            new XMLEventPool(INITIAL_SVG_NS_POOL_SIZE);
+        uriLocalNamePool = new UriLocalNamePool(BUFFER_SIZE);
     }
     
     /**
-     * The increment access function for the sequence associated with the given
+     * The increment access function for the nsSequences associated with the given
      * URI index.
      * 
      * @param nsIndex
      *            the namespace index
-     * @return the next positive sequence number. This number may wrap but is
-     *         guaranteed to be within the range seqMask >= sequence >= 0.
+     * @return the next positive nsSequences number. This number may wrap but is
+     *         guaranteed to be within the range nsSeqMasks >= nsSequences >= 0.
      * @throws FOPException
      *             if the namespace index is out of range
      */
@@ -183,19 +208,19 @@ public class XMLNamespaces {
             throw new FOPException(
                 "Namespace index " + nsIndex + " out of range.");
         }
-        synchronized (sequence) {
-            sequence[nsIndex] = ++sequence[nsIndex] & seqMask[nsIndex];
-            return sequence[nsIndex];
+        synchronized (nsSequences) {
+            nsSequences[nsIndex] = ++nsSequences[nsIndex] & nsSeqMasks[nsIndex];
+            return nsSequences[nsIndex];
         }
     }
 
     /**
-     * The access function for the sequence associated with the given URI
+     * The access function for the nsSequences associated with the given URI
      * index.
      * 
      * @param nsIndex
      *            the namespace index
-     * @return the current sequence number
+     * @return the current nsSequences number
      * @throws FOPException
      *             if the index is out of range
      */
@@ -204,7 +229,7 @@ public class XMLNamespaces {
             throw new FOPException(
                 "Namespace index " + nsIndex + " out of range.");
         }
-        return sequence[nsIndex];
+        return nsSequences[nsIndex];
     }
 
     /**
@@ -270,16 +295,19 @@ public class XMLNamespaces {
         // The only currently known subclass of XMLEvent is FoXMLEvent
         switch (nsIndex) {
         case DefAttrNSIndex :
-            // Produce an FoXMLEvent, e.g. for START_DOCUMENT
-            // Note that FoXMLSerialHandler set the URI index for
-            // CHARACTERS events.
-            // This is problematical, but non-FO events can carry the
-            // NO_FO type.  I think.
+            // Produce an XMLEvent, e.g. for START_DOCUMENT and, more
+            // importantly, CHARACTERS.
+            synchronized (nsSequences) {
+                nsSequences[nsIndex] =
+                    ++nsSequences[nsIndex] & nsSeqMasks[nsIndex];
+                return new XMLEvent(this, nsSequences[nsIndex], nsIndex);
+            }
         case XSLNSpaceIndex :
             // Make an FoXMLEvent
-            synchronized (sequence) {
-                sequence[nsIndex] = ++sequence[nsIndex] & seqMask[nsIndex];
-                return new FoXMLEvent(this, sequence[nsIndex]);
+            synchronized (nsSequences) {
+                nsSequences[nsIndex] =
+                    ++nsSequences[nsIndex] & nsSeqMasks[nsIndex];
+                return new FoXMLEvent(this, nsSequences[nsIndex], nsIndex);
             }
         case FOXNSpaceIndex :
             // No FoxXMLEvent defined - don't break, but fall through
@@ -287,9 +315,10 @@ public class XMLNamespaces {
             // No SvgXMLEvent defined - don't break, but fall through
         default :
             // Just produce a raw XMLEvent
-            synchronized (sequence) {
-                sequence[nsIndex] = ++sequence[nsIndex] & seqMask[nsIndex];
-                return new XMLEvent(this, sequence[nsIndex]);
+            synchronized (nsSequences) {
+                nsSequences[nsIndex] =
+                    ++nsSequences[nsIndex] & nsSeqMasks[nsIndex];
+                return new XMLEvent(this, nsSequences[nsIndex], nsIndex);
             }
         }
     }
@@ -318,9 +347,28 @@ public class XMLNamespaces {
      * @param event to surrender
      */
     public void surrenderEvent(XMLEvent event) {
-        pools[event.uriIndex].surrenderEvent(event);
+        pools[event.uriIndex].surrenderPoolable(event);
     }
 
+    /**
+     * Acquire a <code>UriLocalName</code> from the pool, or null if no
+     * pooled names exist.
+     * 
+     * @return a <tt>UriLocalName</tt> or null.
+     */
+    public UriLocalName acquireUriLocalName() {
+        return uriLocalNamePool.acquireUriLocalName();
+    }
+    
+    /**
+     * Surrender a <code>UriLocalName</code>.
+     * The name is returned to the pool.
+     * @param uriName to surrender
+     */
+    public void surrenderUriLocalName(UriLocalName uriName) {
+        uriLocalNamePool.surrenderPoolable(uriName);
+    }
+    
     /**
      * Get the size of the event pool for a given namespace.
      * 
@@ -328,7 +376,7 @@ public class XMLNamespaces {
      *            the index of the namespace
      * @return pool size.
      */
-    public int getPoolSize(int nsIndex) {
+    public int getNSPoolSize(int nsIndex) {
         return pools[nsIndex].getPoolSize();
     }
 
