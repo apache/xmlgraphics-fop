@@ -1647,17 +1647,6 @@ class rendtest {
       </answer>
     </faq>
   </part>
-  <part id="part_developer">
-    <title>General Developer Questions</title>
-    <faq id="javadoc_location">
-      <question>How do I get the javadocs for FOP?</question>
-      <answer>
-        <p>Currently, the only way to get FOP javadocs is to <link href="download.html">
-        Download the source code</link> and then <link href="compiling.html">Build
-        FOP</link> using the ant build task "javadocs".</p>
-      </answer>
-    </faq>
-  </part>
   <part id="part_help">
     <title>General suggestions. How to solve problems.</title>
     <faq id="bugs">
@@ -1674,6 +1663,7 @@ class rendtest {
       should I post them?</question>
       <answer>
         <ul>
+          <li>If your question is a development-related question, please see the <link href="dev/faq.html">Developer FAQs</link>.</li>
           <li>
             If you have a runtime exception or other runtime problem:
             <ul>
