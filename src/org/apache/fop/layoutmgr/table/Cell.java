@@ -41,6 +41,7 @@ public class Cell extends BlockStackingLayoutManager {
     private int xoffset;
     private int yoffset;
     private int cellIPD;
+    private int height;
 
     /**
      * Create a new Cell layout manager.
@@ -137,6 +138,15 @@ public class Cell extends BlockStackingLayoutManager {
     }
 
     /**
+     * Set the row height that contains this cell.
+     *
+     * @param h the height of the row
+     */
+    public void setRowHeight(int h) {
+        height = h;
+    }
+
+    /**
      * Add the areas for the break points.
      * The cell contains block stacking layout managers
      * that add block areas.
@@ -170,6 +180,8 @@ public class Cell extends BlockStackingLayoutManager {
         if(backgroundProps != null) {
             addBackground(curBlockArea, backgroundProps);
         }
+
+        curBlockArea.setHeight(height);
 
         flush();
 
