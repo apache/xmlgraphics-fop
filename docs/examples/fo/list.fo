@@ -165,19 +165,20 @@
                 text-align="start"
                 space-before.optimum="3cm"
                 white-space-collapse="false" 
+                linefeed-treatment="preserve"
+                white-space-treatment="preserve"
                 wrap-option="no-wrap">
-<![CDATA[
-<!-- list start -->
-<fo:list-block >
+<![CDATA[<!-- list start -->
+<fo:list-block>
   <!-- list item -->
   <fo:list-item>
     <!-- insert a bullet -->
     <fo:list-item-label end-indent="label-end()">
       <fo:block>
-        <fo:inline font-family="Symbol">&amp;#183;</fo:inline>
+        <fo:inline font-family="Symbol">&#183;</fo:inline>
       </fo:block>
     </fo:list-item-label>
-    <!-- list text --> 
+    <!-- list text -->
     <fo:list-item-body start-indent="body-start()">
       <fo:block>
         here is text in the list item body
@@ -225,7 +226,7 @@
            url: http://www.w3.org/TR/xsl/ -->
       <fo:block text-align="center"
                 space-before.optimum="0.5cm">
-        <fo:external-graphic src="file:../graphics/listgeometry.gif"/>
+        <fo:external-graphic src="file:../../graphics/listgeometry.gif"/>
       </fo:block>
       <fo:block font-size="10pt" 
             font-family="sans-serif"
@@ -303,20 +304,21 @@
                 text-align="start"
                 space-before.optimum="0.7cm"
                 white-space-collapse="false" 
+                white-space-treatment="preserve"
+                linefeed-treatment="preserve"
                 wrap-option="no-wrap">
-<![CDATA[
-<!-- list start -->
-<fo:list-block provisional-distance-between-starts="0.3cm" 
+<![CDATA[<!-- list start -->
+<fo:list-block provisional-distance-between-starts="0.3cm"
                   provisional-label-separation="0.15cm">
   <!-- list item -->
   <fo:list-item>
     <!-- insert a bullet -->
     <fo:list-item-label end-indent="label-end()">
       <fo:block>
-        <fo:inline font-family="Symbol">&amp;#183;</fo:inline>
+        <fo:inline font-family="Symbol">&#183;</fo:inline>
       </fo:block>
     </fo:list-item-label>
-    <!-- list text --> 
+    <!-- list text -->
     <fo:list-item-body start-indent="body-start()">
       <fo:block>
         here is text in the list item body
@@ -324,12 +326,12 @@
     </fo:list-item-body>
   </fo:list-item>
 
-  [other list items...] 
+  [other list items...]
 
 </fo:list-block>
 <!-- end list -->
 ]]>
-</fo:block>        
+</fo:block>
 
       <!-- code ends -->
 
@@ -2152,11 +2154,10 @@
                 text-align="start"
                 space-before.optimum="3cm"
                 white-space-collapse="false" 
+                white-space-treatment="preserve"
+                linefeed-treatment="preserve"
                 wrap-option="no-wrap">
-                
-
-<![CDATA[
-<!-- list level 1 -->
+<![CDATA[<!-- list level 1 -->
 <fo:list-block provisional-distance-between-starts="0.4cm"
                provisional-label-separation="0.15cm">
   
@@ -2166,11 +2167,11 @@
     <fo:list-item-label end-indent="label-end()">
       <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
     </fo:list-item-label>
-    <!-- list text --> 
+    <!-- list text -->
     <fo:list-item-body start-indent="body-start()">
       <fo:block text-align="justify">
         here is text in the list item body.  here is text in the list item body. 
-        here is text in the list item body. here is text in the list item body. 
+        here is text in the list item body. here is text in the list item body.
       </fo:block>
     </fo:list-item-body>
   </fo:list-item>
@@ -2181,7 +2182,7 @@
     <fo:list-item-label end-indent="label-end()">
       <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
     </fo:list-item-label>
-    <!-- list text --> 
+    <!-- list text -->
     <fo:list-item-body start-indent="body-start()">
       <fo:block text-align="justify">here comes a nested list with numbers
 
@@ -2196,23 +2197,23 @@
             <fo:list-item-label end-indent="label-end()">
               <fo:block text-align="end">1.)</fo:block>
             </fo:list-item-label>
-            <!-- list text --> 
+            <!-- list text -->
             <fo:list-item-body start-indent="body-start()">
               <fo:block text-align="justify">
                 nested list item             </fo:block>
             </fo:list-item-body>
           </fo:list-item>
-          
+
           [more item in nested list ...]
 
-        </fo:list-block >
+        </fo:list-block>
       <!-- end nested list -->
 
       <!-- continuing list-->
       </fo:block>
     </fo:list-item-body>
   </fo:list-item>
-          
+
           [more item in list ...]
 
 </fo:list-block>
