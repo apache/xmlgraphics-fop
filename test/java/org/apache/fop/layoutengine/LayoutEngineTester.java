@@ -65,6 +65,7 @@ public class LayoutEngineTester {
     
     static {
         CHECK_CLASSES.put("true", TrueCheck.class);
+        CHECK_CLASSES.put("eval", EvalCheck.class);
     }
     
     /**
