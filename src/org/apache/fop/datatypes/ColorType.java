@@ -268,7 +268,7 @@ public class ColorType extends AbstractPropertyValue {
      * @return a <tt>float[4]</tt> containing the RGB information for
      * that color.
      */
-    public static synchronized float[] getSystemColor(String name)
+    public static float[] getSystemColor(String name)
         throws PropertyException
     {
         float syscolor[];
@@ -283,7 +283,7 @@ public class ColorType extends AbstractPropertyValue {
      * name of the color.
      * @return a <tt>float[4]</tt> array representing the normalized color.
      */
-    private static HashMap standardColors;
+    private static final HashMap standardColors;
     static {
         standardColors = new HashMap(16);
         standardColors.put
@@ -328,7 +328,7 @@ public class ColorType extends AbstractPropertyValue {
      * a reference to the array is returned.
      * @return a <tt>float[4]</tt> array representing the normalized color.
      */
-    public static final HashMap systemColors;
+    private static final HashMap systemColors;
     static {
         systemColors = new HashMap();
         systemColors.put("aliceblue",
