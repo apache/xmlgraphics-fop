@@ -66,6 +66,17 @@ public class FontTest {
           System.out.println("\t" + (f.isPlain() ? "PLAIN  " : "      ")
               + (f.isBold() ? "BOLD  " : "      ")
               + (f.isItalic() ? "ITALIC" : "      "));
+          int style = f.getStyle();
+          System.out.println("\tStyle:");
+          if (style == Font.PLAIN) {
+              System.out.println("\t\tPLAIN");
+          }
+          if ((style & Font.BOLD) != 0) {
+              System.out.println("\t\tBOLD");
+          }
+          if ((style & Font.ITALIC) != 0) {
+              System.out.println("\t\tITALIC");             
+          }
           Attribute[] textAttrs = f.getAvailableAttributes();
           for (int j = 0; j < textAttrs.length; j++) {
               if (textAttrs[j] instanceof TextAttribute) {
