@@ -714,30 +714,13 @@ public class PropertySets {
         int property = value.getProperty();
         ROIntArray expansion = getSHandExpansionSet(property);
         PropertyValueList list = new PropertyValueList(property);
-        for (int i = 0; i < expansion.length; i++) {
-            int expandedProp = expansion.get(i);
-            PropertyValue expandedPropValue;
-            //   The PropertyValue must be cloneable
-            // Generally, this method will be called with one of the
-            // pseudo-values - Inherit, FromParent or FromNearestSpecified
-            // e.g. - and becaue those properties may have individual
-            // IndirectValue settings, the value for each expanded
-            // property must be unique.`
-            try {
-                expandedPropValue = (PropertyValue)(value.clone());
-            } catch (CloneNotSupportedException e) {
-                throw new PropertyException(e.getMessage());
-            }
-
-            expandedPropValue.setProperty(expandedProp);
-            list.add(expandedPropValue);
-        }
-        return list;
+        return copyValueToSet(value, expansion, list);
     }
 
     /**
      * Generate a list of the intial values of each property in a
-     * shorthand expansion
+     * shorthand expansion.  Note that this will be a list of
+     * <b>references</b> to the initial values.
      * @param foTree the <tt>FOTree</tt> for which properties are being
      * processed
      * @param property <tt>int</tt> property index
@@ -745,7 +728,7 @@ public class PropertySets {
      * expansions for the (shorthand) property
      * @exception <tt>PropertyException</tt>
      */
-    public static PropertyValueList initialValueExpansion
+    public static PropertyValueList initialValueSHandExpansion
         (FOTree foTree, int property)
         throws PropertyException
     {
@@ -753,17 +736,9 @@ public class PropertySets {
         PropertyValueList list = new PropertyValueList(property);
         for (int i = 0; i < expansion.length; i++) {
             int expandedProp = expansion.get(i);
-            PropertyValue expandedPropValue;
             PropertyValue specified
                     = foTree.getInitialSpecifiedValue(expandedProp);
-            //   The PropertyValue must be cloneable
-            try {
-                expandedPropValue = (PropertyValue)(specified.clone());
-            } catch (CloneNotSupportedException e) {
-                throw new PropertyException(e.getMessage());
-            }
-
-            list.add(expandedPropValue);
+            list.add(specified);
         }
         return list;
     }
@@ -1203,6 +1178,98 @@ public class PropertySets {
         ,spaceStartNonCopyExpansion
         ,wordSpacingNonCopyExpansion
     };
+
+    /**
+     * Expand the >tt>PropertyValue</tt> assigned to a compound property
+     * into <tt>propertyValues</tt> for the individual property components.
+     * N.B. This method assumes that the set of expansion properties is
+     * comprised of a copy and a non-copy set.  For example, &lt;space&gt;
+     * compounds have a copy set of .minimum, .optimum and .maximum, and a
+     * non-copy set of .precedence and .conditionality. For each element of
+     * the copy set, the given value is cloned.  For each member of the
+     * non-copy set, a reference to the initial value is taken.  Any
+     * properties for which the non-copy set takes other than the initial
+     * value will have to arrange to override this method of the method from
+     * which it is invoked.
+     */
+    public static PropertyValueList expandCompoundProperty
+                                        (FOTree foTree, PropertyValue value)
+        throws PropertyException
+    {
+        int property = value.getProperty();
+        Integer compoundX =
+                    (Integer)(compoundMap.get(Ints.consts.get(property)));
+        if (compoundX == null)
+            throw new PropertyException
+                (PropNames.getPropertyName(property) + " (" + property + ") "
+                + " is not a compound property.");
+        int compoundIdx = compoundX.intValue();
+        PropertyValueList list = new PropertyValueList(property);
+        ROIntArray expansion;
+        // Expand the copy components
+        list = copyValueToSet
+                        (value, compoundCopyExpansions[compoundIdx], list);
+        // Expand the non-copy components
+        return initialValueCompoundExpansion
+                    (foTree, compoundNonCopyExpansions[compoundIdx], list);
+    }
+
+    /**
+     * Clone the given property value for each property in the given
+     * expansion set.  Append the new property values to the given list.
+     * @param value - the property value to clone.
+     * @param expansionSet - the set of indices of the expansion properties.
+     * @param list - the list to which to append the expansion elements.
+     * @return the original <tt>PropertyValueList</tt> containing the
+     * appended expansions.
+     * @exception <tt>PropertyException</tt>
+     */
+    private static PropertyValueList copyValueToSet(PropertyValue value,
+                            ROIntArray expansionSet, PropertyValueList list)
+        throws PropertyException
+    {
+        for (int i = 0; i < expansionSet.length; i++) {
+            int expandedProp = expansionSet.get(i);
+            PropertyValue expandedPropValue;
+            //   The PropertyValue must be cloneable
+            // The property associated with each PV in the expansion will
+            // necessarily be different.
+            try {
+                expandedPropValue = (PropertyValue)(value.clone());
+            } catch (CloneNotSupportedException e) {
+                throw new PropertyException(e.getMessage());
+            }
+
+            expandedPropValue.setProperty(expandedProp);
+            list.add(expandedPropValue);
+        }
+        return list;
+    }
+
+    /**
+     * Append the initial values of each non-copy property in a
+     * compound expansion to a list.  Note that these elements will be
+     * <b>references</b> to the initial values.
+     * @param foTree - the <tt>FOTree</tt> of the node whose properties are
+     * being processed.
+     * @param expansion - the set of indices of the expansion properties.
+     * @param list - the list to which to append the expansion elements.
+     * @return the original <tt>PropertyValueList</tt> containing the
+     * appended initial value expansions for the (compound) property.
+     * @exception <tt>PropertyException</tt>
+     */
+    public static PropertyValueList initialValueCompoundExpansion
+                (FOTree foTree, ROIntArray expansion, PropertyValueList list)
+        throws PropertyException
+    {
+        for (int i = 0; i < expansion.length; i++) {
+            int expandedProp = expansion.get(i);
+            PropertyValue specified
+                    = foTree.getInitialSpecifiedValue(expandedProp);
+            list.add(specified);
+        }
+        return list;
+    }
 
     private PropertySets (){}
 
