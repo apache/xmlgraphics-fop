@@ -65,4 +65,20 @@ public class CommonAbsolutePosition {
         left = pList.get(Constants.PR_LEFT).getLength();
         right = pList.get(Constants.PR_RIGHT).getLength();      
     }
+    
+    public String toString() {
+        StringBuffer sb = new StringBuffer("CommonAbsolutePosition{");
+        sb.append(" absPos=");
+        sb.append(absolutePosition);
+        sb.append(" top=");
+        sb.append(top);
+        sb.append(" bottom=");
+        sb.append(bottom);
+        sb.append(" left=");
+        sb.append(left);
+        sb.append(" right=");
+        sb.append(right);
+        sb.append("}");
+        return sb.toString();
+    }
 }
