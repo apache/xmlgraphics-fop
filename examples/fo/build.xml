@@ -69,7 +69,7 @@
   <target name="newPDF" depends="init" description="Creates a new set of PDF test files">
     <antcall target="newTestFiles">
       <param name="mimetype" value="application/pdf"/>
-      <param name="msglevel" value="debug"/>
+      <param name="msglevel" value="warn"/>
       <param name="outDir" value="${testDir}"/>
     </antcall>
   </target>
@@ -79,7 +79,7 @@
   <target name="newPS" depends="init" description="Creates a new set of PostScript test files">
     <antcall target="newTestFiles">
       <param name="mimetype" value="application/postscript"/>
-      <param name="msglevel" value="debug"/>
+      <param name="msglevel" value="warn"/>
       <param name="outDir" value="${testDir}"/>
     </antcall>
   </target>
@@ -89,7 +89,7 @@
   <target name="newAT" depends="init" description="Creates a new set of AreaTree XML test files">
     <antcall target="newTestFiles">
       <param name="mimetype" value="text/xml"/>
-      <param name="msglevel" value="debug"/>
+      <param name="msglevel" value="warn"/>
       <param name="outDir" value="${testDir}"/>
     </antcall>
   </target>
@@ -106,7 +106,7 @@
     <mkdir dir="${referenceDir}"/>
     <antcall target="newTestFiles">
       <param name="mimetype" value="application/pdf"/>
-      <param name="msglevel" value="debug"/>
+      <param name="msglevel" value="warn"/>
       <param name="outDir" value="${referenceDir}"/>
     </antcall>
   </target>
