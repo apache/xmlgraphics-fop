@@ -22,17 +22,29 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.PrintWriter;
 
+// JAXP
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamSource;
 
+// XML
 import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.commons.logging.Log;
 import org.apache.fop.apps.Driver;
-import org.apache.fop.apps.XSLTInputHandler;
 import org.xml.sax.InputSource;
+
+//Java
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+
 
 /**
  * Example servlet to generate a fop printout from a servlet.
@@ -55,7 +67,6 @@ import org.xml.sax.InputSource;
  * @version $Id: FopPrintServlet.java,v 1.2 2003/03/07 09:48:05 jeremias Exp $
  * (todo) Doesn't work since there's no AWTRenderer at the moment. Revisit when
  * available.
- * (todo) Don't use XSLTInputHandler anymore
  * (todo) Ev. add caching mechanism for Templates objects
  */
 public class FopPrintServlet extends HttpServlet {
@@ -101,10 +112,7 @@ public class FopPrintServlet extends HttpServlet {
                 InputStream file = new java.io.FileInputStream(foParam);
                 renderFO(new InputSource(file), response);
             } else if ((xmlParam != null) && (xsltParam != null)) {
-                XSLTInputHandler input =
-                  new XSLTInputHandler(new File(xmlParam),
-                                       new File(xsltParam), null);
-                renderXML(input, response);
+                renderXML(new File(xmlParam), new File(xsltParam), response);
             } else {
                 response.setContentType("text/html");
 
@@ -142,16 +150,29 @@ public class FopPrintServlet extends HttpServlet {
 
     /**
      * Renders an FO generated using an XML and a stylesheet to the default printer.
-     * @param input XSLTInputHandler to use
-     * @param response Response to write to
+     * @param xmlfile XML file object
+     * @param xsltfile XSLT stylesheet 
+     * @param response HTTP response object
      * @throws ServletException In case of a problem
      */
-    public void renderXML(XSLTInputHandler input,
+    public void renderXML(File xmlfile, File xsltfile,
                           HttpServletResponse response) throws ServletException {
         try {
             Driver driver = new Driver();
             driver.setRenderer(Driver.RENDER_PRINT);
-            driver.render(input.getParser(), input.getInputSource());
+
+            // Setup XSLT
+            TransformerFactory factory = TransformerFactory.newInstance();
+            Transformer transformer = factory.newTransformer(new StreamSource(xsltfile));
+            
+            // Setup input for XSLT transformation
+            Source src = new StreamSource(xmlfile);
+        
+            // Resulting SAX events (the generated FO) must be piped through to FOP
+            Result res = new SAXResult(driver.getContentHandler());
+
+            // Start XSLT transformation and FOP processing
+            transformer.transform(src, res);
 
             reportOK (response);
         } catch (Exception ex) {
