@@ -54,6 +54,8 @@ package org.apache.fop.fo.pagination;
 import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.apps.FOPException;				   
+import org.apache.fop.layout.PageMaster;
+import org.apache.fop.apps.FOPException;                   
 
 // Java
 import java.util.Hashtable;
@@ -71,15 +73,18 @@ public class LayoutMasterSet extends FObj {
 	return new LayoutMasterSet.Maker();
     }
 
-    private Hashtable layoutMasters;
-    private Root root;
+    private Hashtable simplePageMasters;
+	private Hashtable pageSequenceMasters;
+	private Root root;
 	
     protected LayoutMasterSet(FObj parent, PropertyList propertyList)
 	throws FOPException {
 	super(parent, propertyList);
 	this.name = "fo:layout-master-set";
 
-	this.layoutMasters = new Hashtable();
+	this.simplePageMasters = new Hashtable();
+	this.pageSequenceMasters = new Hashtable();
+	
 	if (parent.getName().equals("fo:root")) {
 	    this.root = (Root)parent;
 	    root.setLayoutMasterSet(this);
@@ -90,11 +95,62 @@ public class LayoutMasterSet extends FObj {
 	}
     }
 
-    protected void addLayoutMaster(String masterName, SimplePageMaster layoutMaster) {
-	this.layoutMasters.put(masterName, layoutMaster);
+	public PageMaster getNextPageMaster( String pageSequenceName,
+		int currentPageNumber, boolean thisIsFirstPage )
+		throws FOPException
+	{
+		PageMaster pm = null;
+		
+		PageSequenceMaster psm = getPageSequenceMaster( pageSequenceName );
+		if (null != psm)
+		{
+			pm = psm.getNextPageMaster( currentPageNumber, thisIsFirstPage );
+		} else {
+			SimplePageMaster spm = getSimplePageMaster( pageSequenceName );
+			if (null == spm)
+			{
+				throw new FOPException( "'master-name' for 'fo:page-sequence'" +
+					"matches no 'simple-page-master' or 'page-sequence-master'" );
+			}
+			pm = spm.getNextPageMaster();
+		}
+		return pm;
+	}
+	
+    protected void addSimplePageMaster(
+		String masterName, SimplePageMaster simplePageMaster)
+		throws FOPException {
+	// check against duplication of master-name
+	if (existsName(masterName))
+		throw new FOPException( "'master-name' must be unique" +
+			"across page-masters and page-sequence-masters" );
+	this.simplePageMasters.put(masterName, simplePageMaster);
     }
 
-    protected SimplePageMaster getLayoutMaster(String masterName) {
-	return (SimplePageMaster)this.layoutMasters.get(masterName);
+    protected SimplePageMaster getSimplePageMaster(String masterName) {
+		return (SimplePageMaster)this.simplePageMasters.get(masterName);
     }
+
+    protected void addPageSequenceMaster(
+		String masterName, PageSequenceMaster pageSequenceMaster)
+		throws FOPException {
+	// check against duplication of master-name
+	if (existsName(masterName))
+		throw new FOPException( "'master-name' must be unique " +
+			"across page-masters and page-sequence-masters" );
+	this.pageSequenceMasters.put(masterName, pageSequenceMaster);
+    }
+
+    protected PageSequenceMaster getPageSequenceMaster(String masterName) {
+	return (PageSequenceMaster)this.pageSequenceMasters.get(masterName);
+    }
+	
+	private boolean existsName( String masterName )
+	{
+		if (simplePageMasters.containsKey(masterName) ||
+			pageSequenceMasters.containsKey(masterName))
+			return true;
+		else
+			return false;
+	}
 }
