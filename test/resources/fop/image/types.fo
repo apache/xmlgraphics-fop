@@ -37,6 +37,7 @@ gif (<fo:external-graphic src="file:logo.gif"/>),
 tiff (<fo:external-graphic src="file:logo.tif"/>),
 svg (<fo:external-graphic src="file:logo.svg"/>),
 bmp (<fo:external-graphic src="file:logo.bmp"/>),
+eps (<fo:external-graphic src="file:logo.eps"/>),
 png (<fo:external-graphic src="file:logo.png"/>).
   </fo:block>
 </fo:block>
