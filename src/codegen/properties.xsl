@@ -311,7 +311,7 @@ Software Foundation, please see <http://www.apache.org/>.
 
     <redirect:write select="concat($classname, '.java')">
       <xsl:text>package org.apache.fop.fo.properties;
-import org.apache.fop.fo.Constants;
+      
 </xsl:text>
       <xsl:if test=".//keyword-equiv or ./name[.='generic-color']">
         <xsl:text>
@@ -338,6 +338,10 @@ import org.apache.fop.fo.*;</xsl:text>
         <xsl:text>
 import org.apache.fop.apps.FOPException;</xsl:text>
       </xsl:if>
+  <xsl:if test=".//enumeration and @type='generic'">
+    <xsl:text>
+import org.apache.fop.fo.Constants;</xsl:text>
+</xsl:if>
       <xsl:text>
 
 public class </xsl:text>
