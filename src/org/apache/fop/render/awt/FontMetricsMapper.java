@@ -54,7 +54,7 @@ import org.apache.fop.layout.FontState;
 // Java
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.awt.Component;
+import java.awt.Graphics2D;
 import java.awt.Font;
 
 
@@ -99,11 +99,11 @@ public class FontMetricsMapper implements org.apache.fop.layout.FontMetric {
     *                that we can get an instance of
     *                java.awt.FontMetrics
     */
-    public FontMetricsMapper(String family, int style, Component parent) {
+    public FontMetricsMapper(String family, int style, Graphics2D graphics) {
         this.family = family;
         this.style = style;
         if (metric == null)
-            metric = new AWTFontMetrics(parent);
+            metric = new AWTFontMetrics(graphics);
     }
 
     /**

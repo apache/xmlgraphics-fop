@@ -73,16 +73,6 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
      */
     protected String currentFontName;
 
-
-    /**
-     *  The parent component, used to set up the font.
-     * This is needed as FontSetup needs a live AWT component
-     * in order to generate valid font measures.
-     */
-    protected Component parent;
-
-
-
     /**
      * The current font size in millipoints
      */
@@ -94,6 +84,13 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
     protected float currentRed = 0;
     protected float currentGreen = 0;
     protected float currentBlue = 0;
+
+    /**
+     *  The parent component, used to set up the font.
+     * This is needed as FontSetup needs a live AWT component
+     * in order to generate valid font measures.
+     */
+    protected Component parent;
 
     /**
      * The current vertical position in millipoints from bottom
@@ -112,12 +109,12 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 
 	/** options */
 	protected Hashtable options;
-	
+
 	/** set up renderer options */
 	public void setOptions(Hashtable options) {
 		this.options = options;
 	}
-	
+
     public AWTRenderer(Translator aRes) {
         res = aRes;
     }
@@ -465,7 +462,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         return new Rectangle2D.Double(currentAreaContainerXPosition,
                                       currentYPosition, a.getAllocationWidth(), a.getHeight());
     }
-
+/*
     public void renderBlockArea(BlockArea area) {
         doFrame(area);
         Enumeration e = area.getChildren().elements();
@@ -475,9 +472,24 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
             b.render(this);
         }
     }
+*/
+    public void renderBlockArea(BlockArea area) {
+        this.currentYPosition -= (area.getPaddingTop() + area.getBorderTopWidth());
+        doFrame(area);
+        Enumeration e = area.getChildren().elements();
+        while (e.hasMoreElements()) {
+            org.apache.fop.layout.Box b =
+              (org.apache.fop.layout.Box) e.nextElement();
+            b.render(this);
+        }
+	this.currentYPosition -= (area.getPaddingBottom() + area.getBorderBottomWidth());
+	}
+
 
     public void setupFontInfo(FontInfo fontInfo) {
-        FontSetup.setup(fontInfo, parent);
+        // create a temp Image to test font metrics on
+        BufferedImage fontImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+        FontSetup.setup(fontInfo, fontImage.createGraphics());
     }
 
     public void renderDisplaySpace(DisplaySpace space) {
@@ -488,7 +500,9 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 
     public void renderImageArea(ImageArea area) {
 
-        int x = currentAreaContainerXPosition + area.getXOffset();
+        int x = currentAreaContainerXPosition +
+                area.getXOffset();
+
         int y = currentYPosition;
         int w = area.getContentWidth();
         int h = area.getHeight();
@@ -553,7 +567,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
                      area.getFontState().getFontInfo().getMetricsFor(name);
         } catch (FOPException iox) {
             mapper = new FontMetricsMapper("MonoSpaced",
-                                           java.awt.Font.PLAIN, parent);
+                                           java.awt.Font.PLAIN, graphics);
         }
 
         if ((!name.equals(this.currentFontName)) ||
@@ -573,7 +587,16 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         int bl = this.currentYPosition;
 
 
-        String s = area.getText();
+        String s;// = area.getText();
+        if (area.getPageNumberID() != null) { // this text is a page number, so resolve it
+            s = tree.getIDReferences().getPageNumber(area.getPageNumberID());
+            if (s == null) {
+                s = "";
+            }
+        } else {
+            s = area.getText();
+        }
+
         Color oldColor = graphics.getColor();
         java.awt.Font oldFont = graphics.getFont();
         java.awt.Font f = mapper.getFont(size);
@@ -589,7 +612,6 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         }
         graphics.setColor(saveColor);
 
-        FontRenderContext newContext = graphics.getFontRenderContext();
         AttributedString ats = new AttributedString(s);
         ats.addAttribute(TextAttribute.FONT, f);
         if (underlined) {
@@ -609,6 +631,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
     }
 
     public void renderLineArea(LineArea area) {
+
         int rx = this.currentAreaContainerXPosition + area.getStartIndent();
         int ry = this.currentYPosition;
         int w = area.getContentWidth();
@@ -751,11 +774,25 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         Page page = (Page) tree.getPages().elementAt(pageIndex);
         PageFormat pageFormat = new PageFormat();
         Paper paper = new Paper();
-        paper.setImageableArea(0, 0, page.getWidth() / 1000d,
-                               page.getHeight() / 1000d);
-        paper.setSize(page.getWidth() / 1000d, page.getHeight() / 1000d);
-        pageFormat.setPaper(paper);
 
+        double width = page.getWidth();
+        double height = page.getHeight();
+
+        // if the width is greater than the height assume lanscape mode
+        // and swap the width and height values in the paper format
+        if(width > height)
+        {
+            paper.setImageableArea(0, 0, height / 1000d, width / 1000d);
+            paper.setSize(height / 1000d, width / 1000d);
+            pageFormat.setOrientation(PageFormat.LANDSCAPE);
+        }
+        else
+        {
+            paper.setImageableArea(0, 0, width / 1000d, height / 1000d);
+            paper.setSize(width / 1000d, height / 1000d);
+            pageFormat.setOrientation(PageFormat.PORTRAIT);
+        }
+        pageFormat.setPaper(paper);
         return pageFormat;
     }
 
@@ -815,11 +852,13 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
             MessageHandler.errorln("AWTRenderer: renderImage(): " +
                                    ex.getMessage());
         }
+
     }*/
 
     public void renderForeignObjectArea(ForeignObjectArea area) {
         area.getObject().render(this);
     }
+
 
     protected class MUserAgent implements UserAgent {
         AffineTransform currentTransform = null;
