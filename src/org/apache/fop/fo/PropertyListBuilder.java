@@ -110,6 +110,7 @@ public class PropertyListBuilder {
 	propertyTable.put("padding-left",PaddingLeft.maker());
 	propertyTable.put("padding-right",PaddingRight.maker());
 	propertyTable.put("external-destination",ExternalDestination.maker());
+        propertyTable.put("internal-destination",InternalDestination.maker());
 	propertyTable.put("height",SVGLength.maker());
 	propertyTable.put("width",SVGLength.maker());
 	propertyTable.put("x",SVGLength.maker());
