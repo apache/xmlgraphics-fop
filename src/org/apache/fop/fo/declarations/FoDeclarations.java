@@ -78,14 +78,16 @@ public class FoDeclarations extends FONode {
                 throw new FOPException
                         ("No fo:color-profile in fo:declarations.");
             new FoColorProfile(foTree, this, ev);
-            xmlevents.getEndElement(ev);
+            ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+            pool.surrenderEvent(ev);
             do {
                 ev = xmlevents.expectStartElement
                     (FObjectNames.COLOR_PROFILE, XMLEvent.DISCARD_W_SPACE);
                 if (ev == null) break; // No instance of these elements found
                 new FoColorProfile(foTree, this, ev);
                 // Flush the master event
-                xmlevents.getEndElement(ev);
+                ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+                pool.surrenderEvent(ev);
             } while (true);
         } catch (NoSuchElementException e) {
             // Unexpected end of file
