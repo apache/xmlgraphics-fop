@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="yes"?>
 
-<svg:svg width="400px" height="120px" xmlns:svg="http://www.w3.org/TR/2000/CR-SVG-20000802/DTD/svg-20000802.dtd">
+<svg:svg width="400px" height="120px" xmlns:svg="http://www.w3.org/2000/svg">
   <svg:title>RotateScale</svg:title>
   <svg:desc>Example RotateScale - Rotate and scale transforms</svg:desc>
 

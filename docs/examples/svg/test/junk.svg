@@ -1,5 +1,5 @@
 <svg:svg width="400" height="200" 
-    		    xmlns:svg="http://www.w3.org/TR/2000/CR-SVG-20000802/DTD/svg-20000802.dtd">
+    		    xmlns:svg="http://www.w3.org/2000/svg">
   <svg:g transform="matrix(1 0.3 0.2 1.3 30 0)" style="stroke: black; stroke-width: 1; fill: none">
     <svg:rect x="20" y="20" width="100" height="100"/>
     <svg:line x1="20" y1="20" x2="120" y2="120"/>
