@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The Apache Software Foundation.
+ * Copyright 2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -202,6 +202,19 @@ public class CommonBorderPaddingBackground implements Cloneable {
         }
     }
 
+    /**
+     * Return all the border and padding width in the inline progression 
+     * dimension.
+     * @param bDiscard the discard flag.
+     * @return all the padding and border width.
+     */
+    public int getIPPaddingAndBorder(boolean bDiscard) {
+        return getPaddingStart(bDiscard) 
+            + getPaddingEnd(bDiscard) 
+            + getBorderStartWidth(bDiscard) 
+            + getBorderEndWidth(bDiscard);        
+    }
+    
     /**
      * Return all the border and padding height in the block progression 
      * dimension.
