@@ -338,10 +338,10 @@ public class PDFRenderer implements Renderer {
 
 	int xObjectNum = this.pdfDoc.addImage(img);
 
-	currentStream.add("ET\nq\n" + (img.getWidth()/1000f) + " 0 0 " +
-			  (img.getHeight()/1000f) + " " + 
-			  ((x + img.getX())/1000f) + " " + 
-			  (((y - h) - img.getY())/1000f) + " cm\n" +
+	currentStream.add("ET\nq\n" + (((float) w) / 1000f) + " 0 0 " +
+			  (((float) h) / 1000f) + " " + 
+			  (((float) x) / 1000f) + " " + 
+			  (((float) (y - h)) / 1000f) + " cm\n" +
 			  "/Im" + xObjectNum + " Do\nQ\nBT\n"); 
 	}
 	
