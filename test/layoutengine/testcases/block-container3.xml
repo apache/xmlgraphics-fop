@@ -18,7 +18,12 @@
 <testcase>
   <info>
     <p>
-      This test checks indents on block-containers.
+      This test checks indents on block-containers and especially inheritance of start-indent over a block-container.
+    </p>
+    <p>
+      Since block-container generates a reference-area and no margin is specified the block-container as well as its 
+      nested block inherit the start-indent of the top-most block. Since block-container also creates a viewport 
+      the orange block is effectively indented two times by 10 pt. (See 5.3.2 in XSL 1.0)
     </p>
   </info>
   <fo>
@@ -41,10 +46,28 @@
     </fo:root>
   </fo>
   <checks>
+    <!-- Outer block with the start-indent property -->
+    <eval expected="10000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@start-indent"/>
+    <eval expected="10000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@space-start"/>
+    <eval expected="350000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@ipd"/>
+    <eval expected="350000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@ipda"/>
+    <!-- yellow block -->
+    <eval expected="10000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/@start-indent"/>
+    <eval expected="10000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/@space-start"/>
     <eval expected="350000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/@ipd"/>
-    <eval expected="360000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/@ipda"/>
-    <!-- TODO Complete checks after clarifying interpretation -->
-    <!--eval expected="350000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[2]/block[1]/@ipd"/>
-    <eval expected="350000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[2]/block[1]/@ipda"/-->
+    <eval expected="350000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/@ipda"/>
+    <!-- block-container -->
+    <eval expected="10000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[2]/@start-indent"/>
+    <eval expected="10000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[2]/@space-start"/>
+    <eval expected="350000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[2]/@ipd"/>
+    <eval expected="350000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[2]/@ipda"/>
+    <!-- block-container's reference area -->
+    <eval expected="350000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[2]/block[1]/@ipd"/>
+    <eval expected="350000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[2]/block[1]/@ipda"/>
+    <!-- orange block inside the block-container -->
+    <eval expected="10000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[2]/block[1]/block[1]/@start-indent"/>
+    <eval expected="10000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[2]/block[1]/block[1]/@space-start"/>
+    <eval expected="340000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[2]/block[1]/block[1]/@ipd"/>
+    <eval expected="340000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[2]/block[1]/block[1]/@ipda"/>
   </checks>
 </testcase>
