@@ -64,7 +64,9 @@
     <section id="contribute-active">
       <title>Active Contributors</title>
       <ul>
-        <li>Your name here!</li>
+        <li id="rr"><link href="mailto:renaud.richardet AT gmail DOT com">Renaud Richardet</link> (RR)
+            is a Java Programmer interested in XML technologies. See his 
+            <fork href="http://www.oslutions.com">home page</fork> for more information about him.</li>
       </ul>
     </section>
     <section id="founder">
