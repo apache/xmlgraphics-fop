@@ -125,6 +125,10 @@ public class SimplePageMaster extends FObj {
         properties = null;
     }
 
+    public boolean generatesReferenceAreas() {
+        return true;
+    }
+
     public PageMaster getPageMaster() {
         return this.pageMaster;
     }

@@ -8,7 +8,7 @@
 package org.apache.fop.layout;
 
 /**
- * Store all hyphenation related properties on an FO.
+ * Store all block-level margin related properties on an FO.
  * Public "structure" allows direct member access.
  */
 public class MarginProps {
