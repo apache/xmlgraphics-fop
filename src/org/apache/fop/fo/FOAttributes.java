@@ -79,6 +79,7 @@ public class FOAttributes {
                                     = new Integer[] { Ints.consts.get(0) };
 
     private FONode foNode;
+    public final PropertyConsts propertyConsts;
 
     /**
      * Construct an <i>FOAttributes</i> object.
@@ -97,6 +98,9 @@ public class FOAttributes {
      * associated.
      */
     public FOAttributes (XMLEvent event, FONode foNode) throws FOPException {
+
+        propertyConsts = PropertyConsts.getPropertyConsts();
+
         // If the event is null, there is no event associated with this
         // node, probably because this is a manufactured node; e.g.,
         // an "invented" FopageSequenceMaster.  The default initialisation
@@ -127,18 +131,9 @@ public class FOAttributes {
                 // Catch default namespace declaration here.
                 if (attrLocalname.equals("xmlns")) break;
                 // Is this a known (valid) property?
-                try {
-                    // throws PropertyException if invalid
-                    propIndex =
-                            PropertyConsts.getPropertyIndex(attrLocalname);
+                propIndex = PropNames.getPropertyIndex(attrLocalname);
                     // Known attribute name
-                    foAttrMap.put(Ints.consts.get(propIndex), attrValue);
-                } catch (PropertyException e) {
-                    // Not known - ignore
-                    MessageHandler.errorln(event.getQName() + " "
-                                           + attrQName
-                                           + " not recognized.  Ignoring.");
-                }
+                foAttrMap.put(Ints.consts.get(propIndex), attrValue);
             } else { // Not the XSL FO namespace
                 int j;
                 if (nSpaceAttrMaps == null) {
@@ -234,8 +229,7 @@ public class FOAttributes {
     public String getFoAttrValue(String propertyName)
         throws PropertyException
     {
-        return getFoAttrValue
-                        (PropertyConsts.getPropertyIndex(propertyName));
+        return getFoAttrValue(PropNames.getPropertyIndex(propertyName));
     }
 
     /**
@@ -274,7 +268,7 @@ public class FOAttributes {
         throws PropertyException
     {
         if (uriIndex == XMLNamespaces.DefAttrNSIndex)
-            return getFoAttrValue(PropertyConsts.getPropertyIndex(localName));
+            return getFoAttrValue(PropNames.getPropertyIndex(localName));
         return (String)
                 (((HashMap)nSpaceAttrMaps.get(uriIndex)).get(localName));
     }

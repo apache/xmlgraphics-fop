@@ -9,7 +9,10 @@
 
 package org.apache.fop.fo;
 
+import java.util.HashMap;
+
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.datatypes.Ints;
 
 /**
  * A class of constants; an array of all property names and the constants
@@ -735,6 +738,25 @@ public class PropNames {
     };
 
     /**
+     * A <tt>hashMap</tt> mapping property names (the keys) to
+     * property integer indices.
+     */
+    private static final HashMap toIndex;
+    static {
+        toIndex = new HashMap(LAST_PROPERTY_INDEX + 1);
+        // Set up the toIndex Hashmap with the name of the
+        // property as a key, and the integer index as a value
+        for (int i = 0; i <= LAST_PROPERTY_INDEX; i++) {
+            if (toIndex.put(propertyNames[i],
+                                    Ints.consts.get(i)) != null) {
+                throw new RuntimeException(
+                    "Duplicate values in toIndex for key " +
+                    propertyNames[i]);
+            }
+        }
+    }
+
+    /**
      * @param propindex <tt>int</tt> index of the FO property.
      * @return <tt>String</tt> name of the indexd FO property.
      * @exception PropertyException if the property index is invalid.
@@ -746,6 +768,16 @@ public class PropNames {
                 throw new PropertyException
                         ("getPropertyName: index is invalid: " + propindex);
         return propertyNames[propindex];
+    }
+
+    /**
+     * @param propindex <tt>int</tt> index of the FO property.
+     * @return <tt>String</tt> name of the indexd FO property.
+     * @exception PropertyException if the property index is invalid.
+     */
+    public static int getPropertyIndex(String name)
+    {
+        return ((Integer)(toIndex.get(name))).intValue();
     }
 
 }
