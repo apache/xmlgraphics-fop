@@ -81,6 +81,14 @@ Software Foundation, please see <http://www.apache.org/>.
   </xsl:choose>
 </xsl:template>
 
+<!-- Generate enumeration constants for FO's, Properties, etc. -->
+<xsl:template name="makeEnumConstant">
+  <xsl:param name="propstr"/>
+  <xsl:variable name="lcletters" select="'abcdefghijklmnopqrstuvwxyz-:'" />
+  <xsl:variable name="ucletters" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ__'" />
+  <xsl:value-of select="translate($propstr, $lcletters, $ucletters)"/>
+</xsl:template>
+
 <!-- The name of the subclass of Property to be created -->
 <xsl:template name="propclass">
   <xsl:param name="prop" select="."/>
