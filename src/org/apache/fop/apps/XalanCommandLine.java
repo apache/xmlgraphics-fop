@@ -71,6 +71,7 @@ import java.io.FileNotFoundException;
 import java.net.URL;
 
 // Xalan
+import org.apache.xalan.xpath.xml.XMLParserLiaison;
 import org.apache.xalan.xslt.XSLTInputSource;
 import org.apache.xalan.xslt.XSLTProcessor;
 import org.apache.xalan.xslt.XSLTProcessorFactory;
@@ -204,8 +205,17 @@ public class XalanCommandLine {
       XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
 
       // Create the 3 objects the XSLTProcessor needs to perform the transformation.
-      XSLTInputSource xmlSource  = new XSLTInputSource (args[0]);
-      XSLTInputSource xslSheet   = new XSLTInputSource (args[1]);
+      // Fix up the args...
+      XMLParserLiaison xmlPL = processor.getXMLProcessorLiaison();
+      URL urlTmp = xmlPL.getURLFromString(args[0], null);
+      System.err.println("XML File: " + args[0]);
+      System.err.println("URL: " + urlTmp);
+      XSLTInputSource xmlSource  = new XSLTInputSource (urlTmp.toString());
+      urlTmp = xmlPL.getURLFromString(args[1], null);
+      System.err.println("XSL File: " + args[1]);
+      System.err.println("URL: " + urlTmp);
+      XSLTInputSource xslSheet   = new XSLTInputSource (urlTmp.toString());
+
       XSLTResultTarget xmlResult = new XSLTResultTarget (writer);
 
       // Perform the transformation.
