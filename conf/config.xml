@@ -5,7 +5,7 @@
 <configuration>
   <entry>
     <key>version</key>
-    <value>FOP 0.17.0 DEV</value>
+    <value>FOP @version@</value>
   </entry>
 
   <!-- default values for commandline options -->
