@@ -44,7 +44,6 @@ list of possible build targets.
   <fileset dir="${basedir}" id="dist.bin">
     <include name="conf/**"/>
     <include name="docs/**"/>
-    <include name="hyph/**"/>
     <include name="CHANGES"/>
     <include name="LICENSE"/>
     <include name="README"/>
@@ -75,7 +74,6 @@ list of possible build targets.
     <include name="src/**"/>
     <include name="conf/**"/>
     <include name="docs/**"/>
-    <include name="hyph/**"/>
     <include name="lib/**"/>
     <include name="CHANGES"/>
     <include name="LICENSE"/>
@@ -151,7 +149,7 @@ list of possible build targets.
     <property name="xdocs.dir" value="./src/documentation/content/xdocs"/>
     <property name="fo.examples.dir" value="./docs/examples/fo"/>
     <property name="lib.dir" value="./lib"/>
-    <property name="hyph.dir" value="./hyph"/>
+    <property name="hyph.dir" value="./src/hyph"/>
     <property name="conf.dir" value="./conf"/>
     <property name="packages" value="org.apache.fop.*"/>
 
