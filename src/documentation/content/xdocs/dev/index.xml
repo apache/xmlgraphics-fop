@@ -6,11 +6,15 @@
     <title>Information for FOP Developers</title>
   </header>
   <body>
-    <section>
+    <section id="intro">
       <title>Introduction</title>
-      <p>These pages contain information that should be helpful for those developing FOP.</p>
+      <p>These pages contain information that should be helpful for those developing FOP.
+This certainly includes programmers, but may also include those contributing to the project in other ways.</p>
       <p>For basic and user information on FOP, please visit the <link href="http://xml.apache.org/fop">FOP homepage</link>.</p>
-      <p>It is important to understand that there are currently three lines of development on the FOP product:</p>
+    </section>
+    <section id="lines">
+      <title>Development Lines</title>
+      <p>There are currently three lines of development on the FOP product:</p>
       <ul>
         <li>The oldest is the one that releases are currently generated from, and is also called the "maintenance branch". Because of limitations in its design, the FOP committers decided to freeze new development on this branch, and are providing only bug fixes. This branch is tagged as "fop-0_20_2-maintain" in the CVS repository.</li>
         <li>The main development line is the future of FOP. It was spawned from the "maintenance" branch, but had to quickly be "broken" so that the needed redesign could be dropped into place. It is currently not as mature as the "maintenance" branch, but has far greater long-term prospects. It is also known as the "root" or "trunk" or "redesign".</li>
@@ -21,6 +25,7 @@
     </section>
     <section>
       <title>Getting Involved</title>
+      <p>Review the <link href="http://xml.apache.org/roles.html">Apache Project Roles and Responsibilities</link> document for an understanding of the various roles of contributors within the community.</p>
       <p>There are many different ways that you can help with FOP development.
 The development of FOP and the related plans and tasks are discussed on the dev mailing list.
 Users can help or get issues resolved by contributing information and examples to the developers.
@@ -57,17 +62,16 @@ internally will be kept.
      fop-cvs-subscribe@xml.apache.org</link>. If you want to contribute to the development of Fop you should subscribe,
      because it is important that you follow changes being made. </p>
       </section>
-      <section>
-        <title>Contributing code, tests and documentation</title>
-        <p>If you want to contribute code (p.e. a bugfix), a test or documentation (p.e. an additional example), please do the following: </p>
-        <p>1) Make sure your code doesn't break the existing one and that Fop still compiles.</p>
-        <p>2) Create a file which shows the differences to the existing code.</p>
-        <p>3) Send this file as an <strong>Attachment</strong> to <link href="mailto:fop-dev@xml.apache.org">fop-dev@xml.apache.org.</link>
-        </p>
-        <p>One of the committers will test your code and commit it to the code repository.</p>
-        <p>If you have a test or useful bug test you should <link href="testing.html">read this page</link>.</p>
-        <p>BTW: The Apache project knows different roles for contributors, namely 'users', 'developers', 'committers' and the 'Project
-     Management Committee' (An explanation of these roles can be found <link href="http://xml.apache.org/roles.html">here</link>).</p>
+      <section id="patches">
+        <title>Submitting Patches</title>
+        <p>If you have useful changes to source code (bugfixes or enhancements), test files, or documentation that you would like to contribute to the project, please do the following:</p>
+        <ul>
+          <li>If your changes include source code, make sure that it does not break FOP (i.e. make sure that FOP still compiles with your changes).</li>
+          <li>If your changes include test files, review the <link href="testing.html">Testing page</link>.</li>
+          <li><link href="tools.html#cvs_patch">Create a patch file</link> for the differences to be applied to the existing code.</li>
+          <li><link href="../bugs.html#issues_new">Create a new bugzilla issue</link> for the patch. Include the text "[PATCH]" at the beginning of the description. Attach the patch file to the issue.</li>
+        </ul>
+        <p>One of the committers will test your patch and consider its implications for the project. They will then either commit it to the repository or explain on the issue why they did not. Depending on the work load and skill-sets of the various committers, it may take some time before a a submitted patch is addressed.</p>
       </section>
       <section>
         <title>Coding Conventions</title>
