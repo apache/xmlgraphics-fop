@@ -116,13 +116,6 @@ support (better) the direct rendering of text into pdf graphics
 and other similair outputs
     </p>
 </s3>
-<s3 title="svg renderer (output to svg doc for slide presentation)">
-    <p>
-Create an SVGRenderer that will render all pages onto a single
-svg document suitable for slide show presentations (with batik)
-suggested by Vincent Hardy.
-    </p>
-</s3>
 <s3 title="stream encoding">
     <p>
 Support for different encoding on different types of streams

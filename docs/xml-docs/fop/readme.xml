@@ -2,16 +2,28 @@
 
 <!-- Overview -->
 
+<document>
+    <header>
+        <title>FOP</title>
+        <subtitle>XSL Formatter - Renderer in Java</subtitle>
+        <authors>
+        </authors>
+    </header>
+
+    <body>
 <s1 title="FOP">
-  <s2 title="What is FOP?">
+<p>
+        <figure src="title.jpg" alt="FOP Title" />
+</p>
     <p>FOP is the world's first print formatter driven by XSL formatting
        objects. It is a Java application that reads a formatting object
-       tree and then turns it into a PDF document. The formatting object
-       tree, can be in the form of an XML document (output by an XSLT engine
-       like XT or Xalan) or can be passed in memory as a DOM Document or (in
-       the case of XT) SAX events.
+       tree and then renders the resulting pages to a specified output.
+       The primary output target is PDF.
     </p>
-    <p>The latest version of Fop is 0.20.1 and it supports the xsl:fo candidate release.
+<p>
+        <figure src="document.jpg" alt="Render Diagram" />
+</p>
+    <p>The latest version of Fop is 0.20.2 and it supports the xsl:fo candidate release.
        You can <jump href="download.html">download</jump> 
        Fop including a precompiled version, the source code and many example files to 
        get you started. Pointers to introductions into xsl:fo can be found in the
@@ -23,14 +35,35 @@
        limited. 
     </p>
     <p>FOP is part of Apache's XML project. The homepage of FOP is 
-       <jump href="http://xml.apache.org/fop">http://xml.apache.org/fop</jump>. A list
-       of known bugs, the committers to this project and the tasks they are working on can be found 
-       in the file <jump href="http://xml.apache.org/websrc/cvsweb.cgi/xml-fop/">Status</jump> in the
-       root of your Fop distribution. A history of the latest changes to the project can be found in CHANGES.
+       <jump href="http://xml.apache.org/fop">http://xml.apache.org/fop</jump>.
+Here you can find information about using and developing with FOP.
     </p>
-  </s2>
+  </s1>
 
-  <s2 title="FOP Objectives">
+  <s1 title="Formatting">
+<p>
+        <figure src="layout.jpg" alt="Formatting Diagram" />
+</p>
+<p>
+This image is a demonstration of a two page document. The xml data on the left
+is formatted into the two pages on the right. The document contains static areas
+that appear on every page, an external graphic in this case an svg document.
+There is a footnote on the first page and a table that goes across both pages.
+</p>
+<p>
+The advantage of XSL is the ability to take an XML document and to format
+the information into a page layout. The XML document can be generated
+in any way, the most common would be to use XSLT. FOP takes the XML
+and formats the data into pages. The pages are then rendered to the
+requested output.
+</p>
+<p>
+This is a real document. The image was created by rendering the document
+to the svg renderer then putting the rendered pages into an svg document
+along with the xml.
+</p>
+  </s1>
+  <s1 title="FOP Objectives">
     <p>The goals of the Apache XML FOP Project are to deliver an XSL FO->PDF formatter that is compliant to at least the Basic
        conformance level described in the W3C Candidate Recommendation 21 November 2000, and that complies with the 11 March 1999 Portable Document
        Format Specification (Version 1.3) from Adobe Systems. 
@@ -38,28 +71,14 @@
 
     <p>Conformance to the XML 1.0 Recommendation, XSLT 1.0 Recommendation and the XML Namespaces Recommendation is
        understood. Other relevant documents, such as the XPath and XLink Working Drafts, are referenced as necessary. The FOP
-       Project will attempt to use the latest version of evolving specifications. 
+       Project will attempt to use the latest version of evolving specifications.
     </p>
 
-    <p>Secondary goals of the FOP Project (also, "FOP") are desirable requirements that also have a high priority. 
-    </p>
-
-    <p>One secondary goal of the FOP Project is to deliver a follow-on version of the formatter that is compliant to the Extended
-       conformance level described in the XSL FO. Any formatting objects that cannot be translated into PDF will be explicitly
-       identified as such. 
-    </p>
-
-    <p>Another secondary goal is to improve the conversion of SVG into PDF.
-       This includes the use of FOP to work as a transcoder for Batik to convert
-       an SVG document into a PDF document and the fully support embedding SVG inside
-       fo documents in an fo:instream-foreign-object. 
-    </p>
-
-   <p>A final secondary goal is the continued refinement of the FOP design and implementation. In particular, maintaining the
-      separation between formatting and rendering, continuing to support the AWT Viewer renderer (backend), and providing
-      new renderers, are all desirable objectives. 
+   <p>To reach this aim currently the layout system is being redesigned to
+better handle the formatting of all different types of formatting objects.
    </p>
-  </s2>
+  </s1>
 
-</s1>
+    </body>
+</document>
 
