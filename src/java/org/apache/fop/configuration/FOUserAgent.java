@@ -16,7 +16,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.apps;
+package org.apache.fop.configuration;
 
 // Java
 import java.util.Map;

@@ -17,7 +17,7 @@
  * $Id$
  */
 
-package org.apache.fop.apps;
+package org.apache.fop.configuration;
 
 // sax
 import org.xml.sax.InputSource;
@@ -26,32 +26,23 @@ import org.xml.sax.InputSource;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Set;
-import java.util.Iterator;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-// fop
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
-import org.apache.fop.configuration.ConfigurationResource;
-import org.apache.fop.configuration.Configuration;
-import org.apache.fop.configuration.ConfigurationReader;
+import org.apache.fop.apps.Driver;
+import org.apache.fop.apps.FOFileHandler;
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.InputHandler;
+import org.apache.fop.apps.XSLTInputHandler;
 
 /**
- * FOPOptions handles loading of configuration files and
+ * SystemOptions handles loading of configuration files and
  * additional setting of commandline options
  */
-public class FOPOptions {
+public class SystemOptions {
 
     /** input / output not set */
     public static final int NOT_SET = 0;
@@ -80,88 +71,67 @@ public class FOPOptions {
     /** output: RTF file */
     public static final int RTF_OUTPUT = 10;
     
-    private static final int LAST_INPUT_MODE = XSLT_INPUT;
-    private static final int LAST_OUTPUT_MODE = RTF_OUTPUT;
+    protected static final int LAST_INPUT_MODE = XSLT_INPUT;
+    protected static final int LAST_OUTPUT_MODE = RTF_OUTPUT;
 
-    private Configuration configuration = null;
+    protected Configuration configuration = null;
 
-    /* Show debug info. Boolean object set from configuration files.  */
-    private boolean debug = false;
     /* show configuration information */
-    private boolean dumpConfig = false;
-    /* suppress any progress information */
-    /* for area tree XML output, only down to block area level */
+    protected boolean dumpConfig = false;
     /* name of user configuration file */
-    private File userConfigFile = null;
+    protected File userConfigFile = null;
     /* name of input fo file */
-    private File foFile = null;
+    protected File foFile = null;
     /* name of xsltFile (xslt transformation as input) */
-    private File xsltFile = null;
+    protected File xsltFile = null;
     /* name of xml file (xslt transformation as input) */
-    private File xmlFile = null;
+    protected File xmlFile = null;
     /* name of output file */
-    private File outputFile = null;
+    protected File outputFile = null;
     /* name of buffer file */
-    private File bufferFile = null;
+    protected File bufferFile = null;
     /* input mode */
-    private int inputmode = NOT_SET;
+    protected int inputmode = NOT_SET;
     /* output mode */
-    private int outputmode = NOT_SET;
+    protected int outputmode = NOT_SET;
     /* buffer mode */
-    private int buffermode = NOT_SET;
+    protected int buffermode = NOT_SET;
     /* language for user information */
     // baseDir (set from the config files
-    private String baseDir = null;
+    protected String baseDir = null;
 
-    private java.util.HashMap rendererOptions;
+    protected java.util.HashMap rendererOptions;
 
-    private Logger log = Logger.getLogger(Fop.fopPackage);
+    protected Logger log = Logger.getLogger(Fop.fopPackage);
 
-    private Vector xsltParams = null;
+    protected Vector xsltParams = null;
     
-    private Options options = new Options();
+    protected Options options = new Options();
 
-    private static final String defaultConfigFile = "config.xml";
-    private static final String defaultUserConfigFile = "userconfig.xml";
+    protected static final String defaultConfigFile = "config.xml";
     
     /**
      * An array of String indexed by the integer constants representing
      * the various input modes.  Provided so that integer modes can be
      * mapped to a more descriptive string, and vice versa.
      */
-    private String[] inputModes;
+    protected String[] inputModes;
     /**
      * An array of String indexed by the integer constants representing
      * the various output modes.  Provided so that integer modes can be
      * mapped to a more descriptive string, and vice versa.
      */
-    private String[] outputModes;
+    protected String[] outputModes;
 
-    /**
-     * Parser variables
-     */
-    private HashMap arguments = new HashMap();
 
     /**
      * 
      */
-    public FOPOptions(Configuration configuration) {
+    public SystemOptions(Configuration configuration) {
         setup();
         this.configuration = configuration;
         try {
             configure();
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (FOPException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    
-    public FOPOptions(Configuration configuration, String[] args) {
-        setup();
-        this.configuration = configuration;
-        try {
-            configure(args);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (FOPException e) {
@@ -220,7 +190,7 @@ public class FOPOptions {
         }
         throw new FOPException("Output mode " + mode + " not known");
     }
-    
+
     /**
      * Configure the system according to the system configuration file
      * config.xml and the user configuration file if it is specified in the
@@ -228,8 +198,7 @@ public class FOPOptions {
      */
     public void configure()
     throws FOPException, FileNotFoundException {
-        loadConfigFiles();
-        loadArguments();
+        loadConfiguration(getSystemConfigFileName());
         initOptions();
         try {
             checkSettings();
@@ -237,12 +206,6 @@ public class FOPOptions {
             printUsage();
             throw e;
         }
-    }
-    
-    public void configure(String[] args)
-    throws FOPException, FileNotFoundException {
-        parseOptions(args);
-        configure();
     }
     
     /**
@@ -270,25 +233,6 @@ public class FOPOptions {
         }
         return -1;
     }
-    
-    /**
-     * <code>parseOptions()</code> parses the command line into a
-     * <code>HashMap</code> which is
-     * passed to this method.  All key-Object pairs are installed in the
-     * <code>Configuration</code> maps.
-     */
-    void loadArguments() {
-        String key = null;
-        if (arguments != null) {
-            Set keys = arguments.keySet();
-            Iterator iter = keys.iterator();
-            while (iter.hasNext()) {
-                key = (String)iter.next();
-                configuration.put(key, arguments.get(key));
-            }
-        }
-    }
-    
     
     /**
      * Finish initialization of options.  The command line options, if
@@ -343,7 +287,7 @@ public class FOPOptions {
                 configuration.put("baseDir", baseDir);
             } catch (Exception e) {}
         }
-        if (debug) {
+        if (isDebugMode()) {
             log.config("base directory: " + baseDir);
         }
         
@@ -361,29 +305,6 @@ public class FOPOptions {
     }
     
     /**
-     * Load the standard configuration file and the user-defined configuration
-     * file if one has been defined.  The definition can occur in either the
-     * standard file or as a command line argument.
-     * @exception FOPException
-     */
-    private void loadConfigFiles() throws FOPException {
-        String str = null;
-        loadConfiguration(defaultConfigFile);
-        // load user configuration file,if there is one
-        // Has the userConfigFile been set from the command line?
-        if (arguments != null) {
-            if ((str = (String)arguments.get("userConfigFileName")) != null) {
-                configuration.put("userConfigFileName", str);
-            }
-        }
-        if ((str = configuration.getStringValue("userConfigFileName"))
-        != null) {  // No
-            System.out.println("userConfigFileName");
-            loadUserConfiguration(str);
-        }
-    }
-    
-    /**
      * Loads configuration file from a system standard place.
      * The context class loader and the <code>ConfigurationReader</code>
      * class loader are asked in turn to <code>getResourceAsStream</code>
@@ -397,57 +318,14 @@ public class FOPOptions {
         InputStream configfile = ConfigurationResource.getResourceFile(
                 "conf/" + fname, ConfigurationReader.class);
         
-        if (debug) {
+        if (isDebugMode()) {
             log.config(
-                    "reading configuration file " + fname);
+                    "reading configuration file conf/" + fname);
         }
         ConfigurationReader reader = new ConfigurationReader(
                 new InputSource(configfile), configuration);
     }
     
-    
-    /**
-     * Load a user-defined configuration file.
-     * An initial attempt is made to use a File generated from
-     * <code>userConfigFileName</code> as the configuration reader file input
-     * source.  If this fails, an attempt is made to load the file using
-     * <code>loadConfiguration</code>.
-     * @param userConfigFileName the name of the user configuration file.
-     */
-    public void loadUserConfiguration(String userConfigFileName) {
-        // read user configuration file
-        boolean readOk = true;
-        userConfigFile = new File(userConfigFileName);
-        if (userConfigFile == null) {
-            return;
-        }
-        log.config(
-                "reading user configuration file " + userConfigFileName);
-        try {
-            ConfigurationReader reader = new ConfigurationReader(
-                    InputHandler.fileInputSource(userConfigFile),
-                    configuration);
-        } catch (FOPException ex) {
-            log.warning("Can't find user configuration file "
-                    + userConfigFile + " in user locations");
-            if (debug) {
-                ex.printStackTrace();
-            }
-            readOk = false;
-        }
-        if (! readOk) {
-            try {
-                // Try reading the file using loadConfig()
-                loadConfiguration(userConfigFileName);
-            } catch (FOPException ex) {
-                log.warning("Can't find user configuration file "
-                        + userConfigFile + " in system locations");
-                if (debug) {
-                    ex.printStackTrace();
-                }
-            }
-        }
-    }
     
     /**
      * Get the log.
@@ -456,295 +334,6 @@ public class FOPOptions {
     public Logger getLogger() {
         return log;
     }
-    
-    private static final boolean TAKES_ARG = true;
-    private static final boolean NO_ARG = false;
-    private Options makeOptions() {
-        // Create the Options object that will be returned
-        Options options = new Options();
-        // The mutually exclusive verbosity group includes the -d and -q flags
-        OptionGroup verbosity = new OptionGroup();
-        OptionBuilder.withArgName("debug mode");
-        OptionBuilder.withLongOpt("full-error-dump");
-        OptionBuilder.withDescription("Debug mode: verbose reporting");
-        verbosity.addOption(
-                OptionBuilder.create("d"));
-        OptionBuilder.withArgName("quiet mode");
-        OptionBuilder.withLongOpt("quiet");
-        OptionBuilder.withDescription("Quiet mode: report errors only");
-        verbosity.addOption(
-                OptionBuilder.create("q"));
-        verbosity.setRequired(false);
-        // Add verbosity to options
-        options.addOptionGroup(verbosity);
-        // Add the dump-config option directly
-        OptionBuilder.withArgName("dump config");
-        OptionBuilder.withLongOpt("dump-config");
-        OptionBuilder.withDescription("Dump configuration settings");
-        options.addOption(
-                OptionBuilder.create("x"));
-        // Add the config-file option directly
-        OptionBuilder.withArgName("config file");
-        OptionBuilder.withLongOpt("config-file");
-        OptionBuilder.hasArg();
-        OptionBuilder.withDescription("Configuration file");
-        options.addOption(
-                OptionBuilder.create("c"));
-        // Add the language option directly
-        OptionBuilder.withArgName("language");
-        OptionBuilder.withLongOpt("language");
-        OptionBuilder.hasArg();
-        OptionBuilder.withDescription("ISO639 language code");
-        options.addOption(
-                OptionBuilder.create("l"));
-        // Create the mutually exclusive input group
-        OptionGroup input = new OptionGroup();
-        OptionBuilder.withArgName("fo:file");
-        OptionBuilder.withLongOpt("fo");
-        OptionBuilder.hasArg();
-        OptionBuilder.withDescription("XSL-FO input file");
-        input.addOption(
-                OptionBuilder.create("fo"));
-        OptionBuilder.withArgName("xml file");
-        OptionBuilder.withLongOpt("xml");
-        OptionBuilder.hasArg();
-        OptionBuilder.withDescription("XML source file for generating XSL-FO input");
-        input.addOption(
-                OptionBuilder.create("xml"));
-        // Add the input group to the options
-        options.addOptionGroup(input);
-        // The xsl option depends on the xml input option.  There is no
-        // simple way to express this relationship
-        OptionBuilder.withArgName("xsl stylesheet");
-        OptionBuilder.withLongOpt("xsl");
-        OptionBuilder.hasArg();
-        OptionBuilder.withDescription("XSL stylesheet for transforming XML to XSL-FO");
-        options.addOption(
-                OptionBuilder.create("xsl"));
-        // Work-around for the xsl parameters
-        // Allow multiple arguments (does this apply to multiple instances
-        // of the argument specifier?) of the form <name=value>, using '='
-        // as a value separator
-        OptionBuilder.withArgName("name=value");
-        OptionBuilder.withValueSeparator();
-        OptionBuilder.withLongOpt("xsl-param");
-        OptionBuilder.hasArgs(Option.UNLIMITED_VALUES);
-        OptionBuilder.withDescription("Parameter to XSL stylesheet");
-        options.addOption(
-                OptionBuilder.create("param"));
-        
-        // Create the mutually exclusive output group
-        OptionGroup output = new OptionGroup();
-        OptionBuilder.withArgName("screen renderer");
-        OptionBuilder.withLongOpt("awt");
-        OptionBuilder.withDescription("Input will be renderered to display");
-        output.addOption(
-                OptionBuilder.create("awt"));
-        OptionBuilder.withArgName("pdf output file");
-        OptionBuilder.withLongOpt("pdf");
-        OptionBuilder.hasArg();
-        OptionBuilder.withDescription("Input will be rendered as PDF to named file");
-        output.addOption(
-                OptionBuilder.create("pdf"));
-        OptionBuilder.withArgName("postscript output file");
-        OptionBuilder.withLongOpt("ps");
-        OptionBuilder.hasArg();
-        OptionBuilder.withDescription("Input will be rendered as Postscript to named file");
-        output.addOption(
-                OptionBuilder.create("ps"));
-        OptionBuilder.withArgName("pcl output file");
-        OptionBuilder.withLongOpt("pcl");
-        OptionBuilder.hasArg();
-        OptionBuilder.withDescription("Input will be rendered as PCL to named file");
-        output.addOption(
-                OptionBuilder.create("pcl"));
-        OptionBuilder.withArgName("rtf output file");
-        OptionBuilder.withLongOpt("rtf");
-        OptionBuilder.hasArg();
-        OptionBuilder.withDescription("Input will be rendered as RTF to named file");
-        output.addOption(
-                OptionBuilder.create("rtf"));
-        OptionBuilder.withArgName("mif output file");
-        OptionBuilder.withLongOpt("mif");
-        OptionBuilder.hasArg();
-        OptionBuilder.withDescription("Input will be rendered as MIF to named file");
-        output.addOption(
-                OptionBuilder.create("mif"));
-        OptionBuilder.withArgName("svg output file");
-        OptionBuilder.withLongOpt("svg");
-        OptionBuilder.hasArg();
-        OptionBuilder.withDescription("Input will be rendered as SVG to named file");
-        output.addOption(
-                OptionBuilder.create("svg"));
-        OptionBuilder.withArgName("text output file");
-        OptionBuilder.withLongOpt("plain-text");
-        OptionBuilder.hasArg();
-        OptionBuilder.withDescription("Input will be rendered as plain text to named file");
-        output.addOption(
-                OptionBuilder.create("txt"));
-        OptionBuilder.withArgName("area tree output file");
-        OptionBuilder.withLongOpt("area-tree");
-        OptionBuilder.hasArg();
-        OptionBuilder.withDescription("Area tree will be output as XML to named file");
-        output.addOption(
-                OptionBuilder.create("at"));
-        OptionBuilder.withArgName("help");
-        OptionBuilder.withLongOpt("print");
-        OptionBuilder.hasOptionalArg();
-        OptionBuilder.withDescription("Input will be rendered and sent to the printer. "
-                + "Requires extra arguments to the \"java\" command. "
-                + "See options with \"-print help\".");
-        output.addOption(
-                OptionBuilder.create("print"));
-        
-        // -s option relevant only to -at area tree output.  Again, no way
-        // to express this directly
-        OptionBuilder.withArgName("supress low-level areas");
-        OptionBuilder.withLongOpt("only-block-areas");
-        OptionBuilder.withDescription("Suppress non-block areas in XML renderer");
-        options.addOption(
-                OptionBuilder.create("s"));
-        return options;
-    }
-    
-    private static final boolean STOP_AT_NON_OPTION = true;
-    
-    /**
-     * parses the commandline arguments
-     * @return true if parse was successful and processing can continue, false
-     * if processing should stop
-     * @exception FOPException if there was an error in the format of the options
-     */
-    private boolean parseOptions(String[] args) throws FOPException {
-        options = makeOptions();
-        CommandLineParser parser = new PosixParser();
-        CommandLine cli;
-        String[] xslParams = null;
-        String[] remArgs = null;
-        try {
-            cli = parser.parse(options, args, STOP_AT_NON_OPTION);
-        } catch (ParseException e) {
-            throw new FOPException(e);
-        }
-        // Find out what we have
-        // Miscellaneous
-        if (cli.hasOption("d")) {
-            arguments.put("debugMode", Boolean.TRUE);
-            //Fop.setLoggingLevel(Level.FINE);
-            log.setLevel(Level.FINE);
-        }
-        if (cli.hasOption("q")) {
-            arguments.put("quiet", Boolean.TRUE);
-            //Fop.setLoggingLevel(Level.SEVERE);
-            log.setLevel(Level.SEVERE);
-        }
-        if (cli.hasOption("x")) {
-            arguments.put("dumpConfiguration", Boolean.TRUE);
-            if (log.getLevel().intValue() > Level.CONFIG.intValue()) {
-                //Fop.setLoggingLevel(Level.CONFIG);
-                log.setLevel(Level.CONFIG);
-            }
-        }
-        if (cli.hasOption("c")) {
-            arguments.put("userConfigFileName", cli.getOptionValue("c"));
-        }
-        if (cli.hasOption("l")) {
-            arguments.put("language", cli.getOptionValue("l"));
-            //Locale.setDefault(new Locale(cli.getOptionValue("l")));
-        }
-        if (cli.hasOption("s")) {
-            arguments.put("noLowLevelAreas", Boolean.TRUE);
-        }
-        if (cli.hasOption("fo")) {
-            setInputMode(FO_INPUT);
-            arguments.put("foFileName", cli.getOptionValue("fo"));
-        }
-        if (cli.hasOption("xml")) {
-            if (cli.hasOption("xsl")) {
-                setInputMode(XSLT_INPUT);
-                arguments.put("xslFileName", cli.getOptionValue("xsl"));
-            } else {
-                throw new FOPException(
-                "XSLT file must be specified for the transform mode");
-            }
-            arguments.put("xmlFileName", cli.getOptionValue("xml"));
-        } else {
-            if (cli.hasOption("xsl")) {
-                throw new FOPException(
-                "XML file must be specified for the transform mode");
-            }
-        }
-        // Any parameters?
-        if (cli.hasOption("param")) {
-            // TODO Don't know how to handle these yet
-            xslParams = cli.getOptionValues("param");
-        }
-        
-        // Output arguments
-        if (cli.hasOption("awt")) {
-            setOutputMode(AWT_OUTPUT);
-        }
-        if (cli.hasOption("pdf")) {
-            setOutputMode(PDF_OUTPUT);
-            arguments.put("outputFileName", cli.getOptionValue("pdf"));
-        }
-        if (cli.hasOption("mif")) {
-            setOutputMode(MIF_OUTPUT);
-            arguments.put("outputFileName", cli.getOptionValue("mif"));
-        }
-        if (cli.hasOption("rtf")) {
-            setOutputMode(RTF_OUTPUT);
-            arguments.put("outputFileName", cli.getOptionValue("rtf"));
-        }
-        if (cli.hasOption("pcl")) {
-            setOutputMode(PCL_OUTPUT);
-            arguments.put("outputFileName", cli.getOptionValue("pcl"));
-        }
-        if (cli.hasOption("ps")) {
-            setOutputMode(PS_OUTPUT);
-            arguments.put("outputFileName", cli.getOptionValue("ps"));
-        }
-        if (cli.hasOption("txt")) {
-            setOutputMode(TXT_OUTPUT);
-            arguments.put("outputFileName", cli.getOptionValue("txt"));
-        }
-        if (cli.hasOption("svg")) {
-            setOutputMode(SVG_OUTPUT);
-            arguments.put("outputFileName", cli.getOptionValue("svg"));
-        }
-        if (cli.hasOption("at")) {
-            setOutputMode(AREA_OUTPUT);
-            arguments.put("outputFileName", cli.getOptionValue("at"));
-        }
-        if (cli.hasOption("print")) {
-            setOutputMode(PRINT_OUTPUT);
-            if (cli.getOptionValue("print").toLowerCase(Locale.getDefault())
-                    == "help") {
-                printUsagePrintOutput();
-                throw new FOPException("Usage only");
-            }
-        }
-        // Get any remaining non-options
-        remArgs = cli.getArgs();
-        if (remArgs != null) {
-            int i = 0;
-            if (inputmode == NOT_SET && i < remArgs.length
-                    && remArgs[i].charAt(0) != '-') {
-                setInputMode(FO_INPUT);
-                arguments.put("foFileName", remArgs[i++]);
-            }
-            if (outputmode == NOT_SET && i < remArgs.length
-                    && remArgs[i].charAt(0) != '-') {
-                setOutputMode(PDF_OUTPUT);
-                arguments.put("outputFileName", remArgs[i++]);
-            }
-            if (i < remArgs.length) {
-                throw new FOPException("Don't know what to do with "
-                        + remArgs[i]);
-            }
-        }
-        return true;
-    }    // end parseOptions
     
 
     /**
@@ -759,10 +348,11 @@ public class FOPOptions {
      * @param mode the input mode code
      * @exception FOPException
      */
-    private void setInputMode(int mode) throws FOPException {
+    protected void setInputMode(int mode)
+    throws FOPException {
         String tempMode = null;
         if ((tempMode = getInputMode()) == null) {
-            arguments.put("inputMode", inputModes[mode]);
+            configuration.put("inputMode", inputModes[mode]);
             inputmode = mode;
         } else if (tempMode.equals(inputModes[mode])) {
             return;
@@ -783,10 +373,10 @@ public class FOPOptions {
      * @param mode the output mode code
      * @exception FOPException
      */
-    private void setOutputMode(int mode) throws FOPException {
+    protected void setOutputMode(int mode)
+    throws FOPException {
         String tempMode = null;
         if ((tempMode = getOutputMode()) == null) {
-            arguments.put("outputMode", outputModes[mode]);
             outputmode = mode;
         } else if (tempMode.equals(outputModes[mode])) {
             return;
@@ -808,10 +398,17 @@ public class FOPOptions {
         }
         
         if (inputmode == XSLT_INPUT) {
+            if (xmlFile == null) {
+                throw new FOPException("No xml input file specified");
+            }
             if (!xmlFile.exists()) {
                 throw new FileNotFoundException("Error: xml file "
                         + xmlFile.getAbsolutePath()
                         + " not found ");
+            }
+            if (xsltFile == null ) {
+                throw new FOPException(
+                        "No xslt transformation file specified");
             }
             if (!xsltFile.exists()) {
                 throw new FileNotFoundException("Error: xsl file "
@@ -820,6 +417,9 @@ public class FOPOptions {
             }
             
         } else if (inputmode == FO_INPUT) {
+            if (foFile == null) {
+                throw new FOPException("No fo input file specified");
+            }
             if (!foFile.exists()) {
                 throw new FileNotFoundException("Error: fo file "
                         + foFile.getAbsolutePath()
@@ -946,6 +546,15 @@ public class FOPOptions {
 
     public File getOutputFile() {
         return outputFile;
+    }
+
+    public String getSystemConfigFileName() {
+        String nameFromConfig = null;
+        if ((nameFromConfig = configuration.getStringValue("configFileName"))
+        != null) {
+            return nameFromConfig;
+        }
+        return defaultConfigFile;
     }
 
     public String getUserConfigFileName() {

@@ -26,8 +26,8 @@ import java.util.logging.Logger;
 
 
 // FOP
-import org.apache.fop.apps.FOUserAgent;
 
+import org.apache.fop.configuration.FOUserAgent;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontMetrics;
 
