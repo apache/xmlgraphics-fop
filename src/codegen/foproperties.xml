@@ -1127,10 +1127,12 @@
     <name>text-align</name>
     <inherited>true</inherited>
     <datatype>Enum</datatype>
+<!-- Note: both 'end' and 'right' are mapped to END -->
+<!--       both 'start' and 'left' are mapped to START -->
       <enumeration>
         <value const="CENTER">center</value>
-        <value const="END">end</value>
-        <value const="START">start</value>
+        <value const="END">end right</value>
+        <value const="START">start left</value>
         <value const="JUSTIFY">justify</value>
       </enumeration>
     <default>start</default>
