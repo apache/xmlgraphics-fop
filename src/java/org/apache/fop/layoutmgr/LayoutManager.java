@@ -28,7 +28,6 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.Resolveable;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.area.AreaTreeHandler;
 
 /**
  * The interface for all LayoutManagers.
@@ -57,12 +56,6 @@ public interface LayoutManager {
      * @return the parent layout manager.
      */
     LayoutManager getParent();
-
-    /**
-     * Get the AreaTreeHandler object that is activating the LM Tree
-     * @return the AreaTreeHandler object
-     */
-    AreaTreeHandler getAreaTreeHandler();
 
     /**
      * Initialize this layout manager.

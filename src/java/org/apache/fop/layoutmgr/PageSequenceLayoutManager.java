@@ -918,11 +918,4 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
         staticContentLMs.put(sc.getPropString(PR_FLOW_NAME), lm);
         return lm;
     }
-
-    /**
-     * @return the apps.FOTreeHandler object controlling this generation
-     */
-    public AreaTreeHandler getAreaTreeHandler() {
-        return areaTreeHandler;
-    }
 }
