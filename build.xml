@@ -276,6 +276,11 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
     <property name="tools.pkg" value="org/apache/fop/tools"/>
 
+    <property name="xslfo.std"
+              value="http://www.w3.org/TR/2001/REC-xsl-20011015/xslspec.html"/>
+    <property name="xslfo.std.id"
+              value="XSL-FO 1.0"/>
+
 
     <!-- insert custom font information here (step 1 of 2) -->
     <!-- use this as a template 
@@ -403,7 +408,11 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <!-- copy src files -->
     <copy todir="${build.src}" filtering="yes">
       <fileset dir="${src.dir}" 
-         excludes="**/package.html, **/${jimi},**/${jai},**/${xsltransform},**/${trax},**/apps/TraxInputHandler.java"/>
+        excludes="**/${jimi},**/${jai},**/${xsltransform},**/${trax},**/apps/TraxInputHandler.java"/>
+      <filterset>
+        <filter token="XSLFO-STD" value="${xslfo.std}"/>
+        <filter token="XSLFO-STDID" value="${xslfo.std.id}"/>
+      </filterset>
     </copy>
   </target>
 
@@ -448,96 +457,93 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     </dependset>
 
     <style in="${allprops.xml}" style="${genconst.xsl}"
-        out="${build.src}/org/apache/fop/fo/properties/Constants.java"/>
-
+           out="${build.src}/${properties.dir}/Constants.java"/>
     <style in="${foproperties.xml}" style="${properties.xsl}"
-        out="${build.src}/org/apache/fop/fo/properties/fo_${ignore_this}"/>
+           out="${build.src}/${properties.dir}/fo_${ignore_this}"/>
     <style in="${foproperties.xml}" style="${propmap.xsl}"
-        out="${build.src}/org/apache/fop/fo/properties/FOPropertyMapping.java"/>
+           out="${build.src}/${properties.dir}/FOPropertyMapping.java"/>
     <style in="${foproperties.xml}" style="${enumgen.xsl}"
-        out="${build.src}/org/apache/fop/fo/properties/foenums_${ignore_this}"/>
-
+           out="${build.src}/${properties.dir}/foenums_${ignore_this}"/>
     <style in="${extproperties.xml}" style="${propmap.xsl}"
-        out="${build.src}/org/apache/fop/fo/properties/ExtensionPropertyMapping.java"/>
+           out="${build.src}/${properties.dir}/ExtensionPropertyMapping.java"/>
+    <style in="${encodings.xml}" style="${charlist.xsl}"
+           out="${build.src}/org/apache/fop/render/pdf/CodePointMapping.java"/>
 
     <style
-       in="${encodings.xml}" style="${charlist.xsl}"
-       out="${build.src}/org/apache/fop/render/pdf/CodePointMapping.java"/>
-    <style
-       in="${Courier.xml}" style="${fontfile.xsl}"
-       out="${build.src}/org/apache/fop/render/pdf/fonts/Courier.java">
+      in="${Courier.xml}" style="${fontfile.xsl}"
+      out="${build.src}/${fonts.dir}/Courier.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style
-       in="${Courier-Oblique.xml}" style="${fontfile.xsl}"
-       out="${build.src}/org/apache/fop/render/pdf/fonts/CourierOblique.java">
+      in="${Courier-Oblique.xml}" style="${fontfile.xsl}"
+      out="${build.src}/${fonts.dir}/CourierOblique.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style
        in="${Courier-Bold.xml}" style="${fontfile.xsl}"
-       out="${build.src}/org/apache/fop/render/pdf/fonts/CourierBold.java">
+       out="${build.src}/${fonts.dir}/CourierBold.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style
        in="${Courier-BoldOblique.xml}" style="${fontfile.xsl}"
-       out="${build.src}/org/apache/fop/render/pdf/fonts/CourierBoldOblique.java">
+       out="${build.src}/${fonts.dir}/CourierBoldOblique.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style
        in="${Helvetica.xml}" style="${fontfile.xsl}"
-       out="${build.src}/org/apache/fop/render/pdf/fonts/Helvetica.java">
+       out="${build.src}/${fonts.dir}/Helvetica.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style
        in="${Helvetica-Bold.xml}" style="${fontfile.xsl}"
-       out="${build.src}/org/apache/fop/render/pdf/fonts/HelveticaBold.java">
+       out="${build.src}/${fonts.dir}/HelveticaBold.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style
        in="${Helvetica-Oblique.xml}" style="${fontfile.xsl}"
-       out="${build.src}/org/apache/fop/render/pdf/fonts/HelveticaOblique.java">
+       out="${build.src}/${fonts.dir}/HelveticaOblique.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style
        in="${Helvetica-BoldOblique.xml}" style="${fontfile.xsl}"
-       out="${build.src}/org/apache/fop/render/pdf/fonts/HelveticaBoldOblique.java">
+       out="${build.src}/${fonts.dir}/HelveticaBoldOblique.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style
        in="${Times-Roman.xml}" style="${fontfile.xsl}"
-       out="${build.src}/org/apache/fop/render/pdf/fonts/TimesRoman.java">
+       out="${build.src}/${fonts.dir}/TimesRoman.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style
        in="${Times-Italic.xml}" style="${fontfile.xsl}"
-       out="${build.src}/org/apache/fop/render/pdf/fonts/TimesItalic.java">
+       out="${build.src}/${fonts.dir}/TimesItalic.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style
        in="${Times-Bold.xml}" style="${fontfile.xsl}"
-       out="${build.src}/org/apache/fop/render/pdf/fonts/TimesBold.java">
+       out="${build.src}/${fonts.dir}/TimesBold.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style
        in="${Times-BoldItalic.xml}" style="${fontfile.xsl}"
-       out="${build.src}/org/apache/fop/render/pdf/fonts/TimesBoldItalic.java">
+       out="${build.src}/${fonts.dir}/TimesBoldItalic.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style
        in="${Symbol.xml}" style="${fontfile.xsl}"
-       out="${build.src}/org/apache/fop/render/pdf/fonts/Symbol.java"/>
+       out="${build.src}/${fonts.dir}/Symbol.java"/>
     <style
        in="${ZapfDingbats.xml}" style="${fontfile.xsl}"
-       out="${build.src}/org/apache/fop/render/pdf/fonts/ZapfDingbats.java"/>
+       out="${build.src}/${fonts.dir}/ZapfDingbats.java"/>
 
     <!-- custom fonts (Use t1fontfile.xsl instead of fontfile.xsl for Type 1 fonts!) step 2/2 -->
     <!-- use this as a template for type 1 fonts: 
     <xslt infile="${myfont.xml}" xsltfile="${t1fontfile.xsl}"
-        outfile="${build.src}/org/apache/fop/render/pdf/fonts/myfont.java" smart="yes"/>
+        outfile="${build.src}/${fonts.dir}/myfont.java" smart="yes"/>
     -->
     <!-- use this as a template for truetype fonts 
     <xslt infile="${myfont.xml}" xsltfile="${ttffontfile.xsl}" 
-        outfile="${build.src}/org/apache/fop/render/pdf/fonts/myfont.java" smart="yes"/>
+        outfile="${build.src}/${fonts.dir}/myfont.java" smart="yes"/>
     -->
 
 
@@ -619,15 +625,13 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <target name="prepare-docs" depends="init">
     <mkdir dir="${build.docs}"/>
-    <!-- sets exec permission for antRun on Unix systems. necessary for javadoc-->
-    <chmod file="${lib.dir}/bin/antRun" perm="ugo+rx" />
   </target>
 
 
   <!-- =================================================================== -->
   <!-- Creates the API documentation                                       -->
   <!-- =================================================================== -->
-  <target name="javadocs" depends="prepare-src">
+  <target name="javadocs" depends="codegen,prepare-src">
     <echo message="Producing the javadoc files "/>
     <mkdir dir="${build.javadocs}"/>
     <javadoc packagenames="${packages}"
@@ -638,7 +642,40 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
              windowtitle="${Name} API"
              doctitle="${Name}"
              bottom="Copyright &#169; ${year} Apache Software Foundation. All Rights Reserved."
-    />
+             overview="${build.src}/overview.html"
+             use="true"
+             failonerror="true">
+      <group title="Control and Startup">
+        <package name="org.apache.fop.apps"/>
+        <package name="org.apache.fop.configuration"/>
+        <package name="org.apache.fop.messaging"/>
+      </group>
+      <group title="XSL-FO Document (Input)">
+        <package name="org.apache.fop.fo"/>
+        <package name="org.apache.fop.fo.*"/>
+        <package name="org.apache.fop.datatypes"/>
+      </group>
+      <group title="Area Tree Document (Intermediate)">
+        <package name="org.apache.fop.layout"/>
+        <package name="org.apache.fop.layout.*"/>
+      </group>
+      <group title="Rendered Document (Output)">
+        <package name="org.apache.fop.render"/>
+        <package name="org.apache.fop.render.*"/>
+        <package name="org.apache.fop.viewer"/>
+      </group>
+      <group title="Utility">
+        <package name="org.apache.fop.pdf"/>
+        <package name="org.apache.fop.mif"/>
+        <package name="org.apache.fop.tools"/>
+        <package name="org.apache.fop.tools.*"/>
+        <package name="org.apache.fop.svg"/>
+        <package name="org.apache.fop.image"/>
+        <package name="org.apache.fop.image.*"/>
+        <package name="org.apache.fop.fonts"/>
+        <package name="org.apache.fop.fonts.*"/>
+      </group>
+    </javadoc>
   </target>
 
   <target name="htmldoc" depends="prepare-src">

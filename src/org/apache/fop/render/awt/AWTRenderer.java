@@ -7,13 +7,6 @@
 
 package org.apache.fop.render.awt;
 
-/*
- * originally contributed by
- * Juergen Verwohlt: Juergen.Verwohlt@jCatalog.com,
- * Rainer Steinkuhle: Rainer.Steinkuhle@jCatalog.com,
- * Stanislav Gorkhover: Stanislav.Gorkhover@jCatalog.com
- */
-
 import org.apache.fop.apps.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.image.*;
@@ -52,10 +45,18 @@ import java.util.*;
 import javax.swing.*;
 
 /**
-  Modified by Mark Lillywhite mark-fop@inomial.com. Did lots of
-  cleaning up and made the class implement the new Renderer
-  interface. This class could also do with a general audit,
-  and I suspect it's not swing-thread-safe either.
+ * @author <a href="mailto:Juergen.Verwohlt@jCatalog.com">Juergen Verwohlt</a>
+ * @author <a href="mailto:Rainer.Steinkuhle@jCatalog.com">Rainer Steinkuhle</a>
+ * @author <a href="mailto:Stanislav.Gorkhover@jCatalog.com">Stanislav
+ *   Gorkhover</a>
+ * @author <a href="mailto:mark-fop@inomial.com">Mark Lillywhite</a>
+ */
+
+/*
+ * Mark Lillywhite(?) made the following comment: Did lots of
+ * cleaning up and made the class implement the new Renderer
+ * interface. This class could also do with a general audit,
+ * and I suspect it's not swing-thread-safe either.
 */
 public class AWTRenderer extends AbstractRenderer implements Printable, Pageable {
 

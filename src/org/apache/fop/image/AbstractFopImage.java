@@ -19,8 +19,8 @@ import java.net.URL;
 
 /**
  * Base class to implement the FopImage interface.
- * @author Eric SCHAEFFER
- * @author Modified by Eric Dalquist - 9/14/2001 - ebdalqui@mtu.edu
+ * @author Eric Schaeffer
+ * @author <a href="mailto:ebdalqui@mtu.edu">Eric Dalquist</a>
  * @see FopImage
  */
 public abstract class AbstractFopImage implements FopImage {

@@ -15,6 +15,13 @@ import org.apache.fop.layout.RegionArea;
 import org.apache.fop.layout.BorderAndPadding;
 import org.apache.fop.layout.BackgroundProps;
 
+/**
+ * Class modeling the fo:region-after object.
+ *
+ * @see <a href="@XSLFO-STD@#fo_region-after"
+       target="_xslfostd">@XSLFO-STDID@
+ *     &para;6.4.15</a>
+ */
 public class RegionAfter extends Region {
 
     public static class Maker extends FObj.Maker {

@@ -14,7 +14,10 @@ import org.apache.fop.datatypes.IDReferences;
 
 import java.util.*;
 
-
+/**
+ * Class representing an outline entry (an /OUT object in a PDF file, but
+ * referred to as a "Bookmark" from within Adobe Acrobat).
+ */
 public class Outline extends ExtensionObj {
     private Label _label;
     private ArrayList _outlines = new ArrayList();

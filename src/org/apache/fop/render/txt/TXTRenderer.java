@@ -33,10 +33,11 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 
 /**
- * Renderer that renders areas to plain text
+ * Renderer that renders areas to plain text.
  *
- * Modified by Mark Lillywhite mark-fop@inomial.com to use the new
- * Renderer interface.
+ * @author unascribed
+ * @author <a href="mailto:mark-fop@inomial.com">Mark Lillywhite</a> (to use
+ *     the new Renderer interface)
  */
 public class TXTRenderer extends PrintRenderer {
 

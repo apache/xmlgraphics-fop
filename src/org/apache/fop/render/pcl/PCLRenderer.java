@@ -28,11 +28,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * Renderer that renders areas to PCL
- * Created by Arthur E Welch III while at M&I EastPoint Technology
- * Donated by EastPoint to the Apache FOP project March 2, 2001.
- * Modified by Mark Lillywhite mark-fop@inomial.com to use the
- * new Renderer interface.
+ * Renders areas to PCL.
+ *
+ * @author Arthur E Welch III (while at M&I EastPoint Technology --
+ *     donated by EastPoint to the Apache FOP project March 2, 2001)
+ * @author <a href="mailto:mark-fop@inomial.com">Mark Lillywhite</a> (to use
+ *     the new Renderer interface)
  */
 public class PCLRenderer extends PrintRenderer {
 

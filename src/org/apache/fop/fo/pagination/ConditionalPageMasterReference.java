@@ -11,6 +11,13 @@ import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.apps.FOPException;
 
+/**
+ * Class modeling the fo:conditional-page-master-reference object.
+ *
+ * @see <a href="@XSLFO-STD@#fo_conditional-page-master-reference"
+       target="_xslfostd">@XSLFO-STDID@
+ *     &para;6.4.11</a>
+ */
 public class ConditionalPageMasterReference extends FObj {
 
     public static class Maker extends FObj.Maker {

@@ -16,8 +16,11 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.extensions.ExtensionObj;
 
 /**
- * The fo:root formatting object. Contains page masters, root extensions,
+ * Class modeling the fo:root object. Contains page masters, root extensions,
  * page-sequences.
+ *
+ * @see <a href="@XSLFO-STD@#fo_root" target="_xslfostd">@XSLFO-STDID@
+ *     &para;6.4.2</a>
  */
 public class Root extends FObj {
 
