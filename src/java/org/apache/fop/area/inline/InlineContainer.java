@@ -19,7 +19,6 @@
  */
 package org.apache.fop.area.inline;
 
-import org.apache.fop.area.AbstractReferenceArea;
 import org.apache.fop.area.ReferenceArea;
 import org.apache.fop.datastructs.Node;
 import org.apache.fop.fo.FONode;
@@ -30,7 +29,7 @@ import org.apache.fop.fo.flow.FoPageSequence;
  * @version $Revision$ $Name$
  */
 public class InlineContainer
-extends AbstractReferenceArea
+extends InlineReferenceArea
 implements ReferenceArea {
 
     /**
