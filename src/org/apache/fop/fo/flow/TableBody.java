@@ -210,6 +210,16 @@ public class TableBody extends FObj {
 
 						Status status;
 						if ((status = row.layout(areaContainer)).isIncomplete()) {
+								if(status.isPageBreak()) {
+								this.marker = i;
+										area.addChild(areaContainer);
+										//areaContainer.end();
+
+										area.increaseHeight(areaContainer.getHeight());
+										area.setAbsoluteHeight(
+											areaContainer.getAbsoluteHeight());
+								return status;
+								}
 								if (keepWith.size() > 0) { // && status.getCode() == Status.AREA_FULL_NONE
 										row.removeLayout(areaContainer);
 										for (Enumeration e = keepWith.elements();
