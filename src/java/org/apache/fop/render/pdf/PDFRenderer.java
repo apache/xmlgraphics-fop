@@ -80,11 +80,13 @@ import org.apache.fop.fo.properties.BackgroundRepeat;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.pdf.PDFEncryptionManager;
+import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFInfo;
 import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFResourceContext;
+import org.apache.fop.pdf.PDFText;
 import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFState;
@@ -199,7 +201,7 @@ public class PDFRenderer extends PrintRenderer {
     protected int pageHeight;
 
     /** Registry of PDF filters */
-    protected Map filterMap = new java.util.HashMap();
+    protected Map filterMap;
 
     /**
      * true if a TJ command is left to be written
@@ -240,41 +242,17 @@ public class PDFRenderer extends PrintRenderer {
      * fonts etc.
      * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
      */
-    public void configure(Configuration conf) throws ConfigurationException {
+    public void configure(Configuration cfg) throws ConfigurationException {
         //PDF filters
-        Configuration filters = conf.getChild("filterList");
-        Configuration[] filt = filters.getChildren("value");
-        List filterList = new java.util.ArrayList();
-        for (int i = 0; i < filt.length; i++) {
-            String name = filt[i].getValue();
-            filterList.add(name);
-        }
-
-        filterMap.put(PDFStream.DEFAULT_FILTER, filterList);
+        this.filterMap = PDFFilterList.buildFilterMapFromConfiguration(cfg);
 
         //Font configuration
-        Configuration[] font = conf.getChildren("font");
-        for (int i = 0; i < font.length; i++) {
-            Configuration[] triple = font[i].getChildren("font-triplet");
-            List tripleList = new java.util.ArrayList();
-            for (int j = 0; j < triple.length; j++) {
-                tripleList.add(new FontTriplet(triple[j].getAttribute("name"),
-                                               triple[j].getAttribute("weight"),
-                                               triple[j].getAttribute("style")));
-            }
-
-            EmbedFontInfo efi;
-            efi = new EmbedFontInfo(font[i].getAttribute("metrics-url"),
-                                    font[i].getAttributeAsBoolean("kerning"),
-                                    tripleList, font[i].getAttribute("embed-url"));
-
-            if (fontList == null) {
-                fontList = new java.util.ArrayList();
-            }
-            fontList.add(efi);
+        List cfgFonts = FontSetup.buildFontListFromConfiguration(cfg);
+        if (this.fontList == null) {
+            this.fontList = cfgFonts;
+        } else {
+            this.fontList.addAll(cfgFonts);
         }
-
-
     }
 
     /**
@@ -383,11 +361,11 @@ public class PDFRenderer extends PrintRenderer {
             float yoffset = (float)h / 1000f;
             String intDest = (String)pageReferences.get(pv.getKey());
             if (parentOutline == null) {
-                pdfOutline = pdfDoc.makeOutline(outlineRoot,
+                pdfOutline = pdfDoc.getFactory().makeOutline(outlineRoot,
                                         outline.getLabel(), intDest, yoffset);
             } else {
                 PDFOutline pdfParentOutline = parentOutline;
-                pdfOutline = pdfDoc.makeOutline(pdfParentOutline,
+                pdfOutline = pdfDoc.getFactory().makeOutline(pdfParentOutline,
                                         outline.getLabel(), intDest, yoffset);
             }
         }
@@ -448,8 +426,9 @@ public class PDFRenderer extends PrintRenderer {
         Rectangle2D bounds = page.getViewArea();
         double w = bounds.getWidth();
         double h = bounds.getHeight();
-        currentPage = this.pdfDoc.makePage(this.pdfResources,
-                                           (int) Math.round(w / 1000), (int) Math.round(h / 1000));
+        currentPage = this.pdfDoc.getFactory().makePage(
+            this.pdfResources,
+            (int) Math.round(w / 1000), (int) Math.round(h / 1000));
         if (pages == null) {
             pages = new java.util.HashMap();
         }
@@ -478,13 +457,14 @@ public class PDFRenderer extends PrintRenderer {
             double w = bounds.getWidth();
             double h = bounds.getHeight();
             pageHeight = (int) h;
-            currentPage = this.pdfDoc.makePage(this.pdfResources,
-                              (int) Math.round(w / 1000), (int) Math.round(h / 1000));
+            currentPage = this.pdfDoc.getFactory().makePage(
+                this.pdfResources,
+                (int) Math.round(w / 1000), (int) Math.round(h / 1000));
             pageReferences.put(page.getKey(), currentPage.referencePDF());
             pvReferences.put(page.getKey(), page);
         }
         currentStream =
-          this.pdfDoc.makeStream(PDFStream.CONTENT_FILTER, false);
+            this.pdfDoc.getFactory().makeStream(PDFFilterList.CONTENT_FILTER, false);
 
         currentState = new PDFState();
         currentState.setTransform(new AffineTransform(1, 0, 0, -1, 0,
@@ -497,13 +477,13 @@ public class PDFRenderer extends PrintRenderer {
         Page p = page.getPage();
         renderPageAreas(p);
 
-        this.pdfDoc.addStream(currentStream);
+        this.pdfDoc.registerObject(currentStream);
         currentPage.setContents(currentStream);
         PDFAnnotList annots = currentPage.getAnnotations();
         if (annots != null) {
-            this.pdfDoc.addAnnotList(annots);
+            this.pdfDoc.addObject(annots);
         }
-        this.pdfDoc.addPage(currentPage);
+        this.pdfDoc.addObject(currentPage);
         this.pdfDoc.output(ostream);
     }
 
@@ -885,7 +865,8 @@ public class PDFRenderer extends PrintRenderer {
             rect = transform.createTransformedShape(rect).getBounds();
 
             int type = internal ? PDFLink.INTERNAL : PDFLink.EXTERNAL;
-            PDFLink pdflink = pdfDoc.makeLink(rect, dest, type, yoffset);
+            PDFLink pdflink = pdfDoc.getFactory().makeLink(
+                        rect, dest, type, yoffset);
             currentPage.addAnnotation(pdflink);
         }
     }
@@ -1008,7 +989,7 @@ public class PDFRenderer extends PrintRenderer {
                     pdf.append(ch);
                 }
             } else {
-                pdf.append(getUnicodeString(ch));
+                pdf.append(PDFText.toUnicodeHex(ch));
             }
 
             if (kerningAvailable && (i + 1) < l) {
@@ -1017,34 +998,6 @@ public class PDFRenderer extends PrintRenderer {
                            ), kerning, startText, endText);
             }
         }
-    }
-
-    /**
-     * Convert a char to a multibyte hex representation
-     */
-    private String getUnicodeString(char c) {
-        StringBuffer buf = new StringBuffer(4);
-
-        byte[] uniBytes = null;
-        try {
-            char[] a = {c};
-            uniBytes = new String(a).getBytes("UnicodeBigUnmarked");
-        } catch (java.io.UnsupportedEncodingException e) {
-            // This should never fail
-        }
-
-        for (int i = 0; i < uniBytes.length; i++) {
-            int b = (uniBytes[i] < 0) ? (int)(256 + uniBytes[i])
-                        : (int) uniBytes[i];
-
-            String hexString = Integer.toHexString(b);
-            if (hexString.length() == 1) {
-                buf = buf.append("0" + hexString);
-            } else {
-                buf = buf.append(hexString);
-            }
-        }
-        return buf.toString();
     }
 
     private void addKerning(StringBuffer buf, Integer ch1, Integer ch2,
