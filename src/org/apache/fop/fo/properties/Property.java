@@ -639,8 +639,8 @@ public /*abstract*/ class Property {
     {
         int initialValueType =
                     PropertyConsts.pconsts.getInitialValueType(property);
-        System.out.println("In Property getInitialValue property "
-                            + property);
+        //System.out.println("In Property getInitialValue property "
+                            //+ property);
         if ((initialValueType & Property.USE_GET_IT_FUNCTION) != 0)
              throw new PropertyException
                  ("Property.getInitialValue() called for property with "

@@ -8,7 +8,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.properties.BorderCommonWidth;
 
 public class BorderBottomWidth extends BorderCommonWidth {
-    public static final int dataTypes = MAPPED_LENGTH | INHERIT;
+    public static final int dataTypes = LENGTH | MAPPED_LENGTH | INHERIT;
     public static final int traitMapping = DISAPPEARS;
     public static final int initialValueType = LENGTH_IT;
     public PropertyValue getInitialValue(int property)

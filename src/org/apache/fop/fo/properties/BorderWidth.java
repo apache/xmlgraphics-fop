@@ -19,6 +19,9 @@ public class BorderWidth extends BorderCommonWidth {
     public static final int initialValueType = NOTYPE_IT;
     public static final int inherited = NO;
 
+    /** The <tt>FONode</tt> on which this property is defined. */
+    private FONode foNode;
+
     /**
      * 'value' is a PropertyValueList or an individual PropertyValue.
      *
@@ -31,7 +34,7 @@ public class BorderWidth extends BorderCommonWidth {
      *
      * <p>If 'value' is a PropertyValueList, it contains a
      * PropertyValueList which in turn contains a list of
-     * 2 to 4 NCName enum tokens representing border-widths.
+     * 2 to 4 NCName enum tokens or Length values representing border-widths.
      *
      * <p>The value(s) provided, if valid, are converted into a list
      * containing the expansion of the shorthand.
@@ -67,6 +70,7 @@ public class BorderWidth extends BorderCommonWidth {
         (int propindex, FONode foNode, PropertyValue value, boolean nested)
                 throws PropertyException
     {
+        this.foNode = foNode;
         int type = value.getType();
         if (type != PropertyValue.LIST) {
             if ( ! nested) {
@@ -76,36 +80,20 @@ public class BorderWidth extends BorderCommonWidth {
                     return refineExpansionList(PropNames.BORDER_WIDTH, foNode,
                             ShorthandPropSets.expandAndCopySHand(value));
             }
-            if (type == PropertyValue.NCNAME) {
-                // Must be a border-width
-                // BorderWidth does not support a mapped enum
-                // transformation directly, so use BorderTopWidth to
-                // check for mapped enum.
-                Numeric mapped;
-                try {
-                    mapped = (new MappedNumeric
-                                    (foNode, PropNames.BORDER_TOP_WIDTH,
-                                                ((NCName)value).getNCName()))
-                                .getMappedNumValue();
-                } catch (PropertyException e) {
-                    throw new PropertyException
-                        (((NCName)value).getNCName() +
-                                                " not a border-width");
-                }
-                // Correct the property in the mapped Numeric
-                mapped.setProperty(PropNames.BORDER_WIDTH);
-                return refineExpansionList(PropNames.BORDER_WIDTH, foNode,
-                                ShorthandPropSets.expandAndCopySHand(mapped));
-            }
-            else throw new PropertyException
-                ("Invalid " + value.getClass().getName() +
-                                            " value for border-width");
+
+            return refineExpansionList
+                    (PropNames.BORDER_WIDTH, foNode,
+                        ShorthandPropSets.expandAndCopySHand
+                         (checkBorderWidth(PropNames.BORDER_WIDTH, value)
+                          )
+                     );
         } else {
             if (nested) throw new PropertyException
                     ("PropertyValueList invalid for nested border-width "
                         + "refineParsing() method");
             // List may contain only multiple width specifiers
-            // i.e. NCNames specifying a standard width
+            // i.e. NCNames specifying a standard width or Numeric
+            // length values
             PropertyValueList list =
                             spaceSeparatedList((PropertyValueList)value);
             Numeric top, left, bottom, right;
@@ -117,14 +105,12 @@ public class BorderWidth extends BorderCommonWidth {
             Iterator widths = list.iterator();
 
             // There must be at least two
-            top = (new MappedNumeric
-                        (foNode, PropNames.BORDER_TOP_WIDTH,
-                        ((NCName)(widths.next())).getNCName())
-                    ).getMappedNumValue();
-            right = (new MappedNumeric
-                        (foNode, PropNames.BORDER_RIGHT_WIDTH,
-                        ((NCName)(widths.next())).getNCName())
-                    ).getMappedNumValue();
+            top = checkBorderWidth
+                            (PropNames.BORDER_TOP_WIDTH,
+                                             ((PropertyValue)widths.next()));
+            right = checkBorderWidth
+                            (PropNames.BORDER_RIGHT_WIDTH,
+                                             ((PropertyValue)widths.next()));
             try {
                 bottom = (Numeric)(top.clone());
                 bottom.setProperty(PropNames.BORDER_BOTTOM_WIDTH);
@@ -136,15 +122,13 @@ public class BorderWidth extends BorderCommonWidth {
             }
 
             if (widths.hasNext())
-                bottom = (new MappedNumeric
-                            (foNode, PropNames.BORDER_BOTTOM_WIDTH,
-                            ((NCName)(widths.next())).getNCName())
-                        ).getMappedNumValue();
+                bottom = checkBorderWidth
+                            (PropNames.BORDER_BOTTOM_WIDTH,
+                                             ((PropertyValue)widths.next()));
             if (widths.hasNext())
-                left = (new MappedNumeric
-                            (foNode, PropNames.BORDER_LEFT_WIDTH,
-                            ((NCName)(widths.next())).getNCName())
-                        ).getMappedNumValue();
+                left = checkBorderWidth
+                            (PropNames.BORDER_LEFT_WIDTH,
+                                             ((PropertyValue)widths.next()));
 
             list = new PropertyValueList(PropNames.BORDER_WIDTH);
             list.add(top);
@@ -156,6 +140,24 @@ public class BorderWidth extends BorderCommonWidth {
             // have been specified?
             return list;
         }
+    }
+
+    private Numeric checkBorderWidth(int property, PropertyValue value)
+        throws PropertyException
+    {
+        switch (value.getType()) {
+        case PropertyValue.NUMERIC:
+            Numeric length = (Numeric)value;
+            if (length.isAbsOrRelLength())
+                return length;
+            // else fall through to throw exception
+            break;
+        case PropertyValue.NCNAME:
+            return (new MappedNumeric
+                        (foNode, property, ((NCName)value).getNCName())
+                    ).getMappedNumValue();
+        }
+        throw new PropertyException("Invalid border-width value: " + value);
     }
 }
 
