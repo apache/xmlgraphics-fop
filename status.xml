@@ -8,6 +8,7 @@
   <person name="Karen Lease" email="klease@apache.org" id="KL"/>
   <person name="Keiron Liddle" email="keiron@apache.org" id="KLL"/>
   <person name="Jeremias Maerki" email="jeremias@apache.org" id="JM"/>
+  <person name="Victor Mote" email="vmote@apache.org" id="VM"/>
   <person name="Joerg Pietschmann" email="pietsch@apache.org" id="JP"/>
   <person name="Arved Sandstrom" email="arved@apache.org" id="AS"/>
   <person name="Oleg Tkachenko" email="olegt@apache.org" id="OT"/>
@@ -92,6 +93,10 @@ inactive??
      Integrate with Jakarta Avalon: logging, configuration, URI resolver,
      component management, image caching etc.
     </action>
+    <action context="code" dev="open">
+      Make it possible to redo static regions by determining which
+      areas need a new layout for new page.
+    </action>
    </actions>
 
    <actions priority="low">
@@ -118,6 +123,11 @@ inactive??
     <action context="code" dev="KL" type="fix" fixes-bug="14290">
       Correct ordering of loca table in embedded true type fonts.
       Fix taken over from maintenance branch.
+    </action>
+    <action context="docs" dev="KLL" type="update"
+            due-to="Victor Mote" due-to-email="vic@outfitr.com">
+      New dev fonts.xml file to store some useful links and information
+      about font work
     </action>
     <action context="docs" dev="KLL" type="update"
             due-to="Victor Mote" due-to-email="vic@outfitr.com">
