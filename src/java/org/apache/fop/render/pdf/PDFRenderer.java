@@ -864,12 +864,12 @@ public class PDFRenderer extends PrintRenderer {
             prevWordY = bl;
             textOpen = true;
         } else {
-                closeText();
+            closeText();
 
-                pdf.append("1 0 0 -1 " + (rx / 1000f) + " " + (bl / 1000f) + " Tm "
+            pdf.append("1 0 0 -1 " + (rx / 1000f) + " " + (bl / 1000f) + " Tm "
                            + (ch.getTextLetterSpaceAdjust() / 1000f) + " Tc "
                            + (ch.getTextWordSpaceAdjust() / 1000f) + " Tw [" + startText);
-                textOpen = true;
+            textOpen = true;
         }
         prevWordWidth = ch.getIPD();
         prevWordX = rx;
@@ -936,12 +936,12 @@ public class PDFRenderer extends PrintRenderer {
             prevWordY = bl;
             textOpen = true;
         } else {
-                closeText();
+            closeText();
 
-                pdf.append("1 0 0 -1 " + (rx / 1000f) + " " + (bl / 1000f) + " Tm "
+            pdf.append("1 0 0 -1 " + (rx / 1000f) + " " + (bl / 1000f) + " Tm "
                        + (text.getTextLetterSpaceAdjust() / 1000f) + " Tc "
                        + (text.getTextWordSpaceAdjust() / 1000f) + " Tw [" + startText);
-                textOpen = true;
+            textOpen = true;
         }
         prevWordWidth = text.getIPD();
         prevWordX = rx;
