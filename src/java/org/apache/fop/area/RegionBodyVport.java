@@ -74,7 +74,7 @@ public class RegionBodyVport extends RegionViewport {
             FoPageSequence pageSeq, Node parent, Object sync) {
         RegionBodyVport vport =
             new RegionBodyVport(pageSeq, parent, sync);
-        vport.setRegion(RegionBodyRefArea.nullRegionBodyRef(
+        vport.setRegionRefArea(RegionBodyRefArea.nullRegionBodyRef(
                 pageSeq, vport, sync));
         return vport;
     }

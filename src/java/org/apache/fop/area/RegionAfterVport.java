@@ -72,7 +72,7 @@ public class RegionAfterVport extends RegionViewport {
             FoPageSequence pageSeq, Node parent, Object sync) {
         RegionAfterVport vport =
             new RegionAfterVport(pageSeq, parent, sync);
-        vport.setRegion(RegionAfterRefArea.nullRegionAfterRef(
+        vport.setRegionRefArea(RegionAfterRefArea.nullRegionAfterRef(
                 pageSeq, vport, sync));
         return vport;
     }

@@ -67,7 +67,7 @@ implements Viewport, Cloneable {
      *
      * @param regRef the child region inside this viewport
      */
-    public void setRegion(RegionRefArea regRef) {
+    public void setRegionRefArea(RegionRefArea regRef) {
         setReferenceArea(regRef);
     }
 
@@ -76,7 +76,7 @@ implements Viewport, Cloneable {
      *
      * @return the child region inside this viewport
      */
-    public RegionRefArea getRegion() {
+    public RegionRefArea getRegionRefArea() {
         return (RegionRefArea)(getReferenceArea());
     }
 
@@ -182,7 +182,7 @@ implements Viewport, Cloneable {
                                          in.readFloat(), in.readFloat());
         clip = in.readBoolean();
         //props = (HashMap)in.readObject();
-        setRegion((RegionRefArea) in.readObject());
+        setRegionRefArea((RegionRefArea) in.readObject());
     }
 
     /**
