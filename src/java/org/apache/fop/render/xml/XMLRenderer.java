@@ -471,6 +471,9 @@ public class XMLRenderer extends AbstractRenderer {
                 addAttribute("top-position", bvp.getYOffset());
             }
             addAttribute("ctm", bvp.getCTM().toString());
+            if (bvp.getClip()) {
+                addAttribute("clipped", "true");
+            }
         } else {
             if (block.getPositioning() == Block.RELATIVE) {
                 addAttribute("positioning", "relative");
