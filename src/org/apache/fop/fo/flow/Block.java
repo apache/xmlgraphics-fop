@@ -68,7 +68,6 @@ public class Block extends FObjMixed {
 
         super(parent, propertyList);
         this.span = this.properties.get("span").getEnum();
-        ts = propMgr.getTextDecoration(parent);
     }
 
     public String getName() {

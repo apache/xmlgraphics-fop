@@ -18,16 +18,19 @@ import org.apache.fop.apps.FOPException;
 public abstract class FObjMixed extends FObj {
 
     // Textdecoration
-    protected TextState ts;
+    protected TextState textState;
 
     private StringBuffer textBuffer;
 
-    protected FObjMixed(FObj parent, PropertyList propertyList) {
+    protected FObjMixed(FObj parent, PropertyList propertyList)
+      throws FOPException {
         super(parent, propertyList);
+        textState = propMgr.getTextDecoration(parent);
+
     }
 
     public TextState getTextState() {
-        return ts;
+        return textState;
     }
 
     protected void addCharacters(char data[], int start, int length) {
@@ -40,12 +43,7 @@ public abstract class FObjMixed extends FObj {
     private final void finalizeText() {
         if (textBuffer!=null) {
             FOText ft = new FOText(textBuffer, this);
-            ft.setLogger(log);
-            if (ts != null) {
-              ft.setUnderlined(ts.getUnderlined());
-              ft.setOverlined(ts.getOverlined());
-              ft.setLineThrough(ts.getLineThrough());
-            }
+            ft.setTextState(textState);
             super.addChild(ft);
             textBuffer.setLength(0);
         }

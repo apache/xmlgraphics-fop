@@ -38,7 +38,8 @@ public class Leader extends FObjMixed {
         return new Leader.Maker();
     }
 
-    public Leader(FObj parent, PropertyList propertyList) {
+    public Leader(FObj parent, PropertyList propertyList)
+      throws FOPException {
         super(parent, propertyList);
     }
 

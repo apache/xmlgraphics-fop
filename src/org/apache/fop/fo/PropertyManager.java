@@ -12,6 +12,7 @@ import java.text.FieldPosition;
 import java.text.MessageFormat;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.flow.AbstractFlow;
 import org.apache.fop.fo.properties.BreakAfter;
 import org.apache.fop.fo.properties.BreakBefore;
 import org.apache.fop.fo.properties.Constants;
@@ -300,10 +301,9 @@ public class PropertyManager {
         boolean found = false;
 
         do {
-            String fname = parent.getName();
-            if (fname.equals("fo:flow") || fname.equals("fo:static-content")) {
+            if (parent instanceof AbstractFlow) {
                 found = true;
-            } else if (fname.equals("fo:block") || fname.equals("fo:inline")) {
+            } else if (parent instanceof FObjMixed) {
                 FObjMixed fom = (FObjMixed) parent;
                 tsp = fom.getTextState();
                 found = true;

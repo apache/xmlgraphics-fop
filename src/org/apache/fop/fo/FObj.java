@@ -27,18 +27,12 @@ public abstract class FObj extends FONode {
                                   PropertyList propertyList) throws FOPException;
     }
 
-//      public static Maker maker() {
-//          return new Maker();
-//      }
-
     // protected PropertyList properties;
     public PropertyList properties;
     protected PropertyManager propMgr;
 
     // markers
     private HashMap markers;
-
-//    protected String name;
 
     protected FObj(FObj parent, PropertyList propertyList) {
         super(parent);
@@ -159,9 +153,14 @@ public abstract class FObj extends FONode {
 
     public void addMarker(Marker marker) throws FOPException {
         String mcname = marker.getMarkerClassName();
-        if (!children.isEmpty()) {
-            throw new FOPException("A fo:marker must be an initial child of '"
-                                   + getName());
+        if (children != null) {
+            for (int i = 0; i < children.size(); i++) {
+                FONode child = (FONode)children.get(i);
+                if (!child.mayPrecedeMarker()) {
+                  throw new FOPException("A fo:marker must be an initial child of '"
+                                         + getName()+"'");
+                }
+            }
         }
         if (markers==null) {
             markers = new HashMap();
