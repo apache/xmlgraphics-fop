@@ -206,9 +206,10 @@ public class PFMReader {
         String s = pfm.getPostscriptName();
         int pos = s.indexOf("-");
         if (pos >= 0) {
-            StringBuffer sb = new StringBuffer(s);
-            sb.deleteCharAt(pos);
-            s = sb.toString();
+	    char sb[] = new char[s.length() - 1];
+	    s.getChars(0, pos, sb, 0);
+	    s.getChars(pos + 1, s.length(), sb, pos);
+            s = new String(sb);
         }
 
         el = doc.createElement("class-name");
