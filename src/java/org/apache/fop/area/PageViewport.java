@@ -1,52 +1,19 @@
 /*
+ * Copyright 1999-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
  * $Id: PageViewport.java,v 1.16 2003/03/05 15:19:31 jeremias Exp $
- * ============================================================================
- *                    The Apache Software License, Version 1.1
- * ============================================================================
- * 
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without modifica-
- * tion, are permitted provided that the following conditions are met:
- * 
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * 
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 
- * 3. The end-user documentation included with the redistribution, if any, must
- *    include the following acknowledgment: "This product includes software
- *    developed by the Apache Software Foundation (http://www.apache.org/)."
- *    Alternately, this acknowledgment may appear in the software itself, if
- *    and wherever such third-party acknowledgments normally appear.
- * 
- * 4. The names "FOP" and "Apache Software Foundation" must not be used to
- *    endorse or promote products derived from this software without prior
- *    written permission. For written permission, please contact
- *    apache@apache.org.
- * 
- * 5. Products derived from this software may not be called "Apache", nor may
- *    "Apache" appear in their name, without prior written permission of the
- *    Apache Software Foundation.
- * 
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
- * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
- * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
- * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * ============================================================================
- * 
- * This software consists of voluntary contributions made by many individuals
- * on behalf of the Apache Software Foundation and was originally created by
- * James Tauber <jtauber@jtauber.com>. For more information on the Apache
- * Software Foundation, please see <http://www.apache.org/>.
  */ 
 package org.apache.fop.area;
 
@@ -59,19 +26,23 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.apache.fop.fo.Constants;
+import org.apache.fop.datastructs.Node;
+import org.apache.fop.fo.properties.RetrievePosition;
 
 /**
- * Page viewport that specifies the viewport area and holds the page contents.
+ * Page viewport that specifies the viewport area.
  * This is the top level object for a page and remains valid for the life
  * of the document and the area tree.
  * This object may be used as a key to reference a page.
- * This is the level that creates the page.
- * The page (reference area) is then rendered inside the page object
+ * The immediate and only child of any viewport is a reference-area; in this
+ * cast the page-reference-area.
+ * The page reference area is then rendered inside the PageRefArea object
  */
-public class PageViewport implements Resolveable, Cloneable {
+public class PageViewport
+extends Area
+implements Viewport, Resolveable, Cloneable {
     
-    private Page page;
+    private PageRefArea pageRefArea;
     private Rectangle2D viewArea;
     private boolean clip = false;
     private String pageNumber = null;
@@ -99,11 +70,22 @@ public class PageViewport implements Resolveable, Cloneable {
      * @param p the page reference area that holds the contents
      * @param bounds the bounds of this viewport
      */
-    public PageViewport(Page p, Rectangle2D bounds) {
-        page = p;
+    public PageViewport(
+            Node parent, Object areaSync, PageRefArea p, Rectangle2D bounds) {
+        super(parent, areaSync);
+        pageRefArea = p;
         viewArea = bounds;
     }
 
+    /**
+     * Create a page viewport.
+     */
+    public PageViewport(Node parent, Object areaSync) {
+        super(parent, areaSync);
+        pageRefArea = null;
+        viewArea = null;
+    }
+    
     /**
      * Set if this viewport should clip.
      * @param c true if this viewport should clip
@@ -124,8 +106,8 @@ public class PageViewport implements Resolveable, Cloneable {
      * Get the page reference area with the contents.
      * @return the page reference area
      */
-    public Page getPage() {
-        return page;
+    public PageRefArea getPageRefArea() {
+        return pageRefArea;
     }
 
     /**
@@ -159,7 +141,7 @@ public class PageViewport implements Resolveable, Cloneable {
      * Add an unresolved id to this page.
      * All unresolved ids for the contents of this page are
      * added to this page. This is so that the resolvers can be
-     * serialized with the page to preserve the proper function.
+     * serialized with the pageRefArea to preserve the proper function.
      * @param id the id of the reference
      * @param res the resolver of the reference
      */
@@ -199,7 +181,7 @@ public class PageViewport implements Resolveable, Cloneable {
      *              may be null if not found
      */
     public void resolve(String id, List pages) {
-        if (page == null) {
+        if (pageRefArea == null) {
             if (pendingResolved == null) {
                 pendingResolved = new HashMap();
             }
@@ -236,7 +218,7 @@ public class PageViewport implements Resolveable, Cloneable {
      * For "last-ending-within-page" it adds all markers that
      * are ending, replacing earlier markers.
      * 
-     * Should this logic be placed in the Page layout manager.
+     * Should this logic be placed in the page layout manager.
      *
      * @param marks the map of markers to add
      * @param start if the area being added is starting or ending
@@ -307,7 +289,7 @@ public class PageViewport implements Resolveable, Cloneable {
     public Object getMarker(String name, int pos) {
         Object mark = null;
         switch (pos) {
-            case Constants.RetrievePosition.FSWP:
+            case RetrievePosition.FIRST_STARTING_WITHIN_PAGE:
                 if (markerFirstStart != null) {
                     mark = markerFirstStart.get(name);
                 }
@@ -315,12 +297,12 @@ public class PageViewport implements Resolveable, Cloneable {
                     mark = markerFirstAny.get(name);
                 }
             break;
-            case Constants.RetrievePosition.FIC:
+            case RetrievePosition.FIRST_INCLUDING_CARRYOVER:
                 if (markerFirstAny != null) {
                     mark = markerFirstAny.get(name);
                 }
             break;
-            case Constants.RetrievePosition.LSWP:
+            case RetrievePosition.LAST_STARTING_WITHIN_PAGE:
                 if (markerLastStart != null) {
                     mark = markerLastStart.get(name);
                 }
@@ -328,7 +310,7 @@ public class PageViewport implements Resolveable, Cloneable {
                     mark = markerLastAny.get(name);
                 }
             break;
-            case Constants.RetrievePosition.LEWP:
+            case RetrievePosition.LAST_ENDING_WITHIN_PAGE:
                 if (markerLastEnd != null) {
                     mark = markerLastEnd.get(name);
                 }
@@ -341,30 +323,30 @@ public class PageViewport implements Resolveable, Cloneable {
     }
 
     /**
-     * Save the page contents to an object stream.
-     * The map of unresolved references are set on the page so that
+     * Save the viewport pageRefArea to an object stream.
+     * The map of unresolved references are set on the pageRefArea so that
      * the resolvers can be properly serialized and reloaded.
      * @param out the object output stream to write the contents
-     * @throws Exception if there is a problem saving the page
+     * @throws Exception if there is a problem saving the pageRefArea
      */
     public void savePage(ObjectOutputStream out) throws Exception {
         // set the unresolved references so they are serialized
-        page.setUnresolvedReferences(unresolved);
-        out.writeObject(page);
-        page = null;
+        pageRefArea.setUnresolvedReferences(unresolved);
+        out.writeObject(pageRefArea);
+        pageRefArea = null;
     }
 
     /**
-     * Load the page contents from an object stream.
-     * This loads the page contents from the stream and
+     * Load the viewport pageRefArea from an object stream.
+     * This loads the pageRefArea from the stream and
      * if there are any unresolved references that were resolved
      * while saved they will be resolved on the page contents.
-     * @param in the object input stream to read the page from
-     * @throws Exception if there is an error loading the page
+     * @param in the object input stream to read the pageRefArea from
+     * @throws Exception if there is an error loading the pageRefArea
      */
     public void loadPage(ObjectInputStream in) throws Exception {
-        page = (Page) in.readObject();
-        unresolved = page.getUnresolvedReferences();
+        pageRefArea = (PageRefArea) in.readObject();
+        unresolved = pageRefArea.getUnresolvedReferences();
         if (unresolved != null && pendingResolved != null) {
             for (Iterator iter = pendingResolved.keySet().iterator();
                          iter.hasNext();) {
@@ -381,18 +363,18 @@ public class PageViewport implements Resolveable, Cloneable {
      * @return a copy of this page and associated viewports
      */
     public Object clone() {
-        Page p = (Page)page.clone();
-        PageViewport ret = new PageViewport(p, (Rectangle2D)viewArea.clone());
+        PageRefArea p = (PageRefArea)pageRefArea.clone();
+        PageViewport ret = new PageViewport(parent, sync, p, (Rectangle2D)viewArea.clone());
         return ret;
     }
 
     /**
-     * Clear the page contents to save memory.
+     * Clear the pageRefArea contents to save memory.
      * This object is kept for the life of the area tree since
      * it holds id and marker information and is used as a key.
      */
     public void clear() {
-        page = null;
+        pageRefArea = null;
     }
     
     /**
