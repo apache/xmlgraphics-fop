@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FONode;
@@ -70,8 +69,7 @@ public class FoDeclarations extends FONode {
         throws TreeException, FOPException, PropertyException
     {
         super(foTree, FObjectNames.DECLARATIONS, parent, event,
-              FOPropertySets.DECLARATIONS_SET, sparsePropsMap, sparseIndices,
-              numProps);
+              FONode.DECLARATIONS_SET, sparsePropsMap, sparseIndices);
         try {
             FoXMLEvent ev =
                 xmlevents.expectStartElement
