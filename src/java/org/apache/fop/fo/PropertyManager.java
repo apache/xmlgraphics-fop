@@ -510,11 +510,15 @@ public class PropertyManager {
 
     /**
      * Calculate absolute reference-orientation relative to media orientation.
+     * @return the enumerated reference-orientation
      */
     public int getAbsRefOrient() {
         return properties.get("reference-orientation").getNumber().intValue();
     }
 
+    /**
+     * @return the enumerated writing-mode
+     */
     public int getWritingMode() {
         return properties.get("writing-mode").getEnum();
     }
