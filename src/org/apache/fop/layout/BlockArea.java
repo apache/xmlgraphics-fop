@@ -139,7 +139,7 @@ public class BlockArea extends Area {
     public int addText(FontState fontState, float red, float green,
 		       float blue, int wrapOption, LinkSet ls,
 		       int whiteSpaceTreatment, char data[],
-		       int start, int end) { 
+		       int start, int end, boolean ul) { 
 	int ts, te;
 	char[] ca;
 	
@@ -161,7 +161,7 @@ public class BlockArea extends Area {
 	    ls.setYOffset(currentHeight);
 	}
 
-	ts = this.currentLineArea.addText(ca, ts, te, ls);
+	ts = this.currentLineArea.addText(ca, ts, te, ls, ul);
 	this.hasLines = true;
 		
 	while (ts != -1) {
@@ -182,7 +182,7 @@ public class BlockArea extends Area {
 		ls.setYOffset(currentHeight);
 	    }
 
-	    ts = this.currentLineArea.addText(ca, ts, te, ls);
+	    ts = this.currentLineArea.addText(ca, ts, te, ls, ul);
 	}
 	return -1;
     }

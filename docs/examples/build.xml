@@ -52,6 +52,7 @@
     <fop fofile="${foDir}/readme.fo"   pdffile="${testDir}/readme.pdf"/> 
     <fop fofile="${foDir}/fonts.fo"   pdffile="${testDir}/fonts.pdf"/> 
     <fop fofile="${foDir}/leader.fo"   pdffile="${testDir}/leader.pdf"/> 
+    <fop fofile="${foDir}/textdeko.fo"   pdffile="${testDir}/textdeko.pdf"/> 
   </target>
 
 
@@ -81,6 +82,8 @@
     <fop fofile="${foDir}/images.fo"   pdffile="${referenceDir}/images.pdf"/>
     <fop fofile="${foDir}/readme.fo"   pdffile="${referenceDir}/readme.pdf"/>
     <fop fofile="${foDir}/fonts.fo"   pdffile="${referenceDir}/fonts.pdf"/>     
+    <fop fofile="${foDir}/leader.fo"   pdffile="${referenceDir}/leader.pdf"/> 
+    <fop fofile="${foDir}/textdeko.fo"   pdffile="${referenceDir}/textdeko.pdf"/> 
   </target>
 
 

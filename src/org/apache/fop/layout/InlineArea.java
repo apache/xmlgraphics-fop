@@ -58,6 +58,12 @@ public class InlineArea extends Area {
     protected String pageNumberId=null;
     private float red, green, blue;
 
+    // Textdecoration
+    protected boolean underlined = false;
+    protected boolean overlined = false;
+    protected boolean lineThrough = false;
+
+
     public InlineArea(FontState fontState, float red, float green, float blue, String text, int width) {
 	super(fontState);
 	this.red = red;
@@ -90,4 +96,13 @@ public class InlineArea extends Area {
     public String getPageNumberID() {
         return pageNumberId;
     }
+
+    public void setUnderlined(boolean ul) {
+	    this.underlined = ul;
+    }
+
+    public boolean getUnderlined() {
+	    return this.underlined;
+    }
+
 }

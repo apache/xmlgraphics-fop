@@ -541,6 +541,11 @@ public class PDFRenderer implements Renderer {
 	}
 	pdf = pdf.append(") Tj\n");
 
+	if (area.getUnderlined()) {
+		addLine(rx, bl - size/10, rx + area.getContentWidth(),
+		        bl - size/10, size/14, theAreaColor);
+	}
+
 	currentStream.add(pdf.toString());
 
 	this.currentXPosition += area.getContentWidth();

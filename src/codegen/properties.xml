@@ -960,6 +960,21 @@
     <default>auto</default>
   </property>
 
+  <property>
+    <name>text-decoration</name>
+    <class-name>TextDecoration</class-name>
+    <inherited>false</inherited>
+    <datatype>
+      <enumeration>
+        <value const="NONE">none</value>
+        <value const="UNDERLINE">underline</value>
+        <value const="OVERLINE">overline</value>
+        <value const="LINE_THROUGH">line-through</value>
+      </enumeration>
+    </datatype>
+    <default>none</default>
+  </property>
+
   <!-- svg properties, or should these be in another file -->
   <property>
     <name>requiredFeatures</name>

@@ -89,8 +89,8 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 
   <fo:block  id="sec2" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" >B) 
       Downloading FOP</fo:block>
-  <fo:block space-after.optimum="3pt" font-family="serif">The latest release version is <fo:inline font-style="italic" font-family="serif">FOP 12.0</fo:inline>
-<fo:inline font-family="serif">
+  <fo:block space-after.optimum="3pt" font-family="serif">The latest release version is <fo:inline font-style="italic" font-family="serif">FOP
+0.14</fo:inline> <fo:inline font-family="serif">
       ()
    </fo:inline>. </fo:block>
   <fo:block space-after.optimum="3pt" font-family="serif">NOTE: you do not have to unjar or unzip this jar file.</fo:block>
@@ -105,7 +105,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
   <fo:block space-after.optimum="3pt" font-family="serif">To run FOP from the command line, see Running FOP. If you are interested in 
      embedding FOP in a Java application of your own, see Embedding FOP.
   </fo:block>
-  <fo:block space-after.optimum="3pt" font-family="serif">You can also download the <fo:inline font-style="italic" font-family="serif">source code v. 12.0</fo:inline>
+  <fo:block space-after.optimum="3pt" font-family="serif">You can also download the <fo:inline font-style="italic" font-family="serif">source code v. 0.14</fo:inline>
 <fo:inline font-family="serif">
       ()
    </fo:inline> as jar file</fo:block>

@@ -194,7 +194,7 @@ public class PageNumberCitation extends FObj {
         pageNumber=idReferences.getPageNumber(refId);                        
 
         if ( pageNumber!=null ) {  // if we already know the page number
-            this.marker = ((BlockArea) area).addText(fs, red, green, blue, wrapOption, null, whiteSpaceTreatment, pageNumber.toCharArray(), 0, pageNumber.length());
+            this.marker = ((BlockArea) area).addText(fs, red, green, blue, wrapOption, null, whiteSpaceTreatment, pageNumber.toCharArray(), 0, pageNumber.length(), false);
         }
         else {  // add pageNumberCitation to area to be resolved during rendering
             this.marker = ((BlockArea) area).addPageNumberCitation(fs, red, green, blue, wrapOption, null, whiteSpaceTreatment, refId);        
