@@ -143,7 +143,7 @@ public class PSRenderer extends AbstractRenderer {
         PSXMLHandler xmlHandler = new PSXMLHandler();
         //userAgent.setDefaultXMLHandler(MIME_TYPE, xmlHandler);
         String svg = "http://www.w3.org/2000/svg";
-        userAgent.addXMLHandler(MIME_TYPE, svg, xmlHandler);
+        addXMLHandler(userAgent, MIME_TYPE, svg, xmlHandler);
     }
 
     /**

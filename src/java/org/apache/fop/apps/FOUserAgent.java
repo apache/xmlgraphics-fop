@@ -90,8 +90,8 @@ import org.apache.fop.render.RendererContext;
 public class FOUserAgent implements LogEnabled {
 
     private Logger log;
-    private Map defaults = new java.util.HashMap();
-    private Map handlers = new java.util.HashMap();
+    public Map defaults = new java.util.HashMap();
+    public Map handlers = new java.util.HashMap();
     private String baseURL;
     private PDFEncryptionParams pdfEncryptionParams;
     private float px2mm = 0.35277777777777777778f; //72dpi (=25.4/dpi)
@@ -186,30 +186,6 @@ public class FOUserAgent implements LogEnabled {
      */
     public boolean linkToFootnotes() {
         return true;
-    }
-
-    /**
-     * Set the default xml handler for the given mime type.
-     * @param mime MIME type
-     * @param handler XMLHandler to use
-     */
-    public void setDefaultXMLHandler(String mime, XMLHandler handler) {
-        defaults.put(mime, handler);
-    }
-
-    /**
-     * Add an xml handler for the given mime type and xml namespace.
-     * @param mime MIME type
-     * @param ns Namespace URI
-     * @param handler XMLHandler to use
-     */
-    public void addXMLHandler(String mime, String ns, XMLHandler handler) {
-        Map mh = (Map) handlers.get(mime);
-        if (mh == null) {
-            mh = new java.util.HashMap();
-            handlers.put(mime, mh);
-        }
-        mh.put(ns, handler);
     }
 
     /**

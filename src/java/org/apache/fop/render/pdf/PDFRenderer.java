@@ -260,7 +260,7 @@ public class PDFRenderer extends PrintRenderer {
         PDFXMLHandler xmlHandler = new PDFXMLHandler();
         //userAgent.setDefaultXMLHandler(MIME_TYPE, xmlHandler);
         String svg = "http://www.w3.org/2000/svg";
-        userAgent.addXMLHandler(MIME_TYPE, svg, xmlHandler);
+        addXMLHandler(userAgent, MIME_TYPE, svg, xmlHandler);
     }
 
     /**
