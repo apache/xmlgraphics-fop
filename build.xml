@@ -125,8 +125,7 @@ list of possible build targets.
 
     <!-- Source and library directories -->
     <property name="src.dir" value="${basedir}/src"/>
-    <!-- <property name="src.java" value="${src.dir}/java"/> -->
-    <property name="src.java" value="${src.dir}"/>
+    <property name="src.java" value="${src.dir}/java"/>
     <property name="src.codegen" value="${src.dir}/codegen"/>
     <property name="lib.dir" value="${basedir}/lib"/>
     <property name="hyph.dir" value="${src.dir}/hyph"/>
@@ -142,28 +141,41 @@ list of possible build targets.
     <property name="fop.prefix" value="org.apache.fop"/>
     <property name="version.prefix" value="${fop.prefix}.version"/>
 
+    <!-- Font generation properties -->
+    <property name="fonts.dir" value="${fop.dir}/fonts"/>
+    <property name="base14.dir" value="${fonts.dir}/base14"/>
+    <property name="genfonts.dir" value="${src.codegen}/${fonts.dir}"/>
+    <property name="genbase14.dir" value="${genfonts.dir}/base14"/>
+
+    <!-- CountryLanguageScript.java generation -->
+    <property name="datatypes.dir" value="${fop.dir}/datatypes"/>
+    <property name="gendatatypes.dir" value="${src.codegen}/${datatypes.dir}"/>
 
     <!-- Build directories -->
     <property name="build.dir" value="${basedir}/build"/>
     <property name="build.dest" value="${build.dir}/classes"/>
     <property name="build.tmp" value="${build.dir}/tmp"/>
-    <property name="build.src" value="${build.dir}/src"/>
-    <property name="build.gensrc" value="${build.dir}/gensrc"/>
-    <property name="build.docsrc" value="${build.dir}/docsrc"/>
-    <property name="build.codegen" value="${build.src}/codegen"/>
     <property name="build.javadocs" value="${build.dir}/javadocs"/>
     <property name="build.examples.dir" value="${build.dir}/examples"/>
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Create necessary directories                                        -->
+  <!-- =================================================================== -->
+  <target name="makedirs" depends="pre-init">
+    <echo message="Preparing the build directories"/>
+    <!-- N.B. Whenever a directory is created here, adjust the clean target as
+     necessary.  build.dir is never deleted, only subdirectories.   -->
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${build.dest}"/>
+    <mkdir dir="${build.tmp}"/>
   </target>
 
   <!-- =================================================================== -->
   <!-- Generate the build version properties                               -->
   <!-- =================================================================== -->
-  <target name="version" depends="pre-init">
-    <!-- create directories -->
-    <echo message="Preparing the build directories"/>
-    <mkdir dir="${build.dir}"/>
-    <mkdir dir="${build.dest}"/>
-    <mkdir dir="${build.tmp}"/>
+  <target name="version" depends="makedirs">
 
     <!-- Compile Version.java if necessary -->
     <echo message="Check for current Version class file."/>
@@ -192,14 +204,14 @@ list of possible build targets.
     <condition property="build.display.name" value="${build.description}">
       <isset property="build.description"/>
     </condition>
-  <condition property="build.tag.name" value="${build.tag}">
+    <condition property="build.tag.name" value="${build.tag}">
       <isset property="build.tag"/>
     </condition>
     
     <condition property="build.display.name" value="${build.default.description}">
       <isset property="build.default.description"/>
     </condition>
-  <condition property="build.tag.name" value="${build.default.tag}">
+    <condition property="build.tag.name" value="${build.default.tag}">
       <isset property="build.default.tag"/>
     </condition>
     
@@ -211,7 +223,7 @@ list of possible build targets.
   <!-- =================================================================== -->
   <!-- Post-initialization target                                          -->
   <!-- =================================================================== -->
-  <target name="post-init" depends="pre-init, version">
+  <target name="post-version" depends="version">
     
     <property name="textfontencoding" value="WinAnsiEncoding"/>
 
@@ -222,33 +234,45 @@ list of possible build targets.
     <property name="dist.src.result.dir"
                                   value="${dist.src.dir}/${build.tag.name}"/>
 
-    <property name="fonts.dir" value="org/apache/fop/fonts/base14"/>
     <property name="ignore_this" value="ignore_this.dummy"/>
     <property name="jimi" value="JimiImage.java"/>
     <property name="jai" value="JAIImage.java"/>
 
     <property name="xslt" value="org.apache.xalan.xslt.Process"/>
 
-    <property name="encodings.xml" value="${build.codegen}/encodings.xml"/>
-    <property name="charlist.xsl" value="${build.codegen}/code-point-mapping.xsl"/>
-    <property name="fontfile.xsl" value="${build.codegen}/font-file.xsl"/>
-    <property name="t1fontfile.xsl" value="${build.codegen}/t1font-file.xsl"/>
-    <property name="ttffontfile.xsl" value="${build.codegen}/ttffontfile.xsl"/>
+    <!-- Font generation properties -->
+    <property name="encodings.xml" value="${src.codegen}/encodings.xml"/>
+    <property name="charlist.xsl" value="${src.codegen}/code-point-mapping.xsl"/>
+    <property name="fontfile.xsl" value="${src.codegen}/font-file.xsl"/>
+    <property name="t1fontfile.xsl" value="${src.codegen}/t1font-file.xsl"/>
+    <property name="ttffontfile.xsl" value="${src.codegen}/ttffontfile.xsl"/>
 
-    <property name="Courier.xml" value="${build.codegen}/Courier.xml"/>
-    <property name="Courier-Oblique.xml" value="${build.codegen}/CourierOblique.xml"/>
-    <property name="Courier-Bold.xml" value="${build.codegen}/CourierBold.xml"/>
-    <property name="Courier-BoldOblique.xml" value="${build.codegen}/CourierBoldOblique.xml"/>
-    <property name="Helvetica.xml" value="${build.codegen}/Helvetica.xml"/>
-    <property name="Helvetica-Oblique.xml" value="${build.codegen}/HelveticaOblique.xml"/>
-    <property name="Helvetica-Bold.xml" value="${build.codegen}/HelveticaBold.xml"/>
-    <property name="Helvetica-BoldOblique.xml" value="${build.codegen}/HelveticaBoldOblique.xml"/>
-    <property name="Times-Roman.xml" value="${build.codegen}/TimesRoman.xml"/>
-    <property name="Times-Italic.xml" value="${build.codegen}/TimesItalic.xml"/>
-    <property name="Times-Bold.xml" value="${build.codegen}/TimesBold.xml"/>
-    <property name="Times-BoldItalic.xml" value="${build.codegen}/TimesBoldItalic.xml"/>
-    <property name="ZapfDingbats.xml" value="${build.codegen}/ZapfDingbats.xml"/>
-    <property name="Symbol.xml" value="${build.codegen}/Symbol.xml"/>
+    <property name="Courier.xml" value="${src.codegen}/Courier.xml"/>
+    <property name="Courier-Oblique.xml" value="${src.codegen}/CourierOblique.xml"/>
+    <property name="Courier-Bold.xml" value="${src.codegen}/CourierBold.xml"/>
+    <property name="Courier-BoldOblique.xml" value="${src.codegen}/CourierBoldOblique.xml"/>
+    <property name="Helvetica.xml" value="${src.codegen}/Helvetica.xml"/>
+    <property name="Helvetica-Oblique.xml" value="${src.codegen}/HelveticaOblique.xml"/>
+    <property name="Helvetica-Bold.xml" value="${src.codegen}/HelveticaBold.xml"/>
+    <property name="Helvetica-BoldOblique.xml" value="${src.codegen}/HelveticaBoldOblique.xml"/>
+    <property name="Times-Roman.xml" value="${src.codegen}/TimesRoman.xml"/>
+    <property name="Times-Italic.xml" value="${src.codegen}/TimesItalic.xml"/>
+    <property name="Times-Bold.xml" value="${src.codegen}/TimesBold.xml"/>
+    <property name="Times-BoldItalic.xml" value="${src.codegen}/TimesBoldItalic.xml"/>
+    <property name="ZapfDingbats.xml" value="${src.codegen}/ZapfDingbats.xml"/>
+    <property name="Symbol.xml" value="${src.codegen}/Symbol.xml"/>
+
+    <fileset id="font.java.files" dir="${genbase14.dir}">
+      <include name="Courier*.java"/>
+      <include name="Helvetica*.java"/>
+      <include name="Times*.java"/>
+      <include name="Symbol*.java"/>
+      <include name="Zapf*.java"/>
+    </fileset>
+
+    <!-- CountrtLanguageScript.java generation properties -->
+    <property name="xml-lang.xml" value="${src.codegen}/xml-lang.xml"/>
+    <property name="xml-lang.xsl" value="${src.codegen}/xml-lang.xsl"/>
 
     <property name="tools.pkg" value="org/apache/fop/tools"/>
 
@@ -259,7 +283,7 @@ list of possible build targets.
   <!-- =================================================================== -->
   <!-- Initialization target                                               -->
   <!-- =================================================================== -->
-  <target name="init" depends="pre-init, version, post-init">
+  <target name="init" depends="post-version">
   </target>
 
   <!-- =================================================================== -->
@@ -270,135 +294,114 @@ list of possible build targets.
   </target>
 
   <!-- =================================================================== -->
-  <!-- Prepares the build directory                                        -->
-  <!-- =================================================================== -->
-  <target name="prepare" depends="init">
-    <!-- create remaining directories
-        Note that some directories have been created by the 'version' target.
-     -->
-    <echo message="Preparing the build directories"/>
-    <mkdir dir="${build.src}"/>
-    <mkdir dir="${build.gensrc}"/>
-    <mkdir dir="${build.gensrc}/${properties.dir}"/>
-    <mkdir dir="${build.gensrc}/${fonts.dir}"/>
-  </target>
-
-  <!-- =================================================================== -->
   <!-- Generate the source code                                            -->
   <!-- =================================================================== -->
-  <target name="codegen" depends="prepare" description="Generates the java files from the xml resources">
-    <!-- resetting codegen directory -->
+  <target name="codegen" depends="init" description="Generates the java files from the xml resources">
+    <!-- resetting /codegen directory -->
     <echo message="Resetting codegen directory"/>
-
-    <!-- copy codegen directory -->
-    <copy todir="${build.codegen}">
-      <fileset dir="${src.codegen}"/>
-    </copy>
 
     <!-- generate the java files from xml resources -->
     <echo message="Generating the java files from xml resources"/>
 
-    <style in="${encodings.xml}" style="${charlist.xsl}"
-        out="${build.gensrc}/${fop.dir}/fonts//CodePointMapping.java"/>
+    <dependset>
+      <srcfilelist dir="${src.codegen}" files="glyphlist.xml"/>
+      <targetfilelist dir="${genfonts.dir}" files="CodePointMapping.java"/>
+    </dependset>
 
+    <dependset>
+      <srcfilelist dir="${src.codegen}" files="encodings.xml"/>
+      <targetfileset refid="font.java.files"/>
+    </dependset>
+
+    <!-- generate CodePointMapping.java -->
+    <style in="${encodings.xml}" style="${charlist.xsl}"
+        out="${genfonts.dir}/CodePointMapping.java"/>
+
+    <!--                                  -->
+    <!-- generate individual font classes -->
+    <!--                                  -->
     <style in="${Courier.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/${fop.dir}/fonts/base14"
-        out="${build.gensrc}/${fop.dir}/fonts/base14/Courier.java">
+        out="${genbase14.dir}/Courier.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
 
     <style in="${Courier-Oblique.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/${fop.dir}/fonts/base14"
-        out="${build.gensrc}/${fop.dir}/fonts/base14/CourierOblique.java">
+        out="${genbase14.dir}/CourierOblique.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
 
     <style in="${Courier-Bold.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/${fop.dir}/fonts/base14"
-        out="${build.gensrc}/${fop.dir}/fonts/base14/CourierBold.java">
+        out="${genbase14.dir}/CourierBold.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
 
     <style in="${Courier-BoldOblique.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/${fop.dir}/fonts/base14"
-        out="${build.gensrc}/${fop.dir}/fonts/base14/CourierBoldOblique.java">
+        out="${genbase14.dir}/CourierBoldOblique.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
 
     <style in="${Helvetica.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/${fop.dir}/fonts/base14"
-        out="${build.gensrc}/${fop.dir}/fonts/base14/Helvetica.java">
+        out="${genbase14.dir}/Helvetica.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
 
     <style in="${Helvetica-Bold.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/${fop.dir}/fonts/base14"
-        out="${build.gensrc}/${fop.dir}/fonts/base14/HelveticaBold.java">
+        out="${genbase14.dir}/HelveticaBold.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
 
     <style in="${Helvetica-Oblique.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/${fop.dir}/fonts/base14"
-        out="${build.gensrc}/${fop.dir}/fonts/base14/HelveticaOblique.java">
+        out="${genbase14.dir}/HelveticaOblique.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
 
     <style in="${Helvetica-BoldOblique.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/${fop.dir}/fonts/base14"
-        out="${build.gensrc}/${fop.dir}/fonts/base14/HelveticaBoldOblique.java">
+        out="${genbase14.dir}/HelveticaBoldOblique.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
 
     <style in="${Times-Roman.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/${fop.dir}/fonts/base14"
-        out="${build.gensrc}/${fop.dir}/fonts/base14/TimesRoman.java">
+        out="${genbase14.dir}/TimesRoman.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
 
     <style in="${Times-Italic.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/${fop.dir}/fonts/base14"
-        out="${build.gensrc}/${fop.dir}/fonts/base14/TimesItalic.java">
+        out="${genbase14.dir}/TimesItalic.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
 
     <style in="${Times-Bold.xml}" style="${fontfile.xsl}"
-        out="${build.gensrc}/${fop.dir}/fonts/base14/TimesBold.java">
+        out="${genbase14.dir}/TimesBold.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
 
     <style in="${Times-BoldItalic.xml}" style="${fontfile.xsl}"
-        out="${build.gensrc}/${fop.dir}/fonts/base14/TimesBoldItalic.java">
+        out="${genbase14.dir}/TimesBoldItalic.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
 
     <style in="${Symbol.xml}" style="${fontfile.xsl}"
-        out="${build.gensrc}/${fop.dir}/fonts/base14/Symbol.java"/>
+        out="${genbase14.dir}/Symbol.java"/>
 
     <style in="${ZapfDingbats.xml}" style="${fontfile.xsl}"
-        out="${build.gensrc}/${fop.dir}/fonts/base14/ZapfDingbats.java"/>
+        out="${genbase14.dir}/ZapfDingbats.java"/>
+
+    <!-- generate CountryLanguageScript.java -->
+    <style in="${xml-lang.xml}" style="${xml-lang.xsl}"
+        out="${gendatatypes.dir}/CountryLanguageScript.java"/>
 
   </target>
 
   <!-- =================================================================== -->
   <!-- Compiles the source directory                                       -->
   <!-- =================================================================== -->
-  <target name="compile-src" depends="codegen, prepare">
+  <target name="compile-src" depends="codegen">
     <echo message="Compiling the sources "/>
     <!-- create directories -->
-    <mkdir dir="${build.dest}"/>
-
-    <mkdir dir="${viewer.resources.dest.dir}"/>
-    <copy todir="${viewer.resources.dest.dir}">
-      <fileset dir="${viewer.resources.src.dir}"/>
-    </copy>
-    <mkdir dir="${viewer.images.dest.dir}"/>
-    <copy todir="${viewer.images.dest.dir}">
-      <fileset dir="${viewer.images.src.dir}"/>
-    </copy>
 
     <javac destdir="${build.dest}" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}">
-      <src path="${build.gensrc}"/>
       <src path="${src.java}"/>
+      <src path="${src.codegen}"/>
       <patternset refid="exclude-jce-dependencies"/>
       <patternset refid="exclude-jai"/>
       <patternset refid="exclude-jimi"/>
@@ -438,16 +441,9 @@ list of possible build targets.
   <target name="all" depends="package"/> <!-- "all" target for us Makefile converts ;-) -->
 
   <!-- =================================================================== -->
-  <!-- Prepares the docs                                                   -->
-  <!-- =================================================================== -->
-  <target name="prepare-docs" depends="init">
-    <mkdir dir="${build.docs}"/>
-  </target>
-
-  <!-- =================================================================== -->
   <!-- Creates the API documentation                                       -->
   <!-- =================================================================== -->
-  <target name="javadocs" depends="prepare" description="Generates javadocs">
+  <target name="javadocs" depends="init" description="Generates javadocs">
     <echo message="Producing the javadoc files "/>
     <mkdir dir="${build.javadocs}"/>
 
@@ -465,7 +461,7 @@ list of possible build targets.
         failonerror="true">
       <sourcepath>
         <pathelement path="${src.java}"/>
-        <pathelement path="${build.gensrc}"/>
+        <pathelement path="${src.codegen}"/>
       </sourcepath>
       <group title="Control and Startup">
         <package name="org.apache.fop.apps"/>
@@ -515,7 +511,7 @@ list of possible build targets.
   <!-- =================================================================== -->
   <!-- Checkstyle                                                          -->
   <!-- =================================================================== -->
-  <target name="checkstyle" depends="prepare" description="Runs Checkstyle for a code quality report">
+  <target name="checkstyle" depends="init" description="Runs Checkstyle for a code quality report">
     <available property="checkstyle.available" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="checkstylepath"/>
     <fail message="Please put checkstyle-all-*.jar in the lib directory. Get it from http://checkstyle.sourceforge.net" unless="checkstyle.available"/>
     <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="checkstylepath"/>
@@ -578,8 +574,11 @@ list of possible build targets.
   <!-- =================================================================== -->
   <!-- Clean targets                                                       -->
   <!-- =================================================================== -->
-  <target name="clean" depends="init" description="Cleans the build directory">
-    <delete dir="${build.dir}"/>
+  <target name="clean" depends="pre-init" description="Cleans the build directory">
+    <delete dir="${build.dest}"/>
+    <delete dir="${build.tmp}"/>
+    <delete dir="${build.javadocs}"/>
+    <delete dir="${build.examples.dir}"/>
   </target>
 
   <target name="distclean" depends="clean" description="Cleans the distribution target directories">
