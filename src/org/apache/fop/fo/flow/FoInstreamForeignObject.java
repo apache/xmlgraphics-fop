@@ -98,11 +98,14 @@ public class FoInstreamForeignObject extends FONode {
     }
 
     /**
+     * Construct an fo:instream-foreign-object node.  This child of this
+     * node depends on implemented support for non-xsl namespace objects.
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
      * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
      * this node
-     * @param attrSet the index of the attribute set applying to the node.
+     * @param stateFlags - passed down from the parent.  Includes the
+     * attribute set information.
      */
     public FoInstreamForeignObject
                 (FOTree foTree, FONode parent, FoXMLEvent event, int attrSet)
@@ -110,9 +113,7 @@ public class FoInstreamForeignObject extends FONode {
     {
         super(foTree, FObjectNames.INSTREAM_FOREIGN_OBJECT, parent, event,
                           attrSet, sparsePropsMap, sparseIndices);
-        FoXMLEvent ev;
-        String nowProcessing;
-
+        // TODO
         makeSparsePropsSet();
     }
 
