@@ -16,6 +16,7 @@ import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.xml.XMLEvent;
 import org.apache.fop.xml.FoXMLEvent;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
@@ -84,21 +85,69 @@ public class FoListItem extends FONode {
         }
     }
 
+    /** The number of markers on this FO. */
+    private int numMarkers = 0;
+
     /**
+     * Construct an fo:list-item node, and build the fo:list-item subtree.
+     * <p>Content model for fo:list-item:
+     * (marker*, list-item-label,list-item-body)
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
      * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
      * this node
-     * @param attrSet the index of the attribute set applying to the node.
+     * @param stateFlags - passed down from the parent.  Includes the
+     * attribute set information.
      */
     public FoListItem
-                (FOTree foTree, FONode parent, FoXMLEvent event, int attrSet)
+            (FOTree foTree, FONode parent, FoXMLEvent event, int stateFlags)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.LIST_ITEM, parent, event,
-                          attrSet, sparsePropsMap, sparseIndices);
+                          stateFlags, sparsePropsMap, sparseIndices);
         FoXMLEvent ev;
-        String nowProcessing;
+        xmlevents = foTree.getXmlevents();
+        // Look for zero or more markers
+        String nowProcessing = "marker";
+        try {
+            while ((ev = xmlevents.expectStartElement
+                    (FObjectNames.MARKER, XMLEvent.DISCARD_W_SPACE))
+                   != null) {
+                new FoMarker(getFOTree(), this, ev, stateFlags);
+                numMarkers++;
+                xmlevents.getEndElement(FObjectNames.MARKER);
+            }
+
+            // Look for one list-item-label
+            nowProcessing = "list-item-label";
+            if ((ev = xmlevents.expectStartElement
+                    (FObjectNames.LIST_ITEM_LABEL, XMLEvent.DISCARD_W_SPACE))
+                   != null)
+                throw new FOPException
+                        ("No list-item-label in list-item.");
+            new FoListItemLabel(getFOTree(), this, ev, stateFlags);
+            xmlevents.getEndElement(FObjectNames.LIST_ITEM_LABEL);
+
+            // Look for one list-item-body
+            nowProcessing = "list-item-body";
+            if ((ev = xmlevents.expectStartElement
+                    (FObjectNames.LIST_ITEM_BODY, XMLEvent.DISCARD_W_SPACE))
+                   != null)
+                throw new FOPException
+                        ("No list-item-body in list-item.");
+            new FoListItemBody(getFOTree(), this, ev, stateFlags);
+            xmlevents.getEndElement(FObjectNames.LIST_ITEM_BODY);
+
+            /*
+        } catch (NoSuchElementException e) {
+            throw new FOPException
+                ("Unexpected EOF while processing " + nowProcessing + ".");
+            */
+        } catch(TreeException e) {
+            throw new FOPException("TreeException: " + e.getMessage());
+        } catch(PropertyException e) {
+            throw new FOPException("PropertyException: " + e.getMessage());
+        }
 
         makeSparsePropsSet();
     }

@@ -16,6 +16,7 @@ import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.xml.XMLEvent;
 import org.apache.fop.xml.FoXMLEvent;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
@@ -72,21 +73,52 @@ public class FoMultiSwitch extends FONode {
         }
     }
 
+    /** The number of multi-cases on this FO. */
+    private int numCases = 0;
+
     /**
+     * Construct an fo:multi-switch node, and build the
+     * fo:multi-switch subtree.
+     * <p>Content model for fo:multi-switch: (multi-case+)
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
      * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
      * this node
-     * @param attrSet the index of the attribute set applying to the node.
+     * @param stateFlags - passed down from the parent.  Includes the
+     * attribute set information.
      */
     public FoMultiSwitch
-                (FOTree foTree, FONode parent, FoXMLEvent event, int attrSet)
+            (FOTree foTree, FONode parent, FoXMLEvent event, int stateFlags)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.MULTI_SWITCH, parent, event,
-                          attrSet, sparsePropsMap, sparseIndices);
+                          stateFlags, sparsePropsMap, sparseIndices);
         FoXMLEvent ev;
-        String nowProcessing;
+        xmlevents = foTree.getXmlevents();
+        try {
+            // Look for one or more multi-case
+            while ((ev = xmlevents.expectStartElement
+                    (FObjectNames.MULTI_CASE, XMLEvent.DISCARD_W_SPACE))
+                   != null) {
+                new FoMultiCase(getFOTree(), this, ev, stateFlags);
+                numCases++;
+                xmlevents.getEndElement(FObjectNames.MULTI_CASE);
+            }
+
+            if (numCases == 0)
+                throw new FOPException
+                        ("No multi-case in multi-switch.");
+
+            /*
+        } catch (NoSuchElementException e) {
+            throw new FOPException
+                ("Unexpected EOF while processing " + nowProcessing + ".");
+            */
+        } catch(TreeException e) {
+            throw new FOPException("TreeException: " + e.getMessage());
+        } catch(PropertyException e) {
+            throw new FOPException("PropertyException: " + e.getMessage());
+        }
 
         makeSparsePropsSet();
     }

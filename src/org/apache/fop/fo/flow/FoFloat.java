@@ -13,10 +13,12 @@ package org.apache.fop.fo.flow;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.FObjectNames;
+import org.apache.fop.fo.FObjects;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.UnexpectedStartElementException;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.datatypes.PropertyValue;
@@ -72,20 +74,57 @@ public class FoFloat extends FONode {
     }
 
     /**
+     * Construct an fo:float node, and build the fo:float subtree.
+     * <p>Content model for fo:float: (%block;+)
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
      * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
      * this node
-     * @param attrSet the index of the attribute set applying to the node.
+     * @param stateFlags - passed down from the parent.  Includes the
+     * attribute set information.
      */
     public FoFloat
-                (FOTree foTree, FONode parent, FoXMLEvent event, int attrSet)
+            (FOTree foTree, FONode parent, FoXMLEvent event, int stateFlags)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.FLOAT, parent, event,
-                          attrSet, sparsePropsMap, sparseIndices);
-        FoXMLEvent ev;
-        String nowProcessing;
+                          stateFlags, sparsePropsMap, sparseIndices);
+        xmlevents = foTree.getXmlevents();
+        FoXMLEvent ev = null;
+        if ((stateFlags & (FONode.MC_FLOAT | FONode.MC_FOOTNOTE)) != 0)
+            throw new FOPException
+                ("float not permitted as descendent of float or footnote.");
+        try {
+            // Get at least one %block;
+            if ((stateFlags & FONode.MC_OUT_OF_LINE) == 0)
+                ev = xmlevents.expectBlock();
+            else
+                ev = xmlevents.expectOutOfLineBlock();
+            if (ev == null)
+                throw new FOPException
+                        ("%block; not found in fo:table-cell");
+            // Generate the flow object
+            FObjects.fobjects.makeFlowObject
+                    (foTree, this, ev, stateFlags | FONode.MC_FLOAT);
+            // Clear the blockage
+            ev = xmlevents.getEndElement(ev);
+            // Get the rest of the %block;s
+            do {
+                if ((stateFlags & FONode.MC_OUT_OF_LINE) == 0)
+                    ev = xmlevents.expectBlock();
+                else
+                    ev = xmlevents.expectOutOfLineBlock();
+                if (ev != null) {
+                    // Generate the flow object
+                    FObjects.fobjects.makeFlowObject
+                            (foTree, this, ev, stateFlags | FONode.MC_FLOAT);
+                    ev = xmlevents.getEndElement(ev);
+                }
+            } while (ev != null);
+        } catch(UnexpectedStartElementException e) {
+            throw new FOPException
+            ("Block not found or unexpected non-block in fo:table-cell");
+        }
 
         makeSparsePropsSet();
     }

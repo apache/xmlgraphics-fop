@@ -16,6 +16,7 @@ import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.xml.XMLEvent;
 import org.apache.fop.xml.FoXMLEvent;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
@@ -87,21 +88,56 @@ public class FoTableRow extends FONode {
         }
     }
 
+    /** The number of table-cells on this FO. */
+    private int numCells = 0;
+
+    /** The offset of 1st table-cell within the children. */
+    private int firstCellOffset = -1;
+
     /**
+     * Construct an fo:table-row node, and build the fo:table-row subtree.
+     * <p>Content model for fo:table-row: (table-cell+)
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
      * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
      * this node
-     * @param attrSet the index of the attribute set applying to the node.
+     * @param stateFlags - passed down from the parent.  Includes the
+     * attribute set information.
      */
     public FoTableRow
-                (FOTree foTree, FONode parent, FoXMLEvent event, int attrSet)
+            (FOTree foTree, FONode parent, FoXMLEvent event, int stateFlags)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.TABLE_ROW, parent, event,
-                          attrSet, sparsePropsMap, sparseIndices);
+                          stateFlags, sparsePropsMap, sparseIndices);
         FoXMLEvent ev;
-        String nowProcessing;
+        xmlevents = foTree.getXmlevents();
+        // Look for zero or more markers
+        String nowProcessing = "table-cell";
+        try {
+            nowProcessing = "table-cell";
+            if ((ev = xmlevents.expectStartElement
+                    (FObjectNames.TABLE_CELL, XMLEvent.DISCARD_W_SPACE))
+                   != null) {
+                new FoTableCell(getFOTree(), this, ev, stateFlags);
+                numCells++;
+                xmlevents.getEndElement(FObjectNames.TABLE_CELL);
+            }
+            if (numCells == 0)
+                throw new FOPException
+                        ("No table-cell in table-row.");
+            firstCellOffset = 0;
+
+            /*
+        } catch (NoSuchElementException e) {
+            throw new FOPException
+                ("Unexpected EOF while processing " + nowProcessing + ".");
+            */
+        } catch(TreeException e) {
+            throw new FOPException("TreeException: " + e.getMessage());
+        } catch(PropertyException e) {
+            throw new FOPException("PropertyException: " + e.getMessage());
+        }
 
         makeSparsePropsSet();
     }
