@@ -19,6 +19,7 @@
 package org.apache.fop.area;
 
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
@@ -255,6 +256,97 @@ public class Area extends AreaNode implements Cloneable  {
     }
 
     /**
+     * Returns a <code>Rectangle2D</code> constructed from the normailized
+     * values of offset and dimensions expressed in terms of 
+     * <i>inline-progression-direction</i> and
+     * <i>block-progression-direction</i>
+     * @param ipOffset
+     * @param bpOffset
+     * @param ipDim the <i>inline-progression-dimension</i>
+     * @param bpDim the <i>block-progression-dimension</i>
+     * @param wMode
+     * @return
+     * @throws PropertyException
+     */
+    public static Rectangle2D.Double rectRelToAbs(
+            double ipOffset, double bpOffset, double ipDim, double bpDim,
+            int wMode) throws PropertyException {
+        if (WritingMode.isHorizontal(wMode)) {
+            return new Rectangle2D.Double(ipOffset, bpOffset, ipDim, bpDim);
+        }
+        return new Rectangle2D.Double(bpOffset, ipOffset, bpDim, ipDim);
+    }
+
+    /**
+     * Normalizes a pair of values representing an
+     * <i>inline-progression-dimension</i> and a
+     * <i>block-progression-dimension</i> by converting them to a
+     * <i>Point2D</i> representing the corresponding X and Y values in
+     * Java 2D user co-ordinates.
+     * @param ipDim the <i>inline-progression-dimension</i>
+     * @param bpDim the <i>block-progression-dimension</i>
+     * @param writingMode
+     * @return the corresponding x, y values
+     * @throws PropertyException
+     */
+    public static DimensionDbl dimsRelToAbs (
+            double ipDim, double bpDim, int writingMode)
+    throws PropertyException {
+        if (WritingMode.isHorizontal(writingMode)) {
+            return new DimensionDbl(ipDim, bpDim);
+        }
+        return new DimensionDbl(bpDim, ipDim);
+    }
+
+    /**
+     * Normalizes a <code>DimensonDbl</code> representing an
+     * <i>inline-progression-dimension</i> (<i>width</i>) and a
+     * <i>block-progression-dimension</i> (<i>height</i>) by converting them to
+     * a <code>DimensonDbl</code> representing the corresponding width and
+     * height values in Java 2D user co-ordinates.
+     * @param in the dimensions expressed as <i>inline-progression-dimension</i>
+     * and <i>block-progression-dimension</i>
+     * @param writingMode
+     * @return the corresponding Java2D width, height values
+     * @throws PropertyException
+     */
+    public static DimensionDbl dimsRelToAbs (DimensionDbl in, int writingMode)
+    throws PropertyException {
+        if (WritingMode.isHorizontal(writingMode)) {
+            return in;
+        }
+        double width, height;
+        width = in.getHeight();
+        height = in.getWidth();
+        in.setSize(width, height);
+        return in;
+    }
+
+    /**
+     * Returns a <code>Rectangle2D</code> constructed from the normailized
+     * values of offset and dimensions expressed in terms of 
+     * <i>inline-progression-direction</i> and
+     * <i>block-progression-direction</i>
+     * @param offset
+     * @param wideHigh
+     * @param writingMode
+     * @return
+     * @throws PropertyException
+     */
+    public static Rectangle2D dimsRelToAbs (
+            Point2D offset, DimensionDbl wideHigh, int writingMode)
+    throws PropertyException {
+        if (WritingMode.isHorizontal(writingMode)) {
+            return new Rectangle2D.Double(
+                    offset.getX(), offset.getY(),
+                    wideHigh.getWidth(), wideHigh.getHeight());
+        }
+        return new Rectangle2D.Double(
+                offset.getY(), offset.getX(),
+                wideHigh.getHeight(), wideHigh.getWidth());
+    }
+
+    /**
      * A nested class of Area, representing the geometry of one of the frames
      * associated with this area.  These include the content-rectangle,
      * border-rectangle, padding-rectangle, spaces-rectangle and
@@ -308,7 +400,7 @@ public class Area extends AreaNode implements Cloneable  {
             try {
                 // TODO move rectRelToAbs from WritingMode to a more suitable
                 // place
-                setRect(WritingMode.rectRelToAbs(
+                setRect(rectRelToAbs(
                         ipOrigin, bpOrigin, ipDim, bpDim, writingMode));
             } catch (PropertyException e) {
                 throw new RuntimeException(e);
@@ -349,7 +441,7 @@ public class Area extends AreaNode implements Cloneable  {
                 double ipOrigin, double bpOrigin, double ipDim, double bpDim) {
             // Now work out what belongs where
             try {
-                setRect(WritingMode.rectRelToAbs(
+                setRect(rectRelToAbs(
                         ipOrigin, bpOrigin, ipDim, bpDim, writingMode));
             } catch (PropertyException e) {
                 throw new RuntimeException(e);
