@@ -43,7 +43,7 @@
 	</p>
 	<figure src="SAXParsing.png" alt="SAX parsing schematic"/>
 	<p>
-	  In the process of parsing, the heirarchical structure of the
+	  In the process of parsing, the hierarchical structure of the
 	  original FO tree is flattened into a number of streams of
 	  events of the same type which are reported in the sequence
 	  in which they are encountered.  Apart from that, the API
