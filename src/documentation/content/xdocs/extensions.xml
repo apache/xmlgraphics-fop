@@ -19,7 +19,7 @@ Please see the <link href="graphics.html#svg">SVG documentation</link> for more 
         </p>
       </section>
     <section id="fo-extensions">
-      <title>FO Extentions</title>
+      <title>FO Extensions</title>
       <section id="fox-namespace">
         <title>Namespace</title>
         <p>By convention, FO extensions in FOP use the "fox:" namespace identifier.
