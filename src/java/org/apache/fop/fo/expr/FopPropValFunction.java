@@ -51,7 +51,7 @@
 package org.apache.fop.fo.expr;
 
 import org.apache.fop.fo.Property;
-import org.apache.fop.fo.properties.FOPropertyMapping;
+import org.apache.fop.fo.FOPropertyMapping;
 
 
 /**

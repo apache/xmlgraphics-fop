@@ -57,8 +57,6 @@ import org.xml.sax.Attributes;
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Property.Maker;
-import org.apache.fop.fo.properties.FOPropertyMapping;
-
 
 /**
  * Class containing the collection of properties for a given FObj.

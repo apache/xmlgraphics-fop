@@ -68,7 +68,7 @@ import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonRelativePosition;
-import org.apache.fop.fo.properties.FOPropertyMapping;
+
 
 /**
  * Class modelling the fo:table-row object. See Sec. 6.7.9 of the XSL-FO

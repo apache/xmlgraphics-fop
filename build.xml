@@ -355,10 +355,8 @@ list of possible build targets.
         write out to (many) files other than the one specified -->
     <style in="${foproperties.xml}" style="${properties.xsl}"
         out="${build.gensrc}/${replacestring}/fo/properties/fo_${ignore_this}"/>
-    <style in="${foproperties.xml}" style="${build.codegen}/fo-property-mapping.xsl"
-        out="${build.gensrc}/${replacestring}/fo/properties/FOPropertyMapping.java"/>
-    <!--style in="${foproperties.xml}" style="${build.codegen}/prop-val-enum-interfaces.xsl"
-        out="${build.gensrc}/${replacestring}/fo/properties/propertyListing.java"/-->
+    <!--style in="${foproperties.xml}" style="${build.codegen}/fo-property-mapping.xsl"
+        out="${build.gensrc}/${replacestring}/fo/properties/FOPropertyMapping.java"/-->
     <style in="${encodings.xml}" style="${charlist.xsl}"
         out="${build.gensrc}/${replacestring}/fonts//CodePointMapping.java"/>
     <!--
