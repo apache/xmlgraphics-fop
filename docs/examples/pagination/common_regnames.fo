@@ -1,0 +1,305 @@
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+<fo:layout-master-set>
+
+<fo:simple-page-master master-name="firstpage"
+	page-height="297mm" page-width="210mm"
+	margin-top="20mm"  margin-bottom="10mm"
+	margin-left="25mm" margin-right="20mm">
+	<fo:region-body
+		margin-top="20mm" margin-bottom="15mm"
+		margin-left="0mm" margin-right="0mm"/>
+	<fo:region-before
+		region-name="xsl-region-before-firstpage"
+		extent="20mm"/>
+	<fo:region-after
+		region-name="xsl-region-after"
+		extent="10mm"/>
+</fo:simple-page-master>
+
+<!-- layout for the even page -->
+<fo:simple-page-master master-name="evenpage"
+	page-height="297mm" page-width="210mm"
+	margin-top="20mm"  margin-bottom="10mm"
+	margin-left="25mm" margin-right="20mm">
+	<fo:region-body
+		margin-top="10mm" margin-bottom="15mm"
+		margin-left="0mm" margin-right="0mm"/>
+	<fo:region-before
+		region-name="xsl-region-before-evenpage"
+		extent="10mm"/>
+	<fo:region-after
+		region-name="xsl-region-after"
+		extent="10mm"/>
+</fo:simple-page-master>
+
+<!-- layout for the odd page. This should generate an error
+because region-names must be unique within a page master. -->
+<fo:simple-page-master master-name="oddpage"
+	page-height="297mm" page-width="210mm"
+	margin-top="20mm"  margin-bottom="10mm"
+	margin-left="25mm" margin-right="20mm">
+	<fo:region-body
+		margin-top="10mm" margin-bottom="15mm"
+		margin-left="0mm" margin-right="0mm"/>
+	<fo:region-before
+		region-name="xsl-region-before-oddpage"
+		extent="10mm"/>
+	<fo:region-after
+		region-name="xsl-region-after"
+		extent="10mm"/>
+</fo:simple-page-master>
+
+<fo:page-sequence-master master-name="twoside">
+	<fo:repeatable-page-master-alternatives>
+		<fo:conditional-page-master-reference
+			master-name="firstpage"
+			page-position="first"/>
+		<fo:conditional-page-master-reference
+			master-name="oddpage"
+			odd-or-even="odd"/>
+		<fo:conditional-page-master-reference
+			master-name="evenpage"
+			odd-or-even="even"/>
+	</fo:repeatable-page-master-alternatives>
+</fo:page-sequence-master>
+</fo:layout-master-set>
+
+<fo:page-sequence master-name="twoside">
+
+<fo:static-content flow-name="xsl-region-before-firstpage">
+	<fo:block font-size="16pt"
+            font-family="serif"
+            line-height="18pt"
+            space-before.optimum="10pt"
+            space-after.optimum="10pt"
+            text-align="center"
+            padding-top="6pt">Chapter XI</fo:block>
+</fo:static-content>
+
+<fo:static-content flow-name="xsl-region-after">
+	<fo:block text-align="center"><fo:page-number/></fo:block>
+</fo:static-content>
+
+<fo:static-content flow-name="xsl-region-before-oddpage">
+	<fo:block text-align="end">of the Polar Sea</fo:block>
+</fo:static-content>
+
+<fo:static-content flow-name="xsl-region-before-evenpage">
+	<fo:block text-align="start">Journey to the Shores</fo:block>
+</fo:static-content>
+
+<fo:flow flow-name="xsl-region-body">
+
+      <!-- defines local TOC -->
+      <fo:block font-size="10pt"
+            font-family="serif"
+            line-height="12pt"
+            space-before.optimum="10pt"
+            space-after.optimum="10pt"
+            text-align="start"
+            padding-top="6pt">
+Journey across the barren Grounds - Difficulty and delay in crossing Copper-Mine River -
+Melancholy and fatal Results thereof - Extreme Misery of the whole Party - Murder of
+Mr. Hood - Death of several of the Canadians - Desolate State of Fort Enterprise -
+Distress suffered at that Place - Dr. Richardson's Narrative - Mr. Back's Narrative -
+Conclusion.
+      </fo:block>
+
+      <fo:block font-size="8pt"
+                font-family="serif"
+                font-style="italic"
+                line-height="10pt"
+                space-before.optimum="3pt"
+                space-after.optimum="3pt"
+                text-align="start">1821. August 17.
+      </fo:block>
+
+		<!-- Normal text -->
+		<fo:block font-size="12pt"
+        	font-family="serif"
+            line-height="12pt"
+            space-after.optimum="0pt"
+            text-align="start">
+MY original intention, whenever the season should
+compel us to relinquish the survey, had been to return by the way
+of the Copper-Mine River, and in pursuance of my arrangement
+with the Hook to travel to Slave Lake through the line of woods
+extending thither by the Great Bear and Marten Lakes, but our
+scanty stock of provision and the length of the voyage rendered it
+necessary to make for a nearer place. We had already found that
+the country, between Cape Barrow and the Copper-Mine River,
+would not supply our wants, and this it seemed probable would now
+be still more the case ; besides, at this advanced season, we expected
+the frequent recurrence of gales, which would cause great detention,
+if not danger in proceeding along that very rocky part of the coast.
+I determined, therefore, to make at once for Arctic Sound, where
+we had found the animals more numerous than at any other place ;
+and entering Hood's River, to advance up that stream as far as it
+was navigable, and then to construct small canoes out of the
+materials of the larger ones, which could be carried in crossing the
+barren grounds to Fort Enterprise.
+        </fo:block>
+
+		<fo:block font-size="8pt"
+        	font-family="serif"
+            font-style="italic"
+            line-height="10pt"
+            space-before.optimum="3pt"
+			space-after.optimum="3pt"
+            text-align="start">August 19.
+    	</fo:block>
+
+		<!-- Normal text -->
+		<fo:block font-size="12pt"
+        	font-family="serif"
+            line-height="12pt"
+            space-after.optimum="0pt"
+            text-align="start">
+We were almost beaten out of our comfortless abodes
+by rain during the night, and this morning the gale continued
+without diminution. The thermometer fell to 33 deg. Two men were
+sent with Junius to search for the deer which Augustus had killed.
+Junius returned in the evening bringing part of the meat, but owing
+to the thickness of the weather, his companions parted from him
+and did not make their appearance. Divine service was read. On
+the 20th we were presented with the most chilling prospect, the
+small pools of water being frozen over, the ground being covered
+with snow, and the thermometer at the freezing point at mid-day.
+Flights of geese were passing to the southward. The wind however
+was more moderate, having changed to the eastward. Considerable
+anxiety prevailing respecting Belanger and Michel, the two men
+who strayed from Junius yesterday, the rest were sent out to look
+for them. The search was successful, and they all returned in the
+evening. The stragglers were much fatigued, and had suffered
+severely from the cold, one of them having his thighs frozen, and
+what under our present circumstances was most grievous, they had
+thrown away all the meat. The wind during the night returned to
+the north-west quarter, blew more violently than ever, and raised a
+very turbulent sea. The next day did not improve our condition,
+the snow remained on the ground, and the small pools were frozen.
+Our hunters were sent out, but they returned after a fatiguing
+day's march without having seen any animals. We made a scanty
+meal off a handful of pemmican, after which only half a bag
+remained.
+        </fo:block>
+
+		<!-- Normal text -->
+		<fo:block font-size="12pt"
+        	font-family="serif"
+            line-height="12pt"
+            space-after.optimum="0pt"
+            text-align="start">
+The wind abated after midnight, and the surf diminished rapidly,
+which caused us to be on the alert at a very early hour on the 22d,
+but we had to wait until six A.M. for the return of Augustus who
+had continued out all night on an unsuccessful pursuit of deer.
+It appears that he had walked a few miles farther along the coast,
+than the party had done on the 18th, and from a sketch he drew on
+the sand, we were confirmed in our former opinion that the shore
+inclined more to the eastward beyond Point Turnagain. He also
+drew a river of considerable size, that discharges its waters into
+Walker's Bay; on the banks of which stream he saw a piece of
+wood, such as the Esquimaux use in producing fire, and other marks
+so fresh that he supposed they had recently visited the spot. We
+therefore left several iron materials for them. Our men, cheered by
+the prospect of returning, embarked with the utmost alacrity; and,
+paddling with unusual vigour, carried us across Riley's and Walker's
+Bays, a distance of twenty miles before noon, when we landed on
+Slate-Clay Point, as the wind had freshened too much to permit us
+to continue the voyage. The whole party went to hunt, but returned
+without success in the evening, drenched with the heavy rain which
+commenced soon after they had set out. Several deer were seen,
+but could not be approached in this naked country; and as our
+stock of pemmican did not admit of serving out two meals, we went
+dinnerless to bed.
+        </fo:block>
+
+		<!-- Normal text -->
+		<fo:block font-size="12pt"
+        	font-family="serif"
+            line-height="12pt"
+            space-after.optimum="0pt"
+            text-align="start">
+Soon after our departure to-day, a sealed tin-case, sufficiently
+buoyant to float, was thrown overboard, containing a short account of
+our proceedings, and the position of the most conspicuous points.
+The wind blew off the land, the water was smooth, and as the sea
+is in this part more free from islands than in any other, there was
+every probability of its being driven off the shore into the current ;
+which, as I have before mentioned, we suppose, from the circumstance
+of Mackenzie's River being the only known stream that
+brings down the wood we have found along the shores, to set to the
+eastward.
+        </fo:block>
+
+		<fo:block font-size="8pt"
+        	font-family="serif"
+            font-style="italic"
+            line-height="10pt"
+            space-before.optimum="3pt"
+			space-after.optimum="3pt"
+            text-align="start">August 23.
+    	</fo:block>
+
+		<!-- Normal text -->
+		<fo:block font-size="12pt"
+        	font-family="serif"
+            line-height="12pt"
+            space-after.optimum="0pt"
+            text-align="start">
+A severe frost caused us to pass a comfortless night.
+At two P.M. we set sail, and the men voluntarily launched out to
+make a traverse of fifteen miles across Melville Sound, before a
+strong wind and heavy sea. The privation of food, under which
+our voyagers were then labouring, absorbed every other terror;
+otherwise the most powerful persuasion could not have induced
+them to attempt such a traverse. It was with the utmost difficulty
+that the canoes were kept from turning their broadsides to the
+waves, though we sometimes steered with all the paddles. One of
+them narrowly escaped being overset by this accident, happening
+in mid-channel, where the waves were so high that the mast-head
+of our canoe was often hid from the other, though it was sailing
+within hail. The annexed plate, from Mr. Back's sketch, will convey
+to the reader an accurate idea of the peril of our situation.
+        </fo:block>
+
+		<!-- Normal text -->
+		<fo:block font-size="12pt"
+        	font-family="serif"
+            line-height="12pt"
+            space-after.optimum="0pt"
+            text-align="start">
+The traverse, however, was made;we were then near a high
+rocky lee shore, on which a heavy surf was beating. The wind
+being on the beam, the canoes drifted fast to leeward; and, on
+rounding a point, the recoil of the sea from the rocks was so great
+that they were with difficulty kept from foundering. We looked in
+vain for a sheltered bay to land in ; but, at length, being unable to
+weather another point, we were obliged to put ashore on the open
+beach, which, fortunately, was sandy at this spot. The debarkation
+was effected in the manner represented in the plate; and, fortunately,
+without further injury than the splitting of the head of
+the second canoe, which was easily repaired.
+        </fo:block>
+
+		<!-- Normal text -->
+		<fo:block font-size="12pt"
+        	font-family="serif"
+            line-height="12pt"
+            space-after.optimum="0pt"
+            text-align="start">
+Our encampment being near to the place where we killed the deer
+on the 11th, almost the whole party went out to hunt, but they
+returned in the evening without having seen any game. The
+berries, however, were ripe and plentiful, and, with the addition
+of some country tea, furnished a supper. There were some showers
+in the afternoon,and the weather was cold, the thermometer
+being 42 deg, but the evening and night were calm and fine. It may be
+remarked that the mosquitoes disappeared when the late gales
+commenced.
+        </fo:block>
+
+</fo:flow>
+</fo:page-sequence>
+</fo:root>
+
