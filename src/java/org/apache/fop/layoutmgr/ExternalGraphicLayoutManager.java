@@ -73,21 +73,20 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
         url = ImageFactory.getURL(fobj.getSrc());
 
         // assume lr-tb for now and just use the .optimum value of the range
-        Length ipd = fobj.getPropertyList().get(PR_INLINE_PROGRESSION_DIMENSION).
-                                    getLengthRange().getOptimum().getLength();
+        Length ipd = fobj.getInlineProgressionDimension().getOptimum().getLength();
         if (!ipd.isAuto()) {
             viewWidth = ipd.getValue();
         } else {
-            ipd = fobj.getPropertyList().get(PR_WIDTH).getLength();
+            ipd = fobj.getWidth();
             if (!ipd.isAuto()) {
                 viewWidth = ipd.getValue();
             }
         }
-        Length bpd = fobj.getPropertyList().get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange().getOptimum().getLength();
+        Length bpd = fobj.getBlockProgressionDimension().getOptimum().getLength();
         if (!bpd.isAuto()) {
             viewHeight = bpd.getValue();
         } else {
-            bpd = fobj.getPropertyList().get(PR_HEIGHT).getLength();
+            bpd = fobj.getHeight();
             if (!bpd.isAuto()) {
                 viewHeight = bpd.getValue();
             }
@@ -98,7 +97,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
 
         int cwidth = -1;
         int cheight = -1;
-        Length ch = fobj.getPropertyList().get(PR_CONTENT_HEIGHT).getLength();
+        Length ch = fobj.getContentHeight();
         if (!ch.isAuto()) {
             /*if (ch.scaleToFit()) {
                 if (viewHeight != -1) {
@@ -107,7 +106,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
             } else {*/
             cheight = ch.getValue();
         }
-        Length cw = fobj.getPropertyList().get(PR_CONTENT_WIDTH).getLength();
+        Length cw = fobj.getContentWidth();
         if (!cw.isAuto()) {
             /*if (cw.scaleToFit()) {
                 if (viewWidth != -1) {
