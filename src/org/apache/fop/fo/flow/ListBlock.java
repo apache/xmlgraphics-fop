@@ -14,9 +14,11 @@ import org.apache.fop.datatypes.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.layoutmgr.list.ListBlockLayoutManager;
 
 // Java
 import java.util.Iterator;
+import java.util.List;
 
 public class ListBlock extends FObj {
 
@@ -35,6 +37,11 @@ public class ListBlock extends FObj {
     public ListBlock(FONode parent) {
         super(parent);
     }
+
+    public void addLayoutManager(List list) {
+        ListBlockLayoutManager blm = new ListBlockLayoutManager(this);
+        list.add(blm);
+    }       
 
     public void setup() throws FOPException {
 

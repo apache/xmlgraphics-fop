@@ -13,6 +13,7 @@ import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.layoutmgr.list.Item;
 
 // Java
 import java.util.Iterator;
@@ -21,6 +22,11 @@ public class ListItemBody extends FObj {
 
     public ListItemBody(FONode parent) {
         super(parent);
+    }
+
+    public Item getItemLayoutManager() {
+        Item item = new Item(this);
+        return item;
     }
 
     public void setup() {
