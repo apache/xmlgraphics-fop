@@ -15,6 +15,7 @@ import org.apache.fop.datatypes.*;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.BlockLayoutManager;
+import org.apache.fop.util.CharUtilities;
 
 import org.xml.sax.Attributes;
 
@@ -406,8 +407,8 @@ public class Block extends FObjMixed {
 	    LFchecker lfCheck = new LFchecker(charIter);
 
 	    while (charIter.hasNext()) {
-		switch (CharClass.classOf(charIter.nextChar())) {
-		case CharClass.XMLWHITESPACE:
+		switch (CharUtilities.classOf(charIter.nextChar())) {
+		case CharUtilities.XMLWHITESPACE:
 		    /* Some kind of whitespace character, except linefeed. */
 		    boolean bIgnore=false;
 		    
@@ -440,7 +441,7 @@ public class Block extends FObjMixed {
 		    }
 		    break;
 
-		case CharClass.LINEFEED:
+		case CharUtilities.LINEFEED:
 		    /* A linefeed */
 		    lfCheck.reset();
 		    bPrevWasLF=true; // for following whitespace
@@ -468,14 +469,14 @@ public class Block extends FObjMixed {
 		    }
 		    break;
 
-		case CharClass.EOT:
+		case CharUtilities.EOT:
 		    //   A "boundary" objects such as non-character inline
 		    // or nested block object was encountered.
 		    // If any whitespace run in progress, finish it.
 		    // FALL THROUGH
 
-		case CharClass.UCWHITESPACE: // Non XML-whitespace
-		case CharClass.NONWHITESPACE:
+		case CharUtilities.UCWHITESPACE: // Non XML-whitespace
+		case CharUtilities.NONWHITESPACE:
 		    /* Any other character */
 		    bInWS = bPrevWasLF=false;
 		    lfCheck.reset();
@@ -503,7 +504,8 @@ public class Block extends FObjMixed {
 			bNextIsLF=true;
 			break;
 		    }
-		    else if (CharClass.classOf(c)!=CharClass.XMLWHITESPACE) {
+		    else if (CharUtilities.classOf(c) !=
+			     CharUtilities.XMLWHITESPACE) {
 			break;
 		    }
 		}

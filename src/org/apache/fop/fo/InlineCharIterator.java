@@ -1,6 +1,7 @@
 package org.apache.fop.fo;
 
 import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.util.CharUtilities;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
@@ -36,7 +37,7 @@ public class InlineCharIterator extends RecursiveCharIterator {
     public char nextChar() throws NoSuchElementException {
 	if (bStartBoundary) {
 	    bStartBoundary=false;
-	    return CharClass.CODE_EOT;
+	    return CharUtilities.CODE_EOT;
 	}
 	try {
 	    return super.nextChar();
@@ -46,7 +47,7 @@ public class InlineCharIterator extends RecursiveCharIterator {
 	    // Check end boundary char
 	    if (bEndBoundary) {
 		bEndBoundary=false;
-		return CharClass.CODE_EOT;
+		return CharUtilities.CODE_EOT;
 	    }
 	    else throw e;
 	}

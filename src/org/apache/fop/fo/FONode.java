@@ -11,6 +11,7 @@ package org.apache.fop.fo;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.StreamRenderer;
 import org.apache.fop.layout.Area;
+import org.apache.fop.util.CharUtilities;
 
 import org.apache.log.Logger;
 
@@ -121,7 +122,7 @@ abstract public class FONode {
     }
 
     public CharIterator charIterator() {
-	return new OneCharIterator(CharClass.CODE_EOT);
+	return new OneCharIterator(CharUtilities.CODE_EOT);
     }
 
 }
