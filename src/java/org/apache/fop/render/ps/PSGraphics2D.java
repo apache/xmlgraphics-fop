@@ -53,6 +53,7 @@ import java.awt.image.renderable.RenderableImage;
 import java.io.IOException;
 
 //Batik
+import org.apache.batik.ext.awt.RenderingHintsKeyExt;
 import org.apache.batik.ext.awt.g2d.AbstractGraphics2D;
 import org.apache.batik.ext.awt.g2d.GraphicContext;
 import org.apache.commons.logging.Log;
@@ -147,6 +148,12 @@ public class PSGraphics2D extends AbstractGraphics2D {
      */
     public void setGraphicContext(GraphicContext c) {
         gc = c;
+        setPrivateHints();
+    }
+
+    private void setPrivateHints() {
+        setRenderingHint(RenderingHintsKeyExt.KEY_AVOID_TILE_PAINTING, 
+                RenderingHintsKeyExt.VALUE_AVOID_TILE_PAINTING_ON);
     }
 
     /**
