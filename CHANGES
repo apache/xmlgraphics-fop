@@ -1,5 +1,15 @@
 ==============================================================================
 Done since 0.20.2 release
+*** General
+- Support for CMYK and embedded ICC profiles in jpeg images (Tore Engvig)
+- Support for jpeg images in PS Renderer (Tore Engvig)
+- Add support for EPS images in PostScript renderer and limited EPS support in 
+  PDF Renderer (Tore Engvig)
+- fixed bug in TTFReader (unsigned lsb changed to signed) 
+  Submitted by: Cristi Ruja, c_ruja@yahoo.com
+- Added Polish Hyphenation based on TeX hypenation
+  Submitted by: Marcin Kuthan [M.Kuthan@elka.pw.edu.pl]
+  
 *** Tables
 - Implement the proportional-column-width() function in table-column and
 make it possible to specify table width (or inline-progression-dimension)
@@ -7,14 +17,20 @@ using percentage values. (Karen Lease)
 - Fix a bug causing strange layout when a cell containing a nested table
 was laid out again because another cell in the same row was split (David
 Dixon's example). (Karen Lease)
+
 *** Datatypes
 - Rearrange the Length class hierarchy as part of the table-column proportional
 width work. (Karen Lease)
+
 *** Areas
 - Fix BlockArea to account for padding and border when calculating space
 remaining for content. (Karen Lease)
+
 *** Properties
 - Add support for inline-progression-dimension and table-layout. (Karen)
+- Add support for letter-spacing.
+  Submitted by: Raymond Penners <raymond@duologix.nl>
+
 ==============================================================================
 Done since 0.20 release
 
@@ -100,7 +116,7 @@ user config (KLiddle)
 Submitted by:  Jeremias Maerki <jeremias.maerki@outline.ch>
 - (Options.java) fixed error where configfile was not being set (KLiddle)
 - (Options.java) Added patch for loading config via Thread ContextClassLoader
-Submitted by:	Davanum Srinivas
+Submitted by:   Davanum Srinivas
 - (StreamRenderer.java) This just moves the marker supporting code from before
 Mark's patch into StreamRenderer. Not tested. (SCoffman)
 
@@ -577,7 +593,7 @@ Done since 0.16 release
 - fixed: leader didn't fill rest of line in table of contents [Fotis Jannidis]
 - fixed: throws a more useful error if non-row inside table body [Keiron Liddle]
 - fixed: duplicate ID bug for tables that flow over a page [Keiron Liddle]
-- fixed: empty flow bug	[Kai Strackbein]
+- fixed: empty flow bug [Kai Strackbein]
 - fixed: broken support of jdk 1.1 [Peter Housel]
 
 Done since 0.15 release
