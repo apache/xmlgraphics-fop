@@ -3,54 +3,76 @@
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 <document>
   <header>
-    <title>Properties</title>
-    <subtitle>Properties overview</subtitle>
+    <title>FOP Design: Properties</title>
     <authors>
       <person name="Karen Lease" email=""/>
     </authors>
   </header>
   <body>
+    <section id="intro">
+      <title>Introduction</title>
+      <p>As the input XSL-FO is being parsed and the FO Tree is being built, the attributes of the FO elements are passed by the parser to the related FO object.
+The java object that represent the FO object then converts the attributes into properties that are stored in the FO Tree.</p>
+    </section>
+    <section id="terms-related">
+      <title>Related Terms</title>
+      <p>It may be helpful here to show the rough relationship between terms used to describe the various trees in XSL-FO processing, all of which come from the XML and XSL-FO standards. In the table below, the <em>terms</em> (but not the actual items) in each column are roughly equivalent to each other:</p>
+      <table>
+        <tr>
+          <th>Tree Concept</th>
+          <th>Thing (Noun)</th>
+          <th>Descriptive Item (Adjective)</th>
+        </tr>
+        <tr>
+          <td>XML</td>
+          <td>Element</td>
+          <td>Attribute</td>
+        </tr>
+        <tr>
+          <td>FO Tree</td>
+          <td>Object</td>
+          <td>Property</td>
+        </tr>
+        <tr>
+          <td>Area Tree</td>
+          <td>Area</td>
+          <td>Trait</td>
+        </tr>
+      </table>
+    </section>
 
+    <section id="issues">
+      <title>Issues</title>
+      <p>The following are some issues when dealing with properties:</p>
+      <ul>
+        <li>Initial Property Set</li>
+        <li>Inheritance: Some properties can be inherited from parent objects.</li>
+        <li>Adoption: The parentage for some elements can move around.
+Markers are one example.</li>
+        <li>Multiple Namespaces: The properties for foreign namespaces must be handled.</li>
+        <li>Expressions: XSL-FO expressions can be included in properties.</li>
+      </ul>
+    </section>
 
-    <section id="properties">
-      <title>Properties</title>
-      <p>The XML attributes on each element are passed to the object. The objects
-that represent FO objects then convert the attributes into properties.</p>
-      <p>Since properties can be inherited the PropertyList class handles resolving
-properties for a particular element.
-All properties are specified in an XML file. Classes are created
-automatically during the build process.</p>
-      <p>In some cases the element may be moved to have a different parent, for
-example markers, or the inheritance could be different, for example
-initial property set.</p>
-      <p>Properties (recall that FO's have properties, areas have traits, and XML
-nodes have attributes) are also a concern of <em>FOTreeBuilder</em>. It
-accomplishes this by using a <em>PropertyListBuilder</em>. There is a
-separate <em>PropertyListBuilder</em> for each namespace encountered
-while building the FO tree. Each Builder object contains a hash of
-property names and <em>their</em> respective makers. It may also
+    <section id="process-overview">
+      <title>Overview of Processing</title>
+      <p>The general flow of property processing is as follows:</p>
+      <ul>
+        <li>As part of <code>FOTreeBuilder.startElement()</code>, <code>FObj.handleAttrs</code> is passed a list of attributes to be processed for the new FObj.</li>
+        <li>FObj.handleAttrs gets a PropertyListBuilder and asks it to create a Property List from them. There is currently only one static PropertyListBuilder, which handles the fo: namespace.</li>
+        <li>FObj.handleAttrs then cross-references the PropertyList with the FObj.</li>
+      </ul>
+    </section>
+    <section id="plb">
+      <title>PropertyListBuilder</title>
+      <p>Each plb object contains a hash of
+property names and <em>their</em> respective Makers. It may also
 contain element-specific property maker hashes; these are based on the
 <em>local name</em> of the flow object, ie. <em>table-row</em>, not
 <em>fo:table-row</em>. If an element-specific property mapping exists,
 it is preferred to the generic mapping.</p>
-      <p>The base class for all
-properties is <em>Property</em>, and all the property makers extend
-<em>Property.Maker</em>. A more complete discussion of the property
-architecture may be found in <jump href="properties.html">Properties</jump>.</p>
+    <p>The PLB handles loops through each attribute in the list, finds an appropriate "Maker" for it, then calls the Maker to convert the attribute value into a Property object of the correct type, and stores that Property in the PropertyList.</p>
     </section>
-
-
-<p>The <strong>Refinement</strong> step is part of reading and using the properties which may happen immediately or during the layout process.</p>
-
-    <p>During XML Parsing, the FO tree is constructed. For each FO object (some
-subclass of FObj), the tree builder then passes the list of all
-attributes specified on the FO element to the handleAttrs method. This
-method converts the attribute specifications into a PropertyList.</p>
-    <p>The actual work is done by a PropertyListBuilder (PLB for short). The
-basic idea of the PLB is to handle each attribute in the list in turn,
-find an appropriate "Maker" for it, call the Maker to convert the
-attribute value into a Property object of the correct type, and store
-that Property in the PropertyList.</p>
     <section id="datatypes">
       <title>Property datatypes</title>
       <p>The property datatypes are defined in the
@@ -356,9 +378,16 @@ the result is a Property object, and the actual value may be accessed
     </section>
     <section id="refine">
       <title>Refinement</title>
+      <p>The <strong>Refinement</strong> step is part of reading and using the properties which may happen immediately or during the layout process.</p>
     </section>
     <section id="refined-fo-tree">
       <title>Refined FO Tree</title>
     </section>
+    <section id="implement">
+      <title>Implementation Notes</title>
+    </section>
+      <p>All properties are specified in src/codegen/foproperties.xml.
+The related classes are created automatically during the build process.</p>
+      <p>The base class for all properties is <em>fo.Property</em>, and the base class for all the property makers is the inner class <em>Property.Maker</em>.</p>
   </body>
 </document>
