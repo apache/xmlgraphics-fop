@@ -20,7 +20,7 @@
 
 <xsl:preserve-space elements="*"/>
 
-<xsl:template match="compliance">
+<xsl:template match="/compliance">
 <!-- Forrest/Cocoon will place the output from this stylesheet inside of a
      larger html document. The output here is all within one <div> tag. -->
   <div class="content">
