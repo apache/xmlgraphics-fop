@@ -58,16 +58,20 @@
 
 package org.apache.fop.rtf.rtflib.testdocs;
 
-import java.util.Date;
-import java.io.*;
-import org.apache.fop.rtf.rtflib.rtfdoc.*;
+import java.io.IOException;
+
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfDocumentArea;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfSection;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfTable;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfTableRow;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfTableCell;
 
 /**  Generates a simple RTF test document for the jfor rtflib package.
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
 class SimpleTable extends TestDocument {
     /** generate the body of the test document */
-    protected void generateDocument(RtfDocumentArea rda,RtfSection sect)
+    protected void generateDocument(RtfDocumentArea rda, RtfSection sect)
     throws IOException {
         final RtfTable tbl = sect.newTable(new DummyTableColumnsInfo());
         final int MAX_ROW = 2;
@@ -75,18 +79,20 @@ class SimpleTable extends TestDocument {
 
         final int INCH_TO_TWIPS = 1440;
         final int c1w = 4;
-        tbl.newTableRow().newTableCell(c1w * INCH_TO_TWIPS).newParagraph().newText("Here's a table row with just one cell, width " + c1w + "''");
+        tbl.newTableRow().newTableCell(c1w * INCH_TO_TWIPS).newParagraph().newText
+                ("Here's a table row with just one cell, width " + c1w + "''");
 
-        for(int row=0; row < MAX_ROW; row++) {
+        for (int row = 0; row < MAX_ROW; row++) {
             final RtfTableRow r = tbl.newTableRow();
 
-            for(int col=0; col < MAX_COL; col++) {
+            for (int col = 0; col < MAX_COL; col++) {
                 final float widthInInches = col / 2f + 1f;
                 final int widthInTwips = (int)(widthInInches * INCH_TO_TWIPS);
                 final RtfTableCell c = r.newTableCell(widthInTwips);
-                c.newParagraph().newText("(" + row + "," + col + "), width " + widthInInches  + "''");
-                if(row==0 && col==1) {
-                    for(int i=0; i < 4; i++) {
+                c.newParagraph().newText("(" + row + "," + col + "), width "
+                        + widthInInches  + "''");
+                if (row == 0 && col == 1) {
+                    for (int i = 0; i < 4; i++) {
                         c.newParagraph().newText("additional paragraph " + i + " of cell 0,1");
                     }
                 }

@@ -68,7 +68,7 @@ public interface IrtfTemplateContainer {
      *
      * @exception IOException on error
      */
-    public RtfTemplate newTemplate (String str, RtfAttributes attr) throws IOException;
+    RtfTemplate newTemplate (String str, RtfAttributes attr) throws IOException;
 
 
 }

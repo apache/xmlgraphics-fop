@@ -64,23 +64,22 @@ import java.io.IOException;
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
 
-public interface IRtfTextContainer
-{
+public interface IRtfTextContainer {
     /** close current text run if any and start a new one with specified attributes
      *  @param str if not null, added to the RtfText created
      */
-    public RtfText newText(String str,RtfAttributes attr) throws IOException;
+    RtfText newText(String str, RtfAttributes attr) throws IOException;
 
     /** close current text run if any and start a new one with default attributes
      *  @param str if not null, added to the RtfText created
      */
-    public RtfText newText(String str) throws IOException;
+    RtfText newText(String str) throws IOException;
 
     /** add a line break */
-    public void newLineBreak() throws IOException;
+    void newLineBreak() throws IOException;
 
     /** text containers usually provide default attributes for all texts that they contain.
      *  This returns a copy of the container's attributes
      */
-    public RtfAttributes getTextContainerAttributes();
+    RtfAttributes getTextContainerAttributes();
 }

@@ -69,8 +69,7 @@ import java.io.IOException;
  *
  * @author <a href="mailto:a.putz@skynamics.com">Andreas Putz</a>
  */
-class ExternalGraphic extends TestDocument
-{
+class ExternalGraphic extends TestDocument {
     private String file = "file:///tmp/jfor-images/logo.";
 
     //////////////////////////////////////////////////
@@ -80,13 +79,11 @@ class ExternalGraphic extends TestDocument
     /**
      * Default constructor.
      */
-    public ExternalGraphic ()
-    {
+    public ExternalGraphic () {
 
     }
     /** generate the body of the test document */
-    protected void generateDocument (RtfDocumentArea rda, RtfSection sect) throws IOException
-    {
+    protected void generateDocument (RtfDocumentArea rda, RtfSection sect) throws IOException {
         RtfParagraph p = sect.newParagraph ();
         p.newLineBreak();
         p.newLineBreak();
@@ -99,7 +96,7 @@ class ExternalGraphic extends TestDocument
         p.newLineBreak();
         p.close();
 
-        p = sect.newParagraph( );
+        p = sect.newParagraph();
         p.newLineBreak();
         p.newText ("PNG image with 150 % width");
         p.newLineBreak();
@@ -109,7 +106,7 @@ class ExternalGraphic extends TestDocument
         p.newLineBreak();
         p.close();
 
-        p = sect.newParagraph( );
+        p = sect.newParagraph();
         p.newLineBreak();
         p.newLineBreak();
         p.newText ("JPG image with width = 200px and height = 20 px");
@@ -121,11 +118,11 @@ class ExternalGraphic extends TestDocument
         p.newLineBreak();
         p.close();
 
-        p = sect.newParagraph( );
+        p = sect.newParagraph();
         p.newLineBreak();
         p.newLineBreak();
-        p.newText ("GIF image with width = 200px and scaling = 'uniform', that means the image " +
-                    "size will adjusted automatically");
+        p.newText ("GIF image with width = 200px and scaling = 'uniform', that means the image "
+                + "size will adjusted automatically");
         p.newLineBreak();
         RtfExternalGraphic imageD = sect.newImage ();
         imageD.setURL (file + "gif");
@@ -134,7 +131,7 @@ class ExternalGraphic extends TestDocument
         p.newLineBreak();
         p.close();
 
-        p = sect.newParagraph( );
+        p = sect.newParagraph();
         p.newLineBreak();
         p.newLineBreak();
         p.newText ("GIF image");

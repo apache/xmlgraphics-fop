@@ -60,7 +60,6 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import java.io.IOException;
 
-public interface IRtfPageNumberCitationContainer
-{
-    public RtfPageNumberCitation newPageNumberCitation(String id) throws IOException;
+public interface IRtfPageNumberCitationContainer {
+    RtfPageNumberCitation newPageNumberCitation(String id) throws IOException;
 }

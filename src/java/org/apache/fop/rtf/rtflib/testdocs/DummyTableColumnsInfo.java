@@ -68,8 +68,7 @@ import org.apache.fop.rtf.rtflib.interfaces.ITableColumnsInfo;
  *  @author bdelacretaz@codeconsult.ch
  */
 
-class DummyTableColumnsInfo implements ITableColumnsInfo
-{
+class DummyTableColumnsInfo implements ITableColumnsInfo {
 
     public float getColumnWidth() {
         return INVALID_COLUM_WIDTH;

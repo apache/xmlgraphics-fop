@@ -64,16 +64,16 @@ import java.io.IOException;
 /** RtfContainer that encloses footers */
 public class RtfAfter extends RtfAfterBeforeBase {
     /**RtfBefore attributes*/
-    public final static String FOOTER = "footer";
-    public final static String[] FOOTER_ATTR = new String[]{
+    public static final String FOOTER = "footer";
+    public static final String[] FOOTER_ATTR = new String[]{
         FOOTER
     };
 
     RtfAfter(RtfSection parent, Writer w, RtfAttributes attrs) throws IOException {
-        super(parent,w,attrs);
+        super(parent, w, attrs);
     }
 
     protected void writeMyAttributes() throws IOException {
-        writeAttributes(m_attrib,FOOTER_ATTR);
+        writeAttributes(m_attrib, FOOTER_ATTR);
     }
 }

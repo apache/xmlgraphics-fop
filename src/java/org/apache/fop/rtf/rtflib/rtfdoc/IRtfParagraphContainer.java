@@ -64,12 +64,11 @@ import java.io.IOException;
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
 
-public interface IRtfParagraphContainer
-{
+public interface IRtfParagraphContainer {
     /** close current paragraph if any and start a new one with default attributes */
-    public RtfParagraph newParagraph() throws IOException;
+    RtfParagraph newParagraph() throws IOException;
 
     /** close current paragraph if any and start a new one with specified attributes */
-    public RtfParagraph newParagraph(RtfAttributes attr) throws IOException;
+    RtfParagraph newParagraph(RtfAttributes attr) throws IOException;
 
 }

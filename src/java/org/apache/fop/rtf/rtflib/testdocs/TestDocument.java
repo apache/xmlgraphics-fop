@@ -59,8 +59,14 @@
 package org.apache.fop.rtf.rtflib.testdocs;
 
 import java.util.Date;
-import java.io.*;
-import org.apache.fop.rtf.rtflib.rtfdoc.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.FileWriter;
+
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfDocumentArea;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfSection;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfFile;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfParagraph;
 //import org.apache.fop.rtf.rtflib.jfor.main.JForVersionInfo;
 
 /**  Base class for generating RTF documents used to test the jfor rtflib package.
@@ -71,13 +77,11 @@ abstract class TestDocument {
     private File m_output;
 
     final void setOutputDir(File outDir)
-    throws IOException
-    {
-        m_output = new File(outDir,getRtfFilename());
+    throws IOException {
+        m_output = new File(outDir, getRtfFilename());
     }
 
-    final String getRtfFilename()
-    {
+    final String getRtfFilename() {
         // use class name for output filename
         final String name = getClass().getName();
         final int pos = name.lastIndexOf('.');
@@ -85,26 +89,24 @@ abstract class TestDocument {
     }
 
     final void generateOutput()
-    throws IOException
-    {
+    throws IOException {
         debugMsg("Generating document " + m_output + "...");
         final RtfFile f = new RtfFile(new FileWriter(m_output));
         final RtfDocumentArea rda = f.startDocumentArea();
         final RtfSection sect = rda.newSection();
         addIntroComments(sect);
-        generateDocument(rda,sect);
+        generateDocument(rda, sect);
         f.flush();
     }
 
-    protected abstract void generateDocument(RtfDocumentArea rda,RtfSection sect) throws IOException;
+    protected abstract void generateDocument(RtfDocumentArea rda, RtfSection sect)
+            throws IOException;
 
-    void debugMsg(String msg)
-    {
+    void debugMsg(String msg) {
         System.err.println(msg);
     }
 
-    protected void addIntroComments(RtfSection sect) throws IOException
-    {
+    protected void addIntroComments(RtfSection sect) throws IOException {
         final RtfParagraph para = sect.newParagraph();
 
         para.newText("jfor RTF library test document.");

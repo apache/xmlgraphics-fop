@@ -71,7 +71,7 @@ public class CreateTestDocuments {
     public static final String TESTDOCS_PACKAGE = "org.apache.fop.rtf.rtflib.testdocs";
 
     /** List of all TestDocument subclasses from this package */
-    private final static String [] classNames = {
+    private static final String [] classNames = {
         "SimpleDocument",
         "TextAttributes",
         "SimpleTable",
@@ -87,24 +87,25 @@ public class CreateTestDocuments {
 
     CreateTestDocuments(File outDir)
     throws Exception {
-        if(!outDir.isDirectory() || !outDir.canWrite()) {
+        if (!outDir.isDirectory() || !outDir.canWrite()) {
             throw new IOException("output directory (" + outDir + ") must exist and be writable");
         }
 
-        for(int i=0; i < classNames.length; i++) {
-            createOneTestDocument(classNames[i],outDir);
+        for (int i = 0; i < classNames.length; i++) {
+            createOneTestDocument(classNames[i], outDir);
         }
     }
 
     /** instantiate one TestDocument and let it generate its document */
-    void createOneTestDocument(String className,File outDir)
+    void createOneTestDocument(String className, File outDir)
     throws Exception {
         className = TESTDOCS_PACKAGE + "." + className;
         TestDocument td = null;
         try {
             td = (TestDocument)Class.forName(className).newInstance();
-        } catch(Exception e) {
-            throw new Exception("unable to instantiate '" + className + " as a TestDocument object: " + e);
+        } catch (Exception e) {
+            throw new Exception("unable to instantiate '" + className
+                    + " as a TestDocument object: " + e);
         }
         td.setOutputDir(outDir);
         td.generateOutput();
@@ -113,7 +114,7 @@ public class CreateTestDocuments {
     /** execute this to create test documents from all classes listed in classNames array */
     public static void main(String args[])
     throws Exception {
-        if(args.length < 1) {
+        if (args.length < 1) {
             System.err.println("usage: CreateTestDocuments <output directory>");
             System.exit(1);
         }

@@ -58,43 +58,51 @@
 
 package org.apache.fop.rtf.rtflib.testdocs;
 
-import java.util.Date;
-import java.io.*;
-import org.apache.fop.rtf.rtflib.rtfdoc.*;
+import java.io.IOException;
+
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfDocumentArea;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfSection;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfList;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfTable;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfTableRow;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfTableCell;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfListItem;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfParagraph;
 
 /**  Generates a simple RTF test document for the jfor rtflib package.
  */
 
-class ListInTable extends TestDocument
-{
+class ListInTable extends TestDocument {
     /** generate the body of the test document */
-    protected void generateDocument(RtfDocumentArea rda,RtfSection sect)
+    protected void generateDocument(RtfDocumentArea rda, RtfSection sect)
     throws IOException {
-        sect.newParagraph().newText("There must be a table below where the second cell contains a bulleted list mixed with normal paragraphs");
+        sect.newParagraph().newText("There must be a table below where the "
+                + "second cell contains a bulleted list mixed with normal paragraphs");
 
         final RtfTable tbl = sect.newTable(new DummyTableColumnsInfo());
         final RtfTableRow row = tbl.newTableRow();
         row.newTableCell(RtfTableCell.DEFAULT_CELL_WIDTH).newParagraph().newText("cell A, simple");
 
         final RtfTableCell c = row.newTableCell(RtfTableCell.DEFAULT_CELL_WIDTH);
-        c.newParagraph().newText("cell B, contains this paragraph followed by a list and another paragraph");
-        fillList(c.newList(null),1,3);
+        c.newParagraph().newText("cell B, contains this paragraph followed by "
+                + "a list and another paragraph");
+        fillList(c.newList(null), 1, 3);
         c.newParagraph().newText("Normal paragraph, follows the list.");
 
         row.newTableCell(RtfTableCell.DEFAULT_CELL_WIDTH).newParagraph().newText("cell C, simple");
     }
 
-    private void fillList(RtfList list,int listIndex,int nItems)
-    throws IOException
-    {
-        for(int i=0; i < nItems; i++) {
+    private void fillList(RtfList list, int listIndex, int nItems)
+    throws IOException {
+        for (int i = 0; i < nItems; i++) {
             final RtfListItem item = list.newListItem();
-            for(int j=0; j <= i; j++) {
+            for (int j = 0; j <= i; j++) {
                 final RtfParagraph para = item.newParagraph();
                 para.newText("List " + listIndex + ", item " + i + ", paragraph " + j);
-                if(i==0 && j==0) {
+                if (i == 0 && j == 0) {
                     final String txt = "This item takes more than one line to check word-wrapping.";
-                    para.newText(". " + "This list must have " + nItems + " items. " + txt + " " + txt + " " + txt);
+                    para.newText(". " + "This list must have " + nItems
+                            + " items. " + txt + " " + txt + " " + txt);
                 }
             }
         }

@@ -58,21 +58,23 @@
 
 package org.apache.fop.rtf.rtflib.testdocs;
 
-import java.util.Date;
-import java.io.*;
-import org.apache.fop.rtf.rtflib.rtfdoc.*;
+import java.io.IOException;
+
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfDocumentArea;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfSection;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfParagraph;
 
 /**  Generates an RTF document to test the WhitespaceCollapser
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
 
-class Whitespace extends TestDocument
-{
+class Whitespace extends TestDocument {
     /** generate the body of the test document */
-    protected void generateDocument(RtfDocumentArea rda,RtfSection sect)
+    protected void generateDocument(RtfDocumentArea rda, RtfSection sect)
     throws IOException {
         final RtfParagraph p1 = sect.newParagraph();
-        p1.newText("\t  Each word  of this paragraph must   be separated\tfrom\t\n\tthe next word with exactly\t \tone");
+        p1.newText("\t  Each word  of this paragraph must   be "
+                   + "separated\tfrom\t\n\tthe next word with exactly\t \tone");
         p1.newText("   space.");
 
         final RtfParagraph p2 = sect.newParagraph();
@@ -83,7 +85,8 @@ class Whitespace extends TestDocument
         p2.newText("   there must\tbe    \t");
         p2.newText("exactly");
         p2.newText(" one space   ");
-        p2.newText("between  each\tword and the  next, and no spaces at the beginning or end of the paragraph.");
+        p2.newText("between  each\tword and the  next, and no spaces at the "
+                   + "beginning or end of the paragraph.");
 
         final RtfParagraph p3 = sect.newParagraph();
         p3.newText("The word 'boomerang' must be written after this with no funny spacing: ");

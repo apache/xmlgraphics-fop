@@ -63,5 +63,5 @@ import java.io.IOException;
 public interface IRtfParagraphKeepTogetherContainer {
 
     /** close current paragraph if any and start a new one */
-    public RtfParagraphKeepTogether newParagraphKeepTogether() throws IOException;
+    RtfParagraphKeepTogether newParagraphKeepTogether() throws IOException;
 }

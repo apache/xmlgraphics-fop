@@ -62,8 +62,7 @@ package org.apache.fop.rtf.rtflib.tools;
  *  This class belongs to the <fo:external-graphic> tag processing.
  *  @author <a href="mailto:a.putz@skynamics.com">Andreas Putz</a>
  */
-public class ImageUtil
-{
+public class ImageUtil {
 
     //////////////////////////////////////////////////
     // @@ Construction
@@ -72,8 +71,7 @@ public class ImageUtil
     /**
      * Private constructor.
      */
-    private ImageUtil ()
-    {
+    private ImageUtil () {
     }
 
 
@@ -90,26 +88,20 @@ public class ImageUtil
      *  -1      There is no digit\n
      *  number  The digits as integer
      */
-    public static int getInt (String value)
-    {
+    public static int getInt (String value) {
         String retString = new String ();
         StringBuffer s = new StringBuffer (value);
         int len = s.length ();
 
-        for (int i = 0; i < len; i++)
-        {
-            if (Character.isDigit (s.charAt (i)))
-            {
+        for (int i = 0; i < len; i++) {
+            if (Character.isDigit (s.charAt (i))) {
                 retString += s.charAt (i);
             }
         }
 
-        if (retString.length () == 0)
-        {
+        if (retString.length () == 0) {
             return -1;
-        }
-        else
-        {
+        } else {
             return Integer.parseInt (retString);
         }
     }
@@ -123,10 +115,8 @@ public class ImageUtil
      * true    The string contains a % value
      * false   Other string
      */
-    public static boolean isPercent (String value)
-    {
-        if (value.endsWith ("%"))
-        {
+    public static boolean isPercent (String value) {
+        if (value.endsWith ("%")) {
             return true;
 
         }
@@ -147,46 +137,35 @@ public class ImageUtil
      *  false   If different
      */
     public static boolean compareHexValues (byte[] pattern, byte[] data, int searchAt,
-                                            boolean searchForward)
-    {
-        if (searchAt >= data.length)
-        {
+                                            boolean searchForward) {
+        if (searchAt >= data.length) {
             return false;
 
         }
 
         int pLen = pattern.length;
 
-        if (searchForward)
-        {
-            if (pLen >= (data.length - searchAt))
-            {
+        if (searchForward) {
+            if (pLen >= (data.length - searchAt)) {
                 return false;
 
             }
 
-            for (int i = 0; i < pLen; i++)
-            {
-                if (pattern[i] != data[searchAt + i])
-                {
+            for (int i = 0; i < pLen; i++) {
+                if (pattern[i] != data[searchAt + i]) {
                     return false;
                 }
             }
 
             return true;
-        }
-        else
-        {
-            if (pLen > (searchAt + 1))
-            {
+        } else {
+            if (pLen > (searchAt + 1)) {
                 return false;
 
             }
 
-            for (int i = 0; i < pLen; i++)
-            {
-                if (pattern[pLen - i - 1] != data[searchAt - i])
-                {
+            for (int i = 0; i < pLen; i++) {
+                if (pattern[pLen - i - 1] != data[searchAt - i]) {
                     return false;
                 }
             }
@@ -205,49 +184,42 @@ public class ImageUtil
      * @return A number
      */
     public static int getIntFromByteArray (byte[] data, int startAt, int length,
-                                           boolean searchForward)
-    {
+                                           boolean searchForward) {
         int bit = 8;
         int bitMoving = length * bit;
         int retVal = 0;
 
-        if (startAt >= data.length)
-        {
+        if (startAt >= data.length) {
             return retVal;
 
         }
 
-        if (searchForward)
-        {
-            if (length >= (data.length - startAt))
-            {
+        if (searchForward) {
+            if (length >= (data.length - startAt)) {
                 return retVal;
 
             }
 
-            for (int i = 0; i < length; i++)
-            {
+            for (int i = 0; i < length; i++) {
                 bitMoving -= bit;
                 int iData = (int) data[startAt + i];
-                if (iData < 0)
+                if (iData < 0) {
                     iData += 256;
+                }
                 retVal += iData << bitMoving;
             }
-        }
-        else
-        {
-            if (length > (startAt + 1))
-            {
+        } else {
+            if (length > (startAt + 1)) {
                 return retVal;
 
             }
 
-            for (int i = 0; i < length; i++)
-            {
+            for (int i = 0; i < length; i++) {
                 bitMoving -= bit;
                 int iData = (int) data[startAt - i];
-                if (iData < 0)
+                if (iData < 0) {
                     iData += 256;
+                }
                 retVal += iData << bitMoving;            }
         }
 
