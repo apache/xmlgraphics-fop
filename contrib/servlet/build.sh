@@ -1,8 +1,8 @@
 #!/bin/sh
 # This file should be executable.
 echo
-echo "Fop Build System"
-echo "----------------"
+echo "Fop Servlet Build System"
+echo "--------------------------"
 echo
 
 if [ "$JAVA_HOME" = "" ] ; then
@@ -13,8 +13,11 @@ if [ "$JAVA_HOME" = "" ] ; then
   exit 1
 fi
 LIBDIR=../../lib
-LOCALCLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/classes.zip:$LIBDIR/ant.jar:$LIBDIR/ant-1.3-optional.jar:$LIBDIR/buildtools.jar:$LIBDIR/xerces-1.4.3.jar:$LIBDIR/xalan-2.2D11.jar
-
+LOCALCLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/classes.zip
+LOCALCLASSPATH=$LOCALCLASSPATH:$LIBDIR/ant.jar
+LOCALCLASSPATH=$LOCALCLASSPATH:$LIBDIR/xml-apis.jar
+LOCALCLASSPATH=$LOCALCLASSPATH:$LIBDIR/xercesImpl-2.2.1.jar
+LOCALCLASSPATH=$LOCALCLASSPATH:$LIBDIR/xalan-2.4.1.jar
 ANT_HOME=$LIBDIR
 
 echo
