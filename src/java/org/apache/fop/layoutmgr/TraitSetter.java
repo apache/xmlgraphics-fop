@@ -185,23 +185,23 @@ public class TraitSetter {
     public static void addMargins(Area curBlock,
                                   CommonBorderAndPadding bpProps,
                                   CommonMarginBlock marginProps) {
-        int spaceStart = marginProps.startIndent -
-                            bpProps.getBorderStartWidth(false) -
-                            bpProps.getPaddingStart(false);
+        int spaceStart = marginProps.startIndent 
+                            - bpProps.getBorderStartWidth(false)
+                            - bpProps.getPaddingStart(false);
         if (spaceStart != 0) {
             curBlock.addTrait(Trait.SPACE_START, new Integer(spaceStart));
         }
 
-        int spaceEnd = marginProps.endIndent -
-                           bpProps.getBorderEndWidth(false) -
-                           bpProps.getPaddingEnd(false);
+        int spaceEnd = marginProps.endIndent
+                            - bpProps.getBorderEndWidth(false)
+                            - bpProps.getPaddingEnd(false);
         if (spaceEnd != 0) {
             curBlock.addTrait(Trait.SPACE_END, new Integer(spaceEnd));
         }
     }
 
     public static void addBreaks(Area curArea, LayoutProps layoutProps) {
-    	curArea.addTrait(Trait.BREAK_AFTER, new Integer(layoutProps.breakAfter));
+        curArea.addTrait(Trait.BREAK_AFTER, new Integer(layoutProps.breakAfter));
         curArea.addTrait(Trait.BREAK_BEFORE, new Integer(layoutProps.breakBefore));
     }
 }

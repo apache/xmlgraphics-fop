@@ -941,8 +941,8 @@ public class PDFRenderer extends PrintRenderer {
         int bl = currentBPPosition + bpMarginOffset + text.getOffset();
 
 /*        System.out.println("Text = " + text.getTextArea() +
-			"; text width: " + text.getWidth() +
-        	"; BlockIP Position: " + currentBlockIPPosition +
+            "; text width: " + text.getWidth() +
+            "; BlockIP Position: " + currentBlockIPPosition +
             "; currentBPPosition: " + currentBPPosition +
             "; offset: " + text.getOffset());
 */
@@ -954,14 +954,14 @@ public class PDFRenderer extends PrintRenderer {
             closeText();
 
             pdf.append("1 0 0 -1 " + (rx / 1000f) + " " + (bl / 1000f) + " Tm "
-                       + (text.getTextSpaceAdjust()/1000f) + " Tw [" + startText);
+                       + (text.getTextSpaceAdjust() / 1000f) + " Tw [" + startText);
             prevWordY = bl;
             textOpen = true;
         } else {
                 closeText();
 
                 pdf.append("1 0 0 -1 " + (rx / 1000f) + " " + (bl / 1000f) + " Tm "
-                           + (text.getTextSpaceAdjust()/1000f) + " Tw [" + startText);
+                           + (text.getTextSpaceAdjust() / 1000f) + " Tw [" + startText);
                 textOpen = true;
         }
         prevWordWidth = text.getWidth();
