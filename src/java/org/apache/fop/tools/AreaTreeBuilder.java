@@ -383,19 +383,19 @@ class TreeLoader extends AbstractLogEnabled {
             Node obj = childs.item(i);
             if (obj.getNodeName().equals("regionBefore")) {
                 reg.setRegion(readRegion((Element) obj, Region.BEFORE_CODE));
-                page.setRegion(Region.BEFORE_CODE, reg);
+                page.setRegionViewport(Region.BEFORE_CODE, reg);
             } else if (obj.getNodeName().equals("regionStart")) {
                 reg.setRegion(readRegion((Element) obj, Region.START_CODE));
-                page.setRegion(Region.START_CODE, reg);
+                page.setRegionViewport(Region.START_CODE, reg);
             } else if (obj.getNodeName().equals("regionBody")) {
                 reg.setRegion(readRegion((Element) obj, Region.BODY_CODE));
-                page.setRegion(Region.BODY_CODE, reg);
+                page.setRegionViewport(Region.BODY_CODE, reg);
             } else if (obj.getNodeName().equals("regionEnd")) {
                 reg.setRegion(readRegion((Element) obj, Region.END_CODE));
-                page.setRegion(Region.END_CODE, reg);
+                page.setRegionViewport(Region.END_CODE, reg);
             } else if (obj.getNodeName().equals("regionAfter")) {
                 reg.setRegion(readRegion((Element) obj, Region.AFTER_CODE));
-                page.setRegion(Region.AFTER_CODE, reg);
+                page.setRegionViewport(Region.AFTER_CODE, reg);
             }
         }
 

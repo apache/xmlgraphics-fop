@@ -916,12 +916,12 @@ public class PDFRenderer extends PrintRenderer {
         //  where previous line area failed to take up entire allocated space
         int rx = currentBlockIPPosition + IPMarginOffset;
         int bl = currentBPPosition + BPMarginOffset + text.getOffset();
-
-/*      System.out.println("BlockIP Position: " + currentBlockIPPosition +
+/*
+        System.out.println("\nBlockIP Position: " + currentBlockIPPosition +
             "; currentBPPosition: " + currentBPPosition +
             "; offset: " + text.getOffset() +
-            "; Text = " + text.getTextArea()); */
-
+            "; Text = " + text.getTextArea());
+*/
         // Set letterSpacing
         //float ls = fs.getLetterSpacing() / this.currentFontSize;
         //pdf.append(ls).append(" Tc\n");

@@ -107,7 +107,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
 
     /** Start index of first character in this parent Area */
     private short iAreaStart = 0;
-    /** Start index of next "word" */
+    /** Start index of next TextArea */
     private short iNextStart = 0;
     /** Size since last makeArea call, except for last break */
     private MinOptMax ipdTotal;
@@ -187,7 +187,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
     public boolean canBreakBefore(LayoutContext context) {
         char c = chars[iNextStart];
         return ((c == NEWLINE)
-                || (textInfo.bWrap && (CharUtilities.isSpace(c)
+                || (textInfo.bWrap && (CharUtilities.isBreakableSpace(c)
                 || BREAK_CHARS.indexOf(c) >= 0)));
     }
 
@@ -296,10 +296,10 @@ public class TextLayoutManager extends AbstractLayoutManager {
         }
 
 
-        /* Start of this "word", plus any non-suppressed leading space.
+        /* Start of this TextArea, plus any non-suppressed leading space.
          * Collapse any remaining word-space with leading space from
          * ancestor FOs.
-         * Add up other leading space which is counted in the word IPD.
+         * Add up other leading space which is counted in the TextArea IPD.
          */
 
         SpaceSpecifier pendingSpace = new SpaceSpecifier(false);
@@ -375,7 +375,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
                 char c = chars[iNextStart];
                 if ((c == NEWLINE) || // Include any breakable white-space as break char
                         //  even if fixed width
-                        (textInfo.bWrap && (CharUtilities.isSpace(c)
+                        (textInfo.bWrap && (CharUtilities.isBreakableSpace(c)
                                             || BREAK_CHARS.indexOf(c) >= 0))) {
                     iFlags |= BreakPoss.CAN_BREAK_AFTER;
                     if (c != SPACE) {
@@ -464,7 +464,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
 
     /**
      * Generate and add areas to parent area.
-     * This can either generate an area for each "word" and each space, or
+     * This can either generate an area for each TextArea and each space, or
      * an area containing all text with a parameter controlling the size of
      * the word space. The latter is most efficient for PDF generation.
      * Set size of each area.
@@ -474,7 +474,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
      */
     public void addAreas(PositionIterator posIter, LayoutContext context) {
         // Add word areas
-        AreaInfo ai = null ;
+        AreaInfo ai = null;
         int iStart = -1;
         int iWScount = 0;
 
@@ -508,24 +508,25 @@ public class TextLayoutManager extends AbstractLayoutManager {
             iAdjust = (int)((double)(ai.ipdArea.opt
                                      - ai.ipdArea.min) * dSpaceAdjust);
         }
-        // System.err.println("Text adjustment factor = " + dSpaceAdjust +
-        //    " total=" + iAdjust);
+//        System.err.println("\nText adjustment factor = " + dSpaceAdjust +
+//          " total=" + iAdjust + "; breakIndex = " + ai.iBreakIndex);
 
         // Make an area containing all characters between start and end.
         InlineArea word = null;
         int adjust = 0;
-        // ingnore newline character
+        
+        // ignore newline character
         if (chars[ai.iBreakIndex - 1] == NEWLINE) {
             adjust = 1;
         }
         String str = new String(chars, iStart, ai.iBreakIndex - iStart - adjust);
+
         if (" ".equals(str)) {
             word = new Space();
             word.setWidth(ai.ipdArea.opt + iAdjust);
         } else  {
-            TextArea t = createText(
-                      str,
-                      ai.ipdArea.opt + iAdjust, context.getBaseline());
+            TextArea t = createTextArea(str, ai.ipdArea.opt + iAdjust, 
+                context.getBaseline());
             if (iWScount > 0) {
                 //getLogger().error("Adjustment per word-space= " +
                 //                   iAdjust / iWScount);
@@ -560,27 +561,27 @@ public class TextLayoutManager extends AbstractLayoutManager {
 
     /**
      * Create an inline word area.
-     * This creates a Word and sets up the various attributes.
+     * This creates a TextArea and sets up the various attributes.
      *
-     * @param str the string for the word
-     * @param width the width that the word uses
+     * @param str the string for the TextArea
+     * @param width the width that the TextArea uses
      * @param base the baseline position
      * @return the new word area
      */
-    protected TextArea createText(String str, int width, int base) {
-        TextArea curWordArea = new TextArea();
-        curWordArea.setWidth(width);
-        curWordArea.setHeight(textInfo.fs.getAscender()
+    protected TextArea createTextArea(String str, int width, int base) {
+        TextArea textArea = new TextArea();
+        textArea.setWidth(width);
+        textArea.setHeight(textInfo.fs.getAscender()
                               - textInfo.fs.getDescender());
-        curWordArea.setOffset(textInfo.fs.getAscender());
-        curWordArea.setOffset(base);
+        textArea.setOffset(textInfo.fs.getAscender());
+        textArea.setOffset(base);
 
-        curWordArea.setTextArea(str);
-        curWordArea.addTrait(Trait.FONT_NAME, textInfo.fs.getFontName());
-        curWordArea.addTrait(Trait.FONT_SIZE,
+        textArea.setTextArea(str);
+        textArea.addTrait(Trait.FONT_NAME, textInfo.fs.getFontName());
+        textArea.addTrait(Trait.FONT_SIZE,
                              new Integer(textInfo.fs.getFontSize()));
-        curWordArea.addTrait(Trait.COLOR, this.textInfo.color);
-        return curWordArea;
+        textArea.addTrait(Trait.COLOR, this.textInfo.color);
+        return textArea;
     }
 
 }
