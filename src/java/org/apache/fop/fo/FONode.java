@@ -112,6 +112,18 @@ public abstract class FONode {
     }
 
     /**
+     * Create a property list for this node. Return null if the node does not
+     * need a property list.
+     * @param parent the closest parent propertylist. 
+     * @param foEventHandler The FOEventHandler where the PropertyListMaker 
+     *              instance can be found.
+     * @return A new property list.
+     */
+    protected PropertyList createPropertyList(PropertyList parent, FOEventHandler foEventHandler) throws SAXParseException {
+        return null;
+    }
+
+    /**
      * Checks to make sure, during SAX processing of input document, that the
      * incoming node is valid for the this (parent) node (e.g., checking to
      * see that fo:table is not an immediate child of fo:root)
@@ -134,6 +146,13 @@ public abstract class FONode {
                                  Locator locator) throws SAXParseException {
         // ignore
     }
+
+    /**
+    *
+    */
+    protected void startOfNode() throws SAXParseException {
+        // do nothing by default
+   }
 
     /**
      *
