@@ -212,24 +212,24 @@ public class XMLRenderer extends AbstractRenderer {
         if (port != null) {
             writeStartTag("<regionViewport rect=\"" +
                           createString(port.getViewArea()) + "\">");
-            Region region = port.getRegion();
-            if (region.getRegionClass() == Region.BEFORE) {
+            RegionReference region = port.getRegion();
+            if (region.getRegionClass() == RegionReference.BEFORE) {
                 writeStartTag("<regionBefore>");
                 renderRegion(region);
                 writeEndTag("</regionBefore>");
-            } else if (region.getRegionClass() == Region.START) {
+            } else if (region.getRegionClass() == RegionReference.START) {
                 writeStartTag("<regionStart>");
                 renderRegion(region);
                 writeEndTag("</regionStart>");
-            } else if (region.getRegionClass() == Region.BODY) {
+            } else if (region.getRegionClass() == RegionReference.BODY) {
                 writeStartTag("<regionBody>");
                 renderBodyRegion((BodyRegion) region);
                 writeEndTag("</regionBody>");
-            } else if (region.getRegionClass() == Region.END) {
+            } else if (region.getRegionClass() == RegionReference.END) {
                 writeStartTag("<regionEnd>");
                 renderRegion(region);
                 writeEndTag("</regionEnd>");
-            } else if (region.getRegionClass() == Region.AFTER) {
+            } else if (region.getRegionClass() == RegionReference.AFTER) {
                 writeStartTag("<regionAfter>");
                 renderRegion(region);
                 writeEndTag("</regionAfter>");

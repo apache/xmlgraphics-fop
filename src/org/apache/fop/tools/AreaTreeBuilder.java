@@ -302,29 +302,29 @@ class TreeLoader {
         for (int i = 0; i < childs.getLength(); i++) {
             Node obj = childs.item(i);
             if (obj.getNodeName().equals("regionBefore")) {
-                reg.setRegion(readRegion((Element) obj, Region.BEFORE));
-                page.setRegion(Region.BEFORE, reg);
+                reg.setRegion(readRegion((Element) obj, RegionReference.BEFORE));
+                page.setRegion(RegionReference.BEFORE, reg);
             } else if (obj.getNodeName().equals("regionStart")) {
-                reg.setRegion(readRegion((Element) obj, Region.START));
-                page.setRegion(Region.START, reg);
+                reg.setRegion(readRegion((Element) obj, RegionReference.START));
+                page.setRegion(RegionReference.START, reg);
             } else if (obj.getNodeName().equals("regionBody")) {
-                reg.setRegion(readRegion((Element) obj, Region.BODY));
-                page.setRegion(Region.BODY, reg);
+                reg.setRegion(readRegion((Element) obj, RegionReference.BODY));
+                page.setRegion(RegionReference.BODY, reg);
             } else if (obj.getNodeName().equals("regionEnd")) {
-                reg.setRegion(readRegion((Element) obj, Region.END));
-                page.setRegion(Region.END, reg);
+                reg.setRegion(readRegion((Element) obj, RegionReference.END));
+                page.setRegion(RegionReference.END, reg);
             } else if (obj.getNodeName().equals("regionAfter")) {
-                reg.setRegion(readRegion((Element) obj, Region.AFTER));
-                page.setRegion(Region.AFTER, reg);
+                reg.setRegion(readRegion((Element) obj, RegionReference.AFTER));
+                page.setRegion(RegionReference.AFTER, reg);
             }
         }
 
         return reg;
     }
 
-    public Region readRegion(Element root, int type) {
-        Region reg;
-        if (type == Region.BODY) {
+    public RegionReference readRegion(Element root, int type) {
+        RegionReference reg;
+        if (type == RegionReference.BODY) {
             BodyRegion br = new BodyRegion();
             NodeList childs = root.getChildNodes();
             for (int i = 0; i < childs.getLength(); i++) {
@@ -342,7 +342,7 @@ class TreeLoader {
             }
             reg = br;
         } else {
-            reg = new Region(type);
+            reg = new RegionReference(type);
             List blocks = getBlocks(root);
             for (int i = 0; i < blocks.size(); i++) {
                 Block obj = (Block) blocks.get(i);
