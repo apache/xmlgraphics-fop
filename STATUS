@@ -31,6 +31,9 @@ Todo's and problems with AWT Previewer:
 - should "preview" be an option when calling FOP instead of having
   it's own main method?
 
+0.12.1 release
+to make the bug fix on XTCommandLine available to non developers
+
 Done since 0.12.0 release:
 
 basic support for padding-{top,left,bottom,right} on blocks.
