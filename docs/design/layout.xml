@@ -123,6 +123,16 @@ the page to have at least all the information it needs to organise the
 page properly.
   </para>
   <para>
+This should handle the situation where there are keeps on some
+block areas that go over the end of the page better. It is possible that
+fitting the blocks on the page using a spacing between min and optimum
+would give a closer value to the optimum than putting the blocks on the
+next page and the spacing being between optimum and max. So if the objects
+are placed first at optimum then you will need to keep going to see if
+there is a lower keep further on that has a spacing that is closer to the
+optimum.
+  </para>
+  <para>
 The spacing and keep information is stored so that the area positions
 and sizes can be adjusted.
   </para>

@@ -23,6 +23,12 @@ resolution layout process and the renderer.
 Standard Features:
        <itemizedlist>
        <listitem><para>
+error handling, what to do if fo markup is invalid
+       </para></listitem>
+       <listitem><para>
+auto overflow value and handling error-if-overflow
+       </para></listitem>
+       <listitem><para>
 adjusting length values (eg. for borders) to renderable values
        </para></listitem>
        <listitem><para>

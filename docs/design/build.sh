@@ -5,14 +5,13 @@ LIBDIR=../../lib
 TARGET_CLASSPATH=$LIBDIR/ant.jar:\
 $LIBDIR/buildtools.jar:\
 $LIBDIR/xalan-2.0.0.jar:\
-$LIBDIR/xalan-1.2.2.jar:\
 $LIBDIR/xerces-1.2.3.jar:\
 $LIBDIR/bsf.jar:\
 ../../build/fop.jar:\
 $LIBDIR/logkit-1.0b4.jar:\
 $LIBDIR/avalon-framework-4.0.jar:\
 $LIBDIR/batik.jar:\
-$LIBDIR/jimi-1.0.jar:
+$LIBDIR/jimi-1.0.jar
 
 if [ "$JAVA_HOME" != "" ] ; then
    TARGET_CLASSPATH=$TARGET_CLASSPATH:$JAVA_HOME/lib/tools.jar
