@@ -50,9 +50,19 @@
  */
 package org.apache.fop.fo;
 
+// Java
 import java.util.HashMap;
+import java.util.Iterator;
+import org.xml.sax.Attributes;
+
+// FOP
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.Property.Maker;
+import org.apache.fop.fo.properties.FOPropertyMapping;
 import org.apache.fop.fo.properties.WritingMode;
 import org.apache.fop.apps.FOPException;
+
+
 
 /**
  * Class containing the collection of properties for a given FObj.
@@ -115,31 +125,42 @@ public class PropertyList extends HashMap {
         });
     }
 
-    private PropertyListBuilder builder;
     private PropertyList parentPropertyList = null;
     private String namespace = "";
     private String element = "";
     private FObj fobj = null;
 
+    private static HashMap propertyListTable = null;
+    private static HashMap elementTable = null;
+    
     /**
      * Basic constructor.
-     * @param parentPropertyList the PropertyList belongin to the new objects
+     * @param parentPropertyList the PropertyList belonging to the new objects
      * parent
      * @param space name of namespace
      * @param el name of element
      */
-    public PropertyList(PropertyList parentPropertyList, String space,
-                        String el) {
+    public PropertyList(FObj fObjToAttach, PropertyList parentPropertyList,
+        String space, String elementName) {
+        this.fobj = fObjToAttach;
         this.parentPropertyList = parentPropertyList;
         this.namespace = space;
-        this.element = el;
-    }
-
-    /**
-     * @param fobj the FObj object to which this propertyList should be attached
-     */
-    public void setFObj(FObj fobj) {
-        this.fobj = fobj;
+        this.element = elementName;
+        
+        if (propertyListTable == null) {
+            propertyListTable = new HashMap();
+            propertyListTable.putAll(FOPropertyMapping.getGenericMappings());
+        }
+        
+        if (elementTable == null) {
+            elementTable = new HashMap();
+            for (Iterator iter =
+                FOPropertyMapping.getElementMappings().iterator();
+                    iter.hasNext();) {
+                String elem = (String) iter.next();
+                elementTable.put(elem, FOPropertyMapping.getElementMapping(elem));
+            }
+        }
     }
 
     /**
@@ -178,10 +199,10 @@ public class PropertyList extends HashMap {
         }
         Property p = getExplicitBaseProp(baseName);
         if (p == null) {
-            p = builder.getShorthand(this, namespace, element, baseName);
+            p = getShorthand(namespace, element, baseName);
         }
         if (p != null && sepchar > -1) {
-            return builder.getSubpropValue(namespace, element, baseName, p,
+            return getSubpropValue(namespace, element, baseName, p,
                                            propertyName.substring(sepchar
                                            + 1));
         }
@@ -201,10 +222,8 @@ public class PropertyList extends HashMap {
             String baseName = propertyName.substring(0, sepchar);
             Property p = getExplicitBaseProp(baseName);
             if (p != null) {
-                return this.builder.getSubpropValue(namespace, element,
-                                                    baseName, p,
-                                                    propertyName.substring(sepchar
-                                                    + 1));
+                return getSubpropValue(namespace, element, baseName, p,
+                    propertyName.substring(sepchar + 1));
             } else {
                 return null;
             }
@@ -229,23 +248,19 @@ public class PropertyList extends HashMap {
      * @return The inherited value, otherwise null.
      */
     public Property getInherited(String propertyName) {
-        if (builder != null) {
-            if (parentPropertyList != null
-                    && builder.isInherited(namespace, element,
-                                           propertyName)) {
-                return parentPropertyList.get(propertyName);
-            } else {
-                // return the "initial" value
-                try {
-                    return builder.makeProperty(this, namespace, element,
-                                                propertyName);
-                } catch (org.apache.fop.apps.FOPException e) {
-                    //log.error("Exception in getInherited(): property="
-                    //                       + propertyName + " : " + e);
-                }
+        if (parentPropertyList != null
+                && isInherited(namespace, element, propertyName)) {
+            return parentPropertyList.get(propertyName);
+        } else {
+            // return the "initial" value
+            try {
+                return makeProperty(namespace, element, propertyName);
+            } catch (org.apache.fop.apps.FOPException e) {
+                //log.error("Exception in getInherited(): property="
+                //                       + propertyName + " : " + e);
             }
         }
-        return null;    // No builder or exception in makeProperty!
+        return null;    // Exception in makeProperty!
     }
 
     /*
@@ -258,25 +273,20 @@ public class PropertyList extends HashMap {
      */
     private Property findProperty(String propertyName, boolean bTryInherit) {
         Property p = null;
-        if (builder.isCorrespondingForced(this, namespace, element,
-                                          propertyName)) {
-            p = builder.computeProperty(this, namespace, element,
-                                        propertyName);
+        if (isCorrespondingForced(namespace, element, propertyName)) {
+            p = computeProperty(namespace, element, propertyName);
         } else {
             p = getExplicitBaseProp(propertyName);
             if (p == null) {
-                p = this.builder.computeProperty(this, namespace, element,
-                                                 propertyName);
+                p = this.computeProperty(namespace, element, propertyName);
             }
             if (p == null) {    // check for shorthand specification
-                p = builder.getShorthand(this, namespace, element,
-                                         propertyName);
+                p = getShorthand(namespace, element, propertyName);
             }
-            if (p == null
-                    && bTryInherit) {    // else inherit (if has parent and is inheritable)
+            if (p == null && bTryInherit) {    
+                // else inherit (if has parent and is inheritable)
                 if (this.parentPropertyList != null
-                        && builder.isInherited(namespace, element,
-                                               propertyName)) {
+                        && isInherited(namespace, element, propertyName)) {
                     p = parentPropertyList.findProperty(propertyName, true);
                 }
             }
@@ -317,10 +327,7 @@ public class PropertyList extends HashMap {
     private Property get(String propertyName, boolean bTryInherit,
                          boolean bTryDefault) {
 
-        if (builder == null) {
-            //log.error("OH OH, builder has not been set");
-        }
-            /* Handle request for one part of a compound property */
+        /* Handle request for one part of a compound property */
         int sepchar = propertyName.indexOf('.');
         String subpropName = null;
         if (sepchar > -1) {
@@ -331,8 +338,7 @@ public class PropertyList extends HashMap {
         Property p = findProperty(propertyName, bTryInherit);
         if (p == null && bTryDefault) {    // default value for this FO!
             try {
-                p = this.builder.makeProperty(this, namespace, element,
-                                              propertyName);
+                p = makeProperty(namespace, element, propertyName);
             } catch (FOPException e) {
                 // don't know what to do here
             }
@@ -347,19 +353,11 @@ public class PropertyList extends HashMap {
         }
 
         if (subpropName != null && p != null) {
-            return this.builder.getSubpropValue(namespace, element,
-                                                propertyName, p, subpropName);
+            return getSubpropValue(namespace, element, propertyName, p,
+                subpropName);
         } else {
             return p;
         }
-    }
-
-    /**
-     *
-     * @param builder the PropertyListBuilder to attache to this object
-     */
-    public void setBuilder(PropertyListBuilder builder) {
-        this.builder = builder;
     }
 
     /**
@@ -392,8 +390,7 @@ public class PropertyList extends HashMap {
         if (p == null) {
             // If no explicit setting found, return initial (default) value.
             try {
-                p = this.builder.makeProperty(this, namespace, element,
-                                              propertyName);
+                p = makeProperty(namespace, element, propertyName);
             } catch (FOPException e) {
                 //log.error("Exception in getNearestSpecified(): property="
                 //                       + propertyName + " : " + e);
@@ -412,17 +409,15 @@ public class PropertyList extends HashMap {
     public Property getFromParent(String propertyName) {
         if (parentPropertyList != null) {
             return parentPropertyList.get(propertyName);
-        } else if (builder != null) {
-            // return the "initial" value
+        } else {
             try {
-                return builder.makeProperty(this, namespace, element,
-                                            propertyName);
+                return makeProperty(namespace, element, propertyName);
             } catch (org.apache.fop.apps.FOPException e) {
                 //log.error("Exception in getFromParent(): property="
                 //                       + propertyName + " : " + e);
             }
         }
-        return null;    // No builder or exception in makeProperty!
+        return null;    // Exception in makeProperty!
     }
 
     /**
@@ -463,5 +458,311 @@ public class PropertyList extends HashMap {
         this.wmtable = (byte[])WRITING_MODE_TABLES.get(new Integer(writingMode));
     }
 
+    /**
+     *
+     * @param nameSpaceURI URI for the namespace of the element to which
+     *     the attributes belong.
+     * @param elementName Local name for the element to which the attributes
+     *     belong.
+     * @param attributes Collection of attributes passed to us from the parser.
+     * @param fo The FObj to which the attributes need to be attached as
+     *     properties.
+     * @throws FOPException If an error occurs while building the PropertyList
+     */
+    public void addAttributesToList(Attributes attributes) 
+        throws FOPException {
+            /*
+             * If font-size is set on this FO, must set it first, since
+             * other attributes specified in terms of "ems" depend on it.
+             */
+            /** @todo When we do "shorthand" properties, must handle the
+             *  "font" property as well to see if font-size is set.
+             */
+            String attributeName = "font-size";
+            String attributeValue = attributes.getValue(attributeName);
+            convertAttributeToProperty(attributes, attributeName, 
+                attributeValue);
+    
+            for (int i = 0; i < attributes.getLength(); i++) {
+                attributeName = attributes.getQName(i);
+                attributeValue = attributes.getValue(i);
+                convertAttributeToProperty(attributes, attributeName, 
+                    attributeValue);
+            }
+    }
+
+    /**
+     *
+     * @param attributes Collection of attributes
+     * @param attributeName Attribute name to convert
+     * @param attributeValue Attribute value to assign to property
+     * @param validProperties Collection of valid properties
+     * @param parentFO Parent FO of the object for which this property is being
+     *     built
+     */
+    private void convertAttributeToProperty(Attributes attributes,
+                                            String attributeName,
+                                            String attributeValue) {
+                                                
+        FObj parentFO = fobj.findNearestAncestorFObj();
+        
+        HashMap validProperties;
+        validProperties = (HashMap) elementTable.get(element);
+                                                
+        /* Handle "compound" properties, ex. space-before.minimum */
+        String basePropertyName = findBasePropertyName(attributeName);
+        String subPropertyName = findSubPropertyName(attributeName);
+
+        Property.Maker propertyMaker = findMaker(validProperties, 
+            basePropertyName);
+        if (propertyMaker == null) {
+            handleInvalidProperty(attributeName);
+            return;
+        }
+        if (attributeValue == null) {
+            return;
+        }
+        try {
+            Property prop = null;
+            if (subPropertyName == null) {
+                prop = propertyMaker.make(this, attributeValue, parentFO);
+            } else {
+                Property baseProperty = findBaseProperty(attributes,
+                        parentFO, basePropertyName, propertyMaker);
+                prop = propertyMaker.make(baseProperty, subPropertyName,
+                        this, attributeValue, parentFO);
+            }
+            if (prop != null) {
+                put(basePropertyName, prop);
+            }
+        } catch (FOPException e) {
+            /**@todo log this exception */
+            // log.error(e.getMessage());
+        }
+    }
+
+    private Property findBaseProperty(Attributes attributes,
+                                      FObj parentFO,
+                                      String basePropName,
+                                      Maker propertyMaker)
+            throws FOPException {
+        // If the baseProperty has already been created, return it
+        Property baseProperty = getExplicitBaseProp(basePropName);
+        if (baseProperty != null) {
+            return baseProperty;
+        }
+        // If it is specified later in this list of Attributes, create it
+        String basePropertyValue = attributes.getValue(basePropName);
+        if (basePropertyValue != null) {
+            baseProperty = propertyMaker.make(this, basePropertyValue,
+                    parentFO);
+            return baseProperty;
+        }
+        // Otherwise it is a compound property ??
+        // baseProperty = propertyMaker.makeCompound(propertyList, parentFO);
+        return baseProperty;
+    }
+
+    private void handleInvalidProperty(String attributeName) {
+        if (!attributeName.startsWith("xmlns")) {
+            //log.error("property '"
+            //                       + attributeName + "' ignored");
+        }
+    }
+
+    /**
+     * Finds the first or base part (up to any period) of an attribute name.
+     * For example, if input is "space-before.minimum", should return
+     * "space-before".
+     * @param attributeName String to be atomized
+     * @return the base portion of the attribute
+     */
+    public static String findBasePropertyName(String attributeName) {
+        int sepCharIndex = attributeName.indexOf('.');
+        String basePropName = attributeName;
+        if (sepCharIndex > -1) {
+            basePropName = attributeName.substring(0, sepCharIndex);
+        }
+        return basePropName;
+    }
+
+    /**
+     * Finds the second or sub part (portion past any period) of an attribute
+     * name. For example, if input is "space-before.minimum", should return
+     * "minimum".
+     * @param attributeName String to be atomized
+     * @return the sub portion of the attribute
+     */
+    public static String findSubPropertyName(String attributeName) {
+        int sepCharIndex = attributeName.indexOf('.');
+        String subPropName = null;
+        if (sepCharIndex > -1) {
+            subPropName = attributeName.substring(sepCharIndex + 1);
+        }
+        return subPropName;
+    }
+
+    /**
+     * @param space namespace of element
+     * @param element name of element
+     * @param propertyName name of property
+     * @param p a Property object
+     * @param subpropName name of the sub-property to get
+     * @return the sub-property
+     */
+    public Property getSubpropValue(String space, String element,
+                                    String propertyName, Property p,
+                                    String subpropName) {
+        Property.Maker maker = findMaker(space, element, propertyName);
+        if (maker != null) {
+            return maker.getSubpropValue(p, subpropName);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @param space namespace of element
+     * @param element name of element
+     * @param propertyName name of property
+     * @return value from the appropriate Property.Maker
+     */
+    public boolean isCorrespondingForced(String space, String element,
+                                         String propertyName) {
+        Property.Maker propertyMaker = findMaker(space, element,
+                                                 propertyName);
+        if (propertyMaker != null) {
+            return propertyMaker.isCorrespondingForced(this);
+        } else {
+            //log.error("no Maker for " + propertyName);
+        }
+        return false;
+    }
+
+    /**
+     * @param space namespace of element
+     * @param element name of element
+     * @param propertyName name of property
+     * @return new Property object
+     */
+    public Property getShorthand(String space, String element,
+        String propertyName) {
+        Property.Maker propertyMaker = findMaker(space, element,
+                                                 propertyName);
+        if (propertyMaker != null) {
+            return propertyMaker.getShorthand(this);
+        } else {
+            //log.error("no Maker for " + propertyName);
+            return null;
+        }
+    }
+
+    /**
+     * @param space namespace of element
+     * @param element name of element
+     * @param propertyName name of property
+     * @return new Property object
+     * @throws FOPException for errors in the input
+     */
+    public Property makeProperty(String space, String element,
+                                 String propertyName) throws FOPException {
+
+        Property p = null;
+
+        Property.Maker propertyMaker = findMaker(space, element,
+                                                 propertyName);
+        if (propertyMaker != null) {
+            p = propertyMaker.make(this);
+        } else {
+            //log.error("property " + propertyName
+            //                       + " ignored");
+        }
+        return p;
+    }
+
+    /**
+     * @param space namespace of element
+     * @param elementName name of element
+     * @param propertyName name of property
+     * @return the Property.Maker for this property
+     */
+    protected Property.Maker findMaker(String space, String elementName,
+                                       String propertyName) {
+        return findMaker((HashMap)elementTable.get(elementName),
+                         propertyName);
+    }
+
+    /**
+     * Convenience function to return the Maker for a given property
+     * given the HashMap containing properties specific to this element.
+     * If table is non-null and
+     * @param elemTable Element-specific properties or null if none.
+     * @param propertyName Name of property.
+     * @return A Maker for this property.
+     */
+    private Property.Maker findMaker(HashMap elemTable,
+                                     String propertyName) {
+        Property.Maker propertyMaker = null;
+        if (elemTable != null) {
+            propertyMaker = (Property.Maker)elemTable.get(propertyName);
+        }
+        if (propertyMaker == null) {
+            propertyMaker =
+                (Property.Maker)propertyListTable.get(propertyName);
+        }
+        return propertyMaker;
+    }
+
+    /**
+     *
+     * @param propertyList collection of properties
+     * @param space namespace of element
+     * @param element name of element
+     * @param propertyName name of property
+     * @return the requested Property object
+     */
+    public Property computeProperty(String space, String element, 
+        String propertyName) {
+
+        Property p = null;
+        Property.Maker propertyMaker = findMaker(space, element,
+                                                 propertyName);
+        if (propertyMaker != null) {
+            try {
+                p = propertyMaker.compute(this);
+            } catch (FOPException e) {
+                //log.error("exception occurred while computing"
+                //                       + " value of property '"
+                //                       + propertyName + "': "
+                //                       + e.getMessage());
+            }
+        } else {
+            //log.error("property " + propertyName
+            //                       + " ignored");
+        }
+        return p;
+    }
+
+    /**
+     *
+     * @param space namespace of element
+     * @param element name of element
+     * @param propertyName name of property
+     * @return isInherited value from the requested Property.Maker
+     */
+    public boolean isInherited(String space, String element,
+                               String propertyName) {
+        boolean b;
+
+        Property.Maker propertyMaker = findMaker(space, element,
+                                                 propertyName);
+        if (propertyMaker != null) {
+            b = propertyMaker.isInherited();
+        } else {
+            // log.error("Unknown property " + propertyName);
+            b = true;
+        }
+        return b;
+    }    
 }
 
