@@ -47,9 +47,10 @@ public class FontTest {
           GraphicsEnvironment.getLocalGraphicsEnvironment();
       Font[] fonts = gEnv.getAllFonts();
       String[] families = gEnv.getAvailableFontFamilyNames();
-      BufferedImage fontImage =
-          new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
-      Graphics2D g2D = fontImage.createGraphics();
+      BufferedImage pageSpread =
+          new BufferedImage(20*72, 12*72, BufferedImage.TYPE_INT_RGB);
+      //Graphics2D g2D = fontImage.createGraphics();
+      Graphics2D g2D = pageSpread.createGraphics();
       FontRenderContext frc = g2D.getFontRenderContext();
   }
 
