@@ -74,9 +74,7 @@ public class CorrespondingPropertyMaker {
             return false;
         }
         
-        PropertyList pList = (useParent) ? propertyList.getParentPropertyList() :
-            propertyList;
-
+        PropertyList pList = getWMPropertyList(propertyList);
         int correspondingId = pList.getWritingMode(lr_tb, rl_tb, tb_rl);
         
         if (pList.getExplicit(correspondingId) != null) {
@@ -97,14 +95,9 @@ public class CorrespondingPropertyMaker {
      * @throws FOPException for invalid or inconsistent FO input
      */
     public Property compute(PropertyList propertyList) throws FOPException {
-        PropertyList pList;
-        if (useParent) {
-            pList = propertyList.getParentPropertyList();
-            if (pList == null) {
-                return null;
-            }
-        } else {
-            pList = propertyList;
+        PropertyList pList = getWMPropertyList(propertyList);
+        if (pList == null) {
+            return null;
         }
         int correspondingId = pList.getWritingMode(lr_tb, rl_tb, tb_rl);
             
@@ -114,6 +107,18 @@ public class CorrespondingPropertyMaker {
             p = baseMaker.convertProperty(p, propertyList, parentFO);
         }
         return p;
+    }
+    
+    /**
+     * Return the property list to use for fetching writing mode depending property
+     * ids.
+     */
+    protected PropertyList getWMPropertyList(PropertyList pList) {
+        if (useParent) {
+            return pList.getParentPropertyList();
+        } else {
+            return pList;
+        }
     }
 }
 
