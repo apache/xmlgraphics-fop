@@ -26,6 +26,7 @@ import org.xml.sax.Locator;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.PropertyList;
@@ -69,9 +70,13 @@ public class Marker extends FObjMixed {
         // Set a new parent property list and bind all the children again.
         propertyList.setParentPropertyList(parentPropertyList);
         for (Iterator i = children.keySet().iterator(); i.hasNext(); ) {
-            FObj child = (FObj) i.next();
+            Object child = i.next();
             PropertyList childList = (PropertyList) children.get(child);
-            child.bind(childList);
+            if (child instanceof FObj) {
+                ((FObj) child).bind(childList);
+            } else if (child instanceof FOText) {
+                ((FOText) child).bind(childList);
+            }
         }
     }
 
