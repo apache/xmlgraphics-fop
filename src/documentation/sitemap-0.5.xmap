@@ -73,7 +73,7 @@ $Revision$
       </map:serializer>
 
       <map:serializer name="xml" mime-type="text/xml" src="org.apache.cocoon.serialization.XMLSerializer"/>
-      
+
       <map:serializer name="xml-document" mime-type="text/xml" src="org.apache.cocoon.serialization.XMLSerializer">
         <cdata-section-elements>source</cdata-section-elements>
         <doctype-public>-//APACHE//DTD Documentation V1.2//EN</doctype-public>
@@ -138,7 +138,7 @@ $Revision$
         <map:parameter name="nopdf" value="{nopdf}"/>
         <map:parameter name="path" value="{path}"/>
         <map:parameter name="obfuscate-mail-links" value="false"/>
-        <!-- Can set an alternative project skinconfig here 
+        <!-- Can set an alternative project skinconfig here
         <map:parameter name="config-file" value="../../../../skinconf.xml"/>
         -->
       </map:transform>
@@ -245,7 +245,7 @@ $Revision$
         <map:serialize type="xml"/>
       </map:match>
       <!-- ======================== End FOP Additions ======================== -->
- 
+
       <map:match pattern="**body-*.html">
         <map:select type="exists">
           <map:when test="content/xdocs/{1}{2}.ehtml">
@@ -357,7 +357,7 @@ $Revision$
       </map:match>
 
       <!-- ======================= End FOP Additions ======================== -->
-       
+
 
 
       <map:match pattern="*.html">
@@ -370,7 +370,7 @@ $Revision$
           <map:parameter name="type" value="site2xhtml"/>
           <map:parameter name="path" value="{0}"/>
         </map:call>
-      </map:match>         
+      </map:match>
 
       <map:match pattern="**/*.html">
         <map:aggregate element="site">
