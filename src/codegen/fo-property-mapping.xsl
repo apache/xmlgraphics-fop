@@ -104,6 +104,7 @@ package org.apache.fop.fo.properties;
 
 import java.util.HashMap;
 import java.util.Set;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.Property;
 //import org.apache.fop.svg.*;
 

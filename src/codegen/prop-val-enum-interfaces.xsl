@@ -84,6 +84,9 @@ Software Foundation, please see <http://www.apache.org/>.
   <xsl:if test="$bEnum='true' or contains($bSubpropEnum, 'true')">
     <redirect:write select="concat($classname, '.java')">
       <xsl:text>package org.apache.fop.fo.properties;
+
+import org.apache.fop.fo.Constants;
+
 </xsl:text>
       <!-- Handle enumeration values -->
       <xsl:text>

@@ -50,6 +50,7 @@
  */
 package org.apache.fop.fo.properties;
 
+import org.apache.fop.fo.Constants;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.CondLength;
 

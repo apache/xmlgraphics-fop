@@ -311,6 +311,7 @@ Software Foundation, please see <http://www.apache.org/>.
 
     <redirect:write select="concat($classname, '.java')">
       <xsl:text>package org.apache.fop.fo.properties;
+import org.apache.fop.fo.Constants;
 </xsl:text>
       <xsl:if test=".//keyword-equiv or ./name[.='generic-color']">
         <xsl:text>

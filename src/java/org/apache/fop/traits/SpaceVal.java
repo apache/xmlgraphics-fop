@@ -53,7 +53,7 @@ package org.apache.fop.traits;
 import org.apache.fop.datatypes.Space;
 
 import org.apache.fop.fo.Property;
-import org.apache.fop.fo.properties.Constants;
+import org.apache.fop.fo.Constants;
 
 /**
  * Store a single Space property value in simplified form, with all
