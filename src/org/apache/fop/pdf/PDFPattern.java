@@ -64,7 +64,7 @@ import java.util.Vector;
  *
  * All PDF Functions have a FunctionType (0,2,3, or 4), a Domain, and a Range.
  */
-public class PDFPattern extends PDFObject {
+public class PDFPattern extends PDFPathPaint {
 
 	/**
 	 * The resources associated with this pattern
@@ -214,6 +214,18 @@ public class PDFPattern extends PDFObject {
 		return (this.patternName);
 	}
 	
+	
+	public String getColorspaceOut(boolean fillNotStroke)
+	{
+		if(fillNotStroke)
+		{ //fill but no stroke
+			return("/Pattern cs /"+this.getName()+" scn \n");
+		}
+		else
+		{ //stroke (or border)
+			return("/Pattern CS /"+this.getName()+" SCN \n");
+		}
+	}
 	/**
 	 * Output a Double prettily as a string
 	 * 

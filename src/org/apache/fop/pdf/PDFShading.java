@@ -220,7 +220,8 @@ public class PDFShading extends PDFObject {
 		 * @param theExtend Vector of Booleans of whether to extend teh start and end colors past the start and end points
 		 * The default is [false, false]
 		 */
-		public PDFShading(int theNumber, String theShadingName, int theShadingType, StringBuffer theColorSpace,
+	public PDFShading(int theNumber, String theShadingName,
+		int theShadingType, StringBuffer theColorSpace,
 		Vector theBackground, Vector theBBox, boolean theAntiAlias,
 		Vector theCoords, Vector theDomain, PDFFunction theFunction,
 		Vector theExtend)
@@ -330,6 +331,7 @@ public class PDFShading extends PDFObject {
 	public String getName() {
 		return (this.shadingName);
    }
+   
 	public String doubleOut(Double doubleDown)
 	{
 		StringBuffer p = new StringBuffer();
@@ -425,6 +427,10 @@ public class PDFShading extends PDFObject {
 				}
 				p.append("] \n");
 			}
+			else
+			{
+				p.append("/Domain [ 0 1 ] \n");
+			}
 			
 			if(this.matrix != null)
 			{
@@ -460,6 +466,7 @@ public class PDFShading extends PDFObject {
 				p.append("] \n");
 			}
 			
+			//DOMAIN
 			if(this.domain != null)
 			{
 				p.append("/Domain [ ");
@@ -471,7 +478,11 @@ public class PDFShading extends PDFObject {
 				}
 				p.append("] \n");
 			}
-
+			else
+			{
+				p.append("/Domain [ 0 1 ] \n");
+			}
+			
 			if(this.extend != null)
 			{
 				p.append("/Extend [ ");
@@ -483,6 +494,10 @@ public class PDFShading extends PDFObject {
 				
 				p.append("] \n");
 			}
+			else
+			{
+				p.append("/Extend [ true true ] \n");
+			}
 
 
 			if(this.function != null)
@@ -490,33 +505,6 @@ public class PDFShading extends PDFObject {
 				p.append("/Function ");
 				p.append(this.function.referencePDF()+" \n");
 			}
-			else if(true)
-			{
-				
-				//FunctionType 2 /Domain [ 0 1 ] /N 1.048 /C0 [ 0.929 0.357 1 0.298 ] /C1 [ 0.631 0.278 1 0.027 ] >> \n"
-				//+"<< /FunctionType 2 /Domain [ 0 1 ] /N 1.374 /C0 [ 0.929 0.357 1 0.298 ] /C1 [ 0.941 0.4 1 0.102 ]
-
-				p.append("/Function << /FunctionType 3 /Domain [ 0 1 ] /Functions [ << /FunctionType 2 /Domain [ 0 1 ] /C0 [ 0 0 0 0 ] /C1 [ 0.506 0.306 0 0 ] /N 1 >> ] /Encode [ 0 1 ] /Bounds [ ] >> \n");
-			}
-			else if(true)
-			{//RGB function
-				p.append("/Function << /FunctionType 3 /Domain [ 0 1 ] /Encode [ 1 0 1 0 ] /Functions [ << /FunctionType 2 /Domain [ 0 1 ] /N 1.49834 /C0 [ 0 0.73332 0.98038 ] \n"
-+"/C1 [ 0 0.38039 0.50587 ] >> \n"
-+"<< /FunctionType 2 /Domain [ 0 1 ] /N 1 /C0 [ 0.37254 0.8196 0.96861 ] \n"
-+"/C1 [ 0 0.73332 0.98038 ] >> \n"
-+"] \n"
-+"/Bounds [ 0.61581 ] >> ");
-
-			}
-			else
-			{	
-				
-				p.append("/Function << /FunctionType 3 /Domain [ 0 1 ] /Encode [ 1 0 ] /Functions [ << /FunctionType 2 /Domain [ 0 1 ] /N 1 /C0 [ 0.81175 0 0 ] /C1 [ 1 1 1 ] >> \n"
-				+"] \n"
-				+"/Bounds [ ] >> \n");
-			}
-			
-			
 			
 			
 		}
