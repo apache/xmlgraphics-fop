@@ -1494,9 +1494,12 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("line-height-shift-adjustment", m);
 
         // line-stacking-strategy
-        m  = new ToBeImplementedProperty.Maker(PR_LINE_STACKING_STRATEGY);
+        m  = new EnumProperty.Maker(PR_LINE_STACKING_STRATEGY);
         m.setInherited(true);
-        m.setDefault("line-height");
+        m.addEnum("line-height", makeEnumProperty(LINE_HEIGHT, "LINE_HEIGHT"));
+        m.addEnum("font-height", makeEnumProperty(FONT_HEIGHT, "FONT_HEIGHT"));
+        m.addEnum("max-height", makeEnumProperty(MAX_HEIGHT, "MAX_HEIGHT"));
+        m.setDefault("max-height");        
         addPropertyMaker("line-stacking-strategy", m);
 
         // linefeed-treatment
