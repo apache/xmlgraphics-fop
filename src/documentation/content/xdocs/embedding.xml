@@ -317,7 +317,8 @@ pages of each document.
       <li>
         Cache the stylesheet. If you use the same stylesheet multiple times 
         you can setup a JAXP <code>Templates</code> object and reuse it each time you do
-        the XSL transformation.
+        the XSL transformation.  (More information can be found
+        <fork href="http://www.javaworld.com/javaworld/jw-05-2003/jw-0502-xsl.html">here</fork>.)
       </li>
       <li>
         Use an XSLT compiler like <fork href="http://xml.apache.org/xalan-j/xsltc_usage.html">XSLTC</fork>
