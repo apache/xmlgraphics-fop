@@ -35,13 +35,11 @@
       <meta http-equiv="Content-Type" content="text/html; charset=windows-1252"/>
       <link type="text/css" href="skin/page.css" rel="stylesheet"/>
       <style>
-      &lt;!--
       .yes         { background-color: #99FF99 }
       .no          { background-color: #FF9999 }
       .partial     { background-color: #FFFFCC }
       .category    { /*background-color: #CFDCED;*/
                      font-size: 1.2em }
-      --&gt;
       </style>
       </head>
 </xsl:template>
