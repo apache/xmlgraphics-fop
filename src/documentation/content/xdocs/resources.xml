@@ -218,8 +218,8 @@
       <section id="products-other">
         <title>Other products</title>
         <ul>
-          <li>[software] <jump href="http://defoe.sourceforge.net/">FOray</jump> a renderer for converting XML files to PDF via XSL Formatting Object elements</li>
-          <li>[software] <jump href="http://foray.sourceforge.net/">Defoe</jump> a renderer for XML files containing Formatting Object elements (aka FOP Alt.Design)</li>
+          <li>[software] <jump href="http://foray.sourceforge.net/">FOray</jump> a renderer for converting XML files to PDF via XSL Formatting Object elements</li>
+          <li>[software] <jump href="http://defoe.sourceforge.net/">Defoe</jump> a renderer for XML files containing Formatting Object elements (aka FOP Alt.Design)</li>
 
           <li>[commercial software developer] <jump href="http://antennahouse.com/product.htm">Antenna House</jump> - XSL Formatter, WordMLToFo, XML Editor...</li>
           <li>[commercial software developer] <jump href="http://www.renderx.net/">RenderX</jump> XEP, EnMasse, Docbench...</li>
