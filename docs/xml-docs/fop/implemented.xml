@@ -6,48 +6,93 @@
 <s1 title="Features">
   <s2 title="What's Implemented?">
       <p>The following formatting objects and properties of the xsl-fo 
-         working draft (27 March 2000) are implemented. Please have also a look at the 
+         working draft (12 October 2000) are implemented.Please have also a look at the 
          section on <jump href="limitations.html">limitations</jump>
       </p>
   </s2>
   <s2 title="1) Formatting Objects">
-    <ul>
-      <li>block </li>
-      <li>conditional-page-master-reference</li>
-      <li>display-sequence </li>
-      <li>external-graphic</li>
-      <li>flow</li>
-      <li>inline </li>
-      <li>instream-foreign-object</li>
-      <li>layout-master-set </li>
-      <li>leader, but see <jump href="limitations.html">limitations</jump></li>
-      <li>list-block </li>
-      <li>list-item </li>
-      <li>list-item-body </li>
-      <li>list-item-label </li>
-      <li>page-number </li>
-      <li>page-number-citation, see <jump href="limitations.html">limitations</jump></li>
-      <li>page-sequence </li>
-      <li>page-sequence-master</li>
-      <li>region-after </li>
-      <li>region-before </li>
-      <li>region-body </li>
-      <li>repeatable-page-master-alternatives</li>
-      <li>repeatable-page-master-reference</li>
-      <li>root</li>
-      <li>simple-page-master </li>
-      <li>simple-link (internal and external)</li>
-      <li>single-page-master-reference</li>
-      <li>static-content </li>
-      <li>table (minimal support)</li>
-      <li>table-body (minimal support)</li>
-      <li>table-cell (minimal support)</li>
-      <li>table-column (minimal support)</li>
-      <li>table-row (minimal support)</li>
-    </ul>
+    <p>This section follows the table "B Formatting Object Summary" in the xsl:fo specification. At the 
+       end of each sub-section you find listed what is not implemented.</p>
+
+    <s3 title="B.1 Declaration and Pagination and Layout Formatting Objects">
+      <ul>
+        <li>root</li>
+        <li>page-sequence </li>
+        <li>page-sequence-master</li>
+        <li>single-page-master-reference</li>
+        <li>repeatable-page-master-reference</li>
+        <li>repeatable-page-master-alternatives</li>
+        <li>conditional-page-master-reference</li>
+        <li>layout-master-set </li>
+        <li>simple-page-master </li>
+        <li>region-body </li>
+        <li>region-before </li>
+        <li>region-after </li>
+        <li>flow</li>
+        <li>static-content </li>
+      </ul>
+      <p>Not implemented: region-start, region-end, declarations, color-profile, title</p>
+    </s3>
+
+    <s3 title="B.2 Block Formatting Objects">
+      <ul>
+        <li>block </li>
+      </ul>
+      <p>Not implemented: block-container</p>
+    </s3>
+
+    <s3 title="B.3 Inline Formatting Objects">
+      <ul>
+        <li>external-graphic</li>
+        <li>inline</li>
+        <li>instream-foreign-object</li>
+        <li>leader, but see <jump href="limitations.html">limitations</jump></li>
+        <li>page-number </li>
+        <li>page-number-citation, see <jump href="limitations.html">limitations</jump></li>
+      </ul>
+      <p>Not implemented: bidi-override, character, initial-property-set, inline-container</p>
+    </s3>
+
+    <s3 title="B.4 Table Formatting Objects">
+      <ul>
+        <li>table (minimal support)</li>
+        <li>table-column (minimal support)</li>
+        <li>table-body (minimal support)</li>
+        <li>table-row (minimal support)</li>
+        <li>table-cell (minimal support)</li>
+      </ul>
+      <p>Not implemented: table-and-caption, table-caption, table-header, table-footer </p> 
+    </s3>
+
+    <s3 title="B.5 List Formatting Objects">
+      <ul>
+        <li>list-block </li>
+        <li>list-item </li>
+        <li>list-item-body </li>
+        <li>list-item-label </li>
+      </ul>
+    </s3>
+
+    <s3 title="B.6 Link and Multi Formatting Objects">
+      <ul>
+        <li>basic-link (internal and external)</li>
+      </ul>
+      <p>Not implemented: multi-switch, multi-case, multi-toggle,
+         multi-properties, multi-property-set</p>
+    </s3>
+
+    <s3 title="B.7 Out-of-line Formatting Objects">
+      <p>Not implemented: float, footnote, footnote-body</p>
+    </s3>
+
+    <s3 title="B.8 Other Formatting Objects">
+      <p>Not implemented: wrapper, marker, retrieve-marker</p>
+    </s3>
   </s2>
 
+
   <s2 title="2) Properties">
+  <p>Property values can be computed</p>
     <ul>
       <li>background-color </li>
       <li>blank-or-not-blank</li>
@@ -131,6 +176,7 @@
       <li>space-before.optimum </li>
       <li>src </li>
       <li>start-indent </li>
+      <li>textdecoration (only value 'underline' is supported)</li>
       <li>text-align </li>
       <li>text-align-last </li>
       <li>text-indent </li>

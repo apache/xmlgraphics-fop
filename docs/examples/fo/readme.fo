@@ -4,8 +4,8 @@
 THIS IS NOT THE LATEST VERSION OF THE FOP DOCUMENTATION BUT ONLY AN EXAMPLE FILE 
 
 This files shows next to the trivial usage of fo:block and fo:inline examples of
-- fo:simple-link external-destination
-- fo:simple-link internal-destination
+- fo:basic-link external-destination
+- fo:basic-link internal-destination
 - fo:table
 - fo:list-block (including a bullet from the font Symbol as list-item-label)
 - fo:page-number-citation (computes dynamically the page number in section 'content') 
@@ -79,11 +79,8 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 
   </fo:block>
   <fo:block space-after.optimum="3pt" font-family="serif">FOP is part of Apache's XML project. The homepage of FOP is 
-     <fo:inline font-style="italic" font-family="serif"><fo:simple-link color="blue" external-destination="http://xml.apache.org/fop">http://xml.apache.org/fop</fo:simple-link></fo:inline>
+     <fo:inline font-style="italic" font-family="serif"><fo:basic-link color="blue" external-destination="http://xml.apache.org/fop">http://xml.apache.org/fop</fo:basic-link></fo:inline>
   </fo:block>
-
-
-
 
 
 
@@ -239,11 +236,6 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
        maybe somebody is already working on it. 
     </fo:block>
   
-
-
-
-
-
 
 
 
@@ -1040,7 +1032,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 <fo:block>
 <fo:inline font-style="italic" font-family="serif">XML Recommendation</fo:inline>
 <fo:inline font-family="serif" >
-      (<fo:simple-link color="blue" external-destination="http://www.w3.org/TR/REC-xml">http://www.w3.org/TR/REC-xml</fo:simple-link>)
+      (<fo:basic-link color="blue" external-destination="http://www.w3.org/TR/REC-xml">http://www.w3.org/TR/REC-xml</fo:basic-link>)
    </fo:inline>    
 </fo:block>
 </fo:list-item-body>
@@ -1053,7 +1045,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 <fo:block>
 <fo:inline font-style="italic" font-family="serif">XSL-FO Working Draft</fo:inline>
 <fo:inline font-family="serif">
-      (<fo:simple-link color="blue" external-destination="http://www.w3.org/TR/WD-xsl/">http://www.w3.org/TR/WD-xsl/</fo:simple-link>)
+      (<fo:basic-link color="blue" external-destination="http://www.w3.org/TR/WD-xsl/">http://www.w3.org/TR/WD-xsl/</fo:basic-link>)
    </fo:inline>
 </fo:block>
 </fo:list-item-body>
@@ -1066,7 +1058,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 <fo:block>
 <fo:inline font-style="italic" font-family="serif">XSLT Recommendation</fo:inline>
 <fo:inline font-family="serif">
-      (<fo:simple-link color="blue" external-destination="http://www.w3.org/TR/xslt">http://www.w3.org/TR/xslt</fo:simple-link>)
+      (<fo:basic-link color="blue" external-destination="http://www.w3.org/TR/xslt">http://www.w3.org/TR/xslt</fo:basic-link>)
    </fo:inline>
 </fo:block>
 </fo:list-item-body>
@@ -1079,7 +1071,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 <fo:block>
 <fo:inline font-style="italic" font-family="serif">PDF Documentation</fo:inline>
 <fo:inline font-family="serif">
-      (<fo:simple-link color="blue" external-destination="http://partners.adobe.com/asn/developer/acrosdk/DOCS/pdfspec.pdf">http://partners.adobe.com/asn/developer/acrosdk/DOCS/pdfspec.pdf</fo:simple-link>)
+      (<fo:basic-link color="blue" external-destination="http://partners.adobe.com/asn/developer/acrosdk/DOCS/pdfspec.pdf">http://partners.adobe.com/asn/developer/acrosdk/DOCS/pdfspec.pdf</fo:basic-link>)
    </fo:inline>
 </fo:block>
 </fo:list-item-body>
@@ -1092,7 +1084,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 <fo:block>
 <fo:inline font-style="italic" font-family="serif">Simple API for XML (SAX)</fo:inline>
 <fo:inline font-family="serif">
-      (<fo:simple-link color="blue" external-destination="http://www.megginson.com/SAX/">http://www.megginson.com/SAX/</fo:simple-link>)
+      (<fo:basic-link color="blue" external-destination="http://www.megginson.com/SAX/">http://www.megginson.com/SAX/</fo:basic-link>)
    </fo:inline>
 </fo:block>
 </fo:list-item-body>
@@ -1105,7 +1097,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 <fo:block>
 <fo:inline font-style="italic" font-family="serif">Document Object Model (DOM)</fo:inline>
 <fo:inline font-family="serif">
-      (<fo:simple-link color="blue" external-destination="http://www.w3.org/TR/REC-DOM-Level-1">http://www.w3.org/TR/REC-DOM-Level-1</fo:simple-link>)
+      (<fo:basic-link color="blue" external-destination="http://www.w3.org/TR/REC-DOM-Level-1">http://www.w3.org/TR/REC-DOM-Level-1</fo:basic-link>)
    </fo:inline>
 </fo:block>
 </fo:list-item-body>
@@ -1118,7 +1110,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 <fo:block>
 <fo:inline font-style="italic" font-family="serif">Namespaces in XML Recommendation</fo:inline>
 <fo:inline font-family="serif">
-      (<fo:simple-link color="blue" external-destination="http://www.w3.org/TR/REC-xml-names/">http://www.w3.org/TR/REC-xml-names/</fo:simple-link>)
+      (<fo:basic-link color="blue" external-destination="http://www.w3.org/TR/REC-xml-names/">http://www.w3.org/TR/REC-xml-names/</fo:basic-link>)
    </fo:inline>
 </fo:block>
 </fo:list-item-body>
@@ -1131,7 +1123,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 <fo:block>
 <fo:inline font-style="italic" font-family="serif">Java JDK 1.1 Documentation</fo:inline>
 <fo:inline font-family="serif">
-      (<fo:simple-link color="blue" external-destination="http://java.sun.com/products/jdk/1.1/docs/index.html">http://java.sun.com/products/jdk/1.1/docs/index.html</fo:simple-link>)
+      (<fo:basic-link color="blue" external-destination="http://java.sun.com/products/jdk/1.1/docs/index.html">http://java.sun.com/products/jdk/1.1/docs/index.html</fo:basic-link>)
    </fo:inline>
 </fo:block>
 </fo:list-item-body>
@@ -1213,7 +1205,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
                      </fo:block>
 </fo:table-cell>
 <fo:table-cell>
-<fo:block text-align="start"><fo:simple-link color="blue" internal-destination="sec1">What is FOP?</fo:simple-link></fo:block>
+<fo:block text-align="start"><fo:basic-link color="blue" internal-destination="sec1">What is FOP?</fo:basic-link></fo:block>
 </fo:table-cell>
 <fo:table-cell>
 <fo:block text-align="end"><fo:page-number-citation ref-id="sec1"/></fo:block>
@@ -1225,7 +1217,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
                      </fo:block>
 </fo:table-cell>
 <fo:table-cell>
-<fo:block text-align="start"><fo:simple-link color="blue" internal-destination="sec2">Downloading FOP</fo:simple-link></fo:block>
+<fo:block text-align="start"><fo:basic-link color="blue" internal-destination="sec2">Downloading FOP</fo:basic-link></fo:block>
 </fo:table-cell>
 <fo:table-cell>
 <fo:block text-align="end"><fo:page-number-citation ref-id="sec2"/></fo:block>
@@ -1237,7 +1229,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
                      </fo:block>
 </fo:table-cell>
 <fo:table-cell>
-<fo:block text-align="start"><fo:simple-link color="blue" internal-destination="sec3">Running FOP</fo:simple-link></fo:block>
+<fo:block text-align="start"><fo:basic-link color="blue" internal-destination="sec3">Running FOP</fo:basic-link></fo:block>
 </fo:table-cell>
 <fo:table-cell>
 <fo:block text-align="end"><fo:page-number-citation ref-id="sec3"/></fo:block>
@@ -1249,7 +1241,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
                      </fo:block>
 </fo:table-cell>
 <fo:table-cell>
-<fo:block text-align="start"><fo:simple-link color="blue" internal-destination="sec4">Embedding FOP</fo:simple-link> </fo:block>
+<fo:block text-align="start"><fo:basic-link color="blue" internal-destination="sec4">Embedding FOP</fo:basic-link> </fo:block>
 </fo:table-cell>
 <fo:table-cell>
 <fo:block text-align="end"><fo:page-number-citation ref-id="sec4"/></fo:block>
@@ -1261,7 +1253,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
                      </fo:block>
 </fo:table-cell>
 <fo:table-cell>
-<fo:block text-align="start"><fo:simple-link color="blue" internal-destination="sec5">What's Implemented?</fo:simple-link></fo:block>
+<fo:block text-align="start"><fo:basic-link color="blue" internal-destination="sec5">What's Implemented?</fo:basic-link></fo:block>
 </fo:table-cell>
 <fo:table-cell>
 <fo:block text-align="end"><fo:page-number-citation ref-id="sec5"/></fo:block>
@@ -1273,7 +1265,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
                      </fo:block>
 </fo:table-cell>
 <fo:table-cell>
-<fo:block text-align="start"><fo:simple-link color="blue" internal-destination="sec6">Limitations</fo:simple-link></fo:block>
+<fo:block text-align="start"><fo:basic-link color="blue" internal-destination="sec6">Limitations</fo:basic-link></fo:block>
 </fo:table-cell>
 <fo:table-cell>
 <fo:block text-align="end"><fo:page-number-citation ref-id="sec6"/></fo:block>
@@ -1285,7 +1277,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
                      </fo:block>
 </fo:table-cell>
 <fo:table-cell>
-<fo:block text-align="start"><fo:simple-link color="blue" internal-destination="sec7">Bugs</fo:simple-link></fo:block>
+<fo:block text-align="start"><fo:basic-link color="blue" internal-destination="sec7">Bugs</fo:basic-link></fo:block>
 </fo:table-cell>
 <fo:table-cell>
 <fo:block text-align="end"><fo:page-number-citation ref-id="sec7"/></fo:block>
@@ -1297,7 +1289,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
                      </fo:block>
 </fo:table-cell>
 <fo:table-cell>
-<fo:block text-align="start"><fo:simple-link color="blue" internal-destination="sec8">Compiling FOP</fo:simple-link></fo:block>
+<fo:block text-align="start"><fo:basic-link color="blue" internal-destination="sec8">Compiling FOP</fo:basic-link></fo:block>
 </fo:table-cell>
 <fo:table-cell>
 <fo:block text-align="end"><fo:page-number-citation ref-id="sec8"/></fo:block>
@@ -1309,7 +1301,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
                      </fo:block>
 </fo:table-cell>
 <fo:table-cell>
-<fo:block text-align="start"><fo:simple-link color="blue" internal-destination="sec9">Getting involved</fo:simple-link></fo:block>
+<fo:block text-align="start"><fo:basic-link color="blue" internal-destination="sec9">Getting involved</fo:basic-link></fo:block>
 </fo:table-cell>
 <fo:table-cell>
 <fo:block text-align="end"><fo:page-number-citation ref-id="sec9"/></fo:block>
@@ -1321,7 +1313,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
                      </fo:block>
 </fo:table-cell>
 <fo:table-cell>
-<fo:block text-align="start"><fo:simple-link color="blue" internal-destination="sec10">FOP Relevant Specifications</fo:simple-link></fo:block>
+<fo:block text-align="start"><fo:basic-link color="blue" internal-destination="sec10">FOP Relevant Specifications</fo:basic-link></fo:block>
 </fo:table-cell>
 <fo:table-cell>
 <fo:block text-align="end"><fo:page-number-citation ref-id="sec10"/></fo:block>
@@ -1333,7 +1325,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
                      </fo:block>
 </fo:table-cell>
 <fo:table-cell>
-<fo:block text-align="start"><fo:simple-link color="blue" internal-destination="sec11">Licence</fo:simple-link></fo:block>
+<fo:block text-align="start"><fo:basic-link color="blue" internal-destination="sec11">Licence</fo:basic-link></fo:block>
 </fo:table-cell>
 <fo:table-cell>
 <fo:block text-align="end"><fo:page-number-citation ref-id="sec11"/></fo:block>
