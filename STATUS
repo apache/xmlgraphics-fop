@@ -159,7 +159,6 @@ extended
   b) NEW 
    alignment-adjust                                       
    alignment-baseline
-   azimuth
    baseline-shift                                         
    block-progression-dimension                            
    border-after-precedence
@@ -170,8 +169,6 @@ extended
    clip                                                   
    column-number                                          
    content-type                                           
-   cue-after
-   cue-before
    direction                                              
    display-align                                          
    dominant-baseline                                      
