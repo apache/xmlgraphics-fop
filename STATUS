@@ -47,3 +47,80 @@ Incorporate Eric Schaeffer's fix to tables in static-content
 Incorporate Kelly Campell's fixes to GifJpegImage
 Incorporate Eric Schaeffer's background colour implementation
   (actually used different approach with background colour as trait)
+
+
+A list of changes to the fo and properties implemented in FOP in the WD XSL 2000
+(contributed by Pankaj Narula)
+
+Formatting Objects
+root                                           Yes
+layout-master-set                              Yes
+simple-page-master                             Yes
+region-body                                    Yes
+region-before                                  Yes
+region-after                                   Yes
+page-sequence                                  Yes
+sequence-specification                         changed to page-sequence-master
+sequence-specifier-single                      changed to single-page-master-reference 
+sequence-specifier-repeating                   changed to repeatable-page-master-reference 
+sequence-specifier-alternating                 changed to repeatable-page-master-alternatives 
+flow                                           Yes 
+static-content                                 Yes 
+block                                          Yes 
+list-block                                     Yes 
+list-item                                      Yes 
+list-item-label                                Yes 
+list-item-body                                 Yes 
+page-number                                    Yes 
+display-sequence                               nuked tbd the equivalent tag is block-container
+inline-sequence                                nuked tbd the equivalent tag is inline-container 
+display-rule                                   nuked tbd the equivalent thing 
+display-graphic                                nuked now two tags external-graphic instream-graphic 
+table (minimal support)                        Yes 
+table-column (minimal support)                 Yes 
+table-body (minimal support)                   Yes 
+table-row (minimal support)                    Yes 
+table-cell (minimal support)                   Yes
+
+Properties
+end-indent                                     Yes
+page-master-name                               nuked replaced with master-name
+page-master-first                              implemented using conditional page reference object 
+page-master-repeating                          do
+page-master-odd                                do 
+page-master-even                               do 
+margin-top (only on pages and regions)         Yes
+margin-bottom (only on pages and regions)      Yes 
+margin-left (only on pages and regions)        Yes 
+margin-right (only on pages and regions)       Yes
+extent                                         Yes 
+page-width                                     Yes 
+page-height                                    Yes 
+flow-name                                      Yes 
+font-family                                    Yes 
+font-style                                     Yes 
+font-weight                                    Yes 
+font-size                                      Yes 
+line-height                                    Yes 
+text-align                                     Yes 
+text-align-last                                Yes
+space-before.optimum                           Yes 
+space-after.optimum                            Yes 
+start-indent                                   Yes
+end-indent                                     Yes
+provisional-distance-between-starts            Yes 
+provisional-label-separation                   Yes 
+rule-thickness                                 Yes 
+color                                          Yes 
+wrap-option                                    Yes 
+white-space-treatment                          Yes 
+break-before                                   Yes 
+break-after                                    Yes 
+text-indent                                    Yes 
+href                                           Yes 
+column-width                                   Yes
+background-color                               Yes 
+padding-top (in conjunction with bgcolor)      Yes 
+padding-left (in conjunction with bgcolor)     Yes
+padding-bottom (in conjunction with bgcolor)   Yes 
+padding-right (in conjunction with bgcolor)    Yes
