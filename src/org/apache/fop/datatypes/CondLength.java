@@ -61,15 +61,19 @@ public class CondLength extends Length {
 
     private int conditionality=DISCARD ;
 
+  public CondLength () {
+    super(0);
+  }
+
   public CondLength (Length l) {
     super(l.mvalue());
   }
 
-  public void setLength(Length l) {
+  public void setLength(Length l, boolean bIsDefault) {
     setValue(l.mvalue());
   }
 
-    public void setConditionality(String conditionality) {
+    public void setConditionality(String conditionality, boolean bIsDefault) {
 	if (conditionality.equals("retain"))
 	    this.conditionality = Space.RETAIN;
 	else if (conditionality.equals("discard"))

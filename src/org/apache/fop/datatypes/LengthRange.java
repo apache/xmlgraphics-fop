@@ -50,6 +50,8 @@
  */
 package org.apache.fop.datatypes;
 
+import org.apache.fop.messaging.MessageHandler;
+
 /**
  * a "progression-dimension" quantity
  * ex. block-progression-dimension, inline-progression-dimension
@@ -64,63 +66,105 @@ public class LengthRange {
   private static final int OPTSET=2;
   private static final int MAXSET=4;
   private int bfSet = 0; // bit field
+  private boolean bChecked = false;
+
 
     /**
-     * set the space values, and make sure that min <= opt <= max
+     * Set minimum value to min.
+     * @param min A Length value specifying the minimum value for this
+     * LengthRange.
+     * @param bIsDefault If true, this is set as a "default" value
+     * and not a user-specified explicit value.
      */
-  public LengthRange (Length l) {
-	this.minimum = l;
-	this.optimum = l;
-	this.maximum = l;
-    }
-
-    /** Set minimum value to min if it is <= optimum or optimum isn't set
-     */
-    public void setMinimum(Length min) {
-	if ((bfSet&OPTSET)==0) {
-	    if ((bfSet&MAXSET)!=0 && (min.mvalue() > maximum.mvalue()))
-		min = maximum;
-	}
-	else if (min.mvalue() > optimum.mvalue())
-	    min = optimum;
+    public void setMinimum(Length min, boolean bIsDefault) {
 	minimum = min;
-	bfSet |= MINSET;
+	if (!bIsDefault) bfSet |= MINSET;
     }
 
-    /** Set maximum value to max if it is >= optimum or optimum isn't set
+    /**
+     * Set maximum value to max if it is >= optimum or optimum isn't set.
+     * @param max A Length value specifying the maximum value for this
+     * @param bIsDefault If true, this is set as a "default" value
+     * and not a user-specified explicit value.
      */
-    public void setMaximum(Length max) {
-	if ((bfSet&OPTSET)==0) {
-	    if ((bfSet&MINSET) != 0 && (max.mvalue() < minimum.mvalue()))
-		max = minimum;
-	}
-	else if (max.mvalue() < optimum.mvalue())
-	    max = optimum;
+    public void setMaximum(Length max, boolean bIsDefault) {
 	maximum = max;
-	bfSet |= MAXSET;
+	if (!bIsDefault) bfSet |= MAXSET;
     }
 
 
     /**
      * Set the optimum value.
+     * @param opt A Length value specifying the optimum value for this
+     * @param bIsDefault If true, this is set as a "default" value
+     * and not a user-specified explicit value.
      */
-    public void setOptimum(Length opt) {
-	if (((bfSet&MINSET)==0 || opt.mvalue() >= minimum.mvalue()) &&
-	    ((bfSet&MAXSET)==0 || opt.mvalue() <= maximum.mvalue())) {
-	  optimum = opt;
-	  bfSet |= OPTSET;
-	}
+    public void setOptimum(Length opt, boolean bIsDefault) {
+      optimum = opt;
+      if (!bIsDefault) bfSet |= OPTSET;
     }
 
+  // Minimum is prioritaire, if explicit
+  private void checkConsistency() {
+    if (bChecked) return;
+    // Make sure max >= min
+    if (minimum.mvalue() > maximum.mvalue()) {
+      if ((bfSet&MINSET)!=0) {
+	// if minimum is explicit, force max to min
+	if ((bfSet&MAXSET)!=0) {
+	  // Warning: min>max, resetting max to min
+	  MessageHandler.errorln("WARNING: forcing max to min in LengthRange");
+	}
+	maximum = minimum ;
+      }
+      else {
+	minimum = maximum; // minimum was default value
+      }
+    }
+    // Now make sure opt <= max and opt >= min
+    if (optimum.mvalue() > maximum.mvalue()) {
+      if ((bfSet&OPTSET)!=0) {
+	if ((bfSet&MAXSET)!=0) {
+	  // Warning: opt > max, resetting opt to max
+	  MessageHandler.errorln("WARNING: forcing opt to max in LengthRange");
+	  optimum = maximum ;
+	}
+	else {
+	  maximum = optimum; // maximum was default value
+	}
+      }
+      else {
+	// opt is default and max is explicit or default
+	optimum = maximum ;
+      }
+    }
+    else if (optimum.mvalue() < minimum.mvalue()) {
+      if ((bfSet&MINSET)!=0) {
+	// if minimum is explicit, force opt to min
+	if ((bfSet&OPTSET)!=0) {
+	  MessageHandler.errorln("WARNING: forcing opt to min in LengthRange");
+	}
+	optimum = minimum ;
+      }
+      else {
+	minimum = optimum; // minimum was default value
+      }
+    }
+    bChecked = true;
+  }
+
     public Length getMinimum() {
-	return this.minimum;
+      checkConsistency();
+      return this.minimum;
     }
 
     public Length getMaximum() {
-	return this.maximum;
+      checkConsistency();
+      return this.maximum;
     }
 
     public Length getOptimum() {
-	return this.optimum;
+      checkConsistency();
+      return this.optimum;
     }
 }
