@@ -44,7 +44,7 @@ public class TestConverter {
     File destdir;
     File compare = null;
     String baseDir = "./";
-    Hashtable differ = new Hashtable();
+    HashMap differ = new HashMap();
     private Logger log;
 
     /**
@@ -108,7 +108,7 @@ public class TestConverter {
      * This runs the tests specified in the xml file fname.
      * The document is read as a dom and each testcase is covered.
      */
-    public Hashtable runTests(String fname, String dest, String compDir) {
+    public HashMap runTests(String fname, String dest, String compDir) {
         log.debug("running tests in file:" + fname);
         try {
             if (compDir != null) {
@@ -237,7 +237,7 @@ public class TestConverter {
                 driver.setRenderer(Driver.RENDER_XML);
             }
 
-            Hashtable rendererOptions = new Hashtable();
+            HashMap rendererOptions = new HashMap();
             rendererOptions.put("fineDetail", new Boolean(false));
             rendererOptions.put("consistentOutput", new Boolean(true));
             driver.getRenderer().setOptions(rendererOptions);
