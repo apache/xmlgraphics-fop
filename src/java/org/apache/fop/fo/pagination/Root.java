@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.pagination.bookmarks.BookmarkTree;
-import org.apache.fop.fo.extensions.ExtensionElementMapping;
 
 /**
  * The fo:root formatting object. Contains page masters, page-sequences.
@@ -257,6 +256,13 @@ public class Root extends FObj {
      */
     public BookmarkTree getBookmarkTree() {
         return bookmarkTree;
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#getRoot()
+     */
+    public Root getRoot() {
+        return this;
     }
 
     /**

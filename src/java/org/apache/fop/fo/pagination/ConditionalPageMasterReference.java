@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,13 +60,19 @@ public class ConditionalPageMasterReference extends FObj {
         pagePosition = pList.get(PR_PAGE_POSITION).getEnum();
         oddOrEven = pList.get(PR_ODD_OR_EVEN).getEnum();
         blankOrNotBlank = pList.get(PR_BLANK_OR_NOT_BLANK).getEnum();
+
+        if (masterReference == null || masterReference.equals("")) {
+            missingPropertyError("master-reference");
+        }        
     }
 
     /**
      * @see org.apache.fop.fo.FONode#startOfNode
      */
     protected void startOfNode() throws FOPException {
-        validateParent(parent);
+        this.repeatablePageMasterAlternatives =
+            (RepeatablePageMasterAlternatives) parent;
+        this.repeatablePageMasterAlternatives.addConditionalPageMasterReference(this);
     }
 
     /**
@@ -131,30 +137,6 @@ public class ConditionalPageMasterReference extends FObj {
             }
         }
         return true;
-    }
-
-    /**
-     * Check that the parent is the right type of formatting object
-     * repeatable-page-master-alternatives.
-     * @param parent parent node
-     * @throws ValidationException If the parent is invalid
-     */
-    protected void validateParent(FONode parent) throws ValidationException {
-        if (parent.getName().equals("fo:repeatable-page-master-alternatives")) {
-            this.repeatablePageMasterAlternatives =
-                (RepeatablePageMasterAlternatives)parent;
-
-            if (getMasterReference() == null) {
-                getLogger().warn("single-page-master-reference"
-                                       + "does not have a master-name and so is being ignored");
-            } else {
-                this.repeatablePageMasterAlternatives.addConditionalPageMasterReference(this);
-            }
-        } else {
-            throw new ValidationException("fo:conditional-page-master-reference must be child "
-                                   + "of fo:repeatable-page-master-alternatives, not "
-                                   + parent.getName(), locator);
-        }
     }
 
     /**

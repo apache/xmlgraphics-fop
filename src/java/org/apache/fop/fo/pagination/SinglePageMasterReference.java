@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,6 +57,10 @@ public class SinglePageMasterReference extends FObj
      */
     public void bind(PropertyList pList) throws FOPException {
         masterReference = pList.get(PR_MASTER_REFERENCE).getString();
+
+        if (masterReference == null || masterReference.equals("")) {
+            missingPropertyError("master-reference");
+        }        
     }
 
     /**
@@ -64,11 +68,7 @@ public class SinglePageMasterReference extends FObj
      */
     protected void startOfNode() throws FOPException {
         PageSequenceMaster pageSequenceMaster = (PageSequenceMaster) parent;
-        if (masterReference == null) {
-            missingPropertyError("master-reference");
-        } else {
-            pageSequenceMaster.addSubsequenceSpecifier(this);
-        }
+        pageSequenceMaster.addSubsequenceSpecifier(this);
     }
     
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,6 +63,10 @@ public class PageSequenceMaster extends FObj {
      */
     public void bind(PropertyList pList) throws FOPException {
         masterName = pList.get(PR_MASTER_NAME).getString();
+        
+        if (masterName == null || masterName.equals("")) {
+            missingPropertyError("master-name");
+        }
     }
 
     /**
@@ -70,19 +74,8 @@ public class PageSequenceMaster extends FObj {
      */
     protected void startOfNode() throws FOPException {
         subSequenceSpecifiers = new java.util.ArrayList();
-        if (parent.getName().equals("fo:layout-master-set")) {
-            this.layoutMasterSet = (LayoutMasterSet)parent;
-            if (masterName == null) {
-                getLogger().warn("page-sequence-master does not have "
-                                       + "a master-name and so is being ignored");
-            } else {
-                this.layoutMasterSet.addPageSequenceMaster(masterName, this);
-            }
-        } else {
-            throw new ValidationException("fo:page-sequence-master must be child "
-                                   + "of fo:layout-master-set, not "
-                                   + parent.getName(), locator);
-        }
+        layoutMasterSet = parent.getRoot().getLayoutMasterSet();
+        layoutMasterSet.addPageSequenceMaster(masterName, this);
     }
     
     /**
