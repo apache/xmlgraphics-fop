@@ -82,7 +82,7 @@ public class Footnote extends FObj {
     /**
      * Make sure content model satisfied, if so then tell the
      * FOEventHandler that we are at the end of the flow.
-     * @see org.apache.fop.fo.FONode#end
+     * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws SAXParseException {
         super.endOfNode();

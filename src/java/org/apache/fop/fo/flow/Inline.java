@@ -102,7 +102,7 @@ public class Inline extends FObjMixed {
 
 
     /**
-     * @see org.apache.fop.fo.FONode#end
+     * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws SAXParseException {
         getFOEventHandler().endInline(this);

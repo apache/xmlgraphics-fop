@@ -98,7 +98,7 @@ public class BasicLink extends Inline {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#end
+     * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws SAXParseException {
         super.endOfNode();

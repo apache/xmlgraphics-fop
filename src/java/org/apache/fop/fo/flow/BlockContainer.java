@@ -70,7 +70,7 @@ public class BlockContainer extends FObj {
     }
     
     /**
-     * @see org.apache.fop.fo.FONode#end
+     * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws SAXParseException {
         getFOEventHandler().endBlockContainer(this);
