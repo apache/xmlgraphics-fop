@@ -6,9 +6,13 @@
  */
 package org.apache.fop.fo.pagination;
 
-import org.apache.fop.fo.*;
-import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.FONode;
 
+/**
+ * A single-page-master-reference formatting object.
+ * This is a reference for a single page. It returns the
+ * master name only once until reset.
+ */
 public class SinglePageMasterReference extends PageMasterReference
     implements SubSequenceSpecifier {
 
@@ -31,15 +35,10 @@ public class SinglePageMasterReference extends PageMasterReference
         } else {
             return null;
         }
-
     }
 
     public void reset() {
         this.state = FIRST;
     }
-
-    protected String getElementName() {
-        return "fo:single-page-master-reference";
-    }
-
 }
+

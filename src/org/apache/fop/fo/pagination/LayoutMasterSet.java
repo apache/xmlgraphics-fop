@@ -19,13 +19,19 @@ import java.util.Iterator;
 
 import org.xml.sax.Attributes;
 
+/**
+ * The layout-master-set formatting object.
+ * This class maintains the set of simple page master and
+ * page sequence masters.
+ * The masters are stored so that the page sequence can obtain
+ * the required page master to create a page.
+ * The page sequence masters can be reset as they hold state
+ * information for a page sequence.
+ */
 public class LayoutMasterSet extends FObj {
-
     private HashMap simplePageMasters;
     private HashMap pageSequenceMasters;
     private HashMap allRegions;
-
-    private Root root;
 
     public LayoutMasterSet(FONode parent) {
         super(parent);
@@ -33,20 +39,24 @@ public class LayoutMasterSet extends FObj {
 
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
-        this.simplePageMasters = new HashMap();
-        this.pageSequenceMasters = new HashMap();
 
         if (parent.getName().equals("fo:root")) {
-            this.root = (Root)parent;
+            Root root = (Root)parent;
             root.setLayoutMasterSet(this);
         } else {
             throw new FOPException("fo:layout-master-set must be child of fo:root, not "
                                    + parent.getName());
         }
-        allRegions = new HashMap();
 
+        this.simplePageMasters = new HashMap();
+        this.pageSequenceMasters = new HashMap();
+        allRegions = new HashMap();
     }
 
+    /**
+     * Add a simple page master.
+     * The name is checked to throw an error if already added.
+     */
     protected void addSimplePageMaster(SimplePageMaster simplePageMaster)
             throws FOPException {
         // check against duplication of master-name
@@ -59,10 +69,19 @@ public class LayoutMasterSet extends FObj {
                                    simplePageMaster);
     }
 
+    /**
+     * Get a simple page master by name.
+     * This is used by the page sequence to get a page master for
+     * creating pages.
+     */
     protected SimplePageMaster getSimplePageMaster(String masterName) {
         return (SimplePageMaster)this.simplePageMasters.get(masterName);
     }
 
+    /**
+     * Add a page sequence master.
+     * The name is checked to throw an error if already added.
+     */
     protected void addPageSequenceMaster(String masterName, PageSequenceMaster pageSequenceMaster)
             throws FOPException {
         // check against duplication of master-name
@@ -73,6 +92,11 @@ public class LayoutMasterSet extends FObj {
         this.pageSequenceMasters.put(masterName, pageSequenceMaster);
     }
 
+    /**
+     * Get a page sequence master by name.
+     * This is used by the page sequence to get a page master for 
+     * creating pages.
+     */
     protected PageSequenceMaster getPageSequenceMaster(String masterName) {
         return (PageSequenceMaster)this.pageSequenceMasters.get(masterName);
     }
@@ -85,6 +109,10 @@ public class LayoutMasterSet extends FObj {
             return false;
     }
 
+    /**
+     * Reset the state of the page sequence masters.
+     * Use when starting a new page sequence.
+     */
     protected void resetPageMasters() {
         for (Iterator e = pageSequenceMasters.values().iterator();
                 e.hasNext(); ) {

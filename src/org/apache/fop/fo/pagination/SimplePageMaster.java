@@ -23,15 +23,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import org.xml.sax.Attributes;
 
-
+/**
+ * A simple-page-master formatting object.
+ * This creates a simple page from the specified regions
+ * and attributes.
+ */
 public class SimplePageMaster extends FObj {
-
     /**
      * Page regions (regionClass, Region)
      */
     private HashMap _regions;
 
-    LayoutMasterSet layoutMasterSet;
     PageMaster pageMaster;
     String masterName;
 
@@ -43,13 +45,13 @@ public class SimplePageMaster extends FObj {
         super.handleAttrs(attlist);
 
         if (parent.getName().equals("fo:layout-master-set")) {
-            this.layoutMasterSet = (LayoutMasterSet)parent;
+            LayoutMasterSet layoutMasterSet = (LayoutMasterSet)parent;
             masterName = this.properties.get("master-name").getString();
             if (masterName == null) {
                 log.warn("simple-page-master does not have "
                                        + "a master-name and so is being ignored");
             } else {
-                this.layoutMasterSet.addSimplePageMaster(this);
+                layoutMasterSet.addSimplePageMaster(this);
             }
         } else {
             throw new FOPException("fo:simple-page-master must be child "
@@ -57,9 +59,12 @@ public class SimplePageMaster extends FObj {
                                    + parent.getName());
         }
         _regions = new HashMap();
-
     }
 
+    /**
+     * At the end of this element read all the information and create
+     * the page master.
+     */
     protected void end() {
         int pageWidth =
             this.properties.get("page-width").getLength().mvalue();
@@ -72,7 +77,7 @@ public class SimplePageMaster extends FObj {
         MarginProps mProps = propMgr.getMarginProps();
 
 	/* Create the page reference area rectangle in first quadrant coordinates
-	 * (ie, 0,0 is at bottom,left of the "page meida" and y increases
+	 * (ie, 0,0 is at bottom,left of the "page media" and y increases
 	 * when moving towards the top of the page.
 	 * The media rectangle itself is (0,0,pageWidth,pageHeight).
 	 */
@@ -106,6 +111,10 @@ public class SimplePageMaster extends FObj {
 	this.pageMaster = new PageMaster(new PageViewport(page,
 					   new Rectangle(0,0,
 							 pageWidth,pageHeight)));
+
+        _regions = null;
+        children = null;
+        properties = null;
     }
 
     public PageMaster getPageMaster() {
@@ -119,7 +128,6 @@ public class SimplePageMaster extends FObj {
     public String getMasterName() {
         return masterName;
     }
-
 
     protected void addChild(FONode child) {
 	if (child instanceof Region) {
@@ -162,7 +170,6 @@ public class SimplePageMaster extends FObj {
             }
         }
         return false;
-
     }
-
 }
+

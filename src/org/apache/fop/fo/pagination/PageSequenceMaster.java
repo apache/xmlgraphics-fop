@@ -14,15 +14,19 @@ import org.apache.fop.layout.PageMaster;
 import org.apache.fop.apps.FOPException;
 
 // Java
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.xml.sax.Attributes;
 
+/**
+ * The page-sequence-master formatting object.
+ * This class handles a list of subsequence specifiers
+ * which are simple or complex references to page-masters.
+ */
 public class PageSequenceMaster extends FObj {
-
     LayoutMasterSet layoutMasterSet;
-    Vector subSequenceSpecifiers;
-
+    ArrayList subSequenceSpecifiers;
 
     // The terminology may be confusing. A 'page-sequence-master' consists
     // of a sequence of what the XSL spec refers to as
@@ -37,14 +41,14 @@ public class PageSequenceMaster extends FObj {
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
 
-        subSequenceSpecifiers = new Vector();
+        subSequenceSpecifiers = new ArrayList();
 
         if (parent.getName().equals("fo:layout-master-set")) {
             this.layoutMasterSet = (LayoutMasterSet)parent;
             String pm = this.properties.get("master-name").getString();
             if (pm == null) {
                 log.warn("page-sequence-master does not have "
-                                       + "a page-master-name and so is being ignored");
+                                       + "a master-name and so is being ignored");
             } else {
                 this.layoutMasterSet.addPageSequenceMaster(pm, this);
             }
@@ -56,17 +60,15 @@ public class PageSequenceMaster extends FObj {
     }
 
     protected void addSubsequenceSpecifier(SubSequenceSpecifier pageMasterReference) {
-        subSequenceSpecifiers.addElement(pageMasterReference);
+        subSequenceSpecifiers.add(pageMasterReference);
     }
 
     protected SubSequenceSpecifier getSubSequenceSpecifier(int sequenceNumber) {
         if (sequenceNumber >= 0
                 && sequenceNumber < getSubSequenceSpecifierCount()) {
-            return (SubSequenceSpecifier)subSequenceSpecifiers.elementAt(sequenceNumber);
+            return (SubSequenceSpecifier)subSequenceSpecifiers.get(sequenceNumber);
         }
         return null;
-
-
     }
 
     protected int getSubSequenceSpecifierCount() {
@@ -74,12 +76,10 @@ public class PageSequenceMaster extends FObj {
     }
 
     public void reset() {
-        for (Enumeration e = subSequenceSpecifiers.elements();
-                e.hasMoreElements(); ) {
-            ((SubSequenceSpecifier)e.nextElement()).reset();
+        for (Iterator e = subSequenceSpecifiers.iterator();
+                e.hasNext(); ) {
+            ((SubSequenceSpecifier)e.next()).reset();
         }
-
     }
-
-
 }
+

@@ -19,7 +19,6 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.RegionReference;
 
-
 import org.xml.sax.Attributes;
 
 /**
@@ -71,9 +70,7 @@ public abstract class Region extends FObj {
                                    + "of simple-page-master, not "
                                    + parent.getName());
         }
-
     }
-
 
     /**
      * Creates a RegionViewport Area object for this pagination Region.
@@ -101,9 +98,7 @@ public abstract class Region extends FObj {
 
         // this.properties.get("clip");
         // this.properties.get("display-align");
-        // this.properties.get("overflow");
         this.overflow = this.properties.get("overflow").getEnum();
-        // this.properties.get("region-name");
         // this.properties.get("reference-orientation");
         // this.properties.get("writing-mode");
                     
