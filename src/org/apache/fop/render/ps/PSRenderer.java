@@ -59,6 +59,9 @@ import java.util.List;
 import java.util.Map;
 
 // FOP
+import org.apache.fop.fo.properties.BackgroundRepeat;
+import org.apache.fop.area.Area;
+import org.apache.fop.area.RegionViewport;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
@@ -73,9 +76,12 @@ import org.apache.fop.fonts.Font;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.render.RendererContext;
+
+import org.apache.fop.image.FopImage;
+import org.apache.fop.image.ImageFactory;
+import org.apache.fop.traits.BorderProps;
+
 import org.w3c.dom.Document;
-
-
 /**
  * Renderer that renders to PostScript.
  * <br>
@@ -416,14 +422,15 @@ public class PSRenderer extends AbstractRenderer {
                 {page.getPageNumber(),
                  new Integer(this.currentPageNumber)});
         final Integer zero = new Integer(0);
-        final Long pagewidth = new Long(Math.round(page.getViewArea().getWidth() / 1000f));
-        final Long pageheight = new Long(Math.round(page.getViewArea().getHeight() / 1000f));
+        final Long pagewidth = new Long(Math.round(page.getViewArea().getWidth()));
+        final Long pageheight = new Long(Math.round(page.getViewArea().getHeight()));
         gen.writeDSCComment(DSCConstants.PAGE_BBOX, new Object[]
                 {zero, zero, pagewidth, pageheight});
         gen.writeDSCComment(DSCConstants.BEGIN_PAGE_SETUP);         
         gen.writeln("FOPFonts begin");
-        concatMatrix(1, 0, 0, -1, 0, pageheight.doubleValue());
         gen.writeln("0.001 0.001 scale");
+        concatMatrix(1, 0, 0, -1, 0, pageheight.doubleValue());
+        
         gen.writeDSCComment(DSCConstants.END_PAGE_SETUP);         
         
         //Process page
@@ -629,7 +636,7 @@ public class PSRenderer extends AbstractRenderer {
         
         saveGraphicsState();
         // multiply with current CTM
-        //currentStream.add(CTMHelper.toPDFString(ctm) + " cm\n");
+        //writeln(CTMHelper.toPDFString(ctm) + " cm\n");
         final double matrix[] = ctm.toArray();
         concatMatrix(matrix);
         
@@ -646,7 +653,190 @@ public class PSRenderer extends AbstractRenderer {
         //currentState.pop();
     }
 
+    /**
+     * Handle the viewport traits.
+     * This is used to draw the traits for a viewport.
+     *
+     * @param region the viewport region to handle
+     */
+    protected void handleViewportTraits(RegionViewport region) {
+        currentFontName = "";
+        float startx = 0;
+        float starty = 0;
+        Rectangle2D viewArea = region.getViewArea();
+        float width = (float)(viewArea.getWidth());
+        float height = (float)(viewArea.getHeight());
+        /*
+        Trait.Background back;
+        back = (Trait.Background)region.getTrait(Trait.BACKGROUND);
+        */
+        drawBackAndBorders(region, startx, starty, width, height);
+    }
+
+    /**
+     * Handle block traits.
+     * The block could be any sort of block with any positioning
+     * so this should render the traits such as border and background
+     * in its position.
+     *
+     * @param block the block to render the traits
+     */
+    protected void handleBlockTraits(Block block) {
+        float startx = currentIPPosition;
+        float starty = currentBPPosition;
+        drawBackAndBorders(block, startx, starty,
+                           block.getWidth(), block.getHeight());
+    }
+
+    /**
+     * Draw the background and borders.
+     * This draws the background and border traits for an area given
+     * the position.
+     *
+     * @param block the area to get the traits from
+     * @param startx the start x position
+     * @param starty the start y position
+     * @param width the width of the area
+     * @param height the height of the area
+     */
+    protected void drawBackAndBorders(Area block,
+                                    float startx, float starty, 
+                                    float width, float height) {
+        // draw background then border
+
+        boolean started = false;
+        Trait.Background back;
+        back = (Trait.Background)block.getTrait(Trait.BACKGROUND);
+        if (back != null) {
+            started = true;
+//            closeText();
+            endTextObject();
+            //saveGraphicsState();
+
+            if (back.getColor() != null) {
+                updateColor(back.getColor(), true, null);
+                writeln(startx + " " + starty + " "
+                                  + width + " " + height + " rectfill");
+            }
+            if (back.getURL() != null) {
+                ImageFactory fact = ImageFactory.getInstance();
+                FopImage fopimage = fact.getImage(back.getURL(), userAgent);
+                if (fopimage != null && fopimage.load(FopImage.DIMENSIONS, userAgent)) {
+                    if (back.getRepeat() == BackgroundRepeat.REPEAT) {
+                        // create a pattern for the image
+                    } else {
+                        // place once
+                        Rectangle2D pos;
+                        pos = new Rectangle2D.Float((startx + back.getHoriz()) * 1000,
+                                                    (starty + back.getVertical()) * 1000,
+                                                    fopimage.getWidth() * 1000,
+                                                    fopimage.getHeight() * 1000);
+                       // putImage(back.url, pos);
+                    }
+                }
+            }
+        }
+
+        BorderProps bps = (BorderProps)block.getTrait(Trait.BORDER_BEFORE);
+        if (bps != null) {
+            float endx = startx + width;
+
+            if (!started) {
+                started = true;
+//                closeText();
+                endTextObject();
+                //saveGraphicsState();
+            }
+
+            float bwidth = bps.width ;
+            updateColor(bps.color, false, null);
+            writeln(bwidth + " setlinewidth");
+
+            drawLine(startx, starty + bwidth / 2, endx, starty + bwidth / 2);
+        }
+        bps = (BorderProps)block.getTrait(Trait.BORDER_START);
+        if (bps != null) {
+            float endy = starty + height;
+
+            if (!started) {
+                started = true;
+//                closeText();
+                endTextObject();
+                //saveGraphicsState();
+            }
+
+            float bwidth = bps.width ;
+            updateColor(bps.color, false, null);
+            writeln(bwidth + " setlinewidth");
+
+            drawLine(startx + bwidth / 2, starty, startx + bwidth / 2, endy);
+        }
+        bps = (BorderProps)block.getTrait(Trait.BORDER_AFTER);
+        if (bps != null) {
+            float sy = starty + height;
+            float endx = startx + width;
+
+            if (!started) {
+                started = true;
+//                closeText();
+                endTextObject();
+                //saveGraphicsState();
+            }
+
+            float bwidth = bps.width ;
+            updateColor(bps.color, false, null);
+            writeln(bwidth + " setlinewidth");
+
+            drawLine(startx, sy - bwidth / 2, endx, sy - bwidth / 2);
+        }
+        bps = (BorderProps)block.getTrait(Trait.BORDER_END);
+        if (bps != null) {
+            float sx = startx + width;
+            float endy = starty + height;
+
+            if (!started) {
+                started = true;
+ //               closeText();
+                endTextObject();
+                //saveGraphicsState();
+            }
+
+            float bwidth = bps.width ;
+            updateColor(bps.color, false, null);
+            writeln(bwidth + " setlinewidth");
+            drawLine(sx - bwidth / 2, starty, sx - bwidth / 2, endy);
+        }
+        if (started) {
+            //restoreGraphicsState();
+            beginTextObject();
+            // font last set out of scope in text section
+            currentFontName = "";
+        }
+    }
+
+    /**
+     * Draw a line.
+     *
+     * @param startx the start x position
+     * @param starty the start y position
+     * @param endx the x end position
+     * @param endy the y end position
+     */
+    private void drawLine(float startx, float starty, float endx, float endy) {
+        writeln(startx + " " + starty + " M ");
+        writeln(endx + " " + endy + " lineto");
+    }
     
+    private void updateColor(ColorType col, boolean fill, StringBuffer pdf) {
+        writeln(gen.formatDouble(col.getRed()) + " " 
+                        + gen.formatDouble(col.getGreen()) + " " 
+                        + gen.formatDouble(col.getBlue()) + " setrgbcolor");
+    }
+
+    private void updateFont(String name, int size, StringBuffer pdf) {
+
+    }
+   
     /**
      * @see org.apache.fop.render.AbstractRenderer#renderForeignObject(ForeignObject, Rectangle2D)
      */
@@ -677,6 +867,8 @@ public class PSRenderer extends AbstractRenderer {
                             new Integer(currentBlockIPPosition + (int) pos.getX()));
         context.setProperty(PSXMLHandler.PS_YPOS,
                             new Integer(currentBPPosition + (int) pos.getY()));
+        //context.setProperty("strokeSVGText", options.get("strokeSVGText"));
+        
         /*
         context.setProperty(PDFXMLHandler.PDF_DOCUMENT, pdfDoc);
         context.setProperty(PDFXMLHandler.OUTPUT_STREAM, ostream);

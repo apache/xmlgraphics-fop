@@ -50,24 +50,27 @@
  */ 
 package org.apache.fop.render.ps;
 
+// Java
+import java.awt.geom.AffineTransform;
+import java.io.IOException;
+
+// DOM
+import org.w3c.dom.Document;
+import org.w3c.dom.svg.SVGDocument;
+import org.w3c.dom.svg.SVGSVGElement;
+
+// Batik
+import org.apache.batik.bridge.GVTBuilder;
+import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.bridge.ViewBox;
+import org.apache.batik.gvt.GraphicsNode;
+import org.apache.batik.gvt.TextPainter;
+
+// FOP
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.svg.SVGUserAgent;
 import org.apache.fop.layout.FontInfo;
-
-import org.w3c.dom.Document;
-
-import org.apache.batik.bridge.GVTBuilder;
-import org.apache.batik.bridge.BridgeContext;
-import org.apache.batik.bridge.ViewBox;
-
-import org.apache.batik.gvt.GraphicsNode;
-
-import org.w3c.dom.svg.SVGDocument;
-import org.w3c.dom.svg.SVGSVGElement;
-
-import java.awt.geom.AffineTransform;
-import java.io.IOException;
 
 /**
  * PostScript XML handler.
@@ -300,7 +303,9 @@ public class PSXMLHandler implements XMLHandler {
             transform.translate(xOffset / 1000f, yOffset / 1000f);
             //aBridge.setCurrentTransform(transform);
             //ctx.putBridge(aBridge);
-
+          
+            TextPainter textPainter = new PSTextPainter(psInfo.getFontInfo());
+            ctx.setTextPainter(textPainter);            
             GraphicsNode root;
             try {
                 root = builder.build(ctx, doc);
