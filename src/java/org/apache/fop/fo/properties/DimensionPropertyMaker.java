@@ -48,83 +48,67 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.fo;
+package org.apache.fop.fo.properties;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.FixedLength;
-import org.apache.fop.fo.expr.Numeric;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.Property;
+import org.apache.fop.fo.PropertyList;
 
 /**
- * This property maker handles the calculations described in 5.3.2 which
- * involves the sizes of the corresponding margin-* properties and the
- * padding-* and border-*-width properties.
+ * @author me
+ *
+ * To change the template for this generated type comment go to
+ * Window - Preferences - Java - Code Generation - Code and Comments
  */
-public class IndentPropertyMaker extends CorrespondingPropertyMaker {
-    /**
-     * The corresponding padding-* propIds 
-     */
-    private int[] paddingCorresponding = null;    
+public class DimensionPropertyMaker extends CorrespondingPropertyMaker {
+    int[][] extraCorresponding = null;
 
-    /**
-     * The corresponding border-*-width propIds 
-     */
-    private int[] borderWidthCorresponding = null;
-    
-    /**
-     * Create a start-indent or end-indent property maker.
-     * @param baseMaker
-     */
-    public IndentPropertyMaker(Property.Maker baseMaker) {
+    public DimensionPropertyMaker(PropertyMaker baseMaker) {
         super(baseMaker);
     }
+    
+    public void setExtraCorresponding(int[][] extraCorresponding) {
+        this.extraCorresponding = extraCorresponding;
+    }
 
-    /**
-     * Set the corresponding values for the padding-* properties.
-     * @param paddingCorresponding the corresping propids.
-     */
-    public void setPaddingCorresponding(int[] paddingCorresponding) {
-        this.paddingCorresponding = paddingCorresponding;
+    public boolean isCorrespondingForced(PropertyList propertyList) {
+        if (super.isCorrespondingForced(propertyList))
+            return true;
+        for (int i = 0; i < extraCorresponding.length; i++) {
+            int wmcorr = extraCorresponding[i][0]; //propertyList.getWritingMode()];
+            if (propertyList.getExplicit(wmcorr) != null)
+                return true;
+        }            
+        return false;
     }
-    
-    /**
-     * Set the corresponding values for the border-*-width properties.
-     * @param borderWidthCorresponding the corresping propids.
-     */
-    public void setBorderWidthCorresponding(int[] borderWidthCorresponding) {
-        this.borderWidthCorresponding = borderWidthCorresponding;
-    }
-    
-    /**
-     * Calculate the corresponding value for start-indent and end-indent.  
-     * @see CorrespondingPropertyMaker#compute(PropertyList)
-     */
+
     public Property compute(PropertyList propertyList) throws FOPException {
-        // TODO: bckfnn reenable
-        if (propertyList.getExplicitOrShorthand(propertyList.wmMap(lr_tb, rl_tb, tb_rl)) == null) {
-            return null;
+        // Based on [width|height]
+        Property p = super.compute(propertyList);
+        if (p == null) {
+            p = baseMaker.make(propertyList);
         }
-        // Calculate the values as described in 5.3.2.
-        try {
-            Numeric v = new Numeric(new FixedLength(0));
-            /*
-            if (!propertyList.getFObj().generatesInlineAreas()) {
-                String propName = FOPropertyMapping.getPropertyName(this.propId);
-                v = v.add(propertyList.getInherited(propName).getNumeric());
-            }
-            */
-            v = v.add(propertyList.get(propertyList.wmMap(lr_tb, rl_tb, tb_rl)).getNumeric());
-            v = v.add(getCorresponding(paddingCorresponding, propertyList).getNumeric());
-            v = v.add(getCorresponding(borderWidthCorresponding, propertyList).getNumeric());
-            return new LengthProperty(v.asLength());
-        } catch (org.apache.fop.fo.expr.PropertyException propEx) {
-           String propName = FOPropertyMapping.getPropertyName(baseMaker.getPropId());
-           throw new FOPException("Error in " + propName 
-                   + " calculation " + propEx);
-        }    
-    }
-    
-    private Property getCorresponding(int[] corresponding, PropertyList propertyList) {
-        int wmcorr = propertyList.wmMap(corresponding[0], corresponding[1], corresponding[2]);
-        return propertyList.get(wmcorr);
-    }
+
+        // Based on min-[width|height]
+        int wmcorr = propertyList.wmMap(extraCorresponding[0][0], 
+                                        extraCorresponding[0][1], 
+                                        extraCorresponding[0][2]);
+        Property subprop = propertyList.getExplicitOrShorthand(wmcorr);
+        if (subprop != null) {
+            baseMaker.setSubprop(p, Constants.CP_MINIMUM, subprop);
+        }
+
+        // Based on max-[width|height]
+        wmcorr = propertyList.wmMap(extraCorresponding[1][0], 
+                                    extraCorresponding[1][1], 
+                                    extraCorresponding[1][2]);
+        subprop = propertyList.getExplicitOrShorthand(wmcorr);
+        // TODO: Don't set when NONE.
+        if (subprop != null) {
+            baseMaker.setSubprop(p, Constants.CP_MAXIMUM, subprop);
+        }
+
+        return p;
+    }   
 }

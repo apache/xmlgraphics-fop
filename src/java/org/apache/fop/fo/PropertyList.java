@@ -56,7 +56,7 @@ import org.xml.sax.Attributes;
 
 // FOP
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.Property.Maker;
+import org.apache.fop.fo.properties.PropertyMaker;
 
 /**
  * Class containing the collection of properties for a given FObj.
@@ -276,7 +276,7 @@ public class PropertyList extends HashMap {
     private Property get(int propId, boolean bTryInherit,
                          boolean bTryDefault) {
 
-        Property.Maker propertyMaker = findMaker(propId & Constants.PROPERTY_MASK);
+        PropertyMaker propertyMaker = findMaker(propId & Constants.PROPERTY_MASK);
         try {
             return propertyMaker.get(propId & Constants.COMPOUND_MASK, this,
                                      bTryInherit, bTryDefault);
@@ -415,7 +415,7 @@ public class PropertyList extends HashMap {
                                             String attributeName,
                                             String attributeValue) {
                                                 
-        Property.Maker propertyMaker = null;
+        PropertyMaker propertyMaker = null;
         FObj parentFO = fobj.findNearestAncestorFObj();
         
         /* Handle "compound" properties, ex. space-before.minimum */
@@ -464,7 +464,7 @@ public class PropertyList extends HashMap {
     private Property findBaseProperty(Attributes attributes,
                                       FObj parentFO,
                                       String basePropName,
-                                      Maker propertyMaker)
+                                      PropertyMaker propertyMaker)
             throws FOPException {
 
         /* If the baseProperty has already been created, return it
@@ -537,7 +537,7 @@ public class PropertyList extends HashMap {
      */
     private Property getSubpropValue(Property p, int propId) {
 
-        Property.Maker maker = findMaker(propId & Constants.PROPERTY_MASK);
+        PropertyMaker maker = findMaker(propId & Constants.PROPERTY_MASK);
 
         if (maker != null) {
             return maker.getSubprop(p, propId & Constants.COMPOUND_MASK);
@@ -551,7 +551,7 @@ public class PropertyList extends HashMap {
      * @return new Property object
      */
     private Property getShorthand(int propId) {
-        Property.Maker propertyMaker = findMaker(propId);
+        PropertyMaker propertyMaker = findMaker(propId);
         
         if (propertyMaker != null) {
             return propertyMaker.getShorthand(this);
@@ -569,7 +569,7 @@ public class PropertyList extends HashMap {
     private Property makeProperty(int propId) throws FOPException {
 
         Property p = null;
-        Property.Maker propertyMaker = findMaker(propId);
+        PropertyMaker propertyMaker = findMaker(propId);
 
         if (propertyMaker != null) {
             p = propertyMaker.make(this);
@@ -587,7 +587,7 @@ public class PropertyList extends HashMap {
     private boolean isInherited(int propId) {
         if (inheritableProperty == null) {
             inheritableProperty = new boolean[Constants.PROPERTY_COUNT + 1];
-            Property.Maker maker = null;
+            PropertyMaker maker = null;
             for (int prop = 1; prop <= Constants.PROPERTY_COUNT; prop++) {
                 maker = findMaker(prop);
                 inheritableProperty[prop] = (maker != null && maker.isInherited());
@@ -601,7 +601,7 @@ public class PropertyList extends HashMap {
      * @param propId Id of property
      * @return the Property.Maker for this property
      */
-    private Property.Maker findMaker(int propId) {
+    private PropertyMaker findMaker(int propId) {
 
         if (propId < 1 || propId > Constants.PROPERTY_COUNT) {
             return null;

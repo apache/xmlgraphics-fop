@@ -50,6 +50,8 @@
  */
 package org.apache.fop.fo;
 
+import org.apache.fop.fo.properties.PropertyMaker;
+
 /**
  * Shorthand property parser for Box properties
  */
@@ -70,7 +72,7 @@ public class BoxPropShorthandParser extends GenericShorthandParser {
      */
     protected Property convertValueForProperty(int propId,
                                                ListProperty listProperty,
-                                               Property.Maker maker,
+                                               PropertyMaker maker,
                                                PropertyList propertyList) {
         String name = FOPropertyMapping.getPropertyName(propId);
         Property p = null;

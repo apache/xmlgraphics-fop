@@ -50,6 +50,8 @@
  */
 package org.apache.fop.fo;
 
+import org.apache.fop.fo.properties.PropertyMaker;
+
 /**
  * Superclass for properties that wrap a character value
  */
@@ -58,7 +60,7 @@ public class CharacterProperty extends Property {
     /**
      * Inner class for creating instances of CharacterProperty
      */
-    public static class Maker extends Property.Maker {
+    public static class Maker extends PropertyMaker {
 
         /**
          * @param propName name of property for which a Maker should be created

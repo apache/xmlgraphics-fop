@@ -50,6 +50,8 @@
  */
 package org.apache.fop.fo;
 
+import org.apache.fop.fo.properties.PropertyMaker;
+
 /**
  * Interface used to provide parsing capabilities to Properties with shorthand
  * characteristics (those with multiple components).
@@ -64,6 +66,6 @@ public interface ShorthandParser {
      */
     Property getValueForProperty(int propId,
                                  ListProperty listProperty,
-                                 Property.Maker maker,
+                                 PropertyMaker maker,
                                  PropertyList propertyList);
 }

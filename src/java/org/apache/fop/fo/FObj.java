@@ -59,6 +59,7 @@ import java.util.Set;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.flow.Marker;
+import org.apache.fop.fo.properties.PropertyMaker;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 
@@ -67,7 +68,7 @@ import org.xml.sax.Locator;
  */
 public class FObj extends FONode implements Constants {
     private static final String FO_URI = "http://www.w3.org/1999/XSL/Format";
-    public static Property.Maker[] propertyListTable = null;
+    public static PropertyMaker[] propertyListTable = null;
     
     /**
      * Formatting properties for this fo element.
@@ -104,8 +105,8 @@ public class FObj extends FONode implements Constants {
         super(parent);
 
         if (propertyListTable == null) {
-            propertyListTable = new Property.Maker[Constants.PROPERTY_COUNT+1];
-            Property.Maker[] list = FOPropertyMapping.getGenericMappings();
+            propertyListTable = new PropertyMaker[Constants.PROPERTY_COUNT+1];
+            PropertyMaker[] list = FOPropertyMapping.getGenericMappings();
             for (int i = 1; i < list.length; i++) {
                 if (list[i] != null)
                     propertyListTable[i] = list[i]; 

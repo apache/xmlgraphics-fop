@@ -53,6 +53,7 @@ package org.apache.fop.fo;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.AutoLength;
 import org.apache.fop.fo.expr.Numeric;
+import org.apache.fop.fo.properties.PropertyMaker;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -63,7 +64,7 @@ public class LengthProperty extends Property {
     /**
      * Inner class for making instances of LengthProperty
      */
-    public static class Maker extends Property.Maker {
+    public static class Maker extends PropertyMaker {
         private boolean autoOk = false;
 
         /**

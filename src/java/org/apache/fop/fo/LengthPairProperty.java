@@ -52,6 +52,7 @@ package org.apache.fop.fo;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.LengthPair;
+import org.apache.fop.fo.properties.CompoundPropertyMaker;
 
 /**
  * Superclass for properties wrapping a LengthPair value
