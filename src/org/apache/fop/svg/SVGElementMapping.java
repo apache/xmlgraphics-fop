@@ -21,20 +21,23 @@ public class SVGElementMapping implements ElementMapping {
 
     private static HashMap foObjs = null;
 
-    public synchronized void addToBuilder(FOTreeBuilder builder) {
+    private static synchronized void setupSVG() {
+        if (foObjs == null) {
+            // this sets the parser that will be used
+            // by default (SVGBrokenLinkProvider)
+            // normally the user agent value is used
+            XMLResourceDescriptor.setXMLParserClassName(
+              Driver.getParserClassName());
+
+            foObjs = new HashMap();
+            foObjs.put("svg", new SE());
+            foObjs.put(DEFAULT, new SVGMaker());
+        }
+    }
+
+    public void addToBuilder(FOTreeBuilder builder) {
         try {
-            if (foObjs == null) {
-                // this sets the parser that will be used
-                // by default (SVGBrokenLinkProvider)
-                // normally the user agent value is used
-                XMLResourceDescriptor.setXMLParserClassName(
-                  Driver.getParserClassName());
-
-                foObjs = new HashMap();
-                foObjs.put("svg", new SE());
-                foObjs.put(DEFAULT, new SVGMaker());
-            }
-
+            setupSVG();
             String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
             builder.addMapping(svgNS, foObjs);
         } catch (Throwable t) {
@@ -42,13 +45,13 @@ public class SVGElementMapping implements ElementMapping {
         }
     }
 
-    class SVGMaker extends ElementMapping.Maker {
+    static class SVGMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new SVGObj(parent);
         }
     }
 
-    class SE extends ElementMapping.Maker {
+    static class SE extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new SVGElement(parent);
         }
