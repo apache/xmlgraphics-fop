@@ -7,6 +7,7 @@
 package org.apache.fop.tools;
 
 import org.apache.fop.apps.*;
+import org.apache.fop.configuration.*;
 
 import java.io.*;
 import java.util.*;
@@ -188,6 +189,13 @@ public class TestConverter {
 
         try {
             File xmlFile = new File(baseDir + "/" + xml);
+
+            try {
+                Configuration.put("baseDir", xmlFile.getParentFile().toURL().toExternalForm());
+            } catch (Exception e) {
+                System.err.println("Error setting base directory");
+            }
+
             InputHandler inputHandler = new XSLTInputHandler(xmlFile,
                                         new File(baseDir + "/" + xsl));
 
@@ -214,6 +222,7 @@ public class TestConverter {
             }
             driver.setOutputStream(
               new FileOutputStream(new File(destdir, outname + (outputPDF ? ".pdf" : ".at.xml"))));
+System.out.println("ddir:" + destdir + " on:" + outname + ".pdf");
             driver.render();
 
             // check difference
