@@ -85,11 +85,18 @@
     </s3>
 
     <s3 title="B.7 Out-of-line Formatting Objects">
-      <p>Not implemented: float, footnote, footnote-body</p>
+      <ul>
+        <li>footnote</li>
+        <li>footnote-body</li>
+      </ul>
+      <p>Not implemented: float</p>
     </s3>
 
     <s3 title="B.8 Other Formatting Objects">
-      <p>Not implemented: wrapper, marker, retrieve-marker</p>
+      <ul>
+        <li>wrapper</li>
+      </ul>
+      <p>Not implemented: marker, retrieve-marker</p>
     </s3>
   </s2>
 
@@ -200,7 +207,7 @@
       <li>table-omit-header-at-break</li> 
       <li>text-align </li>
       <li>text-align-last </li>
-      <li>textdecoration (only value "underline")</li>
+      <li>text-decoration</li>
       <li>text-indent </li>
       <li>top</li>
       <li>white-space-collapse</li>

@@ -18,7 +18,7 @@
     <xsl:copy-of select="document('fop/involved.xml')"/>
     <xsl:copy-of select="document('fop/architecture.xml')"/>
     <xsl:copy-of select="document('fop/faq.xml')"/>
-    <xsl:copy-of select="document('fop/specs.xml')"/>
+    <xsl:copy-of select="document('fop/resources.xml')"/>
     <xsl:copy-of select="document('fop/license.xml')"/>
   </documentation>
 </xsl:template>

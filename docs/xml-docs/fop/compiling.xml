@@ -16,8 +16,8 @@
    <s2 title="Setting up your classpath">
      <p>The build process relies on finding following libraries in your classpath (the version numbers indicate that building with them has been successfully tested, other, later versions may work too:</p>
      <ul>
-        <li><jump href="http://xml.apache.org/xerces-j/index.html">Xerces-J</jump> version 1.2.1 (xml parser)</li>
-        <li><jump href="http://xml.apache.org/xalan/index.html">Xalan</jump> version 1.2 (xslt processor)</li>
+        <li><jump href="http://xml.apache.org/xerces-j/index.html">Xerces-J</jump> version 1.2.1 (xml parser). Xerces-J version 1.3.0 does not work, because of a bug in Xerces!</li>
+        <li><jump href="http://xml.apache.org/xalan/index.html">Xalan</jump> version 1.2 (xslt processor). Xalan 2.0 is also supported.</li>
         <li>bsf.jar (comes with Xalan)</li>
         <li>jimi.jar (image processing library) this file is optional </li>
      </ul>

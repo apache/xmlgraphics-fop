@@ -20,7 +20,7 @@
        like XT or Xalan) or can be passed in memory as a DOM Document or (in
        the case of XT) SAX events.
     </p>
-    <p>The latest version of Fop is 0.16 and it supports the xsl:fo candidate release.
+    <p>The latest version of Fop is 0.17 and it supports the xsl:fo candidate release.
        You can <jump href="download.html">download</jump> 
        Fop including a precompiled version, the source code and many example files to 
        get you started. Pointers to introductions into xsl:fo can be found in the

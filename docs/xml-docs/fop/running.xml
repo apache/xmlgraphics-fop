@@ -16,11 +16,12 @@
           be included in your classpath. The jar file w3c.jar contains the compiled classes for the
           java svg bindings with some other DOM classes that are used by the SVG DOM bindings.
           The source for the svg java binding classes can be found at - <jump href="http://www.w3.org/TR/2000/CR-SVG-20000802/java.html">
-          SVG Java bindings</jump>, currently they correspond to the CR-SVG-20000802 specification document.
+          SVG Java bindings</jump>, currently they correspond to the SVG Candidate Recommendation (02 November 2000).
           The other required files can be found at <jump href="http://www.w3.org/TR/2000/CR-DOM-Level-2-20000510/java-binding.html">W3C DOM Java binding</jump>.
     </p>
     <p>d) Optional: Fop supports the jimi library for image processing, if it is in your classpath
-          when you build Fop. You can find it at <jump href="http://java.sun.com/products/jimi/">java.sun.com</jump>
+          when you build Fop (the precompiled version supports jimi). You can find it at 
+          <jump href="http://java.sun.com/products/jimi/">java.sun.com</jump>
     </p>
   </s2>
   <s2 title="Starting FOP as an standalone application">
@@ -108,7 +109,7 @@
   </s2>
   <s2 title="Problems">
     <p>If you have problems running FOP, please have a look at the 
-       <jump href="faq-running.html">FOP FAQ</jump>. If you don't find a solution there,
+       <jump href="http://www.owal.co.uk:8090/asf/servlet/asf/screen/DisplayTopics/action/SetAll/project_id/18/faq_id/276">FOP FAQ</jump>. If you don't find a solution there,
        you can ask for help on the list fop-dev@xml.apache.org. Maybe it is a bug and 
        maybe somebody is already working on it. 
     </p>

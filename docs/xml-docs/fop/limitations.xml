@@ -10,10 +10,7 @@
   </p>
 
   <s2 title="fo:leader">
-    <p>Only the property leader-length.optimum is used, so for all purposes you can use 
-       "leader-length" instead. leader-length.minimum/maximum should be honored 
-       for line-justification, but this does not happen.
-    </p>
+    <p>leader-length.minimum is not used at all</p>
   </s2>
 
   <s2 title="page-number-citation">
@@ -79,9 +76,5 @@
     <p><code>&lt;/fo:table></code></p>
   </s2>
 
-  
-  <!--<s2 title="display-graphic">
-    <p>Which formats are supported? Compression etc. </p>  
-  </s2>-->
 
 </s1>
