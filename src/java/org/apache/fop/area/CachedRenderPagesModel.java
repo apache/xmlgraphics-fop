@@ -18,6 +18,9 @@
  
 package org.apache.fop.area;
 
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.Renderer;
 
 import java.util.Map;
@@ -29,6 +32,7 @@ import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
+import java.io.OutputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedInputStream;
 
@@ -42,11 +46,12 @@ public class CachedRenderPagesModel extends RenderPagesModel {
     private Map pageMap = new HashMap();
 
     /**
-     * Create a new render pages model with the given renderer.
-     * @param rend the renderer to render pages to
+     * Constructor
+     * @see org.apache.fop.area.RenderPagesModel(FOUserAgent, int, FontInfo, OutputStream)
      */
-    public CachedRenderPagesModel(Renderer rend) {
-        super(rend);
+    public CachedRenderPagesModel (FOUserAgent userAgent, int renderType, 
+        FontInfo fontInfo, OutputStream stream) throws FOPException {
+        super(userAgent, renderType, fontInfo, stream);
     }
 
     /**

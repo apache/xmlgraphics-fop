@@ -21,6 +21,10 @@ package org.apache.fop.area;
 // Java
 import java.util.List;
 
+// XML
+import org.xml.sax.SAXException;
+
+
 /**
  * This class stores all the pages in the document
  * for interactive agents.
@@ -142,6 +146,6 @@ public class StorePagesModel extends AreaTreeModel {
     /**
      * End document, do nothing.
      */
-    public void endDocument() {
+    public void endDocument() throws SAXException {
     }
 }

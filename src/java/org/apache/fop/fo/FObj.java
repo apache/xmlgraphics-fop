@@ -445,7 +445,7 @@ public class FObj extends FONode implements Constants {
      * Convenience method for validity checking.  Checks if the
      * incoming node is a member of the "%block;" parameter entity
      * as defined in Sect. 6.2 of the XSL 1.0 & 1.1 Recommendations
-     * @param nsURI namespace URI of incoming invalid node
+     * @param nsURI namespace URI of incoming node
      * @param lName local name (i.e., no prefix) of incoming node 
      * @return true if a member, false if not
      */
@@ -456,15 +456,40 @@ public class FObj extends FONode implements Constants {
             || lName.equals("table-and-caption") 
             || lName.equals("block-container")
             || lName.equals("list-block") 
-            || lName.equals("float")))
-            || isNeutralItem(nsURI, lName);
+            || lName.equals("float")
+            || isNeutralItem(nsURI, lName)));
+    }
+
+    /**
+     * Convenience method for validity checking.  Checks if the
+     * incoming node is a member of the "%inline;" parameter entity
+     * as defined in Sect. 6.2 of the XSL 1.0 & 1.1 Recommendations
+     * @param nsURI namespace URI of incoming node
+     * @param lName local name (i.e., no prefix) of incoming node 
+     * @return true if a member, false if not
+     */
+    protected static boolean isInlineItem(String nsURI, String lName) {
+        return (nsURI == FOElementMapping.URI && 
+            (lName.equals("bidi-override") 
+            || lName.equals("character") 
+            || lName.equals("external-graphic") 
+            || lName.equals("instream-foreign-object")
+            || lName.equals("inline") 
+            || lName.equals("inline-container")
+            || lName.equals("leader") 
+            || lName.equals("page-number") 
+            || lName.equals("page-number-citation")
+            || lName.equals("basic-link")
+            || lName.equals("multi-toggle")
+            || lName.equals("footnote") // temp only -- not always correct (see spec)
+            || isNeutralItem(nsURI, lName)));
     }
 
     /**
      * Convenience method for validity checking.  Checks if the
      * incoming node is a member of the neutral item list
      * as defined in Sect. 6.2 of the XSL 1.0 & 1.1 Recommendations
-     * @param nsURI namespace URI of incoming invalid node
+     * @param nsURI namespace URI of incoming node
      * @param lName local name (i.e., no prefix) of incoming node 
      * @return true if a member, false if not
      */
@@ -473,6 +498,7 @@ public class FObj extends FONode implements Constants {
             (lName.equals("multi-switch") 
             || lName.equals("multi-properties")
             || lName.equals("wrapper") 
+            || lName.equals("float") // temp only -- not always correct (see spec)
             || lName.equals("retrieve-marker")));
     }
 }

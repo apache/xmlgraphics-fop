@@ -18,6 +18,10 @@
 
 package org.apache.fop.fo.pagination;
 
+// XML
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+
 // FOP
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
@@ -44,6 +48,16 @@ public class Title extends FObjMixed {
      */
     public Title(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+        XSL/FOP: (#PCDATA|%inline;)*
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) {
+        if (!isInlineItem(nsURI, localName)) {
+            invalidChildError(loc, nsURI, localName);
+        }
     }
 
     private void setup() {
