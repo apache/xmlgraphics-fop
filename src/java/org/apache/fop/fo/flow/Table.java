@@ -99,11 +99,11 @@ public class Table extends FObj {
             == TableOmitHeaderAtBreak.TRUE;
         this.omitFooterAtBreak = getPropEnum(PR_TABLE_OMIT_FOOTER_AT_BREAK)
             == TableOmitFooterAtBreak.TRUE;
-        getFOInputHandler().startTable(this);
+        getFOEventHandler().startTable(this);
     }
 
     protected void endOfNode() throws SAXParseException {
-        getFOInputHandler().endTable(this);
+        getFOEventHandler().endTable(this);
     }
 
     /**

@@ -51,14 +51,14 @@ public class FObjMixed extends FObj {
         if (textInfo == null) {
             // Really only need one of these, but need to get fontInfo
             // stored in propMgr for later use.
-            propMgr.setFontInfo(getFOInputHandler().getFontInfo());
-            textInfo = propMgr.getTextLayoutProps(getFOInputHandler().getFontInfo());
+            propMgr.setFontInfo(getFOEventHandler().getFontInfo());
+            textInfo = propMgr.getTextLayoutProps(getFOEventHandler().getFontInfo());
         }
 
         FOText ft = new FOText(data, start, length, textInfo, this);
         ft.setLocator(locator);
         
-        getFOInputHandler().characters(ft.ca, ft.startIndex, ft.endIndex);
+        getFOEventHandler().characters(ft.ca, ft.startIndex, ft.endIndex);
         addChildNode(ft);
     }
 

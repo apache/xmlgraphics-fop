@@ -62,7 +62,7 @@ public class ExternalGraphic extends FObj {
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
-        getFOInputHandler().image(this);
+        getFOEventHandler().image(this);
     }
 
     /**

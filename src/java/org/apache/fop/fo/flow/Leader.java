@@ -57,7 +57,7 @@ public class Leader extends FObjMixed {
      */
     private void setup() {
         // Common Font Properties
-        this.fontState = propMgr.getFontState(getFOInputHandler().getFontInfo());
+        this.fontState = propMgr.getFontState(getFOEventHandler().getFontInfo());
 
         // color properties
         ColorType c = this.propertyList.get(PR_COLOR).getColorType();

@@ -52,7 +52,7 @@ public class ListBlock extends FObj {
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
-        getFOInputHandler().startList(this);
+        getFOEventHandler().startList(this);
     }
 
     /**
@@ -74,14 +74,14 @@ public class ListBlock extends FObj {
 
     /**
      * Make sure content model satisfied, if so then tell the
-     * FOInputHandler that we are at the end of the flow.
+     * FOEventHandler that we are at the end of the flow.
      * @see org.apache.fop.fo.FONode#end
      */
     protected void endOfNode() throws SAXParseException {
         if (!hasListItem) {
             missingChildElementError("marker* (list-item)+");
         }
-        getFOInputHandler().endList(this);
+        getFOEventHandler().endList(this);
     }
 
     /**

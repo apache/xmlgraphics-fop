@@ -69,7 +69,7 @@ public class Inline extends FObjMixed {
            }
        }
 
-        getFOInputHandler().startInline(this);
+        getFOEventHandler().startInline(this);
     }
 
     /**
@@ -105,7 +105,7 @@ public class Inline extends FObjMixed {
      * @see org.apache.fop.fo.FONode#end
      */
     protected void endOfNode() throws SAXParseException {
-        getFOInputHandler().endInline(this);
+        getFOEventHandler().endInline(this);
     }
 
     /**

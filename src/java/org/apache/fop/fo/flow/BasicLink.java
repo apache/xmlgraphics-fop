@@ -77,7 +77,7 @@ public class BasicLink extends Inline {
                 "internal-destination must be specified.");
         }
         
-        getFOInputHandler().startLink(this);
+        getFOEventHandler().startLink(this);
     }
 
     /**
@@ -102,7 +102,7 @@ public class BasicLink extends Inline {
      */
     protected void endOfNode() throws SAXParseException {
         super.endOfNode();
-        getFOInputHandler().endLink();
+        getFOEventHandler().endLink();
     }
 
     /**

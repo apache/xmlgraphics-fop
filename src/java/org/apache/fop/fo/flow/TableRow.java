@@ -64,12 +64,12 @@ public class TableRow extends FObj {
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
-        getFOInputHandler().startRow(this);
+        getFOEventHandler().startRow(this);
     }
 
 
     protected void endOfNode() throws SAXParseException {
-        getFOInputHandler().endRow(this);
+        getFOEventHandler().endRow(this);
     }
 
     /**

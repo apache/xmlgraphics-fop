@@ -50,7 +50,7 @@ public class Footnote extends FObj {
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
-        getFOInputHandler().startFootnote(this);
+        getFOEventHandler().startFootnote(this);
     }
 
     /**
@@ -81,7 +81,7 @@ public class Footnote extends FObj {
 
     /**
      * Make sure content model satisfied, if so then tell the
-     * FOInputHandler that we are at the end of the flow.
+     * FOEventHandler that we are at the end of the flow.
      * @see org.apache.fop.fo.FONode#end
      */
     protected void endOfNode() throws SAXParseException {
@@ -89,7 +89,7 @@ public class Footnote extends FObj {
         if (inlineFO == null || footnoteBody == null) {
             missingChildElementError("(inline,footnote-body)");
         }
-        getFOInputHandler().endFootnote(this);
+        getFOEventHandler().endFootnote(this);
     }
 
     /**
