@@ -89,7 +89,8 @@ public class TableRow extends FObj {
     int minHeight = 0;    // force row height
     ArrayList columns;
 
-    AreaContainer areaContainer;
+    // public AreaContainer areaContainer;
+    public java.lang.ref.WeakReference areaContainerRef;
 
     boolean areaAdded = false;
     
@@ -296,7 +297,7 @@ public class TableRow extends FObj {
 
         int spaceLeft = area.spaceLeft();
 
-        this.areaContainer =
+        AreaContainer areaContainer =
             new AreaContainer(propMgr.getFontState(area.getFontInfo()), 0, 0,
                               area.getContentWidth(), spaceLeft,
                               Position.RELATIVE);
@@ -309,6 +310,8 @@ public class TableRow extends FObj {
 
         areaContainer.setAbsoluteHeight(area.getAbsoluteHeight());
         areaContainer.setIDReferences(area.getIDReferences());
+
+        this.areaContainerRef = new java.lang.ref.WeakReference(areaContainer);
 
         largestCellHeight = minHeight;
 
@@ -391,7 +394,7 @@ public class TableRow extends FObj {
 
         // This is in case a float was composed in the cells
         area.setMaxHeight(area.getMaxHeight() - spaceLeft
-                          + this.areaContainer.getMaxHeight());
+                          + areaContainer.getMaxHeight());
 
         // Only do this for "STARTCELL", ending spans are handled separately
         // What about empty cells? Yes, we should set their height too!
@@ -468,12 +471,12 @@ public class TableRow extends FObj {
     }
 
     public int getAreaHeight() {
-        return areaContainer.getHeight();
+        return ((AreaContainer)areaContainerRef.get()).getHeight();
     }
 
     public void removeLayout(Area area) {
         if (areaAdded) {
-            area.removeChild(areaContainer);
+            area.removeChild((AreaContainer)areaContainerRef.get());
             areaAdded = false;
         }
         this.resetMarker();
