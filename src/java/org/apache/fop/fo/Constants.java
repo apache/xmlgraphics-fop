@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -125,7 +125,6 @@ public interface Constants {
     int COMPOUND_COUNT = 11;
     
     // property constants
-
     int PR_ABSOLUTE_POSITION = 1;
     int PR_ACTIVE_STATE = 2;
     int PR_ALIGNMENT_ADJUST = 3;

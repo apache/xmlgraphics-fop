@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ public class MultiCase extends FObj {
     // The value of properties relevant for fo:multi-case.
     private CommonAccessibility commonAccessibility;
     private String id;
-    // private ToBeImplementedProperty startingState;
+    private int startingState;
     // private ToBeImplementedProperty caseName;
     // private ToBeImplementedProperty caseTitle;
     // End of property values
@@ -57,7 +57,7 @@ public class MultiCase extends FObj {
     public void bind(PropertyList pList) throws FOPException {
         commonAccessibility = pList.getAccessibilityProps();
         id = pList.get(PR_ID).getString();
-        // startingState = pList.get(PR_STARTING_STATE);
+        startingState = pList.get(PR_STARTING_STATE).getEnum();
         // caseName = pList.get(PR_CASE_NAME);
         // caseTitle = pList.get(PR_CASE_TITLE);
     }
@@ -67,6 +67,13 @@ public class MultiCase extends FObj {
      */
     protected void startOfNode() throws FOPException {
         checkId(id);
+    }
+
+    /**
+     * Return the "starting-state" property.
+     */
+    public int getStartingState() {
+        return startingState;
     }
 
     /**
