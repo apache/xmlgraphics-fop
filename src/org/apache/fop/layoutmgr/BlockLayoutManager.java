@@ -36,6 +36,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     int lineHeight = 14000;
     int follow = 2000;
 
+    int iStartPos = 0;
+
     protected List childBreaks = new ArrayList();
 
     /**
@@ -56,6 +58,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         protected boolean preLoadNext() {
             while (proxy.hasNext()) {
                 LayoutManager lm = (LayoutManager) proxy.next();
+                lm.setParentLM(BlockLayoutManager.this);
                 if(lm.generatesInlineAreas()) {
                     LineLayoutManager lineLM = createLineManager(lm);
                     listLMs.add(lineLM);
@@ -208,8 +211,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         return breakPoss;
     }
 
-    int iStartPos = 0;
-
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
@@ -239,6 +240,9 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
                 childLM.addAreas(breakPosIter, lc);
             }
         }
+
+
+        addMarkers(false);
 
         flush();
 

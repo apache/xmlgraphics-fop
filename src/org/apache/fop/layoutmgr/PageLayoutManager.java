@@ -9,6 +9,7 @@ package org.apache.fop.layoutmgr;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.AreaTree;
+import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Flow;
@@ -27,6 +28,7 @@ import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.PageNumberGenerator;
 import org.apache.fop.fo.properties.Constants;
+import org.apache.fop.fo.properties.RetrieveBoundary;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -267,13 +269,17 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      * @param start true if starting marker area, false for ending
      */
     public void addMarkerMap(Map marks, boolean start) {
-        getLogger().debug("adding markers: " + marks + ":" + start);
+        //getLogger().debug("adding markers: " + marks + ":" + start);
         // add markers to page on area tree
         curPage.addMarkers(marks, start);
     }
 
     /**
      * Retrieve a marker from this layout manager.
+     * If the boundary is page then it will only check the
+     * current page. For page-sequence and document it will
+     * lookup preceding pages from the area tree and try to find
+     * a marker.
      *
      * @param name the marker class name to lookup
      * @param pos the position to locate the marker
@@ -283,6 +289,27 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     public Marker retrieveMarker(String name, int pos, int boundary) {
         // get marker from the current markers on area tree
         Marker mark = (Marker)curPage.getMarker(name, pos);
+        if (mark == null && boundary != RetrieveBoundary.PAGE) {
+            // go back over pages until mark found
+            // if document boundary then keep going
+            boolean doc = boundary == RetrieveBoundary.DOCUMENT;
+            AreaTreeModel atm = areaTree.getAreaTreeModel();
+            int seq = atm.getPageSequenceCount();
+            int page = atm.getPageCount(seq) - 1;
+            while (page >= 0) {
+                PageViewport pv = atm.getPage(seq, page);
+                mark = (Marker)curPage.getMarker(name, pos);
+                if (mark != null) {
+                    return mark;
+                }
+                page--;
+                if (page == -1 && doc && seq > 0) {
+                    seq--;
+                    page = atm.getPageCount(seq) - 1;
+                }
+            }
+        }
+
         return mark;
     }
 

@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.apache.fop.fo.properties.RetrievePosition;
+
 /**
  * Page viewport that specifies the viewport area and holds the page contents.
  * This is the top level object for a page and remains valid for the life
@@ -43,8 +45,10 @@ public class PageViewport implements Resolveable, Cloneable {
 
     // hashmap of markers for this page
     // start and end are added by the fo that contains the markers
-    private Map markerStart = null;
-    private Map markerEnd = null;
+    private Map markerFirstStart = null;
+    private Map markerLastStart = null;
+    private Map markerFirstEnd = null;
+    private Map markerLastEnd = null;
 
     /**
      * Create a page viewport.
@@ -176,27 +180,94 @@ public class PageViewport implements Resolveable, Cloneable {
     }
 
     /**
-     * Add the start markers for this page.
+     * Add the markers for this page.
+     * Only the required markers are kept.
+     * For "first-starting-within-page" it adds the markers
+     * that are starting only if the marker class name is not
+     * already added.
+     * For "first-including-carryover" it adds any marker if
+     * the marker class name is not already added.
+     * For "last-starting-within-page" it adds all marks that
+     * are starting, replacing earlier markers.
+     * For "last-ending-within-page" it adds all markers that
+     * are ending, replacing earlier markers.
+     * 
+     * Should this logic be placed in the Page layout manager.
      *
-     * @param marks the map of start markers to add
+     * @param marks the map of markers to add
+     * @param start if the area being added is starting or ending
      */
     public void addMarkers(Map marks, boolean start) {
         if (start) {
-            if (markerStart == null) {
-                markerStart = new HashMap();
+            if (markerFirstStart == null) {
+                markerFirstStart = new HashMap();
             }
-            markerStart.putAll(marks);
+            if (markerLastStart == null) {
+                markerLastStart = new HashMap();
+            }
+            if (markerFirstEnd == null) {
+                markerFirstEnd = new HashMap();
+            }
+            // only put in new values, leave current
+            for (Iterator iter = marks.keySet().iterator(); iter.hasNext();) {
+                Object key = iter.next();
+                if (!markerFirstStart.containsKey(key)) {
+                    markerFirstStart.put(key, marks.get(key));
+                }
+                if (!markerFirstEnd.containsKey(key)) {
+                    markerFirstEnd.put(key, marks.get(key));
+                }
+            }
+            markerLastStart.putAll(marks);
         } else {
-            if (markerEnd == null) {
-                markerEnd = new HashMap();
+            if (markerFirstEnd == null) {
+                markerFirstEnd = new HashMap();
             }
-            markerEnd.putAll(marks);
+            if (markerLastEnd == null) {
+                markerLastEnd = new HashMap();
+            }
+            // only put in new values, leave current
+            for (Iterator iter = marks.keySet().iterator(); iter.hasNext();) {
+                Object key = iter.next();
+                if (!markerFirstEnd.containsKey(key)) {
+                    markerFirstEnd.put(key, marks.get(key));
+                }
+            }
+            markerLastEnd.putAll(marks);
         }
     }
 
+    /**
+     * Get a marker from this page.
+     * This will retrieve a marker with the class name
+     * and position.
+     *
+     * @param name The class name of the marker to retrieve 
+     * @param pos the position to retrieve
+     * @return Object the marker found or null
+     */
     public Object getMarker(String name, int pos) {
-        if (markerStart != null) {
-            return markerStart.get(name);
+        switch (pos) {
+            case RetrievePosition.FSWP:
+                if (markerFirstStart != null) {
+                    return markerFirstStart.get(name);
+                }
+            break;
+            case RetrievePosition.FIC:
+                if (markerFirstStart != null) {
+                    return markerFirstEnd.get(name);
+                }
+            break;
+            case RetrievePosition.LSWP:
+                if (markerFirstStart != null) {
+                    return markerLastStart.get(name);
+                }
+            break;
+            case RetrievePosition.LEWP:
+                if (markerFirstStart != null) {
+                    return markerLastEnd.get(name);
+                }
+            break;
         }
         return null;
     }
