@@ -16,7 +16,7 @@
    </fo:simple-page-master>
  </fo:layout-master-set>
 
-
+<fo:bookmark-tree>
   <fox:outline internal-destination="sec0">
     <fox:label>Adding Fonts to FOP</fox:label>
   </fox:outline>
@@ -74,7 +74,7 @@
  <fox:outline internal-destination="sec5">
     <fox:label>Japanese Examples</fox:label>
  </fox:outline>
-
+</fo:bookmark-tree>
 
  <fo:page-sequence master-reference="A4">
 

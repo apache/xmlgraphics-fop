@@ -117,12 +117,12 @@ public class FObj extends FONode implements Constants {
 
     /**
      * Bind property values from the property list to the FO node.
-     * Must be overriden in all FObj subclasses. 
+     * Must be overridden in all FObj subclasses that have properties
+     * applying to it.
      * @param pList the PropertyList where the properties can be found.
      * @throws FOPException
      */
     public void bind(PropertyList pList) throws FOPException {
-//        throw new ValidationException("Unconverted element " + this, locator);
     }
 
     /**

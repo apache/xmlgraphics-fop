@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 
-import org.apache.fop.fo.extensions.Bookmarks;
+import org.apache.fop.fo.pagination.bookmarks.BookmarkTree;
 import org.apache.fop.fo.extensions.Outline;
 
 /**
@@ -52,12 +52,12 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
      *
      * @param bookmarks fo:bookmark-tree for this document
      */
-    public BookmarkData(Bookmarks bookmarks) {
+    public BookmarkData(BookmarkTree bookmarkTree) {
         idRef = null;
         whenToProcess = END_OF_DOC;
         
-        for (int count = 0; count < bookmarks.getOutlines().size(); count++) {
-            Outline out = (Outline)(bookmarks.getOutlines()).get(count);
+        for (int count = 0; count < bookmarkTree.getBookmarks().size(); count++) {
+            Outline out = (Outline)(bookmarkTree.getBookmarks()).get(count);
             addSubData(createBookmarkData(out));
         }
     }
