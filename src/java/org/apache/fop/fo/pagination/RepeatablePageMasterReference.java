@@ -86,7 +86,7 @@ public class RepeatablePageMasterReference extends PageMasterReference
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
 
-        String mr = getProperty("maximum-repeats").getString();
+        String mr = getProperty(PR_MAXIMUM_REPEATS).getString();
         if (mr.equals("no-limit")) {
             this.maximumRepeats = INFINITE;
         } else {

@@ -92,8 +92,8 @@ public class ConditionalPageMasterReference extends FObj {
      */
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
-        if (getProperty("master-reference") != null) {
-            setMasterName(getProperty("master-reference").getString());
+        if (getProperty(PR_MASTER_REFERENCE) != null) {
+            setMasterName(getProperty(PR_MASTER_REFERENCE).getString());
         }
 
         validateParent(parent);

@@ -80,8 +80,8 @@ public abstract class PageMasterReference extends FObj
      */
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
-        if (getProperty("master-reference") != null) {
-            this.masterName = getProperty("master-reference").getString();
+        if (getProperty(PR_MASTER_REFERENCE) != null) {
+            this.masterName = getProperty(PR_MASTER_REFERENCE).getString();
         }
         validateParent(parent);
     }

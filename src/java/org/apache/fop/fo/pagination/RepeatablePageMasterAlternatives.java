@@ -106,7 +106,7 @@ public class RepeatablePageMasterAlternatives extends FObj
                                    + parent.getName());
         }
 
-        String mr = getProperty("maximum-repeats").getString();
+        String mr = getProperty(PR_MAXIMUM_REPEATS).getString();
         if (mr.equals("no-limit")) {
             this.maximumRepeats = INFINITE;
         } else {

@@ -258,8 +258,7 @@ public class FObj extends FONode implements Constants {
      * @param name - the name of the desired property to obtain
      * @return the property
      */
-    public Property getProperty(String name) {
-        int propId = FOPropertyMapping.getPropertyId(name);
+    public Property getProperty(int propId) {
         return (propertyList.get(propId));
     }
 
@@ -330,7 +329,7 @@ public class FObj extends FONode implements Constants {
     protected void setWritingMode() {
         FObj p = findNearestAncestorGeneratingRAs(true, true);
         this.propertyList.setWritingMode(
-          p.getProperty("writing-mode").getEnum());
+          p.getProperty(PR_WRITING_MODE).getEnum());
     }
 
     /**
