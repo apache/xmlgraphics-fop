@@ -462,7 +462,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         }
         StaticContentLayoutManager lm = getStaticContentLayoutManager(flow);
         lm.setUserAgent(getUserAgent());
-        lm.init();
+        lm.initialize();
         lm.setRegionReference(reg.getRegion());
         lm.setParent(this);
         LayoutContext childLC = new LayoutContext(0);

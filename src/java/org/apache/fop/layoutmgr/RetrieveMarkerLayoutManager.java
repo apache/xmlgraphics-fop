@@ -96,7 +96,7 @@ public class RetrieveMarkerLayoutManager extends AbstractLayoutManager {
                 if (list.size() > 0) {
                     replaceLM =  (LayoutProcessor)list.get(0);
                     replaceLM.setParent(this);
-                    replaceLM.init();
+                    replaceLM.initialize();
                     getLogger().debug("retrieved: " + replaceLM + ":" + list.size());
                 } else {
                     getLogger().debug("found no marker with name: " + name);

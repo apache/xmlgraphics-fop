@@ -25,8 +25,6 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.Resolveable;
 import org.apache.fop.area.PageViewport;
 
-import org.apache.avalon.framework.logger.Logger;
-
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
@@ -163,14 +161,6 @@ public class ContentLayoutManager implements LayoutProcessor {
         return userAgent;
     }
 
-    /**
-     * Returns the logger
-     * @return the logger
-     */
-    protected Logger getLogger() {
-        return userAgent.getLogger();
-    }
-
     /** @see org.apache.fop.layoutmgr.LayoutManager */
     public void setParent(LayoutProcessor lm) {
         parentLM = lm;
@@ -208,7 +198,7 @@ public class ContentLayoutManager implements LayoutProcessor {
     public void addAreas(PositionIterator posIter, LayoutContext context) { }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public void init() {
+    public void initialize() {
         //to be done
     }
 

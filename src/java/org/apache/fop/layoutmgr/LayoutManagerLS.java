@@ -100,8 +100,6 @@ public class LayoutManagerLS extends LayoutStrategy {
      * @return the Title area
      */
     public org.apache.fop.area.Title getTitleArea(org.apache.fop.fo.pagination.Title foTitle) {
-        org.apache.fop.area.Title title =
-                 new org.apache.fop.area.Title();
         // use special layout manager to add the inline areas
         // to the Title.
         InlineStackingLayoutManager lm;
@@ -109,9 +107,11 @@ public class LayoutManagerLS extends LayoutStrategy {
         lm.setUserAgent(foTitle.getUserAgent());
         lm.setFObj(foTitle);
         lm.setLMiter(new LMiter(lm, foTitle.children.listIterator()));
-        lm.init();
+        lm.initialize();
 
         // get breaks then add areas to title
+        org.apache.fop.area.Title title =
+                 new org.apache.fop.area.Title();
 
         ContentLayoutManager clm = new ContentLayoutManager(title);
         clm.setUserAgent(foTitle.getUserAgent());
