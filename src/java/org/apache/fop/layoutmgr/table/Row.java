@@ -229,15 +229,9 @@ public class Row extends BlockStackingLayoutManager {
             //Determine which columns this cell will occupy
             getColumnsForCell(cellLM, startColumn, spannedColumns);
             int childRefIPD = 0;
-            Iterator i = spannedColumns.iterator();
-            while (i.hasNext()) {
-                Column col = (Column)i.next();
+            for (int i = 0; i < spannedColumns.size(); i++) {
+                Column col = (Column)spannedColumns.get(i);
                 childRefIPD += col.getWidth().getValue();
-            }
-            //Handle border-separation when border-collapse="separate"
-            if (getTable().getBorderCollapse() == EN_SEPARATE) {
-                childRefIPD += (spannedColumns.size() - 1) 
-                    * getTable().getBorderSeparation().getIPD().getLength().getValue();
             }
             childLC.setRefIPD(childRefIPD);
 
@@ -280,11 +274,7 @@ public class Row extends BlockStackingLayoutManager {
             }
             
             //Adjust in-row x offset for individual cells
-            //TODO Probably needs more work to support writing modes
             ipdOffset += childRefIPD;
-            if (getTable().getBorderCollapse() == EN_SEPARATE) {
-                ipdOffset += getTable().getBorderSeparation().getIPD().getLength().getValue();
-            }
             
             
             // the min is the maximum min of all cells
