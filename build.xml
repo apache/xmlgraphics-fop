@@ -120,6 +120,11 @@ list of possible build targets.
     <include name="**/*.java"/>
     <exclude name="**/*${ignore_this}"/>
   </patternset>
+  
+  <patternset id="graphics-configuration-source">
+    <include name="org/apache/fop/svg/GraphicsConfiguration.java"/>
+  </patternset>
+  
 
   <!-- =================================================================== -->
   <!-- Initialization target                                               -->
@@ -216,14 +221,10 @@ list of possible build targets.
     <property name="ZapfDingbats.xml" value="${build.codegen}/ZapfDingbats.xml"/>
     <property name="Symbol.xml" value="${build.codegen}/Symbol.xml"/>
 
-    <property name="trax" value="TraxTransform.java"/>
-    <property name="xsltransform" value="XSLTransform.java"/>
-
     <property name="tools.pkg" value="org/apache/fop/tools"/>
 
     <property name="main.class" value="org.apache.fop.apps.Fop"/>
 
-    <filter filtersfile="${build.codegen}/filter" />
   </target>
 
   <target name="init-avail">
@@ -260,17 +261,21 @@ list of possible build targets.
       </not>
     </condition>
     <echo message="${jce.message}"/>
-    <available property="jdk14.present" classname="java.lang.CharSequence"/>
+    <available property="jdk14.present" classname="java.awt.image.VolatileImage"/>
   </target>
 
   <target name="init-filters-jdk13" depends="init-avail" unless="jdk14.present">
-    <echo message="JDK 1.3 or earlier present."/>
-    <copy file="src/codegen/jdk13.filter" toFile="build/src/codegen/filter"/>
+    <echo message="Use GraphicsConfiguration adapter for JDK 1.3 or earlier."/>
+    <path id="graphics-configuration-adapter">
+      <pathelement location="src/java-1.3"/>
+    </path>
   </target>
 
   <target name="init-filters-jdk14" depends="init-avail" if="jdk14.present">
-    <echo message="JDK 1.4 present."/>
-    <copy file="src/codegen/jdk14.filter" toFile="build/src/codegen/filter"/>
+    <echo message="Use GraphicsConfiguration adapter for JDK 1.4."/>
+    <path id="graphics-configuration-adapter">
+      <pathelement location="src/java-1.4"/>
+    </path>
   </target>
 
   <!-- =================================================================== -->
@@ -301,7 +306,7 @@ list of possible build targets.
     <echo message="Resetting codegen directory"/>
 
     <!-- copy codegen directory -->
-    <copy todir="${build.codegen}" filtering="on">
+    <copy todir="${build.codegen}">
       <fileset dir="${src.codegen}"/>
     </copy>
 
@@ -397,14 +402,6 @@ list of possible build targets.
     <style in="${ZapfDingbats.xml}" style="${fontfile.xsl}"
         out="${build.gensrc}/${replacestring}/fonts/base14/ZapfDingbats.java"/>
 
-    <!-- prepare JDK dependant files -->
-    <copy todir="${build.gensrc}" filtering="on">
-      <mapper type="glob" from="*.javat" to="*.java"/>
-      <fileset dir="${src.java}">
-        <include name="**/*.javat"/>
-      </fileset>
-    </copy>
-
   </target>
 
   <!-- =================================================================== -->
@@ -432,6 +429,8 @@ list of possible build targets.
       <patternset refid="exclude-jimi"/>
       <classpath refid="libs-build-classpath"/>
       <patternset refid="base-sources"/>
+      <src refid="graphics-configuration-adapter"/>
+      <patternset refid="graphics-configuration-source"/>
     </javac>
   </target>
 

@@ -1,5 +1,5 @@
 /*
- * $Id: PDFGraphicsConfiguration.javat,v 1.2 2003/03/07 09:51:25 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -50,7 +50,6 @@
  */ 
 package org.apache.fop.svg;
 
-import java.awt.GraphicsConfiguration;
 import java.awt.Rectangle;
 import java.awt.GraphicsDevice;
 import java.awt.Transparency;
@@ -168,11 +167,5 @@ class PDFGraphicsConfiguration extends GraphicsConfiguration {
         return new PDFGraphicsDevice(this);
     }
 
-    // needed for compiling under jdk1.4
-    @jdk14codestart@
-    public java.awt.image.VolatileImage createCompatibleVolatileImage(int width, int height) {
-        return null;
-    }
-    @jdk14codeend@
 }
 
