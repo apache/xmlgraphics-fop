@@ -50,16 +50,17 @@ public class Fop {
                                                    + (gctotal - startTotal));
 	    System.out.println("Diff after/GC total     : "
                                                    + (gctotal - endtotal));
-	    System.out.println("Free memory before run : " + startFree);
-	    System.out.println("Free memory after run  : " + endfree);
-	    System.out.println("Free memory after GC   : " + gcfree);
-	    System.out.println("Diff before/after free : "
+	    System.out.println("Free memory before run  : " + startFree);
+	    System.out.println("Free memory after run   : " + endfree);
+	    System.out.println("Free memory after GC    : " + gcfree);
+	    System.out.println("Diff before/after free  : "
                                                    + (endfree - startFree));
-	    System.out.println("Diff before/GC free    : "
+	    System.out.println("Diff before/GC free     : "
                                                    + (gcfree - startFree));
-	    System.out.println("Diff after/GC free     : "
+	    System.out.println("Diff after/GC free      : "
                                                    + (gcfree - endfree));
-	    System.out.println("cg() freed  : " + (gcfree - endfree));
+	    System.out.println("cg() freed              : "
+                                                    + (gcfree - endfree));
 	    //System.out.println("PC time     : " + (endPCi - startPCi));
             
         } catch (FOPException e) {
