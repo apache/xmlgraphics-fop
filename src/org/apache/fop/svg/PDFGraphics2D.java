@@ -58,7 +58,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * the PDF Document being created
      */
     protected PDFDocument pdfDoc;
-    protected PDFPage currentPage;
+    protected PDFResourceContext resourceContext;
 
     /**
      * the current state of the pdf graphics
@@ -113,10 +113,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * existing document.
      */
     public PDFGraphics2D(boolean textAsShapes, FontState fs, PDFDocument doc,
-                         PDFPage page, String font, float size, int xpos, int ypos) {
+                         PDFResourceContext page, String font, float size, int xpos, int ypos) {
         super(textAsShapes);
         pdfDoc = doc;
-        currentPage = page;
+        resourceContext = page;
         currentFontName = font;
         currentFontSize = size;
         currentYPosition = ypos;
@@ -175,16 +175,17 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
         if(linkType != PDFLink.EXTERNAL) {
             String pdfdest = "/FitR " + dest;
-            currentPage.addAnnotation(pdfDoc.makeLinkCurrentPage(rect, pdfdest));
+            // TODO use page ref instead
+            resourceContext.addAnnotation(pdfDoc.makeLinkCurrentPage(rect, pdfdest));
         } else {
-            currentPage.addAnnotation(pdfDoc.makeLink(rect,
+            resourceContext.addAnnotation(pdfDoc.makeLink(rect,
                                                  dest, linkType));
         }
     }
 
     public void addJpegImage(JpegImage jpeg, float x, float y, float width, float height) {
         FopPDFImage fopimage = new FopPDFImage(jpeg);
-        int xObjectNum = this.pdfDoc.addImage(fopimage).getXNumber();
+        int xObjectNum = this.pdfDoc.addImage(resourceContext, fopimage).getXNumber();
 
         AffineTransform at = getTransform();
         double[] matrix = new double[6];
@@ -316,7 +317,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                 // if the mask is binary then we could convert it into a bitmask
                 BitmapImage fopimg = new BitmapImage("TempImageMask:" + img.toString(), buf.getWidth(), buf.getHeight(), mask, null);
                 fopimg.setColorSpace(new PDFColorSpace(PDFColorSpace.DEVICE_GRAY));
-                PDFXObject xobj = pdfDoc.addImage(fopimg);
+                PDFXObject xobj = pdfDoc.addImage(resourceContext, fopimg);
                 ref = xobj.referencePDF();
             } else {
                 mask = null;
@@ -324,7 +325,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
             BitmapImage fopimg = new BitmapImage("TempImage:" + img.toString(), buf.getWidth(), buf.getHeight(), result, ref);
             fopimg.setTransparent(new PDFColor(255, 255, 255));
-            imageInfo.xObjectNum = pdfDoc.addImage(fopimg).getXNumber();
+            imageInfo.xObjectNum = pdfDoc.addImage(resourceContext, fopimg).getXNumber();
             imageInfos.put(img, imageInfo);
         }
 
@@ -476,7 +477,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         if(c.getAlpha() != 255) {
             PDFGState gstate = pdfDoc.makeGState();
             gstate.setAlpha(c.getAlpha() / 255f, false);
-            currentPage.addGState(gstate);
+            resourceContext.addGState(gstate);
             currentStream.write("/" + gstate.getName() + " gs\n");
         }
 
@@ -655,43 +656,63 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                     color1.getVector(), color2.getVector(), 1.0);
 
             PDFColorSpace aColorSpace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
-            PDFPattern myPat = this.pdfDoc.createGradient(false, aColorSpace,
+            PDFResources res = pdfDoc.makeResources();
+            PDFPattern myPat = this.pdfDoc.createGradient(resourceContext, false, aColorSpace,
                     someColors, null, theCoords);
             currentStream.write(myPat.getColorSpaceOut(fill));
 
         } else if (paint instanceof RadialGradientPaint) {
-            System.err.println("Radial gradient paint not supported");
-
             RadialGradientPaint rgp = (RadialGradientPaint)paint;
-/*
+
+            float ar = rgp.getRadius();
+            Point2D ac = rgp.getCenterPoint();
+            Point2D af = rgp.getFocusPoint();
+
             ArrayList theCoords = new ArrayList();
-            theCoords.add( new Double(currentXPosition / 1000f + acx));
-            theCoords.add( new Double(currentYPosition / 1000f - acy));
+            theCoords.add( new Double(currentXPosition + ac.getX()));
+            theCoords.add( new Double(currentYPosition - ac.getY()));
             theCoords.add(new Double(0));
-            theCoords.add( new Double(currentXPosition / 1000f + afx)); // Fx
-            theCoords.add(new Double(currentYPosition / 1000f - afy)); // Fy
+            theCoords.add( new Double(currentXPosition + af.getX())); // Fx
+            theCoords.add(new Double(currentYPosition - af.getY())); // Fy
             theCoords.add(new Double(ar));
 
-            float lastoffset = 0;
-            PDFColor color = new PDFColor(0, 0, 0);
-            color = new PDFColor(red, green, blue);
-
-            float offset = stop.getOffset().getBaseVal();
-// create bounds from last to offset
-                lastoffset = offset;
-                someColors.add(color);
+            Color[] cols = rgp.getColors();
+            ArrayList someColors = new ArrayList();
+            for(int count = 0; count < cols.length; count++) {
+                someColors.add(new PDFColor(cols[count].getRed(), cols[count].getGreen(), cols[count].getBlue()));
             }
-            PDFPattern myPat = pdfDoc.createGradient(true, aColorSpace,
+
+            float[] fractions = rgp.getFractions();
+            ArrayList theBounds = new ArrayList();
+            float lastoffset = 0;
+            for(int count = 0; count < fractions.length; count++) {
+                float offset = fractions[count];
+                // create bounds from last to offset
+                lastoffset = offset;
+            }
+            PDFColorSpace colSpace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
+            PDFPattern myPat = pdfDoc.createGradient(resourceContext, true, colSpace,
                                     someColors, theBounds, theCoords);
 
             currentStream.write(myPat.getColorSpaceOut(fill));
-*/
+
         } else if (paint instanceof PatternPaint) {
             PatternPaint pp = (PatternPaint)paint;
             Rectangle2D rect = pp.getPatternRect();
 
-            PDFGraphics2D pattGraphic = new PDFGraphics2D(textAsShapes, fontState,
-                                            pdfDoc, currentPage,
+            FontInfo fi = new FontInfo();
+            FontSetup.setup(fi);
+            FontState fs = null;
+            try {
+                fs = new FontState(fi, "sans-serif", "normal",
+                                          "normal", 1, 0);
+            } catch (org.apache.fop.apps.FOPException fope) {
+                fope.printStackTrace();
+            }
+            PDFResources res = pdfDoc.makeResources();
+            PDFResourceContext context = new PDFResourceContext(0, pdfDoc, res);
+            PDFGraphics2D pattGraphic = new PDFGraphics2D(textAsShapes, fs,
+                                            pdfDoc, context,
                                             currentFontName, currentFontSize,
                                             currentYPosition, currentXPosition);
             pattGraphic.gc = (GraphicContext)this.gc.clone();
@@ -722,10 +743,12 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             translate.add(new Double(0));
             translate.add(new Double(0));
             translate.add(new Double(1));
-            translate.add(new Double(rect.getX()));
-            translate.add(new Double(rect.getY()));
-            // TODO handle PDFResources
-            PDFPattern myPat = pdfDoc.makePattern(1, null, 1, 1, bbox,
+            translate.add(new Double(0/*rect.getX()*/));
+            translate.add(new Double(0/*rect.getY()*/));
+
+            FontSetup.addToResources(pdfDoc, res, fi);
+
+            PDFPattern myPat = pdfDoc.makePattern(resourceContext, 1, res, 1, 1, bbox,
                                     rect.getWidth(), rect.getHeight(),
                                     translate, null, pattStream.getBuffer());
 
@@ -916,11 +939,11 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
         c = getBackground();
         applyColor(c, false);
-        if(salpha != 255 || c.getAlpha() != 255) {
+        if(salpha != 255/* || c.getAlpha() != 255*/) {
             PDFGState gstate = pdfDoc.makeGState();
             gstate.setAlpha(salpha / 255f, true);
             //gstate.setAlpha(c.getAlpha() / 255f, false);
-            currentPage.addGState(gstate); 
+            resourceContext.addGState(gstate); 
             currentStream.write("/" + gstate.getName() + " gs\n");
         }
 
@@ -1150,7 +1173,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         if(c.getAlpha() != 255) {
             PDFGState gstate = pdfDoc.makeGState();
             gstate.setAlpha(c.getAlpha() / 255f, true);
-            currentPage.addGState(gstate);
+            resourceContext.addGState(gstate);
             currentStream.write("/" + gstate.getName() + " gs\n");
         }
 

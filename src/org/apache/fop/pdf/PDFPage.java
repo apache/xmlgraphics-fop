@@ -21,17 +21,12 @@ package org.apache.fop.pdf;
  * to the memory profile this was causing OOM issues. So, we store
  * only the object ID of the parent, rather than the parent itself.
  */
-public class PDFPage extends PDFObject {
+public class PDFPage extends PDFResourceContext {
 
     /**
      * the page's parent, a PDF reference object
      */
     protected String parent;
-
-    /**
-     * the page's /Resource object
-     */
-    protected PDFResources resources;
 
     /**
      * the contents stream
@@ -49,12 +44,6 @@ public class PDFPage extends PDFObject {
     protected int pageheight;
 
     /**
-     * the list of annotation objects for this page
-     */
-    protected PDFAnnotList annotList;
-    protected PDFDocument document;
-
-    /**
      * create a /Page object
      *
      * @param number the object's number
@@ -67,16 +56,12 @@ public class PDFPage extends PDFObject {
                    int pagewidth, int pageheight) {
 
         /* generic creation of object */
-        super(number);
+        super(number, doc, resources);
 
         /* set fields using parameters */
-        this.document = doc;
-        this.resources = resources;
         this.contents = contents;
         this.pagewidth = pagewidth;
         this.pageheight = pageheight;
-
-        this.annotList = null;
     }
 
     /**
@@ -91,15 +76,11 @@ public class PDFPage extends PDFObject {
                    int pagewidth, int pageheight) {
 
         /* generic creation of object */
-        super(number);
+        super(number, doc, resources);
 
         /* set fields using parameters */
-        this.document = doc;
-        this.resources = resources;
         this.pagewidth = pagewidth;
         this.pageheight = pageheight;
-
-        this.annotList = null;
     }
 
     /**
@@ -118,26 +99,6 @@ public class PDFPage extends PDFObject {
      */
     public void setParent(PDFPages parent) {
         this.parent = parent.referencePDF();
-    }
-
-    /**
-     * set this page's annotation list
-     *
-     * @param annotList a PDFAnnotList list of annotations
-     */
-    public void addAnnotation(PDFObject annot) {
-        if(this.annotList == null) {
-            this.annotList = document.makeAnnotList();
-        }
-        this.annotList.addAnnot(annot);
-    }
-
-    public void addGState(PDFGState gstate) {
-        this.resources.addGState(gstate);
-    }
-
-    public void addShading(PDFShading shading) {
-        this.resources.addShading(shading);
     }
 
     /**

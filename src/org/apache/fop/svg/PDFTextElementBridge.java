@@ -60,9 +60,7 @@ public class PDFTextElementBridge extends SVGTextElementBridge {
     private boolean isSimple(BridgeContext ctx, Element element, GraphicsNode node) {
         // Font size, in user space units.
         float fs = TextUtilities.convertFontSize(element).floatValue();
-        /*if(((int)fs) != fs) {
-            return false;
-        }*/
+        // PDF cannot display fonts over 36pt
         if(fs > 36) {
             return false;
         }
