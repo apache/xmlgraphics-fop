@@ -1,24 +1,49 @@
-To update the docs:
+To update the FOP website:
 
-The documentation is generated using forrest (http://xml.apache.org/forrest/).
+Background
+--------------
+ 1. The documentation is generated using forrest
+    (http://xml.apache.org/forrest/).
+ 2. Forrest needs to be run on a machine with a graphical environment (it will
+    fail in a headless environment when it tries to use FOP to generate the PDF
+    files). The Apache machine available to xml-fop developers
+    (icarus.apache.org) appears to be headless, so you will probably need to run
+    this on a local machine with a graphical environment.
 
-The current procedure is:
+Step-by-Step Instructions
+-----------------------------
+ 1. checkout the xml-forrest module (same repository as xml-fop).
+ 2. checkout the xml-site/targets/fop module (same repository as xml-fop).
+ 3. you will also need access to a current xml-fop sandbox (you probably already
+    have one)
+ 4. cd to xml-forrest
+ 5. run: build.sh(bat) dist to build forrest
+ 6. set environment variable FORREST_HOME=~/xml-forrest/build/dist/shbat
+    where ~ is the directory in which xml-forrest is installed
+    (see http://xml.apache.org/forrest/your-project.html for details)
+ 7. set environment variable PATH=$PATH:$FORREST_HOME/bin
+ 8. cd to xml-fop directory
+ 9. run forrest(.bat), which will build the web-site documents in
+    xml-fop/build/site.
+10. NOTE: the compliance.html currently does not work, it can be fixed by
+    adding the dtd ref to: build/tmp/context/resources/schema/catalog
+    and placing the dtd in: build/tmp/context/resources/schema/dtd/
+11. To update the actual website, copy the generated documents
+    (in xml-fop/build/site) to xml-site/targets/fop. (This could also be done by
+    sym-linking this destination before the build.)
+12. commit xml-site/targets/fop.
 
-- checkout xml-forrest module
-- run: build.sh(bat) dist
-- follow instructions to set FORREST_HOME and path
-- go to xml-fop directory
-- run forrest(.bat)
-
-The documents will then be placed in build/site/
-
-NOTE: the compliance.html currently does not work, it can be fixed by
-adding the dtd ref to: build/tmp/context/resources/schema/catalog
-and placing the dtd in: build/tmp/context/resources/schema/dtd/
-
-To update website
-- put the generated docs into the xml-site module targets/fop/
-  this could be done by simlinking the destination to the targets/fop
-- commit the documents
-
-
+Notes
+---------
+ 1. Per Jeff Turner, the downstream process of publishing our web site is as
+    follows:
+    - Committers commit generated docs to xml-site/targets/{project}
+    - Every X hours, a script updates /www/xml.apache.org/ or wherever on
+      the live site, from CVS.
+ 2. Per Jeff Turner, the FOP website is being regenerated (from the contents
+    of xml-site/targets/fop) by Forrest every hour.
+    See http://forrestbot.cocoondev.org/site/xml-fop for the contents.
+    Although we found this interesting (especially wondering how they got around
+    the headless server problem), it doesn't change our workflow above, because
+    we don't know where, at the filesystem level, these files exist, so we have
+    no way of copying them to xml-site/targets/fop.
