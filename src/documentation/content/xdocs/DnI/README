@@ -33,23 +33,31 @@ results using Saxon. I have used FOP-0.20.5 for FO Processor.
 The top-level file assumes that the docbook DTD files are located in
 `http://www.oasis-open.org/docbook/xml/4.2/'. The customization
 stylesheets assume that the docbook stylesheets are located in
-`http://cvs.sourceforge.net/viewcvs.py/*checkout*/docbook/xsl/'. I am
-not quite sure if the latter URL is correct. If you want to use local
-files from your XML installation, you must change these paths at the
-top of the top-level XML file and of each customization stylesheet.
-Alternatively, you can use catalog entries to map the Public ID for
-the Docbook DTD and the system id of the docbook XSL stylesheets to
-your local paths.
+`http://docbook.sourceforge.net/release/xsl/current/'. If you want to
+use local files from your XML installation, you must change these
+paths at the top of the top-level XML file and of each customization
+stylesheet.  Alternatively, you can use catalog entries to map the
+Public ID for the Docbook DTD and the system id of the docbook XSL
+stylesheets to your local paths.
 
 You can use the included java class BookMaker to generate the various
 forms of the documentation. Note that it requires the Jakarta Commons
 CLI package. Call BookMaker with the option '--help' to get a short
-overview of its usage. Use the included Makefile, or learn from it how
-the BookMaker class can be called. If you use the Makefile, you must
-edit the class paths to reflect your java setup. Set the environment
-variable PROGOPTS=--useCatalog if you want to use a catalog. I have
-better results with Xerces and the catalog resolver; therefore Xerces
-is placed before Saxon in the class paths.
+overview of its usage. Use the included Makefile or Ant build file, or
+learn from them how the BookMaker class can be called.
+
+Unfortunately, I do not know of a standard file system setup for java
+jar files. The class paths in the Makefile reflect the java setup of a
+Debian Sarge system. Moreover, it allows for the same setup in
+/usr/local, for jar files installed locally. If you use the Makefile,
+you must edit the class paths to reflect your own java setup. If you
+want to use a catalog with the Makefile, you should set the
+environment variable PROGOPTS=--useCatalog. I have better results
+with Xerces and the catalog resolver; therefore Xerces is placed
+before Saxon in the class paths.
+
+For instructions to use the Ant build file, see the comments at the
+top of that file.
 
 If you do not use a catalog, you can also use Saxon and FOP from the
 command line. The following are typical invocations. Here the
@@ -70,8 +78,5 @@ java $JAVAFLAGS \
 	-cp $SAXONCLASSPATH:$FOPCLASSPATH:$AVALONCLASSPATH:$CLASSPATH \
 	org.apache.fop.apps.Fop \
 	-xml DnI.xml -xsl cust-html-docbook.xsl -pdf book.pdf
-
-I will try to construct an ant build file and an XML catalog which
-make conversion with your own XML and Java system easier.
 
 $Id$

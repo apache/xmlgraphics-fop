@@ -1,0 +1,202 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- ===========================================================================
+
+                           * ================== *
+                           |  FOP build system  |
+                           |    DnI subsystem   |
+                           * ================== *
+
+
+Building instructions
+=====================
+
+Unfortunately, I do not know of a standard file system setup for java
+jar files. The class paths in this Ant build file reflect the java
+setup of a Debian Sarge system. If you use this Ant build file, you
+must change the appropriate variables to reflect your own java
+setup. This can be done in a file build-local.properties. For the relevant
+variables and their default values, see below, under the comment `jar
+files'.
+
+If you want to use a catalog, set the property usecatalog to
+true. Make sure the file CatalogManager.properties can be found along
+the class path. I have better results with Xerces and the catalog
+resolver; therefore Xerces is placed before Saxon in the class paths.
+
+Make sure your current working directory is where this very file is
+located. Then give the command `ant' to build all, or `ant target' to
+build target. Use the command `ant -projecthelp' for a list of
+available commands.
+
+     ====================================================================== -->
+
+<project name="DnI" default="all" basedir=".">
+
+	<!-- used to set values for testing etc. -->
+	<!-- build-local.properties is not stored in CVS and overrides values from build.properties -->
+	<property file="${basedir}/build-local.properties"/>
+
+	<property name="book" value="DnI.xml"/>
+	<property name="custom_docbook_xhtml_stylesheet" value="cust-xhtml-docbook.xsl"/>
+	<property name="custom_docbook_html_stylesheet" value="cust-html-docbook.xsl"/>
+	<property name="custom_docbook_fo_stylesheet" value="cust-fo-docbook.xsl"/>
+	
+	<!-- destinations -->
+	<property name="build_dir" value="../../../../../build"/>
+	<property name="bookmakerclasspath" value="${build_dir}/classes"/>
+	<property name="dni_build_dir" value="${build_dir}/site/DnI"/>
+	<property name="xhtml_dir" value="${dni_build_dir}/xhtml"/>
+	<property name="pdf_dir" value="${dni_build_dir}"/>
+	
+	<!-- jar files -->
+	<property name="javaclasses" value="/usr/share/java"/>
+    <!-- the following should be FOP Maintenance -->   
+	<property name="fop-jar" value="${javaclasses}/fop.jar"/>
+    <property name="avalon-framework-jar" value="${javaclasses}/avalon-framework.jar"/>
+    <property name="saxon-jar" value="${javaclasses}/saxon.jar"/>
+	<property name="xml-commons-resolver-jar" value="${javaclasses}/xml-commons-resolver.jar"/>
+	<property name="xercesImpl-jar" value="${javaclasses}/xercesImpl.jar"/>
+	<property name="xml-apis-jar" value="${javaclasses}/xml-apis.jar"/>
+    <property name="commons-cli-jar" value="${javaclasses}/commons-cli.jar"/>
+	<!-- needed for the CatalogManager.properties file -->
+	<property name="catalog-manager" value="/etc/xml/resolver"/>
+ 
+    <path id="transformer-path">
+        <pathelement path="${xml-apis-jar}"/>
+        <pathelement path="${xercesImpl-jar}"/>
+        <pathelement path="${saxon-jar}"/>
+        <pathelement path="${avalon-framework-jar}"/>
+        <pathelement path="${xml-commons-resolver-jar}"/>
+        <pathelement path="${commons-cli-jar}"/>
+        <pathelement path="${bookmakerclasspath}"/>
+        <pathelement path="${catalog-manager}"/>
+    </path>   
+	
+    <!-- ================================= 
+          target: all              
+         ================================= -->
+    <target name="all" depends="html, xhtml, pdf"
+            description="builds HTML, XHTML and PDF"/>
+
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: bookmaker                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="bookmaker">
+        <echo message="Building Bookmaker"/>
+    	<mkdir dir="${bookmakerclasspath}"/>
+		<javac srcdir="${basedir}" includes="BookMaker.java" destdir="${bookmakerclasspath}" debug="1">
+			<classpath>
+				<pathelement path="${fop-jar}"/>
+				<pathelement path="${avalon-framework-jar}"/>
+				<pathelement path="${xml-commons-resolver-jar}"/>
+				<pathelement path="${commons-cli-jar}"/>
+				<pathelement path="${catalog-manager}"/>
+			</classpath>
+		</javac>
+	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: html                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="html" depends="bookmaker"
+            description="builds the HTML version">
+    	<property name="html_dir" value="${dni_build_dir}/html"/>
+    	<property name="usecatalog" value="false"/>
+    	<property name="javaflags" value="-Dno.option=none"/>
+    	<condition property="progopts" value="--useCatalog">
+    		<istrue value="${usecatalog}"/>
+    	</condition>
+		<property name="progopts" value=""/>
+    	<echo message="Building HTML"/>
+        <mkdir dir="${html_dir}"/>
+		<java className="BookMaker" fork="true" dir="${basedir}">
+			<jvmarg value="${javaflags}"/>
+			<arg line="${progopts} --parameter base.dir ${html_dir}/ -xml ${book} -xsl ${custom_docbook_html_stylesheet} -out ${html_dir}/DnI.html"/>
+			<classpath refid="transformer-path"/>
+		</java>
+    </target>
+
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: xhtml                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="xhtml" depends="bookmaker"
+            description="builds the XHTML version">
+        <property name="xhtml_dir" value="${dni_build_dir}/xhtml"/>
+        <property name="usecatalog" value="false"/>
+        <property name="javaflags" value="-Dno.option=none"/>
+        <condition property="progopts" value="--useCatalog">
+            <istrue value="${usecatalog}"/>
+        </condition>
+        <property name="progopts" value=""/>
+        <echo message="Building XHTML"/>
+        <mkdir dir="${xhtml_dir}"/>
+        <java className="BookMaker" fork="true" dir="${basedir}">
+            <jvmarg value="${javaflags}"/>
+            <arg line="${progopts} --parameter base.dir ${xhtml_dir}/ -xml ${book} -xsl ${custom_docbook_xhtml_stylesheet} -out ${xhtml_dir}/DnI-xhtml.xml"/>
+            <classpath refid="transformer-path"/>
+        </java>
+    </target>
+
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: fo                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="fo" depends="bookmaker"
+            description="builds the FO file for the printed version">
+        <property name="fo_dir" value="${dni_build_dir}"/>
+        <property name="usecatalog" value="false"/>
+        <property name="javaflags" value="-Dno.option=none"/>
+        <condition property="progopts" value="--useCatalog">
+            <istrue value="${usecatalog}"/>
+        </condition>
+        <property name="progopts" value=""/>
+        <echo message="Building FO"/>
+        <mkdir dir="${fo_dir}"/>
+        <java className="BookMaker" fork="true" dir="${basedir}">
+            <jvmarg value="${javaflags}"/>
+            <arg line="${progopts} -xml ${book} -xsl ${custom_docbook_fo_stylesheet} -out ${fo_dir}/DnI.fo"/>
+            <classpath refid="transformer-path"/>
+        </java>
+    </target>
+
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: pdf                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="pdf" depends="bookmaker"
+            description="builds the PDF file of the printed version">
+        <property name="pdf_dir" value="${dni_build_dir}"/>
+        <property name="usecatalog" value="false"/>
+        <property name="javaflags" value="-Dno.option=none"/>
+        <condition property="progopts" value="--useCatalog">
+            <istrue value="${usecatalog}"/>
+        </condition>
+        <property name="progopts" value=""/>
+        <echo message="Building PDF"/>
+        <mkdir dir="${pdf_dir}"/>
+        <java className="BookMaker" fork="true" dir="${basedir}">
+            <jvmarg value="${javaflags}"/>
+            <arg line="${progopts} -xml ${book} -xsl ${custom_docbook_fo_stylesheet} -pdf ${pdf_dir}/DnI.pdf"/>
+            <classpath>
+                <pathelement path="${fop-jar}"/>
+                <!-- note that FOP HEAD is in the transformer path; FOP Maintenance must come first -->
+                <path refid="transformer-path"/>
+            </classpath>
+        </java>
+    </target>
+
+</project>
+
