@@ -21,10 +21,9 @@
       <li>colour not continued onto subsequent pages if coloured block goes over page </li>
       <li>no SVG support in AWTCommandLine </li>
       <li>keep-next doesn't work and doubles the text lines which should be moved to the next page</li>
-      <li>pdf files created with Fop don't print correctly on postscript printers</li>
       <li>lists containing list do not keep their indentation correctly over a page boundary</li>
-      <li>id references are marked as illegally doubled, if they are first layouted at the bottom of a page
-          and then moved to the next page </li>
     </ul>
   </s2>
 </s1>
+
+
