@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,12 +42,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.layoutmgr;
 
 import org.apache.fop.apps.FOPException;
@@ -72,6 +72,7 @@ import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.properties.RetrieveBoundary;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
+import org.apache.fop.layout.PageMaster;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -430,7 +431,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     private PageViewport makeNewPage(boolean bIsBlank, boolean bIsLast) {
         finishPage();
         try {
-            curPage = pageSequence.createPage(pageCount, bIsBlank, isFirstPage, bIsLast);
+            curPage = createPage(pageSequence, pageCount, bIsBlank, isFirstPage, bIsLast);
             isFirstPage = false;
         } catch (FOPException fopex) { /* ???? */
             fopex.printStackTrace();
@@ -684,6 +685,49 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     // See finishPage...
     protected void flush() {
         finishPage();
+    }
+
+    /**
+     * Called by PageLayoutManager when it needs a new page on which to
+     * place content. The PageSequence manages the page number (odd/even),
+     * but the PLM tells it if the page is blank or is the last page.
+     *
+     * @param pageNumber the page number to create page for
+     * @param bIsBlank If true, use a master for a blank page.
+     * @param firstPage true if this is the first page
+     * @param bIsLast If true, use the master for the last page in the sequence.
+     * @return the page viewport created for the page number
+     * @throws FOPException if there is an error creating page
+     */
+    public PageViewport createPage(PageSequence pageSequence, int pageNumber,
+                                   boolean bIsBlank, boolean firstPage,
+                                   boolean bIsLast)
+                                   throws FOPException {
+        if (pageSequence.getPageSequenceMaster() != null) {
+            pageSequence.setCurrentSimplePageMaster (pageSequence.getPageSequenceMaster()
+              .getNextSimplePageMaster(((pageNumber % 2) == 1),
+                                       firstPage,
+                                       bIsBlank));
+        }
+        Region body = pageSequence.getCurrentSimplePageMaster().getRegion(Region.BODY);
+        if (!pageSequence.getMainFlow().getFlowName().equals(body.getRegionName())) {
+          throw new FOPException("Flow '" + pageSequence.getMainFlow().getFlowName()
+                                 + "' does not map to the region-body in page-master '"
+                                 + pageSequence.getCurrentSimplePageMaster().getMasterName() + "'");
+        }
+        PageMaster pageMaster = pageSequence.getCurrentSimplePageMaster().getPageMaster();
+        PageViewport p = pageMaster.makePage();
+        return p;
+        // The page will have a viewport/reference area pair defined
+        // for each region in the master.
+        // Set up the page itself
+// SKIP ALL THIS FOR NOW!!!
+//             //pageSequence.root.setRunningPageNumberCounter(pageSequence.currentPageNumber);
+
+//             pageSequence.pageCount++;    // used for 'force-page-count' calculations
+
+        // handle the 'force-page-count'
+        //forcePage(areaTree, firstAvailPageNumber);
     }
 
 }
