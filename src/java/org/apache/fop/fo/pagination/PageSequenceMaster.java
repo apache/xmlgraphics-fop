@@ -203,24 +203,24 @@ public class PageSequenceMaster {
                 for (int cond = 0; cond < numConds; cond++) {
                     FoConditionalPageMasterReference foCond;
                     int blankOrNot, oddOrEven, pagePosition;
-                    EnumType enum;
+                    EnumType enumval;
 
                     foCond = (FoConditionalPageMasterReference)
                                             (masterReference.getChild(cond));
                     // Get the master-reference property value
                     simplePM = getMasterReference(foCond, simplePageMasters);
-                    enum = (EnumType)
+                    enumval = (EnumType)
                                 (foCond.getPropertyValue
                                              (PropNames.BLANK_OR_NOT_BLANK));
-                    blankOrNot = enum.getEnumValue();
-                    enum = (EnumType)
+                    blankOrNot = enumval.getEnumValue();
+                    enumval = (EnumType)
                                 (foCond.getPropertyValue
                                              (PropNames.ODD_OR_EVEN));
-                    oddOrEven = enum.getEnumValue();
-                    enum = (EnumType)
+                    oddOrEven = enumval.getEnumValue();
+                    enumval = (EnumType)
                                 (foCond.getPropertyValue
                                              (PropNames.PAGE_POSITION));
-                    pagePosition = enum.getEnumValue();
+                    pagePosition = enumval.getEnumValue();
                     // Create and add a single default PageCondition
                     masterAlt.addCondition
                             (masterAlt.new PageCondition
