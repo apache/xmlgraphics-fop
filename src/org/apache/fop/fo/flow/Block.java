@@ -221,7 +221,7 @@ public class Block extends FObjMixed {
     }
 
     private void handleWhiteSpace() {
-        getLogger().debug("fo:block: handleWhiteSpace");
+        //getLogger().debug("fo:block: handleWhiteSpace");
         if (firstInlineChild != null) {
             boolean bInWS = false;
             boolean bPrevWasLF = false;
@@ -340,3 +340,4 @@ public class Block extends FObjMixed {
         }
     }
 }
+
