@@ -19,7 +19,7 @@
 	<property name="build.war" value="./build/war"/>
 	<!-- stuff -->
 	<property name="servlet.jar" value="servlet.jar"/>
-	<property name="avalon-framework.jar" value="avalon-framework-cvs-20020315.jar"/>
+	<property name="avalon-framework.jar" value="avalon-framework-cvs-20020806.jar"/>
 	<path id="project.class.path">
 		<pathelement location="${lib.dir}/${servlet.jar}"/>
 		<pathelement location="${fop.lib.dir}/${avalon-framework.jar}"/>

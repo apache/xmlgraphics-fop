@@ -1,4 +1,9 @@
 ==============================================================================
+Done since 0.20.4 release
+
+- New Avalon Framework JAR with Log4J support (Bug 11274) (Jeremias Maerki)
+
+==============================================================================
 Done since 0.20.3 release
 
 - Moved from org.apache.log.Logger to org.apache.avalon.framework.logger.Logger
@@ -72,9 +77,9 @@ Done since 0.20.2 release
   Submitted by: Rainer Garus <rainer.garus@nexgo.de>
 - Support for CMYK and embedded ICC profiles in jpeg images (Tore Engvig)
 - Support for jpeg images in PS Renderer (Tore Engvig)
-- Add support for EPS images in PostScript renderer and limited EPS support in 
+- Add support for EPS images in PostScript renderer and limited EPS support in
   PDF Renderer (Tore Engvig)
-- fixed bug in TTFReader (unsigned lsb changed to signed) 
+- fixed bug in TTFReader (unsigned lsb changed to signed)
   Submitted by: Cristi Ruja, c_ruja@yahoo.com
 - fixed threading problem (Keiron Liddle)
 - Formatting results patch to enable embedders to obtain info from render doc
@@ -112,10 +117,10 @@ remaining for content. (Karen Lease)
   Submitted by:	Satoshi Ishigami <ishigami@victokai.co.jp>
 
 *** Properties
-- Changed "master-name" to "master-reference" on fo:page-sequence, 
-  fo:single-page-master-reference, fo:repeatable-page-master-reference and 
+- Changed "master-name" to "master-reference" on fo:page-sequence,
+  fo:single-page-master-reference, fo:repeatable-page-master-reference and
   fo:conditional-page-master-reference to comply with the latest XSL recommendation.
-  Also changed the unimplemented property space-treatment to white-space-treatment and 
+  Also changed the unimplemented property space-treatment to white-space-treatment and
   updated examples and tests to use the new syntax.
   Submitted by: Christian Geisert [Christian.Geisert@isu-gmbh.de]
 - Add support for inline-progression-dimension and table-layout. (Karen)
@@ -392,7 +397,7 @@ draw filled rectangles without any stroke in PDF; in doFrame, use rectangles
 instead of lines for borders to eliminate pixel errors (KLease)
 - (awt.AWTRenderer.java) updated to new batik interface (KLiddle)
 improvements to AWTRenderer (borders,backgrounds...)
-(Ralph LaChance/Andy Langowitz): 
+(Ralph LaChance/Andy Langowitz):
 [ AWTRenderers  (-awt and -print options)
          - eliminated 3D-effect in rendering background color
          - borders now draw wider than 1 pixel if appropriate
@@ -622,7 +627,7 @@ and acrobat reports that the font can't be displayed. (KCampbell)
 - (TestConverter.java) fixes a problem relating to rendering options for xml
 renderer (KLiddle)
 
-test/Testing: 
+test/Testing:
 - testing system, for use with the w3c defined testsuite.dtd including our
 tests (KLiddle)
 - added some simple test files with blocks (KLiddle)
@@ -641,39 +646,39 @@ Done since 0.17 release
 - added: a bunch more properties on svg elements [Keiron Liddle]
 - added: subset fonts embedding [Tore Engvig]
 - added: Dutch hyphenation file [Reinout Verkerk]
-- added: Fop is now self-contained (all necessary jar files included) and 
-         a runnable jar (can be started with java -jar fop.jar) [Kelly Campbell] 
+- added: Fop is now self-contained (all necessary jar files included) and
+         a runnable jar (can be started with java -jar fop.jar) [Kelly Campbell]
 - added: support for border and padding shorthand properties [Karen Lease]
 - added: use of property manager, new properties handling [Karen Lease]
 - added: support for region-start, region-end [Arved Sandstrom]
 - added: to migrate FOP to use the svg facilities from Batik in a special cvs branch [Keiron Liddle]
 - added: enabling CID keyed truetype fonts; this gives support
          for other encodings besides WinAnsiEncoding (eg japanese, chinese, arabic,
-         iso-whatever, etc). Also makes font inclusion easier [Tore Engvig] 
+         iso-whatever, etc). Also makes font inclusion easier [Tore Engvig]
 - added: new font configuration [Fotis Jannidis]
 - added: support for body-start and label-end in lists [Peter S. Housel]
 - added: support for non-rotated arcs in svg [Keiron Liddle]
 - added: break before and break after for table rows [Keiron Liddle]
-- added: error is reported if the number of columns the cells are using is 
+- added: error is reported if the number of columns the cells are using is
          different to the number of columns in the table [Keiron Liddle]
 - updated: better handling of svg properties using xsl conversion to svgproperties [Keiron Liddle]
-- updated: the FOP build to fix the problems of the output location for the 
-           property code generation. updated ant.jar to version 1.3, 
-           added all needed jar files [Kelly Campbell] 
-- changed: cleaned up renderWordArea. removed unused code. 
-           optimized object creation a   little. [Kelly Campbell] 
-- changed: refactored FontState so it doesn't do excessive font lookups per character [Kelly Campbell] 
-- changed: Driver to make embedding Fop easier [Kelly Campbell] 
+- updated: the FOP build to fix the problems of the output location for the
+           property code generation. updated ant.jar to version 1.3,
+           added all needed jar files [Kelly Campbell]
+- changed: cleaned up renderWordArea. removed unused code.
+           optimized object creation a   little. [Kelly Campbell]
+- changed: refactored FontState so it doesn't do excessive font lookups per character [Kelly Campbell]
+- changed: Driver to make embedding Fop easier [Kelly Campbell]
 - changed: apps package and commandline usage of Fop [Fotis Jannidis]
-- changed: adding a PrintRenderer for all print oriented renderers [Art Welch] 
+- changed: adding a PrintRenderer for all print oriented renderers [Art Welch]
 - fixed: problems if calculated leader-length < 0 [Fotis Jannidis]
 - fixed: fixes problem with page break after last row of table body [Keiron Liddle]
 - fixed: fixed svg placement bug, now puts the image at the correct offset [Keiron Liddle]
 - fixed: broken support of jdk 1.1 [Art Welch]
 - fixed: xalan 1 support works again, was broken after changes in apps [Kelly Campbell]
 - fixed: properly adjusts the max height of table parts, when a footnote is added
-         table will not overlap with the footnote [Keiron Liddle]  
-- fixed: hexadecimal escape sequences in dutch hyphenation file converted 
+         table will not overlap with the footnote [Keiron Liddle]
+- fixed: hexadecimal escape sequences in dutch hyphenation file converted
          to iso-latin-1 [Carlos Villegas]
 - fixed: the typos in the fonts example in the userconfig.xml
          and optimized conversions to String in TTFReader and use of StringBuffer [Alain Fagot]
@@ -681,9 +686,9 @@ Done since 0.17 release
 - fixed:  put text-anchor in the correct place [Keiron Liddle]
 - fixed: InstreamForeignObject checks for no more room in block area [Keiron Liddle]
 - fixed: false border rendering for PCL renderer [Art Welch]
-- fixed: added default producer to fix a bug where the PDF producer is set to null in the default 
+- fixed: added default producer to fix a bug where the PDF producer is set to null in the default
          commandline usage. [Kelly Campbell]
-- fixed: Made logging go to the same stream (out) for pages and the newline after a page 
+- fixed: Made logging go to the same stream (out) for pages and the newline after a page
          sequence. The newline was previously going to the err stream. [Kelly Campbell]
 
 
@@ -699,7 +704,7 @@ Done since 0.16 release
          docs/examples/fo/pdfoutline.fo [Kelly Campbell]
 - added: some text rendering optimizations for PDF [Kelly Campbell]
 - added: limited support for fo:wrapper [Kelly Campbell]
-- added: support in pdfrenderer for using TrueType fonts, and embedding of TrueType 
+- added: support in pdfrenderer for using TrueType fonts, and embedding of TrueType
          and Type1 fonts, and support for kerning [Tore Engvig]
 - added: further support for complete font handling in pdf renderer [Alain Fagot]
 - added: support for fo:footnote, fo:footnote-body [Keiron Liddle]
@@ -732,7 +737,7 @@ Done since 0.15 release
 
 - added: support for  background color property, column breaks [Arved Sandstrom]
 - added: support for xalan 2 in xslt task [Kelly Campbell]
-- added: support for the properties table-omit-header-at-break, 
+- added: support for the properties table-omit-header-at-break,
          table-omit-footer-at-break, number-columns-spanned (partly), orphans, widows (only for tables) [Keiron Liddle]
 - added: support for multi-column and column spanning (column-count, column-gap, span)[Arved Sandstrom]
 - added: compression for pdf files, changed output format to OutputStream [Kelly Campbell]
@@ -745,7 +750,7 @@ Done since 0.15 release
 - added: interim configuration package [Fotis Jannidis]
 - added: FopImage class that uses JAI [Eric Schaeffer] and JAI compile target [Kelly Campbell]
 - added: support for rule-style [Fotis Jannidis]
-- added: support for fo:table-header, fo:table-footer, and for the following properties 
+- added: support for fo:table-header, fo:table-footer, and for the following properties
          in tables: keep-with-next, keep-with-previous  [Keiron Liddle]
 - updated: svg stuff for the latest java bindings [Keiron Liddle]
 - fixed: enhanced error messages for page layout (region names, master) [Norm Walsh]
@@ -757,29 +762,29 @@ Done since 0.15 release
          table row going over the page  [Kelly Campbell]
 - fixed colspanning so that the cell state keeps track of the
         width so far properly [Keiron Liddle]
-- fix to allow JDK 1.1 users to compile and use FOP [Mikko Honkala, Art Welch] 
+- fix to allow JDK 1.1 users to compile and use FOP [Mikko Honkala, Art Welch]
 - fix: removing duplicate character mappings [Dharamveer Salecha]
-- fix: NullPointerException in FopImageFactory [Kelly Campbell] 
+- fix: NullPointerException in FopImageFactory [Kelly Campbell]
 - fixed: space after's where not being removed if table row was being removed [Keiron Liddle]
 - fixed problem with keep-with not storing the correct rows [Keiron Liddle]
 - fixed: extra space after was left behind for rows going over a page [Keiron Liddle]
 
 Done since 0.14 release
-- added region-name support, refactoring of region, PageSequence, 
+- added region-name support, refactoring of region, PageSequence,
         PageMasterReference, flow/static [Kelly Campbell, Arved Sandstrom]
 - added CommandLine/Driver -d option to output stack traces [Kelly Campbell, Arved Sandstrom]
 - added: a new package for image support and analysis [Pankaj Narula]
-- added better svg support (linear gradients, radial gradients, css style selectors, 
-        css colour names, patterns, path curves (except arcs), text tspan and tref, text whitespace 
+- added better svg support (linear gradients, radial gradients, css style selectors,
+        css colour names, patterns, path curves (except arcs), text tspan and tref, text whitespace
         handling, text outline and fill, switch, images (including external svg images)
         references in external svg documents, svg elements (below top element), symbol element) [Keiron Liddle]
 - added large test suite for svg [Keiron Liddle]
 - added support for property textdecoration (only value 'underline') [Christian Geisert]
 - added support for type 1 fonts [Jeremias Maerki,Alan Fagot]
 - added support for compile target jdk 1.1 only [Art Welch]
-- added support for  partial borders in block, block-container, 
+- added support for  partial borders in block, block-container,
                      table-row, table-column and table-cell [Corinna Hischke]
-- redesign of properties handling, support for computed, compound and shorthand properties, 
+- redesign of properties handling, support for computed, compound and shorthand properties,
                      supporting docs [Karen Lease]
 - redesign of font handling for AWTRenderer [Dorothea Wiarda]
 - added: support for leader-alignment, leader-pattern-width, leader-pattern (dots,space) [Fotis Jannidis]
@@ -788,11 +793,11 @@ Done since 0.14 release
 - fixed: broken buildFOTree [Marcus Holmberg]
 - fixed: problems with borders and padding in tables [Corinna Hischke]
 - fixed: XMLRenderer, unbalanced " in the produced output [Dorothea Wiarda]
-- fixed: renamed: inline-sequence -> inline, simple-link -> basic-link, 
+- fixed: renamed: inline-sequence -> inline, simple-link -> basic-link,
                   white-space-treatment -> white-space-collapse [Fotis Jannidis]
 - fixed: images were rendered only half size (Mikko Honkala)
-- fixed: pdf file in XalanCommandFile explicitly closed [Dharamveer Salecha] 
-- fixed: lists containing list do not keep their indentation correctly 
+- fixed: pdf file in XalanCommandFile explicitly closed [Dharamveer Salecha]
+- fixed: lists containing list do not keep their indentation correctly
          over a page boundary [Dorothea Wiarda]
 
 Done since 0.13 release
@@ -805,31 +810,31 @@ Done since 0.13 release
 - added a MessageHandler  [Fotis Jannidis]
 - fixed table overflow bug [Jordan Naftolin]
 - finally fixed postscript printing of generated PDF [Domagoj Cosic]
-- removed XTCommandLine from build.xml 
-- removed PDFOutputHandler from build.xml 
+- removed XTCommandLine from build.xml
+- removed PDFOutputHandler from build.xml
 - added XalanCommandLine  [Fotis Jannidis]
 - added: fo:instream-foreign-object [Keiron Liddle]
 - added: goto button in AWT viewer [Stanislav Gorkhover]
 - updated: AWT viewer now works again and supports - with some restrictions - the new SVG support [Stanislav Gorkhover]
 
-Done since 0.12.1 release 
-- using Ant to build Fop instead of make [Giacomo Pati] 
-- borders, padding and absolute positioning [Jon Smirl] 
+Done since 0.12.1 release
+- using Ant to build Fop instead of make [Giacomo Pati]
+- borders, padding and absolute positioning [Jon Smirl]
 
-0.12.1 release 
-to make the bug fix on XTCommandLine available to non developers 
-basic support for padding-{top,left,bottom,right} on blocks. 
-implemented simple-link (don't think it works, though) 
-XTCommandLine now works again 
-background color works on list-block 
-list-blocks can now be in table-cell 
+0.12.1 release
+to make the bug fix on XTCommandLine available to non developers
+basic support for padding-{top,left,bottom,right} on blocks.
+implemented simple-link (don't think it works, though)
+XTCommandLine now works again
+background color works on list-block
+list-blocks can now be in table-cell
 
-Done for 0.12.0 release: 
+Done for 0.12.0 release:
 
-Make sure Makefiles work 
-Switch to using Status object as return from layout() 
-Incorporate Eric Schaeffer's fix to tables in static-content 
-Incorporate Kelly Campell's fixes to GifJpegImage 
-Incorporate Eric Schaeffer's background colour implementation 
-  (actually used different approach with background colour as trait) 
+Make sure Makefiles work
+Switch to using Status object as return from layout()
+Incorporate Eric Schaeffer's fix to tables in static-content
+Incorporate Kelly Campell's fixes to GifJpegImage
+Incorporate Eric Schaeffer's background colour implementation
+  (actually used different approach with background colour as trait)
 

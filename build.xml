@@ -144,7 +144,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
        <include name="lib/xalan.LICENSE.txt"/>
        <include name="lib/batik.jar"/>
        <include name="lib/batik.LICENSE.txt"/>
-       <include name="lib/avalon-framework-cvs-20020315.jar"/>
+       <include name="lib/avalon-framework-cvs-20020806.jar"/>
        <include name="lib/avalon.LICENSE.txt"/>
        <include name="lib/readme"/>
     </fileset>
@@ -286,7 +286,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <taskdef name="runTest" classname="org.apache.fop.tools.anttasks.RunTest"/>
 
     <property name="main.class" value="org.apache.fop.apps.Fop"/>
-            <property name="runtime.classpath" value="xercesImpl-2.0.1.jar xml-apis.jar xalan-2.3.1.jar batik.jar jimi-1.0.jar avalon-framework-cvs-20020315.jar"/>
+            <property name="runtime.classpath" value="xercesImpl-2.0.1.jar xml-apis.jar xalan-2.3.1.jar batik.jar jimi-1.0.jar avalon-framework-cvs-20020806.jar"/>
    
     <filter filtersfile="${build.src}/codegen/filter"/>
 
