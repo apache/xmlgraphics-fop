@@ -165,7 +165,6 @@ public class FoPcdata extends FOPageSeqNode {
     {
         super(foTree, FObjectNames.PCDATA, pageSequence, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
-        System.out.println("In FoPcdata");
         characters = event.getChars();
         makeSparsePropsSet();
     }

@@ -178,7 +178,6 @@ public class FoTable extends FOPageSeqNode {
         super(foTree, FObjectNames.TABLE, pageSequence, parent, event,
                                   stateFlags, sparsePropsMap, sparseIndices);
         XmlEvent ev;
-        System.out.println("In FoTable");
         // Look for zero or more markers
         getMarkers();
         try {

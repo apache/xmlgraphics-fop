@@ -172,7 +172,6 @@ public class FoBlock extends FOPageSeqNode {
                           stateFlags, sparsePropsMap, sparseIndices);
         getMarkers();
         XmlEvent ev = null;
-        System.out.println("In FoBlock");
         do {
             try {
                 if ((stateFlags & FONode.MC_OUT_OF_LINE) == 0)
@@ -181,7 +180,6 @@ public class FoBlock extends FOPageSeqNode {
                     ev = xmlevents.expectOutOfLinePcdataOrInlineOrBlock();
                 if (ev != null) {
                     // Generate the flow object
-                    System.out.println("Generating flow object for " + ev);
                     FObjects.fobjects.makePageSeqFOChild(
                             foTree, pageSequence, this, ev, stateFlags);
                     if (ev.getType() != XmlEvent.CHARACTERS) {
