@@ -47,7 +47,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
     public LeaderLayoutManager(Leader node) {
         super(node);
         fobj = node;
-        font = node.getFontState();
+        font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo());
         setAlignment(node.getLeaderAlignment());
     }
 

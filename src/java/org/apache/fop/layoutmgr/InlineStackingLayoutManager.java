@@ -116,7 +116,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
         return true;
     }
 
-    private MinOptMax getExtraIPD(boolean bNotFirst, boolean bNotLast) {
+    protected MinOptMax getExtraIPD(boolean bNotFirst, boolean bNotLast) {
         return new MinOptMax(0);
     }
 

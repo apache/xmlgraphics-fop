@@ -21,7 +21,6 @@ package org.apache.fop.layoutmgr;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.Block;
-import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.hyphenation.Hyphenation;
 import org.apache.fop.hyphenation.Hyphenator;
@@ -54,7 +53,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
      * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
      */
     protected void initProperties() {
-        CommonMarginBlock marginProps = fobj.getCommonMarginBlock();
         bTextAlignment = fobj.getTextAlign();
         bTextAlignmentLast = fobj.getTextAlignLast();
         textIndent = fobj.getTextIndent();

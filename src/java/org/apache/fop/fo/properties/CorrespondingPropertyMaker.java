@@ -29,7 +29,7 @@ public class CorrespondingPropertyMaker {
     protected int lr_tb;
     protected int rl_tb;
     protected int tb_rl;
-    private boolean useParent;
+    protected boolean useParent;
     private boolean relative;
     
     public CorrespondingPropertyMaker(PropertyMaker baseMaker) {

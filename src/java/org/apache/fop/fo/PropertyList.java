@@ -98,7 +98,7 @@ abstract public class PropertyList {
         /* Handle request for one part of a compound property */
         Property p = getExplicit(propId);
         if (p == null) {
-            p = getShorthand(propId & Constants.PROPERTY_MASK);
+            p = getShorthand(propId);
         }
         return p;
     }
