@@ -48,7 +48,9 @@ public class TableRow extends FObj {
     AreaContainer areaContainer;
 
     boolean areaAdded = false;
-
+    
+    boolean bIgnoreKeepTogether = false;
+    
     private RowSpanMgr rowSpanMgr = null;
     private CellArray cellArray = null;
 
@@ -247,7 +249,7 @@ public class TableRow extends FObj {
                               Position.RELATIVE);
         areaContainer.foCreator = this;    // G Seshadri
         areaContainer.setPage(area.getPage());
-	areaContainer.setParent(area);
+        areaContainer.setParent(area);
 
         areaContainer.setBackground(propMgr.getBackgroundProps());
         areaContainer.start();
@@ -303,7 +305,7 @@ public class TableRow extends FObj {
             int rowSpan = cell.getNumRowsSpanned();
             int status;
             if (Status.isIncomplete((status = cell.layout(areaContainer)))) {
-               if ((keepTogether.getType() == KeepValue.KEEP_WITH_ALWAYS)
+               if ((keepTogether.getType() == KeepValue.KEEP_WITH_ALWAYS && bIgnoreKeepTogether==false)
                         || (status == Status.AREA_FULL_NONE)
                         || rowSpan > 1) {
                     // We will put this row into the next column/page
@@ -417,9 +419,10 @@ public class TableRow extends FObj {
     }
 
     public void removeLayout(Area area) {
-        if (areaAdded)
+        if (areaAdded) {
             area.removeChild(areaContainer);
-        areaAdded = false;
+            areaAdded = false;
+        }
         this.resetMarker();
         this.removeID(area.getIDReferences());
     }
@@ -499,6 +502,10 @@ public class TableRow extends FObj {
                                                      - 1)).getColumnWidth();
         }
         return width;
+    }
+    
+    void setIgnoreKeepTogether(boolean bIgnoreKeepTogether) {
+        this.bIgnoreKeepTogether = bIgnoreKeepTogether;
     }
 
 }
