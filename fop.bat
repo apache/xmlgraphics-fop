@@ -1,7 +1,11 @@
 @ECHO OFF
 
-set LIBDIR=lib
-set LOCALCLASSPATH=build/fop.jar
+rem %~dp0 is the expanded pathname of the current script under NT
+set LOCAL_FOP_HOME=
+if "%OS%"=="Windows_NT" set LOCAL_FOP_HOME=%~dp0
+
+set LIBDIR=%LOCAL_FOP_HOME%lib
+set LOCALCLASSPATH=%LOCAL_FOP_HOME%build/fop.jar
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\xml-apis.jar
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\xercesImpl-2.2.1.jar
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\xalan-2.4.1.jar
