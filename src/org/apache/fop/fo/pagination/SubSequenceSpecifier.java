@@ -6,15 +6,17 @@
  */
 
 package org.apache.fop.fo.pagination;
+import org.apache.fop.apps.FOPException;
 
 /**
  * Classes that implement this interface can be added to a PageSequenceMaster,
  * and are capable of looking up an appropriate PageMaster.
  */
 public interface SubSequenceSpecifier {
-    public String getNextPageMaster(int currentPageNumber,
-                                    boolean thisIsFirstPage,
-                                    boolean isEmptyPage);
+    public String getNextPageMasterName(boolean isOddPage,
+                                        boolean isFirstPage,
+                                        boolean isEmptyPage)
+      throws FOPException;
 
     /**
      * Called before a new page sequence is rendered so subsequences can reset

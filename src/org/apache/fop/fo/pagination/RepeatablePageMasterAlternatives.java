@@ -47,38 +47,42 @@ public class RepeatablePageMasterAlternatives extends FObj
         super(parent, propertyList);
         this.name = "fo:repeatable-page-master-alternatives";
 
-        conditionalPageMasterRefs = new Vector();
-
         if (parent.getName().equals("fo:page-sequence-master")) {
             this.pageSequenceMaster = (PageSequenceMaster)parent;
             this.pageSequenceMaster.addSubsequenceSpecifier(this);
         } else {
-            throw new FOPException("fo:repeatable-page-master-alternatives"
+            throw new FOPException("A fo:repeatable-page-master-alternatives"
                                    + "must be child of fo:page-sequence-master, not "
                                    + parent.getName());
         }
 
         String mr = getProperty("maximum-repeats").getString();
         if (mr.equals("no-limit")) {
-            setMaximumRepeats(INFINITE);
+            this.maximumRepeats=INFINITE;
         } else {
             try {
-                setMaximumRepeats(Integer.parseInt(mr));
+                this.maximumRepeats = Integer.parseInt(mr);
+                if (this.maximumRepeats < 0) {
+                    log.debug("negative maximum-repeats: "+this.maximumRepeats);
+                    this.maximumRepeats = 0;
+                }
             } catch (NumberFormatException nfe) {
                 throw new FOPException("Invalid number for "
                                        + "'maximum-repeats' property");
             }
         }
-
+        conditionalPageMasterRefs = new Vector();
     }
 
-    public String getNextPageMaster(int currentPageNumber,
-                                    boolean thisIsFirstPage,
-                                    boolean isEmptyPage) {
-        String pm = null;
+    public void addConditionalPageMasterReference(ConditionalPageMasterReference cpmr) {
+        this.conditionalPageMasterRefs.addElement(cpmr);
+    }
 
-        if (getMaximumRepeats() != INFINITE) {
-            if (numberConsumed < getMaximumRepeats()) {
+    public String getNextPageMasterName(boolean isOddPage,
+                                        boolean isFirstPage,
+                                        boolean isEmptyPage) {
+        if (maximumRepeats != -1) {
+            if (numberConsumed < maximumRepeats) {
                 numberConsumed++;
             } else {
                 return null;
@@ -87,42 +91,17 @@ public class RepeatablePageMasterAlternatives extends FObj
 
         for (int i = 0; i < conditionalPageMasterRefs.size(); i++) {
             ConditionalPageMasterReference cpmr =
-                (ConditionalPageMasterReference)conditionalPageMasterRefs.elementAt(i);
-
-            // 0-indexed page number
-            if (cpmr.isValid(currentPageNumber + 1, thisIsFirstPage,
-                             isEmptyPage)) {
-                pm = cpmr.getMasterName();
-                break;
+                (ConditionalPageMasterReference)conditionalPageMasterRefs
+              .elementAt(i);
+            if (cpmr.isValid(isOddPage, isFirstPage, isEmptyPage)) {
+                return cpmr.getMasterName();
             }
         }
-        return pm;
-    }
-
-    private void setMaximumRepeats(int maximumRepeats) {
-        if (maximumRepeats == INFINITE) {
-            this.maximumRepeats = maximumRepeats;
-        } else {
-            this.maximumRepeats = (maximumRepeats < 0) ? 0 : maximumRepeats;
-        }
-
-    }
-
-    private int getMaximumRepeats() {
-        return this.maximumRepeats;
-    }
-
-    public void addConditionalPageMasterReference(ConditionalPageMasterReference cpmr) {
-        this.conditionalPageMasterRefs.addElement(cpmr);
+        return null;
     }
 
     public void reset() {
         this.numberConsumed = 0;
-    }
-
-
-    protected PageSequenceMaster getPageSequenceMaster() {
-        return pageSequenceMaster;
     }
 
 }
