@@ -76,10 +76,20 @@ public class FoXMLEvent extends XMLEvent {
     /**
      * Clear the fields of this event.  Provided for pool operations.
      * The <i>namespaces</i> field is not cleared.
+     * @return the cleared <tt>XMLEvent</tt> event.
      */
-    public void clear() {
-        super.clear();
+    public XMLEvent clear() {
         foType = FObjectNames.NO_FO;
+        return super.clear();
+    }
+
+    /**
+     * Clear the fields of this event.  Provided for pool operations.
+     * The <i>namespaces</i> field is not cleared.
+     * @return the cleared <tt>XMLEvent</tt> event.
+     */
+    public FoXMLEvent clearFo() {
+        return (FoXMLEvent)clear();
     }
 
     /**
