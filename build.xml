@@ -175,7 +175,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
       <include name="xml-apis*.jar"/>
     </fileset>
   </path>
-
+  
   <!-- =================================================================== -->
   <!-- Initialization target                                               -->
   <!-- =================================================================== -->
@@ -287,9 +287,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="myfont.xml" value="${build.codegen}/myfont.xml"/>
     -->
 
-    <taskdef name="serHyph" classname="org.apache.fop.tools.anttasks.SerializeHyphPattern"/> 
-    <taskdef name="runTest" classname="org.apache.fop.tools.anttasks.RunTest"/>
-
     <property name="main.class" value="org.apache.fop.apps.Fop"/>
             <property name="runtime.classpath" value="xercesImpl-2.0.1.jar xml-apis.jar xalan-2.3.1.jar batik.jar jimi-1.0.jar avalon-framework-cvs-20020806.jar"/>
 
@@ -320,27 +317,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- Help on usage                                                       -->
   <!-- =================================================================== -->
   <target name="usage">
-    <echo message=""/>
-    <echo message=""/>
-    <echo message="${name} Build file"/>
-    <echo message="-------------------------------------------------------------"/>
-    <echo message=""/>
-    <echo message=" available targets are:"/>
-    <echo message=""/>
-    <echo message="   package   --> generates the ${name}.jar file (default)"/>
-    <echo message="   codegen   --> generates the java files from the xml resources"/>
-    <echo message="   compile   --> compiles the source code"/>
-    <echo message="   docs      --> generates the HTML documentation"/>
-    <echo message="   javadocs  --> generates the API documentation (java 1.2 only)"/>
-    <echo message="   dist      --> generates the ${Name} distribution as .tar.gz and .zip"/>
-    <echo message="   clean     --> cleans up the directory (except for the dist files)"/>
-    <echo message="   distclean --> cleans up the directory"/>
-    <echo message="   site      --> generates the ${Name} web site (not yet implemented)"/>
-    <echo message=""/>
-    <echo message=" See the comments inside the build.xml file for more details."/>
-    <echo message="-------------------------------------------------------------"/>
-    <echo message=""/>
-    <echo message=""/>
+    <echo message="Use the -projecthelp option instead"/>
   </target>
 
   <!-- =================================================================== -->
@@ -359,17 +336,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <copy todir="${build.dest}/conf" filtering="yes">
        <fileset dir="./conf"/>
     </copy>
-  </target>
-
-
-  <!-- =================================================================== -->
-  <!-- compiles hyphenation patterns                                       -->
-  <!-- =================================================================== -->
-
-  <target name="hyphenation" depends="prepare" >
-    <serHyph includes="*.xml" 
-             sourceDir="./hyph" 
-             targetDir="${build.dest}/hyph" /> 
   </target>
 
 
@@ -419,7 +385,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <!-- Generate the source code                                            -->
   <!-- =================================================================== -->
-  <target name="codegen" depends="prepare">
+  <target name="codegen" depends="prepare" description="Generates the java files from the xml resources">
     <!-- resetting codegen directory -->
     <echo message="Resetting codegen directory"/>
 
@@ -575,9 +541,25 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   </target>
 
   <!-- =================================================================== -->
+  <!-- compiles hyphenation patterns                                       -->
+  <!-- =================================================================== -->
+
+  <target name="hyphenation" depends="compile" >
+    <path id="hyph-classpath">
+      <path refid="libs-build-classpath"/>
+      <pathelement location="${build.dir}/classes"/>
+    </path>
+    <taskdef name="serHyph" classname="org.apache.fop.tools.anttasks.SerializeHyphPattern" classpathref="hyph-classpath"/> 
+    <serHyph includes="*.xml" 
+             sourceDir="./hyph" 
+             targetDir="${build.dest}/hyph" /> 
+  </target>
+
+
+  <!-- =================================================================== -->
   <!-- Creates the class package                                           -->
   <!-- =================================================================== -->
-  <target name="package" depends="compile,hyphenation">
+  <target name="package" depends="compile,hyphenation" description="Generates the jar files">
     <echo message="Creating the jar file ${build.dir}/${name}.jar"/>
 
     <tstamp>
@@ -598,8 +580,13 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
   </target>
 
-  <target name="test" depends="package">
+  <target name="test" depends="package" description="Runs the test suite">
     <echo message="Testing build in jar file ${build.dir}/${name}.jar against reference"/>
+    <path id="testtask-classpath">
+      <path refid="libs-build-classpath"/>
+      <pathelement location="${build.dir}/classes"/>
+    </path>
+    <taskdef name="runTest" classname="org.apache.fop.tools.anttasks.RunTest" classpathref="testtask-classpath"/>
     <runTest testSuite="basictests.xml" basedir="test/" reference="test/reference/fop.jar"
          refVersion="FOP 0.20.3"/>
     <runTest testSuite="bugtests.xml" basedir="test/" reference="test/reference/fop.jar"
@@ -631,7 +618,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <!-- Creates the API documentation                                       -->
   <!-- =================================================================== -->
-  <target name="javadocs" depends="codegen,prepare-src">
+  <target name="javadocs" depends="codegen,prepare-src" description="Generates javadocs">
     <echo message="Producing the javadoc files "/>
     <mkdir dir="${build.javadocs}"/>
     <javadoc packagenames="${packages}"
@@ -678,7 +665,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     </javadoc>
   </target>
 
-  <target name="htmldoc" depends="prepare-src">
+  <target name="htmldoc" depends="prepare-src" description="Generates documentation in html format">
     <copy file="${xdocs}/fop.xml"
           tofile="${xdocs}/book.xml"
           filtering="yes"/>
@@ -696,7 +683,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <!-- Creates the distribution                                            -->
   <!-- =================================================================== -->
-  <target name="dist" depends="dist-src,dist-bin"/>
+  <target name="dist" depends="dist-src,dist-bin" description="Generates the distribution package"/>
 
   <target name="dist-bin" depends="package">
     <echo message="Building the binary distribution files (zip,tar)"/>
@@ -744,11 +731,11 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <!-- Clean targets                                                       -->
   <!-- =================================================================== -->
-  <target name="clean" depends="init">
+  <target name="clean" depends="init" description="Cleans the build directory">
     <delete dir="${build.dir}"/>
   </target>
 
-  <target name="distclean" depends="clean">
+  <target name="distclean" depends="clean" description="Cleans the distribution target directories">
     <delete dir="${dist.src.dir}"/>
     <delete dir="${dist.bin.dir}"/>
     <delete>
