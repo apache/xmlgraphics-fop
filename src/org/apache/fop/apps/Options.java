@@ -67,7 +67,7 @@ public class Options {
         //debug mode
 		if (clOptions.isDebugMode() != null) {
 			errorDump = clOptions.isDebugMode().booleanValue();
-			Configuration.put("errorDump",new Boolean(errorDump));			
+			Configuration.put("debugMode",new Boolean(errorDump));			
 		} 
 		
 		//show configuration settings
@@ -159,4 +159,5 @@ public class Options {
         }
     }
 }
+
 
