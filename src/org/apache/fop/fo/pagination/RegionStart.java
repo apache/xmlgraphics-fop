@@ -12,6 +12,7 @@ import java.awt.Rectangle;
 
 // FOP
 import org.apache.fop.fo.*;
+import org.apache.fop.fo.properties.WritingMode;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.area.RegionReference;
 
@@ -24,12 +25,15 @@ public class RegionStart extends RegionSE {
 
 
     protected Rectangle getViewportRectangle (FODimension reldims) {
-        // Depends on extent and precedence
+        // Depends on extent, precedence anâ writing mode
         // This is the rectangle relative to the page-reference area in
         // writing-mode relative coordinates
-        Rectangle vpRect =
-            new Rectangle(0, 0, getExtent(), reldims.bpd);
-        adjustIPD(vpRect);
+        Rectangle vpRect;
+        if (this.wm == WritingMode.LR_TB || this.wm == WritingMode.RL_TB)
+            vpRect = new Rectangle(0, 0, getExtent(), reldims.bpd);
+        else
+            vpRect = new Rectangle(0, 0, reldims.bpd, getExtent());
+        adjustIPD(vpRect, this.wm);
         return vpRect;
     }
 
@@ -44,6 +48,5 @@ public class RegionStart extends RegionSE {
     public int getRegionAreaClass() {
         return RegionReference.START;
     }
-
 }
 

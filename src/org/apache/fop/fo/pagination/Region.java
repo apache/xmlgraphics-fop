@@ -7,11 +7,11 @@
 
 package org.apache.fop.fo.pagination;
 
+// Java
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 // FOP
-
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
@@ -23,24 +23,26 @@ import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.RegionReference;
 import org.apache.fop.layoutmgr.AbstractLayoutManager;
 
+// SAX
 import org.xml.sax.Attributes;
 
 /**
  * This is an abstract base class for pagination regions
  */
 public abstract class Region extends FObj {
-    public static final String PROP_REGION_NAME = "region-name";
+    private static final String PROP_REGION_NAME = "region-name";
 
-    public static final String BEFORE = "before";
-    public static final String START =  "start";
-    public static final String END =    "end";
-    public static final String AFTER =  "after";
-    public static final String BODY =   "body";
+    protected static final String BEFORE = "before";
+    protected static final String START =  "start";
+    protected static final String END =    "end";
+    protected static final String AFTER =  "after";
+    protected static final String BODY =   "body";
 
     private SimplePageMaster _layoutMaster;
     private String _regionName;
 
     protected int overflow;
+    protected int wm;
 
     protected Region(FONode parent) {
         super(parent);
@@ -60,8 +62,8 @@ public abstract class Region extends FObj {
             if (isReserved(getRegionName())
                     &&!getRegionName().equals(getDefaultRegionName())) {
                 throw new FOPException(PROP_REGION_NAME + " '" + _regionName
-                                       + "' for " + this.name
-                                       + " not permitted.");
+                        + "' for " + this.name
+                        + " not permitted.");
             }
         }
 
@@ -69,9 +71,10 @@ public abstract class Region extends FObj {
             _layoutMaster = (SimplePageMaster)parent;
         } else {
             throw new FOPException(this.name + " must be child "
-                                   + "of simple-page-master, not "
-                                   + parent.getName());
+                    + "of simple-page-master, not "
+                    + parent.getName());
         }
+        this.wm = this.properties.get("writing-mode").getEnum();
     }
 
     /**
@@ -195,5 +198,4 @@ public abstract class Region extends FObj {
     int getExtent() {
         return 0;
     }
-
 }

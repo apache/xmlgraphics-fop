@@ -9,7 +9,8 @@ package org.apache.fop.fo.pagination;
 
 // FOP
 import org.apache.fop.datatypes.FODimension;
-import org.apache.fop.fo.*;
+import org.apache.fop.fo.properties.WritingMode;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.area.RegionReference;
 
 // Java
@@ -20,10 +21,6 @@ public class RegionBefore extends RegionBA {
     public RegionBefore(FONode parent) {
         super(parent);
     }
-
-//     public void handleAttrs(Attributes attlist) throws FOPException {
-//         super.handleAttrs(attlist);
-//     }
 
     protected String getDefaultRegionName() {
         return "xsl-region-before";
@@ -38,18 +35,21 @@ public class RegionBefore extends RegionBA {
     }
 
     protected Rectangle getViewportRectangle (FODimension reldims) {
-      // Depends on extent and precedence
-      // This should return rectangle in writing-mode coordinates relative
-      // to the page-reference area rectangle
-      // This means the origin is (start, before) and the dimensions are (ipd,bpd)
-      // Before is always 0, start depends on extent
-      // ipd depends on precedence, bpd=extent
-      Rectangle vpRect = new Rectangle(0, 0, reldims.ipd, getExtent());
-      if (getPrecedence() == false) {
-          adjustIPD(vpRect);
-      }
-      return vpRect;
+        // Depends on extent, precedence and writing mode
+        // This should return rectangle in writing-mode coordinates relative
+        // to the page-reference area rectangle
+        // This means the origin is (start, before) and the dimensions are (ipd,bpd)
+        // Before is always 0, start depends on extent
+        // ipd depends on precedence, bpd=extent
+        Rectangle vpRect;
+        if (this.wm == WritingMode.LR_TB || this.wm == WritingMode.RL_TB)
+            vpRect = new Rectangle(0, 0, reldims.ipd, getExtent());
+        else
+            vpRect = new Rectangle(0, 0, getExtent(), reldims.ipd);
+        if (getPrecedence() == false) {
+            adjustIPD(vpRect, this.wm);
+        }
+        return vpRect;
     }
-
 }
 

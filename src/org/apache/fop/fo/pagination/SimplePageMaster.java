@@ -1,9 +1,9 @@
 /*
- * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
+* $Id$
+* Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+* For details on use and redistribution please refer to the
+* LICENSE file included with these sources.
+*/
 
 package org.apache.fop.fo.pagination;
 
@@ -52,16 +52,17 @@ public class SimplePageMaster extends FObj {
             masterName = this.properties.get("master-name").getString();
             if (masterName == null) {
                 getLogger().warn("simple-page-master does not have "
-                                       + "a master-name and so is being ignored");
+                        + "a master-name and so is being ignored");
             } else {
                 layoutMasterSet.addSimplePageMaster(this);
             }
         } else {
             throw new FOPException("fo:simple-page-master must be child "
-                                   + "of fo:layout-master-set, not "
-                                   + parent.getName());
+                    + "of fo:layout-master-set, not "
+                    + parent.getName());
         }
-        _regions = new HashMap();
+        //Well, there are only 5 regions so we can save a bit of memory here
+        _regions = new HashMap(5);
     }
 
     /**
@@ -70,57 +71,57 @@ public class SimplePageMaster extends FObj {
      */
     protected void end() {
         int pageWidth =
-            this.properties.get("page-width").getLength().mvalue();
+                this.properties.get("page-width").getLength().mvalue();
         int pageHeight =
-            this.properties.get("page-height").getLength().mvalue();
+                this.properties.get("page-height").getLength().mvalue();
         // this.properties.get("reference-orientation");
         // this.properties.get("writing-mode");
 
         // Get absolute margin properties (top, left, bottom, right)
         MarginProps mProps = propMgr.getMarginProps();
 
-    /* Create the page reference area rectangle in first quadrant coordinates
-     * (ie, 0,0 is at bottom,left of the "page media" and y increases
-     * when moving towards the top of the page.
-     * The media rectangle itself is (0,0,pageWidth,pageHeight).
-     */
-    Rectangle pageRefRect =
-        new Rectangle(mProps.marginLeft, mProps.marginTop,
-              pageWidth - mProps.marginLeft - mProps.marginRight,
-              pageHeight - mProps.marginTop - mProps.marginBottom);
+        /* Create the page reference area rectangle (0,0 is at top left
+        * of the "page media" and y increases
+        * when moving towards the bottom of the page.
+        * The media rectangle itself is (0,0,pageWidth,pageHeight).
+        */
+        Rectangle pageRefRect =
+                new Rectangle(mProps.marginLeft, mProps.marginTop,
+                        pageWidth - mProps.marginLeft - mProps.marginRight,
+                        pageHeight - mProps.marginTop - mProps.marginBottom);
 
-    // ??? KL shouldn't this take the viewport too???
-    Page page = new Page();  // page reference area
+        // ??? KL shouldn't this take the viewport too???
+        Page page = new Page();  // page reference area
 
         // Set up the CTM on the page reference area based on writing-mode
         // and reference-orientation
-    FODimension reldims=new FODimension(0,0);
-    CTM pageCTM = propMgr.getCTMandRelDims(pageRefRect, reldims);
+        FODimension reldims=new FODimension(0,0);
+        CTM pageCTM = propMgr.getCTMandRelDims(pageRefRect, reldims);
 
-    // Create a RegionViewport/ reference area pair for each page region
+        // Create a RegionViewport/ reference area pair for each page region
 
-    boolean bHasBody=false;
+        boolean bHasBody=false;
 
         for (Iterator regenum = _regions.values().iterator();
-                regenum.hasNext(); ) {
+             regenum.hasNext(); ) {
             Region r = (Region)regenum.next();
-        RegionViewport rvp = r.makeRegionViewport(reldims, pageCTM);
-        rvp.setRegion(r.makeRegionReferenceArea(rvp.getViewArea()));
-        page.setRegion(r.getRegionAreaClass(), rvp);
-        if (r.getRegionAreaClass() == RegionReference.BODY) {
-        bHasBody = true;
-        }
+            RegionViewport rvp = r.makeRegionViewport(reldims, pageCTM);
+            rvp.setRegion(r.makeRegionReferenceArea(rvp.getViewArea()));
+            page.setRegion(r.getRegionAreaClass(), rvp);
+            if (r.getRegionAreaClass() == RegionReference.BODY) {
+                bHasBody = true;
+            }
         }
 
-    if (!bHasBody) {
+        if (!bHasBody) {
             getLogger().error("simple-page-master has no region-body");
         }
 
-    this.pageMaster = new PageMaster(new PageViewport(page,
-                       new Rectangle(0,0,
-                             pageWidth,pageHeight)));
+        this.pageMaster = new PageMaster(new PageViewport(page,
+                new Rectangle(0,0,
+                        pageWidth,pageHeight)));
 
-    //  _regions = null; // PageSequence access SimplePageMaster....
+        //  _regions = null; // PageSequence access SimplePageMaster....
         children = null;
         properties = null;
     }
@@ -146,7 +147,7 @@ public class SimplePageMaster extends FObj {
             addRegion((Region)child);
         } else {
             getLogger().error("SimplePageMaster cannot have child of type " +
-                child.getName());
+                    child.getName());
         }
     }
 
@@ -154,8 +155,8 @@ public class SimplePageMaster extends FObj {
         String key = region.getRegionClass();
         if (_regions.containsKey(key)) {
             getLogger().error("Only one region of class "
-                              + key
-                              + " allowed within a simple-page-master.");
+                    + key
+                    + " allowed within a simple-page-master.");
             // throw new FOPException("Only one region of class "
 //                                    + key
 //                                    + " allowed within a simple-page-master.");
@@ -174,7 +175,7 @@ public class SimplePageMaster extends FObj {
 
     protected boolean regionNameExists(String regionName) {
         for (Iterator regenum = _regions.values().iterator();
-                regenum.hasNext(); ) {
+             regenum.hasNext(); ) {
             Region r = (Region)regenum.next();
             if (r.getRegionName().equals(regionName)) {
                 return true;
