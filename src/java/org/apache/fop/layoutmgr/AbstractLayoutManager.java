@@ -20,7 +20,6 @@ package org.apache.fop.layoutmgr;
 
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Resolveable;
 import org.apache.fop.area.PageViewport;
@@ -40,7 +39,6 @@ import java.util.Map;
  * The base class for all LayoutManagers.
  */
 public abstract class AbstractLayoutManager implements LayoutManager, Constants {
-    protected FOUserAgent userAgent;
     protected LayoutManager parentLM = null;
     protected List childLMs = new ArrayList(10);
     protected FObj fobj;
@@ -351,6 +349,16 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
      * If the id string is not null then add the id to the current page.
      */
     protected void addID() {
+        if (foID != null) {
+            addIDToPage(foID);
+        }
+    }
+
+    /**
+     * Add the id to the page.
+     * If the id string is not null then add the id to the current page.
+     */
+    protected void addID(String foID) {
         if (foID != null) {
             addIDToPage(foID);
         }
