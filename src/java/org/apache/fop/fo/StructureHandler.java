@@ -1,5 +1,5 @@
 /*
- * $Id: StructureHandler.java,v 1.7 2003/02/27 10:13:07 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,7 +48,7 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.apps;
+package org.apache.fop.fo;
 
 // Java
 import java.util.Set;
@@ -58,6 +58,7 @@ import java.util.HashSet;
 import org.apache.avalon.framework.logger.AbstractLogEnabled;
 
 // FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.ExternalGraphic;
 import org.apache.fop.fo.flow.Flow;

@@ -50,7 +50,7 @@
  */ 
 package org.apache.fop.extensions;
 
-import org.apache.fop.apps.LayoutHandler;
+import org.apache.fop.layoutmgr.LayoutHandler;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.area.AreaTree;
 
