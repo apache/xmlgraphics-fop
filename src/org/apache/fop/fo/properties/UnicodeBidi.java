@@ -14,7 +14,7 @@ public class UnicodeBidi extends Property  {
     public static final int NORMAL = 1;
     public static final int EMBED = 2;
     public static final int BIDI_OVERRIDE = 3;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new EnumType (PropNames.UNICODE_BIDI, NORMAL);
@@ -27,10 +27,10 @@ public class UnicodeBidi extends Property  {
         ,"embed"
         ,"bidi-override"
     };
-    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
+    public int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /*static*/ String getEnumText(int index) {
+    public String getEnumText(int index) {
         return rwEnums[index];
     }
 }

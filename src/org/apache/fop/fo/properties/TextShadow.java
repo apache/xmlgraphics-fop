@@ -28,7 +28,7 @@ public class TextShadow extends ColorNonTransparent  {
      * <tt>Length</tt>s may be preceded or followed by a color
      * specifier.
      */
-    public /*static*/ PropertyValue refineParsing
+    public PropertyValue refineParsing
                         (int propindex, FONode foNode, PropertyValue list)
                     throws PropertyException
     {

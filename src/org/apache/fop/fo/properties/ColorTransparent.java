@@ -25,10 +25,10 @@ public class ColorTransparent extends ColorCommon  {
 	}
     }
 
-    public /*static*/ int getEnumIndex(String enum) {
+    public int getEnumIndex(String enum) {
         return ((Integer)(rwEnumHash.get(enum))).intValue();
     }
-    public /*static*/ String getEnumText(int index) {
+    public String getEnumText(int index) {
         return rwEnums[index];
     }
 

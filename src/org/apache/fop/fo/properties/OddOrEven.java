@@ -14,7 +14,7 @@ public class OddOrEven extends Property  {
     public static final int ODD = 1;
     public static final int EVEN = 2;
     public static final int ANY = 3;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new EnumType(PropNames.ODD_OR_EVEN, ANY);
@@ -27,10 +27,10 @@ public class OddOrEven extends Property  {
         ,"even"
         ,"any"
     };
-    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
+    public int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /*static*/ String getEnumText(int index) {
+    public String getEnumText(int index) {
         return rwEnums[index];
     }
 }

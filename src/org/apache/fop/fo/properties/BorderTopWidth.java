@@ -10,13 +10,13 @@ public class BorderTopWidth extends BorderCommonWidth {
     public static final int dataTypes = MAPPED_LENGTH | INHERIT;
     public static final int traitMapping = DISAPPEARS;
     public static final int initialValueType = LENGTH_IT;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return getMappedLength(MEDIUM);
     }
 
-    public /*static*/ Numeric getMappedLength(int enum)
+    public Numeric getMappedLength(int enum)
         throws PropertyException
     {
         return getMappedLength(PropNames.BORDER_TOP_WIDTH, enum);

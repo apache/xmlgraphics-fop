@@ -10,7 +10,7 @@ public class MarkerClassName extends Property  {
     public static final int dataTypes = NCNAME;
     public static final int traitMapping = FORMATTING;
     public static final int initialValueType = NCNAME_IT;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new NCName(PropNames.MARKER_CLASS_NAME, "");

@@ -13,7 +13,7 @@ public class BackgroundAttachment extends Property  {
     public static final int initialValueType = ENUM_IT;
     public static final int SCROLL = 1;
     public static final int FIXED = 2;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new EnumType (PropNames.BACKGROUND_ATTACHMENT, SCROLL);
@@ -26,10 +26,10 @@ public class BackgroundAttachment extends Property  {
         ,"scroll"
         ,"fixed"
     };
-    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
+    public int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /*static*/ String getEnumText(int index) {
+    public String getEnumText(int index) {
         return rwEnums[index];
     }
 }

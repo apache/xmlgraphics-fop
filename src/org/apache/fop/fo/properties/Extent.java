@@ -10,7 +10,7 @@ public class Extent extends Property  {
     public static final int dataTypes = PERCENTAGE | LENGTH | INHERIT;
     public static final int traitMapping = SPECIFICATION;
     public static final int initialValueType = LENGTH_IT;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return Length.makeLength (PropNames.EXTENT, 0.0d, Length.PT);

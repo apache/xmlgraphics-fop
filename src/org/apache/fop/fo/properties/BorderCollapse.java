@@ -13,7 +13,7 @@ public class BorderCollapse extends Property  {
     public static final int initialValueType = ENUM_IT;
     public static final int COLLAPSE = 1;
     public static final int SEPARATE = 2;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return  new EnumType (PropNames.BORDER_COLLAPSE, COLLAPSE);
@@ -26,10 +26,10 @@ public class BorderCollapse extends Property  {
         ,"collapse"
         ,"separate"
     };
-    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
+    public int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /*static*/ String getEnumText(int index) {
+    public String getEnumText(int index) {
         return rwEnums[index];
     }
 }

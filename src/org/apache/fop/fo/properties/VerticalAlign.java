@@ -24,7 +24,7 @@ public class VerticalAlign extends Property  {
     public static final int TEXT_BOTTOM = 6;
     public static final int TOP = 7;
     public static final int BOTTOM = 8;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new EnumType (PropNames.VERTICAL_ALIGN, BASELINE);
@@ -50,10 +50,10 @@ public class VerticalAlign extends Property  {
                                 (Object) Ints.consts.get(i));
         }
     }
-    public /*static*/ int getEnumIndex(String enum) {
+    public int getEnumIndex(String enum) {
         return ((Integer)(rwEnumHash.get(enum))).intValue();
     }
-    public /*static*/ String getEnumText(int index) {
+    public String getEnumText(int index) {
         return rwEnums[index];
     }
 }

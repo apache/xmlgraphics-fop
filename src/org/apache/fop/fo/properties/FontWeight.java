@@ -17,7 +17,7 @@ public class FontWeight extends Property  {
     public static final int BOLDER = 3;
     public static final int LIGHTER = 4;
 
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new IntegerType(PropNames.FONT_WEIGHT, 400);
@@ -39,7 +39,7 @@ public class FontWeight extends Property  {
      * @param value <tt>PropertyValue</tt> returned by the parser
      * @return <tt>PropertyValue</tt> the verified value
      */
-    public /*static*/ PropertyValue refineParsing
+    public PropertyValue refineParsing
                         (int propindex, FONode foNode, PropertyValue value)
                     throws PropertyException
     {
@@ -57,7 +57,7 @@ public class FontWeight extends Property  {
      * @return <tt>PropertyValue</tt> the verified value
      * @see #refineParsing(FONode,PropertyValue)
      */
-    public /*static*/ PropertyValue refineParsing
+    public PropertyValue refineParsing
         (int propindex, FONode foNode, PropertyValue value, boolean nested)
                     throws PropertyException
     {
@@ -74,10 +74,10 @@ public class FontWeight extends Property  {
         }
         return fw;
     }
-    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
+    public int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /*static*/ String getEnumText(int index) {
+    public String getEnumText(int index) {
         return rwEnums[index];
     }
 }

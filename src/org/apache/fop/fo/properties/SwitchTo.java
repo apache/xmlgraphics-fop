@@ -18,7 +18,7 @@ public class SwitchTo extends Property  {
     public static final int XSL_PRECEDING = 1;
     public static final int XSL_FOLLOWING = 2;
     public static final int XSL_ANY = 3;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new EnumType (PropNames.SWITCH_TO, XSL_ANY);
@@ -32,7 +32,7 @@ public class SwitchTo extends Property  {
         ,"xsl-any"
     };
 
-    public /*static*/ PropertyValue refineParsing
+    public PropertyValue refineParsing
                         (int propindex, FONode foNode, PropertyValue list)
                     throws PropertyException
     {
@@ -53,10 +53,10 @@ public class SwitchTo extends Property  {
         }
         return list;
     }
-    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
+    public int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /*static*/ String getEnumText(int index) {
+    public String getEnumText(int index) {
         return rwEnums[index];
     }
 }

@@ -12,7 +12,7 @@ public class LetterSpacing extends Property  {
     public static final int traitMapping = DISAPPEARS;
     public static final int initialValueType = LENGTH_IT;
     public static final int NORMAL = 1;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return Length.makeLength(PropNames.LETTER_SPACING, 0d, Length.PT);
@@ -23,10 +23,10 @@ public class LetterSpacing extends Property  {
         null
         ,"normal"
     };
-    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
+    public int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /*static*/ String getEnumText(int index) {
+    public String getEnumText(int index) {
         return rwEnums[index];
     }
 }

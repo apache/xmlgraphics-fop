@@ -14,7 +14,7 @@ public class Visibility extends Property  {
     public static final int VISIBLE = 1;
     public static final int HIDDEN = 2;
     public static final int COLLAPSE = 3;
-    public /*static*/ PropertyValue getInitialValue(int property)
+    public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new EnumType (PropNames.VISIBILITY, VISIBLE);
@@ -27,10 +27,10 @@ public class Visibility extends Property  {
         ,"hidden"
         ,"collapse"
     };
-    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
+    public int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /*static*/ String getEnumText(int index) {
+    public String getEnumText(int index) {
         return rwEnums[index];
     }
 }

@@ -63,7 +63,7 @@ public class Background extends Property  {
      * @return the refined <tt>PropertyValue</tt>.
      * @throws <tt>PropertyException</tt>.
      */
-    public /*static*/ PropertyValue refineParsing
+    public PropertyValue refineParsing
                         (int propindex, FONode foNode, PropertyValue value)
 		    throws PropertyException
     {
@@ -75,7 +75,7 @@ public class Background extends Property  {
 	}
     }
 
-    private /*static*/ PropertyValueList processValue
+    private PropertyValueList processValue
 	(int propindex, FONode foNode, PropertyValue value)
             throws PropertyException
     {
@@ -99,7 +99,7 @@ public class Background extends Property  {
 	}
     }
 
-    private /*static*/ PropertyValueList processList
+    private PropertyValueList processList
                     (int property, FONode foNode, PropertyValueList value)
 		    throws PropertyException
     {
