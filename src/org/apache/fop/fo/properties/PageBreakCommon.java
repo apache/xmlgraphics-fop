@@ -42,10 +42,19 @@ public class PageBreakCommon extends Property  {
                                 (Object) Ints.consts.get(i));
         }
     }
-    public int getEnumIndex(String enum) {
-        return ((Integer)(rwEnumHash.get(enum))).intValue();
+    public int getEnumIndex(String enum)
+        throws PropertyException
+    {
+        Integer ii = (Integer)(rwEnumHash.get(enum));
+        if (ii == null)
+            throw new PropertyException("Unknown enum value: " + enum);
+        return ii.intValue();
     }
-    public String getEnumText(int index) {
+    public String getEnumText(int index)
+        throws PropertyException
+    {
+        if (index < 1 || index >= rwEnums.length)
+            throw new PropertyException("index out of range: " + index);
         return rwEnums[index];
     }
 
@@ -73,8 +82,7 @@ public class PageBreakCommon extends Property  {
 	    previousNext = PropNames.KEEP_WITH_NEXT;
 	    break;
 	default:
-	    throw new PropertyException
-		("Unknown property in PageBreakCommon: "
+	    throw new PropertyException("Unknown property in PageBreakCommon: "
 		    + PropNames.getPropertyName(property));
 	}
         if (value instanceof Inherit |
@@ -91,8 +99,7 @@ public class PageBreakCommon extends Property  {
             try {
                 enum = new EnumType(value.getProperty(), ncname);
             } catch (PropertyException e) {
-                throw new PropertyException
-                ("Unrecognized NCName in page-break-after: " + ncname);
+                throw new PropertyException                ("Unrecognized NCName in page-break-after: " + ncname);
             }
             PropertyValueList list = new PropertyValueList(property);
             switch (enum.getEnumValue()) {
@@ -115,8 +122,7 @@ public class PageBreakCommon extends Property  {
             }
         }
 
-        throw new PropertyException
-            ("Invalid value for '" + PropNames.getPropertyName(property)
+        throw new PropertyException            ("Invalid value for '" + PropNames.getPropertyName(property)
                 + "': " + value.getClass().getName());
     }
 }

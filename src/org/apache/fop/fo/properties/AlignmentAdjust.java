@@ -51,10 +51,19 @@ public class AlignmentAdjust extends Property  {
 	}
     }
 
-    public int getEnumIndex(String enum) {
-        return ((Integer)(rwEnumHash.get(enum))).intValue();
+    public int getEnumIndex(String enum)
+        throws PropertyException
+    {
+        Integer ii = (Integer)(rwEnumHash.get(enum));
+        if (ii == null)
+            throw new PropertyException("Unknown enum value: " + enum);
+        return ii.intValue();
     }
-    public String getEnumText(int index) {
+    public String getEnumText(int index)
+        throws PropertyException
+    {
+        if (index < 1 || index >= rwEnums.length)
+            throw new PropertyException("index out of range: " + index);
         return rwEnums[index];
     }
 
