@@ -13,8 +13,7 @@ public class LineHeightPrecedence extends PrecedenceCommon {
     public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
-        return new EnumType
-            (PropNames.LINE_HEIGHT_PRECEDENCE, FORCE);
+        return new EnumType(PropNames.LINE_HEIGHT_PRECEDENCE, FORCE);
     }
 
     public static final int inherited = COMPUTED;
