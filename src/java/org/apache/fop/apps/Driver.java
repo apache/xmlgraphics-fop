@@ -31,7 +31,6 @@ import org.xml.sax.XMLReader;
 // FOP
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOTreeBuilder;
-import org.apache.fop.render.awt.AWTRenderer;
 
 /**
  * Primary class that drives the overall FOP process.
@@ -47,10 +46,6 @@ import org.apache.fop.render.awt.AWTRenderer;
  * Renderer to use, the (possibly multiple) ElementMapping(s) to
  * use and the OutputStream to use to output the results of the
  * rendering (where applicable).
- * <P>
- * Once the Driver is set up, the render method
- * is called. The invocation of the method is 
- * render(Parser, InputSource).
  * <P>
  * Here is an example use of Driver which outputs to AWT:
  *
@@ -70,7 +65,7 @@ public class Driver implements Constants {
     /**
      * the stream to use to output the results of the renderer
      */
-    private OutputStream stream;
+    private OutputStream stream = null;
 
     /**
      * The system resources that FOP will use
@@ -82,17 +77,6 @@ public class Driver implements Constants {
      */
     public Driver() {
         foUserAgent = new FOUserAgent();
-        stream = null;
-    }
-
-    /**
-     * Constructor for AWTRenderer, which reuses the
-     * same renderer instance for document reloading
-     */
-    public Driver(AWTRenderer render) {
-        this();
-        renderType = RENDER_AWT;
-        foUserAgent = render.getUserAgent();
     }
 
     /**
@@ -105,12 +89,11 @@ public class Driver implements Constants {
     }
 
     /**
-     * Resets the Driver so it can be reused. Property and element
-     * mappings are reset to defaults.
-     * The output stream is cleared. The renderer is cleared.
+     * Constructor with FOUserAgent
+     * Used by CLI, AWTRenderer
      */
-    public synchronized void reset() {
-        stream = null;
+    public Driver(FOUserAgent ua) {
+        foUserAgent = ua;
     }
 
     /**
@@ -137,12 +120,6 @@ public class Driver implements Constants {
      */
     public void setOutputStream(OutputStream stream) {
         this.stream = stream;
-    }
-
-    private void validateOutputStream() {
-        if (this.stream == null) {
-            throw new IllegalStateException("OutputStream has not been set");
-        }
     }
 
     /**
@@ -182,11 +159,6 @@ public class Driver implements Constants {
      * @throws FOPException if setting up the ContentHandler fails
      */
     public ContentHandler getContentHandler() throws FOPException {
-
-        if (renderType != RENDER_PRINT && renderType != RENDER_AWT) {
-           validateOutputStream();
-        }
-
         return new FOTreeBuilder(renderType, foUserAgent, stream);
     }
 

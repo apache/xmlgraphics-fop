@@ -49,8 +49,9 @@ import java.awt.print.PrinterException;
 
 //FOP
 import org.apache.fop.apps.Driver;
-import org.apache.fop.apps.InputHandler;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.render.awt.AWTRenderer;
 
 /**
@@ -66,8 +67,8 @@ public class PreviewDialog extends JFrame {
     protected Translator translator;
     /** The AWT renderer */
     protected AWTRenderer renderer;
-    /** The InputHandler associated with this window */
-    protected InputHandler inputHandler;
+    /** The FOUserAgent associated with this window */
+    protected FOUserAgent foUserAgent;
     /** The Driver used for refreshing/reloading the view */
     protected Driver driver;
 
@@ -83,9 +84,9 @@ public class PreviewDialog extends JFrame {
      * Creates a new PreviewDialog that uses the given renderer.
      * @param aRenderer the to use renderer
      */
-    public PreviewDialog(AWTRenderer aRenderer, InputHandler handler) {
-        renderer = aRenderer;
-        inputHandler = handler;
+    public PreviewDialog(FOUserAgent foUserAgent) {
+        renderer = (AWTRenderer) foUserAgent.getRendererOverride();
+        this.foUserAgent = foUserAgent;
         translator = renderer.getTranslator();
 
         //Commands aka Actions
@@ -219,7 +220,7 @@ public class PreviewDialog extends JFrame {
             }
         });
         // inputHandler must be set to allow reloading
-        if (inputHandler != null) {
+        if (foUserAgent.getInputHandler() != null) {
             menu.add(new Command(translator.getString("Menu.Reload")) {
                 public void doit() {
                     reload();
@@ -384,9 +385,8 @@ public class PreviewDialog extends JFrame {
     private class Reloader extends Thread {
         public void run() {
             if (driver == null) {
-                driver = new Driver(renderer);
-            } else {
-                driver.reset();
+                driver = new Driver(foUserAgent);
+                driver.setRenderer(Constants.RENDER_AWT);
             }
             
             pageLabel.setIcon(null);
@@ -395,7 +395,7 @@ public class PreviewDialog extends JFrame {
 
             try {
                 setStatus(translator.getString("Status.Build.FO.tree"));
-                driver.render(inputHandler);
+                driver.render(foUserAgent.getInputHandler());
                 setStatus(translator.getString("Status.Show"));
             } catch (FOPException e) {
                 reportException(e);

@@ -302,7 +302,7 @@ public class TestConverter {
             } else {
                 inputHandler = new XSLTInputHandler(xmlFile,
                                                     new File(baseDir + "/"
-                                                             + xsl), null);
+                                                             + xsl));
             }
 
             Driver driver = new Driver();

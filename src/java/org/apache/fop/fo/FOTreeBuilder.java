@@ -96,6 +96,15 @@ public class FOTreeBuilder extends DefaultHandler {
      */
     public FOTreeBuilder(int renderType, FOUserAgent foUserAgent, 
         OutputStream stream) throws FOPException {
+
+        if (renderType != Constants.RENDER_PRINT && 
+            renderType != Constants.RENDER_AWT) {
+            if (stream == null) {
+                throw new IllegalStateException(
+                    "OutputStream has not been set");
+            }
+        }
+            
         if (renderType == Constants.RENDER_MIF) {
             foInputHandler = new MIFHandler(foUserAgent, stream);
         } else if (renderType == Constants.RENDER_RTF) {
