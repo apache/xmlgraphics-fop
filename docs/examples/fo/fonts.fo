@@ -185,7 +185,36 @@ Euro ( dec 8364, hex 20AC): &#x20AC;
   </fo:block>
   
 
+  <fo:block font-family="Helvetica"  font-size="12pt">
+ Different font sizes: 
+  </fo:block>
   <fo:block space-after.optimum="10pt" font-family="Helvetica">
+  	<fo:inline font-size="8.0pt">A</fo:inline>
+  	<fo:inline font-size="8.1pt">A</fo:inline>
+  	<fo:inline font-size="8.2pt">A</fo:inline>
+  	<fo:inline font-size="8.3pt">A</fo:inline>
+  	<fo:inline font-size="8.4pt">A</fo:inline>
+  	<fo:inline font-size="8.5pt">A</fo:inline>
+  	<fo:inline font-size="8.6pt">A</fo:inline>
+  	<fo:inline font-size="8.7pt">A</fo:inline>
+  	<fo:inline font-size="8.8pt">A</fo:inline>
+  	<fo:inline font-size="8.9pt">A</fo:inline>
+  	<fo:inline font-size="9.0pt">A</fo:inline>
+  	<fo:inline font-size="9.1pt">A</fo:inline>
+  	<fo:inline font-size="9.2pt">A</fo:inline>
+  	<fo:inline font-size="9.3pt">A</fo:inline>
+  	<fo:inline font-size="9.4pt">A</fo:inline>
+  	<fo:inline font-size="9.5pt">A</fo:inline>
+  	<fo:inline font-size="9.6pt">A</fo:inline>
+  	<fo:inline font-size="9.7pt">A</fo:inline>
+  	<fo:inline font-size="9.8pt">A</fo:inline>
+  	<fo:inline font-size="9.9pt">A</fo:inline>
+  	<fo:inline font-size="10pt">A</fo:inline>
+  	<fo:inline>---</fo:inline>
+  	<fo:inline font-size="10.5pt">A</fo:inline>
+  	<fo:inline font-size="11pt">A</fo:inline>
+  	<fo:inline font-size="11.5pt">A</fo:inline>
+  	<fo:inline font-size="12pt">A</fo:inline>
 
   </fo:block>
 
