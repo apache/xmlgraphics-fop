@@ -68,8 +68,10 @@ import org.apache.fop.area.BeforeFloat;
 import org.apache.fop.area.Footnote;
 import org.apache.fop.area.Resolveable;
 
+import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.datatypes.FODimension;
 
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.pagination.PageNumberGenerator;
@@ -254,6 +256,8 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
             childLC.setRefIPD(flowIPD);
 
             if (!curLM.isFinished()) {
+                fobj.setLayoutDimension(PercentBase.REFERENCE_AREA_IPD, flowIPD);
+                fobj.setLayoutDimension(PercentBase.REFERENCE_AREA_BPD, flowBPD);
                 bp = curLM.getNextBreakPoss(childLC);
             }
             if (bp != null) {
@@ -769,6 +773,10 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
                 spm.propertyList.get(PR_PAGE_WIDTH).getLength().getValue();
         int pageHeight =
                 spm.propertyList.get(PR_PAGE_HEIGHT).getLength().getValue();
+        // Set the page dimension as the toplevel containing block for margin.
+        ((FObj) fobj.getParent()).setLayoutDimension(PercentBase.BLOCK_IPD, pageWidth);
+        ((FObj) fobj.getParent()).setLayoutDimension(PercentBase.BLOCK_BPD, pageHeight);
+        
         // Get absolute margin properties (top, left, bottom, right)
         CommonMarginBlock mProps = spm.getPropertyManager().getMarginProps();
 
@@ -797,6 +805,8 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
        for (Iterator regenum = spm.getRegions().values().iterator();
             regenum.hasNext();) {
            Region r = (Region)regenum.next();
+           r.setLayoutDimension(PercentBase.BLOCK_IPD, pageWidth);
+           r.setLayoutDimension(PercentBase.BLOCK_BPD, pageHeight);
            RegionViewport rvp = makeRegionViewport(r, reldims, pageCTM);
            if (r.getRegionClassCode() == Region.BODY_CODE) {
                rvp.setRegion(makeRegionBodyReferenceArea(r, rvp.getViewArea()));

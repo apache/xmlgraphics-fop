@@ -51,18 +51,16 @@
 package org.apache.fop.fo.flow;
 
 // XML
-import org.xml.sax.Attributes;
-
-// FOP
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.FOTreeVisitor;
-import org.apache.fop.fo.properties.LengthProperty;
-import org.apache.fop.image.ImageFactory;
-import org.apache.fop.image.FopImage;
-// Java
 import java.awt.geom.Rectangle2D;
+
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.Length;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.image.FopImage;
+import org.apache.fop.image.ImageFactory;
+import org.xml.sax.Attributes;
 
 /**
  * External graphic formatting object.
@@ -104,7 +102,7 @@ public class ExternalGraphic extends FObj {
         url = ImageFactory.getURL(url);
 
         // assume lr-tb for now and just use the .optimum value of the range
-        LengthProperty ipd = propertyList.get(PR_INLINE_PROGRESSION_DIMENSION).
+        Length ipd = propertyList.get(PR_INLINE_PROGRESSION_DIMENSION).
                                     getLengthRange().getOptimum().getLength();
         if (!ipd.isAuto()) {
             viewWidth = ipd.getValue();
@@ -114,7 +112,7 @@ public class ExternalGraphic extends FObj {
                 viewWidth = ipd.getValue();
             }
         }
-        LengthProperty bpd = propertyList.get(PR_BLOCK_PROGRESSION_DIMENSION | CP_OPTIMUM).getLength();
+        Length bpd = propertyList.get(PR_BLOCK_PROGRESSION_DIMENSION | CP_OPTIMUM).getLength();
         if (!bpd.isAuto()) {
             viewHeight = bpd.getValue();
         } else {
@@ -129,7 +127,7 @@ public class ExternalGraphic extends FObj {
 
         int cwidth = -1;
         int cheight = -1;
-        LengthProperty ch = propertyList.get(PR_CONTENT_HEIGHT).getLength();
+        Length ch = propertyList.get(PR_CONTENT_HEIGHT).getLength();
         if (!ch.isAuto()) {
             /*if (ch.scaleToFit()) {
                 if (viewHeight != -1) {
@@ -138,7 +136,7 @@ public class ExternalGraphic extends FObj {
             } else {*/
             cheight = ch.getValue();
         }
-        LengthProperty cw = propertyList.get(PR_CONTENT_WIDTH).getLength();
+        Length cw = propertyList.get(PR_CONTENT_WIDTH).getLength();
         if (!cw.isAuto()) {
             /*if (cw.scaleToFit()) {
                 if (viewWidth != -1) {

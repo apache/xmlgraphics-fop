@@ -191,7 +191,7 @@ public class Row extends BlockStackingLayoutManager {
             } else {
                 col = (Column)columns.get(cellcount - 1);
             }
-            childLC.setRefIPD(col.getWidth());
+            childLC.setRefIPD(col.getWidth().getValue());
 
             while (!curLM.isFinished()) {
                 if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
@@ -343,7 +343,7 @@ public class Row extends BlockStackingLayoutManager {
                     childLM.setRowHeight(rowHeight);
                     childLM.addAreas(breakPosIter, lc);
                 }
-                xoffset += col.getWidth();
+                xoffset += col.getWidth().getValue();
             }
         }
 

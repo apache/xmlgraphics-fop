@@ -64,6 +64,7 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.area.CTM;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -176,6 +177,11 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         // if starting add space before
         // stackSize.add(spaceBefore);
         BreakPoss lastPos = null;
+
+        fobj.setLayoutDimension(PercentBase.BLOCK_IPD, ipd);
+        fobj.setLayoutDimension(PercentBase.BLOCK_BPD, bpd - bIndents);
+        fobj.setLayoutDimension(PercentBase.REFERENCE_AREA_IPD, ipd);
+        fobj.setLayoutDimension(PercentBase.REFERENCE_AREA_BPD, bpd - bIndents);
 
         while ((curLM = getChildLM()) != null) {
             // Make break positions and return blocks!

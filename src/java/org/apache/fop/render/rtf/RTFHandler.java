@@ -479,7 +479,7 @@ public class RTFHandler extends FOInputHandler {
         }
 
         try {
-            Integer iWidth = new Integer(tc.getColumnWidth() / 1000);
+            Integer iWidth = new Integer(tc.getColumnWidth().getValue() / 1000);
             builderContext.getTableContext().setNextColumnWidth(iWidth.toString() + "pt");
             builderContext.getTableContext().setNextColumnRowSpanning(new Integer(0), null);
         } catch (Exception e) {
