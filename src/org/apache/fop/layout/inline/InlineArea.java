@@ -126,4 +126,20 @@ public abstract class InlineArea extends Area {
         return this.underlined;
     }
 
+    public void setOverlined(boolean ol) {
+	    this.overlined = ol;
+    }
+
+    public boolean getOverlined() {
+	    return this.overlined;
+    }
+
+    public void setLineThrough(boolean lt) {
+	    this.lineThrough = lt;
+    }
+
+    public boolean getLineThrough() {
+	    return this.lineThrough;
+    }
+
 }

@@ -74,16 +74,16 @@ import org.apache.fop.messaging.MessageHandler;
  */
 public class BlockArea extends Area {
 
-		/* relative to area container */
-		protected int startIndent;
-		protected int endIndent;
+  /* relative to area container */
+  protected int startIndent;
+  protected int endIndent;
 
 		/* first line startIndent modifier */
-		protected int textIndent;
+  protected int textIndent;
 
-		protected int lineHeight;
+  protected int lineHeight;
 
-		protected int halfLeading;
+  protected int halfLeading;
 
 
 		/* text-align of all but the last line */
@@ -152,145 +152,145 @@ public class BlockArea extends Area {
 				}
 		}
 
-		// font-variant support : addText is a wrapper for addRealText
-		// added by Eric SCHAEFFER
-		public int addText(FontState fontState, float red, float green,
-											 float blue, int wrapOption, LinkSet ls,
-											 int whiteSpaceCollapse, char data[], int start, int end,
-											 boolean ul) {
-			if (fontState.getFontVariant() == FontVariant.SMALL_CAPS) {
-				FontState smallCapsFontState;
-				try {
-					int smallCapsFontHeight = (int) (((double) fontState.getFontSize()) * 0.8d);
-					smallCapsFontState = new FontState(
-						fontState.getFontInfo(),
-						fontState.getFontFamily(),
-						fontState.getFontStyle(),
-						fontState.getFontWeight(),
-						smallCapsFontHeight,
-						FontVariant.NORMAL);
-				} catch (FOPException ex) {
-					smallCapsFontState = fontState;
-					MessageHandler.errorln("Error creating small-caps FontState: " + ex.getMessage());
-				}
+  // font-variant support : addText is a wrapper for addRealText
+  // added by Eric SCHAEFFER
+  public int addText(FontState fontState, float red, float green,
+		     float blue, int wrapOption, LinkSet ls,
+		     int whiteSpaceCollapse, char data[], int start, int end,
+		     TextState textState) {
+    if (fontState.getFontVariant() == FontVariant.SMALL_CAPS) {
+      FontState smallCapsFontState;
+      try {
+	int smallCapsFontHeight = (int) (((double) fontState.getFontSize()) * 0.8d);
+	smallCapsFontState = new FontState(
+					   fontState.getFontInfo(),
+					   fontState.getFontFamily(),
+					   fontState.getFontStyle(),
+					   fontState.getFontWeight(),
+					   smallCapsFontHeight,
+					   FontVariant.NORMAL);
+      } catch (FOPException ex) {
+	smallCapsFontState = fontState;
+	MessageHandler.errorln("Error creating small-caps FontState: " + ex.getMessage());
+      }
 
-				// parse text for upper/lower case and call addRealText
-				char c;
-				boolean isLowerCase;
-				int caseStart;
-				FontState fontStateToUse;
-				for (int i = start; i < end; ) {
-					caseStart = i;
-					c = data[i];
-					isLowerCase = (java.lang.Character.isLetter(c) && java.lang.Character.isLowerCase(c));
-					while (isLowerCase == (java.lang.Character.isLetter(c) && java.lang.Character.isLowerCase(c))) {
-						if (isLowerCase) {
-							data[i] = java.lang.Character.toUpperCase(c);
-						}
-						i++;
-						if (i == end)
-							break;
-						c = data[i];
-					}
-					if (isLowerCase) {
-						fontStateToUse = smallCapsFontState;
-					} else {
-						fontStateToUse = fontState;
-					}
-					int index = this.addRealText(fontStateToUse, red, green, blue, wrapOption, ls,
-						whiteSpaceCollapse, data, caseStart, i, ul);
-					if (index != -1) {
-						return index;
-					}
-				}
+      // parse text for upper/lower case and call addRealText
+      char c;
+      boolean isLowerCase;
+      int caseStart;
+      FontState fontStateToUse;
+      for (int i = start; i < end; ) {
+	caseStart = i;
+	c = data[i];
+	isLowerCase = (java.lang.Character.isLetter(c) && java.lang.Character.isLowerCase(c));
+	while (isLowerCase == (java.lang.Character.isLetter(c) && java.lang.Character.isLowerCase(c))) {
+	  if (isLowerCase) {
+	    data[i] = java.lang.Character.toUpperCase(c);
+	  }
+	  i++;
+	  if (i == end)
+	    break;
+	  c = data[i];
+	}
+	if (isLowerCase) {
+	  fontStateToUse = smallCapsFontState;
+	} else {
+	  fontStateToUse = fontState;
+	}
+	int index = this.addRealText(fontStateToUse, red, green, blue, wrapOption, ls,
+				     whiteSpaceCollapse, data, caseStart, i, textState);
+	if (index != -1) {
+	  return index;
+	}
+      }
 
-				return -1;
-			}
+      return -1;
+    }
 
-			// font-variant normal
-			return this.addRealText(fontState, red, green, blue, wrapOption, ls,
-				whiteSpaceCollapse, data, start, end, ul);
-		}
+    // font-variant normal
+    return this.addRealText(fontState, red, green, blue, wrapOption, ls,
+			    whiteSpaceCollapse, data, start, end, textState);
+  }
 
-		protected int addRealText(FontState fontState, float red, float green,
-											 float blue, int wrapOption, LinkSet ls,
-											 int whiteSpaceCollapse, char data[], int start, int end,
-											 boolean ul) {
-				int ts, te;
-				char[] ca;
+  protected int addRealText(FontState fontState, float red, float green,
+			    float blue, int wrapOption, LinkSet ls,
+			    int whiteSpaceCollapse, char data[], int start, int end,
+			    TextState textState) {
+    int ts, te;
+    char[] ca;
 
-				ts = start;
-				te = end;
-				ca = data;
+    ts = start;
+    te = end;
+    ca = data;
 
-				if (currentHeight + currentLineArea.getHeight() > maxHeight) {
-						return start;
-				}
+    if (currentHeight + currentLineArea.getHeight() > maxHeight) {
+      return start;
+    }
 
-				this.currentLineArea.changeFont(fontState);
-				this.currentLineArea.changeColor(red, green, blue);
-				this.currentLineArea.changeWrapOption(wrapOption);
-				this.currentLineArea.changeWhiteSpaceCollapse(whiteSpaceCollapse);
-				this.currentLineArea.changeHyphenation(language, country, hyphenate,
-																 hyphenationChar, hyphenationPushCharacterCount,
-																 hyphenationRemainCharacterCount);
-				if (ls != null) {
-						this.currentLinkSet = ls;
-						ls.setYOffset(currentHeight);
-				}
+    this.currentLineArea.changeFont(fontState);
+    this.currentLineArea.changeColor(red, green, blue);
+    this.currentLineArea.changeWrapOption(wrapOption);
+    this.currentLineArea.changeWhiteSpaceCollapse(whiteSpaceCollapse);
+    this.currentLineArea.changeHyphenation(language, country, hyphenate,
+					   hyphenationChar, hyphenationPushCharacterCount,
+					   hyphenationRemainCharacterCount);
+    if (ls != null) {
+      this.currentLinkSet = ls;
+      ls.setYOffset(currentHeight);
+    }
 
-				ts = this.currentLineArea.addText(ca, ts, te, ls, ul);
-				this.hasLines = true;
+    ts = this.currentLineArea.addText(ca, ts, te, ls, textState);
+    this.hasLines = true;
 
-				while (ts != -1) {
-						this.currentLineArea.align(this.align);
-						this.addLineArea(this.currentLineArea);
+    while (ts != -1) {
+      this.currentLineArea.align(this.align);
+      this.addLineArea(this.currentLineArea);
 
-						this.currentLineArea =
-							new LineArea(fontState, lineHeight, halfLeading,
-													 allocationWidth, startIndent, endIndent,
-													 currentLineArea);
-						if (currentHeight + currentLineArea.getHeight() >
-										this.maxHeight) {
-								return ts;
-						}
-						this.currentLineArea.changeFont(fontState);
-						this.currentLineArea.changeColor(red, green, blue);
-						this.currentLineArea.changeWrapOption(wrapOption);
-						this.currentLineArea.changeWhiteSpaceCollapse(
-							whiteSpaceCollapse);
-						this.currentLineArea.changeHyphenation(language, country, hyphenate,
-																		 hyphenationChar, hyphenationPushCharacterCount,
-																		 hyphenationRemainCharacterCount);
-						if (ls != null) {
-								ls.setYOffset(currentHeight);
-						}
+      this.currentLineArea =
+	new LineArea(fontState, lineHeight, halfLeading,
+		     allocationWidth, startIndent, endIndent,
+		     currentLineArea);
+      if (currentHeight + currentLineArea.getHeight() >
+	  this.maxHeight) {
+	return ts;
+      }
+      this.currentLineArea.changeFont(fontState);
+      this.currentLineArea.changeColor(red, green, blue);
+      this.currentLineArea.changeWrapOption(wrapOption);
+      this.currentLineArea.changeWhiteSpaceCollapse(
+						    whiteSpaceCollapse);
+      this.currentLineArea.changeHyphenation(language, country, hyphenate,
+					     hyphenationChar, hyphenationPushCharacterCount,
+					     hyphenationRemainCharacterCount);
+      if (ls != null) {
+	ls.setYOffset(currentHeight);
+      }
 
-						ts = this.currentLineArea.addText(ca, ts, te, ls, ul);
-				}
-				return -1;
-		}
+      ts = this.currentLineArea.addText(ca, ts, te, ls, textState);
+    }
+    return -1;
+  }
 
 
-		/**
+  /**
 			* adds a leader to current line area of containing block area
 			* the actual leader area is created in the line area
 			*
 			* @return int +1 for success and -1 for none
 			*/
-		public int addLeader(FontState fontState, float red, float green,
-												 float blue, int leaderPattern, int leaderLengthMinimum,
-												 int leaderLengthOptimum, int leaderLengthMaximum,
-												 int ruleThickness, int ruleStyle, int leaderPatternWidth,
-												 int leaderAlignment) {
+  public int addLeader(FontState fontState, float red, float green,
+		       float blue, int leaderPattern, int leaderLengthMinimum,
+		       int leaderLengthOptimum, int leaderLengthMaximum,
+		       int ruleThickness, int ruleStyle, int leaderPatternWidth,
+		       int leaderAlignment) {
 
 				//this should start a new page
-				if (currentHeight + currentLineArea.getHeight() > maxHeight) {
-						return -1;
-				}
+    if (currentHeight + currentLineArea.getHeight() > maxHeight) {
+      return -1;
+    }
 
-				this.currentLineArea.changeFont(fontState);
-				this.currentLineArea.changeColor(red, green, blue);
+    this.currentLineArea.changeFont(fontState);
+    this.currentLineArea.changeColor(red, green, blue);
 
 				//check whether leader fits into the (rest of the) line
 				//using length.optimum to determine where to break the line as defined
@@ -393,6 +393,7 @@ public class BlockArea extends Area {
 				return endIndent;
 		}
 
+// KL: I think we should just return startIndent here!
 		public int getStartIndent() {
 				return startIndent + paddingLeft + borderWidthLeft;
 		}

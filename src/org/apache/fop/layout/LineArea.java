@@ -136,6 +136,11 @@ public class LineArea extends Area {
     /* the width of the pendingAreas */
     protected int pendingWidth = 0;
 
+    /* text-decoration of the previous text */
+    protected boolean prevUlState = false;
+    protected boolean prevOlState = false;
+    protected boolean prevLTState = false;
+
     public LineArea(FontState fontState, int lineHeight,
                     int halfLeading, int allocationWidth, int startIndent,
                     int endIndent, LineArea prevLineArea) {
@@ -199,7 +204,7 @@ public class LineArea extends Area {
        * @return int character position
        */
     public int addText(char odata[], int start, int end, LinkSet ls,
-                       boolean ul) {
+                       TextState textState) {
         // this prevents an array index out of bounds
         // which occurs when some text is laid out again.
         if(start == -1) return -1;
@@ -259,7 +264,17 @@ public class LineArea extends Area {
                     // was some)
 
                     if (spaceWidth > 0) {
-                        addChild(new InlineSpace(spaceWidth));
+                        InlineSpace is = new InlineSpace(spaceWidth);
+                        if (prevUlState) {
+                            is.setUnderlined(textState.getUnderlined());
+                        }
+                        if (prevOlState) {
+                            is.setOverlined(textState.getOverlined());
+                        }
+                        if (prevLTState) {
+                            is.setLineThrough(textState.getLineThrough());
+                        }
+                        addChild(is);
                         finalWidth += spaceWidth;
                         spaceWidth = 0;
                     }
@@ -295,7 +310,13 @@ public class LineArea extends Area {
                                                        new String(data, wordStart,
                                                                   wordLength), wordWidth);
                         ia.setYOffset(placementOffset);
-                        ia.setUnderlined(ul);
+                        ia.setUnderlined(textState.getUnderlined());
+                        prevUlState = textState.getUnderlined();
+                        ia.setOverlined(textState.getOverlined());
+                        prevOlState = textState.getOverlined();
+                        ia.setLineThrough(textState.getLineThrough());
+                        prevLTState = textState.getLineThrough();
+
                         addChild(ia);
                         if (ls != null) {
                             Rectangle lr = new Rectangle(finalWidth, 0,
@@ -407,14 +428,35 @@ public class LineArea extends Area {
             }
         } // end of iteration over text
 
-        if (prev == TEXT) {
+        if (prev == TEXT) { 
+
+            if (spaceWidth > 0) {
+                InlineSpace pis = new InlineSpace(spaceWidth);
+                if (prevUlState) {
+                    pis.setUnderlined(textState.getUnderlined());
+                }
+                if (prevOlState) {
+                    pis.setOverlined(textState.getOverlined());
+                }
+                if (prevLTState) {
+                    pis.setLineThrough(textState.getLineThrough());
+                }
+                pendingAreas.addElement(pis);
+                pendingWidth += spaceWidth;
+                spaceWidth = 0;
+            }
 
             WordArea pia = new WordArea(currentFontState, this.red,
                                             this.green, this.blue,
                                             new String(data, wordStart, wordLength), wordWidth);
 
             pia.setYOffset(placementOffset);
-            pia.setUnderlined(ul);
+            pia.setUnderlined(textState.getUnderlined());
+            prevUlState = textState.getUnderlined();
+            pia.setOverlined(textState.getOverlined());
+            prevOlState = textState.getOverlined();
+            pia.setLineThrough(textState.getLineThrough());
+            prevLTState = textState.getLineThrough();
 
             if (ls != null) {
                 Rectangle lr = new Rectangle(finalWidth + spaceWidth +
