@@ -453,8 +453,8 @@ used. For more detailed information see other resources on JAXP (ex.
     <title>ExampleObj2PDF.java</title>
     <p>
         <fork href="http://cvs.apache.org/viewcvs.cgi/xml-fop/examples/embedding/java/embedding/ExampleObj2PDF.java?rev=HEAD">
-            The last example</fork>
-here combines the previous and the third to demonstrate 
+            This example</fork>
+combines the previous and the third to demonstrate 
 how you can transform a Java object to a PDF directly in one smooth run
 by generating SAX events from the Java object that get fed to an XSL 
 transformation. The result of the transformation is then converted to PDF 
@@ -462,19 +462,32 @@ using FOP as before.
     </p>
     <figure src="images/EmbeddingExampleObj2PDF.png" alt="Example Java object to PDF (via XML and XSL-FO)"/>
   </section>
+  <section id="ExampleDOM2PDF">
+    <title>ExampleDOM2PDF.java</title>
+    <p>
+        <fork href="http://cvs.apache.org/viewcvs.cgi/xml-fop/examples/embedding/java/embedding/ExampleDOM2PDF.java?rev=HEAD">
+            This example</fork>
+has FOP use a DOMSource instead of a StreamSource in order to 
+use a DOM tree as input for an XSL transformation.
+    </p>
+  </section>
+  <section id="ExampleSVG2PDF">
+    <title>ExampleSVG2PDF.java (PDF Transcoder example)</title>
+    <p>
+        <fork href="http://cvs.apache.org/viewcvs.cgi/xml-fop/examples/embedding/java/embedding/ExampleSVG2PDF.java?rev=HEAD">
+            This example</fork>
+shows use of the PDF Transcoder, a sub-application within FOP.  
+It is used to generate a PDF document from an SVG file.
+    </p>
+  </section>
   <section id="example-notes">
     <title>Final notes</title>
     <p>
 These examples should give you an idea of what's possible. It should be easy 
-to adjust these examples to your needs. For examples, you can use a DOMSource
-instead of a StreamSource to feed a DOM tree as input for an XSL 
-transformation.
-    </p>
-    <p>
-If you think you have a decent example that should be here, contact us via 
-one of the mailing lists and we'll see to it that it gets added. Also, if
-you can't find the solution to your particular problem drop us a message on 
-the fop-user mailing list.
+to adjust these examples to your needs. Also, if you have other examples that you
+think should be added here, please let us know via either the FOP-USER or FOP-DEV
+mailing lists.  Finally, for more help please send your questions to the FOP-USER
+mailing list.
     </p>
   </section>
 </section>
