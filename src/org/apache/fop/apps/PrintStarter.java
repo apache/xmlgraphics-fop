@@ -35,6 +35,9 @@ import org.apache.fop.layout.AreaTree;
 import org.apache.fop.layout.Page;
 import org.apache.fop.messaging.MessageHandler;
 
+// Avalon
+import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.avalon.framework.logger.Logger;
 
 /**
  * This class prints a xsl-fo dokument without interaction.
@@ -59,8 +62,10 @@ public class PrintStarter extends CommandLineStarter {
             driver.setErrorDump(true);
         }
 
-        String version = Version.getVersion();
-        MessageHandler.errorln(version);
+        // Nov 18, 02  eliminates spurious [ERROR] message to logger
+        
+        driver.setLogger (new ConsoleLogger(ConsoleLogger.LEVEL_INFO)) ;
+        log.info (Version.getVersion()) ;
 
         XMLReader parser = inputHandler.getParser();
 

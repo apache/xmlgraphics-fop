@@ -28,7 +28,9 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-
+// Avalon
+import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.avalon.framework.logger.Logger;
 
 // Java
 import java.io.FileReader;
@@ -93,7 +95,7 @@ public class AWTStarter extends CommandLineStarter {
         renderer.setProgressListener(frame);
         renderer.setComponent(frame);
         driver = new Driver();
-        driver.setLogger(log);
+        driver.setLogger(new ConsoleLogger(ConsoleLogger.LEVEL_INFO));
         if (errorDump) {
             driver.setErrorDump(true);
         }
