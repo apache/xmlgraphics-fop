@@ -76,7 +76,7 @@ implements Runnable, Printable, Pageable {
     protected PreviewDialog frame;
 
     public AWTRenderer() {
-        //translator = new Translator();
+        translator = new Translator();
         //createPreviewDialog();
     }
 
