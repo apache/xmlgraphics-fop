@@ -49,6 +49,9 @@ import java.util.HashMap;
  */
 public class PropertyParser extends PropertyTokenizer {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     /**
      * This is an attempt to ensure that the restriction on the application of
      * from-parent() and from-nearest-specified-value() functions to shorthand
