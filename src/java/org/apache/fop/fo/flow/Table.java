@@ -146,6 +146,11 @@ public class Table extends FObj {
         }
     }
 
+    /** @return true of table-layout="auto" */
+    public boolean isAutoLayout() {
+        return (tableLayout != EN_FIXED);
+    }
+    
     public List getColumns() {
         return columns;
     }
