@@ -69,12 +69,6 @@ import org.w3c.dom.svg.*;
 import org.w3c.dom.css.*;
 import org.w3c.dom.svg.SVGLength;
 
-import org.apache.fop.dom.svg.*;
-import org.apache.fop.dom.svg.SVGRectElementImpl;
-import org.apache.fop.dom.svg.SVGTextElementImpl;
-import org.apache.fop.dom.svg.SVGLineElementImpl;
-import org.apache.fop.dom.svg.SVGArea;
-
 // Java
 import java.io.IOException;
 import java.io.StringWriter;
@@ -197,8 +191,8 @@ public class SVGRenderer {
 						org.w3c.dom.Node n = nl.item(count);
 						// only render the first child that has a valid
 						// test data
-						if (n instanceof GraphicElement) {
-								GraphicElement graphic = (GraphicElement) n;
+						if (n instanceof SVGTests) {
+								SVGTests graphic = (SVGTests) n;
 								SVGStringList grelist = graphic.getRequiredExtensions();
 								// if null it evaluates to true
 								if (grelist != null) {
@@ -407,10 +401,10 @@ public class SVGRenderer {
 		 * out in order.
 		 * Arcs don't work.
 		 */
-		protected void addPath(Vector points, int posx, int posy,
+		protected void addPath(SVGPathSegList points, int posx, int posy,
 													 DrawingInstruction di) {
 				PDFNumber pdfNumber = new PDFNumber();
-				SVGPathSegImpl pathmoveto = null;
+				SVGPathSeg pathmoveto = null;
 				float lastx = 0;
 				float lasty = 0;
 				float lastmovex = 0;
@@ -420,14 +414,15 @@ public class SVGRenderer {
 				float tempy;
 				float lastcx = 0;
 				float lastcy = 0;
-				for (Enumeration e = points.elements(); e.hasMoreElements();) {
-						SVGPathSegImpl pc = (SVGPathSegImpl) e.nextElement();
-						float[] vals = pc.getValues();
+				for (int count = 0; count < points.getNumberOfItems(); count++) {
+						SVGPathSeg pc = (SVGPathSeg) points.getItem(count);
+//						float[] vals = pc.getValues();
 						switch (pc.getPathSegType()) {
 								case SVGPathSeg.PATHSEG_MOVETO_ABS:
 										pathmoveto = pc;
-										lastx = vals[0];
-										lasty = vals[1];
+										SVGPathSegMovetoAbs mta = (SVGPathSegMovetoAbs)pc;
+										lastx = mta.getX();
+										lasty = mta.getY();
 										currentStream.write(pdfNumber.doubleOut(lastx) + " " + pdfNumber.doubleOut(lasty) + " m\n");
 										lastcx = 0;
 										lastcy = 0;
@@ -439,14 +434,15 @@ public class SVGRenderer {
 										// it seems if there is an 'm' then the current path is closed
 										// then the point is move to a place relative to the point
 										// after doing the close
+										SVGPathSegMovetoRel mtr = (SVGPathSegMovetoRel)pc;
 										if (pathmoveto == null) {
-												lastx += vals[0];
-												lasty += vals[1];
+												lastx += mtr.getX();
+												lasty += mtr.getY();
 												pathmoveto = pc;
 												currentStream.write(pdfNumber.doubleOut(lastx) + " " + pdfNumber.doubleOut(lasty) + " m\n");
 										} else {
-												lastx += vals[0];
-												lasty += vals[1];
+												lastx += mtr.getX();
+												lasty += mtr.getY();
 												pathmoveto = pc;
 												currentStream.write(pdfNumber.doubleOut(lastx) + " " + pdfNumber.doubleOut(lasty) + " l\n");
 										}
@@ -456,65 +452,73 @@ public class SVGRenderer {
 										lastcy = 0;
 										break;
 								case SVGPathSeg.PATHSEG_LINETO_ABS:
-										lastx = vals[0];
-										lasty = vals[1];
+										SVGPathSegLinetoAbs lta = (SVGPathSegLinetoAbs)pc;
+										lastx = lta.getX();
+										lasty = lta.getY();
 										currentStream.write(pdfNumber.doubleOut(lastx) + " " + pdfNumber.doubleOut(lasty) + " l\n");
 										lastcx = 0;
 										lastcy = 0;
 										break;
 								case SVGPathSeg.PATHSEG_LINETO_REL:
-										lastx += vals[0];
-										lasty += vals[1];
+										SVGPathSegLinetoRel ltr = (SVGPathSegLinetoRel)pc;
+										lastx += ltr.getX();
+										lasty += ltr.getY();
 										currentStream.write(pdfNumber.doubleOut(lastx) + " " + pdfNumber.doubleOut(lasty) + " l\n");
 										lastcx = 0;
 										lastcy = 0;
 										break;
 								case SVGPathSeg.PATHSEG_LINETO_VERTICAL_ABS:
-										lasty = vals[0];
+										SVGPathSegLinetoVerticalAbs lva = (SVGPathSegLinetoVerticalAbs)pc;
+										lasty = lva.getY();
 										currentStream.write(pdfNumber.doubleOut(lastx) + " " + pdfNumber.doubleOut(lasty) + " l\n");
 										lastcx = 0;
 										lastcy = 0;
 										break;
 								case SVGPathSeg.PATHSEG_LINETO_VERTICAL_REL:
-										lasty += vals[0];
+										SVGPathSegLinetoVerticalRel lvr = (SVGPathSegLinetoVerticalRel)pc;
+										lasty += lvr.getY();
 										currentStream.write(pdfNumber.doubleOut(lastx) + " " + pdfNumber.doubleOut(lasty) + " l\n");
 										lastcx = 0;
 										lastcy = 0;
 										break;
 								case SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_ABS:
-										lastx = vals[0];
+										SVGPathSegLinetoHorizontalAbs lha = (SVGPathSegLinetoHorizontalAbs)pc;
+										lastx = lha.getX();
 										currentStream.write(pdfNumber.doubleOut(lastx) + " " + pdfNumber.doubleOut(lasty) + " l\n");
 										lastcx = 0;
 										lastcy = 0;
 										break;
 								case SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_REL:
-										lastx += vals[0];
+										SVGPathSegLinetoHorizontalRel lhr = (SVGPathSegLinetoHorizontalRel)pc;
+										lastx += lhr.getX();
 										currentStream.write(pdfNumber.doubleOut(lastx) + " " + pdfNumber.doubleOut(lasty) + " l\n");
 										lastcx = 0;
 										lastcy = 0;
 										break;
 								case SVGPathSeg.PATHSEG_CURVETO_CUBIC_ABS:
-										lastx = vals[4];
-										lasty = vals[5];
-										lastcx = vals[2];
-										lastcy = vals[3];
-										currentStream.write(pdfNumber.doubleOut(vals[0]) + " " + pdfNumber.doubleOut(vals[1]) +
-																				" " + pdfNumber.doubleOut(vals[2]) + " " + pdfNumber.doubleOut(vals[3]) + " " +
+										SVGPathSegCurvetoCubicAbs cca = (SVGPathSegCurvetoCubicAbs)pc;
+										lastx = cca.getX2();
+										lasty = cca.getY2();
+										lastcx = cca.getX1();
+										lastcy = cca.getY1();
+										currentStream.write(pdfNumber.doubleOut(cca.getX()) + " " + pdfNumber.doubleOut(cca.getY()) +
+																				" " + pdfNumber.doubleOut(lastcx) + " " + pdfNumber.doubleOut(lastcy) + " " +
 																				pdfNumber.doubleOut(lastx) + " " + pdfNumber.doubleOut(lasty) + " c\n");
 										break;
 								case SVGPathSeg.PATHSEG_CURVETO_CUBIC_REL:
-										currentStream.write(pdfNumber.doubleOut(vals[0] + lastx) + " " +
-																				pdfNumber.doubleOut(vals[1] + lasty) + " " +
-																				pdfNumber.doubleOut(vals[2] + lastx) + " " +
-																				pdfNumber.doubleOut(vals[3] + lasty) + " " +
-																				pdfNumber.doubleOut(vals[4] + lastx) + " " +
-																				pdfNumber.doubleOut(vals[5] + lasty) + " c\n");
-										lastcx = vals[2] + lastx;
-										lastcy = vals[3] + lasty;
-										lastx += vals[4];
-										lasty += vals[5];
+										SVGPathSegCurvetoCubicRel ccr = (SVGPathSegCurvetoCubicRel)pc;
+										currentStream.write(pdfNumber.doubleOut(ccr.getX() + lastx) + " " +
+																				pdfNumber.doubleOut(ccr.getY() + lasty) + " " +
+																				pdfNumber.doubleOut(ccr.getX1() + lastx) + " " +
+																				pdfNumber.doubleOut(ccr.getY1() + lasty) + " " +
+																				pdfNumber.doubleOut(ccr.getX2() + lastx) + " " +
+																				pdfNumber.doubleOut(ccr.getY2() + lasty) + " c\n");
+										lastcx = ccr.getX1() + lastx;
+										lastcy = ccr.getY1() + lasty;
+										lastx += ccr.getX2();
+										lasty += ccr.getY2();
 										break;
-								case SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_ABS:
+/*								case SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_ABS:
 										if (lastcx == 0) {
 												lastcx = lastx;
 										}
@@ -645,7 +649,7 @@ public class SVGRenderer {
 										pathmoveto = null;
 										lastx = lastmovex;
 										lasty = lastmovey;
-										break;
+										break;*/
 						}
 				}
 				doDrawing(di);
@@ -797,23 +801,22 @@ public class SVGRenderer {
 		 * A polygon is merely a closed polyline.
 		 * This is made up from a set of points that straight lines are drawn between.
 		 */
-		protected void addPolyline(Vector points, DrawingInstruction di,
+		protected void addPolyline(SVGPointList points, DrawingInstruction di,
 															 boolean close) {
 				PDFNumber pdfNumber = new PDFNumber();
-				PathPoint pc;
+				SVGPoint pc;
 				float lastx = 0;
 				float lasty = 0;
-				Enumeration e = points.elements();
-				if (e.hasMoreElements()) {
-						pc = (PathPoint) e.nextElement();
-						lastx = pc.x;
-						lasty = pc.y;
+				if (points.getNumberOfItems() > 0) {
+						pc = (SVGPoint) points.getItem(0);
+						lastx = pc.getX();
+						lasty = pc.getY();
 						currentStream.write(pdfNumber.doubleOut(lastx) + " " + pdfNumber.doubleOut(lasty) + " m\n");
 				}
-				while (e.hasMoreElements()) {
-						pc = (PathPoint) e.nextElement();
-						lastx = pc.x;
-						lasty = pc.y;
+				for(int count = 1; count < points.getNumberOfItems(); count++) {
+						pc = (SVGPoint) points.getItem(count);
+						lastx = pc.getX();
+						lasty = pc.getY();
 						currentStream.write(pdfNumber.doubleOut(lastx) + " " + pdfNumber.doubleOut(lasty) + " l\n");
 				}
 				if (close)
@@ -943,7 +946,7 @@ public class SVGRenderer {
 				NodeList nl = pattern.getChildNodes();
 				SVGPatternElement ref = (SVGPatternElement) locateDef(
 																	pattern.getHref().getBaseVal(), pattern);
-				while (ref != null) {
+/*				while (ref != null) {
 						if (x == null) {
 								x = ref.getX();
 								pattUnits = ref.getPatternUnits().getBaseVal();
@@ -986,7 +989,7 @@ public class SVGRenderer {
 						length.newValueSpecifiedUnits(
 							SVGLength.SVG_LENGTHTYPE_PERCENTAGE, 1);
 						height = new SVGAnimatedLengthImpl(length);
-				}
+				}*/
 
 				StringWriter realStream = currentStream;
 				currentStream = new StringWriter();
@@ -1006,13 +1009,13 @@ public class SVGRenderer {
 
 				double xval = x.getBaseVal().getValue() + currentXPosition / 1000f;
 				double yval = -y.getBaseVal().getValue() + currentYPosition / 1000f;
-				if (area instanceof GraphicElement) {
-						SVGRect bbox = ((GraphicElement) area).getBBox();
+/*				if (area instanceof SVGLocatable) {
+						SVGRect bbox = ((SVGLocatable) area).getBBox();
 						if (bbox != null) {
 								//		        xval += bbox.getX();
 								//		        yval -= bbox.getY();
 						}
-				}
+				}*/
 				double widthval = width.getBaseVal().getValue();
 				double heightval = height.getBaseVal().getValue();
 				Vector bbox = new Vector();
@@ -1059,7 +1062,7 @@ public class SVGRenderer {
 				stops = linear.getChildNodes();
 				SVGLinearGradientElement ref = (SVGLinearGradientElement) locateDef(
 																				 linear.getHref().getBaseVal(), linear);
-				while (ref != null) {
+/*				while (ref != null) {
 						if (ax1 == null) {
 								ax1 = ref.getX1();
 								gradUnits = ref.getGradientUnits().getBaseVal();
@@ -1103,7 +1106,7 @@ public class SVGRenderer {
 						length.newValueSpecifiedUnits(
 							SVGLength.SVG_LENGTHTYPE_PERCENTAGE, 0);
 						ay2 = new SVGAnimatedLengthImpl(length);
-				}
+				}*/
 				SVGAnimatedTransformList an = linear.getGradientTransform();
 				SVGMatrix transform = null;
 				if(an != null)
@@ -1149,8 +1152,8 @@ public class SVGRenderer {
 											new Double(currentYPosition / 1000f + y2));
 								}
 						}
-				} else if (area instanceof GraphicElement) {
-						SVGRect rect = ((GraphicElement) area).getBBox();
+/*				} else if (area instanceof SVGLocatable) {
+						SVGRect rect = ((SVGLocatable) area).getBBox();
 						if (rect != null) {
 								theCoords = new Vector();
 								SVGLength val;
@@ -1206,7 +1209,7 @@ public class SVGRenderer {
 											new Double(currentYPosition / 1000f -
 																 val.getValue()));
 								}
-						}
+						}*/
 				}
 				if (theCoords == null) {
 						theCoords = new Vector();
@@ -1244,7 +1247,7 @@ public class SVGRenderer {
 				Vector someColors = new Vector();
 				float lastoffset = 0;
 				Vector lastVector = null;
-				SVGStopElementImpl stop;
+				SVGStopElement stop;
 				if (nl.getLength() == 0) {
 						// the color should be "none"
 						if (fill)
@@ -1253,7 +1256,7 @@ public class SVGRenderer {
 								di.stroke = false;
 						return;
 				} else if (nl.getLength() == 1) {
-						stop = (SVGStopElementImpl) nl.item(0);
+						stop = (SVGStopElement) nl.item(0);
 						CSSValue cv = stop.getPresentationAttribute("stop-color");
 						if (cv == null) {
 								// maybe using color
@@ -1266,7 +1269,7 @@ public class SVGRenderer {
 						}
 						PDFColor color = new PDFColor(0, 0, 0);
 						if (cv != null &&
-										cv.getValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+										cv.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 								if (((CSSPrimitiveValue) cv).getPrimitiveType() ==
 												CSSPrimitiveValue.CSS_RGBCOLOR) {
 										RGBColor col =
@@ -1292,7 +1295,7 @@ public class SVGRenderer {
 						return;
 				}
 				for (int count = 0; count < nl.getLength(); count++) {
-						stop = (SVGStopElementImpl) nl.item(count);
+						stop = (SVGStopElement) nl.item(count);
 						CSSValue cv = stop.getPresentationAttribute("stop-color");
 						if (cv == null) {
 								// maybe using color
@@ -1305,7 +1308,7 @@ public class SVGRenderer {
 						}
 						PDFColor color = new PDFColor(0, 0, 0);
 						if (cv != null &&
-										cv.getValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+										cv.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 								if (((CSSPrimitiveValue) cv).getPrimitiveType() ==
 												CSSPrimitiveValue.CSS_RGBCOLOR) {
 										RGBColor col =
@@ -1376,7 +1379,7 @@ public class SVGRenderer {
 				stops = radial.getChildNodes();
 				SVGRadialGradientElement ref = (SVGRadialGradientElement) locateDef(
 																				 radial.getHref().getBaseVal(), radial);
-				while (ref != null) {
+/*				while (ref != null) {
 						if (acx == null) {
 								acx = ref.getCx();
 								gradUnits = ref.getGradientUnits().getBaseVal();
@@ -1428,10 +1431,10 @@ public class SVGRenderer {
 						length.newValueSpecifiedUnits(
 							SVGLength.SVG_LENGTHTYPE_PERCENTAGE, 0.5f);
 						afy = new SVGAnimatedLengthImpl(length);
-				}
+				}*/
 				ColorSpace aColorSpace = new ColorSpace(ColorSpace.DEVICE_RGB);
 				org.w3c.dom.NodeList nl = stops;
-				SVGStopElementImpl stop;
+				SVGStopElement stop;
 				if (nl.getLength() == 0) {
 						// the color should be "none"
 						if (fill)
@@ -1440,7 +1443,7 @@ public class SVGRenderer {
 								di.stroke = false;
 						return;
 				} else if (nl.getLength() == 1) {
-						stop = (SVGStopElementImpl) nl.item(0);
+						stop = (SVGStopElement) nl.item(0);
 						CSSValue cv = stop.getPresentationAttribute("stop-color");
 						if (cv == null) {
 								// maybe using color
@@ -1453,7 +1456,7 @@ public class SVGRenderer {
 						}
 						PDFColor color = new PDFColor(0, 0, 0);
 						if (cv != null &&
-										cv.getValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+										cv.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 								if (((CSSPrimitiveValue) cv).getPrimitiveType() ==
 												CSSPrimitiveValue.CSS_RGBCOLOR) {
 										RGBColor col =
@@ -1527,10 +1530,10 @@ public class SVGRenderer {
 									new Double(ar.getBaseVal().getValue()));
 								//				}
 						}
-				} else if (gradUnits ==
+/*				} else if (gradUnits ==
 						SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX &&
-						area instanceof GraphicElement) {
-						SVGRect rect = ((GraphicElement) area).getBBox();
+						area instanceof SVGLocatable) {
+						SVGRect rect = ((SVGLocatable) area).getBBox();
 						if (rect != null) {
 								theCoords = new Vector();
 								SVGLength val;
@@ -1596,14 +1599,14 @@ public class SVGRenderer {
 								} else {
 										theCoords.addElement(new Double(val.getValue()));
 								}
-						}
+						}*/
 				}
 				if (theCoords == null) {
 						// percentage values are expressed according to the viewport.
-						SVGElement vp =
+/*						SVGElement vp =
 							((GraphicElement) area).getNearestViewportElement();
-						if (area instanceof GraphicElement) {
-								SVGRect rect = ((GraphicElement) area).getBBox();
+						if (area instanceof SVGLocatable) {
+								SVGRect rect = ((SVGLocatable) area).getBBox();
 								if (rect != null) {
 										theCoords = new Vector();
 										SVGLength val = acx.getBaseVal();
@@ -1674,7 +1677,7 @@ public class SVGRenderer {
 												theCoords.addElement(new Double(val.getValue()));
 										}
 								}
-						}
+						}*/
 				}
 				if (theCoords == null) {
 						theCoords = new Vector();
@@ -1693,7 +1696,7 @@ public class SVGRenderer {
 				}
 				float lastoffset = 0;
 				for (int count = 0; count < nl.getLength(); count++) {
-						stop = (SVGStopElementImpl) nl.item(count);
+						stop = (SVGStopElement) nl.item(count);
 						CSSValue cv = stop.getPresentationAttribute("stop-color");
 						if (cv == null) {
 								// maybe using color
@@ -1706,7 +1709,7 @@ public class SVGRenderer {
 						}
 						PDFColor color = new PDFColor(0, 0, 0);
 						if (cv != null &&
-										cv.getValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+										cv.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 								if (((CSSPrimitiveValue) cv).getPrimitiveType() ==
 												CSSPrimitiveValue.CSS_RGBCOLOR) {
 										RGBColor col =
@@ -1759,7 +1762,7 @@ public class SVGRenderer {
 				CSSValue sp;
 				sp = style.getPresentationAttribute("fill");
 				if (sp != null) {
-						if (sp.getValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+						if (sp.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 								if (((CSSPrimitiveValue) sp).getPrimitiveType() ==
 												CSSPrimitiveValue.CSS_RGBCOLOR) {
 										RGBColor col =
@@ -1803,7 +1806,7 @@ public class SVGRenderer {
 				}
 				sp = style.getPresentationAttribute("fill-rule");
 				if (sp != null) {
-						if (sp.getValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+						if (sp.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 								if (((CSSPrimitiveValue) sp).getPrimitiveType() ==
 												CSSPrimitiveValue.CSS_STRING) {
 										if (sp.getCssText().equals("nonzero")) {
@@ -1815,7 +1818,7 @@ public class SVGRenderer {
 				}
 				sp = style.getPresentationAttribute("stroke");
 				if (sp != null) {
-						if (sp.getValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+						if (sp.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 								if (((CSSPrimitiveValue) sp).getPrimitiveType() ==
 												CSSPrimitiveValue.CSS_RGBCOLOR) {
 										RGBColor col =
@@ -1855,7 +1858,7 @@ public class SVGRenderer {
 				}
 				sp = style.getPresentationAttribute("stroke-linecap");
 				if (sp != null) {
-						if (sp.getValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+						if (sp.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 								if (((CSSPrimitiveValue) sp).getPrimitiveType() ==
 												CSSPrimitiveValue.CSS_STRING) {
 										String str = sp.getCssText();
@@ -1873,7 +1876,7 @@ public class SVGRenderer {
 				}
 				sp = style.getPresentationAttribute("stroke-linejoin");
 				if (sp != null) {
-						if (sp.getValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+						if (sp.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 								if (((CSSPrimitiveValue) sp).getPrimitiveType() ==
 												CSSPrimitiveValue.CSS_STRING) {
 										String str = sp.getCssText();
@@ -1890,7 +1893,7 @@ public class SVGRenderer {
 				}
 				sp = style.getPresentationAttribute("stroke-miterlimit");
 				if (sp != null) {
-						if (sp.getValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+						if (sp.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 								float width;
 								width = ((CSSPrimitiveValue) sp).getFloatValue(
 													CSSPrimitiveValue.CSS_PT);
@@ -1901,7 +1904,7 @@ public class SVGRenderer {
 				}
 				sp = style.getPresentationAttribute("stroke-width");
 				if (sp != null) {
-						if (sp.getValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+						if (sp.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 								float width;
 								width = ((CSSPrimitiveValue) sp).getFloatValue(
 													CSSPrimitiveValue.CSS_PT);
@@ -1911,12 +1914,12 @@ public class SVGRenderer {
 				}
 				sp = style.getPresentationAttribute("stroke-dasharray");
 				if (sp != null) {
-						if (sp.getValueType() == CSSValue.CSS_VALUE_LIST) {
+						if (sp.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
 								currentStream.write("[ ");
 								CSSValueList list = (CSSValueList) sp;
 								for (int count = 0; count < list.getLength(); count++) {
 										CSSValue val = list.item(count);
-										if (val.getValueType() ==
+										if (val.getCssValueType() ==
 														CSSValue.CSS_PRIMITIVE_VALUE) {
 												currentStream.write(
 													((CSSPrimitiveValue) val).getFloatValue(
@@ -1925,7 +1928,7 @@ public class SVGRenderer {
 								}
 								currentStream.write("] ");
 								sp = style.getPresentationAttribute("stroke-dashoffset");
-								if (sp != null && sp.getValueType() ==
+								if (sp != null && sp.getCssValueType() ==
 												CSSValue.CSS_PRIMITIVE_VALUE) {
 										currentStream.write(
 											((CSSPrimitiveValue) sp).getFloatValue(
@@ -1938,7 +1941,7 @@ public class SVGRenderer {
 				sp = style.getPresentationAttribute("clip-path");
 				if (sp != null) {
 						String clipurl;
-						if (sp.getValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+						if (sp.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 								if (((CSSPrimitiveValue) sp).getPrimitiveType() ==
 												CSSPrimitiveValue.CSS_URI) {
 										clipurl = ((CSSPrimitiveValue) sp).getCssText();
@@ -1961,7 +1964,7 @@ public class SVGRenderer {
 				sp = style.getPresentationAttribute("mask");
 				if (sp != null) {
 						String maskurl;
-						if (sp.getValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+						if (sp.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 								if (((CSSPrimitiveValue) sp).getPrimitiveType() ==
 												CSSPrimitiveValue.CSS_URI) {
 										maskurl = ((CSSPrimitiveValue) sp).getCssText();
@@ -2018,22 +2021,22 @@ public class SVGRenderer {
 				currentStream.write("q\n");
 				if (area instanceof SVGTransformable) {
 						SVGTransformable tf = (SVGTransformable) area;
-						SVGAnimatedTransformList trans = tf.getTransform();
-						if (trans != null) {
-								applyTransform(trans);
-						}
+//						SVGAnimatedTransformList trans = tf.getTransform();
+//						if (trans != null) {
+//								applyTransform(trans);
+//						}
 				}
 
 				if (area instanceof SVGStylable) {
-						di = applyStyle(area, (SVGStylable) area);
+//						di = applyStyle(area, (SVGStylable) area);
 				}
 
 				if (area instanceof SVGRectElement) {
 						SVGRectElement rg = (SVGRectElement) area;
 						float rectx = rg.getX().getBaseVal().getValue();
 						float recty = rg.getY().getBaseVal().getValue();
-						float rx = rg.getRx().getBaseVal().getValue();
-						float ry = rg.getRy().getBaseVal().getValue();
+						float rx = 0;//rg.getRx().getBaseVal().getValue();
+						float ry = 0;//rg.getRy().getBaseVal().getValue();
 						float rw = rg.getWidth().getBaseVal().getValue();
 						float rh = rg.getHeight().getBaseVal().getValue();
 						addRect(rectx, recty, rw, rh, rx, ry, di);
@@ -2044,11 +2047,11 @@ public class SVGRenderer {
 						float x2 = lg.getX2().getBaseVal().getValue();
 						float y2 = lg.getY2().getBaseVal().getValue();
 						addLine(x1, y1, x2, y2, di);
-				} else if (area instanceof SVGTextElementImpl) {
+				} else if (area instanceof SVGTextElement) {
 						//			currentStream.add("q\n");
 						//			currentStream.add(1 + " " + 0 + " " + 0 + " " + 1 + " " + 0 + " " + 0 + " cm\n");
 						currentStream.write("BT\n");
-						renderText((SVGTextElementImpl) area, 0, 0, di);
+						renderText((SVGTextElement) area, 0, 0, di);
 						currentStream.write("ET\n");
 						//			currentStream.add("Q\n");
 				} else if (area instanceof SVGCircleElement) {
@@ -2064,19 +2067,18 @@ public class SVGRenderer {
 						float rx = cg.getRx().getBaseVal().getValue();
 						float ry = cg.getRy().getBaseVal().getValue();
 						addEllipse(cx, cy, rx, ry, di);
-				} else if (area instanceof SVGPathElementImpl) {
-						addPath(((SVGPathElementImpl) area).pathElements, posx,
-										posy, di);
-				} else if (area instanceof SVGPolylineElementImpl) {
-						addPolyline(((SVGPolylineElementImpl) area).points, di, false);
-				} else if (area instanceof SVGPolygonElementImpl) {
-						addPolyline(((SVGPolygonElementImpl) area).points, di, true);
-				} else if (area instanceof SVGGElementImpl) {
-						renderGArea((SVGGElementImpl) area, x, y);
-				} else if (area instanceof SVGUseElementImpl) {
-						SVGUseElementImpl ug = (SVGUseElementImpl) area;
-						String ref = ug.link;
-						//			ref = ref.substring(1, ref.length());
+				} else if (area instanceof SVGPathElement) {
+//						addPath(((SVGPathElement) area).getPathSegList(), posx,
+//										posy, di);
+				} else if (area instanceof SVGPolylineElement) {
+//						addPolyline(((SVGPolylineElement) area).getPoints(), di, false);
+				} else if (area instanceof SVGPolygonElement) {
+//						addPolyline(((SVGPolygonElement) area).getPoints(), di, true);
+				} else if (area instanceof SVGGElement) {
+						renderGArea((SVGGElement) area, x, y);
+				} else if (area instanceof SVGUseElement) {
+						SVGUseElement ug = (SVGUseElement) area;
+						String ref = ug.getHref().getBaseVal();
 						SVGElement graph = null;
 						graph = locateDef(ref, ug);
 						if (graph != null) {
@@ -2125,14 +2127,14 @@ public class SVGRenderer {
 						else {
 								MessageHandler.logln("Use Element: " + ref + " not found");
 						}
-				} else if (area instanceof SVGImageElementImpl) {
-						SVGImageElementImpl ig = (SVGImageElementImpl) area;
-						renderImage(ig.link, ig.x, ig.y, ig.width, ig.height);
+				} else if (area instanceof SVGImageElement) {
+						SVGImageElement ig = (SVGImageElement) area;
+						renderImage(ig.getHref().getBaseVal(), ig.getX().getBaseVal().getValue(), ig.getY().getBaseVal().getValue(), ig.getWidth().getBaseVal().getValue(), ig.getHeight().getBaseVal().getValue());
 				} else if (area instanceof SVGSVGElement) {
 						currentStream.write("q\n");
 						SVGSVGElement svgel = (SVGSVGElement) area;
 						float svgx = 0;
-						if (svgel.getX() != null)
+/*						if (svgel.getX() != null)
 								svgx = svgel.getX().getBaseVal().getValue();
 						float svgy = 0;
 						if (svgel.getY() != null)
@@ -2140,7 +2142,7 @@ public class SVGRenderer {
 						currentStream.write(1 + " 0 0 " + 1 + " " + svgx + " " +
 																svgy + " cm\n");
 						renderSVG(svgel, (int)(x + 1000 * svgx),
-											(int)(y + 1000 * svgy));
+											(int)(y + 1000 * svgy));*/
 						currentStream.write("Q\n");
 						//		} else if (area instanceof SVGSymbolElement) {
 						// 'symbol' element is not rendered (except by 'use')
@@ -2150,7 +2152,7 @@ public class SVGRenderer {
 						for (int count = 0; count < nl.getLength(); count++) {
 								org.w3c.dom.Node n = nl.item(count);
 								if (n instanceof SVGElement) {
-										if (n instanceof GraphicElement) {
+/*										if (n instanceof GraphicElement) {
 												SVGRect rect = ((GraphicElement) n).getBBox();
 												if (rect != null) {
 														/*							currentAnnotList = this.pdfDoc.makeAnnotList();
@@ -2160,8 +2162,8 @@ public class SVGRenderer {
 																					currentAnnotList.addLink(
 																						this.pdfDoc.makeLink(lrect.getRectangle(), dest, linkType));
 																					currentAnnotList = null;
-														 */ }
-										}
+														 * }
+										}*/
 										renderElement((SVGElement) n, posx, posy);
 								}
 						}
@@ -2176,10 +2178,10 @@ public class SVGRenderer {
 		/**
 		 * Todo: underline, linethrough, textpath
 		 */
-		public void renderText(SVGTextElementImpl tg, float x, float y,
+		public void renderText(SVGTextElement tg, float x, float y,
 													 DrawingInstruction di) {
 				SVGTextRenderer str = new SVGTextRenderer(fontState, tg, x, y);
-				str.renderText(tg);
+//				str.renderText(tg);
 		}
 
 		/**
@@ -2310,25 +2312,26 @@ public class SVGRenderer {
 				float x;
 				float y;
 
-				SVGTextRenderer(FontState fontState, SVGTextElementImpl tg,
+				SVGTextRenderer(FontState fontState, SVGTextElement tg,
 												float x, float y) {
 						fs = fontState;
 
 						PDFNumber pdfNumber = new PDFNumber();
-						SVGTransformList trans = tg.getTransform().getBaseVal();
+/*						SVGTransformList trans = tg.getTransform().getBaseVal();
 						matrix = trans.consolidate().getMatrix();
 						transstr = (pdfNumber.doubleOut(matrix.getA()) + " " +
 												pdfNumber.doubleOut(matrix.getB()) + " " +
 												pdfNumber.doubleOut(matrix.getC()) + " " +
-												pdfNumber.doubleOut(-matrix.getD()) + " ");
+												pdfNumber.doubleOut(-matrix.getD()) + " ");*/
+						transstr = "1 0 0 1 ";
 						this.x = x;
 						this.y = y;
 				}
 
-				void renderText(SVGTextElementImpl te) {
+				void renderText(SVGTextElement te) {
 						float xoffset = 0;
 
-						if (te.anchor.getEnum() != TextAnchor.START) {
+/*						if (te.anchor.getEnum() != TextAnchor.START) {
 								// This is a bit of a hack: The code below will update
 								// the current position, so all I have to do is to
 								// prevent that the code will write anything to the
@@ -2336,7 +2339,7 @@ public class SVGRenderer {
 								StringWriter oldStream = currentStream;
 								currentStream = new StringWriter ();
 								
-								_renderText (te, 0f, true);
+								renderText (te, 0f, true);
 
 								float width = currentX - te.x;
 								currentStream = oldStream;
@@ -2346,26 +2349,26 @@ public class SVGRenderer {
 								} else if (te.anchor.getEnum() == TextAnchor.MIDDLE) {
 										xoffset = -width/2;
 								}
-						}
+						}*/
 
-						_renderText (te, xoffset, false);
+						renderText (te, xoffset, false);
 				}
 
-				void _renderText(SVGTextElementImpl te, float xoffset, boolean getWidthOnly) {
-						DrawingInstruction di = applyStyle(te, te);
-						if (di.fill) {
-								if (di.stroke) {
-										currentStream.write("2 Tr\n");
-								} else {
+				void renderText(SVGTextElement te, float xoffset, boolean getWidthOnly) {
+//						DrawingInstruction di = applyStyle(te, te);
+//						if (di.fill) {
+//								if (di.stroke) {
+//										currentStream.write("2 Tr\n");
+//								} else {
 										currentStream.write("0 Tr\n");
-								}
-						} else if (di.stroke) {
-								currentStream.write("1 Tr\n");
-						}
-						updateFont(te, fs);
+//								}
+//						} else if (di.stroke) {
+//								currentStream.write("1 Tr\n");
+//						}
+//						updateFont(te, fs);
 
-						float tx = te.x;
-						float ty = te.y;
+						float tx = te.getX().getBaseVal().getValue();
+						float ty = te.getY().getBaseVal().getValue();
 						currentX = x + tx + xoffset;
 						currentY = y + ty;
 						baseX = currentX;
@@ -2374,21 +2377,21 @@ public class SVGRenderer {
 						//		Vector list = te.textList;
 						for (int count = 0; count < nodel.getLength(); count++) {
 								Object o = nodel.item(count);
-								applyStyle(te, te);
+//								applyStyle(te, te);
 								if (o instanceof CharacterData) {
 										String str = ((CharacterData) o).getData();
 										currentStream.write(transstr +
-																				(currentX + matrix.getE()) + " " +
-																				(baseY + matrix.getF()) + " Tm " + "(");
+																				(currentX/* + matrix.getE()*/) + " " +
+																				(baseY/* + matrix.getF()*/) + " Tm " + "(");
 										boolean spacing = "preserve".equals(te.getXMLspace());
 										currentX = addSVGStr(fs, currentX, str, spacing);
 										currentStream.write(") Tj\n");
-								} else if (o instanceof SVGTextPathElementImpl) {
-										SVGTextPathElementImpl tpg = (SVGTextPathElementImpl) o;
-										String ref = tpg.str;
+								} else if (o instanceof SVGTextPathElement) {
+										SVGTextPathElement tpg = (SVGTextPathElement) o;
+										String ref = tpg.getHref().getBaseVal();
 										SVGElement graph = null;
 										graph = locateDef(ref, tpg);
-										if (graph instanceof SVGPathElementImpl) {
+										if (graph instanceof SVGPathElement) {
 												// probably not the best way to do this, should be able
 												// to render without the style being set.
 												//					GraphicImpl parent = graph.getGraphicParent();
@@ -2397,18 +2400,18 @@ public class SVGRenderer {
 												// how should this work
 												//					graph.setParent(parent);
 										}
-								} else if (o instanceof SVGTRefElementImpl) {
-										SVGTRefElementImpl trg = (SVGTRefElementImpl) o;
-										String ref = trg.ref;
+								} else if (o instanceof SVGTRefElement) {
+										SVGTRefElement trg = (SVGTRefElement) o;
+										String ref = trg.getHref().getBaseVal();
 										SVGElement element = locateDef(ref, trg);
-										if (element instanceof SVGTextElementImpl) {
+										if (element instanceof SVGTextElement) {
 												//					GraphicImpl parent = graph.getGraphicParent();
 												//					graph.setParent(trg);
-												SVGTextElementImpl tele =
-													(SVGTextElementImpl) element;
+												SVGTextElement tele =
+													(SVGTextElement) element;
 												// the style should be from tele, but it needs to be placed as a child
 												// of trg to work
-												di = applyStyle(trg, trg);
+/*												di = applyStyle(trg, trg);
 												if (di.fill) {
 														if (di.stroke) {
 																currentStream.write("2 Tr\n");
@@ -2417,7 +2420,7 @@ public class SVGRenderer {
 														}
 												} else if (di.stroke) {
 														currentStream.write("1 Tr\n");
-												}
+												}*/
 												boolean changed = false;
 												FontState oldfs = fs;
 												changed = updateFont(te, fs);
@@ -2438,12 +2441,12 @@ public class SVGRenderer {
 												}
 												//					graph.setParent(parent);
 										}
-								} else if (o instanceof SVGTSpanElementImpl) {
-										SVGTSpanElementImpl tsg = (SVGTSpanElementImpl) o;
-										applyStyle(tsg, tsg);
+								} else if (o instanceof SVGTSpanElement) {
+										SVGTSpanElement tsg = (SVGTSpanElement) o;
+//										applyStyle(tsg, tsg);
 										boolean changed = false;
 										FontState oldfs = fs;
-										changed = updateFont(tsg, fs);
+//										changed = updateFont(tsg, fs);
 										boolean spacing = "preserve".equals(tsg.getXMLspace());
 										renderTextNodes(spacing, tsg.getChildNodes(),
 																		tsg.getX().getBaseVal(),
@@ -2598,7 +2601,7 @@ public class SVGRenderer {
 						String fontFamily = fs.getFontFamily();
 						CSSValue sp = style.getPresentationAttribute("font-family");
 						if (sp != null &&
-										sp.getValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+										sp.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 								if (((CSSPrimitiveValue) sp).getPrimitiveType() ==
 												CSSPrimitiveValue.CSS_STRING) {
 										fontFamily = sp.getCssText();
@@ -2610,7 +2613,7 @@ public class SVGRenderer {
 						String fontStyle = fs.getFontStyle();
 						sp = style.getPresentationAttribute("font-style");
 						if (sp != null &&
-										sp.getValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+										sp.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 								if (((CSSPrimitiveValue) sp).getPrimitiveType() ==
 												CSSPrimitiveValue.CSS_STRING) {
 										fontStyle = sp.getCssText();
@@ -2622,7 +2625,7 @@ public class SVGRenderer {
 						String fontWeight = fs.getFontWeight();
 						sp = style.getPresentationAttribute("font-weight");
 						if (sp != null &&
-										sp.getValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+										sp.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 								if (((CSSPrimitiveValue) sp).getPrimitiveType() ==
 												CSSPrimitiveValue.CSS_STRING) {
 										fontWeight = sp.getCssText();
@@ -2634,7 +2637,7 @@ public class SVGRenderer {
 						float newSize = fs.getFontSize() / 1000f;
 						sp = style.getPresentationAttribute("font-size");
 						if (sp != null &&
-										sp.getValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+										sp.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 								//		    if(((CSSPrimitiveValue)sp).getPrimitiveType() == CSSPrimitiveValue.CSS_NUMBER) {
 								newSize = ((CSSPrimitiveValue) sp).getFloatValue(
 														CSSPrimitiveValue.CSS_PT);
