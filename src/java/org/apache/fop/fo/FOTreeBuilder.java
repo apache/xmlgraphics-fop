@@ -31,7 +31,6 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.apps.Document;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.ElementMapping.Maker;
 import org.apache.fop.fo.pagination.Root;
@@ -80,9 +79,6 @@ public class FOTreeBuilder extends DefaultHandler {
      */
     private FOInputHandler foInputHandler;
 
-    /** The Document object managing the FO Tree that is being built */
-    private Document document;
-
     /** The SAX locator object managing the line and column counters */
     private Locator locator; 
     
@@ -91,14 +87,6 @@ public class FOTreeBuilder extends DefaultHandler {
      */
     public FOTreeBuilder() {
         setupDefaultMappings();
-    }
-
-    /**
-     * Sets the apps.Document for this object
-     * @param doc Document instance
-     */
-    public void setDocument(Document doc) {
-        this.document = doc;
     }
 
     /**
@@ -254,7 +242,7 @@ public class FOTreeBuilder extends DefaultHandler {
 
         if (rootFObj == null) {
             rootFObj = (Root) foNode;
-            rootFObj.setFOInputHandler(document.getFOInputHandler());
+            rootFObj.setFOInputHandler(foInputHandler);
         } else {
             currentFObj.addChild(foNode);
         }
