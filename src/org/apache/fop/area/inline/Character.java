@@ -11,7 +11,7 @@ import org.apache.fop.render.Renderer;
 
 /**
  * Single character inline area.
- * This inline area holds a single characater.
+ * This inline area holds a single character.
  */
 public class Character extends InlineArea {
     private char character;
@@ -24,8 +24,6 @@ public class Character extends InlineArea {
     public Character(char ch) {
         character = ch;
     }
-
-    // character info: font, char spacing, colour, baseline
 
     /**
      * Render this inline area.
@@ -44,5 +42,5 @@ public class Character extends InlineArea {
     public char getChar() {
         return character;
     }
-
 }
+

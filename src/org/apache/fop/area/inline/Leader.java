@@ -16,8 +16,6 @@ import org.apache.fop.fo.properties.RuleStyle;
  */
 public class Leader extends InlineArea {
 
-    // pattern, length min opt max
-
     // in the case of use content or dots this is replaced
     // with the set of inline areas
     // if space replaced with a space
@@ -77,3 +75,4 @@ public class Leader extends InlineArea {
         renderer.renderLeader(this);
     }
 }
+

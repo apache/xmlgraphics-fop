@@ -44,7 +44,7 @@ public class RegionReference extends Area implements Cloneable {
     private int regionClass = BEFORE;
     private CTM ctm;
     // the list of block areas from the static flow
-    private ArrayList blocks = new ArrayList();
+    private List blocks = new ArrayList();
 
     /**
      * Create a new region reference area.

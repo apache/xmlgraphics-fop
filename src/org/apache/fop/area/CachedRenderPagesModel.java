@@ -9,6 +9,7 @@ package org.apache.fop.area;
 
 import org.apache.fop.render.Renderer;
 
+import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -27,7 +28,7 @@ import java.io.BufferedInputStream;
  * the contents a reloaded.
  */
 public class CachedRenderPagesModel extends AreaTree.RenderPagesModel {
-    private HashMap pageMap = new HashMap();
+    private Map pageMap = new HashMap();
 
     /**
      * Create a new render pages model with the given renderer.

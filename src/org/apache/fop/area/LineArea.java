@@ -30,7 +30,7 @@ public class LineArea extends Area {
     // this class can contain the dominant char styling info
     // this means that many renderers can optimise a bit
 
-    private ArrayList inlineAreas = new ArrayList();
+    private List inlineAreas = new ArrayList();
 
     /**
      * Set the height of this line area.

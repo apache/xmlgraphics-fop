@@ -14,3 +14,4 @@ package org.apache.fop.area;
  */
 public class Title extends LineArea {
 }
+

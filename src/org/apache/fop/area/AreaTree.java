@@ -11,7 +11,9 @@ import org.apache.fop.render.Renderer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -38,10 +40,10 @@ public class AreaTree {
     private AreaTreeModel model;
 
     // hashmap of arraylists containing pages with id area
-    private HashMap idLocations = new HashMap();
+    private Map idLocations = new HashMap();
     // list of id's yet to be resolved and arraylists of pages
-    private HashMap resolve = new HashMap();
-    private ArrayList treeExtensions = new ArrayList();
+    private Map resolve = new HashMap();
+    private List treeExtensions = new ArrayList();
 
     /**
      * Create a render pages area tree model.
@@ -100,7 +102,7 @@ public class AreaTree {
         }
         list.add(pv);
 
-        HashSet todo = (HashSet)resolve.get(id);
+        Set todo = (Set)resolve.get(id);
         if (todo != null) {
             for (Iterator iter = todo.iterator(); iter.hasNext();) {
                 Resolveable res = (Resolveable)iter.next();
@@ -125,7 +127,7 @@ public class AreaTree {
      * @param res the Resolveable object to resolve
      */
     public void addUnresolvedID(String id, Resolveable res) {
-        HashSet todo = (HashSet)resolve.get(id);
+        Set todo = (Set)resolve.get(id);
         if (todo == null) {
             todo = new HashSet();
             resolve.put(id, todo);
@@ -146,9 +148,9 @@ public class AreaTree {
             String[] ids = res.getIDs();
             for (int count = 0; count < ids.length; count++) {
                 if (idLocations.containsKey(ids[count])) {
-                    res.resolve(ids[count], (ArrayList)idLocations.get(ids[count]));
+                    res.resolve(ids[count], (List)idLocations.get(ids[count]));
                 } else {
-                    HashSet todo = (HashSet)resolve.get(ids[count]);
+                    Set todo = (Set)resolve.get(ids[count]);
                     if (todo == null) {
                         todo = new HashSet();
                         resolve.put(ids[count], todo);
@@ -180,7 +182,7 @@ public class AreaTree {
     public void endDocument() {
         for (Iterator iter = resolve.keySet().iterator(); iter.hasNext();) {
             String id = (String)iter.next();
-            HashSet list = (HashSet)resolve.get(id);
+            Set list = (Set)resolve.get(id);
             for (Iterator resIter = list.iterator(); resIter.hasNext();) {
                 Resolveable res = (Resolveable)resIter.next();
                 if (!res.isResolved()) {
@@ -228,10 +230,10 @@ public class AreaTree {
      * The pages are stored and can be retrieved in any order.
      */
     public static class StorePagesModel extends AreaTreeModel {
-        private ArrayList pageSequence = null;
-        private ArrayList titles = new ArrayList();
-        private ArrayList currSequence;
-        private ArrayList extensions = new ArrayList();
+        private List pageSequence = null;
+        private List titles = new ArrayList();
+        private List currSequence;
+        private List extensions = new ArrayList();
 
         /**
          * Create a new store pages model
@@ -284,7 +286,7 @@ public class AreaTree {
          * @return returns the number of pages in a page sequence
          */
         public int getPageCount(int seq) {
-            ArrayList sequence = (ArrayList) pageSequence.get(seq);
+            List sequence = (List) pageSequence.get(seq);
             return sequence.size();
         }
 
@@ -295,7 +297,7 @@ public class AreaTree {
          * @return the PageViewport for the particular page
          */
         public PageViewport getPage(int seq, int count) {
-            ArrayList sequence = (ArrayList) pageSequence.get(seq);
+            List sequence = (List) pageSequence.get(seq);
             return (PageViewport) sequence.get(count);
         }
 
@@ -363,9 +365,9 @@ public class AreaTree {
         /**
          * Pages that have been prepared but not rendered yet.
          */
-        protected ArrayList prepared = new ArrayList();
-        private ArrayList pendingExt = new ArrayList();
-        private ArrayList endDocExt = new ArrayList();
+        protected List prepared = new ArrayList();
+        private List pendingExt = new ArrayList();
+        private List endDocExt = new ArrayList();
 
         /**
          * Create a new render pages model with the given renderer.
@@ -488,7 +490,7 @@ public class AreaTree {
             }
         }        
 
-        private void renderExtensions(ArrayList list) {
+        private void renderExtensions(List list) {
             for (int count = 0; count < list.size(); count++) {
                 TreeExt ext = (TreeExt)list.get(count);
                 renderer.renderExtension(ext);
