@@ -25,7 +25,9 @@ public interface FopImage {
     // Methods throw exception because they can retrieve data
     // when needed.
 
-    // Ressource location
+    public boolean invertImage();
+
+    // Resource location
     public String getURL();
 
     // image size

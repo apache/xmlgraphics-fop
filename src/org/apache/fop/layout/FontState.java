@@ -23,6 +23,7 @@ public class FontState {
     private int _fontVariant;
 
     private FontMetric _metric;
+    private int _letterSpacing;
 
     private static Hashtable EMPTY_HASHTABLE = new Hashtable();
 
@@ -38,11 +39,26 @@ public class FontState {
         _fontName = fontInfo.fontLookup(fontFamily, fontStyle, fontWeight);
         _metric = fontInfo.getMetricsFor(_fontName);
         _fontVariant = fontVariant;
+        _letterSpacing = 0;
     }
+
+    public FontState(FontInfo fontInfo, String fontFamily, String fontStyle,
+                     String fontWeight, int fontSize,
+                     int fontVariant, int letterSpacing) throws FOPException {
+        this(fontInfo, fontFamily, fontStyle, fontWeight, fontSize,
+             fontVariant);
+        _letterSpacing = letterSpacing;
+    }
+
 
     public int getAscender() {
         return _metric.getAscender(_fontSize) / 1000;
     }
+
+    public int getLetterSpacing() {
+        return _letterSpacing;
+    }
+
 
     public int getCapHeight() {
         return _metric.getCapHeight(_fontSize) / 1000;
@@ -95,7 +111,7 @@ public class FontState {
 
     public int width(int charnum) {
         // returns width of given character number in millipoints
-        return (_metric.width(charnum, _fontSize) / 1000);
+        return _letterSpacing + (_metric.width(charnum, _fontSize) / 1000);
     }
 
     /**

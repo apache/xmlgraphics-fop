@@ -156,7 +156,7 @@ public class PDFDocument {
 
     /**
      * creates an empty PDF document <p>
-     * 
+     *
      * The constructor creates a /Root and /Pages object to
      * track the document but does not write these objects until
      * the trailer is written. Note that the object ID of the
@@ -761,6 +761,12 @@ public class PDFDocument {
     }
 
 
+    public PDFICCStream makePDFICCStream() {
+        PDFICCStream iccStream = new PDFICCStream(++this.objectcount);
+        this.objects.addElement(iccStream);
+        return iccStream;
+    }
+
     /**
      * make a Type1 /Font object
      *
@@ -918,8 +924,7 @@ public class PDFDocument {
         if (xObject != null)
             return xObject.getXNumber();
         // else, create a new one
-        xObject = new PDFXObject(++this.objectcount, ++this.xObjectCount,
-                                 img);
+        xObject = new PDFXObject(++this.objectcount, ++this.xObjectCount, img, this);
         this.objects.addElement(xObject);
         this.xObjects.addElement(xObject);
         this.xObjectsMap.put(url, xObject);
@@ -1033,8 +1038,8 @@ public class PDFDocument {
             //next line by lmckenzi@ca.ibm.com
             //solves when IDNode made before IDReferences.createID called
             //idReferences.createNewId(destination);
- 
-            idReferences.createUnvalidatedID(destination); 
+
+            idReferences.createUnvalidatedID(destination);
             idReferences.addToIdValidationList(destination);
             goToReference = idReferences.createInternalLinkGoTo(destination,
                             ++this.objectcount);

@@ -42,6 +42,7 @@ public class ImageReaderFactory {
         formats.addElement(new GIFReader());
         formats.addElement(new PNGReader());
         formats.addElement(new TIFFReader());
+        formats.addElement(new EPSReader());
         formats.addElement(new SVGReader());
         //
 
