@@ -1561,7 +1561,7 @@ public class FOPropertyMapping implements Constants {
 
         // text-indent
         m  = new LengthProperty.Maker(PR_TEXT_INDENT);
-        m.setInherited(false);
+        m.setInherited(true);
         m.setDefault("0pt");
         m.setPercentBase(LengthBase.BLOCK_WIDTH);
         addPropertyMaker("text-indent", m);
