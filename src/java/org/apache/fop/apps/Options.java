@@ -272,7 +272,7 @@ public class Options {
      *
      * It remains for any related variables defined in this class to be set.
      *
-     * @exception org.apache.fop.fo.FOPException
+     * @exception FOPException
      */
     static void initOptions() throws FOPException {
         Boolean bool = null;
@@ -339,7 +339,7 @@ public class Options {
      * Load the standard configuration file and the user-defined configuration
      * file if one has been defined.  The definition can occur in either the
      * standard file or as a command line argument.
-     * @exception org.apache.fop.fo.FOPException
+     * @exception FOPException
      */
     private static void loadConfigFiles() throws FOPException {
         String str = null;
@@ -362,7 +362,7 @@ public class Options {
      * Convenience class for common functionality required by the config
      * files.
      * @param fname the configuration file name.
-     * @param classobj the <tt>Class</tt> object of requesting class.
+     * @param classob the requesting class
      * @return an <tt>InputStream</tt> generated through a call to
      * <tt>getResourceAsStream</tt> on the context <tt>ClassLoader</tt>
      * or the <tt>ClassLoader</tt> for the conf class provided as an argument.
@@ -402,7 +402,7 @@ public class Options {
      * class loader are asked in turn to <code>getResourceAsStream</code>
      * on <i>fname</i> from a directory called <i>conf</i>.
      * @param fname the name of the configuration file to load.
-     * @exception org.apache.fop.fo.FOPException if the configuration file
+     * @exception FOPException if the configuration file
      * cannot be discovered.
      */
     public static void loadConfiguration(String fname)
@@ -430,11 +430,8 @@ public class Options {
      * source.  If this fails, an attempt is made to load the file using
      * <code>loadConfiguration</code>.
      * @param userConfigFileName the name of the user configuration file.
-     * @exception org.apache.fop.fo.FOPException thrown when the file cannot
-     * be located.
      */
-    public static void loadUserConfiguration(String userConfigFileName)
-        throws FOPException {
+    public static void loadUserConfiguration(String userConfigFileName) {
         // read user configuration file
         boolean readOk = true;
         userConfigFile = new File(userConfigFileName);
@@ -687,7 +684,7 @@ public class Options {
         }
     }
 
-    public static CommandLineStarter getStarter() throws FOPException {
+    public static CommandLineStarter getStarter() {
         switch (outputmode) {
 
         default:

@@ -60,10 +60,8 @@ public class CommandLineStarter {
 
     /**
      * Empty constructor.
-     * 
-     * @throws FOPException
      */
-    public CommandLineStarter() throws FOPException {
+    public CommandLineStarter() {
     }
 
 }
