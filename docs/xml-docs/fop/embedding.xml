@@ -37,23 +37,6 @@
    driver.setRenderer(RENDER_PDF);
    driver.run();]]></source>
 
-  <p>You also need to set the Logger for logging messages, see
-     <jump href="http://jakarta.apache.org/avalon/logkit/index.html">Jakarta Logkit</jump>
-     for more information.
-  </p>
-    <source><![CDATA[
-    Hierarchy hierarchy = Hierarchy.getDefaultHierarchy();
-    PatternFormatter formatter = new PatternFormatter(
-       "[%{priority}]: %{message}\n%{throwable}" );
-
-    LogTarget target = null;
-    target = new StreamTarget(System.out, formatter);
-
-    hierarchy.setDefaultLogTarget(target);
-    log = hierarchy.getLoggerFor("fop");
-    log.setPriority(Priority.INFO);
-    driver.setLogger(log);]]></source>
-
   <p>To setup the user config file you can do the following
   </p>
     <source><![CDATA[
@@ -105,7 +88,37 @@ when finished, you will need to call <code>System.exit</code>. These
 issues should be fixed in the upcoming JDK1.4</note>
 </p>
   </s2>
+  <s2 title="Controlling logging">
+  	<p>FOP uses Jakarta Avalon's 
+  		<jump href="http://jakarta.apache.org/avalon/api/org/apache/avalon/framework/logger/Logger.html">Logger</jump>
+  		 interface to do logging. See the <jump href="http://jakarta.apache.org/avalon/">Jakarta Avalon project</jump> for more information.</p>
+  	<p>Per default FOP uses the ConsoleLogger which logs to System.out. If you want to do logging using a 
+  	logging framework (such as LogKit, Log4J or JDK 1.4 Logging) you can set a
+  	different Logger implementation on the Driver object. Here's an example how you would use LogKit:</p>
+    <source><![CDATA[
+    Hierarchy hierarchy = Hierarchy.getDefaultHierarchy();
+    PatternFormatter formatter = new PatternFormatter(
+       "[%{priority}]: %{message}\n%{throwable}" );
+
+    LogTarget target = null;
+    target = new StreamTarget(System.out, formatter);
+
+    hierarchy.setDefaultLogTarget(target);
+    log = hierarchy.getLoggerFor("fop");
+    log.setPriority(Priority.INFO);
+    
+    driver.setLogger(new org.apache.avalon.framework.logger.LogKitLogger(log));]]></source>
+  <p>The LogKitLogger class implements the Logger interface so all logging calls are being redirected to LogKit. 
+  More information on Jakarta LogKit can be found <jump href="http://jakarta.apache.org/avalon/logkit/index.html">here</jump>.</p>
+  <p>Similar implementations exist for Log4J (org.apache.avalon.framework.logger.Log4JLogger) and 
+  JDK 1.4 logging (org.apache.avalon.framework.logger.Jdk14Logger).</p>
+  <p>If you want FOP to be totally silent you can also set an org.apache.avalon.framework.logger.NullLogger instance.</p>
+  <p>If you want to use yet another logging facility you simply have to create a class that implements org.apache.avalon.framework.logging.Logger 
+  and set it on the Driver object. See the existing implementations in Avalon Framework for examples.</p>
+
+  </s2>
   <s2 title="Hints">
+  	<s3 title="Object reuse">
      <p>
 If FOP is going to be used multiple times within your application
 it may be useful to reuse certain objects to save time.
@@ -117,6 +130,14 @@ after the rendering is complete and the reset method is called.
 You will need to setup the driver again with a new OutputStream,
 IntputStream and renderer.
      </p>
+  	</s3>
+  	<s3 title="Getting information on the rendering process">
+  		To get the number of pages that were rendered by FOP you can call Driver.getResults(). This returns a 
+  		FormattingResults object where you can lookup the number of pages produced. It also gives you the
+  		page-sequences that were produced along with their id attribute and their number of pages. This is particularly useful if you
+  		render multiple documents (each enclosed by a page-sequence) and have to know the number of pages
+  		of each document.
+  	</s3>
   </s2>
   <s2 title="Using Fop in a servlet">  
      <p>

@@ -6,8 +6,8 @@
 <s1 title="Features">
   <s2 title="What's Implemented?">
       <p>The following formatting objects and properties of the XSL-FO 1.0
-         W3C Recommandation are implemented.Please have also a look at the 
-         section on <jump href="limitations.html">limitations</jump>
+         W3C Recommandation are implemented. Please have also a look at the 
+         section on <jump href="limitations.html">limitations</jump>.
       </p>
   </s2>
   <s2 title="1) Formatting Objects">
@@ -17,28 +17,28 @@
     <s3 title="B.1 Declaration and Pagination and Layout Formatting Objects">
       <ul>
         <li>root</li>
-        <li>page-sequence </li>
+        <li>page-sequence</li>
         <li>page-sequence-master</li>
         <li>single-page-master-reference</li>
         <li>repeatable-page-master-reference</li>
         <li>repeatable-page-master-alternatives</li>
         <li>conditional-page-master-reference</li>
-        <li>layout-master-set </li>
-        <li>simple-page-master </li>
-        <li>region-body </li>
-        <li>region-before </li>
-        <li>region-after </li>
+        <li>layout-master-set</li>
+        <li>simple-page-master</li>
+        <li>region-body</li>
+        <li>region-before</li>
+        <li>region-after</li>
         <li>region-start</li>
         <li>region-end</li>
         <li>flow</li>
-        <li>static-content </li>
+        <li>static-content</li>
       </ul>
       <p>Not implemented: declarations, color-profile, title</p>
     </s3>
 
     <s3 title="B.2 Block Formatting Objects">
       <ul>
-        <li>block </li>
+        <li>block</li>
         <li>block-container (limited)</li>
       </ul>
     </s3>
@@ -58,7 +58,7 @@
 
     <s3 title="B.4 Table Formatting Objects">
       <ul>
-        <li>table </li>
+        <li>table</li>
         <li>table-body</li>
         <li>table-cell</li>
         <li>table-column</li>
