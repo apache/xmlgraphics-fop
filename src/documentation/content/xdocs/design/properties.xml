@@ -322,5 +322,11 @@ In either case,
 the result is a Property object, and the actual value may be accessed
 (in this example) by using the "getLength()" accessor.</p>
     </section>
+    <section id="refine">
+      <title>Refinement</title>
+    </section>
+    <section id="refined-fo-tree">
+      <title>Refined FO Tree</title>
+    </section>
   </body>
 </document>

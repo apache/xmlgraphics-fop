@@ -6,6 +6,15 @@
     <title>XML Parsing</title>
   </header>
   <body>
+      <section id="issue-input">
+        <title>Use SAX as Input</title>
+        <p>The two standard ways of dealing with XML input are SAX and DOM. SAX basically creates events as it parses an XML document in a serial fashion; a program using SAX (and not storing anything internally) will only see a small window of the document at any point in time, and can never look forward in the document. DOM creates and stores a tree representation of the document, allowing a view of the entire document as an integrated whole. One issue that may seem counter-intuitive to some new FOP developers, and which has from time to time been contentious, is that FOP uses SAX for input. (DOM can be used as input as well, but it is converted into SAX events before entering FOP, effectively negating its advantages).</p>
+        <p>Since FOP essentially needs a tree representation of the FO input, at first glance it seems to make sense to use DOM. Instead, FOP takes SAX events and builds its own tree-like structure. Why?</p>
+        <ul>
+          <li>DOM has a relatively large memory footprint. FOP's FO Tree is a lighter-weight structure.</li>
+          <li>DOM contains an entire document. FOP is able to process individual fo:page-sequence objects discretely, without the need to have the entire document in memory. For documents that have only one fo:page-sequence object, FOP's approach is no advantage, but in other cases it is a huge advantage. A 500-page book that is broken into 100 5-page chapters, each in its own fo:page-sequence, essentially needs only 1% of the document memory that would be required if using DOM as input.</li>
+        </ul>
+      </section>
     <section>
       <title>XML Input</title>
       <p>The xml document is always handled internally as SAX. The SAX events

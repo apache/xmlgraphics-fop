@@ -10,6 +10,13 @@
     </authors>
   </header>
   <body>
+      <section id="issue-renderers-responsible">
+        <title>Renderers are Responsible</title>
+        <p>Each renderer is totally responsible for its output format.</p>
+      </section>
+      <section id="issue-output-stream">
+        <title>Send Output to a Stream</title>
+      </section>
     <section id="intro">
       <title>Introduction</title>
       <p>A renderer is primarily designed to convert a given area tree into the output
