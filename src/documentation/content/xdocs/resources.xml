@@ -142,7 +142,7 @@
           <li>[software] TIFFRenderer is a renderer for outputting multi-page TIFF: <jump href="http://www.tkachenko.com/fop/tiffrenderer.html">http://www.tkachenko.com/fop/tiffrenderer.html</jump> (MPL)</li>
           <li>[software] AFP Renderer / Batch Assembler for FOP: <jump href="http://mypage.bluewin.ch/huanderegg/">http://mypage.bluewin.ch/huanderegg/</jump> (open source, license unclear)</li>
           <li>[software] The <jump href="http://mogwai.sourceforge.net">Mogwai Project</jump> includes a renderer for FOP that generates output for Okidata dot matrix printers (GPL).</li>
-          <li>[software] <jump href="http://www.krysalis.org/barcode">Krysalis Barcode</jump> is a barcode generator which can be used with FOP (Apache-style license).</li>
+          <li>[software] <jump href="http://barcode4j.krysalis.org">Barcode4J</jump> (formerly Krysalis Barcode) is a barcode generator which can be used with FOP (Apache-style license).</li>
         </ul>        
       </section>
       <section id="products-pdf">
