@@ -36,6 +36,7 @@
           <menu-item label="FAQs" href="faq.html"/>
           <menu-item label="XSL-FO" href="fo.html"/>
           <menu-item label="Examples" href="examples.html"/>
+          <menu-item label="Mailing Lists" href="maillist.html"/>
           <menu-item label="Bugs" href="bugs.html"/>
           <menu-item label="License" href="license.html"/>
           <menu-item label="Other" href="resources.html"/>
