@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "document-v11.dtd">
-      <document> 
-        <header> 
-          <title>FOP</title> 
-        </header> 
-        <body> 
-          <section>
-            <title>Introduction</title>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
+
+<document> 
+  <header> 
+    <title>FOP</title> 
+  </header> 
+  <body> 
+    <section>
+      <title>Introduction</title>
     <p>FOP (Formatting Objects Processor) is the world's first print formatter driven by XSL formatting
        objects and the world's first output independent formatter. It is a
        Java application that reads a formatting object tree and then
@@ -40,7 +42,7 @@
         to <link href="mailto:fop-user-subscribe@xml.apache.org">fop-user-subscribe@xml.apache.org</link>
         this is where user specific topics are discussed.
      </p>
-          </section>
+    </section>
 
   <section>
     <title>Formatting</title>
@@ -79,5 +81,6 @@ along with the xml.
 better handle the formatting of all different types of formatting objects.
    </p>
   </section>
-        </body>
-    </document>
+  </body>
+</document>
+

@@ -1,5 +1,6 @@
 <?xml version="1.0" standalone="no"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "document-v11.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 
 <document>
     <header>
@@ -32,7 +33,6 @@ process files of any size.
 In achieving this aim we need to understand the problem and break it
 into small problems that can be solved.
    </p>
-  <p>
 <ul>
 <li>use SAX as input</li>
 <li>process FO elements ASAP</li>
@@ -43,7 +43,6 @@ into small problems that can be solved.
 <li>renderers are totally responsible for their output format</li>
 <li>output is sent to a stream</li>
 </ul>
-   </p>
 </section>
   </section>
 

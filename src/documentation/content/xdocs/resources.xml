@@ -1,14 +1,15 @@
 <?xml version="1.0" standalone="no"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "document-v11.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
   
 <!-- FOP Relevant Specifications and links -->
 <document> 
-    <header>
-        <title>Resources</title>
-        <subtitle>Resources useful for developing and using FOP</subtitle>
-    </header> 
+  <header>
+    <title>Resources</title>
+    <subtitle>Resources useful for developing and using FOP</subtitle>
+  </header> 
     
-    <body>
+  <body>
 
 <section>
   <title>FOP Relevant Specifications and Links</title>
@@ -91,6 +92,6 @@ post processing of the generated PDF files: <link href="http://www.lowagie.com/i
     </ul>
   </section>
 </section>
-    </body>
+  </body>
 </document>
 

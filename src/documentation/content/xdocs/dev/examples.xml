@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "document-v11.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
+
 <document> 
   <header> 
     <title>FO Examples</title> 
@@ -15,6 +17,7 @@
             <title>Images Examples</title>
             <p>
 Embedding images in FO:
+            </p>
   <table>
     <caption>Images in FO</caption>
     <tr>
@@ -38,15 +41,15 @@ Embedding images in FO:
       <td><link href="../fo/size.fo.pdf">size.fo.pdf</link></td>
     </tr>
   </table>
-            </p>
           </section>
           <section>
             <title>Instream Foreign Object Examples</title>
             <p>
 Instream Foreign Object images in FO, there are more on the
 <link href="svg.html">SVG Page</link>:
+            </p>
   <table>
-    <caption>Images in FO</caption>
+    <caption>Embedding instream-foreign-object</caption>
     <tr>
       <th>description</th>
       <th>fo file</th>
@@ -58,7 +61,7 @@ Instream Foreign Object images in FO, there are more on the
       <td><link href="../fo/embed.fo.pdf">embed.fo.pdf</link></td>
     </tr>
   </table>
-            </p>
           </section>
   </body>
 </document>
+

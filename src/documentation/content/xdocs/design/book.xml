@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN" "book-cocoon-v10.dtd">
+<!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-cocoon2/src/documentation/xdocs/dtd/book-cocoon-v10.dtd">
 
 <book software="FOP"
     title="FOP Design"

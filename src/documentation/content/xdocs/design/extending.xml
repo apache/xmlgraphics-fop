@@ -1,5 +1,6 @@
 <?xml version="1.0" standalone="no"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "document-v11.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 
 <document>
     <header>
@@ -85,12 +86,12 @@ document into PDF markup.
    </p>
   <p>
 eg.
-<source><![CDATA[<my:script-link script="app.execMenuItem('AcroSrch:Query');">
+<code><![CDATA[<my:script-link script="app.execMenuItem('AcroSrch:Query');">
 Search
-</my:script-link>]]></source>
+</my:script-link>]]></code>
 
 to result in a text box referencing the following PDF action:
-<source><![CDATA[<< /S /JavaScript /JS (app.execMenuItem("AcroSrch:Query");) >>]]></source>
+<code><![CDATA[<< /S /JavaScript /JS (app.execMenuItem("AcroSrch:Query");) >>]]></code>
 
    </p>
 

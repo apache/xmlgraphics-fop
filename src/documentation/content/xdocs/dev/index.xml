@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "document-v11.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
+
       <document> 
         <header> 
           <title>FOP 1.0 development</title> 
@@ -23,9 +25,7 @@ current development of FOP.
 FOP - someone who is overly concerned with style, also conveniently
 can mean Formatting Object Processor.
   </note>
-<p>
         <figure width="480" height="260" src="../images/document.jpg" alt="Render Diagram" />
-</p>
     <p>The latest version of Fop is 0.20.4 and it supports the
        <jump href="http://www.w3.org/TR/2001/REC-xsl-20011015/">XSL-FO Version 1.0
        W3C Recommendation</jump>.
@@ -50,9 +50,7 @@ can mean Formatting Object Processor.
           </section>
           <section>
             <title>Formatting</title>
-            <p>
         <figure width="480" height="260" src="../images/layout.jpg" alt="Formatting Diagram" />
-</p> 
 <p>
 This image is a demonstration of a two page document. The xml data on the left
 is formatted into the two pages on the right. The document contains static areasthat appear on every page, an external graphic in this case an svg document.

@@ -1,5 +1,6 @@
 <?xml version="1.0" standalone="no"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "document-v11.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 
 <!-- Status of Design/Rewrite -->
 
@@ -26,7 +27,6 @@ A number of issues have been dealt with in the redesigned code.
   </section>
 <section>
   <title>Features TODO</title>
-<p>
 <ul>
 <li>avalon integration - logging, configuration, component management, caching, uri resolver</li>
 <li>improved interfaces
@@ -37,7 +37,6 @@ A number of issues have been dealt with in the redesigned code.
 </li>
 <li>better commandline handling</li>
 </ul>
-  </p>
   </section>
 <section>
   <title>Done/Started Features</title>
@@ -45,6 +44,7 @@ A number of issues have been dealt with in the redesigned code.
 Many of these changes will make FOP much better to use and develop.
 So if you help out with the development you can get to use these
 things sooner.
+</p>
 <ul>
 <li><strong>better layout design</strong> - that can handle keeps and
 spacing better</li>
@@ -69,7 +69,6 @@ this is done automatically</li>
 <li>changed area tree xml format to match the area tree hierarchy</li>
 </ul>
 
-  </p>
   </section>
 
     </body>

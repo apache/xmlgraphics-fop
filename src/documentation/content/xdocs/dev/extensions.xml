@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "document-v11.dtd">
-      <document> 
-        <header> 
-          <title>Extensions to FOP</title> 
-        </header> 
-        <body> 
-          <section>
-            <title>Overview</title>
-            <p>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
+
+<document> 
+  <header> 
+    <title>Extensions to FOP</title> 
+  </header> 
+  <body> 
+    <section>
+      <title>Overview</title>
+      <p>
 If the default funtionality of FOP needs to be extended for
 some reason then you can write an extensions.
             </p>
@@ -89,8 +91,8 @@ show how this can be done.
 </p>
 <p>
 Put your jar file in the classpath and then run fop over the fo file.
-            </p>
-          </section>
-        </body>
-    </document>
+      </p>
+    </section>
+  </body>
+</document>
 
