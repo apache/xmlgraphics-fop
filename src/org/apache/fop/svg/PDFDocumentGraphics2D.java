@@ -185,6 +185,8 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         }
         this.pdfDoc.output(outputStream);
         pdfDoc.outputTrailer(outputStream);
+
+        outputStream.flush();
     }
 
     /**
