@@ -223,8 +223,8 @@ public class PDFStream extends PDFObject {
         stream.write(p);
         length += p.length;
         _data.outputStreamData(stream);
-        _data.close();
         length += _data.getSize();
+        _data.close();
         p = "\nendstream\n".getBytes();
         stream.write(p);
         length += p.length;
