@@ -20,6 +20,7 @@
 package org.apache.fop.fo;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.area.Area;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.flow.FoMarker;
@@ -32,10 +33,13 @@ import org.apache.fop.xml.XmlEvent;
  */
 public class FOPageSeqNode extends FONode {
 
-    /**
-     * The <code>FoPageSequence</code> ancestor of this node.
-     */
+    /** The <code>FoPageSequence</code> ancestor of this node. */
     protected final FONode pageSequence;
+    /**
+     * Comment for <code>childContext</code>
+     */
+    private Area childContext = null;
+    private Area myContext = null;
     
     /**
      * @param foTree the FO tree to which this node is added
@@ -150,5 +154,9 @@ public class FOPageSeqNode extends FONode {
         }
         return numMarkers;
     }
-    
+
+    public Area getReferenceRectangle() throws FOPException {
+        throw new FOPException("Called from FOPageSeqNode");
+    }
+
 }
