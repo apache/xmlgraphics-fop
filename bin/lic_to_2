@@ -23,8 +23,7 @@ $lic2rem = $2;
 
 # Slurp the input file
 $_ = <>;
-s|\n                    # Start with a newline
-  [^\n]*=+\s+           # Non-newlines followed by multiple '='
+s|[^\n]*=+\s+           # Non-newlines followed by multiple '='
                         # ...followed by whitespace (incl. newline)
   [^\n]*                # Non-newlines (incl spaces)
   The\ Apache\ Software\ License,\ Version\ 1\.1
@@ -34,7 +33,7 @@ s|\n                    # Start with a newline
   James\ Tauber
   .*                    # Anything
   \<http://www.apache.org/\>\.
-  \s+                   # Any whitespace
+  \s*\n                 # Any whitespace ending in a newline
 |$lic2begin$1$lic2rem|xs;
 
 print;
