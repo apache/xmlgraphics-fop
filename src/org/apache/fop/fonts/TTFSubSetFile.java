@@ -462,6 +462,17 @@ public class TTFSubSetFile extends TTFFile {
             flags = in.readTTFUShort(offset);
             compositeIdx = new Integer(in.readTTFUShort(offset+2));
             Integer newIdx = (Integer)glyphs.get(compositeIdx);
+            if (newIdx == null) {
+                    // This errormessage would look much better
+                    // if the fontname was printed to
+                MessageHandler.error("An embedded font " +
+                                     "contains bad glyph data. " +
+                                     "Characters might not display " +
+                                     "correctly.");
+                moreComposites = false;
+                continue;
+            }
+                
             in.writeTTFUShort(offset+2, newIdx.intValue());
 
             offset+=4;
