@@ -32,7 +32,7 @@ import org.apache.fop.fonts.Font;
  */
 public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
 
-    PageNumberCitation fobj;
+    private PageNumberCitation fobj;
     Font font = null;
     
     // whether the page referred to by the citation has been resolved yet
