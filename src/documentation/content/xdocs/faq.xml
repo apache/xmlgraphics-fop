@@ -791,35 +791,10 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
   <part id="part_svg">
     <title>Batik/SVG specific questions</title>
     <faq id="svg_text">
-      <question>SVG text rendered in bad quality. How do I put SVG text as text
-      into PDF?</question>
+      <question>The rendering of SVG text in my PDF is of poor quality.
+Can I control this?</question>
       <answer>
-        <p>
-          The svg text is rendered as shapes, the Acrobat viewer displays it
-          with bad quality unless you turn on smooth line art in the Acrobat
-          preferences. The printout is always ok, it's only the screen view
-          which is of bad quality by default.
-        </p>
-        <p>
-          You can force Batik not to render SVG text by setting the
-          strokeSVGText property to false. You can do this in the user
-          configuration file:
-        </p>
-        <source><![CDATA[<entry>
-  <key>strokeSVGText</key>
-  <value>false</value>
-</entry>]]></source>
-        <p>
-          In a servlet environment, you can set it directly:
-        </p>
-        <source>org.apache.fop.configuration.Configuration.put("strokeSVGText", Boolean.FALSE);</source>
-        <p>
-          See also <link href="#usercfg">using a user configuration file</link>
-          in a servlet.
-        </p>
-        <p>
-          This does not work for other renderers.
-        </p>
+        <p>See <link href="svg.html#pdf_text">Placing SVG Text into PDF</link>.</p>
       </answer>
     </faq>
     <faq id="svg_headless">

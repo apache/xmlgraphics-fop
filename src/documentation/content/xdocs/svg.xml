@@ -94,19 +94,26 @@ for PDF it will use a single character.
     </p>
     <p>
 It is possible to make sure that all text is drawn into PDF using the
-PDF text commands by adding the following to the user config:
+PDF text commands (instead of the graphical shapes), by adding the following to the user config:
     </p>
 <source><![CDATA[<entry>
   <key>strokeSVGText</key>
   <value>false</value>
 </entry>]]></source>
+    <p>In a servlet environment, you can set it directly:</p>
+    <source>org.apache.fop.configuration.Configuration.put("strokeSVGText", Boolean.FALSE);</source>
+    <p>For information on using a configuration file in a servlet, see the <link href="faq.html#usercfg">FAQ</link> on that topic.</p>
+    <p>Note that this configuration setting works only for the PDF renderer.</p>
     <p>
-The drawback from this is that all text will be confined to text that is
+The drawback to forcing text to be rendered as text is that it will be confined to text that is
 possible for PDF fonts (including embedded fonts) and implemented with
 this workaround. The fonts available are the standard pdf fonts and any
 fonts that you have embedded using FOP. The font sizes will be rounded
 to an integer value. In future this will be improved.
     </p>
+    <p>Note that because SVG text can be rendered as either text or a vector graphic, you may need to consider settings in your viewer for both.
+The Acrobat viewer has both "smooth line art" and "smooth text" settings that may need to be set for SVG images to be displayed nicely on your screen (see Edit / Preferences / Display).
+This setting will not affect the printing of your document, which should be OK in any case, but will only affect the quality of the screen display.</p>
   </section>
 
           <section>
