@@ -66,12 +66,15 @@ public class EnumProperty extends Property {
     }
 
     private int value;
+    private String text;
 
     /**
      * @param explicitValue enumerated value to be set for this property
+     * @param text the string value of the enum.
      */
-    public EnumProperty(int explicitValue) {
+    public EnumProperty(int explicitValue, String text) {
         this.value = explicitValue;
+        this.text = text;
     }
 
     /**
@@ -85,9 +88,7 @@ public class EnumProperty extends Property {
      * @return this.value cast as an Object
      */
     public Object getObject() {
-        // TODO return String value: property must reference maker
-        // return maker.getEnumValue(this.value);
-        return new Integer(this.value);
+        return text;
     }
 
 }
