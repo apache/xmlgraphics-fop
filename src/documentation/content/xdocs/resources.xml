@@ -4,67 +4,10 @@
 <!-- FOP Relevant Specifications and links -->
 <document>
   <header>
-    <title>Resources</title>
+    <title>FOP: Other Resources</title>
     <subtitle>Resources useful for developing and using FOP</subtitle>
   </header>
   <body>
-    <section id="mailing-lists">
-      <title>Mailing Lists and Archives</title>
-      <section id="mailing-lists-general">
-        <title>General Information</title>
-        <p>Before posting questions to any list, review "<jump href="http://www.catb.org/~esr/faqs/smart-questions.html">How To Ask Questions The Smart Way</jump>".</p>
-        <p>Be sure to set your email client to send plain text email messages to any mailing lists.
-Please do <em>not</em> send html or rtf email, as they do not work well with the archive engines.
-If you are using Microsoft Outlook, this setting can be found at the "Mail Format" tab of the Tools/Options menu.</p>
-        <p>For help in understanding email acronyms, see the <jump href="http://www.lingo2word.com/lists/acronym_listA.html">Lingo2Word Acronym List</jump>, or the <jump href="http://www.keno.org/web_design/acronyms.htm">Keno Internet Services Internet Glossary</jump>.</p>
-      </section>
-      <section id="mailing-lists-fop-user">
-        <title>FOP User Mailing List</title>
-        <p>Use this forum to discuss topics of interest to FOP users.
-After reviewing the FOP documentation and searching the archives (see below), use this forum to ask questions about how to download, install, configure, and use FOP.
-Please do <em>not</em> use this forum for general XSL-FO, XSLT, or PDF questions.</p>
-        <ul>
-          <li>To review the archives, you have several options:
-            <ul>
-              <li>The <jump href="http://marc.theaimsgroup.com/?l=fop-user&amp;r=1&amp;w=2">Mailing list ARChives </jump> (MARC) at the AIMS group (search).</li>
-              <li>The <jump href="http://nagoya.apache.org/eyebrowse/SummarizeList?listName=fop-user@xml.apache.org">Apache Eyebrowse</jump> archive (search, list by date, author, subject, or thread).</li>
-              <li>The <link href="http://xml.apache.org/mail/fop-user">Apache Mailing List archive</link> (gzip files).</li>
-            </ul>
-          </li>
-          <li>Before posting questions to any list, see "<link href="#mailing-lists-general">General Information</link>".</li>
-          <li>See <link href="http://xml.apache.org/mail.html#fop-user">Apache XML Mailing Lists</link> for detailed subscription information.</li>
-          <li>To subscribe (digest only): Send email to <link href="mailto:fop-user-digest-subscribe@xml.apache.org">fop-user-digest-subscribe@xml.apache.org</link>.</li>
-          <li>To subscribe fully: Send email to <link href="mailto:fop-user-subscribe@xml.apache.org">fop-user-subscribe@xml.apache.org</link>.</li>
-          <li>For standard help: Send email to <link href="mailto:fop-user-help@xml.apache.org">fop-user-help@xml.apache.org</link>.</li>
-          <li>To unsubscribe: Send email to <link href="mailto:fop-user-unsubscribe@xml.apache.org">fop-user-unsubscribe@xml.apache.org</link>.</li>
-        </ul>
-      </section>
-      <section id="mailing-lists-w3c-xslfo">
-        <title>XSL-FO Mailing List (at W3C)</title>
-        <p>Use this forum to ask general XSL-FO questions.</p>
-        <ul>
-          <li>To review the archive: <jump href="http://lists.w3.org/Archives/Public/www-xsl-fo/">W3C XSL-FO Archives</jump>.</li>
-          <li>Before posting questions to any list, see "<link href="#mailing-lists-general">General Information</link>".</li>
-          <li>Subscription administration information can be found at <jump href="http://www.w3.org/Mail/Request">W3C Mailing List Administrativia</jump>.
-After reviewing the instructions there, send your subscribe or unsubscribe request to <link href="mailto:www-xsl-fo-request@w3.org">www-xsl-fo-request@w3.org</link>.</li>
-        </ul>
-      </section>
-      <section id="mailing-lists-yahoogroups-xslfo">
-        <title>XSL-FO Mailing List (at YahooGroups)</title>
-        <p>Use this forum to ask general XSL-FO questions.</p>
-        <ul>
-          <li>Before posting questions to any list, see "<link href="#mailing-lists-general">General Information</link>".</li>
-          <li>The home page for this groups is <jump href="http://groups.yahoo.com/group/XSL-FO">XSL-FO - discussion of XSL Formatting Objects</jump>.</li>
-        </ul>
-      </section>
-      <section id="mailing-lists-xslt-mulberry">
-        <title>XSLT List (Mulberry Tech)</title>
-        <ul>
-          <li>Before posting questions to any list, see "<link href="#mailing-lists-general">General Information</link>".</li>
-          <li>Information for using and subscribing can be found at <jump href="http://www.mulberrytech.com/xsl/xsl-list">XSL-List -- Open Forum on XSL</jump>.</li>
-        </ul>
-      </section>
-    </section>
     <section id="specs">
       <title>Specifications</title>
       <section id="specs-xslfo">
@@ -95,11 +38,17 @@ After reviewing the instructions there, send your subscribe or unsubscribe reque
           <li><jump href="http://java.sun.com/j2se/1.3/docs/api/index.html">Java JDK 1.3 Documentation</jump></li>
         </ul>
       </section>
+      <section id="specs-pdf">
+        <title>PDF</title>
+        <ul>
+          <li><jump href="http://partners.adobe.com/asn/developer/acrosdk/docs/filefmtspecs/PDFReference.pdf">Portable Document Format (PDF) 1.4 Reference Manual</jump>
+         </li>
+        </ul>
+      </section>
       <section id="specs-other">
         <title>Other</title>
         <ul>
           <li><jump href="http://www.w3.org/TR/SVG/">Supported SVG Recommendation (04 September 2001)</jump></li>
-          <li><jump href="http://partners.adobe.com/asn/developer/acrosdk/docs/filefmtspecs/PDFReference.pdf">Portable Document Format (PDF) 1.4 Reference Manual</jump></li>
         </ul>
       </section>
     </section>
@@ -125,7 +74,7 @@ After reviewing the instructions there, send your subscribe or unsubscribe reque
           <li>[book] <jump href="http://wrox.com/books/1861005067.htm">XSLT Programmer's Reference</jump>, by Michael H. Kay, Wrox Press, ISBN 1-861-00506-7.</li>
           <li>[book] <jump href="http://www.oreilly.com/catalog/xslt">XSLT</jump>, by Doug Tidwell, O'Reilly &amp; Associates, 2001, ISBN 0-596-00053-7.</li>
           <li>[book] <jump href="http://www.oreilly.com/catalog/xsltckbk">XSLT Cookbook</jump>, by Sal Mangano, O'Reilly &amp; Associates, 2002, ISBN 0-596-00372-2.</li>
-          <li>[article] <jump href="http://www.dpawson.co.uk/xsl/xslfaq.html">Dave Pawson's XSLT FAQ</jump>.</li>
+          <li>[article] <jump href="http://www.dpawson.co.uk/xsl/xslfaq.html">Dave Pawson's XSL FAQ</jump>.</li>
          <li>[book] <jump href="http://www.oreilly.com/catalog/xpathpointer">XPath and XPointer: Locating Content in XML Documents</jump>, by John E. Simpson, O'Reilly &amp; Associates, 2002, ISBN 0-596-00291-2.</li>
           <li>[book] <jump href="http://www.wiley.com/cda/product/0,,0471416207,00.html">XSL Essentials</jump>, by Michael Fitzgerald, John Wiley &amp; Sons, 2001, ISBN 0-471-41620-7.</li>
           <li>[book] <jump href="http://www.oreilly.com/catalog/javaxslt">Java and XSLT</jump>, by Eric M. Burke, O'Reilly &amp; Associates, 2001, ISBN 0-596-00143-6.</li>
@@ -145,21 +94,63 @@ After reviewing the instructions there, send your subscribe or unsubscribe reque
           <li>[online resource] A great number of Java-related books and articles can be found at the <jump href="http://java.oreilly.com">O'Reilly Java Site</jump>.</li>
         </ul>
       </section>
+      <section id="documents-pdf">
+        <title>PDF</title>
+        <ul>
+          <li>[online resource] Links to the various PDF file format specifications and numerous other documents can be found at Adobe Solutions Network, Acrobat Resources, <jump href="http://partners.adobe.com/asn/acrobat/docs.jsp#filefmtspecs">Acrobat 5.0 SDK Documentation</jump>.</li>
+          <li>[online resource] A list of PDF technical resources can be found at Adobe Solutions Network, Acrobat Resources, <jump href="http://partners.adobe.com/asn/acrobat/technotes.jsp">Acrobat/PDF Technical Notes</jump></li>
+          <li>[online resource] A list of Acrobat and PDF developer resources can be found at Adobe Solutions Network, Acrobat Resources, <jump href="http://partners.adobe.com/asn/acrobat">Resources for Developers</jump>.</li>
+        </ul>
+      </section>
+      <section id="documents-ps">
+        <title>PostScript</title>
+        <ul>
+          <li>[online resource] A list of PostScript-related technical resources can be found at Adobe Solutions Network, <jump href="http://partners.adobe.com/asn/tech/ps/technotes.jsp">PostScript Language Technical Notes</jump></li>
+          <li>[online resource] Additional PostScript-related developer resources can be found at Adobe Solutions Network, <jump href="http://partners.adobe.com/asn/tech/ps/index.jsp">PostScript SDK Archive</jump>.</li>
+        </ul>
+      </section>
     </section>
     <section id="products">
       <title>Related/Useful Products</title>
-      <ul>
-        <li>PJ is an open source product that can be used to modify PDF documents:
-<jump href="http://www.etymon.com/pj/index.html">http://www.etymon.com/pj/index.html</jump></li>
-        <li>iText is a library that can edit PDF files, it is possible to do
-post processing of the generated PDF files: <jump href="http://www.lowagie.com/iText/">http://www.lowagie.com/iText/</jump>.</li>
-        <li>html2fo is a converter from html to xsl:fo: <jump href="http://html2fo.sourceforge.net/">http://html2fo.sourceforge.net/</jump>.</li>
-        <li>FOA is a XSL-FO Authoring tool: <jump href="http://foa.sourceforge.net/">http://foa.sourceforge.net/</jump>.</li>
-        <li>TIFFRenderer is a renderer for outputting multi-page TIFF: <jump href="http://www.tkachenko.com/fop/tiffrenderer.html">http://www.tkachenko.com/fop/tiffrenderer.html</jump>.</li>
-        <li>AFP Renderer / Batch Assembler for FOP: <jump href="http://mypage.bluewin.ch/huanderegg/">http://mypage.bluewin.ch/huanderegg/</jump>.</li>
-        <li>The <jump href="http://mogwai.sourceforge.net">Mogwai Project</jump> includes a renderer for FOP that generates output for Okidata dot matrix printers.</li>
-        <li> [software] <jump href="http://www.vbxml.com/xpathvisualizer">The XPath Visualizer</jump>. Web site says: "This is a full blown Visual XPath Interpreter for the evaluation of any XPath expression and visual presentation of the resulting nodeset or scalar value."</li>
-      </ul>
+      <section id="products-fop-add-ons">
+        <title>FOP add-ons</title>
+        <ul>
+          <li>[software] TIFFRenderer is a renderer for outputting multi-page TIFF: <jump href="http://www.tkachenko.com/fop/tiffrenderer.html">http://www.tkachenko.com/fop/tiffrenderer.html</jump> (MPL)</li>
+          <li>[software] AFP Renderer / Batch Assembler for FOP: <jump href="http://mypage.bluewin.ch/huanderegg/">http://mypage.bluewin.ch/huanderegg/</jump> (open source, license unclear)</li>
+          <li>[software] The <jump href="http://mogwai.sourceforge.net">Mogwai Project</jump> includes a renderer for FOP that generates output for Okidata dot matrix printers (GPL).</li>
+          <li>[software] <jump href="http://www.krysalis.org/barcode">Krysalis Barcode</jump> is a barcode generator which can be used with FOP (Apache-style license).</li>
+        </ul>        
+      </section>
+      <section id="products-pdf">
+        <title>PDF post-processors</title>
+        <ul>
+          <li>[software] <jump href="http://www.lowagie.com/iText">iText</jump> (MPL and LGPL)</li>
+          <li>[software] <jump href="http://www.etymon.com/pjc">PJ Classic</jump> by Etymon (GPL)</li>
+          <li>[software] <jump href="http://www.etymon.com/pjx">PJ Professional</jump> by Etymon (commercial)</li>
+        </ul>
+      </section>
+      <section id="products-editors">
+        <title>XSL-FO editors</title>
+        <ul>
+          <li>[software] <jump href="http://foa.sourceforge.net/">FOA (Formatting Objects Authoring)</jump> (MPL)</li>
+          <li>[software] <jump href="http://www.scruffyware.com/products/foeditor/">FOEditor</jump> by Scruffy Software (Shareware)</li>
+          <li>[software] <jump href="http://www.scriptura-xsl.com">Scriptura</jump> by Inventive Designers (commercial)</li>
+          <li>[software] <jump href="http://www.xslfast.com">XSLfast</jump> by jCatalog Software AG (commercial)</li>
+          <li>[software] <jump href="http://www.rubico.com/styler">XML Report Styler</jump> by Rubico (commercial)</li>
+        </ul>
+      </section>
+      <section id="products-other">
+        <title>Other products</title>
+        <ul>
+          <li>[software] <jump href="http://html2fo.sourceforge.net/">html2fo</jump> is a converter from HTML to XSL-FO (GPL).</li>
+          <li>[software] <jump href="http://wh2fo.sourceforge.net/">wh2fo</jump> is a converter from Word HTML to XSL-FO (MPL).</li>
+          <li>[software] <jump href="http://www.rtf2fo.com">RTF2FO</jump> is a converter from RTF to XSL-FO by Novosoft (commercial).</li>
+          <li> [software] <jump href="http://www.vbxml.com/xpathvisualizer">The XPath Visualizer</jump>.
+Web site says: "This is a full blown Visual XPath Interpreter for the evaluation of any XPath expression and visual presentation of the resulting nodeset or scalar value."
+Requires Internet Explorer 5+.
+(freeware)</li>
+        </ul>
+      </section>
     </section>
   </body>
 </document>

@@ -18,19 +18,14 @@
           <th>Support Thru</th>
         </tr>
         <tr>
-          <td>BMP (Microsoft Windows Bitmap)</td>
+          <td><link href="#bmp">BMP</link> (Microsoft Windows Bitmap)</td>
           <td>bitmap</td>
-          <td><link href="#jimi">JIMI</link> or <link href="#jai">JAI</link></td>
-        </tr>
-        <tr>
-          <td>CUR</td>
-          <td>unknown</td>
-          <td><link href="#jimi">JIMI</link></td>
+          <td><link href="#native">FOP native</link></td>
         </tr>
         <tr>
           <td><link href="#eps">EPS</link> (Encapsulated PostScript)</td>
           <td>metafile (both bitmap and vector), probably most frequently used for vector drawings</td>
-          <td><link href="#native">FOP native</link> (limited support)</td>
+          <td><link href="#native">FOP native</link> (limited support, see restrictions below)</td>
         </tr>
         <tr>
           <td>GIF (Graphics Interchange Format)</td>
@@ -38,49 +33,14 @@
           <td><link href="#native">FOP native</link></td>
         </tr>
         <tr>
-          <td>FPX</td>
-          <td>unknown</td>
-          <td><link href="#jai">JAI</link></td>
-        </tr>
-        <tr>
-          <td>ICO (Sun Icon)</td>
-          <td>bitmap</td>
-          <td><link href="#jimi">JIMI</link></td>
-        </tr>
-        <tr>
           <td><link href="#jpeg">JPEG</link> (Joint Photographic Experts Group)</td>
           <td>bitmap</td>
           <td><link href="#native">FOP native</link></td>
         </tr>
         <tr>
-          <td>PCX (PC Paintbrush)</td>
-          <td>bitmap</td>
-          <td><link href="#jimi">JIMI</link></td>
-        </tr>
-        <tr>
-          <td>PICT (Macintosh PICT)</td>
-          <td>metafile</td>
-          <td><link href="#jimi">JIMI</link></td>
-        </tr>
-        <tr>
-          <td>PNG (Portable Network Graphic)</td>
+          <td><link href="#png">PNG</link> (Portable Network Graphic)</td>
           <td>bitmap</td>
           <td><link href="#jimi">JIMI</link> or <link href="#jai">JAI</link></td>
-        </tr>
-        <tr>
-          <td>PNM (Portable aNyMap Utilities, part of the Portable Bitmap Utilies, aka pbmplus. PNM is a superset encompassing PBM or Portable Bitmap, PGM or Portable Grayscale, and PPM or Portable Pixmap.)</td>
-          <td>bitmap</td>
-          <td><link href="#jai">JAI</link></td>
-        </tr>
-        <tr>
-          <td>PSD (Adobe Photoshop)</td>
-          <td>bitmap</td>
-          <td><link href="#jimi">JIMI</link></td>
-        </tr>
-        <tr>
-          <td>RAS (Sunraster)</td>
-          <td>bitmap</td>
-          <td><link href="#jimi">JIMI</link></td>
         </tr>
         <tr>
           <td><link href="#svg">SVG</link> (Scalable Vector Graphics)</td>
@@ -88,24 +48,9 @@
           <td><link href="#batik">Batik</link></td>
         </tr>
         <tr>
-          <td>TGA (Targa)</td>
+          <td><link href="#tiff">TIFF</link> (Tag Image Format File)</td>
           <td>bitmap</td>
-          <td><link href="#jimi">JIMI</link></td>
-        </tr>
-        <tr>
-          <td>TIFF (Tag Image Format File)</td>
-          <td>bitmap</td>
-          <td><link href="#jimi">JIMI</link> or <link href="#jai">JAI</link></td>
-        </tr>
-        <tr>
-          <td>XBM (X BitMap)</td>
-          <td>bitmap</td>
-          <td><link href="#jimi">JIMI</link></td>
-        </tr>
-        <tr>
-          <td>XPM (X PixMap)</td>
-          <td>bitmap</td>
-          <td><link href="#jimi">JIMI</link></td>
+          <td><link href="#native">FOP native</link> or <link href="#jai">JAI</link>, depending on the subformat. See <link href="#tiff">TIFF</link> for more details.(JIMI also supports TIFF, but this has not been implemented within FOP).</td>
         </tr>
       </table>
     </section>
@@ -121,14 +66,15 @@
         <title>JIMI</title>
         <p>
           Because of licensing issues, the JIMI image library is not included in the FOP distribution. First, <fork href="http://java.sun.com/products/jimi">download</fork> and install it.
-Then, copy the file "JimiProClasses.zip" from the archive to xml-fop/lib/jimi-1.0.jar. Please note that FOP binary distributions are compiled with JIMI support, so there is no need for you to build FOP to add the support. If jimi-1.0.jar is installed in the right place, it will automatically be used by FOP, otherwise it will not.
+Then, copy the file "JimiProClasses.zip" from the archive to {fop-install-dir}/lib/jimi-1.0.jar. Please note that FOP binary distributions are compiled with JIMI support, so there is no need for you to build FOP to add the support. If jimi-1.0.jar is installed in the right place, it will automatically be used by FOP, otherwise it will not.
         </p>
       </section>
       <section id="jai">
-        <title>JAI</title>
+        <title>JAI (Java Advanced Imaging API)</title>
+        <warning>JAI support is available for Release 0.20.5 and later. The comments in this section do not apply to releases earlier than 0.20.5.</warning>
         <p>
           FOP has been compiled with JAI support, but JAI is not included in the FOP distribution.
-To use it, simply install <link href="http://java.sun.com/products/java-media/jai">JAI</link>.
+To use it, install <link href="http://java.sun.com/products/java-media/jai">JAI</link>, then copy the jai_core.jar and the jai_codec.jar files to {fop-install-dir}/lib.
 JAI is much faster than JIMI, but is not available for all platforms. See <link href="http://java.sun.com/products/java-media/jai/forDevelopers/jaifaq.html#platforms">What platforms are supported?</link> on the JAI FAQ page for more details.
         </p>
       </section>
@@ -149,18 +95,40 @@ If you run a server without X, or if you can't connect to the X server due to se
         </ul>
       </section>
     </section>
+    <section id="bmp">
+      <title>BMP</title>
+      <p>FOP native support for BMP images is limited to the RGB color-space.</p>
+    </section>
     <section id="eps">
       <title>EPS</title>
       <p>FOP provides support for two output targets:</p>
       <ul>
         <li>PostScript (full support).</li>
-        <li>PDF (partial support). FOP embeds the EPS file into the PDF, but currently does not do so completely correctly. PostScript devices (including ghostscript) will render the EPS correctly, but Acrobat Reader will not currently display it.</li>
+        <li>
+          PDF (partial support). Due to the lack of a built-in PostScript interpreter, FOP 
+          can only embed the EPS file into the PDF. Acrobat Reader will not currently display 
+          the EPS (it doesn't have a PostScript interpreter, either) but it will be shown 
+          correctly when you print the PDF on a PostScript-capable printer. PostScript devices 
+          (including GhostScript) will render the EPS correctly.
+        </li>
       </ul>
+      <p>
+        Other output targets can't be supported at the moment because
+        FOP lacks a PostScript interpreter.
+      </p>
     </section>
     <section id="jpeg">
       <title>JPEG</title>
-      <p>Not all variants of JPEG are supported, especially those containing unusual color lookup tables and color profiles. If you have trouble with a JPEG image in FOP, try opening it with an image processing program (such as Photoshop or Gimp) and then saving it. Specifying 24-bit color output may also help.
+      <p>FOP native support of JPEG does not include all variants, especially those containing unusual color lookup tables and color profiles.
+If you have trouble with a JPEG image in FOP, try opening it with an image processing program (such as Photoshop or Gimp) and then saving it.
+Specifying 24-bit color output may also help.
+For the PDF and PostScript renderers most JPEG images can be passed through without decompression.
+User reports indicate that grayscale, RGB, and CMYK color-spaces are all rendered properly.
       </p>
+    </section>
+    <section id="png">
+      <title>PNG</title>
+      <p>If using JAI for PNG support, only RGB and RGBA color-spaces are supported for FOP rendering.</p>
     </section>
     <section id="svg">
       <title>SVG</title>
@@ -214,23 +182,10 @@ If the text is inserted into the PDF using the inbuilt text commands
 for PDF it will use a single character.
         </p>
         <p>
-It is possible to make sure that all text is drawn into PDF using the
-PDF text commands (instead of the graphical shapes), by adding the following to the user config:
-        </p>
-        <source><![CDATA[<entry>
-  <key>strokeSVGText</key>
-  <value>false</value>
-</entry>]]></source>
-        <p>In a servlet environment, you can set it directly:</p>
-        <source>org.apache.fop.configuration.Configuration.put("strokeSVGText", Boolean.FALSE);</source>
-        <p>For information on using a configuration file in a servlet, see the <link href="faq.html#usercfg">FAQ</link> on that topic.</p>
-        <p>Note that this configuration setting works only for the PDF renderer.</p>
-        <p>
-The drawback to forcing text to be rendered as text is that it will be confined to text that is
-possible for PDF fonts (including embedded fonts) and implemented with
-this workaround. The fonts available are the standard pdf fonts and any
-fonts that you have embedded using FOP. The font sizes will be rounded
-to an integer value. In future this will be improved.
+For PDF output, there is a <link href="configuration.html#svg-strokeSVGText">configuration option to force SVG text to be rendered as text</link>.
+The drawback to this approach is that it is effective only for available fonts (including embedded fonts).
+Font sizes are rounded to the next integer point size.
+This will be improved in the future.
         </p>
         <p>Note that because SVG text can be rendered as either text or a vector graphic, you may need to consider settings in your viewer for both.
 The Acrobat viewer has both "smooth line art" and "smooth text" settings that may need to be set for SVG images to be displayed nicely on your screen (see Edit / Preferences / Display).
@@ -276,6 +231,16 @@ into a raster graphic are not drawn properly in PDF. The image is opaque.
         </ul>
       </section>
     </section>
+    <section id="tiff">
+      <title>TIFF</title>
+      <p>FOP-native TIFF support is limited to PDF and PostScript output only. Also, according to user reports, FOP's native support for TIFF is limited to images with the following characteristics (all must be true for successful rendering):</p>
+      <ul>
+        <li>single channel images (i.e., bi-level and grayscale only)</li>
+        <li>uncompressed images, or images using CCITT T.4, CCITT T.6, or JPEG compression</li>
+        <li>images using white-is-zero encoding in the TIFF PhotometricInterpretation tag</li>
+      </ul>
+      <p><em>JAI:</em> Supports RGB and RGBA only for FOP rendering.</p>
+    </section>
     <section id="resolution">
       <title>Graphics Resolution</title>
       <p>Some bitmapped image file formats store a dots-per-inch (dpi) or other resolution value. Since PDF and most output formats do not have a concept of resolution, but only of absolute image units (i.e. pixels) FOP ignores the resolution values as well. Instead, FOP uses the dimensions of the image as specified in the fo:external-graphic element to render the image:</p>
@@ -286,6 +251,21 @@ into a raster graphic are not drawn properly in PDF. The image is opaque.
       </ul>
       <p>If you need a higher apparent output resolution for bitmapped images, first make sure that at least one dimension of the image is defined in your XSL-FO input. Apart from that, resolution problems are in the image file itself, and must be corrected there: use or create a higher-resolution image file.</p>
       <note>The explanation above describes only the basic default behavior. There are other attributes of the fo:external-graphic element that can affect the behavior described above.</note>
+    </section>
+    <section id="caching">
+      <title>Image caching</title>
+      <p>
+        FOP caches images between runs. The URL is used as a key to identify images which means that when
+        a particular URL appears again, the image is taken from the cache. If you have a servlet that
+        generates a different image each time it is called with the same URL you need to use a constantly 
+        changing dummy parameter on the URL to avoid caching.
+      </p>
+      <p>
+        Currently, the images are not automatically released when an OutOfMemoryError is imminent. The
+        image cache can grow to a considerable size over time when a lot of different URLs are in use.
+        Starting with version 0.20.5 you can call <code>org.apache.fop.image.FopImageFactory.resetCache()</code>
+        to manually empty the cache. Image caching will be improved as part of our redesign effort.
+      </p>
     </section>
   </body>
 </document>

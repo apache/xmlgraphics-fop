@@ -40,7 +40,7 @@ There is information about how to run FOP, how to embed it, how to add custom fo
     <section id="user-archive">
       <title>Review FOP User Mailing List Archive</title>
       <p>It is possible that your question has already been answered but has not yet found its way into the FAQ.
-Links to the FOP User mailing list archives are on the <link href="resources.html#mailing-lists-fop-user">Resources</link> page.
+Links to the FOP User mailing list archives are on the <link href="maillist.html#fop-user">Mailing List</link> page.
         </p>
     </section>
     <section id="existing-issue">
@@ -50,19 +50,7 @@ If so, please do not post a mailing list question or report another issue, as th
     </section>
     <section id="user-mailing-list">
       <title>Submit Question to FOP User Mailing List</title>
-      <ul>
-        <li>Subscription information is on the <link href="resources.html#mailing-lists-fop-user">Resources</link> page.</li>
-        <li>Review <link href="resources.html#mailing-lists-general">General Mailing List Information</link> before submitting your question.</li>
-        <li>State the version of FOP you're using.</li>
-        <li>Include detailed error messages, if there are any.</li>
-        <li>Provide FO code instead of XSLT snippets or DocBook source. 
-See <link href="running.html#running_xalan">Running Xalan</link> for how to produce FO from your XML+XSLT.</li>
-        <li>Provide the shortest possible complete, <strong>self-contained</strong> FO code that demonstrates the problem.
-Include images only if they are an integral part of the question.
-Filter out any confidential material.</li>
-        <li>Include only those portions of stack traces that will be helpful in finding the problem.</li>
-        <li>Instead of attaching large PDF files or screen shots, include a small B&amp;W GIF, JPG or PNG of the area of interest.</li>
-      </ul>
+      <p>See <link href="maillist.html#fop-user">FOP User Mailing List</link> for details.</p>
     </section>
     <section id="enter-issue">
       <title>Enter an Issue Report</title>

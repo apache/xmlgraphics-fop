@@ -20,7 +20,11 @@ However, a source distribution will be preferable if you fall into one of the fo
   <section id="binary">
     <title>Binary Download</title>
     <p>Binary distributions include "-bin" in their names, and can be downloaded from the <link href="http://xml.apache.org/dist/fop/">FOP Distribution</link> directory.
-</p>
+    </p>
+    <note>We're in the process of moving the download location. Please download the
+      latest release candidate from a
+      <link href="http://www.apache.org/dyn/closer.cgi/xml/fop">mirror</link>.
+    </note>
   </section>
   <section id="source">
     <title>Source Download</title>
@@ -38,4 +42,4 @@ Anyone can do this using the <link href="http://xml.apache.org/cvs.html#AnonCVS"
     </body>
 </document>
 
-<!-- Last Line of $RCSFile$ -->
+<!-- Last Line of $RCSfile$ -->

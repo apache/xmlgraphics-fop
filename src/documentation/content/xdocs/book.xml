@@ -8,18 +8,8 @@
         copyright="@year@ The Apache Software Foundation"
         xmlns:xlink="http://www.w3.org/1999/xlink">
 
-        <menu label="About">
-          <menu-item label="Home" href="index.html"/>
-          <menu-item label="News" href="news.html"/>
-          <menu-item label="Logo contest" href="logocontest.html"/>
-        </menu>
-
-        <menu label="Project">
-          <menu-item label="Status" href="status.html"/>
-          <!--
-	  <menu-item label="Changes" href="changes.html"/>
-          <menu-item label="Todo" href="todo.html"/>
-	  -->
+        <menu label="Home">
+          <menu-item label="Introduction" href="index.html"/>
         </menu>
 
         <menu label="Using FOP">
@@ -29,6 +19,7 @@
           <menu-item label="Configure" href="configuration.html"/>
           <menu-item label="Run" href="running.html"/>
           <menu-item label="Embed" href="embedding.html"/>
+          <menu-item label="Servlets" href="servlets.html"/>
           <menu-item label="Ant task" href="anttask.html"/>
         </menu>
 
@@ -38,6 +29,7 @@
           <menu-item label="PDF encryption" href="pdfencryption.html"/>
           <menu-item label="Graphics" href="graphics.html"/>
           <menu-item label="Fonts" href="fonts.html"/>
+          <menu-item label="Hyphenation" href="hyphenation.html"/>
           <menu-item label="Extensions" href="extensions.html"/>
         </menu>
 
@@ -46,8 +38,21 @@
           <menu-item label="FAQs" href="faq.html"/>
           <menu-item label="XSL-FO" href="fo.html"/>
           <menu-item label="Examples" href="examples.html"/>
+          <menu-item label="Mailing Lists" href="maillist.html"/>
           <menu-item label="Bugs" href="bugs.html"/>
           <menu-item label="License" href="license.html"/>
           <menu-item label="Other" href="resources.html"/>
         </menu>
+
+        <menu label="Project">
+          <menu-item label="News" href="news.html"/>
+          <menu-item label="Logo contest" href="logocontest.html"/>
+          <menu-item label="Status" href="status.html"/>
+          <!--
+          <menu-item label="Changes" href="changes.html"/>
+          <menu-item label="Todo" href="todo.html"/>
+          -->
+          <menu-item label="Team" href="team.html"/>
+        </menu>
+
     </book>

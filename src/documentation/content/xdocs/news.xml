@@ -8,6 +8,17 @@
   </header>
   <body>
     <section>
+      <title>29 June 2003 - New Committer</title>
+      <p>Welcome Glen Mazza!</p>
+    </section>
+    <section>
+      <title>23 May 2003 - FOP 0.20.5 Release Candidate 3 available</title>
+      <p>
+      See the full text of the <link
+      href="http://archives.apache.org/eyebrowse/ReadMsg?listName=fop-dev@xml.apache.org&amp;msgNo=5429">announcement</link>.
+      </p>
+    </section>
+    <section>
       <title>18 February 2003 - FOP 0.20.5 Release Candidate 2 available</title>
       <p>
       See the full text of the <link
@@ -21,10 +32,10 @@
       </p>
     </section>
     <section>
-	    <title>28 January 2003 - FOP logo contest</title>
-		<p>We are looking for a new logo. FOP <link href="logocontest.html">logo
-           contest</link> is started!</p>
-	</section>
+      <title>28 January 2003 - FOP logo contest</title>
+      <p>We are looking for a new logo. FOP <link href="logocontest.html">logo
+      contest</link> is started!</p>
+    </section>
     <section>
       <title>23 December 2002 - Official FOP Wiki</title>
       <p>
