@@ -191,6 +191,8 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
    <!-- <property name="dist.dir" value="./dist"/> -->
     <property name="dist.bin.dir" value="./dist-bin"/>
     <property name="dist.src.dir" value="./dist-src"/>
+    <property name="dist.bin.result.dir" value="${dist.bin.dir}/${Name}-${version}"/>
+    <property name="dist.src.result.dir" value="${dist.src.dir}/${Name}-${version}"/>
 
     <property name="properties.dir" value="org/apache/fop/fo/properties"/>
     <property name="fonts.dir" value="org/apache/fop/render/pdf/fonts"/>
@@ -537,6 +539,8 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
          includes="org/**,conf/**,hyph/**"/>
   </target>
 
+  <target name="all" depends="package"/> <!-- "all" target for us Makefile converts ;-) -->
+
   <target name="package-jdk11" depends="compile-jdk11,hyphenation">
     <echo message="Creating the jar file ${build.dir}/${name}11.jar"/>
     <jar jarfile="${build.dir}/${name}-jdk11.jar"
@@ -578,12 +582,12 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
   <target name="dist-bin" depends="package, javadocs">
     <echo message="Building the binary distribution files (zip,tar)"/>
-    <mkdir dir="${dist.bin.dir}"/>
-    <copy todir="${dist.bin.dir}">
+    <mkdir dir="${dist.bin.result.dir}"/>
+    <copy todir="${dist.bin.result.dir}">
       <fileset refid="dist.bin"/>
       <fileset refid="dist.bin.lib"/>
     </copy>
-    <copy todir="${dist.bin.dir}" file="build/fop.jar"/>
+    <copy todir="${dist.bin.result.dir}" file="build/fop.jar"/>
       
     <zip zipfile="${Name}-${version}-bin.zip" basedir="${dist.bin.dir}" includes="**"/>
     <tar tarfile="${Name}-${version}-bin.tar" basedir="${dist.bin.dir}" includes="**"/>
@@ -595,15 +599,15 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
   <target name="dist-src" depends="package, javadocs">
     <echo message="Building the source distribution files (zip,tar)"/>
-    <mkdir dir="${dist.src.dir}"/>
-    <copy todir="${dist.src.dir}">
+    <mkdir dir="${dist.src.result.dir}"/>
+    <copy todir="${dist.src.result.dir}">
       <fileset refid="dist.src"/>
     </copy>
-    <copy todir="${dist.src.dir}/javadocs">
+    <copy todir="${dist.src.result.dir}/javadocs">
       <fileset dir="${build.javadocs}"/>
     </copy>
-    <copy todir="${dist.src.dir}" file="build/fop.jar"/>
-    <chmod file="${dist.src.dir}/build.sh" perm="ugo+rx" />
+    <copy todir="${dist.src.result.dir}" file="build/fop.jar"/>
+    <chmod file="${dist.src.result.dir}/build.sh" perm="ugo+rx" />
 
     <zip zipfile="${Name}-${version}-src.zip" basedir="${dist.src.dir}" includes="**"/>
     <tar tarfile="${Name}-${version}-src.tar" basedir="${dist.src.dir}" includes="**"/>
