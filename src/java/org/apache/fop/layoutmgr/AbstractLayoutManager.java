@@ -21,7 +21,7 @@ package org.apache.fop.layoutmgr;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.area.Area;
-import org.apache.fop.area.Resolveable;
+import org.apache.fop.area.Resolvable;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.Marker;
@@ -364,7 +364,7 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
      *
      * @see org.apache.fop.layoutmgr.LayoutManager
      */
-    public void addUnresolvedArea(String id, Resolveable res) {
+    public void addUnresolvedArea(String id, Resolvable res) {
         parentLM.addUnresolvedArea(id, res);
     }
 

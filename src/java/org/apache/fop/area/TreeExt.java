@@ -45,27 +45,4 @@ public interface TreeExt {
      */
     public static final int END_OF_DOC = 2;
 
-    /**
-     * Check if this tree extension is also resolveable so that
-     * the area tree can do id reference resolution when the
-     * extension is added to the area tree.
-     *
-     * @return true if this also implements resolveable
-     */
-    boolean isResolveable();
-
-    /**
-     * Get the mime type for the document that this area tree
-     * extension applies.
-     *
-     * @return the mime type of the document where this applies
-     */
-    String getMimeType();
-
-    /**
-     * Get the name of this extension.
-     *
-     * @return the name of this extension
-     */
-    String getName();
 }

@@ -37,7 +37,7 @@ import org.apache.fop.fo.Constants;
  * This is the level that creates the page.
  * The page (reference area) is then rendered inside the page object
  */
-public class PageViewport implements Resolveable, Cloneable {
+public class PageViewport implements Resolvable, Cloneable {
     
     private Page page;
     private Rectangle2D viewArea;
@@ -131,7 +131,7 @@ public class PageViewport implements Resolveable, Cloneable {
      * @param id the id of the reference
      * @param res the resolver of the reference
      */
-    public void addUnresolvedID(String id, Resolveable res) {
+    public void addUnresolvedID(String id, Resolvable res) {
         if (unresolved == null) {
             unresolved = new HashMap();
         }
@@ -177,7 +177,7 @@ public class PageViewport implements Resolveable, Cloneable {
                 List todo = (List)unresolved.get(id);
                 if (todo != null) {
                     for (int count = 0; count < todo.size(); count++) {
-                        Resolveable res = (Resolveable)todo.get(count);
+                        Resolvable res = (Resolvable)todo.get(count);
                         res.resolve(id, pages);
                     }
                 }

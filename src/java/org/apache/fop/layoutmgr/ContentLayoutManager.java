@@ -22,7 +22,7 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.area.Area;
-import org.apache.fop.area.Resolveable;
+import org.apache.fop.area.Resolvable;
 import org.apache.fop.area.PageViewport;
 
 import java.util.LinkedList;
@@ -234,7 +234,7 @@ public class ContentLayoutManager implements LayoutManager {
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public void addUnresolvedArea(String id, Resolveable res) {
+    public void addUnresolvedArea(String id, Resolvable res) {
         parentLM.addUnresolvedArea(id, res);
     }
 

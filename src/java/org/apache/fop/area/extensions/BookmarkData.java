@@ -19,7 +19,7 @@
 package org.apache.fop.area.extensions;
 
 import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.Resolveable;
+import org.apache.fop.area.Resolvable;
 import org.apache.fop.area.TreeExt;
 import org.apache.fop.area.AreaTreeModel;
 
@@ -29,10 +29,10 @@ import java.util.HashMap;
 
 /**
  * This class holds the PDF bookmark extension data.
- * This implements Resolveable and TreeExt so that it can be
- * added to the area tree as a resolveable tree extension.
+ * This implements Resolvable and TreeExt so that it can be
+ * added to the area tree as a resolvable tree extension.
  */
-public class BookmarkData implements Resolveable, TreeExt {
+public class BookmarkData implements Resolvable, TreeExt {
     private ArrayList subData = new ArrayList();
     private HashMap idRefs = new HashMap();
 
@@ -146,34 +146,7 @@ public class BookmarkData implements Resolveable, TreeExt {
     }
 
     /**
-     * Check if this tree extension is resolveable.
-     *
-     * @return true since this also implements Resolveable
-     */
-    public boolean isResolveable() {
-        return true;
-    }
-
-    /**
-     * Get the mime type of this area tree extension.
-     *
-     * @return this tree extension applies to pdf
-     */
-    public String getMimeType() {
-        return "application/pdf";
-    }
-
-    /**
-     * Get the name of this area tree extension.
-     *
-     * @return the name of the PDF bookmark extension is "Bookmark"
-     */
-    public String getName() {
-        return "Bookmark";
-    }
-
-    /**
-     * Check if this resolveable object has been resolved.
+     * Check if this resolvable object has been resolved.
      * Once the id reference is null then it has been resolved.
      *
      * @return true if this has been resolved
@@ -193,7 +166,7 @@ public class BookmarkData implements Resolveable, TreeExt {
     }
 
     /**
-     * Resolve this resolveable object.
+     * Resolve this resolvable object.
      * This resolves the id reference and if possible also
      * resolves id references of child elements that have the same
      * id reference.
@@ -230,7 +203,7 @@ public class BookmarkData implements Resolveable, TreeExt {
         if (idRefs.size() == 0) {
             idRefs = null;
             if (areaTreeModel != null) {
-                areaTreeModel.addExtension(this, TreeExt.AFTER_PAGE);
+                areaTreeModel.handleExtension(this, TreeExt.AFTER_PAGE);
             }
         }
     }

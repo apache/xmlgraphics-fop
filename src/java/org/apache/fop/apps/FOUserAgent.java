@@ -57,8 +57,8 @@ import org.apache.fop.render.Renderer;
  * eg. bookmarks will be held in a special hierarchical area representing
  * the title and bookmark structure
  * <br>
- * These areas may contain resolveable areas that will be processed
- * with other resolveable areas
+ * These areas may contain resolvable areas that will be processed
+ * with other resolvable areas
  */
 public class FOUserAgent {
 

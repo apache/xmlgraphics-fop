@@ -92,13 +92,9 @@ public class StorePagesModel extends AreaTreeModel {
     }
 
     /**
-     * Add an extension to the store page model.
-     * The extension is stored so that it can be retrieved in the
-     * appropriate position.
-     * @param ext the extension to add
-     * @param when when the extension should be handled
+     * @see org.apache.fop.area.AreaTreeModel#handleExtension(TreeExt, int)
      */
-    public void addExtension(TreeExt ext, int when) {
+    public void handleExtension(TreeExt ext, int when) {
         int seq, page;
         switch(when) {
             case TreeExt.IMMEDIATELY:
