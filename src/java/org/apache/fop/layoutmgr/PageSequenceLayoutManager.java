@@ -108,6 +108,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
      * references?
      */
     private AreaTreeHandler areaTreeHandler;
+    private AreaTreeModel areaTreeModel;
     private PageSequence pageSequence;
 
     /**
@@ -134,6 +135,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
     public PageSequenceLayoutManager(AreaTreeHandler areaTreeHandler, PageSequence pageseq) {
         super(pageseq);
         this.areaTreeHandler = areaTreeHandler;
+        areaTreeModel = areaTreeHandler.getAreaTreeModel();
         pageSequence = pageseq;
         if (pageSequence.getPageSequenceMaster() != null) {
             pageSequence.getPageSequenceMaster().reset();
@@ -172,7 +174,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
             title = getTitleArea(pageSequence.getTitleFO());
         }
 
-        areaTreeHandler.startPageSequence(title);
+        areaTreeModel.startPageSequence(title);
         doLayout();
         flush();
     }
@@ -375,11 +377,10 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
             // go back over pages until mark found
             // if document boundary then keep going
             boolean doc = boundary == RetrieveBoundary.DOCUMENT;
-            AreaTreeModel atm = areaTreeHandler.getAreaTreeModel();
-            int seq = atm.getPageSequenceCount();
-            int page = atm.getPageCount(seq) - 1;
+            int seq = areaTreeModel.getPageSequenceCount();
+            int page = areaTreeModel.getPageCount(seq) - 1;
             while (page >= 0) {
-                PageViewport pv = atm.getPage(seq, page);
+                PageViewport pv = areaTreeModel.getPage(seq, page);
                 mark = (Marker)curPage.getMarker(name, pos);
                 if (mark != null) {
                     return mark;
@@ -387,7 +388,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
                 page--;
                 if (page == -1 && doc && seq > 0) {
                     seq--;
-                    page = atm.getPageCount(seq) - 1;
+                    page = areaTreeModel.getPageCount(seq) - 1;
                 }
             }
         }
@@ -533,7 +534,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
         layoutStaticContent(currentSimplePageMaster.getRegion(FO_REGION_END),
                             FO_REGION_END);
         // Queue for ID resolution and rendering
-        areaTreeHandler.addPage(curPage);
+        areaTreeModel.addPage(curPage);
         curPage = null;
         curBody = null;
         curSpan = null;

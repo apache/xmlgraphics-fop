@@ -113,6 +113,16 @@ public class Root extends FObj {
     }
 
     /**
+     * Signal end of this xml element.
+     */
+    protected void endOfNode() throws SAXParseException {
+        if (!pageSequenceFound || layoutMasterSet == null) {
+            missingChildElementError("(layout-master-set, declarations?, " + 
+                "fox:bookmarks?, page-sequence+)");
+        }
+    }
+
+    /**
      * Sets the FOEventHandler object that this Root is attached to
      * @param foEventHandler the FOEventHandler object
      */
