@@ -102,11 +102,14 @@ public class BorderColor extends ColorTransparent {
         Iterator colors = list.iterator();
 
         // There must be at least one
-        top = getColor((PropertyValue)(colors.next()));
+        top = getColor(PropNames.BORDER_TOP_COLOR,
+                                           (PropertyValue)(colors.next()));
 
         try {
             if (colors.hasNext())
-                right = getColor((PropertyValue)(colors.next()));
+                right = getColor
+                        (PropNames.BORDER_RIGHT_COLOR, 
+                                             (PropertyValue)(colors.next()));
             else
                 right = (ColorType)(top.clone());
 
@@ -118,12 +121,15 @@ public class BorderColor extends ColorTransparent {
         }
 
         if (colors.hasNext())
-                    bottom = getColor((PropertyValue)(colors.next()));
+                    bottom = getColor
+                            (PropNames.BORDER_BOTTOM_COLOR,
+                                             (PropertyValue)(colors.next()));
         if (colors.hasNext())
-                    left = getColor((PropertyValue)(colors.next()));
+                    left = getColor
+                            (PropNames.BORDER_LEFT_COLOR, 
+                                             (PropertyValue)(colors.next()));
 
         // Set the properties for each
-        top.setProperty(PropNames.BORDER_TOP_COLOR);
         right.setProperty(PropNames.BORDER_RIGHT_COLOR);
         bottom.setProperty(PropNames.BORDER_BOTTOM_COLOR);
         left.setProperty(PropNames.BORDER_LEFT_COLOR);
