@@ -1343,5 +1343,10 @@ public class PDFRenderer extends PrintRenderer {
         beginTextObject();
         super.renderLeader(area);
     }
+
+    /** @see org.apache.fop.render.AbstractRenderer */
+    public String getMimeType() {
+        return MIME_TYPE;
+    }
 }
 

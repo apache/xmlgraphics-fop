@@ -20,14 +20,25 @@ package org.apache.fop.apps;
 // java
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Locale;
 import java.util.Vector;
 
 import org.apache.fop.fo.Constants;
 
+// commons logging
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.impl.SimpleLog;
+
+// SAX
+import org.xml.sax.XMLReader;
+import org.xml.sax.SAXException;
+
+// avalon configuration
+import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
+import org.apache.avalon.framework.configuration.Configuration;
+import org.apache.avalon.framework.configuration.ConfigurationException;
 
 /**
  * Options parses the commandline arguments
@@ -66,7 +77,7 @@ public class CommandLineOptions implements Constants {
      * @throws FileNotFoundException if an input file wasn't found.
      */
     public CommandLineOptions(String[] args)
-            throws FOPException, FileNotFoundException {
+            throws FOPException, FileNotFoundException, IOException {
 
         log = LogFactory.getLog("FOP");
         
@@ -81,6 +92,7 @@ public class CommandLineOptions implements Constants {
                     dumpConfiguration();
                 }
                 checkSettings();
+                createUserConfig();
             }
         } catch (FOPException e) {
             printUsage();
@@ -412,6 +424,29 @@ public class CommandLineOptions implements Constants {
 
         }
     }    // end checkSettings
+
+    /**
+     * Create the user configuration.
+     * @throws FOPException if creating the user configuration fails
+     * @throws IOException
+     */
+    private void createUserConfig() throws FOPException, IOException {
+        if (userConfigFile == null) {
+            return;
+        }
+        XMLReader parser = FOFileHandler.createParser();
+        DefaultConfigurationBuilder configBuilder
+            = new DefaultConfigurationBuilder(parser);
+        Configuration userConfig = null;
+        try {
+            userConfig = configBuilder.buildFromFile(userConfigFile);
+        } catch (SAXException e) {
+            throw new FOPException(e);
+        } catch (ConfigurationException e) {
+            throw new FOPException(e);
+        }
+        foUserAgent.setUserConfig(userConfig);
+     }
 
     /**
      * @return the type chosen renderer
