@@ -67,16 +67,6 @@ public class Character extends InlineArea {
     }
 
     /**
-     * Handle InlineAreaVisitor request by passing this back to it.
-     *
-     * @param visitor the InlineAreaVisitor wishing to process this.
-     * @see org.apache.fop.area.inline.InlineAreaVisitor
-     */
-    public void acceptVisitor(InlineAreaVisitor visitor) {
-        visitor.serveVisitor(this);
-    }
-
-    /**
      * Get the character for this inline character area.
      *
      * @return the character
