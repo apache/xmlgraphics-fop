@@ -152,7 +152,10 @@ public class Keep implements CompoundDatatype {
      * @return String representation
      */
     public String toString() {
-        return "Keep";
+        return "Keep[" + 
+            "withinLine:" + getWithinLine().getObject() + 
+            ", withinColumn:" + getWithinColumn().getObject() + 
+            ", withinPage:" + getWithinPage().getObject() + "]";
     }
 
 }

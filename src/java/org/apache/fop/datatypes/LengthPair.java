@@ -108,5 +108,11 @@ public class LengthPair implements CompoundDatatype {
         return this.bpd;
     }
 
+    public String toString() {
+        return "LengthPair[" + 
+            "ipd:" + getIPD().getObject() + 
+            ", bpd:" + getBPD().getObject() + "]";
+    }
+    
 }
 

@@ -125,5 +125,14 @@ public class Space extends LengthRange {
         return this.conditionality;
     }
 
+    public String toString() {
+        return "Space[" +
+            "min:" + getMinimum().getObject() + 
+            ", max:" + getMaximum().getObject() + 
+            ", opt:" + getOptimum().getObject() + 
+            ", precedence:" + precedence.getObject() + 
+            ", conditionality:" + conditionality.getObject() + "]";
+    }
+
 }
 
