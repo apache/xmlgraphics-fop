@@ -76,7 +76,7 @@ import org.apache.fop.rtf.rtflib.interfaces.ITableColumnsInfo;
  *          causing extra rows to be generated, with content that can come
  *          from several RtfTableCells
  *
- *  @see org.apache.fop.rtf.rtflib.testdoc.NestedTable
+ *  @see org.apache.fop.rtf.rtflib.testdocs.NestedTable
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
 

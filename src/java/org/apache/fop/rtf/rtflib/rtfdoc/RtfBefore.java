@@ -76,7 +76,8 @@ public class RtfBefore extends RtfAfterBeforeBase {
     }
 
     /**
-     * @see RtfAfterBeforeBase#writeMyAttributes
+     * Write the attributes for this element
+     * @throws IOException for I/O problems
      */
     protected void writeMyAttributes() throws IOException {
         writeAttributes(attrib, HEADER_ATTR);
