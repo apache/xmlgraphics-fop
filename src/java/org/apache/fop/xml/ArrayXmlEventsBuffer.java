@@ -70,13 +70,6 @@ public class ArrayXmlEventsBuffer
 implements XmlEventSource {
 
     /**
-     * Constant for <i>discardEvent</i> field of
-     * <i>getEndElement(boolean discardEvent, XmlEvent(, boolean)).
-     */
-    public static final boolean DISCARD_EV = true,
-                                 RETAIN_EV = false;
-
-    /**
      * The datastructure for the events buffer.
      */
     private ArrayList buffer;
@@ -185,4 +178,13 @@ implements XmlEventSource {
         // requirement, set bufferRead to false.
         nextEvent = 0;
     }
+    
+    public void emptyBuffer() {
+        rewindBuffer();
+        for (int i = buffer.size(); i >= 0; ) {
+            namespaces.relinquishEvent((XmlEvent)buffer.get(--i));
+            buffer.remove(i);
+        }
+    }
+    
 }
