@@ -64,6 +64,8 @@ public class SVGRectElementImpl extends GraphicElement implements SVGRectElement
 
 	/** y-coordinate of corner */
 	private SVGAnimatedLength y;
+	private SVGAnimatedLength rx;
+	private SVGAnimatedLength ry;
 
 	/** width of rectangle */
 	private SVGAnimatedLength width;
@@ -134,16 +136,21 @@ public class SVGRectElementImpl extends GraphicElement implements SVGRectElement
 
 	public SVGAnimatedLength getRx( )
 	{
-		return null;
+		return rx;
 	}
+
 	public void setRx( SVGAnimatedLength rx )
 	{
+	    this.rx = rx;
 	}
+
 	public SVGAnimatedLength getRy( )
 	{
-		return null;
+		return ry;
 	}
+
 	public void setRy( SVGAnimatedLength ry )
 	{
+	    this.ry = ry;
 	}
 }
