@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
      * Reference to FO whose areas it's managing or to the traits
      * of the FO.
      */
-    protected LayoutManager curChildLM = null;
+    //protected LayoutManager curChildLM = null; AbstractLayoutManager also defines this!
     protected BlockParent parentArea = null;
 
     public BlockStackingLayoutManager(FObj node) {
