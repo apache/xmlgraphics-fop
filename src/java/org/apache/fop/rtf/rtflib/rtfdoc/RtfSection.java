@@ -213,6 +213,7 @@ implements
      */
     protected void writeRtfPrefix() throws IOException {
         writeControlWord("sectd");
+        writeAttributes(attrib, RtfPage.PAGE_ATTR);
     }
 
     /**
