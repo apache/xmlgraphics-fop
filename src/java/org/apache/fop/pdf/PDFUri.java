@@ -76,13 +76,10 @@ public class PDFUri extends PDFAction {
     }
 
     /**
-     * There is nothing to return for the toPDF method
-     * as it should not be called.
-     *
-     * @return an empty array
+     * @see org.apache.fop.pdf.PDFObject#toPDFString()
      */
-    public byte[] toPDF() {
-        return new byte[0];
+    public String toPDFString() {
+        throw new UnsupportedOperationException("This method should not be called");
     }
 
 }
