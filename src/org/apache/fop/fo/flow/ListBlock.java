@@ -87,8 +87,6 @@ public class ListBlock extends FObj {
 		int endIndent;
 		int spaceBefore;
 		int spaceAfter;
-		int provisionalDistanceBetweenStarts;
-		int provisionalLabelSeparation;
 		int spaceBetweenListRows = 0;
 		ColorType backgroundColor;
 
@@ -128,11 +126,6 @@ public class ListBlock extends FObj {
 																 "space-before.optimum").getLength().mvalue();
 						this.spaceAfter = this.properties.get(
 																"space-after.optimum").getLength().mvalue();
-						this.provisionalDistanceBetweenStarts = this.properties.get(
-																											"provisional-distance-between-starts").getLength().
-																										mvalue();
-						this.provisionalLabelSeparation = this.properties.get(
-																								"provisional-label-separation").getLength().mvalue();
 						this.spaceBetweenListRows = 0; // not used at present
 						this.backgroundColor = this.properties.get(
 																		 "background-color").getColorType();
@@ -145,11 +138,6 @@ public class ListBlock extends FObj {
 
 						if (spaceBefore != 0) {
 								area.addDisplaySpace(spaceBefore);
-						}
-
-						if (this.isInListBody) {
-								startIndent += bodyIndent + distanceBetweenStarts;
-								bodyIndent = startIndent;
 						}
 
 						if (this.isInTableCell) {
@@ -176,14 +164,10 @@ public class ListBlock extends FObj {
 				int numChildren = this.children.size();
 				for (int i = this.marker; i < numChildren; i++) {
 						if (!(children.elementAt(i) instanceof ListItem)) {
-								MessageHandler.errorln("WARNING: This version of FOP requires list-items inside list-blocks");
+								MessageHandler.errorln("children of list-blocks must be list-items");
 								return new Status(Status.OK);
 						}
 						ListItem listItem = (ListItem) children.elementAt(i);
-						listItem.setDistanceBetweenStarts(
-							this.provisionalDistanceBetweenStarts);
-						listItem.setLabelSeparation(this.provisionalLabelSeparation);
-						listItem.setBodyIndent(this.bodyIndent);
 						Status status;
 						if ((status = listItem.layout(blockArea)).isIncomplete()) {
 								if(status.getCode() == Status.AREA_FULL_NONE && i > 0) {
@@ -214,9 +198,4 @@ public class ListBlock extends FObj {
 				return new Status(Status.OK);
 		}
 
-		public void setBodyIndent(int indent) {
-				if (! this.isInListBody) {
-						super.setBodyIndent(indent);
-				}
-		}
 }

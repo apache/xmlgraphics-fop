@@ -1,35 +1,35 @@
 /*-- $Id$ --
 
  ============================================================================
-									 The Apache Software License, Version 1.1
+                   The Apache Software License, Version 1.1
  ============================================================================
 
-		Copyright (C) 1999 The Apache Software Foundation. All rights reserved.
+    Copyright (C) 1999 The Apache Software Foundation. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without modifica-
  tion, are permitted provided that the following conditions are met:
 
  1. Redistributions of  source code must  retain the above copyright  notice,
-		this list of conditions and the following disclaimer.
+    this list of conditions and the following disclaimer.
 
  2. Redistributions in binary form must reproduce the above copyright notice,
-		this list of conditions and the following disclaimer in the documentation
-		and/or other materials provided with the distribution.
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
 
  3. The end-user documentation included with the redistribution, if any, must
-		include  the following  acknowledgment:  "This product includes  software
-		developed  by the  Apache Software Foundation  (http://www.apache.org/)."
-		Alternately, this  acknowledgment may  appear in the software itself,  if
-		and wherever such third-party acknowledgments normally appear.
+    include  the following  acknowledgment:  "This product includes  software
+    developed  by the  Apache Software Foundation  (http://www.apache.org/)."
+    Alternately, this  acknowledgment may  appear in the software itself,  if
+    and wherever such third-party acknowledgments normally appear.
 
  4. The names "FOP" and  "Apache Software Foundation"  must not be used to
-		endorse  or promote  products derived  from this  software without  prior
-		written permission. For written permission, please contact
-		apache@apache.org.
+    endorse  or promote  products derived  from this  software without  prior
+    written permission. For written permission, please contact
+    apache@apache.org.
 
  5. Products  derived from this software may not  be called "Apache", nor may
-		"Apache" appear  in their name,  without prior written permission  of the
-		Apache Software Foundation.
+    "Apache" appear  in their name,  without prior written permission  of the
+    Apache Software Foundation.
 
  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
@@ -64,149 +64,144 @@ import java.util.Enumeration;
 
 public class ListItem extends FObj {
 
-		public static class Maker extends FObj.Maker {
-	public FObj make(FObj parent, PropertyList propertyList)
-			throws FOPException {
-			return new ListItem(parent, propertyList);
-	}
-		}
+    public static class Maker extends FObj.Maker {
+				public FObj make(FObj parent, PropertyList propertyList)
+						throws FOPException {
+						return new ListItem(parent, propertyList);
+				}
+    }
 
-		public static FObj.Maker maker() {
-	return new ListItem.Maker();
-		}
+    public static FObj.Maker maker() {
+				return new ListItem.Maker();
+    }
 
-		FontState fs;
-		int align;
-		int alignLast;
-		int breakBefore;
-		int breakAfter;
-		int lineHeight;
-		int startIndent;
-		int endIndent;
-		int spaceBefore;
-		int spaceAfter;
-		String id;
+    FontState fs;
+    int align;
+    int alignLast;
+    int breakBefore;
+    int breakAfter;
+    int lineHeight;
+    int startIndent;
+    int endIndent;
+    int spaceBefore;
+    int spaceAfter;
+    String id;
+    BlockArea blockArea;
+    
+    public ListItem(FObj parent, PropertyList propertyList) {
+				super(parent, propertyList);
+				this.name = "fo:list-item";
+    }
 
-		public ListItem(FObj parent, PropertyList propertyList) {
-	super(parent, propertyList);
-	this.name = "fo:list-item";
-		}
+    public Status layout(Area area) throws FOPException {
+				if (this.marker == START) {
+						String fontFamily =
+								this.properties.get("font-family").getString();
+						String fontStyle =
+								this.properties.get("font-style").getString();
+						String fontWeight =
+								this.properties.get("font-weight").getString();
+						int fontSize =
+								this.properties.get("font-size").getLength().mvalue();
+						// font-variant support
+						// added by Eric SCHAEFFER
+						int fontVariant =
+								this.properties.get("font-variant").getEnum();
+						
+						this.fs = new FontState(area.getFontInfo(), fontFamily,
+																		fontStyle, fontWeight, fontSize, fontVariant);
+						
+						this.align = this.properties.get("text-align").getEnum();
+						this.alignLast =
+								this.properties.get("text-align-last").getEnum();
+						this.lineHeight =
+								this.properties.get("line-height").getLength().mvalue();
+						this.spaceBefore =
+								this.properties.get("space-before.optimum").getLength().mvalue();
+						this.spaceAfter =
+								this.properties.get("space-after.optimum").getLength().mvalue();
+            this.id =
+                this.properties.get("id").getString();
 
-		public Status layout(Area area) throws FOPException {
-	if (this.marker == START) {
-			String fontFamily =
-		this.properties.get("font-family").getString();
-			String fontStyle =
-		this.properties.get("font-style").getString();
-			String fontWeight =
-		this.properties.get("font-weight").getString();
-			int fontSize =
-		this.properties.get("font-size").getLength().mvalue();
-		// font-variant support
-		// added by Eric SCHAEFFER
-		int fontVariant =
-			this.properties.get("font-variant").getEnum();
+            area.getIDReferences().createID(id);
 
-		this.fs = new FontState(area.getFontInfo(), fontFamily,
-														fontStyle, fontWeight, fontSize, fontVariant);
+						this.marker = 0;
+				}
 
-			this.align = this.properties.get("text-align").getEnum();
-			this.alignLast =
-		this.properties.get("text-align-last").getEnum();
-			this.lineHeight =
-		this.properties.get("line-height").getLength().mvalue();
-			this.startIndent =
-		this.properties.get("start-indent").getLength().mvalue();
-			this.endIndent =
-		this.properties.get("end-indent").getLength().mvalue();
-			this.spaceBefore =
-		this.properties.get("space-before.optimum").getLength().mvalue();
-			this.spaceAfter =
-		this.properties.get("space-after.optimum").getLength().mvalue();
-						this.id =
-								this.properties.get("id").getString();
+				/* not sure this is needed given we know area is from list block */
+				if (area instanceof BlockArea) {
+						area.end();
+				}
 
-						area.getIDReferences().createID(id);
+				if (spaceBefore != 0) {
+						area.addDisplaySpace(spaceBefore);
+				}
 
-			this.marker = 0;
-	}
+				this.blockArea =
+						new BlockArea(fs, area.getAllocationWidth(),
+													area.spaceLeft(), 0, 0,
+													0, align, alignLast, lineHeight);
+				blockArea.setPage(area.getPage());
+				blockArea.start();
 
-	/* not sure this is needed given we know area is from list block */
-	if (area instanceof BlockArea) {
-			area.end();
-	}
+        blockArea.setAbsoluteHeight(area.getAbsoluteHeight());
+        blockArea.setIDReferences(area.getIDReferences());
 
-	if (spaceBefore != 0) {
-			area.addDisplaySpace(spaceBefore);
-	}
+				int numChildren = this.children.size();
+				if (numChildren != 2) {
+						throw new FOPException("list-item must have exactly two children");
+				}
+				ListItemLabel label = (ListItemLabel) children.elementAt(0);
+				ListItemBody body = (ListItemBody) children.elementAt(1);
 
-	startIndent += this.bodyIndent;
+				Status status;
+				
+				// what follows doesn't yet take into account whether the
+				// body failed completely or only got some text in
 
-	BlockArea blockArea =
-			new BlockArea(fs, area.getAllocationWidth(),
-				area.spaceLeft(), startIndent, endIndent,
-				0, align, alignLast, lineHeight);
-	blockArea.setPage(area.getPage());
-	blockArea.start();
+				if (this.marker == 0) {
+            // configure id
+            area.getIDReferences().configureID(id,area);
 
-				blockArea.setAbsoluteHeight(area.getAbsoluteHeight());
-				blockArea.setIDReferences(area.getIDReferences());
+						status = label.layout(blockArea);
+						if (status.isIncomplete()) {
+								return status;
+						}
+				}
 
-	int numChildren = this.children.size();
-	if (numChildren != 2) {
-			throw new FOPException("list-item must have exactly two children");
-	}
-	ListItemLabel label = (ListItemLabel) children.elementAt(0);
-	ListItemBody body = (ListItemBody) children.elementAt(1);
+				status = body.layout(blockArea);
+				if (status.isIncomplete()) {
+						blockArea.end();
+						area.addChild(blockArea);
+						area.increaseHeight(blockArea.getHeight());
+            area.setAbsoluteHeight(blockArea.getAbsoluteHeight());
+						this.marker = 1;
+						return status;
+				}
 
-	label.setDistanceBetweenStarts(this.distanceBetweenStarts);
-	label.setLabelSeparation(this.labelSeparation);
-	label.setBodyIndent(this.bodyIndent);
+				blockArea.end();
+				area.addChild(blockArea);
+				area.increaseHeight(blockArea.getHeight());
+        area.setAbsoluteHeight(blockArea.getAbsoluteHeight());
 
-	body.setDistanceBetweenStarts(this.distanceBetweenStarts);
-	body.setBodyIndent(this.bodyIndent);
+				if (spaceAfter != 0) {
+						area.addDisplaySpace(spaceAfter);
+				}
 
-	/* this doesn't actually do anything */
-	body.setLabelSeparation(this.labelSeparation);
+				/* not sure this is needed given we know area is from list block */
+				if (area instanceof BlockArea) {
+						area.start();
+				}
+				return new Status(Status.OK);
+    }
 
-	Status status;
+    /**
+     * Return the content width of the boxes generated by this FO.
+     */
+    public int getContentWidth() {
+        if (blockArea != null)
+            return blockArea.getContentWidth(); //getAllocationWidth()??
+        else return 0;  // not laid out yet
+    }
 
-	// what follows doesn't yet take into account whether the
-	// body failed completely or only got some text in
-
-	if (this.marker == 0) {
-						// configure id
-						area.getIDReferences().configureID(id,area);
-
-			status = label.layout(blockArea);
-			if (status.isIncomplete()) {
-		return status;
-			}
-	}
-
-	status = body.layout(blockArea);
-	if (status.isIncomplete()) {
-			blockArea.end();
-			area.addChild(blockArea);
-			area.increaseHeight(blockArea.getHeight());
-						area.setAbsoluteHeight(blockArea.getAbsoluteHeight());
-			this.marker = 1;
-			return status;
-	}
-
-	blockArea.end();
-	area.addChild(blockArea);
-	area.increaseHeight(blockArea.getHeight());
-				area.setAbsoluteHeight(blockArea.getAbsoluteHeight());
-
-	if (spaceAfter != 0) {
-			area.addDisplaySpace(spaceAfter);
-	}
-
-	/* not sure this is needed given we know area is from list block */
-	if (area instanceof BlockArea) {
-			area.start();
-	}
-	return new Status(Status.OK);
-		}
 }

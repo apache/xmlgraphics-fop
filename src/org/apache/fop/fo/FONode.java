@@ -81,13 +81,7 @@ abstract public class FONode {
      */
     protected int marker = START;
 
-    protected boolean isInLabel = false;
-    protected boolean isInListBody = false;
     protected boolean isInTableCell = false;
-
-    protected int bodyIndent;
-    protected int distanceBetweenStarts;
-    protected int labelSeparation;
 
     protected int forcedStartOffset = 0;
     protected int forcedWidth = 0;
@@ -101,57 +95,12 @@ abstract public class FONode {
 	this.parent = parent;
     }
 
-    public void setIsInLabel() {
-	this.isInLabel = true;
-	// made recursive by Eric Schaeffer
-	for (int i = 0; i < this.children.size(); i++ ) {
-	    FONode child = (FONode) this.children.elementAt(i);
-	    child.setIsInLabel();
-	}
-    }
-
-    public void setIsInListBody() {
-	this.isInListBody = true;
-	// made recursive by Eric Schaeffer
-	for (int i = 0; i < this.children.size(); i++) {
-	    FONode child = (FONode) this.children.elementAt(i);
-	    child.setIsInListBody();
-	}
-    }
-
     public void setIsInTableCell() {
 	this.isInTableCell = true;
 	// made recursive by Eric Schaeffer
 	for (int i = 0; i < this.children.size(); i++) {
 	    FONode child = (FONode) this.children.elementAt(i);
 	    child.setIsInTableCell();
-	}
-    }
-
-    public void setDistanceBetweenStarts(int distance) {
-	this.distanceBetweenStarts = distance;
-	// made recursive by Eric Schaeffer
-	for (int i = 0; i < this.children.size(); i++) {
-	    FONode child = (FONode) this.children.elementAt(i);
-	    child.setDistanceBetweenStarts(distance);
-	}
-    }
-
-    public void setLabelSeparation(int separation) {
-	this.labelSeparation = separation;
-	// made recursive by Eric Schaeffer
-	for (int i = 0; i < this.children.size(); i++) {
-	    FONode child = (FONode) this.children.elementAt(i);
-	    child.setLabelSeparation(separation);
-	}
-    }
-
-    public void setBodyIndent(int indent) {
-	this.bodyIndent = indent;
-	// made recursive by Eric Schaeffer
-	for (int i = 0; i < this.children.size(); i++) {
-	    FONode child = (FONode) this.children.elementAt(i);
-	    child.setBodyIndent(indent);
 	}
     }
 

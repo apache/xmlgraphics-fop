@@ -48,53 +48,32 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+package org.apache.fop.fo.expr;
 
-package org.apache.fop.fo.flow;
+import org.apache.fop.fo.Property;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.flow.ListItem;
 
-// FOP
-import org.apache.fop.fo.*;
-import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.Area;
-import org.apache.fop.layout.FontState;
-import org.apache.fop.apps.FOPException;
+public class BodyStartFunction extends FunctionBase {
 
-// Java
-import java.util.Enumeration;
+  public int nbArgs() { return 0; }
 
-public class ListItemLabel extends FObj {
+  public Property eval(Property[] args, PropertyInfo pInfo)
+    throws PropertyException
+  {
+    Numeric distance
+      = pInfo.getPropertyList().get("provisional-distance-between-starts").getNumeric();
 
-    public static class Maker extends FObj.Maker {
-	public FObj make(FObj parent, PropertyList propertyList)
-	    throws FOPException {
-	    return new ListItemLabel(parent, propertyList);
-	}
+    FObj item = pInfo.getFO();
+    while(item != null && !(item instanceof ListItem)) {
+	item = item.getParent();
+    }
+    if(item == null) {
+	throw new PropertyException("body-start() called from outside an fo:list-item");
     }
 
-    public static FObj.Maker maker() {
-	return new ListItemLabel.Maker();
-    }
-
-    public ListItemLabel(FObj parent, PropertyList propertyList) {
-	super(parent, propertyList);
-	this.name = "fo:list-item-label";
-    }
-
-    public Status layout(Area area) throws FOPException {
-	int numChildren = this.children.size();
-
-	if (numChildren != 1) {
-	    throw new FOPException("list-item-label must have exactly one block in this version of FOP");
-	}
-        
-        // initialize id                       
-        String id = this.properties.get("id").getString();            
-        area.getIDReferences().initializeID(id,area);                        
-        
-	Block block = (Block) children.elementAt(0);
-
-	Status status;
-	status = block.layout(area);
-	area.addDisplaySpace(-block.getAreaHeight());
-	return status;
-    }
+    Numeric startIndent = item.properties.get("start-indent").getNumeric();
+    
+    return new NumericProperty(distance.add(startIndent));
+  }
 }

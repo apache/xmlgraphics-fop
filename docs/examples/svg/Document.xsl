@@ -228,21 +228,21 @@
 	</xsl:template>
 
 	<xsl:template match="i">
-		<fo:inline-sequence font-style="italic">
+		<fo:inline font-style="italic">
 			<xsl:apply-templates/>
-		</fo:inline-sequence>
+		</fo:inline>
 	</xsl:template>
 
 	<xsl:template match="b">
-		<fo:inline-sequence font-weight="bold">
+		<fo:inline font-weight="bold">
 			<xsl:apply-templates/>
-		</fo:inline-sequence>
+		</fo:inline>
 	</xsl:template>
 
 	<xsl:template match="a">
-		<fo:inline-sequence color="blue">
+		<fo:inline color="blue">
 			<xsl:apply-templates/>
-		</fo:inline-sequence>
+		</fo:inline>
 	</xsl:template>
 
 	<xsl:template match="Description">
@@ -267,10 +267,10 @@
 
 	<xsl:template match="li">
         <fo:list-item>
-          <fo:list-item-label>
+          <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
-          <fo:list-item-body>
+          <fo:list-item-body start-indent="body-start()">
             <fo:block space-after.optimum="4pt">
         		<xsl:apply-templates/>
             </fo:block>
@@ -286,10 +286,10 @@
 
 	<xsl:template match="ol/li">
         <fo:list-item>
-          <fo:list-item-label>
+          <fo:list-item-label end-indent="label-end()">
             <fo:block><xsl:number level="multiple" count="li" format="1. "/></fo:block>
           </fo:list-item-label>
-          <fo:list-item-body>
+          <fo:list-item-body start-indent="body-start()">
             <fo:block space-after.optimum="4pt">
         		<xsl:apply-templates/>
             </fo:block>

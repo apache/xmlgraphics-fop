@@ -256,14 +256,6 @@ public class Block extends FObjMixed {
 						if (area instanceof BlockArea) {
 								area.end();
 						}
-						if (this.isInLabel) {
-								startIndent += bodyIndent;
-								endIndent += (area.getAllocationWidth() -
-															distanceBetweenStarts - startIndent) +
-														 labelSeparation;
-						} else if (this.isInListBody) {
-								startIndent += bodyIndent + distanceBetweenStarts;
-						}
 
 						if(area.getIDReferences() != null)
 								area.getIDReferences().createID(id);
@@ -358,11 +350,6 @@ public class Block extends FObjMixed {
 				int numChildren = this.children.size();
 				for (int i = this.marker; i < numChildren; i++) {
 						FONode fo = (FONode) children.elementAt(i);
-						if (this.isInListBody) {
-								fo.setIsInListBody();
-								fo.setDistanceBetweenStarts(this.distanceBetweenStarts);
-								fo.setBodyIndent(this.bodyIndent);
-						}
 						Status status;
 						if ((status = fo.layout(blockArea)).isIncomplete()) {
 								this.marker = i;

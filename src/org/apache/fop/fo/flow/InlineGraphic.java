@@ -146,17 +146,6 @@ public class InlineGraphic extends FObj {
 		area.end();
 			}
 
-			if (this.isInLabel) {
-		startIndent += bodyIndent;
-		endIndent += (area.getAllocationWidth()
-						- distanceBetweenStarts - startIndent)
-				+ labelSeparation;
-			}
-
-			if (this.isInListBody) {
-		startIndent += bodyIndent + distanceBetweenStarts;
-			}
-
 			if (this.isInTableCell) {
 		startIndent += forcedStartOffset;
 		endIndent = area.getAllocationWidth() - forcedWidth -

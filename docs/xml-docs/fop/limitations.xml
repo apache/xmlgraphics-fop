@@ -20,18 +20,6 @@
     </p>
   </s2>
 
-  <s2 title="list-block">
-    <p>The fo working draft allows describes two ways to markup lists.The list-block must have as 
-       children either: 1) pairs of fo:list-item-label and fo:list-item-body formatting objects, or
-       2) fo:list-item formatting objects.</p>
-    <p>At the moment FOP only implements the second way. Therefore a list has a basic structure like this:</p>
-    <p><code>&lt;fo:list-block></code></p>
-    <p><code>&lt;fo:list-item></code></p>
-    <p><code>&lt;fo:list-item-label>&lt;fo:block>&lt;/fo:block>&lt;/fo:list-item-label></code></p>
-    <p><code>&lt;fo:list-item-body>&lt;fo:block>&lt;/fo:block>&lt;/fo:list-item-body></code></p>
-    <p><code>&lt;/fo:list-item></code></p>
-    <p><code>&lt;/fo:list-block></code></p>
-  </s2>
   <s2 title="Padding">
     <p>Padding works in conjunction with indents and spaces. It is only implemented 
        for blocks. At the moment padding can't be used to make extra space (indents+spaces

@@ -102,10 +102,10 @@
       <fo:list-block space-after.optimum="13pt">
 
         <fo:list-item>
-          <fo:list-item-label>
+          <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
-          <fo:list-item-body>
+          <fo:list-item-body start-indent="body-start()">
             <fo:block>
               <fo:inline text-decoration="none">none</fo:inline>
             </fo:block>
@@ -113,10 +113,10 @@
         </fo:list-item>
 
         <fo:list-item>
-          <fo:list-item-label>
+          <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
-          <fo:list-item-body>
+          <fo:list-item-body start-indent="body-start()">
             <fo:block>
               <fo:inline text-decoration="underline">underline</fo:inline>
             </fo:block>
@@ -124,10 +124,10 @@
         </fo:list-item>
 
         <fo:list-item>
-          <fo:list-item-label>
+          <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
-          <fo:list-item-body>
+          <fo:list-item-body start-indent="body-start()">
             <fo:block>
               <fo:inline text-decoration="overline">overline</fo:inline>
             </fo:block>
@@ -135,10 +135,10 @@
         </fo:list-item>
 
         <fo:list-item>
-          <fo:list-item-label>
+          <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
-          <fo:list-item-body>
+          <fo:list-item-body start-indent="body-start()">
             <fo:block>
               <fo:inline text-decoration="line-through">line-through</fo:inline>
             </fo:block>
@@ -146,10 +146,10 @@
         </fo:list-item>
 
         <fo:list-item>
-          <fo:list-item-label>
+          <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
-          <fo:list-item-body>
+          <fo:list-item-body start-indent="body-start()">
             <fo:block>
               <fo:inline text-decoration="blink">blink</fo:inline>
             </fo:block>
@@ -157,10 +157,10 @@
         </fo:list-item>
 
         <fo:list-item>
-          <fo:list-item-label>
+          <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
-          <fo:list-item-body>
+          <fo:list-item-body start-indent="body-start()">
             <fo:block>
               <fo:inline text-decoration="no-underline">no-underline</fo:inline>
             </fo:block>
@@ -168,10 +168,10 @@
         </fo:list-item>
 
         <fo:list-item>
-          <fo:list-item-label>
+          <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
-          <fo:list-item-body>
+          <fo:list-item-body start-indent="body-start()">
             <fo:block>
               <fo:inline text-decoration="no-overline">no-overline</fo:inline>
             </fo:block>
@@ -179,10 +179,10 @@
         </fo:list-item>
 
         <fo:list-item>
-          <fo:list-item-label>
+          <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
-          <fo:list-item-body>
+          <fo:list-item-body start-indent="body-start()">
             <fo:block>
               <fo:inline text-decoration="no-line-through">no-line-through</fo:inline>
             </fo:block>
@@ -190,10 +190,10 @@
         </fo:list-item>
 
         <fo:list-item>
-          <fo:list-item-label>
+          <fo:list-item-label end-indent="label-end()">
             <fo:block>&#x2022;</fo:block>
           </fo:list-item-label>
-          <fo:list-item-body>
+          <fo:list-item-body start-indent="body-start()">
             <fo:block>
               <fo:inline text-decoration="no-blink">no-blink</fo:inline>
             </fo:block>
