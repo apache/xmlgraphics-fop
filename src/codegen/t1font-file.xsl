@@ -27,7 +27,7 @@ import org.apache.fop.pdf.PDFT1Stream;
 import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.BufferedInputStream;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 public class <xsl:value-of select="class-name"/> extends Font implements FontDescriptor {
     private final static String fontName = "<xsl:value-of select="font-name"/>";
@@ -51,24 +51,24 @@ public class <xsl:value-of select="class-name"/> extends Font implements FontDes
     private final static int firstChar = <xsl:value-of select="first-char"/>;
     private final static int lastChar = <xsl:value-of select="last-char"/>;
     private final static int[] width;
-    private final static Hashtable kerning=new Hashtable();
+    private final static HashMap kerning=new HashMap();
 
     static {
         width = new int[256];
 <xsl:for-each select="widths/char"><xsl:variable name="char-name" select="@name"/><xsl:variable name="char-num" select="document('charlist.xml')/font-mappings/map[@adobe-name=$char-name]/@win-ansi"/><xsl:if test="$char-num!='-1'">        width[<xsl:value-of select="$char-num"/>] = <xsl:value-of select="@width"/>;
 </xsl:if></xsl:for-each>
 
-    Hashtable tmptable;
+    HashMap tmptable;
 <xsl:for-each select="kerning">
 <xsl:variable name="kpx1-name" select="@kpx1"/>
-    tmptable=new Hashtable();<xsl:for-each select="pair"><xsl:variable name="kpx2-name" select="@kpx2"/><xsl:variable name="kern-name" select="@kern"/>
+    tmptable=new HashMap();<xsl:for-each select="pair"><xsl:variable name="kpx2-name" select="@kpx2"/><xsl:variable name="kern-name" select="@kern"/>
     tmptable.put(Glyphs.glyphToString("<xsl:value-of select="$kpx2-name"/>"), new Integer(<xsl:value-of select="$kern-name"/>));</xsl:for-each>
     kerning.put(Glyphs.glyphToString("<xsl:value-of select="$kpx1-name"/>"), tmptable);
 </xsl:for-each>
     }
 
     public final boolean hasKerningInfo() {return kerning.isEmpty();}
-    public final java.util.Hashtable getKerningInfo() {return kerning;}
+    public final java.util.HashMap getKerningInfo() {return kerning;}
     public byte getSubType() {return org.apache.fop.pdf.PDFFont.TYPE1;}
 
     public boolean isEmbeddable() {

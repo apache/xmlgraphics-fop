@@ -233,7 +233,6 @@
         <value const="AUTO">auto</value>
         <value const="FIXED">fixed</value>
         <value const="ABSOLUTE">absolute</value>
-        <value const="INHERIT">inherit</value>
       </enumeration>
     <default>auto</default>
   </property>
@@ -1848,7 +1847,17 @@
   <property>
     <name>caption-side</name>
     <inherited>true</inherited>
-    <datatype>ToBeImplemented</datatype>
+    <datatype>Enum</datatype>
+      <enumeration>
+        <value const="BEFORE">before</value>
+        <value const="AFTER">after</value>
+        <value const="START">start</value>
+        <value const="END">end</value>
+        <value const="TOP">top</value>
+        <value const="BOTTOM">bottom</value>
+        <value const="LEFT">left</value>
+        <value const="RIGHT">right</value>
+      </enumeration>
     <default>before</default>
   </property>
   <property>

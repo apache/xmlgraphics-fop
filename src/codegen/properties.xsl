@@ -56,9 +56,9 @@
 <!-- Look for keyword equivalents. Value is the new expression  -->
 <xsl:template match="keyword-equiv[1]">
     // Initialize hashtable of keywords
-    static Hashtable s_htKeywords;
+    static HashMap s_htKeywords;
     static {
-	s_htKeywords = new Hashtable(<xsl:value-of select="count(../keyword-equiv)"/>);
+	s_htKeywords = new HashMap(<xsl:value-of select="count(../keyword-equiv)"/>);
   <xsl:for-each select="../keyword-equiv">
       	s_htKeywords.put("<xsl:value-of select="@match"/>", "<xsl:value-of select="."/>");
   </xsl:for-each>
@@ -207,7 +207,7 @@
 <redirect:write select="concat($classname, '.java')">
 package org.apache.fop.fo.properties;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.fo.*;
 import org.apache.fop.apps.FOPException;
