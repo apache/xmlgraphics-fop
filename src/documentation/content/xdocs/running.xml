@@ -3,77 +3,83 @@
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 
 <document>
-<header>
-  <title>Running FOP</title>
-</header>
+  <header>
+    <title>Running FOP</title>
+  </header>
 
-<body>
-  <section>
-    <title>Installation</title>
+  <body>
     <section>
-      <title>Overview</title>
-      <p>The following software must be installed:</p>
-      <ul>
-        <li>Java 1.2.x or later.</li>
-        <li>FOP. The <jump href="http://xml.apache.org/fop/download.html">FOP distribution</jump> includes all libraries that you will need to run a basic FOP installation. These can be found in the xml-fop/lib directory. These libraries include the following:</li>
+      <title>Installation</title>
+      <section>
+        <title>Overview</title>
+        <p>The following software must be installed:</p>
         <ul>
-          <li>Apache <jump href="http://xml.apache.org/xerces-j/index.html">Xerces-J</jump> for XML parsing. You can use other XML parsers which support SAX and DOM.</li>
-          <li>Apache Xalan, an XSLT processor.</li>
-          <li>Apache <jump href="http://xml.apache.org/batik/">Batik</jump>, an SVG library.</li>
+          <li>Java 1.2.x or later.</li>
+          <li>FOP. The <jump href="http://xml.apache.org/fop/download.html">FOP distribution</jump> includes all libraries that you will need to run a basic FOP installation. These can be found in the xml-fop/lib directory. These libraries include the following:</li>
+          <ul>
+            <li>Apache <jump href="http://xml.apache.org/xerces-j/index.html">Xerces-J</jump> for XML parsing. You can use other XML parsers which support SAX and DOM.</li>
+            <li>Apache Xalan, an XSLT processor.</li>
+            <li>Apache <jump href="http://xml.apache.org/batik/">Batik</jump>, an SVG library.</li>
+          </ul>
+          <li>Optional Libraries</li>
         </ul>
-        <li>Optional Libraries</li>
-      </ul>
+      </section>
+      <section>
+        <title>Instructions</title>
+        <p>Basic FOP installation consists of first unzipping the <code>.gz</code> file that is the distribution medium, then unarchiving the resulting <code>.tar</code> file in a directory/folder that is convenient on your system. Please consult your operating system documentation or Zip application software documentation for instructions specific to your site.</p>
+      </section>
+      <section>
+        <title>Problems</title>
+        <p>Some Mac OSX users have experienced filename truncation problems using Stuffit to unzip and unarchive their distribution media. This is a legacy of older Mac operating systems, which had a 31-character pathname limit. Several Mac OSX users have recommended that Mac OSX users use the shell command <code>tar -xzf</code> instead.</p>
+      </section>
     </section>
     <section>
-      <title>Instructions</title>
-      <p>Basic FOP installation consists of first unzipping the <code>.gz</code> file that is the distribution medium, then unarchiving the resulting <code>.tar</code> file in a directory/folder that is convenient on your system. Please consult your operating system documentation or Zip application software documentation for instructions specific to your site.</p>
-    </section>
-    <section>
-      <title>Problems</title>
-      <p>Some Mac OSX users have experienced filename truncation problems using Stuffit to unzip and unarchive their distribution media. This is a legacy of older Mac operating systems, which had a 31-character pathname limit. Several Mac OSX users have recommended that Mac OSX users use the shell command <code>tar -xzf</code> instead.</p>
-    </section>
-  </section>
+      <title>Starting FOP as a standalone application</title>
+      <p>Review the batch file fop.bat or the shell script fop.sh to see how FOP is invoked.</p>
+      <p>The standard scripts for starting FOP require that the environment variable JAVA_HOME be set to a path pointing to the appropriate Java installation on your system. Macintosh OSX includes a Java environment as part of its distribution. We are told by Mac OSX users that the path to use in this case is <code>/Library/Java/Home</code>. <strong>Caveat: </strong>We suspect that, as Apple releases new Java environments and as FOP upgrades the minimum Java requirements, the two will inevitably not match on some systems. Please see <jump href="http://developer.apple.com/java/faq">Java on Mac OSX FAQ</jump> for information as it becomes available.</p>
+      <p><code>fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-pcl|-ps|-txt|-svg|-at|-print] &lt;outfile></code></p>
+      <p>[OPTIONS]</p>
+      <source>
+      -d             debug mode
+      -x             dump configuration settings
+      -q             quiet mode
+      -c cfg.xml     use additional configuration file cfg.xml
+      -l lang        the language to use for user information
+      -s             (-at output) omit tree below block areas
+      -txt.encoding  (-txt output encoding use the encoding for the output file.
+                     The encoding must be a valid java encoding.
+      -o [password]  pdf file will be encrypted with option owner password
+      -u [password]  pdf file will be encrypted with option user password
+      -noprint       pdf file will be encrypted without printing permission
+      -nocopy        pdf file will be encrypted without copy content permission
+      -noedit        pdf file will be encrypted without edit content permission
+      -noannotations pdf file will be encrypted without edit annotation permission</source>
+      <p>[INPUT]</p>
+      <source>      infile            XSLFO input file (the same as the next)
+      -fo  infile       xsl:fo input file
+      -xml infile       xml input file, must be used together with -xsl
+      -xsl stylesheet   xslt stylesheet</source>
 
-  <section>
-    <title>Starting FOP as a standalone application</title>
-    <p>Review the batch file fop.bat or the shell script fop.sh to see how FOP is invoked.</p>
-    <p>The standard scripts for starting FOP require that the environment variable JAVA_HOME be set to a path pointing to the appropriate Java installation on your system. Macintosh OSX includes a Java environment as part of its distribution. We are told by Mac OSX users that the path to use in this case is <code>/Library/Java/Home</code>. <strong>Caveat: </strong>We suspect that, as Apple releases new Java environments and as FOP upgrades the minimum Java requirements, the two will inevitably not match on some systems. Please see <jump href="http://developer.apple.com/java/faq">Java on Mac OSX FAQ</jump> for information as it becomes available.</p>
-    <p><code>fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-pcl|-ps|-txt|-svg|-at|-print] &lt;outfile></code></p>
-     <p>[OPTIONS]</p>
-     <source>
-      -d          debug mode<br/>
-      -x          dump configuration settings<br/>
-      -q          quiet mode<br/>
-      -c cfg.xml  use additional configuration file cfg.xml<br/>
-      -l lang     the language to use for user information<br/></source>
-    <p>[INPUT]</p>
-    <source>
-      infile            xsl:fo input file (the same as the next)<br/>
-      -fo  infile       xsl:fo input file<br/>
-      -xml infile       xml input file, must be used together with -xsl<br/>
-      -xsl stylesheet   xslt stylesheet<br/></source>
-
-    <p>[OUTPUT]</p>
-    <source>
-      outfile           input will be rendered as pdf file into outfile<br/>
-      -pdf outfile      input will be rendered as pdf file (outfile req'd)<br/>
-      -awt              input will be displayed on screen<br/>
-      -mif outfile      input will be rendered as mif file (outfile req'd)<br/>
-      -pcl outfile      input will be rendered as pcl file (outfile req'd)<br/>
-      -ps outfile       input will be rendered as PostScript file (outfile req'd)<br/>
-      -txt outfile      input will be rendered as text file (outfile req'd)<br/>
+      <p>[OUTPUT]</p>
+      <source>      outfile           input will be rendered as pdf file into outfile
+      -pdf outfile      input will be rendered as pdf file (outfile req'd)
+      -awt              input will be displayed on screen
+      -mif outfile      input will be rendered as mif file (outfile req'd)
+      -pcl outfile      input will be rendered as pcl file (outfile req'd)
+      -ps outfile       input will be rendered as PostScript file (outfile req'd)
+      -txt outfile      input will be rendered as text file (outfile req'd)
       -svg outfile      input will be rendered as an svg slides file (outfile req'd)
       -at outfile       representation of area tree as XML (outfile req'd)
-      -print            input file will be rendered and sent to the printer<br/>                        see options with "-print help"<br/></source>
-
-    <p>[Examples]</p>
-    <source>
-      fop foo.fo foo.pdf<br/>
-      fop -fo foo.fo -pdf foo.pdf (does the same as the previous line)<br/>
-      fop -xsl foo.xsl -xml foo.xml -pdf foo.pdf<br/>
-      fop foo.fo -mif foo.mif<br/>
-      fop foo.fo -print or Fop -print foo.fo<br/>
-      fop foo.fo -awt<br/></source>
+      -print            input file will be rendered and sent to the printer
+                        see print specific options with "-print help"</source>
+      <p>[Examples]</p>
+      <source>      fop foo.fo foo.pdf
+      fop -fo foo.fo -pdf foo.pdf (does the same as the previous line)
+      fop -xsl foo.xsl -xml foo.xml -pdf foo.pdf
+      fop foo.fo -mif foo.mif
+      fop foo.fo -print or Fop -print foo.fo
+      fop foo.fo -awt</source>
+      <p>PDF encryption is only available if FOP was compiled with encryption support <strong>and</strong> if compatible encryption support is availabe at run time. Currently, only the JCE is supported. Check the <link href="pdfencryption.html">Details</link>.</p>
   </section>
 
   <section>

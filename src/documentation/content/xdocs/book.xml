@@ -38,6 +38,7 @@
           <menu-item label="SVG" href="svg.html"/>
           <menu-item label="Extensions" href="extensions.html"/>
           <menu-item label="Fonts" href="fonts.html"/>
+          <menu-item label="PDF encryption" href="pdfencryption.html"/>
           <menu-item label="Configuration" href="configuration.html"/>
         </menu>
 
