@@ -111,7 +111,12 @@ public class PageNumber extends FObj {
 	    this.marker = 0;
 	}
 	String p = Integer.toString(area.getPage().getNumber());
-	this.marker = ((BlockArea) area).addText(fs, red, green, blue, wrapOption, whiteSpaceTreatment, p.toCharArray(), 0, p.length());
+	this.marker = ((BlockArea) area).addText(fs, red, green, blue,
+						 wrapOption,
+						 null,
+						 whiteSpaceTreatment,
+						 p.toCharArray(), 0,
+						 p.length());
 	return new Status(Status.OK);
     }
 }

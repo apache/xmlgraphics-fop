@@ -358,5 +358,12 @@
     <datatype>Length</datatype>
     <default>0pt</default>
   </property>
+  <property>
+    <name>external-destination</name>
+    <class-name>ExternalDestination</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default>
+  </property>
 </property-list>
  

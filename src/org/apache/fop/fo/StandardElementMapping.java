@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
+ 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -48,6 +48,7 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+
 package org.apache.fop.fo;
 
 import org.apache.fop.fo.flow.*;
@@ -98,5 +99,6 @@ public class StandardElementMapping implements ElementMapping {
 	builder.addMapping(uri, "table-body", TableBody.maker());
 	builder.addMapping(uri, "table-row", TableRow.maker());
 	builder.addMapping(uri, "table-cell", TableCell.maker());
+	builder.addMapping(uri, "simple-link", SimpleLink.maker());
     }
 }
