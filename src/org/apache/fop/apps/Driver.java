@@ -61,6 +61,7 @@ import org.apache.fop.configuration.Configuration;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.layout.AreaTree;
 import org.apache.fop.messaging.MessageHandler;
+import org.apache.fop.version.Version;
 import org.apache.fop.xml.FoXMLSerialHandler;
 import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
 
