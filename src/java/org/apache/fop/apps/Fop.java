@@ -52,7 +52,7 @@
 
 package org.apache.fop.apps;
 
-import org.apache.fop.messaging.MessageHandler;
+import java.util.logging.Logger;
 
 public class Fop {
 
@@ -62,6 +62,8 @@ public class Fop {
     public static long startTime;
     public static long startPCi;
     public static long endPCi;
+    
+    protected static final Logger logger = Logger.getLogger("org.apache.fop");
 
     public static void main(String[] args) {
 
@@ -109,13 +111,13 @@ public class Fop {
             //System.out.println("PC time     : " + (endPCi - startPCi));
             
         } catch (FOPException e) {
-            MessageHandler.errorln("ERROR: " + e.getMessage());
+            logger.warning(e.getMessage());
             if ((bool = Options.isDebugMode()) != null
                     && bool.booleanValue()) {
                 e.printStackTrace();
             }
         } catch (java.io.FileNotFoundException e) {
-            MessageHandler.errorln("ERROR: " + e.getMessage());
+            logger.warning(e.getMessage());
             if ((bool = Options.isDebugMode()) != null
                     && bool.booleanValue()) {
                 e.printStackTrace();

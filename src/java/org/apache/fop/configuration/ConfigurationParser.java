@@ -62,9 +62,6 @@ import org.xml.sax.Locator;
 import java.util.HashMap;
 import java.util.ArrayList;
 
-// fop
-import org.apache.fop.messaging.MessageHandler;
-
 
 /**
  * SAX2 Handler which retrieves the configuration information and stores them in Configuration.
@@ -190,7 +187,7 @@ public class ConfigurationParser extends DefaultHandler {
             fontTriplets.add(fontTriplet);
         } else {
             // to make sure that user knows about false tag
-            MessageHandler.errorln("Unknown tag in configuration file: "
+            Configuration.logger.warning("Unknown tag in configuration file: "
                                    + localName);
         }
     }                                            // end startElement
@@ -297,7 +294,7 @@ public class ConfigurationParser extends DefaultHandler {
         if (activeConfiguration != null) {
             activeConfiguration.put(key, value);
         } else {
-            MessageHandler.errorln("Unknown role >" + role
+            Configuration.logger.warning("Unknown role >" + role
                                    + "< for new configuration entry. \n"
                                    + "Putting configuration with key:" + key
                                    + " into standard configuration.");

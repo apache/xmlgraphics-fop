@@ -52,7 +52,6 @@
 
 package org.apache.fop.apps;
 
-// FOP
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -60,7 +59,6 @@ import org.xml.sax.XMLReader;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.layout.AreaTree;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.version.Version;
 import org.apache.fop.xml.FoXmlSerialHandler;
 import org.apache.fop.xml.Namespaces;
@@ -77,7 +75,7 @@ import org.apache.fop.xml.XmlEventReader;
 public class Driver {
     /** If true, full error stacks are reported */
     private static boolean _errorDump = false;
-
+    
     private InputHandler inputHandler;
     private XMLReader parser;
     private InputSource saxSource;
@@ -103,7 +101,7 @@ public class Driver {
         _errorDump =
                 Configuration.getBooleanValue("debugMode").booleanValue();
         String version = Version.getVersion();
-        MessageHandler.logln(version);
+        Fop.logger.config(version);
     }
 
     /**
