@@ -39,6 +39,7 @@
         <include name="xerces*.jar"/>
         <include name="xalan*.jar"/>
         <include name="commons-io*.jar"/>
+        <include name="commons-logging*.jar"/>
      </fileset>
      <fileset dir="${fop.lib.dir}/../build">
 		 <include name="fop.jar"/>
@@ -113,6 +114,24 @@
 	<target name="example5" depends="compile" description="Runs the Object to PDF example">
 		<echo message="Running the Object to PDF example"/>
 		<java classname="${name}.ExampleObj2PDF" fork="yes">
+		  <classpath>
+		    <path refid="project.class.path"/>
+		    <pathelement location="${build.dest}"/>
+		  </classpath>
+		</java>
+	</target>
+	<target name="example6" depends="compile" description="Runs the DOM to PDF example">
+		<echo message="Running the Object to PDF example"/>
+		<java classname="${name}.ExampleDOM2PDF" fork="yes">
+		  <classpath>
+		    <path refid="project.class.path"/>
+		    <pathelement location="${build.dest}"/>
+		  </classpath>
+		</java>
+	</target>
+	<target name="example7" depends="compile" description="Runs the SVG to PDF example">
+		<echo message="Running the Object to PDF example"/>
+		<java classname="${name}.ExampleSVG2PDF" fork="yes">
 		  <classpath>
 		    <path refid="project.class.path"/>
 		    <pathelement location="${build.dest}"/>
