@@ -688,6 +688,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     public void drawString(String s, float x, float y) {
         System.out.println("drawString(String)");
         currentStream.write("BT\n");
+
       Shape imclip = getClip();
       writeClip(imclip);
         Color c = getColor();
@@ -697,15 +698,40 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         PDFColor col = new PDFColor(c.getRed(), c.getGreen(), c.getBlue());
         currentStream.write(col.getColorSpaceOut(false));
 
+        Font gFont = getFont();
+        String name = gFont.getName();
+        if(name.equals("sanserif")) {
+            name = "sans-serif";
+        }
+        int size = gFont.getSize();
+        String style = gFont.isItalic() ? "italic" : "normal";
+        String weight = gFont.isBold() ? "bold" : "normal";
+        try {
+            fontState = new FontState(fontState.getFontInfo(), name,
+                                      style, weight, size * 1000, 0);
+        } catch(org.apache.fop.apps.FOPException fope) {
+            fope.printStackTrace();
+        }
+        name = fontState.getFontName();
+        size = fontState.getFontSize() / 1000;
+
+//System.out.println("ffn:" + gFont.getFontName() + "fn:" + gFont.getName() + " ff:" + gFont.getFamily() + " fs:" + fontState.getFontName());
+
+            if ((!name.equals(this.currentFontName)) ||
+                    (size != this.currentFontSize)) {
+                this.currentFontName = name;
+                this.currentFontSize = size;
+                currentStream.write("/" + name + " " + size + " Tf\n");
+
+            }
         AffineTransform trans = getTransform();
         trans.translate(x, y);
         double[] vals = new double[6];
         trans.getMatrix(vals);
 
         currentStream.write(PDFNumber.doubleOut(vals[0]) + " " + PDFNumber.doubleOut(vals[1]) + " "
-+ PDFNumber.doubleOut(vals[2]) + " " + PDFNumber.doubleOut(vals[3]) + " " + PDFNumber.doubleOut(vals[4])
-+ " " + PDFNumber.doubleOut(vals[5]) + " " +
-                           PDFNumber.doubleOut(vals[6]) + " Tm [" + s + "]");
++ PDFNumber.doubleOut(vals[2]) + " " + PDFNumber.doubleOut(-vals[3]) + " " + PDFNumber.doubleOut(vals[4])
++ " " + PDFNumber.doubleOut(vals[5]) + " Tm (" + s + ") Tj\n");
 
         currentStream.write("ET\n");
     }
@@ -755,10 +781,19 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         for(char ch = iterator.first(); ch != CharacterIterator.DONE; ch = iterator.next()) {
             Map attr = iterator.getAttributes();
 
+            String name = fontState.getFontName();
+            int size = fontState.getFontSize();
+            if ((!name.equals(this.currentFontName)) ||
+                    (size != this.currentFontSize)) {
+                this.currentFontName = name;
+                this.currentFontSize = size;
+                currentStream.write("/" + name + " " + (size / 1000) + " Tf\n");
+
+            }
+
             currentStream.write(PDFNumber.doubleOut(vals[0]) + " " + PDFNumber.doubleOut(vals[1]) + " "
 + PDFNumber.doubleOut(vals[2]) + " " + PDFNumber.doubleOut(vals[3]) + " " + PDFNumber.doubleOut(vals[4])
-+ " " + PDFNumber.doubleOut(vals[5]) + " " +
-                           PDFNumber.doubleOut(vals[6]) + " Tm [" + ch + "]");
++ " " + PDFNumber.doubleOut(vals[5]) + " Tm (" + ch + ") Tj\n");
         }
 
         currentStream.write("ET\n");
