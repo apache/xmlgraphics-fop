@@ -181,6 +181,8 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         GraphicsNodeRenderContext rc = getRenderContext(stroke);
         BridgeContext ctx = new BridgeContext(userAgent, rc);
         PDFAElementBridge pdfAElementBridge = new PDFAElementBridge();
+        AffineTransform currentTransform = new AffineTransform(1, 0, 0, 1, 0, 0);
+        pdfAElementBridge.setCurrentTransform(currentTransform);
         ctx.putBridge(pdfAElementBridge);
         GraphicsNode gvtRoot;
         try {
@@ -265,14 +267,13 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         PDFDocumentGraphics2D graphics = new PDFDocumentGraphics2D(stroke,
                 output.getOutputStream(), w, h);
         graphics.setSVGDimension(docWidth, docHeight);
-
+        currentTransform.setTransform(1, 0, 0, -1, 0, height);
         if (!stroke) {
             TextPainter textPainter = null;
             textPainter = new PDFTextPainter(graphics.getFontState());
             rc.setTextPainter(textPainter);
         }
 
-        pdfAElementBridge.setPDFGraphics2D(graphics);
         if (hints.containsKey(ImageTranscoder.KEY_BACKGROUND_COLOR)) {
             graphics.setBackgroundColor((Color)hints.get(ImageTranscoder.KEY_BACKGROUND_COLOR));
         }

@@ -131,6 +131,9 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         PDFResources pdfResources = this.pdfDoc.getResources();
         PDFPage currentPage = this.pdfDoc.makePage(pdfResources, pdfStream,
                                                    width, height, null);
+        if(currentAnnotList != null) {
+            currentPage.setAnnotList(currentAnnotList);
+        }
         if (fontInfo != null) {
             FontSetup.addToResources(this.pdfDoc, fontInfo);
         }
