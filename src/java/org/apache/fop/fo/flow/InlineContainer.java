@@ -22,12 +22,15 @@ package org.apache.fop.fo.flow;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
@@ -38,7 +41,6 @@ import org.apache.fop.layoutmgr.LayoutManager;
 
 /**
  * Class modelling the fo:inline-container object.
- * @todo implement validateChildNode()
  */
 public class InlineContainer extends FObj {
     // The value of properties relevant for fo:inline-container.
@@ -64,6 +66,9 @@ public class InlineContainer extends FObj {
     private Length width;
     private int writingMode;
     // End of property values
+
+    /** used for FO validation */
+    private boolean blockItemFound = false;
 
     /**
      * @param parent FONode that is the parent of this object
@@ -104,6 +109,32 @@ public class InlineContainer extends FObj {
      */
     protected void startOfNode() throws FOPException {
         checkId(id);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: marker* (%block;)+
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws ValidationException {
+        if (nsURI == FO_URI && localName.equals("marker")) {
+            if (blockItemFound) {
+               nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
+            }
+        } else if (!isBlockItem(nsURI, localName)) {
+            invalidChildError(loc, nsURI, localName);
+        } else {
+            blockItemFound = true;
+        }
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#endOfNode
+     */
+    protected void endOfNode() throws FOPException {
+        if (!blockItemFound) {
+            missingChildElementError("marker* (%block;)+");
+        }
     }
 
     /**

@@ -185,7 +185,9 @@ public abstract class FONode implements Cloneable {
    }
 
     /**
-     *
+     *  Primarily used for making final content model validation checks
+     *  and/or informing the FOEventHandler that the end of this FO
+     *  has been reached.
      */
     protected void endOfNode() throws FOPException {
         // do nothing by default
