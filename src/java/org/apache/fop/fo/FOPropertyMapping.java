@@ -1211,6 +1211,7 @@ public class FOPropertyMapping implements Constants {
         m.setDefault("0pt");
         IndentPropertyMaker sCorr = new IndentPropertyMaker(m);
         sCorr.setCorresponding(PR_MARGIN_LEFT, PR_MARGIN_RIGHT, PR_MARGIN_TOP);
+        sCorr.setUseParent(true);
         sCorr.setRelative(true);
         sCorr.setPaddingCorresponding(new int[] {
              PR_PADDING_LEFT, PR_PADDING_RIGHT, PR_PADDING_TOP 
@@ -1226,6 +1227,7 @@ public class FOPropertyMapping implements Constants {
         m.setDefault("0pt");
         IndentPropertyMaker eCorr = new IndentPropertyMaker(m);
         eCorr.setCorresponding(PR_MARGIN_RIGHT, PR_MARGIN_LEFT, PR_MARGIN_BOTTOM);
+        eCorr.setUseParent(true);
         eCorr.setRelative(true);
         eCorr.setPaddingCorresponding(new int[] {
             PR_PADDING_RIGHT, PR_PADDING_LEFT, PR_PADDING_BOTTOM 
