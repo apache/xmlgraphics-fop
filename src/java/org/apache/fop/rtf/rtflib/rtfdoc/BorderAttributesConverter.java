@@ -63,35 +63,64 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 
 public class BorderAttributesConverter {
 
+    /** Constant for a single-thick border */
     public static final String BORDER_SINGLE_THICKNESS = "brdrs";
+    /** Constant for a double-thick border */
     public static final String BORDER_DOUBLE_THICKNESS = "brdrth";
+    /** Constant for a shadowed border */
     public static final String BORDER_SHADOWED = "brdrsh";
+    /** Constant for a double border */
     public static final String BORDER_DOUBLE = "brdrdb";
+    /** Constant for a dotted border */
     public static final String BORDER_DOTTED = "brdrdot";
+    /** Constant for a dashed border */
     public static final String BORDER_DASH = "brdrdash";
+    /** Constant for a hairline border */
     public static final String BORDER_HAIRLINE = "brdrhair";
+    /** Constant for a small-dashed border */
     public static final String BORDER_DASH_SMALL = "brdrdashsm";
+    /** Constant for a dot-dashed border */
     public static final String BORDER_DOT_DASH = "brdrdashd";
+    /** Constant for a dot-dot-dashed border */
     public static final String BORDER_DOT_DOT_DASH = "brdrdashdd";
+    /** Constant for a triple border */
     public static final String BORDER_TRIPLE = "brdrtriple";
+    /** Constant for a think-thin-small border */
     public static final String BORDER_THINK_THIN_SMALL = "brdrtnthsg";
+    /** Constant for a thin-thick-small border */
     public static final String BORDER_THIN_THICK_SMALL = "brdrthtnsg";
+    /** Constant for a thin-thick-thin-small border */
     public static final String BORDER_THIN_THICK_THIN_SMALL = "brdrthtnthsg";
+    /** Constant for a think-thin-medium border */
     public static final String BORDER_THINK_THIN_MEDIUM = "brdrtnthmg";
+    /** Constant for a thin-thick-medium border */
     public static final String BORDER_THIN_THICK_MEDIUM = "brdrthtnmg";
+    /** Constant for a thin-thick-thin-medium border */
     public static final String BORDER_THIN_THICK_THIN_MEDIUM = "brdrthtnthmg";
+    /** Constant for a think-thin-large border */
     public static final String BORDER_THINK_THIN_LARGE = "brdrtnthlg";
+    /** Constant for a thin-thick-large border */
     public static final String BORDER_THIN_THICK_LARGE = "brdrthtnlg";
+    /** Constant for a thin-thick-thin-large border */
     public static final String BORDER_THIN_THICK_THIN_LARGE = "brdrthtnthlg";
+    /** Constant for a wavy border */
     public static final String BORDER_WAVY = "brdrwavy";
+    /** Constant for a double wavy border */
     public static final String BORDER_WAVY_DOUBLE = "brdrwavydb";
+    /** Constant for a striped border */
     public static final String BORDER_STRIPED = "brdrdashdotstr";
+    /** Constant for an embossed border */
     public static final String BORDER_EMBOSS = "brdremboss";
+    /** Constant for an engraved border */
     public static final String BORDER_ENGRAVE = "brdrengrave";
+    /** Constant for border color */
     public static final String BORDER_COLOR = "brdrcf";
+    /** Constant for border space */
     public static final String BORDER_SPACE = "brsp";
+    /** Constant for border width */
     public static final String BORDER_WIDTH = "brdrw";
 
+    /** String array of border attributes */
     public static final String [] BORDERS = new String[] {
         BORDER_SINGLE_THICKNESS,    BORDER_DOUBLE_THICKNESS,            BORDER_SHADOWED,
         BORDER_DOUBLE,              BORDER_DOTTED,                      BORDER_DASH,
