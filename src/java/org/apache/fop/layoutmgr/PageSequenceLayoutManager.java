@@ -25,7 +25,6 @@ import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.NormalFlow;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.Page;
 import org.apache.fop.area.RegionViewport;
@@ -87,8 +86,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     /** Current span being filled */
     private Span curSpan;
 
-    /** Current normal-flow-reference-area being filled. */
-    private NormalFlow curFlow;
+    /** Zero-based index of column (Normal Flow) in span being filled. */
+    private int curFlowIdx = -1;
 
     private int flowBPD = 0;
     private int flowIPD = 0;
@@ -170,7 +169,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 
         makeNewPage(false, false);
         isFirstPage = true;
-        flowIPD = curFlow.getIPD();
+        flowIPD = curSpan.getNormalFlow(curFlowIdx).getIPD();
 
         PageBreaker breaker = new PageBreaker(this);
         breaker.doLayout(flowBPD);
@@ -230,8 +229,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 //algorithm so we have a BPD and IPD. This may subject to change later when we
                 //start handling more complex cases.
                 if (!firstPart) {
-                    if (curSpan.hasMoreAvailableFlows()) {
-                        curFlow = curSpan.addAdditionalNormalFlow();
+                    if (curFlowIdx < curSpan.getColumnCount()) {
+                        curFlowIdx++;
                     } else {
                         handleBreak(list.getStartOn());
                     }
@@ -467,34 +466,28 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
 
         flowBPD = (int) curPage.getBodyRegion().getBPD();
-        createSpan(curPage.getBodyRegion(), false);
+        createSpan(curPage.getBodyRegion().getColumnCount());
         return curPage;
     }
 
     /**
      * Creates a new span reference area.
-     * @param bodyRegion The region-body to create the span for
-     * @param spanned true if a spanned region should be created
+     * @param numCols number of columns needed for new span
      */
-    private void createSpan(BodyRegion bodyRegion, boolean spanned) {
+    private void createSpan(int numCols) {
         // get Width or Height as IPD for span
+        BodyRegion bodyRegion = curPage.getBodyRegion();
+        
         RegionViewport rv = curPage.getPage().getRegionViewport(FO_REGION_BODY);
         int ipdWidth = (int) rv.getRegion().getIPD() -
             rv.getBorderAndPaddingWidthStart() - rv.getBorderAndPaddingWidthEnd();
 
         //TODO currently hardcoding to one column, replace with numCols when ready
-        if (spanned) {
-            curSpan = new Span(1, ipdWidth);
-        } else {
-            int colWidth 
-                = (ipdWidth - (bodyRegion.getColumnCount() - 1) * bodyRegion.getColumnGap()) 
-                    / bodyRegion.getColumnCount();
-            curSpan = new Span(bodyRegion.getColumnCount(), colWidth);
-        }
+        curSpan = new Span(numCols, bodyRegion.getColumnGap(), ipdWidth);
 
         //curSpan.setPosition(BPD, newpos);
         curPage.getBodyRegion().getMainReference().addSpan(curSpan);
-        curFlow = curSpan.getNormalFlow(0);
+        curFlowIdx = 0;
     }
 
     private void layoutSideRegion(int regionID) {
@@ -512,13 +505,10 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         try {
             lm = (StaticContentLayoutManager)
                 areaTreeHandler.getLayoutManagerMaker().makeLayoutManager(sc);
-        } catch (FOPException e) {
-            log.error
-                ("Failed to create a StaticContentLayoutManager for flow "
-                 + sc.getFlowName()
-                 + "; no static content will be laid out:");
-            log.error(e.getMessage());
-            return;
+        } catch (FOPException e) { // severe error
+            throw new IllegalStateException(
+                "Internal error:  Failed to create a StaticContentLayoutManager "
+                + "for flow " + sc.getFlowName());
         }
         lm.initialize();
         lm.setRegionReference(rv.getRegion());
@@ -549,12 +539,10 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         lm.reset(null);
     }
 
-    
-    
     private void finishPage() {
         if (curPage == null) {
             curSpan = null;
-            curFlow = null;
+            curFlowIdx = -1;
             return;
         }
         // Layout side regions
@@ -567,7 +555,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         log.debug("page finished: " + curPage.getPageNumberString() + ", current num: " + currentPageNum);
         curPage = null;
         curSpan = null;
-        curFlow = null;
+        curFlowIdx = -1;
     }
 
     private void prepareNormalFlowArea(Area childArea) {
@@ -613,9 +601,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             bNeedNewSpan = true;
         }
         if (bNeedNewSpan) {
-            createSpan(curPage.getBodyRegion(), (span == Constants.EN_ALL));
-        } else if (curFlow == null) {  // should not happen
-            curFlow = curSpan.addAdditionalNormalFlow();
+            createSpan(numColsNeeded);
         }
     }
     
@@ -633,7 +619,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         if (aclass == Area.CLASS_NORMAL) {
             //We now do this in PageBreaker
             //prepareNormalFlowArea(childArea);
-            return curFlow;
+            return curSpan.getNormalFlow(curFlowIdx);
         } else {
             if (curPage == null) {
                 makeNewPage(false, false);
@@ -668,9 +654,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      */
     private void handleBreak(int breakVal) {
         if (breakVal == Constants.EN_COLUMN) {
-            if (curSpan != null && curSpan.hasMoreAvailableFlows()) {
+            if (curSpan != null && curFlowIdx < curSpan.getColumnCount()) {
                 // Move to next column
-                curFlow = curSpan.addAdditionalNormalFlow();
+                curFlowIdx++;
                 return;
             }
             // else need new page
