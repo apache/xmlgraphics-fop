@@ -14,6 +14,7 @@ import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFState;
 import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.pdf.PDFNumber;
+import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.svg.PDFTextElementBridge;
 import org.apache.fop.svg.PDFAElementBridge;
 import org.apache.fop.svg.PDFGraphics2D;
@@ -61,6 +62,11 @@ public class PDFXMLHandler implements XMLHandler {
      * The current PDF page for page renference and as a resource context.
      */
     public static final String PDF_PAGE = "pdfPage";
+
+    /**
+     * The current PDF page for page renference and as a resource context.
+     */
+    public static final String PDF_CONTEXT = "pdfContext";
 
     /**
      * The current PDF stream to draw directly to.
@@ -141,6 +147,7 @@ public class PDFXMLHandler implements XMLHandler {
         pdfi.outputStream = (OutputStream)context.getProperty(OUTPUT_STREAM);
         pdfi.pdfState = (PDFState)context.getProperty(PDF_STATE);
         pdfi.pdfPage = (PDFPage)context.getProperty(PDF_PAGE);
+        pdfi.pdfContext = (PDFResourceContext)context.getProperty(PDF_CONTEXT);
         pdfi.currentStream = (PDFStream)context.getProperty(PDF_STREAM);
         pdfi.width = ((Integer)context.getProperty(PDF_WIDTH)).intValue();
         pdfi.height = ((Integer)context.getProperty(PDF_HEIGHT)).intValue();
@@ -164,6 +171,8 @@ public class PDFXMLHandler implements XMLHandler {
         public PDFState pdfState;
         /** see PDF_PAGE */
         public PDFPage pdfPage;
+        /** see PDF_CONTEXT */
+        public PDFResourceContext pdfContext;
         /** see PDF_STREAM */
         public PDFStream currentStream;
         /** see PDF_WIDTH */
@@ -256,7 +265,7 @@ public class PDFXMLHandler implements XMLHandler {
             }
 
             PDFGraphics2D graphics = new PDFGraphics2D(true, pdfInfo.fi, pdfInfo.pdfDoc,
-                                     pdfInfo.pdfPage, pdfInfo.pdfPage.referencePDF(),
+                                     pdfInfo.pdfContext, pdfInfo.pdfPage.referencePDF(),
                                      pdfInfo.currentFontName,
                                      pdfInfo.currentFontSize);
             graphics.setGraphicContext(new org.apache.batik.ext.awt.g2d.GraphicContext());

@@ -14,6 +14,7 @@ import org.apache.fop.pdf.PDFState;
 import org.apache.fop.pdf.PDFNumber;
 import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFColor;
+import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.render.pdf.FontSetup;
 import org.apache.fop.layout.FontInfo;
 
@@ -179,6 +180,10 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         pdfStream.add(getString());
         this.pdfDoc.addStream(pdfStream);
         currentPage.setContents(pdfStream);
+        PDFAnnotList annots = currentPage.getAnnotations();
+        if (annots != null) {
+            this.pdfDoc.addAnnotList(annots);
+        }
         this.pdfDoc.addPage(currentPage);
         if (fontInfo != null) {
             FontSetup.addToResources(pdfDoc, pdfDoc.getResources(), fontInfo);

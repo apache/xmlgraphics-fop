@@ -44,6 +44,16 @@ public class PDFPage extends PDFResourceContext {
     protected int pageheight;
 
     /**
+     * Duration to display page
+     */
+    protected int duration = -1;
+
+    /**
+     * Transition dictionary
+     */
+    protected TransitionDictionary trDictionary = null;
+
+    /**
      * create a /Page object
      *
      * @param number the object's number
@@ -101,6 +111,11 @@ public class PDFPage extends PDFResourceContext {
         this.parent = parent.referencePDF();
     }
 
+    public void setTransition(int dur, TransitionDictionary tr) {
+        duration = dur;
+        trDictionary = tr;
+    }
+
     /**
      * represent this object as PDF
      *
@@ -118,6 +133,12 @@ public class PDFPage extends PDFResourceContext {
                        + this.contents.referencePDF() + "\n");
         if (this.annotList != null) {
             sb = sb.append("/Annots " + this.annotList.referencePDF() + "\n");
+        }
+        if (this.duration != -1) {
+            sb = sb.append("/Dur " + this.duration + "\n");
+        }
+        if (this.trDictionary != null) {
+            sb = sb.append("/Trans << " + this.trDictionary.getDictionary() + " >>\n");
         }
 
         sb = sb.append(">>\nendobj\n");

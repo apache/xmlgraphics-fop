@@ -18,6 +18,7 @@ import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.pdf.PDFPattern;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFLink;
+import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.BitmapImage;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.layout.FontState;
@@ -984,6 +985,11 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                                 translate, null, pattStream.getBuffer());
 
         currentStream.write(myPat.getColorSpaceOut(fill));
+
+        PDFAnnotList annots = context.getAnnotations();
+        if (annots != null) {
+            this.pdfDoc.addAnnotList(annots);
+        }
 
         if (outputStream != null) {
             try {

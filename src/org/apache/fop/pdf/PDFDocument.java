@@ -1004,7 +1004,7 @@ public class PDFDocument {
             PDFFont font = new PDFFont(++this.objectcount, fontname,
                                        PDFFont.TYPE1, basefont, encoding);
             this.objects.add(font);
-            fontMap.put(basefont, font);
+            fontMap.put(fontname, font);
             return font;
         } else {
             byte subtype = PDFFont.TYPE1;
@@ -1071,7 +1071,7 @@ public class PDFDocument {
                                      makeArray(metrics.getWidths(1)));
             }
 
-            fontMap.put(basefont, font);
+            fontMap.put(fontname, font);
 
             return font;
         }
@@ -1188,6 +1188,19 @@ public class PDFDocument {
         }
         this.xObjectsMap.put(key, xObject);
         return xObject;
+    }
+
+    public PDFFormXObject addFormXObject(PDFResourceContext res, PDFStream cont, PDFResources formres, String key) {
+        PDFFormXObject xObject;
+        xObject = new PDFFormXObject(++this.objectcount, ++this.xObjectCount,
+                                 cont, formres.referencePDF());
+        this.objects.add(xObject);
+        this.resources.addXObject(xObject);
+        if (res != null) {
+            res.getPDFResources().addXObject(xObject);
+        }
+        return xObject;
+
     }
 
     /**
@@ -1357,8 +1370,16 @@ public class PDFDocument {
          * to the list of objects
          */
         PDFAnnotList obj = new PDFAnnotList(++this.objectcount);
-        this.objects.add(obj);
         return obj;
+    }
+
+    /**
+     * Add an annotation list object to the pdf document
+     *
+     * @param obj the annotation list to add 
+     */ 
+    public void addAnnotList(PDFAnnotList obj) {
+        this.objects.add(obj);
     }
 
     /**
