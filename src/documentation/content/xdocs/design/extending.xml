@@ -85,15 +85,16 @@ information. When the document is rendered a handler converts the
 document into PDF markup.
    </p>
   <p>
-eg.
-<code><![CDATA[<my:script-link script="app.execMenuItem('AcroSrch:Query');">
+For example:</p>
+<source><![CDATA[<my:script-link script="app.execMenuItem('AcroSrch:Query');">
 Search
-</my:script-link>]]></code>
-
-to result in a text box referencing the following PDF action:
-<code><![CDATA[<< /S /JavaScript /JS (app.execMenuItem("AcroSrch:Query");) >>]]></code>
-
-   </p>
+</my:script-link>]]></source>
+<p>
+to result in a text box referencing the following PDF action:</p>
+<source><![CDATA[<<
+/S /JavaScript
+/JS (app.execMenuItem("AcroSrch:Query");)
+>>]]></source>
 
 </section>
 
