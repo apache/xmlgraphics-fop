@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.apache.fop.layoutmgr.BreakPoss;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.TraitSetter;
+import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableColumn;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
@@ -35,17 +36,36 @@ import org.apache.fop.area.Block;
  * column properties.
  */
 public class Column extends AbstractLayoutManager {
+    
     private TableColumn fobj;
     
+    private Length columnWidth;
 
     /**
      * Create a new column layout manager.
+     * @param node the table-column FO
      */
     public Column(TableColumn node) {
          super(node);
          fobj = node;
+         columnWidth = fobj.getColumnWidth();
     }
 
+    /** @return the table-column FO */
+    public TableColumn getFObj() {
+        return this.fobj;
+    }
+    
+    /** @return true if the column is the first column */
+    public boolean isFirst() {
+        return ((TableLayoutManager)getParent()).isFirst(this);
+    }
+    
+    /** @return true if the column is the last column */
+    public boolean isLast() {
+        return ((TableLayoutManager)getParent()).isLast(this);
+    }
+    
     /**
      * Get the next break possibility.
      * Columns do not create or return any areas.
@@ -81,12 +101,20 @@ public class Column extends AbstractLayoutManager {
     }
 
     /**
+     * Overrides the default column-with coming from the FO.
+     * @param width the new width to use
+     */
+    public void setWidth(Length width) {
+        this.columnWidth = width;
+    }
+    
+    /**
      * Get the width of this column.
      *
      * @return the width of the column
      */
     public Length getWidth() {
-        return fobj.getColumnWidth();
+        return columnWidth;
     }
 
     /**

@@ -75,7 +75,7 @@ public class CommonBorderPaddingBackground implements Cloneable {
     /** the "end" edge */ 
     public static final int END = 3;
 
-    private static class BorderInfo implements Cloneable {
+    public static class BorderInfo implements Cloneable {
         private int mStyle; // Enum for border style
         private ColorType mColor; // Border color
         private CondLengthProperty mWidth;
@@ -85,11 +85,52 @@ public class CommonBorderPaddingBackground implements Cloneable {
             mWidth = width;
             mColor = color;
         }
+        
+        public int getStyle() {
+            return this.mStyle;
+        }
+        
+        public ColorType getColor() {
+            return this.mColor;
+        }
+        
+        public CondLengthProperty getWidth() {
+            return this.mWidth;
+        }
+
+        public int getRetainedWidth() {
+            if ((mStyle == Constants.EN_NONE)
+                    || (mStyle == Constants.EN_HIDDEN)) {
+                return 0;
+            } else {
+                return mWidth.getLengthValue();
+            }
+        }
+        
+        /** @see java.lang.Object#toString() */
+        public String toString() {
+            StringBuffer sb = new StringBuffer("BorderInfo");
+            sb.append(" {");
+            sb.append(mStyle);
+            sb.append(", ");
+            sb.append(mColor);
+            sb.append(", ");
+            sb.append(mWidth);
+            sb.append("}");
+            return sb.toString();
+        }
     }
 
     private BorderInfo[] borderInfo = new BorderInfo[4];
     private CondLengthProperty[] padding = new CondLengthProperty[4];
 
+    /**
+     * Construct a CommonBorderPaddingBackground object.
+     */
+    public CommonBorderPaddingBackground() {
+        
+    }
+    
     /**
      * Construct a CommonBorderPaddingBackground object.
      * @param pList The PropertyList to get properties from.
@@ -159,10 +200,27 @@ public class CommonBorderPaddingBackground implements Cloneable {
         // If style = none, force width to 0, don't get Color (spec 7.7.20)
         int style = pList.get(styleProp).getEnum();
         if (style != Constants.EN_NONE) {
-            borderInfo[side] = new BorderInfo(style, 
+            setBorderInfo(new BorderInfo(style, 
                     pList.get(widthProp).getCondLength(), 
-                    pList.get(colorProp).getColorType());
+                    pList.get(colorProp).getColorType()), side);
         }
+    }
+    
+    /**
+     * Sets a border.
+     * @param info the border information
+     * @param side the side to apply the info to
+     */
+    public void setBorderInfo(BorderInfo info, int side) {
+        this.borderInfo[side] = info;
+    }
+    
+    /**
+     * @param side the side to retrieve
+     * @return the border info for a side
+     */
+    public BorderInfo getBorderInfo(int side) {
+        return this.borderInfo[side];
     }
     
     /**

@@ -152,5 +152,23 @@ public class TableBody extends FObj {
     public int getNameId() {
         return FO_TABLE_BODY;
     }
+
+    /**
+     * @param obj table row in question
+     * @return true if the given table row is the first row of this body.
+     */
+    public boolean isFirst(TableRow obj) {
+        return (childNodes.size() > 0) 
+            && (childNodes.get(0) == obj);
+    }
+
+    /**
+     * @param obj table row in question
+     * @return true if the given table row is the first row of this body.
+     */
+    public boolean isLast(TableRow obj) {
+        return (childNodes.size() > 0) 
+            && (childNodes.get(childNodes.size() - 1) == obj);
+    }
 }
 

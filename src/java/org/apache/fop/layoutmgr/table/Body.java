@@ -61,6 +61,11 @@ public class Body extends BlockStackingLayoutManager {
         fobj = node;
     }
 
+    /** @return the table-body|header|footer FO */
+    public TableBody getFObj() {
+        return this.fobj;
+    }
+    
     /**
      * Set the columns from the table.
      *
