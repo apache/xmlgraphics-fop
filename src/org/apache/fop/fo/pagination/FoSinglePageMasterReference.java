@@ -16,20 +16,18 @@ import org.apache.fop.fo.FOAttributes;
 import org.apache.fop.xml.XMLEvent;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.datastructs.SyncedCircularBuffer;
+import org.apache.fop.datastructs.SyncedXmlEventsBuffer;
 
-public class FoSinglePageMasterReference implements SubSequenceSpecifier {
-
-    private FOAttributes attributes
-    private masterReference;
+public class FoSinglePageMasterReference extends FONode {
 
     public FoSinglePageMasterReference
         (SyncedCircularBuffer xmlevents, XMLEvent event) throws FOPException {
-        
+	super(foTree, FObjectNames.SINGLE_PAGE_MASTER_REFERENCE, parent,
+				    event, FOPropertySets.SEQ_MASTER_SET);
     }
 
     public getMasterReference() {
-        return masterReference;
+        return getPropertyValue(PropNames.MASTER_REFERENCE);
     }
 
 }// FoSinglePageMasterReference
