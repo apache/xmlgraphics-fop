@@ -139,6 +139,8 @@ public class FoBlock extends FOPageSeqNode {
         super(foTree, FObjectNames.BLOCK, pageSequence, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         getMarkers();
+        // Generate a block area
+        
         XmlEvent ev = null;
         do {
             try {
