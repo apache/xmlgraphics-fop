@@ -709,8 +709,8 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
                                    throws FOPException {
         currentSimplePageMaster = getSimplePageMasterToUse(bIsBlank);
         Region body = currentSimplePageMaster.getRegion(FO_REGION_BODY);
-        if (!pageSequence.getMainFlow().getFlowName().equals(body.getRegionName())) {
-          throw new FOPException("Flow '" + pageSequence.getMainFlow().getFlowName()
+        if (!pageSequence.getMainFlow().getPropString(PR_FLOW_NAME).equals(body.getRegionName())) {
+          throw new FOPException("Flow '" + pageSequence.getMainFlow().getPropString(PR_FLOW_NAME)
                                  + "' does not map to the region-body in page-master '"
                                  + currentSimplePageMaster.getMasterName() + "'");
         }
@@ -884,13 +884,13 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      */
     private StaticContentLayoutManager getStaticContentLayoutManager(StaticContent sc) {
         StaticContentLayoutManager lm =
-                (StaticContentLayoutManager)staticContentLMs.get(sc.getFlowName());
+                (StaticContentLayoutManager)staticContentLMs.get(sc.getPropString(PR_FLOW_NAME));
         if (lm != null) {
             return lm;
         }
         lm = new StaticContentLayoutManager();
         lm.setFObj(sc);
-        staticContentLMs.put(sc.getFlowName(), lm);
+        staticContentLMs.put(sc.getPropString(PR_FLOW_NAME), lm);
         return lm;
     }
 

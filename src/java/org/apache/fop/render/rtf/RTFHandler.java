@@ -219,7 +219,7 @@ public class RTFHandler extends FOInputHandler {
         }
 
         try {
-            if (fl.getFlowName().equals("xsl-region-body")) {
+            if (fl.getPropString(Constants.PR_FLOW_NAME).equals("xsl-region-body")) {
                 // if there is no header in current page-sequence but there has been
                 // a header in a previous page-sequence, insert an empty header.
                 if (bPrevHeaderSpecified && !bHeaderSpecified) {
@@ -244,7 +244,7 @@ public class RTFHandler extends FOInputHandler {
                     contAfter.newAfter(attr);
                 }
 
-            } else if (fl.getFlowName().equals("xsl-region-before")) {
+            } else if (fl.getPropString(Constants.PR_FLOW_NAME).equals("xsl-region-before")) {
                 bHeaderSpecified = true;
                 bPrevHeaderSpecified = true;
 
@@ -261,7 +261,7 @@ public class RTFHandler extends FOInputHandler {
 
                 RtfBefore before = c.newBefore(beforeAttributes);
                 builderContext.pushContainer(before);
-            } else if (fl.getFlowName().equals("xsl-region-after")) {
+            } else if (fl.getPropString(Constants.PR_FLOW_NAME).equals("xsl-region-after")) {
                 bFooterSpecified = true;
                 bPrevFooterSpecified = true;
 
@@ -298,11 +298,11 @@ public class RTFHandler extends FOInputHandler {
         }
 
         try {
-            if (fl.getFlowName().equals("xsl-region-body")) {
+            if (fl.getPropString(Constants.PR_FLOW_NAME).equals("xsl-region-body")) {
                 //just do nothing
-            } else if (fl.getFlowName().equals("xsl-region-before")) {
+            } else if (fl.getPropString(Constants.PR_FLOW_NAME).equals("xsl-region-before")) {
                 builderContext.popContainer();
-            } else if (fl.getFlowName().equals("xsl-region-after")) {
+            } else if (fl.getPropString(Constants.PR_FLOW_NAME).equals("xsl-region-after")) {
                 builderContext.popContainer();
             }
         } catch (Exception e) {
