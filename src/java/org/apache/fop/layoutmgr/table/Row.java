@@ -273,7 +273,7 @@ public class Row extends BlockStackingLayoutManager {
         int cellcount = 0;
 
         if (pos == null) {
-            while ((curLM = getCellLM(cellcount++)) != null) {
+            while ((curLM = getCellLM(cellcount)) != null) {
                 curLM.resetPosition(null);
                 cellcount++;
             }
@@ -281,7 +281,7 @@ public class Row extends BlockStackingLayoutManager {
             RowPosition rpos = (RowPosition)pos;
             List breaks = rpos.cellBreaks;
 
-            while ((curLM = getCellLM(cellcount++)) != null) {
+            while ((curLM = getCellLM(cellcount)) != null) {
                 List childbreaks = (List)breaks.get(cellcount);
                 curLM.resetPosition((Position)childbreaks.get(childbreaks.size() - 1));
                 cellcount++;
