@@ -13,7 +13,7 @@ package org.apache.fop.fo;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.FObjectNames;
-import org.apache.fop.datastructs.Tree;
+import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.datatypes.Ints;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FONode;
@@ -78,7 +78,7 @@ public class FoRoot extends FONode {
      */
     public FoRoot
         (FOTree foTree, FoXMLEvent event)
-        throws Tree.TreeException, FOPException, PropertyException
+        throws TreeException, FOPException, PropertyException
     {
         // This is the root node of the tree; hence the null argument
         super(foTree, FObjectNames.ROOT, null, event, FOPropertySets.ROOT_SET,
@@ -125,7 +125,7 @@ public class FoRoot extends FONode {
             layoutMasters = new FoLayoutMasterSet(foTree, this, ev);
             // Clean up the fo:layout-master-set event
             xmlevents.getEndElement(ev);
-        } catch(Tree.TreeException e) {
+        } catch(TreeException e) {
             throw new FOPException("TreeException: " + e.getMessage());
         } catch(PropertyException e) {
             throw new FOPException("PropertyException: " + e.getMessage());
