@@ -115,6 +115,23 @@ public class AWTFontMetrics {
 
         // workaround for sun bug on FontMetrics.getAscent()
         // http://developer.java.sun.com/developer/bugParade/bugs/4399887.html
+        /*
+         * Bug 4399887 has status Closed, not a bug.  The comments on the bug
+         * are:
+         * The submitter is incorrectly assuming that the string he has used
+         * is displaying characters which represent those with the maximum
+         * ascent in the font. If (for example) the unicode character
+         * \u00c1 which is the A-acute character used in many European
+         * languages is placed in the bodu of the "Wrong" string it can be
+         * seen that the JDK is exactly correct in its determination of the
+         * ascent of the font.
+         * If the bounds of a particular string are interesting then the
+         * Rectangle FontMetrics.getStringBounds(..) method can be called.
+         * The y value of the rectangle is the offset from the origin
+         * (baseline) apparently needed by the sample test program
+         * 
+         * xxxxx@xxxxx 2001-05-15
+         */
         int realAscent = fmt.getAscent()
                          - (fmt.getDescent() + fmt.getLeading());
         return FONT_FACTOR * realAscent;
