@@ -271,8 +271,7 @@ public abstract class Properties {
                              NO = 0
                       ,COMPUTED = 1
                      ,SPECIFIED = 2
-                  ,COMPOUND_INH = 3
-                ,VALUE_SPECIFIC = 4
+                ,VALUE_SPECIFIC = 3
                               ;
 
     /**
@@ -285,12 +284,15 @@ public abstract class Properties {
      * <i>specified</i> value.
      * @exception <tt>PropertyException</tt>
      */
+     /*
     public static PropertyValue inheritance(FOTree foTree, int property)
             throws PropertyException
     {
-        // Is it inherited?
+        // Is it inherited?  This question is not asked here.  Should it be
+        // determined in here or outside?
         return foTree.getCurrentInherited(property);
     }
+    */
 
     /** Constant for nested <tt>refineParsing</tt> methods. */
     public static boolean IS_NESTED = true;
@@ -4383,7 +4385,7 @@ public abstract class Properties {
             // First, check that we have a list
             if (type != PropertyValue.LIST) {
                 if ( ! nested && type == PropertyValue.INHERIT) {
-                    return foTree.resolveInheritValue((Inherit)value);
+                    return ((Inherit)value).resolve(foTree);
                 }
                 if ( ! (value instanceof StringType))
                     throw new PropertyException
