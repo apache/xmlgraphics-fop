@@ -88,7 +88,6 @@ public class PDFPages extends PDFObject {
      * @param page the PDFPage to add.
      */
     public void addPage(PDFPage page) {
-   	this.count++;
 	this.kids.addElement(page);
 	page.setParent(this);
         this.incrementCount();
