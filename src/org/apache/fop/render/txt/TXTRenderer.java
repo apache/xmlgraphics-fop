@@ -1,17 +1,57 @@
 /*
  * $Id$
- * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
-// package com.eastpoint.chrysalis;
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.render.txt;
 
 // FOP
 import org.apache.fop.render.PrintRenderer;
-import org.apache.fop.render.pcl.*;
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.FopImageException;
@@ -35,7 +75,7 @@ import java.util.List;
 /**
  * Renderer that renders areas to plain text.
  *
- * @author unascribed
+ * @author Art Welch
  * @author <a href="mailto:mark-fop@inomial.com">Mark Lillywhite</a> (to use
  *     the new Renderer interface)
  */
@@ -198,19 +238,19 @@ public class TXTRenderer extends PrintRenderer {
          * {
          * addRect(x1 - sw/2, y1, sw, y2 - y1 + 1, 0, 0, sc, null, 0);
          * }
-         * else if ( y1 == y2 || (Math.abs(y1 - y2) <= 0.24) )	// 72/300=0.24
+         * else if ( y1 == y2 || (Math.abs(y1 - y2) <= 0.24) ) // 72/300=0.24
          * {
          * addRect(x1, y1 - sw/2, x2 - x1 + 1, sw, 0, 0, sc, null, 0);
          * }
          * else if ( sc != null )
          * {
          * // Convert dimensions to characters.
-         * //float cfact = 300f / 72f;	// 300 dpi, 1pt=1/72in
-         * int	ix1 = (int)(x1 * xFactor);
-         * int	iy1 = (int)(y1 * yFactor);
-         * int	ix2 = (int)(x2 * xFactor);
-         * int	iy2 = (int)(y2 * yFactor);
-         * int	isw = (int)(sw * xFactor);
+         * //float cfact = 300f / 72f; // 300 dpi, 1pt=1/72in
+         * int ix1 = (int)(x1 * xFactor);
+         * int iy1 = (int)(y1 * yFactor);
+         * int ix2 = (int)(x2 * xFactor);
+         * int iy2 = (int)(y2 * yFactor);
+         * int isw = (int)(sw * xFactor);
          * int origix;
          * // Normalize
          * if ( iy1 > iy2 )
@@ -236,7 +276,7 @@ public class TXTRenderer extends PrintRenderer {
          * }
          * // Convert line width to a pixel run length.
          * //System.out.println("TXTRenderer.addLine(" + ix1 + ", " + iy1 + ", " + ix2 + ", " + iy2 + ", " + isw + ")");
-         * int	runlen = (int)Math.sqrt(Math.pow(isw, 2) * (1 + Math.pow((ix1 - ix2) / (iy1 - iy2), 2)));
+         * int runlen = (int)Math.sqrt(Math.pow(isw, 2) * (1 + Math.pow((ix1 - ix2) / (iy1 - iy2), 2)));
          * if ( runlen < 1 )
          * runlen = 1;
          * StringBuffer rlbuff = new StringBuffer();
@@ -245,10 +285,10 @@ public class TXTRenderer extends PrintRenderer {
          * String rlstr = rlbuff.toString();
          * //System.out.println("TXTRenderer.addLine: runlen = " + runlen);
          * // Draw the line.
-         * int	d, dx, dy;
-         * int	Aincr, Bincr;
-         * int	xincr = 1;
-         * int	x, y;
+         * int d, dx, dy;
+         * int Aincr, Bincr;
+         * int xincr = 1;
+         * int x, y;
          * dx = Math.abs(ix2 - ix1);
          * dy = iy2 - iy1;
          * if ( dx > dy )
@@ -301,16 +341,16 @@ public class TXTRenderer extends PrintRenderer {
         /*
          * Not yet implemented
          * //System.out.println("TXTRenderer.xferLineBytes(" + startpos + ", " + bitcount + ")");
-         * int	curbitpos = 0;
+         * int curbitpos = 0;
          * if ( start2 > 0 && start2 <= (startpos + bitcount) )
          * {
          * bitcount += (start2 - startpos);
          * start2 = 0;
          * }
          * char bytes[] = new char[((start2>startpos?start2:startpos) + bitcount) / 4 + 2];
-         * int	dlen = 0;
+         * int dlen = 0;
          * byte dbyte = 0;
-         * int	bytepos = 0;
+         * int bytepos = 0;
          * do
          * {
          * int bits2set;
@@ -343,7 +383,7 @@ public class TXTRenderer extends PrintRenderer {
          * }
          * }
          * // Set runs of whole bytes.
-         * int	setbytes = (startpos - curbitpos) / 8;
+         * int setbytes = (startpos - curbitpos) / 8;
          * if ( setbytes > 0 )
          * {
          * curbitpos += setbytes * 8;
@@ -617,16 +657,16 @@ public class TXTRenderer extends PrintRenderer {
          * else
          * {
          * // Convert dimensions to pixels.
-         * float cfact = 300f / 72f;	// 300 dpi, 1pt=1/72in
-         * int	ix = (int)(x * cfact);
-         * int	iy = (int)(y * cfact);
-         * int	iw = (int)(w * cfact);
-         * int	ih = (int)(h * cfact);
-         * int	irx = (int)(rx * cfact);
-         * int	iry = (int)(ry * cfact);
-         * int	isw = (int)(sw * cfact);
-         * int	longwidth = 0;
-         * int	pass = 0;
+         * float cfact = 300f / 72f; // 300 dpi, 1pt=1/72in
+         * int ix = (int)(x * cfact);
+         * int iy = (int)(y * cfact);
+         * int iw = (int)(w * cfact);
+         * int ih = (int)(h * cfact);
+         * int irx = (int)(rx * cfact);
+         * int iry = (int)(ry * cfact);
+         * int isw = (int)(sw * cfact);
+         * int longwidth = 0;
+         * int pass = 0;
          * PDFColor thecolor = null;
          * do
          * {
@@ -636,7 +676,7 @@ public class TXTRenderer extends PrintRenderer {
          * }
          * else if ( pass == 1 && sc != null )
          * {
-         * int	iswdiv2 = isw / 2;
+         * int iswdiv2 = isw / 2;
          * thecolor = sc;
          * ix -= iswdiv2;
          * iy -= iswdiv2;
@@ -650,19 +690,19 @@ public class TXTRenderer extends PrintRenderer {
          * thecolor = null;
          * if ( thecolor != null )
          * {
-         * int		tx = 0;
-         * int		ty = iry;
-         * long	a = irx;
-         * long	b = iry;
-         * long	Asquared = (long)Math.pow(a, 2);
-         * long	TwoAsquared = 2 * Asquared;
-         * long	Bsquared = (long)Math.pow(b, 2);
-         * long	TwoBsquared = 2 * Bsquared;
-         * long	d = Bsquared - Asquared * b + Asquared / 4;
-         * long	dx = 0;
-         * long	dy = TwoAsquared * b;
-         * int		rectlen = iw - 2 * irx;
-         * List	bottomlines = new java.util.ArrayList();
+         * int tx = 0;
+         * int ty = iry;
+         * long a = irx;
+         * long b = iry;
+         * long Asquared = (long)Math.pow(a, 2);
+         * long TwoAsquared = 2 * Asquared;
+         * long Bsquared = (long)Math.pow(b, 2);
+         * long TwoBsquared = 2 * Bsquared;
+         * long d = Bsquared - Asquared * b + Asquared / 4;
+         * long dx = 0;
+         * long dy = TwoAsquared * b;
+         * int rectlen = iw - 2 * irx;
+         * List bottomlines = new java.util.ArrayList();
          * int x0 = tx;
          * // Set Transparency modes and select shading.
          * currentStream.add("\033*v0n1O\033*c" + (int)(100 - ((0.3f * thecolor.red() + 0.59f * thecolor.green() + 0.11f * thecolor.blue()) * 100f)) + "G\033*v2T");
@@ -706,7 +746,7 @@ public class TXTRenderer extends PrintRenderer {
          * d += Asquared - dy;
          * }
          * // Draw the middle part of the rectangle
-         * int	midlen = ih - 2 * iry;
+         * int midlen = ih - 2 * iry;
          * if ( midlen > 0 )
          * {
          * if ( pass == 0 )
@@ -990,14 +1030,13 @@ public class TXTRenderer extends PrintRenderer {
      * PDFColor strokeColour = null;
      * float strokeWidth = 0;
      * //currentStream.add("q\n");
-     * //if( area instanceof SVGTransformable )
-     * //{
-     * //	SVGTransformable tf = (SVGTransformable)area;
-     * //	SVGAnimatedTransformList trans = tf.getTransform();
-     * //	SVGRect bbox = tf.getBBox();
-     * //	if(trans != null) {
-     * //		applyTransform(trans, bbox);
-     * //	}
+     * //if( area instanceof SVGTransformable ) {
+     * //   SVGTransformable tf = (SVGTransformable)area;
+     * //   SVGAnimatedTransformList trans = tf.getTransform();
+     * //   SVGRect bbox = tf.getBBox();
+     * //   if(trans != null) {
+     * //       applyTransform(trans, bbox);
+     * //   }
      * //}
      * if(style != null)
      * {
@@ -1021,8 +1060,8 @@ public class TXTRenderer extends PrintRenderer {
      * }
      * //if(sp instanceof ColorType)
      * //{
-     * //	ColorType ct = (ColorType)sp;
-     * //	fillColour = new PDFColor(ct.red(), ct.green(), ct.blue());
+     * //   ColorType ct = (ColorType)sp;
+     * //   fillColour = new PDFColor(ct.red(), ct.green(), ct.blue());
      * //}
      * }
      * else
@@ -1047,8 +1086,8 @@ public class TXTRenderer extends PrintRenderer {
      * }
      * //if(sp instanceof ColorType)
      * //{
-     * //	ColorType ct = (ColorType)sp;
-     * //	strokeColour = new PDFColor(ct.red(), ct.green(), ct.blue());
+     * //   ColorType ct = (ColorType)sp;
+     * //   strokeColour = new PDFColor(ct.red(), ct.green(), ct.blue());
      * //}
      * }
      * sp = style.getPropertyCSSValue("stroke-width");
@@ -1167,14 +1206,14 @@ public class TXTRenderer extends PrintRenderer {
      * SVGRect rect = ((GraphicElement)n).getBBox();
      * if ( rect != null )
      * {
-     * //							currentAnnotList = this.pdfDoc.makeAnnotList();
-     * //							currentPage.setAnnotList(currentAnnotList);
-     * //							String dest = linkSet.getDest();
-     * //							int linkType = linkSet.getLinkType();
-     * //							currentAnnotList.addLink(
-     * //								this.pdfDoc.makeLink(lrect.getRectangle(), dest, linkType));
-     * //							currentAnnotList = null;
-     * //						}
+     * //   currentAnnotList = this.pdfDoc.makeAnnotList();
+     * //   currentPage.setAnnotList(currentAnnotList);
+     * //   String dest = linkSet.getDest();
+     * //   int linkType = linkSet.getLinkType();
+     * //   currentAnnotList.addLink(
+     * //           this.pdfDoc.makeLink(lrect.getRectangle(), dest, linkType));
+     * //   currentAnnotList = null;
+     * //}
      * }
      * renderElement(fontState, (SVGElement)n, posx, posy);
      * }
@@ -1241,9 +1280,9 @@ public class TXTRenderer extends PrintRenderer {
      * sp = styles.getPropertyCSSValue("font-size");
      * if( sp != null && sp.getValueType() == CSSValue.CSS_PRIMITIVE_VALUE )
      * {
-     * //		    if(((CSSPrimitiveValue)sp).getPrimitiveType() == CSSPrimitiveValue.CSS_NUMBER) {
+     * //if(((CSSPrimitiveValue)sp).getPrimitiveType() == CSSPrimitiveValue.CSS_NUMBER) {
      * fontSize = ((CSSPrimitiveValue)sp).getFloatValue(CSSPrimitiveValue.CSS_PT);
-     * //		    }
+     * //}
      * }
      * else
      * {
@@ -1257,7 +1296,7 @@ public class TXTRenderer extends PrintRenderer {
      * }
      * catch( Exception fope )
      * {
-     * //			fope.printStackTrace();
+     * //   fope.printStackTrace();
      * }
      * //currentStream.add("/" + fs.getFontName() + " " + fontSize + " Tf\n");
      * setFont(fs.getFontName(), fontSize * 1000);
@@ -1275,15 +1314,15 @@ public class TXTRenderer extends PrintRenderer {
      * {
      * String str = (String)o;
      * //currentStream.add(transstr
-     * //	+ (currentX + matrix.getE()) + " "
-     * //	+ (y+ty + matrix.getF()) + " Tm "
-     * //	+ "(");
+     * //   + (currentX + matrix.getE()) + " "
+     * //   + (y+ty + matrix.getF()) + " Tm "
+     * //   + "(");
      * boolean spacing = "preserve".equals(tg.getXMLspace());
      * //currentX = addSVGStr(fs, currentX, str, spacing);
      * //currentStream.add(") Tj\n");
-     * //				for(int count = 0; count < str.length(); count++) {
-     * //				}
-     * //				currentX += fs.width(' ') / 1000f;
+     * //   for(int count = 0; count < str.length(); count++) {
+     * //   }
+     * //   currentX += fs.width(' ') / 1000f;
      * currentStream.add("\033&a" + (currentX + matrix.getE())*10 + "h" + (y+ty + matrix.getF())*10 + "V" + str);
      * for ( int count = 0; count < str.length(); count++ )
      * {
@@ -1294,28 +1333,28 @@ public class TXTRenderer extends PrintRenderer {
      * SVGTextPathElementImpl tpg = (SVGTextPathElementImpl)o;
      * String ref = tpg.str;
      * SVGElement graph = null;
-     * //				graph = tpg.locateDef(ref);
+     * //   graph = tpg.locateDef(ref);
      * if(graph != null && graph instanceof SVGPathElementImpl) {
      * // probably not the best way to do this, should be able
      * // to render without the style being set.
-     * //					GraphicImpl parent = graph.getGraphicParent();
-     * //					graph.setParent(tpg);
+     * //   GraphicImpl parent = graph.getGraphicParent();
+     * //   graph.setParent(tpg);
      * // set text path??
      * // how should this work
-     * //					graph.setParent(parent);
+     * //   graph.setParent(parent);
      * }
      * } else if(o instanceof SVGTRefElementImpl) {
      * SVGTRefElementImpl trg = (SVGTRefElementImpl)o;
      * String ref = trg.ref;
      * ref = ref.substring(1, ref.length());
      * SVGElement graph = null;
-     * //				graph = trg.locateDef(ref);
+     * //   graph = trg.locateDef(ref);
      * if(graph != null && graph instanceof SVGTextElementImpl) {
-     * //					GraphicImpl parent = graph.getGraphicParent();
-     * //					graph.setParent(trg);
+     * //   GraphicImpl parent = graph.getGraphicParent();
+     * //   graph.setParent(trg);
      * SVGTextElementImpl te = (SVGTextElementImpl)graph;
      * renderText(fs, te, (int)(x + tx), (int)(y + ty));
-     * //					graph.setParent(parent);
+     * //   graph.setParent(parent);
      * }
      * } else if(o instanceof SVGTSpanElementImpl) {
      * SVGTSpanElementImpl tsg = (SVGTSpanElementImpl)o;
@@ -1356,9 +1395,9 @@ public class TXTRenderer extends PrintRenderer {
      * float newSize = fontSize;
      * sp = styles.getPropertyCSSValue("font-size");
      * if(sp != null && sp.getValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-     * //				    if(((CSSPrimitiveValue)sp).getPrimitiveType() == CSSPrimitiveValue.CSS_NUMBER) {
+     * //   if(((CSSPrimitiveValue)sp).getPrimitiveType() == CSSPrimitiveValue.CSS_NUMBER) {
      * newSize = ((CSSPrimitiveValue)sp).getFloatValue(CSSPrimitiveValue.CSS_PT);
-     * //				    }
+     * //   }
      * }
      * if ( fontSize != newSize )
      * {
@@ -1404,7 +1443,7 @@ public class TXTRenderer extends PrintRenderer {
      * xpos = xpos + ((Float)tsg.dxlist.get(charPos)).floatValue();
      * switch (ch)
      * {
-     * case '	':
+     * case '   ':
      * case ' ':
      * if ( spacing )
      * {
@@ -1447,7 +1486,7 @@ public class TXTRenderer extends PrintRenderer {
      * }
      * //currentStream.add(pdf.toString());
      * }
-     * //				currentX += fs.width(' ') / 1000f;
+     * //   currentX += fs.width(' ') / 1000f;
      * if ( changed )
      * {
      * fs = oldfs;
@@ -1499,9 +1538,9 @@ public class TXTRenderer extends PrintRenderer {
      * if(relist == null) {
      * // use default extension set
      * // currently no extensions are supported
-     * //							if(!(str.equals("http:// ??"))) {
+     * //   if(!(str.equals("http:// ??"))) {
      * continue;
-     * //							}
+     * //   }
      * } else {
      * }
      * }
