@@ -37,9 +37,6 @@ public class FOPropertySets {
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
 
-    public static final String XSLNamespace =
-                                        "http://www.w3.org/1999/XSL/Format";
-
     public static final String packageNamePrefix = "org.apache.fop";
 
     /**
@@ -109,76 +106,6 @@ public class FOPropertySets {
         }
         throw new FOPException("Invalid attribute set: " + attrSet);
     }
-
-    public static int getFoIndex(String name) {
-        return ((Integer)(foToIndex.get(name))).intValue();
-    }
-
-    public static String getClassName(int foIndex) {
-        return foClassNames[foIndex];
-    }
-
-    public static Class getClass(int foIndex) {
-        return foClasses[foIndex];
-    }
-
-    /**
-     * A String[] array of the fo class names.  This array is
-     * effectively 1-based, with the first element being unused.
-     * The array is initialized in a static initializer by converting the
-     * fo names from the array FObjectNames.foLocalNames into class names by
-     * converting the first character of every component word to upper case,
-     * removing all punctuation characters and prepending the prefix 'Fo'.
-     *  It can be indexed by the fo name constants defined in the
-     * <tt>FObjectNames</tt> class.
-     */
-    private static final String[] foClassNames;
-
-    /**
-     * A String[] array of the fo class package names.  This array is
-     * effectively 1-based, with the first element being unused.
-     * The array is initialized in a static initializer by constructing
-     * the package name from the common package prefix set in the field
-     * <tt>packageNamePrefix</tt>, the package name suffix associated with
-     * the fo local names in the <tt>FObjectNames.foLocalNames</tt> array,
-     * the the class name which has been constructed in the
-     * <tt>foClassNames</tt> array here.
-     *  It can be indexed by the fo name constants defined in the
-     * <tt>FObjectNames</tt> class.
-     */
-    private static final String[] foClassPackages;
-
-    /**
-     * An Class[] array containing Class objects corresponding to each of the
-     * class names in the foClassNames array.  It is initialized in a static
-     * initializer in parallel with the creation of the class names in the
-     * foClassNames array.  It can be indexed by the class name constants
-     * defined in this file.
-     *
-     * It is not guaranteed that there exists a class corresponding to each of
-     * the FlowObjects defined in this file.
-     */
-    private static final Class[] foClasses;
-
-    /**
-     * A HashMap whose elements are an integer index value keyed by an
-     * fo local name.  The index value is the index of the fo local name in
-     * the FObjectNames.foLocalNames[] array.
-     * It is initialized in a static initializer.
-     */
-    private static final HashMap foToIndex;
-
-    /**
-     * A HashMap whose elements are an integer index value keyed by the name
-     * of a fo class.  The index value is the index of the fo
-     * class name in the foClassNames[] array.  It is initialized in a
-     * static initializer.
-     */
-    private static final HashMap foClassToIndex;
-    // Following are the sets of properties which apply to particular
-    // subtrees of the FO Tree.  This whole section is probably redundant.
-    // If it is restored to full functioning, the public BitSet objects
-    // must be replaced with unmodifiableSets.
 
     /**
      * Set of all properties available at fo:root.
@@ -378,64 +305,6 @@ public class FOPropertySets {
         refareas.set(FObjectNames.TITLE);
 
         isReferenceArea = new ROBitSet(refareas);
-    }
-
-    static {
-        String prefix = packageNamePrefix + ".";
-        String foPrefix = "Fo";
-        int namei = 0;	// Index of localName in FObjectNames.foLocalNames
-        int pkgi = 1;	// Index of package suffix in foLocalNames
-
-        foClassNames    = new String[FObjectNames.foLocalNames.length];
-        foClassPackages = new String[FObjectNames.foLocalNames.length];
-        foClasses       = new Class[FObjectNames.foLocalNames.length];
-        foToIndex       = new HashMap(FObjectNames.foLocalNames.length);
-        foClassToIndex  = new HashMap(FObjectNames.foLocalNames.length);
-
-        for (int i = 1;i < FObjectNames.foLocalNames.length; i++) {
-            String cname = foPrefix;
-            StringTokenizer stoke =
-                    new StringTokenizer(FObjectNames.foLocalNames[i][namei],
-                                        "-");
-            while (stoke.hasMoreTokens()) {
-                String token = stoke.nextToken();
-                String pname = new Character(
-                                    Character.toUpperCase(token.charAt(0))
-                                ).toString() + token.substring(1);
-                cname = cname + pname;
-            }
-            foClassNames[i] = cname;
-
-            // Set up the array of class package names
-            String pkgname = prefix + FObjectNames.foLocalNames[i][pkgi];
-
-            // Set up the array of Class objects, indexed by the fo
-            // constants.
-            String name = prefix + cname;
-            try {
-                foClasses[i] = Class.forName(name);
-            } catch (ClassNotFoundException e) {}
-
-            // Set up the foToIndex Hashmap with the name of the
-            // flow object as a key, and the integer index as a value
-            if (foToIndex.put((Object) FObjectNames.foLocalNames[i][namei],
-                                        Ints.consts.get(i)) != null) {
-                throw new RuntimeException(
-                    "Duplicate values in propertyToIndex for key " +
-                    FObjectNames.foLocalNames[i][namei]);
-            }
-
-            // Set up the foClassToIndex Hashmap with the name of the
-            // fo class as a key, and the integer index as a value
-            
-            if (foClassToIndex.put((Object) foClassNames[i],
-                                    Ints.consts.get(i)) != null) {
-                throw new RuntimeException(
-                    "Duplicate values in foClassToIndex for key " +
-                    foClassNames[i]);
-            }
-
-        }
     }
 
 }
