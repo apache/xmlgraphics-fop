@@ -157,6 +157,14 @@ public class LayoutContext {
         return m_stackLimit;
     }
 
+    public void setRefIPD(int ipd) {
+        refIPD = ipd;
+    }
+
+    public int getRefIPD() {
+        return refIPD;
+    }
+
     public void setHyphContext(HyphContext hyphContext) {
         m_hyphContext = hyphContext;
     }

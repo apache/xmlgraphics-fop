@@ -293,7 +293,7 @@ public class Block extends FObjMixed {
                         break;
 
                     case CharUtilities.EOT:
-                        //   A "boundary" objects such as non-character inline
+                        // A "boundary" objects such as non-character inline
                         // or nested block object was encountered.
                         // If any whitespace run in progress, finish it.
                         // FALL THROUGH

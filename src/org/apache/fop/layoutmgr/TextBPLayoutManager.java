@@ -466,14 +466,18 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
         // 			   " total=" + iAdjust);
 
         // Make an area containing all characters between start and end.
-        Word word = createWord(
-                      new String(chars, iStart, ai.m_iBreakIndex - iStart),
+        Word word = null;
+        String str = new String(chars, iStart, ai.m_iBreakIndex - iStart);
+        //if(!"".equals(str.trim())) {
+            word = createWord(
+                      str,
                       ai.m_ipdArea.opt + iAdjust, context.getBaseline());
-        if (iWScount > 0) {
-            //log.error("Adjustment per word-space= " +
-            //                   iAdjust / iWScount);
-            word.setWSadjust(iAdjust / iWScount);
-        }
+            if (iWScount > 0) {
+                //log.error("Adjustment per word-space= " +
+                //                   iAdjust / iWScount);
+                word.setWSadjust(iAdjust / iWScount);
+            }
+        //}
         if ((chars[iStart] == SPACE || chars[iStart] == NBSPACE) &&
                 context.getLeadingSpace().hasSpaces()) {
             context.getLeadingSpace().addSpace(m_halfWS);
@@ -493,7 +497,9 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
                 chars[ai.m_iBreakIndex - 1] == NBSPACE) {
             context.getTrailingSpace().addSpace(m_halfWS);
         }
-        parentLM.addChild(word);
+        if(word != null) {
+            parentLM.addChild(word);
+        }
     }
 
 

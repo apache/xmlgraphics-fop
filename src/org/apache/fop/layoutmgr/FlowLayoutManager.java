@@ -51,6 +51,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
             LayoutContext childLC = new LayoutContext(0);
             boolean breakPage = false;
             childLC.setStackLimit(MinOptMax.subtract(bpd, stackSize));
+            childLC.setRefIPD(context.getRefIPD());
 
             if (!curLM.isFinished()) {
                 if ((bp = curLM.getNextBreakPoss(childLC, null)) != null) {
