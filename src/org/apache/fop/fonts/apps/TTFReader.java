@@ -50,7 +50,7 @@ public class TTFReader {
             }
         }
 
-        return (String[])arguments.toArray(new String[0]);;
+        return (String[])arguments.toArray(new String[0]);
     }
 
 
