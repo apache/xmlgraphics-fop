@@ -14,7 +14,10 @@ import org.apache.fop.fo.properties.Property;
 import java.util.Iterator;
 
 public class BorderWidth extends BorderCommonWidth {
-    public static final int dataTypes = SHORTHAND;
+    // Below is a special case defying the general rule that shorthands do
+    // not require specific data type settings.  This one is neded for the
+    // MappedNumeric generataion in checkBorderWidth().
+    public static final int dataTypes = MAPPED_LENGTH | SHORTHAND;
     public static final int traitMapping = SHORTHAND_MAP;
     public static final int initialValueType = NOTYPE_IT;
     public static final int inherited = NO;
@@ -142,6 +145,14 @@ public class BorderWidth extends BorderCommonWidth {
         }
     }
 
+    /**
+     * Attempt to convert the <tt>PropertyValue</tt> into a length.
+     * This may not be necessary, as it may be possible to pass
+     * unconverted values directly to the <i>refineExpansionList()</i>
+     * method.
+     * @param property the property idex.
+     * @param value the property value being converted.
+     */
     private Numeric checkBorderWidth(int property, PropertyValue value)
         throws PropertyException
     {
@@ -159,5 +170,20 @@ public class BorderWidth extends BorderCommonWidth {
         }
         throw new PropertyException("Invalid border-width value: " + value);
     }
+
+    /**
+     * Get mapped numeric length.  This may not be necessary.  It may be
+     * feasible to simply pass the unrefined values to
+     * <i>refineExpansionList()</i>.
+     * @param node the node for which the mapped length is being
+     * derived.
+     * @param enum the enum value which is being mapped to a length.
+     */
+    public Numeric getMappedLength(FONode node, int enum)
+        throws PropertyException
+    {
+        return getMappedLength(node, PropNames.BORDER_WIDTH, enum);
+    }
+
 }
 
