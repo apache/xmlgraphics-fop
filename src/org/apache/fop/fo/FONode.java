@@ -52,12 +52,6 @@ public class FONode extends Node{
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
 
-    /** The <tt>FOTree</tt> of which this node is a member. */
-    protected FOTree foTree;
-    /** The parent <tt>FONode</tt> of this node. */
-    protected FONode parent;
-    /** The <tt>XMLEvent</tt> which triggered this node. */
-    protected FoXMLEvent event;
     /** The buffer from which parser events are drawn. */
     protected SyncedFoXmlEventsBuffer xmlevents;
     /** The namespaces object associated with <i>xmlevents</i>. */
@@ -139,17 +133,12 @@ public class FONode extends Node{
         throws TreeException, FOPException, PropertyException
     {
         super(foTree, parent);
-        this.foTree = foTree;
         this.type = type;
-        this.parent = parent;
-        this.event = event;
         this.attrSet = attrSet;
         this.sparsePropsMap = sparsePropsMap;
         this.sparseIndices = sparseIndices;
         this.numProps = numProps;
         attrBitSet = FOPropertySets.getAttrROBitSet(attrSet);
-        //inheritedBitSet = FOPropertySets.getInheritedROBitSet(attrSet);
-        //nonInheritedBitSet = FOPropertySets.getNonInheritedROBitSet(attrSet);
         xmlevents = foTree.xmlevents;
         namespaces = xmlevents.getNamespaces();
         exprParser = foTree.exprParser;
@@ -240,7 +229,7 @@ public class FONode extends Node{
      * @return the <tt>FOTree</tt>.
      */
     public FOTree getFOTree() {
-        return foTree;
+        return (FOTree)tree;
     }
 
     /**
@@ -283,7 +272,7 @@ public class FONode extends Node{
     {
         if (parent != null)
             return IndirectValue.adjustedPropertyValue
-                            (parent.getNearestSpecifiedValue(sourceProperty));
+                (((FONode)parent).getNearestSpecifiedValue(sourceProperty));
         else // root
             return IndirectValue.adjustedPropertyValue
                     (PropertyConsts.pconsts.getInitialValue(sourceProperty));
@@ -312,7 +301,7 @@ public class FONode extends Node{
             return IndirectValue.adjustedPropertyValue(propertySet[property]);
         if (parent != null)
             return IndirectValue.adjustedPropertyValue
-                                (parent.getNearestSpecifiedValue(property));
+                        (((FONode)parent).getNearestSpecifiedValue(property));
         else // root
             return IndirectValue.adjustedPropertyValue
                         (PropertyConsts.pconsts.getInitialValue(property));
@@ -354,7 +343,7 @@ public class FONode extends Node{
     {
         if (parent != null)
             return IndirectValue.adjustedPropertyValue
-                                    (parent.getPropertyValue(sourceProperty));
+                        (((FONode)parent).getPropertyValue(sourceProperty));
         else // root
             return IndirectValue.adjustedPropertyValue
                     (PropertyConsts.pconsts.getInitialValue(sourceProperty));
@@ -397,7 +386,7 @@ public class FONode extends Node{
         if (parent != null && PropertyConsts.pconsts.isInherited(property))
             return (propertySet[property] =
                            IndirectValue.adjustedPropertyValue
-                                        (parent.getPropertyValue(property)));
+                            (((FONode)parent).getPropertyValue(property)));
         else // root
             return (propertySet[property] =
                     IndirectValue.adjustedPropertyValue
