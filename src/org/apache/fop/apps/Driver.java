@@ -36,7 +36,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 // Java
 import java.io.*;
-
+import java.util.*;
 
 /**
  * Primary class that drives overall FOP process.
@@ -214,6 +214,18 @@ public class Driver {
 
         addElementMapping("org.apache.fop.extensions.ExtensionElementMapping");
         addPropertyList ("org.apache.fop.extensions.ExtensionPropertyListMapping");
+
+        // add mappings from user configuration
+        Hashtable mappings = Configuration.getHashtableValue("mappings");
+        if (mappings != null) {
+            String prop = (String) mappings.get("property");
+            String ele = (String) mappings.get("element");
+            try {
+                addElementMapping(ele);
+                addPropertyList(prop);
+            } catch (IllegalArgumentException e) {
+            }
+        }
     }
 
     /**
