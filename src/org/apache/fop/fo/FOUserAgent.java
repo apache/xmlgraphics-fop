@@ -73,7 +73,7 @@ public class FOUserAgent {
                 handler.handleXML(ctx, doc, namespace);
             } catch (Throwable t) {
                 // could not handle document
-                //t.printStackTrace();
+                t.printStackTrace();
             }
         } else {
             // no handler found for document

@@ -7,6 +7,8 @@
 
 package org.apache.fop.area;
 
+import org.apache.fop.datatypes.ColorType;
+
 import java.io.Serializable;
 
 // properties should be serialized by the holder
@@ -26,8 +28,16 @@ public class Property implements Serializable {
     public static final int LINETHROUGH = 12;
     public static final int OFFSET = 13;
     public static final int SHADOW = 14;
+
     public int propType;
     public Object data;
 
+    public static class Background {
+        ColorType color;
+        String url;
+        int repeat;
+        int horiz;
+        int vertical;
+    }
 }
 

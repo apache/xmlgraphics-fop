@@ -37,6 +37,10 @@ import org.w3c.dom.Document;
 
 /**
  * Renderer that renders areas to XML for debugging purposes.
+ * This creates an xml that contains the information of the area
+ * tree. It does not output any state or derived information.
+ * The output can be used to build a new area tree (@see AreaTreeBuilder)
+ * which can be rendered to any renderer.
  */
 public class XMLRenderer extends AbstractRenderer {
     public static final String mimeType = "text/xml";
@@ -353,7 +357,7 @@ public class XMLRenderer extends AbstractRenderer {
                 style = "ridge";
                 break;
         }
-        writeElement("<leader ruleStyle=\"" + style +
+        writeElement("<leader width=\"" + area.getWidth() + "\" ruleStyle=\"" + style +
                      "\" ruleThickness=\"" + area.getRuleThickness() + "\"/>");
         super.renderLeader(area);
     }

@@ -14,10 +14,13 @@ import org.apache.fop.render.Renderer;
 import java.util.List;
 import java.util.ArrayList;
 
+// this is an inline area that can have blocks as children
 public class Container extends Area {
     ArrayList blocks = new ArrayList();
+    int width;
 
-    // this is an inline area that can have blocks as children
+    public Container() {
+    }
 
     public void render(Renderer renderer) {
         renderer.renderContainer(this);
@@ -29,6 +32,10 @@ public class Container extends Area {
 
     public List getBlocks() {
         return blocks;
+    }
+
+    public int getWidth() {
+        return width;
     }
 
 }

@@ -17,4 +17,12 @@ public class Word extends InlineArea {
     public void render(Renderer renderer) {
         renderer.renderWord(this);
     }
+
+    public void setWord(String w) {
+        word = w;
+    }
+
+    public String getWord() {
+        return word;
+    }
 }

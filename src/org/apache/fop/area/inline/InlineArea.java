@@ -45,6 +45,14 @@ public class InlineArea extends Area {
         return width;
     }
 
+    public void setOffset(int v) {
+        verticalPosition = v;
+    }
+
+    public int getOffset() {
+        return verticalPosition;
+    }
+
     public void addProperty(Property prop) {
         if (props == null) {
             props = new ArrayList();
