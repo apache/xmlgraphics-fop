@@ -1,12 +1,14 @@
 package org.apache.fop.fo.pagination;
 
 import java.util.Collection;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FONode;
@@ -45,7 +47,7 @@ public class FoLayoutMasterSet extends FONode {
         position in the <i>sparsePropsSet</i> array.  See
         {@link org.apache.fop.fo.FONode#sparsePropsSet FONode.sparsePropsSet}.
      */
-    private static final HashMap sparsePropsMap;
+    private static final int[] sparsePropsMap;
 
     /** An <tt>int</tt> array of of the applicable property indices, in
         property index order. */
@@ -59,7 +61,8 @@ public class FoLayoutMasterSet extends FONode {
         // applicableProps is a HashMap containing the indicies of the
         // sparsePropsSet array, indexed by the FO index of the FO slot
         // in sparsePropsSet.
-        sparsePropsMap = new HashMap(0);
+        sparsePropsMap = new int[PropNames.LAST_PROPERTY_INDEX + 1];
+        Arrays.fill(sparsePropsMap, -1);
         numProps = 0;
         sparseIndices = new int[] {};
     }

@@ -9,6 +9,7 @@
 
 package org.apache.fop.fo.pagination;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.BitSet;
 import java.util.NoSuchElementException;
@@ -47,7 +48,7 @@ public class FoPageSequenceMaster extends FONode {
         position in the <i>sparsePropsSet</i> array.  See
         {@link org.apache.fop.fo.FONode#sparsePropsSet FONode.sparsePropsSet}.
      */
-    private static final HashMap sparsePropsMap;
+    private static final int[] sparsePropsMap;
 
     /** An <tt>int</tt> array of of the applicable property indices, in
         property index order. */
@@ -61,16 +62,16 @@ public class FoPageSequenceMaster extends FONode {
         // applicableProps is a HashMap containing the indicies of the
         // sparsePropsSet array, indexed by the FO index of the FO slot
         // in sparsePropsSet.
-        sparsePropsMap = new HashMap(1);
+        sparsePropsMap = new int[PropNames.LAST_PROPERTY_INDEX + 1];
+        Arrays.fill(sparsePropsMap, -1);
         numProps = 1;
         sparseIndices = new int[] { PropNames.MASTER_NAME };
-        sparsePropsMap.put
-            (Ints.consts.get(PropNames.MASTER_NAME), Ints.consts.get(0));
+        sparsePropsMap[PropNames.MASTER_NAME] = 0;
     }
 
     /** Constant values for FoSinglePageMasterReference.
         See {@link #sparsePropsMap sparsePropsMap}. */
-    private static final HashMap s_p_m_r_PropsMap;
+    private static final int[] s_p_m_r_PropsMap;
 
     /** See {@link #sparseIndices sparseIndices}. */
     private static final int[] s_p_m_r_Indices;
@@ -82,16 +83,15 @@ public class FoPageSequenceMaster extends FONode {
         // applicableProps is a HashMap containing the indicies of the
         // sparsePropsSet array, indexed by the FO index of the FO slot
         // in sparsePropsSet.
-        s_p_m_r_PropsMap = new HashMap(1);
+        s_p_m_r_PropsMap = new int[PropNames.LAST_PROPERTY_INDEX + 1];
+        Arrays.fill(s_p_m_r_PropsMap, -1);
         s_p_m_r_numProps = 1;
         s_p_m_r_Indices = new int[] { PropNames.MASTER_REFERENCE };
-        s_p_m_r_PropsMap.put
-            (Ints.consts.get(PropNames.MASTER_REFERENCE),
-                                                Ints.consts.get(0));
+        s_p_m_r_PropsMap[PropNames.MASTER_REFERENCE] = 0;
     }
 
     /** See {@link #sparsePropsMap sparsePropsMap}. */
-    private static final HashMap r_p_m_r_PropsMap;
+    private static final int[] r_p_m_r_PropsMap;
 
     /** See {@link #sparseIndices sparseIndices}. */
     private static final int[] r_p_m_r_Indices;
@@ -109,7 +109,8 @@ public class FoPageSequenceMaster extends FONode {
         // sparsePropsSet is a HashMap containing the indicies of the
         // sparsePropsSet array, indexed by the FO index of the FO slot
         // in sparsePropsSet.
-        r_p_m_r_PropsMap = new HashMap();
+        r_p_m_r_PropsMap = new int[PropNames.LAST_PROPERTY_INDEX + 1];
+        Arrays.fill(r_p_m_r_PropsMap, -1);
         r_p_m_r_numProps = propsets.cardinality();
         r_p_m_r_Indices = new int[r_p_m_r_numProps];
         int propx = 0;
@@ -117,13 +118,12 @@ public class FoPageSequenceMaster extends FONode {
                 next >= 0;
                 next = propsets.nextSetBit(next + 1)) {
             r_p_m_r_Indices[propx] = next;
-            r_p_m_r_PropsMap.put
-                        (Ints.consts.get(next), Ints.consts.get(propx++));
+            r_p_m_r_PropsMap[next] = propx++;
         }
     }
 
     /** See {@link #sparsePropsMap sparsePropsMap}.  */
-    private static final HashMap r_p_m_a_PropsMap;
+    private static final int[] r_p_m_a_PropsMap;
 
     /** See {@link #sparseIndices sparseIndices}.  */
     private static final int[] r_p_m_a_Indices;
@@ -132,16 +132,15 @@ public class FoPageSequenceMaster extends FONode {
     private static final int r_p_m_a_numProps;
 
     static {
-        r_p_m_a_PropsMap = new HashMap(1);
+        r_p_m_a_PropsMap = new int[PropNames.LAST_PROPERTY_INDEX + 1];
+        Arrays.fill(r_p_m_a_PropsMap, -1);
         r_p_m_a_numProps = 1;
         r_p_m_a_Indices = new int[] { PropNames.MAXIMUM_REPEATS };
-        r_p_m_a_PropsMap.put
-            (Ints.consts.get(PropNames.MAXIMUM_REPEATS),
-                                                Ints.consts.get(0));
+        r_p_m_a_PropsMap[PropNames.MAXIMUM_REPEATS] = 0;
     }
 
     /** See {@link #sparsePropsMap sparsePropsMap}. */
-    private static final HashMap c_p_m_r_PropsMap;
+    private static final int[] c_p_m_r_PropsMap;
 
     /** See {@link #sparseIndices sparseIndices}. */
     private static final int[] c_p_m_r_Indices;
@@ -161,7 +160,8 @@ public class FoPageSequenceMaster extends FONode {
         // sparsePropsSet is a HashMap containing the indicies of the
         // sparsePropsSet array, indexed by the FO index of the FO slot
         // in sparsePropsSet.
-        c_p_m_r_PropsMap = new HashMap();
+        c_p_m_r_PropsMap = new int[PropNames.LAST_PROPERTY_INDEX + 1];
+        Arrays.fill(c_p_m_r_PropsMap, -1);
         c_p_m_r_numProps = propsets.cardinality();
         c_p_m_r_Indices = new int[c_p_m_r_numProps];
         int propx = 0;
@@ -169,8 +169,7 @@ public class FoPageSequenceMaster extends FONode {
                 next >= 0;
                 next = propsets.nextSetBit(next + 1)) {
             c_p_m_r_Indices[propx] = next;
-            c_p_m_r_PropsMap.put
-                    (Ints.consts.get(next), Ints.consts.get(propx++));
+            c_p_m_r_PropsMap[next] = propx++;
         }
     }
 
