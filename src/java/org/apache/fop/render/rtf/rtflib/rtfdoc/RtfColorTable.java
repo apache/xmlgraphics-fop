@@ -187,14 +187,21 @@ public class RtfColorTable {
         int retVal;
 
         if (o == null) {
+            //The color currently does not exist, so add it to the table.
+            //First add it, then read the size as index (to return it).
+            //So the first added color gets index 1. That is OK, because
+            //index 0 is reserved for auto-colored. 
             addColor (identifier);
 
             retVal = colorTable.size ();
         } else {
-            retVal = ((Integer) o).intValue ();
+            //The color was found. Before returning the index, increment
+            //it by one. Because index 0 is reserved for auto-colored, but
+            //is not contained in colorTable.
+            retVal = ((Integer) o).intValue () + 1;
         }
 
-        return new Integer(retVal + 1);
+        return new Integer(retVal);
     }
 
     /**
@@ -212,6 +219,8 @@ public class RtfColorTable {
         header.writeGroupMark (true);
         //Don't use writeControlWord, because it appends a blank,
         //which may confuse Wordpad.
+        //This also implicitly writes the first color (=index 0), which
+        //is reserved for auto-colored.
         header.write ("\\colortbl;");
 
         int len = colorTable.size ();
