@@ -98,36 +98,43 @@ public class PDFResources extends PDFObject {
      *
      * @return the PDF
      */
-    public String toPDF() {
-	StringBuffer p = new StringBuffer(this.number + " "
-					  + this.generation
-					  + " obj\n<< /Font << ");
+	public String toPDF() {
+		StringBuffer p = new StringBuffer(this.number + " "
+						+ this.generation
+						+ " obj\n<< \n");
+		if(!this.fonts.isEmpty())
+		{
+			p.append("/Font << ");
 
-	/* construct PDF dictionary of font object references */
-	Enumeration fontEnumeration = fonts.keys();
-	while (fontEnumeration.hasMoreElements()) {
-	    String fontName = (String) fontEnumeration.nextElement();
-	    p = p.append("/" + fontName + " " 
-			 + ((PDFFont) fonts.get(fontName)).referencePDF()
-			 + "\n");  
-	}
+			/* construct PDF dictionary of font object references */
+			Enumeration fontEnumeration = fonts.keys();
+			while (fontEnumeration.hasMoreElements()) {
+	   		String fontName = (String) fontEnumeration.nextElement();
+	   		p = p.append("/" + fontName + " " 
+					+ ((PDFFont) fonts.get(fontName)).referencePDF()
+					+ "\n");  
+			}
+			
+			p = p.append(">>\n");
+		}
+		
+		p.append("/ProcSet [ /PDF /ImageC /Text ] ");
 
-	p = p.append(">>\n/ProcSet [ /PDF /ImageC /Text ] ");
+		if (!this.xObjects.isEmpty())
+		{
+	   	p = p.append("/XObject <<");
+	   	for (int i = 1; i < this.xObjects.size(); i++) {
+			p = p.append("/Im" + i + " " +
+			   	((PDFXObject)
+			      	this.xObjects.elementAt(i -
+						      	1)).referencePDF()
+			   	+
+			   	" \n");
+	   	}
+		}
 
-	if (!this.xObjects.isEmpty()) {
-	    p = p.append("/XObject <<");
-	    for (int i = 1; i < this.xObjects.size(); i++) {
-		p = p.append("/Im" + i + " " +
-			     ((PDFXObject)
-			      this.xObjects.elementAt(i -
-						      1)).referencePDF()
-			     +
-			     " \n");
-	    }
-	}
+			p = p.append(">>\nendobj\n");
 
-	p = p.append(">>\nendobj\n");
-
-	return p.toString();
-    }
+			return p.toString();
+		}    
 }
