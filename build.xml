@@ -471,6 +471,7 @@ list of possible build targets.
     <pathconvert property="manifest-classpath" dirsep="/" pathsep=" " refid="libs-run-classpath">
       <map from="${basedir}${file.separator}lib${file.separator}" to=""/>
       <map from="${basedir}${file.separator}build${file.separator}fop.jar" to=""/>
+      <map from="${optional.lib.dir}${file.separator}" to=""/>
     </pathconvert>
 
     <jar jarfile="${build.dir}/${name}.jar" basedir="${build.dest}" includes="org/**,hyph/**">
