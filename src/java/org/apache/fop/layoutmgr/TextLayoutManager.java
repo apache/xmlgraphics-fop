@@ -98,9 +98,9 @@ public class TextLayoutManager extends AbstractLayoutManager {
     public TextLayoutManager(FOText node) {
         super(node);
         foText = node;
-        textArray = new char[node.ca.length - node.start];
-        System.arraycopy(node.ca, node.start, textArray, 0,
-            node.ca.length - node.start);
+        textArray = new char[node.endIndex - node.startIndex];
+        System.arraycopy(node.ca, node.startIndex, textArray, 0,
+            node.endIndex - node.startIndex);
 
         vecAreaInfo = new java.util.ArrayList();
 

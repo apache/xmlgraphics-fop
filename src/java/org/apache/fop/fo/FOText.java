@@ -47,11 +47,21 @@ public class FOText extends FObj {
      * The starting valid index of the ca array 
      * to be processed.
      *
-     * This value is originally equal to ca.length, but becomes 
-     * incremented during whitespace removal by the flow.Block class,  
+     * This value is originally equal to 0, but becomes 
+     * incremented during leading whitespace removal by the flow.Block class,  
      * via the TextCharIterator.remove() method below.
      */
-    public int start = 0;
+    public int startIndex = 0;
+
+    /**
+     * The ending valid index of the ca array 
+     * to be processed.
+     *
+     * This value is originally equal to ca.length, but becomes 
+     * decremented during between-word whitespace removal by the flow.Block class,  
+     * via the TextCharIterator.remove() method below.
+     */
+    public int endIndex = 0;
 
     /**
      * The TextInfo object attached to the text
@@ -100,9 +110,10 @@ public class FOText extends FObj {
      */
     public FOText(char[] chars, int start, int end, TextInfo ti, FONode parent) {
         super(parent);
-        int length = end - start;
-        this.ca = new char[length];
-        System.arraycopy(chars, start, ca, 0, length);
+        endIndex = end - start;
+        this.ca = new char[endIndex];
+        System.arraycopy(chars, start, ca, 0, endIndex);
+//      System.out.println("->" + new String(ca) + "<-");
         textInfo = ti;
         createBlockPointers();
         textTransform();
@@ -119,11 +130,11 @@ public class FOText extends FObj {
      */
     public boolean willCreateArea() {
         if (textInfo.whiteSpaceCollapse == WhiteSpaceCollapse.FALSE
-                && ca.length - start > 0) {
+                && endIndex - startIndex > 0) {
             return true;
         }
 
-        for (int i = start; i < ca.length; i++) {
+        for (int i = startIndex; i < endIndex; i++) {
             char ch = ca[i];
             if (!((ch == ' ')
                     || (ch == '\n')
@@ -142,37 +153,7 @@ public class FOText extends FObj {
         return new TextCharIterator();
     }
 
-    private class TextCharIterator extends AbstractCharIterator {
-        private int curIndex = 0;
-
-        public boolean hasNext() {
-            return (curIndex < ca.length);
-        }
-
-        public char nextChar() {
-            if (curIndex < ca.length) {
-                // Just a char class? Don't actually care about the value!
-                return ca[curIndex++];
-            } else {
-                throw new NoSuchElementException();
-            }
-        }
-
-        public void remove() {
-            if (start < ca.length) {
-                start++;
-            }
-        }
-
-        public void replaceChar(char c) {
-            if (curIndex > 0 && curIndex <= ca.length) {
-                ca[curIndex - 1] = c;
-            }
-        }
-
-    }
-
-    /**
+     /**
      * This method is run as part of the Constructor, to create xref pointers to
      * the previous FOText objects within the same Block
      */
@@ -214,7 +195,7 @@ public class FOText extends FObj {
         if (textInfo.textTransform == TextTransform.NONE) {
             return;
         }
-        for (int i = 0; i < ca.length; i++) {
+        for (int i = 0; i < endIndex; i++) {
             ca[i] = charTransform(i);
         }
     }
@@ -279,7 +260,7 @@ public class FOText extends FObj {
      */
     private char getRelativeCharInBlock(int i, int offset) {
         // The easy case is where the desired character is in the same FOText
-        if (((i + offset) >= 0) && ((i + offset) <= this.ca.length)) {
+        if (((i + offset) >= 0) && ((i + offset) <= this.endIndex)) {
             return ca[i + offset];
         }
         // For now, we can't look at following FOText nodes
@@ -297,11 +278,11 @@ public class FOText extends FObj {
                 break;
             }
             nodeToTest = nodeToTest.prevFOTextThisBlock;
-            if ((nodeToTest.ca.length + remainingOffset) >= 0) {
-                charToReturn = nodeToTest.ca[nodeToTest.ca.length + remainingOffset];
+            if ((nodeToTest.endIndex + remainingOffset) >= 0) {
+                charToReturn = nodeToTest.ca[nodeToTest.endIndex + remainingOffset];
                 foundChar = true;
             } else {
-                remainingOffset = remainingOffset + nodeToTest.ca.length;
+                remainingOffset = remainingOffset + nodeToTest.endIndex;
             }
         }
         return charToReturn;
@@ -458,4 +439,53 @@ public class FOText extends FObj {
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveFOText(this);
     }
+
+    
+    private class TextCharIterator extends AbstractCharIterator {
+        private int curIndex = 0;
+        private int nextCharCalled = 0;
+        
+        public boolean hasNext() {
+           if (curIndex == 0) {
+//             System.out.println("->" + new String(ca) + "<-");
+          }
+           return (curIndex < endIndex);
+        }
+
+        public char nextChar() {
+            if (curIndex < endIndex) {
+                nextCharCalled++;
+                // Just a char class? Don't actually care about the value!
+                return ca[curIndex++];
+            } else {
+                throw new NoSuchElementException();
+            }
+        }
+
+        public void remove() {
+            if (curIndex < endIndex && nextCharCalled < 2) {
+                startIndex++;
+                nextCharCalled = 0;
+//              System.out.println("removeA: " + new String(ca, startIndex, endIndex - startIndex));
+            } else if (curIndex < endIndex) {
+                // copy from curIndex to end to curIndex-1
+                System.arraycopy(ca, curIndex, ca, curIndex - 1, 
+                    endIndex - curIndex);
+                endIndex--;
+                curIndex--;
+//              System.out.println("removeB: " + new String(ca, startIndex, endIndex - startIndex));
+            } else if (curIndex == endIndex) {
+//              System.out.println("removeC: " + new String(ca, startIndex, endIndex - startIndex));
+                curIndex = --endIndex;
+            }
+        }
+
+        public void replaceChar(char c) {
+            if (curIndex > 0 && curIndex <= endIndex) {
+                ca[curIndex - 1] = c;
+            }
+        }
+
+    }
+    
 }

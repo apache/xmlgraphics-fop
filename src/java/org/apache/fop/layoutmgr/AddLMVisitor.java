@@ -180,7 +180,7 @@ public class AddLMVisitor implements FOTreeVisitor {
     }
 
     public void serveFOText(FOText foText) {
-        if (foText.ca.length - foText.start > 0) {
+        if (foText.endIndex - foText.startIndex > 0) {
             currentLMList.add(new TextLayoutManager(foText));
         }
     }
