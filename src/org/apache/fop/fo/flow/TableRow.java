@@ -349,9 +349,12 @@ public class TableRow extends FObj {
             if (area instanceof BlockArea) {
                 area.end();
             }
-
-            area.getIDReferences().createID(id);
-            configID = true;
+	    if (cells == null) { // check to make sure this row hasn't been partially
+		                 // laid out yet (with an id created already)
+		area.getIDReferences().createID(id);
+		configID = true;
+	    }
+	    
 
             this.marker = 0;
         }
