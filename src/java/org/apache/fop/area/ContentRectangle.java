@@ -122,6 +122,23 @@ public class ContentRectangle extends AreaGeometry {
     }
 
     /**
+     * Gets the width of this <code>AreaGeometry</code> as seen from any
+     * enclosing frame
+     * @return the frame-view width
+     */
+    protected double getFrameRelativeWidth() {
+        return getFrameRelativeDimensions().getWidth();
+    }
+    /**
+     * Gets the height of this <code>AreaGeometry</code> as seen from any
+     * enclosing frame
+     * @return the frame-view height
+     */
+    protected double getFrameRelativeHeight() {
+        return getFrameRelativeDimensions().getHeight();
+    }
+
+    /**
      * {@inheritDoc}
      * <p>Any registered listeners are notified of the change in the
      * dimension.
