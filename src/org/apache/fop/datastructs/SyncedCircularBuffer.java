@@ -28,7 +28,7 @@ import java.lang.IndexOutOfBoundsException;
  */
 public class SyncedCircularBuffer {
 
-    private final static int DEFAULTBUFSIZE = 128;
+    public final static int DEFAULTBUFSIZE = 64;
 
     private Object[] buf;
     private int size = 0;
