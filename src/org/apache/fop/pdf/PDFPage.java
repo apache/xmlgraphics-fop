@@ -130,7 +130,7 @@ public class PDFPage extends PDFObject {
 	StringBuffer sb = new StringBuffer();
 
 	sb = sb.append(this.number + " " + this.generation + " obj\n" +
-		"<< / Type /Page\n" +
+		"<< /Type /Page\n" +
 		"/Parent " + this.parent.referencePDF() + "\n" +
 		"/MediaBox [ 0 0 " + this.pagewidth + " " +
 		this.pageheight + " ]\n" + 
