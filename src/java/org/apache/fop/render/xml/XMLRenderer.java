@@ -313,7 +313,9 @@ public class XMLRenderer extends AbstractRenderer {
      * @see org.apache.fop.render.Renderer#stopRenderer()
      */
     public void stopRenderer() throws IOException {
-        endElement("pageSequence");
+        if (startedSequence) {
+            endElement("pageSequence");
+        }
         endElement("areaTree");
         try {
             handler.endDocument();
