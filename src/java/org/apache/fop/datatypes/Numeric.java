@@ -54,7 +54,13 @@ public interface Numeric {
      * @return true when the numeric is absolute.
      */
     boolean isAbsolute();
-    
+
+    /**
+     * Returns the value of this numeric as an int.
+     * @return the value as an integer.
+     */
+    public int getValue();
+
     /**
      * Return the resolved value. This method will becalled during evaluation 
      * of the expression tree and relative numerics can then return a 
