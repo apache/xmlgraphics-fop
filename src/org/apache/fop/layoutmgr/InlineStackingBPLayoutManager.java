@@ -130,9 +130,9 @@ public class InlineStackingBPLayoutManager extends AbstractBPLayoutManager {
         if (prevPos != null) {
             // ASSERT (prevPos.getLM() == this)
             if (prevPos.getLM() != this) {
-                System.err.println(
-                  "InlineStackingBPLayoutManager.resetPosition: " +
-                  "LM mismatch!!!");
+                //log.error(
+                //  "InlineStackingBPLayoutManager.resetPosition: " +
+                //  "LM mismatch!!!");
             }
             // Back up the child LM Position
             Position childPos = prevPos.getPosition();
@@ -496,7 +496,7 @@ public class InlineStackingBPLayoutManager extends AbstractBPLayoutManager {
                                           spaceRange.min) * dSpaceAdjust);
             }
             if (iAdjust != 0) {
-                System.err.println("Add leading space: " + iAdjust);
+                //log.error("Add leading space: " + iAdjust);
                 Space ls = new Space();
                 ls.setWidth(iAdjust);
                 parentArea.addChild(ls);

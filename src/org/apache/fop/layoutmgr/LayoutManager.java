@@ -14,7 +14,6 @@ import org.apache.fop.area.Area;
  * The interface for all LayoutManagers.
  */
 public interface LayoutManager {
-    public boolean generateAreas();
     public boolean generatesInlineAreas();
     public Area getParentArea (Area childArea);
     public boolean addChild (Area childArea);

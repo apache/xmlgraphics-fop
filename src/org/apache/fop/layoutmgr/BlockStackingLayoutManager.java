@@ -139,7 +139,7 @@ public abstract class BlockStackingLayoutManager extends AbstractBPLayoutManager
                                      BlockParent parentArea) {
         // This should be a block-level Area (Block in the generic sense)
         if (!(childArea instanceof Block)) {
-            System.err.println("Child not a Block in BlockStackingLM!");
+            //log.error("Child not a Block in BlockStackingLM!");
             return false;
         }
 

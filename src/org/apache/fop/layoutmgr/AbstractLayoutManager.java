@@ -41,34 +41,6 @@ public abstract class AbstractLayoutManager implements LayoutManager {
         return 0;
     }
 
-    /**
-     * Propagates to lower level layout managers. It iterates over the
-     * children of its FO, asks each for its LayoutManager and calls
-     * its generateAreas method.
-     */
-    public boolean generateAreas() {
-        ArrayList lms = new ArrayList();
-        if (fobj != null) {
-            ListIterator children = fobj.getChildren();
-            while (children.hasNext()) {
-                FONode node = (FONode) children.next();
-                if (node instanceof FObj) {
-                    ((FObj) node).addLayoutManager(lms);
-                }
-            }
-            fobj = null;
-        }
-
-        for (int count = 0; count < lms.size(); count++) {
-            LayoutManager lm = (LayoutManager) lms.get(count);
-            lm.setParentLM(this);
-            if (lm.generateAreas()) {
-                break;
-            }
-        }
-        return flush(); // Add last area to parent
-    }
-
     //     /**
     //      * Ask the parent LayoutManager to add the current (full) area to the
     //      * appropriate parent area.

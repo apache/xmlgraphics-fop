@@ -43,25 +43,6 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
         super(fobj);
     }
 
-    public boolean generateAreas() {
-
-        ArrayList vecBreakPoss = new ArrayList();
-
-        BreakPoss bp;
-        LayoutContext childLC = new LayoutContext(0);
-        while (!isFinished()) {
-            if ((bp = getNextBreakPoss(childLC, null)) != null) {
-                System.out.println("Flow Break: " + bp);
-                vecBreakPoss.add(bp);
-            }
-        }
-
-        addAreas( new BreakPossPosIter(vecBreakPoss, 0,
-                                       vecBreakPoss.size()), null);
-        flush();
-        return false;
-    }
-
     public BreakPoss getNextBreakPoss(LayoutContext context,
                                       Position prevLineBP) {
 
@@ -86,8 +67,6 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
                 }
             }
 
-System.out.println("Flow BreakPoss: " + vecBreakPoss);
-
             return new BreakPoss(
                      new BlockBreakPosition(curLM, 0, vecBreakPoss));
         }
@@ -96,10 +75,8 @@ System.out.println("Flow BreakPoss: " + vecBreakPoss);
     }
 
     public void addAreas(PositionIterator parentIter, LayoutContext lc) {
-System.out.println("FL add: " + parentIter);
         while (parentIter.hasNext()) {
             BlockBreakPosition bbp = (BlockBreakPosition) parentIter.next();
-System.out.println("FL add: " + bbp);
             bbp.getLM().addAreas( new BreakPossPosIter(bbp.blockps, 0,
                                   bbp.blockps.size()), null);
         }

@@ -76,7 +76,6 @@ public class PageLayoutManager extends AbstractBPLayoutManager implements Runnab
      * rendering process can also run in a parallel thread.
      */
     public void run() {
-        //generateAreas();
         doLayout();
         flush();
     }
@@ -89,11 +88,11 @@ public class PageLayoutManager extends AbstractBPLayoutManager implements Runnab
         LayoutContext childLC = new LayoutContext(0);
         while (!isFinished()) {
         ArrayList vecBreakPoss = new ArrayList();
-            makeNewPage(false, false);
             if ((bp = getNextBreakPoss(childLC, null)) != null) {
                 vecBreakPoss.add(bp);
                 addAreas( new BreakPossPosIter(vecBreakPoss, 0,
                                        vecBreakPoss.size()), null);
+                finishPage();
             }
         }
 
@@ -125,9 +124,10 @@ public class PageLayoutManager extends AbstractBPLayoutManager implements Runnab
                     vecBreakPoss.add(bp);
                 }
             }
-System.out.println("BREAKS: " + vecBreakPoss.size());
-            return new BreakPoss(
-                     new BlockBreakPosition(curLM, 0, vecBreakPoss));
+            if(vecBreakPoss.size() > 0) {
+                return new BreakPoss(
+                         new BlockBreakPosition(curLM, 0, vecBreakPoss));
+            }
         }
         setFinished(true);
         return null;
@@ -137,7 +137,6 @@ System.out.println("BREAKS: " + vecBreakPoss.size());
 
         while (parentIter.hasNext()) {
             BlockBreakPosition bbp = (BlockBreakPosition) parentIter.next();
-System.out.println("ADD BREAKS: " + bbp.blockps.size());
             bbp.getLM().addAreas( new BreakPossPosIter(bbp.blockps, 0,
                                   bbp.blockps.size()), null);
         }
@@ -178,8 +177,8 @@ System.out.println("ADD BREAKS: " + bbp.blockps.size());
         // end the page.
 getParentArea(area);
         // Alternatively the child LM indicates to parent that it's full?
-        System.out.println("size: " + area.getAllocationBPD().max +
-                           ":" + curSpan.getMaxBPD().min);
+        //System.out.println("size: " + area.getAllocationBPD().max +
+        //                   ":" + curSpan.getMaxBPD().min);
         if (area.getAllocationBPD().max >= curSpan.getMaxBPD().min) {
             // Consider it filled
             if (curSpan.getColumnCount() == curSpanColumns) {

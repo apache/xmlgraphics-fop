@@ -9,7 +9,7 @@ package org.apache.fop.layoutmgr;
 
 import org.apache.fop.area.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * Accumulate a sequence of space-specifiers (XSL space type) on
@@ -21,7 +21,7 @@ public class SpaceSpecifier implements Cloneable {
 
     private boolean m_bStartsRefArea;
     private boolean m_bHasForcing = false;
-    private Vector m_vecSpaceVals = new Vector(3);
+    private ArrayList m_vecSpaceVals = new ArrayList();
 
 
     public SpaceSpecifier(boolean bStartsRefArea) {
@@ -32,7 +32,7 @@ public class SpaceSpecifier implements Cloneable {
         try {
             SpaceSpecifier ss = (SpaceSpecifier) super.clone();
             // Clone the vector, but share the objects in it!
-            ss.m_vecSpaceVals = new Vector(this.m_vecSpaceVals.size());
+            ss.m_vecSpaceVals = new ArrayList();
             ss.m_vecSpaceVals.addAll(this.m_vecSpaceVals);
             return ss;
         } catch (CloneNotSupportedException cnse) {
@@ -95,7 +95,7 @@ public class SpaceSpecifier implements Cloneable {
             // Start from the end and count conditional specifiers
             // Stop at first non-conditional
             for (; lastIndex > 0; --lastIndex) {
-                SpaceVal sval = (SpaceVal) m_vecSpaceVals.elementAt(
+                SpaceVal sval = (SpaceVal) m_vecSpaceVals.get(
                                   lastIndex - 1);
                 if (!sval.bConditional) {
                     break;
@@ -105,7 +105,7 @@ public class SpaceSpecifier implements Cloneable {
         MinOptMax resSpace = new MinOptMax(0);
         int iMaxPrec = -1;
         for (int index = 0; index < lastIndex; index++) {
-            SpaceVal sval = (SpaceVal) m_vecSpaceVals.elementAt(index);
+            SpaceVal sval = (SpaceVal) m_vecSpaceVals.get(index);
             if (m_bHasForcing) {
                 resSpace.add(sval.space);
             } else if (sval.iPrecedence > iMaxPrec) {

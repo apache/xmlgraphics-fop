@@ -58,9 +58,9 @@ public abstract class AbstractBPLayoutManager extends AbstractLayoutManager impl
                 return m_curChildLM;
             } else {
                 m_childLMiter.remove();
-                System.err.println(
-                  "WARNING: child LM not a BPLayoutManager: " +
-                  obj.getClass().getName());
+                //log.warn(
+                //  "child LM not a BPLayoutManager: " +
+                //  obj.getClass().getName());
             }
         }
         return null;
@@ -69,8 +69,8 @@ public abstract class AbstractBPLayoutManager extends AbstractLayoutManager impl
     protected boolean hasMoreLM(BPLayoutManager prevLM) {
         // prevLM should = m_curChildLM
         if (prevLM != m_curChildLM) {
-            System.err.println("AbstractBPLayoutManager.peekNextLM: " +
-                               "passed LM is not current child LM!");
+            //log.debug("AbstractBPLayoutManager.peekNextLM: " +
+            //                   "passed LM is not current child LM!");
             return false;
         }
         return !m_childLMiter.hasNext();
@@ -92,7 +92,7 @@ public abstract class AbstractBPLayoutManager extends AbstractLayoutManager impl
             // ASSERT m_curChildLM == (BPLayoutManager)m_childLMiter.previous()
             if (m_curChildLM !=
                     (BPLayoutManager) m_childLMiter.previous()) {
-                System.err.println("LMiter problem!");
+                //log.error("LMiter problem!");
             }
             while (m_curChildLM != lm && m_childLMiter.hasPrevious()) {
                 m_curChildLM.resetPosition(null);
@@ -130,7 +130,7 @@ public abstract class AbstractBPLayoutManager extends AbstractLayoutManager impl
      * for the areas it will create, based on Properties set on its FO.
      */
     protected void initProperties(PropertyManager pm) {
-        System.err.println("AbstractBPLayoutManager.initProperties");
+        //log.debug("AbstractBPLayoutManager.initProperties");
     }
 
 
