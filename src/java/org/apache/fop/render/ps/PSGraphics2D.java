@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,12 +42,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.render.ps;
 
 //Java
@@ -83,7 +83,7 @@ import java.awt.image.renderable.RenderableImage;
 import java.io.IOException;
 
 // FOP
-import org.apache.fop.layout.FontInfo;
+import org.apache.fop.control.Document;
 import org.apache.fop.layout.FontState;
 
 // Batik
@@ -114,10 +114,10 @@ public class PSGraphics2D extends AbstractGraphics2D {
 
     /** Currently valid FontState */
     protected FontState fontState;
-    
+
     /** Overriding FontState */
     protected FontState overrideFontState = null;
-    
+
     /**
      * the current (internal) font name
      */
@@ -144,7 +144,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
     protected Color currentColour = new Color(0, 0, 0);
 
     /** FontInfo containing all available fonts */
-    protected FontInfo fontInfo;
+    protected Document fontInfo;
 
     /**
      * Create a new Graphics2D that generates PostScript code.
@@ -521,13 +521,13 @@ public class PSGraphics2D extends AbstractGraphics2D {
             Shape imclip = getClip();
             writeClip(imclip);
             Color c = getColor();
-            gen.writeln(gen.formatDouble(c.getRed() / 255.0) + " " 
-                      + gen.formatDouble(c.getGreen() / 255.0) + " " 
+            gen.writeln(gen.formatDouble(c.getRed() / 255.0) + " "
+                      + gen.formatDouble(c.getGreen() / 255.0) + " "
                       + gen.formatDouble(c.getBlue() / 255.0) + " setrgbcolor");
-            
+
             applyPaint(getPaint(), false);
             applyStroke(getStroke());
-            
+
             gen.writeln("newpath");
             PathIterator iter = s.getPathIterator(getTransform());
             while (!iter.isDone()) {
@@ -554,9 +554,9 @@ public class PSGraphics2D extends AbstractGraphics2D {
                               + " M");
                     break;
                 case PathIterator.SEG_QUADTO:
-                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " " 
-                              + gen.formatDouble(1000 * vals[1]) + " " 
-                              + gen.formatDouble(1000 * vals[2]) + " " 
+                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
+                              + gen.formatDouble(1000 * vals[1]) + " "
+                              + gen.formatDouble(1000 * vals[2]) + " "
                               + gen.formatDouble(1000 * vals[3]) + " QUADTO ");
                     break;
                 case PathIterator.SEG_CLOSE:
@@ -606,9 +606,9 @@ public class PSGraphics2D extends AbstractGraphics2D {
                               + " M");
                     break;
                 case PathIterator.SEG_QUADTO:
-                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " " 
-                              + gen.formatDouble(1000 * vals[1]) + " " 
-                              + gen.formatDouble(1000 * vals[2]) + " " 
+                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
+                              + gen.formatDouble(1000 * vals[1]) + " "
+                              + gen.formatDouble(1000 * vals[2]) + " "
                               + gen.formatDouble(1000 * vals[3]) + " QUADTO ");
                     break;
                 case PathIterator.SEG_CLOSE:
@@ -689,7 +689,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
         try {
             if (stroke instanceof BasicStroke) {
                 BasicStroke bs = (BasicStroke)stroke;
-            
+
                 float[] da = bs.getDashArray();
                 if (da != null) {
                     gen.writeln("[");
@@ -715,7 +715,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
                     gen.writeln(2 + " setlinecap");
                     break;
                 }
-            
+
                 int lj = bs.getLineJoin();
                 switch (lj) {
                 case BasicStroke.JOIN_MITER:
@@ -730,7 +730,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
                 }
                 float lw = bs.getLineWidth();
                 gen.writeln(gen.formatDouble(1000 * lw) + " setlinewidth");
-            
+
                 float ml = bs.getMiterLimit();
                 gen.writeln(gen.formatDouble(1000 * ml) + " setmiterlimit");
             }
@@ -834,7 +834,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
             int siz = gFont.getSize();
             String style = gFont.isItalic() ? "italic" : "normal";
             String weight = gFont.isBold() ? "bold" : "normal";
-            
+
             //try {
                 //fontState = new FontState(n, fontState.getFontMetrics(),siz);
             //} catch (org.apache.fop.apps.FOPException fope) {
@@ -847,10 +847,10 @@ public class PSGraphics2D extends AbstractGraphics2D {
         Shape imclip = getClip();
         writeClip(imclip);
         Color c = getColor();
-        gen.writeln(c.getRed() / 255.0 + " " 
-                  + c.getGreen() / 255.0 + " " 
+        gen.writeln(c.getRed() / 255.0 + " "
+                  + c.getGreen() / 255.0 + " "
                   + c.getBlue() / 255.0 + " setrgbcolor");
-  
+
         AffineTransform trans = getTransform();
         trans.translate(x, y);
         double[] vals = new double[6];
@@ -859,10 +859,10 @@ public class PSGraphics2D extends AbstractGraphics2D {
                   + gen.formatDouble(1000 * vals[5]) + " moveto ");
         //String fontWeight = fontState.getFontWeight();
         StringBuffer sb = new StringBuffer();
-  
+
         int l = s.length();
 
-        if ((currentFontName != fontState.getFontName()) 
+        if ((currentFontName != fontState.getFontName())
                 || (currentFontSize != fontState.getFontSize())) {
             gen.writeln(fontState.getFontName() + " " + fontState.getFontSize() + " F");
             currentFontName = fontState.getFontName();
@@ -886,7 +886,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
         psString = " (" + sb.toString() + ") " + " t ";
 
         gen.writeln(" 1.0 -1.0 scale");
-        gen.writeln(psString);        
+        gen.writeln(psString);
         gen.writeln(" 1.0 -1.0 scale");
       } catch (IOException ioe) {
           handleIOException(ioe);
@@ -922,7 +922,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
                            float y) {
         try {
             System.err.println("drawString(AttributedCharacterIterator)");
-            
+
             gen.writeln("BT");
             Shape imclip = getClip();
             writeClip(imclip);
@@ -932,16 +932,16 @@ public class PSGraphics2D extends AbstractGraphics2D {
             c = getBackground();
             Color col = new Color(c.getRed(), c.getGreen(), c.getBlue());
             //gen.writeln(col.getColorSpaceOut(false));
-            
+
             AffineTransform trans = getTransform();
             trans.translate(x, y);
             double[] vals = new double[6];
             trans.getMatrix(vals);
-            
+
             for (char ch = iterator.first(); ch != CharacterIterator.DONE;
                     ch = iterator.next()) {
                 //Map attr = iterator.getAttributes();
-            
+
                 gen.writeln(gen.formatDouble(vals[0]) + " "
                           + gen.formatDouble(vals[1]) + " "
                           + gen.formatDouble(vals[2]) + " "
@@ -951,7 +951,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
                           + gen.formatDouble(vals[6]) + " Tm [" + ch
                           + "]");
             }
-            
+
             gen.writeln("ET");
         } catch (IOException ioe) {
             handleIOException(ioe);
@@ -982,9 +982,9 @@ public class PSGraphics2D extends AbstractGraphics2D {
             gen.writeln(gen.formatDouble(c.getRed() / 255.0) + " "
                       + gen.formatDouble(c.getGreen() / 255.0) + " "
                       + gen.formatDouble(c.getBlue() / 255.0) + " setrgbcolor");
-            
+
             applyPaint(getPaint(), true);
-            
+
             gen.writeln("newpath");
             PathIterator iter = s.getPathIterator(getTransform());
             while (!iter.isDone()) {
@@ -1011,9 +1011,9 @@ public class PSGraphics2D extends AbstractGraphics2D {
                               + " M");
                     break;
                 case PathIterator.SEG_QUADTO:
-                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " " 
-                              + gen.formatDouble(1000 * vals[1]) + " " 
-                              + gen.formatDouble(1000 * vals[2]) + " " 
+                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
+                              + gen.formatDouble(1000 * vals[1]) + " "
+                              + gen.formatDouble(1000 * vals[2]) + " "
                               + gen.formatDouble(1000 * vals[3]) + " QUADTO ");
                     break;
                 case PathIterator.SEG_CLOSE:
@@ -1039,7 +1039,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * @param nonzero ???
      * @exception IOException In case of an I/O problem
      */
-    protected void doDrawing(boolean fill, boolean stroke, boolean nonzero) 
+    protected void doDrawing(boolean fill, boolean stroke, boolean nonzero)
                 throws IOException {
         if (fill) {
             if (stroke) {
@@ -1091,7 +1091,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
     public void setOverrideFontState(FontState infont) {
         overrideFontState = infont;
     }
-    
+
     /**
      * Gets the font metrics for the specified font.
      * @return    the font metrics for the specified font.

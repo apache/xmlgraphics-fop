@@ -52,7 +52,7 @@ package org.apache.fop.render;
 
 // FOP
 import org.apache.fop.render.pdf.FontSetup;
-import org.apache.fop.layout.FontInfo;
+import org.apache.fop.control.Document;
 
 // Java
 import java.util.List;
@@ -61,7 +61,7 @@ import java.util.List;
 public abstract class PrintRenderer extends AbstractRenderer {
 
     /** Font configuration */
-    protected FontInfo fontInfo;
+    protected Document fontInfo;
 
     /** list of fonts */
     protected List fontList = null;
@@ -71,7 +71,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
      *
      * @param fontInfo  font info to set up
      */
-    public void setupFontInfo(FontInfo fontInfo) {
+    public void setupFontInfo(Document fontInfo) {
         this.fontInfo = fontInfo;
         FontSetup.setup(fontInfo, fontList);
     }

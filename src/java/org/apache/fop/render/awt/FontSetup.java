@@ -51,7 +51,7 @@
 package org.apache.fop.render.awt;
 
 // FOP
-import org.apache.fop.layout.FontInfo;
+import org.apache.fop.control.Document;
 
 // Java
 import java.awt.Graphics2D;
@@ -74,7 +74,7 @@ public class FontSetup {
      * @param fontInfo the font info object to set up
      * @param graphics needed for acces to font metrics
      */
-    public static void setup(FontInfo fontInfo, Graphics2D graphics) {
+    public static void setup(Document fontInfo, Graphics2D graphics) {
         FontMetricsMapper metric;
         int normal, bold, bolditalic, italic;
 
@@ -140,52 +140,52 @@ public class FontSetup {
         // fontInfo.addMetrics("F17", new BauerBodoniBoldItalic());
 
         /* any is treated as serif */
-        fontInfo.addFontProperties("F5", "any", "normal", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F6", "any", "italic", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F6", "any", "oblique", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F7", "any", "normal", FontInfo.BOLD);
-        fontInfo.addFontProperties("F8", "any", "italic", FontInfo.BOLD);
-        fontInfo.addFontProperties("F8", "any", "oblique", FontInfo.BOLD);
+        fontInfo.addFontProperties("F5", "any", "normal", Document.NORMAL);
+        fontInfo.addFontProperties("F6", "any", "italic", Document.NORMAL);
+        fontInfo.addFontProperties("F6", "any", "oblique", Document.NORMAL);
+        fontInfo.addFontProperties("F7", "any", "normal", Document.BOLD);
+        fontInfo.addFontProperties("F8", "any", "italic", Document.BOLD);
+        fontInfo.addFontProperties("F8", "any", "oblique", Document.BOLD);
 
-        fontInfo.addFontProperties("F1", "sans-serif", "normal", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F2", "sans-serif", "oblique", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F2", "sans-serif", "italic", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F3", "sans-serif", "normal", FontInfo.BOLD);
-        fontInfo.addFontProperties("F4", "sans-serif", "oblique", FontInfo.BOLD);
-        fontInfo.addFontProperties("F4", "sans-serif", "italic", FontInfo.BOLD);
-        fontInfo.addFontProperties("F5", "serif", "normal", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F6", "serif", "oblique", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F6", "serif", "italic", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F7", "serif", "normal", FontInfo.BOLD);
-        fontInfo.addFontProperties("F8", "serif", "oblique", FontInfo.BOLD);
-        fontInfo.addFontProperties("F8", "serif", "italic", FontInfo.BOLD);
-        fontInfo.addFontProperties("F9", "monospace", "normal", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F10", "monospace", "oblique", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F10", "monospace", "italic", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F11", "monospace", "normal", FontInfo.BOLD);
-        fontInfo.addFontProperties("F12", "monospace", "oblique", FontInfo.BOLD);
-        fontInfo.addFontProperties("F12", "monospace", "italic", FontInfo.BOLD);
+        fontInfo.addFontProperties("F1", "sans-serif", "normal", Document.NORMAL);
+        fontInfo.addFontProperties("F2", "sans-serif", "oblique", Document.NORMAL);
+        fontInfo.addFontProperties("F2", "sans-serif", "italic", Document.NORMAL);
+        fontInfo.addFontProperties("F3", "sans-serif", "normal", Document.BOLD);
+        fontInfo.addFontProperties("F4", "sans-serif", "oblique", Document.BOLD);
+        fontInfo.addFontProperties("F4", "sans-serif", "italic", Document.BOLD);
+        fontInfo.addFontProperties("F5", "serif", "normal", Document.NORMAL);
+        fontInfo.addFontProperties("F6", "serif", "oblique", Document.NORMAL);
+        fontInfo.addFontProperties("F6", "serif", "italic", Document.NORMAL);
+        fontInfo.addFontProperties("F7", "serif", "normal", Document.BOLD);
+        fontInfo.addFontProperties("F8", "serif", "oblique", Document.BOLD);
+        fontInfo.addFontProperties("F8", "serif", "italic", Document.BOLD);
+        fontInfo.addFontProperties("F9", "monospace", "normal", Document.NORMAL);
+        fontInfo.addFontProperties("F10", "monospace", "oblique", Document.NORMAL);
+        fontInfo.addFontProperties("F10", "monospace", "italic", Document.NORMAL);
+        fontInfo.addFontProperties("F11", "monospace", "normal", Document.BOLD);
+        fontInfo.addFontProperties("F12", "monospace", "oblique", Document.BOLD);
+        fontInfo.addFontProperties("F12", "monospace", "italic", Document.BOLD);
 
-        fontInfo.addFontProperties("F1", "Helvetica", "normal", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F2", "Helvetica", "oblique", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F2", "Helvetica", "italic", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F3", "Helvetica", "normal", FontInfo.BOLD);
-        fontInfo.addFontProperties("F4", "Helvetica", "oblique", FontInfo.BOLD);
-        fontInfo.addFontProperties("F4", "Helvetica", "italic", FontInfo.BOLD);
-        fontInfo.addFontProperties("F5", "Times", "normal", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F6", "Times", "oblique", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F6", "Times", "italic", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F7", "Times", "normal", FontInfo.BOLD);
-        fontInfo.addFontProperties("F8", "Times", "oblique", FontInfo.BOLD);
-        fontInfo.addFontProperties("F8", "Times", "italic", FontInfo.BOLD);
-        fontInfo.addFontProperties("F9", "Courier", "normal", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F10", "Courier", "oblique", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F10", "Courier", "italic", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F11", "Courier", "normal", FontInfo.BOLD);
-        fontInfo.addFontProperties("F12", "Courier", "oblique", FontInfo.BOLD);
-        fontInfo.addFontProperties("F12", "Courier", "italic", FontInfo.BOLD);
-        fontInfo.addFontProperties("F13", "Symbol", "normal", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F14", "ZapfDingbats", "normal", FontInfo.NORMAL);
+        fontInfo.addFontProperties("F1", "Helvetica", "normal", Document.NORMAL);
+        fontInfo.addFontProperties("F2", "Helvetica", "oblique", Document.NORMAL);
+        fontInfo.addFontProperties("F2", "Helvetica", "italic", Document.NORMAL);
+        fontInfo.addFontProperties("F3", "Helvetica", "normal", Document.BOLD);
+        fontInfo.addFontProperties("F4", "Helvetica", "oblique", Document.BOLD);
+        fontInfo.addFontProperties("F4", "Helvetica", "italic", Document.BOLD);
+        fontInfo.addFontProperties("F5", "Times", "normal", Document.NORMAL);
+        fontInfo.addFontProperties("F6", "Times", "oblique", Document.NORMAL);
+        fontInfo.addFontProperties("F6", "Times", "italic", Document.NORMAL);
+        fontInfo.addFontProperties("F7", "Times", "normal", Document.BOLD);
+        fontInfo.addFontProperties("F8", "Times", "oblique", Document.BOLD);
+        fontInfo.addFontProperties("F8", "Times", "italic", Document.BOLD);
+        fontInfo.addFontProperties("F9", "Courier", "normal", Document.NORMAL);
+        fontInfo.addFontProperties("F10", "Courier", "oblique", Document.NORMAL);
+        fontInfo.addFontProperties("F10", "Courier", "italic", Document.NORMAL);
+        fontInfo.addFontProperties("F11", "Courier", "normal", Document.BOLD);
+        fontInfo.addFontProperties("F12", "Courier", "oblique", Document.BOLD);
+        fontInfo.addFontProperties("F12", "Courier", "italic", Document.BOLD);
+        fontInfo.addFontProperties("F13", "Symbol", "normal", Document.NORMAL);
+        fontInfo.addFontProperties("F14", "ZapfDingbats", "normal", Document.NORMAL);
 
         // Custom type 1 fonts step 2/2
         // fontInfo.addFontProperties("F15", "OMEP", "normal", FontInfo.NORMAL);
@@ -193,20 +193,20 @@ public class FontSetup {
         // fontInfo.addFontProperties("F17", "BauerBodoni", "italic", FontInfo.BOLD);
 
         /* for compatibility with PassiveTex */
-        fontInfo.addFontProperties("F5", "Times-Roman", "normal", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F6", "Times-Roman", "oblique", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F6", "Times-Roman", "italic", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F7", "Times-Roman", "normal", FontInfo.BOLD);
-        fontInfo.addFontProperties("F8", "Times-Roman", "oblique", FontInfo.BOLD);
-        fontInfo.addFontProperties("F8", "Times-Roman", "italic", FontInfo.BOLD);
-        fontInfo.addFontProperties("F5", "Times Roman", "normal", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F6", "Times Roman", "oblique", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F6", "Times Roman", "italic", FontInfo.NORMAL);
-        fontInfo.addFontProperties("F7", "Times Roman", "normal", FontInfo.BOLD);
-        fontInfo.addFontProperties("F8", "Times Roman", "oblique", FontInfo.BOLD);
-        fontInfo.addFontProperties("F8", "Times Roman", "italic", FontInfo.BOLD);
+        fontInfo.addFontProperties("F5", "Times-Roman", "normal", Document.NORMAL);
+        fontInfo.addFontProperties("F6", "Times-Roman", "oblique", Document.NORMAL);
+        fontInfo.addFontProperties("F6", "Times-Roman", "italic", Document.NORMAL);
+        fontInfo.addFontProperties("F7", "Times-Roman", "normal", Document.BOLD);
+        fontInfo.addFontProperties("F8", "Times-Roman", "oblique", Document.BOLD);
+        fontInfo.addFontProperties("F8", "Times-Roman", "italic", Document.BOLD);
+        fontInfo.addFontProperties("F5", "Times Roman", "normal", Document.NORMAL);
+        fontInfo.addFontProperties("F6", "Times Roman", "oblique", Document.NORMAL);
+        fontInfo.addFontProperties("F6", "Times Roman", "italic", Document.NORMAL);
+        fontInfo.addFontProperties("F7", "Times Roman", "normal", Document.BOLD);
+        fontInfo.addFontProperties("F8", "Times Roman", "oblique", Document.BOLD);
+        fontInfo.addFontProperties("F8", "Times Roman", "italic", Document.BOLD);
         fontInfo.addFontProperties("F9", "Computer-Modern-Typewriter",
-                                   "normal", FontInfo.NORMAL);
+                                   "normal", Document.NORMAL);
     }
 
 }

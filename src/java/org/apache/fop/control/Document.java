@@ -1,5 +1,5 @@
 /*
- * $Id: FontInfo.java,v 1.20 2003/03/06 22:19:16 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,7 +48,7 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */ 
-package org.apache.fop.layout;
+package org.apache.fop.control;
 
 // Java
 import java.util.Map;
@@ -65,7 +65,7 @@ import org.apache.fop.fonts.FontMetrics;
  * Currently font supported font-variant small-caps is not
  * implemented.
  */
-public class FontInfo {
+public class Document {
     
     /** Default fallback key */
     public static final String DEFAULT_FONT = "any,normal,400";
@@ -86,7 +86,7 @@ public class FontInfo {
     /**
      * Main constructor
      */
-    public FontInfo() {
+    public Document() {
         this.triplets = new java.util.HashMap();
         this.fonts = new java.util.HashMap();
         this.usedFonts = new java.util.HashMap();

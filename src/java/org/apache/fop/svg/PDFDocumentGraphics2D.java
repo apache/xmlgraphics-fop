@@ -69,7 +69,7 @@ import org.apache.avalon.framework.container.ContainerUtil;
 import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.avalon.framework.logger.LogEnabled;
 import org.apache.avalon.framework.logger.Logger;
-import org.apache.fop.layout.FontInfo;
+import org.apache.fop.control.Document;
 
 import java.awt.Graphics;
 import java.awt.Font;
@@ -119,7 +119,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
         super(textAsShapes);
 
         if (!textAsShapes) {
-            fontInfo = new FontInfo();
+            fontInfo = new Document();
             FontSetup.setup(fontInfo, null);
             //FontState fontState = new FontState("Helvetica", "normal",
             //                          FontInfo.NORMAL, 12, 0);
@@ -195,7 +195,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
      */
     public void initialize() throws Exception {
         if (this.fontInfo == null) {
-            fontInfo = new FontInfo();
+            fontInfo = new Document();
             FontSetup.setup(fontInfo, this.fontList);
             //FontState fontState = new FontState("Helvetica", "normal",
             //                          FontInfo.NORMAL, 12, 0);
@@ -244,7 +244,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
      * Get the font info for this pdf document.
      * @return the font information
      */
-    public FontInfo getFontInfo() {
+    public Document getFontInfo() {
         return fontInfo;
     }
 

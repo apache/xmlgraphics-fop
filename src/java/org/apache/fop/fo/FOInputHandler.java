@@ -72,7 +72,7 @@ import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
-import org.apache.fop.layout.FontInfo;
+import org.apache.fop.control.Document;
 
 import org.xml.sax.SAXException;
 
@@ -115,7 +115,7 @@ public abstract class FOInputHandler extends AbstractLogEnabled {
      * Returns the FontInfo object associated with this FOInputHandler.
      * @return the FontInof object
      */
-    public FontInfo getFontInfo() {
+    public Document getFontInfo() {
         return null;
     }
 

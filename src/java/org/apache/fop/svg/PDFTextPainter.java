@@ -74,7 +74,7 @@ import org.apache.batik.gvt.renderer.StrokingTextPainter;
 
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.layout.FontState;
-import org.apache.fop.layout.FontInfo;
+import org.apache.fop.control.Document;
 
 /**
  * Renders the attributed character iterator of a <tt>TextNode</tt>.
@@ -91,7 +91,7 @@ import org.apache.fop.layout.FontInfo;
  * @version $Id: PDFTextPainter.java,v 1.16 2003/03/07 09:51:25 jeremias Exp $
  */
 public class PDFTextPainter implements TextPainter {
-    private FontInfo fontInfo;
+    private Document fontInfo;
 
     /**
      * Use the stroking text painter to get the bounds and shape.
@@ -104,7 +104,7 @@ public class PDFTextPainter implements TextPainter {
      * Create a new PDF text painter with the given font information.
      * @param fi the fint info
      */
-    public PDFTextPainter(FontInfo fi) {
+    public PDFTextPainter(Document fi) {
         fontInfo = fi;
     }
 
@@ -186,11 +186,11 @@ public class PDFTextPainter implements TextPainter {
         String style = ((posture != null) && (posture.floatValue() > 0.0))
                        ? "italic" : "normal";
         int weight = ((taWeight != null)
-                       &&  (taWeight.floatValue() > 1.0)) ? FontInfo.BOLD
-                       : FontInfo.NORMAL;
+                       &&  (taWeight.floatValue() > 1.0)) ? Document.BOLD
+                       : Document.NORMAL;
 
         FontState fontState = null;
-        FontInfo fi = fontInfo;
+        Document fi = fontInfo;
         boolean found = false;
         String fontFamily = null;
         if (gvtFonts != null) {
@@ -215,7 +215,7 @@ public class PDFTextPainter implements TextPainter {
         }
         if (!found) {
             String fname =
-              fontInfo.fontLookup("any", style, FontInfo.NORMAL);
+              fontInfo.fontLookup("any", style, Document.NORMAL);
             FontMetrics metrics = fontInfo.getMetricsFor(fname);
             int fsize = (int)(size.floatValue() * 1000);
             fontState = new FontState(fname, metrics, fsize);
@@ -225,7 +225,7 @@ public class PDFTextPainter implements TextPainter {
             }
         }
         int fStyle = Font.PLAIN;
-        if (weight == FontInfo.BOLD) {
+        if (weight == Document.BOLD) {
             if (style.equals("italic")) {
                 fStyle = Font.BOLD | Font.ITALIC;
             } else {

@@ -77,7 +77,7 @@ import java.util.Map;
 
 // FOP
 import org.apache.fop.apps.InputHandler;
-import org.apache.fop.layout.FontInfo;
+import org.apache.fop.control.Document;
 import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.viewer.PreviewDialog;
 import org.apache.fop.viewer.Translator;
@@ -159,7 +159,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         return 0;
     }
 
-    public void setupFontInfo(FontInfo fontInfo) {
+    public void setupFontInfo(Document fontInfo) {
         // create a temp Image to test font metrics on
         BufferedImage fontImage =
             new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
