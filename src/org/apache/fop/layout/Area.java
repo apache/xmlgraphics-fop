@@ -122,6 +122,10 @@ abstract public class Area extends Box {
         return this.children;
     }
 
+    public boolean hasChildren() {
+        return (this.children.size() != 0);
+    }
+
     public int getContentWidth() {
       /* ATTENTION: this may change your output!! (Karen Lease, 4mar2001)
 	return contentRectangleWidth  - getPaddingLeft() - getPaddingRight()

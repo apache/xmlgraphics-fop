@@ -9,12 +9,15 @@ package org.apache.fop.fo;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.fo.properties.BreakAfter;
 import org.apache.fop.fo.properties.BreakBefore;
 import org.apache.fop.fo.properties.Constants;
 import org.apache.fop.layout.HyphenationProps;
 import org.apache.fop.apps.FOPException;
 import java.text.MessageFormat;
 import java.text.FieldPosition;
+import org.apache.fop.layout.Area;
+import org.apache.fop.layout.ColumnArea;
 
 public class PropertyManager {
 
@@ -103,15 +106,55 @@ public class PropertyManager {
     return hyphProps;
   }
 
-  public int checkBreakBefore() {
+  public int checkBreakBefore(Area area) {
+	  if (!(area instanceof ColumnArea))
+		  	return Status.OK;
+	  ColumnArea colArea = (ColumnArea)area;
     switch(properties.get("break-before").getEnum()) {
       case BreakBefore.PAGE:
-       return Status.FORCE_PAGE_BREAK;
+		  // if first ColumnArea, and empty, return OK
+		  if (!colArea.hasChildren() && (colArea.getColumnIndex() == 1))
+			  return Status.OK;
+		  else
+              return Status.FORCE_PAGE_BREAK;
       case BreakBefore.ODD_PAGE:
-       return Status.FORCE_PAGE_BREAK_ODD;
+		  // if first ColumnArea, empty, _and_ in odd page,
+		  // return OK
+		  if (!colArea.hasChildren() && (colArea.getColumnIndex() == 1) &&
+			  (colArea.getPage().getNumber() % 2 != 0))
+			  return Status.OK;
+		  else
+              return Status.FORCE_PAGE_BREAK_ODD;
       case BreakBefore.EVEN_PAGE:
+		  // if first ColumnArea, empty, _and_ in even page,
+		  // return OK
+		  if (!colArea.hasChildren() && (colArea.getColumnIndex() == 1) &&
+			  (colArea.getPage().getNumber() % 2 == 0))
+			  return Status.OK;
+		  else
        return Status.FORCE_PAGE_BREAK_EVEN;
       case BreakBefore.COLUMN:
+		  // if ColumnArea is empty return OK
+		  if (!area.hasChildren())
+			  return Status.OK;
+		  else		  
+              return Status.FORCE_COLUMN_BREAK;
+      default:
+        return Status.OK;
+    }
+  }
+
+  public int checkBreakAfter(Area area) {
+	  if (!(area instanceof org.apache.fop.layout.ColumnArea))
+		  	return Status.OK;
+    switch(properties.get("break-after").getEnum()) {
+      case BreakAfter.PAGE:
+       return Status.FORCE_PAGE_BREAK;
+      case BreakAfter.ODD_PAGE:
+       return Status.FORCE_PAGE_BREAK_ODD;
+      case BreakAfter.EVEN_PAGE:
+       return Status.FORCE_PAGE_BREAK_EVEN;
+      case BreakAfter.COLUMN:
        return Status.FORCE_COLUMN_BREAK;
       default:
         return Status.OK;
