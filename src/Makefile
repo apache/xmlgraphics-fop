@@ -1,9 +1,9 @@
 
 
-BASEDIR:=../../..
+BASEDIR:=..
 include $(BASEDIR)/Makefile.rules
 
-SUBDIRS=fop
+SUBDIRS=org
 
 all: allsubs
 

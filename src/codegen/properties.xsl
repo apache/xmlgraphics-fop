@@ -3,7 +3,7 @@
  version="1.0">
 <template match="property" priority="-1">
 <variable name="classname" select="class-name"/>
-<xt:document method="text" href="src/org/apache/fop/fo/properties/{$classname}.java">
+<xt:document method="text" href="org/apache/fop/fo/properties/{$classname}.java">
 package org.apache.fop.fo.properties;
 
 import org.apache.fop.datatypes.*;
@@ -70,7 +70,7 @@ public class <value-of select="class-name"/> extends Property {
 
 <template match="property[datatype/enumeration]">
 <variable name="classname" select="class-name"/>
-<xt:document method="text" href="src/org/apache/xml/fop/fo/properties/{$classname}.java">
+<xt:document method="text" href="org/apache/fop/fo/properties/{$classname}.java">
 package org.apache.fop.fo.properties;
 
 import org.apache.fop.datatypes.*;

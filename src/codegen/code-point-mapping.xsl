@@ -2,7 +2,7 @@
  xmlns:xt="http://www.jclark.com/xt" extension-element-prefixes="xt"
  version="1.0">
 <template match="font-mappings">
-<xt:document href="src/org/apache/fop/render/pdf/CodePointMapping.java">
+<xt:document href="org/apache/fop/render/pdf/CodePointMapping.java">
 package org.apache.fop.render.pdf;
 
 public class CodePointMapping {
