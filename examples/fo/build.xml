@@ -29,47 +29,31 @@
   <!-- Produces new test files (function)                                  -->
   <!-- =================================================================== -->
   <target name="newTestFiles">
-    <fop format="${mimetype}" outdir="${outDir}" messagelevel="${msglevel}" basedir="basic">
+    <fop format="${mimetype}" outdir="${outDir}" messagelevel="${msglevel}" relativebase="true">
       <fileset dir="basic">
         <include name="**/*.fo"/>
       </fileset>
-    </fop>
-    <fop format="${mimetype}" outdir="${outDir}" messagelevel="${msglevel}" basedir="footnotes">
       <fileset dir="footnotes">
         <include name="**/*.fo"/>
       </fileset>
-    </fop>
-    <fop format="${mimetype}" outdir="${outDir}" messagelevel="${msglevel}" basedir="pagination">
       <fileset dir="pagination">
         <include name="**/*.fo"/>
       </fileset>
-    </fop>
-    <fop format="${mimetype}" outdir="${outDir}" messagelevel="${msglevel}" basedir="keeps_and_breaks">
       <fileset dir="keeps_and_breaks">
         <include name="**/*.fo"/>
       </fileset>
-    </fop>
-    <fop format="${mimetype}" outdir="${outDir}" messagelevel="${msglevel}" basedir="markers">
       <fileset dir="markers">
         <include name="**/*.fo"/>
       </fileset>
-    </fop>
-    <fop format="${mimetype}" outdir="${outDir}" messagelevel="${msglevel}" basedir="region_body">
       <fileset dir="region_body">
         <include name="**/*.fo"/>
       </fileset>
-    </fop>
-    <fop format="${mimetype}" outdir="${outDir}" messagelevel="${msglevel}" basedir="tables">
       <fileset dir="tables">
         <include name="**/*.fo"/>
       </fileset>
-    </fop>
-    <fop format="${mimetype}" outdir="${outDir}" messagelevel="${msglevel}" basedir="svg">
       <fileset dir="svg">
         <include name="**/*.fo"/>
       </fileset>
-    </fop>
-    <fop format="${mimetype}" outdir="${outDir}" messagelevel="${msglevel}" basedir="advanced">
       <fileset dir="advanced">
         <include name="**/giro.fo"/>
       </fileset>
