@@ -197,11 +197,11 @@ public class XMLRenderer implements Renderer {
 		StringBuffer baText = new StringBuffer();
 		baText.append("<BlockArea start-indent=\"" + area.getStartIndent() + "\"");
 		baText.append(" end-indent=\"" + area.getEndIndent() + "\"");
-		baText.append("\nis-first=\"" + area.isFirst + "\"");
-		baText.append(" is-last=\"" + area.isLast + "\"");
-		if (null != area.generatedBy)
-			baText.append(" generated-by=\"" + area.generatedBy.getName() +
-			"//" + area.generatedBy + "\"");
+		baText.append("\nis-first=\"" + area.isFirst() + "\"");
+		baText.append(" is-last=\"" + area.isLast() + "\"");
+		if (null != area.getGeneratedBy())
+			baText.append(" generated-by=\"" + area.getGeneratedBy().getName() +
+			"//" + area.getGeneratedBy() + "\"");
 		baText.append(">");
         writeStartTag(baText.toString());
 		
@@ -231,6 +231,43 @@ public class XMLRenderer implements Renderer {
         writeEndTag("</BlockArea>");
     }
 
+	public void renderInlineArea(InlineArea area) {
+		StringBuffer iaText = new StringBuffer();
+		iaText.append("<InlineArea");
+		iaText.append("\nis-first=\"" + area.isFirst() + "\"");
+		iaText.append(" is-last=\"" + area.isLast() + "\"");
+		if (null != area.getGeneratedBy())
+			iaText.append(" generated-by=\"" + area.getGeneratedBy().getName() +
+			"//" + area.getGeneratedBy() + "\"");
+		iaText.append(">");
+        writeStartTag(iaText.toString());
+		
+		// write out marker info
+		java.util.Vector markers = area.getMarkers();
+		if (!markers.isEmpty()) {
+			writeStartTag("<Markers>");
+			for (int m = 0; m < markers.size(); m++) {
+				org.apache.fop.fo.flow.Marker marker =
+					(org.apache.fop.fo.flow.Marker)markers.elementAt(m);
+				StringBuffer maText = new StringBuffer();
+				maText.append("<Marker marker-class-name=\"" +
+					marker.getMarkerClassName() + "\"");
+				maText.append(" RegisteredArea=\"" +
+					marker.getRegistryArea() + "\"");
+				maText.append("/>");
+				writeEmptyElementTag(maText.toString());
+			}
+			writeEndTag("</Markers>");
+		}
+		
+        Enumeration e = area.getChildren().elements();
+        while (e.hasMoreElements()) {
+            Box b = (Box) e.nextElement();
+            b.render(this);
+        }
+        writeEndTag("</InlineArea>");
+	}
+	
     /**
      * render a display space to XML
      *
