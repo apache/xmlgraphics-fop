@@ -60,7 +60,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     protected double scaleFactor = 100.0;
     protected int pageNumber = 0;
     protected Vector pageList = new Vector();
-    protected ProgressListener progressListener = null;
+    //protected ProgressListener progressListener = null;
     protected Translator res = null;
 
     protected Hashtable fontNames = new Hashtable();

@@ -5,35 +5,41 @@
  * LICENSE file included with these sources.
  */
 
-package org.apache.fop.viewer;
+package org.apache.fop.viewer; 
 
+//Java
+import java.util.ResourceBundle; 
+import java.util.Locale;
+import java.util.MissingResourceException;
 
-/**
- * Definition für die Übersetzer-Klassen.
- *
- * @version 03.12.99
- * @author Stanislav.Gorkhover@jCatalog.com
- *
+/** 
+ * AWT Viewer's localization class, backed up by <code>java.util.ResourceBundle</code>.
+ * Originally contributed by:
+ * Stanislav.Gorkhover@jCatalog.com
  */
-public interface Translator {
+public class Translator {
+    private ResourceBundle bundle;
+    private static String bundleBaseName = "org/apache/fop/viewer/resources/Viewer";
 
     /**
-     * Übersetzt ein Wort.
+     * Default constructor, default <code>Locale</code> is used.
      */
-    public String getString(String key);
+    public Translator() {
+        this(Locale.getDefault()); 
+    }
+ 
+    /** 
+     * Constructor for a given <code>Locale</code>.
+     */
+    public Translator(Locale locale) {
+        bundle = ResourceBundle.getBundle(bundleBaseName, locale);
+    }
 
     /**
-     * Ein Translator soll die fehlenden keys hervorheben können.
+     * Returns localized <code>String</code> for a given key.
      */
-    public void setMissingEmphasized(boolean b);
-
-    /**
-     * Gibt an ob die Übersetzungsquelle gefunden ist.
-     */
-    public boolean isSourceFound();
-
-    /**
-     * Gibt an ob ein Key in der Übersetzungsquelle vorhanden ist.
-     */
-    public boolean contains(String key);
+    public String getString(String key) {
+        return bundle.getString(key);
+    }
 }
+

@@ -7,80 +7,65 @@
 
 package org.apache.fop.viewer;
 
-/*
- * originally contributed by
+//Java
+import java.awt.*;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.ActionEvent;
+
+//FOP
+import org.apache.fop.apps.Version;
+
+/**
+ * AWT Viewer's "About" dialog.
+ * Originally contributed by:
  * Juergen Verwohlt: Juergen.Verwohlt@jCatalog.com,
  * Rainer Steinkuhle: Rainer.Steinkuhle@jCatalog.com,
  * Stanislav Gorkhover: Stanislav.Gorkhover@jCatalog.com
  */
-
-
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.border.*;
-
-import org.apache.fop.apps.Version;
-
-
-
 public class PreviewDialogAboutBox extends Dialog implements ActionListener {
+    private JButton okButton;
 
-    JPanel panel1 = new JPanel();
-    JPanel panel2 = new JPanel();
-    JPanel insetsPanel1 = new JPanel();
-    JPanel insetsPanel2 = new JPanel();
-    JPanel insetsPanel3 = new JPanel();
-    JButton button1 = new JButton();
-    JLabel imageControl1 = new JLabel();
-    ImageIcon imageIcon;
-    JLabel label1 = new JLabel();
-    JLabel label2 = new JLabel();
-    JLabel label3 = new JLabel();
-    JLabel label4 = new JLabel();
-    BorderLayout borderLayout1 = new BorderLayout();
-    BorderLayout borderLayout2 = new BorderLayout();
-    FlowLayout flowLayout1 = new FlowLayout();
-    FlowLayout flowLayout2 = new FlowLayout();
-    GridLayout gridLayout1 = new GridLayout();
-    String product = "FOP AWT-Preview";
-    String version = "Version: " + Version.getVersion();
-    String copyright = "See xml.apache.org";
-    String comments = "";    // "Print Preview";
-
-    public PreviewDialogAboutBox(Frame parent) {
-        super(parent);
+    /**
+     * Creates modal "About" dialog, attached to a given parent frame.
+     */
+    public PreviewDialogAboutBox(Frame parent, Translator translator) {
+        super(parent, true);
         enableEvents(AWTEvent.WINDOW_EVENT_MASK);
-
-        // imageIcon = new ImageIcon(getClass().getResource("Hier der Grafikname"));
-        this.setTitle("Info");
+        setTitle(translator.getString("About.Title"));
         setResizable(false);
-        panel1.setLayout(borderLayout1);
-        panel2.setLayout(borderLayout2);
-        insetsPanel1.setLayout(flowLayout1);
-        insetsPanel2.setLayout(flowLayout1);
+        JPanel panel1 = new JPanel();
+        JPanel panel2 = new JPanel();
+        JPanel insetsPanel1 = new JPanel();
+        JPanel insetsPanel2 = new JPanel();
+        JPanel insetsPanel3 = new JPanel();
+        okButton = new JButton();
+        JLabel imageControl1 = new JLabel();
+        imageControl1.setIcon(new ImageIcon(getClass().getResource("Images/fop.gif")));
+        JLabel label1 = new JLabel(translator.getString("About.Product"));
+        JLabel label2 = new JLabel(translator.getString("About.Version") + " " + Version.getVersion());
+        JLabel label3 = new JLabel(translator.getString("About.Copyright"));
+        panel1.setLayout(new BorderLayout());
+        panel2.setLayout(new BorderLayout());
+        insetsPanel1.setLayout(new FlowLayout());
+        insetsPanel2.setLayout(new FlowLayout());
         insetsPanel2.setBorder(new EmptyBorder(10, 10, 10, 10));
-        gridLayout1.setRows(4);
-        gridLayout1.setColumns(1);
-        label1.setText(product);
-        label2.setText(version);
-        label3.setText(copyright);
-        label4.setText(comments);
-        insetsPanel3.setLayout(gridLayout1);
-        insetsPanel3.setBorder(new EmptyBorder(10, 60, 10, 10));
-        button1.setText("OK");
-        button1.addActionListener(this);
+        insetsPanel3.setLayout(new GridLayout(3, 1));
+        insetsPanel3.setBorder(new EmptyBorder(10, 10, 10, 10));
+        okButton.setText(translator.getString("Button.Ok"));
+        okButton.addActionListener(this);
         insetsPanel2.add(imageControl1, null);
         panel2.add(insetsPanel2, BorderLayout.WEST);
-        this.add(panel1, null);
-        insetsPanel3.add(label1, null);
-        insetsPanel3.add(label2, null);
-        insetsPanel3.add(label3, null);
-        insetsPanel3.add(label4, null);
+        insetsPanel3.add(label1);
+        insetsPanel3.add(label2);
+        insetsPanel3.add(label3);
         panel2.add(insetsPanel3, BorderLayout.CENTER);
-        insetsPanel1.add(button1, null);
+        insetsPanel1.add(okButton);
         panel1.add(insetsPanel1, BorderLayout.SOUTH);
         panel1.add(panel2, BorderLayout.NORTH);
+        add(panel1);
         pack();
     }
 
@@ -96,10 +81,9 @@ public class PreviewDialogAboutBox extends Dialog implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == button1) {
+        if (e.getSource() == okButton) {
             cancel();
         }
     }
-
 }
 
