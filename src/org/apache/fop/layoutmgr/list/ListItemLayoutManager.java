@@ -35,10 +35,9 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
     private Item label;
     private Item body;
 
-    private Block curBlockArea;
+    private Block curBlockArea = null;
 
     private List cellList = null;
-    private List columns = null;
     private int listItemHeight;
     private BorderAndPadding borderProps = null;
     private BackgroundProps backgroundProps;
@@ -171,7 +170,10 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
 
         MinOptMax itemSize = new MinOptMax(min, opt, max);
 
-        setFinished(true);
+        if (label.isFinished() && body.isFinished()) {
+            setFinished(true);
+        }
+
         ItemPosition rp = new ItemPosition(this, breakList.size() - 1, breakList);
         BreakPoss breakPoss = new BreakPoss(rp);
         if (over) { 
@@ -217,6 +219,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
 
         flush();
 
+        curBlockArea = null;
     }
 
     /**
