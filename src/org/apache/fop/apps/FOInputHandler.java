@@ -16,19 +16,27 @@ import org.apache.fop.messaging.MessageHandler;
 
 // java
 import java.io.File;
+import java.net.URL;
 
 /**
  * Manages input if it is an xsl:fo file
  */
 public class FOInputHandler extends InputHandler {
 
-    File fofile;
-    public FOInputHandler(File fofile) {
+    File fofile = null;
+    URL foURL = null;
+    public FOInputHandler (File fofile) {
         this.fofile = fofile;
     }
 
-    public InputSource getInputSource() {
-        return super.fileInputSource(fofile);
+    public FOInputHandler (URL url) {
+        this.foURL = url;
+    }
+
+    public InputSource getInputSource () {
+        if (fofile != null)
+            return super.fileInputSource(fofile);
+        return super.urlInputSource(foURL);
     }
 
     public XMLReader getParser() throws FOPException {
