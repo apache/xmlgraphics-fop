@@ -108,7 +108,7 @@ public class SVGReader extends AbstractImageReader {
         }
     }
 
-    protected class MUserAgent implements UserAgent {
+    protected class MUserAgent extends UserAgentAdapter {
         AffineTransform currentTransform = null;
 
         /**
@@ -157,7 +157,7 @@ public class SVGReader extends AbstractImageReader {
         }
 
         public String getMedia() {
-            return "";
+            return "print";
         }
 
 public boolean isXMLParserValidating() {
@@ -179,21 +179,6 @@ return true;
             return org.apache.fop.apps.Driver.getParserClassName();
         }
 
-        /**
-         * Opens a link in a new component.
-         * @param doc The current document.
-         * @param uri The document URI.
-         */
-        public void openLink(SVGAElement elt) {
-        }
-
-        public Point getClientAreaLocationOnScreen() {
-            return new Point(0, 0);
-        }
-
-        public void setSVGCursor(java.awt.Cursor cursor) {}
-
-
         public AffineTransform getTransform() {
             return currentTransform;
         }
@@ -201,22 +186,6 @@ return true;
         public Dimension2D getViewportSize() {
             return new Dimension(100, 100);
         }
-
-        public EventDispatcher getEventDispatcher() {
-            return null;
-        }
-
-        public boolean supportExtension(String str) {
-            return false;
-        }
-
-        public boolean hasFeature(String str) {
-            return false;
-        }
-
-        public void registerExtension(BridgeExtension be) {}
-
-        public void handleElement(Element elt, Object data) {}
 
     }
 
