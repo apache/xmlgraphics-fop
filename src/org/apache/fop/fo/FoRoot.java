@@ -98,9 +98,6 @@ public class FoRoot extends FONode {
         } catch(PropertyException e) {
             throw new FOPException("PropertyException: " + e.getMessage());
         }
-        layoutMasters.setupPageMasters();
-        // Stub - flush the layout masters
-        ev = xmlevents.getEndElement(ev);
         // Look for optional declarations
         try {
             xmlevents.expectStartElement
