@@ -7,6 +7,7 @@
 
 package org.apache.fop.layoutmgr.table;
 
+import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.BreakPoss;
@@ -18,6 +19,8 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.MinOptMax;
+import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.layout.BackgroundProps;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +31,8 @@ import java.util.List;
  * Cells are organised into rows.
  */
 public class Body extends BlockStackingLayoutManager {
+    private BorderAndPadding borderProps = null;
+    private BackgroundProps backgroundProps;
 
     private boolean rows = true;
     private List columns;
@@ -46,6 +51,11 @@ public class Body extends BlockStackingLayoutManager {
      */
     public Body(FObj fobj) {
         super(fobj);
+    }
+
+    protected void initProperties(PropertyManager propMgr) {
+        borderProps = propMgr.getBorderAndPadding();
+        backgroundProps = propMgr.getBackgroundProps();
     }
 
     /**
@@ -210,6 +220,21 @@ public class Body extends BlockStackingLayoutManager {
         if (resetPos == null) {
             reset(null);
         }
+    }
+
+    /**
+     * Create a body area.
+     * This area has the background and width set.
+     *
+     * @return the new body area
+     */
+    public Area createColumnArea() {
+        Area curBlockArea = new Block();
+
+        if(backgroundProps != null) {
+            addBackground(curBlockArea, backgroundProps);
+        }
+        return curBlockArea;
     }
 }
 

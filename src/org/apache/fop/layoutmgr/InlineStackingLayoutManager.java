@@ -10,6 +10,7 @@ package org.apache.fop.layoutmgr;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.layout.BackgroundProps;
 import org.apache.fop.traits.InlineProps;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.MinOptMax;
@@ -48,27 +49,28 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
     /**
      * Size of any start or end borders and padding.
      */
-    private MinOptMax m_allocIPD = new MinOptMax(0);
+    private MinOptMax allocIPD = new MinOptMax(0);
 
     /**
      * Size of border and padding in BPD (ie, before and after).
      */
-    private MinOptMax m_extraBPD;
+    private MinOptMax extraBPD;
 
 
-    private InlineProps m_inlineProps = null;
-    private BorderAndPadding m_borderProps = null;
+    private InlineProps inlineProps = null;
+    private BorderAndPadding borderProps = null;
+    private BackgroundProps backgroundProps;
 
-    private Area m_currentArea; // LineArea or InlineParent
+    private Area currentArea; // LineArea or InlineParent
 
-    private BreakPoss m_prevBP;
-    private LayoutContext m_childLC ;
+    private BreakPoss prevBP;
+    private LayoutContext childLC ;
 
-    private LayoutManager m_lastChildLM = null; // Set when return last breakposs
-    private boolean m_bAreaCreated = false;
+    private LayoutManager lastChildLM = null; // Set when return last breakposs
+    private boolean bAreaCreated = false;
 
     /** Used to store previous content IPD for each child LM. */
-    private HashMap m_hmPrevIPD = new HashMap();
+    private HashMap hmPrevIPD = new HashMap();
 
     public InlineStackingLayoutManager(FObj fobj,
                                          ListIterator childLMiter) {
@@ -83,39 +85,41 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
 
     protected void initProperties(PropertyManager propMgr) {
         // super.initProperties(propMgr);
-        m_inlineProps = propMgr.getInlineProps();
-        m_borderProps = propMgr.getBorderAndPadding();
+        inlineProps = propMgr.getInlineProps();
+        borderProps = propMgr.getBorderAndPadding();
         // Calculdate border and padding size in BPD
-        int iPad = m_borderProps.getPadding(BorderAndPadding.BEFORE, false);
-        iPad += m_borderProps.getBorderWidth(BorderAndPadding.BEFORE,
+        int iPad = borderProps.getPadding(BorderAndPadding.BEFORE, false);
+        iPad += borderProps.getBorderWidth(BorderAndPadding.BEFORE,
                                              false);
-        iPad += m_borderProps.getPadding(BorderAndPadding.AFTER, false);
-        iPad += m_borderProps.getBorderWidth(BorderAndPadding.AFTER, false);
-        m_extraBPD = new MinOptMax(iPad);
+        iPad += borderProps.getPadding(BorderAndPadding.AFTER, false);
+        iPad += borderProps.getBorderWidth(BorderAndPadding.AFTER, false);
+        extraBPD = new MinOptMax(iPad);
+
+        backgroundProps = propMgr.getBackgroundProps();
     }
 
     private MinOptMax getExtraIPD(boolean bNotFirst, boolean bNotLast) {
-        int iBP = m_borderProps.getPadding(BorderAndPadding.START,
+        int iBP = borderProps.getPadding(BorderAndPadding.START,
                                            bNotFirst);
-        iBP += m_borderProps.getBorderWidth(BorderAndPadding.START,
+        iBP += borderProps.getBorderWidth(BorderAndPadding.START,
                                             bNotFirst);
-        iBP += m_borderProps.getPadding(BorderAndPadding.END, bNotLast);
-        iBP += m_borderProps.getBorderWidth(BorderAndPadding.END, bNotLast);
+        iBP += borderProps.getPadding(BorderAndPadding.END, bNotLast);
+        iBP += borderProps.getBorderWidth(BorderAndPadding.END, bNotLast);
         return new MinOptMax(iBP);
     }
 
 
     protected boolean hasLeadingFence(boolean bNotFirst) {
-        int iBP = m_borderProps.getPadding(BorderAndPadding.START,
+        int iBP = borderProps.getPadding(BorderAndPadding.START,
                                            bNotFirst);
-        iBP += m_borderProps.getBorderWidth(BorderAndPadding.START,
+        iBP += borderProps.getBorderWidth(BorderAndPadding.START,
                                             bNotFirst);
         return (iBP > 0);
     }
 
     protected boolean hasTrailingFence(boolean bNotLast) {
-        int iBP = m_borderProps.getPadding(BorderAndPadding.END, bNotLast);
-        iBP += m_borderProps.getBorderWidth(BorderAndPadding.END, bNotLast);
+        int iBP = borderProps.getPadding(BorderAndPadding.END, bNotLast);
+        iBP += borderProps.getBorderWidth(BorderAndPadding.END, bNotLast);
         return (iBP > 0);
     }
 
@@ -137,21 +141,21 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
             // Back up the child LM Position
             Position childPos = prevPos.getPosition();
             reset(childPos);
-            if (m_prevBP != null &&
-                    m_prevBP.getLayoutManager() != childPos.getLM()) {
-                m_childLC = null;
+            if (prevBP != null &&
+                    prevBP.getLayoutManager() != childPos.getLM()) {
+                childLC = null;
             }
-            m_prevBP = new BreakPoss(childPos);
+            prevBP = new BreakPoss(childPos);
         } else {
             // Backup to start of first child layout manager
-            m_prevBP = null;
+            prevBP = null;
             // super.resetPosition(prevPos);
             reset(prevPos);
             // If any areas created, we are restarting!
-            m_bAreaCreated = false;
+            bAreaCreated = false;
         }
         // Do we need to reset some context like pending or prevContent?
-        // What about m_prevBP?
+        // What about prevBP?
     }
 
 
@@ -163,7 +167,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
      * propagate to first child LM
      */
     public boolean canBreakBefore(LayoutContext context) {
-        if (m_inlineProps.spaceStart.space.min > 0 ||
+        if (inlineProps.spaceStart.space.min > 0 ||
                 hasLeadingFence(false)) {
             return true;
         }
@@ -176,12 +180,12 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
     }
 
     protected MinOptMax getPrevIPD(LayoutManager lm) {
-        return (MinOptMax) m_hmPrevIPD.get(lm);
+        return (MinOptMax) hmPrevIPD.get(lm);
     }
 
 
     protected void clearPrevIPD() {
-        m_hmPrevIPD.clear();
+        hmPrevIPD.clear();
     }
 
 
@@ -194,8 +198,8 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
         if (lc.startsNewArea()) {
             // First call to this LM in new parent "area", but this may
             // not be the first area created by this inline
-            m_childLC = new LayoutContext(lc);
-            lc.getLeadingSpace().addSpace(m_inlineProps.spaceStart);
+            childLC = new LayoutContext(lc);
+            lc.getLeadingSpace().addSpace(inlineProps.spaceStart);
 
             // Check for "fence"
             if (hasLeadingFence(!lc.isFirstArea())) {
@@ -213,16 +217,16 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
              * and initialize pending space from previous LM sibling's
              * trailing space specifiers.
              */
-            boolean bFirstChildBP = (m_prevBP == null ||
-                                     m_prevBP.getLayoutManager() != curLM);
+            boolean bFirstChildBP = (prevBP == null ||
+                                     prevBP.getLayoutManager() != curLM);
 
-            initChildLC(m_childLC, m_prevBP, lc.startsNewArea(),
+            initChildLC(childLC, prevBP, lc.startsNewArea(),
                         bFirstChildBP, leadingSpace);
             if (lc.tryHyphenate()) {
-                m_childLC.setHyphContext(lc.getHyphContext());
+                childLC.setHyphContext(lc.getHyphContext());
             }
 
-            if (((bp = curLM.getNextBreakPoss(m_childLC)) != null) ||
+            if (((bp = curLM.getNextBreakPoss(childLC)) != null) ||
                     (lc.tryHyphenate() &&
                      !lc.getHyphContext().hasMoreHyphPoints())) {
                 break;
@@ -281,7 +285,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
         myBP.setFlag(BreakPoss.ISLAST, bIsLast);
 
         if (bIsLast) {
-            m_lastChildLM = bp.getLayoutManager();
+            lastChildLM = bp.getLayoutManager();
         }
 
         // Update dimension information for our allocation area,
@@ -291,7 +295,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
         // This includes all previous breakinfo
 
         MinOptMax bpDim = (MinOptMax) bp.getStackingSize().clone();
-        MinOptMax prevIPD = updatePrevIPD(bp, m_prevBP, lc.startsNewArea(),
+        MinOptMax prevIPD = updatePrevIPD(bp, prevBP, lc.startsNewArea(),
                                           lc.isFirstArea());
 
         if (lc.startsNewArea()) {
@@ -312,16 +316,16 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
             // call in this LM
             trailingSpace = (SpaceSpecifier) trailingSpace.clone();
         }
-        trailingSpace.addSpace(m_inlineProps.spaceEnd);
+        trailingSpace.addSpace(inlineProps.spaceEnd);
         myBP.setTrailingSpace(trailingSpace);
 
         // Add start and end borders and padding
         bpDim.add(getExtraIPD(!lc.isFirstArea(), !bIsLast));
         myBP.setStackingSize(bpDim);
         myBP.setNonStackingSize(
-          MinOptMax.add(bp.getNonStackingSize(), m_extraBPD));
+          MinOptMax.add(bp.getNonStackingSize(), extraBPD));
 
-        m_prevBP = bp;
+        prevBP = bp;
         //         if (bIsLast) {
         //     setFinished(true);  // Our last area, so indicate done
         //         }
@@ -339,11 +343,11 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
                 // Space-start before first child area placed
                 prevIPD.add(bp.resolveLeadingSpace());
             }
-            m_hmPrevIPD.put(bp.getLayoutManager(), prevIPD);
+            hmPrevIPD.put(bp.getLayoutManager(), prevIPD);
         } else {
             // In case of reset to a previous position, it may already
             // be calculated
-            prevIPD = (MinOptMax) m_hmPrevIPD.get(bp.getLayoutManager());
+            prevIPD = (MinOptMax) hmPrevIPD.get(bp.getLayoutManager());
             if (prevIPD == null) {
                 // ASSERT(prevBP.getLayoutManager() != bp.getLayoutManager());
                 /* This is first bp generated by child (in this parent area).
@@ -351,11 +355,11 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
                  * pending space-end with previous break.
                  * Corresponds to Space between two child areas.
                  */
-                prevIPD = (MinOptMax) m_hmPrevIPD.get(
+                prevIPD = (MinOptMax) hmPrevIPD.get(
                             prevBP.getLayoutManager());
                 prevIPD = MinOptMax.add(prevIPD, bp.resolveLeadingSpace());
                 prevIPD.add(prevBP.getStackingSize());
-                m_hmPrevIPD.put(bp.getLayoutManager(), prevIPD);
+                hmPrevIPD.put(bp.getLayoutManager(), prevIPD);
             }
         }
         return prevIPD;
@@ -404,7 +408,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
         /* How to know if first area created by this LM? Keep a count and
          * reset it if getNextBreakPoss() is called again.
          */
-        if (hasLeadingFence(m_bAreaCreated)) {
+        if (hasLeadingFence(bAreaCreated)) {
             getContext().setLeadingSpace(new SpaceSpecifier(false));
             getContext().setFlags(LayoutContext.RESOLVE_LEADING_SPACE,
                                   true);
@@ -413,7 +417,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
                                   false);
         }
 
-        context.getLeadingSpace().addSpace(m_inlineProps.spaceStart);
+        context.getLeadingSpace().addSpace(inlineProps.spaceStart);
 
 
         // posIter iterates over positions returned by this LM
@@ -437,7 +441,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
          * the last area for the current LM also.
          */
         boolean bIsLast =
-          (getContext().isLastArea() && prevLM == m_lastChildLM);
+          (getContext().isLastArea() && prevLM == lastChildLM);
         if (hasTrailingFence(bIsLast)) {
             addSpace(getCurrentArea(),
                      getContext().getTrailingSpace().resolve(false),
@@ -449,23 +453,31 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
         }
         // Add own trailing space to parent context (or set on area?)
         if(context.getTrailingSpace() != null) {
-            context.getTrailingSpace().addSpace(m_inlineProps.spaceEnd);
+            context.getTrailingSpace().addSpace(inlineProps.spaceEnd);
         }
 
         // Add border and padding to current area and set flags (FIRST, LAST ...)
         TraitSetter.setBorderPaddingTraits(getCurrentArea(),
-                                           m_borderProps, m_bAreaCreated, !bIsLast);
+                                           borderProps, bAreaCreated, !bIsLast);
+
+        if(borderProps != null) {
+            addBorders(getCurrentArea(), borderProps);
+        }
+        if(backgroundProps != null) {
+            addBackground(getCurrentArea(), backgroundProps);
+        }
+
         parentLM.addChild(getCurrentArea());
         context.setFlags(LayoutContext.LAST_AREA, bIsLast);
-        m_bAreaCreated = true;
+        bAreaCreated = true;
     }
 
     protected Area getCurrentArea() {
-        return m_currentArea;
+        return currentArea;
     }
 
     protected void setCurrentArea(Area area) {
-        m_currentArea = area;
+        currentArea = area;
     }
 
 
@@ -484,12 +496,12 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
     }
 
     protected void setChildContext(LayoutContext lc) {
-        m_childLC = lc;
+        childLC = lc;
     }
 
     // Current child layout context
     protected LayoutContext getContext() {
-        return m_childLC ;
+        return childLC ;
     }
 
     protected void addSpace(Area parentArea, MinOptMax spaceRange,

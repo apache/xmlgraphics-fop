@@ -254,6 +254,27 @@ public class PropertyManager {
 
     public BackgroundProps getBackgroundProps() {
         BackgroundProps bp = new BackgroundProps();
+        bp.backAttachment = properties.get("background-attachment").getEnum();
+        bp.backColor = properties.get("background-color").getColorType();
+        if (bp.backColor.alpha() == 1) {
+            bp.backColor = null;
+        }
+
+        bp.backImage = properties.get("background-image").getString();
+        if (bp.backImage == null || "none".equals(bp.backImage)) {
+            bp.backImage = null;
+        } else {
+            bp.backRepeat = properties.get("background-repeat").getEnum();
+            Property prop = properties.get("background-position-horizontal");
+            if(prop != null) {
+                bp.backPosHorizontal = prop.getLength();
+            }
+            prop = properties.get("background-position-vertical");
+            if(prop != null) {
+                bp.backPosVertical = prop.getLength();
+            }
+        }
+
         return bp;
     }
 
@@ -426,3 +447,4 @@ public class PropertyManager {
         return myRefOrient;
     }
 }
+

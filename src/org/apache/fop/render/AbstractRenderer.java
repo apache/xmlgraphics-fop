@@ -46,6 +46,9 @@ import org.apache.fop.area.inline.Character;
 
 // Avalon
 import org.apache.avalon.framework.logger.AbstractLogEnabled;
+import org.apache.avalon.framework.configuration.Configurable;
+import org.apache.avalon.framework.configuration.Configuration;
+import org.apache.avalon.framework.configuration.ConfigurationException;
 
 /**
  * Abstract base class for all renderers. The Abstract renderer does all the
@@ -53,7 +56,7 @@ import org.apache.avalon.framework.logger.AbstractLogEnabled;
  * handle viewports. This keeps track of the current block and inline position.
  */
 public abstract class AbstractRenderer extends AbstractLogEnabled
-         implements Renderer {
+         implements Renderer, Configurable {
 
     /**
      * user agent
@@ -575,4 +578,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
         }
     }
 
+    public void configure(Configuration conf) throws ConfigurationException {
+    }
 }
+

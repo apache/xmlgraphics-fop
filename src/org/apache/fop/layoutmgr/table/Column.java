@@ -7,6 +7,7 @@
 
 package org.apache.fop.layoutmgr.table;
 
+import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.layoutmgr.AbstractLayoutManager;
 import org.apache.fop.layoutmgr.BreakPoss;
 import org.apache.fop.layoutmgr.LayoutContext;
@@ -14,6 +15,8 @@ import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.fo.flow.TableColumn;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
+import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.layout.BackgroundProps;
 
 /**
  * LayoutManager for a table-column FO.
@@ -23,6 +26,8 @@ import org.apache.fop.area.Block;
  */
 public class Column extends AbstractLayoutManager {
     private int columnWidth;
+    private BorderAndPadding borderProps = null;
+    private BackgroundProps backgroundProps;
 
     /**
      * Create a new column layout manager.
@@ -32,6 +37,11 @@ public class Column extends AbstractLayoutManager {
     public Column(TableColumn fobj) {
         super(fobj);
         columnWidth = fobj.getColumnWidth();
+    }
+
+    protected void initProperties(PropertyManager propMgr) {
+        borderProps = propMgr.getBorderAndPadding();
+        backgroundProps = propMgr.getBackgroundProps();
     }
 
     /**
@@ -86,7 +96,12 @@ public class Column extends AbstractLayoutManager {
      * @return the new column area
      */
     public Area createColumnArea() {
-        return new Block();
+        Area curBlockArea = new Block();
+
+        if(backgroundProps != null) {
+            addBackground(curBlockArea, backgroundProps);
+        }
+        return curBlockArea;
     }
 }
 

@@ -13,13 +13,12 @@ import java.util.ArrayList;
  * FontInfo contains meta information on fonts (where is the metrics file etc.)
  */
 public class EmbedFontInfo {
-    private String metricsFile, embedFile, name;
+    private String metricsFile, embedFile;
     private boolean kerning;
     private ArrayList fontTriplets;
 
-    public EmbedFontInfo(String name, String metricsFile, boolean kerning,
+    public EmbedFontInfo(String metricsFile, boolean kerning,
                     ArrayList fontTriplets, String embedFile) {
-        this.name = name;
         this.metricsFile = metricsFile;
         this.embedFile = embedFile;
         this.kerning = kerning;

@@ -17,6 +17,7 @@ import org.apache.fop.image.ImageFactory;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.Version;
 import org.apache.fop.fo.properties.RuleStyle;
+import org.apache.fop.fo.properties.BackgroundRepeat;
 import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.pdf.PDFDocument; 
 import org.apache.fop.pdf.PDFInfo;
@@ -37,6 +38,7 @@ import org.apache.fop.area.Title;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Page;
 import org.apache.fop.area.RegionReference;
+import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.LineArea;
@@ -50,6 +52,11 @@ import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.layout.FontMetric;
 import org.apache.fop.traits.BorderProps;
+import org.apache.fop.datatypes.ColorType;
+
+import org.apache.avalon.framework.configuration.Configurable;
+import org.apache.avalon.framework.configuration.Configuration;
+import org.apache.avalon.framework.configuration.ConfigurationException;
 
 import org.w3c.dom.Document;
 
@@ -60,6 +67,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 
 /*
 todo:
@@ -137,6 +145,8 @@ public class PDFRenderer extends PrintRenderer {
     protected int currentFontSize = 0;
     protected int pageHeight;
 
+    protected HashMap filterMap = new HashMap();
+
     /**
      * true if a TJ command is left to be written
      */
@@ -171,6 +181,45 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     /**
+     * Configure the PDF renderer.
+     * Get the configuration to be used for pdf stream filters,
+     * fonts etc.
+     */
+    public void configure(Configuration conf) throws ConfigurationException {
+        Configuration filters = conf.getChild("filterList");
+        Configuration[] filt = filters.getChildren("value");
+        ArrayList filterList = new ArrayList();
+        for (int i = 0; i < filt.length; i++) {
+            String name = filt[i].getValue();
+            filterList.add(name);
+        }
+
+        filterMap.put(PDFStream.DEFAULT_FILTER, filterList);
+
+        Configuration[] font = conf.getChildren("font");
+        for (int i = 0; i < font.length; i++) {
+            Configuration[] triple = font[i].getChildren("font-triplet");
+            ArrayList tripleList = new ArrayList();
+            for (int j = 0; j < triple.length; j++) {
+                tripleList.add(new FontTriplet(triple[j].getAttribute("name"),
+                                               triple[j].getAttribute("style"),
+                                               triple[j].getAttribute("weight")));
+            }
+
+            EmbedFontInfo efi;
+            efi = new EmbedFontInfo(font[i].getAttribute("metrics-url"),
+                                    font[i].getAttributeAsBoolean("kerning"),
+                                    tripleList, font[i].getAttribute("embed-url"));
+
+            if(fontList == null) {
+                fontList = new ArrayList();
+            }
+            fontList.add(efi);
+        }
+
+    }
+
+    /**
      * set the PDF document's producer
      *
      * @param producer string indicating application producing PDF
@@ -191,6 +240,7 @@ public class PDFRenderer extends PrintRenderer {
         ostream = stream;
         this.pdfDoc = new PDFDocument(Version.getVersion());
         this.pdfDoc.setProducer(producer);
+        this.pdfDoc.setFilterMap(filterMap);
         pdfDoc.outputHeader(stream);
     }
 
@@ -341,35 +391,149 @@ public class PDFRenderer extends PrintRenderer {
         super.renderRegion(region);
     }
 
+    /**
+     * Handle block traits.
+     * The block could be any sort of block with any positioning
+     * so this should render the traits such as border and background
+     * in its position.
+     *
+     * @param block the block to render the traits
+     */
     protected void handleBlockTraits(Block block) {
-        // draw border and background
-        BorderProps bps = (BorderProps)block.getTrait(Trait.BORDER_BEFORE);
-        if(bps != null) {
-            float startx = ((float) currentBlockIPPosition) / 1000f;
-            float starty = (currentBPPosition / 1000f);
-            float endx = (currentBlockIPPosition + block.getWidth()) / 1000f;
+        float startx = currentIPPosition / 1000f;
+        float starty = currentBPPosition / 1000f;
+        drawBackAndBorders(block, startx, starty,
+                           block.getWidth() / 1000f, block.getHeight() / 1000f);
+    }
 
+    /**
+     * Draw the background and borders.
+     * This draws the background and border traits for an area given
+     * the position.
+     *
+     * @param block the area to get teh traits from
+     * @param startx the start x position
+     * @param starty the start y position
+     * @param width the width of the area
+     * @param height the height of the area
+     */
+    protected void drawBackAndBorders(Area block, float startx, float starty, float width, float height) {
+        // draw background then border
+
+        closeText();
+
+        boolean started = false;
+        Trait.Background back;
+        back = (Trait.Background)block.getTrait(Trait.BACKGROUND);
+        if(back != null) {
+            started = true;
             currentStream.add("ET\n");
             currentStream.add("q\n");
 
+            if (back.color != null) {
+                updateColor(back.color, true, null);
+                currentStream.add(startx + " " + starty + " "
+                                  + width + " " + height + " re\n");
+                currentStream.add("f\n");
+            }
+            if (back.url != null) {
+                ImageFactory fact = ImageFactory.getInstance();
+                FopImage fopimage = fact.getImage(back.url, userAgent);
+                if (fopimage != null && fopimage.load(FopImage.DIMENSIONS, userAgent)) {
+                    if (back.repeat == BackgroundRepeat.REPEAT) {
+                        // create a pattern for the image
+                    } else {
+                        // place once
+                        Rectangle2D pos;
+                        pos = new Rectangle2D.Float((startx + back.horiz) * 1000,
+                                                    (starty + back.vertical) * 1000,
+                                                    fopimage.getWidth() * 1000,
+                                                    fopimage.getHeight() * 1000);
+                        putImage(back.url, pos);
+                    }
+                }
+            }
+        }
+
+        BorderProps bps = (BorderProps)block.getTrait(Trait.BORDER_BEFORE);
+        if(bps != null) {
+            float endx = startx + width;
+
+            if(!started) {
+                started = true;
+                currentStream.add("ET\n");
+                currentStream.add("q\n");
+            }
+
+            updateColor(bps.color, false, null);
             currentStream.add(bps.width / 1000f + " w\n");
 
-            currentStream.add(startx + " " + starty + " m\n");
-            currentStream.add(endx + " " + starty + " l\n");
-            currentStream.add("S\n");
-
-            currentStream.add("Q\n");
-            currentStream.add("BT\n");
+            drawLine(startx, starty, endx, starty);
         }
         bps = (BorderProps)block.getTrait(Trait.BORDER_START);
         if(bps != null) {
+            float endy = starty + height;
+
+            if(!started) {
+                started = true;
+                currentStream.add("ET\n");
+                currentStream.add("q\n");
+            }
+
+            updateColor(bps.color, false, null);
+            currentStream.add(bps.width / 1000f + " w\n");
+
+            drawLine(startx, starty, startx, endy);
         }
         bps = (BorderProps)block.getTrait(Trait.BORDER_AFTER);
         if(bps != null) {
+            float sy = starty + height;
+            float endx = startx + width;
+
+            if(!started) {
+                started = true;
+                currentStream.add("ET\n");
+                currentStream.add("q\n");
+            }
+
+            updateColor(bps.color, false, null);
+            currentStream.add(bps.width / 1000f + " w\n");
+
+            drawLine(startx, sy, endx, sy);
         }
         bps = (BorderProps)block.getTrait(Trait.BORDER_END);
         if(bps != null) {
+            float sx = startx + width;
+            float endy = starty + height;
+
+            if(!started) {
+                started = true;
+                currentStream.add("ET\n");
+                currentStream.add("q\n");
+            }
+
+            updateColor(bps.color, false, null);
+            currentStream.add(bps.width / 1000f + " w\n");
+            drawLine(sx, starty, sx, endy);
         }
+        if(started) {
+            currentStream.add("Q\n");
+            currentStream.add("BT\n");
+        }
+    }
+
+    /**
+     * Draw a line.
+     *
+     * @param startx the start x position
+     * @param starty the start y position
+     * @param endx the x end position
+     * @param endy the y end position
+     */
+    private void drawLine(float startx, float starty, float endx, float endy) {
+        currentStream.add(startx + " " + starty + " m\n");
+        currentStream.add(endx + " " + endy + " l\n");
+        currentStream.add("S\n");
     }
 
     protected void renderBlockViewport(BlockViewport bv, List children) {
@@ -501,6 +665,16 @@ public class PDFRenderer extends PrintRenderer {
      * @param ip the inline parent area
      */
     public void renderInlineParent(InlineParent ip) {
+        float start = currentBlockIPPosition / 1000f;
+        float top = (ip.getOffset() + currentBPPosition) / 1000f;
+        float width = ip.getWidth() / 1000f;
+        float height = ip.getHeight() / 1000f;
+        drawBackAndBorders(ip, start, top, width, height);
+
+        // render contents
+        super.renderInlineParent(ip);
+
+        // place the link over the top
         Object tr = ip.getTrait(Trait.INTERNAL_LINK);
         boolean internal = false;
         String dest = null;
@@ -512,12 +686,6 @@ public class PDFRenderer extends PrintRenderer {
             internal = true;
         }
         if (dest != null) {
-            float start = currentBlockIPPosition;
-            float top = (ip.getOffset() + currentBPPosition) / 1000f;
-            float height = ip.getHeight() / 1000f;
-            super.renderInlineParent(ip);
-            float width = (currentBlockIPPosition - start) / 1000f;
-            start = start / 1000f;
             // add link to pdf document
             Rectangle2D rect = new Rectangle2D.Float(start, top, width, height);
             // transform rect to absolute coords
@@ -527,8 +695,6 @@ public class PDFRenderer extends PrintRenderer {
             int type = internal ? PDFLink.INTERNAL : PDFLink.EXTERNAL;
             PDFLink pdflink = pdfDoc.makeLink(rect, dest, type);
             currentPage.addAnnotation(pdflink);
-        } else {
-            super.renderInlineParent(ip);
         }
     }
 
@@ -552,7 +718,10 @@ public class PDFRenderer extends PrintRenderer {
         String endText = useMultiByte ? "> " : ") ";
 
         updateFont(name, size, pdf);
-        updateColor(true, pdf);
+        ColorType ct = (ColorType)word.getTrait(Trait.COLOR);
+        if(ct != null) {
+            updateColor(ct, true, pdf);
+        }
 
         int rx = currentBlockIPPosition;
         // int bl = pageHeight - currentBPPosition;
@@ -700,24 +869,28 @@ public class PDFRenderer extends PrintRenderer {
         }
     }
 
-    private void updateColor(boolean fill, StringBuffer pdf) {
-        /*PDFColor areaColor = null;
-         if (this.currentFill instanceof PDFColor) {
-             areaColor = (PDFColor)this.currentFill;
-         }
+    private void updateColor(ColorType col, boolean fill, StringBuffer pdf) {
+        PDFColor areaColor = null;
+        //if (this.currentFill instanceof PDFColor) {
+        //    areaColor = (PDFColor)this.currentFill;
+        //}
 
-         if (areaColor == null || areaColor.red() != (double)area.getRed()
-                 || areaColor.green() != (double)area.getGreen()
-                 || areaColor.blue() != (double)area.getBlue()) {
+        if (areaColor == null || areaColor.red() != (double)col.red()
+                || areaColor.green() != (double)col.green()
+                || areaColor.blue() != (double)col.blue()) {
 
-             areaColor = new PDFColor((double)area.getRed(),
-                                      (double)area.getGreen(),
-                                      (double)area.getBlue());
+            areaColor = new PDFColor((double)col.red(),
+                                     (double)col.green(),
+                                     (double)col.blue());
 
-             closeText();
-             this.currentFill = areaColor;
-             pdf.append(this.currentFill.getColorSpaceOut(true));
-         }*/
+            closeText();
+            //this.currentFill = areaColor;
+            if(pdf != null) {
+                pdf.append(areaColor.getColorSpaceOut(fill));
+            } else {
+                currentStream.add(areaColor.getColorSpaceOut(fill));
+            }
+        }
     }
 
     private void updateFont(String name, int size, StringBuffer pdf) {
@@ -734,7 +907,10 @@ public class PDFRenderer extends PrintRenderer {
 
     public void renderImage(Image image, Rectangle2D pos) {
         String url = image.getURL();
+        putImage(url, pos);
+    }
 
+    protected void putImage(String url, Rectangle2D pos) {
         PDFXObject xobject = pdfDoc.getImage(url);
         if (xobject != null) {
             int w = (int) pos.getWidth() / 1000;
@@ -908,21 +1084,14 @@ public class PDFRenderer extends PrintRenderer {
         float endx = (currentBlockIPPosition + area.getWidth()) / 1000f;
         if (!alt) {
             currentStream.add(area.getRuleThickness() / 1000f + " w\n");
-
-            currentStream.add(startx + " " + starty + " m\n");
-            currentStream.add(endx + " " + starty + " l\n");
-            currentStream.add("S\n");
+            drawLine(startx, starty, endx, starty);
         } else {
             if (style == RuleStyle.DOUBLE) {
                 float third = area.getRuleThickness() / 3000f;
                 currentStream.add(third + " w\n");
-                currentStream.add(startx + " " + starty + " m\n");
-                currentStream.add(endx + " " + starty + " l\n");
-                currentStream.add("S\n");
+                drawLine(startx, starty, endx, starty);
 
-                currentStream.add(startx + " " + (starty + 2 * third) + " m\n");
-                currentStream.add(endx + " " + (starty + 2 * third) + " l\n");
-                currentStream.add("S\n");
+                drawLine(startx, (starty + 2 * third), endx, (starty + 2 * third));
             } else {
                 float half = area.getRuleThickness() / 2000f;
 

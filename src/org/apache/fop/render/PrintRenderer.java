@@ -11,6 +11,7 @@ import org.apache.fop.render.pdf.FontSetup;
 import org.apache.fop.layout.FontInfo;
 
 // Java
+import java.util.ArrayList;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -20,6 +21,8 @@ public abstract class PrintRenderer extends AbstractRenderer {
     /** Font configuration */
     protected FontInfo fontInfo;
 
+    protected ArrayList fontList = null;
+
     /**
      * Set up the font info
      *
@@ -27,7 +30,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
      */
     public void setupFontInfo(FontInfo fontInfo) {
         this.fontInfo = fontInfo;
-        FontSetup.setup(fontInfo, null);
+        FontSetup.setup(fontInfo, fontList);
     }
 
     /** @see org.apache.fop.render.Renderer */
