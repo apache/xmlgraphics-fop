@@ -140,7 +140,31 @@ public class ColorType {
 	} else if (value.startsWith("url(")) {
 		// refers to a gradient
 	} else {
-	    if (value.toLowerCase().equals("black")) {
+	    if (value.toLowerCase().equals("transparent")) {
+		this.red = 0;
+		this.green = 0;
+		this.blue = 0;
+		this.alpha = 1;
+		} else {
+		boolean found = false;
+		for(int count = 0; count < names.length; count++) {
+			if (value.toLowerCase().equals(names[count])) {
+				this.red = vals[count][0] / 255f;
+				this.green = vals[count][1] / 255f;
+				this.blue = vals[count][2] / 255f;
+				found = true;
+				break;
+			}
+		}
+	    if(!found) {
+		this.red = 0;
+		this.green = 0;
+		this.blue = 0;
+		MessageHandler.errorln("ERROR: unknown colour name: " + value);
+	    }
+	    }
+
+/*	    if (value.toLowerCase().equals("black")) {
 		this.red = 0;
 		this.green = 0;
 		this.blue = 0;
@@ -219,7 +243,7 @@ public class ColorType {
 		this.green = 0;
 		this.blue = 0;
 		MessageHandler.errorln("ERROR: unknown colour name: " + value);
-	    }
+	    }*/
 	}
     }
 	
@@ -238,32 +262,6 @@ public class ColorType {
     public float alpha() {
 	return this.alpha;
     }
-}
-/*
-	    if (value.toLowerCase().equals("transparent")) {
-		this.red = 0;
-		this.green = 0;
-		this.blue = 0;
-		this.alpha = 1;
-		} else {
-		boolean found = false;
-		for(int count = 0; count < names.length; count++) {
-			if (value.toLowerCase().equals(names[count])) {
-				this.red = vals[count][0] / 255f;
-				this.green = vals[count][1] / 255f;
-				this.blue = vals[count][2] / 255f;
-				found = true;
-				break;
-			}
-		}
-	    if(!found) {
-		this.red = 0;
-		this.green = 0;
-		this.blue = 0;
-		MessageHandler.errorln("ERROR: unknown colour name: " + value);
-	    }
-	    }
-
 
 	final static String[] names = {
 		"aliceblue",
@@ -564,7 +562,8 @@ public class ColorType {
 		{255, 255, 0},
 		{154, 205, 50}
 	};
-*/
+}
+
 /*	
 aliceblue rgb(240, 248, 255)
 antiquewhite rgb(250, 235, 215)
