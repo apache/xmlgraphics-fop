@@ -16,6 +16,7 @@ import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.configuration.FontTriplet;
+import org.apache.fop.apps.FOPException;
 
 // Java
 import java.util.Enumeration;
@@ -38,7 +39,7 @@ public class FontSetup {
      *
      * @param fontInfo the font info object to set up
      */
-    public static void setup(FontInfo fontInfo) {
+    public static void setup(FontInfo fontInfo) throws FOPException {
         MessageHandler.logln("setting up fonts");
 
         fontInfo.addMetrics("F1", new Helvetica());
@@ -138,7 +139,8 @@ public class FontSetup {
      * Add fonts from configuration file starting with
      * internalnames F<num>
      */
-    public static void addConfiguredFonts(FontInfo fontInfo, int num) {
+    public static void addConfiguredFonts(FontInfo fontInfo, int num)
+        throws FOPException {
 
         String internalName = null;
         FontReader reader = null;

@@ -128,6 +128,8 @@ public class StreamRenderer {
         try {
             renderer.setupFontInfo(fontInfo);
             renderer.startRenderer(outputStream);
+        } catch (FOPException fe) {
+            throw new SAXException(fe);
         } catch (IOException e) {
             throw new SAXException(e);
         }

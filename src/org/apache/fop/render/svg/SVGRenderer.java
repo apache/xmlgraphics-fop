@@ -14,6 +14,7 @@ import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.image.*;
 import org.apache.fop.svg.SVGArea;
 import org.apache.fop.svg.SVGUtilities;
+import org.apache.fop.apps.FOPException;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.ProcessingInstruction;
@@ -344,7 +345,7 @@ public class SVGRenderer extends AbstractRenderer {
                                       a.getAllocationWidth(), a.getHeight());
     }
 
-    public void setupFontInfo(FontInfo fontInfo) {
+    public void setupFontInfo(FontInfo fontInfo) throws FOPException {
         // create a temp Image to test font metrics on
         BufferedImage fontImage =
             new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);

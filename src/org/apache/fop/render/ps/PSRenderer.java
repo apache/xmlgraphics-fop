@@ -21,6 +21,7 @@ import org.apache.fop.datatypes.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.render.pdf.Font;
 import org.apache.fop.image.*;
+import org.apache.fop.apps.FOPException;
 
 import org.apache.batik.bridge.*;
 import org.apache.batik.swing.svg.*;
@@ -247,7 +248,8 @@ public class PSRenderer extends AbstractRenderer {
      *
      * @param fontInfo the font info object to set up
      */
-    public void setupFontInfo(FontInfo fontInfo) {
+    public void setupFontInfo(FontInfo fontInfo)
+        throws FOPException {
         /* use PDF's font setup to get PDF metrics */
         org.apache.fop.render.pdf.FontSetup.setup(fontInfo);
         this.fontInfo = fontInfo;

@@ -32,6 +32,8 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.fop.apps.FOPException;
+
 import org.apache.batik.transcoder.*;
 
 import org.apache.batik.bridge.BridgeContext;
@@ -151,7 +153,8 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
      * @exception TranscoderException if an error occured while transcoding
      */
     protected void transcode(Document document, String uri,
-                             TranscoderOutput output) throws TranscoderException {
+                             TranscoderOutput output) 
+                             throws TranscoderException {
 
         if (!(document instanceof SVGOMDocument)) {
             throw new TranscoderException(Messages.formatMessage("notsvg",
@@ -259,8 +262,13 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         int w = (int)width;
         int h = (int)height;
 
-        PDFDocumentGraphics2D graphics = new PDFDocumentGraphics2D(stroke,
+        PDFDocumentGraphics2D graphics;
+        try {
+            graphics = new PDFDocumentGraphics2D(stroke,
                 output.getOutputStream(), w, h);
+        } catch (FOPException ex) {
+            throw new TranscoderException(ex);
+        }
         graphics.setSVGDimension(docWidth, docHeight);
         currentTransform.setTransform(1, 0, 0, -1, 0, height);
         if (!stroke) {
