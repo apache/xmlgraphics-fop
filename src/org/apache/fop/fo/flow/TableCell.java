@@ -82,6 +82,11 @@ public class TableCell extends FObj {
 
     // boolean setup = false;
     boolean bSepBorders = true;
+    
+    /**
+     * Set to true if all content completely laid out.
+     */
+    boolean bDone=false;
 
     /**
      * Border separation value in the block-progression dimension.
@@ -209,6 +214,7 @@ public class TableCell extends FObj {
             area.getIDReferences().createID(id);
 
             this.marker = 0;
+            this.bDone=false;
         }
 
         /*
@@ -250,7 +256,7 @@ public class TableCell extends FObj {
         cellArea.setTableCellXOffset(startOffset);
 
         int numChildren = this.children.size();
-        for (int i = this.marker; i < numChildren; i++) {
+        for (int i = this.marker; bDone==false && i < numChildren; i++) {
             FObj fo = (FObj)children.elementAt(i);
             fo.setIsInTableCell();
             fo.forceWidth(width);    // ???
@@ -275,6 +281,7 @@ public class TableCell extends FObj {
             area.setMaxHeight(area.getMaxHeight() - spaceLeft
                               + this.cellArea.getMaxHeight());
         }
+        this.bDone=true;
         cellArea.end();
         area.addChild(cellArea);
 
@@ -457,6 +464,6 @@ public class TableCell extends FObj {
             this.borderHeight = (borderBefore + borderAfter) / 2;
         }
     }
-
+    
 
 }
