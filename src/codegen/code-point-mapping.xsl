@@ -6,7 +6,9 @@
 
   <xsl:template match="encoding-set">
 package org.apache.fop.render.pdf;
-import java.util.Hashtable;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Collections;
 
 public class CodePointMapping {
     private char[] latin1Map;
@@ -61,9 +63,9 @@ public class CodePointMapping {
         }
     }
 
-    private static Hashtable mappings;
+    private static Map mappings;
     static {
-	mappings = new Hashtable();
+        mappings = Collections.synchronizedMap(new HashMap());
     }
     public static CodePointMapping getMapping(String encoding) {
         CodePointMapping mapping = (CodePointMapping) mappings.get(encoding);
