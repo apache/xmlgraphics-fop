@@ -23,7 +23,9 @@ import java.awt.Rectangle;
 // XML
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
+import org.xml.sax.SAXParseException;
 
+// FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.fo.FONode;
@@ -68,8 +70,9 @@ public abstract class Region extends FObj {
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
      * XSL/FOP Content Model: empty
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) {
-       invalidChildError(loc, nsURI, localName);
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
+            invalidChildError(loc, nsURI, localName);
     }
 
     /**

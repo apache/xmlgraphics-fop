@@ -24,6 +24,7 @@ import java.util.ArrayList;
 // XML
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
+import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.fo.FONode;
@@ -73,7 +74,8 @@ public class Flow extends FObj {
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
      * XSL/FOP Content Model: marker* (%block;)+
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) {
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
         if (nsURI == FOElementMapping.URI && localName.equals("marker")) {
             if (blockItemFound) {
                nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
@@ -90,7 +92,7 @@ public class Flow extends FObj {
      * StructureRenderer that we are at the end of the flow.
      * @see org.apache.fop.fo.FONode#end
      */
-    protected void endOfNode() {
+    protected void endOfNode() throws SAXParseException {
         if (!blockItemFound) {
             missingChildElementError("marker* (%block;)+");
         }

@@ -20,6 +20,7 @@ package org.apache.fop.fo.pagination;
 
 // XML
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.fo.FONode;
@@ -43,7 +44,7 @@ public abstract class RegionBASE extends Region {
     /**
      * @see org.apache.fop.fo.FONode#endOfNode()
      */
-    protected void endOfNode() {
+    protected void endOfNode() throws SAXParseException {
         // The problem with this is that it might not be known yet....
         // Supposing extent is calculated in terms of percentage
         this.extent = this.propertyList.get(PR_EXTENT).getLength().getValue();

@@ -21,6 +21,7 @@ package org.apache.fop.fo.flow;
 // XML
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.apps.FOPException;
@@ -104,7 +105,7 @@ public class TableBody extends FObj {
         fotv.serveTableBody(this);
     }
 
-    protected void endOfNode() {
+    protected void endOfNode() throws SAXParseException {
         getFOInputHandler().endBody(this);
     }
 

@@ -21,6 +21,10 @@ package org.apache.fop.fo.pagination;
 // java
 import java.util.List;
 
+// XML
+import org.xml.sax.Locator;
+import org.xml.sax.SAXParseException;
+
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
@@ -29,7 +33,6 @@ import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.fo.FOTreeVisitor;
-import org.xml.sax.Locator;
 
 /**
  * The fo:root formatting object. Contains page masters, page-sequences.
@@ -70,7 +73,8 @@ public class Root extends FObj {
         XSL 1.0 Spec: (layout-master-set,declarations?,page-sequence+)
         FOP: (layout-master-set, declarations?, fox:bookmarks?, page-sequence+)
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) {
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
         if (nsURI == FOElementMapping.URI) {
             if (localName.equals("layout-master-set")) {   
                 if (layoutMasterSet != null) {

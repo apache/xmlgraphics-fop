@@ -20,6 +20,7 @@ package org.apache.fop.fo.flow;
 
 // XML
 import org.xml.sax.Attributes;
+import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.apps.FOPException;
@@ -123,7 +124,7 @@ public class TableColumn extends FObj {
         fotv.serveTableColumn(this);
     }
 
-    protected void endOfNode() {
+    protected void endOfNode() throws SAXParseException {
         getFOInputHandler().endColumn(this);
     }
     

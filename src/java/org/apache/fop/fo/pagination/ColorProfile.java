@@ -27,7 +27,7 @@ import java.io.InputStream;
 
 // XML
 import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.datatypes.ColorType;
@@ -56,7 +56,8 @@ public class ColorProfile extends FObj {
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
         XSL 1.0/FOP: EMPTY (no child nodes permitted)
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) {
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
         invalidChildError(loc, nsURI, localName);
     }
 
@@ -65,7 +66,7 @@ public class ColorProfile extends FObj {
      * Extract instance variables from the collection of properties for this
      * object.
      */
-    protected void endOfNode() {
+    protected void endOfNode() throws SAXParseException {
         src = this.propertyList.get(PR_SRC).getString();
         profileName = this.propertyList.get(PR_COLOR_PROFILE_NAME).getString();
         intent = this.propertyList.get(PR_RENDERING_INTENT).getEnum();

@@ -24,6 +24,7 @@ import java.util.List;
 // XML
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
+import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.fo.Constants;
@@ -67,7 +68,8 @@ public class PageSequenceMaster extends FObj {
      * XSL/FOP: (single-page-master-reference|repeatable-page-master-reference|
      *     repeatable-page-master-alternatives)+
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) {
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
         if (nsURI == FOElementMapping.URI) {
             if (!localName.equals("single-page-master-reference") 
                 && !localName.equals("repeatable-page-master-reference")
@@ -79,7 +81,7 @@ public class PageSequenceMaster extends FObj {
         }
     }
 
-    protected void endOfNode() {
+    protected void endOfNode() throws SAXParseException {
         if (childNodes == null) {
            missingChildElementError("(single-page-master-reference|" +
             "repeatable-page-master-reference|repeatable-page-master-alternatives)+");

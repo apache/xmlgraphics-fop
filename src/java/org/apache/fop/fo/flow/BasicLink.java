@@ -20,6 +20,7 @@ package org.apache.fop.fo.flow;
 
 // XML
 import org.xml.sax.Attributes;
+import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.apps.FOPException;
@@ -140,7 +141,7 @@ public class BasicLink extends Inline {
     /**
      * @see org.apache.fop.fo.FONode#end
      */
-    protected void endOfNode() {
+    protected void endOfNode() throws SAXParseException {
         super.endOfNode();
         getFOInputHandler().endLink();
     }

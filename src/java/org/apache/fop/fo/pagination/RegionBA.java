@@ -21,6 +21,9 @@ package org.apache.fop.fo.pagination;
 // Java
 import java.awt.Rectangle;
 
+// XML
+import org.xml.sax.SAXParseException;
+
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
@@ -50,7 +53,7 @@ public abstract class RegionBA extends RegionBASE {
     /**
      * @see org.apache.fop.fo.FONode#endOfNode()
      */
-    protected void endOfNode() {
+    protected void endOfNode() throws SAXParseException {
         super.endOfNode();
         bPrecedence =
             (this.propertyList.get(PR_PRECEDENCE).getEnum() == Precedence.TRUE);

@@ -26,6 +26,7 @@ import java.util.Iterator;
 // XML
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
+import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.fo.FOElementMapping;
@@ -60,7 +61,8 @@ public class Declarations extends FObj {
         XSL 1.0: (color-profile)+ (and non-XSL NS nodes)
         FOP/XSL 1.1: (color-profile)* (and non-XSL NS nodes)
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) {
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
         if (nsURI == FOElementMapping.URI) {
             if (!localName.equals("color-profile")) {   
                 invalidChildError(loc, nsURI, localName);
@@ -72,7 +74,7 @@ public class Declarations extends FObj {
      * At the end of this element sort out the child into
      * a hashmap of color profiles and a list of external xml.
      */
-    protected void endOfNode() {
+    protected void endOfNode() throws SAXParseException {
         if (childNodes != null) {
             for (Iterator iter = childNodes.iterator(); iter.hasNext();) {
                 FONode node = (FONode)iter.next();

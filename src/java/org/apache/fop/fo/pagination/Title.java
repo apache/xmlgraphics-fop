@@ -21,6 +21,7 @@ package org.apache.fop.fo.pagination;
 // XML
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
+import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.datatypes.ColorType;
@@ -54,7 +55,8 @@ public class Title extends FObjMixed {
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
         XSL/FOP: (#PCDATA|%inline;)*
      */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) {
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
         if (!isInlineItem(nsURI, localName)) {
             invalidChildError(loc, nsURI, localName);
         }
