@@ -27,18 +27,14 @@ import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
+// FOP
 import org.apache.fop.area.inline.Image;
-import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.datatypes.Length;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
-import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
-import org.apache.fop.layoutmgr.TraitSetter;
+import org.apache.fop.layoutmgr.ExternalGraphicLayoutManager;
 
 /**
  * External graphic formatting object.
@@ -88,6 +84,7 @@ public class ExternalGraphic extends FObj {
     /**
      * Setup this image.
      * This gets the sizes for the image and the dimensions and clipping.
+     * @todo move logic to LM class and/or addProperties() as appropriate
      */
     private void setup() {
         url = this.propertyList.get(PR_SRC).getString();
@@ -230,6 +227,7 @@ public class ExternalGraphic extends FObj {
 
     /**
      * @return the ViewHeight (in millipoints??)
+     * @todo check that each of these accessors are needed
      */
     public int getViewHeight() {
         return viewHeight;
@@ -251,52 +249,23 @@ public class ExternalGraphic extends FObj {
         return placement;
     }
 
-    public String getName() {
-        return "fo:external-graphic";
-    }
-
     /**
      * @see org.apache.fop.fo.FObj#addLayoutManager(List)
     */
     public void addLayoutManager(List list) {
         setup();
-        InlineArea area = getExternalGraphicInlineArea();
-        if (area != null) {
-            LeafNodeLayoutManager lm = new LeafNodeLayoutManager(this);
-            lm.setCurrentArea(area);
-            lm.setAlignment(getProperty(PR_VERTICAL_ALIGN).getEnum());
-            lm.setLead(getViewHeight());
+        if (getURL() != null) {
+            ExternalGraphicLayoutManager lm = new ExternalGraphicLayoutManager(this);
             list.add(lm);
         }
     }
 
-     /**
-      * Get the inline area for this external grpahic.
-      * This creates the image area and puts it inside a viewport.
-      *
-      * @return the viewport containing the image area
-      * @todo see if can move to LM classes.
-      */
-     public InlineArea getExternalGraphicInlineArea() {
-         if (getURL() == null) {
-             return null;
-         }
-         Image imArea = new Image(getURL());
-         Viewport vp = new Viewport(imArea);
-         vp.setWidth(getViewWidth());
-         vp.setHeight(getViewHeight());
-         vp.setClip(getClip());
-         vp.setContentPosition(getPlacement());
-         vp.setOffset(0);
-
-         // Common Border, Padding, and Background Properties
-         CommonBorderAndPadding bap = getPropertyManager().getBorderAndPadding();
-         CommonBackground bProps = getPropertyManager().getBackgroundProps();
-         TraitSetter.addBorders(vp, bap);
-         TraitSetter.addBackground(vp, bProps);
-
-         return vp;
-     }
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
+    public String getName() {
+        return "fo:external-graphic";
+    }
 
     /**
      * @see org.apache.fop.fo.FObj#getNameId()

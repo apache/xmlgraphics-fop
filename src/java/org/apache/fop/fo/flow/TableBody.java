@@ -18,6 +18,9 @@
 
 package org.apache.fop.fo.flow;
 
+// Java
+import java.util.List;
+
 // XML
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -27,14 +30,13 @@ import org.xml.sax.SAXParseException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.layoutmgr.AddLMVisitor;
-import org.apache.fop.fo.LMVisited;
+import org.apache.fop.layoutmgr.table.Body;
 
 /**
  * Class modelling the fo:table-body object. See Sec. 6.7.8 of the XSL-FO
  * Standard.
  */
-public class TableBody extends FObj implements LMVisited {
+public class TableBody extends FObj {
 
     private int spaceBefore;
     private int spaceAfter;
@@ -61,19 +63,21 @@ public class TableBody extends FObj implements LMVisited {
         getFOInputHandler().startBody(this);
     }
 
-    /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
-     */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveTableBody(this);
-    }
-
     protected void endOfNode() throws SAXParseException {
         getFOInputHandler().endBody(this);
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#addLayoutManager(List)
+     */
+    public void addLayoutManager(List list) { 	 
+        Body blm = new Body(this);
+        list.add(blm);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:table-body";
     }

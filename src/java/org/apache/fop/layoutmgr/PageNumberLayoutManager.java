@@ -25,7 +25,7 @@ import org.apache.fop.area.Trait;
 import org.apache.fop.fonts.Font;
 
 /**
- * LayoutManager for the fo:basic-link formatting object
+ * LayoutManager for the fo:page-number formatting object
  */
 public class PageNumberLayoutManager extends LeafNodeLayoutManager {
 
