@@ -75,8 +75,7 @@ public class Root extends FObj {
 	}
 
 	LayoutMasterSet layoutMasterSet;
- 	Vector pageSequences;
-	Vector unresolvedCitations;
+ 	Vector pageSequences;	
 		
 	protected Root(FObj parent, PropertyList propertyList) throws FOPException 
 	{
@@ -116,31 +115,8 @@ public class Root extends FObj {
 		{
 			((PageSequence) e.nextElement()).format(areaTree);
 		}
-
-
-		if(unresolvedCitations != null)
-		{
-			Enumeration ec = unresolvedCitations.elements();
-			while( ec.hasMoreElements() ) 
-			{
-				((PageNumberCitation)ec.nextElement()).resolvePageNumber();
-			}
-			
-			// forward page number citations have been resolved here
-			// question now is how to apply this information to the document
-			
-		}
-	}
-	
-	
-	public void addUnresolvedCitation(Object x)
-	{
-		if(unresolvedCitations == null)
-		{
-			unresolvedCitations = new Vector();
-		}
-		unresolvedCitations.add(x);
-	}
+		
+	}		
 
 
     public void setLayoutMasterSet(LayoutMasterSet layoutMasterSet) {
