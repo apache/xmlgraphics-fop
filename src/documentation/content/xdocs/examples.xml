@@ -9,6 +9,20 @@
 <body>
 <section>
   <title>Examples</title>
+  <table>
+    <caption>Generated examples</caption>
+    <tr>
+      <th>description</th>
+      <th>fo file</th>
+      <th>pdf result</th>
+    </tr>
+    <tr>
+      <td>default font characters</td>
+      <td><link href="fo/fonts.fo">fonts.fo</link></td>
+      <td><link href="fo/fonts.fo.pdf">fonts.fo.pdf</link></td>
+    </tr>
+  </table>
+
     <p>Examples for the use of xsl:fo can be found in the Fop distribution in
        the subdirectory xml-fop/docs/examples/fo. You can start transformation of all fo files into pdf
        files by starting xml-fop/docs/examples/runtests (only source distribution). The resulting test
