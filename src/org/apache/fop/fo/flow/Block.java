@@ -53,8 +53,6 @@ public class Block extends FObjMixed {
     int spaceAfter;
     int textIndent;
     int keepWithNext;
-    int blockWidows;
-    int blockOrphans;
 
     int areaHeight = 0;
     int contentWidth = 0;
@@ -111,34 +109,6 @@ public class Block extends FObjMixed {
             // Common Relative Position Properties
             RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
 
-            // this.properties.get("break-after");
-            // this.properties.get("break-before");
-            // this.properties.get("color");
-            // this.properties.get("text-depth");
-            // this.properties.get("text-altitude");
-            // this.properties.get("hyphenation-keep");
-            // this.properties.get("hyphenation-ladder-count");
-            // this.properties.get("id");
-            // this.properties.get("keep-together");
-            // this.properties.get("keep-with-next");
-            // this.properties.get("keep-with-previous");
-            // this.properties.get("last-line-end-indent");
-            // this.properties.get("linefeed-treatment");
-            // this.properties.get("line-height");
-            // this.properties.get("line-height-shift-adjustment");
-            // this.properties.get("line-stacking-strategy");
-            // this.properties.get("orphans");
-            // this.properties.get("white-space-treatment");
-            // this.properties.get("span");
-            // this.properties.get("text-align");
-            // this.properties.get("text-align-last");
-            // this.properties.get("text-indent");
-            // this.properties.get("visibility");
-            // this.properties.get("white-space-collapse");
-            // this.properties.get("widows");
-            // this.properties.get("wrap-option");
-            // this.properties.get("z-index");
-
             this.align = this.properties.get("text-align").getEnum();
             this.alignLast = this.properties.get("text-align-last").getEnum();
             this.breakAfter = this.properties.get("break-after").getEnum();
@@ -156,13 +126,6 @@ public class Block extends FObjMixed {
                 this.properties.get("text-indent").getLength().mvalue();
             this.keepWithNext =
                 this.properties.get("keep-with-next").getEnum();
-
-            this.blockWidows =
-                this.properties.get("widows").getNumber().intValue();
-            this.blockOrphans =
-                this.properties.get("orphans").getNumber().intValue();
-
-
 
             this.id = this.properties.get("id").getString();
 
@@ -182,36 +145,6 @@ public class Block extends FObjMixed {
                 return new Status(breakBeforeStatus);
             }
 
-            int numChildren = this.children.size();
-            for (int i = 0; i < numChildren; i++) {
-                FONode fo = (FONode)children.elementAt(i);
-                if (fo instanceof FOText) {
-                    if (((FOText)fo).willCreateArea()) {
-                        fo.setWidows(blockWidows);
-                        break;
-                    } else {
-                        children.removeElementAt(i);
-                        numChildren = this.children.size();
-                        i--;
-                    }
-                } else {
-                    fo.setWidows(blockWidows);
-                    break;
-                }
-            }
-
-            for (int i = numChildren - 1; i >= 0; i--) {
-                FONode fo = (FONode)children.elementAt(i);
-                if (fo instanceof FOText) {
-                    if (((FOText)fo).willCreateArea()) {
-                        fo.setOrphans(blockOrphans);
-                        break;
-                    }
-                } else {
-                    fo.setOrphans(blockOrphans);
-                    break;
-                }
-            }
         }
 
         if ((spaceBefore != 0) && (this.marker == 0)) {

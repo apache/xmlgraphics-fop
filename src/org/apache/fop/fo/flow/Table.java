@@ -240,8 +240,6 @@ public class Table extends FObj {
                     addedFooter = true;
                     tableFooter.resetMarker();
                 }
-                fo.setWidows(widows);
-                fo.setOrphans(orphans);
                 ((TableBody)fo).setColumns(columns);
 
                 if ((status = fo.layout(areaContainer)).isIncomplete()) {
