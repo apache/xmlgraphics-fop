@@ -120,6 +120,13 @@ public class FONode extends SyncedNode implements AreaListener {
 
     /** The FOP logger */
     protected final Logger log;
+    /**
+     * Gets the logger from this <code>FONode</code>
+     * @return the logger
+     */
+    public Logger getLogger() {
+        return log;
+    }
 
     /** The buffer from which parser events are drawn. */
     protected final XmlEventReader xmlevents;
