@@ -111,6 +111,16 @@ implements PageListElement, PageSetElement, Cloneable {
         }
     }
 
+    public NormalFlowRefArea getNormalFlowRefArea() {
+        RegionBodyRefArea bodyRefArea = getRegionBodyRefArea();
+        if (bodyRefArea == null) return null;
+        MainReferenceArea main = bodyRefArea.getMainReference();
+        if (main == null) return null;
+        SpanReferenceArea span = main.getCurrSpanRefArea();
+        if (span == null) return null;
+        return span.getCurrNormalFlowRefArea();
+    }
+
     /**
      * Creates a null page, consisting of
      * <ul>
