@@ -16,6 +16,7 @@ import java.io.FileNotFoundException;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.messaging.MessageHandler;
+import org.apache.fop.render.txt.TXTRenderer;
 
 // Avalon
 import org.apache.avalon.framework.logger.ConsoleLogger;
@@ -78,7 +79,7 @@ public class CommandLineOptions {
     /* language for user information */
     String language = null;
 
-    private java.util.Hashtable rendererOptions;
+    private java.util.HashMap rendererOptions;
 
     private Logger log;
 
@@ -88,7 +89,7 @@ public class CommandLineOptions {
         setLogger(new ConsoleLogger(ConsoleLogger.LEVEL_INFO));
 
         boolean optionsParsed = true;
-        rendererOptions = new java.util.Hashtable();
+        rendererOptions = new java.util.HashMap();
         try {
             optionsParsed = parseOptions(args);
             if (optionsParsed) {
@@ -252,6 +253,14 @@ public class CommandLineOptions {
                     outfile = new File(args[i + 1]);
                     i++;
                 }
+            } else if (args[i].equals("-" + TXTRenderer.encodingOptionName)) {
+                if ((i + 1 == args.length)
+                    || (args[i + 1].charAt(0) == '-')) {
+                    throw new FOPException("you must specify text renderer encoding");
+                } else {
+                    rendererOptions.put(TXTRenderer.encodingOptionName, args[i + 1]);
+                    i++;
+                }
             } else {
                 printUsage();
                 return false;
@@ -375,7 +384,7 @@ public class CommandLineOptions {
         }
     }
 
-    public java.util.Hashtable getRendererOptions() {
+    public java.util.HashMap getRendererOptions() {
         return rendererOptions;
     }
 
@@ -505,6 +514,8 @@ public class CommandLineOptions {
                                + "  -pcl outfile      input will be rendered as pcl file (outfile req'd) \n"
                                + "  -ps outfile       input will be rendered as PostScript file (outfile req'd) \n"
                                + "  -txt outfile      input will be rendered as text file (outfile req'd) \n"
+                               + "    -"+TXTRenderer.encodingOptionName+" encoding  use the encoding for the output file.\n"
+                               + "                    the encoding must be a valid java encoding.\n"
                                + "  -svg outfile      input will be rendered as an svg slides file (outfile req'd) \n"
                                + "  -at outfile       representation of area tree as XML (outfile req'd) \n"
                                + "  -print            input file will be rendered and sent to the printer \n"
@@ -587,6 +598,8 @@ public class CommandLineOptions {
         case TXT_OUTPUT:
             log.debug("txt");
             log.debug("output file: " + outfile.toString());
+            if (rendererOptions.containsKey(TXTRenderer.encodingOptionName))
+                log.debug("output encoding: " + rendererOptions.get(TXTRenderer.encodingOptionName));
             break;
         case SVG_OUTPUT:
             log.debug("svg");
