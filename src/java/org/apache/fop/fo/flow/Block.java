@@ -246,6 +246,11 @@ public class Block extends FObjMixed {
         if (firstInlineChild != null) {
             boolean bInWS = false;
             boolean bPrevWasLF = false;
+            
+            /* bSeenNonWSYet is an indicator used for trimming all leading 
+               whitespace for the first inline child of the block
+            */
+            boolean bSeenNonWSYet = false;
             RecursiveCharIterator charIter =
               new RecursiveCharIterator(this, firstInlineChild);
             LFchecker lfCheck = new LFchecker(charIter);
@@ -279,7 +284,13 @@ public class Block extends FObjMixed {
                                         && (bPrevWasLF || lfCheck.nextIsLF()))) {
                                 charIter.remove();
                             } else {
+                                // this is to retain a single space between words
                                 bInWS = true;
+                                // remove the space if no word in block 
+                                // encountered yet
+                                if (!bSeenNonWSYet) {
+                                    charIter.remove();
+                                }
                             }
                         }
                         break;
@@ -300,6 +311,11 @@ public class Block extends FObjMixed {
                                 } else {
                                     if (bWScollapse) {
                                         bInWS = true;
+                                        // remove the linefeed if no word in block 
+                                        // encountered yet
+                                        if (!bSeenNonWSYet) {
+                                            charIter.remove();
+                                        }
                                     }
                                     charIter.replaceChar('\u0020');
                                 }
@@ -323,6 +339,7 @@ public class Block extends FObjMixed {
                     case CharUtilities.NONWHITESPACE:
                         /* Any other character */
                         bInWS = bPrevWasLF = false;
+                        bSeenNonWSYet = true;
                         lfCheck.reset();
                         break;
                 }
