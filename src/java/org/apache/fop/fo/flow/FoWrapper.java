@@ -1,6 +1,4 @@
 /*
- * $Id$
- * 
  * ============================================================================
  *                   The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,8 +46,7 @@
  * James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
  * Software Foundation, please see <http://www.apache.org/>.
  *  
- *
- * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
+ * $Id$
  */
 
 package org.apache.fop.fo.flow;
@@ -73,6 +70,7 @@ import org.apache.fop.xml.UnexpectedStartElementException;
 
 /**
  * Implements the fo:wrapper flow object.
+ * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
  */
 public class FoWrapper extends FONode {
 
@@ -126,6 +124,7 @@ public class FoWrapper extends FONode {
         super(foTree, FObjectNames.WRAPPER, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         XmlEvent ev = null;
+        getMarkers();
         do {
             try {
                 if ((stateFlags & FONode.MC_OUT_OF_LINE) == 0)
@@ -134,7 +133,6 @@ public class FoWrapper extends FONode {
                     ev = xmlevents.expectOutOfLinePcdataOrInlineOrBlock();
                 if (ev != null) {
                     // Generate the flow object
-                    //System.out.println("Generating flow object for " + ev);
                     FObjects.fobjects.makeFlowObject(
                             foTree, this, ev, stateFlags);
                     if (ev.getType() != XmlEvent.CHARACTERS)
