@@ -83,7 +83,8 @@ public class PDFTranscoder extends AbstractFOPTranscoder
         return new AbstractFOPTranscoder.FOPTranscoderUserAgent() {
             // The PDF stuff wants everything at 72dpi
             public float getPixelUnitToMillimeter() {
-                return 0.3427778f; //72dpi
+                //return super.getPixelUnitToMillimeter();
+                return 25.4f / 72; //72dpi = 0.352778f;
             }
         };
     }
@@ -122,6 +123,8 @@ public class PDFTranscoder extends AbstractFOPTranscoder
 
         super.transcode(document, uri, output);
 
+        getLogger().trace("document size: " + width + " x " + height);
+        
         // prepare the image to be painted
         int w = (int)(width + 0.5);
         int h = (int)(height + 0.5);
