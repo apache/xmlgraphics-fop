@@ -86,8 +86,8 @@ public class TableContentLayoutManager {
 
                     //Calculate width of cell
                     int spanWidth = 0;
-                    for (int i = primary.getStartRow(); 
-                            i < primary.getStartRow() + primary.getCell().getNumberColumnsSpanned();
+                    for (int i = primary.getStartCol(); 
+                            i < primary.getStartCol() + primary.getCell().getNumberColumnsSpanned();
                             i++) {
                         spanWidth += getTableLM().getColumns().getColumn(i + 1)
                             .getColumnWidth().getValue();
