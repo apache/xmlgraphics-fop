@@ -19,23 +19,11 @@
  */
 package org.apache.fop.area;
 
-import java.awt.geom.Rectangle2D;
-
 /**
  * @author pbw
  * @version $Revision$ $Name$
  */
 public interface Viewport extends Cloneable {
-    
-    /**
-     * @return the view area rectangle for this viewport
-     */
-    public abstract Rectangle2D getViewArea();
-
-    /**
-     * @param viewArea to set
-     */
-    public abstract void setViewArea(Rectangle2D viewArea);
     
     /**
      * Sets the reference-area of this viewport/reference pair
