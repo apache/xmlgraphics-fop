@@ -946,7 +946,7 @@ public class PDFDocument {
 
         /* add it to the list of objects */
         this.objects.add(page);
-
+        pages.addPage(page);
         return page;
     }
 

@@ -53,51 +53,52 @@ public abstract class XMLObj extends FONode {
     public abstract String getNameSpace();
 
     protected static HashMap ns = new HashMap();
+    static {
+        ns.put("xlink", "http://www.w3.org/1999/xlink");
+    }
 
     public void addElement(Document doc, Element parent) {
         this.doc = doc;
         element = doc.createElementNS(getNameSpace(), name);
 
-            for (int count = 0; count < attr.getLength(); count++) {
-                String rf = attr.getValue(count);
-                String qname = attr.getQName(count);
-                if (qname.indexOf(":") == -1) {
-                    element.setAttribute(qname, rf);
+        for (int count = 0; count < attr.getLength(); count++) {
+            String rf = attr.getValue(count);
+            String qname = attr.getQName(count);
+            int idx = qname.indexOf(":");
+            if (idx == -1) {
+                element.setAttribute(qname, rf);
+            } else {
+                String pref = qname.substring(0, idx);
+                String tail = qname.substring(idx + 1);
+                if (pref.equals("xmlns")) {
+                    ns.put(tail, rf);
                 } else {
-                    String pref =
-                        qname.substring(0, qname.indexOf(":"));
-                    if (pref.equals("xmlns")) {
-                        ns.put(qname.substring(qname.indexOf(":")
-                                                      + 1), rf);
-                    }
-                    ns.put("xlink", "http://www.w3.org/1999/xlink");
-                    element.setAttributeNS((String)ns.get(pref),
-                                           qname, rf);
+                    element.setAttributeNS((String)ns.get(pref), tail, rf);
                 }
             }
+        }
         attr = null;
         parent.appendChild(element);
     }
 
     public void buildTopLevel(Document doc, Element svgRoot) {
         // build up the info for the top level element
-            for (int count = 0; count < attr.getLength(); count++) {
-                String rf = attr.getValue(count);
-                String qname = attr.getQName(count);
-                if (qname.indexOf(":") == -1) {
-                    element.setAttribute(qname, rf);
+        for (int count = 0; count < attr.getLength(); count++) {
+            String rf = attr.getValue(count);
+            String qname = attr.getQName(count);
+            int idx = qname.indexOf(":");
+            if (idx == -1) {
+                element.setAttribute(qname, rf);
+            } else {
+                String pref = qname.substring(0, idx);
+                String tail = qname.substring(idx + 1);
+                if (pref.equals("xmlns")) {
+                    ns.put(tail, rf);
                 } else {
-                    String pref =
-                       qname.substring(0, qname.indexOf(":"));
-                    if (pref.equals("xmlns")) {
-                        ns.put(qname.substring(qname.indexOf(":")
-                                                      + 1), rf);
-                    }
-                    ns.put("xlink", "http://www.w3.org/1999/xlink");
-                    element.setAttributeNS((String)ns.get(pref),
-                                           qname, rf);
+                    element.setAttributeNS((String)ns.get(pref), tail, rf);
                 }
             }
+        }
     }
 
     public Document createBasicDocument() {

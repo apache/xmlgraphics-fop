@@ -382,7 +382,7 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         }
 
         public String getMedia() {
-            return "";
+            return "print";
         }
 
         /**

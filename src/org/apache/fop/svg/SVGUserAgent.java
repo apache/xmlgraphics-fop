@@ -85,7 +85,7 @@ public class SVGUserAgent implements UserAgent {
     }
 
     public String getMedia() {
-        return "";
+        return "print";
     }
 
     /**

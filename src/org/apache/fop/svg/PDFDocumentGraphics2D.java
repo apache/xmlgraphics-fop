@@ -78,16 +78,16 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         currentFontSize = 0;
         currentYPosition = 0;
         currentXPosition = 0;
-
-        PDFResources pdfResources = this.pdfDoc.getResources();
-        currentPage = this.pdfDoc.makePage(pdfResources,
-                                                   width, height);
     }
 
     void setupDocument(OutputStream stream, int width, int height) {
         this.width = width;
         this.height = height;
         this.stream = stream;
+
+        PDFResources pdfResources = this.pdfDoc.getResources();
+        currentPage = this.pdfDoc.makePage(pdfResources,
+                                                   width, height);
         currentStream.write("1 0 0 -1 0 " + height + " cm\n");
     }
 
@@ -165,10 +165,6 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         pdfDoc.outputHeader(stream);
         this.pdfDoc.output(stream);
         pdfDoc.outputTrailer(stream);
-    }
-
-    public void setGraphicContext(GraphicContext c) {
-        gc = c;
     }
 
     /**
