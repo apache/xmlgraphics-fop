@@ -15,7 +15,7 @@
 	<fo:page-sequence master-name="simplePM">
 	    <fo:flow flow-name="xsl-region-body">
 			<fo:block>
-				<fo:external-graphic src="file:../page.gif"/>
+				<fo:external-graphic src="file:../graphics/page.gif"/>
 			</fo:block>
 
 		</fo:flow>
