@@ -124,6 +124,15 @@ public class SVG extends FObj implements GraphicsCreator {
 		sal = new SVGAnimatedLengthImpl(h);
 		sal.setBaseVal(h);
 		svgArea.setHeight(sal);
+		SVGLength x = ((SVGLengthProperty)this.properties.get("x")).getSVGLength();
+		sal = new SVGAnimatedLengthImpl(x);
+		sal.setBaseVal(x);
+		svgArea.setX(sal);
+		SVGLength y = ((SVGLengthProperty)this.properties.get("y")).getSVGLength();
+		sal = new SVGAnimatedLengthImpl(y);
+		sal.setBaseVal(y);
+		svgArea.setY(sal);
+
 		svgArea.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
 		svgArea.setTransform(((SVGTransform)this.properties.get("transform")).getTransform());
 		svgArea.setId(this.properties.get("id").getString());

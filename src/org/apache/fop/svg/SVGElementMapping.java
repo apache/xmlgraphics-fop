@@ -77,6 +77,7 @@ public class SVGElementMapping implements ElementMapping {
 		builder.addMapping(uri, "tspan", TSpan.maker());
 		builder.addMapping(uri, "tref", TRef.maker());
 		builder.addMapping(uri, "image", Image.maker());
+		builder.addMapping(uri, "style", Style.maker());
 
 // elements in progress
 		builder.addMapping(uri, "textPath", TextPath.maker());
@@ -87,6 +88,7 @@ public class SVGElementMapping implements ElementMapping {
 		builder.addMapping(uri, "stop", Stop.maker());
 		builder.addMapping(uri, "a", A.maker());
 		builder.addMapping(uri, "switch", Switch.maker());
+		builder.addMapping(uri, "symbol", Symbol.maker());
 
 // elements below will not work
 		builder.addMapping(uri, "pattern", Pattern.maker());
@@ -99,12 +101,10 @@ public class SVGElementMapping implements ElementMapping {
 		builder.addMapping(uri, "missing-glyph", MissingGlyph.maker());
 		builder.addMapping(uri, "hkern", HKern.maker());
 		builder.addMapping(uri, "vkern", VKern.maker());
-		builder.addMapping(uri, "symbol", Symbol.maker());
 		builder.addMapping(uri, "set", Set.maker());
 		builder.addMapping(uri, "animateMotion", AnimateMotion.maker());
 		builder.addMapping(uri, "animateColor", AnimateColor.maker());
 		builder.addMapping(uri, "animateTransform", AnimateTransform.maker());
-		builder.addMapping(uri, "style", Style.maker());
 		builder.addMapping(uri, "cursor", Cursor.maker());
 		builder.addMapping(uri, "filter", Filter.maker());
 	}

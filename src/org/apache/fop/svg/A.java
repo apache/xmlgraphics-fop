@@ -118,7 +118,7 @@ public class A extends SVGObj {
 			FONode child = (FONode) children.elementAt(i);
 			if(child instanceof GraphicsCreator) {
 				SVGElement impl = ((GraphicsCreator)child).createGraphic();
-				graphic.appendChild((GraphicElement)impl);
+				graphic.appendChild(impl);
 			} else if(child instanceof Defs) {
 			}
 		}

@@ -93,7 +93,7 @@ public class SVGPropertyListMapping implements PropertyListMapping {
 		propertyTable.put("transform",SVGTransform.maker());
 		propertyTable.put("d",SVGD.maker());
 		propertyTable.put("points",SVGPoints.maker());
-//		propertyTable.put("viewBox",SVGBox.maker());
+		propertyTable.put("viewBox",ViewBox.maker());
 		propertyTable.put("xml:space",XMLSpace.maker());
 
 	propertyTable.put("font-family",FontFamily.maker());
