@@ -52,6 +52,7 @@ package org.apache.fop.viewer;
 
 //Java
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -66,6 +67,7 @@ import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -73,6 +75,7 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.awt.print.PrinterJob;
 import java.awt.print.PrinterException;
 
@@ -555,19 +558,25 @@ public class PreviewDialog extends JFrame {
          * The run method that does the actual updating
          */
         public void run() {
-            //Rendering a page - to be done
-            /*
-            renderer.render(currentPage);
-            BufferedImage pageImage = renderer.getLastRenderedPage();
+            BufferedImage pageImage = null;
+            Graphics graphics = null;
+
+//          renderer.render(currentPage);
+            pageImage = renderer.getLastRenderedPage();
             if (pageImage == null)
                 return;
+            graphics = pageImage.getGraphics();
+            graphics.setColor(Color.black);
+            graphics.drawRect(0, 0, pageImage.getWidth() - 1,
+                              pageImage.getHeight() - 1);
+
             pageLabel.setIcon(new ImageIcon(pageImage));
             pageCount = renderer.getPageCount();
+
             //Updates status bar
             infoStatus.setText(translator.getString("Status.Page") + " "
                 + (currentPage + 1) + " "
                 + translator.getString("Status.of") + " " + pageCount);
-            */
         }
     }
 

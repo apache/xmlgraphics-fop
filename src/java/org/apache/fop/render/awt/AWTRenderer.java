@@ -63,22 +63,31 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Pageable;
 import java.awt.print.Printable;
+import java.awt.RenderingHints;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
 // FOP
-import org.apache.fop.apps.InputHandler;
 import org.apache.fop.apps.Document;
+import org.apache.fop.apps.InputHandler;
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.area.Area;
+import org.apache.fop.area.Page;
+import org.apache.fop.area.PageViewport;
+import org.apache.fop.area.RegionViewport;
 import org.apache.fop.fo.FOTreeControl;
+import org.apache.fop.fonts.Font;
 import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.viewer.PreviewDialog;
 import org.apache.fop.viewer.Translator;
@@ -94,6 +103,9 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     protected int pageNumber = 0;
     protected List pageList = new java.util.Vector();
     //protected ProgressListener progressListener = null;
+
+    /** Font configuration */
+    protected Document fontInfo;
 
     /**
         The InputHandler associated with this Renderer.
@@ -157,14 +169,15 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     }
 
     public int getPageCount() {
-        return 0;
+        return pageList.size();
     }
 
     public void setupFontInfo(FOTreeControl foTreeControl) {
         // create a temp Image to test font metrics on
+        fontInfo = (Document) foTreeControl;
         BufferedImage fontImage =
             new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
-        FontSetup.setup((Document)foTreeControl, fontImage.createGraphics());
+        FontSetup.setup(fontInfo, fontImage.createGraphics());
     }
 
     public int getPageNumber() {
@@ -237,4 +250,54 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         frame.setStatus(translator.getString("Status.Build.FO.tree"));
         return frame;
     }
+    
+    private void transform(Graphics2D g2d, double zoomPercent, double angle) {
+        AffineTransform at = g2d.getTransform();
+        at.rotate(angle);
+        at.scale(zoomPercent / 100.0, zoomPercent / 100.0);
+        g2d.setTransform(at);
+    }
+
+    /** @see org.apache.fop.render.Renderer */
+    public void renderPage(PageViewport page)  throws IOException, FOPException {
+//      Page p = page.getPage();
+        
+        Rectangle2D bounds = page.getViewArea();
+        pageWidth = (int)((float) bounds.getWidth() / 1000f + .5);
+        pageHeight = (int)((float) bounds.getHeight() / 1000f + .5);
+
+        pageImage =
+            new BufferedImage((int)((pageWidth * (int)scaleFactor) / 100),
+                              (int)((pageHeight * (int)scaleFactor) / 100),
+                              BufferedImage.TYPE_INT_RGB);
+
+        graphics = pageImage.createGraphics();
+        graphics.setRenderingHint (RenderingHints.KEY_FRACTIONALMETRICS,
+                                   RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+
+        transform(graphics, scaleFactor, 0);
+        drawFrame();
+
+        this.currentFontName = "";
+        this.currentFontSize = 0;
+//      renderPageAreas(p);
+//      pageList.add(page);
+    }
+
+    protected void drawFrame() {
+        int width = pageWidth;
+        int height = pageHeight;
+
+        graphics.setColor(Color.white);
+        graphics.fillRect(0, 0, width, height);
+
+        graphics.setColor(Color.black);
+        graphics.drawRect(-1, -1, width + 2, height + 2);
+        graphics.drawLine(width + 2, 0, width + 2, height + 2);
+        graphics.drawLine(width + 3, 1, width + 3, height + 3);
+
+        graphics.drawLine(0, height + 2, width + 2, height + 2);
+        graphics.drawLine(1, height + 3, width + 3, height + 3);
+    }
+    
 }
