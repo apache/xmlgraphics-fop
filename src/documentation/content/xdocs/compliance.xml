@@ -45,7 +45,10 @@ So, for example, a given item may be blue either because it is not required at t
         </level-2>
         <level-2 name="Block Formatting Objects" citation="§6.5" extURL="slice6.html#section-N12764-Block-level-Formatting-Objects" ref-name="block">
           <level-3 name="block" citation="§6.5.2" extURL="slice6.html#fo_block" compliance-level="1" comply="yes"/>
-          <level-3 name="block-container" citation="§6.5.3" extURL="slice6.html#fo_block-container" compliance-level="2" comply="partial"/>
+          <level-3 name="block-container" citation="§6.5.3" extURL="slice6.html#fo_block-container" compliance-level="2" comply="partial">
+            <comment>Currently only works as direct child of fo:flow.</comment>
+            <comment>For absolute positioning, use 'position="absolute"' (as 'absolute-position="absolute"' is not implemented), and specify all four of "left", "top", "width" and "height"</comment>
+          </level-3>
         </level-2>
         <level-2 name="Inline Formatting Objects" citation="§6.6" extURL="slice6.html#section-N13277-Inline-level-Formatting-Objects" ref-name="inline">
           <level-3 name="bidi-override" citation="§6.6.2" extURL="slice6.html#fo_bidi-override" compliance-level="2" comply="no"/>
