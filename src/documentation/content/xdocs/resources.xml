@@ -20,24 +20,52 @@ If you are using Microsoft Outlook, this setting can be found at the "Mail Forma
       </section>
       <section id="mailing-lists-fop-user">
         <title>FOP User Mailing List</title>
-        <p>Use this forum to discuss topics of interest to FOP users.
-After reviewing the FOP documentation and searching the archives (see below), use this forum to ask questions about how to download, install, configure, and use FOP.
-Please do <em>not</em> use this forum for general XSL-FO, XSLT, or PDF questions.</p>
-        <ul>
-          <li>To review the archives, you have several options:
-            <ul>
-              <li>The <jump href="http://marc.theaimsgroup.com/?l=fop-user&amp;r=1&amp;w=2">Mailing list ARChives </jump> (MARC) at the AIMS group (search).</li>
-              <li>The <jump href="http://nagoya.apache.org/eyebrowse/SummarizeList?listName=fop-user@xml.apache.org">Apache Eyebrowse</jump> archive (search, list by date, author, subject, or thread).</li>
-              <li>The <link href="http://xml.apache.org/mail/fop-user">Apache Mailing List archive</link> (gzip files).</li>
-            </ul>
-          </li>
-          <li>Before posting questions to any list, see "<link href="#mailing-lists-general">General Information</link>".</li>
-          <li>See <link href="http://xml.apache.org/mail.html#fop-user">Apache XML Mailing Lists</link> for detailed subscription information.</li>
-          <li>To subscribe (digest only): Send email to <link href="mailto:fop-user-digest-subscribe@xml.apache.org">fop-user-digest-subscribe@xml.apache.org</link>.</li>
-          <li>To subscribe fully: Send email to <link href="mailto:fop-user-subscribe@xml.apache.org">fop-user-subscribe@xml.apache.org</link>.</li>
-          <li>For standard help: Send email to <link href="mailto:fop-user-help@xml.apache.org">fop-user-help@xml.apache.org</link>.</li>
-          <li>To unsubscribe: Send email to <link href="mailto:fop-user-unsubscribe@xml.apache.org">fop-user-unsubscribe@xml.apache.org</link>.</li>
+        <p>Use this forum to discuss topics of interest to FOP users.</p>
+        <section id="ml-fop-user-archive">
+          <title>Archives</title>
+          <p>To review the archives, you have several options:</p>
+          <ul>
+            <li>The <jump href="http://marc.theaimsgroup.com/?l=fop-user&amp;r=1&amp;w=2">Mailing list ARChives </jump> (MARC) at the AIMS group (search).</li>
+            <li>The <jump href="http://nagoya.apache.org/eyebrowse/SummarizeList?listName=fop-user@xml.apache.org">Apache Eyebrowse</jump> archive (search, list by date, author, subject, or thread).</li>
+            <li>The <link href="http://xml.apache.org/mail/fop-user">Apache Mailing List archive</link> (gzip files).</li>
+          </ul>
+        </section>
+        <section id="ml-fop-user-subscribe">
+          <title>Subscription Information</title>
+          <ul>
+            <li>See <link href="http://xml.apache.org/mail.html#fop-user">Apache XML Mailing Lists</link> for detailed subscription information.</li>
+            <li>To subscribe (digest only): Send email to <link href="mailto:fop-user-digest-subscribe@xml.apache.org">fop-user-digest-subscribe@xml.apache.org</link>.</li>
+            <li>To subscribe fully: Send email to <link href="mailto:fop-user-subscribe@xml.apache.org">fop-user-subscribe@xml.apache.org</link>.</li>
+            <li>For standard help: Send email to <link href="mailto:fop-user-help@xml.apache.org">fop-user-help@xml.apache.org</link>.</li>
+            <li>To unsubscribe: Send email to <link href="mailto:fop-user-unsubscribe@xml.apache.org">fop-user-unsubscribe@xml.apache.org</link>.</li>
         </ul>
+        </section>
+        <section id="ml-fop-user-policy">
+          <title>Sumitting a Question</title>
+          <p>FOP support is primarily <em>self-service</em>. The FOP User Mailing List serves as a backup to the self-service documentation for cases where either the documentation is deficient or where users have unusual circumstances. FOP developers and users are happy to help answer questions that are <em>appropriate to the forum</em> (i.e. FOP-specific), and that are <em>submitted after appropriate preparation</em>. To ensure that your question is not <strong>abusive</strong> of this policy, please use the following checklist:</p>
+          <ul>
+            <li>Have you followed the <link href="gethelp.html">Getting Help</link> checklist? If not, please do so before submitting your question.</li>
+            <li>Is your question appropriate to the forum? If it is really an XSL-FO question, XSLT question, or PDF question, please see the other resources on this page that are intended to help you get those questions answered.</li>
+            <li>Have you read <link href="#mailing-lists-general">Mailing List General Information</link>? If not please do so before proceeding.</li>
+            <li>Have you stated the version of FOP you are using? Please do so.</li>
+            <li>Have you included any detailed error messages? Please do so.</li>
+            <li>Does a proper understanding of your question require inclusion of XSLT code, DocBook source, or other semantic XML? If so, the question is <em>almost certainly not appropriate to this list</em>. In general, the only input documents that are appropriate on this list are XSL-FO snippets. See <link href="running.html#running_xalan">Running Xalan</link> for instructions about capturing the XSL-FO document that is actually submitted to FOP. If you haven't examined the XSL-FO document yourself, then you are not yet prepared to formulate a FOP-specific question.</li>
+            <li>If you are providing one or more XSL-FO snippets:
+              <ul>
+                <li>Have you reduced them to the shortest possible complete, <strong>self-contained</strong> document that demonstrates the problem? Please do so.</li>
+                <li>Have you removed images that are not an integral part of the question? Please do so.</li>
+                <li>Have you filtered out confidential material? Please do so.</li>
+              </ul> 
+            </li>
+            <li>If you are including a stack trace:
+              <ul>
+                <li>Is it helpful in finding the problem? If not, please do not submit it.</li>
+                <li>Have you included only those portions that are relevant to the question? If not, please do so.</li>
+              </ul>
+            </li>
+            <li>Are you attaching large PDF files or screen shots to your message? If so, please consider attaching a minimal, appropriate B&amp;W GIF, JPG or PNG that conveys the necessary information instead.</li>
+          </ul>
+        </section>
       </section>
       <section id="mailing-lists-w3c-xslfo">
         <title>XSL-FO Mailing List (at W3C)</title>
