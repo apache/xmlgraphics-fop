@@ -127,7 +127,7 @@ public class InstreamForeignObject extends FObj {
         Point2D size = child.getDimension(new Point2D.Float(-1, -1));
 
         Document doc = child.getDocument();
-        String ns = child.getNameSpace();
+        String ns = child.getDocumentNamespace();
 
         children = null;
         ForeignObject foreign = new ForeignObject(doc, ns);

@@ -53,7 +53,7 @@ public abstract class XMLObj extends FONode {
     }
 
     public Document getDocument() {
-         return doc;
+        return doc;
     }
 
     public Point2D getDimension(Point2D view) {
@@ -61,6 +61,10 @@ public abstract class XMLObj extends FONode {
     }
 
     public abstract String getNameSpace();
+
+    public String getDocumentNamespace() {
+        return getNameSpace();
+    }
 
     protected static HashMap ns = new HashMap();
     static {
