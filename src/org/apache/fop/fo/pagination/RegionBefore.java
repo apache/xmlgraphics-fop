@@ -8,6 +8,8 @@
 package org.apache.fop.fo.pagination;
 
 // FOP
+
+import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.fo.*;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.RegionReference;
@@ -40,10 +42,14 @@ public class RegionBefore extends RegionBA {
     }
 
 
-    protected Rectangle getViewportRectangle (Rectangle pageRefRect) {
+    protected Rectangle getViewportRectangle (FODimension reldims) {
 	// Depends on extent and precedence
-	Rectangle vpRect = new Rectangle(pageRefRect);
-	vpRect.height = getExtent();
+      // This should return rectangle in writing-mode coordinates relative
+      // to the page-reference area rectangle
+      // This means the origin is (start, before) and the dimensions are (ipd,bpd)
+      // Before is always 0, start depends on extent
+      // ipd depends on precedence, bpd=extent
+	Rectangle vpRect = new Rectangle(0, 0, reldims.ipd, getExtent());
 	if (getPrecedence() == false) {
 	    adjustIPD(vpRect);
 	}

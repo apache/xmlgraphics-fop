@@ -7,6 +7,10 @@
 
 package org.apache.fop.fo;
 
+
+import java.awt.geom.Rectangle2D;
+import org.apache.fop.area.CTM;
+import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.layout.BorderAndPadding;
@@ -20,6 +24,7 @@ import org.apache.fop.layout.AbsolutePositionProps;
 import org.apache.fop.fo.properties.BreakAfter;
 import org.apache.fop.fo.properties.BreakBefore;
 import org.apache.fop.fo.properties.Constants;
+import org.apache.fop.fo.properties.WritingMode;
 import org.apache.fop.layout.HyphenationProps;
 import org.apache.fop.apps.FOPException;
 import java.text.MessageFormat;
@@ -187,6 +192,7 @@ public class PropertyManager {
         }
     }
 
+
     public MarginProps getMarginProps() {
         MarginProps props = new MarginProps();
 
@@ -199,13 +205,15 @@ public class PropertyManager {
             this.properties.get("margin-left").getLength().mvalue();
         props.marginRight =
             this.properties.get("margin-right").getLength().mvalue();
-        /*
-         * // need to get opt, min and max
-         * props.spaceBefore = this.properties.get("space-before").getLength().mvalue();
-         * props.spaceAfter = this.properties.get("space-after").getLength().mvalue();
-         * props.startIndent = this.properties.get("start-indent").getLength().mvalue();
-         * props.endIndent = this.properties.get("end-indent").getLength().mvalue();
-         */
+
+        // For now, we only get the optimum value for space-before and after
+        props.spaceBefore = this.properties.get("space-before").getSpace().
+	    getOptimum().getLength().mvalue();
+        props.spaceAfter = this.properties.get("space-after").getSpace().
+	    getOptimum().getLength().mvalue();
+        props.startIndent = this.properties.get("start-indent").getLength().mvalue();
+        props.endIndent = this.properties.get("end-indent").getLength().mvalue();
+
         return props;
     }
 
@@ -246,5 +254,70 @@ public class PropertyManager {
     public AbsolutePositionProps getAbsolutePositionProps() {
         AbsolutePositionProps props = new AbsolutePositionProps();
         return props;
+    }
+
+    public CTM getCTMandRelDims(Rectangle2D absVPrect, FODimension reldims) {
+	int width, height;
+        // We will use the absolute reference-orientation to set up the CTM.
+        // The value here is relative to its ancestor reference area.
+        int absRefOrient =
+            getAbsRefOrient(this.properties.get("reference-orientation").
+			    getNumber().intValue());
+        if (absRefOrient % 180 == 0) {
+            width = (int)absVPrect.getWidth();
+            height = (int)absVPrect.getHeight();
+        }
+        else {
+            // invert width and height since top left are rotated by 90 (cl or ccl)
+            height = (int)absVPrect.getWidth();
+            width = (int)absVPrect.getHeight();
+        }
+        /* Set up the CTM for the content of this reference area. This will transform
+         * region content coordinates in writing-mode relative into absolute page-relative
+         * which will then be translated based on the position of the region viewport
+         * (Note: scrolling between region vp and ref area when doing online content!)
+         */
+         CTM ctm = new CTM(absVPrect.getX(), absVPrect.getY());
+         // First transform for rotation
+         if (absRefOrient != 0) {
+            // Rotation implies translation to keep the drawing area in the
+            // first quadrant. Note: rotation is counter-clockwise
+             switch (absRefOrient) {
+               case 90:
+                ctm = ctm.translate(height, 0); // height = absVPrect.width
+                break;
+            case 180:
+                ctm = ctm.translate(width, height);
+                break;
+            case 270:
+                ctm = ctm.translate(0, width); // width = absVPrect.height
+                break;
+           }
+           ctm = ctm.rotate(absRefOrient);
+         }
+        int wm = this.properties.get("writing-mode").getEnum();
+        /* Since we've already put adjusted width and height values for the
+         * top and left positions implied by the reference-orientation, we
+         * can set ipd and bpd appropriately based on the writing mode.
+         */
+
+        if (wm == WritingMode.LR_TB || wm == WritingMode.RL_TB) {
+            reldims.ipd = width;
+            reldims.bpd = height;
+        }
+        else {
+            reldims.ipd=height;
+            reldims.bpd=width;
+        }
+	// Set a rectangle to be the writing-mode relative version???
+	// Now transform for writing mode
+        return ctm.multiply(CTM.getWMctm(wm, reldims.ipd, reldims.bpd));
+    }
+
+    /**
+     * Calculate absolute reference-orientation relative to media orientation.
+     */
+    private int getAbsRefOrient(int myRefOrient) {
+	return myRefOrient;
     }
 }

@@ -1384,7 +1384,7 @@
   <property>
     <name>reference-orientation</name>
     <inherited>true</inherited>
-    <datatype>ToBeImplemented</datatype>
+    <datatype>Number</datatype>
     <default>0</default>
   </property>
   <property>
@@ -1655,7 +1655,7 @@
   <property>
   <name>column-count</name>
   <inherited>false</inherited>
-  <datatype>String</datatype>
+  <datatype>Number</datatype>
   <default>1</default>
    </property>
   <property>

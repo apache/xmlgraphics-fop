@@ -18,9 +18,21 @@ public class RegionReference extends Area implements Serializable {
     public static final int END = 3;
     public static final int AFTER = 4;
     int regionClass = BEFORE;
+    private CTM ctm;
 
     public RegionReference(int type) {
         regionClass = type;
+    }
+
+    /**
+     * Set the Coordinate Transformation Matrix which transforms content
+     * coordinates in this region reference area which are specified in
+     * terms of "start" and "before" into coordinates in a system which
+     * is positioned in "absolute" directions (with origin at lower left of
+     * the region reference area.
+     */
+    public void setCTM(CTM ctm) {
+        this.ctm = ctm;
     }
 
     // the list of block areas from the static flow

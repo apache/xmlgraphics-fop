@@ -10,6 +10,8 @@ package org.apache.fop.fo.pagination;
 // FOP
 import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
+import org.apache.fop.area.CTM;
+import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Page;
 import org.apache.fop.area.RegionViewport;
@@ -19,6 +21,7 @@ import org.apache.fop.layout.PageMaster;
 import org.apache.fop.apps.FOPException;
 
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.Iterator;
 import org.xml.sax.Attributes;
@@ -73,7 +76,7 @@ public class SimplePageMaster extends FObj {
         // this.properties.get("reference-orientation");
         // this.properties.get("writing-mode");
 
-        // Common Margin Properties-Block
+        // Get absolute margin properties (top, left, bottom, right)
         MarginProps mProps = propMgr.getMarginProps();
 
 	/* Create the page reference area rectangle in first quadrant coordinates
@@ -82,12 +85,17 @@ public class SimplePageMaster extends FObj {
 	 * The media rectangle itself is (0,0,pageWidth,pageHeight).
 	 */
 	Rectangle pageRefRect =
-	    new Rectangle(mProps.marginLeft, pageHeight - mProps.marginTop,
+	    new Rectangle(mProps.marginLeft, mProps.marginBottom,
 			  pageWidth - mProps.marginLeft - mProps.marginRight,
 			  pageHeight - mProps.marginTop - mProps.marginBottom);
 
 	// ??? KL shouldn't this take the viewport too???
 	Page page = new Page();  // page reference area
+
+        // Set up the CTM on the page reference area based on writing-mode
+        // and reference-orientation
+	FODimension reldims=new FODimension(0,0);
+	CTM pageCTM = propMgr.getCTMandRelDims(pageRefRect, reldims);
 
 	// Create a RegionViewport/ reference area pair for each page region
 
@@ -96,8 +104,8 @@ public class SimplePageMaster extends FObj {
         for (Iterator regenum = _regions.values().iterator();
                 regenum.hasNext(); ) {
             Region r = (Region)regenum.next();
-	    RegionViewport rvp = r.makeRegionViewport(pageRefRect);
-	    rvp.setRegion(r.makeRegionReferenceArea());
+	    RegionViewport rvp = r.makeRegionViewport(reldims, pageCTM);
+	    rvp.setRegion(r.makeRegionReferenceArea(rvp.getViewArea()));
 	    page.setRegion(r.getRegionAreaClass(), rvp);
 	    if (r.getRegionAreaClass() == RegionReference.BODY) {
 		bHasBody = true;
