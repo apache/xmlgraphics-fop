@@ -122,7 +122,7 @@ public class BodyRegion extends RegionReference {
      * @return whether the main reference area has any child areas added to it
      */
     public boolean isEmpty() {
-        return mainReference.isEmpty();
+        return mainReference == null || mainReference.isEmpty();
     }
 
 
