@@ -89,7 +89,9 @@ public class StyleData {
 					if(value.startsWith("url(")) {
 						table.put(type, new String(value));
 					} else if(!value.equals("none")) {
-							table.put(type, new ColorType(value));
+						table.put(type, new ColorType(value));
+					} else if(value.equals("none")) {
+						table.put(type, value);
 					}
 				} else if(type.equals("color")) {
 //					if(!value.equals("none"))
@@ -100,15 +102,19 @@ public class StyleData {
 				} else if(type.equals("stroke-linejoin")) {
 					table.put(type, value);
 				} else if(type.equals("stroke-miterlimit")) {
+					table.put(type, new SVGLengthImpl(value));
 				} else if(type.equals("stroke-dasharray")) {
 					// array of space or comma separated numbers
-					Vector list = new Vector();
-					StringTokenizer array = new StringTokenizer(value, " ,");
-					while(array.hasMoreTokens()) {
-						String intstr = array.nextToken();
-						list.addElement(new Integer(Integer.parseInt(intstr)));
+					if(!value.equals("none")) {
+						Vector list = new Vector();
+						StringTokenizer array = new StringTokenizer(value, " ,");
+						while(array.hasMoreTokens()) {
+							String intstr = array.nextToken();
+							list.addElement(new Integer(Integer.parseInt(intstr)));
+						}
+						table.put(type, list);
 					}
-					table.put(type, list);
+					// else leave ??
 				} else if(type.equals("stroke-dashoffset")) {
 					table.put(type, new SVGLengthImpl(value));
 				} else if(type.equals("stroke-opacity")) {
@@ -117,11 +123,12 @@ public class StyleData {
 						table.put(type, new String(value));
 					} else if(!value.equals("none")) {
 						table.put(type, new ColorType(value));
+					} else {
+						table.put(type, value);
 					}
-//					else
-//						table.put(type, null);
 				} else if(type.equals("fill-rule")) {
 					// nonzero
+					table.put(type, value);
 				} else if(type.equals("font")) {
 					table.put(type, value);
 				} else if(type.equals("font-size")) {
