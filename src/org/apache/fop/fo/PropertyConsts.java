@@ -36,7 +36,6 @@ import org.apache.fop.datastructs.ROBitSet;
 import org.apache.fop.datatypes.PropertyValue;
 
 /**
- * <p>
  * This class contains a number of arrays containing values indexed by the
  * property index value, determined from the PropNames class.  These arrays
  * provide a means of accessing information about the nature of a property
@@ -56,7 +55,7 @@ public class PropertyConsts {
 
     private static final String packageName = "org.apache.fop.fo";
 
-    private static final PropertyConsts pconsts;
+    public static final PropertyConsts pconsts;
     static {
         try {
             pconsts = new PropertyConsts();
@@ -81,8 +80,8 @@ public class PropertyConsts {
 
     /**
      * A Class[] array containing Class objects corresponding to each of the
-     * class names in the classNames array.  It is initialized in a
-     * static initializer in parallel to the creation of the class names in
+     * class names in the classNames array.  Elements are set
+     * in parallel to the creation of the class names in
      * the classNames array.  It can be indexed by the property name
      * constants defined in this file.
      */
@@ -90,12 +89,24 @@ public class PropertyConsts {
                             = new Class[PropNames.LAST_PROPERTY_INDEX + 1];
 
     /**
-     * A HashMap whose elements are an integer index value keyed by a
-     * property name.  The index value is the index of the property name in
-     * the PropNames.propertyNames[] array.
-     * It is initialized in a static initializer.
+     * A String[] array of the property class names.  This array is
+     * effectively 1-based, with the first element being unused.
+     * The elements of this array are set by converting the FO
+     * property names from the array PropNames.propertyNames into class
+     * names by converting the first character of every component word to
+     * upper case, and removing all punctuation characters.
+     * It can be indexed by the property name constants defined in
+     * the PropNames class.
      */
-    private final HashMap toIndex
+    private final String[] classNames
+                            = new String[PropNames.LAST_PROPERTY_INDEX + 1];
+
+    /**
+     * A HashMap whose elements are an integer index value keyed by the name
+     * of a property class.  The index value is the index of the property
+     * class name in the classNames[] array.
+     */
+    private final HashMap classToIndex
                         = new HashMap(PropNames.LAST_PROPERTY_INDEX + 1);
 
     /**
@@ -127,15 +138,32 @@ public class PropertyConsts {
                             = new int[PropNames.LAST_PROPERTY_INDEX + 1];
 
     /**
+     * A <tt>PropertyValue</tt> array containing the initial values of
+     * each of the properties.
+     */
+    private final PropertyValue[] initialValues
+                    = new PropertyValue[PropNames.LAST_PROPERTY_INDEX + 1];
+
+    /**
      * An int[] array of the values of the <i>dataTypes</i> field of each
      * property.  The array is indexed by the index value constants that are
      * defined in the PropNames class in parallel to the
      * PropNames.propertyNames[] array.
-     * <p>
-     * The array is initialized in a static initializer from the values of the
+     * The array elements are set from the values of the
      * <i>dataTypes</i> field in each property class.
      */
     private final int[] datatypes
+                            = new int[PropNames.LAST_PROPERTY_INDEX + 1];
+
+    /**
+     * An int[] array of the values of the <i>traitMapping</i> field of each
+     * property.  The array is indexed by the index value constants that are
+     * defined in the PropNames class in parallel to the
+     * PropNames.propertyNames[] array.
+     * The array elements are set from the values of the
+     * <i>traitMapping</i> field in each property class.
+     */
+    private final int[] traitMappings
                             = new int[PropNames.LAST_PROPERTY_INDEX + 1];
 
     /**
@@ -163,36 +191,67 @@ public class PropertyConsts {
             throws PropertyException
     {
         setupProperty(propindex);
+        //System.out.println("getInitialValueType: " + propindex + " "
+                            //+ initialValueTypes[propindex]);
         return initialValueTypes[propindex];
     }
 
     /**
-     * Get the initial value for a property index.
-     * @param propindex <tt>int</tt> index of the property
-     * @return <tt>PropertyValue</tt> from property's <i>getInitialValue</i>
-     * method
+     * Get the initial value <tt>PropertyValue</tt> for a given property.
+     * Note that this is a <b>raw</b> value; if it is
+     * an unresolved percentage that value will be returned.
+     * @param index - the property index.
+     * @return a <tt>PropertyValue</tt> containing the initial property
+     * value element for the indexed property.
      * @exception <tt>PropertyException</tt>
      */
     public PropertyValue getInitialValue(int propindex)
             throws PropertyException
     {
+        if (initialValues[propindex] != null)
+            return initialValues[propindex];
         Property property = setupProperty(propindex);
-        return property.getInitialValue(propindex);
+        //System.out.println("PropertyConts.getInitialValue(" + propindex
+                           //+ ") " + property.getClass().getName());
+        return
+            (initialValues[propindex] =
+                    setupProperty(propindex).getInitialValue(propindex));
     }
 
     /**
+     * @param propindex <tt>int</tt> index of the property
      * @param foNode the node whose properties are being constructed.
      * @param value the <tt>PropertyValue</tt> being refined.
      * @return <tt>PropertyValue</tt> constructed by the property's
      * <i>refineParsing</i> method
      * @exception <tt>PropertyException</tt>
      */
-    public PropertyValue refineParsing(FONode foNode, PropertyValue value)
+    public PropertyValue refineParsing
+                        (int propindex, FONode foNode, PropertyValue value)
         throws PropertyException
     {
-        int propindex = value.getProperty();
         Property property = setupProperty(propindex);
-        return property.refineParsing(foNode, value);
+        return property.refineParsing(propindex, foNode, value);
+    }
+
+    /**
+     * @param propindex <tt>int</tt> index of the property
+     * @param foNode the node whose properties are being constructed.
+     * @param value the <tt>PropertyValue</tt> being refined.
+     * @param nested - <tt>boolean</tt> indicating whether this method is
+     * called normally (false), or as part of another <i>refineParsing</i>
+     * method.
+     * @see #refineParsing(FOTree,PropertyValue)
+     * @return <tt>PropertyValue</tt> constructed by the property's
+     * <i>refineParsing</i> method
+     * @exception <tt>PropertyException</tt>
+     */
+    public PropertyValue refineParsing
+        (int propindex, FONode foNode, PropertyValue value, boolean isNested)
+        throws PropertyException
+    {
+        Property property = setupProperty(propindex);
+        return property.refineParsing(propindex, foNode, value, isNested);
     }
 
     /**
@@ -242,7 +301,7 @@ public class PropertyConsts {
      */
     public boolean isInherited(int propindex) throws PropertyException {
         Property property = setupProperty(propindex);
-        return (inherited[propindex] & Property.NO) == 0;
+        return inherited[propindex] != Property.NO;
     }
 
     /**
@@ -368,6 +427,8 @@ public class PropertyConsts {
         Class pclass;
         Property property;
 
+        //System.out.println("setupProperty " + propindex + " "
+                            //+ PropNames.getPropertyName(propindex));
         if ((property = properties[propindex]) != null) return property;
 
         // Get the property class name
@@ -381,10 +442,16 @@ public class PropertyConsts {
                             ).toString() + token.substring(1);
             cname = cname + pname;
         }
-        //classNames[propindex] = cname;
+        classNames[propindex] = cname;
+        
+        // Set up the classToIndex Hashmap with the name of the
+        // property class as a key, and the integer index as a value
+        if (classToIndex.put(cname, Ints.consts.get(propindex)) != null)
+            throw new PropertyException
+                ("Duplicate values in classToIndex for key " + cname);
 
         // Get the class for this property name
-        String name = packageName + "." + cname;
+        String name = packageName + ".properties." + cname;
         try {
             //System.out.println("classes["+propindex+"] "+name);//DEBUG
             pclass = Class.forName(name);
@@ -393,40 +460,51 @@ public class PropertyConsts {
             // Instantiate the class
             property = (Property)(pclass.newInstance());
             properties[propindex] = property;
+            //System.out.println
+                    //("property name "
+                     //+ property.getClass().getName());
+            //System.out.println
+            //("property name " +
+            //properties[propindex].getClass().getName());
 
             // Set inheritance value
-            if ((inherited[propindex] = property.inherited) != Property.NO)
-                        inheritedprops.set(propindex);
+            if ((inherited[propindex]
+                                = pclass.getField("inherited").getInt(null))
+                    != Property.NO)
+                            inheritedprops.set(propindex);
             // Set datatypes
-            datatypes[propindex] = property.dataTypes;
+            datatypes[propindex] = pclass.getField("dataTypes").getInt(null);
+            //System.out.println("datatypes " + datatypes[propindex] + "\n"
+                           //+ Property.listDataTypes(datatypes[propindex]));
 
             // Set initialValueTypes
-            initialValueTypes[propindex] = property.initialValueType;
+            initialValueTypes[propindex] =
+                            pclass.getField("initialValueType").getInt(null);
+            //System.out.println("initialValueType "
+                               //+ initialValueTypes[propindex]);
+
+            traitMappings[propindex] =
+                                pclass.getField("traitMapping").getInt(null);
 
         } catch (ClassNotFoundException e) {
-            throw new PropertyException(e);
+            throw new PropertyException
+                    ("ClassNotFoundException" + e.getMessage());
         } catch (IllegalAccessException e) {
-            throw new PropertyException(e);
+            throw new PropertyException
+                    ("IllegalAccessException" + e.getMessage());
         } catch (InstantiationException e) {
-            throw new PropertyException(e);
+            throw new PropertyException
+                    ("InstantiationException" + e.getMessage());
+        }
+        catch (NoSuchFieldException e) {
+            throw new PropertyException
+                    ("NoSuchFieldException" + e.getMessage());
         }
 
         return property;
     }
 
 
-    private PropertyConsts () throws PropertyException {
-        
-        // Set up the toIndex Hashmap with the name of the
-        // property as a key, and the integer index as a value
-        for (int i = 0; i <= PropNames.LAST_PROPERTY_INDEX; i++) {
-            if (toIndex.put(PropNames.getPropertyName(i),
-                                    Ints.consts.get(i)) != null) {
-                throw new PropertyException(
-                    "Duplicate values in toIndex for key " +
-                    PropNames.getPropertyName(i));
-            }
-        }
-    }
+    private PropertyConsts () throws PropertyException {}
 
 }
