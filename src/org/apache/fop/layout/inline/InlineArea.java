@@ -73,6 +73,9 @@ public abstract class InlineArea extends Area {
                       float blue) {
         super(fontState);
         this.contentRectangleWidth = width;
+        this.red = red;
+        this.green = green;
+        this.blue = blue;
     }
 
     public float getBlue() {
