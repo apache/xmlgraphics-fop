@@ -4,7 +4,7 @@
 
 <document>
   <header>
-    <title>Downloading FOP</title>
+    <title>FOP: Downloading A Distribution</title>
   </header>
   <body>
   <section id="dist-type">
@@ -14,6 +14,7 @@ However, a source distribution will be preferable if you fall into one of the fo
     <ul>
       <li>You wish to modify FOP.</li>
       <li>You wish to use a version more recent than the latest release. For example, if you have read on the user mailing list that a bug has been fixed or a feature added that you are eager to try, you might download a source distribution from the CVS repository so that you don't have to wait for the next release.</li>
+      <li>You wish to build a local copy of the API documentation (javadocs).</li>
     </ul>
   </section>
   <section id="binary">

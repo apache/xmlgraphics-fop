@@ -4,13 +4,13 @@
 
 <document>
   <header>
-    <title>Compiling FOP</title>
+    <title>FOP: Building from Source Code</title>
   </header>
   <body>
     <section>
-      <title>Do You Need To Compile?</title>
+      <title>Do You Need To Build?</title>
       <p>FOP distributions are either pre-compiled binary or source.
-If you are using a binary distribution, it is already compiled and there is no need to compile it again. See the <link href="download.html">Download Instructions</link> for information about whether a binary or source distribution is best for your needs.
+If you are using a binary distribution, it is already built and there is no need to build it again. See the <link href="download.html">Download Instructions</link> for information about whether a binary or source distribution is best for your needs.
       </p>
     </section>
     <section>
@@ -29,18 +29,35 @@ You will only need to adjust the classpath if you build FOP in some other way. S
       </section>
       <section>
         <title>JAVA_HOME</title>
-        <p>Ant, which is used by the build script, requires that the enviroment variable JAVA_HOME point to your local JDK root directory.
+        <p>Ant, which is used by the build script, requires that the environment variable JAVA_HOME point to your local JDK root directory.
 This is true even if you use JDK 1.2 or above, which normally don't need this setting.</p>
       </section>
   </section>
   <section>
     <title>Run the "build" Script</title>
     <p>Build FOP by executing the "build" script, which is located in the FOP root directory.
-The Windows batch file is build.bat, and the Unix shell script is build.sh.</p>
+The Windows batch file is build.bat, and the Unix shell script is build.sh.
+The examples below are for running the shell script, but except for the build file extension, the syntax is identical.</p>
     <p>The build script uses <link href="http://jakarta.apache.org/ant/">Ant</link>, a popular java-based build tool.
 The file build.xml in the FOP root directory is the blueprint that Ant uses for the build.
-Consult its contents for detailed information on the build process and the various build targets.</p>
-    <p>A help screen is shown by calling "build usage".</p>
+It contains information for numerous build targets, many of which are building blocks to more useful target, and others which are primarily used by the FOP developers.
+You may benefit from looking through this file to learn more about the various build targets.
+To obtain a complete list of useful build targets:</p>
+    <source>build.sh -projecthelp</source>
+    <p>The most useful targets are:</p>
+    <ul>
+      <li><strong>package</strong>: Generates the jar files (default). This is the normal build that produces a jar file usable for running FOP.</li>
+      <li><strong>clean </strong>: Cleans the build directory. This is useful for making sure that any build errors are cleaned up before starting a new build. It should not ordinarily be needed, but may be helpful if you are having problems with the build process itself.</li>
+      <li><strong>javadocs</strong>: Generates javadocs. This creates the FOP API documentation.</li>
+    </ul>
+    <p>To run the build:</p>
+    <source>build.sh [target ...]</source>
+    <p>For example to do a normal build for the package target (which is the default):</p>
+    <source>build.sh</source>
+    <p>OR</p>
+    <source>build.sh package</source>
+    <p>To clean the build directory first:</p>
+    <source>build.sh clean package</source>
   </section>
   <section>
     <title>Troubleshooting</title>
