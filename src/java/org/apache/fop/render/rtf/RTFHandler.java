@@ -59,7 +59,9 @@ import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.avalon.framework.logger.Logger;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.fo.EnumProperty;
 import org.apache.fop.fo.FOInputHandler;
+import org.apache.fop.datatypes.FixedLength;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.ExternalGraphic;
 import org.apache.fop.fo.flow.Inline;
@@ -78,10 +80,12 @@ import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.properties.Constants;
 import org.apache.fop.fo.Property;
+import org.apache.fop.fo.LengthProperty;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.apps.Document;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfAfterContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfBeforeContainer;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfExternalGraphicContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfPageNumberContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfParagraphContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfTextrunContainer;
@@ -91,6 +95,7 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfBefore;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfColorTable;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfDocumentArea;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfElement;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfExternalGraphic;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFile;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFontManager;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfParagraph;
@@ -111,6 +116,7 @@ import org.xml.sax.SAXException;
  * @author Trembicki-Guy, Ed <GuyE@DNB.com>
  * @author Boris Poudérous <boris.pouderous@eads-telecom.com>
  * @author Peter Herweg <pherweg@web.de>
+ * @author Andreas Putz <a.putz@skynamics.com>
  */
 public class RTFHandler extends FOInputHandler {
 
@@ -693,6 +699,64 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#image(ExternalGraphic)
      */
     public void image(ExternalGraphic eg) {
+        try {
+       
+        
+            final IRtfTextrunContainer c =
+                    (IRtfTextrunContainer)builderContext.getContainer(IRtfTextrunContainer.class,
+                    true, this);
+            
+            final RtfExternalGraphic newGraphic = c.getTextrun().newImage();
+       
+            Property p=null; 
+               
+            //get source file
+            if((p=eg.properties.get("src"))!=null) {
+                newGraphic.setURL (p.getString());
+            } else {
+                log.error("The attribute 'src' of <fo:external-graphic> is required.");
+                return;
+            }
+            
+            //get scaling
+            if((p=eg.properties.get("scaling"))!=null) {
+                EnumProperty e=(EnumProperty)p;
+                if(p.getEnum()==Constants.UNIFORM) {
+                    newGraphic.setScaling ("uniform");
+                }
+            }
+            
+            //get width
+            if((p=eg.properties.get("width"))!=null) {
+                LengthProperty lengthProp=(LengthProperty)p;
+                if(lengthProp.getLength() instanceof FixedLength) {
+                    Float f = new Float(lengthProp.getLength().getValue() / 1000f);
+                    String sValue = f.toString() + "pt";
+                    newGraphic.setWidth(sValue);
+                }
+            }
+            
+            //get height
+            if((p=eg.properties.get("height"))!=null) {
+                LengthProperty lengthProp=(LengthProperty)p;
+                if(lengthProp.getLength() instanceof FixedLength) {
+                    Float f = new Float(lengthProp.getLength().getValue() / 1000f);
+                    String sValue = f.toString() + "pt";
+                    newGraphic.setHeight(sValue);
+                }
+            }
+
+            //TODO: make this configurable:
+            //      int compression = m_context.m_options.getRtfExternalGraphicCompressionRate ();
+            int compression = 0;
+            if (compression != 0) {
+                if (! newGraphic.setCompressionRate (compression)) {
+                    log.warn("The compression rate " + compression + " is invalid. The value has to be between 1 and 100 %.");
+                }
+            }
+        } catch(Exception e) {
+            log.error("image: " + e.getMessage());
+        }
     }
 
     /**

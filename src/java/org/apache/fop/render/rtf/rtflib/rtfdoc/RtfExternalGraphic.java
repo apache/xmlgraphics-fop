@@ -277,10 +277,10 @@ public class RtfExternalGraphic extends RtfElement {
             // convert
             int to = ImageConstants.CONVERT_TO [type - ImageConstants.I_TO_CONVERT_BASIS];
 
-            if (to == ImageConstants.I_JPG) {
-                ByteArrayOutputStream out = null;
+//            if (to == ImageConstants.I_JPG) {
+//                ByteArrayOutputStream out = null;
 //                try {
-                    //convert to jpeg
+//                    //convert to jpeg
 //                    out = new ByteArrayOutputStream();
 //                    Encoder jpgEncoder = new Encoder(graphicCompressionRate, out);
 //                    jpgEncoder.encodeJPEG(data);
@@ -292,11 +292,11 @@ public class RtfExternalGraphic extends RtfElement {
 //                            + "not be created (src = '" + url + "'");
 //                }
 //                finally {
-                    out.close();
+//                    out.close();
 //                }
-            } else {
+//            } else {
                 type = ImageConstants.I_NOT_SUPPORTED;
-            }
+//            }
         }
 
 

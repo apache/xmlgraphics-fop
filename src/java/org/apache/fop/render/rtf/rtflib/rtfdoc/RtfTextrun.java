@@ -63,6 +63,7 @@ import java.util.List;
 import java.util.Iterator;
 import java.io.IOException;
 import org.apache.fop.render.rtf.rtflib.exceptions.RtfStructureException;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfExternalGraphic;
 
 /**  Class which contains a linear text run. It has methods to add attributes, text, paragraph breaks....
  *  @author Peter Herweg, pherweg@web.de
@@ -166,6 +167,10 @@ public class RtfTextrun extends RtfContainer {
     
     public void addPageNumber(RtfAttributes attr) throws IOException {
         RtfPageNumber r=new RtfPageNumber(this, writer, attr);
+    }
+    
+    public RtfExternalGraphic newImage() throws IOException {
+        return new RtfExternalGraphic(this, writer);
     }
 
     /**
