@@ -95,7 +95,7 @@ public class FONode extends FOTree.Node{
         propertyStacks = foTree.propertyStacks;
         exprParser = foTree.exprParser;
         id = foTree.nextNodeID();
-        foAttributes = new FOAttributes(event);
+        foAttributes = new FOAttributes(event, this);
         if ( ! (attrSet == MARKER)) {
             processProperties();
         }
