@@ -106,6 +106,7 @@
   <p>Property values can be computed. Compound properties are also understood by Fop.</p>
     <ul>
       <li>background-color </li>
+      <li>background-image </li>
       <li>blank-or-not-blank</li>
       <li>border-after-color</li>
       <li>border-after-style</li>
@@ -170,7 +171,9 @@
       <li>leader-pattern (not value "use-content")</li>
       <li>leader-pattern-width</li>
       <li>left</li>
+      <li>letter-spacing</li>
       <li>line-height </li>
+      <li>margin (only on pages and regions) </li>
       <li>margin-bottom (only on pages and regions) </li>
       <li>margin-left (only on pages and regions) </li>
       <li>margin-right (only on pages and regions) </li>
