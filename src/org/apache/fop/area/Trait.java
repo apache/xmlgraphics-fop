@@ -1,10 +1,53 @@
 /*
  * $Id$
- * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.area;
 
 import org.apache.fop.datatypes.ColorType;
@@ -131,11 +174,20 @@ public class Trait implements Serializable {
     private static final Map TRAIT_INFO = new HashMap();
 
     private static class TraitInfo {
-        String sName;
-        Class sClass; // Class of trait data
-        TraitInfo(String sName, Class sClass) {
-            this.sName = sName;
-            this.sClass = sClass;
+        private String name;
+        private Class clazz; // Class of trait data
+        
+        public TraitInfo(String name, Class clazz) {
+            this.name = name;
+            this.clazz = clazz;
+        }
+        
+        public String getName() {
+            return this.name;
+        }
+        
+        public Class getClazz() {
+            return this.clazz;
         }
     }
 
@@ -189,7 +241,7 @@ public class Trait implements Serializable {
     public static String getTraitName(Object traitCode) {
         Object obj = TRAIT_INFO.get(traitCode);
         if (obj != null) {
-            return ((TraitInfo) obj).sName;
+            return ((TraitInfo) obj).getName();
         } else {
             return "unknown-trait-" + traitCode.toString();
         }
@@ -206,7 +258,7 @@ public class Trait implements Serializable {
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
             TraitInfo ti = (TraitInfo) entry.getValue();
-            if (ti != null && ti.sName.equals(sTraitName)) {
+            if (ti != null && ti.getName().equals(sTraitName)) {
                 return entry.getKey();
             }
         }
@@ -221,21 +273,21 @@ public class Trait implements Serializable {
      */
     private static Class getTraitClass(Object oTraitCode) {
         TraitInfo ti = (TraitInfo) TRAIT_INFO.get(oTraitCode);
-        return (ti != null ? ti.sClass : null);
+        return (ti != null ? ti.getClazz() : null);
     }
 
     /**
      * The type of trait for an area.
      */
-    public Object propType;
+    private Object propType;
 
     /**
      * The data value of the trait.
      */
-    public Object data;
+    private Object data;
 
     /**
-     * Create a new emty trait.
+     * Create a new empty trait.
      */
     public Trait() {
         this.propType = null;
@@ -254,7 +306,24 @@ public class Trait implements Serializable {
     }
 
     /**
+     * Returns the trait data value.
+     * @return the trait data value
+     */
+    public Object getData() {
+        return this.data;
+    }
+
+    /**
+     * Returns the property type.
+     * @return the property type
+     */
+    public Object getPropType() {
+        return this.propType;
+    }
+
+    /**
      * Return the string for debugging.
+     * @see java.lang.Object#toString()
      */
     public String toString() {
         return data.toString();
@@ -263,7 +332,9 @@ public class Trait implements Serializable {
     /**
      * Make a trait value.
      *
-     * @param oCode
+     * @param oCode trait code
+     * @param sTraitValue trait value as String
+     * @return the trait value as object
      */
     public static Object makeTraitValue(Object oCode, String sTraitValue) {
         // Get the code from the name
@@ -284,13 +355,12 @@ public class Trait implements Serializable {
             Object o = tclass.newInstance();
             //return o.fromString(sTraitValue);
         } catch (IllegalAccessException e1) {
-            System.err.println("Can't create instance of " +
-                               tclass.getName());
+            System.err.println("Can't create instance of " 
+                               + tclass.getName());
             return null;
-        }
-        catch (InstantiationException e2) {
-            System.err.println("Can't create instance of " +
-                               tclass.getName());
+        } catch (InstantiationException e2) {
+            System.err.println("Can't create instance of " 
+                               + tclass.getName());
             return null;
         }
 
@@ -303,30 +373,102 @@ public class Trait implements Serializable {
      * Used for storing back trait information which are related.
      */
     public static class Background implements Serializable {
+        
+        /** The background color if any. */
+        private ColorType color = null;
+
+        /** The background image url if any. */
+        private String url = null;
+
+        /** Background repeat enum for images. */
+        private int repeat;
+
+        /** Background horizontal offset for images. */
+        private int horiz;
+
+        /** Background vertical offset for images. */
+        private int vertical;
+        
         /**
-         * The background color if any.
+         * Returns the background color.
+         * @return background color, null if n/a
          */
-        public ColorType color = null;
+        public ColorType getColor() {
+            return color;
+        }
 
         /**
-         * The background image url if any.
+         * Returns the horizontal offset for images.
+         * @return the horizontal offset
          */
-        public String url = null;
+        public int getHoriz() {
+            return horiz;
+        }
 
         /**
-         * Background repeat enum for images.
+         * Returns the image repetition behaviour for images.
+         * @return the image repetition behaviour
          */
-        public int repeat;
+        public int getRepeat() {
+            return repeat;
+        }
 
         /**
-         * Background horizontal offset for images.
+         * Returns the URL to the background image
+         * @return URL to the background image, null if n/a
          */
-        public int horiz;
+        public String getURL() {
+            return url;
+        }
 
         /**
-         * Background vertical offset for images.
+         * Returns the vertical offset for images.
+         * @return the vertical offset
          */
-        public int vertical;
+        public int getVertical() {
+            return vertical;
+        }
+
+        /**
+         * Sets the color.
+         * @param color The color to set
+         */
+        public void setColor(ColorType color) {
+            this.color = color;
+        }
+
+        /**
+         * Sets the horizontal offset.
+         * @param horiz The horizontal offset to set
+         */
+        public void setHoriz(int horiz) {
+            this.horiz = horiz;
+        }
+
+        /**
+         * Sets the image repetition behaviour for images.
+         * @param repeat The image repetition behaviour to set
+         */
+        public void setRepeat(int repeat) {
+            this.repeat = repeat;
+        }
+
+        /**
+         * Sets the URL to the background image.
+         * @param url The URL to set
+         */
+        public void setURL(String url) {
+            this.url = url;
+        }
+
+        /**
+         * Sets the vertical offset for images.
+         * @param vertical The vertical offset to set
+         */
+        public void setVertical(int vertical) {
+            this.vertical = vertical;
+        }
+
     }
 
 }

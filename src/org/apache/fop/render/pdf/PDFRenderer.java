@@ -1,11 +1,70 @@
 /*
  * $Id$
- * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.render.pdf;
+
+// Java
+import java.io.IOException;
+import java.io.OutputStream;
+import java.awt.Color;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.AffineTransform;
+import java.util.Map;
+import java.util.List;
+
+// XML
+import org.w3c.dom.Document;
+
+// Avalon
+import org.apache.avalon.framework.configuration.Configuration;
+import org.apache.avalon.framework.configuration.ConfigurationException;
 
 // FOP
 import org.apache.fop.render.PrintRenderer;
@@ -18,7 +77,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.Version;
 import org.apache.fop.fo.properties.RuleStyle;
 import org.apache.fop.fo.properties.BackgroundRepeat;
-import org.apache.fop.fonts.*;
+import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.pdf.PDFDocument;
@@ -55,20 +114,6 @@ import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.datatypes.ColorType;
-
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
-
-import org.w3c.dom.Document;
-
-// Java
-import java.io.IOException;
-import java.io.OutputStream;
-import java.awt.Color;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.AffineTransform;
-import java.util.Map;
-import java.util.List;
 
 /*
 todo:
@@ -110,6 +155,7 @@ public class PDFRenderer extends PrintRenderer {
      * for pdf this means we need the pdf page reference
      */
     protected Map pageReferences = new java.util.HashMap();
+    /** Page viewport references */
     protected Map pvReferences = new java.util.HashMap();
 
     private String producer = "FOP";
@@ -141,13 +187,17 @@ public class PDFRenderer extends PrintRenderer {
      */
     protected PDFPage currentPage;
 
-    // drawing state
+    /** drawing state */
     protected PDFState currentState = null;
 
+    /** Name of currently selected font */
     protected String currentFontName = "";
+    /** Size of currently selected font */
     protected int currentFontSize = 0;
+    /** page height */
     protected int pageHeight;
 
+    /** Registry of PDF filters */
     protected Map filterMap = new java.util.HashMap();
 
     /**
@@ -187,6 +237,7 @@ public class PDFRenderer extends PrintRenderer {
      * Configure the PDF renderer.
      * Get the configuration to be used for pdf stream filters,
      * fonts etc.
+     * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
      */
     public void configure(Configuration conf) throws ConfigurationException {
         Configuration filters = conf.getChild("filterList");
@@ -214,7 +265,7 @@ public class PDFRenderer extends PrintRenderer {
                                     font[i].getAttributeAsBoolean("kerning"),
                                     tripleList, font[i].getAttribute("embed-url"));
 
-            if(fontList == null) {
+            if (fontList == null) {
                 fontList = new java.util.ArrayList();
             }
             fontList.add(efi);
@@ -223,23 +274,26 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     /**
-     * set the document creator
+     * Set the document creator.
      *
      * @param creator string indicating application that is creating the document
      */
-    public void setCreator(String crea) {
-        creator = crea;
+    public void setCreator(String creator) {
+        this.creator = creator;
     }
 
     /**
-     * set the PDF document's producer
+     * Set the PDF document's producer.
      *
      * @param producer string indicating application producing PDF
      */
-    public void setProducer(String prod) {
-        producer = prod;
+    public void setProducer(String producer) {
+        this.producer = producer;
     }
 
+    /**
+     * @see org.apache.fop.render.Renderer#setUserAgent(FOUserAgent)
+     */
     public void setUserAgent(FOUserAgent agent) {
         super.setUserAgent(agent);
         PDFXMLHandler xmlHandler = new PDFXMLHandler();
@@ -248,6 +302,9 @@ public class PDFRenderer extends PrintRenderer {
         userAgent.addXMLHandler(MIME_TYPE, svg, xmlHandler);
     }
 
+    /**
+     * @see org.apache.fop.render.Renderer#startRenderer(OutputStream)
+     */
     public void startRenderer(OutputStream stream) throws IOException {
         ostream = stream;
         producer = "FOP " + Version.getVersion();
@@ -257,6 +314,9 @@ public class PDFRenderer extends PrintRenderer {
         pdfDoc.outputHeader(stream);
     }
 
+    /**
+     * @see org.apache.fop.render.Renderer#stopRenderer()
+     */
     public void stopRenderer() throws IOException {
         FontSetup.addToResources(pdfDoc, pdfDoc.getResources(), fontInfo);
         pdfDoc.outputTrailer(ostream);
@@ -277,10 +337,16 @@ public class PDFRenderer extends PrintRenderer {
         wordAreaPDF = new StringBuffer();
     }
 
+    /**
+     * @see org.apache.fop.render.Renderer#supportsOutOfOrder()
+     */
     public boolean supportsOutOfOrder() {
         return true;
     }
 
+    /**
+     * @see org.apache.fop.render.Renderer#renderExtension(TreeExt)
+     */
     public void renderExtension(TreeExt ext) {
         // render bookmark extension
         if (ext instanceof BookmarkData) {
@@ -288,6 +354,10 @@ public class PDFRenderer extends PrintRenderer {
         }
     }
 
+    /**
+     * Renders the root extension elements
+     * @param bookmarks the bookmarks to render
+     */
     protected void renderRootExtensions(BookmarkData bookmarks) {
         for (int i = 0; i < bookmarks.getCount(); i++) {
             BookmarkData ext = bookmarks.getSubData(i);
@@ -299,7 +369,7 @@ public class PDFRenderer extends PrintRenderer {
         PDFOutline outlineRoot = pdfDoc.getOutlineRoot();
         PDFOutline pdfOutline = null;
         PageViewport pv = outline.getPage();
-        if(pv != null) {
+        if (pv != null) {
             Rectangle2D bounds = pv.getViewArea();
             double h = bounds.getHeight();
             float yoffset = (float)h / 1000f;
@@ -384,9 +454,10 @@ public class PDFRenderer extends PrintRenderer {
      * This method creates a pdf stream for the current page
      * uses it as the contents of a new page. The page is written
      * immediately to the output stream.
+     * @see org.apache.fop.render.Renderer#renderPage(PageViewport)
      */
-    public void renderPage(PageViewport page) throws IOException,
-    FOPException {
+    public void renderPage(PageViewport page) 
+                throws IOException, FOPException {
         if (pages != null
                 && (currentPage = (PDFPage) pages.get(page)) != null) {
             pages.remove(page);
@@ -429,6 +500,9 @@ public class PDFRenderer extends PrintRenderer {
     }
 
 
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#startVParea(CTM)
+     */
     protected void startVParea(CTM ctm) {
         // Set the given CTM in the graphics state
         currentState.push();
@@ -442,6 +516,9 @@ public class PDFRenderer extends PrintRenderer {
         beginTextObject();
     }
 
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#endVParea()
+     */
     protected void endVParea() {
         endTextObject();
         restoreGraphicsState();
@@ -494,48 +571,50 @@ public class PDFRenderer extends PrintRenderer {
      * @param width the width of the area
      * @param height the height of the area
      */
-    protected void drawBackAndBorders(Area block, float startx, float starty, float width, float height) {
+    protected void drawBackAndBorders(Area block, 
+                    float startx, float starty, 
+                    float width, float height) {
         // draw background then border
 
         boolean started = false;
         Trait.Background back;
         back = (Trait.Background)block.getTrait(Trait.BACKGROUND);
-        if(back != null) {
+        if (back != null) {
             started = true;
             closeText();
             endTextObject();
             //saveGraphicsState();
 
-            if (back.color != null) {
-                updateColor(back.color, true, null);
+            if (back.getColor() != null) {
+                updateColor(back.getColor(), true, null);
                 currentStream.add(startx + " " + starty + " "
                                   + width + " " + height + " re\n");
                 currentStream.add("f\n");
             }
-            if (back.url != null) {
+            if (back.getURL() != null) {
                 ImageFactory fact = ImageFactory.getInstance();
-                FopImage fopimage = fact.getImage(back.url, userAgent);
+                FopImage fopimage = fact.getImage(back.getURL(), userAgent);
                 if (fopimage != null && fopimage.load(FopImage.DIMENSIONS, userAgent)) {
-                    if (back.repeat == BackgroundRepeat.REPEAT) {
+                    if (back.getRepeat() == BackgroundRepeat.REPEAT) {
                         // create a pattern for the image
                     } else {
                         // place once
                         Rectangle2D pos;
-                        pos = new Rectangle2D.Float((startx + back.horiz) * 1000,
-                                                    (starty + back.vertical) * 1000,
+                        pos = new Rectangle2D.Float((startx + back.getHoriz()) * 1000,
+                                                    (starty + back.getVertical()) * 1000,
                                                     fopimage.getWidth() * 1000,
                                                     fopimage.getHeight() * 1000);
-                        putImage(back.url, pos);
+                        putImage(back.getURL(), pos);
                     }
                 }
             }
         }
 
         BorderProps bps = (BorderProps)block.getTrait(Trait.BORDER_BEFORE);
-        if(bps != null) {
+        if (bps != null) {
             float endx = startx + width;
 
-            if(!started) {
+            if (!started) {
                 started = true;
                 closeText();
                 endTextObject();
@@ -549,10 +628,10 @@ public class PDFRenderer extends PrintRenderer {
             drawLine(startx, starty + bwidth / 2, endx, starty + bwidth / 2);
         }
         bps = (BorderProps)block.getTrait(Trait.BORDER_START);
-        if(bps != null) {
+        if (bps != null) {
             float endy = starty + height;
 
-            if(!started) {
+            if (!started) {
                 started = true;
                 closeText();
                 endTextObject();
@@ -566,11 +645,11 @@ public class PDFRenderer extends PrintRenderer {
             drawLine(startx + bwidth / 2, starty, startx + bwidth / 2, endy);
         }
         bps = (BorderProps)block.getTrait(Trait.BORDER_AFTER);
-        if(bps != null) {
+        if (bps != null) {
             float sy = starty + height;
             float endx = startx + width;
 
-            if(!started) {
+            if (!started) {
                 started = true;
                 closeText();
                 endTextObject();
@@ -584,11 +663,11 @@ public class PDFRenderer extends PrintRenderer {
             drawLine(startx, sy - bwidth / 2, endx, sy - bwidth / 2);
         }
         bps = (BorderProps)block.getTrait(Trait.BORDER_END);
-        if(bps != null) {
+        if (bps != null) {
             float sx = startx + width;
             float endy = starty + height;
 
-            if(!started) {
+            if (!started) {
                 started = true;
                 closeText();
                 endTextObject();
@@ -600,7 +679,7 @@ public class PDFRenderer extends PrintRenderer {
             currentStream.add(bwidth + " w\n");
             drawLine(sx - bwidth / 2, starty, sx - bwidth / 2, endy);
         }
-        if(started) {
+        if (started) {
             //restoreGraphicsState();
             beginTextObject();
             // font last set out of scope in text section
@@ -622,6 +701,9 @@ public class PDFRenderer extends PrintRenderer {
         currentStream.add("S\n");
     }
 
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#renderBlockViewport(BlockViewport, List)
+     */
     protected void renderBlockViewport(BlockViewport bv, List children) {
         // clip and position viewport if necessary
 
@@ -745,6 +827,9 @@ public class PDFRenderer extends PrintRenderer {
         currentStream.add("n\n");
     }
 
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#renderLineArea(LineArea)
+     */
     protected void renderLineArea(LineArea line) {
         super.renderLineArea(line);
         closeText();
@@ -776,7 +861,7 @@ public class PDFRenderer extends PrintRenderer {
         } else {
             String pvKey = (String)tr;
             dest = (String)pageReferences.get(pvKey);
-            if(dest != null) {
+            if (dest != null) {
                 PageViewport pv = (PageViewport)pvReferences.get(pvKey);
                 Rectangle2D bounds = pv.getViewArea();
                 double h = bounds.getHeight();
@@ -797,11 +882,17 @@ public class PDFRenderer extends PrintRenderer {
         }
     }
 
+    /**
+     * @see org.apache.fop.render.Renderer#renderCharacter(Character)
+     */
     public void renderCharacter(Character ch) {
 
         super.renderCharacter(ch);
     }
 
+    /**
+     * @see org.apache.fop.render.Renderer#renderWord(Word)
+     */
     public void renderWord(Word word) {
         StringBuffer pdf = new StringBuffer();
 
@@ -818,7 +909,7 @@ public class PDFRenderer extends PrintRenderer {
 
         updateFont(name, size, pdf);
         ColorType ct = (ColorType)word.getTrait(Trait.COLOR);
-        if(ct != null) {
+        if (ct != null) {
             updateColor(ct, true, pdf);
         }
 
@@ -871,6 +962,13 @@ public class PDFRenderer extends PrintRenderer {
         super.renderWord(word);
     }
 
+    /**
+     * Escapes text according to PDF rules.
+     * @param s Text to escape
+     * @param fs Font state
+     * @param useMultiByte Indicates the use of multi byte convention
+     * @param pdf target buffer for the escaped text
+     */
     public void escapeText(String s, FontState fs,
                            boolean useMultiByte, StringBuffer pdf) {
         String startText = useMultiByte ? "<" : "(";
@@ -983,7 +1081,7 @@ public class PDFRenderer extends PrintRenderer {
 
             closeText();
 
-            if(pdf != null) {
+            if (pdf != null) {
                 pdf.append(color.getColorSpaceOut(fill));
             } else {
                 currentStream.add(color.getColorSpaceOut(fill));
@@ -1003,11 +1101,19 @@ public class PDFRenderer extends PrintRenderer {
         }
     }
 
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#renderImage(Image, Rectangle2D)
+     */
     public void renderImage(Image image, Rectangle2D pos) {
         String url = image.getURL();
         putImage(url, pos);
     }
 
+    /**
+     * Adds a PDF XObject (a bitmap) to the PDF that will later be referenced.
+     * @param url URL of the bitmap
+     * @param pos Position of the bitmap
+     */
     protected void putImage(String url, Rectangle2D pos) {
         PDFXObject xobject = pdfDoc.getImage(url);
         if (xobject != null) {
@@ -1084,6 +1190,14 @@ public class PDFRenderer extends PrintRenderer {
         }
     }
 
+    /**
+     * Places a previously registered image at a certain place on the page.
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @param w width for image
+     * @param h height for image
+     * @param xobj object number of the referenced image
+     */
     protected void placeImage(int x, int y, int w, int h, int xobj) {
         saveGraphicsState();
         currentStream.add(((float) w) + " 0 0 "
@@ -1095,12 +1209,21 @@ public class PDFRenderer extends PrintRenderer {
 
     }
 
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#renderForeignObject(ForeignObject, Rectangle2D)
+     */
     public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
         Document doc = fo.getDocument();
         String ns = fo.getNameSpace();
         renderDocument(doc, ns, pos);
     }
 
+    /**
+     * Renders an XML document (SVG for example).
+     * @param doc DOM document representing the XML document
+     * @param ns Namespace for the document
+     * @param pos Position on the page
+     */
     public void renderDocument(Document doc, String ns, Rectangle2D pos) {
         RendererContext context;
         context = new RendererContext(MIME_TYPE);
@@ -1110,7 +1233,8 @@ public class PDFRenderer extends PrintRenderer {
         context.setProperty(PDFXMLHandler.OUTPUT_STREAM, ostream);
         context.setProperty(PDFXMLHandler.PDF_STATE, currentState);
         context.setProperty(PDFXMLHandler.PDF_PAGE, currentPage);
-        context.setProperty(PDFXMLHandler.PDF_CONTEXT, currentContext == null ? currentPage: currentContext);
+        context.setProperty(PDFXMLHandler.PDF_CONTEXT, 
+                    currentContext == null ? currentPage : currentContext);
         context.setProperty(PDFXMLHandler.PDF_CONTEXT, currentContext);
         context.setProperty(PDFXMLHandler.PDF_STREAM, currentStream);
         context.setProperty(PDFXMLHandler.PDF_XPOS,
