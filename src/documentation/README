@@ -1,59 +1,102 @@
 $Id$
 
-To update the FOP website:
+                      HOW TO UPDATE THE FOP WEBSITE
 
 Background
 --------------
- 1. The documentation is generated using forrest
+ 1. The FOP web site & documentation are generated using forrest
     (http://xml.apache.org/forrest/).
- 2. Forrest needs to be run on a machine with a graphical environment (it will
-    fail in a headless environment when it tries to use FOP to generate the PDF
-    files). The Apache machine available to xml-fop developers
-    (icarus.apache.org) appears to be headless, so you will probably need to run
-    this on a local machine with a graphical environment.
+ 2. There are two general ways to update the FOP web repository, each described
+    in more detail below:
+    a. the forrestbot on the Apache server
+    b. a local copy of Forrest
+ 3. Files related to the web site reside in the following places:
+    a. fop source repository (cvs):
+       icarus.apache.org/home/cvs/xml-fop
+    b. interim web site (html, pdf, etc.)
+       1) if forrestbot is used:
+          Location is unknown & unimportant to us.
+          Content can be viewed, refreshed, and published at:
+          http://forrestbot.cocoondev.org
+       2) if local Forrest is used:
+          Files will be generated on your local machine.
+    c. fop web repository (cvs):
+       icarus.apache.org/home/cvs/xml-site/targets/fop
+    d. fop live web site:
+       somewhere on daedalus.apache.org
+ 3. The flow of data from our project committers to the actual web site is as
+    follows:
+    a. Source code changes are committed to the cvs repository by developers.
+    b. An interim web site is built using one of two methods: manual/local or
+       forrestbot.
+    c. The interim web site is committed to the fop web repository, again using
+       one of two methods: manual/local or forrestbot.
+    d. Every six hours (midnight, 6am, noon, 6pm Pacific time), a script copies
+       the contents of the web site repository to the server for the FOP live
+       web site. This script is maintained by Sam Ruby.
 
-Step-by-Step Instructions
------------------------------
- 1. checkout the xml-forrest module (same repository as xml-fop).
- 2. checkout the xml-site/targets/fop module (same repository as xml-fop).
- 3. you will also need access to a current xml-fop sandbox (you probably already
+Forrestbot or Local Forrest?
+----------------------------
+By far, the easiest way to generate an interim web site and to update the FOP
+web repository is to use the forrestbot on the Apache servers.
+
+Advantages:
+1. Easy to use.
+2. Always using the "approved" versions of Forrest and supporting
+   infrastructure.
+3. No manual steps with attendant human error.
+
+Disadvantages:
+1. Ties up server resources.
+2. Requires a server login (see http://forrestbot.cocoondev.org for instructions
+   about how to obtain one).
+
+For minor or pure documentation changes, use the forrestbot. For major changes,
+such as sitemap building, that will require many edit/build/test/debug cycles,
+use a local Forrest instead. Also, even for major changes, it is probably better
+to do the final build and commit using the forrestbot, after all of the
+debugging has been completed on your local machine.
+
+Updating the Web Site Repository using the Forrestbot
+-----------------------------------------------------
+To use the forrestbot, simply follow these steps:
+1. Make sure your changes are committed to the FOP source repository.
+2. Open http://forrestbot.cocoondev.org in your browser.
+3. Login.
+4. In the "Select a module" box, select "xml-fop".
+5. Click the "refresh" button to have the interim site built. On-screen
+   instructions tell you how to view the log as the build progresses.
+6. After the build has completed, click "xml-fop" in the list of preview sites.
+   The interim site will be displayed in a frame.
+7. After you are satisfied with the interim site, commit it to the fop web
+   repository by first making sure that "xml-fop" is still selected in the
+   "Select a module" box, then clicking "publish". Again, you can watch the
+   log as it is built.
+8. Wait for the next 6-hour update cycle and check the live web site.
+
+Updating the Web Site Repository using a Manual/Local Forrest
+-------------------------------------------------------------
+ 1. Note: Forrest needs to be run on a machine with a graphical environment (it
+    will fail in a headless environment when it tries to use FOP to generate
+    the PDF files).
+ 2. checkout the xml-forrest module (same repository as xml-fop).
+ 3. checkout the xml-site/targets/fop module (same repository as xml-fop).
+ 4. you will also need access to a current xml-fop sandbox (you probably already
     have one)
- 4. cd to xml-forrest
- 5. run: build.sh(bat) dist to build forrest
- 6. set environment variable FORREST_HOME=~/xml-forrest/build/dist/shbat
+ 5. cd to xml-forrest
+ 6. run: build.sh(bat) dist to build forrest
+ 7. set environment variable FORREST_HOME=~/xml-forrest/build/dist/shbat
     where ~ is the directory in which xml-forrest is installed
     (see http://xml.apache.org/forrest/your-project.html for details)
- 7. set environment variable PATH=$PATH:$FORREST_HOME/bin
- 8. cd to xml-fop directory
- 9. run forrest(.bat), which will build the web-site documents in
+ 8. set environment variable PATH=$PATH:$FORREST_HOME/bin
+ 9. cd to xml-fop directory
+10. run forrest(.bat), which will build the web-site documents in
     xml-fop/build/site.
-10. NOTE: the compliance.html currently does not work, it can be fixed by
-    adding the dtd ref to: build/tmp/context/resources/schema/catalog
-    and placing the dtd in: build/tmp/context/resources/schema/dtd/
 11. To update the actual website, copy the generated documents
-    (in xml-fop/build/site) to xml-site/targets/fop. (This could also be done by
-    sym-linking this destination before the build.)
-12. commit xml-site/targets/fop.
-
-Notes
----------
- 1. Per information from Jeff Turner & Christian Geisert, the downstream
-    process of publishing our web site is as follows:
-    - Committers commit generated docs to xml-site/targets/fop
-    - Every 6 hours (midnight, 6am, noon, 6pm Pacific time), a script (which is
-      maintained by Sam Ruby) updates the FOP website:
-      - soucre: icarus (cvs.apache.org), specifically from
-        /home/cvs/xml-site/targets/fop.
-      - target: daedalus (xml.apache.org)
- 2. Per Jeff Turner, the contents of the FOP website (but not the web site
-    itself) are being regenerated by Forrest every hour.
-    This process actually checks out the contents of xml-fop/src/documentation
-    from CVS and builds the web-site contents with the latest Forrest.
-    This process has no relation to what is in xml-site/targets/fop.
-    See http://forrestbot.cocoondev.org/site/xml-fop for the contents.
-    Although we found this interesting (especially wondering how they got around
-    the headless server problem), it doesn't change our workflow above, because
-    we don't know where, at the filesystem level, these files exist, so we have
-    no way of copying them to xml-site/targets/fop.
+    (in xml-fop/build/site) to xml-site/targets/fop on your local machine.
+    (This could also be done by sym-linking this destination before the build.)
+12. Consider whether your final build and publish should be done using the
+    forrestbot on the Apache servers (see discussion above). Otherwise, commit
+    xml-site/targets/fop.
 
 Last Line of $RCSfile$
