@@ -3,35 +3,41 @@
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 
 <document>
-    <header>
-        <title>Running FOP</title>
-    </header>
-
-    <body>
-<section>
+<header>
   <title>Running FOP</title>
+</header>
+
+<body>
   <section>
-    <title>Prerequisites</title>
-    <p>Following software must be installed:</p>
-    <p>a) Java 1.2.x or later</p>
-    <p>b) All libraries you need are part of the Fop distribution and
-          can be found in the xml-fop/lib directory. Look at the batch/shell script fop.bat/fop.sh
-          to see, how Fop can be invoked easily. These libraries are included:
-    </p>
-          <ul>
-            <li>An XML parser which supports SAX and DOM like
-                <jump href="http://xml.apache.org/xerces-j/index.html">Xerces-J</jump>.
-                (Xerces is the default xml parser)
-            </li>
-            <li>An XSLT processor (Xalan is included)
-            </li>
-            <li>The SVG library batik.jar is the library from the <jump href="http://xml.apache.org/batik/">batik project</jump> at xml.apache.org.
-            </li>
-          </ul>
+    <title>Installation</title>
+    <section>
+      <title>Overview</title>
+      <p>The following software must be installed:</p>
+      <ul>
+        <li>Java 1.2.x or later.</li>
+        <li>FOP. The <jump href="http://xml.apache.org/fop/download.html">FOP distribution</jump> includes all libraries that you will need to run a basic FOP installation. These can be found in the xml-fop/lib directory. These libraries include the following:</li>
+        <ul>
+          <li>Apache <jump href="http://xml.apache.org/xerces-j/index.html">Xerces-J</jump> for XML parsing. You can use other XML parsers which support SAX and DOM.</li>
+          <li>Apache Xalan, an XSLT processor.</li>
+          <li>Apache <jump href="http://xml.apache.org/batik/">Batik</jump>, an SVG library.</li>
+        </ul>
+        <li>Optional Libraries</li>
+      </ul>
+    </section>
+    <section>
+      <title>Instructions</title>
+      <p>Basic FOP installation consists of first unzipping the <code>.gz</code> file that is the distribution medium, then unarchiving the resulting <code>.tar</code> file in a directory/folder that is convenient on your system. Please consult your operating system documentation or Zip application software documentation for instructions specific to your site.</p>
+    </section>
+    <section>
+      <title>Problems</title>
+      <p>Some Mac OSX users have experienced filename truncation problems using Stuffit to unzip and unarchive their distribution media. This is a legacy of older Mac operating systems, which had a 31-character pathname limit. Several Mac OSX users have recommended that Mac OSX users use the shell command <code>tar -xzf</code> instead.</p>
+    </section>
   </section>
 
   <section>
-    <title>Starting FOP as an standalone application</title>
+    <title>Starting FOP as a standalone application</title>
+    <p>Review the batch file fop.bat or the shell script fop.sh to see how FOP is invoked.</p>
+    <p>The standard scripts for starting FOP require that the environment variable JAVA_HOME be set to a path pointing to the appropriate Java installation on your system. Macintosh OSX includes a Java environment as part of its distribution. We are told by Mac OSX users that the path to use in this case is <code>/Library/Java/Home</code>. <strong>Caveat: </strong>We suspect that, as Apple releases new Java environments and as FOP upgrades the minimum Java requirements, the two will inevitably not match on some systems. Please see <jump href="http://developer.apple.com/java/faq">Java on Mac OSX FAQ</jump> for information as it becomes available.</p>
     <p><code>Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-pcl|-txt|-svg|-at|-print] &lt;outfile></code></p>
      <p>[OPTIONS]</p>
      <source>
@@ -72,6 +78,6 @@
     <title>Problems</title>
     <p>If you have problems running FOP, please have a look at the <jump href="gethelp.html">"How to get Help" page</jump>.</p>
   </section>
-</section>
+
 </body>
 </document>
