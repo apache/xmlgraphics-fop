@@ -9,18 +9,16 @@ package org.apache.fop.layoutmgr;
 
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOUserAgent;
+import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Resolveable;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.PropertyManager;
-import org.apache.fop.area.Trait;
-import org.apache.fop.layout.BorderAndPadding;
-import org.apache.fop.layout.BackgroundProps;
-import org.apache.fop.traits.BorderProps;
 
 import org.apache.avalon.framework.logger.Logger;
 
 import java.util.ListIterator;
+import java.util.Map;
 
 /**
  * The base class for all LayoutManagers.
@@ -30,13 +28,13 @@ public abstract class AbstractLayoutManager implements LayoutManager {
     protected LayoutManager parentLM = null;
     protected FObj fobj;
     protected String foID = null;
+    protected Map markers = null;
 
     /** True if this LayoutManager has handled all of its content. */
     private boolean bFinished = false;
     protected LayoutManager curChildLM = null;
     protected ListIterator childLMiter;
     protected boolean bInited = false;
-
 
     /**
      * Abstract layout manager.
@@ -52,6 +50,7 @@ public abstract class AbstractLayoutManager implements LayoutManager {
     public void setFObj(FObj fo) {
         this.fobj = fo;
         foID = fobj.getID();
+        markers = fobj.getMarkers();
         childLMiter = new LMiter(fobj.getChildren());
     }
 
@@ -64,6 +63,11 @@ public abstract class AbstractLayoutManager implements LayoutManager {
         userAgent = ua;
     }
 
+    /**
+     * Get the user agent.
+     *
+     * @see org.apache.fop.layoutmgr.LayoutManager#getUserAgent()
+     */
     public FOUserAgent getUserAgent() {
         return userAgent;
     }
@@ -318,12 +322,22 @@ public abstract class AbstractLayoutManager implements LayoutManager {
     }
 
     /**
+     * Add the markers when adding an area.
+     */
+    protected void addMarkers(boolean start) {
+        // add markers
+        if (markers != null) {
+            addMarkerMap(markers, start);
+        }
+    }
+
+    /**
      * Delegate adding marker to the parent layout manager.
      *
      * @see org.apache.fop.layoutmgr.LayoutManager
      */
-    public void addMarker(String name, LayoutManager lm, boolean start) {
-        parentLM.addMarker(name, lm, start);
+    public void addMarkerMap(Map marks, boolean start) {
+        parentLM.addMarkerMap(marks, start);
     }
 
     /**
@@ -331,65 +345,9 @@ public abstract class AbstractLayoutManager implements LayoutManager {
      *
      * @see org.apache.fop.layoutmgr.LayoutManager
      */
-    public LayoutManager retrieveMarker(String name, int pos, int boundary) {
+    public Marker retrieveMarker(String name, int pos, int boundary) {
         return parentLM.retrieveMarker(name, pos, boundary);
     }
 
-    /**
-     * Add borders to an area.
-     * Layout managers that create areas with borders can use this to
-     * add the borders to the area.
-     */
-    public static void addBorders(Area curBlock, BorderAndPadding bordProps) {
-        BorderProps bps = getBorderProps(bordProps, BorderAndPadding.TOP);
-        if(bps.width != 0) {
-            curBlock.addTrait(Trait.BORDER_BEFORE, bps);
-        }
-        bps = getBorderProps(bordProps, BorderAndPadding.BOTTOM);
-        if(bps.width != 0) {
-            curBlock.addTrait(Trait.BORDER_AFTER, bps);
-        }
-        bps = getBorderProps(bordProps, BorderAndPadding.LEFT);
-        if(bps.width != 0) {
-            curBlock.addTrait(Trait.BORDER_START, bps);
-        }
-        bps = getBorderProps(bordProps, BorderAndPadding.RIGHT);
-        if(bps.width != 0) {
-            curBlock.addTrait(Trait.BORDER_END, bps);
-        }
-    }
-
-    private static BorderProps getBorderProps(BorderAndPadding bordProps, int side) {
-        BorderProps bps;
-        bps = new BorderProps(bordProps.getBorderStyle(side),
-                              bordProps.getBorderWidth(side, false),
-                              bordProps.getBorderColor(side));
-        return bps;
-    }
-
-    /**
-     * Add background to an area.
-     * Layout managers that create areas with a background can use this to
-     * add the background to the area.
-     */
-    public static void addBackground(Area curBlock, BackgroundProps backProps) {
-        Trait.Background back = new Trait.Background();
-        back.color = backProps.backColor;
-
-        if(backProps.backImage != null) {
-            back.url = backProps.backImage;
-            back.repeat = backProps.backRepeat;
-            if(backProps.backPosHorizontal != null) {
-                back.horiz = backProps.backPosHorizontal.mvalue();
-            }
-            if(backProps.backPosVertical != null) {
-                back.vertical = backProps.backPosVertical.mvalue();
-            }
-        }
-
-        if(back.color != null || back.url != null) {
-            curBlock.addTrait(Trait.BACKGROUND, back);
-        }
-    }
 }
 

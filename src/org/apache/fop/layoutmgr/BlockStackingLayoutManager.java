@@ -7,12 +7,9 @@
 
 package org.apache.fop.layoutmgr;
 
-import org.apache.fop.fo.FObj;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockParent;
 import org.apache.fop.area.Block;
-
-import java.util.Iterator;
 
 /**
  * Base LayoutManager class for all areas which stack their child

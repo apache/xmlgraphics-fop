@@ -509,10 +509,10 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
                                            borderProps, bAreaCreated, !bIsLast);
 
         if(borderProps != null) {
-            addBorders(getCurrentArea(), borderProps);
+            TraitSetter.addBorders(getCurrentArea(), borderProps);
         }
         if(backgroundProps != null) {
-            addBackground(getCurrentArea(), backgroundProps);
+            TraitSetter.addBackground(getCurrentArea(), backgroundProps);
         }
 
         parentLM.addChild(getCurrentArea());

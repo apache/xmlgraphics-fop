@@ -20,14 +20,29 @@ public class MinOptMax implements java.io.Serializable, Cloneable {
     public int opt;
     public int max;
 
+    /**
+     * New min/opt/max with zero values.
+     */
     public MinOptMax() {
         this(0);
     }
 
+    /**
+     * New min/opt/max with one fixed value.
+     *
+     * @param val the value for min, opt and max
+     */
     public MinOptMax(int val) {
         this(val, val, val);
     }
 
+    /**
+     * New min/opt/max with the three values.
+     *
+     * @param min the minimum value
+     * @param opt the optimum value
+     * @param max the maximum value
+     */
     public MinOptMax(int min, int opt, int max) {
         this.min = min;
         this.opt = opt;
