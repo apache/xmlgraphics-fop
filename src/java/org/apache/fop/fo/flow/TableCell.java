@@ -49,8 +49,8 @@ public class TableCell extends FObj {
     // private ToBeImplementedProperty borderEndPrecedence;
     // private ToBeImplementedProperty borderStartPrecedence;
     private LengthRangeProperty blockProgressionDimension;
-    private int borderCollapse;
-    private LengthPairProperty borderSeparation;
+    private int borderCollapse; //inherited from fo:table
+    private LengthPairProperty borderSeparation; //inherited from fo:table
     private Numeric columnNumber;
     private int displayAlign;
     private int relativeAlign;
@@ -303,6 +303,21 @@ public class TableCell extends FObj {
         return (this.emptyCells == EN_SHOW);
     }
     
+    /** @return the "border-collapse" property (inherited from fo:table). */
+    public int getBorderCollapse() {
+        return borderCollapse;
+    }
+
+    /** @return true if the separate border model is active */
+    public boolean isSeparateBorderModel() {
+        return (getBorderCollapse() == EN_SEPARATE);
+    }
+    
+    /** @return the "border-separation" property (inherited from fo:table). */
+    public LengthPairProperty getBorderSeparation() {
+        return borderSeparation;
+    }
+
     /**
      * @return the "id" property.
      */

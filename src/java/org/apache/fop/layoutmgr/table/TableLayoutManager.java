@@ -387,7 +387,9 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
 
         curBlockArea.setBPD(tableHeight);
 
-        TraitSetter.addBorders(curBlockArea, fobj.getCommonBorderPaddingBackground());
+        if (fobj.isSeparateBorderModel()) {
+            TraitSetter.addBorders(curBlockArea, fobj.getCommonBorderPaddingBackground());
+        }
         TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
         TraitSetter.addMargins(curBlockArea,
                 fobj.getCommonBorderPaddingBackground(), 

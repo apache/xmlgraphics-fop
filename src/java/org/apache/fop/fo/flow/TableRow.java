@@ -25,7 +25,6 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.StaticPropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;

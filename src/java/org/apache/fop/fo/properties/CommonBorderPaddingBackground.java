@@ -279,4 +279,10 @@ public class CommonBorderPaddingBackground implements Cloneable {
     public boolean hasBackground() {
         return ((backgroundColor != null || getFopImage() != null));
     }
+
+    /** @return true if padding is non-zero. */
+    public boolean hasPadding() {
+        return ((getPaddingBefore(false) + getPaddingAfter(false) 
+                + getPaddingStart(false) + getPaddingEnd(false)) > 0);
+    }
 }

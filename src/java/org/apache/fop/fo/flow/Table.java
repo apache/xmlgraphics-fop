@@ -122,6 +122,11 @@ public class Table extends FObj {
         PropertyList colPList = new StaticPropertyList(defaultColumn, pList);
         colPList.setWritingMode();
         defaultColumn.bind(colPList);
+        
+        if (borderCollapse != EN_SEPARATE && commonBorderPaddingBackground.hasPadding()) {
+            //See "17.6.2 The collapsing border model" in CSS2
+            getLogger().error("Table may not have padding when using the collapsing border model.");
+        }
     }
 
     /**
@@ -237,6 +242,11 @@ public class Table extends FObj {
         return borderCollapse;
     }
 
+    /** @return true if the separate border model is active */
+    public boolean isSeparateBorderModel() {
+        return (getBorderCollapse() == EN_SEPARATE);
+    }
+    
     /** @return the "border-separation" property. */
     public LengthPairProperty getBorderSeparation() {
         return borderSeparation;
