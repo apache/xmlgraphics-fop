@@ -60,10 +60,19 @@ public class Keep implements CompoundDatatype {
     private Property withinColumn;
     private Property withinPage;
 
+    /**
+     * Constructor
+     */
     public Keep() {
     }
 
-    // From CompoundDatatype
+
+    /**
+     * From CompoundDatatype
+     * @param sCmpnName name of compound property to set
+     * @param cmpnValue property containing value to be set
+     * @param bIsDefault not used (??)
+     */
     public void setComponent(String sCmpnName, Property cmpnValue,
                              boolean bIsDefault) {
         if (sCmpnName.equals("within-line")) {
@@ -75,7 +84,11 @@ public class Keep implements CompoundDatatype {
         }
     }
 
-    // From CompoundDatatype
+    /**
+     * From CompoundDatatype
+     * @param sCmpnName compound property name
+     * @return property corresponding to compound property string
+     */
     public Property getComponent(String sCmpnName) {
         if (sCmpnName.equals("within-line")) {
             return getWithinLine();
@@ -88,33 +101,55 @@ public class Keep implements CompoundDatatype {
         }
     }
 
+    /**
+     * @param withinLine withinLine property to set
+     * @param bIsDefault not used (??)
+     */
     public void setWithinLine(Property withinLine, boolean bIsDefault) {
         this.withinLine = withinLine;
     }
 
+    /**
+     * @param withinColumn withinColumn property to set
+     * @param bIsDefault not used (??)
+     */
     protected void setWithinColumn(Property withinColumn,
                                    boolean bIsDefault) {
         this.withinColumn = withinColumn;
     }
 
+    /**
+     * @param withinPage withinPage property to set
+     * @param bIsDefault not used (??)
+     */
     public void setWithinPage(Property withinPage, boolean bIsDefault) {
         this.withinPage = withinPage;
     }
 
+    /**
+     * @return the withinLine property
+     */
     public Property getWithinLine() {
         return this.withinLine;
     }
 
+    /**
+     * @return the withinColumn property
+     */
     public Property getWithinColumn() {
         return this.withinColumn;
     }
 
+    /**
+     * @return the withinPage property
+     */
     public Property getWithinPage() {
         return this.withinPage;
     }
 
     /**
      * Not sure what to do here. There isn't really a meaningful single value.
+     * @return String representation
      */
     public String toString() {
         return "Keep";
