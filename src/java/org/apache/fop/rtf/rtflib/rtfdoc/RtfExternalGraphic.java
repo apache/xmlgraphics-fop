@@ -178,6 +178,7 @@ public class RtfExternalGraphic extends RtfElement {
      *
      * @param container a <code>RtfContainer</code> value
      * @param writer a <code>Writer</code> value
+     * @throws IOException for I/O problems
      */
     public RtfExternalGraphic(RtfContainer container, Writer writer) throws IOException {
         super (container, writer);
@@ -189,6 +190,7 @@ public class RtfExternalGraphic extends RtfElement {
      * @param container a <code>RtfContainer</code> value
      * @param writer a <code>Writer</code> value
      * @param attributes a <code>RtfAttributes</code> value
+     * @throws IOException for I/O problems
      */
     public RtfExternalGraphic(RtfContainer container, Writer writer,
     RtfAttributes attributes) throws IOException {
@@ -200,8 +202,10 @@ public class RtfExternalGraphic extends RtfElement {
     // @@ RtfElement implementation
     //////////////////////////////////////////////////
 
-        /** RtfElement override - catches ExternalGraphicException and writes a warning
-         *  message to the document if image cannot be read
+        /**
+         * RtfElement override - catches ExternalGraphicException and writes a warning
+         * message to the document if image cannot be read
+         * @throws IOException for I/O problems
          */
     protected void writeRtfContent() throws IOException {
             try {
@@ -494,9 +498,7 @@ public class RtfExternalGraphic extends RtfElement {
      * Sets the compression rate for the image in percent.
      *
      * @param percent Compression rate
-     * @return
-     *  true:   The compression rate is valid (0..100)\n
-     *  false:  The compression rate is invalid
+     * @return true if the compression rate is valid (0..100), false if invalid
      */
     public boolean setCompressionRate (int percent) {
         if (percent < 1 || percent > 100) {
@@ -622,7 +624,9 @@ public class RtfExternalGraphic extends RtfElement {
         return type;
     }
 
-    /** true if this element would generate no "useful" RTF content */
+    /**
+     * @return true if this element would generate no "useful" RTF content
+     */
     public boolean isEmpty() {
         return url == null;
     }
