@@ -22,7 +22,6 @@ import java.util.Iterator;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.configuration.ConfigurationReader;
-import org.apache.fop.configuration.LanguageFileReader;
 
 /**
  * Options handles loading of configuration files and
@@ -221,7 +220,7 @@ public class Options {
      * effect of command line parsing.
      *
      * The standard configuration file has been read and its contents
-     * stored in the Configuration HahMaps.  If a user configuration file
+     * stored in the Configuration HashMaps.  If a user configuration file
      * was specified in the command line arguments, or, failing that, in
      * the standard configuration file, it had been read and its contents
      * have overridden the Configuration maps.
@@ -278,9 +277,6 @@ public class Options {
             MessageHandler.logln("base directory: " + baseDir);
         }
 
-        if ((str = Configuration.getStringValue("languageConfigFileName"))
-            != null) loadLanguagesConfig(str);
-
         if (dumpConfig) {
             Configuration.dumpConfiguration();
             System.exit(0);
@@ -319,7 +315,7 @@ public class Options {
 
     /**
      * Convenience class for common functionality required by the config
-     * files and the language files.
+     * files.
      * @param <tt>Class</tt> object of requesting class.
      * @return an <tt>InputStream</tt> generated through a call to
      * <tt>getResourceAsStream</tt> on the context <tt>ClassLoader</tt>
@@ -420,39 +416,6 @@ public class Options {
                 loadConfiguration(userConfigFileName);
             }
         }
-    }
-
-    /**
-     * Loads language configuration file from a system standard place.
-     * The context class loader and the <code>ConfigurationReader</code>
-     * class loader are asked in turn to <code>getResourceAsStream</code>
-     * on <i>fname</i> from a directory called <i>conf</i>.
-     * If the languages configuration file is found, the results of reading
-     * the file are stored in Configation as <tt>HashMaps</tt> under three
-     * keys:
-     * <tt><i>languagesMap</i></tt>, <tt><i>countriesMap</i></tt> and
-     * <tt><i>scriptsMap</i></tt>.
-     *
-     * @param fname the name of the configuration file to load.
-     * @exception org.apache.fop.fo.FOPException if the configuration file
-     * cannot be discovered.
-     */
-    public static void loadLanguagesConfig(String fname)
-        throws FOPException {
-        InputStream configfile =
-                getConfResourceFile(fname, LanguageFileReader.class);
-
-        if (debug) {
-            MessageHandler.logln(
-                    "reading language configuration file " + fname);
-        }
-        LanguageFileReader reader =
-            new LanguageFileReader(new InputSource(configfile));
-        reader.start();
-        // Now add the HashMaps to the Configuration
-        Configuration.put("languagesMap", reader.getLanguagesHashMap());
-        Configuration.put("countriesMap", reader.getCountriesHashMap());
-        Configuration.put("scriptsMap", reader.getScriptsHashMap());
     }
 
     /**
