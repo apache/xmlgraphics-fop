@@ -53,7 +53,7 @@ public class FONode extends SyncedNode{
     private static final String tag = "$Name:  $";
     private static final String revision = "$Revision: 1.19.2.33 $";
 
-    protected static final Logger logger = Logger.getLogger(Fop.fopPackage);
+    protected Logger log = Logger.getLogger(Fop.fopPackage);
     /**
      * State flags: a bit set of states applicable during FO tree build.
      * N.B. States must be powers of 2.
@@ -240,7 +240,7 @@ public class FONode extends SyncedNode{
             int property;
             int prop = foKeys[propx].intValue();
             if ( ! attrBitSet.get(prop)) {
-                logger.info("Ignoring "
+                log.info("Ignoring "
                                    + PropNames.getPropertyName(prop)
                                    + " on "
                                    + FObjectNames.getFOName(type)
@@ -271,12 +271,12 @@ public class FONode extends SyncedNode{
                     }
                 }
             } catch (FunctionNotImplementedException e) {
-                logger.info
+                log.info
                         ("Function not implemented: " + e.getMessage()
                          + ". Ignoring property '"
                          + PropNames.getPropertyName(prop) + "'.");
             } catch (PropertyException e) {
-                logger.info
+                log.info
                         ("Problem with '" + PropNames.getPropertyName(prop)
                          + "':\n" + e.getMessage() + "\nIgnoring property.");
             }
