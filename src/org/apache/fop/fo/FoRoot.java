@@ -134,8 +134,7 @@ public class FoRoot extends FONode {
                                 new FoLayoutMasterSet(getFOTree(), this, ev);
             // Clean up the fo:layout-master-set event
             pageSequenceMasters = layoutMasters.getPageSequenceMasters();
-            xmlevents.getEndElement(ev);
-            //System.out.println("Surrendering layout-master-set ev");
+            ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
             pool.surrenderEvent(ev);
             layoutMasters.deleteSubTree();
 
@@ -147,8 +146,7 @@ public class FoRoot extends FONode {
                 // process the declarations
                 declarations = numChildren();
                 new FoDeclarations(getFOTree(), this, ev);
-                xmlevents.getEndElement(ev);
-                //System.out.println("Surrendering declarations ev");
+                ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
                 pool.surrenderEvent(ev);
             }
 
@@ -161,13 +159,14 @@ public class FoRoot extends FONode {
                 throw new FOPException("No page-sequence found.");
             firstPageSeq = numChildren();
             new FoPageSequence(getFOTree(), this, ev);
-            xmlevents.getEndElement(ev);
+            ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+            pool.surrenderEvent(ev);
             while ((ev = xmlevents.expectStartElement
                     (FObjectNames.PAGE_SEQUENCE, XMLEvent.DISCARD_W_SPACE))
                    != null) {
                 // Loop over remaining fo:page-sequences
                 new FoPageSequence(getFOTree(), this, ev);
-                xmlevents.getEndElement(ev);
+                ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
                 pool.surrenderEvent(ev);
             }
         } catch (NoSuchElementException e) {
@@ -180,5 +179,9 @@ public class FoRoot extends FONode {
         }
         // Clean up root's FO tree build environment
         makeSparsePropsSet();
+        // Provide some stats
+        System.out.println("Size of event pool: " + pool.getPoolSize());
+        System.out.println("Next event id     : " + 
+                           xmlevents.getNamespaces().getSequence());
     }
 }
