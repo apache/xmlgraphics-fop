@@ -25,7 +25,6 @@ import org.apache.log.*;
 import org.apache.log.format.*;
 import org.apache.log.output.io.*;
 import org.apache.log.output.*;
-import org.apache.avalon.framework.logger.Loggable;
 
 // DOM
 import org.w3c.dom.Document;
@@ -89,7 +88,7 @@ import java.util.*;
  * driver.render(parser, fileInputSource(args[0]));
  * </PRE>
  */
-public class Driver implements Loggable {
+public class Driver {
 
     /**
      * Render to PDF. OutputStream must be set
