@@ -44,6 +44,8 @@ import java.awt.geom.AffineTransform;
  */
 public class PDFXMLHandler implements XMLHandler {
 public static final String PDF_DOCUMENT = "pdfDoc";
+public static final String PDF_STATE = "pdfState";
+public static final String PDF_PAGE = "pdfPage";
 public static final String PDF_STREAM = "pdfStream";
 public static final String PDF_X = "x";
 public static final String PDF_Y = "y";
@@ -71,6 +73,8 @@ public static final String PDF_YPOS = "ypos";
     public static PDFInfo getPDFInfo(RendererContext context) {
         PDFInfo pdfi = new PDFInfo();
         pdfi.pdfDoc = (PDFDocument)context.getProperty(PDF_DOCUMENT);
+        pdfi.pdfState = (PDFState)context.getProperty(PDF_STATE);
+        pdfi.pdfPage = (PDFPage)context.getProperty(PDF_PAGE);
         pdfi.currentStream = (PDFStream)context.getProperty(PDF_STREAM);
         pdfi.x = ((Integer)context.getProperty(PDF_X)).intValue();
         pdfi.y = ((Integer)context.getProperty(PDF_Y)).intValue();
@@ -84,6 +88,8 @@ public static final String PDF_YPOS = "ypos";
 
     public static class PDFInfo {
         PDFDocument pdfDoc;
+        PDFState pdfState;
+        PDFPage pdfPage;
         public PDFStream currentStream;
         int x;
         int y;
@@ -108,12 +114,14 @@ public static final String PDF_YPOS = "ypos";
 
             GVTBuilder builder = new GVTBuilder();
             BridgeContext ctx = new BridgeContext(ua);
-            TextPainter textPainter = null;
-            textPainter = new PDFTextPainter(pdfInfo.fs);
-            ctx.setTextPainter(textPainter);
+            PDFTextElementBridge tBridge = new PDFTextElementBridge(pdfInfo.fs);
+            ctx.putBridge(tBridge);
 
             PDFAElementBridge aBridge = new PDFAElementBridge();
-            aBridge.setCurrentTransform(new AffineTransform(sx, 0, 0, sy, xOffset / 1000f, yOffset / 1000f));
+            // to get the correct transform we need to use the PDFState
+            AffineTransform transform = pdfInfo.pdfState.getTransform();
+            transform.translate(xOffset / 1000f, yOffset / 1000f);
+            aBridge.setCurrentTransform(transform);
             ctx.putBridge(aBridge);
 
             GraphicsNode root;
@@ -156,12 +164,17 @@ public static final String PDF_YPOS = "ypos";
             }
 
             PDFGraphics2D graphics = new PDFGraphics2D(true, pdfInfo.fs, pdfInfo.pdfDoc,
-                                     pdfInfo.currentFontName,
+                                     pdfInfo.pdfPage, pdfInfo.currentFontName,
                                      pdfInfo.currentFontSize,
                                      pdfInfo.currentXPosition,
                                      pdfInfo.currentYPosition);
             graphics.setGraphicContext(new org.apache.batik.ext.awt.g2d.GraphicContext());
-
+            pdfInfo.pdfState.push();
+            transform = new AffineTransform();
+            // TODO scale to viewbox
+            transform.translate(xOffset / 1000f, yOffset / 1000f);
+            pdfInfo.pdfState.setTransform(transform);
+            graphics.setPDFState(pdfInfo.pdfState);
             try {
                 root.paint(graphics);
                 pdfInfo.currentStream.add(graphics.getString());
@@ -170,9 +183,8 @@ public static final String PDF_YPOS = "ypos";
                                        + e.getMessage(), e);
             }
 
-            //currentAnnotList = graphics.getAnnotList();
-
             pdfInfo.currentStream.add("Q\n");
+            pdfInfo.pdfState.pop();
         }
     }
 }

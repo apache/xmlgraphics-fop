@@ -44,7 +44,7 @@ public class PDFAnnotList extends PDFObject {
      *
      * @param link the PDFLink to add.
      */
-    public void addLink(PDFLink link) {
+    public void addAnnot(PDFObject link) {
         this.links.addElement(link);
         this.count++;
     }

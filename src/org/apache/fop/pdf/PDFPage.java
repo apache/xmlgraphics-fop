@@ -52,6 +52,7 @@ public class PDFPage extends PDFObject {
      * the list of annotation objects for this page
      */
     protected PDFAnnotList annotList;
+    protected PDFDocument document;
 
     /**
      * create a /Page object
@@ -62,13 +63,14 @@ public class PDFPage extends PDFObject {
      * @param pagewidth the page's width in points
      * @param pageheight the page's height in points
      */
-    public PDFPage(int number, PDFResources resources, PDFStream contents,
+    public PDFPage(PDFDocument doc, int number, PDFResources resources, PDFStream contents,
                    int pagewidth, int pageheight) {
 
         /* generic creation of object */
         super(number);
 
         /* set fields using parameters */
+        this.document = doc;
         this.resources = resources;
         this.contents = contents;
         this.pagewidth = pagewidth;
@@ -85,13 +87,14 @@ public class PDFPage extends PDFObject {
      * @param pagewidth the page's width in points
      * @param pageheight the page's height in points
      */
-    public PDFPage(int number, PDFResources resources,
+    public PDFPage(PDFDocument doc, int number, PDFResources resources,
                    int pagewidth, int pageheight) {
 
         /* generic creation of object */
         super(number);
 
         /* set fields using parameters */
+        this.document = doc;
         this.resources = resources;
         this.pagewidth = pagewidth;
         this.pageheight = pageheight;
@@ -122,17 +125,11 @@ public class PDFPage extends PDFObject {
      *
      * @param annotList a PDFAnnotList list of annotations
      */
-    public void setAnnotList(PDFAnnotList annotList) {
-        this.annotList = annotList;
-    }
-
-    /**
-     * get this page's annotation list
-     *
-     * @return annotList a PDFAnnotList list of annotations
-     */
-    public PDFAnnotList getAnnotList() {
-        return this.annotList;
+    public void addAnnotation(PDFObject annot) {
+        if(this.annotList == null) {
+            this.annotList = document.makeAnnotList();
+        }
+        this.annotList.addAnnot(annot);
     }
 
     public void addShading(PDFShading shading) {

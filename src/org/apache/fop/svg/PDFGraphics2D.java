@@ -51,16 +51,12 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * the PDF Document being created
      */
     protected PDFDocument pdfDoc;
+    protected PDFPage currentPage;
 
     /**
      * the current state of the pdf graphics
      */
     PDFState graphicsState;
-
-    /**
-     * the current annotation list to add annotations to
-     */
-    PDFAnnotList currentAnnotList = null;
 
     protected FontState fontState;
     protected FontState ovFontState = null;
@@ -110,9 +106,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * existing document.
      */
     public PDFGraphics2D(boolean textAsShapes, FontState fs, PDFDocument doc,
-                         String font, int size, int xpos, int ypos) {
+                         PDFPage page, String font, int size, int xpos, int ypos) {
         super(textAsShapes);
         pdfDoc = doc;
+        currentPage = page;
         currentFontName = font;
         currentFontSize = size;
         currentYPosition = ypos;
@@ -123,6 +120,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
     protected PDFGraphics2D(boolean textAsShapes) {
         super(textAsShapes);
+    }
+
+    public void setPDFState(PDFState state) {
+        graphicsState = state;
     }
 
     public String getString() {
@@ -158,30 +159,20 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * This is a pdf specific method used to add a link to the
      * pdf document.
      */
-    public void addLink(Shape bounds, AffineTransform trans, String dest, int linkType) {
-        if(currentAnnotList == null) {
-            currentAnnotList = pdfDoc.makeAnnotList();
-        }
+    public void addLink(Rectangle2D bounds, AffineTransform trans, String dest, int linkType) {
         AffineTransform at = getTransform();
         Shape b = at.createTransformedShape(bounds);
         b = trans.createTransformedShape(b);
         Rectangle rect = b.getBounds();
-        // this handles the / 1000 in PDFLink
-        rect.x = rect.x * 1000;
-        rect.y = rect.y * 1000;
-        rect.height = -rect.height * 1000;
-        rect.width = rect.width * 1000;
+        rect.height = -rect.height;
+
         if(linkType != LinkSet.EXTERNAL) {
-            String pdfdest = "/XYZ " + dest;
-            currentAnnotList.addLink(pdfDoc.makeLinkCurrentPage(rect, pdfdest));
+            String pdfdest = "/FitR " + dest;
+            currentPage.addAnnotation(pdfDoc.makeLinkCurrentPage(rect, pdfdest));
         } else {
-            currentAnnotList.addLink(pdfDoc.makeLink(rect,
+            currentPage.addAnnotation(pdfDoc.makeLink(rect,
                                                  dest, linkType));
         }
-    }
-
-    public PDFAnnotList getAnnotList() {
-        return currentAnnotList;
     }
 
     public void addJpegImage(JpegImage jpeg, float x, float y, float width, float height) {
@@ -545,7 +536,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
         Shape imclip = getClip();
         boolean newClip = graphicsState.checkClip(imclip);
-        boolean newTransform = graphicsState.checkTransform(tranvals);
+        boolean newTransform = graphicsState.checkTransform(trans);
 
         if(newClip || newTransform) { 
             currentStream.write("q\n");

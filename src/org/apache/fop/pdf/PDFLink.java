@@ -52,8 +52,8 @@ public class PDFLink extends PDFObject {
     public byte[] toPDF() {
         String p = this.number + " " + this.generation + " obj\n"
                    + "<< /Type /Annot\n" + "/Subtype /Link\n" + "/Rect [ "
-                   + (ulx / 1000f) + " " + (uly / 1000f) + " "
-                   + (brx / 1000f) + " " + (bry / 1000f) + " ]\n" + "/C [ "
+                   + (ulx) + " " + (uly) + " "
+                   + (brx) + " " + (bry) + " ]\n" + "/C [ "
                    + this.color + " ]\n" + "/Border [ 0 0 0 ]\n" + "/A "
                    + this.action.getAction() + "\n" + "/H /I\n>>\nendobj\n";
         return p.getBytes();
