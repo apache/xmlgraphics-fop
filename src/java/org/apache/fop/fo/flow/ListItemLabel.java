@@ -44,7 +44,7 @@ public class ListItemLabel extends FObj {
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
-        getFOInputHandler().startListLabel();
+        getFOEventHandler().startListLabel();
         /*
          * For calculating the lineage - The fo:list-item-label formatting object
          * does not generate any areas. The fo:list-item-label formatting object
@@ -55,7 +55,7 @@ public class ListItemLabel extends FObj {
 
     protected void endOfNode() throws SAXParseException {
         super.endOfNode();
-        getFOInputHandler().endListLabel();
+        getFOEventHandler().endListLabel();
     }
     
     public String getName() {

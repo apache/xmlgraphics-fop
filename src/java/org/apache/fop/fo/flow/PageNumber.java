@@ -68,7 +68,7 @@ public class PageNumber extends FObj {
         super.addProperties(attlist);
 
         // Common Font Properties
-        this.fontState = propMgr.getFontState(getFOInputHandler().getFontInfo());
+        this.fontState = propMgr.getFontState(getFOEventHandler().getFontInfo());
 
         ColorType c = this.propertyList.get(PR_COLOR).getColorType();
         this.red = c.getRed();
@@ -76,7 +76,7 @@ public class PageNumber extends FObj {
         this.blue = c.getBlue();
 
         this.wrapOption = getPropEnum(PR_WRAP_OPTION);
-        getFOInputHandler().startPageNumber(this);
+        getFOEventHandler().startPageNumber(this);
     }
 
     /**
@@ -87,7 +87,7 @@ public class PageNumber extends FObj {
     }
 
     protected void endOfNode() throws SAXParseException {
-        getFOInputHandler().endPageNumber(this);
+        getFOEventHandler().endPageNumber(this);
     }
     
     /**

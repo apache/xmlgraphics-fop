@@ -58,11 +58,11 @@ public class TableBody extends FObj {
         this.spaceAfter = getPropLength(PR_SPACE_AFTER | CP_OPTIMUM);
         this.backgroundColor =
           this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
-        getFOInputHandler().startBody(this);
+        getFOEventHandler().startBody(this);
     }
 
     protected void endOfNode() throws SAXParseException {
-        getFOInputHandler().endBody(this);
+        getFOEventHandler().endBody(this);
     }
 
     /**

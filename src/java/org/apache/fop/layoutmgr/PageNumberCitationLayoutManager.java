@@ -46,7 +46,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
      */
     public PageNumberCitationLayoutManager(PageNumberCitation node) {
         super(node);
-        font = node.getPropertyManager().getFontState(node.getFOInputHandler().getFontInfo());
+        font = node.getPropertyManager().getFontState(node.getFOEventHandler().getFontInfo());
         pncNode = node;
     }
 

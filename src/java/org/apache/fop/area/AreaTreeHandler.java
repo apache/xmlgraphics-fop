@@ -34,7 +34,7 @@ import org.xml.sax.SAXException;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.extensions.BookmarkData;
-import org.apache.fop.fo.FOInputHandler;
+import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.extensions.Outline;
 import org.apache.fop.fo.extensions.Bookmarks;
@@ -69,7 +69,7 @@ import java.util.Iterator;
  * The area tree pages are organized in a model that depends on the
  * type of renderer.
  */
-public class AreaTreeHandler extends FOInputHandler {
+public class AreaTreeHandler extends FOEventHandler {
 
     // TODO: Collecting of statistics should be configurable
     private final boolean collectStatistics = true;

@@ -28,7 +28,7 @@ import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.commons.logging.Log;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.fo.FOInputHandler;
+import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
@@ -94,7 +94,7 @@ import org.xml.sax.SAXException;
  * @author Peter Herweg <pherweg@web.de>
  * @author Andreas Putz <a.putz@skynamics.com>
  */
-public class RTFHandler extends FOInputHandler {
+public class RTFHandler extends FOEventHandler {
 
     private RtfFile rtfFile;
     private final OutputStream os;
@@ -136,7 +136,7 @@ public class RTFHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#startDocument()
+     * @see org.apache.fop.fo.FOEventHandler#startDocument()
      */
     public void startDocument() throws SAXException {
         // TODO sections should be created
@@ -144,25 +144,25 @@ public class RTFHandler extends FOInputHandler {
             rtfFile = new RtfFile(new OutputStreamWriter(os));
             docArea = rtfFile.startDocumentArea();
         } catch (IOException ioe) {
-            // TODO could we throw Exception in all FOInputHandler events?
+            // TODO could we throw Exception in all FOEventHandler events?
             throw new SAXException(ioe);
         }
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#endDocument()
+     * @see org.apache.fop.fo.FOEventHandler#endDocument()
      */
     public void endDocument() throws SAXException {
         try {
             rtfFile.flush();
         } catch (IOException ioe) {
-            // TODO could we throw Exception in all FOInputHandler events?
+            // TODO could we throw Exception in all FOEventHandler events?
             throw new SAXException(ioe);
         }
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler
+     * @see org.apache.fop.fo.FOEventHandler
      */
     public void startPageSequence(PageSequence pageSeq)  {
         try {
@@ -193,14 +193,14 @@ public class RTFHandler extends FOInputHandler {
             bHeaderSpecified = false;
             bFooterSpecified = false;
         } catch (IOException ioe) {
-            // TODO could we throw Exception in all FOInputHandler events?
+            // TODO could we throw Exception in all FOEventHandler events?
             log.error("startPageSequence: " + ioe.getMessage());
             //TODO throw new FOPException(ioe);
         }
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#endPageSequence(PageSequence)
+     * @see org.apache.fop.fo.FOEventHandler#endPageSequence(PageSequence)
      */
     public void endPageSequence(PageSequence pageSeq) {
         if (bDefer) {
@@ -211,7 +211,7 @@ public class RTFHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#startFlow(Flow)
+     * @see org.apache.fop.fo.FOEventHandler#startFlow(Flow)
      */
     public void startFlow(Flow fl) {
         if (bDefer) {
@@ -290,7 +290,7 @@ public class RTFHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#endFlow(Flow)
+     * @see org.apache.fop.fo.FOEventHandler#endFlow(Flow)
      */
     public void endFlow(Flow fl) {
         if (bDefer) {
@@ -312,7 +312,7 @@ public class RTFHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#startBlock(Block)
+     * @see org.apache.fop.fo.FOEventHandler#startBlock(Block)
      */
     public void startBlock(Block bl) {
         ++iNestCount;
@@ -342,7 +342,7 @@ public class RTFHandler extends FOInputHandler {
             textrun.addParagraphBreak();
             textrun.pushAttributes(rtfAttr);
         } catch (IOException ioe) {
-            // TODO could we throw Exception in all FOInputHandler events?
+            // TODO could we throw Exception in all FOEventHandler events?
             log.error("startBlock: " + ioe.getMessage());
             throw new RuntimeException("IOException: " + ioe);
         } catch (Exception e) {
@@ -353,7 +353,7 @@ public class RTFHandler extends FOInputHandler {
 
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#endBlock(Block)
+     * @see org.apache.fop.fo.FOEventHandler#endBlock(Block)
      */
     public void endBlock(Block bl) {
         --iNestCount;
@@ -398,7 +398,7 @@ public class RTFHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#startTable(Table)
+     * @see org.apache.fop.fo.FOEventHandler#startTable(Table)
      */
     public void startTable(Table tbl) {
         if (bDefer) {
@@ -425,7 +425,7 @@ public class RTFHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#endTable(Table)
+     * @see org.apache.fop.fo.FOEventHandler#endTable(Table)
      */
     public void endTable(Table tbl) {
         if (bDefer) {
@@ -469,25 +469,25 @@ public class RTFHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#startHeader(TableBody)
+     * @see org.apache.fop.fo.FOEventHandler#startHeader(TableBody)
      */
     public void startHeader(TableBody th) {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#endHeader(TableBody)
+     * @see org.apache.fop.fo.FOEventHandler#endHeader(TableBody)
      */
     public void endHeader(TableBody th) {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#startFooter(TableBody)
+     * @see org.apache.fop.fo.FOEventHandler#startFooter(TableBody)
      */
     public void startFooter(TableBody tf) {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#endFooter(TableBody)
+     * @see org.apache.fop.fo.FOEventHandler#endFooter(TableBody)
      */
     public void endFooter(TableBody tf) {
     }
@@ -549,7 +549,7 @@ public class RTFHandler extends FOInputHandler {
     }
 
      /**
-     * @see org.apache.fop.fo.FOInputHandler#startBody(TableBody)
+     * @see org.apache.fop.fo.FOEventHandler#startBody(TableBody)
      */
     public void startBody(TableBody tb) {
         if (bDefer) {
@@ -569,7 +569,7 @@ public class RTFHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#endBody(TableBody)
+     * @see org.apache.fop.fo.FOEventHandler#endBody(TableBody)
      */
     public void endBody(TableBody tb) {
         if (bDefer) {
@@ -586,7 +586,7 @@ public class RTFHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#startRow(TableRow)
+     * @see org.apache.fop.fo.FOEventHandler#startRow(TableRow)
      */
     public void startRow(TableRow tr) {
         if (bDefer) {
@@ -616,7 +616,7 @@ public class RTFHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#endRow(TableRow)
+     * @see org.apache.fop.fo.FOEventHandler#endRow(TableRow)
      */
     public void endRow(TableRow tr) {
         if (bDefer) {
@@ -628,7 +628,7 @@ public class RTFHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#startCell(TableCell)
+     * @see org.apache.fop.fo.FOEventHandler#startCell(TableCell)
      */
     public void startCell(TableCell tc) {
         if (bDefer) {
@@ -678,7 +678,7 @@ public class RTFHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#endCell(TableCell)
+     * @see org.apache.fop.fo.FOEventHandler#endCell(TableCell)
      */
     public void endCell(TableCell tc) {
         if (bDefer) {
@@ -691,7 +691,7 @@ public class RTFHandler extends FOInputHandler {
 
     // Lists
     /**
-     * @see org.apache.fop.fo.FOInputHandler#startList(ListBlock)
+     * @see org.apache.fop.fo.FOEventHandler#startList(ListBlock)
      */
     public void startList(ListBlock lb) {
         if (bDefer) {
@@ -719,7 +719,7 @@ public class RTFHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#endList(ListBlock)
+     * @see org.apache.fop.fo.FOEventHandler#endList(ListBlock)
      */
     public void endList(ListBlock lb) {
         if (bDefer) {
@@ -730,7 +730,7 @@ public class RTFHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#startListItem(ListItem)
+     * @see org.apache.fop.fo.FOEventHandler#startListItem(ListItem)
      */
     public void startListItem(ListItem li) {
         if (bDefer) {
@@ -755,7 +755,7 @@ public class RTFHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#endListItem(ListItem)
+     * @see org.apache.fop.fo.FOEventHandler#endListItem(ListItem)
      */
     public void endListItem(ListItem li) {
         if (bDefer) {
@@ -766,7 +766,7 @@ public class RTFHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#startListLabel()
+     * @see org.apache.fop.fo.FOEventHandler#startListLabel()
      */
     public void startListLabel() {
         if (bDefer) {
@@ -789,7 +789,7 @@ public class RTFHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#endListLabel()
+     * @see org.apache.fop.fo.FOEventHandler#endListLabel()
      */
     public void endListLabel() {
         if (bDefer) {
@@ -800,44 +800,44 @@ public class RTFHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#startListBody()
+     * @see org.apache.fop.fo.FOEventHandler#startListBody()
      */
     public void startListBody() {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#endListBody()
+     * @see org.apache.fop.fo.FOEventHandler#endListBody()
      */
     public void endListBody() {
     }
 
     // Static Regions
     /**
-     * @see org.apache.fop.fo.FOInputHandler#startStatic()
+     * @see org.apache.fop.fo.FOEventHandler#startStatic()
      */
     public void startStatic() {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#endStatic()
+     * @see org.apache.fop.fo.FOEventHandler#endStatic()
      */
     public void endStatic() {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#startMarkup()
+     * @see org.apache.fop.fo.FOEventHandler#startMarkup()
      */
     public void startMarkup() {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#endMarkup()
+     * @see org.apache.fop.fo.FOEventHandler#endMarkup()
      */
     public void endMarkup() {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#startLink(BasicLink basicLink)
+     * @see org.apache.fop.fo.FOEventHandler#startLink(BasicLink basicLink)
      */
     public void startLink(BasicLink basicLink) {
         if (bDefer) {
@@ -876,7 +876,7 @@ public class RTFHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#endLink()
+     * @see org.apache.fop.fo.FOEventHandler#endLink()
      */
     public void endLink() {
         if (bDefer) {
@@ -887,7 +887,7 @@ public class RTFHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#image(ExternalGraphic)
+     * @see org.apache.fop.fo.FOEventHandler#image(ExternalGraphic)
      */
     public void image(ExternalGraphic eg) {
         if (bDefer) {
@@ -956,19 +956,19 @@ public class RTFHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#pageRef()
+     * @see org.apache.fop.fo.FOEventHandler#pageRef()
      */
     public void pageRef() {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#foreignObject(InstreamForeignObject)
+     * @see org.apache.fop.fo.FOEventHandler#foreignObject(InstreamForeignObject)
      */
     public void foreignObject(InstreamForeignObject ifo) {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#startFootnote(Footnote)
+     * @see org.apache.fop.fo.FOEventHandler#startFootnote(Footnote)
      */
     public void startFootnote(Footnote footnote) {
         if (bDefer) {
@@ -990,7 +990,7 @@ public class RTFHandler extends FOInputHandler {
             builderContext.pushContainer(rtfFootnote);
             
         } catch (IOException ioe) {
-            // TODO could we throw Exception in all FOInputHandler events?
+            // TODO could we throw Exception in all FOEventHandler events?
             log.error("startFootnote: " + ioe.getMessage());
             throw new RuntimeException("IOException: " + ioe);
         } catch (Exception e) {
@@ -1000,7 +1000,7 @@ public class RTFHandler extends FOInputHandler {
     }
     
     /**
-     * @see org.apache.fop.fo.FOInputHandler#endFootnote(Footnote)
+     * @see org.apache.fop.fo.FOEventHandler#endFootnote(Footnote)
      */
     public void endFootnote(Footnote footnote) {
         if (bDefer) {
@@ -1011,7 +1011,7 @@ public class RTFHandler extends FOInputHandler {
     }
     
     /**
-     * @see org.apache.fop.fo.FOInputHandler#startFootnoteBody(FootnoteBody)
+     * @see org.apache.fop.fo.FOEventHandler#startFootnoteBody(FootnoteBody)
      */
     public void startFootnoteBody(FootnoteBody body) {
         if (bDefer) {
@@ -1026,7 +1026,7 @@ public class RTFHandler extends FOInputHandler {
 
             rtfFootnote.startBody();
         } catch (IOException ioe) {
-            // TODO could we throw Exception in all FOInputHandler events?
+            // TODO could we throw Exception in all FOEventHandler events?
             log.error("startFootnoteBody: " + ioe.getMessage());
             throw new RuntimeException("IOException: " + ioe);
         } catch (Exception e) {
@@ -1036,7 +1036,7 @@ public class RTFHandler extends FOInputHandler {
     }
     
     /**
-     * @see org.apache.fop.fo.FOInputHandler#endFootnoteBody(FootnoteBody)
+     * @see org.apache.fop.fo.FOEventHandler#endFootnoteBody(FootnoteBody)
      */
     public void endFootnoteBody(FootnoteBody body) {
         if (bDefer) {
@@ -1051,7 +1051,7 @@ public class RTFHandler extends FOInputHandler {
 
             rtfFootnote.endBody();
         } catch (IOException ioe) {
-            // TODO could we throw Exception in all FOInputHandler events?
+            // TODO could we throw Exception in all FOEventHandler events?
             log.error("endFootnoteBody: " + ioe.getMessage());
             throw new RuntimeException("IOException: " + ioe);
         } catch (Exception e) {
@@ -1061,13 +1061,13 @@ public class RTFHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#leader(Leader)
+     * @see org.apache.fop.fo.FOEventHandler#leader(Leader)
      */
     public void leader(Leader l) {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#characters(char[], int, int)
+     * @see org.apache.fop.fo.FOEventHandler#characters(char[], int, int)
      */
     public void characters(char[] data, int start, int length) {
         if (bDefer) {
@@ -1082,7 +1082,7 @@ public class RTFHandler extends FOInputHandler {
             RtfTextrun textrun = container.getTextrun();
             textrun.addString(new String(data, start, length-start));
          } catch (IOException ioe) {
-            // FIXME could we throw Exception in all FOInputHandler events?
+            // FIXME could we throw Exception in all FOEventHandler events?
             log.error("characters: " + ioe.getMessage());
             throw new RuntimeException(ioe.getMessage());
         } catch (Exception e) {

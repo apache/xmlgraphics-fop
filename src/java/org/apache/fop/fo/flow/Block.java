@@ -122,7 +122,7 @@ public class Block extends FObjMixed {
         this.blockOrphans =
           this.propertyList.get(PR_ORPHANS).getNumber().intValue();
 
-        getFOInputHandler().startBlock(this);
+        getFOEventHandler().startBlock(this);
     }
 
     /**
@@ -188,7 +188,7 @@ public class Block extends FObjMixed {
      */
     protected void endOfNode() throws SAXParseException {
         handleWhiteSpace();
-        getFOInputHandler().endBlock(this);
+        getFOEventHandler().endBlock(this);
     }
 
     private void handleWhiteSpace() {

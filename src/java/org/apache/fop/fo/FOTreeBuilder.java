@@ -84,7 +84,7 @@ public class FOTreeBuilder extends DefaultHandler {
      * The class that handles formatting and rendering to a stream
      * (mark-fop@inomial.com)
      */
-    private FOInputHandler foInputHandler;
+    private FOEventHandler foEventHandler;
 
     /** The SAX locator object managing the line and column counters */
     private Locator locator; 
@@ -107,9 +107,9 @@ public class FOTreeBuilder extends DefaultHandler {
         }
             
         if (renderType == Constants.RENDER_MIF) {
-            foInputHandler = new MIFHandler(foUserAgent, stream);
+            foEventHandler = new MIFHandler(foUserAgent, stream);
         } else if (renderType == Constants.RENDER_RTF) {
-            foInputHandler = new RTFHandler(foUserAgent, stream);
+            foEventHandler = new RTFHandler(foUserAgent, stream);
         } else {
             if (renderType < Constants.RENDER_MIN_CONST 
                 || renderType > Constants.RENDER_MAX_CONST) {
@@ -117,7 +117,7 @@ public class FOTreeBuilder extends DefaultHandler {
                     "Invalid render ID#" + renderType);
             }
 
-            foInputHandler = new AreaTreeHandler(foUserAgent, renderType, 
+            foEventHandler = new AreaTreeHandler(foUserAgent, renderType, 
                 stream);
         }
         
@@ -217,11 +217,11 @@ public class FOTreeBuilder extends DefaultHandler {
      */
     public void startDocument() throws SAXException {
         rootFObj = null;    // allows FOTreeBuilder to be reused
-        FONode.setFOInputHandler(foInputHandler);
+        FONode.setFOEventHandler(foEventHandler);
         if (log.isDebugEnabled()) {
             log.debug("Building formatting object tree");
         }
-        foInputHandler.startDocument();
+        foEventHandler.startDocument();
     }
 
     /**
@@ -234,7 +234,7 @@ public class FOTreeBuilder extends DefaultHandler {
         if (log.isDebugEnabled()) {
             log.debug("Parsing of document complete");
         }
-        foInputHandler.endDocument();
+        foEventHandler.endDocument();
     }
 
     /**
@@ -355,7 +355,7 @@ public class FOTreeBuilder extends DefaultHandler {
     public void reset() {
         currentFObj = null;
         rootFObj = null;
-        foInputHandler = null;
+        foEventHandler = null;
     }
 
 }

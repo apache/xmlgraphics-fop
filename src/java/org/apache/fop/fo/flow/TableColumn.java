@@ -69,14 +69,14 @@ public class TableColumn extends FObj {
             this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
         columnWidth = this.propertyList.get(PR_COLUMN_WIDTH).getLength();
 
-        getFOInputHandler().startColumn(this);
+        getFOEventHandler().startColumn(this);
     }
 
     /**
      * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws SAXParseException {
-        getFOInputHandler().endColumn(this);
+        getFOEventHandler().endColumn(this);
     }
 
     /**

@@ -42,10 +42,10 @@ public abstract class FONode {
     protected static String FO_URI = FOElementMapping.URI;
 
     /** 
-     * FOInputHandler that handles FO events occurring 
+     * FOEventHandler that handles FO events occurring 
      * during FO Tree processing.
      */
-    protected static FOInputHandler foInputHandler = null;
+    protected static FOEventHandler foEventHandler = null;
 
     /** Parent FO node */
     protected FONode parent;
@@ -79,20 +79,20 @@ public abstract class FONode {
     }
 
     /**
-     * Sets the FOInputHandler that the FOTree processing fires events to
-     * @param inputHandler the FOInputHandler subclass to send FO events to
+     * Sets the FOEventHandler that the FOTree processing fires events to
+     * @param eventHandler the FOEventHandler subclass to send FO events to
      */
-    public static void setFOInputHandler(FOInputHandler inputHandler) {
-        FONode.foInputHandler = inputHandler;
+    public static void setFOEventHandler(FOEventHandler eventHandler) {
+        FONode.foEventHandler = eventHandler;
     } 
 
     /**
      * Recursively goes up the FOTree hierarchy until the fo:root is found,
-     * which returns the parent FOInputHandler.
-     * @return the FOInputHandler object that is the parent of the FO Tree
+     * which returns the parent FOEventHandler.
+     * @return the FOEventHandler object that is the parent of the FO Tree
      */
-    public FOInputHandler getFOInputHandler() {
-        return FONode.foInputHandler;
+    public FOEventHandler getFOEventHandler() {
+        return FONode.foEventHandler;
     }
 
     /**
@@ -100,7 +100,7 @@ public abstract class FONode {
      * @return FOUserAgent
      */
     public FOUserAgent getUserAgent() {
-        return getFOInputHandler().getUserAgent();
+        return getFOEventHandler().getUserAgent();
     }
 
     /**

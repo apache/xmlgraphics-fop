@@ -49,7 +49,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         setCurrentArea(inline);
 
         textInfo = node.getPropertyManager().getTextLayoutProps
-            (node.getFOInputHandler().getFontInfo());
+            (node.getFOEventHandler().getFontInfo());
         SpaceVal ls = textInfo.letterSpacing;
         letterSpaceIPD = new MinOptMax(ls.getSpace().min,
                                        ls.getSpace().opt,

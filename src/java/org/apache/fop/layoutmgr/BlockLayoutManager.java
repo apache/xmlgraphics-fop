@@ -76,7 +76,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         proxyLMiter = new ProxyLMiter();
         userAgent = inBlock.getUserAgent();
         setBlockTextInfo(inBlock.getPropertyManager().getTextLayoutProps(
-            inBlock.getFOInputHandler().getFontInfo()));
+            inBlock.getFOEventHandler().getFontInfo()));
     }
 
     private void setBlockTextInfo(TextInfo ti) {

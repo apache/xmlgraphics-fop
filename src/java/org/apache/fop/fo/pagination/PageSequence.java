@@ -245,7 +245,7 @@ public class PageSequence extends FObj {
            missingChildElementError("(title?,static-content*,flow)");
         }
 
-        getFOInputHandler().endPageSequence(this);
+        getFOEventHandler().endPageSequence(this);
     }
 
     /**
@@ -278,7 +278,7 @@ public class PageSequence extends FObj {
      */
     private void startStructuredPageSequence() {
         if (!sequenceStarted) {
-            getFOInputHandler().startPageSequence(this);
+            getFOEventHandler().startPageSequence(this);
             sequenceStarted = true;
         }
     }

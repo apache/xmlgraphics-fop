@@ -85,7 +85,7 @@ public class TableAndCaption extends FObj {
 
     /**
      * Make sure content model satisfied, if so then tell the
-     * FOInputHandler that we are at the end of the flow.
+     * FOEventHandler that we are at the end of the flow.
      * @see org.apache.fop.fo.FONode#end
      */
     protected void endOfNode() throws SAXParseException {
