@@ -27,6 +27,10 @@ package org.apache.fop.area;
 public class BlockAllocationRectangle extends AreaFrame implements
         AllocationRectangle {
 
+    private PaddingRectangle padding;
+    private BorderRectangle borders;
+    private SpacesRectangle spaces;
+
     /**
      * @param area
      * @param contents
@@ -43,13 +47,16 @@ public class BlockAllocationRectangle extends AreaFrame implements
         // Now extend the AreaFrame to co-incide with the
         // edges of the border rectangle in the BPDir, and with the edges of
         // the spaces rectangle in the IPDir.
-        PaddingRectangle padding = area.getPadding();
-        BorderRectangle borders = area.getBorders();
-        SpacesRectangle spaces = area.getSpaces();
+        padding = area.getPadding();
+        borders = area.getBorders();
+        spaces = area.getSpaces();
+        setAllocationFrame();
+    }
+
+    public void setAllocationFrame() {
         setStart(spaces.getStart() + borders.getStart() + padding.getStart());
         setEnd(spaces.getEnd() + borders.getEnd() + padding.getEnd());
         setBefore(borders.getBefore() + padding.getBefore());
         setAfter(borders.getAfter() + padding.getAfter());
     }
-
 }
