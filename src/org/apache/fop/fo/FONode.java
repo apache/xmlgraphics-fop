@@ -118,6 +118,24 @@ public class FONode extends Node{
     protected FONode ancestorRefArea = null;
 
     /**
+     * The default constructor arguments for an FObject. <b>N.B.</b> not
+     * all subclasses of <tt>FONode</tt> use this constructor; e.g.
+     * <tt>FoRoot</tt>, <tt>FoPageSequence</tt> &amp; <tt>FoFlow</tt>.
+     * Generally these FObjects are not invoked through reflection.  If such
+     * invocation becomes necessary for a particular class, a contructor of
+     * this kind must be added to the class.
+     * <p>At present, the only difference is in the addition of the
+     * <tt>int.class</tt> constructor argument.
+     */
+    protected static final Class[] defaultConstructorArgs =
+        new Class[] {
+            FOTree.class
+            ,FONode.class
+            ,FoXMLEvent.class
+            ,int.class
+        };
+
+    /**
      * @param foTree an <tt>FOTree</tt> to which this node belongs
      * @param type the fo type of this FONode.
      * @param parent an <tt>FONode</tt>, the parent node of this node in
@@ -133,6 +151,8 @@ public class FONode extends Node{
         throws TreeException, FOPException, PropertyException
     {
         super(foTree, parent);
+        if (type == FObjectNames.BLOCK)
+            System.out.println("Constructing FONode for FoBlock");
         this.type = type;
         this.attrSet = attrSet;
         this.sparsePropsMap = sparsePropsMap;
@@ -150,6 +170,8 @@ public class FONode extends Node{
         // Do not set up the remaining properties now.
         // These will be developed by inheritance or from the initial values
         // as the property values are referenced.
+        if (type == FObjectNames.BLOCK)
+            System.out.println("Finshed constructing FONode for FoBlock");
     }
 
     private void processAttributes() throws FOPException, PropertyException {
@@ -181,7 +203,7 @@ public class FONode extends Node{
             if (ptype != PropertyValue.LIST) { 
                 property = props.getProperty();
                 // Update the propertySet
-                propertySet[props.getProperty()] = props;
+                propertySet[property] = props;
                 specifiedProps.set(property);
                 // Handle corresponding properties here
             } else { // a list
