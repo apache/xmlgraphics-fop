@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="yes"?>
 
-<svg:svg width="480px" height="270px" style="font-family:Verdana; font-size:8" xmlns:svg="http://www.w3.org/TR/2000/03/WD-SVG-20000303/DTD/svg-20000303-stylable.dtd">
+<svg:svg width="480px" height="270px" style="font-family:Verdana; font-size:8" xmlns:svg="http://www.w3.org/TR/2000/WD-SVG-20000629/DTD/svg-20000629.dtd">
   <svg:title>PreserveAspectRatio</svg:title>
   <svg:desc>Example PreserveAspectRatio - demonstrate available options</svg:desc>
   
