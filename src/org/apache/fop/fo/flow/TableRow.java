@@ -597,5 +597,6 @@ public class TableRow extends FObj {
 				spacer = null;
 				spacerAfter = null;
 				hasAddedSpacer = false;
+         cells = null;
 		}
 }
