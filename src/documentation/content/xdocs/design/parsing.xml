@@ -6,37 +6,33 @@
     <title>XML Parsing</title>
   </header>
   <body>
-      <section id="issue-input">
-        <title>Use SAX as Input</title>
-        <p>The two standard ways of dealing with XML input are SAX and DOM. SAX basically creates events as it parses an XML document in a serial fashion; a program using SAX (and not storing anything internally) will only see a small window of the document at any point in time, and can never look forward in the document. DOM creates and stores a tree representation of the document, allowing a view of the entire document as an integrated whole. One issue that may seem counter-intuitive to some new FOP developers, and which has from time to time been contentious, is that FOP uses SAX for input. (DOM can be used as input as well, but it is converted into SAX events before entering FOP, effectively negating its advantages).</p>
-        <p>Since FOP essentially needs a tree representation of the FO input, at first glance it seems to make sense to use DOM. Instead, FOP takes SAX events and builds its own tree-like structure. Why?</p>
-        <ul>
-          <li>DOM has a relatively large memory footprint. FOP's FO Tree is a lighter-weight structure.</li>
-          <li>DOM contains an entire document. FOP is able to process individual fo:page-sequence objects discretely, without the need to have the entire document in memory. For documents that have only one fo:page-sequence object, FOP's approach is no advantage, but in other cases it is a huge advantage. A 500-page book that is broken into 100 5-page chapters, each in its own fo:page-sequence, essentially needs only 1% of the document memory that would be required if using DOM as input.</li>
-        </ul>
-      </section>
-    <section>
-      <title>XML Input</title>
-      <p>The xml document is always handled internally as SAX. The SAX events
-       are used to read the elements, attributes and text data of the FO document.
-       After the manipulation of the data the renderer writes out the pages in the
-       appropriate format. It may write as it goes, a page at a time or the whole
-       document at once. Once finished the document should contain all the data in the
-       chosen format ready for whatever use.</p>
-      <p>FOP can take the input XML in a number of ways:</p>
-      <ul>
-        <li><strong>SAX Events through SAX Handler</strong>: <code>FOTreeBuilder</code> is the SAX Handler which is obtained through <code>getContentHandler</code> on <code>Driver</code>.</li>
-        <li><strong>DOM (which is converted into SAX Events)</strong>: The conversion of a DOM tree is done via the <code>render(Document)</code> method on <code>Driver</code>.</li>
-        <li><strong>Data Source (which is parsed and converted into SAX Events)</strong>: The <code>Driver</code> can take an <code>InputSource</code> as input.
-This can use a <code>Stream</code>, <code>String</code> etc.</li>
-        <li>XML+XSLT Transformation (which is transformed using an XSLT Processor and the result is fired as SAX Events: <code>XSLTInputHandler</code> is used as an <code>InputSource</code> in the render(<code>XMLReader</code>, <code>InputSource</code>) method on <code>Driver</code></li>
-      </ul>
-      <p>The SAX Events which are fired on the SAX Handler, class <code>FOTreeBuilder</code>, must represent an XSL:FO document.
-If not there will be an error.
-Any problems with the XML being well-formed are also handled here.</p>
+    <section id="intro">
+      <title>Introduction</title>
+      <p>Parsing is the process of reading the XSL-FO input and making the information in it available to FOP.</p>
     </section>
-    <section>
-      <title>Element Mappings</title>
+    <section id="input">
+      <title>SAX for Input</title>
+      <p>The two standard ways of dealing with XML input are SAX and DOM.
+SAX basically creates events as it parses an XML document in a serial fashion; a program using SAX (and not storing anything internally) will only see a small window of the document at any point in time, and can never look forward in the document.
+DOM creates and stores a tree representation of the document, allowing a view of the entire document as an integrated whole.
+One issue that may seem counter-intuitive to some new FOP developers, and which has from time to time been contentious, is that FOP uses SAX for input.
+(DOM can be used as input as well, but it is converted into SAX events before entering FOP, effectively negating its advantages).</p>
+      <p>Since FOP essentially needs a tree representation of the FO input, at first glance it seems to make sense to use DOM.
+Instead, FOP takes SAX events and builds its own tree-like structure. Why?</p>
+      <ul>
+        <li>DOM has a relatively large memory footprint. FOP's FO Tree is a lighter-weight structure.</li>
+        <li>DOM contains an entire document. FOP is able to process individual fo:page-sequence objects discretely, without the need to have the entire document in memory. For documents that have only one fo:page-sequence object, FOP's approach is no advantage, but in other cases it is a huge advantage. A 500-page book that is broken into 100 5-page chapters, each in its own fo:page-sequence, essentially needs only 1% of the document memory that would be required if using DOM as input.</li>
+      </ul>
+      <p>See the <link href="../embedding.html#input">Input Section of the User Embedding Document</link> for a discussion of input usage patterns and some implementation details.</p>
+    </section>
+    <section id="validation">
+      <title>Validation</title>
+      <p>If the input XML is not well-formed, that will be reported.</p>
+      <p>There is no DTD for XSL-FO, so no formal validation is possible at the parser level.</p>
+      <p>The SAX handler will report an error for unrecognized namespaces.</p>
+    </section>
+    <section id="namespaces">
+      <title>Namespaces</title>
       <p>The element mapping is a hashmap of all the elements in a particular namespace.
 This makes it easy to create a different object for each element.
 Element mappings are static to save on memory.</p>
