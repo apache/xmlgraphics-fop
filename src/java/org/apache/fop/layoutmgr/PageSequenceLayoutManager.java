@@ -66,7 +66,7 @@ import org.apache.fop.traits.MinOptMax;
  * LayoutManager for a PageSequence and its flow.
  * It manages all page-related layout.
  */
-public class PageSequenceLayoutManager extends AbstractLayoutManager implements Runnable {
+public class PageSequenceLayoutManager extends AbstractLayoutManager {
     private PageSequence fobj;
 
     private static class BlockBreakPosition extends LeafPosition {
@@ -155,30 +155,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
     }
 
     /**
-     * The layout process is designed to be able to be run in a thread.
-     * In theory it can run at the same
-     * time as FO tree generation, once the layout-master-set has been read.
-     * We can arrange it so that the iterator over the fobj children waits
-     * until the next child is available.
-     * As it produces pages, it adds them to the AreaTree, where the
-     * rendering process can also run in a parallel thread.
-     */
-    public void run() {
-        fobj.initPageNumber();
-        setPageCounting(fobj.getCurrentPageNumber(),
-                fobj.getPageNumberGenerator());
-
-        LineArea title = null;
-        if (fobj.getTitleFO() != null) {
-            title = getTitleArea(fobj.getTitleFO());
-        }
-
-        areaTreeModel.startPageSequence(title);
-        doLayout();
-        flush();
-    }
-
-    /**
      * Get the page count.
      * Used to get the last page number for reference for
      * the next page sequence.
@@ -211,13 +187,23 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
     }
 
     /**
-     * Do the layout of this page sequence.
+     * Start the layout of this page sequence.
      * This completes the layout of the page sequence
      * which creates and adds all the pages to the area tree.
      */
-    protected void doLayout() {
+    public void activateLayout() {
+        fobj.initPageNumber();
+        setPageCounting(fobj.getCurrentPageNumber(),
+                fobj.getPageNumberGenerator());
 
+        LineArea title = null;
+        if (fobj.getTitleFO() != null) {
+            title = getTitleArea(fobj.getTitleFO());
+        }
+
+        areaTreeModel.startPageSequence(title);
         log.debug("Starting layout");
+
         // this should be done another way
         makeNewPage(false, false);
         createBodyMainReferenceArea();
@@ -239,6 +225,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
         }
         pageCount--;
         log.debug("Ending layout");
+        flush();
     }
 
     /**

@@ -236,7 +236,7 @@ public class AreaTreeHandler extends FOEventHandler {
         if (pageSequence.getMainFlow() != null) {
             PageSequenceLayoutManager pageSLM 
                 = new PageSequenceLayoutManager(this, pageSequence);
-            pageSLM.run();
+            pageSLM.activateLayout();
             pageSequence.setCurrentPageNumber(pageSLM.getPageCount());
         }
     }
