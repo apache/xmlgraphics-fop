@@ -67,6 +67,31 @@ public class XMLNamespaces {
      */
     private ArrayList uris;
 
+    /**
+     * A sequence object for use by <tt>XMLEvent</tt>s.  Because an
+     * <tt>XMLEvent</tt> object must always be associated with an
+     * <i>XMLNamespace</i> object, this namespace object will act as a
+     * singleton for <tt>XMLEvent</tt>s.  This field provides a
+     * counter for those objects.  The range of values which may be
+     * assigned to <i>sequence</i> is restricted by <i>seqMask</i>.
+     */
+    private int sequence = 0;
+
+    /** Mask to restrict the range of values within which <i>sequence</i>
+     * may cycle.
+     */
+    public final int seqMask = (1 << 20) - 1;
+
+    /**
+     * The access function for the sequence.
+     * @return the next positive sequence number.  This number may wrap
+     * but is guaranteed to be within the range seqMask >= sequence >= 0.
+     */
+    public int getSequence() {
+        sequence = ++sequence & seqMask;
+        return sequence;
+    }
+
     public XMLNamespaces() {
         uriIndices = new HashMap(4);
         uris = new ArrayList(4);
