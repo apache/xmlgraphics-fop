@@ -116,10 +116,10 @@ public class FoBidiOverride extends FONode {
                         ev = xmlevents.getEndElement(ev);
                 }
             } catch(UnexpectedStartElementException e) {
+                ev = xmlevents.getStartElement();
                 MessageHandler.logln
                         ("Ignoring unexpected Start Element: "
                                                          + ev.getQName());
-                ev = xmlevents.getStartElement();
                 ev = xmlevents.getEndElement(ev);
             }
         } while (ev != null);
