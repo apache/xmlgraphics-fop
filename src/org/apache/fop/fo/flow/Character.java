@@ -56,7 +56,11 @@ public class Character  extends FObj {
 
 
 		public Status layout(Area area) throws FOPException {
-				AreaContainer blockArea;
+				BlockArea blockArea;
+        if(!(area instanceof BlockArea)) {
+            MessageHandler.errorln("WARNING: currently Character can only be in a BlockArea");
+            return new Status(Status.OK);
+        }
 				blockArea = (BlockArea) area;
 				boolean textDecoration;
 
