@@ -26,7 +26,7 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.fop.apps.Driver;
+import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOFileHandler;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.InputHandler;
@@ -49,13 +49,11 @@ import org.apache.commons.logging.impl.SimpleLog;
  * versions of FOP or the pdf can be view for manual checking and
  * pdf rendering.
  *
- * Modified by Mark Lillywhite mark-fop@inomial.com to use the new Driver
- * interface.
  */
 public class TestConverter {
     
     private boolean failOnly = false;
-    private int renderType = Driver.RENDER_XML;
+    private int renderType = Fop.RENDER_XML;
     private File destdir;
     private File compare = null;
     private String baseDir = "./";
@@ -106,7 +104,7 @@ public class TestConverter {
             if (args[count].equals("-failOnly")) {
                 tc.setFailOnly(true);
             } else if (args[count].equals("-pdf")) {
-                tc.setRenderType(Driver.RENDER_PDF);
+                tc.setRenderType(Fop.RENDER_PDF);
             } else if (args[count].equals("-d")) {
                 tc.setDebug(true);
             } else if (args[count].equals("-b")) {
@@ -307,7 +305,7 @@ public class TestConverter {
 
             FOUserAgent userAgent = new FOUserAgent();
             userAgent.setBaseURL(baseURL);
-            Driver driver = new Driver(renderType, userAgent);
+            Fop fop = new Fop(renderType, userAgent);
 
             userAgent.getRendererOptions().put("fineDetail", new Boolean(false));
             userAgent.getRendererOptions().put("consistentOutput", new Boolean(true));
@@ -318,15 +316,15 @@ public class TestConverter {
                 outname = outname.substring(0, outname.length() - 4);
             }
             File outputFile = new File(destdir, // assuming only RENDER_PDF or RENDER_XML here
-                                 outname + ((renderType==Driver.RENDER_PDF) ? ".pdf" : ".at.xml"));
+                                 outname + ((renderType==Fop.RENDER_PDF) ? ".pdf" : ".at.xml"));
 
             outputFile.getParentFile().mkdirs();
             OutputStream outStream = new java.io.BufferedOutputStream(
                                  new java.io.FileOutputStream(outputFile));
-            driver.setOutputStream(outStream);
+            fop.setOutputStream(outStream);
             logger.debug("ddir:" + destdir + " on:" + 
                               outputFile.getName());
-            inputHandler.render(driver);
+            inputHandler.render(fop);
             outStream.close();
 
             // check difference

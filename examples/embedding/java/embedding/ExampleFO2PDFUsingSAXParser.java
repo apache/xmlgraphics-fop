@@ -36,7 +36,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.SAXException;
 
 // FOP
-import org.apache.fop.apps.Driver;
+import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -63,14 +63,14 @@ public class ExampleFO2PDFUsingSAXParser {
         OutputStream out = null;
         
         try {
-            // Construct driver and setup output format
-            Driver driver = new Driver(Driver.RENDER_PDF);
+            // Construct fop and setup output format
+            Fop fop = new Fop(Fop.RENDER_PDF);
     
             // Setup output stream.  Note: Using BufferedOutputStream
             // for performance reasons (helpful with FileOutputStreams).
             out = new FileOutputStream(pdf);
             out = new BufferedOutputStream(out);
-            driver.setOutputStream(out);
+            fop.setOutputStream(out);
 
             // Setup SAX parser
             // throws FactoryConfigurationError
@@ -81,7 +81,7 @@ public class ExampleFO2PDFUsingSAXParser {
                 
             // Obtain FOP's DefaultHandler
             // throws FOPException
-            DefaultHandler dh = driver.getDefaultHandler();
+            DefaultHandler dh = fop.getDefaultHandler();
 
             // Start parsing and FOP processing
             // throws SAXException, IOException

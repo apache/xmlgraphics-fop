@@ -21,15 +21,112 @@ package org.apache.fop.apps;
 // Java
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
+import java.io.OutputStream;
+
+// XML
+import org.xml.sax.helpers.DefaultHandler;
 
 // FOP
-import org.apache.fop.render.awt.AWTRenderer;
-
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.FOTreeBuilder;
 
 /**
- * The main application class for the FOP command line interface (CLI).
+ * Primary class that activates the FOP process for both command line
+ * and embedded usage.
+ * <P>
+ * JAXP is the standard method of embedding FOP in Java programs.
+ * Please check our embedding page (http://xml.apache.org/fop/embedding.html)
+ * for samples (these are also available within the distribution in 
+ * FOP_DIR\examples\embedding)
+ * <P>
+ * Methods within FOUserAgent are available to customize portions of the
+ * process.  For example, a specific Renderer object can be specified, 
+ * also ElementMappings which determine elements in the FO that can be
+ * processed) can be added.
  */
-public class Fop {
+public class Fop implements Constants {
+
+    // desired output type: RENDER_PDF, RENDER_PS, etc.
+    private int renderType = NOT_SET;
+
+    // output stream to send results to
+    private OutputStream stream = null;
+
+    // FOUserAgent object to set processing options
+    private FOUserAgent foUserAgent = null;
+
+    /**
+     * Constructor for use with already-created FOUserAgents
+     * @param renderType the type of renderer to use.  Must be one of
+     * <ul>
+     * <li>Fop.RENDER_PDF</li>
+     * <li>Fop.RENDER_AWT</li>
+     * <li>Fop.RENDER_PRINT</li>
+     * <li>Fop.RENDER_MIF</li>
+     * <li>Fop.RENDER_XML</li>
+     * <li>Fop.RENDER_PCL</li>
+     * <li>Fop.RENDER_PS</li>
+     * <li>Fop.RENDER_TXT</li>
+     * <li>Fop.RENDER_SVG</li>
+     * <li>Fop.RENDER_RTF</li>
+     * </ul>
+     * @param ua FOUserAgent object
+     * @throws IllegalArgumentException if an unsupported renderer type was requested.
+     */
+    public Fop(int renderType, FOUserAgent ua) {
+        if (renderType < Constants.RENDER_MIN_CONST 
+            || renderType > Constants.RENDER_MAX_CONST) {
+            throw new IllegalArgumentException(
+                "Invalid render type #" + renderType);
+        }
+
+        this.renderType = renderType;
+
+        foUserAgent = ua;
+        if (foUserAgent == null) {
+            foUserAgent = new FOUserAgent();
+        }
+    }
+
+    /**
+     * Constructor that creates a default FOUserAgent
+     * @see org.apache.fop.apps.Fop#(int, FOUserAgent)
+     */
+    public Fop(int renderType) {
+        this(renderType, new FOUserAgent());
+    }
+
+    /**
+     * Get the FOUserAgent instance for this process
+     * @return the user agent
+     */
+    public FOUserAgent getUserAgent() {
+        return foUserAgent;
+    }
+
+    /**
+     * Set the OutputStream to use to output the result of the Render
+     * (if applicable)
+     * @param stream the stream to output the result of rendering to
+     */
+    public void setOutputStream(OutputStream stream) {
+        this.stream = stream;
+    }
+
+    /**
+     * Returns a DefaultHandler object used to generate the document.
+     * Note this object implements the ContentHandler interface.
+     * For processing with a Transformer object, this DefaultHandler object
+     * can be used in the SAXResult constructor.
+     * Alternatively, for processing with a SAXParser, this object can be
+     * used as the DefaultHandler argument to its parse() methods.
+     *
+     * @return a SAX DefaultHandler for handling the SAX events.
+     * @throws FOPException if setting up the DefaultHandler fails
+     */
+    public DefaultHandler getDefaultHandler() throws FOPException {
+        return new FOTreeBuilder(renderType, foUserAgent, stream);
+    }
 
     /**
      * The main routine for the command line interface
@@ -44,15 +141,15 @@ public class Fop {
             options = new CommandLineOptions(args);
             foUserAgent = options.getFOUserAgent();
             
-            Driver driver = new Driver(options.getRenderer(), foUserAgent);
+            Fop fop = new Fop(options.getRenderer(), foUserAgent);
 
             try {
                 if (options.getOutputFile() != null) {
                     bos = new BufferedOutputStream(new FileOutputStream(
                         options.getOutputFile()));
-                    driver.setOutputStream(bos);
+                    fop.setOutputStream(bos);
                 }
-                foUserAgent.getInputHandler().render(driver);
+                foUserAgent.getInputHandler().render(fop);
              } finally {
                  if (bos != null) {
                      bos.close();
@@ -96,4 +193,3 @@ public class Fop {
         return "1.0dev";
     }
 }
-

@@ -22,7 +22,7 @@ package org.apache.fop.fo;
 public interface Constants {
 
     /* These constants are used by apps.CommandLineOptions and
-       apps.Driver to describe the input (either .FO or .XML/.XSL)
+       apps.Fop to describe the input (either .FO or .XML/.XSL)
        and desired output (PDF, PS, AWT, etc.) of the document */
        
     /** render constants for bounds checking */

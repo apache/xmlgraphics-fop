@@ -38,7 +38,7 @@ import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.commons.logging.Log;
 
 //FOP
-import org.apache.fop.apps.Driver;
+import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -201,14 +201,14 @@ public class FopServlet extends HttpServlet {
                 throws FOPException, TransformerException {
 
         //Setup FOP
-        Driver driver = new Driver(Driver.RENDER_PDF);
+        Fop fop = new Fop(Fop.RENDER_PDF);
 
         //Setup output
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        driver.setOutputStream(out);
+        fop.setOutputStream(out);
 
         //Make sure the XSL transformation's result is piped through to FOP
-        Result res = new SAXResult(driver.getDefaultHandler());
+        Result res = new SAXResult(fop.getDefaultHandler());
 
         //Start the transformation and rendering process
         transformer.transform(src, res);

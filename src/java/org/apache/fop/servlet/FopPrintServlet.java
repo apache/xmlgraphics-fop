@@ -37,7 +37,7 @@ import javax.xml.transform.stream.StreamSource;
 // XML
 import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.commons.logging.Log;
-import org.apache.fop.apps.Driver;
+import org.apache.fop.apps.Fop;
 import org.xml.sax.InputSource;
 
 //Java
@@ -138,7 +138,7 @@ public class FopPrintServlet extends HttpServlet {
     public void renderFO(InputStream foFile,
                          HttpServletResponse response) throws ServletException {
         try {
-            Driver driver = new Driver(Driver.RENDER_PRINT);
+            Fop fop = new Fop(Fop.RENDER_PRINT);
 
             // Setup JAXP
             TransformerFactory factory = TransformerFactory.newInstance();
@@ -148,7 +148,7 @@ public class FopPrintServlet extends HttpServlet {
             Source src = new StreamSource(foFile);
             
             // Resulting SAX events (the generated FO) must be piped through to FOP
-            Result res = new SAXResult(driver.getDefaultHandler());
+            Result res = new SAXResult(fop.getDefaultHandler());
             
             // Start XSLT transformation and FOP processing
             transformer.transform(src, res);
@@ -169,7 +169,7 @@ public class FopPrintServlet extends HttpServlet {
     public void renderXML(File xmlfile, File xsltfile,
                           HttpServletResponse response) throws ServletException {
         try {
-            Driver driver = new Driver(Driver.RENDER_PRINT);
+            Fop fop = new Fop(Fop.RENDER_PRINT);
 
             // Setup XSLT
             TransformerFactory factory = TransformerFactory.newInstance();
@@ -179,7 +179,7 @@ public class FopPrintServlet extends HttpServlet {
             Source src = new StreamSource(xmlfile);
         
             // Resulting SAX events (the generated FO) must be piped through to FOP
-            Result res = new SAXResult(driver.getDefaultHandler());
+            Result res = new SAXResult(fop.getDefaultHandler());
 
             // Start XSLT transformation and FOP processing
             transformer.transform(src, res);

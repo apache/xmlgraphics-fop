@@ -30,7 +30,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.apache.fop.apps.Driver;
+import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.render.pdf.PDFRenderer;
 import org.apache.fop.util.DigestFilter;
@@ -118,12 +118,12 @@ public final class GenericFOPTestCase extends TestCase {
         ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
         DigestOutputStream out =
             new DigestOutputStream(new ByteArrayOutputStream(), outDigest);
-        Driver driver = new Driver(Driver.RENDER_PDF, foUserAgent);
-        driver.setOutputStream(out);
+        Fop fop = new Fop(Fop.RENDER_PDF, foUserAgent);
+        fop.setOutputStream(out);
         InputSource source = new InputSource(new StringReader(fo));
         DigestFilter filter = new DigestFilter("MD5");
         filter.setParent(parserFactory.newSAXParser().getXMLReader());
-        filter.setContentHandler(driver.getDefaultHandler());
+        filter.setContentHandler(fop.getDefaultHandler());
         filter.parse(source);
         String digestInActual = digestToString(filter.getDigestValue());
         if (!digestIn.equals(digestInActual)) {
