@@ -52,31 +52,20 @@ package org.apache.fop.svg;
 
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import org.apache.avalon.framework.configuration.Configurable;
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.container.ContainerUtil;
 import org.apache.batik.bridge.BridgeContext;
-import org.apache.batik.bridge.BridgeException;
-import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.UserAgent;
-import org.apache.batik.bridge.ViewBox;
-import org.apache.batik.dom.svg.SVGOMDocument;
-import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.gvt.TextPainter;
 import org.apache.batik.gvt.renderer.StrokingTextPainter;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.ImageTranscoder;
-import org.apache.batik.transcoder.image.resources.Messages;
 import org.w3c.dom.Document;
-import org.w3c.dom.svg.SVGDocument;
-import org.w3c.dom.svg.SVGSVGElement;
 
 /**
  * This class enables to transcode an input to a pdf document.
@@ -123,11 +112,11 @@ public class PDFTranscoder extends AbstractFOPTranscoder
      * @see org.apache.fop.svg.AbstractFOPTranscoder#createUserAgent()
      */
     protected UserAgent createUserAgent() {
-        return new SVGAbstractTranscoderUserAgent() {
-                // The PDF stuff wants everything at 72dpi
-                public float getPixelUnitToMillimeter() {
-                    return 0.3427778f;
-                }
+        return new AbstractFOPTranscoder.FOPTranscoderUserAgent() {
+            // The PDF stuff wants everything at 72dpi
+            public float getPixelUnitToMillimeter() {
+                return 0.3427778f; //72dpi
+            }
         };
     }
     
@@ -165,8 +154,8 @@ public class PDFTranscoder extends AbstractFOPTranscoder
         super.transcode(document, uri, output);
 
         // prepare the image to be painted
-        int w = (int)(width+.5);
-        int h = (int)(height+.5);
+        int w = (int)(width + 0.5);
+        int h = (int)(height + 0.5);
 
         try {
             graphics.setupDocument(output.getOutputStream(), w, h);
