@@ -2,6 +2,20 @@ Testing procedure for FOP
 
 (to be written using appropriate xml document)
 
+To Write a new test
+
+Determine what type of test it is:
+- basic conformance test
+- complex conformance, interaction
+- bugtest for fop
+
+You will add the test to the appropriate file.
+
+Write the test. You can either write an fo document which is copied using copy.xsl or simply write a fragment and use one of the standard document xsl's.
+
+Put the test in test/xml.
+Put the information for the test in testsuite xml file, including a result.
+
 1) Aim
 
 Need an infrastructure to develop and perform tests.
