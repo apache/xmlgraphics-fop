@@ -53,7 +53,6 @@
 package org.apache.fop.datastructs;
 
 import java.util.NoSuchElementException;
-import java.lang.IndexOutOfBoundsException;
 
 /**
  * A general synchronized circular buffer class.
@@ -124,8 +123,7 @@ public class SyncedCircularBuffer {
      * <p>This implementation supports a single entry pushback buffer.</p>
      * @param obj and <tt>Object</tt>
      */
-    synchronized public void pushBack (Object obj)
-        throws IndexOutOfBoundsException {
+    synchronized public void pushBack (Object obj) {
         if (pushBackBuf != null)
             throw new IndexOutOfBoundsException("pushBack buffer is full");
         pushBackBuf = obj;

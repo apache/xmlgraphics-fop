@@ -79,7 +79,7 @@ public abstract class FopPool {
      * the range of values that the <tt>Poolable</tt> <i>id</i> field can
      * assume.
      * If there is a significant disparity between the frequency of
-     * pool acquire and surrender invocations, an id clash may arise in
+     * pool acquire and relinquish invocations, an id clash may arise in
      * the current set.
      */
     protected final BitSet eventSet;
@@ -119,12 +119,9 @@ public abstract class FopPool {
      * Return an <tt>Poolable</tt> to the pool.
      * @param ev - the event being returned.
      */
-    public synchronized void surrenderPoolable(Poolable ev) {
-        //System.out.println("surrenderEvent " + ev.id
-                                           //+ "  poolSize " + poolSize);
+    public synchronized void relinquishPoolable(Poolable ev) {
         if (ev == null) return;
         if (eventSet.get(ev.id)) {
-            //System.out.println("Event clash: " + ev);
             MessageHandler.logln
                     ("Event clash in Poolable pool. Id " + ev.id);
             return;

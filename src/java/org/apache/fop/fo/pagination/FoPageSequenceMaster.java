@@ -67,7 +67,7 @@ import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.xml.SyncedXmlEventsBuffer;
+import org.apache.fop.xml.XmlEventReader;
 import org.apache.fop.xml.XmlEvent;
 
 /**
@@ -252,8 +252,8 @@ public class FoPageSequenceMaster extends FONode {
                     throw new FOPException
                             ("Aargh! expectStartElement(events, list)");
                 ev = xmlevents.getEndElement
-                                    (SyncedXmlEventsBuffer.DISCARD_EV, ev);
-                namespaces.surrenderEvent(ev);
+                                    (XmlEventReader.DISCARD_EV, ev);
+                namespaces.relinquishEvent(ev);
             } while (true);
         } catch (NoSuchElementException e) {
             throw new FOPException("Unexpected EOF in page-sequence-master.");
@@ -343,8 +343,8 @@ public class FoPageSequenceMaster extends FONode {
                     //    ("Found conditional-page-master-reference");
                     new FoConditionalPageMasterReference(foTree, this, ev);
                     ev = this.xmlevents.getEndElement
-                                    (SyncedXmlEventsBuffer.DISCARD_EV, ev);
-                    this.namespaces.surrenderEvent(ev);
+                                    (XmlEventReader.DISCARD_EV, ev);
+                    this.namespaces.relinquishEvent(ev);
                 } while (true);
             } catch (NoSuchElementException e) {
                 // End of file reached

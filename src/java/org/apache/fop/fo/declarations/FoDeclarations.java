@@ -64,7 +64,7 @@ import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.xml.SyncedXmlEventsBuffer;
+import org.apache.fop.xml.XmlEventReader;
 import org.apache.fop.xml.XmlEvent;
 
 /**
@@ -123,16 +123,16 @@ public class FoDeclarations extends FONode {
                 throw new FOPException
                         ("No fo:color-profile in fo:declarations.");
             new FoColorProfile(foTree, this, ev);
-            ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
-            namespaces.surrenderEvent(ev);
+            ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
+            namespaces.relinquishEvent(ev);
             do {
                 ev = xmlevents.expectStartElement
                     (FObjectNames.COLOR_PROFILE, XmlEvent.DISCARD_W_SPACE);
                 if (ev == null) break; // No instance of these elements found
                 new FoColorProfile(foTree, this, ev);
                 // Flush the master event
-                ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
-                namespaces.surrenderEvent(ev);
+                ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
+                namespaces.relinquishEvent(ev);
             } while (true);
         } catch (NoSuchElementException e) {
             // Unexpected end of file

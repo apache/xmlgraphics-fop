@@ -341,13 +341,13 @@ public class Namespaces {
     }
     
     /**
-     * Surrender an event.  This method selects the appropriate pool
+     * Relinquish an event.  This method selects the appropriate pool
      * according to the event namespace index, and passes the request to
      * the pool.
-     * @param event to surrender
+     * @param event to relinquish
      */
-    public void surrenderEvent(XmlEvent event) {
-        pools[event.uriIndex].surrenderPoolable(event);
+    public void relinquishEvent(XmlEvent event) {
+        pools[event.uriIndex].relinquishPoolable(event);
     }
 
     /**
@@ -361,12 +361,12 @@ public class Namespaces {
     }
     
     /**
-     * Surrender a <code>UriLocalName</code>.
+     * Relinquish a <code>UriLocalName</code>.
      * The name is returned to the pool.
-     * @param uriName to surrender
+     * @param uriName to relinquish
      */
-    public void surrenderUriLocalName(UriLocalName uriName) {
-        uriLocalNamePool.surrenderPoolable(uriName);
+    public void relinquishUriLocalName(UriLocalName uriName) {
+        uriLocalNamePool.relinquishPoolable(uriName);
     }
     
     /**
