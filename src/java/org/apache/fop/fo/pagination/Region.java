@@ -32,17 +32,6 @@ import org.xml.sax.Attributes;
  */
 public abstract class Region extends FObj {
 
-    /** Key for before regions */
-    public static final String BEFORE = "before";
-    /** Key for start regions */
-    public static final String START =  "start";
-    /** Key for end regions */
-    public static final String END =    "end";
-    /** Key for after regions */
-    public static final String AFTER =  "after";
-    /** Key for body regions */
-    public static final String BODY =   "body";
-
     /* The following codes correspond to those found in area/RegionReference */
     /** Integer Code for before regions */
     public static final int BEFORE_CODE = 0;
@@ -56,6 +45,7 @@ public abstract class Region extends FObj {
     public static final int AFTER_CODE = 4;
 
     private SimplePageMaster layoutMaster;
+    private int regionId = -1;
     private String regionName;
 
     /** Holds the overflow attribute */
@@ -66,8 +56,9 @@ public abstract class Region extends FObj {
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
-    protected Region(FONode parent) {
+    protected Region(FONode parent, int id) {
         super(parent);
+        regionId = id;
     }
 
     /**
@@ -114,13 +105,6 @@ public abstract class Region extends FObj {
      * @return the default region name
      */
     protected abstract String getDefaultRegionName();
-
-
-    /**
-     * Returns the region class name.
-     * @return the region class name
-     */
-    public abstract String getRegionClass();
 
     /**
      * Returns the region class code.
@@ -179,9 +163,9 @@ public abstract class Region extends FObj {
      * @param regionClass the class of the requested region
      * @return the requested region
      */
-    protected Region getSiblingRegion(String regionClass) {
+    protected Region getSiblingRegion(int regionId) {
         // Ask parent for region
-        return  layoutMaster.getRegion(regionClass);
+        return  layoutMaster.getRegion(regionId);
     }
 
     /**

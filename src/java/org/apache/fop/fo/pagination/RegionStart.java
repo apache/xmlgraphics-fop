@@ -35,7 +35,7 @@ public class RegionStart extends RegionSE {
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public RegionStart(FONode parent) {
-        super(parent);
+        super(parent, Region.START_CODE);
     }
 
     /**
@@ -60,13 +60,6 @@ public class RegionStart extends RegionSE {
      */
     protected String getDefaultRegionName() {
         return "xsl-region-start";
-    }
-
-    /**
-     * @see org.apache.fop.fo.pagination.Region#getRegionClass()
-     */
-    public String getRegionClass() {
-        return Region.START;
     }
 
     /**

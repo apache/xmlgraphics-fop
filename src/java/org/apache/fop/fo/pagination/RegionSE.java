@@ -33,8 +33,8 @@ public abstract class RegionSE extends RegionBASE {
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
-    protected RegionSE(FONode parent) {
-        super(parent);
+    protected RegionSE(FONode parent, int regionId) {
+        super(parent, regionId);
     }
 
     /**

@@ -41,7 +41,7 @@ public class RegionBody extends Region {
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public RegionBody(FONode parent) {
-        super(parent);
+        super(parent, Region.BODY_CODE);
     }
 
     /**
@@ -93,13 +93,6 @@ public class RegionBody extends Region {
      */
     protected String getDefaultRegionName() {
         return "xsl-region-body";
-    }
-
-    /**
-     * @see org.apache.fop.fo.pagination.Region#getRegionClass()
-     */
-    public String getRegionClass() {
-        return Region.BODY;
     }
 
     /**

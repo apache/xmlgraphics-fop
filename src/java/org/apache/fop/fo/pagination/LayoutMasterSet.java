@@ -140,11 +140,12 @@ public class LayoutMasterSet extends FObj {
     }
 
     /**
-     * Section 7.33.15: check to see that if a region-name is a
-     * duplicate, that it maps to the same region-class.
+     * Section 7.25.7: check to see that if a region-name is a
+     * duplicate, that it maps to the same fo region-class.
      * @throws FOPException if there's a name duplication
      */
     public void checkRegionNames() throws FOPException {
+        // (user-entered) region-name to default region map.
         Map allRegions = new java.util.HashMap();
         for (Iterator spm = simplePageMasters.values().iterator();
                 spm.hasNext();) {
@@ -153,22 +154,22 @@ public class LayoutMasterSet extends FObj {
             Map spmRegions = simplePageMaster.getRegions();
             for (Iterator e = spmRegions.values().iterator();
                     e.hasNext();) {
-                Region region = (Region)e.next();
+                Region region = (Region) e.next();
                 if (allRegions.containsKey(region.getRegionName())) {
-                    String localClass =
-                        (String)allRegions.get(region.getRegionName());
-                    if (!localClass.equals(region.getRegionClass())) {
-                        throw new FOPException("Duplicate region-names ("
+                    String defaultRegionName =
+                        (String) allRegions.get(region.getRegionName());
+                    if (!defaultRegionName.equals(region.getDefaultRegionName())) {
+                        throw new FOPException("Region-name ("
                                                + region.getRegionName()
-                                               + ") must map "
-                                               + "to the same region-class ("
-                                               + localClass + "!="
-                                               + region.getRegionClass()
+                                               + ") is being mapped to multiple "
+                                               + "region-classes ("
+                                               + defaultRegionName + " and "
+                                               + region.getDefaultRegionName()
                                                + ")");
                     }
                 }
                 allRegions.put(region.getRegionName(),
-                               region.getRegionClass());
+                               region.getDefaultRegionName());
             }
         }
     }

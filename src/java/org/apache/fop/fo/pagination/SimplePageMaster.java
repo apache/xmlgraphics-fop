@@ -108,9 +108,9 @@ public class SimplePageMaster extends FObj {
      * @param region region to add
      */
     protected void addRegion(Region region) {
-        String key = region.getRegionClass();
+        String key = String.valueOf(region.getRegionClassCode());
         if (regions.containsKey(key)) {
-            getLogger().error("Only one region of class " + key
+            getLogger().error("Only one region of class " + region.getRegionName()
                     + " allowed within a simple-page-master. The duplicate"
                     + " region (" + region.getName() + ") is ignored.");
         } else {
@@ -123,8 +123,8 @@ public class SimplePageMaster extends FObj {
      * @param regionClass region class to lookup
      * @return the region, null if it doesn't exist
      */
-    public Region getRegion(String regionClass) {
-        return (Region)regions.get(regionClass);
+    public Region getRegion(int regionId) {
+        return (Region) regions.get(String.valueOf(regionId));
     }
 
     /**
