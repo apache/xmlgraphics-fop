@@ -18,17 +18,24 @@
 
 package org.apache.fop.layoutmgr;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Trait;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.PercentLength;
 
 /**
  * This is a helper class used for setting common traits on areas.
  */
 public class TraitSetter {
 
+    /** logger */
+    protected static Log log = LogFactory.getLog(TraitSetter.class);
+    
     /**
      * Sets border and padding traits on areas.
      * @param area area to set the traits on
@@ -152,6 +159,7 @@ public class TraitSetter {
      * Add background to an area.
      * Layout managers that create areas with a background can use this to
      * add the background to the area.
+     * Note: The area's IPD and BPD must be set before calling this method.
      * @param area the area to set the traits on
      * @param backProps the background properties
      */
@@ -159,18 +167,52 @@ public class TraitSetter {
         Trait.Background back = new Trait.Background();
         back.setColor(backProps.backgroundColor);
 
-        if (backProps.backgroundImage != null) {
+        if (backProps.getFopImage() != null) {
             back.setURL(backProps.backgroundImage);
+            back.setFopImage(backProps.getFopImage());
             back.setRepeat(backProps.backgroundRepeat);
             if (backProps.backgroundPositionHorizontal != null) {
-                back.setHoriz(backProps.backgroundPositionHorizontal.getValue());
+                if (back.getRepeat() == Constants.EN_NOREPEAT 
+                        || back.getRepeat() == Constants.EN_REPEATY) {
+                    if (backProps.backgroundPositionHorizontal instanceof PercentLength) {
+                        if (area.getIPD() > 0) {
+                            int width = area.getIPD();
+                            width += backProps.getPaddingStart(false);
+                            width += backProps.getPaddingEnd(false);
+                            back.setHoriz((int)((width - back.getFopImage().getIntrinsicWidth()) 
+                                * ((PercentLength)backProps.backgroundPositionHorizontal).value()));
+                        } else {
+                            //TODO Area IPD has to be set for this to work
+                            log.warn("Horizontal background image positioning ignored");
+                        }
+                    } else {
+                        back.setHoriz(backProps.backgroundPositionHorizontal.getValue());
+                    }
+                }
             }
             if (backProps.backgroundPositionVertical != null) {
-                back.setVertical(backProps.backgroundPositionVertical.getValue());
+                if (back.getRepeat() == Constants.EN_NOREPEAT 
+                        || back.getRepeat() == Constants.EN_REPEATX) {
+                    if (backProps.backgroundPositionVertical instanceof PercentLength) {
+                        if (area.getBPD() > 0) {
+                            int height = area.getBPD();
+                            height += backProps.getPaddingBefore(false);
+                            height += backProps.getPaddingAfter(false);
+                            back.setVertical(
+                                (int)((height - back.getFopImage().getIntrinsicHeight()) 
+                                * ((PercentLength)backProps.backgroundPositionVertical).value()));
+                        } else {
+                            //TODO Area BPD has to be set for this to work
+                            log.warn("Vertical background image positioning ignored");
+                        }
+                    } else {
+                        back.setVertical(backProps.backgroundPositionVertical.getValue());
+                    }
+                }
             }
         }
 
-        if (back.getColor() != null || back.getURL() != null) {
+        if (back.getColor() != null || back.getFopImage() != null) {
             area.addTrait(Trait.BACKGROUND, back);
         }
     }
