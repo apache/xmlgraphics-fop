@@ -159,6 +159,18 @@ public class Trait implements Serializable {
      */
     public static final Integer BREAK_AFTER = new Integer(26);
 
+    /**
+     * The start-indent trait.
+     */
+    public static final Integer START_INDENT = new Integer(27);
+
+    /**
+     * The end-indent trait.
+     */
+    public static final Integer END_INDENT  = new Integer(28);
+
+    
+    
     private static final Map TRAIT_INFO = new HashMap();
 
     private static class TraitInfo {
@@ -226,8 +238,10 @@ public class Trait implements Serializable {
                           new TraitInfo("break-before", Integer.class));
         TRAIT_INFO.put(BREAK_AFTER,
                           new TraitInfo("break-after", Integer.class));
-
-
+        TRAIT_INFO.put(START_INDENT,
+                new TraitInfo("start-indent", Integer.class));
+        TRAIT_INFO.put(END_INDENT,
+                new TraitInfo("end-indent", Integer.class));
     }
 
     /**
