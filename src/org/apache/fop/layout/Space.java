@@ -50,9 +50,5 @@
  */
 package org.apache.fop.layout;
 
-
-
 abstract public class Space extends Box {
-
 }
-
