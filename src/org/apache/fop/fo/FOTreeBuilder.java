@@ -99,55 +99,55 @@ public class FOTreeBuilder extends DefaultHandler {
     protected Hashtable unknownFOs = new Hashtable();
 
     // namespace implementation ideas pinched from John Cowan
-    protected static class NSMap {
-	String prefix;
-	String uri;
-	int level;
+//      protected static class NSMap {
+//  	String prefix;
+//  	String uri;
+//  	int level;
 
-	NSMap(String prefix, String uri, int level) {
-	    this.prefix = prefix;
-	    this.uri = uri;
-	    this.level = level;
-	}
-    }
+//  	NSMap(String prefix, String uri, int level) {
+//  	    this.prefix = prefix;
+//  	    this.uri = uri;
+//  	    this.level = level;
+//  	}
+//      }
 
-    protected int level = 0;
-    protected Stack namespaceStack = new Stack();
+//      protected int level = 0;
+//      protected Stack namespaceStack = new Stack();
 
-    {
-	namespaceStack.push(new NSMap("xml",
-				      "http://www.w3.org/XML/1998/namespace",
-				      -1));
-	namespaceStack.push(new NSMap("", "", -1));
-    }
+//      {
+//  	namespaceStack.push(new NSMap("xml",
+//  				      "http://www.w3.org/XML/1998/namespace",
+//  				      -1));
+//  	namespaceStack.push(new NSMap("", "", -1));
+//      }
 
-    protected String findURI(String prefix) {
-	for (int i = namespaceStack.size() - 1; i >= 0; i--) {
-	    NSMap nsMap = (NSMap) (namespaceStack.elementAt(i));
-	    if (prefix.equals(nsMap.prefix)) return nsMap.uri;
-	}
-	return null;
-    }
+//      protected String findURI(String prefix) {
+//  	for (int i = namespaceStack.size() - 1; i >= 0; i--) {
+//  	    NSMap nsMap = (NSMap) (namespaceStack.elementAt(i));
+//  	    if (prefix.equals(nsMap.prefix)) return nsMap.uri;
+//  	}
+//  	return null;
+//      }
 
-    protected String mapName(String name)
-	throws SAXException {
-	int colon = name.indexOf(':');
-	String prefix = "";
-	String localPart = name;
-	if (colon != -1) {
-	    prefix = name.substring(0, colon);
-	    localPart = name.substring(colon + 1);
-	}
-	String uri = findURI(prefix);
-	if (uri == null) {
-	    if (prefix.equals("")) {
-		return name;
-	    } else {
-		throw new SAXException(new FOPException("Unknown namespace prefix " + prefix));
-	    }
-	}
-	return uri + "^" + localPart;
-    }
+//      protected String mapName(String name)
+//  	throws SAXException {
+//  	int colon = name.indexOf(':');
+//  	String prefix = "";
+//  	String localPart = name;
+//  	if (colon != -1) {
+//  	    prefix = name.substring(0, colon);
+//  	    localPart = name.substring(colon + 1);
+//  	}
+//  	String uri = findURI(prefix);
+//  	if (uri == null) {
+//  	    if (prefix.equals("")) {
+//  		return name;
+//  	    } else {
+//  		throw new SAXException(new FOPException("Unknown namespace prefix " + prefix));
+//  	    }
+//  	}
+//  	return uri + "^" + localPart;
+//      }
 
     /**
      * add a mapping from element name to maker.
@@ -209,10 +209,10 @@ public class FOTreeBuilder extends DefaultHandler {
 		String uri, String localName, String rawName) {
 	currentFObj.end();
 	currentFObj = (FObj) currentFObj.getParent();
-	level--;
-	while (((NSMap) namespaceStack.peek()).level > level) {
-	    namespaceStack.pop();
-	}
+//      level--;
+//  	while (((NSMap) namespaceStack.peek()).level > level) {
+//  	    namespaceStack.pop();
+//  	}
     }
 
     /** SAX Handler for the start of the document */
@@ -230,25 +230,26 @@ public class FOTreeBuilder extends DefaultHandler {
 	/* the maker for the formatting object started */
 	FObj.Maker fobjMaker;
 
-	level++;
-	int length = attlist.getLength();
-	for (int i = 0; i < length; i++) {
-	    String att = attlist.getQName(i);
-	    if (att.equals("xmlns")) {
-		namespaceStack.push( new NSMap("",
-					       attlist.getValue(i),
-					       level));
-	    } else if (att.startsWith("xmlns:")) {
-		String value = attlist.getValue(i);
-		namespaceStack.push(new NSMap(att.substring(6), value,
-					      level));
-	    }
-	}
+//  	level++;
+//  	int length = attlist.getLength();
+//  	for (int i = 0; i < length; i++) {
+//  	    String att = attlist.getQName(i);
+//  	    if (att.equals("xmlns")) {
+//  		namespaceStack.push( new NSMap("",
+//  					       attlist.getValue(i),
+//  					       level));
+//  	    } else if (att.startsWith("xmlns:")) {
+//  		String value = attlist.getValue(i);
+//  		namespaceStack.push(new NSMap(att.substring(6), value,
+//  					      level));
+//  	    }
+//  	}
 
-	String fullName = mapName(rawName);
-
+	//String fullName = mapName(rawName);
+	String fullName = uri + "^" + localName;
 	fobjMaker = (FObj.Maker) fobjTable.get(fullName);
-    PropertyListBuilder currentListBuilder = (PropertyListBuilder)this.propertylistTable.get(uri);
+	PropertyListBuilder currentListBuilder =
+	  (PropertyListBuilder)this.propertylistTable.get(uri);
 
 	if (fobjMaker == null) {
 	    if (!this.unknownFOs.containsKey(fullName)) {
@@ -262,8 +263,8 @@ public class FOTreeBuilder extends DefaultHandler {
 	try {
 		PropertyList list = null;
 		if(currentListBuilder != null) {
-			list = currentListBuilder.makeList(fullName, attlist,  
-			     (currentFObj == null) ? null : currentFObj.properties);
+		  list = currentListBuilder.makeList(fullName, attlist,  
+			(currentFObj == null) ? null : currentFObj.properties);
 		}
 	    fobj = fobjMaker.make(currentFObj, list);
 	} catch (FOPException e) {
