@@ -68,6 +68,9 @@ public class PDFTextElementBridge extends SVGTextElementBridge {
         if(((int)fs) != fs) {
             return false;
         }
+        if(fs > 36) {
+            return false;
+        }
 
         Element nodeElement;
         for (Node n = element.getFirstChild();

@@ -95,9 +95,6 @@ import org.w3c.dom.svg.SVGAElement;
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGSVGElement;
 
-// <!> FIXME : Those import clauses will change with new design
-import org.apache.batik.gvt.renderer.StaticRendererFactory;
-
 /**
  * This class enables to transcode an input to a pdf document.
  *
@@ -177,7 +174,6 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
 
         // build the GVT tree
         GVTBuilder builder = new GVTBuilder();
-        ImageRendererFactory rendFactory = new StaticRendererFactory();
         BridgeContext ctx = new BridgeContext(userAgent);
         TextPainter textPainter = null;
         textPainter = new StrokingTextPainter();

@@ -74,12 +74,16 @@ public class PDFTextPainter implements TextPainter {
             (Vector)aci.getAttribute(GVTAttributedCharacterIterator.TextAttribute.GVT_FONT_FAMILIES);
         Paint forg = (Paint)aci.getAttribute(TextAttribute.FOREGROUND);
         Float size = (Float)aci.getAttribute(TextAttribute.SIZE);
+        if(size == null) {
+            return;
+        }
         Stroke stroke =
             (Stroke)aci.getAttribute(GVTAttributedCharacterIterator.TextAttribute.STROKE);
         Float xpos =
             (Float)aci.getAttribute(GVTAttributedCharacterIterator.TextAttribute.X);
         Float ypos =
             (Float)aci.getAttribute(GVTAttributedCharacterIterator.TextAttribute.Y);
+System.out.println("data:" + size + ":" + forg + ":" + xpos + ":" + ypos);
 
         Float posture = (Float)aci.getAttribute(TextAttribute.POSTURE);
         Float taWeight = (Float)aci.getAttribute(TextAttribute.WEIGHT);
