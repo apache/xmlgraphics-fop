@@ -52,7 +52,7 @@
  * Automatically generated from xml-lang.xml by xml-lang.xsl.  DO NOT EDIT!
  *!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  */ 
-    
+
 package org.apache.fop.datatypes;
 
 import java.util.HashMap;
