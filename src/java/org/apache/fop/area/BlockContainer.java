@@ -32,9 +32,9 @@ public class BlockContainer extends BlockArea implements ReferenceArea {
      * @param index
      * @throws IndexOutOfBoundsException
      */
-    public BlockContainer(Node parent, int index)
+    public BlockContainer(Node parent, int index, Object areaSync)
         throws IndexOutOfBoundsException {
-        super(parent, index);
+        super(parent, index, areaSync);
         // TODO Auto-generated constructor stub
     }
 
@@ -42,8 +42,9 @@ public class BlockContainer extends BlockArea implements ReferenceArea {
      * @param parent
      * @throws IndexOutOfBoundsException
      */
-    public BlockContainer(Node parent) throws IndexOutOfBoundsException {
-        super(parent);
+    public BlockContainer(Node parent, Object areaSync)
+    throws IndexOutOfBoundsException {
+        super(parent, areaSync);
         // TODO Auto-generated constructor stub
     }
 
