@@ -44,7 +44,7 @@ If you are using Microsoft Outlook, this setting can be found at the "Mail Forma
         <p>To review the archives, you have several options:</p>
         <ul>
           <li>The <jump href="http://marc.theaimsgroup.com/?l=fop-user&amp;r=1&amp;w=2">Mailing list ARChives </jump> (MARC) at the AIMS group (search).</li>
-          <li>The <jump href="http://nagoya.apache.org/eyebrowse/SummarizeList?listName=fop-user@xml.apache.org">Apache Eyebrowse</jump> archive (search, list by date, author, subject, or thread).</li>
+          <li>The <jump href="http://mail-archives.apache.org/eyebrowse/SummarizeList?listName=fop-user@xml.apache.org">Apache Eyebrowse</jump> archive (search, list by date, author, subject, or thread).</li>
           <li>The <link href="http://xml.apache.org/mail/fop-user">Apache Mailing List archive</link> (gzip files).</li>
         </ul>
       </section>
