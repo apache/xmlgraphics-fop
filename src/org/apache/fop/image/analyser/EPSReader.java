@@ -1,47 +1,41 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
-
 package org.apache.fop.image.analyser;
 
 // Java
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-
+// FOP
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.EPSImage;
 import org.apache.fop.fo.FOUserAgent;
 
 /**
  * ImageReader object for EPS document image type.
+ *
+ * @version   $Id$
  */
 public class EPSReader implements ImageReader {
 
-    private long getLong(byte[] buf, int idx) {
-        int b1 = buf[idx] & 0xff;
-        int b2 = buf[idx + 1] & 0xff;
-        int b3 = buf[idx + 2] & 0xff;
-        int b4 = buf[idx + 3] & 0xff;
+    private static final byte[] EPS_HEADER_ASCII = "%!PS".getBytes();
+    private static final byte[] BOUNDINGBOX = "%%BoundingBox: ".getBytes();
 
-        return (long)((b4 << 24) | (b3 << 16) | (b2 << 8) | b1);
-    }
+    /** @see org.apache.fop.image.analyser.ImageReader */
+    public FopImage.ImageInfo verifySignature(String uri, BufferedInputStream bis,
+                FOUserAgent ua) throws IOException {
 
-    public FopImage.ImageInfo verifySignature(String uri, BufferedInputStream fis,
-                                   FOUserAgent ua) throws IOException {
         boolean isEPS = false;
-        fis.mark(32);
+
+        bis.mark(32);
         byte[] header = new byte[30];
-        fis.read(header, 0, 30);
-        fis.reset();
+        bis.read(header, 0, 30);
+        bis.reset();
 
         EPSImage.EPSData data = new EPSImage.EPSData();
 
@@ -60,8 +54,10 @@ public class EPSReader implements ImageReader {
         } else {
             // Check if plain ascii
             byte[] epsh = "%!PS".getBytes();
-            if (epsh[0] == header[0] && epsh[1] == header[1] &&
-                    epsh[2] == header[2] && epsh[3] == header[3]) {
+            if (EPS_HEADER_ASCII[0] == header[0]
+                    && EPS_HEADER_ASCII[1] == header[1]
+                    && EPS_HEADER_ASCII[2] == header[2]
+                    && EPS_HEADER_ASCII[3] == header[3]) {
                 data.isAscii = true;
                 isEPS = true;
             }
@@ -71,12 +67,12 @@ public class EPSReader implements ImageReader {
             FopImage.ImageInfo info = new FopImage.ImageInfo();
             info.mimeType = getMimeType();
             info.data = data;
-            readEPSImage(fis, data);
+            readEPSImage(bis, data);
             data.bbox = readBBox(data);
 
             if (data.bbox != null) {
-                info.width = (int)(data.bbox[2] - data.bbox[0]);
-                info.height = (int)(data.bbox[3] - data.bbox[1]);
+                info.width = (int) (data.bbox[2] - data.bbox[0]);
+                info.height = (int) (data.bbox[3] - data.bbox[1]);
                 return info;
             } else {
                 // Ain't eps if no BoundingBox
@@ -87,23 +83,47 @@ public class EPSReader implements ImageReader {
         return null;
     }
 
-    /** read the eps file and extract eps part */
-    private void readEPSImage(BufferedInputStream fis, EPSImage.EPSData data) throws IOException {
+    /**
+     * Returns the MIME type supported by this implementation.
+     *
+     * @return   The MIME type
+     */
+    public String getMimeType() {
+        return "image/eps";
+    }
+
+    private long getLong(byte[] buf, int idx) {
+        int b1 = buf[idx] & 0xff;
+        int b2 = buf[idx + 1] & 0xff;
+        int b3 = buf[idx + 2] & 0xff;
+        int b4 = buf[idx + 3] & 0xff;
+
+        return (long) ((b4 << 24) | (b3 << 16) | (b2 << 8) | b1);
+    }
+
+    /**
+     * Read the eps file and extract eps part.
+     *
+     * @param bis              The InputStream
+     * @param data             EPSData object to write the results to
+     * @exception IOException  If an I/O error occurs
+     */
+    private void readEPSImage(BufferedInputStream bis, EPSImage.EPSData data)
+                throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte[] file;
         byte[] readBuf = new byte[20480];
-        int bytes_read;
+        int bytesRead;
         int index = 0;
         boolean cont = true;
 
-
         try {
-            while ((bytes_read = fis.read(readBuf)) != -1) {
-                baos.write(readBuf, 0, bytes_read);
+            while ((bytesRead = bis.read(readBuf)) != -1) {
+                baos.write(readBuf, 0, bytesRead);
             }
         } catch (java.io.IOException ex) {
-            throw new IOException("Error while loading EPS image " +
-                                  ex.getMessage());
+            throw new IOException("Error while loading EPS image: "
+                    + ex.getMessage());
         }
 
         file = baos.toByteArray();
@@ -117,36 +137,45 @@ public class EPSReader implements ImageReader {
             data.epsFile = new byte[(int) data.psLength];
             System.arraycopy(file, 0, data.rawEps, 0, data.rawEps.length);
             System.arraycopy(data.rawEps, (int) data.psStart, data.epsFile, 0,
-                             (int) data.psLength);
+                    (int) data.psLength);
         }
     }
 
-    /* Get embedded preview or null */
+    /**
+     * Get embedded TIFF preview or null.
+     *
+     * @param data  The EPS payload
+     * @return      The embedded preview
+     */
     public byte[] getPreview(EPSImage.EPSData data) {
         if (data.preview == null) {
             if (data.tiffLength > 0) {
                 data.preview = new byte[(int) data.tiffLength];
                 System.arraycopy(data.rawEps, (int) data.tiffStart, data.preview, 0,
-                                 (int) data.tiffLength);
+                        (int) data.tiffLength);
             }
         }
         return data.preview;
     }
 
-    /** Extract bounding box from eps part
+    /**
+     * Extract bounding box from eps part.
+     *
+     * @param data  The EPS payload
+     * @return      An Array of four coordinates making up the bounding box
      */
     private long[] readBBox(EPSImage.EPSData data) {
         long[] mbbox = null;
         int idx = 0;
-        byte[] bbxName = "%%BoundingBox: ".getBytes();
         boolean found = false;
 
-        while (!found && (data.epsFile.length > (idx + bbxName.length))) {
+        while (!found && (data.epsFile.length > (idx + BOUNDINGBOX.length))) {
             boolean sfound = true;
             int i = idx;
-            for (i = idx; sfound && (i - idx) < bbxName.length; i++) {
-                if (bbxName[i - idx] != data.epsFile[i])
+            for (i = idx; sfound && (i - idx) < BOUNDINGBOX.length; i++) {
+                if (BOUNDINGBOX[i - idx] != data.epsFile[i]) {
                     sfound = false;
+                }
             }
             if (sfound) {
                 found = true;
@@ -156,9 +185,9 @@ public class EPSReader implements ImageReader {
             }
         }
 
-        if (!found)
+        if (!found) {
             return mbbox;
-
+        }
 
         mbbox = new long[4];
         idx += readLongString(data, mbbox, 0, idx);
@@ -171,15 +200,16 @@ public class EPSReader implements ImageReader {
 
     private int readLongString(EPSImage.EPSData data, long[] mbbox, int i, int idx) {
         while (idx < data.epsFile.length && (data.epsFile[idx] == 32)) {
-           idx++;
+            idx++;
         }
 
         int nidx = idx;
 
         // check also for ANSI46(".") to identify floating point values
-        while (nidx < data.epsFile.length &&
-                ((data.epsFile[nidx] >= 48 && data.epsFile[nidx] <= 57) ||
-                (data.epsFile[nidx] == 45) || (data.epsFile[nidx] == 46) )) {
+        while (nidx < data.epsFile.length
+                && ((data.epsFile[nidx] >= 48 && data.epsFile[nidx] <= 57)
+                || (data.epsFile[nidx] == 45)
+                || (data.epsFile[nidx] == 46))) {
             nidx++;
         }
 
@@ -188,17 +218,14 @@ public class EPSReader implements ImageReader {
         String ns = new String(num);
 
         //if( ns.indexOf(".") != -1 ) {
-            // do something like logging a warning
+        // do something like logging a warning
         //}
 
         // then parse the double and round off to the next math. Integer
-        mbbox[i] = (long) Math.ceil( Double.parseDouble( ns ) );
+        mbbox[i] = (long) Math.ceil(Double.parseDouble(ns));
 
         return (1 + nidx - idx);
     }
 
-    public String getMimeType() {
-        return "image/eps";
-    }
 }
 

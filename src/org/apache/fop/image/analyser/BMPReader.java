@@ -1,32 +1,36 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
-
 package org.apache.fop.image.analyser;
 
 // Java
 import java.io.BufferedInputStream;
 import java.io.IOException;
 
+// FOP
 import org.apache.fop.image.FopImage;
 import org.apache.fop.fo.FOUserAgent;
 
 /**
  * ImageReader object for BMP image type.
- * @author Pankaj Narula
- * @version 1.0
+ *
+ * @author    Pankaj Narula
+ * @version   $Id$
  */
 public class BMPReader implements ImageReader {
-    static protected final int BMP_SIG_LENGTH = 26;
 
-    public FopImage.ImageInfo verifySignature(String uri, BufferedInputStream fis,
-                                   FOUserAgent ua) throws IOException {
-        byte[] header = getDefaultHeader(fis);
-        boolean supported = ((header[0] == (byte) 0x42) &&
-                             (header[1] == (byte) 0x4d));
+    /** Length of the BMP header */
+    protected static final int BMP_SIG_LENGTH = 26;
+
+    /** @see org.apache.fop.image.analyser.ImageReader */
+    public FopImage.ImageInfo verifySignature(String uri, BufferedInputStream bis,
+                FOUserAgent ua) throws IOException {
+        byte[] header = getDefaultHeader(bis);
+        boolean supported = ((header[0] == (byte) 0x42)
+                && (header[1] == (byte) 0x4d));
         if (supported) {
             return getDimension(header);
         } else {
@@ -34,11 +38,16 @@ public class BMPReader implements ImageReader {
         }
     }
 
+    /**
+     * Returns the MIME type supported by this implementation.
+     *
+     * @return   The MIME type
+     */
     public String getMimeType() {
         return "image/bmp";
     }
 
-    protected FopImage.ImageInfo getDimension(byte[] header) {
+    private FopImage.ImageInfo getDimension(byte[] header) {
         FopImage.ImageInfo info = new FopImage.ImageInfo();
         info.mimeType = getMimeType();
 
@@ -47,20 +56,21 @@ public class BMPReader implements ImageReader {
         int byte2 = header[19] & 0xff;
         int byte3 = header[20] & 0xff;
         int byte4 = header[21] & 0xff;
-        long l = (long)((byte4 << 24) | (byte3 << 16) |
-                        (byte2 << 8) | byte1);
-        info.width = (int)(l & 0xffffffff);
+        long l = (long) ((byte4 << 24) | (byte3 << 16)
+                | (byte2 << 8) | byte1);
+        info.width = (int) (l & 0xffffffff);
 
         byte1 = header[22] & 0xff;
         byte2 = header[23] & 0xff;
         byte3 = header[24] & 0xff;
         byte4 = header[25] & 0xff;
-        l = (long)((byte4 << 24) | (byte3 << 16) | (byte2 << 8) | byte1);
-        info.height = (int)(l & 0xffffffff);
+        l = (long) ((byte4 << 24) | (byte3 << 16) | (byte2 << 8) | byte1);
+        info.height = (int) (l & 0xffffffff);
         return info;
     }
 
-    protected byte[] getDefaultHeader(BufferedInputStream imageStream) throws IOException {
+    private byte[] getDefaultHeader(BufferedInputStream imageStream)
+                throws IOException {
         byte[] header = new byte[BMP_SIG_LENGTH];
         try {
             imageStream.mark(BMP_SIG_LENGTH + 1);
@@ -69,11 +79,12 @@ public class BMPReader implements ImageReader {
         } catch (IOException ex) {
             try {
                 imageStream.reset();
-            } catch (IOException exbis) {}
+            } catch (IOException exbis) {
+                // throw the original exception, not this one
+            }
             throw ex;
         }
         return header;
     }
 
 }
-
