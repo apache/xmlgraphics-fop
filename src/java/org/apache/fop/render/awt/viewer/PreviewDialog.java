@@ -1,5 +1,5 @@
 /*
- * $Id: PreviewDialog.java,v 1.14 2003/03/07 10:09:58 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,7 +48,7 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */ 
-package org.apache.fop.viewer;
+package org.apache.fop.render.awt.viewer;
 
 //Java
 import javax.swing.BorderFactory;

@@ -174,8 +174,8 @@ list of possible build targets.
     <property name="conf.dir" value="${basedir}/conf"/>
     <property name="packages" value="org.apache.fop.*"/>
 
-    <property name="viewer.resources.src.dir" value="${src.java}/org/apache/fop/viewer/resources"/>
-    <property name="viewer.images.src.dir" value="${src.java}/org/apache/fop/viewer/images"/>
+    <property name="viewer.resources.src.dir" value="${src.java}/org/apache/fop/render/awt/viewer/resources"/>
+    <property name="viewer.images.src.dir" value="${src.java}/org/apache/fop/render/awt/viewer/images"/>
 
     <property name="build.dir" value="${basedir}/build"/>
     <property name="build.src" value="${build.dir}/src"/>
@@ -187,8 +187,8 @@ list of possible build targets.
     <property name="build.javadocs" value="${build.dir}/javadocs"/>
     <property name="build.examples.dir" value="${build.dir}/examples"/>
 
-    <property name="viewer.resources.dest.dir" value="${build.dest}/org/apache/fop/viewer/resources"/>
-    <property name="viewer.images.dest.dir" value="${build.dest}/org/apache/fop/viewer/Images"/>
+    <property name="viewer.resources.dest.dir" value="${build.dest}/org/apache/fop/render/awt/viewer/resources"/>
+    <property name="viewer.images.dest.dir" value="${build.dest}/org/apache/fop/render/awt/viewer/Images"/>
 
     <property name="dist.bin.dir" value="${basedir}/dist-bin"/>
     <property name="dist.src.dir" value="${basedir}/dist-src"/>

@@ -590,33 +590,13 @@ public class PDFRenderer extends PrintRenderer {
             }
 
             float bwidth = bps.width / 1000f;
-            updateColor(bps.color, false, null);
-            currentStream.add(bwidth + " w\n");
-
-            drawLine(startx, starty + bwidth / 2, endx, starty + bwidth / 2);
-        }
-        bps = (BorderProps)block.getTrait(Trait.BORDER_START);
-        if (bps != null) {
-            float endy = starty + height;
-
-            if (!started) {
-                started = true;
-                closeText();
-                endTextObject();
-                //saveGraphicsState();
-            }
-
-            float bwidth = bps.width / 1000f;
-            updateColor(bps.color, false, null);
-            currentStream.add(bwidth + " w\n");
-
-            drawLine(startx + bwidth / 2, starty, startx + bwidth / 2, endy);
+            updateColor(bps.color, true, null);
+            currentStream.add(startx + " " + starty + " "
+                              + width + " " + bwidth + " re\n");
+            currentStream.add("f\n");
         }
         bps = (BorderProps)block.getTrait(Trait.BORDER_AFTER);
         if (bps != null) {
-            float sy = starty + height;
-            float endx = startx + width;
-
             if (!started) {
                 started = true;
                 closeText();
@@ -625,16 +605,28 @@ public class PDFRenderer extends PrintRenderer {
             }
 
             float bwidth = bps.width / 1000f;
-            updateColor(bps.color, false, null);
-            currentStream.add(bwidth + " w\n");
+            updateColor(bps.color, true, null);
+            currentStream.add(startx + " " + (starty + height - bwidth) + " "
+                              + width + " " + bwidth + " re\n");
+            currentStream.add("f\n");
+        }
+        bps = (BorderProps)block.getTrait(Trait.BORDER_START);
+        if (bps != null) {
+            if (!started) {
+                started = true;
+                closeText();
+                endTextObject();
+                //saveGraphicsState();
+            }
 
-            drawLine(startx, sy - bwidth / 2, endx, sy - bwidth / 2);
+            float bwidth = bps.width / 1000f;
+            updateColor(bps.color, true, null);
+            currentStream.add(startx + " " + starty + " "
+                              + bwidth + " " + height + " re\n");
+            currentStream.add("f\n");
         }
         bps = (BorderProps)block.getTrait(Trait.BORDER_END);
         if (bps != null) {
-            float sx = startx + width;
-            float endy = starty + height;
-
             if (!started) {
                 started = true;
                 closeText();
@@ -643,9 +635,10 @@ public class PDFRenderer extends PrintRenderer {
             }
 
             float bwidth = bps.width / 1000f;
-            updateColor(bps.color, false, null);
-            currentStream.add(bwidth + " w\n");
-            drawLine(sx - bwidth / 2, starty, sx - bwidth / 2, endy);
+            updateColor(bps.color, true, null);
+            currentStream.add((startx + width - bwidth) + " " + starty + " "
+                              + bwidth + " " + height + " re\n");
+            currentStream.add("f\n");
         }
         if (started) {
             //restoreGraphicsState();
