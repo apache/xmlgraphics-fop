@@ -62,8 +62,10 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         if (fobj != null) {
             ListIterator children = fobj.getChildren();
             while (children.hasNext()) {
-                FObj childFO = (FObj) children.next();
-                childFO.addLayoutManager(lms);
+                Object childFO = children.next();
+                if(childFO instanceof FObj) {
+                    ((FObj)childFO).addLayoutManager(lms);
+                }
             }
             fobj = null;
         }

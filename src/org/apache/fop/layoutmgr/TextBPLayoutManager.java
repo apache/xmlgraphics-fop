@@ -390,7 +390,9 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
     {
 	MinOptMax ipd = new MinOptMax(wordDim);
 	ipd.add(spaceIPD);
+        if(m_ipdTotal != null) {
 	ipd.add(m_ipdTotal); // sum of all words so far in line
+        }
 	// Note: break position now stores total size to here
 
 	// Position is the index of the info for this word in the vector

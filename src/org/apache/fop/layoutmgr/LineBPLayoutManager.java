@@ -254,18 +254,28 @@ public class LineBPLayoutManager extends
 	}
 
 	if(bp == null) return null;
+        if(m_prevBP == null) m_prevBP = bp;
 
 	// Choose the best break
 	if (!bp.isForcedBreak() && vecPossEnd.size()>0) {
 	    m_prevBP = getBestBP(vecPossEnd);
 	}
 	// Backup child LM if necessary
-	if (bp != m_prevBP) {
+	if (bp != m_prevBP && !bp.couldEndLine()) {
 	    reset();
 	}
 	// Distribute space in the line
-	MinOptMax actual = MinOptMax.add(m_prevBP.getStackingSize(),
-					 getPrevIPD(m_prevBP.getLayoutManager()));
+	MinOptMax actual;
+        if(bp != m_prevBP) {
+        MinOptMax mom = getPrevIPD(m_prevBP.getLayoutManager());
+        if(mom != null) {
+        actual = MinOptMax.add(m_prevBP.getStackingSize(), mom);
+        } else {
+            actual = m_prevBP.getStackingSize();
+        }
+        } else {
+            actual = m_prevBP.getStackingSize();
+        }
 	// ATTENTION: make sure this hasn't gotten start space for next
 	// LM added onto it!
 	actual.add(m_prevBP.resolveTrailingSpace(true));
