@@ -1,5 +1,8 @@
 ==============================================================================
 Done since 0.20.4 release
+- Fixed some sources of "wrong operand type" error in Acrobat Reader. They
+  were caused by rounding bugs, mostly experienced with SVG files coming from
+  OpenOffice. (Jeremias Maerki)
 - FOP Ant task: Fix for logging behaviour, fix for directory structure
   preservation for nested filesets and additional attribute "logFiles".
   Submitted by: Stefan Wachter <Stefan.Wachter@gmx.de>
