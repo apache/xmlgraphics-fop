@@ -169,7 +169,8 @@ public class FopImageFactory {
 		Object imageInstance = null;
 		Class imageClass = null;
 		try {
-			imageClass = Class.forName("org.apache.fop.image.JimiImage"); //ClassNotFoundException
+//			imageClass = Class.forName("org.apache.fop.image.JimiImage"); //ClassNotFoundException
+			imageClass = Class.forName("org.apache.fop.image.GifJpegImage"); //ClassNotFoundException
 			Class[] imageConstructorParameters = new Class[1];
 			imageConstructorParameters[0] = Class.forName("java.net.URL");
 			Constructor imageConstructor = imageClass.getDeclaredConstructor(imageConstructorParameters); //NoSuchMethodException, SecurityException
@@ -177,7 +178,8 @@ public class FopImageFactory {
 			initArgs[0] = absoluteURL;
 			imageInstance = imageConstructor.newInstance(initArgs); // InstanciationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
 		} catch (ClassNotFoundException classex) {
-			throw new FopImageException("class " + "org.apache.fop.image.JimiImage" + " not found");
+//			throw new FopImageException("class " + "org.apache.fop.image.JimiImage" + " not found");
+			throw new FopImageException("class " + "org.apache.fop.image.GifJpegImage" + " not found");
 /*
 		} catch (FopImageException fopex) {
 			throw new FopImageException(fopex.getMessage());
