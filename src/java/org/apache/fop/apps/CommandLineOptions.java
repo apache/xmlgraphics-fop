@@ -525,15 +525,6 @@ public class CommandLineOptions {
                 throw new FOPException("AWTStarter could not be loaded.", e);
             }
             break;
-        case PRINT_OUTPUT:
-            try {
-                starter = new PrintStarter(this);
-            } catch (FOPException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new FOPException("PrintStarter could not be loaded.", e);
-            }
-            break;
         default:
             starter = new CommandLineStarter(this);
         }
