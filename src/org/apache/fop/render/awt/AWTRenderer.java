@@ -944,5 +944,9 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         {
                 return false;
         }
+
+        public void registerExtension(BridgeExtension be)
+        {
+        }
     }
 }

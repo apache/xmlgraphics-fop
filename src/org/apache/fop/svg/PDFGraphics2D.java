@@ -30,11 +30,11 @@ import java.io.*;
 import java.util.Map;
 
 /**
- * This concrete implementation of <tt>AbstractGraphics2D</tt> is a 
- * simple help to programmers to get started with their own 
- * implementation of <tt>Graphics2D</tt>. 
+ * This concrete implementation of <tt>AbstractGraphics2D</tt> is a
+ * simple help to programmers to get started with their own
+ * implementation of <tt>Graphics2D</tt>.
  * <tt>DefaultGraphics2D</tt> implements all the abstract methods
- * is <tt>AbstractGraphics2D</tt> and makes it easy to start 
+ * is <tt>AbstractGraphics2D</tt> and makes it easy to start
  * implementing a <tt>Graphic2D</tt> piece-meal.
  *
  * @author <a href="mailto:vincent.hardy@eng.sun.com">Vincent Hardy</a>
@@ -42,71 +42,69 @@ import java.util.Map;
  * @see org.apache.batik.ext.awt.g2d.AbstractGraphics2D
  */
 public class PDFGraphics2D extends AbstractGraphics2D {
-		protected PDFDocument pdfDoc;
+    protected PDFDocument pdfDoc;
 
-		protected FontState fontState;
+    protected FontState fontState;
 
-        boolean standalone = false;
+    boolean standalone = false;
 
-		/** the PDF Document being created */
-		//protected PDFDocument pdfDoc;
+    /** the PDF Document being created */
+    //protected PDFDocument pdfDoc;
 
-		//protected FontState fontState;
+    //protected FontState fontState;
 
-		/** the current stream to add PDF commands to */
-		StringWriter currentStream = new StringWriter();
+    /** the current stream to add PDF commands to */
+    StringWriter currentStream = new StringWriter();
 
-		/** the current (internal) font name */
-		protected String currentFontName;
+    /** the current (internal) font name */
+    protected String currentFontName;
 
-		/** the current font size in millipoints */
-		protected int currentFontSize;
+    /** the current font size in millipoints */
+    protected int currentFontSize;
 
-		/** the current vertical position in millipoints from bottom */
-		protected int currentYPosition = 0;
+    /** the current vertical position in millipoints from bottom */
+    protected int currentYPosition = 0;
 
-		/** the current horizontal position in millipoints from left */
-		protected int currentXPosition = 0;
+    /** the current horizontal position in millipoints from left */
+    protected int currentXPosition = 0;
 
-		/** the current colour for use in svg */
-		PDFColor currentColour = new PDFColor(0, 0, 0);
+    /** the current colour for use in svg */
+    PDFColor currentColour = new PDFColor(0, 0, 0);
 
-	    FontInfo fontInfo;
+    FontInfo fontInfo;
 
     /**
      * Create a new PDFGraphics2D with the given pdf document info.
      * This is used to create a Graphics object for use inside an already
      * existing document.
      */
-    public PDFGraphics2D(boolean textAsShapes, FontState fs, PDFDocument doc, String font,
-											 int size, int xpos, int ypos){
+    public PDFGraphics2D(boolean textAsShapes, FontState fs,
+                         PDFDocument doc, String font, int size, int xpos, int ypos) {
         super(textAsShapes);
-				pdfDoc = doc;
-				currentFontName = font;
-				currentFontSize = size;
-				currentYPosition = ypos;
-				currentXPosition = xpos;
-				fontState = fs;
+        pdfDoc = doc;
+        currentFontName = font;
+        currentFontSize = size;
+        currentYPosition = ypos;
+        currentXPosition = xpos;
+        fontState = fs;
     }
 
-    public PDFGraphics2D(boolean textAsShapes)
-	{
+    public PDFGraphics2D(boolean textAsShapes) {
         super(textAsShapes);
-	}
+    }
 
-		public String getString() {
-				return currentStream.toString();
-		}
+    public String getString() {
+        return currentStream.toString();
+    }
 
-    public void setGraphicContext(GraphicContext c)
-    {
+    public void setGraphicContext(GraphicContext c) {
         gc = c;
     }
 
     /**
      * This constructor supports the create method
      */
-    public PDFGraphics2D(PDFGraphics2D g){
+    public PDFGraphics2D(PDFGraphics2D g) {
         super(g);
     }
 
@@ -116,7 +114,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @return     a new graphics context that is a copy of
      *             this graphics context.
      */
-    public Graphics create(){
+    public Graphics create() {
         return new PDFGraphics2D(this);
     }
 
@@ -144,83 +142,88 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @see      java.awt.image.ImageObserver
      * @see      java.awt.image.ImageObserver#imageUpdate(java.awt.Image, int, int, int, int, int)
      */
-    public boolean drawImage(Image img, int x, int y, ImageObserver observer){
+    public boolean drawImage(Image img, int x, int y,
+                             ImageObserver observer) {
         System.err.println("drawImage:x, y");
 
         final int width = img.getWidth(observer);
         final int height = img.getHeight(observer);
-		if(width == -1 || height == -1) {
-			return false;
-		}
+        if (width == -1 || height == -1) {
+            return false;
+        }
 
         Dimension size = new Dimension(width, height);
         BufferedImage buf = buildBufferedImage(size);
 
         java.awt.Graphics2D g = buf.createGraphics();
         g.setComposite(AlphaComposite.SrcOver);
-		g.setBackground(new Color(1, 1, 1, 0));
+        g.setBackground(new Color(1, 1, 1, 0));
         g.setPaint(new Color(1, 1, 1, 0));
-		g.fillRect(0, 0, width, height);
+        g.fillRect(0, 0, width, height);
         g.clip(new Rectangle(0, 0, buf.getWidth(), buf.getHeight()));
 
-        if(!g.drawImage(img, 0, 0, observer)) {
-			return false;
-		}
+        if (!g.drawImage(img, 0, 0, observer)) {
+            return false;
+        }
         g.dispose();
 
-		final byte[] result = new byte[buf.getWidth() * buf.getHeight() * 3];
+        final byte[] result =
+          new byte[buf.getWidth() * buf.getHeight() * 3];
 
-		Raster raster = buf.getData();
-		DataBuffer bd = raster.getDataBuffer();
+        Raster raster = buf.getData();
+        DataBuffer bd = raster.getDataBuffer();
 
-		int count = 0;
-		switch(bd.getDataType()) {
-		    case DataBuffer.TYPE_INT:
-				int[][] idata = ((DataBufferInt)bd).getBankData();
-				for(int i = 0; i < idata.length; i++) {
-					for(int j = 0; j < idata[i].length; j++) {
-						//System.out.println("data:" + ((idata[i][j] >> 24) & 0xFF));
-						if(((idata[i][j] >> 24) & 0xFF) != 255) {
-System.out.println("data:" + ((idata[i][j] >> 24) & 0xFF));
-							result[count++] = (byte)0xFF;
-							result[count++] = (byte)0xFF;
-							result[count++] = (byte)0xFF;
-						} else {
-							result[count++] = (byte)((idata[i][j] >> 16) & 0xFF);
-							result[count++] = (byte)((idata[i][j] >> 8) & 0xFF);
-							result[count++] = (byte)((idata[i][j]) & 0xFF);
-						}
-					}
-				}
-			break;
-		    default:
-				// error
-			break;
-			}
+        int count = 0;
+        switch (bd.getDataType()) {
+            case DataBuffer.TYPE_INT:
+                int[][] idata = ((DataBufferInt) bd).getBankData();
+                for (int i = 0; i < idata.length; i++) {
+                    for (int j = 0; j < idata[i].length; j++) {
+                        //System.out.println("data:" + ((idata[i][j] >> 24) & 0xFF));
+                        if (((idata[i][j] >> 24) & 0xFF) != 255) {
+                            System.out.println("data:" +
+                                               ((idata[i][j] >> 24) & 0xFF));
+                            result[count++] = (byte) 0xFF;
+                            result[count++] = (byte) 0xFF;
+                            result[count++] = (byte) 0xFF;
+                        } else {
+                            result[count++] =
+                              (byte)((idata[i][j] >> 16) & 0xFF);
+                            result[count++] =
+                              (byte)((idata[i][j] >> 8) & 0xFF);
+                            result[count++] = (byte)((idata[i][j]) & 0xFF);
+                        }
+                    }
+                }
+                break;
+            default:
+                // error
+                break;
+        }
 
-		try {
-        FopImage fopimg = new TempImage(width, height, result);
-        int xObjectNum = this.pdfDoc.addImage(fopimg);
-		/*currentStream.write("q\n" + (((float) width)) +
-                          " 0 0 " + (((float) height)) + " " +
-                          x + " " +
-                          ((float)(y - height)) + " cm\n" + "/Im" +
-                          xObjectNum + " Do\nQ\n");*/
-		AffineTransform at = getTransform();
-		double[] matrix = new double[6];
-		at.getMatrix(matrix);
-		currentStream.write("q\n" + matrix[0] +
-                          " " + matrix[1] + " " + matrix[2]  + " " + matrix[3] + " " +
-                          matrix[4] + " " +
-                          matrix[5] + " cm\n");
-		currentStream.write("" + width +
-                          " 0 0 " + (-height) + " " +
-                          x + " " +
-                          (y + height) + " cm\n" + "/Im" +
-                          xObjectNum + " Do\nQ\n");
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
+        try {
+            FopImage fopimg = new TempImage(width, height, result);
+            int xObjectNum = this.pdfDoc.addImage(fopimg);
+            /*currentStream.write("q\n" + (((float) width)) +
+                                     " 0 0 " + (((float) height)) + " " +
+                                     x + " " +
+                                     ((float)(y - height)) + " cm\n" + "/Im" +
+                                     xObjectNum + " Do\nQ\n");*/
+            AffineTransform at = getTransform();
+            double[] matrix = new double[6];
+            at.getMatrix(matrix);
+            currentStream.write("q\n");
+			Shape imclip = getClip();
+			writeClip(imclip);
+            currentStream.write("" + matrix[0] + " " + matrix[1] +
+                                " " + matrix[2] + " " + matrix[3] + " " +
+                                matrix[4] + " " + matrix[5] + " cm\n");
+            currentStream.write("" + width + " 0 0 " + (-height) +
+                                " " + x + " " + (y + height) + " cm\n" + "/Im" +
+                                xObjectNum + " Do\nQ\n");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return true;
     }
 
@@ -229,75 +232,86 @@ System.out.println("data:" + ((idata[i][j] >> 24) & 0xFF));
                                  BufferedImage.TYPE_INT_ARGB);
     }
 
-        class TempImage implements FopImage {
-			int m_height;
-			int m_width;
-			int m_bitsPerPixel;
-			ColorSpace m_colorSpace;
-			int m_bitmapSiye;
-			byte[] m_bitmaps;
-			PDFColor transparent = new PDFColor(255, 255, 255);
+    class TempImage implements FopImage {
+        int m_height;
+        int m_width;
+        int m_bitsPerPixel;
+        ColorSpace m_colorSpace;
+        int m_bitmapSiye;
+        byte[] m_bitmaps;
+        PDFColor transparent = new PDFColor(255, 255, 255);
 
-			TempImage(int width, int height, byte[] result) throws FopImageException
-			{
-				this.m_height = height;
-				this.m_width = width;
-				this.m_bitsPerPixel = 8;
-				this.m_colorSpace = new ColorSpace(ColorSpace.DEVICE_RGB);
-				//this.m_isTransparent = false;
-				//this.m_bitmapsSize = this.m_width * this.m_height * 3;
-				this.m_bitmaps = result;
-			}
-
-			public String getURL() {return "" + m_bitmaps;}
-
-			// image size
-			public int getWidth() throws FopImageException
-			{
-				return m_width;
-			}
-
-	public int getHeight() throws FopImageException
-			{return m_height;}
-
-	// DeviceGray, DeviceRGB, or DeviceCMYK
-	public ColorSpace getColorSpace() throws FopImageException
-			{return m_colorSpace;}
-
-	// bits per pixel
-	public int getBitsPerPixel() throws FopImageException
-			{return m_bitsPerPixel;}
-
-	// For transparent images
-	public boolean isTransparent() throws FopImageException
-			{return transparent != null;}
-	public PDFColor getTransparentColor() throws FopImageException
-			{return transparent;}
-
-	// get the image bytes, and bytes properties
-
-	// get uncompressed image bytes
-	public byte[] getBitmaps() throws FopImageException
-			{return m_bitmaps;}
-// width * (bitsPerPixel / 8) * height, no ?
-	public int getBitmapsSize() throws FopImageException
-			{return m_width * m_height * 3;}
-
-	// get compressed image bytes
-	// I don't know if we really need it, nor if it
-	// should be changed...
-	public byte[] getRessourceBytes() throws FopImageException
-			{return null;}
-	public int getRessourceBytesSize() throws FopImageException
-			{return 0;}
-	// return null if no corresponding PDFFilter
-	public PDFFilter getPDFFilter() throws FopImageException
-			{return null;}
-
-	// release memory
-			public void close() {}
-
+        TempImage(int width, int height,
+                  byte[] result) throws FopImageException {
+            this.m_height = height;
+            this.m_width = width;
+            this.m_bitsPerPixel = 8;
+            this.m_colorSpace = new ColorSpace(ColorSpace.DEVICE_RGB);
+            //this.m_isTransparent = false;
+            //this.m_bitmapsSize = this.m_width * this.m_height * 3;
+            this.m_bitmaps = result;
         }
+
+        public String getURL() {
+            return "" + m_bitmaps;
+        }
+
+        // image size
+        public int getWidth() throws FopImageException {
+            return m_width;
+        }
+
+        public int getHeight() throws FopImageException {
+            return m_height;
+        }
+
+        // DeviceGray, DeviceRGB, or DeviceCMYK
+        public ColorSpace getColorSpace() throws FopImageException {
+            return m_colorSpace;
+        }
+
+        // bits per pixel
+        public int getBitsPerPixel() throws FopImageException {
+            return m_bitsPerPixel;
+        }
+
+        // For transparent images
+        public boolean isTransparent() throws FopImageException {
+            return transparent != null;
+        }
+        public PDFColor getTransparentColor() throws FopImageException {
+            return transparent;
+        }
+
+        // get the image bytes, and bytes properties
+
+        // get uncompressed image bytes
+        public byte[] getBitmaps() throws FopImageException {
+            return m_bitmaps;
+        }
+        // width * (bitsPerPixel / 8) * height, no ?
+        public int getBitmapsSize() throws FopImageException {
+            return m_width * m_height * 3;
+        }
+
+        // get compressed image bytes
+        // I don't know if we really need it, nor if it
+        // should be changed...
+        public byte[] getRessourceBytes() throws FopImageException {
+            return null;
+        }
+        public int getRessourceBytesSize() throws FopImageException {
+            return 0;
+        }
+        // return null if no corresponding PDFFilter
+        public PDFFilter getPDFFilter() throws FopImageException {
+            return null;
+        }
+
+        // release memory
+        public void close() {}
+
+    }
 
 
     /**
@@ -333,9 +347,8 @@ System.out.println("data:" + ((idata[i][j] >> 24) & 0xFF));
      * @see      java.awt.image.ImageObserver
      * @see      java.awt.image.ImageObserver#imageUpdate(java.awt.Image, int, int, int, int, int)
      */
-    public boolean drawImage(Image img, int x, int y,
-                             int width, int height,
-                             ImageObserver observer) {
+    public boolean drawImage(Image img, int x, int y, int width,
+                             int height, ImageObserver observer) {
         System.out.println("drawImage");
         return true;
     }
@@ -367,7 +380,7 @@ System.out.println("data:" + ((idata[i][j] >> 24) & 0xFF));
      * @see         java.awt.Component#getGraphics
      * @see         java.awt.Graphics#create
      */
-    public void dispose(){
+    public void dispose() {
         System.out.println("dispose");
     }
 
@@ -387,8 +400,11 @@ System.out.println("data:" + ((idata[i][j] >> 24) & 0xFF));
      * @see #setClip
      * @see #setComposite
      */
-    public void draw(Shape s){
+    public void draw(Shape s) {
         //System.out.println("draw(Shape)");
+            currentStream.write("q\n");
+			Shape imclip = getClip();
+			writeClip(imclip);
         Color c = getColor();
         currentColour = new PDFColor(c.getRed(), c.getGreen(), c.getBlue());
         currentStream.write(currentColour.getColorSpaceOut(true));
@@ -396,37 +412,88 @@ System.out.println("data:" + ((idata[i][j] >> 24) & 0xFF));
         PDFColor col = new PDFColor(c.getRed(), c.getGreen(), c.getBlue());
         currentStream.write(col.getColorSpaceOut(false));
 
-		PDFNumber pdfNumber = new PDFNumber();
+        PDFNumber pdfNumber = new PDFNumber();
 
         PathIterator iter = s.getPathIterator(getTransform());
-        while(!iter.isDone()) {
+        while (!iter.isDone()) {
             double vals[] = new double[6];
             int type = iter.currentSegment(vals);
-            switch(type) {
+            switch (type) {
                 case PathIterator.SEG_CUBICTO:
-					currentStream.write(pdfNumber.doubleOut(vals[0]) + " " + pdfNumber.doubleOut(vals[1]) +
-															" " + pdfNumber.doubleOut(vals[2]) + " " + pdfNumber.doubleOut(vals[3]) + " " +
-															pdfNumber.doubleOut(vals[4]) + " " + pdfNumber.doubleOut(vals[5]) + " c\n");
-                break;
+                    currentStream.write(pdfNumber.doubleOut(vals[0]) +
+                                        " " + pdfNumber.doubleOut(vals[1]) + " " +
+                                        pdfNumber.doubleOut(vals[2]) + " " +
+                                        pdfNumber.doubleOut(vals[3]) + " " +
+                                        pdfNumber.doubleOut(vals[4]) + " " +
+                                        pdfNumber.doubleOut(vals[5]) + " c\n");
+                    break;
                 case PathIterator.SEG_LINETO:
-					currentStream.write(pdfNumber.doubleOut(vals[0]) + " " + pdfNumber.doubleOut(vals[1]) + " l\n");
-                break;
+                    currentStream.write(pdfNumber.doubleOut(vals[0]) +
+                                        " " + pdfNumber.doubleOut(vals[1]) + " l\n");
+                    break;
                 case PathIterator.SEG_MOVETO:
-					currentStream.write(pdfNumber.doubleOut(vals[0]) + " " + pdfNumber.doubleOut(vals[1]) + " m\n");
-                break;
+                    currentStream.write(pdfNumber.doubleOut(vals[0]) +
+                                        " " + pdfNumber.doubleOut(vals[1]) + " m\n");
+                    break;
                 case PathIterator.SEG_QUADTO:
-					currentStream.write(pdfNumber.doubleOut(vals[0]) + " " + pdfNumber.doubleOut(vals[1]) + " " +
-															pdfNumber.doubleOut(vals[2]) + " " + pdfNumber.doubleOut(vals[3]) + " y\n");
-                break;
+                    currentStream.write(pdfNumber.doubleOut(vals[0]) +
+                                        " " + pdfNumber.doubleOut(vals[1]) + " " +
+                                        pdfNumber.doubleOut(vals[2]) + " " +
+                                        pdfNumber.doubleOut(vals[3]) + " y\n");
+                    break;
                 case PathIterator.SEG_CLOSE:
-					currentStream.write("h\n");
-                break;
+                    currentStream.write("h\n");
+                    break;
                 default:
-                break;
+                    break;
             }
             iter.next();
         }
         doDrawing(false, true, false);
+            currentStream.write("Q\n");
+    }
+
+    protected void writeClip(Shape s) {
+        PDFNumber pdfNumber = new PDFNumber();
+
+        PathIterator iter = s.getPathIterator(getTransform());
+        while (!iter.isDone()) {
+            double vals[] = new double[6];
+            int type = iter.currentSegment(vals);
+            switch (type) {
+                case PathIterator.SEG_CUBICTO:
+                    currentStream.write(pdfNumber.doubleOut(vals[0]) +
+                                        " " + pdfNumber.doubleOut(vals[1]) + " " +
+                                        pdfNumber.doubleOut(vals[2]) + " " +
+                                        pdfNumber.doubleOut(vals[3]) + " " +
+                                        pdfNumber.doubleOut(vals[4]) + " " +
+                                        pdfNumber.doubleOut(vals[5]) + " c\n");
+                    break;
+                case PathIterator.SEG_LINETO:
+                    currentStream.write(pdfNumber.doubleOut(vals[0]) +
+                                        " " + pdfNumber.doubleOut(vals[1]) + " l\n");
+                    break;
+                case PathIterator.SEG_MOVETO:
+                    currentStream.write(pdfNumber.doubleOut(vals[0]) +
+                                        " " + pdfNumber.doubleOut(vals[1]) + " m\n");
+                    break;
+                case PathIterator.SEG_QUADTO:
+                    currentStream.write(pdfNumber.doubleOut(vals[0]) +
+                                        " " + pdfNumber.doubleOut(vals[1]) + " " +
+                                        pdfNumber.doubleOut(vals[2]) + " " +
+                                        pdfNumber.doubleOut(vals[3]) + " y\n");
+                    break;
+                case PathIterator.SEG_CLOSE:
+                    currentStream.write("h\n");
+                    break;
+                default:
+                    break;
+            }
+            iter.next();
+        }
+        // clip area
+		currentStream.write("W\n");
+		currentStream.write("n\n");
     }
 
     /**
@@ -485,10 +552,10 @@ System.out.println("data:" + ((idata[i][j] >> 24) & 0xFF));
      * @see #setClip
      * @see #drawRenderedImage
      */
-     public void drawRenderableImage(RenderableImage img,
-                                     AffineTransform xform){
-         System.out.println("drawRenderableImage");
-     }
+    public void drawRenderableImage(RenderableImage img,
+                                    AffineTransform xform) {
+        System.out.println("drawRenderableImage");
+    }
 
     /**
      * Renders the text specified by the specified <code>String</code>,
@@ -512,7 +579,7 @@ System.out.println("data:" + ((idata[i][j] >> 24) & 0xFF));
      * @see #setComposite
      * @see #setClip
      */
-    public void drawString(String s, float x, float y){
+    public void drawString(String s, float x, float y) {
         System.out.println("drawString(String)");
     }
 
@@ -539,10 +606,10 @@ System.out.println("data:" + ((idata[i][j] >> 24) & 0xFF));
      * @see #setComposite
      * @see #setClip
      */
-     public void drawString(AttributedCharacterIterator iterator,
-                            float x, float y) {
-         System.err.println("drawString(AttributedCharacterIterator)");
-     }
+    public void drawString(AttributedCharacterIterator iterator,
+                           float x, float y) {
+        System.err.println("drawString(AttributedCharacterIterator)");
+    }
 
     /**
      * Fills the interior of a <code>Shape</code> using the settings of the
@@ -558,8 +625,11 @@ System.out.println("data:" + ((idata[i][j] >> 24) & 0xFF));
      * @see #clip
      * @see #setClip
      */
-    public void fill(Shape s){
+    public void fill(Shape s) {
         //System.err.println("fill");
+            currentStream.write("q\n");
+			Shape imclip = getClip();
+			writeClip(imclip);
         Color c = getColor();
         currentColour = new PDFColor(c.getRed(), c.getGreen(), c.getBlue());
         currentStream.write(currentColour.getColorSpaceOut(true));
@@ -567,65 +637,76 @@ System.out.println("data:" + ((idata[i][j] >> 24) & 0xFF));
         PDFColor col = new PDFColor(c.getRed(), c.getGreen(), c.getBlue());
         currentStream.write(col.getColorSpaceOut(false));
 
-		PDFNumber pdfNumber = new PDFNumber();
+        PDFNumber pdfNumber = new PDFNumber();
 
         PathIterator iter = s.getPathIterator(getTransform());
-        while(!iter.isDone()) {
+        while (!iter.isDone()) {
             double vals[] = new double[6];
             int type = iter.currentSegment(vals);
-            switch(type) {
+            switch (type) {
                 case PathIterator.SEG_CUBICTO:
-					currentStream.write(pdfNumber.doubleOut(vals[0]) + " " + pdfNumber.doubleOut(vals[1]) +
-															" " + pdfNumber.doubleOut(vals[2]) + " " + pdfNumber.doubleOut(vals[3]) + " " +
-															pdfNumber.doubleOut(vals[4]) + " " + pdfNumber.doubleOut(vals[5]) + " c\n");
-                break;
+                    currentStream.write(pdfNumber.doubleOut(vals[0]) +
+                                        " " + pdfNumber.doubleOut(vals[1]) + " " +
+                                        pdfNumber.doubleOut(vals[2]) + " " +
+                                        pdfNumber.doubleOut(vals[3]) + " " +
+                                        pdfNumber.doubleOut(vals[4]) + " " +
+                                        pdfNumber.doubleOut(vals[5]) + " c\n");
+                    break;
                 case PathIterator.SEG_LINETO:
-					currentStream.write(pdfNumber.doubleOut(vals[0]) + " " + pdfNumber.doubleOut(vals[1]) + " l\n");
-                break;
+                    currentStream.write(pdfNumber.doubleOut(vals[0]) +
+                                        " " + pdfNumber.doubleOut(vals[1]) + " l\n");
+                    break;
                 case PathIterator.SEG_MOVETO:
-					currentStream.write(pdfNumber.doubleOut(vals[0]) + " " + pdfNumber.doubleOut(vals[1]) + " m\n");
-                break;
+                    currentStream.write(pdfNumber.doubleOut(vals[0]) +
+                                        " " + pdfNumber.doubleOut(vals[1]) + " m\n");
+                    break;
                 case PathIterator.SEG_QUADTO:
-					currentStream.write(pdfNumber.doubleOut(vals[0]) + " " + pdfNumber.doubleOut(vals[1]) + " " +
-															pdfNumber.doubleOut(vals[2]) + " " + pdfNumber.doubleOut(vals[3]) + " y\n");
-                break;
+                    currentStream.write(pdfNumber.doubleOut(vals[0]) +
+                                        " " + pdfNumber.doubleOut(vals[1]) + " " +
+                                        pdfNumber.doubleOut(vals[2]) + " " +
+                                        pdfNumber.doubleOut(vals[3]) + " y\n");
+                    break;
                 case PathIterator.SEG_CLOSE:
-					currentStream.write("h\n");
-                break;
+                    currentStream.write("h\n");
+                    break;
                 default:
-                break;
+                    break;
             }
             iter.next();
         }
-        doDrawing(true, false, iter.getWindingRule() == PathIterator.WIND_EVEN_ODD);
+        doDrawing(true, false,
+                  iter.getWindingRule() == PathIterator.WIND_EVEN_ODD);
+            currentStream.write("Q\n");
     }
-    
-		protected void doDrawing(boolean fill, boolean stroke, boolean nonzero) {
-						if (fill) {
-								if (stroke) {
-										if (!nonzero)
-												currentStream.write("B*\n");
-										else
-												currentStream.write("B\n");
-								} else {
-										if (!nonzero)
-												currentStream.write("f*\n");
-										else
-												currentStream.write("f\n");
-								}
-						} else {
-								//if(stroke)
-								currentStream.write("S\n");
-						}
-		}
+
+    protected void doDrawing(boolean fill, boolean stroke,
+                             boolean nonzero) {
+        if (fill) {
+            if (stroke) {
+                if (!nonzero)
+                    currentStream.write("B*\n");
+                else
+                    currentStream.write("B\n");
+            } else {
+                if (!nonzero)
+                    currentStream.write("f*\n");
+                else
+                    currentStream.write("f\n");
+            }
+        } else {
+            //if(stroke)
+            currentStream.write("S\n");
+        }
+    }
 
     /**
      * Returns the device configuration associated with this
      * <code>Graphics2D</code>.
      */
-    public GraphicsConfiguration getDeviceConfiguration(){
+    public GraphicsConfiguration getDeviceConfiguration() {
         System.out.println("getDeviceConviguration");
-        return GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+        return GraphicsEnvironment.getLocalGraphicsEnvironment().
+               getDefaultScreenDevice().getDefaultConfiguration();
     }
 
     /**
@@ -634,8 +715,8 @@ System.out.println("data:" + ((idata[i][j] >> 24) & 0xFF));
     private Graphics2D fmg;
 
     {
-        BufferedImage bi
-            = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage bi =
+          new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 
         fmg = bi.createGraphics();
     }
@@ -648,7 +729,7 @@ System.out.println("data:" + ((idata[i][j] >> 24) & 0xFF));
      * @see       java.awt.FontMetrics
      * @see       java.awt.Graphics#getFontMetrics()
      */
-    public FontMetrics getFontMetrics(Font f){
+    public FontMetrics getFontMetrics(Font f) {
         return fmg.getFontMetrics(f);
     }
 
@@ -667,7 +748,7 @@ System.out.println("data:" + ((idata[i][j] >> 24) & 0xFF));
      * drawn twice, then all pixels are restored to their original values.
      * @param     c1 the XOR alternation color
      */
-    public void setXORMode(Color c1){
+    public void setXORMode(Color c1) {
         System.out.println("setXORMode");
     }
 
@@ -691,8 +772,8 @@ System.out.println("data:" + ((idata[i][j] >> 24) & 0xFF));
      * @param       dx the horizontal distance to copy the pixels.
      * @param       dy the vertical distance to copy the pixels.
      */
-    public void copyArea(int x, int y, int width, int height,
-                         int dx, int dy){
+    public void copyArea(int x, int y, int width, int height, int dx,
+                         int dy) {
         System.out.println("copyArea");
     }
 
