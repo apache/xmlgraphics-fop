@@ -59,6 +59,9 @@
     <source><![CDATA[
    userConfigFile = new File(userConfig);
    options = new Options(userConfigFile);]]></source>
+    <note><p>
+        This is all you need to do, it sets up a static configuration class.
+    </p></note>
 
   <p>Once the Driver is set up, the render method
      is called. Depending on whether DOM or SAX is being used, the

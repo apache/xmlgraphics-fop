@@ -15,6 +15,7 @@
   <page id="optimise"    label="Optimisations" source="optimise.xml" />
   <separator/>
   <page id="embedding"    label="Embedding" source="embedding.xml" />
+  <page id="extending"    label="Extending" source="extending.xml" />
   <separator/>
   <page id="status"         label="Status" source="status.xml" />
 </book>

@@ -10,9 +10,16 @@
        information. 
       </p>
       <p>
-        For up to date information or more details please visit the Fop FAQ site.
-        The site uses Jyve to provide an interactive FAQ: 
-         <jump href="http://www.owal.co.uk:8090/asf/servlet/asf/screen/DisplayTopics/action/SetAll/project_id/18/faq_id/276">http://www.OWAL.co.uk:8090/</jump>
+For up to date information or more details please visit the Fop FAQ site.
+<jump href="http://www.OWAL.co.uk/cgi-bin/fopfaq.cgi">http://www.OWAL.co.uk/cgi-bin/fopfaq.cgi</jump>
+      </p>
+      <p>
+Any problems with the FAQ itself or new answers for the FAQ should be mailed 
+to info@OWAL.co.uk
+      </p>
+      <p>
+More general questions about FOP should be directed to one of the mailing 
+lists.
       </p>
   </answer>
 </faq>

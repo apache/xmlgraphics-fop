@@ -37,136 +37,136 @@ resolution layout process and the renderer.
 
   <p>
 Standard Features:
-       <itemizedlist>
-       <listitem><para>
+       <ul>
+       <li><p>
 error handling, what to do if fo markup is invalid
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 auto overflow value and handling error-if-overflow
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 adjusting length values (eg. for borders) to renderable values
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 available fonts
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 converting cm/in to pt (dpi)
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 active state for multi properties
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 title, used to identify a set of pages (in a page sequence)
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 the width (in inline-progression-dimension) of a character with
 treat-word-as-space true
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 maximum space used by conditional areas from region-reference-area
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 if there should be "hot links" to before floats or footnotes
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 when to clear side floats if space in inline-progression-dimension
 is not enough
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 placement of left over footnotes on a page with a region-body
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 using color property as border colour
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 interpretting all border styles (except outset) as solid
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 thin, medium and thick values for border width
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 initial font-family value
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 absolute font sizes (eg, xx-small, x-small etc.)
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 relative font sizes (eg. larger, smaller)
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 small caps simulation
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 font weight mapping
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 baseline info for a font if not available
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 determining sub/superscript when another baseline is dominant
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 scaling method for external-graphic and instream-foreign-object
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 the width of a replaced element
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 "normal" line height value
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 text alignment (stretching the line with letter and word spacing)
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 text transform
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 initial color
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 rendering intent of auto
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 dot character for leader
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 line breaking with leaders, use optimum length when breaking the line
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 page height/width of auto
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 left and right caption widths
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 glyph orientation vertical of auto
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 rendering processor of content-type (mime type)
-       </para></listitem>
-       </itemizedlist>
+       </p></li>
+       </ul>
   </p>
 
   <p>
 Interactive Features:
-       <itemizedlist>
-       <listitem><para>
+       <ul>
+       <li><p>
 inline and block scroll amount
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 dynamic effects, links and property sets
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 initial "pause-after", "pause-before" and "voice-family" value
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 treating fixed as scroll on background attachement
-       </para></listitem>
-       <listitem><para>
+       </p></li>
+       <li><p>
 media usage of auto
-       </para></listitem>
-       </itemizedlist>
+       </p></li>
+       </ul>
   </p>
 
   </s1>
