@@ -55,8 +55,6 @@ import java.awt.Rectangle;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.properties.Precedence;
-import org.apache.fop.fo.properties.WritingMode;
 import org.apache.fop.fo.FOTreeVisitor;
 
 /**

@@ -59,7 +59,6 @@ import java.util.List;
 // FOP
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
-import org.apache.fop.fo.properties.BackgroundRepeat;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.apps.FOPException;

@@ -58,7 +58,6 @@ import org.apache.fop.layout.hyphenation.Hyphenator;
 import org.apache.fop.traits.BlockProps;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.Resolveable;
-import org.apache.fop.fo.properties.TextAlign;
 
 import java.util.ListIterator;
 import java.util.Iterator;

@@ -213,7 +213,7 @@ public abstract class AbstractLayoutManager implements LayoutProcessor, Constant
      * representing a potential break decision.
      * If pos is null, then back up to the first child LM.
      */
-    protected void reset(Position pos) {
+    protected void reset(org.apache.fop.layoutmgr.Position pos) {
         //if (lm == null) return;
         LayoutManager lm = (pos != null) ? pos.getLM() : null;
         if (curChildLM != lm) {

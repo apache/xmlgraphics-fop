@@ -154,9 +154,6 @@ import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.pagination.Title;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.LeaderPattern;
-import org.apache.fop.fo.properties.Overflow;
-import org.apache.fop.fo.properties.Scaling;
 import org.apache.fop.layoutmgr.list.Item;
 import org.apache.fop.layoutmgr.list.ListBlockLayoutManager;
 import org.apache.fop.layoutmgr.list.ListItemLayoutManager;
@@ -370,14 +367,14 @@ public class AddLMVisitor implements FOTreeVisitor {
          node.setup();
          InlineArea leaderArea = null;
 
-         if (node.getLeaderPattern() == LeaderPattern.RULE) {
+         if (node.getLeaderPattern() == Constants.LeaderPattern.RULE) {
              org.apache.fop.area.inline.Leader leader = new org.apache.fop.area.inline.Leader();
              leader.setRuleStyle(node.getRuleStyle());
              leader.setRuleThickness(node.getRuleThickness());
              leaderArea = leader;
-         } else if (node.getLeaderPattern() == LeaderPattern.SPACE) {
+         } else if (node.getLeaderPattern() == Constants.LeaderPattern.SPACE) {
              leaderArea = new Space();
-         } else if (node.getLeaderPattern() == LeaderPattern.DOTS) {
+         } else if (node.getLeaderPattern() == Constants.LeaderPattern.DOTS) {
              TextArea t = new TextArea();
              char dot = '.'; // userAgent.getLeaderDotCharacter();
 
@@ -403,7 +400,7 @@ public class AddLMVisitor implements FOTreeVisitor {
              fa.setHeight(node.getFontState().getAscender());
 
              leaderArea = fa;
-         } else if (node.getLeaderPattern() == LeaderPattern.USECONTENT) {
+         } else if (node.getLeaderPattern() == Constants.LeaderPattern.USECONTENT) {
              if (node.getChildren() == null) {
                  node.getLogger().error("Leader use-content with no content");
                  return null;
@@ -644,7 +641,7 @@ public class AddLMVisitor implements FOTreeVisitor {
              cheight = (int)size.getY() * 1000;
          }
          int scaling = node.propertyList.get(Constants.PR_SCALING).getEnum();
-         if (scaling == Scaling.UNIFORM) {
+         if (scaling == Constants.Scaling.UNIFORM) {
              // adjust the larger
              double rat1 = cwidth / (size.getX() * 1000f);
              double rat2 = cheight / (size.getY() * 1000f);
@@ -666,9 +663,9 @@ public class AddLMVisitor implements FOTreeVisitor {
          boolean clip = false;
          if (cwidth > ipd || cheight > bpd) {
              int overflow = node.propertyList.get(Constants.PR_OVERFLOW).getEnum();
-             if (overflow == Overflow.HIDDEN) {
+             if (overflow == Constants.Overflow.HIDDEN) {
                  clip = true;
-             } else if (overflow == Overflow.ERROR_IF_OVERFLOW) {
+             } else if (overflow == Constants.Overflow.ERROR_IF_OVERFLOW) {
                  node.getLogger().error("Instream foreign object overflows the viewport: clipping");
                  clip = true;
              }

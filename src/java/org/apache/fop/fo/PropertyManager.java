@@ -64,7 +64,6 @@ import org.apache.fop.traits.BlockProps;
 import org.apache.fop.traits.InlineProps;
 import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.traits.LayoutProps; // keep, break, span, space?
-import org.apache.fop.fo.properties.Span;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fo.properties.CommonHyphenation;
 
@@ -454,7 +453,7 @@ public class PropertyManager implements Constants {
         LayoutProps props = new LayoutProps();
         props.breakBefore = this.propertyList.get(PR_BREAK_BEFORE).getEnum();
         props.breakAfter = this.propertyList.get(PR_BREAK_AFTER).getEnum();
-        props.bIsSpan = (this.propertyList.get(PR_SPAN).getEnum() == Span.ALL);
+        props.bIsSpan = (this.propertyList.get(PR_SPAN).getEnum() == Constants.ALL);
         props.spaceBefore = new SpaceVal(
                               this.propertyList.get(PR_SPACE_BEFORE).getSpace());
         props.spaceAfter = new SpaceVal(

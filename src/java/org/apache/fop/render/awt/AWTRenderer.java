@@ -88,7 +88,6 @@ import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FOTreeControl;
-import org.apache.fop.fo.properties.BackgroundRepeat;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.render.AbstractRenderer;

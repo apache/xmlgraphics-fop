@@ -55,7 +55,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 
 import org.apache.fop.datatypes.FODimension;
-import org.apache.fop.fo.properties.WritingMode;
+import org.apache.fop.fo.Constants;
 
 /**
  * Describe a PDF or PostScript style coordinate transformation matrix (CTM).
@@ -145,15 +145,15 @@ public class CTM implements Serializable {
     public static CTM getWMctm(int wm, int ipd, int bpd) {
         CTM wmctm;
         switch (wm) {
-            case WritingMode.LR_TB:
+            case Constants.WritingMode.LR_TB:
                 return new CTM(CTM_LRTB);
-            case WritingMode.RL_TB: {
+            case Constants.WritingMode.RL_TB: {
                     wmctm = new CTM(CTM_RLTB);
                     wmctm.e = ipd;
                     return wmctm;
                 }
                 //return  CTM_RLTB.translate(ipd, 0);
-            case WritingMode.TB_RL: { // CJK
+            case Constants.WritingMode.TB_RL: { // CJK
                     wmctm = new CTM(CTM_TBRL);
                     wmctm.e = bpd;
                     return wmctm;
@@ -331,7 +331,7 @@ public class CTM implements Serializable {
          * can set ipd and bpd appropriately based on the writing mode.
          */
 
-        if (writingMode == WritingMode.LR_TB || writingMode == WritingMode.RL_TB) {
+        if (writingMode == Constants.WritingMode.LR_TB || writingMode == Constants.WritingMode.RL_TB) {
             reldims.ipd = width;
             reldims.bpd = height;
         } else {

@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -46,12 +47,22 @@
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
-*/
+ */
+
 package org.apache.fop.fo;
+
+import org.apache.fop.fo.properties.GenericBoolean;
+import org.apache.fop.fo.properties.GenericBorderStyle;
+import org.apache.fop.fo.properties.GenericBreak;
+import org.apache.fop.fo.properties.GenericCondBorderWidth;
+import org.apache.fop.fo.properties.GenericCondPadding;
+import org.apache.fop.fo.properties.GenericKeep;
+import org.apache.fop.fo.properties.GenericSpace;
 
 public interface Constants {
 
     // element constants
+
     int FO_BASIC_LINK = 1;
     int FO_BIDI_OVERRIDE = 2;
     int FO_BLOCK = 3;
@@ -110,12 +121,15 @@ public interface Constants {
     int FO_WRAPPER = 56;
     int ELEMENT_COUNT = 56;
     
+
     // Masks
     int COMPOUND_SHIFT = 9;
     int PROPERTY_MASK = (1 << COMPOUND_SHIFT)-1;
     int COMPOUND_MASK = ~PROPERTY_MASK;
-
+    int COMPOUND_COUNT = 11;
+    
     // property constants
+
     int PR_ABSOLUTE_POSITION = 1;
     int PR_ACTIVE_STATE = 2;
     int PR_ALIGNMENT_ADJUST = 3;
@@ -365,7 +379,9 @@ public interface Constants {
     int PR_Z_INDEX = 247;
     int PROPERTY_COUNT = 247;
     
+
     // compound property constants
+
     int CP_BLOCK_PROGRESSION_DIRECTION = 1 << COMPOUND_SHIFT;
     int CP_CONDITIONALITY = 2 << COMPOUND_SHIFT;
     int CP_INLINE_PROGRESSION_DIRECTION = 3 << COMPOUND_SHIFT;
@@ -379,6 +395,7 @@ public interface Constants {
     int CP_WITHIN_PAGE = 11 << COMPOUND_SHIFT;
 
     // Enumeration constants
+
     int ABSOLUTE = 1;
     int ABSOLUTE_COLORMETRIC = 2;
     int AFTER = 3;
@@ -485,5 +502,270 @@ public interface Constants {
     int USECONTENT = 104;
     int VISIBLE = 105;
     int WRAP = 106;
+
+   // Enumeration Interfaces
+
+    public interface AbsolutePosition {
+        int AUTO = Constants.AUTO;
+        int FIXED = Constants.FIXED;
+        int ABSOLUTE = Constants.ABSOLUTE; }
+
+    public interface BackgroundRepeat {
+        int REPEAT = Constants.REPEAT;
+        int REPEATX = Constants.REPEATX;
+        int REPEATY = Constants.REPEATY;
+        int NOREPEAT = Constants.NOREPEAT; }
+
+    public interface BorderBeforeStyle extends GenericBorderStyle.Enums { }
+
+    public interface BorderBeforeWidth extends GenericCondBorderWidth.Enums { }
+
+    public interface BorderAfterStyle extends GenericBorderStyle.Enums { }
+
+    public interface BorderAfterWidth extends GenericCondBorderWidth.Enums { }
+
+    public interface BorderStartStyle extends GenericBorderStyle.Enums { }
+
+    public interface BorderStartWidth extends GenericCondBorderWidth.Enums { }
+
+    public interface BorderEndStyle extends GenericBorderStyle.Enums { }
+
+    public interface BorderEndWidth extends GenericCondBorderWidth.Enums { }
+
+    public interface BorderTopStyle extends GenericBorderStyle.Enums { }
+
+    public interface BorderBottomStyle extends GenericBorderStyle.Enums { }
+
+    public interface BorderLeftStyle extends GenericBorderStyle.Enums { }
+
+    public interface BorderRightStyle extends GenericBorderStyle.Enums { }
+
+    public interface PaddingBefore extends GenericCondPadding.Enums { }
+
+    public interface PaddingAfter extends GenericCondPadding.Enums { }
+
+    public interface PaddingStart extends GenericCondPadding.Enums { }
+
+    public interface PaddingEnd extends GenericCondPadding.Enums { }
+
+    public interface FontVariant {
+        int NORMAL = Constants.NORMAL;
+        int SMALL_CAPS = Constants.SMALL_CAPS; }
+
+    public interface Hyphenate {
+        int TRUE = Constants.TRUE;
+        int FALSE = Constants.FALSE; }
+
+    public interface SpaceBefore extends GenericSpace.Enums { }
+
+    public interface SpaceAfter extends GenericSpace.Enums { }
+
+    public interface SpaceEnd extends GenericSpace.Enums { }
+
+    public interface SpaceStart extends GenericSpace.Enums { }
+
+    public interface BaselineShift {
+        int BASELINE = Constants.BASELINE;
+        int SUB = Constants.SUB;
+        int SUPER = Constants.SUPER; }
+
+    public interface DisplayAlign {
+        int BEFORE = Constants.BEFORE;
+        int AFTER = Constants.AFTER;
+        int CENTER = Constants.CENTER;
+        int AUTO = Constants.AUTO; }
+
+    public interface RelativeAlign {
+        int BEFORE = Constants.BEFORE;
+        int BASELINE = Constants.BASELINE; }
+
+    public interface Scaling {
+        int UNIFORM = Constants.UNIFORM;
+        int NON_UNIFORM = Constants.NON_UNIFORM; }
+
+    public interface LinefeedTreatment {
+        int IGNORE = Constants.IGNORE;
+        int PRESERVE = Constants.PRESERVE;
+        int TREAT_AS_SPACE = Constants.TREAT_AS_SPACE;
+        int TREAT_AS_ZERO_WIDTH_SPACE = Constants.TREAT_AS_ZERO_WIDTH_SPACE; }
+
+    public interface TextAlign {
+        int CENTER = Constants.CENTER;
+        int END = Constants.END;
+        int START = Constants.START;
+        int JUSTIFY = Constants.JUSTIFY; }
+
+    public interface TextAlignLast {
+        int CENTER = Constants.CENTER;
+        int END = Constants.END;
+        int START = Constants.START;
+        int JUSTIFY = Constants.JUSTIFY; }
+
+    public interface WhiteSpaceCollapse extends GenericBoolean.Enums { }
+
+    public interface WrapOption {
+        int WRAP = Constants.WRAP;
+        int NO_WRAP = Constants.NO_WRAP; }
+
+    public interface TextDecoration {
+        int NONE = Constants.NONE;
+        int UNDERLINE = Constants.UNDERLINE;
+        int OVERLINE = Constants.OVERLINE;
+        int LINE_THROUGH = Constants.LINE_THROUGH;
+        int BLINK = Constants.BLINK;
+        int NO_UNDERLINE = Constants.NO_UNDERLINE;
+        int NO_OVERLINE = Constants.NO_OVERLINE;
+        int NO_LINE_THROUGH = Constants.NO_LINE_THROUGH;
+        int NO_BLINK = Constants.NO_BLINK; }
+
+    public interface TextTransform {
+        int NONE = Constants.NONE;
+        int CAPITALIZE = Constants.CAPITALIZE;
+        int UPPERCASE = Constants.UPPERCASE;
+        int LOWERCASE = Constants.LOWERCASE; }
+
+    public interface WordSpacing extends GenericSpace.Enums { }
+
+    public interface RenderingIntent {
+        int AUTO = Constants.AUTO;
+        int PERCEPTUAL = Constants.PERCEPTUAL;
+        int RELATIVE_COLOMETRIC = Constants.RELATIVE_COLOMETRIC;
+        int SATURATION = Constants.SATURATION;
+        int ABSOLUTE_COLORMETRIC = Constants.ABSOLUTE_COLORMETRIC; }
+
+    public interface BreakAfter extends GenericBreak.Enums { }
+
+    public interface BreakBefore extends GenericBreak.Enums { }
+
+    public interface KeepTogether extends GenericKeep.Enums { }
+
+    public interface KeepWithNext extends GenericKeep.Enums { }
+
+    public interface KeepWithPrevious extends GenericKeep.Enums { }
+
+    public interface Overflow {
+        int VISIBLE = Constants.VISIBLE;
+        int HIDDEN = Constants.HIDDEN;
+        int SCROLL = Constants.SCROLL;
+        int ERROR_IF_OVERFLOW = Constants.ERROR_IF_OVERFLOW;
+        int AUTO = Constants.AUTO; }
+
+/*    public interface Span {   conflicts with Area.Span 
+        int NONE = Constants.NONE;
+        int ALL = Constants.ALL; }  */
+
+    public interface LeaderAlignment {
+        int NONE = Constants.NONE;
+        int REFERENCE_AREA = Constants.REFERENCE_AREA;
+        int PAGE = Constants.PAGE; }
+
+    public interface LeaderPattern {
+        int SPACE = Constants.SPACE;
+        int RULE = Constants.RULE;
+        int DOTS = Constants.DOTS;
+        int USECONTENT = Constants.USECONTENT; }
+
+    public interface RuleStyle {
+        int NONE = Constants.NONE;
+        int DOTTED = Constants.DOTTED;
+        int DASHED = Constants.DASHED;
+        int SOLID = Constants.SOLID;
+        int DOUBLE = Constants.DOUBLE;
+        int GROOVE = Constants.GROOVE;
+        int RIDGE = Constants.RIDGE; }
+
+    public interface RetrievePosition {
+        int FSWP = Constants.FSWP;
+        int FIC = Constants.FIC;
+        int LSWP = Constants.LSWP;
+        int LEWP = Constants.LEWP; }
+
+    public interface RetrieveBoundary {
+        int PAGE = Constants.PAGE;
+        int PAGE_SEQUENCE = Constants.PAGE_SEQUENCE;
+        int DOCUMENT = Constants.DOCUMENT; }
+
+    public interface LetterValue {
+        int ALPHABETIC = Constants.ALPHABETIC;
+        int TRADITIONAL = Constants.TRADITIONAL;
+        int AUTO = Constants.AUTO; }
+
+    public interface BlankOrNotBlank {
+        int BLANK = Constants.BLANK;
+        int NOT_BLANK = Constants.NOT_BLANK;
+        int ANY = Constants.ANY; }
+
+    public interface ForcePageCount {
+        int EVEN = Constants.EVEN;
+        int ODD = Constants.ODD;
+        int END_ON_EVEN = Constants.END_ON_EVEN;
+        int END_ON_ODD = Constants.END_ON_ODD;
+        int NO_FORCE = Constants.NO_FORCE;
+        int AUTO = Constants.AUTO; }
+
+    public interface OddOrEven {
+        int ODD = Constants.ODD;
+        int EVEN = Constants.EVEN;
+        int ANY = Constants.ANY; }
+
+    public interface PagePosition {
+        int FIRST = Constants.FIRST;
+        int LAST = Constants.LAST;
+        int REST = Constants.REST;
+        int ANY = Constants.ANY; }
+
+    public interface Precedence {
+        int TRUE = Constants.TRUE;
+        int FALSE = Constants.FALSE; }
+
+    public interface BorderCollapse {
+        int SEPARATE = Constants.SEPARATE;
+        int COLLAPSE = Constants.COLLAPSE; }
+
+    public interface CaptionSide {
+        int BEFORE = Constants.BEFORE;
+        int AFTER = Constants.AFTER;
+        int START = Constants.START;
+        int END = Constants.END;
+        int TOP = Constants.TOP;
+        int BOTTOM = Constants.BOTTOM;
+        int LEFT = Constants.LEFT;
+        int RIGHT = Constants.RIGHT; }
+
+    public interface TableLayout {
+        int AUTO = Constants.AUTO;
+        int FIXED = Constants.FIXED; }
+
+    public interface TableOmitFooterAtBreak extends GenericBoolean.Enums { }
+
+    public interface TableOmitHeaderAtBreak extends GenericBoolean.Enums { }
+
+    public interface WritingMode {
+        int LR_TB = Constants.LR_TB;
+        int RL_TB = Constants.RL_TB;
+        int TB_RL = Constants.TB_RL; }
+
+/*    public interface Position {  conflicts with layoutmgr.Position
+        int STATIC = Constants.STATIC;
+        int RELATIVE = Constants.RELATIVE;
+        int ABSOLUTE = Constants.ABSOLUTE;
+        int FIXED = Constants.FIXED; } */
+
+    public interface VerticalAlign {
+        int BASELINE = Constants.BASELINE;
+        int MIDDLE = Constants.MIDDLE;
+        int SUB = Constants.SUB;
+        int SUPER = Constants.SUPER;
+        int TEXT_TOP = Constants.TEXT_TOP;
+        int TEXT_BOTTOM = Constants.TEXT_BOTTOM;
+        int TOP = Constants.TOP;
+        int BOTTOM = Constants.BOTTOM; }
+
+    public interface WhiteSpaceTreatment {
+        int IGNORE = Constants.IGNORE;
+        int PRESERVE = Constants.PRESERVE;
+        int IGNORE_IF_BEFORE_LINEFEED = Constants.IGNORE_IF_BEFORE_LINEFEED;
+        int IGNORE_IF_AFTER_LINEFEED = Constants.IGNORE_IF_AFTER_LINEFEED;
+        int IGNORE_IF_SURROUNDING_LINEFEED = Constants.IGNORE_IF_SURROUNDING_LINEFEED; }
 
 }

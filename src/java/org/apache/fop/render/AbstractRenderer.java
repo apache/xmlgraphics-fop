@@ -93,6 +93,7 @@ import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.Character;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fo.pagination.Region;
 
@@ -108,7 +109,7 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
  * handle viewports. This keeps track of the current block and inline position.
  */
 public abstract class AbstractRenderer extends AbstractLogEnabled
-         implements Renderer, Configurable, InlineAreaVisitor {
+         implements Renderer, Configurable, InlineAreaVisitor, Constants {
 
     /**
      * user agent

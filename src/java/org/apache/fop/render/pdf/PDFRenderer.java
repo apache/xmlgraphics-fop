@@ -90,8 +90,6 @@ import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.datatypes.ColorType;
-import org.apache.fop.fo.properties.BackgroundRepeat;
-import org.apache.fop.fo.properties.RuleStyle;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontSetup;

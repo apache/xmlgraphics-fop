@@ -58,8 +58,6 @@ import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.Block;
 import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
-import org.apache.fop.fo.properties.AbsolutePosition;
-import org.apache.fop.fo.properties.Overflow;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.area.CTM;
 import org.apache.fop.datatypes.FODimension;
