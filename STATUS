@@ -29,17 +29,16 @@ tables: fo: table-header, table-and-caption,
              number-rows-spanned 
          general properties wrt tables 
             [Karen Lease] 
-docs, message handler [Fotis Jannidis] 
+docs [Fotis Jannidis] 
 
 **** THINGS TO DO **** 
 
 Support XSL Working Draft 27 March 2000 
 
 1.One category of tasks will be to implement missing formatting objects. 
-  There are 6 (7) such objects: 
+  There are 6  such objects: 
 
-  fo:character (?) 
-  fo:external-graphic 
+  fo:character 
   fo:leader 
   fo:table-and-caption 
   fo:table-header 
@@ -65,12 +64,6 @@ Support XSL Working Draft 27 March 2000
   to be compliant. 
 
   a) CHANGED 
-   11.href (Dropped/Changed) 
-   14.page-master-even (Dropped/Changed) 
-   15.page-master-first (Dropped/Changed) 
-   16.page-master-name (Dropped/Changed) 
-   17.page-master-odd (Dropped/Changed) 
-   18.page-master-repeating (Dropped/Changed) 
    21.space-after.optimum (Incomplete) 
    22.space-before.optimum (Incomplete) 
    25.white-space-treatment (Dropped/Changed) 
@@ -88,19 +81,19 @@ Support XSL Working Draft 27 March 2000
    10.display-align                                          35.ref-id 
    11.dominant-baseline                                      36.reference-orientation 
    12.font-variant                                           37.region-name 
-   13.format 38.relative-align 
-   14.grouping-separator 39.role 
-   15.grouping-size 40.rule-style 
-   16.inline-progression-dimension 41.source-document 
-   17.keep-with-previous 42.space-after 
-   18.leader-length 43.space-before 
-   19.leader-pattern 44.space-end 
-   20.letter-value 45.space-start 
-   21.line-stacking-strategy 46.src 
-   22.master-name 47.visibility 
-   23.max-height 48.widows 
-   24.max-width 49.writing-mode 
-   25.min-height 50.z-index 
+   13.format                                                 38.relative-align 
+   14.grouping-separator                                     39.role 
+   15.grouping-size                                          40.rule-style 
+   16.inline-progression-dimension                           41.source-document 
+   17.keep-with-previous                                     42.space-after 
+   18.leader-length                                          43.space-before 
+   19.leader-pattern                                         44.space-end 
+   20.letter-value                                           45.space-start 
+   21.line-stacking-strategy                                 
+   22.master-name                                            47.visibility 
+   23.max-height                                             48.widows 
+   24.max-width                                              49.writing-mode 
+   25.min-height                                             50.z-index 
 
 5.A fifth category of tasks is the ongoing effort to promote maintainability, 
 write 
@@ -145,6 +138,10 @@ Done since 0.13 release
 - finally fixed postscript printing of generated PDF [Domagoj Cosic]
 - removed XTCommandLine from build.xml 
 - removed PDFOutputHandler from build.xml 
+- added XalanCommandLine  [Fotis Jannidis]
+- added: fo:instream-foreign-object [Keiron Liddle]
+- added: goto button in AWT viewer [Stanislav Gorkhover]
+- updated: AWT viewer now works again and support - with some restrictions - the new SVG support [Stanislav Gorkhover]
 
 Done since 0.12.1 release 
 - using Ant to build Fop instead of make [Giacomo Pati] 
