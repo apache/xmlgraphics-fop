@@ -50,13 +50,10 @@
  */ 
 package org.apache.fop.pdf;
 
-import org.apache.fop.render.ps.FlateEncodeOutputStream;
-import org.apache.fop.util.StreamUtilities;
+import org.apache.fop.util.FlateEncodeOutputStream;
 
 import java.io.OutputStream;
-import java.io.InputStream;
 import java.io.IOException;
-import java.util.zip.DeflaterOutputStream;
 
 /**
  * A filter to deflate a stream.
@@ -146,33 +143,6 @@ public class FlateFilter extends PDFFilter {
             return sb.toString();
         }
         return null;
-    }
-
-
-    /**
-     * Encode the given data and return it. Note: a side effect of
-     * this method is that it resets the prediction to the default
-     * because these attributes are not supported. So the DecodeParms
-     * should be retrieved after calling this method.
-     *
-     * @param in the input stream to read the data from
-     * @param out the output stream to write the data to
-     * @param length the length of data to read
-     * @throws IOException if there is an error reading or writing to the streams
-     */
-    public void encode(InputStream in, OutputStream out, int length) throws IOException {
-        predictor = PREDICTION_NONE;
-        try {
-            DeflaterOutputStream compressedStream =
-                new DeflaterOutputStream(out);
-            StreamUtilities.streamCopy(in, compressedStream, length);
-            compressedStream.flush();
-            compressedStream.close();
-        } catch (IOException e) {
-            //log.error("Fatal error: "
-            //        + e.getMessage(), e);
-        }
-
     }
 
     /**
