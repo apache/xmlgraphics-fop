@@ -22,7 +22,7 @@ public class TNodeTest{
     //public TNodeTest (){}
     
     public static void main(String[] args)
-	throws Tree.TreeException {
+	throws TreeException {
 	Tree tree = new Tree();
 	TNode root = new TNode(tree, null, "Root");
 	TNode child1 = new TNode(tree, root, "1-1");
@@ -69,7 +69,7 @@ public class TNodeTest{
 	System.out.println("copySubTree child3_3 to root");
 	try {
 	    root.copySubTree(child3_3, 0);
-	} catch (Tree.TreeException e) {
+	} catch (TreeException e) {
 	    System.out.println("Caught TreeException: " + e.getMessage());
 	}
 
@@ -78,17 +78,32 @@ public class TNodeTest{
 	System.out.println("copySubTree child3 to child3_3");
 	try {
 	    child3_3.copySubTree(child3, 0);
-	} catch (Tree.TreeException e) {
+	} catch (TreeException e) {
 	    System.out.println("Caught TreeException: " + e.getMessage());
 	}
 
 	System.out.println("Pre-order traversal:root:");
 	preorder(root, tree.getModCount());
 
-	// Test the deleteSubTree method
-	System.out.println("deleteSubTree child2_1");
-	int delcount = child2_1.deleteSubTree();
-	System.out.println("# deleted: "+delcount);
+	// Test the cutSubTree method
+	System.out.println("cutSubTree child2_1");
+	TNode subtree = (TNode)(child2_1.cutSubTree());
+        Tree tree2 = new Tree(subtree);
+	System.out.println("Pre-order traversal:tree2.getRoot():");
+	preorder((TNode)(tree2.getRoot()), tree2.getModCount());
+	System.out.println("Post-order traversal:tree2.getRoot():");
+	postorder((TNode)(tree2.getRoot()), tree2.getModCount());
+
+	System.out.println("Get the first child of tree 2 root");
+        TNode firstChild = (TNode)(tree2.getRoot().getChild(0));
+	System.out.println("Cut the first child of tree 2 root");
+        subtree = (TNode)(firstChild.cutSubTree());
+	System.out.println("Pre-order traversal:tree2.getRoot():");
+	preorder((TNode)(tree2.getRoot()), tree2.getModCount());
+	System.out.println("Post-order traversal:tree2.getRoot():");
+	postorder((TNode)(tree2.getRoot()), tree2.getModCount());
+	System.out.println("Insert as first child of child2");
+        child2.addSubTree(0, subtree);
 
 	System.out.println("Pre-order traversal:root:");
 	preorder(root, tree.getModCount());
@@ -136,6 +151,11 @@ public class TNodeTest{
 	    System.out.println("Comod exception caught");
 	}
 
+	System.out.println("Delete child1 nodes");
+	int delcount = child1.deleteSubTree();
+	System.out.println("# deleted: "+delcount);
+	System.out.println("Pre-order traversal:root:");
+	preorder((TNode)tree.getRoot(), tree.getModCount());
 	System.out.println("Delete all nodes");
 	delcount = root.deleteSubTree();
 	System.out.println("# deleted: "+delcount);
