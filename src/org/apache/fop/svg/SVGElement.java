@@ -137,28 +137,4 @@ public class SVGElement extends Svg {
         /* return status */
         return new Status(Status.OK);
     }
-
-    public void buildTopLevel(Document doc, Element svgRoot)
-    {
-        // build up the info for the top level element
-        for (int count = 0; count < props.length; count++) {
-            if (this.properties.get(props[count]) != null) {
-                String rf = this.properties.get(props[count]).getString();
-                if (rf != null)
-                    svgRoot.setAttributeNS(null, props[count], rf);
-            }
-        }
-        //doc.appendChild(topLevel);
-        int numChildren = this.children.size();
-        for (int i = 0; i < numChildren; i++) {
-            Object child = children.elementAt(i);
-            if (child instanceof SVGObj) {
-                ((SVGObj) child).addGraphic(doc, svgRoot);
-            } else if (child instanceof String) {
-                org.w3c.dom.Text text = doc.createTextNode((String) child);
-                svgRoot.appendChild(text);
-            }
-        }
-
-    }
 }
