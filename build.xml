@@ -144,6 +144,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
        <include name="src/**"/>
        <include name="conf/**"/>
        <include name="docs/**"/>
+       <include name="hyph/**"/>
        <include name="lib/**"/>
        <include name="CHANGES"/>
        <include name="LICENSE"/>
