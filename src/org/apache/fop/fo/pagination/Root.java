@@ -19,9 +19,8 @@ import java.util.List;
  * The fo:root formatting object. Contains page masters, page-sequences.
  */
 public class Root extends FObj {
-
-    LayoutMasterSet layoutMasterSet;
-    List pageSequences;
+    private LayoutMasterSet layoutMasterSet;
+    private List pageSequences;
 
     /**
      * keeps count of page number from over PageSequence instances
@@ -30,11 +29,8 @@ public class Root extends FObj {
 
     public Root(FONode parent) {
         super(parent);
-
         // this.properties.get("media-usage");
-
         pageSequences = new ArrayList();
-
         if (parent != null) {
             //throw new FOPException("root must be root element");
         }
