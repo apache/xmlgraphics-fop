@@ -116,7 +116,7 @@
   <!-- Clean targets                                                       -->
   <!-- =================================================================== -->
   <target name="clean" depends="init">
-    <deltree dir="${build.dir}"/>
+    <delete dir="${testDir}"/>
     
   </target>
 
