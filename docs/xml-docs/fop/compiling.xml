@@ -27,7 +27,7 @@
     <p>If you have problems compiling Fop, please try this first: </p>
     <ul>
       <li>delete the build directory completely and try a new build from scratch</li>
-      <li>check, whether you have an older version of xerces.jar, xalan.jar, w3c.jar somewhere in 
+      <li>check, whether you have an older version of xerces.jar, xalan.jar, batik.jar somewhere in 
           you classpath.</li>
       </ul>
       <p>If you still have problems, please look at the

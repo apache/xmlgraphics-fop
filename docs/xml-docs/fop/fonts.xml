@@ -18,7 +18,7 @@
 			<p>	Run the class org.apache.fop.fonts.apps.PFMReader to generate the XML file.
 			</p>
 			<p>
-				<code>java -cp fop.jar;xerces.jar;xalan.jar;w3c.jar</code>
+				<code>java -cp fop.jar;xerces.jar;xalan.jar;batik.jar</code>
 			</p>
 			<p>
 				<code>org.apache.fop.fonts.apps.PFMReader pfm-file xml-file</code>
