@@ -37,6 +37,8 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
     int width;
     int height;
 
+    FontInfo fontInfo = null;
+
     /**
      * Create a new PDFDocumentGraphics2D.
      * This is used to create a new pdf document of the given height
@@ -54,7 +56,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         super(textAsShapes);
 
         if(!textAsShapes) {
-            FontInfo fontInfo = new FontInfo();
+            fontInfo = new FontInfo();
             FontSetup.setup(fontInfo);
             try {
                 fontState = new FontState(fontInfo, "Helvetica", "normal", "normal", 12, 0);
@@ -73,14 +75,8 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         currentFontSize = 0;
         currentYPosition = 0;
         currentXPosition = 0;
-        //				fontState = fs;
 
         currentStream.write("1 0 0 -1 0 " + height + " cm\n");
-
-        // end part
-        /*
-        FontSetup.addToResources(this.pdfDoc, fontInfo);
-         */
 
     }
 
@@ -123,6 +119,9 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         PDFPage currentPage =
           this.pdfDoc.makePage(pdfResources, pdfStream, width,
                                height, null);
+        if(fontInfo != null) {
+            FontSetup.addToResources(this.pdfDoc, fontInfo);
+        }
         this.pdfDoc.output(stream);
 
     }
