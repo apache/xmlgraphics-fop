@@ -26,6 +26,7 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.properties.Property;
 
 /**
  * A repeatable-page-master-reference formatting object.
@@ -62,21 +63,16 @@ public class RepeatablePageMasterReference extends FObj
             pageSequenceMaster.addSubsequenceSpecifier(this);
         }
 
-        String mr = getPropString(PR_MAXIMUM_REPEATS);
+        Property mr = getProperty(PR_MAXIMUM_REPEATS);
 
-        if (mr.equals("no-limit")) {
+        if (mr.getEnum() == NO_LIMIT) {
             this.maximumRepeats = INFINITE;
         } else {
-            try {
-                this.maximumRepeats = Integer.parseInt(mr);
-                if (this.maximumRepeats < 0) {
-                    getLogger().debug("negative maximum-repeats: "
-                                      + this.maximumRepeats);
-                    this.maximumRepeats = 0;
-                }
-            } catch (NumberFormatException nfe) {
-                throw new SAXParseException("Invalid number for "
-                                       + "'maximum-repeats' property", locator);
+            this.maximumRepeats = mr.getNumber().intValue();
+            if (this.maximumRepeats < 0) {
+                getLogger().debug("negative maximum-repeats: "
+                                  + this.maximumRepeats);
+                this.maximumRepeats = 0;
             }
         }
     }
