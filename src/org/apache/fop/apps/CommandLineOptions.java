@@ -432,7 +432,7 @@ public class CommandLineOptions {
        */
     public static void printUsage() {
         MessageHandler.logln(
-          "\nUSAGE\nFop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-print] <outfile>\n" +
+          "\nUSAGE\nFop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-pcl|-txt|-print] <outfile>\n" +
           " [OPTIONS]  \n" + "  -d          debug mode   \n" +
           "  -x          dump configuration settings  \n" +
           "  -q          quiet mode  \n" +
