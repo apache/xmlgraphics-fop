@@ -18,27 +18,17 @@
 
 package org.apache.fop.render.rtf;
 
-//RTF
-import org.apache.fop.render.rtf.rtflib.rtfdoc.BorderAttributesConverter;
-
-//FOP
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.expr.NCnameProperty;
-import org.apache.fop.fo.properties.ColorTypeProperty;
-import org.apache.fop.fo.properties.EnumProperty;
-import org.apache.fop.fo.properties.LengthProperty;
-import org.apache.fop.fo.properties.ListProperty;
-import org.apache.fop.fo.properties.NumberProperty;
-import org.apache.fop.fo.properties.Property;
+import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.datatypes.ColorType;
-
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
+import org.apache.fop.fo.properties.Property;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.BorderAttributesConverter;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableAttributes;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfColorTable;
 
 /**
@@ -85,20 +75,9 @@ public class TableAttributesConverter {
      */
     static RtfAttributes convertTableAttributes(FObj fobj)
             throws FOPException {
-        RtfAttributes attrib = new RtfAttributes();
-
-        LengthProperty lengthProp = null;
-        // margin-left
-        lengthProp = (LengthProperty)fobj.getProperty(Constants.PR_MARGIN_LEFT);
-        if (lengthProp != null) {
-            Float f = new Float(lengthProp.getLength().getValue() / 1000f);
-            final String sValue = f.toString() + "pt";
-
-            attrib.set(
-                    ITableAttributes.ATTR_ROW_LEFT_INDENT,
-                    (int)FoUnitsConverter.getInstance().convertToTwips(sValue));
-        }
-
+        FOPRtfAttributes attrib = new FOPRtfAttributes();
+        attrib.set(ITableAttributes.ATTR_ROW_LEFT_INDENT,
+                fobj.getProperty(Constants.PR_MARGIN_LEFT).getLength());
         return attrib;
     }
 
@@ -114,14 +93,11 @@ public class TableAttributesConverter {
     throws FOPException {
 
         Property p;
-        EnumProperty ep;
         RtfColorTable colorTable = RtfColorTable.getInstance();
         PropertyList propList = fobj.getPropertyList();
         
         
-        RtfAttributes attrib = null;
-
-        attrib = new RtfAttributes();
+        FOPRtfAttributes attrib = new FOPRtfAttributes();
 
         boolean isBorderPresent = false;
 
@@ -135,118 +111,35 @@ public class TableAttributesConverter {
                         || color.getGreen() != 0
                         || color.getBlue() != 0) {
                     attrib.set(
-                        ITableAttributes.CELL_COLOR_BACKGROUND,
-                        TextAttributesConverter.convertFOPColorToRTF(color));
+                        ITableAttributes.CELL_COLOR_BACKGROUND, color);
                 }
             } else {
                 log.warn("Named color '" + p.toString() + "' not found. ");
             }
 
         }
+        
+        BorderAttributesConverter.makeBorder(propList, attrib, ITableAttributes.CELL_BORDER_TOP,
+                Constants.PR_BORDER_TOP_COLOR, 
+                Constants.PR_BORDER_TOP_STYLE, 
+                Constants.PR_BORDER_TOP_WIDTH);
+        BorderAttributesConverter.makeBorder(propList, attrib, ITableAttributes.CELL_BORDER_BOTTOM,
+                Constants.PR_BORDER_BOTTOM_COLOR, 
+                Constants.PR_BORDER_BOTTOM_STYLE, 
+                Constants.PR_BORDER_BOTTOM_WIDTH);
+        BorderAttributesConverter.makeBorder(propList, attrib, ITableAttributes.CELL_BORDER_LEFT,
+                Constants.PR_BORDER_LEFT_COLOR, 
+                Constants.PR_BORDER_LEFT_STYLE, 
+                Constants.PR_BORDER_LEFT_WIDTH);
+        BorderAttributesConverter.makeBorder(propList, attrib,  ITableAttributes.CELL_BORDER_RIGHT,
+                Constants.PR_BORDER_RIGHT_COLOR, 
+                Constants.PR_BORDER_RIGHT_STYLE, 
+                Constants.PR_BORDER_RIGHT_WIDTH);
 
-        // Cell borders :
-        if ((p = propList.getExplicit(Constants.PR_BORDER_COLOR)) != null) {
-            ListProperty listprop = (ListProperty) p;
-            ColorType color = null;
-            if (listprop.getList().get(0) instanceof NCnameProperty) {
-                color = new ColorTypeProperty(((NCnameProperty)listprop.getList().get(0)).getNCname());
-            } else if (listprop.getList().get(0) instanceof ColorTypeProperty) {
-                color = ((ColorTypeProperty)listprop.getList().get(0)).getColorType();
-            }
-
-            attrib.set(
-                BorderAttributesConverter.BORDER_COLOR,
-                colorTable.getColorNumber((int)color.getRed(), (int)color.getGreen(),
-                        (int)color.getBlue()).intValue());
-        }
-        if ((p = propList.getExplicit(
-                Constants.PR_BORDER_TOP_COLOR)) != null) {
-            ColorType color = p.getColorType();
-            attrib.set(
-                BorderAttributesConverter.BORDER_COLOR,
-                colorTable.getColorNumber((int)color.getRed(), (int)color.getGreen(),
-                        (int)color.getBlue()).intValue());
-        }
-        if ((p = propList.getExplicit(Constants.PR_BORDER_BOTTOM_COLOR)) != null) {
-            ColorType color = p.getColorType();
-            attrib.set(
-                BorderAttributesConverter.BORDER_COLOR,
-                colorTable.getColorNumber((int)color.getRed(), (int)color.getGreen(),
-                        (int)color.getBlue()).intValue());
-        }
-        if ((p = propList.getExplicit(Constants.PR_BORDER_LEFT_COLOR)) != null) {
-            ColorType color = p.getColorType();
-            attrib.set(
-                BorderAttributesConverter.BORDER_COLOR,
-                colorTable.getColorNumber((int)color.getRed(), (int)color.getGreen(),
-                        (int)color.getBlue()).intValue());
-        }
-        if ((p = propList.getExplicit(Constants.PR_BORDER_RIGHT_COLOR)) != null) {
-            ColorType color = p.getColorType();
-            attrib.set(
-                BorderAttributesConverter.BORDER_COLOR,
-                colorTable.getColorNumber((int)color.getRed(), (int)color.getGreen(),
-                        (int)color.getBlue()).intValue());
-        }
-
-        // Border styles do not inherit from parent
-
-        ep = (EnumProperty)fobj.getProperty(Constants.PR_BORDER_TOP_STYLE);
-        if (ep != null && ep.getEnum() != Constants.NONE) {
-            attrib.set(ITableAttributes.CELL_BORDER_TOP,   "\\"
-                       + convertAttributetoRtf(ep.getEnum()));
-            isBorderPresent = true;
-        }
-        ep = (EnumProperty)fobj.getProperty(Constants.PR_BORDER_BOTTOM_STYLE);
-        if (ep != null && ep.getEnum() != Constants.NONE) {
-            attrib.set(ITableAttributes.CELL_BORDER_BOTTOM, "\\"
-                       + convertAttributetoRtf(ep.getEnum()));
-            isBorderPresent = true;
-        }
-        ep = (EnumProperty)fobj.getProperty(Constants.PR_BORDER_LEFT_STYLE);
-        if (ep != null && ep.getEnum() != Constants.NONE) {
-            attrib.set(ITableAttributes.CELL_BORDER_LEFT,  "\\"
-                       + convertAttributetoRtf(ep.getEnum()));
-            isBorderPresent = true;
-        }
-        ep = (EnumProperty)fobj.getProperty(Constants.PR_BORDER_RIGHT_STYLE);
-        if (ep != null && ep.getEnum() != Constants.NONE) {
-            attrib.set(ITableAttributes.CELL_BORDER_RIGHT, "\\"
-                       + convertAttributetoRtf(ep.getEnum()));
-            isBorderPresent = true;
-        }
-
-        //Currently there is only one border width supported in each cell.  
-        p = fobj.getProperty(Constants.PR_BORDER_LEFT_WIDTH);
-        if(p == null) {
-            p = fobj.getProperty(Constants.PR_BORDER_RIGHT_WIDTH);
-        }
-        if(p == null) {
-            p = fobj.getProperty(Constants.PR_BORDER_TOP_WIDTH);
-        }
-        if(p == null) {
-            p = fobj.getProperty(Constants.PR_BORDER_BOTTOM_WIDTH);
-        }
-        if (p != null) {
-            LengthProperty lengthprop = (LengthProperty)p;
-
-            Float f = new Float(lengthprop.getLength().getValue() / 1000f);
-            String sValue = f.toString() + "pt";
-
-            attrib.set(BorderAttributesConverter.BORDER_WIDTH,
-                       (int)FoUnitsConverter.getInstance().convertToTwips(sValue));
-        } else if (isBorderPresent) {
-            //if not defined, set default border width
-            //note 20 twips = 1 point
-            attrib.set(BorderAttributesConverter.BORDER_WIDTH,
-                       (int)FoUnitsConverter.getInstance().convertToTwips("1pt"));
-        }
-
-
+        int n = fobj.getProperty(Constants.PR_NUMBER_COLUMNS_SPANNED).getNumber().intValue();
         // Column spanning :
-        NumberProperty n = (NumberProperty)fobj.getProperty(Constants.PR_NUMBER_COLUMNS_SPANNED);
-        if (n != null && n.getNumber().intValue() > 1) {
-            attrib.set(ITableAttributes.COLUMN_SPAN, n.getNumber().intValue());
+        if (n > 1) {
+            attrib.set(ITableAttributes.COLUMN_SPAN, n);
         }
 
         return attrib;
@@ -267,7 +160,6 @@ public class TableAttributesConverter {
     throws FOPException {
 
         Property p;
-        EnumProperty ep;
         RtfColorTable colorTable = RtfColorTable.getInstance();
 
         RtfAttributes attrib = null;
@@ -322,7 +214,24 @@ public class TableAttributesConverter {
          * it is implemented that the border type is the value of the border
          * place.
          */
-
+        PropertyList propList = fobj.getPropertyList();
+        BorderAttributesConverter.makeBorder(propList, attrib, ITableAttributes.CELL_BORDER_TOP,
+                Constants.PR_BORDER_TOP_COLOR, 
+                Constants.PR_BORDER_TOP_STYLE, 
+                Constants.PR_BORDER_TOP_WIDTH);
+        BorderAttributesConverter.makeBorder(propList, attrib, ITableAttributes.CELL_BORDER_BOTTOM,
+                Constants.PR_BORDER_BOTTOM_COLOR, 
+                Constants.PR_BORDER_BOTTOM_STYLE, 
+                Constants.PR_BORDER_BOTTOM_WIDTH);
+        BorderAttributesConverter.makeBorder(propList, attrib, ITableAttributes.CELL_BORDER_LEFT,
+                Constants.PR_BORDER_LEFT_COLOR, 
+                Constants.PR_BORDER_LEFT_STYLE, 
+                Constants.PR_BORDER_LEFT_WIDTH);
+        BorderAttributesConverter.makeBorder(propList, attrib,  ITableAttributes.CELL_BORDER_RIGHT,
+                Constants.PR_BORDER_RIGHT_COLOR, 
+                Constants.PR_BORDER_RIGHT_STYLE, 
+                Constants.PR_BORDER_RIGHT_WIDTH);
+/*
         ep = (EnumProperty)fobj.getProperty(Constants.PR_BORDER_TOP_STYLE);
         if (ep != null && ep.getEnum() != Constants.NONE) {
             attrib.set(ITableAttributes.ROW_BORDER_TOP,       "\\"
@@ -381,7 +290,7 @@ public class TableAttributesConverter {
             attrib.set(BorderAttributesConverter.BORDER_WIDTH,
                        (int)FoUnitsConverter.getInstance().convertToTwips("1pt"));
         }
-
+*/
         return attrib;
     }
 
