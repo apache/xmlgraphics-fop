@@ -251,9 +251,6 @@ public class FOPropSets {
         foPropertyLists[FObjectNames.FLOAT] = new ROBitSet(floatset);
 
         //flow
-        BitSet flow = new BitSet();
-        flow.set(PropNames.FLOW_NAME);
-        foPropertyLists[FObjectNames.FLOW] = new ROBitSet(flow);
 
         //footnote
         BitSet footnote = new BitSet();
@@ -567,18 +564,6 @@ public class FOPropSets {
         foPropertyLists[FObjectNames.PAGE_NUMBER_CITATION] = new ROBitSet(page_number_citation);
 
         //page-sequence
-        BitSet page_sequence = new BitSet();
-        page_sequence.set(PropNames.COUNTRY);
-        page_sequence.set(PropNames.FORMAT);
-        page_sequence.set(PropNames.LANGUAGE);
-        page_sequence.set(PropNames.LETTER_VALUE);
-        page_sequence.set(PropNames.GROUPING_SEPARATOR);
-        page_sequence.set(PropNames.GROUPING_SIZE);
-        page_sequence.set(PropNames.ID);
-        page_sequence.set(PropNames.INITIAL_PAGE_NUMBER);
-        page_sequence.set(PropNames.FORCE_PAGE_COUNT);
-        page_sequence.set(PropNames.MASTER_REFERENCE);
-        foPropertyLists[FObjectNames.PAGE_SEQUENCE] = new ROBitSet(page_sequence);
 
         //page-sequence-master
 
@@ -610,9 +595,6 @@ public class FOPropSets {
         //single-page-master-reference
 
         //static-content
-        BitSet static_content = new BitSet();
-        static_content.set(PropNames.FLOW_NAME);
-        foPropertyLists[FObjectNames.STATIC_CONTENT] = new ROBitSet(static_content);
 
         //table
         BitSet table = new BitSet();
@@ -793,18 +775,6 @@ public class FOPropSets {
         foPropertyLists[FObjectNames.TABLE_ROW] = new ROBitSet(table_row);
 
         //title
-        BitSet title = new BitSet();
-        title.or(PropertySets.accessibilitySet);
-        title.or(PropertySets.auralSet);
-        title.or(PropertySets.backgroundSet);
-        title.or(PropertySets.borderSet);
-        title.or(PropertySets.paddingSet);
-        title.or(PropertySets.fontSet);
-        title.or(PropertySets.marginInlineSet);
-        title.set(PropNames.COLOR);
-        title.set(PropNames.LINE_HEIGHT);
-        title.set(PropNames.VISIBILITY);
-        foPropertyLists[FObjectNames.TITLE] = new ROBitSet(title);
 
         //wrapper
         BitSet wrapper = new BitSet();
