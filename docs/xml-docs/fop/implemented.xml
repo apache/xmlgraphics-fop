@@ -132,6 +132,7 @@
       <li>break-before </li>
       <li>color </li>
       <li>column-width </li>
+      <li>country</li>
       <li>end-indent </li>
       <li>extent </li>
       <li>external-destination</li>
@@ -141,10 +142,15 @@
       <li>font-style </li>
       <li>font-weight </li>
       <li>height</li>
+      <li>hyphenate</li>
+      <li>hyphenation-character</li>
+      <li>hyphenation-push-character-count</li>
+      <li>hyphenation-remain-character-count</li>
       <li>id</li>
       <li>initial-page-number</li>
       <li>internal-destination</li>
       <li>keep-with-next (broken)</li>
+      <li>language</li>
       <li>leader-alignment (not value "page")</li>
       <li>leader-length (no percentage values)</li>
       <li>leader-pattern (not value "use-content")</li>
@@ -181,9 +187,9 @@
       <li>space-before.optimum </li>
       <li>src </li>
       <li>start-indent </li>
-      <li>textdecoration (only value "underline")</li>
       <li>text-align </li>
       <li>text-align-last </li>
+      <li>textdecoration (only value "underline")</li>
       <li>text-indent </li>
       <li>top</li>
       <li>white-space-collapse</li>
