@@ -1,4 +1,4 @@
-<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/TR/2000/WD-SVG-20000629/DTD/svg-20000629.dtd">
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/TR/2000/CR-SVG-20000802/DTD/svg-20000802.dtd">
 <fo:layout-master-set>
   <fo:simple-page-master master-name="one">
     <fo:region-body margin-top="25pt" margin-bottom="25pt" margin-left="50pt" margin-right="50pt" />
