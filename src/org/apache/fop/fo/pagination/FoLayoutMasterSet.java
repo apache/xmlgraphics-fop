@@ -53,13 +53,13 @@ public class FoLayoutMasterSet extends FONode {
      * Hash of SimplePageMaster and PageSequenceMaster objects,
      * indexed by master-name of the object.
      */
-    private HashMap pageMasters;
+    private HashMap pageMasters = new HashMap();
 
     /**
      * Hash of SimplePageMaster objects,
      * indexed by master-name of the object.
      */
-    private HashMap simplePageMasters;
+    private HashMap simplePageMasters = new HashMap();
 
     /**
      * @param foTree the FO tree being built
@@ -96,8 +96,6 @@ public class FoLayoutMasterSet extends FONode {
                     System.out.println("Found simple-page-master");
                     simple = new FoSimplePageMaster(foTree, this, ev);
                     simpleName = simple.getMasterName();
-                    if (pageMasters == null)
-                        pageMasters = new HashMap();
                     if (pageMasters.get
                         ((Object)(simpleName)) != null)
                         throw new FOPException
