@@ -48,6 +48,7 @@ public class Root extends FObj {
         this.name = "fo:root";
 
         pageSequences = new Vector();
+		
         if (parent != null) {
             throw new FOPException("root must be root element");
         }
