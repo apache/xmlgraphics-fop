@@ -49,7 +49,6 @@ import java.awt.print.PrinterException;
 
 //FOP
 import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.InputHandler;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.render.awt.AWTRenderer;
 
@@ -66,8 +65,6 @@ public class PreviewDialog extends JFrame {
     protected Translator translator;
     /** The AWT renderer */
     protected AWTRenderer renderer;
-    /** The InputHandler associated with this window */
-    protected InputHandler inputHandler;
     /** The Fop used for refreshing/reloading the view */
     protected Fop fop;
 
@@ -83,9 +80,8 @@ public class PreviewDialog extends JFrame {
      * Creates a new PreviewDialog that uses the given renderer.
      * @param aRenderer the to use renderer
      */
-    public PreviewDialog(AWTRenderer aRenderer, InputHandler handler) {
+    public PreviewDialog(AWTRenderer aRenderer) {
         renderer = aRenderer;
-        inputHandler = handler;
         translator = renderer.getTranslator();
 
         //Commands aka Actions
@@ -219,14 +215,13 @@ public class PreviewDialog extends JFrame {
             }
         });
         // inputHandler must be set to allow reloading
-        if (inputHandler != null) {
             menu.add(new Command(translator.getString("Menu.Reload")) {
                 public void doit() {
                     reload();
                 }
             });
-        }
-        menu.addSeparator();
+
+            menu.addSeparator();
         menu.add(new Command(translator.getString("Menu.Exit")) {
             public void doit() {
                 dispose();
@@ -394,13 +389,9 @@ public class PreviewDialog extends JFrame {
             infoStatus.setText("");
             currentPage = 0;
 
-            try {
+                // TODO work out how to reload
                 setStatus(translator.getString("Status.Build.FO.tree"));
-                fop.render(inputHandler);
                 setStatus(translator.getString("Status.Show"));
-            } catch (FOPException e) {
-                reportException(e);
-            }
         }
     }
 
