@@ -123,9 +123,10 @@ public class OldGridUnit {
         
         CollapsingBorderModel borderModel = CollapsingBorderModel.getBorderModelFor(
                 table.getBorderCollapse());
+        /*
         target.setBorderInfo(
                 borderModel.determineWinner(current, other, 
-                        side, 0), side);
+                        side, 0), side);*/
     }
     
 }

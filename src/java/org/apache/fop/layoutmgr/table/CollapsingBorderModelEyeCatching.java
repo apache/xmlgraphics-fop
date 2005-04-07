@@ -19,6 +19,11 @@
 package org.apache.fop.layoutmgr.table;
 
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.flow.Table;
+import org.apache.fop.fo.flow.TableBody;
+import org.apache.fop.fo.flow.TableCell;
+import org.apache.fop.fo.flow.TableColumn;
+import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
 
@@ -34,43 +39,43 @@ public class CollapsingBorderModelEyeCatching extends CollapsingBorderModel {
     private static final int START = CommonBorderPaddingBackground.START;
     private static final int END = CommonBorderPaddingBackground.END;
     
-    public BorderInfo determineWinner(OldGridUnit currentGridUnit, 
-            OldGridUnit otherGridUnit, int side, int flags) {
+    public BorderInfo determineWinner(GridUnit currentGridUnit, 
+            GridUnit otherGridUnit, int side, int flags) {
         final boolean vertical = isVerticalRelation(side);
         final int otherSide = getOtherSide(side);
         
         //Get cells
-        Cell currentCell = currentGridUnit.layoutManager;
-        Cell otherCell = null;
+        TableCell currentCell = currentGridUnit.getCell();
+        TableCell otherCell = null;
         if (otherGridUnit != null) {
-            otherCell = otherGridUnit.layoutManager;
+            otherCell = otherGridUnit.getCell();
         }
         
         //Get rows
-        Row currentRow = currentGridUnit.row;
-        Row otherRow = null;
+        TableRow currentRow = currentGridUnit.getRow();
+        TableRow otherRow = null;
         if (vertical && otherCell != null) {
-            otherRow = otherGridUnit.row;
+            otherRow = otherGridUnit.getRow();
         }
         
         //get bodies
-        Body currentBody = (Body)currentRow.getParent();
-        Body otherBody = null;
+        TableBody currentBody = currentGridUnit.getBody();
+        TableBody otherBody = null;
         if (otherRow != null) {
-            otherBody = (Body)otherRow.getParent();
+            otherBody = otherGridUnit.getBody();
         }
 
         //get columns
-        Column currentColumn = (Column)currentGridUnit.column;
-        Column otherColumn = null;
+        TableColumn currentColumn = currentGridUnit.getColumn();
+        TableColumn otherColumn = null;
         if (otherGridUnit != null) {
-            otherColumn = (Column)otherGridUnit.column;
+            otherColumn = otherGridUnit.getColumn();
         }
         
         //TODO get column groups
         
         //Get table
-        TableLayoutManager table = (TableLayoutManager)currentBody.getParent();
+        Table table = currentGridUnit.getTable();
         
         //----------------------------------------------------------------------
         //We're creating two arrays containing the applicable BorderInfos for
@@ -85,44 +90,45 @@ public class CollapsingBorderModelEyeCatching extends CollapsingBorderModel {
         if (otherGridUnit != null) {
             other[0] = otherGridUnit.getOriginalBorderInfoForCell(otherSide);
         }
-        if (side == BEFORE 
-                || side == AFTER
-                || (currentColumn.isFirst() && side == START)
-                || (currentColumn.isLast() && side == END)) {
+        if ((currentRow != null) 
+                && (side == BEFORE 
+                    || side == AFTER
+                    || (currentGridUnit.getFlag(GridUnit.IN_FIRST_COLUMN) && side == START)
+                    || (currentGridUnit.getFlag(GridUnit.IN_LAST_COLUMN) && side == END))) {
             //row
-            current[1] = currentRow.getFObj().getCommonBorderPaddingBackground().getBorderInfo(side);
+            current[1] = currentRow.getCommonBorderPaddingBackground().getBorderInfo(side);
         }
         if (otherRow != null) {
             //row
-            other[1] = otherRow.getFObj().getCommonBorderPaddingBackground().getBorderInfo(otherSide);
+            other[1] = otherRow.getCommonBorderPaddingBackground().getBorderInfo(otherSide);
         }
-        if ((side == BEFORE && currentRow.isFirstInBody())
-                || (side == AFTER && currentRow.isLastInBody())
-                || (currentColumn.isFirst() && side == START)
-                || (currentColumn.isLast() && side == END)) {
+        if ((side == BEFORE && currentGridUnit.getFlag(GridUnit.FIRST_IN_BODY))
+                || (side == AFTER && currentGridUnit.getFlag(GridUnit.LAST_IN_BODY))
+                || (currentGridUnit.getFlag(GridUnit.IN_FIRST_COLUMN) && side == START)
+                || (currentGridUnit.getFlag(GridUnit.IN_LAST_COLUMN) && side == END)) {
             //row group (=body, table-header or table-footer)
-            current[2] = currentBody.getFObj().getCommonBorderPaddingBackground().getBorderInfo(side);
+            current[2] = currentBody.getCommonBorderPaddingBackground().getBorderInfo(side);
         }
-        if ((otherSide == BEFORE && otherRow.isFirstInBody())
-                || (otherSide == AFTER && otherRow.isLastInBody())) {
+        if ((otherSide == BEFORE && otherGridUnit.getFlag(GridUnit.FIRST_IN_BODY))
+                || (otherSide == AFTER && otherGridUnit.getFlag(GridUnit.LAST_IN_BODY))) {
             //row group (=body, table-header or table-footer)
-            other[2] = otherBody.getFObj().getCommonBorderPaddingBackground().getBorderInfo(otherSide);
+            other[2] = otherBody.getCommonBorderPaddingBackground().getBorderInfo(otherSide);
         }
         if ((side == BEFORE && otherGridUnit == null)
                 || (side == AFTER && otherGridUnit == null)
                 || (side == START)
                 || (side == END)) {
             //column
-            current[3] = currentColumn.getFObj().getCommonBorderPaddingBackground().getBorderInfo(side);
+            current[3] = currentColumn.getCommonBorderPaddingBackground().getBorderInfo(side);
         }
         if (otherColumn != null) {
             //column
-            other[3] = otherColumn.getFObj().getCommonBorderPaddingBackground().getBorderInfo(otherSide);
+            other[3] = otherColumn.getCommonBorderPaddingBackground().getBorderInfo(otherSide);
         }
         //TODO current[4] and other[4] for column groups
         if (otherGridUnit == null) {
             //table
-            current[5] = table.getTable().getCommonBorderPaddingBackground().getBorderInfo(side);
+            current[5] = table.getCommonBorderPaddingBackground().getBorderInfo(side);
         }
         //other[6] is always null, since it's always the same table
         
