@@ -19,6 +19,7 @@
 package org.apache.fop.layoutmgr.table;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableColumn;
@@ -28,11 +29,14 @@ import org.apache.fop.fo.flow.TableColumn;
  */
 public class PrimaryGridUnit extends GridUnit {
 
+    /** Cell layout manager. */
     private Cell cellLM;
+    /** List of Knuth elements representing the contents of the cell. */
     private LinkedList elements;
-    /** index of row where this cell starts */
+    /** Index of row where this cell starts */
     private int startRow;
-
+    /** Links to the spanned grid units. (List of GridUnit arrays, one array represents a row) */ 
+    private List rows;
     
     public PrimaryGridUnit(TableCell cell, TableColumn column, int startCol, int startRow) {
         super(cell, column, startCol, 0);
@@ -58,15 +62,51 @@ public class PrimaryGridUnit extends GridUnit {
         return this.elements;
     }
     
+    public List getRows() {
+        return this.rows;
+    }
+    
+    public void addRow(GridUnit[] row) {
+        if (rows == null) {
+            rows = new java.util.ArrayList();
+        }
+        rows.add(row);
+    }
+    
     public int getStartRow() {
         return this.startRow;
     }
 
+    public int[] getStartEndBorderWidths() {
+        int[] widths = new int[2];
+        if (rows == null) {
+            widths[0] = getBorders().getBorderStartWidth(false);
+            widths[1] = getBorders().getBorderEndWidth(false);
+        } else {
+            for (int i = 0; i < rows.size(); i++) {
+                GridUnit[] gridUnits = (GridUnit[])rows.get(i);
+                widths[0] = Math.max(widths[0], 
+                        (gridUnits[0]).
+                            getBorders().getBorderStartWidth(false));
+                widths[1] = Math.max(widths[1], 
+                        (gridUnits[gridUnits.length - 1]).
+                            getBorders().getBorderEndWidth(false));
+            }
+        }
+        return widths;
+    }
+    
     /** @see java.lang.Object#toString() */
     public String toString() {
         StringBuffer sb = new StringBuffer(super.toString());
         sb.append(" startRow=").append(startRow);
         return sb.toString();
+    }
+
+    /** @return true if this cell spans over more than one grid unit. */
+    public boolean hasSpanning() {
+        return (getCell().getNumberColumnsSpanned() > 1) 
+            || (getCell().getNumberRowsSpanned() > 1);
     }
     
 }

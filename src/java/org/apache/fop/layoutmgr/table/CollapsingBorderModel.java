@@ -111,11 +111,11 @@ public abstract class CollapsingBorderModel {
     
     /**
      * Determines the winning BorderInfo.
-     * @param current cell info of the current element
-     * @param neighbour cell info of the neighbouring element
+     * @param current grid unit of the current element
+     * @param neighbour grid unit of the neighbouring element
      * @return the winning BorderInfo
      */
     public abstract BorderInfo determineWinner(
-            OldGridUnit current, OldGridUnit neighbour, int side, int flags);
+            GridUnit current, GridUnit neighbour, int side, int flags);
     
 }

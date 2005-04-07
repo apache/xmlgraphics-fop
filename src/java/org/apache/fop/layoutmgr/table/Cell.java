@@ -131,20 +131,10 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
 
     private int getIPIndents() {
         int iIndents = 0;
-        startBorderWidth = 0;
-        endBorderWidth = 0;
-        for (int i = 0; i < rows.size(); i++) {
-            List gridUnits = (List)rows.get(i);
-            startBorderWidth = Math.max(startBorderWidth, 
-                    ((OldGridUnit)gridUnits.get(0)).
-                        effBorders.getBorderStartWidth(false));
-            endBorderWidth = Math.max(endBorderWidth, 
-                    ((OldGridUnit)gridUnits.get(gridUnits.size() - 1)).
-                        effBorders.getBorderEndWidth(false));
-        }
-        //iIndents += fobj.getCommonBorderPaddingBackground().getBorderStartWidth(false);
+        int[] startEndBorderWidths = gridUnit.getStartEndBorderWidths();
+        startBorderWidth += startEndBorderWidths[0];
+        endBorderWidth += startEndBorderWidths[1];
         iIndents += startBorderWidth;
-        //iIndents += fobj.getCommonBorderPaddingBackground().getBorderEndWidth(false);
         iIndents += endBorderWidth;
         if (!fobj.isSeparateBorderModel()) {
             iIndents /= 2;
@@ -432,24 +422,19 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
             TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
             //TODO Set these booleans right
             boolean[] outer = new boolean[] {false, false, false, false};
-            if (rows.size() == 1 && ((List)rows.get(0)).size() == 1) {
+            if (!gridUnit.hasSpanning()) {
                 //Can set the borders directly if there's no span
-                CommonBorderPaddingBackground effBorders =
-                    ((OldGridUnit)((List)rows.get(0)).get(0)).effBorders;
-                //TODO Next line is a temporary hack!
                 TraitSetter.addCollapsingBorders(curBlockArea, 
-                        fobj.getCommonBorderPaddingBackground(), outer);
-                TraitSetter.addCollapsingBorders(curBlockArea, 
-                        effBorders, outer);
+                        gridUnit.getBorders(), outer);
             } else {
                 int dy = yoffset;
-                for (int y = 0; y < rows.size(); y++) {
-                    List gridUnits = (List)rows.get(y);
+                for (int y = 0; y < gridUnit.getRows().size(); y++) {
+                    GridUnit[] gridUnits = (GridUnit[])gridUnit.getRows().get(y);
                     int dx = xoffset;
                     int lastRowHeight = 0;
-                    for (int x = 0; x < gridUnits.size(); x++) {
-                        OldGridUnit gu = (OldGridUnit)gridUnits.get(x);
-                        if (!gu.effBorders.hasBorder()) {
+                    for (int x = 0; x < gridUnits.length; x++) {
+                        GridUnit gu = gridUnits[x];
+                        if (!gu.getBorders().hasBorder()) {
                             continue;
                         }
                         
@@ -457,18 +442,20 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
                         Block block = new Block();
                         block.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
                         block.setPositioning(Block.ABSOLUTE);
-                        block.setBPD(gu.row.getRowHeight());
-                        lastRowHeight = gu.row.getRowHeight();
-                        int ipd = gu.column.getWidth().getValue();
-                        int borderStartWidth = gu.effBorders.getBorderStartWidth(false) / 2; 
+                        //block.setBPD(gu.row.getRowHeight());
+                        block.setBPD(rowHeight); //TODO This needs to be fixed for row spanning
+                        //lastRowHeight = gu.row.getRowHeight();
+                        lastRowHeight = rowHeight;
+                        int ipd = gu.getColumn().getColumnWidth().getValue();
+                        int borderStartWidth = gu.getBorders().getBorderStartWidth(false) / 2; 
                         ipd -= borderStartWidth;
-                        ipd -= gu.effBorders.getBorderEndWidth(false) / 2;
+                        ipd -= gu.getBorders().getBorderEndWidth(false) / 2;
                         block.setIPD(ipd);
                         block.setXOffset(dx + borderStartWidth);
                         block.setYOffset(dy);
-                        TraitSetter.addCollapsingBorders(block, gu.effBorders, outer);
+                        TraitSetter.addCollapsingBorders(block, gu.getBorders(), outer);
                         parentLM.addChildArea(block);
-                        dx += gu.column.getWidth().getValue();
+                        dx += gu.getColumn().getColumnWidth().getValue();
                     }
                     dy += lastRowHeight;
                 }
@@ -560,7 +547,7 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
             int halfCollapsingBorderHeight = 0;
             if (!fobj.isSeparateBorderModel()) {
                 halfCollapsingBorderHeight += 
-                    fobj.getCommonBorderPaddingBackground().getBorderBeforeWidth(false) / 2;
+                    gridUnit.getBorders().getBorderBeforeWidth(false) / 2;
             }
             curBlockArea.setXOffset(xoffset + inRowIPDOffset + halfBorderSep + indent);
             curBlockArea.setYOffset(yoffset - halfCollapsingBorderHeight);
