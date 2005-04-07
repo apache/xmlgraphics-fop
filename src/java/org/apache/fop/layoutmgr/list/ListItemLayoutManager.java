@@ -29,7 +29,10 @@ import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.BreakPossPosIter;
 import org.apache.fop.layoutmgr.Position;
+import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.TraitSetter;
+import org.apache.fop.layoutmgr.KnuthElement;
+import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.traits.MinOptMax;
@@ -38,6 +41,8 @@ import org.apache.fop.traits.SpaceVal;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.LinkedList;
+import java.util.ListIterator;
 
 /**
  * LayoutManager for a list-item FO.
@@ -52,6 +57,23 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
     private int referenceIPD = 0;
 
     private Block curBlockArea = null;
+
+    private LinkedList labelList = null;
+    private boolean labelAreasAdded = false;
+
+    private static class StackingIter extends PositionIterator {
+        StackingIter(Iterator parentIter) {
+            super(parentIter);
+        }
+
+        protected LayoutManager getLM(Object nextObj) {
+            return ((Position) nextObj).getLM();
+        }
+
+        protected Position getPos(Object nextObj) {
+            return ((Position) nextObj);
+        }
+    }
 
     //private List cellList = null;
     private int listItemHeight;
@@ -226,6 +248,69 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         return breakPoss;
     }
 
+    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+        // label
+        labelList = label.getNextKnuthElements(context, alignment);
+
+        // body
+        LinkedList returnedList = body.getNextKnuthElements(context, alignment);
+
+        // "wrap" the Position inside each element
+        LinkedList tempList = returnedList;
+        KnuthElement tempElement;
+        returnedList = new LinkedList();
+        ListIterator listIter = tempList.listIterator();
+        while (listIter.hasNext()) {
+            tempElement = (KnuthElement)listIter.next();
+            tempElement.setPosition(new NonLeafPosition(this, tempElement.getPosition()));
+            returnedList.add(tempElement);
+        }
+
+        setFinished(true);
+        return returnedList;
+    }
+
+    public LinkedList getChangedKnuthElements(List oldList, int alignment) {
+/*LF*/  //log.debug(" LILM.getChanged> label");
+        // label
+        labelList = label.getChangedKnuthElements(labelList, alignment);
+
+/*LF*/  //log.debug(" LILM.getChanged> body");
+        // body
+        // "unwrap" the Positions stored in the elements
+        ListIterator oldListIterator = oldList.listIterator();
+        KnuthElement oldElement = null;
+        while (oldListIterator.hasNext()) {
+            oldElement = (KnuthElement)oldListIterator.next();
+            Position innerPosition = ((NonLeafPosition) oldElement.getPosition()).getPosition();
+/*LF*/      //System.out.println(" BLM> unwrapping: " + (oldElement.isBox() ? "box    " : (oldElement.isGlue() ? "glue   " : "penalty")) + " creato da " + oldElement.getLayoutManager().getClass().getName());
+/*LF*/      //System.out.println(" BLM> unwrapping:         " + oldElement.getPosition().getClass().getName());
+            if (innerPosition != null) {
+                // oldElement was created by a descendant of this BlockLM
+                oldElement.setPosition(innerPosition);
+            } else {
+                // thisElement was created by this BlockLM
+                // modify its position in order to recognize it was not created
+                // by a child
+                oldElement.setPosition(new Position(this));
+            }
+        }
+
+        LinkedList returnedList = body.getChangedKnuthElements(oldList, alignment);
+        // "wrap" the Position inside each element
+        LinkedList tempList = returnedList;
+        KnuthElement tempElement;
+        returnedList = new LinkedList();
+        ListIterator listIter = tempList.listIterator();
+        while (listIter.hasNext()) {
+            tempElement = (KnuthElement)listIter.next();
+            tempElement.setPosition(new NonLeafPosition(this, tempElement.getPosition()));
+            returnedList.add(tempElement);
+        }
+
+        return returnedList;
+    }
+
     /**
      * Add the areas for the break points.
      * This sets the offset of each cell as it is added.
@@ -244,24 +329,49 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
 
         addID(fobj.getId());
 
-        Item childLM;
+        LayoutManager childLM = null;
         LayoutContext lc = new LayoutContext(0);
+        LayoutManager firstLM = null;
+        LayoutManager lastLM = null;
+
+        // create a new list; 
+        // add the label areas, if this is the first time addAreas() is called
+        LinkedList positionList = new LinkedList();
+        if (!labelAreasAdded) {
+            KnuthPossPosIter labelPosIter = new KnuthPossPosIter(labelList, 0, labelList.size());
+            while (labelPosIter.hasNext()) {
+                positionList.add((Position) labelPosIter.next());
+            }
+        }
+        // "unwrap" the NonLeafPositions stored in parentIter
+        Position pos;
         while (parentIter.hasNext()) {
-            ItemPosition lfp = (ItemPosition) parentIter.next();
-            // Add the block areas to Area
-
-            for (Iterator iter = lfp.cellBreaks.iterator(); iter.hasNext();) {
-                List cellsbr = (List)iter.next();
-                PositionIterator breakPosIter;
-                breakPosIter = new BreakPossPosIter(cellsbr, 0, cellsbr.size());
-
-                while ((childLM = (Item)breakPosIter.getNextChildLM()) != null) {
-                    childLM.addAreas(breakPosIter, lc);
+            pos = (Position) parentIter.next();
+            if (pos instanceof NonLeafPosition
+                && ((NonLeafPosition) pos).getPosition().getLM() != this) {
+                // pos was created by a child of this ListBlockLM
+                positionList.add(((NonLeafPosition) pos).getPosition());
+                lastLM = ((NonLeafPosition) pos).getPosition().getLM();
+                if (firstLM == null) {
+                    firstLM = lastLM;
                 }
             }
         }
 
-        curBlockArea.setBPD(listItemHeight);
+        StackingIter childPosIter = new StackingIter(positionList.listIterator());
+        while ((childLM = childPosIter.getNextChildLM()) != null) {
+            // Add the block areas to Area
+            lc.setFlags(LayoutContext.FIRST_AREA, childLM == firstLM);
+            lc.setFlags(LayoutContext.LAST_AREA, childLM == lastLM);
+            // reset the area height after adding the label areas
+            if (!labelAreasAdded && childLM == firstLM) {
+                curBlockArea.setBPD(0);
+                labelAreasAdded = true;
+            }
+            /* questo non e' correttissimo, bisogna avere due diversi valori per la label e il body */
+            lc.setStackLimit(layoutContext.getStackLimit());
+            childLM.addAreas(childPosIter, lc);
+        }
 
         flush();
 
