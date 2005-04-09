@@ -131,6 +131,13 @@ public class GridUnit {
         }
     }
     
+    /**
+     * Returns a BorderInfo instance for a side of the currently applicable cell before border
+     * resolution (i.e. the value from the FO). A return value of null indicates an empty cell.
+     * See CollapsingBorderModel(EyeCatching) where this method is used. 
+     * @param side for which side to return the BorderInfo
+     * @return the requested BorderInfo instance or null if the grid unit is an empty cell
+     */
     public BorderInfo getOriginalBorderInfoForCell(int side) {
         if (cell != null) {
             return cell.getCommonBorderPaddingBackground().getBorderInfo(side);
@@ -139,12 +146,11 @@ public class GridUnit {
         }
     }
     
+    /**
+     * @return the resolved normal borders for this grid unit
+     */
     public CommonBorderPaddingBackground getBorders() {
         return this.effBorders;
-    }
-    
-    public void setBorders(CommonBorderPaddingBackground borders) {
-        this.effBorders = borders;
     }
     
     /**
