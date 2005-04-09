@@ -36,10 +36,17 @@ import org.apache.fop.traits.MinOptMax;
  */
 public class TableRowIterator {
 
+    /** Selects the list of table-body elements for iteration. */
+    public static final int BODY = 0;
+    /** Selects the table-header element for iteration. */
+    public static final int HEADER = 1;
+    /** Selects the table-footer element for iteration. */
+    public static final int FOOTER = 2; 
+    
     /** Logger **/
     private static Log log = LogFactory.getLog(TableRowIterator.class);
 
-    private Table table;
+    protected Table table;
     private ColumnSetup columns;
     
     /** Holds the current row (TableCell instances) */
@@ -58,15 +65,31 @@ public class TableRowIterator {
     private ListIterator bodyIterator = null;
     private ListIterator childInBodyIterator = null;
     
-    public TableRowIterator(Table table, ColumnSetup columns) {
+    public TableRowIterator(Table table, ColumnSetup columns, int what) {
         this.table = table;
         this.columns = columns;
-        this.bodyIterator = table.getChildNodes();
+        switch(what) {
+            case HEADER: {
+                List bodyList = new java.util.ArrayList();
+                bodyList.add(table.getTableHeader());
+                this.bodyIterator = bodyList.listIterator();
+                break;
+            }
+            case FOOTER: {
+                List bodyList = new java.util.ArrayList();
+                bodyList.add(table.getTableFooter());
+                this.bodyIterator = bodyList.listIterator();
+                break;
+            }
+            default: {
+                this.bodyIterator = table.getChildNodes();
+            }
+        }
     }
     
     public void prefetchAll() {
         while (prefetchNext()) {
-            System.out.println("found row...");
+            log.trace("found row...");
         }
     }
     

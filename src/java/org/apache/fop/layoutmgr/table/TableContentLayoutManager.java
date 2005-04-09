@@ -24,23 +24,19 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import javax.naming.Context;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.Trait;
+import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
-import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
-import org.apache.fop.layoutmgr.LeafPosition;
-import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.TraitSetter;
@@ -56,13 +52,26 @@ public class TableContentLayoutManager {
 
     private TableLayoutManager tableLM;
     private TableRowIterator trIter;
+    private TableRowIterator headerIter;
+    private TableRowIterator footerIter;
+    private LinkedList headerList;
+    private LinkedList footerList;
+    private int headerNetHeight = 0;
+    private int footerNetHeight = 0;
 
     private int startXOffset;
     private int usedBPD;
     
     public TableContentLayoutManager(TableLayoutManager parent) {
         this.tableLM = parent;
-        this.trIter = new TableRowIterator(getTableLM().getTable(), getTableLM().getColumns());
+        Table table = getTableLM().getTable();
+        this.trIter = new TableRowIterator(table, getTableLM().getColumns(), TableRowIterator.BODY);
+        if (table.getTableHeader() != null) {
+            headerIter = new TableRowIterator(table, getTableLM().getColumns(), TableRowIterator.HEADER);
+        }
+        if (table.getTableFooter() != null) {
+            footerIter = new TableRowIterator(table, getTableLM().getColumns(), TableRowIterator.FOOTER);
+        }
     }
     
     public TableLayoutManager getTableLM() {
@@ -77,10 +86,93 @@ public class TableContentLayoutManager {
      * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(org.apache.fop.layoutmgr.LayoutContext, int)
      */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
-        System.out.println(getTableLM().getColumns());
+        log.debug("Columns: " +getTableLM().getColumns());
+        KnuthBox headerAsFirst = null;
+        KnuthBox headerAsSecondToLast = null;
+        KnuthBox footerAsLast = null;
+        if (headerIter != null) {
+            this.headerList = getKnuthElementsForRowIterator(
+                    headerIter, context, alignment, true);
+            removeLegalBreaks(this.headerList);
+            this.headerNetHeight = calcCellHeightFromContents(this.headerList);
+            if (log.isDebugEnabled()) {
+                log.debug("Header: " + headerNetHeight + " - " + this.headerList);
+            }
+            TableHeaderFooterPosition pos = new TableHeaderFooterPosition(
+                    getTableLM(), true, this.headerList);
+            KnuthBox box = new KnuthBox(headerNetHeight, pos, false);
+            if (getTableLM().getTable().omitHeaderAtBreak()) {
+                //We can simply add the table header at the beginning of the whole list
+                headerAsFirst = box;
+                //returnList.add(0, box);
+            } else {
+                headerAsSecondToLast = box;
+                //returnList.add(box);
+            }
+        }
+        if (footerIter != null) {
+            this.footerList = getKnuthElementsForRowIterator(
+                    footerIter, context, alignment, true);
+            removeLegalBreaks(this.footerList);
+            this.footerNetHeight = calcCellHeightFromContents(this.footerList);
+            if (log.isDebugEnabled()) {
+                log.debug("Footer: " + footerNetHeight + " - " + this.footerList);
+            }
+            if (true /*getTableLM().getTable().omitFooterAtBreak()*/) {
+                //We can simply add the table header at the end of the whole list
+                TableHeaderFooterPosition pos = new TableHeaderFooterPosition(
+                        getTableLM(), false, this.footerList);
+                KnuthBox box = new KnuthBox(footerNetHeight, pos, false);
+                footerAsLast = box;
+                //returnList.add(box);
+            }
+        }
+        LinkedList returnList = getKnuthElementsForRowIterator(
+                trIter, context, alignment, false);
+        if (headerAsFirst != null) {
+            returnList.add(0, headerAsFirst);
+        } else if (headerAsSecondToLast != null) {
+            returnList.add(headerAsSecondToLast);
+        }
+        if (footerAsLast != null) {
+            returnList.add(footerAsLast);
+        }
+        return returnList;
+    }
+    
+    private void removeLegalBreaks(LinkedList elements) {
+        ListIterator i = elements.listIterator();
+        while (i.hasNext()) {
+            KnuthElement el = (KnuthElement)i.next();
+            if (el.isPenalty()) {
+                KnuthPenalty penalty = (KnuthPenalty)el;
+                //Convert all penalties no break inhibitors
+                if (penalty.getP() < KnuthPenalty.INFINITE) {
+                    i.set(new KnuthPenalty(penalty.getW(), KnuthPenalty.INFINITE, 
+                            penalty.isFlagged(), penalty.getPosition(), penalty.isAuxiliary()));
+                }
+            } else if (el.isGlue()) {
+                i.previous();
+                if (el.isBox()) {
+                    i.next();
+                    i.add(new KnuthPenalty(0, KnuthPenalty.INFINITE, false, 
+                            new Position(getTableLM()), false));
+                }
+            }
+        }
+    }
+    
+    /**
+     * Creates Knuth elements by iterating over a TableRowIterator.
+     * @param context
+     * @param alignment
+     * @return
+     */
+    private LinkedList getKnuthElementsForRowIterator(TableRowIterator iter, 
+            LayoutContext context, int alignment, boolean disableHeaderFooter) {
         LinkedList returnList = new LinkedList();
         TableRowIterator.EffRow row = null;
-        while ((row = trIter.getNextRow()) != null) {
+        while ((row = iter.getNextRow()) != null) {
             List pgus = new java.util.ArrayList();
             TableRow tableRow = null;
             int maxCellHeight = 0;
@@ -136,23 +228,31 @@ public class TableContentLayoutManager {
             
             PrimaryGridUnit[] pguArray = new PrimaryGridUnit[pgus.size()];
             pguArray = (PrimaryGridUnit[])pgus.toArray(pguArray);
-            LinkedList returnedList = getCombinedKnuthElementsForRow(pguArray, row);
+            LinkedList returnedList = getCombinedKnuthElementsForRow(pguArray, row, 
+                    disableHeaderFooter);
             if (returnedList != null) {
                 returnList.addAll(returnedList);
             }
 
             if (row.getHeight().opt > maxCellHeight) {
-                //TODO Fix me (additional spaces)
-                log.warn("Knuth elements for additional space coming from height/bpd propertes NYI");
                 int space = row.getHeight().opt - maxCellHeight;
-                returnList.add(new KnuthGlue(space, 0, 0, new Position(null), false));
+                KnuthPenalty penalty = (KnuthPenalty)returnList.removeLast();
+                //Insert dummy box before penalty
+                returnList.add(new KnuthBox(space, new Position(getTableLM()), false));
+                returnList.add(penalty);
             }
+        }
+        
+        //Remove last penalty
+        KnuthElement last = (KnuthElement)returnList.getLast();
+        if (last.isPenalty() && last.getW() == 0 && last.getP() == 0) {
+            returnList.removeLast();
         }
         return returnList;
     }
-    
+
     private LinkedList getCombinedKnuthElementsForRow(PrimaryGridUnit[] pguArray, 
-            TableRowIterator.EffRow row) {
+            TableRowIterator.EffRow row, boolean disableHeaderFooter) {
         List[] elementLists = new List[pguArray.length];
         for (int i = 0; i < pguArray.length; i++) {
             //Copy elements to array lists to improve element access performance
@@ -195,7 +295,18 @@ public class TableContentLayoutManager {
             TableContentPosition tcpos = new TableContentPosition(getTableLM(), 
                     gridUnitParts, row);
             returnList.add(new KnuthBox(boxLen, tcpos, false));
-            returnList.add(new KnuthPenalty(penaltyLen, 0, false, null, false));
+            TableHFPenaltyPosition penaltyPos = new TableHFPenaltyPosition(getTableLM());
+            if (!disableHeaderFooter) {
+                if (!getTableLM().getTable().omitHeaderAtBreak()) {
+                    penaltyLen += this.headerNetHeight;
+                    penaltyPos.headerElements = this.headerList;
+                }
+                if (!getTableLM().getTable().omitFooterAtBreak()) {
+                    penaltyLen += this.footerNetHeight;
+                    penaltyPos.footerElements = this.footerList;
+                }
+            }
+            returnList.add(new KnuthPenalty(penaltyLen, 0, false, penaltyPos, false));
             laststep = step;
         }
         return returnList;
@@ -222,7 +333,6 @@ public class TableContentLayoutManager {
                 end[i] = -1;
             }
         }
-        //Arrays.fill(widths, laststep);
         
         //Get next possible sequence for each cell
         int seqCount = 0;
@@ -251,7 +361,7 @@ public class TableContentLayoutManager {
             } else {
                 seqCount++;
             }
-            //System.out.println("part " + start[i] + "-" + end[i] + " " + widths[i]);
+            //log.debug("part " + start[i] + "-" + end[i] + " " + widths[i]);
         }
         if (seqCount == 0) {
             return 0;
@@ -319,106 +429,184 @@ public class TableContentLayoutManager {
     
     public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
         this.usedBPD = 0;
-        int colCount = getColumns().getColumnCount();
-        TableRowIterator.EffRow lastRow = null;
-        int lastRowHeight = 0;
-        TableRow rowFO = null;
-        int yoffset = 0;
-        
-        //These three variables are our buffer to recombine the individual steps into cells
-        PrimaryGridUnit[] gridUnits = new PrimaryGridUnit[colCount];
-        int[] start = new int[colCount];
-        int[] end = new int[colCount];
-        int[] partLength = new int[colCount];
-        
-        //Iterate over all steps
+        RowPainter painter = new RowPainter(layoutContext);
+
+        List positions = new java.util.ArrayList();
+        Position lastPos = null;
         while (parentIter.hasNext()) {
             Position pos = (Position)parentIter.next();
-            rowFO = null;
+            lastPos = pos;
+            if (pos instanceof TableHeaderFooterPosition) {
+                TableHeaderFooterPosition thfpos = (TableHeaderFooterPosition)pos;
+                //these positions need to be unpacked
+                if (thfpos.header) {
+                    //header positions for the last part are the second-to-last element and need to
+                    //be handled first before all other TableContentPositions
+                    PositionIterator nestedIter = new KnuthPossPosIter(thfpos.nestedElements);
+                    while (nestedIter.hasNext()) {
+                        Position containedPos = (Position)nestedIter.next();
+                        if (containedPos instanceof TableContentPosition) {
+                            TableContentPosition tcpos = (TableContentPosition)containedPos;
+                            painter.handleTableContentPosition(tcpos);
+                        } else {
+                            log.debug("Ignoring position: " + containedPos);
+                        }
+                    }
+                } else {
+                    //Positions for footers are simply added at the end
+                    PositionIterator iter = new KnuthPossPosIter(thfpos.nestedElements);
+                    while (iter.hasNext()) {
+                        Position containedPos = (Position)iter.next();
+                        positions.add(containedPos);
+                    }
+                }
+            } else if (pos instanceof TableHFPenaltyPosition) {
+                //ignore for now, see special handling below if break is at a penalty
+                //Only if the last position in this part/page us such a position it will be used 
+            } else {
+                //leave order as is for the rest
+                positions.add(pos);
+            }
+        }
+        if (lastPos instanceof TableHFPenaltyPosition) {
+            TableHFPenaltyPosition penaltyPos = (TableHFPenaltyPosition)lastPos;
+            log.debug("Break at penalty!");
+            if (penaltyPos.headerElements != null) {
+                //Header positions for the penalty position are in the last element and need to
+                //be handled first before all other TableContentPositions
+                PositionIterator nestedIter = new KnuthPossPosIter(penaltyPos.headerElements);
+                while (nestedIter.hasNext()) {
+                    Position containedPos = (Position)nestedIter.next();
+                    if (containedPos instanceof TableContentPosition) {
+                        TableContentPosition tcpos = (TableContentPosition)containedPos;
+                        painter.handleTableContentPosition(tcpos);
+                    } else {
+                        log.debug("Ignoring position: " + containedPos);
+                    }
+                }
+            }
+            if (penaltyPos.footerElements != null) {
+                //Positions for footers are simply added at the end
+                PositionIterator iter = new KnuthPossPosIter(penaltyPos.footerElements);
+                while (iter.hasNext()) {
+                    Position containedPos = (Position)iter.next();
+                    positions.add(containedPos);
+                }
+            }
+        }
+
+        
+        Iterator posIter = positions.iterator();
+        //Iterate over all steps
+        while (posIter.hasNext()) {
+            Position pos = (Position)posIter.next();
             if (pos instanceof TableContentPosition) {
                 TableContentPosition tcpos = (TableContentPosition)pos;
-                if (lastRow != tcpos.row && lastRow != null) {
-                    //yoffset += lastRow.getHeight().opt;
-                    yoffset += lastRowHeight;
-                    this.usedBPD += lastRowHeight;
-                }
-                lastRow = tcpos.row;
-                Iterator iter = tcpos.gridUnitParts.iterator();
-                //Iterate over all grid units in the current step
-                while (iter.hasNext()) {
-                    GridUnitPart gup = (GridUnitPart)iter.next();
-                    log.debug(">" + gup);
-                    int colIndex = gup.pgu.getStartCol();
-                    if (gridUnits[colIndex] != gup.pgu) {
-                        gridUnits[colIndex] = gup.pgu;
-                        start[colIndex] = gup.start;
-                        end[colIndex] = gup.end;
-                    } else {
-                        end[colIndex] = gup.end;
-                    }
-                    if (rowFO == null) {
-                        //Find the row if any
-                        rowFO = gridUnits[colIndex].getRow();
-                    }
-                }
-                
-                //Calculate the height of the row
-                int maxLen = 0;
-                for (int i = 0; i < gridUnits.length; i++) {
-                    if ((gridUnits[i] != null) 
-                            && (end[i] == gridUnits[i].getElements().size() - 1)) {
-                        log.debug("getting len for " + i + " " 
-                                + start[i] + "-" + end[i]);
-                        int len = calcCellHeightFromContents(
-                                gridUnits[i].getElements(), start[i], end[i]);
-                        partLength[i] = len;
-                        log.debug("len of part: " + len);
-                        maxLen = Math.max(maxLen, len);
-                        maxLen = Math.max(maxLen, getExplicitCellHeight(gridUnits[i]));
-                    }
-                }
-                lastRowHeight = maxLen;
-                
-                //Add areas for row
-                addRowBackgroundArea(rowFO, lastRowHeight, layoutContext.getRefIPD(), yoffset);
-                for (int i = 0; i < gridUnits.length; i++) {
-                    if ((gridUnits[i] != null) 
-                            && (end[i] == gridUnits[i].getElements().size() - 1)) {
-                        log.debug("flushing..." + i + " " 
-                                + start[i] + "-" + end[i]);
-                        addAreasForCell(gridUnits[i], start[i], end[i], 
-                                layoutContext, lastRow, yoffset, partLength[i], maxLen);
-                        gridUnits[i] = null;
-                        start[i] = 0;
-                        end[i] = 0;
-                    }
-                }
+                painter.handleTableContentPosition(tcpos);
+            } else {
+                log.debug("Ignoring position: " + pos);
             }
         }
         
         //Calculate the height of the row
-        int maxLen = 0;
-        for (int i = 0; i < gridUnits.length; i++) {
-            if (gridUnits[i] != null) {
-                int len = calcCellHeightFromContents(
-                        gridUnits[i].getElements(), start[i], end[i]);
-                partLength[i] = len;
-                log.debug("len of part: " + len);
-                maxLen = Math.max(maxLen, len);
-                maxLen = Math.max(maxLen, getExplicitCellHeight(gridUnits[i]));
-            }
+        int maxLen = painter.addAreasAndFlushRow(true);
+        this.usedBPD += painter.getAccumulatedBPD();
+    }
+   
+    private class RowPainter {
+        
+        private TableRow rowFO = null;
+        private int colCount = getColumns().getColumnCount();
+        private int yoffset = 0;
+        private int accumulatedBPD = 0;
+        private TableRowIterator.EffRow lastRow = null;
+        private LayoutContext layoutContext;
+        private int lastRowHeight = 0;
+
+        //These three variables are our buffer to recombine the individual steps into cells
+        private PrimaryGridUnit[] gridUnits = new PrimaryGridUnit[colCount];
+        private int[] start = new int[colCount];
+        private int[] end = new int[colCount];
+        private int[] partLength = new int[colCount];
+        
+        public RowPainter(LayoutContext layoutContext) {
+            this.layoutContext = layoutContext;
         }
         
-        //Add areas now
-        addRowBackgroundArea(rowFO, lastRowHeight, layoutContext.getRefIPD(), yoffset);
-        for (int i = 0; i < gridUnits.length; i++) {
-            if (gridUnits[i] != null) {
-                log.debug("final flushing " + i + " " + start[i] + "-" + end[i]);
-                addAreasForCell(gridUnits[i], start[i], end[i], 
-                        layoutContext, lastRow, yoffset, partLength[i], maxLen);
-            }
+        public int getAccumulatedBPD() {
+            return this.accumulatedBPD;
         }
-        this.usedBPD += lastRowHeight; //for last row
+        
+        private void handleTableContentPosition(TableContentPosition tcpos) {
+            rowFO = null;
+            if (lastRow != tcpos.row && lastRow != null) {
+                //yoffset += lastRow.getHeight().opt;
+                yoffset += lastRowHeight;
+                this.accumulatedBPD += lastRowHeight;
+            }
+            lastRow = tcpos.row;
+            Iterator partIter = tcpos.gridUnitParts.iterator();
+            //Iterate over all grid units in the current step
+            while (partIter.hasNext()) {
+                GridUnitPart gup = (GridUnitPart)partIter.next();
+                log.debug(">" + gup);
+                int colIndex = gup.pgu.getStartCol();
+                if (gridUnits[colIndex] != gup.pgu) {
+                    gridUnits[colIndex] = gup.pgu;
+                    start[colIndex] = gup.start;
+                    end[colIndex] = gup.end;
+                } else {
+                    end[colIndex] = gup.end;
+                }
+                if (rowFO == null) {
+                    //Find the row if any
+                    rowFO = gridUnits[colIndex].getRow();
+                }
+            }
+            
+            //Calculate the height of the row
+            int maxLen = addAreasAndFlushRow(false);
+            lastRowHeight = maxLen;
+        }
+        
+        private int addAreasAndFlushRow(boolean finalFlush) {
+            int maxLen = 0;
+            for (int i = 0; i < gridUnits.length; i++) {
+                if ((gridUnits[i] != null) 
+                        && (finalFlush || (end[i] == gridUnits[i].getElements().size() - 1))) {
+                    log.debug("getting len for " + i + " " 
+                            + start[i] + "-" + end[i]);
+                    int len = calcCellHeightFromContents(
+                            gridUnits[i].getElements(), start[i], end[i]);
+                    partLength[i] = len;
+                    log.debug("len of part: " + len);
+                    maxLen = Math.max(maxLen, len);
+                    maxLen = Math.max(maxLen, getExplicitCellHeight(gridUnits[i]));
+                }
+            }
+            
+            //Add areas for row
+            //addRowBackgroundArea(rowFO, lastRowHeight, layoutContext.getRefIPD(), yoffset);
+            for (int i = 0; i < gridUnits.length; i++) {
+                if ((gridUnits[i] != null) 
+                        && (finalFlush || (end[i] == gridUnits[i].getElements().size() - 1))) {
+                    if (log.isDebugEnabled()) {
+                        log.debug((finalFlush ? "final " : "") + "flushing..." + i + " " 
+                                + start[i] + "-" + end[i]);
+                    }
+                    addAreasForCell(gridUnits[i], start[i], end[i], 
+                            layoutContext, lastRow, yoffset, partLength[i], maxLen);
+                    gridUnits[i] = null;
+                    start[i] = 0;
+                    end[i] = 0;
+                }
+            }
+            if (finalFlush) {
+                this.accumulatedBPD += lastRowHeight; //for last row
+            }
+            return maxLen;
+        }
+
     }
     
     private int getExplicitCellHeight(PrimaryGridUnit pgu) {
@@ -528,6 +716,51 @@ public class TableContentLayoutManager {
         public String toString() {
             StringBuffer sb = new StringBuffer("TableContentPosition {");
             sb.append(gridUnitParts);
+            sb.append("}");
+            return sb.toString();
+        }
+    }
+    
+    public class TableHeaderFooterPosition extends Position {
+        
+        protected boolean header;
+        protected List nestedElements;
+        
+        protected TableHeaderFooterPosition(LayoutManager lm, 
+                boolean header, List nestedElements) {
+            super(lm);
+            this.header = header;
+            this.nestedElements = nestedElements;
+        }
+        
+        /** @see java.lang.Object#toString() */
+        public String toString() {
+            StringBuffer sb = new StringBuffer("Table");
+            sb.append(header ? "Header" : "Footer");
+            sb.append("Position {");
+            sb.append(nestedElements);
+            sb.append("}");
+            return sb.toString();
+        }
+    }
+
+    public class TableHFPenaltyPosition extends Position {
+        
+        protected List headerElements;
+        protected List footerElements;
+        
+        protected TableHFPenaltyPosition(LayoutManager lm) {
+            super(lm);
+        }
+        
+        /** @see java.lang.Object#toString() */
+        public String toString() {
+            StringBuffer sb = new StringBuffer("TableHFPenaltyPosition");
+            sb.append(" {");
+            sb.append("header:");
+            sb.append(headerElements);
+            sb.append(", footer:");
+            sb.append(footerElements);
             sb.append("}");
             return sb.toString();
         }
