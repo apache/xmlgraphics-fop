@@ -37,6 +37,10 @@ public class KnuthPossPosIter extends PositionIterator {
 
     // Check position < endPos
     
+    public KnuthPossPosIter(List bpList) {
+        this(bpList, 0, bpList.size());
+    }
+
     /**
      * @see org.apache.fop.layoutmgr.PositionIterator#checkNext()
      */
