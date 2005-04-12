@@ -18,6 +18,7 @@
 
 package org.apache.fop.layoutmgr;
 
+import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.area.Area;
@@ -172,8 +173,11 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
 
     
 //TODO Reintroduce emergency counter (generate error to avoid endless loop)
-//TODO Reintroduce layout dimensions
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+        // set layout dimensions
+        fobj.setLayoutDimension(PercentBase.BLOCK_IPD, context.getRefIPD());
+        fobj.setLayoutDimension(PercentBase.BLOCK_BPD, context.getStackLimit().opt);
+
         // currently active LM
         BlockLevelLayoutManager curLM;
         BlockLevelLayoutManager prevLM = null;
