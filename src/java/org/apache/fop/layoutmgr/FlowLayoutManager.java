@@ -29,8 +29,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.apache.fop.traits.MinOptMax;
-
 /**
  * LayoutManager for an fo:flow object.
  * Its parent LM is the PageSequenceLayoutManager.

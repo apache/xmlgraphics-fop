@@ -20,8 +20,6 @@ package org.apache.fop.fo.flow;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 
 
 import org.xml.sax.Locator;
@@ -29,7 +27,6 @@ import org.xml.sax.Locator;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.PropertyList;
@@ -60,7 +57,17 @@ public class Marker extends FObjMixed {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
+        if (findAncestor(FO_FLOW) < 0) {
+            invalidChildError(locator, FO_URI, "marker", 
+                "An fo:marker is permitted only as the descendant " +
+                "of an fo:flow");
+        }
+        
         markerClassName = pList.get(PR_MARKER_CLASS_NAME).getString();
+        
+        if (markerClassName == null || markerClassName.equals("")) {
+            missingPropertyError("marker-class-name");
+        }        
     }
     
     /**
