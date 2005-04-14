@@ -71,9 +71,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     /** Zero-based index of column (Normal Flow) in span being filled. */
     private int curFlowIdx = -1;
 
-    private int flowBPD = 0;
-    private int flowIPD = 0;
-
     /** 
      * AreaTreeHandler which activates this PSLM.
      */
@@ -141,9 +138,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         log.debug("Starting layout");
 
         makeNewPage(false, true, false);
-        flowIPD = curPage.getCurrentSpan().getNormalFlow(curFlowIdx).getIPD();
 
         PageBreaker breaker = new PageBreaker(this);
+        int flowBPD = (int) curPage.getBodyRegion().getBPD();
         breaker.doLayout(flowBPD);
         
         finishPage();
@@ -163,6 +160,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         
         protected LayoutContext createLayoutContext() {
             LayoutContext lc = new LayoutContext(0);
+            int flowIPD = curPage.getCurrentSpan().getColumnWidth();
             lc.setRefIPD(flowIPD);
             return lc;
         }
@@ -254,6 +252,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             childLC.setRefIPD(context.getRefIPD());
 
             if (!curLM.isFinished()) {
+                int flowIPD = curPage.getCurrentSpan().getColumnWidth();
+                int flowBPD = (int) curPage.getBodyRegion().getBPD();
                 pageSeq.setLayoutDimension(PercentBase.REFERENCE_AREA_IPD, flowIPD);
                 pageSeq.setLayoutDimension(PercentBase.REFERENCE_AREA_BPD, flowBPD);
 /*LF*/          returnedList = curLM.getNextKnuthElements(childLC, alignment);
@@ -410,12 +410,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             SimplePageMaster spm = pageSeq.getSimplePageMasterToUse(
                 currentPageNum, bIsFirst, bIsBlank);
             
-            // Unsure if these four lines are needed
-            int pageWidth = spm.getPageWidth().getValue();
-            int pageHeight = spm.getPageHeight().getValue();
-            pageSeq.getRoot().setLayoutDimension(PercentBase.BLOCK_IPD, pageWidth);
-            pageSeq.getRoot().setLayoutDimension(PercentBase.BLOCK_BPD, pageHeight);
-            
             Region body = spm.getRegion(FO_REGION_BODY);
             if (!pageSeq.getMainFlow().getFlowName().equals(body.getRegionName())) {
               // this is fine by the XSL Rec (fo:flow's flow-name can be mapped to
@@ -435,7 +429,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             log.debug("[" + curPage.getPageNumberString() + (bIsBlank ? "*" : "") + "]");
         }
 
-        flowBPD = (int) curPage.getBodyRegion().getBPD();
         curPage.createSpan(false);
         curFlowIdx = 0;
         return curPage;

@@ -21,6 +21,7 @@ package org.apache.fop.layoutmgr;
 import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
+import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.SideRegion;
 import org.apache.fop.fo.pagination.StaticContent;
@@ -30,7 +31,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 
 /**
  * LayoutManager for an fo:flow object.
@@ -64,6 +64,10 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
      * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(org.apache.fop.layoutmgr.LayoutContext, int)
      */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+        // set layout dimensions
+        fobj.setLayoutDimension(PercentBase.BLOCK_IPD, context.getRefIPD());
+        fobj.setLayoutDimension(PercentBase.BLOCK_BPD, context.getStackLimit().opt);
+
         //TODO Copied from elsewhere. May be worthwhile to factor out the common parts. 
         // currently active LM
         BlockLevelLayoutManager curLM;
@@ -222,17 +226,6 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         return region;
     }
 
-    /**
-     * Markers are not allowed in static areas so this reports an
-     * error and does nothing.
-     *
-     * @see org.apache.fop.layoutmgr.LayoutManager
-     */
-    public void addMarker(Map marks, boolean start, boolean isfirst) {
-        // error markers not allowed in static
-        log.error("Cannot add marker to static areas");
-    }
-    
     public void doLayout(SideRegion region, StaticContentLayoutManager lm, MinOptMax ipd) {
         StaticContentBreaker breaker = new StaticContentBreaker(region, lm, ipd);
         breaker.doLayout(lm.getRegionReference().getBPD());
@@ -322,8 +315,6 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
             return null; //TODO NYI
         }
         
-    }
-    
-    
+    }    
 }
 

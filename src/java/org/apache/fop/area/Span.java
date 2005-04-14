@@ -34,6 +34,7 @@ public class Span extends Area {
     private int height;
     private int colCount;
     private int colGap;
+    private int colWidth; // width for each normal flow, calculated value
 
     /**
      * Create a span area with the number of columns for this span area.
@@ -54,9 +55,9 @@ public class Span extends Area {
      * Create the normal flows for this Span
      */
     private void createNormalFlows() {
-        flowAreas = new java.util.ArrayList(colCount);
-        
-        int colWidth =  (ipd - ((colCount - 1) * colGap)) / colCount;
+        flowAreas = new java.util.ArrayList(colCount);        
+        colWidth = (ipd - ((colCount - 1) * colGap)) / colCount;
+
         for (int i=0; i< colCount; i++) {
             NormalFlow newFlow = new NormalFlow(colWidth);
             newFlow.setIPD(getIPD());
@@ -71,6 +72,15 @@ public class Span extends Area {
      */
     public int getColumnCount() {
         return colCount;
+    }
+
+    /**
+     * Get the width of a single column within this Span
+     *
+     * @return the width of a single column
+     */
+    public int getColumnWidth() {
+        return colWidth;
     }
 
     /**
