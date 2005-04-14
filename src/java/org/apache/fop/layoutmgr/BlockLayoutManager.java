@@ -80,13 +80,13 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         super(inBlock);
         proxyLMiter = new ProxyLMiter();
 
-        Font fs = ((org.apache.fop.fo.flow.Block) fobj).getCommonFont().getFontState(
-                  ((org.apache.fop.fo.flow.Block) fobj).getFOEventHandler().getFontInfo());
+        Font fs = getBlockFO().getCommonFont().getFontState(
+                  getBlockFO().getFOEventHandler().getFontInfo());
         
         lead = fs.getAscender();
         follow = -fs.getDescender();
         middleShift = -fs.getXHeight() / 2;
-        lineHeight = ((org.apache.fop.fo.flow.Block) fobj).getLineHeight().getOptimum().getLength().getValue();
+        lineHeight = getBlockFO().getLineHeight().getOptimum().getLength().getValue();
     }
 
     /**
@@ -95,17 +95,17 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
      *      if defined for the block.
      */
     protected void initProperties() {
-        foBlockSpaceBefore = new SpaceVal(((org.apache.fop.fo.flow.Block) fobj).getCommonMarginBlock().spaceBefore).getSpace();
+        foBlockSpaceBefore = new SpaceVal(getBlockFO().getCommonMarginBlock().spaceBefore).getSpace();
         prevFoBlockSpaceAfter = foBlockSpaceAfter;
 /*LF*/  bpUnit = 0; //layoutProps.blockProgressionUnit;
 /*LF*/  if (bpUnit == 0) {
 /*LF*/      // use optimum space values
-/*LF*/      adjustedSpaceBefore = ((org.apache.fop.fo.flow.Block) fobj).getCommonMarginBlock().spaceBefore.getSpace().getOptimum().getLength().getValue();
-/*LF*/      adjustedSpaceAfter = ((org.apache.fop.fo.flow.Block) fobj).getCommonMarginBlock().spaceAfter.getSpace().getOptimum().getLength().getValue();
+/*LF*/      adjustedSpaceBefore = getBlockFO().getCommonMarginBlock().spaceBefore.getSpace().getOptimum().getLength().getValue();
+/*LF*/      adjustedSpaceAfter = getBlockFO().getCommonMarginBlock().spaceAfter.getSpace().getOptimum().getLength().getValue();
 /*LF*/  } else {
 /*LF*/      // use minimum space values
-/*LF*/      adjustedSpaceBefore = ((org.apache.fop.fo.flow.Block) fobj).getCommonMarginBlock().spaceBefore.getSpace().getMinimum().getLength().getValue();
-/*LF*/      adjustedSpaceAfter = ((org.apache.fop.fo.flow.Block) fobj).getCommonMarginBlock().spaceAfter.getSpace().getMinimum().getLength().getValue();
+/*LF*/      adjustedSpaceBefore = getBlockFO().getCommonMarginBlock().spaceBefore.getSpace().getMinimum().getLength().getValue();
+/*LF*/      adjustedSpaceAfter = getBlockFO().getCommonMarginBlock().spaceAfter.getSpace().getMinimum().getLength().getValue();
 /*LF*/  }
     }
 
@@ -165,7 +165,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
      */
     private LineLayoutManager createLineManager(LayoutManager firstlm) {
         LineLayoutManager llm;
-        llm = new LineLayoutManager(((org.apache.fop.fo.flow.Block) fobj), lineHeight, lead, follow, middleShift);
+        llm = new LineLayoutManager(getBlockFO(), lineHeight, lead, follow, middleShift);
         List inlines = new java.util.ArrayList();
         inlines.add(firstlm);
         while (proxyLMiter.hasNext()) {
@@ -183,8 +183,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
     private int getIPIndents() {
         int iIndents = 0;
-        iIndents += ((org.apache.fop.fo.flow.Block) fobj).getCommonMarginBlock().startIndent.getValue();
-        iIndents += ((org.apache.fop.fo.flow.Block) fobj).getCommonMarginBlock().endIndent.getValue();
+        iIndents += getBlockFO().getCommonMarginBlock().startIndent.getValue();
+        iIndents += getBlockFO().getCommonMarginBlock().endIndent.getValue();
         return iIndents;
     }
     
@@ -214,8 +214,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         BreakPoss lastPos = null;
 
         // Set context for percentage property values.
-        ((org.apache.fop.fo.flow.Block) fobj).setLayoutDimension(PercentBase.BLOCK_IPD, contentipd);
-        ((org.apache.fop.fo.flow.Block) fobj).setLayoutDimension(PercentBase.BLOCK_BPD, -1);
+        getBlockFO().setLayoutDimension(PercentBase.BLOCK_IPD, contentipd);
+        getBlockFO().setLayoutDimension(PercentBase.BLOCK_BPD, -1);
 
         while ((curLM = getChildLM()) != null) {
             // Make break positions and return blocks!
@@ -273,7 +273,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             if (getChildLM() == null || over) {
                 if (getChildLM() == null) {
                     setFinished(true);
-                    stackSize.add(new SpaceVal(((org.apache.fop.fo.flow.Block) fobj).getCommonMarginBlock().spaceAfter).getSpace());
+                    stackSize.add(new SpaceVal(getBlockFO().getCommonMarginBlock().spaceAfter).getSpace());
                 }
                 BreakPoss breakPoss = new BreakPoss(
                                     new LeafPosition(this, childBreaks.size() - 1));
@@ -305,24 +305,24 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     public boolean mustKeepTogether() {
         //TODO Keeps will have to be more sophisticated sooner or later
         return ((BlockLevelLayoutManager)getParent()).mustKeepTogether() 
-                || !((org.apache.fop.fo.flow.Block) fobj).getKeepTogether().getWithinPage().isAuto()
-                || !((org.apache.fop.fo.flow.Block) fobj).getKeepTogether().getWithinColumn().isAuto();
+                || !getBlockFO().getKeepTogether().getWithinPage().isAuto()
+                || !getBlockFO().getKeepTogether().getWithinColumn().isAuto();
     }
 
     /**
      * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithPrevious()
      */
     public boolean mustKeepWithPrevious() {
-        return !((org.apache.fop.fo.flow.Block) fobj).getKeepWithPrevious().getWithinPage().isAuto()
-            || !((org.apache.fop.fo.flow.Block) fobj).getKeepWithPrevious().getWithinColumn().isAuto();
+        return !getBlockFO().getKeepWithPrevious().getWithinPage().isAuto()
+            || !getBlockFO().getKeepWithPrevious().getWithinColumn().isAuto();
     }
 
     /**
      * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithNext()
      */
     public boolean mustKeepWithNext() {
-        return !((org.apache.fop.fo.flow.Block) fobj).getKeepWithNext().getWithinPage().isAuto()
-                || !((org.apache.fop.fo.flow.Block) fobj).getKeepWithNext().getWithinColumn().isAuto();
+        return !getBlockFO().getKeepWithNext().getWithinPage().isAuto()
+                || !getBlockFO().getKeepWithNext().getWithinColumn().isAuto();
     }
 
     //TODO this method is no longer used
@@ -347,7 +347,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         foBlockSpaceBefore = null;
 
         if (!isBogus()) {
-            addID(((org.apache.fop.fo.flow.Block) fobj).getId());
+            addID(getBlockFO().getId());
             addMarkers(true, bp1.isFirstArea(), bp1.isLastArea());
         }
 
@@ -375,7 +375,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             flush();
 
             // if adjusted space after
-            foBlockSpaceAfter = new SpaceVal(((org.apache.fop.fo.flow.Block) fobj).getCommonMarginBlock().spaceAfter).getSpace();
+            foBlockSpaceAfter = new SpaceVal(getBlockFO().getCommonMarginBlock().spaceAfter).getSpace();
             addBlockSpacing(adjust, foBlockSpaceAfter);
             curBlockArea = null;
         }
@@ -392,7 +392,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             addBlockSpacing(0.0, new MinOptMax(layoutContext.getSpaceBefore()));
         }
 
-        addID(((org.apache.fop.fo.flow.Block) fobj).getId());
+        addID(getBlockFO().getId());
         //addMarkers(true, bp1.isFirstArea(), bp1.isLastArea());
         addMarkers(true, true, false);
 
@@ -491,8 +491,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             // add space before and / or after the paragraph
             // to reach a multiple of bpUnit
             if (bSpaceBefore && bSpaceAfter) {
-                foBlockSpaceBefore = new SpaceVal(((org.apache.fop.fo.flow.Block) fobj).getCommonMarginBlock().spaceBefore).getSpace();
-                foBlockSpaceAfter = new SpaceVal(((org.apache.fop.fo.flow.Block) fobj).getCommonMarginBlock().spaceAfter).getSpace();
+                foBlockSpaceBefore = new SpaceVal(getBlockFO().getCommonMarginBlock().spaceBefore).getSpace();
+                foBlockSpaceAfter = new SpaceVal(getBlockFO().getCommonMarginBlock().spaceAfter).getSpace();
                 adjustedSpaceBefore = (neededUnits(splitLength
                         + foBlockSpaceBefore.min
                         + foBlockSpaceAfter.min)
@@ -532,7 +532,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             childLM.addAreas(childPosIter, lc);
         }
 
-        int bIndents = ((org.apache.fop.fo.flow.Block) fobj).getCommonBorderPaddingBackground().getBPPaddingAndBorder(false);
+        int bIndents = getBlockFO().getCommonBorderPaddingBackground().getBPPaddingAndBorder(false);
 
         addMarkers(false, false, true);
 
@@ -562,7 +562,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             curBlockArea = new Block();
 
             TraitSetter.addBreaks(curBlockArea, 
-                    ((org.apache.fop.fo.flow.Block) fobj).getBreakBefore(), ((org.apache.fop.fo.flow.Block) fobj).getBreakAfter());
+                    getBlockFO().getBreakBefore(), getBlockFO().getBreakAfter());
 
             // Must get dimensions from parent area
             //Don't optimize this line away. It can have ugly side-effects.
@@ -570,12 +570,12 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
             // set traits
             TraitSetter.addBorders(curBlockArea, 
-                    ((org.apache.fop.fo.flow.Block) fobj).getCommonBorderPaddingBackground());
+                    getBlockFO().getCommonBorderPaddingBackground());
             TraitSetter.addBackground(curBlockArea, 
-                    ((org.apache.fop.fo.flow.Block) fobj).getCommonBorderPaddingBackground());
+                    getBlockFO().getCommonBorderPaddingBackground());
             TraitSetter.addMargins(curBlockArea,
-                    ((org.apache.fop.fo.flow.Block) fobj).getCommonBorderPaddingBackground(), 
-                    ((org.apache.fop.fo.flow.Block) fobj).getCommonMarginBlock());
+                    getBlockFO().getCommonBorderPaddingBackground(), 
+                    getBlockFO().getCommonMarginBlock());
 
             // Set up dimensions
             // Get reference IPD from parentArea
@@ -628,6 +628,13 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             //reset(resetPos);
             LayoutManager lm = resetPos.getLM();
         }
+    }
+
+    /**
+     * convenience method that returns the Block node
+     */
+    protected org.apache.fop.fo.flow.Block getBlockFO() {
+        return (org.apache.fop.fo.flow.Block) fobj;
     }
 }
 
