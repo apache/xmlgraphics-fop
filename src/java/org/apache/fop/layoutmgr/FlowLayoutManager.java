@@ -19,7 +19,6 @@
 package org.apache.fop.layoutmgr;
 
 import org.apache.fop.datatypes.PercentBase;
-import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockParent;
@@ -439,18 +438,6 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
         if (resetPos == null) {
             reset(null);
         }
-    }
-
-    /**
-     * Retrieve marker is not allowed in the flow so this reports an
-     * error and returns null.
-     *
-     * @see org.apache.fop.layoutmgr.LayoutManager
-     */
-    public Marker retrieveMarker(String name, int pos, int boundary) {
-        // error cannot retrieve markers in flow
-        log.error("Cannot retrieve a marker from the flow");
-        return null;
     }
 }
 

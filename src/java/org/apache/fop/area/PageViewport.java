@@ -31,14 +31,8 @@ import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.datatypes.FODimension;
-import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.pagination.Region;
-import org.apache.fop.fo.pagination.RegionBody;
 import org.apache.fop.fo.pagination.SimplePageMaster;
-import org.apache.fop.fo.properties.CommonMarginBlock;
-import org.apache.fop.layoutmgr.TraitSetter;
 
 /**
  * Page viewport that specifies the viewport area and holds the page contents.
@@ -85,7 +79,10 @@ public class PageViewport implements Resolvable, Cloneable {
      */
     public PageViewport(SimplePageMaster spm) {
         this.spm = spm;
-        createPageAreas();
+        int pageWidth = spm.getPageWidth().getValue();
+        int pageHeight = spm.getPageHeight().getValue();
+        viewArea = new Rectangle(0, 0, pageWidth, pageHeight);
+        page = new Page(spm);
     }
 
     /**
@@ -454,92 +451,4 @@ public class PageViewport implements Resolvable, Cloneable {
     public SimplePageMaster getSPM() {
         return spm;
     }
-    
-    private void createPageAreas() {
-        int pageWidth = spm.getPageWidth().getValue();
-        int pageHeight = spm.getPageHeight().getValue();
-
-        // Get absolute margin properties (top, left, bottom, right)
-        CommonMarginBlock mProps = spm.getCommonMarginBlock();
-
-      /* Create the page reference area rectangle (0,0 is at top left
-       * of the "page media" and y increases
-       * when moving towards the bottom of the page.
-       * The media rectangle itself is (0,0,pageWidth,pageHeight).
-       */
-       Rectangle pageRefRect =
-               new Rectangle(mProps.marginLeft.getValue(), mProps.marginTop.getValue(),
-                       pageWidth - mProps.marginLeft.getValue() - mProps.marginRight.getValue(),
-                       pageHeight - mProps.marginTop.getValue() - mProps.marginBottom.getValue());
-
-       page = new Page();  // page reference area
-
-       // Set up the CTM on the page reference area based on writing-mode
-       // and reference-orientation
-       FODimension reldims = new FODimension(0, 0);
-       CTM pageCTM = CTM.getCTMandRelDims(spm.getReferenceOrientation(),
-               spm.getWritingMode(), pageRefRect, reldims);
-
-       // Create a RegionViewport/ reference area pair for each page region
-       RegionReference rr = null;
-       for (Iterator regenum = spm.getRegions().values().iterator();
-            regenum.hasNext();) {
-           Region r = (Region)regenum.next();
-           RegionViewport rvp = makeRegionViewport(r, reldims, pageCTM);
-           r.setLayoutDimension(PercentBase.BLOCK_IPD, rvp.getIPD());
-           r.setLayoutDimension(PercentBase.BLOCK_BPD, rvp.getBPD());
-           if (r.getNameId() == Constants.FO_REGION_BODY) {
-               RegionBody rb = (RegionBody) r;
-               rr = new BodyRegion(rb.getColumnCount(), rb.getColumnGap(),
-                       rvp);
-           } else {
-               rr = new RegionReference(r.getNameId(), rvp);
-           }
-           setRegionReferencePosition(rr, r, rvp.getViewArea());
-           rvp.setRegionReference(rr);
-           page.setRegionViewport(r.getNameId(), rvp);
-       }
-
-       viewArea = new Rectangle(0, 0, pageWidth, pageHeight);
-    }  
-    
-    /**
-     * Creates a RegionViewport Area object for this pagination Region.
-     * @param reldims relative dimensions
-     * @param pageCTM page coordinate transformation matrix
-     * @return the new region viewport
-     */
-    private RegionViewport makeRegionViewport(Region r, FODimension reldims, CTM pageCTM) {
-        Rectangle2D relRegionRect = r.getViewportRectangle(reldims);
-        Rectangle2D absRegionRect = pageCTM.transform(relRegionRect);
-        // Get the region viewport rectangle in absolute coords by
-        // transforming it using the page CTM
-        RegionViewport rv = new RegionViewport(absRegionRect);
-        rv.setBPD((int)relRegionRect.getHeight());
-        rv.setIPD((int)relRegionRect.getWidth());
-        TraitSetter.addBackground(rv, r.getCommonBorderPaddingBackground());
-        rv.setClip(r.getOverflow() == Constants.EN_HIDDEN 
-                || r.getOverflow() == Constants.EN_ERROR_IF_OVERFLOW);
-        return rv;
-    }
-   
-    /**
-     * Set the region reference position within the region viewport.
-     * This sets the transform that is used to place the contents of
-     * the region reference.
-     *
-     * @param rr the region reference area
-     * @param r the region-xxx formatting object
-     * @param absRegVPRect The region viewport rectangle in "absolute" coordinates
-     * where x=distance from left, y=distance from bottom, width=right-left
-     * height=top-bottom
-     */
-    private void setRegionReferencePosition(RegionReference rr, Region r, 
-                                  Rectangle2D absRegVPRect) {
-        FODimension reldims = new FODimension(0, 0);
-        rr.setCTM(CTM.getCTMandRelDims(r.getReferenceOrientation(),
-                r.getWritingMode(), absRegVPRect, reldims));
-        rr.setIPD(reldims.ipd);
-        rr.setBPD(reldims.bpd);
-    }    
 }
