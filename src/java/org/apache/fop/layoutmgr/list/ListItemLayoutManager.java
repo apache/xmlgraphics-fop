@@ -27,7 +27,6 @@ import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.BreakPoss;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.BreakPossPosIter;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.TraitSetter;
@@ -40,7 +39,6 @@ import org.apache.fop.area.Block;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
 
-import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.LinkedList;
@@ -56,28 +54,11 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
     private Item label;
     private Item body;
 
-    private int referenceIPD = 0;
-
     private Block curBlockArea = null;
 
     private LinkedList labelList = null;
     private LinkedList bodyList = null;
 
-    private static class StackingIter extends PositionIterator {
-        StackingIter(Iterator parentIter) {
-            super(parentIter);
-        }
-
-        protected LayoutManager getLM(Object nextObj) {
-            return ((Position) nextObj).getLM();
-        }
-
-        protected Position getPos(Object nextObj) {
-            return ((Position) nextObj);
-        }
-    }
-
-    //private List cellList = null;
     private int listItemHeight;
 
     //TODO space-before|after: handle space-resolution rules
@@ -98,7 +79,8 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         private int iBodyFirstIndex;
         private int iBodyLastIndex;
 
-        public ListItemPosition(LayoutManager lm, int labelFirst, int labelLast, int bodyFirst, int bodyLast) {
+        public ListItemPosition(LayoutManager lm, int labelFirst, int labelLast, 
+                int bodyFirst, int bodyLast) {
             super(lm);
             iLabelFirstIndex = labelFirst;
             iLabelLastIndex = labelLast;
@@ -281,7 +263,12 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         return breakPoss;
     }
 
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(org.apache.fop.layoutmgr.LayoutContext, int)
+     */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+        referenceIPD = context.getRefIPD();
+
         // label
         labelList = label.getNextKnuthElements(context, alignment);
 
@@ -325,12 +312,15 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         while ((step = getNextStep(elementLists, start, end, partialHeights))
                > 0) {
             // compute penalty height and box height
-            int penaltyHeight = step + getMaxRemainingHeight(fullHeights, partialHeights) - totalHeight;
+            int penaltyHeight = step 
+                + getMaxRemainingHeight(fullHeights, partialHeights) 
+                - totalHeight;
             int boxHeight = step - addedBoxHeight - penaltyHeight;
 
             // add the new elements
             addedBoxHeight += boxHeight;
-            ListItemPosition stepPosition = new ListItemPosition(this, start[0], end[0], start[1], end[1]);
+            ListItemPosition stepPosition = new ListItemPosition(this, 
+                    start[0], end[0], start[1], end[1]);
             returnList.add(new KnuthBox(boxHeight, stepPosition, false));
             if (addedBoxHeight < totalHeight) {
                 returnList.add(new KnuthPenalty(penaltyHeight, 0, false, stepPosition, false));
@@ -366,9 +356,9 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         return calcItemHeightFromContents(elements, 0, elements.size() - 1);
     }
 
-    private int getNextStep(List elementLists[], int[] start, int[] end, int[] partialHeights) {
+    private int getNextStep(List[] elementLists, int[] start, int[] end, int[] partialHeights) {
         // backup of partial heights
-        int backupHeights[] = {partialHeights[0], partialHeights[1]};
+        int[] backupHeights = {partialHeights[0], partialHeights[1]};
 
         // set starting points
         start[0] = end[0] + 1;
@@ -436,6 +426,9 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
                         fullHeights[1] - partialHeights[1]);
     }
 
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(java.util.List, int)
+     */
     public LinkedList getChangedKnuthElements(List oldList, int alignment) {
 /*LF*/  //log.debug(" LILM.getChanged> label");
         // label
@@ -495,7 +488,6 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
 
         addID(fobj.getId());
 
-        LayoutManager childLM = null;
         LayoutContext lc = new LayoutContext(0);
 
         // "unwrap" the NonLeafPositions stored in parentIter
@@ -518,7 +510,8 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
 
         // add label areas
         if (labelFirstIndex <= labelLastIndex) {
-            KnuthPossPosIter labelIter = new KnuthPossPosIter(labelList, labelFirstIndex, labelLastIndex + 1);
+            KnuthPossPosIter labelIter = new KnuthPossPosIter(labelList, 
+                    labelFirstIndex, labelLastIndex + 1);
             lc.setFlags(LayoutContext.FIRST_AREA, layoutContext.isFirstArea());
             lc.setFlags(LayoutContext.LAST_AREA, layoutContext.isLastArea());
             // TO DO: use the right stack limit for the label
@@ -536,7 +529,8 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
 
         // add body areas
         if (bodyFirstIndex <= bodyLastIndex) {
-            KnuthPossPosIter bodyIter = new KnuthPossPosIter(bodyList, bodyFirstIndex, bodyLastIndex + 1);
+            KnuthPossPosIter bodyIter = new KnuthPossPosIter(bodyList, 
+                    bodyFirstIndex, bodyLastIndex + 1);
             lc.setFlags(LayoutContext.FIRST_AREA, layoutContext.isFirstArea());
             lc.setFlags(LayoutContext.LAST_AREA, layoutContext.isLastArea());
             // TO DO: use the right stack limit for the body
