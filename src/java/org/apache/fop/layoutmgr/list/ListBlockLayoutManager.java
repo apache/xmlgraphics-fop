@@ -25,7 +25,6 @@ import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.BreakPoss;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.BreakPossPosIter;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.TraitSetter;
@@ -48,8 +47,6 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
     private ListBlock fobj;
     
     private Block curBlockArea;
-
-    private int referenceIPD = 0;
 
     private List bodyBreaks = new ArrayList();
 
