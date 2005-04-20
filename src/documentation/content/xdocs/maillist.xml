@@ -61,7 +61,8 @@ If you are using Microsoft Outlook, this setting can be found at the "Mail Forma
           <li>To unsubscribe: Send email to <link href="mailto:fop-users-unsubscribe@xmlgraphics.apache.org">fop-users-unsubscribe@xmlgraphics.apache.org</link>.</li>
         </ul>
       </section>
-      <note>You can find the developer mailing list on the <link href="/dev/index.html">Development pages</link>.</note>
+      <note>You can find the developer mailing list on the <link
+href="site:development">Development pages</link>.</note>
       <section id="fop-user-policy">
         <title>Submitting a Question</title>
         <p>FOP support is primarily <em>self-service</em>. The FOP User Mailing List serves as a backup to the self-service documentation for cases where either the documentation is deficient or where users have unusual circumstances. FOP developers and users are happy to help answer questions that are <em>appropriate to the forum</em> (i.e. FOP-specific), and that are <em>submitted after appropriate preparation</em>. To ensure that your question is not <strong>abusive</strong> of this policy, please use the following checklist:</p>
