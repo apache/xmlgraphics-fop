@@ -149,6 +149,8 @@ public class CommandLineOptions implements Constants {
                 suppressLowLevelAreas = Boolean.TRUE;
             } else if (args[i].equals("-d")) {
                 setLogLevel("debug");
+            } else if (args[i].equals("-r")) {
+                foUserAgent.setStrictValidation(false);
             } else if (args[i].equals("-q") || args[i].equals("--quiet")) {
                 setLogLevel("error");
             } else if (args[i].equals("-fo")) {
@@ -612,6 +614,7 @@ public class CommandLineOptions implements Constants {
             + "  -q          quiet mode  \n"
             + "  -c cfg.xml  use additional configuration file cfg.xml\n"
             + "  -l lang     the language to use for user information \n"
+            + "  -r          relaxed/less strict validation (where available)\n"
             + "  -s          for area tree XML, down to block areas only\n"
             + "  -v          to show FOP version being used\n\n"
             + " [INPUT]  \n"
