@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,28 +19,26 @@
 package org.apache.fop.fo.flow;
 
 // Java
-import java.util.List;
-import java.util.ListIterator;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
+import org.xml.sax.Locator;
 
 /**
  * Implementation for fo:wrapper formatting object.
  * The wrapper object serves as
  * a property holder for its child node objects.
- *
- * Content: (#PCDATA|%inline;|%block;)*
- * Properties: id
- * @todo implement validateChildNode()
  */
 public class Wrapper extends FObjMixed {
     // The value of properties relevant for fo:wrapper.
     private String id;
     // End of property values
     
+    // used for FO validation
+    private boolean blockOrInlineItemFound = false;
+
     /**
      * @param parent FONode that is the parent of this object
      */
@@ -60,6 +58,27 @@ public class Wrapper extends FObjMixed {
      */
     protected void startOfNode() throws FOPException {
         checkId(id);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: marker* (#PCDATA|%inline;|%block;)*
+     * Additionally (unimplemented): "An fo:wrapper that is a child of an 
+     * fo:multi-properties is only permitted to have children that would 
+     * be permitted in place of the fo:multi-properties."
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws ValidationException {
+        if (nsURI == FO_URI && localName.equals("marker")) {
+            if (blockOrInlineItemFound) {
+               nodesOutOfOrderError(loc, "fo:marker", 
+                    "(#PCDATA|%inline;|%block;)");
+            }
+        } else if (isBlockOrInlineItem(nsURI, localName)) {
+            blockOrInlineItemFound = true;
+        } else {
+            invalidChildError(loc, nsURI, localName);
+        }
     }
 
     /**

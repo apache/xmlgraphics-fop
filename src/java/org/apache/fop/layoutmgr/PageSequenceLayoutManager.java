@@ -446,14 +446,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         
         RegionViewport rv = curPage.getPage().getRegionViewport(regionID);
         StaticContentLayoutManager lm;
-        try {
-            lm = (StaticContentLayoutManager)
-                areaTreeHandler.getLayoutManagerMaker().makeLayoutManager(sc);
-        } catch (FOPException e) { // severe error
-            throw new IllegalStateException(
-                "Internal error:  Failed to create a StaticContentLayoutManager "
-                + "for flow " + sc.getFlowName());
-        }
+        lm = (StaticContentLayoutManager)
+            areaTreeHandler.getLayoutManagerMaker().makeLayoutManager(sc);
         lm.initialize();
         lm.setRegionReference(rv.getRegionReference());
         lm.setParent(this);

@@ -21,13 +21,10 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
@@ -64,10 +61,10 @@ import org.apache.fop.fo.pagination.Title;
 
 import org.apache.fop.layoutmgr.list.ListBlockLayoutManager;
 import org.apache.fop.layoutmgr.list.ListItemLayoutManager;
-import org.apache.fop.layoutmgr.table.Body;
+/*import org.apache.fop.layoutmgr.table.Body;
 import org.apache.fop.layoutmgr.table.Cell;
 import org.apache.fop.layoutmgr.table.Column;
-import org.apache.fop.layoutmgr.table.Row;
+import org.apache.fop.layoutmgr.table.Row;*/
 import org.apache.fop.layoutmgr.table.TableLayoutManager;
 
 /**
@@ -88,7 +85,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     /**
      * Initializes the set of maker objects associated with this LayoutManagerMapping
      */
-    private void initialize() {
+    protected void initialize() {
         makers.put(FOText.class, new FOTextLayoutManagerMaker());
         makers.put(FObjMixed.class, new Maker());
         makers.put(BidiOverride.class, new BidiOverrideLayoutManagerMaker());
@@ -141,18 +138,17 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     /**
      * @see org.apache.fop.layoutmgr.LayoutManagerMaker#makeLayoutManager(FONode)
      */
-    public LayoutManager makeLayoutManager(FONode node)
-        throws FOPException {
+    public LayoutManager makeLayoutManager(FONode node) {
         List lms = new ArrayList();
         makeLayoutManagers(node, lms);
         if (lms.size() == 0) {
-            throw new FOPException("No LayoutManager for class "
+            throw new IllegalStateException("LayoutManager for class "
                                    + node.getClass()
-                                   + "; 1 was required");
+                                   + " is missing.");
         } else if (lms.size() > 1) {
-            throw new FOPException("More than 1 LayoutManager for class "
+            throw new IllegalStateException("Duplicate LayoutManagers for class "
                                    + node.getClass()
-                                   + "; 1 was required"); 
+                                   + " found, only one may be declared."); 
         }
         return (LayoutManager) lms.get(0);
     }
