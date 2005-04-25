@@ -44,7 +44,6 @@ import org.apache.fop.fo.pagination.StaticContent;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import org.apache.fop.traits.MinOptMax;
 
 /**
  * LayoutManager for a PageSequence.
@@ -82,13 +81,17 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     private AreaTreeModel areaTreeModel;
 
     /**
-     * The collection of StaticContentLayoutManager objects that are associated
-     * with this Page Sequence, keyed by flow-name.
+     * The single FlowLayoutManager object, which processes
+     * the single fo:flow of the fo:page-sequence
+     */
+    private FlowLayoutManager childFLM = null;
+    
+    /**
+     * The collection of StaticContentLayoutManager objects that
+     * are associated with this Page Sequence, keyed by flow-name.
      */
     //private HashMap staticContentLMs = new HashMap(4);
 
-    private FlowLayoutManager childFLM = null;
-    
     /**
      * Constructor - activated by AreaTreeHandler for each
      * fo:page-sequence in the input FO stream
@@ -434,6 +437,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         return curPage;
     }
 
+    /* TODO: See if can initialize the SCLM's just once for
+     * the page sequence, instead of after every page.
+     */
     private void layoutSideRegion(int regionID) {
         SideRegion reg = (SideRegion)curPage.getSPM().getRegion(regionID);
         if (reg == null) {
@@ -449,7 +455,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         lm = (StaticContentLayoutManager)
             areaTreeHandler.getLayoutManagerMaker().makeLayoutManager(sc);
         lm.initialize();
-        lm.setRegionReference(rv.getRegionReference());
+        lm.setTargetRegion(rv.getRegionReference());
         lm.setParent(this);
         /*
         LayoutContext childLC = new LayoutContext(0);
@@ -457,8 +463,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         childLC.setRefIPD(rv.getRegion().getIPD());
         */
         
-        MinOptMax range = new MinOptMax(rv.getRegionReference().getIPD());
-        lm.doLayout(reg, lm, range);
+        lm.doLayout(reg);
         
         /*
         while (!lm.isFinished()) {
