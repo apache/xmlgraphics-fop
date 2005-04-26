@@ -96,7 +96,7 @@ public abstract class AbstractBreaker {
         return (blockLists.size() == 0);
     }
     
-    protected void startPart(BlockSequence list) {
+    protected void startPart(BlockSequence list, int localPageNumber) {
         //nop
     }
     
@@ -202,7 +202,7 @@ public abstract class AbstractBreaker {
             System.out.println("PLM> part: " + (p + 1)
                     + ", break at position " + endElementIndex);
 
-            startPart(effectiveList);
+            startPart(effectiveList, p+1);
             
             int displayAlign = getCurrentDisplayAlign();
             
