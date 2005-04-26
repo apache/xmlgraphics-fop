@@ -393,22 +393,12 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     }
 
     /**
-     * Add the markers when adding an area.
+     * Add the markers to the PageViewport when adding an area.
      */
-    protected void addMarkers(boolean starting, boolean isfirst, boolean islast) {
-        // add markers
+    protected void addMarkersToPV(boolean starting, boolean isfirst, boolean islast) {
         if (markers != null) {
-            addMarkerMap(markers, starting, isfirst, islast);
+            getCurrentPageViewport().addMarkers(markers, starting, isfirst, islast);
         }
-    }
-
-    /**
-     * Delegate adding marker to the parent layout manager.
-     *
-     * @see org.apache.fop.layoutmgr.LayoutManager
-     */
-    public void addMarkerMap(Map marks, boolean starting, boolean isfirst, boolean islast) {
-        parentLM.addMarkerMap(marks, starting, isfirst, islast);
     }
 
     /**
