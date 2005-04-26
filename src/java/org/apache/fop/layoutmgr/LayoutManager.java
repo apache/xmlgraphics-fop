@@ -20,7 +20,6 @@ package org.apache.fop.layoutmgr;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.fop.fo.flow.Marker;
 
@@ -200,18 +199,6 @@ public interface LayoutManager {
      * @param res the resolvable object
      */
     void addUnresolvedArea(String id, Resolvable res);
-
-    /**
-     * Add the marker.
-     * A number of formatting objects may contain markers. This
-     * method is used to add those markers to the page.
-     *
-     * @param name the marker class name
-     * @param starting if the area being added is starting or ending
-     * @param isfirst if the area being added has is-first trait
-     * @param islast if the area being added has is-last trait
-     */
-    void addMarkerMap(Map marks, boolean starting, boolean isfirst, boolean islast);
 
     /**
      * Retrieve a marker.

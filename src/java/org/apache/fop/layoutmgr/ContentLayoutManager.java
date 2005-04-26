@@ -32,7 +32,6 @@ import org.apache.fop.area.PageViewport;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 import java.util.ArrayList;
 import org.apache.fop.traits.MinOptMax;
 
@@ -268,11 +267,6 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
     /** @see org.apache.fop.layoutmgr.LayoutManager */
     public void addUnresolvedArea(String id, Resolvable res) {
         parentLM.addUnresolvedArea(id, res);
-    }
-
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public void addMarkerMap(Map marks, boolean starting, boolean isfirst, boolean islast) {
-        parentLM.addMarkerMap(marks, starting, isfirst, islast);
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */

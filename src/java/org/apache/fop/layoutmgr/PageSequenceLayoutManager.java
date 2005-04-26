@@ -43,7 +43,6 @@ import org.apache.fop.fo.pagination.StaticContent;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * LayoutManager for a PageSequence.
@@ -321,17 +320,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         curPage.addUnresolvedIDRef(id, res);
         // add unresolved to tree
         areaTreeHandler.addUnresolvedIDRef(id, curPage);
-    }
-
-    /**
-     * Add the marker to the page layout manager.
-     *
-     * @see org.apache.fop.layoutmgr.LayoutManager
-     */
-    public void addMarkerMap(Map marks, boolean starting, boolean isfirst, boolean islast) {
-        //getLogger().debug("adding markers: " + marks + ":" + start);
-        // add markers to page on area tree
-        curPage.addMarkers(marks, starting, isfirst, islast);
     }
 
     /**

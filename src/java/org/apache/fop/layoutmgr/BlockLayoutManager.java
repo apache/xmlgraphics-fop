@@ -348,7 +348,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
         if (!isBogus()) {
             addID(getBlockFO().getId());
-            addMarkers(true, bp1.isFirstArea(), bp1.isLastArea());
+            addMarkersToPV(true, bp1.isFirstArea(), bp1.isLastArea());
         }
 
         try {
@@ -370,7 +370,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             }
         } finally {
             if (!isBogus()) {
-                addMarkers(false, bp1.isFirstArea(), bp1.isLastArea());
+                addMarkersToPV(false, bp1.isFirstArea(), bp1.isLastArea());
             }
             flush();
 
@@ -393,8 +393,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         }
 
         addID(getBlockFO().getId());
-        //addMarkers(true, bp1.isFirstArea(), bp1.isLastArea());
-        addMarkers(true, true, false);
+        //addMarkersToPV(true, bp1.isFirstArea(), bp1.isLastArea());
+        addMarkersToPV(true, true, false);
 
         LayoutManager childLM = null;
         LayoutManager lastLM = null;
@@ -534,7 +534,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
         int bIndents = getBlockFO().getCommonBorderPaddingBackground().getBPPaddingAndBorder(false);
 
-        addMarkers(false, false, true);
+        addMarkersToPV(false, false, true);
 
         flush();
 

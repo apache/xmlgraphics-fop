@@ -842,8 +842,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         }
 
         addID(getBlockContainerFO().getId());
-        //addMarkers(true, bp1.isFirstArea(), bp1.isLastArea());
-        addMarkers(true, true, false);
+        //addMarkersToPV(true, bp1.isFirstArea(), bp1.isLastArea());
+        addMarkersToPV(true, true, false);
 
         LayoutManager childLM = null;
         LayoutManager lastLM = null;
@@ -998,7 +998,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
 
         int bIndents = getBlockContainerFO().getCommonBorderPaddingBackground().getBPPaddingAndBorder(false);
 
-        addMarkers(false, false, true);
+        addMarkersToPV(false, false, true);
 
         flush();
 
@@ -1025,7 +1025,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
 
         BreakPoss bp1 = (BreakPoss)parentIter.peekNext();
         addID(getBlockContainerFO().getId());
-        addMarkers(true, bp1.isFirstArea(), bp1.isLastArea());
+        addMarkersToPV(true, bp1.isFirstArea(), bp1.isLastArea());
 
         LayoutManager childLM;
         int iStartPos = 0;
@@ -1043,7 +1043,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         }
 
         flush();
-        addMarkers(true, bp1.isFirstArea(), bp1.isLastArea());
+        addMarkersToPV(true, bp1.isFirstArea(), bp1.isLastArea());
 
         /*
         if (!isAbsoluteOrFixed()) {
