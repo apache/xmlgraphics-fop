@@ -193,7 +193,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             addAreas(alg, partCount, originalList, effectiveList);
         }
         
-        protected void startPart(BlockSequence list) {
+        protected void startPart(BlockSequence list, int localPageNumber) {
             if (curPage == null) {
                 throw new IllegalStateException("curPage must not be null");
             } else {
@@ -203,8 +203,16 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 if (!firstPart) {
                     if (curFlowIdx < curPage.getCurrentSpan().getColumnCount()-1) {
                         curFlowIdx++;
-                    } else {
+                    } else if (localPageNumber == 1) {
+                        // this is the first page that will be created by
+                        // the current BlockSequence: it could have a break
+                        // condition that must be satisfied
                         handleBreak(list.getStartOn());
+                    } else {
+                        // this is NOT the first page that will be created by
+                        // the current BlockSequence: we simply need a new
+                        // page
+                        handleBreak(Constants.EN_PAGE);
                     }
                 }
             }
