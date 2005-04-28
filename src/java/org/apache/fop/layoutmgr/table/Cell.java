@@ -434,7 +434,7 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
                     int lastRowHeight = 0;
                     for (int x = 0; x < gridUnits.length; x++) {
                         GridUnit gu = gridUnits[x];
-                        if (!gu.getBorders().hasBorder()) {
+                        if (!gu.hasBorders()) {
                             continue;
                         }
                         

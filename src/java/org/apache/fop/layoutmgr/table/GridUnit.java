@@ -154,6 +154,13 @@ public class GridUnit {
     }
     
     /**
+     * @return true if the grid unit has any borders.
+     */
+    public boolean hasBorders() {
+        return (getBorders() != null) && getBorders().hasBorder();
+    }
+    
+    /**
      * Assigns the borders from the given cell to this cell info. Used in
      * case of separate border model.
      */
