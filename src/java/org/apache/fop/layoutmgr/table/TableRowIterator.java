@@ -18,6 +18,7 @@
 
 package org.apache.fop.layoutmgr.table;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -32,7 +33,10 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.traits.MinOptMax;
 
 /**
- * Iterator that lets the table layout manager step over all rows of a table.
+ * <p>Iterator that lets the table layout manager step over all rows of a table.
+ * </p>
+ * <p>Note: This class is not thread-safe.
+ * </p>
  */
 public class TableRowIterator {
 
@@ -46,6 +50,7 @@ public class TableRowIterator {
     /** Logger **/
     private static Log log = LogFactory.getLog(TableRowIterator.class);
 
+    /** The table on with this instance operates. */
     protected Table table;
     private ColumnSetup columns;
     
@@ -57,6 +62,7 @@ public class TableRowIterator {
     private int currentRowIndex = -1;
     //TODO rows should later be a Jakarta Commons LinkedList so concurrent modifications while 
     //using a ListIterator are possible
+    /** List of cache rows. */
     private List rows = new java.util.ArrayList();
     //private int indexOfFirstRowInList;
     private int currentIndex = -1;
@@ -91,6 +97,44 @@ public class TableRowIterator {
         while (prefetchNext()) {
             log.trace("found row...");
         }
+    }
+    
+    /**
+     * Returns the next row group if any. A row group in this context is the minimum number of 
+     * consecutive rows which contains all spanned grid units of its cells.
+     * @return the next row group, or null
+     */
+    public EffRow[] getNextRowGroup() {
+        EffRow firstRowInGroup = getNextRow();
+        if (firstRowInGroup == null) {
+            return null;
+        }
+        EffRow lastRowInGroup = firstRowInGroup;
+        int lastIndex = lastRowInGroup.getIndex();
+        boolean allFinished = true;
+        do {
+            Iterator iter = lastRowInGroup.getGridUnits().iterator();
+            while (iter.hasNext()) {
+                GridUnit gu = (GridUnit)iter.next();
+                if (!gu.isLastGridUnitRowSpan()) {
+                    allFinished = false;
+                    break;
+                }
+            }
+            if (!allFinished) {
+                lastIndex = lastRowInGroup.getIndex();
+                lastRowInGroup = getNextRow();
+                if (lastRowInGroup == null) {
+                    allFinished = true;
+                }
+            }
+        } while (!allFinished);
+        int rowCount = lastIndex - firstRowInGroup.getIndex() + 1;
+        EffRow[] rowGroup = new EffRow[rowCount];
+        for (int i = 0; i < rowCount; i++) {
+            rowGroup[i] = getCachedRow(i + firstRowInGroup.getIndex());
+        }
+        return rowGroup;
     }
     
     public EffRow getNextRow() {
@@ -375,5 +419,5 @@ public class TableRowIterator {
             return sb.toString();
         }
     }
-    
+
 }

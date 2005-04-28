@@ -67,10 +67,12 @@ public class TableContentLayoutManager {
         Table table = getTableLM().getTable();
         this.trIter = new TableRowIterator(table, getTableLM().getColumns(), TableRowIterator.BODY);
         if (table.getTableHeader() != null) {
-            headerIter = new TableRowIterator(table, getTableLM().getColumns(), TableRowIterator.HEADER);
+            headerIter = new TableRowIterator(table, 
+                    getTableLM().getColumns(), TableRowIterator.HEADER);
         }
         if (table.getTableFooter() != null) {
-            footerIter = new TableRowIterator(table, getTableLM().getColumns(), TableRowIterator.FOOTER);
+            footerIter = new TableRowIterator(table, 
+                    getTableLM().getColumns(), TableRowIterator.FOOTER);
         }
     }
     
@@ -86,7 +88,7 @@ public class TableContentLayoutManager {
      * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(org.apache.fop.layoutmgr.LayoutContext, int)
      */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
-        log.debug("Columns: " +getTableLM().getColumns());
+        log.debug("Columns: " + getTableLM().getColumns());
         KnuthBox headerAsFirst = null;
         KnuthBox headerAsSecondToLast = null;
         KnuthBox footerAsLast = null;
@@ -164,82 +166,87 @@ public class TableContentLayoutManager {
     
     /**
      * Creates Knuth elements by iterating over a TableRowIterator.
-     * @param context
-     * @param alignment
-     * @return
+     * @param iter TableRowIterator instance to fetch rows from
+     * @param context Active LayoutContext
+     * @param alignment alignment indicator
+     * @return An element list
      */
     private LinkedList getKnuthElementsForRowIterator(TableRowIterator iter, 
             LayoutContext context, int alignment, boolean disableHeaderFooter) {
         LinkedList returnList = new LinkedList();
+        TableRowIterator.EffRow[] rowGroup = null;
         TableRowIterator.EffRow row = null;
-        while ((row = iter.getNextRow()) != null) {
-            List pgus = new java.util.ArrayList();
-            TableRow tableRow = null;
-            int maxCellHeight = 0;
-            for (int j = 0; j < row.getGridUnits().size(); j++) {
-                GridUnit gu = (GridUnit)row.getGridUnits().get(j);
-                if (gu.isPrimary() && !gu.isEmpty()) {
-                    PrimaryGridUnit primary = (PrimaryGridUnit)gu;
-                    primary.getCellLM().setParent(tableLM);
+        while ((rowGroup = iter.getNextRowGroup()) != null) {
+            for (int rgi = 0; rgi < rowGroup.length; rgi++) {
+                row = rowGroup[rgi];
+                List pgus = new java.util.ArrayList();
+                TableRow tableRow = null;
+                int maxCellHeight = 0;
+                for (int j = 0; j < row.getGridUnits().size(); j++) {
+                    GridUnit gu = (GridUnit)row.getGridUnits().get(j);
+                    if (gu.isPrimary() && !gu.isEmpty()) {
+                        PrimaryGridUnit primary = (PrimaryGridUnit)gu;
+                        primary.getCellLM().setParent(tableLM);
 
-                    //Calculate width of cell
-                    int spanWidth = 0;
-                    for (int i = primary.getStartCol(); 
-                            i < primary.getStartCol() + primary.getCell().getNumberColumnsSpanned();
-                            i++) {
-                        spanWidth += getTableLM().getColumns().getColumn(i + 1)
-                            .getColumnWidth().getValue();
+                        //Calculate width of cell
+                        int spanWidth = 0;
+                        for (int i = primary.getStartCol(); 
+                                i < primary.getStartCol() + primary.getCell().getNumberColumnsSpanned();
+                                i++) {
+                            spanWidth += getTableLM().getColumns().getColumn(i + 1)
+                                .getColumnWidth().getValue();
+                        }
+                        log.info("spanWidth=" + spanWidth);
+                        LayoutContext childLC = new LayoutContext(0);
+                        childLC.setStackLimit(context.getStackLimit()); //necessary?
+                        childLC.setRefIPD(spanWidth);
+                        
+                        LinkedList elems = primary.getCellLM().getNextKnuthElements(childLC, alignment);
+                        primary.setElements(elems);
+                        log.debug("Elements: " + elems);
+                        int len = calcCellHeightFromContents(elems);
+                        pgus.add(primary);
+                        maxCellHeight = Math.max(maxCellHeight, len);
+                        if (len > row.getHeight().opt) {
+                            row.setHeight(new MinOptMax(len));
+                        }
+                        LengthRangeProperty bpd = primary.getCell().getBlockProgressionDimension();
+                        if (!bpd.getOptimum().isAuto()) {
+                            if (bpd.getOptimum().getLength().getValue() > row.getHeight().opt) {
+                                row.setHeight(new MinOptMax(bpd.getOptimum().getLength().getValue()));
+                            }
+                        }
+                        if (tableRow == null) {
+                            tableRow = primary.getRow();
+                        }
                     }
-                    log.info("spanWidth=" + spanWidth);
-                    LayoutContext childLC = new LayoutContext(0);
-                    childLC.setStackLimit(context.getStackLimit()); //necessary?
-                    childLC.setRefIPD(spanWidth);
-                    
-                    LinkedList elems = primary.getCellLM().getNextKnuthElements(childLC, alignment);
-                    primary.setElements(elems);
-                    log.debug("Elements: " + elems);
-                    int len = calcCellHeightFromContents(elems);
-                    pgus.add(primary);
-                    maxCellHeight = Math.max(maxCellHeight, len);
-                    if (len > row.getHeight().opt) {
-                        row.setHeight(new MinOptMax(len));
-                    }
-                    LengthRangeProperty bpd = primary.getCell().getBlockProgressionDimension();
+                }
+                
+                if (tableRow != null) {
+                    LengthRangeProperty bpd = tableRow.getBlockProgressionDimension();
                     if (!bpd.getOptimum().isAuto()) {
                         if (bpd.getOptimum().getLength().getValue() > row.getHeight().opt) {
                             row.setHeight(new MinOptMax(bpd.getOptimum().getLength().getValue()));
                         }
                     }
-                    if (tableRow == null) {
-                        tableRow = primary.getRow();
-                    }
                 }
-            }
-            
-            if (tableRow != null) {
-                LengthRangeProperty bpd = tableRow.getBlockProgressionDimension();
-                if (!bpd.getOptimum().isAuto()) {
-                    if (bpd.getOptimum().getLength().getValue() > row.getHeight().opt) {
-                        row.setHeight(new MinOptMax(bpd.getOptimum().getLength().getValue()));
-                    }
+                log.debug(row);
+                
+                PrimaryGridUnit[] pguArray = new PrimaryGridUnit[pgus.size()];
+                pguArray = (PrimaryGridUnit[])pgus.toArray(pguArray);
+                LinkedList returnedList = getCombinedKnuthElementsForRow(pguArray, row, 
+                        disableHeaderFooter);
+                if (returnedList != null) {
+                    returnList.addAll(returnedList);
                 }
-            }
-            log.debug(row);
-            
-            PrimaryGridUnit[] pguArray = new PrimaryGridUnit[pgus.size()];
-            pguArray = (PrimaryGridUnit[])pgus.toArray(pguArray);
-            LinkedList returnedList = getCombinedKnuthElementsForRow(pguArray, row, 
-                    disableHeaderFooter);
-            if (returnedList != null) {
-                returnList.addAll(returnedList);
-            }
 
-            if (row.getHeight().opt > maxCellHeight) {
-                int space = row.getHeight().opt - maxCellHeight;
-                KnuthPenalty penalty = (KnuthPenalty)returnList.removeLast();
-                //Insert dummy box before penalty
-                returnList.add(new KnuthBox(space, new Position(getTableLM()), false));
-                returnList.add(penalty);
+                if (row.getHeight().opt > maxCellHeight) {
+                    int space = row.getHeight().opt - maxCellHeight;
+                    KnuthPenalty penalty = (KnuthPenalty)returnList.removeLast();
+                    //Insert dummy box before penalty
+                    returnList.add(new KnuthBox(space, new Position(getTableLM()), false));
+                    returnList.add(penalty);
+                }
             }
         }
         
@@ -322,7 +329,7 @@ public class TableContentLayoutManager {
     
     private int getNextStep(int laststep, List[] elementLists, int[] index, 
             int[] start, int[] end, int[] widths, int[] fullWidths) {
-        int backupWidths[] = new int[start.length];
+        int[] backupWidths = new int[start.length];
         System.arraycopy(widths, 0, backupWidths, 0, backupWidths.length);
         //set starting points
         for (int i = 0; i < start.length; i++) {
