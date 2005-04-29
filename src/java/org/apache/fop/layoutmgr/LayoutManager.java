@@ -171,7 +171,7 @@ public interface LayoutManager {
      *
      * @return the current PageViewport
      */
-    PageViewport getCurrentPageViewport();
+    PageViewport getCurrentPV();
 
     /**
      * Resolve the id reference.

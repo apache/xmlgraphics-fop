@@ -63,8 +63,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     private int startPageNum = 0;
     private int currentPageNum = 0;
 
-    /** Current page being worked on. */
-    private PageViewport curPage = null;
+    /** Current page-viewport-area being filled. */
+    private PageViewport curPV = null;
 
     /** Zero-based index of column (Normal Flow) in span being filled. */
     private int curFlowIdx = -1;
@@ -142,7 +142,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         makeNewPage(false, true, false);
 
         PageBreaker breaker = new PageBreaker(this);
-        int flowBPD = (int) curPage.getBodyRegion().getBPD();
+        int flowBPD = (int) curPV.getBodyRegion().getBPD();
         breaker.doLayout(flowBPD);
         
         finishPage();
@@ -162,7 +162,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         
         protected LayoutContext createLayoutContext() {
             LayoutContext lc = new LayoutContext(0);
-            int flowIPD = curPage.getCurrentSpan().getColumnWidth();
+            int flowIPD = curPV.getCurrentSpan().getColumnWidth();
             lc.setRefIPD(flowIPD);
             return lc;
         }
@@ -176,7 +176,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
         
         protected int getCurrentDisplayAlign() {
-            return curPage.getSPM().getRegion(Constants.FO_REGION_BODY).getDisplayAlign();
+            return curPV.getSPM().getRegion(Constants.FO_REGION_BODY).getDisplayAlign();
         }
         
         protected boolean hasMoreContent() {
@@ -194,14 +194,14 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
         
         protected void startPart(BlockSequence list, boolean bIsFirstPage) {
-            if (curPage == null) {
-                throw new IllegalStateException("curPage must not be null");
+            if (curPV == null) {
+                throw new IllegalStateException("curPV must not be null");
             } else {
                 //firstPart is necessary because we need the first page before we start the 
                 //algorithm so we have a BPD and IPD. This may subject to change later when we
                 //start handling more complex cases.
                 if (!firstPart) {
-                    if (curFlowIdx < curPage.getCurrentSpan().getColumnCount()-1) {
+                    if (curFlowIdx < curPV.getCurrentSpan().getColumnCount()-1) {
                         curFlowIdx++;
                     } else  {
                         // if this is the first page that will be created by
@@ -258,8 +258,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             childLC.setRefIPD(context.getRefIPD());
 
             if (!curLM.isFinished()) {
-                int flowIPD = curPage.getCurrentSpan().getColumnWidth();
-                int flowBPD = (int) curPage.getBodyRegion().getBPD();
+                int flowIPD = curPV.getCurrentSpan().getColumnWidth();
+                int flowBPD = (int) curPV.getBodyRegion().getBPD();
                 pageSeq.setLayoutDimension(PercentBase.REFERENCE_AREA_IPD, flowIPD);
                 pageSeq.setLayoutDimension(PercentBase.REFERENCE_AREA_BPD, flowBPD);
 /*LF*/          returnedList = curLM.getNextKnuthElements(childLC, alignment);
@@ -276,8 +276,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * Provides access to the current page.
      * @return the current PageViewport
      */
-    public PageViewport getCurrentPageViewport() {
-        return this.curPage;
+    public PageViewport getCurrentPV() {
+        return curPV;
     }
 
     /**
@@ -305,7 +305,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * @param id the ID reference to add
      */
     public void addIDToPage(String id) {
-        areaTreeHandler.associateIDWithPageViewport(id, curPage);
+        areaTreeHandler.associateIDWithPageViewport(id, curPV);
     }
 
     /**
@@ -321,9 +321,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      */
     public void addUnresolvedArea(String id, Resolvable res) {
         // add to the page viewport so it can serialize
-        curPage.addUnresolvedIDRef(id, res);
+        curPV.addUnresolvedIDRef(id, res);
         // add unresolved to tree
-        areaTreeHandler.addUnresolvedIDRef(id, curPage);
+        areaTreeHandler.addUnresolvedIDRef(id, curPV);
     }
 
     /**
@@ -345,7 +345,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      */
     public Marker retrieveMarker(String name, int pos, int boundary) {
         // get marker from the current markers on area tree
-        Marker mark = (Marker)curPage.getMarker(name, pos);
+        Marker mark = (Marker)curPV.getMarker(name, pos);
         if (mark == null && boundary != EN_PAGE) {
             // go back over pages until mark found
             // if document boundary then keep going
@@ -393,7 +393,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     }
 
     private PageViewport makeNewPage(boolean bIsBlank, boolean bIsFirst, boolean bIsLast) {
-        if (curPage != null) {
+        if (curPV != null) {
             finishPage();
         }
 
@@ -414,26 +414,26 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                  + spm.getMasterName() + "'.  FOP presently "
                  + "does not support this.");
             }
-            curPage = new PageViewport(spm);
+            curPV = new PageViewport(spm);
         } catch (FOPException fopex) {
             throw new IllegalArgumentException("Cannot create page: " + fopex.getMessage());
         }
 
-        curPage.setPageNumberString(pageNumberString);
+        curPV.setPageNumberString(pageNumberString);
         if (log.isDebugEnabled()) {
-            log.debug("[" + curPage.getPageNumberString() + (bIsBlank ? "*" : "") + "]");
+            log.debug("[" + curPV.getPageNumberString() + (bIsBlank ? "*" : "") + "]");
         }
 
-        curPage.createSpan(false);
+        curPV.createSpan(false);
         curFlowIdx = 0;
-        return curPage;
+        return curPV;
     }
 
     /* TODO: See if can initialize the SCLM's just once for
      * the page sequence, instead of after every page.
      */
     private void layoutSideRegion(int regionID) {
-        SideRegion reg = (SideRegion)curPage.getSPM().getRegion(regionID);
+        SideRegion reg = (SideRegion)curPV.getSPM().getRegion(regionID);
         if (reg == null) {
             return;
         }
@@ -442,7 +442,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             return;
         }
         
-        RegionViewport rv = curPage.getPage().getRegionViewport(regionID);
+        RegionViewport rv = curPV.getPage().getRegionViewport(regionID);
         StaticContentLayoutManager lm;
         lm = (StaticContentLayoutManager)
             areaTreeHandler.getLayoutManagerMaker().makeLayoutManager(sc);
@@ -451,7 +451,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         lm.setParent(this);
         /*
         LayoutContext childLC = new LayoutContext(0);
-        childLC.setStackLimit(new MinOptMax((int)curPage.getViewArea().getHeight()));
+        childLC.setStackLimit(new MinOptMax((int)curPV.getViewArea().getHeight()));
         childLC.setRefIPD(rv.getRegion().getIPD());
         */
         
@@ -480,9 +480,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         layoutSideRegion(FO_REGION_START);
         layoutSideRegion(FO_REGION_END);
         // Queue for ID resolution and rendering
-        areaTreeModel.addPage(curPage);
-        log.debug("page finished: " + curPage.getPageNumberString() + ", current num: " + currentPageNum);
-        curPage = null;
+        areaTreeModel.addPage(curPV);
+        log.debug("page finished: " + curPV.getPageNumberString() + ", current num: " + currentPageNum);
+        curPV = null;
         curFlowIdx = -1;
     }
 
@@ -496,8 +496,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         if (breakVal != Constants.EN_AUTO) {
             // We may be forced to make new page
             handleBreak(breakVal);
-        } else if (curPage == null) {
-            log.debug("curPage is null. Making new page");
+        } else if (curPV == null) {
+            log.debug("curPV is null. Making new page");
             makeNewPage(false, false, false);
         }
         /* Determine if a new span is needed.  From the XSL
@@ -514,11 +514,11 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         if (span == Constants.EN_ALL) {
             numColsNeeded = 1;
         } else { // EN_NONE
-            numColsNeeded = curPage.getBodyRegion().getColumnCount();
+            numColsNeeded = curPV.getBodyRegion().getColumnCount();
         }
-        if (numColsNeeded != curPage.getCurrentSpan().getColumnCount()) {
+        if (numColsNeeded != curPV.getCurrentSpan().getColumnCount()) {
             // need a new Span, with numColsNeeded columns
-            if (curPage.getCurrentSpan().getColumnCount() > 1) {
+            if (curPV.getCurrentSpan().getColumnCount() > 1) {
                 // finished with current span, so balance 
                 // its columns to make them the same "height"
                 // balanceColumns();  // TODO: implement
@@ -526,7 +526,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             bNeedNewSpan = true;
         }
         if (bNeedNewSpan) {
-            curPage.createSpan(span == Constants.EN_ALL);
+            curPV.createSpan(span == Constants.EN_ALL);
             curFlowIdx = 0;
         }
     }
@@ -545,24 +545,24 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         if (aclass == Area.CLASS_NORMAL) {
             //We now do this in PageBreaker
             //prepareNormalFlowArea(childArea);
-            return curPage.getCurrentSpan().getNormalFlow(curFlowIdx);
+            return curPV.getCurrentSpan().getNormalFlow(curFlowIdx);
         } else {
-            if (curPage == null) {
+            if (curPV == null) {
                 makeNewPage(false, false, false);
             }
             // Now handle different kinds of areas
             if (aclass == Area.CLASS_BEFORE_FLOAT) {
-                BeforeFloat bf = curPage.getBodyRegion().getBeforeFloat();
+                BeforeFloat bf = curPV.getBodyRegion().getBeforeFloat();
                 if (bf == null) {
                     bf = new BeforeFloat();
-                    curPage.getBodyRegion().setBeforeFloat(bf);
+                    curPV.getBodyRegion().setBeforeFloat(bf);
                 }
                 return bf;
             } else if (aclass == Area.CLASS_FOOTNOTE) {
-                Footnote fn = curPage.getBodyRegion().getFootnote();
+                Footnote fn = curPV.getBodyRegion().getFootnote();
                 if (fn == null) {
                     fn = new Footnote();
-                    curPage.getBodyRegion().setFootnote(fn);
+                    curPV.getBodyRegion().setFootnote(fn);
                 }
                 return fn;
             }
@@ -580,7 +580,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      */
     private void handleBreak(int breakVal) {
         if (breakVal == Constants.EN_COLUMN) {
-            if (curFlowIdx < curPage.getCurrentSpan().getColumnCount()) {
+            if (curFlowIdx < curPV.getCurrentSpan().getColumnCount()) {
                 // Move to next column
                 curFlowIdx++;
                 return;
@@ -590,10 +590,10 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
         log.debug("handling break after page " + currentPageNum + " breakVal=" + breakVal);
         if (needEmptyPage(breakVal)) {
-            curPage = makeNewPage(true, false, false);
+            curPV = makeNewPage(true, false, false);
         }
         if (needNewPage(breakVal)) {
-            curPage = makeNewPage(false, false, false);
+            curPV = makeNewPage(false, false, false);
         }
     }
 
@@ -607,7 +607,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      */
     private boolean needEmptyPage(int breakValue) {
 
-        if (breakValue == Constants.EN_PAGE || ((curPage != null) && curPage.getPage().isEmpty())) {
+        if (breakValue == Constants.EN_PAGE || ((curPV != null) && curPV.getPage().isEmpty())) {
             // any page is OK or we already have an empty page
             return false;
         } else {
@@ -625,7 +625,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * See if need to generate a new page for a forced break condition.
      */
     private boolean needNewPage(int breakValue) {
-        if (curPage != null && curPage.getPage().isEmpty()) {
+        if (curPV != null && curPV.getPage().isEmpty()) {
             if (breakValue == Constants.EN_PAGE) {
                 return false;
             }
