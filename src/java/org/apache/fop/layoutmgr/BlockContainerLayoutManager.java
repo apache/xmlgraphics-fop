@@ -351,7 +351,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             allocBPD = 0;
             if (abProps.bottom.getEnum() != EN_AUTO) {
                 if (isFixed()) {
-                    allocBPD = (int)getCurrentPageViewport().getViewArea().getHeight();
+                    allocBPD = (int)getCurrentPV().getViewArea().getHeight();
                 } else {
                     allocBPD = context.getStackLimit().opt; 
                 }
@@ -368,7 +368,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             allocIPD += getIPIndents();
         } else {
             if (isFixed()) {
-                allocIPD = (int)getCurrentPageViewport().getViewArea().getWidth(); 
+                allocIPD = (int)getCurrentPV().getViewArea().getWidth(); 
             } else {
                 allocIPD = context.getRefIPD();
             }
@@ -742,7 +742,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             allocBPD = 0;
             if (abProps.bottom.getEnum() != EN_AUTO) {
                 if (isFixed()) {
-                    allocBPD = (int)getCurrentPageViewport().getViewArea().getHeight();
+                    allocBPD = (int)getCurrentPV().getViewArea().getHeight();
                 } else {
                     allocBPD = context.getStackLimit().opt; 
                 }
@@ -759,7 +759,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             allocIPD += getIPIndents();
         } else {
             if (isFixed()) {
-                allocIPD = (int)getCurrentPageViewport().getViewArea().getWidth(); 
+                allocIPD = (int)getCurrentPV().getViewArea().getWidth(); 
             } else {
                 allocIPD = context.getRefIPD();
             }
@@ -843,7 +843,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
 
         addID(getBlockContainerFO().getId());
         //addMarkersToPV(true, bp1.isFirstArea(), bp1.isLastArea());
-        addMarkersToPV(true, true, false);
+        getCurrentPV().addMarkers(markers, true, true, false);
 
         LayoutManager childLM = null;
         LayoutManager lastLM = null;
@@ -998,7 +998,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
 
         int bIndents = getBlockContainerFO().getCommonBorderPaddingBackground().getBPPaddingAndBorder(false);
 
-        addMarkersToPV(false, false, true);
+        getCurrentPV().addMarkers(markers, false, false, true);
 
         flush();
 
@@ -1025,7 +1025,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
 
         BreakPoss bp1 = (BreakPoss)parentIter.peekNext();
         addID(getBlockContainerFO().getId());
-        addMarkersToPV(true, bp1.isFirstArea(), bp1.isLastArea());
+        getCurrentPV().addMarkers(markers, true, bp1.isFirstArea(), bp1.isLastArea());
 
         LayoutManager childLM;
         int iStartPos = 0;
@@ -1043,7 +1043,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         }
 
         flush();
-        addMarkersToPV(true, bp1.isFirstArea(), bp1.isLastArea());
+        getCurrentPV().addMarkers(markers, true, bp1.isFirstArea(), bp1.isLastArea());
 
         /*
         if (!isAbsoluteOrFixed()) {

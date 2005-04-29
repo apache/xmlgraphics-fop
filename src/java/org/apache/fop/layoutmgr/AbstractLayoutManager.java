@@ -351,8 +351,8 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
      *
      * @see org.apache.fop.layoutmgr.LayoutManager
      */
-    public PageViewport getCurrentPageViewport() {
-        return parentLM.getCurrentPageViewport();
+    public PageViewport getCurrentPV() {
+        return parentLM.getCurrentPV();
     }
 
     /**
@@ -390,15 +390,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
      */
     public void addUnresolvedArea(String id, Resolvable res) {
         parentLM.addUnresolvedArea(id, res);
-    }
-
-    /**
-     * Add the markers to the PageViewport when adding an area.
-     */
-    protected void addMarkersToPV(boolean starting, boolean isfirst, boolean islast) {
-        if (markers != null) {
-            getCurrentPageViewport().addMarkers(markers, starting, isfirst, islast);
-        }
     }
 
     /**

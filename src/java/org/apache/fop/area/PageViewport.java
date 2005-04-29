@@ -267,6 +267,11 @@ public class PageViewport implements Resolvable, Cloneable {
      */
     public void addMarkers(Map marks, boolean starting,
             boolean isfirst, boolean islast) {
+
+        if (marks == null) {
+            return;
+        }
+        
         // at the start of the area, register is-first and any areas
         if (starting) {
             if (isfirst) {
