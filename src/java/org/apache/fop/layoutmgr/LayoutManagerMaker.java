@@ -19,6 +19,8 @@ package org.apache.fop.layoutmgr;
 
 import java.util.List;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.area.AreaTreeHandler;
 
 
 /**
@@ -43,6 +45,15 @@ public interface LayoutManagerMaker {
      *    LayoutManager is available for the requested node
      */
     public LayoutManager makeLayoutManager(FONode node);
+
+    /**
+     * Make a PageSequenceLayoutManager object.
+     * @param ath the AreaTreeHandler object the PSLM interacts with
+     * @param ps the fo:page-sequence object this PSLM will process
+     * @return The created PageSequenceLayoutManager object
+     */
+    public PageSequenceLayoutManager makePageSequenceLayoutManager(
+        AreaTreeHandler ath, PageSequence ps);
 
 }
 
