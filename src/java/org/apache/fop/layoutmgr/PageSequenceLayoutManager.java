@@ -43,10 +43,36 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * LayoutManager for a PageSequence.
+ * LayoutManager for a PageSequence.  This class is instantiated by
+ * area.AreaTreeHandler for each fo:page-sequence found in the
+ * input document.
  */
 public class PageSequenceLayoutManager extends AbstractLayoutManager {
+
+    /** 
+     * AreaTreeHandler which activates the PSLM and controls
+     * the rendering of its pages.
+     */
+    private AreaTreeHandler areaTreeHandler;
+
+    /** 
+     * fo:page-sequence formatting object being
+     * processed by this class
+     */
     private PageSequence pageSeq;
+
+    /** 
+     * Current page-viewport-area being filled by
+     * the PSLM.
+     */
+    private PageViewport curPV = null;
+
+    /**
+     * Zero-based index of column (Normal Flow) in span (of the PV) 
+     * being filled.  See XSL Rec description of fo:region-body 
+     * and fop.Area package classes for more information. 
+     */
+    private int curFlowIdx = -1;
 
     /*
     private static class BlockBreakPosition extends LeafPosition {
@@ -61,22 +87,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     private int startPageNum = 0;
     private int currentPageNum = 0;
 
-    /** Current page-viewport-area being filled. */
-    private PageViewport curPV = null;
-
-    /** Zero-based index of column (Normal Flow) in span being filled. */
-    private int curFlowIdx = -1;
-
-    /** 
-     * AreaTreeHandler which activates this PSLM.
-     */
-    private AreaTreeHandler areaTreeHandler;
-
-    /** 
-     * AreaTreeModel that this PSLM sends pages to.
-     */
-    private AreaTreeModel areaTreeModel;
-
     /**
      * The single FlowLayoutManager object, which processes
      * the single fo:flow of the fo:page-sequence
@@ -90,23 +100,15 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     //private HashMap staticContentLMs = new HashMap(4);
 
     /**
-     * Constructor - activated by AreaTreeHandler for each
-     * fo:page-sequence in the input FO stream
+     * Constructor
      *
-     * @param pageSeq the page-sequence formatting object
+     * @param ath the area tree handler object
+     * @param pseq fo:page-sequence to process
      */
-    public PageSequenceLayoutManager(PageSequence pageSeq) {
-        super(pageSeq);
-        this.pageSeq = pageSeq;
-    }
-
-    /**
-     * Set the AreaTreeHandler
-     * @param areaTreeHandler the area tree handler object
-     */
-    public void setAreaTreeHandler(AreaTreeHandler areaTreeHandler) {
-        this.areaTreeHandler = areaTreeHandler;
-        areaTreeModel = areaTreeHandler.getAreaTreeModel();
+    public PageSequenceLayoutManager(AreaTreeHandler ath, PageSequence pseq) {
+        super(pseq);
+        this.areaTreeHandler = ath;
+        this.pageSeq = pseq;
     }
 
     /**
@@ -134,7 +136,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             title = (LineArea) clm.getParentArea(null); // can improve
         }
 
-        areaTreeModel.startPageSequence(title);
+        areaTreeHandler.getAreaTreeModel().startPageSequence(title);
         log.debug("Starting layout");
 
         curPV = makeNewPage(false, true, false);
@@ -342,6 +344,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * @return the layout manager for the marker contents
      */
     public Marker retrieveMarker(String name, int pos, int boundary) {
+        AreaTreeModel areaTreeModel = areaTreeHandler.getAreaTreeModel();
+        
         // get marker from the current markers on area tree
         Marker mark = (Marker)curPV.getMarker(name, pos);
         if (mark == null && boundary != EN_PAGE) {
@@ -424,7 +428,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         if (sc == null) {
             return;
         }
-        
+
         RegionViewport rv = curPV.getPage().getRegionViewport(regionID);
         StaticContentLayoutManager lm;
         lm = (StaticContentLayoutManager)
@@ -462,7 +466,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         layoutSideRegion(FO_REGION_START);
         layoutSideRegion(FO_REGION_END);
         // Queue for ID resolution and rendering
-        areaTreeModel.addPage(curPV);
+        areaTreeHandler.getAreaTreeModel().addPage(curPV);
         log.debug("page finished: " + curPV.getPageNumberString() + ", current num: " + currentPageNum);
         curPV = null;
         curFlowIdx = -1;

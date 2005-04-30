@@ -230,9 +230,9 @@ public class AreaTreeHandler extends FOEventHandler {
         // If no main flow, nothing to layout!
         if (pageSequence.getMainFlow() != null) {
             PageSequenceLayoutManager pageSLM;
-            pageSLM = (PageSequenceLayoutManager)
-                getLayoutManagerMaker().makeLayoutManager(pageSequence);
-            pageSLM.setAreaTreeHandler(this);
+            pageSLM =
+                getLayoutManagerMaker().makePageSequenceLayoutManager(this,
+                    pageSequence);
             pageSLM.activateLayout();
         }
     }

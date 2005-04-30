@@ -58,6 +58,7 @@ import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.pagination.Title;
+import org.apache.fop.area.AreaTreeHandler;
 
 import org.apache.fop.layoutmgr.list.ListBlockLayoutManager;
 import org.apache.fop.layoutmgr.list.ListItemLayoutManager;
@@ -109,7 +110,6 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         makers.put(PageNumber.class, new PageNumberLayoutManagerMaker());
         makers.put(PageNumberCitation.class,
                    new PageNumberCitationLayoutManagerMaker());
-        makers.put(PageSequence.class, new PageSequenceLayoutManagerMaker());
         makers.put(Table.class, new TableLayoutManagerMaker());
         makers.put(TableBody.class, new /*TableBodyLayoutManager*/Maker());
         makers.put(TableColumn.class, new /*TableColumnLayoutManager*/Maker());
@@ -151,6 +151,11 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
                                    + " found, only one may be declared."); 
         }
         return (LayoutManager) lms.get(0);
+    }
+
+    public PageSequenceLayoutManager makePageSequenceLayoutManager(
+        AreaTreeHandler ath, PageSequence ps) {
+        return new PageSequenceLayoutManager(ath, ps);
     }
 
     public static class Maker {
@@ -298,12 +303,6 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     public static class PageNumberCitationLayoutManagerMaker extends Maker {
          public void make(FONode node, List lms) {
             lms.add(new PageNumberCitationLayoutManager((PageNumberCitation) node));
-         }
-    }
-
-    public static class PageSequenceLayoutManagerMaker extends Maker {
-         public void make(FONode node, List lms) {
-             lms.add(new PageSequenceLayoutManager((PageSequence) node));
          }
     }
 
