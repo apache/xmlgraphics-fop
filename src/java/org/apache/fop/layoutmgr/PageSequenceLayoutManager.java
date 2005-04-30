@@ -26,8 +26,6 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.RegionViewport;
-import org.apache.fop.area.BeforeFloat;
-import org.apache.fop.area.Footnote;
 import org.apache.fop.area.Resolvable;
 import org.apache.fop.area.Trait;
 
@@ -139,7 +137,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         areaTreeModel.startPageSequence(title);
         log.debug("Starting layout");
 
-        makeNewPage(false, true, false);
+        curPV = makeNewPage(false, true, false);
 
         PageBreaker breaker = new PageBreaker(this);
         int flowBPD = (int) curPV.getBodyRegion().getBPD();
@@ -377,21 +375,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         return mark;
     }
 
-    /**
-     * For now, only handle normal flow areas.
-     * @see org.apache.fop.layoutmgr.LayoutManager#addChildArea(org.apache.fop.area.Area)
-     */
-    public void addChildArea(Area childArea) {
-        if (childArea == null) {
-            return;
-        }
-        if (childArea.getAreaClass() == Area.CLASS_NORMAL) {
-            getParentArea(childArea);
-        } else {
-             // todo: all the others!
-        }
-    }
-
     private PageViewport makeNewPage(boolean bIsBlank, boolean bIsFirst, boolean bIsLast) {
         if (curPV != null) {
             finishPage();
@@ -469,7 +452,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 log.error("bp==null  cls=" + reg.getRegionName());
             }
         }*/
-        //lm.flush();
         lm.reset(null);
     }
 
@@ -496,9 +478,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         if (breakVal != Constants.EN_AUTO) {
             // We may be forced to make new page
             handleBreak(breakVal);
-        } else if (curPV == null) {
-            log.debug("curPV is null. Making new page");
-            makeNewPage(false, false, false);
         }
         /* Determine if a new span is needed.  From the XSL
          * fo:region-body definition, if an fo:block has a span="ALL"
@@ -542,33 +521,18 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      */
     public Area getParentArea(Area childArea) {
         int aclass = childArea.getAreaClass();
+
         if (aclass == Area.CLASS_NORMAL) {
             //We now do this in PageBreaker
             //prepareNormalFlowArea(childArea);
             return curPV.getCurrentSpan().getNormalFlow(curFlowIdx);
-        } else {
-            if (curPV == null) {
-                makeNewPage(false, false, false);
-            }
-            // Now handle different kinds of areas
-            if (aclass == Area.CLASS_BEFORE_FLOAT) {
-                BeforeFloat bf = curPV.getBodyRegion().getBeforeFloat();
-                if (bf == null) {
-                    bf = new BeforeFloat();
-                    curPV.getBodyRegion().setBeforeFloat(bf);
-                }
-                return bf;
-            } else if (aclass == Area.CLASS_FOOTNOTE) {
-                Footnote fn = curPV.getBodyRegion().getFootnote();
-                if (fn == null) {
-                    fn = new Footnote();
-                    curPV.getBodyRegion().setFootnote(fn);
-                }
-                return fn;
-            }
-            // todo!!! other area classes (side-float, absolute, fixed)
-            return null;
+        } else if (aclass == Area.CLASS_BEFORE_FLOAT) {
+            return curPV.getBodyRegion().getBeforeFloat();
+        } else if (aclass == Area.CLASS_FOOTNOTE) {
+            return curPV.getBodyRegion().getFootnote();
         }
+        // todo!!! other area classes (side-float, absolute, fixed)
+        return null;
     }
 
     /**

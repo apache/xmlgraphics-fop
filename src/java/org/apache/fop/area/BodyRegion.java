@@ -76,34 +76,7 @@ public class BodyRegion extends RegionReference {
     public int getColumnGap() {
         return this.columnGap;
     }
-    
-    /**
-     * Set the before float area.
-     *
-     * @param bf the before float area
-     */
-    public void setBeforeFloat(BeforeFloat bf) {
-        beforeFloat = bf;
-    }
-
-    /**
-     * Set the footnote area.
-     *
-     * @param foot the footnote area
-     */
-    public void setFootnote(Footnote foot) {
-        footnote = foot;
-    }
-
-    /**
-     * Get the before float area.
-     *
-     * @return the before float area
-     */
-    public BeforeFloat getBeforeFloat() {
-        return beforeFloat;
-    }
-
+   
     /**
      * Get the main reference area.
      *
@@ -124,11 +97,26 @@ public class BodyRegion extends RegionReference {
 
 
     /**
+     * Get the before float area.
+     *
+     * @return the before float area
+     */
+    public BeforeFloat getBeforeFloat() {
+        if (beforeFloat == null) {
+            beforeFloat = new BeforeFloat();
+        }
+        return beforeFloat;
+    }
+
+    /**
      * Get the footnote area.
      *
      * @return the footnote area
      */
     public Footnote getFootnote() {
+        if (footnote == null) {
+            footnote = new Footnote();
+        }
         return footnote;
     }
 

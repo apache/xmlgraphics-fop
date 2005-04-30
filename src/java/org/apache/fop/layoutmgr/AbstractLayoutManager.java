@@ -340,9 +340,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
         return null;
     }
 
-    protected void flush() {
-    }
-
     public void addChildArea(Area childArea) {
     }
 
