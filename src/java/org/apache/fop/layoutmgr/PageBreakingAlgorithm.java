@@ -64,21 +64,17 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 bestActiveNode.position, ratio, difference));
     }
 
-    protected int filterActiveList() {
-        // leave only bestActiveNode in the activeList
-        KnuthNode tempNode = null;
+    protected int filterActiveNodes() {
+        // leave only the active node with fewest total demerits
         KnuthNode bestActiveNode = null;
-        System.out.println("PBA.filterActiveList> " + activeList.size() + " possibilita'");
-        while (activeList.size() > 0) {
-            tempNode = (KnuthNode)activeList.removeFirst();
-            System.out.println("                      + linee= " + tempNode.line + " demeriti= " + tempNode.totalDemerits);
-            if (bestActiveNode == null
-                || tempNode.totalDemerits < bestActiveNode.totalDemerits) {
-                bestActiveNode = tempNode;
+        for (int i = startLine; i < endLine; i++) {
+            for (KnuthNode node = getNode(i); node != null; node = node.next) {
+                bestActiveNode = compareNodes(bestActiveNode, node);
+                if (node != bestActiveNode) {
+                    removeNode(i, node);
+                }
             }
         }
-        activeList.add(bestActiveNode);
-        System.out.println("                      migliore " + bestActiveNode.line);
         return bestActiveNode.line;
     }
 

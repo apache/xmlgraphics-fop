@@ -18,12 +18,12 @@
 
 package org.apache.fop.layoutmgr;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 /**
  * Represents a list of Knuth elements.
  */
-public class KnuthSequence extends LinkedList {
+public class KnuthSequence extends ArrayList {
     /** Number of elements to ignore at the beginning of the list. */ 
     public int ignoreAtStart = 0;
     /** Number of elements to ignore at the end of the list. */
@@ -63,5 +63,21 @@ public class KnuthSequence extends LinkedList {
             this.clear();
             return null;
         }
+    }
+
+    public KnuthElement getLast() {
+        int idx = size();
+        if (idx == 0) {
+            return null; 
+        }
+        return (KnuthElement) get(idx - 1);
+    }
+
+    public KnuthElement removeLast() {
+        int idx = size();
+        if (idx == 0) {
+            return null; 
+        }
+        return (KnuthElement) remove(idx - 1);
     }
 }

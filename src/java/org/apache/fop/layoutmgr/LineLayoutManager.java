@@ -415,55 +415,45 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             return super.findBreakingPoints(par, lineWidth, threshold, force, hyphenationAllowed);
         }
 
-        protected int filterActiveList() {
+        protected int filterActiveNodes() {
             KnuthNode bestActiveNode = null;
 
             if (pageAlignment == EN_JUSTIFY) {
-                // leave all active nodes in the activeList
-                // and find the optimum line number
-                ListIterator activeListIterator = activeList.listIterator();
-                KnuthNode tempNode = null;
-                //System.out.println("LBA.filterActiveList> " + activeList.size() + " layouts");
-                while (activeListIterator.hasNext()) {
-                    tempNode = (KnuthNode)activeListIterator.next();
-                    //System.out.println("                      + lines = " + tempNode.line + " demerits = " + tempNode.totalDemerits);
-                    if (bestActiveNode == null
-                        || tempNode.totalDemerits < bestActiveNode.totalDemerits) {
-                        bestActiveNode = tempNode;
+                // leave all active nodes and find the optimum line number
+                //System.out.println("LBA.filterActiveNodes> " + activeNodeCount + " layouts");
+                for (int i = startLine; i < endLine; i++) {
+                    for (KnuthNode node = getNode(i); node != null; node = node.next) {
+                        //System.out.println("                       + lines = " + node.line + " demerits = " + node.totalDemerits);
+                        bestActiveNode = compareNodes(bestActiveNode, node);
                     }
                 }
 
-                // scan activeList once again and remove some nodes
-                activeListIterator = activeList.listIterator();
-                tempNode = null;
+                // scan the node set once again and remove some nodes
                 //System.out.println("LBA.filterActiveList> layout selection");
-                while (activeListIterator.hasNext()) {
-                    tempNode = (KnuthNode)activeListIterator.next();
-                    //if (Math.abs(tempNode.line - bestActiveNode.line) > maxDiff) {
-                    //if (false) {
-                    if (tempNode.line != bestActiveNode.line
-                        && tempNode.totalDemerits > MAX_DEMERITS) {
-                        //System.out.println("                    XXX lines = " + tempNode.line + " demerits = " + tempNode.totalDemerits);
-                        activeListIterator.remove();
-                    } else {
-                        //System.out.println("                     ok lines = " + tempNode.line + " demerits = " + tempNode.totalDemerits);
+                for (int i = startLine; i < endLine; i++) {
+                    for (KnuthNode node = getNode(i); node != null; node = node.next) {
+                        //if (Math.abs(node.line - bestActiveNode.line) > maxDiff) {
+                        //if (false) {
+                        if (node.line != bestActiveNode.line
+                            && node.totalDemerits > MAX_DEMERITS) {
+                            //System.out.println("                     XXX lines = " + node.line + " demerits = " + node.totalDemerits);
+                            removeNode(i, node);
+                        } else {
+                            //System.out.println("                      ok lines = " + node.line + " demerits = " + node.totalDemerits);
+                        }
                     }
                 }
             } else {
-                // leave only bestActiveNode in the activeList
-                KnuthNode tempNode = null;
-                //System.out.println("LBA.filterActiveList> " + activeList.size() + " layouts");
-                while (activeList.size() > 0) {
-                    tempNode = (KnuthNode)activeList.removeFirst();
-                    //System.out.println("                      + lines = " + tempNode.line + " demerits = " + tempNode.totalDemerits);
-                    if (bestActiveNode == null
-                        || tempNode.totalDemerits < bestActiveNode.totalDemerits) {
-                        bestActiveNode = tempNode;
+                // leave only the active node with fewest total demerits
+                for (int i = startLine; i < endLine; i++) {
+                    for (KnuthNode node = getNode(i); node != null; node = node.next) {
+                        bestActiveNode = compareNodes(bestActiveNode, node);
+                        if (node != bestActiveNode) {
+                            removeNode(i, node);
+                        }
                     }
                 }
-                activeList.add(bestActiveNode);
             }
-            //System.out.println("                      best " + bestActiveNode.line);
             return bestActiveNode.line;
         }
     }
