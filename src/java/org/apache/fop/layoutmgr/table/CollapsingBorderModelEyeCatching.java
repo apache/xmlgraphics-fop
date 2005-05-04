@@ -24,7 +24,6 @@ import org.apache.fop.fo.flow.TableBody;
 import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableColumn;
 import org.apache.fop.fo.flow.TableRow;
-import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
 
 /**
@@ -34,11 +33,6 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
  */
 public class CollapsingBorderModelEyeCatching extends CollapsingBorderModel {
 
-    private static final int BEFORE = CommonBorderPaddingBackground.BEFORE;
-    private static final int AFTER = CommonBorderPaddingBackground.AFTER;
-    private static final int START = CommonBorderPaddingBackground.START;
-    private static final int END = CommonBorderPaddingBackground.END;
-    
     public BorderInfo determineWinner(GridUnit currentGridUnit, 
             GridUnit otherGridUnit, int side, int flags) {
         final boolean vertical = isVerticalRelation(side);
@@ -109,8 +103,9 @@ public class CollapsingBorderModelEyeCatching extends CollapsingBorderModel {
             //row group (=body, table-header or table-footer)
             current[2] = currentBody.getCommonBorderPaddingBackground().getBorderInfo(side);
         }
-        if ((otherSide == BEFORE && otherGridUnit.getFlag(GridUnit.FIRST_IN_BODY))
-                || (otherSide == AFTER && otherGridUnit.getFlag(GridUnit.LAST_IN_BODY))) {
+        if (otherGridUnit != null
+                && ((otherSide == BEFORE && otherGridUnit.getFlag(GridUnit.FIRST_IN_BODY))
+                    || (otherSide == AFTER && otherGridUnit.getFlag(GridUnit.LAST_IN_BODY)))) {
             //row group (=body, table-header or table-footer)
             other[2] = otherBody.getCommonBorderPaddingBackground().getBorderInfo(otherSide);
         }
@@ -126,7 +121,11 @@ public class CollapsingBorderModelEyeCatching extends CollapsingBorderModel {
             other[3] = otherColumn.getCommonBorderPaddingBackground().getBorderInfo(otherSide);
         }
         //TODO current[4] and other[4] for column groups
-        if (otherGridUnit == null) {
+        if (otherGridUnit == null
+            && ((side == BEFORE && (flags & VERTICAL_START_END_OF_TABLE) > 0)
+                    || (side == AFTER && (flags & VERTICAL_START_END_OF_TABLE) > 0)
+                    || (side == START)
+                    || (side == END))) {
             //table
             current[5] = table.getCommonBorderPaddingBackground().getBorderInfo(side);
         }
@@ -142,7 +141,6 @@ public class CollapsingBorderModelEyeCatching extends CollapsingBorderModel {
         
         // *** Rule 2 ***
         if (!doRule2(current, other)) {
-            return null; //paint no border
         }
         
         // *** Rule 3 ***
@@ -167,7 +165,7 @@ public class CollapsingBorderModelEyeCatching extends CollapsingBorderModel {
     }
 
     private BorderInfo doRule1(BorderInfo[] current, BorderInfo[] other) {
-        for (int i = 0; i < current.length - 1; i++) {
+        for (int i = 0; i < current.length; i++) {
             if ((current[i] != null) && (current[i].getStyle() == Constants.EN_HIDDEN)) {
                 return current[i];
             }
@@ -180,7 +178,7 @@ public class CollapsingBorderModelEyeCatching extends CollapsingBorderModel {
     
     private boolean doRule2(BorderInfo[] current, BorderInfo[] other) {
         boolean found = false;
-        for (int i = 0; i < current.length - 1; i++) {
+        for (int i = 0; i < current.length; i++) {
             if ((current[i] != null) && (current[i].getStyle() != Constants.EN_NONE)) {
                 found = true;
                 break;
@@ -196,7 +194,7 @@ public class CollapsingBorderModelEyeCatching extends CollapsingBorderModel {
     private BorderInfo doRule3(BorderInfo[] current, BorderInfo[] other) {
         int width = 0;
         //Find max border width
-        for (int i = 0; i < current.length - 1; i++) {
+        for (int i = 0; i < current.length; i++) {
             if ((current[i] != null) && (current[i].getRetainedWidth() > width)) {
                 width = current[i].getRetainedWidth();
             }
@@ -207,13 +205,12 @@ public class CollapsingBorderModelEyeCatching extends CollapsingBorderModel {
         BorderInfo widest = null;
         int count = 0;
         //See if there's only one with the widest border
-        for (int i = 0; i < current.length - 1; i++) {
+        for (int i = 0; i < current.length; i++) {
             if ((current[i] != null) && (current[i].getRetainedWidth() == width)) {
                 count++;
                 if (widest == null) {
                     widest = current[i];
                 }
-                break;
             } else {
                 current[i] = null; //Discard the narrower ones
             }
@@ -222,7 +219,6 @@ public class CollapsingBorderModelEyeCatching extends CollapsingBorderModel {
                 if (widest == null) {
                     widest = other[i];
                 }
-                break;
             } else {
                 other[i] = null; //Discard the narrower ones
             }
@@ -237,26 +233,24 @@ public class CollapsingBorderModelEyeCatching extends CollapsingBorderModel {
     private BorderInfo doRule4(BorderInfo[] current, BorderInfo[] other) {
         int pref = getPreferenceValue(Constants.EN_INSET); //Lowest preference
         //Find highest preference value
-        for (int i = 0; i < current.length - 1; i++) {
+        for (int i = 0; i < current.length; i++) {
             if (current[i] != null) {
                 int currPref = getPreferenceValue(current[i].getStyle());
                 if (currPref > pref) {
                     pref = currPref;
-                    break;
                 }
             }
             if (other[i] != null) {
                 int currPref = getPreferenceValue(other[i].getStyle());
                 if (currPref > pref) {
                     pref = currPref;
-                    break;
                 }
             }
         }
         BorderInfo preferred = null;
         int count = 0;
         //See if there's only one with the preferred border style
-        for (int i = 0; i < current.length - 1; i++) {
+        for (int i = 0; i < current.length; i++) {
             if (current[i] != null) {
                 int currPref = getPreferenceValue(current[i].getStyle());
                 if (currPref == pref) {
@@ -290,7 +284,7 @@ public class CollapsingBorderModelEyeCatching extends CollapsingBorderModel {
     }
 
     private BorderInfo doRule5(BorderInfo[] current, BorderInfo[] other) {
-        for (int i = 0; i < current.length - 1; i++) {
+        for (int i = 0; i < current.length; i++) {
             if (current[i] != null) {
                 return current[i];
             }

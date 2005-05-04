@@ -28,14 +28,26 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
  */
 public abstract class CollapsingBorderModel {
 
+    /** before side */
+    protected static final int BEFORE = CommonBorderPaddingBackground.BEFORE;
+    /** after side */
+    protected static final int AFTER = CommonBorderPaddingBackground.AFTER;
+    /** start side */
+    protected static final int START = CommonBorderPaddingBackground.START;
+    /** end side */
+    protected static final int END = CommonBorderPaddingBackground.END;
+    
+    /** Flag: current grid unit is either start or end of the table. */
+    public static final int VERTICAL_START_END_OF_TABLE = 1;
+    
     /** Indicates that the cell is/starts in the first row being painted on a particular page */
-    public static final int FIRST_ROW_IN_TABLE_PART = 1;
+    //public static final int FIRST_ROW_IN_TABLE_PART = 1;
     /** Indicates that the cell is/ends in the last row being painted on a particular page */
-    public static final int LAST_ROW_IN_TABLE_PART  = 2;
+    //public static final int LAST_ROW_IN_TABLE_PART  = 2;
     /** Indicates that the cell is/starts in the first row of a body/table-header/table-footer */
-    public static final int FIRST_ROW_IN_GROUP      = 4;
+    //public static final int FIRST_ROW_IN_GROUP      = 4;
     /** Indicates that the cell is/end in the last row of a body/table-header/table-footer */
-    public static final int LAST_ROW_IN_GROUP       = 8;
+    //public static final int LAST_ROW_IN_GROUP       = 8;
     
     private static CollapsingBorderModel collapse = null;
     private static CollapsingBorderModel collapseWithPrecedence = null;

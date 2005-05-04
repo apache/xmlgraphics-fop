@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableColumn;
+import org.apache.fop.fo.properties.LengthRangeProperty;
 
 /**
  * This class represents a primary grid unit of a spanned cell.
@@ -37,6 +38,8 @@ public class PrimaryGridUnit extends GridUnit {
     private int startRow;
     /** Links to the spanned grid units. (List of GridUnit arrays, one array represents a row) */ 
     private List rows;
+    /** The calculated size of the cell's content. (cached value) */
+    private int contentLength = -1;
     
     public PrimaryGridUnit(TableCell cell, TableColumn column, int startCol, int startRow) {
         super(cell, column, startCol, 0);
@@ -62,6 +65,94 @@ public class PrimaryGridUnit extends GridUnit {
         return this.elements;
     }
     
+    /** 
+     * @return Returns the half the maximum before border width of this cell.
+     */
+    public int getHalfMaxBeforeBorderWidth() {
+        int value = 0;
+        if (getRows() != null) {
+            int before = 0;
+            //first row for before borders
+            GridUnit[] row = (GridUnit[])getRows().get(0);
+            for (int i = 0; i < row.length; i++) {
+                if (row[i].hasBorders()) {
+                    before = Math.max(before, 
+                            row[i].getBorders().getBorderBeforeWidth(false));
+                }
+            }
+            value += before / 2;
+        } else {
+            if (hasBorders()) {
+                value += getBorders().getBorderBeforeWidth(false) / 2;
+            }
+        }
+        return value;
+    }
+    
+    /** 
+     * @return Returns the sum of half the maximum before and after border 
+     * widths of this cell.
+     */
+    public int getHalfMaxBorderWidth() {
+        int value = getHalfMaxBeforeBorderWidth();
+        if (getRows() != null) {
+            //Last row for after borders
+            int after = 0;
+            GridUnit[] row = (GridUnit[])getRows().get(getRows().size() - 1);
+            for (int i = 0; i < row.length; i++) {
+                if (row[i].hasBorders()) {
+                    after = Math.max(after, row[i].getBorders().getBorderAfterWidth(false));
+                }
+            }
+            value += after / 2;
+        } else {
+            if (hasBorders()) {
+                value += getBorders().getBorderAfterWidth(false) / 2;
+            }
+        }
+        return value;
+    }
+    
+    /** @param value The length of the cell content to remember. */
+    public void setContentLength(int value) {
+        this.contentLength = value;
+    }
+    
+    /** @return Returns the length of the cell content. */
+    public int getContentLength() {
+        return contentLength;
+    }
+
+    /** 
+     * @return Returns the length of the cell content after the bpd/height attributes on cell
+     * and row have been taken into account.
+     */
+    public int getEffectiveContentLength() {
+        int value = getContentLength();
+        if (!getCell().getBlockProgressionDimension().getMinimum().isAuto()) {
+            value = Math.max(value, 
+                    getCell().getBlockProgressionDimension().getMinimum().getLength().getValue());
+        }
+        if (getRow() != null 
+                && !getRow().getBlockProgressionDimension().getMinimum().isAuto()) {
+            value = Math.max(value, 
+                    getRow().getBlockProgressionDimension().getMinimum().getLength().getValue());
+        }
+        return value;
+    }
+    
+    /** @return true if cell/row has an explicit BPD/height */
+    public boolean hasBPD() {
+        if (!getCell().getBlockProgressionDimension().getOptimum().isAuto()) {
+            return true;
+        }
+        if (getRow() != null 
+                && !getRow().getBlockProgressionDimension().getOptimum().isAuto()) {
+            return true;
+        }
+        return false;
+    }
+
     public List getRows() {
         return this.rows;
     }

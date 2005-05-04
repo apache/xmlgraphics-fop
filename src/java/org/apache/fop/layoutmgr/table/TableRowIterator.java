@@ -150,11 +150,35 @@ public class TableRowIterator {
         }
     }
     
+    public void backToPreviewRow() {
+        currentIndex--;
+    }
+    
+    public EffRow getFirstRow() {
+        if (rows.size() == 0) {
+            prefetchNext();
+        }
+        return getCachedRow(0);
+    }
+    
+    public EffRow getLastRow() {
+        while (prefetchNext()) {
+            //nop
+        }
+        return getCachedRow(rows.size() - 1);
+    }
+    
     public EffRow getCachedRow(int index) {
-        return (EffRow)rows.get(index);
+        if (index < 0 || index >= rows.size()) {
+            return null;
+        } else {
+            return (EffRow)rows.get(index);
+        }
     }
     
     private boolean prefetchNext() {
+        boolean firstInTable = false;
+        boolean firstInBody = false;
         if (childInBodyIterator != null) {
             if (!childInBodyIterator.hasNext()) {
                 //force skip on to next body
@@ -164,8 +188,18 @@ public class TableRowIterator {
         if (childInBodyIterator == null) {
             if (bodyIterator.hasNext()) {
                 childInBodyIterator = ((TableBody)bodyIterator.next()).getChildNodes();
+                if (rows.size() == 0) {
+                    firstInTable = true;
+                }
+                firstInBody = true;
             } else {
                 //no more rows
+                if (rows.size() > 0) {
+                    getCachedRow(rows.size() - 1).setFlagForAllGridUnits(
+                            GridUnit.LAST_IN_BODY, true);
+                    getCachedRow(rows.size() - 1).setFlagForAllGridUnits(
+                            GridUnit.LAST_IN_TABLE, true);
+                }
                 return false;
             }
         }
@@ -198,6 +232,12 @@ public class TableRowIterator {
             throw new IllegalStateException("Illegal class found: " + node.getClass().getName());
         }
         EffRow gridUnits = buildGridRow(this.currentRow);
+        if (firstInBody) {
+            gridUnits.setFlagForAllGridUnits(GridUnit.FIRST_IN_BODY, true);
+        }
+        if (firstInTable) {
+            gridUnits.setFlagForAllGridUnits(GridUnit.FIRST_IN_TABLE, true);
+        }
         log.debug(gridUnits);
         rows.add(gridUnits);
         return true;
@@ -277,7 +317,7 @@ public class TableRowIterator {
                 horzSpan[0] = gu;
                 for (int j = 1; j < cell.getNumberColumnsSpanned(); j++) {
                     colnum++;
-                    GridUnit guSpan = new GridUnit(cell, columns.getColumn(colnum), colnum - 1, j);
+                    GridUnit guSpan = new GridUnit(gu, columns.getColumn(colnum), colnum - 1, j);
                     if (safelyGetListItem(gridUnits, colnum - 1) != null) {
                         log.error("Overlapping cell at position " + colnum);
                         //TODO throw layout exception
@@ -409,6 +449,14 @@ public class TableRowIterator {
             return gridUnits;
         }
         
+        public void setFlagForAllGridUnits(int flag, boolean value) {
+            Iterator iter = gridUnits.iterator();
+            while (iter.hasNext()) {
+                GridUnit gu = (GridUnit)iter.next();
+                gu.setFlag(flag, value);
+            }
+        }
+
         /** @see java.lang.Object#toString() */
         public String toString() {
             StringBuffer sb = new StringBuffer("EffRow {");
