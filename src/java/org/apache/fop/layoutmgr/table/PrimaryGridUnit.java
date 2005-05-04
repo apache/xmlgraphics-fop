@@ -90,11 +90,10 @@ public class PrimaryGridUnit extends GridUnit {
     }
     
     /** 
-     * @return Returns the sum of half the maximum before and after border 
-     * widths of this cell.
+     * @return Returns the half the maximum after border width of this cell.
      */
-    public int getHalfMaxBorderWidth() {
-        int value = getHalfMaxBeforeBorderWidth();
+    public int getHalfMaxAfterBorderWidth() {
+        int value = 0;
         if (getRows() != null) {
             //Last row for after borders
             int after = 0;
@@ -111,6 +110,14 @@ public class PrimaryGridUnit extends GridUnit {
             }
         }
         return value;
+    }
+    
+    /** 
+     * @return Returns the sum of half the maximum before and after border 
+     * widths of this cell.
+     */
+    public int getHalfMaxBorderWidth() {
+        return getHalfMaxBeforeBorderWidth() + getHalfMaxAfterBorderWidth();
     }
     
     /** @param value The length of the cell content to remember. */

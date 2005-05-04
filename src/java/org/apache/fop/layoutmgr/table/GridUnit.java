@@ -157,6 +157,13 @@ public class GridUnit {
     }
     
     /**
+     * @return the index of the grid unit inside a cell in column direction
+     */
+    public int getColSpanIndex() {
+        return this.colSpanIndex;
+    }
+
+    /**
      * Returns a BorderInfo instance for a side of the currently applicable cell before border
      * resolution (i.e. the value from the FO). A return value of null indicates an empty cell.
      * See CollapsingBorderModel(EyeCatching) where this method is used. 
