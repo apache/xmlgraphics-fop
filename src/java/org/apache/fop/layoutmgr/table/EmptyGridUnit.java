@@ -19,7 +19,6 @@
 package org.apache.fop.layoutmgr.table;
 
 import org.apache.fop.fo.flow.TableBody;
-import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableColumn;
 import org.apache.fop.fo.flow.TableRow;
 
@@ -35,12 +34,11 @@ public class EmptyGridUnit extends GridUnit {
      * @param row Optional table-row instance
      * @param column table-column instance
      * @param body table-body the grid unit belongs to
-     * @param startCol 
-     * @param colSpanIndex
+     * @param startCol column index 
      */
     public EmptyGridUnit(TableRow row, TableColumn column, TableBody body, 
             int startCol) {
-        super(null, column, startCol, 0);
+        super(null, null, column, startCol, 0);
         this.row = row;
         this.body = body;
     }

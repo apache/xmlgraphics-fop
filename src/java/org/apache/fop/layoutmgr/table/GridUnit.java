@@ -45,6 +45,8 @@ public class GridUnit {
     /** Indicates that the grid unit is in the last row (context: table). */
     public static final int LAST_IN_TABLE = 5;
     
+    /** Primary grid unit */
+    private PrimaryGridUnit primary;
     /** Table cell which occupies this grid unit */
     private TableCell cell;
     /** Table column that this grid unit belongs to */
@@ -63,6 +65,15 @@ public class GridUnit {
     
     
     public GridUnit(TableCell cell, TableColumn column, int startCol, int colSpanIndex) {
+        this(null, cell, column, startCol, colSpanIndex);
+    }
+    
+    public GridUnit(PrimaryGridUnit primary, TableColumn column, int startCol, int colSpanIndex) {
+        this(primary, primary.getCell(), column, startCol, colSpanIndex);
+    }
+    
+    protected GridUnit(PrimaryGridUnit primary, TableCell cell, TableColumn column, int startCol, int colSpanIndex) {
+        this.primary = primary;
         this.cell = cell;
         this.column = column;
         this.startCol = startCol;
@@ -101,6 +112,13 @@ public class GridUnit {
         return (Table)node;
     }
     
+    /**
+     * @return the primary grid unit if this is a spanned grid unit
+     */
+    public PrimaryGridUnit getPrimary() {
+        return (isPrimary() ? (PrimaryGridUnit)this : this.primary);
+    }
+
     public boolean isPrimary() {
         return false;
     }
@@ -129,6 +147,13 @@ public class GridUnit {
         } else {
             return true;
         }
+    }
+    
+    /**
+     * @return the index of the grid unit inside a cell in row direction
+     */
+    public int getRowSpanIndex() {
+        return this.rowSpanIndex;
     }
     
     /**
@@ -176,6 +201,16 @@ public class GridUnit {
      * @param side the side to resolve (one of CommonBorderPaddingBackground.BEFORE|AFTER|START|END)
      */
     public void resolveBorder(GridUnit other, int side) {
+        resolveBorder(other, side, 0);
+    }
+    
+    /**
+     * Resolve collapsing borders for the given cell. Used in case of the collapsing border model.
+     * @param other neighbouring grid unit if any
+     * @param side the side to resolve (one of CommonBorderPaddingBackground.BEFORE|AFTER|START|END)
+     * @param resFlags flags for the border resolution
+     */
+    public void resolveBorder(GridUnit other, int side, int resFlags) {
         CollapsingBorderModel borderModel = CollapsingBorderModel.getBorderModelFor(
                 getTable().getBorderCollapse());
         if (this.effBorders == null) {
@@ -183,7 +218,7 @@ public class GridUnit {
         }
         this.effBorders.setBorderInfo(
                 borderModel.determineWinner(this, other, 
-                        side, 0), side);
+                        side, resFlags), side);
     }
     
     public boolean getFlag(int which) {
@@ -206,7 +241,7 @@ public class GridUnit {
             return null;
         } else {
             //cloning the current GridUnit with adjustments
-            GridUnit gu = new GridUnit(getCell(), getColumn(), startCol, colSpanIndex);
+            GridUnit gu = new GridUnit(getPrimary(), getColumn(), startCol, colSpanIndex);
             gu.rowSpanIndex = rowSpanIndex + 1;
             return gu;
         }

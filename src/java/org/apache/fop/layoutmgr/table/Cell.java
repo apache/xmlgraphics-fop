@@ -395,6 +395,16 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
         rowHeight = h;
     }
 
+    private int getContentHeight(int rowHeight, GridUnit gu) {
+        int bpd = rowHeight;
+        bpd -= gu.getPrimary().getHalfMaxBorderWidth();
+        CommonBorderPaddingBackground cbpb 
+            = gu.getCell().getCommonBorderPaddingBackground(); 
+        bpd -= cbpb.getPaddingBefore(false);
+        bpd -= cbpb.getPaddingAfter(false);
+        return bpd;
+    }
+    
     /**
      * Add the areas for the break points.
      * The cell contains block stacking layout managers
@@ -421,7 +431,11 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
         } else {
             TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
             //TODO Set these booleans right
-            boolean[] outer = new boolean[] {false, false, false, false};
+            boolean[] outer = new boolean[] {
+                    gridUnit.getFlag(GridUnit.FIRST_IN_TABLE), 
+                    gridUnit.getFlag(GridUnit.LAST_IN_TABLE),
+                    gridUnit.getFlag(GridUnit.IN_FIRST_COLUMN),
+                    gridUnit.getFlag(GridUnit.IN_LAST_COLUMN)};
             if (!gridUnit.hasSpanning()) {
                 //Can set the borders directly if there's no span
                 TraitSetter.addCollapsingBorders(curBlockArea, 
@@ -442,9 +456,12 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
                         Block block = new Block();
                         block.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
                         block.setPositioning(Block.ABSOLUTE);
-                        //block.setBPD(gu.row.getRowHeight());
-                        block.setBPD(rowHeight); //TODO This needs to be fixed for row spanning
-                        //lastRowHeight = gu.row.getRowHeight();
+
+                        int bpd = getContentHeight(rowHeight, gu);
+                        bpd += gridUnit.getHalfMaxBeforeBorderWidth() 
+                                - (gu.getBorders().getBorderBeforeWidth(false) / 2);
+                        block.setBPD(bpd);
+                        //TODO This needs to be fixed for row spanning
                         lastRowHeight = rowHeight;
                         int ipd = gu.getColumn().getColumnWidth().getValue();
                         int borderStartWidth = gu.getBorders().getBorderStartWidth(false) / 2; 
@@ -452,7 +469,12 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
                         ipd -= gu.getBorders().getBorderEndWidth(false) / 2;
                         block.setIPD(ipd);
                         block.setXOffset(dx + borderStartWidth);
-                        block.setYOffset(dy);
+                        int halfCollapsingBorderHeight = 0;
+                        if (!fobj.isSeparateBorderModel()) {
+                            halfCollapsingBorderHeight += 
+                                gu.getBorders().getBorderBeforeWidth(false) / 2;
+                        }
+                        block.setYOffset(dy - halfCollapsingBorderHeight);
                         TraitSetter.addCollapsingBorders(block, gu.getBorders(), outer);
                         parentLM.addChildArea(block);
                         dx += gu.getColumn().getColumnWidth().getValue();
@@ -477,35 +499,8 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
         }
 
         AreaAdditionUtil.addAreas(parentIter, layoutContext);
-        /*
-        LayoutManager childLM;
-        int iStartPos = 0;
-        LayoutContext lc = new LayoutContext(0);
-        PositionIterator childPosIter;
-        childPosIter = new StackingIter(positionList.listIterator());
-        while ((childLM = childPosIter.getNextChildLM()) != null) {
-            // set last area flag
-            lc.setFlags(LayoutContext.LAST_AREA,
-                    (layoutContext.isLastArea() && childLM == lastLM));
-            lc.setStackLimit(layoutContext.getStackLimit());
-            // Add the line areas to Area
-            childLM.addAreas(childPosIter, lc);
-        }
-        while (parentIter.hasNext()) {
-            LeafPosition lfp = (LeafPosition) parentIter.next();
-            // Add the block areas to Area
-            PositionIterator breakPosIter =
-              new BreakPossPosIter(childBreaks, iStartPos,
-                                   lfp.getLeafPos() + 1);
-            iStartPos = lfp.getLeafPos() + 1;
-            while ((childLM = breakPosIter.getNextChildLM()) != null) {
-                childLM.addAreas(breakPosIter, lc);
-            }
-        }*/
-
         
-        int contentBPD = rowHeight;
-        contentBPD -= borderAndPaddingBPD;
+        int contentBPD = getContentHeight(rowHeight, gridUnit);
         curBlockArea.setBPD(contentBPD);
 
         flush();
@@ -546,8 +541,11 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
             }
             int halfCollapsingBorderHeight = 0;
             if (!fobj.isSeparateBorderModel()) {
-                halfCollapsingBorderHeight += 
-                    gridUnit.getBorders().getBorderBeforeWidth(false) / 2;
+                if (gridUnit.hasSpanning()) {
+                    halfCollapsingBorderHeight -= gridUnit.getHalfMaxBeforeBorderWidth();
+                } else {
+                    halfCollapsingBorderHeight += gridUnit.getHalfMaxBeforeBorderWidth();
+                }
             }
             curBlockArea.setXOffset(xoffset + inRowIPDOffset + halfBorderSep + indent);
             curBlockArea.setYOffset(yoffset - halfCollapsingBorderHeight);
@@ -585,7 +583,7 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
         }
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#negotiateBPDAdjustment(int, org.apache.fop.layoutmgr.KnuthElement)
      */
     public int negotiateBPDAdjustment(int adj, KnuthElement lastElement) {
