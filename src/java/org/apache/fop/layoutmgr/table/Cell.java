@@ -460,6 +460,8 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
                         int bpd = getContentHeight(rowHeight, gu);
                         bpd += gridUnit.getHalfMaxBeforeBorderWidth() 
                                 - (gu.getBorders().getBorderBeforeWidth(false) / 2);
+                        bpd += gridUnit.getHalfMaxAfterBorderWidth() 
+                                - (gu.getBorders().getBorderAfterWidth(false) / 2);
                         block.setBPD(bpd);
                         //TODO This needs to be fixed for row spanning
                         lastRowHeight = rowHeight;
