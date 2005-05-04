@@ -104,6 +104,7 @@ public class CollapsingBorderModelEyeCatching extends CollapsingBorderModel {
             current[2] = currentBody.getCommonBorderPaddingBackground().getBorderInfo(side);
         }
         if (otherGridUnit != null
+                && otherBody != null
                 && ((otherSide == BEFORE && otherGridUnit.getFlag(GridUnit.FIRST_IN_BODY))
                     || (otherSide == AFTER && otherGridUnit.getFlag(GridUnit.LAST_IN_BODY)))) {
             //row group (=body, table-header or table-footer)
