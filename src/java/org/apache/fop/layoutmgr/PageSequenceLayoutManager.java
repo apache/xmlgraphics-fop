@@ -133,7 +133,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         if (pageSeq.getTitleFO() != null) {
             ContentLayoutManager clm = new ContentLayoutManager(pageSeq
                     .getTitleFO(), this);
-            title = (LineArea) clm.getParentArea(null); // can improve
+            title = (LineArea) clm.getParentArea(null);
         }
 
         areaTreeHandler.getAreaTreeModel().startPageSequence(title);
@@ -207,8 +207,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                         // if this is the first page that will be created by
                         // the current BlockSequence, it could have a break
                         // condition that must be satisfied;
-                        // otherwise, we simply need a new page
-                        handleBreak(bIsFirstPage ? list.getStartOn() : Constants.EN_PAGE);
+                        // otherwise, we may simply need a new page
+                        handleBreakBefore(bIsFirstPage ? list.getStartOn() : Constants.EN_PAGE);
                     }
                 }
             }
@@ -474,14 +474,14 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 
     private void prepareNormalFlowArea(Area childArea) {
         // Need span, break
-        int breakVal = Constants.EN_AUTO;
+        int breakBeforeVal = Constants.EN_AUTO;
         Integer breakBefore = (Integer)childArea.getTrait(Trait.BREAK_BEFORE);
         if (breakBefore != null) {
-            breakVal = breakBefore.intValue();
+            breakBeforeVal = breakBefore.intValue();
         }
-        if (breakVal != Constants.EN_AUTO) {
+        if (breakBeforeVal != Constants.EN_AUTO) {
             // We may be forced to make new page
-            handleBreak(breakVal);
+            handleBreakBefore(breakBeforeVal);
         }
         /* Determine if a new span is needed.  From the XSL
          * fo:region-body definition, if an fo:block has a span="ALL"
@@ -544,23 +544,25 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * or page. May need to make an empty page if next page would
      * not have the desired "handedness".
      *
-     * @param breakVal the break value to handle
+     * @param breakBefore - the break-before trait of the area
+     * currently being processed.
      */
-    private void handleBreak(int breakVal) {
-        if (breakVal == Constants.EN_COLUMN) {
+    private void handleBreakBefore(int breakBefore) {
+        if (breakBefore == Constants.EN_COLUMN) {
             if (curFlowIdx < curPV.getCurrentSpan().getColumnCount()) {
                 // Move to next column
                 curFlowIdx++;
-                return;
+            } else {
+                curPV = makeNewPage(false, false, false);
             }
-            // else need new page
-            breakVal = Constants.EN_PAGE;
+            return;
         }
-        log.debug("handling break after page " + currentPageNum + " breakVal=" + breakVal);
-        if (needEmptyPage(breakVal)) {
+        log.debug("handling break-before after page " + currentPageNum 
+            + " breakVal=" + breakBefore);
+        if (needEmptyPage(breakBefore)) {
             curPV = makeNewPage(true, false, false);
         }
-        if (needNewPage(breakVal)) {
+        if (needNewPage(breakBefore)) {
             curPV = makeNewPage(false, false, false);
         }
     }
@@ -573,36 +575,33 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * it will flow onto another page or not, so we'd probably better
      * block until the queue of layoutable stuff is empty!
      */
-    private boolean needEmptyPage(int breakValue) {
-
-        if (breakValue == Constants.EN_PAGE || ((curPV != null) && curPV.getPage().isEmpty())) {
+    private boolean needEmptyPage(int breakBefore) {
+        if (breakBefore == Constants.EN_PAGE || (curPV.getPage().isEmpty())) {
             // any page is OK or we already have an empty page
             return false;
         } else {
             /* IF we are on the kind of page we need, we'll need a new page. */
-            if (currentPageNum % 2 != 0) {
-                // Current page is odd
-                return (breakValue == Constants.EN_ODD_PAGE);
-            } else {
-                return (breakValue == Constants.EN_EVEN_PAGE);
+            if (currentPageNum % 2 == 0) { // even page
+                return (breakBefore == Constants.EN_EVEN_PAGE);
+            } else { // odd page
+                return (breakBefore == Constants.EN_ODD_PAGE);
             }
         }
     }
 
     /**
-     * See if need to generate a new page for a forced break condition.
+     * See if need to generate a new page
      */
-    private boolean needNewPage(int breakValue) {
-        if (curPV != null && curPV.getPage().isEmpty()) {
-            if (breakValue == Constants.EN_PAGE) {
+    private boolean needNewPage(int breakBefore) {
+        if (curPV.getPage().isEmpty()) {
+            if (breakBefore == Constants.EN_PAGE) {
                 return false;
             }
-            else if (currentPageNum % 2 != 0) {
-                // Current page is odd
-                return (breakValue == Constants.EN_EVEN_PAGE);
+            else if (currentPageNum % 2 == 0) { // even page
+                return (breakBefore == Constants.EN_ODD_PAGE);
             }
-            else {
-                return (breakValue == Constants.EN_ODD_PAGE);
+            else { // odd page
+                return (breakBefore == Constants.EN_EVEN_PAGE);
             }
         } else {
             return true;
