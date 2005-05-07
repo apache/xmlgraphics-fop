@@ -27,7 +27,6 @@ import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Resolvable;
-import org.apache.fop.area.Trait;
 
 import org.apache.fop.datatypes.PercentBase;
 
@@ -74,30 +73,20 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      */
     private int curFlowIdx = -1;
 
-    /*
-    private static class BlockBreakPosition extends LeafPosition {
-        protected BreakPoss breakps;
-
-        protected BlockBreakPosition(LayoutManager lm, BreakPoss bp) {
-            super(lm, 0);
-            breakps = bp;
-        }
-    }*/
-
-    private int startPageNum = 0;
-    private int currentPageNum = 0;
-
     /**
-     * The single FlowLayoutManager object, which processes
+     * The FlowLayoutManager object, which processes
      * the single fo:flow of the fo:page-sequence
      */
     private FlowLayoutManager childFLM = null;
-    
+
     /**
      * The collection of StaticContentLayoutManager objects that
      * are associated with this Page Sequence, keyed by flow-name.
      */
     //private HashMap staticContentLMs = new HashMap(4);
+
+    private int startPageNum = 0;
+    private int currentPageNum = 0;
 
     /**
      * Constructor
@@ -208,7 +197,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                         // the current BlockSequence, it could have a break
                         // condition that must be satisfied;
                         // otherwise, we may simply need a new page
-                        handleBreakBefore(bIsFirstPage ? list.getStartOn() : Constants.EN_PAGE);
+                        handleBreakTrait(bIsFirstPage ? list.getStartOn() : Constants.EN_PAGE);
                     }
                 }
             }
@@ -433,29 +422,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         StaticContentLayoutManager lm;
         lm = (StaticContentLayoutManager)
             areaTreeHandler.getLayoutManagerMaker().makeLayoutManager(sc);
-        lm.initialize();
         lm.setTargetRegion(rv.getRegionReference());
-        lm.setParent(this);
-        /*
-        LayoutContext childLC = new LayoutContext(0);
-        childLC.setStackLimit(new MinOptMax((int)curPV.getViewArea().getHeight()));
-        childLC.setRefIPD(rv.getRegion().getIPD());
-        */
-        
+        lm.setParent(this);       
         lm.doLayout(reg);
-        
-        /*
-        while (!lm.isFinished()) {
-            BreakPoss bp = lm.getNextBreakPoss(childLC);
-            if (bp != null) {
-                List vecBreakPoss = new java.util.ArrayList();
-                vecBreakPoss.add(bp);
-                lm.addAreas(new BreakPossPosIter(vecBreakPoss, 0,
-                                                 vecBreakPoss.size()), null);
-            } else {
-                log.error("bp==null  cls=" + reg.getRegionName());
-            }
-        }*/
         lm.reset(null);
     }
 
@@ -467,51 +436,10 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         layoutSideRegion(FO_REGION_END);
         // Queue for ID resolution and rendering
         areaTreeHandler.getAreaTreeModel().addPage(curPV);
-        log.debug("page finished: " + curPV.getPageNumberString() + ", current num: " + currentPageNum);
+        log.debug("page finished: " + curPV.getPageNumberString() 
+                + ", current num: " + currentPageNum);
         curPV = null;
         curFlowIdx = -1;
-    }
-
-    private void prepareNormalFlowArea(Area childArea) {
-        // Need span, break
-        int breakBeforeVal = Constants.EN_AUTO;
-        Integer breakBefore = (Integer)childArea.getTrait(Trait.BREAK_BEFORE);
-        if (breakBefore != null) {
-            breakBeforeVal = breakBefore.intValue();
-        }
-        if (breakBeforeVal != Constants.EN_AUTO) {
-            // We may be forced to make new page
-            handleBreakBefore(breakBeforeVal);
-        }
-        /* Determine if a new span is needed.  From the XSL
-         * fo:region-body definition, if an fo:block has a span="ALL"
-         * (i.e., span all columns defined for the region-body), it
-         * must be placed in a span-reference-area whose 
-         * column-count = 1.  If its span-value is "NONE", 
-         * place in a normal Span whose column-count is what
-         * is defined for the region-body. 
-         */  // temporarily hardcoded to EN_NONE.
-        boolean bNeedNewSpan = false;
-        int span = Constants.EN_NONE; // childArea.getSpan()
-        int numColsNeeded;
-        if (span == Constants.EN_ALL) {
-            numColsNeeded = 1;
-        } else { // EN_NONE
-            numColsNeeded = curPV.getBodyRegion().getColumnCount();
-        }
-        if (numColsNeeded != curPV.getCurrentSpan().getColumnCount()) {
-            // need a new Span, with numColsNeeded columns
-            if (curPV.getCurrentSpan().getColumnCount() > 1) {
-                // finished with current span, so balance 
-                // its columns to make them the same "height"
-                // balanceColumns();  // TODO: implement
-            }
-            bNeedNewSpan = true;
-        }
-        if (bNeedNewSpan) {
-            curPV.createSpan(span == Constants.EN_ALL);
-            curFlowIdx = 0;
-        }
     }
     
     /**
@@ -527,8 +455,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         int aclass = childArea.getAreaClass();
 
         if (aclass == Area.CLASS_NORMAL) {
-            //We now do this in PageBreaker
-            //prepareNormalFlowArea(childArea);
             return curPV.getCurrentSpan().getNormalFlow(curFlowIdx);
         } else if (aclass == Area.CLASS_BEFORE_FLOAT) {
             return curPV.getBodyRegion().getBeforeFloat();
@@ -543,12 +469,10 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * Depending on the kind of break condition, make new column
      * or page. May need to make an empty page if next page would
      * not have the desired "handedness".
-     *
-     * @param breakBefore - the break-before trait of the area
-     * currently being processed.
+     * @param breakVal - value of break-before or break-after trait.
      */
-    private void handleBreakBefore(int breakBefore) {
-        if (breakBefore == Constants.EN_COLUMN) {
+    private void handleBreakTrait(int breakVal) {
+        if (breakVal == Constants.EN_COLUMN) {
             if (curFlowIdx < curPV.getCurrentSpan().getColumnCount()) {
                 // Move to next column
                 curFlowIdx++;
@@ -558,11 +482,11 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             return;
         }
         log.debug("handling break-before after page " + currentPageNum 
-            + " breakVal=" + breakBefore);
-        if (needEmptyPage(breakBefore)) {
+            + " breakVal=" + breakVal);
+        if (needBlankPageBeforeNew(breakVal)) {
             curPV = makeNewPage(true, false, false);
         }
-        if (needNewPage(breakBefore)) {
+        if (needNewPage(breakVal)) {
             curPV = makeNewPage(false, false, false);
         }
     }
@@ -574,34 +498,36 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * Note that if not all content is placed, we aren't sure whether
      * it will flow onto another page or not, so we'd probably better
      * block until the queue of layoutable stuff is empty!
+     * @param breakVal - value of break-before or break-after trait.
      */
-    private boolean needEmptyPage(int breakBefore) {
-        if (breakBefore == Constants.EN_PAGE || (curPV.getPage().isEmpty())) {
+    private boolean needBlankPageBeforeNew(int breakVal) {
+        if (breakVal == Constants.EN_PAGE || (curPV.getPage().isEmpty())) {
             // any page is OK or we already have an empty page
             return false;
         } else {
             /* IF we are on the kind of page we need, we'll need a new page. */
             if (currentPageNum % 2 == 0) { // even page
-                return (breakBefore == Constants.EN_EVEN_PAGE);
+                return (breakVal == Constants.EN_EVEN_PAGE);
             } else { // odd page
-                return (breakBefore == Constants.EN_ODD_PAGE);
+                return (breakVal == Constants.EN_ODD_PAGE);
             }
         }
     }
 
     /**
      * See if need to generate a new page
+     * @param breakVal - value of break-before or break-after trait.
      */
-    private boolean needNewPage(int breakBefore) {
+    private boolean needNewPage(int breakVal) {
         if (curPV.getPage().isEmpty()) {
-            if (breakBefore == Constants.EN_PAGE) {
+            if (breakVal == Constants.EN_PAGE) {
                 return false;
             }
             else if (currentPageNum % 2 == 0) { // even page
-                return (breakBefore == Constants.EN_ODD_PAGE);
+                return (breakVal == Constants.EN_ODD_PAGE);
             }
             else { // odd page
-                return (breakBefore == Constants.EN_EVEN_PAGE);
+                return (breakVal == Constants.EN_EVEN_PAGE);
             }
         } else {
             return true;
