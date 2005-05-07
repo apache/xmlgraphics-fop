@@ -50,6 +50,13 @@ public abstract class AbstractBreaker {
 
     public class BlockSequence extends KnuthSequence {
 
+        /**
+         * startOn represents where on the page/which page layout
+         * should start for this BlockSequence.  Acceptable values:
+         * Constants.EN_ANY (can continue from finished location 
+         * of previous BlockSequence?), EN_COLUMN, EN_ODD_PAGE, 
+         * EN_EVEN_PAGE. 
+         */
         private int startOn;
 
         public BlockSequence(int iStartOn) {
