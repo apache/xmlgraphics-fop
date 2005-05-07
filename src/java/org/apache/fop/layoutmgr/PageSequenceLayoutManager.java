@@ -298,20 +298,23 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     }
 
     /**
-     * Add an unresolved area to the layout manager.
-     * The Page layout manager handles the unresolved ID
-     * reference by adding to the current page and then adding
-     * the page as a resolvable to the area tree.
-     * This is so that the area tree can resolve the reference
-     * and the page can serialize the resolvers if required.
+     * Identify an unresolved area (one needing an idref to be 
+     * resolved, e.g. the internal-destination of an fo:basic-link)
+     * for both the AreaTreeHandler and PageViewport object.
+     * 
+     * The AreaTreeHandler keeps a document-wide list of idref's
+     * and the PV's needing them to be resolved.  It uses this to  
+     * send notifications to the PV's when an id has been resolved.
+     * 
+     * The PageViewport keeps lists of id's needing resolving, along
+     * with the child areas (page-number-citation, basic-link, etc.)
+     * of the PV needing their resolution.
      *
      * @param id the ID reference to add
      * @param res the resolvable object that needs resolving
      */
     public void addUnresolvedArea(String id, Resolvable res) {
-        // add to the page viewport so it can serialize
         curPV.addUnresolvedIDRef(id, res);
-        // add unresolved to tree
         areaTreeHandler.addUnresolvedIDRef(id, curPV);
     }
 
