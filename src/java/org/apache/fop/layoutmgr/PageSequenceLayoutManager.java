@@ -270,15 +270,14 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     }
 
     /**
-     * Resolve a reference ID.
-     * This resolves a reference ID and returns the first PageViewport
-     * that contains the reference ID or null if reference not found.
+     * This returns the first PageViewport that contains an id trait
+     * matching the idref argument, or null if no such PV exists.
      *
-     * @param id the reference ID to lookup
-     * @return the first page viewport that contains the reference
+     * @param idref the idref trait needing to be resolved 
+     * @return the first PageViewport that contains the ID trait
      */
-    public PageViewport resolveRefID(String id) {
-        List list = areaTreeHandler.getPageViewportsContainingID(id);
+    public PageViewport getFirstPVWithID(String idref) {
+        List list = areaTreeHandler.getPageViewportsContainingID(idref);
         if (list != null && list.size() > 0) {
             return (PageViewport) list.get(0);
         }

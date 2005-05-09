@@ -353,12 +353,12 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     }
 
     /**
-     * Delegate resolving the id reference to the parent layout manager.
+     * Delegate resolving the id reference to the PSLM
      *
      * @see org.apache.fop.layoutmgr.LayoutManager
      */
-    public PageViewport resolveRefID(String ref) {
-        return parentLM.resolveRefID(ref);
+    public PageViewport getFirstPVWithID(String ref) {
+        return parentLM.getFirstPVWithID(ref);
     }
 
     /**
