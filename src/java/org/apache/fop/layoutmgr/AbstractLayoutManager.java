@@ -21,7 +21,6 @@ package org.apache.fop.layoutmgr;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.area.Area;
-import org.apache.fop.area.Resolvable;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.RetrieveMarker;
@@ -344,68 +343,13 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     }
 
     /**
-     * Delegate getting the current page viewport to the parent layout manager.
-     *
-     * @see org.apache.fop.layoutmgr.LayoutManager
-     */
-    public PageViewport getCurrentPV() {
-        return parentLM.getCurrentPV();
-    }
-
-    /**
-     * Delegate resolving the id reference to the PSLM
-     *
-     * @see org.apache.fop.layoutmgr.LayoutManager
-     */
-    public PageViewport getFirstPVWithID(String ref) {
-        return parentLM.getFirstPVWithID(ref);
-    }
-
-    /**
      * Add the id to the page.
      * If the id string is not null then add the id to the current page.
      */
     protected void addID(String foID) {
         if (foID != null && foID.length() > 0) {
-            addIDToPage(foID);
+            getPSLM().addIDToPage(foID);
         }
-    }
-
-    /**
-     * Delegate adding id reference to the parent layout manager.
-     *
-     * @see org.apache.fop.layoutmgr.LayoutManager
-     */
-    public void addIDToPage(String id) {
-        parentLM.addIDToPage(id);
-    }
-
-    /**
-     * Delegate adding unresolved area to the parent layout manager.
-     *
-     * @see org.apache.fop.layoutmgr.LayoutManager
-     */
-    public void addUnresolvedArea(String id, Resolvable res) {
-        parentLM.addUnresolvedArea(id, res);
-    }
-
-    /**
-     * Delegate retrieve marker to the parent layout manager.
-     *
-     * @see org.apache.fop.layoutmgr.LayoutManager
-     */
-    public Marker retrieveMarker(String name, int pos, int boundary) {
-        return parentLM.retrieveMarker(name, pos, boundary);
-    }
-
-    /**
-     * Delegate getLayoutManagerMaker to the parent layout manager.
-     *
-     * @see org.apache.fop.layoutmgr.LayoutManager
-     * @return the LayoutManagerMaker object.
-     */
-    public LayoutManagerMaker getLayoutManagerMaker() {
-        return parentLM.getLayoutManagerMaker();
     }
 
     /**
@@ -418,7 +362,7 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     private FONode handleRetrieveMarker(FONode foNode) {
         if (foNode instanceof RetrieveMarker) {
             RetrieveMarker rm = (RetrieveMarker) foNode;
-            Marker marker = retrieveMarker(rm.getRetrieveClassName(),
+            Marker marker = getPSLM().retrieveMarker(rm.getRetrieveClassName(),
                                            rm.getRetrievePosition(),
                                            rm.getRetrieveBoundary());
             if (marker == null) {
@@ -447,7 +391,7 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
                 FONode foNode = (FONode) theobj;
                 foNode = handleRetrieveMarker(foNode);
                 if (foNode != null) {
-                    getLayoutManagerMaker().
+                    getPSLM().getLayoutManagerMaker().
                         makeLayoutManagers(foNode, newLMs);
                 }
             }
@@ -455,6 +399,20 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
         return newLMs;
     }
 
+    /**
+     * @see org.apache.fop.layoutmgr.PageSequenceLayoutManager#getPSLM
+     */
+    public PageSequenceLayoutManager getPSLM() {
+    	return parentLM.getPSLM();
+    }
+    
+    /**
+     * @see org.apache.fop.layoutmgr.PageSequenceLayoutManager#getCurrentPV
+     */
+    public PageViewport getCurrentPV() {
+    	return getPSLM().getCurrentPV();
+    }  
+    
     /**
      * @see org.apache.fop.layoutmgr.LayoutManager#preLoadNext
      */
@@ -504,6 +462,4 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
             addChildLM(lm);
         }
     }
-
 }
-

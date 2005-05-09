@@ -25,7 +25,6 @@ import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.hyphenation.Hyphenation;
 import org.apache.fop.hyphenation.Hyphenator;
 import org.apache.fop.area.LineArea;
-import org.apache.fop.area.Resolvable;
 
 import java.util.ListIterator;
 import java.util.Iterator;
@@ -1572,26 +1571,5 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         }
         setCurrentArea(null); // ?? necessary
     }
-
-    /**
-     * Add an unresolved area.
-     * If a child layout manager needs to add an unresolved area
-     * for page reference or linking then this intercepts it for
-     * line area handling.
-     * A line area may need to have the inline areas adjusted
-     * to properly fill the line area. This adds a resolver that
-     * resolves the inline area and can do the necessary
-     * adjustments to the line and inline areas.
-     *
-     * @param id the id reference of the resolvable
-     * @param res the resolvable object
-     */
-    public void addUnresolvedArea(String id, Resolvable res) {
-        // create a resolvable class that handles ipd
-        // adjustment for the current line
-
-        parentLM.addUnresolvedArea(id, res);
-    }
-
 }
 

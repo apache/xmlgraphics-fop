@@ -52,12 +52,12 @@ public class BasicLinkLayoutManager extends InlineLayoutManager {
              area.addTrait(Trait.EXTERNAL_LINK, fobj.getExternalDestination());
          } else {
              String idref = fobj.getInternalDestination();
-             PageViewport page = parentLM.getFirstPVWithID(idref);
+             PageViewport page = getPSLM().getFirstPVWithID(idref);
              if (page != null) {
                  area.addTrait(Trait.INTERNAL_LINK, page.getKey());
              } else {
                  LinkResolver res = new LinkResolver(idref, area);
-                 parentLM.addUnresolvedArea(idref, res);
+                 getPSLM().addUnresolvedArea(idref, res);
              }
          }
      }

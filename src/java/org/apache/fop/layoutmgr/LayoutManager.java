@@ -21,11 +21,7 @@ package org.apache.fop.layoutmgr;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.fop.fo.flow.Marker;
-
 import org.apache.fop.area.Area;
-import org.apache.fop.area.Resolvable;
-import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.FObj;
 
 /**
@@ -60,6 +56,12 @@ public interface LayoutManager {
      * Initialize this layout manager.
      */
     void initialize();
+
+    /**
+     * Get the active PageSequenceLayoutManager instance for this
+     * layout process.
+     */
+    PageSequenceLayoutManager getPSLM();
 
     /**
      * Generates inline areas.
@@ -167,13 +169,6 @@ public interface LayoutManager {
     void addAreas(PositionIterator posIter, LayoutContext context);
 
     /**
-     * Get the PageViewport currently being generated
-     *
-     * @return the current PageViewport
-     */
-    PageViewport getCurrentPV();
-
-    /**
      * Load next child LMs, up to child LM index pos
      * @param pos index up to which child LMs are requested
      * @return if requested index does exist
@@ -220,21 +215,6 @@ public interface LayoutManager {
      */
     LinkedList getChangedKnuthElements(List oldList, /*int flaggedPenalty,*/
                                        int alignment);
-
-    /** @see PageSequenceLayoutManager#getFirstPVWithID(String) */
-    PageViewport getFirstPVWithID(String ref);
-
-    /** @see PageSequenceLayoutManager#addIDToPage(String) */
-    void addIDToPage(String id);
-
-    /** @see PageSequenceLayoutManager#addUnresolvedArea(String, Resolvable) */
-    void addUnresolvedArea(String id, Resolvable res);
-
-    /** @see PageSequenceLayoutManager#retrieveMarker(String, int, int) */
-    Marker retrieveMarker(String name, int pos, int boundary);
-
-    /** @see PageSequenceLayoutManager#getLayoutManagerMaker() */
-    LayoutManagerMaker getLayoutManagerMaker();
-
+   
     public static final int FLAGGED_PENALTY = 50;
 }

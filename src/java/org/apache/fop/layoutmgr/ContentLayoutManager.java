@@ -22,12 +22,9 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.pagination.Title;
-import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.Resolvable;
-import org.apache.fop.area.PageViewport;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -249,39 +246,6 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
     public void getWordChars(StringBuffer sbChars, Position bp1,
             Position bp2) { }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public PageViewport getCurrentPV() {
-        return parentLM.getCurrentPV();
-    }
-
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public PageViewport getFirstPVWithID(String ref) {
-        return parentLM.getFirstPVWithID(ref);
-    }
-
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public void addIDToPage(String id) {
-        parentLM.addIDToPage(id);
-    }
-
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public void addUnresolvedArea(String id, Resolvable res) {
-        parentLM.addUnresolvedArea(id, res);
-    }
-
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public Marker retrieveMarker(String name, int pos, int boundary) {
-        return parentLM.retrieveMarker(name, pos, boundary);
-    }
-
-    /**
-     * @see org.apache.fop.layoutmgr.LayoutManager
-     * @return the LayoutManagerMaker object.
-     */
-    public LayoutManagerMaker getLayoutManagerMaker() {
-        return parentLM.getLayoutManagerMaker();
-    }
-
     /**
      * @see org.apache.fop.layoutmgr.LayoutManager#preLoadNext
      */
@@ -369,6 +333,9 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
                                               int alignment) {
         return null;
     }
-
+    
+    public PageSequenceLayoutManager getPSLM() {
+    	return parentLM.getPSLM();
+    }
 }
 
