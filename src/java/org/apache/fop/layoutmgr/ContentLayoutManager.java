@@ -255,8 +255,8 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public PageViewport resolveRefID(String ref) {
-        return parentLM.resolveRefID(ref);
+    public PageViewport getFirstPVWithID(String ref) {
+        return parentLM.getFirstPVWithID(ref);
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */

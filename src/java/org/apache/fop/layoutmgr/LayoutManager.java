@@ -174,49 +174,6 @@ public interface LayoutManager {
     PageViewport getCurrentPV();
 
     /**
-     * Resolve the id reference.
-     * This is called by an area looking for an id reference.
-     * If the id reference is not found then it should add a resolvable object.
-     *
-     * @param ref the id reference
-     * @return the page containing the id reference or null if not found
-     */
-    PageViewport resolveRefID(String ref);
-
-    /**
-     * Add an id to the page.
-     * (todo) add the location of the area on the page
-     *
-     * @param id the id reference to add.
-     */
-    void addIDToPage(String id);
-
-    /**
-     * Add an unresolved area.
-     * The is used to add a resolvable object to the page for a given id.
-     *
-     * @param id the id reference this object needs for resolving
-     * @param res the resolvable object
-     */
-    void addUnresolvedArea(String id, Resolvable res);
-
-    /**
-     * Retrieve a marker.
-     * This method is used when retrieve a marker.
-     *
-     * @param name the class name of the marker
-     * @param pos the retrieve position
-     * @param boundary the boundary for retrieving the marker
-     * @return the layout manaager of the retrieved marker if any
-     */
-    Marker retrieveMarker(String name, int pos, int boundary);
-
-    /**
-     * @return the LayoutManagerMaker object.
-     */
-    LayoutManagerMaker getLayoutManagerMaker();
-
-    /**
      * Load next child LMs, up to child LM index pos
      * @param pos index up to which child LMs are requested
      * @return if requested index does exist
@@ -264,6 +221,20 @@ public interface LayoutManager {
     LinkedList getChangedKnuthElements(List oldList, /*int flaggedPenalty,*/
                                        int alignment);
 
-    public static final int FLAGGED_PENALTY = 50;
+    /** @see PageSequenceLayoutManager#getFirstPVWithID(String) */
+    PageViewport getFirstPVWithID(String ref);
 
+    /** @see PageSequenceLayoutManager#addIDToPage(String) */
+    void addIDToPage(String id);
+
+    /** @see PageSequenceLayoutManager#addUnresolvedArea(String, Resolvable) */
+    void addUnresolvedArea(String id, Resolvable res);
+
+    /** @see PageSequenceLayoutManager#retrieveMarker(String, int, int) */
+    Marker retrieveMarker(String name, int pos, int boundary);
+
+    /** @see PageSequenceLayoutManager#getLayoutManagerMaker() */
+    LayoutManagerMaker getLayoutManagerMaker();
+
+    public static final int FLAGGED_PENALTY = 50;
 }
