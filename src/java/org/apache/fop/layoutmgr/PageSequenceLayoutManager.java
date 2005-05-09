@@ -270,6 +270,14 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     }
 
     /**
+     * Provides access to this object
+     * @return this PageSequenceLayoutManager instance
+     */
+    public PageSequenceLayoutManager getPSLM() {
+    	return this;
+    }
+    
+    /**
      * This returns the first PageViewport that contains an id trait
      * matching the idref argument, or null if no such PV exists.
      *

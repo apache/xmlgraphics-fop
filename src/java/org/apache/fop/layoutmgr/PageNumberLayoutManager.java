@@ -46,7 +46,7 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
     public InlineArea get(LayoutContext context) {
         // get page string from parent, build area
         TextArea inline = new TextArea();
-        String str = parentLM.getCurrentPV().getPageNumberString();
+        String str = getCurrentPV().getPageNumberString();
         int width = 0;
         for (int count = 0; count < str.length(); count++) {
             width += font.getCharWidth(str.charAt(count));
