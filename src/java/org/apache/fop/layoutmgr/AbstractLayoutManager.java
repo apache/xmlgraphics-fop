@@ -79,15 +79,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
         if (fo == null) {
             throw new IllegalStateException("Null formatting object found.");
         }
-        setFObj(fo);
-    }
-
-    /**
-     * Set the FO object for this layout manager
-     *
-     * @param fo the formatting object for this layout manager
-     */
-    public void setFObj(FObj fo) {
         markers = fo.getMarkers();
         fobjIter = fo.getChildNodes();
         childLMiter = new LMiter(this);

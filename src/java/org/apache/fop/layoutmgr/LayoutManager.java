@@ -22,21 +22,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.fop.area.Area;
-import org.apache.fop.fo.FObj;
 
 /**
  * The interface for all LayoutManagers.
  */
 public interface LayoutManager {
-
-    /**
-     * Set the FO object for this layout manager.
-     * For layout managers that are created without an FO
-     * this may not be called.
-     *
-     * @param obj the FO object for this layout manager
-     */
-    void setFObj(FObj obj);
 
     /**
      * Set the parent layout manager.
@@ -216,5 +206,4 @@ public interface LayoutManager {
     LinkedList getChangedKnuthElements(List oldList, /*int flaggedPenalty,*/
                                        int alignment);
    
-    public static final int FLAGGED_PENALTY = 50;
 }

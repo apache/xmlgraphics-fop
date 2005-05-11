@@ -38,6 +38,8 @@ package org.apache.fop.layoutmgr;
  */
 public class KnuthPenalty extends KnuthElement {
 
+    public static final int FLAGGED_PENALTY = 50;
+
     private int penalty;
     private boolean bFlagged; 
     private int breakClass = -1;
