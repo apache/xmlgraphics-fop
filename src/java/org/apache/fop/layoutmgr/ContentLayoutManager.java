@@ -19,7 +19,6 @@
 package org.apache.fop.layoutmgr;
 
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.pagination.Title;
 import org.apache.fop.area.Area;
@@ -197,10 +196,6 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
      */
     public FOUserAgent getUserAgent() {
         return userAgent;
-    }
-
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public void setFObj(FObj fobj) {
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */

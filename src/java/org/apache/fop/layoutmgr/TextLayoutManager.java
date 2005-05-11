@@ -837,7 +837,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                     && textArray[iTempStart] != SPACE
                     && textArray[iTempStart] != NBSPACE) {
                     returnList.add
-                        (new KnuthPenalty(0, LayoutManager.FLAGGED_PENALTY, true,
+                        (new KnuthPenalty(0, KnuthPenalty.FLAGGED_PENALTY, true,
                                           new LeafPosition(this, -1), false));
                     returnList.add
                         (new KnuthGlue(letterSpaceIPD.opt,
@@ -872,7 +872,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             // the last character could be used as a line break
             // append new elements to oldList
             oldListIterator = oldList.listIterator(oldList.size());
-            oldListIterator.add(new KnuthPenalty(0, LayoutManager.FLAGGED_PENALTY, true,
+            oldListIterator.add(new KnuthPenalty(0, KnuthPenalty.FLAGGED_PENALTY, true,
                                                  new LeafPosition(this, -1), false));
             oldListIterator.add(new KnuthGlue(letterSpaceIPD.opt,
                                        letterSpaceIPD.max - letterSpaceIPD.opt,
@@ -1033,7 +1033,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 }
                 if (ai.bHyphenated) {
                     returnList.add
-                        (new KnuthPenalty(hyphIPD, LayoutManager.FLAGGED_PENALTY, true,
+                        (new KnuthPenalty(hyphIPD, KnuthPenalty.FLAGGED_PENALTY, true,
                                           new LeafPosition(this, -1), false));
                 }
                 // if the last character is '-' or '/', it could be used as a line end;
@@ -1042,7 +1042,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 if (BREAK_CHARS.indexOf(textArray[ai.iBreakIndex - 1]) >= 0
                     && ai.iLScount == (ai.iBreakIndex - ai.iStartIndex)) {
                     returnList.add
-                        (new KnuthPenalty(0, LayoutManager.FLAGGED_PENALTY, true,
+                        (new KnuthPenalty(0, KnuthPenalty.FLAGGED_PENALTY, true,
                                           new LeafPosition(this, -1), false));
                     returnList.add
                         (new KnuthGlue(letterSpaceIPD.opt,
