@@ -384,14 +384,14 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
      * @see org.apache.fop.layoutmgr.PageSequenceLayoutManager#getPSLM
      */
     public PageSequenceLayoutManager getPSLM() {
-    	return parentLM.getPSLM();
+        return parentLM.getPSLM();
     }
     
     /**
      * @see org.apache.fop.layoutmgr.PageSequenceLayoutManager#getCurrentPV
      */
     public PageViewport getCurrentPV() {
-    	return getPSLM().getCurrentPV();
+        return getPSLM().getCurrentPV();
     }  
     
     /**
