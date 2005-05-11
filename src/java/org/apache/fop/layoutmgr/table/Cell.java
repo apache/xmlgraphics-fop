@@ -42,6 +42,7 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.Trait;
 import org.apache.fop.traits.MinOptMax;
+import org.apache.tools.ant.taskdefs.condition.IsSet;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -91,6 +92,10 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
         return this.fobj;
     }
     
+    private boolean isSeparateBorderModel() {
+        return fobj.isSeparateBorderModel();
+    }
+    
     /**
      * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
      */
@@ -99,7 +104,7 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
         borderAndPaddingBPD = 0;
         borderAndPaddingBPD += fobj.getCommonBorderPaddingBackground().getBorderBeforeWidth(false);
         borderAndPaddingBPD += fobj.getCommonBorderPaddingBackground().getBorderAfterWidth(false);
-        if (!fobj.isSeparateBorderModel()) {
+        if (!isSeparateBorderModel()) {
             borderAndPaddingBPD /= 2;
         }
         borderAndPaddingBPD += fobj.getCommonBorderPaddingBackground().getPaddingBefore(false);
@@ -135,7 +140,7 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
         endBorderWidth += startEndBorderWidths[1];
         iIndents += startBorderWidth;
         iIndents += endBorderWidth;
-        if (!fobj.isSeparateBorderModel()) {
+        if (!isSeparateBorderModel()) {
             iIndents /= 2;
         }
         iIndents += fobj.getCommonBorderPaddingBackground().getPaddingStart(false);
@@ -155,7 +160,7 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
         referenceIPD = context.getRefIPD(); 
         cellIPD = referenceIPD;
         cellIPD -= getIPIndents();
-        if (fobj.isSeparateBorderModel()) {
+        if (isSeparateBorderModel()) {
             int borderSep = fobj.getBorderSeparation().getLengthPair()
                     .getIPD().getLength().getValue();
             cellIPD -= borderSep;
@@ -396,7 +401,12 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
 
     private int getContentHeight(int rowHeight, GridUnit gu) {
         int bpd = rowHeight;
-        bpd -= gu.getPrimary().getHalfMaxBorderWidth();
+        if (isSeparateBorderModel()) {
+            bpd -= gu.getPrimary().getBorders().getBorderBeforeWidth(false);
+            bpd -= gu.getPrimary().getBorders().getBorderAfterWidth(false);
+        } else {
+            bpd -= gu.getPrimary().getHalfMaxBorderWidth();
+        }
         CommonBorderPaddingBackground cbpb 
             = gu.getCell().getCommonBorderPaddingBackground(); 
         bpd -= cbpb.getPaddingBefore(false);
@@ -422,14 +432,13 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
             getPSLM().addIDToPage(fobj.getId());
         }
 
-        if (fobj.isSeparateBorderModel()) {
+        if (isSeparateBorderModel()) {
             if (!emptyCell || fobj.showEmptyCells()) {
                 TraitSetter.addBorders(curBlockArea, fobj.getCommonBorderPaddingBackground());
                 TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
             }
         } else {
             TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
-            //TODO Set these booleans right
             boolean[] outer = new boolean[] {
                     gridUnit.getFlag(GridUnit.FIRST_IN_TABLE), 
                     gridUnit.getFlag(GridUnit.LAST_IN_TABLE),
@@ -457,10 +466,15 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
                         block.setPositioning(Block.ABSOLUTE);
 
                         int bpd = getContentHeight(rowHeight, gu);
-                        bpd += gridUnit.getHalfMaxBeforeBorderWidth() 
-                                - (gu.getBorders().getBorderBeforeWidth(false) / 2);
-                        bpd += gridUnit.getHalfMaxAfterBorderWidth() 
-                                - (gu.getBorders().getBorderAfterWidth(false) / 2);
+                        if (isSeparateBorderModel()) {
+                            bpd += (gu.getBorders().getBorderBeforeWidth(false));
+                            bpd += (gu.getBorders().getBorderAfterWidth(false));
+                        } else {
+                            bpd += gridUnit.getHalfMaxBeforeBorderWidth() 
+                                    - (gu.getBorders().getBorderBeforeWidth(false) / 2);
+                            bpd += gridUnit.getHalfMaxAfterBorderWidth() 
+                                    - (gu.getBorders().getBorderAfterWidth(false) / 2);
+                        }
                         block.setBPD(bpd);
                         //TODO This needs to be fixed for row spanning
                         lastRowHeight = rowHeight;
@@ -471,7 +485,7 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
                         block.setIPD(ipd);
                         block.setXOffset(dx + borderStartWidth);
                         int halfCollapsingBorderHeight = 0;
-                        if (!fobj.isSeparateBorderModel()) {
+                        if (!isSeparateBorderModel()) {
                             halfCollapsingBorderHeight += 
                                 gu.getBorders().getBorderBeforeWidth(false) / 2;
                         }
@@ -530,26 +544,28 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
             curBlockArea.setPositioning(Block.ABSOLUTE);
             int indent = 0;
             indent += startBorderWidth;
-            if (!fobj.isSeparateBorderModel()) {
+            if (!isSeparateBorderModel()) {
                 indent /= 2;
             }
             indent += fobj.getCommonBorderPaddingBackground().getPaddingStart(false);
             // set position
             int halfBorderSep = 0;
-            if (fobj.isSeparateBorderModel()) {
+            if (isSeparateBorderModel()) {
                 halfBorderSep = fobj.getBorderSeparation().getLengthPair()
                         .getIPD().getLength().getValue() / 2;
             }
-            int halfCollapsingBorderHeight = 0;
-            if (!fobj.isSeparateBorderModel()) {
+            int borderAdjust = 0;
+            if (!isSeparateBorderModel()) {
                 if (gridUnit.hasSpanning()) {
-                    halfCollapsingBorderHeight -= gridUnit.getHalfMaxBeforeBorderWidth();
+                    borderAdjust -= gridUnit.getHalfMaxBeforeBorderWidth();
                 } else {
-                    halfCollapsingBorderHeight += gridUnit.getHalfMaxBeforeBorderWidth();
+                    borderAdjust += gridUnit.getHalfMaxBeforeBorderWidth();
                 }
+            } else {
+                //borderAdjust += gridUnit.getBorders().getBorderBeforeWidth(false);
             }
             curBlockArea.setXOffset(xoffset + inRowIPDOffset + halfBorderSep + indent);
-            curBlockArea.setYOffset(yoffset - halfCollapsingBorderHeight);
+            curBlockArea.setYOffset(yoffset - borderAdjust);
             curBlockArea.setIPD(cellIPD);
             //curBlockArea.setHeight();
 
