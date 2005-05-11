@@ -49,6 +49,8 @@ public class GridUnit {
     private PrimaryGridUnit primary;
     /** Table cell which occupies this grid unit */
     private TableCell cell;
+    /** Table row which occupied this grid unit (may be null) */
+    private TableRow row;
     /** Table column that this grid unit belongs to */
     private TableColumn column;
     
@@ -89,13 +91,23 @@ public class GridUnit {
     }
     
     public TableRow getRow() {
-        if (getCell().getParent() instanceof TableRow) {
+        if (this.row != null) {
+            return this.row;
+        } else if (getCell().getParent() instanceof TableRow) {
             return (TableRow)getCell().getParent();
         } else {
             return null;
         }
     }
     
+    /**
+     * Sets the table-row FO, if applicable.
+     * @param rowFO the table-row FO
+     */
+    public void setRow(TableRow rowFO) {
+        this.row = rowFO;
+    }
+
     public TableBody getBody() {
         FONode node = getCell();
         while (node != null && !(node instanceof TableBody)) {
