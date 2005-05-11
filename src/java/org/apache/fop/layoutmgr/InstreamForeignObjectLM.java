@@ -19,7 +19,6 @@
 package org.apache.fop.layoutmgr;
 
 // Java
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 // FOP
@@ -194,7 +193,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
      * @see org.apache.fop.layoutmgr.LeafNodeLayoutManager#addId()
      */
     protected void addId() {
-        addID(fobj.getId());
+        getPSLM().addIDToPage(fobj.getId());
     }
 }
 

@@ -841,7 +841,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             addBlockSpacing(0.0, new MinOptMax(layoutContext.getSpaceBefore()));
         }
 
-        addID(getBlockContainerFO().getId());
+        getPSLM().addIDToPage(getBlockContainerFO().getId());
         //addMarkersToPV(true, bp1.isFirstArea(), bp1.isLastArea());
         getCurrentPV().addMarkers(markers, true, true, false);
 
@@ -1024,7 +1024,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         }*/
 
         BreakPoss bp1 = (BreakPoss)parentIter.peekNext();
-        addID(getBlockContainerFO().getId());
+        getPSLM().addIDToPage(getBlockContainerFO().getId());
         getCurrentPV().addMarkers(markers, true, bp1.isFirstArea(), bp1.isLastArea());
 
         LayoutManager childLM;

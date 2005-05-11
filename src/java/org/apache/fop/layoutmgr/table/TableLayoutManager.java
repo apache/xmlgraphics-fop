@@ -644,7 +644,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
-        addID(fobj.getId());
+        getPSLM().addIDToPage(fobj.getId());
 
         // if adjusted space before
         double adjust = layoutContext.getSpaceAdjust();

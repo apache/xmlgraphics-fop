@@ -138,7 +138,7 @@ public class Caption extends BlockStackingLayoutManager {
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
-        addID(fobj.getId());
+        getPSLM().addIDToPage(fobj.getId());
 
         LayoutManager childLM;
         int iStartPos = 0;

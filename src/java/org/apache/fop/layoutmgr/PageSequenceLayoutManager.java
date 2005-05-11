@@ -301,7 +301,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * @param id the ID reference to add
      */
     public void addIDToPage(String id) {
-        areaTreeHandler.associateIDWithPageViewport(id, curPV);
+        if (id != null && id.length() > 0) {
+            areaTreeHandler.associateIDWithPageViewport(id, curPV);
+        }
     }
 
     /**

@@ -486,7 +486,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         addBlockSpacing(adjust, spaceBefore);
         spaceBefore = null;
 
-        addID(fobj.getId());
+        getPSLM().addIDToPage(fobj.getId());
 
         LayoutContext lc = new LayoutContext(0);
 
