@@ -274,7 +274,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * @return this PageSequenceLayoutManager instance
      */
     public PageSequenceLayoutManager getPSLM() {
-    	return this;
+        return this;
     }
     
     /**

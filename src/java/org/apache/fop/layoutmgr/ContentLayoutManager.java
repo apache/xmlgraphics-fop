@@ -330,7 +330,7 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
     }
     
     public PageSequenceLayoutManager getPSLM() {
-    	return parentLM.getPSLM();
+        return parentLM.getPSLM();
     }
 }
 

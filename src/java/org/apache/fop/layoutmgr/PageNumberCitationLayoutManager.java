@@ -58,7 +58,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
     public void addAreas(PositionIterator posIter, LayoutContext context) {
         super.addAreas(posIter, context);
         if (!resolved) {
-        	getPSLM().addUnresolvedArea(fobj.getRefId(), (Resolvable) curArea);
+            getPSLM().addUnresolvedArea(fobj.getRefId(), (Resolvable) curArea);
         }
     }
     
