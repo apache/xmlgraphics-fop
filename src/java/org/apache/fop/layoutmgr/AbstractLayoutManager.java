@@ -343,16 +343,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     }
 
     /**
-     * Add the id to the page.
-     * If the id string is not null then add the id to the current page.
-     */
-    protected void addID(String foID) {
-        if (foID != null && foID.length() > 0) {
-            getPSLM().addIDToPage(foID);
-        }
-    }
-
-    /**
      * Handles retrieve-marker nodes as they occur.
      * @param foNode FO node to check
      * @return the original foNode or in case of a retrieve-marker the replaced

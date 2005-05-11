@@ -201,7 +201,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
         addBlockSpacing(adjust, spaceBefore);
         spaceBefore = null;
         
-        addID(fobj.getId());
+        getPSLM().addIDToPage(fobj.getId());
 
         // the list block contains areas stacked from each list item
 

@@ -518,7 +518,7 @@ public class Row extends BlockStackingLayoutManager implements BlockLevelLayoutM
         BreakPoss bp1 = (BreakPoss)parentIter.peekNext();
         bBogus = !bp1.generatesAreas();
         if (!isBogus()) {
-            addID(fobj.getId());
+            getPSLM().addIDToPage(fobj.getId());
         }
 
         Cell childLM;

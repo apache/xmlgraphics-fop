@@ -36,7 +36,6 @@ import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.MinOptMaxUtil;
 import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.BreakPossPosIter;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.area.Area;
@@ -420,7 +419,7 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
         bBogus = false;//!bp1.generatesAreas(); 
 
         if (!isBogus()) {
-            addID(fobj.getId());
+            getPSLM().addIDToPage(fobj.getId());
         }
 
         if (fobj.isSeparateBorderModel()) {

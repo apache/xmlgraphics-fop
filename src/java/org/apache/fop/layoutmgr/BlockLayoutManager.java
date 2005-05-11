@@ -347,7 +347,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         foBlockSpaceBefore = null;
 
         if (!isBogus()) {
-            addID(getBlockFO().getId());
+            getPSLM().addIDToPage(getBlockFO().getId());
             getCurrentPV().addMarkers(markers, true, bp1.isFirstArea(), 
                     bp1.isLastArea());
         }
@@ -394,7 +394,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             addBlockSpacing(0.0, new MinOptMax(layoutContext.getSpaceBefore()));
         }
 
-        addID(getBlockFO().getId());
+        getPSLM().addIDToPage(getBlockFO().getId());
         //addMarkersToPV(true, bp1.isFirstArea(), bp1.isLastArea());
         getCurrentPV().addMarkers(markers, true, true, false);
 

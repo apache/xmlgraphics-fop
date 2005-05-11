@@ -27,7 +27,6 @@ import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.BreakPoss;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.BreakPossPosIter;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.area.Area;
@@ -188,9 +187,9 @@ public class Item extends BlockStackingLayoutManager {
         
         int nameId = fobj.getNameId();
         if (nameId == FO_LIST_ITEM_LABEL) {
-            addID(((ListItemLabel) fobj).getId());
+            getPSLM().addIDToPage(((ListItemLabel) fobj).getId());
         } else if (nameId == FO_LIST_ITEM_BODY) {
-            addID(((ListItemBody) fobj).getId());
+            getPSLM().addIDToPage(((ListItemBody) fobj).getId());
         }
 
         LayoutManager childLM = null;

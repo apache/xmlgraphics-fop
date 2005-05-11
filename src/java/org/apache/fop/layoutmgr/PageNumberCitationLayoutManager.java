@@ -118,7 +118,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
     }
     
     protected void addId() {
-        addID(fobj.getId());
+        getPSLM().addIDToPage(fobj.getId());
     }
 }
 

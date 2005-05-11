@@ -327,6 +327,6 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
     }
 
     protected void addId() {
-        addID(fobj.getId());
+        getPSLM().addIDToPage(fobj.getId());
     }
 }
