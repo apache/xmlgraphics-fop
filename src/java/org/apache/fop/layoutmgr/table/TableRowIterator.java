@@ -211,9 +211,10 @@ public class TableRowIterator {
         Object node = childInBodyIterator.next();
         this.currentRow.clear();
         this.currentRowIndex++;
+        TableRow rowFO = null;
         if (node instanceof TableRow) {
-            TableRow row = (TableRow)node;
-            ListIterator cellIterator = row.getChildNodes();
+            rowFO = (TableRow)node;
+            ListIterator cellIterator = rowFO.getChildNodes();
             while (cellIterator.hasNext()) {
                 this.currentRow.add(cellIterator.next());
             }
@@ -236,7 +237,7 @@ public class TableRowIterator {
         } else {
             throw new IllegalStateException("Illegal class found: " + node.getClass().getName());
         }
-        EffRow gridUnits = buildGridRow(this.currentRow);
+        EffRow gridUnits = buildGridRow(this.currentRow, rowFO);
         if (firstInBody) {
             gridUnits.setFlagForAllGridUnits(GridUnit.FIRST_IN_BODY, true);
         }
@@ -264,11 +265,10 @@ public class TableRowIterator {
         }
     }
     
-    private EffRow buildGridRow(List cells) {
-        EffRow row = new EffRow(this.currentRowIndex);
+    private EffRow buildGridRow(List cells, TableRow rowFO) {
+        EffRow row = new EffRow(this.currentRowIndex, type);
         List gridUnits = row.getGridUnits();
         
-        TableRow rowFO = null;
         TableBody bodyFO = null;
         
         //Create all row-spanned grid units based on information from the last row
@@ -282,6 +282,7 @@ public class TableRowIterator {
                     horzSpan = new GridUnit[gu.getCell().getNumberColumnsSpanned()];
                 }
                 GridUnit newGU = gu.createNextRowSpanningGridUnit();
+                newGU.setRow(rowFO);
                 safelySetListItem(gridUnits, colnum - 1, newGU);
                 horzSpan[newGU.getColSpanIndex()] = newGU;
                 if (newGU.isLastGridUnitColSpan()) {
@@ -348,9 +349,6 @@ public class TableRowIterator {
             }
             
             //Gather info for empty grid units (used later)
-            if (rowFO == null) {
-                rowFO = gu.getRow();
-            }
             if (bodyFO == null) {
                 bodyFO = gu.getBody();
             }
@@ -435,52 +433,6 @@ public class TableRowIterator {
                 //Only start and end borders here, before and after during layout
                 //TODO resolve before and after borders during layout
             }
-        }
-    }
-    
-    public class EffRow {
-        
-        private List gridUnits = new java.util.ArrayList();
-        private int index;
-        private MinOptMax height = new MinOptMax(0);
-        
-        public EffRow(int index) {
-            this.index = index;
-            this.height = height;
-        }
-        
-        public int getIndex() {
-            return this.index;
-        }
-        
-        public MinOptMax getHeight() {
-            return this.height;
-        }
-        
-        public void setHeight(MinOptMax height) {
-            this.height = height;
-        }
-        
-        public List getGridUnits() {
-            return gridUnits;
-        }
-        
-        public void setFlagForAllGridUnits(int flag, boolean value) {
-            Iterator iter = gridUnits.iterator();
-            while (iter.hasNext()) {
-                GridUnit gu = (GridUnit)iter.next();
-                gu.setFlag(flag, value);
-            }
-        }
-
-        /** @see java.lang.Object#toString() */
-        public String toString() {
-            StringBuffer sb = new StringBuffer("EffRow {");
-            sb.append(index);
-            sb.append(", ").append(height);
-            sb.append(", ").append(gridUnits.size()).append(" gu");
-            sb.append("}");
-            return sb.toString();
         }
     }
 
