@@ -64,7 +64,6 @@ public class MinOptMaxUtil {
     }
 
     public static void extendMinimum(MinOptMax mom, int len, boolean optToLen) {
-        System.out.print("before: " + mom);
         if (mom.min < len) {
             mom.min = len;
             mom.opt = Math.max(mom.min, mom.opt);
@@ -73,7 +72,6 @@ public class MinOptMaxUtil {
             }
             mom.max = Math.max(mom.opt, mom.max);
         }
-        System.out.println(" - after: " + mom);
     }
     
     /**
