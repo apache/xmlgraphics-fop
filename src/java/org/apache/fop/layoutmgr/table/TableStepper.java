@@ -194,19 +194,12 @@ public class TableStepper {
                     if (start[i] == 0 && end[i] == 0 
                             && elementLists[i].size() == 1
                             && elementLists[i].get(0) instanceof KnuthBoxCellWithBPD) {
+                        //Special case: Cell with fixed BPD
                         gridUnitParts.add(new GridUnitPart(pgu, 
                                 0, pgu.getElements().size() - 1));
                     } else {
                         gridUnitParts.add(new GridUnitPart(pgu, start[i], end[i]));
                     }
-                } else {
-                    /*
-                    if ((end[i] >= 0)
-                            || (elementLists[i] != null && end[i] < 0)) {
-                        PrimaryGridUnit pgu = getActivePrimaryGridUnit(i);
-                        log.debug(">>>>>" + start[i] + "-" + end[i]);
-                        gridUnitParts.add(new GridUnitPart(pgu, 0, -1));
-                    }*/
                 }
             }
             //log.debug(">>> guPARTS: " + gridUnitParts);
@@ -278,7 +271,9 @@ public class TableStepper {
                 log.debug("===> new row: " + activeRow);
                 initializeElementLists();
                 for (int i = 0; i < backupWidths.length; i++) {
-                    backupWidths[i] = 0;
+                    if (end[i] < 0) {
+                        backupWidths[i] = 0;
+                    }
                 }
             }
         }
@@ -343,11 +338,11 @@ public class TableStepper {
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < widths.length; i++) {
             baseWidth[i] = 0;
+            for (int prevRow = 0; prevRow < startRow[i]; prevRow++) {
+                baseWidth[i] += rowGroup[prevRow].getHeight().opt;
+            }
+            baseWidth[i] += borderBefore[i] + borderAfter[i];
             if (end[i] >= start[i]) {
-                for (int prevRow = 0; prevRow < startRow[i]; prevRow++) {
-                    baseWidth[i] += rowGroup[prevRow].getHeight().opt;
-                }
-                baseWidth[i] += borderBefore[i] + borderAfter[i];
                 int len = baseWidth[i] + widths[i];
                 sb.append(len + " ");
                 minStep = Math.min(len, minStep);
