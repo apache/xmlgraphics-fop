@@ -651,6 +651,9 @@ public class TableContentLayoutManager {
                     start[colIndex] = gup.start;
                     end[colIndex] = gup.end;
                 } else {
+                    if (gup.end < end[colIndex]) {
+                        throw new IllegalStateException("Internal Error: stepper problem");
+                    }
                     end[colIndex] = gup.end;
                 }
                 if (rowFO == null) {
@@ -703,8 +706,10 @@ public class TableContentLayoutManager {
             //Add areas for row
             //addRowBackgroundArea(rowFO, lastRowHeight, layoutContext.getRefIPD(), yoffset);
             for (int i = 0; i < gridUnits.length; i++) {
+                GridUnit currentGU = (GridUnit)lastRow.getGridUnits().get(i);
                 if ((gridUnits[i] != null) 
-                        && (forcedFlush || (end[i] == gridUnits[i].getElements().size() - 1))) {
+                        && (forcedFlush || (end[i] == gridUnits[i].getElements().size() - 1))
+                        && (currentGU.isLastGridUnitRowSpan())) {
                     if (log.isDebugEnabled()) {
                         log.debug((forcedFlush ? "FORCED " : "") + "flushing..." + i + " " 
                                 + start[i] + "-" + end[i]);
