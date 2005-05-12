@@ -81,7 +81,7 @@ public class TableStepper {
     }
     
     private GridUnit getActiveGridUnit(int column) {
-        return (GridUnit)getActiveRow().getGridUnits().get(column);
+        return getActiveRow().getGridUnit(column);
     }
     
     private PrimaryGridUnit getActivePrimaryGridUnit(int column) {

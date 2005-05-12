@@ -60,6 +60,14 @@ public class EffRow {
         return gridUnits;
     }
     
+    public GridUnit getGridUnit(int index) {
+        if (index >= 0 && index < gridUnits.size()) {
+            return (GridUnit)gridUnits.get(index);
+        } else {
+            return null;
+        }
+    }
+    
     public void setFlagForAllGridUnits(int flag, boolean value) {
         Iterator iter = gridUnits.iterator();
         while (iter.hasNext()) {

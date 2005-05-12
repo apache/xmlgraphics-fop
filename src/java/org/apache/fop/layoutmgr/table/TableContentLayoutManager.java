@@ -269,7 +269,7 @@ public class TableContentLayoutManager {
             if (next != null) {
                 guCount = Math.max(guCount, next.getGridUnits().size());
             }
-            GridUnit gu = (GridUnit)row.getGridUnits().get(0);
+            GridUnit gu = row.getGridUnit(0);
             //Create empty grid units to hold resolved borders of neighbouring cells
             //TODO maybe this needs to be done differently (and sooner)
             for (int i = 0; i < guCount - row.getGridUnits().size(); i++) {
@@ -285,11 +285,11 @@ public class TableContentLayoutManager {
                 //nop, borders are already assigned at this point
             } else {
                 for (int i = 0; i < row.getGridUnits().size(); i++) {
-                    gu = (GridUnit)row.getGridUnits().get(i);
+                    gu = row.getGridUnit(i);
                     GridUnit other;
                     int flags = 0;
                     if (prev != null && i < prev.getGridUnits().size()) {
-                        other = (GridUnit)prev.getGridUnits().get(i);
+                        other = prev.getGridUnit(i);
                     } else {
                         other = null;
                     }
@@ -312,7 +312,7 @@ public class TableContentLayoutManager {
                     
                     flags = 0;
                     if (next != null && i < next.getGridUnits().size()) {
-                        other = (GridUnit)next.getGridUnits().get(i);
+                        other = next.getGridUnit(i);
                     } else {
                         other = null;
                     }
@@ -364,7 +364,7 @@ public class TableContentLayoutManager {
             int maxCellHeight = 0;
             for (int j = 0; j < row.getGridUnits().size(); j++) {
                 maxColumnCount = Math.max(maxColumnCount, row.getGridUnits().size());
-                GridUnit gu = (GridUnit)row.getGridUnits().get(j);
+                GridUnit gu = row.getGridUnit(j);
                 if ((gu.isPrimary() || (gu.getColSpanIndex() == 0 && gu.isLastGridUnitRowSpan())) 
                         && !gu.isEmpty()) {
                     PrimaryGridUnit primary = gu.getPrimary();
@@ -706,10 +706,10 @@ public class TableContentLayoutManager {
             //Add areas for row
             //addRowBackgroundArea(rowFO, lastRowHeight, layoutContext.getRefIPD(), yoffset);
             for (int i = 0; i < gridUnits.length; i++) {
-                GridUnit currentGU = (GridUnit)lastRow.getGridUnits().get(i);
+                GridUnit currentGU = lastRow.getGridUnit(i);
                 if ((gridUnits[i] != null) 
                         && (forcedFlush || (end[i] == gridUnits[i].getElements().size() - 1))
-                        && (currentGU.isLastGridUnitRowSpan())) {
+                        && (currentGU == null || currentGU.isLastGridUnitRowSpan())) {
                     if (log.isDebugEnabled()) {
                         log.debug((forcedFlush ? "FORCED " : "") + "flushing..." + i + " " 
                                 + start[i] + "-" + end[i]);
