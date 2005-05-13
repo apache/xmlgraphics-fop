@@ -60,9 +60,25 @@ public class EffRow {
         return gridUnits;
     }
     
-    public GridUnit getGridUnit(int index) {
-        if (index >= 0 && index < gridUnits.size()) {
-            return (GridUnit)gridUnits.get(index);
+    /**
+     * Returns the grid unit at a given position.
+     * @param column index of the grid unit in the row (zero based)
+     * @return the requested grid unit.
+     */
+    public GridUnit getGridUnit(int column) {
+        return (GridUnit)gridUnits.get(column);
+    }
+    
+    /**
+     * Returns the grid unit at a given position. In contrast to getGridUnit() this 
+     * method returns null if there's no grid unit at the given position. The number of
+     * grid units for row x can be smaller than the number of grid units for row x-1.
+     * @param column index of the grid unit in the row (zero based)
+     * @return the requested grid unit or null if there's no grid unit at this position.
+     */
+    public GridUnit safelyGetGridUnit(int column) {
+        if (column < gridUnits.size()) {
+            return (GridUnit)gridUnits.get(column);
         } else {
             return null;
         }
