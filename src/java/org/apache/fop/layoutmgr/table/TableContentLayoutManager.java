@@ -33,6 +33,7 @@ import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.LengthRangeProperty;
+import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthPenalty;
@@ -133,8 +134,8 @@ public class TableContentLayoutManager {
         if (headerIter != null) {
             this.headerList = getKnuthElementsForRowIterator(
                     headerIter, context, alignment, TableRowIterator.HEADER);
-            removeLegalBreaks(this.headerList);
-            this.headerNetHeight = calcCellHeightFromContents(this.headerList);
+            ElementListUtils.removeLegalBreaks(this.headerList);
+            this.headerNetHeight = ElementListUtils.calcContentLength(this.headerList);
             if (log.isDebugEnabled()) {
                 log.debug("==> Header: " + headerNetHeight + " - " + this.headerList);
             }
@@ -153,8 +154,8 @@ public class TableContentLayoutManager {
         if (footerIter != null) {
             this.footerList = getKnuthElementsForRowIterator(
                     footerIter, context, alignment, TableRowIterator.FOOTER);
-            removeLegalBreaks(this.footerList);
-            this.footerNetHeight = calcCellHeightFromContents(this.footerList);
+            ElementListUtils.removeLegalBreaks(this.footerList);
+            this.footerNetHeight = ElementListUtils.calcContentLength(this.footerList);
             if (log.isDebugEnabled()) {
                 log.debug("==> Footer: " + footerNetHeight + " - " + this.footerList);
             }
@@ -178,28 +179,6 @@ public class TableContentLayoutManager {
             returnList.add(footerAsLast);
         }
         return returnList;
-    }
-    
-    private void removeLegalBreaks(LinkedList elements) {
-        ListIterator i = elements.listIterator();
-        while (i.hasNext()) {
-            KnuthElement el = (KnuthElement)i.next();
-            if (el.isPenalty()) {
-                KnuthPenalty penalty = (KnuthPenalty)el;
-                //Convert all penalties no break inhibitors
-                if (penalty.getP() < KnuthPenalty.INFINITE) {
-                    i.set(new KnuthPenalty(penalty.getW(), KnuthPenalty.INFINITE, 
-                            penalty.isFlagged(), penalty.getPosition(), penalty.isAuxiliary()));
-                }
-            } else if (el.isGlue()) {
-                i.previous();
-                if (el.isBox()) {
-                    i.next();
-                    i.add(new KnuthPenalty(0, KnuthPenalty.INFINITE, false, 
-                            new Position(getTableLM()), false));
-                }
-            }
-        }
     }
     
     /**
@@ -351,12 +330,14 @@ public class TableContentLayoutManager {
             EffRow[] rowGroup) {
         log.debug("Handling row group with " + rowGroup.length + " rows...");
         MinOptMax[] rowHeights = new MinOptMax[rowGroup.length];
+        MinOptMax[] explicitRowHeights = new MinOptMax[rowGroup.length];
         EffRow row;
         int maxColumnCount = 0;
         List pgus = new java.util.ArrayList(); //holds a list of a row's primary grid units
         for (int rgi = 0; rgi < rowGroup.length; rgi++) {
             row = rowGroup[rgi];
             rowHeights[rgi] = new MinOptMax(0, 0, Integer.MAX_VALUE);
+            explicitRowHeights[rgi] = new MinOptMax(0, 0, Integer.MAX_VALUE);
             
             pgus.clear();
             TableRow tableRow = null;
@@ -382,6 +363,8 @@ public class TableContentLayoutManager {
                                 minContentHeight = Math.max(minContentHeight, 
                                         bpd.getMinimum().getLength().getValue());
                             }
+                            MinOptMaxUtil.restrict(explicitRowHeights[rgi], bpd);
+                            
                         }
 
                         //Calculate width of cell
@@ -404,7 +387,8 @@ public class TableContentLayoutManager {
 
                     
                     //Calculate height of cell contents
-                    primary.setContentLength(calcCellHeightFromContents(primary.getElements()));
+                    primary.setContentLength(ElementListUtils.calcContentLength(
+                            primary.getElements()));
                     maxCellHeight = Math.max(maxCellHeight, primary.getContentLength());
 
                     //Calculate height of row, see CSS21, 17.5.3 Table height algorithms
@@ -414,6 +398,10 @@ public class TableContentLayoutManager {
                         if (!bpd.getMinimum().isAuto()) {
                             effCellContentHeight = Math.max(effCellContentHeight,
                                     bpd.getMinimum().getLength().getValue());
+                        }
+                        if (gu.getRowSpanIndex() == 0) {
+                            //TODO ATM only non-row-spanned cells are taken for this
+                            MinOptMaxUtil.restrict(explicitRowHeights[rgi], bpd);
                         }
                         effCellContentHeight = Math.max(effCellContentHeight, 
                                 primary.getContentLength());
@@ -445,23 +433,19 @@ public class TableContentLayoutManager {
                     }
                 }
             }
-            
-            log.debug("row: " + row);
-            
-            PrimaryGridUnit[] pguArray = new PrimaryGridUnit[pgus.size()];
-            pguArray = (PrimaryGridUnit[])pgus.toArray(pguArray);
 
-            /*
-            LinkedList returnedList = getCombinedKnuthElementsForRow(pguArray, row, 
-                    isHeaderFooter);
-            if (returnedList != null) {
-                returnList.addAll(returnedList);
-            }*/
+            row.setExplicitHeight(explicitRowHeights[rgi]);
+            if (row.getHeight().opt > row.getExplicitHeight().max) {
+                log.warn("Contents of row " + row.getIndex() + " violate a maximum constraint "
+                        + "in block-progression-dimension. Due to its contents the row grows "
+                        + "to " + row.getHeight().opt + " millipoints. The row constraint resolve "
+                        + "to " + row.getExplicitHeight());
+            }
         }
         if (log.isDebugEnabled()) {
             log.debug("rowGroup:");
             for (int i = 0; i < rowHeights.length; i++) {
-                log.debug("  " + rowHeights[i]);
+                log.debug("  height=" + rowHeights[i] + " explicit=" + explicitRowHeights[i]);
             }
         }
         TableStepper stepper = new TableStepper(this);
@@ -473,32 +457,6 @@ public class TableContentLayoutManager {
         
     }
 
-    private int calcCellHeightFromContents(List elems, int start, int end) {
-        ListIterator iter = elems.listIterator(start);
-        int count = end - start + 1;
-        int len = 0;
-        while (iter.hasNext()) {
-            KnuthElement el = (KnuthElement)iter.next();
-            if (el.isBox()) {
-                len += el.getW();
-            } else if (el.isGlue()) {
-                len += el.getW();
-            } else {
-                //log.debug("Ignoring penalty: " + el);
-                //ignore penalties
-            }
-            count--;
-            if (count == 0) {
-                break;
-            }
-        }
-        return len;
-    }
-    
-    private int calcCellHeightFromContents(List elems) {
-        return calcCellHeightFromContents(elems, 0, elems.size() - 1);
-    }
-    
     protected int getXOffsetOfGridUnit(GridUnit gu) {
         int col = gu.getStartCol();
         return startXOffset + getTableLM().getColumns().getXOffset(col + 1);
@@ -676,8 +634,11 @@ public class TableContentLayoutManager {
                     log.debug("getting len for " + i + " " 
                             + start[i] + "-" + end[i]);
                     readyCount++;
-                    int len = calcCellHeightFromContents(
+                    int len = ElementListUtils.calcContentLength(
                             gridUnits[i].getElements(), start[i], end[i]);
+                    if (start[i] == 0 && lastRow.getExplicitHeight().min > 0) {
+                        len = Math.max(len, lastRow.getExplicitHeight().opt);
+                    }
                     partLength[i] = len;
                     log.debug("len of part: " + len);
                     

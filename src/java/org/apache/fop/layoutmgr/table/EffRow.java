@@ -32,7 +32,8 @@ public class EffRow {
     private List gridUnits = new java.util.ArrayList();
     private int index;
     private int bodyType;
-    private MinOptMax height = new MinOptMax(0);
+    private MinOptMax height;
+    private MinOptMax explicitHeight;
     
     public EffRow(int index, int bodyType) {
         this.index = index;
@@ -52,8 +53,16 @@ public class EffRow {
         return this.height;
     }
     
-    public void setHeight(MinOptMax height) {
-        this.height = height;
+    public void setHeight(MinOptMax mom) {
+        this.height = mom;
+    }
+    
+    public MinOptMax getExplicitHeight() {
+        return this.explicitHeight;
+    }
+    
+    public void setExplicitHeight(MinOptMax mom) {
+        this.explicitHeight = mom;
     }
     
     public List getGridUnits() {
@@ -104,6 +113,7 @@ public class EffRow {
             sb.append(" in footer");
         }
         sb.append(", ").append(height);
+        sb.append(", ").append(explicitHeight);
         sb.append(", ").append(gridUnits.size()).append(" gu");
         sb.append("}");
         return sb.toString();

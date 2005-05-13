@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthPenalty;
@@ -127,13 +128,22 @@ public class TableStepper {
 
     private void setupElementList(int column) {
         GridUnit gu = getActiveGridUnit(column);
+        EffRow row = getActiveRow();
         if (gu.isPrimary() && !gu.isEmpty()) {
             PrimaryGridUnit pgu = (PrimaryGridUnit)gu;
-            if (pgu.hasBPD()) {
-                List list = new java.util.ArrayList(1);
-                list.add(new KnuthBoxCellWithBPD(
-                        pgu.getEffectiveContentLength(), pgu));
-                elementLists[column] = list;
+            if (row.getExplicitHeight().min > 0) {
+                boolean contentsSmaller = ElementListUtils.removeLegalBreaks(
+                        pgu.getElements(), row.getExplicitHeight());
+                if (contentsSmaller) {
+                    List list = new java.util.ArrayList(1);
+                    list.add(new KnuthBoxCellWithBPD(
+                            row.getExplicitHeight().opt, pgu));
+                    elementLists[column] = list;
+                } else {
+                    //Copy elements (LinkedList) to array lists to improve 
+                    //element access performance
+                    elementLists[column] = new java.util.ArrayList(pgu.getElements());
+                }
             } else {
                 //Copy elements (LinkedList) to array lists to improve 
                 //element access performance
