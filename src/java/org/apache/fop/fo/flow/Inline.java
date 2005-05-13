@@ -28,7 +28,6 @@ import org.apache.fop.fo.InlineCharIterator;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonRelativePosition;
-import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 

@@ -21,23 +21,21 @@ package org.apache.fop.layoutmgr;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.area.Area;
-import org.apache.fop.area.Resolvable;
 import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.RetrieveMarker;
-import org.apache.fop.fo.flow.Marker;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.Map;
 
 /**
- * The base class for all LayoutManagers.
+ * The base class for most LayoutManagers.
  */
 public abstract class AbstractLayoutManager implements LayoutManager, Constants {
     protected LayoutManager parentLM = null;
@@ -51,7 +49,7 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     
     /**
      * Used during addAreas(): signals that a BreakPoss is not generating areas
-     * and therefore doesn't add IDs and markers to the current page.
+     * and therefore shouldn't add IDs and markers to the current page.
      * @see org.apache.fop.layoutmgr.AbstractLayoutManager#isBogus
      */
     protected boolean bBogus = false;
@@ -80,15 +78,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
         if (fo == null) {
             throw new IllegalStateException("Null formatting object found.");
         }
-        setFObj(fo);
-    }
-
-    /**
-     * Set the FO object for this layout manager
-     *
-     * @param fo the formatting object for this layout manager
-     */
-    public void setFObj(FObj fo) {
         markers = fo.getMarkers();
         fobjIter = fo.getChildNodes();
         childLMiter = new LMiter(this);
@@ -119,38 +108,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     public LayoutManager getParent() {
         return this.parentLM;
     }
-
-    //     /**
-    //      * Ask the parent LayoutManager to add the current (full) area to the
-    //      * appropriate parent area.
-    //      * @param bFinished If true, this area is finished, either because it's
-    //      * completely full or because there is no more content to put in it.
-    //      * If false, we are in the middle of this area. This can happen,
-    //      * for example, if we find floats in a line. We stop the current area,
-    //      * and add it (temporarily) to its parent so that we can see if there
-    //      * is enough space to place the float(s) anchored in the line.
-    //      */
-    //     protected void flush(Area area, boolean bFinished) {
-    // if (area != null) {
-    //     // area.setFinished(true);
-    //     parentLM.addChildArea(area, bFinished); // ????
-    //     if (bFinished) {
-    // setCurrentArea(null);
-    //     }
-    // }
-    //     }
-
-    /**
-     * Return an Area which can contain the passed childArea. The childArea
-     * may not yet have any content, but it has essential traits set.
-     * In general, if the LayoutManager already has an Area it simply returns
-     * it. Otherwise, it makes a new Area of the appropriate class.
-     * It gets a parent area for its area by calling its parent LM.
-     * Finally, based on the dimensions of the parent area, it initializes
-     * its own area. This includes setting the content IPD and the maximum
-     * BPD.
-     */
-
 
     /** @see org.apache.fop.layoutmgr.LayoutManager#generatesInlineAreas() */
     public boolean generatesInlineAreas() {
@@ -296,126 +253,60 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
      * interface which are declared abstract in AbstractLayoutManager.
      * ---------------------------------------------------------*/
 
+    public LinkedList getNextKnuthElements(LayoutContext context,
+                                           int alignment) {
+        log.warn("null implementation of getNextKnuthElements() called!");
+        setFinished(true);
+        return null;
+    }
+
+    public KnuthElement addALetterSpaceTo(KnuthElement element) {
+        log.warn("null implementation of addALetterSpaceTo() called!");
+        return element;
+    }
+
+    public void getWordChars(StringBuffer sbChars, Position pos) {
+        log.warn("null implementation of getWordChars() called!");
+    }
+
+    public void hyphenate(Position pos, HyphContext hc) {
+        log.warn("null implementation of hyphenate called!");
+    }
+
+    public boolean applyChanges(List oldList) {
+        log.warn("null implementation of applyChanges() called!");
+        return false;
+    }
+
+    public LinkedList getChangedKnuthElements(List oldList,
+                                              /*int flaggedPenalty,*/
+                                              int alignment) {
+        log.warn("null implementation of getChangeKnuthElement() called!");
+        return null;
+    }
+
+    public int getWordSpaceIPD() {
+        log.warn("null implementation of getWordSpaceIPD() called!");
+        return 0;
+    }
+
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getParentArea(org.apache.fop.area.Area)
+     * Return an Area which can contain the passed childArea. The childArea
+     * may not yet have any content, but it has essential traits set.
+     * In general, if the LayoutManager already has an Area it simply returns
+     * it. Otherwise, it makes a new Area of the appropriate class.
+     * It gets a parent area for its area by calling its parent LM.
+     * Finally, based on the dimensions of the parent area, it initializes
+     * its own area. This includes setting the content IPD and the maximum
+     * BPD.
      */
     public Area getParentArea(Area childArea) {
         return null;
     }
 
-    protected void flush() {
-    }
-
     public void addChildArea(Area childArea) {
     }
 
-    /**
-     * Delegate getting the current page number to the parent layout manager.
-     *
-     * @see org.apache.fop.layoutmgr.LayoutManager
-     */
-    public String getCurrentPageNumberString() {
-        return parentLM.getCurrentPageNumberString();
-    }
-
-    /**
-     * Delegate resolving the id reference to the parent layout manager.
-     *
-     * @see org.apache.fop.layoutmgr.LayoutManager
-     */
-    public PageViewport resolveRefID(String ref) {
-        return parentLM.resolveRefID(ref);
-    }
-
-    /**
-     * Add the id to the page.
-     * If the id string is not null then add the id to the current page.
-     */
-    protected void addID(String foID) {
-        if (foID != null && foID.length() > 0) {
-            addIDToPage(foID);
-        }
-    }
-
-    /**
-     * Delegate adding id reference to the parent layout manager.
-     *
-     * @see org.apache.fop.layoutmgr.LayoutManager
-     */
-    public void addIDToPage(String id) {
-        parentLM.addIDToPage(id);
-    }
-
-    /**
-     * Delegate adding unresolved area to the parent layout manager.
-     *
-     * @see org.apache.fop.layoutmgr.LayoutManager
-     */
-    public void addUnresolvedArea(String id, Resolvable res) {
-        parentLM.addUnresolvedArea(id, res);
-    }
-
-    /**
-     * Add the markers when adding an area.
-     */
-    protected void addMarkers(boolean starting, boolean isfirst, boolean islast) {
-        // add markers
-        if (markers != null) {
-            addMarkerMap(markers, starting, isfirst, islast);
-        }
-    }
-
-    /**
-     * Delegate adding marker to the parent layout manager.
-     *
-     * @see org.apache.fop.layoutmgr.LayoutManager
-     */
-    public void addMarkerMap(Map marks, boolean starting, boolean isfirst, boolean islast) {
-        parentLM.addMarkerMap(marks, starting, isfirst, islast);
-    }
-
-    /**
-     * Delegate retrieve marker to the parent layout manager.
-     *
-     * @see org.apache.fop.layoutmgr.LayoutManager
-     */
-    public Marker retrieveMarker(String name, int pos, int boundary) {
-        return parentLM.retrieveMarker(name, pos, boundary);
-    }
-
-    /**
-     * Delegate getAreaTreeHandler to the parent layout manager.
-     *
-     * @see org.apache.fop.layoutmgr.LayoutManager
-     * @return the AreaTreeHandler object.
-     */
-    public AreaTreeHandler getAreaTreeHandler() {
-        return parentLM.getAreaTreeHandler();
-    }
-
-    /**
-     * Handles retrieve-marker nodes as they occur.
-     * @param foNode FO node to check
-     * @return the original foNode or in case of a retrieve-marker the replaced
-     *     FO node. null if the the replacement results in no nodes to be 
-     *     processed.
-     */
-    private FONode handleRetrieveMarker(FONode foNode) {
-        if (foNode instanceof RetrieveMarker) {
-            RetrieveMarker rm = (RetrieveMarker) foNode;
-            Marker marker = retrieveMarker(rm.getRetrieveClassName(),
-                                           rm.getRetrievePosition(),
-                                           rm.getRetrieveBoundary());
-            if (marker == null) {
-                return null;
-            }
-            rm.bindMarker(marker);
-            return rm;
-        } else {
-            return foNode;
-        }
-    }
-    
     /**
      * Convenience method: preload a number of child LMs
      * @param size the requested number of child LMs
@@ -430,9 +321,12 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
             Object theobj = fobjIter.next();
             if (theobj instanceof FONode) {
                 FONode foNode = (FONode) theobj;
-                foNode = handleRetrieveMarker(foNode);
+                if (foNode instanceof RetrieveMarker) {
+                    foNode = getPSLM().resolveRetrieveMarker(
+                        (RetrieveMarker) foNode);
+                }
                 if (foNode != null) {
-                    getAreaTreeHandler().getLayoutManagerMaker().
+                    getPSLM().getLayoutManagerMaker().
                         makeLayoutManagers(foNode, newLMs);
                 }
             }
@@ -440,6 +334,20 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
         return newLMs;
     }
 
+    /**
+     * @see org.apache.fop.layoutmgr.PageSequenceLayoutManager#getPSLM
+     */
+    public PageSequenceLayoutManager getPSLM() {
+        return parentLM.getPSLM();
+    }
+    
+    /**
+     * @see org.apache.fop.layoutmgr.PageSequenceLayoutManager#getCurrentPV
+     */
+    public PageViewport getCurrentPV() {
+        return getPSLM().getCurrentPV();
+    }  
+    
     /**
      * @see org.apache.fop.layoutmgr.LayoutManager#preLoadNext
      */
@@ -489,6 +397,4 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
             addChildLM(lm);
         }
     }
-
 }
-

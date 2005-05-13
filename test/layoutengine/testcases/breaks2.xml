@@ -31,35 +31,35 @@
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
           <fo:block break-after="column">line1</fo:block>
-          <fo:block>line2</fo:block>
+          <fo:block>line2, last block had break-after="column"</fo:block>
           <fo:block break-after="page">line3</fo:block>
-          <fo:block>line4</fo:block>
+          <fo:block>line4, last block had break-after="page"</fo:block>
           <fo:block break-after="even-page">line5</fo:block>
-          <fo:block>line6</fo:block>
+          <fo:block>line6, last block had break-after="even-page"</fo:block>
           <fo:block break-after="even-page">line7</fo:block>
-          <fo:block>line8</fo:block>
+          <fo:block>line8, last block had break-after="even-page"</fo:block>
           <fo:block break-after="odd-page">line9</fo:block>
-          <fo:block>line10</fo:block>
+          <fo:block>line10, last block had break-after="odd-page"</fo:block>
           <fo:block break-after="odd-page">line11</fo:block>
-          <fo:block>line12</fo:block>
+          <fo:block>line12, last block had break-after="odd-page"</fo:block>
           <fo:block>line13</fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
   </fo>
   <checks>
-    <eval expected="1" xpath="//lineArea[. = 'line1']/ancestor::pageViewport/@nr"/>
-    <eval expected="2" xpath="//lineArea[. = 'line2']/ancestor::pageViewport/@nr"/>
-    <eval expected="2" xpath="//lineArea[. = 'line3']/ancestor::pageViewport/@nr"/>
-    <eval expected="3" xpath="//lineArea[. = 'line4']/ancestor::pageViewport/@nr"/>
-    <eval expected="3" xpath="//lineArea[. = 'line5']/ancestor::pageViewport/@nr"/>
-    <eval expected="4" xpath="//lineArea[. = 'line6']/ancestor::pageViewport/@nr"/>
-    <eval expected="4" xpath="//lineArea[. = 'line7']/ancestor::pageViewport/@nr"/>
-    <eval expected="6" xpath="//lineArea[. = 'line8']/ancestor::pageViewport/@nr"/>
-    <eval expected="6" xpath="//lineArea[. = 'line9']/ancestor::pageViewport/@nr"/>
-    <eval expected="7" xpath="//lineArea[. = 'line10']/ancestor::pageViewport/@nr"/>
-    <eval expected="7" xpath="//lineArea[. = 'line11']/ancestor::pageViewport/@nr"/>
-    <eval expected="9" xpath="//lineArea[. = 'line12']/ancestor::pageViewport/@nr"/>
-    <eval expected="9" xpath="//lineArea[. = 'line13']/ancestor::pageViewport/@nr"/>
+    <eval expected="1" xpath="//lineArea[starts-with(., 'line1')]/ancestor::pageViewport/@nr"/>
+    <eval expected="2" xpath="//lineArea[starts-with(., 'line2')]/ancestor::pageViewport/@nr"/>
+    <eval expected="2" xpath="//lineArea[starts-with(., 'line3')]/ancestor::pageViewport/@nr"/>
+    <eval expected="3" xpath="//lineArea[starts-with(., 'line4')]/ancestor::pageViewport/@nr"/>
+    <eval expected="3" xpath="//lineArea[starts-with(., 'line5')]/ancestor::pageViewport/@nr"/>
+    <eval expected="4" xpath="//lineArea[starts-with(., 'line6')]/ancestor::pageViewport/@nr"/>
+    <eval expected="4" xpath="//lineArea[starts-with(., 'line7')]/ancestor::pageViewport/@nr"/>
+    <eval expected="6" xpath="//lineArea[starts-with(., 'line8')]/ancestor::pageViewport/@nr"/>
+    <eval expected="6" xpath="//lineArea[starts-with(., 'line9')]/ancestor::pageViewport/@nr"/>
+    <eval expected="7" xpath="//lineArea[starts-with(., 'line10')]/ancestor::pageViewport/@nr"/>
+    <eval expected="7" xpath="//lineArea[starts-with(., 'line11')]/ancestor::pageViewport/@nr"/>
+    <eval expected="9" xpath="//lineArea[starts-with(., 'line12')]/ancestor::pageViewport/@nr"/>
+    <eval expected="9" xpath="//lineArea[starts-with(., 'line13')]/ancestor::pageViewport/@nr"/>
   </checks>
 </testcase>

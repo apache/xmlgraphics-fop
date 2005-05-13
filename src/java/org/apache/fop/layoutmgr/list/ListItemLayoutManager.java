@@ -27,17 +27,22 @@ import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.BreakPoss;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.BreakPossPosIter;
 import org.apache.fop.layoutmgr.Position;
+import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.TraitSetter;
+import org.apache.fop.layoutmgr.KnuthElement;
+import org.apache.fop.layoutmgr.KnuthBox;
+import org.apache.fop.layoutmgr.KnuthPenalty;
+import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
 
-import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.LinkedList;
+import java.util.ListIterator;
 
 /**
  * LayoutManager for a list-item FO.
@@ -49,11 +54,11 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
     private Item label;
     private Item body;
 
-    private int referenceIPD = 0;
-
     private Block curBlockArea = null;
 
-    //private List cellList = null;
+    private LinkedList labelList = null;
+    private LinkedList bodyList = null;
+
     private int listItemHeight;
 
     //TODO space-before|after: handle space-resolution rules
@@ -65,6 +70,38 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         protected ItemPosition(LayoutManager lm, int pos, List l) {
             super(lm, pos);
             cellBreaks = l;
+        }
+    }
+
+    private class ListItemPosition extends Position {
+        private int iLabelFirstIndex;
+        private int iLabelLastIndex;
+        private int iBodyFirstIndex;
+        private int iBodyLastIndex;
+
+        public ListItemPosition(LayoutManager lm, int labelFirst, int labelLast, 
+                int bodyFirst, int bodyLast) {
+            super(lm);
+            iLabelFirstIndex = labelFirst;
+            iLabelLastIndex = labelLast;
+            iBodyFirstIndex = bodyFirst;
+            iBodyLastIndex = bodyLast;
+        }
+        
+        public int getLabelFirstIndex() {
+            return iLabelFirstIndex;
+        }
+        
+        public int getLabelLastIndex() {
+            return iLabelLastIndex;
+        }
+
+        public int getBodyFirstIndex() {
+            return iBodyFirstIndex;
+        }
+        
+        public int getBodyLastIndex() {
+            return iBodyLastIndex;
         }
     }
 
@@ -227,6 +264,213 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
     }
 
     /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(org.apache.fop.layoutmgr.LayoutContext, int)
+     */
+    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+        referenceIPD = context.getRefIPD();
+
+        // label
+        labelList = label.getNextKnuthElements(context, alignment);
+
+        // body
+        bodyList = body.getNextKnuthElements(context, alignment);
+
+        // create a combined list
+        LinkedList returnedList = getCombinedKnuthElementsForListItem(labelList, bodyList);
+
+        // "wrap" the Position inside each element
+        LinkedList tempList = returnedList;
+        KnuthElement tempElement;
+        returnedList = new LinkedList();
+        ListIterator listIter = tempList.listIterator();
+        while (listIter.hasNext()) {
+            tempElement = (KnuthElement)listIter.next();
+            tempElement.setPosition(new NonLeafPosition(this, tempElement.getPosition()));
+            returnedList.add(tempElement);
+        }
+
+        setFinished(true);
+        return returnedList;
+    }
+
+    private LinkedList getCombinedKnuthElementsForListItem(LinkedList labelElements,
+                                                           LinkedList bodyElements) {
+        //Copy elements to array lists to improve element access performance
+        List[] elementLists = {new ArrayList(labelElements),
+                               new ArrayList(bodyElements)};
+        int[] fullHeights = {calcItemHeightFromContents(elementLists[0]),
+                            calcItemHeightFromContents(elementLists[1])};
+        int[] partialHeights = {0, 0};
+        int[] start = {-1, -1};
+        int[] end = {-1, -1};
+
+        int totalHeight = Math.max(fullHeights[0], fullHeights[1]);
+        int step;
+        int addedBoxHeight = 0;
+
+        LinkedList returnList = new LinkedList();
+        while ((step = getNextStep(elementLists, start, end, partialHeights))
+               > 0) {
+            // compute penalty height and box height
+            int penaltyHeight = step 
+                + getMaxRemainingHeight(fullHeights, partialHeights) 
+                - totalHeight;
+            int boxHeight = step - addedBoxHeight - penaltyHeight;
+
+            // add the new elements
+            addedBoxHeight += boxHeight;
+            ListItemPosition stepPosition = new ListItemPosition(this, 
+                    start[0], end[0], start[1], end[1]);
+            returnList.add(new KnuthBox(boxHeight, stepPosition, false));
+            if (addedBoxHeight < totalHeight) {
+                returnList.add(new KnuthPenalty(penaltyHeight, 0, false, stepPosition, false));
+            }
+        }
+
+        return returnList;
+    }
+
+    private int calcItemHeightFromContents(List elements, int start, int end) {
+        ListIterator iter = elements.listIterator(start);
+        int count = end - start + 1;
+        int len = 0;
+        while (iter.hasNext()) {
+            KnuthElement el = (KnuthElement)iter.next();
+            if (el.isBox()) {
+                len += el.getW();
+            } else if (el.isGlue()) {
+                len += el.getW();
+            } else {
+                log.debug("Ignoring penalty: " + el);
+                //ignore penalties
+            }
+            count--;
+            if (count == 0) {
+                break;
+            }
+        }
+        return len;
+    }
+    
+    private int calcItemHeightFromContents(List elements) {
+        return calcItemHeightFromContents(elements, 0, elements.size() - 1);
+    }
+
+    private int getNextStep(List[] elementLists, int[] start, int[] end, int[] partialHeights) {
+        // backup of partial heights
+        int[] backupHeights = {partialHeights[0], partialHeights[1]};
+
+        // set starting points
+        start[0] = end[0] + 1;
+        start[1] = end[1] + 1;
+
+        // get next possible sequence for label and body
+        int seqCount = 0;
+        for (int i = 0; i < start.length; i++) {
+            while (end[i] + 1 < elementLists[i].size()) {
+                end[i]++;
+                KnuthElement el = (KnuthElement)elementLists[i].get(end[i]);
+                if (el.isPenalty()) {
+                    if (el.getP() < KnuthElement.INFINITE) {
+                        //First legal break point
+                        break;
+                    }
+                } else if (el.isGlue()) {
+                    KnuthElement prev = (KnuthElement)elementLists[i].get(end[i] - 1);
+                    if (prev.isBox()) {
+                        //Second legal break point
+                        break;
+                    }
+                    partialHeights[i] += el.getW();
+                } else {
+                    partialHeights[i] += el.getW();
+                }
+            }
+            if (end[i] < start[i]) {
+                partialHeights[i] = backupHeights[i];
+            } else {
+                seqCount++;
+            }
+        }
+        if (seqCount == 0) {
+            return 0;
+        }
+        
+        // determine next step
+        int step;
+        if (backupHeights[0] == 0 && backupHeights[1] == 0) {
+            // this is the first step: choose the maximum increase, so that
+            // the smallest area in the first page will contain at least
+            // a label area and a body area
+            step = Math.max((end[0] >= start[0] ? partialHeights[0] : Integer.MIN_VALUE),
+                            (end[1] >= start[1] ? partialHeights[1] : Integer.MIN_VALUE));
+        } else {
+            // this is not the first step: choose the minimum increase
+            step = Math.min((end[0] >= start[0] ? partialHeights[0] : Integer.MAX_VALUE),
+                            (end[1] >= start[1] ? partialHeights[1] : Integer.MAX_VALUE));
+        }
+
+        // reset bigger-than-step sequences
+        for (int i = 0; i < partialHeights.length; i++) {
+            if (partialHeights[i] > step) {
+                partialHeights[i] = backupHeights[i];
+                end[i] = start[i] - 1;
+            }
+        }
+
+        return step;
+    }
+
+    private int getMaxRemainingHeight(int[] fullHeights, int[] partialHeights) {
+        return Math.max(fullHeights[0] - partialHeights[0],
+                        fullHeights[1] - partialHeights[1]);
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(java.util.List, int)
+     */
+    public LinkedList getChangedKnuthElements(List oldList, int alignment) {
+/*LF*/  //log.debug(" LILM.getChanged> label");
+        // label
+        labelList = label.getChangedKnuthElements(labelList, alignment);
+
+/*LF*/  //log.debug(" LILM.getChanged> body");
+        // body
+        // "unwrap" the Positions stored in the elements
+        ListIterator oldListIterator = oldList.listIterator();
+        KnuthElement oldElement = null;
+        while (oldListIterator.hasNext()) {
+            oldElement = (KnuthElement)oldListIterator.next();
+            Position innerPosition = ((NonLeafPosition) oldElement.getPosition()).getPosition();
+/*LF*/      //System.out.println(" BLM> unwrapping: " + (oldElement.isBox() ? "box    " : (oldElement.isGlue() ? "glue   " : "penalty")) + " creato da " + oldElement.getLayoutManager().getClass().getName());
+/*LF*/      //System.out.println(" BLM> unwrapping:         " + oldElement.getPosition().getClass().getName());
+            if (innerPosition != null) {
+                // oldElement was created by a descendant of this BlockLM
+                oldElement.setPosition(innerPosition);
+            } else {
+                // thisElement was created by this BlockLM
+                // modify its position in order to recognize it was not created
+                // by a child
+                oldElement.setPosition(new Position(this));
+            }
+        }
+
+        LinkedList returnedList = body.getChangedKnuthElements(oldList, alignment);
+        // "wrap" the Position inside each element
+        LinkedList tempList = returnedList;
+        KnuthElement tempElement;
+        returnedList = new LinkedList();
+        ListIterator listIter = tempList.listIterator();
+        while (listIter.hasNext()) {
+            tempElement = (KnuthElement)listIter.next();
+            tempElement.setPosition(new NonLeafPosition(this, tempElement.getPosition()));
+            returnedList.add(tempElement);
+        }
+
+        return returnedList;
+    }
+
+    /**
      * Add the areas for the break points.
      * This sets the offset of each cell as it is added.
      *
@@ -242,26 +486,62 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         addBlockSpacing(adjust, spaceBefore);
         spaceBefore = null;
 
-        addID(fobj.getId());
+        getPSLM().addIDToPage(fobj.getId());
 
-        Item childLM;
         LayoutContext lc = new LayoutContext(0);
+
+        // "unwrap" the NonLeafPositions stored in parentIter
+        LinkedList positionList = new LinkedList();
+        Position pos;
         while (parentIter.hasNext()) {
-            ItemPosition lfp = (ItemPosition) parentIter.next();
-            // Add the block areas to Area
-
-            for (Iterator iter = lfp.cellBreaks.iterator(); iter.hasNext();) {
-                List cellsbr = (List)iter.next();
-                PositionIterator breakPosIter;
-                breakPosIter = new BreakPossPosIter(cellsbr, 0, cellsbr.size());
-
-                while ((childLM = (Item)breakPosIter.getNextChildLM()) != null) {
-                    childLM.addAreas(breakPosIter, lc);
-                }
+            pos = (Position) parentIter.next();
+            if (pos instanceof NonLeafPosition) {
+                // pos contains a ListItemPosition created by this ListBlockLM
+                positionList.add(((NonLeafPosition) pos).getPosition());
             }
         }
 
-        curBlockArea.setBPD(listItemHeight);
+        // use the first and the last ListItemPosition to determine the 
+        // corresponding indexes in the original labelList and bodyList
+        int labelFirstIndex = ((ListItemPosition) positionList.getFirst()).getLabelFirstIndex();
+        int labelLastIndex = ((ListItemPosition) positionList.getLast()).getLabelLastIndex();
+        int bodyFirstIndex = ((ListItemPosition) positionList.getFirst()).getBodyFirstIndex();
+        int bodyLastIndex = ((ListItemPosition) positionList.getLast()).getBodyLastIndex();
+
+        // add label areas
+        if (labelFirstIndex <= labelLastIndex) {
+            KnuthPossPosIter labelIter = new KnuthPossPosIter(labelList, 
+                    labelFirstIndex, labelLastIndex + 1);
+            lc.setFlags(LayoutContext.FIRST_AREA, layoutContext.isFirstArea());
+            lc.setFlags(LayoutContext.LAST_AREA, layoutContext.isLastArea());
+            // TO DO: use the right stack limit for the label
+            lc.setStackLimit(layoutContext.getStackLimit());
+            label.addAreas(labelIter, lc);
+        }
+
+        // reset the area bpd after adding the label areas and before adding the body areas
+        int savedBPD = 0;
+        if (labelFirstIndex <= labelLastIndex
+            && bodyFirstIndex <= bodyLastIndex) {
+            savedBPD = curBlockArea.getBPD();
+            curBlockArea.setBPD(0);
+        }
+
+        // add body areas
+        if (bodyFirstIndex <= bodyLastIndex) {
+            KnuthPossPosIter bodyIter = new KnuthPossPosIter(bodyList, 
+                    bodyFirstIndex, bodyLastIndex + 1);
+            lc.setFlags(LayoutContext.FIRST_AREA, layoutContext.isFirstArea());
+            lc.setFlags(LayoutContext.LAST_AREA, layoutContext.isLastArea());
+            // TO DO: use the right stack limit for the body
+            lc.setStackLimit(layoutContext.getStackLimit());
+            body.addAreas(bodyIter, lc);
+        }
+
+        // after adding body areas, set the maximum area bpd
+        if (curBlockArea.getBPD() < savedBPD) {
+            curBlockArea.setBPD(savedBPD);
+        }
 
         flush();
 

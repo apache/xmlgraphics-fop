@@ -23,17 +23,19 @@ import java.io.IOException;
 import java.util.HashMap;
 
 /**
- * Region Viewport reference area.
- * This area is the viewport for a region and contains a region area.
+ * Region Viewport area.
+ * This object represents the region-viewport-area.  It has a 
+ * region-reference-area as its child.  These areas are described
+ * in the fo:region-body description in the XSL Recommendation.
  */
 public class RegionViewport extends Area implements Cloneable {
     // this rectangle is relative to the page
-    private RegionReference region;
+    private RegionReference regionReference;
     private Rectangle2D viewArea;
     private boolean clip = false;
 
     /**
-     * Create a new region viewport.
+     * Create a new region-viewport-area
      *
      * @param viewArea the view area of this viewport
      */
@@ -43,21 +45,21 @@ public class RegionViewport extends Area implements Cloneable {
     }
 
     /**
-     * Set the region for this region viewport.
+     * Set the region-reference-area for this region viewport.
      *
-     * @param reg the child region inside this viewport
+     * @param reg the child region-reference-area inside this viewport
      */
-    public void setRegion(RegionReference reg) {
-        region = reg;
+    public void setRegionReference(RegionReference reg) {
+        regionReference = reg;
     }
 
     /**
-     * Get the region for this region viewport.
+     * Get the region-reference-area for this region viewport.
      *
-     * @return the child region inside this viewport
+     * @return the child region-reference-area inside this viewport
      */
-    public RegionReference getRegion() {
-        return region;
+    public RegionReference getRegionReference() {
+        return regionReference;
     }
 
     /**
@@ -69,6 +71,11 @@ public class RegionViewport extends Area implements Cloneable {
         clip = c;
     }
 
+    /** @return true if the viewport should be clipped. */
+    public boolean isClip() {
+        return this.clip;
+    }
+    
     /**
      * Get the view area of this viewport.
      *
@@ -86,7 +93,7 @@ public class RegionViewport extends Area implements Cloneable {
         out.writeFloat((float) viewArea.getHeight());
         out.writeBoolean(clip);
         out.writeObject(props);
-        out.writeObject(region);
+        out.writeObject(regionReference);
     }
 
     private void readObject(java.io.ObjectInputStream in)
@@ -95,7 +102,7 @@ public class RegionViewport extends Area implements Cloneable {
                                          in.readFloat(), in.readFloat());
         clip = in.readBoolean();
         props = (HashMap)in.readObject();
-        setRegion((RegionReference) in.readObject());
+        setRegionReference((RegionReference) in.readObject());
     }
 
     /**
@@ -106,7 +113,7 @@ public class RegionViewport extends Area implements Cloneable {
      */
     public Object clone() {
         RegionViewport rv = new RegionViewport((Rectangle2D)viewArea.clone());
-        rv.region = (RegionReference)region.clone();
+        rv.regionReference = (RegionReference)regionReference.clone();
         if (props != null) {
             rv.props = (HashMap)props.clone();
         }

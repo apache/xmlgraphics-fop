@@ -208,7 +208,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
      }
      
      protected void addId() {
-         addID(fobj.getId());
+         getPSLM().addIDToPage(fobj.getId());
      }
 }
 

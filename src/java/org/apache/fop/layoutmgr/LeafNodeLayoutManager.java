@@ -78,6 +78,12 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager
     }
 
     /**
+     * Create a Leaf node layout mananger.
+     */
+    public LeafNodeLayoutManager() {
+    }
+
+    /**
      * get the inline area.
      * @param context the context used to create the area
      * @return the current inline area for this layout manager
@@ -194,10 +200,10 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager
                 curArea.setOffset(context.getMiddleBaseline() - bpd / 2);
             break;
             case EN_TOP:
-                //curArea.setOffset(0);
+                curArea.setOffset(context.getTopBaseline());
             break;
             case EN_BOTTOM:
-                curArea.setOffset(context.getLineHeight() - bpd);
+                curArea.setOffset(context.getBottomBaseline() - bpd);
             break;
             case EN_BASELINE:
             default:
@@ -269,21 +275,19 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager
 
         // node is a fo:ExternalGraphic, fo:InstreamForeignObject,
         // fo:PageNumber or fo:PageNumberCitation
-        returnList.add(new KnuthBox(areaInfo.ipdArea.opt, areaInfo.lead,
+        returnList.add(new KnuthInlineBox(areaInfo.ipdArea.opt, areaInfo.lead,
                                     areaInfo.total, areaInfo.middle,
                                     new LeafPosition(this, 0), false));
         setFinished(true);
         return returnList;
     }
 
-    public void getWordChars(StringBuffer sbChars, Position bp) {
+    public List addALetterSpaceTo(List oldList) {
+        // return the unchanged elements
+        return oldList;
     }
 
-    public KnuthElement addALetterSpaceTo(KnuthElement element) {
-        // return the unchanged box object
-        return new KnuthBox(areaInfo.ipdArea.opt, areaInfo.lead,
-                            areaInfo.total, areaInfo.middle,
-                            new LeafPosition(this, 0), false);
+    public void getWordChars(StringBuffer sbChars, Position pos) {
     }
 
     public void hyphenate(Position pos, HyphContext hc) {
@@ -295,7 +299,7 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager
     }
 
     public LinkedList getChangedKnuthElements(List oldList,
-                                              int flaggedPenalty,
+                                              /*int flaggedPenalty,*/
                                               int alignment) {
         if (isFinished()) {
             return null;
@@ -305,9 +309,9 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager
 
         // fobj is a fo:ExternalGraphic, fo:InstreamForeignObject,
         // fo:PageNumber or fo:PageNumberCitation
-        returnList.add(new KnuthBox(areaInfo.ipdArea.opt, areaInfo.lead,
-                                    areaInfo.total, areaInfo.middle,
-                                    new LeafPosition(this, 0), true));
+        returnList.add(new KnuthInlineBox(areaInfo.ipdArea.opt, areaInfo.lead,
+                                          areaInfo.total, areaInfo.middle,
+                                          new LeafPosition(this, 0), true));
 
         setFinished(true);
         return returnList;

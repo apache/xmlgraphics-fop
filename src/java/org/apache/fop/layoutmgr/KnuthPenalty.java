@@ -37,8 +37,12 @@ package org.apache.fop.layoutmgr;
  * be chosen as breaking points for consecutive lines.
  */
 public class KnuthPenalty extends KnuthElement {
+
+    public static final int FLAGGED_PENALTY = 50;
+
     private int penalty;
     private boolean bFlagged; 
+    private int breakClass = -1;
 
     /**
      * Create a new KnuthPenalty.
@@ -53,6 +57,14 @@ public class KnuthPenalty extends KnuthElement {
         super(w, pos, bAux);
         penalty = p;
         bFlagged = f;
+    }
+
+    public KnuthPenalty(int w, int p, boolean f,
+            int iBreakClass, Position pos, boolean bAux) {
+        super(w, pos, bAux);
+        penalty = p;
+        bFlagged = f;
+        breakClass = iBreakClass;
     }
 
     public boolean isPenalty() {
@@ -76,4 +88,36 @@ public class KnuthPenalty extends KnuthElement {
     public boolean isForcedBreak() {
         return penalty == -KnuthElement.INFINITE;
     }
+    
+    public int getBreakClass() {
+        return breakClass;
+    }
+    
+    /** @see java.lang.Object#toString() */
+    public String toString() {
+        StringBuffer sb = new StringBuffer(64);
+        if (isAuxiliary()) {
+            sb.append("aux. ");
+        }
+        sb.append("penalty");
+        sb.append(" p=");
+        if (getP() < 0) {
+            sb.append("-");
+        }
+        if (Math.abs(getP()) == INFINITE) {
+            sb.append("INFINITE");
+        } else {
+            sb.append(getP());
+        }
+        if (isFlagged()) {
+            sb.append(" [flagged]");
+        }
+        sb.append(" w=");
+        sb.append(getW());
+        if (isForcedBreak()) {
+            sb.append(" (forced break)");
+        }
+        return sb.toString();
+    }
+    
 }

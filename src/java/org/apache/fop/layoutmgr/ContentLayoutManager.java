@@ -19,21 +19,15 @@
 package org.apache.fop.layoutmgr;
 
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.pagination.Title;
-import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.area.Area;
-import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.Resolvable;
-import org.apache.fop.area.PageViewport;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 import java.util.ArrayList;
 import org.apache.fop.traits.MinOptMax;
 
@@ -47,7 +41,6 @@ import org.apache.commons.logging.LogFactory;
  */
 public class ContentLayoutManager implements InlineLevelLayoutManager {
     private FOUserAgent userAgent;
-    private AreaTreeHandler areaTreeHandler;
     private Area holder;
     private int stackSize;
     private LayoutManager parentLM;
@@ -117,7 +110,7 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
         while (contentIter.hasNext()) {
             KnuthElement element = (KnuthElement) contentIter.next();
             if (element.isBox()) {
-                KnuthBox box = (KnuthBox) element;
+                KnuthInlineBox box = (KnuthInlineBox) element;
                 if (box.getLead() > lineLead) {
                     lineLead = box.getLead();
                 }
@@ -206,10 +199,6 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public void setFObj(FObj fobj) {
-    }
-
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public void setParent(LayoutManager lm) {
         parentLM = lm;
     }
@@ -251,44 +240,6 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
     /** @see org.apache.fop.layoutmgr.LayoutManager */
     public void getWordChars(StringBuffer sbChars, Position bp1,
             Position bp2) { }
-
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public String getCurrentPageNumberString() {
-        return parentLM.getCurrentPageNumberString();
-    }
-
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public PageViewport resolveRefID(String ref) {
-        return parentLM.resolveRefID(ref);
-    }
-
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public void addIDToPage(String id) {
-        parentLM.addIDToPage(id);
-    }
-
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public void addUnresolvedArea(String id, Resolvable res) {
-        parentLM.addUnresolvedArea(id, res);
-    }
-
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public void addMarkerMap(Map marks, boolean starting, boolean isfirst, boolean islast) {
-        parentLM.addMarkerMap(marks, starting, isfirst, islast);
-    }
-
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public Marker retrieveMarker(String name, int pos, int boundary) {
-        return parentLM.retrieveMarker(name, pos, boundary);
-    }
-
-    /**
-     * @see org.apache.fop.layoutmgr.LayoutManager
-     * @return the AreaTreeHandler object.
-     */
-    public AreaTreeHandler getAreaTreeHandler() {
-        return parentLM.getAreaTreeHandler();
-    }
 
     /**
      * @see org.apache.fop.layoutmgr.LayoutManager#preLoadNext
@@ -358,8 +309,8 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
         return contentList;
     }
 
-    public KnuthElement addALetterSpaceTo(KnuthElement element) {
-        return element;
+    public List addALetterSpaceTo(List oldList) {
+        return oldList;
     }
 
     public void getWordChars(StringBuffer sbChars, Position pos) {
@@ -373,10 +324,13 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
     }
 
     public LinkedList getChangedKnuthElements(List oldList,
-                                              int flaggedPenalty,
+                                              /*int flaggedPenalty,*/
                                               int alignment) {
         return null;
     }
-
+    
+    public PageSequenceLayoutManager getPSLM() {
+        return parentLM.getPSLM();
+    }
 }
 

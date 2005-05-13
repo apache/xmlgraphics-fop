@@ -37,7 +37,6 @@ public class BidiLayoutManager extends LeafNodeLayoutManager {
     public BidiLayoutManager(BidiOverride node, InlineLayoutManager cLM) {
         super(node);
         children = new ArrayList();
-        setFObj(node);
 /*
         for (int count = cLM.size() - 1; count >= 0; count--) {
             InlineArea ia = cLM.get(count);

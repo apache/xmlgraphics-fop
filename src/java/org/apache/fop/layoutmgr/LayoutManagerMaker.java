@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The Apache Software Foundation.
+ * Copyright 2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,9 @@ package org.apache.fop.layoutmgr;
 
 import java.util.List;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.area.AreaTreeHandler;
+
 
 /**
  * The interface for all LayoutManager makers
@@ -34,14 +36,24 @@ public interface LayoutManagerMaker {
     public void makeLayoutManagers(FONode node, List lms);
 
     /**
-     * Make the LayoutManager for the node.
-     * If not exactly one LayoutManagers is made,
-     * a FOPException is thrown.
+     * Make a specific LayoutManager for the node.
+     * If not exactly one LayoutManagers is available,
+     * an IllegalStateException is thrown.
      * @param node the FO node for which the LayoutManagers are made
      * @return The created LayoutManager
+     * @throws IllegalStateException if not exactly one
+     *    LayoutManager is available for the requested node
      */
-    public LayoutManager makeLayoutManager(FONode node)
-        throws FOPException;
+    public LayoutManager makeLayoutManager(FONode node);
+
+    /**
+     * Make a PageSequenceLayoutManager object.
+     * @param ath the AreaTreeHandler object the PSLM interacts with
+     * @param ps the fo:page-sequence object this PSLM will process
+     * @return The created PageSequenceLayoutManager object
+     */
+    public PageSequenceLayoutManager makePageSequenceLayoutManager(
+        AreaTreeHandler ath, PageSequence ps);
 
 }
 

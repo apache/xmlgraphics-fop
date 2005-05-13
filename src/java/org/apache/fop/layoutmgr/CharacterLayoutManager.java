@@ -137,7 +137,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         // node is a fo:Character
         if (letterSpaceIPD.min == letterSpaceIPD.max) {
             // constant letter space, only return a box
-            returnList.add(new KnuthBox(areaInfo.ipdArea.opt, areaInfo.lead,
+            returnList.add(new KnuthInlineBox(areaInfo.ipdArea.opt, areaInfo.lead,
                                         areaInfo.total, areaInfo.middle,
                                         new LeafPosition(this, 0), false));
         } else {
@@ -145,14 +145,14 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
             // at the moment the character is supposed to have no letter spaces,
             // but returning this sequence allows us to change only one element
             // if addALetterSpaceTo() is called
-            returnList.add(new KnuthBox(areaInfo.ipdArea.opt, areaInfo.lead,
+            returnList.add(new KnuthInlineBox(areaInfo.ipdArea.opt, areaInfo.lead,
                                         areaInfo.total, areaInfo.middle,
                                         new LeafPosition(this, 0), false));
             returnList.add(new KnuthPenalty(0, KnuthElement.INFINITE, false,
                                             new LeafPosition(this, -1), true));
             returnList.add(new KnuthGlue(0, 0, 0,
                                          new LeafPosition(this, -1), true));
-            returnList.add(new KnuthBox(0, 0, 0, 0,
+            returnList.add(new KnuthInlineBox(0, 0, 0, 0,
                                         new LeafPosition(this, -1), true));
         }
 
@@ -171,7 +171,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
 
         if (letterSpaceIPD.min == letterSpaceIPD.max) {
             // constant letter space, return a new box
-            return new KnuthBox(areaInfo.ipdArea.opt, areaInfo.lead,
+            return new KnuthInlineBox(areaInfo.ipdArea.opt, areaInfo.lead,
                                 areaInfo.total, areaInfo.middle,
                                 new LeafPosition(this, 0), false);
         } else {
@@ -220,7 +220,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         if (letterSpaceIPD.min == letterSpaceIPD.max
             || areaInfo.iLScount == 0) {
             // constant letter space, or no letter space
-            returnList.add(new KnuthBox(areaInfo.ipdArea.opt, areaInfo.lead,
+            returnList.add(new KnuthInlineBox(areaInfo.ipdArea.opt, areaInfo.lead,
                                         areaInfo.total, areaInfo.middle,
                                         new LeafPosition(this, 0), false));
             if (areaInfo.bHyphenated) {
@@ -231,7 +231,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         } else {
             // adjustable letter space
             returnList.add
-                (new KnuthBox(areaInfo.ipdArea.opt
+                (new KnuthInlineBox(areaInfo.ipdArea.opt
                               - areaInfo.iLScount * letterSpaceIPD.opt,
                               areaInfo.lead, areaInfo.total, areaInfo.middle,
                               new LeafPosition(this, 0), false));
@@ -242,7 +242,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
                                areaInfo.iLScount * letterSpaceIPD.max - letterSpaceIPD.opt,
                                areaInfo.iLScount * letterSpaceIPD.opt - letterSpaceIPD.min,
                                new LeafPosition(this, -1), true));
-            returnList.add(new KnuthBox(0, 0, 0, 0,
+            returnList.add(new KnuthInlineBox(0, 0, 0, 0,
                                         new LeafPosition(this, -1), true));
             if (areaInfo.bHyphenated) {
                 returnList.add
@@ -256,7 +256,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
     }
 
     protected void addId() {
-        addID(fobj.getId());
+        getPSLM().addIDToPage(fobj.getId());
     }
 }
 

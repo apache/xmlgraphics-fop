@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,19 @@ public class Position {
      */
     public Position getPosition() {
         return null;
+    }
+    
+    
+    /** @see java.lang.Object#toString() */
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("Position");
+        if (getLM() != null) {
+            sb.append(" {");
+            sb.append(getLM());
+            sb.append("}");
+        }
+        return sb.toString();
     }
 }
 

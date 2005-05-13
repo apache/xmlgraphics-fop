@@ -18,6 +18,7 @@
 
 package org.apache.fop.area;
 
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
@@ -31,6 +32,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.pagination.SimplePageMaster;
 
 /**
  * Page viewport that specifies the viewport area and holds the page contents.
@@ -46,6 +48,7 @@ public class PageViewport implements Resolvable, Cloneable {
     private Rectangle2D viewArea;
     private boolean clip = false;
     private String pageNumberString = null;
+    private SimplePageMaster spm = null;
 
     // list of id references and the rectangle on the page
     private Map idReferences = null;
@@ -72,12 +75,26 @@ public class PageViewport implements Resolvable, Cloneable {
 
     /**
      * Create a page viewport.
-     * @param p the page reference area that holds the contents
-     * @param bounds the bounds of this viewport
+     * @param spm SimplePageMaster indicating the page and region dimensions
      */
-    public PageViewport(Page p, Rectangle2D bounds) {
-        page = p;
-        viewArea = bounds;
+    public PageViewport(SimplePageMaster spm) {
+        this.spm = spm;
+        int pageWidth = spm.getPageWidth().getValue();
+        int pageHeight = spm.getPageHeight().getValue();
+        viewArea = new Rectangle(0, 0, pageWidth, pageHeight);
+        page = new Page(spm);
+    }
+
+    /**
+     * Create a page viewport 
+     * @param spm SimplePageMaster indicating the page and region dimensions
+     * @param p Page Reference Area
+     * @param bounds Page Viewport dimensions
+     */
+    public PageViewport(SimplePageMaster spm, Page p, Rectangle2D bounds) {
+        this.spm = spm;
+        this.page = p;
+        this.viewArea = bounds;
     }
 
     /**
@@ -85,8 +102,29 @@ public class PageViewport implements Resolvable, Cloneable {
      * @return BodyRegion object
      */
     public BodyRegion getBodyRegion() {
-        return (BodyRegion)
-            getPage().getRegionViewport(Constants.FO_REGION_BODY).getRegion();
+        return (BodyRegion) getPage().getRegionViewport(
+                Constants.FO_REGION_BODY).getRegionReference();
+    }    
+
+    /**
+     * Convenience method to create a new Span for this
+     * this PageViewport.
+     * 
+     * @param spanAll whether this is a single-column span
+     * @return Span object created
+     */
+    public Span createSpan(boolean spanAll) {
+        return getBodyRegion().getMainReference().createSpan(spanAll);
+    }    
+
+    /**
+     * Convenience method to get the span-reference-area currently
+     * being processed
+     * 
+     * @return span currently being processed.
+     */
+    public Span getCurrentSpan() {
+        return getBodyRegion().getMainReference().getCurrentSpan();
     }    
 
     /**
@@ -229,6 +267,11 @@ public class PageViewport implements Resolvable, Cloneable {
      */
     public void addMarkers(Map marks, boolean starting,
             boolean isfirst, boolean islast) {
+
+        if (marks == null) {
+            return;
+        }
+        
         // at the start of the area, register is-first and any areas
         if (starting) {
             if (isfirst) {
@@ -385,7 +428,7 @@ public class PageViewport implements Resolvable, Cloneable {
      */
     public Object clone() {
         Page p = (Page)page.clone();
-        PageViewport ret = new PageViewport(p, (Rectangle2D)viewArea.clone());
+        PageViewport ret = new PageViewport(spm, p, (Rectangle2D)viewArea.clone());
         return ret;
     }
 
@@ -406,5 +449,11 @@ public class PageViewport implements Resolvable, Cloneable {
         sb.append("PageViewport: page=");
         sb.append(getPageNumberString());
         return sb.toString();
+    }
+    /**
+     * @return Returns the spm.
+     */
+    public SimplePageMaster getSPM() {
+        return spm;
     }
 }

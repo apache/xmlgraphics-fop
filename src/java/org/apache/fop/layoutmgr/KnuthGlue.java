@@ -45,8 +45,10 @@ package org.apache.fop.layoutmgr;
  * to get these values.
  */
 public class KnuthGlue extends KnuthElement {
+    
     private int stretchability;
     private int shrinkability;
+    private int adjustmentClass = -1;
 
     /**
      * Create a new KnuthGlue.
@@ -63,21 +65,48 @@ public class KnuthGlue extends KnuthElement {
         shrinkability = z;
     }
 
+    public KnuthGlue(int w, int y, int z,
+            int iAdjClass, Position pos, boolean bAux) {
+        super(w, pos, bAux);
+        stretchability = y;
+        shrinkability = z;
+        adjustmentClass = iAdjClass;
+    }
+
+    /** @see org.apache.fop.layoutmgr.KnuthElement#isGlue() */
     public boolean isGlue() {
         return true;
     }
 
-    /**
-     * Return the stretchability of this glue.
-     */
+    /** @return the stretchability of this glue. */
     public int getY() {
         return stretchability;
     }
 
-    /**
-     * Return the shrinkability of this glue.
-     */
+    /** @return the shrinkability of this glue. */
     public int getZ() {
         return shrinkability;
     }
+    
+    /** @return the adjustment class (or role) of this glue. */
+    public int getAdjustmentClass() {
+        return adjustmentClass;
+    }
+    
+    /** @see java.lang.Object#toString() */
+    public String toString() {
+        StringBuffer sb = new StringBuffer(64);
+        if (isAuxiliary()) {
+            sb.append("aux. ");
+        }
+        sb.append("glue");
+        sb.append(" w=").append(getW());
+        sb.append(" stretch=").append(getY());
+        sb.append(" shrink=").append(getZ());
+        if (getAdjustmentClass() >= 0) {
+            sb.append(" adj-class=").append(getAdjustmentClass());
+        }
+        return sb.toString();
+    }
+    
 }

@@ -20,119 +20,93 @@ package org.apache.fop.layoutmgr;
 
 import org.apache.fop.apps.FOPException;
 
-import org.apache.fop.area.CTM;
 import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.NormalFlow;
 import org.apache.fop.area.LineArea;
-import org.apache.fop.area.Page;
 import org.apache.fop.area.RegionViewport;
-import org.apache.fop.area.RegionReference;
-import org.apache.fop.area.BodyRegion;
-import org.apache.fop.area.Span;
-import org.apache.fop.area.BeforeFloat;
-import org.apache.fop.area.Footnote;
 import org.apache.fop.area.Resolvable;
-import org.apache.fop.area.Trait;
 
 import org.apache.fop.datatypes.PercentBase;
-import org.apache.fop.datatypes.FODimension;
 
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.Marker;
+import org.apache.fop.fo.flow.RetrieveMarker;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Region;
-import org.apache.fop.fo.pagination.RegionBody;
+import org.apache.fop.fo.pagination.SideRegion;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
-import org.apache.fop.fo.properties.CommonMarginBlock;
 
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.awt.Rectangle;
-import java.util.Iterator;
-import java.awt.geom.Rectangle2D;
-import org.apache.fop.traits.MinOptMax;
 
 /**
- * LayoutManager for a PageSequence.
+ * LayoutManager for a PageSequence.  This class is instantiated by
+ * area.AreaTreeHandler for each fo:page-sequence found in the
+ * input document.
  */
 public class PageSequenceLayoutManager extends AbstractLayoutManager {
-    private PageSequence pageSeq;
-
-    private static class BlockBreakPosition extends LeafPosition {
-        protected BreakPoss breakps;
-
-        protected BlockBreakPosition(LayoutManager lm, BreakPoss bp) {
-            super(lm, 0);
-            breakps = bp;
-        }
-    }
-
-    private int startPageNum = 0;
-    private int currentPageNum = 0;
-    private String pageNumberString;
-    private boolean isFirstPage = true;
-
-    /** Current page being worked on. */
-    private PageViewport curPage;
-
-    /** Current span being filled */
-    private Span curSpan;
-
-    /** Current normal-flow-reference-area being filled. */
-    private NormalFlow curFlow;
-
-    private int flowBPD = 0;
-    private int flowIPD = 0;
 
     /** 
-     * AreaTreeHandler which activates this PSLM.
+     * AreaTreeHandler which activates the PSLM and controls
+     * the rendering of its pages.
      */
     private AreaTreeHandler areaTreeHandler;
 
     /** 
-     * AreaTreeModel that this PSLM sends pages to.
+     * fo:page-sequence formatting object being
+     * processed by this class
      */
-    private AreaTreeModel areaTreeModel;
+    private PageSequence pageSeq;
+
+    /** 
+     * Current page-viewport-area being filled by
+     * the PSLM.
+     */
+    private PageViewport curPV = null;
 
     /**
-     * This is the SimplePageMaster that should be used to create the page. It
-     * will be equal to the PageSequence's simplePageMaster, if it exists, or
-     * to the correct member of the PageSequence's pageSequenceMaster, if that
-     * is in effect instead.
+     * Zero-based index of column (Normal Flow) in span (of the PV) 
+     * being filled.  See XSL Rec description of fo:region-body 
+     * and fop.Area package classes for more information. 
      */
-    private SimplePageMaster currentSimplePageMaster;
+    private int curFlowIdx = -1;
 
     /**
-     * Constructor - activated by AreaTreeHandler for each
-     * fo:page-sequence in the input FO stream
+     * The FlowLayoutManager object, which processes
+     * the single fo:flow of the fo:page-sequence
+     */
+    private FlowLayoutManager childFLM = null;
+
+    /**
+     * The collection of StaticContentLayoutManager objects that
+     * are associated with this Page Sequence, keyed by flow-name.
+     */
+    //private HashMap staticContentLMs = new HashMap(4);
+
+    private int startPageNum = 0;
+    private int currentPageNum = 0;
+
+    /**
+     * Constructor
      *
-     * @param pageseq the page-sequence formatting object
+     * @param ath the area tree handler object
+     * @param pseq fo:page-sequence to process
      */
-    public PageSequenceLayoutManager(PageSequence pageSeq) {
-        super(pageSeq);
-        this.pageSeq = pageSeq;
-    }
-
-    /**
-     * Set the AreaTreeHandler
-     * @param areaTreeHandler the area tree handler object
-     */
-    public void setAreaTreeHandler(AreaTreeHandler areaTreeHandler) {
-        this.areaTreeHandler = areaTreeHandler;
-        areaTreeModel = areaTreeHandler.getAreaTreeModel();
+    public PageSequenceLayoutManager(AreaTreeHandler ath, PageSequence pseq) {
+        super(pseq);
+        this.areaTreeHandler = ath;
+        this.pageSeq = pseq;
     }
 
     /**
      * @see org.apache.fop.layoutmgr.LayoutManager
-     * @return the AreaTreeHandler object
+     * @return the LayoutManagerMaker object
      */
-    public AreaTreeHandler getAreaTreeHandler() {
-        return areaTreeHandler;
+    public LayoutManagerMaker getLayoutManagerMaker() {
+        return areaTreeHandler.getLayoutManagerMaker();
     }
 
     /**
@@ -142,42 +116,106 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      */
     public void activateLayout() {
         startPageNum = pageSeq.getStartingPageNumber();
-        currentPageNum = startPageNum;
-        pageNumberString = pageSeq.makeFormattedPageNumber(currentPageNum);
+        currentPageNum = startPageNum - 1;
 
         LineArea title = null;
 
         if (pageSeq.getTitleFO() != null) {
-            ContentLayoutManager clm = 
-                new ContentLayoutManager(pageSeq.getTitleFO(), this);
-            title = (LineArea) clm.getParentArea(null); // can improve
+            ContentLayoutManager clm = new ContentLayoutManager(pageSeq
+                    .getTitleFO(), this);
+            title = (LineArea) clm.getParentArea(null);
         }
 
-        areaTreeModel.startPageSequence(title);
+        areaTreeHandler.getAreaTreeModel().startPageSequence(title);
         log.debug("Starting layout");
 
-        makeNewPage(false, false);
-        flowIPD = curFlow.getIPD();
+        curPV = makeNewPage(false, true, false);
 
-        BreakPoss bp;
-        LayoutContext childLC = new LayoutContext(0);
-        while (!isFinished()) {
-            if ((bp = getNextBreakPoss(childLC)) != null) {
-                addAreas((BlockBreakPosition)bp.getPosition());
-                // add static areas and resolve any new id areas
-                // finish page and add to area tree
-                finishPage();
-                currentPageNum++;
-                pageNumberString = pageSeq.makeFormattedPageNumber(currentPageNum);
-            }
-        }
-        // TODO: Don't decrement currentPageNum when no pages are generated
-        currentPageNum--;
+        PageBreaker breaker = new PageBreaker(this);
+        int flowBPD = (int) curPV.getBodyRegion().getBPD();
+        breaker.doLayout(flowBPD);
+        
         finishPage();
-        pageSeq.getRoot().notifyPageSequenceFinished(currentPageNum, (currentPageNum - startPageNum) + 1);
+        pageSeq.getRoot().notifyPageSequenceFinished(currentPageNum,
+                (currentPageNum - startPageNum) + 1);
         log.debug("Ending layout");
     }
 
+    private class PageBreaker extends AbstractBreaker {
+        
+        private PageSequenceLayoutManager pslm;
+        private boolean firstPart = true;
+        
+        public PageBreaker(PageSequenceLayoutManager pslm) {
+            this.pslm = pslm;
+        }
+        
+        protected LayoutContext createLayoutContext() {
+            LayoutContext lc = new LayoutContext(0);
+            int flowIPD = curPV.getCurrentSpan().getColumnWidth();
+            lc.setRefIPD(flowIPD);
+            return lc;
+        }
+        
+        protected LayoutManager getTopLevelLM() {
+            return pslm;
+        }
+        
+        protected LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+            return pslm.getNextKnuthElements(context, alignment);
+        }
+        
+        protected int getCurrentDisplayAlign() {
+            return curPV.getSPM().getRegion(Constants.FO_REGION_BODY).getDisplayAlign();
+        }
+        
+        protected boolean hasMoreContent() {
+            return !isFinished();
+        }
+        
+        protected void addAreas(PositionIterator posIter, LayoutContext context) {
+            getCurrentChildLM().addAreas(posIter, context);    
+        }
+        
+        protected void doPhase3(PageBreakingAlgorithm alg, int partCount, 
+                BlockSequence originalList, BlockSequence effectiveList) {
+            //Directly add areas after finding the breaks
+            addAreas(alg, partCount, originalList, effectiveList);
+        }
+        
+        protected void startPart(BlockSequence list, boolean bIsFirstPage) {
+            if (curPV == null) {
+                throw new IllegalStateException("curPV must not be null");
+            } else {
+                //firstPart is necessary because we need the first page before we start the 
+                //algorithm so we have a BPD and IPD. This may subject to change later when we
+                //start handling more complex cases.
+                if (!firstPart) {
+                    if (curFlowIdx < curPV.getCurrentSpan().getColumnCount()-1) {
+                        curFlowIdx++;
+                    } else  {
+                        // if this is the first page that will be created by
+                        // the current BlockSequence, it could have a break
+                        // condition that must be satisfied;
+                        // otherwise, we may simply need a new page
+                        handleBreakTrait(bIsFirstPage ? list.getStartOn() : Constants.EN_PAGE);
+                    }
+                }
+            }
+            // add static areas and resolve any new id areas
+            // finish page and add to area tree
+            firstPart = false;
+        }
+        
+        protected void finishPart() {
+        }
+        
+        protected LayoutManager getCurrentChildLM() {
+            return childFLM;
+        }
+        
+    }
+    
     /** @see org.apache.fop.layoutmgr.LayoutManager#isBogus() */
     public boolean isBogus() {
         return false;
@@ -191,25 +229,33 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * @param context the layout context for finding breaks
      * @return the break for the page
      */
-    public BreakPoss getNextBreakPoss(LayoutContext context) {
+    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
 
         LayoutManager curLM; // currently active LM
 
         while ((curLM = getChildLM()) != null) {
-            BreakPoss bp = null;
+/*LF*/      LinkedList returnedList = null;
+/*LF*/      if (childFLM == null && (curLM instanceof FlowLayoutManager)) {
+/*LF*/          childFLM = (FlowLayoutManager)curLM;
+/*LF*/      } else {
+/*LF*/          if (curLM != childFLM) {
+/*LF*/              System.out.println("PLM> figlio sconosciuto (invalid child LM)");
+/*LF*/          }
+/*LF*/      }
 
             LayoutContext childLC = new LayoutContext(0);
-            childLC.setStackLimit(new MinOptMax(flowBPD));
-            childLC.setRefIPD(flowIPD);
+            childLC.setStackLimit(context.getStackLimit());
+            childLC.setRefIPD(context.getRefIPD());
 
             if (!curLM.isFinished()) {
+                int flowIPD = curPV.getCurrentSpan().getColumnWidth();
+                int flowBPD = (int) curPV.getBodyRegion().getBPD();
                 pageSeq.setLayoutDimension(PercentBase.REFERENCE_AREA_IPD, flowIPD);
                 pageSeq.setLayoutDimension(PercentBase.REFERENCE_AREA_BPD, flowBPD);
-                bp = curLM.getNextBreakPoss(childLC);
+/*LF*/          returnedList = curLM.getNextKnuthElements(childLC, alignment);
             }
-            if (bp != null) {
-                return new BreakPoss(
-                         new BlockBreakPosition(curLM, bp));
+            if (returnedList != null) {
+                return returnedList;
             }
         }
         setFinished(true);
@@ -217,51 +263,34 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     }
 
     /**
-     * Get the current page number string.
-     * This returns the formatted string for the current page.
-     *
-     * @return the formatted page number string
-     */
-    public String getCurrentPageNumberString() {
-        return pageNumberString;
-    }
-    
-    /**
      * Provides access to the current page.
      * @return the current PageViewport
      */
-    public PageViewport getCurrentPageViewport() {
-        return this.curPage;
+    public PageViewport getCurrentPV() {
+        return curPV;
     }
 
     /**
-     * Resolve a reference ID.
-     * This resolves a reference ID and returns the first PageViewport
-     * that contains the reference ID or null if reference not found.
-     *
-     * @param id the reference ID to lookup
-     * @return the first page viewport that contains the reference
+     * Provides access to this object
+     * @return this PageSequenceLayoutManager instance
      */
-    public PageViewport resolveRefID(String id) {
-        List list = areaTreeHandler.getPageViewportsContainingID(id);
+    public PageSequenceLayoutManager getPSLM() {
+        return this;
+    }
+    
+    /**
+     * This returns the first PageViewport that contains an id trait
+     * matching the idref argument, or null if no such PV exists.
+     *
+     * @param idref the idref trait needing to be resolved 
+     * @return the first PageViewport that contains the ID trait
+     */
+    public PageViewport getFirstPVWithID(String idref) {
+        List list = areaTreeHandler.getPageViewportsContainingID(idref);
         if (list != null && list.size() > 0) {
             return (PageViewport) list.get(0);
         }
         return null;
-    }
-
-    /**
-     * Add the areas to the current page.
-     * Given the page break position this adds the areas to the current
-     * page.
-     *
-     * @param bbp the block break position
-     */
-    public void addAreas(BlockBreakPosition bbp) {
-        List list = new java.util.ArrayList();
-        list.add(bbp.breakps);
-        bbp.getLM().addAreas(new BreakPossPosIter(list, 0,
-                              1), null);
     }
 
     /**
@@ -273,40 +302,34 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * @param id the ID reference to add
      */
     public void addIDToPage(String id) {
-        areaTreeHandler.associateIDWithPageViewport(id, curPage);
+        if (id != null && id.length() > 0) {
+            areaTreeHandler.associateIDWithPageViewport(id, curPV);
+        }
     }
 
     /**
-     * Add an unresolved area to the layout manager.
-     * The Page layout manager handles the unresolved ID
-     * reference by adding to the current page and then adding
-     * the page as a resolvable to the area tree.
-     * This is so that the area tree can resolve the reference
-     * and the page can serialize the resolvers if required.
+     * Identify an unresolved area (one needing an idref to be 
+     * resolved, e.g. the internal-destination of an fo:basic-link)
+     * for both the AreaTreeHandler and PageViewport object.
+     * 
+     * The AreaTreeHandler keeps a document-wide list of idref's
+     * and the PV's needing them to be resolved.  It uses this to  
+     * send notifications to the PV's when an id has been resolved.
+     * 
+     * The PageViewport keeps lists of id's needing resolving, along
+     * with the child areas (page-number-citation, basic-link, etc.)
+     * of the PV needing their resolution.
      *
      * @param id the ID reference to add
      * @param res the resolvable object that needs resolving
      */
     public void addUnresolvedArea(String id, Resolvable res) {
-        // add to the page viewport so it can serialize
-        curPage.addUnresolvedIDRef(id, res);
-        // add unresolved to tree
-        areaTreeHandler.addUnresolvedIDRef(id, curPage);
+        curPV.addUnresolvedIDRef(id, res);
+        areaTreeHandler.addUnresolvedIDRef(id, curPV);
     }
 
     /**
-     * Add the marker to the page layout manager.
-     *
-     * @see org.apache.fop.layoutmgr.LayoutManager
-     */
-    public void addMarkerMap(Map marks, boolean starting, boolean isfirst, boolean islast) {
-        //getLogger().debug("adding markers: " + marks + ":" + start);
-        // add markers to page on area tree
-        curPage.addMarkers(marks, starting, isfirst, islast);
-    }
-
-    /**
-     * Retrieve a marker from this layout manager.
+     * Bind the RetrieveMarker to the corresponding Marker subtree.
      * If the boundary is page then it will only check the
      * current page. For page-sequence and document it will
      * lookup preceding pages from the area tree and try to find
@@ -317,14 +340,19 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * Therefore we use last-ending-within-page (Constants.EN_LEWP)
      * as the position. 
      *
-     * @param name the marker class name to lookup
-     * @param pos the position to locate the marker
-     * @param boundary the boundary for locating the marker
-     * @return the layout manager for the marker contents
+     * @param rm the RetrieveMarker instance whose properties are to
+     * used to find the matching Marker.
+     * @return a bound RetrieveMarker instance, or null if no Marker
+     * could be found.
      */
-    public Marker retrieveMarker(String name, int pos, int boundary) {
+    public RetrieveMarker resolveRetrieveMarker(RetrieveMarker rm) {
+        AreaTreeModel areaTreeModel = areaTreeHandler.getAreaTreeModel();
+        String name = rm.getRetrieveClassName();
+        int pos = rm.getRetrievePosition();
+        int boundary = rm.getRetrieveBoundary();               
+        
         // get marker from the current markers on area tree
-        Marker mark = (Marker)curPage.getMarker(name, pos);
+        Marker mark = (Marker)curPV.getMarker(name, pos);
         if (mark == null && boundary != EN_PAGE) {
             // go back over pages until mark found
             // if document boundary then keep going
@@ -339,7 +367,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 PageViewport pv = areaTreeModel.getPage(seq, page);
                 mark = (Marker)pv.getMarker(name, Constants.EN_LEWP);
                 if (mark != null) {
-                    return mark;
+                    break;
                 }
                 page--;
                 if (page < 0 && doc && seq > 1) {
@@ -351,71 +379,55 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 
         if (mark == null) {
             log.debug("found no marker with name: " + name);
-        }
-
-        return mark;
-    }
-
-    /**
-     * For now, only handle normal flow areas.
-     * @see org.apache.fop.layoutmgr.LayoutManager#addChildArea(org.apache.fop.area.Area)
-     */
-    public void addChildArea(Area childArea) {
-        if (childArea == null) {
-            return;
-        }
-        if (childArea.getAreaClass() == Area.CLASS_NORMAL) {
-            getParentArea(childArea);
+            return null;
         } else {
-             // todo: all the others!
+            rm.bindMarker(mark);
+            return rm;
         }
     }
 
-    private PageViewport makeNewPage(boolean bIsBlank, boolean bIsLast) {
-        finishPage();
+    private PageViewport makeNewPage(boolean bIsBlank, boolean bIsFirst, boolean bIsLast) {
+        if (curPV != null) {
+            finishPage();
+        }
+
+        currentPageNum++;
+        String pageNumberString = pageSeq.makeFormattedPageNumber(currentPageNum);
 
         try {
             // create a new page
-            currentSimplePageMaster = pageSeq.getSimplePageMasterToUse(
-                currentPageNum, isFirstPage, bIsBlank);
-            Region body = currentSimplePageMaster.getRegion(FO_REGION_BODY);
+            SimplePageMaster spm = pageSeq.getSimplePageMasterToUse(
+                currentPageNum, bIsFirst, bIsBlank);
+            
+            Region body = spm.getRegion(FO_REGION_BODY);
             if (!pageSeq.getMainFlow().getFlowName().equals(body.getRegionName())) {
+              // this is fine by the XSL Rec (fo:flow's flow-name can be mapped to
+              // any region), but we don't support it yet.
               throw new FOPException("Flow '" + pageSeq.getMainFlow().getFlowName()
                  + "' does not map to the region-body in page-master '"
-                 + currentSimplePageMaster.getMasterName() + "'");
+                 + spm.getMasterName() + "'.  FOP presently "
+                 + "does not support this.");
             }
-            curPage = createPageAreas(currentSimplePageMaster);
-            isFirstPage = false;
+            curPV = new PageViewport(spm);
         } catch (FOPException fopex) {
             throw new IllegalArgumentException("Cannot create page: " + fopex.getMessage());
         }
 
-        curPage.setPageNumberString(pageNumberString);
+        curPV.setPageNumberString(pageNumberString);
         if (log.isDebugEnabled()) {
-            log.debug("[" + curPage.getPageNumberString() + "]");
+            log.debug("[" + curPV.getPageNumberString() + (bIsBlank ? "*" : "") + "]");
         }
 
-        flowBPD = (int) curPage.getBodyRegion().getBPD();
-        createSpan(curPage.getBodyRegion().getColumnCount());
-        return curPage;
+        curPV.createSpan(false);
+        curFlowIdx = 0;
+        return curPV;
     }
 
-    private void createSpan(int numCols) {
-        // get Width or Height as IPD for span
-        RegionViewport rv = curPage.getPage().getRegionViewport(FO_REGION_BODY);
-        int ipdWidth = (int) rv.getRegion().getIPD() -
-            rv.getBorderAndPaddingWidthStart() - rv.getBorderAndPaddingWidthEnd();
-
-        // currently hardcoding to one column, replace with numCols when ready
-        curSpan = new Span(1 /* numCols */, ipdWidth);
-
-        //curSpan.setPosition(BPD, newpos);
-        curPage.getBodyRegion().getMainReference().addSpan(curSpan);
-        curFlow = curSpan.getNormalFlow(0);
-    }
-
-    private void layoutStaticContent(int regionID) {
-        Region reg = currentSimplePageMaster.getRegion(regionID);
+    /* TODO: See if can initialize the SCLM's just once for
+     * the page sequence, instead of after every page.
+     */
+    private void layoutSideRegion(int regionID) {
+        SideRegion reg = (SideRegion)curPV.getSPM().getRegion(regionID);
         if (reg == null) {
             return;
         }
@@ -423,59 +435,31 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         if (sc == null) {
             return;
         }
-        
-        RegionViewport rv = curPage.getPage().getRegionViewport(regionID);
+
+        RegionViewport rv = curPV.getPage().getRegionViewport(regionID);
         StaticContentLayoutManager lm;
-        try {
-            lm = (StaticContentLayoutManager)
-                areaTreeHandler.getLayoutManagerMaker().makeLayoutManager(sc);
-        } catch (FOPException e) {
-            log.error
-                ("Failed to create a StaticContentLayoutManager for flow "
-                 + sc.getFlowName()
-                 + "; no static content will be laid out:");
-            log.error(e.getMessage());
-            return;
-        }
-        lm.initialize();
-        lm.setRegionReference(rv.getRegion());
-        lm.setParent(this);
-        LayoutContext childLC = new LayoutContext(0);
-        childLC.setStackLimit(new MinOptMax((int)curPage.getViewArea().getHeight()));
-        childLC.setRefIPD(rv.getRegion().getIPD());
-        while (!lm.isFinished()) {
-            BreakPoss bp = lm.getNextBreakPoss(childLC);
-            if (bp != null) {
-                List vecBreakPoss = new java.util.ArrayList();
-                vecBreakPoss.add(bp);
-                lm.addAreas(new BreakPossPosIter(vecBreakPoss, 0,
-                                                 vecBreakPoss.size()), null);
-            } else {
-                log.error("bp==null  cls=" + reg.getRegionName());
-            }
-        }
-        //lm.flush();
+        lm = (StaticContentLayoutManager)
+            areaTreeHandler.getLayoutManagerMaker().makeLayoutManager(sc);
+        lm.setTargetRegion(rv.getRegionReference());
+        lm.setParent(this);       
+        lm.doLayout(reg);
         lm.reset(null);
     }
 
     private void finishPage() {
-        if (curPage == null) {
-            curSpan = null;
-            curFlow = null;
-            return;
-        }
-        // Layout static content into the regions
-        layoutStaticContent(FO_REGION_BEFORE); 
-        layoutStaticContent(FO_REGION_AFTER);
-        layoutStaticContent(FO_REGION_START);
-        layoutStaticContent(FO_REGION_END);
+        // Layout side regions
+        layoutSideRegion(FO_REGION_BEFORE); 
+        layoutSideRegion(FO_REGION_AFTER);
+        layoutSideRegion(FO_REGION_START);
+        layoutSideRegion(FO_REGION_END);
         // Queue for ID resolution and rendering
-        areaTreeModel.addPage(curPage);
-        curPage = null;
-        curSpan = null;
-        curFlow = null;
+        areaTreeHandler.getAreaTreeModel().addPage(curPV);
+        log.debug("page finished: " + curPV.getPageNumberString() 
+                + ", current num: " + currentPageNum);
+        curPV = null;
+        curFlowIdx = -1;
     }
-
+    
     /**
      * This is called from FlowLayoutManager when it needs to start
      * a new flow container (while generating areas).
@@ -487,103 +471,41 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      */
     public Area getParentArea(Area childArea) {
         int aclass = childArea.getAreaClass();
+
         if (aclass == Area.CLASS_NORMAL) {
-            // todo: how to get properties from the Area???
-            // Need span, break
-            int breakVal = Constants.EN_AUTO;
-            Integer breakBefore = (Integer)childArea.getTrait(Trait.BREAK_BEFORE);
-            if (breakBefore != null) {
-                breakVal = breakBefore.intValue();
-            }
-            if (breakVal != Constants.EN_AUTO) {
-                // We may be forced to make new page
-                handleBreak(breakVal);
-            } else if (curPage == null) {
-                log.debug("curPage is null. Making new page");
-                makeNewPage(false, false);
-            }
-            // Now we should be on the right kind of page
-            boolean bNeedNewSpan = false;
-            /* Determine if a new span is needed.  From the XSL
-             * fo:region-body definition, if an fo:block has a span="ALL"
-             * (i.e., span all columns defined for the region-body), it
-             * must be placed in a span-reference-area whose 
-             * column-count = 1.  If its span-value is "NONE", 
-             * place in a normal Span whose column-count is what
-             * is defined for the region-body. 
-             */  // temporarily hardcoded to EN_NONE.
-            int span = Constants.EN_NONE; // childArea.getSpan()
-            int numColsNeeded;
-            if (span == Constants.EN_ALL) {
-                numColsNeeded = 1;
-            } else { // EN_NONE
-                numColsNeeded = curPage.getBodyRegion().getColumnCount();
-            }
-            if (curSpan == null) {  // should never happen, remove?
-                bNeedNewSpan = true;
-            } else if (numColsNeeded != curSpan.getColumnCount()) {
-                // need a new Span, with numColsNeeded columns
-                if (curSpan.getColumnCount() > 1) {
-                    // finished with current span, so balance 
-                    // its columns to make them the same "height"
-                    // balanceColumns();  // TODO: implement
-                }
-                bNeedNewSpan = true;
-            }
-            if (bNeedNewSpan) {
-                createSpan(numColsNeeded);
-            } else if (curFlow == null) {  // should not happen
-                curFlow = curSpan.addAdditionalNormalFlow();
-            }
-            return curFlow;
-        } else {
-            if (curPage == null) {
-                makeNewPage(false, false);
-            }
-            // Now handle different kinds of areas
-            if (aclass == Area.CLASS_BEFORE_FLOAT) {
-                BeforeFloat bf = curPage.getBodyRegion().getBeforeFloat();
-                if (bf == null) {
-                    bf = new BeforeFloat();
-                    curPage.getBodyRegion().setBeforeFloat(bf);
-                }
-                return bf;
-            } else if (aclass == Area.CLASS_FOOTNOTE) {
-                Footnote fn = curPage.getBodyRegion().getFootnote();
-                if (fn == null) {
-                    fn = new Footnote();
-                    curPage.getBodyRegion().setFootnote(fn);
-                }
-                return fn;
-            }
-            // todo!!! other area classes (side-float, absolute, fixed)
-            return null;
+            return curPV.getCurrentSpan().getNormalFlow(curFlowIdx);
+        } else if (aclass == Area.CLASS_BEFORE_FLOAT) {
+            return curPV.getBodyRegion().getBeforeFloat();
+        } else if (aclass == Area.CLASS_FOOTNOTE) {
+            return curPV.getBodyRegion().getFootnote();
         }
+        // todo!!! other area classes (side-float, absolute, fixed)
+        return null;
     }
 
     /**
      * Depending on the kind of break condition, make new column
      * or page. May need to make an empty page if next page would
      * not have the desired "handedness".
-     *
-     * @param breakVal the break value to handle
+     * @param breakVal - value of break-before or break-after trait.
      */
-    private void handleBreak(int breakVal) {
+    private void handleBreakTrait(int breakVal) {
         if (breakVal == Constants.EN_COLUMN) {
-            if (curSpan != null
-                    && curSpan.getNormalFlowCount() < curSpan.getColumnCount()) {
+            if (curFlowIdx < curPV.getCurrentSpan().getColumnCount()) {
                 // Move to next column
-                curFlow = curSpan.addAdditionalNormalFlow();
-                return;
+                curFlowIdx++;
+            } else {
+                curPV = makeNewPage(false, false, false);
             }
-            // else need new page
-            breakVal = Constants.EN_PAGE;
+            return;
         }
-        if (needEmptyPage(breakVal)) {
-            curPage = makeNewPage(true, false);
+        log.debug("handling break-before after page " + currentPageNum 
+            + " breakVal=" + breakVal);
+        if (needBlankPageBeforeNew(breakVal)) {
+            curPV = makeNewPage(true, false, false);
         }
         if (needNewPage(breakVal)) {
-            curPage = makeNewPage(false, false);
+            curPV = makeNewPage(false, false, false);
         }
     }
 
@@ -594,130 +516,39 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * Note that if not all content is placed, we aren't sure whether
      * it will flow onto another page or not, so we'd probably better
      * block until the queue of layoutable stuff is empty!
+     * @param breakVal - value of break-before or break-after trait.
      */
-    private boolean needEmptyPage(int breakValue) {
-
-        if (breakValue == Constants.EN_PAGE || curPage.getPage().isEmpty()) {
+    private boolean needBlankPageBeforeNew(int breakVal) {
+        if (breakVal == Constants.EN_PAGE || (curPV.getPage().isEmpty())) {
             // any page is OK or we already have an empty page
             return false;
-        }
-        else {
+        } else {
             /* IF we are on the kind of page we need, we'll need a new page. */
-            if (currentPageNum%2 != 0) {
-                // Current page is odd
-                return (breakValue == Constants.EN_ODD_PAGE);
-            }
-            else {
-                return (breakValue == Constants.EN_EVEN_PAGE);
+            if (currentPageNum % 2 == 0) { // even page
+                return (breakVal == Constants.EN_EVEN_PAGE);
+            } else { // odd page
+                return (breakVal == Constants.EN_ODD_PAGE);
             }
         }
     }
 
     /**
-     * See if need to generate a new page for a forced break condition.
+     * See if need to generate a new page
+     * @param breakVal - value of break-before or break-after trait.
      */
-    private boolean needNewPage(int breakValue) {
-        if (curPage != null && curPage.getPage().isEmpty()) {
-            if (breakValue == Constants.EN_PAGE) {
+    private boolean needNewPage(int breakVal) {
+        if (curPV.getPage().isEmpty()) {
+            if (breakVal == Constants.EN_PAGE) {
                 return false;
             }
-            else if (currentPageNum%2 != 0) {
-                // Current page is odd
-                return (breakValue == Constants.EN_EVEN_PAGE);
+            else if (currentPageNum % 2 == 0) { // even page
+                return (breakVal == Constants.EN_ODD_PAGE);
             }
-            else {
-                return (breakValue == Constants.EN_ODD_PAGE);
+            else { // odd page
+                return (breakVal == Constants.EN_EVEN_PAGE);
             }
-        }
-        else {
+        } else {
             return true;
         }
-    }
-
-    private PageViewport createPageAreas(SimplePageMaster spm) {
-        int pageWidth = spm.getPageWidth().getValue();
-        int pageHeight = spm.getPageHeight().getValue();
-
-        // Set the page dimension as the toplevel containing block for margin.
-        ((FObj) pageSeq.getParent()).setLayoutDimension(PercentBase.BLOCK_IPD, pageWidth);
-        ((FObj) pageSeq.getParent()).setLayoutDimension(PercentBase.BLOCK_BPD, pageHeight);
-
-        // Get absolute margin properties (top, left, bottom, right)
-        CommonMarginBlock mProps = spm.getCommonMarginBlock();
-
-      /* Create the page reference area rectangle (0,0 is at top left
-       * of the "page media" and y increases
-       * when moving towards the bottom of the page.
-       * The media rectangle itself is (0,0,pageWidth,pageHeight).
-       */
-       Rectangle pageRefRect =
-               new Rectangle(mProps.marginLeft.getValue(), mProps.marginTop.getValue(),
-                       pageWidth - mProps.marginLeft.getValue() - mProps.marginRight.getValue(),
-                       pageHeight - mProps.marginTop.getValue() - mProps.marginBottom.getValue());
-
-       Page page = new Page();  // page reference area
-
-       // Set up the CTM on the page reference area based on writing-mode
-       // and reference-orientation
-       FODimension reldims = new FODimension(0, 0);
-       CTM pageCTM = CTM.getCTMandRelDims(spm.getReferenceOrientation(),
-               spm.getWritingMode(), pageRefRect, reldims);
-
-       // Create a RegionViewport/ reference area pair for each page region
-       RegionReference rr = null;
-       for (Iterator regenum = spm.getRegions().values().iterator();
-            regenum.hasNext();) {
-           Region r = (Region)regenum.next();
-           RegionViewport rvp = makeRegionViewport(r, reldims, pageCTM);
-           r.setLayoutDimension(PercentBase.BLOCK_IPD, rvp.getIPD());
-           r.setLayoutDimension(PercentBase.BLOCK_BPD, rvp.getBPD());
-           if (r.getNameId() == FO_REGION_BODY) {
-               rr = new BodyRegion((RegionBody) r);
-           } else {
-               rr = new RegionReference(r.getNameId());
-           }
-           setRegionPosition(r, rr, rvp.getViewArea());
-           rvp.setRegion(rr);
-           page.setRegionViewport(r.getNameId(), rvp);
-       }
-
-       return new PageViewport(page, new Rectangle(0, 0, pageWidth, pageHeight));
-    }  
-    
-    /**
-     * Creates a RegionViewport Area object for this pagination Region.
-     * @param reldims relative dimensions
-     * @param pageCTM page coordinate transformation matrix
-     * @return the new region viewport
-     */
-    private RegionViewport makeRegionViewport(Region r, FODimension reldims, CTM pageCTM) {
-        Rectangle2D relRegionRect = r.getViewportRectangle(reldims);
-        Rectangle2D absRegionRect = pageCTM.transform(relRegionRect);
-        // Get the region viewport rectangle in absolute coords by
-        // transforming it using the page CTM
-        RegionViewport rv = new RegionViewport(absRegionRect);
-        rv.setBPD((int)relRegionRect.getHeight());
-        rv.setIPD((int)relRegionRect.getWidth());
-        TraitSetter.addBackground(rv, r.getCommonBorderPaddingBackground());
-        return rv;
-    }
-   
-    /**
-     * Set the region position inside the region viewport.
-     * This sets the transform that is used to place the contents of
-     * the region.
-     *
-     * @param r the region reference area
-     * @param absRegVPRect The region viewport rectangle in "absolute" coordinates
-     * where x=distance from left, y=distance from bottom, width=right-left
-     * height=top-bottom
-     */
-    private void setRegionPosition(Region r, RegionReference rr,
-                                  Rectangle2D absRegVPRect) {
-        FODimension reldims = new FODimension(0, 0);
-        rr.setCTM(CTM.getCTMandRelDims(r.getReferenceOrientation(),
-                r.getWritingMode(), absRegVPRect, reldims));
-        rr.setIPD(reldims.ipd);
-        rr.setBPD(reldims.bpd);
     }
 }

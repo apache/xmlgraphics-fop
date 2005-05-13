@@ -378,7 +378,7 @@ public class XMLRenderer extends AbstractRenderer {
             addTraitAttributes(port);
             addAttribute("rect", port.getViewArea());
             startElement("regionViewport", atts);
-            RegionReference region = port.getRegion();
+            RegionReference region = port.getRegionReference();
             atts.clear();
             addAreaAttributes(region);
             addTraitAttributes(region);
