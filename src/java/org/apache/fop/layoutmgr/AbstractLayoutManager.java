@@ -24,7 +24,6 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.RetrieveMarker;
-import org.apache.fop.fo.flow.Marker;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,7 +35,7 @@ import java.util.ListIterator;
 import java.util.Map;
 
 /**
- * The base class for all LayoutManagers.
+ * The base class for most LayoutManagers.
  */
 public abstract class AbstractLayoutManager implements LayoutManager, Constants {
     protected LayoutManager parentLM = null;
@@ -50,7 +49,7 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     
     /**
      * Used during addAreas(): signals that a BreakPoss is not generating areas
-     * and therefore doesn't add IDs and markers to the current page.
+     * and therefore shouldn't add IDs and markers to the current page.
      * @see org.apache.fop.layoutmgr.AbstractLayoutManager#isBogus
      */
     protected boolean bBogus = false;
@@ -109,38 +108,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     public LayoutManager getParent() {
         return this.parentLM;
     }
-
-    //     /**
-    //      * Ask the parent LayoutManager to add the current (full) area to the
-    //      * appropriate parent area.
-    //      * @param bFinished If true, this area is finished, either because it's
-    //      * completely full or because there is no more content to put in it.
-    //      * If false, we are in the middle of this area. This can happen,
-    //      * for example, if we find floats in a line. We stop the current area,
-    //      * and add it (temporarily) to its parent so that we can see if there
-    //      * is enough space to place the float(s) anchored in the line.
-    //      */
-    //     protected void flush(Area area, boolean bFinished) {
-    // if (area != null) {
-    //     // area.setFinished(true);
-    //     parentLM.addChildArea(area, bFinished); // ????
-    //     if (bFinished) {
-    // setCurrentArea(null);
-    //     }
-    // }
-    //     }
-
-    /**
-     * Return an Area which can contain the passed childArea. The childArea
-     * may not yet have any content, but it has essential traits set.
-     * In general, if the LayoutManager already has an Area it simply returns
-     * it. Otherwise, it makes a new Area of the appropriate class.
-     * It gets a parent area for its area by calling its parent LM.
-     * Finally, based on the dimensions of the parent area, it initializes
-     * its own area. This includes setting the content IPD and the maximum
-     * BPD.
-     */
-
 
     /** @see org.apache.fop.layoutmgr.LayoutManager#generatesInlineAreas() */
     public boolean generatesInlineAreas() {
@@ -324,7 +291,14 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getParentArea(org.apache.fop.area.Area)
+     * Return an Area which can contain the passed childArea. The childArea
+     * may not yet have any content, but it has essential traits set.
+     * In general, if the LayoutManager already has an Area it simply returns
+     * it. Otherwise, it makes a new Area of the appropriate class.
+     * It gets a parent area for its area by calling its parent LM.
+     * Finally, based on the dimensions of the parent area, it initializes
+     * its own area. This includes setting the content IPD and the maximum
+     * BPD.
      */
     public Area getParentArea(Area childArea) {
         return null;
@@ -333,29 +307,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     public void addChildArea(Area childArea) {
     }
 
-    /**
-     * Handles retrieve-marker nodes as they occur.
-     * @param foNode FO node to check
-     * @return the original foNode or in case of a retrieve-marker the replaced
-     *     FO node. null if the the replacement results in no nodes to be 
-     *     processed.
-     */
-    private FONode handleRetrieveMarker(FONode foNode) {
-        if (foNode instanceof RetrieveMarker) {
-            RetrieveMarker rm = (RetrieveMarker) foNode;
-            Marker marker = getPSLM().retrieveMarker(rm.getRetrieveClassName(),
-                                           rm.getRetrievePosition(),
-                                           rm.getRetrieveBoundary());
-            if (marker == null) {
-                return null;
-            }
-            rm.bindMarker(marker);
-            return rm;
-        } else {
-            return foNode;
-        }
-    }
-    
     /**
      * Convenience method: preload a number of child LMs
      * @param size the requested number of child LMs
@@ -370,7 +321,10 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
             Object theobj = fobjIter.next();
             if (theobj instanceof FONode) {
                 FONode foNode = (FONode) theobj;
-                foNode = handleRetrieveMarker(foNode);
+                if (foNode instanceof RetrieveMarker) {
+                    foNode = getPSLM().resolveRetrieveMarker(
+                        (RetrieveMarker) foNode);
+                }
                 if (foNode != null) {
                     getPSLM().getLayoutManagerMaker().
                         makeLayoutManagers(foNode, newLMs);

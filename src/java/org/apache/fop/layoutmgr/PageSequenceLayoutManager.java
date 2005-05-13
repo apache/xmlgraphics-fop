@@ -32,6 +32,7 @@ import org.apache.fop.datatypes.PercentBase;
 
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.Marker;
+import org.apache.fop.fo.flow.RetrieveMarker;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.SideRegion;
@@ -328,7 +329,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     }
 
     /**
-     * Retrieve a marker from this layout manager.
+     * Bind the RetrieveMarker to the corresponding Marker subtree.
      * If the boundary is page then it will only check the
      * current page. For page-sequence and document it will
      * lookup preceding pages from the area tree and try to find
@@ -339,13 +340,16 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * Therefore we use last-ending-within-page (Constants.EN_LEWP)
      * as the position. 
      *
-     * @param name the marker class name to lookup
-     * @param pos the position to locate the marker
-     * @param boundary the boundary for locating the marker
-     * @return the layout manager for the marker contents
+     * @param rm the RetrieveMarker instance whose properties are to
+     * used to find the matching Marker.
+     * @return a bound RetrieveMarker instance, or null if no Marker
+     * could be found.
      */
-    public Marker retrieveMarker(String name, int pos, int boundary) {
+    public RetrieveMarker resolveRetrieveMarker(RetrieveMarker rm) {
         AreaTreeModel areaTreeModel = areaTreeHandler.getAreaTreeModel();
+        String name = rm.getRetrieveClassName();
+        int pos = rm.getRetrievePosition();
+        int boundary = rm.getRetrieveBoundary();               
         
         // get marker from the current markers on area tree
         Marker mark = (Marker)curPV.getMarker(name, pos);
@@ -363,7 +367,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 PageViewport pv = areaTreeModel.getPage(seq, page);
                 mark = (Marker)pv.getMarker(name, Constants.EN_LEWP);
                 if (mark != null) {
-                    return mark;
+                    rm.bindMarker(mark);
+                    return rm;
                 }
                 page--;
                 if (page < 0 && doc && seq > 1) {
@@ -377,7 +382,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             log.debug("found no marker with name: " + name);
         }
 
-        return mark;
+        return null;
     }
 
     private PageViewport makeNewPage(boolean bIsBlank, boolean bIsFirst, boolean bIsLast) {
