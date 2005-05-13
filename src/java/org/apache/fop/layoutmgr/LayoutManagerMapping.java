@@ -21,13 +21,10 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
@@ -61,13 +58,14 @@ import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.pagination.Title;
+import org.apache.fop.area.AreaTreeHandler;
 
 import org.apache.fop.layoutmgr.list.ListBlockLayoutManager;
 import org.apache.fop.layoutmgr.list.ListItemLayoutManager;
-import org.apache.fop.layoutmgr.table.Body;
+/*import org.apache.fop.layoutmgr.table.Body;
 import org.apache.fop.layoutmgr.table.Cell;
 import org.apache.fop.layoutmgr.table.Column;
-import org.apache.fop.layoutmgr.table.Row;
+import org.apache.fop.layoutmgr.table.Row;*/
 import org.apache.fop.layoutmgr.table.TableLayoutManager;
 
 /**
@@ -88,7 +86,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     /**
      * Initializes the set of maker objects associated with this LayoutManagerMapping
      */
-    private void initialize() {
+    protected void initialize() {
         makers.put(FOText.class, new FOTextLayoutManagerMaker());
         makers.put(FObjMixed.class, new Maker());
         makers.put(BidiOverride.class, new BidiOverrideLayoutManagerMaker());
@@ -112,14 +110,13 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         makers.put(PageNumber.class, new PageNumberLayoutManagerMaker());
         makers.put(PageNumberCitation.class,
                    new PageNumberCitationLayoutManagerMaker());
-        makers.put(PageSequence.class, new PageSequenceLayoutManagerMaker());
         makers.put(Table.class, new TableLayoutManagerMaker());
-        makers.put(TableBody.class, new TableBodyLayoutManagerMaker());
-        makers.put(TableColumn.class, new TableColumnLayoutManagerMaker());
-        makers.put(TableRow.class, new TableRowLayoutManagerMaker());
-        makers.put(TableCell.class, new TableCellLayoutManagerMaker());
-        makers.put(TableFooter.class, new TableBodyLayoutManagerMaker());
-        makers.put(TableHeader.class, new TableBodyLayoutManagerMaker());
+        makers.put(TableBody.class, new /*TableBodyLayoutManager*/Maker());
+        makers.put(TableColumn.class, new /*TableColumnLayoutManager*/Maker());
+        makers.put(TableRow.class, new /*TableRowLayoutManager*/Maker());
+        makers.put(TableCell.class, new /*TableCellLayoutManager*/Maker());
+        makers.put(TableFooter.class, new /*TableBodyLayoutManager*/Maker());
+        makers.put(TableHeader.class, new /*TableBodyLayoutManager*/Maker());
         makers.put(Flow.class, new FlowLayoutManagerMaker());
         makers.put(StaticContent.class, new StaticContentLayoutManagerMaker());
         makers.put(Wrapper.class, new WrapperLayoutManagerMaker());
@@ -141,20 +138,24 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     /**
      * @see org.apache.fop.layoutmgr.LayoutManagerMaker#makeLayoutManager(FONode)
      */
-    public LayoutManager makeLayoutManager(FONode node)
-        throws FOPException {
+    public LayoutManager makeLayoutManager(FONode node) {
         List lms = new ArrayList();
         makeLayoutManagers(node, lms);
         if (lms.size() == 0) {
-            throw new FOPException("No LayoutManager for class "
+            throw new IllegalStateException("LayoutManager for class "
                                    + node.getClass()
-                                   + "; 1 was required");
+                                   + " is missing.");
         } else if (lms.size() > 1) {
-            throw new FOPException("More than 1 LayoutManager for class "
+            throw new IllegalStateException("Duplicate LayoutManagers for class "
                                    + node.getClass()
-                                   + "; 1 was required"); 
+                                   + " found, only one may be declared."); 
         }
         return (LayoutManager) lms.get(0);
+    }
+
+    public PageSequenceLayoutManager makePageSequenceLayoutManager(
+        AreaTreeHandler ath, PageSequence ps) {
+        return new PageSequenceLayoutManager(ath, ps);
     }
 
     public static class Maker {
@@ -305,14 +306,9 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
          }
     }
 
-    public static class PageSequenceLayoutManagerMaker extends Maker {
-         public void make(FONode node, List lms) {
-             lms.add(new PageSequenceLayoutManager((PageSequence) node));
-         }
-    }
-
     public static class TableLayoutManagerMaker extends Maker {
         
+        /*
         private List getColumnLayoutManagerList(Table table, TableLayoutManager tlm) {
             List columnLMs = null;
             List columns = table.getColumns();
@@ -347,19 +343,21 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
                 }
             }
             return columnLMs;
-        }
+        }*/
         
         public void make(FONode node, List lms) {
             Table table = (Table) node;
             TableLayoutManager tlm = new TableLayoutManager(table);
+            /*
             List columnLMs = getColumnLayoutManagerList(table, tlm);
             if (columnLMs != null) {
                 tlm.setColumns(columnLMs);
-            }
+            }*/
             lms.add(tlm);
         }
     }
-        
+     
+    /*
     public static class TableBodyLayoutManagerMaker extends Maker {
          public void make(FONode node, List lms) {
              lms.add(new Body((TableBody) node));
@@ -383,7 +381,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         public void make(FONode node, List lms) {
             lms.add(new Cell((TableCell) node));
         }
-    }
+    }*/
 
     public static class FlowLayoutManagerMaker extends Maker {
          public void make(FONode node, List lms) {

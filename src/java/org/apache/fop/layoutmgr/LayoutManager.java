@@ -18,30 +18,15 @@
  
 package org.apache.fop.layoutmgr;
 
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
-import org.apache.fop.fo.flow.Marker;
 
 import org.apache.fop.area.Area;
-import org.apache.fop.area.Resolvable;
-import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.AreaTreeHandler;
-import org.apache.fop.fo.FObj;
 
 /**
  * The interface for all LayoutManagers.
  */
 public interface LayoutManager {
-
-    /**
-     * Set the FO object for this layout manager.
-     * For layout managers that are created without an FO
-     * this may not be called.
-     *
-     * @param obj the FO object for this layout manager
-     */
-    void setFObj(FObj obj);
 
     /**
      * Set the parent layout manager.
@@ -61,6 +46,12 @@ public interface LayoutManager {
      * Initialize this layout manager.
      */
     void initialize();
+
+    /**
+     * Get the active PageSequenceLayoutManager instance for this
+     * layout process.
+     */
+    PageSequenceLayoutManager getPSLM();
 
     /**
      * Generates inline areas.
@@ -168,68 +159,6 @@ public interface LayoutManager {
     void addAreas(PositionIterator posIter, LayoutContext context);
 
     /**
-     * Get the string of the current page number.
-     *
-     * @return the string for the current page number
-     */
-    String getCurrentPageNumberString();
-
-    /**
-     * Resolve the id reference.
-     * This is called by an area looking for an id reference.
-     * If the id reference is not found then it should add a resolvable object.
-     *
-     * @param ref the id reference
-     * @return the page containing the id reference or null if not found
-     */
-    PageViewport resolveRefID(String ref);
-
-    /**
-     * Add an id to the page.
-     * (todo) add the location of the area on the page
-     *
-     * @param id the id reference to add.
-     */
-    void addIDToPage(String id);
-
-    /**
-     * Add an unresolved area.
-     * The is used to add a resolvable object to the page for a given id.
-     *
-     * @param id the id reference this object needs for resolving
-     * @param res the resolvable object
-     */
-    void addUnresolvedArea(String id, Resolvable res);
-
-    /**
-     * Add the marker.
-     * A number of formatting objects may contain markers. This
-     * method is used to add those markers to the page.
-     *
-     * @param name the marker class name
-     * @param starting if the area being added is starting or ending
-     * @param isfirst if the area being added has is-first trait
-     * @param islast if the area being added has is-last trait
-     */
-    void addMarkerMap(Map marks, boolean starting, boolean isfirst, boolean islast);
-
-    /**
-     * Retrieve a marker.
-     * This method is used when retrieve a marker.
-     *
-     * @param name the class name of the marker
-     * @param pos the retrieve position
-     * @param boundary the boundary for retrieving the marker
-     * @return the layout manaager of the retrieved marker if any
-     */
-    Marker retrieveMarker(String name, int pos, int boundary);
-
-    /**
-     * @return the AreaTreeHandler object.
-     */
-    AreaTreeHandler getAreaTreeHandler();
-
-    /**
      * Load next child LMs, up to child LM index pos
      * @param pos index up to which child LMs are requested
      * @return if requested index does exist
@@ -254,4 +183,27 @@ public interface LayoutManager {
      * @param newLMs the list of LMs to be added
      */
     void addChildLMs(List newLMs);
+
+    /**
+     * Get a sequence of KnuthElements representing the content 
+     * of the node assigned to the LM
+     * 
+     * @param context   the LayoutContext used to store layout information
+     * @param alignment the desired text alignement
+     * @return          the list of KnuthElements
+     */
+    LinkedList getNextKnuthElements(LayoutContext context, int alignment);
+
+    /**
+     * Get a sequence of KnuthElements representing the content 
+     * of the node assigned to the LM, after changes have been applied
+     *
+     * @param oldList        the elements to replace
+     * @param flaggedPenalty the penalty value for hyphenated lines
+     * @param alignment      the desired text alignment
+     * @return               the updated list of KnuthElements
+     */
+    LinkedList getChangedKnuthElements(List oldList, /*int flaggedPenalty,*/
+                                       int alignment);
+   
 }

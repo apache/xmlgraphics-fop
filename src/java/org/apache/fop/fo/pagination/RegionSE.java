@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,16 +22,14 @@ package org.apache.fop.fo.pagination;
 import java.awt.Rectangle;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 
 /**
  * Abstract base class for fo:region-start and fo:region-end.
  */
-public abstract class RegionSE extends Region {
+public abstract class RegionSE extends SideRegion {
     // The value of properties relevant for fo:region-[start|end].
-    private Length extent;
     // End of property values
 
     /**
@@ -46,16 +44,8 @@ public abstract class RegionSE extends Region {
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
-        extent = pList.get(PR_EXTENT).getLength();
     }
 
-    /**
-     * Return the "extent" property.
-     */
-    public Length getExtent() {
-        return extent;
-    }
-    
     /**
      * Adjust the viewport reference rectangle for a region as a function
      * of precedence.

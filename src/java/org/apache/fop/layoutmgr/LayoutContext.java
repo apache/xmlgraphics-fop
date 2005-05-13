@@ -87,6 +87,10 @@ public class LayoutContext {
     private int iLineHeight;
     private int iBaseline;
     private int iMiddleShift;
+    private int iTopShift; /*LF*/
+    private int iBottomShift; /*LF*/
+    private int iSpaceBefore; /*LF*/
+    private int iSpaceAfter; /*LF*/
 
     public LayoutContext(LayoutContext parentLC) {
         this.flags = parentLC.flags;
@@ -100,6 +104,10 @@ public class LayoutContext {
         this.iLineHeight = parentLC.iLineHeight;
         this.iBaseline = parentLC.iBaseline;
         this.iMiddleShift = parentLC.iMiddleShift;
+/*LF*/  this.iTopShift = parentLC.iTopShift;
+/*LF*/  this.iBottomShift = parentLC.iBottomShift;
+/*LF*/  this.iSpaceBefore = parentLC.iSpaceBefore;
+/*LF*/  this.iSpaceAfter = parentLC.iSpaceAfter;
         // Copy other fields as necessary. Use clone???
     }
 
@@ -233,6 +241,38 @@ public class LayoutContext {
 
     public int getMiddleBaseline() {
         return iBaseline + iMiddleShift;
+    }
+    
+    public void setTopShift(int ts) {
+        iTopShift = ts;
+    }
+
+    public int getTopBaseline() {
+        return iBaseline + iTopShift;
+    }
+
+    public void setBottomShift(int bs) {
+        iBottomShift = bs;
+    }
+
+    public int getBottomBaseline() {
+        return iBaseline + iBottomShift;
+    }
+
+    public int getSpaceBefore() {
+        return iSpaceBefore;
+    }
+    
+    public void setSpaceBefore(int sp) {
+        iSpaceBefore = sp;
+    }
+
+    public int getSpaceAfter() {
+        return iSpaceAfter;
+    }
+
+    public void setSpaceAfter(int sp) {
+        iSpaceAfter = sp;
     }
     
     public String toString() {

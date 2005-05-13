@@ -156,6 +156,7 @@ public class TableCell extends FObj {
         if (!blockItemFound) {
             missingChildElementError("marker* (%block;)+");
         }
+        //TODO Complain about startsRow|endsRow=true if parent is a table-row
         getFOEventHandler().endCell(this);
     }
 

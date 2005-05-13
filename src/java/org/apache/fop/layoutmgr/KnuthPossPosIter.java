@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The Apache Software Foundation.
+ * Copyright 2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,13 +26,21 @@ public class KnuthPossPosIter extends PositionIterator {
 
     /**
      * Main constructor
-     * @param bpList List of break possibilities
+     * @param elementList List of Knuth elements
      * @param startPos starting position
      * @param endPos ending position
      */
-    public KnuthPossPosIter(List bpList, int startPos, int endPos) {
-        super(bpList.listIterator(startPos));
+    public KnuthPossPosIter(List elementList, int startPos, int endPos) {
+        super(elementList.listIterator(startPos));
         iterCount = endPos - startPos;
+    }
+    
+    /**
+     * Auxiliary constructor
+     * @param elementList List of Knuth elements
+     */
+    public KnuthPossPosIter(List elementList) {
+        this(elementList, 0, elementList.size());
     }
 
     // Check position < endPos

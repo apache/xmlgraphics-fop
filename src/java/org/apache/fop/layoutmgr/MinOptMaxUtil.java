@@ -63,6 +63,17 @@ public class MinOptMaxUtil {
         }
     }
 
+    public static void extendMinimum(MinOptMax mom, int len, boolean optToLen) {
+        if (mom.min < len) {
+            mom.min = len;
+            mom.opt = Math.max(mom.min, mom.opt);
+            if (optToLen) {
+                mom.opt = Math.min(mom.min, len);
+            }
+            mom.max = Math.max(mom.opt, mom.max);
+        }
+    }
+    
     /**
      * After a calculation on a MinOptMax, this can be called to set opt to
      * a new effective value.
@@ -75,6 +86,23 @@ public class MinOptMaxUtil {
                 mom.max = mom.opt;
             }
         }
+    }
+    
+    /**
+     * Converts a LengthRangeProperty to a MinOptMax.
+     * @param prop LengthRangeProperty
+     * @return the requested MinOptMax instance
+     */
+    public static MinOptMax toMinOptMax(LengthRangeProperty prop) {
+        MinOptMax mom = new MinOptMax(
+                (prop.getMinimum().isAuto() 
+                        ? 0 : prop.getMinimum().getLength().getValue()),
+                (prop.getOptimum().isAuto() 
+                        ? 0 : prop.getOptimum().getLength().getValue()),
+                (prop.getMinimum().isAuto() 
+                        ? Integer.MAX_VALUE 
+                        : prop.getMaximum().getLength().getValue()));
+        return mom;
     }
     
 }

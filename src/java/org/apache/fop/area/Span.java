@@ -32,36 +32,37 @@ public class Span extends Area {
     // the list of flow reference areas in this span area
     private List flowAreas;
     private int height;
-    private int columnCount;
+    private int colCount;
+    private int colGap;
+    private int colWidth; // width for each normal flow, calculated value
 
     /**
      * Create a span area with the number of columns for this span area.
      *
-     * @param cols the number of columns in the span
-     * @param ipd the ipd of the span 
+     * @param colCount the number of columns in the span
+     * @param colGap the column gap between each column 
+     * @param ipd the total ipd of the span 
      */
-    public Span(int cols, int ipd) {
+    public Span(int colCount, int colGap, int ipd) {
         addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
-        columnCount = cols;
+        this.colCount = colCount;
+        this.colGap = colGap;
         this.ipd = ipd;
-        flowAreas = new java.util.ArrayList(cols);
-        addAdditionalNormalFlow(); // one normal flow is required
+        createNormalFlows();
     }
 
     /**
-     * Create a new normal flow and add it to this span area
-     *
-     * @return the newly made NormalFlow object
+     * Create the normal flows for this Span
      */
-    public NormalFlow addAdditionalNormalFlow() {
-        if (flowAreas.size() >= columnCount) { // internal error
-            throw new IllegalStateException("Maximum number of flow areas (" +
-                    columnCount + ") for this span reached.");
+    private void createNormalFlows() {
+        flowAreas = new java.util.ArrayList(colCount);        
+        colWidth = (ipd - ((colCount - 1) * colGap)) / colCount;
+
+        for (int i=0; i< colCount; i++) {
+            NormalFlow newFlow = new NormalFlow(colWidth);
+            newFlow.setIPD(getIPD());
+            flowAreas.add(newFlow);
         }
-        NormalFlow newFlow = new NormalFlow();
-        newFlow.setIPD(getIPD());
-        flowAreas.add(newFlow);
-        return newFlow;
     }
 
     /**
@@ -70,16 +71,16 @@ public class Span extends Area {
      * @return the number of columns defined for this span area
      */
     public int getColumnCount() {
-        return columnCount;
+        return colCount;
     }
 
     /**
-     * Get the count of normal flows for this span area.
+     * Get the width of a single column within this Span
      *
-     * @return the number of normal flows attached to this span
+     * @return the width of a single column
      */
-    public int getNormalFlowCount() {
-        return flowAreas.size();
+    public int getColumnWidth() {
+        return colWidth;
     }
 
     /**
@@ -91,15 +92,21 @@ public class Span extends Area {
         return height;
     }
 
+
     /**
      * Get the normal flow area for a particular column.
      *
-     * @param count the column number for the flow
+     * @param colRequested the zero-based column number of the flow
      * @return the flow area for the requested column
      */
-    public NormalFlow getNormalFlow(int columnNumber) {
-        return (NormalFlow) flowAreas.get(columnNumber);
+    public NormalFlow getNormalFlow(int colRequested) {
+        if (colRequested >= 0 && colRequested < colCount) {
+            return (NormalFlow) flowAreas.get(colRequested);
+        } else { // internal error
+            throw new IllegalArgumentException("Invalid column number " + 
+                    colRequested + " requested; only 0-" + (colCount-1) +
+                    " available.");
+        }
     }
-
 }
 

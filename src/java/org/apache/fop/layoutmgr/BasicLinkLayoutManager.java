@@ -51,13 +51,13 @@ public class BasicLinkLayoutManager extends InlineLayoutManager {
          if (fobj.getExternalDestination() != null) {
              area.addTrait(Trait.EXTERNAL_LINK, fobj.getExternalDestination());
          } else {
-             String link = fobj.getInternalDestination();
-             PageViewport page = parentLM.resolveRefID(link);
+             String idref = fobj.getInternalDestination();
+             PageViewport page = getPSLM().getFirstPVWithID(idref);
              if (page != null) {
                  area.addTrait(Trait.INTERNAL_LINK, page.getKey());
              } else {
-                 LinkResolver res = new LinkResolver(link, area);
-                 parentLM.addUnresolvedArea(link, res);
+                 LinkResolver res = new LinkResolver(idref, area);
+                 getPSLM().addUnresolvedArea(idref, res);
              }
          }
      }

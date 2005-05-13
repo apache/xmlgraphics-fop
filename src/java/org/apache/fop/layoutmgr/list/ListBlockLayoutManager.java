@@ -25,8 +25,8 @@ import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.BreakPoss;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.BreakPossPosIter;
 import org.apache.fop.layoutmgr.Position;
+import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
@@ -34,6 +34,8 @@ import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -46,13 +48,25 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
     
     private Block curBlockArea;
 
-    private int referenceIPD = 0;
-
     private List bodyBreaks = new ArrayList();
 
     //TODO space-before|after: handle space-resolution rules
     private MinOptMax spaceBefore;
     private MinOptMax spaceAfter;
+
+    private static class StackingIter extends PositionIterator {
+        StackingIter(Iterator parentIter) {
+            super(parentIter);
+        }
+
+        protected LayoutManager getLM(Object nextObj) {
+            return ((Position) nextObj).getLM();
+        }
+
+        protected Position getPos(Object nextObj) {
+            return ((Position) nextObj);
+        }
+    }
 
     /*
     private class SectionPosition extends LeafPosition {
@@ -64,7 +78,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
     }*/
 
     /**
-     * Create a new table layout manager.
+     * Create a new list block layout manager.
      * @param node list-block to create the layout manager for
      */
     public ListBlockLayoutManager(ListBlock node) {
@@ -166,6 +180,11 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
         return null;
     }
 
+    public LinkedList getChangedKnuthElements(List oldList, int alignment) {
+        //log.debug("LBLM.getChangedKnuthElements>");
+        return super.getChangedKnuthElements(oldList, alignment);
+    }
+
     /**
      * The table area is a reference area that contains areas for
      * columns, bodies, rows and the contents are in cells.
@@ -182,26 +201,40 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
         addBlockSpacing(adjust, spaceBefore);
         spaceBefore = null;
         
-        addID(fobj.getId());
+        getPSLM().addIDToPage(fobj.getId());
 
         // the list block contains areas stacked from each list item
 
-        //int listHeight = 0;
-
-        LayoutManager childLM;
-        int iStartPos = 0;
+        LayoutManager childLM = null;
         LayoutContext lc = new LayoutContext(0);
+        LayoutManager firstLM = null;
+        LayoutManager lastLM = null;
+
+        // "unwrap" the NonLeafPositions stored in parentIter
+        // and put them in a new list; 
+        LinkedList positionList = new LinkedList();
+        Position pos;
         while (parentIter.hasNext()) {
-            LeafPosition lfp = (LeafPosition) parentIter.next();
-            // Add the block areas to Area
-            PositionIterator breakPosIter = new BreakPossPosIter(
-                    bodyBreaks, iStartPos, lfp.getLeafPos() + 1);
-            iStartPos = lfp.getLeafPos() + 1;
-            while ((childLM = (LayoutManager)breakPosIter.getNextChildLM()) != null) {
-                childLM.addAreas(breakPosIter, lc);
+            pos = (Position)parentIter.next();
+            if (pos instanceof NonLeafPosition
+                && ((NonLeafPosition) pos).getPosition().getLM() != this) {
+                // pos was created by a child of this ListBlockLM
+                positionList.add(((NonLeafPosition) pos).getPosition());
+                lastLM = ((NonLeafPosition) pos).getPosition().getLM();
+                if (firstLM == null) {
+                    firstLM = lastLM;
+                }
             }
         }
 
+        StackingIter childPosIter = new StackingIter(positionList.listIterator());
+        while ((childLM = childPosIter.getNextChildLM()) != null) {
+            // Add the block areas to Area
+            lc.setFlags(LayoutContext.FIRST_AREA, childLM == firstLM);
+            lc.setFlags(LayoutContext.LAST_AREA, childLM == lastLM);
+            lc.setStackLimit(layoutContext.getStackLimit());
+            childLM.addAreas(childPosIter, lc);
+        }
 
         flush();
 

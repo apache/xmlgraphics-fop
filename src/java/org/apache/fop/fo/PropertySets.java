@@ -395,6 +395,7 @@ public class PropertySets {
         elem.addProperties(CommonBorderPaddingBackgroundProperties);
         elem.addProperties(CommonMarginPropertiesBlock);
         elem.addProperty(Constants.PR_BLOCK_PROGRESSION_DIMENSION);
+        elem.addProperty(Constants.PR_X_BLOCK_PROGRESSION_UNIT);
         elem.addProperty(Constants.PR_PAGE_BREAK_AFTER);
         elem.addProperty(Constants.PR_PAGE_BREAK_BEFORE);
         elem.addProperty(Constants.PR_BREAK_AFTER);

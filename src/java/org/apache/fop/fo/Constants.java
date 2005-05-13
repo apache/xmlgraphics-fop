@@ -375,7 +375,8 @@ public interface Constants {
     int PR_INTRUSION_DISPLACE = 247;
     int PR_INDEX_CLASS = 248;   // XSL 1.1
     int PR_INDEX_KEY = 249;     // XSL 1.1
-    int PROPERTY_COUNT = 249;
+    int PR_X_BLOCK_PROGRESSION_UNIT = 250; //Custom extension
+    int PROPERTY_COUNT = 250;
 
     // compound property constants
 
@@ -553,5 +554,7 @@ public interface Constants {
     int EN_VISIBLE = 159;
     int EN_WIDER = 160;
     int EN_WRAP = 161;
-    int ENUM_COUNT = 161;
+    int EN_X_FILL = 162; //non-standard for display-align
+    int EN_X_DISTRIBUTE = 163; //non-standard for display-align
+    int ENUM_COUNT = 163;
 }
