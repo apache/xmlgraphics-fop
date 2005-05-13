@@ -636,11 +636,11 @@ public class TableContentLayoutManager {
                     readyCount++;
                     int len = ElementListUtils.calcContentLength(
                             gridUnits[i].getElements(), start[i], end[i]);
+                    partLength[i] = len;
+                    log.debug("len of part: " + len);
                     if (start[i] == 0 && lastRow.getExplicitHeight().min > 0) {
                         len = Math.max(len, lastRow.getExplicitHeight().opt);
                     }
-                    partLength[i] = len;
-                    log.debug("len of part: " + len);
                     
                     //Now add the borders to the contentLength
                     if (isSeparateBorderModel()) {
