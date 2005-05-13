@@ -30,7 +30,7 @@ import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableColumn;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
-import org.apache.fop.traits.MinOptMax;
+
 
 /**
  * <p>Iterator that lets the table layout manager step over all rows of a table.
