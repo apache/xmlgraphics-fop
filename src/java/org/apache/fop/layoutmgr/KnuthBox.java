@@ -32,49 +32,33 @@ package org.apache.fop.layoutmgr;
  * positioning, and the methods used to get them.
  */
 public class KnuthBox extends KnuthElement {
-    private int lead;
-    private int total;
-    private int middle;
 
     /**
      * Create a new KnuthBox.
      *
      * @param w    the width of this box
-     * @param l    the height of this box above the main baseline
-     * @param t    the total height of this box
-     * @param m    the height of this box above and below the middle baseline
      * @param pos  the Position stored in this box
      * @param bAux is this box auxiliary?
      */
-    public KnuthBox(int w, int l, int t, int m, Position pos, boolean bAux) {
+    public KnuthBox(int w, Position pos, boolean bAux) {
         super(w, pos, bAux);
-        lead = l;
-        total = t;
-        middle = m;
     }
 
+    /** @see org.apache.fop.layoutmgr.KnuthElement#isBox() */
     public boolean isBox() {
         return true;
     }
 
-    /**
-     * Return the height of this box above the main baseline.
-     */
-    public int getLead() {
-        return lead;
+    /** @see java.lang.Object#toString() */
+    public String toString() {
+        StringBuffer sb = new StringBuffer(64);
+        if (isAuxiliary()) {
+            sb.append("aux. ");
+        }
+        sb.append("box");
+        sb.append(" w=");
+        sb.append(getW());
+        return sb.toString();
     }
-
-    /**
-     * Return the total height of this box.
-     */
-    public int getTotal() {
-        return total;
-    }
-
-    /**
-     * Return the height of this box above and below the middle baseline.
-     */
-    public int getMiddle() {
-        return middle;
-    }
+    
 }

@@ -18,45 +18,135 @@
 
 package org.apache.fop.layoutmgr.table;
 
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.Table;
+import org.apache.fop.fo.flow.TableBody;
+import org.apache.fop.fo.flow.TableCell;
+import org.apache.fop.fo.flow.TableColumn;
+import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
 
-
+/**
+ * This class represents one grid unit inside a table.
+ */
 public class GridUnit {
+
+    /** Indicates that the grid unit is in the first column. */
+    public static final int IN_FIRST_COLUMN = 0;
+    /** Indicates that the grid unit is in the last column. */
+    public static final int IN_LAST_COLUMN = 1;
+    /** Indicates that the grid unit is in the first row (context: table). */
+    public static final int FIRST_IN_TABLE = 2;
+    /** Indicates that the grid unit is in the first row (context: body). */
+    public static final int FIRST_IN_BODY = 3;
+    /** Indicates that the grid unit is in the last row (context: body). */
+    public static final int LAST_IN_BODY = 4;
+    /** Indicates that the grid unit is in the last row (context: table). */
+    public static final int LAST_IN_TABLE = 5;
     
-    /** layout manager for the cell occupying this grid unit, may be null */
-    public Cell layoutManager;
-    /** layout manager for the column that this grid unit belongs to */
-    public Column column;
-    /** layout manager for the row that this grid unit belongs to */
-    public Row row;
+    /** Primary grid unit */
+    private PrimaryGridUnit primary;
+    /** Table cell which occupies this grid unit */
+    private TableCell cell;
+    /** Table row which occupied this grid unit (may be null) */
+    private TableRow row;
+    /** Table column that this grid unit belongs to */
+    private TableColumn column;
+    
+    /** start index of grid unit within row in column direction */
+    private int startCol;
     /** index of grid unit within cell in column direction */
-    public int colSpanIndex;
+    private int colSpanIndex;
     /** index of grid unit within cell in row direction */
-    public int rowSpanIndex;
-    /** effective borders for a cell slot (used for collapsing border model) */
-    public CommonBorderPaddingBackground effBorders;
+    private int rowSpanIndex;
+    /** effective borders for a cell slot */
+    private CommonBorderPaddingBackground effBorders;
+    /** flags for the grid unit */
+    private byte flags = 0;
     
-    public GridUnit(Cell layoutManager, int colSpanIndex) {
-        this.layoutManager = layoutManager;
-        this.colSpanIndex = colSpanIndex;
-        this.rowSpanIndex = 0;
+    
+    public GridUnit(TableCell cell, TableColumn column, int startCol, int colSpanIndex) {
+        this(null, cell, column, startCol, colSpanIndex);
     }
     
-    public GridUnit(Cell layoutManager) {
-        this(layoutManager, 0);
+    public GridUnit(PrimaryGridUnit primary, TableColumn column, int startCol, int colSpanIndex) {
+        this(primary, primary.getCell(), column, startCol, colSpanIndex);
+    }
+    
+    protected GridUnit(PrimaryGridUnit primary, TableCell cell, TableColumn column, int startCol, int colSpanIndex) {
+        this.primary = primary;
+        this.cell = cell;
+        this.column = column;
+        this.startCol = startCol;
+        this.colSpanIndex = colSpanIndex;
+    }
+    
+    public TableCell getCell() {
+        return this.cell;
+    }
+    
+    public TableColumn getColumn() {
+        return this.column;
+    }
+    
+    public TableRow getRow() {
+        if (this.row != null) {
+            return this.row;
+        } else if (getCell().getParent() instanceof TableRow) {
+            return (TableRow)getCell().getParent();
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * Sets the table-row FO, if applicable.
+     * @param rowFO the table-row FO
+     */
+    public void setRow(TableRow rowFO) {
+        this.row = rowFO;
     }
 
-    /** @return true if the grid unit is the primary of a cell */
-    public boolean isPrimaryGridUnit() {
-        return (colSpanIndex == 0) && (rowSpanIndex == 0);
+    public TableBody getBody() {
+        FONode node = getCell();
+        while (node != null && !(node instanceof TableBody)) {
+            node = node.getParent();
+        }
+        return (TableBody)node;
+    }
+    
+    public Table getTable() {
+        FONode node = getBody();
+        while (node != null && !(node instanceof Table)) {
+            node = node.getParent();
+        }
+        return (Table)node;
+    }
+    
+    /**
+     * @return the primary grid unit if this is a spanned grid unit
+     */
+    public PrimaryGridUnit getPrimary() {
+        return (isPrimary() ? (PrimaryGridUnit)this : this.primary);
+    }
+
+    public boolean isPrimary() {
+        return false;
+    }
+    
+    public boolean isEmpty() {
+        return this.cell == null;
+    }
+    
+    public int getStartCol() {
+        return this.startCol;
     }
     
     /** @return true if the grid unit is the last in column spanning direction */
     public boolean isLastGridUnitColSpan() {
-        if (layoutManager != null) {
-            return (colSpanIndex == layoutManager.getFObj().getNumberColumnsSpanned() - 1);
+        if (cell != null) {
+            return (colSpanIndex == cell.getNumberColumnsSpanned() - 1);
         } else {
             return true;
         }
@@ -64,68 +154,136 @@ public class GridUnit {
     
     /** @return true if the grid unit is the last in column spanning direction */
     public boolean isLastGridUnitRowSpan() {
-        if (layoutManager != null) {
-            return (rowSpanIndex == layoutManager.getFObj().getNumberRowsSpanned() - 1);
+        if (cell != null) {
+            return (rowSpanIndex == cell.getNumberRowsSpanned() - 1);
         } else {
             return true;
         }
     }
     
-    /** @return true if the cell is part of a span in column direction */
-    public boolean isColSpan() {
-        return (colSpanIndex > 0);
+    /**
+     * @return the index of the grid unit inside a cell in row direction
+     */
+    public int getRowSpanIndex() {
+        return this.rowSpanIndex;
+    }
+    
+    /**
+     * @return the index of the grid unit inside a cell in column direction
+     */
+    public int getColSpanIndex() {
+        return this.colSpanIndex;
     }
 
+    /**
+     * Returns a BorderInfo instance for a side of the currently applicable cell before border
+     * resolution (i.e. the value from the FO). A return value of null indicates an empty cell.
+     * See CollapsingBorderModel(EyeCatching) where this method is used. 
+     * @param side for which side to return the BorderInfo
+     * @return the requested BorderInfo instance or null if the grid unit is an empty cell
+     */
     public BorderInfo getOriginalBorderInfoForCell(int side) {
-        if (layoutManager != null) {
-            return layoutManager.getFObj().getCommonBorderPaddingBackground().getBorderInfo(side);
+        if (cell != null) {
+            return cell.getCommonBorderPaddingBackground().getBorderInfo(side);
         } else {
             return null;
         }
     }
     
     /**
-     * Assign the borders from the given cell to this cell info. Used in
+     * @return the resolved normal borders for this grid unit
+     */
+    public CommonBorderPaddingBackground getBorders() {
+        return this.effBorders;
+    }
+    
+    /**
+     * @return true if the grid unit has any borders.
+     */
+    public boolean hasBorders() {
+        return (getBorders() != null) && getBorders().hasBorder();
+    }
+    
+    /**
+     * Assigns the borders from the given cell to this cell info. Used in
      * case of separate border model.
-     * @param current cell to take the borders from
      */
-    public void assignBorder(Cell current) {
-        if (current != null) {
-            this.effBorders = current.getFObj().getCommonBorderPaddingBackground();
+    public void assignBorderForSeparateBorderModel() {
+        if (cell != null) {
+            this.effBorders = cell.getCommonBorderPaddingBackground();
         }
     }
     
     /**
-     * Assign the borders directly.
-     * @param borders the borders to use
+     * Resolve collapsing borders for the given cell. Used in case of the collapsing border model.
+     * @param other neighbouring grid unit if any
+     * @param side the side to resolve (one of CommonBorderPaddingBackground.BEFORE|AFTER|START|END)
      */
-    public void assignBorder(CommonBorderPaddingBackground borders) {
-        if (borders != null) {
-            this.effBorders = borders;
-        }
+    public void resolveBorder(GridUnit other, int side) {
+        resolveBorder(other, side, 0);
     }
     
     /**
-     * Resolve collapsing borders for the given cell and store the resulting
-     * borders in this cell info. Use in case of the collapsing border model.
-     * @param current cell to resolve borders for
-     * @param before cell before the current cell, if any
-     * @param after cell after the current cell, if any
-     * @param start cell preceeding the current cell, if any
-     * @param end cell succeeding of the current cell, if any
+     * Resolve collapsing borders for the given cell. Used in case of the collapsing border model.
+     * @param other neighbouring grid unit if any
+     * @param side the side to resolve (one of CommonBorderPaddingBackground.BEFORE|AFTER|START|END)
+     * @param resFlags flags for the border resolution
      */
-    public static void resolveBorder(Table table,
-            CommonBorderPaddingBackground target,
-            GridUnit current, GridUnit other, int side) {
-        if (current == null) {
-            return;
-        }
-        
+    public void resolveBorder(GridUnit other, int side, int resFlags) {
         CollapsingBorderModel borderModel = CollapsingBorderModel.getBorderModelFor(
-                table.getBorderCollapse());
-        target.setBorderInfo(
-                borderModel.determineWinner(current, other, 
-                        side, 0), side);
+                getTable().getBorderCollapse());
+        if (this.effBorders == null) {
+            this.effBorders = new CommonBorderPaddingBackground();
+        }
+        this.effBorders.setBorderInfo(
+                borderModel.determineWinner(this, other, 
+                        side, resFlags), side);
     }
     
+    public boolean getFlag(int which) {
+        return (flags & (1 << which)) != 0;
+    }
+    
+    public void setFlag(int which, boolean value) {
+        if (value) {
+            flags |= (1 << which); //set flag
+        } else {
+            flags &= ~(1 << which); //clear flag
+        }
+    }
+    
+    /**
+     * @return the grid unit just below this grid unit if the cell is spanning.
+     */
+    public GridUnit createNextRowSpanningGridUnit() {
+        if (isLastGridUnitRowSpan()) {
+            return null;
+        } else {
+            //cloning the current GridUnit with adjustments
+            GridUnit gu = new GridUnit(getPrimary(), getColumn(), startCol, colSpanIndex);
+            gu.rowSpanIndex = rowSpanIndex + 1;
+            return gu;
+        }
+    }
+
+    /** @see java.lang.Object#toString() */
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        if (isEmpty()) {
+            sb.append("EMPTY");
+        } else if (isPrimary()) {
+            sb.append("Primary");
+        }
+        sb.append("GridUnit:");
+        if (colSpanIndex > 0) {
+            sb.append(" colSpan=").append(colSpanIndex);
+        }
+        if (rowSpanIndex > 0) {
+            sb.append(" rowSpan=").append(rowSpanIndex);
+        }
+        sb.append(" startCol=").append(startCol);
+        sb.append(" flags=").append(Integer.toBinaryString(flags));
+        return sb.toString();
+    }
+
 }

@@ -28,7 +28,7 @@ public abstract class PositionIterator implements Iterator {
     private LayoutManager childLM;
     private boolean bHasNext;
 
-    PositionIterator(Iterator pIter) {
+    protected PositionIterator(Iterator pIter) {
         parentIter = pIter;
         lookAhead();
         //checkNext();

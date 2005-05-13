@@ -24,26 +24,29 @@ import java.util.List;
 import org.apache.fop.fo.Constants;
 
 /**
- * This is a region reference area for the page regions.
- * This area represents a region on the page. It is cloneable
+ * This is a region reference area for a page regions.
+ * This area is the direct child of a region-viewport-area. It is cloneable
  * so the page master can make copies from the original page and regions.
  */
 public class RegionReference extends Area implements Cloneable {
     private int regionClass = Constants.FO_REGION_BEFORE;
     private CTM ctm;
+
     // the list of block areas from the static flow
     private List blocks = new ArrayList();
-
-    private int bpd;
+    
+    // the parent RegionViewport for this object
+    protected RegionViewport regionViewport;
 
     /**
      * Create a new region reference area.
      *
      * @param type the region class type
      */
-    public RegionReference(int type) {
+    public RegionReference(int type, RegionViewport parent) {
         regionClass = type;
         addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
+        regionViewport = parent;
     }
 
     /**
@@ -57,6 +60,13 @@ public class RegionReference extends Area implements Cloneable {
      */
     public void setCTM(CTM ctm) {
         this.ctm = ctm;
+    }
+    
+    /**
+     * @return Returns the parent RegionViewport.
+     */
+    public RegionViewport getRegionViewport() {
+        return regionViewport;
     }
 
     /**
@@ -96,24 +106,6 @@ public class RegionReference extends Area implements Cloneable {
     }
 
     /**
-     * Set the block-progression-dimension.
-     *
-     * @return the footnote area
-     */
-    public void setBPD(int bpd) {
-        this.bpd = bpd;
-    }
-
-    /**
-     * Set the block-progression-dimension.
-     *
-     * @return the footnote area
-     */
-    public int getBPD() {
-        return bpd;
-    }
-
-    /**
      * Clone this region.
      * This is used when cloning the page by the page master.
      * The blocks are not copied since the master will have no blocks.
@@ -121,7 +113,7 @@ public class RegionReference extends Area implements Cloneable {
      * @return a copy of this region reference area
      */
     public Object clone() {
-        RegionReference rr = new RegionReference(regionClass);
+        RegionReference rr = new RegionReference(regionClass, regionViewport);
         rr.ctm = ctm;
         rr.setIPD(getIPD());
         return rr;

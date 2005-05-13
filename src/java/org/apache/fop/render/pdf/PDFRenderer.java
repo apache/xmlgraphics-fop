@@ -517,7 +517,7 @@ public class PDFRenderer extends PrintRenderer {
         float width = (float)(viewArea.getWidth() / 1000f);
         float height = (float)(viewArea.getHeight() / 1000f);
 
-        if (region.getRegion().getRegionClass() == FO_REGION_BODY) {
+        if (region.getRegionReference().getRegionClass() == FO_REGION_BODY) {
             currentBPPosition = region.getBorderAndPaddingWidthBefore();
             currentIPPosition = region.getBorderAndPaddingWidthStart();
         }
@@ -655,18 +655,18 @@ public class PDFRenderer extends PrintRenderer {
             }
         }
 
-        boolean b[] = new boolean[] {
+        boolean[] b = new boolean[] {
             (bpsBefore != null), (bpsEnd != null), 
             (bpsAfter != null), (bpsStart != null)};
         if (!b[0] && !b[1] && !b[2] && !b[3]) {
             return;
         }
-        float bw[] = new float[] {
+        float[] bw = new float[] {
             (b[0] ? bpsBefore.width / 1000f : 0.0f),
             (b[1] ? bpsEnd.width / 1000f : 0.0f),
             (b[2] ? bpsAfter.width / 1000f : 0.0f),
             (b[3] ? bpsStart.width / 1000f : 0.0f)};
-        float clipw[] = new float[] {
+        float[] clipw = new float[] {
             BorderProps.getClippedWidth(bpsBefore) / 1000f,    
             BorderProps.getClippedWidth(bpsEnd) / 1000f,    
             BorderProps.getClippedWidth(bpsAfter) / 1000f,    
@@ -678,7 +678,7 @@ public class PDFRenderer extends PrintRenderer {
         width -= clipw[3];
         width -= clipw[1];
         
-        boolean slant[] = new boolean[] {
+        boolean[] slant = new boolean[] {
             (b[3] && b[0]), (b[0] && b[1]), (b[1] && b[2]), (b[2] && b[3])};
         if (bpsBefore != null) {
             endTextObject();
@@ -710,7 +710,8 @@ public class PDFRenderer extends PrintRenderer {
             lineTo(sx2, innery);
             closePath();
             clip();
-            drawBorderLine(sx1a, outery, ex1a, innery, true, true, bpsBefore.style, bpsBefore.color);
+            drawBorderLine(sx1a, outery, ex1a, innery, true, true, 
+                    bpsBefore.style, bpsBefore.color);
             restoreGraphicsState();
         }
         if (bpsEnd != null) {
@@ -765,7 +766,7 @@ public class PDFRenderer extends PrintRenderer {
                 if (bpsStart != null && bpsStart.mode == BorderProps.COLLAPSE_OUTER) {
                     sx1a -= clipw[3];
                 }
-                if (bpsStart != null && bpsStart.mode == BorderProps.COLLAPSE_OUTER) {
+                if (bpsEnd != null && bpsEnd.mode == BorderProps.COLLAPSE_OUTER) {
                     ex1a += clipw[1];
                 }
                 lineTo(ex1a, outery);
@@ -785,7 +786,7 @@ public class PDFRenderer extends PrintRenderer {
             float sy1 = starty;
             float sy2 = (slant[0] ? sy1 + bw[0] - clipw[0] : sy1);
             float ey1 = sy1 + height;
-            float ey2 = (slant[3] ? ey1 - bw[2] + clipw[2]: ey1);
+            float ey2 = (slant[3] ? ey1 - bw[2] + clipw[2] : ey1);
             float outerx = startx - clipw[3];
             float clipx = outerx + clipw[3];
             float innerx = outerx + bw[3];
@@ -801,8 +802,8 @@ public class PDFRenderer extends PrintRenderer {
                 if (bpsAfter != null && bpsAfter.mode == BorderProps.COLLAPSE_OUTER) {
                     ey1a += clipw[2];
                 }
-                lineTo(outerx, sy1a);
                 lineTo(outerx, ey1a);
+                lineTo(outerx, sy1a);
             }
             lineTo(clipx, sy1);
             lineTo(innerx, sy2);

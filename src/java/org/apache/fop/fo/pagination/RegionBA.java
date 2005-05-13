@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,16 +22,14 @@ package org.apache.fop.fo.pagination;
 import java.awt.Rectangle;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 
 /**
  * Abstract base class for fo:region-before and fo:region-after.
  */
-public abstract class RegionBA extends Region {
+public abstract class RegionBA extends SideRegion {
     // The value of properties relevant for fo:region-[before|after].
-    private Length extent;
     private int precedence;
     // End of property values
     
@@ -47,19 +45,11 @@ public abstract class RegionBA extends Region {
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
-        extent = pList.get(PR_EXTENT).getLength();
         precedence = pList.get(PR_PRECEDENCE).getEnum();
     }
 
     /**
-     * Return the "extent" property.
-     */
-    public Length getExtent() {
-        return extent;
-    }
-
-    /**
-     * Return the "precedence" property.
+     * @return the "precedence" property.
      */
     public int getPrecedence() {
         return precedence;

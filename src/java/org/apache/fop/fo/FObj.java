@@ -18,9 +18,8 @@
 
 package org.apache.fop.fo;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
@@ -39,7 +38,7 @@ public abstract class FObj extends FONode implements Constants {
     public static PropertyMaker[] propertyListTable = null;
     
     /** The immediate child nodes of this node. */
-    public ArrayList childNodes = null;
+    public List childNodes = null;
 
     /** Used to indicate if this FO is either an Out Of Line FO (see rec)
         or a descendant of one.  Used during validateChildNode() FO 
@@ -164,7 +163,7 @@ public abstract class FObj extends FONode implements Constants {
                 addMarker((Marker) child);
         } else {
             if (childNodes == null) {
-                childNodes = new ArrayList();
+                childNodes = new java.util.ArrayList();
             }
             childNodes.add(child);
         }
@@ -198,7 +197,7 @@ public abstract class FObj extends FONode implements Constants {
      */
     public void setLayoutDimension(PercentBase.LayoutDimension key, int dimension) {
         if (layoutDimension == null) {
-            layoutDimension = new HashMap();
+            layoutDimension = new java.util.HashMap();
         }
         layoutDimension.put(key, new Integer(dimension));
     }
@@ -210,7 +209,7 @@ public abstract class FObj extends FONode implements Constants {
      */
     public void setLayoutDimension(PercentBase.LayoutDimension key, float dimension) {
         if (layoutDimension == null) {
-            layoutDimension = new HashMap();
+            layoutDimension = new java.util.HashMap();
         }
         layoutDimension.put(key, new Float(dimension));
     }
@@ -307,7 +306,7 @@ public abstract class FObj extends FONode implements Constants {
             }
         }
         if (markers == null) {
-            markers = new HashMap();
+            markers = new java.util.HashMap();
         }
         if (!markers.containsKey(mcname)) {
             markers.put(mcname, marker);

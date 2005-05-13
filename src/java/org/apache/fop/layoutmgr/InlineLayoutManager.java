@@ -179,6 +179,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
         return null;
     }
 
+    /*
     public KnuthElement addALetterSpaceTo(KnuthElement element) {
         NonLeafPosition savedPos = (NonLeafPosition) element.getPosition();
         element.setPosition(savedPos.getPosition());
@@ -325,6 +326,6 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
             returnList.add(returnedElement);
         }
         return returnList;
-    }
+    }*/
 }
 

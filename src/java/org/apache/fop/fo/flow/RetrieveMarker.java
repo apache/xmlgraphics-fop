@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.xml.sax.Locator;
 
@@ -66,9 +65,19 @@ public class RetrieveMarker extends FObjMixed {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
+        if (findAncestor(FO_STATIC_CONTENT) < 0) {
+            invalidChildError(locator, FO_URI, "retrieve-marker", 
+                "An fo:retrieve-marker is permitted only as the " +
+                " descendant of an fo:static-content.");
+        }
+
         retrieveClassName = pList.get(PR_RETRIEVE_CLASS_NAME).getString();
         retrievePosition = pList.get(PR_RETRIEVE_POSITION).getEnum();
         retrieveBoundary = pList.get(PR_RETRIEVE_BOUNDARY).getEnum();
+        
+        if (retrieveClassName == null || retrieveClassName.equals("")) {
+            missingPropertyError("retrieve-class-name");
+        }        
     }
     
     /**

@@ -85,7 +85,7 @@ public class FOUserAgent {
      * behavior for FOP.  However, this flag, if set, provides the user the
      * ability for FOP to halt on all content model violations if desired.   
      */ 
-    private boolean strictValidation = false;
+    private boolean strictValidation = true;
 
     /* Additional fo.ElementMapping subclasses set by user */
     private ArrayList additionalElementMappings = null;

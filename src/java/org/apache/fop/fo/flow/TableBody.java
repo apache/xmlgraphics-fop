@@ -102,9 +102,10 @@ public class TableBody extends FObj {
                 getParent().removeChild(this);
             }
         }
+        /*
         if (tableCellsFound) {
             convertCellsToRows();
-        }
+        }*/
         savedPropertyList = null; //Release reference
     }
 
@@ -148,7 +149,7 @@ public class TableBody extends FObj {
      */
     private void convertCellsToRows() throws FOPException {
         //getLogger().debug("Converting cells to rows...");
-        List cells = (List)childNodes.clone();
+        List cells = new java.util.ArrayList(childNodes);
         childNodes.clear();
         Iterator i = cells.iterator();
         TableRow row = null;

@@ -263,7 +263,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
                                 lead, total, middle);
 
         // node is a fo:Leader
-        returnList.add(new KnuthBox(0, areaInfo.lead, areaInfo.total,
+        returnList.add(new KnuthInlineBox(0, areaInfo.lead, areaInfo.total,
                                     areaInfo.middle,
                                     new LeafPosition(this, -1), true));
         returnList.add(new KnuthPenalty(0, KnuthElement.INFINITE, false,
@@ -273,7 +273,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
                            areaInfo.ipdArea.max - areaInfo.ipdArea.opt,
                            areaInfo.ipdArea.opt - areaInfo.ipdArea.min, 
                            new LeafPosition(this, 0), false));
-        returnList.add(new KnuthBox(0, areaInfo.lead, areaInfo.total,
+        returnList.add(new KnuthInlineBox(0, areaInfo.lead, areaInfo.total,
                                     areaInfo.middle,
                                     new LeafPosition(this, -1), true));
 
@@ -308,7 +308,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
 
         LinkedList returnList = new LinkedList();
 
-        returnList.add(new KnuthBox(0, areaInfo.lead, areaInfo.total,
+        returnList.add(new KnuthInlineBox(0, areaInfo.lead, areaInfo.total,
                                     areaInfo.middle,
                                     new LeafPosition(this, -1), true));
         returnList.add(new KnuthPenalty(0, KnuthElement.INFINITE, false,
@@ -318,7 +318,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
                            areaInfo.ipdArea.max - areaInfo.ipdArea.opt,
                            areaInfo.ipdArea.opt - areaInfo.ipdArea.min, 
                            new LeafPosition(this, 0), false));
-        returnList.add(new KnuthBox(0, areaInfo.lead, areaInfo.total,
+        returnList.add(new KnuthInlineBox(0, areaInfo.lead, areaInfo.total,
                                     areaInfo.middle,
                                     new LeafPosition(this, -1), true));
 
@@ -327,6 +327,6 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
     }
 
     protected void addId() {
-        addID(fobj.getId());
+        getPSLM().addIDToPage(fobj.getId());
     }
 }

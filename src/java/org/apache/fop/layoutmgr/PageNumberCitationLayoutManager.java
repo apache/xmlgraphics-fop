@@ -58,7 +58,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
     public void addAreas(PositionIterator posIter, LayoutContext context) {
         super.addAreas(posIter, context);
         if (!resolved) {
-            parentLM.addUnresolvedArea(fobj.getRefId(), (Resolvable) curArea);
+            getPSLM().addUnresolvedArea(fobj.getRefId(), (Resolvable) curArea);
         }
     }
     
@@ -71,7 +71,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
      * return a resolvable area
      */
     private InlineArea getPageNumberCitationInlineArea(LayoutManager parentLM) {
-        PageViewport page = parentLM.resolveRefID(fobj.getRefId());
+        PageViewport page = getPSLM().getFirstPVWithID(fobj.getRefId());
         InlineArea inline = null;
         if (page != null) {
             String str = page.getPageNumberString();
@@ -118,7 +118,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
     }
     
     protected void addId() {
-        addID(fobj.getId());
+        getPSLM().addIDToPage(fobj.getId());
     }
 }
 

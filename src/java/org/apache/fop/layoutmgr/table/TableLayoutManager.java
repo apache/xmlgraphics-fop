@@ -21,14 +21,17 @@ package org.apache.fop.layoutmgr.table;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.flow.Table;
+import org.apache.fop.fo.flow.TableColumn;
 import org.apache.fop.fo.properties.TableColLength;
+import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
+import org.apache.fop.layoutmgr.KnuthElement;
+import org.apache.fop.layoutmgr.KnuthGlue;
+import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafPosition;
-import org.apache.fop.layoutmgr.BreakPoss;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.BreakPossPosIter;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.area.Area;
@@ -37,28 +40,26 @@ import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
  * LayoutManager for a table FO.
- * A table consists of columns, table header, table footer and multiple
+ * A table consists of oldColumns, table header, table footer and multiple
  * table bodies.
  * The header, footer and body add the areas created from the table cells.
- * The table then creates areas for the columns, bodies and rows
+ * The table then creates areas for the oldColumns, bodies and rows
  * the render background.
  */
-public class TableLayoutManager extends BlockStackingLayoutManager {
+public class TableLayoutManager extends BlockStackingLayoutManager 
+                implements BlockLevelLayoutManager {
     private Table fobj;
     
-    private List columns = null;
+    private TableContentLayoutManager contentLM; 
+    private ColumnSetup columns = null;
 
     private Block curBlockArea;
 
-    private List bodyBreaks = new java.util.ArrayList();
-    private BreakPoss headerBreak;
-    private BreakPoss footerBreak;
-    private boolean firstRowHandled = false;
-    
     private int referenceIPD;
     private boolean autoLayout = true;
 
@@ -82,6 +83,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
     public TableLayoutManager(Table node) {
         super(node);
         fobj = node;
+        this.columns = new ColumnSetup(node);
     }
 
     /** @return the table FO */
@@ -90,14 +92,12 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
     }
     
     /**
-     * Set the columns for this table.
-     *
-     * @param cols the list of column layout managers
+     * @return the column setup for this table.
      */
-    public void setColumns(List cols) {
-        columns = cols;
+    public ColumnSetup getColumns() {
+        return this.columns;
     }
-
+    
     /** @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties() */
     protected void initProperties() {
         super.initProperties();
@@ -118,15 +118,11 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
     }
     
     /**
-     * Get the next break possibility.
-     * The break possibility depends on the height of the header and footer
-     * and possible breaks inside the table body.
-     *
-     * @param context the layout context for finding breaks
-     * @return the next break possibility
+     * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(org.apache.fop.layoutmgr.LayoutContext, int)
      */
-    public BreakPoss getNextBreakPoss(LayoutContext context) {
-        Body curLM; // currently active LM
+    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+        
+        //Body curLM; // currently active LM
 
         referenceIPD = context.getRefIPD();
         if (fobj.getInlineProgressionDimension().getOptimum().getEnum() != EN_AUTO) {
@@ -146,200 +142,122 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
             stackSize.add(spaceBefore);
         }
 
-        BreakPoss lastPos = null;
-
         fobj.setLayoutDimension(PercentBase.BLOCK_IPD, referenceIPD);
         fobj.setLayoutDimension(PercentBase.BLOCK_BPD, context.getStackLimit().opt);
         fobj.setLayoutDimension(PercentBase.REFERENCE_AREA_IPD, referenceIPD);
         fobj.setLayoutDimension(PercentBase.REFERENCE_AREA_BPD, context.getStackLimit().opt);
 
-        if (columns == null) {
-            createColumnsFromFirstRow();
-        }
-        
         // either works out table of column widths or if proportional-column-width function
         // is used works out total factor, so that value of single unit can be computed.
         int sumCols = 0;
         float factors = 0;
-        if (columns != null) {
-            for (Iterator i = columns.iterator(); i.hasNext(); ) {
-                Column column = (Column) i.next();
-                Length width = column.getWidth();
-                sumCols += width.getValue();
-                if (width instanceof TableColLength) {
-                    factors += ((TableColLength) width).getTableUnits();
-                }
+        for (Iterator i = columns.iterator(); i.hasNext(); ) {
+            TableColumn column = (TableColumn) i.next();
+            Length width = column.getColumnWidth();
+            sumCols += width.getValue();
+            if (width instanceof TableColLength) {
+                factors += ((TableColLength) width).getTableUnits();
             }
         }
-        // sets TABLE_UNITS in case where one or more columns is defined using proportional-column-width
+        // sets TABLE_UNITS in case where one or more oldColumns is defined using 
+        // proportional-column-width
         if (sumCols < contentIPD) {
             if (fobj.getLayoutDimension(PercentBase.TABLE_UNITS).floatValue() == 0.0) {
                 fobj.setLayoutDimension(PercentBase.TABLE_UNITS,
                                       (contentIPD - sumCols) / factors);
             }
         }
-        
-        boolean headerFooterBuilt = false;
 
-        while ((curLM = (Body)getChildLM()) != null) {
-            if (!headerFooterBuilt) {
-                //Calculate the headers and footers only when needed
-                MinOptMax headerSize = null;
-                if (getTable().getTableHeader() != null) {
-                    if (!getTable().omitHeaderAtBreak() || !firstRowHandled) {
-                        Body tableHeader = new Body(getTable().getTableHeader());
-                        tableHeader.setParent(this);
-                        headerBreak = getHeight(tableHeader, context);
-                        headerSize = headerBreak.getStackingSize();
-                        stackSize.add(headerSize);
-                    }
-                }
-
-                //TODO Implement table-omit-footer-at-break once the page breaking
-                //is improved, so we don't have to do this twice
-                MinOptMax footerSize = null;
-                if (getTable().getTableFooter() != null) {
-                    Body tableFooter = new Body(getTable().getTableFooter());
-                    tableFooter.setParent(this);
-                    footerBreak = getHeight(tableFooter, context);
-                    footerSize = footerBreak.getStackingSize();
-                    stackSize.add(footerSize);
-                }
-
-                if (stackSize.opt > context.getStackLimit().max) {
-                    BreakPoss breakPoss = new BreakPoss(
-                                            new LeafPosition(this, 0));
-                    breakPoss.setFlag(BreakPoss.NEXT_OVERFLOWS, true);
-                    breakPoss.setStackingSize(stackSize);
-                    return breakPoss;
-                }
-                headerFooterBuilt = true;
-            }
-            
-            // Make break positions
-            // Set up a LayoutContext
-            int ipd = context.getRefIPD();
-            BreakPoss bp;
-
-            LayoutContext childLC = new LayoutContext(0);
-            childLC.setStackLimit(
-                  MinOptMax.subtract(context.getStackLimit(),
-                                     stackSize));
-            childLC.setRefIPD(ipd);
-
-            curLM.setColumns(columns);
-
-            boolean over = false;
-            while (!curLM.isFinished()) {
-                if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
-                    if (stackSize.opt + bp.getStackingSize().opt > context.getStackLimit().max) {
-                        // reset to last break
-                        if (lastPos != null) {
-                            LayoutManager lm = lastPos.getLayoutManager();
-                            lm.resetPosition(lastPos.getPosition());
-                            if (lm != curLM) {
-                                curLM.resetPosition(null);
-                            }
-                        } else {
-                            curLM.resetPosition(null);
-                        }
-                        over = true;
-                        break;
-                    }
-                    stackSize.add(bp.getStackingSize());
-                    lastPos = bp;
-                    bodyBreaks.add(bp);
-                    firstRowHandled = true;
-
-                    if (bp.nextBreakOverflows()) {
-                        over = true;
-                        break;
-                    }
-
-                    childLC.setStackLimit(MinOptMax.subtract(
-                                             context.getStackLimit(), stackSize));
-                }
-            }
-            BreakPoss breakPoss = new BreakPoss(
-                                    new LeafPosition(this, bodyBreaks.size() - 1));
-            if (over) {
-                breakPoss.setFlag(BreakPoss.NEXT_OVERFLOWS, true);
-            }
-            breakPoss.setStackingSize(stackSize);
-            return breakPoss;
-        }
-        setFinished(true);
-        return null;
-    }
-
-    private void createColumnsFromFirstRow() {
-        this.columns = new java.util.ArrayList();
-        //TODO Create columns from first row here 
-        //--> rule 2 in "fixed table layout", see CSS2, 17.5.2
-        //Alternative: extend columns on-the-fly, but in this case we need the
-        //new property evaluation context so proportional-column-width() works
-        //correctly.
-        if (columns.size() == 0) {
-            Column col = new Column(getTable().getDefaultColumn());
-            col.setParent(this);
-            this.columns.add(col);
-        }
-    }
-    
-    /**
-     * @param column the column to check
-     * @return true if the column is the first column
-     */
-    public boolean isFirst(Column column) {
-        return (this.columns.size() == 0 || this.columns.get(0) == column);
-    }
-    
-    /**
-     * @param column the column to check
-     * @return true if the column is the last column
-     */
-    public boolean isLast(Column column) {
-        return (this.columns.size() == 0 || this.columns.get(columns.size() - 1) == column);
-    }
-    
-    /**
-     * Get the break possibility and height of the table header or footer.
-     *
-     * @param lm the header or footer layout manager
-     * @param context the parent layout context
-     * @return the break possibility containing the stacking size
-     */
-    protected BreakPoss getHeight(Body lm, LayoutContext context) {
-        int referenceIPD = context.getRefIPD();
-        int contentIPD = referenceIPD - getIPIndents();
-        BreakPoss bp;
-
-        MinOptMax stackSize = new MinOptMax();
+        LinkedList returnedList = null;
+        LinkedList contentList = new LinkedList();
+        LinkedList returnList = new LinkedList();
+        //Position returnPosition = new NonLeafPosition(this, null);
+        //Body prevLM = null;
 
         LayoutContext childLC = new LayoutContext(0);
-        childLC.setStackLimit(context.getStackLimit());
-        childLC.setRefIPD(contentIPD);
+        childLC.setStackLimit(
+              MinOptMax.subtract(context.getStackLimit(),
+                                 stackSize));
+        childLC.setRefIPD(context.getRefIPD());
 
-        lm.setColumns(columns);
+        contentLM = new TableContentLayoutManager(this);
+        returnedList = contentLM.getNextKnuthElements(childLC, alignment);
+        log.debug(returnedList);
+        
+            if (returnedList.size() == 1
+                    && ((KnuthElement) returnedList.getFirst()).isPenalty()
+                    && ((KnuthPenalty) returnedList.getFirst()).getP() == -KnuthElement.INFINITE) {
+                // a descendant of this block has break-before
+                if (returnList.size() == 0) {
+                    // the first child (or its first child ...) has
+                    // break-before;
+                    // all this block, including space before, will be put in
+                    // the
+                    // following page
+                    //FIX ME
+                    //bSpaceBeforeServed = false;
+                }
+                contentList.addAll(returnedList);
 
-        List breaks = new java.util.ArrayList();
-        while (!lm.isFinished()) {
-            if ((bp = lm.getNextBreakPoss(childLC)) != null) {
-                stackSize.add(bp.getStackingSize());
-                breaks.add(bp);
-                childLC.setStackLimit(MinOptMax.subtract(
-                                         context.getStackLimit(), stackSize));
-            }
+                // "wrap" the Position inside each element
+                // moving the elements from contentList to returnList
+                returnedList = new LinkedList();
+                wrapPositionElements(contentList, returnList);
+
+                return returnList;
+            } else {
+                /*
+                if (prevLM != null) {
+                    // there is a block handled by prevLM
+                    // before the one handled by curLM
+                    if (mustKeepTogether() 
+                            || prevLM.mustKeepWithNext()
+                            || curLM.mustKeepWithPrevious()) {
+                        // add an infinite penalty to forbid a break between
+                        // blocks
+                        contentList.add(new KnuthPenalty(0,
+                                KnuthElement.INFINITE, false,
+                                new Position(this), false));
+                    } else if (!((KnuthElement) contentList.getLast()).isGlue()) {
+                        // add a null penalty to allow a break between blocks
+                        contentList.add(new KnuthPenalty(0, 0, false,
+                                new Position(this), false));
+                    } else {
+                        // the last element in contentList is a glue;
+                        // it is a feasible breakpoint, there is no need to add
+                        // a penalty
+                    }
+                }*/
+                contentList.addAll(returnedList);
+                /*
+                if (returnedList.size() == 0) {
+                    //Avoid NoSuchElementException below (happens with empty blocks)
+                    continue;
+                }*/
+                if (((KnuthElement) returnedList.getLast()).isPenalty()
+                        && ((KnuthPenalty) returnedList.getLast()).getP() == -KnuthElement.INFINITE) {
+                    // a descendant of this block has break-after
+                    if (false /*curLM.isFinished()*/) {
+                        // there is no other content in this block;
+                        // it's useless to add space after before a page break
+                        setFinished(true);
+                    }
+
+                    returnedList = new LinkedList();
+                    wrapPositionElements(contentList, returnList);
+
+                    return returnList;
+                }
+            
         }
-        BreakPoss breakPoss = new BreakPoss(
-                               new SectionPosition(this, breaks.size() - 1, breaks));
-        breakPoss.setStackingSize(stackSize);
-        return breakPoss;
+        wrapPositionElements(contentList, returnList);
+        setFinished(true);
+        return returnList;
     }
-
+    
     /**
      * The table area is a reference area that contains areas for
-     * columns, bodies, rows and the contents are in cells.
+     * oldColumns, bodies, rows and the contents are in cells.
      *
      * @param parentIter the position iterator
      * @param layoutContext the layout context for adding areas
@@ -347,7 +265,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
-        addID(fobj.getId());
+        getPSLM().addIDToPage(fobj.getId());
 
         // if adjusted space before
         double adjust = layoutContext.getSpaceAdjust();
@@ -359,49 +277,14 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
         // add column, body then row areas
 
         int tableHeight = 0;
-        Body childLM;
+        //Body childLM;
         LayoutContext lc = new LayoutContext(0);
 
-        // add table header areas
-        if (headerBreak != null) {
-            SectionPosition pos = (SectionPosition)headerBreak.getPosition();
-            List list = pos.list;
-            PositionIterator breakPosIter = new BreakPossPosIter(list, 0, list.size() + 1);
-            while ((childLM = (Body)breakPosIter.getNextChildLM()) != null) {
-                childLM.setXOffset(startXOffset);
-                childLM.addAreas(breakPosIter, lc);
-                tableHeight += childLM.getBodyHeight();
-            }
-        }
 
-        int iStartPos = 0;
-        while (parentIter.hasNext()) {
-            LeafPosition lfp = (LeafPosition) parentIter.next();
-            // Add the block areas to Area
-            PositionIterator breakPosIter =
-              new BreakPossPosIter(bodyBreaks, iStartPos,
-                                   lfp.getLeafPos() + 1);
-            iStartPos = lfp.getLeafPos() + 1;
-            while ((childLM = (Body)breakPosIter.getNextChildLM()) != null) {
-                childLM.setXOffset(startXOffset);
-                childLM.setYOffset(tableHeight);
-                childLM.addAreas(breakPosIter, lc);
-                tableHeight += childLM.getBodyHeight();
-            }
-        }
-
-        // add footer areas
-        if (footerBreak != null) {
-            SectionPosition pos = (SectionPosition)footerBreak.getPosition();
-            List list = pos.list;
-            PositionIterator breakPosIter = new BreakPossPosIter(list, 0, list.size() + 1);
-            while ((childLM = (Body)breakPosIter.getNextChildLM()) != null) {
-                childLM.setXOffset(startXOffset);
-                childLM.setYOffset(tableHeight);
-                childLM.addAreas(breakPosIter, lc);
-                tableHeight += childLM.getBodyHeight();
-            }
-        }
+        lc.setRefIPD(referenceIPD - getIPIndents());
+        contentLM.setStartXOffset(startXOffset);
+        contentLM.addAreas(parentIter, lc);
+        tableHeight += contentLM.getUsedBPD();
 
         curBlockArea.setBPD(tableHeight);
 
@@ -420,7 +303,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
         // if adjusted space after
         addBlockSpacing(adjust, spaceAfter);
 
-        bodyBreaks.clear();
+        //bodyBreaks.clear();
         curBlockArea = null;
     }
 
@@ -472,6 +355,48 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
         if (resetPos == null) {
             reset(null);
         }
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#negotiateBPDAdjustment(int, org.apache.fop.layoutmgr.KnuthElement)
+     */
+    public int negotiateBPDAdjustment(int adj, KnuthElement lastElement) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#discardSpace(org.apache.fop.layoutmgr.KnuthGlue)
+     */
+    public void discardSpace(KnuthGlue spaceGlue) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepTogether()
+     */
+    public boolean mustKeepTogether() {
+        //TODO Keeps will have to be more sophisticated sooner or later
+        return ((BlockLevelLayoutManager)getParent()).mustKeepTogether() 
+                || !fobj.getKeepTogether().getWithinPage().isAuto()
+                || !fobj.getKeepTogether().getWithinColumn().isAuto();
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithPrevious()
+     */
+    public boolean mustKeepWithPrevious() {
+        return !fobj.getKeepWithPrevious().getWithinPage().isAuto()
+                || !fobj.getKeepWithPrevious().getWithinColumn().isAuto();
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithNext()
+     */
+    public boolean mustKeepWithNext() {
+        return !fobj.getKeepWithNext().getWithinPage().isAuto()
+                || !fobj.getKeepWithNext().getWithinColumn().isAuto();
     }
 
 }
