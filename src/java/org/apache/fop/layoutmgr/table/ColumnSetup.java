@@ -26,7 +26,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.fo.flow.Table;
-import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableColumn;
 
 /**
