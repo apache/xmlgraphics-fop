@@ -367,8 +367,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 PageViewport pv = areaTreeModel.getPage(seq, page);
                 mark = (Marker)pv.getMarker(name, Constants.EN_LEWP);
                 if (mark != null) {
-                    rm.bindMarker(mark);
-                    return rm;
+                    break;
                 }
                 page--;
                 if (page < 0 && doc && seq > 1) {
@@ -380,9 +379,11 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 
         if (mark == null) {
             log.debug("found no marker with name: " + name);
+            return null;
+        } else {
+            rm.bindMarker(mark);
+            return rm;
         }
-
-        return null;
     }
 
     private PageViewport makeNewPage(boolean bIsBlank, boolean bIsFirst, boolean bIsLast) {
