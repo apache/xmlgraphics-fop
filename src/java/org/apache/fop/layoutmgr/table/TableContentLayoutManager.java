@@ -665,7 +665,7 @@ public class TableContentLayoutManager {
             lastRowHeight = actualRowHeight;
             
             //Add areas for row
-            //addRowBackgroundArea(rowFO, lastRowHeight, layoutContext.getRefIPD(), yoffset);
+            addRowBackgroundArea(rowFO, actualRowHeight, layoutContext.getRefIPD(), yoffset);
             for (int i = 0; i < gridUnits.length; i++) {
                 GridUnit currentGU = lastRow.safelyGetGridUnit(i);
                 if ((gridUnits[i] != null) 
