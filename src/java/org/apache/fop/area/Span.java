@@ -35,7 +35,8 @@ public class Span extends Area {
     private int colCount;
     private int colGap;
     private int colWidth; // width for each normal flow, calculated value
-
+    private int curFlowIdx;  // n-f-r-a currently being processed, zero-based
+    
     /**
      * Create a span area with the number of columns for this span area.
      *
@@ -48,6 +49,7 @@ public class Span extends Area {
         this.colCount = colCount;
         this.colGap = colGap;
         this.ipd = ipd;
+        curFlowIdx = 0;
         createNormalFlows();
     }
 
@@ -107,6 +109,41 @@ public class Span extends Area {
                     colRequested + " requested; only 0-" + (colCount-1) +
                     " available.");
         }
+    }
+    
+    /**
+     * Get the NormalFlow area currently being processed
+     *
+     * @return the current NormalFlow
+     */
+    public NormalFlow getCurrentFlow() {
+        return getNormalFlow(curFlowIdx); 
+    }
+    
+    /**
+     * Indicate to the Span that the next column is being 
+     * processed.
+     *
+     * @return the new NormalFlow (in the next column)
+     */
+    public NormalFlow moveToNextFlow() {
+        if (hasMoreFlows()) {
+            curFlowIdx++;
+            return getNormalFlow(curFlowIdx);
+        } else {
+            throw new IllegalStateException("(Internal error.)" +
+                    " No more flows left in span.");
+        }
+    }
+    
+    /**
+     * Indicates if the Span has unprocessed flows. 
+     *
+     * @return true if Span can increment to the next flow, 
+     * false otherwise.
+     */
+    public boolean hasMoreFlows() {
+        return (curFlowIdx < colCount-1); 
     }
 }
 

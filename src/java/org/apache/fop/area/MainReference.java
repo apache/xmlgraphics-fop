@@ -45,7 +45,7 @@ public class MainReference extends Area {
     /**
      * Add a span area to this area.
      *
-     * @param span the span area to add
+     * @param spanAll whether to make a single-column span
      */
     public Span createSpan(boolean spanAll) {
         RegionViewport rv = parent.getRegionViewport();
