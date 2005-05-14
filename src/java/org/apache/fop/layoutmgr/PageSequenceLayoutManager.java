@@ -442,7 +442,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             areaTreeHandler.getLayoutManagerMaker().makeLayoutManager(sc);
         lm.setTargetRegion(rv.getRegionReference());
         lm.setParent(this);       
-        lm.doLayout(reg);
+        lm.doLayout();
         lm.reset(null);
     }
 
