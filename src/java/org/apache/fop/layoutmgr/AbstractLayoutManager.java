@@ -124,12 +124,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     }
     
     /**
-     * Add a child area to the current area. If this causes the maximum
-     * dimension of the current area to be exceeded, the parent LM is called
-     * to add it.
-     */
-
-    /**
      * Return currently active child LayoutManager or null if
      * all children have finished layout.
      * Note: child must implement LayoutManager! If it doesn't, skip it
@@ -304,6 +298,11 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
         return null;
     }
 
+    /**
+     * Add a child area to the current area. If this causes the maximum
+     * dimension of the current area to be exceeded, the parent LM is called
+     * to add it.
+     */
     public void addChildArea(Area childArea) {
     }
 
