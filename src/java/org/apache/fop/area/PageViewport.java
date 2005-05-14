@@ -77,10 +77,11 @@ public class PageViewport implements Resolvable, Cloneable {
      * Create a page viewport.
      * @param spm SimplePageMaster indicating the page and region dimensions
      */
-    public PageViewport(SimplePageMaster spm) {
+    public PageViewport(SimplePageMaster spm, String pageStr) {
         this.spm = spm;
         int pageWidth = spm.getPageWidth().getValue();
         int pageHeight = spm.getPageHeight().getValue();
+        pageNumberString = pageStr;
         viewArea = new Rectangle(0, 0, pageWidth, pageHeight);
         page = new Page(spm);
     }
@@ -91,41 +92,12 @@ public class PageViewport implements Resolvable, Cloneable {
      * @param p Page Reference Area
      * @param bounds Page Viewport dimensions
      */
-    public PageViewport(SimplePageMaster spm, Page p, Rectangle2D bounds) {
+    public PageViewport(SimplePageMaster spm, String pageStr, Page p, Rectangle2D bounds) {
         this.spm = spm;
+        this.pageNumberString = pageStr;
         this.page = p;
         this.viewArea = bounds;
     }
-
-    /**
-     * Convenience method to get BodyRegion of this PageViewport
-     * @return BodyRegion object
-     */
-    public BodyRegion getBodyRegion() {
-        return (BodyRegion) getPage().getRegionViewport(
-                Constants.FO_REGION_BODY).getRegionReference();
-    }    
-
-    /**
-     * Convenience method to create a new Span for this
-     * this PageViewport.
-     * 
-     * @param spanAll whether this is a single-column span
-     * @return Span object created
-     */
-    public Span createSpan(boolean spanAll) {
-        return getBodyRegion().getMainReference().createSpan(spanAll);
-    }    
-
-    /**
-     * Convenience method to get the span-reference-area currently
-     * being processed
-     * 
-     * @return span currently being processed.
-     */
-    public Span getCurrentSpan() {
-        return getBodyRegion().getMainReference().getCurrentSpan();
-    }    
 
     /**
      * Set if this viewport should clip.
@@ -149,14 +121,6 @@ public class PageViewport implements Resolvable, Cloneable {
      */
     public Page getPage() {
         return page;
-    }
-
-    /**
-     * Set the page number for this page.
-     * @param num the string representing the page number
-     */
-    public void setPageNumberString(String num) {
-        pageNumberString = num;
     }
 
     /**
@@ -428,7 +392,8 @@ public class PageViewport implements Resolvable, Cloneable {
      */
     public Object clone() {
         Page p = (Page)page.clone();
-        PageViewport ret = new PageViewport(spm, p, (Rectangle2D)viewArea.clone());
+        PageViewport ret = new PageViewport(spm, pageNumberString, 
+                p, (Rectangle2D)viewArea.clone());
         return ret;
     }
 
@@ -456,4 +421,54 @@ public class PageViewport implements Resolvable, Cloneable {
     public SimplePageMaster getSPM() {
         return spm;
     }
+    
+    /**
+     * Convenience method to get BodyRegion of this PageViewport
+     * @return BodyRegion object
+     */
+    public BodyRegion getBodyRegion() {
+        return (BodyRegion) getPage().getRegionViewport(
+                Constants.FO_REGION_BODY).getRegionReference();
+    }    
+
+    /**
+     * Convenience method to create a new Span for this
+     * this PageViewport.
+     * 
+     * @param spanAll whether this is a single-column span
+     * @return Span object created
+     */
+    public Span createSpan(boolean spanAll) {
+        return getBodyRegion().getMainReference().createSpan(spanAll);
+    }    
+
+    /**
+     * Convenience method to get the span-reference-area currently
+     * being processed
+     * 
+     * @return span currently being processed.
+     */
+    public Span getCurrentSpan() {
+        return getBodyRegion().getMainReference().getCurrentSpan();
+    }
+    
+    /**
+     * Convenience method to get the normal-flow-reference-area 
+     * currently being processed
+     * 
+     * @return span currently being processed.
+     */
+    public NormalFlow getCurrentFlow() {
+        return getCurrentSpan().getCurrentFlow();
+    }
+    
+    /**
+     * Convenience method to increment the Span to the 
+     * next NormalFlow to be processed, and to return that flow.
+     * 
+     * @return the next NormalFlow in the Span.
+     */
+    public NormalFlow moveToNextFlow() {
+        return getCurrentSpan().moveToNextFlow();
+    }    
 }

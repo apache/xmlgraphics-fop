@@ -68,13 +68,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     private PageViewport curPV = null;
 
     /**
-     * Zero-based index of column (Normal Flow) in span (of the PV) 
-     * being filled.  See XSL Rec description of fo:region-body 
-     * and fop.Area package classes for more information. 
-     */
-    private int curFlowIdx = -1;
-
-    /**
      * The FlowLayoutManager object, which processes
      * the single fo:flow of the fo:page-sequence
      */
@@ -191,8 +184,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 //algorithm so we have a BPD and IPD. This may subject to change later when we
                 //start handling more complex cases.
                 if (!firstPart) {
-                    if (curFlowIdx < curPV.getCurrentSpan().getColumnCount()-1) {
-                        curFlowIdx++;
+                    if (curPV.getCurrentSpan().hasMoreFlows()) {
+                        curPV.getCurrentSpan().moveToNextFlow();
                     } else  {
                         // if this is the first page that will be created by
                         // the current BlockSequence, it could have a break
@@ -408,18 +401,16 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                  + spm.getMasterName() + "'.  FOP presently "
                  + "does not support this.");
             }
-            curPV = new PageViewport(spm);
+            curPV = new PageViewport(spm, pageNumberString);
         } catch (FOPException fopex) {
             throw new IllegalArgumentException("Cannot create page: " + fopex.getMessage());
         }
 
-        curPV.setPageNumberString(pageNumberString);
         if (log.isDebugEnabled()) {
             log.debug("[" + curPV.getPageNumberString() + (bIsBlank ? "*" : "") + "]");
         }
 
         curPV.createSpan(false);
-        curFlowIdx = 0;
         return curPV;
     }
 
@@ -457,7 +448,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         log.debug("page finished: " + curPV.getPageNumberString() 
                 + ", current num: " + currentPageNum);
         curPV = null;
-        curFlowIdx = -1;
     }
     
     /**
@@ -473,7 +463,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         int aclass = childArea.getAreaClass();
 
         if (aclass == Area.CLASS_NORMAL) {
-            return curPV.getCurrentSpan().getNormalFlow(curFlowIdx);
+            return curPV.getCurrentFlow();
         } else if (aclass == Area.CLASS_BEFORE_FLOAT) {
             return curPV.getBodyRegion().getBeforeFloat();
         } else if (aclass == Area.CLASS_FOOTNOTE) {
@@ -484,16 +474,15 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     }
 
     /**
-     * Depending on the kind of break condition, make new column
+     * Depending on the kind of break condition, move to next column
      * or page. May need to make an empty page if next page would
      * not have the desired "handedness".
      * @param breakVal - value of break-before or break-after trait.
      */
     private void handleBreakTrait(int breakVal) {
         if (breakVal == Constants.EN_COLUMN) {
-            if (curFlowIdx < curPV.getCurrentSpan().getColumnCount()) {
-                // Move to next column
-                curFlowIdx++;
+            if (curPV.getCurrentSpan().hasMoreFlows()) {
+                curPV.getCurrentSpan().moveToNextFlow();
             } else {
                 curPV = makeNewPage(false, false, false);
             }
