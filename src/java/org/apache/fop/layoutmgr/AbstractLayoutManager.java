@@ -308,11 +308,12 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     }
 
     /**
-     * Convenience method: preload a number of child LMs
+     * Create the LM instances for the children of the
+     * formatting object being handled by this LM.
      * @param size the requested number of child LMs
      * @return the list with the preloaded child LMs
      */
-    protected List preLoadList(int size) {
+    protected List createChildLMs(int size) {
         if (fobjIter == null) {
             return null;
         }
@@ -349,10 +350,10 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     }  
     
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#preLoadNext
+     * @see org.apache.fop.layoutmgr.LayoutManager#createNextChildLMs
      */
-    public boolean preLoadNext(int pos) {
-        List newLMs = preLoadList(pos + 1 - childLMs.size());
+    public boolean createNextChildLMs(int pos) {
+        List newLMs = createChildLMs(pos + 1 - childLMs.size());
         addChildLMs(newLMs);
         return pos < childLMs.size();
     }

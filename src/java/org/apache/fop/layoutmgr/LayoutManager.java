@@ -159,11 +159,11 @@ public interface LayoutManager {
     void addAreas(PositionIterator posIter, LayoutContext context);
 
     /**
-     * Load next child LMs, up to child LM index pos
+     * Create more child LMs of the parent, up to child LM index pos
      * @param pos index up to which child LMs are requested
-     * @return if requested index does exist
+     * @return true if requested index does exist
      */
-    boolean preLoadNext(int pos);
+    boolean createNextChildLMs(int pos);
 
     /**
      * @return the list of child LMs

@@ -424,8 +424,20 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
      * @see org.apache.fop.layoutmgr.LayoutManager#getParentArea(Area)
      */
     public Area getParentArea(Area childArea) {
-        // Get an area from the Page
-        BlockParent parentArea = (BlockParent)parentLM.getParentArea(childArea);
+        BlockParent parentArea = null;
+        int aclass = childArea.getAreaClass();
+        
+        if (aclass == Area.CLASS_NORMAL) {
+            parentArea = getCurrentPV().getCurrentFlow();
+        } else if (aclass == Area.CLASS_BEFORE_FLOAT) {
+            parentArea = getCurrentPV().getBodyRegion().getBeforeFloat();
+        } else if (aclass == Area.CLASS_FOOTNOTE) {
+            parentArea = getCurrentPV().getBodyRegion().getFootnote();
+        } else {
+            throw new IllegalStateException("(internal error) Invalid " +
+                    "area class (" + aclass + ") requested.");
+        }
+        
         this.currentAreas[parentArea.getAreaClass()] = parentArea;
         setCurrentArea(parentArea);
         return parentArea;

@@ -242,9 +242,9 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
             Position bp2) { }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#preLoadNext
+     * @see org.apache.fop.layoutmgr.LayoutManager#createNextChildLMs
      */
-    public boolean preLoadNext(int pos) {
+    public boolean createNextChildLMs(int pos) {
         return false;
     }
 
