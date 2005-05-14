@@ -36,7 +36,7 @@ public class LMiter implements ListIterator {
     }
 
     public boolean hasNext() {
-        return (curPos < listLMs.size()) ? true : lp.preLoadNext(curPos);
+        return (curPos < listLMs.size()) ? true : lp.createNextChildLMs(curPos);
     }
 
     public boolean hasPrevious() {

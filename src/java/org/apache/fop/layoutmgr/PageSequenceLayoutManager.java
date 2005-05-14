@@ -22,7 +22,6 @@ import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.AreaTreeModel;
-import org.apache.fop.area.Area;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.RegionViewport;
@@ -430,7 +429,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         RegionViewport rv = curPV.getPage().getRegionViewport(regionID);
         StaticContentLayoutManager lm;
         lm = (StaticContentLayoutManager)
-            areaTreeHandler.getLayoutManagerMaker().makeLayoutManager(sc);
+            getLayoutManagerMaker().makeLayoutManager(sc);
         lm.setTargetRegion(rv.getRegionReference());
         lm.setParent(this);       
         lm.doLayout();
@@ -450,29 +449,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         curPV = null;
     }
     
-    /**
-     * This is called from FlowLayoutManager when it needs to start
-     * a new flow container (while generating areas).
-     *
-     * @param childArea The area for which a container is needed. It must be
-     * some kind of block-level area. It must have area-class, break-before
-     * and span properties set.
-     * @return the parent area
-     */
-    public Area getParentArea(Area childArea) {
-        int aclass = childArea.getAreaClass();
-
-        if (aclass == Area.CLASS_NORMAL) {
-            return curPV.getCurrentFlow();
-        } else if (aclass == Area.CLASS_BEFORE_FLOAT) {
-            return curPV.getBodyRegion().getBeforeFloat();
-        } else if (aclass == Area.CLASS_FOOTNOTE) {
-            return curPV.getBodyRegion().getFootnote();
-        }
-        // todo!!! other area classes (side-float, absolute, fixed)
-        return null;
-    }
-
     /**
      * Depending on the kind of break condition, move to next column
      * or page. May need to make an empty page if next page would

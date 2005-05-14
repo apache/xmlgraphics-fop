@@ -114,7 +114,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
      * This iterator creates and holds the complete list
      * of child LMs.
      * It uses fobjIter as its base iterator.
-     * Block LM's preLoadNext uses this iterator
+     * Block LM's createNextChildLMs uses this iterator
      * as its base iterator.
      */
     protected class ProxyLMiter extends LMiter {
@@ -125,11 +125,11 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         }
 
         public boolean hasNext() {
-            return (curPos < listLMs.size()) ? true : preLoadNext(curPos);
+            return (curPos < listLMs.size()) ? true : createNextChildLMs(curPos);
         }
 
-        protected boolean preLoadNext(int pos) {
-            List newLMs = preLoadList(pos + 1 - listLMs.size());
+        protected boolean createNextChildLMs(int pos) {
+            List newLMs = createChildLMs(pos + 1 - listLMs.size());
             if (newLMs != null) {
                 listLMs.addAll(newLMs);
             }
@@ -138,9 +138,9 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#preLoadNext
+     * @see org.apache.fop.layoutmgr.LayoutManager#createNextChildLMs
      */
-    public boolean preLoadNext(int pos) {
+    public boolean createNextChildLMs(int pos) {
 
         while (proxyLMiter.hasNext()) {
             LayoutManager lm = (LayoutManager) proxyLMiter.next();
