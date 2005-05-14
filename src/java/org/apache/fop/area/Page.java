@@ -99,11 +99,9 @@ public class Page implements Serializable, Cloneable {
             r.setLayoutDimension(PercentBase.BLOCK_IPD, rvp.getIPD());
             r.setLayoutDimension(PercentBase.BLOCK_BPD, rvp.getBPD());
             if (r.getNameId() == Constants.FO_REGION_BODY) {
-                RegionBody rb = (RegionBody) r;
-                rr = new BodyRegion(rb.getColumnCount(), rb.getColumnGap(),
-                       rvp);
+                rr = new BodyRegion((RegionBody) r, rvp);
             } else {
-                rr = new RegionReference(r.getNameId(), rvp);
+                rr = new RegionReference(r, rvp);
             }
             setRegionReferencePosition(rr, r, rvp.getViewArea());
             rvp.setRegionReference(rr);

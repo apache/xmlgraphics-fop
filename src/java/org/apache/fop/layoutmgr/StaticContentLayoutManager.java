@@ -228,9 +228,10 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         return targetRegion;
     }
 
-    public void doLayout(SideRegion region) {
-        MinOptMax range = new MinOptMax(targetRegion.getIPD());
-        StaticContentBreaker breaker = new StaticContentBreaker(region, this, range);
+    public void doLayout() {
+        Region region = targetRegion.getRegionFO();
+        StaticContentBreaker breaker = new StaticContentBreaker(
+                this, targetRegion.getIPD(), region.getDisplayAlign());
         breaker.doLayout(targetRegion.getBPD());
         if (breaker.isOverflow()) {
             if (region.getOverflow() == EN_ERROR_IF_OVERFLOW) {
@@ -240,17 +241,17 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         }
     }
     
-    private class StaticContentBreaker extends AbstractBreaker {
-        
-        private Region region;
+    private class StaticContentBreaker extends AbstractBreaker {       
         private StaticContentLayoutManager lm;
-        private MinOptMax ipd;
+        private int displayAlign;
+        private int ipd;
         boolean overflow = false;
         
-        public StaticContentBreaker(Region region, StaticContentLayoutManager lm, MinOptMax ipd) {
-            this.region = region;
+        public StaticContentBreaker(StaticContentLayoutManager lm, int ipd, 
+                int displayAlign) {
             this.lm = lm;
             this.ipd = ipd;
+            this.displayAlign = displayAlign;
         }
 
         public boolean isOverflow() {
@@ -263,7 +264,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
 
         protected LayoutContext createLayoutContext() {
             LayoutContext lc = super.createLayoutContext();
-            lc.setRefIPD(ipd.opt);
+            lc.setRefIPD(ipd);
             return lc;
         }
         
@@ -290,7 +291,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         }
 
         protected int getCurrentDisplayAlign() {
-            return region.getDisplayAlign();
+            return displayAlign;
         }
         
         protected boolean hasMoreContent() {
@@ -317,7 +318,6 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         protected LayoutManager getCurrentChildLM() {
             return null; //TODO NYI
         }
-        
     }    
 }
 
