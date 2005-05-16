@@ -56,6 +56,7 @@ import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.flow.Wrapper;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fo.pagination.SideRegion;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.pagination.Title;
 import org.apache.fop.area.AreaTreeHandler;
@@ -118,7 +119,6 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         makers.put(TableFooter.class, new /*TableBodyLayoutManager*/Maker());
         makers.put(TableHeader.class, new /*TableBodyLayoutManager*/Maker());
         makers.put(Flow.class, new FlowLayoutManagerMaker());
-        makers.put(StaticContent.class, new StaticContentLayoutManagerMaker());
         makers.put(Wrapper.class, new WrapperLayoutManagerMaker());
         makers.put(Title.class, new InlineLayoutManagerMaker());
     }
@@ -158,6 +158,14 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         return new PageSequenceLayoutManager(ath, ps);
     }
 
+    /*
+     * @see org.apache.fop.layoutmgr.LayoutManagerMaker#makeStaticContentLayoutManager(org.apache.fop.layoutmgr.PageSequenceLayoutManager, org.apache.fop.fo.pagination.StaticContent, org.apache.fop.fo.pagination.Region)
+     */
+    public StaticContentLayoutManager makeStaticContentLayoutManager(
+            PageSequenceLayoutManager pslm, StaticContent sc, SideRegion reg) {
+        return new StaticContentLayoutManager(pslm, sc, reg);
+    }
+    
     public static class Maker {
         public void make(FONode node, List lms) {
             // no layout manager
@@ -386,12 +394,6 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     public static class FlowLayoutManagerMaker extends Maker {
          public void make(FONode node, List lms) {
              lms.add(new FlowLayoutManager((Flow) node));
-         }
-    }
-
-    public static class StaticContentLayoutManagerMaker extends Maker {
-         public void make(FONode node, List lms) {
-             lms.add(new StaticContentLayoutManager((StaticContent) node));
          }
     }
 

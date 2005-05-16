@@ -22,7 +22,6 @@ import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.datatypes.PercentBase;
-import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.SideRegion;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.traits.MinOptMax;
@@ -41,27 +40,16 @@ import java.util.ListIterator;
 public class StaticContentLayoutManager extends BlockStackingLayoutManager {
     private RegionReference targetRegion;
     private List blockBreaks = new ArrayList();
+    private SideRegion regionFO;
 
-    public StaticContentLayoutManager(StaticContent node) {
+    public StaticContentLayoutManager(PageSequenceLayoutManager pslm, 
+            StaticContent node, SideRegion reg) {
         super(node);
+        setParent(pslm);
+        regionFO = reg;
+        targetRegion = getCurrentPV().getRegionReference(regionFO.getNameId()); 
     }
 
-    /**
-     * Sets the region reference
-     * @param region region reference
-     */
-    public void setTargetRegion(RegionReference targetRegion) {
-        this.targetRegion = targetRegion;
-    }
-
-    /** 
-     * @return the region-reference-area that this 
-     * static content is directed to.  
-     */
-    public RegionReference getTargetRegion() {
-        return targetRegion;
-    }
-    
     /**
      * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(org.apache.fop.layoutmgr.LayoutContext, int)
      */
@@ -229,12 +217,11 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
     }
 
     public void doLayout() {
-        Region region = targetRegion.getRegionFO();
         StaticContentBreaker breaker = new StaticContentBreaker(
-                this, targetRegion.getIPD(), region.getDisplayAlign());
+                this, targetRegion.getIPD(), regionFO.getDisplayAlign());
         breaker.doLayout(targetRegion.getBPD());
         if (breaker.isOverflow()) {
-            if (region.getOverflow() == EN_ERROR_IF_OVERFLOW) {
+            if (regionFO.getOverflow() == EN_ERROR_IF_OVERFLOW) {
                 //TODO throw layout exception
             }
             log.warn("static-content overflows the available area.");
