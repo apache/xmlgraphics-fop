@@ -24,7 +24,6 @@ import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.LineArea;
-import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Resolvable;
 
 import org.apache.fop.datatypes.PercentBase;
@@ -426,12 +425,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             return;
         }
 
-        RegionViewport rv = curPV.getPage().getRegionViewport(regionID);
-        StaticContentLayoutManager lm;
-        lm = (StaticContentLayoutManager)
-            getLayoutManagerMaker().makeLayoutManager(sc);
-        lm.setTargetRegion(rv.getRegionReference());
-        lm.setParent(this);       
+        StaticContentLayoutManager lm = (StaticContentLayoutManager)
+            getLayoutManagerMaker().makeStaticContentLayoutManager(
+                    this, sc, reg);
         lm.doLayout();
         lm.reset(null);
     }

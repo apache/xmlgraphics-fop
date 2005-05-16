@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.pagination.SimplePageMaster;
+import org.apache.fop.layoutmgr.StaticContentLayoutManager;
 
 /**
  * Page viewport that specifies the viewport area and holds the page contents.
@@ -470,5 +471,18 @@ public class PageViewport implements Resolvable, Cloneable {
      */
     public NormalFlow moveToNextFlow() {
         return getCurrentSpan().moveToNextFlow();
-    }    
+    }
+    
+    /**
+     * Convenience method to return a given region-reference-area, 
+     * keyed by the Constants class identifier for the corresponding
+     * formatting object (ie. Constants.FO_REGION_BODY, FO_REGION_START, 
+     * etc.)
+     * 
+     * @param id the Constants class identifier for the region.
+     * @return the corresponding region-reference-area for this page.
+     */
+    public RegionReference getRegionReference(int id) {
+        return getPage().getRegionViewport(id).getRegionReference();
+    }
 }

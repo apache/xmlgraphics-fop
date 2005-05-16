@@ -20,6 +20,8 @@ package org.apache.fop.layoutmgr;
 import java.util.List;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fo.pagination.SideRegion;
+import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.area.AreaTreeHandler;
 
 
@@ -54,6 +56,17 @@ public interface LayoutManagerMaker {
      */
     public PageSequenceLayoutManager makePageSequenceLayoutManager(
         AreaTreeHandler ath, PageSequence ps);
+
+    /**
+     * Make a StaticContentLayoutManager object.
+     * @param pslm the parent PageSequenceLayoutManager object
+     * @param sc the fo:static-content object this SCLM will process
+     * @param reg the side region indicating where the static content
+     *     needs to be processed.
+     * @return The created StaticContentLayoutManager object
+     */
+    public StaticContentLayoutManager makeStaticContentLayoutManager(
+        PageSequenceLayoutManager pslm, StaticContent sc, SideRegion reg);
 
 }
 

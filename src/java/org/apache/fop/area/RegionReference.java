@@ -98,16 +98,6 @@ public class RegionReference extends Area implements Cloneable {
     }
 
     /**
-     * Return the Region FO which provides the
-     * traits for this region.
-     *
-     * @return the region formatting object
-     */
-    public Region getRegionFO() {
-        return regionFO;
-    }
-
-    /**
      * Add a block area to this region reference area.
      *
      * @param block the block area to add
