@@ -130,7 +130,7 @@ public abstract class AbstractBreaker {
         BlockSequence blockList;
         blockLists = new java.util.ArrayList();
 
-        System.out.println("PLM> flow BPD =" + flowBPD);
+        log.debug("PLM> flow BPD =" + flowBPD);
         
         //*** Phase 1: Get Knuth elements ***
         int nextSequenceStartsOn = Constants.EN_ANY;
@@ -139,20 +139,22 @@ public abstract class AbstractBreaker {
         }
 
         //*** Phase 2: Alignment and breaking ***
-        System.out.println("PLM> blockLists.size() = " + blockLists.size());
+        log.debug("PLM> blockLists.size() = " + blockLists.size());
         for (blockListIndex = 0; blockListIndex < blockLists.size(); blockListIndex++) {
             blockList = (BlockSequence) blockLists.get(blockListIndex);
             
             //debug code start
-            System.err.println("  blockListIndex = " + blockListIndex);
-            String pagina = (blockList.startOn == Constants.EN_ANY) ? "any page"
-                    : (blockList.startOn == Constants.EN_ODD_PAGE) ? "odd page"
-                            : "even page";
-            System.err.println("  sequence starts on " + pagina);
-            logBlocklist(blockList);
+            if (log.isDebugEnabled()) {
+                log.debug("  blockListIndex = " + blockListIndex);
+                String pagina = (blockList.startOn == Constants.EN_ANY) ? "any page"
+                        : (blockList.startOn == Constants.EN_ODD_PAGE) ? "odd page"
+                                : "even page";
+                log.debug("  sequence starts on " + pagina);
+                logBlocklist(blockList);
+            }
             //debug code end
 
-            System.out.println("PLM> start of algorithm (" + this.getClass().getName() 
+            log.debug("PLM> start of algorithm (" + this.getClass().getName() 
                     + "), flow BPD =" + flowBPD);
             PageBreakingAlgorithm alg = new PageBreakingAlgorithm(getTopLevelLM(),
                     alignment, alignmentLast);
@@ -170,7 +172,7 @@ public abstract class AbstractBreaker {
             //iOptPageNumber = alg.firstFit(effectiveList, flowBPD, 1, true);
             iOptPageNumber = alg.findBreakingPoints(effectiveList, flowBPD, 1,
                     true, true);
-            System.out.println("PLM> iOptPageNumber= " + iOptPageNumber
+            log.debug("PLM> iOptPageNumber= " + iOptPageNumber
                     + " pageBreaks.size()= " + alg.getPageBreaks().size());
 
             
@@ -206,7 +208,7 @@ public abstract class AbstractBreaker {
         for (int p = 0; p < partCount; p++) {
             PageBreakPosition pbp = (PageBreakPosition) alg.getPageBreaks().get(p);
             endElementIndex = pbp.getLeafPos();
-            System.out.println("PLM> part: " + (p + 1)
+            log.debug("PLM> part: " + (p + 1)
                     + ", break at position " + endElementIndex);
 
             startPart(effectiveList, (p == 0));
@@ -243,7 +245,7 @@ public abstract class AbstractBreaker {
             }
 
             if (startElementIndex <= endElementIndex) {
-                System.out.println("     addAreas da " + startElementIndex
+                log.debug("     addAreas da " + startElementIndex
                         + " a " + endElementIndex);
                 childLC = new LayoutContext(0);
                 // add space before if display-align is center or bottom
@@ -311,20 +313,20 @@ public abstract class AbstractBreaker {
                         .removeLast();
                 switch (breakPenalty.getBreakClass()) {
                 case Constants.EN_PAGE:
-                    System.err.println("PLM> break - PAGE");
+                    log.debug("PLM> break - PAGE");
                     nextSequenceStartsOn = Constants.EN_ANY;
                     break;
                 case Constants.EN_COLUMN:
-                    System.err.println("PLM> break - COLUMN");
+                    log.debug("PLM> break - COLUMN");
                     //TODO Fix this when implementing multi-column layout
                     nextSequenceStartsOn = Constants.EN_COLUMN;
                     break;
                 case Constants.EN_ODD_PAGE:
-                    System.err.println("PLM> break - ODD PAGE");
+                    log.debug("PLM> break - ODD PAGE");
                     nextSequenceStartsOn = Constants.EN_ODD_PAGE;
                     break;
                 case Constants.EN_EVEN_PAGE:
-                    System.err.println("PLM> break - EVEN PAGE");
+                    log.debug("PLM> break - EVEN PAGE");
                     nextSequenceStartsOn = Constants.EN_EVEN_PAGE;
                     break;
                 default:
@@ -399,7 +401,7 @@ public abstract class AbstractBreaker {
         int iOptPageNumber;
         iOptPageNumber = alg.findBreakingPoints(blockList, availableBPD, 1,
                 true, true);
-        System.out.println("PLM> iOptPageNumber= " + iOptPageNumber);
+        log.debug("PLM> iOptPageNumber= " + iOptPageNumber);
 
         // 
         ListIterator sequenceIterator = blockList.listIterator();
@@ -412,10 +414,12 @@ public abstract class AbstractBreaker {
 
         while (breakIterator.hasNext()) {
             thisBreak = (PageBreakPosition) breakIterator.next();
-            System.out.println("| first page: break= "
-                    + thisBreak.getLeafPos() + " difference= "
-                    + thisBreak.difference + " ratio= "
-                    + thisBreak.bpdAdjust);
+            if (log.isDebugEnabled()) {
+                log.debug("| first page: break= "
+                        + thisBreak.getLeafPos() + " difference= "
+                        + thisBreak.difference + " ratio= "
+                        + thisBreak.bpdAdjust);
+            }
             accumulatedS = 0;
             adjustedDiff = 0;
 
@@ -428,7 +432,7 @@ public abstract class AbstractBreaker {
             while (!(firstElement = (KnuthElement) sequenceIterator
                     .next()).isBox()) {
                 // 
-                System.out.println("PLM> ignoring glue or penalty element "
+                log.debug("PLM> ignoring glue or penalty element "
                         + "at the beginning of the sequence");
                 if (firstElement.isGlue()) {
                     ((BlockLevelLayoutManager) firstElement
@@ -502,14 +506,13 @@ public abstract class AbstractBreaker {
                     }
                 }
             }
-            System.out.println("| line number adj= "
+            log.debug("| line number adj= "
                     + lineNumberMaxAdjustment);
-            System.out.println("| space adj      = "
+            log.debug("| space adj      = "
                     + spaceMaxAdjustment);
 
             if (thisElement.isPenalty() && thisElement.getW() > 0) {
-                System.out
-                        .println("  mandatory variation to the number of lines!");
+                log.debug("  mandatory variation to the number of lines!");
                 ((BlockLevelLayoutManager) thisElement
                         .getLayoutManager()).negotiateBPDAdjustment(
                         thisElement.getW(), thisElement);
@@ -526,7 +529,7 @@ public abstract class AbstractBreaker {
                         thisBreak.difference,
                         (thisBreak.difference > 0 ? spaceMaxAdjustment.max
                                 : -spaceMaxAdjustment.min));
-                System.out.println("single space: "
+                log.debug("single space: "
                         + (adjustedDiff == thisBreak.difference
                                 || thisBreak.bpdAdjust == 0 ? "ok"
                                 : "ERROR"));
@@ -541,7 +544,7 @@ public abstract class AbstractBreaker {
                         thisBreak.difference - adjustedDiff,
                         ((thisBreak.difference - adjustedDiff) > 0 ? spaceMaxAdjustment.max
                                 : -spaceMaxAdjustment.min));
-                System.out.println("lines and space: "
+                log.debug("lines and space: "
                         + (adjustedDiff == thisBreak.difference
                                 || thisBreak.bpdAdjust == 0 ? "ok"
                                 : "ERROR"));
@@ -571,27 +574,30 @@ public abstract class AbstractBreaker {
      * @param blockList block list to log
      */
     private void logBlocklist(KnuthSequence blockList) {
+        if (!log.isDebugEnabled()) {
+            return;
+        }
         ListIterator tempIter = blockList.listIterator();
 
         KnuthElement temp;
-        System.out.println(" ");
+        log.debug(" ");
         while (tempIter.hasNext()) {
             temp = (KnuthElement) tempIter.next();
             if (temp.isBox()) {
-                System.out.println(tempIter.previousIndex()
+                log.debug(tempIter.previousIndex()
                         + ") " + temp);
             } else if (temp.isGlue()) {
-                System.out.println(tempIter.previousIndex()
+                log.debug(tempIter.previousIndex()
                         + ") " + temp);
             } else {
-                System.out.println(tempIter.previousIndex()
+                log.debug(tempIter.previousIndex()
                         + ") " + temp);
             }
             if (temp.getPosition() != null) {
-                System.out.println("            " + temp.getPosition());
+                log.debug("            " + temp.getPosition());
             }
         }
-        System.out.println(" ");
+        log.debug(" ");
     }
 
     /**
@@ -599,28 +605,37 @@ public abstract class AbstractBreaker {
      * @param effectiveList block list to log
      */
     private void logEffectiveList(KnuthSequence effectiveList) {
-        System.out.println("Effective list");
+        log.debug("Effective list");
         logBlocklist(effectiveList);
     }
 
     private int adjustBlockSpaces(LinkedList spaceList, int difference, int total) {
-    /*LF*/  System.out.println("AdjustBlockSpaces: difference " + difference + " / " + total + " on " + spaceList.size() + " spaces in block");
-            ListIterator spaceListIterator = spaceList.listIterator();
-            int adjustedDiff = 0;
-            int partial = 0;
-            while (spaceListIterator.hasNext()) {
-                KnuthGlue blockSpace = (KnuthGlue)spaceListIterator.next();
-                partial += (difference > 0 ? blockSpace.getY() : blockSpace.getZ());
-                System.out.println("available = " + partial +  " / " + total);
-                System.out.println("competenza  = " + (((int) ((float) partial * difference / total)) - adjustedDiff) + " / " + difference);
-                int newAdjust = ((BlockLevelLayoutManager) blockSpace.getLayoutManager()).negotiateBPDAdjustment(((int) ((float) partial * difference / total)) - adjustedDiff, blockSpace);
-                adjustedDiff += newAdjust;
-            }
-            return adjustedDiff;
+        if (log.isDebugEnabled()) {
+            log.debug("AdjustBlockSpaces: difference " + difference + " / " + total 
+                    + " on " + spaceList.size() + " spaces in block");
         }
+        ListIterator spaceListIterator = spaceList.listIterator();
+        int adjustedDiff = 0;
+        int partial = 0;
+        while (spaceListIterator.hasNext()) {
+            KnuthGlue blockSpace = (KnuthGlue)spaceListIterator.next();
+            partial += (difference > 0 ? blockSpace.getY() : blockSpace.getZ());
+            if (log.isDebugEnabled()) {
+                log.debug("available = " + partial +  " / " + total);
+                log.debug("competenza  = " 
+                        + (((int)((float) partial * difference / total)) - adjustedDiff) 
+                        + " / " + difference);
+            }
+            int newAdjust = ((BlockLevelLayoutManager) blockSpace.getLayoutManager()).negotiateBPDAdjustment(((int) ((float) partial * difference / total)) - adjustedDiff, blockSpace);
+            adjustedDiff += newAdjust;
+        }
+        return adjustedDiff;
+    }
 
     private int adjustLineNumbers(LinkedList lineList, int difference, int total) {
-    /*LF*/  System.out.println("AdjustLineNumbers: difference " + difference + " / " + total + " on " + lineList.size() + " elements");
+        if (log.isDebugEnabled()) {
+            log.debug("AdjustLineNumbers: difference " + difference + " / " + total + " on " + lineList.size() + " elements");
+        }
 
 //            int adjustedDiff = 0;
 //            int partial = 0;
@@ -645,17 +660,16 @@ public abstract class AbstractBreaker {
 //            }
 //            return adjustedDiff;
 
-            ListIterator lineListIterator = lineList.listIterator();
-            int adjustedDiff = 0;
-            int partial = 0;
-            while (lineListIterator.hasNext()) {
-                KnuthGlue line = (KnuthGlue)lineListIterator.next();
-                partial += (difference > 0 ? line.getY() : line.getZ());
-                int newAdjust = ((BlockLevelLayoutManager) line.getLayoutManager()).negotiateBPDAdjustment(((int) ((float) partial * difference / total)) - adjustedDiff, line);
-                adjustedDiff += newAdjust;
-            }
-            return adjustedDiff;
+        ListIterator lineListIterator = lineList.listIterator();
+        int adjustedDiff = 0;
+        int partial = 0;
+        while (lineListIterator.hasNext()) {
+            KnuthGlue line = (KnuthGlue)lineListIterator.next();
+            partial += (difference > 0 ? line.getY() : line.getZ());
+            int newAdjust = ((BlockLevelLayoutManager) line.getLayoutManager()).negotiateBPDAdjustment(((int) ((float) partial * difference / total)) - adjustedDiff, line);
+            adjustedDiff += newAdjust;
         }
-
+        return adjustedDiff;
+    }
     
 }
