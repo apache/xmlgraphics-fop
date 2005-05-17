@@ -39,6 +39,7 @@ import java.util.ListIterator;
  */
 public class StaticContentLayoutManager extends BlockStackingLayoutManager {
     private RegionReference targetRegion;
+    private Block targetBlock;
     private List blockBreaks = new ArrayList();
     private SideRegion regionFO;
 
@@ -48,6 +49,13 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         setParent(pslm);
         regionFO = reg;
         targetRegion = getCurrentPV().getRegionReference(regionFO.getNameId()); 
+    }
+
+    public StaticContentLayoutManager(PageSequenceLayoutManager pslm, 
+            StaticContent node, Block block) {
+        super(node);
+        setParent(pslm);
+        targetBlock = block; 
     }
 
     /**
@@ -206,14 +214,22 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
      * @see org.apache.fop.layoutmgr.LayoutManager#addChildArea(Area)
      */
     public void addChildArea(Area childArea) {
+        if (getStaticContentFO().getFlowName().equals("xsl-footnote-separator")) {
+            targetBlock.addBlock((Block)childArea);
+        } else {
         targetRegion.addBlock((Block)childArea);
+    }
     }
 
     /**
      * @see org.apache.fop.layoutmgr.LayoutManager#getParentArea(Area)
      */
     public Area getParentArea(Area childArea) {
+        if (getStaticContentFO().getFlowName().equals("xsl-footnote-separator")) {
+            return targetBlock;
+        } else {
         return targetRegion;
+    }
     }
 
     public void doLayout() {
@@ -228,6 +244,13 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         }
     }
     
+    /**
+     * convenience method that returns the Static Content node
+     */
+    protected StaticContent getStaticContentFO() {
+        return (StaticContent) fobj;
+    }
+
     private class StaticContentBreaker extends AbstractBreaker {       
         private StaticContentLayoutManager lm;
         private int displayAlign;
@@ -298,7 +321,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
             }
         }
         
-        protected void finishPart() {
+        protected void finishPart(PageBreakingAlgorithm alg, PageBreakPosition pbp) {
             //nop for static content
         }
         

@@ -348,6 +348,7 @@ public abstract class AbstractRenderer
      * @param footnote  The footnote
      */
     protected void renderFootnote(Footnote footnote) {
+        currentBPPosition += footnote.getTop();
         List blocks = footnote.getChildAreas();
         if (blocks != null) {
             Block sep = footnote.getSeparator();

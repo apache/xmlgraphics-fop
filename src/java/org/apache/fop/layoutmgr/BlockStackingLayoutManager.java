@@ -230,8 +230,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                 childLC.setRefIPD(ipd);
             } else {
                 // curLM is a ?
-                childLC.setStackLimit(MinOptMax.subtract(context
-                        .getStackLimit(), stackSize));
+                //childLC.setStackLimit(MinOptMax.subtract(context
+                //        .getStackLimit(), stackSize));
                 childLC.setRefIPD(referenceIPD);
             }
 

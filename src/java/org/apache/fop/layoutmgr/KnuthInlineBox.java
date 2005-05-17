@@ -23,6 +23,7 @@ public class KnuthInlineBox extends KnuthBox {
     private int lead;
     private int total;
     private int middle;
+    private FootnoteBodyLayoutManager footnoteBodyLM = null;
 
     /**
      * Create a new KnuthBox.
@@ -60,5 +61,26 @@ public class KnuthInlineBox extends KnuthBox {
      */
     public int getMiddle() {
         return middle;
+    }
+
+    /**
+     * @param fblm the FootnoteBodyLM this box must hold a reference to
+     */
+    public void setFootnoteBodyLM(FootnoteBodyLayoutManager fblm) {
+        footnoteBodyLM = fblm;
+    }
+
+    /**
+     * @return the FootnoteBodyLM this box holds a reference to
+     */
+    public FootnoteBodyLayoutManager getFootnoteBodyLM() {
+        return footnoteBodyLM;
+    }
+
+    /**
+     * @return true if this box holds a reference to a FootnoteBodyLM
+     */
+    public boolean isAnchor() {
+        return (footnoteBodyLM != null);
     }
 }

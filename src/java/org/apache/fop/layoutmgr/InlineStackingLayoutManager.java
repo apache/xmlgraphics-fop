@@ -603,6 +603,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager
                                              returnedElement.getPosition()));
                     returnList.add(returnedElement);
                 }
+                setFinished(curLM.isFinished() && (getChildLM() == null));
                 return returnList;
             } else {
                 // curLM returned null because it finished;
