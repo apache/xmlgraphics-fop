@@ -146,42 +146,42 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         return leaderArea;
      }
 
-    protected void offsetArea(LayoutContext context) {
+    protected void offsetArea(InlineArea area, LayoutContext context) {
         int pattern = fobj.getLeaderPattern();
-        int bpd = curArea.getBPD();
+        int bpd = area.getBPD();
 
         switch (pattern) {
             case EN_RULE: 
                 switch (verticalAlignment) {
                     case EN_TOP:
-                        curArea.setOffset(0);
+                        area.setOffset(0);
                     break;
                     case EN_MIDDLE:
-                        curArea.setOffset(context.getMiddleBaseline() - bpd / 2);
+                        area.setOffset(context.getMiddleBaseline() - bpd / 2);
                     break;
                     case EN_BOTTOM:
-                        curArea.setOffset(context.getLineHeight() - bpd);
+                        area.setOffset(context.getLineHeight() - bpd);
                     break;
                     case EN_BASELINE: // fall through
                     default:
-                        curArea.setOffset(context.getBaseline() - bpd);
+                        area.setOffset(context.getBaseline() - bpd);
                     break;
                 }
             break;
             case EN_DOTS: 
                 switch (verticalAlignment) {
                     case EN_TOP:
-                        curArea.setOffset(0);
+                        area.setOffset(0);
                     break;
                     case EN_MIDDLE:
-                        curArea.setOffset(context.getMiddleBaseline());
+                        area.setOffset(context.getMiddleBaseline());
                     break;
                     case EN_BOTTOM:
-                        curArea.setOffset(context.getLineHeight() - bpd + font.getAscender());
+                        area.setOffset(context.getLineHeight() - bpd + font.getAscender());
                     break;
                     case EN_BASELINE: // fall through
                     default:
-                        curArea.setOffset(context.getBaseline());
+                        area.setOffset(context.getBaseline());
                     break;
                 }
             break;
@@ -191,17 +191,17 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             case EN_USECONTENT: 
                 switch (verticalAlignment) {
                     case EN_TOP:
-                        curArea.setOffset(0);
+                        area.setOffset(0);
                     break;
                     case EN_MIDDLE:
-                        curArea.setOffset(context.getMiddleBaseline());
+                        area.setOffset(context.getMiddleBaseline());
                     break;
                     case EN_BOTTOM:
-                        curArea.setOffset(context.getLineHeight() - bpd);
+                        area.setOffset(context.getLineHeight() - bpd);
                     break;
                     case EN_BASELINE: // fall through
                     default:
-                        curArea.setOffset(context.getBaseline());
+                        area.setOffset(context.getBaseline());
                     break;
                 }
             break;
@@ -215,12 +215,12 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         } else {
             addId();
 
-            widthAdjustArea(context);
+            widthAdjustArea(curArea, context);
 
             // add content areas
             KnuthPossPosIter contentIter = new KnuthPossPosIter(contentList, 0, contentList.size());
             clm.addAreas(contentIter, context);
-            offsetArea(context);
+            offsetArea(curArea, context);
 
             parentLM.addChildArea(curArea);
 

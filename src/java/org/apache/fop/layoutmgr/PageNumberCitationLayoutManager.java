@@ -33,7 +33,7 @@ import org.apache.fop.fonts.Font;
 public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
 
     private PageNumberCitation fobj;
-    Font font = null;
+    private Font font = null;
     
     // whether the page referred to by the citation has been resolved yet
     private boolean resolved = false;
@@ -62,8 +62,8 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
         }
     }
     
-    protected void offsetArea(LayoutContext context) {
-        curArea.setOffset(context.getBaseline());
+    protected void offsetArea(InlineArea area, LayoutContext context) {
+        area.setOffset(context.getBaseline());
     }
 
     /**
@@ -81,12 +81,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
             int width = getStringWidth(str);
             text.setTextArea(str);
             inline.setIPD(width);
-            inline.setBPD(font.getAscender() - font.getDescender());
-            inline.setOffset(font.getAscender());
             
-            inline.addTrait(Trait.FONT_NAME, font.getFontName());
-            inline.addTrait(Trait.FONT_SIZE,
-                         new Integer(font.getFontSize()));
             resolved = true;
         } else {
             resolved = false;
@@ -94,12 +89,12 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
             String str = "MMM"; // reserve three spaces for page number
             int width = getStringWidth(str);
             inline.setIPD(width);
-            inline.setBPD(font.getAscender() - font.getDescender());
-            inline.setOffset(font.getAscender());
             
-            inline.addTrait(Trait.FONT_NAME, font.getFontName());
-            inline.addTrait(Trait.FONT_SIZE, new Integer(font.getFontSize()));
         }
+        inline.setBPD(font.getAscender() - font.getDescender());
+        inline.setOffset(font.getAscender());
+        inline.addTrait(Trait.FONT_NAME, font.getFontName());
+        inline.addTrait(Trait.FONT_SIZE, new Integer(font.getFontSize()));
         TraitSetter.addTextDecoration(inline, fobj.getTextDecoration());
         
         return inline;

@@ -69,23 +69,24 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
      * inline area.
      * This is used for vertical alignment.
      * Subclasses should override this if necessary.
+     * @param area the inline area to be updated
      * @param context the layout context used for adding the area
      */
-    protected void offsetArea(LayoutContext context) {
-        int bpd = curArea.getBPD();
+    protected void offsetArea(InlineArea area, LayoutContext context) {
+        int bpd = area.getBPD();
         switch (verticalAlignment) {
             case EN_MIDDLE:
-                curArea.setOffset(context.getMiddleBaseline() + fs.getXHeight() / 2);
+                area.setOffset(context.getMiddleBaseline() + fs.getXHeight() / 2);
             break;
             case EN_TOP:
-                curArea.setOffset(fs.getAscender());
+                area.setOffset(fs.getAscender());
             break;
             case EN_BOTTOM:
-                curArea.setOffset(context.getLineHeight() - bpd + fs.getAscender());
+                area.setOffset(context.getLineHeight() - bpd + fs.getAscender());
             break;
             case EN_BASELINE:
             default:
-                curArea.setOffset(context.getBaseline());
+                area.setOffset(context.getBaseline());
             break;
         }
     }

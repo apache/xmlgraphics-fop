@@ -160,19 +160,45 @@ public class AreaTreeHandler extends FOEventHandler {
              * See if this ID is in the unresolved idref list, if so
              * resolve Resolvable objects tied to it.
              */
-            Set todo = (Set) unresolvedIDRefs.get(id);
-            if (todo != null) {
-                for (Iterator iter = todo.iterator(); iter.hasNext();) {
-                    Resolvable res = (Resolvable) iter.next();
-                    res.resolveIDRef(id, pvList);
-                }
-                unresolvedIDRefs.remove(id);
-            }
+            tryIDResolution(id, pv, pvList);
         } else {
             pvList.add(pv);
         }
     }
 
+    /**
+     * Tries to resolve all unresolved ID references on the given page.
+     * @param id ID to resolve
+     * @param pv page viewport whose ID refs to resolve
+     * @param List of PageViewports
+     */
+    private void tryIDResolution(String id, PageViewport pv, List pvList) {
+        Set todo = (Set) unresolvedIDRefs.get(id);
+        if (todo != null) {
+            for (Iterator iter = todo.iterator(); iter.hasNext();) {
+                Resolvable res = (Resolvable) iter.next();
+                res.resolveIDRef(id, pvList);
+            }
+            unresolvedIDRefs.remove(id);
+        }
+    }
+
+    /**
+     * Tries to resolve all unresolved ID references on the given page.
+     * @param pv page viewport whose ID refs to resolve
+     */
+    public void tryIDResolution(PageViewport pv) {
+        String[] ids = pv.getIDRefs();
+        if (ids != null) {
+            for (int i = 0; i < ids.length; i++) {
+                List pvList = (List) idLocations.get(ids[i]);
+                if (pvList != null) {
+                    tryIDResolution(ids[i], pv, pvList);
+                }
+            }
+        }
+    }
+    
     /**
      * Get the list of page viewports that have an area with a given id.
      * @param id the id to lookup
