@@ -60,9 +60,8 @@ public class Span extends Area {
         flowAreas = new java.util.ArrayList(colCount);        
         colWidth = (ipd - ((colCount - 1) * colGap)) / colCount;
 
-        for (int i=0; i< colCount; i++) {
+        for (int i = 0; i < colCount; i++) {
             NormalFlow newFlow = new NormalFlow(colWidth);
-            newFlow.setIPD(getIPD());
             flowAreas.add(newFlow);
         }
     }
@@ -105,9 +104,9 @@ public class Span extends Area {
         if (colRequested >= 0 && colRequested < colCount) {
             return (NormalFlow) flowAreas.get(colRequested);
         } else { // internal error
-            throw new IllegalArgumentException("Invalid column number " + 
-                    colRequested + " requested; only 0-" + (colCount-1) +
-                    " available.");
+            throw new IllegalArgumentException("Invalid column number " 
+                    + colRequested + " requested; only 0-" + (colCount - 1) 
+                    + " available.");
         }
     }
     
@@ -131,8 +130,7 @@ public class Span extends Area {
             curFlowIdx++;
             return getNormalFlow(curFlowIdx);
         } else {
-            throw new IllegalStateException("(Internal error.)" +
-                    " No more flows left in span.");
+            throw new IllegalStateException("(Internal error.) No more flows left in span.");
         }
     }
     
@@ -143,7 +141,7 @@ public class Span extends Area {
      * false otherwise.
      */
     public boolean hasMoreFlows() {
-        return (curFlowIdx < colCount-1); 
+        return (curFlowIdx < colCount - 1); 
     }
 }
 
