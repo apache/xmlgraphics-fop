@@ -29,7 +29,7 @@ import org.apache.fop.fonts.Font;
  */
 public class PageNumberLayoutManager extends LeafNodeLayoutManager {
     private PageNumber fobj;
-    Font font = null;
+    private Font font = null;
     
     /**
      * Constructor
@@ -64,8 +64,27 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         return inline;
     }
     
-    protected void offsetArea(LayoutContext context) {
-        curArea.setOffset(context.getBaseline());
+    protected void offsetArea(InlineArea area, LayoutContext context) {
+        area.setOffset(context.getBaseline());
+    }
+    
+    protected InlineArea getEffectiveArea() {
+        TextArea baseArea = (TextArea)curArea;
+        //TODO Maybe replace that with a clone() call or better, a copy constructor
+        //TODO or even better: delay area creation until addAreas() stage
+        //TextArea is cloned because the LM is reused in static areas and the area can't be.
+        TextArea ta = new TextArea();
+        ta.setIPD(baseArea.getIPD());
+        ta.setBPD(baseArea.getBPD());
+        ta.setOffset(baseArea.getOffset());
+        ta.addTrait(Trait.FONT_NAME, font.getFontName()); //only to initialize the trait map
+        ta.getTraits().putAll(baseArea.getTraits());
+        updateContent(ta);
+        return ta;
+    }
+    
+    private void updateContent(TextArea area) {
+        area.setTextArea(getCurrentPV().getPageNumberString());
     }
     
     protected void addId() {

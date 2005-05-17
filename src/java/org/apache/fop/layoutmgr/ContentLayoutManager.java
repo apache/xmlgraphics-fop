@@ -213,11 +213,6 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public BreakPoss getNextBreakPoss(LayoutContext context) {
-        return null;
-    }
-
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public boolean isFinished() {
         return false;
     }

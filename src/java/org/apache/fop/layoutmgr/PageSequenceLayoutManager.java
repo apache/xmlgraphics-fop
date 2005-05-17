@@ -531,6 +531,10 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         layoutSideRegion(FO_REGION_AFTER);
         layoutSideRegion(FO_REGION_START);
         layoutSideRegion(FO_REGION_END);
+        
+        // Try to resolve any unresolved IDs for the current page.
+        // 
+        areaTreeHandler.tryIDResolution(curPV);
         // Queue for ID resolution and rendering
         areaTreeHandler.getAreaTreeModel().addPage(curPV);
         log.debug("page finished: " + curPV.getPageNumberString() 

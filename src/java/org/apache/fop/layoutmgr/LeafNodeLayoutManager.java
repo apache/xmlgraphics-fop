@@ -33,7 +33,7 @@ import java.util.LinkedList;
  * This class can be extended to handle the creation and adding of the
  * inline area.
  */
-public class LeafNodeLayoutManager extends AbstractLayoutManager 
+public abstract class LeafNodeLayoutManager extends AbstractLayoutManager 
                                    implements InlineLevelLayoutManager {
     /**
      * The inline area that this leafnode will add.
@@ -172,17 +172,26 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager
     public void addAreas(PositionIterator posIter, LayoutContext context) {
         addId();
 
-        offsetArea(context);
-        widthAdjustArea(context);
-        parentLM.addChildArea(curArea);
+        InlineArea area = getEffectiveArea();
+        offsetArea(area, context);
+        widthAdjustArea(area, context);
+        parentLM.addChildArea(area);
 
         while (posIter.hasNext()) {
             posIter.next();
         }
     }
 
+    /**
+     * @return the effective area to be added to the area tree. Normally, this is simply "curArea"
+     * but in the case of page-number(-citation) curArea is cloned, updated and returned.
+     */
+    protected InlineArea getEffectiveArea() {
+        return curArea;
+    }
+    
     protected void addId() {
-        // Do nothing here, overriden in subclasses that has a 'id' property.
+        // Do nothing here, overriden in subclasses that have an 'id' property.
     }
     
     /**
@@ -191,23 +200,24 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager
      * inline area.
      * This is used for vertical alignment.
      * Subclasses should override this if necessary.
+     * @param area the inline area to be updated
      * @param context the layout context used for adding the area
      */
-    protected void offsetArea(LayoutContext context) {
-        int bpd = curArea.getBPD();
+    protected void offsetArea(InlineArea area, LayoutContext context) {
+        int bpd = area.getBPD();
         switch (verticalAlignment) {
             case EN_MIDDLE:
-                curArea.setOffset(context.getMiddleBaseline() - bpd / 2);
+                area.setOffset(context.getMiddleBaseline() - bpd / 2);
             break;
             case EN_TOP:
-                curArea.setOffset(context.getTopBaseline());
+                area.setOffset(context.getTopBaseline());
             break;
             case EN_BOTTOM:
-                curArea.setOffset(context.getBottomBaseline() - bpd);
+                area.setOffset(context.getBottomBaseline() - bpd);
             break;
             case EN_BASELINE:
             default:
-                curArea.setOffset(context.getBaseline() - bpd);
+                area.setOffset(context.getBaseline() - bpd);
             break;
         }
     }
@@ -216,9 +226,10 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager
      * Adjust the width of the area when adding.
      * This uses the min/opt/max values to adjust the with
      * of the inline area by a percentage.
+     * @param area the inline area to be updated
      * @param context the layout context for adding this area
      */
-    protected void widthAdjustArea(LayoutContext context) {
+    protected void widthAdjustArea(InlineArea area, LayoutContext context) {
         double dAdjust = context.getIPDAdjust();
         int width = areaInfo.ipdArea.opt;
         if (dAdjust < 0) {
@@ -228,7 +239,7 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager
             width = (int) (width + dAdjust * (areaInfo.ipdArea.max
                                              - areaInfo.ipdArea.opt));
         }
-        curArea.setIPD(width);
+        area.setIPD(width);
     }
 
     /**
