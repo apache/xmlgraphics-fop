@@ -96,8 +96,10 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
      */
     protected void initProperties() {
         abProps = getBlockContainerFO().getCommonAbsolutePosition();
-        foBlockSpaceBefore = new SpaceVal(getBlockContainerFO().getCommonMarginBlock().spaceBefore).getSpace();
-        foBlockSpaceAfter = new SpaceVal(getBlockContainerFO().getCommonMarginBlock().spaceAfter).getSpace();
+        foBlockSpaceBefore = new SpaceVal(getBlockContainerFO().getCommonMarginBlock()
+                    .spaceBefore).getSpace();
+        foBlockSpaceAfter = new SpaceVal(getBlockContainerFO().getCommonMarginBlock()
+                    .spaceAfter).getSpace();
 
         boolean rotated = (getBlockContainerFO().getReferenceOrientation() % 180 != 0);
         if (rotated) {
@@ -108,21 +110,26 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             width = getBlockContainerFO().getInlineProgressionDimension().getOptimum().getLength();
         }
         
-/*LF*/  bpUnit = 0; //layoutProps.blockProgressionUnit;
-/*LF*/  if (bpUnit == 0) {
-/*LF*/      // use optimum space values
-/*LF*/      adjustedSpaceBefore = getBlockContainerFO().getCommonMarginBlock().spaceBefore.getSpace().getOptimum().getLength().getValue();
-/*LF*/      adjustedSpaceAfter = getBlockContainerFO().getCommonMarginBlock().spaceAfter.getSpace().getOptimum().getLength().getValue();
-/*LF*/  } else {
-/*LF*/      // use minimum space values
-/*LF*/      adjustedSpaceBefore = getBlockContainerFO().getCommonMarginBlock().spaceBefore.getSpace().getMinimum().getLength().getValue();
-/*LF*/      adjustedSpaceAfter = getBlockContainerFO().getCommonMarginBlock().spaceAfter.getSpace().getMinimum().getLength().getValue();
-/*LF*/  }
+        bpUnit = 0; //layoutProps.blockProgressionUnit;
+        if (bpUnit == 0) {
+            // use optimum space values
+            adjustedSpaceBefore = getBlockContainerFO().getCommonMarginBlock()
+                .spaceBefore.getSpace().getOptimum().getLength().getValue();
+            adjustedSpaceAfter = getBlockContainerFO().getCommonMarginBlock()
+                .spaceAfter.getSpace().getOptimum().getLength().getValue();
+        } else {
+            // use minimum space values
+            adjustedSpaceBefore = getBlockContainerFO().getCommonMarginBlock()
+                .spaceBefore.getSpace().getMinimum().getLength().getValue();
+            adjustedSpaceAfter = getBlockContainerFO().getCommonMarginBlock()
+                .spaceAfter.getSpace().getMinimum().getLength().getValue();
+        }
     }
 
     /** @return the content IPD */
     protected int getRotatedIPD() {
-        return getBlockContainerFO().getInlineProgressionDimension().getOptimum().getLength().getValue();
+        return getBlockContainerFO().getInlineProgressionDimension()
+                .getOptimum().getLength().getValue();
     }
 
     private int getSpaceBefore() {
@@ -131,9 +138,12 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
     
     private int getBPIndents() {
         int indents = 0;
-        indents += getBlockContainerFO().getCommonMarginBlock().spaceBefore.getOptimum().getLength().getValue();
-        indents += getBlockContainerFO().getCommonMarginBlock().spaceAfter.getOptimum().getLength().getValue();
-        indents += getBlockContainerFO().getCommonBorderPaddingBackground().getBPPaddingAndBorder(false);
+        indents += getBlockContainerFO().getCommonMarginBlock()
+                    .spaceBefore.getOptimum().getLength().getValue();
+        indents += getBlockContainerFO().getCommonMarginBlock()
+                    .spaceAfter.getOptimum().getLength().getValue();
+        indents += getBlockContainerFO().getCommonBorderPaddingBackground()
+                    .getBPPaddingAndBorder(false);
         return indents;
     }
     
@@ -162,7 +172,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         }
         
         autoHeight = false;
-        boolean rotated = (getBlockContainerFO().getReferenceOrientation() % 180 != 0); //vals[0] == 0.0;
+        //boolean rotated = (getBlockContainerFO().getReferenceOrientation() % 180 != 0);
         referenceIPD = context.getRefIPD();
         int maxbpd = context.getStackLimit().opt;
         int allocBPD, allocIPD;
@@ -186,10 +196,10 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         double contentRectOffsetX = 0;
         contentRectOffsetX += getBlockContainerFO().getCommonMarginBlock().startIndent.getValue();
         double contentRectOffsetY = 0;
-        //contentRectOffsetY += getBlockContainerFO().getCommonMarginBlock().startIndent.getValue();
-        //contentRectOffsetY += getSpaceBefore();
-        contentRectOffsetY += getBlockContainerFO().getCommonBorderPaddingBackground().getBorderBeforeWidth(false);
-        contentRectOffsetY += getBlockContainerFO().getCommonBorderPaddingBackground().getPaddingBefore(false);
+        contentRectOffsetY += getBlockContainerFO()
+                .getCommonBorderPaddingBackground().getBorderBeforeWidth(false);
+        contentRectOffsetY += getBlockContainerFO()
+                .getCommonBorderPaddingBackground().getPaddingBefore(false);
         
         Rectangle2D rect = new Rectangle2D.Double(
                 contentRectOffsetX, contentRectOffsetY, 
@@ -235,8 +245,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                 // get elements from curLM
                 returnedList = curLM.getNextKnuthElements(childLC, alignment);
                 if (returnedList.size() == 1
-                        && ((KnuthElement) returnedList.getFirst()).isPenalty()
-                        && ((KnuthPenalty) returnedList.getFirst()).getP() == -KnuthElement.INFINITE) {
+                        && ((KnuthElement)returnedList.getFirst()).isPenalty()
+                        && ((KnuthPenalty)returnedList.getFirst()).getP() 
+                                == -KnuthElement.INFINITE) {
                     // a descendant of this block has break-before
                     if (returnList.size() == 0) {
                         // the first child (or its first child ...) has
@@ -282,7 +293,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                         continue;
                     }
                     if (((KnuthElement) returnedList.getLast()).isPenalty()
-                            && ((KnuthPenalty) returnedList.getLast()).getP() == -KnuthElement.INFINITE) {
+                            && ((KnuthPenalty) returnedList.getLast()).getP() 
+                                    == -KnuthElement.INFINITE) {
                         // a descendant of this block has break-after
                         if (curLM.isFinished()) {
                             // there is no other content in this block;
@@ -315,7 +327,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             returnList.add(new KnuthBox(vpContentBPD, bcPosition, false));
             //TODO Handle min/opt/max for block-progression-dimension
             /* These two elements will be used to add stretchability to the above box
-            returnList.add(new KnuthPenalty(0, KnuthElement.INFINITE, false, returnPosition, false));
+            returnList.add(new KnuthPenalty(0, KnuthElement.INFINITE, 
+                                   false, returnPosition, false));
             returnList.add(new KnuthGlue(0, 1 * constantLineHeight, 0,
                                    LINE_NUMBER_ADJUSTMENT, returnPosition, false));
             */
@@ -339,7 +352,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
     }
     
     private LinkedList getNextKnuthElementsAbsolute(LayoutContext context, int alignment) {
-        MinOptMax stackSize = new MinOptMax();
         autoHeight = false;
 
         Point offset = getAbsOffset();
@@ -387,8 +399,10 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         contentRectOffsetX += getBlockContainerFO().getCommonMarginBlock().startIndent.getValue();
         double contentRectOffsetY = offset.getY();
         contentRectOffsetY += getSpaceBefore();
-        contentRectOffsetY += getBlockContainerFO().getCommonBorderPaddingBackground().getBorderBeforeWidth(false);
-        contentRectOffsetY += getBlockContainerFO().getCommonBorderPaddingBackground().getPaddingBefore(false);
+        contentRectOffsetY += getBlockContainerFO()
+                .getCommonBorderPaddingBackground().getBorderBeforeWidth(false);
+        contentRectOffsetY += getBlockContainerFO()
+                .getCommonBorderPaddingBackground().getPaddingBefore(false);
         
         Rectangle2D rect = new Rectangle2D.Double(
                 contentRectOffsetX, contentRectOffsetY, 
@@ -543,170 +557,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         
     }
     
-    /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getNextBreakPoss(org.apache.fop.layoutmgr.LayoutContext)
-     */
-    public BreakPoss getNextBreakPoss(LayoutContext context) {
-
-        if (isAbsoluteOrFixed()) {
-            return getAbsoluteBreakPoss(context);
-        }
-
-        autoHeight = false;
-        boolean rotated = (getBlockContainerFO().getReferenceOrientation() % 180 != 0); //vals[0] == 0.0;
-        referenceIPD = context.getRefIPD();
-        int maxbpd = context.getStackLimit().opt;
-        int allocBPD, allocIPD;
-        if (height.getEnum() != EN_AUTO) {
-            allocBPD = height.getValue(); //this is the content-height
-            allocBPD += getBPIndents();
-        } else {
-            allocBPD = maxbpd;
-            autoHeight = true;
-        }
-        if (width.getEnum() != EN_AUTO) {
-            allocIPD = width.getValue(); //this is the content-width
-            allocIPD += getIPIndents();
-        } else {
-            allocIPD = referenceIPD;
-        }
-
-        vpContentBPD = allocBPD - getBPIndents();
-        vpContentIPD = allocIPD - getIPIndents();
-        
-        double contentRectOffsetX = 0;
-        contentRectOffsetX += getBlockContainerFO().getCommonMarginBlock().startIndent.getValue();
-        double contentRectOffsetY = 0;
-        //contentRectOffsetY += getBlockContainerFO().getCommonMarginBlock().startIndent.getValue();
-        //contentRectOffsetY += getSpaceBefore();
-        contentRectOffsetY += getBlockContainerFO().getCommonBorderPaddingBackground().getBorderBeforeWidth(false);
-        contentRectOffsetY += getBlockContainerFO().getCommonBorderPaddingBackground().getPaddingBefore(false);
-        
-        Rectangle2D rect = new Rectangle2D.Double(
-                contentRectOffsetX, contentRectOffsetY, 
-                vpContentIPD, vpContentBPD);
-        relDims = new FODimension(0, 0);
-        absoluteCTM = CTM.getCTMandRelDims(getBlockContainerFO().getReferenceOrientation(),
-                getBlockContainerFO().getWritingMode(), rect, relDims);
-        //double[] vals = absoluteCTM.toArray();
-
-        MinOptMax stackLimit;
-        if (rotated) {
-            // rotated 90 degrees
-            /*
-            if (relDims.ipd > context.getRefIPD()) {
-                relDims.ipd = context.getRefIPD();
-            }*/
-            //stackLimit = new MinOptMax(relDims.ipd);
-            /*
-            if (width.getEnum() == EN_AUTO) {
-                relDims.bpd = context.getStackLimit().opt;
-            }
-            absoluteCTM = new CTM(vals[0], vals[1], vals[2], vals[3], 0, 0);
-            */
-            //absoluteCTM = new CTM(vals[0], vals[1], vals[2], vals[3], vals[5], vals[4]);
-        } else {
-            /*
-            if (vals[0] == -1.0) {
-                absoluteCTM = new CTM(vals[0], vals[1], vals[2], vals[3], 0, 0);
-            }*/
-            //stackLimit = context.getStackLimit();
-        }
-        stackLimit = new MinOptMax(relDims.bpd);
-
-        LayoutManager curLM; // currently active LM
-
-        MinOptMax stackSize = new MinOptMax();
-        // if starting add space before
-        // stackSize.add(spaceBefore);
-        BreakPoss lastPos = null;
-
-        //TODO fix layout dimensions!
-        getBlockContainerFO().setLayoutDimension(PercentBase.BLOCK_IPD, allocIPD);
-        getBlockContainerFO().setLayoutDimension(PercentBase.BLOCK_BPD, allocBPD);
-        getBlockContainerFO().setLayoutDimension(PercentBase.REFERENCE_AREA_IPD, relDims.ipd);
-        getBlockContainerFO().setLayoutDimension(PercentBase.REFERENCE_AREA_BPD, relDims.bpd);
-
-        while ((curLM = getChildLM()) != null) {
-            //Treat bc with fixed BPD as non-breakable
-            if (!autoHeight && (stackLimit.max > context.stackLimit.max)) {
-                if (log.isDebugEnabled()) {
-                    log.debug("block-container does not fit in the available area "
-                            + "(available: " + context.stackLimit.max
-                            + ", needed: " + stackLimit.max + ")");
-                }
-                BreakPoss breakPoss = new BreakPoss(new LeafPosition(this, -1));
-                breakPoss.setFlag(BreakPoss.NEXT_OVERFLOWS, true);
-                breakPoss.setStackingSize(new MinOptMax());
-                return breakPoss;
-            }
-
-            // Make break positions and return blocks!
-            // Set up a LayoutContext
-            BreakPoss bp;
-
-            LayoutContext childLC = new LayoutContext(0);
-                childLC.setStackLimit(
-                  MinOptMax.subtract(stackLimit,
-                                     stackSize));
-                childLC.setRefIPD(relDims.ipd);
-
-            boolean over = false;
-            while (!curLM.isFinished()) {
-                if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
-                    if (stackSize.opt + bp.getStackingSize().opt > stackLimit.max) {
-                        // reset to last break
-                        if (lastPos != null) {
-                            reset(lastPos.getPosition());
-                        } else {
-                            curLM.resetPosition(null);
-                        }
-                        over = true;
-                        break;
-                    }
-                    if (bp.nextBreakOverflows()) {
-                        over = true;
-                        break;
-                    }                    
-                    
-                    stackSize.add(bp.getStackingSize());
-                    lastPos = bp;
-                    childBreaks.add(bp);
-
-                    childLC.setStackLimit(MinOptMax.subtract(
-                                           stackLimit, stackSize));
-                }
-            }
-            if (!rotated && autoHeight) {
-                BreakPoss breakPoss;
-                breakPoss = new BreakPoss(new LeafPosition(this,
-                                                   childBreaks.size() - 1));
-                breakPoss.setStackingSize(stackSize);
-                if (over) {
-                    breakPoss.setFlag(BreakPoss.NEXT_OVERFLOWS, true);
-                }
-                return breakPoss;
-            }
-        }
-        setFinished(true);
-        if (rotated) {
-            BreakPoss breakPoss;
-            breakPoss = new BreakPoss(new LeafPosition(this,
-                                               childBreaks.size() - 1));
-            breakPoss.setStackingSize(new MinOptMax(relDims.ipd));
-            return breakPoss;
-        }
-        if (!rotated && !autoHeight) {
-            //Treated as if all content is kept together
-            BreakPoss breakPoss;
-            breakPoss = new BreakPoss(new LeafPosition(this,
-                                               childBreaks.size() - 1));
-            breakPoss.setStackingSize(new MinOptMax(relDims.bpd));
-            return breakPoss;
-        }
-        return null;
-    }
-
     private Point getAbsOffset() {
         int x = 0;
         int y = 0;
@@ -719,115 +569,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         return new Point(x, y);
     }
     
-    /**
-     * Generate and return the next break possibility for absolutely positioned
-     * block-containers.
-     * @param context LayoutContext to work with
-     * @return the next break position
-     * @see org.apache.fop.layoutmgr.LayoutManager#getNextBreakPoss(org.apache.fop.layoutmgr.LayoutContext)
-     */
-    public BreakPoss getAbsoluteBreakPoss(LayoutContext context) {
-
-        LayoutManager curLM; // currently active LM
-
-        MinOptMax stackSize = new MinOptMax();
-        autoHeight = false;
-
-        Point offset = getAbsOffset();
-        int allocBPD, allocIPD;
-        if (height.getEnum() != EN_AUTO) {
-            allocBPD = height.getValue(); //this is the content-height
-            allocBPD += getBPIndents();
-        } else {
-            allocBPD = 0;
-            if (abProps.bottom.getEnum() != EN_AUTO) {
-                if (isFixed()) {
-                    allocBPD = (int)getCurrentPV().getViewArea().getHeight();
-                } else {
-                    allocBPD = context.getStackLimit().opt; 
-                }
-                allocBPD -= offset.y;
-                if (abProps.bottom.getEnum() != EN_AUTO) {
-                    allocBPD -= abProps.bottom.getValue();
-                }
-            } else {
-                autoHeight = true;
-            }
-        }
-        if (width.getEnum() != EN_AUTO) {
-            allocIPD = width.getValue(); //this is the content-width
-            allocIPD += getIPIndents();
-        } else {
-            if (isFixed()) {
-                allocIPD = (int)getCurrentPV().getViewArea().getWidth(); 
-            } else {
-                allocIPD = context.getRefIPD();
-            }
-            if (abProps.left.getEnum() != EN_AUTO) {
-                allocIPD -= abProps.left.getValue();
-            }
-            if (abProps.right.getEnum() != EN_AUTO) {
-                allocIPD -= abProps.right.getValue();
-            }
-        }
-
-        vpContentBPD = allocBPD - getBPIndents();
-        vpContentIPD = allocIPD - getIPIndents();
-        
-        double contentRectOffsetX = offset.getX();
-        contentRectOffsetX += getBlockContainerFO().getCommonMarginBlock().startIndent.getValue();
-        double contentRectOffsetY = offset.getY();
-        contentRectOffsetY += getSpaceBefore();
-        contentRectOffsetY += getBlockContainerFO().getCommonBorderPaddingBackground().getBorderBeforeWidth(false);
-        contentRectOffsetY += getBlockContainerFO().getCommonBorderPaddingBackground().getPaddingBefore(false);
-        
-        Rectangle2D rect = new Rectangle2D.Double(
-                contentRectOffsetX, contentRectOffsetY, 
-                vpContentIPD, vpContentBPD);
-        relDims = new FODimension(0, 0);
-        absoluteCTM = CTM.getCTMandRelDims(
-                getBlockContainerFO().getReferenceOrientation(),
-                getBlockContainerFO().getWritingMode(), 
-                rect, relDims);
-        
-        while ((curLM = getChildLM()) != null) {
-            // Make break positions and return blocks!
-            // Set up a LayoutContext
-            BreakPoss bp;
-
-            LayoutContext childLC = new LayoutContext(0);
-            childLC.setStackLimit(new MinOptMax(1000000));
-            childLC.setRefIPD(relDims.ipd);
-
-            while (!curLM.isFinished()) {
-                if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
-                    stackSize.add(bp.getStackingSize());
-                    childBreaks.add(bp);
-                }
-            }
-        }
-        setFinished(true);
-        BreakPoss breakPoss = new BreakPoss(
-                                new LeafPosition(this, childBreaks.size() - 1));
-        // absolutely positioned areas do not contribute
-        // to the normal stacking
-        breakPoss.setStackingSize(new MinOptMax(0));
-        usedBPD = stackSize.opt;
-
-        //TODO Maybe check for page overflow when autoHeight=true
-        if (!autoHeight & (usedBPD > relDims.bpd)) {
-            log.warn("Contents overflow block-container viewport: clipping");
-            if (getBlockContainerFO().getOverflow() == EN_HIDDEN) {
-                clip = true;
-            } else if (getBlockContainerFO().getOverflow() == EN_ERROR_IF_OVERFLOW) {
-                //TODO Throw layout exception
-                clip = true;
-            }
-        }
-
-        return breakPoss;
-    }
-
     /**
      * @see org.apache.fop.layoutmgr.LayoutManager#addAreas(org.apache.fop.layoutmgr.PositionIterator, org.apache.fop.layoutmgr.LayoutContext)
      */
@@ -947,8 +688,10 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             // add space before and / or after the paragraph
             // to reach a multiple of bpUnit
             if (bSpaceBefore && bSpaceAfter) {
-                foBlockSpaceBefore = new SpaceVal(getBlockContainerFO().getCommonMarginBlock().spaceBefore).getSpace();
-                foBlockSpaceAfter = new SpaceVal(getBlockContainerFO().getCommonMarginBlock().spaceAfter).getSpace();
+                foBlockSpaceBefore = new SpaceVal(getBlockContainerFO()
+                            .getCommonMarginBlock().spaceBefore).getSpace();
+                foBlockSpaceAfter = new SpaceVal(getBlockContainerFO()
+                            .getCommonMarginBlock().spaceAfter).getSpace();
                 adjustedSpaceBefore = (neededUnits(splitLength
                         + foBlockSpaceBefore.min
                         + foBlockSpaceAfter.min)
@@ -996,7 +739,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             bcpos.getBreaker().addContainedAreas();
         }
 
-        int bIndents = getBlockContainerFO().getCommonBorderPaddingBackground().getBPPaddingAndBorder(false);
+        //int bIndents = getBlockContainerFO().getCommonBorderPaddingBackground()
+        //    .getBPPaddingAndBorder(false);
 
         getCurrentPV().addMarkers(markers, false, false, true);
 
@@ -1011,52 +755,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         referenceArea = null;
     }
     
-    public void addAreasOLDOLDOLD(PositionIterator parentIter,
-                         LayoutContext layoutContext) {
-        getParentArea(null);
-
-        /* taken from BlockLM, check first if we should use space-before|after traits
-        double adjust = layoutContext.getSpaceAdjust();
-        if (!isAbsoluteOrFixed()) {
-            // if adjusted space before
-            addBlockSpacing(adjust, foBlockSpaceBefore);
-            foBlockSpaceBefore = null;
-        }*/
-
-        BreakPoss bp1 = (BreakPoss)parentIter.peekNext();
-        getPSLM().addIDToPage(getBlockContainerFO().getId());
-        getCurrentPV().addMarkers(markers, true, bp1.isFirstArea(), bp1.isLastArea());
-
-        LayoutManager childLM;
-        int iStartPos = 0;
-        LayoutContext lc = new LayoutContext(0);
-        while (parentIter.hasNext()) {
-            LeafPosition lfp = (LeafPosition) parentIter.next();
-            // Add the block areas to Area
-            PositionIterator breakPosIter 
-                    = new BreakPossPosIter(childBreaks, iStartPos,
-                                   lfp.getLeafPos() + 1);
-            iStartPos = lfp.getLeafPos() + 1;
-            while ((childLM = breakPosIter.getNextChildLM()) != null) {
-                childLM.addAreas(breakPosIter, lc);
-            }
-        }
-
-        flush();
-        getCurrentPV().addMarkers(markers, true, bp1.isFirstArea(), bp1.isLastArea());
-
-        /*
-        if (!isAbsoluteOrFixed()) {
-            // if adjusted space after
-            foBlockSpaceAfter = new SpaceVal(getBlockContainerFO().getCommonMarginBlock().spaceAfter).getSpace();
-            addBlockSpacing(adjust, foBlockSpaceAfter);
-        }*/
-        
-        childBreaks.clear();
-        viewportBlockArea = null;
-        referenceArea = null;
-    }
-
     /**
      * Get the parent area for children of this block container.
      * This returns the current block container area
@@ -1075,8 +773,10 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                 viewportBlockArea.setBPD(vpContentBPD);
             }
 
-            TraitSetter.addBorders(viewportBlockArea, getBlockContainerFO().getCommonBorderPaddingBackground());
-            TraitSetter.addBackground(viewportBlockArea, getBlockContainerFO().getCommonBorderPaddingBackground());
+            TraitSetter.addBorders(viewportBlockArea, 
+                    getBlockContainerFO().getCommonBorderPaddingBackground());
+            TraitSetter.addBackground(viewportBlockArea, 
+                    getBlockContainerFO().getCommonBorderPaddingBackground());
             TraitSetter.addMargins(viewportBlockArea, 
                     getBlockContainerFO().getCommonBorderPaddingBackground(),
                     getBlockContainerFO().getCommonMarginBlock());
@@ -1214,7 +914,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
     }
 
     /**
-     * convenience method that returns the BlockContainer node
+     * @return the BlockContainer node
      */
     protected BlockContainer getBlockContainerFO() {
         return (BlockContainer) fobj;

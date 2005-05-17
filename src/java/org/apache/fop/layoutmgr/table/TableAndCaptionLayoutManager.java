@@ -20,19 +20,11 @@ package org.apache.fop.layoutmgr.table;
 
 import org.apache.fop.fo.flow.TableAndCaption;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
-import org.apache.fop.layoutmgr.LayoutManager;
-import org.apache.fop.layoutmgr.LeafPosition;
-import org.apache.fop.layoutmgr.BreakPoss;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.BreakPossPosIter;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
-import org.apache.fop.traits.MinOptMax;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * LayoutManager for a table-and-caption FO.
@@ -40,17 +32,18 @@ import java.util.List;
  * The caption contains blocks that are positioned next to the
  * table on the caption side.
  * The caption blocks have an implicit keep with the table.
+ * @todo Implement getNextKnuthElements()
  */
 public class TableAndCaptionLayoutManager extends BlockStackingLayoutManager {
     private TableAndCaption fobj;
     
     private Block curBlockArea;
 
-    private List childBreaks = new ArrayList();
+    //private List childBreaks = new java.util.ArrayList();
 
     /**
      * Create a new table and caption layout manager.
-     *
+     * @param node table-and-caption FO
      */
     public TableAndCaptionLayoutManager(TableAndCaption node) {
         super(node);
@@ -63,6 +56,7 @@ public class TableAndCaptionLayoutManager extends BlockStackingLayoutManager {
      * @param context the layout context for getting breaks
      * @return the next break possibility
      */
+    /*
     public BreakPoss getNextBreakPoss(LayoutContext context) {
         LayoutManager curLM; // currently active LM
 
@@ -128,7 +122,7 @@ public class TableAndCaptionLayoutManager extends BlockStackingLayoutManager {
         }
         setFinished(true);
         return null;
-    }
+    }*/
 
     /**
      * Add the areas.
@@ -141,24 +135,24 @@ public class TableAndCaptionLayoutManager extends BlockStackingLayoutManager {
         getParentArea(null);
         getPSLM().addIDToPage(fobj.getId());
 
+        /* TODO: Reimplement using Knuth approach
         LayoutManager childLM;
         int iStartPos = 0;
         LayoutContext lc = new LayoutContext(0);
         while (parentIter.hasNext()) {
             LeafPosition lfp = (LeafPosition) parentIter.next();
             // Add the block areas to Area
-            PositionIterator breakPosIter =
-              new BreakPossPosIter(childBreaks, iStartPos,
-                                   lfp.getLeafPos() + 1);
+            PositionIterator breakPosIter = new BreakPossPosIter(
+                    childBreaks, iStartPos, lfp.getLeafPos() + 1);
             iStartPos = lfp.getLeafPos() + 1;
             while ((childLM = breakPosIter.getNextChildLM()) != null) {
                 childLM.addAreas(breakPosIter, lc);
             }
-        }
+        }*/
 
         flush();
 
-        childBreaks.clear();
+        //childBreaks.clear();
         curBlockArea = null;
     }
 

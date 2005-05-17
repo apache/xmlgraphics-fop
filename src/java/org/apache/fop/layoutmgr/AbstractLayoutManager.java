@@ -204,17 +204,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
 
 
     /**
-     * Generate and return the next break possibility.
-     * Each layout manager must implement this.
-     * TODO: should this be abstract or is there some reasonable
-     * default implementation?
-     */
-    public BreakPoss getNextBreakPoss(LayoutContext context) {
-        return null;
-    }
-
-
-    /**
      * Return value indicating whether the next area to be generated could
      * start a new line or flow area.
      * In general, if can't break at the current level, delegate to

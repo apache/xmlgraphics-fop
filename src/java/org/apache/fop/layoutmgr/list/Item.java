@@ -23,15 +23,12 @@ import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManager;
-import org.apache.fop.layoutmgr.LeafPosition;
-import org.apache.fop.layoutmgr.BreakPoss;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
-import org.apache.fop.traits.MinOptMax;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -46,8 +43,6 @@ public class Item extends BlockStackingLayoutManager {
     private FObj fobj;
 
     private Block curBlockArea;
-
-    private List childBreaks = new ArrayList();
 
     private int xoffset;
     private int itemIPD;
@@ -80,81 +75,6 @@ public class Item extends BlockStackingLayoutManager {
     public Item(ListItemBody node) {
         super(node);
         fobj = node;
-    }
-
-    /**
-     * Get the next break possibility for this cell.
-     * A cell contains blocks so there are breaks around the blocks
-     * and inside the blocks.
-     *
-     * @param context the layout context
-     * @return the next break possibility
-     */
-    public BreakPoss getNextBreakPoss(LayoutContext context) {
-        LayoutManager curLM; // currently active LM
-
-        MinOptMax stackSize = new MinOptMax();
-        // if starting add space before
-        // stackSize.add(spaceBefore);
-        BreakPoss lastPos = null;
-
-        itemIPD = context.getRefIPD();
-
-        while ((curLM = getChildLM()) != null) {
-            if (curLM.generatesInlineAreas()) {
-                // error
-                curLM.setFinished(true);
-                continue;
-            }
-            // Set up a LayoutContext
-            int ipd = context.getRefIPD();
-            BreakPoss bp;
-
-            LayoutContext childLC = new LayoutContext(0);
-            childLC.setStackLimit(MinOptMax.subtract(context.getStackLimit(),
-                                     stackSize));
-            childLC.setRefIPD(ipd);
-
-            boolean over = false;
-            while (!curLM.isFinished()) {
-                if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
-                    if (stackSize.opt + bp.getStackingSize().opt > context.getStackLimit().max) {
-                        // reset to last break
-                        if (lastPos != null) {
-                            LayoutManager lm = lastPos.getLayoutManager();
-                            lm.resetPosition(lastPos.getPosition());
-                            if (lm != curLM) {
-                                curLM.resetPosition(null);
-                            }
-                        } else {
-                            curLM.resetPosition(null);
-                        }
-                        over = true;
-                        break;
-                    }
-                    stackSize.add(bp.getStackingSize());
-                    lastPos = bp;
-                    childBreaks.add(bp);
-
-                    if (bp.nextBreakOverflows()) {
-                        over = true;
-                        break;
-                    }
-
-                    childLC.setStackLimit(MinOptMax.subtract(
-                                             context.getStackLimit(), stackSize));
-                }
-            }
-            BreakPoss breakPoss = new BreakPoss(
-                                    new LeafPosition(this, childBreaks.size() - 1));
-            if (over) {
-                breakPoss.setFlag(BreakPoss.NEXT_OVERFLOWS, true);
-            }
-            breakPoss.setStackingSize(stackSize);
-            return breakPoss;
-        }
-        setFinished(true);
-        return null;
     }
 
     /**
@@ -235,7 +155,6 @@ public class Item extends BlockStackingLayoutManager {
 
         flush();
 
-        childBreaks.clear();
         curBlockArea = null;
     }
 

@@ -24,7 +24,6 @@ import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafPosition;
-import org.apache.fop.layoutmgr.BreakPoss;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.Position;
@@ -148,121 +147,6 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         return iIndents;
     }
     
-    /**
-     * Get the next break possibility.
-     *
-     * @param context the layout context for getting breaks
-     * @return the next break possibility
-     */
-    public BreakPoss getNextBreakPoss(LayoutContext context) {
-        // currently active LM
-        Item curLM;
-
-        //int allocBPD = context.
-        referenceIPD = context.getRefIPD();
-
-        BreakPoss lastPos = null;
-        List breakList = new ArrayList();
-
-        int min = 0;
-        int opt = 0;
-        int max = 0;
-
-        int stage = 0;
-        boolean over = false;
-        while (true) {
-            if (stage == 0) {
-                curLM = label;
-            } else if (stage == 1) {
-                curLM = body;
-            } else {
-                break;
-            }
-            List childBreaks = new ArrayList();
-            MinOptMax stackSize = new MinOptMax();
-
-            // Set up a LayoutContext
-            // the ipd is from the current column
-            //int ipd = context.getRefIPD();
-            BreakPoss bp;
-
-            LayoutContext childLC = new LayoutContext(0);
-            childLC.setStackLimit(
-                  MinOptMax.subtract(context.getStackLimit(),
-                                     stackSize));
-            childLC.setRefIPD(referenceIPD);
-            
-            stage++;
-            while (!curLM.isFinished()) {
-                if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
-                    if (stackSize.opt + bp.getStackingSize().opt > context.getStackLimit().max) {
-                        // reset to last break
-                        if (lastPos != null) {
-                            LayoutManager lm = lastPos.getLayoutManager();
-                            lm.resetPosition(lastPos.getPosition());
-                            if (lm != curLM) {
-                                curLM.resetPosition(null);
-                            }
-                        } else {
-                            curLM.resetPosition(null);
-                        }
-                        over = true;
-                        break;
-                    } else {
-                        lastPos = bp;
-                    }
-                    stackSize.add(bp.getStackingSize());
-                    childBreaks.add(bp);
-
-                    if (bp.nextBreakOverflows()) {
-                        over = true;
-                        break;
-                    }
-
-                    childLC.setStackLimit(MinOptMax.subtract(
-                                             context.getStackLimit(), stackSize));
-                }
-            }
-            // the min is the maximum min of the label and body
-            if (stackSize.min > min) {
-                min = stackSize.min;
-            }
-            // the optimum is the minimum of all optimums
-            if (stackSize.opt > opt) {
-                opt = stackSize.opt;
-            }
-            // the maximum is the largest maximum
-            if (stackSize.max > max) {
-                max = stackSize.max;
-            }
-
-            breakList.add(childBreaks);
-        }
-        listItemHeight = opt;
-
-        if (label.isFinished() && body.isFinished()) {
-            setFinished(true);
-        }
-
-        MinOptMax itemSize = new MinOptMax(min, opt, max);
-        
-        //Add spacing
-        if (spaceAfter != null) {
-            itemSize.add(spaceAfter);
-        }
-        if (spaceBefore != null) {
-            itemSize.add(spaceBefore);
-        }
-        
-        ItemPosition rp = new ItemPosition(this, breakList.size() - 1, breakList);
-        BreakPoss breakPoss = new BreakPoss(rp);
-        if (over) {
-            breakPoss.setFlag(BreakPoss.NEXT_OVERFLOWS, true);
-        }
-        breakPoss.setStackingSize(itemSize);
-        return breakPoss;
-    }
-
     /**
      * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(org.apache.fop.layoutmgr.LayoutContext, int)
      */
@@ -430,11 +314,11 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
      * @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(java.util.List, int)
      */
     public LinkedList getChangedKnuthElements(List oldList, int alignment) {
-/*LF*/  //log.debug(" LILM.getChanged> label");
+        //log.debug(" LILM.getChanged> label");
         // label
         labelList = label.getChangedKnuthElements(labelList, alignment);
 
-/*LF*/  //log.debug(" LILM.getChanged> body");
+        //log.debug(" LILM.getChanged> body");
         // body
         // "unwrap" the Positions stored in the elements
         ListIterator oldListIterator = oldList.listIterator();
@@ -442,8 +326,11 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         while (oldListIterator.hasNext()) {
             oldElement = (KnuthElement)oldListIterator.next();
             Position innerPosition = ((NonLeafPosition) oldElement.getPosition()).getPosition();
-/*LF*/      //System.out.println(" BLM> unwrapping: " + (oldElement.isBox() ? "box    " : (oldElement.isGlue() ? "glue   " : "penalty")) + " creato da " + oldElement.getLayoutManager().getClass().getName());
-/*LF*/      //System.out.println(" BLM> unwrapping:         " + oldElement.getPosition().getClass().getName());
+            //System.out.println(" BLM> unwrapping: " + (oldElement.isBox() 
+            //  ? "box    " : (oldElement.isGlue() ? "glue   " : "penalty")) 
+            //  + " creato da " + oldElement.getLayoutManager().getClass().getName());
+            //System.out.println(" BLM> unwrapping:         " 
+            //  + oldElement.getPosition().getClass().getName());
             if (innerPosition != null) {
                 // oldElement was created by a descendant of this BlockLM
                 oldElement.setPosition(innerPosition);

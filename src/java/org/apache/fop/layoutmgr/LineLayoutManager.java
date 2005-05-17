@@ -112,7 +112,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     /** Break positions returned by inline content. */
     private List vecInlineBreaks = new java.util.ArrayList();
 
-    private BreakPoss prevBP = null; // Last confirmed break position
     private int bTextAlignment = EN_JUSTIFY;
     private int bTextAlignmentLast;
     private int effectiveAlignment;
@@ -128,7 +127,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     private int middleShift;
 
     private List knuthParagraphs = null;
-    private List breakpoints = null;
     private int iReturnedLBP = 0;
     private int iStartElement = 0;
     private int iEndElement = 0;
@@ -483,19 +481,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         initialize(); // Normally done when started by parent!
     }
 
-    /**
-     * Call child layout managers to generate content.
-     * This gets the next break which is a full line.
-     *
-     * @param context the layout context for finding breaks
-     * @return the next break position
-     */
-    // this method is no longer used
-    public BreakPoss getNextBreakPoss(LayoutContext context) {
-        setFinished(true);
-        return null;
-    }
-
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         // Get a break from currently active child LM
         // Set up constraints for inline level managers
@@ -510,7 +495,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         if (iPrevLineEnd == 0 && bTextAlignment == EN_START) {
             availIPD.subtract(new MinOptMax(textIndent.getValue()));
         }
-        prevBP = null;
 
         //PHASE 1: Create Knuth elements
         if (knuthParagraphs == null) {
@@ -1307,56 +1291,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         updateList.clear();
     }
 
-    private void resetBP(BreakPoss resetBP) {
-        if (resetBP == null) {
-            reset((Position) null);
-        } else {
-            while (vecInlineBreaks.get(vecInlineBreaks.size() - 1) != resetBP) {
-                vecInlineBreaks.remove(vecInlineBreaks.size() - 1);
-            }
-            reset(resetBP.getPosition());
-        }
-    }
-
-    private void reset() {
-        resetBP(prevBP);
-    }
-
-    protected boolean couldEndLine(BreakPoss bp) {
-        if (bp.canBreakAfter()) {
-            return true; // no keep, ends on break char
-        } else if (bp.isSuppressible()) {
-            // NOTE: except at end of content for this LM!!
-            // Never break after only space chars or any other sequence
-            // of areas which would be suppressed at the end of the line.
-            return false;
-        } else {
-            // See if could break before next area
-            // TODO: do we need to set anything on the layout context?
-            LayoutContext lc = new LayoutContext(0);
-            LayoutManager nextLM = getChildLM();
-            return (nextLM == null || nextLM.canBreakBefore(lc));
-        }
-    }
-
-    private BreakPoss getBestBP(List vecPossEnd) {
-        if (vecPossEnd.size() == 1) {
-            return ((BreakCost) vecPossEnd.get(0)).getBP();
-        }
-        // Choose the best break (use a sort on cost!)
-        Iterator iter = vecPossEnd.iterator();
-        int minCost = Integer.MAX_VALUE;
-        BreakPoss bestBP = null;
-        while (iter.hasNext()) {
-            BreakCost bc = (BreakCost) iter.next();
-            if (bc.getCost() < minCost) {
-                minCost = bc.getCost();
-                bestBP = bc.getBP();
-            }
-        }
-        return bestBP;
-    }
-
     /** Line area is always considered to act as a fence. */
     protected boolean hasLeadingFence(boolean bNotFirst) {
         return true;
@@ -1365,47 +1299,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     /** Line area is always considered to act as a fence. */
     protected boolean hasTrailingFence(boolean bNotLast) {
         return true;
-    }
-
-    /** Return true if we are at the end of this LM,
-        and BPs after prev have been added to vecInlineBreaks
-        and all breakposs in vecInlineBreaks
-        back to and excluding prev are suppressible */
-    private boolean condAllAreSuppressible(BreakPoss prev) {
-        if (!isFinished()) {
-            return false;
-        }
-        if (vecInlineBreaks.get(vecInlineBreaks.size() - 1) == prev) {
-            return false;
-        }
-        return allAreSuppressible(prev);
-    }
-
-    /** Test whether all breakposs in vecInlineBreaks
-        back to and excluding prev are suppressible */
-    private boolean allAreSuppressible(BreakPoss prev) {
-        ListIterator bpIter =
-            vecInlineBreaks.listIterator(vecInlineBreaks.size());
-        boolean allAreSuppressible = true;
-        BreakPoss bp;
-        while (bpIter.hasPrevious()
-               && (bp = (BreakPoss) bpIter.previous()) != prev
-               && (allAreSuppressible = bp.isSuppressible())) {
-        }
-        return allAreSuppressible;
-    }
-
-    /** Remove all BPs from the end back to and excluding prev
-        from vecInlineBreaks*/
-    private void removeAllBP(BreakPoss prev) {
-        int iPrev;
-        if (prev == null) {
-            vecInlineBreaks.clear();
-        } else if ((iPrev = vecInlineBreaks.indexOf(prev)) != -1) {
-            for (int i = vecInlineBreaks.size()-1; iPrev < i; --i) {
-                vecInlineBreaks.remove(i);
-            }
-        }
     }
 
     private HyphContext getHyphenContext(StringBuffer sbChars) {
