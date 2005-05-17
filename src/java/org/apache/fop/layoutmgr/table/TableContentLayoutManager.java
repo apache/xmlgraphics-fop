@@ -676,8 +676,8 @@ public class TableContentLayoutManager {
             for (int i = 0; i < gridUnits.length; i++) {
                 GridUnit currentGU = lastRow.safelyGetGridUnit(i);
                 if ((gridUnits[i] != null) 
-                        && (forcedFlush || (end[i] == gridUnits[i].getElements().size() - 1))
-                        && (currentGU == null || currentGU.isLastGridUnitRowSpan())) {
+                        && (forcedFlush || ((end[i] == gridUnits[i].getElements().size() - 1))
+                                && (currentGU == null || currentGU.isLastGridUnitRowSpan()))) {
                     //the last line in the "if" above is to avoid a premature end of an 
                     //row-spanned cell because no GridUnitParts are generated after a cell is
                     //finished with its content. currentGU can be null if there's no grid unit
