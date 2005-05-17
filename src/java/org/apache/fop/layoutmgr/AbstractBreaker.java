@@ -253,8 +253,8 @@ public abstract class AbstractBreaker {
             }
 
             if (startElementIndex <= endElementIndex) {
-                log.debug("     addAreas da " + startElementIndex
-                        + " a " + endElementIndex);
+                log.debug("     addAreas from " + startElementIndex
+                        + " to " + endElementIndex);
                 childLC = new LayoutContext(0);
                 // add space before if display-align is center or bottom
                 // add space after if display-align is distribute and

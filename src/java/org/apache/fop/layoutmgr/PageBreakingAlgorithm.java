@@ -510,8 +510,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         // add nodes at the beginning of the list, as they are found
         // backwards, from the last one to the first one
         if (log.isDebugEnabled()) {
-            log.debug("BBA> difference= " + difference + " ratio= " + ratio 
-                    + " posizione= " + bestActiveNode.position);
+            log.debug("BBA> difference=" + difference + " ratio=" + ratio 
+                    + " position=" + bestActiveNode.position);
         }
         insertPageBreakAsFirst(new PageBreakPosition(this.topLevelLM, 
                 bestActiveNode.position,
