@@ -21,8 +21,6 @@ package org.apache.fop.layoutmgr.list;
 import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManager;
-import org.apache.fop.layoutmgr.LeafPosition;
-import org.apache.fop.layoutmgr.BreakPoss;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.Position;
@@ -33,7 +31,6 @@ import org.apache.fop.area.Block;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,8 +44,6 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
     private ListBlock fobj;
     
     private Block curBlockArea;
-
-    private List bodyBreaks = new ArrayList();
 
     //TODO space-before|after: handle space-resolution rules
     private MinOptMax spaceBefore;
@@ -100,86 +95,6 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
         return iIndents;
     }
     
-    /**
-     * Get the next break possibility.
-     * The break possibility depends on the height of the header and footer
-     * and possible breaks inside the table body.
-     *
-     * @param context the layout context for finding breaks
-     * @return the next break possibility
-     */
-    public BreakPoss getNextBreakPoss(LayoutContext context) {
-        // currently active LM
-        LayoutManager curLM;
-
-        referenceIPD = context.getRefIPD();
-
-        MinOptMax stackSize = new MinOptMax();
-        
-        //Add spacing
-        if (spaceAfter != null) {
-            stackSize.add(spaceAfter);
-        }
-        if (spaceBefore != null) {
-            stackSize.add(spaceBefore);
-        }
-
-        BreakPoss lastPos = null;
-
-        while ((curLM = (LayoutManager)getChildLM()) != null) {
-            // Make break positions
-            // Set up a LayoutContext
-            //int ipd = context.getRefIPD();
-            BreakPoss bp;
-
-            LayoutContext childLC = new LayoutContext(0);
-            childLC.setStackLimit(
-                  MinOptMax.subtract(context.getStackLimit(),
-                                     stackSize));
-            childLC.setRefIPD(referenceIPD);
-
-            boolean over = false;
-            while (!curLM.isFinished()) {
-                if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
-                    if (stackSize.opt + bp.getStackingSize().opt > context.getStackLimit().max) {
-                        // reset to last break
-                        if (lastPos != null) {
-                            LayoutManager lm = lastPos.getLayoutManager();
-                            lm.resetPosition(lastPos.getPosition());
-                            if (lm != curLM) {
-                                curLM.resetPosition(null);
-                            }
-                        } else {
-                            curLM.resetPosition(null);
-                        }
-                        over = true;
-                        break;
-                    }
-                    stackSize.add(bp.getStackingSize());
-                    lastPos = bp;
-                    bodyBreaks.add(bp);
-
-                    if (bp.nextBreakOverflows()) {
-                        over = true;
-                        break;
-                    }
-
-                    childLC.setStackLimit(MinOptMax.subtract(
-                                             context.getStackLimit(), stackSize));
-                }
-            }
-            BreakPoss breakPoss = new BreakPoss(
-                                    new LeafPosition(this, bodyBreaks.size() - 1));
-            if (over) {
-                breakPoss.setFlag(BreakPoss.NEXT_OVERFLOWS, true);
-            }
-            breakPoss.setStackingSize(stackSize);
-            return breakPoss;
-        }
-        setFinished(true);
-        return null;
-    }
-
     public LinkedList getChangedKnuthElements(List oldList, int alignment) {
         //log.debug("LBLM.getChangedKnuthElements>");
         return super.getChangedKnuthElements(oldList, alignment);
@@ -241,7 +156,6 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
         // if adjusted space after
         addBlockSpacing(adjust, spaceAfter);
         
-        bodyBreaks.clear();
         curBlockArea = null;
     }
 
@@ -301,7 +215,6 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
      */
     public void resetPosition(Position resetPos) {
         if (resetPos == null) {
-            bodyBreaks.clear();
             reset(null);
         } else {
             //TODO Something to put here?

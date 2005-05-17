@@ -22,7 +22,6 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.List;
 
-import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
@@ -35,8 +34,6 @@ import org.apache.fop.traits.MinOptMax;
  */
 public class BlockLayoutManager extends BlockStackingLayoutManager {
     
-    private static final int FINISHED_LEAF_POS = -2;
-        
     private Block curBlockArea;
 
     /** Iterator over the child layout managers. */
@@ -51,26 +48,15 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
        used in rendering the fo:block.
     */
     private MinOptMax foBlockSpaceBefore = null;
-    // need to retain foBlockSpaceAfter from previous instantiation
-    //TODO this is very bad for multi-threading. fix me!
-    private static MinOptMax foBlockSpaceAfter = null;
-    private MinOptMax prevFoBlockSpaceAfter = null;
+    private MinOptMax foBlockSpaceAfter = null;
 
     private int lead = 12000;
     private int lineHeight = 14000;
     private int follow = 2000;
     private int middleShift = 0;
 
-    private int iStartPos = 0;
-
-    //private int contentIPD = 0;
-    
     /** The list of child BreakPoss instances. */
     protected List childBreaks = new java.util.ArrayList();
-
-    private boolean isfirst = true;
-    
-    private LineLayoutManager childLLM = null;
 
     /**
      * Creates a new BlockLayoutManager.
@@ -96,7 +82,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
      */
     protected void initProperties() {
         foBlockSpaceBefore = new SpaceVal(getBlockFO().getCommonMarginBlock().spaceBefore).getSpace();
-        prevFoBlockSpaceAfter = foBlockSpaceAfter;
 /*LF*/  bpUnit = 0; //layoutProps.blockProgressionUnit;
 /*LF*/  if (bpUnit == 0) {
 /*LF*/      // use optimum space values
@@ -189,117 +174,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     }
     
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getNextBreakPoss(org.apache.fop.layoutmgr.LayoutContext)
-     */
-    public BreakPoss getNextBreakPossOLDOLDOLD(LayoutContext context) {
-        LayoutManager curLM; // currently active LM
-
-        //int refipd = context.getRefIPD();
-        referenceIPD = context.getRefIPD();
-        int contentipd = referenceIPD - getIPIndents();
-
-        MinOptMax stackSize = new MinOptMax();
-
-        if (prevFoBlockSpaceAfter != null) {
-            stackSize.add(prevFoBlockSpaceAfter);
-            prevFoBlockSpaceAfter = null;
-        }
-
-        if (foBlockSpaceBefore != null) {
-            // this function called before addAreas(), so
-            // resetting foBlockSpaceBefore = null in addAreas()
-            stackSize.add(foBlockSpaceBefore);
-        }
-
-        BreakPoss lastPos = null;
-
-        // Set context for percentage property values.
-        getBlockFO().setLayoutDimension(PercentBase.BLOCK_IPD, contentipd);
-        getBlockFO().setLayoutDimension(PercentBase.BLOCK_BPD, -1);
-
-        while ((curLM = getChildLM()) != null) {
-            // Make break positions and return blocks!
-            // Set up a LayoutContext
-            BreakPoss bp;
-
-            LayoutContext childLC = new LayoutContext(0);
-            // if line layout manager then set stack limit to ipd
-            // line LM actually generates a LineArea which is a block
-            if (curLM.generatesInlineAreas()) {
-                // set stackLimit for lines
-                childLC.setStackLimit(new MinOptMax(contentipd));
-                childLC.setRefIPD(contentipd);
-            } else {
-                childLC.setStackLimit(
-                  MinOptMax.subtract(context.getStackLimit(),
-                                     stackSize));
-                childLC.setRefIPD(referenceIPD);
-            }
-            boolean over = false;
-            while (!curLM.isFinished()) {
-                if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
-                    if (stackSize.opt + bp.getStackingSize().opt > context.getStackLimit().max) {
-                        // reset to last break
-                        if (lastPos != null) {
-                            LayoutManager lm = lastPos.getLayoutManager();
-                            lm.resetPosition(lastPos.getPosition());
-                            if (lm != curLM) {
-                                curLM.resetPosition(null);
-                            }
-                        } else {
-                            curLM.resetPosition(null);
-                        }
-                        over = true;
-                        break;
-                    }
-                    stackSize.add(bp.getStackingSize());
-                    lastPos = bp;
-                    childBreaks.add(bp);
-
-                    if (bp.nextBreakOverflows()) {
-                        over = true;
-                        break;
-                    }
-
-                    if (curLM.generatesInlineAreas()) {
-                        // Reset stackLimit for non-first lines
-                        childLC.setStackLimit(new MinOptMax(contentipd));
-                    } else {
-                        childLC.setStackLimit(MinOptMax.subtract(
-                                                 context.getStackLimit(), stackSize));
-                    }
-                }
-            }
-            if (getChildLM() == null || over) {
-                if (getChildLM() == null) {
-                    setFinished(true);
-                    stackSize.add(new SpaceVal(getBlockFO().getCommonMarginBlock().spaceAfter).getSpace());
-                }
-                BreakPoss breakPoss = new BreakPoss(
-                                    new LeafPosition(this, childBreaks.size() - 1));
-                if (over) {
-                    breakPoss.setFlag(BreakPoss.NEXT_OVERFLOWS, true);
-                }
-                breakPoss.setStackingSize(stackSize);
-                if (isfirst && breakPoss.getStackingSize().opt > 0) {
-                    breakPoss.setFlag(BreakPoss.ISFIRST, true);
-                    isfirst = false;
-                }
-                if (isFinished()) {
-                    breakPoss.setFlag(BreakPoss.ISLAST, true);
-                }
-                return breakPoss;
-            }
-        }
-        setFinished(true);
-        BreakPoss breakPoss = new BreakPoss(new LeafPosition(this, FINISHED_LEAF_POS));
-        breakPoss.setStackingSize(stackSize);
-        breakPoss.setFlag(BreakPoss.ISFIRST, isfirst);
-        breakPoss.setFlag(BreakPoss.ISLAST, true);
-        return breakPoss;
-    }
-
-    /**
      * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepTogether()
      */
     public boolean mustKeepTogether() {
@@ -323,64 +197,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     public boolean mustKeepWithNext() {
         return !getBlockFO().getKeepWithNext().getWithinPage().isAuto()
                 || !getBlockFO().getKeepWithNext().getWithinColumn().isAuto();
-    }
-
-    //TODO this method is no longer used
-    public BreakPoss getNextBreakPoss(LayoutContext context) {
-        setFinished(true);
-        return null;
-    }
-
-    /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#addAreas(org.apache.fop.layoutmgr.PositionIterator, org.apache.fop.layoutmgr.LayoutContext)
-     */
-    public void addAreasOLDOLDOLD(PositionIterator parentIter,
-                         LayoutContext layoutContext) {
-        getParentArea(null);
-
-        BreakPoss bp1 = (BreakPoss)parentIter.peekNext();
-        bBogus = !bp1.generatesAreas(); 
-        
-        // if adjusted space before
-        double adjust = layoutContext.getSpaceAdjust();
-        addBlockSpacing(adjust, foBlockSpaceBefore);
-        foBlockSpaceBefore = null;
-
-        if (!isBogus()) {
-            getPSLM().addIDToPage(getBlockFO().getId());
-            getCurrentPV().addMarkers(markers, true, bp1.isFirstArea(), 
-                    bp1.isLastArea());
-        }
-
-        try {
-            LayoutManager childLM;
-            LayoutContext lc = new LayoutContext(0);
-            while (parentIter.hasNext()) {
-                LeafPosition lfp = (LeafPosition) parentIter.next();
-                if (lfp.getLeafPos() == FINISHED_LEAF_POS) {
-                    return;
-                }
-                // Add the block areas to Area
-                PositionIterator breakPosIter 
-                    = new BreakPossPosIter(childBreaks, iStartPos,
-                                       lfp.getLeafPos() + 1);
-                iStartPos = lfp.getLeafPos() + 1;
-                while ((childLM = breakPosIter.getNextChildLM()) != null) {
-                    childLM.addAreas(breakPosIter, lc);
-                }
-            }
-        } finally {
-            if (!isBogus()) {
-                getCurrentPV().addMarkers(markers, false, bp1.isFirstArea(), 
-                    bp1.isLastArea());
-            }
-            flush();
-
-            // if adjusted space after
-            foBlockSpaceAfter = new SpaceVal(getBlockFO().getCommonMarginBlock().spaceAfter).getSpace();
-            addBlockSpacing(adjust, foBlockSpaceAfter);
-            curBlockArea = null;
-        }
     }
 
     public void addAreas(PositionIterator parentIter,
@@ -625,7 +441,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         if (resetPos == null) {
             reset(null);
             childBreaks.clear();
-            iStartPos = 0;
         } else {
             //reset(resetPos);
             LayoutManager lm = resetPos.getLM();

@@ -22,19 +22,13 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
-import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.layoutmgr.AreaAdditionUtil;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
-import org.apache.fop.layoutmgr.LayoutManager;
-import org.apache.fop.layoutmgr.LeafPosition;
-import org.apache.fop.layoutmgr.BreakPoss;
 import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.MinOptMaxUtil;
-import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.TraitSetter;
@@ -42,7 +36,6 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.Trait;
 import org.apache.fop.traits.MinOptMax;
-import org.apache.tools.ant.taskdefs.condition.IsSet;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -79,7 +72,8 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
     
     /**
      * Create a new Cell layout manager.
-     * @node table-cell FO for which to create the LM
+     * @param node table-cell FO for which to create the LM
+     * @param pgu primary grid unit for the cell 
      */
     public Cell(TableCell node, PrimaryGridUnit pgu) {
         super(node);
@@ -152,10 +146,7 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
      * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(org.apache.fop.layoutmgr.LayoutContext, int)
      */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
-        MinOptMax stackSize = new MinOptMax();
         MinOptMax stackLimit = new MinOptMax(context.getStackLimit());
-
-        BreakPoss lastPos = null;
 
         referenceIPD = context.getRefIPD(); 
         cellIPD = referenceIPD;
@@ -169,7 +160,6 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
         LinkedList returnedList = null;
         LinkedList contentList = new LinkedList();
         LinkedList returnList = new LinkedList();
-        Position returnPosition = new NonLeafPosition(this, null);
 
         BlockLevelLayoutManager curLM; // currently active LM
         BlockLevelLayoutManager prevLM = null; // previously active LM
@@ -229,7 +219,8 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
                     continue;
                 }
                 if (((KnuthElement) returnedList.getLast()).isPenalty()
-                        && ((KnuthPenalty) returnedList.getLast()).getP() == -KnuthElement.INFINITE) {
+                        && ((KnuthPenalty) returnedList.getLast()).getP() 
+                                == -KnuthElement.INFINITE) {
                     // a descendant of this block has break-after
                     if (curLM.isFinished()) {
                         // there is no other content in this block;
@@ -253,103 +244,6 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
         return returnList;
     }
     
-    /**
-     * Get the next break possibility for this cell.
-     * A cell contains blocks so there are breaks around the blocks
-     * and inside the blocks.
-     *
-     * @param context the layout context
-     * @return the next break possibility
-     */
-    public BreakPoss getNextBreakPossOLDOLDOLD(LayoutContext context) {
-        LayoutManager curLM; // currently active LM
-
-        MinOptMax stackSize = new MinOptMax();
-        BreakPoss lastPos = null;
-
-        referenceIPD = context.getRefIPD(); 
-        cellIPD = referenceIPD;
-        cellIPD -= getIPIndents();
-        if (fobj.isSeparateBorderModel()) {
-            int borderSep = fobj.getBorderSeparation().getLengthPair()
-                    .getIPD().getLength().getValue();
-            cellIPD -= borderSep;
-        }
-
-        while ((curLM = getChildLM()) != null) {
-            if (curLM.generatesInlineAreas()) {
-                log.error("table-cell must contain block areas - ignoring");
-                curLM.setFinished(true);
-                continue;
-            }
-            // Set up a LayoutContext
-            BreakPoss bp;
-
-            LayoutContext childLC = new LayoutContext(0);
-            childLC.setStackLimit(MinOptMax.subtract(context.getStackLimit(),
-                                     stackSize));
-            childLC.setRefIPD(cellIPD);
-
-            boolean over = false;
-
-            while (!curLM.isFinished()) {
-                if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
-                    if (stackSize.opt + bp.getStackingSize().opt > context.getStackLimit().max) {
-                        // reset to last break
-                        if (lastPos != null) {
-                            LayoutManager lm = lastPos.getLayoutManager();
-                            lm.resetPosition(lastPos.getPosition());
-                            if (lm != curLM) {
-                                curLM.resetPosition(null);
-                            }
-                        } else {
-                            curLM.resetPosition(null);
-                        }
-                        over = true;
-                        break;
-                    }
-                    stackSize.add(bp.getStackingSize());
-                    lastPos = bp;
-                    childBreaks.add(bp);
-
-                    if (bp.nextBreakOverflows()) {
-                        over = true;
-                        break;
-                    }
-
-                    childLC.setStackLimit(MinOptMax.subtract(
-                                             context.getStackLimit(), stackSize));
-                }
-            }
-            
-            usedBPD = stackSize.opt;
-            if (usedBPD > 0) {
-                emptyCell = false;
-            }
-            
-            LengthRangeProperty specifiedBPD = fobj.getBlockProgressionDimension();
-            if (specifiedBPD.getEnum() != EN_AUTO) {
-                if ((specifiedBPD.getMaximum().getEnum() != EN_AUTO)
-                        && (specifiedBPD.getMaximum().getLength().getValue() < stackSize.min)) {
-                    log.warn("maximum height of cell is smaller than the minimum "
-                            + "height of its contents");
-                }
-                MinOptMaxUtil.restrict(stackSize, specifiedBPD);
-            }
-            stackSize = MinOptMax.add(stackSize, new MinOptMax(borderAndPaddingBPD));
-
-            BreakPoss breakPoss = new BreakPoss(
-                                    new LeafPosition(this, childBreaks.size() - 1));
-            if (over) {
-                breakPoss.setFlag(BreakPoss.NEXT_OVERFLOWS, true);
-            }
-            breakPoss.setStackingSize(stackSize);
-            return breakPoss;
-        }
-        setFinished(true);
-        return null;
-    }
-
     /**
      * Set the y offset of this cell.
      * This offset is used to set the absolute position of the cell.
@@ -425,8 +319,7 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
-        //BreakPoss bp1 = (BreakPoss)parentIter.peekNext();
-        bBogus = false;//!bp1.generatesAreas(); 
+        bBogus = false; //!bp1.generatesAreas(); 
 
         if (!isBogus()) {
             getPSLM().addIDToPage(fobj.getId());
@@ -486,8 +379,8 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
                         block.setXOffset(dx + borderStartWidth);
                         int halfCollapsingBorderHeight = 0;
                         if (!isSeparateBorderModel()) {
-                            halfCollapsingBorderHeight += 
-                                gu.getBorders().getBorderBeforeWidth(false) / 2;
+                            halfCollapsingBorderHeight 
+                                += gu.getBorders().getBorderBeforeWidth(false) / 2;
                         }
                         block.setYOffset(dy - halfCollapsingBorderHeight);
                         TraitSetter.addCollapsingBorders(block, gu.getBorders(), outer);
@@ -615,7 +508,7 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
         // TODO Auto-generated method stub
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepTogether()
      */
     public boolean mustKeepTogether() {

@@ -83,17 +83,6 @@ public interface LayoutManager {
     boolean canBreakBefore(LayoutContext lc);
 
     /**
-     * Generate and return the next break possibility.
-     *
-     * @param context The layout context contains information about pending
-     * space specifiers from ancestor areas or previous areas, reference
-     * area inline-progression-dimension and various other layout-related
-     * information.
-     * @return the next break position
-     */
-    BreakPoss getNextBreakPoss(LayoutContext context);
-
-    /**
      * Reset to the position.
      *
      * @param position
