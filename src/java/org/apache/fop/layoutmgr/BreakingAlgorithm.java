@@ -23,9 +23,6 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.traits.MinOptMax;
 
-import java.util.LinkedList;
-import java.util.ListIterator;
-
 /**
  * The set of nodes is sorted into lines indexed into activeLines.
  * The nodes in each line are linked together in a single linked list by the 
