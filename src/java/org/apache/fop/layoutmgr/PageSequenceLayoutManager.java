@@ -230,7 +230,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 /*LF*/          childFLM = (FlowLayoutManager)curLM;
 /*LF*/      } else {
 /*LF*/          if (curLM != childFLM) {
-/*LF*/              System.out.println("PLM> figlio sconosciuto (invalid child LM)");
+/*LF*/              log.error("PSLM> invalid child LM");
 /*LF*/          }
 /*LF*/      }
 

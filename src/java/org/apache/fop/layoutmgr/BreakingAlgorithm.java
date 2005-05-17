@@ -18,8 +18,6 @@
 
 package org.apache.fop.layoutmgr;
 
-import java.util.ArrayList;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

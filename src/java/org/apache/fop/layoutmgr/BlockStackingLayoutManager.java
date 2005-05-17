@@ -407,7 +407,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             return returnValue;
         } else {
             // this should never happen
-            System.err.println("BlockLayoutManager.negotiateBPDAdjustment(): unexpected Position");
+            log.error("BlockLayoutManager.negotiateBPDAdjustment(): unexpected Position");
             return 0;
         }
     }
