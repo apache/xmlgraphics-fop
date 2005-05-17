@@ -18,6 +18,9 @@
  
 package org.apache.fop.area;
 
+import java.util.ArrayList;
+import java.util.List;
+
 // may combine with before float into a conditional area
 
 /**
@@ -53,5 +56,24 @@ public class Footnote extends BlockParent {
         return separator;
     }
 
+    public void setTop(int top) {
+        this.top = top;
+    }
+
+    public int getTop() {
+        return top;
+    }
+
+    public void addBlock(Block child) {
+        if (children == null) {
+            children = new ArrayList();
+        }
+        this.setBPD(this.getBPD() + child.getBPD());
+        children.add(child);
+    }
+
+    public List getChildAreas() {
+        return children;
+    }
 }
 

@@ -35,16 +35,24 @@ public abstract class AbstractBreaker {
     /** logging instance */
     protected static Log log = LogFactory.getLog(AbstractBreaker.class);
 
-    /*LF*/
     public static class PageBreakPosition extends LeafPosition {
         double bpdAdjust; // Percentage to adjust (stretch or shrink)
         int difference;
+        int footnoteFirstListIndex;
+        int footnoteFirstElementIndex;
+        int footnoteLastListIndex;
+        int footnoteLastElementIndex;
 
         PageBreakPosition(LayoutManager lm, int iBreakIndex,
+                          int ffli, int ffei, int flli, int flei,
                           double bpdA, int diff) {
             super(lm, iBreakIndex);
             bpdAdjust = bpdA;
             difference = diff;
+            footnoteFirstListIndex = ffli;
+            footnoteFirstElementIndex = ffei;
+            footnoteLastListIndex = flli;
+            footnoteLastElementIndex = flei;
         }
     }
 
@@ -83,13 +91,13 @@ public abstract class AbstractBreaker {
 
     /** blockListIndex of the current BlockSequence in blockLists */
     private int blockListIndex = 0;
-/*LF*/
-    /*LF*/
+
     private List blockLists = null;
 
     private int alignment;
     private int alignmentLast;
-    /*LF*/
+
+    protected MinOptMax footnoteSeparatorLength = new MinOptMax(0);
 
     protected abstract int getCurrentDisplayAlign();
     protected abstract boolean hasMoreContent();
@@ -107,7 +115,7 @@ public abstract class AbstractBreaker {
         //nop
     }
     
-    protected abstract void finishPart();
+    protected abstract void finishPart(PageBreakingAlgorithm alg, PageBreakPosition pbp);
 
     protected LayoutContext createLayoutContext() {
         return new LayoutContext(0);
@@ -157,7 +165,7 @@ public abstract class AbstractBreaker {
             log.debug("PLM> start of algorithm (" + this.getClass().getName() 
                     + "), flow BPD =" + flowBPD);
             PageBreakingAlgorithm alg = new PageBreakingAlgorithm(getTopLevelLM(),
-                    alignment, alignmentLast);
+                    alignment, alignmentLast, footnoteSeparatorLength);
             int iOptPageNumber;
 
             BlockSequence effectiveList;
@@ -286,7 +294,7 @@ public abstract class AbstractBreaker {
                         startElementIndex, endElementIndex + 1), childLC);
             }
 
-            finishPart();
+            finishPart(alg, pbp);
 
             startElementIndex = pbp.getLeafPos() + 1;
         }

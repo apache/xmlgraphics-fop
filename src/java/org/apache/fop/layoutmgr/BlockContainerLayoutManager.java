@@ -521,7 +521,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             this.deferredEffectiveList = effectiveList;
         }
         
-        protected void finishPart() {
+        protected void finishPart(PageBreakingAlgorithm alg, PageBreakPosition pbp) {
             //nop for bclm
         }
         

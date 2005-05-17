@@ -166,6 +166,14 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         return new StaticContentLayoutManager(pslm, sc, reg);
     }
     
+    /*
+     * @see org.apache.fop.layoutmgr.LayoutManagerMaker#makeStaticContentLayoutManager(org.apache.fop.layoutmgr.PageSequenceLayoutManager, org.apache.fop.fo.pagination.StaticContent, org.apache.fop.area.Block)
+     */
+    public StaticContentLayoutManager makeStaticContentLayoutManager(
+        PageSequenceLayoutManager pslm, StaticContent sc, org.apache.fop.area.Block block) {
+        return new StaticContentLayoutManager(pslm, sc, block);
+    }
+
     public static class Maker {
         public void make(FONode node, List lms) {
             // no layout manager
@@ -230,10 +238,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
 
     public static class FootnodeLayoutManagerMaker extends Maker {
         public void make(FONode node, List lms) {
-            Inline citation = ((Footnote) node).getInlineFO();
-            if (citation != null) {
-                lms.add(new InlineLayoutManager(citation));
-            }
+            lms.add(new FootnoteLayoutManager((Footnote) node));
         }
     }
 

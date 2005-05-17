@@ -620,6 +620,12 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     knuthPar.addAll(((InlineLevelLayoutManager)
                                      prevBox.getLayoutManager())
                                     .addALetterSpaceTo(oldList));
+                    if (((KnuthInlineBox) prevBox).isAnchor()) {
+                        // prevBox represents a footnote citation: copy footnote info
+                        // from prevBox to the new box
+                        KnuthInlineBox newBox = (KnuthInlineBox) knuthPar.getLast();
+                        newBox.setFootnoteBodyLM(((KnuthInlineBox) prevBox).getFootnoteBodyLM());
+                    }
                 }
 
                 // look at the last element
@@ -941,6 +947,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 /* "normal" vertical alignment: create a sequence whose boxes
                    represent effective lines, and contain LineBreakPositions */
                 Position returnPosition = new LeafPosition(this, p);
+                int startIndex = 0;
                 for (int i = 0;
                         i < lineLayouts.getChosenLineCount();
                         i++) {
@@ -951,8 +958,21 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                         // null penalty allowing a page break between lines
                         returnList.add(new KnuthPenalty(0, 0, false, returnPosition, false));
                     }
-                    returnList.add(new KnuthBox(((LineBreakPosition) lineLayouts.getChosenPosition(i)).lineHeight,
-                                                lineLayouts.getChosenPosition(i), false));
+                    int endIndex = ((LineBreakPosition) lineLayouts.getChosenPosition(i)).getLeafPos();
+                    // create a list of the FootnoteBodyLM handling footnotes 
+                    // whose citations are in this line
+                    LinkedList footnoteList = new LinkedList();
+                    ListIterator elementIterator = ((Paragraph) knuthParagraphs.get(p)).listIterator(startIndex);
+                    while (elementIterator.nextIndex() <= endIndex) {
+                        KnuthElement element = (KnuthElement) elementIterator.next();
+                        if (element instanceof KnuthInlineBox
+                            && ((KnuthInlineBox) element).isAnchor()) {
+                            footnoteList.add(((KnuthInlineBox) element).getFootnoteBodyLM());
+                        }
+                    }
+                    startIndex = endIndex + 1;
+                    returnList.add(new KnuthBlockBox(((LineBreakPosition) lineLayouts.getChosenPosition(i)).lineHeight,
+                                                     footnoteList, lineLayouts.getChosenPosition(i), false));
                 }
             }
         }

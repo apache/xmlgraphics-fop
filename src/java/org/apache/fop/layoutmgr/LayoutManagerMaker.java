@@ -23,7 +23,7 @@ import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.SideRegion;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.area.AreaTreeHandler;
-
+import org.apache.fop.area.Block;
 
 /**
  * The interface for all LayoutManager makers
@@ -67,6 +67,16 @@ public interface LayoutManagerMaker {
      */
     public StaticContentLayoutManager makeStaticContentLayoutManager(
         PageSequenceLayoutManager pslm, StaticContent sc, SideRegion reg);
+
+    /**
+     * Make a StaticContentLayoutManager object for a footnote-separator.
+     * @param pslm the parent PageSequenceLayoutManager object
+     * @param sc the fo:static-content object this SCLM will process
+     * @param block the Block area this SCLM must add its areas to
+     * @return The created StaticContentLayoutManager object
+     */
+    public StaticContentLayoutManager makeStaticContentLayoutManager(
+        PageSequenceLayoutManager pslm, StaticContent sc, Block block);
 
 }
 

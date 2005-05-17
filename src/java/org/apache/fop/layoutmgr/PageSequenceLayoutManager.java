@@ -22,6 +22,8 @@ import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.AreaTreeModel;
+import org.apache.fop.area.Block;
+import org.apache.fop.area.Footnote;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.Resolvable;
@@ -37,8 +39,11 @@ import org.apache.fop.fo.pagination.SideRegion;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
 
+import org.apache.fop.traits.MinOptMax;
+
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * LayoutManager for a PageSequence.  This class is instantiated by
@@ -80,6 +85,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     private int startPageNum = 0;
     private int currentPageNum = 0;
 
+    private Block separatorArea = null;
+    
     /**
      * Constructor
      *
@@ -137,6 +144,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         private PageSequenceLayoutManager pslm;
         private boolean firstPart = true;
         
+        private StaticContentLayoutManager footnoteSeparatorLM = null;
+        private LinkedList footnoteSeparatorList = null;
+
         public PageBreaker(PageSequenceLayoutManager pslm) {
             this.pslm = pslm;
         }
@@ -153,7 +163,67 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
         
         protected LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
-            return pslm.getNextKnuthElements(context, alignment);
+            LinkedList contentList = pslm.getNextKnuthElements(context, alignment);
+
+            // scan contentList, searching for footnotes
+            boolean bFootnotesPresent = false;
+            if (contentList != null) {
+                ListIterator contentListIterator = contentList.listIterator();
+                while (contentListIterator.hasNext()) {
+                    KnuthElement element = (KnuthElement) contentListIterator.next();
+                    if (element instanceof KnuthBlockBox
+                        && ((KnuthBlockBox) element).hasAnchors()) {
+                        // element represents a line with footnote citations
+                        bFootnotesPresent = true;
+                        LinkedList footnoteBodyLMs = ((KnuthBlockBox) element).getFootnoteBodyLMs();
+                        ListIterator footnoteBodyIterator = footnoteBodyLMs.listIterator();
+                        // store the lists of elements representing the footnote bodies
+                        // in the box representing the line containing their references
+                        while (footnoteBodyIterator.hasNext()) {
+                            FootnoteBodyLayoutManager fblm = (FootnoteBodyLayoutManager) footnoteBodyIterator.next();
+                            fblm.setParent(childFLM);
+                            ((KnuthBlockBox) element).addElementList(fblm.getNextKnuthElements(context, alignment));
+                        }
+                    }
+                }
+            }
+
+            // handle the footnote separator
+            StaticContent footnoteSeparator;
+            if (bFootnotesPresent
+                && (footnoteSeparator = pageSeq.getStaticContent("xsl-footnote-separator")) != null) {
+                // create a Block area that will contain the separator areas
+                separatorArea = new Block();
+
+                // create a StaticContentLM for the footnote separator
+                footnoteSeparatorLM = (StaticContentLayoutManager)
+                    getLayoutManagerMaker().makeStaticContentLayoutManager(
+                    pslm, footnoteSeparator, separatorArea);
+
+                // get the list of elements representing the footnote separator
+                footnoteSeparatorList = footnoteSeparatorLM.getNextKnuthElements(context, alignment);
+
+                // compute the total length of the elements
+                footnoteSeparatorLength = new MinOptMax(0);
+                ListIterator separatorIterator = footnoteSeparatorList.listIterator();
+                while (separatorIterator.hasNext()) {
+                    KnuthElement element = (KnuthElement) separatorIterator.next();
+                    if (element.isBox()) {
+                        footnoteSeparatorLength.add(new MinOptMax(element.getW()));
+                    } else if (element.isGlue()) {
+                        footnoteSeparatorLength.add(new MinOptMax(element.getW()));
+                        footnoteSeparatorLength.max += element.getY();
+                        footnoteSeparatorLength.min -= element.getZ();
+                    }
+                }
+
+                // add the footnote separator areas to the Block area
+                if (footnoteSeparatorList != null) {
+                    LayoutContext childLC = new LayoutContext(0);
+                    footnoteSeparatorLM.addAreas(new KnuthPossPosIter(footnoteSeparatorList, 0, footnoteSeparatorList.size()), childLC);
+                }
+            }
+            return contentList;
         }
         
         protected int getCurrentDisplayAlign() {
@@ -198,7 +268,30 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             firstPart = false;
         }
         
-        protected void finishPart() {
+        protected void finishPart(PageBreakingAlgorithm alg, PageBreakPosition pbp) {
+            // add footnote areas
+            if (pbp.footnoteFirstListIndex < pbp.footnoteLastListIndex
+                || pbp.footnoteFirstElementIndex <= pbp.footnoteLastElementIndex) {
+                // call addAreas() for each FootnoteBodyLM
+                for (int i = pbp.footnoteFirstListIndex; i <= pbp.footnoteLastListIndex; i++) {
+                    LinkedList elementList = alg.getFootnoteList(i);
+                    int firstIndex = (i == pbp.footnoteFirstListIndex ? pbp.footnoteFirstElementIndex : 0);
+                    int lastIndex = (i == pbp.footnoteLastListIndex ? pbp.footnoteLastElementIndex : elementList.size() - 1);
+
+                    FootnoteBodyLayoutManager fblm = (FootnoteBodyLayoutManager)
+                                                     ((KnuthElement) elementList.getFirst()).getLayoutManager();
+                    LayoutContext childLC = new LayoutContext(0);
+                    fblm.addAreas(new KnuthPossPosIter(elementList, firstIndex, lastIndex + 1), childLC);
+                }
+                // set the offset from the top margin
+                Footnote parentArea = (Footnote) getCurrentPV().getBodyRegion().getFootnote();
+                int topOffset = (int) curPV.getBodyRegion().getBPD() - parentArea.getBPD();
+                if (separatorArea != null) {
+                    topOffset -= separatorArea.getBPD();
+                }
+                parentArea.setTop(topOffset);
+                parentArea.setSeparator(separatorArea);
+            }
         }
         
         protected LayoutManager getCurrentChildLM() {
@@ -225,14 +318,14 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         LayoutManager curLM; // currently active LM
 
         while ((curLM = getChildLM()) != null) {
-/*LF*/      LinkedList returnedList = null;
-/*LF*/      if (childFLM == null && (curLM instanceof FlowLayoutManager)) {
-/*LF*/          childFLM = (FlowLayoutManager)curLM;
-/*LF*/      } else {
-/*LF*/          if (curLM != childFLM) {
-/*LF*/              log.error("PSLM> invalid child LM");
-/*LF*/          }
-/*LF*/      }
+            LinkedList returnedList = null;
+            if (childFLM == null && (curLM instanceof FlowLayoutManager)) {
+                childFLM = (FlowLayoutManager)curLM;
+            } else {
+                if (curLM != childFLM) {
+                    log.error("PSLM> invalid child LM");
+                }
+            }
 
             LayoutContext childLC = new LayoutContext(0);
             childLC.setStackLimit(context.getStackLimit());
@@ -243,7 +336,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 int flowBPD = (int) curPV.getBodyRegion().getBPD();
                 pageSeq.setLayoutDimension(PercentBase.REFERENCE_AREA_IPD, flowIPD);
                 pageSeq.setLayoutDimension(PercentBase.REFERENCE_AREA_BPD, flowBPD);
-/*LF*/          returnedList = curLM.getNextKnuthElements(childLC, alignment);
+                returnedList = curLM.getNextKnuthElements(childLC, alignment);
             }
             if (returnedList != null) {
                 return returnedList;
