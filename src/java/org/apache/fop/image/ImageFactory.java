@@ -200,6 +200,10 @@ public class ImageFactory {
             log.error("Error creating FopImage object ("
                     + href + "): " + msg, (t == null) ? ex : t);
             return null;
+        } catch (InstantiationException ie) {
+            log.error("Error creating FopImage object ("
+                    + href + "): Could not instantiate " + imgClassName + " instance");
+            return null;
         } catch (Exception ex) {
             log.error("Error creating FopImage object ("
                     + href + "): " + ex.getMessage(), ex);
