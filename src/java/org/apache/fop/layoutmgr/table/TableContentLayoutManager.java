@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -36,7 +35,6 @@ import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
-import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
@@ -145,10 +143,8 @@ public class TableContentLayoutManager {
             if (getTableLM().getTable().omitHeaderAtBreak()) {
                 //We can simply add the table header at the beginning of the whole list
                 headerAsFirst = box;
-                //returnList.add(0, box);
             } else {
                 headerAsSecondToLast = box;
-                //returnList.add(box);
             }
         }
         if (footerIter != null) {
@@ -165,7 +161,6 @@ public class TableContentLayoutManager {
                         getTableLM(), false, this.footerList);
                 KnuthBox box = new KnuthBox(footerNetHeight, pos, false);
                 footerAsLast = box;
-                //returnList.add(box);
             }
         }
         LinkedList returnList = getKnuthElementsForRowIterator(
@@ -203,7 +198,7 @@ public class TableContentLayoutManager {
         
         //Remove last penalty
         KnuthElement last = (KnuthElement)returnList.getLast();
-        if (last.isPenalty() && last.getW() == 0 && last.getP() == 0) {
+        if (last.isPenalty() && last.getP() == 0) {
             returnList.removeLast();
         }
         return returnList;
@@ -252,7 +247,7 @@ public class TableContentLayoutManager {
             //Create empty grid units to hold resolved borders of neighbouring cells
             //TODO maybe this needs to be done differently (and sooner)
             for (int i = 0; i < guCount - row.getGridUnits().size(); i++) {
-                //TODO This block in untested!
+                //TODO This block is untested!
                 int pos = row.getGridUnits().size() + i;
                 row.getGridUnits().add(new EmptyGridUnit(gu.getRow(), 
                         this.tableLM.getColumns().getColumn(pos + 1), gu.getBody(), 
@@ -370,7 +365,8 @@ public class TableContentLayoutManager {
                         //Calculate width of cell
                         int spanWidth = 0;
                         for (int i = primary.getStartCol(); 
-                                i < primary.getStartCol() + primary.getCell().getNumberColumnsSpanned();
+                                i < primary.getStartCol() 
+                                        + primary.getCell().getNumberColumnsSpanned();
                                 i++) {
                             spanWidth += getTableLM().getColumns().getColumn(i + 1)
                                 .getColumnWidth().getValue();
@@ -380,7 +376,8 @@ public class TableContentLayoutManager {
                         childLC.setRefIPD(spanWidth);
                         
                         //Get the element list for the cell contents
-                        LinkedList elems = primary.getCellLM().getNextKnuthElements(childLC, alignment);
+                        LinkedList elems = primary.getCellLM().getNextKnuthElements(
+                                                childLC, alignment);
                         primary.setElements(elems);
                         log.debug("Elements: " + elems);
                     }
@@ -457,11 +454,21 @@ public class TableContentLayoutManager {
         
     }
 
+    /**
+     * Retuns the X offset of the given grid unit.
+     * @param gu the grid unit
+     * @return the requested X offset
+     */
     protected int getXOffsetOfGridUnit(GridUnit gu) {
         int col = gu.getStartCol();
         return startXOffset + getTableLM().getColumns().getXOffset(col + 1);
     }
     
+    /**
+     * Adds the areas generated my this layout manager to the area tree.
+     * @param parentIter the position iterator
+     * @param layoutContext the layout context for adding areas
+     */
     public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
         this.usedBPD = 0;
         RowPainter painter = new RowPainter(layoutContext);
@@ -680,7 +687,7 @@ public class TableContentLayoutManager {
                                 + start[i] + "-" + end[i]);
                     }
                     addAreasForCell(gridUnits[i], start[i], end[i], 
-                            layoutContext, lastRow, yoffset, 
+                            lastRow,  
                             partLength[i], actualRowHeight);
                     gridUnits[i] = null;
                     start[i] = 0;
@@ -692,8 +699,7 @@ public class TableContentLayoutManager {
         }
 
         private void addAreasForCell(PrimaryGridUnit pgu, int start, int end, 
-                LayoutContext layoutContext, EffRow row, 
-                int yoffset, int contentHeight, int rowHeight) {
+                EffRow row, int contentHeight, int rowHeight) {
             int bt = row.getBodyType();
             if (firstRow[bt] < 0) {
                 firstRow[bt] = row.getIndex();
@@ -737,6 +743,13 @@ public class TableContentLayoutManager {
         }
     }
 
+    /**
+     * Adds the area for the row background if any.
+     * @param row row for which to generate the background
+     * @param bpd block-progression-dimension of the row
+     * @param ipd inline-progression-dimension of the row
+     * @param yoffset Y offset at which to paint
+     */
     public void addRowBackgroundArea(TableRow row, int bpd, int ipd, int yoffset) {
         //Add row background if any
         Block rowBackground = getRowArea(row);
@@ -758,16 +771,31 @@ public class TableContentLayoutManager {
         this.startXOffset = startXOffset;
     }
 
+    /**
+     * @return the amount of block-progression-dimension used by the content
+     */
     public int getUsedBPD() {
         return this.usedBPD;
     }
     
+    /**
+     * Represents a non-dividable part of a grid unit. Used by the table stepper.
+     */
     protected static class GridUnitPart {
         
+        /** Primary grid unit */
         protected PrimaryGridUnit pgu;
+        /** Index of the starting element of this part */
         protected int start;
+        /** Index of the ending element of this part */
         protected int end;
         
+        /**
+         * Creates a new GridUnitPart.
+         * @param pgu Primary grid unit
+         * @param start starting element
+         * @param end ending element
+         */
         protected GridUnitPart(PrimaryGridUnit pgu, int start, int end) {
             this.pgu = pgu;
             this.start = start;
@@ -784,11 +812,23 @@ public class TableContentLayoutManager {
         
     }
     
+    /**
+     * This class represents a Position specific to this layout manager. Used for normal content
+     * cases.
+     */
     public static class TableContentPosition extends Position {
 
+        /** the list of GridUnitParts making up this position */
         protected List gridUnitParts;
+        /** effective row this position belongs to */
         protected EffRow row;
         
+        /**
+         * Creates a new TableContentPosition.
+         * @param lm applicable layout manager
+         * @param gridUnitParts the list of GridUnitPart instances
+         * @param row effective row this position belongs to
+         */
         protected TableContentPosition(LayoutManager lm, List gridUnitParts, 
                 EffRow row) {
             super(lm);
@@ -805,11 +845,23 @@ public class TableContentLayoutManager {
         }
     }
     
+    /**
+     * This class represents a Position specific to this layout manager. Used for table
+     * headers and footers at the beginning and end of a table.
+     */
     public static class TableHeaderFooterPosition extends Position {
-        
+
+        /** True indicates a position for a header, false for a footer. */
         protected boolean header;
+        /** Element list representing the header/footer */
         protected List nestedElements;
         
+        /**
+         * Creates a new TableHeaderFooterPosition.
+         * @param lm applicable layout manager
+         * @param header True indicates a position for a header, false for a footer.
+         * @param nestedElements Element list representing the header/footer
+         */
         protected TableHeaderFooterPosition(LayoutManager lm, 
                 boolean header, List nestedElements) {
             super(lm);
@@ -828,11 +880,21 @@ public class TableContentLayoutManager {
         }
     }
 
+    /**
+    * This class represents a Position specific to this layout manager. Used for table
+    * headers and footers at breaks.
+    */
     public static class TableHFPenaltyPosition extends Position {
         
+        /** Element list for the header */
         protected List headerElements;
+        /** Element list for the footer */
         protected List footerElements;
         
+        /**
+         * Creates a new TableHFPenaltyPosition
+         * @param lm applicable layout manager
+         */
         protected TableHFPenaltyPosition(LayoutManager lm) {
             super(lm);
         }
@@ -850,14 +912,4 @@ public class TableContentLayoutManager {
         }
     }
     
-    private class KnuthBoxCellWithBPD extends KnuthBox {
-        
-        private PrimaryGridUnit pgu;
-        
-        public KnuthBoxCellWithBPD(int w, PrimaryGridUnit pgu) {
-            super(w, null, true);
-            this.pgu = pgu;
-        }
-    }
-
 }
