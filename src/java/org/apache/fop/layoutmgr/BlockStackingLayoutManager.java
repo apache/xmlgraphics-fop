@@ -45,7 +45,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     //protected LayoutManager curChildLM = null; AbstractLayoutManager also defines this!
     protected BlockParent parentArea = null;
 
-    /*LF*/
     /** Value of the block-progression-unit (non-standard property) */
     protected int bpUnit = 0;
     /** space-before value adjusted for block-progression-unit handling */
@@ -54,11 +53,14 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     protected int adjustedSpaceAfter = 0;
     /** Only used to store the original list when createUnitElements is called */
     protected LinkedList storedList = null;
+    /** FO node */
     protected FObj fobj;
-    private boolean bBreakBeforeServed = false;
-    private boolean bSpaceBeforeServed = false;
+    /** Indicates whether break before has been served or not */
+    protected boolean bBreakBeforeServed = false;
+    /** Indicates whether space before has been served or not */
+    protected boolean bSpaceBeforeServed = false;
+    /** Reference IPD available */
     protected int referenceIPD = 0;
-    /*LF*/
 
     public BlockStackingLayoutManager(FObj node) {
         super(node);
@@ -842,7 +844,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         if (fobj instanceof org.apache.fop.fo.flow.Block) {
             spaceAfter = ((org.apache.fop.fo.flow.Block)fobj)
                 .getCommonMarginBlock().spaceAfter;
-        } else if (fobj instanceof org.apache.fop.fo.flow.Block) {
+        } else if (fobj instanceof org.apache.fop.fo.flow.BlockContainer) {
             spaceAfter = ((org.apache.fop.fo.flow.BlockContainer)fobj)
                 .getCommonMarginBlock().spaceAfter;
         }
