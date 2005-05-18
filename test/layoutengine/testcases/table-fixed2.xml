@@ -21,7 +21,7 @@
       This test checks tables with table-layout="fixed" with no table-columns specified.
     </p>
     <p>
-      Currently doesn't work. Please see the comment in TableLayoutManager.createColumnsFromFirstRow().
+      Not yet implemented. Please see the comment in ColumnSetup.createColumnsFromFirstRow().
     </p>
   </info>
   <fo>
