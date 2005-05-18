@@ -69,6 +69,11 @@ public class FootnoteLayoutManager extends AbstractLayoutManager
                 returnedList.addAll(partialList);
             }
         }
+        if (returnedList.size() == 0) {
+            //Inline part of the footnote is empty. Need to send back an auxiliary
+            //zero-width, zero-height inline box so the footnote gets painted.
+            returnedList.add(new KnuthInlineBox(0, 0, 0, 0, null, true));
+        }
         setFinished(true);
 
         addAnchor(returnedList);
