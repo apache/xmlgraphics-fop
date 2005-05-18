@@ -575,6 +575,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                  = curLM.getNextKnuthElements(inlineLC,
                                               effectiveAlignment))
                 != null) {
+                if (returnedList.size() == 0) {
+                    continue;
+                }
                 // look at the first element
                 thisElement = (KnuthElement) returnedList.getFirst();
                 if (thisElement.isBox() && !thisElement.isAuxiliary()
