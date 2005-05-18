@@ -19,7 +19,6 @@
 package org.apache.fop.layoutmgr;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.ListIterator;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
@@ -33,7 +32,6 @@ import org.apache.fop.fo.properties.CommonAbsolutePosition;
 import org.apache.fop.area.CTM;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.Length;
-import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
 
@@ -45,8 +43,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
     private BlockViewport viewportBlockArea;
     private Block referenceArea;
 
-    private List childBreaks = new java.util.ArrayList();
-
     private CommonAbsolutePosition abProps;
     private FODimension relDims;
     private CTM absoluteCTM;
@@ -55,12 +51,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
     private Length height;
     private int vpContentIPD;
     private int vpContentBPD;
-    private int usedBPD;
     
     // When viewport should grow with the content.
     private boolean autoHeight = true; 
-
-    private int referenceIPD;
     
     /* holds the (one-time use) fo:block space-before
     and -after properties.  Large fo:blocks are split
@@ -73,15 +66,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
     //TODO space-before|after: handle space-resolution rules
     private MinOptMax foBlockSpaceBefore;
     private MinOptMax foBlockSpaceAfter;
-
-    private boolean bBreakBeforeServed = false;
-    private boolean bSpaceBeforeServed = false;
-
-    /*LF*/
-    /** Only used to store the original list when createUnitElements is called */
-    //TODO Maybe pull up as protected member if also used in this class (JM)
-    private LinkedList storedList = null;
-    
     
     /**
      * Create a new block container layout manager.
@@ -163,9 +147,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         return (abProps.absolutePosition == EN_FIXED);
     }
     
-    /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(org.apache.fop.layoutmgr.LayoutContext, int)
-     */
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         if (isAbsoluteOrFixed()) {
             return getNextKnuthElementsAbsolute(context, alignment);
@@ -419,8 +401,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         boolean contentOverflows = breaker.isOverflow();
         LinkedList returnList = new LinkedList();
         if (!breaker.isEmpty()) {
-            usedBPD = relDims.bpd - breaker.getDifferenceOfFirstPart(); 
-
             Position bcPosition = new BlockContainerPosition(this, breaker);
             returnList.add(new KnuthBox(0, bcPosition, false));
     
@@ -617,7 +597,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                 // pos was created by this BCLM and was inside an element
                 // representing space before or after
                 // this means the space was not discarded
-                if (positionList.size() == 0) {
+                if (positionList.size() == 0 && bcpos == null) {
                     // pos was in the element representing space-before
                     bSpaceBefore = true;
                     /* LF *///System.out.println(" space-before");
@@ -642,94 +622,93 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         }
 
         if (bcpos == null) {
-            
-        if (bpUnit == 0) {
-            // the Positions in positionList were inside the elements
-            // created by the LineLM
-            childPosIter = new StackingIter(positionList.listIterator());
-        } else {
-            // the Positions in positionList were inside the elements
-            // created by the BCLM in the createUnitElements() method
-            //if (((Position) positionList.getLast()) instanceof
-                  // LeafPosition) {
-            //    // the last item inside positionList is a LeafPosition
-            //    // (a LineBreakPosition, more precisely); this means that
-            //    // the whole paragraph is on the same page
-            //    System.out.println("paragrafo intero");
-            //    childPosIter = new KnuthPossPosIter(storedList, 0,
-                  // storedList.size());
-            //} else {
-            //    // the last item inside positionList is a Position;
-            //    // this means that the paragraph has been split
-            //    // between consecutive pages
-            LinkedList splitList = new LinkedList();
-            int splitLength = 0;
-            int iFirst = ((MappingPosition) positionList.getFirst()).getFirstIndex();
-            int iLast = ((MappingPosition) positionList.getLast()).getLastIndex();
-            // copy from storedList to splitList all the elements from
-            // iFirst to iLast
-            ListIterator storedListIterator = storedList.listIterator(iFirst);
-            while (storedListIterator.nextIndex() <= iLast) {
-                KnuthElement element = (KnuthElement) storedListIterator
-                        .next();
-                // some elements in storedList (i.e. penalty items) were created
-                // by this BlockLM, and must be ignored
-                if (element.getLayoutManager() != this) {
-                    splitList.add(element);
-                    splitLength += element.getW();
-                    lastLM = element.getLayoutManager();
-                }
-            }
-            //System.out.println("addAreas riferito a storedList da " +
-                  // iFirst + " a " + iLast);
-            //System.out.println("splitLength= " + splitLength
-            //                   + " (" + neededUnits(splitLength) + " unita') "
-            //                   + (neededUnits(splitLength) * bpUnit - splitLength) + " spazi");
-            // add space before and / or after the paragraph
-            // to reach a multiple of bpUnit
-            if (bSpaceBefore && bSpaceAfter) {
-                foBlockSpaceBefore = new SpaceVal(getBlockContainerFO()
-                            .getCommonMarginBlock().spaceBefore).getSpace();
-                foBlockSpaceAfter = new SpaceVal(getBlockContainerFO()
-                            .getCommonMarginBlock().spaceAfter).getSpace();
-                adjustedSpaceBefore = (neededUnits(splitLength
-                        + foBlockSpaceBefore.min
-                        + foBlockSpaceAfter.min)
-                        * bpUnit - splitLength) / 2;
-                adjustedSpaceAfter = neededUnits(splitLength
-                        + foBlockSpaceBefore.min
-                        + foBlockSpaceAfter.min)
-                        * bpUnit - splitLength - adjustedSpaceBefore;
-            } else if (bSpaceBefore) {
-                adjustedSpaceBefore = neededUnits(splitLength
-                        + foBlockSpaceBefore.min)
-                        * bpUnit - splitLength;
+            if (bpUnit == 0) {
+                // the Positions in positionList were inside the elements
+                // created by the LineLM
+                childPosIter = new StackingIter(positionList.listIterator());
             } else {
-                adjustedSpaceAfter = neededUnits(splitLength
-                        + foBlockSpaceAfter.min)
-                        * bpUnit - splitLength;
+                // the Positions in positionList were inside the elements
+                // created by the BCLM in the createUnitElements() method
+                //if (((Position) positionList.getLast()) instanceof
+                      // LeafPosition) {
+                //    // the last item inside positionList is a LeafPosition
+                //    // (a LineBreakPosition, more precisely); this means that
+                //    // the whole paragraph is on the same page
+                //    System.out.println("paragrafo intero");
+                //    childPosIter = new KnuthPossPosIter(storedList, 0,
+                      // storedList.size());
+                //} else {
+                //    // the last item inside positionList is a Position;
+                //    // this means that the paragraph has been split
+                //    // between consecutive pages
+                LinkedList splitList = new LinkedList();
+                int splitLength = 0;
+                int iFirst = ((MappingPosition) positionList.getFirst()).getFirstIndex();
+                int iLast = ((MappingPosition) positionList.getLast()).getLastIndex();
+                // copy from storedList to splitList all the elements from
+                // iFirst to iLast
+                ListIterator storedListIterator = storedList.listIterator(iFirst);
+                while (storedListIterator.nextIndex() <= iLast) {
+                    KnuthElement element = (KnuthElement) storedListIterator
+                            .next();
+                    // some elements in storedList (i.e. penalty items) were created
+                    // by this BlockLM, and must be ignored
+                    if (element.getLayoutManager() != this) {
+                        splitList.add(element);
+                        splitLength += element.getW();
+                        lastLM = element.getLayoutManager();
+                    }
+                }
+                //System.out.println("addAreas riferito a storedList da " +
+                      // iFirst + " a " + iLast);
+                //System.out.println("splitLength= " + splitLength
+                //                   + " (" + neededUnits(splitLength) + " unita') "
+                //                   + (neededUnits(splitLength) * bpUnit - splitLength) + " spazi");
+                // add space before and / or after the paragraph
+                // to reach a multiple of bpUnit
+                if (bSpaceBefore && bSpaceAfter) {
+                    foBlockSpaceBefore = new SpaceVal(getBlockContainerFO()
+                                .getCommonMarginBlock().spaceBefore).getSpace();
+                    foBlockSpaceAfter = new SpaceVal(getBlockContainerFO()
+                                .getCommonMarginBlock().spaceAfter).getSpace();
+                    adjustedSpaceBefore = (neededUnits(splitLength
+                            + foBlockSpaceBefore.min
+                            + foBlockSpaceAfter.min)
+                            * bpUnit - splitLength) / 2;
+                    adjustedSpaceAfter = neededUnits(splitLength
+                            + foBlockSpaceBefore.min
+                            + foBlockSpaceAfter.min)
+                            * bpUnit - splitLength - adjustedSpaceBefore;
+                } else if (bSpaceBefore) {
+                    adjustedSpaceBefore = neededUnits(splitLength
+                            + foBlockSpaceBefore.min)
+                            * bpUnit - splitLength;
+                } else {
+                    adjustedSpaceAfter = neededUnits(splitLength
+                            + foBlockSpaceAfter.min)
+                            * bpUnit - splitLength;
+                }
+                //System.out.println("spazio prima = " + adjustedSpaceBefore
+                      // + " spazio dopo = " + adjustedSpaceAfter + " totale = " +
+                      // (adjustedSpaceBefore + adjustedSpaceAfter + splitLength));
+                childPosIter = new KnuthPossPosIter(splitList, 0, splitList
+                        .size());
+                //}
             }
-            //System.out.println("spazio prima = " + adjustedSpaceBefore
-                  // + " spazio dopo = " + adjustedSpaceAfter + " totale = " +
-                  // (adjustedSpaceBefore + adjustedSpaceAfter + splitLength));
-            childPosIter = new KnuthPossPosIter(splitList, 0, splitList
-                    .size());
-            //}
-        }
-
-        // if adjusted space before
-        if (bSpaceBefore) {
-            addBlockSpacing(0, new MinOptMax(adjustedSpaceBefore));
-        }
-
-        while ((childLM = childPosIter.getNextChildLM()) != null) {
-            // set last area flag
-            lc.setFlags(LayoutContext.LAST_AREA,
-                    (layoutContext.isLastArea() && childLM == lastLM));
-            /*LF*/lc.setStackLimit(layoutContext.getStackLimit());
-            // Add the line areas to Area
-            childLM.addAreas(childPosIter, lc);
-        }
+    
+            // if adjusted space before
+            if (bSpaceBefore) {
+                addBlockSpacing(0, new MinOptMax(adjustedSpaceBefore));
+            }
+    
+            while ((childLM = childPosIter.getNextChildLM()) != null) {
+                // set last area flag
+                lc.setFlags(LayoutContext.LAST_AREA,
+                        (layoutContext.isLastArea() && childLM == lastLM));
+                /*LF*/lc.setStackLimit(layoutContext.getStackLimit());
+                // Add the line areas to Area
+                childLM.addAreas(childPosIter, lc);
+            }
         } else {
             // if adjusted space before
             if (bSpaceBefore) {
@@ -783,12 +762,13 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             
             viewportBlockArea.setCTM(absoluteCTM);
             viewportBlockArea.setClip(clip);
+            /*
             if (getSpaceBefore() != 0) {
                 viewportBlockArea.addTrait(Trait.SPACE_BEFORE, new Integer(getSpaceBefore()));
             }
             if (foBlockSpaceAfter.opt != 0) {
                 viewportBlockArea.addTrait(Trait.SPACE_AFTER, new Integer(foBlockSpaceAfter.opt));
-            }
+            }*/
 
             if (abProps.absolutePosition == EN_ABSOLUTE 
                     || abProps.absolutePosition == EN_FIXED) {
@@ -846,19 +826,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
     protected void flush() {
         viewportBlockArea.addBlock(referenceArea, autoHeight);
 
-        //Handle display-align now that the used BPD can be determined
-        usedBPD = referenceArea.getAllocBPD();
-        /* done by the breaker now by inserting additional boxes
-        if (!autoHeight & (usedBPD > 0)) {
-            if (getBlockContainerFO().getDisplayAlign() == EN_CENTER) {
-                viewportBlockArea.setCTM(viewportBlockArea.getCTM().multiply(
-                        new CTM().translate(0, (relDims.bpd - usedBPD) / 2)));
-            } else if (getBlockContainerFO().getDisplayAlign() == EN_AFTER) {
-                viewportBlockArea.setCTM(viewportBlockArea.getCTM().multiply(
-                        new CTM().translate(0, (relDims.bpd - usedBPD))));
-            }
-        }*/
-        
         // Fake a 0 height for absolute positioned blocks.
         int saveBPD = viewportBlockArea.getBPD();
         if (viewportBlockArea.getPositioning() == Block.ABSOLUTE) {
