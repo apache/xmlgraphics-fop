@@ -585,7 +585,10 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         while (parentIter.hasNext()) {
             pos = (Position) parentIter.next();
             /* LF *///System.out.println("pos = " + pos.getClass().getName());
-            Position innerPosition = ((NonLeafPosition) pos).getPosition();
+            Position innerPosition = null;
+            if (pos instanceof NonLeafPosition) {
+                innerPosition = ((NonLeafPosition)pos).getPosition();
+            }
             if (pos instanceof BlockContainerPosition) {
                 if (bcpos != null) {
                     throw new IllegalStateException("Only one BlockContainerPosition allowed");
@@ -594,17 +597,19 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                 //Add child areas inside the reference area
                 //bcpos.getBreaker().addContainedAreas();
             } else if (innerPosition == null) {
-                // pos was created by this BCLM and was inside an element
-                // representing space before or after
-                // this means the space was not discarded
-                if (positionList.size() == 0 && bcpos == null) {
-                    // pos was in the element representing space-before
-                    bSpaceBefore = true;
-                    /* LF *///System.out.println(" space-before");
+                if (pos instanceof NonLeafPosition) {
+                    // pos was created by this BCLM and was inside an element
+                    // representing space before or after
+                    // this means the space was not discarded
+                    if (positionList.size() == 0 && bcpos == null) {
+                        // pos was in the element representing space-before
+                        bSpaceBefore = true;
+                    } else {
+                        // pos was in the element representing space-after
+                        bSpaceAfter = true;
+                    }
                 } else {
-                    // pos was in the element representing space-after
-                    bSpaceAfter = true;
-                    /* LF *///System.out.println(" space-after");
+                    //ignore (probably a Position for a simple penalty between blocks)
                 }
             } else if (innerPosition.getLM() == this
                     && !(innerPosition instanceof MappingPosition)) {
