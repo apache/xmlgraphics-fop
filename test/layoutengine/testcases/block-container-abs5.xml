@@ -89,7 +89,7 @@
 
     <!-- third block-container -->
     <true xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/@is-viewport-area"/>
-    <eval expected="[-1.0 -0.0 0.0 -1.0 160000.0 254400.0]" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/@ctm"/>
+    <eval expected="[-1.0 -0.0 0.0 -1.0 160000.0 290000.0]" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/@ctm"/>
     <eval expected="150000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/@ipd"/>
     <eval expected="150000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/@ipda"/>
     <eval expected="100000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/@bpd"/>
@@ -100,12 +100,15 @@
     <true xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/block[1]/@is-reference-area"/>
     <eval expected="150000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/block[1]/@ipd"/>
     <eval expected="150000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/block[1]/@ipda"/>
-    <eval expected="28800" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/block[1]/@bpd"/>
-    <eval expected="28800" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/block[1]/@bpda"/>
+    <eval expected="64400" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/block[1]/@bpd"/>
+    <eval expected="64400" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/block[1]/@bpda"/>
+    <eval expected="35600" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/block[1]/block[1]/@bpda"/>
+    <eval expected="14400" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/block[1]/block[2]/@bpda"/>
+    <eval expected="14400" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/block[1]/block[3]/@bpda"/>
 
     <!-- fourth block-container -->
     <true xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@is-viewport-area"/>
-    <eval expected="[0.0 1.0 -1.0 0.0 218800.0 190000.0]" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@ctm"/>
+    <eval expected="[0.0 1.0 -1.0 0.0 290000.0 190000.0]" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@ctm"/>
     <eval expected="100000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@ipd"/>
     <eval expected="100000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@ipda"/>
     <eval expected="150000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@bpd"/>
@@ -116,8 +119,11 @@
     <true xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/block[1]/@is-reference-area"/>
     <eval expected="150000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/block[1]/@ipd"/>
     <eval expected="150000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/block[1]/@ipda"/>
-    <eval expected="28800" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/block[1]/@bpd"/>
-    <eval expected="28800" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/block[1]/@bpda"/>
+    <eval expected="100000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/block[1]/@bpd"/>
+    <eval expected="100000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/block[1]/@bpda"/>
+    <eval expected="71200" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/block[1]/block[1]/@bpda"/>
+    <eval expected="14400" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/block[1]/block[2]/@bpda"/>
+    <eval expected="14400" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/block[1]/block[3]/@bpda"/>
 
     <!-- fifth block-container -->
     <true xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[5]/@is-viewport-area"/>
