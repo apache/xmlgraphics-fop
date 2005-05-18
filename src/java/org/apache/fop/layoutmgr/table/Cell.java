@@ -18,6 +18,9 @@
  
 package org.apache.fop.layoutmgr.table;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableCell;
@@ -37,10 +40,6 @@ import org.apache.fop.area.Block;
 import org.apache.fop.area.Trait;
 import org.apache.fop.traits.MinOptMax;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 /**
  * LayoutManager for a table-cell FO.
  * A cell contains blocks. These blocks fill the cell.
@@ -52,13 +51,10 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
     
     private Block curBlockArea;
 
-    private List childBreaks = new ArrayList();
-
     private int inRowIPDOffset;
     
     private int xoffset;
     private int yoffset;
-    private int referenceIPD;
     private int cellIPD;
     private int rowHeight;
     private int usedBPD;
@@ -413,7 +409,6 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
 
         flush();
 
-        childBreaks.clear();
         curBlockArea = null;
     }
 
@@ -489,7 +484,6 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
     public void resetPosition(Position resetPos) {
         if (resetPos == null) {
             reset(null);
-            childBreaks.clear();
         }
     }
 
