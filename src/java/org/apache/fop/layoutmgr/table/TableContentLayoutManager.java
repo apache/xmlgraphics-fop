@@ -598,12 +598,12 @@ public class TableContentLayoutManager {
         
         public void handleTableContentPosition(TableContentPosition tcpos) {
             log.debug("===handleTableContentPosition(" + tcpos);
-            rowFO = null;
             if (lastRow != tcpos.row && lastRow != null) {
                 addAreasAndFlushRow(false);
                 yoffset += lastRowHeight;
                 this.accumulatedBPD += lastRowHeight;
             }
+            rowFO = null;
             lastRow = tcpos.row;
             Iterator partIter = tcpos.gridUnitParts.iterator();
             //Iterate over all grid units in the current step
