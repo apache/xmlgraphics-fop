@@ -159,9 +159,10 @@
     <eval expected="216000" xpath="//flow/block[1]/block[12]/block[1]/@ipd"/>
     <eval expected="24000" xpath="//flow/block[1]/block[12]/block[1]/@bpd"/>
 
-    <!-- cell 14: content-height is 24pt (3*8pt), max="20", contents overflow -->
+    <!-- cell 14: content-height is 24pt (3*8pt), max="20", contents force relaxing max constraint -->
+    <!-- Check for the warning message in the log -->
     <eval expected="216000" xpath="//flow/block[1]/block[14]/@ipd"/>
-    <eval expected="20000" xpath="//flow/block[1]/block[14]/@bpd"/>
+    <eval expected="24000" xpath="//flow/block[1]/block[14]/@bpd"/>
     <eval expected="216000" xpath="//flow/block[1]/block[14]/block[1]/@ipd"/>
     <eval expected="24000" xpath="//flow/block[1]/block[14]/block[1]/@bpd"/>
   </checks>
