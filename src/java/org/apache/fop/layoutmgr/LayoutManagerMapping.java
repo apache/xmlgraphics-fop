@@ -63,10 +63,6 @@ import org.apache.fop.area.AreaTreeHandler;
 
 import org.apache.fop.layoutmgr.list.ListBlockLayoutManager;
 import org.apache.fop.layoutmgr.list.ListItemLayoutManager;
-/*import org.apache.fop.layoutmgr.table.Body;
-import org.apache.fop.layoutmgr.table.Cell;
-import org.apache.fop.layoutmgr.table.Column;
-import org.apache.fop.layoutmgr.table.Row;*/
 import org.apache.fop.layoutmgr.table.TableLayoutManager;
 
 /**
@@ -112,12 +108,12 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         makers.put(PageNumberCitation.class,
                    new PageNumberCitationLayoutManagerMaker());
         makers.put(Table.class, new TableLayoutManagerMaker());
-        makers.put(TableBody.class, new /*TableBodyLayoutManager*/Maker());
-        makers.put(TableColumn.class, new /*TableColumnLayoutManager*/Maker());
-        makers.put(TableRow.class, new /*TableRowLayoutManager*/Maker());
-        makers.put(TableCell.class, new /*TableCellLayoutManager*/Maker());
-        makers.put(TableFooter.class, new /*TableBodyLayoutManager*/Maker());
-        makers.put(TableHeader.class, new /*TableBodyLayoutManager*/Maker());
+        makers.put(TableBody.class, new Maker());
+        makers.put(TableColumn.class, new Maker());
+        makers.put(TableRow.class, new Maker());
+        makers.put(TableCell.class, new Maker());
+        makers.put(TableFooter.class, new Maker());
+        makers.put(TableHeader.class, new Maker());
         makers.put(Flow.class, new FlowLayoutManagerMaker());
         makers.put(Wrapper.class, new WrapperLayoutManagerMaker());
         makers.put(Title.class, new InlineLayoutManagerMaker());
@@ -320,82 +316,13 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     }
 
     public static class TableLayoutManagerMaker extends Maker {
-        
-        /*
-        private List getColumnLayoutManagerList(Table table, TableLayoutManager tlm) {
-            List columnLMs = null;
-            List columns = table.getColumns();
-            if (columns != null) {
-                columnLMs = new java.util.ArrayList();
-                int colnum = 1;
-                ListIterator iter = columns.listIterator();
-                while (iter.hasNext()) {
-                    TableColumn col = (TableColumn)iter.next();
-                    if (col.hasColumnNumber()) {
-                        colnum = col.getColumnNumber();
-                    }
-                    for (int i = 0; i < col.getNumberColumnsRepeated(); i++) {
-                        while (colnum > columnLMs.size()) {
-                            columnLMs.add(null);
-                        }
-                        Column colLM = new Column(col);
-                        colLM.setParent(tlm);
-                        columnLMs.set(colnum - 1, colLM);
-                        colnum++;
-                    }
-                }
-                //Post-processing the list (looking for gaps)
-                int pos = 1;
-                ListIterator ppIter = columnLMs.listIterator();
-                while (ppIter.hasNext()) {
-                    Column col = (Column)ppIter.next();
-                    if (col == null) {
-                        log.error("Found a gap in the table-columns at position " + pos);
-                    }
-                    pos++;
-                }
-            }
-            return columnLMs;
-        }*/
-        
         public void make(FONode node, List lms) {
             Table table = (Table) node;
             TableLayoutManager tlm = new TableLayoutManager(table);
-            /*
-            List columnLMs = getColumnLayoutManagerList(table, tlm);
-            if (columnLMs != null) {
-                tlm.setColumns(columnLMs);
-            }*/
             lms.add(tlm);
         }
     }
      
-    /*
-    public static class TableBodyLayoutManagerMaker extends Maker {
-         public void make(FONode node, List lms) {
-             lms.add(new Body((TableBody) node));
-         }
-
-    }
-    
-    public static class TableColumnLayoutManagerMaker extends Maker {
-         public void make(FONode node, List lms) {
-             lms.add(new Column((TableColumn) node));
-        }       
-    }
-
-    public static class TableRowLayoutManagerMaker extends Maker {
-        public void make(FONode node, List lms) {
-            lms.add(new Row((TableRow) node));
-        }
-    }
-
-    public static class TableCellLayoutManagerMaker extends Maker {
-        public void make(FONode node, List lms) {
-            lms.add(new Cell((TableCell) node));
-        }
-    }*/
-
     public static class FlowLayoutManagerMaker extends Maker {
          public void make(FONode node, List lms) {
              lms.add(new FlowLayoutManager((Flow) node));
