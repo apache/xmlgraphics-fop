@@ -232,7 +232,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
 
             // get elements from curLM
             returnedList = curLM.getNextKnuthElements(childLC, alignment);
-            if (returnedList.size() == 1
+            if (returnedList != null
+                    && returnedList.size() == 1
                     && ((KnuthElement) returnedList.getFirst()).isPenalty()
                     && ((KnuthPenalty) returnedList.getFirst()).getP() == -KnuthElement.INFINITE) {
                 // a descendant of this block has break-before
@@ -281,7 +282,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                         // a penalty
                     }
                 }
-                if (returnedList.size() == 0) {
+                if (returnedList == null || returnedList.size() == 0) {
                     //Avoid NoSuchElementException below (happens with empty blocks)
                     continue;
                 }
