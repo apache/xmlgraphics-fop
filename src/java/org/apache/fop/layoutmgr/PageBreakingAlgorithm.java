@@ -35,6 +35,16 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     private int totalFootnotesLength = 0;
     private int insertedFootnotesLength = 0;
     private boolean bPendingFootnotes = false;
+    /**
+     * bNewFootnotes is true if the elements met after the previous break point
+     * contain footnote citations
+     */
+    private boolean bNewFootnotes = false;
+    /**
+     * iNewFootnoteIndex is the index of the first footnote met after the 
+     * previous break point
+     */
+    private int iNewFootnoteIndex = 0;
     private int footnoteListIndex = 0;
     private int footnoteElementIndex = -1;
 
@@ -155,6 +165,10 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         if (box instanceof KnuthBlockBox
             && ((KnuthBlockBox) box).hasAnchors()) {
             handleFootnotes(((KnuthBlockBox) box).getElementLists());
+            if (!bNewFootnotes) {
+                bNewFootnotes = true;
+                iNewFootnoteIndex = footnotesList.size() - 1;
+            }
         }
     }
 
@@ -188,6 +202,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
 
     protected void restartFrom(KnuthNode restartingNode, int currentIndex) {
         super.restartFrom(restartingNode, currentIndex);
+        bNewFootnotes = false;
         if (bPendingFootnotes) {
             // remove from footnotesList the note lists that will be met
             // after the restarting point
@@ -219,6 +234,11 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         }
     }
 
+    protected void considerLegalBreak(KnuthElement element, int elementIdx) {
+        super.considerLegalBreak(element, elementIdx);
+        bNewFootnotes = false;
+    }
+
     /**
      * Return the difference between the line width and the width of the break that
      * ends in 'element'.
@@ -229,63 +249,59 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
      */
     protected int computeDifference(KnuthNode activeNode, KnuthElement element) {
         int actualWidth = totalWidth - activeNode.totalWidth;
+        int footnoteSplit;
         if (element.isPenalty()) {
             actualWidth += element.getW();
         }
         if (bPendingFootnotes) {
+            // compute the total length of the footnotes not yet inserted
             int newFootnotes = totalFootnotesLength - ((KnuthPageNode) activeNode).totalFootnotes;
-            // add the footnote separator width if some footnote content will be added
-            if (((KnuthPageNode) activeNode).totalFootnotes < totalFootnotesLength) {
+            if (newFootnotes > 0) {
+                // this page contains some footnote citations
+                // add the footnote separator width
                 actualWidth += footnoteSeparatorLength.opt;
-            }
-            if (actualWidth + newFootnotes <= lineWidth) {
-                // there is enough space to insert all footnotes:
-                // add the whole newFootnotes length
-                actualWidth += newFootnotes;
-                insertedFootnotesLength = ((KnuthPageNode) activeNode).totalFootnotes + newFootnotes;
-                footnoteListIndex = footnotesList.size() - 1;
-                footnoteElementIndex = ((LinkedList) footnotesList.get(footnoteListIndex)).size() - 1;
-            } else {
-                // check if there is enough space to insert at least a piece
-                // of the last footnote (and all the previous ones)
-                int footnoteSplit = getFootnoteSplit((KnuthPageNode) activeNode, lineWidth - actualWidth);
-                if (actualWidth + footnoteSplit <= lineWidth) {
-                    // the last footnote will be split
-                    // add more footnote content as possible
+                if (actualWidth + newFootnotes <= lineWidth) {
+                    // there is enough space to insert all footnotes:
+                    // add the whole newFootnotes length
+                    actualWidth += newFootnotes;
+                    insertedFootnotesLength = ((KnuthPageNode) activeNode).totalFootnotes + newFootnotes;
+                    footnoteListIndex = footnotesList.size() - 1;
+                    footnoteElementIndex = ((LinkedList) footnotesList.get(footnoteListIndex)).size() - 1;
+                } else if (bNewFootnotes
+                    && (footnoteSplit = getFootnoteSplit((KnuthPageNode) activeNode, lineWidth - actualWidth)) > 0) {
+                    // the last footnote, whose citation is in the last piece of content
+                    // added to the page, will be split:
+                    // add as much footnote content as possible
                     actualWidth += footnoteSplit;
                     insertedFootnotesLength = ((KnuthPageNode) activeNode).totalFootnotes + footnoteSplit;
                     footnoteListIndex = footnotesList.size() - 1;
                     // footnoteElementIndex has been set in getFootnoteSplit()
                 } else {
-                    // there is no space to add the smallest piece of the last footnote:
+                    // there is no space to add the smallest piece of the last footnote,
+                    // or we are trying to add a piece of content with no footnotes and
+                    // it does not fit in the page, because of the previous footnote bodies
+                    // that cannot be broken:
                     // add the whole newFootnotes length, so this breakpoint will be discarded
                     actualWidth += newFootnotes;
                     insertedFootnotesLength = ((KnuthPageNode) activeNode).totalFootnotes + newFootnotes;
                     footnoteListIndex = footnotesList.size() - 1;
                     footnoteElementIndex = ((LinkedList) footnotesList.get(footnoteListIndex)).size() - 1;
                 }
+            } else {
+                // all footnotes have already been placed on previous pages
             }
+        } else {
+            // there are no footnotes
         }
         return lineWidth - actualWidth;
     }
 
     private int getFootnoteSplit(KnuthPageNode activeNode, int availableLength) {
-        // length of all the not-yet-inserted footnotes
-        int newFootnotes = totalFootnotesLength - activeNode.totalFootnotes;
         if (availableLength <= 0) {
-            return newFootnotes;
+            return 0;
         } else {
             // the split must contain a piece of the last footnote
             // together with all previous, not yet inserted footnotes
-            int firstFootnoteIndex = activeNode.footnoteListIndex;
-            int firstElementIndex = activeNode.footnoteElementIndex;
-            if (firstElementIndex == ((LinkedList) footnotesList.get(firstFootnoteIndex)).size() - 1) {
-                // advance to the next list
-                firstFootnoteIndex ++;
-                firstElementIndex = 0;
-            } else {
-                firstElementIndex ++;
-            }
             int splitLength = 0;
             ListIterator noteListIterator = null;
             KnuthElement element = null;
@@ -343,10 +359,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             // and insert the remaining in the following one
             if (prevSplitLength > 0 ) {
                 footnoteElementIndex = prevIndex;
-                return prevSplitLength;
-            } else {
-                return newFootnotes;
             }
+            return prevSplitLength;
         }
     }
 
@@ -428,9 +442,6 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             } else if (footnoteElementIndex < ((LinkedList) footnotesList.get(footnoteListIndex)).size() - 1) {
                 // add demerits for the footnote split between pages
                 demerits += splitFootnoteDemerits;
-            } else {
-                // reduce demerits when all footnotes are inserted in the page where their citations are
-               demerits /= 2;
             }
         }
         demerits += activeNode.totalDemerits;
