@@ -429,7 +429,7 @@ public abstract class BreakingAlgorithm {
         lastTooShort = lastTooLong = null;
     }
 
-    private void considerLegalBreak(KnuthElement element, int elementIdx) {
+    protected void considerLegalBreak(KnuthElement element, int elementIdx) {
 
         if (log.isTraceEnabled()) {
             log.trace("Feasible breakpoint at " + par.indexOf(element) + " " + totalWidth + "+" + totalStretch + "-" + totalShrink);
