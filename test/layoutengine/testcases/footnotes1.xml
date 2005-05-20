@@ -30,7 +30,7 @@
       </fo:layout-master-set>
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
-          <fo:block>This is a block with a footnote<fo:footnote><fo:inline font-size="50%" vertical-align="super">1</fo:inline><fo:footnote-body><fo:block><fo:inline font-size="50%" vertical-align="super">1</fo:inline>I'm a footnote!</fo:block></fo:footnote-body></fo:footnote> in it.</fo:block>
+          <fo:block>This is a block with a footnote<fo:footnote><fo:inline font-size="50%" vertical-align="top">1</fo:inline><fo:footnote-body><fo:block><fo:inline font-size="50%" vertical-align="top">1</fo:inline>I'm a footnote!</fo:block></fo:footnote-body></fo:footnote> in it.</fo:block>
           <fo:block>This is another block without a footnote.</fo:block>
           <fo:block>filling 1...</fo:block>
           <fo:block background-color="yellow">filling 2...</fo:block>
