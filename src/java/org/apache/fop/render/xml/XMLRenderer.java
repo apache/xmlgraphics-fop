@@ -599,6 +599,7 @@ public class XMLRenderer extends AbstractRenderer {
         if (text.getTextLetterSpaceAdjust() != 0) {
             addAttribute("tlsadjust", text.getTextLetterSpaceAdjust());
         }
+        addAttribute("vpos", text.getOffset());
         addTraitAttributes(text);
         startElement("text", atts);
         characters(text.getTextArea());
