@@ -184,56 +184,52 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         returnedList = contentLM.getNextKnuthElements(childLC, alignment);
         log.debug(returnedList);
         
-            if (returnedList.size() == 1
-                    && ((KnuthElement) returnedList.getFirst()).isPenalty()
-                    && ((KnuthPenalty) returnedList.getFirst()).getP() == -KnuthElement.INFINITE) {
-                // a descendant of this block has break-before
-                if (returnList.size() == 0) {
-                    // the first child (or its first child ...) has
-                    // break-before;
-                    // all this block, including space before, will be put in
-                    // the
-                    // following page
-                    //FIX ME
-                    //bSpaceBeforeServed = false;
+        if (returnedList.size() == 1
+                && ((KnuthElement) returnedList.getFirst()).isPenalty()
+                && ((KnuthPenalty) returnedList.getFirst()).getP() == -KnuthElement.INFINITE) {
+            // a descendant of this block has break-before
+            if (returnList.size() == 0) {
+                // the first child (or its first child ...) has
+                // break-before;
+                // all this block, including space before, will be put in
+                // the
+                // following page
+                //FIX ME
+                //bSpaceBeforeServed = false;
+            }
+            contentList.addAll(returnedList);
+
+            // "wrap" the Position inside each element
+            // moving the elements from contentList to returnList
+            returnedList = new LinkedList();
+            wrapPositionElements(contentList, returnList);
+
+            return returnList;
+        } else {
+            /*
+            if (prevLM != null) {
+                // there is a block handled by prevLM
+                // before the one handled by curLM
+                if (mustKeepTogether() 
+                        || prevLM.mustKeepWithNext()
+                        || curLM.mustKeepWithPrevious()) {
+                    // add an infinite penalty to forbid a break between
+                    // blocks
+                    contentList.add(new KnuthPenalty(0,
+                            KnuthElement.INFINITE, false,
+                            new Position(this), false));
+                } else if (!((KnuthElement) contentList.getLast()).isGlue()) {
+                    // add a null penalty to allow a break between blocks
+                    contentList.add(new KnuthPenalty(0, 0, false,
+                            new Position(this), false));
+                } else {
+                    // the last element in contentList is a glue;
+                    // it is a feasible breakpoint, there is no need to add
+                    // a penalty
                 }
-                contentList.addAll(returnedList);
-
-                // "wrap" the Position inside each element
-                // moving the elements from contentList to returnList
-                returnedList = new LinkedList();
-                wrapPositionElements(contentList, returnList);
-
-                return returnList;
-            } else {
-                /*
-                if (prevLM != null) {
-                    // there is a block handled by prevLM
-                    // before the one handled by curLM
-                    if (mustKeepTogether() 
-                            || prevLM.mustKeepWithNext()
-                            || curLM.mustKeepWithPrevious()) {
-                        // add an infinite penalty to forbid a break between
-                        // blocks
-                        contentList.add(new KnuthPenalty(0,
-                                KnuthElement.INFINITE, false,
-                                new Position(this), false));
-                    } else if (!((KnuthElement) contentList.getLast()).isGlue()) {
-                        // add a null penalty to allow a break between blocks
-                        contentList.add(new KnuthPenalty(0, 0, false,
-                                new Position(this), false));
-                    } else {
-                        // the last element in contentList is a glue;
-                        // it is a feasible breakpoint, there is no need to add
-                        // a penalty
-                    }
-                }*/
-                contentList.addAll(returnedList);
-                /*
-                if (returnedList.size() == 0) {
-                    //Avoid NoSuchElementException below (happens with empty blocks)
-                    continue;
-                }*/
+            }*/
+            contentList.addAll(returnedList);
+            if (returnedList.size() > 0) {
                 if (((KnuthElement) returnedList.getLast()).isPenalty()
                         && ((KnuthPenalty) returnedList.getLast()).getP() == -KnuthElement.INFINITE) {
                     // a descendant of this block has break-after
@@ -248,7 +244,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
 
                     return returnList;
                 }
-            
+            }
         }
         wrapPositionElements(contentList, returnList);
         setFinished(true);
