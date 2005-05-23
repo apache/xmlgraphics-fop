@@ -138,27 +138,30 @@ public class TableRow extends FObj {
         return id;
     }
 
-    /**
-     * @return the "keep-with-previous" property.
-     */
+    /** @return the "keep-with-previous" property. */
     public KeepProperty getKeepWithPrevious() {
         return keepWithPrevious;
     }
 
-    /**
-     * Return the "keep-with-next" property.
-     */
+    /** @return the "keep-with-next" property. */
     public KeepProperty getKeepWithNext() {
         return keepWithNext;
     }
 
-    /**
-     * Return the "keep-together" property.
-     */
+    /** @return the "keep-together" property. */
     public KeepProperty getKeepTogether() {
         return keepTogether;
     }
 
+    /**
+     * Convenience method to check if a keep-together constraint is specified.
+     * @return true if keep-together is active.
+     */
+    public boolean mustKeepTogether() {
+        return !getKeepTogether().getWithinPage().isAuto()
+                || !getKeepTogether().getWithinColumn().isAuto();
+    }
+    
     /**
      * @return the "block-progression-dimension" property.
      */

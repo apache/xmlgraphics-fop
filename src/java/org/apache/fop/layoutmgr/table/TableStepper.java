@@ -131,19 +131,25 @@ public class TableStepper {
         EffRow row = getActiveRow();
         if (gu.isPrimary() && !gu.isEmpty()) {
             PrimaryGridUnit pgu = (PrimaryGridUnit)gu;
+            boolean makeBoxForWholeRow = false;
             if (row.getExplicitHeight().min > 0) {
                 boolean contentsSmaller = ElementListUtils.removeLegalBreaks(
                         pgu.getElements(), row.getExplicitHeight());
                 if (contentsSmaller) {
-                    List list = new java.util.ArrayList(1);
-                    list.add(new KnuthBoxCellWithBPD(
-                            row.getExplicitHeight().opt, pgu));
-                    elementLists[column] = list;
-                } else {
-                    //Copy elements (LinkedList) to array lists to improve 
-                    //element access performance
-                    elementLists[column] = new java.util.ArrayList(pgu.getElements());
+                    makeBoxForWholeRow = true;
                 }
+            }
+            if (pgu.isLastGridUnitRowSpan() && pgu.getRow() != null) {
+                makeBoxForWholeRow |= pgu.getRow().mustKeepTogether();
+            }
+            if (makeBoxForWholeRow) {
+                List list = new java.util.ArrayList(1);
+                int height = row.getExplicitHeight().opt;
+                if (height == 0) {
+                    height = row.getHeight().opt;
+                }
+                list.add(new KnuthBoxCellWithBPD(height, pgu));
+                elementLists[column] = list;
             } else {
                 //Copy elements (LinkedList) to array lists to improve 
                 //element access performance

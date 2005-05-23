@@ -32,6 +32,7 @@ import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.LengthRangeProperty;
+import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
@@ -121,9 +122,7 @@ public class TableContentLayoutManager {
         return this.footerList;
     }
 
-    /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(org.apache.fop.layoutmgr.LayoutContext, int)
-     */
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         log.debug("==> Columns: " + getTableLM().getColumns());
         KnuthBox headerAsFirst = null;
@@ -381,7 +380,7 @@ public class TableContentLayoutManager {
                         LinkedList elems = primary.getCellLM().getNextKnuthElements(
                                                 childLC, alignment);
                         primary.setElements(elems);
-                        log.debug("Elements: " + elems);
+                        ElementListObserver.observe(elems, "table-cell", primary.getCell().getId());
                     }
 
                     
