@@ -139,7 +139,7 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
     }
     
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(org.apache.fop.layoutmgr.LayoutContext, int)
+     * @see org.apache.fop.layoutmgr.LayoutManager
      */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         MinOptMax stackLimit = new MinOptMax(context.getStackLimit());
@@ -458,7 +458,7 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
             //curBlockArea.setHeight();
 
             // Set up dimensions
-            Area parentArea = parentLM.getParentArea(curBlockArea);
+            /*Area parentArea =*/ parentLM.getParentArea(curBlockArea);
             // Get reference IPD from parentArea
             setCurrentArea(curBlockArea); // ??? for generic operations
         }
@@ -488,7 +488,7 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#negotiateBPDAdjustment(int, org.apache.fop.layoutmgr.KnuthElement)
+     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager
      */
     public int negotiateBPDAdjustment(int adj, KnuthElement lastElement) {
         // TODO Auto-generated method stub
@@ -496,7 +496,7 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#discardSpace(org.apache.fop.layoutmgr.KnuthGlue)
+     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager
      */
     public void discardSpace(KnuthGlue spaceGlue) {
         // TODO Auto-generated method stub
@@ -507,9 +507,11 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
      */
     public boolean mustKeepTogether() {
         //TODO Keeps will have to be more sophisticated sooner or later
-        return ((BlockLevelLayoutManager)getParent()).mustKeepTogether()/* 
-                || !fobj.getKeepTogether().getWithinPage().isAuto()
-                || !fobj.getKeepTogether().getWithinColumn().isAuto()*/;
+        boolean keep = ((BlockLevelLayoutManager)getParent()).mustKeepTogether();
+        if (gridUnit.getRow() != null) {
+            keep |= gridUnit.getRow().mustKeepTogether();
+        }
+        return keep;
     }
 
     /**

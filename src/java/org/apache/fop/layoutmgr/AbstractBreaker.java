@@ -158,8 +158,8 @@ public abstract class AbstractBreaker {
                         : (blockList.startOn == Constants.EN_ODD_PAGE) ? "odd page"
                                 : "even page";
                 log.debug("  sequence starts on " + pagina);
-                logBlocklist(blockList);
             }
+            ElementListObserver.observe(blockList, "breaker", null);
             //debug code end
 
             log.debug("PLM> start of algorithm (" + this.getClass().getName() 
@@ -571,50 +571,10 @@ public abstract class AbstractBreaker {
         // false, new Position(this), false));
         effectiveList.endSequence();
 
-        logEffectiveList(effectiveList);
+        ElementListObserver.observe(effectiveList, "breaker-effective", null);
 
         alg.getPageBreaks().clear(); //Why this?
         return effectiveList;
-    }
-
-    /**
-     * Logs the contents of a block list for debugging purposes
-     * @param blockList block list to log
-     */
-    private void logBlocklist(KnuthSequence blockList) {
-        if (!log.isDebugEnabled()) {
-            return;
-        }
-        ListIterator tempIter = blockList.listIterator();
-
-        KnuthElement temp;
-        log.debug(" ");
-        while (tempIter.hasNext()) {
-            temp = (KnuthElement) tempIter.next();
-            if (temp.isBox()) {
-                log.debug(tempIter.previousIndex()
-                        + ") " + temp);
-            } else if (temp.isGlue()) {
-                log.debug(tempIter.previousIndex()
-                        + ") " + temp);
-            } else {
-                log.debug(tempIter.previousIndex()
-                        + ") " + temp);
-            }
-            if (temp.getPosition() != null) {
-                log.debug("            " + temp.getPosition());
-            }
-        }
-        log.debug(" ");
-    }
-
-    /**
-     * Logs the contents of an effective block list for debugging purposes
-     * @param effectiveList block list to log
-     */
-    private void logEffectiveList(KnuthSequence effectiveList) {
-        log.debug("Effective list");
-        logBlocklist(effectiveList);
     }
 
     private int adjustBlockSpaces(LinkedList spaceList, int difference, int total) {

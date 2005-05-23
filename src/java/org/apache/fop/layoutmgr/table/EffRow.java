@@ -38,7 +38,6 @@ public class EffRow {
     public EffRow(int index, int bodyType) {
         this.index = index;
         this.bodyType = bodyType;
-        this.height = height;
     }
     
     public int getIndex() {
