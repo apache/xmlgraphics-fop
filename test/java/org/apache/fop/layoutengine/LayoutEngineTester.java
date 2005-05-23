@@ -43,6 +43,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.render.xml.XMLRenderer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -68,6 +69,7 @@ public class LayoutEngineTester {
     static {
         CHECK_CLASSES.put("true", TrueCheck.class);
         CHECK_CLASSES.put("eval", EvalCheck.class);
+        CHECK_CLASSES.put("element-list", ElementListCheck.class);
     }
     
     /**
@@ -106,32 +108,41 @@ public class LayoutEngineTester {
      */
     public void runTest(File testFile) 
             throws TransformerException, FOPException, MalformedURLException {
-        //Setup Transformer to convert the testcase XML to XSL-FO
-        Transformer transformer = getTestcase2FOStylesheet().newTransformer();
-        Source src = new StreamSource(testFile);
         
-        //Setup Transformer to convert the area tree to a DOM
-        TransformerHandler athandler = tfactory.newTransformerHandler();
         DOMResult domres = new DOMResult();
-        athandler.setResult(domres);
-        
-        //Setup FOP for area tree rendering
-        FOUserAgent ua = new FOUserAgent();
-        ua.setBaseURL(testFile.getParentFile().toURL().toString());
-        XMLRenderer atrenderer = new XMLRenderer();
-        atrenderer.setUserAgent(ua);
-        atrenderer.setTransformerHandler(athandler);
-        ua.setRendererOverride(atrenderer);
-        Fop fop = new Fop(Constants.RENDER_XML, ua);
-        
-        SAXResult fores = new SAXResult(fop.getDefaultHandler());
-        transformer.transform(src, fores);
+
+        ElementListCollector elCollector = new ElementListCollector();
+        ElementListObserver.addObserver(elCollector);
+        try {
+            //Setup Transformer to convert the testcase XML to XSL-FO
+            Transformer transformer = getTestcase2FOStylesheet().newTransformer();
+            Source src = new StreamSource(testFile);
+            
+            //Setup Transformer to convert the area tree to a DOM
+            TransformerHandler athandler = tfactory.newTransformerHandler();
+            athandler.setResult(domres);
+            
+            //Setup FOP for area tree rendering
+            FOUserAgent ua = new FOUserAgent();
+            ua.setBaseURL(testFile.getParentFile().toURL().toString());
+            XMLRenderer atrenderer = new XMLRenderer();
+            atrenderer.setUserAgent(ua);
+            atrenderer.setTransformerHandler(athandler);
+            ua.setRendererOverride(atrenderer);
+            Fop fop = new Fop(Constants.RENDER_XML, ua);
+            
+            SAXResult fores = new SAXResult(fop.getDefaultHandler());
+            transformer.transform(src, fores);
+        } finally {
+            ElementListObserver.removeObserver(elCollector);
+        }
         
         Document doc = (Document)domres.getNode();
         if (this.areaTreeBackupDir != null) {
             saveAreaTreeXML(doc, new File(this.areaTreeBackupDir, testFile.getName() + ".at.xml"));
         }
-        checkAll(testFile, doc);
+        LayoutResult result = new LayoutResult(doc, elCollector);
+        checkAll(testFile, result);
     }
     
     /**
@@ -159,10 +170,10 @@ public class LayoutEngineTester {
     /**
      * Perform all checks on the area tree.
      * @param testFile Test case XML file
-     * @param at The generated area tree
+     * @param result The layout results
      * @throws TransformerException if a problem occurs in XSLT/JAXP
      */
-    protected void checkAll(File testFile, Document at) throws TransformerException {
+    protected void checkAll(File testFile, LayoutResult result) throws TransformerException {
         Transformer transformer = getTestcase2ChecksStylesheet().newTransformer();
         Source src = new StreamSource(testFile);
         DOMResult res = new DOMResult();
@@ -181,7 +192,7 @@ public class LayoutEngineTester {
         Iterator i = checks.iterator();
         while (i.hasNext()) {
             LayoutEngineCheck check = (LayoutEngineCheck)i.next();
-            check.check(at);
+            check.check(result);
         }
     }
     

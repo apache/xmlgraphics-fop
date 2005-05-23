@@ -21,9 +21,7 @@ package org.apache.fop.layoutengine;
 import javax.xml.transform.TransformerException;
 
 import org.apache.xpath.XPathAPI;
-import org.apache.xpath.objects.XBoolean;
 import org.apache.xpath.objects.XObject;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 /**
@@ -53,13 +51,11 @@ public class EvalCheck implements LayoutEngineCheck {
         this.xpath = node.getAttributes().getNamedItem("xpath").getNodeValue();
     }
     
-    /**
-     * @see org.apache.fop.layoutengine.LayoutEngineCheck#check(org.w3c.dom.Document)
-     */
-    public void check(Document doc) {
+    /** @see org.apache.fop.layoutengine.LayoutEngineCheck */
+    public void check(LayoutResult result) {
         XObject res;
         try {
-            res = XPathAPI.eval(doc, xpath);
+            res = XPathAPI.eval(result.getAreaTree(), xpath);
         } catch (TransformerException e) {
             throw new RuntimeException("XPath evaluation failed: " + e.getMessage());
         }
