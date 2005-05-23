@@ -200,7 +200,8 @@ public class Table extends FObj {
      */
     protected void endOfNode() throws FOPException {
         if (!tableBodyFound) {
-           missingChildElementError("(marker*,table-column*,table-header?,table-footer?,table-body+)");
+           missingChildElementError(
+                   "(marker*,table-column*,table-header?,table-footer?,table-body+)");
         }
 
         getFOEventHandler().endTable(this);
@@ -235,6 +236,7 @@ public class Table extends FObj {
         return this.defaultColumn;
     }
     
+    /** @return the list of table-column elements. */
     public List getColumns() {
         return columns;
     }
@@ -247,10 +249,12 @@ public class Table extends FObj {
         return (TableBody)childNodes.get(index);
     }
 
+    /** @return the body for the table-header. */
     public TableBody getTableHeader() {
         return tableHeader;
     }
 
+    /** @return the body for the table-footer. */
     public TableBody getTableFooter() {
         return tableFooter;
     }
@@ -318,6 +322,15 @@ public class Table extends FObj {
         return keepTogether;
     }
 
+    /**
+     * Convenience method to check if a keep-together constraint is specified.
+     * @return true if keep-together is active.
+     */
+    public boolean mustKeepTogether() {
+        return !getKeepTogether().getWithinPage().isAuto()
+                || !getKeepTogether().getWithinColumn().isAuto();
+    }
+    
     /** @return the "border-collapse" property. */
     public int getBorderCollapse() {
         return borderCollapse;
