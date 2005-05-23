@@ -219,7 +219,7 @@ public class TableContentLayoutManager {
             if (next == null) {
                 //It wasn't read, yet, or we are at the last row
                 next = iter.getNextRow();
-                iter.backToPreviewRow();
+                iter.backToPreviousRow();
             }
             if ((prev == null) && (iter == this.trIter) && (this.headerIter != null)) {
                 prev = this.headerIter.getLastRow();

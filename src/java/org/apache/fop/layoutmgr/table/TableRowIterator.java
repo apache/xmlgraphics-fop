@@ -72,6 +72,12 @@ public class TableRowIterator {
     private ListIterator bodyIterator = null;
     private ListIterator childInBodyIterator = null;
     
+    /**
+     * Creates a new TableRowIterator.
+     * @param table the table to iterate over
+     * @param columns the column setup for the table
+     * @param what indicates what part of the table to iterate over (HEADER, FOOTER, BODY)
+     */
     public TableRowIterator(Table table, ColumnSetup columns, int what) {
         this.table = table;
         this.columns = columns;
@@ -95,6 +101,12 @@ public class TableRowIterator {
         }
     }
     
+    /**
+     * <p>Preloads the whole table. 
+     * </p>
+     * <p>Note:This is inefficient for large tables.
+     * </p>
+     */
     public void prefetchAll() {
         while (prefetchNext()) {
             log.trace("found row...");
@@ -139,6 +151,10 @@ public class TableRowIterator {
         return rowGroup;
     }
     
+    /**
+     * Retuns the next effective row.
+     * @return the requested effective row.
+     */
     public EffRow getNextRow() {
         currentIndex++;
         boolean moreRows = true;
@@ -152,10 +168,17 @@ public class TableRowIterator {
         }
     }
     
-    public void backToPreviewRow() {
+    /**
+     * Sets the iterator to the previous row.
+     */
+    public void backToPreviousRow() {
         currentIndex--;
     }
     
+    /**
+     * Returns the first effective row.
+     * @return the requested effective row.
+     */
     public EffRow getFirstRow() {
         if (rows.size() == 0) {
             prefetchNext();
@@ -163,6 +186,14 @@ public class TableRowIterator {
         return getCachedRow(0);
     }
     
+    /**
+     * <p>Returns the last effective row.
+     * </p>
+     * <p>Note:This is inefficient for large tables because the whole table
+     * if preloaded.
+     * </p>
+     * @return the requested effective row.
+     */
     public EffRow getLastRow() {
         while (prefetchNext()) {
             //nop
@@ -170,6 +201,11 @@ public class TableRowIterator {
         return getCachedRow(rows.size() - 1);
     }
     
+    /**
+     * Returns a cached effective row.
+     * @param index index of the row (zero-based)
+     * @return the requested effective row
+     */
     public EffRow getCachedRow(int index) {
         if (index < 0 || index >= rows.size()) {
             return null;
@@ -419,19 +455,11 @@ public class TableRowIterator {
                     }
                     find++;
                 }
-                //CommonBorderPaddingBackground borders = new CommonBorderPaddingBackground();
                 starting.resolveBorder(start, 
                         CommonBorderPaddingBackground.START);
-                //starting.setBorders(borders);
-                /*
-                if (starting != ending) {
-                    borders = new CommonBorderPaddingBackground();
-                }*/
                 ending.resolveBorder(end, 
                         CommonBorderPaddingBackground.END);
-                //ending.setBorders(borders);
                 //Only start and end borders here, before and after during layout
-                //TODO resolve before and after borders during layout
             }
         }
     }
