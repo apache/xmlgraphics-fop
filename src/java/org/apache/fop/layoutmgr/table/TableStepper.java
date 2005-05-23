@@ -185,7 +185,7 @@ public class TableStepper {
         int step;
         int addedBoxLen = 0;
         LinkedList returnList = new LinkedList();
-        while ((step = getNextStep(laststep)) > 0) {
+        while ((step = getNextStep(laststep)) >= 0) {
             if (rowBacktrackForLastStep) {
                 //Even though we've already switched to the next row, we have to 
                 //calculate as if we were still on the previous row
@@ -340,7 +340,7 @@ public class TableStepper {
             log.debug("borders before=" + borderBefore[i] + " after=" + borderAfter[i]);
         }
         if (seqCount == 0) {
-            return 0;
+            return -1;
         }
 
         //Determine smallest possible step

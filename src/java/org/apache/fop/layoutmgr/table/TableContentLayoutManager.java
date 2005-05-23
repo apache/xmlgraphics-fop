@@ -196,10 +196,12 @@ public class TableContentLayoutManager {
                         returnList, rowGroup);
         }
         
-        //Remove last penalty
-        KnuthElement last = (KnuthElement)returnList.getLast();
-        if (last.isPenalty() && last.getP() == 0) {
-            returnList.removeLast();
+        if (returnList.size() > 0) {
+            //Remove last penalty
+            KnuthElement last = (KnuthElement)returnList.getLast();
+            if (last.isPenalty() && last.getP() == 0) {
+                returnList.removeLast();
+            }
         }
         return returnList;
     }
