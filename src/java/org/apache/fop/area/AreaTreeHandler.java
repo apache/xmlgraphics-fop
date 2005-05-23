@@ -290,7 +290,9 @@ public class AreaTreeHandler extends FOEventHandler {
             log.debug("Total time used: " + timeUsed + "ms");
             log.debug("Pages rendered: " + pageCount);
             if (pageCount > 0) {
-                log.debug("Avg render time: " + (timeUsed / pageCount) + "ms/page");
+                long perPage = (timeUsed / pageCount);
+                long ppm = (timeUsed != 0 ? Math.round(60000 * pageCount / (double)timeUsed) : -1);
+                log.debug("Avg render time: " + perPage + "ms/page (" + ppm + "pages/min)");
             }
         }
     }
