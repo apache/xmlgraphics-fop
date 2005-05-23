@@ -141,6 +141,7 @@ public class TableStepper {
             }
             if (pgu.isLastGridUnitRowSpan() && pgu.getRow() != null) {
                 makeBoxForWholeRow |= pgu.getRow().mustKeepTogether();
+                makeBoxForWholeRow |= pgu.getTable().mustKeepTogether();
             }
             if (makeBoxForWholeRow) {
                 List list = new java.util.ArrayList(1);
@@ -243,7 +244,11 @@ public class TableStepper {
                     penaltyPos.footerElements = tclm.getFooterElements();
                 }
             }
-            returnList.add(new KnuthPenalty(effPenaltyLen, 0, false, penaltyPos, false));
+            int p = 0;
+            if (getTableLM().mustKeepTogether()) {
+                p = KnuthPenalty.INFINITE;
+            }
+            returnList.add(new KnuthPenalty(effPenaltyLen, p, false, penaltyPos, false));
 
             log.debug("step=" + step + " (+" + increase + ")"
                     + " box=" + boxLen 

@@ -198,7 +198,7 @@ public class TableContentLayoutManager {
         if (returnList.size() > 0) {
             //Remove last penalty
             KnuthElement last = (KnuthElement)returnList.getLast();
-            if (last.isPenalty() && last.getP() == 0) {
+            if (last.isPenalty()) {
                 returnList.removeLast();
             }
         }
