@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 The Apache Software Foundation.
+ * Copyright 2005 Jeremias Maerki
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.fop.layoutengine;
+
+/* $Id$ */
+
+package org.apache.fop;
+
+import org.apache.fop.layoutmgr.ElementListObserver;
+import org.apache.fop.logging.LoggingElementListObserver;
 
 /**
- * Defines the interface for check operations.
+ * Handles some standard tasks for debugging.
  */
-public interface LayoutEngineCheck {
+public class DebugHelper {
 
-    /**
-     * Called to perform the check.
-     * @param result the results from the processing run
-     */
-    void check(LayoutResult result);
+    private static boolean elObserversRegistered = false;
+    
+    public static void registerStandardElementListObservers() {
+        if (!elObserversRegistered) {
+            ElementListObserver.addObserver(new LoggingElementListObserver());
+            elObserversRegistered = true;
+        }
+    }
     
 }

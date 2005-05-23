@@ -35,6 +35,7 @@ import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.commons.io.filefilter.PrefixFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.fop.DebugHelper;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -45,6 +46,10 @@ import junit.framework.TestSuite;
  */
 public class LayoutEngineTestSuite {
 
+    static {
+        DebugHelper.registerStandardElementListObservers();
+    }
+    
     private static String[] readLinesFromFile(File f) throws IOException {
         List lines = new java.util.ArrayList();
         Reader reader = new FileReader(f);
