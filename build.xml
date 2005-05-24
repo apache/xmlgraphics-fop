@@ -55,6 +55,7 @@ list of possible build targets.
   <!-- build-local.properties is not stored in CVS and overrides values from build.properties -->
   <property file="${basedir}/build-local.properties"/>
   <property file="${basedir}/build.properties"/>
+  <property environment="env"/>
 
   <property name="optional.lib.dir" value="${basedir}/lib"/>
 
@@ -252,6 +253,8 @@ list of possible build targets.
 
   <target name="init-avail">
     <echo message="${ant.version}"/>
+    <echo message="VM: ${java.vm.version}, ${java.vm.vendor}"/>
+    <echo message="JAVA_HOME: ${env.JAVA_HOME}"/>
 
     <available property="jimi.present" classname="com.sun.jimi.core.Jimi"
         classpathref="libs-build-classpath"/>
@@ -510,7 +513,7 @@ list of possible build targets.
     <jar jarfile="${build.dir}/${name}.jar" basedir="${build.dest}" includes="org/**">
       <manifest>
         <attribute name="Main-Class" value="${main.class}"/>
-        <attribute name="Class-Path" value="${manifest-classpath}"/>
+        <!--attribute name="Class-Path" value="${manifest-classpath}"/-->
         <attribute name="Implementation-Title" value="${Name}"/>
         <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The Apache Software Foundation (http://xml.apache.org/fop/)"/>
