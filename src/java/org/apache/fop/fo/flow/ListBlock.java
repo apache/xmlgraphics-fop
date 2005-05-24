@@ -151,6 +151,21 @@ public class ListBlock extends FObj {
         return breakBefore;
     }
 
+    /** @return the "keep-with-next" property.  */
+    public KeepProperty getKeepWithNext() {
+        return keepWithNext;
+    }
+
+    /** @return the "keep-with-previous" property.  */
+    public KeepProperty getKeepWithPrevious() {
+        return keepWithPrevious;
+    }
+
+    /** @return the "keep-together" property.  */
+    public KeepProperty getKeepTogether() {
+        return keepTogether;
+    }
+
     /**
      * @return the "id" property.
      */

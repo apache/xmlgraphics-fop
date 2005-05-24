@@ -163,6 +163,24 @@ public class TableRow extends FObj {
     }
     
     /**
+     * Convenience method to check if a keep-with-next constraint is specified.
+     * @return true if keep-with-next is active.
+     */
+    public boolean mustKeepWithNext() {
+        return !getKeepWithNext().getWithinPage().isAuto()
+                || !getKeepWithNext().getWithinColumn().isAuto();
+    }
+    
+    /**
+     * Convenience method to check if a keep-with-previous constraint is specified.
+     * @return true if keep-with-previous is active.
+     */
+    public boolean mustKeepWithPrevious() {
+        return !getKeepWithPrevious().getWithinPage().isAuto()
+                || !getKeepWithPrevious().getWithinColumn().isAuto();
+    }
+    
+    /**
      * @return the "block-progression-dimension" property.
      */
     public LengthRangeProperty getBlockProgressionDimension() {
