@@ -62,6 +62,9 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
     private MinOptMax spaceBefore;
     private MinOptMax spaceAfter;
     
+    private boolean keepWithNextPendingOnLabel;
+    private boolean keepWithNextPendingOnBody;
+    
     /*
     private class ItemPosition extends LeafPosition {
         protected List cellBreaks;
@@ -156,12 +159,25 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
     /** @see org.apache.fop.layoutmgr.LayoutManager */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         referenceIPD = context.getRefIPD();
-
+        LayoutContext childLC;
+        
         // label
-        labelList = label.getNextKnuthElements(context, alignment);
+        childLC = new LayoutContext(0);
+        childLC.setRefIPD(context.getRefIPD());
+        labelList = label.getNextKnuthElements(childLC, alignment);
+        if (childLC.isKeepWithPreviousPending()) {
+            context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
+        }
+        this.keepWithNextPendingOnLabel = childLC.isKeepWithNextPending();
 
         // body
-        bodyList = body.getNextKnuthElements(context, alignment);
+        childLC = new LayoutContext(0);
+        childLC.setRefIPD(context.getRefIPD());
+        bodyList = body.getNextKnuthElements(childLC, alignment);
+        if (childLC.isKeepWithPreviousPending()) {
+            context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
+        }
+        this.keepWithNextPendingOnBody = childLC.isKeepWithNextPending();
 
         // create a combined list
         LinkedList returnedList = getCombinedKnuthElementsForListItem(labelList, bodyList);
@@ -175,6 +191,13 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
             tempElement = (KnuthElement)listIter.next();
             tempElement.setPosition(new NonLeafPosition(this, tempElement.getPosition()));
             returnedList.add(tempElement);
+        }
+        
+        if (keepWithNextPendingOnLabel || keepWithNextPendingOnBody || mustKeepWithNext()) {
+            context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
+        }
+        if (mustKeepWithPrevious()) {
+            context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
         }
 
         setFinished(true);
@@ -195,10 +218,23 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         int totalHeight = Math.max(fullHeights[0], fullHeights[1]);
         int step;
         int addedBoxHeight = 0;
+        boolean keepWithNextActive = false;
 
         LinkedList returnList = new LinkedList();
         while ((step = getNextStep(elementLists, start, end, partialHeights))
                > 0) {
+            
+            if (end[0] + 1 == elementLists[0].size()) {
+                if (keepWithNextPendingOnLabel) {
+                    keepWithNextActive = true;
+                }
+            }
+            if (end[1] + 1 == elementLists[1].size()) {
+                if (keepWithNextPendingOnBody) {
+                    keepWithNextActive = true;
+                }
+            }
+            
             // compute penalty height and box height
             int penaltyHeight = step 
                 + getMaxRemainingHeight(fullHeights, partialHeights) 
@@ -212,7 +248,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
             returnList.add(new KnuthBox(boxHeight, stepPosition, false));
             if (addedBoxHeight < totalHeight) {
                 int p = 0;
-                if (mustKeepTogether()) {
+                if (keepWithNextActive || mustKeepTogether()) {
                     p = KnuthPenalty.INFINITE;
                 }
                 returnList.add(new KnuthPenalty(penaltyHeight, p, false, stepPosition, false));
