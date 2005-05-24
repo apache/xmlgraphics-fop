@@ -101,6 +101,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
         return iIndents;
     }
     
+    /** @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(java.util.List, int) */
     public LinkedList getChangedKnuthElements(List oldList, int alignment) {
         //log.debug("LBLM.getChangedKnuthElements>");
         return super.getChangedKnuthElements(oldList, alignment);
