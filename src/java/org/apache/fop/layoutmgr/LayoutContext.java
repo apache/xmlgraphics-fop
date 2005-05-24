@@ -310,7 +310,9 @@ public class LayoutContext {
         "\nIs First Area: \t" + isFirstArea() + 
         "\nStarts New Area: \t" + startsNewArea() + 
         "\nIs Last Area: \t" + isLastArea() +
-        "\nTry Hyphenate: \t" + tryHyphenate();
+        "\nTry Hyphenate: \t" + tryHyphenate() + 
+        "\nKeeps: \t[" + (isKeepWithNextPending()?"keep-with-next":"") + "][" 
+            + (isKeepWithPreviousPending()?"keep-with-previous":"") + "] pending";
     }
 }
 
