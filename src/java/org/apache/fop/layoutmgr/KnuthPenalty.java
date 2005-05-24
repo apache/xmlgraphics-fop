@@ -72,12 +72,20 @@ public class KnuthPenalty extends KnuthElement {
     }
 
     /**
-     * Return the penalty value of this penalty.
+     * @return the penalty value of this penalty.
      */
     public int getP() {
         return penalty;
     }
 
+    /**
+     * Sets a new penalty value.
+     * @param p the new penalty value
+     */
+    public void setP(int p) {
+        this.penalty = p;
+    }
+    
     /**
      * Return true is this penalty is a flagged one.
      */
