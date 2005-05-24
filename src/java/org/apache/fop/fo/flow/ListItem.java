@@ -171,8 +171,23 @@ public class ListItem extends FObj {
         return breakBefore;
     }
 
+    /** @return the "keep-with-next" property.  */
+    public KeepProperty getKeepWithNext() {
+        return keepWithNext;
+    }
+
+    /** @return the "keep-with-previous" property.  */
+    public KeepProperty getKeepWithPrevious() {
+        return keepWithPrevious;
+    }
+
+    /** @return the "keep-together" property.  */
+    public KeepProperty getKeepTogether() {
+        return keepTogether;
+    }
+
     /**
-     * Return the "id" property.
+     * @return the "id" property.
      */
     public String getId() {
         return id;
