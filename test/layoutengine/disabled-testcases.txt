@@ -1,6 +1,8 @@
 footnotes2.xml
 keep-with-previous2.xml
 keep-with-previous3.xml
+keep-with-previous4.xml
+keep-with-previous5.xml
 markers5b.xml
 multi-column1.xml
 normal-breaking4.xml
