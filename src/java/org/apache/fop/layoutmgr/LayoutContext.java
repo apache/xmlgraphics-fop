@@ -52,6 +52,17 @@ public class LayoutContext {
 
     public static final int RESOLVE_LEADING_SPACE = 0x100;
 
+    /**
+     * This flag indicates that there's a keep-with-next that hasn't
+     * been processed, yet.
+     */
+    public static final int KEEP_WITH_NEXT_PENDING = 0x200;
+    /**
+     * This flag indicates that there's a keep-with-previous that hasn't
+     * been processed, yet.
+     */
+    public static final int KEEP_WITH_PREVIOUS_PENDING = 0x400;
+
 
     public int flags; // Contains some set of flags defined above
     /**
@@ -155,6 +166,14 @@ public class LayoutContext {
         return ((this.flags & SUPPRESS_LEADING_SPACE) != 0);
     }
 
+    public boolean isKeepWithNextPending() {
+        return ((this.flags & KEEP_WITH_NEXT_PENDING) != 0);
+    }
+    
+    public boolean isKeepWithPreviousPending() {
+        return ((this.flags & KEEP_WITH_PREVIOUS_PENDING) != 0);
+    }
+    
     public void setLeadingSpace(SpaceSpecifier space) {
         leadingSpace = space;
     }
