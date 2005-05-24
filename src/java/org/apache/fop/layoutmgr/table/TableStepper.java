@@ -29,6 +29,7 @@ import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthPenalty;
+import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.table.TableContentLayoutManager.GridUnitPart;
 import org.apache.fop.layoutmgr.table.TableContentLayoutManager.TableContentPosition;
 import org.apache.fop.layoutmgr.table.TableContentLayoutManager.TableHFPenaltyPosition;
@@ -55,6 +56,7 @@ public class TableStepper {
     private int[] borderBefore;
     private int[] borderAfter;
     private boolean rowBacktrackForLastStep;
+    private boolean[] keepWithNextSignals;
     
     /**
      * Main constructor
@@ -74,6 +76,7 @@ public class TableStepper {
         baseWidth = new int[columnCount];
         borderBefore = new int[columnCount];
         borderAfter = new int[columnCount];
+        keepWithNextSignals = new boolean[columnCount];
         Arrays.fill(end, -1);
     }
     
@@ -165,6 +168,7 @@ public class TableStepper {
             end[column] = -1;
             widths[column] = 0;
             startRow[column] = activeRow;
+            keepWithNextSignals[column] = false;
         }
     }
     
@@ -176,18 +180,21 @@ public class TableStepper {
 
     /**
      * Creates the combined element list for a row group.
+     * @param context Active LayoutContext
      * @param rowGroup the row group
      * @param maxColumnCount the maximum number of columns to expect
      * @param bodyType Indicates what type of body is processed (boder, header or footer)
      * @return the combined element list
      */
-    public LinkedList getCombinedKnuthElementsForRowGroup( 
+    public LinkedList getCombinedKnuthElementsForRowGroup(
+            LayoutContext context,
             EffRow[] rowGroup, int maxColumnCount, int bodyType) {
         this.rowGroup = rowGroup;
         setup(maxColumnCount);
         initializeElementLists();
         calcTotalHeight();
         
+        boolean signalKeepWithNext = false;
         int laststep = 0;
         int step;
         int addedBoxLen = 0;
@@ -217,6 +224,30 @@ public class TableStepper {
                     } else {
                         gridUnitParts.add(new GridUnitPart(pgu, start[i], end[i]));
                     }
+                    if (end[i] + 1 == elementLists[i].size()) {
+                        if (pgu.getFlag(GridUnit.KEEP_WITH_NEXT_PENDING)) {
+                            log.debug("PGU has pending keep-with-next");
+                            keepWithNextSignals[i] = true;
+                        }
+                        if (pgu.getRow() != null && pgu.getRow().mustKeepWithNext()) {
+                            log.debug("table-row causes keep-with-next");
+                            keepWithNextSignals[i] = true;
+                        }
+                    }
+                    if (start[i] == 0 && end[i] >= 0) {
+                        if (pgu.getFlag(GridUnit.KEEP_WITH_PREVIOUS_PENDING)) {
+                            log.debug("PGU has pending keep-with-previous");
+                            if (returnList.size() == 0) {
+                                context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
+                            }
+                        }
+                        if (pgu.getRow() != null && pgu.getRow().mustKeepWithPrevious()) {
+                            log.debug("table-row causes keep-with-previous");
+                            if (returnList.size() == 0) {
+                                context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
+                            }
+                        }
+                    }
                 }
             }
             //log.debug(">>> guPARTS: " + gridUnitParts);
@@ -245,7 +276,11 @@ public class TableStepper {
                 }
             }
             int p = 0;
-            if (getTableLM().mustKeepTogether()) {
+            signalKeepWithNext = false;
+            for (int i = 0; i < start.length; i++) {
+                signalKeepWithNext |= keepWithNextSignals[i];
+            }
+            if (signalKeepWithNext || getTableLM().mustKeepTogether()) {
                 p = KnuthPenalty.INFINITE;
             }
             returnList.add(new KnuthPenalty(effPenaltyLen, p, false, penaltyPos, false));
@@ -260,6 +295,11 @@ public class TableStepper {
                 //If row was set to previous, restore now
                 activeRow++;
             }
+        }
+        if (signalKeepWithNext) {
+            //Last step signalled a keep-with-next. Since the last penalty will be removed,
+            //we have to signal the still pending last keep-with-next using the LayoutContext.
+            context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
         }
         return returnList;
     }

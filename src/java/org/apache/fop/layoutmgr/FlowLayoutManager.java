@@ -106,6 +106,10 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
             // get elements from curLM
             returnedList = curLM.getNextKnuthElements(childLC, alignment);
             //log.debug("FLM.getNextKnuthElements> returnedList.size() = " + returnedList.size());
+            if (returnList.size() == 0 && childLC.isKeepWithPreviousPending()) {
+                context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
+                childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
+            }
 
             // "wrap" the Position inside each element
             LinkedList tempList = returnedList;
@@ -121,8 +125,11 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
             } else {
                 if (returnList.size() > 0) {
                     // there is a block before this one
-                    if (prevLM.mustKeepWithNext()
-                        || curLM.mustKeepWithPrevious()) {
+                    if (context.isKeepWithNextPending()
+                            || childLC.isKeepWithPreviousPending()) {
+                        //Clear pending keep flag
+                        context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
+                        childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
                         // add an infinite penalty to forbid a break between blocks
                         returnList.add(new KnuthPenalty(0, KnuthElement.INFINITE, false, 
                                 new Position(this), false));
@@ -141,6 +148,11 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
                         return returnList;
                     }
                 }
+            }
+            if (childLC.isKeepWithNextPending()) {
+                //Clear and propagate
+                childLC.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
+                context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
             }
             prevLM = curLM;
         }

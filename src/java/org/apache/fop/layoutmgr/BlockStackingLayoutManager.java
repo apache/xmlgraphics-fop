@@ -234,6 +234,10 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
 
             // get elements from curLM
             returnedList = curLM.getNextKnuthElements(childLC, alignment);
+            if (contentList.size() == 0 && childLC.isKeepWithPreviousPending()) {
+                context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
+                childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
+            }
             if (returnedList != null
                     && returnedList.size() == 1
                     && ((KnuthElement) returnedList.getFirst()).isPenalty()
@@ -267,8 +271,11 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                     // there is a block handled by prevLM
                     // before the one handled by curLM
                     if (mustKeepTogether() 
-                            || prevLM.mustKeepWithNext()
-                            || curLM.mustKeepWithPrevious()) {
+                            || context.isKeepWithNextPending()
+                            || childLC.isKeepWithPreviousPending()) {
+                        //Clear keep pending flag
+                        context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
+                        childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
                         // add an infinite penalty to forbid a break between
                         // blocks
                         contentList.add(new KnuthPenalty(0,
@@ -317,6 +324,11 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                     return returnList;
                 }*/
             }
+            if (childLC.isKeepWithNextPending()) {
+                //Clear and propagate
+                childLC.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
+                context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
+            }
             prevLM = curLM;
         }
 
@@ -339,6 +351,13 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         addKnuthElementsForSpaceAfter(returnList, returnPosition, alignment);
         addKnuthElementsForBreakAfter(returnList, returnPosition);
 
+        if (mustKeepWithNext()) {
+            context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
+        }
+        if (mustKeepWithPrevious()) {
+            context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
+        }
+        
         setFinished(true);
 
         return returnList;

@@ -36,6 +36,7 @@ import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
+import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
@@ -193,6 +194,20 @@ public class TableContentLayoutManager {
             }
             createElementsForRowGroup(context, alignment, bodyType, 
                         returnList, rowGroup);
+            if (context.isKeepWithNextPending()) {
+                log.debug("child LM (row group) signals pending keep-with-next");
+            }
+            if (context.isKeepWithPreviousPending()) {
+                log.debug("child LM (row group) signals pending keep-with-previous");
+                if (returnList.size() > 0) {
+                    //Modify last penalty
+                    KnuthElement last = (KnuthElement)returnList.getLast();
+                    if (last.isPenalty()) {
+                        KnuthPenalty pen = (KnuthPenalty)last;
+                        pen.setP(KnuthPenalty.INFINITE);
+                    }
+                }
+            }
         }
         
         if (returnList.size() > 0) {
@@ -381,6 +396,15 @@ public class TableContentLayoutManager {
                                                 childLC, alignment);
                         primary.setElements(elems);
                         ElementListObserver.observe(elems, "table-cell", primary.getCell().getId());
+                        
+                        if (childLC.isKeepWithNextPending()) {
+                            log.debug("child LM signals pending keep-with-next");
+                            primary.setFlag(GridUnit.KEEP_WITH_NEXT_PENDING, true);
+                        }
+                        if (childLC.isKeepWithPreviousPending()) {
+                            log.debug("child LM signals pending keep-with-previous");
+                            primary.setFlag(GridUnit.KEEP_WITH_PREVIOUS_PENDING, true);
+                        }
                     }
 
                     
@@ -446,9 +470,10 @@ public class TableContentLayoutManager {
                 log.debug("  height=" + rowHeights[i] + " explicit=" + explicitRowHeights[i]);
             }
         }
+        //TODO It may make sense to reuse the stepper since it allocates quite some space
         TableStepper stepper = new TableStepper(this);
         LinkedList returnedList = stepper.getCombinedKnuthElementsForRowGroup(
-                rowGroup, maxColumnCount, bodyType);
+                context, rowGroup, maxColumnCount, bodyType);
         if (returnedList != null) {
             returnList.addAll(returnedList);
         }
