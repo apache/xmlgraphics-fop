@@ -19,6 +19,7 @@
 package org.apache.fop.layoutmgr.list;
 
 import org.apache.fop.fo.flow.ListBlock;
+import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LayoutContext;
@@ -41,8 +42,6 @@ import java.util.List;
  * the list block area..
  */
 public class ListBlockLayoutManager extends BlockStackingLayoutManager {
-    private ListBlock fobj;
-    
     private Block curBlockArea;
 
     //TODO space-before|after: handle space-resolution rules
@@ -78,20 +77,27 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
      */
     public ListBlockLayoutManager(ListBlock node) {
         super(node);
-        fobj = node;
+    }
+
+    /**
+     * Convenience method.
+     * @return the ListBlock node
+     */
+    protected ListBlock getListBlockFO() {
+        return (ListBlock)fobj;
     }
 
     /** @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties() */
     protected void initProperties() {
         super.initProperties();
-        spaceBefore = new SpaceVal(fobj.getCommonMarginBlock().spaceBefore).getSpace();
-        spaceAfter = new SpaceVal(fobj.getCommonMarginBlock().spaceAfter).getSpace();
+        spaceBefore = new SpaceVal(getListBlockFO().getCommonMarginBlock().spaceBefore).getSpace();
+        spaceAfter = new SpaceVal(getListBlockFO().getCommonMarginBlock().spaceAfter).getSpace();
     }
 
     private int getIPIndents() {
         int iIndents = 0;
-        iIndents += fobj.getCommonMarginBlock().startIndent.getValue();
-        iIndents += fobj.getCommonMarginBlock().endIndent.getValue();
+        iIndents += getListBlockFO().getCommonMarginBlock().startIndent.getValue();
+        iIndents += getListBlockFO().getCommonMarginBlock().endIndent.getValue();
         return iIndents;
     }
     
@@ -116,7 +122,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
         addBlockSpacing(adjust, spaceBefore);
         spaceBefore = null;
         
-        getPSLM().addIDToPage(fobj.getId());
+        getPSLM().addIDToPage(getListBlockFO().getId());
 
         // the list block contains areas stacked from each list item
 
@@ -181,13 +187,16 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
             /*Area parentArea =*/ parentLM.getParentArea(curBlockArea);
 
             // set traits
-            TraitSetter.addBorders(curBlockArea, fobj.getCommonBorderPaddingBackground());
-            TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
+            TraitSetter.addBorders(curBlockArea, 
+                    getListBlockFO().getCommonBorderPaddingBackground());
+            TraitSetter.addBackground(curBlockArea, 
+                    getListBlockFO().getCommonBorderPaddingBackground());
             TraitSetter.addMargins(curBlockArea,
-                    fobj.getCommonBorderPaddingBackground(), 
-                    fobj.getCommonMarginBlock());
+                    getListBlockFO().getCommonBorderPaddingBackground(), 
+                    getListBlockFO().getCommonMarginBlock());
             TraitSetter.addBreaks(curBlockArea, 
-                    fobj.getBreakBefore(), fobj.getBreakAfter());
+                    getListBlockFO().getBreakBefore(), 
+                    getListBlockFO().getBreakAfter());
             
             int contentIPD = referenceIPD - getIPIndents();
             curBlockArea.setIPD(contentIPD);
@@ -220,5 +229,26 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
             //TODO Something to put here?
         }
     }
+    
+    /** @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepTogether() */
+    public boolean mustKeepTogether() {
+        //TODO Keeps will have to be more sophisticated sooner or later
+        return ((BlockLevelLayoutManager)getParent()).mustKeepTogether() 
+                || !getListBlockFO().getKeepTogether().getWithinPage().isAuto()
+                || !getListBlockFO().getKeepTogether().getWithinColumn().isAuto();
+    }
+
+    /** @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithPrevious() */
+    public boolean mustKeepWithPrevious() {
+        return !getListBlockFO().getKeepWithPrevious().getWithinPage().isAuto()
+            || !getListBlockFO().getKeepWithPrevious().getWithinColumn().isAuto();
+    }
+
+    /** @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithNext() */
+    public boolean mustKeepWithNext() {
+        return !getListBlockFO().getKeepWithNext().getWithinPage().isAuto()
+                || !getListBlockFO().getKeepWithNext().getWithinColumn().isAuto();
+    }
+
 }
 

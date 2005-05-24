@@ -18,9 +18,10 @@
  
 package org.apache.fop.layoutmgr.list;
 
-import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.flow.AbstractListItemPart;
 import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
+import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LayoutContext;
@@ -30,17 +31,14 @@ import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.LinkedList;
 
 /**
- * LayoutManager for a table-cell FO.
- * A cell contains blocks. These blocks fill the cell.
+ * LayoutManager for a list-item-label or list-item-body FO.
  */
 public class Item extends BlockStackingLayoutManager {
-    private FObj fobj;
 
     private Block curBlockArea;
 
@@ -63,20 +61,28 @@ public class Item extends BlockStackingLayoutManager {
 
     /**
      * Create a new Cell layout manager.
+     * @param node list-item-label node
      */
     public Item(ListItemLabel node) {
         super(node);
-        fobj = node;
     }
 
     /**
      * Create a new Cell layout manager.
+     * @param node list-item-body node
      */
     public Item(ListItemBody node) {
         super(node);
-        fobj = node;
     }
 
+    /**
+     * Convenience method.
+     * @return the ListBlock node
+     */
+    protected AbstractListItemPart getPartFO() {
+        return (AbstractListItemPart)fobj;
+    }
+    
     /**
      * Set the x offset of this list item.
      * This offset is used to set the absolute position
@@ -88,6 +94,7 @@ public class Item extends BlockStackingLayoutManager {
         xoffset = off;
     }
 
+    /** @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(java.util.List, int) */
     public LinkedList getChangedKnuthElements(List oldList, int alignment) {
         //log.debug("  Item.getChanged>");
         return super.getChangedKnuthElements(oldList, alignment);
@@ -105,12 +112,7 @@ public class Item extends BlockStackingLayoutManager {
                          LayoutContext layoutContext) {
         getParentArea(null);
         
-        int nameId = fobj.getNameId();
-        if (nameId == FO_LIST_ITEM_LABEL) {
-            getPSLM().addIDToPage(((ListItemLabel) fobj).getId());
-        } else if (nameId == FO_LIST_ITEM_BODY) {
-            getPSLM().addIDToPage(((ListItemBody) fobj).getId());
-        }
+        getPSLM().addIDToPage(getPartFO().getId());
 
         LayoutManager childLM = null;
         LayoutContext lc = new LayoutContext(0);
@@ -143,15 +145,6 @@ public class Item extends BlockStackingLayoutManager {
             lc.setStackLimit(layoutContext.getStackLimit());
             childLM.addAreas(childPosIter, lc);
         }
-
-        /*
-        if (borderProps != null) {
-            TraitSetter.addBorders(curBlockArea, borderProps);
-        }
-        if (backgroundProps != null) {
-            TraitSetter.addBackground(curBlockArea, backgroundProps);
-        }
-        */
 
         flush();
 
@@ -214,5 +207,14 @@ public class Item extends BlockStackingLayoutManager {
             //reset(resetPos);
         }
     }
+    
+    /** @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepTogether() */
+    public boolean mustKeepTogether() {
+        //TODO Keeps will have to be more sophisticated sooner or later
+        return ((BlockLevelLayoutManager)getParent()).mustKeepTogether() 
+                || !getPartFO().getKeepTogether().getWithinPage().isAuto()
+                || !getPartFO().getKeepTogether().getWithinColumn().isAuto();
+    }
+
 }
 

@@ -44,6 +44,10 @@ public class GridUnit {
     public static final int LAST_IN_BODY = 4;
     /** Indicates that the grid unit is in the last row (context: table). */
     public static final int LAST_IN_TABLE = 5;
+    /** Indicates that the primary grid unit has a pending keep-with-next. */
+    public static final int KEEP_WITH_NEXT_PENDING = 6;
+    /** Indicates that the primary grid unit has a pending keep-with-previous. */
+    public static final int KEEP_WITH_PREVIOUS_PENDING = 7;
     
     /** Primary grid unit */
     private PrimaryGridUnit primary;

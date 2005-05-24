@@ -168,6 +168,14 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
 
             // get elements from curLM
             returnedList = curLM.getNextKnuthElements(childLC, alignment);
+            if (childLC.isKeepWithNextPending()) {
+                log.debug("child LM signals pending keep with next");
+            }
+            if (contentList.size() == 0 && childLC.isKeepWithPreviousPending()) {
+                context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
+                childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
+            }
+            
             if (returnedList.size() == 1
                     && ((KnuthElement) returnedList.getFirst()).isPenalty()
                     && ((KnuthPenalty) returnedList.getFirst()).getP() == -KnuthElement.INFINITE) {
@@ -192,8 +200,11 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
                     // there is a block handled by prevLM
                     // before the one handled by curLM
                     if (mustKeepTogether() 
-                            || prevLM.mustKeepWithNext()
-                            || curLM.mustKeepWithPrevious()) {
+                            || context.isKeepWithNextPending()
+                            || childLC.isKeepWithPreviousPending()) {
+                        //Clear keep pending flag
+                        context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
+                        childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
                         // add an infinite penalty to forbid a break between
                         // blocks
                         contentList.add(new KnuthPenalty(0,
@@ -229,6 +240,11 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
 
                     return returnList;
                 }
+            }
+            if (childLC.isKeepWithNextPending()) {
+                //Clear and propagate
+                childLC.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
+                context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
             }
             prevLM = curLM;
         }

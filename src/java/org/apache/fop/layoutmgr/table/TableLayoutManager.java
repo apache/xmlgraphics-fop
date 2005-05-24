@@ -182,6 +182,14 @@ public class TableLayoutManager extends BlockStackingLayoutManager
 
         contentLM = new TableContentLayoutManager(this);
         returnedList = contentLM.getNextKnuthElements(childLC, alignment);
+        if (childLC.isKeepWithNextPending()) {
+            log.debug("TableContentLM signals pending keep-with-next");
+            context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
+        }
+        if (childLC.isKeepWithPreviousPending()) {
+            log.debug("TableContentLM signals pending keep-with-previous");
+            context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
+        }
         log.debug(returnedList);
         
         if (returnedList.size() == 1
