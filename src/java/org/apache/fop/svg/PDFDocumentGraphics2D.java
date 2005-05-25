@@ -46,6 +46,7 @@ import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.io.OutputStream;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.List;
 
 /**
@@ -61,12 +62,28 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
             implements Configurable, Initializable {
 
     private PDFPage currentPage;
-    private PDFStream pdfStream;
 
     private int width;
     private int height;
     
+    //for SVG scaling
+    private float svgWidth;
+    private float svgHeight;
+
     private List fontList;
+
+    /** number of pages generated */
+    protected int pagecount;
+    /** indicates whether a page is currently being generated */
+    protected boolean pagePending;
+    
+    /** Initial clipping area, used to restore to original setting when a new page is started. */
+    protected Shape initialClip;
+    /**
+     * Initial transformation matrix, used to restore to original setting when a new page is 
+     * started.
+     */
+    protected AffineTransform initialTransform;
 
     private Log logger;
 
@@ -174,13 +191,6 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
             this.pdfDoc.setFilterMap(
                 PDFFilterList.buildFilterMapFromConfiguration(cfg));
         }
-
-        graphicsState = new PDFState();
-
-        currentFontName = "";
-        currentFontSize = 0;
-
-        pdfStream = this.pdfDoc.getFactory().makeStream(PDFFilterList.CONTENT_FILTER, false);
     }
 
     /**
@@ -195,15 +205,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
         this.width = width;
         this.height = height;
 
-        PDFResources pdfResources = this.pdfDoc.getResources();
-        currentPage = this.pdfDoc.getFactory().makePage(pdfResources,
-                                                   width, height);
-        resourceContext = currentPage;
-        pageRef = currentPage.referencePDF();
-        currentStream.write("1 0 0 -1 0 " + height + " cm\n");
-        graphicsState.setTransform(new AffineTransform(1.0, 0.0, 0.0, -1.0, 0.0, (double)height));
         pdfDoc.outputHeader(stream);
-
         setOutputStream(stream);
     }
 
@@ -233,8 +235,8 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
      * @param h the height of the page
      */
     public void setSVGDimension(float w, float h) {
-        currentStream.write("" + PDFNumber.doubleOut(width / w) + " 0 0 "
-                            + PDFNumber.doubleOut(height / h) + " 0 0 cm\n");
+        this.svgWidth = w;
+        this.svgHeight = h;
     }
 
     /**
@@ -255,6 +257,83 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
         currentStream.write("Q\n");
     }
 
+    public void nextPage() {
+        closePage();
+    }
+    
+    
+    protected void closePage() {
+        if (!this.pagePending) {
+            return; //ignore
+        }
+        //Finish page
+        PDFStream pdfStream = this.pdfDoc.getFactory().makeStream(PDFFilterList.CONTENT_FILTER, false);
+        pdfStream.add(getString());
+        currentStream = null;
+        this.pdfDoc.registerObject(pdfStream);
+        currentPage.setContents(pdfStream);
+        PDFAnnotList annots = currentPage.getAnnotations();
+        if (annots != null) {
+            this.pdfDoc.addObject(annots);
+        }
+        this.pdfDoc.addObject(currentPage);
+        this.currentPage = null;
+
+        this.pagePending = false;         
+    }
+    
+    /** {@inheritDoc} */
+    protected void preparePainting() {
+        if (this.pagePending) {
+            return;
+        }
+        try {
+            startPage();
+        } catch (IOException ioe) {
+            handleIOException(ioe);
+        }
+    }
+
+    protected void startPage() throws IOException {
+        if (this.pagePending) {
+            throw new IllegalStateException("Close page first before starting another");
+        }
+        //Start page
+        graphicsState = new PDFState();
+        if (this.initialTransform == null) {
+            //Save initial transformation matrix
+            this.initialTransform = getTransform();
+            this.initialClip = getClip();      
+        } else {
+            //Reset transformation matrix
+            setTransform(this.initialTransform);
+            setClip(this.initialClip);
+        }
+
+        currentFontName = "";
+        currentFontSize = 0;
+
+        if (currentStream == null) {
+            currentStream = new StringWriter();
+        }
+        
+        PDFResources pdfResources = this.pdfDoc.getResources();
+        currentPage = this.pdfDoc.getFactory().makePage(pdfResources,
+                                                   width, height);
+        resourceContext = currentPage;
+        pageRef = currentPage.referencePDF();
+        graphicsState.setTransform(new AffineTransform(1.0, 0.0, 0.0, -1.0, 0.0, (double)height));
+        currentStream.write("1 0 0 -1 0 " + height + " cm\n");
+        if (svgWidth != 0) {
+            currentStream.write("" + PDFNumber.doubleOut(width / svgWidth) + " 0 0 "
+                    + PDFNumber.doubleOut(height / svgHeight) + " 0 0 cm\n");
+        }
+
+        this.pagecount++;
+        this.pagePending = true;
+    }
+        
+    
     /**
      * The rendering process has finished.
      * This should be called after the rendering has completed as there is
@@ -266,14 +345,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
     public void finish() throws IOException {
         // restorePDFState();
 
-        pdfStream.add(getString());
-        this.pdfDoc.registerObject(pdfStream);
-        currentPage.setContents(pdfStream);
-        PDFAnnotList annots = currentPage.getAnnotations();
-        if (annots != null) {
-            this.pdfDoc.addObject(annots);
-        }
-        this.pdfDoc.addObject(currentPage);
+        closePage();
         if (fontInfo != null) {
             pdfDoc.getResources().addFonts(pdfDoc, fontInfo);
         }
