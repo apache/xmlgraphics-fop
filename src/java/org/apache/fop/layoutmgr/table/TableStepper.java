@@ -354,10 +354,12 @@ public class TableStepper {
                         break;
                     }
                 } else if (el.isGlue()) {
-                    KnuthElement prev = (KnuthElement)elementLists[i].get(end[i] - 1);
-                    if (prev.isBox()) {
-                        //Second legal break point
-                        break;
+                    if (end[i] > 0) {
+                        KnuthElement prev = (KnuthElement)elementLists[i].get(end[i] - 1);
+                        if (prev.isBox()) {
+                            //Second legal break point
+                            break;
+                        }
                     }
                     widths[i] += el.getW();
                 } else {
