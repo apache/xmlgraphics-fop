@@ -214,6 +214,22 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     }
 
     /**
+     * Central handler for IOExceptions for this class.
+     * @param ioe IOException to handle
+     */
+    protected void handleIOException(IOException ioe) {
+        ioe.printStackTrace();
+    }
+
+    /**
+     * This method is used by PDFDocumentGraphics2D to prepare a new page if
+     * necessary.
+     */
+    protected void preparePainting() {
+        //nop, used by PDFDocumentGraphics2D
+    }
+
+    /**
      * Set the PDF state to use when starting to draw
      * into the PDF graphics.
      *
@@ -292,6 +308,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @param linkType the type of link, internal or external
      */
     public void addLink(Rectangle2D bounds, AffineTransform trans, String dest, int linkType) {
+        preparePainting();
         AffineTransform at = getTransform();
         Shape b = at.createTransformedShape(bounds);
         b = trans.createTransformedShape(b);
@@ -323,6 +340,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public void addJpegImage(JpegImage jpeg, float x, float y, 
                              float width, float height) {
+        preparePainting();
         String key = "__AddJPEG_"+jpegCount;
         jpegCount++;
         FopPDFImage fopimage = new FopPDFImage(jpeg, key);
@@ -383,6 +401,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public boolean drawImage(Image img, int x, int y,
                              ImageObserver observer) {
+        preparePainting();
         // System.err.println("drawImage:x, y");
 
         int width = img.getWidth(observer);
@@ -436,6 +455,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public boolean drawImage(Image img, int x, int y, int width, int height,
                                ImageObserver observer) {
+        preparePainting();
         //System.out.println("drawImage x=" + x + " y=" + y + " width=" + width + " height=" + height + " image=" + img.toString());
         // first we look to see if we've already added this image to
         // the pdf document. If so, we just reuse the reference;
@@ -605,6 +625,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @see #setComposite
      */
     public void draw(Shape s) {
+        preparePainting();
         // System.out.println("draw(Shape)");
         AffineTransform trans = getTransform();
         double[] tranvals = new double[6];
@@ -744,6 +765,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         if (s == null) {
             return;
         }
+        preparePainting();
         PathIterator iter = s.getPathIterator(getTransform());
         while (!iter.isDone()) {
             double vals[] = new double[6];
@@ -793,6 +815,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @param fill true if the colour will be used for filling
      */
     protected void applyColor(Color col, boolean fill) {
+        preparePainting();
         Color c = col;
         if (c.getColorSpace().getType()
                 == ColorSpace.TYPE_RGB) {
@@ -834,6 +857,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @param fill true if the paint should be set for filling
      */
     protected void applyPaint(Paint paint, boolean fill) {
+        preparePainting();
 
         if (paint instanceof LinearGradientPaint) {
             LinearGradientPaint gp = (LinearGradientPaint)paint;
@@ -946,6 +970,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     }
 
     private void createPattern(PatternPaint pp, boolean fill) {
+        preparePainting();
         Rectangle2D rect = pp.getPatternRect();
 
         FontInfo fontInfo = new FontInfo();
@@ -1026,6 +1051,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @param stroke the java stroke
      */
     protected void applyStroke(Stroke stroke) {
+        preparePainting();
         if (stroke instanceof BasicStroke) {
             BasicStroke bs = (BasicStroke)stroke;
 
@@ -1165,6 +1191,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @see #setClip
      */
     public void drawString(String s, float x, float y) {
+        preparePainting();
         // System.out.println("drawString(String)");
 
         Font fontState;
@@ -1298,6 +1325,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     private void addKerning(StringWriter buf, Integer ch1, Integer ch2,
                             Map kerning, String startText,
                             String endText) {
+        preparePainting();
         Map kernPair = (Map)kerning.get(ch1);
 
         if (kernPair != null) {
@@ -1335,6 +1363,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public void drawString(AttributedCharacterIterator iterator, float x,
                            float y) {
+        preparePainting();
         System.err.println("drawString(AttributedCharacterIterator)");
 
         Font fontState = null;
@@ -1414,6 +1443,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @see #setClip
      */
     public void fill(Shape s) {
+        preparePainting();
         // System.err.println("fill");
         Color c;
         c = getBackground();
@@ -1509,6 +1539,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @param nonzero true if using the non-zero winding rule
      */
     protected void doDrawing(boolean fill, boolean stroke, boolean nonzero) {
+        preparePainting();
         if (fill) {
             if (stroke) {
                 if (nonzero) {
