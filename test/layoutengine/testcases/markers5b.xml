@@ -153,7 +153,7 @@
     <!-- page 2 -->
     <eval expected="4.00" xpath="//pageViewport[2]/page/regionViewport[1]/regionBefore/block[2]/lineArea"/>
     <eval expected="6.00" xpath="//pageViewport[2]/page/regionViewport[2]/regionAfter/block[1]/lineArea"/>
-    <eval expected="5: 1.00" xpath="//pageViewport[2]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[1]/block[1]/block[1]/lineArea"/>
-    <eval expected="6: 1.00" xpath="//pageViewport[2]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[1]/block[4]/block[1]/lineArea"/>
+    <eval expected="5" xpath="//pageViewport[2]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[1]/block[1]/block[1]/lineArea"/>
+    <eval expected="6" xpath="//pageViewport[2]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[1]/block[4]/block[1]/lineArea"/>
   </checks>
 </testcase>
