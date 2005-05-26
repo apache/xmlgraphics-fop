@@ -24,6 +24,7 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableBody;
 import org.apache.fop.fo.flow.TableCell;
@@ -245,6 +246,9 @@ public class TableRowIterator {
             }
         }
         Object node = childInBodyIterator.next();
+        while (node instanceof Marker) {
+            node = childInBodyIterator.next();
+        }
         this.currentRow.clear();
         this.currentRowIndex++;
         TableRow rowFO = null;
