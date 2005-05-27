@@ -20,6 +20,10 @@
     <p>
       This test checks text-transform (especially some mean cases for capitalize).
     </p>
+    <p>
+      The second block may cause rised eyebrows. An explanation can be found at 
+      <a href="http://marc.theaimsgroup.com/?t=111718934800001&amp;r=1&amp;w=2">http://marc.theaimsgroup.com/?t=111718934800001&amp;r=1&amp;w=2</a>
+    </p>
   </info>
   <fo>
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
@@ -38,6 +42,6 @@
   </fo>
   <checks>
     <eval expected="1: This Text Is Capitalized." xpath="//flow/block[1]"/>
-    <eval expected="2: This Text Is Capitalized." xpath="//flow/block[2]"/>
+    <eval expected="2: This Text Is CaPitALizEd." xpath="//flow/block[2]"/>
   </checks>
 </testcase>
