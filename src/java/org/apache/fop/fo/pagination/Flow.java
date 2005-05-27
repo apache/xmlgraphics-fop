@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,6 @@
 
 package org.apache.fop.fo.pagination;
 
-// Java
-import java.util.ArrayList;
-import java.util.List;
-
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
@@ -29,22 +25,15 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.layoutmgr.FlowLayoutManager;
 
 /**
  * Class modelling the fo:flow object.
- * @todo check need for markerSnapshot, contentWidth
  */
 public class Flow extends FObj {
     // The value of properties relevant for fo:flow.
     private String flowName;
     // End of property values
     
-    /**
-     * ArrayList to store snapshot
-     */
-    private ArrayList markerSnapshot;
-
     /** used for FO validation */
     private boolean blockItemFound = false;
 
@@ -126,9 +115,7 @@ public class Flow extends FObj {
         return true;
     }
 
-    /**
-     * Return "flow-name" property.
-     */
+    /** @return "flow-name" property. */
     public String getFlowName() {
         return flowName;
     }
