@@ -1044,6 +1044,7 @@ public class PropertySets {
             can_have_markers.set(Constants.FO_BIDI_OVERRIDE);
             can_have_markers.set(Constants.FO_BLOCK);
             can_have_markers.set(Constants.FO_BLOCK_CONTAINER);
+            can_have_markers.set(Constants.FO_FLOW);
             can_have_markers.set(Constants.FO_INLINE);
             can_have_markers.set(Constants.FO_INLINE_CONTAINER);
             can_have_markers.set(Constants.FO_LIST_BLOCK);
@@ -1052,6 +1053,8 @@ public class PropertySets {
             can_have_markers.set(Constants.FO_LIST_ITEM_LABEL);
             can_have_markers.set(Constants.FO_TABLE);
             can_have_markers.set(Constants.FO_TABLE_BODY);
+            can_have_markers.set(Constants.FO_TABLE_HEADER);
+            can_have_markers.set(Constants.FO_TABLE_FOOTER);
             can_have_markers.set(Constants.FO_TABLE_CELL);
             can_have_markers.set(Constants.FO_TABLE_AND_CAPTION);
             can_have_markers.set(Constants.FO_TABLE_CAPTION);
