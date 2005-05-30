@@ -49,7 +49,7 @@ If you are using Microsoft Outlook, this setting can be found at the "Mail Forma
           <li>The <jump href="http://marc.theaimsgroup.com/?l=fop-user&amp;r=1&amp;w=2">Mailing list ARChives </jump> (MARC) at the AIMS group (search).</li>
           <li>The <jump href="http://mail-archives.apache.org/eyebrowse/SummarizeList?listName=fop-user@xml.apache.org">Apache Eyebrowse</jump> archive (search, list by date, author, subject, or thread).</li>
         </ul>
-        <note>The Eyebrowse and MARC archives are currently broken!</note>
+        <note>The Eyebrowse archives are currently broken!</note>
       </section>
       <section id="fop-user-subscribe">
         <title>Subscription Information</title>
