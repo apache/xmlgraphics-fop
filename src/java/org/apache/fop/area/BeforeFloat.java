@@ -61,5 +61,8 @@ public class BeforeFloat extends BlockParent {
         return h;
     }
 
+    public boolean isEmpty() {
+        return true; // before floats are not yet implemented
+    }
 }
 

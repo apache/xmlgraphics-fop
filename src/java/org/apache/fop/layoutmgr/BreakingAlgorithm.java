@@ -55,7 +55,7 @@ public abstract class BreakingAlgorithm {
     /**
      * The paragraph of KnuthElements.
      */
-    private KnuthSequence par;
+    protected KnuthSequence par;
     
     /**
      * The width of a line.
@@ -370,6 +370,7 @@ public abstract class BreakingAlgorithm {
                 i = lastForced.position;
             }
         }
+        finish();
         if (log.isTraceEnabled()) {
             log.trace("Main loop completed " + activeNodeCount);
             log.trace("Active nodes=" + toString(""));
@@ -381,7 +382,7 @@ public abstract class BreakingAlgorithm {
 
         // for each active node, create a set of breaking points
         for (int i = startLine; i < endLine; i++) {
-            for (KnuthNode node = getNode(line); node != null; node = node.next) {
+            for (KnuthNode node = getNode(i); node != null; node = node.next) {
                 updateData1(node.line, node.totalDemerits);
                 calculateBreakPoints(node, par, node.line);
             }
@@ -443,7 +444,7 @@ public abstract class BreakingAlgorithm {
                 if (node.position == elementIdx) {
                     continue;
                 }
-                int difference = computeDifference(node, element);
+                int difference = computeDifference(node, element, elementIdx);
                 double r = computeAdjustmentRatio(node, difference);
                 int availableShrink = totalShrink - node.totalShrink;
                 int availableStretch = totalStretch - node.totalStretch;
@@ -559,7 +560,8 @@ public abstract class BreakingAlgorithm {
      * @return The difference in width. Positive numbers mean extra space in the line,
      * negative number that the line overflows. 
      */
-    protected int computeDifference(KnuthNode activeNode, KnuthElement element) {
+    protected int computeDifference(KnuthNode activeNode, KnuthElement element,
+                                    int elementIndex) {
         // compute the adjustment ratio
         int actualWidth = totalWidth - activeNode.totalWidth;
         if (element.isPenalty()) {
@@ -653,6 +655,9 @@ public abstract class BreakingAlgorithm {
         return demerits;
     }
 
+    protected void finish() {
+    }
+
     /**
      * Return the element at index idx in the paragraph.
      * @param idx index of the element.
@@ -686,7 +691,7 @@ public abstract class BreakingAlgorithm {
      * @param line
      * @param node
      */
-    private void addNode(int line, KnuthNode node) {
+    protected void addNode(int line, KnuthNode node) {
         int headIdx = line * 2;
         if (headIdx >= activeLines.length) {
             KnuthNode[] oldList = activeLines;

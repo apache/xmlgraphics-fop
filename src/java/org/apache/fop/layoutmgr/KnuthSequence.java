@@ -80,4 +80,8 @@ public class KnuthSequence extends ArrayList {
         }
         return (KnuthElement) remove(idx - 1);
     }
+
+    public KnuthElement getElement(int index) {
+        return (KnuthElement) get(index);
+    }
 }
