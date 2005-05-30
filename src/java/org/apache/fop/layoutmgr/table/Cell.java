@@ -19,7 +19,6 @@
 package org.apache.fop.layoutmgr.table;
 
 import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.Table;
@@ -63,9 +62,6 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
     private int borderAndPaddingBPD;
     private boolean emptyCell = true;
 
-    /** List of Lists containing OldGridUnit instances, one List per row. */
-    private List rows = new java.util.ArrayList(); 
-    
     /**
      * Create a new Cell layout manager.
      * @param node table-cell FO for which to create the LM
@@ -112,16 +108,6 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
         return (Table)node;
     }
     
-
-    /**
-     * Called by Row LM to register the grid units occupied by this cell for a row.
-     * @param spannedGridUnits a List of GridUnits
-     */
-    public void addGridUnitsFromRow(List spannedGridUnits) {
-        log.debug("Getting another row, " + spannedGridUnits.size() + " grid units");
-        this.rows.add(spannedGridUnits);
-        
-    }
 
     private int getIPIndents() {
         int iIndents = 0;
@@ -331,11 +317,8 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
-        bBogus = false; //!bp1.generatesAreas(); 
 
-        if (!isBogus()) {
-            getPSLM().addIDToPage(fobj.getId());
-        }
+        getPSLM().addIDToPage(fobj.getId());
 
         if (isSeparateBorderModel()) {
             if (!emptyCell || fobj.showEmptyCells()) {
@@ -381,7 +364,6 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
                                     - (gu.getBorders().getBorderAfterWidth(false) / 2);
                         }
                         block.setBPD(bpd);
-                        //TODO This needs to be fixed for row spanning
                         lastRowHeight = rowHeight;
                         int ipd = gu.getColumn().getColumnWidth().getValue();
                         int borderStartWidth = gu.getBorders().getBorderStartWidth(false) / 2; 
@@ -418,7 +400,7 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
             }
         }
 
-        AreaAdditionUtil.addAreas(parentIter, layoutContext);
+        AreaAdditionUtil.addAreas(this, parentIter, layoutContext);
         
         int contentBPD = getContentHeight(rowHeight, gridUnit);
         curBlockArea.setBPD(contentBPD);

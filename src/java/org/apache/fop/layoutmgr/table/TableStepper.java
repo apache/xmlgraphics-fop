@@ -198,6 +198,7 @@ public class TableStepper {
         int laststep = 0;
         int step;
         int addedBoxLen = 0;
+        TableContentPosition lastTCPos = null;
         LinkedList returnList = new LinkedList();
         while ((step = getNextStep(laststep)) >= 0) {
             if (rowBacktrackForLastStep) {
@@ -262,6 +263,10 @@ public class TableStepper {
             }
             TableContentPosition tcpos = new TableContentPosition(getTableLM(), 
                     gridUnitParts, getActiveRow());
+            if (returnList.size() == 0) {
+                tcpos.setFlag(TableContentPosition.FIRST_IN_ROWGROUP, true);
+            }
+            lastTCPos = tcpos;
             log.debug(" - " + rowBacktrackForLastStep + " - " + activeRow + " - " + tcpos);
             returnList.add(new KnuthBox(boxLen, tcpos, false));
             TableHFPenaltyPosition penaltyPos = new TableHFPenaltyPosition(getTableLM());
@@ -301,6 +306,7 @@ public class TableStepper {
             //we have to signal the still pending last keep-with-next using the LayoutContext.
             context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
         }
+        lastTCPos.setFlag(TableContentPosition.LAST_IN_ROWGROUP, true);
         return returnList;
     }
     

@@ -201,7 +201,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
     public void addAreas(PositionIterator parentIter,
             LayoutContext layoutContext) {
-        /* LF *///System.out.println(" BLM.addAreas>");
+        //System.out.println(" BLM.addAreas>");
         getParentArea(null);
 
         // if this will create the first block area in a page
@@ -210,18 +210,14 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             addBlockSpacing(0.0, new MinOptMax(layoutContext.getSpaceBefore()));
         }
 
-        getPSLM().addIDToPage(getBlockFO().getId());
-        //addMarkersToPV(true, bp1.isFirstArea(), bp1.isLastArea());
-        getCurrentPV().addMarkers(markers, true, true, false);
-
         LayoutManager childLM = null;
         LayoutManager lastLM = null;
         LayoutContext lc = new LayoutContext(0);
-        /* LF */// set space after in the LayoutContext for children
-        /* LF */if (layoutContext.getSpaceAfter() > 0) {
-            /* LF */lc.setSpaceAfter(layoutContext.getSpaceAfter());
-            /* LF */}
-        /* LF */PositionIterator childPosIter;
+        // set space after in the LayoutContext for children
+        if (layoutContext.getSpaceAfter() > 0) {
+            lc.setSpaceAfter(layoutContext.getSpaceAfter());
+        }
+        PositionIterator childPosIter;
 
         // "unwrap" the NonLeafPositions stored in parentIter
         // and put them in a new list;
@@ -229,9 +225,17 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         Position pos;
         boolean bSpaceBefore = false;
         boolean bSpaceAfter = false;
+        Position firstPos = null;
+        Position lastPos = null;
         while (parentIter.hasNext()) {
             pos = (Position) parentIter.next();
             //log.trace("pos = " + pos.getClass().getName() + "; " + pos);
+            if (pos.getIndex() >= 0) {
+                if (firstPos == null) {
+                    firstPos = pos;
+                }
+                lastPos = pos;
+            }
             Position innerPosition = pos;
             if (pos instanceof NonLeafPosition) {
                 //Not all elements are wrapped
@@ -262,6 +266,17 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
                 lastLM = innerPosition.getLM();
                 //log.trace(" " + innerPosition.getClass().getName());
             }
+        }
+
+        getPSLM().addIDToPage(getBlockFO().getId());
+        /* TODO remove when markers are really ok
+        log.debug("Checking on " + this);
+        log.debug("Checking first=" + firstPos);
+        log.debug("Checking last=" + lastPos);
+        log.debug("->" + isFirst(firstPos) + "/" + isLast(lastPos));
+        */
+        if (markers != null) {
+            getCurrentPV().addMarkers(markers, true, isFirst(firstPos), isLast(lastPos));
         }
 
         if (bpUnit == 0) {
@@ -345,14 +360,16 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             // set last area flag
             lc.setFlags(LayoutContext.LAST_AREA,
                     (layoutContext.isLastArea() && childLM == lastLM));
-            /*LF*/lc.setStackLimit(layoutContext.getStackLimit());
+            lc.setStackLimit(layoutContext.getStackLimit());
             // Add the line areas to Area
             childLM.addAreas(childPosIter, lc);
         }
 
-        int bIndents = getBlockFO().getCommonBorderPaddingBackground().getBPPaddingAndBorder(false);
+        //int bIndents = getBlockFO().getCommonBorderPaddingBackground().getBPPaddingAndBorder(false);
 
-        getCurrentPV().addMarkers(markers, false, false, true);
+        if (markers != null) {
+            getCurrentPV().addMarkers(markers, false, isFirst(firstPos), isLast(lastPos));
+        }
 
         flush();
 

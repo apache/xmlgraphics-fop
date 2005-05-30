@@ -31,11 +31,16 @@ public class LeafPosition extends Position {
         return iLeafPos;
     }
     
+    public boolean generatesAreas() {
+        return getLM() != null;
+    }
+    
     /** @see java.lang.Object#toString()*/
     public String toString() {
-        StringBuffer sb = new StringBuffer(super.toString());
-        sb.append(" {pos=").append(getLeafPos());
-        sb.append(", lm=").append(getLM()).append("}");
+        StringBuffer sb = new StringBuffer();
+        sb.append("LeafPos:").append(getIndex()).append("(");
+        sb.append("pos=").append(getLeafPos());
+        sb.append(", lm=").append(getShortLMName()).append(")");
         return sb.toString();
     }
 }

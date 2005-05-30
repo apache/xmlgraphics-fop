@@ -131,6 +131,8 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
         LayoutContext lc = new LayoutContext(0);
         LayoutManager firstLM = null;
         LayoutManager lastLM = null;
+        Position firstPos = null;
+        Position lastPos = null;
 
         // "unwrap" the NonLeafPositions stored in parentIter
         // and put them in a new list; 
@@ -138,6 +140,12 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
         Position pos;
         while (parentIter.hasNext()) {
             pos = (Position)parentIter.next();
+            if (pos.getIndex() >= 0) {
+                if (firstPos == null) {
+                    firstPos = pos;
+                }
+                lastPos = pos;
+            }
             if (pos instanceof NonLeafPosition
                 && ((NonLeafPosition) pos).getPosition().getLM() != this) {
                 // pos was created by a child of this ListBlockLM
@@ -149,6 +157,10 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
             }
         }
 
+        if (markers != null) {
+            getCurrentPV().addMarkers(markers, true, isFirst(firstPos), isLast(lastPos));
+        }
+
         StackingIter childPosIter = new StackingIter(positionList.listIterator());
         while ((childLM = childPosIter.getNextChildLM()) != null) {
             // Add the block areas to Area
@@ -156,6 +168,10 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
             lc.setFlags(LayoutContext.LAST_AREA, childLM == lastLM);
             lc.setStackLimit(layoutContext.getStackLimit());
             childLM.addAreas(childPosIter, lc);
+        }
+
+        if (markers != null) {
+            getCurrentPV().addMarkers(markers, false, isFirst(firstPos), isLast(lastPos));
         }
 
         flush();

@@ -23,11 +23,16 @@ package org.apache.fop.layoutmgr;
  */
 public interface BlockLevelLayoutManager extends LayoutManager {
 
-    static final int NO_ADJUSTMENT = -1;
-    static final int SPACE_BEFORE_ADJUSTMENT = 0;
-    static final int SPACE_AFTER_ADJUSTMENT = 1;
-    static final int LINE_NUMBER_ADJUSTMENT = 2;
-    static final int LINE_HEIGHT_ADJUSTMENT = 3;
+    /** Adjustment class: no adjustment */
+    int NO_ADJUSTMENT = -1;
+    /** Adjustment class: adjustment for space-before */
+    int SPACE_BEFORE_ADJUSTMENT = 0;
+    /** Adjustment class: adjustment for space-after */
+    int SPACE_AFTER_ADJUSTMENT = 1;
+    /** Adjustment class: adjustment for number of lines */
+    int LINE_NUMBER_ADJUSTMENT = 2;
+    /** Adjustment class: adjustment for line height */
+    int LINE_HEIGHT_ADJUSTMENT = 3;
 
     int negotiateBPDAdjustment(int adj, KnuthElement lastElement);
 

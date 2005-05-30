@@ -57,25 +57,6 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
         fobj = node;
     }
 
-    /**
-     * "wrap" the Position inside each element moving the elements from 
-     * SourceList to targetList
-     * @param sourceList source list
-     * @param targetList target list receiving the wrapped position elements
-     */
-    protected void wrapPositionElements(List sourceList, List targetList) {
-        ListIterator listIter = sourceList.listIterator();
-        while (listIter.hasNext()) {
-            KnuthElement tempElement;
-            tempElement = (KnuthElement) listIter.next();
-            //if (tempElement.getLayoutManager() != this) {
-            tempElement.setPosition(new NonLeafPosition(this,
-                    tempElement.getPosition()));
-            //}
-            targetList.add(tempElement);
-        }
-    }
-
     /** @see org.apache.fop.layoutmgr.LayoutManager */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         // set layout dimensions
@@ -296,7 +277,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
      * @see org.apache.fop.layoutmgr.LayoutManager#addAreas(PositionIterator, LayoutContext)
      */
     public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
-        AreaAdditionUtil.addAreas(parentIter, layoutContext);
+        AreaAdditionUtil.addAreas(this, parentIter, layoutContext);
         flush();
     }
 
