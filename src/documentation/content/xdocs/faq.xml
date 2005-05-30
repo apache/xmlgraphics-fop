@@ -56,7 +56,7 @@
       <question>What does "FOP" stand for?</question>
       <answer>
         <p>
-          It's an acronym for <strong>F</strong>ormatting
+          FOP is an acronym for <strong>F</strong>ormatting
           <strong>O</strong>bject <strong>P</strong>rocessor
         </p>
       </answer>
@@ -93,7 +93,7 @@
       <question>What is XSL-FO?</question>
       <answer>
         <p>
-          XSLFO is an XML vocabulary that is used to specify a pagination and
+          XSLFO (aka XSL-FO) is an XML vocabulary that is used to specify a pagination and
           other styling for page layout output. The acronym &#8220;FO&#8221;
           stands for
           <strong>F</strong>ormatting <strong>O</strong>bjects. XSLFO can be
@@ -135,9 +135,11 @@
     <faq id="next-release">
       <question>When is the next released planned?</question>
       <answer>
-        <p> This depends on progress made so it is not possible to predict any dates. However, we think that at the
-        current rate of progress we can start releasing again in the second half of 2005. If you want to speed up
-        the process, consider to <link href="dev/index.html#involved">contribute</link> to FOP</p>
+        <p> This depends on progress made so it is not possible to predict
+        	any dates. However, we think that at the current rate of progress
+        	we can start releasing again in the second half of 2005. If you
+        	want to speed up the process, consider to
+        	<link href="dev/index.html#involved">contribute</link> to FOP</p>
       </answer>
     </faq>
     <faq id="redesign">
@@ -157,7 +159,7 @@
       <question>How can I contribute?</question>
       <answer>
         <p>
-          There are numerous ways that you can help. They are outlined in the <link href="dev/index.html">Developer's Introduction</link>.
+          There are numerous ways that you can help. They are outlined in the <link href="dev/index.html">Developer's Introduction</link> page.
         </p>
       </answer>
     </faq>
@@ -192,14 +194,14 @@
         <p>If you are running FOP from the command line:</p>
         <ul>
           <li>
-            Use the fop.bat or fop.sh command file from the FOP
+            Use the <code>fop.bat</code> or <code>fop.sh</code> command file from the FOP
             distribution. If you have a FOP version older than 0.20.5,
             ensure the directory where FOP and these files have been
             installed is the current working directory.
           </li>
           <li>
             If this doesn't help, check whether still all the jar files
-            mentioned in the classpath in the fop.bat file are in their
+            mentioned in the classpath in the <code>fop.bat</code> file are in their
             respective places.
           </li>
         </ul>
@@ -242,7 +244,7 @@
         <anchor id="MalformedURL"/>
         <p>
           What you probably think of as "file names" are usually URLs, in
-          particular the src attribute of fo:external-graphic.
+          particular the <code>src</code> attribute of fo:external-graphic.
         </p>
         <p>
           Because usage of URLs is growing, you should make yourself familiar
@@ -277,17 +279,16 @@
         <p>
           This is often caused by an invalid FO document. Currently only very
           common errors are intercepted and produce a comprehensible error
-          message. If you forgot container elements like fo:page-sequence or
-          fo:flow and put blocks and inline elements directly as children of
-          fo:root or fo:page-sequence, you'll only get a
+          message. If you forgot container elements like <code>fo:page-sequence</code> or
+          <code>fo:flow</code> and put blocks and inline elements directly as children of
+          <code>fo:root</code> or <code>fo:page-sequence</code>, you'll only get a
           NullPointerException. Check whether your FO file has a proper
           structure. In some cases there are mandatory properties, like the
-          master-reference in fo:conditional-page-master-reference, check also
+          master-reference in <code>fo:conditional-page-master-reference</code>, check also
           whether you got them right.
         </p>
         <p>
-          You may find it helpful to use the <link
-            href="#FO-validate">validation tools</link> to validate your
+          You may find it helpful to use the <link href="#FO-validate">validation tools</link> to validate your
           FO document. This will catch most problems, but should not be
           relied upon to catch all.
         </p>
@@ -298,7 +299,7 @@
           message from the XSLT processor.
         </p>
         <p>
-          If you turn on debugging with the "-d" option you may be able to
+          If you turn on debugging with the "<code>-d</code>" option you may be able to
           see more detailed information.
         </p>
       </answer>
@@ -335,7 +336,7 @@
       </answer>
     </faq>
     <faq id="boxoverflow">
-      <question>FOP runs forever, writing lots of ">" to the log.</question>
+      <question>FOP runs forever, writing lots of "&gt;" to the log.</question>
       <answer>
         <p>
           There is something too large to fit into the intended place, usually a
@@ -352,7 +353,7 @@
     <faq id="cannot-find-external-graphics">
       <question>FOP cannot find a file for fo:external-graphics.</question>
       <answer>
-        <p>The src attribute of the fo:external-graphics element requires a URI, not a file name. See <link href="fo.html#external-resources">External Resources</link> for more information about specifying URIs.</p>
+        <p>The src attribute of the <code>fo:external-graphics</code> element requires a URI, not a file name. See <link href="fo.html#external-resources">External Resources</link> for more information about specifying URIs.</p>
       </answer>
     </faq>
     <faq id="fonts-not-found">
@@ -385,10 +386,10 @@
       <answer>
         <p>
           Leaders still work, in fact they work better than ever
-          before. You'll just have to add text-align="justify" and/or
-          text-align-last="justify" to the block with the leader. Be
+          before. You'll just have to add <code>text-align="justify"</code> and/or
+          <code>text-align-last="justify"</code> to the block with the leader. Be
           sure you haven't accidentally overridden the
-          leader-length.maximum="100%" default value.
+          <code>leader-length.maximum="100%"</code> default value.
         </p>
         <p>
           Earlier versions of FOP used to expand a leader to fill the
@@ -447,16 +448,23 @@ Check the following:</p>
         <ul>
           <li>Empty or wrong baseDir setting.</li>
           <li>Spelling errors in the file name (including using the wrong case).</li>
-          <li>Security Problems (i.e. image was not delivered because FOP is not allowed to read the file).
-This is especially a problem if the external file is retrieved over HTTP.
-Possible issues include security settings on the server, server configuration, and missing cookies or other authorization information.
-Any easy way to check this is to cut&amp;paste the source URL from the fo:external-graphic into the Location field of a browser <strong>on the machine where the FOP process will be running</strong>.</li>
+          <li>Security Problems (i.e. image was not delivered because FOP is not
+          allowed to read the file). This is especially a problem if the external
+          file is retrieved over HTTP. Possible issues include security settings
+          on the server, server configuration, and missing cookies or other
+          authorization information. Any easy way to check this is to
+          cut&amp;paste the source URL from the fo:external-graphic into
+          the Location field of a browser <strong>on the machine where the
+          FOP process will be running</strong>.</li>
         </ul>
         <p>Other possibilities:</p>
         <ul>
-          <li>The image format is not supported or not supported completely. See <link href="graphics.html">FOP Graphics Formats</link> for a list of supported formats and related issues.</li>
+          <li>The image format is not supported or not supported completely.
+          See <link href="graphics.html">FOP Graphics Formats</link> for a
+          list of supported formats and related issues.</li>
           <li>The graphic may be too large to fit into the intended space.</li>
-          <li>There may be something (static content) that is obscuring the graphic. (This is very rare).
+          <li>There may be something (static content) that is obscuring the
+          graphic. (This is very rare).
           </li>
         </ul>
       </answer>
@@ -464,7 +472,8 @@ Any easy way to check this is to cut&amp;paste the source URL from the fo:extern
     <faq id="png-fails">
       <question>My graphical images do not work properly.</question>
       <answer>
-        <p>See <link href="graphics.html">FOP Graphics Formats</link> for a list of supported formats and related issues.</p>
+        <p>See <link href="graphics.html">FOP Graphics Formats</link> for a
+        list of supported graphics formats and related issues.</p>
       </answer>
     </faq>
     <faq id="graphic-resolution">
@@ -512,15 +521,15 @@ Any easy way to check this is to cut&amp;paste the source URL from the fo:extern
       <question>My tables are missing, or missing their content.</question>
       <answer>
         <p>
-          Check for fo:table-body around the rows. FOP up to 0.20.4 doesn't
+          Check for <code>fo:table-body</code> around the rows. FOP up to 0.20.4 doesn't
           raise an error if it is omitted, it just drops the content. More
           recent releases will catch this problem.
         </p>
         <p>
-          Also, the fo:table-with-caption element is not implemented, tables
+          Also, the <code>fo:table-with-caption</code> element is not implemented, tables
           within such an element are dropped too. FOP generates an error
           message for this problem. The DocBook style sheets generate
-          fo:table-with-caption elements, so watch out.
+          <code>fo:table-with-caption</code> elements, so watch out.
         </p>
       </answer>
     </faq>
@@ -558,7 +567,7 @@ Any easy way to check this is to cut&amp;paste the source URL from the fo:extern
       <question>Page numbers are not properly right aligned.</question>
       <answer>
         <p>
-          This happens for fo:page-number-citation elements if the
+          This happens for <code>fo:page-number-citation</code> elements if the
           citation occurs before FOP formatted the requested page,
           usually in TOC or index pages. It is caused by the problem
           that FOP has to guess how much space the yet unknown page
@@ -610,12 +619,12 @@ Any easy way to check this is to cut&amp;paste the source URL from the fo:extern
       </answer>
     </faq>
     <faq id="servlet-nonstd-fonts">
-      <question>How do I use my own fonts when running FOP from a
-      servlet?</question>
+      <question>How do I use my own fonts when running FOP from a servlet?</question>
       <answer>
         <p>
           Declare the fonts in the <code>userconfig.xml</code> file as usual.
-See <link href="#usercfg">loading the user configuration file</link> for further details.
+          See <link href="#usercfg">loading the user configuration file</link>
+          for further details.
         </p>
       </answer>
     </faq>
@@ -863,7 +872,7 @@ Can I control this?</question>
           should not relied on except in tightly controlled environments.
         </p>
         <p>
-          See also http://marc.theaimsgroup.com/?l=fop-dev&amp;m=101065988325115&amp;w=2
+          See also <link href="http://marc.theaimsgroup.com/?l=fop-dev&amp;m=101065988325115&amp;w=2">http://marc.theaimsgroup.com/?l=fop-dev&amp;m=101065988325115&amp;w=2</link>
         </p>
       </answer>
     </faq>
@@ -1013,6 +1022,51 @@ Can I control this?</question>
       <question>(XSLT) How can I use the current date and time in my document?</question>
       <answer>
         <p>See <link href="fo.html#xslt-date">Current Date and Time</link>.</p>
+      </answer>
+    </faq>
+    <faq id="xhtml-to-pdf">
+      <question>Can I use FOP to convert XHTML or HTML files to PDF?</question>
+      <answer>
+        <p>
+        	You will get better results if you transform your source
+			XML directly into XSLFO. It is tempting to use the
+			XML-&gt;XHTML-&gt;XSLFO approach, because this apparently means
+			there's only one transformation to maintain, but XHTML
+			and publishing grade PDF are dissimilar enough that an
+			"generic" XHTML-&gt;XSLFO(PDF) usually wont cut it, because
+			the XHTML already lacks information from the original XML.
+			It may be worthwhile to go from the source XML to an
+			intermediate custom XML which on one hand is close enough
+			to representation to allow simple transformation to either
+			XHTML or XSLFO for most of the structure, but on the other
+			hand retains enough semantic from the original XML that
+			elements which must be handled differently in the two
+			representations can be handled differently. Setting this
+			up requires experience and most likely extensive prototyping.
+        </p>
+      </answer>
+    </faq>
+    <faq id="xhtml-to-pdf2">
+      <question>I know it may be a bad idea to use FOP to convert XHTML or HTML files to PDF, but I want to do it anyway. Are there any tools available to help me?</question>
+      <answer>
+        <p>
+        	The <link href="resources.html">FOP Resources page</link> has links
+        	to a tool called <link href="http://html2fo.sourceforge.net/">html2fo</link>
+        	which can be used to make such a transformation. In addition, there
+        	are tools on the Antenna House <link href="http://www.antennahouse.com/XSLsample/XSLsample.htm">XSL-FO Tutorial and Sample</link>
+			page.
+        </p>
+      </answer>
+    </faq>
+  </part>
+  <part id="dev-help">
+    <title>Development-related Questions.</title>
+    <faq id="doc-mgt">
+      <question>I am an FOP developer and I don't remember how our docs are built.</question>
+      <answer>
+      	<p>
+      		See FOP <link href="dev/doc.html">Doc Management</link>. ;-)
+      	</p>
       </answer>
     </faq>
   </part>
