@@ -222,6 +222,10 @@ public class TableRowIterator {
             if (!childInBodyIterator.hasNext()) {
                 //force skip on to next body
                 childInBodyIterator = null;
+                if (rows.size() > 0) {
+                    getCachedRow(rows.size() - 1).setFlagForAllGridUnits(
+                            GridUnit.LAST_IN_BODY, true);
+                }
             }
         }
         if (childInBodyIterator == null) {
