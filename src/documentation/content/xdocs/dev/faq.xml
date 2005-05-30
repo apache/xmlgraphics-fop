@@ -44,6 +44,14 @@
         FOP</link> using the ant build task "javadocs".</p>
       </answer>
     </faq>
+    <faq id="doc-mgt">
+      <question>I am an FOP developer and I don't remember how our docs are built.</question>
+      <answer>
+      	<p>
+      		See FOP <link href="doc.html">Doc Management</link>. ;-)
+      	</p>
+      </answer>
+    </faq>
   </part>
   <part id="part_further_help">
     <title>Further Help</title>
