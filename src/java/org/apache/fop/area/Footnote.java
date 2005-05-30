@@ -75,5 +75,9 @@ public class Footnote extends BlockParent {
     public List getChildAreas() {
         return children;
     }
+
+    public boolean isEmpty() {
+        return children == null || children.size() == 0;
+    }
 }
 
