@@ -29,41 +29,68 @@ import org.apache.fop.traits.MinOptMax;
  */
 public class EffRow {
     
+    /** Indicates that the row is the first in a table-body */
+    public static final int FIRST_IN_BODY = GridUnit.FIRST_IN_BODY;
+    /** Indicates that the row is the last in a table-body */
+    public static final int LAST_IN_BODY = GridUnit.LAST_IN_BODY;
+    
     private List gridUnits = new java.util.ArrayList();
     private int index;
     private int bodyType;
     private MinOptMax height;
     private MinOptMax explicitHeight;
     
+    /**
+     * Creates a new effective row instance.
+     * @param index index of the row
+     * @param bodyType type of body (one of HEADER, FOOTER, BODY as found on TableRowIterator)
+     */
     public EffRow(int index, int bodyType) {
         this.index = index;
         this.bodyType = bodyType;
     }
     
+    /** @return the index of the EffRow in the sequence of rows */
     public int getIndex() {
         return this.index;
     }
     
+    /**
+     * @return an indicator what type of body this EffRow is in (one of HEADER, FOOTER, BODY 
+     * as found on TableRowIterator)
+     */
     public int getBodyType() {
         return this.bodyType;
     }
     
+    /** @return the calculated height for this EffRow. */
     public MinOptMax getHeight() {
         return this.height;
     }
     
+    /**
+     * Sets the calculated height for this EffRow.
+     * @param mom the calculated height
+     */
     public void setHeight(MinOptMax mom) {
         this.height = mom;
     }
     
+    /** @return the explicit height of the EffRow (as specified through properties) */
     public MinOptMax getExplicitHeight() {
         return this.explicitHeight;
     }
     
+    /**
+     * Sets the height for this row that resulted from the explicit height properties specified
+     * by the user.
+     * @param mom the height
+     */
     public void setExplicitHeight(MinOptMax mom) {
         this.explicitHeight = mom;
     }
     
+    /** @return the list of GridUnits for this EffRow */
     public List getGridUnits() {
         return gridUnits;
     }
@@ -92,6 +119,11 @@ public class EffRow {
         }
     }
     
+    /**
+     * Sets a flag on all grid units of this effective row.
+     * @param flag which flag to set (on of the GridUnit.* constants)
+     * @param value new value for the flag
+     */
     public void setFlagForAllGridUnits(int flag, boolean value) {
         Iterator iter = gridUnits.iterator();
         while (iter.hasNext()) {
@@ -100,6 +132,22 @@ public class EffRow {
         }
     }
 
+    /**
+     * Returns a flag for this effective row. Only a subset of the flags on GridUnit is supported.
+     * The flag is determined by inspecting flags on the EffRow's GridUnits.
+     * @param which the requested flag
+     * @return true if the flag is set
+     */
+    public boolean getFlag(int which) {
+        if (which == FIRST_IN_BODY) {
+            return getGridUnit(0).getFlag(GridUnit.FIRST_IN_BODY);
+        } else if (which == LAST_IN_BODY) {
+            return getGridUnit(0).getFlag(GridUnit.LAST_IN_BODY);
+        } else {
+            throw new IllegalArgumentException("Illegal flag queried: " +  which);
+        }
+    }
+    
     /** @see java.lang.Object#toString() */
     public String toString() {
         StringBuffer sb = new StringBuffer("EffRow {");

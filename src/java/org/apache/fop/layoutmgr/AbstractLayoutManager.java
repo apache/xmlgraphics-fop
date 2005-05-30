@@ -47,13 +47,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     private boolean bFinished = false;
     protected boolean bInited = false;
     
-    /**
-     * Used during addAreas(): signals that a BreakPoss is not generating areas
-     * and therefore shouldn't add IDs and markers to the current page.
-     * @see org.apache.fop.layoutmgr.AbstractLayoutManager#isBogus
-     */
-    protected boolean bBogus = false;
-
     /** child LM and child LM iterator during getNextBreakPoss phase */
     protected LayoutManager curChildLM = null;
     protected ListIterator childLMiter = null;
@@ -114,15 +107,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
         return false;
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager#isBogus() */
-    public boolean isBogus() {
-        if (getParent().isBogus()) {
-            return true;
-        } else {
-            return bBogus;
-        }
-    }
-    
     /**
      * Return currently active child LayoutManager or null if
      * all children have finished layout.

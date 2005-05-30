@@ -21,6 +21,7 @@ package org.apache.fop.layoutmgr;
 public class Position {
     
     private LayoutManager layoutManager;
+    private int index = -1;
 
     public Position(LayoutManager lm) {
         layoutManager = lm;
@@ -38,16 +39,38 @@ public class Position {
         return null;
     }
     
+    public boolean generatesAreas() {
+        return false;
+    }
+    
+    public void setIndex(int value) {
+        this.index = value;
+    }
+    
+    public int getIndex() {
+        return this.index;
+    }
+    
+    public String getShortLMName() {
+        if (getLM() != null) {
+            String lm = getLM().toString();
+            int idx = lm.lastIndexOf('.');
+            if (idx >= 0 && lm.indexOf('@') > 0) {
+                return(lm.substring(idx + 1));
+            } else {
+                return lm;
+            }
+        } else {
+            return "null";
+        }
+    }
     
     /** @see java.lang.Object#toString() */
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("Position");
-        if (getLM() != null) {
-            sb.append(" {");
-            sb.append(getLM());
-            sb.append("}");
-        }
+        sb.append("Position:").append(getIndex()).append("(");
+        sb.append(getShortLMName());
+        sb.append(")");
         return sb.toString();
     }
 }

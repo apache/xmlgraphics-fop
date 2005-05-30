@@ -104,6 +104,16 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         public int getBodyLastIndex() {
             return iBodyLastIndex;
         }
+        
+        /** @see java.lang.Object#toString() */
+        public String toString() {
+            StringBuffer sb = new StringBuffer("ListItemPosition:");
+            sb.append(getIndex()).append("(");
+            sb.append("label:").append(iLabelFirstIndex).append("-").append(iLabelLastIndex);
+            sb.append(" body:").append(iBodyFirstIndex).append("-").append(iBodyLastIndex);
+            sb.append(")");
+            return sb.toString();
+        }
     }
 
     /**
@@ -184,14 +194,8 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
 
         // "wrap" the Position inside each element
         LinkedList tempList = returnedList;
-        KnuthElement tempElement;
         returnedList = new LinkedList();
-        ListIterator listIter = tempList.listIterator();
-        while (listIter.hasNext()) {
-            tempElement = (KnuthElement)listIter.next();
-            tempElement.setPosition(new NonLeafPosition(this, tempElement.getPosition()));
-            returnedList.add(tempElement);
-        }
+        wrapPositionElements(tempList, returnedList, true);
         
         if (keepWithNextPendingOnLabel || keepWithNextPendingOnBody || mustKeepWithNext()) {
             context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
@@ -422,16 +426,28 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         getPSLM().addIDToPage(getListItemFO().getId());
 
         LayoutContext lc = new LayoutContext(0);
+        Position firstPos = null;
+        Position lastPos = null;
 
         // "unwrap" the NonLeafPositions stored in parentIter
         LinkedList positionList = new LinkedList();
         Position pos;
         while (parentIter.hasNext()) {
             pos = (Position) parentIter.next();
+            if (pos.getIndex() >= 0) {
+                if (firstPos == null) {
+                    firstPos = pos;
+                }
+                lastPos = pos;
+            }
             if (pos instanceof NonLeafPosition) {
                 // pos contains a ListItemPosition created by this ListBlockLM
                 positionList.add(((NonLeafPosition) pos).getPosition());
             }
+        }
+
+        if (markers != null) {
+            getCurrentPV().addMarkers(markers, true, isFirst(firstPos), isLast(lastPos));
         }
 
         // use the first and the last ListItemPosition to determine the 
@@ -474,6 +490,10 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         // after adding body areas, set the maximum area bpd
         if (curBlockArea.getBPD() < savedBPD) {
             curBlockArea.setBPD(savedBPD);
+        }
+
+        if (markers != null) {
+            getCurrentPV().addMarkers(markers, false, isFirst(firstPos), isLast(lastPos));
         }
 
         flush();

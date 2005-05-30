@@ -31,10 +31,16 @@ public class NonLeafPosition extends Position {
         return subPos;
     }
     
+    public boolean generatesAreas() {
+        return (subPos != null ? subPos.generatesAreas() : false);
+    }
+    
     /** @see java.lang.Object#toString() */
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("NonLeafPos(");
+        sb.append("NonLeafPos:").append(getIndex()).append("(");
+        sb.append(getShortLMName());
+        sb.append(", ");
         if (getPosition() != null) {
             sb.append(getPosition().toString());
         } else {

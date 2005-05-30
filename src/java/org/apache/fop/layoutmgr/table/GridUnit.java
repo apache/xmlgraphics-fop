@@ -244,10 +244,20 @@ public class GridUnit {
                         side, resFlags), side);
     }
     
+    /**
+     * Returns a flag for this GridUnit.
+     * @param which the requested flag
+     * @return the value of the flag
+     */
     public boolean getFlag(int which) {
         return (flags & (1 << which)) != 0;
     }
     
+    /**
+     * Sets a flag on a GridUnit.
+     * @param which the flag to set
+     * @param value the new value for the flag
+     */
     public void setFlag(int which, boolean value) {
         if (value) {
             flags |= (1 << which); //set flag

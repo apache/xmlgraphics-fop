@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.Trait;
 import org.apache.fop.fo.flow.Table;
+import org.apache.fop.fo.flow.TableBody;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.LengthRangeProperty;
@@ -500,28 +501,22 @@ public class TableContentLayoutManager {
         RowPainter painter = new RowPainter(layoutContext);
 
         List positions = new java.util.ArrayList();
+        List headerElements = null;
         List footerElements = null;
+        Position firstPos = null;
         Position lastPos = null;
         while (parentIter.hasNext()) {
             Position pos = (Position)parentIter.next();
+            if (firstPos == null) {
+                firstPos = pos;
+            }
             lastPos = pos;
             if (pos instanceof TableHeaderFooterPosition) {
                 TableHeaderFooterPosition thfpos = (TableHeaderFooterPosition)pos;
                 //these positions need to be unpacked
                 if (thfpos.header) {
-                    //header positions for the last part are the second-to-last element and need to
-                    //be handled first before all other TableContentPositions
-                    PositionIterator nestedIter = new KnuthPossPosIter(thfpos.nestedElements);
-                    while (nestedIter.hasNext()) {
-                        Position containedPos = (Position)nestedIter.next();
-                        if (containedPos instanceof TableContentPosition) {
-                            TableContentPosition tcpos = (TableContentPosition)containedPos;
-                            painter.handleTableContentPosition(tcpos);
-                        } else {
-                            log.debug("Ignoring position: " + containedPos);
-                        }
-                    }
-                    painter.addAreasAndFlushRow(true);
+                    //Positions for header will be added first
+                    headerElements = thfpos.nestedElements;
                 } else {
                     //Positions for footers are simply added at the end
                     footerElements = thfpos.nestedElements;
@@ -540,54 +535,102 @@ public class TableContentLayoutManager {
             if (penaltyPos.headerElements != null) {
                 //Header positions for the penalty position are in the last element and need to
                 //be handled first before all other TableContentPositions
-                PositionIterator nestedIter = new KnuthPossPosIter(penaltyPos.headerElements);
-                while (nestedIter.hasNext()) {
-                    Position containedPos = (Position)nestedIter.next();
-                    if (containedPos instanceof TableContentPosition) {
-                        TableContentPosition tcpos = (TableContentPosition)containedPos;
-                        painter.handleTableContentPosition(tcpos);
-                    } else {
-                        log.debug("Ignoring position: " + containedPos);
-                    }
-                }
-                painter.addAreasAndFlushRow(true);
+                headerElements = penaltyPos.headerElements;
             }
             if (penaltyPos.footerElements != null) {
                 footerElements = penaltyPos.footerElements; 
             }
         }
 
-        
-        Iterator posIter = positions.iterator();
-        //Iterate over all steps
-        while (posIter.hasNext()) {
-            Position pos = (Position)posIter.next();
-            if (pos instanceof TableContentPosition) {
-                TableContentPosition tcpos = (TableContentPosition)pos;
-                painter.handleTableContentPosition(tcpos);
-            } else {
-                log.debug("Ignoring position: " + pos);
-            }
+        Map markers = getTableLM().getTable().getMarkers();
+        if (markers != null) {
+            getTableLM().getCurrentPV().addMarkers(markers, 
+                    true, getTableLM().isFirst(firstPos), getTableLM().isLast(lastPos));
         }
+        
+        if (headerElements != null) {
+            //header positions for the last part are the second-to-last element and need to
+            //be handled first before all other TableContentPositions
+            PositionIterator nestedIter = new KnuthPossPosIter(headerElements);
+            iterateAndPaintPositions(nestedIter, painter);
+            painter.addAreasAndFlushRow(true);
+        }
+        
+        //Iterate over all steps
+        Iterator posIter = positions.iterator();
+        iterateAndPaintPositions(posIter, painter);
         painter.addAreasAndFlushRow(true);
 
         if (footerElements != null) {
             //Positions for footers are simply added at the end
-            PositionIterator iter = new KnuthPossPosIter(footerElements);
-            while (iter.hasNext()) {
-                Position pos = (Position)iter.next();
-                if (pos instanceof TableContentPosition) {
-                    TableContentPosition tcpos = (TableContentPosition)pos;
-                    painter.handleTableContentPosition(tcpos);
-                } else {
-                    log.debug("Ignoring position: " + pos);
-                }
-            }
+            PositionIterator nestedIter = new KnuthPossPosIter(footerElements);
+            iterateAndPaintPositions(nestedIter, painter);
             painter.addAreasAndFlushRow(true);
         }
         
         painter.notifyEndOfSequence();
         this.usedBPD += painter.getAccumulatedBPD();
+
+        if (markers != null) {
+            getTableLM().getCurrentPV().addMarkers(markers, 
+                    false, getTableLM().isFirst(firstPos), getTableLM().isLast(lastPos));
+        }
+    }
+    
+    private void iterateAndPaintPositions(Iterator iterator, RowPainter painter) {
+        List lst = new java.util.ArrayList();
+        boolean firstPos = false;
+        boolean lastPos = false;
+        TableBody body = null;
+        while (iterator.hasNext()) {
+            Position pos = (Position)iterator.next();
+            //System.out.println(pos);
+            if (pos instanceof TableContentPosition) {
+                TableContentPosition tcpos = (TableContentPosition)pos;
+                lst.add(tcpos);
+                //System.out.println(tcpos.row);
+                GridUnitPart part = (GridUnitPart)tcpos.gridUnitParts.get(0);
+                if (body == null) {
+                    body = part.pgu.getBody();
+                }
+                if (tcpos.getFlag(TableContentPosition.FIRST_IN_ROWGROUP) 
+                        && tcpos.row.getFlag(EffRow.FIRST_IN_BODY)) {
+                    //System.out.println("pgu is first in body");
+                    firstPos = true;
+
+                }
+                if (tcpos.getFlag(TableContentPosition.LAST_IN_ROWGROUP) 
+                        && tcpos.row.getFlag(EffRow.LAST_IN_BODY)) {
+                    //System.out.println("pgu is last in body");
+                    lastPos = true;
+                    getTableLM().getCurrentPV().addMarkers(body.getMarkers(), 
+                            true, firstPos, lastPos);
+                    int size = lst.size();
+                    for (int i = 0; i < size; i++) {
+                        painter.handleTableContentPosition((TableContentPosition)lst.get(i));
+                    }
+                    getTableLM().getCurrentPV().addMarkers(body.getMarkers(), 
+                            false, firstPos, lastPos);
+                    //reset
+                    firstPos = false;
+                    lastPos = false;
+                    body = null;
+                    lst.clear();
+                }
+            } else {
+                log.debug("Ignoring position: " + pos);
+            }
+        }
+        if (body != null) {
+            getTableLM().getCurrentPV().addMarkers(body.getMarkers(), 
+                    true, firstPos, lastPos);
+            int size = lst.size();
+            for (int i = 0; i < size; i++) {
+                painter.handleTableContentPosition((TableContentPosition)lst.get(i));
+            }
+            getTableLM().getCurrentPV().addMarkers(body.getMarkers(), 
+                    false, firstPos, lastPos);
+        }
     }
    
     private class RowPainter {
@@ -828,11 +871,22 @@ public class TableContentLayoutManager {
             this.end = end;
         }
         
+        /** @return true if this part is the first part of a cell */
+        public boolean isFirstPart() {
+            return (start == 0);
+        }
+        
+        /** @return true if this part is the last part of a cell */
+        public boolean isLastPart() {
+            return (end >= 0 && end == pgu.getElements().size() - 1);
+        }
+        
         /** @see java.lang.Object#toString() */
         public String toString() {
             StringBuffer sb = new StringBuffer("Part: ");
             sb.append(start).append("-").append(end);
-            sb.append(" ").append(pgu);
+            sb.append(" [").append(isFirstPart() ? "F" : "-").append(isLastPart() ? "L" : "-");
+            sb.append("] ").append(pgu);
             return sb.toString();
         }
         
@@ -844,10 +898,17 @@ public class TableContentLayoutManager {
      */
     public static class TableContentPosition extends Position {
 
+        /** The position is the first of the row group. */ 
+        public static final int FIRST_IN_ROWGROUP = 1;
+        /** The position is the last of the row group. */ 
+        public static final int LAST_IN_ROWGROUP = 2;
+        
         /** the list of GridUnitParts making up this position */
         protected List gridUnitParts;
         /** effective row this position belongs to */
         protected EffRow row;
+        /** flags for the position */
+        protected int flags;
         
         /**
          * Creates a new TableContentPosition.
@@ -862,11 +923,37 @@ public class TableContentLayoutManager {
             this.row = row;
         }
         
+        /**
+         * Returns a flag for this GridUnit.
+         * @param which the requested flag
+         * @return the value of the flag
+         */
+        public boolean getFlag(int which) {
+            return (flags & (1 << which)) != 0;
+        }
+        
+        /**
+         * Sets a flag on a GridUnit.
+         * @param which the flag to set
+         * @param value the new value for the flag
+         */
+        public void setFlag(int which, boolean value) {
+            if (value) {
+                flags |= (1 << which); //set flag
+            } else {
+                flags &= ~(1 << which); //clear flag
+            }
+        }
+        
         /** @see java.lang.Object#toString() */
         public String toString() {
-            StringBuffer sb = new StringBuffer("TableContentPosition {");
+            StringBuffer sb = new StringBuffer("TableContentPosition:");
+            sb.append(getIndex());
+            sb.append("[").append(getFlag(FIRST_IN_ROWGROUP) ? "F" : "-");
+            sb.append((getFlag(LAST_IN_ROWGROUP) ? "L" : "-")).append("]");
+            sb.append("(");
             sb.append(gridUnitParts);
-            sb.append("}");
+            sb.append(")");
             return sb.toString();
         }
     }
@@ -899,9 +986,10 @@ public class TableContentLayoutManager {
         public String toString() {
             StringBuffer sb = new StringBuffer("Table");
             sb.append(header ? "Header" : "Footer");
-            sb.append("Position {");
+            sb.append("Position:");
+            sb.append(getIndex()).append("(");
             sb.append(nestedElements);
-            sb.append("}");
+            sb.append(")");
             return sb.toString();
         }
     }
@@ -927,13 +1015,13 @@ public class TableContentLayoutManager {
         
         /** @see java.lang.Object#toString() */
         public String toString() {
-            StringBuffer sb = new StringBuffer("TableHFPenaltyPosition");
-            sb.append(" {");
+            StringBuffer sb = new StringBuffer("TableHFPenaltyPosition:");
+            sb.append(getIndex()).append("(");
             sb.append("header:");
             sb.append(headerElements);
             sb.append(", footer:");
             sb.append(footerElements);
-            sb.append("}");
+            sb.append(")");
             return sb.toString();
         }
     }

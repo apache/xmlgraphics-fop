@@ -61,7 +61,12 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     protected boolean bSpaceBeforeServed = false;
     /** Reference IPD available */
     protected int referenceIPD = 0;
+    
+    private int lastGeneratedPosition = -1;
+    private int smallestPosNumberChecked = Integer.MAX_VALUE;
 
+    private Position auxiliaryPosition;
+    
     public BlockStackingLayoutManager(FObj node) {
         super(node);
         fobj = node;
@@ -159,6 +164,63 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     }
 
     /**
+     * Adds a Position to the Position participating in the first|last determination by assigning
+     * it a unique position index.
+     * @param pos the Position
+     * @return the same Position but with a position index
+     */
+    protected Position notifyPos(Position pos) {
+        if (pos.getIndex() >= 0) {
+            throw new IllegalStateException("Position already got its index");
+        }
+        lastGeneratedPosition++;
+        pos.setIndex(lastGeneratedPosition);
+        return pos;
+    }
+    
+    /**
+     * Indicates whether the given Position is the first area-generating Position of this LM.
+     * @param pos the Position (must be one with a position index)
+     * @return True if it is the first Position
+     */
+    public boolean isFirst(Position pos) {
+        //log.trace("isFirst() smallestPosNumberChecked=" + smallestPosNumberChecked + " " + pos);
+        if (pos.getIndex() < 0) {
+            throw new IllegalArgumentException("Only Positions with an index can be checked");
+        }
+        if (pos.getIndex() == this.smallestPosNumberChecked) {
+            return true;
+        } else if (pos.getIndex() < this.smallestPosNumberChecked) {
+            this.smallestPosNumberChecked = pos.getIndex();
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Indicates whether the given Position is the last area-generating Position of this LM.
+     * @param pos the Position (must be one with a position index)
+     * @return True if it is the last Position
+     */
+    public boolean isLast(Position pos) {
+        //log.trace("isLast() lastGenPos=" + lastGeneratedPosition + " " + pos);
+        if (pos.getIndex() < 0) {
+            throw new IllegalArgumentException("Only Positions with an index can be checked");
+        }
+        return (pos.getIndex() == this.lastGeneratedPosition
+                && isFinished());
+    }
+
+    /** @return a cached auxiliary Position instance used for things like spaces. */
+    protected Position getAuxiliaryPosition() {
+        if (this.auxiliaryPosition == null) {
+            this.auxiliaryPosition = new NonLeafPosition(this, null);
+        }
+        return this.auxiliaryPosition;
+    }
+    
+    /**
      * @param len length in millipoints to span with bp units
      * @return the minimum integer n such that n * bpUnit >= len
      */
@@ -196,11 +258,10 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         LinkedList returnedList = null;
         LinkedList contentList = new LinkedList();
         LinkedList returnList = new LinkedList();
-        Position returnPosition = new NonLeafPosition(this, null);
 
         if (!bBreakBeforeServed) {
             try {
-                if (addKnuthElementsForBreakBefore(returnList, returnPosition)) {
+                if (addKnuthElementsForBreakBefore(returnList)) {
                     return returnList;
                 }
             } finally {
@@ -209,11 +270,11 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         }
 
         if (!bSpaceBeforeServed) {
-            addKnuthElementsForSpaceBefore(returnList, returnPosition, alignment);
+            addKnuthElementsForSpaceBefore(returnList, alignment);
             bSpaceBeforeServed = true;
         }
         
-        addKnuthElementsForBorderPaddingBefore(returnList, returnPosition);
+        addKnuthElementsForBorderPaddingBefore(returnList);
         
         while ((curLM = (BlockLevelLayoutManager) getChildLM()) != null) {
             LayoutContext childLC = new LayoutContext(0);
@@ -344,12 +405,12 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             wrapPositionElements(contentList, returnList);
         } else {
             //Empty fo:block, zero-length box makes sure the IDs are registered.
-            returnList.add(new KnuthBox(0, new Position(this), true));
+            returnList.add(new KnuthBox(0, notifyPos(new Position(this)), true));
         }
 
-        addKnuthElementsForBorderPaddingAfter(returnList, returnPosition);
-        addKnuthElementsForSpaceAfter(returnList, returnPosition, alignment);
-        addKnuthElementsForBreakAfter(returnList, returnPosition);
+        addKnuthElementsForBorderPaddingAfter(returnList);
+        addKnuthElementsForSpaceAfter(returnList, alignment);
+        addKnuthElementsForBreakAfter(returnList);
 
         if (mustKeepWithNext()) {
             context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
@@ -701,8 +762,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * @param returnList return list to add the additional elements to
      * @param returnPosition applicable return position
      */
-    protected void addKnuthElementsForBorderPaddingBefore(LinkedList returnList, 
-            Position returnPosition) {
+    protected void addKnuthElementsForBorderPaddingBefore(LinkedList returnList/*, 
+            Position returnPosition*/) {
         //Border and Padding (before)
         CommonBorderPaddingBackground borderAndPadding = null;
         if (fobj instanceof org.apache.fop.fo.flow.Block) {
@@ -717,7 +778,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             int bpBefore = borderAndPadding.getBorderBeforeWidth(false)
                          + borderAndPadding.getPaddingBefore(false);
             if (bpBefore > 0) {
-                returnList.add(new KnuthBox(bpBefore, returnPosition, true));
+                returnList.add(new KnuthBox(bpBefore, getAuxiliaryPosition(), true));
             }
         }
     }
@@ -727,8 +788,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * @param returnList return list to add the additional elements to
      * @param returnPosition applicable return position
      */
-    protected void addKnuthElementsForBorderPaddingAfter(LinkedList returnList, 
-            Position returnPosition) {
+    protected void addKnuthElementsForBorderPaddingAfter(LinkedList returnList/*, 
+            Position returnPosition*/) {
         //Border and Padding (after)
         CommonBorderPaddingBackground borderAndPadding = null;
         if (fobj instanceof org.apache.fop.fo.flow.Block) {
@@ -743,7 +804,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             int bpAfter = borderAndPadding.getBorderAfterWidth(false)
                         + borderAndPadding.getPaddingAfter(false);
             if (bpAfter > 0) {
-                returnList.add(new KnuthBox(bpAfter, returnPosition, true));
+                returnList.add(new KnuthBox(bpAfter, getAuxiliaryPosition(), true));
             }
         }
     }
@@ -754,8 +815,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * @param returnPosition applicable return position
      * @return true if an element has been added due to a break-before.
      */
-    protected boolean addKnuthElementsForBreakBefore(LinkedList returnList, 
-            Position returnPosition) {
+    protected boolean addKnuthElementsForBreakBefore(LinkedList returnList/*, 
+            Position returnPosition*/) {
         int breakBefore = -1;
         if (fobj instanceof org.apache.fop.fo.flow.Block) {
             breakBefore = ((org.apache.fop.fo.flow.Block) fobj).getBreakBefore();
@@ -768,7 +829,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                 || breakBefore == EN_ODD_PAGE) {
             // return a penalty element, representing a forced page break
             returnList.add(new KnuthPenalty(0, -KnuthElement.INFINITE, false,
-                    breakBefore, returnPosition, false));
+                    breakBefore, getAuxiliaryPosition(), false));
             return true;
         } else {
             return false;
@@ -781,8 +842,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * @param returnPosition applicable return position
      * @return true if an element has been added due to a break-after.
      */
-    protected boolean addKnuthElementsForBreakAfter(LinkedList returnList, 
-            Position returnPosition) {
+    protected boolean addKnuthElementsForBreakAfter(LinkedList returnList/*, 
+            Position returnPosition*/) {
         int breakAfter = -1;
         if (fobj instanceof org.apache.fop.fo.flow.Block) {
             breakAfter = ((org.apache.fop.fo.flow.Block) fobj).getBreakAfter();
@@ -795,7 +856,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                 || breakAfter == EN_ODD_PAGE) {
             // add a penalty element, representing a forced page break
             returnList.add(new KnuthPenalty(0, -KnuthElement.INFINITE, false,
-                    breakAfter, returnPosition, false));
+                    breakAfter, getAuxiliaryPosition(), false));
             return true;
         } else {
             return false;
@@ -808,8 +869,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * @param returnPosition applicable return position
      * @param alignment vertical alignment
      */
-    protected void addKnuthElementsForSpaceBefore(LinkedList returnList, 
-            Position returnPosition, int alignment) {
+    protected void addKnuthElementsForSpaceBefore(LinkedList returnList/*, 
+            Position returnPosition*/, int alignment) {
         SpaceProperty spaceBefore = null;
         if (fobj instanceof org.apache.fop.fo.flow.Block) {
             spaceBefore = ((org.apache.fop.fo.flow.Block)fobj)
@@ -825,14 +886,14 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                         && spaceBefore.getMaximum().getLength().getValue() == 0)) {
             if (spaceBefore != null && !spaceBefore.getSpace().isDiscard()) {
                 // add elements to prevent the glue to be discarded
-                returnList.add(new KnuthBox(0, returnPosition, false));
+                returnList.add(new KnuthBox(0, getAuxiliaryPosition(), false));
                 returnList.add(new KnuthPenalty(0, KnuthElement.INFINITE,
-                        false, returnPosition, false));
+                        false, getAuxiliaryPosition(), false));
             }
             if (bpUnit > 0) {
                 returnList.add(new KnuthGlue(0, 0, 0,
                         BlockLevelLayoutManager.SPACE_BEFORE_ADJUSTMENT, 
-                        returnPosition, true));
+                        getAuxiliaryPosition(), true));
             } else /*if (alignment == EN_JUSTIFY)*/ {
                 returnList.add(new KnuthGlue(
                         spaceBefore.getOptimum().getLength().getValue(),
@@ -841,7 +902,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                         spaceBefore.getOptimum().getLength().getValue()
                                 - spaceBefore.getMinimum().getLength().getValue(),
                         BlockLevelLayoutManager.SPACE_BEFORE_ADJUSTMENT, 
-                        returnPosition, true));
+                        getAuxiliaryPosition(), true));
             } /*else {
                 returnList.add(new KnuthGlue(
                         spaceBefore.getOptimum().getLength().getValue(), 
@@ -857,7 +918,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * @param returnPosition applicable return position
      * @param alignment vertical alignment
      */
-    protected void addKnuthElementsForSpaceAfter(LinkedList returnList, Position returnPosition, 
+    protected void addKnuthElementsForSpaceAfter(LinkedList returnList/*, Position returnPosition*/, 
                 int alignment) {
         SpaceProperty spaceAfter = null;
         if (fobj instanceof org.apache.fop.fo.flow.Block) {
@@ -874,12 +935,12 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                         && spaceAfter.getMaximum().getLength().getValue() == 0)) {
             if (spaceAfter != null && !spaceAfter.getSpace().isDiscard()) {
                 returnList.add(new KnuthPenalty(0, KnuthElement.INFINITE,
-                        false, returnPosition, false));
+                        false, getAuxiliaryPosition(), false));
             }
             if (bpUnit > 0) {
                 returnList.add(new KnuthGlue(0, 0, 0, 
                         BlockLevelLayoutManager.SPACE_AFTER_ADJUSTMENT,
-                        returnPosition, true));
+                        getAuxiliaryPosition(), true));
             } else /*if (alignment == EN_JUSTIFY)*/ {
                 returnList.add(new KnuthGlue(
                         spaceAfter.getOptimum().getLength().getValue(),
@@ -887,7 +948,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                                 - spaceAfter.getOptimum().getLength().getValue(),
                         spaceAfter.getOptimum().getLength().getValue()
                                 - spaceAfter.getMinimum().getLength().getValue(),
-                        BlockLevelLayoutManager.SPACE_AFTER_ADJUSTMENT, returnPosition,
+                        BlockLevelLayoutManager.SPACE_AFTER_ADJUSTMENT, getAuxiliaryPosition(),
                         (!spaceAfter.getSpace().isDiscard()) ? false : true));
             } /*else {
                 returnList.add(new KnuthGlue(
@@ -896,7 +957,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                         (!spaceAfter.getSpace().isDiscard()) ? false : true));
             }*/
             if (spaceAfter != null && !spaceAfter.getSpace().isDiscard()) {
-                returnList.add(new KnuthBox(0, returnPosition, true));
+                returnList.add(new KnuthBox(0, getAuxiliaryPosition(), true));
             }
         }
     }
@@ -1262,13 +1323,25 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * @param targetList target list receiving the wrapped position elements
      */
     protected void wrapPositionElements(List sourceList, List targetList) {
+        wrapPositionElements(sourceList, targetList, false);
+    }
+    
+    /**
+     * "wrap" the Position inside each element moving the elements from 
+     * SourceList to targetList
+     * @param sourceList source list
+     * @param targetList target list receiving the wrapped position elements
+     * @param force if true, every Position is wrapper regardless of its LM of origin
+     */
+    protected void wrapPositionElements(List sourceList, List targetList, boolean force) {
+          
         ListIterator listIter = sourceList.listIterator();
         while (listIter.hasNext()) {
             KnuthElement tempElement;
             tempElement = (KnuthElement) listIter.next();
-            if (tempElement.getLayoutManager() != this) {
-                tempElement.setPosition(new NonLeafPosition(this,
-                        tempElement.getPosition()));
+            if (force || tempElement.getLayoutManager() != this) {
+                tempElement.setPosition(notifyPos(new NonLeafPosition(this,
+                        tempElement.getPosition())));
             }
             targetList.add(tempElement);
         }

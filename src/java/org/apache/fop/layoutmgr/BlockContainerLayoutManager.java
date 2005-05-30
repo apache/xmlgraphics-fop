@@ -195,11 +195,10 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         LinkedList returnedList = null;
         LinkedList contentList = new LinkedList();
         LinkedList returnList = new LinkedList();
-        Position returnPosition = new NonLeafPosition(this, null);
         
         if (!bBreakBeforeServed) {
             try {
-                if (addKnuthElementsForBreakBefore(returnList, returnPosition)) {
+                if (addKnuthElementsForBreakBefore(returnList)) {
                     return returnList;
                 }
             } finally {
@@ -208,11 +207,11 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         }
 
         if (!bSpaceBeforeServed) {
-            addKnuthElementsForSpaceBefore(returnList, returnPosition, alignment);
+            addKnuthElementsForSpaceBefore(returnList, alignment);
             bSpaceBeforeServed = true;
         }
         
-        addKnuthElementsForBorderPaddingBefore(returnList, returnPosition);
+        addKnuthElementsForBorderPaddingBefore(returnList);
 
         if (autoHeight) {
             BlockLevelLayoutManager curLM; // currently active LM
@@ -306,7 +305,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             }
 
             Position bcPosition = new BlockContainerPosition(this, breaker);
-            returnList.add(new KnuthBox(vpContentBPD, bcPosition, false));
+            returnList.add(new KnuthBox(vpContentBPD, notifyPos(bcPosition), false));
             //TODO Handle min/opt/max for block-progression-dimension
             /* These two elements will be used to add stretchability to the above box
             returnList.add(new KnuthPenalty(0, KnuthElement.INFINITE, 
@@ -325,9 +324,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                 }
             }
         }
-        addKnuthElementsForBorderPaddingAfter(returnList, returnPosition);
-        addKnuthElementsForSpaceAfter(returnList, returnPosition, alignment);
-        addKnuthElementsForBreakAfter(returnList, returnPosition);
+        addKnuthElementsForBorderPaddingAfter(returnList);
+        addKnuthElementsForSpaceAfter(returnList, alignment);
+        addKnuthElementsForBreakAfter(returnList);
 
         setFinished(true);
         return returnList;
@@ -402,7 +401,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         LinkedList returnList = new LinkedList();
         if (!breaker.isEmpty()) {
             Position bcPosition = new BlockContainerPosition(this, breaker);
-            returnList.add(new KnuthBox(0, bcPosition, false));
+            returnList.add(new KnuthBox(0, notifyPos(bcPosition), false));
     
             //TODO Maybe check for page overflow when autoHeight=true
             if (!autoHeight & (contentOverflows/*usedBPD > relDims.bpd*/)) {
@@ -504,7 +503,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         }
         
         protected void addAreas(PositionIterator posIter, LayoutContext context) {
-            AreaAdditionUtil.addAreas(posIter, context);    
+            AreaAdditionUtil.addAreas(bclm, posIter, context);    
         }
         
         protected void doPhase3(PageBreakingAlgorithm alg, int partCount, 
@@ -562,10 +561,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             addBlockSpacing(0.0, new MinOptMax(layoutContext.getSpaceBefore()));
         }
 
-        getPSLM().addIDToPage(getBlockContainerFO().getId());
-        //addMarkersToPV(true, bp1.isFirstArea(), bp1.isLastArea());
-        getCurrentPV().addMarkers(markers, true, true, false);
-
         LayoutManager childLM = null;
         LayoutManager lastLM = null;
         LayoutContext lc = new LayoutContext(0);
@@ -582,9 +577,17 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         Position pos;
         boolean bSpaceBefore = false;
         boolean bSpaceAfter = false;
+        Position firstPos = null;
+        Position lastPos = null;
         while (parentIter.hasNext()) {
             pos = (Position) parentIter.next();
-            /* LF *///System.out.println("pos = " + pos.getClass().getName());
+            //System.out.println("pos = " + pos.getClass().getName());
+            if (pos.getIndex() >= 0) {
+                if (firstPos == null) {
+                    firstPos = pos;
+                }
+                lastPos = pos;
+            }
             Position innerPosition = null;
             if (pos instanceof NonLeafPosition) {
                 innerPosition = ((NonLeafPosition)pos).getPosition();
@@ -624,6 +627,11 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                 /* LF *///System.out.println(" " +
                       // innerPosition.getClass().getName());
             }
+        }
+
+        getPSLM().addIDToPage(getBlockContainerFO().getId());
+        if (markers != null) {
+            getCurrentPV().addMarkers(markers, true, isFirst(firstPos), isLast(lastPos));
         }
 
         if (bcpos == null) {
@@ -726,7 +734,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         //int bIndents = getBlockContainerFO().getCommonBorderPaddingBackground()
         //    .getBPPaddingAndBorder(false);
 
-        getCurrentPV().addMarkers(markers, false, false, true);
+        if (markers != null) {
+            getCurrentPV().addMarkers(markers, false, isFirst(firstPos), isLast(lastPos));
+        }
 
         flush();
 

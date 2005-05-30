@@ -190,6 +190,13 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             log.debug("TableContentLM signals pending keep-with-previous");
             context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
         }
+        
+        //Set index values on elements coming from the content LM
+        Iterator iter = returnedList.iterator();
+        while (iter.hasNext()) {
+            KnuthElement el = (KnuthElement)iter.next();
+            notifyPos(el.getPosition());
+        }
         log.debug(returnedList);
         
         if (returnedList.size() == 1

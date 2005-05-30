@@ -37,11 +37,14 @@ public class AreaAdditionUtil {
         }
     }
 
-    public static void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
+    public static void addAreas(BlockStackingLayoutManager bslm, 
+            PositionIterator parentIter, LayoutContext layoutContext) {
         LayoutManager childLM = null;
         LayoutContext lc = new LayoutContext(0);
         LayoutManager firstLM = null;
         LayoutManager lastLM = null;
+        Position firstPos = null;
+        Position lastPos = null;
 
         // "unwrap" the NonLeafPositions stored in parentIter
         // and put them in a new list; 
@@ -49,6 +52,12 @@ public class AreaAdditionUtil {
         Position pos;
         while (parentIter.hasNext()) {
             pos = (Position)parentIter.next();
+            if (pos.getIndex() >= 0) {
+                if (firstPos == null) {
+                    firstPos = pos;
+                }
+                lastPos = pos;
+            }
             if (pos instanceof NonLeafPosition) {
                 // pos was created by a child of this FlowLM
                 positionList.add(((NonLeafPosition) pos).getPosition());
@@ -59,6 +68,11 @@ public class AreaAdditionUtil {
             } else {
                 // pos was created by this LM, so it must be ignored
             }
+        }
+        
+        if (bslm.markers != null) {
+            bslm.getCurrentPV().addMarkers(bslm.markers, true, 
+                    bslm.isFirst(firstPos), bslm.isLast(lastPos));
         }
 
         StackingIter childPosIter = new StackingIter(positionList.listIterator());
@@ -75,6 +89,11 @@ public class AreaAdditionUtil {
             lc.setStackLimit(layoutContext.getStackLimit());
             childLM.addAreas(childPosIter, lc);
         }
+        if (bslm.markers != null) {
+            bslm.getCurrentPV().addMarkers(bslm.markers, false, 
+                    bslm.isFirst(firstPos), bslm.isLast(lastPos));
+        }
+        
     }
     
 }

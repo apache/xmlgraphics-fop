@@ -155,7 +155,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
      * @see org.apache.fop.layoutmgr.LayoutManager#addAreas(PositionIterator, LayoutContext)
      */
     public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
-        AreaAdditionUtil.addAreas(parentIter, layoutContext);
+        AreaAdditionUtil.addAreas(this, parentIter, layoutContext);
 
         flush();
         targetRegion = null;
@@ -267,7 +267,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         }
         
         protected void addAreas(PositionIterator posIter, LayoutContext context) {
-            AreaAdditionUtil.addAreas(posIter, context);    
+            AreaAdditionUtil.addAreas(lm, posIter, context);    
         }
         
         protected void doPhase3(PageBreakingAlgorithm alg, int partCount, 
