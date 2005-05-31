@@ -108,6 +108,7 @@
                 </fo:table-cell>
                 <fo:table-cell>
                   <fo:block>blah</fo:block>
+                  <fo:block>blah</fo:block>
                 </fo:table-cell>
               </fo:table-row>
               <fo:table-row>
@@ -118,6 +119,63 @@
             </fo:table-body>
             <fo:table-body color="cyan">
               <fo:marker marker-class-name="test">body4</fo:marker>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>blah</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>blah</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+          <fo:table break-before="page">
+            <fo:table-column number-columns-repeated="2"/>
+            <fo:table-body color="black">
+              <fo:marker marker-class-name="test">body5</fo:marker>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>blah</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>blah</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+            <fo:table-body color="green">
+              <fo:marker marker-class-name="test">body6</fo:marker>
+              <fo:table-row>
+                <fo:table-cell number-rows-spanned="3">
+                  <fo:block>blah1</fo:block>
+                  <fo:block>blah2</fo:block>
+                  <fo:block>blah3</fo:block>
+                  <fo:block>blah4</fo:block>
+                  <fo:block>blah5</fo:block>
+                  <fo:block>blah6</fo:block>
+                  <fo:block>blah7</fo:block>
+                  <fo:block>blah8</fo:block>
+                  <fo:block>blah9</fo:block>
+                  <fo:block>blah10</fo:block>
+                  <fo:block>blah11</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>blah</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>blah</fo:block>
+                  <fo:block>blah</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <!--fo:table-row>
+                <fo:table-cell>
+                  <fo:block>blah</fo:block>
+                </fo:table-cell>
+              </fo:table-row-->
+            </fo:table-body>
+            <fo:table-body color="black">
+              <fo:marker marker-class-name="test">body7</fo:marker>
               <fo:table-row>
                 <fo:table-cell>
                   <fo:block>blah</fo:block>
@@ -150,7 +208,12 @@
 
     <true xpath="starts-with(//pageViewport[@nr=4]//regionBefore/block[1],'body3')"/>
     <true xpath="starts-with(//pageViewport[@nr=4]//regionBefore/block[2],'body4')"/>
-    <true xpath="starts-with(//pageViewport[@nr=4]//regionAfter/block[1],'body4')"/>
-    <true xpath="starts-with(//pageViewport[@nr=4]//regionAfter/block[2],'body4')"/>
+    <true xpath="starts-with(//pageViewport[@nr=4]//regionAfter/block[1],'body6')"/>
+    <true xpath="starts-with(//pageViewport[@nr=4]//regionAfter/block[2],'body5')"/>
+
+    <true xpath="starts-with(//pageViewport[@nr=5]//regionBefore/block[1],'body6')"/>
+    <true xpath="starts-with(//pageViewport[@nr=5]//regionBefore/block[2],'body6')"/>
+    <true xpath="starts-with(//pageViewport[@nr=5]//regionAfter/block[1],'body6')"/>
+    <true xpath="starts-with(//pageViewport[@nr=5]//regionAfter/block[2],'body6')"/>
   </checks>
 </testcase>
