@@ -192,36 +192,23 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             StaticContent footnoteSeparator;
             if (bFootnotesPresent
                 && (footnoteSeparator = pageSeq.getStaticContent("xsl-footnote-separator")) != null) {
+                // the footnote separator can contain page-dependent content such as
+                // page numbers or retrieve markers, so its areas cannot simply be 
+                // obtained now and repeated in each page;
+                // we need to know in advance the separator bpd: the actual separator
+                // could be different from page to page, but its bpd would likely be
+                // always the same
+
                 // create a Block area that will contain the separator areas
                 separatorArea = new Block();
-
+                separatorArea.setIPD(context.getRefIPD());
                 // create a StaticContentLM for the footnote separator
                 footnoteSeparatorLM = (StaticContentLayoutManager)
                     getLayoutManagerMaker().makeStaticContentLayoutManager(
                     pslm, footnoteSeparator, separatorArea);
+                footnoteSeparatorLM.doLayout();
 
-                // get the list of elements representing the footnote separator
-                footnoteSeparatorList = footnoteSeparatorLM.getNextKnuthElements(context, alignment);
-
-                // compute the total length of the elements
-                footnoteSeparatorLength = new MinOptMax(0);
-                ListIterator separatorIterator = footnoteSeparatorList.listIterator();
-                while (separatorIterator.hasNext()) {
-                    KnuthElement element = (KnuthElement) separatorIterator.next();
-                    if (element.isBox()) {
-                        footnoteSeparatorLength.add(new MinOptMax(element.getW()));
-                    } else if (element.isGlue()) {
-                        footnoteSeparatorLength.add(new MinOptMax(element.getW()));
-                        footnoteSeparatorLength.max += element.getY();
-                        footnoteSeparatorLength.min -= element.getZ();
-                    }
-                }
-
-                // add the footnote separator areas to the Block area
-                if (footnoteSeparatorList != null) {
-                    LayoutContext childLC = new LayoutContext(0);
-                    footnoteSeparatorLM.addAreas(new KnuthPossPosIter(footnoteSeparatorList, 0, footnoteSeparatorList.size()), childLC);
-                }
+                footnoteSeparatorLength = new MinOptMax(separatorArea.getBPD());
             }
             return contentList;
         }
@@ -235,6 +222,18 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
         
         protected void addAreas(PositionIterator posIter, LayoutContext context) {
+            if (footnoteSeparatorLM != null) {
+                StaticContent footnoteSeparator = pageSeq.getStaticContent("xsl-footnote-separator");
+                // create a Block area that will contain the separator areas
+                separatorArea = new Block();
+                separatorArea.setIPD(curPV.getCurrentSpan().getColumnWidth());
+                // create a StaticContentLM for the footnote separator
+                footnoteSeparatorLM = (StaticContentLayoutManager)
+                    getLayoutManagerMaker().makeStaticContentLayoutManager(
+                    pslm, footnoteSeparator, separatorArea);
+                footnoteSeparatorLM.doLayout();
+            }
+
             getCurrentChildLM().addAreas(posIter, context);    
         }
         
