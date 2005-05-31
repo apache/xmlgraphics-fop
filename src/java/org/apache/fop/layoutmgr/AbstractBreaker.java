@@ -94,7 +94,7 @@ public abstract class AbstractBreaker {
 
     private List blockLists = null;
 
-    private int alignment;
+    protected int alignment;
     private int alignmentLast;
 
     protected MinOptMax footnoteSeparatorLength = new MinOptMax(0);

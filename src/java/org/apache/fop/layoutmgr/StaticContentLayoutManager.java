@@ -172,8 +172,8 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         if (getStaticContentFO().getFlowName().equals("xsl-footnote-separator")) {
             targetBlock.addBlock((Block)childArea);
         } else {
-        targetRegion.addBlock((Block)childArea);
-    }
+            targetRegion.addBlock((Block)childArea);
+        }
     }
 
     /**
@@ -183,19 +183,33 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         if (getStaticContentFO().getFlowName().equals("xsl-footnote-separator")) {
             return targetBlock;
         } else {
-        return targetRegion;
-    }
+            return targetRegion;
+        }
     }
 
     /**
      * Does the layout for a side region. Called by PageSequenceLayoutManager.
      */
     public void doLayout() {
-        StaticContentBreaker breaker = new StaticContentBreaker(
-                this, targetRegion.getIPD(), regionFO.getDisplayAlign());
-        breaker.doLayout(targetRegion.getBPD());
+        int targetIPD = 0;
+        int targetBPD = 0;
+        int targetAlign = EN_AUTO;
+        StaticContentBreaker breaker;
+
+        if (getStaticContentFO().getFlowName().equals("xsl-footnote-separator")) {
+            targetIPD = targetBlock.getIPD();
+            targetBPD = targetBlock.getBPD();
+            targetAlign = EN_BEFORE;
+        } else {
+            targetIPD = targetRegion.getIPD();
+            targetBPD = targetRegion.getBPD();
+            targetAlign = regionFO.getDisplayAlign();
+        }
+        breaker = new StaticContentBreaker(this, targetIPD, targetAlign);
+        breaker.doLayout(targetBPD);
         if (breaker.isOverflow()) {
-            if (regionFO.getOverflow() == EN_ERROR_IF_OVERFLOW) {
+            if (!getStaticContentFO().getFlowName().equals("xsl-footnote-separator")
+                && regionFO.getOverflow() == EN_ERROR_IF_OVERFLOW) {
                 //TODO throw layout exception
             }
             log.warn("static-content overflows the available area.");
