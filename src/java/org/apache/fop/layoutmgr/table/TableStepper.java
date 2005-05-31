@@ -107,19 +107,27 @@ public class TableStepper {
                 if (elementLists[i] == null) {
                     continue;
                 }
-                if (getActivePrimaryGridUnit(i).getCell().getNumberRowsSpanned() > 1) {
+                if (end[i] == elementLists[i].size() - 1) {
+                    continue;
+                }
+                GridUnit gu = getActiveGridUnit(i); 
+                if (!gu.isLastGridUnitRowSpan()) {
                     continue;
                 }
                 int len = widths[i]; 
                 if (len > 0) {
                     len += borderBefore[i] + borderAfter[i]; 
                 }
-                if (len == rowGroup[activeRow].getHeight().opt) {
+                int nominalHeight = rowGroup[activeRow].getHeight().opt;
+                for (int r = 0; r < gu.getRowSpanIndex(); r++) {
+                    nominalHeight += rowGroup[activeRow - r - 1].getHeight().opt;
+                }
+                if (len == nominalHeight) {
                     //row is filled
                     maxW = 0;
                     break;
                 }
-                maxW = Math.max(maxW, rowGroup[activeRow].getHeight().opt - len);
+                maxW = Math.max(maxW, nominalHeight - len);
             }
         }
         for (int i = activeRow + 1; i < rowGroup.length; i++) {
@@ -132,7 +140,14 @@ public class TableStepper {
     private void setupElementList(int column) {
         GridUnit gu = getActiveGridUnit(column);
         EffRow row = getActiveRow();
-        if (gu.isPrimary() && !gu.isEmpty()) {
+        if (gu.isEmpty()){
+            elementLists[column] = null;
+            start[column] = 0;
+            end[column] = -1;
+            widths[column] = 0;
+            startRow[column] = activeRow;
+            keepWithNextSignals[column] = false;
+        } else if (gu.isPrimary()) {
             PrimaryGridUnit pgu = (PrimaryGridUnit)gu;
             boolean makeBoxForWholeRow = false;
             if (row.getExplicitHeight().min > 0) {

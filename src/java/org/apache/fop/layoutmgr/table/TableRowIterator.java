@@ -68,6 +68,7 @@ public class TableRowIterator {
     private List rows = new java.util.ArrayList();
     //private int indexOfFirstRowInList;
     private int currentIndex = -1;
+    private int pendingRowSpans;
     
     //prefetch state
     private ListIterator bodyIterator = null;
@@ -126,8 +127,9 @@ public class TableRowIterator {
         }
         EffRow lastRowInGroup = firstRowInGroup;
         int lastIndex = lastRowInGroup.getIndex();
-        boolean allFinished = true;
+        boolean allFinished;
         do {
+            allFinished = true;
             Iterator iter = lastRowInGroup.getGridUnits().iterator();
             while (iter.hasNext()) {
                 GridUnit gu = (GridUnit)iter.next();
@@ -136,8 +138,8 @@ public class TableRowIterator {
                     break;
                 }
             }
+            lastIndex = lastRowInGroup.getIndex();
             if (!allFinished) {
-                lastIndex = lastRowInGroup.getIndex();
                 lastRowInGroup = getNextRow();
                 if (lastRowInGroup == null) {
                     allFinished = true;
@@ -221,6 +223,14 @@ public class TableRowIterator {
         if (childInBodyIterator != null) {
             if (!childInBodyIterator.hasNext()) {
                 //force skip on to next body
+                if (pendingRowSpans > 0) {
+                    this.currentRow.clear();
+                    this.currentRowIndex++;
+                    EffRow gridUnits = buildGridRow(this.currentRow, null);
+                    log.debug(gridUnits);
+                    rows.add(gridUnits);
+                    return true;
+                }
                 childInBodyIterator = null;
                 if (rows.size() > 0) {
                     getCachedRow(rows.size() - 1).setFlagForAllGridUnits(
@@ -317,30 +327,33 @@ public class TableRowIterator {
         
         //Create all row-spanned grid units based on information from the last row
         int colnum = 1;
-        ListIterator spanIter = lastRowsSpanningCells.listIterator();
         GridUnit[] horzSpan = null;
-        while (spanIter.hasNext()) {
-            GridUnit gu = (GridUnit)spanIter.next();
-            if (gu != null) {
-                if (gu.getColSpanIndex() == 0) {
-                    horzSpan = new GridUnit[gu.getCell().getNumberColumnsSpanned()];
+        if (pendingRowSpans > 0) {
+            ListIterator spanIter = lastRowsSpanningCells.listIterator();
+            while (spanIter.hasNext()) {
+                GridUnit gu = (GridUnit)spanIter.next();
+                if (gu != null) {
+                    if (gu.getColSpanIndex() == 0) {
+                        horzSpan = new GridUnit[gu.getCell().getNumberColumnsSpanned()];
+                    }
+                    GridUnit newGU = gu.createNextRowSpanningGridUnit();
+                    newGU.setRow(rowFO);
+                    safelySetListItem(gridUnits, colnum - 1, newGU);
+                    horzSpan[newGU.getColSpanIndex()] = newGU;
+                    if (newGU.isLastGridUnitColSpan()) {
+                        //Add the array of row-spanned grid units to the primary grid unit
+                        newGU.getPrimary().addRow(horzSpan);
+                        horzSpan = null;
+                    }
+                    if (newGU.isLastGridUnitRowSpan()) {
+                        spanIter.set(null);
+                        pendingRowSpans--;
+                    } else {
+                        spanIter.set(newGU);
+                    }
                 }
-                GridUnit newGU = gu.createNextRowSpanningGridUnit();
-                newGU.setRow(rowFO);
-                safelySetListItem(gridUnits, colnum - 1, newGU);
-                horzSpan[newGU.getColSpanIndex()] = newGU;
-                if (newGU.isLastGridUnitColSpan()) {
-                    //Add the array of row-spanned grid units to the primary grid unit
-                    newGU.getPrimary().addRow(horzSpan);
-                    horzSpan = null;
-                }
-                if (newGU.isLastGridUnitRowSpan()) {
-                    spanIter.set(null);
-                } else {
-                    spanIter.set(newGU);
-                }
+                colnum++;
             }
-            colnum++;
         }
         
         //Transfer available cells to their slots
@@ -369,6 +382,7 @@ public class TableRowIterator {
             safelySetListItem(gridUnits, colnum - 1, gu);
             boolean hasRowSpanningLeft = !gu.isLastGridUnitRowSpan();
             if (hasRowSpanningLeft) {
+                pendingRowSpans++;
                 safelySetListItem(lastRowsSpanningCells, colnum - 1, gu);
             }
             
