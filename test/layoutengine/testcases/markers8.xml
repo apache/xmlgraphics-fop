@@ -108,6 +108,7 @@
                 </fo:table-cell>
                 <fo:table-cell>
                   <fo:block>blah</fo:block>
+                  <fo:block>blah</fo:block>
                 </fo:table-cell>
               </fo:table-row>
               <fo:table-row>
