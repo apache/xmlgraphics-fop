@@ -124,17 +124,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
         return null;
     }
 
-    protected boolean hasMoreLM(LayoutManager prevLM) {
-        // prevLM should = curChildLM
-        if (prevLM != curChildLM) {
-            //log.debug("AbstractLayoutManager.peekNextLM: " +
-            //                   "passed LM is not current child LM!");
-            return false;
-        }
-        return !childLMiter.hasNext();
-    }
-
-
     /**
      * Reset the layoutmanager "iterator" so that it will start
      * with the passed Position's generating LM
