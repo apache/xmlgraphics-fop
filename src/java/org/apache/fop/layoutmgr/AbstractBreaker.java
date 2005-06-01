@@ -104,6 +104,12 @@ public abstract class AbstractBreaker {
     protected abstract void addAreas(PositionIterator posIter, LayoutContext context);
     protected abstract LayoutManager getTopLevelLM();
     protected abstract LayoutManager getCurrentChildLM();
+    
+    /*
+     * This method is to contain the logic to determine the LM's
+     * getNextKnuthElements() implementation(s) that are to be called. 
+     * @return LinkedList of Knuth elements.  
+     */
     protected abstract LinkedList getNextKnuthElements(LayoutContext context, int alignment);
 
     /** @return true if there's no content that could be handled. */

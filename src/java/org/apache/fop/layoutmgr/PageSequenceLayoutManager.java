@@ -33,6 +33,7 @@ import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.flow.RetrieveMarker;
+import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.SideRegion;
@@ -128,6 +129,11 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         log.debug("Starting layout");
 
         curPV = makeNewPage(false, true, false);
+
+        Flow mainFlow = pageSeq.getMainFlow();
+        childFLM = (FlowLayoutManager) 
+            getLayoutManagerMaker().makeLayoutManager(mainFlow);
+        childFLM.setParent(this);
 
         PageBreaker breaker = new PageBreaker(this);
         int flowBPD = (int) curPV.getBodyRegion().getBPD();
@@ -312,35 +318,25 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * @param context the layout context for finding breaks
      * @return the break for the page
      */
-    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {       
+        LinkedList returnedList = null;
 
-        LayoutManager curLM; // currently active LM
-
-        while ((curLM = getChildLM()) != null) {
-            LinkedList returnedList = null;
-            if (childFLM == null && (curLM instanceof FlowLayoutManager)) {
-                childFLM = (FlowLayoutManager)curLM;
-            } else {
-                if (curLM != childFLM) {
-                    log.error("PSLM> invalid child LM");
-                }
-            }
-
+        while (!childFLM.isFinished()) {
             LayoutContext childLC = new LayoutContext(0);
             childLC.setStackLimit(context.getStackLimit());
             childLC.setRefIPD(context.getRefIPD());
 
-            if (!curLM.isFinished()) {
-                int flowIPD = curPV.getCurrentSpan().getColumnWidth();
-                int flowBPD = (int) curPV.getBodyRegion().getBPD();
-                pageSeq.setLayoutDimension(PercentBase.REFERENCE_AREA_IPD, flowIPD);
-                pageSeq.setLayoutDimension(PercentBase.REFERENCE_AREA_BPD, flowBPD);
-                returnedList = curLM.getNextKnuthElements(childLC, alignment);
-            }
+            int flowIPD = curPV.getCurrentSpan().getColumnWidth();
+            int flowBPD = (int) curPV.getBodyRegion().getBPD();
+            pageSeq.setLayoutDimension(PercentBase.REFERENCE_AREA_IPD, flowIPD);
+            pageSeq.setLayoutDimension(PercentBase.REFERENCE_AREA_BPD, flowBPD);
+            returnedList = childFLM.getNextKnuthElements(childLC, alignment);
+
             if (returnedList != null) {
                 return returnedList;
             }
         }
+
         setFinished(true);
         return null;
     }
