@@ -28,8 +28,6 @@ import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.Resolvable;
 
-import org.apache.fop.datatypes.PercentBase;
-
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.flow.RetrieveMarker;
@@ -131,9 +129,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         curPV = makeNewPage(false, true, false);
 
         Flow mainFlow = pageSeq.getMainFlow();
-        childFLM = (FlowLayoutManager) 
-            getLayoutManagerMaker().makeLayoutManager(mainFlow);
-        childFLM.setParent(this);
+        childFLM = getLayoutManagerMaker().
+            makeFlowLayoutManager(this, mainFlow);
 
         PageBreaker breaker = new PageBreaker(this);
         int flowBPD = (int) curPV.getBodyRegion().getBPD();
@@ -325,11 +322,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             LayoutContext childLC = new LayoutContext(0);
             childLC.setStackLimit(context.getStackLimit());
             childLC.setRefIPD(context.getRefIPD());
-
-            int flowIPD = curPV.getCurrentSpan().getColumnWidth();
-            int flowBPD = (int) curPV.getBodyRegion().getBPD();
-            pageSeq.setLayoutDimension(PercentBase.REFERENCE_AREA_IPD, flowIPD);
-            pageSeq.setLayoutDimension(PercentBase.REFERENCE_AREA_BPD, flowBPD);
             returnedList = childFLM.getNextKnuthElements(childLC, alignment);
 
             if (returnedList != null) {

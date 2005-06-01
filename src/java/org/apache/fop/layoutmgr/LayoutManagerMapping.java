@@ -114,7 +114,6 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         makers.put(TableCell.class, new Maker());
         makers.put(TableFooter.class, new Maker());
         makers.put(TableHeader.class, new Maker());
-        makers.put(Flow.class, new FlowLayoutManagerMaker());
         makers.put(Wrapper.class, new WrapperLayoutManagerMaker());
         makers.put(Title.class, new InlineLayoutManagerMaker());
     }
@@ -155,7 +154,15 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     }
 
     /*
-     * @see org.apache.fop.layoutmgr.LayoutManagerMaker#makeStaticContentLayoutManager(org.apache.fop.layoutmgr.PageSequenceLayoutManager, org.apache.fop.fo.pagination.StaticContent, org.apache.fop.fo.pagination.Region)
+     * @see org.apache.fop.layoutmgr.LayoutManagerMaker#makeFlowLayoutManager(PageSequenceLayoutManager, Flow)
+     */
+    public FlowLayoutManager makeFlowLayoutManager(
+            PageSequenceLayoutManager pslm, Flow flow) {
+        return new FlowLayoutManager(pslm, flow);
+    }
+    
+    /*
+     * @see org.apache.fop.layoutmgr.LayoutManagerMaker#makeStaticContentLayoutManager(PageSequenceLayoutManager, StaticContent, Region)
      */
     public StaticContentLayoutManager makeStaticContentLayoutManager(
             PageSequenceLayoutManager pslm, StaticContent sc, SideRegion reg) {
@@ -163,7 +170,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
     }
     
     /*
-     * @see org.apache.fop.layoutmgr.LayoutManagerMaker#makeStaticContentLayoutManager(org.apache.fop.layoutmgr.PageSequenceLayoutManager, org.apache.fop.fo.pagination.StaticContent, org.apache.fop.area.Block)
+     * @see org.apache.fop.layoutmgr.LayoutManagerMaker#makeStaticContentLayoutManager(PageSequenceLayoutManager, StaticContent, Block)
      */
     public StaticContentLayoutManager makeStaticContentLayoutManager(
         PageSequenceLayoutManager pslm, StaticContent sc, org.apache.fop.area.Block block) {
@@ -323,12 +330,6 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         }
     }
      
-    public static class FlowLayoutManagerMaker extends Maker {
-         public void make(FONode node, List lms) {
-             lms.add(new FlowLayoutManager((Flow) node));
-         }
-    }
-
     public class WrapperLayoutManagerMaker extends Maker {
         public void make(FONode node, List lms) {
             Iterator baseIter;

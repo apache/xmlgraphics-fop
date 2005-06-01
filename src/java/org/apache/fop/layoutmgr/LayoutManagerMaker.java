@@ -19,6 +19,7 @@ package org.apache.fop.layoutmgr;
 
 import java.util.List;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.SideRegion;
 import org.apache.fop.fo.pagination.StaticContent;
@@ -56,6 +57,15 @@ public interface LayoutManagerMaker {
      */
     public PageSequenceLayoutManager makePageSequenceLayoutManager(
         AreaTreeHandler ath, PageSequence ps);
+
+    /**
+     * Make a FlowLayoutManager object.
+     * @param pslm the parent PageSequenceLayoutManager object
+     * @param flow the fo:flow object this FLM will process
+     * @return The created FlowLayoutManager object
+     */
+    public FlowLayoutManager makeFlowLayoutManager(
+        PageSequenceLayoutManager pslm, Flow flow);
 
     /**
      * Make a StaticContentLayoutManager object.

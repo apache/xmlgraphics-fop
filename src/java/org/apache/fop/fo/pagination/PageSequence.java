@@ -200,7 +200,6 @@ public class PageSequence extends FObj {
         } else if (childId == FO_FLOW) {
             this.mainFlow = (Flow) child;
             addFlow(mainFlow);
-            super.addChildNode(child); // For getChildren
         } else if (childId == FO_STATIC_CONTENT) {
             addFlow((StaticContent) child);
             String flowName = ((StaticContent) child).getFlowName();
