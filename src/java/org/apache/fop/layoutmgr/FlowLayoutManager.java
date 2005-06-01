@@ -50,16 +50,23 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     /**
      * This is the top level layout manager.
      * It is created by the PageSequence FO.
+     * @param pslm parent PageSequenceLayoutManager object
      * @param node Flow object
      */
-    public FlowLayoutManager(Flow node) {
+    public FlowLayoutManager(PageSequenceLayoutManager pslm, Flow node) {
         super(node);
         fobj = node;
+        setParent(pslm);
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+
         // set layout dimensions
+        int flowIPD = getCurrentPV().getCurrentSpan().getColumnWidth();
+        int flowBPD = (int) getCurrentPV().getBodyRegion().getBPD();
+        fobj.setLayoutDimension(PercentBase.REFERENCE_AREA_IPD, flowIPD);
+        fobj.setLayoutDimension(PercentBase.REFERENCE_AREA_BPD, flowBPD);
         fobj.setLayoutDimension(PercentBase.BLOCK_IPD, context.getRefIPD());
         fobj.setLayoutDimension(PercentBase.BLOCK_BPD, context.getStackLimit().opt);
 
