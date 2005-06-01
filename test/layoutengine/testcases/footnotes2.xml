@@ -96,8 +96,8 @@
     <eval expected="filling 15..." xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[last()]/lineArea"/>
     <eval expected="filling 16..." xpath="//pageViewport[3]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea"/>
     <!-- last block on page 3 -->
-    <eval expected="360000" xpath="//pageViewport[3]/page/regionViewport/regionBody/footnote/block[last()]/@ipd"/>
-    <eval expected="0" xpath="//pageViewport[3]/page/regionViewport/regionBody/footnote/block[last()]/@bpd"/>
+    <eval expected="360000" xpath="//pageViewport[3]/page/regionViewport/regionBody/mainReference/span/flow/block[last()]/@ipd"/>
+    <eval expected="0" xpath="//pageViewport[3]/page/regionViewport/regionBody/mainReference/span/flow/block[last()]/@bpd"/>
     <!-- the footnotes on page 3 -->
     <eval expected="2" xpath="count(//pageViewport[3]/page/regionViewport/regionBody/footnote/block)"/>
     <eval expected="360000" xpath="//pageViewport[3]/page/regionViewport/regionBody/footnote/block[1]/@ipd"/>
