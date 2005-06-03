@@ -1062,7 +1062,7 @@ Can I control this?</question>
   <part id="dev-help">
     <title>Development-related Questions.</title>
     <faq id="doc-mgt">
-      <question>I am an FOP developer and I don't remember how our docs are built.</question>
+      <question>Where can I learn how the FOP docs and web site are built?</question>
       <answer>
       	<p>
       		See FOP <link href="dev/doc.html">Doc Management</link>. ;-)
