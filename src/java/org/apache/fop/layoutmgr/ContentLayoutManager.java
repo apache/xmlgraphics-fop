@@ -165,11 +165,6 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
         return true;
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager#isBogus() */
-    public boolean isBogus() {
-        return false;
-    }
-
     /** @see org.apache.fop.layoutmgr.LayoutManager */
     public Area getParentArea(Area childArea) {
         return holder;
