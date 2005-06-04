@@ -302,27 +302,12 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         
     }
     
-    /** @see org.apache.fop.layoutmgr.LayoutManager#isBogus() */
-    public boolean isBogus() {
-        return false;
-    }
-    
     /**
-     * Get the next break possibility.
-     * This finds the next break for a page which is always at the end
-     * of the page.
-     *
-     * @param context the layout context for finding breaks
-     * @return the break for the page
+     * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(Layout Context, int)
      */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {       
-        LinkedList returnedList = null;
-
         while (!childFLM.isFinished()) {
-            LayoutContext childLC = new LayoutContext(0);
-            childLC.setStackLimit(context.getStackLimit());
-            childLC.setRefIPD(context.getRefIPD());
-            returnedList = childFLM.getNextKnuthElements(childLC, alignment);
+            LinkedList returnedList = childFLM.getNextKnuthElements(context, alignment);
 
             if (returnedList != null) {
                 return returnedList;
