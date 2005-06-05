@@ -166,7 +166,11 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
         
         protected LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
-            LinkedList contentList = pslm.getNextKnuthElements(context, alignment);
+            LinkedList contentList = null;
+            
+            while (!childFLM.isFinished() && contentList == null) {
+                contentList = childFLM.getNextKnuthElements(context, alignment);
+            }
 
             // scan contentList, searching for footnotes
             boolean bFootnotesPresent = false;
@@ -221,7 +225,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
         
         protected boolean hasMoreContent() {
-            return !isFinished();
+            return !childFLM.isFinished();
         }
         
         protected void addAreas(PositionIterator posIter, LayoutContext context) {
@@ -302,22 +306,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         
     }
     
-    /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(Layout Context, int)
-     */
-    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {       
-        while (!childFLM.isFinished()) {
-            LinkedList returnedList = childFLM.getNextKnuthElements(context, alignment);
-
-            if (returnedList != null) {
-                return returnedList;
-            }
-        }
-
-        setFinished(true);
-        return null;
-    }
-
     /**
      * Provides access to the current page.
      * @return the current PageViewport
