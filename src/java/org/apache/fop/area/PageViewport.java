@@ -33,7 +33,6 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.pagination.SimplePageMaster;
-import org.apache.fop.layoutmgr.StaticContentLayoutManager;
 
 /**
  * Page viewport that specifies the viewport area and holds the page contents.
@@ -85,6 +84,7 @@ public class PageViewport implements Resolvable, Cloneable {
         pageNumberString = pageStr;
         viewArea = new Rectangle(0, 0, pageWidth, pageHeight);
         page = new Page(spm);
+        createSpan(false);
     }
 
     /**
