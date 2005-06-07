@@ -84,6 +84,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         super(node);
         fobj = node;
         this.columns = new ColumnSetup(node);
+        initialize();
     }
 
     /** @return the table FO */
@@ -98,9 +99,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         return this.columns;
     }
     
-    /** @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties() */
-    protected void initProperties() {
-        super.initProperties();
+    private void initialize() {
         spaceBefore = new SpaceVal(fobj.getCommonMarginBlock().spaceBefore).getSpace();
         spaceAfter = new SpaceVal(fobj.getCommonMarginBlock().spaceAfter).getSpace();
         

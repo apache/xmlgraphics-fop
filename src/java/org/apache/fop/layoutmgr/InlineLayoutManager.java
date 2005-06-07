@@ -52,12 +52,10 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
     public InlineLayoutManager(InlineLevel node) {
         super(node);
         fobj = node;
+        initialize();
     }
     
-    /**
-     * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
-     */
-    protected void initProperties() {
+    private void initialize() {
         inlineProps = fobj.getCommonMarginInline();
         borderProps = fobj.getCommonBorderPaddingBackground();
 

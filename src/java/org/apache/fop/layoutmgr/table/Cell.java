@@ -71,6 +71,7 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
         super(node);
         fobj = node;
         this.gridUnit = pgu;
+        initialize();
     }
 
     /** @return the table-cell FO */
@@ -82,11 +83,7 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
         return fobj.isSeparateBorderModel();
     }
     
-    /**
-     * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
-     */
-    protected void initProperties() {
-        super.initProperties();
+    private void initialize() {
         borderAndPaddingBPD = 0;
         borderAndPaddingBPD += fobj.getCommonBorderPaddingBackground().getBorderBeforeWidth(false);
         borderAndPaddingBPD += fobj.getCommonBorderPaddingBackground().getBorderAfterWidth(false);

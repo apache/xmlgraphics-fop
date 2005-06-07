@@ -73,12 +73,10 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
      */
     public BlockContainerLayoutManager(BlockContainer node) {
         super(node);
+        initialize();
     }
     
-    /**
-     * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
-     */
-    protected void initProperties() {
+    private void initialize() {
         abProps = getBlockContainerFO().getCommonAbsolutePosition();
         foBlockSpaceBefore = new SpaceVal(getBlockContainerFO().getCommonMarginBlock()
                     .spaceBefore).getSpace();

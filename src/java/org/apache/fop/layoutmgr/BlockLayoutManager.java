@@ -73,14 +73,10 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         follow = -fs.getDescender();
         middleShift = -fs.getXHeight() / 2;
         lineHeight = getBlockFO().getLineHeight().getOptimum().getLength().getValue();
+        initialize();
     }
 
-    /**
-     * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
-     * @todo need to take into account somewhere the effects of fo:initial-property-set,
-     *      if defined for the block.
-     */
-    protected void initProperties() {
+    private void initialize() {
         foBlockSpaceBefore = new SpaceVal(getBlockFO().getCommonMarginBlock().spaceBefore).getSpace();
 /*LF*/  bpUnit = 0; //layoutProps.blockProgressionUnit;
 /*LF*/  if (bpUnit == 0) {
