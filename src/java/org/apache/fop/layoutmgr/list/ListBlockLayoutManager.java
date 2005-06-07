@@ -77,6 +77,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
      */
     public ListBlockLayoutManager(ListBlock node) {
         super(node);
+        initialize();
     }
 
     /**
@@ -87,9 +88,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
         return (ListBlock)fobj;
     }
 
-    /** @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties() */
-    protected void initProperties() {
-        super.initProperties();
+    private void initialize() {
         spaceBefore = new SpaceVal(getListBlockFO().getCommonMarginBlock().spaceBefore).getSpace();
         spaceAfter = new SpaceVal(getListBlockFO().getCommonMarginBlock().spaceAfter).getSpace();
     }

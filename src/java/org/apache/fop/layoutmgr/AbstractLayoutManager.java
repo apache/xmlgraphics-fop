@@ -45,7 +45,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
 
     /** True if this LayoutManager has handled all of its content. */
     private boolean bFinished = false;
-    protected boolean bInited = false;
     
     /** child LM and child LM iterator during getNextBreakPoss phase */
     protected LayoutManager curChildLM = null;
@@ -74,24 +73,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
         markers = fo.getMarkers();
         fobjIter = fo.getChildNodes();
         childLMiter = new LMiter(this);
-    }
-
-    /**
-     * This method provides a hook for a LayoutManager to initialize traits
-     * for the areas it will create, based on Properties set on its FO.
-     */
-    public void initialize() {
-        if (bInited == false) {
-            initProperties();
-            bInited = true;
-        }
-    }
-
-    /**
-     * This method is called by initialize() to set any method variables
-     * based on Properties set on its FO.
-     */
-    protected void initProperties() {
     }
 
     public void setParent(LayoutManager lm) {
@@ -337,7 +318,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
             return;
         }
         lm.setParent(this);
-        lm.initialize();
         if (childLMs == null) {
             childLMs = new java.util.ArrayList(10);
         }

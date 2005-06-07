@@ -50,10 +50,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
     private Block fobj; 
     
-    /**
-     * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
-     */
-    protected void initProperties() {
+    private void initialize() {
         bTextAlignment = fobj.getTextAlign();
         bTextAlignmentLast = fobj.getTextAlignLast();
         textIndent = fobj.getTextIndent();

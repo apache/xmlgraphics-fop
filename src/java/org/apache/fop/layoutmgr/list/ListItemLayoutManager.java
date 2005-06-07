@@ -124,6 +124,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         super(node);
         setLabel(node.getLabel());
         setBody(node.getBody());
+        initialize();
     }
 
     /**
@@ -152,9 +153,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         body.setParent(this);
     }
 
-    /** @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties() */
-    protected void initProperties() {
-        super.initProperties();
+    private void initialize() {
         spaceBefore = new SpaceVal(getListItemFO().getCommonMarginBlock().spaceBefore).getSpace();
         spaceAfter = new SpaceVal(getListItemFO().getCommonMarginBlock().spaceAfter).getSpace();
     }

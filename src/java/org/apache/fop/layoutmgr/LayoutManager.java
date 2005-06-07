@@ -43,11 +43,6 @@ public interface LayoutManager {
     LayoutManager getParent();
 
     /**
-     * Initialize this layout manager.
-     */
-    void initialize();
-
-    /**
      * Get the active PageSequenceLayoutManager instance for this
      * layout process.
      * @return the PageSequenceLayoutManager

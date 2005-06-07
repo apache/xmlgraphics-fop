@@ -452,7 +452,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             throw new IllegalArgumentException("Cannot create page: " + fopex.getMessage());
         }
 
-        log.debug("[" + curPV.getPageNumberString() + (bIsBlank ? "*" : "") + "]");
+        if (log.isDebugEnabled()) {
+            log.debug("[" + curPV.getPageNumberString() + (bIsBlank ? "*" : "") + "]");
+        }
         return curPV;
     }
 
@@ -484,8 +486,10 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         areaTreeHandler.tryIDResolution(curPV);
         // Queue for ID resolution and rendering
         areaTreeHandler.getAreaTreeModel().addPage(curPV);
-        log.debug("page finished: " + curPV.getPageNumberString() 
-                + ", current num: " + currentPageNum);
+        if (log.isDebugEnabled()) {
+            log.debug("page finished: " + curPV.getPageNumberString() 
+                    + ", current num: " + currentPageNum);
+        }
         curPV = null;
     }
     

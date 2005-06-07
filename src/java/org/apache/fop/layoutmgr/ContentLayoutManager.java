@@ -218,11 +218,6 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public void initialize() {
-        //to be done
-    }
-
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public void resetPosition(Position position) {
         //to be done
     }
@@ -255,7 +250,6 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
             return;
         }
         lm.setParent(this);
-        lm.initialize();
         childLM = (InlineLevelLayoutManager)lm;
         log.trace(this.getClass().getName()
                   + ": Adding child LM " + lm.getClass().getName());
