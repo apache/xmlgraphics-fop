@@ -203,11 +203,6 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public boolean canBreakBefore(LayoutContext lc) {
-        return false;
-    }
-
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public boolean isFinished() {
         return false;
     }

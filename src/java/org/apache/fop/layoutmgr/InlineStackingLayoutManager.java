@@ -168,22 +168,6 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager
         // What about prevBP?
     }
 
-    /**
-     * Return value indicating whether the next area to be generated could
-     * start a new line. This should only be called in the "START" condition
-     * if a previous inline BP couldn't end the line.
-     * Return true if any space-start, border-start or padding-start, else
-     * propagate to first child LM
-     */
-    public boolean canBreakBefore(LayoutContext context) {
-        LayoutManager lm = getChildLM();
-        if (lm != null) {
-            return lm.canBreakBefore(context);
-        } else {
-            return false; // ??? NO child LM?
-        }
-    }
-
     protected MinOptMax getPrevIPD(LayoutManager lm) {
         return (MinOptMax) hmPrevIPD.get(lm);
     }
