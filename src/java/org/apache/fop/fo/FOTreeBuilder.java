@@ -37,7 +37,6 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.render.RendererFactory;
 import org.apache.fop.fo.ElementMapping.Maker;
-import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.pagination.Root;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
@@ -252,7 +251,6 @@ public class FOTreeBuilder extends DefaultHandler {
                 try {
                     currentFObj.validateChildNode(locator, namespaceURI, localName);
                 } catch (ValidationException e) {
-                    // TODO: add relaxed validation.
                     throw e;
                 }
             }
