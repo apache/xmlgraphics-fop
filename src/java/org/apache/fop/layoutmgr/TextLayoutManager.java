@@ -219,24 +219,6 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     }
 
     /**
-     * Return value indicating whether the next area to be generated could
-     * start a new line. This should only be called in the "START" condition
-     * if a previous inline BP couldn't end the line.
-     * Return true if the first character is a potential linebreak character.
-     *
-     * @param context the layout context for determining a break
-     * @return true if can break before this text
-     */
-    public boolean canBreakBefore(LayoutContext context) {
-        char c = textArray[iNextStart];
-        return ((c == NEWLINE) || (foText.getWrapOption() == EN_WRAP 
-                    && (CharUtilities.isBreakableSpace(c)
-                        || (BREAK_CHARS.indexOf(c) >= 0
-                            && (iNextStart == 0 
-                                || Character.isLetterOrDigit(textArray[iNextStart-1]))))));
-    }
-
-    /**
      * Reset position for returning next BreakPossibility.
      *
      * @param prevPos the position to reset to

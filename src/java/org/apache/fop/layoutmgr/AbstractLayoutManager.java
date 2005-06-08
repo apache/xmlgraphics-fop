@@ -156,24 +156,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
         bFinished = fin;
     }
 
-
-    /**
-     * Return value indicating whether the next area to be generated could
-     * start a new line or flow area.
-     * In general, if can't break at the current level, delegate to
-     * the first child LM.
-     * NOTE: should only be called if the START_AREA flag is set in context,
-     * since the previous sibling LM must have returned a BreakPoss which
-     * does not allow break-after.
-     * QUESTION: in block-stacked areas, does this mean some kind of keep
-     * condition, or is it only used for inline-stacked areas?
-     * Default implementation always returns true.
-     */
-    public boolean canBreakBefore(LayoutContext context) {
-        return true;
-    }
-
-
     /**
      * @see org.apache.fop.layoutmgr.LayoutManager#addAreas(org.apache.fop.layoutmgr.PositionIterator, org.apache.fop.layoutmgr.LayoutContext)
      */

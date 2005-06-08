@@ -242,15 +242,6 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
         area.setIPD(width);
     }
 
-    /**
-     * Check if can break before this area.
-     * @param context the layout context to check for the break
-     * @return true if can break before this area in the context
-     */
-    public boolean canBreakBefore(LayoutContext context) {
-        return true;
-    }
-
     public LinkedList getNextKnuthElements(LayoutContext context,
                                            int alignment) {
         MinOptMax ipd;

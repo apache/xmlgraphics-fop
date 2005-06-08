@@ -18,11 +18,9 @@
 
 package org.apache.fop.layoutmgr;
 
-import java.util.List;
 import java.util.ListIterator;
 import java.util.LinkedList;
 
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.InlineLevel;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonMarginInline;
@@ -97,20 +95,6 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
     }
     protected SpaceProperty getSpaceEnd() {
         return inlineProps.spaceEnd;
-    }
-    
-    /**
-     * Return value indicating whether the next area to be generated could
-     * start a new line. This should only be called in the "START" condition
-     * if a previous inline BP couldn't end the line.
-     * Return true if any space-start, border-start or padding-start, else
-     * propagate to first child LM
-     */
-    public boolean canBreakBefore(LayoutContext context) {
-        if (new SpaceVal(inlineProps.spaceStart).getSpace().min > 0 || hasLeadingFence(false)) {
-            return true;
-        }
-        return super.canBreakBefore(context);
     }
     
     protected void setTraits(boolean bNotFirst, boolean bNotLast) {
