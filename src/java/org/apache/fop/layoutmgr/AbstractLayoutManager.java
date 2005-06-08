@@ -163,10 +163,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     }
 
 
-    public void getWordChars(StringBuffer sbChars, Position bp1,
-                             Position bp2) {
-    }
-
     /* ---------------------------------------------------------
      * PROVIDE NULL IMPLEMENTATIONS OF METHODS from LayoutManager
      * interface which are declared abstract in AbstractLayoutManager.
@@ -184,8 +180,14 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
         return element;
     }
 
-    public void getWordChars(StringBuffer sbChars, Position pos) {
+    public void getWordChars(StringBuffer sbChars, Position bp1,
+            Position bp2) {
         log.warn("null implementation of getWordChars() called!");
+    }
+
+    // This version is not in LayoutManager but is the only version being
+    // called within the application.
+    public void getWordChars(StringBuffer sbChars, Position pos) {
     }
 
     public void hyphenate(Position pos, HyphContext hc) {
