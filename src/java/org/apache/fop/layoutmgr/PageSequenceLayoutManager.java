@@ -236,7 +236,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 footnoteSeparatorLM.doLayout();
             }
 
-            getCurrentChildLM().addAreas(posIter, context);    
+            childFLM.addAreas(posIter, context);    
         }
         
         protected void doPhase3(PageBreakingAlgorithm alg, int partCount, 
