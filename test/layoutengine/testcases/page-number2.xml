@@ -53,16 +53,16 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="page: 1" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea"/>
-    <eval expected="page: 1" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea"/>
+    <eval expected="page: 1" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea"/>
+    <eval expected="page: 1" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea"/>
 
-    <eval expected="page: 2" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea"/>
-    <eval expected="page: 2" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea"/>
+    <eval expected="page: 2" xpath="//pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea"/>
+    <eval expected="page: 2" xpath="//pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea"/>
 
-    <eval expected="page: 11" xpath="//pageViewport[3]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea"/>
-    <eval expected="page: 11" xpath="//pageViewport[3]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea"/>
+    <eval expected="page: 11" xpath="//pageViewport[@nr=11]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea"/>
+    <eval expected="page: 11" xpath="//pageViewport[@nr=11]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea"/>
 
-    <eval expected="page: 12" xpath="//pageViewport[4]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea"/>
-    <eval expected="page: 12" xpath="//pageViewport[4]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea"/>
+    <eval expected="page: 12" xpath="//pageViewport[@nr=12]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea"/>
+    <eval expected="page: 12" xpath="//pageViewport[@nr=12]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea"/>
   </checks>
 </testcase>
