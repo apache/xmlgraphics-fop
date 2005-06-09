@@ -24,6 +24,8 @@ import java.util.NoSuchElementException;
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.fo.flow.Block;
+import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.fo.properties.CommonTextDecoration;
@@ -81,6 +83,33 @@ public class FOText extends FONode {
     private int wrapOption;
     // End of property values
 
+    /**
+     * Keeps track of the last FOText object created within the current
+     * block. This is used to create pointers between such objects.
+     * TODO: As soon as the control hierarchy is straightened out, this static
+     * variable needs to become an instance variable in some parent object,
+     * probably the page-sequence.
+     */
+    private static FOText lastFOTextProcessed = null;
+
+    /**
+     * Points to the previous FOText object created within the current
+     * block. If this is "null", this is the first such object.
+     */
+    private FOText prevFOTextThisBlock = null;
+
+    /**
+     * Points to the next FOText object created within the current
+     * block. If this is "null", this is the last such object.
+     */
+    private FOText nextFOTextThisBlock = null;
+
+    /**
+     * Points to the ancestor Block object. This is used to keep track of
+     * which FOText nodes are descendants of the same block.
+     */
+    private Block ancestorBlock = null;
+    
     /** Holds the text decoration values. May be null */
     private CommonTextDecoration textDecoration;
     
@@ -134,6 +163,7 @@ public class FOText extends FONode {
 
     /** @see org.apache.fop.fo.FONode#endOfNode() */
     protected void endOfNode() throws FOPException {
+        createBlockPointers();
         textTransform();
     }
 
@@ -169,6 +199,41 @@ public class FOText extends FONode {
      */
     public CharIterator charIterator() {
         return new TextCharIterator();
+    }
+
+     /**
+     * This method is run as part of the Constructor, to create xref pointers to
+     * the previous FOText objects within the same Block
+     */
+    private void createBlockPointers() {
+        // build pointers between the FOText objects withing the same Block
+        //
+        // find the ancestorBlock of the current node
+        FONode ancestorFONode = this;
+        while (this.ancestorBlock == null) {
+            ancestorFONode = ancestorFONode.parent;
+            if (ancestorFONode instanceof org.apache.fop.fo.pagination.Title) {
+                return;
+            } else if (ancestorFONode instanceof Root) {
+                getLogger().warn("Unexpected: fo:text with no fo:block ancestor");
+                return;
+            } else if (ancestorFONode instanceof Block) {
+                this.ancestorBlock = (Block)ancestorFONode;
+            }
+        }
+        // if the last FOText is a sibling, point to it, and have it point here
+        if (lastFOTextProcessed != null) {
+            if (lastFOTextProcessed.ancestorBlock == this.ancestorBlock) {
+                prevFOTextThisBlock = lastFOTextProcessed;
+                prevFOTextThisBlock.nextFOTextThisBlock = this;
+            } else {
+                prevFOTextThisBlock = null;
+            }
+        }
+        // save the current node in static field so the next guy knows where
+        // to look
+        lastFOTextProcessed = this;
+        return;
     }
 
     /**
@@ -246,9 +311,54 @@ public class FOText extends FONode {
         // The easy case is where the desired character is in the same FOText
         if (((i + offset) >= 0) && ((i + offset) <= this.endIndex)) {
             return ca[i + offset];
-        } else {
-            return '\u0000';
         }
+        // For now, we can't look at following FOText nodes
+        if (offset > 0) {
+             return '\u0000';
+         }
+        // Remaining case has the text in some previous FOText node
+        boolean foundChar = false;
+        char charToReturn = '\u0000';
+        FOText nodeToTest = this;
+        int remainingOffset = offset + i;
+        while (!foundChar) {
+            if (nodeToTest.prevFOTextThisBlock == null) {
+                foundChar = true;
+                break;
+            }
+            nodeToTest = nodeToTest.prevFOTextThisBlock;
+            if ((nodeToTest.endIndex + remainingOffset) >= 0) {
+                charToReturn = nodeToTest.ca[nodeToTest.endIndex + remainingOffset];
+                foundChar = true;
+            } else {
+                remainingOffset = remainingOffset + nodeToTest.endIndex;
+            }
+        }
+        return charToReturn;
+    }
+
+    /**
+     * @return The previous FOText node in this Block; null, if this is the
+     * first FOText in this Block.
+     */
+    public FOText getPrevFOTextThisBlock () {
+        return prevFOTextThisBlock;
+    }
+
+    /**
+     * @return The next FOText node in this Block; null if this is the last
+     * FOText in this Block; null if subsequent FOText nodes have not yet been
+     * processed.
+     */
+    public FOText getNextFOTextThisBlock () {
+        return nextFOTextThisBlock;
+    }
+
+    /**
+     * @return The nearest ancestor block object which contains this FOText.
+     */
+    public Block getAncestorBlock () {
+        return ancestorBlock;
     }
 
     /**
@@ -276,7 +386,7 @@ public class FOText extends FONode {
                 */
                 return Character.toTitleCase(ca[i]);
             } else {
-                return Character.toLowerCase(ca[i]);
+                return ca[i];
             }
         default:
             getLogger().warn("Invalid text-tranform value: " + textTransform);
