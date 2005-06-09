@@ -117,6 +117,7 @@ public class Inline extends InlineLevel {
      * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws FOPException {
+        super.endOfNode();
         getFOEventHandler().endInline(this);
     }
 

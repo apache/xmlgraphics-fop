@@ -174,6 +174,7 @@ public class Block extends FObjMixed {
      * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws FOPException {
+        super.endOfNode();
         handleWhiteSpace();
         getFOEventHandler().endBlock(this);
     }
@@ -330,6 +331,7 @@ public class Block extends FObjMixed {
      * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
     public void addChildNode(FONode child) throws FOPException {
+        flushText();
         // Handle whitespace based on values of properties
         // Handle a sequence of inline-producing child nodes in
         // one pass

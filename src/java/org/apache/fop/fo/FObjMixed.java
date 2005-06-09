@@ -28,6 +28,10 @@ import org.apache.fop.apps.FOPException;
  * It should not be instantiated directly.
  */
 public abstract class FObjMixed extends FObj {
+    
+    /** Represents accumulated, pending FO text. See flushText(). */
+    protected FOText ft = null;
+    
     /**
      * @param parent FONode that is the parent of this object
      */
@@ -35,26 +39,41 @@ public abstract class FObjMixed extends FObj {
         super(parent);
     }
 
-    /**
-     * Adds characters
-     * @param data array of characters containing text to be added
-     * @param start starting array element to add
-     * @param end ending array element to add
-     * @param pList currently applicable PropertyList 
-     * @param locator location in fo source file.
-     * @throws FOPException if there's a problem during processing
-     * @see org.apache.fop.fo.FONode#addCharacters(char[], int, int, org.apache.fop.fo.PropertyList, org.xml.sax.Locator)
-     */
+    /** @see org.apache.fop.fo.FONode */
     protected void addCharacters(char[] data, int start, int end,
                                  PropertyList pList,
                                  Locator locator) throws FOPException {
-        FOText ft = new FOText(data, start, end, this);
-        ft.setLocator(locator);
-        ft.bind(pList);
-        ft.startOfNode();
-        
-        getFOEventHandler().characters(ft.ca, ft.startIndex, ft.endIndex);
-        addChildNode(ft);
+        if (ft == null) {
+            ft = new FOText(this);
+            ft.setLocator(locator);
+            ft.bind(pList);
+        }
+        ft.addCharacters(data, start, end, null, null);
+    }
+
+    /** @see org.apache.fop.fo.FONode#endOfNode() */
+    protected void endOfNode() throws FOPException {
+        flushText();
+        super.endOfNode();
+    }
+
+    /**
+     * Adds accumulated text as one FOText instance.
+     * @throws FOPException if there is a problem during processing
+     */
+    protected void flushText() throws FOPException {
+       if (ft != null) {
+            FOText lft = ft;
+            ft = null;
+            lft.endOfNode();
+            getFOEventHandler().characters(lft.ca, lft.startIndex, lft.endIndex);
+            addChildNode(lft);
+        }
+    }
+
+    protected void addChildNode(FONode child) throws FOPException {
+        flushText();
+        super.addChildNode(child);
     }
 
     /**

@@ -83,6 +83,7 @@ public class Marker extends FObjMixed {
         return new MarkerPropertyList(this, parent);
     }
 
+    /** @see org.apache.fop.fo.FONode#startOfNode() */
     protected void startOfNode() {
         FOEventHandler foEventHandler = getFOEventHandler(); 
         // Push a new property list maker which will make MarkerPropertyLists.
@@ -96,7 +97,9 @@ public class Marker extends FObjMixed {
         });
     }
 
-    protected void endOfNode() {
+    /** @see org.apache.fop.fo.FONode#endOfNode() */
+    protected void endOfNode() throws FOPException {
+        super.endOfNode();
         // Pop the MarkerPropertyList maker.
         getFOEventHandler().setPropertyListMaker(savePropertyListMaker);
         savePropertyListMaker = null;
