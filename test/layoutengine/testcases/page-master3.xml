@@ -54,22 +54,22 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="10000 20000 320000 20000" xpath="//pageViewport[1]/page/regionViewport[1]/@rect"/>
-    <eval expected="320000" xpath="//pageViewport[1]/page/regionViewport[1]/regionBefore/@ipda"/>
-    <eval expected="20000" xpath="//pageViewport[1]/page/regionViewport[1]/regionBefore/@bpda"/>
-    <eval expected="320000" xpath="//pageViewport[1]/page/regionViewport[1]/regionBefore/block[1]/@ipda"/>
-    <eval expected="14400" xpath="//pageViewport[1]/page/regionViewport[1]/regionBefore/block[1]/@bpda"/>
-    <eval expected="10000 40000 320000 280000" xpath="//pageViewport[1]/page/regionViewport[2]/@rect"/>
-    <eval expected="320000" xpath="//pageViewport[1]/page/regionViewport[2]/regionBody/@ipda"/>
-    <eval expected="280000" xpath="//pageViewport[1]/page/regionViewport[2]/regionBody/@bpda"/>
+    <eval expected="10000 20000 320000 20000" xpath="//pageViewport[@nr=1]/page/regionViewport[1]/@rect"/>
+    <eval expected="320000" xpath="//pageViewport[@nr=1]/page/regionViewport[1]/regionBefore/@ipda"/>
+    <eval expected="20000" xpath="//pageViewport[@nr=1]/page/regionViewport[1]/regionBefore/@bpda"/>
+    <eval expected="320000" xpath="//pageViewport[@nr=1]/page/regionViewport[1]/regionBefore/block[1]/@ipda"/>
+    <eval expected="14400" xpath="//pageViewport[@nr=1]/page/regionViewport[1]/regionBefore/block[1]/@bpda"/>
+    <eval expected="10000 40000 320000 280000" xpath="//pageViewport[@nr=1]/page/regionViewport[2]/@rect"/>
+    <eval expected="320000" xpath="//pageViewport[@nr=1]/page/regionViewport[2]/regionBody/@ipda"/>
+    <eval expected="280000" xpath="//pageViewport[@nr=1]/page/regionViewport[2]/regionBody/@bpda"/>
 
-    <eval expected="10000 20000 20000 300000" xpath="//pageViewport[2]/page/regionViewport[1]/@rect"/>
-    <eval expected="300000" xpath="//pageViewport[2]/page/regionViewport[1]/regionBefore/@ipda"/>
-    <eval expected="20000" xpath="//pageViewport[2]/page/regionViewport[1]/regionBefore/@bpda"/>
-    <eval expected="300000" xpath="//pageViewport[2]/page/regionViewport[1]/regionBefore/block[1]/@ipda"/>
-    <eval expected="14400" xpath="//pageViewport[2]/page/regionViewport[1]/regionBefore/block[1]/@bpda"/>
-    <eval expected="45000 20000 285000 300000" xpath="//pageViewport[2]/page/regionViewport[2]/@rect"/>
-    <eval expected="300000" xpath="//pageViewport[2]/page/regionViewport[2]/regionBody/@ipda"/>
-    <eval expected="285000" xpath="//pageViewport[2]/page/regionViewport[2]/regionBody/@bpda"/>
+    <eval expected="10000 20000 20000 300000" xpath="//pageViewport[@nr=2]/page/regionViewport[1]/@rect"/>
+    <eval expected="300000" xpath="//pageViewport[@nr=2]/page/regionViewport[1]/regionBefore/@ipda"/>
+    <eval expected="20000" xpath="//pageViewport[@nr=2]/page/regionViewport[1]/regionBefore/@bpda"/>
+    <eval expected="300000" xpath="//pageViewport[@nr=2]/page/regionViewport[1]/regionBefore/block[1]/@ipda"/>
+    <eval expected="14400" xpath="//pageViewport[@nr=2]/page/regionViewport[1]/regionBefore/block[1]/@bpda"/>
+    <eval expected="45000 20000 285000 300000" xpath="//pageViewport[@nr=2]/page/regionViewport[2]/@rect"/>
+    <eval expected="300000" xpath="//pageViewport[@nr=2]/page/regionViewport[2]/regionBody/@ipda"/>
+    <eval expected="285000" xpath="//pageViewport[@nr=2]/page/regionViewport[2]/regionBody/@bpda"/>
   </checks>
 </testcase>

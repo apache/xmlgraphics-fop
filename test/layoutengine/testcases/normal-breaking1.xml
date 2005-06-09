@@ -59,29 +59,29 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="block1" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea"/>
-    <eval expected="block2" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea"/>
-    <eval expected="block3" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[3]/lineArea"/>
-    <eval expected="block4" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[4]/lineArea"/>
+    <eval expected="block1" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea"/>
+    <eval expected="block2" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea"/>
+    <eval expected="block3" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block[3]/lineArea"/>
+    <eval expected="block4" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block[4]/lineArea"/>
 
-    <eval expected="block5" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea"/>
-    <eval expected="block6" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea"/>
-    <eval expected="block7" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[3]/lineArea"/>
-    <eval expected="block8" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[4]/lineArea"/>
+    <eval expected="block5" xpath="//pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea"/>
+    <eval expected="block6" xpath="//pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea"/>
+    <eval expected="block7" xpath="//pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[3]/lineArea"/>
+    <eval expected="block8" xpath="//pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block[4]/lineArea"/>
 
-    <eval expected="block9" xpath="//pageViewport[3]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea"/>
+    <eval expected="block9" xpath="//pageViewport[@nr=3]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea"/>
 
     <!-- second page sequence uses a plain block-container -->
-    <eval expected="block1" xpath="//pageViewport[4]/page/regionViewport/regionBody/mainReference/span/flow/block/block/block[1]/lineArea"/>
-    <eval expected="block2" xpath="//pageViewport[4]/page/regionViewport/regionBody/mainReference/span/flow/block/block/block[2]/lineArea"/>
-    <eval expected="block3" xpath="//pageViewport[4]/page/regionViewport/regionBody/mainReference/span/flow/block/block/block[3]/lineArea"/>
-    <eval expected="block4" xpath="//pageViewport[4]/page/regionViewport/regionBody/mainReference/span/flow/block/block/block[4]/lineArea"/>
+    <eval expected="block1" xpath="//pageViewport[@nr=4]/page/regionViewport/regionBody/mainReference/span/flow/block/block/block[1]/lineArea"/>
+    <eval expected="block2" xpath="//pageViewport[@nr=4]/page/regionViewport/regionBody/mainReference/span/flow/block/block/block[2]/lineArea"/>
+    <eval expected="block3" xpath="//pageViewport[@nr=4]/page/regionViewport/regionBody/mainReference/span/flow/block/block/block[3]/lineArea"/>
+    <eval expected="block4" xpath="//pageViewport[@nr=4]/page/regionViewport/regionBody/mainReference/span/flow/block/block/block[4]/lineArea"/>
 
-    <eval expected="block5" xpath="//pageViewport[5]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block/block[1]/lineArea"/>
-    <eval expected="block6" xpath="//pageViewport[5]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea"/>
-    <eval expected="block7" xpath="//pageViewport[5]/page/regionViewport/regionBody/mainReference/span/flow/block[3]/lineArea"/>
-    <eval expected="block8" xpath="//pageViewport[5]/page/regionViewport/regionBody/mainReference/span/flow/block[4]/lineArea"/>
+    <eval expected="block5" xpath="//pageViewport[@nr=5]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block/block[1]/lineArea"/>
+    <eval expected="block6" xpath="//pageViewport[@nr=5]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea"/>
+    <eval expected="block7" xpath="//pageViewport[@nr=5]/page/regionViewport/regionBody/mainReference/span/flow/block[3]/lineArea"/>
+    <eval expected="block8" xpath="//pageViewport[@nr=5]/page/regionViewport/regionBody/mainReference/span/flow/block[4]/lineArea"/>
 
-    <eval expected="block9" xpath="//pageViewport[6]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea"/>
+    <eval expected="block9" xpath="//pageViewport[@nr=6]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea"/>
   </checks>
 </testcase>
