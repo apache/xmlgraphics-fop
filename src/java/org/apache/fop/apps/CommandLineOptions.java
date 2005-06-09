@@ -1,5 +1,5 @@
 /* 
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -151,6 +151,8 @@ public class CommandLineOptions implements Constants {
                 setLogLevel("debug");
             } else if (args[i].equals("-r")) {
                 foUserAgent.setStrictValidation(false);
+            } else if (args[i].equals("-dpi")) {
+                i = i + parseResolution(args, i);
             } else if (args[i].equals("-q") || args[i].equals("--quiet")) {
                 setLogLevel("error");
             } else if (args[i].equals("-fo")) {
@@ -231,6 +233,17 @@ public class CommandLineOptions implements Constants {
             throw new FOPException("if you use '-l', you must specify a language");
         } else {
             Locale.setDefault(new Locale(args[i + 1], ""));
+            return 1;
+        }
+    }
+
+    private int parseResolution(String[] args, int i) throws FOPException {
+        if ((i + 1 == args.length)
+                || (args[i + 1].charAt(0) == '-')) {
+            throw new FOPException(
+                    "if you use '-dpi', you must specify a resolution (dots per inch)");
+        } else {
+            foUserAgent.setResolution(Integer.parseInt(args[i + 1]));
             return 1;
         }
     }
@@ -643,6 +656,7 @@ public class CommandLineOptions implements Constants {
             + "  -c cfg.xml  use additional configuration file cfg.xml\n"
             + "  -l lang     the language to use for user information \n"
             + "  -r          relaxed/less strict validation (where available)\n"
+            + "  -dpi xxx    resolution in dots per inch (dpi) where xxx is a number\n"
             + "  -s          for area tree XML, down to block areas only\n"
             + "  -v          to show FOP version being used\n\n"
             + " [INPUT]  \n"
