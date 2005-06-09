@@ -137,7 +137,7 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
         // create a temp Image to test font metrics on
         BufferedImage fontImage =
           new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-        org.apache.fop.render.awt.FontSetup.setup(fontInfo,
+        org.apache.fop.render.java2d.FontSetup.setup(fontInfo,
                 fontImage.createGraphics());
     }
 

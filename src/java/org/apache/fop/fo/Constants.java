@@ -27,7 +27,7 @@ public interface Constants {
        
     /** render constants for bounds checking */
     int RENDER_MIN_CONST = 1;
-    int RENDER_MAX_CONST = 10;
+    int RENDER_MAX_CONST = 12;
     /** input / output not set */
     int NOT_SET = 0;
     /** input: fo file */
@@ -54,7 +54,11 @@ public interface Constants {
     int RENDER_XML = 9;
     /** output: RTF file */
     int RENDER_RTF = 10;
-    
+    /** output: TIFF file */
+    int RENDER_TIFF = 11;
+    /** output: PNG file */
+    int RENDER_PNG = 12;
+
     // element constants
     int FO_UNKNOWN_NODE = 0;  // FObj base class
     int FO_BASIC_LINK = 1;

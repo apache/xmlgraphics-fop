@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,14 +15,17 @@
  */
 
 /* $Id$ */
- 
+
+// Originally contributed by:
+// Juergen Verwohlt: Juergen.Verwohlt@jCatalog.com,
+// Rainer Steinkuhle: Rainer.Steinkuhle@jCatalog.com,
+// Stanislav Gorkhover: Stanislav.Gorkhover@jCatalog.com
 package org.apache.fop.render.awt.viewer;
 
-//Java
+// Java
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -44,9 +47,11 @@ import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -54,15 +59,9 @@ import org.apache.fop.apps.Fop;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.render.awt.AWTRenderer;
 
-/**
- * AWT Viewer main window.
- * Originally contributed by:
- * Juergen Verwohlt: Juergen.Verwohlt@jCatalog.com,
- * Rainer Steinkuhle: Rainer.Steinkuhle@jCatalog.com,
- * Stanislav Gorkhover: Stanislav.Gorkhover@jCatalog.com
- */
+/** AWT Viewer main window. */
 public class PreviewDialog extends JFrame {
-    
+
     /** The Translator for localization */
     protected Translator translator;
     /** The AWT renderer */
@@ -72,12 +71,22 @@ public class PreviewDialog extends JFrame {
     /** The Fop object used for refreshing/reloading the view */
     protected Fop fop;
 
+    /** The number of the page which is currently visible */
     private int currentPage = 0;
-    private int pageCount = 0;
+
+    /** The Reloader, when the user clicks on menu "reload" */
     private Reloader reloader;
+
+    /** The JCombobox to rescale the rendered page view */
     private JComboBox scale;
+
+    /** The JLabel for the process status bar */
     private JLabel processStatus;
+
+    /** The JLabel that holds the rendered page */
     private JLabel pageLabel;
+
+    /** The JLabel information status bar */
     private JLabel infoStatus;
 
     /**
@@ -92,7 +101,7 @@ public class PreviewDialog extends JFrame {
         //Commands aka Actions
         Command printAction = new Command(translator.getString("Menu.Print"), "Print") {
             public void doit() {
-                print();
+                startPrinterJob();
             }
         };
         Command firstPageAction = new Command(translator.getString("Menu.First.page"),
@@ -124,9 +133,14 @@ public class PreviewDialog extends JFrame {
             }
         };
         Command debugAction = new Command("   Debug") {
-            //TODO use Translator
+            // TODO use Translator
             public void doit() {
                 debug();
+            }
+        };
+        Command aboutAction = new Command("About FOP", "fopLogo") {
+            public void doit() {
+                startHelpAbout();
             }
         };
 
@@ -146,6 +160,8 @@ public class PreviewDialog extends JFrame {
 
         //Page view stuff
         pageLabel = new JLabel();
+        pageLabel.setHorizontalAlignment(0 /* CENTER */);
+        pageLabel.setBorder(new EmptyBorder(20, 0, 20, 0));
         JScrollPane previewArea = new JScrollPane(pageLabel);
         previewArea.getViewport().setBackground(Color.gray);
         previewArea.setMinimumSize(new Dimension(50, 50));
@@ -159,20 +175,20 @@ public class PreviewDialog extends JFrame {
         scale.addItem("100%");
         scale.addItem("150%");
         scale.addItem("200%");
+        scale.addItem("400%");
         scale.setMaximumSize(new Dimension(80, 24));
         scale.setPreferredSize(new Dimension(80, 24));
+        scale.setSelectedItem("100%");
         scale.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 scaleActionPerformed(e);
             }
         });
-        scale.setSelectedItem("100%");
-        renderer.setScaleFactor(100.0);
 
         //Menu
         setJMenuBar(setupMenu());
 
-        //Toolbar
+        // Toolbar
         JToolBar toolBar = new JToolBar();
         toolBar.add(printAction);
         toolBar.add(reloadAction);
@@ -181,21 +197,24 @@ public class PreviewDialog extends JFrame {
         toolBar.add(previousPageAction);
         toolBar.add(nextPageAction);
         toolBar.add(lastPageAction);
-        toolBar.addSeparator();
+        toolBar.addSeparator(new Dimension(20,0));
         toolBar.add(new JLabel(translator.getString("Menu.Zoom")));
         toolBar.add(scale);
         toolBar.addSeparator();
         toolBar.add(debugAction);
+        toolBar.addSeparator(new Dimension(60,0));
+        toolBar.add(aboutAction);
         getContentPane().add(toolBar, BorderLayout.NORTH);
-        //Status bar
+
+        // Status bar
         JPanel statusBar = new JPanel();
         processStatus = new JLabel();
         processStatus.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createEtchedBorder(), 
+                BorderFactory.createEtchedBorder(),
                 BorderFactory.createEmptyBorder(0, 3, 0, 0)));
         infoStatus = new JLabel();
         infoStatus.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createEtchedBorder(), 
+                BorderFactory.createEtchedBorder(),
                 BorderFactory.createEmptyBorder(0, 3, 0, 0)));
 
         statusBar.setLayout(new GridBagLayout());
@@ -229,7 +248,7 @@ public class PreviewDialog extends JFrame {
         //Adds mostly the same actions, but without icons
         menu.add(new Command(translator.getString("Menu.Print")) {
             public void doit() {
-                print();
+                startPrinterJob();
             }
         });
         // inputHandler must be set to allow reloading
@@ -305,6 +324,11 @@ public class PreviewDialog extends JFrame {
                 setScale(200.0);
             }
         });
+        subMenu.add(new Command("400%") {
+            public void doit() {
+                setScale(400.0);
+            }
+        });
         menu.add(subMenu);
         menu.addSeparator();
         menu.add(new Command(translator.getString("Menu.Default.zoom")) {
@@ -323,9 +347,7 @@ public class PreviewDialog extends JFrame {
         return menuBar;
     }
 
-    /**
-     * Shows the About box
-     */
+    /** Shows the About box */
     private void startHelpAbout() {
         PreviewDialogAboutBox dlg = new PreviewDialogAboutBox(this, translator);
         //Centers the box
@@ -343,8 +365,8 @@ public class PreviewDialog extends JFrame {
      */
       private void goToPage(int number) {
         currentPage = number;
-        renderer.setPageNumber(number);
         showPage();
+        setInfo();
     }
 
     /**
@@ -358,12 +380,11 @@ public class PreviewDialog extends JFrame {
         goToPage(currentPage);
     }
 
-
     /**
      * Shows the next page.
      */
     private void goToNextPage() {
-        if (currentPage >= pageCount - 1) {
+        if (currentPage >= renderer.getNumberOfPages() - 1) {
             return;
         }
         currentPage++;
@@ -374,10 +395,10 @@ public class PreviewDialog extends JFrame {
      * Shows the last page.
      */
     private void goToLastPage() {
-        if (currentPage == pageCount - 1) {
+        if (currentPage == renderer.getNumberOfPages() - 1) {
             return;
         }
-        currentPage = pageCount - 1;
+        currentPage = renderer.getNumberOfPages() - 1;
         goToPage(currentPage);
     }
 
@@ -396,26 +417,38 @@ public class PreviewDialog extends JFrame {
      */
     private void debug(){
         renderer.debug = !renderer.debug;
-        showPage();
+        reload();
     }
 
     /**
-     * This class is used to reload document  in
-     * a thread safe way.
+     * This class is used to reload document in a thread safe way.
      */
     private class Reloader extends Thread {
         public void run() {
+
+            if (!renderer.renderingDone) {
+                // do not allow the reloading while FOP is
+                // still rendering
+                JOptionPane.showMessageDialog(getContentPane(),
+                        "Cannot perform the requested operation until "
+                                + "all page are rendererd. Please wait",
+                        "Please wait ", 1 /* INFORMATION_MESSAGE */);
+                return;
+            }
+
             if (fop == null) {
                 fop = new Fop(Constants.RENDER_AWT, foUserAgent);
             }
-            
+
             pageLabel.setIcon(null);
-            infoStatus.setText("");
+            int savedCurrentPage = currentPage;
             currentPage = 0;
+            renderer.clearViewportList();
 
             try {
                 setStatus(translator.getString("Status.Build.FO.tree"));
                 foUserAgent.getInputHandler().render(fop);
+                goToPage(savedCurrentPage);
                 setStatus(translator.getString("Status.Show"));
             } catch (FOPException e) {
                 reportException(e);
@@ -433,16 +466,14 @@ public class PreviewDialog extends JFrame {
                       (int)getLocation().getY() + 50);
         d.setVisible(true);
         currentPage = d.getPageNumber();
-        if (currentPage < 1 || currentPage > pageCount) {
+        if (currentPage < 1 || currentPage > renderer.getNumberOfPages()) {
             return;
         }
         currentPage--;
         goToPage(currentPage);
     }
 
-    /**
-     * Shows the first page.
-     */
+    /** Shows the first page. */
     private void goToFirstPage() {
         if (currentPage == 0) {
             return;
@@ -451,24 +482,20 @@ public class PreviewDialog extends JFrame {
         goToPage(currentPage);
     }
 
-    /**
-     * Prints the document
-     */
-    private void print() {
+    /** Prints the document */
+    private void startPrinterJob() {
         PrinterJob pj = PrinterJob.getPrinterJob();
         pj.setPageable(renderer);
         if (pj.printDialog()) {
             try {
                 pj.print();
-            } catch (PrinterException pe) {
-                pe.printStackTrace();
+            } catch (PrinterException e) {
+                e.printStackTrace();
             }
         }
     }
 
-    /**
-     * Scales page image
-     */
+    /** Scales page image */
     private void setScale(double scaleFactor) {
         if (scaleFactor == 25.0) {
             scale.setSelectedIndex(0);
@@ -482,11 +509,11 @@ public class PreviewDialog extends JFrame {
             scale.setSelectedIndex(4);
         } else if (scaleFactor == 200.0) {
             scale.setSelectedIndex(5);
+        } else if (scaleFactor == 400.0) {
+            scale.setSelectedIndex(6);
         }
-        renderer.setScaleFactor(scaleFactor);
-        if (renderer.getNumberOfPages() != 0) {
-            showPage();
-        }
+        renderer.setScaleFactor(scaleFactor / 100d);
+        reload();
     }
 
     private void scaleActionPerformed(ActionEvent e) {
@@ -502,32 +529,50 @@ public class PreviewDialog extends JFrame {
         SwingUtilities.invokeLater(new ShowStatus(message));
     }
 
-    /**
-     * This class is used to show status in a thread safe way.
-     */
+    /** This class is used to show status in a thread safe way. */
     private class ShowStatus implements Runnable {
-        /**
-         * The message to display
-         */
+
+        /** The message to display */
         private String message;
+
         /**
-         * Constructs  ShowStatus thread
+         * Constructs ShowStatus thread
          * @param message message to display
          */
         public ShowStatus(String message) {
             this.message = message;
         }
-        
+
         public void run() {
             processStatus.setText(message.toString());
         }
     }
 
     /**
-     * Starts rendering process and shows the current page.
+     * Updates the message to be shown in the info bar in a thread safe way.
      */
-    public void showPage() {
+    public void setInfo() {
+        SwingUtilities.invokeLater(new ShowInfo());
+    }
+
+    /** This class is used to show info in a thread safe way. */
+    private class ShowInfo implements Runnable {
+
+        public void run() {
+
+            String message = translator.getString("Status.Page") + " "
+                    + (currentPage + 1) + " "
+                    + translator.getString("Status.of") + " "
+                    + renderer.getCurrentPageNumber();
+
+            infoStatus.setText(message);
+        }
+    }
+
+    /** Starts rendering process and shows the current page. */
+    public synchronized void showPage() {
         ShowPageImage viewer = new ShowPageImage();
+
         if (SwingUtilities.isEventDispatchThread()) {
             viewer.run();
         } else {
@@ -535,38 +580,25 @@ public class PreviewDialog extends JFrame {
         }
     }
 
-
-    /**
-     * This class is used to update the page image
-     * in a thread safe way.
-     */
+    /** This class is used to render the page image in a thread safe way. */
     private class ShowPageImage implements Runnable {
+
         /**
-         * The run method that does the actual updating
+         * The run method that does the actual rendering of the viewed page
          */
         public void run() {
+
+            setStatus(translator.getString("Status.Build.FO.tree"));
+
+            BufferedImage pageImage = null;
             try {
-                BufferedImage pageImage = null;
-                Graphics graphics = null;
-    
                 pageImage = renderer.getPageImage(currentPage);
-                if (pageImage == null)
-                    return;
-                graphics = pageImage.getGraphics();
-                graphics.setColor(Color.black);
-                graphics.drawRect(0, 0, pageImage.getWidth() - 1,
-                                  pageImage.getHeight() - 1);
-    
-                pageLabel.setIcon(new ImageIcon(pageImage));
-                pageCount = renderer.getNumberOfPages();
-    
-                // Update status bar
-                infoStatus.setText(translator.getString("Status.Page") + " "
-                    + (currentPage + 1) + " "
-                    + translator.getString("Status.of") + " " + pageCount);
             } catch (FOPException e) {
                 reportException(e);
             }
+            pageLabel.setIcon(new ImageIcon(pageImage));
+
+            setStatus(translator.getString("Status.Show"));
         }
     }
 
@@ -581,10 +613,9 @@ public class PreviewDialog extends JFrame {
             getContentPane(),
             "<html><b>" + msg + ":</b><br>"
                 + e.getClass().getName() + "<br>"
-                + e.getMessage() + "</html>", 
+                + e.getMessage() + "</html>",
             translator.getString("Exception.Error"),
             JOptionPane.ERROR_MESSAGE
         );
     }
 }
-

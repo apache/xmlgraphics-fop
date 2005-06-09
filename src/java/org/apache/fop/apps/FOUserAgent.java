@@ -19,12 +19,13 @@
 package org.apache.fop.apps;
 
 // Java
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.io.IOException;
-import java.io.InputStream;
 
 // avalon configuration
 import org.apache.avalon.framework.configuration.Configuration;
@@ -73,6 +74,7 @@ public class FOUserAgent {
     private float px2mm = (25.4f / 72); //dpi (=25.4/dpi)
     private HashMap rendererOptions = new java.util.HashMap();
     private InputHandler inputHandler = null;
+    private File outputFile = null;
     private Renderer rendererOverride = null;
     private FOEventHandler foEventHandlerOverride = null;
     private LayoutManagerMaker lmMakerOverride = null;
@@ -415,6 +417,22 @@ public class FOUserAgent {
      */
     public InputStream getStream(String uri) throws IOException {
         return null;
+    }
+
+    /**
+     * Sets the output File.
+     * @param the output File
+     */
+    public void setOutputFile(File f){
+        this.outputFile = f;
+    }
+
+    /**
+     * Gets the output File.
+     * @return the output File
+     */
+    public File getOutputFile(){
+        return outputFile;
     }
 
     /**

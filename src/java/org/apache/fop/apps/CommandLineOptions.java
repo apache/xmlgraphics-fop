@@ -167,6 +167,10 @@ public class CommandLineOptions implements Constants {
                 i = i + parseMIFOutputOption(args, i);
             } else if (args[i].equals("-rtf")) {
                 i = i + parseRTFOutputOption(args, i);
+            } else if (args[i].equals("-tiff")) {
+                i = i + parseTIFFOutputOption(args, i);
+            } else if (args[i].equals("-png")) {
+                i = i + parsePNGOutputOption(args, i);
             } else if (args[i].equals("-print")) {
                 i = i + parsePrintOutputOption(args, i);
                 // show print help
@@ -298,6 +302,28 @@ public class CommandLineOptions implements Constants {
         if ((i + 1 == args.length)
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the rtf output file");
+        } else {
+            outfile = new File(args[i + 1]);
+            return 1;
+        }
+    }
+
+    private int parseTIFFOutputOption(String[] args, int i) throws FOPException {
+        setOutputMode(RENDER_TIFF);
+        if ((i + 1 == args.length)
+                || (args[i + 1].charAt(0) == '-')) {
+            throw new FOPException("you must specify the tiff output file");
+        } else {
+            outfile = new File(args[i + 1]);
+            return 1;
+        }
+    }
+
+    private int parsePNGOutputOption(String[] args, int i) throws FOPException {
+        setOutputMode(RENDER_PNG);
+        if ((i + 1 == args.length)
+                || (args[i + 1].charAt(0) == '-')) {
+            throw new FOPException("you must specify the png output file");
         } else {
             outfile = new File(args[i + 1]);
             return 1;
@@ -495,6 +521,8 @@ public class CommandLineOptions implements Constants {
         case RENDER_TXT:
         case RENDER_SVG:
         case RENDER_RTF:
+        case RENDER_TIFF:
+        case RENDER_PNG:
             return outputmode;
         case RENDER_XML:
             foUserAgent.getRendererOptions().put("fineDetail", isCoarseAreaXml());
@@ -607,7 +635,7 @@ public class CommandLineOptions implements Constants {
     public static void printUsage() {
         System.err.println(
               "\nUSAGE\nFop [options] [-fo|-xml] infile [-xsl file] "
-                    + "[-awt|-pdf|-mif|-rtf|-pcl|-ps|-txt|-at|-print] <outfile>\n"
+                    + "[-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl|-ps|-txt|-at|-print] <outfile>\n"
             + " [OPTIONS]  \n"
             + "  -d          debug mode   \n"
             + "  -x          dump configuration settings  \n"
@@ -630,6 +658,8 @@ public class CommandLineOptions implements Constants {
             + "  -awt              input will be displayed on screen \n"
             + "  -mif outfile      input will be rendered as mif file (outfile req'd)\n"
             + "  -rtf outfile      input will be rendered as rtf file (outfile req'd)\n"
+            + "  -tiff outfile     input will be rendered as tiff file (outfile req'd)\n"
+            + "  -png outfile      input will be rendered as png file (outfile req'd)\n"
             + "  -pcl outfile      input will be rendered as pcl file (outfile req'd) \n"
             + "  -ps outfile       input will be rendered as PostScript file (outfile req'd) \n"
             + "  -txt outfile      input will be rendered as text file (outfile req'd) \n"
@@ -699,6 +729,14 @@ public class CommandLineOptions implements Constants {
             break;
         case RENDER_RTF:
             log.info("rtf");
+            log.info("output file: " + outfile.toString());
+            break;
+        case RENDER_TIFF:
+            log.info("tiff");
+            log.info("output file: " + outfile.toString());
+            break;
+        case RENDER_PNG:
+            log.info("png");
             log.info("output file: " + outfile.toString());
             break;
         case RENDER_PRINT:

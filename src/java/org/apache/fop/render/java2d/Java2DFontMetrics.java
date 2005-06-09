@@ -16,7 +16,7 @@
 
 /* $Id$ */
  
-package org.apache.fop.render.awt;
+package org.apache.fop.render.java2d;
 
 // Java
 import java.awt.Font;
@@ -37,7 +37,7 @@ import java.awt.font.TextLayout;
  * Since FontState and FontInfo multiply all factors by
  * size, we assume a "standard" font of FONT_SIZE.
  */
-public class AWTFontMetrics {
+public class Java2DFontMetrics {
 
     /**
      * Font size standard used for metric measurements
@@ -97,7 +97,7 @@ public class AWTFontMetrics {
      * @param graphics a temp graphics object - this is needed  so
      * that we can get an instance of java.awt.FontMetrics
      */
-    public AWTFontMetrics(Graphics2D graphics) {
+    public Java2DFontMetrics(Graphics2D graphics) {
         this.graphics = graphics;
     }
 
