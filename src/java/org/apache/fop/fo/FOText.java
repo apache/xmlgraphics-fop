@@ -29,6 +29,7 @@ import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.SpaceProperty;
+import org.xml.sax.Locator;
 
 /**
  * A text node (PCDATA) in the formatting object tree.
@@ -88,20 +89,31 @@ public class FOText extends FONode {
     private static final int IS_WORD_CHAR_MAYBE = 2;
 
     /**
-     *
-     * @param chars array of chars which contains the text in this object (may
-     * be a superset of the text in this object)
-     * @param start starting index into char[] for the text in this object
-     * @param end ending index into char[] for the text in this object
+     * Creates a now FO text node.
      * @param parent FONode that is the parent of this object
      */
-    public FOText(char[] chars, int start, int end, FONode parent) {
+    public FOText(FONode parent) {
         super(parent);
-        endIndex = end - start;
-        this.ca = new char[endIndex];
-        System.arraycopy(chars, start, ca, 0, endIndex);
-//      System.out.println("->" + new String(ca) + "<-");
     }
+
+    /** @see org.apache.fop.fo.FONode */
+    protected void addCharacters(char[] data, int start, int end,
+            PropertyList list, Locator locator) throws FOPException {
+
+        int length = end - start;
+        int calength = 0;
+        char[] nca = null;
+        if (ca != null) {
+            calength = ca.length;
+            nca = new char[calength + length];
+            System.arraycopy(ca, 0, nca, 0, calength);
+        } else {
+            nca = new char[length];
+        }
+        System.arraycopy(data, start, nca, calength, length);
+        endIndex = nca.length;
+        this.ca = nca;
+     }
 
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
@@ -120,7 +132,8 @@ public class FOText extends FONode {
         textDecoration = pList.getTextDecorationProps();
     }
 
-    protected void startOfNode() {
+    /** @see org.apache.fop.fo.FONode#endOfNode() */
+    protected void endOfNode() throws FOPException {
         textTransform();
     }
 
