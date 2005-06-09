@@ -64,6 +64,9 @@ import org.apache.fop.render.Renderer;
  */
 public class FOUserAgent {
 
+    /** Defines the default resolution (72dpi) for FOP */
+    public static final float DEFAULT_PX2MM = (25.4f / 72); //dpi (=25.4/dpi) 
+    
     /** Map containing various default values */
     public Map defaults = new java.util.HashMap();
     /** Map containing XML handlers for various document types */
@@ -71,7 +74,7 @@ public class FOUserAgent {
     
     private String baseURL;
     private PDFEncryptionParams pdfEncryptionParams;
-    private float px2mm = (25.4f / 72); //dpi (=25.4/dpi)
+    private float px2mm = DEFAULT_PX2MM;
     private HashMap rendererOptions = new java.util.HashMap();
     private InputHandler inputHandler = null;
     private File outputFile = null;
