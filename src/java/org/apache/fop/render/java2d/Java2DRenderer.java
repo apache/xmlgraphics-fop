@@ -35,6 +35,7 @@ import java.awt.image.DataBufferByte;
 import java.awt.image.PixelInterleavedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.SampleModel;
+import java.awt.image.SinglePixelPackedSampleModel;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -268,15 +269,24 @@ public abstract class Java2DRenderer extends AbstractRenderer {
                         + " (pageWidth " + pageWidth + ", pageHeight "
                         + pageHeight + ")");
 
+        double scaleX = scaleFactor 
+            * FOUserAgent.DEFAULT_PX2MM / userAgent.getPixelUnitToMillimeter();
+        double scaleY = scaleFactor
+            * FOUserAgent.DEFAULT_PX2MM / userAgent.getPixelUnitToMillimeter();
+        int bitmapWidth = (int) ((pageWidth * scaleX) + 0.5);
+        int bitmapHeight = (int) ((pageHeight * scaleY) + 0.5);
+                
+        
         BufferedImage currentPageImage = new BufferedImage(
-                (int) ((pageWidth * scaleFactor)),
-                (int) ((pageHeight * scaleFactor)), BufferedImage.TYPE_INT_RGB);
+                bitmapWidth, bitmapHeight, BufferedImage.TYPE_INT_ARGB);
         // FIXME TYPE_BYTE_BINARY ?
 
         Graphics2D graphics = currentPageImage.createGraphics();
         graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
                 RenderingHints.VALUE_FRACTIONALMETRICS_ON);
         if (antialiasing) {
+            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
             graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                     RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         }
@@ -287,7 +297,7 @@ public abstract class Java2DRenderer extends AbstractRenderer {
 
         // transform page based on scale factor supplied
         AffineTransform at = graphics.getTransform();
-        at.scale(scaleFactor, scaleFactor);
+        at.scale(scaleX, scaleY);
         graphics.setTransform(at);
 
         // draw page frame
