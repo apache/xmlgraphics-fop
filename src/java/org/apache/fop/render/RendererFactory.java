@@ -53,9 +53,13 @@ public class RendererFactory {
         case Constants.RENDER_AWT:
             return new org.apache.fop.render.awt.AWTRenderer();
         case Constants.RENDER_PRINT:
-            return new org.apache.fop.render.awt.AWTPrintRenderer();
+            return new org.apache.fop.render.print.PrintRenderer();
         case Constants.RENDER_PCL:
             return new org.apache.fop.render.pcl.PCLRenderer();
+        case Constants.RENDER_TIFF:
+            return new org.apache.fop.render.bitmap.TIFFRenderer();
+        case Constants.RENDER_PNG:
+            return new org.apache.fop.render.bitmap.PNGRenderer();
         case Constants.RENDER_PS:
             return new org.apache.fop.render.ps.PSRenderer();
         case Constants.RENDER_TXT:

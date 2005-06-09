@@ -16,7 +16,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.awt;
+package org.apache.fop.render.java2d;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -38,7 +38,7 @@ import org.apache.fop.fonts.FontInfo;
  * <p>
  * The graphics context is updated with the updateXXX() methods.
  */
-public class AWTGraphicsState implements Constants, RendererState {
+public class Java2DGraphicsState implements Constants, RendererState {
 
     /** Holds the datas of the current state */
     private Graphics2D currentGraphics;
@@ -54,10 +54,21 @@ public class AWTGraphicsState implements Constants, RendererState {
     /** Font configuration, passed from AWTRenderer */
     private FontInfo fontInfo;
 
-    /** State for storing graphics state. */
-    public AWTGraphicsState(Graphics2D graphics, FontInfo fontInfo) {
+    /** Initial AffinTransform passed by the renderer, includes scaling-info */
+    private AffineTransform initialTransform;
+
+    /**
+     * State for storing graphics state.
+     * @param graphics the graphics associated with the BufferedImage
+     * @param fontInfo the FontInfo from the renderer
+     * @param at the initial AffineTransform containing the scale transformation
+     */
+    public Java2DGraphicsState(Graphics2D graphics, FontInfo fontInfo,
+            AffineTransform at) {
         this.fontInfo = fontInfo;
         this.currentGraphics = graphics;
+        this.initialTransform = at;
+        currentGraphics.setTransform(at);
     }
 
     /**
@@ -67,13 +78,13 @@ public class AWTGraphicsState implements Constants, RendererState {
         return currentGraphics;
     }
 
-    /** @see org.apache.fop.render.awt.RendererState#push() */
+    /** @see org.apache.fop.render.java2d.RendererState#push() */
     public void push() {
         Graphics2D tmpGraphics = (Graphics2D) currentGraphics.create();
         stateStack.add(tmpGraphics);
     }
 
-    /** @see org.apache.fop.render.awt.RendererState#pop() */
+    /** @see org.apache.fop.render.java2d.RendererState#pop() */
     public Graphics2D pop() {
         if (getStackLevel() > 0) {
             Graphics2D popped = (Graphics2D) stateStack.remove(stateStack
@@ -86,7 +97,7 @@ public class AWTGraphicsState implements Constants, RendererState {
         }
     }
 
-    /** @see org.apache.fop.render.awt.RendererState#getStackLevel() */
+    /** @see org.apache.fop.render.java2d.RendererState#getStackLevel() */
     public int getStackLevel() {
         return stateStack.size();
     }
@@ -130,7 +141,7 @@ public class AWTGraphicsState implements Constants, RendererState {
     }
 
     /**
-     * @see org.apache.fop.render.awt.RendererState#updateColor(org.apache.fop.datatypes.ColorType,
+     * @see org.apache.fop.render.java2d.RendererState#updateColor(org.apache.fop.datatypes.ColorType,
      * boolean, java.lang.StringBuffer)
      */
     public boolean updateColor(ColorType col, boolean fill, StringBuffer pdf) {
@@ -161,7 +172,7 @@ public class AWTGraphicsState implements Constants, RendererState {
     }
 
     /**
-     * @see org.apache.fop.render.awt.RendererState#updateFont(java.lang.String,
+     * @see org.apache.fop.render.java2d.RendererState#updateFont(java.lang.String,
      * int, java.lang.StringBuffer)
      */
     public boolean updateFont(String name, int size, StringBuffer pdf) {
@@ -190,7 +201,7 @@ public class AWTGraphicsState implements Constants, RendererState {
     }
 
     /**
-     * @see org.apache.fop.render.awt.RendererState#updateStroke(float, int)
+     * @see org.apache.fop.render.java2d.RendererState#updateStroke(float, int)
      */
     public boolean updateStroke(float width, int style) {
 
@@ -243,7 +254,7 @@ public class AWTGraphicsState implements Constants, RendererState {
         return (BasicStroke) currentGraphics.getStroke();
     }
 
-    /** @see org.apache.fop.render.awt.RendererState#updatePaint(java.awt.Paint) */
+    /** @see org.apache.fop.render.java2d.RendererState#updatePaint(java.awt.Paint) */
     public boolean updatePaint(Paint p) {
         if (getGraph().getPaint() == null) {
             if (p != null) {
@@ -257,7 +268,7 @@ public class AWTGraphicsState implements Constants, RendererState {
         return false;
     }
 
-    /** @see org.apache.fop.render.awt.RendererState#checkClip(java.awt.Shape) */
+    /** @see org.apache.fop.render.java2d.RendererState#checkClip(java.awt.Shape) */
     // TODO implement and test
     public boolean checkClip(Shape cl) {
         if (getGraph().getClip() == null) {
@@ -272,7 +283,7 @@ public class AWTGraphicsState implements Constants, RendererState {
     }
 
     /**
-     * @see org.apache.fop.render.awt.RendererState#updateClip(java.awt.Shape)
+     * @see org.apache.fop.render.java2d.RendererState#updateClip(java.awt.Shape)
      */
     public boolean updateClip(Shape cl) {
         if (getGraph().getClip() != null) {
@@ -286,28 +297,30 @@ public class AWTGraphicsState implements Constants, RendererState {
     }
 
     /**
-     * @see org.apache.fop.render.awt.RendererState#checkTransform(java.awt.geom.AffineTransform)
+     * @see org.apache.fop.render.java2d.RendererState#checkTransform(java.awt.geom.AffineTransform)
      */
     public boolean checkTransform(AffineTransform tf) {
         return !tf.equals(getGraph().getTransform());
     }
 
     /**
-     * @see org.apache.fop.render.awt.RendererState#setTransform(java.awt.geom.AffineTransform)
+     * @see org.apache.fop.render.java2d.RendererState#setTransform(java.awt.geom.AffineTransform)
      */
     public void setTransform(AffineTransform tf) {
-        getGraph().setTransform(tf);
+        //apply initial transformation
+        getGraph().setTransform(initialTransform);
+        getGraph().transform(tf);
     }
 
     /**
-     * @see org.apache.fop.render.awt.RendererState#transform(java.awt.geom.AffineTransform)
+     * @see org.apache.fop.render.java2d.RendererState#transform(java.awt.geom.AffineTransform)
      */
     public void transform(AffineTransform tf) {
         getGraph().transform(tf);
     }
 
     /**
-     * @see org.apache.fop.render.awt.RendererState#getTransform()
+     * @see org.apache.fop.render.java2d.RendererState#getTransform()
      */
     public AffineTransform getTransform() {
         /*

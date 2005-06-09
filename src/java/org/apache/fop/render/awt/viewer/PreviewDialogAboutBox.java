@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,7 +15,7 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.render.awt.viewer;
 
 //Java
@@ -65,9 +65,9 @@ public class PreviewDialogAboutBox extends Dialog implements ActionListener {
         JPanel insetsPanel3 = new JPanel();
         okButton = new JButton();
         JLabel imageControl1 = new JLabel();
-        imageControl1.setIcon(new ImageIcon(getClass().getResource("images/fop.gif")));
+        imageControl1.setIcon(new ImageIcon(getClass().getResource("images/logo_big.jpg")));
         JLabel label1 = new JLabel(translator.getString("About.Product"));
-        JLabel label2 = new JLabel(translator.getString("About.Version") 
+        JLabel label2 = new JLabel(translator.getString("About.Version")
                                             + " " + Fop.getVersion());
         JLabel label3 = new JLabel(translator.getString("About.Copyright"));
         panel1.setLayout(new BorderLayout());

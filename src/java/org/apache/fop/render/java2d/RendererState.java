@@ -16,7 +16,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.awt;
+package org.apache.fop.render.java2d;
 
 import java.awt.Graphics2D;
 import java.awt.Paint;

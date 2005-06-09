@@ -16,7 +16,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.awt;
+package org.apache.fop.render.java2d;
 
 // FOP
 import org.apache.fop.fonts.FontInfo;

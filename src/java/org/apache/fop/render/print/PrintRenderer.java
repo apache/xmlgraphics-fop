@@ -1,12 +1,12 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
- * 
+ * Copyright 2005 The Apache Software Foundation.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,31 +15,51 @@
  */
 
 /* $Id$ */
- 
-package org.apache.fop.render.awt;
 
+package org.apache.fop.render.print;
+
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.awt.print.PageFormat;
+import java.awt.print.Pageable;
+import java.awt.print.Paper;
+import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.IOException;
 import java.util.Vector;
 
-public class AWTPrintRenderer extends AWTRenderer {
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.render.java2d.Java2DRenderer;
+
+/**
+ * Renderer that prints through java.awt.PrintJob.
+ */
+public class PrintRenderer extends Java2DRenderer implements Pageable, Printable {
 
     private static final int EVEN_AND_ALL = 0;
+
     private static final int EVEN = 1;
+
     private static final int ODD = 2;
-    
+
     private int startNumber;
+
     private int endNumber;
+
     private int mode = EVEN_AND_ALL;
+
     private int copies = 1;
+
     private PrinterJob printerJob;
 
-    public AWTPrintRenderer() {
-        initialize();
+    public PrintRenderer() {
+        initializePrinterJob();
     }
 
-    private void initialize() throws IllegalArgumentException {
+    private void initializePrinterJob() throws IllegalArgumentException {
         // read from command-line options
         copies = getIntProperty("copies", 1);
         startNumber = getIntProperty("start", 1) - 1;
@@ -48,22 +68,24 @@ public class AWTPrintRenderer extends AWTRenderer {
         if (str != null) {
             mode = Boolean.valueOf(str).booleanValue() ? EVEN : ODD;
         }
-        
+
         printerJob = PrinterJob.getPrinterJob();
         printerJob.setJobName("FOP Document");
         printerJob.setCopies(copies);
         if (System.getProperty("dialog") != null) {
             if (!printerJob.printDialog()) {
-                throw new IllegalArgumentException("Printing cancelled by operator");
+                throw new IllegalArgumentException(
+                        "Printing cancelled by operator");
             }
         }
         printerJob.setPageable(this);
-    }   
+    }
 
     public void stopRenderer() throws IOException {
         super.stopRenderer();
 
         if (endNumber == -1) {
+            // was not set on command line
             endNumber = getNumberOfPages();
         }
 
@@ -76,10 +98,10 @@ public class AWTPrintRenderer extends AWTRenderer {
             printerJob.print();
         } catch (PrinterException e) {
             e.printStackTrace();
-            throw new IOException("Unable to print: " 
-                + e.getClass().getName()
-                + ": " + e.getMessage());
+            throw new IOException("Unable to print: " + e.getClass().getName()
+                    + ": " + e.getMessage());
         }
+        clearViewportList();
     }
 
     public static int getIntProperty(String name, int def) {
@@ -117,5 +139,58 @@ public class AWTPrintRenderer extends AWTRenderer {
         }
         return vec;
     }
-} // class AWTPrintRenderer
 
+    public int print(Graphics g, PageFormat pageFormat, int pageIndex)
+            throws PrinterException {
+        if (pageIndex >= getNumberOfPages()){
+            return NO_SUCH_PAGE;
+        }
+
+        Graphics2D g2 = (Graphics2D) g;
+
+        BufferedImage image;
+        try {
+            image = getPageImage(pageIndex);
+        } catch (FOPException e) {
+            e.printStackTrace();
+            return NO_SUCH_PAGE;
+        }
+
+        g2.drawImage(image,null,0,0);
+
+        return PAGE_EXISTS;
+    }
+
+    public PageFormat getPageFormat(int pageIndex)
+            throws IndexOutOfBoundsException {
+        if (pageIndex >= getNumberOfPages())
+            return null;
+
+        PageFormat pageFormat = new PageFormat();
+
+        Paper paper = new Paper();
+        pageFormat.setPaper(paper);
+
+        Rectangle2D dim = getPageViewport(pageIndex).getViewArea();
+        double width = dim.getWidth();
+        double height = dim.getHeight();
+
+        // if the width is greater than the height assume lanscape mode
+        // and swap the width and height values in the paper format
+        if (width > height) {
+            paper.setImageableArea(0, 0, height / 1000d, width / 1000d);
+            paper.setSize(height / 1000d, width / 1000d);
+            pageFormat.setOrientation(PageFormat.LANDSCAPE);
+        } else {
+            paper.setImageableArea(0, 0, width / 1000d, height / 1000d);
+            paper.setSize(width / 1000d, height / 1000d);
+            pageFormat.setOrientation(PageFormat.PORTRAIT);
+        }
+        return pageFormat;
+    }
+
+    public Printable getPrintable(int pageIndex)
+            throws IndexOutOfBoundsException {
+        return this;
+    }
+}

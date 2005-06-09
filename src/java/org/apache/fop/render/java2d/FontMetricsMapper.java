@@ -16,7 +16,7 @@
 
 /* $Id$ */
  
-package org.apache.fop.render.awt;
+package org.apache.fop.render.java2d;
 
 // Java
 import java.awt.Graphics2D;
@@ -31,7 +31,7 @@ import org.apache.fop.fonts.FontType;
  * This class implements org.apache.fop.layout.FontMetrics and
  * is added to the hash table in FontInfo. It  deferes the
  * actual calculation of the metrics to
- * AWTFontMetrics.  It only keeps the java name and
+ * Java2DFontMetrics.  It only keeps the java name and
  * style as member varibles
  */
 
@@ -44,10 +44,10 @@ public class FontMetricsMapper implements FontMetrics {
     private static final int LAST_CHAR = 255;
 
     /**
-     * This is a AWTFontMetrics that does the real calculation.
+     * This is a Java2DFontMetrics that does the real calculation.
      * It is only one class that dynamically determines the font-size.
      */
-    private static AWTFontMetrics metric = null;
+    private static Java2DFontMetrics metric = null;
 
     /**
      * The java name of the font.
@@ -72,7 +72,7 @@ public class FontMetricsMapper implements FontMetrics {
         this.family = family;
         this.style = style;
         if (metric == null) {
-            metric = new AWTFontMetrics(graphics);
+            metric = new Java2DFontMetrics(graphics);
         }
     }
 
@@ -130,7 +130,7 @@ public class FontMetricsMapper implements FontMetrics {
      * @see org.apache.fop.fonts.FontMetrics#getWidths()
      */
     public int[] getWidths() {
-        return metric.getWidths(family, style, AWTFontMetrics.FONT_SIZE);
+        return metric.getWidths(family, style, Java2DFontMetrics.FONT_SIZE);
     }
 
     /**

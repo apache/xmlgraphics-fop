@@ -170,7 +170,8 @@ public class PageViewport implements Resolvable, Cloneable {
      * @return true if the page is resolved and can be rendered
      */
     public boolean isResolved() {
-        return unresolvedIDRefs == null;
+        return unresolvedIDRefs == null 
+            || unresolvedIDRefs.size() == 0;
     }
 
     /**
@@ -395,6 +396,7 @@ public class PageViewport implements Resolvable, Cloneable {
         Page p = (Page)page.clone();
         PageViewport ret = new PageViewport(spm, pageNumberString, 
                 p, (Rectangle2D)viewArea.clone());
+        ret.pageNumberString = pageNumberString;
         return ret;
     }
 

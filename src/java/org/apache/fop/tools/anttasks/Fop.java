@@ -354,6 +354,13 @@ class FOPTaskStarter {
                 || format.equalsIgnoreCase("at")
                 || format.equalsIgnoreCase("xml")) {
             return Constants.RENDER_XML;
+        } else if (format.equalsIgnoreCase("image/tiff")
+                || format.equalsIgnoreCase("tiff")
+                || format.equalsIgnoreCase("tif")) {
+            return Constants.RENDER_TIFF;
+        } else if (format.equalsIgnoreCase("image/png")
+                || format.equalsIgnoreCase("png")) {
+            return Constants.RENDER_PNG;
         } else {
             String err = "Couldn't determine renderer to use: " + format;
             throw new BuildException(err);
@@ -376,6 +383,10 @@ class FOPTaskStarter {
                 return ".txt";
             case Constants.RENDER_XML:
                 return ".xml";
+            case Constants.RENDER_TIFF:
+                return ".tiff";
+            case Constants.RENDER_PNG:
+                return ".png";
             default:
                 String err = "Unknown renderer: " + renderer;
                 throw new BuildException(err);
