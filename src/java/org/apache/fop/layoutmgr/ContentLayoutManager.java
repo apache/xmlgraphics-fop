@@ -62,11 +62,12 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
     }
 
     /**
-     * Constructor using a fo:title formatting object
+     * Constructor using a fo:title formatting object and its
+     * PageSequenceLayoutManager parent.
      */
-    public ContentLayoutManager(Title foTitle, LayoutManager parentLM) {
+    public ContentLayoutManager(Title foTitle, PageSequenceLayoutManager pslm) {
         // get breaks then add areas to title
-        this.parentLM = parentLM;
+        this.parentLM = pslm;
         holder = new LineArea();
 
         setUserAgent(foTitle.getUserAgent());

@@ -185,11 +185,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
         log.warn("null implementation of getWordChars() called!");
     }
 
-    // This version is not in LayoutManager but is the only version being
-    // called within the application.
-    public void getWordChars(StringBuffer sbChars, Position pos) {
-    }
-
     public void hyphenate(Position pos, HyphContext hc) {
         log.warn("null implementation of hyphenate called!");
     }
