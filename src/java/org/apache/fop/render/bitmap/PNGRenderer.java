@@ -125,8 +125,8 @@ public class PNGRenderer extends Java2DRenderer {
         if (filePrefix == null) {
             return null;
         } else {
-            File f = new File(outputDir + File.separator + filePrefix
-                    + (pageNumber + 1) + ".png");
+            File f = new File(outputDir,
+                    filePrefix + (pageNumber + 1) + ".png");
             try {
                 OutputStream os = new BufferedOutputStream(new FileOutputStream(f));
                 return os;
