@@ -22,15 +22,23 @@ package org.apache.fop.render.bitmap;
 // (olegt@multiconn.com).
 
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
+import java.awt.image.PixelInterleavedSampleModel;
 import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
+import java.awt.image.SinglePixelPackedSampleModel;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
+import org.apache.batik.ext.awt.image.GraphicsUtil;
 import org.apache.batik.ext.awt.image.codec.tiff.TIFFEncodeParam;
+import org.apache.batik.ext.awt.image.codec.tiff.TIFFField;
+import org.apache.batik.ext.awt.image.codec.tiff.TIFFImageDecoder;
 import org.apache.batik.ext.awt.image.codec.tiff.TIFFImageEncoder;
+import org.apache.batik.ext.awt.image.rendered.FormatRed;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.render.java2d.Java2DRenderer;
 
@@ -72,9 +80,9 @@ public class TIFFRenderer extends Java2DRenderer {
 
     /** Creates TIFF renderer. */
     public TIFFRenderer() {
-
         renderParams = new TIFFEncodeParam();
-
+        //Default to packbits compression which is widely supported
+        renderParams.setCompression(TIFFEncodeParam.COMPRESSION_PACKBITS);
     }
 
     /**
@@ -84,7 +92,8 @@ public class TIFFRenderer extends Java2DRenderer {
      */
     public void configure(Configuration cfg) throws ConfigurationException {
 
-        String c = cfg.getChild("directory").getAttribute("value");
+        //TODO Support output of monochrome bitmaps (fax-style)
+        String c = cfg.getChild("compression").getAttribute("value");
         int comp = Integer.parseInt(c);
         String name = null;
         switch (comp) {
@@ -106,7 +115,6 @@ public class TIFFRenderer extends Java2DRenderer {
         }
         getLogger().info("TIFF compression set to " + name);
 
-              renderParams.setCompression(comp);
     }
 
     /** @see org.apache.fop.render.Renderer#startRenderer(java.io.OutputStream) */
@@ -120,6 +128,25 @@ public class TIFFRenderer extends Java2DRenderer {
 
         super.stopRenderer();
         getLogger().debug("Starting Tiff encoding ...");
+
+        //Set resolution
+        float pixSzMM = userAgent.getPixelUnitToMillimeter();
+        // num Pixs in 100 Meters
+        int numPix = (int)(((1000 * 100) / pixSzMM) + 0.5); 
+        int denom = 100 * 100;  // Centimeters per 100 Meters;
+        long [] rational = {numPix, denom};
+        TIFFField [] fields = {
+            new TIFFField(TIFFImageDecoder.TIFF_RESOLUTION_UNIT, 
+                          TIFFField.TIFF_SHORT, 1, 
+                          new char[] {(char)3}),
+            new TIFFField(TIFFImageDecoder.TIFF_X_RESOLUTION, 
+                          TIFFField.TIFF_RATIONAL, 1, 
+                          new long[][] {rational}),
+            new TIFFField(TIFFImageDecoder.TIFF_Y_RESOLUTION, 
+                          TIFFField.TIFF_RATIONAL, 1, 
+                          new long[][] {rational}) 
+                };
+        renderParams.setExtraFields(fields);
 
         // Creates encoder
         TIFFImageEncoder enc = new TIFFImageEncoder(outputStream, renderParams);
@@ -169,21 +196,35 @@ public class TIFFRenderer extends Java2DRenderer {
                 e.printStackTrace();
             }
 
-            switch (renderParams.getCompression()) { //TODO
-            // These types of compression require bilevel image
+            switch (renderParams.getCompression()) {
+            // These types of compression require a monochrome image
+            /* these compression types are not supported by the Batik codec
             case TIFFEncodeParam.COMPRESSION_GROUP3_1D:
             case TIFFEncodeParam.COMPRESSION_GROUP3_2D:
             case TIFFEncodeParam.COMPRESSION_GROUP4:
-            default: //FIXME
                 BufferedImage faxImage = new BufferedImage(
                         pageImage.getWidth(), pageImage.getHeight(),
                         BufferedImage.TYPE_BYTE_BINARY);
                 faxImage.getGraphics().drawImage(pageImage, 0, 0, null);
-                return faxImage;
-            //default:
-            //    return pageImage;
+                return faxImage;*/
+            default:
+                //Decorate the image with a packed sample model for encoding by the codec
+                SinglePixelPackedSampleModel sppsm;
+                sppsm = (SinglePixelPackedSampleModel)pageImage.getSampleModel();
+                
+                int bands = sppsm.getNumBands();
+                int[] off = new int[bands];
+                int w = pageImage.getWidth();
+                int h = pageImage.getHeight();
+                for (int i = 0; i < bands; i++) {
+                    off[i] = i;
+                }
+                SampleModel sm = new PixelInterleavedSampleModel(
+                        DataBuffer.TYPE_BYTE, w, h, bands, w * bands, off);
+                
+                RenderedImage rimg = new FormatRed(GraphicsUtil.wrap(pageImage), sm);
+                return rimg;
             }
-
         }
 
         public void remove() {
