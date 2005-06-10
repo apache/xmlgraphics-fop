@@ -218,10 +218,6 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
         //to be done
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public void getWordChars(StringBuffer sbChars, Position bp1,
-            Position bp2) { }
-
     /**
      * @see org.apache.fop.layoutmgr.LayoutManager#createNextChildLMs
      */

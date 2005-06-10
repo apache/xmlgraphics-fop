@@ -281,14 +281,6 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         return returnList;
     }
 
-    public KnuthElement addALetterSpaceTo(KnuthElement element) {
-        // return the unchanged glue object
-        return new KnuthGlue(areaInfo.ipdArea.opt,
-                             areaInfo.ipdArea.max - areaInfo.ipdArea.opt,
-                             areaInfo.ipdArea.opt - areaInfo.ipdArea.min, 
-                             new LeafPosition(this, 0), false);
-    }
-
     public void hyphenate(Position pos, HyphContext hc) {
         // use the AbstractLayoutManager.hyphenate() null implementation
         super.hyphenate(pos, hc);

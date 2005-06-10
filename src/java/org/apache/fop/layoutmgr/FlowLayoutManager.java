@@ -78,7 +78,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
         LinkedList returnList = new LinkedList();
 
         while ((curLM = ((BlockLevelLayoutManager) getChildLM())) != null) {
-            if (curLM.generatesInlineAreas()) {
+            if (curLM instanceof InlineLevelLayoutManager) {
                 log.error("inline area not allowed under flow - ignoring");
                 curLM.setFinished(true);
                 continue;

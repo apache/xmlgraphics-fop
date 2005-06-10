@@ -219,7 +219,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
                 super.make(node, childList);
                 for (int count = childList.size() - 1; count >= 0; count--) {
                     LayoutManager lm = (LayoutManager) childList.get(count);
-                    if (lm.generatesInlineAreas()) {
+                    if (lm instanceof InlineLevelLayoutManager) {
                         LayoutManager blm = new BidiLayoutManager
                             (node, (InlineLayoutManager) lm);
                         lms.add(blm);

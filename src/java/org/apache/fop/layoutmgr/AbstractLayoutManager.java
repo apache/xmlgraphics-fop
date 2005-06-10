@@ -175,25 +175,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
         return null;
     }
 
-    public KnuthElement addALetterSpaceTo(KnuthElement element) {
-        log.warn("null implementation of addALetterSpaceTo() called!");
-        return element;
-    }
-
-    public void getWordChars(StringBuffer sbChars, Position bp1,
-            Position bp2) {
-        log.warn("null implementation of getWordChars() called!");
-    }
-
-    public void hyphenate(Position pos, HyphContext hc) {
-        log.warn("null implementation of hyphenate called!");
-    }
-
-    public boolean applyChanges(List oldList) {
-        log.warn("null implementation of applyChanges() called!");
-        return false;
-    }
-
     public LinkedList getChangedKnuthElements(List oldList,
                                               /*int flaggedPenalty,*/
                                               int alignment) {
