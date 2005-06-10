@@ -132,7 +132,7 @@ public class PreviewDialog extends JFrame {
                 reload();
             }
         };
-        Command debugAction = new Command("   Debug") {
+        Command debugAction = new Command("Debug", "debug") {
             // TODO use Translator
             public void doit() {
                 debug();
@@ -198,11 +198,11 @@ public class PreviewDialog extends JFrame {
         toolBar.add(nextPageAction);
         toolBar.add(lastPageAction);
         toolBar.addSeparator(new Dimension(20,0));
-        toolBar.add(new JLabel(translator.getString("Menu.Zoom")));
+        toolBar.add(new JLabel(translator.getString("Menu.Zoom") + " "));
         toolBar.add(scale);
         toolBar.addSeparator();
         toolBar.add(debugAction);
-        toolBar.addSeparator(new Dimension(60,0));
+        toolBar.addSeparator();
         toolBar.add(aboutAction);
         getContentPane().add(toolBar, BorderLayout.NORTH);
 
