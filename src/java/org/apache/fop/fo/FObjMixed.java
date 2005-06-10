@@ -59,6 +59,7 @@ public abstract class FObjMixed extends FObj {
 
     /**
      * Adds accumulated text as one FOText instance.
+     * Makes sure that nested calls to itself do nothing.
      * @throws FOPException if there is a problem during processing
      */
     protected void flushText() throws FOPException {
