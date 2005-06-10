@@ -120,10 +120,4 @@ public class FootnoteLayoutManager extends AbstractLayoutManager
         log.warn("null implementation of getChangeKnuthElement() called!");
         return null;
     }
-
-    public int getWordSpaceIPD() {
-        log.warn("null implementation of getWordSpaceIPD() called!");
-        return 0;
-    }
-
 }

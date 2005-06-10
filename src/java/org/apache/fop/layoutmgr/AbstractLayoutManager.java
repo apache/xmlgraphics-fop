@@ -182,11 +182,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
         return null;
     }
 
-    public int getWordSpaceIPD() {
-        log.warn("null implementation of getWordSpaceIPD() called!");
-        return 0;
-    }
-
     /**
      * Return an Area which can contain the passed childArea. The childArea
      * may not yet have any content, but it has essential traits set.
