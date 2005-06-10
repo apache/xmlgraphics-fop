@@ -186,15 +186,6 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     }
 
     /**
-     * Text always generates inline areas.
-     *
-     * @return true
-     */
-    public boolean generatesInlineAreas() {
-        return true;
-    }
-
-    /**
      * Reset position for returning next BreakPossibility.
      *
      * @param prevPos the position to reset to

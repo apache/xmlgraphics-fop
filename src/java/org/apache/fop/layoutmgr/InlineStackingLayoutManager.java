@@ -102,16 +102,6 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager
         childLMiter = iter;
     }
 
-    /**
-     * Check if this generates inline areas.
-     * This creates inline areas that contain other inline areas.
-     *
-     * @return true
-     */
-    public boolean generatesInlineAreas() {
-        return true;
-    }
-
     protected MinOptMax getExtraIPD(boolean bNotFirst, boolean bNotLast) {
         return new MinOptMax(0);
     }
@@ -545,4 +535,3 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager
         return returnList;
     }
 }
-

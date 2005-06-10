@@ -83,11 +83,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
         return this.parentLM;
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager#generatesInlineAreas() */
-    public boolean generatesInlineAreas() {
-        return false;
-    }
-
     /**
      * Return currently active child LayoutManager or null if
      * all children have finished layout.
@@ -161,12 +156,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
      */
     public void addAreas(PositionIterator posIter, LayoutContext context) {
     }
-
-
-    /* ---------------------------------------------------------
-     * PROVIDE NULL IMPLEMENTATIONS OF METHODS from LayoutManager
-     * interface which are declared abstract in AbstractLayoutManager.
-     * ---------------------------------------------------------*/
 
     public LinkedList getNextKnuthElements(LayoutContext context,
                                            int alignment) {
