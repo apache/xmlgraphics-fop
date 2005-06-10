@@ -30,7 +30,6 @@ import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.util.CharUtilities;
 import org.apache.fop.traits.MinOptMax;
 
 /**
