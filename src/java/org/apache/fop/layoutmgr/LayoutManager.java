@@ -66,18 +66,6 @@ public interface LayoutManager {
     void resetPosition(Position position);
 
     /**
-     * Get the word chars between two positions and
-     * append to the string buffer. The positions could
-     * span multiple layout managers.
-     *
-     * @param sbChars the string buffer to append the word chars
-     * @param bp1 the start position
-     * @param bp2 the end position
-     */
-    void getWordChars(StringBuffer sbChars, Position bp1,
-                             Position bp2);
-
-    /**
      * Return a value indicating whether this LayoutManager has laid out
      * all its content (or generated BreakPossibilities for all content.)
      *

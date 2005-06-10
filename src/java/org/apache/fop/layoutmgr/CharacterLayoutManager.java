@@ -166,24 +166,6 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
             (((org.apache.fop.area.inline.Character) curArea).getChar());
     }
 
-    public KnuthElement addALetterSpaceTo(KnuthElement element) {
-        areaInfo.iLScount ++;
-        areaInfo.ipdArea.add(letterSpaceIPD);
-
-        if (letterSpaceIPD.min == letterSpaceIPD.max) {
-            // constant letter space, return a new box
-            return new KnuthInlineBox(areaInfo.ipdArea.opt, areaInfo.lead,
-                                areaInfo.total, areaInfo.middle,
-                                new LeafPosition(this, 0), false);
-        } else {
-            // adjustable letter space, return a new glue
-            return new KnuthGlue(letterSpaceIPD.opt,
-                                 letterSpaceIPD.max - letterSpaceIPD.opt,
-                                 letterSpaceIPD.opt - letterSpaceIPD.min,
-                                 new LeafPosition(this, -1), true);
-        }
-    }
-
     public void hyphenate(Position pos, HyphContext hc) {
         if (hc.getNextHyphPoint() == 1) {
             // the character ends a syllable

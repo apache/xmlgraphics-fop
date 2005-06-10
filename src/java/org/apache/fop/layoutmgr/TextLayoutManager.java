@@ -195,30 +195,6 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     }
 
     /**
-     * Get the word characters between two positions.
-     * This is used when doing hyphenation or other word manipulations.
-     *
-     * @param sbChars the string buffer to put the chars into
-     * @param bp1 the start position
-     * @param bp2 the end position
-     */
-    public void getWordChars(StringBuffer sbChars, Position bp1,
-                             Position bp2) {
-        LeafPosition endPos = (LeafPosition) bp2;
-        AreaInfo ai =
-          (AreaInfo) vecAreaInfo.get(endPos.getLeafPos());
-        // Skip all leading spaces for hyphenation
-        int i;
-        for (i = ai.iStartIndex;
-             i < ai.iBreakIndex
-                 && CharUtilities.isAnySpace(textArray[i]) == true;
-             i++) {
-            //nop
-        }
-        sbChars.append(new String(textArray, i, ai.iBreakIndex - i));
-    }
-
-    /**
      * Reset position for returning next BreakPossibility.
      *
      * @param prevPos the position to reset to
