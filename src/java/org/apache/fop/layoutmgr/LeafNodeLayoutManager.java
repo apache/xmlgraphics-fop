@@ -246,7 +246,6 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
                                            int alignment) {
         MinOptMax ipd;
         curArea = get(context);
-        LinkedList returnList = new LinkedList();
 
         if (curArea == null) {
             setFinished(true);
@@ -277,6 +276,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
 
         // node is a fo:ExternalGraphic, fo:InstreamForeignObject,
         // fo:PageNumber or fo:PageNumberCitation
+        LinkedList returnList = new LinkedList();
         returnList.add(new KnuthInlineBox(areaInfo.ipdArea.opt, areaInfo.lead,
                                     areaInfo.total, areaInfo.middle,
                                     new LeafPosition(this, 0), false));
