@@ -162,11 +162,6 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public boolean generatesInlineAreas() {
-        return true;
-    }
-
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public Area getParentArea(Area childArea) {
         return holder;
     }

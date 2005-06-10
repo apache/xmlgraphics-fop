@@ -46,10 +46,6 @@ public class FootnoteLayoutManager extends AbstractLayoutManager
         bodyLM = new FootnoteBodyLayoutManager(footnote.getFootnoteBody());
     }
 
-    public boolean generatesInlineAreas() {
-        return true;
-    }
-
     public LinkedList getNextKnuthElements(LayoutContext context,
                                            int alignment) {
         // this is the only method that must be implemented:

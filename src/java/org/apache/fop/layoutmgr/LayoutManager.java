@@ -50,15 +50,6 @@ public interface LayoutManager {
     PageSequenceLayoutManager getPSLM();
 
     /**
-     * Generates inline areas.
-     * This is used to check if the layout manager generates inline
-     * areas.
-     *
-     * @return true if the layout manager generates inline areas
-     */
-    boolean generatesInlineAreas();
-
-    /**
      * Reset to the position.
      *
      * @param position the Position to reset to

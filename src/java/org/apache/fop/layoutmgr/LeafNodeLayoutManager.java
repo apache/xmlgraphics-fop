@@ -93,14 +93,6 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
     }
 
     /**
-     * Check if this generates inline areas.
-     * @return true always since this is an inline area manager
-     */
-    public boolean generatesInlineAreas() {
-        return true;
-    }
-
-    /**
      * Check if this inline area is resolved due to changes in
      * page or ipd.
      * Currently not used.
