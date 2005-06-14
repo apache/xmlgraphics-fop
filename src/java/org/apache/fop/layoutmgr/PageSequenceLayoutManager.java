@@ -157,7 +157,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
         
         protected LayoutManager getTopLevelLM() {
-            return pslm;
+            return null;  // unneeded for PSLM
         }
         
         protected LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
