@@ -354,6 +354,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             int maxtb = follow;
             // max size of middle alignment before and after the middle baseline
             int middlefollow = maxtb;
+            // true if this line contains only zero-height, auxiliary boxes
+            // and the actual line width is 0; in this case, the line "collapses"
+            // i.e. the line area will have bpd = 0
+            boolean bZeroHeightLine = (difference == iLineWidth);
 
             // if line-stacking-strategy is "font-height", the line height
             // is not affected by its content
@@ -379,6 +383,13 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                             middlefollow += ((KnuthInlineBox) element).getMiddle()
                                             - middlefollow + middleShift;
                         }
+                        if (bZeroHeightLine
+                            && (!element.isAuxiliary()
+                                || ((KnuthInlineBox) element).getTotal() > 0
+                                || ((KnuthInlineBox) element).getLead() > 0
+                                || ((KnuthInlineBox) element).getMiddle() > 0)) {
+                            bZeroHeightLine = false;
+                        }
                     }
                 }
 
@@ -387,19 +398,24 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 }
             }
 
-            //lineLead += halfLeading;
-            //middlefollow += lineHeight - lead - follow - halfLeading;
-
             constantLineHeight = lineLead + middlefollow + (lineHeight - lead - follow);
-            //System.out.println("desired height: " + lineHeight + " actual height: " + (lineLead + middlefollow + (lineHeight - lead - follow)) + " halfleading = " + halfLeading + " and " + (lineHeight - lead - follow - halfLeading));
 
-            return new LineBreakPosition(thisLLM,
-                                         knuthParagraphs.indexOf(par),
-                                         lastElementIndex,
-                                         availableShrink, availableStretch, difference, ratio, 0, indent,
-                                         lineLead + middlefollow + (lineHeight - lead - follow), iLineWidth,
-                                         lineLead + halfLeading,
-                                         - lineLead, middlefollow);
+            if (bZeroHeightLine) {
+                return new LineBreakPosition(thisLLM,
+                                             knuthParagraphs.indexOf(par),
+                                             lastElementIndex,
+                                             availableShrink, availableStretch, difference, ratio, 0, indent,
+                                             0, iLineWidth,
+                                             0, 0, 0);
+            } else {
+                return new LineBreakPosition(thisLLM,
+                                             knuthParagraphs.indexOf(par),
+                                             lastElementIndex,
+                                             availableShrink, availableStretch, difference, ratio, 0, indent,
+                                             lineLead + middlefollow + (lineHeight - lead - follow), iLineWidth,
+                                             lineLead + halfLeading,
+                                             - lineLead, middlefollow);
+            }
         }
 
         public int findBreakingPoints(Paragraph par, int lineWidth,
