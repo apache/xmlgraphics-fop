@@ -58,9 +58,10 @@ public abstract class BreakingAlgorithm {
     protected KnuthSequence par;
     
     /**
-     * The width of a line.
+     * The width of a line (or height of a column in page-breaking mode).
+     * -1 indicates that the line widths are different for each line.
      */
-    protected int lineWidth = 0;
+    protected int lineWidth = -1;
     private boolean force =  false;
 
     protected KnuthNode lastDeactivatedNode = null;
@@ -287,13 +288,17 @@ public abstract class BreakingAlgorithm {
                                      KnuthSequence sequence,
                                      int total) ;
 
-    public int findBreakingPoints(KnuthSequence par, int lineWidth,
+    public void setConstantLineWidth(int lineWidth) {
+        this.lineWidth = lineWidth;
+    }
+    
+    public int findBreakingPoints(KnuthSequence par, /*int lineWidth,*/
                                   double threshold, boolean force,
                                   boolean hyphenationAllowed) {
         this.par = par;
         this.threshold = threshold;
         this.force = force;
-        this.lineWidth = lineWidth;
+        //this.lineWidth = lineWidth;
         initialize();
 
         activeLines = new KnuthNode[20];
@@ -567,7 +572,7 @@ public abstract class BreakingAlgorithm {
         if (element.isPenalty()) {
             actualWidth += element.getW();
         }
-        return lineWidth - actualWidth;
+        return getLineWidth() - actualWidth;
     }
 
     /**
@@ -768,6 +773,18 @@ public abstract class BreakingAlgorithm {
         return positions[line].position;
     }
 
+    protected int getLineWidth(int line) {
+        if (this.lineWidth < 0) {
+            throw new IllegalStateException("lineWidth must be set");
+        } else {
+            return this.lineWidth;
+        }
+    }
+    
+    protected int getLineWidth() {
+        return this.lineWidth;
+    }
+    
     /**
      * Return a string representation of a MinOptMax in the form of a 
      * "width+stretch-shrink". Useful only for debugging.

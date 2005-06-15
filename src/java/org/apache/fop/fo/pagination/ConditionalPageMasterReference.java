@@ -43,8 +43,6 @@ public class ConditionalPageMasterReference extends FObj {
     private int blankOrNotBlank;
     // End of property values
     
-    private RepeatablePageMasterAlternatives repeatablePageMasterAlternatives;
-
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
@@ -70,17 +68,19 @@ public class ConditionalPageMasterReference extends FObj {
      * @see org.apache.fop.fo.FONode#startOfNode
      */
     protected void startOfNode() throws FOPException {
-        this.repeatablePageMasterAlternatives =
-            (RepeatablePageMasterAlternatives) parent;
-        this.repeatablePageMasterAlternatives.addConditionalPageMasterReference(this);
+        getConcreteParent().addConditionalPageMasterReference(this);
     }
 
+    private RepeatablePageMasterAlternatives getConcreteParent() {
+        return (RepeatablePageMasterAlternatives) parent;
+    }
+    
     /**
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
      * XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws ValidationException {
+           throws ValidationException {
        invalidChildError(loc, nsURI, localName);
     }
 

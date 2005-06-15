@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 package org.apache.fop.fo.pagination;
 
 // Java
-import java.util.ArrayList;
+import java.util.List;
 
 import org.xml.sax.Locator;
 
@@ -46,7 +46,7 @@ public class RepeatablePageMasterAlternatives extends FObj
 
     private int numberConsumed = 0;
 
-    private ArrayList conditionalPageMasterRefs;
+    private List conditionalPageMasterRefs;
 
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
@@ -66,7 +66,7 @@ public class RepeatablePageMasterAlternatives extends FObj
      * @see org.apache.fop.fo.FONode#startOfNode
      */
     protected void startOfNode() throws FOPException {
-        conditionalPageMasterRefs = new ArrayList();
+        conditionalPageMasterRefs = new java.util.ArrayList();
 
         if (parent.getName().equals("fo:page-sequence-master")) {
             PageSequenceMaster pageSequenceMaster = (PageSequenceMaster)parent;
@@ -99,9 +99,7 @@ public class RepeatablePageMasterAlternatives extends FObj
         }
     }
 
-    /**
-     * Return the "maximum-repeats" property.
-     */
+    /** @return the "maximum-repeats" property. */
     public int getMaximumRepeats() {
         if (maximumRepeats.getEnum() == EN_NO_LIMIT) {
             return INFINITE;
@@ -151,20 +149,27 @@ public class RepeatablePageMasterAlternatives extends FObj
         this.conditionalPageMasterRefs.add(cpmr);
     }
 
-    /**
-     * @see org.apache.fop.fo.pagination.SubSequenceSpecifier#reset()
-     */
+    /** @see org.apache.fop.fo.pagination.SubSequenceSpecifier#reset() */
     public void reset() {
         this.numberConsumed = 0;
     }
 
+    /** @see org.apache.fop.fo.pagination.SubSequenceSpecifier#goToPrevious() */
+    public boolean goToPrevious() {
+        if (numberConsumed == 0) {
+            return false;
+        } else {
+            numberConsumed--;
+            return true;
+        }
+    }
+    
+    /** @see org.apache.fop.fo.FONode#getName() */
     public String getName() {
         return "fo:repeatable-page-master-alternatives";
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getNameId()
-     */
+    /** @see org.apache.fop.fo.FObj#getNameId() */
     public int getNameId() {
         return FO_REPEATABLE_PAGE_MASTER_ALTERNATIVES;
     }
