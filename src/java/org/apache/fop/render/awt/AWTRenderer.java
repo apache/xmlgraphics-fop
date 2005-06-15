@@ -29,10 +29,10 @@ package org.apache.fop.render.awt;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Pageable;
@@ -82,22 +82,34 @@ public class AWTRenderer extends Java2DRenderer implements Pageable, Printable {
         createPreviewDialog();
     }
 
-    public void renderPage(PageViewport pageViewport) throws IOException,
-            FOPException {
+    public void renderPage(PageViewport pageViewport) 
+            throws IOException, FOPException {
 
         super.renderPage(pageViewport);
-
-        // Shows the page if it's the first one
-        if (getCurrentPageNumber() == 1) {
-            frame.showPage();
-        }
         frame.setInfo();
-
     }
 
     public void stopRenderer() throws IOException {
         super.stopRenderer();
         frame.setStatus(translator.getString("Status.Show"));
+            frame.reload(); // Refreshes view of page
+        }
+
+        /**
+         * Returns the dimensions of the specified page
+         * @exception FOPException If the page is out of range or has not been rendered.
+         */
+        public Dimension getPageImageSize(int pageNum) throws FOPException {
+        Rectangle2D bounds = getPageViewport(pageNum).getViewArea();
+        pageWidth = (int) Math.round(bounds.getWidth() / 1000f);
+        pageHeight = (int) Math.round(bounds.getHeight() / 1000f);
+        double scaleX = scaleFactor 
+                * FOUserAgent.DEFAULT_PX2MM / userAgent.getPixelUnitToMillimeter();
+        double scaleY = scaleFactor 
+                * FOUserAgent.DEFAULT_PX2MM / userAgent.getPixelUnitToMillimeter();
+        int bitmapWidth = (int) ((pageWidth * scaleX) + 0.5);
+        int bitmapHeight = (int) ((pageHeight * scaleY) + 0.5);
+                return new Dimension(bitmapWidth, bitmapHeight);
     }
 
     /** Creates and initialize the AWT Viewer main window */
@@ -153,30 +165,35 @@ public class AWTRenderer extends Java2DRenderer implements Pageable, Printable {
     /** @see java.awt.print.Pageable#getPageFormat(int) */
     public PageFormat getPageFormat(int pageIndex)
             throws IndexOutOfBoundsException {
-        if (pageIndex >= getNumberOfPages())
-            return null;
-
-        PageFormat pageFormat = new PageFormat();
-
-        Paper paper = new Paper();
-        pageFormat.setPaper(paper);
-
-        Rectangle2D dim = getPageViewport(pageIndex).getViewArea();
-        double width = dim.getWidth();
-        double height = dim.getHeight();
-
-        // if the width is greater than the height assume lanscape mode
-        // and swap the width and height values in the paper format
-        if (width > height) {
-            paper.setImageableArea(0, 0, height / 1000d, width / 1000d);
-            paper.setSize(height / 1000d, width / 1000d);
-            pageFormat.setOrientation(PageFormat.LANDSCAPE);
-        } else {
-            paper.setImageableArea(0, 0, width / 1000d, height / 1000d);
-            paper.setSize(width / 1000d, height / 1000d);
-            pageFormat.setOrientation(PageFormat.PORTRAIT);
+        try {
+            if (pageIndex >= getNumberOfPages()) {
+                return null;
+            }
+    
+            PageFormat pageFormat = new PageFormat();
+    
+            Paper paper = new Paper();
+            pageFormat.setPaper(paper);
+    
+            Rectangle2D dim = getPageViewport(pageIndex).getViewArea();
+            double width = dim.getWidth();
+            double height = dim.getHeight();
+    
+            // if the width is greater than the height assume lanscape mode
+            // and swap the width and height values in the paper format
+            if (width > height) {
+                paper.setImageableArea(0, 0, height / 1000d, width / 1000d);
+                paper.setSize(height / 1000d, width / 1000d);
+                pageFormat.setOrientation(PageFormat.LANDSCAPE);
+            } else {
+                paper.setImageableArea(0, 0, width / 1000d, height / 1000d);
+                paper.setSize(width / 1000d, height / 1000d);
+                pageFormat.setOrientation(PageFormat.PORTRAIT);
+            }
+            return pageFormat;
+        } catch (FOPException fopEx) {
+            throw new IndexOutOfBoundsException(fopEx.getMessage());
         }
-        return pageFormat;
     }
 
     /** @see java.awt.print.Pageable#getPrintable(int) */
@@ -207,7 +224,7 @@ public class AWTRenderer extends Java2DRenderer implements Pageable, Printable {
      * @see org.apache.fop.render.java2d.Java2DRenderer#drawBackAndBorders(org.apache.fop.area.Area,
      * float, float, float, float)
      *
-     * @param block the area to get the traits from
+     * @param area the area to get the traits from
      * @param startx the start x position
      * @param starty the start y position
      * @param width the width of the area

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,10 +44,14 @@ public class Command extends AbstractAction {
      * Creates <code>Command</code> object with a given name and
      * sets the name as a tooltip text. No associated icon image.
      * @param name of the command
+     * @param mnemonic A Key
      */
-    public Command(String name) {
+    public Command(String name, int mnemonic) {
         super(name);
         putValue(SHORT_DESCRIPTION, name);
+        if (mnemonic > 0) {
+            putValue(MNEMONIC_KEY, new Integer(mnemonic));
+        }
     }
 
     /**

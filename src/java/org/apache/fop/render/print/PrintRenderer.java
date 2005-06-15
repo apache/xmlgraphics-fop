@@ -142,7 +142,7 @@ public class PrintRenderer extends Java2DRenderer implements Pageable, Printable
 
     public int print(Graphics g, PageFormat pageFormat, int pageIndex)
             throws PrinterException {
-        if (pageIndex >= getNumberOfPages()){
+        if (pageIndex >= getNumberOfPages()) {
             return NO_SUCH_PAGE;
         }
 
@@ -156,37 +156,43 @@ public class PrintRenderer extends Java2DRenderer implements Pageable, Printable
             return NO_SUCH_PAGE;
         }
 
-        g2.drawImage(image,null,0,0);
+        g2.drawImage(image, null, 0, 0);
 
         return PAGE_EXISTS;
     }
 
+    /** @see java.awt.print.Pageable#getPageFormat(int) */
     public PageFormat getPageFormat(int pageIndex)
             throws IndexOutOfBoundsException {
-        if (pageIndex >= getNumberOfPages())
-            return null;
-
-        PageFormat pageFormat = new PageFormat();
-
-        Paper paper = new Paper();
-        pageFormat.setPaper(paper);
-
-        Rectangle2D dim = getPageViewport(pageIndex).getViewArea();
-        double width = dim.getWidth();
-        double height = dim.getHeight();
-
-        // if the width is greater than the height assume lanscape mode
-        // and swap the width and height values in the paper format
-        if (width > height) {
-            paper.setImageableArea(0, 0, height / 1000d, width / 1000d);
-            paper.setSize(height / 1000d, width / 1000d);
-            pageFormat.setOrientation(PageFormat.LANDSCAPE);
-        } else {
-            paper.setImageableArea(0, 0, width / 1000d, height / 1000d);
-            paper.setSize(width / 1000d, height / 1000d);
-            pageFormat.setOrientation(PageFormat.PORTRAIT);
+        try {
+            if (pageIndex >= getNumberOfPages()) {
+                return null;
+            }
+    
+            PageFormat pageFormat = new PageFormat();
+    
+            Paper paper = new Paper();
+            pageFormat.setPaper(paper);
+    
+            Rectangle2D dim = getPageViewport(pageIndex).getViewArea();
+            double width = dim.getWidth();
+            double height = dim.getHeight();
+    
+            // if the width is greater than the height assume lanscape mode
+            // and swap the width and height values in the paper format
+            if (width > height) {
+                paper.setImageableArea(0, 0, height / 1000d, width / 1000d);
+                paper.setSize(height / 1000d, width / 1000d);
+                pageFormat.setOrientation(PageFormat.LANDSCAPE);
+            } else {
+                paper.setImageableArea(0, 0, width / 1000d, height / 1000d);
+                paper.setSize(width / 1000d, height / 1000d);
+                pageFormat.setOrientation(PageFormat.PORTRAIT);
+            }
+            return pageFormat;
+        } catch (FOPException fopEx) {
+            throw new IndexOutOfBoundsException(fopEx.getMessage());
         }
-        return pageFormat;
     }
 
     public Printable getPrintable(int pageIndex)
