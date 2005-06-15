@@ -433,23 +433,42 @@ public class PageSequence extends FObj {
     }
 
     /**
-     * Public accessor for determining the page master to use for any given
-     * page within this page sequence
-     * @param pageCount = the page number of the page to be created
-     * @param bIsFirstPage = indicator whether this page is the first page of the
+     * Public accessor for determining the next page master to use within this page sequence.
+     * @param page the page number of the page to be created
+     * @param bIsFirstPage indicator whether this page is the first page of the
      *      page sequence
-     * @param bIsBlank = indicator whether the page will be blank
+     * @param bIsBlank indicator whether the page will be blank
      * @return the SimplePageMaster to use for this page
+     * @throws FOPException if there's a problem determining the page master
      */
-    public SimplePageMaster getSimplePageMasterToUse(int pageCount, boolean bIsFirstPage, 
-        boolean bIsBlank) throws FOPException {
+    public SimplePageMaster getNextSimplePageMaster(int page, 
+            boolean bIsFirstPage,  
+            boolean bIsBlank) throws FOPException {
 
         if (pageSequenceMaster == null) {
             return simplePageMaster;
         }
-        boolean isOddPage = ((pageCount % 2) == 1);
+        boolean isOddPage = ((page % 2) == 1);
+        if (getLogger().isDebugEnabled()) {
+            getLogger().debug("getNextSimplePageMaster(page=" + page
+                    + " isOdd=" + isOddPage 
+                    + " isFirst=" + bIsFirstPage 
+                    + " isBlank=" + bIsBlank + ")");
+        }
         return pageSequenceMaster.getNextSimplePageMaster(isOddPage, 
             bIsFirstPage, bIsBlank);
+    }
+
+    /**
+     * Used to set the "cursor position" for the page masters to the previous item.
+     * @return true if there is a previous item, false if the current one was the first one.
+     */
+    public boolean goToPreviousSimplePageMaster() {
+        if (pageSequenceMaster == null) {
+            return true;
+        } else {
+            return pageSequenceMaster.goToPreviousSimplePageMaster();
+        }
     }
 
     /**

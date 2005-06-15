@@ -43,7 +43,6 @@ public class RepeatablePageMasterReference extends FObj
     
     private static final int INFINITE = -1;
 
-    private PageSequenceMaster pageSequenceMaster;
     private int numberConsumed = 0;
 
     /**
@@ -103,9 +102,7 @@ public class RepeatablePageMasterReference extends FObj
         return masterReference;
     }
 
-    /**
-     * Return the "maximum-repeats" property.
-     */
+    /** @return the "maximum-repeats" property. */
     public int getMaximumRepeats() {
         if (maximumRepeats.getEnum() == EN_NO_LIMIT) {
             return INFINITE;
@@ -120,23 +117,28 @@ public class RepeatablePageMasterReference extends FObj
         }
     }
 
-    /**
-     * @see org.apache.fop.fo.pagination.SubSequenceSpecifier#reset()
-     */
+    /** @see org.apache.fop.fo.pagination.SubSequenceSpecifier#reset() */
     public void reset() {
         this.numberConsumed = 0;
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
+    
+    /** @see org.apache.fop.fo.pagination.SubSequenceSpecifier#goToPrevious() */
+    public boolean goToPrevious() {
+        if (numberConsumed == 0) {
+            return false;
+        } else {
+            numberConsumed--;
+            return true;
+        }
+    }
+    
+    /** @see org.apache.fop.fo.FObj#getName() */
     public String getName() {
         return "fo:repeatable-page-master-reference";
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getNameId()
-     */
+    /** @see org.apache.fop.fo.FObj#getNameId() */
     public int getNameId() {
         return FO_REPEATABLE_PAGE_MASTER_REFERENCE;
     }

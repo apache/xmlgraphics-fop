@@ -80,9 +80,7 @@ public class SinglePageMasterReference extends FObj
        invalidChildError(loc, nsURI, localName);
     }
 
-    /**
-     * @see org.apache.fop.fo.pagination.SubSequenceSpecifier
-     */
+    /** @see org.apache.fop.fo.pagination.SubSequenceSpecifier */
     public String getNextPageMasterName(boolean isOddPage,
                                         boolean isFirstPage,
                                         boolean isEmptyPage) {
@@ -94,20 +92,29 @@ public class SinglePageMasterReference extends FObj
         }
     }
 
-    /**
-     * @see org.apache.fop.fo.pagination.SubSequenceSpecifier#reset()
-     */
+    /** @see org.apache.fop.fo.pagination.SubSequenceSpecifier#reset() */
     public void reset() {
         this.state = FIRST;
     }
+    
+    
 
+    /** @see org.apache.fop.fo.pagination.SubSequenceSpecifier#goToPrevious() */
+    public boolean goToPrevious() {
+        if (state == FIRST) {
+            return false;
+        } else {
+            this.state = FIRST;
+            return true;
+        }
+    }
+    
+    /** @see org.apache.fop.fo.FONode#getName() */
     public String getName() {
         return "fo:single-page-master-reference";
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getNameId()
-     */
+    /** @see org.apache.fop.fo.FObj#getNameId() */
     public int getNameId() {
         return FO_SINGLE_PAGE_MASTER_REFERENCE;
     }

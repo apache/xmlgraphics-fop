@@ -83,8 +83,8 @@ public class PageSequenceMaster extends FObj {
      */
     protected void endOfNode() throws FOPException {
         if (childNodes == null) {
-           missingChildElementError("(single-page-master-reference|" +
-            "repeatable-page-master-reference|repeatable-page-master-alternatives)+");
+            missingChildElementError("(single-page-master-reference|"
+                    + "repeatable-page-master-reference|repeatable-page-master-alternatives)+");
         }
     }
 
@@ -121,7 +121,7 @@ public class PageSequenceMaster extends FObj {
     private SubSequenceSpecifier getNextSubSequence() {
         currentSubSequenceNumber++;
         if (currentSubSequenceNumber >= 0
-            && currentSubSequenceNumber < subSequenceSpecifiers.size()) {
+                && currentSubSequenceNumber < subSequenceSpecifiers.size()) {
             return (SubSequenceSpecifier)subSequenceSpecifiers
               .get(currentSubSequenceNumber);
         }
@@ -139,6 +139,26 @@ public class PageSequenceMaster extends FObj {
         }
     }
 
+    /**
+     * Used to set the "cursor position" for the page masters to the previous item.
+     * @return true if there is a previous item, false if the current one was the first one.
+     */
+    public boolean goToPreviousSimplePageMaster() {
+        if (currentSubSequence != null) {
+            boolean success = currentSubSequence.goToPrevious();
+            if (!success) {
+                if (currentSubSequenceNumber > 0) {
+                    currentSubSequenceNumber--;
+                    currentSubSequence = (SubSequenceSpecifier)subSequenceSpecifiers
+                        .get(currentSubSequenceNumber);
+                } else {
+                    currentSubSequence = null;
+                }
+            }
+        }
+        return (currentSubSequence != null);
+    }
+    
     /**
      * Returns the next simple-page-master.
      * @param isOddPage True if the next page number is odd

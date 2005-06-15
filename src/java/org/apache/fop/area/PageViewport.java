@@ -49,6 +49,7 @@ public class PageViewport implements Resolvable, Cloneable {
     private boolean clip = false;
     private String pageNumberString = null;
     private SimplePageMaster spm = null;
+    private boolean blank;
 
     // list of id references and the rectangle on the page
     private Map idReferences = null;
@@ -76,9 +77,12 @@ public class PageViewport implements Resolvable, Cloneable {
     /**
      * Create a page viewport.
      * @param spm SimplePageMaster indicating the page and region dimensions
+     * @param pageStr String representation of the page number
+     * @param blank true if this is a blank page
      */
-    public PageViewport(SimplePageMaster spm, String pageStr) {
+    public PageViewport(SimplePageMaster spm, String pageStr, boolean blank) {
         this.spm = spm;
+        this.blank = blank;
         int pageWidth = spm.getPageWidth().getValue();
         int pageHeight = spm.getPageHeight().getValue();
         pageNumberString = pageStr;
@@ -237,6 +241,12 @@ public class PageViewport implements Resolvable, Cloneable {
         if (marks == null) {
             return;
         }
+        if (log.isDebugEnabled()) {
+            log.debug("--" + marks.keySet() + ": " 
+                    + (starting ? "starting" : "ending") 
+                    + (isfirst ? ", first" : "") 
+                    + (islast ? ", last" : ""));
+        }
         
         // at the start of the area, register is-first and any areas
         if (starting) {
@@ -348,10 +358,24 @@ public class PageViewport implements Resolvable, Cloneable {
                 }
             break;
         }
-        log.trace("page " + pageNumberString + ": " + "Retrieving marker " + name + "at position " + posName); 
+        if (log.isTraceEnabled()) {
+            log.trace("page " + pageNumberString + ": " + "Retrieving marker " + name 
+                    + " at position " + posName); 
+        }
         return mark;    
     }
 
+    /** Dumps the current marker data to the logger. */
+    public void dumpMarkers() {
+        if (log.isTraceEnabled()) {
+            log.trace("FirstAny: " + this.markerFirstAny);
+            log.trace("FirstStart: " + this.markerFirstStart);
+            log.trace("LastAny: " + this.markerLastAny);
+            log.trace("LastEnd: " + this.markerLastEnd);
+            log.trace("LastStart: " + this.markerLastStart);
+        }
+    }
+    
     /**
      * Save the page contents to an object stream.
      * The map of unresolved references are set on the page so that
@@ -423,6 +447,11 @@ public class PageViewport implements Resolvable, Cloneable {
      */
     public SimplePageMaster getSPM() {
         return spm;
+    }
+    
+    /** @return True if this is a blank page. */
+    public boolean isBlank() {
+        return this.blank;
     }
     
     /**

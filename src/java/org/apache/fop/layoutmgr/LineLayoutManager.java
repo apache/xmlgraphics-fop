@@ -418,10 +418,11 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             }
         }
 
-        public int findBreakingPoints(Paragraph par, int lineWidth,
+        public int findBreakingPoints(Paragraph par, /*int lineWidth,*/
                                       double threshold, boolean force,
                                       boolean hyphenationAllowed) {
-            return super.findBreakingPoints(par, lineWidth, threshold, force, hyphenationAllowed);
+            return super.findBreakingPoints(par, /*lineWidth,*/ 
+                    threshold, force, hyphenationAllowed);
         }
 
         protected int filterActiveNodes() {
@@ -832,8 +833,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     
             // first try
             boolean bHyphenationAllowed = false;
+            alg.setConstantLineWidth(iLineWidth);
             iBPcount = alg.findBreakingPoints(currPar,
-                                              iLineWidth,
                                               maxAdjustment, false, bHyphenationAllowed);
             if (iBPcount == 0 || alignment == EN_JUSTIFY) {
                 // if the first try found a set of breaking points, save them
@@ -857,7 +858,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     
                 if ((iBPcount
                      = alg.findBreakingPoints(currPar,
-                                              iLineWidth,
                                               maxAdjustment, false, bHyphenationAllowed)) == 0) {
                     // the second try failed too, try with a huge threshold
                     // and force the algorithm to find
@@ -867,7 +867,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     maxAdjustment = 20;
                     iBPcount
                         = alg.findBreakingPoints(currPar,
-                                                 iLineWidth,
                                                  maxAdjustment, true, bHyphenationAllowed);
                 }
     
@@ -887,13 +886,11 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                         // try with shorter lines
                         int savedLineWidth = iLineWidth;
                         iLineWidth = (int) (iLineWidth * 0.95);
-                        iBPcount
-                            = alg.findBreakingPoints(currPar,
-                                                     iLineWidth,
-                                                     maxAdjustment, true, bHyphenationAllowed);
-                         // use normal lines, when possible
-                         lineLayouts.restorePossibilities();
-                         iLineWidth = savedLineWidth;
+                        iBPcount = alg.findBreakingPoints(currPar,
+                                 maxAdjustment, true, bHyphenationAllowed);
+                        // use normal lines, when possible
+                        lineLayouts.restorePossibilities();
+                        iLineWidth = savedLineWidth;
                     }
                     if (!lineLayouts.canUseLessLines()) {
                         alg.resetAlgorithm();
@@ -901,13 +898,12 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                         // try with longer lines
                         int savedLineWidth = iLineWidth;
                         iLineWidth = (int) (iLineWidth * 1.05);
-                        iBPcount
-                            = alg.findBreakingPoints(currPar,
-                                                     iLineWidth,
-                                                     maxAdjustment, true, bHyphenationAllowed);
-                         // use normal lines, when possible
-                         lineLayouts.restorePossibilities();
-                         iLineWidth = savedLineWidth;
+                        alg.setConstantLineWidth(iLineWidth);
+                        iBPcount = alg.findBreakingPoints(currPar,
+                                maxAdjustment, true, bHyphenationAllowed);
+                        // use normal lines, when possible
+                        lineLayouts.restorePossibilities();
+                        iLineWidth = savedLineWidth;
                     }
                     //System.out.println("LLM.getNextKnuthElements> now, layouts with more lines? " + lineLayouts.canUseMoreLines());
                     //System.out.println("                          now, layouts with fewer lines? " + lineLayouts.canUseLessLines());

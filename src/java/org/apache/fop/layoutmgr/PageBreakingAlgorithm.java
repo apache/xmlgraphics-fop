@@ -22,12 +22,14 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+import org.apache.fop.area.PageViewport;
 import org.apache.fop.layoutmgr.AbstractBreaker.PageBreakPosition;
 
 import org.apache.fop.traits.MinOptMax;
 
 class PageBreakingAlgorithm extends BreakingAlgorithm {
     private LayoutManager topLevelLM;
+    private PageSequenceLayoutManager.PageViewportProvider pvProvider;
     private LinkedList pageBreaks = null;
 
     private ArrayList footnotesList = null;
@@ -62,10 +64,12 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     private boolean storedValue = false;
 
     public PageBreakingAlgorithm(LayoutManager topLevelLM,
+                                 PageSequenceLayoutManager.PageViewportProvider pvProvider,
                                  int alignment, int alignmentLast,
                                  MinOptMax fnSeparatorLength) {
         super(alignment, alignmentLast, true);
         this.topLevelLM = topLevelLM;
+        this.pvProvider = pvProvider;
         best = new BestPageRecords();
         footnoteSeparatorLength = (MinOptMax) fnSeparatorLength.clone();
         // add some stretch, to avoid a restart for every page containing footnotes
@@ -274,7 +278,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 // this page contains some footnote citations
                 // add the footnote separator width
                 actualWidth += footnoteSeparatorLength.opt;
-                if (actualWidth + allFootnotes <= lineWidth) {
+                if (actualWidth + allFootnotes <= getLineWidth()) {
                     // there is enough space to insert all footnotes:
                     // add the whole allFootnotes length
                     actualWidth += allFootnotes;
@@ -284,7 +288,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 } else if (((bCanDeferOldFootnotes = canDeferOldFootnotes((KnuthPageNode) activeNode, elementIndex))
                             || bNewFootnotes)
                            && (footnoteSplit = getFootnoteSplit((KnuthPageNode) activeNode,
-                                                                lineWidth - actualWidth,
+                                                                getLineWidth() - actualWidth,
                                                                 bCanDeferOldFootnotes)) > 0) {
                     // it is allowed to break or even defer footnotes if either:
                     //  - there are new footnotes in the last piece of content, and
@@ -313,7 +317,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         } else {
             // there are no footnotes
         }
-        return lineWidth - actualWidth;
+        return getLineWidth(activeNode.line) - actualWidth;
     }
 
     private boolean canDeferOldFootnotes(KnuthPageNode node, int contentElementIndex) {
@@ -594,7 +598,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         insertedFootnotesLength = lastNode.totalFootnotes;
         footnoteListIndex = lastNode.footnoteListIndex;
         footnoteElementIndex = lastNode.footnoteElementIndex;
-        int availableBPD = lineWidth;
+        int availableBPD = getLineWidth();
         int split = 0;
         KnuthPageNode prevNode = lastNode;
 
@@ -627,7 +631,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 removeNode(prevNode.line, prevNode);
 
                 prevNode = node;
-                availableBPD = lineWidth;
+                availableBPD = getLineWidth();
             }
         }
         // create the last node
@@ -741,4 +745,19 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     public LinkedList getFootnoteList(int index) {
         return (LinkedList) footnotesList.get(index);
     }
+    
+    /** @see org.apache.fop.layoutmgr.BreakingAlgorithm#getLineWidth(int) */
+    protected int getLineWidth(int line) {
+        int bpd;
+        if (pvProvider != null) {
+            PageViewport pv = pvProvider.getPageViewport(
+                    false, line, 
+                    PageSequenceLayoutManager.PageViewportProvider.RELTO_CURRENT_ELEMENT_LIST);
+            bpd = pv.getBodyRegion().getBPD(); 
+        } else {
+            bpd = super.getLineWidth(line);
+        }
+        return bpd;
+    }
+    
 }

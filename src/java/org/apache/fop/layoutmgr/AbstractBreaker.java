@@ -105,6 +105,16 @@ public abstract class AbstractBreaker {
     protected abstract LayoutManager getTopLevelLM();
     protected abstract LayoutManager getCurrentChildLM();
     
+    /**
+     * Returns the PageViewportProvider if any. PageBreaker overrides this method because each
+     * page may have a different available BPD which needs to be accessible to the breaking
+     * algorithm.
+     * @return the applicable PageViewportProvider, or null if not applicable
+     */
+    protected PageSequenceLayoutManager.PageViewportProvider getPageViewportProvider() {
+        return null;
+    }
+    
     /*
      * This method is to contain the logic to determine the LM's
      * getNextKnuthElements() implementation(s) that are to be called. 
@@ -171,6 +181,7 @@ public abstract class AbstractBreaker {
             log.debug("PLM> start of algorithm (" + this.getClass().getName() 
                     + "), flow BPD =" + flowBPD);
             PageBreakingAlgorithm alg = new PageBreakingAlgorithm(getTopLevelLM(),
+                    getPageViewportProvider(),
                     alignment, alignmentLast, footnoteSeparatorLength);
             int iOptPageNumber;
 
@@ -184,8 +195,9 @@ public abstract class AbstractBreaker {
             }
 
             //iOptPageNumber = alg.firstFit(effectiveList, flowBPD, 1, true);
-            iOptPageNumber = alg.findBreakingPoints(effectiveList, flowBPD, 1,
-                    true, true);
+            alg.setConstantLineWidth(flowBPD);
+            iOptPageNumber = alg.findBreakingPoints(effectiveList, /*flowBPD,*/
+                    1, true, true);
             log.debug("PLM> iOptPageNumber= " + iOptPageNumber
                     + " pageBreaks.size()= " + alg.getPageBreaks().size());
 
@@ -413,8 +425,9 @@ public abstract class AbstractBreaker {
      */
     private BlockSequence justifyBoxes(BlockSequence blockList, PageBreakingAlgorithm alg, int availableBPD) {
         int iOptPageNumber;
-        iOptPageNumber = alg.findBreakingPoints(blockList, availableBPD, 1,
-                true, true);
+        alg.setConstantLineWidth(availableBPD);
+        iOptPageNumber = alg.findBreakingPoints(blockList, /*availableBPD,*/
+                1, true, true);
         log.debug("PLM> iOptPageNumber= " + iOptPageNumber);
 
         // 

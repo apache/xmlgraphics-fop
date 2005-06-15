@@ -63,6 +63,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      */
     private PageSequence pageSeq;
 
+    private PageViewportProvider pvProvider;
+    
     /** 
      * Current page-viewport-area being filled by
      * the PSLM.
@@ -90,6 +92,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         super(pseq);
         this.areaTreeHandler = ath;
         this.pageSeq = pseq;
+        this.pvProvider = new PageViewportProvider(this.pageSeq);
     }
 
     /**
@@ -121,7 +124,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         areaTreeHandler.getAreaTreeModel().startPageSequence(title);
         log.debug("Starting layout");
 
-        curPV = makeNewPage(false, true, false);
+        curPV = makeNewPage(false, false);
 
         Flow mainFlow = pageSeq.getMainFlow();
         childFLM = getLayoutManagerMaker().
@@ -158,6 +161,11 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         
         protected LayoutManager getTopLevelLM() {
             return null;  // unneeded for PSLM
+        }
+        
+        /** @see org.apache.fop.layoutmgr.AbstractBreaker#getPageViewportProvider() */
+        protected PageSequenceLayoutManager.PageViewportProvider getPageViewportProvider() {
+            return pvProvider;
         }
         
         protected LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
@@ -263,6 +271,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                         handleBreakTrait(bIsFirstPage ? list.getStartOn() : Constants.EN_PAGE);
                     }
                 }
+                pvProvider.setStartPageOfNextElementList(currentPageNum);
             }
             // add static areas and resolve any new id areas
             // finish page and add to area tree
@@ -425,32 +434,15 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
     }
 
-    private PageViewport makeNewPage(boolean bIsBlank, boolean bIsFirst, boolean bIsLast) {
+    private PageViewport makeNewPage(boolean bIsBlank, boolean bIsLast) {
         if (curPV != null) {
             finishPage();
         }
 
         currentPageNum++;
-        String pageNumberString = pageSeq.makeFormattedPageNumber(currentPageNum);
 
-        try {
-            // create a new page
-            SimplePageMaster spm = pageSeq.getSimplePageMasterToUse(
-                currentPageNum, bIsFirst, bIsBlank);
-            
-            Region body = spm.getRegion(FO_REGION_BODY);
-            if (!pageSeq.getMainFlow().getFlowName().equals(body.getRegionName())) {
-              // this is fine by the XSL Rec (fo:flow's flow-name can be mapped to
-              // any region), but we don't support it yet.
-              throw new FOPException("Flow '" + pageSeq.getMainFlow().getFlowName()
-                 + "' does not map to the region-body in page-master '"
-                 + spm.getMasterName() + "'.  FOP presently "
-                 + "does not support this.");
-            }
-            curPV = new PageViewport(spm, pageNumberString);
-        } catch (FOPException fopex) {
-            throw new IllegalArgumentException("Cannot create page: " + fopex.getMessage());
-        }
+        curPV = pvProvider.getPageViewport(bIsBlank,
+                currentPageNum, PageViewportProvider.RELTO_PAGE_SEQUENCE);
 
         if (log.isDebugEnabled()) {
             log.debug("[" + curPV.getPageNumberString() + (bIsBlank ? "*" : "") + "]");
@@ -475,6 +467,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     }
 
     private void finishPage() {
+        curPV.dumpMarkers();
         // Layout side regions
         layoutSideRegion(FO_REGION_BEFORE); 
         layoutSideRegion(FO_REGION_AFTER);
@@ -504,17 +497,17 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             if (curPV.getCurrentSpan().hasMoreFlows()) {
                 curPV.getCurrentSpan().moveToNextFlow();
             } else {
-                curPV = makeNewPage(false, false, false);
+                curPV = makeNewPage(false, false);
             }
             return;
         }
         log.debug("handling break-before after page " + currentPageNum 
             + " breakVal=" + breakVal);
         if (needBlankPageBeforeNew(breakVal)) {
-            curPV = makeNewPage(true, false, false);
+            curPV = makeNewPage(true, false);
         }
         if (needNewPage(breakVal)) {
-            curPV = makeNewPage(false, false, false);
+            curPV = makeNewPage(false, false);
         }
     }
 
@@ -555,5 +548,90 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         } else {
             return true;
         }
+    }
+    
+    
+    public class PageViewportProvider {
+        
+        public static final int RELTO_PAGE_SEQUENCE = 0;
+        public static final int RELTO_CURRENT_ELEMENT_LIST = 1;
+        
+        private int startPageOfPageSequence;
+        private int startPageOfCurrentElementList;
+        private List cachedPageViewports = new java.util.ArrayList();
+        
+        public PageViewportProvider(PageSequence ps) {
+            this.startPageOfPageSequence = ps.getStartingPageNumber();
+        }
+        
+        public void setStartPageOfNextElementList(int startPage) {
+            log.debug("start page of the next element list is: " + startPage);
+            this.startPageOfCurrentElementList = startPage;
+        }
+        
+        public PageViewport getPageViewport(boolean bIsBlank, int index, int relativeTo) {
+            if (relativeTo == RELTO_PAGE_SEQUENCE) {
+                return getPageViewport(bIsBlank, index);
+            } else if (relativeTo == RELTO_CURRENT_ELEMENT_LIST) {
+                int effIndex = startPageOfCurrentElementList + index;
+                effIndex += startPageOfPageSequence;
+                return getPageViewport(bIsBlank, effIndex);
+            } else {
+                throw new IllegalArgumentException(
+                        "Illegal value for relativeTo: " + relativeTo);
+            }
+        }
+        
+        private PageViewport getPageViewport(boolean bIsBlank, int index) {
+            //System.out.println("getPageViewport(" + index + " " + bIsBlank);
+            log.debug("getPageViewport(" + index + " " + bIsBlank);
+            int intIndex = index - startPageOfPageSequence;
+            if (bIsBlank) {
+                log.debug("blank page requested: " + index);
+            }
+            while (intIndex >= cachedPageViewports.size()) {
+                //System.out.println("Caching " + index);
+                log.debug("Caching " + index);
+                cacheNextPageViewport(index, bIsBlank);
+            }
+            PageViewport pv = (PageViewport)cachedPageViewports.get(intIndex);
+            if (pv.isBlank() != bIsBlank) {
+                log.debug("blank condition doesn't match. Replacing PageViewport.");
+                while (intIndex < cachedPageViewports.size()) {
+                    this.cachedPageViewports.remove(cachedPageViewports.size() - 1);
+                    if (!pageSeq.goToPreviousSimplePageMaster()) {
+                        log.warn("goToPreviousSimplePageMaster() on the first page called!");
+                    }
+                }
+                cacheNextPageViewport(index, bIsBlank);
+                //throw new IllegalStateException("blank condition doesn't match. Check code!");
+            }
+            return pv;
+        }
+        
+        private void cacheNextPageViewport(int index, boolean bIsBlank) {
+            try {
+                String pageNumberString = pageSeq.makeFormattedPageNumber(index);
+                SimplePageMaster spm = pageSeq.getNextSimplePageMaster(
+                        index, (startPageOfPageSequence == index), bIsBlank);
+                    
+                Region body = spm.getRegion(FO_REGION_BODY);
+                if (!pageSeq.getMainFlow().getFlowName().equals(body.getRegionName())) {
+                    // this is fine by the XSL Rec (fo:flow's flow-name can be mapped to
+                    // any region), but we don't support it yet.
+                    throw new FOPException("Flow '" + pageSeq.getMainFlow().getFlowName()
+                        + "' does not map to the region-body in page-master '"
+                        + spm.getMasterName() + "'.  FOP presently "
+                        + "does not support this.");
+                }
+                PageViewport pv = new PageViewport(spm, pageNumberString, bIsBlank);
+                cachedPageViewports.add(pv);
+            } catch (FOPException e) {
+                //TODO Maybe improve. It'll mean to propagate this exception up several
+                //methods calls.
+                throw new IllegalStateException(e.getMessage());
+            }
+        }
+        
     }
 }
