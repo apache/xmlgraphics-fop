@@ -35,7 +35,6 @@ import java.awt.image.DataBufferByte;
 import java.awt.image.PixelInterleavedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.SampleModel;
-import java.awt.image.SinglePixelPackedSampleModel;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -148,7 +147,8 @@ public abstract class Java2DRenderer extends AbstractRenderer {
     public boolean renderingDone;
 
     /** Default constructor */
-    public Java2DRenderer() {}
+    public Java2DRenderer() {
+    }
 
     /**
      * @see org.apache.fop.render.Renderer#setUserAgent(org.apache.fop.apps.FOUserAgent)
@@ -227,14 +227,6 @@ public abstract class Java2DRenderer extends AbstractRenderer {
     }
 
     /**
-     * @param the 0-based pageIndex
-     * @return the corresponding PageViewport
-     */
-    public PageViewport getPageViewport(int pageIndex) {
-        return (PageViewport) pageViewportList.get(pageIndex);
-    }
-
-    /**
      * This method override only stores the PageViewport in a List. No actual
      * rendering is performed here. A renderer override renderPage() to get the
      * freshly produced PageViewport, and rendere them on the fly (producing the
@@ -245,9 +237,9 @@ public abstract class Java2DRenderer extends AbstractRenderer {
      * the Area Tree
      * @see org.apache.fop.render.Renderer
      */
-    public void renderPage(PageViewport pageViewport) throws IOException,
-            FOPException {
-        pageViewportList.add(pageViewport.clone());// FIXME clone
+    public void renderPage(PageViewport pageViewport) 
+                throws IOException, FOPException {
+        pageViewportList.add(pageViewport.clone()); // FIXME clone
         currentPageNumber++;
     }
 
@@ -321,6 +313,21 @@ public abstract class Java2DRenderer extends AbstractRenderer {
         return currentPageImage;
     }
 
+        
+    /**
+     * Returns the page viewport
+     * @param pageNum the page number
+     * @exception FOPException If the page is out of range.
+     */
+    public PageViewport getPageViewport(int pageNum) throws FOPException {
+        if (pageNum < 0 || pageNum >= pageViewportList.size()) {
+            throw new FOPException("Requested page number is out of range: " + pageNum
+                     + "; only " + pageViewportList.size()
+                     + " page(s) available.");
+        }
+        return (PageViewport) pageViewportList.get(pageNum);
+    }
+
     /**
      * Generates a desired page from the renderer's page viewport list.
      *
@@ -330,14 +337,7 @@ public abstract class Java2DRenderer extends AbstractRenderer {
      * @throws FOPException
      */
     public BufferedImage getPageImage(int pageNum) throws FOPException {
-        if (pageNum < 0 || pageNum >= pageViewportList.size()) {
-            throw new FOPException("out-of-range page number (" + pageNum
-                    + ") requested; only " + pageViewportList.size()
-                    + " page(s) available.");
-        }
-        PageViewport pageViewport = (PageViewport) pageViewportList
-                .get(pageNum);
-        return getPageImage(pageViewport);
+        return getPageImage(getPageViewport(pageNum));
     }
 
     /**
