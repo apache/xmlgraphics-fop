@@ -207,7 +207,7 @@ list of possible build targets.
     <property name="build.examples.dir" value="${build.dir}/examples"/>
 
     <property name="viewer.resources.dest.dir" value="${build.dest}/org/apache/fop/render/awt/viewer/resources"/>
-    <property name="viewer.images.dest.dir" value="${build.dest}/org/apache/fop/render/awt/viewer/Images"/>
+    <property name="viewer.images.dest.dir" value="${build.dest}/org/apache/fop/render/awt/viewer/images"/>
 
     <property name="dist.bin.dir" value="${basedir}/dist-bin"/>
     <property name="dist.src.dir" value="${basedir}/dist-src"/>
