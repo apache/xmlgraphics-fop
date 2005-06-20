@@ -125,6 +125,9 @@ public class GridUnit {
         while (node != null && !(node instanceof Table)) {
             node = node.getParent();
         }
+        if (node == null && getColumn() != null) {
+            node = getColumn().getParent();
+        }
         return (Table)node;
     }
     
