@@ -42,18 +42,42 @@ import org.apache.fop.render.awt.AWTRenderer;
 
 
 /**
- * Holds a scrollpane with the rendered page(s) and handles actions performed
+ * <p>Holds a scrollpane with the rendered page(s) and handles actions performed
  * to alter the display of the page.
- *    
- * Use PreviewPanel when you want to embed a preview in your own application
+ * </p>
+ * <p>Use PreviewPanel when you want to embed a preview in your own application
  * with your own controls. Use PreviewDialog when you want to use the standard
  * Fop controls.
- *    
- * In order to embed a PreviewPanel in your own app, use the following:
+ * </p>   
+ * <p>In order to embed a PreviewPanel in your own app, create your own renderer,
+ * and your own agent. Then call setPreviewDialogDisplayed(false) to hide the
+ * default dialog. Finally create a preview panel with the renderer and add it
+ * to your gui:
+ * </p>
  * <pre>
- * FOUserAgent ua = new FOUserAgent();
- * ua.setRendererOverride(new AWTRenderer());
+ * AWTRenderer renderer = new AWTRenderer();
+ * FOUserAgent agent = new FOUserAgent();
+ * agent.setRendererOverride(renderer);
+ * renderer.setPreviewDialogDisplayed(false);
+ * renderer.setUserAgent(agent);
+ * previewPanel = new PreviewPanel(agent, renderer);
  * previewPanel = new PreviewPanel(ua);
+ * myGui.add(previewPanel);
+ * </pre>
+ *
+ * In order to set options and display a page do:
+ * <pre>
+ * renderer.clearViewportList();
+ * // build report xml here
+ * reload(); // optional if setting changed
+ * </pre>
+ *
+ * If you wan't to change settings, don't call reload. A good example is
+ * to set the page to fill the screen and set the scrolling mode:
+ * <pre>
+ * double scale = previewPanel.getScaleToFitWindow();
+ * previewPanel.setScaleFactor(scale);
+ * previewPanel.setDisplayMode(PreviewPanel.CONTINUOUS);
  * </pre>
  */
 public class PreviewPanel extends JPanel {
@@ -109,6 +133,11 @@ public class PreviewPanel extends JPanel {
     private ViewportScroller scroller;
 
         
+    /**
+     * Creates a new PreviewPanel instance.
+     * @param foUserAgent the user agent
+     * @param renderer the AWT Renderer instance to paint with
+     */
     public PreviewPanel(FOUserAgent foUserAgent, AWTRenderer renderer) {
         super(new GridLayout(1, 1));
         this.renderer = renderer;
@@ -296,15 +325,17 @@ public class PreviewPanel extends JPanel {
                 gridPanel.add(pagePanels[pg]);
             }
 
-            renderer.clearViewportList();
-
             try {
-                foUserAgent.getInputHandler().render(fop);
-                setPage(savedCurrentPage);
+                if (foUserAgent.getInputHandler() != null) {
+                    renderer.clearViewportList();
+                    foUserAgent.getInputHandler().render(fop);
+                }
             } catch (FOPException e) {
                 e.printStackTrace();
                 // FIXME Should show exception in gui - was reportException(e);
             }
+
+            setPage(savedCurrentPage);
         }
     }
 
@@ -321,6 +352,8 @@ public class PreviewPanel extends JPanel {
      * Returns the scale factor required in order to fit either the current
      * page within the current window or to fit two adjacent pages within
      * the display if the displaymode is continuous.
+     * @return the requested scale factor
+     * @throws FOPException in case of an error while fetching the PageViewport
      */
     public double getScaleToFitWindow() throws FOPException {
         Dimension extents = previewArea.getViewport().getExtentSize();
@@ -330,6 +363,8 @@ public class PreviewPanel extends JPanel {
 
     /**
      * As getScaleToFitWindow, but ignoring the Y axis.
+     * @return the requested scale factor
+     * @throws FOPException in case of an error while fetching the PageViewport
      */
     public double getScaleToFitWidth() throws FOPException {
         Dimension extents = previewArea.getViewport().getExtentSize();
@@ -341,6 +376,10 @@ public class PreviewPanel extends JPanel {
      * two adjacent pages within a window of the given height and width, depending
      * on the display mode. In order to ignore either dimension,
      * just specify it as Double.MAX_VALUE.
+     * @param viewWidth width of the view
+     * @param viewHeight height of the view
+     * @return the requested scale factor
+     * @throws FOPException in case of an error while fetching the PageViewport
      */
     public double getScaleToFit(double viewWidth, double viewHeight) throws FOPException {
         PageViewport pageViewport = renderer.getPageViewport(currentPage);

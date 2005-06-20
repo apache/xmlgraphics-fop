@@ -67,39 +67,64 @@ public class AWTRenderer extends Java2DRenderer implements Pageable, Printable {
     /** flag for debugging */
     public boolean debug;
 
+    /** If true, preview dialog is shown. */
+    public boolean dialogDisplay = true;
+
     /**
      * The preview dialog frame used for display of the documents. Also used as
      * the AWT Component for FontSetup in generating valid font measures.
      */
     protected PreviewDialog frame;
 
+    /**
+     * Creates a new AWTRenderer instance.
+     */
     public AWTRenderer() {
         translator = new Translator();
     }
 
+    /** @see org.apache.fop.render.Renderer#setUserAgent(org.apache.fop.apps.FOUserAgent) */
     public void setUserAgent(FOUserAgent foUserAgent) {
         super.setUserAgent(foUserAgent);
-        createPreviewDialog();
+        if (dialogDisplay) {
+            createPreviewDialog();
+        }
     }
 
+    /**
+     * Sets whether the preview dialog should be created and displayed when
+     * the rendering is finished.
+     * @param show If false, preview dialog is not shown. True by default
+     */
+    public void setPreviewDialogDisplayed(boolean show) {
+        dialogDisplay = show;
+    }
+
+    /** @see org.apache.fop.render.Renderer#renderPage(org.apache.fop.area.PageViewport) */
     public void renderPage(PageViewport pageViewport) 
             throws IOException, FOPException {
 
         super.renderPage(pageViewport);
-        frame.setInfo();
+        if (frame != null) {
+            frame.setInfo();
+        }
     }
 
+    /** @see org.apache.fop.render.Renderer#stopRenderer() */
     public void stopRenderer() throws IOException {
         super.stopRenderer();
-        frame.setStatus(translator.getString("Status.Show"));
+        if (frame != null) {
+            frame.setStatus(translator.getString("Status.Show"));
             frame.reload(); // Refreshes view of page
         }
+    }
 
-        /**
-         * Returns the dimensions of the specified page
-         * @exception FOPException If the page is out of range or has not been rendered.
-         */
-        public Dimension getPageImageSize(int pageNum) throws FOPException {
+    /**
+     * @return the dimensions of the specified page
+     * @param pageNum the page number
+     * @exception FOPException If the page is out of range or has not been rendered.
+     */
+    public Dimension getPageImageSize(int pageNum) throws FOPException {
         Rectangle2D bounds = getPageViewport(pageNum).getViewArea();
         pageWidth = (int) Math.round(bounds.getWidth() / 1000f);
         pageHeight = (int) Math.round(bounds.getHeight() / 1000f);

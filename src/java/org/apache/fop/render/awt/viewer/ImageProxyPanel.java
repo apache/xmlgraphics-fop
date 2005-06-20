@@ -54,21 +54,26 @@ public class ImageProxyPanel extends JPanel {
 
     /**
      * Panel constructor. Doesn't allocate anything until needed.
+     * @param renderer the AWTRenderer instance to use for painting
+     * @param page initial page number to show
      */
     public ImageProxyPanel(AWTRenderer renderer, int page) {
         this.renderer = renderer;
         this.page = page;
+        // Allows single panel to appear behind page display.
+        // Important for textured L&Fs.
+        setOpaque(false);
     }
 
     /**
-     * Returns the size of the page plus the border.
+     * @return the size of the page plus the border.
      */
     public Dimension getMinimumSize() {
         return getPreferredSize();
     }
 
     /**
-     * Returns the size of the page plus the border.
+     * @return the size of the page plus the border.
      */
     public Dimension getPreferredSize() {
         if (size == null) {
@@ -87,6 +92,7 @@ public class ImageProxyPanel extends JPanel {
 
     /**
      * Sets the number of the page to be displayed and refreshes the display.
+     * @param pg the page number
      */
     public void setPage(int pg) {
         if (page != pg) {
