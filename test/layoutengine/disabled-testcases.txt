@@ -7,6 +7,7 @@ keep-with-previous4.xml
 keep-with-previous5.xml
 multi-column1.xml
 normal-breaking4.xml
+normal-breaking5.xml
 table-border-collapse1.xml
 table-border-collapse2.xml
 table-fixed2.xml
