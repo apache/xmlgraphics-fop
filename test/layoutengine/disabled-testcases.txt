@@ -11,4 +11,3 @@ normal-breaking5.xml
 table-border-collapse1.xml
 table-border-collapse2.xml
 table-fixed2.xml
-wrapper1.xml
