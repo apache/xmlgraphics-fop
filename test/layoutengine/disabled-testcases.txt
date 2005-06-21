@@ -1,5 +1,6 @@
 external-graphic1.xml
 external-graphic2.xml
+inline1.xml
 keep-with-previous2.xml
 keep-with-previous3.xml
 keep-with-previous4.xml
@@ -9,3 +10,4 @@ normal-breaking4.xml
 table-border-collapse1.xml
 table-border-collapse2.xml
 table-fixed2.xml
+wrapper1.xml
