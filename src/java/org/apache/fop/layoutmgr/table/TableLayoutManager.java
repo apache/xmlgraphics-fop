@@ -116,12 +116,20 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         return iIndents;
     }
     
-    /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(org.apache.fop.layoutmgr.LayoutContext, int)
-     */
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         
-        //Body curLM; // currently active LM
+        LinkedList returnList = new LinkedList();
+        
+        if (!bBreakBeforeServed) {
+            try {
+                if (addKnuthElementsForBreakBefore(returnList)) {
+                    return returnList;
+                }
+            } finally {
+                bBreakBeforeServed = true;
+            }
+        }
 
         referenceIPD = context.getRefIPD();
         if (fobj.getInlineProgressionDimension().getOptimum().getEnum() != EN_AUTO) {
@@ -169,7 +177,6 @@ public class TableLayoutManager extends BlockStackingLayoutManager
 
         LinkedList returnedList = null;
         LinkedList contentList = new LinkedList();
-        LinkedList returnList = new LinkedList();
         //Position returnPosition = new NonLeafPosition(this, null);
         //Body prevLM = null;
 
@@ -179,7 +186,9 @@ public class TableLayoutManager extends BlockStackingLayoutManager
                                  stackSize));
         childLC.setRefIPD(context.getRefIPD());
 
-        contentLM = new TableContentLayoutManager(this);
+        if (contentLM == null) {
+            contentLM = new TableContentLayoutManager(this);
+        }
         returnedList = contentLM.getNextKnuthElements(childLC, alignment);
         if (childLC.isKeepWithNextPending()) {
             log.debug("TableContentLM signals pending keep-with-next");
@@ -261,6 +270,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             }
         }
         wrapPositionElements(contentList, returnList);
+        addKnuthElementsForBreakAfter(returnList);
         setFinished(true);
         return returnList;
     }

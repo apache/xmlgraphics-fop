@@ -261,7 +261,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             addAreas(alg, partCount, originalList, effectiveList);
         }
         
-        protected void startPart(BlockSequence list, boolean bIsFirstPage) {
+        protected void startPart(BlockSequence list, int breakClass) {
             if (curPV == null) {
                 throw new IllegalStateException("curPV must not be null");
             } else {
@@ -276,7 +276,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                         // the current BlockSequence, it could have a break
                         // condition that must be satisfied;
                         // otherwise, we may simply need a new page
-                        handleBreakTrait(bIsFirstPage ? list.getStartOn() : Constants.EN_PAGE);
+                        handleBreakTrait(breakClass);
                     }
                 }
                 pvProvider.setStartPageOfNextElementList(currentPageNum);

@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.Trait;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableBody;
 import org.apache.fop.fo.flow.TableRow;
@@ -63,6 +64,7 @@ public class TableContentLayoutManager {
     private LinkedList footerList;
     private int headerNetHeight = 0;
     private int footerNetHeight = 0;
+    private boolean firstBreakBeforeServed = false;
 
     private int startXOffset;
     private int usedBPD;
@@ -130,7 +132,7 @@ public class TableContentLayoutManager {
         KnuthBox headerAsFirst = null;
         KnuthBox headerAsSecondToLast = null;
         KnuthBox footerAsLast = null;
-        if (headerIter != null) {
+        if (headerIter != null && headerList == null) {
             this.headerList = getKnuthElementsForRowIterator(
                     headerIter, context, alignment, TableRowIterator.HEADER);
             ElementListUtils.removeLegalBreaks(this.headerList);
@@ -148,7 +150,7 @@ public class TableContentLayoutManager {
                 headerAsSecondToLast = box;
             }
         }
-        if (footerIter != null) {
+        if (footerIter != null && footerList == null) {
             this.footerList = getKnuthElementsForRowIterator(
                     footerIter, context, alignment, TableRowIterator.FOOTER);
             ElementListUtils.removeLegalBreaks(this.footerList);
@@ -190,11 +192,39 @@ public class TableContentLayoutManager {
         LinkedList returnList = new LinkedList();
         EffRow[] rowGroup = null;
         while ((rowGroup = iter.getNextRowGroup()) != null) {
+            //Check for break-before on the table-row at the start of the row group
+            TableRow rowFO = rowGroup[0].getTableRow(); 
+            if (rowFO != null && rowFO.getBreakBefore() != Constants.EN_AUTO) {
+                log.info("break-before found");
+                if (returnList.size() > 0) {
+                    KnuthElement last = (KnuthElement)returnList.getLast();
+                    if (last.isPenalty()) {
+                        KnuthPenalty pen = (KnuthPenalty)last;
+                        pen.setP(-KnuthPenalty.INFINITE);
+                        pen.setBreakClass(rowFO.getBreakBefore());
+                    }
+                } else {
+                    if (!firstBreakBeforeServed) {
+                        returnList.add(new KnuthPenalty(0, -KnuthPenalty.INFINITE, 
+                                false, rowFO.getBreakBefore(), new Position(getTableLM()), true));
+                        iter.backToPreviousRow();
+                        firstBreakBeforeServed = true;
+                        break;
+                    }
+                }
+            }
+            firstBreakBeforeServed = true;
+            
+            //Border resolution
             if (!isSeparateBorderModel()) {
                 resolveNormalBeforeAfterBordersForRowGroup(rowGroup, iter);
             }
+            
+            //Element list creation
             createElementsForRowGroup(context, alignment, bodyType, 
                         returnList, rowGroup);
+            
+            //Handle keeps
             if (context.isKeepWithNextPending()) {
                 log.debug("child LM (row group) signals pending keep-with-next");
             }
@@ -205,7 +235,24 @@ public class TableContentLayoutManager {
                     KnuthElement last = (KnuthElement)returnList.getLast();
                     if (last.isPenalty()) {
                         KnuthPenalty pen = (KnuthPenalty)last;
-                        pen.setP(KnuthPenalty.INFINITE);
+                        //Only honor keep if there's no forced break
+                        if (!pen.isForcedBreak()) {
+                            pen.setP(KnuthPenalty.INFINITE);
+                        }
+                    }
+                }
+            }
+            
+            //Check for break-after on the table-row at the end of the row group
+            rowFO = rowGroup[rowGroup.length - 1].getTableRow(); 
+            if (rowFO != null && rowFO.getBreakAfter() != Constants.EN_AUTO) {
+                log.info("break-after found");
+                if (returnList.size() > 0) {
+                    KnuthElement last = (KnuthElement)returnList.getLast();
+                    if (last.isPenalty()) {
+                        KnuthPenalty pen = (KnuthPenalty)last;
+                        pen.setP(-KnuthPenalty.INFINITE);
+                        pen.setBreakClass(rowFO.getBreakAfter());
                     }
                 }
             }
@@ -215,7 +262,11 @@ public class TableContentLayoutManager {
             //Remove last penalty
             KnuthElement last = (KnuthElement)returnList.getLast();
             if (last.isPenalty()) {
-                returnList.removeLast();
+                KnuthPenalty pen = (KnuthPenalty)last;
+                if (!pen.isForcedBreak()) {
+                    //Only remove if we don't signal a forced break
+                    returnList.removeLast();
+                }
             }
         }
         return returnList;
@@ -395,8 +446,24 @@ public class TableContentLayoutManager {
                         //Get the element list for the cell contents
                         LinkedList elems = primary.getCellLM().getNextKnuthElements(
                                                 childLC, alignment);
-                        primary.setElements(elems);
+                        //Temporary? Multiple calls in case of break conditions.
+                        //TODO Revisit when table layout is restartable
+                        while (!primary.getCellLM().isFinished()) {
+                            LinkedList additionalElems = primary.getCellLM().getNextKnuthElements(
+                                    childLC, alignment);
+                            elems.addAll(additionalElems);
+                        }
                         ElementListObserver.observe(elems, "table-cell", primary.getCell().getId());
+
+                        if (((KnuthElement)elems.getLast()).isPenalty()
+                                && ((KnuthPenalty)elems.getLast()).getP() 
+                                        == -KnuthElement.INFINITE) {
+                            // a descendant of this block has break-after
+                            log.warn("Descendant of table-cell signals break: " 
+                                    + primary.getCellLM().isFinished());
+                        }
+                        
+                        primary.setElements(elems);
                         
                         if (childLC.isKeepWithNextPending()) {
                             log.debug("child LM signals pending keep-with-next");
