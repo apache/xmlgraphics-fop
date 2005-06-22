@@ -129,7 +129,7 @@
               </fo:table-row>
             </fo:table-body>
           </fo:table>
-          <fo:table break-before="page">
+          <fo:table>
             <fo:table-column number-columns-repeated="2"/>
             <fo:table-body color="black">
               <fo:marker marker-class-name="test">body5</fo:marker>
