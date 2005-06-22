@@ -138,6 +138,16 @@ public class TableRow extends FObj {
         return id;
     }
 
+    /** @return the "break-after" property. */
+    public int getBreakAfter() {
+        return breakAfter;
+    }
+
+    /** @return the "break-before" property. */
+    public int getBreakBefore() {
+        return breakBefore;
+    }
+
     /** @return the "keep-with-previous" property. */
     public KeepProperty getKeepWithPrevious() {
         return keepWithPrevious;
