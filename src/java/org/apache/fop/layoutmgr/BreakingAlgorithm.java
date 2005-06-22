@@ -39,6 +39,12 @@ import org.apache.fop.traits.MinOptMax;
  * </pre> 
  */
 public abstract class BreakingAlgorithm {
+
+    /** the logger */
+    protected static Log log = LogFactory.getLog(BreakingAlgorithm.class);
+    
+    protected static final int INFINITE_RATIO = 1000;
+
     // parameters of Knuth's algorithm:
     // penalty value for flagged penalties
     private int flaggedPenalty = 50;
@@ -110,10 +116,6 @@ public abstract class BreakingAlgorithm {
 
     protected BestRecords best;
     private KnuthNode[] positions;
-
-    protected static final int INFINITE_RATIO = 1000;
-
-    protected static Log log = LogFactory.getLog(KnuthParagraph.class);
 
     public BreakingAlgorithm(int align, int alignLast,
                              boolean first) {
