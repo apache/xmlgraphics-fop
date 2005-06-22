@@ -28,6 +28,7 @@ import org.apache.fop.layoutmgr.AbstractBreaker.PageBreakPosition;
 import org.apache.fop.traits.MinOptMax;
 
 class PageBreakingAlgorithm extends BreakingAlgorithm {
+
     private LayoutManager topLevelLM;
     private PageSequenceLayoutManager.PageViewportProvider pvProvider;
     private LinkedList pageBreaks = null;
@@ -497,7 +498,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     }
 
     /**
-     * Return the adjust ration needed to make up for the difference. A ration of 
+     * Return the adjust ration needed to make up for the difference. A ratio of 
      * <ul>
      *    <li>0 means that the break has the exact right width</li>
      *    <li>&gt;= -1 && &lt; 0  means that the break is to wider than the line, 
@@ -756,6 +757,9 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             bpd = pv.getBodyRegion().getBPD(); 
         } else {
             bpd = super.getLineWidth(line);
+        }
+        if (log.isTraceEnabled()) {
+            log.trace("getLineWidth(" + line + ") -> " + bpd);
         }
         return bpd;
     }
