@@ -18,6 +18,8 @@
 
 package org.apache.fop.layoutmgr;
 
+import org.apache.fop.fo.Constants;
+
 /**
  * An instance of this class represents information about a feasible
  * breaking point; it does not represent any piece of content.
@@ -38,6 +40,7 @@ package org.apache.fop.layoutmgr;
  */
 public class KnuthPenalty extends KnuthElement {
 
+    /** Used for flagged penalties. See Knuth algorithm. */
     public static final int FLAGGED_PENALTY = 50;
 
     private int penalty;
@@ -59,6 +62,16 @@ public class KnuthPenalty extends KnuthElement {
         bFlagged = f;
     }
 
+    /**
+     * Create a new KnuthPenalty.
+     *
+     * @param w the width of this penalty
+     * @param p the penalty value of this penalty
+     * @param f is this penalty flagged?
+     * @param iBreakClass the break class of this penalty (one of the break-* constants)
+     * @param pos the Position stored in this penalty
+     * @param bAux is this penalty auxiliary?
+     */
     public KnuthPenalty(int w, int p, boolean f,
             int iBreakClass, Position pos, boolean bAux) {
         super(w, pos, bAux);
@@ -67,6 +80,7 @@ public class KnuthPenalty extends KnuthElement {
         breakClass = iBreakClass;
     }
 
+    /** @see org.apache.fop.layoutmgr.KnuthElement#isPenalty() */
     public boolean isPenalty() {
         return true;
     }
@@ -86,19 +100,27 @@ public class KnuthPenalty extends KnuthElement {
         this.penalty = p;
     }
     
-    /**
-     * Return true is this penalty is a flagged one.
-     */
+    /** @return true is this penalty is a flagged one. */
     public boolean isFlagged() {
         return bFlagged;
     }
 
+    /** @see org.apache.fop.layoutmgr.KnuthElement#isForcedBreak() */
     public boolean isForcedBreak() {
         return penalty == -KnuthElement.INFINITE;
     }
     
+    /** @return the break class of this penalty (one of the break-* constants) */
     public int getBreakClass() {
         return breakClass;
+    }
+    
+    /**
+     * Sets the break class for this penalty.
+     * @param cl the break class (one of the break-* constants)
+     */
+    public void setBreakClass(int cl) {
+        this.breakClass = cl;
     }
     
     /** @see java.lang.Object#toString() */
@@ -123,7 +145,23 @@ public class KnuthPenalty extends KnuthElement {
         sb.append(" w=");
         sb.append(getW());
         if (isForcedBreak()) {
-            sb.append(" (forced break)");
+            sb.append(" (forced break");
+            switch (getBreakClass()) {
+            case Constants.EN_PAGE:
+                sb.append(", page");
+                break;
+            case Constants.EN_COLUMN:
+                sb.append(", column");
+                break;
+            case Constants.EN_EVEN_PAGE:
+                sb.append(", even page");
+                break;
+            case Constants.EN_ODD_PAGE:
+                sb.append(", odd page");
+                break;
+            default:
+            }
+            sb.append(")");
         }
         return sb.toString();
     }
