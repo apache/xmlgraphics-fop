@@ -822,6 +822,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             breakBefore = ((org.apache.fop.fo.flow.Block) fobj).getBreakBefore();
         } else if (fobj instanceof org.apache.fop.fo.flow.BlockContainer) {
             breakBefore = ((org.apache.fop.fo.flow.BlockContainer) fobj).getBreakBefore();
+        } else if (fobj instanceof org.apache.fop.fo.flow.Table) {
+            breakBefore = ((org.apache.fop.fo.flow.Table) fobj).getBreakBefore();
         }
         if (breakBefore == EN_PAGE
                 || breakBefore == EN_COLUMN 
@@ -849,6 +851,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             breakAfter = ((org.apache.fop.fo.flow.Block) fobj).getBreakAfter();
         } else if (fobj instanceof org.apache.fop.fo.flow.BlockContainer) {
             breakAfter = ((org.apache.fop.fo.flow.BlockContainer) fobj).getBreakAfter();
+        } else if (fobj instanceof org.apache.fop.fo.flow.Table) {
+            breakAfter = ((org.apache.fop.fo.flow.Table) fobj).getBreakAfter();
         }
         if (breakAfter == EN_PAGE
                 || breakAfter == EN_COLUMN

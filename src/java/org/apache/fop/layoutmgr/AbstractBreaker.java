@@ -127,7 +127,7 @@ public abstract class AbstractBreaker {
         return (blockLists.size() == 0);
     }
     
-    protected void startPart(BlockSequence list, boolean bIsFirstPage) {
+    protected void startPart(BlockSequence list, int breakClass) {
         //nop
     }
     
@@ -183,7 +183,7 @@ public abstract class AbstractBreaker {
             PageBreakingAlgorithm alg = new PageBreakingAlgorithm(getTopLevelLM(),
                     getPageViewportProvider(),
                     alignment, alignmentLast, footnoteSeparatorLength);
-            int iOptPageNumber;
+            int iOptPageCount;
 
             BlockSequence effectiveList;
             if (alignment == Constants.EN_JUSTIFY) {
@@ -194,16 +194,16 @@ public abstract class AbstractBreaker {
                 effectiveList = blockList;
             }
 
-            //iOptPageNumber = alg.firstFit(effectiveList, flowBPD, 1, true);
+            //iOptPageCount = alg.firstFit(effectiveList, flowBPD, 1, true);
             alg.setConstantLineWidth(flowBPD);
-            iOptPageNumber = alg.findBreakingPoints(effectiveList, /*flowBPD,*/
-                    1, true, true);
-            log.debug("PLM> iOptPageNumber= " + iOptPageNumber
+            iOptPageCount = alg.findBreakingPoints(effectiveList, /*flowBPD,*/
+                        1, true, true);
+            log.debug("PLM> iOptPageCount= " + iOptPageCount
                     + " pageBreaks.size()= " + alg.getPageBreaks().size());
 
             
             //*** Phase 3: Add areas ***
-            doPhase3(alg, iOptPageNumber, blockList, effectiveList);
+            doPhase3(alg, iOptPageCount, blockList, effectiveList);
         }
     }
 
@@ -233,20 +233,38 @@ public abstract class AbstractBreaker {
         int endElementIndex = 0;
         for (int p = 0; p < partCount; p++) {
             PageBreakPosition pbp = (PageBreakPosition) alg.getPageBreaks().get(p);
-            endElementIndex = pbp.getLeafPos();
-            log.debug("PLM> part: " + (p + 1)
-                    + ", break at position " + endElementIndex);
 
-            startPart(effectiveList, (p == 0));
+            //Check the last break position for forced breaks
+            int lastBreakClass;
+            if (p == 0) {
+                lastBreakClass = effectiveList.getStartOn();
+            } else {
+                KnuthElement lastBreakElement = effectiveList.getElement(endElementIndex);
+                if (lastBreakElement.isPenalty()) {
+                    KnuthPenalty pen = (KnuthPenalty)lastBreakElement;
+                    lastBreakClass = pen.getBreakClass();
+                } else {
+                    lastBreakClass = Constants.EN_AUTO;
+                }
+            }
             
-            int displayAlign = getCurrentDisplayAlign();
-            
+            //the end of the new part
+            endElementIndex = pbp.getLeafPos();
+
             // ignore the first elements added by the
             // PageSequenceLayoutManager
             startElementIndex += (startElementIndex == 0) 
                     ? effectiveList.ignoreAtStart
                     : 0;
 
+            log.debug("PLM> part: " + (p + 1)
+                    + ", start at pos " + startElementIndex
+                    + ", break at pos " + endElementIndex);
+
+            startPart(effectiveList, lastBreakClass);
+            
+            int displayAlign = getCurrentDisplayAlign();
+            
             // ignore the last elements added by the
             // PageSequenceLayoutManager
             endElementIndex -= (endElementIndex == (originalList.size() - 1)) 

@@ -24,6 +24,8 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthBox;
@@ -57,6 +59,7 @@ public class TableStepper {
     private int[] borderAfter;
     private boolean rowBacktrackForLastStep;
     private boolean[] keepWithNextSignals;
+    private boolean[] forcedBreaks;
     
     /**
      * Main constructor
@@ -77,7 +80,21 @@ public class TableStepper {
         borderBefore = new int[columnCount];
         borderAfter = new int[columnCount];
         keepWithNextSignals = new boolean[columnCount];
+        forcedBreaks = new boolean[columnCount];
         Arrays.fill(end, -1);
+    }
+    
+    private void clearBreakCondition() {
+        Arrays.fill(forcedBreaks, false);
+    }
+    
+    private boolean isBreakCondition() {
+        for (int i = 0; i < forcedBreaks.length; i++) {
+            if (forcedBreaks[i]) {
+                return true;
+            }
+        }
+        return false;
     }
     
     private EffRow getActiveRow() {
@@ -147,6 +164,7 @@ public class TableStepper {
             widths[column] = 0;
             startRow[column] = activeRow;
             keepWithNextSignals[column] = false;
+            forcedBreaks[column] = false;
         } else if (gu.isPrimary()) {
             PrimaryGridUnit pgu = (PrimaryGridUnit)gu;
             boolean makeBoxForWholeRow = false;
@@ -184,6 +202,7 @@ public class TableStepper {
             widths[column] = 0;
             startRow[column] = activeRow;
             keepWithNextSignals[column] = false;
+            forcedBreaks[column] = false;
         }
     }
     
@@ -303,6 +322,10 @@ public class TableStepper {
             if (signalKeepWithNext || getTableLM().mustKeepTogether()) {
                 p = KnuthPenalty.INFINITE;
             }
+            if (isBreakCondition()) {
+                p = -KnuthPenalty.INFINITE; //Overrides any keeps (see 4.8 in XSL 1.0)
+                clearBreakCondition();
+            }
             returnList.add(new KnuthPenalty(effPenaltyLen, p, false, penaltyPos, false));
 
             log.debug("step=" + step + " (+" + increase + ")"
@@ -321,11 +344,20 @@ public class TableStepper {
             //we have to signal the still pending last keep-with-next using the LayoutContext.
             context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
         }
+        if (isBreakCondition()) {
+            ((KnuthPenalty)returnList.getLast()).setP(-KnuthPenalty.INFINITE);
+        }
         lastTCPos.setFlag(TableContentPosition.LAST_IN_ROWGROUP, true);
         return returnList;
     }
     
     private int getNextStep(int lastStep) {
+        //Check for forced break conditions
+        /*
+        if (isBreakCondition()) {
+            return -1;
+        }*/
+        
         int[] backupWidths = new int[start.length];
         System.arraycopy(widths, 0, backupWidths, 0, backupWidths.length);
 
@@ -349,6 +381,11 @@ public class TableStepper {
 
         if (rowPendingIndicator == 0) {
             if (activeRow < rowGroup.length - 1) {
+                TableRow rowFO = getActiveRow().getTableRow();
+                if (rowFO != null && rowFO.getBreakAfter() != Constants.EN_AUTO) {
+                    log.warn("break-after ignored on table-row because of row spanning "
+                            + "in progress (See XSL 1.0, 7.19.1)");
+                }
                 activeRow++;
                 log.debug("===> new row: " + activeRow);
                 initializeElementLists();
@@ -356,6 +393,11 @@ public class TableStepper {
                     if (end[i] < 0) {
                         backupWidths[i] = 0;
                     }
+                }
+                rowFO = getActiveRow().getTableRow();
+                if (rowFO != null && rowFO.getBreakBefore() != Constants.EN_AUTO) {
+                    log.warn("break-before ignored on table-row because of row spanning "
+                            + "in progress (See XSL 1.0, 7.19.2)");
                 }
             }
         }
@@ -370,7 +412,11 @@ public class TableStepper {
                 end[i]++;
                 KnuthElement el = (KnuthElement)elementLists[i].get(end[i]);
                 if (el.isPenalty()) {
-                    if (el.getP() < KnuthElement.INFINITE) {
+                    if (el.getP() <= -KnuthElement.INFINITE) {
+                        log.warn("FORCED break encountered!");
+                        forcedBreaks[i] = true;
+                        break;
+                    } else if (el.getP() < KnuthElement.INFINITE) {
                         //First legal break point
                         break;
                     }

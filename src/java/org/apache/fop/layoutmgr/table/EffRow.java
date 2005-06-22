@@ -21,6 +21,7 @@ package org.apache.fop.layoutmgr.table;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -61,6 +62,11 @@ public class EffRow {
      */
     public int getBodyType() {
         return this.bodyType;
+    }
+    
+    /** @return the table-row FO for this EffRow, or null if there is no table-row. */
+    public TableRow getTableRow() {
+        return getGridUnit(0).getRow();
     }
     
     /** @return the calculated height for this EffRow. */
