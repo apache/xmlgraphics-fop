@@ -1176,7 +1176,7 @@ public class PDFRenderer extends PrintRenderer {
             //borders and background in the old coordinate system
             handleBlockTraits(bv);
 
-            CTM tempctm = new CTM(containingIPPosition, currentBPPosition + containingBPPosition);
+            CTM tempctm = new CTM(containingIPPosition, currentBPPosition);
             ctm = tempctm.multiply(ctm);
             
             //Now adjust for border/padding
