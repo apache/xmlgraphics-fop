@@ -106,6 +106,15 @@ public abstract class AbstractBreaker {
     protected abstract LayoutManager getCurrentChildLM();
     
     /**
+     * Controls the behaviour of the algorithm in cases where the first element of a part
+     * overflows a line/page. 
+     * @return true if the algorithm should try to send the element to the next line/page.
+     */
+    protected boolean isPartOverflowRecoveryActivated() {
+        return true;
+    }
+
+    /**
      * Returns the PageViewportProvider if any. PageBreaker overrides this method because each
      * page may have a different available BPD which needs to be accessible to the breaking
      * algorithm.
@@ -129,6 +138,13 @@ public abstract class AbstractBreaker {
     
     protected void startPart(BlockSequence list, int breakClass) {
         //nop
+    }
+    
+    /**
+     * This method is called when no content is available for a part. Used to force empty pages.
+     */
+    protected void handleEmptyContent() {
+        //nop    
     }
     
     protected abstract void finishPart(PageBreakingAlgorithm alg, PageBreakPosition pbp);
@@ -182,7 +198,8 @@ public abstract class AbstractBreaker {
                     + "), flow BPD =" + flowBPD);
             PageBreakingAlgorithm alg = new PageBreakingAlgorithm(getTopLevelLM(),
                     getPageViewportProvider(),
-                    alignment, alignmentLast, footnoteSeparatorLength);
+                    alignment, alignmentLast, footnoteSeparatorLength,
+                    isPartOverflowRecoveryActivated());
             int iOptPageCount;
 
             BlockSequence effectiveList;
@@ -328,6 +345,9 @@ public abstract class AbstractBreaker {
 
                 addAreas(new KnuthPossPosIter(effectiveList,
                         startElementIndex, endElementIndex + 1), childLC);
+            } else {
+                //no content for this part
+                handleEmptyContent();
             }
 
             finishPart(alg, pbp);

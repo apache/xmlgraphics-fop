@@ -55,6 +55,9 @@ public class Page implements Serializable, Cloneable {
     // temporary map of unresolved objects used when serializing the page
     private HashMap unresolved = null;
 
+    /** Set to true to make this page behave as if it were not empty. */
+    private boolean fakeNonEmpty = false;
+    
     /**
      *  Empty constructor, for cloning 
      */
@@ -109,6 +112,13 @@ public class Page implements Serializable, Cloneable {
        }
     }
 
+    /**
+     * Call this method to force this page to pretend not to be empty.
+     */
+    public void fakeNonEmpty() {
+        this.fakeNonEmpty = true;
+    }
+    
     /**
      * Creates a RegionViewport Area object for this pagination Region.
      * @param reldims relative dimensions
@@ -197,10 +207,11 @@ public class Page implements Serializable, Cloneable {
      * @return whether any FOs have been added to the body region
      */
     public boolean isEmpty() {
-        if (regionBody == null) {
+        if (fakeNonEmpty) {
+            return false;
+        } else if (regionBody == null) {
             return true;
-        }
-        else {
+        } else {
             BodyRegion body = (BodyRegion)regionBody.getRegionReference();
             return body.isEmpty();
         }

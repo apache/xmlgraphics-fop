@@ -236,6 +236,12 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
             this.displayAlign = displayAlign;
         }
 
+        /** @see org.apache.fop.layoutmgr.AbstractBreaker#isPartOverflowRecoveryActivated() */
+        protected boolean isPartOverflowRecoveryActivated() {
+            //For side regions, this must be disabled because of wanted overflow.
+            return false;
+        }
+
         public boolean isOverflow() {
             return this.overflow;
         }

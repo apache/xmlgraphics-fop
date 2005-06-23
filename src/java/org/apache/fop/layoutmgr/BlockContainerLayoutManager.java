@@ -447,6 +447,12 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             this.ipd = ipd;
         }
 
+        /** @see org.apache.fop.layoutmgr.AbstractBreaker#isPartOverflowRecoveryActivated() */
+        protected boolean isPartOverflowRecoveryActivated() {
+            //For block-containers, this must be disabled because of wanted overflow.
+            return false;
+        }
+
         public int getDifferenceOfFirstPart() {
             PageBreakPosition pbp = (PageBreakPosition)this.deferredAlg.getPageBreaks().getFirst();
             return pbp.difference;
