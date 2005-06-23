@@ -286,6 +286,11 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             firstPart = false;
         }
         
+        /** @see org.apache.fop.layoutmgr.AbstractBreaker#handleEmptyContent() */
+        protected void handleEmptyContent() {
+            curPV.getPage().fakeNonEmpty();
+        }
+        
         protected void finishPart(PageBreakingAlgorithm alg, PageBreakPosition pbp) {
             // add footnote areas
             if (pbp.footnoteFirstListIndex < pbp.footnoteLastListIndex

@@ -273,7 +273,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                                       int indent, int fillerWidth,
                                       int lh, int ld, int fl, int ms, boolean first,
                                       LineLayoutManager llm) {
-            super(textAlign, textAlignLast, first);
+            super(textAlign, textAlignLast, first, false);
             pageAlignment = pageAlign;
             textIndent = indent;
             fillerMinWidth = fillerWidth;

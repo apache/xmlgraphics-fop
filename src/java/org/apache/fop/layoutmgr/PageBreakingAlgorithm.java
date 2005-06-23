@@ -67,8 +67,9 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     public PageBreakingAlgorithm(LayoutManager topLevelLM,
                                  PageSequenceLayoutManager.PageViewportProvider pvProvider,
                                  int alignment, int alignmentLast,
-                                 MinOptMax fnSeparatorLength) {
-        super(alignment, alignmentLast, true);
+                                 MinOptMax fnSeparatorLength,
+                                 boolean partOverflowRecovery) {
+        super(alignment, alignmentLast, true, partOverflowRecovery);
         this.topLevelLM = topLevelLM;
         this.pvProvider = pvProvider;
         best = new BestPageRecords();

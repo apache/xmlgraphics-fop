@@ -21,6 +21,7 @@ package org.apache.fop.layoutmgr;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.layoutmgr.PageBreakingAlgorithm.KnuthPageNode;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -44,6 +45,8 @@ public abstract class BreakingAlgorithm {
     protected static Log log = LogFactory.getLog(BreakingAlgorithm.class);
     
     protected static final int INFINITE_RATIO = 1000;
+
+    private static final int MAX_RECOVERY_ATTEMPTS = 50;
 
     // parameters of Knuth's algorithm:
     // penalty value for flagged penalties
@@ -117,57 +120,66 @@ public abstract class BreakingAlgorithm {
     protected BestRecords best;
     private KnuthNode[] positions;
 
+    /** @see isPartOverflowRecoveryActivated() */
+    private boolean partOverflowRecoveryActivated = true;
+
     public BreakingAlgorithm(int align, int alignLast,
-                             boolean first) {
+                             boolean first, boolean partOverflowRecovery) {
         alignment = align;
         alignmentLast = alignLast;
         bFirst = first;
+        this.partOverflowRecoveryActivated = partOverflowRecovery;
         this.best = new BestRecords();
     }
 
 
     // this class represent a feasible breaking point
     protected class KnuthNode {
-        // index of the breakpoint represented by this node
+        /** index of the breakpoint represented by this node */
         public int position;
 
-        // number of the line ending at this breakpoint
+        /** number of the line ending at this breakpoint */
         public int line;
 
-        // fitness class of the line ending at his breakpoint
+        /** fitness class of the line ending at his breakpoint */
         public int fitness;
 
-        // accumulated width of the KnuthElements
+        /** accumulated width of the KnuthElements */
         public int totalWidth;
 
-        // accumulated stretchability of the KnuthElements
+        /** accumulated stretchability of the KnuthElements */
         public int totalStretch;
 
-        // accumulated shrinkability of the KnuthElements
+        /** accumulated shrinkability of the KnuthElements */
         public int totalShrink;
 
-        // adjustment ratio if the line ends at this breakpoint
+        /** adjustment ratio if the line ends at this breakpoint */
         public double adjustRatio;
 
-        // available stretch of the line ending at this breakpoint
+        /** available stretch of the line ending at this breakpoint */
         public int availableShrink;
 
-        // available shrink of the line ending at this breakpoint
+        /** available shrink of the line ending at this breakpoint */
         public int availableStretch;
 
-        // difference between target and actual line width
+        /** difference between target and actual line width */
         public int difference;
 
-        // minimum total demerits up to this breakpoint
+        /** minimum total demerits up to this breakpoint */
         public double totalDemerits;
 
-        // best node for the preceding breakpoint
+        /** best node for the preceding breakpoint */
         public KnuthNode previous;
 
-        // next possible node in the same line 
+        /** next possible node in the same line */ 
         public KnuthNode next;
 
-
+        /**
+         * Holds the number of subsequent recovery attempty that are made to get content fit
+         * into a line.
+         */
+        public int fitRecoveryCounter = 0;
+        
         public KnuthNode(int position, int line, int fitness,
                          int totalWidth, int totalStretch, int totalShrink,
                          double adjustRatio, int availableShrink, int availableStretch, int difference,
@@ -219,7 +231,7 @@ public abstract class BreakingAlgorithm {
                               int availableShrink, int availableStretch,
                               int difference, int fitness) {
             if (demerits > bestDemerits[fitness]) {
-                log.error("New demerits value greter than the old one");
+                log.error("New demerits value greater than the old one");
             }
             bestDemerits[fitness] = demerits;
             bestNode[fitness] = node;
@@ -282,7 +294,22 @@ public abstract class BreakingAlgorithm {
         }
     }
 
-
+    /**
+     * @return the number of times the algorithm should try to move overflowing content to the
+     * next line/page.
+     */
+    protected int getMaxRecoveryAttempts() {
+        return MAX_RECOVERY_ATTEMPTS;
+    }
+    
+    /**
+     * Controls the behaviour of the algorithm in cases where the first element of a part
+     * overflows a line/page. 
+     * @return true if the algorithm should try to send the element to the next line/page.
+     */
+    protected boolean isPartOverflowRecoveryActivated() {
+        return this.partOverflowRecoveryActivated;
+    }
 
     public abstract void updateData1(int total, double demerits) ;
 
@@ -367,7 +394,25 @@ public abstract class BreakingAlgorithm {
                     return 0;
                 }
                 if (lastTooShort == null || lastForced.position == lastTooShort.position) {
-                    lastForced = lastTooLong;
+                    if (isPartOverflowRecoveryActivated()) {
+                        // content would overflow, insert empty line/page and try again
+                        KnuthNode node = createNode(
+                                lastTooLong.previous.position, lastTooLong.previous.line + 1, 1,
+                                0, 0, 0,
+                                0, 0, 0,
+                                0, 0, lastTooLong.previous);
+                        lastForced = node;
+                        node.fitRecoveryCounter = lastTooLong.previous.fitRecoveryCounter + 1;
+                        log.debug("first part doesn't fit into line, recovering: " 
+                                + node.fitRecoveryCounter);
+                        if (node.fitRecoveryCounter > getMaxRecoveryAttempts()) {
+                            throw new RuntimeException("Some content could not fit "
+                                    + "into a line/page after " + getMaxRecoveryAttempts() 
+                                    + " attempts. Giving up to avoid an endless loop.");
+                        }
+                    } else {
+                        lastForced = lastTooLong;
+                    }
                 } else {
                     lastForced = lastTooShort;
                 }
