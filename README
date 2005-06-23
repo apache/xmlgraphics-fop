@@ -13,8 +13,9 @@ FOP README
     
     Please report bugs to bugzilla at http://issues.apache.org/bugzilla/
 
-    A mailing list for how to use FOP is at fop-user@xml.apache.org (subscribe 
-    at fop-dev-subscribe@xml.apache.org)
+    A mailing list for how to use FOP is at fop-users@xmlgraphics.apache.org
+    (subscribe by sending an empty mail to 
+    fop-users-subscribe@xmlgraphics.apache.org)
 
     Before you post any questions, please have a look at the FAQ at
     http://xml.apache.org/fop/fo.html.
