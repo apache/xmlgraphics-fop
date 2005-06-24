@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no"?>
 <!--
-  Copyright 1999-2004 The Apache Software Foundation
+  Copyright 1999-2005 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,8 +15,7 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
-    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/document-v12.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
     <title>FOP Development: Managing Documentation</title>
@@ -25,9 +24,9 @@
   <body>
     <section id="general">
       <title>General Information</title>
-      <p>All raw documentation content is managed in the FOP CVS repository.
+      <p>All raw documentation content is managed in the FOP SVN repository.
 Updates should be committed to the repository, then the repository files are used to generate usable output.
-The remaining discussions on this page assume that the CVS repository is the starting place for processing.
+The remaining discussions on this page assume that the SVN repository is the starting place for processing.
 The path to the documentation is xml-fop/src/documentation/content/xdocs.</p>
       <note>All documentation is maintained on the trunk.
 Although we are currently maintaining two sets of code (trunk and maintenance), there is only one set of documentation.
@@ -67,9 +66,9 @@ Maintenance branch releases either copy the trunk content to the maintenance bra
           </tr>
           <tr>
             <td>Developer commits code to FOP repository.</td>
-            <td>FOP repository (cvs) at cvs.apache.org/home/cvs/xml-fop</td>
+            <td>FOP repository (SVN)</td>
             <td>Raw XML and other content</td>
-            <td><link href="http://cvs.apache.org/viewcvs.cgi/xml-fop/src/documentation/content/xdocs/">ViewCVS</link></td>
+            <td><link href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/trunk/src/documentation/content/xdocs/">ViewCVS</link></td>
           </tr>
           <tr>
             <td>Developer builds documentation and commits it to xml-site.</td>

@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no"?>
 <!--
-  Copyright 1999-2004 The Apache Software Foundation
+  Copyright 1999-2005 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,8 +15,7 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
-    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/document-v12.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
     <title>FOP: Getting Help</title>
@@ -72,6 +71,7 @@ If so, please do not post a mailing list question or report another issue, as th
     <section id="user-mailing-list">
       <title>Submit Question to FOP User Mailing List</title>
       <p>See <link href="maillist.html#fop-user">FOP User Mailing List</link> for details.</p>
+      <note label="Important">Please don't write to any developer directly. Only if you submit questions to the <link href="maillist.html#fop-user">FOP User Mailing List</link> will other FOP users be able to profit from answers given to your question. Another point is that a developer may have gone inactive or is on holidays in which case you may not get an answer in time.</note>
     </section>
     <section id="enter-issue">
       <title>Enter an Issue Report</title>

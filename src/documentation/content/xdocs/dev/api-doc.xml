@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 1999-2004 The Apache Software Foundation
+  Copyright 1999-2005 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,8 +15,7 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
-    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/document-v12.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
     <title>FOP Development: API Documentation (javadocs)</title>
@@ -27,12 +26,12 @@
       <title>On-line Access (through Gump)</title>
       <p>FOP (and many other Apache projects) use <link href="http://gump.apache.org/">Apache Gump</link> to do a test build several times each day. One of the useful byproducts of this process is that javadocs can be created and made available.</p>
       <p>First, determine which line of development code you wish to see. If you don't know, you probably want the "Maintenance Branch", which is the line that currently produces FOP releases. See <link href="index.html#lines">Development Lines</link> for more details.</p>
-      <warning>Javadocs for both development lines are made from current CVS code, and are not tied to any particular release. Both the documentation and the API may be different, even if you are working with the correct branch. Currently, the only way to obtain API documentation for a specific release is to <link href="#self-built">build it yourself</link>.</warning>
+      <warning>Javadocs for both development lines are made from current SVN code, and are not tied to any particular release. Both the documentation and the API may be different, even if you are working with the correct branch. Currently, the only way to obtain API documentation for a specific release is to <link href="#self-built">build it yourself</link>.</warning>
       <ul>
         <li><link href="http://gump.apache.org/javadoc/xml-fop-maintenance/build/javadocs/index.html">Javadocs for Maintenance Branch</link></li>
         <li><link href="http://gump.apache.org/javadoc/xml-fop/build/javadocs/index.html">Javadocs for Trunk (Redesign)</link></li>
       </ul>
-      <note>If the links return an "Object not found!" message or otherwise do not work properly, it is probably because of a build error. Please raise a question on the <link href="../maillist.html#fop-user">fop-user mailing list</link> so that any problems can be fixed before the next build.</note>
+      <note>If the links return an "Object not found!" message or otherwise do not work properly, it is probably because of a build error. Please raise a question on the <link href="../maillist.html#fop-user">FOP User Mailing List</link> so that any problems can be fixed before the next build.</note>
     </section>
     <section id="self-built">
       <title>Building them Yourself</title>
