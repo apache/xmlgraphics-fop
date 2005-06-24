@@ -27,6 +27,7 @@ import java.util.Set;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.flow.Marker;
+import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.properties.PropertyMaker;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
@@ -146,6 +147,21 @@ public abstract class FObj extends FONode implements Constants {
         }
     }
 
+     /**
+      * Checks the block-level FO for correct use of the span attribute.
+      * Used by fo:block and fo:block-container.
+      * @param pList the property list to determine if the span is explicit
+      */
+     protected void checkSpanProperty(PropertyList pList) {
+         if (pList.getExplicit(PR_SPAN) != null) {
+             if (!(getParent() instanceof Flow)) {
+                 attributeWarning("Ignoring span attribute on " + getName() 
+                         + " as it's not a direct child of an fo:flow."
+                         + " (see XSL 1.0, 7.20.4)");
+             }
+         }
+     }
+     
     /**
      * Returns Out Of Line FO Descendant indicator.
      * @return true if Out of Line FO or Out Of Line descendant, false otherwise

@@ -160,6 +160,8 @@ public class Block extends FObjMixed {
         whiteSpaceCollapse = pList.get(PR_WHITE_SPACE_COLLAPSE).getEnum();
         widows = pList.get(PR_WIDOWS).getNumeric();
         wrapOption = pList.get(PR_WRAP_OPTION).getEnum();
+     
+        checkSpanProperty(pList);
     }
 
     /**
