@@ -15,8 +15,7 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
-    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/document-v12.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
     <title>FOP: Mailing List Resources</title>
@@ -44,7 +43,7 @@ If you are using Microsoft Outlook, this setting can be found at the "Mail Forma
         <p>To review the archives, you have several options:</p>
         <ul>
         
-          <li>The <link href="http://mail-archives.eu.apache.org/mod_mbox/xmlgraphics-fop-users/">Apache Mailing List archive</link> (mod_mbox archive).</li>
+          <li>The <link href="http://mail-archives.apache.org/mod_mbox/xmlgraphics-fop-users/">Apache Mailing List archive</link> (mod_mbox archive).</li>
           <li>The <link href="http://xmlgraphics.apache.org/mail/fop-users/">Apache Mailing List archive</link> (gzip files).</li>
           <li>The <jump href="http://marc.theaimsgroup.com/?l=fop-user&amp;r=1&amp;w=2">Mailing list ARChives </jump> (MARC) at the AIMS group (search).</li>
           <li>The <jump href="http://mail-archives.apache.org/eyebrowse/SummarizeList?listName=fop-user@xml.apache.org">Apache Eyebrowse</jump> archive (search, list by date, author, subject, or thread).</li>
@@ -55,7 +54,7 @@ If you are using Microsoft Outlook, this setting can be found at the "Mail Forma
         <title>Subscription Information</title>
         <ul>
           <li>See <link href="http://xmlgraphics.apache.org/mail.html">Apache XML Graphics Mailing Lists</link> for detailed subscription information.</li>
-          <li>To subscribe (digest only): Send email to <link href="mailto:fop-user-digest-subscribe@xmlgraphics.apache.org">fop-users-digest-subscribe@xmlgraphics.apache.org</link>.</li>
+          <li>To subscribe (digest only): Send email to <link href="mailto:fop-users-digest-subscribe@xmlgraphics.apache.org">fop-users-digest-subscribe@xmlgraphics.apache.org</link>.</li>
           <li>To subscribe fully: Send email to <link href="mailto:fop-users-subscribe@xmlgraphics.apache.org">fop-users-subscribe@xmlgraphics.apache.org</link>.</li>
           <li>For standard help: Send email to <link href="mailto:fop-users-help@xmlgraphics.apache.org">fop-users-help@xmlgraphics.apache.org</link>.</li>
           <li>To unsubscribe: Send email to <link href="mailto:fop-users-unsubscribe@xmlgraphics.apache.org">fop-users-unsubscribe@xmlgraphics.apache.org</link>.</li>

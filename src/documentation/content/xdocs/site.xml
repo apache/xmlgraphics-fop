@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-  Copyright 2002-2004 The Apache Software Foundation
+  Copyright 2002-2005 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
   <about label="About">
     <index label="Introduction" href="index.html"/>
     <license label="Release Notes" href="relnotes.html"/>
-    <download label="Download" href="http://www.apache.org/dyn/closer.cgi/xml/fop/"/>
+    <download label="Download" href="download.html"/>
     <help label="Getting Help" href="gethelp.html"/>
     <faqs label="FAQs" href="faq.html"/>
     <maillist label="Mailing Lists" href="maillist.html"/>
@@ -53,7 +53,7 @@
     <xsl-fo label="XSL-FO" href="fo.html"/>
     <examples label="Examples" href="examples.html"/>
     <bugs label="Bugs" href="bugs.html"/>
-    <wiki label="Wiki" href="http://wiki.apache.org/xmlgraphics-fop/FOPProjectPages"/>
+    <wiki label="Wiki" href="http://wiki.apache.org/xmlgraphics-fop/FrontPage"/>
     <other label="Other" href="resources.html"/>
   </resources>
 
@@ -97,7 +97,7 @@
     <resources label="Resources">
       <faq label="FAQs" href="faq.html"/>
       <tools label="Tools" href="tools.html"/>
-      <view-cvs label="ViewCVS" href="http://cvs.apache.org/viewcvs.cgi/xml-fop"/>
+      <viewcvs label="ViewCVS" href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop"/>
     </resources>
 
     <subpackages label="SubPackages">
@@ -150,6 +150,8 @@
       <input-modules href="userdocs/concepts/modules.html"/>
       <views href="userdocs/concepts/views.html"/>
     </cocoon-->
+    <xmlgraphics.apache.org href="http://xmlgraphics.apache.org">
+    </xmlgraphics.apache.org>
     <xml.apache.org href="http://xml.apache.org/">
      <forrest href="forrest/"/>
       <xindice href="xindice/"/>

@@ -15,8 +15,7 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
-    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/document-v12.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
     <title>FOP Development: Coding Conventions</title>
@@ -24,12 +23,12 @@
   </header>
   <body>
     <p>Acknowledgement: Some content in this guide was adapted from other Apache projects such as Avalon, Cactus, Turbine and Velocity.</p>
-    <section id="cvs">
-      <title>CVS Repository</title>
+    <section id="svn">
+      <title>Subversion Repository</title>
       <p>Conventions in this section apply to Repository content, regardless of type:</p>
       <ul>
         <li>Files checked in must conform to the code conventions for that type of file (java files must conform to java requirements, xml to xml requirements, etc.). If a submitted patch does not conform, it is the responsibility of the committer to bring it into conformance before checking it in. Developers submitting patches are encouraged to follow the code conventions to reduce the work load on the the committers.</li>
-        <li>To reduce the amount of spurious deltas, all text (non-binary) files checked into CVS must have Unix-style line endings (LF only). Many IDEs and editors (even on non-Unix platforms) have settings that can facilitate this convention.</li>
+        <li>To reduce the amount of spurious deltas, all text (non-binary) files checked into SVN must have Unix-style line endings (LF only). Many IDEs and editors (even on non-Unix platforms) have settings that can facilitate this convention.</li>
       </ul>
     </section>
     <section id="java">

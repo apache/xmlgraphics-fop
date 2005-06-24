@@ -15,9 +15,7 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
-    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/document-v12.dtd">
-
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
     <title>FOP: Development Team</title>
@@ -30,6 +28,7 @@
       <link href="mailto:fop-dev@xmlgraphics.apache.org">fop-dev</link> mailing list.</p>
     <section id="commit-active">
       <title>Active Committers</title>
+      <note label="Important">Please don't write to any developer directly if you need help on using FOP. Only if you submit questions to the <link href="maillist.html#fop-user">FOP User Mailing List</link> will other FOP users be able to profit from answers given to your question. Another point is that a developer may have gone inactive or is on holidays in which case you may not get an answer in time.</note>
       <ul>
         <li id="fb"><link href="mailto:bckfnn@worldonline.dk">Finn Bock</link> (FB)</li>
         <li id="cb"><link href="mailto:bowditch_chris@hotmail.com">Chris Bowditch</link> (CB)
