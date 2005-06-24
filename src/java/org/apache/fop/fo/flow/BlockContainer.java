@@ -96,6 +96,8 @@ public class BlockContainer extends FObj {
         width = pList.get(PR_WIDTH).getLength();
         writingMode = pList.get(PR_WRITING_MODE).getEnum();
         zIndex = pList.get(PR_Z_INDEX).getNumeric();
+        
+        checkSpanProperty(pList);
     }
 
     /**
