@@ -147,21 +147,6 @@ public abstract class FObj extends FONode implements Constants {
         }
     }
 
-     /**
-      * Checks the block-level FO for correct use of the span attribute.
-      * Used by fo:block and fo:block-container.
-      * @param pList the property list to determine if the span is explicit
-      */
-     protected void checkSpanProperty(PropertyList pList) {
-         if (pList.getExplicit(PR_SPAN) != null) {
-             if (!(getParent() instanceof Flow)) {
-                 attributeWarning("Ignoring span attribute on " + getName() 
-                         + " as it's not a direct child of an fo:flow."
-                         + " (see XSL 1.0, 7.20.4)");
-             }
-         }
-     }
-     
     /**
      * Returns Out Of Line FO Descendant indicator.
      * @return true if Out of Line FO or Out Of Line descendant, false otherwise
