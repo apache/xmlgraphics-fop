@@ -117,13 +117,13 @@ public class SimplePageMaster extends FObj {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
-        if (nsURI == FO_URI && localName.equals("region-body")) {
+        if (FO_URI.equals(nsURI) && localName.equals("region-body")) {
             if (hasRegionBody) {
                 tooManyNodesError(loc, "fo:region-body");
             } else {
                 hasRegionBody = true;
             }
-        } else if (nsURI == FO_URI && localName.equals("region-before")) {
+        } else if (FO_URI.equals(nsURI) && localName.equals("region-before")) {
             if (!hasRegionBody) {
                 nodesOutOfOrderError(loc, "fo:region-body", "fo:region-before");
             } else if (hasRegionBefore) {
@@ -137,7 +137,7 @@ public class SimplePageMaster extends FObj {
             } else {
                 hasRegionBody = true;
             }
-        } else if (nsURI == FO_URI && localName.equals("region-after")) {
+        } else if (FO_URI.equals(nsURI) && localName.equals("region-after")) {
             if (!hasRegionBody) {
                 nodesOutOfOrderError(loc, "fo:region-body", "fo:region-after");
             } else if (hasRegionAfter) {
@@ -149,7 +149,7 @@ public class SimplePageMaster extends FObj {
             } else {
                 hasRegionAfter = true;
             }
-        } else if (nsURI == FO_URI && localName.equals("region-start")) {
+        } else if (FO_URI.equals(nsURI) && localName.equals("region-start")) {
             if (!hasRegionBody) {
                 nodesOutOfOrderError(loc, "fo:region-body", "fo:region-start");
             } else if (hasRegionStart) {
@@ -159,7 +159,7 @@ public class SimplePageMaster extends FObj {
             } else {
                 hasRegionStart = true;
             }
-        } else if (nsURI == FO_URI && localName.equals("region-end")) {
+        } else if (FO_URI.equals(nsURI) && localName.equals("region-end")) {
             if (!hasRegionBody) {
                 nodesOutOfOrderError(loc, "fo:region-body", "fo:region-end");
             } else if (hasRegionEnd) {

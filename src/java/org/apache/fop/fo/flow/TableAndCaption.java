@@ -118,13 +118,13 @@ public class TableAndCaption extends FObj {
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
 
-        if (nsURI == FO_URI && localName.equals("marker")) {
+        if (FO_URI.equals(nsURI) && localName.equals("marker")) {
             if (tableCaptionFound) {
                 nodesOutOfOrderError(loc, "fo:marker", "fo:table-caption");
             } else if (tableFound) {
                 nodesOutOfOrderError(loc, "fo:marker", "fo:table");
             }
-        } else if (nsURI == FO_URI && localName.equals("table-caption")) {
+        } else if (FO_URI.equals(nsURI) && localName.equals("table-caption")) {
             if (tableCaptionFound) {
                 tooManyNodesError(loc, "fo:table-caption");
             } else if (tableFound) {
@@ -132,7 +132,7 @@ public class TableAndCaption extends FObj {
             } else {
                 tableCaptionFound = true;
             }
-        } else if (nsURI == FO_URI && localName.equals("table")) {
+        } else if (FO_URI.equals(nsURI) && localName.equals("table")) {
             if (tableFound) {
                 tooManyNodesError(loc, "fo:table");
             } else {

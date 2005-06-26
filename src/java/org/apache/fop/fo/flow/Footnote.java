@@ -86,11 +86,11 @@ public class Footnote extends FObj {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
-            if (nsURI == FO_URI && localName.equals("inline")) {
+            if (FO_URI.equals(nsURI) && localName.equals("inline")) {
                 if (footnoteCitation != null) {
                     tooManyNodesError(loc, "fo:inline");
                 }
-            } else if (nsURI == FO_URI && localName.equals("footnote-body")) {
+            } else if (FO_URI.equals(nsURI) && localName.equals("footnote-body")) {
                 if (footnoteCitation == null) {
                     nodesOutOfOrderError(loc, "fo:inline", "fo:footnote-body");
                 } else if (footnoteBody != null) {

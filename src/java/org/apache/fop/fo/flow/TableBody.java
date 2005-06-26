@@ -115,7 +115,7 @@ public class TableBody extends FObj {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
-        if (nsURI == FO_URI) {
+        if (FO_URI.equals(nsURI)) {
             if (localName.equals("marker")) {
                 if (tableRowsFound || tableCellsFound) {
                    nodesOutOfOrderError(loc, "fo:marker", "(table-row+|table-cell+)");

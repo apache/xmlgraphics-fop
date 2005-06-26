@@ -144,7 +144,7 @@ public class InstreamForeignObject extends FObj {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
-        if (nsURI == FO_URI) {
+        if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
         } else if (childNodes != null) {
             tooManyNodesError(loc, "child element");

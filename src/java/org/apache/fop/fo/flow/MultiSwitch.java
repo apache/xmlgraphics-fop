@@ -85,7 +85,7 @@ public class MultiSwitch extends FObj {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
-        if (!(nsURI == FO_URI && localName.equals("multi-case"))) {
+        if (!(FO_URI.equals(nsURI) && localName.equals("multi-case"))) {
             invalidChildError(loc, nsURI, localName);
         }
     }

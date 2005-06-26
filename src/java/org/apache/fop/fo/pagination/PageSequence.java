@@ -162,7 +162,7 @@ public class PageSequence extends FObj {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
-        if (nsURI == FO_URI) {
+        if (FO_URI.equals(nsURI)) {
             if (localName.equals("title")) {
                 if (titleFO != null) {
                     tooManyNodesError(loc, "fo:title");

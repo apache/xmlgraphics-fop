@@ -107,15 +107,15 @@ public class ListItem extends FObj {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
-        if (nsURI == FO_URI && localName.equals("marker")) {
+        if (FO_URI.equals(nsURI) && localName.equals("marker")) {
             if (label != null) {
                 nodesOutOfOrderError(loc, "fo:marker", "fo:list-item-label");
             }
-        } else if (nsURI == FO_URI && localName.equals("list-item-label")) {
+        } else if (FO_URI.equals(nsURI) && localName.equals("list-item-label")) {
             if (label != null) {
                 tooManyNodesError(loc, "fo:list-item-label");
             }
-        } else if (nsURI == FO_URI && localName.equals("list-item-body")) {
+        } else if (FO_URI.equals(nsURI) && localName.equals("list-item-body")) {
             if (label == null) {
                 nodesOutOfOrderError(loc, "fo:list-item-label", "fo:list-item-body");
             } else if (body != null) {
