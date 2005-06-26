@@ -80,11 +80,11 @@ public class Bookmark extends FObj {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
-            if (nsURI == FO_URI && localName.equals("bookmark-title")) {
+            if (FO_URI.equals(nsURI) && localName.equals("bookmark-title")) {
                 if (bookmarkTitle != null) {
                     tooManyNodesError(loc, "fo:bookmark-title");
                 }
-            } else if (nsURI == FO_URI && localName.equals("bookmark")) {
+            } else if (FO_URI.equals(nsURI) && localName.equals("bookmark")) {
                 if (bookmarkTitle == null) {
                     nodesOutOfOrderError(loc, "fo:bookmark-title", "fo:bookmark");
                 }                

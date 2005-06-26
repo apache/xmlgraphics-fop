@@ -106,7 +106,7 @@ public class BasicLink extends Inline {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
-        if (nsURI == FO_URI && localName.equals("marker")) {
+        if (FO_URI.equals(nsURI) && localName.equals("marker")) {
             if (blockOrInlineItemFound) {
                nodesOutOfOrderError(loc, "fo:marker", "(#PCDATA|%inline;|%block;)");
             }

@@ -126,7 +126,7 @@ public class TableRow extends FObj {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
-        if (!(nsURI == FO_URI && localName.equals("table-cell"))) {
+        if (!(FO_URI.equals(nsURI) && localName.equals("table-cell"))) {
             invalidChildError(loc, nsURI, localName);
         }
     }

@@ -365,7 +365,7 @@ public abstract class FObj extends FONode implements Constants {
      * @return true if a member, false if not
      */
     protected boolean isBlockItem(String nsURI, String lName) {
-        return (nsURI == FO_URI && 
+        return (FO_URI.equals(nsURI) && 
             (lName.equals("block") 
             || lName.equals("table") 
             || lName.equals("table-and-caption") 
@@ -384,7 +384,7 @@ public abstract class FObj extends FONode implements Constants {
      * @return true if a member, false if not
      */
     protected boolean isInlineItem(String nsURI, String lName) {
-        return (nsURI == FO_URI && 
+        return (FO_URI.equals(nsURI) && 
             (lName.equals("bidi-override") 
             || lName.equals("character") 
             || lName.equals("external-graphic") 
@@ -422,7 +422,7 @@ public abstract class FObj extends FONode implements Constants {
      * @return true if a member, false if not
      */
     protected boolean isNeutralItem(String nsURI, String lName) {
-        return (nsURI == FO_URI && 
+        return (FO_URI.equals(nsURI) && 
             (lName.equals("multi-switch") 
             || lName.equals("multi-properties")
             || lName.equals("wrapper") 

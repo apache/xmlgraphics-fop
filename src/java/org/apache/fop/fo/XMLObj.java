@@ -61,7 +61,7 @@ public abstract class XMLObj extends FONode {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
-        if (nsURI == FO_URI) {
+        if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
         }
     }

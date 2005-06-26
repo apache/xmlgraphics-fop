@@ -118,7 +118,7 @@ public class BlockContainer extends FObj {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
-        if (nsURI == FO_URI && localName.equals("marker")) {
+        if (FO_URI.equals(nsURI) && localName.equals("marker")) {
             if (blockItemFound) {
                nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
             }

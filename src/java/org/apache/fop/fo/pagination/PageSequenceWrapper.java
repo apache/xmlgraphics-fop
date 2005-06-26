@@ -71,7 +71,7 @@ public class PageSequenceWrapper extends FObj {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
-        if (!(nsURI == FO_URI && (localName.equals("page-sequence") || 
+        if (!(FO_URI.equals(nsURI) && (localName.equals("page-sequence") || 
             localName.equals("page-sequence-wrapper")))) {
                 invalidChildError(loc, nsURI, localName);
         }

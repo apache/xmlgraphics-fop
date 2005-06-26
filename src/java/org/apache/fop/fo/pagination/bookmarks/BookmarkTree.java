@@ -71,7 +71,7 @@ public class BookmarkTree extends FObj {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
-        if (!(nsURI == FO_URI &&
+        if (!(FO_URI.equals(nsURI) &&
             localName.equals("bookmark"))) {
                 invalidChildError(loc, nsURI, localName);
         }

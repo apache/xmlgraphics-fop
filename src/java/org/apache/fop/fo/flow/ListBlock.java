@@ -112,11 +112,11 @@ public class ListBlock extends FObj {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
-        if (nsURI == FO_URI && localName.equals("marker")) {
+        if (FO_URI.equals(nsURI) && localName.equals("marker")) {
             if (hasListItem) {
                 nodesOutOfOrderError(loc, "fo:marker", "fo:list-item");
             }
-        } else if (nsURI == FO_URI && localName.equals("list-item")) {
+        } else if (FO_URI.equals(nsURI) && localName.equals("list-item")) {
             hasListItem = true;
         } else {
             invalidChildError(loc, nsURI, localName);

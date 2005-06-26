@@ -93,7 +93,7 @@ public class Root extends FObj {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
-        if (nsURI == FO_URI) {
+        if (FO_URI.equals(nsURI)) {
             if (localName.equals("layout-master-set")) {   
                 if (layoutMasterSet != null) {
                     tooManyNodesError(loc, "fo:layout-master-set");
