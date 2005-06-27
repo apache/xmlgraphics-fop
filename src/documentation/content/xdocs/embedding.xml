@@ -389,7 +389,7 @@ XML access. This may be easier to understand for people familiar with JAXP.
   <section id="ExampleFO2PDF">
     <title>ExampleFO2PDF.java</title>
     <p>This example
-        <fork href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/trunk/examples/embedding/java/embedding/ExampleFO2PDF.java?rev=197384&view=markup">
+        <fork href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/tags/fop-0_20_5/examples/embedding/java/embedding/ExampleFO2PDF.java?view=markup">
             (current 0.20.5)</fork>
         <fork href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/trunk/examples/embedding/java/embedding/ExampleFO2PDF.java?view=markup">
             (future 1.0dev)</fork>
@@ -401,7 +401,7 @@ file to PDF using FOP.
   <section id="ExampleXML2FO">
     <title>ExampleXML2FO.java</title>
     <p>This example
-        <fork href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/trunk/examples/embedding/java/embedding/ExampleXML2FO.java?rev=197384&view=markup">
+        <fork href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/tags/fop-0_20_5/examples/embedding/java/embedding/ExampleXML2FO.java?view=markup">
             (current 0.20.5)</fork>
         <fork href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/trunk/examples/embedding/java/embedding/ExampleXML2FO.java?view=markup">
             (future 1.0dev)</fork>
@@ -415,7 +415,7 @@ classpath (ex. <fork href="http://xml.apache.org/xalan-j">Xalan</fork>).
   <section id="ExampleXML2PDF">
     <title>ExampleXML2PDF.java</title>
     <p>This example
-        <fork href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/trunk/examples/embedding/java/embedding/ExampleXML2PDF.java?rev=197384&view=markup">
+        <fork href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/tags/fop-0_20_5/examples/embedding/java/embedding/ExampleXML2PDF.java?view=markup">
         (current 0.20.5)</fork>
         <fork href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/trunk/examples/embedding/java/embedding/ExampleXML2PDF.java?view=markup">
         (future 1.0dev)</fork>
@@ -437,7 +437,7 @@ performance is significantly higher with SAX.
   <section id="ExampleObj2XML">
     <title>ExampleObj2XML.java</title>
     <p>This example
-    <fork href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/trunk/examples/embedding/java/embedding/ExampleObj2XML.java?rev=197384&view=markup">
+    <fork href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/tags/fop-0_20_5/examples/embedding/java/embedding/ExampleObj2XML.java?view=markup">
         (current 0.20.5)</fork>
     <fork href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/trunk/examples/embedding/java/embedding/ExampleObj2XML.java?view=markup">
         (future 1.0dev)</fork>
@@ -472,7 +472,7 @@ used. For more detailed information see other resources on JAXP (ex.
   <section id="ExampleObj2PDF">
     <title>ExampleObj2PDF.java</title>
     <p>This example
-        <fork href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/trunk/examples/embedding/java/embedding/ExampleObj2PDF.java?rev=197384&view=markup">
+        <fork href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/tags/fop-0_20_5/examples/embedding/java/embedding/ExampleObj2PDF.java?view=markup">
             (current 0.20.5)</fork>
         <fork href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/trunk/examples/embedding/java/embedding/ExampleObj2PDF.java?view=markup">
             (future 1.0dev)</fork>
@@ -487,7 +487,7 @@ using FOP as before.
   <section id="ExampleDOM2PDF">
     <title>ExampleDOM2PDF.java</title>
     <p>This example
-        <fork href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/trunk/examples/embedding/java/embedding/ExampleDOM2PDF.java?rev=197384&view=markup">
+        <fork href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/tags/fop-0_20_5/examples/embedding/java/embedding/ExampleDOM2PDF.java?view=markup">
             (current 0.20.5)</fork>
         <fork href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/trunk/examples/embedding/java/embedding/ExampleDOM2PDF.java?view=markup">
             (future 1.0dev)</fork>
@@ -499,9 +499,7 @@ use a DOM tree as input for an XSL transformation.
     <title>ExampleSVG2PDF.java (PDF Transcoder example)</title>
     <p>This example
         <fork href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/trunk/examples/embedding/java/embedding/ExampleSVG2PDF.java?view=markup">
-            (current 0.20.5)</fork>
-        <fork href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/trunk/examples/embedding/java/embedding/ExampleSVG2PDF.java?rev=197384&view=markup">
-            (future 1.0dev)</fork>
+            (applies to 0.20.5 and future 1.0dev)</fork>
 shows use of the PDF Transcoder, a sub-application within FOP.  
 It is used to generate a PDF document from an SVG file.
     </p>
