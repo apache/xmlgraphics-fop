@@ -21,9 +21,9 @@
 </head>
 <body>
 
-  <h1><a href="http://www.w3.org/TR/xsl" name="fo">W3C XSL-FO 1.0 Standard</a></h1>
+  <h1>W3C XSL-FO 1.0 Standard</h1>
   <p>
-    One of FOP's design goals is conformance to the W3C XSL-FO 1.0 standard, which specifies three levels of "conformance": basic, extended, and complete. Although FOP does not currently conform to any of these levels, it is nevertheless a useful work-in-progress for many applications. The information presented here demonstrates FOP's progress toward the goal of conformance, which progress consists of implementation of specific objects and properties in the standard. The information presented is useful not only to the developers as a sort of "to do" list, but also for setting proper expectations for users and potential users.
+    One of FOP's design goals is conformance to the <a href="http://www.w3.org/TR/xsl" name="fo">W3C XSL-FO 1.0 standard</a>, which specifies three levels of "conformance": basic, extended, and complete. Although FOP does not currently conform to any of these levels, it is nevertheless a useful work-in-progress for many applications. The information presented here demonstrates FOP's progress toward the goal of conformance, which progress consists of implementation of specific objects and properties in the standard. The information presented is useful not only to the developers as a sort of "to do" list, but also for setting proper expectations for users and potential users.
   </p>
   <p>
     In the tables below, "yes" indicates conformance, "no" indicates a lack of conformance, "partial" indicates partial conformance, and "na" indicates that the item is "not applicable" to FOP. The color-coding indicates conformance at a specific conformance level, with blue indicating conformance, red indicating non-conformance, and gray indicating partial conformance. So, for example, a given item may be blue either because it is not required at the conformance level indicated, or because FOP supports this feature, or both.
