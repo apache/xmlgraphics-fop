@@ -119,7 +119,7 @@ which will be used to configure the chosen Forrest skin.
   @location ("page","menu","page,menu", "none")
    Where to show the TOC.
   -->
-  <toc max-depth="2" min-sections="3" location="page"/>
+  <toc max-depth="2" min-sections="1" location="page"/>
 
   <!-- Heading types can be clean|underlined|boxed  -->
   <headings type="underlined"/>
