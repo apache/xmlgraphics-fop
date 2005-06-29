@@ -33,7 +33,7 @@ import org.apache.fop.fonts.Font;
 public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
 
     private PageNumberCitation fobj;
-    private Font font = null;
+    private Font font;
     
     // whether the page referred to by the citation has been resolved yet
     private boolean resolved = false;
@@ -62,6 +62,11 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
         }
     }
     
+    /** @see org.apache.fop.layoutmgr.LeafNodeLayoutManager#getLead() */
+    public int getLead() {
+        return font.getAscender();
+    }
+
     protected void offsetArea(InlineArea area, LayoutContext context) {
         area.setOffset(context.getBaseline());
     }
