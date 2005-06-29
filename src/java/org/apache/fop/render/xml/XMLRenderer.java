@@ -573,6 +573,7 @@ public class XMLRenderer extends AbstractRenderer {
     protected void renderCharacter(org.apache.fop.area.inline.Character ch) {
         atts.clear();
         addTraitAttributes(ch);
+        addAttribute("vpos", ch.getOffset());
         startElement("char", atts);
         characters(ch.getChar());
         endElement("char");
