@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
-import org.apache.fop.area.PageViewport;
 import org.apache.fop.layoutmgr.AbstractBreaker.PageBreakPosition;
 
 import org.apache.fop.traits.MinOptMax;
@@ -752,10 +751,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     protected int getLineWidth(int line) {
         int bpd;
         if (pvProvider != null) {
-            PageViewport pv = pvProvider.getPageViewport(
-                    false, line, 
-                    PageSequenceLayoutManager.PageViewportProvider.RELTO_CURRENT_ELEMENT_LIST);
-            bpd = pv.getBodyRegion().getBPD(); 
+            bpd = pvProvider.getAvailableBPD(line);
         } else {
             bpd = super.getLineWidth(line);
         }

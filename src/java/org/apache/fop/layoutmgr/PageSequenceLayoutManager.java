@@ -18,6 +18,8 @@
 
 package org.apache.fop.layoutmgr;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.area.AreaTreeHandler;
@@ -51,6 +53,8 @@ import java.util.ListIterator;
  * input document.
  */
 public class PageSequenceLayoutManager extends AbstractLayoutManager {
+
+    private Log log = LogFactory.getLog(PageSequenceLayoutManager.class);
 
     /** 
      * AreaTreeHandler which activates the PSLM and controls
@@ -137,7 +141,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             makeFlowLayoutManager(this, mainFlow);
 
         PageBreaker breaker = new PageBreaker(this);
-        int flowBPD = (int) curPV.getBodyRegion().getBPD();
+        int flowBPD = (int) curPV.getBodyRegion().getRemainingBPD();
         breaker.doLayout(flowBPD);
         
         finishPage();
@@ -150,6 +154,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         
         private PageSequenceLayoutManager pslm;
         private boolean firstPart = true;
+        private boolean pageBreakHandled;
+        private boolean needColumnBalancing;
         
         private StaticContentLayoutManager footnoteSeparatorLM = null;
 
@@ -157,11 +163,10 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             this.pslm = pslm;
         }
         
-        protected LayoutContext createLayoutContext() {
-            LayoutContext lc = new LayoutContext(0);
+        /** @see org.apache.fop.layoutmgr.AbstractBreaker */
+        protected void updateLayoutContext(LayoutContext context) {
             int flowIPD = curPV.getCurrentSpan().getColumnWidth();
-            lc.setRefIPD(flowIPD);
-            return lc;
+            context.setRefIPD(flowIPD);
         }
         
         protected LayoutManager getTopLevelLM() {
@@ -173,6 +178,39 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             return pvProvider;
         }
         
+        /** @see org.apache.fop.layoutmgr.AbstractBreaker */
+        protected int handleSpanChange(LayoutContext childLC, int nextSequenceStartsOn) {
+            needColumnBalancing = false;
+            if (childLC.getNextSpan() != Constants.NOT_SET) {
+                //Next block list will have a different span.
+                nextSequenceStartsOn = childLC.getNextSpan();
+                needColumnBalancing = (childLC.getNextSpan() == Constants.EN_ALL);
+            }
+            if (needColumnBalancing) {
+                log.debug("Column balancing necessary for the next element list!!!");
+            }
+            return nextSequenceStartsOn;
+        }
+
+        /** @see org.apache.fop.layoutmgr.AbstractBreaker */
+        protected int getNextBlockList(LayoutContext childLC, 
+                int nextSequenceStartsOn, 
+                List blockLists) {
+            if (!firstPart) {
+                // if this is the first page that will be created by
+                // the current BlockSequence, it could have a break
+                // condition that must be satisfied;
+                // otherwise, we may simply need a new page
+                handleBreakTrait(nextSequenceStartsOn);
+            }
+            firstPart = false;
+            pageBreakHandled = true;
+            pvProvider.setStartOfNextElementList(currentPageNum, 
+                    curPV.getCurrentSpan().getCurrentFlowIndex());
+            return super.getNextBlockList(childLC, nextSequenceStartsOn, blockLists);
+        }
+        
+        /** @see org.apache.fop.layoutmgr.AbstractBreaker */
         protected LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
             LinkedList contentList = null;
             
@@ -190,6 +228,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                         && ((KnuthBlockBox) element).hasAnchors()) {
                         // element represents a line with footnote citations
                         bFootnotesPresent = true;
+                        LayoutContext footnoteContext = new LayoutContext(context);
+                        footnoteContext.setRefIPD(getCurrentPV()
+                                .getRegionReference(Constants.FO_REGION_BODY).getIPD());
                         LinkedList footnoteBodyLMs = ((KnuthBlockBox) element).getFootnoteBodyLMs();
                         ListIterator footnoteBodyIterator = footnoteBodyLMs.listIterator();
                         // store the lists of elements representing the footnote bodies
@@ -199,7 +240,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                                 = (FootnoteBodyLayoutManager) footnoteBodyIterator.next();
                             fblm.setParent(childFLM);
                             ((KnuthBlockBox) element).addElementList(
-                                    fblm.getNextKnuthElements(context, alignment));
+                                    fblm.getNextKnuthElements(footnoteContext, alignment));
                         }
                     }
                 }
@@ -219,7 +260,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 
                 // create a Block area that will contain the separator areas
                 separatorArea = new Block();
-                separatorArea.setIPD(context.getRefIPD());
+                separatorArea.setIPD(pslm.getCurrentPV()
+                            .getRegionReference(Constants.FO_REGION_BODY).getIPD());
                 // create a StaticContentLM for the footnote separator
                 footnoteSeparatorLM = (StaticContentLayoutManager)
                     getLayoutManagerMaker().makeStaticContentLayoutManager(
@@ -245,7 +287,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                         "xsl-footnote-separator");
                 // create a Block area that will contain the separator areas
                 separatorArea = new Block();
-                separatorArea.setIPD(curPV.getCurrentSpan().getColumnWidth());
+                separatorArea.setIPD(curPV.getRegionReference(Constants.FO_REGION_BODY).getIPD());
                 // create a StaticContentLM for the footnote separator
                 footnoteSeparatorLM = (StaticContentLayoutManager)
                     getLayoutManagerMaker().makeStaticContentLayoutManager(
@@ -258,30 +300,74 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         
         protected void doPhase3(PageBreakingAlgorithm alg, int partCount, 
                 BlockSequence originalList, BlockSequence effectiveList) {
-            //Directly add areas after finding the breaks
-            addAreas(alg, partCount, originalList, effectiveList);
+            if (needColumnBalancing) {
+                log.debug("Column balancing now!!!");
+                log.debug("===================================================");
+                int restartPoint = pvProvider.getStartingPartIndexForLastPage(partCount);
+                if (restartPoint > 0) {
+                    addAreas(alg, restartPoint, originalList, effectiveList);
+                }
+                
+                int newStartPos;
+                if (restartPoint > 0) {
+                    PageBreakPosition pbp = (PageBreakPosition)
+                            alg.getPageBreaks().get(restartPoint - 1);
+                    newStartPos = pbp.getLeafPos();
+                } else {
+                    newStartPos = 0;
+                }
+                log.debug("Restarting at " + restartPoint + ", new start position: " + newStartPos);
+                
+                //Restart last page
+                PageBreakingAlgorithm algRestart = new BalancingColumnBreakingAlgorithm(
+                        getTopLevelLM(),
+                        getPageViewportProvider(),
+                        alignment, Constants.EN_START, footnoteSeparatorLength,
+                        isPartOverflowRecoveryActivated(),
+                        getCurrentPV().getBodyRegion().getColumnCount());
+                //alg.setConstantLineWidth(flowBPD);
+                int iOptPageCount = algRestart.findBreakingPoints(effectiveList,
+                            newStartPos,
+                            1, true, true);
+                log.debug("restart: iOptPageCount= " + iOptPageCount
+                        + " pageBreaks.size()= " + algRestart.getPageBreaks().size());
+                if (iOptPageCount > getCurrentPV().getBodyRegion().getColumnCount()) {
+                    /* reenable when everything works
+                    throw new IllegalStateException(
+                            "Breaking algorithm must not produce more columns than available.");
+                    */
+                }
+                //Make sure we only add the areas we haven't added already
+                effectiveList.ignoreAtStart = newStartPos;
+                addAreas(algRestart, iOptPageCount, originalList, effectiveList);
+                log.debug("===================================================");
+            } else {
+                //Directly add areas after finding the breaks
+                addAreas(alg, partCount, originalList, effectiveList);
+            }
         }
         
         protected void startPart(BlockSequence list, int breakClass) {
+            log.info("startPart() breakClass=" + breakClass);
             if (curPV == null) {
                 throw new IllegalStateException("curPV must not be null");
-            } else {
+            }
+            if (!pageBreakHandled) {
+                
                 //firstPart is necessary because we need the first page before we start the 
                 //algorithm so we have a BPD and IPD. This may subject to change later when we
                 //start handling more complex cases.
                 if (!firstPart) {
-                    if (curPV.getCurrentSpan().hasMoreFlows()) {
-                        curPV.getCurrentSpan().moveToNextFlow();
-                    } else  {
-                        // if this is the first page that will be created by
-                        // the current BlockSequence, it could have a break
-                        // condition that must be satisfied;
-                        // otherwise, we may simply need a new page
-                        handleBreakTrait(breakClass);
-                    }
+                    // if this is the first page that will be created by
+                    // the current BlockSequence, it could have a break
+                    // condition that must be satisfied;
+                    // otherwise, we may simply need a new page
+                    handleBreakTrait(breakClass);
                 }
-                pvProvider.setStartPageOfNextElementList(currentPageNum);
+                pvProvider.setStartOfNextElementList(currentPageNum, 
+                        curPV.getCurrentSpan().getCurrentFlowIndex());
             }
+            pageBreakHandled = false;
             // add static areas and resolve any new id areas
             // finish page and add to area tree
             firstPart = false;
@@ -319,6 +405,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 parentArea.setTop(topOffset);
                 parentArea.setSeparator(separatorArea);
             }
+            getCurrentPV().getCurrentSpan().notifyFlowsFinished();
         }
         
         protected LayoutManager getCurrentChildLM() {
@@ -510,7 +597,14 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * @param breakVal - value of break-before or break-after trait.
      */
     private void handleBreakTrait(int breakVal) {
-        if (breakVal == Constants.EN_COLUMN) {
+        if (breakVal == Constants.EN_ALL) {
+            //break due to span change in multi-column layout
+            curPV.createSpan(true);
+            return;
+        } else if (breakVal == Constants.EN_NONE) {
+            curPV.createSpan(false);
+            return;
+        } else if (breakVal == Constants.EN_COLUMN || breakVal == -1) {
             if (curPV.getCurrentSpan().hasMoreFlows()) {
                 curPV.getCurrentSpan().moveToNextFlow();
             } else {
@@ -577,6 +671,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      */
     public class PageViewportProvider {
         
+        private Log log = LogFactory.getLog(PageViewportProvider.class);
+
         /** Indices are evaluated relative to the first page in the page-sequence. */
         public static final int RELTO_PAGE_SEQUENCE = 0;
         /** Indices are evaluated relative to the first page in the current element list. */
@@ -584,7 +680,12 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         
         private int startPageOfPageSequence;
         private int startPageOfCurrentElementList;
+        private int startColumnOfCurrentElementList;
         private List cachedPageViewports = new java.util.ArrayList();
+        
+        //Cache to optimize getAvailableBPD() calls
+        private int lastRequestedIndex = -1;
+        private int lastReportedBPD = -1;
         
         /**
          * Main constructor.
@@ -598,12 +699,83 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
          * The page breaker notifies the provider about the page number an element list starts
          * on so it can later retrieve PageViewports relative to this first page.
          * @param startPage the number of the first page for the element list.
+         * @param startColumn the starting column number for the element list. 
          */
-        public void setStartPageOfNextElementList(int startPage) {
-            log.debug("start page of the next element list is: " + startPage);
-            this.startPageOfCurrentElementList = startPage;
+        public void setStartOfNextElementList(int startPage, int startColumn) {
+            log.debug("start of the next element list is:"
+                    + " page=" + startPage + " col=" + startColumn);
+            this.startPageOfCurrentElementList = startPage - startPageOfPageSequence + 1;
+            this.startColumnOfCurrentElementList = startColumn;
+            //Reset Cache
+            this.lastRequestedIndex = -1;
+            this.lastReportedBPD = -1;
         }
         
+        /**
+         * Returns the available BPD for the part/page indicated by the index parameter.
+         * The index is the part/page relative to the start of the current element list.
+         * This method takes multiple columns into account.
+         * @param index zero-based index of the requested part/page
+         * @return the available BPD
+         */
+        public int getAvailableBPD(int index) {
+            //Special optimization: There may be many equal calls by the BreakingAlgorithm
+            if (this.lastRequestedIndex == index) {
+                if (log.isTraceEnabled()) {
+                    log.trace("getAvailableBPD(" + index + ") -> (cached) " + lastReportedBPD);
+                }
+                return this.lastReportedBPD;
+            }
+            int c = index;
+            int pageIndex = 0;
+            int colIndex = startColumnOfCurrentElementList;
+            PageViewport pv = getPageViewport(
+                    false, pageIndex, RELTO_CURRENT_ELEMENT_LIST);
+            while (c > 0) {
+                colIndex++;
+                if (colIndex >= pv.getCurrentSpan().getColumnCount()) {
+                    colIndex = 0;
+                    pageIndex++;
+                    pv = getPageViewport(
+                            false, pageIndex, RELTO_CURRENT_ELEMENT_LIST);
+                }
+                c--;
+            }
+            this.lastRequestedIndex = index;
+            this.lastReportedBPD = pv.getBodyRegion().getRemainingBPD();
+            if (log.isTraceEnabled()) {
+                log.trace("getAvailableBPD(" + index + ") -> " + lastReportedBPD);
+            }
+            return this.lastReportedBPD;
+        }
+        
+        /**
+         * Returns the part index (0<x<partCount) which denotes the first part on the last page 
+         * generated by the current element list.
+         * @param partCount Number of parts determined by the breaking algorithm
+         * @return the requested part index
+         */
+        public int getStartingPartIndexForLastPage(int partCount) {
+            int result = 0;
+            int idx = 0;
+            int pageIndex = 0;
+            int colIndex = startColumnOfCurrentElementList;
+            PageViewport pv = getPageViewport(
+                    false, pageIndex, RELTO_CURRENT_ELEMENT_LIST);
+            while (idx < partCount) {
+                if ((idx < partCount - 1) && (colIndex >= pv.getCurrentSpan().getColumnCount())) {
+                    colIndex = 0;
+                    pageIndex++;
+                    pv = getPageViewport(
+                            false, pageIndex, RELTO_CURRENT_ELEMENT_LIST);
+                    result = idx;
+                }
+                colIndex++;
+                idx++;
+            }
+            return result;
+        }
+
         /**
          * Returns a PageViewport.
          * @param bIsBlank true if this page is supposed to be blank.
@@ -617,7 +789,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 return getPageViewport(bIsBlank, index);
             } else if (relativeTo == RELTO_CURRENT_ELEMENT_LIST) {
                 int effIndex = startPageOfCurrentElementList + index;
-                effIndex += startPageOfPageSequence;
+                effIndex += startPageOfPageSequence - 1;
                 return getPageViewport(bIsBlank, effIndex);
             } else {
                 throw new IllegalArgumentException(
