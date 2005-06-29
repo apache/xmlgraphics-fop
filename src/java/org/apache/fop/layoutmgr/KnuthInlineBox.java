@@ -83,4 +83,14 @@ public class KnuthInlineBox extends KnuthBox {
     public boolean isAnchor() {
         return (footnoteBodyLM != null);
     }
+    
+    
+    /** @see java.lang.Object#toString() */
+    public String toString() {
+        StringBuffer sb = new StringBuffer(super.toString());
+        sb.append(" lead=").append(lead);
+        sb.append(" total=").append(total);
+        sb.append(" middle=").append(middle);
+        return sb.toString();
+    }
 }
