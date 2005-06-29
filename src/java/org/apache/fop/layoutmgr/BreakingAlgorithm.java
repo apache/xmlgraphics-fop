@@ -21,7 +21,6 @@ package org.apache.fop.layoutmgr;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.layoutmgr.PageBreakingAlgorithm.KnuthPageNode;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -322,6 +321,13 @@ public abstract class BreakingAlgorithm {
     }
     
     public int findBreakingPoints(KnuthSequence par, /*int lineWidth,*/
+            double threshold, boolean force,
+            boolean hyphenationAllowed) {
+        return findBreakingPoints(par, 0, threshold, force, hyphenationAllowed);
+    }
+    
+    public int findBreakingPoints(KnuthSequence par, int startIndex,
+                                  /*int lineWidth,*/
                                   double threshold, boolean force,
                                   boolean hyphenationAllowed) {
         this.par = par;
@@ -343,7 +349,7 @@ public abstract class BreakingAlgorithm {
         boolean previousIsBox = false;
 
         // index of the first KnuthBox in the sequence
-        int firstBoxIndex = 0;
+        int firstBoxIndex = startIndex;
         while (alignment != org.apache.fop.fo.Constants.EN_CENTER
                && ! ((KnuthElement) par.get(firstBoxIndex)).isBox()) {
             firstBoxIndex++;
@@ -354,13 +360,13 @@ public abstract class BreakingAlgorithm {
         addNode(0, createNode(firstBoxIndex, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, null));
 
         if (log.isTraceEnabled()) {
-            log.trace("Looping over " + par.size() + " box objects");
+            log.trace("Looping over " + (par.size() - startIndex) + " elements");
         }
         
         KnuthNode lastForced = getNode(0);
 
         // main loop
-        for (int i = 0; i < par.size(); i++) {
+        for (int i = startIndex; i < par.size(); i++) {
             thisElement = getElement(i);
             if (thisElement.isBox()) {
                 // a KnuthBox object is not a legal line break
@@ -658,13 +664,16 @@ public abstract class BreakingAlgorithm {
     }
     
     /**
-     * Figure out the fitness class of this line (tight, loose,
+     * <p>Figure out the fitness class of this line (tight, loose,
      * very tight or very loose).
+     * </p>
+     * <p>See the section on "More Bells and Whistles" in Knuth's 
+     * "Breaking Paragraphs Into Lines".
+     * </p>
      * @param r
      * @return
      */
     private int computeFitness(double r) {
-        int newFitnessClass;
         if (r < -0.5) {
             return 0;
         } else if (r <= 0.5) {
