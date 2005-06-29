@@ -31,7 +31,6 @@ import java.util.List;
 public class Span extends Area {
     // the list of flow reference areas in this span area
     private List flowAreas;
-    private int height;
     private int colCount;
     private int colGap;
     private int colWidth; // width for each normal flow, calculated value
@@ -90,7 +89,7 @@ public class Span extends Area {
      * @return the height of this span area
      */
     public int getHeight() {
-        return height;
+        return getBPD();
     }
 
 
@@ -119,6 +118,11 @@ public class Span extends Area {
         return getNormalFlow(curFlowIdx); 
     }
     
+    /** @return the index of the current normal flow */
+    public int getCurrentFlowIndex() {
+        return curFlowIdx;
+    }
+    
     /**
      * Indicate to the Span that the next column is being 
      * processed.
@@ -143,5 +147,30 @@ public class Span extends Area {
     public boolean hasMoreFlows() {
         return (curFlowIdx < colCount - 1); 
     }
+    
+    /**
+     * Called to notify the span that all its flows have been fully generated so it can update
+     * its own BPD extent.
+     */
+    public void notifyFlowsFinished() {
+        int maxFlowBPD = 0;
+        for (int i = 0; i < colCount; i++) {
+            maxFlowBPD = Math.max(maxFlowBPD, getNormalFlow(i).getAllocBPD());
+        }
+        bpd = maxFlowBPD;
+    }
+    
+    /** @see java.lang.Object#toString() */
+    public String toString() {
+        StringBuffer sb = new StringBuffer(super.toString());
+        if (colCount > 1) {
+            sb.append(" {colCount=").append(colCount);
+            sb.append(", colWidth=").append(colWidth);
+            sb.append(", curFlowIdx=").append(this.curFlowIdx);
+            sb.append("}");
+        }
+        return sb.toString();
+    }
+
 }
 
