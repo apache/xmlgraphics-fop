@@ -149,8 +149,20 @@ public abstract class AbstractBreaker {
     
     protected abstract void finishPart(PageBreakingAlgorithm alg, PageBreakPosition pbp);
 
+    /**
+     * Creates the top-level LayoutContext for the breaker operation.
+     * @return the top-level LayoutContext
+     */
     protected LayoutContext createLayoutContext() {
         return new LayoutContext(0);
+    }
+    
+    /**
+     * Used to update the LayoutContext in subclasses prior to starting a new element list.
+     * @param context the LayoutContext to update
+     */
+    protected void updateLayoutContext(LayoutContext context) {
+        //nop
     }
     
     public void doLayout(int flowBPD) {
@@ -175,53 +187,56 @@ public abstract class AbstractBreaker {
         //*** Phase 1: Get Knuth elements ***
         int nextSequenceStartsOn = Constants.EN_ANY;
         while (hasMoreContent()) {
+            blockLists.clear();
+
             nextSequenceStartsOn = getNextBlockList(childLC, nextSequenceStartsOn, blockLists);
+
+            //*** Phase 2: Alignment and breaking ***
+            log.debug("PLM> blockLists.size() = " + blockLists.size());
+            for (blockListIndex = 0; blockListIndex < blockLists.size(); blockListIndex++) {
+                blockList = (BlockSequence) blockLists.get(blockListIndex);
+                
+                //debug code start
+                if (log.isDebugEnabled()) {
+                    log.debug("  blockListIndex = " + blockListIndex);
+                    String pagina = (blockList.startOn == Constants.EN_ANY) ? "any page"
+                            : (blockList.startOn == Constants.EN_ODD_PAGE) ? "odd page"
+                                    : "even page";
+                    log.debug("  sequence starts on " + pagina);
+                }
+                ElementListObserver.observe(blockList, "breaker", null);
+                //debug code end
+
+                log.debug("PLM> start of algorithm (" + this.getClass().getName() 
+                        + "), flow BPD =" + flowBPD);
+                PageBreakingAlgorithm alg = new PageBreakingAlgorithm(getTopLevelLM(),
+                        getPageViewportProvider(),
+                        alignment, alignmentLast, footnoteSeparatorLength,
+                        isPartOverflowRecoveryActivated());
+                int iOptPageCount;
+
+                BlockSequence effectiveList;
+                if (alignment == Constants.EN_JUSTIFY) {
+                    /* justification */
+                    effectiveList = justifyBoxes(blockList, alg, flowBPD);
+                } else {
+                    /* no justification */
+                    effectiveList = blockList;
+                }
+
+                //iOptPageCount = alg.firstFit(effectiveList, flowBPD, 1, true);
+                alg.setConstantLineWidth(flowBPD);
+                iOptPageCount = alg.findBreakingPoints(effectiveList, /*flowBPD,*/
+                            1, true, true);
+                log.debug("PLM> iOptPageCount= " + iOptPageCount
+                        + " pageBreaks.size()= " + alg.getPageBreaks().size());
+
+                
+                //*** Phase 3: Add areas ***
+                doPhase3(alg, iOptPageCount, blockList, effectiveList);
+            }
         }
 
-        //*** Phase 2: Alignment and breaking ***
-        log.debug("PLM> blockLists.size() = " + blockLists.size());
-        for (blockListIndex = 0; blockListIndex < blockLists.size(); blockListIndex++) {
-            blockList = (BlockSequence) blockLists.get(blockListIndex);
-            
-            //debug code start
-            if (log.isDebugEnabled()) {
-                log.debug("  blockListIndex = " + blockListIndex);
-                String pagina = (blockList.startOn == Constants.EN_ANY) ? "any page"
-                        : (blockList.startOn == Constants.EN_ODD_PAGE) ? "odd page"
-                                : "even page";
-                log.debug("  sequence starts on " + pagina);
-            }
-            ElementListObserver.observe(blockList, "breaker", null);
-            //debug code end
-
-            log.debug("PLM> start of algorithm (" + this.getClass().getName() 
-                    + "), flow BPD =" + flowBPD);
-            PageBreakingAlgorithm alg = new PageBreakingAlgorithm(getTopLevelLM(),
-                    getPageViewportProvider(),
-                    alignment, alignmentLast, footnoteSeparatorLength,
-                    isPartOverflowRecoveryActivated());
-            int iOptPageCount;
-
-            BlockSequence effectiveList;
-            if (alignment == Constants.EN_JUSTIFY) {
-                /* justification */
-                effectiveList = justifyBoxes(blockList, alg, flowBPD);
-            } else {
-                /* no justification */
-                effectiveList = blockList;
-            }
-
-            //iOptPageCount = alg.firstFit(effectiveList, flowBPD, 1, true);
-            alg.setConstantLineWidth(flowBPD);
-            iOptPageCount = alg.findBreakingPoints(effectiveList, /*flowBPD,*/
-                        1, true, true);
-            log.debug("PLM> iOptPageCount= " + iOptPageCount
-                    + " pageBreaks.size()= " + alg.getPageBreaks().size());
-
-            
-            //*** Phase 3: Add areas ***
-            doPhase3(alg, iOptPageCount, blockList, effectiveList);
-        }
     }
 
     /**
@@ -357,13 +372,29 @@ public abstract class AbstractBreaker {
     }
     
     /**
+     * Handles span changes reported through the <code>LayoutContext</code>. 
+     * Only used by the PSLM and called by <code>getNextBlockList()</code>.
+     * @param childLC the LayoutContext
+     * @param nextSequenceStartsOn previous value for break handling
+     * @return effective value for break handling
+     */
+    protected int handleSpanChange(LayoutContext childLC, int nextSequenceStartsOn) {
+        return nextSequenceStartsOn;
+    }
+    /**
      * Gets the next block list (sequence) and adds it to a list of block lists if it's not empty.
      * @param childLC LayoutContext to use
      * @param nextSequenceStartsOn indicates on what page the next sequence should start
      * @param blockLists list of block lists (sequences)
      * @return the page on which the next content should appear after a hard break
      */
-    private int getNextBlockList(LayoutContext childLC, int nextSequenceStartsOn, List blockLists) {
+    protected int getNextBlockList(LayoutContext childLC, 
+            int nextSequenceStartsOn, 
+            List blockLists) {
+        updateLayoutContext(childLC);
+        //Make sure the span change signal is reset
+        childLC.signalSpanChange(Constants.NOT_SET);
+        
         LinkedList returnedList;
         BlockSequence blockList;
         if ((returnedList = getNextKnuthElements(childLC, alignment)) != null) {
@@ -371,6 +402,10 @@ public abstract class AbstractBreaker {
                 return nextSequenceStartsOn;
             }
             blockList = new BlockSequence(nextSequenceStartsOn);
+            
+            //Only implemented by the PSLM
+            nextSequenceStartsOn = handleSpanChange(childLC, nextSequenceStartsOn);
+            
             if (((KnuthElement) returnedList.getLast()).isPenalty()
                     && ((KnuthPenalty) returnedList.getLast()).getP() == -KnuthElement.INFINITE) {
                 KnuthPenalty breakPenalty = (KnuthPenalty) returnedList
