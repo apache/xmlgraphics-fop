@@ -41,11 +41,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     /** Array of areas currently being filled stored by area class */
     private BlockParent[] currentAreas = new BlockParent[Area.CLASS_MAX];
 
-    /**
-     * Used to count the number of subsequent times to layout child areas on
-     * multiple pages.
-     */
-    private int numSubsequentOverflows = 0;
+    private int currentSpan = EN_NONE;
     
     /**
      * This is the top level layout manager.
@@ -72,8 +68,6 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
 
         // currently active LM
         BlockLevelLayoutManager curLM;
-        BlockLevelLayoutManager prevLM = null;
-        //MinOptMax stackSize = new MinOptMax();
         LinkedList returnedList;
         LinkedList returnList = new LinkedList();
 
@@ -84,6 +78,19 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
                 continue;
             }
 
+            int span = EN_NONE;
+            if (curLM instanceof BlockLayoutManager) {
+                span = ((BlockLayoutManager)curLM).getBlockFO().getSpan();
+            } else if (curLM instanceof BlockContainerLayoutManager) {
+                span = ((BlockContainerLayoutManager)curLM).getBlockContainerFO().getSpan();
+            }
+            if (currentSpan != span) {
+                log.debug("span change from " + currentSpan + " to " + span);
+                context.signalSpanChange(span);
+                currentSpan = span;
+                return returnList;
+            }
+            
             // Set up a LayoutContext
             //MinOptMax bpd = context.getStackLimit();
 
@@ -142,7 +149,6 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
                 childLC.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
                 context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
             }
-            prevLM = curLM;
         }
 
         setFinished(true);
