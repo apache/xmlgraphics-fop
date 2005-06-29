@@ -18,6 +18,8 @@
 
 package org.apache.fop.area;
 
+import java.util.List;
+
 import org.apache.fop.fo.pagination.RegionBody;
 
 /**
@@ -36,6 +38,8 @@ public class BodyRegion extends RegionReference {
     /**
      * Constructor which can read traits directly
      * from an fo:region-body formatting object.
+     * @param rb the region-body FO node
+     * @param parent the parent region viewport
      */
     public BodyRegion(RegionBody rb, RegionViewport parent) {
         super(rb, parent);
@@ -103,6 +107,20 @@ public class BodyRegion extends RegionReference {
         return footnote;
     }
 
+    /**
+     * @return the available BPD in the main reference area after the previous span reference
+     * areas are subtracted.
+     */
+    public int getRemainingBPD() {
+        int usedBPD = 0;
+        List spans = getMainReference().getSpans();
+        int previousSpanCount = spans.size() - 1;
+        for (int i = 0; i < previousSpanCount; i++) {
+            usedBPD += ((Span)spans.get(i)).getHeight();
+        }
+        return getBPD() - usedBPD;
+    }
+    
     /**
      * Clone this object.
      *
