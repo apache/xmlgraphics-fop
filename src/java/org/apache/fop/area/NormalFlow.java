@@ -32,5 +32,11 @@ public class NormalFlow extends BlockParent {
         addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
         setIPD(ipd);
     }
+    
+    /** @see org.apache.fop.area.BlockParent#addBlock(org.apache.fop.area.Block) */
+    public void addBlock(Block block) {
+        super.addBlock(block);
+        bpd += block.getAllocBPD();
+    }
 }
 
