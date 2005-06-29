@@ -5,7 +5,6 @@ keep-with-previous2.xml
 keep-with-previous3.xml
 keep-with-previous4.xml
 keep-with-previous5.xml
-line-layout2.xml
 list4.xml
 multi-column2.xml
 multi-column3.xml
