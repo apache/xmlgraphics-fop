@@ -670,6 +670,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             }
         }
         knuthPar.endParagraph();
+        ElementListObserver.observe(knuthPar, "line", null);
     }
 
     /**
