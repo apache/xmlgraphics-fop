@@ -18,6 +18,7 @@
 
 package org.apache.fop.layoutmgr;
 
+import org.apache.fop.fo.Constants;
 import org.apache.fop.traits.MinOptMax;
 
 
@@ -74,8 +75,8 @@ public class LayoutContext {
      */
     MinOptMax stackLimit;
 
-    /** True if current top-level reference area is spanning. */
-    boolean bIsSpan;
+    /** True if current element list is spanning in multi-column layout. */
+    private int nextSpan = Constants.NOT_SET;
 
     /** inline-progression-dimension of nearest ancestor reference area */
     int refIPD;
@@ -294,6 +295,29 @@ public class LayoutContext {
         iSpaceAfter = sp;
     }
     
+    /**
+     * @return true if the current element list ends early because of a span change
+     * in multi-column layout.
+     */
+    public int getNextSpan() {
+        return nextSpan;
+    }
+    
+    /**
+     * Used to signal the PSLM that the element list ends early because of a span change in
+     * multi-column layout.
+     * @param span the new span value (legal values: NOT_SET, EN_NONE, EN_ALL)
+     */
+    public void signalSpanChange(int span) {
+        if (span == Constants.NOT_SET || span == Constants.EN_NONE || span == Constants.EN_ALL) {
+            this.nextSpan = span;
+        } else {
+            throw new IllegalArgumentException("Illegal value on signalSpanChange() for span: "
+                    + span);
+        }
+    }
+    
+    /** @see java.lang.Object#toString() */
     public String toString() {
         return "Layout Context:" +
         "\nStack Limit: \t" + (getStackLimit() == null ? "null" : getStackLimit().toString()) +
