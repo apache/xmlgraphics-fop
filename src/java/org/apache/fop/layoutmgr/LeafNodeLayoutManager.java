@@ -122,11 +122,15 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
      * Set the lead for this inline area.
      * The lead is the distance from the top of the object
      * to the baseline.
-     * Currently not used.
      * @param l the lead value
      */
     public void setLead(int l) {
         lead = l;
+    }
+    
+    /** @return the lead value (distance from the top of the object to the baseline) */
+    public int getLead() {
+        return this.lead;
     }
 
     /**
@@ -258,8 +262,11 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
             case EN_BOTTOM  : total = bpd;
                                          break;
             case EN_BASELINE:
-            default:                     lead = bpd;
-                                         break;
+            default:                     
+                //lead = bpd;
+                lead = getLead();
+                total = bpd;
+                break;
         }
 
         // create the AreaInfo object to store the computed values
