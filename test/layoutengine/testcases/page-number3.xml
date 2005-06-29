@@ -34,7 +34,7 @@
           <fo:block>page: <fo:page-number/>, bof1 is on page <fo:page-number-citation ref-id="bof1"/></fo:block>
           <fo:block>page: <fo:page-number/>, bof2 is on page <fo:page-number-citation ref-id="bof2"/></fo:block>
           <fo:block>page: <fo:page-number/></fo:block>
-          <fo:block>page: <fo:page-number/></fo:block>
+          <fo:block break-before="page">page: <fo:page-number/></fo:block>
           <fo:block>page: <fo:page-number/></fo:block>
           <fo:block>page: <fo:page-number/> of <fo:page-number-citation ref-id="eof1"/></fo:block>
           <fo:block id="eof1"/>
@@ -46,7 +46,7 @@
           <fo:block>page: <fo:page-number/></fo:block>
           <fo:block>page: <fo:page-number/></fo:block>
           <fo:block>page: <fo:page-number/></fo:block>
-          <fo:block>page: <fo:page-number/>, bof1 is on page <fo:page-number-citation ref-id="bof1"/></fo:block>
+          <fo:block break-before="page">page: <fo:page-number/>, bof1 is on page <fo:page-number-citation ref-id="bof1"/></fo:block>
           <fo:block>page: <fo:page-number/>, bof2 is on page <fo:page-number-citation ref-id="bof2"/></fo:block>
           <fo:block>page: <fo:page-number/> of <fo:page-number-citation ref-id="eof2"/></fo:block>
           <fo:block id="eof2"/>

@@ -55,5 +55,19 @@
       <box w="14400"/>
       <skip>3</skip>
     </element-list>
+    
+    <eval expected="14400" xpath="//flow/block[1]/lineArea/@bpd"/>
+    <eval expected="14400" xpath="//flow/block[2]/lineArea/@bpd"/>
+    <eval expected="14400" xpath="//flow/block[3]/lineArea/@bpd"/>
+    <eval expected="14400" xpath="//flow/block[4]/lineArea/@bpd"/>
+    <eval expected="14400" xpath="//flow/block[5]/lineArea/@bpd"/>
+    <eval expected="14400" xpath="//flow/block[6]/lineArea/@bpd"/>
+    
+    <eval expected="10266" xpath="//flow/block[1]/lineArea/text/@vpos"/>
+    <eval expected="10266" xpath="//flow/block[2]/lineArea/text/@vpos"/>
+    <eval expected="10266" xpath="//flow/block[3]/lineArea/text/@vpos"/>
+    <eval expected="10266" xpath="//flow/block[4]/lineArea/text/@vpos"/>
+    <eval expected="10266" xpath="//flow/block[5]/lineArea/inlineparent/text/@vpos"/>
+    <eval expected="10266" xpath="//flow/block[6]/lineArea/char/@vpos"/>
   </checks>
 </testcase>
