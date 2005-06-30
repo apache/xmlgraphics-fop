@@ -158,6 +158,8 @@ public class PDFRenderer extends PrintRenderer {
      * the current page to add annotations to
      */
     protected PDFPage currentPage;
+    
+    protected AffineTransform currentBasicTransform;
 
     /** drawing state */
     protected PDFState currentState = null;
@@ -463,6 +465,8 @@ public class PDFRenderer extends PrintRenderer {
         // Transform origin at top left to origin at bottom left
         currentStream.add("1 0 0 -1 0 "
                            + (int) Math.round(pageHeight / 1000) + " cm\n");
+        currentBasicTransform = new AffineTransform(1, 0, 0, -1, 0,
+                (int) Math.round(pageHeight / 1000));
         
         
         currentFontName = "";
@@ -1290,7 +1294,8 @@ public class PDFRenderer extends PrintRenderer {
             Rectangle2D rect = new Rectangle2D.Float(start, top, width, height);
             // transform rect to absolute coords
             AffineTransform transform = currentState.getTransform();
-            rect = transform.createTransformedShape(rect).getBounds();
+            rect = transform.createTransformedShape(rect).getBounds2D();
+            rect = currentBasicTransform.createTransformedShape(rect).getBounds2D();
 
             int type = internal ? PDFLink.INTERNAL : PDFLink.EXTERNAL;
             PDFLink pdflink = pdfDoc.getFactory().makeLink(
