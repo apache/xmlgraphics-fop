@@ -20,6 +20,7 @@ package org.apache.fop.render.java2d;
 
 // Java
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.color.ColorSpace;
@@ -36,6 +37,9 @@ import java.awt.image.PixelInterleavedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
@@ -101,7 +105,7 @@ import org.w3c.dom.svg.SVGSVGElement;
  * }</code>
  *
  */
-public abstract class Java2DRenderer extends AbstractRenderer {
+public abstract class Java2DRenderer extends AbstractRenderer implements Printable {
 
     /** The MIME type for Java2D-Rendering */
     public static final String MIME_TYPE = "application/X-Java2D";
@@ -1120,5 +1124,37 @@ public abstract class Java2DRenderer extends AbstractRenderer {
         // pageHeight);
         state.getGraph().translate(-(x + 500) / 1000,
                 (y + 500) / 1000 - pageHeight);
+    }
+
+    /**
+     * @see java.awt.print.Printable#print(java.awt.Graphics,
+     * java.awt.print.PageFormat, int)
+     */
+    public int print(Graphics g, PageFormat pageFormat, int pageIndex)
+            throws PrinterException {
+        if (pageIndex >= getNumberOfPages()) {
+            return NO_SUCH_PAGE;
+        }
+
+        Graphics2D graphics = (Graphics2D) g;
+        Java2DGraphicsState oldState = state;
+        BufferedImage image;
+        try {
+          PageViewport viewport = getPageViewport(pageIndex);
+          AffineTransform at = graphics.getTransform();
+          state = new Java2DGraphicsState(graphics, this.fontInfo, at);
+
+          // reset the current Positions
+          currentBPPosition = 0;
+          currentIPPosition = 0;
+
+          renderPageAreas(viewport.getPage());
+          return PAGE_EXISTS;
+        } catch (FOPException e) {
+            e.printStackTrace();
+            return NO_SUCH_PAGE;
+        } finally {
+          oldState = state;
+        }
     }
 }
