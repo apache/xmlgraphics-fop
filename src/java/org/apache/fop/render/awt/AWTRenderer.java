@@ -27,18 +27,14 @@ package org.apache.fop.render.awt;
 
 // Java
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Pageable;
 import java.awt.print.Paper;
 import java.awt.print.Printable;
-import java.awt.print.PrinterException;
 import java.io.IOException;
 
 import org.apache.fop.apps.FOPException;
@@ -56,7 +52,7 @@ import org.apache.fop.render.java2d.Java2DRenderer;
  * window. This Swing window serves as default viewer for the -awt switch and as
  * an example of how to embed the AWTRenderer into an AWT/Swing application.
  */
-public class AWTRenderer extends Java2DRenderer implements Pageable, Printable {
+public class AWTRenderer extends Java2DRenderer implements Pageable {
 
     /** The MIME type for AWT-Rendering */
     public static final String MIME_TYPE = "application/X-awt";
@@ -160,31 +156,6 @@ public class AWTRenderer extends Java2DRenderer implements Pageable, Printable {
         frame.setStatus(translator.getString("Status.Build.FO.tree"));
         frame.setVisible(true);
         return frame;
-    }
-
-    /**
-     * @see java.awt.print.Printable#print(java.awt.Graphics,
-     * java.awt.print.PageFormat, int)
-     */
-    public int print(Graphics g, PageFormat pageFormat, int pageIndex)
-            throws PrinterException {
-        if (pageIndex >= getNumberOfPages()) {
-            return NO_SUCH_PAGE;
-        }
-
-        Graphics2D g2 = (Graphics2D) g;
-
-        BufferedImage image;
-        try {
-            image = getPageImage(pageIndex);
-        } catch (FOPException e) {
-            e.printStackTrace();
-            return NO_SUCH_PAGE;
-        }
-
-        g2.drawImage(image, null, 0, 0);
-
-        return PAGE_EXISTS;
     }
 
     /** @see java.awt.print.Pageable#getPageFormat(int) */

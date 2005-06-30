@@ -18,10 +18,7 @@
 
 package org.apache.fop.render.print;
 
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Pageable;
 import java.awt.print.Paper;
@@ -36,8 +33,11 @@ import org.apache.fop.render.java2d.Java2DRenderer;
 
 /**
  * Renderer that prints through java.awt.PrintJob.
+ * The actual printing is handled by Java2DRenderer
+ * since both PrintRenderer and AWTRenderer need to
+ * support printing.
  */
-public class PrintRenderer extends Java2DRenderer implements Pageable, Printable {
+public class PrintRenderer extends Java2DRenderer implements Pageable {
 
     private static final int EVEN_AND_ALL = 0;
 
@@ -138,27 +138,6 @@ public class PrintRenderer extends Java2DRenderer implements Pageable, Printable
             }
         }
         return vec;
-    }
-
-    public int print(Graphics g, PageFormat pageFormat, int pageIndex)
-            throws PrinterException {
-        if (pageIndex >= getNumberOfPages()) {
-            return NO_SUCH_PAGE;
-        }
-
-        Graphics2D g2 = (Graphics2D) g;
-
-        BufferedImage image;
-        try {
-            image = getPageImage(pageIndex);
-        } catch (FOPException e) {
-            e.printStackTrace();
-            return NO_SUCH_PAGE;
-        }
-
-        g2.drawImage(image, null, 0, 0);
-
-        return PAGE_EXISTS;
     }
 
     /** @see java.awt.print.Pageable#getPageFormat(int) */
