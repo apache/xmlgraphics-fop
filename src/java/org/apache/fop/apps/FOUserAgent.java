@@ -98,7 +98,7 @@ public class FOUserAgent {
     /** Producer:  Metadata element for the system/software that produces
      * the document. (Some renderers can store this in the document.)
      */
-    protected String producer = "FOP Version " + Fop.getVersion();
+    protected String producer = "Apache FOP Version " + Fop.getVersion();
 
     /** Creator:  Metadata element for the user that created the
      * document. (Some renderers can store this in the document.)
