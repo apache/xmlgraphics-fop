@@ -24,13 +24,13 @@
   <fo>
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
       <fo:layout-master-set>
-        <fo:simple-page-master master-name="master1" page-width="5in" page-height="5in" margin-left="10pt" margin-top="20pt" margin-right="30pt" margin-bottom="40pt" background-color="rgb(100%, 90%, 90%)">
+        <fo:simple-page-master master-name="master1" page-width="5in" page-height="5in" margin-left="10pt" margin-top="20pt" margin-right="30pt" margin-bottom="40pt">
           <fo:region-body background-color="rgb(100%, 80%, 80%)" margin-top="20pt"/>
           <fo:region-before background-color="lightgray" extent="20pt"/>
         </fo:simple-page-master>
-        <fo:simple-page-master master-name="master2" page-width="5in" page-height="5in" margin-left="10pt" margin-top="20pt" margin-right="30pt" margin-bottom="40pt" background-color="rgb(100%, 90%, 90%)" reference-orientation="90">
+        <fo:simple-page-master master-name="master2" page-width="5in" page-height="5in" margin-left="10pt" margin-top="20pt" margin-right="30pt" margin-bottom="40pt" reference-orientation="90">
           <fo:region-body background-color="rgb(100%, 80%, 80%)" margin-top="35pt"/>
-          <fo:region-before background-color="lightgray" extent="20pt" margin-left="50pt" overflow="hidden"/>
+          <fo:region-before background-color="lightgray" extent="20pt" overflow="hidden"/>
         </fo:simple-page-master>
       </fo:layout-master-set>
       <fo:page-sequence master-reference="master1" white-space-collapse="true">
