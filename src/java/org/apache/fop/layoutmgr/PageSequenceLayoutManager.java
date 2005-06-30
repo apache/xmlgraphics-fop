@@ -348,7 +348,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
         
         protected void startPart(BlockSequence list, int breakClass) {
-            log.info("startPart() breakClass=" + breakClass);
+            log.debug("startPart() breakClass=" + breakClass);
             if (curPV == null) {
                 throw new IllegalStateException("curPV must not be null");
             }
