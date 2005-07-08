@@ -81,31 +81,31 @@
     <!-- 3 columns in span 1 -->
     <eval expected="3" xpath="count(//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span[1]/flow)"/>
     <!-- 5 lines in first column -->
-    <eval expected="5" xpath="count(//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span[1]/flow[1]/block)"/>
+    <eval expected="5" xpath="count(//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span[1]/flow[1]/block/block)"/>
     <eval expected="5" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span[1]/flow[1]/@bpd div 14400"/>
-    <!-- 5 lines in second column -->
-    <eval expected="5" xpath="count(//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span[1]/flow[2]/block)"/>
-    <eval expected="5" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span[1]/flow[2]/@bpd div 14400"/>
-    <!-- 3 lines in third column -->
-    <eval expected="3" xpath="count(//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span[1]/flow[3]/block)"/>
-    <eval expected="3" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span[1]/flow[3]/@bpd div 14400"/>
+    <!-- 4 lines in second column -->
+    <eval expected="4" xpath="count(//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span[1]/flow[2]/block/block)"/>
+    <eval expected="4" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span[1]/flow[2]/@bpd div 14400"/>
+    <!-- 4 lines in third column -->
+    <eval expected="4" xpath="count(//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span[1]/flow[3]/block/block)"/>
+    <eval expected="4" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span[1]/flow[3]/@bpd div 14400"/>
 
     <!-- second span should produce 4 lines -->
     <eval expected="4" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span[2]/@bpd div 14400"/>
     <!-- 1 column in span 2 -->
     <eval expected="1" xpath="count(//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span[2]/flow)"/>
-    <eval expected="4" xpath="count(//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span[2]/flow[1]/block)"/>
+    <eval expected="4" xpath="count(//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span[2]/flow[1]/block/block)"/>
     <eval expected="4" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span[2]/flow[1]/@bpd div 14400"/>
 
     <!-- no column balancing in the last span -->
-    <eval expected="3" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span[3]/@bpd div 14400"/>
+    <eval expected="11" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span[3]/@bpd div 14400"/>
     <!-- 3 columns in span 3 -->
     <eval expected="3" xpath="count(//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span[3]/flow)"/>
     <!-- 11 lines in first column -->
-    <eval expected="11" xpath="count(//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span[3]/flow[1]/block)"/>
+    <eval expected="11" xpath="count(//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span[3]/flow[1]/block/block)"/>
     <eval expected="11" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span[3]/flow[1]/@bpd div 14400"/>
     <!-- 2 lines in second column (no column balancing here)-->
-    <eval expected="2" xpath="count(//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span[3]/flow[2]/block)"/>
+    <eval expected="2" xpath="count(//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span[3]/flow[2]/block/block)"/>
     <eval expected="2" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span[3]/flow[2]/@bpd div 14400"/>
 
   </checks>
