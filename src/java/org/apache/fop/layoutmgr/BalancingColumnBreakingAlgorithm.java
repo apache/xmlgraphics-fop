@@ -38,33 +38,55 @@ public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
         super(topLevelLM, pvProvider, alignment, alignmentLast, 
                 fnSeparatorLength, partOverflowRecovery);
         this.columnCount = columnCount;
+        this.considerTooShort = true; //This is important!
     }
     
     /** @see org.apache.fop.layoutmgr.BreakingAlgorithm */
     protected double computeDemerits(KnuthNode activeNode,
             KnuthElement element, int fitnessClass, double r) {
         double dem = super.computeDemerits(activeNode, element, fitnessClass, r);
-        log.trace("original demerit=" + dem + " " + totalWidth);
+        if (log.isTraceEnabled()) {
+            log.trace("original demerit=" + dem + " " + totalWidth 
+                    + " line=" + activeNode.line);
+        }
+        int remParts = columnCount - activeNode.line;
         int curPos = par.indexOf(element);
         if (fullLen == 0) {
             fullLen = ElementListUtils.calcContentLength(par);
         }
         int partLen = ElementListUtils.calcContentLength(par, activeNode.position, curPos - 1);
+        int restLen = ElementListUtils.calcContentLength(par, curPos - 1, par.size() - 1);
+        int avgRestLen = 0;
+        if (remParts > 0) {
+            avgRestLen = restLen / remParts;
+        }
+        if (log.isTraceEnabled()) {
+            log.trace("remaining parts: " + remParts + " rest len: " + restLen 
+                    + " avg=" + avgRestLen);
+        }
         int meanColumnLen = (fullLen / columnCount);
         double balance = (meanColumnLen - partLen) / 1000f;
-        log.trace("balance=" + balance);
+        if (log.isTraceEnabled()) {
+            log.trace("balance=" + balance);
+        }
         double absBalance = Math.abs(balance);
+        //Step 1: This does the rough balancing
         if (balance <= 0) {
-            dem = absBalance * absBalance;
+            dem = absBalance;
         } else {
             //shorter parts are less desired than longer ones
-            dem = absBalance * absBalance * 2;
+            dem = absBalance * 1.2f;
         }
+        //Step 2: This helps keep the trailing parts shorter than the previous ones 
+        dem += (avgRestLen) / 1000f;
+        
         if (activeNode.line >= columnCount) {
             //We don't want more columns than available
             dem = Double.MAX_VALUE;
         }
-        log.trace("effective dem=" + dem + " " + totalWidth);
+        if (log.isTraceEnabled()) {
+            log.trace("effective dem=" + dem + " " + totalWidth);
+        }
         return dem;
     }
 }
