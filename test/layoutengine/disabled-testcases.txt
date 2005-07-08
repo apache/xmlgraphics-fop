@@ -11,4 +11,5 @@ multi-column3.xml
 normal-breaking4.xml
 table-border-collapse1.xml
 table-border-collapse2.xml
+table-column4.xml
 table-fixed2.xml
