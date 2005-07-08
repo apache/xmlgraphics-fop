@@ -276,7 +276,7 @@ public abstract class AbstractBreaker {
                     KnuthPenalty pen = (KnuthPenalty)lastBreakElement;
                     lastBreakClass = pen.getBreakClass();
                 } else {
-                    lastBreakClass = Constants.EN_AUTO;
+                    lastBreakClass = Constants.EN_COLUMN;
                 }
             }
             
