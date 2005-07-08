@@ -71,6 +71,8 @@ public abstract class BreakingAlgorithm {
      */
     protected int lineWidth = -1;
     private boolean force =  false;
+    /** If set to true, doesn't ignore break possibilities which are definitely too short. */
+    protected boolean considerTooShort = false;
 
     protected KnuthNode lastDeactivatedNode = null;
     private KnuthNode lastTooLong;
@@ -556,6 +558,12 @@ public abstract class BreakingAlgorithm {
                         }
                     } else {
                         if (lastTooShort == null || demerits <= lastTooShort.totalDemerits) {
+                            if (considerTooShort) {
+                                //consider possibilities which are too short
+                                best.addRecord(demerits, node, r, 
+                                        availableShrink, availableStretch,
+                                        difference, fitnessClass);
+                            }
                             lastTooShort = createNode(elementIdx, line + 1, fitnessClass,
                                     totalWidth, totalStretch, totalShrink,
                                     r, availableShrink, availableStretch,
