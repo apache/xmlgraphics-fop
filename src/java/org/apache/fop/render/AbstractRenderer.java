@@ -393,7 +393,7 @@ public abstract class AbstractRenderer
                 }
             }
             currentIPPosition = saveIPPos;
-            currentBPPosition = saveBPPos + span.getHeight();
+            currentBPPosition = saveSpanBPPos + span.getHeight();
             saveSpanBPPos = currentBPPosition;
         }
         currentBPPosition = saveBPPos;
