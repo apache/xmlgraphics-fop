@@ -317,7 +317,14 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                     newStartPos = 0;
                 }
                 log.debug("Restarting at " + restartPoint + ", new start position: " + newStartPos);
-                
+
+                //Handle page break right here to avoid any side-effects
+                handleBreakTrait(EN_PAGE);
+                pageBreakHandled = true;
+                //Update so the available BPD is reported correctly
+                pvProvider.setStartOfNextElementList(currentPageNum, 
+                        curPV.getCurrentSpan().getCurrentFlowIndex());
+
                 //Restart last page
                 PageBreakingAlgorithm algRestart = new BalancingColumnBreakingAlgorithm(
                         getTopLevelLM(),
