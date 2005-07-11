@@ -18,6 +18,8 @@
 
 package org.apache.fop.layoutmgr;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -26,8 +28,11 @@ import org.apache.fop.traits.MinOptMax;
  */
 public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
 
+    private Log log = LogFactory.getLog(BalancingColumnBreakingAlgorithm.class);
+    
     private int columnCount;
     private int fullLen;
+    private int idealPartLen;
     
     public BalancingColumnBreakingAlgorithm(LayoutManager topLevelLM,
             PageSequenceLayoutManager.PageViewportProvider pvProvider,
@@ -47,12 +52,13 @@ public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
         double dem = super.computeDemerits(activeNode, element, fitnessClass, r);
         if (log.isTraceEnabled()) {
             log.trace("original demerit=" + dem + " " + totalWidth 
-                    + " line=" + activeNode.line);
+                    + " line=" + activeNode.line + "/" + columnCount);
         }
         int remParts = columnCount - activeNode.line;
         int curPos = par.indexOf(element);
         if (fullLen == 0) {
-            fullLen = ElementListUtils.calcContentLength(par);
+            fullLen = ElementListUtils.calcContentLength(par, activeNode.position, par.size() - 1);
+            this.idealPartLen = (fullLen / columnCount);
         }
         int partLen = ElementListUtils.calcContentLength(par, activeNode.position, curPos - 1);
         int restLen = ElementListUtils.calcContentLength(par, curPos - 1, par.size() - 1);
@@ -64,8 +70,7 @@ public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
             log.trace("remaining parts: " + remParts + " rest len: " + restLen 
                     + " avg=" + avgRestLen);
         }
-        int meanColumnLen = (fullLen / columnCount);
-        double balance = (meanColumnLen - partLen) / 1000f;
+        double balance = (idealPartLen - partLen) / 1000f;
         if (log.isTraceEnabled()) {
             log.trace("balance=" + balance);
         }
