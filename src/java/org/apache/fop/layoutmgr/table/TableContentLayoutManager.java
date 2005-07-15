@@ -455,7 +455,8 @@ public class TableContentLayoutManager {
                         }
                         ElementListObserver.observe(elems, "table-cell", primary.getCell().getId());
 
-                        if (((KnuthElement)elems.getLast()).isPenalty()
+                        if ((elems.size() > 0) 
+                                && ((KnuthElement)elems.getLast()).isPenalty()
                                 && ((KnuthPenalty)elems.getLast()).getP() 
                                         == -KnuthElement.INFINITE) {
                             // a descendant of this block has break-after
@@ -514,7 +515,6 @@ public class TableContentLayoutManager {
                         if (effRowHeight > rowHeights[rgi].min) {
                             //This is the new height of the (grid) row
                             MinOptMaxUtil.extendMinimum(rowHeights[rgi], effRowHeight, false);
-                            row.setHeight(rowHeights[rgi]);
                         }
                     }
                     
@@ -524,6 +524,7 @@ public class TableContentLayoutManager {
                 }
             }
 
+            row.setHeight(rowHeights[rgi]);
             row.setExplicitHeight(explicitRowHeights[rgi]);
             if (row.getHeight().opt > row.getExplicitHeight().max) {
                 log.warn("Contents of row " + row.getIndex() + " violate a maximum constraint "
