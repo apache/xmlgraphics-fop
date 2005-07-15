@@ -332,6 +332,9 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
      
     public class WrapperLayoutManagerMaker extends Maker {
         public void make(FONode node, List lms) {
+            //We insert the wrapper LM before it's children so an ID
+            //on the node can be registered on a page.
+            lms.add(new WrapperLayoutManager((Wrapper)node));
             Iterator baseIter;
             baseIter = node.getChildNodes();
             if (baseIter == null) {

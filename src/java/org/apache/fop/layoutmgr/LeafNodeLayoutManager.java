@@ -169,9 +169,11 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
         addId();
 
         InlineArea area = getEffectiveArea();
-        offsetArea(area, context);
-        widthAdjustArea(area, context);
-        parentLM.addChildArea(area);
+        if (area.getAllocIPD() > 0 || area.getAllocBPD() > 0) {
+            offsetArea(area, context);
+            widthAdjustArea(area, context);
+            parentLM.addChildArea(area);
+        }
 
         while (posIter.hasNext()) {
             posIter.next();
