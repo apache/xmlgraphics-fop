@@ -94,7 +94,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         makers.put(BasicLink.class, new BasicLinkLayoutManagerMaker());
         makers.put(Block.class, new BlockLayoutManagerMaker());
         makers.put(Leader.class, new LeaderLayoutManagerMaker());
-        makers.put(RetrieveMarker.class, new WrapperLayoutManagerMaker());
+        makers.put(RetrieveMarker.class, new RetrieveMarkerLayoutManagerMaker());
         makers.put(Character.class, new CharacterLayoutManagerMaker());
         makers.put(ExternalGraphic.class,
                    new ExternalGraphicLayoutManagerMaker());
@@ -330,6 +330,20 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         }
     }
      
+    public class RetrieveMarkerLayoutManagerMaker extends Maker {
+        public void make(FONode node, List lms) {
+            Iterator baseIter;
+            baseIter = node.getChildNodes();
+            if (baseIter == null) {
+                return;
+            }
+            while (baseIter.hasNext()) {
+                FONode child = (FONode) baseIter.next();
+                makeLayoutManagers(child, lms);
+            }
+        }       
+    }
+
     public class WrapperLayoutManagerMaker extends Maker {
         public void make(FONode node, List lms) {
             //We insert the wrapper LM before it's children so an ID
