@@ -38,7 +38,7 @@ import java.util.LinkedList;
 /**
  * LayoutManager for a list-item-label or list-item-body FO.
  */
-public class Item extends BlockStackingLayoutManager {
+public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
 
     private Block curBlockArea;
 
@@ -63,7 +63,7 @@ public class Item extends BlockStackingLayoutManager {
      * Create a new Cell layout manager.
      * @param node list-item-label node
      */
-    public Item(ListItemLabel node) {
+    public ListItemContentLayoutManager(ListItemLabel node) {
         super(node);
     }
 
@@ -71,7 +71,7 @@ public class Item extends BlockStackingLayoutManager {
      * Create a new Cell layout manager.
      * @param node list-item-body node
      */
-    public Item(ListItemBody node) {
+    public ListItemContentLayoutManager(ListItemBody node) {
         super(node);
     }
 
@@ -96,7 +96,7 @@ public class Item extends BlockStackingLayoutManager {
 
     /** @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(java.util.List, int) */
     public LinkedList getChangedKnuthElements(List oldList, int alignment) {
-        //log.debug("  Item.getChanged>");
+        //log.debug("  ListItemContentLayoutManager.getChanged>");
         return super.getChangedKnuthElements(oldList, alignment);
     }
 

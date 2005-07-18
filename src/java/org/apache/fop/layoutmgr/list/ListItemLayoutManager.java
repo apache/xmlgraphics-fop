@@ -48,8 +48,8 @@ import java.util.ListIterator;
  * The list item contains a list item label and a list item body.
  */
 public class ListItemLayoutManager extends BlockStackingLayoutManager {
-    private Item label;
-    private Item body;
+    private ListItemContentLayoutManager label;
+    private ListItemContentLayoutManager body;
 
     private Block curBlockArea = null;
 
@@ -140,7 +140,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
      * @param node the fo:list-item-label FO
      */
     public void setLabel(ListItemLabel node) {
-        label = new Item(node);
+        label = new ListItemContentLayoutManager(node);
         label.setParent(this);
     }
 
@@ -149,7 +149,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
      * @param node the fo:list-item-body FO
      */
     public void setBody(ListItemBody node) {
-        body = new Item(node); 
+        body = new ListItemContentLayoutManager(node); 
         body.setParent(this);
     }
 
