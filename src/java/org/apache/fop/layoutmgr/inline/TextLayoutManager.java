@@ -16,7 +16,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutmgr;
+package org.apache.fop.layoutmgr.inline;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +26,15 @@ import java.util.ListIterator;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.layoutmgr.KnuthBox;
+import org.apache.fop.layoutmgr.KnuthElement;
+import org.apache.fop.layoutmgr.KnuthGlue;
+import org.apache.fop.layoutmgr.KnuthPenalty;
+import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.LeafPosition;
+import org.apache.fop.layoutmgr.Position;
+import org.apache.fop.layoutmgr.PositionIterator;
+import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.InlineArea;

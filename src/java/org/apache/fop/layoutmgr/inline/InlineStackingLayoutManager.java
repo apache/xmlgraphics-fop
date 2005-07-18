@@ -16,7 +16,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutmgr;
+package org.apache.fop.layoutmgr.inline;
 
 import java.util.LinkedList;
 import java.util.Iterator;
@@ -26,6 +26,14 @@ import java.util.HashMap;
 
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.properties.SpaceProperty;
+import org.apache.fop.layoutmgr.AbstractLayoutManager;
+import org.apache.fop.layoutmgr.KnuthElement;
+import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.NonLeafPosition;
+import org.apache.fop.layoutmgr.Position;
+import org.apache.fop.layoutmgr.PositionIterator;
+import org.apache.fop.layoutmgr.SpaceSpecifier;
 import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.inline.InlineArea;

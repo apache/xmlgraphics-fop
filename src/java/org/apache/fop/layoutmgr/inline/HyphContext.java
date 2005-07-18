@@ -16,7 +16,7 @@
 
 /* $Id$ */
  
-package org.apache.fop.layoutmgr;
+package org.apache.fop.layoutmgr.inline;
 
 /**
  * This class is used to pass information to the getNextBreakPoss()

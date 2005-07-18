@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,6 @@
 
 package org.apache.fop.fo.flow;
 
-// Java
-import java.util.List;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
@@ -29,7 +26,6 @@ import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.fo.properties.SpaceProperty;
-import org.apache.fop.layoutmgr.LeaderLayoutManager;
 
 /**
  * Class modelling fo:leader object.
@@ -105,6 +101,8 @@ public class Leader extends InlineLevel {
             // use inline layout manager to create inline areas
             // add the inline parent multiple times until leader full
             break;
+        default:
+            throw new RuntimeException("Invalid leader pattern: " + leaderPattern);
         }
         // letterSpacing = pList.get(PR_LETTER_SPACING);
         // textShadow = pList.get(PR_TEXT_SHADOW);
@@ -120,56 +118,56 @@ public class Leader extends InlineLevel {
 
 
     /**
-     * Return the "id" property.
+     * @return the "id" property.
      */
     public String getId() {
         return id;
     }
 
     /**
-     * Return the "rule-style" property.
+     * @return the "rule-style" property.
      */
     public int getRuleStyle() {
         return ruleStyle;
     }
 
     /**
-     * Return the "rule-thickness" property.
+     * @return the "rule-thickness" property.
      */
     public Length getRuleThickness() {
         return ruleThickness;
     }
 
     /**
-     * Return the "leader-alignment" property.
+     * @return the "leader-alignment" property.
      */
     public int getLeaderAlignment() {
         return leaderAlignment;
     }
 
     /**
-     * Return the "leader-length" property.
+     * @return the "leader-length" property.
      */
     public LengthRangeProperty getLeaderLength() {
         return leaderLength;
     }
 
     /**
-     * Return the "leader-pattern" property.
+     * @return the "leader-pattern" property.
      */
     public int getLeaderPattern() {
         return leaderPattern;
     }
 
     /**
-     * Return the "leader-pattern-width" property.
+     * @return the "leader-pattern-width" property.
      */
     public Length getLeaderPatternWidth() {
         return leaderPatternWidth;
     }
 
     /**
-     * Return the "vertical-align" property.
+     * @return the "vertical-align" property.
      */
     public int getVerticalAlign() {
         return verticalAlign; 

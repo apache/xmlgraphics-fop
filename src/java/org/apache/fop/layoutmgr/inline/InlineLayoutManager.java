@@ -16,7 +16,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutmgr;
+package org.apache.fop.layoutmgr.inline;
 
 import java.util.ListIterator;
 import java.util.LinkedList;
@@ -25,6 +25,11 @@ import org.apache.fop.fo.flow.InlineLevel;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.SpaceProperty;
+import org.apache.fop.layoutmgr.KnuthElement;
+import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.NonLeafPosition;
+import org.apache.fop.layoutmgr.SpaceSpecifier;
+import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
 

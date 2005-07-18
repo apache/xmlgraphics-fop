@@ -16,7 +16,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutmgr;
+package org.apache.fop.layoutmgr.inline;
 
 // Java
 import java.util.List;

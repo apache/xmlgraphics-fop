@@ -16,7 +16,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutmgr;
+package org.apache.fop.layoutmgr.inline;
 
 // Java
 import java.awt.geom.Rectangle2D;
@@ -27,6 +27,7 @@ import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.flow.ExternalGraphic;
+import org.apache.fop.layoutmgr.TraitSetter;
 
 /**
  * LayoutManager for the fo:external-graphic formatting object

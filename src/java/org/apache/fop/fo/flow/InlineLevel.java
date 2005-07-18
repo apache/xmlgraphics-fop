@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The Apache Software Foundation.
+ * Copyright 2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@
 
 package org.apache.fop.fo.flow;
 
-import java.util.List;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
@@ -31,13 +29,14 @@ import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonMarginInline;
-import org.apache.fop.layoutmgr.InlineLayoutManager;
 
 /**
  * Class modelling the commonalities of several inline-level
  * formatting objects.
  */
 public abstract class InlineLevel extends FObjMixed {
+    
+    // The value of properties relevant for inline-level FOs.
     protected CommonBorderPaddingBackground commonBorderPaddingBackground;
     protected CommonAccessibility commonAccessibility;
     protected CommonMarginInline commonMarginInline;
@@ -70,28 +69,28 @@ public abstract class InlineLevel extends FObjMixed {
     }
 
     /**
-     * Return the Common Margin Properties-Inline.
+     * @return the Common Margin Properties-Inline.
      */
     public CommonMarginInline getCommonMarginInline() {
         return commonMarginInline;
     }
 
     /**
-     * Return the Common Border, Padding, and Background Properties.
+     * @return the Common Border, Padding, and Background Properties.
      */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
     } 
 
     /**
-     * Return the Common Font Properties.
+     * @return the Common Font Properties.
      */
     public CommonFont getCommonFont() {
         return commonFont;
     }
 
     /**
-     * Return the "color" property.
+     * @return the "color" property.
      */
     public ColorType getColor() {
         return color;

@@ -135,7 +135,7 @@ public abstract class BreakingAlgorithm {
 
 
     // this class represent a feasible breaking point
-    protected class KnuthNode {
+    public class KnuthNode {
         /** index of the breakpoint represented by this node */
         public int position;
 

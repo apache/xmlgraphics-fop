@@ -20,6 +20,7 @@ package org.apache.fop.layoutmgr;
 
 import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.pagination.Flow;
+import org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockParent;
 

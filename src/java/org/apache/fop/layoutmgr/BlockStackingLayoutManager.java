@@ -30,6 +30,7 @@ import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.SpaceProperty;
+import org.apache.fop.layoutmgr.inline.LineLayoutManager;
 import org.apache.fop.traits.MinOptMax;
 
 /**

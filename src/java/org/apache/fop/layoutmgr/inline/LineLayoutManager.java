@@ -16,7 +16,7 @@
 
 /* $Id: LineLayoutManager.java,v 1.17 2004/04/02 10:38:29 cbowditch Exp $ */
 
-package org.apache.fop.layoutmgr;
+package org.apache.fop.layoutmgr.inline;
 
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.Constants;
@@ -24,6 +24,23 @@ import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.hyphenation.Hyphenation;
 import org.apache.fop.hyphenation.Hyphenator;
+import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
+import org.apache.fop.layoutmgr.BreakingAlgorithm;
+import org.apache.fop.layoutmgr.ElementListObserver;
+import org.apache.fop.layoutmgr.KnuthBlockBox;
+import org.apache.fop.layoutmgr.KnuthBox;
+import org.apache.fop.layoutmgr.KnuthElement;
+import org.apache.fop.layoutmgr.KnuthGlue;
+import org.apache.fop.layoutmgr.KnuthPenalty;
+import org.apache.fop.layoutmgr.KnuthPossPosIter;
+import org.apache.fop.layoutmgr.KnuthSequence;
+import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.LeafPosition;
+import org.apache.fop.layoutmgr.Position;
+import org.apache.fop.layoutmgr.PositionIterator;
+import org.apache.fop.layoutmgr.SpaceSpecifier;
+import org.apache.fop.layoutmgr.BreakingAlgorithm.KnuthNode;
 import org.apache.fop.area.LineArea;
 
 import java.util.ListIterator;
