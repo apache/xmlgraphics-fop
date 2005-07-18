@@ -43,7 +43,7 @@ import org.apache.fop.traits.MinOptMax;
  * LayoutManager for a table-cell FO.
  * A cell contains blocks. These blocks fill the cell.
  */
-public class Cell extends BlockStackingLayoutManager implements BlockLevelLayoutManager {
+public class TableCellLayoutManager extends BlockStackingLayoutManager implements BlockLevelLayoutManager {
     
     private TableCell fobj;
     private PrimaryGridUnit gridUnit;
@@ -67,7 +67,7 @@ public class Cell extends BlockStackingLayoutManager implements BlockLevelLayout
      * @param node table-cell FO for which to create the LM
      * @param pgu primary grid unit for the cell 
      */
-    public Cell(TableCell node, PrimaryGridUnit pgu) {
+    public TableCellLayoutManager(TableCell node, PrimaryGridUnit pgu) {
         super(node);
         fobj = node;
         this.gridUnit = pgu;
