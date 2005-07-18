@@ -31,7 +31,7 @@ import org.apache.fop.fo.properties.LengthRangeProperty;
 public class PrimaryGridUnit extends GridUnit {
 
     /** Cell layout manager. */
-    private Cell cellLM;
+    private TableCellLayoutManager cellLM;
     /** List of Knuth elements representing the contents of the cell. */
     private LinkedList elements;
     /** Index of row where this cell starts */
@@ -45,11 +45,11 @@ public class PrimaryGridUnit extends GridUnit {
         super(cell, column, startCol, 0);
         this.startRow = startRow;
         if (cell != null) {
-            cellLM = new Cell(cell, this);
+            cellLM = new TableCellLayoutManager(cell, this);
         }
     }
     
-    public Cell getCellLM() {
+    public TableCellLayoutManager getCellLM() {
         return cellLM;
     }
     

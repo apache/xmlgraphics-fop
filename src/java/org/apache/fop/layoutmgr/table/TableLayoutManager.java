@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* $Id: TableLayoutManager.java,v 1.8 2004/03/21 12:03:08 gmazza Exp $ */
+/* $Id$ */
 
 package org.apache.fop.layoutmgr.table;
 

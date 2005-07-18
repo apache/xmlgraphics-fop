@@ -32,7 +32,7 @@ import org.apache.fop.area.Block;
  * table.
  * @todo Implement getNextKnuthElements()
  */
-public class Caption extends BlockStackingLayoutManager {
+public class TableCaptionLayoutManager extends BlockStackingLayoutManager {
     private TableCaption fobj;
 
     private Block curBlockArea;
@@ -43,7 +43,7 @@ public class Caption extends BlockStackingLayoutManager {
      * Create a new Caption layout manager.
      * @param node table-caption FO
      */
-    public Caption(TableCaption node) {
+    public TableCaptionLayoutManager(TableCaption node) {
         super(node);
         fobj = node;
     }

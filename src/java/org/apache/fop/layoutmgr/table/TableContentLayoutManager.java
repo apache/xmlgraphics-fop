@@ -851,7 +851,7 @@ public class TableContentLayoutManager {
             log.debug("start row: " + pgu.getStartRow() + " " + yoffset + " " + effYOffset);
             log.debug("contentHeight: " + contentHeight + " rowHeight=" + rowHeight 
                     + " effCellHeight=" + effCellHeight);
-            Cell cellLM = pgu.getCellLM();
+            TableCellLayoutManager cellLM = pgu.getCellLM();
             cellLM.setXOffset(getXOffsetOfGridUnit(pgu));
             cellLM.setYOffset(effYOffset);
             cellLM.setContentHeight(contentHeight);
