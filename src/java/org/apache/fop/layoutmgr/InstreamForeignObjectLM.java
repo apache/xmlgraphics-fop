@@ -172,7 +172,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
         org.w3c.dom.Document doc = child.getDOMDocument();
         String ns = child.getDocumentNamespace();
 
-        fobj.childNodes = null;
+        //fobj.childNodes = null; This is bad for i-f-o in static-content!!!!!
         ForeignObject foreign = new ForeignObject(doc, ns);
 
         Viewport vp = new Viewport(foreign);
