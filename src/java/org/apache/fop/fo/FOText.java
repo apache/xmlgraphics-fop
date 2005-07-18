@@ -31,6 +31,8 @@ import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.SpaceProperty;
+
+// SAX
 import org.xml.sax.Locator;
 
 /**
@@ -214,8 +216,11 @@ public class FOText extends FONode {
             ancestorFONode = ancestorFONode.parent;
             if (ancestorFONode instanceof org.apache.fop.fo.pagination.Title) {
                 return;
+            } else if (ancestorFONode instanceof org.apache.fop.fo.flow.Marker) {
+                return;
             } else if (ancestorFONode instanceof Root) {
-                getLogger().warn("Unexpected: fo:text with no fo:block ancestor");
+                getLogger().warn("Unexpected: fo:text with no fo:block ancestor. The text is: " 
+                        + new String(ca));
                 return;
             } else if (ancestorFONode instanceof Block) {
                 this.ancestorBlock = (Block)ancestorFONode;
