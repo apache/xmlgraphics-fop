@@ -188,84 +188,84 @@ public class InstreamForeignObject extends FObj {
     }
 
     /**
-     * Return the "id" property.
+     * @return the "id" property.
      */
     public String getId() {
         return id;
     }
 
     /**
-     * Return the Common Border, Padding, and Background Properties.
+     * @return the Common Border, Padding, and Background Properties.
      */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
     }
 
     /**
-     * Return the "line-height" property.
+     * @return the "line-height" property.
      */
     public Length getLineHeight() {
         return lineHeight;
     }
 
     /**
-     * Return the "inline-progression-dimension" property.
+     * @return the "inline-progression-dimension" property.
      */
     public LengthRangeProperty getInlineProgressionDimension() {
         return inlineProgressionDimension;
     }
 
     /**
-     * Return the "block-progression-dimension" property.
+     * @return the "block-progression-dimension" property.
      */
     public LengthRangeProperty getBlockProgressionDimension() {
         return blockProgressionDimension;
     }
 
     /**
-     * Return the "height" property.
+     * @return the "height" property.
      */
     public Length getHeight() {
         return height;
     }
 
     /**
-     * Return the "width" property.
+     * @return the "width" property.
      */
     public Length getWidth() {
         return width;
     }
 
     /**
-     * Return the "content-height" property.
+     * @return the "content-height" property.
      */
     public Length getContentHeight() {
         return contentHeight;
     }
 
     /**
-     * Return the "content-width" property.
+     * @return the "content-width" property.
      */
     public Length getContentWidth() {
         return contentWidth;
     }
 
     /**
-     * Return the "scaling" property.
+     * @return the "scaling" property.
      */
     public int getScaling() {
         return scaling;
     }
 
     /**
-     * Return the "vertical-align" property.
+     * @return the "vertical-align" property.
      */
     public int getVerticalAlign() {
         return verticalAlign;
     }
 
     /**
-     * Return the "overflow" property.
+     * @return the "overflow" property.
      */
     public int getOverflow() {
         return overflow;
@@ -285,9 +285,7 @@ public class InstreamForeignObject extends FObj {
         return FO_INSTREAM_FOREIGN_OBJECT;
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getLayoutDimension(org.apache.fop.datatypes.PercentBase.DimensionType)
-     */
+    /** @see org.apache.fop.fo.FObj */
     public Number getLayoutDimension(PercentBase.LayoutDimension key) {
         if (key == PercentBase.IMAGE_INTRINSIC_WIDTH) {
             return new Integer(getIntrinsicWidth());
@@ -337,4 +335,8 @@ public class InstreamForeignObject extends FObj {
         }
     }
     
+    /** @see org.apache.fop.fo.FONode#addChildNode(org.apache.fop.fo.FONode) */
+    protected void addChildNode(FONode child) throws FOPException {
+        super.addChildNode(child);
+    }
 }

@@ -16,7 +16,11 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutmgr;
+package org.apache.fop.layoutmgr.inline;
+
+import org.apache.fop.layoutmgr.FootnoteBodyLayoutManager;
+import org.apache.fop.layoutmgr.KnuthBox;
+import org.apache.fop.layoutmgr.Position;
 
 public class KnuthInlineBox extends KnuthBox {
     

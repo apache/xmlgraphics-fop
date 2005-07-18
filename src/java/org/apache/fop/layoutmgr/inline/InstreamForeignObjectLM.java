@@ -16,7 +16,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutmgr;
+package org.apache.fop.layoutmgr.inline;
 
 // Java
 import java.awt.geom.Rectangle2D;
@@ -25,6 +25,7 @@ import java.awt.geom.Rectangle2D;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.XMLObj;
 import org.apache.fop.fo.flow.InstreamForeignObject;
+import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Viewport;
 
@@ -190,7 +191,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
     }
     
     /**
-     * @see org.apache.fop.layoutmgr.LeafNodeLayoutManager#addId()
+     * @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#addId()
      */
     protected void addId() {
         getPSLM().addIDToPage(fobj.getId());

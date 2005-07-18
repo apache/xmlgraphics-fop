@@ -16,9 +16,10 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutmgr;
+package org.apache.fop.layoutmgr.inline;
 
 import org.apache.fop.fo.flow.BasicLink;
+import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.LinkResolver;

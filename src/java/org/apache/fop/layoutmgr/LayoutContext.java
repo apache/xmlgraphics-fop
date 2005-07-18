@@ -19,6 +19,7 @@
 package org.apache.fop.layoutmgr;
 
 import org.apache.fop.fo.Constants;
+import org.apache.fop.layoutmgr.inline.HyphContext;
 import org.apache.fop.traits.MinOptMax;
 
 

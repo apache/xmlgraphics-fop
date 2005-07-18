@@ -23,6 +23,8 @@ import java.util.ListIterator;
 import java.util.List;
 
 import org.apache.fop.fonts.Font;
+import org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager;
+import org.apache.fop.layoutmgr.inline.LineLayoutManager;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.LineArea;

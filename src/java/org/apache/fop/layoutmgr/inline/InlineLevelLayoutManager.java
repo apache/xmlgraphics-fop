@@ -16,9 +16,12 @@
 
 /* $Id$ */
  
-package org.apache.fop.layoutmgr;
+package org.apache.fop.layoutmgr.inline;
 
 import java.util.List;
+
+import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.Position;
 
 /**
  * The interface for LayoutManagers which generate inline areas

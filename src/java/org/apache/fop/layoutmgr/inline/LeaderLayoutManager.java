@@ -16,7 +16,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutmgr;
+package org.apache.fop.layoutmgr.inline;
 
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.FilledArea;
@@ -26,6 +26,14 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.layoutmgr.KnuthElement;
+import org.apache.fop.layoutmgr.KnuthGlue;
+import org.apache.fop.layoutmgr.KnuthPenalty;
+import org.apache.fop.layoutmgr.KnuthPossPosIter;
+import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.LeafPosition;
+import org.apache.fop.layoutmgr.Position;
+import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.traits.MinOptMax;
 
 import java.util.List;

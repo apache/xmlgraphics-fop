@@ -16,10 +16,18 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutmgr;
+package org.apache.fop.layoutmgr.inline;
 
 import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.layoutmgr.KnuthElement;
+import org.apache.fop.layoutmgr.KnuthGlue;
+import org.apache.fop.layoutmgr.KnuthPenalty;
+import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.LeafPosition;
+import org.apache.fop.layoutmgr.Position;
+import org.apache.fop.layoutmgr.TraitSetter;
+import org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager.AreaInfo;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.Trait;
 import org.apache.fop.traits.MinOptMax;

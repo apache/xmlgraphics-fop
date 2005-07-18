@@ -40,6 +40,7 @@ import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.SideRegion;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
+import org.apache.fop.layoutmgr.inline.ContentLayoutManager;
 
 import org.apache.fop.traits.MinOptMax;
 

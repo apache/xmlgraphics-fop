@@ -16,13 +16,18 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutmgr;
+package org.apache.fop.layoutmgr.inline;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
 import org.apache.fop.fo.flow.Footnote;
+import org.apache.fop.layoutmgr.AbstractLayoutManager;
+import org.apache.fop.layoutmgr.FootnoteBodyLayoutManager;
+import org.apache.fop.layoutmgr.KnuthElement;
+import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.Position;
 
 public class FootnoteLayoutManager extends AbstractLayoutManager 
                                    implements InlineLevelLayoutManager {

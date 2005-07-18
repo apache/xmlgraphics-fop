@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,12 @@
 
 package org.apache.fop.fo.flow;
 
-// Java
-import java.util.List;
-
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.layoutmgr.BasicLinkLayoutManager;
 
 /**
  * The fo:basic-link formatting object.
@@ -118,14 +114,14 @@ public class BasicLink extends Inline {
     }
 
     /**
-     * Return the "internal-destination" property.
+     * @return the "internal-destination" property.
      */
     public String getInternalDestination() {
         return internalDestination;
     }
 
     /**
-     * Return the "external-destination" property.
+     * @return the "external-destination" property.
      */
     public String getExternalDestination() {
         return externalDestination;

@@ -16,7 +16,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutmgr;
+package org.apache.fop.layoutmgr.inline;
 
 import org.apache.fop.fo.flow.PageNumberCitation;
 import org.apache.fop.area.PageViewport;
@@ -26,6 +26,10 @@ import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.UnresolvedPageNumber;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.PositionIterator;
+import org.apache.fop.layoutmgr.TraitSetter;
 
 /**
  * LayoutManager for the fo:page-number-citation formatting object
@@ -62,7 +66,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
         }
     }
     
-    /** @see org.apache.fop.layoutmgr.LeafNodeLayoutManager#getLead() */
+    /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#getLead() */
     public int getLead() {
         return font.getAscender();
     }

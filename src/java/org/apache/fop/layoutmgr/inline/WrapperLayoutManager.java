@@ -16,10 +16,11 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutmgr;
+package org.apache.fop.layoutmgr.inline;
 
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.fo.flow.Wrapper;
+import org.apache.fop.layoutmgr.LayoutContext;
 
 /**
  * This is the layout manager for the fo:wrapper formatting object.
@@ -37,7 +38,7 @@ public class WrapperLayoutManager extends LeafNodeLayoutManager {
         fobj = node;
     }
 
-    /** @see org.apache.fop.layoutmgr.LeafNodeLayoutManager */
+    /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager */
     public InlineArea get(LayoutContext context) {
         //Create a zero-width, zero-height dummy area so this node can 
         //participate in the ID handling. Otherwise, addId() wouldn't 
@@ -46,7 +47,7 @@ public class WrapperLayoutManager extends LeafNodeLayoutManager {
         return area;
     }
     
-    /** @see org.apache.fop.layoutmgr.LeafNodeLayoutManager#addId() */
+    /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#addId() */
     protected void addId() {
         getPSLM().addIDToPage(fobj.getId());
     }
