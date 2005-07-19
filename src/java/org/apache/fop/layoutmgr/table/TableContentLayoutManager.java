@@ -406,6 +406,7 @@ public class TableContentLayoutManager {
             TableRow tableRow = null;
             int minContentHeight = 0;
             int maxCellHeight = 0;
+            int effRowContentHeight = 0;
             for (int j = 0; j < row.getGridUnits().size(); j++) {
                 maxColumnCount = Math.max(maxColumnCount, row.getGridUnits().size());
                 GridUnit gu = row.getGridUnit(j);
@@ -504,6 +505,8 @@ public class TableContentLayoutManager {
                             borderWidths = primary.getHalfMaxBorderWidth();
                         }
                         int padding = 0;
+                        effRowContentHeight = Math.max(effRowContentHeight,
+                                effCellContentHeight);
                         CommonBorderPaddingBackground cbpb 
                             = primary.getCell().getCommonBorderPaddingBackground(); 
                         padding += cbpb.getPaddingBefore(false);
@@ -526,11 +529,13 @@ public class TableContentLayoutManager {
 
             row.setHeight(rowHeights[rgi]);
             row.setExplicitHeight(explicitRowHeights[rgi]);
-            if (row.getHeight().opt > row.getExplicitHeight().max) {
-                log.warn("Contents of row " + row.getIndex() + " violate a maximum constraint "
-                        + "in block-progression-dimension. Due to its contents the row grows "
-                        + "to " + row.getHeight().opt + " millipoints. The row constraint resolve "
-                        + "to " + row.getExplicitHeight());
+            if (effRowContentHeight > row.getExplicitHeight().max) {
+                log.warn("The contents of row " + (row.getIndex() + 1) 
+                        + " are taller than they should be (there is a"
+                        + " block-progression-dimension or height constraint on the indicated row)."
+                        + " Due to its contents the row grows"
+                        + " to " + effRowContentHeight + " millipoints, but the row shouldn't get"
+                        + " any taller than " + row.getExplicitHeight() + " millipoints.");
             }
         }
         if (log.isDebugEnabled()) {
