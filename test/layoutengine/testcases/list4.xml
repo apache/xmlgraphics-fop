@@ -31,8 +31,9 @@
       </fo:layout-master-set>
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
+          <fo:block>test</fo:block>
           <fo:list-block provisional-distance-between-starts="50pt" provisional-label-separation="5pt">
-            <fo:list-item space-before.optimum="1em">
+            <fo:list-item space-before="1em">
               <fo:list-item-label end-indent="label-end()">
                 <fo:block>•</fo:block>
               </fo:list-item-label>
@@ -40,7 +41,7 @@
                 <fo:block>here is text in the list item body</fo:block>
               </fo:list-item-body>
             </fo:list-item>
-            <fo:list-item space-before.optimum="1em">
+            <fo:list-item space-before="1em">
               <fo:list-item-label end-indent="label-end()">
                 <fo:block>•</fo:block>
               </fo:list-item-label>
@@ -48,7 +49,7 @@
                 <fo:block>here is text in the list item body</fo:block>
               </fo:list-item-body>
             </fo:list-item>
-            <fo:list-item space-before.optimum="1em">
+            <fo:list-item space-before="1em">
               <fo:list-item-label end-indent="label-end()">
                 <fo:block>•</fo:block>
               </fo:list-item-label>
@@ -56,7 +57,7 @@
                 <fo:block>here is text in the list item body</fo:block>
               </fo:list-item-body>
             </fo:list-item>
-            <fo:list-item space-before.optimum="1em">
+            <fo:list-item space-before="1em">
               <fo:list-item-label end-indent="label-end()">
                 <fo:block>•</fo:block>
               </fo:list-item-label>
@@ -64,7 +65,7 @@
                 <fo:block>here is text in the list item body</fo:block>
               </fo:list-item-body>
             </fo:list-item>
-            <fo:list-item space-before.optimum="1em">
+            <fo:list-item space-before="1em">
               <fo:list-item-label end-indent="label-end()">
                 <fo:block>•</fo:block>
               </fo:list-item-label>
@@ -75,18 +76,28 @@
           </fo:list-block>
         </fo:flow>
       </fo:page-sequence>
-      <!--fo:page-sequence master-reference="normal" white-space-collapse="true">
-        <fo:flow flow-name="xsl-region-body">
-          <fo:block space-before.optimum="1em">line</fo:block>
-          <fo:block space-before.optimum="1em">line</fo:block>
-          <fo:block space-before.optimum="1em">line</fo:block>
-          <fo:block space-before.optimum="1em">line</fo:block>
-          <fo:block space-before.optimum="1em">line</fo:block>
-        </fo:flow>
-      </fo:page-sequence-->
     </fo:root>
   </fo>
   <checks>
     <eval expected="2" xpath="count(//pageViewport)"/>
+    <element-list category="breaker">
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <glue w="12000"/>
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <glue w="12000"/>
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <glue w="12000"/>
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <glue w="12000"/>
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <glue w="12000"/>
+      <box w="14400"/>
+      <skip>3</skip>
+    </element-list>
   </checks>
 </testcase>
