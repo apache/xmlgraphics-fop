@@ -22,9 +22,8 @@ package org.apache.fop.apps;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 // avalon configuration
@@ -41,6 +40,7 @@ import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
 import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.render.XMLHandlerRegistry;
 
 /**
  * The User Agent for fo.
@@ -67,15 +67,13 @@ public class FOUserAgent {
     /** Defines the default resolution (72dpi) for FOP */
     public static final float DEFAULT_PX2MM = (25.4f / 72); //dpi (=25.4/dpi) 
     
-    /** Map containing various default values */
-    public Map defaults = new java.util.HashMap();
-    /** Map containing XML handlers for various document types */
-    public Map handlers = new java.util.HashMap();
+    /** Registry for XML handlers */
+    private XMLHandlerRegistry xmlHandlers = new XMLHandlerRegistry();
     
     private String baseURL;
     private PDFEncryptionParams pdfEncryptionParams;
     private float px2mm = DEFAULT_PX2MM;
-    private HashMap rendererOptions = new java.util.HashMap();
+    private Map rendererOptions = new java.util.HashMap();
     private InputHandler inputHandler = null;
     private File outputFile = null;
     private Renderer rendererOverride = null;
@@ -93,7 +91,7 @@ public class FOUserAgent {
     private boolean strictValidation = true;
 
     /* Additional fo.ElementMapping subclasses set by user */
-    private ArrayList additionalElementMappings = null;
+    private List additionalElementMappings = null;
 
     /** Producer:  Metadata element for the system/software that produces
      * the document. (Some renderers can store this in the document.)
@@ -140,16 +138,16 @@ public class FOUserAgent {
      */
     public void addElementMapping(ElementMapping elementMapping) {
         if (additionalElementMappings == null) {
-            additionalElementMappings = new ArrayList();
+            additionalElementMappings = new java.util.ArrayList();
         }
         additionalElementMappings.add(elementMapping);
     }
 
     /**
-     * Returns the ArrayList of user-added ElementMapping class names
-     * @return ArrayList of Strings holding ElementMapping names.
+     * Returns the List of user-added ElementMapping class names
+     * @return List of Strings holding ElementMapping names.
      */
-    public ArrayList getAdditionalElementMappings() {
+    public List getAdditionalElementMappings() {
         return additionalElementMappings;
     }
 
@@ -322,7 +320,7 @@ public class FOUserAgent {
      * Returns the renderer options
      * @return renderer options
      */
-    public HashMap getRendererOptions() {
+    public Map getRendererOptions() {
         return rendererOptions;
     }
 
@@ -457,11 +455,19 @@ public class FOUserAgent {
 
     /**
      * If to create hot links to footnotes and before floats.
-     * @return True if hot links dhould be created
+     * @return True if hot links should be created
      */
     public boolean linkToFootnotes() {
         return true;
     }
 
+    /**
+     * @return the XML handler registry
+     */
+    public XMLHandlerRegistry getXMLHandlerRegistry() {
+        return this.xmlHandlers;
+    }
+    
+    
 }
 

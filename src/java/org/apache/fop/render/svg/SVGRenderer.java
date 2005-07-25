@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -118,7 +118,7 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
      * Creates a new SVG renderer.
      */
     public SVGRenderer() {
-        context = new RendererContext(SVG_MIME_TYPE);
+        context = new RendererContext(this, SVG_MIME_TYPE);
     }
 
     /**
@@ -126,8 +126,7 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
      */
     public void setUserAgent(FOUserAgent agent) {
         super.setUserAgent(agent);
-        setDefaultXMLHandler(userAgent, SVG_MIME_TYPE, this);
-        addXMLHandler(userAgent, SVG_MIME_TYPE, SVG_NAMESPACE, this);
+        userAgent.getXMLHandlerRegistry().addXMLHandler(this);
     }
 
     /**
@@ -316,17 +315,15 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
      * Method renderForeignObject.
      * @param fo the foreign object
      */
-    public void renderForeignObject(ForeignObject fo) {
+    public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
         org.w3c.dom.Document doc = fo.getDocument();
         String ns = fo.getNameSpace();
-        renderXML(userAgent, context, doc, ns);
+        renderXML(context, doc, ns);
     }
 
-    /**
-     * @see org.apache.fop.render.XMLHandler#handleXML(RendererContext, Document, String)
-     */
-    public void handleXML(RendererContext context, org.w3c.dom.Document doc,
-                          String ns) throws Exception {
+    /** @see org.apache.fop.render.XMLHandler */
+    public void handleXML(RendererContext context, 
+                org.w3c.dom.Document doc, String ns) throws Exception {
         if (SVG_NAMESPACE.equals(ns)) {
             if (!(doc instanceof SVGDocument)) {
                 DOMImplementation impl =
@@ -417,6 +414,11 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
     /** @see org.apache.fop.render.AbstractRenderer */
     public String getMimeType() {
         return SVG_MIME_TYPE;
+    }
+
+    /** @see org.apache.fop.render.XMLHandler#getNamespace() */
+    public String getNamespace() {
+        return SVG_NAMESPACE;
     }
 
 }

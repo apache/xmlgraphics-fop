@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,12 +45,14 @@ import java.io.OutputStream;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.ViewBox;
+import org.apache.batik.dom.svg.SVGDOMImplementation;
 
 import org.apache.batik.gvt.GraphicsNode;
 
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGSVGElement;
 
+import java.awt.Color;
 import java.awt.geom.AffineTransform;
 
 /**
@@ -137,17 +139,9 @@ public class PDFXMLHandler implements XMLHandler {
     public PDFXMLHandler() {
     }
 
-    /**
-     * Handle the XML.
-     * This checks the type of XML and handles appropraitely.
-     *
-     * @param context the renderer context
-     * @param doc the XML document to render
-     * @param ns the namespace of the XML document
-     * @throws Exception any sort of exception could be thrown and shuld be handled
-     */
-    public void handleXML(RendererContext context, org.w3c.dom.Document doc,
-                          String ns) throws Exception {
+    /** @see org.apache.fop.render.XMLHandler */
+    public void handleXML(RendererContext context, 
+                org.w3c.dom.Document doc, String ns) throws Exception {
         PDFInfo pdfi = getPDFInfo(context);
 
         String svg = "http://www.w3.org/2000/svg";
@@ -269,7 +263,11 @@ public class PDFXMLHandler implements XMLHandler {
              * Note: To have the svg overlay (under) a text area then use
              * an fo:block-container
              */
-            pdfInfo.currentStream.add("q\n");
+            PDFRenderer renderer = (PDFRenderer)context.getRenderer();
+            renderer.saveGraphicsState();
+            //pdfInfo.currentStream.add("q\n");
+            renderer.setColor(Color.BLACK, false, null);
+            renderer.setColor(Color.BLACK, true, null);
             // transform so that the coordinates (0,0) is from the top left
             // and positive is down and to the right. (0,0) is where the
             // viewBox puts it.
@@ -278,7 +276,7 @@ public class PDFXMLHandler implements XMLHandler {
 
             SVGSVGElement svg = ((SVGDocument)doc).getRootElement();
             AffineTransform at = ViewBox.getPreserveAspectRatioTransform(svg, w / 1000f, h / 1000f);
-            if (!at.isIdentity()) {
+            if (false && !at.isIdentity()) {
                 double[] vals = new double[6];
                 at.getMatrix(vals);
                 pdfInfo.currentStream.add(PDFNumber.doubleOut(vals[0], 5) + " "
@@ -312,9 +310,20 @@ public class PDFXMLHandler implements XMLHandler {
                                        + e.getMessage(), e);
             }
 
-            pdfInfo.currentStream.add("Q\n");
+            //pdfInfo.currentStream.add("Q\n");
+            renderer.restoreGraphicsState();
             pdfInfo.pdfState.pop();
         }
     }
-}
+    
+    /** @see org.apache.fop.render.XMLHandler#getMimeType() */
+    public String getMimeType() {
+        return PDFRenderer.MIME_TYPE;
+    }
 
+    /** @see org.apache.fop.render.XMLHandler#getNamespace() */
+    public String getNamespace() {
+        return SVGDOMImplementation.SVG_NAMESPACE_URI;
+    }
+    
+}

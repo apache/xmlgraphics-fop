@@ -237,9 +237,7 @@ public class PDFRenderer extends PrintRenderer {
     public void setUserAgent(FOUserAgent agent) {
         super.setUserAgent(agent);
         PDFXMLHandler xmlHandler = new PDFXMLHandler();
-        //userAgent.setDefaultXMLHandler(MIME_TYPE, xmlHandler);
-        String svg = "http://www.w3.org/2000/svg";
-        addXMLHandler(userAgent, MIME_TYPE, svg, xmlHandler);
+        userAgent.getXMLHandlerRegistry().addXMLHandler(xmlHandler);
     }
 
     /**
@@ -1570,7 +1568,7 @@ public class PDFRenderer extends PrintRenderer {
      * @param pdf StringBuffer to write the PDF code to, if null, the code is
      *     written to the current stream.
      */
-    private void setColor(Color col, boolean fill, StringBuffer pdf) {
+    protected void setColor(Color col, boolean fill, StringBuffer pdf) {
         PDFColor color = new PDFColor(col);
 
         closeText();
@@ -1754,7 +1752,7 @@ public class PDFRenderer extends PrintRenderer {
      */
     public void renderDocument(Document doc, String ns, Rectangle2D pos) {
         RendererContext context;
-        context = new RendererContext(MIME_TYPE);
+        context = new RendererContext(this, MIME_TYPE);
         context.setUserAgent(userAgent);
 
         context.setProperty(PDFXMLHandler.PDF_DOCUMENT, pdfDoc);
@@ -1777,7 +1775,7 @@ public class PDFRenderer extends PrintRenderer {
                             new Integer((int) pos.getWidth()));
         context.setProperty(PDFXMLHandler.PDF_HEIGHT,
                             new Integer((int) pos.getHeight()));
-        renderXML(userAgent, context, doc, ns);
+        renderXML(context, doc, ns);
 
     }
 

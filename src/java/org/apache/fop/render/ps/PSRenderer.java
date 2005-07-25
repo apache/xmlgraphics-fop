@@ -112,9 +112,7 @@ public class PSRenderer extends PrintRenderer {
     public void setUserAgent(FOUserAgent agent) {
         super.setUserAgent(agent);
         PSXMLHandler xmlHandler = new PSXMLHandler();
-        //userAgent.setDefaultXMLHandler(MIME_TYPE, xmlHandler);
-        String svg = "http://www.w3.org/2000/svg";
-        addXMLHandler(userAgent, MIME_TYPE, svg, xmlHandler);
+        userAgent.getXMLHandlerRegistry().addXMLHandler(xmlHandler);
     }
 
     /**
@@ -815,7 +813,7 @@ public class PSRenderer extends PrintRenderer {
      */
     public void renderDocument(Document doc, String ns, Rectangle2D pos) {
         RendererContext context;
-        context = new RendererContext(MIME_TYPE);
+        context = new RendererContext(this, MIME_TYPE);
         context.setUserAgent(userAgent);
 
         context.setProperty(PSXMLHandler.PS_GENERATOR, this.gen);
@@ -830,7 +828,7 @@ public class PSRenderer extends PrintRenderer {
                             new Integer(currentBPPosition + (int) pos.getY()));
         //context.setProperty("strokeSVGText", options.get("strokeSVGText"));
         
-        renderXML(userAgent, context, doc, ns);
+        renderXML(context, doc, ns);
     }
 
     /** @see org.apache.fop.render.AbstractRenderer */

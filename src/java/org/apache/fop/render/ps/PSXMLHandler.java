@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import org.w3c.dom.svg.SVGSVGElement;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.ViewBox;
+import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.gvt.GraphicsNode;
 
 // FOP
@@ -96,21 +97,12 @@ public class PSXMLHandler implements XMLHandler {
     public PSXMLHandler() {
     }
 
-    /**
-     * Handle the XML.
-     * This checks the type of XML and handles appropraitely.
-     *
-     * @param context the renderer context
-     * @param doc the XML document to render
-     * @param ns the namespace of the XML document
-     * @throws Exception any sort of exception could be thrown and shuld be handled
-     */
-    public void handleXML(RendererContext context, org.w3c.dom.Document doc,
-                          String ns) throws Exception {
+    /** @see org.apache.fop.render.XMLHandler */
+    public void handleXML(RendererContext context, 
+                org.w3c.dom.Document doc, String ns) throws Exception {
         PSInfo psi = getPSInfo(context);
 
-        String svg = "http://www.w3.org/2000/svg";
-        if (svg.equals(ns)) {
+        if (SVGDOMImplementation.SVG_NAMESPACE_URI.equals(ns)) {
             SVGHandler svghandler = new SVGHandler();
             svghandler.renderSVGDocument(context, doc, psi);
         } else {
@@ -360,5 +352,16 @@ public class PSXMLHandler implements XMLHandler {
             }
         }
     }
+
+    /** @see org.apache.fop.render.XMLHandler#getMimeType() */
+    public String getMimeType() {
+        return PSRenderer.MIME_TYPE;
+    }
+
+    /** @see org.apache.fop.render.XMLHandler#getNamespace() */
+    public String getNamespace() {
+        return SVGDOMImplementation.SVG_NAMESPACE_URI;
+    }
+    
 }
 

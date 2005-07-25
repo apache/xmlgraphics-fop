@@ -40,14 +40,11 @@ public class XMLXMLHandler implements XMLHandler {
 
     private AttributesImpl atts = new AttributesImpl();
     
-    /**
-     * @see org.apache.fop.render.XMLHandler#handleXML(RendererContext, Document, String)
-     */
-    public void handleXML(RendererContext context, Document doc,
-                          String ns) throws Exception {
+    /** @see org.apache.fop.render.XMLHandler */
+    public void handleXML(RendererContext context, 
+                org.w3c.dom.Document doc, String ns) throws Exception {
         TransformerHandler handler = (TransformerHandler) context.getProperty(HANDLER);
 
-        //String svg = "http://www.w3.org/2000/svg";
         writeDocument(doc, handler);
     }
 
@@ -164,6 +161,16 @@ public class XMLXMLHandler implements XMLHandler {
         }
 
         return result.toString();
+    }
+
+    /** @see org.apache.fop.render.XMLHandler#getMimeType() */
+    public String getMimeType() {
+        return XMLRenderer.XML_MIME_TYPE;
+    }
+
+    /** @see org.apache.fop.render.XMLHandler#getNamespace() */
+    public String getNamespace() {
+        return null; //Handle all XML content
     }
 
 }

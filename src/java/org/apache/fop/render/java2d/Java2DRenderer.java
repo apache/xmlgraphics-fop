@@ -49,6 +49,7 @@ import java.util.Map;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.ViewBox;
+import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -1024,7 +1025,7 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
     public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
         Document doc = fo.getDocument();
         String ns = fo.getNameSpace();
-        if (ns.equals("http://www.w3.org/2000/svg")) {
+        if (SVGDOMImplementation.SVG_NAMESPACE_URI.equals(ns)) {
             renderSVGDocument(doc, pos);
         } else {
             renderDocument(doc, ns, pos);
@@ -1041,7 +1042,7 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
      */
     public void renderDocument(Document doc, String ns, Rectangle2D pos) {
         RendererContext context;
-        context = new RendererContext(MIME_TYPE);
+        context = new RendererContext(this, MIME_TYPE);
         context.setUserAgent(userAgent);
         // TODO implement
         /*
@@ -1074,7 +1075,7 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
         int y = currentBPPosition;
 
         RendererContext context;
-        context = new RendererContext(MIME_TYPE);
+        context = new RendererContext(this, MIME_TYPE);
         context.setUserAgent(userAgent);
 
         SVGUserAgent ua = new SVGUserAgent(context.getUserAgent()

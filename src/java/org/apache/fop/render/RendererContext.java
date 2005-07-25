@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,18 +32,28 @@ import org.apache.fop.apps.FOUserAgent;
 public class RendererContext {
 
     private String mime;
+    private AbstractRenderer renderer;
     private FOUserAgent userAgent;
     private Map props = new java.util.HashMap();
 
     /**
      * Contructor for this class. It takes a MIME type as parameter.
      *
+     * @param renderer The current renderer
      * @param m  The MIME type of the output that's generated.
      */
-    public RendererContext(String m) {
-        mime = m;
+    public RendererContext(AbstractRenderer renderer, String m) {
+        this.renderer = renderer;
+        this.mime = m;
     }
 
+    /**
+     * @return Returns the renderer.
+     */
+    public AbstractRenderer getRenderer() {
+        return renderer;
+    }
+    
     /**
      * Returns the MIME type associated with this RendererContext.
      *
