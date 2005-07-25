@@ -883,6 +883,12 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         } else if (fobj instanceof org.apache.fop.fo.flow.BlockContainer) {
             spaceBefore = ((org.apache.fop.fo.flow.BlockContainer)fobj)
                 .getCommonMarginBlock().spaceBefore;
+        } else if (fobj instanceof org.apache.fop.fo.flow.ListBlock) {
+            spaceBefore = ((org.apache.fop.fo.flow.ListBlock)fobj)
+                .getCommonMarginBlock().spaceBefore;
+        } else if (fobj instanceof org.apache.fop.fo.flow.ListItem) {
+            spaceBefore = ((org.apache.fop.fo.flow.ListItem)fobj)
+                .getCommonMarginBlock().spaceBefore;
         }
         // append elements representing space-before
         if (bpUnit > 0
@@ -931,6 +937,12 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                 .getCommonMarginBlock().spaceAfter;
         } else if (fobj instanceof org.apache.fop.fo.flow.BlockContainer) {
             spaceAfter = ((org.apache.fop.fo.flow.BlockContainer)fobj)
+                .getCommonMarginBlock().spaceAfter;
+        } else if (fobj instanceof org.apache.fop.fo.flow.ListBlock) {
+            spaceAfter = ((org.apache.fop.fo.flow.ListBlock)fobj)
+                .getCommonMarginBlock().spaceAfter;
+        } else if (fobj instanceof org.apache.fop.fo.flow.ListItem) {
+            spaceAfter = ((org.apache.fop.fo.flow.ListItem)fobj)
                 .getCommonMarginBlock().spaceAfter;
         }
         // append elements representing space-after
