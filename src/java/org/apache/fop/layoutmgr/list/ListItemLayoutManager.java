@@ -170,6 +170,13 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         referenceIPD = context.getRefIPD();
         LayoutContext childLC;
         
+        LinkedList returnList = new LinkedList();
+        
+        if (!bSpaceBeforeServed) {
+            addKnuthElementsForSpaceBefore(returnList, alignment);
+            bSpaceBeforeServed = true;
+        }
+        
         // label
         childLC = new LayoutContext(0);
         childLC.setRefIPD(context.getRefIPD());
@@ -192,10 +199,10 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         LinkedList returnedList = getCombinedKnuthElementsForListItem(labelList, bodyList);
 
         // "wrap" the Position inside each element
-        LinkedList tempList = returnedList;
-        returnedList = new LinkedList();
-        wrapPositionElements(tempList, returnedList, true);
+        wrapPositionElements(returnedList, returnList, true);
         
+        addKnuthElementsForSpaceAfter(returnList, alignment);
+
         if (keepWithNextPendingOnLabel || keepWithNextPendingOnBody || mustKeepWithNext()) {
             context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
         }
@@ -204,7 +211,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         }
 
         setFinished(true);
-        return returnedList;
+        return returnList;
     }
 
     private LinkedList getCombinedKnuthElementsForListItem(LinkedList labelElements,
@@ -439,7 +446,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
                 }
                 lastPos = pos;
             }
-            if (pos instanceof NonLeafPosition) {
+            if (pos instanceof NonLeafPosition && pos.getPosition() != null) {
                 // pos contains a ListItemPosition created by this ListBlockLM
                 positionList.add(((NonLeafPosition) pos).getPosition());
             }
