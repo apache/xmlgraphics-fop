@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,7 @@
 
 package org.apache.fop.fo;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.render.RendererFactory;
+import org.apache.fop.util.Service;
 import org.apache.fop.fo.ElementMapping.Maker;
 import org.apache.fop.fo.pagination.Root;
 import org.xml.sax.Attributes;
@@ -115,7 +109,7 @@ public class FOTreeBuilder extends DefaultHandler {
         setupDefaultMappings();
 
         // add additional ElementMappings defined within FOUserAgent
-        ArrayList addlEMs = foUserAgent.getAdditionalElementMappings();
+        List addlEMs = foUserAgent.getAdditionalElementMappings();
 
         if (addlEMs != null) {
             for (int i = 0; i < addlEMs.size(); i++) {
@@ -355,89 +349,6 @@ public class FOTreeBuilder extends DefaultHandler {
         currentFObj = null;
         rootFObj = null;
         foEventHandler = null;
-    }
-}
-
-// code stolen from org.apache.batik.util and modified slightly
-// does what sun.misc.Service probably does, but it cannot be relied on.
-// hopefully will be part of standard jdk sometime.
-
-/**
- * This class loads services present in the class path.
- */
-class Service {
-
-    private static Map providerMap = new java.util.Hashtable();
-
-    public static synchronized Iterator providers(Class cls) {
-        ClassLoader cl = cls.getClassLoader();
-        // null if loaded by bootstrap class loader
-        if (cl == null) {
-            cl = ClassLoader.getSystemClassLoader();
-        }
-        String serviceFile = "META-INF/services/" + cls.getName();
-
-        // log.debug("File: " + serviceFile);
-
-        List lst = (List)providerMap.get(serviceFile);
-        if (lst != null) {
-            return lst.iterator();
-        }
-
-        lst = new java.util.Vector();
-        providerMap.put(serviceFile, lst);
-
-        Enumeration e;
-        try {
-            e = cl.getResources(serviceFile);
-        } catch (IOException ioe) {
-            return lst.iterator();
-        }
-
-        while (e.hasMoreElements()) {
-            try {
-                java.net.URL u = (java.net.URL)e.nextElement();
-                //log.debug("URL: " + u);
-
-                InputStream is = u.openStream();
-                Reader r = new InputStreamReader(is, "UTF-8");
-                BufferedReader br = new BufferedReader(r);
-
-                String line = br.readLine();
-                while (line != null) {
-                    try {
-                        // First strip any comment...
-                        int idx = line.indexOf('#');
-                        if (idx != -1) {
-                            line = line.substring(0, idx);
-                        }
-
-                        // Trim whitespace.
-                        line = line.trim();
-
-                        // If nothing left then loop around...
-                        if (line.length() == 0) {
-                            line = br.readLine();
-                            continue;
-                        }
-                        // log.debug("Line: " + line);
-
-                        // Try and load the class
-                        // Object obj = cl.loadClass(line).newInstance();
-                        // stick it into our vector...
-                        lst.add(line);
-                    } catch (Exception ex) {
-                        // Just try the next line
-                    }
-
-                    line = br.readLine();
-                }
-            } catch (Exception ex) {
-                // Just try the next file...
-            }
-
-        }
-        return lst.iterator();
     }
 
 }

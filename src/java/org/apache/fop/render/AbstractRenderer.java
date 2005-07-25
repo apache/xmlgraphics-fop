@@ -22,9 +22,9 @@ package org.apache.fop.render;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Map;
 import java.util.List;
 import java.util.Iterator;
+import java.util.Set;
 
 // XML
 import org.w3c.dom.Document;
@@ -109,6 +109,8 @@ public abstract class AbstractRenderer
      */
     protected int containingIPPosition = 0;
 
+    private Set warnedXMLHandlers;
+    
     /**
      * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
      */
@@ -694,32 +696,6 @@ public abstract class AbstractRenderer
     }
 
     /**
-     * Set the default xml handler for the given mime type.
-     * @param mime MIME type
-     * @param handler XMLHandler to use
-     */
-    public void setDefaultXMLHandler(FOUserAgent foua, String mime,
-                                     XMLHandler handler) {
-        foua.defaults.put(mime, handler);
-    }
-
-    /**
-     * Add an xml handler for the given mime type and xml namespace.
-     * @param mime MIME type
-     * @param ns Namespace URI
-     * @param handler XMLHandler to use
-     */
-    public void addXMLHandler(FOUserAgent foua, String mime, String ns,
-                              XMLHandler handler) {
-        Map mh = (Map) foua.handlers.get(mime);
-        if (mh == null) {
-            mh = new java.util.HashMap();
-            foua.handlers.put(mime, mh);
-        }
-        mh.put(ns, handler);
-    }
-
-    /**
      * Render the xml document with the given xml namespace.
      * The Render Context is by the handle to render into the current
      * rendering target.
@@ -727,17 +703,11 @@ public abstract class AbstractRenderer
      * @param doc DOM Document containing the source document
      * @param namespace Namespace URI of the document
      */
-    public void renderXML(FOUserAgent foua, RendererContext ctx, Document doc,
+    public void renderXML(RendererContext ctx, Document doc,
                           String namespace) {
         String mime = ctx.getMimeType();
-        Map mh = (Map) foua.handlers.get(mime);
-        XMLHandler handler = null;
-        if (mh != null) {
-            handler = (XMLHandler) mh.get(namespace);
-        }
-        if (handler == null) {
-            handler = (XMLHandler) foua.defaults.get(mime);
-        }
+        XMLHandler handler = userAgent.getXMLHandlerRegistry().getXMLHandler(
+                mime, namespace);
         if (handler != null) {
             try {
                 handler.handleXML(ctx, doc, namespace);
@@ -747,9 +717,15 @@ public abstract class AbstractRenderer
                         + "Could not render XML", t);
             }
         } else {
-            // no handler found for document
-            getLogger().warn("Some XML content will be ignored. "
-                    + "No handler defined for XML: " + namespace);
+            if (warnedXMLHandlers == null) {
+                warnedXMLHandlers = new java.util.HashSet();
+            }
+            if (!warnedXMLHandlers.contains(namespace)) {
+                // no handler found for document
+                warnedXMLHandlers.add(namespace);
+                getLogger().warn("Some XML content will be ignored. "
+                        + "No handler defined for XML: " + namespace);
+            }
         }
     }
 

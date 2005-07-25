@@ -105,7 +105,7 @@ public class XMLRenderer extends AbstractRenderer {
      * Creates a new XML renderer.
      */
     public XMLRenderer() {
-        context = new RendererContext(XML_MIME_TYPE);
+        context = new RendererContext(this, XML_MIME_TYPE);
     }
 
     /**
@@ -117,9 +117,7 @@ public class XMLRenderer extends AbstractRenderer {
         //
         //userAgent.addExtensionHandler();
         XMLHandler handler = new XMLXMLHandler();
-        setDefaultXMLHandler(userAgent, XML_MIME_TYPE, handler);
-        String svg = "http://www.w3.org/2000/svg";
-        addXMLHandler(userAgent, XML_MIME_TYPE, svg, handler);
+        userAgent.getXMLHandlerRegistry().addXMLHandler(handler);
     }
 
     /**
@@ -563,7 +561,7 @@ public class XMLRenderer extends AbstractRenderer {
         Document doc = fo.getDocument();
         String ns = fo.getNameSpace();
         context.setProperty(XMLXMLHandler.HANDLER, handler);
-        renderXML(userAgent, context, doc, ns);
+        renderXML(context, doc, ns);
         endElement("foreignObject");
     }
 
