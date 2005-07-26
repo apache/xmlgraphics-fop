@@ -100,6 +100,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
             inline.setIPD(width);
             
         }
+        TraitSetter.setProducerID(inline, fobj.getId());
         inline.setBPD(font.getAscender() - font.getDescender());
         inline.setOffset(font.getAscender());
         inline.addTrait(Trait.FONT_NAME, font.getFontName());

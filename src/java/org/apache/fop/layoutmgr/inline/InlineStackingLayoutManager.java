@@ -182,6 +182,14 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager
     }
 
     /**
+     * This method is called by addAreas() so IDs can be added to a page for FOs that 
+     * support the 'id' property.
+     */
+    protected void addId() {
+        // Do nothing here, overriden in subclasses that have an 'id' property.
+    }
+    
+    /**
      * Generate and add areas to parent area.
      * Set size of each area. This should only create and return one
      * inline area for any inline parent area.
@@ -193,6 +201,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager
      */
     public void addAreas(PositionIterator parentIter,
                          LayoutContext context) {
+        addId();
         InlineParent parent = createArea();
         parent.setBPD(context.getLineHeight());
         parent.setOffset(0);

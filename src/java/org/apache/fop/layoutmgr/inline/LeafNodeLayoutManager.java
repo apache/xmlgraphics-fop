@@ -193,6 +193,10 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
         return curArea;
     }
     
+    /**
+     * This method is called by addAreas() so IDs can be added to a page for FOs that 
+     * support the 'id' property.
+     */
     protected void addId() {
         // Do nothing here, overriden in subclasses that have an 'id' property.
     }

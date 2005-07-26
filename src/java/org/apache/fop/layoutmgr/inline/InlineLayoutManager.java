@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ package org.apache.fop.layoutmgr.inline;
 import java.util.ListIterator;
 import java.util.LinkedList;
 
+import org.apache.fop.area.inline.InlineParent;
+import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fo.flow.InlineLevel;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonMarginInline;
@@ -56,6 +58,10 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
         super(node);
         fobj = node;
         initialize();
+    }
+    
+    private Inline getInlineFO() {
+        return (Inline)fobj;
     }
     
     private void initialize() {
@@ -102,6 +108,16 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
         return inlineProps.spaceEnd;
     }
     
+    /** @see org.apache.fop.layoutmgr.inline.InlineStackingLayoutManager#createArea() */
+    protected InlineParent createArea() {
+        InlineParent area = super.createArea(); 
+        TraitSetter.setProducerID(area, getInlineFO().getId());
+        return area;
+    }
+    
+    /**
+     * @see org.apache.fop.layoutmgr.inline.InlineStackingLayoutManager#setTraits(boolean, boolean)
+     */
     protected void setTraits(boolean bNotFirst, boolean bNotLast) {
         
         // Add border and padding to current area and set flags (FIRST, LAST ...)
@@ -114,6 +130,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
         }
     }
 
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public LinkedList getNextKnuthElements(LayoutContext lc, int alignment) {
         InlineLevelLayoutManager curLM;
 
@@ -314,5 +331,11 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
         }
         return returnList;
     }*/
+    
+    /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#addId() */
+    protected void addId() {
+        getPSLM().addIDToPage(getInlineFO().getId());
+    }
+    
 }
 
