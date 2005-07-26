@@ -204,6 +204,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
             /*Area parentArea =*/ parentLM.getParentArea(curBlockArea);
 
             // set traits
+            TraitSetter.setProducerID(curBlockArea, getListBlockFO().getId());
             TraitSetter.addBorders(curBlockArea, 
                     getListBlockFO().getCommonBorderPaddingBackground());
             TraitSetter.addBackground(curBlockArea, 

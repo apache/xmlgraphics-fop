@@ -66,9 +66,9 @@ public class Trait implements Serializable {
     public static final Integer COLOR = new Integer(7);
 
     /**
-     * Don't think this is necessary.
+     * The ID of the FO that produced an area.
      */
-    public static final Integer ID_AREA = new Integer(8);
+    public static final Integer PROD_ID = new Integer(8);
 
     /**
      * Background trait for an area.
@@ -224,7 +224,7 @@ public class Trait implements Serializable {
         TRAIT_INFO.put(FONT_SIZE,
                           new TraitInfo("font-size", Integer.class));
         TRAIT_INFO.put(COLOR, new TraitInfo("color", String.class));
-        TRAIT_INFO.put(ID_AREA, new TraitInfo("id-area", String.class));
+        TRAIT_INFO.put(PROD_ID, new TraitInfo("prod-id", String.class));
         TRAIT_INFO.put(BACKGROUND,
                           new TraitInfo("background", Background.class));
         TRAIT_INFO.put(UNDERLINE,

@@ -348,4 +348,16 @@ public class TraitSetter {
             }
         }
     }
+    
+    /**
+     * Sets the producer's ID as a trait on the area. This can be used to track back the 
+     * generating FO node.
+     * @param area the area to set the traits on
+     * @param id the ID to set
+     */
+    public static void setProducerID(Area area, String id) {
+        if (id != null && id.length() > 0) {
+            area.addTrait(Trait.PROD_ID, id);
+        }
+    }
 }
