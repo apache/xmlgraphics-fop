@@ -524,19 +524,21 @@ public class XMLRenderer extends AbstractRenderer {
     protected void renderViewport(Viewport viewport) {
         atts.clear();
         addAreaAttributes(viewport);
+        addTraitAttributes(viewport);
         startElement("viewport", atts);
         super.renderViewport(viewport);
         endElement("viewport");
     }
 
     /**
-     * Renders an image
-     * @param image the image
+     * @see org.apache.fop.render.AbstractRenderer
      */
-    public void renderImage(Image image) {
+    public void renderImage(Image image, Rectangle2D pos) {
         atts.clear();
         addAreaAttributes(image);
+        addTraitAttributes(image);
         addAttribute("url", image.getURL());
+        addAttribute("pos", pos);
         startElement("image", atts);
         endElement("image");
     }
@@ -557,6 +559,7 @@ public class XMLRenderer extends AbstractRenderer {
     public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
         atts.clear();
         addAreaAttributes(fo);
+        addTraitAttributes(fo);
         startElement("foreignObject", atts);
         Document doc = fo.getDocument();
         String ns = fo.getNameSpace();
