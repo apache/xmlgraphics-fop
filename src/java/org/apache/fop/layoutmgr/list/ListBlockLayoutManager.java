@@ -146,7 +146,8 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
                 lastPos = pos;
             }
             if (pos instanceof NonLeafPosition
-                && ((NonLeafPosition) pos).getPosition().getLM() != this) {
+                    && (pos.getPosition() != null)
+                    && ((NonLeafPosition) pos).getPosition().getLM() != this) {
                 // pos was created by a child of this ListBlockLM
                 positionList.add(((NonLeafPosition) pos).getPosition());
                 lastLM = ((NonLeafPosition) pos).getPosition().getLM();
