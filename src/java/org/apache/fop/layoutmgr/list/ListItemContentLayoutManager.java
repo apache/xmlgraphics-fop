@@ -28,6 +28,7 @@ import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.NonLeafPosition;
+import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 
@@ -189,6 +190,8 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
             curBlockArea.setIPD(itemIPD);
             //curBlockArea.setHeight();
 
+            TraitSetter.setProducerID(curBlockArea, getPartFO().getId());
+            
             // Set up dimensions
             Area parentArea = parentLM.getParentArea(curBlockArea);
             int referenceIPD = parentArea.getIPD();

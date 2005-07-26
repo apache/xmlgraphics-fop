@@ -28,8 +28,6 @@ import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
-import org.apache.fop.layoutmgr.LayoutManager;
-import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.Position;
@@ -41,7 +39,6 @@ import org.apache.fop.traits.SpaceVal;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * LayoutManager for a table FO.
@@ -68,14 +65,6 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     private MinOptMax spaceAfter;
     
     
-    private class SectionPosition extends LeafPosition {
-        protected List list;
-        protected SectionPosition(LayoutManager lm, int pos, List l) {
-            super(lm, pos);
-            list = l;
-        }
-    }
-
     /**
      * Create a new table layout manager.
      * @param node the table FO
@@ -347,6 +336,8 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             // Must get dimensions from parent area
             /*Area parentArea =*/ parentLM.getParentArea(curBlockArea);
             
+            TraitSetter.setProducerID(curBlockArea, getTable().getId());
+
             int contentIPD = referenceIPD - getIPIndents();
             curBlockArea.setIPD(contentIPD);
             

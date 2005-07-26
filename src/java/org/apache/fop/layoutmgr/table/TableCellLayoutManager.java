@@ -424,6 +424,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager implement
         if (curBlockArea == null) {
             curBlockArea = new Block();
             curBlockArea.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
+            TraitSetter.setProducerID(curBlockArea, fobj.getId());
             curBlockArea.setPositioning(Block.ABSOLUTE);
             int indent = 0;
             indent += startBorderWidth;

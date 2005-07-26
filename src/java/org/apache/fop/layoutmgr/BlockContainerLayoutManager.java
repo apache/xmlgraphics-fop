@@ -771,6 +771,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                 viewportBlockArea.setBPD(vpContentBPD);
             }
 
+            TraitSetter.setProducerID(viewportBlockArea, getBlockContainerFO().getId());
             TraitSetter.addBorders(viewportBlockArea, 
                     getBlockContainerFO().getCommonBorderPaddingBackground());
             TraitSetter.addBackground(viewportBlockArea, 
@@ -800,6 +801,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
 
             referenceArea = new Block();
             referenceArea.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
+            TraitSetter.setProducerID(referenceArea, getBlockContainerFO().getId());
 
             if (abProps.absolutePosition == EN_ABSOLUTE) {
                 viewportBlockArea.setPositioning(Block.ABSOLUTE);
