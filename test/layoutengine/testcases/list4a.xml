@@ -18,7 +18,8 @@
 <testcase>
   <info>
     <p>
-      This test checks lists. Checks for the presence of space-before and space-after on list-items.
+      This test checks lists. Checks for the presence of space-before and space-after 
+      on list-items. In this case, min/opt/max don't have the same value.
     </p>
   </info>
   <fo>
@@ -33,7 +34,7 @@
         <fo:flow flow-name="xsl-region-body">
           <fo:block>test</fo:block>
           <fo:list-block provisional-distance-between-starts="50pt" provisional-label-separation="5pt">
-            <fo:list-item space-before="1em">
+            <fo:list-item space-before.optimum="1em">
               <fo:list-item-label end-indent="label-end()">
                 <fo:block>•</fo:block>
               </fo:list-item-label>
@@ -41,7 +42,7 @@
                 <fo:block>here is text in the list item body</fo:block>
               </fo:list-item-body>
             </fo:list-item>
-            <fo:list-item space-before="1em">
+            <fo:list-item space-before.optimum="1em">
               <fo:list-item-label end-indent="label-end()">
                 <fo:block>•</fo:block>
               </fo:list-item-label>
@@ -49,7 +50,7 @@
                 <fo:block>here is text in the list item body</fo:block>
               </fo:list-item-body>
             </fo:list-item>
-            <fo:list-item space-before="1em" space-after="1em">
+            <fo:list-item space-before.optimum="1em" space-after.optimum="1em">
               <fo:list-item-label end-indent="label-end()">
                 <fo:block>•</fo:block>
               </fo:list-item-label>
@@ -57,7 +58,7 @@
                 <fo:block>here is text in the list item body</fo:block>
               </fo:list-item-body>
             </fo:list-item>
-            <fo:list-item space-after="1em">
+            <fo:list-item space-after.optimum="1em">
               <fo:list-item-label end-indent="label-end()">
                 <fo:block>•</fo:block>
               </fo:list-item-label>
@@ -80,10 +81,18 @@
   </fo>
   <checks>
     <eval expected="2" xpath="count(//pageViewport)"/>
+    
+    <!-- The following check makes sure that the content doesn't overlap the available region -->
+    <true xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/@bpda &lt;= //pageViewport[@nr=1]/page/regionViewport/regionBody/@bpda"
+        fail-msg="The span content must not exceed the available space given by the region-body!"/>
+    <!-- This check currently breaks because the breaker uses the minimum values (0pt) 
+      instead of optimum and the addAreas stage doesn't create smaller space-before/after 
+      spacers. -->
+    
     <element-list category="breaker">
       <box w="14400"/>
       <penalty w="0" p="0"/>
-      <glue w="12000"/>
+      <glue w="12000"/> <!-- TODO Check shrink/stretch -->
       <box w="14400"/>
       <penalty w="0" p="0"/>
       <glue w="12000"/>
