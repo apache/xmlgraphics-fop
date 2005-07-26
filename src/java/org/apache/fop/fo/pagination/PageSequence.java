@@ -404,6 +404,11 @@ public class PageSequence extends FObj {
         return (StaticContent) flowMap.get(name);
     }
 
+    /** @return the "id" property. */
+    public String getId() {
+        return id;
+    }
+
     /**
      * Accessor method for titleFO
      * @return titleFO for this object
