@@ -31,6 +31,7 @@ import org.w3c.dom.Node;
 public class TrueCheck implements LayoutEngineCheck {
 
     private String xpath;
+    private String failureMessage;
     
     /**
      * Creates a new instance
@@ -46,6 +47,10 @@ public class TrueCheck implements LayoutEngineCheck {
      */
     public TrueCheck(Node node) {
         this.xpath = node.getAttributes().getNamedItem("xpath").getNodeValue();
+        Node nd = node.getAttributes().getNamedItem("fail-msg");
+        if (nd != null) {
+            this.failureMessage = nd.getNodeValue();
+        }
     }
     
     /** @see org.apache.fop.layoutengine.LayoutEngineCheck */
@@ -57,9 +62,13 @@ public class TrueCheck implements LayoutEngineCheck {
             throw new RuntimeException("XPath evaluation failed: " + e.getMessage());
         }
         if (!XBoolean.S_TRUE.equals(res)) {
-            throw new RuntimeException(
-                    "Expected XPath expression to evaluate to 'true', but got '" 
-                    + res + "' (" + this + ")");
+            if (failureMessage != null) {
+                throw new RuntimeException(failureMessage);
+            } else {
+                throw new RuntimeException(
+                        "Expected XPath expression to evaluate to 'true', but got '" 
+                        + res + "' (" + this + ")");
+            }
         }
 
     }
