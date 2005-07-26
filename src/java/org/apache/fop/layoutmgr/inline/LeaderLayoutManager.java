@@ -34,6 +34,7 @@ import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
+import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.traits.MinOptMax;
 
 import java.util.List;
@@ -151,6 +152,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             }
             leaderArea = fa;
         }
+        TraitSetter.setProducerID(leaderArea, fobj.getId());
         return leaderArea;
      }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.flow.ExternalGraphic;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.layoutmgr.TraitSetter;
 
 /**
@@ -183,6 +184,33 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
             default:
             break;
         }
+        
+        
+        CommonBorderPaddingBackground borderProps = fobj.getCommonBorderPaddingBackground();
+        
+        //Determine extra BPD from borders etc.
+        int beforeBPD = borderProps.getPadding(CommonBorderPaddingBackground.BEFORE, false);
+        beforeBPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.BEFORE,
+                                             false);
+        int afterBPD = borderProps.getPadding(CommonBorderPaddingBackground.AFTER, false);
+        afterBPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.AFTER, false);
+        
+        yoffset += beforeBPD;
+        viewHeight += beforeBPD;
+        viewHeight += afterBPD;
+        
+        //Determine extra IPD from borders etc.
+        int startIPD = borderProps.getPadding(CommonBorderPaddingBackground.START,
+                false/*bNotFirst*/);
+        startIPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.START,
+                 false/*bNotFirst*/);
+        int endIPD = borderProps.getPadding(CommonBorderPaddingBackground.END, false/*bNotLast*/);
+        endIPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.END, false/*bNotLast*/);
+        
+        xoffset += startIPD;
+        viewWidth += startIPD;
+        viewWidth += endIPD;
+        
         placement = new Rectangle2D.Float(xoffset, yoffset, cwidth, cheight);
     }
 
@@ -194,7 +222,9 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
       */
      public InlineArea getExternalGraphicInlineArea() {
          Image imArea = new Image(fobj.getSrc());
+         TraitSetter.setProducerID(imArea, fobj.getId());
          Viewport vp = new Viewport(imArea);
+         TraitSetter.setProducerID(vp, fobj.getId());
          vp.setIPD(viewWidth);
          vp.setBPD(viewHeight);
          vp.setClip(clip);
@@ -208,7 +238,8 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
          return vp;
      }
      
-     protected void addId() {
+    /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#addId() */
+    protected void addId() {
          getPSLM().addIDToPage(fobj.getId());
      }
 }

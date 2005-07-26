@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import java.awt.geom.Rectangle2D;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.XMLObj;
 import org.apache.fop.fo.flow.InstreamForeignObject;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Viewport;
@@ -168,6 +169,31 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
         int xoffset = fobj.computeXOffset(ipd, cwidth);
         int yoffset = fobj.computeYOffset(bpd, cheight);
 
+        CommonBorderPaddingBackground borderProps = fobj.getCommonBorderPaddingBackground();
+        
+        //Determine extra BPD from borders etc.
+        int beforeBPD = borderProps.getPadding(CommonBorderPaddingBackground.BEFORE, false);
+        beforeBPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.BEFORE,
+                                             false);
+        int afterBPD = borderProps.getPadding(CommonBorderPaddingBackground.AFTER, false);
+        afterBPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.AFTER, false);
+        
+        yoffset += beforeBPD;
+        bpd += beforeBPD;
+        bpd += afterBPD;
+        
+        //Determine extra IPD from borders etc.
+        int startIPD = borderProps.getPadding(CommonBorderPaddingBackground.START,
+                false/*bNotFirst*/);
+        startIPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.START,
+                 false/*bNotFirst*/);
+        int endIPD = borderProps.getPadding(CommonBorderPaddingBackground.END, false/*bNotLast*/);
+        endIPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.END, false/*bNotLast*/);
+        
+        xoffset += startIPD;
+        ipd += startIPD;
+        ipd += endIPD;
+
         Rectangle2D placement = new Rectangle2D.Float(xoffset, yoffset, cwidth, cheight);
 
         org.w3c.dom.Document doc = child.getDOMDocument();
@@ -175,8 +201,10 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
 
         //fobj.childNodes = null; This is bad for i-f-o in static-content!!!!!
         ForeignObject foreign = new ForeignObject(doc, ns);
+        TraitSetter.setProducerID(foreign, fobj.getId());
 
         Viewport vp = new Viewport(foreign);
+        TraitSetter.setProducerID(vp, fobj.getId());
         vp.setIPD(ipd);
         vp.setBPD(bpd);
         vp.setContentPosition(placement);

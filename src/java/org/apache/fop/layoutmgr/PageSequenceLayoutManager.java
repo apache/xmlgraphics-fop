@@ -137,6 +137,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 
         curPV = makeNewPage(false, false);
 
+        addIDToPage(pageSeq.getId());
         Flow mainFlow = pageSeq.getMainFlow();
         childFLM = getLayoutManagerMaker().
             makeFlowLayoutManager(this, mainFlow);

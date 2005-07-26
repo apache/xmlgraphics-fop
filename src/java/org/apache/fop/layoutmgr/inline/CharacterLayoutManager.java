@@ -67,6 +67,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
     private InlineArea getCharacterInlineArea(Character node) {
         org.apache.fop.area.inline.Character ch =
             new org.apache.fop.area.inline.Character(node.getCharacter());
+        TraitSetter.setProducerID(ch, node.getId());
         TraitSetter.addTextDecoration(ch, fobj.getTextDecoration());
         return ch;
     }

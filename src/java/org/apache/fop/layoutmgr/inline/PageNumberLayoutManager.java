@@ -83,6 +83,7 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         //TODO or even better: delay area creation until addAreas() stage
         //TextArea is cloned because the LM is reused in static areas and the area can't be.
         TextArea ta = new TextArea();
+        TraitSetter.setProducerID(ta, fobj.getId());
         ta.setIPD(baseArea.getIPD());
         ta.setBPD(baseArea.getBPD());
         ta.setOffset(baseArea.getOffset());
