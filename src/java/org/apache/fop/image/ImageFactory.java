@@ -281,8 +281,12 @@ public class ImageFactory {
                 return null;
             }
 
-            //Decorate the InputStream with a BufferedInputStream
-            return new java.io.BufferedInputStream(in);
+            //Make sure the InputStream is decorated with a BufferedInputStream
+            if (in instanceof java.io.BufferedInputStream) {
+                return in;
+            } else {
+                return new java.io.BufferedInputStream(in);
+            }
         } catch (Exception e) {
             log.error("Error while opening stream for ("
                     + href + "): " + e.getMessage(), e);
