@@ -60,5 +60,29 @@
     </fo:root>
   </fo>
   <checks>
+    <eval expected="0 0 360000 360000" xpath="//pageViewport/@bounds"/>
+    
+    <eval expected="20000" xpath="//regionBefore/@bpda"/>
+    <eval expected="320000" xpath="//regionBefore/@ipda"/>
+    <eval expected="color=#ffcccc,repeat=0,horiz=0,vertical=0" xpath="//regionBefore/../@background"/>
+    
+    <eval expected="20000" xpath="//regionAfter/@bpda"/>
+    <eval expected="360000" xpath="//regionAfter/@ipda"/>
+    <!-- 360pt due to precendece -->
+    <eval expected="color=#cccccc,repeat=0,horiz=0,vertical=0" xpath="//regionAfter/../@background"/>
+    
+    <eval expected="340000" xpath="//regionStart/@bpda"/>
+    <eval expected="20000" xpath="//regionStart/@ipda"/>
+    <eval expected="color=#ccffcc,repeat=0,horiz=0,vertical=0" xpath="//regionStart/../@background"/>
+    
+    <eval expected="20000" xpath="//regionEnd/@bpda"/>
+    <eval expected="340000" xpath="//regionEnd/@ipda"/>
+    <!-- bpd and ipd flipped due to reference-orientation -->
+    <eval expected="color=#ccccff,repeat=0,horiz=0,vertical=0" xpath="//regionEnd/../@background"/>
+    
+    <eval expected="300000" xpath="//regionBody/@bpda"/>
+    <eval expected="300000" xpath="//regionBody/@ipda"/>
+    <eval expected="color=#ffffcc,repeat=0,horiz=0,vertical=0" xpath="//regionBody/../@background"/>
+    
   </checks>
 </testcase>
