@@ -266,8 +266,8 @@ public class PDFXMLHandler implements XMLHandler {
             PDFRenderer renderer = (PDFRenderer)context.getRenderer();
             renderer.saveGraphicsState();
             //pdfInfo.currentStream.add("q\n");
-            renderer.setColor(Color.BLACK, false, null);
-            renderer.setColor(Color.BLACK, true, null);
+            renderer.setColor(Color.black, false, null);
+            renderer.setColor(Color.black, true, null);
             // transform so that the coordinates (0,0) is from the top left
             // and positive is down and to the right. (0,0) is where the
             // viewBox puts it.

@@ -46,7 +46,7 @@ public class PNGRenderer extends Java2DRenderer {
 
     /** @see org.apache.fop.render.Renderer#startRenderer(java.io.OutputStream) */
     public void startRenderer(OutputStream outputStream) throws IOException {
-        getLogger().info("rendering areas to PNG");
+        log.info("rendering areas to PNG");
         setOutputDirectory();
         this.firstOutputStream = outputStream;
     }
@@ -86,7 +86,7 @@ public class PNGRenderer extends Java2DRenderer {
 
             OutputStream os = getCurrentOutputStream(i);
             if (os == null) {
-                getLogger().warn("No filename information available."
+                log.warn("No filename information available."
                         + " Stopping early after the first page.");
                 break;
             }
@@ -95,7 +95,7 @@ public class PNGRenderer extends Java2DRenderer {
                     .get(i));
 
             // Encode this image
-            getLogger().debug("Encoding page " + (i + 1));
+            log.debug("Encoding page " + (i + 1));
             renderParams = PNGEncodeParam.getDefaultEncodeParam(image);
             
             // Set resolution

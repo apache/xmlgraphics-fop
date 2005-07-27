@@ -77,16 +77,14 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 public abstract class AbstractRenderer 
          implements Renderer, Configurable, Constants {
 
+    /** logging instance */
+    protected static Log log = LogFactory.getLog("org.apache.fop.render");
+    
     /**
      * user agent
      */
     protected FOUserAgent userAgent;
 
-    /**
-     * logging instance
-     */
-    protected static Log logger = LogFactory.getLog("org.apache.fop.render");
-    
     /**
      * block progression position
      */
@@ -115,14 +113,6 @@ public abstract class AbstractRenderer
      * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
      */
     public void configure(Configuration conf) throws ConfigurationException {
-    }
-
-    /**
-     * Returns the Commons-Logging instance for this class
-     * @return  The Commons-Logging instance
-     */
-    protected Log getLogger() {
-        return logger;
     }
 
     /**
@@ -713,7 +703,7 @@ public abstract class AbstractRenderer
                 handler.handleXML(ctx, doc, namespace);
             } catch (Throwable t) {
                 // could not handle document
-                getLogger().error("Some XML content will be ignored. "
+                log.error("Some XML content will be ignored. "
                         + "Could not render XML", t);
             }
         } else {
@@ -723,7 +713,7 @@ public abstract class AbstractRenderer
             if (!warnedXMLHandlers.contains(namespace)) {
                 // no handler found for document
                 warnedXMLHandlers.add(namespace);
-                getLogger().warn("Some XML content will be ignored. "
+                log.warn("Some XML content will be ignored. "
                         + "No handler defined for XML: " + namespace);
             }
         }
