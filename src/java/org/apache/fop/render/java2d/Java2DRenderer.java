@@ -201,7 +201,7 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
     }
 
     public void stopRenderer() throws IOException {
-        getLogger().debug("Java2DRenderer stopped");
+        log.debug("Java2DRenderer stopped");
         renderingDone = true;
         numberOfPages = currentPageNumber;
         // TODO set all vars to null for gc
@@ -261,7 +261,7 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
         pageWidth = (int) Math.round(bounds.getWidth() / 1000f);
         pageHeight = (int) Math.round(bounds.getHeight() / 1000f);
 
-        getLogger().info(
+        log.info(
                 "Rendering Page " + pageViewport.getPageNumberString()
                         + " (pageWidth " + pageWidth + ", pageHeight "
                         + pageHeight + ")");
@@ -393,7 +393,7 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
             // after the block-container has been painted. See below.
             List breakOutList = null;
             if (bv.getPositioning() == Block.FIXED) {
-                getLogger().debug("Block.FIXED --> break out");
+                log.debug("Block.FIXED --> break out");
                 breakOutList = new java.util.ArrayList();
                 Graphics2D graph;
                 while (true) {
@@ -403,7 +403,7 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
                     }
                     breakOutList.add(0, graph); // Insert because of
                     // stack-popping
-                    getLogger().debug("Adding to break out list: " + graph);
+                    log.debug("Adding to break out list: " + graph);
                 }
             }
 
@@ -455,13 +455,13 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
             // clip if necessary
 
             if (breakOutList != null) {
-                getLogger().debug(
+                log.debug(
                         "Block.FIXED --> restoring context after break-out");
                 Graphics2D graph;
                 Iterator i = breakOutList.iterator();
                 while (i.hasNext()) {
                     graph = (Graphics2D) i.next();
-                    getLogger().debug("Restoring: " + graph);
+                    log.debug("Restoring: " + graph);
                     state.push();
                 }
             }
@@ -638,7 +638,7 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
                     }
 
                 } else {
-                    getLogger().warn(
+                    log.warn(
                             "Can't find background image: " + back.getURL());
                 }
             }
@@ -883,7 +883,7 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
             state.getGraph().draw(line);
             // lower Leader
             line.setLine(startx, starty + thickness, endx, starty + thickness);
-            state.getGraph().setColor(Color.WHITE);
+            state.getGraph().setColor(Color.white);
             state.getGraph().draw(line);
 
             // TODO the implementation could be nicer, f.eg. with triangles at
@@ -904,7 +904,7 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
             state.getGraph().draw(line);
             // upperLeader
             line.setLine(startx, starty, endx, starty);
-            state.getGraph().setColor(Color.WHITE);
+            state.getGraph().setColor(Color.white);
             state.getGraph().draw(line);
 
             // TODO the implementation could be nicer, f.eg. with triangles at
@@ -972,7 +972,7 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
             renderSVGDocument(doc, pos); // TODO check if ok.
 
         } else if ("image/eps".equals(mime)) {
-            getLogger().warn("EPS images are not supported by this renderer");
+            log.warn("EPS images are not supported by this renderer");
             currentBPPosition += (h * 1000);
         } else if ("image/jpeg".equals(mime)) {
             if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
@@ -991,15 +991,17 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
             currentBPPosition += (h * 1000);
         } else {
             if (!fopimage.load(FopImage.BITMAP)) {
-                getLogger().warn("Loading of bitmap failed: " + url);
+                log.warn("Loading of bitmap failed: " + url);
                 return;
             }
 
             byte[] raw = fopimage.getBitmaps();
 
             // TODO Hardcoded color and sample models, FIX ME!
-            ColorModel cm = new ComponentColorModel(ColorSpace
-                    .getInstance(ColorSpace.CS_LINEAR_RGB), false, false,
+            ColorModel cm = new ComponentColorModel(
+                    ColorSpace.getInstance(ColorSpace.CS_LINEAR_RGB), 
+                    new int[] {8, 8, 8},
+                    false, false,
                     ColorModel.OPAQUE, DataBuffer.TYPE_BYTE);
             SampleModel sampleModel = new PixelInterleavedSampleModel(
                     DataBuffer.TYPE_BYTE, w, h, 3, w * 3, new int[] { 0, 1, 2 });
@@ -1088,7 +1090,7 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
         try {
             root = builder.build(ctx, doc);
         } catch (Exception e) {
-            getLogger().error(
+            log.error(
                     "svg graphic could not be built: " + e.getMessage(), e);
             return;
         }
@@ -1105,7 +1107,7 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
         try {
             inverse = at.createInverse();
         } catch (NoninvertibleTransformException e) {
-            getLogger().warn(e);
+            log.warn(e);
         }
         if (!at.isIdentity()) {
             state.getGraph().transform(at);

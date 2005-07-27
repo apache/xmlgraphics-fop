@@ -185,7 +185,7 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
         try {
             svgT.transcode(input, output);
         } catch (TranscoderException e) {
-            getLogger().error("could not write svg file :" + e.getMessage(), e);
+            log.error("could not write svg file :" + e.getMessage(), e);
         }
         ostream.flush();
         ostream = null;

@@ -260,7 +260,7 @@ public class PDFRenderer extends PrintRenderer {
 
         //Setup encryption if necessary
         PDFEncryptionManager.setupPDFEncryption(
-                userAgent.getPDFEncryptionParams(), this.pdfDoc, getLogger());
+                userAgent.getPDFEncryptionParams(), this.pdfDoc);
     }
 
     /**
@@ -652,7 +652,7 @@ public class PDFRenderer extends PrintRenderer {
                     
                     restoreGraphicsState();
                 } else {
-                    getLogger().warn("Can't find background image: " + back.getURL());
+                    log.warn("Can't find background image: " + back.getURL());
                 }
             }
         }
@@ -837,7 +837,7 @@ public class PDFRenderer extends PrintRenderer {
         float w = x2 - x1;
         float h = y2 - y1;
         if ((w < 0) || (h < 0)) {
-            getLogger().error("Negative extent received. Border won't be painted.");
+            log.error("Negative extent received. Border won't be painted.");
             return;
         }
         switch (style) {

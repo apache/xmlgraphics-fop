@@ -24,12 +24,16 @@ import java.security.Provider;
 import java.security.Security;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This class acts as a factory for PDF encryption support. It enables the
  * feature to be optional to FOP depending on the availability of JCE.
  */
 public class PDFEncryptionManager {
+
+    /** logging instance */
+    protected static Log log = LogFactory.getLog(PDFEncryptionManager.class);
 
     /**
      * Indicates whether JCE is available.
@@ -75,8 +79,7 @@ public class PDFEncryptionManager {
      * @param log the logger to send warnings to
      */
     public static void setupPDFEncryption(PDFEncryptionParams params, 
-                                          PDFDocument pdf,
-                                          Log log) {
+                                          PDFDocument pdf) {
         if (pdf == null) {
             throw new NullPointerException("PDF document must not be null");
         }

@@ -50,7 +50,7 @@ public class PNGRenderer_onthefly extends Java2DRenderer {
 
     /** @see org.apache.fop.render.Renderer#startRenderer(java.io.OutputStream) */
     public void startRenderer(OutputStream outputStream) throws IOException {
-        getLogger().info("rendering areas to PNG");
+        log.info("rendering areas to PNG");
         setOutputDirectory();
         this.firstOutputStream = outputStream;
     }
@@ -83,7 +83,7 @@ public class PNGRenderer_onthefly extends Java2DRenderer {
         RenderedImage image = (RenderedImage) getPageImage(pageViewport);
 
         // Encode this image
-        getLogger().debug("Encoding  Page" + (getCurrentPageNumber() + 1));
+        log.debug("Encoding page" + (getCurrentPageNumber() + 1));
         renderParams = PNGEncodeParam.getDefaultEncodeParam(image);
         OutputStream os = getCurrentOutputStream(getCurrentPageNumber());
         PNGImageEncoder encoder = new PNGImageEncoder(os, renderParams);

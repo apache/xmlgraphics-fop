@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@ public class TXTRenderer extends PrintRenderer {
 
     private void addStr(int row, int col, String str, boolean ischar) {
         if (debug) {
-            getLogger().debug("TXTRenderer.addStr(" + row + ", " + col
+            log.debug("TXTRenderer.addStr(" + row + ", " + col
                                + ", \"" + str + "\", " + ischar + ")");
         }
         if (suppressGraphics && !ischar) {
@@ -109,7 +109,7 @@ public class TXTRenderer extends PrintRenderer {
             sb.append(' ');
         }
         if (debug) {
-            getLogger().debug("TXTRenderer.addStr() sb.length()="
+            log.debug("TXTRenderer.addStr() sb.length()="
                                + sb.length());
         }
         for (int countr = col; countr < (col + str.length()); countr++) {
@@ -117,7 +117,7 @@ public class TXTRenderer extends PrintRenderer {
                 sb.append(str.charAt(countr - col));
             } else {
                 if (debug) {
-                    getLogger().debug("TXTRenderer.addStr() sb.length()="
+                    log.debug("TXTRenderer.addStr() sb.length()="
                                        + sb.length() + " countr=" + countr);
                 }
                 sb.setCharAt(countr, str.charAt(countr - col));

@@ -285,7 +285,7 @@ public class XMLRenderer extends AbstractRenderer {
      */
     public void startRenderer(OutputStream outputStream)
                 throws IOException {
-        getLogger().debug("Rendering areas to Area Tree XML");
+        log.debug("Rendering areas to Area Tree XML");
     
         if (this.handler == null) {
             SAXTransformerFactory factory 
@@ -327,7 +327,7 @@ public class XMLRenderer extends AbstractRenderer {
         if (this.out != null) {
             this.out.flush();
         }
-        getLogger().debug("Written out Area Tree XML");
+        log.debug("Written out Area Tree XML");
     }
 
     /**

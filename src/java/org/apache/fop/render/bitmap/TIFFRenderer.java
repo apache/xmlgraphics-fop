@@ -39,6 +39,8 @@ import org.apache.batik.ext.awt.image.codec.tiff.TIFFField;
 import org.apache.batik.ext.awt.image.codec.tiff.TIFFImageDecoder;
 import org.apache.batik.ext.awt.image.codec.tiff.TIFFImageEncoder;
 import org.apache.batik.ext.awt.image.rendered.FormatRed;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.render.java2d.Java2DRenderer;
 
@@ -110,10 +112,10 @@ public class TIFFRenderer extends Java2DRenderer {
             name = "COMPRESSION_DEFLATE";
             break;
         default:
-            getLogger().info("TIFF compression not supported: " + comp);
+            log.info("TIFF compression not supported: " + comp);
             return;
         }
-        getLogger().info("TIFF compression set to " + name);
+        log.info("TIFF compression set to " + name);
 
     }
 
@@ -127,7 +129,7 @@ public class TIFFRenderer extends Java2DRenderer {
     public void stopRenderer() throws IOException {
 
         super.stopRenderer();
-        getLogger().debug("Starting Tiff encoding ...");
+        log.debug("Starting Tiff encoding ...");
 
         //Set resolution
         float pixSzMM = userAgent.getPixelUnitToMillimeter();
@@ -152,7 +154,7 @@ public class TIFFRenderer extends Java2DRenderer {
         TIFFImageEncoder enc = new TIFFImageEncoder(outputStream, renderParams);
 
         // Creates lazy iterator over generated page images
-        Iterator pageImagesItr = new LazyPageImagesIterator(getNumberOfPages());
+        Iterator pageImagesItr = new LazyPageImagesIterator(getNumberOfPages(), log);
 
         // The first image to be passed to enc
         RenderedImage first = (RenderedImage) pageImagesItr.next();
@@ -166,18 +168,27 @@ public class TIFFRenderer extends Java2DRenderer {
         // Cleaning
         outputStream.flush();
         clearViewportList();
-        getLogger().debug("Tiff encoding done.");
+        log.debug("Tiff encoding done.");
 
     }
 
     /** Private inner class to lazy page rendering. */
     private class LazyPageImagesIterator implements Iterator {
+        /** logging instance */
+        private Log log;
+
         private int count;
 
         private int current = 0;
 
-        public LazyPageImagesIterator(int c) {
+        /**
+         * Main constructor
+         * @param c number of pages to iterate over
+         * @param log the logger to use (this is a hack so this compiles under JDK 1.3)
+         */
+        public LazyPageImagesIterator(int c, Log log) {
             count = c;
+            this.log = log;
         }
 
         public boolean hasNext() {
@@ -185,7 +196,7 @@ public class TIFFRenderer extends Java2DRenderer {
         }
 
         public Object next() {
-            getLogger().debug("[" + (current + 1) + "]");
+            log.debug("[" + (current + 1) + "]");
 
             // Renders current page as image
             BufferedImage pageImage = null;

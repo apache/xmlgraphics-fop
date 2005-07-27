@@ -478,7 +478,7 @@ list of possible build targets.
 
   <target name="hyphenation-jar" depends="hyphenation">
     <tstamp>
-      <format property="ts" pattern="yyyy-MM-dd'T'HH:mm:ssZ"/>
+      <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
     </tstamp>
     <jar jarfile="${build.dir}/fop-hyph.jar" basedir="${build.dest}" includes="hyph/**">
       <manifest>

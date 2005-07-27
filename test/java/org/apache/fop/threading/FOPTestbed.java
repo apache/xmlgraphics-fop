@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The Apache Software Foundation.
+ * Copyright 2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.container.ContainerUtil;
 import org.apache.avalon.framework.logger.AbstractLogEnabled;
+import org.apache.avalon.framework.logger.Logger;
 import org.apache.commons.io.IOUtils;
 
 public class FOPTestbed extends AbstractLogEnabled 
@@ -75,7 +76,9 @@ public class FOPTestbed extends AbstractLogEnabled
         //Initialize threads
         List threadList = new java.util.LinkedList();
         for (int ti = 0; ti < this.threads; ti++) {
-            Thread thread = new Thread(new TaskRunner());
+            TaskRunner runner = new TaskRunner();
+            ContainerUtil.enableLogging(runner, getLogger());
+            Thread thread = new Thread(runner);
             threadList.add(thread);
         }
         
@@ -100,7 +103,7 @@ public class FOPTestbed extends AbstractLogEnabled
         getLogger().info("Stress test duration: " + (System.currentTimeMillis() - start) + "ms");
     }
 
-    private class TaskRunner implements Runnable {
+    private class TaskRunner extends AbstractLogEnabled implements Runnable {
         
         public void run() {
             try {
@@ -109,6 +112,7 @@ public class FOPTestbed extends AbstractLogEnabled
                     while (i.hasNext()) {
                         TaskDef def = (TaskDef)i.next();
                         final Task task = new Task(def, counter++);
+                        ContainerUtil.enableLogging(task, getLogger());
                         task.execute();
                     }
                 }
@@ -122,7 +126,8 @@ public class FOPTestbed extends AbstractLogEnabled
     
     public FOProcessor createFOProcessor() {
         try {
-            Class clazz = Class.forName(this.fopCfg.getAttribute("class", "org.apache.fop.threading.FOProcessorImpl"));
+            Class clazz = Class.forName(this.fopCfg.getAttribute("class", 
+                    "org.apache.fop.threading.FOProcessorImpl"));
             FOProcessor fop = (FOProcessor)clazz.newInstance();
             ContainerUtil.enableLogging(fop, getLogger());
             ContainerUtil.configure(fop, this.fopCfg);
@@ -187,7 +192,7 @@ public class FOPTestbed extends AbstractLogEnabled
     }
 
 
-    private class Task implements Executable {
+    private class Task extends AbstractLogEnabled implements Executable {
 
         private TaskDef def;
         private int num;
@@ -199,7 +204,7 @@ public class FOPTestbed extends AbstractLogEnabled
 
 
         public void execute() throws Exception {
-            getLogger().info("Processing: "+def);
+            getLogger().info("Processing: " + def);
             FOProcessor fop = (FOProcessor)createFOProcessor();
             DecimalFormat df = new DecimalFormat("00000");
             File outfile = new File(outputDir, df.format(num) + ".pdf");
