@@ -45,9 +45,9 @@ public class PrintRenderer extends Java2DRenderer implements Pageable {
 
     private static final int ODD = 2;
 
-    private int startNumber;
+    private int startNumber = 0;
 
-    private int endNumber;
+    private int endNumber = -1;
 
     private int mode = EVEN_AND_ALL;
 
@@ -55,10 +55,23 @@ public class PrintRenderer extends Java2DRenderer implements Pageable {
 
     private PrinterJob printerJob;
 
+    /**
+     * Creates a new PrintRenderer with the options set from system properties.
+     */
     public PrintRenderer() {
         initializePrinterJob();
     }
 
+    /**
+     * Creates a new PrintRenderer and allows you to pass in a specific PrinterJob instance
+     * that this renderer should work with.
+     * @param printerJob the PrinterJob instance
+     */
+    public PrintRenderer(PrinterJob printerJob) {
+        this.printerJob = printerJob;
+        printerJob.setPageable(this);
+    }
+    
     private void initializePrinterJob() throws IllegalArgumentException {
         // read from command-line options
         copies = getIntProperty("copies", 1);
@@ -80,7 +93,38 @@ public class PrintRenderer extends Java2DRenderer implements Pageable {
         }
         printerJob.setPageable(this);
     }
+    
+    /** @return the PrinterJob instance that this renderer prints to */
+    public PrinterJob getPrinterJob() {
+        return this.printerJob;
+    }
 
+    /** @return the ending page number */
+    public int getEndNumber() {
+        return endNumber;
+    }
+    
+    /**
+     * Sets the number of the last page to be printed.
+     * @param end The ending page number
+     */
+    public void setEndPage(int end) {
+        this.endNumber = end;
+    }
+    
+    /** @return the starting page number */
+    public int getStartPage() {
+        return startNumber;
+    }
+    
+    /**
+     * Sets the number of the first page to be printed.
+     * @param start The starting page number
+     */
+    public void setStartPage(int start) {
+        this.startNumber = start;
+    }
+    
     public void stopRenderer() throws IOException {
         super.stopRenderer();
 
@@ -134,7 +178,7 @@ public class PrintRenderer extends Java2DRenderer implements Pageable {
             }
 
             if (!isValid) {
-                vec.add(i + "");
+                vec.add(Integer.toString(i));
             }
         }
         return vec;
@@ -151,7 +195,6 @@ public class PrintRenderer extends Java2DRenderer implements Pageable {
             PageFormat pageFormat = new PageFormat();
     
             Paper paper = new Paper();
-            pageFormat.setPaper(paper);
     
             Rectangle2D dim = getPageViewport(pageIndex).getViewArea();
             double width = dim.getWidth();
@@ -168,6 +211,7 @@ public class PrintRenderer extends Java2DRenderer implements Pageable {
                 paper.setSize(width / 1000d, height / 1000d);
                 pageFormat.setOrientation(PageFormat.PORTRAIT);
             }
+            pageFormat.setPaper(paper);
             return pageFormat;
         } catch (FOPException fopEx) {
             throw new IndexOutOfBoundsException(fopEx.getMessage());
