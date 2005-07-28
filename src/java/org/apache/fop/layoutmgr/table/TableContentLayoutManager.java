@@ -491,12 +491,17 @@ public class TableContentLayoutManager {
                             effCellContentHeight = Math.max(effCellContentHeight,
                                     bpd.getMinimum().getLength().getValue());
                         }
+                        if (!bpd.getOptimum().isAuto()) {
+                            effCellContentHeight = Math.max(effCellContentHeight,
+                                    bpd.getOptimum().getLength().getValue());
+                        }
                         if (gu.getRowSpanIndex() == 0) {
                             //TODO ATM only non-row-spanned cells are taken for this
                             MinOptMaxUtil.restrict(explicitRowHeights[rgi], bpd);
                         }
                         effCellContentHeight = Math.max(effCellContentHeight, 
                                 primary.getContentLength());
+                        
                         int borderWidths;
                         if (isSeparateBorderModel()) {
                             borderWidths = primary.getBorders().getBorderBeforeWidth(false)
@@ -787,8 +792,27 @@ public class TableContentLayoutManager {
                             gridUnits[i].getElements(), start[i], end[i]);
                     partLength[i] = len;
                     log.debug("len of part: " + len);
-                    if (start[i] == 0 && lastRow.getExplicitHeight().min > 0) {
-                        len = Math.max(len, lastRow.getExplicitHeight().opt);
+                    if (start[i] == 0) {
+                        LengthRangeProperty bpd = gridUnits[i].getCell()
+                                .getBlockProgressionDimension();
+                        if (!bpd.getMinimum().isAuto()) {
+                            if (bpd.getMinimum().getLength().getValue() > 0) {
+                                len = Math.max(len, bpd.getMinimum().getLength().getValue());
+                            }
+                        }
+                        if (!bpd.getOptimum().isAuto()) {
+                            if (bpd.getOptimum().getLength().getValue() > 0) {
+                                len = Math.max(len, bpd.getOptimum().getLength().getValue());
+                            }
+                        }
+                        if (gridUnits[i].getRow() != null) {
+                            bpd = gridUnits[i].getRow().getBlockProgressionDimension();
+                            if (!bpd.getMinimum().isAuto()) {
+                                if (bpd.getMinimum().getLength().getValue() > 0) {
+                                    len = Math.max(len, bpd.getMinimum().getLength().getValue());
+                                }
+                            }
+                        }
                     }
                     
                     //Now add the borders to the contentLength
@@ -796,6 +820,8 @@ public class TableContentLayoutManager {
                         len += gridUnits[i].getBorders().getBorderBeforeWidth(false);
                         len += gridUnits[i].getBorders().getBorderAfterWidth(false);
                     }
+                    len += gridUnits[i].getBorders().getPaddingBefore(false);
+                    len += gridUnits[i].getBorders().getPaddingAfter(false);
                     int startRow = Math.max(gridUnits[i].getStartRow(), firstRow[bt]);
                     Integer storedOffset = (Integer)rowOffsets[bt].get(new Integer(startRow));
                     int effYOffset;
