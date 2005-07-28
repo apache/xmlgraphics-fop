@@ -19,7 +19,6 @@
 package org.apache.fop.fo.pagination.bookmarks;
 
 import java.util.ArrayList;
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FObj;

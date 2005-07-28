@@ -18,7 +18,6 @@
 
 package org.apache.fop.fo.extensions;
 
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ElementMapping;
 
 import java.util.HashMap;

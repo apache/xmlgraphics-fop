@@ -21,10 +21,7 @@ package org.apache.fop.fo.pagination;
 // XML
 import org.xml.sax.Locator;
 
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.flow.InlineLevel;
 

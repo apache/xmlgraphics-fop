@@ -189,7 +189,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 needColumnBalancing = (childLC.getNextSpan() == Constants.EN_ALL);
             }
             if (needColumnBalancing) {
-                this.log.debug("Column balancing necessary for the next element list!!!");
+                AbstractBreaker.log.debug("Column balancing necessary for the next element list!!!");
             }
             return nextSequenceStartsOn;
         }
@@ -303,8 +303,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         protected void doPhase3(PageBreakingAlgorithm alg, int partCount, 
                 BlockSequence originalList, BlockSequence effectiveList) {
             if (needColumnBalancing) {
-                this.log.debug("Column balancing now!!!");
-                this.log.debug("===================================================");
+                AbstractBreaker.log.debug("Column balancing now!!!");
+                AbstractBreaker.log.debug("===================================================");
                 int restartPoint = pvProvider.getStartingPartIndexForLastPage(partCount);
                 if (restartPoint > 0) {
                     addAreas(alg, restartPoint, originalList, effectiveList);
@@ -318,7 +318,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 } else {
                     newStartPos = 0;
                 }
-                this.log.debug("Restarting at " + restartPoint + ", new start position: " + newStartPos);
+                AbstractBreaker.log.debug("Restarting at " + restartPoint + ", new start position: " + newStartPos);
 
                 //Handle page break right here to avoid any side-effects
                 handleBreakTrait(EN_PAGE);
@@ -338,7 +338,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 int iOptPageCount = algRestart.findBreakingPoints(effectiveList,
                             newStartPos,
                             1, true, true);
-                this.log.debug("restart: iOptPageCount= " + iOptPageCount
+                AbstractBreaker.log.debug("restart: iOptPageCount= " + iOptPageCount
                         + " pageBreaks.size()= " + algRestart.getPageBreaks().size());
                 if (iOptPageCount > getCurrentPV().getBodyRegion().getColumnCount()) {
                     /* reenable when everything works
@@ -349,7 +349,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 //Make sure we only add the areas we haven't added already
                 effectiveList.ignoreAtStart = newStartPos;
                 addAreas(algRestart, iOptPageCount, originalList, effectiveList);
-                this.log.debug("===================================================");
+                AbstractBreaker.log.debug("===================================================");
             } else {
                 //Directly add areas after finding the breaks
                 addAreas(alg, partCount, originalList, effectiveList);
@@ -357,7 +357,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
         
         protected void startPart(BlockSequence list, int breakClass) {
-            this.log.debug("startPart() breakClass=" + breakClass);
+            AbstractBreaker.log.debug("startPart() breakClass=" + breakClass);
             if (curPV == null) {
                 throw new IllegalStateException("curPV must not be null");
             }
