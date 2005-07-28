@@ -50,7 +50,7 @@ public class LayoutEngineTestSuite {
         DebugHelper.registerStandardElementListObservers();
     }
     
-    private static String[] readLinesFromFile(File f) throws IOException {
+    public static String[] readLinesFromFile(File f) throws IOException {
         List lines = new java.util.ArrayList();
         Reader reader = new FileReader(f);
         BufferedReader br = new BufferedReader(reader);
@@ -59,6 +59,16 @@ public class LayoutEngineTestSuite {
             lines.add(line);
         }
         return (String[])lines.toArray(new String[lines.size()]);
+    }
+    
+    public static IOFileFilter decorateWithDisabledList(IOFileFilter filter) throws IOException {
+        String disabled = System.getProperty("fop.layoutengine.disabled");
+        if (disabled != null && disabled.length() > 0) {
+            filter = new AndFileFilter(new NotFileFilter(
+                    new NameFileFilter(readLinesFromFile(new File(disabled)))),
+                    filter);
+        }
+        return filter;
     }
     
     /**
@@ -84,16 +94,17 @@ public class LayoutEngineTestSuite {
             filter = new AndFileFilter(filter, new SuffixFileFilter(".xml"));
         } else {
             filter = new SuffixFileFilter(".xml");
-            String disabled = System.getProperty("fop.layoutengine.disabled");
-            if (disabled != null && disabled.length() > 0) {
-                filter = new AndFileFilter(new NotFileFilter(
-                        new NameFileFilter(readLinesFromFile(new File(disabled)))),
-                        filter);
-            }
-            
+            filter = decorateWithDisabledList(filter);
         }
         Collection files = FileUtils.listFiles(new File(mainDir, "testcases"), 
                 filter, TrueFileFilter.INSTANCE);
+        String privateTests = System.getProperty("fop.layoutengine.private");
+        if ("true".equalsIgnoreCase(privateTests)) {
+            Collection privateFiles = FileUtils.listFiles(
+                    new File(mainDir, "private-testcases"), 
+                    filter, TrueFileFilter.INSTANCE);
+            files.addAll(privateFiles);
+        }
         Iterator i = files.iterator();
         while (i.hasNext()) {
             File f = (File)i.next();
