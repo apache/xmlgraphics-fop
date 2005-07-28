@@ -385,21 +385,21 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager implement
         }
 
         //Handle display-align
-        if (usedBPD < rowHeight) {
+        int contentBPD = getContentHeight(rowHeight, gridUnit);
+        if (usedBPD < contentBPD) {
             if (fobj.getDisplayAlign() == EN_CENTER) {
                 Block space = new Block();
-                space.setBPD((rowHeight - usedBPD) / 2);
+                space.setBPD((contentBPD - usedBPD) / 2);
                 curBlockArea.addBlock(space);
             } else if (fobj.getDisplayAlign() == EN_AFTER) {
                 Block space = new Block();
-                space.setBPD((rowHeight - usedBPD));
+                space.setBPD((contentBPD - usedBPD));
                 curBlockArea.addBlock(space);
             }
         }
 
         AreaAdditionUtil.addAreas(this, parentIter, layoutContext);
         
-        int contentBPD = getContentHeight(rowHeight, gridUnit);
         curBlockArea.setBPD(contentBPD);
 
         flush();
