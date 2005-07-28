@@ -313,7 +313,7 @@ public class PSRenderer extends PrintRenderer {
 
         //PostScript Header
         writeln(DSCConstants.PS_ADOBE_30);
-        gen.writeDSCComment(DSCConstants.CREATOR, new String[] { userAgent.getProducer() });
+        gen.writeDSCComment(DSCConstants.CREATOR, new String[] {userAgent.getProducer()});
         gen.writeDSCComment(DSCConstants.CREATION_DATE, new Object[] {new java.util.Date()});
         gen.writeDSCComment(DSCConstants.LANGUAGE_LEVEL, new Integer(gen.getPSLevel()));
         gen.writeDSCComment(DSCConstants.PAGES, new Object[] {PSGenerator.ATEND});
@@ -396,6 +396,12 @@ public class PSRenderer extends PrintRenderer {
             gen.writeln(Math.round(pspageheight) + " 0 translate");
             gen.writeln("90 rotate");
         }
+        gen.writeln("<<");
+        gen.writeln("/PageSize [" 
+                + Math.round(pspagewidth) + " " 
+                + Math.round(pspageheight) + "]");
+        gen.writeln("/ImagingBBox null");
+        gen.writeln(">> setpagedevice");
         gen.writeln("0.001 0.001 scale");
         concatMatrix(1, 0, 0, -1, 0, pageheight);
 
