@@ -129,24 +129,6 @@ public class PrimaryGridUnit extends GridUnit {
         return contentLength;
     }
 
-    /** 
-     * @return Returns the length of the cell content after the bpd/height attributes on cell
-     * and row have been taken into account.
-     */
-    public int getEffectiveContentLength() {
-        int value = getContentLength();
-        if (!getCell().getBlockProgressionDimension().getMinimum().isAuto()) {
-            value = Math.max(value, 
-                    getCell().getBlockProgressionDimension().getMinimum().getLength().getValue());
-        }
-        if (getRow() != null 
-                && !getRow().getBlockProgressionDimension().getMinimum().isAuto()) {
-            value = Math.max(value, 
-                    getRow().getBlockProgressionDimension().getMinimum().getLength().getValue());
-        }
-        return value;
-    }
-    
     /** @return true if cell/row has an explicit BPD/height */
     public boolean hasBPD() {
         if (!getCell().getBlockProgressionDimension().getOptimum().isAuto()) {
