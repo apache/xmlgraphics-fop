@@ -18,10 +18,6 @@
 
 package org.apache.fop.fo.pagination;
 
-// Java
-import java.util.List;
-import java.util.ListIterator;
-
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;

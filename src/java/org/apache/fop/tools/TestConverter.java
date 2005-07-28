@@ -19,7 +19,6 @@
 package org.apache.fop.tools;
 
 import java.io.File;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 

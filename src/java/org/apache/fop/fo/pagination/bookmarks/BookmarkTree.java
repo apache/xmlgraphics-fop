@@ -26,10 +26,8 @@ import org.xml.sax.Locator;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.pagination.Root;
-import org.apache.fop.fo.properties.Property;
 
 /**
  * The fo:bookmark-tree formatting object, first introduced in the 

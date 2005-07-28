@@ -27,7 +27,6 @@ import java.util.Set;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.flow.Marker;
-import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.properties.PropertyMaker;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;

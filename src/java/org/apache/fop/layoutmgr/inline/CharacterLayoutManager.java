@@ -27,7 +27,6 @@ import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.TraitSetter;
-import org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager.AreaInfo;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.Trait;
 import org.apache.fop.traits.MinOptMax;
