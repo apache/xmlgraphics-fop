@@ -40,7 +40,6 @@ import org.apache.batik.ext.awt.image.codec.tiff.TIFFImageDecoder;
 import org.apache.batik.ext.awt.image.codec.tiff.TIFFImageEncoder;
 import org.apache.batik.ext.awt.image.rendered.FormatRed;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.render.java2d.Java2DRenderer;
 
