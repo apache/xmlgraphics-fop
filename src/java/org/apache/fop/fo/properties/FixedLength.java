@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,6 +68,9 @@ public class FixedLength extends LengthProperty {
         } else if (unit.equals("pt")) {
             // Do nothing.
             // dvalue = dvalue;
+        } else if (unit.equals("mpt")) { //mpt is non-standard!!! mpt=millipoints
+            // Do nothing.
+            // dvalue = dvalue;
         } else if (unit.equals("pc")) {
             dvalue = dvalue * 12;
             /*
@@ -78,10 +81,13 @@ public class FixedLength extends LengthProperty {
             dvalue = dvalue * assumedResolution;
         } else {
             dvalue = 0;
-            //log.error("unknown length unit '" + unit
-            //                       + "'");
+            log.error("Unknown length unit '" + unit + "'");
         }
-        millipoints = (int)(dvalue * 1000);
+        if (unit.equals("mpt")) {
+            millipoints = (int)dvalue;
+        } else {
+            millipoints = (int)(dvalue * 1000);
+        }
     }
 
     /**
