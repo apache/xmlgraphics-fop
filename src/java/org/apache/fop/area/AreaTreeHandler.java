@@ -35,6 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FormattingResults;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Root;
@@ -91,6 +92,9 @@ public class AreaTreeHandler extends FOEventHandler {
     // idref's whose target PageViewports have yet to be identified
     // Each idref has a HashSet of Resolvable objects containing that idref
     private Map unresolvedIDRefs = new HashMap();
+
+     // The formatting results to be handed back to the caller.
+    private FormattingResults results = new FormattingResults();
 
     private static Log log = LogFactory.getLog(AreaTreeHandler.class);
 
@@ -209,6 +213,15 @@ public class AreaTreeHandler extends FOEventHandler {
     }
 
     /**
+     * Get information about the rendered output, like
+     * number of pages created.
+     * @return the results structure
+     */
+    public FormattingResults getResults() {
+        return this.results;
+    }
+
+    /**
      * Add an Resolvable object with an unresolved idref
      * @param idref the idref whose target id has not yet been located
      * @param res the Resolvable object needing the idref to be resolved
@@ -256,10 +269,17 @@ public class AreaTreeHandler extends FOEventHandler {
         // If no main flow, nothing to layout!
         if (pageSequence.getMainFlow() != null) {
             PageSequenceLayoutManager pageSLM;
-            pageSLM =
-                getLayoutManagerMaker().makePageSequenceLayoutManager(this,
-                    pageSequence);
+            pageSLM = getLayoutManagerMaker().makePageSequenceLayoutManager(
+                    this, pageSequence);
             pageSLM.activateLayout();
+            this.results.haveFormattedPageSequence(pageSequence, 
+                    getAreaTreeModel().getPageCount(getAreaTreeModel().getPageSequenceCount()));
+            if (log.isDebugEnabled()) {
+                log.debug("Last page-sequence produced " 
+                        + getAreaTreeModel().getPageCount(
+                                getAreaTreeModel().getPageSequenceCount())
+                        + " pages.");
+            }
         }
     }
 

@@ -28,6 +28,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FormattingResults;
+import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.render.RendererFactory;
 import org.apache.fop.util.Service;
 import org.apache.fop.fo.ElementMapping.Maker;
@@ -129,8 +131,7 @@ public class FOTreeBuilder extends DefaultHandler {
         addElementMapping("org.apache.fop.fo.extensions.ExtensionElementMapping");
 
         // add mappings from available services
-        Iterator providers =
-            Service.providers(ElementMapping.class);
+        Iterator providers = Service.providers(ElementMapping.class);
         if (providers != null) {
             while (providers.hasNext()) {
                 String str = (String)providers.next();
@@ -191,7 +192,8 @@ public class FOTreeBuilder extends DefaultHandler {
     public void characters(char[] data, int start, int length) 
         throws FOPException {
             if (currentFObj != null) {
-                currentFObj.addCharacters(data, start, start + length, currentPropertyList, locator);
+                currentFObj.addCharacters(data, start, start + length, 
+                        currentPropertyList, locator);
             }
     }
 
@@ -342,6 +344,30 @@ public class FOTreeBuilder extends DefaultHandler {
         throw e;
     }
 
+    /**
+     * Provides access to the underlying FOEventHandler object.
+     * @return the FOEventHandler object
+     */
+    public FOEventHandler getEventHandler() {
+        return foEventHandler;
+    }
+
+    /**
+     * Returns the results of the rendering process. Information includes
+     * the total number of pages generated and the number of pages per
+     * page-sequence.
+     * @return the results of the rendering process.
+     */
+    public FormattingResults getResults() {
+        if (getEventHandler() instanceof AreaTreeHandler) {
+            return ((AreaTreeHandler)getEventHandler()).getResults();
+        } else {
+            //No formatting results available for output formats no 
+            //involving the layout engine.
+            return null;   
+        }
+    }
+    
     /**
      * Resets this object for another run.
      */
