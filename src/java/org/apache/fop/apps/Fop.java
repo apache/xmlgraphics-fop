@@ -61,6 +61,9 @@ public class Fop implements Constants {
     // FOUserAgent object to set processing options
     private FOUserAgent foUserAgent = null;
 
+    // FOTreeBuilder object to maintain reference for access to results
+    private FOTreeBuilder foTreeBuilder = null;
+
     /**
      * Constructor for use with already-created FOUserAgents
      * @param renderType the type of renderer to use.  Must be one of
@@ -133,7 +136,28 @@ public class Fop implements Constants {
      * @throws FOPException if setting up the DefaultHandler fails
      */
     public DefaultHandler getDefaultHandler() throws FOPException {
-        return new FOTreeBuilder(renderType, foUserAgent, stream);
+        if (foTreeBuilder == null) {
+            this.foTreeBuilder = new FOTreeBuilder(renderType, foUserAgent, stream);
+        }
+        return this.foTreeBuilder;
+    }
+
+    /**
+     * Returns the results of the rendering process. Information includes
+     * the total number of pages generated and the number of pages per
+     * page-sequence. Call this method only after the rendering process is
+     * finished. Note that the results are only available for output formats
+     * which make use of FOP's layout engine (PDF, PS, etc.).
+     * @return the results of the rendering process, or null for flow-oriented 
+     * output formats like RTF and MIF.
+     */
+    public FormattingResults getResults() {
+        if (foTreeBuilder == null) {
+            throw new IllegalStateException(
+                    "Results are only available after calling getDefaultHandler().");
+        } else {
+            return foTreeBuilder.getResults();
+        }
     }
 
     /**

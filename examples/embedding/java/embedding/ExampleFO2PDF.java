@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,8 @@ import javax.xml.transform.sax.SAXResult;
 // FOP
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FormattingResults;
+import org.apache.fop.apps.PageSequenceResults;
 
 /**
  * This class demonstrates the conversion of an FO file to PDF using FOP.
@@ -76,6 +78,18 @@ public class ExampleFO2PDF {
             
             // Start XSLT transformation and FOP processing
             transformer.transform(src, res);
+            
+            // Result processing
+            FormattingResults foResults = fop.getResults();
+            java.util.List pageSequences = foResults.getPageSequences();
+            for (java.util.Iterator it = pageSequences.iterator(); it.hasNext();) {
+                PageSequenceResults pageSequenceResults = (PageSequenceResults)it.next();
+                System.out.println("PageSequence " 
+                        + (String.valueOf(pageSequenceResults.getID()).length() > 0 
+                                ? pageSequenceResults.getID() : "<no id>") 
+                        + " generated " + pageSequenceResults.getPageCount() + " pages.");
+            }
+            System.out.println("Generated " + foResults.getPageCount() + " pages in total.");
 
         } catch (Exception e) {
             e.printStackTrace(System.err);
@@ -102,6 +116,7 @@ public class ExampleFO2PDF {
 
             //Setup input and output files            
             File fofile = new File(baseDir, "xml/fo/helloworld.fo");
+            //File fofile = new File(baseDir, "../fo/pagination/franklin_2pageseqs.fo");
             File pdffile = new File(outDir, "ResultFO2PDF.pdf");
 
             System.out.println("Input: XSL-FO (" + fofile + ")");
