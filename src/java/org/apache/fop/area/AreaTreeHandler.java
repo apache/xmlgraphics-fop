@@ -272,14 +272,16 @@ public class AreaTreeHandler extends FOEventHandler {
             pageSLM = getLayoutManagerMaker().makePageSequenceLayoutManager(
                     this, pageSequence);
             pageSLM.activateLayout();
-            this.results.haveFormattedPageSequence(pageSequence, 
-                    getAreaTreeModel().getPageCount(getAreaTreeModel().getPageSequenceCount()));
-            if (log.isDebugEnabled()) {
-                log.debug("Last page-sequence produced " 
-                        + getAreaTreeModel().getPageCount(
-                                getAreaTreeModel().getPageSequenceCount())
-                        + " pages.");
-            }
+        }
+    }
+
+    public void notifyPageSequenceFinished(PageSequence pageSequence,
+                                           int pageCount) {
+        this.results.haveFormattedPageSequence(pageSequence, 
+                                               pageCount);
+        if (log.isDebugEnabled()) {
+            log.debug("Last page-sequence produced " 
+                    + pageCount + " pages.");
         }
     }
 
