@@ -324,9 +324,19 @@ public class TableStepper {
                 }
             }
             int p = 0;
+            boolean allCellsHaveContributed = true;
             signalKeepWithNext = false;
             for (int i = 0; i < start.length; i++) {
+                if (start[i] == 0 && end[i] < 0 && elementLists[i] != null) {
+                    allCellsHaveContributed = false;
+                }
                 signalKeepWithNext |= keepWithNextSignals[i];
+            }
+            if (!allCellsHaveContributed) {
+                //Not all cells have contributed to a newly started row. The penalty here is
+                //used to avoid breaks resulting in badly broken tables.
+                //See also: http://marc.theaimsgroup.com/?t=112248999600005&r=1&w=2
+                p = 900; //KnuthPenalty.INFINITE; //TODO Arbitrary value. Please refine.
             }
             if (signalKeepWithNext || getTableLM().mustKeepTogether()) {
                 p = KnuthPenalty.INFINITE;
