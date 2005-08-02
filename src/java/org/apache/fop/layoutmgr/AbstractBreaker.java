@@ -165,6 +165,15 @@ public abstract class AbstractBreaker {
         //nop
     }
     
+    /**
+     * Used for debugging purposes. Notifies all registered observers about the element list.
+     * Override to set different parameters.
+     * @param elementList the Knuth element list
+     */
+    protected void observeElementList(List elementList) {
+        ElementListObserver.observe(elementList, "breaker", null);
+    }
+    
     public void doLayout(int flowBPD) {
         LayoutContext childLC = createLayoutContext();
         childLC.setStackLimit(new MinOptMax(flowBPD));
@@ -204,7 +213,7 @@ public abstract class AbstractBreaker {
                                     : "even page";
                     log.debug("  sequence starts on " + pagina);
                 }
-                ElementListObserver.observe(blockList, "breaker", null);
+                observeElementList(blockList);
                 //debug code end
 
                 log.debug("PLM> start of algorithm (" + this.getClass().getName() 

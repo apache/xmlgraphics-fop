@@ -19,6 +19,7 @@
 package org.apache.fop.layoutmgr;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
@@ -447,6 +448,12 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             this.ipd = ipd;
         }
 
+        /** @see org.apache.fop.layoutmgr.AbstractBreaker#observeElementList(java.util.List) */
+        protected void observeElementList(List elementList) {
+            ElementListObserver.observe(elementList, "block-container", 
+                    bclm.getBlockContainerFO().getId());
+        }
+        
         /** @see org.apache.fop.layoutmgr.AbstractBreaker#isPartOverflowRecoveryActivated() */
         protected boolean isPartOverflowRecoveryActivated() {
             //For block-containers, this must be disabled because of wanted overflow.
