@@ -62,7 +62,18 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     protected boolean bSpaceBeforeServed = false;
     /** Reference IPD available */
     protected int referenceIPD = 0;
-    
+
+    /* holds the (one-time use) fo:block space-before
+       and -after properties.  Large fo:blocks are split
+       into multiple Area.Blocks to accomodate the subsequent
+       regions (pages) they are placed on.  space-before
+       is applied at the beginning of the first
+       Block and space-after at the end of the last Block
+       used in rendering the fo:block.
+    */
+    protected MinOptMax foSpaceBefore = null;
+    protected MinOptMax foSpaceAfter = null;
+
     private int lastGeneratedPosition = -1;
     private int smallestPosNumberChecked = Integer.MAX_VALUE;
 
@@ -506,22 +517,24 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     }
 
     public void discardSpace(KnuthGlue spaceGlue) {
-/*LF*/  //System.out.println("  BLM.discardSpace> " + spaceGlue.getPosition().getClass().getName());
+        //System.out.println("  BLM.discardSpace> " + spaceGlue.getPosition().getClass().getName());
         Position innerPosition = ((NonLeafPosition) spaceGlue.getPosition()).getPosition();
 
-/*LF*/  if (innerPosition == null || innerPosition.getLM() == this) {
+        if (innerPosition == null || innerPosition.getLM() == this) {
             // if this block has block-progression-unit > 0, innerPosition can be
             // a MappingPosition
             // spaceGlue represents space before or space after of this block
             if (spaceGlue.getAdjustmentClass() == SPACE_BEFORE_ADJUSTMENT) {
                 // space-before must be discarded
                 adjustedSpaceBefore = 0;
+                foSpaceBefore = new MinOptMax(0);
             } else {
                 // space-after must be discarded
                 adjustedSpaceAfter = 0;
+                foSpaceAfter = new MinOptMax(0);
                 //TODO Why are both cases handled in the same way?
             }
-/*LF*/  } else {
+        } else {
             // this element was not created by this BlockLM
             NonLeafPosition savedPos = (NonLeafPosition)spaceGlue.getPosition();
             spaceGlue.setPosition(innerPosition);

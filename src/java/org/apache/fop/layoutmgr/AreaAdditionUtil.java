@@ -80,6 +80,8 @@ public class AreaAdditionUtil {
             // Add the block areas to Area
             lc.setFlags(LayoutContext.FIRST_AREA, childLM == firstLM);
             lc.setFlags(LayoutContext.LAST_AREA, childLM == lastLM);
+            // set the space adjustment ratio
+            lc.setSpaceAdjust(layoutContext.getSpaceAdjust());
             // set space before for the first LM, in order to implement
             // display-align = center or after
             lc.setSpaceBefore((childLM == firstLM ? layoutContext.getSpaceBefore() : 0));

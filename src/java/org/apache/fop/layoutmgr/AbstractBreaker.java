@@ -314,9 +314,16 @@ public abstract class AbstractBreaker {
             // at the beginning of the line
             effectiveListIterator = effectiveList
                     .listIterator(startElementIndex);
+            KnuthElement firstElement;
             while (effectiveListIterator.hasNext()
-                    && !((KnuthElement) effectiveListIterator.next())
+                    && !(firstElement = (KnuthElement) effectiveListIterator.next())
                             .isBox()) {
+                if (firstElement.isGlue()) {
+                    // discard the space representd by the glue element
+                    ((BlockLevelLayoutManager) firstElement
+                            .getLayoutManager())
+                            .discardSpace((KnuthGlue) firstElement);
+                }
                 startElementIndex++;
             }
 
@@ -324,6 +331,8 @@ public abstract class AbstractBreaker {
                 log.debug("     addAreas from " + startElementIndex
                         + " to " + endElementIndex);
                 childLC = new LayoutContext(0);
+                // set the space adjustment ratio
+                childLC.setSpaceAdjust(pbp.bpdAdjust);
                 // add space before if display-align is center or bottom
                 // add space after if display-align is distribute and
                 // this is not the last page

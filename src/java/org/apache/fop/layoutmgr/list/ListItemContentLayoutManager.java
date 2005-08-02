@@ -155,6 +155,8 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
             // Add the block areas to Area
             lc.setFlags(LayoutContext.FIRST_AREA, childLM == firstLM);
             lc.setFlags(LayoutContext.LAST_AREA, childLM == lastLM);
+            // set the space adjustment ratio
+            lc.setSpaceAdjust(layoutContext.getSpaceAdjust());
             lc.setStackLimit(layoutContext.getStackLimit());
             childLM.addAreas(childPosIter, lc);
         }

@@ -41,17 +41,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     /** Iterator over the child layout managers. */
     protected ListIterator proxyLMiter;
 
-    /* holds the (one-time use) fo:block space-before
-       and -after properties.  Large fo:blocks are split
-       into multiple Area.Blocks to accomodate the subsequent
-       regions (pages) they are placed on.  space-before
-       is applied at the beginning of the first
-       Block and space-after at the end of the last Block
-       used in rendering the fo:block.
-    */
-    private MinOptMax foBlockSpaceBefore = null;
-    private MinOptMax foBlockSpaceAfter = null;
-
     private int lead = 12000;
     private int lineHeight = 14000;
     private int follow = 2000;
@@ -79,17 +68,18 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     }
 
     private void initialize() {
-        foBlockSpaceBefore = new SpaceVal(getBlockFO().getCommonMarginBlock().spaceBefore).getSpace();
-/*LF*/  bpUnit = 0; //layoutProps.blockProgressionUnit;
-/*LF*/  if (bpUnit == 0) {
-/*LF*/      // use optimum space values
-/*LF*/      adjustedSpaceBefore = getBlockFO().getCommonMarginBlock().spaceBefore.getSpace().getOptimum().getLength().getValue();
-/*LF*/      adjustedSpaceAfter = getBlockFO().getCommonMarginBlock().spaceAfter.getSpace().getOptimum().getLength().getValue();
-/*LF*/  } else {
-/*LF*/      // use minimum space values
-/*LF*/      adjustedSpaceBefore = getBlockFO().getCommonMarginBlock().spaceBefore.getSpace().getMinimum().getLength().getValue();
-/*LF*/      adjustedSpaceAfter = getBlockFO().getCommonMarginBlock().spaceAfter.getSpace().getMinimum().getLength().getValue();
-/*LF*/  }
+        foSpaceBefore = new SpaceVal(getBlockFO().getCommonMarginBlock().spaceBefore).getSpace();
+        foSpaceAfter = new SpaceVal(getBlockFO().getCommonMarginBlock().spaceAfter).getSpace();
+        bpUnit = 0; // non-standard extension
+        if (bpUnit == 0) {
+            // use optimum space values
+            adjustedSpaceBefore = getBlockFO().getCommonMarginBlock().spaceBefore.getSpace().getOptimum().getLength().getValue();
+            adjustedSpaceAfter = getBlockFO().getCommonMarginBlock().spaceAfter.getSpace().getOptimum().getLength().getValue();
+        } else {
+            // use minimum space values
+            adjustedSpaceBefore = getBlockFO().getCommonMarginBlock().spaceBefore.getSpace().getMinimum().getLength().getValue();
+            adjustedSpaceAfter = getBlockFO().getCommonMarginBlock().spaceAfter.getSpace().getMinimum().getLength().getValue();
+        }
     }
 
     /**
@@ -203,7 +193,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         getParentArea(null);
 
         // if this will create the first block area in a page
-        // and display-align is bottom or center, add space before
+        // and display-align is after or center, add space before
         if (layoutContext.getSpaceBefore() > 0) {
             addBlockSpacing(0.0, new MinOptMax(layoutContext.getSpaceBefore()));
         }
@@ -322,23 +312,23 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             // add space before and / or after the paragraph
             // to reach a multiple of bpUnit
             if (bSpaceBefore && bSpaceAfter) {
-                foBlockSpaceBefore = new SpaceVal(getBlockFO().getCommonMarginBlock().spaceBefore).getSpace();
-                foBlockSpaceAfter = new SpaceVal(getBlockFO().getCommonMarginBlock().spaceAfter).getSpace();
+                foSpaceBefore = new SpaceVal(getBlockFO().getCommonMarginBlock().spaceBefore).getSpace();
+                foSpaceAfter = new SpaceVal(getBlockFO().getCommonMarginBlock().spaceAfter).getSpace();
                 adjustedSpaceBefore = (neededUnits(splitLength
-                        + foBlockSpaceBefore.min
-                        + foBlockSpaceAfter.min)
+                        + foSpaceBefore.min
+                        + foSpaceAfter.min)
                         * bpUnit - splitLength) / 2;
                 adjustedSpaceAfter = neededUnits(splitLength
-                        + foBlockSpaceBefore.min
-                        + foBlockSpaceAfter.min)
+                        + foSpaceBefore.min
+                        + foSpaceAfter.min)
                         * bpUnit - splitLength - adjustedSpaceBefore;
                 } else if (bSpaceBefore) {
                 adjustedSpaceBefore = neededUnits(splitLength
-                        + foBlockSpaceBefore.min)
+                        + foSpaceBefore.min)
                         * bpUnit - splitLength;
                 } else {
                 adjustedSpaceAfter = neededUnits(splitLength
-                        + foBlockSpaceAfter.min)
+                        + foSpaceAfter.min)
                         * bpUnit - splitLength;
                 }
             //System.out.println("spazio prima = " + adjustedSpaceBefore
@@ -347,12 +337,15 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             childPosIter = new KnuthPossPosIter(splitList, 0, splitList
                     .size());
             //}
-            }
+        }
 
         // if adjusted space before
-        if (bSpaceBefore) {
-            addBlockSpacing(0, new MinOptMax(adjustedSpaceBefore));
-        }
+        double adjust = layoutContext.getSpaceAdjust();
+        addBlockSpacing(adjust, foSpaceBefore);
+        foSpaceBefore = null;
+        //if (bSpaceBefore) {
+        //    addBlockSpacing(0, new MinOptMax(adjustedSpaceBefore));
+        //}
 
         while ((childLM = childPosIter.getNextChildLM()) != null) {
             // set last area flag
@@ -372,9 +365,10 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         flush();
 
         // if adjusted space after
-        if (bSpaceAfter) {
-            addBlockSpacing(0, new MinOptMax(adjustedSpaceAfter));
-        }
+        addBlockSpacing(adjust, foSpaceAfter);
+        //if (bSpaceAfter) {
+        //    addBlockSpacing(0, new MinOptMax(adjustedSpaceAfter));
+        //}
 
         curBlockArea = null;
     }

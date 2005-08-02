@@ -59,8 +59,6 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
     private int listItemHeight;
 
     //TODO space-before|after: handle space-resolution rules
-    private MinOptMax spaceBefore;
-    private MinOptMax spaceAfter;
     
     private boolean keepWithNextPendingOnLabel;
     private boolean keepWithNextPendingOnBody;
@@ -154,8 +152,8 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
     }
 
     private void initialize() {
-        spaceBefore = new SpaceVal(getListItemFO().getCommonMarginBlock().spaceBefore).getSpace();
-        spaceAfter = new SpaceVal(getListItemFO().getCommonMarginBlock().spaceAfter).getSpace();
+        foSpaceBefore = new SpaceVal(getListItemFO().getCommonMarginBlock().spaceBefore).getSpace();
+        foSpaceAfter = new SpaceVal(getListItemFO().getCommonMarginBlock().spaceAfter).getSpace();
     }
 
     private int getIPIndents() {
@@ -426,8 +424,8 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
 
         // if adjusted space before
         double adjust = layoutContext.getSpaceAdjust();
-        addBlockSpacing(adjust, spaceBefore);
-        spaceBefore = null;
+        addBlockSpacing(adjust, foSpaceBefore);
+        foSpaceBefore = null;
 
         getPSLM().addIDToPage(getListItemFO().getId());
 
@@ -469,6 +467,8 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
                     labelFirstIndex, labelLastIndex + 1);
             lc.setFlags(LayoutContext.FIRST_AREA, layoutContext.isFirstArea());
             lc.setFlags(LayoutContext.LAST_AREA, layoutContext.isLastArea());
+            // set the space adjustment ratio
+            lc.setSpaceAdjust(layoutContext.getSpaceAdjust());
             // TO DO: use the right stack limit for the label
             lc.setStackLimit(layoutContext.getStackLimit());
             label.addAreas(labelIter, lc);
@@ -488,6 +488,8 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
                     bodyFirstIndex, bodyLastIndex + 1);
             lc.setFlags(LayoutContext.FIRST_AREA, layoutContext.isFirstArea());
             lc.setFlags(LayoutContext.LAST_AREA, layoutContext.isLastArea());
+            // set the space adjustment ratio
+            lc.setSpaceAdjust(layoutContext.getSpaceAdjust());
             // TO DO: use the right stack limit for the body
             lc.setStackLimit(layoutContext.getStackLimit());
             body.addAreas(bodyIter, lc);
@@ -505,7 +507,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         flush();
 
         // if adjusted space after
-        addBlockSpacing(adjust, spaceAfter);
+        addBlockSpacing(adjust, foSpaceAfter);
         
         curBlockArea = null;
     }
