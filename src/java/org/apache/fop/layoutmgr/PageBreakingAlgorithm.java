@@ -700,9 +700,27 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         //int difference = (bestActiveNode.line < total) ? bestActiveNode.difference : bestActiveNode.difference + fillerMinWidth;
         int difference = bestActiveNode.difference;
         int blockAlignment = (bestActiveNode.line < total) ? alignment : alignmentLast;
-        double ratio = (blockAlignment == org.apache.fop.fo.Constants.EN_JUSTIFY
-                        || bestActiveNode.adjustRatio < 0) ? bestActiveNode.adjustRatio : 0;
-
+        // it is always allowed to adjust space, so the ratio must be set regardless of
+        // the value of the property display-align; the ratio must be <= 1
+        double ratio = bestActiveNode.adjustRatio;
+        if (ratio < 0) {
+            // page break with a negative difference:
+            // spaces always have enough shrink
+            difference = 0;
+        } else if (ratio <= 1 && bestActiveNode.line < total) {
+            // not-last page break with a positive difference smaller than the available stretch:
+            // spaces can stretch to fill the whole difference
+            difference = 0;
+        } else if (ratio > 1) {
+            // not-last page with a positive difference greater than the available stretch
+            // spaces can stretch to fill the difference only partially
+            ratio = 1;
+            difference -= bestActiveNode.availableStretch;
+        } else {
+            // last page with a positive difference:
+            // spaces do not need to stretch
+            ratio = 0;
+        }
         // compute the indexes of the first footnote list and the first element in that list
         int firstListIndex = ((KnuthPageNode) bestActiveNode.previous).footnoteListIndex;
         int firstElementIndex = ((KnuthPageNode) bestActiveNode.previous).footnoteElementIndex;

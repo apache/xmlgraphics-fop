@@ -45,8 +45,6 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
     private Block curBlockArea;
 
     //TODO space-before|after: handle space-resolution rules
-    private MinOptMax spaceBefore;
-    private MinOptMax spaceAfter;
 
     private static class StackingIter extends PositionIterator {
         StackingIter(Iterator parentIter) {
@@ -89,8 +87,8 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
     }
 
     private void initialize() {
-        spaceBefore = new SpaceVal(getListBlockFO().getCommonMarginBlock().spaceBefore).getSpace();
-        spaceAfter = new SpaceVal(getListBlockFO().getCommonMarginBlock().spaceAfter).getSpace();
+        foSpaceBefore = new SpaceVal(getListBlockFO().getCommonMarginBlock().spaceBefore).getSpace();
+        foSpaceAfter = new SpaceVal(getListBlockFO().getCommonMarginBlock().spaceAfter).getSpace();
     }
 
     private int getIPIndents() {
@@ -116,11 +114,17 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
-        
+
+        // if this will create the first block area in a page
+        // and display-align is after or center, add space before
+        if (layoutContext.getSpaceBefore() > 0) {
+            addBlockSpacing(0.0, new MinOptMax(layoutContext.getSpaceBefore()));
+        }
+
         // if adjusted space before
         double adjust = layoutContext.getSpaceAdjust();
-        addBlockSpacing(adjust, spaceBefore);
-        spaceBefore = null;
+        addBlockSpacing(adjust, foSpaceBefore);
+        foSpaceBefore = null;
         
         getPSLM().addIDToPage(getListBlockFO().getId());
 
@@ -164,6 +168,8 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
         StackingIter childPosIter = new StackingIter(positionList.listIterator());
         while ((childLM = childPosIter.getNextChildLM()) != null) {
             // Add the block areas to Area
+            // set the space adjustment ratio
+            lc.setSpaceAdjust(layoutContext.getSpaceAdjust());
             lc.setFlags(LayoutContext.FIRST_AREA, childLM == firstLM);
             lc.setFlags(LayoutContext.LAST_AREA, childLM == lastLM);
             lc.setStackLimit(layoutContext.getStackLimit());
@@ -177,7 +183,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
         flush();
 
         // if adjusted space after
-        addBlockSpacing(adjust, spaceAfter);
+        addBlockSpacing(adjust, foSpaceAfter);
         
         curBlockArea = null;
     }
