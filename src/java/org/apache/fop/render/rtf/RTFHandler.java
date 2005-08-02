@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,12 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Iterator;
 
+// Libs
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.xml.sax.SAXException;
+
+// FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.FOEventHandler;
@@ -79,7 +83,6 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableRow;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableCell;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfTableContainer;
 import org.apache.fop.fonts.FontSetup;
-import org.xml.sax.SAXException;
 
 /**
  * RTF Handler: generates RTF output using the structure events from
@@ -114,8 +117,6 @@ public class RTFHandler extends FOEventHandler {
                                                //in current page-sequence
     private BuilderContext builderContext = new BuilderContext(null);
 
-    private static final String ALPHA_WARNING = "WARNING: RTF renderer is "
-        + "veryveryalpha at this time, see class org.apache.fop.rtf.renderer.RTFHandler";
 
     /**
      * Creates a new RTF structure handler.
@@ -129,7 +130,6 @@ public class RTFHandler extends FOEventHandler {
         bDeferredExecution = false;
         iNestCount = 0;
         FontSetup.setup(fontInfo, null);
-        log.warn(ALPHA_WARNING);
     }
 
     /**
