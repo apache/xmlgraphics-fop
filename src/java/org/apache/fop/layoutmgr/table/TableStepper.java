@@ -56,7 +56,9 @@ public class TableStepper {
     private int[] widths;
     private int[] baseWidth;
     private int[] borderBefore;
+    private int[] paddingBefore;
     private int[] borderAfter;
+    private int[] paddingAfter;
     private boolean rowBacktrackForLastStep;
     private boolean[] keepWithNextSignals;
     private boolean[] forcedBreaks;
@@ -78,7 +80,9 @@ public class TableStepper {
         widths = new int[columnCount];
         baseWidth = new int[columnCount];
         borderBefore = new int[columnCount];
+        paddingBefore = new int[columnCount];
         borderAfter = new int[columnCount];
+        paddingAfter = new int[columnCount];
         keepWithNextSignals = new boolean[columnCount];
         forcedBreaks = new boolean[columnCount];
         Arrays.fill(end, -1);
@@ -134,6 +138,7 @@ public class TableStepper {
                 int len = widths[i]; 
                 if (len > 0) {
                     len += borderBefore[i] + borderAfter[i]; 
+                    len += paddingBefore[i] + paddingAfter[i]; 
                 }
                 int nominalHeight = rowGroup[activeRow].getHeight().opt;
                 for (int r = 0; r < gu.getRowSpanIndex(); r++) {
@@ -197,6 +202,8 @@ public class TableStepper {
             } else {
                 borderBefore[column] = pgu.getBorders().getBorderBeforeWidth(false) / 2;
             }
+            paddingBefore[column] = pgu.getBorders().getPaddingBefore(false);
+            paddingAfter[column] = pgu.getBorders().getPaddingAfter(false);
             start[column] = 0;
             end[column] = -1;
             widths[column] = 0;
@@ -294,6 +301,8 @@ public class TableStepper {
                     = getTableLM().getTable().getCommonBorderPaddingBackground(); 
                 effPenaltyLen += borders.getBorderBeforeWidth(false); 
                 effPenaltyLen += borders.getBorderAfterWidth(false); 
+                effPenaltyLen += borders.getPaddingBefore(false); 
+                effPenaltyLen += borders.getPaddingAfter(false); 
             }
             TableContentPosition tcpos = new TableContentPosition(getTableLM(), 
                     gridUnitParts, getActiveRow());
@@ -458,6 +467,7 @@ public class TableStepper {
                 }
             }
             log.debug("borders before=" + borderBefore[i] + " after=" + borderAfter[i]);
+            log.debug("padding before=" + paddingBefore[i] + " after=" + paddingAfter[i]);
         }
         if (seqCount == 0) {
             return -1;
@@ -472,6 +482,7 @@ public class TableStepper {
                 baseWidth[i] += rowGroup[prevRow].getHeight().opt;
             }
             baseWidth[i] += borderBefore[i] + borderAfter[i];
+            baseWidth[i] += paddingBefore[i] + paddingAfter[i];
             if (end[i] >= start[i]) {
                 int len = baseWidth[i] + widths[i];
                 sb.append(len + " ");
