@@ -104,22 +104,36 @@ public class ElementListCheck implements LayoutEngineCheck {
                         }
                     }
                     if (domEl.getAttribute("p").length() > 0) {
-                        int p;
-                        if ("INF".equalsIgnoreCase(domEl.getAttribute("p"))) {
-                            p = KnuthPenalty.INFINITE;
-                        } else if ("INFINITE".equalsIgnoreCase(domEl.getAttribute("p"))) {
-                            p = KnuthPenalty.INFINITE;
-                        } else if ("-INF".equalsIgnoreCase(domEl.getAttribute("p"))) {
-                            p = -KnuthPenalty.INFINITE;
-                        } else if ("-INFINITE".equalsIgnoreCase(domEl.getAttribute("p"))) {
-                            p = -KnuthPenalty.INFINITE;
+                        if ("<0".equals(domEl.getAttribute("p"))) {
+                            if (knuthEl.getP() >= 0) {
+                                fail("Expected p<0" 
+                                        + " at position " + pos 
+                                        + " but got: " + knuthEl.getP());
+                            }
+                        } else if (">0".equals(domEl.getAttribute("p"))) {
+                            if (knuthEl.getP() <= 0) {
+                                fail("Expected p>0" 
+                                        + " at position " + pos 
+                                        + " but got: " + knuthEl.getP());
+                            }
                         } else {
-                            p = Integer.parseInt(domEl.getAttribute("p"));
-                        }
-                        if (p != knuthEl.getP()) {
-                            fail("Expected p=" + p 
-                                    + " at position " + pos 
-                                    + " but got: " + knuthEl.getP());
+                            int p;
+                            if ("INF".equalsIgnoreCase(domEl.getAttribute("p"))) {
+                                p = KnuthPenalty.INFINITE;
+                            } else if ("INFINITE".equalsIgnoreCase(domEl.getAttribute("p"))) {
+                                p = KnuthPenalty.INFINITE;
+                            } else if ("-INF".equalsIgnoreCase(domEl.getAttribute("p"))) {
+                                p = -KnuthPenalty.INFINITE;
+                            } else if ("-INFINITE".equalsIgnoreCase(domEl.getAttribute("p"))) {
+                                p = -KnuthPenalty.INFINITE;
+                            } else {
+                                p = Integer.parseInt(domEl.getAttribute("p"));
+                            }
+                            if (p != knuthEl.getP()) {
+                                fail("Expected p=" + p 
+                                        + " at position " + pos 
+                                        + " but got: " + knuthEl.getP());
+                            }
                         }
                     }
                     if ("true".equals(domEl.getAttribute("flagged"))) {
