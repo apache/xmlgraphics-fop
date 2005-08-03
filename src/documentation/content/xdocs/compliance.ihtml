@@ -605,10 +605,13 @@
       <td align="left">
         <ul>
           <li>
-            Currently only works as direct child of fo:flow.
+            [0.20.5] Currently only works as direct child of fo:flow.
           </li>
           <li>
-            For absolute positioning, use 'position="absolute"' (as 'absolute-position="absolute"' is not implemented), and specify all four of "left", "top", "width" and "height"
+            [0.20.5] For absolute positioning, use 'position="absolute"' (as 'absolute-position="absolute"' is not implemented), and specify all four of "left", "top", "width" and "height"
+          </li>
+          <li>
+            [Trunk] No known restrictions.
           </li>
         </ul>
       </td>
@@ -715,7 +718,9 @@
         yes
       </td>
       <td align="center">
-        &nbsp;
+        <ul>
+          <li>Built-in support for SVG only, additional namespaces through optional extensions.</li>
+        </ul>
       </td>
     </tr>
     <tr>
@@ -731,11 +736,13 @@
       <td class="yes">
         yes
       </td>
-      <td class="yes">
-        yes
+      <td class="partial">
+        partial
       </td>
       <td align="center">
-        &nbsp;
+        <ul>
+          <li>[Trunk] Does not support block-level objects as children.</li>
+        </ul>
       </td>
     </tr>
     <tr>
@@ -775,7 +782,9 @@
         partial
       </td>
       <td align="center">
-        &nbsp;
+        <ul>
+          <li>TODO Document restrictions</li>
+        </ul>
       </td>
     </tr>
     <tr>
@@ -817,7 +826,10 @@
       <td align="left">
         <ul>
           <li>
-            Only works for table of contents without any problems. The case where the page number doesn't fit on a line isn't handled, and any text on the same line and after the page-number might not appear exactly where you want it to.
+            [0.20.5] Only works for table of contents without any problems. The case where the page number doesn't fit on a line isn't handled, and any text on the same line and after the page-number might not appear exactly where you want it to.
+          </li>
+          <li>
+            [Trunk] After the page number is known, no relayout is performed. The appearance may be suboptimal depending on the use case.
           </li>
         </ul>
       </td>
@@ -857,14 +869,18 @@
       <td align="center">
         <a href="http://www.w3.org/TR/xsl/slice6.html#fo_table">&sect;6.7.3</a>
       </td>
-      <td class="yes">
-        yes
+      <td class="partial">
+        partial
       </td>
-      <td class="yes">
-        yes
+      <td class="partial">
+        partial
       </td>
-      <td align="center">
-        &nbsp;
+      <td align="left">
+        <ul>
+          <li>
+            [Trunk] Only border-collapse="separate" is supported and there's no support for automatic column widths.
+          </li>
+        </ul>
       </td>
     </tr>
     <tr>
@@ -880,13 +896,13 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            you must explicitly specify column widths
+            [0.20.5] You must explicitly specify column widths.
           </li>
         </ul>
       </td>
@@ -1004,13 +1020,13 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            must contain block-level FOs (cannot contain straight character data)
+            [0.20.5] must contain block-level FOs (cannot contain straight character data)
           </li>
         </ul>
       </td>
@@ -1267,11 +1283,13 @@
       <td class="yes">
         yes
       </td>
-      <td class="yes">
-        yes
+      <td class="partial">
+        partial
       </td>
-      <td align="center">
-        &nbsp;
+      <td align="left">
+        <ul>
+          <li>[Trunk] Restrictions with multi-column documents.</li>
+        </ul>
       </td>
     </tr>
     <tr>
@@ -1453,13 +1471,16 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            Use shorthand position="absolute" as a workaround.
+            [0.20.5] Use shorthand position="absolute" as a workaround.
+          </li>
+          <li>
+            [Trunk] No restrictions. The 0.20.5 work-around is not supported.
           </li>
         </ul>
       </td>
@@ -1987,8 +2008,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -2007,11 +2028,13 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes?
       </td>
-      <td align="center">
-        &nbsp;
+      <td align="left">
+        <ul>
+          <li>[Trunk] Please check. Write test cases.</li>
+        </ul>
       </td>
     </tr>
     <tr>
@@ -2027,11 +2050,13 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes?
       </td>
       <td align="center">
-        &nbsp;
+        <ul>
+          <li>[Trunk] Please check. Write test cases.</li>
+        </ul>
       </td>
     </tr>
     <tr>
@@ -2067,13 +2092,16 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            only "solid" works
+            [0.20.5] only "solid" works
+          </li>
+          <li>
+            [Trunk] All styles available.
           </li>
         </ul>
       </td>
@@ -2131,13 +2159,16 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            only "solid" works
+            [0.20.5] only "solid" works
+          </li>
+          <li>
+            [Trunk] All styles available.
           </li>
         </ul>
       </td>
@@ -2195,13 +2226,16 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            only "solid" works
+            [0.20.5] only "solid" works
+          </li>
+          <li>
+            [Trunk] All styles available.
           </li>
         </ul>
       </td>
@@ -2259,13 +2293,16 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            only "solid" works
+            [0.20.5] only "solid" works
+          </li>
+          <li>
+            [Trunk] All styles available.
           </li>
         </ul>
       </td>
@@ -2323,13 +2360,16 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            only "solid" works
+            [0.20.5] only "solid" works
+          </li>
+          <li>
+            [Trunk] All styles available.
           </li>
         </ul>
       </td>
@@ -2387,13 +2427,16 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            only "solid" works
+            [0.20.5] only "solid" works
+          </li>
+          <li>
+            [Trunk] All styles available.
           </li>
         </ul>
       </td>
@@ -2451,13 +2494,16 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            only "solid" works
+            [0.20.5] only "solid" works
+          </li>
+          <li>
+            [Trunk] All styles available.
           </li>
         </ul>
       </td>
@@ -2515,13 +2561,16 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            only "solid" works
+            [0.20.5] only "solid" works
+          </li>
+          <li>
+            [Trunk] All styles available.
           </li>
         </ul>
       </td>
@@ -2559,22 +2608,25 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            only one value allowed
+            [0.20.5] only one value allowed
           </li>
           <li>
-            only implemented for blocks
+            [0.20.5] only implemented for blocks
           </li>
           <li>
-            can't be used to make extra space (use indents + spaces instead)
+            [0.20.5] can't be used to make extra space (use indents + spaces instead)
           </li>
           <li>
-            can be used to control how much the background-color extends beyond the content rectangle
+            [0.20.5] can be used to control how much the background-color extends beyond the content rectangle
+          </li>
+          <li>
+            [Trunk] Full conformance.
           </li>
         </ul>
       </td>
@@ -2592,13 +2644,13 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            same limitations as padding-before
+            [0.20.5] same limitations as padding-before
           </li>
         </ul>
       </td>
@@ -2616,13 +2668,13 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            same limitations as padding-before
+            [0.20.5] same limitations as padding-before
           </li>
         </ul>
       </td>
@@ -2640,13 +2692,13 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            same limitations as padding-before
+            [0.20.5] same limitations as padding-before
           </li>
         </ul>
       </td>
@@ -2664,13 +2716,13 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            same limitations as padding-before
+            [0.20.5] same limitations as padding-before
           </li>
         </ul>
       </td>
@@ -2688,13 +2740,13 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            same limitations as padding-before
+            [0.20.5] same limitations as padding-before
           </li>
         </ul>
       </td>
@@ -2712,13 +2764,13 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            same limitations as padding-before
+            [0.20.5] same limitations as padding-before
           </li>
         </ul>
       </td>
@@ -2736,13 +2788,13 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            same limitations as padding-before
+            [0.20.5] same limitations as padding-before
           </li>
         </ul>
       </td>
@@ -3079,13 +3131,13 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            only on pages and regions
+            [0.20.5] only on pages and regions
           </li>
         </ul>
       </td>
@@ -3103,13 +3155,13 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            only on pages and regions
+            [0.20.5] only on pages and regions
           </li>
         </ul>
       </td>
@@ -3127,13 +3179,13 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            only on pages and regions
+            [0.20.5] only on pages and regions
           </li>
         </ul>
       </td>
@@ -3151,13 +3203,13 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            only on pages and regions
+            [0.20.5] only on pages and regions
           </li>
         </ul>
       </td>
@@ -3181,7 +3233,10 @@
       <td align="left">
         <ul>
           <li>
-            space-before.optimum supported
+            [0.20.5] space-before.optimum supported
+          </li>
+          <li>
+            [Trunk] Space adjustment may not fully work everywhere, yet.
           </li>
         </ul>
       </td>
@@ -3205,7 +3260,10 @@
       <td align="left">
         <ul>
           <li>
-            space-after.optimum supported
+            [0.20.5] space-after.optimum supported
+          </li>
+          <li>
+            [Trunk] Space adjustment may not fully work everywhere, yet.
           </li>
         </ul>
       </td>
@@ -3384,7 +3442,10 @@
       <td align="left">
         <ul>
           <li>
-            Only values "super" and "sub" have been implemented.
+            [0.20.5] Only values "super" and "sub" have been implemented.
+          </li>
+          <li>
+            [Trunk] TODO TBD
           </li>
         </ul>
       </td>
@@ -3408,10 +3469,13 @@
       <td align="left">
         <ul>
           <li>
-            Implemented only for table-cell and block-container.
+            [0.20.5] Implemented only for table-cell and block-container.
           </li>
           <li>
-            For table-cell, the "height" attribute must be set for the parent table-row; setting the height of the table or the table-cell results in vertical centering having no effect. 
+            [0.20.5] For table-cell, the "height" attribute must be set for the parent table-row; setting the height of the table or the table-cell results in vertical centering having no effect. 
+          </li>
+          <li>
+            [Trunk] TODO Check e-g, i-f-o.
           </li>
         </ul>
       </td>
@@ -3474,8 +3538,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -3494,8 +3558,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -3514,8 +3578,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -3554,8 +3618,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -3654,8 +3718,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -3819,11 +3883,15 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="partial">
+        partial
       </td>
-      <td align="center">
-        &nbsp;
+      <td align="left">
+        <ul>
+          <li>
+            [Trunk] TODO TBD
+          </li>
+        </ul>
       </td>
     </tr>
     <tr>
@@ -3839,11 +3907,15 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="partial">
+        partial
       </td>
-      <td align="center">
-        &nbsp;
+      <td align="left">
+        <ul>
+          <li>
+            [Trunk] TODO TBD
+          </li>
+        </ul>
       </td>
     </tr>
     <tr>
@@ -3859,11 +3931,15 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="partial">
+        partial
       </td>
-      <td align="center">
-        &nbsp;
+      <td align="left">
+        <ul>
+          <li>
+            [Trunk] TODO TBD
+          </li>
+        </ul>
       </td>
     </tr>
     <tr>
@@ -3967,8 +4043,8 @@
       <td class="yes">
         yes
       </td>
-      <td class="yes">
-        yes
+      <td class="no">
+        no
       </td>
       <td align="center">
         &nbsp;
@@ -4013,10 +4089,14 @@
         yes
       </td>
       <td class="yes">
-        yes
+        yes?
       </td>
       <td align="center">
-        &nbsp;
+        <ul>
+          <li>
+            [Trunk] TODO Write test cases
+          </li>
+        </ul>
       </td>
     </tr>
     <tr>
@@ -4092,8 +4172,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -4132,11 +4212,15 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
-        &nbsp;
+        <ul>
+          <li>
+            [Trunk] TODO Write test cases
+          </li>
+        </ul>
       </td>
     </tr>
     <tr>
@@ -4333,7 +4417,13 @@
       <td align="left">
         <ul>
           <li>
-            works only in table rows
+            [0.20.5] works only in table rows
+          </li>
+          <li>
+            [Trunk] works on all implemented FOs.
+          </li>
+          <li>
+            [Trunk] &lt;integer&gt; values are not supported.
           </li>
         </ul>
       </td>
@@ -4357,7 +4447,13 @@
       <td align="left">
         <ul>
           <li>
-            works only in table rows
+            [0.20.5] works only in table rows
+          </li>
+          <li>
+            [Trunk] works on all implemented FOs.
+          </li>
+          <li>
+            [Trunk] &lt;integer&gt; values are not supported.
           </li>
         </ul>
       </td>
@@ -4381,7 +4477,13 @@
       <td align="left">
         <ul>
           <li>
-            works only in table rows
+            [0.20.5] works only in table rows
+          </li>
+          <li>
+            [Trunk] works on all implemented FOs, except list- and table-related FOs.
+          </li>
+          <li>
+            [Trunk] &lt;integer&gt; values are not supported.
           </li>
         </ul>
       </td>
@@ -4399,8 +4501,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -4419,8 +4521,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -4464,11 +4566,13 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="partial">
+        partial
       </td>
       <td align="center">
-        &nbsp;
+        <ul>  
+          <li>[Trunk] TODO TBD</li>
+        </ul>
       </td>
     </tr>
     <tr>
@@ -4484,16 +4588,19 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            Workaround for page-orientation (portrait vs. landscape) is to swap the page-width and page-height properties.
+            [0.20.5] Workaround for page-orientation (portrait vs. landscape) is to swap the page-width and page-height properties.
           </li>
           <li>
-            Workaround for block-container is to use SVG.
+            [0.20.5] Workaround for block-container is to use SVG.
+          </li>
+          <li>
+            [Trunk] No restrictions.
           </li>
         </ul>
       </td>
@@ -4542,7 +4649,10 @@
       <td align="left">
         <ul>
           <li>
-            not value "page"
+            [0.20.5] not value "page"
+          </li>
+          <li>
+            [Trunk] TODO TBD
           </li>
         </ul>
       </td>
@@ -4560,13 +4670,13 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            not value "use-content"
+            [0.20.5] not value "use-content"
           </li>
         </ul>
       </td>
@@ -4604,13 +4714,13 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            leader-length.minimum is not used at all
+            [0.20.5] leader-length.minimum is not used at all
           </li>
         </ul>
       </td>
@@ -4629,10 +4739,12 @@
         yes
       </td>
       <td class="yes">
-        yes
+        yes?
       </td>
-      <td align="center">
-        &nbsp;
+      <td align="left">
+        <ul>
+          <li>[Trunk] TODO TBD</li>
+        </ul>
       </td>
     </tr>
     <tr>
@@ -4958,8 +5070,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -4978,8 +5090,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -4998,8 +5110,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -5018,8 +5130,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -5043,8 +5155,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -5432,8 +5544,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -5561,8 +5673,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -5621,8 +5733,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -5641,13 +5753,13 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            "percentage" not implemented. Workaround is to use the XSL-FO "proportional-column-width" function.
+            [0.20.5] "percentage" not implemented. Workaround is to use the XSL-FO "proportional-column-width" function.
           </li>
         </ul>
       </td>
@@ -5665,8 +5777,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -5685,8 +5797,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -5705,8 +5817,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -5765,8 +5877,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -6220,8 +6332,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -6260,13 +6372,13 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            only one value allowed
+            [0.20.5] only one value allowed
           </li>
         </ul>
       </td>
@@ -6324,13 +6436,13 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            only "solid" works
+            [0.20.5] only "solid" works
           </li>
         </ul>
       </td>
@@ -6348,8 +6460,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -6405,11 +6517,11 @@
       <td align="center">
         <a href="http://www.w3.org/TR/xsl/slice7.html#cue">&sect;7.29.12</a>
       </td>
-      <td class="no">
-        no
+      <td class="na">
+        na
       </td>
-      <td class="no">
-        no
+      <td class="na">
+        na
       </td>
       <td align="center">
         &nbsp;
@@ -6448,13 +6560,13 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            only on pages and regions
+            [0.20.5] only on pages and regions
           </li>
         </ul>
       </td>
@@ -6472,22 +6584,22 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            only one value allowed
+            [0.20.5] only one value allowed
           </li>
           <li>
-            only implemented for blocks
+            [0.20.5] only implemented for blocks
           </li>
           <li>
-            can't be used to make extra space (use indents + spaces instead)
+            [0.20.5] can't be used to make extra space (use indents + spaces instead)
           </li>
           <li>
-            can be used to control how much the background-color extends beyond the content rectangle
+            [0.20.5] can be used to control how much the background-color extends beyond the content rectangle
           </li>
         </ul>
       </td>
@@ -6562,11 +6674,11 @@
       <td align="center">
         <a href="http://www.w3.org/TR/xsl/slice7.html#pause">&sect;7.29.19</a>
       </td>
-      <td class="no">
-        no
+      <td class="na">
+        na
       </td>
-      <td class="no">
-        no
+      <td class="na">
+        na
       </td>
       <td align="center">
         &nbsp;
@@ -6585,13 +6697,13 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            "inherit" not handled
+            [0.20.5] "inherit" not handled
           </li>
         </ul>
       </td>
@@ -6635,7 +6747,10 @@
       <td align="left">
         <ul>
           <li>
-            Only works as a shorthand for baseline-shift property.
+            [0.20.5] Only works as a shorthand for baseline-shift property.
+          </li>
+          <li>
+            [Trunk] No &lt;percentage&gt; or &lt;length&gt; values possible.
           </li>
         </ul>
       </td>
