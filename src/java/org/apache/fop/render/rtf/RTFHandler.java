@@ -505,7 +505,9 @@ public class RTFHandler extends FOEventHandler {
 
         try {
             Integer iWidth = new Integer(tc.getColumnWidth().getValue() / 1000);
-            builderContext.getTableContext().setNextColumnWidth(iWidth.toString() + "pt");
+            String strWidth = iWidth.toString() + "pt";
+            Float width = new Float(FoUnitsConverter.getInstance().convertToTwips(strWidth));
+            builderContext.getTableContext().setNextColumnWidth(width);
             builderContext.getTableContext().setNextColumnRowSpanning(new Integer(0), null);
         } catch (Exception e) {
             log.error("startColumn: " + e.getMessage());

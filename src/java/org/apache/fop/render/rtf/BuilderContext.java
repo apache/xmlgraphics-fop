@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfContainer;
  *  for the JFOR project and is now integrated into FOP.
  */
 
-class BuilderContext {
+public class BuilderContext {
     /** stack of RtfContainers */
     private final Stack containers = new Stack();
 
@@ -46,7 +46,7 @@ class BuilderContext {
     /** Rtf options */
     private IRtfOptions options;
 
-    BuilderContext(IRtfOptions rtfOptions) {
+    public BuilderContext(IRtfOptions rtfOptions) {
         options = rtfOptions;
     }
 
@@ -67,7 +67,7 @@ class BuilderContext {
     }
 
     /* find the "nearest" IBuilder of given class /
-    Object getBuilder(Class builderClass,boolean required)
+    public Object getBuilder(Class builderClass,boolean required)
     throws Exception
     {
         final IBuilder result = (IBuilder)getObjectFromStack(builders,builderClass);
@@ -83,7 +83,7 @@ class BuilderContext {
      *  @param required if true, ConverterException is thrown if no container found
      *  @param forWhichBuilder used in error message if container not found
      */
-    RtfContainer getContainer(Class containerClass, boolean required,
+    public RtfContainer getContainer(Class containerClass, boolean required,
                               Object /*IBuilder*/ forWhichBuilder) throws Exception {
         // TODO what to do if the desired container is not at the top of the stack?
         // close top-of-stack container?
@@ -101,7 +101,7 @@ class BuilderContext {
     }
 
     /** push an RtfContainer on our stack */
-    void pushContainer(RtfContainer c) {
+    public void pushContainer(RtfContainer c) {
         containers.push(c);
     }
 
@@ -113,7 +113,7 @@ class BuilderContext {
      * TODO: what happens to elements that are "more on top" than oldC on the
      * stack? shouldn't they be closed or something?
      */
-    void replaceContainer(RtfContainer oldC, RtfContainer newC)
+    public void replaceContainer(RtfContainer oldC, RtfContainer newC)
     throws Exception {
         // treating the Stack as a Vector allows such manipulations (yes, I hear you screaming ;-)
         final int index = containers.indexOf(oldC);
@@ -124,12 +124,12 @@ class BuilderContext {
     }
 
     /** pop the topmost RtfContainer from our stack */
-    void popContainer() {
+    public void popContainer() {
         containers.pop();
     }
 
     /* push an IBuilder to our stack /
-    void pushBuilder(IBuilder b)
+    public void pushBuilder(IBuilder b)
     {
         builders.push(b);
     }*/
@@ -137,7 +137,7 @@ class BuilderContext {
     /** pop the topmost IBuilder from our stack and return previous builder on stack
      *  @return null if builders stack is empty
 
-    IBuilder popBuilderAndGetPreviousOne()
+    public IBuilder popBuilderAndGetPreviousOne()
     {
         IBuilder result = null;
         builders.pop();
@@ -148,17 +148,17 @@ class BuilderContext {
     }
     */
     /** return the current TableContext */
-    TableContext getTableContext() {
+    public TableContext getTableContext() {
         return (TableContext)tableContexts.peek();
     }
 
     /** push a TableContext to our stack */
-    void pushTableContext(TableContext tc) {
+    public void pushTableContext(TableContext tc) {
         tableContexts.push(tc);
     }
 
     /** pop a TableContext from our stack */
-    void popTableContext() {
+    public void popTableContext() {
         tableContexts.pop();
     }
 

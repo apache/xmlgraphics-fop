@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The Apache Software Foundation.
+ * Copyright 2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,6 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 import java.io.IOException;
 import java.io.Writer;
 
-import org.apache.fop.apps.Fop;
-
 /**
  * Represents a generator element which says who generated the RTF document.
  */
@@ -40,8 +38,7 @@ public class RtfGenerator extends RtfElement {
         newLine();
         writeGroupMark(true);
         writeStarControlWord("generator");
-        writer.write("Apache FOP ");
-        writer.write(Fop.getVersion());
+        writer.write("Apache XML Graphics RTF Library");
         writer.write(";");
         writeGroupMark(false);
     }
