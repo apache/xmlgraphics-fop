@@ -100,8 +100,8 @@ which will be used to configure the chosen Forrest skin.
   <!-- Some skins use this to form a 'breadcrumb trail' of links.
     Use location="alt" to move the trail to an alternate location
     (if the skin supports it).
-	  Omit the location attribute to display the trail in the default location.
-	  Use location="none" to not display the trail (if the skin supports it).
+          Omit the location attribute to display the trail in the default location.
+          Use location="none" to not display the trail (if the skin supports it).
     For some skins just set the attributes to blank.
   -->
   <trail location="alt">
@@ -153,8 +153,15 @@ which will be used to configure the chosen Forrest skin.
     .yes         { background-color: #99FF99; }
     .no          { background-color: #FF9999; }
     .partial     { background-color: #FFFFCC; }
-    .category    { /*background-color: #CFDCED;*/
-                   font-size: 1.2em }
+    .ForrestTable td.basic      { text-align: center; }
+    .ForrestTable td.extended   { text-align: center; }
+    .ForrestTable td.complete   { text-align: center; }
+    .ForrestTable td.na         { text-align: center; }
+    .ForrestTable td.yes        { background-color: #99FF99; text-align: center; }
+    .ForrestTable td.no         { background-color: #FF9999; text-align: center; }
+    .ForrestTable td.partial    { background-color: #FFFFCC; text-align: center; }
+    .ForrestTable td.category   { /*background-color: #CFDCED;*/
+                                       font-size: 1.2em }
 
   </extra-css>
 
