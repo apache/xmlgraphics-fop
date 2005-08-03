@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -152,7 +152,7 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
         writeAttributes(attrib, new String[]{ITableAttributes.ATTR_HEADER});
         writeAttributes(attrib, ITableAttributes.ROW_BORDER);
         writeAttributes(attrib, ITableAttributes.CELL_BORDER);
-        writeAttributes(attrib, BorderAttributesConverter.BORDERS);
+        writeAttributes(attrib, IBorderAttributes.BORDERS);
 
         if (attrib.isSet(ITableAttributes.ROW_HEIGHT)) {
             writeOneAttribute(

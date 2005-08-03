@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.Property;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.BorderAttributesConverter;
+import org.apache.fop.render.rtf.BorderAttributesConverter;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfColorTable;
@@ -318,52 +318,6 @@ public class TableAttributesConverter {
         }
 */
         return attrib;
-    }
-
-
-    /**
-     *
-     * @param iBorderStyle the border style to be converted
-     * @return String with the converted border style
-     */
-    public static String convertAttributetoRtf(int iBorderStyle) {
-        // Added by Normand Masse
-        // "solid" is interpreted like "thin"
-        if (iBorderStyle == Constants.EN_SOLID) {
-            return BorderAttributesConverter.BORDER_SINGLE_THICKNESS;
-/*        } else if (iBorderStyle==Constants.EN_THIN) {
-                        return BorderAttributesConverter.BORDER_SINGLE_THICKNESS;
-        } else if (iBorderStyle==Constants.EN_THICK) {
-            return BorderAttributesConverter.BORDER_DOUBLE_THICKNESS;
-        } else if (iBorderStyle==Constants.EN_ value.equals("shadowed")) {
-            return BorderAttributesConverter.BORDER_SHADOWED;*/
-        } else if (iBorderStyle == Constants.EN_DOUBLE) {
-            return BorderAttributesConverter.BORDER_DOUBLE;
-        } else if (iBorderStyle == Constants.EN_DOTTED) {
-            return BorderAttributesConverter.BORDER_DOTTED;
-        } else if (iBorderStyle == Constants.EN_DASHED) {
-            return BorderAttributesConverter.BORDER_DASH;
-/*        } else if (iBorderStyle==Constants value.equals("hairline")) {
-            return BorderAttributesConverter.BORDER_HAIRLINE;*/
-/*        } else if (iBorderStyle==Constant value.equals("dot-dash")) {
-            return BorderAttributesConverter.BORDER_DOT_DASH;
-        } else if (iBorderStyle==Constant value.equals("dot-dot-dash")) {
-            return BorderAttributesConverter.BORDER_DOT_DOT_DASH;
-        } else if (iBorderStyle==Constant value.equals("triple")) {
-            return BorderAttributesConverter.BORDER_TRIPLE;
-        } else if (iBorderStyle==Constant value.equals("wavy")) {
-            return BorderAttributesConverter.BORDER_WAVY;
-        } else if (iBorderStyle==Constant value.equals("wavy-double")) {
-            return BorderAttributesConverter.BORDER_WAVY_DOUBLE;
-        } else if (iBorderStyle==Constant value.equals("striped")) {
-            return BorderAttributesConverter.BORDER_STRIPED;
-        } else if (iBorderStyle==Constant value.equals("emboss")) {
-            return BorderAttributesConverter.BORDER_EMBOSS;
-        } else if (iBorderStyle==Constant value.equals("engrave")) {
-            return BorderAttributesConverter.BORDER_ENGRAVE;*/
-        } else {
-            return null;
-        }
     }
 
 }

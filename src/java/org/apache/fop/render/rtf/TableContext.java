@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import org.apache.fop.render.rtf.rtflib.interfaces.ITableColumnsInfo;
  *  is now integrated into FOP.
  */
 
-class TableContext implements ITableColumnsInfo {
+public class TableContext implements ITableColumnsInfo {
     private final Log log = new SimpleLog("FOP/RTF");
     private final BuilderContext context;
     private final List colWidths = new java.util.ArrayList();
@@ -72,27 +72,27 @@ class TableContext implements ITableColumnsInfo {
         return bNextRowBelongsToHeader;
     }
 
-    TableContext(BuilderContext ctx) {
+    public TableContext(BuilderContext ctx) {
         context = ctx;
     }
 
-    void setNextColumnWidth(String strWidth)
+    public void setNextColumnWidth(Float width)
             throws Exception {
-        colWidths.add(new Float(FoUnitsConverter.getInstance().convertToTwips(strWidth)));
+        colWidths.add(width);
     }
 
     //Added by Peter Herweg on 2002-06-29
-    RtfAttributes getColumnRowSpanningAttrs() {
+    public RtfAttributes getColumnRowSpanningAttrs() {
         return (RtfAttributes)colRowSpanningAttrs.get(colIndex);
     }
 
     //Added by Peter Herweg on 2002-06-29
-    Integer getColumnRowSpanningNumber() {
+    public Integer getColumnRowSpanningNumber() {
         return (Integer)colRowSpanningNumber.get(colIndex);
     }
 
     //Added by Peter Herweg on 2002-06-29
-    void setCurrentColumnRowSpanning(Integer iRowSpanning,  RtfAttributes attrs)
+    public void setCurrentColumnRowSpanning(Integer iRowSpanning,  RtfAttributes attrs)
             throws Exception {
 
         if (colIndex < colRowSpanningNumber.size()) {

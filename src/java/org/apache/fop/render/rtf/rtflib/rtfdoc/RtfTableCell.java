@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -252,7 +252,7 @@ implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
 
         writeAttributes (attrib, ITableAttributes.ATTRIB_CELL_PADDING);
         writeAttributes (attrib, ITableAttributes.CELL_BORDER);
-        writeAttributes (attrib, BorderAttributesConverter.BORDERS);
+        writeAttributes (attrib, IBorderAttributes.BORDERS);
 
         // cell width
         final int xPos = widthOffset + this.cellWidth;
