@@ -48,23 +48,24 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
 
     public InlineArea get(LayoutContext context) {
         // get page string from parent, build area
-        TextArea inline = new TextArea();
+        TextArea text = new TextArea();
         String str = getCurrentPV().getPageNumberString();
         int width = 0;
         for (int count = 0; count < str.length(); count++) {
             width += font.getCharWidth(str.charAt(count));
         }
-        inline.setTextArea(str);
-        inline.setIPD(width);
-        inline.setBPD(font.getAscender() - font.getDescender());
-        inline.setOffset(font.getAscender());
-        inline.addTrait(Trait.FONT_NAME, font.getFontName());
-        inline.addTrait(Trait.FONT_SIZE,
+        text.setTextArea(str);
+        text.setIPD(width);
+        text.setBPD(font.getAscender() - font.getDescender());
+        text.setOffset(font.getAscender());
+        text.addTrait(Trait.FONT_NAME, font.getFontName());
+        text.addTrait(Trait.FONT_SIZE,
                         new Integer(font.getFontSize()));
+        text.addTrait(Trait.COLOR, fobj.getColor());
 
-        TraitSetter.addTextDecoration(inline, fobj.getTextDecoration());
+        TraitSetter.addTextDecoration(text, fobj.getTextDecoration());
 
-        return inline;
+        return text;
     }
     
     

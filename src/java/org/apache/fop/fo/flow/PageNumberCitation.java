@@ -21,7 +21,9 @@ package org.apache.fop.fo.flow;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
@@ -72,6 +74,9 @@ public class PageNumberCitation extends FObj {
     private int wrapOption;
     // End of property values
 
+    // Properties which are not explicitely listed but are still applicable 
+    private ColorType color;
+
     /**
      * @param parent FONode that is the parent of this object
      */
@@ -108,6 +113,9 @@ public class PageNumberCitation extends FObj {
         visibility = pList.get(PR_VISIBILITY).getEnum();
         wordSpacing = pList.get(PR_WORD_SPACING).getSpace();
         wrapOption = pList.get(PR_WRAP_OPTION).getEnum();
+        
+        // implicit properties
+        color = pList.get(Constants.PR_COLOR).getColorType();
     }
 
     /**
@@ -129,11 +137,14 @@ public class PageNumberCitation extends FObj {
             invalidChildError(loc, nsURI, localName);
     }
 
-    /**
-     * Return the Common Font Properties.
-     */
+    /** @return the Common Font Properties. */
     public CommonFont getCommonFont() {
         return commonFont;
+    }
+
+    /** @return the "color" property. */
+    public ColorType getColor() {
+        return color;
     }
 
     /** @return the "text-decoration" property. */
@@ -141,30 +152,22 @@ public class PageNumberCitation extends FObj {
         return textDecoration; 
     }
     
-    /**
-     * Return the "id" property.
-     */
+    /** @return the "id" property. */
     public String getId() {
         return id;
     }
 
-    /**
-     * Return the "ref-id" property.
-     */
+    /** @return the "ref-id" property. */
     public String getRefId() {
         return refId;
     }
      
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
+    /** @see org.apache.fop.fo.FObj#getName() */
     public String getName() {
         return "fo:page-number-citation";
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getNameId()
-     */
+    /** @see org.apache.fop.fo.FObj#getNameId() */
     public int getNameId() {
         return FO_PAGE_NUMBER_CITATION;
     }

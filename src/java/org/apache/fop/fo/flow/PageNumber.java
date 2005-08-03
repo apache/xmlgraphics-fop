@@ -21,7 +21,9 @@ package org.apache.fop.fo.flow;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
@@ -68,6 +70,9 @@ public class PageNumber extends FObj {
     private int wrapOption;
     //  End of property values
 
+    // Properties which are not explicitely listed but are still applicable 
+    private ColorType color;
+    
     /**
      * @param parent FONode that is the parent of this object
      */
@@ -103,6 +108,9 @@ public class PageNumber extends FObj {
         visibility = pList.get(PR_VISIBILITY).getEnum();
         wordSpacing = pList.get(PR_WORD_SPACING).getSpace();
         wrapOption = pList.get(PR_WRAP_OPTION).getEnum();
+
+        // implicit properties
+        color = pList.get(Constants.PR_COLOR).getColorType();
     }
 
     /**
@@ -129,23 +137,22 @@ public class PageNumber extends FObj {
             invalidChildError(loc, nsURI, localName);
     }
 
-    /**
-     * Return the Common Font Properties.
-     */
+    /** @return the Common Font Properties. */
     public CommonFont getCommonFont() {
         return commonFont;
     }
 
-    /**
-     * Return the Common Border, Padding, and Background Properties.
-     */
+    /** @return the "color" property. */
+    public ColorType getColor() {
+        return color;
+    }
+
+    /** @return the Common Border, Padding, and Background Properties. */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
     }
 
-    /**
-     * @return the "id" property.
-     */
+    /** @return the "id" property. */
     public String getId() {
         return id;
     }
@@ -155,16 +162,12 @@ public class PageNumber extends FObj {
         return textDecoration; 
     }
 
-    /**
-     * @see org.apache.fop.fo.FONode#getName()
-     */
+    /** @see org.apache.fop.fo.FONode#getName() */
     public String getName() {
         return "fo:page-number";
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getNameId()
-     */
+    /** @see org.apache.fop.fo.FObj#getNameId() */
     public int getNameId() {
         return FO_PAGE_NUMBER;
     }
