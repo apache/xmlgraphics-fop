@@ -16,3 +16,5 @@ table-column4.xml
 table-fixed2.xml
 font-size-absolute.xml
 font-size-relative.xml
+inline-block1.xml
+inline-block2.xml

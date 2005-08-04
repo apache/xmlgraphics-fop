@@ -28,12 +28,22 @@ public class KnuthSequence extends ArrayList {
     public int ignoreAtStart = 0;
     /** Number of elements to ignore at the end of the list. */
     public int ignoreAtEnd = 0;
+    // Is this an inline or a block sequence?
+    private boolean isInlineSequence = false;
 
     /**
      * Creates a new and empty list.
      */
     public KnuthSequence() {
         super();
+    }
+
+    /**
+     * Creates a new and empty list, and sets isInlineSequence.
+     */
+    public KnuthSequence(boolean isInlineSequence) {
+        super();
+        this.isInlineSequence = isInlineSequence;
     }
 
     /**
@@ -83,5 +93,13 @@ public class KnuthSequence extends ArrayList {
 
     public KnuthElement getElement(int index) {
         return (KnuthElement) get(index);
+    }
+
+    /**
+     * Is this an inline or a block sequence?
+     * @return true if this is an inline sequence
+     */
+    public boolean isInlineSequence() {
+        return isInlineSequence;
     }
 }
