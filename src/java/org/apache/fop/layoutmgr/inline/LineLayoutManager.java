@@ -629,6 +629,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                         oldList.add(prevBox);
                         oldList.addFirst((KnuthGlue) knuthPar.removeLast());
                         oldList.addFirst((KnuthPenalty) knuthPar.removeLast());
+                        oldList.addFirst((KnuthBox) knuthPar.removeLast());
                     }
                     // adding a letter space could involve, according to the text
                     // represented by oldList, replacing a glue element or adding
