@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<!-- $Id: text-decoration1.xml 198408 2005-02-09 21:38:31Z jeremias $ -->
+<!-- $Id: letter-spacing1.xml 198408 2005-02-09 21:38:31Z jeremias $ -->
 <testcase>
   <info>
     <p>
@@ -55,5 +55,10 @@
     </fo:root>
   </fo>
   <checks>
+    <true xpath="not(//flow/block[1]/lineArea/text/@tlsadjust)"/>
+    <eval expected="2000" xpath="//flow/block[8]/lineArea[1]/text/@tlsadjust"/>
+    <eval expected="2000" xpath="//flow/block[8]/lineArea[2]/text/@tlsadjust"/>
+    <eval expected="2000" xpath="//flow/block[8]/lineArea[3]/text/@tlsadjust"/>
+    <eval expected="2000" xpath="//flow/block[8]/lineArea[4]/text/@tlsadjust"/>
   </checks>
 </testcase>

@@ -55,5 +55,16 @@
     </fo:root>
   </fo>
   <checks>
+    <true xpath="not(//flow/block[1]/lineArea/text/@tlsadjust)"/>
+    <true xpath="//flow/block[2]/lineArea/text/@twsadjust"/>
+    <eval expected="2000" xpath="//flow/block[8]/lineArea[1]/text/@tlsadjust"/>
+    <true xpath="//flow/block[8]/lineArea[1]/text/@twsadjust"/>
+    <eval expected="2000" xpath="//flow/block[8]/lineArea[2]/text/@tlsadjust"/>
+    <true xpath="//flow/block[8]/lineArea[2]/text/@twsadjust"/>
+    <eval expected="2000" xpath="//flow/block[8]/lineArea[3]/text/@tlsadjust"/>
+    <true xpath="//flow/block[8]/lineArea[3]/text/@twsadjust"/>
+    <eval expected="2000" xpath="//flow/block[8]/lineArea[4]/text/@tlsadjust"/>
+    <!-- text-align doesnt apply to last line Area -->
+    <true xpath="not(//flow/block[8]/lineArea[4]/text/@twsadjust)"/>
   </checks>
 </testcase>
