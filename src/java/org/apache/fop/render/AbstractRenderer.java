@@ -52,6 +52,7 @@ import org.apache.fop.area.inline.Container;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.inline.InlineBlockParent;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
@@ -116,22 +117,22 @@ public abstract class AbstractRenderer
     }
 
     /**
-     *  @see org.apache.fop.render.Renderer
+     *  @see org.apache.fop.render.Renderer#setupFontInfo(FontInfo)
      */
     public abstract void setupFontInfo(FontInfo fontInfo);
 
     /**
-     *  @see org.apache.fop.render.Renderer
+     *  @see org.apache.fop.render.Renderer#setUserAgent(FOUserAgent)
      */
     public void setUserAgent(FOUserAgent agent) {
         userAgent = agent;
     }
 
-    /** @see org.apache.fop.render.Renderer */
+    /** @see org.apache.fop.render.Renderer#startRenderer(OutputStream) */
     public void startRenderer(OutputStream outputStream)
         throws IOException { }
 
-    /** @see org.apache.fop.render.Renderer */
+    /** @see org.apache.fop.render.Renderer#stopRenderer() */
     public void stopRenderer()
         throws IOException { }
 
@@ -148,7 +149,7 @@ public abstract class AbstractRenderer
     }
 
     /**
-     * @see     org.apache.fop.render.Renderer
+     * @see     org.apache.fop.render.Renderer#processOffDocumentItem(OffDocumentItem)
      */
     public void processOffDocumentItem(OffDocumentItem oDI) { }
 
@@ -159,7 +160,7 @@ public abstract class AbstractRenderer
      * page should not be rendered. The page will be rendered at a later time
      * by the call to render page.
      *
-     * @see org.apache.fop.render.Renderer
+     * @see org.apache.fop.render.Renderer#preparePage(PageViewport)
      */
     public void preparePage(PageViewport page) { }
 
@@ -196,14 +197,14 @@ public abstract class AbstractRenderer
         return sb.toString();
     }
 
-    /** @see org.apache.fop.render.Renderer */
+    /** @see org.apache.fop.render.Renderer#startPageSequence(LineArea) */
     public void startPageSequence(LineArea seqTitle) {
         //do nothing
     }
 
     // normally this would be overriden to create a page in the
     // output
-    /** @see org.apache.fop.render.Renderer */
+    /** @see org.apache.fop.render.Renderer#renderPage(PageViewport) */
     public void renderPage(PageViewport page)
         throws IOException, FOPException {
 
@@ -501,6 +502,7 @@ public abstract class AbstractRenderer
                         + parent.getStartIndent() 
                         + line.getStartIndent();
                 renderLineArea(line);
+                InlineArea child = (InlineArea) line.getInlineAreas().get(0);
                 currentBPPosition += line.getAllocBPD();
             }
             currentIPPosition = saveIP;
@@ -584,6 +586,8 @@ public abstract class AbstractRenderer
             renderText((TextArea) inlineArea);
         } else if (inlineArea instanceof InlineParent) {
             renderInlineParent((InlineParent) inlineArea);
+        } else if (inlineArea instanceof InlineBlockParent) {
+            renderInlineBlockParent((InlineBlockParent) inlineArea);
         } else if (inlineArea instanceof Space) {
             renderInlineSpace((Space) inlineArea);
         } else if (inlineArea instanceof Character) {
@@ -596,12 +600,10 @@ public abstract class AbstractRenderer
     }
 
 
-    /** @see org.apache.fop.render.Renderer */
     protected void renderCharacter(Character ch) {
         currentIPPosition += ch.getAllocIPD();
     }
 
-    /** @see org.apache.fop.render.Renderer */
     protected void renderInlineSpace(Space space) {
         // an inline space moves the inline progression position
         // for the current block by the width or height of the space
@@ -610,17 +612,14 @@ public abstract class AbstractRenderer
         currentIPPosition += space.getAllocIPD();
     }
 
-    /** @see org.apache.fop.render.Renderer */
     protected void renderLeader(Leader area) {
         currentIPPosition += area.getAllocIPD();
     }
 
-    /** @see org.apache.fop.render.Renderer */
     protected void renderText(TextArea text) {
         currentIPPosition += text.getAllocIPD();
     }
 
-    /** @see org.apache.fop.render.Renderer */
     protected void renderInlineParent(InlineParent ip) {
         int saveIP = currentIPPosition;
         Iterator iter = ip.getChildAreas().iterator();
@@ -630,7 +629,13 @@ public abstract class AbstractRenderer
         currentIPPosition = saveIP + ip.getAllocIPD();
     }
 
-    /** @see org.apache.fop.render.Renderer */
+    protected void renderInlineBlockParent(InlineBlockParent ibp) {
+        // For inline content the BP position is updated by the enclosing line area
+        int saveBP = currentBPPosition;
+        renderBlock(ibp.getChildArea());
+        currentBPPosition = saveBP;
+    }
+
     protected void renderViewport(Viewport viewport) {
         Area content = viewport.getContent();
         int saveBP = currentBPPosition;
