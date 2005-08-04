@@ -14,3 +14,5 @@ table-border-collapse1.xml
 table-border-collapse2.xml
 table-column4.xml
 table-fixed2.xml
+font-size-absolute.xml
+font-size-relative.xml
