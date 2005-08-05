@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: TableContext.java 227252 2005-08-03 19:30:55Z jeremias $ */
 
-package org.apache.fop.render.rtf;
+package org.apache.fop.render.rtf.rtflib.tools;
 
 import java.util.List;
 
 import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.commons.logging.Log;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableColumnsInfo;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
-import org.apache.fop.render.rtf.rtflib.interfaces.ITableColumnsInfo;
 
 
 /** Used when handling fo:table to hold information to build the table.

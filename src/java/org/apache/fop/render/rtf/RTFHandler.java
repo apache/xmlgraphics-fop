@@ -82,6 +82,8 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTable;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableRow;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableCell;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfTableContainer;
+import org.apache.fop.render.rtf.rtflib.tools.BuilderContext;
+import org.apache.fop.render.rtf.rtflib.tools.TableContext;
 import org.apache.fop.fonts.FontSetup;
 
 /**

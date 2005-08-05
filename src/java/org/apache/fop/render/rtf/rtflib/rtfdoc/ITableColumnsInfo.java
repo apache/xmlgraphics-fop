@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@
  * the FOP project.
  */
 
-package org.apache.fop.render.rtf.rtflib.interfaces;
+package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 /**  Used to get information about tables, for example when handling nested tables
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
