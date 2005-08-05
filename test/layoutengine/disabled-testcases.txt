@@ -1,5 +1,6 @@
 external-graphic1.xml
 external-graphic2.xml
+font-size-relative.xml
 inline1.xml
 keep-with-previous2.xml
 keep-with-previous3.xml
@@ -14,4 +15,3 @@ table-border-collapse1.xml
 table-border-collapse2.xml
 table-column4.xml
 table-fixed2.xml
-font-size-relative.xml
