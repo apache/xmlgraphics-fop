@@ -51,6 +51,9 @@
           <fo:block-container left="10pt" top="250pt" width="100pt" height="50pt" border="solid 5pt" padding="5pt" absolute-position="absolute" background-position-horizontal="5pt" background-position-vertical="5pt" background-color="blue" background-repeat="no-repeat" background-image="##img">
             <fo:block margin="0pt">5pt/5pt</fo:block>
           </fo:block-container>
+          <fo:block-container left="150pt" top="250pt" width="100pt" height="50pt" border="solid 5pt" padding="5pt" absolute-position="absolute" background-position-horizontal="20%" background-position-vertical="50%" background-color="blue" background-repeat="no-repeat" background-image="##img">
+            <fo:block margin="0pt">20%/50%</fo:block>
+          </fo:block-container>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
