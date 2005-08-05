@@ -2029,12 +2029,10 @@
         no
       </td>
       <td class="yes">
-        yes?
+        yes
       </td>
-      <td align="left">
-        <ul>
-          <li>[Trunk] Please check. Write test cases.</li>
-        </ul>
+      <td align="center">
+        &nbsp;
       </td>
     </tr>
     <tr>
@@ -2051,12 +2049,10 @@
         no
       </td>
       <td class="yes">
-        yes?
+        yes
       </td>
       <td align="center">
-        <ul>
-          <li>[Trunk] Please check. Write test cases.</li>
-        </ul>
+        &nbsp;
       </td>
     </tr>
     <tr>
@@ -2861,11 +2857,18 @@
       <td class="yes">
         yes
       </td>
-      <td class="yes">
-        yes
+      <td class="partial">
+        partial
       </td>
-      <td align="center">
-        &nbsp;
+      <td align="left">
+        <ul>
+          <li>
+            [Trunk] TODO &lt;absolute&gt; font sizes
+          </li>
+          <li>
+            [Trunk] TODO &lt;relative&gt; font sizes
+          </li>
+        </ul>
       </td>
     </tr>
     <tr>
@@ -4089,14 +4092,10 @@
         yes
       </td>
       <td class="yes">
-        yes?
+        yes
       </td>
       <td align="center">
-        <ul>
-          <li>
-            [Trunk] TODO Write test cases
-          </li>
-        </ul>
+        &nbsp;
       </td>
     </tr>
     <tr>
@@ -4216,11 +4215,7 @@
         yes
       </td>
       <td align="center">
-        <ul>
-          <li>
-            [Trunk] TODO Write test cases
-          </li>
-        </ul>
+        &nbsp;
       </td>
     </tr>
     <tr>
@@ -4670,13 +4665,19 @@
       <td class="partial">
         partial
       </td>
-      <td class="yes">
-        yes
+      <td class="partial">
+        partial
       </td>
       <td align="left">
         <ul>
           <li>
             [0.20.5] not value "use-content"
+          </li>
+          <li>
+            [Trunk] TODO: values "rule" and "space"
+          </li>
+          <li>
+            Note: Support for value "use-content" is not required for compliance - fallback "space".
           </li>
         </ul>
       </td>
@@ -4694,11 +4695,15 @@
       <td class="yes">
         yes
       </td>
-      <td class="yes">
-        yes
+      <td class="partial">
+        partial
       </td>
-      <td align="center">
-        &nbsp;
+      <td align="left">
+        <ul>
+          <li>
+            [Trunk] TODO leader-length=&lt;percentage&gt;
+          </li>
+        </ul>
       </td>
     </tr>
     <tr>
@@ -4738,12 +4743,12 @@
       <td class="yes">
         yes
       </td>
-      <td class="yes">
-        yes?
+      <td class="no">
+        no
       </td>
       <td align="left">
         <ul>
-          <li>[Trunk] TODO TBD</li>
+          <li>[Trunk] TODO Requires implementation of leader-pattern="rule"</li>
         </ul>
       </td>
     </tr>
@@ -4760,11 +4765,13 @@
       <td class="yes">
         yes
       </td>
-      <td class="yes">
-        yes
+      <td class="no">
+        no
       </td>
-      <td align="center">
-        &nbsp;
+      <td align="left">
+        <ul>
+          <li>[Trunk] TODO Requires implementation of leader-pattern="rule"</li>
+        </ul>
       </td>
     </tr>
     <tr>
