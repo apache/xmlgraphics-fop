@@ -29,7 +29,6 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 import java.io.Writer;
 import java.io.IOException;
 import java.util.Iterator;
-import org.apache.fop.render.rtf.rtflib.interfaces.ITableColumnsInfo;
 
 /**  A cell in an RTF table, container for paragraphs, lists, etc.
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch

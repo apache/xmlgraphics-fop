@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: BuilderContext.java 227252 2005-08-03 19:30:55Z jeremias $ */
 
-package org.apache.fop.render.rtf;
+package org.apache.fop.render.rtf.rtflib.tools;
 
 import java.util.Stack;
+
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfOptions;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfContainer;
 
