@@ -30,90 +30,72 @@
       </fo:layout-master-set>
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
-          <fo:block font-family="serif" font-size="24pt"> font-family="serif" font-size="24pt"
+          <fo:block font-family="serif"> font-family="serif" font-size not specified
             <fo:block font-family="serif" font-size="smaller"> font-family="serif" font-size="smaller"
               <fo:block font-family="serif" font-size="smaller"> font-family="serif" font-size="smaller"
                 <fo:block font-family="serif" font-size="smaller"> font-family="serif" font-size="smaller"
                   <fo:block font-family="serif" font-size="smaller"> font-family="serif" font-size="smaller"
                     <fo:block font-family="serif" font-size="smaller"> font-family="serif" font-size="smaller"
-                      <fo:block font-family="serif" font-size="smaller"> font-family="serif" font-size="smaller"
-                        <fo:block font-family="serif" font-size="smaller"> font-family="serif" font-size="smaller"
-                          <fo:block font-family="serif" font-size="larger"> font-family="serif" font-size="larger"
-                            <fo:block font-family="serif" font-size="larger"> font-family="serif" font-size="larger"
-                              <fo:block font-family="serif" font-size="larger"> font-family="serif" font-size="larger"
-                                <fo:block font-family="serif" font-size="larger"> font-family="serif" font-size="larger"
-                                  <fo:block font-family="serif" font-size="larger"> font-family="serif" font-size="larger"
-                                    <fo:block font-family="serif" font-size="larger"> font-family="serif" font-size="larger"
-                                      <fo:block font-family="serif" font-size="larger"> font-family="serif" font-size="larger"
-                                      </fo:block>
-                                    </fo:block>
-                                  </fo:block>
-                                </fo:block>
-                              </fo:block>
-                            </fo:block>
-                          </fo:block>
-                        </fo:block>
-                      </fo:block>
                     </fo:block>
                   </fo:block>
                 </fo:block>
               </fo:block>
             </fo:block>
           </fo:block>
-          <fo:block font-family="sans-serif" font-size="24pt"> font-family="sans-serif" font-size="24pt"
+          <fo:block font-family="serif"> font-family="serif" font-size not specified
+            <fo:block font-family="serif" font-size="larger"> font-family="serif" font-size="larger"
+              <fo:block font-family="serif" font-size="larger"> font-family="serif" font-size="larger"
+                <fo:block font-family="serif" font-size="larger"> font-family="serif" font-size="larger"
+                  <fo:block font-family="serif" font-size="larger"> font-family="serif" font-size="larger"
+                    <fo:block font-family="serif" font-size="larger"> font-family="serif" font-size="larger"
+                    </fo:block>
+                  </fo:block>
+                </fo:block>
+              </fo:block>
+            </fo:block>
+          </fo:block>
+          <fo:block font-family="sans-serif"> font-family="sans-serif" font-size not specified
             <fo:block font-family="sans-serif" font-size="smaller"> font-family="sans-serif" font-size="smaller"
               <fo:block font-family="sans-serif" font-size="smaller"> font-family="sans-serif" font-size="smaller"
                 <fo:block font-family="sans-serif" font-size="smaller"> font-family="sans-serif" font-size="smaller"
                   <fo:block font-family="sans-serif" font-size="smaller"> font-family="sans-serif" font-size="smaller"
                     <fo:block font-family="sans-serif" font-size="smaller"> font-family="sans-serif" font-size="smaller"
-                      <fo:block font-family="sans-serif" font-size="smaller"> font-family="sans-serif" font-size="smaller"
-                        <fo:block font-family="sans-serif" font-size="smaller"> font-family="sans-serif" font-size="smaller"
-                          <fo:block font-family="sans-serif" font-size="larger"> font-family="sans-serif" font-size="larger"
-                            <fo:block font-family="sans-serif" font-size="larger"> font-family="sans-serif" font-size="larger"
-                              <fo:block font-family="sans-serif" font-size="larger"> font-family="sans-serif" font-size="larger"
-                                <fo:block font-family="sans-serif" font-size="larger"> font-family="sans-serif" font-size="larger"
-                                  <fo:block font-family="sans-serif" font-size="larger"> font-family="sans-serif" font-size="larger"
-                                    <fo:block font-family="sans-serif" font-size="larger"> font-family="sans-serif" font-size="larger"
-                                      <fo:block font-family="sans-serif" font-size="larger"> font-family="sans-serif" font-size="larger"
-                                      </fo:block>
-                                    </fo:block>
-                                  </fo:block>
-                                </fo:block>
-                              </fo:block>
-                            </fo:block>
-                          </fo:block>
-                        </fo:block>
-                      </fo:block>
                     </fo:block>
                   </fo:block>
                 </fo:block>
               </fo:block>
             </fo:block>
           </fo:block>
-          <fo:block font-family="monospace" font-size="24pt"> font-family="monospace" font-size="24pt"
+          <fo:block font-family="sans-serif"> font-family="sans-serif" font-size not specified
+            <fo:block font-family="sans-serif" font-size="larger"> font-family="sans-serif" font-size="larger"
+              <fo:block font-family="sans-serif" font-size="larger"> font-family="sans-serif" font-size="larger"
+                <fo:block font-family="sans-serif" font-size="larger"> font-family="sans-serif" font-size="larger"
+                  <fo:block font-family="sans-serif" font-size="larger"> font-family="sans-serif" font-size="larger"
+                    <fo:block font-family="sans-serif" font-size="larger"> font-family="sans-serif" font-size="larger"
+                    </fo:block>
+                  </fo:block>
+                </fo:block>
+              </fo:block>
+            </fo:block>
+          </fo:block>
+          <fo:block font-family="monospace"> font-family="monospace" font-size not specified
             <fo:block font-family="monospace" font-size="smaller"> font-family="monospace" font-size="smaller"
               <fo:block font-family="monospace" font-size="smaller"> font-family="monospace" font-size="smaller"
                 <fo:block font-family="monospace" font-size="smaller"> font-family="monospace" font-size="smaller"
                   <fo:block font-family="monospace" font-size="smaller"> font-family="monospace" font-size="smaller"
                     <fo:block font-family="monospace" font-size="smaller"> font-family="monospace" font-size="smaller"
-                      <fo:block font-family="monospace" font-size="smaller"> font-family="monospace" font-size="smaller"
-                        <fo:block font-family="monospace" font-size="smaller"> font-family="monospace" font-size="smaller"
-                          <fo:block font-family="monospace" font-size="larger"> font-family="monospace" font-size="larger"
-                            <fo:block font-family="monospace" font-size="larger"> font-family="monospace" font-size="larger"
-                              <fo:block font-family="monospace" font-size="larger"> font-family="monospace" font-size="larger"
-                                <fo:block font-family="monospace" font-size="larger"> font-family="monospace" font-size="larger"
-                                  <fo:block font-family="monospace" font-size="larger"> font-family="monospace" font-size="larger"
-                                    <fo:block font-family="monospace" font-size="larger"> font-family="monospace" font-size="larger"
-                                      <fo:block font-family="monospace" font-size="larger"> font-family="monospace" font-size="larger"
-                                      </fo:block>
-                                    </fo:block>
-                                  </fo:block>
-                                </fo:block>
-                              </fo:block>
-                            </fo:block>
-                          </fo:block>
-                        </fo:block>
-                      </fo:block>
+                    </fo:block>
+                  </fo:block>
+                </fo:block>
+              </fo:block>
+            </fo:block>
+          </fo:block>
+          <fo:block font-family="monospace"> font-family="monospace" font-size not specified
+            <fo:block font-family="monospace" font-size="larger"> font-family="monospace" font-size="larger"
+              <fo:block font-family="monospace" font-size="larger"> font-family="monospace" font-size="larger"
+                <fo:block font-family="monospace" font-size="larger"> font-family="monospace" font-size="larger"
+                  <fo:block font-family="monospace" font-size="larger"> font-family="monospace" font-size="larger"
+                    <fo:block font-family="monospace" font-size="larger"> font-family="monospace" font-size="larger"
                     </fo:block>
                   </fo:block>
                 </fo:block>
@@ -125,20 +107,41 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="24000" xpath="//flow/block[1]/lineArea/text/@font-size"/>
-    <eval expected="20000" xpath="//flow/block[1]/block/lineArea/text/@font-size"/>
-    <eval expected="16666" xpath="//flow/block[1]/block/block/lineArea/text/@font-size"/>
-    <eval expected="13888" xpath="//flow/block[1]/block/block/block/lineArea/text/@font-size"/>
-    <eval expected="11573" xpath="//flow/block[1]/block/block/block/block/lineArea/text/@font-size"/>
-    <eval expected="9644" xpath="//flow/block[1]/block/block/block/block/block/lineArea/text/@font-size"/>
-    <eval expected="8036" xpath="//flow/block[1]/block/block/block/block/block/block/lineArea/text/@font-size"/>
-    <eval expected="6696" xpath="//flow/block[1]/block/block/block/block/block/block/block/lineArea/text/@font-size"/>
-    <eval expected="8035" xpath="//flow/block[1]/block/block/block/block/block/block/block/block/lineArea/text/@font-size"/>
-    <eval expected="9642" xpath="//flow/block[1]/block/block/block/block/block/block/block/block/block/lineArea/text/@font-size"/>
-    <eval expected="11570" xpath="//flow/block[1]/block/block/block/block/block/block/block/block/block/block/lineArea/text/@font-size"/>
-    <eval expected="13884" xpath="//flow/block[1]/block/block/block/block/block/block/block/block/block/block/block/lineArea/text/@font-size"/>
-    <eval expected="16660" xpath="//flow/block[1]/block/block/block/block/block/block/block/block/block/block/block/block/lineArea/text/@font-size"/>
-    <eval expected="19992" xpath="//flow/block[1]/block/block/block/block/block/block/block/block/block/block/block/block/block/lineArea/text/@font-size"/>
-    <eval expected="23990" xpath="//flow/block[1]/block/block/block/block/block/block/block/block/block/block/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="12000" xpath="//flow/block[1]/lineArea/text/@font-size"/>
+    <eval expected="9999" xpath="//flow/block[1]/block/lineArea/text/@font-size"/>
+    <eval expected="8332" xpath="//flow/block[1]/block/block/lineArea/text/@font-size"/>
+    <eval expected="6943" xpath="//flow/block[1]/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="5785" xpath="//flow/block[1]/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="4820" xpath="//flow/block[1]/block/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="12000" xpath="//flow/block[2]/lineArea/text/@font-size"/>
+    <eval expected="14400" xpath="//flow/block[2]/block/lineArea/text/@font-size"/>
+    <eval expected="17280" xpath="//flow/block[2]/block/block/lineArea/text/@font-size"/>
+    <eval expected="20736" xpath="//flow/block[2]/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="24883" xpath="//flow/block[2]/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="29859" xpath="//flow/block[2]/block/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="12000" xpath="//flow/block[3]/lineArea/text/@font-size"/>
+    <eval expected="9999" xpath="//flow/block[3]/block/lineArea/text/@font-size"/>
+    <eval expected="8332" xpath="//flow/block[3]/block/block/lineArea/text/@font-size"/>
+    <eval expected="6943" xpath="//flow/block[3]/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="5785" xpath="//flow/block[3]/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="4820" xpath="//flow/block[3]/block/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="12000" xpath="//flow/block[4]/lineArea/text/@font-size"/>
+    <eval expected="14400" xpath="//flow/block[4]/block/lineArea/text/@font-size"/>
+    <eval expected="17280" xpath="//flow/block[4]/block/block/lineArea/text/@font-size"/>
+    <eval expected="20736" xpath="//flow/block[4]/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="24883" xpath="//flow/block[4]/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="29859" xpath="//flow/block[4]/block/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="12000" xpath="//flow/block[5]/lineArea/text/@font-size"/>
+    <eval expected="9999" xpath="//flow/block[5]/block/lineArea/text/@font-size"/>
+    <eval expected="8332" xpath="//flow/block[5]/block/block/lineArea/text/@font-size"/>
+    <eval expected="6943" xpath="//flow/block[5]/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="5785" xpath="//flow/block[5]/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="4820" xpath="//flow/block[5]/block/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="12000" xpath="//flow/block[6]/lineArea/text/@font-size"/>
+    <eval expected="14400" xpath="//flow/block[6]/block/lineArea/text/@font-size"/>
+    <eval expected="17280" xpath="//flow/block[6]/block/block/lineArea/text/@font-size"/>
+    <eval expected="20736" xpath="//flow/block[6]/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="24883" xpath="//flow/block[6]/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="29859" xpath="//flow/block[6]/block/block/block/block/block/lineArea/text/@font-size"/>
   </checks>
 </testcase>

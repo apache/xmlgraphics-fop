@@ -77,5 +77,33 @@
     <eval expected="14400" xpath="//flow/block[5]/lineArea/text/@font-size"/>
     <eval expected="17280" xpath="//flow/block[6]/lineArea/text/@font-size"/>
     <eval expected="20736" xpath="//flow/block[7]/lineArea/text/@font-size"/>
+    <eval expected="6944" xpath="//flow/block[8]/lineArea/text/@font-size"/>
+    <eval expected="8333" xpath="//flow/block[9]/lineArea/text/@font-size"/>
+    <eval expected="10000" xpath="//flow/block[10]/lineArea/text/@font-size"/>
+    <eval expected="12000" xpath="//flow/block[11]/lineArea/text/@font-size"/>
+    <eval expected="14400" xpath="//flow/block[12]/lineArea/text/@font-size"/>
+    <eval expected="17280" xpath="//flow/block[13]/lineArea/text/@font-size"/>
+    <eval expected="20736" xpath="//flow/block[14]/lineArea/text/@font-size"/>
+    <eval expected="6944" xpath="//flow/block[15]/lineArea/text/@font-size"/>
+    <eval expected="8333" xpath="//flow/block[16]/lineArea/text/@font-size"/>
+    <eval expected="10000" xpath="//flow/block[17]/lineArea/text/@font-size"/>
+    <eval expected="12000" xpath="//flow/block[18]/lineArea/text/@font-size"/>
+    <eval expected="14400" xpath="//flow/block[19]/lineArea/text/@font-size"/>
+    <eval expected="17280" xpath="//flow/block[20]/lineArea/text/@font-size"/>
+    <eval expected="20736" xpath="//flow/block[21]/lineArea/text/@font-size"/>
+    <eval expected="6944" xpath="//flow/block[22]/lineArea/text/@font-size"/>
+    <eval expected="8333" xpath="//flow/block[23]/lineArea/text/@font-size"/>
+    <eval expected="10000" xpath="//flow/block[24]/lineArea/text/@font-size"/>
+    <eval expected="12000" xpath="//flow/block[25]/lineArea/text/@font-size"/>
+    <eval expected="14400" xpath="//flow/block[26]/lineArea/text/@font-size"/>
+    <eval expected="17280" xpath="//flow/block[27]/lineArea/text/@font-size"/>
+    <eval expected="20736" xpath="//flow/block[28]/lineArea/text/@font-size"/>
+    <eval expected="6944" xpath="//flow/block[29]/lineArea/text/@font-size"/>
+    <eval expected="8333" xpath="//flow/block[30]/lineArea/text/@font-size"/>
+    <eval expected="10000" xpath="//flow/block[31]/lineArea/text/@font-size"/>
+    <eval expected="12000" xpath="//flow/block[32]/lineArea/text/@font-size"/>
+    <eval expected="14400" xpath="//flow/block[33]/lineArea/text/@font-size"/>
+    <eval expected="17280" xpath="//flow/block[34]/lineArea/text/@font-size"/>
+    <eval expected="20736" xpath="//flow/block[35]/lineArea/text/@font-size"/>
   </checks>
 </testcase>
