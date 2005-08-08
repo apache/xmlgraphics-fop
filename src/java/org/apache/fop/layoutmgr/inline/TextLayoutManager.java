@@ -596,8 +596,12 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 iNextStart = iTempStart;
             }
         } // end of while
+        if (((List)returnList.getLast()).size() == 0) {
+            //Remove an empty sequence because of a trailing newline
+            returnList.removeLast();
+        }
         setFinished(true);
-        if (sequence.size() > 0) {
+        if (returnList.size() > 0) {
             return returnList;
         } else {
             return null;
@@ -609,7 +613,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         // look at the Position stored in the first element in oldList
         // which is always a box
         ListIterator oldListIterator = oldList.listIterator();
-        LeafPosition pos = (LeafPosition) ((KnuthBox) oldListIterator.next()).getPosition();
+        KnuthElement el = (KnuthElement)oldListIterator.next();
+        LeafPosition pos = (LeafPosition) ((KnuthBox) el).getPosition();
         AreaInfo ai = (AreaInfo) vecAreaInfo.get(pos.getLeafPos());
         ai.iLScount ++;
         ai.ipdArea.add(letterSpaceIPD);
