@@ -33,9 +33,7 @@ import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.SpaceSpecifier;
 import org.apache.fop.area.Area;
-import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.traits.MinOptMax;
 
@@ -239,7 +237,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager
         oldList = ((InlineLevelLayoutManager)
                    element.getLayoutManager()).addALetterSpaceTo(oldList);
 
-        // "wrap" againg the Position stored in each element of oldList
+        // "wrap" again the Position stored in each element of oldList
         oldListIterator = oldList.listIterator();
         while (oldListIterator.hasNext()) {
             element = (KnuthElement) oldListIterator.next();
