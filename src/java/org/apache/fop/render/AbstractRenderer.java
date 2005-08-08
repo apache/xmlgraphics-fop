@@ -502,7 +502,7 @@ public abstract class AbstractRenderer
                         + parent.getStartIndent() 
                         + line.getStartIndent();
                 renderLineArea(line);
-                InlineArea child = (InlineArea) line.getInlineAreas().get(0);
+                //InlineArea child = (InlineArea) line.getInlineAreas().get(0);
                 currentBPPosition += line.getAllocBPD();
             }
             currentIPPosition = saveIP;
