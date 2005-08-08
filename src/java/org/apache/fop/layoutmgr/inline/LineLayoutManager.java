@@ -287,10 +287,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 // the letter space is added to <aux glue>,
                 // while the other elements are not changed
                 oldList.add(prevBox);
-                // TODO check if this is the correct place; merge was not correct
-                // already done by above call???? oldList.addFirst((KnuthBox) removeLast());
                 oldList.addFirst((KnuthGlue) removeLast());
                 oldList.addFirst((KnuthPenalty) removeLast());
+                oldList.addFirst((KnuthBox) removeLast());
             }
             // adding a letter space could involve, according to the text
             // represented by oldList, replacing a glue element or adding
@@ -682,6 +681,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                             lastElement = singleElement;
                         } else {
                             lastElement = (KnuthElement) sequence.getLast();
+                            if (lastElement == null) {
+                                throw new NullPointerException(
+                                        "Sequence was empty! lastElement is null");
+                            }
                         }
                         bPrevWasKnuthBox = lastElement.isBox();
 
