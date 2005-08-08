@@ -288,7 +288,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 // while the other elements are not changed
                 oldList.add(prevBox);
                 // TODO check if this is the correct place; merge was not correct
-                oldList.addFirst((KnuthBox) removeLast());
+                // already done by above call???? oldList.addFirst((KnuthBox) removeLast());
                 oldList.addFirst((KnuthGlue) removeLast());
                 oldList.addFirst((KnuthPenalty) removeLast());
             }
@@ -644,25 +644,45 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 }
                 // does the first element of the first paragraph add to an existing word?
                 if (lastPar != null) {
-                    KnuthSequence firstSeq = (KnuthSequence) returnedList.getFirst();
-                    if (!firstSeq.isInlineSequence()) {
-                        log.error("Expect inline sequence as first sequence when last paragraph is not null");
+                    Object obj = returnedList.getFirst();
+                    KnuthElement thisElement;
+                    if (obj instanceof KnuthElement) {
+                        thisElement = (KnuthElement)obj;
+                    } else {
+                        KnuthSequence firstSeq = (KnuthSequence) obj;
+                        if (!firstSeq.isInlineSequence()) {
+                            log.error("Expect inline sequence as first sequence when last paragraph is not null");
+                        }
+                        thisElement = (KnuthElement) firstSeq.get(0);
                     }
-                    KnuthElement thisElement = (KnuthElement) firstSeq.get(0);
                     if (thisElement.isBox() && !thisElement.isAuxiliary()
                             && bPrevWasKnuthBox) {
                         lastPar.addALetterSpace();
                     }
                 }
 
-                // loop over the KnuthSequences in returnedList
+                // loop over the KnuthSequences (and single KnuthElements) in returnedList
+                // (LeafNodeLM descendants may also skip wrapping elements in KnuthSequences
+                // to cause fewer container structures)
                 ListIterator iter = returnedList.listIterator();
                 while (iter.hasNext()) {
-                    KnuthSequence sequence = (KnuthSequence) iter.next();
+                    Object obj = iter.next();
+                    KnuthElement singleElement = null;
+                    KnuthSequence sequence = null;
+                    if (obj instanceof KnuthElement) {
+                        singleElement = (KnuthElement)obj;
+                    } else {
+                        sequence = (KnuthSequence)obj;
+                    }
                     // the sequence contains inline Knuth elements
-                    if (sequence.isInlineSequence()) {
+                    if (singleElement != null || sequence.isInlineSequence()) {
                         // look at the last element 
-                        KnuthElement lastElement = (KnuthElement) sequence.getLast();
+                        KnuthElement lastElement;
+                        if (singleElement != null) {
+                            lastElement = singleElement;
+                        } else {
+                            lastElement = (KnuthElement) sequence.getLast();
+                        }
                         bPrevWasKnuthBox = lastElement.isBox();
 
                         // if last paragraph is open, add the new elements to the paragraph
@@ -680,7 +700,11 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                                 trace.append(" +");
                             }
                         }
-                        lastPar.addAll(sequence);
+                        if (singleElement != null) {
+                            lastPar.add(singleElement);
+                        } else {
+                            lastPar.addAll(sequence);
+                        }
                         if (log.isTraceEnabled()) {
                             trace.append(" I");
                         }
