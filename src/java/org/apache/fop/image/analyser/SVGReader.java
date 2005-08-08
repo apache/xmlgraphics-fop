@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,8 @@ import org.apache.batik.dom.svg.SVGOMDocument;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 // FOP
 import org.apache.fop.image.XMLImage;
@@ -45,6 +47,9 @@ import org.apache.fop.svg.SVGUserAgent;
  */
 public class SVGReader implements ImageReader {
 
+    /** Logger instance */
+    protected static Log log = LogFactory.getLog(SVGReader.class);
+    
     /** SVG's MIME type */
     public static final String SVG_MIME_TYPE = "image/svg+xml";
 
@@ -91,7 +96,7 @@ public class SVGReader implements ImageReader {
                     ua.getPixelUnitToMillimeter());
             } catch (NoClassDefFoundError e) {
                 batik = false;
-                //ua.getLogger().error("Batik not in class path", e);
+                log.warn("Batik not in class path", e);
                 return null;
             }
         }
@@ -116,7 +121,8 @@ public class SVGReader implements ImageReader {
                 String start = new String(b);
                 fis.reset();
 
-                if (start.equals("<?xml")) {
+                //TODO "true ||" here is a hack to improve SVG detection rate. Please improve.
+                if (true || start.equals("<?xml")) {
                     // we have xml, might be another doc
                     // so stop batik from closing the stream
                     final InputStream input = fis;
@@ -207,14 +213,14 @@ public class SVGReader implements ImageReader {
                     // we're more interested in the original exception
                 }
                 batik = false;
-                //ua.getLogger().error("Batik not in class path", ncdfe);
+                log.warn("Batik not in class path", ncdfe);
                 return null;
             } catch (Exception e) {
                 // If the svg is invalid then it throws an IOException
                 // so there is no way of knowing if it is an svg document
 
-                // ua.getLogger().error("Could not load external SVG: " +
-                //                       e.getMessage(), e);
+                log.debug("Error while trying to load stream as an SVG file: "
+                                       + e.getMessage());
                 // assuming any exception means this document is not svg
                 // or could not be loaded for some reason
                 try {
