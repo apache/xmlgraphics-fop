@@ -91,6 +91,9 @@ public class LayoutContext {
     /** Current hyphenation context. May be null. */
     private HyphContext hyphContext = null;
 
+    /** Alignment in BP direction */
+    private int bpAlignment = Constants.EN_START;
+    
     /** Stretch or shrink value when making areas. */
     private double ipdAdjust = 0.0;
 
@@ -112,6 +115,7 @@ public class LayoutContext {
         this.leadingSpace = parentLC.leadingSpace; //???
         this.trailingSpace = parentLC.trailingSpace; //???
         this.hyphContext = parentLC.hyphContext;
+        this.bpAlignment = parentLC.bpAlignment;
         this.dSpaceAdjust = parentLC.dSpaceAdjust;
         this.ipdAdjust = parentLC.ipdAdjust;
         this.iLineHeight = parentLC.iLineHeight;
@@ -224,6 +228,19 @@ public class LayoutContext {
         return ((this.flags & TRY_HYPHENATE) != 0);
     }
 
+    /**
+     * Sets the currently applicable alignment in BP direction.
+     * @param alignment one of EN_START, EN_JUSTIFY etc.
+     */
+    public void setBPAlignment(int alignment) {
+        this.bpAlignment = alignment;
+    }
+    
+    /** @return the currently applicable alignment in BP direction (EN_START, EN_JUSTIFY...) */
+    public int getBPAlignment() {
+        return this.bpAlignment;
+    }
+    
     public void setSpaceAdjust(double adjust) {
         dSpaceAdjust = adjust;
     }
