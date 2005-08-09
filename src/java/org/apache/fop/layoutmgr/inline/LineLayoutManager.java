@@ -546,6 +546,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         initialize(); // Normally done when started by parent!
     }
 
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         // Get a break from currently active child LM
         // Set up constraints for inline level managers
@@ -582,7 +583,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         }
 
         //PHASE 2: Create line breaks
-        return createLineBreaks(alignment);
+        return createLineBreaks(context.getBPAlignment());
         /*
         LineBreakPosition lbp = null;
         if (breakpoints == null) {
@@ -903,7 +904,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     
     /**
      * Phase 2 of Knuth algorithm: find optimal break points.
-     * @param alignment alignment of the paragraph
+     * @param alignment alignment in BP direction of the paragraph
      * @return a list of Knuth elements representing broken lines
      */
     private LinkedList createLineBreaks(int alignment) {
@@ -1057,6 +1058,11 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         return lineLayouts;
     }
 
+    /**
+     * Creates the element list in BP direction for the broken lines.
+     * @param alignment the currently applicable vertical alignment
+     * @return the newly built element list
+     */
     private LinkedList postProcessLineBreaks(int alignment) {
     
         LinkedList returnList = new LinkedList();
