@@ -36,6 +36,11 @@
     </fo:root>
   </fo>
   <checks>
-    <!-- currently causes a ClassCastException -->
+    <element-list category="breaker">
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      <skip>3</skip>
+    </element-list>
   </checks>
 </testcase>
