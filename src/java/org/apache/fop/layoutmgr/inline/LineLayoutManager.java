@@ -663,6 +663,11 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 // loop over the KnuthSequences (and single KnuthElements) in returnedList
                 // (LeafNodeLM descendants may also skip wrapping elements in KnuthSequences
                 // to cause fewer container structures)
+                // TODO the mixture here adds a little to the complexity. Decide whether:
+                // - to leave as is and save some container instances
+                // - to use KnuthSequences exclusively (adjustments on leaf-type LMs necessary)
+                // See also FootnoteLM.addAnchor() as well as right above this comment
+                // for similar code. Or see http://svn.apache.org/viewcvs?rev=230779&view=rev 
                 ListIterator iter = returnedList.listIterator();
                 while (iter.hasNext()) {
                     Object obj = iter.next();
