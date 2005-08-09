@@ -47,6 +47,7 @@ public class InlineBlockParent extends InlineArea {
     public void addChildArea(Area childArea) {
         if (childArea instanceof Block && child == null) {
             child = (Block) childArea;
+            increaseIPD(childArea.getAllocIPD());
         } else {
             // TODO: log error, raise exception?
         }
