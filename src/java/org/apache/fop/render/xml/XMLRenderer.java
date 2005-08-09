@@ -624,6 +624,7 @@ public class XMLRenderer extends AbstractRenderer {
 
     protected void renderInlineBlockParent(InlineBlockParent ibp) {
         atts.clear();
+        addAreaAttributes(ibp);
         addTraitAttributes(ibp);
         startElement("inlineblockparent", atts);
         super.renderInlineBlockParent(ibp);
