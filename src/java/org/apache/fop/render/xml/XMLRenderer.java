@@ -560,6 +560,7 @@ public class XMLRenderer extends AbstractRenderer {
         atts.clear();
         addAreaAttributes(fo);
         addTraitAttributes(fo);
+        addAttribute("pos", pos);
         startElement("foreignObject", atts);
         Document doc = fo.getDocument();
         String ns = fo.getNameSpace();
