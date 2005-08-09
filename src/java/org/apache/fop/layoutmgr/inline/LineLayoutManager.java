@@ -951,7 +951,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         LineBreakPosition lbp = new LineBreakPosition(this,
                 knuthParagraphs.indexOf(seq), seq.size() - 1,
                 lineShrink, lineStretch, 0, 0, 0, 0, lineHeight,
-                0, 0, 0, 0);
+                iLineWidth, 0, 0, 0);
         lineLayouts.addBreakPosition(lbp, 0);
         return lineLayouts;
     }
@@ -1550,6 +1550,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 LineArea lineArea = new LineArea();
                 lineArea.setStartIndent(lbp.startIndent);
                 lineArea.setBPD(lbp.lineHeight);
+                lineArea.setIPD(lbp.lineWidth);
                 lc.setBaseline(lbp.baseline);
                 lc.setLineHeight(lbp.lineHeight);
                 lc.setMiddleShift(middleShift);
