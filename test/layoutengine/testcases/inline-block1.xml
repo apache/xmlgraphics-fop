@@ -71,20 +71,29 @@
     <true xpath="not(boolean(//flow/block/lineArea[1]/child::*[1]/@background))"/>
     
     <true xpath="boolean(//flow/block/lineArea[2]/inlineparent[1])"/>
-    <eval expected="color=#d3d3d3,repeat=0,horiz=0,vertical=0" xpath="//flow/block/lineArea[2]//child::*[1]/@background"/>
+    <eval expected="color=#d3d3d3,repeat=0,horiz=0,vertical=0" xpath="//flow/block/lineArea[2]/child::*[1]/@background"/>
 
     <true xpath="boolean(//flow/block/lineArea[3]/inlineblockparent[1])"/>
-    <eval expected="color=#d3d3d3,repeat=0,horiz=0,vertical=0" xpath="//flow/block/lineArea[3]//child::*[1]/@background"/>
+    <eval expected="color=#d3d3d3,repeat=0,horiz=0,vertical=0" xpath="//flow/block/lineArea[3]/child::*[1]/@background"/>
     <true xpath="not(boolean(//flow/block/lineArea[3]/inlineblockparent[1]/block/@background))"/>
 
     <true xpath="boolean(//flow/block/lineArea[4]/inlineblockparent[1])"/>
-    <eval expected="color=#d3d3d3,repeat=0,horiz=0,vertical=0" xpath="//flow/block/lineArea[4]//child::*[1]/@background"/>
+    <eval expected="color=#d3d3d3,repeat=0,horiz=0,vertical=0" xpath="//flow/block/lineArea[4]/child::*[1]/@background"/>
     <true xpath="not(boolean(//flow/block/lineArea[4]/inlineblockparent[1]/block/@background))"/>
 
     <eval expected="inlineparent" xpath="local-name(//flow/block/lineArea[5]/child::*[1])"/>
     <eval expected="text" xpath="local-name(//flow/block/lineArea[5]/child::*[2])"/>
-    <eval expected="color=#d3d3d3,repeat=0,horiz=0,vertical=0" xpath="//flow/block/lineArea[5]//child::*[1]/@background"/>
+    <eval expected="color=#d3d3d3,repeat=0,horiz=0,vertical=0" xpath="//flow/block/lineArea[5]/child::*[1]/@background"/>
 
     <true xpath="not(boolean(//flow/block/lineArea[6]/child::*[1]/@background))"/>
+
+    <!-- the following check sequence verifies size traits so the background is actually painted correctly. -->
+    <eval expected="86400" xpath="//flow/block/@bpd"/>
+    <eval expected="337891" xpath="//flow/block/@ipd"/>
+    <eval expected="14400" xpath="//flow/block/lineArea[4]/child::*[1]/@bpd"/>
+    <eval expected="337891" xpath="//flow/block/lineArea[4]/child::*[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block/lineArea[5]/child::*[1]/@bpd"/>
+    <eval expected="337891" xpath="//flow/block/lineArea[5]/child::*[1]/@ipd"/>
+
   </checks>
 </testcase>
