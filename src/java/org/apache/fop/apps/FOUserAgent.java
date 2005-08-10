@@ -410,21 +410,23 @@ public class FOUserAgent {
 
 
     /**
-     * Get an input stream for a reference.
-     * Temporary solution until API better.
+     * Get an input stream for a reference. Subclass FOUserAgent and override this method to
+     * do custom URI to InputStream resolution.
+     * Temporary solution until the API is better.
      * @param uri URI to access
      * @return InputStream for accessing the resource.
      * @throws IOException in case of an I/O problem
      */
     public InputStream getStream(String uri) throws IOException {
+        //The default implementation does noting. Subclass FOUserAgent to add custom behaviour.
         return null;
     }
 
     /**
      * Sets the output File.
-     * @param the output File
+     * @param f the output File
      */
-    public void setOutputFile(File f){
+    public void setOutputFile(File f) {
         this.outputFile = f;
     }
 
