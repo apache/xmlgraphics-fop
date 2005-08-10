@@ -140,5 +140,35 @@
     <eval expected="16200" xpath="//flow/block[1]/block/block/block/block/block/block/block/block/block/block/block/block/lineArea/text/@font-size"/>
     <eval expected="19440" xpath="//flow/block[1]/block/block/block/block/block/block/block/block/block/block/block/block/block/lineArea/text/@font-size"/>
     <eval expected="23328" xpath="//flow/block[1]/block/block/block/block/block/block/block/block/block/block/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="24000" xpath="//flow/block[2]/lineArea/text/@font-size"/>
+    <eval expected="19920" xpath="//flow/block[2]/block/lineArea/text/@font-size"/>
+    <eval expected="16533" xpath="//flow/block[2]/block/block/lineArea/text/@font-size"/>
+    <eval expected="13722" xpath="//flow/block[2]/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="11389" xpath="//flow/block[2]/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="9452" xpath="//flow/block[2]/block/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="7845" xpath="//flow/block[2]/block/block/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="6511" xpath="//flow/block[2]/block/block/block/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="7813" xpath="//flow/block[2]/block/block/block/block/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="9375" xpath="//flow/block[2]/block/block/block/block/block/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="11250" xpath="//flow/block[2]/block/block/block/block/block/block/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="13500" xpath="//flow/block[2]/block/block/block/block/block/block/block/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="16200" xpath="//flow/block[2]/block/block/block/block/block/block/block/block/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="19440" xpath="//flow/block[2]/block/block/block/block/block/block/block/block/block/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="23328" xpath="//flow/block[2]/block/block/block/block/block/block/block/block/block/block/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="24000" xpath="//flow/block[3]/lineArea/text/@font-size"/>
+    <eval expected="19920" xpath="//flow/block[3]/block/lineArea/text/@font-size"/>
+    <eval expected="16533" xpath="//flow/block[3]/block/block/lineArea/text/@font-size"/>
+    <eval expected="13722" xpath="//flow/block[3]/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="11389" xpath="//flow/block[3]/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="9452" xpath="//flow/block[3]/block/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="7845" xpath="//flow/block[3]/block/block/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="6511" xpath="//flow/block[3]/block/block/block/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="7813" xpath="//flow/block[3]/block/block/block/block/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="9375" xpath="//flow/block[3]/block/block/block/block/block/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="11250" xpath="//flow/block[3]/block/block/block/block/block/block/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="13500" xpath="//flow/block[3]/block/block/block/block/block/block/block/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="16200" xpath="//flow/block[3]/block/block/block/block/block/block/block/block/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="19440" xpath="//flow/block[3]/block/block/block/block/block/block/block/block/block/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="23328" xpath="//flow/block[3]/block/block/block/block/block/block/block/block/block/block/block/block/block/block/lineArea/text/@font-size"/>
   </checks>
 </testcase>

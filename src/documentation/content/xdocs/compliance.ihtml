@@ -2854,19 +2854,16 @@
       <td align="center">
         <a href="http://www.w3.org/TR/xsl/slice7.html#font-size">&sect;7.8.4</a>
       </td>
-      <td class="yes">
-        yes
-      </td>
       <td class="partial">
         partial
+      </td>
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
-            [Trunk] TODO &lt;absolute&gt; font sizes
-          </li>
-          <li>
-            [Trunk] TODO &lt;relative&gt; font sizes
+            [0.20.5] "smaller" and "larger" not implemented
           </li>
         </ul>
       </td>
@@ -2921,14 +2918,18 @@
       <td align="center">
         <a href="http://www.w3.org/TR/xsl/slice7.html#font-style">&sect;7.8.7</a>
       </td>
-      <td class="yes">
-        yes
+      <td class="partial">
+        partial
       </td>
       <td class="yes">
         yes
       </td>
-      <td align="center">
-        &nbsp;
+      <td align="left">
+        <ul>
+          <li>
+            [0.20.5] "normal" is not supported
+          </li>
+        </ul>
       </td>
     </tr>
     <tr>
@@ -2961,14 +2962,21 @@
       <td align="center">
         <a href="http://www.w3.org/TR/xsl/slice7.html#font-weight">&sect;7.8.9</a>
       </td>
-      <td class="yes">
-        yes
+      <td class="partial">
+        partial
       </td>
-      <td class="yes">
-        yes
+      <td class="partial">
+        partial
       </td>
-      <td align="center">
-        &nbsp;
+      <td align="left">
+        <ul>
+          <li>
+            [0.20.5] "normal", "bolder" and "lighter" are not supported
+          </li>
+          <li>
+            [Trunk] TODO &lt;relative&gt; font weights
+          </li>
+        </ul>
       </td>
     </tr>
     <tr>
