@@ -91,5 +91,19 @@ public class LineArea extends Area {
     public int getStartIndent() {
         return startIndent;
     }
+
+    /**
+     * Updates the extents of the line area from its children.
+     */
+    public void updateExtentsFromChildren() {
+        int ipd = 0;
+        int bpd = 0;
+        for (int i = 0, len = inlineAreas.size(); i < len; i++) {
+            ipd = Math.max(ipd, ((InlineArea)inlineAreas.get(i)).getAllocIPD());
+            bpd += ((InlineArea)inlineAreas.get(i)).getAllocBPD();
+        }
+        setIPD(ipd);
+        setBPD(bpd);
+    }
 }
 

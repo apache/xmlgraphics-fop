@@ -37,6 +37,7 @@ import org.apache.fop.layoutmgr.KnuthSequence;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafPosition;
+import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.SpaceSpecifier;
@@ -1079,7 +1080,20 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             lineLayouts = (LineLayoutPossibilities)lineLayoutsList.get(p);
             KnuthSequence seq = (KnuthSequence) knuthParagraphs.get(p);
 
-            if (seq.isInlineSequence() && alignment == EN_JUSTIFY) {
+            if (!seq.isInlineSequence()) {
+                LinkedList targetList = new LinkedList();
+                ListIterator listIter = seq.listIterator();
+                while (listIter.hasNext()) {
+                    KnuthElement tempElement;
+                    tempElement = (KnuthElement) listIter.next();
+                    if (tempElement.getLayoutManager() != this) {
+                        tempElement.setPosition(new NonLeafPosition(this,
+                                tempElement.getPosition()));
+                    }
+                    targetList.add(tempElement);
+                }
+                returnList.addAll(targetList); 
+            } else if (seq.isInlineSequence() && alignment == EN_JUSTIFY) {
                 /* justified vertical alignment (not in the XSL FO recommendation):
                    create a multi-layout sequence whose elements will contain 
                    a conventional Position */
@@ -1651,8 +1665,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     lineArea.setBPD(lineArea.getBPD() + context.getSpaceAfter());
                 }
                 parentLM.addChildArea(lineArea);
-/*            } else if (pos instanceof NonLeafPosition) {
-                // LineBreakPosition inside a nested block;
+            } else if (pos instanceof NonLeafPosition) {
+                // Nested block-level content;
                 // go down the LM stack again;
                 // collect all consecutive NonLeafPosition objects,
                 // "unwrap" them and put the child positions in a new list.
@@ -1661,7 +1675,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 innerPosition = ((NonLeafPosition) pos).getPosition();
                 positionList.add(innerPosition);
                 while (parentIter.hasNext()) {
-                    pos = (Position) parentIter.getPos(parentIter.peekNext());
+                    pos = (Position)parentIter.peekNext();
                     if (!(pos instanceof NonLeafPosition)) {
                         break;
                     }
@@ -1697,8 +1711,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     blocklc.setLeadingSpace(blocklc.getTrailingSpace());
                     blocklc.setTrailingSpace(new SpaceSpecifier(false));
                 }
+                lineArea.updateExtentsFromChildren();
                 parentLM.addChildArea(lineArea);
-*/            } else {
+            } else {
                 // pos was the Position inside a penalty item, nothing to do
             }
         }
