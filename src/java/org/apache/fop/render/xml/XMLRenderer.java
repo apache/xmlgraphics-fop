@@ -604,6 +604,7 @@ public class XMLRenderer extends AbstractRenderer {
             addAttribute("tlsadjust", text.getTextLetterSpaceAdjust());
         }
         addAttribute("vpos", text.getOffset());
+        addAreaAttributes(text);
         addTraitAttributes(text);
         startElement("text", atts);
         characters(text.getTextArea());
@@ -616,6 +617,7 @@ public class XMLRenderer extends AbstractRenderer {
      */
     protected void renderInlineParent(InlineParent ip) {
         atts.clear();
+        addAreaAttributes(ip);
         addTraitAttributes(ip);
         startElement("inlineparent", atts);
         super.renderInlineParent(ip);
