@@ -94,8 +94,7 @@ public class TIFFRenderer extends Java2DRenderer {
     public void configure(Configuration cfg) throws ConfigurationException {
 
         //TODO Support output of monochrome bitmaps (fax-style)
-        String c = cfg.getChild("compression").getAttribute("value");
-        int comp = Integer.parseInt(c);
+        int comp = cfg.getChild("compression").getAttributeAsInteger("value", 1);
         String name = null;
         switch (comp) {
         case TIFFEncodeParam.COMPRESSION_NONE:
