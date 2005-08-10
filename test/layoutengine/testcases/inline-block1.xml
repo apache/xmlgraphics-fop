@@ -90,10 +90,10 @@
     <!-- the following check sequence verifies size traits so the background is actually painted correctly. -->
     <eval expected="86400" xpath="//flow/block/@bpd"/>
     <eval expected="337891" xpath="//flow/block/@ipd"/>
-    <eval expected="14400" xpath="//flow/block/lineArea[4]/child::*[1]/@bpd"/>
-    <eval expected="337891" xpath="//flow/block/lineArea[4]/child::*[1]/@ipd"/>
-    <eval expected="14400" xpath="//flow/block/lineArea[5]/child::*[1]/@bpd"/>
-    <eval expected="337891" xpath="//flow/block/lineArea[5]/child::*[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block/lineArea[3]/inlineblockparent[1]/@bpd"/>
+    <eval expected="337891" xpath="//flow/block/lineArea[3]/inlineblockparent[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block/lineArea[4]/inlineblockparent[1]/@bpd"/>
+    <eval expected="337891" xpath="//flow/block/lineArea[4]/inlineblockparent[1]/@ipd"/>
 
   </checks>
 </testcase>
