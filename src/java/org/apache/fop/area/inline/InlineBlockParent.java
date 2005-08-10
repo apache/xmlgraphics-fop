@@ -45,11 +45,17 @@ public class InlineBlockParent extends InlineArea {
      * @param childArea the child area to add
      */
     public void addChildArea(Area childArea) {
-        if (childArea instanceof Block && child == null) {
+        if (child != null) {
+            throw new IllegalStateException("InlineBlockParent may have only one child area.");
+        }
+        if (childArea instanceof Block) {
             child = (Block) childArea;
-            increaseIPD(childArea.getAllocIPD());
+            //Update extents from the child
+            setIPD(childArea.getAllocIPD());
+            setBPD(childArea.getAllocBPD());
         } else {
-            // TODO: log error, raise exception?
+            throw new IllegalArgumentException("The child of an InlineBlockParent must be a"
+                    + " Block area");
         }
     }
 
