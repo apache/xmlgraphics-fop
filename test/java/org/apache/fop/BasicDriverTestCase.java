@@ -23,17 +23,13 @@ import java.io.File;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.InputHandler;
-import org.w3c.dom.Document;
 
 /**
  * Basic runtime test for the old Fop class. It is used to verify that 

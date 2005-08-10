@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 
 /* $Id$ */
-
 
 package org.apache.fop;
 
@@ -41,15 +40,13 @@ public class DigestFilterTestCase extends TestCase {
 
     private SAXParserFactory parserFactory;
 
-    /* (non-Javadoc)
-     * @see junit.framework.TestCase#setUp()
-     */
+    /** @see junit.framework.TestCase#setUp() */
     protected void setUp() {
         parserFactory = SAXParserFactory.newInstance();
         parserFactory.setNamespaceAware(true);
     }
 
-    private boolean compareDigest(byte a[], byte b[]) {
+    private boolean compareDigest(byte[] a, byte[] b) {
         if (a.length != b.length) {
             return false;
         }
@@ -61,7 +58,7 @@ public class DigestFilterTestCase extends TestCase {
         return true;
     }
 
-    private String digestToString(byte digest[]) {
+    private String digestToString(byte[] digest) {
         StringBuffer buffer = new StringBuffer(2 * digest.length);
         for (int i = 0; i < digest.length; i++) {
             int val = digest[i];
@@ -90,7 +87,7 @@ public class DigestFilterTestCase extends TestCase {
         XMLReader parser = parserFactory.newSAXParser().getXMLReader();
         DigestFilter digestFilter = new DigestFilter("MD5");
         digestFilter.setParent(parser);
-        digestFilter.setFeature("http://xml.org/sax/features/namespaces",true);
+        digestFilter.setFeature("http://xml.org/sax/features/namespaces", true);
         parser.setContentHandler(digestFilter);
         InputSource inputSource = new InputSource(new StringReader(input));
         parser.parse(inputSource);
@@ -103,8 +100,8 @@ public class DigestFilterTestCase extends TestCase {
             ParserConfigurationException,
             SAXException,
             IOException {
-        byte lfDigest[] = runTest("<a>\n</a>");
-        byte crlfDigest[] = runTest("<a>\r\n</a>");
+        byte[] lfDigest = runTest("<a>\n</a>");
+        byte[] crlfDigest = runTest("<a>\r\n</a>");
         assertTrue(
             "LF: "
                 + digestToString(lfDigest)
@@ -119,15 +116,15 @@ public class DigestFilterTestCase extends TestCase {
             ParserConfigurationException,
             SAXException,
             IOException {
-        byte sortDigest[] = runTest("<a a1='1' a2='2' a3='3'/>");
-        byte permutationDigest[] = runTest("<a a2='2' a3='3' a1='1'/>");
+        byte[] sortDigest = runTest("<a a1='1' a2='2' a3='3'/>");
+        byte[] permutationDigest = runTest("<a a2='2' a3='3' a1='1'/>");
         assertTrue(
             "Sort: "
                 + digestToString(sortDigest)
                 + " permuted: "
                 + digestToString(permutationDigest),
             compareDigest(sortDigest, permutationDigest));
-        byte reverseDigest[] = runTest("<a a3='3' a2='2' a1='1'/>");
+        byte[] reverseDigest = runTest("<a a3='3' a2='2' a1='1'/>");
         assertTrue(
             "Sort: "
                 + digestToString(sortDigest)
@@ -142,8 +139,8 @@ public class DigestFilterTestCase extends TestCase {
             ParserConfigurationException,
             SAXException,
             IOException {
-        byte prefix1Digest[] = runTest("<a:a xmlns:a='foo'/>");
-        byte prefix2Digest[] = runTest("<b:a xmlns:b='foo'/>");
+        byte[] prefix1Digest = runTest("<a:a xmlns:a='foo'/>");
+        byte[] prefix2Digest = runTest("<b:a xmlns:b='foo'/>");
         assertTrue(
             "prefix1: "
                 + digestToString(prefix1Digest)
