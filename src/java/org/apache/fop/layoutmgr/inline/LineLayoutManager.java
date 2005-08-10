@@ -733,6 +733,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                                         null, false));
                             }
                             lastPar.endParagraph();
+                            ElementListObserver.observe(lastPar, "line", null);
                             lastPar = null;
                             if (log.isTraceEnabled()) {
                                 trace.append(" ]");
@@ -763,13 +764,12 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         }
         if (lastPar != null) {
             lastPar.endParagraph();
+            ElementListObserver.observe(lastPar, "line", null);
             if (log.isTraceEnabled()) {
                 trace.append(" ]");
             }
         }
         log.trace(trace);
-        // TODO Do we need more of these lines?
-        ElementListObserver.observe(lastPar, "line", null);
     }
 
     /**
@@ -936,6 +936,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
      * @return the line layout possibilities for the paragraph
      */
     private LineLayoutPossibilities createBlockLineBreak(KnuthSequence seq) {
+        //TODO Should this really create only a single LineBreakPosition???
+        //This creates an implicit keep-together on the nested block-level FOs.
         lineLayouts = new LineLayoutPossibilities();
         lineLayouts.addPossibility(1,0);
         int lineHeight = 0, lineStretch = 0, lineShrink = 0;
