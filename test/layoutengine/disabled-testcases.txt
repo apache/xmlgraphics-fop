@@ -1,6 +1,5 @@
 external-graphic1.xml
 external-graphic2.xml
-font-size-relative.xml
 inline1.xml
 keep-with-previous2.xml
 keep-with-previous3.xml

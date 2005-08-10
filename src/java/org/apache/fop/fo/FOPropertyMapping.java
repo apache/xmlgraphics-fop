@@ -32,6 +32,8 @@ import org.apache.fop.fo.properties.CondLengthProperty;
 import org.apache.fop.fo.properties.CorrespondingPropertyMaker;
 import org.apache.fop.fo.properties.DimensionPropertyMaker;
 import org.apache.fop.fo.properties.EnumProperty;
+import org.apache.fop.fo.properties.FontSizePropertyMaker;
+import org.apache.fop.fo.properties.FontStretchPropertyMaker;
 import org.apache.fop.fo.properties.GenericShorthandParser;
 import org.apache.fop.fo.properties.IndentPropertyMaker;
 import org.apache.fop.fo.properties.KeepProperty;
@@ -1081,7 +1083,7 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("font-selection-strategy", m);
 
         // font-size
-        m  = new LengthProperty.Maker(PR_FONT_SIZE);
+        m  = new FontSizePropertyMaker(PR_FONT_SIZE);
         m.setInherited(true);
         m.setDefault("12pt");
         m.addKeyword("xx-small", "6.944pt");
@@ -1091,11 +1093,13 @@ public class FOPropertyMapping implements Constants {
         m.addKeyword("large", "14.4pt");
         m.addKeyword("x-large", "17.28pt");
         m.addKeyword("xx-large", "20.736pt");
+        m.addEnum("larger", getEnumProperty(EN_LARGER, "LARGER"));
+        m.addEnum("smaller", getEnumProperty(EN_SMALLER, "SMALLER"));
         m.setPercentBase(LengthBase.INH_FONTSIZE);
         addPropertyMaker("font-size", m);
 
         // font-stretch
-        m  = new EnumProperty.Maker(PR_FONT_STRETCH);
+        m  = new FontStretchPropertyMaker(PR_FONT_STRETCH);
         m.addEnum("normal", getEnumProperty(EN_NORMAL, "NORMAL"));
         m.addEnum("wider", getEnumProperty(EN_WIDER, "WIDER"));
         m.addEnum("narrower", getEnumProperty(EN_NARROWER, "NARROWER"));
