@@ -27,9 +27,6 @@ import java.awt.image.BufferedImage;
 // ImageIO
 import javax.imageio.ImageIO;
 
-// FOP
-import org.apache.fop.apps.FOUserAgent;
-
 /**
  * FopImage object using ImageIO.
  * @see AbstractFopImage
