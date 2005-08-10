@@ -116,5 +116,23 @@
     <eval expected="144000" xpath="//flow/block[2]/block[4]/block[1]/@ipd"/>
     <eval expected="14400" xpath="//flow/block[2]/block[4]/block[1]/@bpd"/>
     <eval expected="cell4" xpath="//flow/block[2]/block[4]/block[1]/lineArea"/>
+    
+    <element-list category="breaker">
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <box w="10000" aux="true"/>
+      <box w="14400"/>
+      <penalty w="20000" p="0"/>
+      <box w="14400"/>
+      <box w="10000" aux="true"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <box w="10000" aux="true"/>
+      <box w="14400"/>
+      <box w="10000" aux="true"/>
+      <skip>3</skip>
+    </element-list>
+    
   </checks>
 </testcase>
