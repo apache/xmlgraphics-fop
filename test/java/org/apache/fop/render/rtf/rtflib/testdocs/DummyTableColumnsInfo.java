@@ -26,7 +26,7 @@
 
 package org.apache.fop.render.rtf.rtflib.testdocs;
 
-import org.apache.fop.render.rtf.rtflib.interfaces.ITableColumnsInfo;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableColumnsInfo;
 
 /** ITableColumnsInfo that does nothing, used in testodcs package
  *  to create documents without worrying about nested tables handling.
