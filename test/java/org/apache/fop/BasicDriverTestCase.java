@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,6 @@ package org.apache.fop;
 
 import java.io.File;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -32,8 +30,6 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.xml.sax.InputSource;
-
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.InputHandler;
@@ -42,7 +38,6 @@ import org.w3c.dom.Document;
 /**
  * Basic runtime test for the old Fop class. It is used to verify that 
  * nothing obvious is broken after compiling.
- * @author <a href="mailto:jeremias@apache.org">Jeremias Maerki</a>
  */
 public class BasicDriverTestCase extends AbstractFOPTestCase {
 
@@ -51,35 +46,6 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
      */
     public BasicDriverTestCase(String name) {
         super(name);
-    }
-
-    private Document loadDocument(File foFile) 
-                throws TransformerException {
-        TransformerFactory factory = TransformerFactory.newInstance();
-        Transformer transformer = factory.newTransformer();
-        Source src = new StreamSource(foFile);
-        DOMResult res = new DOMResult();
-        transformer.transform(src, res);
-        return (Document)res.getNode();                                
-    }
-
-    /**
-     * Tests DOM with JAXP and OutputStream generating PostScript.
-     * @throws Exception if anything fails
-     */
-    public void testFO2PDFWithDOM() throws Exception {
-        File foFile = new File(getBaseDir(), "test/xml/bugtests/block.fo");
-        ByteArrayOutputStream baout = new ByteArrayOutputStream();
-        Fop fop = new Fop(Fop.RENDER_PDF);
-        fop.setOutputStream(baout);
-        
-        TransformerFactory factory = TransformerFactory.newInstance();
-        Transformer transformer = factory.newTransformer(); //Identity transf.
-        Source src = new DOMSource(loadDocument(foFile));
-        Result res = new SAXResult(fop.getDefaultHandler());
-        transformer.transform(src, res);
-        
-        assertTrue("Generated PostScript has zero length", baout.size() > 0);
     }
 
     /**
