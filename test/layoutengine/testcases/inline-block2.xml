@@ -42,7 +42,7 @@
             hyphenate="true" text-align="justify">
             The appropriate values of the parameters can be obtained from <fo:inline background-color="lightgray">the following table:
             <fo:block>
-          <fo:table table-layout="fixed" border-collapse="separate" margin="0pt" border="solid 5pt" padding="5pt" width="4in + 10pt + 10pt" background-color="lightgray">
+          <fo:table table-layout="fixed" border-collapse="separate" margin="0pt" border="solid 5pt" padding="5pt" width="4in + 10pt + 10pt" background-color="gray">
             <fo:table-column column-width="2in"/>
             <fo:table-column column-width="2in"/>
             <fo:table-body start-indent="0pt" end-indent="0pt">
@@ -71,5 +71,17 @@
     </fo:root>
   </fo>
   <checks>
+    <element-list category="breaker">
+      <box w="14400"/>
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      <penalty w="20000" p="0"/>
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      <box w="14400"/>
+      <skip>3</skip>
+    </element-list>
   </checks>
 </testcase>
