@@ -12,5 +12,6 @@ page-number-citation2.xml
 page-number-citation3.xml
 table-border-collapse1.xml
 table-border-collapse2.xml
+table-border-separate1.xml
 table-column4.xml
 table-fixed2.xml
