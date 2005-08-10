@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,12 +29,14 @@ import org.apache.fop.fo.pagination.Region;
  * so the page master can make copies from the original page and regions.
  */
 public class RegionReference extends Area implements Cloneable {
+    
+    /** Reference to the region FO. */
     protected Region regionFO;
     private CTM ctm;
     
 
     // the list of block areas from the static flow
-    private List blocks = new ArrayList();
+    private ArrayList blocks = new ArrayList();
     
     // the parent RegionViewport for this object
     protected RegionViewport regionViewport;
@@ -109,7 +111,6 @@ public class RegionReference extends Area implements Cloneable {
     /**
      * Clone this region.
      * This is used when cloning the page by the page master.
-     * The blocks are not copied since the master will have no blocks.
      *
      * @return a copy of this region reference area
      */
@@ -117,6 +118,7 @@ public class RegionReference extends Area implements Cloneable {
         RegionReference rr = new RegionReference(regionFO, regionViewport);
         rr.ctm = ctm;
         rr.setIPD(getIPD());
+        rr.blocks = (ArrayList)blocks.clone();
         return rr;
     }
 
