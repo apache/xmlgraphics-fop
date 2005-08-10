@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 Jeremias Maerki
+ * Copyright 2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,9 @@ public class DebugHelper {
 
     private static boolean elObserversRegistered = false;
     
+    /**
+     * Registers the default element list observers used for debugging. 
+     */
     public static void registerStandardElementListObservers() {
         if (!elObserversRegistered) {
             ElementListObserver.addObserver(new LoggingElementListObserver());

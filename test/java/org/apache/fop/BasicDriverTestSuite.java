@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import junit.framework.TestSuite;
 
 /**
  * Test suite for basic functionality of FOP's Driver API.
- * @author <a href="mailto:jeremias@apache.org">Jeremias Maerki</a>
  */
 public class BasicDriverTestSuite {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import junit.framework.TestSuite;
 
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.render.pdf.PDFRenderer;
 import org.apache.fop.util.DigestFilter;
 import org.xml.sax.InputSource;
 
@@ -62,15 +61,13 @@ public final class GenericFOPTestCase extends TestCase {
         super(name);
     }
 
-    /* (non-Javadoc)
-     * @see junit.framework.TestCase#setUp()
-     */
+    /** @see junit.framework.TestCase#setUp() */
     protected void setUp() throws Exception {
         parserFactory = SAXParserFactory.newInstance();
         parserFactory.setNamespaceAware(true);
     }
 
-    public final void testSimple() throws Exception {
+    public void testSimple() throws Exception {
         final String digestIn = "17bf13298796065f7775db8707133aeb";
         final String digestOut = "e2761f51152f6663911e567901596707";
         final String fo =
@@ -90,7 +87,7 @@ public final class GenericFOPTestCase extends TestCase {
         renderPDF(fo, digestIn, digestOut);
     }
 
-    private String digestToString(byte value[]) {
+    private String digestToString(byte[] value) {
         StringBuffer buffer = new StringBuffer(2 * value.length);
         for (int i = 0; i < value.length; i++) {
             int val = value[i];
@@ -115,7 +112,6 @@ public final class GenericFOPTestCase extends TestCase {
         FOUserAgent foUserAgent = new FOUserAgent();
         foUserAgent.setCreationDate(new Date(10000));
         MessageDigest outDigest = MessageDigest.getInstance("MD5");
-        ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
         DigestOutputStream out =
             new DigestOutputStream(new ByteArrayOutputStream(), outDigest);
         Fop fop = new Fop(Fop.RENDER_PDF, foUserAgent);
