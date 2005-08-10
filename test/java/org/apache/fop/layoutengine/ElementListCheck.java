@@ -88,6 +88,18 @@ public class ElementListCheck implements LayoutEngineCheck {
                                     + " but got: " + knuthEl.getW());
                         }
                     }
+                    if ("true".equals(domEl.getAttribute("aux"))) {
+                        if (!knuthEl.isAuxiliary()) {
+                            fail("Expected auxiliary box"
+                                    + " at position " + pos);
+                        }
+                    }
+                    if ("false".equals(domEl.getAttribute("aux"))) {
+                        if (knuthEl.isAuxiliary()) {
+                            fail("Expected a normal, not an auxiliary box"
+                                    + " at position " + pos);
+                        }
+                    }
                 } else if ("penalty".equals(domEl.getLocalName())) {
                     if (!(knuthEl instanceof KnuthPenalty)) {
                         fail("Expected KnuthPenalty "
