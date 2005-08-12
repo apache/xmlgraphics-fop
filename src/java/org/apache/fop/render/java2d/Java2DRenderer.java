@@ -986,8 +986,9 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
             // url = "C:/eclipse/myWorkbenches/fop4/xml-fop/examples/fo" + url;
             java.awt.Image awtImage = new javax.swing.ImageIcon(url).getImage();
 
-            state.getGraph().drawImage(awtImage, (int) (x / 1000f),
-                    (int) (y / 1000f), (int) w, h, null);
+            state.getGraph().drawImage(awtImage, 
+                    (int)(x / 1000f), (int)(y / 1000f), 
+                    (int)(pos.getWidth() / 1000f), (int)(pos.getHeight() / 1000f), null);
             currentBPPosition += (h * 1000);
         } else {
             if (!fopimage.load(FopImage.BITMAP)) {
@@ -1014,8 +1015,9 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
             // Combine the color model and raster into a buffered image
             awtImage = new BufferedImage(cm, raster, false, null);
 
-            state.getGraph().drawImage(awtImage, (int) (x / 1000f),
-                    (int) (y / 1000f), (int) w, h, null);
+            state.getGraph().drawImage(awtImage, 
+                    (int)(x / 1000f), (int)(y / 1000f), 
+                    (int)(pos.getWidth() / 1000f), (int)(pos.getHeight() / 1000f), null);
             currentBPPosition += (h * 1000);
         }
     }
