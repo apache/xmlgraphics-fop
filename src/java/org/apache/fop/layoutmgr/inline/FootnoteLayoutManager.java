@@ -26,6 +26,7 @@ import org.apache.fop.fo.flow.Footnote;
 import org.apache.fop.layoutmgr.AbstractLayoutManager;
 import org.apache.fop.layoutmgr.FootnoteBodyLayoutManager;
 import org.apache.fop.layoutmgr.KnuthElement;
+import org.apache.fop.layoutmgr.KnuthSequence;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.Position;
 
@@ -45,7 +46,7 @@ public class FootnoteLayoutManager extends AbstractLayoutManager
         footnote = node;
 
         // create an InlineStackingLM handling the fo:inline child of fo:footnote
-        citationLM = new InlineStackingLayoutManager(footnote.getFootnoteCitation());
+        citationLM = new InlineLayoutManager(footnote.getFootnoteCitation());
 
         // create a FootnoteBodyLM handling the fo:footnote-body child of fo:footnote
         bodyLM = new FootnoteBodyLayoutManager(footnote.getFootnoteBody());
@@ -85,12 +86,24 @@ public class FootnoteLayoutManager extends AbstractLayoutManager
     private void addAnchor(LinkedList citationList) {
         // find the last box in the sequence, and add a reference
         // to the FootnoteBodyLM
-        ListIterator citationIterator = citationList.listIterator(citationList.size());
         KnuthInlineBox lastBox = null;
+        ListIterator citationIterator = citationList.listIterator(citationList.size());
         while (citationIterator.hasPrevious() && lastBox == null) {
-            KnuthElement element = (KnuthElement) citationIterator.previous();
-            if (element instanceof KnuthInlineBox) {
-                lastBox = (KnuthInlineBox) element;
+            Object obj = citationIterator.previous();
+            if (obj instanceof KnuthElement) {
+                KnuthElement element = (KnuthElement)obj;
+                if (element instanceof KnuthInlineBox) {
+                    lastBox = (KnuthInlineBox) element;
+                }
+            } else {
+                KnuthSequence seq = (KnuthSequence)obj;
+                ListIterator nestedIterator = seq.listIterator(seq.size());
+                while (nestedIterator.hasPrevious() && lastBox == null) {
+                    KnuthElement element = (KnuthElement)nestedIterator.previous();
+                    if (element instanceof KnuthInlineBox) {
+                        lastBox = (KnuthInlineBox) element;
+                    }
+                }
             }
         }
         if (lastBox != null) {

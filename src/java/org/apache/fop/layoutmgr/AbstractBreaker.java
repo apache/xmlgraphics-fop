@@ -187,6 +187,7 @@ public abstract class AbstractBreaker {
             alignment = Constants.EN_START;
         }
         alignmentLast = Constants.EN_START;
+        childLC.setBPAlignment(alignment);
 
         BlockSequence blockList;
         blockLists = new java.util.ArrayList();

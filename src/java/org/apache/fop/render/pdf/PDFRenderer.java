@@ -51,6 +51,7 @@ import org.apache.fop.area.OffDocumentItem;
 import org.apache.fop.area.BookmarkData;
 import org.apache.fop.area.inline.Character;
 import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.inline.InlineBlockParent;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.ForeignObject;
@@ -1302,6 +1303,17 @@ public class PDFRenderer extends PrintRenderer {
         }
     }
 
+    /** @see org.apache.fop.render.AbstractRenderer */
+    protected void renderInlineBlockParent(InlineBlockParent ibp) {
+        float start = currentIPPosition / 1000f;
+        float top = (ibp.getOffset() + currentBPPosition) / 1000f;
+        float width = ibp.getIPD() / 1000f;
+        float height = ibp.getBPD() / 1000f;
+        drawBackAndBorders(ibp, start, top, width, height);
+        
+        super.renderInlineBlockParent(ibp);
+    }
+    
     /**
      * @see org.apache.fop.render.Renderer#renderCharacter(Character)
      */

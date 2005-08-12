@@ -20,6 +20,7 @@ package org.apache.fop.layoutmgr.inline;
 
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.LinkResolver;
@@ -41,14 +42,14 @@ public class BasicLinkLayoutManager extends InlineLayoutManager {
         fobj = node;
     }
 
-    protected InlineParent createArea() {
-        InlineParent area = super.createArea();
+    protected InlineArea createArea(boolean bInlineParent) {
+        InlineArea area = super.createArea(bInlineParent);
         setupBasicLinkArea(parentLM, area);
         return area;
     }
     
     private void setupBasicLinkArea(LayoutManager parentLM,
-                                      InlineParent area) {
+                                      InlineArea area) {
          if (fobj.getExternalDestination() != null) {
              area.addTrait(Trait.EXTERNAL_LINK, fobj.getExternalDestination());
          } else {

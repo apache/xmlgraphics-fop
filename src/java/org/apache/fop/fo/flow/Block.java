@@ -29,6 +29,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.FObjMixed;
+import org.apache.fop.fo.NullCharIterator;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.RecursiveCharIterator;
@@ -507,6 +508,11 @@ public class Block extends FObjMixed {
         }
     }
      
+    /** @see org.apache.fop.fo.FONode#charIterator() */
+    public CharIterator charIterator() {
+        return NullCharIterator.getInstance();
+    }
+
     /**
      * @see org.apache.fop.fo.FONode#getName()
      */

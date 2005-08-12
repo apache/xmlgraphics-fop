@@ -166,7 +166,10 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
      */
     public boolean mustKeepTogether() {
         //TODO Keeps will have to be more sophisticated sooner or later
-        return ((BlockLevelLayoutManager)getParent()).mustKeepTogether() 
+        // TODO This is a quick fix for the fact that the parent is not always a BlockLevelLM;
+        // eventually mustKeepTogether() must be moved up to the LM interface
+        return (getParent() instanceof BlockLevelLayoutManager
+                && ((BlockLevelLayoutManager) getParent()).mustKeepTogether()) 
                 || !getBlockFO().getKeepTogether().getWithinPage().isAuto()
                 || !getBlockFO().getKeepTogether().getWithinColumn().isAuto();
     }
@@ -303,7 +306,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
                     splitLength += element.getW();
                     lastLM = element.getLayoutManager();
                 }
-                }
+            }
             //System.out.println("addAreas riferito a storedList da " +
                   // iFirst + " a " + iLast);
             //System.out.println("splitLength= " + splitLength
