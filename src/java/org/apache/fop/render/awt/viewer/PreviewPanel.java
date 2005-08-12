@@ -289,9 +289,8 @@ public class PreviewPanel extends JPanel {
                 return;
             }
 
-            if (fop == null) {
-                fop = new Fop(Constants.RENDER_AWT, foUserAgent);
-            }
+            //Always recreate the Fop instance. It is a use-once only.
+            fop = new Fop(Constants.RENDER_AWT, foUserAgent);
 
             pagePanels = null;
 
