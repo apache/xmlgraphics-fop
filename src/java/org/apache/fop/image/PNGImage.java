@@ -48,7 +48,15 @@ public class PNGImage extends BatikImage {
         PNGDecodeParam param = new PNGDecodeParam();
         param.setPerformGammaCorrection(true);
         param.setDisplayExponent(2.2f); // sRGB gamma
-        return new PNGRed(stream, param);
+        PNGRed red = new PNGRed(stream, param); 
+        String unit = (String)red.getProperty("pixel_units");
+        if ("Meters".equals(unit)) {
+            this.dpiHorizontal = ((Integer)red.getProperty("x_pixels_per_unit")).intValue() 
+                * 25.4f / 1000f;
+            this.dpiVertical = ((Integer)red.getProperty("y_pixels_per_unit")).intValue()
+                * 25.4f / 1000f;
+        }
+        return red;
     }
     
 }
