@@ -26,6 +26,7 @@ import java.util.ListIterator;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.layoutmgr.KnuthSequence;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
@@ -418,6 +419,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     public LinkedList getNextKnuthElements(LayoutContext context,
                                            int alignment) {
         LinkedList returnList = new LinkedList();
+        KnuthSequence sequence = new KnuthSequence(true);
+        returnList.add(sequence);
 
         while (iNextStart < textArray.length) {
             if (textArray[iNextStart] == SPACE
@@ -425,7 +428,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 // normal, breaking space
                 // or non-breaking space
                 if (textArray[iNextStart] == NBSPACE) {
-                    returnList.add
+                    sequence.add
                         (new KnuthPenalty(0, KnuthElement.INFINITE, false,
                                           new LeafPosition(this, vecAreaInfo.size() - 1),
                                           false));
@@ -436,23 +439,23 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         (new AreaInfo(iNextStart, (short) (iNextStart + 1),
                                       (short) 1, (short) 0,
                                       wordSpaceIPD, false));
-                    returnList.add
+                    sequence.add
                         (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                                        new LeafPosition(this, vecAreaInfo.size() - 1), false));
-                    returnList.add
+                    sequence.add
                         (new KnuthPenalty(0, 0, false,
                                           new LeafPosition(this, -1), true));
-                    returnList.add
+                    sequence.add
                         (new KnuthGlue(wordSpaceIPD.opt,
                                        - 6 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                                        new LeafPosition(this, -1), true));
-                    returnList.add
+                    sequence.add
                         (new KnuthInlineBox(0, 0, 0, 0,
                                       new LeafPosition(this, -1), true));
-                    returnList.add
+                    sequence.add
                         (new KnuthPenalty(0, KnuthElement.INFINITE, false,
                                           new LeafPosition(this, -1), true));
-                    returnList.add
+                    sequence.add
                         (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                                        new LeafPosition(this, -1), true));
                     iNextStart ++;
@@ -464,13 +467,13 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         (new AreaInfo(iNextStart, (short) (iNextStart + 1),
                                       (short) 1, (short) 0,
                                       wordSpaceIPD, false));
-                    returnList.add
+                    sequence.add
                         (new KnuthGlue(0, 3 * wordSpaceIPD.opt, 0,
                                        new LeafPosition(this, vecAreaInfo.size() - 1), false));
-                    returnList.add
+                    sequence.add
                         (new KnuthPenalty(0, 0, false,
                                           new LeafPosition(this, -1), true));
-                    returnList.add
+                    sequence.add
                         (new KnuthGlue(wordSpaceIPD.opt,
                                        - 3 * wordSpaceIPD.opt, 0,
                                        new LeafPosition(this, -1), true));
@@ -482,7 +485,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         (new AreaInfo(iNextStart, (short) (iNextStart + 1),
                                       (short) 1, (short) 0,
                                       wordSpaceIPD, false));
-                    returnList.add
+                    sequence.add
                         (new KnuthGlue(wordSpaceIPD.opt,
                                        wordSpaceIPD.max - wordSpaceIPD.opt,
                                        wordSpaceIPD.opt - wordSpaceIPD.min,
@@ -495,7 +498,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         (new AreaInfo(iNextStart, (short) (iNextStart + 1),
                                       (short) 1, (short) 0,
                                       wordSpaceIPD, false));
-                    returnList.add
+                    sequence.add
                         (new KnuthGlue(wordSpaceIPD.opt,
                                        wordSpaceIPD.max - wordSpaceIPD.opt, 0,
                                        new LeafPosition(this, vecAreaInfo.size() - 1), false));
@@ -507,10 +510,10 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                     (new AreaInfo(iNextStart, (short) (iNextStart + 1),
                                   (short) 1, (short) 0,
                                   wordSpaceIPD, false));
-                returnList.add
+                sequence.add
                     (new KnuthPenalty(0, KnuthElement.INFINITE, false,
                                       new LeafPosition(this, vecAreaInfo.size() - 1), false));
-                returnList.add
+                sequence.add
                     (new KnuthGlue(wordSpaceIPD.opt,
                                    wordSpaceIPD.max - wordSpaceIPD.opt,
                                    wordSpaceIPD.opt - wordSpaceIPD.min,
@@ -518,12 +521,13 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 iNextStart ++;
             } else if (textArray[iNextStart] == NEWLINE) {
                 // linefeed; this can happen when linefeed-treatment="preserve"
-                // add a penalty item to the list and return
-                returnList.add
+                // add a penalty item to the list and start a new sequence
+                sequence.add
                     (new KnuthPenalty(0, -KnuthElement.INFINITE,
                                       false, null, false));
+                sequence = new KnuthSequence(true);
+                returnList.add(sequence);
                 iNextStart ++;
-                return returnList;
             } else {
                 // the beginning of a word
                 iThisStart = iNextStart;
@@ -548,25 +552,25 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 if (letterSpaceIPD.min == letterSpaceIPD.max) {
                     // constant letter space; simply return a box
                     // whose width includes letter spaces
-                    returnList.add
+                    sequence.add
                         (new KnuthInlineBox(wordIPD.opt, lead, total, middle,
                                       new LeafPosition(this, vecAreaInfo.size() - 1), false));
                 } else {
                     // adjustable letter space;
                     // some other KnuthElements are needed
-                    returnList.add
+                    sequence.add
                         (new KnuthInlineBox(wordIPD.opt - iLetterSpaces * letterSpaceIPD.opt,
                                       lead, total, middle,
                                       new LeafPosition(this, vecAreaInfo.size() - 1), false));
-                    returnList.add
+                    sequence.add
                         (new KnuthPenalty(0, KnuthElement.INFINITE, false,
                                           new LeafPosition(this, -1), true));
-                    returnList.add
+                    sequence.add
                         (new KnuthGlue(iLetterSpaces * letterSpaceIPD.opt,
                                        iLetterSpaces * (letterSpaceIPD.max - letterSpaceIPD.opt),
                                        iLetterSpaces * (letterSpaceIPD.opt - letterSpaceIPD.min),
                                        new LeafPosition(this, -1), true));
-                    returnList.add
+                    sequence.add
                         (new KnuthInlineBox(0, lead, total, middle,
                                             new LeafPosition(this, -1), true));
                 }
@@ -577,10 +581,10 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                     && iTempStart < textArray.length
                     && textArray[iTempStart] != SPACE
                     && textArray[iTempStart] != NBSPACE) {
-                    returnList.add
+                    sequence.add
                         (new KnuthPenalty(0, KnuthPenalty.FLAGGED_PENALTY, true,
                                           new LeafPosition(this, -1), false));
-                    returnList.add
+                    sequence.add
                         (new KnuthGlue(letterSpaceIPD.opt,
                                        letterSpaceIPD.max - letterSpaceIPD.opt,
                                        letterSpaceIPD.opt - letterSpaceIPD.min,
@@ -592,6 +596,10 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 iNextStart = iTempStart;
             }
         } // end of while
+        if (((List)returnList.getLast()).size() == 0) {
+            //Remove an empty sequence because of a trailing newline
+            returnList.removeLast();
+        }
         setFinished(true);
         if (returnList.size() > 0) {
             return returnList;
@@ -605,7 +613,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         // look at the Position stored in the first element in oldList
         // which is always a box
         ListIterator oldListIterator = oldList.listIterator();
-        LeafPosition pos = (LeafPosition) ((KnuthBox) oldListIterator.next()).getPosition();
+        KnuthElement el = (KnuthElement)oldListIterator.next();
+        LeafPosition pos = (LeafPosition) ((KnuthBox) el).getPosition();
         AreaInfo ai = (AreaInfo) vecAreaInfo.get(pos.getLeafPos());
         ai.iLScount ++;
         ai.ipdArea.add(letterSpaceIPD);

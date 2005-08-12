@@ -60,6 +60,7 @@ import org.apache.fop.area.inline.Container;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.inline.InlineBlockParent;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
@@ -513,13 +514,14 @@ public class XMLRenderer extends AbstractRenderer {
         atts.clear();
         addAreaAttributes(line);
         addTraitAttributes(line);
+        addAttribute("vpos", currentBPPosition);
         startElement("lineArea", atts);
         super.renderLineArea(line);
         endElement("lineArea");
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#renderViewport(Viewport)
+     * @see org.apache.fop.render.AbstractRenderer#renderViewport(Viewport)
      */
     protected void renderViewport(Viewport viewport) {
         atts.clear();
@@ -544,7 +546,7 @@ public class XMLRenderer extends AbstractRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#renderContainer(Container)
+     * @see org.apache.fop.render.AbstractRenderer#renderContainer(Container)
      */
     public void renderContainer(Container cont) {
         startElement("container");
@@ -570,7 +572,7 @@ public class XMLRenderer extends AbstractRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#renderCharacter(Character)
+     * @see org.apache.fop.render.AbstractRenderer#renderCharacter(Character)
      */
     protected void renderCharacter(org.apache.fop.area.inline.Character ch) {
         atts.clear();
@@ -582,7 +584,7 @@ public class XMLRenderer extends AbstractRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#renderInlineSpace(Space)
+     * @see org.apache.fop.render.AbstractRenderer#renderInlineSpace(Space)
      */
     protected void renderInlineSpace(Space space) {
         atts.clear();
@@ -592,7 +594,7 @@ public class XMLRenderer extends AbstractRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#renderText(TextArea)
+     * @see org.apache.fop.render.AbstractRenderer#renderText(TextArea)
      */
     protected void renderText(TextArea text) {
         atts.clear();
@@ -603,6 +605,7 @@ public class XMLRenderer extends AbstractRenderer {
             addAttribute("tlsadjust", text.getTextLetterSpaceAdjust());
         }
         addAttribute("vpos", text.getOffset());
+        addAreaAttributes(text);
         addTraitAttributes(text);
         startElement("text", atts);
         characters(text.getTextArea());
@@ -611,18 +614,28 @@ public class XMLRenderer extends AbstractRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#renderInlineParent(InlineParent)
+     * @see org.apache.fop.render.AbstractRenderer#renderInlineParent(InlineParent)
      */
     protected void renderInlineParent(InlineParent ip) {
         atts.clear();
+        addAreaAttributes(ip);
         addTraitAttributes(ip);
         startElement("inlineparent", atts);
         super.renderInlineParent(ip);
         endElement("inlineparent");
     }
 
+    protected void renderInlineBlockParent(InlineBlockParent ibp) {
+        atts.clear();
+        addAreaAttributes(ibp);
+        addTraitAttributes(ibp);
+        startElement("inlineblockparent", atts);
+        super.renderInlineBlockParent(ibp);
+        endElement("inlineblockparent");
+    }
+
     /**
-     * @see org.apache.fop.render.Renderer#renderLeader(Leader)
+     * @see org.apache.fop.render.AbstractRenderer#renderLeader(Leader)
      */
     protected void renderLeader(Leader area) {
         String style = "solid";
@@ -656,7 +669,7 @@ public class XMLRenderer extends AbstractRenderer {
         super.renderLeader(area);
     }
 
-    /** @see org.apache.fop.render.AbstractRenderer */
+    /** @see org.apache.fop.render.AbstractRenderer#getMimeType() */
     public String getMimeType() {
         return XML_MIME_TYPE;
     }

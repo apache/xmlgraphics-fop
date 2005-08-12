@@ -44,6 +44,10 @@ public class LoggingElementListObserver implements Observer {
         }
         log.debug(" ");
         log.debug("ElementList: category=" + category + ", id=" + id);
+        if (elementList == null) {
+            log.debug("<<empty list>>");
+            return;
+        }
         ListIterator tempIter = elementList.listIterator();
         KnuthElement temp;
         while (tempIter.hasNext()) {

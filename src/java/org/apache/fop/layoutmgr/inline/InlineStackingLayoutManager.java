@@ -33,11 +33,7 @@ import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.SpaceSpecifier;
-import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.area.Area;
-import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.traits.MinOptMax;
 
@@ -50,7 +46,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager
                                          implements InlineLevelLayoutManager {
 
 
-    private static class StackingIter extends PositionIterator {
+    protected static class StackingIter extends PositionIterator {
 
         StackingIter(Iterator parentIter) {
             super(parentIter);
@@ -81,7 +77,6 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager
     //private BreakPoss prevBP;
     protected LayoutContext childLC;
 
-    private LayoutManager lastChildLM = null; // Set when return last breakposs
     private boolean bAreaCreated = false;
 
     //private LayoutManager currentLM = null;
@@ -177,10 +172,6 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager
         hmPrevIPD.clear();
     }
 
-    protected InlineParent createArea() {
-        return new InlineParent();
-    }
-
     /**
      * This method is called by addAreas() so IDs can be added to a page for FOs that 
      * support the 'id' property.
@@ -189,103 +180,6 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager
         // Do nothing here, overriden in subclasses that have an 'id' property.
     }
     
-    /**
-     * Generate and add areas to parent area.
-     * Set size of each area. This should only create and return one
-     * inline area for any inline parent area.
-     *
-     * @param parentIter Iterator over Position information returned
-     * by this LayoutManager.
-     * @param dSpaceAdjust Factor controlling how much extra space to add
-     * in order to justify the line.
-     */
-    public void addAreas(PositionIterator parentIter,
-                         LayoutContext context) {
-        addId();
-        InlineParent parent = createArea();
-        parent.setBPD(context.getLineHeight());
-        parent.setOffset(0);
-        setCurrentArea(parent);
-
-        setChildContext(new LayoutContext(context)); // Store current value
-
-        // If has fence, make a new leadingSS
-        /* How to know if first area created by this LM? Keep a count and
-         * reset it if getNextBreakPoss() is called again.
-         */
-        if (hasLeadingFence(bAreaCreated)) {
-            getContext().setLeadingSpace(new SpaceSpecifier(false));
-            getContext().setFlags(LayoutContext.RESOLVE_LEADING_SPACE,
-                                  true);
-        } else {
-            getContext().setFlags(LayoutContext.RESOLVE_LEADING_SPACE,
-                                  false);
-        }
-
-        if (getSpaceStart() != null) {
-            context.getLeadingSpace().addSpace(new SpaceVal(getSpaceStart()));
-        }
-
-        // "unwrap" the NonLeafPositions stored in parentIter
-        // and put them in a new list; 
-        // also set lastLM to be the LayoutManager which created
-        // the last Position: if the LAST_AREA flag is set in context,
-        // it must be also set in the LayoutContext given to lastLM,
-        // but unset in the LayoutContext given to the other LMs
-        LinkedList positionList = new LinkedList();
-        NonLeafPosition pos;
-        LayoutManager lastLM = null; // last child LM in this iterator
-        while (parentIter.hasNext()) {
-            pos = (NonLeafPosition) parentIter.next();
-            lastLM = pos.getPosition().getLM();
-            positionList.add(pos.getPosition());
-        }
-
-        StackingIter childPosIter
-            = new StackingIter(positionList.listIterator());
-
-        LayoutManager prevLM = null;
-        InlineLevelLayoutManager childLM;
-        while ((childLM = (InlineLevelLayoutManager) childPosIter.getNextChildLM())
-               != null) {
-            getContext().setFlags(LayoutContext.LAST_AREA,
-                                  context.isLastArea() && childLM == lastLM);
-            childLM.addAreas(childPosIter, getContext());
-            getContext().setLeadingSpace(getContext().getTrailingSpace());
-            getContext().setFlags(LayoutContext.RESOLVE_LEADING_SPACE, true);
-            prevLM = childLM;
-        }
-
-        /* If has trailing fence,
-         * resolve trailing space specs from descendants.
-         * Otherwise, propagate any trailing space specs to parent LM via
-         * the context object.
-         * If the last child LM called return ISLAST in the context object
-         * and it is the last child LM for this LM, then this must be
-         * the last area for the current LM also.
-         */
-        boolean bIsLast =
-          (getContext().isLastArea() && prevLM == lastChildLM);
-        if (hasTrailingFence(bIsLast)) {
-            addSpace(getCurrentArea(),
-                     getContext().getTrailingSpace().resolve(false),
-                     getContext().getSpaceAdjust());
-            context.setTrailingSpace(new SpaceSpecifier(false));
-        } else {
-            // Propagate trailing space-spec sequence to parent LM in context
-            context.setTrailingSpace(getContext().getTrailingSpace());
-        }
-        // Add own trailing space to parent context (or set on area?)
-        if (context.getTrailingSpace() != null  && getSpaceEnd() != null) {
-            context.getTrailingSpace().addSpace(new SpaceVal(getSpaceEnd()));
-        }
-        setTraits(bAreaCreated, !bIsLast);
-        
-        parentLM.addChildArea(getCurrentArea());
-        context.setFlags(LayoutContext.LAST_AREA, bIsLast);
-        bAreaCreated = true;
-    }
-
     protected Area getCurrentArea() {
         return currentArea;
     }
@@ -296,19 +190,6 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager
 
     protected void setTraits(boolean bNotFirst, boolean bNotLast) {
         
-    }
-
-    public void addChildArea(Area childArea) {
-        // Make sure childArea is inline area
-        if (childArea instanceof InlineArea) {
-            Area parent = getCurrentArea();
-            if (getContext().resolveLeadingSpace()) {
-                addSpace(parent,
-                         getContext().getLeadingSpace().resolve(false),
-                         getContext().getSpaceAdjust());
-            }
-            parent.addChildArea(childArea);
-        }
     }
 
     protected void setChildContext(LayoutContext lc) {
@@ -342,57 +223,6 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager
         }
     }
 
-    public LinkedList getNextKnuthElements(LayoutContext lc, int alignment) {
-        InlineLevelLayoutManager curLM;
-
-        // the list returned by child LM
-        LinkedList returnedList;
-        KnuthElement returnedElement;
-
-        // the list which will be returned to the parent LM
-        LinkedList returnList = new LinkedList();
-
-        SpaceSpecifier leadingSpace = lc.getLeadingSpace();
-
-        if (lc.startsNewArea()) {
-            // First call to this LM in new parent "area", but this may
-            // not be the first area created by this inline
-            childLC = new LayoutContext(lc);
-            lc.getLeadingSpace().addSpace(new SpaceVal(getSpaceStart()));
-
-            // Check for "fence"
-            if (hasLeadingFence(!lc.isFirstArea())) {
-                // Reset leading space sequence for child areas
-                leadingSpace = new SpaceSpecifier(false);
-            }
-            // Reset state variables
-            clearPrevIPD(); // Clear stored prev content dimensions
-        }
-
-        while ((curLM = (InlineLevelLayoutManager) getChildLM()) != null) {
-            // get KnuthElements from curLM
-            returnedList = curLM.getNextKnuthElements(lc, alignment);
-            if (returnedList != null) {
-                // "wrap" the Position stored in each element of returnedList
-                ListIterator listIter = returnedList.listIterator();
-                while (listIter.hasNext()) {
-                    returnedElement = (KnuthElement) listIter.next();
-                    returnedElement.setPosition
-                        (new NonLeafPosition(this,
-                                             returnedElement.getPosition()));
-                    returnList.add(returnedElement);
-                }
-                setFinished(curLM.isFinished() && (getChildLM() == null));
-                return returnList;
-            } else {
-                // curLM returned null because it finished;
-                // just iterate once more to see if there is another child
-            }
-        }
-        setFinished(true);
-        return null;
-    }
-
     public List addALetterSpaceTo(List oldList) {
         // old list contains only a box, or the sequence: box penalty glue box
 
@@ -407,7 +237,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager
         oldList = ((InlineLevelLayoutManager)
                    element.getLayoutManager()).addALetterSpaceTo(oldList);
 
-        // "wrap" againg the Position stored in each element of oldList
+        // "wrap" again the Position stored in each element of oldList
         oldListIterator = oldList.listIterator();
         while (oldListIterator.hasNext()) {
             element = (KnuthElement) oldListIterator.next();

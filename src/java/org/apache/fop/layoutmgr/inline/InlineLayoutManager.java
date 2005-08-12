@@ -21,6 +21,9 @@ package org.apache.fop.layoutmgr.inline;
 import java.util.ListIterator;
 import java.util.LinkedList;
 
+import org.apache.fop.area.Area;
+import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.inline.InlineBlockParent;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fo.flow.InlineLevel;
@@ -28,10 +31,14 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.layoutmgr.KnuthElement;
+import org.apache.fop.layoutmgr.KnuthSequence;
+import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.SpaceSpecifier;
 import org.apache.fop.layoutmgr.TraitSetter;
+import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
 
@@ -45,6 +52,9 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
 
     private CommonMarginInline inlineProps = null;
     private CommonBorderPaddingBackground borderProps = null;
+
+    private boolean bAreaCreated = false;
+    private LayoutManager lastChildLM = null; // Set when return last breakposs;
 
     /**
      * Create an inline layout manager.
@@ -109,8 +119,14 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
     }
     
     /** @see org.apache.fop.layoutmgr.inline.InlineStackingLayoutManager#createArea() */
-    protected InlineParent createArea() {
-        InlineParent area = super.createArea(); 
+    protected InlineArea createArea(boolean bInlineParent) {
+        InlineArea area;
+        if (bInlineParent) {
+            area = new InlineParent();
+            area.setOffset(0);
+        } else {
+            area = new InlineBlockParent();
+        }
         TraitSetter.setProducerID(area, getInlineFO().getId());
         return area;
     }
@@ -132,7 +148,8 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */
     public LinkedList getNextKnuthElements(LayoutContext lc, int alignment) {
-        InlineLevelLayoutManager curLM;
+        InlineLevelLayoutManager curILM;
+        LayoutManager curLM, lastLM = null;
 
         // the list returned by child LM
         LinkedList returnedList;
@@ -140,6 +157,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
 
         // the list which will be returned to the parent LM
         LinkedList returnList = new LinkedList();
+        KnuthSequence lastSequence = null;
 
         SpaceSpecifier leadingSpace = lc.getLeadingSpace();
 
@@ -160,27 +178,236 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
             clearPrevIPD(); // Clear stored prev content dimensions
         }
 
-        while ((curLM = (InlineLevelLayoutManager) getChildLM()) != null) {
+        StringBuffer trace = new StringBuffer("InlineLM:");
+
+        while ((curLM = (LayoutManager) getChildLM()) != null) {
             // get KnuthElements from curLM
             returnedList = curLM.getNextKnuthElements(lc, alignment);
-            if (returnedList != null) {
-                // "wrap" the Position stored in each element of returnedList
-                ListIterator listIter = returnedList.listIterator();
-                while (listIter.hasNext()) {
-                    returnedElement = (KnuthElement) listIter.next();
-                    returnedElement.setPosition
-                        (new NonLeafPosition(this,
-                                             returnedElement.getPosition()));
-                    returnList.add(returnedElement);
-                }
-                return returnList;
-            } else {
+            if (returnedList == null) {
                 // curLM returned null because it finished;
                 // just iterate once more to see if there is another child
+                continue;
+            }
+            if (curLM instanceof InlineLevelLayoutManager) {
+                // close the last block sequence 
+                if (lastSequence != null && !lastSequence.isInlineSequence()) {
+                    lastSequence = null;
+                    if (log.isTraceEnabled()) {
+                        trace.append(" ]");
+                    }
+                }
+                // "wrap" the Position stored in each element of returnedList
+                ListIterator seqIter = returnedList.listIterator();
+                while (seqIter.hasNext()) {
+                    KnuthSequence sequence = (KnuthSequence) seqIter.next();
+                    ListIterator listIter = sequence.listIterator();
+                    while (listIter.hasNext()) {
+                        returnedElement = (KnuthElement) listIter.next();
+                        returnedElement.setPosition
+                        (new NonLeafPosition(this,
+                                returnedElement.getPosition()));
+                    }
+                    if (!sequence.isInlineSequence()) {
+                        if (lastSequence != null && lastSequence.isInlineSequence()) {
+                            // log.error("Last inline sequence should be closed before a block sequence");
+                            lastSequence.add(new KnuthPenalty(0, -KnuthElement.INFINITE,
+                                                   false, null, false));
+                            lastSequence = null;
+                            if (log.isTraceEnabled()) {
+                                trace.append(" ]");
+                            }
+                        }
+                        returnList.add(sequence);
+                        if (log.isTraceEnabled()) {
+                            trace.append(" B");
+                        }
+                    } else {
+                        if (lastSequence == null) {
+                            lastSequence = new KnuthSequence(true);
+                            returnList.add(lastSequence);
+                            if (log.isTraceEnabled()) {
+                                trace.append(" [");
+                            }
+                        } else {
+                            if (log.isTraceEnabled()) {
+                                trace.append(" +");
+                            }
+                        }
+                        lastSequence.addAll(sequence);
+                        if (log.isTraceEnabled()) {
+                            trace.append(" I");
+                        }
+                       // finish last paragraph if it was closed with a linefeed
+                        KnuthElement lastElement = (KnuthElement) sequence.getLast();
+                        if (lastElement.isPenalty()
+                                && ((KnuthPenalty) lastElement).getP()
+                                == -KnuthPenalty.INFINITE) {
+                            // a penalty item whose value is -inf
+                            // represents a preserved linefeed,
+                            // wich forces a line break
+                            lastSequence = null;
+                            if (log.isTraceEnabled()) {
+                                trace.append(" ]");
+                            }
+                        }
+                    }
+                }
+            } else { // A block LM
+                // close the last inline sequence 
+                if (lastSequence != null && lastSequence.isInlineSequence()) {
+                    lastSequence.add(new KnuthPenalty(0, -KnuthElement.INFINITE,
+                                           false, null, false));
+                    lastSequence = null;
+                    if (log.isTraceEnabled()) {
+                        trace.append(" ]");
+                    }
+                }
+                if (curLM != lastLM) {
+                    // close the last block sequence
+                    if (lastSequence != null && !lastSequence.isInlineSequence()) {
+                        lastSequence = null;
+                        if (log.isTraceEnabled()) {
+                            trace.append(" ]");
+                        }
+                    }
+                    lastLM = curLM;
+                }
+                if (lastSequence == null) {
+                    lastSequence = new KnuthSequence(false);
+                    returnList.add(lastSequence);
+                    if (log.isTraceEnabled()) {
+                        trace.append(" [");
+                    }
+                } else {
+                    if (log.isTraceEnabled()) {
+                        trace.append(" +");
+                    }
+                }
+                ListIterator iter = returnedList.listIterator();
+                while (iter.hasNext()) {
+                    KnuthElement element = (KnuthElement) iter.next();
+                    element.setPosition
+                    (new NonLeafPosition(this,
+                            element.getPosition()));
+                }
+                lastSequence.addAll(returnedList);
+                if (log.isTraceEnabled()) {
+                    trace.append(" L");
+                }
             }
         }
         setFinished(true);
-        return null;
+        log.trace(trace);
+        return returnList.size() == 0 ? null : returnList;
+    }
+
+    /**
+     * Generate and add areas to parent area.
+     * Set size of each area. This should only create and return one
+     * inline area for any inline parent area.
+     *
+     * @param parentIter Iterator over Position information returned
+     * by this LayoutManager.
+     * @param dSpaceAdjust Factor controlling how much extra space to add
+     * in order to justify the line.
+     */
+    public void addAreas(PositionIterator parentIter,
+                         LayoutContext context) {
+        addId();
+
+        setChildContext(new LayoutContext(context)); // Store current value
+
+        // If has fence, make a new leadingSS
+        /* How to know if first area created by this LM? Keep a count and
+         * reset it if getNextBreakPoss() is called again.
+         */
+        if (hasLeadingFence(bAreaCreated)) {
+            getContext().setLeadingSpace(new SpaceSpecifier(false));
+            getContext().setFlags(LayoutContext.RESOLVE_LEADING_SPACE,
+                                  true);
+        } else {
+            getContext().setFlags(LayoutContext.RESOLVE_LEADING_SPACE,
+                                  false);
+        }
+
+        if (getSpaceStart() != null) {
+            context.getLeadingSpace().addSpace(new SpaceVal(getSpaceStart()));
+        }
+
+        // "unwrap" the NonLeafPositions stored in parentIter
+        // and put them in a new list; 
+        // also set lastLM to be the LayoutManager which created
+        // the last Position: if the LAST_AREA flag is set in context,
+        // it must be also set in the LayoutContext given to lastLM,
+        // but unset in the LayoutContext given to the other LMs
+        LinkedList positionList = new LinkedList();
+        NonLeafPosition pos = null;
+        LayoutManager lastLM = null; // last child LM in this iterator
+        while (parentIter.hasNext()) {
+            pos = (NonLeafPosition) parentIter.next();
+            positionList.add(pos.getPosition());
+        }
+        if (pos != null) {
+            lastLM = pos.getPosition().getLM();
+        }
+
+        InlineArea parent = createArea(lastLM == null || lastLM instanceof InlineLevelLayoutManager);
+        parent.setBPD(context.getLineHeight());
+        setCurrentArea(parent);
+        
+        StackingIter childPosIter
+            = new StackingIter(positionList.listIterator());
+
+        LayoutManager prevLM = null;
+        LayoutManager childLM;
+        while ((childLM = childPosIter.getNextChildLM())
+               != null) {
+            getContext().setFlags(LayoutContext.LAST_AREA,
+                                  context.isLastArea() && childLM == lastLM);
+            childLM.addAreas(childPosIter, getContext());
+            getContext().setLeadingSpace(getContext().getTrailingSpace());
+            getContext().setFlags(LayoutContext.RESOLVE_LEADING_SPACE, true);
+            prevLM = childLM;
+        }
+
+        /* If has trailing fence,
+         * resolve trailing space specs from descendants.
+         * Otherwise, propagate any trailing space specs to parent LM via
+         * the context object.
+         * If the last child LM called return ISLAST in the context object
+         * and it is the last child LM for this LM, then this must be
+         * the last area for the current LM also.
+         */
+        boolean bIsLast =
+          (getContext().isLastArea() && prevLM == lastChildLM);
+        if (hasTrailingFence(bIsLast)) {
+            addSpace(getCurrentArea(),
+                     getContext().getTrailingSpace().resolve(false),
+                     getContext().getSpaceAdjust());
+            context.setTrailingSpace(new SpaceSpecifier(false));
+        } else {
+            // Propagate trailing space-spec sequence to parent LM in context
+            context.setTrailingSpace(getContext().getTrailingSpace());
+        }
+        // Add own trailing space to parent context (or set on area?)
+        if (context.getTrailingSpace() != null  && getSpaceEnd() != null) {
+            context.getTrailingSpace().addSpace(new SpaceVal(getSpaceEnd()));
+        }
+        setTraits(bAreaCreated, !bIsLast);
+        
+        parentLM.addChildArea(getCurrentArea());
+        context.setFlags(LayoutContext.LAST_AREA, bIsLast);
+        bAreaCreated = true;
+    }
+
+    public void addChildArea(Area childArea) {
+        Area parent = getCurrentArea();
+        if (getContext().resolveLeadingSpace()) {
+            addSpace(parent,
+                    getContext().getLeadingSpace().resolve(false),
+                    getContext().getSpaceAdjust());
+        }
+        parent.addChildArea(childArea);
     }
 
     /*
