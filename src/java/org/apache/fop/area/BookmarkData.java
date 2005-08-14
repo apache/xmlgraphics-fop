@@ -53,7 +53,7 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
      * This should only be called by the bookmark-tree item because
      * it has no idref item that needs to be resolved.
      *
-     * @param bookmarks fo:bookmark-tree for this document
+     * @param bookmarkTree fo:bookmark-tree for this document
      */
     public BookmarkData(BookmarkTree bookmarkTree) {
         idRef = null;

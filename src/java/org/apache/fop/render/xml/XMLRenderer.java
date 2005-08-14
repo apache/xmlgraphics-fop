@@ -346,7 +346,7 @@ public class XMLRenderer extends AbstractRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#startPageSequence(Title)
+     * @see org.apache.fop.render.Renderer#startPageSequence(LineArea)
      */
     public void startPageSequence(LineArea seqTitle) {
         if (startedSequence) {
@@ -454,7 +454,7 @@ public class XMLRenderer extends AbstractRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderFlow(Flow)
+     * @see org.apache.fop.render.AbstractRenderer#renderFlow(NormalFlow)
      */
     protected void renderFlow(NormalFlow flow) {
         // the normal flow reference area contains stacked blocks

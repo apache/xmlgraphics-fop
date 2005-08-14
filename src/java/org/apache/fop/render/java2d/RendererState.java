@@ -120,7 +120,7 @@ public interface RendererState {
     /**
      * Overwrites the Transform in the Graphics2D context. Use <code>transform()</code> if you
      * wish to compose with the current Affinetransform instead.
-     * @see java.awt.Graphics2D.setTransform().
+     * @see java.awt.Graphics2D#setTransform(AffineTransform tf).
      * @param tf the transform to concatonate to the current level transform
      */
     public abstract void setTransform(AffineTransform tf);
@@ -128,7 +128,7 @@ public interface RendererState {
     /**
      * Composes an AffineTransform object with the Transform in this Graphics2D
      * according to the rule last-specified-first-applied.
-     * @see java.awt.Graphics2D.transform().
+     * @see java.awt.Graphics2D#transform(AffineTransform tf).
      *
      * @param tf the transform to concatonate to the current level transform
      */

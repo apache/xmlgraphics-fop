@@ -730,17 +730,17 @@ public abstract class BreakingAlgorithm {
     /**
      * Return the element at index idx in the paragraph.
      * @param idx index of the element.
-     * @return
+     * @return the element at index idx in the paragraph.
      */
     protected KnuthElement getElement(int idx) {
         return (KnuthElement) par.get(idx);
     }
 
     /**
-     * Compare two KnuthNodes and return the node with the least demerit. 
+     * Compare two KnuthNodes and return the node with the least demerit.
      * @param node1 The first knuth node.
      * @param node2 The other knuth node.
-     * @return
+     * @return the node with the least demerit.
      */
     protected KnuthNode compareNodes(KnuthNode node1, KnuthNode node2) {
         if (node1 == null || node2.position > node1.position) {

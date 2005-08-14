@@ -101,7 +101,7 @@ public class Fop implements Constants {
 
     /**
      * Constructor that creates a default FOUserAgent
-     * @see org.apache.fop.apps.Fop#(int, FOUserAgent)
+     * @see org.apache.fop.apps.Fop#Fop(int, FOUserAgent)
      */
     public Fop(int renderType) {
         this(renderType, new FOUserAgent());

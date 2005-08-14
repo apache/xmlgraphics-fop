@@ -34,7 +34,6 @@ public class NumericProperty extends Property implements Numeric, Length {
     /**
      * Construct a Numeric object by specifying one or more components,
      * including absolute length, percent length, table units.
-     * @param valType A combination of bits representing the value types.
      * @param value The value of the numeric.
      * @param dim The dimension of the value. 0 for a Number, 1 for a Length
      * (any type), >1, <0 if Lengths have been multiplied or divided.

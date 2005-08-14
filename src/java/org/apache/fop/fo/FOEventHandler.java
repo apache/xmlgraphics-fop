@@ -84,7 +84,7 @@ public abstract class FOEventHandler {
 
     /**
      * Main constructor
-     * @param FOUserAgent the apps.FOUserAgent instance for this process
+     * @param foUserAgent the apps.FOUserAgent instance for this process
      */
     public FOEventHandler(FOUserAgent foUserAgent) {
         this.foUserAgent = foUserAgent;
@@ -203,7 +203,7 @@ public abstract class FOEventHandler {
 
     /**
     *
-    * @param bl BlockContainer that is starting.
+    * @param blc BlockContainer that is starting.
     */
    public void startBlockContainer(BlockContainer blc) {
    }

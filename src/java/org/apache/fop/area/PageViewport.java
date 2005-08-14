@@ -153,7 +153,7 @@ public class PageViewport implements Resolvable, Cloneable {
      * to unresolvedIDRefs, for subsequent resolution by AreaTreeHandler
      * calls to this object's resolveIDRef().
      *
-     * @param id the idref
+     * @param idref the idref
      * @param res the child element of this page that needs this
      *      idref resolved
      */
@@ -188,7 +188,7 @@ public class PageViewport implements Resolvable, Cloneable {
     }
 
     /**
-     * @see org.apache.fop.area.Resolveable#resolveIDRef(String, List)
+     * @see org.apache.fop.area.Resolvable#resolveIDRef(String, List)
      */
     public void resolveIDRef(String id, List pages) {
         if (page == null) {

@@ -849,7 +849,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
 
     /** 
      * Force current area to be added to parent area.
-     * @see org.apache.fop.layoutmgr.AbstractLayoutManager#flush()
+     * @see org.apache.fop.layoutmgr.BlockStackingLayoutManager#flush()
      */
     protected void flush() {
         viewportBlockArea.addBlock(referenceArea, autoHeight);

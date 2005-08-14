@@ -280,7 +280,7 @@ public class ExternalGraphic extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#getLayoutDimension(org.apache.fop.datatypes.PercentBase.DimensionType)
+     * @see org.apache.fop.fo.FObj#getLayoutDimension(org.apache.fop.datatypes.PercentBase.LayoutDimension)
      */
     public Number getLayoutDimension(PercentBase.LayoutDimension key) {
         if (key == PercentBase.IMAGE_INTRINSIC_WIDTH) {

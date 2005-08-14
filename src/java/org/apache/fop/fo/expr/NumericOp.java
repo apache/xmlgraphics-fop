@@ -140,10 +140,9 @@ public class NumericOp {
     }
 
     /**
-     * Return the absolute value of the operand Numeric.
-     * @param op1 The first operand.
-     * @param op2 The second operand.
-     * @return A new Numeric object representing the absolute value.
+     * Return the absolute value of a Numeric.
+     * @param op the operand.
+     * @return a new Numeric object representing the absolute value of the operand.
      */
     public static Numeric abs(Numeric op) throws PropertyException {
         if (op.isAbsolute()) {
@@ -158,10 +157,9 @@ public class NumericOp {
     }
     
     /**
-     * Return the absolute value of the operand Numeric.
-     * @param op1 The first operand.
-     * @param op2 The second operand.
-     * @return A new Numeric object representing the absolute value.
+     * Return the negation of a Numeric.
+     * @param op the  operand.
+     * @return a new Numeric object representing the negation of the operand.
      */
     public static Numeric negate(Numeric op) throws PropertyException {
         if (op.isAbsolute()) {
@@ -176,12 +174,11 @@ public class NumericOp {
     }
     
     /**
-     * Return the largest of the two operands.
+     * Return the larger of the two Numerics.
      * @param op1 The first operand.
      * @param op2 The second operand.
      * @return a Numeric which is the maximum of the two operands.
-     * @throws PropertyException If the dimensions or value types of the
-     * object and the operand are different.
+     * @throws PropertyException if the dimensions or value types of the operands are different.
      */
     public static Numeric max(Numeric op1, Numeric op2) throws PropertyException {
         if (op1.isAbsolute() && op2.isAbsolute()) {
@@ -199,12 +196,11 @@ public class NumericOp {
     }
     
     /**
-     * Return the smallest of the two operands.
+     * Return the smaller of two Numerics.
      * @param op1 The first operand.
      * @param op2 The second operand.
      * @return a Numeric which is the minimum of the two operands.
-     * @throws PropertyException If the dimensions or value types of the
-     * object and the operand are different.
+     * @throws PropertyException if the dimensions or value types of the operands are different.
      */
     public static Numeric min(Numeric op1, Numeric op2) throws PropertyException {
         if (op1.isAbsolute() && op2.isAbsolute()) {

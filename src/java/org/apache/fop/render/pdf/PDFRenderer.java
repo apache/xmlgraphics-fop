@@ -1315,7 +1315,7 @@ public class PDFRenderer extends PrintRenderer {
     }
     
     /**
-     * @see org.apache.fop.render.Renderer#renderCharacter(Character)
+     * @see org.apache.fop.render.AbstractRenderer#renderCharacter(Character)
      */
     public void renderCharacter(Character ch) {
         StringBuffer pdf = new StringBuffer();
@@ -1388,7 +1388,7 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#renderText(TextArea)
+     * @see org.apache.fop.render.AbstractRenderer#renderText(TextArea)
      */
     public void renderText(TextArea text) {
         beginTextObject();
