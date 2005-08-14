@@ -23,11 +23,13 @@
 Building instructions
 =====================
 
-First, make sure your current working directory is where this very file is
+First, install Ant (http://ant.apache.org). Check that ant.sh or ant.bat
+is in your search path and that JAVA_HOME and ANT_HOME are properly set.
+Next make sure your current working directory is where this very file is
 located. Then type
 
-  ./build.sh (on unixes)
-  build (on Windows)
+  ant.sh (on unixes)
+  ant (on Windows)
 
 If everything is right and all the required packages are visible, this action
 will generate a file called "fop.jar" in the "./build" directory.
@@ -40,19 +42,19 @@ Build targets
 =============
 
 The build system is not only responsible for compiling Fop into a jar file,
-but is also responsible for creating the HTML documentation, javadocs,
-distributions and web site. In fact, the file you have here is _exactly_ what
-is used by fop maintainers to take care of everything in the Fop
+but is also responsible for creating the javadocs, distributions, examples
+and a miscellaneous stuff. In fact, the file you have here is _exactly_ what
+is used by fop maintainers to take care of nearly everything in the Fop
 project, no less and no more.
 
-Call the build script (see above) with the parameter "-projecthelp" to get a
+Call the Ant (see above) with the parameter "-projecthelp" to get a
 list of possible build targets.
 
 ============================================================================ -->
 <project default="all" basedir=".">
 
-  <!-- used to set values for testing etc. -->
-  <!-- build-local.properties is not stored in CVS and overrides values from build.properties -->
+  <!-- See build.properties and build-local.properties for overriding build settings. -->
+  <!-- build-local.properties is not stored in SVN and overrides values from build.properties -->
   <property file="${basedir}/build-local.properties"/>
   <property file="${basedir}/build.properties"/>
   <property environment="env"/>
@@ -111,18 +113,14 @@ list of possible build targets.
     </fileset>
   </path>
 
-  <path id="libs-basic-run-classpath">
+  <path id="libs-run-classpath">
     <fileset dir="${basedir}/lib">
       <include name="*.jar"/>
-      <exclude name="ant.jar"/>
     </fileset>
     <fileset dir="${optional.lib.dir}">
       <include name="*.jar"/>
+      <exclude name="ant.jar"/>
     </fileset>
-  </path>
-
-  <path id="libs-run-classpath">
-    <path refid="libs-basic-run-classpath"/>
     <fileset dir="${basedir}/build">
       <include name="fop.jar"/>
       <include name="fop-hyph.jar" />
@@ -150,90 +148,52 @@ list of possible build targets.
     <exclude name="org/apache/fop/pdf/PDFEncryptionJCE.java" unless="jce.present"/>
   </patternset>
 
-  <patternset id="base-sources">
-    <include name="**/*.java"/>
-  </patternset>
+  <property name="Name" value="Fop"/>
+  <property name="name" value="fop"/>
+  <property name="NAME" value="FOP"/>
+  <property name="version" value="1.0dev"/>
+  <property name="year" value="1999-2005"/>
 
-  <patternset id="graphics-configuration-source">
-    <include name="org/apache/fop/svg/GraphicsConfiguration.java"/>
-  </patternset>
+  <property name="debug" value="on"/>
+  <property name="optimize" value="off"/>
+  <property name="deprecation" value="on"/>
+  <property name="javac.target" value="1.3"/>
+    
+  <property name="javadoc.packages" value="org.apache.fop.*"/>
+  
+  <property name="src.dir" value="${basedir}/src"/>
+  <property name="src.codegen.dir" value="${src.dir}/codegen"/>
+  <property name="src.java.dir" value="${src.dir}/java"/>
+  <property name="src.hyph.dir" value="${src.dir}/hyph"/>
+  <property name="src.viewer.resources.dir" value="${src.java.dir}/org/apache/fop/render/awt/viewer/resources"/>
+  <property name="src.viewer.images.dir" value="${src.java.dir}/org/apache/fop/render/awt/viewer/images"/>
+  <property name="xdocs.dir" value="${src.dir}/documentation/content/xdocs"/>
+  <property name="fo.examples.dir" value="${basedir}/examples/fo/basic"/>
+  <property name="lib.dir" value="${basedir}/lib"/>
 
+  <property name="build.dir" value="${basedir}/build"/>
+  <property name="build.gensrc.dir" value="${build.dir}/gensrc"/>
+  <property name="build.classes.dir" value="${build.dir}/classes"/>
+  <property name="build.javadocs.dir" value="${build.dir}/javadocs"/>
+  <property name="build.examples.dir" value="${build.dir}/examples"/>
+
+  <property name="build.viewer.resources.dir" value="${build.classes.dir}/org/apache/fop/render/awt/viewer/resources"/>
+  <property name="build.viewer.images.dir" value="${build.classes.dir}/org/apache/fop/render/awt/viewer/images"/>
+
+  <property name="dist.bin.dir" value="${basedir}/dist-bin"/>
+  <property name="dist.src.dir" value="${basedir}/dist-src"/>
+  <property name="dist.bin.result.dir" value="${dist.bin.dir}/${Name}-${version}"/>
+  <property name="dist.src.result.dir" value="${dist.src.dir}/${Name}-${version}"/>
 
   <!-- =================================================================== -->
   <!-- Initialization target                                               -->
   <!-- =================================================================== -->
   <target name="init" depends="init-avail, init-filters-jdk14, init-filters-jdk13">
-    <tstamp/>
-    <property name="Name" value="Fop"/>
-    <property name="name" value="fop"/>
-    <property name="NAME" value="FOP"/>
-    <property name="version" value="1.0dev"/>
-    <property name="year" value="1999-2005"/>
-
-    <echo message="------------------- ${Name} ${version} [${year}] ----------------"/>
-    <echo message="See build.properties and build-local.properties for additional build settings"/>
-
-    <property name="build.compiler" value="classic"/>
-    <property name="debug" value="on"/>
-    <property name="optimize" value="off"/>
-    <property name="deprecation" value="on"/>
-    
-    <property name="textfontencoding" value="WinAnsiEncoding"/>
-
-    <property name="src.dir" value="${basedir}/src"/>
-    <property name="src.java" value="${src.dir}/java"/>
-    <property name="src.codegen" value="${src.dir}/codegen"/>
-    <property name="xdocs.dir" value="${src.dir}/documentation/content/xdocs"/>
-    <property name="fo.examples.dir" value="${basedir}/examples/fo/basic"/>
-    <property name="lib.dir" value="${basedir}/lib"/>
-    <property name="hyph.dir" value="${src.dir}/hyph"/>
-    <property name="conf.dir" value="${basedir}/conf"/>
-    <property name="packages" value="org.apache.fop.*"/>
-
-    <property name="viewer.resources.src.dir" value="${src.java}/org/apache/fop/render/awt/viewer/resources"/>
-    <property name="viewer.images.src.dir" value="${src.java}/org/apache/fop/render/awt/viewer/images"/>
-
-    <property name="build.dir" value="${basedir}/build"/>
-    <property name="build.gensrc" value="${build.dir}/gensrc"/>
-    <property name="build.dest" value="${build.dir}/classes"/>
-    <property name="build.javadocs" value="${build.dir}/javadocs"/>
-    <property name="build.examples.dir" value="${build.dir}/examples"/>
-
-    <property name="viewer.resources.dest.dir" value="${build.dest}/org/apache/fop/render/awt/viewer/resources"/>
-    <property name="viewer.images.dest.dir" value="${build.dest}/org/apache/fop/render/awt/viewer/images"/>
-
-    <property name="dist.bin.dir" value="${basedir}/dist-bin"/>
-    <property name="dist.src.dir" value="${basedir}/dist-src"/>
-    <property name="dist.bin.result.dir" value="${dist.bin.dir}/${Name}-${version}"/>
-    <property name="dist.src.result.dir" value="${dist.src.dir}/${Name}-${version}"/>
-
-    <property name="properties.dir" value="org/apache/fop/fo/properties"/>
-    <property name="fonts.dir" value="org/apache/fop/fonts/base14"/>
-
-    <property name="encodings.xml" value="${src.codegen}/encodings.xml"/>
-    <property name="charlist.xsl" value="${src.codegen}/code-point-mapping.xsl"/>
-    <property name="fontfile.xsl" value="${src.codegen}/font-file.xsl"/>
-    <property name="t1fontfile.xsl" value="${src.codegen}/t1font-file.xsl"/>
-    <property name="ttffontfile.xsl" value="${src.codegen}/ttffontfile.xsl"/>
-
-    <property name="Courier.xml" value="${src.codegen}/Courier.xml"/>
-    <property name="Courier-Oblique.xml" value="${src.codegen}/CourierOblique.xml"/>
-    <property name="Courier-Bold.xml" value="${src.codegen}/CourierBold.xml"/>
-    <property name="Courier-BoldOblique.xml" value="${src.codegen}/CourierBoldOblique.xml"/>
-    <property name="Helvetica.xml" value="${src.codegen}/Helvetica.xml"/>
-    <property name="Helvetica-Oblique.xml" value="${src.codegen}/HelveticaOblique.xml"/>
-    <property name="Helvetica-Bold.xml" value="${src.codegen}/HelveticaBold.xml"/>
-    <property name="Helvetica-BoldOblique.xml" value="${src.codegen}/HelveticaBoldOblique.xml"/>
-    <property name="Times-Roman.xml" value="${src.codegen}/TimesRoman.xml"/>
-    <property name="Times-Italic.xml" value="${src.codegen}/TimesItalic.xml"/>
-    <property name="Times-Bold.xml" value="${src.codegen}/TimesBold.xml"/>
-    <property name="Times-BoldItalic.xml" value="${src.codegen}/TimesBoldItalic.xml"/>
-    <property name="ZapfDingbats.xml" value="${src.codegen}/ZapfDingbats.xml"/>
-    <property name="Symbol.xml" value="${src.codegen}/Symbol.xml"/>
-
   </target>
 
   <target name="init-avail">
+    <echo message="------------------- ${Name} ${version} [${year}] ----------------"/>
+    <echo message="See build.properties and build-local.properties for additional build settings"/>
     <echo message="${ant.version}"/>
     <echo message="VM: ${java.vm.version}, ${java.vm.vendor}"/>
     <echo message="JAVA_HOME: ${env.JAVA_HOME}"/>
@@ -315,108 +275,101 @@ list of possible build targets.
   <!-- =================================================================== -->
   <target name="codegen" depends="init" description="Generates the java files from the xml resources">
     <echo message="Generating the java files from xml resources"/>
-    <mkdir dir="${build.gensrc}"/>
-    <mkdir dir="${build.gensrc}/${fonts.dir}"/>
+    <mkdir dir="${build.gensrc.dir}"/>
+    <mkdir dir="${build.gensrc.dir}/org/apache/fop/fonts/base14"/>
 
-    <style in="${encodings.xml}" style="${charlist.xsl}"
-        out="${build.gensrc}/org/apache/fop/fonts//CodePointMapping.java"/>
+    <style in="${src.codegen.dir}/encodings.xml"
+           style="${src.codegen.dir}/code-point-mapping.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/CodePointMapping.java"/>
     <!-- Task unrolled because of a bug in Xalan included in some
          JDK 1.4 releases
     <style basedir="src/codegen" includes="Helvetica*.xml,Times*.xml,Courier*.xml"
-        style="${fontfile.xsl}"
-        destdir="${build.gensrc}/org/apache/fop/fonts/base14" extension=".java">
-        <param name="encoding" expression="${textfontencoding}"/>
+        style="${src.codegen.dir}/font-file.xsl"
+        destdir="${build.gensrc.dir}/org/apache/fop/fonts/base14" extension=".java">
+        <param name="encoding" expression="WinAnsiEncoding"/>
     </style>
     -->
-    <style in="${Courier.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/org/apache/fop/fonts/base14"
-        out="${build.gensrc}/org/apache/fop/fonts/base14/Courier.java">
-      <param name="encoding" expression="${textfontencoding}"/>
+    <style in="${src.codegen.dir}/Courier.xml" style="${src.codegen.dir}/font-file.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/Courier.java">
+      <param name="encoding" expression="WinAnsiEncoding"/>
     </style>
-    <style in="${Courier-Oblique.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/org/apache/fop/fonts/base14"
-        out="${build.gensrc}/org/apache/fop/fonts/base14/CourierOblique.java">
-      <param name="encoding" expression="${textfontencoding}"/>
+    <style in="${src.codegen.dir}/CourierOblique.xml" style="${src.codegen.dir}/font-file.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/CourierOblique.java">
+      <param name="encoding" expression="WinAnsiEncoding"/>
     </style>
-    <style in="${Courier-Bold.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/org/apache/fop/fonts/base14"
-        out="${build.gensrc}/org/apache/fop/fonts/base14/CourierBold.java">
-      <param name="encoding" expression="${textfontencoding}"/>
+    <style in="${src.codegen.dir}/CourierBold.xml" style="${src.codegen.dir}/font-file.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/CourierBold.java">
+      <param name="encoding" expression="WinAnsiEncoding"/>
     </style>
-    <style in="${Courier-BoldOblique.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/org/apache/fop/fonts/base14"
-        out="${build.gensrc}/org/apache/fop/fonts/base14/CourierBoldOblique.java">
-      <param name="encoding" expression="${textfontencoding}"/>
+    <style in="${src.codegen.dir}/CourierBoldOblique.xml" style="${src.codegen.dir}/font-file.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/CourierBoldOblique.java">
+      <param name="encoding" expression="WinAnsiEncoding"/>
     </style>
-    <style in="${Helvetica.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/org/apache/fop/fonts/base14"
-        out="${build.gensrc}/org/apache/fop/fonts/base14/Helvetica.java">
-      <param name="encoding" expression="${textfontencoding}"/>
+    <style in="${src.codegen.dir}/Helvetica.xml" style="${src.codegen.dir}/font-file.xsl"
+        destdir="${build.gensrc.dir}/org/apache/fop/fonts/base14"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/Helvetica.java">
+      <param name="encoding" expression="WinAnsiEncoding"/>
     </style>
-    <style in="${Helvetica-Bold.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/org/apache/fop/fonts/base14"
-        out="${build.gensrc}/org/apache/fop/fonts/base14/HelveticaBold.java">
-      <param name="encoding" expression="${textfontencoding}"/>
+    <style in="${src.codegen.dir}/HelveticaBold.xml" style="${src.codegen.dir}/font-file.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/HelveticaBold.java">
+      <param name="encoding" expression="WinAnsiEncoding"/>
     </style>
-    <style in="${Helvetica-Oblique.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/org/apache/fop/fonts/base14"
-        out="${build.gensrc}/org/apache/fop/fonts/base14/HelveticaOblique.java">
-      <param name="encoding" expression="${textfontencoding}"/>
+    <style in="${src.codegen.dir}/HelveticaOblique.xml" style="${src.codegen.dir}/font-file.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/HelveticaOblique.java">
+      <param name="encoding" expression="WinAnsiEncoding"/>
     </style>
-    <style in="${Helvetica-BoldOblique.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/org/apache/fop/fonts/base14"
-        out="${build.gensrc}/org/apache/fop/fonts/base14/HelveticaBoldOblique.java">
-      <param name="encoding" expression="${textfontencoding}"/>
+    <style in="${src.codegen.dir}/HelveticaBoldOblique.xml" style="${src.codegen.dir}/font-file.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/HelveticaBoldOblique.java">
+      <param name="encoding" expression="WinAnsiEncoding"/>
     </style>
-    <style in="${Times-Roman.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/org/apache/fop/fonts/base14"
-        out="${build.gensrc}/org/apache/fop/fonts/base14/TimesRoman.java">
-      <param name="encoding" expression="${textfontencoding}"/>
+    <style in="${src.codegen.dir}/TimesRoman.xml" style="${src.codegen.dir}/font-file.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/TimesRoman.java">
+      <param name="encoding" expression="WinAnsiEncoding"/>
     </style>
-    <style in="${Times-Italic.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/org/apache/fop/fonts/base14"
-        out="${build.gensrc}/org/apache/fop/fonts/base14/TimesItalic.java">
-      <param name="encoding" expression="${textfontencoding}"/>
+    <style in="${src.codegen.dir}/TimesItalic.xml" style="${src.codegen.dir}/font-file.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/TimesItalic.java">
+      <param name="encoding" expression="WinAnsiEncoding"/>
     </style>
-    <style in="${Times-Bold.xml}" style="${fontfile.xsl}"
-        out="${build.gensrc}/org/apache/fop/fonts/base14/TimesBold.java">
-      <param name="encoding" expression="${textfontencoding}"/>
+    <style in="${src.codegen.dir}/TimesBold.xml" style="${src.codegen.dir}/font-file.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/TimesBold.java">
+      <param name="encoding" expression="WinAnsiEncoding"/>
     </style>
-    <style in="${Times-BoldItalic.xml}" style="${fontfile.xsl}"
-        out="${build.gensrc}/org/apache/fop/fonts/base14/TimesBoldItalic.java">
-      <param name="encoding" expression="${textfontencoding}"/>
+    <style in="${src.codegen.dir}/TimesBoldItalic.xml" style="${src.codegen.dir}/font-file.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/TimesBoldItalic.java">
+      <param name="encoding" expression="WinAnsiEncoding"/>
     </style>
-    <style in="${Symbol.xml}" style="${fontfile.xsl}"
-        out="${build.gensrc}/org/apache/fop/fonts/base14/Symbol.java"/>
-    <style in="${ZapfDingbats.xml}" style="${fontfile.xsl}"
-        out="${build.gensrc}/org/apache/fop/fonts/base14/ZapfDingbats.java"/>
+    <style in="${src.codegen.dir}/Symbol.xml" style="${src.codegen.dir}/font-file.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/Symbol.java"/>
+    <style in="${src.codegen.dir}/ZapfDingbats.xml" style="${src.codegen.dir}/font-file.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/ZapfDingbats.java"/>
 
   </target>
 
   <!-- =================================================================== -->
   <!-- Compiles the source directory                                       -->
   <!-- =================================================================== -->
-<target name="compile" depends="init, codegen" description="Compiles the source code">
+  <target name="compile-java" depends="init, codegen" description="Compiles the source code">
     <!-- create directories -->
-    <mkdir dir="${build.dest}"/>
-    <javac destdir="${build.dest}" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}">
-      <src path="${build.gensrc}"/>
-      <src path="${src.java}"/>
+    <mkdir dir="${build.classes.dir}"/>
+    <javac destdir="${build.classes.dir}" debug="${debug}" deprecation="${deprecation}"
+           optimize="${optimize}" target="${javac.target}">
+      <src path="${build.gensrc.dir}"/>
+      <src path="${src.java.dir}"/>
+      <src refid="graphics-configuration-adapter"/>
+      <patternset includes="**/*.java"/>
+      <!--patternset includes="org/apache/fop/svg/GraphicsConfiguration.java"/-->
       <patternset refid="exclude-jce-dependencies"/>
       <patternset refid="exclude-jai"/>
       <patternset refid="exclude-jimi"/>
       <classpath refid="libs-build-classpath"/>
-      <patternset refid="base-sources"/>
-      <src refid="graphics-configuration-adapter"/>
-      <patternset refid="graphics-configuration-source"/>
     </javac>
-    <mkdir dir="${viewer.resources.dest.dir}"/>
-    <copy todir="${viewer.resources.dest.dir}">
-      <fileset dir="${viewer.resources.src.dir}"/>
+    <mkdir dir="${build.viewer.resources.dir}"/>
+    <copy todir="${build.viewer.resources.dir}">
+      <fileset dir="${src.viewer.resources.dir}"/>
     </copy>
-    <mkdir dir="${viewer.images.dest.dir}"/>
-    <copy todir="${viewer.images.dest.dir}">
-      <fileset dir="${viewer.images.src.dir}"/>
+    <mkdir dir="${build.viewer.images.dir}"/>
+    <copy todir="${build.viewer.images.dir}">
+      <fileset dir="${src.viewer.images.dir}"/>
     </copy>
   </target>
 
@@ -424,28 +377,45 @@ list of possible build targets.
   <!-- =================================================================== -->
   <!-- compiles hyphenation patterns                                       -->
   <!-- =================================================================== -->
-  <target name="hyphenation" depends="compile">
+  <target name="compile-hyphenation" depends="compile-java">
     <path id="hyph-classpath">
       <path refid="libs-build-classpath"/>
-      <pathelement location="${build.dir}/classes"/>
+      <pathelement location="${build.classes.dir}"/>
     </path>
     <taskdef name="serHyph" classname="org.apache.fop.tools.anttasks.SerializeHyphPattern" classpathref="hyph-classpath"/>
-    <mkdir dir="${build.dest}/hyph"/>
+    <mkdir dir="${build.dir}/hyph"/>
     <serHyph includes="*.xml"
-             sourceDir="${hyph.dir}"
-             targetDir="${build.dest}/hyph"/>
+             sourceDir="${src.hyph.dir}"
+             targetDir="${build.dir}/hyph"/>
   </target>
 
-  <target name="uptodate-jar" depends="compile, hyphenation">
-    <uptodate property="jar.uptodate" targetfile="${build.dir}/${name}.jar">
-      <srcfiles dir= "${build.dest}"/>
+  <target name="uptodate-jar-hyphenation" depends="compile-hyphenation">
+    <uptodate property="jar.hyphenation.uptodate" targetfile="${build.dir}/fop-hyph.jar">
+      <srcfiles dir="${build.dir}/hyph"/>
     </uptodate>
   </target>
 
-  <!-- =================================================================== -->
-  <!-- Creates the class package                                           -->
-  <!-- =================================================================== -->
-  <target name="package" depends="compile,hyphenation,uptodate-jar" description="Generates the jar files" unless="jar.uptodate">
+  <target name="jar-hyphenation" depends="compile-hyphenation,uptodate-jar-hyphenation" description="Generates the hyphenation jar file" unless="jar.hyphenation.uptodate">
+    <tstamp>
+      <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
+    </tstamp>
+    <jar jarfile="${build.dir}/fop-hyph.jar" basedir="${build.dir}/hyph">
+      <manifest>
+        <attribute name="Implementation-Title" value="${Name}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
+        <attribute name="Implementation-Vendor" value="The Apache Software Foundation (http://xml.apache.org/fop/)"/>
+        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="uptodate-jar-main" depends="compile-java">
+    <uptodate property="jar.main.uptodate" targetfile="${build.dir}/fop.jar">
+      <srcfiles dir= "${build.classes.dir}"/>
+    </uptodate>
+  </target>
+
+  <target name="jar-main" depends="compile-java,uptodate-jar-main" description="Generates the main jar file" unless="jar.main.uptodate">
     <tstamp>
       <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
     </tstamp>
@@ -455,7 +425,7 @@ list of possible build targets.
       <map from="${optional.lib.dir}${file.separator}" to=""/>
     </pathconvert>
 
-    <jar jarfile="${build.dir}/${name}.jar" basedir="${build.dest}" includes="org/**">
+    <jar jarfile="${build.dir}/fop.jar" basedir="${build.classes.dir}" includes="org/**">
       <manifest>
         <attribute name="Main-Class" value="org.apache.fop.apps.Fop"/>
         <!--attribute name="Class-Path" value="${manifest-classpath}"/-->
@@ -467,6 +437,11 @@ list of possible build targets.
     </jar>
   </target>
 
+  <!-- =================================================================== -->
+  <!-- Creates the class package                                           -->
+  <!-- =================================================================== -->
+  <target name="package" depends="jar-main,jar-hyphenation" description="Generates the jar files"/>
+  
   <target name="servlet" depends="package" description="Generates the WAR with the sample FOP servlet">
     <echo message="Creating the WAR file"/>
     <war warfile="${build.dir}/fop.war" webxml="${src.dir}/conf/web.xml">
@@ -482,7 +457,7 @@ list of possible build targets.
     </war>
   </target>
 
-  <target name="transcoder-pkg" depends="compile" description="Generates the jar for the transcoder package for Batik">
+  <target name="transcoder-pkg" depends="compile-java" description="Generates the jar for the transcoder package for Batik">
     <echo message="Creating the jar file ${build.dir}/fop-transcoder.jar"/>
 
     <property name="fop-transcoder.name" value="FOP Transcoder Package"/>
@@ -529,7 +504,7 @@ list of possible build targets.
 
     <!-- lean transcoder jar -->
     <jar jarfile="${build.dir}/fop-transcoder.jar">
-      <fileset dir="${build.dest}">
+      <fileset dir="${build.classes.dir}">
         <patternset refid="transcoder-classes"/>
       </fileset>
       <manifest>
@@ -571,7 +546,7 @@ list of possible build targets.
       </fileset>
     </copy>
     <jar jarfile="${build.dir}/fop-transcoder-allinone.jar">
-      <fileset dir="${build.dest}">
+      <fileset dir="${build.classes.dir}">
         <patternset refid="transcoder-classes"/>
       </fileset>
       <fileset dir="${transcoder-deps}"/>
@@ -608,7 +583,7 @@ list of possible build targets.
       <formatter type="brief" usefile="false"/>
       <classpath>
         <pathelement location="${build.dir}/test-classes"/>
-        <path refid="libs-basic-run-classpath"/>
+        <path refid="libs-run-classpath"/>
         <fileset dir="${build.dir}">
           <include name="fop-transcoder.jar"/>
         </fileset>
@@ -708,11 +683,11 @@ list of possible build targets.
     </condition>
     <property name="javadoc.level" value=""/>
     <echo message="Producing the javadoc files${javadoc.level}"/>
-    <mkdir dir="${build.javadocs}"/>
+    <mkdir dir="${build.javadocs.dir}"/>
 
     <javadoc
-        packagenames="${packages}"
-        destdir="${build.javadocs}"
+        packagenames="${javadoc.packages}"
+        destdir="${build.javadocs.dir}"
         classpathref="libs-build-classpath"
         author="true"
         version="true"
@@ -726,8 +701,8 @@ list of possible build targets.
         package="${javadoc.package}"
         private="${javadoc.private}">
       <sourcepath>
-        <pathelement path="${src.java}"/>
-        <pathelement path="${build.gensrc}"/>
+        <pathelement path="${src.java.dir}"/>
+        <pathelement path="${build.gensrc.dir}"/>
         <path refid="graphics-configuration-adapter"/>
       </sourcepath>
       <group title="Control and Startup">
@@ -786,7 +761,7 @@ list of possible build targets.
     <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="checkstylepath"/>
 
     <checkstyle config="checkstyle-3.5-fop-head.xml" failonviolation="false">
-      <fileset dir="${src.java}" includes="org/apache/fop/**/*.java"/>
+      <fileset dir="${src.java.dir}" includes="**/*.java"/>
       <formatter type="plain" toFile="${build.dir}/checkstyle_report.txt"/>
       <formatter type="xml" toFile="${build.dir}/checkstyle_report.xml"/>
     </checkstyle>
@@ -827,7 +802,7 @@ list of possible build targets.
       <fileset refid="dist.src"/>
     </copy>
     <copy todir="${dist.src.result.dir}/javadocs">
-      <fileset dir="${build.javadocs}"/>
+      <fileset dir="${build.javadocs.dir}"/>
     </copy>
     <mkdir dir="${dist.src.result.dir}/build"/>
     <copy todir="${dist.src.result.dir}/build" file="build/fop.jar"/>
@@ -875,7 +850,7 @@ list of possible build targets.
   <!-- =================================================================== -->
   <!-- Clean targets                                                       -->
   <!-- =================================================================== -->
-  <target name="clean" depends="init" description="Cleans the build directory">
+  <target name="clean" description="Cleans the build directory">
     <delete dir="${build.dir}"/>
   </target>
 
@@ -888,7 +863,7 @@ list of possible build targets.
     </delete>
   </target>
 
-  <target name="validate-xdocs" depends="init" description="Validate the
+  <target name="validate-xdocs" description="Validate the
 xdocs. Point schemas.dir to Forrest's 'schemas' directory.">
     <property name="schemas.dir" value="../xml-forrest/src/resources/schema"/>
     <xmlvalidate failonerror="no">
