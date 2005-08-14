@@ -202,7 +202,7 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#startPageSequence(Title)
+     * @see org.apache.fop.render.Renderer#startPageSequence(LineArea)
      */
     public void startPageSequence(LineArea seqTitle) {
         totalWidth += sequenceWidth;
@@ -351,7 +351,7 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#renderLeader(Leader)
+     * @see org.apache.fop.render.AbstractRenderer#renderLeader(Leader)
      */
     public void renderLeader(Leader area) {
         String style = "stroke:black;stroke-width:"
@@ -386,7 +386,7 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#renderText(TextArea)
+     * @see org.apache.fop.render.AbstractRenderer#renderText(TextArea)
      */
     public void renderText(TextArea text) {
         Element textElement = SVGUtilities.createText(svgDocument,
@@ -399,7 +399,7 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#renderCharacter(Character)
+     * @see org.apache.fop.render.AbstractRenderer#renderCharacter(Character)
      */
     public void renderCharacter(org.apache.fop.area.inline.Character ch) {
         Element text = SVGUtilities.createText(svgDocument,

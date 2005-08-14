@@ -355,10 +355,9 @@ public abstract class FONode implements Cloneable {
     }
 
     /**
-     * Helper function to return missing child element errors
-     * (e.g., fo:layout-master-set not having any page-master child element)
-     * @param contentModel The XSL Content Model for the fo: object.
-     * or a similar description indicating child elements needed.
+     * Helper function to throw an error caused by missing mandatory child elements.
+     * E.g., fo:layout-master-set not having any page-master child element.
+     * @param contentModel The XSL Content Model for the fo: object or a similar description indicating the necessary child elements.
      */
     protected void missingChildElementError(String contentModel)
         throws ValidationException {
@@ -368,10 +367,8 @@ public abstract class FONode implements Cloneable {
     }
 
     /**
-     * Helper function to return missing child element errors
-     * (e.g., fo:layout-master-set not having any page-master child element)
-     * @param contentModel The XSL Content Model for the fo: object.
-     * or a similar description indicating child elements needed.
+     * Helper function to throw an error caused by missing mandatory properties
+     * @param propertyName the name of the missing property.
      */
     protected void missingPropertyError(String propertyName)
         throws ValidationException {

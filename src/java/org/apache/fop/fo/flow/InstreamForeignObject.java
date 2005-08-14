@@ -121,7 +121,7 @@ public class InstreamForeignObject extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#start
+     * @see org.apache.fop.fo.FONode#startOfNode
      */
     protected void startOfNode() throws FOPException {
         checkId(id);

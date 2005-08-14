@@ -44,7 +44,8 @@ public class RegionReference extends Area implements Cloneable {
     /**
      * Create a new region reference area.
      *
-     * @param type the region class type
+     * @param regionFO the region.
+     * @param parent the viewport for this region.
      */
     public RegionReference(Region regionFO, RegionViewport parent) {
         this.regionFO = regionFO;

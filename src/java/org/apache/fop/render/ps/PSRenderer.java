@@ -441,7 +441,7 @@ public class PSRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#renderText(TextArea)
+     * @see org.apache.fop.render.AbstractRenderer#renderText(TextArea)
      */
     public void renderText(TextArea area) {
         String fontname = (String)area.getTrait(Trait.FONT_NAME);

@@ -68,19 +68,18 @@ public class MainReference extends Area {
     }
 
     /**
-     * Get the span area currently being filled (i.e., the last span created)
-     *
-     * @return the active span 
+     * Get the span area currently being filled (i.e., the last span created).
+     * @return the active span.
      */
     public Span getCurrentSpan() {
         return (Span) spanAreas.get(spanAreas.size()-1);
     }
 
     /**
-     * indicates whether any child areas have been added to this reference area
-     * this is achieved by looping through each span
+     * Indicates whether any child areas have been added to this reference area.
      *
-     * @return
+     * This is achieved by looping through each span.
+     * @return true if no child areas have been added yet.
      */
     public boolean isEmpty() {
         if (isEmpty) {

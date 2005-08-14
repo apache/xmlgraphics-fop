@@ -69,7 +69,7 @@ public class SimplePageMaster extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#resolve
+     * @see org.apache.fop.fo.FObj#bind
      */
     public void bind(PropertyList pList) throws FOPException {
         commonMarginBlock = pList.getMarginBlockProps();
