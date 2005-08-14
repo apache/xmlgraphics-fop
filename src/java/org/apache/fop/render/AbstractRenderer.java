@@ -559,10 +559,6 @@ public abstract class AbstractRenderer
         }
     }
 
-    protected void renderTextDecoration(InlineArea area) {
-        //getLogger().debug("renderTextDecoration for " + area + " -> " + area.getTrait(Trait.UNDERLINE));
-    }
-
     /**
      * Renders a line area. <p>
      *
@@ -581,7 +577,6 @@ public abstract class AbstractRenderer
     }
 
     protected void renderInlineArea(InlineArea inlineArea) {
-        renderTextDecoration(inlineArea);
         if (inlineArea instanceof TextArea) {
             renderText((TextArea) inlineArea);
         } else if (inlineArea instanceof InlineParent) {
