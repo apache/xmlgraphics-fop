@@ -39,6 +39,7 @@ public class PNGImage extends BatikImage {
      */
     public PNGImage(FopImage.ImageInfo imgReader) {
         super(imgReader);
+        this.loaded = 0; //TODO The PNGReader cannot read the resolution, yet. 
     }
 
     /**
