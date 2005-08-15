@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,16 @@ import org.apache.fop.apps.FOUserAgent;
 public class BMPReader implements ImageReader {
 
     /** Length of the BMP header */
-    protected static final int BMP_SIG_LENGTH = 26;
+    protected static final int BMP_SIG_LENGTH = 46;
+    
+    /** offset to width */
+    private static final int WIDTH_OFFSET = 18;
+    /** offset to height */
+    private static final int HEIGHT_OFFSET = 18;
+    /** offset to horizontal res */
+    private static final int HRES_OFFSET = 38;
+    /** offset to vertical res */
+    private static final int VRES_OFFSET = 42;
 
     /** @see org.apache.fop.image.analyser.ImageReader */
     public FopImage.ImageInfo verifySignature(String uri, InputStream bis,
@@ -66,20 +75,39 @@ public class BMPReader implements ImageReader {
         info.mimeType = getMimeType();
 
         // little endian notation
-        int byte1 = header[18] & 0xff;
-        int byte2 = header[19] & 0xff;
-        int byte3 = header[20] & 0xff;
-        int byte4 = header[21] & 0xff;
+        int byte1 = header[WIDTH_OFFSET] & 0xff;
+        int byte2 = header[WIDTH_OFFSET + 1] & 0xff;
+        int byte3 = header[WIDTH_OFFSET + 2] & 0xff;
+        int byte4 = header[WIDTH_OFFSET + 3] & 0xff;
         long l = (long) ((byte4 << 24) | (byte3 << 16)
                 | (byte2 << 8) | byte1);
         info.width = (int) (l & 0xffffffff);
 
-        byte1 = header[22] & 0xff;
-        byte2 = header[23] & 0xff;
-        byte3 = header[24] & 0xff;
-        byte4 = header[25] & 0xff;
+        byte1 = header[HEIGHT_OFFSET] & 0xff;
+        byte2 = header[HEIGHT_OFFSET + 1] & 0xff;
+        byte3 = header[HEIGHT_OFFSET + 2] & 0xff;
+        byte4 = header[HEIGHT_OFFSET + 3] & 0xff;
         l = (long) ((byte4 << 24) | (byte3 << 16) | (byte2 << 8) | byte1);
         info.height = (int) (l & 0xffffffff);
+
+        byte1 = header[HRES_OFFSET] & 0xff;
+        byte2 = header[HRES_OFFSET + 1] & 0xff;
+        byte3 = header[HRES_OFFSET + 2] & 0xff;
+        byte4 = header[HRES_OFFSET + 3] & 0xff;
+        l = (long) ((byte4 << 24) | (byte3 << 16) | (byte2 << 8) | byte1);
+        if (l > 0) {
+            info.dpiHorizontal = l / 39.37d;
+        }
+
+        byte1 = header[VRES_OFFSET] & 0xff;
+        byte2 = header[VRES_OFFSET + 1] & 0xff;
+        byte3 = header[VRES_OFFSET + 2] & 0xff;
+        byte4 = header[VRES_OFFSET + 3] & 0xff;
+        l = (long) ((byte4 << 24) | (byte3 << 16) | (byte2 << 8) | byte1);
+        if (l > 0) {
+            info.dpiVertical = l / 39.37d;
+        }
+        
         return info;
     }
 

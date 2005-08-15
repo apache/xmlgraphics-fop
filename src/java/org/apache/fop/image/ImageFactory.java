@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,13 +21,15 @@ package org.apache.fop.image;
 // Java
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.net.MalformedURLException;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,18 +43,76 @@ import org.apache.fop.apps.FOUserAgent;
  * Create FopImage objects (with a configuration file - not yet implemented).
  * @author Eric SCHAEFFER
  */
-public class ImageFactory {
+public final class ImageFactory {
 
     /**
      * logging instance
      */
     protected static Log log = LogFactory.getLog(FopImage.class);
-
+    
     private static ImageFactory factory = new ImageFactory();
 
+    private HashMap imageMimeTypes = new HashMap();
+    
     private ImageCache cache = new ContextImageCache(true);
 
     private ImageFactory() {
+        /* @todo The mappings set up below of image mime types to implementing
+         * classes should be made externally configurable
+         */
+        ImageProvider jaiImage = new ImageProvider("JAIImage", "org.apache.fop.image.JAIImage");
+        ImageProvider jimiImage = new ImageProvider("JIMIImage", "org.apache.fop.image.JimiImage");
+        ImageProvider imageIoImage = new ImageProvider(
+                "ImageIOImage", "org.apache.fop.image.ImageIoImage");
+        ImageProvider gifImage = new ImageProvider("GIFImage", "org.apache.fop.image.GifImage");
+        ImageProvider jpegImage = new ImageProvider("JPEGImage", "org.apache.fop.image.JpegImage");
+        ImageProvider bmpImage = new ImageProvider("BMPImage", "org.apache.fop.image.BmpImage");
+        ImageProvider epsImage = new ImageProvider("EPSImage", "org.apache.fop.image.EPSImage");
+        ImageProvider pngImage = new ImageProvider("PNGImage", "org.apache.fop.image.PNGImage");
+        ImageProvider tiffImage = new ImageProvider("TIFFImage", "org.apache.fop.image.TIFFImage");
+        ImageProvider xmlImage = new ImageProvider("XMLImage", "org.apache.fop.image.XMLImage");
+        
+        ImageMimeType imt = new ImageMimeType("image/gif");
+        imageMimeTypes.put(imt.getMimeType(), imt);
+        imt.addProvider(jaiImage);
+        imt.addProvider(imageIoImage);
+        imt.addProvider(jimiImage);
+        imt.addProvider(gifImage);
+
+        imt = new ImageMimeType("image/jpeg");
+        imageMimeTypes.put(imt.getMimeType(), imt);
+        imt.addProvider(jpegImage);
+
+        imt = new ImageMimeType("image/bmp");
+        imageMimeTypes.put(imt.getMimeType(), imt);
+        imt.addProvider(bmpImage);
+
+        imt = new ImageMimeType("image/eps");
+        imageMimeTypes.put(imt.getMimeType(), imt);
+        imt.addProvider(epsImage);
+
+        imt = new ImageMimeType("image/png");
+        imageMimeTypes.put(imt.getMimeType(), imt);
+        imt.addProvider(pngImage);
+
+        imt = new ImageMimeType("image/tga");
+        imageMimeTypes.put(imt.getMimeType(), imt);
+        imt.addProvider(jaiImage);
+        imt.addProvider(imageIoImage);
+        imt.addProvider(jimiImage);
+
+        imt = new ImageMimeType("image/tiff");
+        imageMimeTypes.put(imt.getMimeType(), imt);
+        imt.addProvider(tiffImage);
+
+        imt = new ImageMimeType("image/svg+xml");
+        imageMimeTypes.put(imt.getMimeType(), imt);
+        imt.addProvider(xmlImage);
+
+        imt = new ImageMimeType("text/xml");
+        imageMimeTypes.put(imt.getMimeType(), imt);
+        imt.addProvider(xmlImage);
+
     }
 
     /**
@@ -134,19 +194,23 @@ public class ImageFactory {
      * @param ua the user agent context
      * @return the fop image instance
      */
-    public static FopImage loadImage(String href, FOUserAgent ua) {
+    public FopImage loadImage(String href, FOUserAgent ua) {
 
-        InputStream in = openStream(href, ua);
-
-        if (in == null) {
+        StreamSource source = openStream(href, ua);
+        if (source == null) {
             return null;
         }
 
-        // If not, check image type
+        InputStream in = source.getInputStream();
+        //Make sure the InputStream is decorated with a BufferedInputStream
+        if (!(in instanceof java.io.BufferedInputStream)) {
+            in = new java.io.BufferedInputStream(in);
+        }
+
+        // Check image type
         FopImage.ImageInfo imgInfo = null;
         try {
-            imgInfo = ImageReaderFactory.make(
-                          href, in, ua);
+            imgInfo = ImageReaderFactory.make(source.getSystemId(), in, ua);
         } catch (Exception e) {
             log.error("Error while recovering image information ("
                     + href + ") : " + e.getMessage(), e);
@@ -165,8 +229,8 @@ public class ImageFactory {
         }
         // Associate mime-type to FopImage class
         String imgMimeType = imgInfo.mimeType;
-        String imgClassName = getImageClassName(imgMimeType);
-        if (imgClassName == null) {
+        Class imageClass = getImageClass(imgMimeType);
+        if (imageClass == null) {
             log.error("Unsupported image type ("
                     + href + "): " + imgMimeType);
             return null;
@@ -175,20 +239,14 @@ public class ImageFactory {
         // load the right image class
         // return new <FopImage implementing class>
         Object imageInstance = null;
-        Class imageClass = null;
         try {
-            imageClass = Class.forName(imgClassName);
             Class[] imageConstructorParameters = new Class[1];
             imageConstructorParameters[0] = org.apache.fop.image.FopImage.ImageInfo.class;
-            Constructor imageConstructor =
-              imageClass.getDeclaredConstructor(
-                imageConstructorParameters);
+            Constructor imageConstructor = imageClass.getDeclaredConstructor(
+                    imageConstructorParameters);
             Object[] initArgs = new Object[1];
             initArgs[0] = imgInfo;
             imageInstance = imageConstructor.newInstance(initArgs);
-        } catch (ClassNotFoundException cnfe) {
-            log.error("Class " + imgClassName + " not found. Check that Jimi/JAI is in classpath");
-            return null;
         } catch (java.lang.reflect.InvocationTargetException ex) {
             Throwable t = ex.getTargetException();
             String msg;
@@ -202,7 +260,7 @@ public class ImageFactory {
             return null;
         } catch (InstantiationException ie) {
             log.error("Error creating FopImage object ("
-                    + href + "): Could not instantiate " + imgClassName + " instance");
+                    + href + "): Could not instantiate " + imageClass.getName() + " instance");
             return null;
         } catch (Exception ex) {
             log.error("Error creating FopImage object ("
@@ -220,16 +278,14 @@ public class ImageFactory {
     }
 
     /**
-     * Create an FopImage objects.
+     * Create a StreamSource objects.
      * @param href image URL as a String
      * @param ua user agent
-     * @return a new FopImage object
+     * @return a new StreamSource object
      */
-    protected static InputStream openStream(String href, FOUserAgent ua) {
+    protected StreamSource openStream(String href, FOUserAgent ua) {
 
-        // Get the absolute URL
-        URL absoluteURL = null;
-        InputStream in = null;
+        StreamSource in = null;
 
         try {
             in = ua.getStream(href);
@@ -238,90 +294,15 @@ public class ImageFactory {
                     + href + "): " + ioe.getMessage(), ioe);
             return null;
         }
-        if (in == null) {
-            try {
-                // try url as complete first, this can cause
-                // a problem with relative uri's if there is an
-                // image relative to where fop is run and relative
-                // to the base dir of the document
-                try {
-                    absoluteURL = new URL(href);
-                } catch (MalformedURLException mue) {
-                    // if the href contains only a path then file is assumed
-                    absoluteURL = new URL("file:" + href);
-                }
-                in = absoluteURL.openStream();
-            } catch (MalformedURLException mfue) {
-                log.error("Error with image URL: " + mfue.getMessage(), mfue);
-                return null;
-            } catch (Exception e) {
-                // maybe relative
-                if (ua.getBaseURL() == null) {
-                    log.error("Error with image URL: " + e.getMessage()
-                            + " and no base URL is specified", e);
-                    return null;
-                }
-                try {
-                    absoluteURL = new URL(ua.getBaseURL() + absoluteURL.getFile());
-                } catch (MalformedURLException e_context) {
-                    // pb context url
-                    log.error("Invalid Image URL - error on relative URL: "
-                            + e_context.getMessage(), e_context);
-                    return null;
-                }
-            }
-        } /* if (in == null) */
-
-        try {
-            if (in == null && absoluteURL != null) {
-                in = absoluteURL.openStream();
-            }
-            if (in == null) {
-                log.error("Could not resolve URI for image: " + href);
-                return null;
-            }
-
-            //Make sure the InputStream is decorated with a BufferedInputStream
-            if (in instanceof java.io.BufferedInputStream) {
-                return in;
-            } else {
-                return new java.io.BufferedInputStream(in);
-            }
-        } catch (Exception e) {
-            log.error("Error while opening stream for ("
-                    + href + "): " + e.getMessage(), e);
-            return null;
-        }
+        return in;
     }
 
-    private static String getImageClassName(String imgMimeType) {
-        String imgClassName = null;
-        if ("image/gif".equals(imgMimeType)) {
-            imgClassName = "org.apache.fop.image.GifImage";
-            // imgClassName = "org.apache.fop.image.JAIImage";
-        } else if ("image/jpeg".equals(imgMimeType)) {
-            imgClassName = "org.apache.fop.image.JpegImage";
-            // imgClassName = "org.apache.fop.image.JAIImage";
-        } else if ("image/bmp".equals(imgMimeType)) {
-            imgClassName = "org.apache.fop.image.BmpImage";
-            // imgClassName = "org.apache.fop.image.JAIImage";
-        } else if ("image/eps".equals(imgMimeType)) {
-            imgClassName = "org.apache.fop.image.EPSImage";
-        } else if ("image/png".equals(imgMimeType)) {
-            imgClassName = "org.apache.fop.image.PNGImage";
-            // imgClassName = "org.apache.fop.image.JAIImage";
-        } else if ("image/tga".equals(imgMimeType)) {
-            imgClassName = "org.apache.fop.image.JimiImage";
-            // imgClassName = "org.apache.fop.image.JAIImage";
-        } else if ("image/tiff".equals(imgMimeType)) {
-            imgClassName = "org.apache.fop.image.TIFFImage";
-            // imgClassName = "org.apache.fop.image.JAIImage";
-        } else if ("image/svg+xml".equals(imgMimeType)) {
-            imgClassName = "org.apache.fop.image.XMLImage";
-        } else if ("text/xml".equals(imgMimeType)) {
-            imgClassName = "org.apache.fop.image.XMLImage";
+    private Class getImageClass(String imgMimeType) {
+        ImageMimeType imt = (ImageMimeType)imageMimeTypes.get(imgMimeType);
+        if (imt == null) {
+            return null;
         }
-        return imgClassName;
+        return imt.getFirstImplementingClass();
     }
 }
 
@@ -332,7 +313,7 @@ public class ImageFactory {
 class BasicImageCache implements ImageCache {
 
     private Set invalid = Collections.synchronizedSet(new java.util.HashSet());
-    private Map contextStore = Collections.synchronizedMap(new java.util.HashMap());
+    //private Map contextStore = Collections.synchronizedMap(new java.util.HashMap());
 
     public FopImage getImage(String url, FOUserAgent context) {
         if (invalid.contains(url)) {
@@ -521,5 +502,135 @@ class ContextImageCache implements ImageCache {
 
     }
 
+}
+
+/**
+ * Encapsulates a class of type FopImage by holding its class name.
+ * This allows dynamic loading of the class at runtime.
+ */
+class ImageProvider {
+
+    private String name = null;
+
+    private String className = null;
+
+    private boolean checked = false;
+
+    private Class clazz = null;
+
+    /**
+     * Creates an ImageProvider with a given name and implementing class.
+     * The class name should refer to a class of type {@link FopImage}.
+     * However, this is not checked on construction.
+     * @param name The name of the provider
+     * @param className The full class name of the class implementing this provider
+     */
+    public ImageProvider(String name, String className) {
+        setName(name);
+        setClassName(className);
+    }
+
+    /**
+     * Returns the provider name.
+     * @return The provider name
+     */
+    public String getName() {
+        return name;
+    }
+
+    private void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Returns the implementing class name.
+     * @return The implementing class name
+     */
+    public String getClassName() {
+        return className;
+    }
+
+    private void setClassName(String className) {
+        this.className = className;
+    }
+
+    /**
+     * Returns the implementing class as a {@link Class} object.
+     * @return The implementing class or null if it couldn't be loaded.
+     */
+    public Class getImplementingClass() {
+        if (!checked) {
+            try {
+                clazz = Class.forName(getClassName());
+            } catch (ClassNotFoundException cnfe) {
+                //nop
+            }
+            checked = true;
+        }
+        return clazz;
+    }
+}
+
+/**
+ * Holds a mime type for a particular image format plus a list of
+ * {@link ImageProvider} objects which support the particular image format.
+ */
+class ImageMimeType {
+
+    private String mimeType = null;
+
+    private List providers = null;
+
+    /**
+     * Constructor for a particular mime type.
+     * @param mimeType The mime type
+     */
+    public ImageMimeType(String mimeType) {
+        setMimeType(mimeType);
+    }
+
+    /**
+     * Returns the mime type.
+     * @return The mime type
+     */
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    private void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
+
+    /**
+     * Returns the class from the first available provider.
+     * @return The first available class or null if none can be found
+     */
+    public Class getFirstImplementingClass() {
+        if (providers == null) {
+            return null;
+        }
+        for (Iterator it = providers.iterator(); it.hasNext();) {
+            ImageProvider ip = (ImageProvider)it.next();
+            Class clazz = ip.getImplementingClass();
+            if (clazz != null) {
+                return clazz;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Adds a new provider.
+     * The provider is added to the end of the current provider list.
+     * @param The new provider to add
+     */
+    public void addProvider(ImageProvider provider) {
+        if (providers == null) {
+            providers = new ArrayList(4); // Assume we only have a few providers
+        }
+        if (!providers.contains(provider)) {
+            providers.add(provider);
+        }
+    }
 }
 

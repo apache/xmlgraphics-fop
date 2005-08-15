@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,6 @@ public class BmpImage extends AbstractFopImage {
      * Load the bitmap.
      * This laods the bitmap data from the bitmap image.
      *
-     * @param ua the user agent
      * @return true if it was loaded successfully
      */
     protected boolean loadBitmap() {
@@ -52,7 +51,7 @@ public class BmpImage extends AbstractFopImage {
         int hpos = 22; // offset positioning for w and height in  bmp files
         int[] headermap = new int[54];
         int filepos = 0;
-        byte palette[] = null;
+        byte[] palette = null;
         try {
             boolean eof = false;
             while ((!eof) && (filepos < 54)) {
@@ -75,8 +74,7 @@ public class BmpImage extends AbstractFopImage {
                         if (input == -1) {
                             eof = true;
                         } else if (count2 >= 0) {
-                            palette[countr * 3 + count2] =
-                              (byte)(input & 0xFF);
+                            palette[countr * 3 + count2] = (byte)(input & 0xFF);
                         }
                         count2--;
                         filepos++;
@@ -135,7 +133,12 @@ public class BmpImage extends AbstractFopImage {
             int count = 0;
             inputStream.skip((long)(imagestart - filepos));
             while ((input = inputStream.read()) != -1) {
-                temp[count++] = input;
+                if (count >= temp.length) {
+                    log.warn("Data longer than expected while loading image");
+                    break;
+                } else {
+                    temp[count++] = input;
+                }
             }
             inputStream.close();
             inputStream = null;
