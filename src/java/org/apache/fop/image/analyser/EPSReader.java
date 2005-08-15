@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,8 @@ public class EPSReader implements ImageReader {
 
     private static final byte[] EPS_HEADER_ASCII = "%!PS".getBytes();
     private static final byte[] BOUNDINGBOX = "%%BoundingBox: ".getBytes();
+    //private static final byte[] HIRESBOUNDINGBOX = "%%HiResBoundingBox: ".getBytes();
+    //TODO Implement HiResBoundingBox, ImageInfo probably needs some changes for that
 
     /** @see org.apache.fop.image.analyser.ImageReader */
     public FopImage.ImageInfo verifySignature(String uri, InputStream bis,
