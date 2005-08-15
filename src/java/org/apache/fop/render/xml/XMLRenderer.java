@@ -37,7 +37,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 // FOP
-import org.apache.fop.render.AbstractRenderer;
+import org.apache.fop.render.PrintRenderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.apps.FOUserAgent;
@@ -68,6 +68,7 @@ import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontMetrics;
 
 /**
  * Renderer that renders areas to XML for debugging purposes.
@@ -76,7 +77,7 @@ import org.apache.fop.fonts.FontInfo;
  * The output can be used to build a new area tree (@see AreaTreeBuilder)
  * which can be rendered to any renderer.
  */
-public class XMLRenderer extends AbstractRenderer {
+public class XMLRenderer extends PrintRenderer {
 
     /** XML MIME type */
     public static final String XML_MIME_TYPE = "application/x-fop-areatree";
@@ -128,15 +129,6 @@ public class XMLRenderer extends AbstractRenderer {
      */
     public void setTransformerHandler(TransformerHandler handler) {
         this.handler = handler;
-    }
-
-    /**
-     * set up the font info
-     *
-     * @param fontInfo the font info object to set up
-     */
-    public void setupFontInfo(FontInfo fontInfo) {
-        FontSetup.setup(fontInfo, null);
     }
 
     private boolean isCoarseXml() {
@@ -272,6 +264,11 @@ public class XMLRenderer extends AbstractRenderer {
                 }
                 String value = traitEntry.getValue().toString();
                 addAttribute(name, value);
+                if ("font-family".equals(name)) {
+                    addAttribute("font-name", fontInfo.getMetricsFor(value).getFontName());
+                    addAttribute("font-style", fontInfo.getFontStyleFor(value));
+                    addAttribute("font-weight", fontInfo.getFontWeightFor(value));
+                }
             }
         }
     }
