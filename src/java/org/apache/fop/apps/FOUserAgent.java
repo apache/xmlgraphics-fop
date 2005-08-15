@@ -21,10 +21,13 @@ package org.apache.fop.apps;
 // Java
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import javax.xml.transform.Source;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.URIResolver;
+import javax.xml.transform.stream.StreamSource;
 
 // avalon configuration
 import org.apache.avalon.framework.configuration.Configuration;
@@ -71,6 +74,12 @@ public class FOUserAgent {
     private XMLHandlerRegistry xmlHandlers = new XMLHandlerRegistry();
     
     private String baseURL;
+    
+    /** A user settable URI Resolver */
+    private URIResolver uriResolver = null;
+    /** Our default resolver if none is set */
+    private URIResolver foURIResolver = new FOURIResolver();
+    
     private PDFEncryptionParams pdfEncryptionParams;
     private float px2mm = DEFAULT_PX2MM;
     private Map rendererOptions = new java.util.HashMap();
@@ -384,11 +393,23 @@ public class FOUserAgent {
      * @return the base URL
      */
     public String getBaseURL() {
-        if ((this.baseURL == null) || (this.baseURL.trim().equals(""))) {
-            return "file:.";
-        } else {
-            return this.baseURL;
-        }
+        return this.baseURL;
+    }
+
+    /**
+     * Sets the URI Resolver.
+     * @param uriResolver the new URI resolver
+     */
+    public void setURIResolver(URIResolver uriResolver) {
+        this.uriResolver = uriResolver;
+    }
+
+    /**
+     * Returns the URI Resolver.
+     * @return the URI Resolver
+     */
+    public URIResolver getURIResolver() {
+        return this.uriResolver != null ? this.uriResolver : this.foURIResolver;
     }
 
     /**
@@ -410,15 +431,28 @@ public class FOUserAgent {
 
 
     /**
-     * Get an input stream for a reference. Subclass FOUserAgent and override this method to
-     * do custom URI to InputStream resolution.
+     * Get a stream source for a reference. Subclass FOUserAgent and override this method to
+     * do custom URI to {@link javax.xml.transform.stream.StreamSource} resolution.
+     * Alternatively set your own {@link javax.xml.transform.URIResolver} on the FOUserAgent.
      * Temporary solution until the API is better.
      * @param uri URI to access
-     * @return InputStream for accessing the resource.
+     * @return StreamSource for accessing the resource.
      * @throws IOException in case of an I/O problem
      */
-    public InputStream getStream(String uri) throws IOException {
-        //The default implementation does noting. Subclass FOUserAgent to add custom behaviour.
+    public StreamSource getStream(String uri) throws IOException {
+        Source source = null;
+        try {
+            source = getURIResolver().resolve(uri, getBaseURL());
+        } catch (TransformerException te) {
+            log.error("Attempt to resolve URI '" + uri + "' failed: ", te);
+        }
+        if (source != null) {
+            if (source instanceof StreamSource) {
+                return (StreamSource)source;
+            } else {
+                log.error("Attempt to resolve URI returned unknown source");
+            }
+        }
         return null;
     }
 
@@ -434,7 +468,7 @@ public class FOUserAgent {
      * Gets the output File.
      * @return the output File
      */
-    public File getOutputFile(){
+    public File getOutputFile() {
         return outputFile;
     }
 

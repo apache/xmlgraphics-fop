@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ class ImageLoader {
         if (!valid || image != null) {
             return image;
         }
-        image = ImageFactory.loadImage(url, userAgent);
+        image = ImageFactory.getInstance().loadImage(url, userAgent);
         if (image == null) {
             cache.invalidateImage(url, userAgent);
             valid = false;

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,9 +80,11 @@ public class SVGElement extends SVGObj {
         /* if width and height are zero, get the bounds of the content. */
 
         try {
-            String baseDir = getUserAgent().getBaseURL();
-            if (baseDir != null) {
-                ((SVGOMDocument)doc).setURLObject(new URL(baseDir));
+            URL baseURL = new URL(getUserAgent().getBaseURL() == null 
+                            ? new java.io.File("").toURL().toExternalForm() 
+                            : getUserAgent().getBaseURL());
+            if (baseURL != null) {
+                ((SVGOMDocument)doc).setURLObject(baseURL);
             }
         } catch (Exception e) {
             getLogger().error("Could not set base URL for svg", e);
