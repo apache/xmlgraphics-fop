@@ -18,8 +18,12 @@
 
 package org.apache.fop.fonts;
 
-// Java
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+
 
 /**
  * The FontInfo for the layout and rendering of a fo document.
@@ -226,6 +230,61 @@ public class FontInfo {
         usedFonts.put(fontName, fonts.get(fontName));
         return (FontMetrics)fonts.get(fontName);
     }
+
+    /**
+     * Returns the first triplet matching the given font name.
+     * As there may be multiple triplets matching the font name
+     * the result set is sorted first to guarantee consistent results.
+     * @param fontName The font name we are looking for
+     * @return The first triplet for the given font name
+     */
+    private String getTripletFor(String fontName) {
+        List foundTriplets = new ArrayList();
+        for (Iterator iter = triplets.entrySet().iterator(); iter.hasNext(); ) {
+            Map.Entry tripletEntry = (Map.Entry) iter.next();
+            if (fontName.equals(((String)tripletEntry.getValue()))) {
+                foundTriplets.add(tripletEntry.getKey());
+            }
+        }
+        if (foundTriplets.size() > 0) {
+            Collections.sort(foundTriplets);
+            return (String)foundTriplets.get(0);
+        }
+        return null;
+    }
+    
+    /**
+     * Returns the font style for a particular font.
+     * There may be multiple font styles matching this font. Only the first
+     * found is returned. Searching is done on a sorted list to guarantee consistent
+     * results.
+     * @param fontName internal key
+     * @return font style
+     */
+    public String getFontStyleFor(String fontName) {
+        String triplet = getTripletFor(fontName);
+        if (triplet != null) {
+            return triplet.substring(triplet.indexOf(',') + 1, triplet.lastIndexOf(','));
+        }
+        return "";
+    }
+    
+    /**
+     * Returns the font weight for a particular font.
+     * There may be multiple font weights matching this font. Only the first
+     * found is returned. Searching is done on a sorted list to guarantee consistent
+     * results.
+     * @param fontName internal key
+     * @return font weight
+     */
+    public String getFontWeightFor(String fontName) {
+        String triplet = getTripletFor(fontName);
+        if (triplet != null) {
+            return triplet.substring(triplet.lastIndexOf(',') + 1);
+        }
+        return "";
+    }
+    
 }
 
 
