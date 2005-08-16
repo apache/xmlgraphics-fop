@@ -33,31 +33,34 @@ import org.apache.commons.logging.LogFactory;
  * @see javax.xml.transform.URIResolver
  */
 public class FOURIResolver
-    implements javax.xml.transform.URIResolver
-{
+    implements javax.xml.transform.URIResolver {
+    
     private Log log = LogFactory.getLog("FOP");
     
     /**
-     * Called by the processor through {@link FOUserAgent} when it encounters an uri in an external-graphic element.
+     * Called by the processor through {@link FOUserAgent} when it encounters an 
+     * uri in an external-graphic element.
      * (see also {@link javax.xml.transform.URIResolver#resolve(String, String)}
-     * This resolver will allow URLs without a scheme, i.e. it assumes 'file:' as the default
-     * scheme. It also allows relative URLs with scheme, e.g. file:../../abc.jpg which is
-     * not strictly RFC compliant as long as the scheme is the same as the scheme of the
-     * base URL. If the base URL is null a 'file:' URL referencing the current directory is used as 
-     * the base URL.
+     * This resolver will allow URLs without a scheme, i.e. it assumes 'file:' as
+     * the default scheme. It also allows relative URLs with scheme, 
+     * e.g. file:../../abc.jpg which is not strictly RFC compliant as long as the 
+     * scheme is the same as the scheme of the base URL. If the base URL is null 
+     * a 'file:' URL referencing the current directory is used as the base URL.
      * If the method is successful it will return a Source of type 
-     * {@link javax.xml.transform.stream.StreamSource} with its SystemID set to the resolved
-     * URL used to open the underlying InputStream.
+     * {@link javax.xml.transform.stream.StreamSource} with its SystemID set to 
+     * the resolved URL used to open the underlying InputStream.
      * 
      * @param href An href attribute, which may be relative or absolute.
-     * @param base The base URI against which the first argument will be made absolute if the absolute URI is required. 
-     * @return A {@link javax.xml.transform.Source} object, or null if the href cannot be resolved. 
-     * @throws TransformerException Never thrown by this implementation.
+     * @param base The base URI against which the first argument will be made 
+     * absolute if the absolute URI is required. 
+     * @return A {@link javax.xml.transform.Source} object, or null if the href 
+     * cannot be resolved. 
+     * @throws javax.xml.transform.TransformerException Never thrown by this implementation.
      * @see javax.xml.transform.URIResolver#resolve(String, String)
      */
     public Source resolve(String href, String base)
-        throws javax.xml.transform.TransformerException
-    {
+        throws javax.xml.transform.TransformerException {
+        
         URL absoluteURL = null;
         URL baseURL = toBaseURL(base);
         if (baseURL == null) {
@@ -120,8 +123,7 @@ public class FOURIResolver
      * @param baseURL the base URL
      * @returns the base URL as java.net.URL
      */
-    private URL toBaseURL(String baseURL)
-    {
+    private URL toBaseURL(String baseURL) {
         try {
             return new URL(baseURL == null 
                             ? new java.io.File("").toURL().toExternalForm() 

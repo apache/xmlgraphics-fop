@@ -19,7 +19,6 @@
 package org.apache.fop.image;
 
 // Java
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -29,6 +28,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
@@ -196,12 +196,28 @@ public final class ImageFactory {
      */
     public FopImage loadImage(String href, FOUserAgent ua) {
 
-        StreamSource source = openStream(href, ua);
+        Source source = ua.resolveURI(href);
         if (source == null) {
             return null;
         }
+        
+        // Got a valid source, obtain an InputStream from it
+        InputStream in = null;
+        if (source instanceof StreamSource) {
+            in = ((StreamSource)source).getInputStream();
+        }
+        if (in == null) {
+            try {
+                in = new java.net.URL(source.getSystemId()).openStream();
+            } catch (Exception ex) {
+                log.error("Unable to obtain stream from id '" 
+                    + source.getSystemId() + "'");
+            }
+        }
+        if (in == null) {
+            return null;
+        }
 
-        InputStream in = source.getInputStream();
         //Make sure the InputStream is decorated with a BufferedInputStream
         if (!(in instanceof java.io.BufferedInputStream)) {
             in = new java.io.BufferedInputStream(in);
@@ -275,26 +291,6 @@ public final class ImageFactory {
             return null;
         }
         return (FopImage) imageInstance;
-    }
-
-    /**
-     * Create a StreamSource objects.
-     * @param href image URL as a String
-     * @param ua user agent
-     * @return a new StreamSource object
-     */
-    protected StreamSource openStream(String href, FOUserAgent ua) {
-
-        StreamSource in = null;
-
-        try {
-            in = ua.getStream(href);
-        } catch (IOException ioe) {
-            log.error("Error while opening stream for ("
-                    + href + "): " + ioe.getMessage(), ioe);
-            return null;
-        }
-        return in;
     }
 
     private Class getImageClass(String imgMimeType) {
