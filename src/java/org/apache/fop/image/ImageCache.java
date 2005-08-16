@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.apache.fop.apps.FOUserAgent;
  * This interface is used for caching images.
  */
 public interface ImageCache {
+    
     /**
      * Get an image from the cache.
      *
@@ -60,5 +61,11 @@ public interface ImageCache {
      * @param context the user agent context
      */
     void removeContext(FOUserAgent context);
+    
+    /**
+     * Forces the cache to fully cleared.
+     */
+    void clearAll();
+    
 }
 
