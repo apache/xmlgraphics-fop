@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no"?>
 <!--
-  Copyright 1999-2004 The Apache Software Foundation
+  Copyright 1999-2005 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -175,11 +175,9 @@ Here is a small, self-contained document centering an image on a page:
         <fo:table-column column-width="proportional-column-width(1)"/>
         <fo:table-body>
           <fo:table-row>
-            <fo:table-cell/>
-            <fo:table-cell>
+            <fo:table-cell column-number="2">
               <fo:block>foo</fo:block>
             </fo:table-cell>
-            <fo:table-cell/>
           </fo:table-row>
         </fo:table-body>
       </fo:table>
@@ -188,6 +186,15 @@ Here is a small, self-contained document centering an image on a page:
 </fo:root>]]></source>
         <p>
           If your table is more complicated, or if defining borders on individual cells becomes too much work, use the code above and nest your table within the middle cell.
+        </p>
+      </section>
+      <section id="fo-right-align-table-horizon">
+        <title>Right-Aligning (Tables)</title>
+        <p>
+          To right-align a table, you can use the same approach as above for centering tables. 
+          Just remove the last table-column element which causes all the left-over space not 
+          used by the columns with a fixed column-width to be assigned to the first column which
+          effectively right-aligns the table.
         </p>
       </section>
       <section id="fo-oddeven">
