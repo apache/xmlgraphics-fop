@@ -19,6 +19,7 @@
 package org.apache.fop;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.OutputStream;
 
 import javax.xml.transform.Result;
@@ -39,6 +40,7 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.image.ImageFactory;
 import org.apache.fop.render.xml.XMLRenderer;
 import org.apache.xpath.XPathAPI;
 import org.apache.xpath.objects.XObject;
@@ -63,11 +65,26 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
      * Test custom URI resolution with a hand-written URIResolver.
      * @throws Exception if anything fails
      */
-    public void testFO1() throws Exception {
+    public void testFO1a() throws Exception {
+        innerTestFO1(false);
+    }
+    
+    /**
+     * Test custom URI resolution with a hand-written URIResolver.
+     * @throws Exception if anything fails
+     */
+    public void testFO1b() throws Exception {
+        innerTestFO1(true);
+    }
+    
+    private void innerTestFO1(boolean withStream) throws Exception {
+        //Reset the image caches to force URI resolution!
+        ImageFactory.getInstance().clearCaches();
+        
         File foFile = new File(getBaseDir(), "test/xml/uri-resolution1.fo");
         
         FOUserAgent ua = new FOUserAgent();
-        MyURIResolver resolver = new MyURIResolver(); 
+        MyURIResolver resolver = new MyURIResolver(withStream); 
         ua.setURIResolver(resolver);
         ua.setBaseURL(foFile.getParentFile().toURL().toString());
 
@@ -89,12 +106,12 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
      * Test custom URI resolution with a hand-written URIResolver.
      * @throws Exception if anything fails
      */
-    public void testFO2() throws Exception {
+    public void DISABLEDtestFO2() throws Exception {
         //TODO This will only work when we can do URI resolution inside Batik!
         File foFile = new File(getBaseDir(), "test/xml/uri-resolution2.fo");
         
         FOUserAgent ua = new FOUserAgent();
-        MyURIResolver resolver = new MyURIResolver(); 
+        MyURIResolver resolver = new MyURIResolver(false); 
         ua.setURIResolver(resolver);
         ua.setBaseURL(foFile.getParentFile().toURL().toString());
 
@@ -177,8 +194,13 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
 
         private static final String PREFIX = "funky:";
         
+        private boolean withStream; 
         private int successCount = 0;
         private int failureCount = 0;
+        
+        public MyURIResolver(boolean withStream) {
+            this.withStream = withStream;
+        }
         
         /**
          * @see javax.xml.transform.URIResolver#resolve(java.lang.String, java.lang.String)
@@ -188,7 +210,16 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
                 String name = href.substring(PREFIX.length());
                 if ("myimage123".equals(name)) {
                     File image = new File(getBaseDir(), "test/resources/images/bgimg300dpi.jpg");
-                    StreamSource src = new StreamSource(image);
+                    Source src;
+                    if (withStream) {
+                        try {
+                            src = new StreamSource(new java.io.FileInputStream(image));
+                        } catch (FileNotFoundException e) {
+                            throw new TransformerException(e.getMessage(), e);
+                        }
+                    } else {
+                        src = new StreamSource(image);
+                    }
                     successCount++;
                     return src;
                 } else {

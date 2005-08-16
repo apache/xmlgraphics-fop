@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* $Id: ImageFactory.java,v 1.7 2004/05/12 23:19:52 gmazza Exp $ */
+/* $Id$ */
 
 package org.apache.fop.image;
 
@@ -300,6 +300,17 @@ public final class ImageFactory {
         }
         return imt.getFirstImplementingClass();
     }
+    
+    /**
+     * Forces all the image caches to be cleared. This should normally only be used in
+     * testing environments. If you happen to think that you need to call this yourself 
+     * in a production environment, please notify the development team so we can look 
+     * into the issue. A call like this shouldn't be necessary anymore like it may have 
+     * been with FOP 0.20.5.
+     */
+    public void clearCaches() {
+        cache.clearAll();
+    }
 }
 
 /**
@@ -315,6 +326,7 @@ class BasicImageCache implements ImageCache {
         if (invalid.contains(url)) {
             return null;
         }
+        //TODO Doesn't seem to be fully implemented. Do we need it at all? Not referenced.
         return null;
     }
 
@@ -333,6 +345,12 @@ class BasicImageCache implements ImageCache {
     public void removeContext(FOUserAgent context) {
         // do nothing
     }
+
+    /** @see org.apache.fop.image.ImageCache#clearAll() */
+    public void clearAll() {
+        invalid.clear();
+    }
+    
 }
 
 /**
@@ -496,6 +514,16 @@ class ContextImageCache implements ImageCache {
             return invalid.contains(url);
         }
 
+    }
+
+    /** @see org.apache.fop.image.ImageCache#clearAll() */
+    public void clearAll() {
+        this.weakStore.clear();
+        this.invalid.clear();
+        //The context-sensitive caches are not cleared so there are no negative side-effects
+        //in a multi-threaded environment. Not that it's a good idea to use this method at
+        //all except in testing environments. If such a calls is necessary in normal environments
+        //we need to check on memory leaks!
     }
 
 }
