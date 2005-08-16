@@ -34,6 +34,7 @@ import org.apache.fop.render.RendererFactory;
 import org.apache.fop.util.Service;
 import org.apache.fop.fo.ElementMapping.Maker;
 import org.apache.fop.fo.pagination.Root;
+import org.apache.fop.image.ImageFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -88,6 +89,9 @@ public class FOTreeBuilder extends DefaultHandler {
     /** The SAX locator object managing the line and column counters */
     private Locator locator; 
     
+    /** The user agent for this processing run. */
+    private FOUserAgent userAgent;
+    
     /**
      * FOTreeBuilder constructor
      * @param renderType output type as defined in Constants class
@@ -98,6 +102,8 @@ public class FOTreeBuilder extends DefaultHandler {
     public FOTreeBuilder(int renderType, FOUserAgent foUserAgent, 
         OutputStream stream) throws FOPException {
 
+        this.userAgent = foUserAgent;
+        
         //This creates either an AreaTreeHandler and ultimately a Renderer, or
         //one of the RTF-, MIF- etc. Handlers.
         foEventHandler = RendererFactory.createFOEventHandler(foUserAgent, renderType, stream);
@@ -154,8 +160,8 @@ public class FOTreeBuilder extends DefaultHandler {
                 throws IllegalArgumentException {
 
         try {
-            ElementMapping mapping =
-                (ElementMapping)Class.forName(mappingClassName).newInstance();
+            ElementMapping mapping
+                = (ElementMapping)Class.forName(mappingClassName).newInstance();
             addElementMapping(mapping);
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Could not find "
@@ -220,6 +226,9 @@ public class FOTreeBuilder extends DefaultHandler {
             log.debug("Parsing of document complete");
         }
         foEventHandler.endDocument();
+        
+        //Notify the image factory that this user agent has expired.
+        ImageFactory.getInstance().removeContext(this.userAgent);
     }
 
     /**
@@ -311,8 +320,8 @@ public class FOTreeBuilder extends DefaultHandler {
 
       if (fobjMaker == null) {
           if (namespaces.contains(namespaceURI.intern())) {
-                throw new FOPException(FONode.errorText(locator) + 
-                    "No element mapping definition found for "
+                throw new FOPException(FONode.errorText(locator) 
+                    + "No element mapping definition found for "
                     + FONode.getNodeString(namespaceURI, localName), locator);
           } else {
               log.warn("Unknown formatting object " + namespaceURI + "^" + localName);
@@ -322,23 +331,17 @@ public class FOTreeBuilder extends DefaultHandler {
       return fobjMaker;
     }
 
-    /**
-     * org.xml.sax.ErrorHandler#warning
-     **/
+    /** @see org.xml.sax.ErrorHandler#warning(org.xml.sax.SAXParseException) */
     public void warning(SAXParseException e) {
         log.warn(e.toString());
     }
 
-    /**
-     * org.xml.sax.ErrorHandler#error
-     **/
+    /** @see org.xml.sax.ErrorHandler#error(org.xml.sax.SAXParseException) */
     public void error(SAXParseException e) {
         log.error(e.toString());
     }
 
-    /**
-     * org.xml.sax.ErrorHandler#fatalError
-     **/
+    /** @see org.xml.sax.ErrorHandler#fatalError(org.xml.sax.SAXParseException) */
     public void fatalError(SAXParseException e) throws SAXException {
         log.error(e.toString());
         throw e;
