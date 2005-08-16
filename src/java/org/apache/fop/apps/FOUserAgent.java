@@ -20,14 +20,12 @@ package org.apache.fop.apps;
 
 // Java
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
-import javax.xml.transform.stream.StreamSource;
 
 // avalon configuration
 import org.apache.avalon.framework.configuration.Configuration;
@@ -409,7 +407,7 @@ public class FOUserAgent {
      * @return the URI Resolver
      */
     public URIResolver getURIResolver() {
-        return this.uriResolver != null ? this.uriResolver : this.foURIResolver;
+        return this.uriResolver;
     }
 
     /**
@@ -431,29 +429,33 @@ public class FOUserAgent {
 
 
     /**
-     * Get a stream source for a reference. Subclass FOUserAgent and override this method to
-     * do custom URI to {@link javax.xml.transform.stream.StreamSource} resolution.
-     * Alternatively set your own {@link javax.xml.transform.URIResolver} on the FOUserAgent.
-     * Temporary solution until the API is better.
+     * Attempts to resolve the given URI.
+     * Will use the configured resolver and if not successful fall back
+     * to the default resolver.
      * @param uri URI to access
-     * @return StreamSource for accessing the resource.
-     * @throws IOException in case of an I/O problem
+     * @return A {@link javax.xml.transform.Source} object, or null if the URI
+     * cannot be resolved. 
+     * @see org.apache.fop.apps.FOURIResolver
      */
-    public StreamSource getStream(String uri) throws IOException {
+    public Source resolveURI(String uri) {
         Source source = null;
-        try {
-            source = getURIResolver().resolve(uri, getBaseURL());
-        } catch (TransformerException te) {
-            log.error("Attempt to resolve URI '" + uri + "' failed: ", te);
-        }
-        if (source != null) {
-            if (source instanceof StreamSource) {
-                return (StreamSource)source;
-            } else {
-                log.error("Attempt to resolve URI returned unknown source");
+        URIResolver uriResolver = getURIResolver();
+        if (uriResolver != null) {
+            try {
+                source = uriResolver.resolve(uri, getBaseURL());
+            } catch (TransformerException te) {
+                log.error("Attempt to resolve URI '" + uri + "' failed: ", te);
             }
         }
-        return null;
+        if (source == null) {
+            // URI Resolver not configured or returned null, use default resolver
+            try {
+                source = foURIResolver.resolve(uri, getBaseURL());
+            } catch (TransformerException te) {
+                log.error("Attempt to resolve URI '" + uri + "' failed: ", te);
+            }
+        }
+        return source;
     }
 
     /**

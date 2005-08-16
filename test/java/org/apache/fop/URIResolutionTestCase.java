@@ -19,7 +19,6 @@
 package org.apache.fop;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.OutputStream;
 
 import javax.xml.transform.Result;
@@ -75,8 +74,10 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
         Document doc = createAreaTree(foFile, ua);
         
         //Check how many times the resolver was consulted
-        assertEquals(1, resolver.successCount);
-        assertEquals(0, resolver.failureCount);
+        assertEquals("Expected resolver to do 1 successful URI resolution",
+                1, resolver.successCount);
+        assertEquals("Expected resolver to do 0 failed URI resolution",
+                0, resolver.failureCount);
         //Additional XPath checking on the area tree
         assertEquals("viewport for external-graphic is missing", 
                 "true", evalXPath(doc, "boolean(//flow/block[1]/lineArea/viewport)"));
@@ -89,6 +90,7 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
      * @throws Exception if anything fails
      */
     public void testFO2() throws Exception {
+        //TODO This will only work when we can do URI resolution inside Batik!
         File foFile = new File(getBaseDir(), "test/xml/uri-resolution2.fo");
         
         FOUserAgent ua = new FOUserAgent();
@@ -115,8 +117,10 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
         }
         
         //Check how many times the resolver was consulted
-        assertEquals(1, resolver.successCount);
-        assertEquals(0, resolver.failureCount);
+        assertEquals("Expected resolver to do 1 successful URI resolution",
+                1, resolver.successCount);
+        assertEquals("Expected resolver to do 0 failed URI resolutions",
+                0, resolver.failureCount);
         //Test using PDF as the area tree doesn't invoke Batik so we could check
         //if the resolver is actually passed to Batik by FOP
         assertTrue("Generated PDF has zero length", baout.size() > 0);
@@ -185,12 +189,6 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
                 if ("myimage123".equals(name)) {
                     File image = new File(getBaseDir(), "test/resources/images/bgimg300dpi.jpg");
                     StreamSource src = new StreamSource(image);
-                    try {
-                        //TODO The next line should not be necessary!!!
-                        src.setInputStream(new java.io.FileInputStream(image));
-                    } catch (FileNotFoundException e) {
-                        throw new TransformerException(e.getMessage(), e);
-                    }
                     successCount++;
                     return src;
                 } else {
