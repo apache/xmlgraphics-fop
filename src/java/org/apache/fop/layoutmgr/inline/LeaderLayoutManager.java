@@ -30,6 +30,7 @@ import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.KnuthPossPosIter;
+import org.apache.fop.layoutmgr.KnuthSequence;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.Position;
@@ -244,7 +245,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
                                            int alignment) {
         MinOptMax ipd;
         curArea = get(context);
-        LinkedList returnList = new LinkedList();
+        KnuthSequence seq = new KnuthSequence(true);
 
         if (curArea == null) {
             setFinished(true);
@@ -273,20 +274,22 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
                                 lead, total, middle);
 
         // node is a fo:Leader
-        returnList.add(new KnuthInlineBox(0, areaInfo.lead, areaInfo.total,
+        seq.add(new KnuthInlineBox(0, areaInfo.lead, areaInfo.total,
                                     areaInfo.middle,
                                     new LeafPosition(this, -1), true));
-        returnList.add(new KnuthPenalty(0, KnuthElement.INFINITE, false,
+        seq.add(new KnuthPenalty(0, KnuthElement.INFINITE, false,
                                         new LeafPosition(this, -1), true));
-        returnList.add
+        seq.add
             (new KnuthGlue(areaInfo.ipdArea.opt,
                            areaInfo.ipdArea.max - areaInfo.ipdArea.opt,
                            areaInfo.ipdArea.opt - areaInfo.ipdArea.min, 
                            new LeafPosition(this, 0), false));
-        returnList.add(new KnuthInlineBox(0, areaInfo.lead, areaInfo.total,
+        seq.add(new KnuthInlineBox(0, areaInfo.lead, areaInfo.total,
                                     areaInfo.middle,
                                     new LeafPosition(this, -1), true));
 
+        LinkedList returnList = new LinkedList();
+        returnList.add(seq);
         setFinished(true);
         return returnList;
     }
