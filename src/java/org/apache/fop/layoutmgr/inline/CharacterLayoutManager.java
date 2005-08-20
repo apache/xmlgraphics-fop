@@ -23,6 +23,7 @@ import org.apache.fop.fonts.Font;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
+import org.apache.fop.layoutmgr.KnuthSequence;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.Position;
@@ -103,7 +104,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
                                            int alignment) {
         MinOptMax ipd;
         curArea = get(context);
-        LinkedList returnList = new LinkedList();
+        KnuthSequence seq = new KnuthSequence(true);
 
         if (curArea == null) {
             setFinished(true);
@@ -146,7 +147,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         // node is a fo:Character
         if (letterSpaceIPD.min == letterSpaceIPD.max) {
             // constant letter space, only return a box
-            returnList.add(new KnuthInlineBox(areaInfo.ipdArea.opt, areaInfo.lead,
+            seq.add(new KnuthInlineBox(areaInfo.ipdArea.opt, areaInfo.lead,
                                         areaInfo.total, areaInfo.middle,
                                         new LeafPosition(this, 0), false));
         } else {
@@ -154,17 +155,19 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
             // at the moment the character is supposed to have no letter spaces,
             // but returning this sequence allows us to change only one element
             // if addALetterSpaceTo() is called
-            returnList.add(new KnuthInlineBox(areaInfo.ipdArea.opt, areaInfo.lead,
+            seq.add(new KnuthInlineBox(areaInfo.ipdArea.opt, areaInfo.lead,
                                         areaInfo.total, areaInfo.middle,
                                         new LeafPosition(this, 0), false));
-            returnList.add(new KnuthPenalty(0, KnuthElement.INFINITE, false,
+            seq.add(new KnuthPenalty(0, KnuthElement.INFINITE, false,
                                             new LeafPosition(this, -1), true));
-            returnList.add(new KnuthGlue(0, 0, 0,
+            seq.add(new KnuthGlue(0, 0, 0,
                                          new LeafPosition(this, -1), true));
-            returnList.add(new KnuthInlineBox(0, 0, 0, 0,
+            seq.add(new KnuthInlineBox(0, 0, 0, 0,
                                         new LeafPosition(this, -1), true));
         }
 
+        LinkedList returnList = new LinkedList();
+        returnList.add(seq);
         setFinished(true);
         return returnList;
     }

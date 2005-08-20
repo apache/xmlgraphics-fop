@@ -22,6 +22,7 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.AbstractLayoutManager;
+import org.apache.fop.layoutmgr.KnuthSequence;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.Position;
@@ -286,10 +287,12 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
 
         // node is a fo:ExternalGraphic, fo:InstreamForeignObject,
         // fo:PageNumber or fo:PageNumberCitation
-        LinkedList returnList = new LinkedList();
-        returnList.add(new KnuthInlineBox(areaInfo.ipdArea.opt, areaInfo.lead,
+        KnuthSequence seq = new KnuthSequence(true);
+        seq.add(new KnuthInlineBox(areaInfo.ipdArea.opt, areaInfo.lead,
                                     areaInfo.total, areaInfo.middle,
                                     new LeafPosition(this, 0), false));
+        LinkedList returnList = new LinkedList();
+        returnList.add(seq);
         setFinished(true);
         return returnList;
     }
