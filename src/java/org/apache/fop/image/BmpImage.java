@@ -22,6 +22,8 @@ package org.apache.fop.image;
 import java.io.IOException;
 import java.awt.color.ColorSpace;
 
+import org.apache.commons.io.IOUtils;
+
 /**
  * Bitmap image.
  * This supports loading a bitmap image into bitmap data.
@@ -84,11 +86,7 @@ public class BmpImage extends AbstractFopImage {
             }
         } catch (IOException ex) {
             log.error("Error while loading image (Bmp): " + ex.getMessage(), ex);
-            try {
-                inputStream.close();
-            } catch (java.io.IOException ioe) {
-                // Ignore
-            }
+            IOUtils.closeQuietly(inputStream);
             inputStream = null;
             return false;
         }
@@ -147,11 +145,7 @@ public class BmpImage extends AbstractFopImage {
             log.error("Error while loading image (Bmp): " + ex.getMessage(), ex);
             return false;
         } finally {
-            try {
-                inputStream.close();
-            } catch (java.io.IOException ioe) {
-                // Ignore
-            }
+            IOUtils.closeQuietly(inputStream);
             inputStream = null;
         }
 

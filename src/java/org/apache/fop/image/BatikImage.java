@@ -31,6 +31,7 @@ import org.apache.batik.ext.awt.image.codec.MemoryCacheSeekableStream;
 import org.apache.batik.ext.awt.image.codec.FileCacheSeekableStream;
 import org.apache.batik.ext.awt.image.rendered.Any2sRGBRed;
 import org.apache.batik.ext.awt.image.rendered.CachableRed;
+import org.apache.commons.io.IOUtils;
 
 /**
  * FopImage object using TIFF
@@ -114,16 +115,8 @@ public abstract class BatikImage extends AbstractFopImage {
                 }
             } catch (IOException ioe) {
                 log.error("Error while loading image (Batik): " + ioe.getMessage(), ioe);
-                try {
-                    seekableInput.close();
-                } catch (IOException ioex) {
-                    // ignore
-                }
-                try {
-                    inputStream.close();
-                } catch (IOException ioex) {
-                    // ignore
-                }
+                IOUtils.closeQuietly(seekableInput);
+                IOUtils.closeQuietly(inputStream);
                 seekableInput = null;
                 inputStream = null;
                 return false;
@@ -219,16 +212,8 @@ public abstract class BatikImage extends AbstractFopImage {
                 log.error("Error while loading image (Batik): " + ex.getMessage(), ex);
             } finally {
                 // Make sure we clean up
-                try {
-                    seekableInput.close();
-                } catch (IOException ioex) {
-                    // ignore
-                }
-                try {
-                    inputStream.close();
-                } catch (IOException ioex) {
-                    // ignore
-                }
+                IOUtils.closeQuietly(seekableInput);
+                IOUtils.closeQuietly(inputStream);
                 seekableInput = null;
                 inputStream = null;
                 cr = null;

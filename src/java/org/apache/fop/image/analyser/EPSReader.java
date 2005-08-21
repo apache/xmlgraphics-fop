@@ -24,6 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 // FOP
+import org.apache.commons.io.IOUtils;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.EPSImage;
 import org.apache.fop.apps.FOUserAgent;
@@ -89,7 +90,7 @@ public class EPSReader implements ImageReader {
                 info.height = (int) (data.bbox[3] - data.bbox[1]);
 
                 // image data read
-                bis.close();
+                IOUtils.closeQuietly(bis);
                 info.inputStream = null;
 
                 return info;

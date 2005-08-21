@@ -27,6 +27,8 @@ import java.awt.image.BufferedImage;
 // ImageIO
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.IOUtils;
+
 /**
  * FopImage object using ImageIO.
  * @see AbstractFopImage
@@ -145,6 +147,9 @@ public class ImageIOImage extends AbstractFopImage {
         } catch (Exception ex) {
             log.error("Error while loading image: " + ex.getMessage(), ex);
             return false; 
+        } finally {
+            IOUtils.closeQuietly(inputStream);
+            inputStream = null;
         }
         return true;
     }

@@ -33,6 +33,7 @@ import org.apache.batik.dom.svg.SVGOMDocument;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -60,11 +61,7 @@ public class SVGReader implements ImageReader {
             FOUserAgent ua) throws IOException {
         FopImage.ImageInfo info = loadImage(uri, fis, ua);
         if (info != null) {
-            try {
-                fis.close();
-            } catch (Exception e) {
-                //ignore
-            }
+            IOUtils.closeQuietly(fis);
         }
         return info;
     }

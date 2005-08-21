@@ -26,6 +26,7 @@ import org.apache.batik.ext.awt.image.codec.tiff.TIFFDirectory;
 import org.apache.batik.ext.awt.image.codec.tiff.TIFFField;
 import org.apache.batik.ext.awt.image.codec.tiff.TIFFImageDecoder;
 import org.apache.batik.ext.awt.image.rendered.CachableRed;
+import org.apache.commons.io.IOUtils;
 
 /**
  * TIFF implementation using the Batik codecs.
@@ -140,16 +141,8 @@ public class TIFFImage extends BatikImage {
                 log.error("Error while loading image strip 1 (TIFF): ", ioe);
                 return false;
             } finally {
-                try {
-                    this.seekableInput.close();
-                } catch (IOException ioex) {
-                    // ignore
-                }
-                try {
-                    this.inputStream.close();
-                } catch (IOException ioex) {
-                    // ignore
-                }
+                IOUtils.closeQuietly(seekableInput);
+                IOUtils.closeQuietly(inputStream);
                 this.seekableInput = null;
                 this.inputStream = null;
                 this.cr = null;

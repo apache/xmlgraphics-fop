@@ -28,6 +28,8 @@ import java.awt.Color;
 // JAI
 import javax.media.jai.JAI;
 import javax.media.jai.RenderedOp;
+
+import org.apache.commons.io.IOUtils;
 // Sun codec
 import com.sun.media.jai.codec.FileCacheSeekableStream;
 
@@ -154,18 +156,10 @@ public class JAIImage extends AbstractFopImage {
         } catch (Exception ex) {
             log.error("Error while loading image (JAI): " + ex.getMessage(), ex);
         } finally {
-            try {
-                inputStream.close();
-            } catch (java.io.IOException ioe) {
-                // Ignore
-            }
+            IOUtils.closeQuietly(inputStream);
             inputStream = null;
             if (seekableInput != null) {
-                try {
-                    seekableInput.close();
-                } catch (java.io.IOException ioe) {
-                    // Ignore
-                }
+                IOUtils.closeQuietly(seekableInput);
             }
         }
     }
