@@ -111,7 +111,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
      */
     public void setUserAgent(FOUserAgent agent) {
         super.setUserAgent(agent);
-        PSXMLHandler xmlHandler = new PSXMLHandler();
+        PSSVGHandler xmlHandler = new PSSVGHandler();
         userAgent.getXMLHandlerRegistry().addXMLHandler(xmlHandler);
     }
 
@@ -853,15 +853,15 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
         context = new RendererContext(this, MIME_TYPE);
         context.setUserAgent(userAgent);
 
-        context.setProperty(PSXMLHandler.PS_GENERATOR, this.gen);
-        context.setProperty(PSXMLHandler.PS_FONT_INFO, fontInfo);
-        context.setProperty(PSXMLHandler.PS_WIDTH,
+        context.setProperty(PSSVGHandler.PS_GENERATOR, this.gen);
+        context.setProperty(PSSVGHandler.PS_FONT_INFO, fontInfo);
+        context.setProperty(PSSVGHandler.PS_WIDTH,
                             new Integer((int) pos.getWidth()));
-        context.setProperty(PSXMLHandler.PS_HEIGHT,
+        context.setProperty(PSSVGHandler.PS_HEIGHT,
                             new Integer((int) pos.getHeight()));
-        context.setProperty(PSXMLHandler.PS_XPOS,
+        context.setProperty(PSSVGHandler.PS_XPOS,
                             new Integer(currentIPPosition + (int) pos.getX()));
-        context.setProperty(PSXMLHandler.PS_YPOS,
+        context.setProperty(PSSVGHandler.PS_YPOS,
                             new Integer(currentBPPosition + (int) pos.getY()));
         //context.setProperty("strokeSVGText", options.get("strokeSVGText"));
         
