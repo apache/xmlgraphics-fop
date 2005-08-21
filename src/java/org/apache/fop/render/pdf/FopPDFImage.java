@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 /* $Id$ */
 
 package org.apache.fop.render.pdf;
-
 import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFImage;
 import org.apache.fop.pdf.PDFFilter;
@@ -32,11 +31,13 @@ import org.apache.fop.pdf.BitmapImage;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.JpegImage;
 import org.apache.fop.image.EPSImage;
+import org.apache.fop.image.TIFFImage;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
+import org.apache.fop.pdf.CCFFilter;
 
 /**
  * PDFImage implementation for the PDF renderer.
@@ -49,6 +50,8 @@ public class FopPDFImage implements PDFImage {
     private String maskRef;
     private String softMaskRef;
     private boolean isPS = false;
+    private boolean isCCF = false;
+    private boolean isDCT = false;
     private String key;
 
     /**
@@ -77,6 +80,7 @@ public class FopPDFImage implements PDFImage {
         if ("image/jpeg".equals(fopImage.getMimeType())) {
             pdfFilter = new DCTFilter();
             pdfFilter.setApplied(true);
+            isDCT = true;
 
             JpegImage jpegimage = (JpegImage) fopImage;
             ICC_Profile prof = jpegimage.getICCProfile();
@@ -85,8 +89,35 @@ public class FopPDFImage implements PDFImage {
                 pdfICCStream = doc.getFactory().makePDFICCStream();
                 pdfICCStream.setColorSpace(prof, pdfCS);
             }
+        } else if ("image/tiff".equals(fopImage.getMimeType())
+                    && fopImage instanceof TIFFImage) {
+            TIFFImage tiffImage = (TIFFImage) fopImage;
+            if (tiffImage.getStripCount() == 1) {
+                int comp = tiffImage.getCompression();
+                if (comp == 1) {
+                    // Nothing to do
+                } else if (comp == 3) {
+                    pdfFilter = new CCFFilter();
+                    pdfFilter.setApplied(true);
+                    isCCF = true;
+                } else if (comp == 4) {
+                    pdfFilter = new CCFFilter();
+                    pdfFilter.setApplied(true);
+                    ((CCFFilter)pdfFilter).setDecodeParms("<< /K -1 /Columns " 
+                        + tiffImage.getWidth() + " >>");
+                    isCCF = true;
+                } else if (comp == 6) {
+                    pdfFilter = new DCTFilter();
+                    pdfFilter.setApplied(true);
+                    isDCT = true;
+                }
+            }
         }
-
+        if (isPS || isDCT || isCCF) {
+            fopImage.load(FopImage.ORIGINAL_DATA);
+        } else {
+            fopImage.load(FopImage.BITMAP);
+        }
         //Handle transparency mask if applicable
         if (fopImage.hasSoftMask()) {
             byte [] softMask = fopImage.getSoftMask();
@@ -100,20 +131,6 @@ public class FopPDFImage implements PDFImage {
             PDFXObject xobj = doc.addImage(null, fopimg);
             softMaskRef = xobj.referencePDF();
         }
-    }
-
-    /**
-     * @see org.apache.fop.pdf.PDFImage#isPS()
-     */
-    public boolean isPS() {
-        return isPS;
-    }
-
-    /**
-     * @see org.apache.fop.pdf.PDFImage#isDCT()
-     */
-    public boolean isDCT() {
-        return fopImage.getMimeType().equals("image/jpeg");
     }
 
     /**
@@ -175,6 +192,20 @@ public class FopPDFImage implements PDFImage {
         return softMaskRef;
     }
 
+    /**
+     * @see org.apache.fop.pdf.PDFImage#isPS()
+     */
+    public boolean isPS() {
+        return isPS;
+    }
+
+    /**
+     * @see org.apache.fop.pdf.PDFImage#getPDFFilter()
+     */
+    public PDFFilter getPDFFilter() {
+        return pdfFilter;
+    }
+    
     /**
      * @see org.apache.fop.pdf.PDFImage#outputContents(OutputStream)
      */
@@ -268,10 +299,12 @@ public class FopPDFImage implements PDFImage {
      * @see org.apache.fop.pdf.PDFImage#getFilterHint()
      */
     public String getFilterHint() {
-        if (isPS()) {
+        if (isPS) {
             return PDFFilterList.CONTENT_FILTER;
-        } else if (fopImage.getMimeType().equals("image/jpeg")) {
+        } else if (isDCT) {
             return PDFFilterList.JPEG_FILTER;
+        } else if (isCCF) {
+            return PDFFilterList.TIFF_FILTER;
         } else {
             return PDFFilterList.IMAGE_FILTER;
         }

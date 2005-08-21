@@ -63,7 +63,7 @@ public final class ImageFactory {
         ImageProvider jaiImage = new ImageProvider("JAIImage", "org.apache.fop.image.JAIImage");
         ImageProvider jimiImage = new ImageProvider("JIMIImage", "org.apache.fop.image.JimiImage");
         ImageProvider imageIoImage = new ImageProvider(
-                "ImageIOImage", "org.apache.fop.image.ImageIoImage");
+                "ImageIOImage", "org.apache.fop.image.ImageIOImage");
         ImageProvider gifImage = new ImageProvider("GIFImage", "org.apache.fop.image.GifImage");
         ImageProvider jpegImage = new ImageProvider("JPEGImage", "org.apache.fop.image.JpegImage");
         ImageProvider bmpImage = new ImageProvider("BMPImage", "org.apache.fop.image.BmpImage");
@@ -104,6 +104,7 @@ public final class ImageFactory {
         imt = new ImageMimeType("image/tiff");
         imageMimeTypes.put(imt.getMimeType(), imt);
         imt.addProvider(tiffImage);
+        imt.addProvider(jaiImage);
 
         imt = new ImageMimeType("image/svg+xml");
         imageMimeTypes.put(imt.getMimeType(), imt);

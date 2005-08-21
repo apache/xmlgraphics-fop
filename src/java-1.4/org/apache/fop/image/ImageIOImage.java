@@ -42,9 +42,20 @@ public class ImageIOImage extends AbstractFopImage {
         super(info);
     }
 
+    /**
+     * @see org.apache.fop.image.AbstractFopImage#loadDimensions()
+     */
+    protected boolean loadDimensions() {
+        if (this.bitmaps == null) {
+            return loadBitmap();
+        }
+        return true;
+    }
+    
     /** @see org.apache.fop.image.AbstractFopImage#loadBitmap() */
     protected boolean loadBitmap() {
         try {
+            inputStream.reset();
             BufferedImage imageData = ImageIO.read(inputStream);
 
             this.height = imageData.getHeight();

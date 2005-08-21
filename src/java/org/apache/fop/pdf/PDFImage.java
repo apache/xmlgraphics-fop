@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,13 +82,6 @@ public interface PDFImage {
     boolean isPS();
 
     /**
-     * Check if this image is a DCT encoded image (for JPEG images).
-     *
-     * @return true if this is a DCT image
-     */
-    boolean isDCT();
-
-    /**
      * Check if this image has a transparent color transparency.
      *
      * @return true if it has transparency
@@ -116,6 +109,13 @@ public interface PDFImage {
      */
     String getSoftMask();
 
+    /**
+     * Get the PDF Filter to be applied to the image.
+     *
+     * @return the PDF Filter or null
+     */
+    PDFFilter getPDFFilter();
+    
     // get the image bytes, and bytes properties
 
     /**

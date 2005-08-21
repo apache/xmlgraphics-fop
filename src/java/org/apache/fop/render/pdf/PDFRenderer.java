@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* $Id: PDFRenderer.java,v 1.38 2004/04/07 14:24:17 cbowditch Exp $ */
+/* $Id$ */
 
 package org.apache.fop.render.pdf;
 
@@ -161,6 +161,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      */
     protected PDFPage currentPage;
     
+    /** The current Transform */
     protected AffineTransform currentBasicTransform;
 
     /** drawing state */
@@ -615,9 +616,11 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                     setColor(uppercol, false, null);
                     currentStream.add(x1 + " " + ym1 + " m " + x2 + " " + ym1 + " l S\n");
                     setColor(c, false, null);
-                    currentStream.add(x1 + " " + (ym1 + h3) + " m " + x2 + " " + (ym1 + h3) + " l S\n");
+                    currentStream.add(x1 + " " + (ym1 + h3) + " m " 
+                                        + x2 + " " + (ym1 + h3) + " l S\n");
                     setColor(lowercol, false, null);
-                    currentStream.add(x1 + " " + (ym1 + h3 + h3) + " m " + x2 + " " + (ym1 + h3 + h3) + " l S\n");
+                    currentStream.add(x1 + " " + (ym1 + h3 + h3) + " m " 
+                                        + x2 + " " + (ym1 + h3 + h3) + " l S\n");
                 } else {
                     Color leftcol = lightenColor(c, -colFactor);
                     Color rightcol = lightenColor(c, colFactor);
@@ -627,9 +630,11 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                     setColor(leftcol, false, null);
                     currentStream.add(xm1 + " " + y1 + " m " + xm1 + " " + y2 + " l S\n");
                     setColor(c, false, null);
-                    currentStream.add((xm1 + w3) + " " + y1 + " m " + (xm1 + w3) + " " + y2 + " l S\n");
+                    currentStream.add((xm1 + w3) + " " + y1 + " m " 
+                                        + (xm1 + w3) + " " + y2 + " l S\n");
                     setColor(rightcol, false, null);
-                    currentStream.add((xm1 + w3 + w3) + " " + y1 + " m " + (xm1 + w3 + w3) + " " + y2 + " l S\n");
+                    currentStream.add((xm1 + w3 + w3) + " " + y1 + " m " 
+                                        + (xm1 + w3 + w3) + " " + y2 + " l S\n");
                 }
                 break;
             }
@@ -1398,16 +1403,10 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
 
             renderDocument(doc, ns, pos);
         } else if ("image/eps".equals(mime)) {
-            if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
-                return;
-            }
             FopPDFImage pdfimage = new FopPDFImage(fopimage, url);
             int xobj = pdfDoc.addImage(currentContext, pdfimage).getXNumber();
             fact.releaseImage(url, userAgent);
-        } else if ("image/jpeg".equals(mime)) {
-            if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
-                return;
-            }
+        } else if ("image/jpeg".equals(mime) || "image/tiff".equals(mime)) {
             FopPDFImage pdfimage = new FopPDFImage(fopimage, url);
             int xobj = pdfDoc.addImage(currentContext, pdfimage).getXNumber();
             fact.releaseImage(url, userAgent);
@@ -1417,9 +1416,6 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             placeImage((float) pos.getX() / 1000,
                        (float) pos.getY() / 1000, w, h, xobj);
         } else {
-            if (!fopimage.load(FopImage.BITMAP)) {
-                return;
-            }
             FopPDFImage pdfimage = new FopPDFImage(fopimage, url);
             int xobj = pdfDoc.addImage(currentContext, pdfimage).getXNumber();
             fact.releaseImage(url, userAgent);
