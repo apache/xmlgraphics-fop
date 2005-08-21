@@ -100,6 +100,11 @@ public class RegionReference extends Area implements Cloneable {
         return regionFO.getNameId();
     }
 
+    /** @return the region name */
+    public String getRegionName() {
+        return regionFO.getRegionName();
+    }
+    
     /**
      * Add a block area to this region reference area.
      *
