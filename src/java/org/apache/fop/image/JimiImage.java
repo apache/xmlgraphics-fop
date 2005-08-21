@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,15 +37,18 @@ import com.sun.jimi.core.Jimi;
  */
 public class JimiImage extends AbstractFopImage {
 
-    public JimiImage(FopImage.ImageInfo imgReader) {
-        super(imgReader);
-        try {
-            Class c = Class.forName("com.sun.jimi.core.Jimi");
-        } catch (ClassNotFoundException e) {
-            //throw new FopImageException("Jimi image library not available");
-        }
+    /**
+     * Create a new Jimi image.
+     *
+     * @param imgInfo the image info for this Jimi image
+     */
+    public JimiImage(FopImage.ImageInfo imgInfo) {
+        super(imgInfo);
     }
 
+    /**
+     * @see org.apache.fop.image.AbstractFopImage#loadDimensions()
+     */
     protected boolean loadDimensions() {
         if (this.bitmaps == null) {
             loadImage();
@@ -65,6 +68,9 @@ public class JimiImage extends AbstractFopImage {
         return this.bitmaps != null;
     }
 
+    /**
+     * Loads the image from the inputstream
+     */
     protected void loadImage() {
         int[] tmpMap = null;
         try {
@@ -79,9 +85,6 @@ public class JimiImage extends AbstractFopImage {
             }
             this.height = consumer.getHeight();
             this.width = consumer.getWidth();
-
-            inputStream.close();
-            inputStream = null;
 
             try {
                 tmpMap = consumer.getImage();
@@ -149,9 +152,15 @@ public class JimiImage extends AbstractFopImage {
                 this.isTransparent = false;
             }
         } catch (Throwable ex) {
-            log.error("Error while loading image "
-                               + "", ex);
+            log.error("Error while loading image (Jimi): " + ex.getMessage(), ex);
             return;
+        } finally {
+            try {
+                inputStream.close();
+            } catch (java.io.IOException ioe) {
+                // Ignore
+            }
+            inputStream = null;
         }
 
 
@@ -164,12 +173,9 @@ public class JimiImage extends AbstractFopImage {
                 int r = (p >> 16) & 0xFF;
                 int g = (p >> 8) & 0xFF;
                 int b = (p) & 0xFF;
-                this.bitmaps[3 * (i * this.width + j)] =
-                  (byte)(r & 0xFF);
-                this.bitmaps[3 * (i * this.width + j) + 1] =
-                  (byte)(g & 0xFF);
-                this.bitmaps[3 * (i * this.width + j) + 2] =
-                  (byte)(b & 0xFF);
+                this.bitmaps[3 * (i * this.width + j)] = (byte)(r & 0xFF);
+                this.bitmaps[3 * (i * this.width + j) + 1] = (byte)(g & 0xFF);
+                this.bitmaps[3 * (i * this.width + j) + 2] = (byte)(b & 0xFF);
             }
         }
     }

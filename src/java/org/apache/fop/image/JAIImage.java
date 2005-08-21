@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,26 +39,43 @@ import com.sun.media.jai.codec.FileCacheSeekableStream;
  */
 public class JAIImage extends AbstractFopImage {
 
-    public JAIImage(FopImage.ImageInfo imgReader) {
-        super(imgReader);
+    /**
+     * Create a new JAI image.
+     *
+     * @param imgInfo the image info for this JAI image
+     */
+    public JAIImage(FopImage.ImageInfo imgInfo) {
+        super(imgInfo);
     }
 
+    /**
+     * @see org.apache.fop.image.AbstractFopImage#loadDimensions()
+     */
+    protected boolean loadDimensions() {
+        if (this.bitmaps == null) {
+            loadImage();
+        }
+        return this.bitmaps != null;
+    }
+    
+    /**
+     * Loads the image from the inputstream
+     */
     protected void loadImage() {
+        com.sun.media.jai.codec.FileCacheSeekableStream seekableInput = null;
         try {
-            com.sun.media.jai.codec.FileCacheSeekableStream seekableInput =
-              new FileCacheSeekableStream(inputStream);
+            seekableInput = new FileCacheSeekableStream(inputStream);
             RenderedOp imageOp = JAI.create("stream", seekableInput);
-            inputStream.close();
-            inputStream = null;
 
             this.height = imageOp.getHeight();
             this.width = imageOp.getWidth();
 
             ColorModel cm = imageOp.getColorModel();
-            this.bitsPerPixel = 8;
-            // this.bitsPerPixel = cm.getPixelSize();
-            this.colorSpace = ColorSpace.getInstance(ColorSpace.CS_LINEAR_RGB);
-
+            //this.bitsPerPixel = 8;
+            this.bitsPerPixel = cm.getPixelSize();
+            //this.colorSpace = ColorSpace.getInstance(ColorSpace.CS_LINEAR_RGB);
+            this.colorSpace = cm.getColorSpace();
+            
             BufferedImage imageData = imageOp.getAsBufferedImage();
             int[] tmpMap = imageData.getRGB(0, 0, this.width,
                                             this.height, null, 0, this.width);
@@ -128,21 +145,29 @@ public class JAIImage extends AbstractFopImage {
                     int r = (p >> 16) & 0xFF;
                     int g = (p >> 8) & 0xFF;
                     int b = (p) & 0xFF;
-                    this.bitmaps[3 * (i * this.width + j)] =
-                      (byte)(r & 0xFF);
-                    this.bitmaps[3 * (i * this.width + j) + 1] =
-                      (byte)(g & 0xFF);
-                    this.bitmaps[3 * (i * this.width + j) + 2] =
-                      (byte)(b & 0xFF);
+                    this.bitmaps[3 * (i * this.width + j)] = (byte)(r & 0xFF);
+                    this.bitmaps[3 * (i * this.width + j) + 1] = (byte)(g & 0xFF);
+                    this.bitmaps[3 * (i * this.width + j) + 2] = (byte)(b & 0xFF);
                 }
             }
 
         } catch (Exception ex) {
-            /*throw new FopImageException("Error while loading image "
-                                         + "" + " : "
-                                         + ex.getClass() + " - "
-                                         + ex.getMessage());
-             */}
+            log.error("Error while loading image (JAI): " + ex.getMessage(), ex);
+        } finally {
+            try {
+                inputStream.close();
+            } catch (java.io.IOException ioe) {
+                // Ignore
+            }
+            inputStream = null;
+            if (seekableInput != null) {
+                try {
+                    seekableInput.close();
+                } catch (java.io.IOException ioe) {
+                    // Ignore
+                }
+            }
+        }
     }
 
 }

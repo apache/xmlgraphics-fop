@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import java.net.URLConnection;
  * @see FopImage
  */
 public class GifImage extends AbstractFopImage {
+
     /**
      * Create a new gif image.
      *
@@ -52,7 +53,6 @@ public class GifImage extends AbstractFopImage {
      * To decode the image a dummy URLConnection is used that
      * will do the conversion.
      *
-     * @param ua the user agent for loading
      * @return True if the load process succeeded
      */
     protected boolean loadBitmap() {
@@ -82,9 +82,6 @@ public class GifImage extends AbstractFopImage {
                               + ex.getMessage(), ex);
                 return false;
             }
-
-            inputStream.close();
-            inputStream = null;
 
             ColorModel cm = consumer.getColorModel();
             this.bitsPerPixel = 8;
@@ -143,11 +140,15 @@ public class GifImage extends AbstractFopImage {
                 this.isTransparent = false;
             }
         } catch (Exception ex) {
-            log.error("Error while loading image "
-                          + "" + " : "
-                          + ex.getClass() + " - "
-                          + ex.getMessage(), ex);
+            log.error("Error while loading image (Gif): " + ex.getMessage(), ex);
             return false;
+        } finally {
+            try {
+                inputStream.close();
+            } catch (java.io.IOException ioe) {
+                // Ignore
+            }
+            inputStream = null;
         }
 
         // Should take care of the ColorSpace and bitsPerPixel
@@ -159,12 +160,9 @@ public class GifImage extends AbstractFopImage {
                 int r = (p >> 16) & 0xFF;
                 int g = (p >> 8) & 0xFF;
                 int b = (p) & 0xFF;
-                this.bitmaps[3 * (i * this.width + j)] =
-                  (byte)(r & 0xFF);
-                this.bitmaps[3 * (i * this.width + j) + 1] =
-                  (byte)(g & 0xFF);
-                this.bitmaps[3 * (i * this.width + j) + 2] =
-                  (byte)(b & 0xFF);
+                this.bitmaps[3 * (i * this.width + j)] = (byte)(r & 0xFF);
+                this.bitmaps[3 * (i * this.width + j) + 1] = (byte)(g & 0xFF);
+                this.bitmaps[3 * (i * this.width + j) + 2] = (byte)(b & 0xFF);
             }
         }
         return true;
@@ -181,18 +179,30 @@ public class GifImage extends AbstractFopImage {
             inputStream = is;
         }
 
+        /**
+         * @see java.net.URLConnection#getInputStream()
+         */
         public InputStream getInputStream() throws IOException {
             return inputStream;
         }
 
+        /**
+         * @see java.net.URLConnection#connect()
+         */
         public void connect() throws IOException {
             // do nothing
         }
 
+        /**
+         * @see java.net.URLConnection#getContentType()
+         */
         public String getContentType() {
             return "image/gif";
         }
 
+        /**
+         * @see java.net.URLConnection#getContentLength()
+         */
         public int getContentLength() {
             try {
                 return inputStream.available();

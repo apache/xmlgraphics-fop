@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -196,19 +196,19 @@ public class BitmapImage implements PDFImage {
     }
 
     /**
-     * @see org.apache.fop.pdf.PDFImage#isDCT()
-     */
-    public boolean isDCT() {
-        return false;
-    }
-
-    /**
      * @see org.apache.fop.pdf.PDFImage#getFilterHint()
      */
     public String getFilterHint() {
         return PDFFilterList.IMAGE_FILTER;
     }
 
+    /**
+     * @see org.apache.fop.pdf.PDFImage#getPDFFilter()
+     */
+    public PDFFilter getPDFFilter() {
+        return null;
+    }
+    
 }
 
 

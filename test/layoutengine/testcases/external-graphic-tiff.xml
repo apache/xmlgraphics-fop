@@ -24,7 +24,7 @@
   <fo>
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
       <fo:layout-master-set>
-        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+        <fo:simple-page-master master-name="normal" page-width="8in" page-height="8in">
           <fo:region-body/>
         </fo:simple-page-master>
       </fo:layout-master-set>
@@ -37,6 +37,10 @@
           <fo:block>TIFF external-graphic 72dpi</fo:block>
           <fo:block>
             <fo:external-graphic src="../../resources/images/bgimg72dpi.tif"/>EOG
+          </fo:block>
+          <fo:block>TIFF external-graphic (CCITT group 4 encoding)</fo:block>
+          <fo:block>
+            <fo:external-graphic src="../../resources/images/tiff_group4.tif"/>EOG
           </fo:block>
           <fo:block>EOF</fo:block>
         </fo:flow>
@@ -52,5 +56,9 @@
     <eval expected="192000" xpath="//flow/block[4]/lineArea/viewport/@ipda"/>
     <eval expected="192000" xpath="//flow/block[4]/lineArea/viewport/@bpd"/>
     <eval expected="192000" xpath="//flow/block[4]/lineArea/viewport/@bpda"/>
+    <eval expected="550588" xpath="//flow/block[6]/lineArea/viewport/@ipd"/>
+    <eval expected="550588" xpath="//flow/block[6]/lineArea/viewport/@ipda"/>
+    <eval expected="66705" xpath="//flow/block[6]/lineArea/viewport/@bpd"/>
+    <eval expected="66705" xpath="//flow/block[6]/lineArea/viewport/@bpda"/>
   </checks>
 </testcase>

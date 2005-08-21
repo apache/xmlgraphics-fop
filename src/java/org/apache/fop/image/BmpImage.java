@@ -82,14 +82,17 @@ public class BmpImage extends AbstractFopImage {
                     countr++;
                 }
             }
-        } catch (IOException e) {
-            log.error("Error while loading image "
-                                         + "" + " : "
-                                         + e.getClass() + " - "
-                                         + e.getMessage(), e);
+        } catch (IOException ex) {
+            log.error("Error while loading image (Bmp): " + ex.getMessage(), ex);
+            try {
+                inputStream.close();
+            } catch (java.io.IOException ioe) {
+                // Ignore
+            }
+            inputStream = null;
             return false;
         }
-        // gets h & w from headermap
+            // gets h & w from headermap
         this.width = headermap[wpos] 
                 + headermap[wpos + 1] * 256
                 + headermap[wpos + 2] * 256 * 256
@@ -140,14 +143,16 @@ public class BmpImage extends AbstractFopImage {
                     temp[count++] = input;
                 }
             }
-            inputStream.close();
-            inputStream = null;
-        } catch (IOException e) {
-            log.error("Error while loading image "
-                          + "" + " : "
-                          + e.getClass() + " - "
-                          + e.getMessage(), e);
+        } catch (IOException ex) {
+            log.error("Error while loading image (Bmp): " + ex.getMessage(), ex);
             return false;
+        } finally {
+            try {
+                inputStream.close();
+            } catch (java.io.IOException ioe) {
+                // Ignore
+            }
+            inputStream = null;
         }
 
         for (int i = 0; i < this.height; i++) {
@@ -159,9 +164,8 @@ public class BmpImage extends AbstractFopImage {
                 if (this.bitsPerPixel == 24 && x < this.width) {
                     int countr = 2;
                     do {
-                        this.bitmaps[3 * (i * this.width + x) + countr] =
-                                         (byte)(temp[(this.height - i - 1)
-                                                     * bytes + j] & 0xFF);
+                        this.bitmaps[3 * (i * this.width + x) + countr] 
+                            = (byte)(temp[(this.height - i - 1) * bytes + j] & 0xFF);
                         j++;
                     } while (--countr >= 0)
                         ;

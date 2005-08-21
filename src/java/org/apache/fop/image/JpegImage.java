@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,13 +65,16 @@ public class JpegImage extends AbstractFopImage {
             while ((bytesRead = inputStream.read(readBuf)) != -1) {
                 baos.write(readBuf, 0, bytesRead);
             }
-            inputStream.close();
-            inputStream = null;
         } catch (java.io.IOException ex) {
-            log.error("Error while loading image "
-                          + " : " + ex.getClass()
-                          + " - " + ex.getMessage(), ex);
+            log.error("Error while loading image (Jpeg): " + ex.getMessage(), ex);
             return false;
+        } finally {
+            try {
+                inputStream.close();
+            } catch (java.io.IOException ioe) {
+                // Ignore
+            }
+            inputStream = null;
         }
 
         this.bitmaps = baos.toByteArray();
@@ -163,10 +166,8 @@ public class JpegImage extends AbstractFopImage {
             byte[] align = new byte[((iccStream.size()) % 8) + 8];
             try {
                 iccStream.write(align);
-            } catch (Exception e) {
-                log.error("Error while loading image "
-                              + " : "
-                              + e.getMessage(), e);
+            } catch (Exception ex) {
+                log.error("Error while aligning ICC stream: " + ex.getMessage(), ex);
                 return false;
             }
             try {

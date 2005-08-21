@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The Apache Software Foundation
+ * Copyright 2004-2005 The Apache Software Foundation 
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 
 package org.apache.fop.image;
 
+import java.awt.color.ColorSpace;
 import java.io.IOException;
 
 import org.apache.batik.ext.awt.image.codec.SeekableStream;
@@ -31,12 +32,33 @@ import org.apache.batik.ext.awt.image.rendered.CachableRed;
  */
 public class TIFFImage extends BatikImage {
 
+    private int compression = 0;
+    private int stripCount = 0;
+    private long stripOffset = 0;
+    private long stripLength = 0;
+    
     /**
      * Constructs a new BatikImage instance.
      * @param imgReader basic metadata for the image
      */
     public TIFFImage(FopImage.ImageInfo imgReader) {
         super(imgReader);
+    }
+
+    /**
+     * The compression type set in the TIFF directory
+     * @return the TIFF compression type
+     */
+    public int getCompression() {
+        return compression;
+    }
+
+    /**
+     * The number of strips in the image
+     * @return the number of strips in the image
+     */
+    public int getStripCount() {
+        return stripCount;
     }
 
     /**
@@ -67,7 +89,73 @@ public class TIFFImage extends BatikImage {
             log.warn("Cannot determine bitmap resolution."
                     + " Unimplemented resolution unit: " + resUnit);
         }
+        fld = dir.getField(TIFFImageDecoder.TIFF_COMPRESSION);
+        if (fld != null) {
+            compression = fld.getAsInt(0);
+        }
+        fld = dir.getField(TIFFImageDecoder.TIFF_BITS_PER_SAMPLE);
+        if (fld != null) {
+            bitsPerPixel = fld.getAsInt(0);
+        }
+        fld = dir.getField(TIFFImageDecoder.TIFF_ROWS_PER_STRIP);
+        if (fld == null) {
+            stripCount = 1;
+        } else {
+            stripCount = (int)(dir.getFieldAsLong(TIFFImageDecoder.TIFF_IMAGE_LENGTH)
+                                / fld.getAsLong(0));
+        }
+        stripOffset = dir.getField(TIFFImageDecoder.TIFF_STRIP_OFFSETS).getAsLong(0);
+        stripLength = dir.getField(TIFFImageDecoder.TIFF_STRIP_BYTE_COUNTS).getAsLong(0);
+        
+        if (this.bitsPerPixel == 1) {
+            this.colorSpace = ColorSpace.getInstance(ColorSpace.CS_GRAY);
+        }
         return img;
     }
-    
+
+    /**
+     * Load the original TIFF data.
+     * This loads only strip 1 of the original TIFF data.
+     *
+     * @return true if loaded false for any error
+     * @see org.apache.fop.image.AbstractFopImage#loadOriginalData()
+     */
+    protected boolean loadOriginalData() {
+        if (loadDimensions()) {
+            byte[] readBuf = new byte[(int)stripLength];
+            int bytesRead;
+
+            try {
+                this.seekableInput.reset();
+                this.seekableInput.skip(stripOffset);
+                bytesRead = seekableInput.read(readBuf);
+                if (bytesRead != stripLength) {
+                    log.error("Error while loading image: length mismatch on read");
+                    return false;
+                }
+
+                this.bitmaps = readBuf;
+                return true;
+            } catch (IOException ioe) {
+                log.error("Error while loading image strip 1 (TIFF): ", ioe);
+                return false;
+            } finally {
+                try {
+                    this.seekableInput.close();
+                } catch (IOException ioex) {
+                    // ignore
+                }
+                try {
+                    this.inputStream.close();
+                } catch (IOException ioex) {
+                    // ignore
+                }
+                this.seekableInput = null;
+                this.inputStream = null;
+                this.cr = null;
+            }
+        }
+        return false;
+    }
+
 }

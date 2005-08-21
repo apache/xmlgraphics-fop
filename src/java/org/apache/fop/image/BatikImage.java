@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The Apache Software Foundation 
+ * Copyright 2004-2005 The Apache Software Foundation 
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +43,16 @@ public abstract class BatikImage extends AbstractFopImage {
     private byte[] softMask = null;
 
     /**
+     * The InputStream wrapped into a SeekableStream for decoding.
+     */
+    protected SeekableStream seekableInput = null;
+
+    /**
+     * The Batik representation of the image
+     */
+    protected CachableRed cr = null;
+    
+    /**
      * Constructs a new BatikImage instance.
      * @param imgReader basic metadata for the image
      */
@@ -54,11 +64,72 @@ public abstract class BatikImage extends AbstractFopImage {
      * @see org.apache.fop.image.AbstractFopImage#loadDimensions()
      */
     protected boolean loadDimensions() {
-        if (this.bitmaps == null) {
-            loadImage();
-        }
+        if (seekableInput == null && inputStream != null) {
+            try { 
+                seekableInput = new FileCacheSeekableStream(inputStream);
+            } catch (IOException ioe) {
+                seekableInput = new MemoryCacheSeekableStream(inputStream);
+            }
+            try {
+                this.bitsPerPixel = 8;
+                cr = decodeImage(seekableInput);
+                this.height = cr.getHeight();
+                this.width  = cr.getWidth();
+                this.isTransparent = false;
+                this.softMask = null;
+                ColorModel cm = cr.getColorModel();
 
-        return this.bitmaps != null;
+                this.height = cr.getHeight();
+                this.width  = cr.getWidth();
+                this.isTransparent = false;
+                this.softMask = null;
+
+                int transparencyType = cm.getTransparency();
+                if (cm instanceof IndexColorModel)  {
+                    if (transparencyType == Transparency.BITMASK) {
+                        // Use 'transparent color'.
+                        IndexColorModel icm = (IndexColorModel)cm;
+                        int numColor = icm.getMapSize();
+                        byte [] alpha = new byte[numColor];
+                        icm.getAlphas(alpha);
+                        for (int i = 0; i < numColor; i++) {
+                            if ((alpha[i] & 0xFF) == 0) {
+                                this.isTransparent = true;
+                                int red = (icm.getRed  (i)) & 0xFF;
+                                int grn = (icm.getGreen(i)) & 0xFF;
+                                int blu = (icm.getBlue (i)) & 0xFF;
+                                this.transparentColor = new Color(red, grn, blu);
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    cr = new Any2sRGBRed(cr);
+                }
+
+                // Get our current ColorModel
+                cm = cr.getColorModel();
+                if (this.colorSpace == null) {
+                    this.colorSpace = cm.getColorSpace();
+                }
+            } catch (IOException ioe) {
+                log.error("Error while loading image (Batik): " + ioe.getMessage(), ioe);
+                try {
+                    seekableInput.close();
+                } catch (IOException ioex) {
+                    // ignore
+                }
+                try {
+                    inputStream.close();
+                } catch (IOException ioex) {
+                    // ignore
+                }
+                seekableInput = null;
+                inputStream = null;
+                return false;
+            }
+        }
+        return this.height != -1;
     }
 
     /**
@@ -106,88 +177,62 @@ public abstract class BatikImage extends AbstractFopImage {
      * Loads the image from the InputStream.
      */
     protected void loadImage() {
-        try {
-            SeekableStream seekableInput;
-            try { seekableInput = new FileCacheSeekableStream(inputStream);
-            } catch (IOException ioe) {
-                seekableInput = new MemoryCacheSeekableStream(inputStream);
-            }
+        if (loadDimensions()) {
+            try {
+                // Get our current ColorModel
+                ColorModel cm = cr.getColorModel();
 
-            CachableRed cr = decodeImage(seekableInput);
-            ColorModel cm = cr.getColorModel();
+                // It has an alpha channel so generate a soft mask.
+                if (!this.isTransparent && cm.hasAlpha())
+                    this.softMask = new byte[this.width * this.height];
 
-            this.height = cr.getHeight();
-            this.width  = cr.getWidth();
-            this.isTransparent = false;
-            this.softMask = null;
-            this.bitmapsSize = this.width * this.height * 3;
-            this.bitmaps = new byte[this.bitmapsSize];
-            this.bitsPerPixel = 8;
+                this.bitmapsSize = this.width * this.height * 3;
+                this.bitmaps = new byte[this.bitmapsSize];
 
-            int transparencyType = cm.getTransparency();
-            if (cm instanceof IndexColorModel)  {
-                if (transparencyType == Transparency.BITMASK) {
-                // Use 'transparent color'.
-                IndexColorModel icm = (IndexColorModel)cm;
-                int numColor = icm.getMapSize();
-                byte [] alpha = new byte[numColor];
-                icm.getAlphas(alpha);
-                for (int i = 0; i < numColor; i++) {
-                    if ((alpha[i] & 0xFF) == 0) {
-                        this.isTransparent = true;
-                        int red = (icm.getRed  (i)) & 0xFF;
-                        int grn = (icm.getGreen(i)) & 0xFF;
-                        int blu = (icm.getBlue (i)) & 0xFF;
-                        this.transparentColor = new Color(red, grn, blu);
-                        break;
+                WritableRaster wr = (WritableRaster)cr.getData();
+                BufferedImage bi = new BufferedImage
+                    (cm, wr.createWritableTranslatedChild(0, 0), 
+                     cm.isAlphaPremultiplied(), null);
+                int [] tmpMap = new int[this.width];
+                int idx = 0;
+                int sfIdx = 0;
+                for (int y = 0; y < this.height; y++) {
+                    tmpMap = bi.getRGB(0, y, this.width, 1, tmpMap, 0, this.width);
+                    if (softMask != null) {
+                        for (int x = 0; x < this.width; x++) {
+                            int pix = tmpMap[x];
+                            this.softMask[sfIdx++] = (byte)(pix >>> 24);
+                            this.bitmaps[idx++]    = (byte)((pix >>> 16) & 0xFF);
+                            this.bitmaps[idx++]    = (byte)((pix >>> 8)  & 0xFF);
+                            this.bitmaps[idx++]    = (byte)((pix)        & 0xFF);
+                        }
+                    } else {
+                        for (int x = 0; x < this.width; x++) {
+                            int pix = tmpMap[x];
+                            this.bitmaps[idx++] = (byte)((pix >> 16) & 0xFF);
+                            this.bitmaps[idx++] = (byte)((pix >> 8)  & 0xFF);
+                            this.bitmaps[idx++] = (byte)((pix)       & 0xFF);
+                        }
                     }
                 }
-            }
-            } else {
-                cr = new Any2sRGBRed(cr);
-            }
-
-            // Get our current ColorModel
-            cm = cr.getColorModel();
-
-            // It has an alpha channel so generate a soft mask.
-            if (!this.isTransparent && cm.hasAlpha())
-                this.softMask = new byte[this.width * this.height];
-
-            this.colorSpace = cm.getColorSpace();
-            WritableRaster wr = (WritableRaster)cr.getData();
-            BufferedImage bi = new BufferedImage
-                (cm, wr.createWritableTranslatedChild(0, 0), 
-                 cm.isAlphaPremultiplied(), null);
-            int [] tmpMap = new int[this.width];
-            int idx = 0;
-            int sfIdx = 0;
-            for (int y = 0; y < this.height; y++) {
-                tmpMap = bi.getRGB(0, y, this.width, 1, tmpMap, 0, this.width);
-                if (softMask != null) {
-                    for (int x = 0; x < this.width; x++) {
-                        int pix = tmpMap[x];
-                        this.softMask[sfIdx++] = (byte)(pix >>> 24);
-                        this.bitmaps[idx++]    = (byte)((pix >>> 16) & 0xFF);
-                        this.bitmaps[idx++]    = (byte)((pix >>> 8)  & 0xFF);
-                        this.bitmaps[idx++]    = (byte)((pix)        & 0xFF);
-                    }
-                } else {
-                    for (int x = 0; x < this.width; x++) {
-                        int pix = tmpMap[x];
-                        this.bitmaps[idx++] = (byte)((pix >> 16) & 0xFF);
-                        this.bitmaps[idx++] = (byte)((pix >> 8)  & 0xFF);
-                        this.bitmaps[idx++] = (byte)((pix)       & 0xFF);
-                    }
+            } catch (Exception ex) {
+                log.error("Error while loading image (Batik): " + ex.getMessage(), ex);
+            } finally {
+                // Make sure we clean up
+                try {
+                    seekableInput.close();
+                } catch (IOException ioex) {
+                    // ignore
                 }
+                try {
+                    inputStream.close();
+                } catch (IOException ioex) {
+                    // ignore
+                }
+                seekableInput = null;
+                inputStream = null;
+                cr = null;
             }
-        } catch (Exception ex) {
-            log.error("Error loading an image" , ex);
-            /*throw new FopImageException("Error while loading image "
-                                         + "" + " : "
-                                         + ex.getClass() + " - "
-                                         + ex.getMessage());
-            */
         }
     }
 };

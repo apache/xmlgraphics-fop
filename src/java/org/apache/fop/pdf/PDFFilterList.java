@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,6 +45,8 @@ public class PDFFilterList {
     public static final String IMAGE_FILTER = "image";
     /** Key for the filter used for JPEG images */
     public static final String JPEG_FILTER = "jpeg";
+    /** Key for the filter used for TIFF images */
+    public static final String TIFF_FILTER = "tiff";
     /** Key for the filter used for fonts */
     public static final String FONT_FILTER = "font";
 
@@ -131,15 +133,16 @@ public class PDFFilterList {
     }
 
     /**
-     * Checks the filter list for the DCT filter and adds it in the correct
+     * Checks the filter list for the filter and adds it in the correct
      * place if necessary.
+     * @param pdfFilter the filter to check / add
      */
-    public void ensureDCTFilterInPlace() {
+    public void ensureFilterInPlace(PDFFilter pdfFilter) {
         if (this.filters.size() == 0) {
-            addFilter(new DCTFilter());
+            addFilter(pdfFilter);
         } else {
-            if (!(this.filters.get(0) instanceof DCTFilter)) {
-                this.filters.add(0, new DCTFilter());
+            if (!(this.filters.get(0).equals(pdfFilter))) {
+                this.filters.add(0, pdfFilter);
             }
         }
     }
@@ -186,7 +189,9 @@ public class PDFFilterList {
                 PDFFilter filter = (PDFFilter)filters.get(count);
                 // place the names in our local vector in reverse order
                 names.add(0, filter.getName());
-                parms.add(0, filter.getDecodeParms());
+                if (filter.getDecodeParms() != null) {
+                    parms.add(0, filter.getDecodeParms());
+                }
             }
 
             // now build up the filter entries for the dictionary
@@ -197,20 +202,22 @@ public class PDFFilterList {
     }
 
     private String buildFilterEntries(List names) {
-        boolean needFilterEntry = false;
+        int filterCount = 0;
         StringBuffer sb = new StringBuffer(64);
-        sb.append("/Filter [ ");
         for (int i = 0; i < names.size(); i++) {
             final String name = (String)names.get(i);
             if (name.length() > 0) {
-                needFilterEntry = true;
+                filterCount++;
                 sb.append(name);
                 sb.append(" ");
             }
         }
-        if (needFilterEntry) {
-            sb.append("]");
-            return sb.toString();
+        if (filterCount > 0) {
+            if (filterCount > 1) {
+                return "/Filter [ " + sb.toString() + "]";
+            } else {
+                return "/Filter " + sb.toString();
+            }
         } else {
             return "";
         }
@@ -219,7 +226,7 @@ public class PDFFilterList {
     private String buildDecodeParms(List parms) {
         StringBuffer sb = new StringBuffer();
         boolean needParmsEntry = false;
-        sb.append("/DecodeParms ");
+        sb.append("\n/DecodeParms ");
 
         if (parms.size() > 1) {
             sb.append("[ ");
