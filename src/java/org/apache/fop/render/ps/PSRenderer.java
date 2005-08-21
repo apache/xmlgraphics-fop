@@ -19,34 +19,38 @@
 package org.apache.fop.render.ps;
 
 // Java
+import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Iterator;
 import java.util.List;
 
 // FOP
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
-import org.apache.fop.area.Area;
-import org.apache.fop.area.RegionViewport;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.area.Block;
+import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.PageViewport;
+import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.ForeignObject;
+import org.apache.fop.area.inline.Image;
+import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.Typeface;
-import org.apache.fop.render.PrintRenderer;
-import org.apache.fop.render.RendererContext;
-
+import org.apache.fop.image.EPSImage;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
-import org.apache.fop.traits.BorderProps;
+import org.apache.fop.image.XMLImage;
+import org.apache.fop.render.AbstractPathOrientedRenderer;
+import org.apache.fop.render.RendererContext;
 
 import org.w3c.dom.Document;
 
@@ -62,14 +66,14 @@ import org.w3c.dom.Document;
  * sure to also follow the DSC to make it simpler to programmatically modify
  * the generated Postscript files (ex. extract pages etc.).
  * <br>
- * The PS renderer operates in millipoints as the layout engine. Since PostScript
- * initially uses points, scaling is applied as needed.
+ * This renderer inserts FOP-specific comments into the PostScript stream which
+ * may help certain users to do certain types of post-processing of the output.
+ * These comments all start with "%FOP". 
  *
  * @author <a href="mailto:fop-dev@xml.apache.org">Apache XML FOP Development Team</a>
- * @author <a href="mailto:jeremias@apache.org">Jeremias Maerki</a>
- * @version $Id: PSRenderer.java,v 1.31 2003/03/11 08:42:24 jeremias Exp $
+ * @version $Id$
  */
-public class PSRenderer extends PrintRenderer {
+public class PSRenderer extends AbstractPathOrientedRenderer {
 
     /** The MIME type for PostScript */
     public static final String MIME_TYPE = "application/postscript";
@@ -84,11 +88,7 @@ public class PSRenderer extends PrintRenderer {
     protected PSGenerator gen;
     private boolean ioTrouble = false;
 
-    private String currentFontName;
-    private int currentFontSize;
-    private float currRed;
-    private float currGreen;
-    private float currBlue;
+    private boolean inTextMode = false;
 
     /**
      * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
@@ -144,7 +144,11 @@ public class PSRenderer extends PrintRenderer {
      */
     protected void comment(String comment) {
         if (this.enableComments) {
-            writeln(comment);
+            if (comment.startsWith("%")) {
+                writeln(comment);
+            } else {
+                writeln("%" + comment);
+            }
         }
     }
 
@@ -155,17 +159,129 @@ public class PSRenderer extends PrintRenderer {
         moveTo(this.currentIPPosition, this.currentBPPosition);
     }
 
+    /** @see org.apache.fop.render.AbstractPathOrientedRenderer#clip() */
+    protected void clip() {
+        writeln("clip newpath");
+        //writeln("newpath");
+    }
+    
     /**
-     * Moves the cursor.
-     * @param x X coordinate
-     * @param y Y coordinate
+     * Clip an area.
+     * Write a clipping operation given coordinates in the current
+     * transform.
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @param width the width of the area
+     * @param height the height of the area
      */
-    protected void moveTo(int x, int y) {
-        writeln(x + " " + y + " M");
+    protected void clipRect(float x, float y, float width, float height) {
+        try {
+            gen.defineRect(x, y, width, height);
+            gen.writeln("clip");
+            //comment("clip here");
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
+        }
     }
 
+    /** @see org.apache.fop.render.AbstractPathOrientedRenderer#moveTo(float, float) */
+    protected void moveTo(float x, float y) {
+        writeln(gen.formatDouble(x) + " " + gen.formatDouble(y) + " M");
+    }
+    
+    /** @see org.apache.fop.render.AbstractPathOrientedRenderer#lineTo(float, float) */
+    protected void lineTo(float x, float y) {
+        writeln(gen.formatDouble(x) + " " + gen.formatDouble(y) + " lineto");
+    }
+    
+    /** @see org.apache.fop.render.AbstractPathOrientedRenderer#closePath() */
+    protected void closePath() {
+        writeln("cp");
+    }
+    
+    /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
+    protected void fillRect(float x, float y, float width, float height) {
+        try {
+            gen.defineRect(x, y, width, height);
+            gen.writeln("fill");
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
+        }
+    }
+
+    /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
+    protected void updateColor(ColorType col, boolean fill) {
+        try {
+            useColor(col);
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
+        }
+    }
+
+    /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
+    protected void drawImage(String url, Rectangle2D pos) {
+        endTextObject();
+        url = ImageFactory.getURL(url);
+        ImageFactory fact = ImageFactory.getInstance();
+        FopImage fopimage = fact.getImage(url, userAgent);
+        if (fopimage == null) {
+            return;
+        }
+        if (!fopimage.load(FopImage.DIMENSIONS)) {
+            return;
+        }
+        float x = (float)pos.getX() / 1000f;
+        x += currentIPPosition / 1000f;
+        float y = (float)pos.getY() / 1000f;
+        y += currentBPPosition / 1000f;
+        float w = (float)pos.getWidth() / 1000f;
+        float h = (float)pos.getHeight() / 1000f;
+        try {
+            String mime = fopimage.getMimeType();
+            if ("text/xml".equals(mime)) {
+                if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
+                    return;
+                }
+                Document doc = ((XMLImage) fopimage).getDocument();
+                String ns = ((XMLImage) fopimage).getNameSpace();
+
+                renderDocument(doc, ns, pos);
+            } else if ("image/svg+xml".equals(mime)) {
+                if (!fopimage.load(FopImage.ORIGINAL_DATA)) {
+                    return;
+                }
+                Document doc = ((XMLImage) fopimage).getDocument();
+                String ns = ((XMLImage) fopimage).getNameSpace();
+
+                renderDocument(doc, ns, pos);
+            } else if (fopimage instanceof EPSImage) {
+                PSImageUtils.renderEPS((EPSImage)fopimage, x, y, w, h, gen);
+            } else {
+                PSImageUtils.renderBitmapImage(fopimage, x, y, w, h, gen);
+            }
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
+        }
+    }
+
+    /**
+     * Draw a line.
+     *
+     * @param startx the start x position
+     * @param starty the start y position
+     * @param endx the x end position
+     * @param endy the y end position
+     */
+    private void drawLine(float startx, float starty, float endx, float endy) {
+        writeln(gen.formatDouble(startx) + " " 
+                + gen.formatDouble(starty) + " M " 
+                + gen.formatDouble(endx) + " " 
+                + gen.formatDouble(endy) + " lineto stroke newpath");
+    }
+    
     /** Saves the graphics state of the rendering engine. */
     public void saveGraphicsState() {
+        endTextObject();
         try {
             //delegate
             gen.saveGraphicsState();
@@ -176,6 +292,7 @@ public class PSRenderer extends PrintRenderer {
 
     /** Restores the last graphics state of the rendering engine. */
     public void restoreGraphicsState() {
+        endTextObject();
         try {
             //delegate
             gen.restoreGraphicsState();
@@ -186,12 +303,18 @@ public class PSRenderer extends PrintRenderer {
 
     /** Indicates the beginning of a text object. */
     protected void beginTextObject() {
-        writeln("BT");
+        if (!inTextMode) {
+            writeln("BT");
+            inTextMode = true;
+        }
     }
 
     /** Indicates the end of a text object. */
     protected void endTextObject() {
-        writeln("ET");
+        if (inTextMode) {
+            writeln("ET");
+            inTextMode = false;
+        }
     }
 
     /**
@@ -226,80 +349,193 @@ public class PSRenderer extends PrintRenderer {
     }
 
     /**
-     * Draws a filled rectangle.
-     * @param x x-coordinate
-     * @param y y-coordinate
-     * @param w width
-     * @param h height
-     * @param col color to fill with
-     */
-    protected void fillRect(float x, float y, float w, float h,
-                                 ColorType col) {
-        useColor(col);
-        writeln(gen.formatDouble(x) 
-            + " " + gen.formatDouble(y) 
-            + " " + gen.formatDouble(w) 
-            + " " + gen.formatDouble(h) 
-            + " rectfill");
-    }
-
-    /**
-     * Draws a stroked rectangle with the current stroke settings.
-     * @param x x-coordinate
-     * @param y y-coordinate
-     * @param w width
-     * @param h height
-     */
-    protected void drawRect(float x, float y, float w, float h) {
-        writeln(gen.formatDouble(x) 
-            + " " + gen.formatDouble(y) 
-            + " " + gen.formatDouble(w) 
-            + " " + gen.formatDouble(h) 
-            + " rectstroke");
-    }
-
-    /**
-     * Clip an area.
-     * Write a clipping operation given coordinates in the current
-     * transform.
-     * @param x the x coordinate
-     * @param y the y coordinate
-     * @param width the width of the area
-     * @param height the height of the area
-     */
-    protected void clip(float x, float y, float width, float height) {
-        writeln(x + " " + y + " " + width + " " + height + " rectclip");
-    }
-
-    /**
      * Changes the currently used font.
      * @param name name of the font
      * @param size font size
      */
     public void useFont(String name, int size) {
-        if ((currentFontName != name) || (currentFontSize != size)) {
-            writeln(name + " " + size + " F");
-            currentFontName = name;
-            currentFontSize = size;
+        try {
+            gen.useFont(name, size / 1000f);
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
         }
     }
 
-    private void useColor(ColorType col) {
-        useColor(col.getRed(), col.getGreen(), col.getBlue());
+    private void useColor(ColorType col) throws IOException {
+        gen.useRGBColor(toColor(col));
     }
 
-    private void useColor(float red, float green, float blue) {
-        if ((red != currRed) || (green != currGreen) || (blue != currBlue)) {
-            writeln(gen.formatDouble(red)
-                + " " + gen.formatDouble(green)
-                + " " + gen.formatDouble(blue)
-                + " setrgbcolor");
-            currRed = red;
-            currGreen = green;
-            currBlue = blue;
+    /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
+    protected void drawBackAndBorders(Area area, float startx, float starty,
+            float width, float height) {
+        if (area.hasTrait(Trait.BACKGROUND)
+                || area.hasTrait(Trait.BORDER_BEFORE)
+                || area.hasTrait(Trait.BORDER_AFTER)
+                || area.hasTrait(Trait.BORDER_START)
+                || area.hasTrait(Trait.BORDER_END)) {
+            comment("%FOPBeginBackgroundAndBorder: " 
+                    + startx + " " + starty + " " + width + " " + height);
+            super.drawBackAndBorders(area, startx, starty, width, height);
+            comment("%FOPEndBackgroundAndBorder"); 
         }
     }
-
+    
+    /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
+    protected void drawBorderLine(float x1, float y1, float x2, float y2, 
+            boolean horz, boolean startOrBefore, int style, ColorType col) {
+        try {
+            float w = x2 - x1;
+            float h = y2 - y1;
+            if ((w < 0) || (h < 0)) {
+                log.error("Negative extent received. Border won't be painted.");
+                return;
+            }
+            switch (style) {
+                case Constants.EN_DASHED: 
+                    useColor(col);
+                    if (horz) {
+                        float unit = Math.abs(2 * h);
+                        int rep = (int)(w / unit);
+                        if (rep % 2 == 0) {
+                            rep++;
+                        }
+                        unit = w / rep;
+                        gen.useDash("[" + unit + "] 0");
+                        gen.useLineCap(0);
+                        gen.useLineWidth(h);
+                        float ym = y1 + (h / 2);
+                        drawLine(x1, ym, x2, ym);
+                    } else {
+                        float unit = Math.abs(2 * w);
+                        int rep = (int)(h / unit);
+                        if (rep % 2 == 0) {
+                            rep++;
+                        }
+                        unit = h / rep;
+                        gen.useDash("[" + unit + "] 0");
+                        gen.useLineCap(0);
+                        gen.useLineWidth(w);
+                        float xm = x1 + (w / 2);
+                        drawLine(xm, y1, xm, y2);
+                    }
+                    break;
+                case Constants.EN_DOTTED:
+                    useColor(col);
+                    gen.useLineCap(1); //Rounded!
+                    if (horz) {
+                        float unit = Math.abs(2 * h);
+                        int rep = (int)(w / unit);
+                        if (rep % 2 == 0) {
+                            rep++;
+                        }
+                        unit = w / rep;
+                        gen.useDash("[0 " + unit + "] 0");
+                        gen.useLineWidth(h);
+                        float ym = y1 + (h / 2);
+                        drawLine(x1, ym, x2, ym);
+                    } else {
+                        float unit = Math.abs(2 * w);
+                        int rep = (int)(h / unit);
+                        if (rep % 2 == 0) {
+                            rep++;
+                        }
+                        unit = h / rep;
+                        gen.useDash("[0 " + unit + "] 0");
+                        gen.useLineWidth(w);
+                        float xm = x1 + (w / 2);
+                        drawLine(xm, y1, xm, y2);
+                    }
+                    break;
+                case Constants.EN_DOUBLE:
+                    useColor(col);
+                    gen.useDash(null);
+                    if (horz) {
+                        float h3 = h / 3;
+                        gen.useLineWidth(h3);
+                        float ym1 = y1 + (h3 / 2);
+                        float ym2 = ym1 + h3 + h3;
+                        drawLine(x1, ym1, x2, ym1);
+                        drawLine(x1, ym2, x2, ym2);
+                    } else {
+                        float w3 = w / 3;
+                        gen.useLineWidth(w3);
+                        float xm1 = x1 + (w3 / 2);
+                        float xm2 = xm1 + w3 + w3;
+                        drawLine(xm1, y1, xm1, y2);
+                        drawLine(xm2, y1, xm2, y2);
+                    }
+                    break;
+                case Constants.EN_GROOVE:
+                case Constants.EN_RIDGE:
+                    float colFactor = (style == EN_GROOVE ? 0.4f : -0.4f);
+                    gen.useDash(null);
+                    Color c = toColor(col);
+                    if (horz) {
+                        Color uppercol = lightenColor(c, -colFactor);
+                        Color lowercol = lightenColor(c, colFactor);
+                        float h3 = h / 3;
+                        gen.useLineWidth(h3);
+                        float ym1 = y1 + (h3 / 2);
+                        gen.useRGBColor(uppercol);
+                        drawLine(x1, ym1, x2, ym1);
+                        gen.useRGBColor(c);
+                        drawLine(x1, ym1 + h3, x2, ym1 + h3);
+                        gen.useRGBColor(lowercol);
+                        drawLine(x1, ym1 + h3 + h3, x2, ym1 + h3 + h3);
+                    } else {
+                        Color leftcol = lightenColor(c, -colFactor);
+                        Color rightcol = lightenColor(c, colFactor);
+                        float w3 = w / 3;
+                        gen.useLineWidth(w3);
+                        float xm1 = x1 + (w3 / 2);
+                        gen.useRGBColor(leftcol);
+                        drawLine(xm1, y1, xm1, y2);
+                        gen.useRGBColor(c);
+                        drawLine(xm1 + w3, y1, xm1 + w3, y2);
+                        gen.useRGBColor(rightcol);
+                        drawLine(xm1 + w3 + w3, y1, xm1 + w3 + w3, y2);
+                    }
+                    break;
+                case Constants.EN_INSET:
+                case Constants.EN_OUTSET:
+                    colFactor = (style == EN_OUTSET ? 0.4f : -0.4f);
+                    gen.useDash(null);
+                    c = toColor(col);
+                    if (horz) {
+                        c = lightenColor(c, (startOrBefore ? 1 : -1) * colFactor);
+                        gen.useLineWidth(h);
+                        float ym1 = y1 + (h / 2);
+                        gen.useRGBColor(c);
+                        drawLine(x1, ym1, x2, ym1);
+                    } else {
+                        c = lightenColor(c, (startOrBefore ? 1 : -1) * colFactor);
+                        gen.useLineWidth(w);
+                        float xm1 = x1 + (w / 2);
+                        gen.useRGBColor(c);
+                        drawLine(xm1, y1, xm1, y2);
+                    }
+                    break;
+                case Constants.EN_HIDDEN:
+                    break;
+                default:
+                    useColor(col);
+                    gen.useDash(null);
+                    gen.useLineCap(0);
+                    if (horz) {
+                        gen.useLineWidth(h);
+                        float ym = y1 + (h / 2);
+                        drawLine(x1, ym, x2, ym);
+                    } else {
+                        gen.useLineWidth(w);
+                        float xm = x1 + (w / 2);
+                        drawLine(xm, y1, xm, y2);
+                    }
+            }
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
+        }
+    }
+    
     /**
      * @see org.apache.fop.render.Renderer#startRenderer(OutputStream)
      */
@@ -402,8 +638,8 @@ public class PSRenderer extends PrintRenderer {
                 + Math.round(pspageheight) + "]");
         gen.writeln("/ImagingBBox null");
         gen.writeln(">> setpagedevice");
-        gen.writeln("0.001 0.001 scale");
-        concatMatrix(1, 0, 0, -1, 0, pageheight);
+        //gen.writeln("0.001 0.001 scale");
+        concatMatrix(1, 0, 0, -1, 0, pageheight / 1000f);
 
         gen.writeDSCComment(DSCConstants.END_PAGE_SETUP);
 
@@ -415,6 +651,15 @@ public class PSRenderer extends PrintRenderer {
         gen.writeDSCComment(DSCConstants.END_PAGE);
     }
 
+    /** @see org.apache.fop.render.AbstractRenderer */
+    protected void renderRegionViewport(RegionViewport port) {
+        if (port != null) {
+            comment("%FOPBeginRegionViewport: " + port.getRegionReference().getRegionName());
+            super.renderRegionViewport(port);
+            comment("%FOPEndRegionViewport");
+        }
+    }
+    
     /**
      * Paints text.
      * @param rx X coordinate
@@ -424,7 +669,9 @@ public class PSRenderer extends PrintRenderer {
      */
     protected void paintText(int rx, int bl, String text, Typeface font) {
         saveGraphicsState();
-        writeln("1 0 0 -1 " + rx + " " + bl + " Tm");
+        beginTextObject();
+        writeln("1 0 0 -1 " + gen.formatDouble(rx / 1000f) 
+                + " " + gen.formatDouble(bl / 1000f) + " Tm");
 
         int initialSize = text.length();
         initialSize += initialSize / 2;
@@ -457,7 +704,11 @@ public class PSRenderer extends PrintRenderer {
         useFont(fontname, fontsize);
         ColorType ct = (ColorType)area.getTrait(Trait.COLOR);
         if (ct != null) {
-            useColor(ct);
+            try {
+                useColor(ct);
+            } catch (IOException ioe) {
+                handleIOTrouble(ioe);
+            }
         }
         paintText(rx, bl, area.getTextArea(), f);
 
@@ -495,130 +746,58 @@ public class PSRenderer extends PrintRenderer {
         super.renderText(area); //Updates IPD
     }
 
-
-    /**
-     * @see org.apache.fop.render.AbstractRenderer#renderBlockViewport(BlockViewport, List)
-     */
-    protected void renderBlockViewport(BlockViewport bv, List children) {
-        // clip and position viewport if necessary
-
-        // save positions
-        int saveIP = currentIPPosition;
-        int saveBP = currentBPPosition;
-        String saveFontName = currentFontName;
-
-        CTM ctm = bv.getCTM();
-
-        if (bv.getPositioning() == Block.ABSOLUTE) {
-
-            currentIPPosition = 0;
-            currentBPPosition = 0;
-
-            //closeText();
-            endTextObject();
-
-            if (bv.getClip()) {
-                saveGraphicsState();
-                int x = bv.getXOffset() + containingIPPosition;
-                int y = bv.getYOffset() + containingBPPosition;
-                int width = bv.getIPD();
-                int height = bv.getBPD();
-                clip(x, y, width, height);
-            }
-
-            CTM tempctm = new CTM(containingIPPosition, containingBPPosition);
-            ctm = tempctm.multiply(ctm);
-
-            startVParea(ctm);
-            handleBlockTraits(bv);
-            renderBlocks(bv, children);
-            endVParea();
-
-            if (bv.getClip()) {
-                restoreGraphicsState();
-            }
-            beginTextObject();
-
-            // clip if necessary
-
-            currentIPPosition = saveIP;
-            currentBPPosition = saveBP;
-        } else {
-
-            if (ctm != null) {
-                currentIPPosition = 0;
-                currentBPPosition = 0;
-
-                //closeText();
-                endTextObject();
-
-                double[] vals = ctm.toArray();
-                //boolean aclock = vals[2] == 1.0;
-                if (vals[2] == 1.0) {
-                    ctm = ctm.translate(-saveBP - bv.getBPD(), -saveIP);
-                } else if (vals[0] == -1.0) {
-                    ctm = ctm.translate(-saveIP - bv.getIPD(), -saveBP - bv.getBPD());
-                } else {
-                    ctm = ctm.translate(saveBP, saveIP - bv.getIPD());
+    /** @see org.apache.fop.render.AbstractPathOrientedRenderer#breakOutOfStateStack() */
+    protected List breakOutOfStateStack() {
+        try {
+            List breakOutList = new java.util.ArrayList();
+            PSState state;
+            while (true) {
+                if (breakOutList.size() == 0) {
+                    comment("------ break out!");
                 }
-            }
-
-            // clip if necessary
-            if (bv.getClip()) {
-                if (ctm == null) {
-                    //closeText();
-                    endTextObject();
+                state = gen.getCurrentState();
+                if (!gen.restoreGraphicsState()) {
+                    break;
                 }
-                saveGraphicsState();
-                int x = bv.getXOffset();
-                int y = bv.getYOffset();
-                int width = bv.getIPD();
-                int height = bv.getBPD();
-                clip(x, y, width, height);
+                breakOutList.add(0, state); //Insert because of stack-popping
             }
-
-            if (ctm != null) {
-                startVParea(ctm);
-            }
-            handleBlockTraits(bv);
-            renderBlocks(bv, children);
-            if (ctm != null) {
-                endVParea();
-            }
-
-            if (bv.getClip()) {
-                restoreGraphicsState();
-                if (ctm == null) {
-                    beginTextObject();
-                }
-            }
-            if (ctm != null) {
-                beginTextObject();
-            }
-
-            currentIPPosition = saveIP;
-            currentBPPosition = saveBP;
-            currentBPPosition += (int)(bv.getAllocBPD());
+            return breakOutList;
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
+            return null;
         }
-        currentFontName = saveFontName;
     }
-
+    
+    /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
+    protected void restoreStateStackAfterBreakOut(List breakOutList) {
+        try {
+            comment("------ restoring context after break-out...");
+            PSState state;
+            Iterator i = breakOutList.iterator();
+            while (i.hasNext()) {
+                state = (PSState)i.next();
+                saveGraphicsState();
+                state.reestablish(gen);
+            }
+            comment("------ done.");
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
+        }
+    }
+    
     /**
      * @see org.apache.fop.render.AbstractRenderer#startVParea(CTM)
      */
     protected void startVParea(CTM ctm) {
-        // Set the given CTM in the graphics state
-        //currentState.push();
-        //currentState.setTransform(new AffineTransform(CTMHelper.toPDFArray(ctm)));
 
         saveGraphicsState();
         // multiply with current CTM
-        //writeln(CTMHelper.toPDFString(ctm) + " cm\n");
         final double[] matrix = ctm.toArray();
+        matrix[4] /= 1000f;
+        matrix[5] /= 1000f;
         concatMatrix(matrix);
 
         // Set clip?
-        beginTextObject();
     }
 
     /**
@@ -627,181 +806,33 @@ public class PSRenderer extends PrintRenderer {
     protected void endVParea() {
         endTextObject();
         restoreGraphicsState();
-        //currentState.pop();
     }
 
-    /**
-     * Handle the traits for a region
-     * This is used to draw the traits for the given page region.
-     * (See Sect. 6.4.1.2 of XSL-FO spec.)
-     * @param region the RegionViewport whose region is to be drawn
-     */
-    protected void handleRegionTraits(RegionViewport region) {
-        currentFontName = "";
-        float startx = 0;
-        float starty = 0;
-        Rectangle2D viewArea = region.getViewArea();
-        float width = (float)(viewArea.getWidth());
-        float height = (float)(viewArea.getHeight());
-        /*
-        Trait.Background back;
-        back = (Trait.Background)region.getTrait(Trait.BACKGROUND);
-        */
-        drawBackAndBorders(region, startx, starty, width, height);
-    }
-
-    /**
-     * Handle block traits.
-     * The block could be any sort of block with any positioning
-     * so this should render the traits such as border and background
-     * in its position.
-     *
-     * @param block the block to render the traits
-     */
-    protected void handleBlockTraits(Block block) {
-        float startx = currentIPPosition;
-        float starty = currentBPPosition;
-        drawBackAndBorders(block, startx, starty,
-                           block.getIPD(), block.getBPD());
-    }
-
-    /**
-     * Draw the background and borders.
-     * This draws the background and border traits for an area given
-     * the position.
-     *
-     * @param block the area to get the traits from
-     * @param startx the start x position
-     * @param starty the start y position
-     * @param width the width of the area
-     * @param height the height of the area
-     */
-    protected void drawBackAndBorders(Area block,
-                                    float startx, float starty,
-                                    float width, float height) {
-        // draw background then border
-
-        boolean started = false;
-        Trait.Background back;
-        back = (Trait.Background)block.getTrait(Trait.BACKGROUND);
-        if (back != null) {
-            started = true;
-//            closeText();
-            endTextObject();
-            //saveGraphicsState();
-
-            if (back.getColor() != null) {
-                fillRect(startx, starty, width, height, back.getColor());
-            }
-            if (back.getURL() != null) {
-                ImageFactory fact = ImageFactory.getInstance();
-                FopImage fopimage = fact.getImage(back.getURL(), userAgent);
-                if (fopimage != null && fopimage.load(FopImage.DIMENSIONS)) {
-                    if (back.getRepeat() == EN_REPEAT) {
-                        // create a pattern for the image
-                    } else {
-                        // place once
-                        Rectangle2D pos;
-                        pos = new Rectangle2D.Float((startx + back.getHoriz()) * 1000,
-                                                    (starty + back.getVertical()) * 1000,
-                                                    fopimage.getWidth() * 1000,
-                                                    fopimage.getHeight() * 1000);
-                       // putImage(back.url, pos);
-                    }
-                }
-            }
-        }
-
-        BorderProps bps = (BorderProps)block.getTrait(Trait.BORDER_BEFORE);
-        if (bps != null) {
-            float endx = startx + width;
-
-            if (!started) {
-                started = true;
-//                closeText();
-                endTextObject();
-                //saveGraphicsState();
-            }
-
-            float bwidth = bps.width;
-            useColor(bps.color);
-            writeln(bwidth + " setlinewidth");
-
-            drawLine(startx, starty + bwidth / 2, endx, starty + bwidth / 2);
-        }
-        bps = (BorderProps)block.getTrait(Trait.BORDER_START);
-        if (bps != null) {
-            float endy = starty + height;
-
-            if (!started) {
-                started = true;
-//                closeText();
-                endTextObject();
-                //saveGraphicsState();
-            }
-
-            float bwidth = bps.width;
-            useColor(bps.color);
-            writeln(bwidth + " setlinewidth");
-
-            drawLine(startx + bwidth / 2, starty, startx + bwidth / 2, endy);
-        }
-        bps = (BorderProps)block.getTrait(Trait.BORDER_AFTER);
-        if (bps != null) {
-            float sy = starty + height;
-            float endx = startx + width;
-
-            if (!started) {
-                started = true;
-//                closeText();
-                endTextObject();
-                //saveGraphicsState();
-            }
-
-            float bwidth = bps.width;
-            useColor(bps.color);
-            writeln(bwidth + " setlinewidth");
-
-            drawLine(startx, sy - bwidth / 2, endx, sy - bwidth / 2);
-        }
-        bps = (BorderProps)block.getTrait(Trait.BORDER_END);
-        if (bps != null) {
-            float sx = startx + width;
-            float endy = starty + height;
-
-            if (!started) {
-                started = true;
- //               closeText();
-                endTextObject();
-                //saveGraphicsState();
-            }
-
-            float bwidth = bps.width;
-            useColor(bps.color);
-            writeln(bwidth + " setlinewidth");
-            drawLine(sx - bwidth / 2, starty, sx - bwidth / 2, endy);
-        }
-        if (started) {
-            //restoreGraphicsState();
-            beginTextObject();
-            // font last set out of scope in text section
-            currentFontName = "";
-        }
-    }
-
-    /**
-     * Draw a line.
-     *
-     * @param startx the start x position
-     * @param starty the start y position
-     * @param endx the x end position
-     * @param endy the y end position
-     */
-    private void drawLine(float startx, float starty, float endx, float endy) {
-        writeln(startx + " " + starty + " M ");
-        writeln(endx + " " + endy + " lineto");
+    /** @see org.apache.fop.render.AbstractRenderer */
+    protected void renderBlockViewport(BlockViewport bv, List children) {
+        comment("%FOPBeginBlockViewport: " + bv.toString());
+        super.renderBlockViewport(bv, children);
+        comment("%FOPEndBlockViewport");
     }
     
+    /** @see org.apache.fop.render.AbstractRenderer */
+    protected void renderInlineParent(InlineParent ip) {
+        float start = currentIPPosition / 1000f;
+        float top = (ip.getOffset() + currentBPPosition) / 1000f;
+        float width = ip.getIPD() / 1000f;
+        float height = ip.getBPD() / 1000f;
+        drawBackAndBorders(ip, start, top, width, height);
+
+        super.renderInlineParent(ip);
+    }
+    
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#renderImage(Image, Rectangle2D)
+     */
+    public void renderImage(Image image, Rectangle2D pos) {
+        drawImage(image.getURL(), pos);
+    }
+
     /**
      * @see org.apache.fop.render.AbstractRenderer#renderForeignObject(ForeignObject, Rectangle2D)
      */

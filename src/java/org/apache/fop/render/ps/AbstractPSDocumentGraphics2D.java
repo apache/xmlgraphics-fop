@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,6 @@ import org.apache.fop.fonts.FontSetup;
  * <tt>PSGraphics2D</tt>.
  *
  * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
- * @author <a href="mailto:jeremias@apache.org">Jeremias Maerki</a>
  * @version $Id$
  * @see org.apache.fop.render.ps.PSGraphics2D
  */
@@ -218,15 +217,14 @@ public abstract class AbstractPSDocumentGraphics2D extends PSGraphics2D {
         }
           
         writePageHeader();
-        gen.writeln("0.001 0.001 scale");
         if ((this.viewportWidth != this.width 
                 || this.viewportHeight != this.height)
                 && (this.viewportWidth > 0) && (this.viewportHeight > 0)){
             gen.concatMatrix(this.width / this.viewportWidth, 0, 
                        0, -1 * (this.height / this.viewportHeight), 
-                       0, this.height * 1000);
+                       0, this.height);
         } else {
-            gen.concatMatrix(1, 0, 0, -1, 0, this.height * 1000);
+            gen.concatMatrix(1, 0, 0, -1, 0, this.height);
         }
         gen.writeDSCComment(DSCConstants.END_PAGE_SETUP);
         this.pagePending = true;

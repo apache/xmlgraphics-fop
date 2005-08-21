@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
  
 package org.apache.fop.render.ps;
 
+import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.io.OutputStream;
 import java.io.IOException;
@@ -32,8 +33,7 @@ import java.util.Stack;
  * This class is used to output PostScript code to an OutputStream.
  *
  * @author <a href="mailto:fop-dev@xml.apache.org">Apache XML FOP Development Team</a>
- * @author <a href="mailto:jeremias@apache.org">Jeremias Maerki</a>
- * @version $Id: PSGenerator.java,v 1.3 2003/03/07 09:46:30 jeremias Exp $
+ * @version $Id$
  */
 public class PSGenerator {
 
@@ -49,8 +49,8 @@ public class PSGenerator {
     
     private Stack graphicsStateStack = new Stack();
     private PSState currentState;
-    private DecimalFormat df3 = new DecimalFormat("0.000", new DecimalFormatSymbols(Locale.US));
-    private DecimalFormat df1 = new DecimalFormat("0.#", new DecimalFormatSymbols(Locale.US));
+    //private DecimalFormat df3 = new DecimalFormat("0.000", new DecimalFormatSymbols(Locale.US));
+    private DecimalFormat df3 = new DecimalFormat("0.###", new DecimalFormatSymbols(Locale.US));
     private DecimalFormat df5 = new DecimalFormat("0.#####", new DecimalFormatSymbols(Locale.US));
 
     private StringBuffer tempBuffer = new StringBuffer(256);
@@ -59,7 +59,7 @@ public class PSGenerator {
     public PSGenerator(OutputStream out) {
         this.out = out;
         this.currentState = new PSState();
-        this.graphicsStateStack.push(this.currentState);
+        //this.graphicsStateStack.push(this.currentState);
     }
     
     /**
@@ -72,13 +72,13 @@ public class PSGenerator {
 
     /**
      * Returns the selected PostScript level. 
-     * (Hardcoded to level 3 for the moment.)
+     * (Hardcoded to level 2 for the moment.)
      * @return the PostScript level
      */
     public int getPSLevel() {
-        return 3; 
+        return 2; 
     }
-
+    
     /**
      * Writes a newline character to the OutputStream.
      * 
@@ -95,7 +95,7 @@ public class PSGenerator {
      * @return the formatted value
      */
     public String formatDouble(double value) {
-        return df1.format(value);
+        return df3.format(value);
     }
 
     /**
@@ -327,20 +327,35 @@ public class PSGenerator {
     public void saveGraphicsState() throws IOException {
         writeln("gsave");
         
-        PSState state = (PSState)this.currentState.clone();
+        PSState state = new PSState(this.currentState, false);
         this.graphicsStateStack.push(this.currentState);
         this.currentState = state;
     }
     
     /** 
      * Restores the last graphics state of the rendering engine.
+     * @return true if the state was restored, false if there's a stack underflow.
      * @exception IOException In case of an I/O problem
      */
-    public void restoreGraphicsState() throws IOException {
-        writeln("grestore");
-        this.currentState = (PSState)this.graphicsStateStack.pop();
+    public boolean restoreGraphicsState() throws IOException {
+        if (this.graphicsStateStack.size() > 0) {
+            writeln("grestore");
+            this.currentState = (PSState)this.graphicsStateStack.pop();
+            return true;
+        } else {
+            return false;
+        }
     }
     
+    
+    /**
+     * Returns the current graphics state.
+     * @return the current graphics state
+     */
+    public PSState getCurrentState() {
+        return this.currentState;
+    }
+
     /**
      * Concats the transformation matrix.
      * @param a A part
@@ -352,14 +367,11 @@ public class PSGenerator {
      * @exception IOException In case of an I/O problem
      */
     public void concatMatrix(double a, double b,
-                                double c, double d, 
-                                double e, double f) throws IOException {
-        writeln("[" + formatDouble5(a) + " "
-                    + formatDouble5(b) + " "
-                    + formatDouble5(c) + " "
-                    + formatDouble5(d) + " "
-                    + formatDouble5(e) + " "
-                    + formatDouble5(f) + "] concat");
+            double c, double d, 
+            double e, double f) throws IOException {
+        AffineTransform at = new AffineTransform(a, b, c, d, e, f);
+        concatMatrix(at);
+        
     }
     
     /**
@@ -381,7 +393,13 @@ public class PSGenerator {
     public void concatMatrix(AffineTransform at) throws IOException {
         double[] matrix = new double[6];
         at.getMatrix(matrix);
-        concatMatrix(matrix);                   
+        getCurrentState().concatMatrix(at);
+        writeln("[" + formatDouble5(matrix[0]) + " "
+                + formatDouble5(matrix[1]) + " "
+                + formatDouble5(matrix[2]) + " "
+                + formatDouble5(matrix[3]) + " "
+                + formatDouble5(matrix[4]) + " "
+                + formatDouble5(matrix[5]) + "] concat");
     }
                
     /**
@@ -400,18 +418,76 @@ public class PSGenerator {
             + " " + formatDouble(h) 
             + " re");
     }
+    
+    /**
+     * Establishes the specified line cap style.
+     * @param linecap the line cap style (0, 1 or 2) as defined by the setlinecap command.
+     * @exception IOException In case of an I/O problem
+     */
+    public void useLineCap(int linecap) throws IOException {
+        if (getCurrentState().useLineCap(linecap)) {
+            writeln(linecap + " setlinecap");
+        }
+    }
                                 
     /**
-     * Returns the current graphics state.
-     * @return the current graphics state
+     * Establishes the specified line width.
+     * @param width the line width as defined by the setlinewidth command.
+     * @exception IOException In case of an I/O problem
      */
-    public PSState getCurrentState() {
-        return this.currentState;
+    public void useLineWidth(double width) throws IOException {
+        if (getCurrentState().useLineWidth(width)) {
+            writeln(formatDouble(width) + " setlinewidth");
+        }
+    }
+                                
+    /**
+     * Establishes the specified dash pattern.
+     * @param pattern the dash pattern as defined by the setdash command.
+     * @exception IOException In case of an I/O problem
+     */
+    public void useDash(String pattern) throws IOException {
+        if (pattern == null) {
+            pattern = PSState.DEFAULT_DASH;
+        }
+        if (getCurrentState().useDash(pattern)) {
+            writeln(pattern + " setdash");
+        }
+    }
+                                
+    /**
+     * Establishes the specified color (RGB).
+     * @param col the color as defined by the setrgbcolor command.
+     * @exception IOException In case of an I/O problem
+     */
+    public void useRGBColor(Color col) throws IOException {
+        if (col == null) {
+            col = PSState.DEFAULT_RGB_COLOR;
+        }
+        if (getCurrentState().useColor(col)) {
+            float[] comps = col.getColorComponents(null);
+            writeln(formatDouble(comps[0])
+                    + " " + formatDouble(comps[1])
+                    + " " + formatDouble(comps[2])
+                    + " setrgbcolor");
+        }
+    }
+    
+    /**
+     * Establishes the specified font and size.
+     * @param name name of the font for the "F" command (see FOP Std Proc Set)
+     * @param size size of the font
+     * @exception IOException In case of an I/O problem
+     */
+    public void useFont(String name, float size) throws IOException {
+        if (getCurrentState().useFont(name, size)) {
+            writeln(name + " " + formatDouble(size) + " F");
+        }
     }
 
-    
     /** Used for the ATEND constant. See there. */
     private static interface AtendIndicator {
     }
+
 
 }

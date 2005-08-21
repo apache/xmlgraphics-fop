@@ -81,6 +81,7 @@ import org.apache.fop.pdf.PDFState;
 import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.pdf.PDFText;
 import org.apache.fop.pdf.PDFXObject;
+import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.PrintRenderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.traits.BorderProps;
@@ -103,7 +104,7 @@ text decoration
  * Renderer that renders areas to PDF
  *
  */
-public class PDFRenderer extends PrintRenderer {
+public class PDFRenderer extends AbstractPathOrientedRenderer {
     
     /**
      * The mime type for pdf
@@ -514,326 +515,11 @@ public class PDFRenderer extends PrintRenderer {
      */
     protected void handleRegionTraits(RegionViewport region) {
         currentFontName = "";
-        Rectangle2D viewArea = region.getViewArea();
-        float startx = (float)(viewArea.getX() / 1000f);
-        float starty = (float)(viewArea.getY() / 1000f);
-        float width = (float)(viewArea.getWidth() / 1000f);
-        float height = (float)(viewArea.getHeight() / 1000f);
-
-        if (region.getRegionReference().getRegionClass() == FO_REGION_BODY) {
-            currentBPPosition = region.getBorderAndPaddingWidthBefore();
-            currentIPPosition = region.getBorderAndPaddingWidthStart();
-        }
-        drawBackAndBorders(region, startx, starty, width, height);
+        super.handleRegionTraits(region);
     }
 
-    /**
-     * Handle block traits.
-     * The block could be any sort of block with any positioning
-     * so this should render the traits such as border and background
-     * in its position.
-     *
-     * @param block the block to render the traits
-     */
-    protected void handleBlockTraits(Block block) {
-        int borderPaddingStart = block.getBorderAndPaddingWidthStart();
-        int borderPaddingBefore = block.getBorderAndPaddingWidthBefore();
-        
-        float startx = currentIPPosition / 1000f;
-        float starty = currentBPPosition / 1000f;
-        float width = block.getIPD() / 1000f;
-        float height = block.getBPD() / 1000f;
-
-        /* using start-indent now
-        Integer spaceStart = (Integer) block.getTrait(Trait.SPACE_START);
-        if (spaceStart != null) {
-            startx += spaceStart.floatValue() / 1000f;
-        }*/
-        startx += block.getStartIndent() / 1000f;
-        startx -= block.getBorderAndPaddingWidthStart() / 1000f;
-
-        width += borderPaddingStart / 1000f;
-        width += block.getBorderAndPaddingWidthEnd() / 1000f;
-        height += borderPaddingBefore / 1000f;
-        height += block.getBorderAndPaddingWidthAfter() / 1000f;
-
-        drawBackAndBorders(block, startx, starty,
-            width, height);
-    }
-
-    /**
-     * Draw the background and borders.
-     * This draws the background and border traits for an area given
-     * the position.
-     *
-     * @param area the area to get the traits from
-     * @param startx the start x position
-     * @param starty the start y position
-     * @param width the width of the area
-     * @param height the height of the area
-     */
-    protected void drawBackAndBorders(Area area,
-                    float startx, float starty,
-                    float width, float height) {
-        // draw background then border
-
-        BorderProps bpsBefore = (BorderProps)area.getTrait(Trait.BORDER_BEFORE);
-        BorderProps bpsAfter = (BorderProps)area.getTrait(Trait.BORDER_AFTER);
-        BorderProps bpsStart = (BorderProps)area.getTrait(Trait.BORDER_START);
-        BorderProps bpsEnd = (BorderProps)area.getTrait(Trait.BORDER_END);
-
-        Trait.Background back;
-        back = (Trait.Background)area.getTrait(Trait.BACKGROUND);
-        if (back != null) {
-            endTextObject();
-
-            //Calculate padding rectangle
-            float sx = startx;
-            float sy = starty;
-            float paddRectWidth = width;
-            float paddRectHeight = height;
-            if (bpsStart != null) {
-                sx += bpsStart.width / 1000f;
-                paddRectWidth -= bpsStart.width / 1000f;
-            }
-            if (bpsBefore != null) {
-                sy += bpsBefore.width / 1000f;
-                paddRectHeight -= bpsBefore.width / 1000f;
-            }
-            if (bpsEnd != null) {
-                paddRectWidth -= bpsEnd.width / 1000f;
-            }
-            if (bpsAfter != null) {
-                paddRectHeight -= bpsAfter.width / 1000f;
-            }
-
-            if (back.getColor() != null) {
-                updateColor(back.getColor(), true, null);
-                currentStream.add(sx + " " + sy + " "
-                                  + paddRectWidth + " " + paddRectHeight + " re\n");
-                currentStream.add("f\n");
-            }
-            if (back.getFopImage() != null) {
-                FopImage fopimage = back.getFopImage();
-                if (fopimage != null && fopimage.load(FopImage.DIMENSIONS)) {
-                    saveGraphicsState();
-                    clip(sx, sy, paddRectWidth, paddRectHeight);
-                    int horzCount = (int)((paddRectWidth 
-                            * 1000 / fopimage.getIntrinsicWidth()) + 1.0f); 
-                    int vertCount = (int)((paddRectHeight 
-                            * 1000 / fopimage.getIntrinsicHeight()) + 1.0f); 
-                    if (back.getRepeat() == EN_NOREPEAT) {
-                        horzCount = 1;
-                        vertCount = 1;
-                    } else if (back.getRepeat() == EN_REPEATX) {
-                        vertCount = 1;
-                    } else if (back.getRepeat() == EN_REPEATY) {
-                        horzCount = 1;
-                    }
-                    //change from points to millipoints
-                    sx *= 1000;
-                    sy *= 1000;
-                    if (horzCount == 1) {
-                        sx += back.getHoriz();
-                    }
-                    if (vertCount == 1) {
-                        sy += back.getVertical();
-                    }
-                    for (int x = 0; x < horzCount; x++) {
-                        for (int y = 0; y < vertCount; y++) {
-                            // place once
-                            Rectangle2D pos;
-                            pos = new Rectangle2D.Float(sx + (x * fopimage.getIntrinsicWidth()),
-                                                        sy + (y * fopimage.getIntrinsicHeight()),
-                                                        fopimage.getIntrinsicWidth(),
-                                                        fopimage.getIntrinsicHeight());
-                            putImage(back.getURL(), pos);
-                        }
-                    }
-                    
-                    restoreGraphicsState();
-                } else {
-                    log.warn("Can't find background image: " + back.getURL());
-                }
-            }
-        }
-
-        boolean[] b = new boolean[] {
-            (bpsBefore != null), (bpsEnd != null), 
-            (bpsAfter != null), (bpsStart != null)};
-        if (!b[0] && !b[1] && !b[2] && !b[3]) {
-            return;
-        }
-        float[] bw = new float[] {
-            (b[0] ? bpsBefore.width / 1000f : 0.0f),
-            (b[1] ? bpsEnd.width / 1000f : 0.0f),
-            (b[2] ? bpsAfter.width / 1000f : 0.0f),
-            (b[3] ? bpsStart.width / 1000f : 0.0f)};
-        float[] clipw = new float[] {
-            BorderProps.getClippedWidth(bpsBefore) / 1000f,    
-            BorderProps.getClippedWidth(bpsEnd) / 1000f,    
-            BorderProps.getClippedWidth(bpsAfter) / 1000f,    
-            BorderProps.getClippedWidth(bpsStart) / 1000f};
-        starty += clipw[0];
-        height -= clipw[0];
-        height -= clipw[2];
-        startx += clipw[3];
-        width -= clipw[3];
-        width -= clipw[1];
-        
-        boolean[] slant = new boolean[] {
-            (b[3] && b[0]), (b[0] && b[1]), (b[1] && b[2]), (b[2] && b[3])};
-        if (bpsBefore != null) {
-            endTextObject();
-
-            float sx1 = startx;
-            float sx2 = (slant[0] ? sx1 + bw[3] - clipw[3] : sx1);
-            float ex1 = startx + width;
-            float ex2 = (slant[1] ? ex1 - bw[1] + clipw[1] : ex1);
-            float outery = starty - clipw[0];
-            float clipy = outery + clipw[0];
-            float innery = outery + bw[0];
-
-            saveGraphicsState();
-            moveTo(sx1, clipy);
-            float sx1a = sx1;
-            float ex1a = ex1;
-            if (bpsBefore.mode == BorderProps.COLLAPSE_OUTER) {
-                if (bpsStart != null && bpsStart.mode == BorderProps.COLLAPSE_OUTER) {
-                    sx1a -= clipw[3];
-                }
-                if (bpsEnd != null && bpsEnd.mode == BorderProps.COLLAPSE_OUTER) {
-                    ex1a += clipw[1];
-                }
-                lineTo(sx1a, outery);
-                lineTo(ex1a, outery);
-            }
-            lineTo(ex1, clipy);
-            lineTo(ex2, innery);
-            lineTo(sx2, innery);
-            closePath();
-            clip();
-            drawBorderLine(sx1a, outery, ex1a, innery, true, true, 
-                    bpsBefore.style, bpsBefore.color);
-            restoreGraphicsState();
-        }
-        if (bpsEnd != null) {
-            endTextObject();
-
-            float sy1 = starty;
-            float sy2 = (slant[1] ? sy1 + bw[0] - clipw[0] : sy1);
-            float ey1 = starty + height;
-            float ey2 = (slant[2] ? ey1 - bw[2] + clipw[2] : ey1);
-            float outerx = startx + width + clipw[1];
-            float clipx = outerx - clipw[1];
-            float innerx = outerx - bw[1];
-            
-            saveGraphicsState();
-            moveTo(clipx, sy1);
-            float sy1a = sy1;
-            float ey1a = ey1;
-            if (bpsEnd.mode == BorderProps.COLLAPSE_OUTER) {
-                if (bpsBefore != null && bpsBefore.mode == BorderProps.COLLAPSE_OUTER) {
-                    sy1a -= clipw[0];
-                }
-                if (bpsAfter != null && bpsAfter.mode == BorderProps.COLLAPSE_OUTER) {
-                    ey1a += clipw[2];
-                }
-                lineTo(outerx, sy1a);
-                lineTo(outerx, ey1a);
-            }
-            lineTo(clipx, ey1);
-            lineTo(innerx, ey2);
-            lineTo(innerx, sy2);
-            closePath();
-            clip();
-            drawBorderLine(innerx, sy1a, outerx, ey1a, false, false, bpsEnd.style, bpsEnd.color);
-            restoreGraphicsState();
-        }
-        if (bpsAfter != null) {
-            endTextObject();
-
-            float sx1 = startx;
-            float sx2 = (slant[3] ? sx1 + bw[3] - clipw[3] : sx1);
-            float ex1 = startx + width;
-            float ex2 = (slant[2] ? ex1 - bw[1] + clipw[1] : ex1);
-            float outery = starty + height + clipw[2];
-            float clipy = outery - clipw[2];
-            float innery = outery - bw[2];
-
-            saveGraphicsState();
-            moveTo(ex1, clipy);
-            float sx1a = sx1;
-            float ex1a = ex1;
-            if (bpsAfter.mode == BorderProps.COLLAPSE_OUTER) {
-                if (bpsStart != null && bpsStart.mode == BorderProps.COLLAPSE_OUTER) {
-                    sx1a -= clipw[3];
-                }
-                if (bpsEnd != null && bpsEnd.mode == BorderProps.COLLAPSE_OUTER) {
-                    ex1a += clipw[1];
-                }
-                lineTo(ex1a, outery);
-                lineTo(sx1a, outery);
-            }
-            lineTo(sx1, clipy);
-            lineTo(sx2, innery);
-            lineTo(ex2, innery);
-            closePath();
-            clip();
-            drawBorderLine(sx1a, innery, ex1a, outery, true, false, bpsAfter.style, bpsAfter.color);
-            restoreGraphicsState();
-        }
-        if (bpsStart != null) {
-            endTextObject();
-
-            float sy1 = starty;
-            float sy2 = (slant[0] ? sy1 + bw[0] - clipw[0] : sy1);
-            float ey1 = sy1 + height;
-            float ey2 = (slant[3] ? ey1 - bw[2] + clipw[2] : ey1);
-            float outerx = startx - clipw[3];
-            float clipx = outerx + clipw[3];
-            float innerx = outerx + bw[3];
-
-            saveGraphicsState();
-            moveTo(clipx, ey1);
-            float sy1a = sy1;
-            float ey1a = ey1;
-            if (bpsStart.mode == BorderProps.COLLAPSE_OUTER) {
-                if (bpsBefore != null && bpsBefore.mode == BorderProps.COLLAPSE_OUTER) {
-                    sy1a -= clipw[0];
-                }
-                if (bpsAfter != null && bpsAfter.mode == BorderProps.COLLAPSE_OUTER) {
-                    ey1a += clipw[2];
-                }
-                lineTo(outerx, ey1a);
-                lineTo(outerx, sy1a);
-            }
-            lineTo(clipx, sy1);
-            lineTo(innerx, sy2);
-            lineTo(innerx, ey2);
-            closePath();
-            clip();
-            drawBorderLine(outerx, sy1a, innerx, ey1a, false, true, bpsStart.style, bpsStart.color);
-            restoreGraphicsState();
-        }
-    }
-    
-    private Color lightenColor(Color col, float factor) {
-        float[] cols = new float[3];
-        cols = col.getColorComponents(cols);
-        if (factor > 0) {
-            cols[0] += (1.0 - cols[0]) * factor;
-            cols[1] += (1.0 - cols[1]) * factor;
-            cols[2] += (1.0 - cols[2]) * factor;
-        } else {
-            cols[0] -= cols[0] * -factor;
-            cols[1] -= cols[1] * -factor;
-            cols[2] -= cols[2] * -factor;
-        }
-        return new Color(cols[0], cols[1], cols[2]);
-    }
-
-    private void drawBorderLine(float x1, float y1, float x2, float y2, 
+    /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
+    protected void drawBorderLine(float x1, float y1, float x2, float y2, 
             boolean horz, boolean startOrBefore, int style, ColorType col) {
         float w = x2 - x1;
         float h = y2 - y1;
@@ -1012,11 +698,33 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     /**
+     * Clip a rectangular area.
+     * write a clipping operation given coordinates in the current
+     * transform.
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @param width the width of the area
+     * @param height the height of the area
+     */
+    protected void clipRect(float x, float y, float width, float height) {
+        currentStream.add(x + " " + y + " " + width + " " + height + " re ");
+        clip();
+    }
+
+    /**
+     * Clip an area.
+     */
+    protected void clip() {
+        currentStream.add("W\n");
+        currentStream.add("n\n");
+    }
+
+    /**
      * Moves the current point to (x, y), omitting any connecting line segment. 
      * @param x x coordinate
      * @param y y coordinate
      */
-    private void moveTo(float x, float y) {
+    protected void moveTo(float x, float y) {
         currentStream.add(x + " " + y + " m ");
     }
     
@@ -1026,7 +734,7 @@ public class PDFRenderer extends PrintRenderer {
      * @param x x coordinate
      * @param y y coordinate
      */
-    private void lineTo(float x, float y) {
+    protected void lineTo(float x, float y) {
         currentStream.add(x + " " + y + " l ");
     }
     
@@ -1034,8 +742,15 @@ public class PDFRenderer extends PrintRenderer {
      * Closes the current subpath by appending a straight line segment from 
      * the current point to the starting point of the subpath.
      */
-    private void closePath() {
+    protected void closePath() {
         currentStream.add("h ");
+    }
+
+    /** 
+     * @see org.apache.fop.render.AbstractPathOrientedRenderer#fillRect(float, float, float, float)
+     */
+    protected void fillRect(float x, float y, float w, float h) {
+        currentStream.add(x + " " + y + " " + w + " " + h + " re f\n");
     }
     
     /**
@@ -1053,7 +768,7 @@ public class PDFRenderer extends PrintRenderer {
 
     /**
      * @see org.apache.fop.render.AbstractRenderer#renderBlockViewport(BlockViewport, List)
-     */
+     *//*
     protected void renderBlockViewport(BlockViewport bv, List children) {
         // clip and position viewport if necessary
 
@@ -1077,21 +792,7 @@ public class PDFRenderer extends PrintRenderer {
             //after the block-container has been painted. See below.
             List breakOutList = null;
             if (bv.getPositioning() == Block.FIXED) {
-                //break out
-                breakOutList = new java.util.ArrayList();
-                PDFState.Data data;
-                while (true) {
-                    data = currentState.getData();
-                    if (currentState.pop() == null) {
-                        break;
-                    }
-                    if (breakOutList.size() == 0) {
-                        comment("------ break out!");
-                    }
-                    breakOutList.add(0, data); //Insert because of stack-popping
-                    //getLogger().debug("Adding to break out list: " + data);
-                    restoreGraphicsState();
-                }
+                breakOutList = breakOutOfStateStack();
             }
             
             CTM tempctm = new CTM(containingIPPosition, containingBPPosition);
@@ -1122,7 +823,7 @@ public class PDFRenderer extends PrintRenderer {
             
             if (bv.getClip()) {
                 saveGraphicsState();
-                clip(x, y, width, height);
+                clipRect(x, y, width, height);
             }
 
             startVParea(ctm);
@@ -1140,31 +841,7 @@ public class PDFRenderer extends PrintRenderer {
             // clip if necessary
 
             if (breakOutList != null) {
-                comment("------ restoring context after break-out...");
-                PDFState.Data data;
-                Iterator i = breakOutList.iterator();
-                while (i.hasNext()) {
-                    data = (PDFState.Data)i.next();
-                    //getLogger().debug("Restoring: " + data);
-                    currentState.push();
-                    saveGraphicsState();
-                    if (data.concatenations != null) {
-                        Iterator tr = data.concatenations.iterator();
-                        while (tr.hasNext()) {
-                            AffineTransform at = (AffineTransform)tr.next();
-                            currentState.setTransform(at);
-                            double[] matrix = new double[6];
-                            at.getMatrix(matrix);
-                            tempctm = new CTM(matrix[0], matrix[1], matrix[2], matrix[3], 
-                                    matrix[4] * 1000, matrix[5] * 1000);
-                            currentStream.add(CTMHelper.toPDFString(tempctm) + " cm\n");
-                        }
-                    }
-                    //TODO Break-out: Also restore items such as line width and color
-                    //Left out for now because all this painting stuff is very
-                    //inconsistent. Some values go over PDFState, some don't.
-                }
-                comment("------ done.");
+                restoreStateStackAfterBreakOut(breakOutList);
             }
             
             currentIPPosition = saveIP;
@@ -1191,7 +868,7 @@ public class PDFRenderer extends PrintRenderer {
                 saveGraphicsState();
                 float width = (float)bv.getIPD() / 1000f;
                 float height = (float)bv.getBPD() / 1000f;
-                clip(x, y, width, height);
+                clipRect(x, y, width, height);
             }
 
             if (ctm != null) {
@@ -1222,28 +899,59 @@ public class PDFRenderer extends PrintRenderer {
             }
         }
         currentFontName = saveFontName;
+    }*/
+   
+    /**
+     * Breaks out of the state stack to handle fixed block-containers.
+     * @return the saved state stack to recreate later
+     */
+    protected List breakOutOfStateStack() {
+        List breakOutList = new java.util.ArrayList();
+        PDFState.Data data;
+        while (true) {
+            data = currentState.getData();
+            if (currentState.pop() == null) {
+                break;
+            }
+            if (breakOutList.size() == 0) {
+                comment("------ break out!");
+            }
+            breakOutList.add(0, data); //Insert because of stack-popping
+            restoreGraphicsState();
+        }
+        return breakOutList;
     }
 
     /**
-     * Clip an area.
-     * write a clipping operation given coordinates in the current
-     * transform.
-     * @param x the x coordinate
-     * @param y the y coordinate
-     * @param width the width of the area
-     * @param height the height of the area
+     * Restores the state stack after a break out.
+     * @param breakOutList the state stack to restore.
      */
-    protected void clip(float x, float y, float width, float height) {
-        currentStream.add(x + " " + y + " " + width + " " + height + " re ");
-        clip();
-    }
-
-    /**
-     * Clip an area.
-     */
-    protected void clip() {
-        currentStream.add("W\n");
-        currentStream.add("n\n");
+    protected void restoreStateStackAfterBreakOut(List breakOutList) {
+        CTM tempctm;
+        comment("------ restoring context after break-out...");
+        PDFState.Data data;
+        Iterator i = breakOutList.iterator();
+        while (i.hasNext()) {
+            data = (PDFState.Data)i.next();
+            currentState.push();
+            saveGraphicsState();
+            if (data.concatenations != null) {
+                Iterator tr = data.concatenations.iterator();
+                while (tr.hasNext()) {
+                    AffineTransform at = (AffineTransform)tr.next();
+                    currentState.setTransform(at);
+                    double[] matrix = new double[6];
+                    at.getMatrix(matrix);
+                    tempctm = new CTM(matrix[0], matrix[1], matrix[2], matrix[3], 
+                            matrix[4] * 1000, matrix[5] * 1000);
+                    currentStream.add(CTMHelper.toPDFString(tempctm) + " cm\n");
+                }
+            }
+            //TODO Break-out: Also restore items such as line width and color
+            //Left out for now because all this painting stuff is very
+            //inconsistent. Some values go over PDFState, some don't.
+        }
+        comment("------ done.");
     }
 
     /**
@@ -1593,15 +1301,6 @@ public class PDFRenderer extends PrintRenderer {
     }
     
     /**
-     * Converts a ColorType to a java.awt.Color (sRGB).
-     * @param col the color
-     * @return the converted color
-     */
-    private Color toColor(ColorType col) {
-        return new Color(col.getRed(), col.getGreen(), col.getBlue());
-    }
-    
-    /**
      * Establishes a new foreground or fill color.
      * @param col the color to apply (null skips this operation)
      * @param fill true to set the fill color, false for the foreground color
@@ -1625,6 +1324,11 @@ public class PDFRenderer extends PrintRenderer {
         }
     }
 
+    /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
+    protected  void updateColor(ColorType col, boolean fill) {
+        updateColor(col, fill, null);
+    }
+    
     private void updateFont(String name, int size, StringBuffer pdf) {
         if ((!name.equals(this.currentFontName))
                 || (size != this.currentFontSize)) {
@@ -1646,6 +1350,12 @@ public class PDFRenderer extends PrintRenderer {
         putImage(url, pos);
     }
 
+    /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
+    protected void drawImage(String url, Rectangle2D pos) {
+        endTextObject();
+        putImage(url, pos);
+    }
+    
     /**
      * Adds a PDF XObject (a bitmap) to the PDF that will later be referenced.
      * @param url URL of the bitmap
@@ -1789,32 +1499,6 @@ public class PDFRenderer extends PrintRenderer {
                             new Integer((int) pos.getHeight()));
         renderXML(context, doc, ns);
 
-    }
-
-    /**
-     * Render an inline viewport.
-     * This renders an inline viewport by clipping if necessary.
-     * @param viewport the viewport to handle
-     */
-    public void renderViewport(Viewport viewport) {
-
-        float x = currentIPPosition / 1000f;
-        float y = (currentBPPosition + viewport.getOffset()) / 1000f;
-        float width = viewport.getIPD() / 1000f;
-        float height = viewport.getBPD() / 1000f;
-        // TODO: Calculate the border rect correctly. 
-        drawBackAndBorders(viewport, x, y, width, height);
-
-        if (viewport.getClip()) {
-            saveGraphicsState();
-
-            clip(x, y, width, height);
-        }
-        super.renderViewport(viewport);
-
-        if (viewport.getClip()) {
-            restoreGraphicsState();
-        }
     }
 
     /**
