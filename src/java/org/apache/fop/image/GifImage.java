@@ -28,6 +28,8 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.net.URLConnection;
 
+import org.apache.commons.io.IOUtils;
+
 /**
  * FopImage object for GIF images, using Java native classes.
  * @author Eric SCHAEFFER
@@ -143,11 +145,7 @@ public class GifImage extends AbstractFopImage {
             log.error("Error while loading image (Gif): " + ex.getMessage(), ex);
             return false;
         } finally {
-            try {
-                inputStream.close();
-            } catch (java.io.IOException ioe) {
-                // Ignore
-            }
+            IOUtils.closeQuietly(inputStream);
             inputStream = null;
         }
 

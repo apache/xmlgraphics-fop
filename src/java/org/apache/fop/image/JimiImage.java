@@ -25,6 +25,8 @@ import java.awt.image.IndexColorModel;
 import java.awt.color.ColorSpace;
 import java.awt.Color;
 
+import org.apache.commons.io.IOUtils;
+
 // Jimi
 import com.sun.jimi.core.Jimi;
 
@@ -155,11 +157,7 @@ public class JimiImage extends AbstractFopImage {
             log.error("Error while loading image (Jimi): " + ex.getMessage(), ex);
             return;
         } finally {
-            try {
-                inputStream.close();
-            } catch (java.io.IOException ioe) {
-                // Ignore
-            }
+            IOUtils.closeQuietly(inputStream);
             inputStream = null;
         }
 

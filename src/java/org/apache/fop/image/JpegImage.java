@@ -24,6 +24,7 @@ import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
 
 // FOP
+import org.apache.commons.io.IOUtils;
 import org.apache.fop.util.CMYKColorSpace;
 
 /**
@@ -69,11 +70,7 @@ public class JpegImage extends AbstractFopImage {
             log.error("Error while loading image (Jpeg): " + ex.getMessage(), ex);
             return false;
         } finally {
-            try {
-                inputStream.close();
-            } catch (java.io.IOException ioe) {
-                // Ignore
-            }
+            IOUtils.closeQuietly(inputStream);
             inputStream = null;
         }
 

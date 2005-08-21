@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import org.apache.fop.image.FopImage;
 import org.apache.fop.apps.FOUserAgent;
 
 // Commons-Logging
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -62,11 +63,7 @@ public class XMLReader implements ImageReader {
         throws IOException {
         FopImage.ImageInfo info = loadImage(uri, fis, ua);
         if (info != null) {
-            try {
-                fis.close();
-            } catch (Exception e) {
-                //ignore
-            }
+            IOUtils.closeQuietly(fis);
         }
         return info;
     }
