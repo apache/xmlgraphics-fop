@@ -839,7 +839,8 @@ public abstract class BreakingAlgorithm {
 
     protected int getLineWidth(int line) {
         if (this.lineWidth < 0) {
-            throw new IllegalStateException("lineWidth must be set");
+            throw new IllegalStateException("lineWidth must be set" 
+                    + (this.lineWidth != 0 ? " and positive, but it is: " + this.lineWidth : ""));
         } else {
             return this.lineWidth;
         }
