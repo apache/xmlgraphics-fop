@@ -54,12 +54,12 @@ import org.apache.commons.logging.LogFactory;
  * @author <a href="mailto:fop-dev@xml.apache.org">Apache XML FOP Development Team</a>
  * @version $Id$
  */
-public class PSXMLHandler implements XMLHandler {
+public class PSSVGHandler implements XMLHandler {
 
     /**
      * logging instance
      */
-    private Log log = LogFactory.getLog(PSXMLHandler.class);
+    private Log log = LogFactory.getLog(PSSVGHandler.class);
 
     /**
      * The PostScript generator that is being used to drawn into.
@@ -94,7 +94,7 @@ public class PSXMLHandler implements XMLHandler {
     /**
      * Create a new PostScript XML handler for use by the PostScript renderer.
      */
-    public PSXMLHandler() {
+    public PSSVGHandler() {
     }
 
     /** @see org.apache.fop.render.XMLHandler */
