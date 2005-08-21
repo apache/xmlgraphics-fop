@@ -249,6 +249,7 @@ public class BatchDiffer {
                 System.exit(-1);
             }
      
+            Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
             BatchDiffer differ = new BatchDiffer();
             differ.runBatch(cfgFile);
         } catch (Exception e) {
