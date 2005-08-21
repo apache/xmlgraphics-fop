@@ -120,7 +120,9 @@ public class Area implements Serializable {
     public static final int CLASS_MAX = CLASS_SIDE_FLOAT + 1;
 
     private int areaClass = CLASS_NORMAL;
+    /** the area's inline-progression-dimension */
     protected int ipd;
+    /** the area's block-progression-dimension */
     protected int bpd;
 
     /**
@@ -358,6 +360,15 @@ public class Area implements Serializable {
     }
     
     /**
+     * Checks whether a certain trait is set on this area.
+     * @param oTraitCode the trait key
+     * @return true if the trait is set
+     */
+    public boolean hasTrait(Object oTraitCode) {
+        return (getTrait(oTraitCode) != null);
+    }
+    
+    /**
      * Get a boolean trait from this area.
      * @param oTraitCode the trait key
      * @return the trait value
@@ -388,6 +399,7 @@ public class Area implements Serializable {
         }
     }
     
+    /** @see java.lang.Object#toString() */
     public String toString() {
         StringBuffer sb = new StringBuffer(super.toString());
         sb.append(" {ipd=").append(Integer.toString(getIPD()));
