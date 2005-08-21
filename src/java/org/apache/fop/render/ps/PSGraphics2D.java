@@ -73,18 +73,20 @@ import org.apache.fop.image.FopImage;
  * implementing a <tt>Graphic2D</tt> piece-meal.
  *
  * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
- * @version $Id: PSGraphics2D.java,v 1.11 2003/03/11 08:42:24 jeremias Exp $
+ * @version $Id$
  * @see org.apache.batik.ext.awt.g2d.AbstractGraphics2D
  */
 public class PSGraphics2D extends AbstractGraphics2D {
 
+    private static final AffineTransform IDENTITY_TRANSFORM = new AffineTransform();
+    
     /** the logger for this class */
     protected Log log = LogFactory.getLog(PSTextPainter.class);
 
     /** the PostScript generator being created */
     protected PSGenerator gen;
 
-    private boolean clippingDisabled = true;
+    private boolean clippingDisabled = false;
 
     /** Currently valid FontState */
     protected Font font;
@@ -279,8 +281,8 @@ public class PSGraphics2D extends AbstractGraphics2D {
             Shape imclip = getClip();
             writeClip(imclip);
             gen.concatMatrix(at);
-            PSImageUtils.renderFopImage(fopimg, 
-                1000 * x, 1000 * y, 1000 * width, 1000 * height, gen);
+            PSImageUtils.renderBitmapImage(fopimg, 
+                x, y, width, height, gen);
             gen.restoreGraphicsState();
         } catch (IOException ioe) {
             handleIOException(ioe);
@@ -396,12 +398,12 @@ public class PSGraphics2D extends AbstractGraphics2D {
 
         /** @see org.apache.fop.image.FopImage#getIntrinsicWidth() */
         public int getIntrinsicWidth() {
-            return (int)(getWidth() * 72000 / getHorizontalResolution());
+            return (int)(getWidth() * 72 / getHorizontalResolution());
         }
 
         /** @see org.apache.fop.image.FopImage#getIntrinsicHeight() */
         public int getIntrinsicHeight() {
-            return (int)(getHeight() * 72000 / getVerticalResolution());
+            return (int)(getHeight() * 72 / getVerticalResolution());
         }
 
         /** @see org.apache.fop.image.FopImage#getHorizontalResolution() */
@@ -503,29 +505,29 @@ public class PSGraphics2D extends AbstractGraphics2D {
             int type = iter.currentSegment(vals);
             switch (type) {
             case PathIterator.SEG_CUBICTO:
-                gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
-                                 + gen.formatDouble(1000 * vals[1]) + " "
-                                 + gen.formatDouble(1000 * vals[2]) + " "
-                                 + gen.formatDouble(1000 * vals[3]) + " "
-                                 + gen.formatDouble(1000 * vals[4]) + " "
-                                 + gen.formatDouble(1000 * vals[5])
+                gen.writeln(gen.formatDouble(vals[0]) + " "
+                                 + gen.formatDouble(vals[1]) + " "
+                                 + gen.formatDouble(vals[2]) + " "
+                                 + gen.formatDouble(vals[3]) + " "
+                                 + gen.formatDouble(vals[4]) + " "
+                                 + gen.formatDouble(vals[5])
                                  + " curveto");
                 break;
             case PathIterator.SEG_LINETO:
-                gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
-                                 + gen.formatDouble(1000 * vals[1])
+                gen.writeln(gen.formatDouble(vals[0]) + " "
+                                 + gen.formatDouble(vals[1])
                                  + " lineto");
                 break;
             case PathIterator.SEG_MOVETO:
-                gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
-                                 + gen.formatDouble(1000 * vals[1])
+                gen.writeln(gen.formatDouble(vals[0]) + " "
+                                 + gen.formatDouble(vals[1])
                                  + " M");
                 break;
             case PathIterator.SEG_QUADTO:
-                gen.writeln(gen.formatDouble(1000 * vals[0]) + " " 
-                          + gen.formatDouble(1000 * vals[1]) + " " 
-                          + gen.formatDouble(1000 * vals[2]) + " " 
-                          + gen.formatDouble(1000 * vals[3]) + " QUADTO ");
+                gen.writeln(gen.formatDouble(vals[0]) + " " 
+                          + gen.formatDouble(vals[1]) + " " 
+                          + gen.formatDouble(vals[2]) + " " 
+                          + gen.formatDouble(vals[3]) + " QUADTO ");
                 break;
             case PathIterator.SEG_CLOSE:
                 gen.writeln("closepath");
@@ -557,15 +559,23 @@ public class PSGraphics2D extends AbstractGraphics2D {
         preparePainting();
         try {
             gen.saveGraphicsState();
+            
+            AffineTransform trans = getTransform();
+            boolean newTransform = gen.getCurrentState().checkTransform(trans)
+                    && !trans.isIdentity();
+
             Shape imclip = getClip();
             writeClip(imclip);
+            if (newTransform) {
+                gen.concatMatrix(trans);
+            }
             establishColor(getColor());
 
             applyPaint(getPaint(), false);
             applyStroke(getStroke());
 
             gen.writeln("newpath");
-            PathIterator iter = s.getPathIterator(getTransform());
+            PathIterator iter = s.getPathIterator(IDENTITY_TRANSFORM);
             processPathIterator(iter);
             doDrawing(false, true, false);
             gen.restoreGraphicsState();
@@ -589,7 +599,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
                 PathIterator iter = s.getPathIterator(getTransform());
                 processPathIterator(iter);
                 // clip area
-                gen.writeln("clippath");
+                gen.writeln("clip");
             } catch (IOException ioe) {
                 handleIOException(ioe);
             }
@@ -624,14 +634,14 @@ public class PSGraphics2D extends AbstractGraphics2D {
                 if (da != null) {
                     gen.write("[");
                     for (int count = 0; count < da.length; count++) {
-                        gen.write("" + (1000 * (int)da[count]));
+                        gen.write("" + ((int)da[count]));
                         if (count < da.length - 1) {
                             gen.write(" ");
                         }
                     }
                     gen.write("] ");
                     float offset = bs.getDashPhase();
-                    gen.writeln((1000 * (int)offset) + " setdash");
+                    gen.writeln(((int)offset) + " setdash");
                 }
                 int ec = bs.getEndCap();
                 switch (ec) {
@@ -661,10 +671,10 @@ public class PSGraphics2D extends AbstractGraphics2D {
                 default: log.warn("Unsupported line join: " + lj);
                 }
                 float lw = bs.getLineWidth();
-                gen.writeln(gen.formatDouble(1000 * lw) + " setlinewidth");
+                gen.writeln(gen.formatDouble(lw) + " setlinewidth");
 
                 float ml = bs.getMiterLimit();
-                gen.writeln(gen.formatDouble(1000 * ml) + " setmiterlimit");
+                gen.writeln(gen.formatDouble(ml) + " setmiterlimit");
             }
         } catch (IOException ioe) {
             handleIOException(ioe);
@@ -857,9 +867,9 @@ public class PSGraphics2D extends AbstractGraphics2D {
 
             //Prepare correct transformation
             AffineTransform trans = getTransform();
-            gen.writeln("[" + toArray(trans) + "] concat"); 
-            gen.writeln(gen.formatDouble(1000 * x) + " "
-                      + gen.formatDouble(1000 * y) + " moveto ");
+            gen.concatMatrix(trans);
+            gen.writeln(gen.formatDouble(x) + " "
+                      + gen.formatDouble(y) + " moveto ");
             gen.writeln("1 -1 scale");
       
             StringBuffer sb = new StringBuffer("(");
@@ -872,22 +882,6 @@ public class PSGraphics2D extends AbstractGraphics2D {
         } catch (IOException ioe) {
             handleIOException(ioe);
         }
-    }
-
-    /**
-     * Converts an AffineTransform to a value array.
-     * @param at AffineTransform to convert
-     * @return a String (array of six space-separated values)
-     */
-    protected String toArray(AffineTransform at) {
-        final double[] vals = new double[6];
-        at.getMatrix(vals);
-        return gen.formatDouble5(vals[0]) + " " 
-                + gen.formatDouble5(vals[1]) + " " 
-                + gen.formatDouble5(vals[2]) + " "   
-                + gen.formatDouble5(vals[3]) + " "   
-                + gen.formatDouble(1000 * vals[4]) + " "   
-                + gen.formatDouble(1000 * vals[5]); 
     }
 
     private void escapeText(final String text, StringBuffer target) {

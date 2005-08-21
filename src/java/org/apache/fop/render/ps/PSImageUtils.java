@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The Apache Software Foundation.
+ * Copyright 2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,20 +22,29 @@ import java.awt.color.ColorSpace;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.commons.io.output.CountingOutputStream;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.fop.image.EPSImage;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.JpegImage;
+import org.apache.fop.image.XMLImage;
 import org.apache.fop.util.ASCII85OutputStream;
 import org.apache.fop.util.Finalizable;
 import org.apache.fop.util.FlateEncodeOutputStream;
 import org.apache.fop.util.RunLengthEncodeOutputStream;
+import org.w3c.dom.Document;
 
 /**
  * Utility code for rendering images in PostScript. 
  */
 public class PSImageUtils {
 
+    /** logging instance */
+    protected static Log log = LogFactory.getLog(PSImageUtils.class);
+
     /**
-     * Renders an image to PostScript.
+     * Renders a bitmap image to PostScript.
      * @param img image to render
      * @param x x position
      * @param y y position
@@ -44,12 +53,26 @@ public class PSImageUtils {
      * @param gen PS generator
      * @throws IOException In case of an I/O problem while rendering the image
      */
-    public static void renderFopImage(FopImage img, int x, int y, int w, int h, PSGenerator gen) throws IOException {
+    public static void renderBitmapImage(FopImage img, 
+                float x, float y, float w, float h, PSGenerator gen)
+                    throws IOException {
+        if (img instanceof JpegImage) {
+            if (!img.load(FopImage.ORIGINAL_DATA)) {
+                gen.commentln("%JPEG image could not be processed: " + img);
+                return;
+            }
+        } else {
+            if (!img.load(FopImage.BITMAP)) {
+                gen.commentln("%Bitmap image could not be processed: " + img);
+                return;
+            }
+        }
         boolean iscolor = img.getColorSpace().getType()
                           != ColorSpace.CS_GRAY;
         byte[] imgmap = img.getBitmaps();
 
         gen.saveGraphicsState();
+        gen.commentln("%FOPBeginBitmap: " + img.getMimeType());
         if (img.getColorSpace().getType() == ColorSpace.TYPE_CMYK) {
             gen.writeln("/DeviceCMYK setcolorspace");
         } else if (img.getColorSpace().getType() == ColorSpace.CS_GRAY) {
@@ -108,22 +131,6 @@ public class PSImageUtils {
         gen.writeln("  RawData flushfile");
         gen.writeln("} exec");
 
-        /*
-         * for (int y=0; y<img.getHeight(); y++) {
-         * int indx = y * img.getWidth();
-         * if (iscolor) indx*= 3;
-         * for (int x=0; x<img.getWidth(); x++) {
-         * if (iscolor) {
-         * writeASCIIHex(imgmap[indx++] & 0xFF);
-         * writeASCIIHex(imgmap[indx++] & 0xFF);
-         * writeASCIIHex(imgmap[indx++] & 0xFF);
-         * } else {
-         * writeASCIIHex(imgmap[indx++] & 0xFF);
-         * }
-         * }
-         * }
-         */
-
         OutputStream out = gen.getOutputStream();
         out = new ASCII85OutputStream(out);
         if (img instanceof JpegImage) {
@@ -143,8 +150,70 @@ public class PSImageUtils {
         }
 
         gen.writeln("");
+        gen.commentln("%FOPEndBitmap");
         gen.restoreGraphicsState();
     }
 
+    public static void renderEPS(EPSImage img, 
+            float x, float y, float w, float h,
+            PSGenerator gen) {
+        try {
+            if (!img.load(FopImage.ORIGINAL_DATA)) {
+                gen.commentln("%EPS image could not be processed: " + img);
+                return;
+            }
+            int[] bbox = img.getBBox();
+            int bboxw = bbox[2] - bbox[0];
+            int bboxh = bbox[3] - bbox[1];
+            renderEPS(img.getEPSImage(), img.getDocName(),
+                x, y, w, h,
+                bbox[0], bbox[1], bboxw, bboxh, gen);
+
+        } catch (Exception e) {
+            log.error("PSRenderer.renderImageArea(): Error rendering bitmap ("
+                                   + e.getMessage() + ")", e);
+        }
+    }
+
+    /**
+     * Places an EPS file in the PostScript stream.
+     * @param rawEPS byte array containing the raw EPS data
+     * @param name name for the EPS document
+     * @param x x-coordinate of viewport in millipoints
+     * @param y y-coordinate of viewport in millipoints
+     * @param w width of viewport in millipoints
+     * @param h height of viewport in millipoints
+     * @param bboxx x-coordinate of EPS bounding box in points
+     * @param bboxy y-coordinate of EPS bounding box in points
+     * @param bboxw width of EPS bounding box in points
+     * @param bboxh height of EPS bounding box in points
+     * @throws IOException in case an I/O error happens during output
+     */
+    public static void renderEPS(byte[] rawEPS, String name,
+                    float x, float y, float w, float h,
+                    int bboxx, int bboxy, int bboxw, int bboxh,
+                    PSGenerator gen) throws IOException {
+        gen.writeln("BeginEPSF");
+        gen.writeln("%%BeginDocument: " + name);
+
+        gen.writeln(gen.formatDouble(x) + " " + gen.formatDouble(y) + " translate");
+        gen.writeln("0 " + gen.formatDouble(h) + " translate");
+        gen.writeln("1 -1 scale");
+        float sx = w / bboxw;
+        float sy = h / bboxh;
+        if (sx != 1 || sy != 1) {
+            gen.writeln(gen.formatDouble(sx) + " " + gen.formatDouble(sy) + " scale");
+        }
+        if (bboxx != 0 || bboxy != 0) {
+            gen.writeln(gen.formatDouble(-bboxx) + " " + gen.formatDouble(-bboxy) + " translate");
+        }
+        gen.writeln(gen.formatDouble(bboxy) + " " + gen.formatDouble(bboxy) 
+                + " " + gen.formatDouble(bboxw) + " " + gen.formatDouble(bboxh) + " re clip");
+        gen.writeln("newpath");
+        gen.writeByteArr(rawEPS);
+        gen.writeln("%%EndDocument");
+        gen.writeln("EndEPSF");
+        gen.writeln("");
+    }
 
 }

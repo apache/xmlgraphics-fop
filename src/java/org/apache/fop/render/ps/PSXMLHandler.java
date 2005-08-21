@@ -46,13 +46,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * PostScript XML handler.
+ * PostScript XML handler for SVG. Uses Apache Batik for SVG processing.
  * This handler handles XML for foreign objects when rendering to PostScript.
  * It renders SVG to the PostScript document using the PSGraphics2D.
  * The properties from the PostScript renderer are subject to change.
  *
  * @author <a href="mailto:fop-dev@xml.apache.org">Apache XML FOP Development Team</a>
- * @version $Id: PSXMLHandler.java,v 1.4 2003/03/11 08:42:24 jeremias Exp $
+ * @version $Id$
  */
 public class PSXMLHandler implements XMLHandler {
 
@@ -297,7 +297,7 @@ public class PSXMLHandler implements XMLHandler {
             builder = null;
 
             try {
-                gen.writeln("%SVG graphic start ---");
+                gen.commentln("%FOPBeginSVG");
                 gen.saveGraphicsState();
                 /*
                  * Clip to the svg area.
@@ -305,18 +305,19 @@ public class PSXMLHandler implements XMLHandler {
                  * an fo:block-container
                  */
                 gen.writeln("newpath");
-                gen.defineRect(xOffset, yOffset, w, h);
+                gen.defineRect(xOffset / 1000f, yOffset / 1000f, 
+                        psInfo.getWidth() / 1000f, psInfo.getWidth() / 1000f);
                 gen.writeln("clip");
                 
                 // transform so that the coordinates (0,0) is from the top left
                 // and positive is down and to the right. (0,0) is where the
                 // viewBox puts it.
-                gen.concatMatrix(sx, 0, 0, sy, xOffset, yOffset);
+                gen.concatMatrix(sx, 0, 0, sy, xOffset / 1000f, yOffset / 1000f);
 
                 SVGSVGElement svg = ((SVGDocument)doc).getRootElement();
                 AffineTransform at = ViewBox.getPreserveAspectRatioTransform(svg,
-                                    w / 1000f, h / 1000f);
-                if (!at.isIdentity()) {
+                        psInfo.getWidth() / 1000f, psInfo.getHeight() / 1000f);
+                if (false && !at.isIdentity()) {
                     double[] vals = new double[6];
                     at.getMatrix(vals);
                     gen.concatMatrix(vals);
@@ -345,7 +346,7 @@ public class PSXMLHandler implements XMLHandler {
 
                 psInfo.psGenerator.restoreGraphicsState();
                 //psInfo.pdfState.pop();
-                gen.writeln("%SVG graphic end ---");
+                gen.commentln("%FOPEndSVG");
             } catch (IOException ioe) {
                 log.error("SVG graphic could not be rendered: "
                                        + ioe.getMessage(), ioe);
