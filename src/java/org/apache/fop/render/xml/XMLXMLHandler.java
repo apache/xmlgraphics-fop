@@ -127,42 +127,6 @@ public class XMLXMLHandler implements XMLHandler {
         }
     }
 
-    /**
-     * Returns the given content value transformed to replace invalid
-     * characters with entities.
-     * @param s content value
-     * @return encoded value
-     */
-    private static String contentToString(String s) {
-        StringBuffer result = new StringBuffer();
-
-        for (int i = 0; i < s.length(); i++) {
-            char c = s.charAt(i);
-
-            switch (c) {
-                case '<':
-                    result.append("&lt;");
-                    break;
-                case '>':
-                    result.append("&gt;");
-                    break;
-                case '&':
-                    result.append("&amp;");
-                    break;
-                case '"':
-                    result.append("&quot;");
-                    break;
-                case '\'':
-                    result.append("&apos;");
-                    break;
-                default:
-                    result.append(c);
-            }
-        }
-
-        return result.toString();
-    }
-
     /** @see org.apache.fop.render.XMLHandler#getMimeType() */
     public String getMimeType() {
         return XMLRenderer.XML_MIME_TYPE;
