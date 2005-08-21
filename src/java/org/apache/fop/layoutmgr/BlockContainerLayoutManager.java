@@ -342,14 +342,33 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         } else {
             allocBPD = 0;
             if (abProps.bottom.getEnum() != EN_AUTO) {
+                int availHeight;
                 if (isFixed()) {
-                    allocBPD = (int)getCurrentPV().getViewArea().getHeight();
+                    availHeight = (int)getCurrentPV().getViewArea().getHeight();
                 } else {
-                    allocBPD = context.getStackLimit().opt; 
+                    availHeight = context.getStackLimit().opt; 
                 }
+                allocBPD = availHeight;
                 allocBPD -= offset.y;
                 if (abProps.bottom.getEnum() != EN_AUTO) {
                     allocBPD -= abProps.bottom.getValue();
+                    if (allocBPD < 0) {
+                        log.error("The current combination of top and bottom properties results"
+                                + " in a negative extent for the block-container. 'bottom' may be"
+                                + " at most " + (allocBPD + abProps.bottom.getValue()) + " mpt,"
+                                + " but was actually " + abProps.bottom.getValue() + " mpt."
+                                + " The nominal available height is " + availHeight + " mpt.");
+                        allocBPD = 0;
+                    }
+                } else {
+                    if (allocBPD < 0) {
+                        log.error("The current combination of top and bottom properties results"
+                                + " in a negative extent for the block-container. 'top' may be"
+                                + " at most " + availHeight + " mpt,"
+                                + " but was actually " + offset.y + " mpt."
+                                + " The nominal available height is " + availHeight + " mpt.");
+                        allocBPD = 0;
+                    }
                 }
             } else {
                 autoHeight = true;
@@ -359,16 +378,35 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             allocIPD = width.getValue(); //this is the content-width
             allocIPD += getIPIndents();
         } else {
+            int availWidth;
             if (isFixed()) {
-                allocIPD = (int)getCurrentPV().getViewArea().getWidth(); 
+                availWidth = (int)getCurrentPV().getViewArea().getWidth(); 
             } else {
-                allocIPD = context.getRefIPD();
+                availWidth = context.getRefIPD();
             }
+            allocIPD = availWidth;
             if (abProps.left.getEnum() != EN_AUTO) {
                 allocIPD -= abProps.left.getValue();
             }
             if (abProps.right.getEnum() != EN_AUTO) {
                 allocIPD -= abProps.right.getValue();
+                if (allocIPD < 0) {
+                    log.error("The current combination of left and right properties results"
+                            + " in a negative extent for the block-container. 'right' may be"
+                            + " at most " + (allocIPD + abProps.right.getValue()) + " mpt,"
+                            + " but was actually " + abProps.right.getValue() + " mpt."
+                            + " The nominal available width is " + availWidth + " mpt.");
+                    allocIPD = 0;
+                }
+            } else {
+                if (allocIPD < 0) {
+                    log.error("The current combination of left and right properties results"
+                            + " in a negative extent for the block-container. 'left' may be"
+                            + " at most " + allocIPD + " mpt,"
+                            + " but was actually " + abProps.left.getValue() + " mpt."
+                            + " The nominal available width is " + availWidth + " mpt.");
+                    allocIPD = 0;
+                }
             }
         }
 
