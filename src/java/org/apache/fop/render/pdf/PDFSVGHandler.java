@@ -56,17 +56,17 @@ import java.awt.Color;
 import java.awt.geom.AffineTransform;
 
 /**
- * PDF XML handler.
+ * PDF XML handler for SVG (uses Apache Batik).
  * This handler handles XML for foreign objects when rendering to PDF.
  * It renders SVG to the PDF document using the PDFGraphics2D.
  * The properties from the PDF renderer are subject to change.
  */
-public class PDFXMLHandler implements XMLHandler {
+public class PDFSVGHandler implements XMLHandler {
 
     /**
      * logging instance
      */
-    private Log log = LogFactory.getLog(PDFXMLHandler.class);
+    private Log log = LogFactory.getLog(PDFSVGHandler.class);
 
     /**
      * The PDF document that is being drawn into.
@@ -136,7 +136,7 @@ public class PDFXMLHandler implements XMLHandler {
     /**
      * Create a new PDF XML handler for use by the PDF renderer.
      */
-    public PDFXMLHandler() {
+    public PDFSVGHandler() {
     }
 
     /** @see org.apache.fop.render.XMLHandler */
@@ -148,7 +148,6 @@ public class PDFXMLHandler implements XMLHandler {
         if (svg.equals(ns)) {
             SVGHandler svghandler = new SVGHandler();
             svghandler.renderSVGDocument(context, doc, pdfi);
-        } else {
         }
     }
 
