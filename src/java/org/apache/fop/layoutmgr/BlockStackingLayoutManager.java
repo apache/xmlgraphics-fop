@@ -302,6 +302,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                 // curLM is a ?
                 //childLC.setStackLimit(MinOptMax.subtract(context
                 //        .getStackLimit(), stackSize));
+                childLC.setStackLimit(context.getStackLimit());
                 childLC.setRefIPD(referenceIPD);
             }
 

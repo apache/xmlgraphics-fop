@@ -43,6 +43,9 @@
             This is some background-text. 
             This is some background-text. 
             This is some background-text. 
+            <fo:block-container left="100pt" top="100pt" right="100pt" bottom="100pt" absolute-position="absolute" background-color="orange" color="black">
+              <fo:block background-color="yellow">absolutely positioned right/bottom (inside a block)</fo:block>
+            </fo:block-container>
             This is some background-text. 
             This is some background-text. 
             This is some background-text.
@@ -66,7 +69,7 @@
     <eval expected="216000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/block[1]/@ipda"/>
 
     <!-- *** second block-container *** -->
-    <true xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@is-viewport-area"/>
+    <true xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@is-viewport-area"/>
     <eval expected="absolute" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@positioning"/>
     <eval expected="340000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@ipd"/>
     <eval expected="340000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@ipda"/>
@@ -77,5 +80,16 @@
     <!--   -> containing block (skipping dummy block)-->
     <eval expected="340000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/block[1]/block[1]/@ipd"/>
     <eval expected="340000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/block[1]/block[1]/@ipda"/>
+
+    <!-- *** third block-container *** -->
+    <true xpath="//flow/block[3]/block[1]/@is-viewport-area"/>
+    <eval expected="absolute" xpath="//flow/block[3]/block[1]/@positioning"/>
+    <eval expected="160000" xpath="//flow/block[3]/block[1]/@ipd"/>
+    <eval expected="160000" xpath="//flow/block[3]/block[1]/@ipda"/>
+    <eval expected="160000" xpath="//flow/block[3]/block[1]/@bpd"/>
+    <eval expected="160000" xpath="//flow/block[3]/block[1]/@bpda"/>
+    <eval expected="100000" xpath="//flow/block[3]/block[1]/@left-position"/>
+    <eval expected="100000" xpath="//flow/block[3]/block[1]/@top-position"/>
+
   </checks>
 </testcase>
