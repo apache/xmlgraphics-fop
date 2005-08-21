@@ -1050,24 +1050,24 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
         context.setUserAgent(userAgent);
         // TODO implement
         /*
-         * context.setProperty(PDFXMLHandler.PDF_DOCUMENT, pdfDoc);
-         * context.setProperty(PDFXMLHandler.OUTPUT_STREAM, ostream);
-         * context.setProperty(PDFXMLHandler.PDF_STATE, currentState);
-         * context.setProperty(PDFXMLHandler.PDF_PAGE, currentPage);
-         * context.setProperty(PDFXMLHandler.PDF_CONTEXT, currentContext == null ?
+         * context.setProperty(PDFSVGHandler.PDF_DOCUMENT, pdfDoc);
+         * context.setProperty(PDFSVGHandler.OUTPUT_STREAM, ostream);
+         * context.setProperty(PDFSVGHandler.PDF_STATE, currentState);
+         * context.setProperty(PDFSVGHandler.PDF_PAGE, currentPage);
+         * context.setProperty(PDFSVGHandler.PDF_CONTEXT, currentContext == null ?
          * currentPage : currentContext);
-         * context.setProperty(PDFXMLHandler.PDF_CONTEXT, currentContext);
-         * context.setProperty(PDFXMLHandler.PDF_STREAM, currentStream);
-         * context.setProperty(PDFXMLHandler.PDF_XPOS, new
+         * context.setProperty(PDFSVGHandler.PDF_CONTEXT, currentContext);
+         * context.setProperty(PDFSVGHandler.PDF_STREAM, currentStream);
+         * context.setProperty(PDFSVGHandler.PDF_XPOS, new
          * Integer(currentIPPosition + (int) pos.getX()));
-         * context.setProperty(PDFXMLHandler.PDF_YPOS, new
+         * context.setProperty(PDFSVGHandler.PDF_YPOS, new
          * Integer(currentBPPosition + (int) pos.getY()));
-         * context.setProperty(PDFXMLHandler.PDF_FONT_INFO, fontInfo);
-         * context.setProperty(PDFXMLHandler.PDF_FONT_NAME, currentFontName);
-         * context.setProperty(PDFXMLHandler.PDF_FONT_SIZE, new
+         * context.setProperty(PDFSVGHandler.PDF_FONT_INFO, fontInfo);
+         * context.setProperty(PDFSVGHandler.PDF_FONT_NAME, currentFontName);
+         * context.setProperty(PDFSVGHandler.PDF_FONT_SIZE, new
          * Integer(currentFontSize));
-         * context.setProperty(PDFXMLHandler.PDF_WIDTH, new Integer((int)
-         * pos.getWidth())); context.setProperty(PDFXMLHandler.PDF_HEIGHT, new
+         * context.setProperty(PDFSVGHandler.PDF_WIDTH, new Integer((int)
+         * pos.getWidth())); context.setProperty(PDFSVGHandler.PDF_HEIGHT, new
          * Integer((int) pos.getHeight())); renderXML(userAgent, context, doc,
          * ns);
          */
