@@ -30,7 +30,7 @@ import org.apache.fop.apps.FOUserAgent;
  * ImageReader object for PNG image type.
  *
  * @author    Pankaj Narula
- * @version   $Id: PNGReader.java,v 1.8 2003/03/06 21:25:45 jeremias Exp $
+ * @version   $Id$
  */
 public class PNGReader implements ImageReader {
 
@@ -51,6 +51,7 @@ public class PNGReader implements ImageReader {
 
         if (supported) {
             FopImage.ImageInfo info = getDimension(header);
+            info.originalURI = uri;
             info.mimeType = getMimeType();
             info.inputStream = bis;
             return info;

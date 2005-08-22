@@ -30,7 +30,7 @@ import org.apache.fop.apps.FOUserAgent;
  * ImageReader object for BMP image type.
  *
  * @author    Pankaj Narula
- * @version   $Id: BMPReader.java,v 1.8 2003/03/06 21:25:45 jeremias Exp $
+ * @version   $Id$
  */
 public class BMPReader implements ImageReader {
 
@@ -54,6 +54,8 @@ public class BMPReader implements ImageReader {
                 && (header[1] == (byte) 0x4d));
         if (supported) {
             FopImage.ImageInfo info = getDimension(header);
+            info.originalURI = uri;
+            info.mimeType = getMimeType();
             info.inputStream = bis;
             return info;
         } else {
@@ -72,7 +74,6 @@ public class BMPReader implements ImageReader {
 
     private FopImage.ImageInfo getDimension(byte[] header) {
         FopImage.ImageInfo info = new FopImage.ImageInfo();
-        info.mimeType = getMimeType();
 
         // little endian notation
         int byte1 = header[WIDTH_OFFSET] & 0xff;

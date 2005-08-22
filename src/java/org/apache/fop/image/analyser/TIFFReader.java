@@ -30,7 +30,7 @@ import org.apache.fop.apps.FOUserAgent;
  * ImageReader object for TIFF image type.
  *
  * @author    Pankaj Narula, Michael Lee
- * @version   $Id: TIFFReader.java,v 1.9 2003/03/06 21:25:45 jeremias Exp $
+ * @version   $Id$
  */
 public class TIFFReader implements ImageReader {
 
@@ -62,6 +62,7 @@ public class TIFFReader implements ImageReader {
 
         if (supported) {
             FopImage.ImageInfo info = getDimension(header);
+            info.originalURI = uri;
             info.mimeType = getMimeType();
             info.inputStream = bis;
             return info;

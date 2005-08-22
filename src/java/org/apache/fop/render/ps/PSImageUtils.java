@@ -22,18 +22,15 @@ import java.awt.color.ColorSpace;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.image.EPSImage;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.JpegImage;
-import org.apache.fop.image.XMLImage;
 import org.apache.fop.util.ASCII85OutputStream;
 import org.apache.fop.util.Finalizable;
 import org.apache.fop.util.FlateEncodeOutputStream;
 import org.apache.fop.util.RunLengthEncodeOutputStream;
-import org.w3c.dom.Document;
 
 /**
  * Utility code for rendering images in PostScript. 
@@ -72,7 +69,10 @@ public class PSImageUtils {
         byte[] imgmap = img.getBitmaps();
 
         gen.saveGraphicsState();
-        gen.commentln("%FOPBeginBitmap: " + img.getMimeType());
+        gen.writeln(x + " " + y + " translate");
+        gen.writeln(w + " " + h + " scale");
+
+        gen.commentln("%FOPBeginBitmap: " + img.getMimeType() + " " + img.getOriginalURI());
         if (img.getColorSpace().getType() == ColorSpace.TYPE_CMYK) {
             gen.writeln("/DeviceCMYK setcolorspace");
         } else if (img.getColorSpace().getType() == ColorSpace.CS_GRAY) {
@@ -80,9 +80,6 @@ public class PSImageUtils {
         } else {
             gen.writeln("/DeviceRGB setcolorspace");
         }
-
-        gen.writeln(x + " " + y + " translate");
-        gen.writeln(w + " " + h + " scale");
 
         gen.writeln("{{");
         // Template: (RawData is used for the EOF signal only)

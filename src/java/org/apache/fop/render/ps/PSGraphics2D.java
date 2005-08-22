@@ -307,7 +307,6 @@ public class PSGraphics2D extends AbstractGraphics2D {
         private int width;
         private int bitsPerPixel;
         private ColorSpace colorSpace;
-        private int bitmapSiye;
         private byte[] bitmaps;
         private byte[] mask;
         private Color transparentColor;
@@ -326,6 +325,10 @@ public class PSGraphics2D extends AbstractGraphics2D {
             return "application/octet-stream";
         }
 
+        public String getOriginalURI() {
+            return "temp-image:" + this.toString();
+        }
+        
         /**
          * @see org.apache.fop.image.FopImage#load(int, org.apache.commons.logging.Log)
          */

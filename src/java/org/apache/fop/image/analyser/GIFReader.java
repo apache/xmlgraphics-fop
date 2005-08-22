@@ -30,7 +30,7 @@ import org.apache.fop.apps.FOUserAgent;
  * ImageReader object for GIF image type.
  *
  * @author    Pankaj Narula
- * @version   $Id: GIFReader.java,v 1.8 2003/03/06 21:25:45 jeremias Exp $
+ * @version   $Id$
  */
 public class GIFReader implements ImageReader {
 
@@ -48,6 +48,7 @@ public class GIFReader implements ImageReader {
                 && (header[5] == 'a'));
         if (supported) {
             FopImage.ImageInfo info = getDimension(header);
+            info.originalURI = uri;
             info.mimeType = getMimeType();
             info.inputStream = bis;
             return info;
