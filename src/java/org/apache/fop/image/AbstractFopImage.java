@@ -24,7 +24,6 @@ import java.awt.color.ICC_Profile;
 import java.io.InputStream;
 import java.awt.Color;
 
-// FOP
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -133,11 +132,15 @@ public abstract class AbstractFopImage implements FopImage {
         return imageInfo.mimeType;
     }
 
+    /** @see org.apache.fop.image.FopImage#getOriginalURI() */
+    public String getOriginalURI() {
+        return this.imageInfo.originalURI;
+    }
+    
     /**
      * Load image data and initialize its properties.
      *
      * @param type the type of loading to do
-     * @param ua the user agent for handling logging etc.
      * @return true if the loading was successful
      */
     public synchronized boolean load(int type) {
@@ -173,7 +176,6 @@ public abstract class AbstractFopImage implements FopImage {
      * All implementations should override this to get and
      * return the dimensions.
      *
-     * @param ua the user agent
      * @return true if the loading was successful
      */
     protected boolean loadDimensions() {
@@ -185,7 +187,6 @@ public abstract class AbstractFopImage implements FopImage {
      * If the renderer requires a bitmap image then the
      * implementations should override this to load the bitmap.
      *
-     * @param ua the user agent
      * @return true if the loading was successful
      */
     protected boolean loadBitmap() {
@@ -197,7 +198,6 @@ public abstract class AbstractFopImage implements FopImage {
      * In some cases the original data can be used by the renderer.
      * This should load the data and any other associated information.
      *
-     * @param ua the user agent
      * @return true if the loading was successful
      */
     protected boolean loadOriginalData() {

@@ -30,7 +30,7 @@ import org.apache.fop.apps.FOUserAgent;
  * ImageReader object for JPEG image type.
  *
  * @author Pankaj Narula
- * @version $Id: JPEGReader.java,v 1.8 2003/03/06 21:25:45 jeremias Exp $
+ * @version $Id$
  */
 public class JPEGReader implements ImageReader {
 
@@ -61,6 +61,7 @@ public class JPEGReader implements ImageReader {
                     && (header[1] == (byte) 0xd8));
         if (supported) {
             FopImage.ImageInfo info = getDimension(fis);
+            info.originalURI = uri;
             info.mimeType = getMimeType();
             info.inputStream = fis;
             return info;

@@ -32,17 +32,17 @@ public interface FopImage {
     /**
      * Flag for loading dimensions.
      */
-    public static final int DIMENSIONS = 1;
+    int DIMENSIONS = 1;
 
     /**
      * Flag for loading original data.
      */
-    public static final int ORIGINAL_DATA = 2;
+    int ORIGINAL_DATA = 2;
 
     /**
      * Flag for loading bitmap data.
      */
-    public static final int BITMAP = 4;
+    int BITMAP = 4;
 
     /**
      * Get the mime type of this image.
@@ -53,6 +53,9 @@ public interface FopImage {
      */
     String getMimeType();
 
+    /** @return the original URI used to access this image. */
+    String getOriginalURI();
+    
     /**
      * Load particular inforamtion for this image
      * This must be called before attempting to get
@@ -170,6 +173,8 @@ public interface FopImage {
     public static class ImageInfo {
         /** InputStream to load the image from */
         public InputStream inputStream;
+        /** Original URI the image was accessed with */
+        public String originalURI;
         /** image width (in pixels) */
         public int width;
         /** image height (in pixels) */

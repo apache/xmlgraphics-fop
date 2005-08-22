@@ -32,7 +32,7 @@ import org.apache.fop.apps.FOUserAgent;
 /**
  * ImageReader object for EPS document image type.
  *
- * @version   $Id: EPSReader.java,v 1.9 2003/03/06 21:25:45 jeremias Exp $
+ * @version   $Id$
  */
 public class EPSReader implements ImageReader {
 
@@ -80,6 +80,7 @@ public class EPSReader implements ImageReader {
 
         if (isEPS) {
             FopImage.ImageInfo info = new FopImage.ImageInfo();
+            info.originalURI = uri;
             info.mimeType = getMimeType();
             info.data = data;
             readEPSImage(bis, data);

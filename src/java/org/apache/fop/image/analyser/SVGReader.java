@@ -166,6 +166,7 @@ public class SVGReader implements ImageReader {
 
                 FopImage.ImageInfo info = new FopImage.ImageInfo();
 
+                info.originalURI = uri;
                 info.mimeType = getMimeType();
                 info.str = SVGDOMImplementation.SVG_NAMESPACE_URI;
 

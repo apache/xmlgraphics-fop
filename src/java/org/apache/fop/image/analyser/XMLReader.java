@@ -62,6 +62,7 @@ public class XMLReader implements ImageReader {
             FOUserAgent ua)
         throws IOException {
         FopImage.ImageInfo info = loadImage(uri, fis, ua);
+        info.originalURI = uri;
         if (info != null) {
             IOUtils.closeQuietly(fis);
         }
