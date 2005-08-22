@@ -162,7 +162,11 @@ public class PSImageUtils {
             int[] bbox = img.getBBox();
             int bboxw = bbox[2] - bbox[0];
             int bboxh = bbox[3] - bbox[1];
-            renderEPS(img.getEPSImage(), img.getDocName(),
+            String name = img.getDocName();
+            if (name == null || name.length() == 0) {
+                name = img.getOriginalURI();
+            }
+            renderEPS(img.getEPSImage(), name,
                 x, y, w, h,
                 bbox[0], bbox[1], bboxw, bboxh, gen);
 
@@ -184,14 +188,15 @@ public class PSImageUtils {
      * @param bboxy y-coordinate of EPS bounding box in points
      * @param bboxw width of EPS bounding box in points
      * @param bboxh height of EPS bounding box in points
+     * @param gen the PS generator
      * @throws IOException in case an I/O error happens during output
      */
     public static void renderEPS(byte[] rawEPS, String name,
                     float x, float y, float w, float h,
                     int bboxx, int bboxy, int bboxw, int bboxh,
                     PSGenerator gen) throws IOException {
+        gen.writeln("%FOPBeginEPS: " + name);
         gen.writeln("BeginEPSF");
-        gen.writeln("%%BeginDocument: " + name);
 
         gen.writeln(gen.formatDouble(x) + " " + gen.formatDouble(y) + " translate");
         gen.writeln("0 " + gen.formatDouble(h) + " translate");
@@ -207,10 +212,11 @@ public class PSImageUtils {
         gen.writeln(gen.formatDouble(bboxy) + " " + gen.formatDouble(bboxy) 
                 + " " + gen.formatDouble(bboxw) + " " + gen.formatDouble(bboxh) + " re clip");
         gen.writeln("newpath");
+        gen.writeln("%%BeginDocument: " + name);
         gen.writeByteArr(rawEPS);
         gen.writeln("%%EndDocument");
         gen.writeln("EndEPSF");
-        gen.writeln("");
+        gen.writeln("%FOPEndEPS");
     }
 
 }
