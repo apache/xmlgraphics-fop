@@ -122,5 +122,5 @@ LOGLEVEL=
 # Possible SimpleLog values:  "trace", "debug", "info" (default), "warn", "error", or "fatal".
 # LOGLEVEL=-Dorg.apache.commons.logging.simplelog.defaultlog=INFO
 
-$JAVACMD $LOGCHOICE $LOGLEVEL -classpath "$LOCALCLASSPATH" $FOP_OPTS org.apache.fop.apps.Fop "$@"
+$JAVACMD $LOGCHOICE $LOGLEVEL -classpath "$LOCALCLASSPATH" $FOP_OPTS org.apache.fop.cli.Main "$@"
 

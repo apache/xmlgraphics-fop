@@ -29,7 +29,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.InputHandler;
+import org.apache.fop.cli.InputHandler;
 
 /**
  * Basic runtime test for the old Fop class. It is used to verify that 

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,10 +34,10 @@ import java.net.MalformedURLException;
 import java.util.List;
 
 // FOP
-import org.apache.fop.apps.InputHandler;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.cli.InputHandler;
 
 import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.commons.logging.Log;

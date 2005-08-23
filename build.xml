@@ -428,7 +428,7 @@ list of possible build targets.
 
     <jar jarfile="${build.dir}/fop.jar" basedir="${build.classes.dir}" includes="org/**">
       <manifest>
-        <attribute name="Main-Class" value="org.apache.fop.apps.Fop"/>
+        <attribute name="Main-Class" value="org.apache.fop.cli.Main"/>
         <!--attribute name="Class-Path" value="${manifest-classpath}"/-->
         <attribute name="Implementation-Title" value="${Name}"/>
         <attribute name="Implementation-Version" value="${version}"/>

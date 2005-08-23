@@ -16,7 +16,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.apps;
+package org.apache.fop.cli;
 
 // Imported java.io classes
 import java.io.File;
@@ -34,13 +34,17 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.Fop;
+import org.apache.fop.render.awt.viewer.Renderable;
 
 /**
  * Class for handling files input from command line
  * either with XML and XSLT files (and optionally xsl
  * parameters) or FO File input alone
  */
-public class InputHandler implements ErrorListener {
+public class InputHandler implements ErrorListener, Renderable {
+     
     private File sourcefile = null;  // either FO or XML/XSLT usage
     private File stylesheet = null;  // for XML/XSLT usage
     private Vector xsltParams = null; // for XML/XSLT usage
@@ -80,8 +84,7 @@ public class InputHandler implements ErrorListener {
             String baseURL = null;
 
             try {
-                baseURL =
-                    new File(sourcefile.getAbsolutePath()).
+                baseURL = new File(sourcefile.getAbsolutePath()).
                         getParentFile().toURL().toExternalForm();
             } catch (Exception e) {
                 baseURL = "";
@@ -124,22 +127,24 @@ public class InputHandler implements ErrorListener {
         }
     }
     
+    // --- Implementation of the ErrorListener interface ---
+
     /**
-     * Implementation of the ErrorListener interface.
+     * @see javax.xml.transform.ErrorListener#warning(javax.xml.transform.TransformerException)
      */
     public void warning(TransformerException exc) {
         log.warn(exc.toString());
     }
 
     /**
-     * Implementation of the ErrorListener interface.
+     * @see javax.xml.transform.ErrorListener#error(javax.xml.transform.TransformerException)
      */
     public void error(TransformerException exc) {
         log.error(exc.toString());
     }
 
     /**
-     * Implementation of the ErrorListener interface.
+     * @see javax.xml.transform.ErrorListener#fatalError(javax.xml.transform.TransformerException)
      */
     public void fatalError(TransformerException exc)
             throws TransformerException {
