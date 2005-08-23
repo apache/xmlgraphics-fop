@@ -147,16 +147,25 @@ public class Main {
             options.parse(args);
             foUserAgent = options.getFOUserAgent();
             
-            Fop fop = new Fop(options.getRenderer(), foUserAgent);
+            Fop fop = null;
+            if (options.getOutputMode() != CommandLineOptions.RENDER_NONE) {
+                fop = new Fop(options.getRenderer(), foUserAgent);
+            }
 
             try {
                 if (options.getOutputFile() != null) {
                     bos = new BufferedOutputStream(new FileOutputStream(
                         options.getOutputFile()));
-                    fop.setOutputStream(bos);
-                    foUserAgent.setOutputFile(options.getOutputFile());
+                    if (fop != null) {
+                        fop.setOutputStream(bos);
+                        foUserAgent.setOutputFile(options.getOutputFile());
+                    }
                 }
-                options.getInputHandler().render(fop);
+                if (fop != null) {
+                    options.getInputHandler().render(fop);
+                } else {
+                    options.getInputHandler().transformTo(bos);
+                }
              } finally {
                  if (bos != null) {
                      bos.close();
