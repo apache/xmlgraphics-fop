@@ -81,7 +81,6 @@ public class FOUserAgent {
     private PDFEncryptionParams pdfEncryptionParams;
     private float px2mm = DEFAULT_PX2MM;
     private Map rendererOptions = new java.util.HashMap();
-    private InputHandler inputHandler = null;
     private File outputFile = null;
     private Renderer rendererOverride = null;
     private FOEventHandler foEventHandlerOverride = null;
@@ -122,23 +121,6 @@ public class FOUserAgent {
     /** Set of keywords applicable to this document. */
     protected String keywords = null;
     
-    /**
-     * Sets the InputHandler object for this process
-     * @param inputHandler holding input file name information
-     */
-    public void setInputHandler(InputHandler inputHandler) {
-        this.inputHandler = inputHandler;
-    }
-
-    /**
-     * Returns the apps.InputHandler object created during command-line
-     * processing
-     * @return InputHandler object
-     */
-    public InputHandler getInputHandler() {
-        return inputHandler;
-    }
-
     /**
      * Add the element mapping with the given class name.
      * @param elementMapping the class name representing the element mapping.

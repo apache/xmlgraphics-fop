@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/* $Id$ */
+
 package org.apache.fop.render.awt.viewer;
 
 import java.awt.Color;
@@ -100,6 +103,11 @@ public class PreviewPanel extends JPanel {
 
     /** The FOUserAgent associated with this panel - often shared with PreviewDialog */
     protected FOUserAgent foUserAgent;
+    /**
+     * Renderable instance that can be used to reload and re-render a document after 
+     * modifications.
+     */
+    protected Renderable renderable;
     /** The number of the page which is currently selected */
     private int currentPage = 0;
 
@@ -136,10 +144,13 @@ public class PreviewPanel extends JPanel {
     /**
      * Creates a new PreviewPanel instance.
      * @param foUserAgent the user agent
+     * @param renderable the Renderable instance that is used to reload/re-render a document
+     *                   after modifications.
      * @param renderer the AWT Renderer instance to paint with
      */
-    public PreviewPanel(FOUserAgent foUserAgent, AWTRenderer renderer) {
+    public PreviewPanel(FOUserAgent foUserAgent, Renderable renderable, AWTRenderer renderer) {
         super(new GridLayout(1, 1));
+        this.renderable = renderable;
         this.renderer = renderer;
         this.foUserAgent = foUserAgent;
 
@@ -284,7 +295,7 @@ public class PreviewPanel extends JPanel {
                 // do not allow the reloading while FOP is still rendering
                 JOptionPane.showMessageDialog(previewArea,
                         "Cannot perform the requested operation until "
-                                + "all page are rendererd. Please wait",
+                                + "all page are rendered. Please wait",
                         "Please wait ", 1 /* INFORMATION_MESSAGE */);
                 return;
             }
@@ -325,9 +336,9 @@ public class PreviewPanel extends JPanel {
             }
 
             try {
-                if (foUserAgent.getInputHandler() != null) {
+                if (renderable != null) {
                     renderer.clearViewportList();
-                    foUserAgent.getInputHandler().render(fop);
+                    renderable.render(fop);
                 }
             } catch (FOPException e) {
                 e.printStackTrace();

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.InputHandler;
+import org.apache.fop.cli.InputHandler;
 import org.apache.fop.tools.anttasks.FileCompare;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;

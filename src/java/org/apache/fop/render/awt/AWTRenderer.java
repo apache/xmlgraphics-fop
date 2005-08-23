@@ -44,6 +44,7 @@ import org.apache.fop.area.PageViewport;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.properties.ColorTypeProperty;
 import org.apache.fop.render.awt.viewer.PreviewDialog;
+import org.apache.fop.render.awt.viewer.Renderable;
 import org.apache.fop.render.awt.viewer.Translator;
 import org.apache.fop.render.java2d.Java2DRenderer;
 
@@ -73,6 +74,12 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
     protected PreviewDialog frame;
 
     /**
+     * Renderable instance that can be used to reload and re-render a document after 
+     * modifications.
+     */
+    protected Renderable renderable;
+    
+    /**
      * Creates a new AWTRenderer instance.
      */
     public AWTRenderer() {
@@ -87,6 +94,15 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
         }
     }
 
+    /**
+     * A Renderable instance can be set so the Preview Dialog can enable the "Reload" button
+     * which causes the current document to be reprocessed and redisplayed.
+     * @param renderable the Renderable instance.
+     */
+    public void setRenderable(Renderable renderable) {
+        this.renderable = renderable;
+    }
+    
     /**
      * Sets whether the preview dialog should be created and displayed when
      * the rendering is finished.
@@ -135,7 +151,7 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
 
     /** Creates and initialize the AWT Viewer main window */
     private PreviewDialog createPreviewDialog() {
-        frame = new PreviewDialog(userAgent);
+        frame = new PreviewDialog(userAgent, this.renderable);
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosed(WindowEvent we) {
                 System.exit(0);

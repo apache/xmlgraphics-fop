@@ -16,7 +16,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.apps;
+package org.apache.fop.cli;
 
 // java
 import java.io.File;
@@ -25,7 +25,11 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.Vector;
 
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.Fop;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.render.awt.AWTRenderer;
 import org.apache.fop.util.CommandLineLogger;
 
 // commons logging
@@ -67,6 +71,8 @@ public class CommandLineOptions implements Constants {
     private int outputmode = NOT_SET;
 
     private FOUserAgent foUserAgent;
+    
+    private InputHandler inputHandler;
     
     private Log log;
 
@@ -119,9 +125,23 @@ public class CommandLineOptions implements Constants {
             throw e;
         }
         
-        foUserAgent.setInputHandler(createInputHandler());
+        inputHandler = createInputHandler();
+        
+        if (outputmode == RENDER_AWT) {
+            AWTRenderer renderer = new AWTRenderer();
+            renderer.setRenderable(inputHandler); //set before user agent!
+            renderer.setUserAgent(foUserAgent);
+            foUserAgent.setRendererOverride(renderer);
+        }
     }
 
+    /**
+     * @return the InputHandler instance defined by the command-line options.
+     */
+    public InputHandler getInputHandler() {
+        return inputHandler;
+    }
+    
     /**
      * Get the logger.
      * @return the logger

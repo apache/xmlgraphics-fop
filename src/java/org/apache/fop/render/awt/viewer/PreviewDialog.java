@@ -68,6 +68,11 @@ public class PreviewDialog extends JFrame {
     protected AWTRenderer renderer;
     /** The FOUserAgent associated with this window */
     protected FOUserAgent foUserAgent;
+    /**
+     * Renderable instance that can be used to reload and re-render a document after 
+     * modifications.
+     */
+    protected Renderable renderable;
 
     /** The JCombobox to rescale the rendered page view */
     private JComboBox scale;
@@ -87,10 +92,13 @@ public class PreviewDialog extends JFrame {
     /**
      * Creates a new PreviewDialog that uses the given renderer.
      * @param foUserAgent the user agent
+     * @param renderable the Renderable instance that is used to reload/re-render a document
+     *                   after modifications.
      */
-    public PreviewDialog(FOUserAgent foUserAgent) {
+    public PreviewDialog(FOUserAgent foUserAgent, Renderable renderable) {
         renderer = (AWTRenderer) foUserAgent.getRendererOverride();
         this.foUserAgent = foUserAgent;
+        this.renderable = renderable;
         translator = renderer.getTranslator();
 
         //Commands aka Actions
@@ -156,7 +164,7 @@ public class PreviewDialog extends JFrame {
         setSize(screen.width * 61 / 100, screen.height * 9 / 10);
 
         //Page view stuff
-        previewPanel = new PreviewPanel(foUserAgent, renderer);
+        previewPanel = new PreviewPanel(foUserAgent, renderable, renderer);
         getContentPane().add(previewPanel, BorderLayout.CENTER);
 
         //Scaling combobox
@@ -232,6 +240,14 @@ public class PreviewDialog extends JFrame {
     }
 
     /**
+     * Creates a new PreviewDialog that uses the given renderer.
+     * @param foUserAgent the user agent
+     */
+    public PreviewDialog(FOUserAgent foUserAgent) {
+        this(foUserAgent, null);
+    }
+    
+    /**
      * Creates a new menubar to be shown in this window.
      * @return the newly created menubar
      */
@@ -246,7 +262,7 @@ public class PreviewDialog extends JFrame {
             }
         });
         // inputHandler must be set to allow reloading
-        if (foUserAgent.getInputHandler() != null) {
+        if (renderable != null) {
             menu.add(new Command(translator.getString("Menu.Reload"), KeyEvent.VK_R) {
                 public void doit() {
                     reload();
