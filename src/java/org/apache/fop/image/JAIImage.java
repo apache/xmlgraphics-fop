@@ -61,6 +61,17 @@ public class JAIImage extends AbstractFopImage {
     }
     
     /**
+     * @see org.apache.fop.image.AbstractFopImage#loadBitmap()
+     */
+    protected boolean loadBitmap() {
+        if (this.bitmaps == null) {
+            loadImage();
+        }
+
+        return this.bitmaps != null;
+    }
+
+    /**
      * Loads the image from the inputstream
      */
     protected void loadImage() {
