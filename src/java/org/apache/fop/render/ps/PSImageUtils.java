@@ -195,6 +195,7 @@ public class PSImageUtils {
                     float x, float y, float w, float h,
                     int bboxx, int bboxy, int bboxw, int bboxh,
                     PSGenerator gen) throws IOException {
+        gen.notifyResourceUsage(PSProcSets.EPS_PROCSET, false);
         gen.writeln("%FOPBeginEPS: " + name);
         gen.writeln("BeginEPSF");
 
@@ -212,9 +213,12 @@ public class PSImageUtils {
         gen.writeln(gen.formatDouble(bboxy) + " " + gen.formatDouble(bboxy) 
                 + " " + gen.formatDouble(bboxw) + " " + gen.formatDouble(bboxh) + " re clip");
         gen.writeln("newpath");
-        gen.writeln("%%BeginDocument: " + name);
+        
+        PSResource res = new PSResource(PSResource.TYPE_FILE, name);
+        gen.notifyResourceUsage(res, false);
+        gen.writeDSCComment(DSCConstants.BEGIN_DOCUMENT, res.getName());
         gen.writeByteArr(rawEPS);
-        gen.writeln("%%EndDocument");
+        gen.writeDSCComment(DSCConstants.END_DOCUMENT);
         gen.writeln("EndEPSF");
         gen.writeln("%FOPEndEPS");
     }

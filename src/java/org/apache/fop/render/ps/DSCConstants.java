@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,7 @@ package org.apache.fop.render.ps;
 /**
  * This class defines constants with Strings for the DSC specification.
  * 
- * @author <a href="mailto:fop-dev@xml.apache.org">Apache XML FOP Development Team</a>
- * @author <a href="mailto:jeremias@apache.org">Jeremias Maerki</a>
+ * @author <a href="mailto:fop-dev@xmlgraphics.apache.org">Apache FOP Development Team</a>
  * @version $Id: DSCConstants.java,v 1.2 2003/03/07 09:46:30 jeremias Exp $
  */
 public class DSCConstants {
@@ -145,6 +144,33 @@ public class DSCConstants {
     // ----==== Requirements Conventions ====----
 
     /**@todo Add the missing comments */
+    /**
+     * This comment indicates all types of paper media (paper sizes, weight, color)
+     * this document requires. 
+     */
+    public static final String DOCUMENT_MEDIA              = "DocumentMedia";
+    /** This comment provides a list of resources the document needs */
+    public static final String DOCUMENT_NEEDED_RESOURCES   = "DocumentNeededResources";
+    /** This comment provides a list of resources the document includes */
+    public static final String DOCUMENT_SUPPLIED_RESOURCES = "DocumentSuppliedResources";
+    //Skipping %%DocumentPrinterRequired
+    //Skipping %%DocumentNeededFiles -> deprecated
+    //Skipping %%DocumentSuppliedFiles -> deprecated
+    //Skipping %%DocumentFonts -> deprecated
+    //Skipping %%DocumentNeededFonts -> deprecated
+    //Skipping %%DocumentSuppliedFonts -> deprecated
+    //Skipping %%DocumentNeededProcSets -> deprecated
+    //Skipping %%DocumentSuppliedProcSets -> deprecated
+    //Skipping %%OperatorIntervention
+    //Skipping %%OperatorMessage
+    //Skipping %%ProofMode
+    /**
+     * This comment describes document requirements, such as duplex printing,
+     * hole punching, collating, or other physical document processing needs.
+     */
+    public static final String REQUIREMENTS = "Requirements";
+    //Skipping %%VMlocation
+    //Skipping %%VMusage
     
     // ----==== Requirement Body Comments ====----
     
@@ -173,5 +199,21 @@ public class DSCConstants {
     /** Indicates a referenced a resource (font, file, procset) */
     public static final String INCLUDE_RESOURCE     = "IncludeResource";
     
+    // ----==== Requirement Page Comments ====----
     
+    //Skipping %%PageFonts -> deprecated
+    //Skipping %%PageFiles -> deprecated
+    /** Indicates that the paper attributes denoted by medianame are invoked on this page. */
+    public static final String PAGE_MEDIA        = "PageMedia";
+    /**
+     * This is the page-level invocation of a combination of the options listed in
+     * the %%Requirements: comment.
+     */
+    public static final String PAGE_REQUIREMENTS = "PageRequirements";
+    /**
+     * This comment indicates the names and values of all resources that are needed
+     * or supplied on the present page.
+     */
+    public static final String PAGE_RESOURCES    = "PageResources";
+
 }
