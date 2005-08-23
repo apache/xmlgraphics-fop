@@ -51,6 +51,9 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
  */
 public class CommandLineOptions implements Constants {
 
+    /** Used to indicate that only the result of the XSL transformation should be output */
+    public static final int RENDER_NONE = -1;
+    
     /* show configuration information */
     private Boolean showConfiguration = Boolean.FALSE;
     /* for area tree XML output, only down to block area level */
@@ -210,6 +213,8 @@ public class CommandLineOptions implements Constants {
                 i = i + parseTextOutputOption(args, i);
             } else if (args[i].equals("-svg")) {
                 i = i + parseSVGOutputOption(args, i);
+            } else if (args[i].equals("-foout")) {
+                i = i + parseFOOutputOption(args, i);
             } else if (args[i].charAt(0) != '-') {
                 i = i + parseUnknownOption(args, i);
             } else if (args[i].equals("-at")) {
@@ -412,6 +417,17 @@ public class CommandLineOptions implements Constants {
         }
     }
 
+    private int parseFOOutputOption(String[] args, int i) throws FOPException {
+        setOutputMode(RENDER_NONE);
+        if ((i + 1 == args.length)
+                || (args[i + 1].charAt(0) == '-')) {
+            throw new FOPException("you must specify the FO output file");
+        } else {
+            outfile = new File(args[i + 1]);
+            return 1;
+        }
+    }
+
     private int parseUnknownOption(String[] args, int i) throws FOPException {
         if (inputmode == NOT_SET) {
             inputmode = FO_INPUT;
@@ -502,6 +518,10 @@ public class CommandLineOptions implements Constants {
             }
 
         } else if (inputmode == FO_INPUT) {
+            if (outputmode == RENDER_NONE) {
+                throw new FOPException(
+                        "FO output mode is only available if you use -xml and -xsl");
+            }
             if (xmlfile != null || xsltfile != null) {
                 log.warn("fo input mode, but xmlfile or xslt file are set:");
                 log.error("xml file: " + xmlfile.toString());
@@ -556,6 +576,7 @@ public class CommandLineOptions implements Constants {
         case RENDER_RTF:
         case RENDER_TIFF:
         case RENDER_PNG:
+        case RENDER_NONE:
             return outputmode;
         case RENDER_XML:
             foUserAgent.getRendererOptions().put("fineDetail", isCoarseAreaXml());
@@ -701,9 +722,13 @@ public class CommandLineOptions implements Constants {
             + "  -at outfile       representation of area tree as XML (outfile req'd) \n"
             + "  -print            input file will be rendered and sent to the printer \n"
             + "                    see options with \"-print help\" \n\n"
+            + "  -foout outfile    input will only be XSL transformed. The intermediate \n"
+            + "                    XSL-FO file is saved and no rendering is performed. \n"
+            + "                    (Only available if you use -xml and -xsl parameters)\n\n"
             + " [Examples]\n" + "  Fop foo.fo foo.pdf \n"
             + "  Fop -fo foo.fo -pdf foo.pdf (does the same as the previous line)\n"
             + "  Fop -xml foo.xml -xsl foo.xsl -pdf foo.pdf\n"
+            + "  Fop -xml foo.xml -xsl foo.xsl -foout foo.fo\n"
             + "  Fop foo.fo -mif foo.mif\n"
             + "  Fop foo.fo -rtf foo.rtf\n"
             + "  Fop foo.fo -print or Fop -print foo.fo \n"

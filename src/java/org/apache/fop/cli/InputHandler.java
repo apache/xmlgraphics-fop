@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package org.apache.fop.cli;
 
 // Imported java.io classes
 import java.io.File;
+import java.io.OutputStream;
 import java.util.Vector;
 
 // Imported TraX classes
@@ -30,6 +31,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
@@ -49,6 +51,7 @@ public class InputHandler implements ErrorListener, Renderable {
     private File stylesheet = null;  // for XML/XSLT usage
     private Vector xsltParams = null; // for XML/XSLT usage
 
+    /** the logger */
     protected Log log = LogFactory.getLog(InputHandler.class);
     
     /**
@@ -92,6 +95,24 @@ public class InputHandler implements ErrorListener, Renderable {
             fop.getUserAgent().setBaseURL(baseURL);
         }
 
+        // Resulting SAX events (the generated FO) must be piped through to FOP
+        Result res = new SAXResult(fop.getDefaultHandler());
+
+        transformTo(res);
+    }
+    
+    /**
+     * In contrast to render(Fop) this method only performs the XSLT stage and saves the
+     * intermediate XSL-FO file to the output file.
+     * @param out OutputStream to write the transformation result to.
+     * @throws FOPException in case of an error during processing
+     */
+    public void transformTo(OutputStream out) throws FOPException {
+        Result res = new StreamResult(out);
+        transformTo(res);
+    }
+    
+    private void transformTo(Result result) throws FOPException {
         try {
             // Setup XSLT
             TransformerFactory factory = TransformerFactory.newInstance();
@@ -116,17 +137,14 @@ public class InputHandler implements ErrorListener, Renderable {
             // Create a SAXSource from the input Source file
             Source src = new StreamSource(sourcefile);
 
-            // Resulting SAX events (the generated FO) must be piped through to FOP
-            Result res = new SAXResult(fop.getDefaultHandler());
-
             // Start XSLT transformation and FOP processing
-            transformer.transform(src, res);
+            transformer.transform(src, result);
 
         } catch (Exception e) {
             throw new FOPException(e);
         }
     }
-    
+
     // --- Implementation of the ErrorListener interface ---
 
     /**
@@ -150,4 +168,5 @@ public class InputHandler implements ErrorListener, Renderable {
             throws TransformerException {
         throw exc;
     }
+
 }
