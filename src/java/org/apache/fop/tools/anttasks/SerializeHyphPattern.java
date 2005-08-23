@@ -22,10 +22,12 @@ package org.apache.fop.tools.anttasks;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.List;
 
 // Ant
-import org.apache.tools.ant.taskdefs.MatchingTask;
+import org.apache.tools.ant.Task;
 import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.types.FileSet;
 
 // FOP
 import org.apache.fop.hyphenation.HyphenationTree;
@@ -36,34 +38,42 @@ import org.apache.fop.hyphenation.HyphenationException;
  */
 
 
-public class SerializeHyphPattern extends MatchingTask {
-    private File sourceDir, targetDir;
+public class SerializeHyphPattern extends Task {
+    private List filesets = new java.util.ArrayList();
+    private File targetDir;
     private boolean errorDump = false;
 
     /**
      * @see org.apache.tools.ant.Task#execute()
      */
     public void execute() throws org.apache.tools.ant.BuildException {
-        DirectoryScanner ds = this.getDirectoryScanner(sourceDir);
-        String[] files = ds.getIncludedFiles();
-        for (int i = 0; i < files.length; i++) {
-            processFile(files[i].substring(0, files[i].length() - 4));
+        // deal with the filesets
+        for (int i = 0; i < getFilesets().size(); i++) {
+            FileSet fs = (FileSet) getFilesets().get(i);
+            DirectoryScanner ds = fs.getDirectoryScanner(getProject());
+            File basedir = ds.getBasedir();
+            String[] files = ds.getIncludedFiles();
+            for (int j = 0; j < files.length; j++) {
+                processFile(basedir, files[j].substring(0, files[j].length() - 4));
+            }
         }
     }    // end execute
 
 
     /**
-     * Sets the source directory.
-     * @param sourceDir source directory
+     * Adds a set of pattern files (nested fileset attribute).
+     * @param set a fileset
      */
-    public void setSourceDir(String sourceDir) {
-        File dir = new File(sourceDir);
-        if (!dir.exists()) {
-            System.err.println("Fatal Error: source directory " + sourceDir
-                               + " for hyphenation files doesn't exist.");
-            System.exit(1);
-        }
-        this.sourceDir = dir;
+    public void addFileset(FileSet set) {
+        filesets.add(set);
+    }
+
+    /**
+     * Returns the current list of filesets.
+     * @return the filesets
+     */
+    public List getFilesets() {
+        return this.filesets;
     }
 
     /**
@@ -88,8 +98,8 @@ public class SerializeHyphPattern extends MatchingTask {
      * checks whether input or output files exists or the latter is older than input file
      * and start build if necessary
      */
-    private void processFile(String filename) {
-        File infile = new File(sourceDir, filename + ".xml");
+    private void processFile(File basedir, String filename) {
+        File infile = new File(basedir, filename + ".xml");
         File outfile = new File(targetDir, filename + ".hyp");
         //long outfileLastModified = outfile.lastModified();
         boolean startProcess = true;
@@ -154,9 +164,11 @@ public class SerializeHyphPattern extends MatchingTask {
      * //quick access for debugging
      * public static void main (String args[]) {
      * SerializeHyphPattern ser = new SerializeHyphPattern();
-     * ser.setIncludes("*.xml");
-     * ser.setSourceDir("\\xml-fop\\hyph\\");
-     * ser.setTargetDir("\\xml-fop\\hyph\\");
+     * FileSet set = new FileSet();
+     * set.setDir(new File("src/hyph"));
+     * set.setIncludes("*.xml");
+     * ser.addFileset(set);
+     * ser.setTargetDir("build/hyph");
      * ser.execute();
      * }
      */
