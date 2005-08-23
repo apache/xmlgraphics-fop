@@ -171,6 +171,7 @@ list of possible build targets.
   <property name="xdocs.dir" value="${src.dir}/documentation/content/xdocs"/>
   <property name="fo.examples.dir" value="${basedir}/examples/fo/basic"/>
   <property name="lib.dir" value="${basedir}/lib"/>
+  <property name="user.hyph.dir" value="${basedir}/hyph"/>
 
   <property name="build.dir" value="${basedir}/build"/>
   <property name="build.gensrc.dir" value="${build.dir}/gensrc"/>
@@ -385,9 +386,14 @@ list of possible build targets.
     </path>
     <taskdef name="serHyph" classname="org.apache.fop.tools.anttasks.SerializeHyphPattern" classpathref="hyph-classpath"/>
     <mkdir dir="${build.dir}/hyph"/>
-    <serHyph includes="*.xml"
-             sourceDir="${src.hyph.dir}"
-             targetDir="${build.dir}/hyph"/>
+    <serHyph targetDir="${build.dir}/hyph">
+      <fileset dir="${user.hyph.dir}">
+        <include name="*.xml"/>
+      </fileset>
+      <fileset dir="${src.hyph.dir}">
+        <include name="*.xml"/>
+      </fileset>
+    </serHyph>
   </target>
 
   <target name="uptodate-jar-hyphenation" depends="compile-hyphenation">
@@ -400,7 +406,7 @@ list of possible build targets.
     <tstamp>
       <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
     </tstamp>
-    <jar jarfile="${build.dir}/fop-hyph.jar" basedir="${build.dir}/hyph">
+    <jar jarfile="${build.dir}/fop-hyph.jar" basedir="${build.dir}" includes="hyph/*.hyp">
       <manifest>
         <attribute name="Implementation-Title" value="${Name}"/>
         <attribute name="Implementation-Version" value="${version}"/>
