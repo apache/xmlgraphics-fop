@@ -26,13 +26,15 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.Set;
 import java.util.Stack;
 
 /**
  * This class is used to output PostScript code to an OutputStream.
  *
- * @author <a href="mailto:fop-dev@xml.apache.org">Apache XML FOP Development Team</a>
+ * @author <a href="mailto:fop-dev@xmlgraphics.apache.org">Apache FOP Development Team</a>
  * @version $Id$
  */
 public class PSGenerator {
@@ -484,7 +486,87 @@ public class PSGenerator {
             writeln(name + " " + formatDouble(size) + " F");
         }
     }
+    
+    private Set documentSuppliedResources;
+    private Set documentNeededResources;
+    private Set pageResources;
+    
+    /**
+     * Notifies the generator that a new page has been started and that the page resource
+     * set can be cleared.
+     */
+    public void notifyStartNewPage() {
+        if (pageResources != null) {
+            pageResources.clear();
+        }
+    }
+    
+    /**
+     * Notifies the generator about the usage of a resource on the current page.
+     * @param res the resource being used
+     * @param needed true if this is a needed resource, false for a supplied resource
+     */
+    public void notifyResourceUsage(PSResource res, boolean needed) {
+        if (pageResources == null) {
+            pageResources = new java.util.HashSet();
+        }
+        pageResources.add(res);
+        if (needed) {
+            if (documentNeededResources == null) {
+                documentNeededResources = new java.util.HashSet();
+            }
+            documentNeededResources.add(res);
+        } else {
+            if (documentSuppliedResources == null) {
+                documentSuppliedResources = new java.util.HashSet();
+            }
+            documentSuppliedResources.add(res);
+        }
+    }
 
+    /**
+     * Writes a DSC comment for the accumulated used resources, either at page level or
+     * at document level.
+     * @param pageLevel true if the DSC comment for the page level should be generated, 
+     *                  false for the document level (in the trailer)
+     * @exception IOException In case of an I/O problem
+     */
+    public void writeResources(boolean pageLevel) throws IOException {
+        if (pageLevel) {
+            writeResourceComment(DSCConstants.PAGE_RESOURCES, pageResources);
+        } else {
+            writeResourceComment(DSCConstants.DOCUMENT_NEEDED_RESOURCES, 
+                    documentNeededResources);
+            writeResourceComment(DSCConstants.DOCUMENT_SUPPLIED_RESOURCES, 
+                    documentSuppliedResources);
+        }
+    }
+    
+    private void writeResourceComment(String name, Set resources) throws IOException {
+        if (resources == null || resources.size() == 0) {
+            return;
+        }
+        tempBuffer.setLength(0);
+        tempBuffer.append("%%");
+        tempBuffer.append(name);
+        tempBuffer.append(" ");
+        boolean first = true;
+        Iterator i = resources.iterator();
+        while (i.hasNext()) {
+            if (!first) {
+                writeln(tempBuffer.toString());
+                tempBuffer.setLength(0);
+                tempBuffer.append("%%+ ");
+            }
+            PSResource res = (PSResource)i.next();
+            tempBuffer.append(res.getType());
+            tempBuffer.append(" ");
+            tempBuffer.append(res.getName());
+            first = false;
+        }
+        writeln(tempBuffer.toString());
+    }
+    
     /** Used for the ATEND constant. See there. */
     private static interface AtendIndicator {
     }

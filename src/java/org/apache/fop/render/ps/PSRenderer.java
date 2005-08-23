@@ -70,7 +70,7 @@ import org.w3c.dom.Document;
  * may help certain users to do certain types of post-processing of the output.
  * These comments all start with "%FOP". 
  *
- * @author <a href="mailto:fop-dev@xml.apache.org">Apache XML FOP Development Team</a>
+ * @author <a href="mailto:fop-dev@xmlgraphics.apache.org">Apache FOP Development Team</a>
  * @version $Id$
  */
 public class PSRenderer extends AbstractPathOrientedRenderer {
@@ -553,6 +553,8 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
         gen.writeDSCComment(DSCConstants.CREATION_DATE, new Object[] {new java.util.Date()});
         gen.writeDSCComment(DSCConstants.LANGUAGE_LEVEL, new Integer(gen.getPSLevel()));
         gen.writeDSCComment(DSCConstants.PAGES, new Object[] {PSGenerator.ATEND});
+        gen.writeDSCComment(DSCConstants.DOCUMENT_SUPPLIED_RESOURCES, 
+                new Object[] {PSGenerator.ATEND});
         gen.writeDSCComment(DSCConstants.END_COMMENTS);
 
         //Defaults
@@ -561,12 +563,12 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
 
         //Prolog
         gen.writeDSCComment(DSCConstants.BEGIN_PROLOG);
+        PSProcSets.writeFOPStdProcSet(gen);
+        PSProcSets.writeFOPEPSProcSet(gen);
         gen.writeDSCComment(DSCConstants.END_PROLOG);
 
         //Setup
         gen.writeDSCComment(DSCConstants.BEGIN_SETUP);
-        PSProcSets.writeFOPStdProcSet(gen);
-        PSProcSets.writeFOPEPSProcSet(gen);
         PSProcSets.writeFontDict(gen, fontInfo);
         gen.writeln("FOPFonts begin");
         gen.writeDSCComment(DSCConstants.END_SETUP);
@@ -578,6 +580,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
     public void stopRenderer() throws IOException {
         gen.writeDSCComment(DSCConstants.TRAILER);
         gen.writeDSCComment(DSCConstants.PAGES, new Integer(this.currentPageNumber));
+        gen.writeResources(false);
         gen.writeDSCComment(DSCConstants.EOF);
         gen.flush();
     }
@@ -590,6 +593,8 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
         log.debug("renderPage(): " + page);
 
         this.currentPageNumber++;
+        gen.notifyStartNewPage();
+        gen.notifyResourceUsage(PSProcSets.STD_PROCSET, false);
         gen.writeDSCComment(DSCConstants.PAGE, new Object[]
                 {page.getPageNumberString(),
                  new Integer(this.currentPageNumber)});
@@ -627,6 +632,8 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
                 gen.writeDSCComment(DSCConstants.PAGE_ORIENTATION, "Portrait");
             }
         }
+        gen.writeDSCComment(DSCConstants.PAGE_RESOURCES, 
+                new Object[] {PSGenerator.ATEND});
         gen.writeDSCComment(DSCConstants.BEGIN_PAGE_SETUP);
         if (rotate) {
             gen.writeln(Math.round(pspageheight) + " 0 translate");
@@ -648,6 +655,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
 
         writeln("showpage");
         gen.writeDSCComment(DSCConstants.PAGE_TRAILER);
+        gen.writeResources(true);
         gen.writeDSCComment(DSCConstants.END_PAGE);
     }
 
