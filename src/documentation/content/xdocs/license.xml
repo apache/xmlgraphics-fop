@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no"?>
 <!--
-  Copyright 1999-2004 The Apache Software Foundation
+  Copyright 1999-2005 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,61 +20,28 @@
 
 <document>
   <header>
-    <title>FOP License</title>
+    <title>Apache FOP License</title>
     <version>$Revision$</version>
   </header>
 <body>
 <section>
   <title>License</title>
-  <section>
-    <title>The Apache Software License, Version 1.1</title>
-    <p> Copyright (C) 1999-2001 The Apache Software Foundation. All rights reserved.</p>
-    <p> Redistribution and use in source and binary forms, with or without modification,
-        are permitted provided that the following conditions are met:</p>
-    <p>1. Redistributions of  source code must  retain the above copyright  notice,
-        this list of conditions and the following disclaimer.
-    </p>
-
-    <p>2. Redistributions in binary form must reproduce the above copyright notice,
-        this list of conditions and the following disclaimer in the documentation
-        and/or other materials provided with the distribution.
-    </p>
-
-    <p>3. The end-user documentation included with the redistribution, if any, must
-        include  the following  acknowledgment:  "This product includes  software
-        developed  by the  Apache Software Foundation  (http://www.apache.org/)."
-        Alternately, this  acknowledgment may  appear in the software itself,  if
-        and wherever such third-party acknowledgments normally appear.
-    </p>
-
-    <p>4. The names "FOP" and  "Apache Software Foundation"  must not be used to        endorse  or promote  products derived  from this  software without  prior
-        written permission. For written permission, please contact
-        apache@apache.org.
-    </p>
-
-    <p>5. Products  derived from this software may not  be called "Apache", nor may
-        "Apache" appear  in their name,  without prior written permission  of the
-        Apache Software Foundation.
-    </p>
-    <p>THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
-       INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-       FITNESS  FOR A PARTICULAR  PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL  THE
-       APACHE SOFTWARE  FOUNDATION  OR ITS CONTRIBUTORS  BE LIABLE FOR  ANY DIRECT,
-       INDIRECT, INCIDENTAL, SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL  DAMAGES (INCLU-
-       DING, BUT NOT LIMITED TO, PROCUREMENT  OF SUBSTITUTE GOODS OR SERVICES; LOSS
-       OF USE, DATA, OR  PROFITS; OR BUSINESS  INTERRUPTION)  HOWEVER CAUSED AND ON
-       ANY  THEORY OF LIABILITY,  WHETHER  IN CONTRACT,  STRICT LIABILITY,  OR TORT
-       (INCLUDING  NEGLIGENCE OR  OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
-       THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-    </p>
-
-    <p>
-       This software  consists of voluntary contributions made  by many individuals
-       on  behalf of the Apache Software  Foundation and was  originally created by
-       James Tauber &lt;jtauber@jtauber.com>. For more  information on the Apache
-       Software Foundation, please see <link href="http://www.apache.org/">http://www.apache.org/</link>.
-    </p>
-  </section>
+  <p>
+    All new Apache FOP releases will be licensed under the <strong>Apache License, version 2.0</strong>. 
+    Releases until version 0.20.5 are released unter the Apache License, version 1.1.
+  </p>
+  <p>
+    To inspect the license terms please consult the LICENSE and NOTICE files in the root
+    directory of the distribution. The full license text can also be accessed via the web
+    from the <jump href="http://www.apache.org/licenses/">Apache Licenses page</jump>.
+  </p>
+  <p>
+    Apache FOP comes with a number of libraries all of which are currently coming from within
+    the Apache Software Foundation. These libraries are all licensed under one of the
+    Apache License versions. There is one exception which is "xml-apis.jar" which contains
+    code licensed by the <fork href="http://www.w3.org">W3C</fork>. Please consult the
+    license files included with the libraries in the "lib" directory for details.
+  </p>
 </section>
 </body>
 </document>
