@@ -66,7 +66,12 @@ public class PSImageUtils {
         }
         boolean iscolor = img.getColorSpace().getType()
                           != ColorSpace.CS_GRAY;
-        byte[] imgmap = img.getBitmaps();
+        byte[] imgmap;
+        if (img.getBitmapsSize() > 0) {
+            imgmap = img.getBitmaps();
+        } else {
+            imgmap = img.getRessourceBytes();
+        }
 
         gen.saveGraphicsState();
         gen.writeln(x + " " + y + " translate");

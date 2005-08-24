@@ -140,7 +140,7 @@ public abstract class BatikImage extends AbstractFopImage {
      * @see org.apache.fop.image.FopImage#hasSoftMask()
      */
     public boolean hasSoftMask() {
-        if (this.bitmaps == null) {
+        if (this.bitmaps == null && this.raw == null) {
             loadImage();
         }
 
@@ -172,15 +172,20 @@ public abstract class BatikImage extends AbstractFopImage {
     protected void loadImage() {
         if (loadDimensions()) {
             try {
+                if (cr == null) {
+                    throw new IllegalStateException(
+                            "Can't load the bitmaps data without the CachableRed instance");
+                }
+                
                 // Get our current ColorModel
                 ColorModel cm = cr.getColorModel();
 
                 // It has an alpha channel so generate a soft mask.
-                if (!this.isTransparent && cm.hasAlpha())
+                if (!this.isTransparent && cm.hasAlpha()) {
                     this.softMask = new byte[this.width * this.height];
+                }
 
-                this.bitmapsSize = this.width * this.height * 3;
-                this.bitmaps = new byte[this.bitmapsSize];
+                this.bitmaps = new byte[this.width * this.height * 3];
 
                 WritableRaster wr = (WritableRaster)cr.getData();
                 BufferedImage bi = new BufferedImage

@@ -213,7 +213,11 @@ public class FopPDFImage implements PDFImage {
         if (isPS) {
             outputPostScriptContents(out);
         } else {
-            out.write(fopImage.getBitmaps());
+            if (fopImage.getBitmapsSize() > 0) {
+                out.write(fopImage.getBitmaps());
+            } else {
+                out.write(fopImage.getRessourceBytes());
+            }
         }
     }
 
