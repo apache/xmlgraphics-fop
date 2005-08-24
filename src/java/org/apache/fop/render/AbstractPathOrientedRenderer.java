@@ -19,9 +19,7 @@
 package org.apache.fop.render;
 
 import java.awt.Color;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.fop.area.Area;
@@ -30,11 +28,12 @@ import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
+import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fonts.Typeface;
 import org.apache.fop.image.FopImage;
-import org.apache.fop.pdf.PDFState;
-import org.apache.fop.render.pdf.CTMHelper;
 import org.apache.fop.traits.BorderProps;
 
 /**
@@ -554,6 +553,49 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
     /** Indicates the end of a text object. */
     protected abstract void endTextObject();
     
+    /**
+     * Paints the text decoration marks.
+     * @param tf Current typeface
+     * @param fontsize Current font size
+     * @param inline inline area to paint the marks for
+     * @param baseline position of the baseline
+     * @param startx start IPD
+     */
+    protected void renderTextDecoration(Typeface tf, int fontsize, InlineArea inline, 
+                    int baseline, int startx) {
+        boolean hasTextDeco = inline.hasUnderline() 
+                || inline.hasOverline() 
+                || inline.hasLineThrough();
+        if (hasTextDeco) {
+            endTextObject();
+            float descender = tf.getDescender(fontsize) / 1000f;
+            float capHeight = tf.getCapHeight(fontsize) / 1000f;
+            float halfLineWidth = (descender / -8f) / 2f;
+            float endx = (startx + inline.getIPD()) / 1000f;
+            if (inline.hasUnderline()) {
+                ColorType ct = (ColorType) inline.getTrait(Trait.UNDERLINE_COLOR);
+                float y = baseline - descender / 2f;
+                drawBorderLine(startx / 1000f, (y - halfLineWidth) / 1000f, 
+                        endx, (y + halfLineWidth) / 1000f, 
+                        true, true, Constants.EN_SOLID, ct);
+            }
+            if (inline.hasOverline()) {
+                ColorType ct = (ColorType) inline.getTrait(Trait.OVERLINE_COLOR);
+                float y = (float)(baseline - (1.1 * capHeight));
+                drawBorderLine(startx / 1000f, (y - halfLineWidth) / 1000f, 
+                        endx, (y + halfLineWidth) / 1000f, 
+                        true, true, Constants.EN_SOLID, ct);
+            }
+            if (inline.hasLineThrough()) {
+                ColorType ct = (ColorType) inline.getTrait(Trait.LINETHROUGH_COLOR);
+                float y = (float)(baseline - (0.45 * capHeight));
+                drawBorderLine(startx / 1000f, (y - halfLineWidth) / 1000f, 
+                        endx, (y + halfLineWidth) / 1000f, 
+                        true, true, Constants.EN_SOLID, ct);
+            }
+        }
+    }
+
     /** Clip using the current path. */
     protected abstract void clip();
         

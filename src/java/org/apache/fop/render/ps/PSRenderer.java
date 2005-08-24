@@ -51,6 +51,7 @@ import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.XMLImage;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.RendererContext;
+import org.apache.fop.util.CharUtilities;
 
 import org.w3c.dom.Document;
 
@@ -292,28 +293,11 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
 
     /** Restores the last graphics state of the rendering engine. */
     public void restoreGraphicsState() {
-        endTextObject();
         try {
             //delegate
             gen.restoreGraphicsState();
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
-        }
-    }
-
-    /** Indicates the beginning of a text object. */
-    protected void beginTextObject() {
-        if (!inTextMode) {
-            writeln("BT");
-            inTextMode = true;
-        }
-    }
-
-    /** Indicates the end of a text object. */
-    protected void endTextObject() {
-        if (inTextMode) {
-            writeln("ET");
-            inTextMode = false;
         }
     }
 
@@ -363,6 +347,26 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
 
     private void useColor(ColorType col) throws IOException {
         gen.useRGBColor(toColor(col));
+    }
+
+    /** @see org.apache.fop.render.AbstractPathOrientedRenderer#updateLineStyle(int) */
+    protected void updateLineStyle(int style) {
+        try {
+            switch (style) {
+                case Constants.EN_DASHED:
+                    gen.useDash("[3] 0");
+                    break;
+                case Constants.EN_DOTTED:
+                    gen.useDash("[1 7] 0");
+                    break;
+                default:
+                    // solid
+                    gen.useDash("[] 0");
+                    break;
+            }
+        } catch (IOException ioe) {
+            handleIOTrouble(ioe);
+        }
     }
 
     /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
@@ -668,31 +672,22 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
         }
     }
     
-    /**
-     * Paints text.
-     * @param rx X coordinate
-     * @param bl Y coordinate
-     * @param text Text to paint
-     * @param font Font to use
-     */
-    protected void paintText(int rx, int bl, String text, Typeface font) {
-        saveGraphicsState();
-        beginTextObject();
-        writeln("1 0 0 -1 " + gen.formatDouble(rx / 1000f) 
-                + " " + gen.formatDouble(bl / 1000f) + " Tm");
-
-        int initialSize = text.length();
-        initialSize += initialSize / 2;
-        StringBuffer sb = new StringBuffer(initialSize);
-        sb.append("(");
-        for (int i = 0; i < text.length(); i++) {
-            final char c = text.charAt(i);
-            final char mapped = font.mapChar(c);
-            PSGenerator.escapeChar(mapped, sb);
+    /** Indicates the beginning of a text object. */
+    protected void beginTextObject() {
+        if (!inTextMode) {
+            saveGraphicsState();
+            writeln("BT");
+            inTextMode = true;
         }
-        sb.append(") t");
-        writeln(sb.toString());
-        restoreGraphicsState();
+    }
+
+    /** Indicates the end of a text object. */
+    protected void endTextObject() {
+        if (inTextMode) {
+            writeln("ET");
+            restoreGraphicsState();
+            inTextMode = false;
+        }
     }
 
     /**
@@ -703,7 +698,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
         int fontsize = area.getTraitAsInteger(Trait.FONT_SIZE);
 
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
-        Typeface f = (Typeface) fontInfo.getFonts().get(fontname);
+        Typeface tf = (Typeface) fontInfo.getFonts().get(fontname);
 
         //Determine position
         int rx = currentIPPosition;
@@ -718,39 +713,56 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
                 handleIOTrouble(ioe);
             }
         }
-        paintText(rx, bl, area.getTextArea(), f);
+        //paintText(rx, bl, , f);
+        String text = area.getTextArea();
+        beginTextObject();
+        writeln("1 0 0 -1 " + gen.formatDouble(rx / 1000f) 
+                + " " + gen.formatDouble(bl / 1000f) + " Tm");
 
-/*
-        String psString = null;
-        if (area.getFontState().getLetterSpacing() > 0) {
-            //float f = area.getFontState().getLetterSpacing()
-            //    * 1000 / this.currentFontSize;
-            float f = area.getFontState().getLetterSpacing();
-            psString = (new StringBuffer().append(f).append(" 0.0 (")
-              .append(sb.toString()).append(") A")).toString();
+        int initialSize = text.length();
+        initialSize += initialSize / 2;
+        StringBuffer sb = new StringBuffer(initialSize);
+        int textLen = text.length();
+        if (area.getTextLetterSpaceAdjust() == 0 && area.getTextWordSpaceAdjust() == 0) {
+            sb.append("(");
+            for (int i = 0; i < textLen; i++) {
+                final char c = text.charAt(i);
+                final char mapped = tf.mapChar(c);
+                PSGenerator.escapeChar(mapped, sb);
+            }
+            sb.append(") t");
         } else {
-            psString = (new StringBuffer("(").append(sb.toString())
-              .append(") t")).toString();
+            sb.append("(");
+            int[] offsets = new int[textLen];
+            for (int i = 0; i < textLen; i++) {
+                final char c = text.charAt(i);
+                final char mapped = tf.mapChar(c);
+                int wordSpace;
+                //TODO Synchronize word space behaviour with TextLayoutManager
+                //Check the other renderers, too!
+                if (CharUtilities.isAnySpace(mapped)
+                        && mapped != CharUtilities.ZERO_WIDTH_SPACE
+                        && mapped != CharUtilities.ZERO_WIDTH_NOBREAK_SPACE) {
+                    wordSpace = area.getTextWordSpaceAdjust();
+                } else {
+                    wordSpace = 0;
+                }
+                int cw = tf.getWidth(mapped, fontsize) / 1000;
+                offsets[i] = cw + area.getTextLetterSpaceAdjust() + wordSpace;
+                PSGenerator.escapeChar(mapped, sb);
+            }
+            sb.append(")" + PSGenerator.LF + "[");
+            for (int i = 0; i < textLen; i++) {
+                if (i > 0) {
+                    sb.append(" ");
+                }
+                sb.append(gen.formatDouble(offsets[i] / 1000f));
+            }
+            sb.append("]" + PSGenerator.LF + "xshow");
         }
+        writeln(sb.toString());
 
-
-        // System.out.println("["+s+"] --> ["+sb.toString()+"]");
-
-        // comment("% --- InlineArea font-weight="+fontWeight+": " + sb.toString());
-        useFont(fs.getFontName(), fs.getFontSize());
-        useColor(area.getRed(), area.getGreen(), area.getBlue());
-        if (area.getUnderlined() || area.getLineThrough()
-                || area.getOverlined())
-            write("ULS");
-        write(psString);
-        if (area.getUnderlined())
-            write("ULE");
-        if (area.getLineThrough())
-            write("SOE");
-        if (area.getOverlined())
-            write("OLE");
-        this.currentXPosition += area.getContentWidth();
-        */
+        renderTextDecoration(tf, fontsize, area, bl, rx);
         super.renderText(area); //Updates IPD
     }
 

@@ -687,6 +687,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         }
     }
     
+    /** @see org.apache.fop.render.AbstractPathOrientedRenderer#updateLineStyle(int) */
     private void updateLineStyle(int style) {
         switch (style) {
             case Constants.EN_DASHED:
@@ -1037,8 +1038,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         int size = ((Integer) ch.getTrait(Trait.FONT_SIZE)).intValue();
 
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
-        Typeface f = (Typeface) fontInfo.getFonts().get(name);
-        boolean useMultiByte = f.isMultiByte();
+        Typeface tf = (Typeface) fontInfo.getFonts().get(name);
+        boolean useMultiByte = tf.isMultiByte();
 
         // String startText = useMultiByte ? "<FEFF" : "(";
         String startText = useMultiByte ? "<" : "(";
@@ -1095,7 +1096,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
 
         currentStream.add(pdf.toString());
 
-        renderTextDecoration(fs, ch, bl, rx);
+        renderTextDecoration(tf, size, ch, bl, rx);
         
         super.renderCharacter(ch);
     }
@@ -1111,8 +1112,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         int size = ((Integer) text.getTrait(Trait.FONT_SIZE)).intValue();
         
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
-        Typeface f = (Typeface) fontInfo.getFonts().get(name);
-        boolean useMultiByte = f.isMultiByte();
+        Typeface tf = (Typeface) fontInfo.getFonts().get(name);
+        boolean useMultiByte = tf.isMultiByte();
 
         // String startText = useMultiByte ? "<FEFF" : "(";
         String startText = useMultiByte ? "<" : "(";
@@ -1166,49 +1167,11 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
 
         currentStream.add(pdf.toString());
 
-        renderTextDecoration(fs, text, bl, rx);
+        renderTextDecoration(tf, size, text, bl, rx);
         
         super.renderText(text);
     }
     
-    /**
-     * Paints the text decoration marks.
-     * @param fs Current font
-     * @param inline inline area to paint the marks for
-     * @param baseline position of the baseline
-     * @param startx start IPD
-     */
-    protected void renderTextDecoration(Font fs, InlineArea inline, 
-                    int baseline, int startx) {
-        boolean hasTextDeco = inline.hasUnderline() 
-                || inline.hasOverline() 
-                || inline.hasLineThrough();
-        if (hasTextDeco) {
-            endTextObject();
-            updateLineStyle(Constants.EN_SOLID);
-            updateLineWidth(fs.getDescender() / -8 / 1000f);
-            float endx = (startx + inline.getIPD()) / 1000f;
-            if (inline.hasUnderline()) {
-                ColorType ct = (ColorType) inline.getTrait(Trait.UNDERLINE_COLOR);
-                updateColor(ct, false, null);
-                float y = baseline - fs.getDescender() / 2;
-                drawLine(startx / 1000f, y / 1000f, endx, y / 1000f);
-            }
-            if (inline.hasOverline()) {
-                ColorType ct = (ColorType) inline.getTrait(Trait.OVERLINE_COLOR);
-                updateColor(ct, false, null);
-                float y = (float)(baseline - (1.1 * fs.getCapHeight()));
-                drawLine(startx / 1000f, y / 1000f, endx, y / 1000f);
-            }
-            if (inline.hasLineThrough()) {
-                ColorType ct = (ColorType) inline.getTrait(Trait.LINETHROUGH_COLOR);
-                updateColor(ct, false, null);
-                float y = (float)(baseline - (0.45 * fs.getCapHeight()));
-                drawLine(startx / 1000f, y / 1000f, endx, y / 1000f);
-            }
-        }
-    }
-
     /**
      * Escapes text according to PDF rules.
      * @param s Text to escape
