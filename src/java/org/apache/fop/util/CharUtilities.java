@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,6 +53,12 @@ public class CharUtilities {
     public static final int XMLWHITESPACE = 4;
 
 
+    /** zero-width space */
+    public static final char ZERO_WIDTH_SPACE = '\u200B';
+    /** zero-width no-break space */
+    public static final char ZERO_WIDTH_NOBREAK_SPACE = '\uFEFF';
+    
+    
     /**
      * Utility class: Constructor prevents instantiating when subclassed.
      */
@@ -110,7 +116,7 @@ public class CharUtilities {
             (c == '\u00A0'      // no-break space
             || c == '\u202F'    // narrow no-break space
             || c == '\u3000'    // ideographic space
-            || c == '\uFEFF');  // zero width no-break space
+            || c == ZERO_WIDTH_NOBREAK_SPACE);  // zero width no-break space
     }
 
     /**
