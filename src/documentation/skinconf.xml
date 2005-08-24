@@ -66,7 +66,7 @@ which will be used to configure the chosen Forrest skin.
   <!-- mandatory project logo
        default skin: renders it at the top -->
   <project-name>FOP</project-name>
-  <project-description>FOP (Formatting Objects Processor) is the world&apos;s first output independent formatter. Output formats  currently supported include PDF, PCL, PS, SVG, XML (area tree representation), Print, AWT, MIF and TXT.  The primary output target is PDF.</project-description>
+  <project-description>Apache FOP (Formatting Objects Processor) is the world&apos;s first output independent formatter. Output formats currently supported include PDF, PCL, PS, SVG, XML (area tree representation), Print, AWT, MIF and TXT. The primary output target is PDF.</project-description>
   <project-url>http://xmlgraphics.apache.org/fop/</project-url>
   <project-logo>images/logo.jpg</project-logo>
   <!-- Alternative static image:
