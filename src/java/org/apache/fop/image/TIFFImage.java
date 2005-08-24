@@ -62,9 +62,7 @@ public class TIFFImage extends BatikImage {
         return stripCount;
     }
 
-    /**
-     * @see org.apache.fop.image.BatikImage#decodeImage(org.apache.batik.ext.awt.image.codec.SeekableStream)
-     */
+    /** @see org.apache.fop.image.BatikImage */
     protected CachableRed decodeImage(SeekableStream stream) throws IOException {
         org.apache.batik.ext.awt.image.codec.tiff.TIFFImage img
             = new org.apache.batik.ext.awt.image.codec.tiff.TIFFImage
@@ -135,7 +133,7 @@ public class TIFFImage extends BatikImage {
                     return false;
                 }
 
-                this.bitmaps = readBuf;
+                this.raw = readBuf;
                 return true;
             } catch (IOException ioe) {
                 log.error("Error while loading image strip 1 (TIFF): ", ioe);

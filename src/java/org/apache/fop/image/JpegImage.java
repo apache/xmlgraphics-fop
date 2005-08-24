@@ -36,7 +36,6 @@ import org.apache.fop.util.CMYKColorSpace;
 public class JpegImage extends AbstractFopImage {
     private ICC_Profile iccProfile = null;
     private boolean foundICCProfile = false;
-    private boolean foundDimensions = false;
 
     /**
      * Create a jpeg image with the info.
@@ -74,38 +73,38 @@ public class JpegImage extends AbstractFopImage {
             inputStream = null;
         }
 
-        this.bitmaps = baos.toByteArray();
+        this.raw = baos.toByteArray();
         this.bitsPerPixel = 8;
         this.isTransparent = false;
 
         //Check for SOI (Start of image) marker (FFD8)
-        if (this.bitmaps.length > (index + 2)
-                && uByte(this.bitmaps[index]) == 255 /*0xFF*/
-                && uByte(this.bitmaps[index + 1]) == 216 /*0xD8*/) {
+        if (this.raw.length > (index + 2)
+                && uByte(this.raw[index]) == 255 /*0xFF*/
+                && uByte(this.raw[index + 1]) == 216 /*0xD8*/) {
             index += 2;
 
-            while (index < this.bitmaps.length && cont) {
+            while (index < this.raw.length && cont) {
                 //check to be sure this is the begining of a header
-                if (this.bitmaps.length > (index + 2)
-                        && uByte(this.bitmaps[index]) == 255 /*0xFF*/) {
+                if (this.raw.length > (index + 2)
+                        && uByte(this.raw[index]) == 255 /*0xFF*/) {
 
                     //192 or 194 are the header bytes that contain
                     // the jpeg width height and color depth.
-                    if (uByte(this.bitmaps[index + 1]) == 192 /*0xC0*/
-                            || uByte(this.bitmaps[index + 1]) == 194 /*0xC2*/) {
+                    if (uByte(this.raw[index + 1]) == 192 /*0xC0*/
+                            || uByte(this.raw[index + 1]) == 194 /*0xC2*/) {
 
-                        this.height = calcBytes(this.bitmaps[index + 5],
-                                                  this.bitmaps[index + 6]);
-                        this.width = calcBytes(this.bitmaps[index + 7],
-                                                 this.bitmaps[index + 8]);
+                        this.height = calcBytes(this.raw[index + 5],
+                                                  this.raw[index + 6]);
+                        this.width = calcBytes(this.raw[index + 7],
+                                                 this.raw[index + 8]);
 
-                        if (this.bitmaps[index + 9] == 1) {
+                        if (this.raw[index + 9] == 1) {
                             this.colorSpace = ColorSpace.getInstance(
                               ColorSpace.CS_GRAY);
-                        } else if (this.bitmaps[index + 9] == 3) {
+                        } else if (this.raw[index + 9] == 3) {
                             this.colorSpace = ColorSpace.getInstance(
                               ColorSpace.CS_LINEAR_RGB);
-                        } else if (this.bitmaps[index + 9] == 4) {
+                        } else if (this.raw[index + 9] == 4) {
                             // howto create CMYK color space
                             /*
                             this.colorSpace = ColorSpace.getInstance(
@@ -118,36 +117,35 @@ public class JpegImage extends AbstractFopImage {
                             return false;
                         }
 
-                        foundDimensions = true;
                         if (foundICCProfile) {
                             cont = false;
                             break;
                         }
-                        index += calcBytes(this.bitmaps[index + 2],
-                                           this.bitmaps[index + 3]) + 2;
+                        index += calcBytes(this.raw[index + 2],
+                                           this.raw[index + 3]) + 2;
 
-                    } else if (uByte(this.bitmaps[index + 1]) == 226 /*0xE2*/
-                                   && this.bitmaps.length > (index + 60)) {
+                    } else if (uByte(this.raw[index + 1]) == 226 /*0xE2*/
+                                   && this.raw.length > (index + 60)) {
                         // Check if ICC profile
                         byte[] iccString = new byte[11];
-                        System.arraycopy(this.bitmaps, index + 4,
+                        System.arraycopy(this.raw, index + 4,
                                          iccString, 0, 11);
 
                         if ("ICC_PROFILE".equals(new String(iccString))) {
                             int chunkSize = calcBytes(
-                                              this.bitmaps[index + 2],
-                                              this.bitmaps[index + 3]) + 2;
+                                              this.raw[index + 2],
+                                              this.raw[index + 3]) + 2;
 
-                            iccStream.write(this.bitmaps,
+                            iccStream.write(this.raw,
                                             index + 18, chunkSize - 18);
 
                         }
 
-                        index += calcBytes(this.bitmaps[index + 2],
-                                           this.bitmaps[index + 3]) + 2;
+                        index += calcBytes(this.raw[index + 2],
+                                           this.raw[index + 3]) + 2;
                     } else {
-                        index += calcBytes(this.bitmaps[index + 2],
-                                           this.bitmaps[index + 3]) + 2;
+                        index += calcBytes(this.raw[index + 2],
+                                           this.raw[index + 3]) + 2;
                     }
 
                 } else {

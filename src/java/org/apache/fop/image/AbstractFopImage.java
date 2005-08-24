@@ -82,14 +82,14 @@ public abstract class AbstractFopImage implements FopImage {
     protected int bitsPerPixel = 0;
 
     /**
-     * Image data (uncompressed).
+     * Image data (pixels, uncompressed).
      */
     protected byte[] bitmaps = null;
 
     /**
-     * Image data size.
+     * Image data (undecoded, compressed, for image formats that can be embedded without decoding.
      */
-    protected int bitmapsSize = 0;
+    protected byte[] raw = null;
 
     /**
      * Image transparency.
@@ -298,7 +298,7 @@ public abstract class AbstractFopImage implements FopImage {
     }
 
     /**
-     * Return the image data (uncompressed).
+     * Return the image data (pixels, uncompressed).
      * @return the image data
      */
     public byte[] getBitmaps() {
@@ -306,11 +306,11 @@ public abstract class AbstractFopImage implements FopImage {
     }
 
     /**
-     * Return the image data size (uncompressed).
+     * Return the image data size (number of bytes taken up by the uncompressed pixels).
      * @return the image data size
      */
     public int getBitmapsSize() {
-        return this.bitmapsSize;
+        return (bitmaps != null ? bitmaps.length : 0);
     }
 
     /**
@@ -318,7 +318,7 @@ public abstract class AbstractFopImage implements FopImage {
      * @return the original image data
      */
     public byte[] getRessourceBytes() {
-        return null;
+        return raw;
     }
 
     /**
@@ -326,7 +326,7 @@ public abstract class AbstractFopImage implements FopImage {
      * @return the original image data size
      */
     public int getRessourceBytesSize() {
-        return 0;
+        return (raw != null ? raw.length : 0);
     }
 
 }

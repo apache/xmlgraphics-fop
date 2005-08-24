@@ -125,8 +125,7 @@ public class BmpImage extends AbstractFopImage {
         }
 
         // Should take care of the ColorSpace and bitsPerPixel
-        this.bitmapsSize = this.width * this.height * 3;
-        this.bitmaps = new byte[this.bitmapsSize];
+        this.bitmaps = new byte[this.width * this.height * 3];
 
         int[] temp = new int[bytes * this.height];
         try {

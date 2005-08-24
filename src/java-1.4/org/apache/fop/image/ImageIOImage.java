@@ -127,8 +127,7 @@ public class ImageIOImage extends AbstractFopImage {
             }
 
             // Should take care of the ColorSpace and bitsPerPixel
-            this.bitmapsSize = this.width * this.height * 3;
-            this.bitmaps = new byte[this.bitmapsSize];
+            this.bitmaps = new byte[this.width * this.height * 3];
             for (int i = 0; i < this.height; i++) {
                 for (int j = 0; j < this.width; j++) {
                     int p = tmpMap[i * this.width + j];

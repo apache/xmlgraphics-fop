@@ -22,7 +22,6 @@ package org.apache.fop.image;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.BufferedImage;
-import java.awt.color.ColorSpace;
 import java.awt.Color;
 
 // JAI
@@ -150,8 +149,7 @@ public class JAIImage extends AbstractFopImage {
             }
 
             // Should take care of the ColorSpace and bitsPerPixel
-            this.bitmapsSize = this.width * this.height * 3;
-            this.bitmaps = new byte[this.bitmapsSize];
+            this.bitmaps = new byte[this.width * this.height * 3];
             for (int i = 0; i < this.height; i++) {
                 for (int j = 0; j < this.width; j++) {
                     int p = tmpMap[i * this.width + j];
