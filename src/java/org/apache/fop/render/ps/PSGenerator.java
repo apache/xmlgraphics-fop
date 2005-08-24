@@ -46,6 +46,9 @@ public class PSGenerator {
     public static final AtendIndicator ATEND = new AtendIndicator() {
     };
 
+    /** Line feed used by PostScript */
+    public static final char LF = '\n';
+    
     private OutputStream out;
     private boolean commentsEnabled = true;
     
@@ -87,7 +90,7 @@ public class PSGenerator {
      * @throws IOException In case of an I/O problem
      */
     public final void newLine() throws IOException {
-        out.write('\n');
+        out.write(LF);
     }
 
     /**
