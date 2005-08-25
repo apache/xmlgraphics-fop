@@ -1187,7 +1187,9 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         boolean kerningAvailable = false;
         Map kerning = fs.getKerning();
         if (kerning != null && !kerning.isEmpty()) {
-            kerningAvailable = true;
+            //kerningAvailable = true;
+            //TODO Reenable me when the layout engine supports kerning, too
+            log.warn("Kerning support is disabled until it is supported by the layout engine!");
         }
 
         int l = s.length();
