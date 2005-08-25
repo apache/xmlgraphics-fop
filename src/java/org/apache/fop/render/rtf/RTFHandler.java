@@ -57,6 +57,7 @@ import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.SimplePageMaster;
+import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableAttributes;
@@ -103,12 +104,8 @@ public class RTFHandler extends FOEventHandler {
     private static Log log = LogFactory.getLog(RTFHandler.class);
     private RtfSection sect;
     private RtfDocumentArea docArea;
-    private int iNestCount;
     private boolean bDefer;              //true, if each called handler shall be
                                          //processed at later time.
-    private boolean bDeferredExecution;  //true, if currently called handler was not
-                                         //called while SAX parsing, but was called
-                                         //by invokeDeferredEvent.
     private boolean bPrevHeaderSpecified = false; //true, if there has been a
                                                   //header in any page-sequence
     private boolean bPrevFooterSpecified = false; //true, if there has been a
@@ -128,9 +125,8 @@ public class RTFHandler extends FOEventHandler {
     public RTFHandler(FOUserAgent userAgent, OutputStream os) {
         super(userAgent);
         this.os = os;
-        bDefer = false;
-        bDeferredExecution = false;
-        iNestCount = 0;
+        bDefer = true;
+
         FontSetup.setup(fontInfo, null);
     }
 
@@ -203,10 +199,17 @@ public class RTFHandler extends FOEventHandler {
      */
     public void endPageSequence(PageSequence pageSeq) {
         if (bDefer) {
+            //If endBlock was called while SAX parsing, and the passed FO is Block
+            //nested within another Block, stop deferring.
+            //Now process all deferred FOs.
+            bDefer = false;
+            recurseFONode(pageSeq);
+            bDefer = true;
+            
             return;
+        } else {
+            builderContext.popContainer();
         }
-
-        builderContext.popContainer();
     }
 
     /**
@@ -315,15 +318,6 @@ public class RTFHandler extends FOEventHandler {
      * @see org.apache.fop.fo.FOEventHandler#startBlock(Block)
      */
     public void startBlock(Block bl) {
-        ++iNestCount;
-        
-        if (!bDeferredExecution) {
-            //If startBlock was called while SAX parsing, defer processing of this
-            //FO and all its elements until endBlock. This has to be done, because
-            //attributes (for example while-space-treatment, linefeed-treatment)
-            //are not available until endBlock.
-            bDefer = true;
-        }
         if (bDefer) {
             return;
         }
@@ -356,23 +350,7 @@ public class RTFHandler extends FOEventHandler {
      * @see org.apache.fop.fo.FOEventHandler#endBlock(Block)
      */
     public void endBlock(Block bl) {
-        --iNestCount;
-        
-        if (!bDeferredExecution && iNestCount == 0) {
-            //If endBlock was called while SAX parsing, and the passed FO is Block
-            //nested within another Block, stop deferring.
-            //Now process all deferred FOs.
-            bDefer = false;
-            
-            bDeferredExecution = true;
-            recurseFONode(bl);
-            bDeferredExecution = false;
-            
-            //exit function, because the code has already beed executed while 
-            //deferred execution.   
-            return;
-        }
-        
+
         if (bDefer) {
             return;
         }
@@ -1198,7 +1176,25 @@ public class RTFHandler extends FOEventHandler {
      * @param bStart TRUE calls the start handler, FALSE the end handler 
      */
     private void invokeDeferredEvent(FONode foNode, boolean bStart) {
-        if (foNode instanceof Block) {
+        if (foNode instanceof PageSequence) {
+            if (bStart) {
+                startPageSequence( (PageSequence) foNode);
+            } else {
+                endPageSequence( (PageSequence) foNode);
+            }
+        } else if (foNode instanceof Flow) {
+            if (bStart) {
+                startFlow( (Flow) foNode);
+            } else {
+                endFlow( (Flow) foNode);
+            }
+        } else if (foNode instanceof StaticContent) {
+            if (bStart) {
+                startStatic();
+            } else {
+                endStatic();
+            }
+        } else if (foNode instanceof Block) {
             if (bStart) {
                 startBlock( (Block) foNode);
             } else {
@@ -1297,12 +1293,58 @@ public class RTFHandler extends FOEventHandler {
     private void recurseFONode(FONode foNode) {
         invokeDeferredEvent(foNode, true);
         
-        if (foNode.getChildNodes() != null) {
-            for (Iterator it = foNode.getChildNodes(); it.hasNext();) {
+        if (foNode instanceof PageSequence) {
+            PageSequence pageSequence = (PageSequence) foNode;
+                        
+            FONode regionBefore = (FONode) pageSequence.flowMap.get("xsl-region-before");
+            FONode regionAfter  = (FONode) pageSequence.flowMap.get("xsl-region-after");
+            
+            if (regionBefore != null) {
+                recurseFONode(regionBefore);
+            }
+            
+            if (regionAfter != null) {
+                recurseFONode(regionAfter);
+            }            
+            
+            recurseFONode( pageSequence.getMainFlow() );
+        } else if (foNode instanceof Table) {
+            Table table = (Table) foNode;
+            
+            //recurse all table-columns
+            for(Iterator it = table.getColumns().iterator(); it.hasNext();) {
                 recurseFONode( (FONode) it.next() );
             }
+            
+            //recurse table-header
+            if (table.getTableHeader()!=null) {
+                recurseFONode( table.getTableHeader() );
+            }
+            
+            //recurse table-footer
+            if (table.getTableHeader()!=null) {
+                recurseFONode( table.getTableFooter() );
+            }
+            
+            if (foNode.getChildNodes() != null) {
+                for (Iterator it = foNode.getChildNodes(); it.hasNext();) {
+                    recurseFONode( (FONode) it.next() );                       
+                }
+            }
+        } else if (foNode instanceof ListItem) {
+            ListItem item = (ListItem) foNode;
+            
+            recurseFONode( item.getLabel());
+            recurseFONode( item.getBody());
+        } else {
+            //Any other FO-Object: Simply recurse through all childNodes.
+            if (foNode.getChildNodes() != null) {
+                for (Iterator it = foNode.getChildNodes(); it.hasNext();) {
+                    recurseFONode( (FONode) it.next() );                       
+                }
+            }
         }
-        
+                
         invokeDeferredEvent(foNode, false);
     }
 }
