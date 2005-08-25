@@ -233,11 +233,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         }
 
         public KnuthSequence endSequence() {
-            // remove glue and penalty item at the end of the paragraph
-            while (this.size() > ignoreAtStart
-                   && !((KnuthElement)this.get(this.size() - 1)).isBox()) {
-                this.remove(this.size() - 1);
-            }
+            // remove elements representig spaces at the end of the paragraph
+            removeElementsForTrailingSpaces();
             if (this.size() > ignoreAtStart) {
                 if (bTextAlignment == EN_CENTER
                     && bTextAlignmentLast != EN_JUSTIFY) {
@@ -268,6 +265,45 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             } else {
                 this.clear();
                 return null;
+            }
+        }
+
+        /**
+         * remove elements representing spaces at the end of the paragraph;
+         * the text could have one or more trailing spaces, each of them
+         * being either a normal space or a non-breaking space;
+         * according to the alignment, the sub-sequence of elements
+         * representing each space has a different "pattern"
+         */
+        private void removeElementsForTrailingSpaces() {
+            KnuthElement removedElement;
+            while (this.size() > ignoreAtStart
+                   && ((KnuthElement) this.get(this.size() - 1)).isGlue()) {
+                if (textAlignment == EN_CENTER) {
+                    // centered text: the pattern is
+                    //     <glue> <penaly> <glue> <box> <penaly> <glue>
+                    removedElement = (KnuthGlue) this.remove(this.size() - 1);
+                    removedElement = (KnuthPenalty) this.remove(this.size() - 1);
+                    removedElement = (KnuthBox) this.remove(this.size() - 1);
+                    removedElement = (KnuthGlue) this.remove(this.size() - 1);
+                    removedElement = (KnuthPenalty) this.remove(this.size() - 1);
+                    removedElement = (KnuthGlue) this.remove(this.size() - 1);
+                } else if (textAlignment == EN_START || textAlignment == EN_END) {
+                    // left- or right-aligned text: the pattern is
+                    //     <glue> <penalty> <glue>
+                    removedElement = (KnuthGlue) this.remove(this.size() - 1);
+                    removedElement = (KnuthPenalty) this.remove(this.size() - 1);
+                    removedElement = (KnuthGlue) this.remove(this.size() - 1);
+                } else {
+                    // justified text: the pattern is
+                    //     <glue>
+                    removedElement = (KnuthGlue) this.remove(this.size() - 1);
+                }
+                // if the space was a non-breaking one, there is also a penalty
+                if (this.size() > ignoreAtStart
+                    && ((KnuthElement) this.get(this.size() - 1)).isPenalty()) {
+                    removedElement = (KnuthPenalty) this.remove(this.size() - 1);
+                }
             }
         }
 
