@@ -783,6 +783,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
             PSState state;
             while (true) {
                 if (breakOutList.size() == 0) {
+                    endTextObject();
                     comment("------ break out!");
                 }
                 state = gen.getCurrentState();
