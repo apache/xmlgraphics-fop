@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 // FOP
 import org.apache.avalon.framework.configuration.Configuration;
@@ -713,7 +714,16 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
                 handleIOTrouble(ioe);
             }
         }
-        //paintText(rx, bl, , f);
+        
+        boolean kerningAvailable = false;
+        Map kerning = tf.getKerningInfo();
+        if (kerning != null && !kerning.isEmpty()) {
+            //kerningAvailable = true;
+            //TODO Fix me when kerning is supported by the layout engine
+            log.warn("Kerning info is available, but kerning is not yet implemented for"
+                    + " the PS renderer and not currently supported by the layout engine.");
+        }
+        
         String text = area.getTextArea();
         beginTextObject();
         writeln("1 0 0 -1 " + gen.formatDouble(rx / 1000f) 
