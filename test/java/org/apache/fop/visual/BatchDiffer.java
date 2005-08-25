@@ -201,7 +201,9 @@ public class BatchDiffer {
                     BufferedImage diff = BitmapComparator.buildDiffImage(bitmaps[0], bitmaps[k]);
                     outputFile = new File(targetDir, f.getName() + "._diff" + k + ".png");
                     saveAsPNG(diff, outputFile);
+                    bitmaps[k] = null;
                 }
+                bitmaps[0] = null;
                 maxfiles = (maxfiles < 0 ? maxfiles : maxfiles - 1);
                 if (maxfiles == 0) {
                     break;
@@ -252,7 +254,10 @@ public class BatchDiffer {
             Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
             BatchDiffer differ = new BatchDiffer();
             differ.runBatch(cfgFile);
+            
+            System.out.println("Regular exit...");
         } catch (Exception e) {
+            System.out.println("Exception caugth...");
             e.printStackTrace();
         }
     }
