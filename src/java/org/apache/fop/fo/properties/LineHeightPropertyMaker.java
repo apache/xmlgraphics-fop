@@ -42,17 +42,6 @@ public class LineHeightPropertyMaker extends SpaceProperty.Maker {
     }
 
     /**
-     * Make a property as normal, and save the specified value.
-     * @see PropertyMaker#make(PropertyList, String, FObj)
-     */
-    public Property make(PropertyList propertyList, String value,
-                         FObj fo) throws PropertyException {
-        Property p = super.make(propertyList, value, fo);
-        p.setSpecifiedValue(checkValueKeywords(value));
-        return p;
-    }
-    
-    /**
      * Recalculate the line-height value based on the nearest specified
      * value.
      * @see PropertyMaker#compute(PropertyList)
@@ -77,6 +66,9 @@ public class LineHeightPropertyMaker extends SpaceProperty.Maker {
         Numeric numval = p.getNumeric();
         if (numval != null && numval.getDimension() == 0) {
             p = new PercentLength(numval.getNumericValue(), getPercentBase(fo,propertyList));
+            Property spaceProp = super.convertProperty(p, propertyList, fo);
+            spaceProp.setSpecifiedValue(String.valueOf(numval.getNumericValue()));
+            return spaceProp;
         }
         return super.convertProperty(p, propertyList, fo);
     }

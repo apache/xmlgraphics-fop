@@ -1587,7 +1587,7 @@ public class FOPropertyMapping implements Constants {
         m.useGeneric(genericSpace);
         m.setInherited(true);
         m.setDefault("normal", true);
-        m.addKeyword("normal", "1.2em");
+        m.addKeyword("normal", "1.2");
         m.setPercentBase(LengthBase.FONTSIZE);
         addPropertyMaker("line-height", m);
 
