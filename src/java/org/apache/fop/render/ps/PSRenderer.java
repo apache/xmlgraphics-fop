@@ -37,6 +37,8 @@ import org.apache.fop.area.CTM;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
+import org.apache.fop.area.inline.AbstractTextArea;
+import org.apache.fop.area.inline.Character;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineParent;
@@ -692,9 +694,24 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
+     * @see org.apache.fop.render.AbstractRenderer#renderCharacter(Character)
+     */
+    public void renderCharacter(Character ch) {
+        String text = ch.getChar();
+        renderText(ch, text);
+        super.renderCharacter(ch); //Updates IPD
+    }
+
+    /**
      * @see org.apache.fop.render.AbstractRenderer#renderText(TextArea)
      */
     public void renderText(TextArea area) {
+        String text = area.getTextArea();
+        renderText(area, text);
+        super.renderText(area); //Updates IPD
+    }
+    
+    private void renderText(AbstractTextArea area, String text) {
         String fontname = (String)area.getTrait(Trait.FONT_NAME);
         int fontsize = area.getTraitAsInteger(Trait.FONT_SIZE);
 
@@ -724,7 +741,6 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
                     + " the PS renderer and not currently supported by the layout engine.");
         }
         
-        String text = area.getTextArea();
         beginTextObject();
         writeln("1 0 0 -1 " + gen.formatDouble(rx / 1000f) 
                 + " " + gen.formatDouble(bl / 1000f) + " Tm");
@@ -773,7 +789,6 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
         writeln(sb.toString());
 
         renderTextDecoration(tf, fontsize, area, bl, rx);
-        super.renderText(area); //Updates IPD
     }
 
     /** @see org.apache.fop.render.AbstractPathOrientedRenderer#breakOutOfStateStack() */
