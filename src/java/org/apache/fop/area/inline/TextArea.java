@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,12 @@ package org.apache.fop.area.inline;
 /**
  * A text inline area.
  */
-public class TextArea extends InlineArea {
+public class TextArea extends AbstractTextArea {
 
     /**
      * The text for this inline area
      */
     protected String text;
-    private int iTextWordSpaceAdjust = 0;
-    private int iTextLetterSpaceAdjust = 0;
 
     /**
      * Create a text inline area
@@ -54,39 +52,5 @@ public class TextArea extends InlineArea {
         return text;
     }
 
-    /**
-     * Get text word space adjust.
-     *
-     * @return the text word space adjustment
-     */
-    public int getTextWordSpaceAdjust() {
-        return iTextWordSpaceAdjust;
-    }
-
-    /**
-     * Set text word space adjust.
-     *
-     * @param iTWSadjust the text word space adjustment
-     */
-    public void setTextWordSpaceAdjust(int iTWSadjust) {
-        iTextWordSpaceAdjust = iTWSadjust;
-    }
-    /**
-     * Get text letter space adjust.
-     *
-     * @return the text letter space adjustment
-     */
-    public int getTextLetterSpaceAdjust() {
-        return iTextLetterSpaceAdjust;
-    }
-
-    /**
-     * Set text letter space adjust.
-     *
-     * @param iTLSadjust the text letter space adjustment
-     */
-    public void setTextLetterSpaceAdjust(int iTLSadjust) {
-        iTextLetterSpaceAdjust = iTLSadjust;
-    }
 }
 

@@ -67,18 +67,22 @@ public class InlineArea extends Area {
         return verticalPosition;
     }
     
+    /** @return true if the inline area is underlined. */
     public boolean hasUnderline() {
         return getBooleanTrait(Trait.UNDERLINE);
     }
 
+    /** @return true if the inline area is overlined. */
     public boolean hasOverline() {
         return getBooleanTrait(Trait.OVERLINE);
     }
     
+    /** @return true if the inline area has a line through. */
     public boolean hasLineThrough() {
         return getBooleanTrait(Trait.LINETHROUGH);
     }
     
+    /** @return true if the inline area is blinking. */
     public boolean isBlinking() {
         return getBooleanTrait(Trait.BLINK);
     }
