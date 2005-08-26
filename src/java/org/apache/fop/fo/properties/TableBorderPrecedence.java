@@ -43,7 +43,6 @@ public class TableBorderPrecedence extends NumberProperty.Maker{
      */
     public Property make(PropertyList propertyList) throws PropertyException {
         FObj fo = propertyList.getFObj();
-        System.out.println(fo.getName() + " " + fo.getNameId());
         switch (fo.getNameId()) {
         case Constants.FO_TABLE:
             return num6;
