@@ -50,6 +50,7 @@ import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.fo.properties.SpacePropertyMaker;
 import org.apache.fop.fo.properties.SpacingPropertyMaker;
 import org.apache.fop.fo.properties.StringProperty;
+import org.apache.fop.fo.properties.TableBorderPrecedence;
 import org.apache.fop.fo.properties.TextDecorationProperty;
 import org.apache.fop.fo.properties.ToBeImplementedProperty;
 
@@ -2304,15 +2305,15 @@ public class FOPropertyMapping implements Constants {
         PropertyMaker sub;
 
         // border-after-precedence
-        m  = new ToBeImplementedProperty.Maker(PR_BORDER_AFTER_PRECEDENCE);
+        m  = new TableBorderPrecedence(PR_BORDER_AFTER_PRECEDENCE);
         m.setInherited(false);
-        m.setDefault("none");
+        m.addEnum("force", getEnumProperty(EN_FORCE, "FORCE"));
         addPropertyMaker("border-after-precedence", m);
 
         // border-before-precedence
-        m  = new ToBeImplementedProperty.Maker(PR_BORDER_BEFORE_PRECEDENCE);
+        m  = new TableBorderPrecedence(PR_BORDER_BEFORE_PRECEDENCE);
         m.setInherited(false);
-        m.setDefault("none");
+        m.addEnum("force", getEnumProperty(EN_FORCE, "FORCE"));
         addPropertyMaker("border-before-precedence", m);
 
         // border-collapse
@@ -2326,9 +2327,9 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("border-collapse", m);
 
         // border-end-precedence
-        m  = new ToBeImplementedProperty.Maker(PR_BORDER_END_PRECEDENCE);
+        m  = new TableBorderPrecedence(PR_BORDER_END_PRECEDENCE);
         m.setInherited(false);
-        m.setDefault("none");
+        m.addEnum("force", getEnumProperty(EN_FORCE, "FORCE"));
         addPropertyMaker("border-end-precedence", m);
 
         // border-separation
@@ -2346,9 +2347,9 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("border-separation", m);
 
         // border-start-precedence
-        m  = new ToBeImplementedProperty.Maker(PR_BORDER_START_PRECEDENCE);
+        m  = new TableBorderPrecedence(PR_BORDER_START_PRECEDENCE);
         m.setInherited(false);
-        m.setDefault("none");
+        m.addEnum("force", getEnumProperty(EN_FORCE, "FORCE"));
         addPropertyMaker("border-start-precedence", m);
 
         // caption-side

@@ -25,6 +25,7 @@ import java.util.List;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
@@ -44,10 +45,10 @@ public class TableBody extends FObj {
     private CommonAural commonAural;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonRelativePosition commonRelativePosition;
-    // private ToBeImplementedProperty borderAfterPrecedence;
-    // private ToBeImplementedProperty borderBeforePrecedence;
-    // private ToBeImplementedProperty borderEndPrecedence;
-    // private ToBeImplementedProperty borderStartPrecedence;
+    private Numeric borderAfterPrecedence;
+    private Numeric borderBeforePrecedence;
+    private Numeric borderEndPrecedence;
+    private Numeric borderStartPrecedence;
     private int visibility;
     // End of property values
     
@@ -71,10 +72,10 @@ public class TableBody extends FObj {
         commonAural = pList.getAuralProps();
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonRelativePosition = pList.getRelativePositionProps();
-        // borderAfterPrecedence = pList.get(PR_BORDER_AFTER_PRECEDENCE);
-        // borderBeforePrecedence = pList.get(PR_BORDER_BEFORE_PRECEDENCE);
-        // borderEndPrecedence = pList.get(PR_BORDER_END_PRECEDENCE);
-        // borderStartPrecedence = pList.get(PR_BORDER_START_PRECEDENCE);
+        borderAfterPrecedence = pList.get(PR_BORDER_AFTER_PRECEDENCE).getNumeric();
+        borderBeforePrecedence = pList.get(PR_BORDER_BEFORE_PRECEDENCE).getNumeric();
+        borderEndPrecedence = pList.get(PR_BORDER_END_PRECEDENCE).getNumeric();
+        borderStartPrecedence = pList.get(PR_BORDER_START_PRECEDENCE).getNumeric();
         visibility = pList.get(PR_VISIBILITY).getEnum();
         
         //Used by convertCellsToRows()

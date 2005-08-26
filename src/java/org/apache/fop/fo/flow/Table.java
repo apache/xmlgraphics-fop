@@ -18,11 +18,12 @@
 
 package org.apache.fop.fo.flow;
 
-import org.xml.sax.Locator;
-
 import java.util.List;
 
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
@@ -48,12 +49,12 @@ public class Table extends FObj {
     private CommonMarginBlock commonMarginBlock;
     private CommonRelativePosition commonRelativePosition;
     private LengthRangeProperty blockProgressionDimension;
-    // private ToBeImplementedProperty borderAfterPrecedence;
-    // private ToBeImplementedProperty borderBeforePrecedence;
+    private Numeric borderAfterPrecedence;
+    private Numeric borderBeforePrecedence;
     private int borderCollapse;
-    // private ToBeImplementedProperty borderEndPrecedence;
+    private Numeric borderEndPrecedence;
     private LengthPairProperty borderSeparation;
-    // private ToBeImplementedProperty borderStartPrecedence;
+    private Numeric borderStartPrecedence;
     private int breakAfter;
     private int breakBefore;
     private String id;
@@ -105,12 +106,12 @@ public class Table extends FObj {
         commonMarginBlock = pList.getMarginBlockProps();
         commonRelativePosition = pList.getRelativePositionProps();
         blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
-        // borderAfterPrecedence = pList.get(PR_BORDER_AFTER_PRECEDENCE);
-        // borderBeforePrecedence = pList.get(PR_BORDER_BEFORE_PRECEDENCE);
+        borderAfterPrecedence = pList.get(PR_BORDER_AFTER_PRECEDENCE).getNumeric();
+        borderBeforePrecedence = pList.get(PR_BORDER_BEFORE_PRECEDENCE).getNumeric();
         borderCollapse = pList.get(PR_BORDER_COLLAPSE).getEnum();
-        // borderEndPrecedence = pList.get(PR_BORDER_END_PRECEDENCE);
+        borderEndPrecedence = pList.get(PR_BORDER_END_PRECEDENCE).getNumeric();
         borderSeparation = pList.get(PR_BORDER_SEPARATION).getLengthPair();
-        // borderStartPrecedence = pList.get(PR_BORDER_START_PRECEDENCE);
+        borderStartPrecedence = pList.get(PR_BORDER_START_PRECEDENCE).getNumeric();
         breakAfter = pList.get(PR_BREAK_AFTER).getEnum();
         breakBefore = pList.get(PR_BREAK_BEFORE).getEnum();
         id = pList.get(PR_ID).getString();
@@ -125,7 +126,7 @@ public class Table extends FObj {
         tableOmitHeaderAtBreak = pList.get(PR_TABLE_OMIT_HEADER_AT_BREAK).getEnum();
         //width = pList.get(PR_WIDTH).getLength();
         writingMode = pList.get(PR_WRITING_MODE).getEnum();
-        
+
         //Create default column in case no table-columns will be defined.
         defaultColumn = new TableColumn(this);
         PropertyList colPList = new StaticPropertyList(defaultColumn, pList);
