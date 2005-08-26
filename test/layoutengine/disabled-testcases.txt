@@ -7,6 +7,7 @@ keep-with-previous4.xml
 keep-with-previous5.xml
 list4a.xml
 multi-column3.xml
+multi-column4.xml
 normal-breaking4.xml
 page-number3.xml
 page-number-citation2.xml
