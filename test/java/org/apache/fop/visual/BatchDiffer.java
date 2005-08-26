@@ -61,6 +61,8 @@ import org.xml.sax.SAXException;
  *   <max-files>10</max-files>
  *   <target-directory>C:/Temp/diff-out</target-directory>
  *   <resolution>100</resolution>
+ *   <stop-on-exception>false</stop-on-exception>
+ *   <create-diffs>false</create-diffs>
  *   <stylesheet>C:/Dev/FOP/trunk/test/layoutengine/testcase2fo.xsl</stylesheet>
  *   <producers>
  *     <producer classname="org.apache.fop.visual.BitmapProducerJava2D">
@@ -81,6 +83,12 @@ import org.xml.sax.SAXException;
  * <p>
  * The optional "resolution" element controls the requested bitmap resolution in dpi for the
  * generated bitmaps. Defaults to 72dpi.
+ * <p>
+ * The optional "stop-on-exception" element controls whether the batch should be aborted when
+ * an exception is caught. Defaults to true.
+ * <p>
+ * The optional "create-diffs" element controls whether the diff images should be created.
+ * Defaults to true.
  * <p>
  * The optional "stylesheet" element allows you to supply an XSLT stylesheet to preprocess all
  * source files with. Default: no stylesheet, identity transform.
@@ -168,6 +176,9 @@ public class BatchDiffer {
             }
             context.setTargetDir(targetDir);
             
+            boolean stopOnException = cfg.getChild("stop-on-exception").getValueAsBoolean(true);
+            boolean createDiffs = cfg.getChild("create-diffs").getValueAsBoolean(true);
+            
             //RUN!
             BufferedImage[] bitmaps = new BufferedImage[producers.length];
             
@@ -181,29 +192,42 @@ public class BatchDiffer {
             Collection files = FileUtils.listFiles(srcDir, filter, null);
             Iterator i = files.iterator();
             while (i.hasNext()) {
-                File f = (File)i.next();
-                log.info("---=== " + f + " ===---");
-                for (int j = 0; j < producers.length; j++) {
-                    bitmaps[j] = producers[j].produce(f, context);
-                }
-                //Create combined image
-                if (bitmaps[0] == null) {
-                    throw new RuntimeException("First producer didn't return a bitmap."
-                            + " Cannot continue.");
-                }
-                BufferedImage combined = BitmapComparator.buildCompareImage(bitmaps);
-                
-                //Save combined bitmap as PNG file
-                File outputFile = new File(targetDir, f.getName() + "._combined.png");
-                saveAsPNG(combined, outputFile);
+                try {
+                    File f = (File)i.next();
+                    log.info("---=== " + f + " ===---");
+                    for (int j = 0; j < producers.length; j++) {
+                        bitmaps[j] = producers[j].produce(f, context);
+                    }
+                    //Create combined image
+                    if (bitmaps[0] == null) {
+                        throw new RuntimeException("First producer didn't return a bitmap."
+                                + " Cannot continue.");
+                    }
+                    BufferedImage combined = BitmapComparator.buildCompareImage(bitmaps);
+                    
+                    //Save combined bitmap as PNG file
+                    File outputFile = new File(targetDir, f.getName() + "._combined.png");
+                    saveAsPNG(combined, outputFile);
 
-                for (int k = 1; k < bitmaps.length; k++) {
-                    BufferedImage diff = BitmapComparator.buildDiffImage(bitmaps[0], bitmaps[k]);
-                    outputFile = new File(targetDir, f.getName() + "._diff" + k + ".png");
-                    saveAsPNG(diff, outputFile);
-                    bitmaps[k] = null;
+                    if (createDiffs) {
+                        for (int k = 1; k < bitmaps.length; k++) {
+                            BufferedImage diff = BitmapComparator.buildDiffImage(
+                                    bitmaps[0], bitmaps[k]);
+                            outputFile = new File(targetDir, f.getName() + "._diff" + k + ".png");
+                            saveAsPNG(diff, outputFile);
+                        }
+                    }
+                    //Release memory as soon as possible. These images are huge!
+                    for (int k = 0; k < bitmaps.length; k++) {
+                        bitmaps[k] = null;
+                    }
+                } catch (RuntimeException e) {
+                    System.out.println("Catching RE: " + e.getMessage());
+                    if (stopOnException) {
+                        System.out.println("rethrowing...");
+                        throw e;
+                    }
                 }
-                bitmaps[0] = null;
                 maxfiles = (maxfiles < 0 ? maxfiles : maxfiles - 1);
                 if (maxfiles == 0) {
                     break;
