@@ -8,6 +8,7 @@ keep-with-previous5.xml
 list4a.xml
 multi-column3.xml
 normal-breaking4.xml
+page-number3.xml
 page-number-citation2.xml
 page-number-citation3.xml
 table-border-collapse1.xml
