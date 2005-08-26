@@ -895,6 +895,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
      * @param pos Position for the generated graphic/image
      */
     public void renderDocument(Document doc, String ns, Rectangle2D pos) {
+        endTextObject();
         RendererContext context;
         context = new RendererContext(this, MIME_TYPE);
         context.setUserAgent(userAgent);
