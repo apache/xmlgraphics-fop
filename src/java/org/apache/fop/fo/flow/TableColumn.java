@@ -37,10 +37,10 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 public class TableColumn extends FObj {
     // The value of properties relevant for fo:table-column.
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
-    // private ToBeImplementedProperty borderAfterPrecedence;
-    // private ToBeImplementedProperty borderBeforePrecedence;
-    // private ToBeImplementedProperty borderEndPrecedence;
-    // private ToBeImplementedProperty borderStartPrecedence;
+    private Numeric borderAfterPrecedence;
+    private Numeric borderBeforePrecedence;
+    private Numeric borderEndPrecedence;
+    private Numeric borderStartPrecedence;
     private Numeric columnNumber;
     private Length columnWidth;
     private Numeric numberColumnsRepeated;
@@ -60,10 +60,10 @@ public class TableColumn extends FObj {
      */
     public void bind(PropertyList pList) throws FOPException {
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
-        // borderAfterPrecedence = pList.get(PR_BORDER_AFTER_PRECEDENCE);
-        // borderBeforePrecedence = pList.get(PR_BORDER_BEFORE_PRECEDENCE);
-        // borderEndPrecedence = pList.get(PR_BORDER_END_PRECEDENCE);
-        // borderStartPrecedence = pList.get(PR_BORDER_START_PRECEDENCE);
+        borderAfterPrecedence = pList.get(PR_BORDER_AFTER_PRECEDENCE).getNumeric();
+        borderBeforePrecedence = pList.get(PR_BORDER_BEFORE_PRECEDENCE).getNumeric();
+        borderEndPrecedence = pList.get(PR_BORDER_END_PRECEDENCE).getNumeric();
+        borderStartPrecedence = pList.get(PR_BORDER_START_PRECEDENCE).getNumeric();
         columnNumber = pList.get(PR_COLUMN_NUMBER).getNumeric();
         columnWidth = pList.get(PR_COLUMN_WIDTH).getLength();
         numberColumnsRepeated = pList.get(PR_NUMBER_COLUMNS_REPEATED).getNumeric();

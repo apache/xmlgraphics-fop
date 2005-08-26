@@ -44,10 +44,10 @@ public class TableCell extends FObj {
     private CommonAural commonAural;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonRelativePosition commonRelativePosition;
-    // private ToBeImplementedProperty borderAfterPrecedence;
-    // private ToBeImplementedProperty borderBeforePrecedence;
-    // private ToBeImplementedProperty borderEndPrecedence;
-    // private ToBeImplementedProperty borderStartPrecedence;
+    private Numeric borderAfterPrecedence;
+    private Numeric borderBeforePrecedence;
+    private Numeric borderEndPrecedence;
+    private Numeric borderStartPrecedence;
     private LengthRangeProperty blockProgressionDimension;
     private int borderCollapse; //inherited from fo:table
     private LengthPairProperty borderSeparation; //inherited from fo:table
@@ -118,10 +118,10 @@ public class TableCell extends FObj {
         commonAural = pList.getAuralProps();
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonRelativePosition = pList.getRelativePositionProps();
-        // borderAfterPrecedence = pList.get(PR_BORDER_AFTER_PRECEDENCE);
-        // borderBeforePrecedence = pList.get(PR_BORDER_BEFORE_PRECEDENCE);
-        // borderEndPrecedence = pList.get(PR_BORDER_END_PRECEDENCE);
-        // borderStartPrecedence = pList.get(PR_BORDER_START_PRECEDENCE);
+        borderAfterPrecedence = pList.get(PR_BORDER_AFTER_PRECEDENCE).getNumeric();
+        borderBeforePrecedence = pList.get(PR_BORDER_BEFORE_PRECEDENCE).getNumeric();
+        borderEndPrecedence = pList.get(PR_BORDER_END_PRECEDENCE).getNumeric();
+        borderStartPrecedence = pList.get(PR_BORDER_START_PRECEDENCE).getNumeric();
         blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
         borderCollapse = pList.get(PR_BORDER_COLLAPSE).getEnum();
         borderSeparation = pList.get(PR_BORDER_SEPARATION).getLengthPair();
