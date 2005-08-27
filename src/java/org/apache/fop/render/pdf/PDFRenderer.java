@@ -1032,6 +1032,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @see org.apache.fop.render.AbstractRenderer#renderCharacter(Character)
      */
     public void renderCharacter(Character ch) {
+        beginTextObject();
         StringBuffer pdf = new StringBuffer();
 
         String name = (String) ch.getTrait(Trait.FONT_NAME);
