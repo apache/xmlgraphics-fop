@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -157,13 +157,13 @@ public class CTM implements Serializable {
      */
     public CTM rotate(double angle) {
         double cos, sin;
-        if (angle == 90.0) {
+        if (angle == 90.0 || angle == -270.0) {
             cos = 0.0;
             sin = 1.0;
-        } else if (angle == 270.0) {
+        } else if (angle == 270.0 || angle == -90.0) {
             cos = 0.0;
             sin = -1.0;
-        } else if (angle == 180.0) {
+        } else if (angle == 180.0 || angle == -180.0) {
             cos = -1.0;
             sin = 0.0;
         } else {
@@ -283,12 +283,15 @@ public class CTM implements Serializable {
             // first quadrant. Note: rotation is counter-clockwise
             switch (absRefOrient) {
                 case 90:
+                case -270:
                     ctm = ctm.translate(0, width); // width = absVPrect.height
                     break;
                 case 180:
+                case -180:
                     ctm = ctm.translate(width, height);
                     break;
                 case 270:
+                case -90:
                     ctm = ctm.translate(height, 0); // height = absVPrect.width
                     break;
             }
