@@ -1200,6 +1200,13 @@ public class RTFHandler extends FOEventHandler {
             } else {
                 endBlock( (Block) foNode);
             }
+        } else if (foNode instanceof BasicLink) {
+            //BasicLink must be placed before Inline
+            if (bStart) {
+                startLink( (BasicLink) foNode);
+            } else {
+                endLink();
+            }
         } else if (foNode instanceof Inline) {
             if (bStart) {
                 startInline( (Inline) foNode);
@@ -1215,12 +1222,6 @@ public class RTFHandler extends FOEventHandler {
             if (bStart) {
                 Character c = (Character) foNode;
                 character(c);
-            }
-        } else if (foNode instanceof BasicLink) {
-            if (bStart) {
-                startLink( (BasicLink) foNode);
-            } else {
-                endLink();
             }
         } else if (foNode instanceof PageNumber) {
             if (bStart) {
@@ -1322,7 +1323,7 @@ public class RTFHandler extends FOEventHandler {
             }
             
             //recurse table-footer
-            if (table.getTableHeader()!=null) {
+            if (table.getTableFooter()!=null) {
                 recurseFONode( table.getTableFooter() );
             }
             
