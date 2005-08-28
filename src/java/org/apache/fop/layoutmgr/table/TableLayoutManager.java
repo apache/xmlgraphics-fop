@@ -123,6 +123,9 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         referenceIPD = context.getRefIPD();
         if (fobj.getInlineProgressionDimension().getOptimum().getEnum() != EN_AUTO) {
             referenceIPD = fobj.getInlineProgressionDimension().getOptimum().getLength().getValue();
+        } else if( !fobj.isAutoLayout() ) {
+            log.info("table-layout=\"fixed\" and width=\"auto\", but auto-layout not supported " + 
+                     "=> assuming width=\"100%\"");
         }
         if (referenceIPD > context.getRefIPD()) {
             log.warn("Allocated IPD exceeds available reference IPD");
