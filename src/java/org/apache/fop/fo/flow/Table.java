@@ -141,6 +141,9 @@ public class Table extends FObj {
             getLogger().warn("The collapsing border model on an fo:table "
                     + "is currently not supported by FOP");
         }
+        if( tableLayout == EN_AUTO ) {
+            getLogger().warn("table-layout=\"auto\" is currently not supported by FOP");
+        }
     }
 
     /**
