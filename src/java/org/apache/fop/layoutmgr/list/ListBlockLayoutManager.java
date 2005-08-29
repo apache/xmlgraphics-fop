@@ -213,8 +213,6 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
             TraitSetter.setProducerID(curBlockArea, getListBlockFO().getId());
             TraitSetter.addBorders(curBlockArea, 
                     getListBlockFO().getCommonBorderPaddingBackground());
-            TraitSetter.addBackground(curBlockArea, 
-                    getListBlockFO().getCommonBorderPaddingBackground());
             TraitSetter.addMargins(curBlockArea,
                     getListBlockFO().getCommonBorderPaddingBackground(), 
                     getListBlockFO().getCommonMarginBlock());
@@ -224,6 +222,8 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
             
             int contentIPD = referenceIPD - getIPIndents();
             curBlockArea.setIPD(contentIPD);
+            TraitSetter.addBackground(curBlockArea, 
+                    getListBlockFO().getCommonBorderPaddingBackground());
             
             setCurrentArea(curBlockArea);
         }
