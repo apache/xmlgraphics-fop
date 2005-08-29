@@ -29,6 +29,7 @@ import org.apache.fop.area.CTM;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.inline.InlineBlockParent;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.Constants;
@@ -359,6 +360,17 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             drawBorderLine(outerx, sy1a, innerx, ey1a, false, true, bpsStart.style, bpsStart.color);
             restoreGraphicsState();
         }
+    }
+    
+    /** @see org.apache.fop.render.AbstractRenderer */
+    protected void renderInlineBlockParent(InlineBlockParent ibp) {
+        float start = currentIPPosition / 1000f;
+        float top = (ibp.getOffset() + currentBPPosition) / 1000f;
+        float width = ibp.getIPD() / 1000f;
+        float height = ibp.getBPD() / 1000f;
+        drawBackAndBorders(ibp, start, top, width, height);
+        
+        super.renderInlineBlockParent(ibp);
     }
     
     /**
