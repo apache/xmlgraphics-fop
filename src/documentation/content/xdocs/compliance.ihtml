@@ -1968,11 +1968,15 @@
       <td class="yes">
         yes
       </td>
-      <td class="yes">
-        yes
+      <td class="partial">
+        partial
       </td>
-      <td align="center">
-        &nbsp;
+      <td align="left">
+        <ul>
+          <li>
+            [Trunk] not yet implemented on table-body, table-header and table-footer.
+          </li>
+        </ul>
       </td>
     </tr>
     <tr>
@@ -1988,11 +1992,15 @@
       <td class="yes">
         yes
       </td>
-      <td class="yes">
+      <td class="partial">
         yes
       </td>
-      <td align="center">
-        &nbsp;
+      <td align="partial">
+        <ul>
+          <li>
+            [Trunk] not yet implemented on table-body, table-header and table-footer.
+          </li>
+        </ul>
       </td>
     </tr>
     <tr>
