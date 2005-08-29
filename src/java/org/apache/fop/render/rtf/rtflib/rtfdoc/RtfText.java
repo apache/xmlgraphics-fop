@@ -60,6 +60,8 @@ public class RtfText extends RtfElement {
     public static final String ATTR_ITALIC = "i";
     /** constant for underline */
     public static final String ATTR_UNDERLINE = "ul";
+    /** constant for underline */
+    public static final String ATTR_STRIKETHROUGH = "strike";
     /** constant for font size */
     public static final String ATTR_FONT_SIZE = "fs";
     /** constant for font family */

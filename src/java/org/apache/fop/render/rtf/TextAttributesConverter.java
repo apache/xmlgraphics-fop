@@ -25,6 +25,7 @@ import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.BlockContainer;
 import org.apache.fop.fo.flow.Character;
@@ -33,6 +34,7 @@ import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.properties.ColorTypeProperty;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
+import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfColorTable;
@@ -89,18 +91,15 @@ class TextAttributesConverter {
      * @param fobj FObj whose properties are to be converted
      */
     public static RtfAttributes convertCharacterAttributes(
-            Character fobj) throws FOPException {
+            FOText fobj) throws FOPException {
 
         FOPRtfAttributes attrib = new FOPRtfAttributes();
         attrFont(fobj.getCommonFont(), attrib);
         attrFontColor(fobj.getColor(), attrib);
-        //TODO Fix text-decoration here!
-        //attrTextDecoration(fobj.getTextDecoration(), attrib);
-
-        attrBackgroundColor(fobj.getCommonBorderPaddingBackground(), attrib);
+        attrTextDecoration(fobj.getTextDecoration(), attrib);
         return attrib;
     }
-
+    
     /**
      * Converts all character related FO properties to RtfAttributes.
      * @param fobj FObj whose properties are to be converted
@@ -110,8 +109,7 @@ class TextAttributesConverter {
 
         FOPRtfAttributes attrib = new FOPRtfAttributes();
         attrFont(fobj.getCommonFont(), attrib);
-        //TODO Fix text-decoration here!
-        //attrTextDecoration(fobj.getTextDecoration(), attrib);
+        attrTextDecoration(fobj.getTextDecoration(), attrib);
         attrBackgroundColor(fobj.getCommonBorderPaddingBackground(), attrib);
         return attrib;
     }
@@ -126,8 +124,7 @@ class TextAttributesConverter {
         FOPRtfAttributes attrib = new FOPRtfAttributes();
         attrFont(fobj.getCommonFont(), attrib);
         attrFontColor(fobj.getColor(), attrib);
-        //TODO Fix text-decoration here!
-        //attrTextDecoration(fobj.getTextDecoration(), attrib);
+
         attrBackgroundColor(fobj.getCommonBorderPaddingBackground(), attrib);
         return attrib;
     }
@@ -168,11 +165,21 @@ class TextAttributesConverter {
 
 
 
-    private static void attrTextDecoration(int textDecoration, RtfAttributes rtfAttr) {
-        if (textDecoration == Constants.EN_UNDERLINE) {
+    private static void attrTextDecoration(CommonTextDecoration textDecoration, RtfAttributes rtfAttr) {
+        if (textDecoration == null) {
+            return;
+        }
+                
+        if (textDecoration.hasUnderline()) {
             rtfAttr.set(RtfText.ATTR_UNDERLINE, 1);
         } else {
             rtfAttr.set(RtfText.ATTR_UNDERLINE, 0);
+        }
+        
+        if (textDecoration.hasLineThrough()) {
+            rtfAttr.set(RtfText.ATTR_STRIKETHROUGH, 1);
+        } else {
+            rtfAttr.set(RtfText.ATTR_STRIKETHROUGH, 0);
         }
     }
 

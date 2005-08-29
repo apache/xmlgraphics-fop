@@ -1075,40 +1075,9 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOEventHandler#character(Character)
-     */
-    public void character(Character c) {
-        if (bDefer) {
-            return;
-        }
-        
-        try {
-            RtfAttributes rtfAttr 
-                    = TextAttributesConverter.convertCharacterAttributes(c);
-
-            IRtfTextrunContainer container
-                = (IRtfTextrunContainer)builderContext.getContainer(
-                    IRtfTextrunContainer.class, true, this);
-                    
-            RtfTextrun textrun = container.getTextrun();
-            
-            textrun.pushAttributes(rtfAttr);            
-            textrun.addString(new String(new char[] {c.getCharacter()}));
-            textrun.popAttributes();
-         } catch (IOException ioe) {
-            // FIXME could we throw Exception in all FOEventHandler events?
-            log.error("character: " + ioe.getMessage());
-            throw new RuntimeException(ioe.getMessage());
-        } catch (Exception e) {
-            log.error("character:" + e.getMessage());
-            throw new RuntimeException(e.getMessage());
-        }
-    }
-
-    /**
      * @see org.apache.fop.fo.FOEventHandler#characters(char[], int, int)
      */
-    public void characters(char[] data, int start, int length) {
+    public void text(FOText text, char[] data, int start, int length) {
         if (bDefer) {
             return;
         }
@@ -1117,9 +1086,14 @@ public class RTFHandler extends FOEventHandler {
             IRtfTextrunContainer container
                 = (IRtfTextrunContainer)builderContext.getContainer(
                     IRtfTextrunContainer.class, true, this);
-                    
+           
             RtfTextrun textrun = container.getTextrun();
+            RtfAttributes rtfAttr
+                = TextAttributesConverter.convertCharacterAttributes(text);
+            
+            textrun.pushAttributes(rtfAttr);
             textrun.addString(new String(data, start, length - start));
+            textrun.popAttributes();
          } catch (IOException ioe) {
             // FIXME could we throw Exception in all FOEventHandler events?
             log.error("characters: " + ioe.getMessage());
@@ -1216,7 +1190,7 @@ public class RTFHandler extends FOEventHandler {
         } else if (foNode instanceof FOText) {
             if (bStart) {
                 FOText text = (FOText) foNode;
-                characters(text.ca, text.startIndex, text.endIndex);
+                text(text, text.ca, text.startIndex, text.endIndex);
             }
         } else if (foNode instanceof Character) {
             if (bStart) {
