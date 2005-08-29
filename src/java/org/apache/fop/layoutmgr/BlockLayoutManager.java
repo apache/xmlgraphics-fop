@@ -402,8 +402,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             TraitSetter.setProducerID(curBlockArea, getBlockFO().getId());
             TraitSetter.addBorders(curBlockArea, 
                     getBlockFO().getCommonBorderPaddingBackground());
-            TraitSetter.addBackground(curBlockArea, 
-                    getBlockFO().getCommonBorderPaddingBackground());
             TraitSetter.addMargins(curBlockArea,
                     getBlockFO().getCommonBorderPaddingBackground(), 
                     getBlockFO().getCommonMarginBlock());
@@ -429,6 +427,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             int contentIPD = referenceIPD - getIPIndents();
             
             curBlockArea.setIPD(contentIPD/*parentwidth*/);
+            TraitSetter.addBackground(curBlockArea, 
+                    getBlockFO().getCommonBorderPaddingBackground());
             setCurrentArea(curBlockArea); // ??? for generic operations
         }
         return curBlockArea;
