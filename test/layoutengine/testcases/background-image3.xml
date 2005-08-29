@@ -44,5 +44,7 @@
     </fo:root>
   </fo>
   <checks>
+    <eval expected="color=#ffff00" xpath="//flow/block[1]/@background"/>
+    <eval expected="color=null,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=136960,vertical=-8640" xpath="//flow/block[1]/block[1]/block[1]/@background"/>
   </checks>
 </testcase>

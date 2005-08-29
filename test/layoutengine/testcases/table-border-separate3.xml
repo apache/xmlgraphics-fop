@@ -65,11 +65,11 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="color=#ffff00,repeat=0,horiz=0,vertical=0" xpath="//flow/block[1]/block[1]/@background"/>
+    <eval expected="color=#ffff00" xpath="//flow/block[1]/block[1]/@background"/>
     <eval expected="5000 5000 5000 5000" xpath="//flow/block[1]/block[1]/@bap"/>
     <eval expected="cell2" xpath="//flow/block[1]/block[2]/block[1]/lineArea"/>
 
-    <eval expected="color=#ffff00,repeat=0,horiz=0,vertical=0" xpath="//flow/block[1]/block[3]/@background"/>
+    <eval expected="color=#ffff00" xpath="//flow/block[1]/block[3]/@background"/>
     <eval expected="5000 5000 5000 5000" xpath="//flow/block[1]/block[3]/@bap"/>
     <eval expected="cell4" xpath="//flow/block[1]/block[4]/block[1]/lineArea"/>
 

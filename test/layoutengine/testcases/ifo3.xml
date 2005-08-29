@@ -46,7 +46,7 @@
   </fo>
   <checks>
     <eval expected="10000 10000 10000 10000" xpath="//flow/block[1]/lineArea/viewport/@bap"/>
-    <eval expected="color=#ffffff,repeat=0,horiz=0,vertical=0" xpath="//flow/block[1]/lineArea/viewport/@background"/>
+    <eval expected="color=#ffffff" xpath="//flow/block[1]/lineArea/viewport/@background"/>
     <eval expected="(solid,#000000,5000)" xpath="//flow/block[1]/lineArea/viewport/@border-before"/>
     <eval expected="(solid,#000000,5000)" xpath="//flow/block[1]/lineArea/viewport/@border-after"/>
     <eval expected="(solid,#000000,5000)" xpath="//flow/block[1]/lineArea/viewport/@border-start"/>

@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-/* $Id: Trait.java,v 1.4 2004/02/27 17:41:26 jeremias Exp $ */
+/* $Id$ */
 
 package org.apache.fop.area;
 
 import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.traits.BorderProps;
 
@@ -540,14 +541,29 @@ public class Trait implements Serializable {
          */
         public String toString() {
             StringBuffer sb = new StringBuffer();
-            sb.append("color=" + color);
+            sb.append("color=").append(color);
             if (url != null) {
-                sb.append(",url=");
-                sb.append(url);
+                sb.append(",url=").append(url);
+                sb.append(",repeat=");
+                switch (repeat) {
+                    case Constants.EN_REPEAT:
+                        sb.append("repeat");
+                        break;
+                    case Constants.EN_REPEATX:
+                        sb.append("repeat-x");
+                        break;
+                    case Constants.EN_REPEATY:
+                        sb.append("repeat-y");
+                        break;
+                    case Constants.EN_NOREPEAT:
+                        sb.append("no-repeat");
+                        break;
+                    default:
+                        sb.append("ILLEGAL!");
+                }
+                sb.append(",horiz=").append(horiz);
+                sb.append(",vertical=").append(vertical);
             }
-            sb.append(",repeat=" + repeat);
-            sb.append(",horiz=" + horiz);
-            sb.append(",vertical=" + vertical);
             return sb.toString();
         }
 
