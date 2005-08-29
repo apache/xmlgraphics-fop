@@ -317,13 +317,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager implement
 
         getPSLM().addIDToPage(fobj.getId());
 
-        if (isSeparateBorderModel()) {
-            if (!emptyCell || fobj.showEmptyCells()) {
-                TraitSetter.addBorders(curBlockArea, fobj.getCommonBorderPaddingBackground());
-                TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
-            }
-        } else {
-            TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
+        if (!isSeparateBorderModel()) {
             boolean[] outer = new boolean[] {
                     gridUnit.getFlag(GridUnit.FIRST_IN_TABLE), 
                     gridUnit.getFlag(GridUnit.LAST_IN_TABLE),
@@ -402,6 +396,15 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager implement
         
         curBlockArea.setBPD(contentBPD);
 
+        if (isSeparateBorderModel()) {
+            if (!emptyCell || fobj.showEmptyCells()) {
+                TraitSetter.addBorders(curBlockArea, fobj.getCommonBorderPaddingBackground());
+                TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
+            }
+        } else {
+            TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
+        }
+        
         flush();
 
         curBlockArea = null;
