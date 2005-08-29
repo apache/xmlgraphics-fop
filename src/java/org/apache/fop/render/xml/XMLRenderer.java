@@ -511,6 +511,9 @@ public class XMLRenderer extends PrintRenderer {
         atts.clear();
         addAreaAttributes(line);
         addTraitAttributes(line);
+        if (line.getStartIndent() != 0) {
+            addAttribute("start-indent", line.getStartIndent());
+        }
         addAttribute("vpos", currentBPPosition);
         startElement("lineArea", atts);
         super.renderLineArea(line);
