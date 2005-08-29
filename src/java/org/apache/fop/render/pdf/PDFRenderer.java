@@ -38,9 +38,6 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.area.Area;
-import org.apache.fop.area.Block;
-import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.Page;
@@ -50,10 +47,8 @@ import org.apache.fop.area.Trait;
 import org.apache.fop.area.OffDocumentItem;
 import org.apache.fop.area.BookmarkData;
 import org.apache.fop.area.inline.Character;
-import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.InlineBlockParent;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.Leader;
@@ -82,11 +77,8 @@ import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.pdf.PDFText;
 import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
-import org.apache.fop.render.PrintRenderer;
 import org.apache.fop.render.RendererContext;
-import org.apache.fop.traits.BorderProps;
 import org.apache.fop.fo.Constants;
-
 
 /*
 todo:
@@ -464,10 +456,9 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                                    (int) Math.round(pageHeight / 1000)));
         */
         // Transform origin at top left to origin at bottom left
-        currentStream.add("1 0 0 -1 0 "
-                           + (int) Math.round(pageHeight / 1000) + " cm\n");
         currentBasicTransform = new AffineTransform(1, 0, 0, -1, 0,
-                (int) Math.round(pageHeight / 1000));
+                pageHeight / 1000f);
+        currentStream.add(CTMHelper.toPDFString(currentBasicTransform, false) + " cm\n");
         
         
         currentFontName = "";
