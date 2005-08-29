@@ -780,7 +780,11 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
             sb.append(")" + PSGenerator.LF + "[");
             for (int i = 0; i < textLen; i++) {
                 if (i > 0) {
-                    sb.append(" ");
+                    if (i % 8 == 0) {
+                        sb.append(PSGenerator.LF);
+                    } else {
+                        sb.append(" ");
+                    }
                 }
                 sb.append(gen.formatDouble(offsets[i] / 1000f));
             }
