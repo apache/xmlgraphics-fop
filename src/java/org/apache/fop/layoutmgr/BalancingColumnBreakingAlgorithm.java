@@ -52,7 +52,8 @@ public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
         double dem = super.computeDemerits(activeNode, element, fitnessClass, r);
         if (log.isTraceEnabled()) {
             log.trace("original demerit=" + dem + " " + totalWidth 
-                    + " line=" + activeNode.line + "/" + columnCount);
+                    + " line=" + activeNode.line + "/" + columnCount
+                    + " pos=" + activeNode.position + "/" + (par.size() - 1));
         }
         int remParts = columnCount - activeNode.line;
         int curPos = par.indexOf(element);
