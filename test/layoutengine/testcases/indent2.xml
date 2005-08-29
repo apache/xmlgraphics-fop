@@ -61,5 +61,16 @@ the nested block should be indented as well.
     </fo:root>
   </fo>
   <checks>
+    <eval expected="20000" xpath="//flow/block[1]/lineArea[1]/@start-indent"/>
+    <true xpath="boolean(not(//flow/block[1]/lineArea[2]/@start-indent))"/>
+    <true xpath="boolean(not(//flow/block[1]/lineArea[10]/@start-indent))"/>
+    <eval expected="20000" xpath="//flow/block[2]/lineArea[1]/@start-indent"/>
+    <true xpath="boolean(not(//flow/block[2]/lineArea[2]/@start-indent))"/>
+    <true xpath="boolean(not(//flow/block[2]/lineArea[10]/@start-indent))"/>
+
+    <eval expected="20000" xpath="//flow/block[3]/child::*[1]/@start-indent"/>
+    <eval expected="20000" xpath="//flow/block[3]/child::*[2]/lineArea[1]/@start-indent"/>
+    <eval expected="20000" xpath="//flow/block[3]/child::*[3]/@start-indent"/>
+    <true xpath="boolean(not(//flow/block[3]/child::*[4]/@start-indent))"/>
   </checks>
 </testcase>

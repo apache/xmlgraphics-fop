@@ -59,5 +59,12 @@
     </fo:root>
   </fo>
   <checks>
+    <eval expected="color=#0000ff" xpath="//flow/block[1]/@background"/>
+    <eval expected="color=#0000ff,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=0,vertical=0" xpath="//flow/block[2]/@background"/>
+    <eval expected="color=#0000ff,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=0,vertical=0" xpath="//flow/block[3]/@background"/>
+    <eval expected="color=#0000ff,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=31960,vertical=6960" xpath="//flow/block[4]/@background"/>
+    <eval expected="color=#0000ff,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=63920,vertical=13920" xpath="//flow/block[5]/@background"/>
+    <eval expected="color=#0000ff,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=5000,vertical=5000" xpath="//flow/block[6]/@background"/>
+    <eval expected="color=#0000ff,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=12784,vertical=6960" xpath="//flow/block[7]/@background"/>
   </checks>
 </testcase>

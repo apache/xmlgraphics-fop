@@ -80,7 +80,7 @@
     <eval expected="57600" xpath="//flow/block[1]/@bpda"/>
 
     <!-- header row background -->
-    <eval expected="color=#ffff00,repeat=0,horiz=0,vertical=0" xpath="//flow/block[1]/block[1]/@background"/>
+    <eval expected="color=#ffff00" xpath="//flow/block[1]/block[1]/@background"/>
     <eval expected="360000" xpath="//flow/block[1]/block[1]/@ipda"/>
     <eval expected="14400" xpath="//flow/block[1]/block[1]/@bpda"/>
 
@@ -97,7 +97,7 @@
     <eval expected="cell4" xpath="//flow/block[1]/block[7]/block[1]/lineArea"/>
 
     <!-- footer row background -->
-    <eval expected="color=#ffa500,repeat=0,horiz=0,vertical=0" xpath="//flow/block[1]/block[8]/@background"/>
+    <eval expected="color=#ffa500" xpath="//flow/block[1]/block[8]/@background"/>
     <eval expected="360000" xpath="//flow/block[1]/block[8]/@ipda"/>
     <eval expected="14400" xpath="//flow/block[1]/block[8]/@bpda"/>
 

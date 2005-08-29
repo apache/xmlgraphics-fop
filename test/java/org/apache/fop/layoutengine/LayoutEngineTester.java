@@ -189,6 +189,9 @@ public class LayoutEngineTester {
             }
         }
         
+        if (checks.size() == 0) {
+            throw new RuntimeException("No checks are available!");
+        }
         Iterator i = checks.iterator();
         while (i.hasNext()) {
             LayoutEngineCheck check = (LayoutEngineCheck)i.next();

@@ -82,7 +82,7 @@
     <!-- row 2 -->
     <eval expected="360000" xpath="//flow/block[1]/block[3]/@ipd"/>
     <eval expected="20000" xpath="//flow/block[1]/block[3]/@bpd"/> <!-- background-area generated for the row -->
-    <eval expected="color=#ffff00,repeat=0,horiz=0,vertical=0" xpath="//flow/block[1]/block[3]/@background"/>
+    <eval expected="color=#ffff00" xpath="//flow/block[1]/block[3]/@background"/>
     <eval expected="144000" xpath="//flow/block[1]/block[4]/@ipd"/>
     <eval expected="20000" xpath="//flow/block[1]/block[4]/@bpd"/>
     <eval expected="216000" xpath="//flow/block[1]/block[5]/@ipd"/>
@@ -91,7 +91,7 @@
     <!-- row 3 -->
     <eval expected="360000" xpath="//flow/block[1]/block[6]/@ipd"/>
     <eval expected="20000" xpath="//flow/block[1]/block[6]/@bpd"/> <!-- background-area generated for the row -->
-    <eval expected="color=#ffa500,repeat=0,horiz=0,vertical=0" xpath="//flow/block[1]/block[6]/@background"/>
+    <eval expected="color=#ffa500" xpath="//flow/block[1]/block[6]/@background"/>
     <eval expected="144000" xpath="//flow/block[1]/block[7]/@ipd"/>
     <eval expected="20000" xpath="//flow/block[1]/block[7]/@bpd"/>
     <eval expected="216000" xpath="//flow/block[1]/block[8]/@ipd"/>
