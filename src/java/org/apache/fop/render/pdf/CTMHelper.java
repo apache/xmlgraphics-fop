@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,14 @@
  
 package org.apache.fop.render.pdf;
 
+import java.awt.geom.AffineTransform;
+
 import org.apache.fop.area.CTM;
 import org.apache.fop.pdf.PDFNumber;
 
 /**
- * CTMHelper converts FOP transformation matrixis to those
- * suitable for use by the PDFRender. The e and f elements
+ * CTMHelper converts FOP transformation matrices to those
+ * suitable for use by the PDFRenderer. The e and f elements
  * of the matrix will be divided by 1000 as FOP uses millipoints
  * as it's default user space and PDF uses points.
  *
@@ -33,7 +35,7 @@ import org.apache.fop.pdf.PDFNumber;
  */
 public final class CTMHelper {
     /**
-     * <p>Converts the sourceMatrix to a string for use in the PDFRender cm operations.</p>
+     * <p>Converts the sourceMatrix to a string for use in the PDFRenderer cm operations.</p>
      * <p>For example:
      * <pre>
      *    org.apache.fop.area.CTM ctm = 
@@ -51,16 +53,45 @@ public final class CTMHelper {
             throw new NullPointerException("sourceMatrix must not be null");
         }
 
-        final double matrix[] = toPDFArray(sourceMatrix);
+        final double[] matrix = toPDFArray(sourceMatrix);
 
-        return PDFNumber.doubleOut(matrix[0], 8) + " " + 
-               PDFNumber.doubleOut(matrix[1], 8) + " " + 
-               PDFNumber.doubleOut(matrix[2], 8) + " " + 
-               PDFNumber.doubleOut(matrix[3], 8) + " " + 
-               PDFNumber.doubleOut(matrix[4], 8) + " " + 
-               PDFNumber.doubleOut(matrix[5], 8);
+        return constructPDFArray(matrix);
     }
 
+    /**
+     * <p>Converts the AffineTransform instance to a string for use in the PDFRenderer 
+     * cm operations.</p>
+     *
+     * @param transform The matrix to convert.
+     * @param convertMillipoints Indicates that the matrix needs to be converted from millipoints
+     *                           to points.
+     * @return  a space seperated string containing the matrix elements.
+     */
+    public static String toPDFString(AffineTransform transform, boolean convertMillipoints) {
+        if (null == transform) {
+            throw new NullPointerException("transform must not be null");
+        }
+
+        final double[] matrix = new double[6];
+        transform.getMatrix(matrix);
+        if (convertMillipoints) {
+            //Convert from millipoints to points
+            matrix[4] /= 1000;
+            matrix[5] /= 1000;
+        }
+
+        return constructPDFArray(matrix);
+    }
+
+    private static String constructPDFArray(double[] matrix) {
+        return PDFNumber.doubleOut(matrix[0], 8) + " " 
+                + PDFNumber.doubleOut(matrix[1], 8) + " " 
+                + PDFNumber.doubleOut(matrix[2], 8) + " " 
+                + PDFNumber.doubleOut(matrix[3], 8) + " " 
+                + PDFNumber.doubleOut(matrix[4], 8) + " " 
+                + PDFNumber.doubleOut(matrix[5], 8);
+    }
+    
     /**
      * <p>Creates a new CTM based in the sourceMatrix.</p>
      * <p>For example:
@@ -81,7 +112,7 @@ public final class CTMHelper {
             throw new NullPointerException("sourceMatrix must not be null");
         }
 
-        final double matrix[] = toPDFArray(sourceMatrix);
+        final double[] matrix = toPDFArray(sourceMatrix);
 
         return new CTM(matrix[0], matrix[1], matrix[2], matrix[3],
                        matrix[4], matrix[5]);
@@ -107,7 +138,7 @@ public final class CTMHelper {
             throw new NullPointerException("sourceMatrix must not be null");
         }
 
-        final double matrix[] = sourceMatrix.toArray();
+        final double[] matrix = sourceMatrix.toArray();
 
         return new double[]{matrix[0], matrix[1], matrix[2], matrix[3],
                             matrix[4] / 1000.0, matrix[5] / 1000.0};
