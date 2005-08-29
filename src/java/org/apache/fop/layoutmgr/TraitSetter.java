@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* $Id: TraitSetter.java,v 1.6 2004/02/27 17:49:25 jeremias Exp $ */
+/* $Id$ */
 
 package org.apache.fop.layoutmgr;
 
@@ -245,7 +245,9 @@ public class TraitSetter {
                                 * ((PercentLength)backProps.backgroundPositionHorizontal).value()));
                         } else {
                             //TODO Area IPD has to be set for this to work
-                            log.warn("Horizontal background image positioning ignored");
+                            log.warn("Horizontal background image positioning ignored"
+                                    + " because the IPD was not set on the area."
+                                    + " (Yes, it's a bug in FOP)");
                         }
                     } else {
                         back.setHoriz(backProps.backgroundPositionHorizontal.getValue());
@@ -265,7 +267,9 @@ public class TraitSetter {
                                 * ((PercentLength)backProps.backgroundPositionVertical).value()));
                         } else {
                             //TODO Area BPD has to be set for this to work
-                            log.warn("Vertical background image positioning ignored");
+                            log.warn("Vertical background image positioning ignored"
+                                    + " because the BPD was not set on the area."
+                                    + " (Yes, it's a bug in FOP)");
                         }
                     } else {
                         back.setVertical(backProps.backgroundPositionVertical.getValue());
