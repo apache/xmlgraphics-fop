@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.flow.Block;
@@ -33,9 +34,8 @@ import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.properties.ColorTypeProperty;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
-import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.CommonMarginBlock;
-import org.apache.fop.fo.properties.EnumLength;
+import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfColorTable;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFontManager;
@@ -254,13 +254,13 @@ class TextAttributesConverter {
         rtfAttr.set(RtfText.ATTR_BACKGROUND_COLOR, rtfColor);
    }
     
-   private static void attrBaseLineShift(EnumLength baselineShift, RtfAttributes rtfAttr) {
+   private static void attrBaseLineShift(Length baselineShift, RtfAttributes rtfAttr) {
        
-       String s = baselineShift.getString();
+       int s = baselineShift.getEnum();
        
-       if (s=="SUPER") {
+       if (s==Constants.EN_SUPER) {
            rtfAttr.set(RtfText.ATTR_SUPERSCRIPT);
-       } else if (s=="SUB") {
+       } else if (s==Constants.EN_SUB) {
            rtfAttr.set(RtfText.ATTR_SUBSCRIPT);
        }
    }
