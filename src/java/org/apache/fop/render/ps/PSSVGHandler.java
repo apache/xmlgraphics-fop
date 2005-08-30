@@ -323,29 +323,21 @@ public class PSSVGHandler implements XMLHandler {
                     gen.concatMatrix(vals);
                 }
 
-                /*
-                if (psInfo.pdfContext == null) {
-                    psInfo.pdfContext = psInfo.pdfPage;
-                }*/
                 final boolean textAsShapes = false;
                 PSGraphics2D graphics = new PSGraphics2D(textAsShapes, gen);
                 graphics.setGraphicContext(new org.apache.batik.ext.awt.g2d.GraphicContext());
-                //psInfo.pdfState.push();
                 transform = new AffineTransform();
                 // scale to viewbox
                 transform.translate(xOffset, yOffset);
                 gen.getCurrentState().concatMatrix(transform);
-                //graphics.setPDFState(psInfo.pdfState);
                 try {
                     root.paint(graphics);
-                    //psInfo.currentStream.add(graphics.getString());
                 } catch (Exception e) {
                     log.error("SVG graphic could not be rendered: "
                                            + e.getMessage(), e);
                 }
 
                 psInfo.psGenerator.restoreGraphicsState();
-                //psInfo.pdfState.pop();
                 gen.commentln("%FOPEndSVG");
             } catch (IOException ioe) {
                 log.error("SVG graphic could not be rendered: "
