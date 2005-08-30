@@ -251,6 +251,11 @@ public final class ImageFactory {
             log.error("Unsupported image type ("
                     + href + "): " + imgMimeType);
             return null;
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Loading " + imgMimeType + " with " + imageClass.getName() 
+                        + ": " + href);
+            }
         }
 
         // load the right image class
