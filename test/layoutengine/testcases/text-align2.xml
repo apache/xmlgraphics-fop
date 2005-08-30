@@ -35,14 +35,17 @@
                removed by LineLM.removeElementsForTrailingSpaces(). There used to be a ClassCastException here. -->
           <fo:block text-align-last="justify" background-color="yellow">Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
           </fo:block>
+          <fo:block text-align="justify">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. </fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
   </fo>
   <checks>
-    <!-- first and second block must be identical -->
+    <!-- all three blocks must be identical -->
     <true xpath="not(boolean(//flow/block[1]/lineArea[1]/@start-indent))"/>
     <true xpath="not(boolean(//flow/block[2]/lineArea[1]/@start-indent))"/>
+    <true xpath="not(boolean(//flow/block[3]/lineArea[1]/@start-indent))"/>
     <true xpath="//flow/block[1]/lineArea[1]/text/@ipd = //flow/block[2]/lineArea[1]/text/@ipd"/>
+    <true xpath="//flow/block[1]/lineArea[1]/text/@ipd = //flow/block[3]/lineArea[1]/text/@ipd"/>
   </checks>
 </testcase>
