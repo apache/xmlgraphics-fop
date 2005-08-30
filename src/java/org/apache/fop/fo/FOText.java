@@ -85,7 +85,7 @@ public class FOText extends FONode {
     private int textTransform;
     private Property wordSpacing;
     private int wrapOption;
-    private EnumLength baselineShift;
+    private Length baselineShift;
     // End of property values
 
     /**
@@ -164,7 +164,7 @@ public class FOText extends FONode {
         wordSpacing = pList.get(Constants.PR_WORD_SPACING);
         wrapOption = pList.get(Constants.PR_WRAP_OPTION).getEnum();
         textDecoration = pList.getTextDecorationProps();
-        baselineShift = (EnumLength) pList.get(Constants.PR_BASELINE_SHIFT);
+        baselineShift = pList.get(Constants.PR_BASELINE_SHIFT).getLength();
     }
 
     /** @see org.apache.fop.fo.FONode#endOfNode() */
@@ -604,7 +604,7 @@ public class FOText extends FONode {
         return sb.toString();
     }
  
-    public EnumLength getBaseLineShift() {
+    public Length getBaseLineShift() {
         return baselineShift;
     }
     
