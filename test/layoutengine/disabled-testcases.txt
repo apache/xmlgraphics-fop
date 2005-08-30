@@ -34,6 +34,7 @@ table-border-collapse2.xml
 table-border-separate1.xml
 table-column4.xml
 table-fixed2.xml
+text-align2.xml
 word-spacing1.xml
 word-spacing2.xml
 word-spacing3.xml
