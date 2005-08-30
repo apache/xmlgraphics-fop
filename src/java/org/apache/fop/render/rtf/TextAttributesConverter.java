@@ -28,7 +28,6 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.BlockContainer;
-import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.properties.ColorTypeProperty;
@@ -36,6 +35,7 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.CommonMarginBlock;
+import org.apache.fop.fo.properties.EnumLength;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfColorTable;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFontManager;
@@ -97,6 +97,7 @@ class TextAttributesConverter {
         attrFont(fobj.getCommonFont(), attrib);
         attrFontColor(fobj.getColor(), attrib);
         attrTextDecoration(fobj.getTextDecoration(), attrib);
+        attrBaseLineShift(fobj.getBaseLineShift(), attrib);
         return attrib;
     }
     
@@ -252,6 +253,17 @@ class TextAttributesConverter {
 
         rtfAttr.set(RtfText.ATTR_BACKGROUND_COLOR, rtfColor);
    }
+    
+   private static void attrBaseLineShift(EnumLength baselineShift, RtfAttributes rtfAttr) {
+       
+       String s = baselineShift.getString();
+       
+       if (s=="SUPER") {
+           rtfAttr.set(RtfText.ATTR_SUPERSCRIPT);
+       } else if (s=="SUB") {
+           rtfAttr.set(RtfText.ATTR_SUBSCRIPT);
+       }
+   }
 
    /**
     * Converts a FOP ColorType to the integer pointing into the RTF color table
@@ -265,5 +277,4 @@ class TextAttributesConverter {
        return RtfColorTable.getInstance().getColorNumber(redComponent,
                greenComponent, blueComponent).intValue();
    }
-
 }

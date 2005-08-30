@@ -70,6 +70,10 @@ public class RtfText extends RtfElement {
     public static final String ATTR_FONT_COLOR = "cf";
     /** constant for background color */
     public static final String ATTR_BACKGROUND_COLOR = "chcbpat"; // Added by Boris on 06/25//02
+    /** constant for superscript */
+    public static final String ATTR_SUPERSCRIPT = "super";
+    /** constant for subscript */
+    public static final String ATTR_SUBSCRIPT = "sub";
 
     /** RtfText attributes: alignment attributes */
     /** constant for align center */
