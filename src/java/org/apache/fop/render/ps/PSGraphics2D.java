@@ -278,9 +278,9 @@ public class PSGraphics2D extends AbstractGraphics2D {
             FopImage fopimg = new TempImage(width, height, result, null);
             AffineTransform at = getTransform();
             gen.saveGraphicsState();
+            gen.concatMatrix(at);
             Shape imclip = getClip();
             writeClip(imclip);
-            gen.concatMatrix(at);
             PSImageUtils.renderBitmapImage(fopimg, 
                 x, y, width, height, gen);
             gen.restoreGraphicsState();
@@ -567,11 +567,11 @@ public class PSGraphics2D extends AbstractGraphics2D {
             boolean newTransform = gen.getCurrentState().checkTransform(trans)
                     && !trans.isIdentity();
 
-            Shape imclip = getClip();
-            writeClip(imclip);
             if (newTransform) {
                 gen.concatMatrix(trans);
             }
+            Shape imclip = getClip();
+            writeClip(imclip);
             establishColor(getColor());
 
             applyPaint(getPaint(), false);
@@ -599,7 +599,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
             preparePainting();
             try {
                 gen.writeln("newpath");
-                PathIterator iter = s.getPathIterator(getTransform());
+                PathIterator iter = s.getPathIterator(IDENTITY_TRANSFORM);
                 processPathIterator(iter);
                 // clip area
                 gen.writeln("clip");
@@ -999,14 +999,23 @@ public class PSGraphics2D extends AbstractGraphics2D {
         preparePainting();
         try {
             gen.saveGraphicsState();
+            
+            AffineTransform trans = getTransform();
+            boolean newTransform = gen.getCurrentState().checkTransform(trans)
+                    && !trans.isIdentity();
+            
+            if (newTransform) {
+                gen.concatMatrix(trans);
+            }
             Shape imclip = getClip();
             writeClip(imclip);
+            
             establishColor(getColor());
 
             applyPaint(getPaint(), true);
 
             gen.writeln("newpath");
-            PathIterator iter = s.getPathIterator(getTransform());
+            PathIterator iter = s.getPathIterator(IDENTITY_TRANSFORM);
             processPathIterator(iter);
             doDrawing(true, false,
                       iter.getWindingRule() == PathIterator.WIND_EVEN_ODD);
@@ -1020,7 +1029,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * Commits a painting operation.
      * @param fill filling
      * @param stroke stroking
-     * @param nonzero ???
+     * @param nonzero true if the non-zero winding rule should be used when filling
      * @exception IOException In case of an I/O problem
      */
     protected void doDrawing(boolean fill, boolean stroke, boolean nonzero) 
@@ -1029,15 +1038,15 @@ public class PSGraphics2D extends AbstractGraphics2D {
         if (fill) {
             if (stroke) {
                 if (!nonzero) {
-                    gen.writeln("stroke");
+                    gen.writeln("gsave fill grestore stroke");
                 } else {
-                    gen.writeln("stroke");
+                    gen.writeln("gsave eofill grestore stroke");
                 }
             } else {
                 if (!nonzero) {
                     gen.writeln("fill");
                 } else {
-                    gen.writeln("fill");
+                    gen.writeln("eofill");
                 }
             }
         } else {

@@ -366,11 +366,11 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         double[] matrix = new double[6];
         at.getMatrix(matrix);
         currentStream.write("q\n");
-        Shape imclip = getClip();
-        writeClip(imclip);
         if (!at.isIdentity()) {
             concatMatrix(matrix);
         }
+        Shape imclip = getClip();
+        writeClip(imclip);
 
         currentStream.write("" + width + " 0 0 "
                           + (-height) + " "
@@ -574,11 +574,11 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         double[] matrix = new double[6];
         at.getMatrix(matrix);
         currentStream.write("q\n");
-        Shape imclip = getClip();
-        writeClip(imclip);
         if (!at.isIdentity()) {
             concatMatrix(matrix);
         }
+        Shape imclip = getClip();
+        writeClip(imclip);
         currentStream.write("" + width + " 0 0 " + (-height) + " " + x
                             + " " + (y + height) + " cm\n" + "/Im"
                             + imageInfo.getXNumber() + " Do\nQ\n");
@@ -659,11 +659,11 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         if (newClip || newTransform) {
             currentStream.write("q\n");
             graphicsState.push();
-            if (newClip) {
-                writeClip(imclip);
-            }
             if (newTransform) {
                 concatMatrix(tranvals);
+            }
+            if (newClip) {
+                writeClip(imclip);
             }
         }
 
@@ -1183,8 +1183,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
         currentStream.write("q\n");
 
-        Shape imclip = getClip();
-        writeClip(imclip);
         Color c = getColor();
         applyColor(c, true);
         applyPaint(getPaint(), true);
@@ -1198,8 +1196,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             resourceContext.addGState(gstate);
             currentStream.write("/" + gstate.getName() + " gs\n");
         }
-
-        currentStream.write("BT\n");
 
         Map kerning = null;
         boolean kerningAvailable = false;
@@ -1231,6 +1227,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         trans.getMatrix(vals);
 
         concatMatrix(vals);
+        Shape imclip = getClip();
+        writeClip(imclip);
+        currentStream.write("BT\n");
+
         currentStream.write("1 0 0 -1 0 0 Tm [" + startText);
 
         int l = s.length();
@@ -1418,11 +1418,11 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         if (newClip || newTransform) {
             currentStream.write("q\n");
             graphicsState.push();
-            if (newClip) {
-                writeClip(imclip);
-            }
             if (newTransform) {
                 concatMatrix(tranvals);
+            }
+            if (newClip) {
+                writeClip(imclip);
             }
         }
 
