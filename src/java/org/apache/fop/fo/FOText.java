@@ -24,11 +24,13 @@ import java.util.NoSuchElementException;
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.fo.properties.CommonTextDecoration;
+import org.apache.fop.fo.properties.EnumLength;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.SpaceProperty;
 
@@ -83,6 +85,7 @@ public class FOText extends FONode {
     private int textTransform;
     private Property wordSpacing;
     private int wrapOption;
+    private EnumLength baselineShift;
     // End of property values
 
     /**
@@ -161,6 +164,7 @@ public class FOText extends FONode {
         wordSpacing = pList.get(Constants.PR_WORD_SPACING);
         wrapOption = pList.get(Constants.PR_WRAP_OPTION).getEnum();
         textDecoration = pList.getTextDecorationProps();
+        baselineShift = (EnumLength) pList.get(Constants.PR_BASELINE_SHIFT);
     }
 
     /** @see org.apache.fop.fo.FONode#endOfNode() */
@@ -598,6 +602,10 @@ public class FOText extends FONode {
         StringBuffer sb = new StringBuffer(super.toString());
         sb.append(" (").append(ca).append(")");
         return sb.toString();
+    }
+ 
+    public EnumLength getBaseLineShift() {
+        return baselineShift;
     }
     
 }
