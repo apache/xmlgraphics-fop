@@ -75,13 +75,17 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         hyphProps = fobj.getCommonHyphenation();
         
         //
-        if (bTextAlignment != EN_JUSTIFY && bTextAlignmentLast == EN_JUSTIFY) {
-            effectiveAlignment = 0;
-        } else {
-            effectiveAlignment = bTextAlignment;
-        }
+        effectiveAlignment = getEffectiveAlignment(bTextAlignment, bTextAlignmentLast);
     }
 
+    private int getEffectiveAlignment(int alignment, int alignmentLast) {
+        if (bTextAlignment != EN_JUSTIFY && bTextAlignmentLast == EN_JUSTIFY) {
+            return 0;
+        } else {
+            return bTextAlignment;
+        }
+    }
+    
     /**
      * Private class to store information about inline breaks.
      * Each value holds the start and end indexes into a List of
@@ -277,9 +281,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager
          */
         private void removeElementsForTrailingSpaces() {
             KnuthElement removedElement;
+            int effectiveAlignment = getEffectiveAlignment(textAlignment, textAlignmentLast);
             while (this.size() > ignoreAtStart
                    && ((KnuthElement) this.get(this.size() - 1)).isGlue()) {
-                if (textAlignmentLast == EN_CENTER) {
+                if (effectiveAlignment == EN_CENTER) {
                     // centered text: the pattern is
                     //     <glue> <penaly> <glue> <box> <penaly> <glue>
                     removedElement = (KnuthGlue) this.remove(this.size() - 1);
@@ -288,7 +293,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     removedElement = (KnuthGlue) this.remove(this.size() - 1);
                     removedElement = (KnuthPenalty) this.remove(this.size() - 1);
                     removedElement = (KnuthGlue) this.remove(this.size() - 1);
-                } else if (textAlignmentLast == EN_START || textAlignmentLast == EN_END) {
+                } else if (effectiveAlignment == EN_START || effectiveAlignment == EN_END) {
                     // left- or right-aligned text: the pattern is
                     //     <glue> <penalty> <glue>
                     removedElement = (KnuthGlue) this.remove(this.size() - 1);
@@ -1411,6 +1416,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     break;
                 }
             }
+            
             // collect word fragments, ignoring auxiliary elements;
             // each word fragment was created by a different TextLM
             if (firstElement.isBox() && !firstElement.isAuxiliary()) {
