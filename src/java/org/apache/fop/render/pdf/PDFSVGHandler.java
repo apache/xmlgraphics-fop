@@ -264,7 +264,6 @@ public class PDFSVGHandler implements XMLHandler {
              */
             PDFRenderer renderer = (PDFRenderer)context.getRenderer();
             renderer.saveGraphicsState();
-            //pdfInfo.currentStream.add("q\n");
             renderer.setColor(Color.black, false, null);
             renderer.setColor(Color.black, true, null);
             // transform so that the coordinates (0,0) is from the top left
@@ -274,16 +273,13 @@ public class PDFSVGHandler implements XMLHandler {
                               + yOffset / 1000f + " cm\n");
 
             SVGSVGElement svg = ((SVGDocument)doc).getRootElement();
-            AffineTransform at = ViewBox.getPreserveAspectRatioTransform(svg, w / 1000f, h / 1000f);
+            //AffineTransform at = ViewBox.getPreserveAspectRatioTransform(svg, w / 1000f, h / 1000f);
+            AffineTransform at = ViewBox.getPreserveAspectRatioTransform(svg,
+                    pdfInfo.width / 1000f, pdfInfo.height / 1000f);
             if (false && !at.isIdentity()) {
                 double[] vals = new double[6];
                 at.getMatrix(vals);
-                pdfInfo.currentStream.add(PDFNumber.doubleOut(vals[0], 5) + " "
-                                + PDFNumber.doubleOut(vals[1], 5) + " "
-                                + PDFNumber.doubleOut(vals[2], 5) + " "
-                                + PDFNumber.doubleOut(vals[3], 5) + " "
-                                + PDFNumber.doubleOut(vals[4]) + " "
-                                + PDFNumber.doubleOut(vals[5]) + " cm\n");
+                pdfInfo.currentStream.add(CTMHelper.toPDFString(at, false) + " cm\n");
             }
 
             if (pdfInfo.pdfContext == null) {
@@ -309,7 +305,6 @@ public class PDFSVGHandler implements XMLHandler {
                                        + e.getMessage(), e);
             }
 
-            //pdfInfo.currentStream.add("Q\n");
             renderer.restoreGraphicsState();
             pdfInfo.pdfState.pop();
         }
