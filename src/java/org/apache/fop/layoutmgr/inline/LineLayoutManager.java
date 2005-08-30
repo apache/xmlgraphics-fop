@@ -279,7 +279,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             KnuthElement removedElement;
             while (this.size() > ignoreAtStart
                    && ((KnuthElement) this.get(this.size() - 1)).isGlue()) {
-                if (textAlignment == EN_CENTER) {
+                if (textAlignmentLast == EN_CENTER) {
                     // centered text: the pattern is
                     //     <glue> <penaly> <glue> <box> <penaly> <glue>
                     removedElement = (KnuthGlue) this.remove(this.size() - 1);
@@ -288,7 +288,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     removedElement = (KnuthGlue) this.remove(this.size() - 1);
                     removedElement = (KnuthPenalty) this.remove(this.size() - 1);
                     removedElement = (KnuthGlue) this.remove(this.size() - 1);
-                } else if (textAlignment == EN_START || textAlignment == EN_END) {
+                } else if (textAlignmentLast == EN_START || textAlignmentLast == EN_END) {
                     // left- or right-aligned text: the pattern is
                     //     <glue> <penalty> <glue>
                     removedElement = (KnuthGlue) this.remove(this.size() - 1);
@@ -1411,7 +1411,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     break;
                 }
             }
-
             // collect word fragments, ignoring auxiliary elements;
             // each word fragment was created by a different TextLM
             if (firstElement.isBox() && !firstElement.isAuxiliary()) {
