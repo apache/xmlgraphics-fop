@@ -327,7 +327,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         return contentAreaIPD;
     }
    
-    private void setContentAreaIPD(int contentAreaIPD) {
+    protected void setContentAreaIPD(int contentAreaIPD) {
         this.contentAreaIPD = contentAreaIPD;
     }
     
