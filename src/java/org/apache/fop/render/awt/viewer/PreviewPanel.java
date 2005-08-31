@@ -53,9 +53,12 @@ import org.apache.fop.render.awt.AWTRenderer;
  * Fop controls.
  * </p>   
  * <p>In order to embed a PreviewPanel in your own app, create your own renderer,
- * and your own agent. Then call setPreviewDialogDisplayed(false) to hide the
- * default dialog. Finally create a preview panel with the renderer and add it
- * to your gui:
+ * and your own agent. In order to support reloads, you may also implement your
+ * own Renderable extension or the default InputHandler. Setting the Renderable
+ * to null works fine though.
+ * Then call setPreviewDialogDisplayed(false) to hide the
+ * default dialog. Finally create a preview panel with the agent, renderable and
+ * renderer and add it to your gui:
  * </p>
  * <pre>
  * AWTRenderer renderer = new AWTRenderer();
@@ -63,7 +66,7 @@ import org.apache.fop.render.awt.AWTRenderer;
  * agent.setRendererOverride(renderer);
  * renderer.setPreviewDialogDisplayed(false);
  * renderer.setUserAgent(agent);
- * previewPanel = new PreviewPanel(agent, renderer);
+ * previewPanel = new PreviewPanel(agent, null, renderer);
  * previewPanel = new PreviewPanel(ua);
  * myGui.add(previewPanel);
  * </pre>
