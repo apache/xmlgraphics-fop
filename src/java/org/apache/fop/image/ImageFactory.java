@@ -594,6 +594,15 @@ class ImageProvider {
                 clazz = Class.forName(getClassName());
             } catch (ClassNotFoundException cnfe) {
                 //nop
+            } catch (LinkageError le) {
+                // This can happen if fop was build with support for a
+                // particular provider (e.g. a binary fop distribution)
+                // but the required support files (e.g. jai, jimi) are not
+                // available in the current runtime environment.
+                ImageFactory.log.debug("Image support provider " + getName() 
+                    + " could not be loaded. If " + getName() + " should be" 
+                    + " available please make sure all required external libraries" 
+                    + " are on the classpath.");
             }
             checked = true;
         }
