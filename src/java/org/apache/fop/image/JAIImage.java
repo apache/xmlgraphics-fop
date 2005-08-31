@@ -75,9 +75,10 @@ public class JAIImage extends AbstractFopImage {
      */
     protected void loadImage() {
         com.sun.media.jai.codec.FileCacheSeekableStream seekableInput = null;
+        RenderedOp imageOp = null;
         try {
             seekableInput = new FileCacheSeekableStream(inputStream);
-            RenderedOp imageOp = JAI.create("stream", seekableInput);
+            imageOp = JAI.create("stream", seekableInput);
 
             this.height = imageOp.getHeight();
             this.width = imageOp.getWidth();
@@ -167,6 +168,9 @@ public class JAIImage extends AbstractFopImage {
         } finally {
             IOUtils.closeQuietly(inputStream);
             inputStream = null;
+            if (imageOp != null) {
+                imageOp.dispose();
+            }
             if (seekableInput != null) {
                 IOUtils.closeQuietly(seekableInput);
             }
