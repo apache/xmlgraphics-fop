@@ -44,7 +44,9 @@ public class FootnoteLayoutManager extends AbstractLayoutManager
     public FootnoteLayoutManager(Footnote node) {
         super(node);
         footnote = node;
-
+    }
+    
+    public void initialize() {
         // create an InlineStackingLM handling the fo:inline child of fo:footnote
         citationLM = new InlineLayoutManager(footnote.getFootnoteCitation());
 
@@ -61,7 +63,9 @@ public class FootnoteLayoutManager extends AbstractLayoutManager
 
         // set the citationLM parent to be this LM's parent
         citationLM.setParent(getParent());
+        citationLM.initialize();
         bodyLM.setParent(this);
+        bodyLM.initialize();
 
         // get Knuth elements representing the footnote citation
         LinkedList returnedList = new LinkedList();

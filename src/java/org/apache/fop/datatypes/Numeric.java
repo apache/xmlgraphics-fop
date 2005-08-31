@@ -41,6 +41,14 @@ public interface Numeric {
     double getNumericValue() throws PropertyException;
     
     /**
+     * Return the value of this Numeric
+     * @param context The context for the length calculation (for percentage based lengths)
+     * @return the computed value.
+     * @throws PropertyException
+     */
+    double getNumericValue(PercentBaseContext context) throws PropertyException;
+
+    /**
      * Return the dimension of this numeric. Plain numbers has a dimension of
      * 0 and length has a dimension of 1. Other dimension can occur as a result
      * of multiplications and divisions.
@@ -60,6 +68,13 @@ public interface Numeric {
      * @return the value as an integer.
      */
     public int getValue();
+
+    /**
+     * Returns the value of this numeric as an int.
+     * @param conext The context for the length calculation (for percentage based lengths)
+     * @return the value as an integer.
+     */
+    public int getValue(PercentBaseContext context);
 
     /**
      * Return the resolved value. This method will becalled during evaluation 

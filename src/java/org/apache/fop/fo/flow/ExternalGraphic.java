@@ -280,19 +280,6 @@ public class ExternalGraphic extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#getLayoutDimension(org.apache.fop.datatypes.PercentBase.LayoutDimension)
-     */
-    public Number getLayoutDimension(PercentBase.LayoutDimension key) {
-        if (key == PercentBase.IMAGE_INTRINSIC_WIDTH) {
-            return new Integer(getIntrinsicWidth());
-        } else if (key == PercentBase.IMAGE_INTRINSIC_HEIGHT) {
-            return new Integer(getIntrinsicHeight());
-        } else {
-            return super.getLayoutDimension(key);
-        }
-    }
-    
-    /**
      * @see org.apache.fop.fo.IntrinsicSizeAccess#getIntrinsicWidth()
      */
     public int getIntrinsicWidth() {

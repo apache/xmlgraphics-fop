@@ -18,6 +18,7 @@
 
 package org.apache.fop.fo.properties;
 
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
@@ -104,8 +105,28 @@ public class NumberProperty extends Property implements Numeric {
         return number.doubleValue();
     }
 
+    /**
+     * Return the value of this Numeric.
+     * @param context Evaluation context
+     * @return The value as a double.
+     * @see Numeric#getNumericValue(Object)
+     */
+    public double getNumericValue(PercentBaseContext context) {
+        return getNumericValue();
+    }
+
     public int getValue() {
         return number.intValue();
+    }
+
+    /**
+     * Return the value
+     * @param context Evaluation context
+     * @return The value as an int.
+     * @see Numeric#getValue(Object)
+     */
+    public int getValue(PercentBaseContext context) {
+        return getValue();
     }
 
     /**

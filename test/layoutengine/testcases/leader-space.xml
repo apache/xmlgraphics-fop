@@ -35,25 +35,26 @@
                Default space pattern
           </fo:block>
           <fo:block>
-            <fo:leader leader-pattern="space" leader-pattern-width="use-font-metrics"/>
-                leader-pattern-width="use-font-metrics"
+            <fo:leader leader-pattern="space" leader-length="0.5in"/>
+               leader-length="0.5in"
           </fo:block>
           <fo:block>
-            <fo:leader leader-pattern="space" leader-length="20mm" leader-pattern-width="5mm"/>
-                 leader-length="20mm" leader-pattern-width="5mm"
-          </fo:block>
-          <fo:block>
-            <fo:leader leader-pattern="space" leader-pattern-width="1pt"/>
-                leader-pattern-width="1pt"
-          </fo:block>
-          <fo:block>
-            <fo:leader leader-pattern="space" leader-pattern-width="5%"/>
-                leader-pattern-width="5%"
+            <fo:leader leader-pattern="space" leader-length="5%"/>
+               leader-length="5%"
           </fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
   </fo>
   <checks>
+    <eval expected="14400" xpath="//flow/block[1]/lineArea/@bpd"/>
+    <eval expected="360000" xpath="//flow/block[1]/lineArea/@ipd"/>
+    <eval expected="12000" xpath="//flow/block[1]/lineArea/space/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[2]/lineArea/@bpd"/>
+    <eval expected="360000" xpath="//flow/block[2]/lineArea/@ipd"/>
+    <eval expected="36000" xpath="//flow/block[2]/lineArea/space/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[3]/lineArea/@bpd"/>
+    <eval expected="360000" xpath="//flow/block[3]/lineArea/@ipd"/>
+    <eval expected="18000" xpath="//flow/block[3]/lineArea/space/@ipd"/>
   </checks>
 </testcase>

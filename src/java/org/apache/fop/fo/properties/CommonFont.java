@@ -21,6 +21,7 @@ package org.apache.fop.fo.properties;
 // FOP
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
@@ -96,7 +97,7 @@ public class CommonFont {
      * @param fontInfo
      * @return a Font object.
      */
-    public Font getFontState(FontInfo fontInfo) {
+    public Font getFontState(FontInfo fontInfo, PercentBaseContext context) {
         if (fontState == null) {
             /**@todo this is ugly. need to improve. */
 
@@ -124,7 +125,7 @@ public class CommonFont {
             String fname = fontInfo.fontLookup(fontFamily, fontStyle,
                                                font_weight);
             FontMetrics metrics = fontInfo.getMetricsFor(fname);
-            fontState = new Font(fname, metrics, fontSize.getValue());
+            fontState = new Font(fname, metrics, fontSize.getValue(context));
         }
         return fontState;
     }

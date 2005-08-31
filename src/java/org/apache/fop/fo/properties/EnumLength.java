@@ -18,6 +18,8 @@
  
 package org.apache.fop.fo.properties;
 
+import org.apache.fop.datatypes.PercentBaseContext;
+
 /**
  * A length quantity in XSL which is specified as an enum, such as "auto"
  */
@@ -38,6 +40,7 @@ public class EnumLength extends LengthProperty {
     public boolean isAbsolute() {
         return false;
     }
+
     /**
      * Returns the length in 1/1000ths of a point (millipoints)
      * @return the length in millipoints
@@ -48,10 +51,30 @@ public class EnumLength extends LengthProperty {
     }
 
     /**
+     * Returns the length in 1/1000ths of a point (millipoints)
+     * @param Evaluation context
+     * @return the length in millipoints
+     */
+    public int getValue(PercentBaseContext context) {
+        log.error("getValue() called on " + enumProperty + " length");
+        return 0;
+    }
+
+    /**
      * Returns the value as numeric.
      * @return the length in millipoints
      */
     public double getNumericValue() {
+        log.error("getNumericValue() called on " + enumProperty + " number");
+        return 0;
+    }
+
+    /**
+     * Returns the value as numeric.
+     * @param context Evaluation context
+     * @return the length in millipoints
+     */
+    public double getNumericValue(PercentBaseContext context) {
         log.error("getNumericValue() called on " + enumProperty + " number");
         return 0;
     }

@@ -188,95 +188,97 @@ public class TableCell extends FObj {
      * Calculate cell border and padding, including offset of content
      * rectangle from the theoretical grid position.
      */
-    private void calcBorders(CommonBorderPaddingBackground bp) {
-        if (this.borderCollapse == EN_SEPARATE) {
-            /*
-             * Easy case.
-             * Cell border is the property specified directly on cell.
-             * Offset content rect by half the border-separation value,
-             * in addition to the border and padding values. Note:
-             * border-separate should only be specified on the table object,
-             * but it inherits.
-             */
-            int iSep = borderSeparation.getIPD().getLength().getValue();
-            this.startAdjust = iSep / 2 + bp.getBorderStartWidth(false)
-                               + bp.getPaddingStart(false);
-
-            this.widthAdjust = startAdjust + iSep - iSep / 2
-                               + bp.getBorderEndWidth(false)
-                               + bp.getPaddingEnd(false);
-
-            // Offset of content rectangle in the block-progression direction
-            int bSep = borderSeparation.getBPD().getLength().getValue();
-            this.beforeOffset = bSep / 2
-                                + bp.getBorderBeforeWidth(false)
-                                + bp.getPaddingBefore(false);
-
-        } else {
-            // System.err.println("Collapse borders");
-            /*
-             * Hard case.
-             * Cell border is combination of other cell borders, or table
-             * border for edge cells. Also seems to border values specified
-             * on row and column FO in the table (if I read CR correclty.)
-             */
-
-            // Set up before and after borders, taking into account row
-            // and table border properties.
-            // ??? What about table-body, header,footer
-
-            /*
-             * We can't calculate before and after because we aren't sure
-             * whether this row will be the first or last in its area, due
-             * to redoing break decisions (at least in the "new" architecture.)
-             * So in the general case, we will calculate two possible values:
-             * the first/last one and the "middle" one.
-             * Example: border-before
-             * 1. If the cell is in the first row in the first table body, it
-             * will combine with the last row of the header, or with the
-             * top (before) table border if there is no header.
-             * 2. Otherwise there are two cases:
-             * a. the row is first in its (non-first) Area.
-             * The border can combine with either:
-             * i.  the last row of table-header and its cells, or
-             * ii. the table before border (no table-header or it is
-             * omitted on non-first Areas).
-             * b. the row isn't first in its Area.
-             * The border combines with the border of the previous
-             * row and the cells which end in that row.
-             */
-
-            /*
-             * if-first
-             * Calculate the effective border of the cell before-border,
-             * it's parent row before-border, the last header row after-border,
-             * the after border of the cell(s) which end in the last header
-             * row.
-             */
-            /*
-             * if-not-first
-             * Calculate the effective border of the cell before-border,
-             * it's parent row before-border, the previous row after-border,
-             * the after border of the cell(s) which end in the previous
-             * row.
-             */
-
-
-            /* ivan demakov */
-            int borderStart = bp.getBorderStartWidth(false);
-            int borderEnd = bp.getBorderEndWidth(false);
-            int borderBefore = bp.getBorderBeforeWidth(false);
-            int borderAfter = bp.getBorderAfterWidth(false);
-
-            this.startAdjust = borderStart / 2 + bp.getPaddingStart(false);
-
-            this.widthAdjust = startAdjust + borderEnd / 2
-                               + bp.getPaddingEnd(false);
-            this.beforeOffset = borderBefore / 2 + bp.getPaddingBefore(false);
-            // Half border height to fix overestimate of area size!
-            this.borderHeight = (borderBefore + borderAfter) / 2;
-        }
-    }
+// TODO This whole method is not used it refers to padding which requires layout
+// context to evaluate
+//    private void calcBorders(CommonBorderPaddingBackground bp) {
+//        if (this.borderCollapse == EN_SEPARATE) {
+//            /*
+//             * Easy case.
+//             * Cell border is the property specified directly on cell.
+//             * Offset content rect by half the border-separation value,
+//             * in addition to the border and padding values. Note:
+//             * border-separate should only be specified on the table object,
+//             * but it inherits.
+//             */
+//            int iSep = borderSeparation.getIPD().getLength().getValue();
+//            this.startAdjust = iSep / 2 + bp.getBorderStartWidth(false)
+//                               + bp.getPaddingStart(false);
+//
+//            this.widthAdjust = startAdjust + iSep - iSep / 2
+//                               + bp.getBorderEndWidth(false)
+//                               + bp.getPaddingEnd(false);
+//
+//            // Offset of content rectangle in the block-progression direction
+//            int bSep = borderSeparation.getBPD().getLength().getValue();
+//            this.beforeOffset = bSep / 2
+//                                + bp.getBorderBeforeWidth(false)
+//                                + bp.getPaddingBefore(false);
+//
+//        } else {
+//            // System.err.println("Collapse borders");
+//            /*
+//             * Hard case.
+//             * Cell border is combination of other cell borders, or table
+//             * border for edge cells. Also seems to border values specified
+//             * on row and column FO in the table (if I read CR correclty.)
+//             */
+//
+//            // Set up before and after borders, taking into account row
+//            // and table border properties.
+//            // ??? What about table-body, header,footer
+//
+//            /*
+//             * We can't calculate before and after because we aren't sure
+//             * whether this row will be the first or last in its area, due
+//             * to redoing break decisions (at least in the "new" architecture.)
+//             * So in the general case, we will calculate two possible values:
+//             * the first/last one and the "middle" one.
+//             * Example: border-before
+//             * 1. If the cell is in the first row in the first table body, it
+//             * will combine with the last row of the header, or with the
+//             * top (before) table border if there is no header.
+//             * 2. Otherwise there are two cases:
+//             * a. the row is first in its (non-first) Area.
+//             * The border can combine with either:
+//             * i.  the last row of table-header and its cells, or
+//             * ii. the table before border (no table-header or it is
+//             * omitted on non-first Areas).
+//             * b. the row isn't first in its Area.
+//             * The border combines with the border of the previous
+//             * row and the cells which end in that row.
+//             */
+//
+//            /*
+//             * if-first
+//             * Calculate the effective border of the cell before-border,
+//             * it's parent row before-border, the last header row after-border,
+//             * the after border of the cell(s) which end in the last header
+//             * row.
+//             */
+//            /*
+//             * if-not-first
+//             * Calculate the effective border of the cell before-border,
+//             * it's parent row before-border, the previous row after-border,
+//             * the after border of the cell(s) which end in the previous
+//             * row.
+//             */
+//
+//
+//            /* ivan demakov */
+//            int borderStart = bp.getBorderStartWidth(false);
+//            int borderEnd = bp.getBorderEndWidth(false);
+//            int borderBefore = bp.getBorderBeforeWidth(false);
+//            int borderAfter = bp.getBorderAfterWidth(false);
+//
+//            this.startAdjust = borderStart / 2 + bp.getPaddingStart(false);
+//
+//            this.widthAdjust = startAdjust + borderEnd / 2
+//                               + bp.getPaddingEnd(false);
+//            this.beforeOffset = borderBefore / 2 + bp.getPaddingBefore(false);
+//            // Half border height to fix overestimate of area size!
+//            this.borderHeight = (borderBefore + borderAfter) / 2;
+//        }
+//    }
 
     /**
      * @return the Common Border, Padding, and Background Properties.

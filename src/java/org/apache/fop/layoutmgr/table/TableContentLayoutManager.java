@@ -28,7 +28,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.Trait;
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableBody;
 import org.apache.fop.fo.flow.TableRow;
@@ -51,7 +53,7 @@ import org.apache.fop.traits.MinOptMax;
 /**
  * Layout manager for table contents, particularly managing the creation of combined element lists.
  */
-public class TableContentLayoutManager {
+public class TableContentLayoutManager implements PercentBaseContext {
 
     /** Logger **/
     private static Log log = LogFactory.getLog(TableContentLayoutManager.class);
@@ -415,7 +417,7 @@ public class TableContentLayoutManager {
                     PrimaryGridUnit primary = gu.getPrimary();
                     
                     if (gu.isPrimary()) {
-                        primary.getCellLM().setParent(tableLM);
+                        primary.getCellLM().setParent(getTableLM());
                      
                         //Determine the table-row if any
                         if (tableRow == null && primary.getRow() != null) {
@@ -423,11 +425,11 @@ public class TableContentLayoutManager {
                             
                             //Check for bpd on row, see CSS21, 17.5.3 Table height algorithms
                             LengthRangeProperty bpd = tableRow.getBlockProgressionDimension();
-                            if (!bpd.getMinimum().isAuto()) {
+                            if (!bpd.getMinimum(getTableLM()).isAuto()) {
                                 minContentHeight = Math.max(minContentHeight, 
-                                        bpd.getMinimum().getLength().getValue());
+                                        bpd.getMinimum(getTableLM()).getLength().getValue(getTableLM()));
                             }
-                            MinOptMaxUtil.restrict(explicitRowHeights[rgi], bpd);
+                            MinOptMaxUtil.restrict(explicitRowHeights[rgi], bpd, getTableLM());
                             
                         }
 
@@ -438,7 +440,7 @@ public class TableContentLayoutManager {
                                         + primary.getCell().getNumberColumnsSpanned();
                                 i++) {
                             spanWidth += getTableLM().getColumns().getColumn(i + 1)
-                                .getColumnWidth().getValue();
+                                .getColumnWidth().getValue(getTableLM());
                         }
                         LayoutContext childLC = new LayoutContext(0);
                         childLC.setStackLimit(context.getStackLimit()); //necessary?
@@ -487,17 +489,17 @@ public class TableContentLayoutManager {
                     if (gu.isLastGridUnitRowSpan()) {
                         int effCellContentHeight = minContentHeight;
                         LengthRangeProperty bpd = primary.getCell().getBlockProgressionDimension();
-                        if (!bpd.getMinimum().isAuto()) {
+                        if (!bpd.getMinimum(getTableLM()).isAuto()) {
                             effCellContentHeight = Math.max(effCellContentHeight,
-                                    bpd.getMinimum().getLength().getValue());
+                                    bpd.getMinimum(getTableLM()).getLength().getValue(getTableLM()));
                         }
-                        if (!bpd.getOptimum().isAuto()) {
+                        if (!bpd.getOptimum(getTableLM()).isAuto()) {
                             effCellContentHeight = Math.max(effCellContentHeight,
-                                    bpd.getOptimum().getLength().getValue());
+                                    bpd.getOptimum(getTableLM()).getLength().getValue(getTableLM()));
                         }
                         if (gu.getRowSpanIndex() == 0) {
                             //TODO ATM only non-row-spanned cells are taken for this
-                            MinOptMaxUtil.restrict(explicitRowHeights[rgi], bpd);
+                            MinOptMaxUtil.restrict(explicitRowHeights[rgi], bpd, tableLM);
                         }
                         effCellContentHeight = Math.max(effCellContentHeight, 
                                 primary.getContentLength());
@@ -514,8 +516,8 @@ public class TableContentLayoutManager {
                                 effCellContentHeight);
                         CommonBorderPaddingBackground cbpb 
                             = primary.getCell().getCommonBorderPaddingBackground(); 
-                        padding += cbpb.getPaddingBefore(false);
-                        padding += cbpb.getPaddingAfter(false);
+                        padding += cbpb.getPaddingBefore(false, primary.getCellLM());
+                        padding += cbpb.getPaddingAfter(false, primary.getCellLM());
                         int effRowHeight = effCellContentHeight + padding + borderWidths;
                         for (int previous = 0; previous < gu.getRowSpanIndex(); previous++) {
                             effRowHeight -= rowHeights[rgi - previous - 1].opt;
@@ -566,7 +568,7 @@ public class TableContentLayoutManager {
      */
     protected int getXOffsetOfGridUnit(GridUnit gu) {
         int col = gu.getStartCol();
-        return startXOffset + getTableLM().getColumns().getXOffset(col + 1);
+        return startXOffset + getTableLM().getColumns().getXOffset(col + 1, getTableLM());
     }
     
     /**
@@ -792,36 +794,41 @@ public class TableContentLayoutManager {
                             gridUnits[i].getElements(), start[i], end[i]);
                     partLength[i] = len;
                     log.debug("len of part: " + len);
+
                     if (start[i] == 0) {
                         LengthRangeProperty bpd = gridUnits[i].getCell()
                                 .getBlockProgressionDimension();
-                        if (!bpd.getMinimum().isAuto()) {
-                            if (bpd.getMinimum().getLength().getValue() > 0) {
-                                len = Math.max(len, bpd.getMinimum().getLength().getValue());
+                        if (!bpd.getMinimum(getTableLM()).isAuto()) {
+                            if (bpd.getMinimum(getTableLM()).getLength().getValue(getTableLM()) > 0) {
+                                len = Math.max(len, bpd.getMinimum(getTableLM()).getLength().getValue(getTableLM()));
                             }
                         }
-                        if (!bpd.getOptimum().isAuto()) {
-                            if (bpd.getOptimum().getLength().getValue() > 0) {
-                                len = Math.max(len, bpd.getOptimum().getLength().getValue());
+                        if (!bpd.getOptimum(getTableLM()).isAuto()) {
+                            if (bpd.getOptimum(getTableLM()).getLength().getValue(getTableLM()) > 0) {
+                                len = Math.max(len, bpd.getOptimum(getTableLM()).getLength().getValue(getTableLM()));
                             }
                         }
                         if (gridUnits[i].getRow() != null) {
                             bpd = gridUnits[i].getRow().getBlockProgressionDimension();
-                            if (!bpd.getMinimum().isAuto()) {
-                                if (bpd.getMinimum().getLength().getValue() > 0) {
-                                    len = Math.max(len, bpd.getMinimum().getLength().getValue());
+                            if (!bpd.getMinimum(getTableLM()).isAuto()) {
+                                if (bpd.getMinimum(getTableLM()).getLength().getValue(getTableLM()) > 0) {
+                                    len = Math.max(len, bpd.getMinimum(getTableLM()).getLength().getValue(getTableLM()));
                                 }
                             }
                         }
                     }
                     
+                    // Add the padding if any
+                    len += gridUnits[i].getBorders()
+                                    .getPaddingBefore(false, gridUnits[i].getCellLM());
+                    len += gridUnits[i].getBorders()
+                                    .getPaddingAfter(false, gridUnits[i].getCellLM());
+
                     //Now add the borders to the contentLength
                     if (isSeparateBorderModel()) {
                         len += gridUnits[i].getBorders().getBorderBeforeWidth(false);
                         len += gridUnits[i].getBorders().getBorderAfterWidth(false);
                     }
-                    len += gridUnits[i].getBorders().getPaddingBefore(false);
-                    len += gridUnits[i].getBorders().getPaddingAfter(false);
                     int startRow = Math.max(gridUnits[i].getStartRow(), firstRow[bt]);
                     Integer storedOffset = (Integer)rowOffsets[bt].get(new Integer(startRow));
                     int effYOffset;
@@ -906,7 +913,6 @@ public class TableContentLayoutManager {
             Block block = new Block();
             block.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
             block.setPositioning(Block.ABSOLUTE);
-            TraitSetter.addBackground(block, row.getCommonBorderPaddingBackground());
             return block;
         }
     }
@@ -927,6 +933,7 @@ public class TableContentLayoutManager {
             rowBackground.setXOffset(this.startXOffset);
             rowBackground.setYOffset(yoffset);
             getTableLM().addChildArea(rowBackground);
+            TraitSetter.addBackground(rowBackground, row.getCommonBorderPaddingBackground(), getTableLM());
         }
     }
     
@@ -1125,4 +1132,13 @@ public class TableContentLayoutManager {
         }
     }
     
+    // --------- Property Resolution related functions --------- //
+    
+    /**
+     * @see org.apache.fop.datatypes.PercentBaseContext#getBaseLength(int, fobj)
+     */
+    public int getBaseLength(int lengthBase, FObj fobj) {
+        return tableLM.getBaseLength(lengthBase, fobj);
+    }
+
 }

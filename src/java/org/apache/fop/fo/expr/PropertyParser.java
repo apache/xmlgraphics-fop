@@ -285,18 +285,11 @@ public class PropertyParser extends PropertyTokenizer {
             String unitPart = currentTokenValue.substring(numLen);
             Double numPart = new Double(currentTokenValue.substring(0,
                     numLen));
-            LengthProperty length = null;
             if (unitPart.equals(RELUNIT)) {
-                length = new FixedLength(numPart.doubleValue(),
+                prop = (Property) NumericOp.multiply(new NumberProperty(numPart.doubleValue()),
                                     propInfo.currentFontSize());
             } else {
-                length = new FixedLength(numPart.doubleValue(), unitPart);
-            }
-            if (length == null) {
-                throw new PropertyException("unrecognized unit name: "
-                                            + currentTokenValue);
-            } else {
-                prop = length;
+                prop = new FixedLength(numPart.doubleValue(), unitPart);
             }
             break;
 

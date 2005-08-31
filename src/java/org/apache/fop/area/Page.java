@@ -25,7 +25,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.apache.fop.datatypes.FODimension;
-import org.apache.fop.datatypes.PercentBase;
+import org.apache.fop.datatypes.LengthBase;
+import org.apache.fop.datatypes.PercentBaseContext;
+import org.apache.fop.datatypes.SimplePercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.RegionBody;
@@ -70,22 +72,35 @@ public class Page implements Serializable, Cloneable {
      *            page-reference-area
      */
     public Page(SimplePageMaster spm) {
-        int pageWidth = spm.getPageWidth().getValue();
-        int pageHeight = spm.getPageHeight().getValue();
+        // Width and Height of the page view port
+        FODimension pageViewPortDims = new FODimension(spm.getPageWidth().getValue()
+                            ,  spm.getPageHeight().getValue());
 
         // Get absolute margin properties (top, left, bottom, right)
         CommonMarginBlock mProps = spm.getCommonMarginBlock();
-
+        
         /*
          * Create the page reference area rectangle (0,0 is at top left
          * of the "page media" and y increases
          * when moving towards the bottom of the page.
          * The media rectangle itself is (0,0,pageWidth,pageHeight).
          */
+        /* Special rules apply to resolving margins in the page context.
+         * Contrary to normal margins in this case top and bottom margin
+         * are resolved relative to the height. In the property subsystem
+         * all margin properties are configured to using BLOCK_WIDTH.
+         * That's why we 'cheat' here and setup a context for the height but
+         * use the LengthBase.BLOCK_WIDTH.
+         */
+        SimplePercentBaseContext pageWidthContext 
+            = new SimplePercentBaseContext(null, LengthBase.CONTAINING_BLOCK_WIDTH, pageViewPortDims.ipd);
+        SimplePercentBaseContext pageHeightContext
+            = new SimplePercentBaseContext(null, LengthBase.CONTAINING_BLOCK_WIDTH, pageViewPortDims.bpd);
+
         Rectangle pageRefRect =
-            new Rectangle(mProps.marginLeft.getValue(), mProps.marginTop.getValue(),
-            pageWidth - mProps.marginLeft.getValue() - mProps.marginRight.getValue(),
-            pageHeight - mProps.marginTop.getValue() - mProps.marginBottom.getValue());
+            new Rectangle(mProps.marginLeft.getValue(pageWidthContext), mProps.marginTop.getValue(pageHeightContext),
+            pageViewPortDims.ipd - mProps.marginLeft.getValue(pageWidthContext) - mProps.marginRight.getValue(pageWidthContext),
+            pageViewPortDims.bpd - mProps.marginTop.getValue(pageHeightContext) - mProps.marginBottom.getValue(pageHeightContext));
 
         // Set up the CTM on the page reference area based on writing-mode
         // and reference-orientation
@@ -98,9 +113,7 @@ public class Page implements Serializable, Cloneable {
         for (Iterator regenum = spm.getRegions().values().iterator();
             regenum.hasNext();) {
             Region r = (Region)regenum.next();
-            RegionViewport rvp = makeRegionViewport(r, reldims, pageCTM);
-            r.setLayoutDimension(PercentBase.BLOCK_IPD, rvp.getIPD());
-            r.setLayoutDimension(PercentBase.BLOCK_BPD, rvp.getBPD());
+            RegionViewport rvp = makeRegionViewport(r, reldims, pageCTM, pageViewPortDims);
             if (r.getNameId() == Constants.FO_REGION_BODY) {
                 rr = new BodyRegion((RegionBody) r, rvp);
             } else {
@@ -125,15 +138,16 @@ public class Page implements Serializable, Cloneable {
      * @param pageCTM page coordinate transformation matrix
      * @return the new region viewport
      */
-    private RegionViewport makeRegionViewport(Region r, FODimension reldims, CTM pageCTM) {
-        Rectangle2D relRegionRect = r.getViewportRectangle(reldims);
+    private RegionViewport makeRegionViewport(Region r, FODimension reldims, CTM pageCTM,
+        FODimension pageViewPortDims) {
+        Rectangle2D relRegionRect = r.getViewportRectangle(reldims, pageViewPortDims);
         Rectangle2D absRegionRect = pageCTM.transform(relRegionRect);
         // Get the region viewport rectangle in absolute coords by
         // transforming it using the page CTM
         RegionViewport rv = new RegionViewport(absRegionRect);
         rv.setBPD((int)relRegionRect.getHeight());
         rv.setIPD((int)relRegionRect.getWidth());
-        TraitSetter.addBackground(rv, r.getCommonBorderPaddingBackground());
+        TraitSetter.addBackground(rv, r.getCommonBorderPaddingBackground(), null);
         rv.setClip(r.getOverflow() == Constants.EN_HIDDEN 
                 || r.getOverflow() == Constants.EN_ERROR_IF_OVERFLOW);
         return rv;
@@ -263,5 +277,6 @@ public class Page implements Serializable, Cloneable {
     public HashMap getUnresolvedReferences() {
         return unresolved;
     }
+
 }
 

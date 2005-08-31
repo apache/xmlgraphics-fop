@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableColumn;
+import org.apache.fop.layoutmgr.LayoutManager;
 
 /**
  * This class represents a primary grid unit of a spanned cell.
@@ -131,11 +132,11 @@ public class PrimaryGridUnit extends GridUnit {
 
     /** @return true if cell/row has an explicit BPD/height */
     public boolean hasBPD() {
-        if (!getCell().getBlockProgressionDimension().getOptimum().isAuto()) {
+        if (!getCell().getBlockProgressionDimension().getOptimum(null).isAuto()) {
             return true;
         }
         if (getRow() != null 
-                && !getRow().getBlockProgressionDimension().getOptimum().isAuto()) {
+                && !getRow().getBlockProgressionDimension().getOptimum(null).isAuto()) {
             return true;
         }
         return false;

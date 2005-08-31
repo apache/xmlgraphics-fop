@@ -202,8 +202,8 @@ public class TableStepper {
             } else {
                 borderBefore[column] = pgu.getBorders().getBorderBeforeWidth(false) / 2;
             }
-            paddingBefore[column] = pgu.getBorders().getPaddingBefore(false);
-            paddingAfter[column] = pgu.getBorders().getPaddingAfter(false);
+            paddingBefore[column] = pgu.getBorders().getPaddingBefore(false, pgu.getCellLM());
+            paddingAfter[column] = pgu.getBorders().getPaddingAfter(false, pgu.getCellLM());
             start[column] = 0;
             end[column] = -1;
             widths[column] = 0;
@@ -301,8 +301,8 @@ public class TableStepper {
                     = getTableLM().getTable().getCommonBorderPaddingBackground(); 
                 effPenaltyLen += borders.getBorderBeforeWidth(false); 
                 effPenaltyLen += borders.getBorderAfterWidth(false); 
-                effPenaltyLen += borders.getPaddingBefore(false); 
-                effPenaltyLen += borders.getPaddingAfter(false); 
+                effPenaltyLen += borders.getPaddingBefore(false, getTableLM()); 
+                effPenaltyLen += borders.getPaddingAfter(false, getTableLM()); 
             }
             TableContentPosition tcpos = new TableContentPosition(getTableLM(), 
                     gridUnitParts, getActiveRow());

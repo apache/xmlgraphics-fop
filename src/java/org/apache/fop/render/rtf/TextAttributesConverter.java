@@ -186,9 +186,9 @@ class TextAttributesConverter {
 
     private static void attrBlockMargin(CommonMarginBlock cmb, FOPRtfAttributes rtfAttr) {
         rtfAttr.setTwips(RtfText.SPACE_BEFORE, 
-                cmb.spaceBefore.getOptimum().getLength());
+                cmb.spaceBefore.getOptimum(null).getLength());
         rtfAttr.setTwips(RtfText.SPACE_AFTER, 
-                cmb.spaceAfter.getOptimum().getLength());
+                cmb.spaceAfter.getOptimum(null).getLength());
         rtfAttr.setTwips(RtfText.LEFT_INDENT_BODY, cmb.marginLeft);
         rtfAttr.setTwips(RtfText.RIGHT_INDENT_BODY, cmb.marginRight);
     }

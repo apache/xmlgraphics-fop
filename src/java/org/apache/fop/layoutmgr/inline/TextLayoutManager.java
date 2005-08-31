@@ -132,7 +132,6 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     private int total = 0;
     private int middle = 0;
     private int verticalAlignment = EN_BASELINE;
-
     /**
      * Create a Text layout manager.
      *
@@ -147,8 +146,10 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             node.endIndex - node.startIndex);
 
         vecAreaInfo = new java.util.ArrayList();
-
-        fs = foText.getCommonFont().getFontState(foText.getFOEventHandler().getFontInfo());
+    }
+    
+    public void initialize() {
+        fs = foText.getCommonFont().getFontState(foText.getFOEventHandler().getFontInfo(), this);
         
         // With CID fonts, space isn't neccesary currentFontState.width(32)
         spaceCharIPD = fs.getCharWidth(' ');

@@ -19,9 +19,10 @@
 package org.apache.fop.fo.expr;
 
 
+import org.apache.fop.datatypes.PercentBaseContext;
+import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.properties.ColorTypeProperty;
 import org.apache.fop.fo.properties.Property;
-import org.apache.fop.datatypes.PercentBase;
 
 class RGBColorFunction extends FunctionBase {
     public int nbArgs() {
@@ -68,7 +69,7 @@ class RGBColorFunction extends FunctionBase {
             return 255f;
         }
 
-        public int getBaseLength() {
+        public int getBaseLength(PercentBaseContext context) {
             return 0;
         }
 

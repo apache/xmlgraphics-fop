@@ -21,6 +21,7 @@ package org.apache.fop.layoutmgr.inline;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.pagination.Title;
+import org.apache.fop.layoutmgr.AbstractBaseLayoutManager;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.layoutmgr.LayoutContext;
@@ -41,23 +42,20 @@ import org.apache.fop.traits.MinOptMax;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.area.Block;
 
 /**
  * Content Layout Manager.
  * For use with objects that contain inline areas such as
  * leader use-content and title.
  */
-public class ContentLayoutManager implements InlineLevelLayoutManager {
+public class ContentLayoutManager extends AbstractBaseLayoutManager
+        implements InlineLevelLayoutManager {
     private FOUserAgent userAgent;
     private Area holder;
     private int stackSize;
     private LayoutManager parentLM;
     private InlineLevelLayoutManager childLM = null;
-
-    /**
-     * logging instance
-     */
-    protected static Log log = LogFactory.getLog(LayoutManager.class);
 
     /**
      * Constructs a new ContentLayoutManager
@@ -86,6 +84,10 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
         lm = new InlineLayoutManager(foTitle);
         addChildLM(lm);
         fillArea(lm);
+    }
+
+    public void initialize() {
+        // Empty
     }
 
     public void fillArea(LayoutManager curLM) {
@@ -311,5 +313,45 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
     public PageSequenceLayoutManager getPSLM() {
         return parentLM.getPSLM();
     }
+
+    // --------- Property Resolution related functions --------- //
+    
+    /**
+     * Returns the IPD of the content area
+     * @return the IPD of the content area
+     */
+    public int getContentAreaIPD() {
+        return holder.getIPD();
+    }
+   
+    /**
+     * Returns the BPD of the content area
+     * @return the BPD of the content area
+     */
+    public int getContentAreaBPD() {
+        return holder.getBPD();
+    }
+    
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#getGeneratesReferenceArea
+     */
+    public boolean getGeneratesReferenceArea() {
+        return false;
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#getGeneratesBlockArea
+     */
+    public boolean getGeneratesBlockArea() {
+        return getGeneratesLineArea() || holder instanceof Block;
+    }
+   
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#getGeneratesLineArea
+     */
+    public boolean getGeneratesLineArea() {
+        return holder instanceof LineArea;
+    }
+   
 }
 

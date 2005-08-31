@@ -42,6 +42,9 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
     private Block targetBlock;
     private SideRegion regionFO;
 
+    private int contentAreaIPD = 0;
+    private int contentAreaBPD = -1;
+
     /**
      * Creates a new StaticContentLayoutManager.
      * @param pslm PageSequenceLayoutManager this layout manager belongs to
@@ -53,9 +56,15 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         super(node);
         setParent(pslm);
         regionFO = reg;
-        targetRegion = getCurrentPV().getRegionReference(regionFO.getNameId()); 
+        targetRegion = getCurrentPV().getRegionReference(regionFO.getNameId());
     }
 
+    /**
+     * Creates a new StaticContentLayoutManager.
+     * @param pslm PageSequenceLayoutManager this layout manager belongs to
+     * @param node static-content FO
+     * @param block the block to layout into
+     */
     public StaticContentLayoutManager(PageSequenceLayoutManager pslm, 
             StaticContent node, Block block) {
         super(node);
@@ -68,8 +77,8 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
      */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         // set layout dimensions
-        fobj.setLayoutDimension(PercentBase.BLOCK_IPD, context.getRefIPD());
-        fobj.setLayoutDimension(PercentBase.BLOCK_BPD, context.getStackLimit().opt);
+        setContentAreaIPD(context.getRefIPD());
+        setContentAreaBPD(context.getStackLimit().opt);
 
         //TODO Copied from elsewhere. May be worthwhile to factor out the common parts. 
         // currently active LM
@@ -218,7 +227,8 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
     }
     
     /**
-     * convenience method that returns the Static Content node
+     * Convenience method that returns the Static Content node.
+     * @return the static content node
      */
     protected StaticContent getStaticContentFO() {
         return (StaticContent) fobj;
@@ -307,6 +317,31 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         protected LayoutManager getCurrentChildLM() {
             return null; //TODO NYI
         }
-    }    
+    } 
+    
+    /**
+     * Returns the IPD of the content area
+     * @return the IPD of the content area
+     */
+    public int getContentAreaIPD() {
+        return contentAreaIPD;
+    }
+   
+    private void setContentAreaIPD(int contentAreaIPD) {
+        this.contentAreaIPD = contentAreaIPD;
+    }
+    
+    /**
+     * Returns the BPD of the content area
+     * @return the BPD of the content area
+     */
+    public int getContentAreaBPD() {
+        return contentAreaBPD;
+    }
+    
+    private void setContentAreaBPD(int contentAreaBPD) {
+        this.contentAreaBPD = contentAreaBPD;
+    }
+    
 }
 

@@ -23,6 +23,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Trait;
+import org.apache.fop.datatypes.LengthBase;
+import org.apache.fop.datatypes.PercentBaseContext;
+import org.apache.fop.datatypes.SimplePercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
@@ -43,23 +46,25 @@ public class TraitSetter {
      * @param bpProps border and padding properties
      * @param bNotFirst True if the area is not the first area
      * @param bNotLast True if the area is not the last area
+     * @param context Property evaluation context
      */
     public static void setBorderPaddingTraits(Area area,
-            CommonBorderPaddingBackground bpProps, boolean bNotFirst, boolean bNotLast) {
+            CommonBorderPaddingBackground bpProps, boolean bNotFirst, boolean bNotLast,
+            PercentBaseContext context) {
         int iBP;
-        iBP = bpProps.getPadding(CommonBorderPaddingBackground.START, bNotFirst);
+        iBP = bpProps.getPadding(CommonBorderPaddingBackground.START, bNotFirst, context);
         if (iBP > 0) {
             area.addTrait(Trait.PADDING_START, new Integer(iBP));
         }
-        iBP = bpProps.getPadding(CommonBorderPaddingBackground.END, bNotLast);
+        iBP = bpProps.getPadding(CommonBorderPaddingBackground.END, bNotLast, context);
         if (iBP > 0) {
             area.addTrait(Trait.PADDING_END, new Integer(iBP));
         }
-        iBP = bpProps.getPadding(CommonBorderPaddingBackground.BEFORE, false);
+        iBP = bpProps.getPadding(CommonBorderPaddingBackground.BEFORE, false, context);
         if (iBP > 0) {
             area.addTrait(Trait.PADDING_BEFORE, new Integer(iBP));
         }
-        iBP = bpProps.getPadding(CommonBorderPaddingBackground.AFTER, false);
+        iBP = bpProps.getPadding(CommonBorderPaddingBackground.AFTER, false, context);
         if (iBP > 0) {
             area.addTrait(Trait.PADDING_AFTER, new Integer(iBP));
         }
@@ -106,8 +111,10 @@ public class TraitSetter {
      * add the borders to the area.
      * @param area the area to set the traits on.
      * @param bordProps border properties
+     * @param context Property evaluation context
      */
-    public static void addBorders(Area area, CommonBorderPaddingBackground bordProps) {
+    public static void addBorders(Area area, CommonBorderPaddingBackground bordProps,
+                                PercentBaseContext context) {
         BorderProps bps = getBorderProps(bordProps, CommonBorderPaddingBackground.BEFORE);
         if (bps != null) {
             area.addTrait(Trait.BORDER_BEFORE, bps);
@@ -125,7 +132,7 @@ public class TraitSetter {
             area.addTrait(Trait.BORDER_END, bps);
         }
 
-        addPadding(area, bordProps);
+        addPadding(area, bordProps, context);
     }
 
     /**
@@ -136,10 +143,12 @@ public class TraitSetter {
      * @param bordProps border properties
      * @param outer 4 boolean values indicating if the side represents the 
      *     table's outer border. Order: before, after, start, end
+     * @param context Property evaluation context
      */
     public static void addCollapsingBorders(Area area, 
             CommonBorderPaddingBackground bordProps,
-            boolean[] outer) {
+            boolean[] outer,
+            PercentBaseContext context) {
         BorderProps bps = getCollapsingBorderProps(bordProps, 
                 CommonBorderPaddingBackground.BEFORE, outer[0]);
         if (bps != null) {
@@ -161,26 +170,27 @@ public class TraitSetter {
             area.addTrait(Trait.BORDER_END, bps);
         }
 
-        addPadding(area, bordProps);
+        addPadding(area, bordProps, context);
     }
 
-    private static void addPadding(Area area, CommonBorderPaddingBackground bordProps) {
-        int padding = bordProps.getPadding(CommonBorderPaddingBackground.START, false);
+    private static void addPadding(Area area, CommonBorderPaddingBackground bordProps, 
+                                PercentBaseContext context) {
+        int padding = bordProps.getPadding(CommonBorderPaddingBackground.START, false, context);
         if (padding != 0) {
             area.addTrait(Trait.PADDING_START, new java.lang.Integer(padding));
         }
 
-        padding = bordProps.getPadding(CommonBorderPaddingBackground.END, false);
+        padding = bordProps.getPadding(CommonBorderPaddingBackground.END, false, context);
         if (padding != 0) {
             area.addTrait(Trait.PADDING_END, new java.lang.Integer(padding));
         }
 
-        padding = bordProps.getPadding(CommonBorderPaddingBackground.BEFORE, false);
+        padding = bordProps.getPadding(CommonBorderPaddingBackground.BEFORE, false, context);
         if (padding != 0) {
             area.addTrait(Trait.PADDING_BEFORE, new java.lang.Integer(padding));
         }
 
-        padding = bordProps.getPadding(CommonBorderPaddingBackground.AFTER, false);
+        padding = bordProps.getPadding(CommonBorderPaddingBackground.AFTER, false, context);
         if (padding != 0) {
             area.addTrait(Trait.PADDING_AFTER, new java.lang.Integer(padding));
         }
@@ -221,8 +231,11 @@ public class TraitSetter {
      * Note: The area's IPD and BPD must be set before calling this method.
      * @param area the area to set the traits on
      * @param backProps the background properties
+     * @param context Property evaluation context
      */
-    public static void addBackground(Area area, CommonBorderPaddingBackground backProps) {
+    public static void addBackground(Area area, 
+                                     CommonBorderPaddingBackground backProps,
+                                     PercentBaseContext context) {
         if (!backProps.hasBackground()) {
             return;
         }
@@ -236,43 +249,42 @@ public class TraitSetter {
             if (backProps.backgroundPositionHorizontal != null) {
                 if (back.getRepeat() == Constants.EN_NOREPEAT 
                         || back.getRepeat() == Constants.EN_REPEATY) {
-                    if (backProps.backgroundPositionHorizontal instanceof PercentLength) {
-                        if (area.getIPD() > 0) {
-                            int width = area.getIPD();
-                            width += backProps.getPaddingStart(false);
-                            width += backProps.getPaddingEnd(false);
-                            back.setHoriz((int)((width - back.getFopImage().getIntrinsicWidth()) 
-                                * ((PercentLength)backProps.backgroundPositionHorizontal).value()));
-                        } else {
-                            //TODO Area IPD has to be set for this to work
-                            log.warn("Horizontal background image positioning ignored"
-                                    + " because the IPD was not set on the area."
-                                    + " (Yes, it's a bug in FOP)");
-                        }
+                    if (area.getIPD() > 0) {
+                        int width = area.getIPD();
+                        width += backProps.getPaddingStart(false, context);
+                        width += backProps.getPaddingEnd(false, context);
+                        back.setHoriz(backProps.backgroundPositionHorizontal.getValue(
+                                new SimplePercentBaseContext(context, 
+                                                             LengthBase.IMAGE_BACKGROUND_POSITION_HORIZONTAL,
+                                                             (width - back.getFopImage().getIntrinsicWidth())
+                                                            )
+                            ));
                     } else {
-                        back.setHoriz(backProps.backgroundPositionHorizontal.getValue());
+                        //TODO Area IPD has to be set for this to work
+                        log.warn("Horizontal background image positioning ignored"
+                                + " because the IPD was not set on the area."
+                                + " (Yes, it's a bug in FOP)");
                     }
                 }
             }
             if (backProps.backgroundPositionVertical != null) {
                 if (back.getRepeat() == Constants.EN_NOREPEAT 
                         || back.getRepeat() == Constants.EN_REPEATX) {
-                    if (backProps.backgroundPositionVertical instanceof PercentLength) {
-                        if (area.getBPD() > 0) {
-                            int height = area.getBPD();
-                            height += backProps.getPaddingBefore(false);
-                            height += backProps.getPaddingAfter(false);
-                            back.setVertical(
-                                (int)((height - back.getFopImage().getIntrinsicHeight()) 
-                                * ((PercentLength)backProps.backgroundPositionVertical).value()));
-                        } else {
-                            //TODO Area BPD has to be set for this to work
-                            log.warn("Vertical background image positioning ignored"
-                                    + " because the BPD was not set on the area."
-                                    + " (Yes, it's a bug in FOP)");
-                        }
+                    if (area.getBPD() > 0) {
+                        int height = area.getBPD();
+                        height += backProps.getPaddingBefore(false, context);
+                        height += backProps.getPaddingAfter(false, context);
+                        back.setVertical(backProps.backgroundPositionVertical.getValue(
+                                new SimplePercentBaseContext(context, 
+                                                             LengthBase.IMAGE_BACKGROUND_POSITION_VERTICAL,
+                                                             (height - back.getFopImage().getIntrinsicHeight())
+                                                            )
+                            ));
                     } else {
-                        back.setVertical(backProps.backgroundPositionVertical.getValue());
+                        //TODO Area BPD has to be set for this to work
+                        log.warn("Vertical background image positioning ignored"
+                                + " because the BPD was not set on the area."
+                                + " (Yes, it's a bug in FOP)");
                     }
                 }
             }
@@ -288,29 +300,31 @@ public class TraitSetter {
      * @param area the area to set the traits on.
      * @param bpProps the border, padding and background properties
      * @param marginProps the margin properties.
+     * @param context the context for evaluation of percentages
      */
     public static void addMargins(Area area,
                                   CommonBorderPaddingBackground bpProps,
-                                  CommonMarginBlock marginProps) {
-        int startIndent = marginProps.startIndent.getValue();
+                                  CommonMarginBlock marginProps,
+                                  PercentBaseContext context) {
+        int startIndent = marginProps.startIndent.getValue(context);
         if (startIndent != 0) {
             area.addTrait(Trait.START_INDENT, new Integer(startIndent));
         }
         
-        int spaceStart = marginProps.startIndent.getValue()
+        int spaceStart = marginProps.startIndent.getValue(context)
                             - bpProps.getBorderStartWidth(false)
-                            - bpProps.getPaddingStart(false);
+                            - bpProps.getPaddingStart(false, context);
         if (spaceStart != 0) {
             area.addTrait(Trait.SPACE_START, new Integer(spaceStart));
         }
 
-        int endIndent = marginProps.endIndent.getValue();
+        int endIndent = marginProps.endIndent.getValue(context);
         if (endIndent != 0) {
             area.addTrait(Trait.END_INDENT, new Integer(endIndent));
         }
-        int spaceEnd = marginProps.endIndent.getValue()
+        int spaceEnd = marginProps.endIndent.getValue(context)
                             - bpProps.getBorderEndWidth(false)
-                            - bpProps.getPaddingEnd(false);
+                            - bpProps.getPaddingEnd(false, context);
         if (spaceEnd != 0) {
             area.addTrait(Trait.SPACE_END, new Integer(spaceEnd));
         }

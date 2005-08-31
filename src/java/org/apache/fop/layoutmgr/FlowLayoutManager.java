@@ -62,10 +62,6 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
         // set layout dimensions
         int flowIPD = getCurrentPV().getCurrentSpan().getColumnWidth();
         int flowBPD = (int) getCurrentPV().getBodyRegion().getBPD();
-        fobj.setLayoutDimension(PercentBase.REFERENCE_AREA_IPD, flowIPD);
-        fobj.setLayoutDimension(PercentBase.REFERENCE_AREA_BPD, flowBPD);
-        fobj.setLayoutDimension(PercentBase.BLOCK_IPD, context.getRefIPD());
-        fobj.setLayoutDimension(PercentBase.BLOCK_BPD, context.getStackLimit().opt);
 
         // currently active LM
         BlockLevelLayoutManager curLM;
@@ -338,5 +334,21 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
             reset(null);
         }
     }
+    /**
+     * Returns the IPD of the content area
+     * @return the IPD of the content area
+     */
+    public int getContentAreaIPD() {
+        return getCurrentPV().getCurrentSpan().getColumnWidth();
+    }
+   
+    /**
+     * Returns the BPD of the content area
+     * @return the BPD of the content area
+     */
+    public int getContentAreaBPD() {
+        return (int) getCurrentPV().getBodyRegion().getBPD();
+    }
+    
 }
 

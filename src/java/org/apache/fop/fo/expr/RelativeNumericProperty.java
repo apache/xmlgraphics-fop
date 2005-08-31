@@ -18,6 +18,8 @@
 
 package org.apache.fop.fo.expr;
 
+import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.properties.Property;
@@ -96,29 +98,30 @@ public class RelativeNumericProperty extends Property implements Numeric, Length
 
     /**
      * Return a resolved (calculated) Numeric with the value of the expression.
+     * @param context Evaluation context
      * @throws PropertyException when an exception occur during evaluation.
      */
-    private Numeric getResolved() throws PropertyException {
+    private Numeric getResolved(PercentBaseContext context) throws PropertyException {
         Numeric n;
         switch (operation) {
         case ADDITION:
-            return NumericOp.addition2(op1, op2);
+            return NumericOp.addition2(op1, op2, context);
         case SUBTRACTION:
-            return NumericOp.subtraction2(op1, op2);
+            return NumericOp.subtraction2(op1, op2, context);
         case MULTIPLY:
-            return NumericOp.multiply2(op1, op2);
+            return NumericOp.multiply2(op1, op2, context);
         case DIVIDE:
-            return NumericOp.divide2(op1, op2);
+            return NumericOp.divide2(op1, op2, context);
         case MODULO:
-            return NumericOp.modulo2(op1, op2);
+            return NumericOp.modulo2(op1, op2, context);
         case NEGATE:
-            return NumericOp.negate2(op1);
+            return NumericOp.negate2(op1, context);
         case ABS:
-            return NumericOp.abs2(op1);
+            return NumericOp.abs2(op1, context);
         case MAX:
-            return NumericOp.max2(op1, op2);
+            return NumericOp.max2(op1, op2, context);
         case MIN:
-            return NumericOp.min2(op1, op2);
+            return NumericOp.min2(op1, op2, context);
         default:
             throw new PropertyException("Unknown expr operation " + operation);  
         }
@@ -129,7 +132,16 @@ public class RelativeNumericProperty extends Property implements Numeric, Length
      * @see Numeric#getNumericValue()
      */
     public double getNumericValue() throws PropertyException {
-        return getResolved().getNumericValue();
+        return getResolved(null).getNumericValue(null);
+    }
+
+    /**
+     * Return the value.
+     * @param Evaluation context
+     * @see Numeric#getNumericValue(Object)
+     */
+    public double getNumericValue(PercentBaseContext context) throws PropertyException {
+        return getResolved(context).getNumericValue(context);
     }
 
     /**
@@ -168,6 +180,19 @@ public class RelativeNumericProperty extends Property implements Numeric, Length
     public int getValue() {
         try {
             return (int) getNumericValue();
+        } catch (PropertyException exc) {
+            log.error(exc);
+        }
+        return 0;
+    }
+
+    /**
+     * Return the value of this numeric as a length in millipoints. 
+     * @param Evaluation context
+     */
+    public int getValue(PercentBaseContext context) {
+        try {
+            return (int) getNumericValue(context);
         } catch (PropertyException exc) {
             log.error(exc);
         }

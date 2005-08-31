@@ -24,7 +24,9 @@ import java.awt.Rectangle;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.datatypes.SimplePercentBaseContext;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.CommonMarginBlock;
@@ -90,11 +92,24 @@ public class RegionBody extends Region {
     /**
      * @see org.apache.fop.fo.pagination.Region#getViewportRectangle(FODimension)
      */
-    public Rectangle getViewportRectangle (FODimension reldims) {
-        int left = commonMarginBlock.marginLeft.getValue();
-        int right = commonMarginBlock.marginRight.getValue();
-        int top = commonMarginBlock.marginTop.getValue();
-        int bottom = commonMarginBlock.marginBottom.getValue();
+    public Rectangle getViewportRectangle (FODimension reldims, FODimension pageViewPortRect) {
+        /* Special rules apply to resolving margins in the page context.
+         * Contrary to normal margins in this case top and bottom margin
+         * are resolved relative to the height. In the property subsystem
+         * all margin properties are configured to using BLOCK_WIDTH.
+         * That's why we 'cheat' here and setup a context for the height but
+         * use the LengthBase.BLOCK_WIDTH.
+         * Also the values are resolved relative to the page size.
+         */
+        SimplePercentBaseContext pageWidthContext 
+            = new SimplePercentBaseContext(null, LengthBase.CONTAINING_BLOCK_WIDTH, pageViewPortRect.ipd);
+        SimplePercentBaseContext pageHeightContext
+            = new SimplePercentBaseContext(null, LengthBase.CONTAINING_BLOCK_WIDTH, pageViewPortRect.bpd);
+
+        int left = commonMarginBlock.marginLeft.getValue(pageWidthContext);
+        int right = commonMarginBlock.marginRight.getValue(pageWidthContext);
+        int top = commonMarginBlock.marginTop.getValue(pageHeightContext);
+        int bottom = commonMarginBlock.marginBottom.getValue(pageHeightContext);
         return new Rectangle(left, top,
                     reldims.ipd - left - right,
                     reldims.bpd - top - bottom);

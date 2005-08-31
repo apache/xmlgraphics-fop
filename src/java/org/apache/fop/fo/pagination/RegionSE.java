@@ -22,6 +22,7 @@ package org.apache.fop.fo.pagination;
 import java.awt.Rectangle;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 
@@ -55,17 +56,18 @@ public abstract class RegionSE extends SideRegion {
      * diminish by extend of start and end if present.
      * @param vpRefRect viewport reference rectangle
      * @param wm writing mode
+     * @param siblingContext the context to use to resolve extent on siblings
      */
-    protected void adjustIPD(Rectangle vpRefRect, int wm) {
+    protected void adjustIPD(Rectangle vpRefRect, int wm, PercentBaseContext siblingContext) {
         int offset = 0;
         RegionBefore before = (RegionBefore) getSiblingRegion(FO_REGION_BEFORE);
         if (before != null && before.getPrecedence() == EN_TRUE) {
-            offset = before.getExtent().getValue();
+            offset = before.getExtent().getValue(siblingContext);
             vpRefRect.translate(0, offset);
         }
         RegionAfter after = (RegionAfter) getSiblingRegion(FO_REGION_AFTER);
         if (after != null && after.getPrecedence() == EN_TRUE) {
-            offset += after.getExtent().getValue();
+            offset += after.getExtent().getValue(siblingContext);
         }
         if (offset > 0) {
             if (wm == EN_LR_TB || wm == EN_RL_TB) {

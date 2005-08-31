@@ -17,11 +17,14 @@
 /* $Id$ */
 
 package org.apache.fop.fo.properties;
-
+import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.datatypes.SimplePercentBaseContext;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.expr.RelativeNumericProperty;
 
 /**
  * A maker which calculates the line-height property.
@@ -60,10 +63,13 @@ public class LineHeightPropertyMaker extends SpaceProperty.Maker {
         return null;
     }
 
+    /**
+     * @see SpaceProperty#convertProperty(Property, PropertyList, FObj)
+     */
     public Property convertProperty(Property p,
             PropertyList propertyList,
             FObj fo) throws PropertyException {
-        Numeric numval = p.getNumeric();
+        Numeric numval = p.getNumeric();    
         if (numval != null && numval.getDimension() == 0) {
             p = new PercentLength(numval.getNumericValue(), getPercentBase(fo,propertyList));
             Property spaceProp = super.convertProperty(p, propertyList, fo);

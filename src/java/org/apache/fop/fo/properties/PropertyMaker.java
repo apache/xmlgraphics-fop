@@ -308,7 +308,7 @@ public class PropertyMaker implements Cloneable {
      * what this is used for, or remove it from the signature.)
      * @return an object implementing the PercentBase interface.
      */
-    public PercentBase getPercentBase(FObj fo, PropertyList pl) {
+    public PercentBase getPercentBase(FObj fo, PropertyList pl) throws PropertyException {
         if (percentBase == -1)
             return null;
         return new LengthBase(fo, pl, percentBase);

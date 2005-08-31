@@ -22,6 +22,7 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.expr.RelativeNumericProperty;
 
 /**
  * Store all common margin properties for blocks.

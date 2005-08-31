@@ -37,6 +37,7 @@ import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.Trait;
+import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -71,11 +72,10 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager implement
         super(node);
         fobj = node;
         this.gridUnit = pgu;
-        initialize();
     }
 
     /** @return the table-cell FO */
-    public TableCell getFObj() {
+    public TableCell getTableCell() {
         return this.fobj;
     }
     
@@ -83,15 +83,15 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager implement
         return fobj.isSeparateBorderModel();
     }
     
-    private void initialize() {
+    public void initialize() {
         borderAndPaddingBPD = 0;
         borderAndPaddingBPD += fobj.getCommonBorderPaddingBackground().getBorderBeforeWidth(false);
         borderAndPaddingBPD += fobj.getCommonBorderPaddingBackground().getBorderAfterWidth(false);
         if (!isSeparateBorderModel()) {
             borderAndPaddingBPD /= 2;
         }
-        borderAndPaddingBPD += fobj.getCommonBorderPaddingBackground().getPaddingBefore(false);
-        borderAndPaddingBPD += fobj.getCommonBorderPaddingBackground().getPaddingAfter(false);
+        borderAndPaddingBPD += fobj.getCommonBorderPaddingBackground().getPaddingBefore(false, this);
+        borderAndPaddingBPD += fobj.getCommonBorderPaddingBackground().getPaddingAfter(false, this);
     }
     
     /**
@@ -116,8 +116,8 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager implement
         if (!isSeparateBorderModel()) {
             iIndents /= 2;
         }
-        iIndents += fobj.getCommonBorderPaddingBackground().getPaddingStart(false);
-        iIndents += fobj.getCommonBorderPaddingBackground().getPaddingEnd(false);
+        iIndents += fobj.getCommonBorderPaddingBackground().getPaddingStart(false, this);
+        iIndents += fobj.getCommonBorderPaddingBackground().getPaddingEnd(false, this);
         return iIndents;
     }
     
@@ -132,7 +132,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager implement
         cellIPD -= getIPIndents();
         if (isSeparateBorderModel()) {
             int borderSep = fobj.getBorderSeparation().getLengthPair()
-                    .getIPD().getLength().getValue();
+                    .getIPD().getLength().getValue(this);
             cellIPD -= borderSep;
         }
 
@@ -298,8 +298,8 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager implement
         }
         CommonBorderPaddingBackground cbpb 
             = gu.getCell().getCommonBorderPaddingBackground(); 
-        bpd -= cbpb.getPaddingBefore(false);
-        bpd -= cbpb.getPaddingAfter(false);
+        bpd -= cbpb.getPaddingBefore(false, this);
+        bpd -= cbpb.getPaddingAfter(false, this);
         return bpd;
     }
     
@@ -317,7 +317,11 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager implement
 
         getPSLM().addIDToPage(fobj.getId());
 
-        if (!isSeparateBorderModel()) {
+        if (isSeparateBorderModel()) {
+            if (!emptyCell || fobj.showEmptyCells()) {
+                TraitSetter.addBorders(curBlockArea, fobj.getCommonBorderPaddingBackground(), this);
+            }
+        } else {
             boolean[] outer = new boolean[] {
                     gridUnit.getFlag(GridUnit.FIRST_IN_TABLE), 
                     gridUnit.getFlag(GridUnit.LAST_IN_TABLE),
@@ -326,7 +330,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager implement
             if (!gridUnit.hasSpanning()) {
                 //Can set the borders directly if there's no span
                 TraitSetter.addCollapsingBorders(curBlockArea, 
-                        gridUnit.getBorders(), outer);
+                        gridUnit.getBorders(), outer, this);
             } else {
                 int dy = yoffset;
                 for (int y = 0; y < gridUnit.getRows().size(); y++) {
@@ -356,7 +360,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager implement
                         }
                         block.setBPD(bpd);
                         lastRowHeight = rowHeight;
-                        int ipd = gu.getColumn().getColumnWidth().getValue();
+                        int ipd = gu.getColumn().getColumnWidth().getValue(this);
                         int borderStartWidth = gu.getBorders().getBorderStartWidth(false) / 2; 
                         ipd -= borderStartWidth;
                         ipd -= gu.getBorders().getBorderEndWidth(false) / 2;
@@ -368,9 +372,9 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager implement
                                 += gu.getBorders().getBorderBeforeWidth(false) / 2;
                         }
                         block.setYOffset(dy - halfCollapsingBorderHeight);
-                        TraitSetter.addCollapsingBorders(block, gu.getBorders(), outer);
+                        TraitSetter.addCollapsingBorders(block, gu.getBorders(), outer, this);
                         parentLM.addChildArea(block);
-                        dx += gu.getColumn().getColumnWidth().getValue();
+                        dx += gu.getColumn().getColumnWidth().getValue(this);
                     }
                     dy += lastRowHeight;
                 }
@@ -396,13 +400,17 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager implement
         
         curBlockArea.setBPD(contentBPD);
 
+        // Add background after we know the BPD
         if (isSeparateBorderModel()) {
             if (!emptyCell || fobj.showEmptyCells()) {
-                TraitSetter.addBorders(curBlockArea, fobj.getCommonBorderPaddingBackground());
-                TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
+                TraitSetter.addBackground(curBlockArea,
+                                          fobj.getCommonBorderPaddingBackground(),
+                                          this);
             }
         } else {
-            TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
+            TraitSetter.addBackground(curBlockArea,
+                                      fobj.getCommonBorderPaddingBackground(),
+                                      this);
         }
         
         flush();
@@ -434,12 +442,12 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager implement
             if (!isSeparateBorderModel()) {
                 indent /= 2;
             }
-            indent += fobj.getCommonBorderPaddingBackground().getPaddingStart(false);
+            indent += fobj.getCommonBorderPaddingBackground().getPaddingStart(false, this);
             // set position
             int halfBorderSep = 0;
             if (isSeparateBorderModel()) {
                 halfBorderSep = fobj.getBorderSeparation().getLengthPair()
-                        .getIPD().getLength().getValue() / 2;
+                        .getIPD().getLength().getValue(this) / 2;
             }
             int borderAdjust = 0;
             if (!isSeparateBorderModel()) {
@@ -533,6 +541,43 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager implement
         return !fobj.getKeepWithNext().getWithinPage().isAuto()
             || !fobj.getKeepWithNext().getWithinColumn().isAuto();
             */
+    }
+    
+    // --------- Property Resolution related functions --------- //
+    
+    /**
+     * Returns the IPD of the content area
+     * @return the IPD of the content area
+     */
+    public int getContentAreaIPD() {
+        return cellIPD;
+    }
+   
+    /**
+     * Returns the BPD of the content area
+     * @return the BPD of the content area
+     */
+    public int getContentAreaBPD() {
+        if (curBlockArea != null) {
+            return curBlockArea.getBPD();
+        } else {
+            log.error("getContentAreaBPD called on unknown BPD");
+            return -1;
+        }
+    }
+   
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#getGeneratesReferenceArea
+     */
+    public boolean getGeneratesReferenceArea() {
+        return true;
+    }
+   
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#getGeneratesBlockArea
+     */
+    public boolean getGeneratesBlockArea() {
+        return true;
     }
 
 }

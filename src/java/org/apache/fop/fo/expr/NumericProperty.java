@@ -19,6 +19,7 @@
 package org.apache.fop.fo.expr;
 
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.properties.ColorTypeProperty;
 import org.apache.fop.fo.properties.Property;
@@ -60,6 +61,15 @@ public class NumericProperty extends Property implements Numeric, Length {
     }
 
     /**
+     * Return the value.
+     * @param Evaluation context
+     * @see Numeric#getNumericValue(Object)
+     */
+    public double getNumericValue(PercentBaseContext context) {
+        return value;
+    }
+
+    /**
      * Return true of the numeric is absolute.
      * @see Numeric#isAbsolute()
      */
@@ -85,6 +95,14 @@ public class NumericProperty extends Property implements Numeric, Length {
      * Return the value of this numeric as a length in millipoints. 
      */
     public int getValue() {
+        return (int) value;
+    }
+
+    /**
+     * Return the value of this numeric as a length in millipoints. 
+     * @param Evaluation context
+     */
+    public int getValue(PercentBaseContext context) {
         return (int) value;
     }
 

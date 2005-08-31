@@ -118,6 +118,7 @@ public class LayoutEngineTestSuite {
                 final LayoutEngineTester tester, final File f) {
         suite.addTest(new LayoutEngineTestCase(f.getName()) {
             public void runTest() throws Exception {
+                org.apache.commons.logging.LogFactory.getLog(this.getClass()).info("Starting " + f.getName());
                 prepare(tester, f);
                 testMain();
             }

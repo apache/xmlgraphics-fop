@@ -19,6 +19,7 @@
 package org.apache.fop.fo.properties;
 
 import org.apache.fop.datatypes.CompoundDatatype;
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
@@ -90,11 +91,11 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
      */
     public Property getComponent(int cmpId) {
         if (cmpId == CP_MINIMUM) {
-            return getMinimum();
+            return getMinimum(null);
         } else if (cmpId == CP_OPTIMUM) {
-            return getOptimum();
+            return getOptimum(null);
         } else if (cmpId == CP_MAXIMUM) {
-            return getMaximum();
+            return getMaximum(null);
         } else {
             return null;    // SHOULDN'T HAPPEN
         }
@@ -146,15 +147,18 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
     }
     
     // Minimum is prioritaire, if explicit
-    private void checkConsistency() {
+    private void checkConsistency(PercentBaseContext context) {
         if (consistent) {
+            return;
+        }
+        if (context == null) {
             return;
         }
         // Make sure max >= min
         // Must also control if have any allowed enum values!
 
         if (!minimum.isAuto() && !maximum.isAuto() 
-                && minimum.getLength().getValue() > maximum.getLength().getValue()) {
+                && minimum.getLength().getValue(context) > maximum.getLength().getValue(context)) {
             if ((bfSet & MINSET) != 0) {
                 // if minimum is explicit, force max to min
                 if ((bfSet & MAXSET) != 0) {
@@ -168,7 +172,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
         }
         // Now make sure opt <= max and opt >= min
         if (!optimum.isAuto() && !maximum.isAuto() 
-                && optimum.getLength().getValue() > maximum.getLength().getValue()) {
+                && optimum.getLength().getValue(context) > maximum.getLength().getValue(context)) {
             if ((bfSet & OPTSET) != 0) {
                 if ((bfSet & MAXSET) != 0) {
                     // Warning: opt > max, resetting opt to max
@@ -182,7 +186,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
                 optimum = maximum;
             }
         } else if (!optimum.isAuto() && !minimum.isAuto() && 
-                optimum.getLength().getValue() < minimum.getLength().getValue()) {
+                optimum.getLength().getValue(context) < minimum.getLength().getValue(context)) {
             if ((bfSet & MINSET) != 0) {
                 // if minimum is explicit, force opt to min
                 if ((bfSet & OPTSET) != 0) {
@@ -198,34 +202,37 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
     }
 
     /**
+     * @param context Percentage evaluation context
      * @return minimum length
      */
-    public Property getMinimum() {
-        checkConsistency();
+    public Property getMinimum(PercentBaseContext context) {
+        checkConsistency(context);
         return this.minimum;
     }
 
     /**
+     * @param context Percentage evaluation context
      * @return maximum length
      */
-    public Property getMaximum() {
-        checkConsistency();
+    public Property getMaximum(PercentBaseContext context) {
+        checkConsistency(context);
         return this.maximum;
     }
 
     /**
+     * @param context Percentage evaluation context
      * @return optimum length
      */
-    public Property getOptimum() {
-        checkConsistency();
+    public Property getOptimum(PercentBaseContext context) {
+        checkConsistency(context);
         return this.optimum;
     }
 
     public String toString() {
         return "LengthRange[" +
-        "min:" + getMinimum().getObject() + 
-        ", max:" + getMaximum().getObject() + 
-        ", opt:" + getOptimum().getObject() + "]";
+        "min:" + getMinimum(null).getObject() + 
+        ", max:" + getMaximum(null).getObject() + 
+        ", opt:" + getOptimum(null).getObject() + "]";
     }
 
     /**

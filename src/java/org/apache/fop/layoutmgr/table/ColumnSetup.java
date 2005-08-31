@@ -24,6 +24,7 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.datatypes.PercentBaseContext;
 
 import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableColumn;
@@ -127,12 +128,13 @@ public class ColumnSetup {
 
     /**
      * @param col column index (1 is first column)
+     * @param context the context for percentage based calculations
      * @return the X offset of the requested column
      */
-    public int getXOffset(int col) {
+    public int getXOffset(int col, PercentBaseContext context) {
         int xoffset = 0;
         for (int i = 1; i < col; i++) {
-            xoffset += getColumn(i).getColumnWidth().getValue();
+            xoffset += getColumn(i).getColumnWidth().getValue(context);
         }
         return xoffset;
     }

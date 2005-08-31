@@ -20,6 +20,7 @@ package org.apache.fop.fo.properties;
 
 import org.apache.fop.datatypes.CompoundDatatype;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
@@ -120,6 +121,14 @@ public class CondLengthProperty extends Property implements CompoundDatatype {
      */
     public int getLengthValue() {
         return this.length.getLength().getValue();
+    }
+
+    /**
+     * Returns the computed length value.
+     * @return the length in millipoints
+     */
+    public int getLengthValue(PercentBaseContext context) {
+        return this.length.getLength().getValue(context);
     }
 
     public String toString() {

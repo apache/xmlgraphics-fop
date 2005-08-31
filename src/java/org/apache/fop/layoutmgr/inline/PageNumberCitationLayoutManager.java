@@ -51,7 +51,10 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
     public PageNumberCitationLayoutManager(PageNumberCitation node) {
         super(node);
         fobj = node;
-        font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo());
+    }
+    
+    public void initialize() {
+        font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
     }
 
     public InlineArea get(LayoutContext context) {

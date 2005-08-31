@@ -18,6 +18,7 @@
 
 package org.apache.fop.fo.expr;
 
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.datatypes.Numeric;
 
 /**
@@ -39,17 +40,17 @@ public class NumericOp {
      */
     public static Numeric addition(Numeric op1, Numeric op2) throws PropertyException {
         if (op1.isAbsolute() && op2.isAbsolute()) {
-            return addition2(op1, op2);
+            return addition2(op1, op2, null);
         } else {
             return new RelativeNumericProperty(RelativeNumericProperty.ADDITION, op1, op2);
         }
     }
     
-    public static Numeric addition2(Numeric op1, Numeric op2) throws PropertyException {
+    public static Numeric addition2(Numeric op1, Numeric op2, PercentBaseContext context) throws PropertyException {
         if (op1.getDimension() != op2.getDimension()) {
             throw new PropertyException("Can't subtract Numerics of different dimensions");
         }
-        return numeric(op1.getNumericValue() + op2.getNumericValue(), op1.getDimension());
+        return numeric(op1.getNumericValue(context) + op2.getNumericValue(context), op1.getDimension());
     }
     
     /**
@@ -63,17 +64,17 @@ public class NumericOp {
      */
     public static Numeric subtraction(Numeric op1, Numeric op2) throws PropertyException {
         if (op1.isAbsolute() && op2.isAbsolute()) {
-            return subtraction2(op1, op2);
+            return subtraction2(op1, op2, null);
         } else {
             return new RelativeNumericProperty(RelativeNumericProperty.SUBTRACTION, op1, op2);
         }
     }
 
-    public static Numeric subtraction2(Numeric op1, Numeric op2) throws PropertyException {
+    public static Numeric subtraction2(Numeric op1, Numeric op2, PercentBaseContext context) throws PropertyException {
         if (op1.getDimension() != op2.getDimension()) {
             throw new PropertyException("Can't subtract Numerics of different dimensions");
         }
-        return numeric(op1.getNumericValue() - op2.getNumericValue(), op1.getDimension());
+        return numeric(op1.getNumericValue(context) - op2.getNumericValue(context), op1.getDimension());
     }
     
     /**
@@ -87,14 +88,14 @@ public class NumericOp {
      */
     public static Numeric multiply(Numeric op1, Numeric op2) throws PropertyException {
         if (op1.isAbsolute() && op2.isAbsolute()) {
-            return multiply2(op1, op2);
+            return multiply2(op1, op2, null);
         } else {
             return new RelativeNumericProperty(RelativeNumericProperty.MULTIPLY, op1, op2);
         }
     }    
 
-    public static Numeric multiply2(Numeric op1, Numeric op2) throws PropertyException {
-        return numeric(op1.getNumericValue() * op2.getNumericValue(), 
+    public static Numeric multiply2(Numeric op1, Numeric op2, PercentBaseContext context) throws PropertyException {
+        return numeric(op1.getNumericValue(context) * op2.getNumericValue(context), 
                        op1.getDimension() + op2.getDimension());
     }
     
@@ -110,14 +111,14 @@ public class NumericOp {
      */
     public static Numeric divide(Numeric op1, Numeric op2) throws PropertyException {
         if (op1.isAbsolute() && op2.isAbsolute()) {
-            return divide2(op1, op2);
+            return divide2(op1, op2, null);
         } else {
             return new RelativeNumericProperty(RelativeNumericProperty.DIVIDE, op1, op2);
         }
     }
     
-    public static Numeric divide2(Numeric op1, Numeric op2) throws PropertyException {
-        return numeric(op1.getNumericValue() / op2.getNumericValue(), 
+    public static Numeric divide2(Numeric op1, Numeric op2, PercentBaseContext context) throws PropertyException {
+        return numeric(op1.getNumericValue(context) / op2.getNumericValue(context), 
                        op1.getDimension() - op2.getDimension());
     }
     
@@ -129,14 +130,14 @@ public class NumericOp {
      */
     public static Numeric modulo(Numeric op1, Numeric op2) throws PropertyException {
         if (op1.isAbsolute() && op2.isAbsolute()) {
-            return modulo2(op1, op2);
+            return modulo2(op1, op2, null);
         } else {
             return new RelativeNumericProperty(RelativeNumericProperty.MODULO, op1, op2);
         }
     }
     
-    public static Numeric modulo2(Numeric op1, Numeric op2) throws PropertyException {
-        return numeric(op1.getNumericValue() % op2.getNumericValue(), op1.getDimension());
+    public static Numeric modulo2(Numeric op1, Numeric op2, PercentBaseContext context) throws PropertyException {
+        return numeric(op1.getNumericValue(context) % op2.getNumericValue(context), op1.getDimension());
     }
 
     /**
@@ -146,14 +147,14 @@ public class NumericOp {
      */
     public static Numeric abs(Numeric op) throws PropertyException {
         if (op.isAbsolute()) {
-            return abs2(op);
+            return abs2(op, null);
         } else {
             return new RelativeNumericProperty(RelativeNumericProperty.ABS, op);
         }
     }
 
-    public static Numeric abs2(Numeric op) throws PropertyException {
-        return numeric(Math.abs(op.getNumericValue()), op.getDimension());
+    public static Numeric abs2(Numeric op, PercentBaseContext context) throws PropertyException {
+        return numeric(Math.abs(op.getNumericValue(context)), op.getDimension());
     }
     
     /**
@@ -163,14 +164,14 @@ public class NumericOp {
      */
     public static Numeric negate(Numeric op) throws PropertyException {
         if (op.isAbsolute()) {
-            return negate2(op);
+            return negate2(op, null);
         } else {
             return new RelativeNumericProperty(RelativeNumericProperty.NEGATE, op);
         }
     }
 
-    public static Numeric negate2(Numeric op) throws PropertyException {
-        return numeric(- op.getNumericValue(), op.getDimension());
+    public static Numeric negate2(Numeric op, PercentBaseContext context) throws PropertyException {
+        return numeric(- op.getNumericValue(context), op.getDimension());
     }
     
     /**
@@ -182,17 +183,17 @@ public class NumericOp {
      */
     public static Numeric max(Numeric op1, Numeric op2) throws PropertyException {
         if (op1.isAbsolute() && op2.isAbsolute()) {
-            return max2(op1, op2);
+            return max2(op1, op2, null);
         } else {
             return new RelativeNumericProperty(RelativeNumericProperty.MAX, op1, op2);
         }
     }
 
-    public static Numeric max2(Numeric op1, Numeric op2) throws PropertyException {
+    public static Numeric max2(Numeric op1, Numeric op2, PercentBaseContext context) throws PropertyException {
         if (op1.getDimension() != op2.getDimension()) {
             throw new PropertyException("Arguments to max() must have same dimensions");
         }
-        return op1.getNumericValue() > op2.getNumericValue() ? op1 : op2;
+        return op1.getNumericValue(context) > op2.getNumericValue(context) ? op1 : op2;
     }
     
     /**
@@ -204,17 +205,17 @@ public class NumericOp {
      */
     public static Numeric min(Numeric op1, Numeric op2) throws PropertyException {
         if (op1.isAbsolute() && op2.isAbsolute()) {
-            return min2(op1, op2);
+            return min2(op1, op2, null);
         } else {
             return new RelativeNumericProperty(RelativeNumericProperty.MIN, op1, op2);
         }
     }
 
-    public static Numeric min2(Numeric op1, Numeric op2) throws PropertyException {
+    public static Numeric min2(Numeric op1, Numeric op2, PercentBaseContext context) throws PropertyException {
         if (op1.getDimension() != op2.getDimension()) {
             throw new PropertyException("Arguments to min() must have same dimensions");
         }
-        return op1.getNumericValue() <= op2.getNumericValue() ? op1 : op2;
+        return op1.getNumericValue(context) <= op2.getNumericValue(context) ? op1 : op2;
     }
     
     /**

@@ -20,11 +20,12 @@ package org.apache.fop.fo.expr;
 
 import java.util.Stack;
 
-import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.properties.PropertyMaker;
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentBase;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.PropertyMaker;
 
 
 /**
@@ -57,7 +58,7 @@ public class PropertyInfo {
      * Propagates to the Maker.
      * @return The PercentBase object or null if percentLengthOK()=false.
      */
-    public PercentBase getPercentBase() {
+    public PercentBase getPercentBase() throws PropertyException {
         PercentBase pcbase = getFunctionPercentBase();
         return (pcbase != null) ? pcbase : maker.getPercentBase(fo, plist);
     }
@@ -65,8 +66,8 @@ public class PropertyInfo {
     /**
      * @return the current font-size value as base units (milli-points).
      */
-    public int currentFontSize() throws PropertyException {
-        return plist.get(Constants.PR_FONT_SIZE).getLength().getValue();
+    public Length currentFontSize() throws PropertyException {
+        return plist.get(Constants.PR_FONT_SIZE).getLength();
     }
 
     /**

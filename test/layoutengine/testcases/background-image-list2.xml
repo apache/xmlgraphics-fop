@@ -25,7 +25,7 @@
     <img>../../resources/images/bgimg300dpi.jpg</img>
   </variables>
   <fo>
-    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
       <fo:layout-master-set>
         <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
           <fo:region-body/>
@@ -34,7 +34,7 @@
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
           <fo:list-block provisional-distance-between-starts="1in" provisional-label-separation="0.1in">
-            <fo:list-item background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center" background-image="##img">
+            <fo:list-item background-repeat="no-repeat" background-color="yellow"  background-position-horizontal="center" background-position-vertical="center" background-image="##img">
               <fo:list-item-label end-indent="label-end()">
                 <fo:block>label 1</fo:block>
               </fo:list-item-label>
@@ -62,20 +62,22 @@
               <fo:list-item-label end-indent="label-end()">
                 <fo:block>label 3</fo:block>
               </fo:list-item-label>
-              <fo:list-item-body start-indent="body-start()" background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center" background-image="##img">
+              <fo:list-item-body start-indent="body-start()">
                 <fo:block>
-                  body 3: The whole list should have a centered background.
-                  The whole list should have a centered background.
-                  The whole list should have a centered background.
+                  body 3: We should have no background on this list item.
+                  We should have no background on this list item.
+                  We should have no background on this list item.
                 </fo:block>
               </fo:list-item-body>
             </fo:list-item>
           </fo:list-block>
-          <fo:block></fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
   </fo>
   <checks>
+    <eval expected="360000" xpath="//flow/block/block/@ipd"/>
+    <eval expected="72000" xpath="//flow/block/block/@bpd"/>
+    <eval expected="color=#ffff00,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=156960,vertical=12960" xpath="//flow/block/block/@background"/>
   </checks>
 </testcase>

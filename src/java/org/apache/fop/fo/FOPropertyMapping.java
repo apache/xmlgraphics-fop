@@ -280,12 +280,13 @@ public class FOPropertyMapping implements Constants {
         genericCondPadding.useGeneric(genericCondLength);
         genericCondPadding.setInherited(false);
         genericCondPadding.getSubpropMaker(CP_LENGTH).setDefault("0pt");
+        genericCondPadding.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
 
         // GenericPadding
         genericPadding = new LengthProperty.Maker(0);
         genericPadding.setInherited(false);
         genericPadding.setDefault("0pt");
-        genericPadding.setPercentBase(LengthBase.BLOCK_WIDTH);
+        genericPadding.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         genericPadding.addShorthand(s_generics[PR_PADDING]);
 
         // GenericCondBorderWidth
@@ -716,7 +717,7 @@ public class FOPropertyMapping implements Constants {
         m.addKeyword("left", "0%");
         m.addKeyword("center", "50%");
         m.addKeyword("right", "100%");
-        m.setPercentBase(LengthBase.CONTAINING_BOX);
+        m.setPercentBase(LengthBase.IMAGE_BACKGROUND_POSITION_HORIZONTAL);
         addPropertyMaker("background-position-horizontal", m);
 
         // background-position-vertical
@@ -726,7 +727,7 @@ public class FOPropertyMapping implements Constants {
         m.addKeyword("top", "0%");
         m.addKeyword("center", "50%");
         m.addKeyword("bottom", "100%");
-        m.setPercentBase(LengthBase.CONTAINING_BOX);
+        m.setPercentBase(LengthBase.IMAGE_BACKGROUND_POSITION_VERTICAL);
         addPropertyMaker("background-position-vertical", m);
 
         // border-before-color
@@ -1202,7 +1203,7 @@ public class FOPropertyMapping implements Constants {
         m.setInherited(false);
         m.setDefault("0pt");
         m.addShorthand(s_generics[PR_MARGIN]);
-        m.setPercentBase(LengthBase.BLOCK_WIDTH);
+        m.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         addPropertyMaker("margin-top", m);
 
         // margin-bottom
@@ -1210,7 +1211,7 @@ public class FOPropertyMapping implements Constants {
         m.setInherited(false);
         m.setDefault("0pt");
         m.addShorthand(s_generics[PR_MARGIN]);
-        m.setPercentBase(LengthBase.BLOCK_WIDTH);
+        m.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         addPropertyMaker("margin-bottom", m);
 
         // margin-left
@@ -1218,7 +1219,7 @@ public class FOPropertyMapping implements Constants {
         m.setInherited(false);
         m.setDefault("0pt");
         m.addShorthand(s_generics[PR_MARGIN]);
-        m.setPercentBase(LengthBase.BLOCK_WIDTH);
+        m.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         addPropertyMaker("margin-left", m);
 
         // margin-right
@@ -1226,7 +1227,7 @@ public class FOPropertyMapping implements Constants {
         m.setInherited(false);
         m.setDefault("0pt");
         m.addShorthand(s_generics[PR_MARGIN]);
-        m.setPercentBase(LengthBase.BLOCK_WIDTH);
+        m.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         addPropertyMaker("margin-right", m);
 
         // space-before
@@ -1407,26 +1408,26 @@ public class FOPropertyMapping implements Constants {
         // block-progression-dimension
         m = new LengthRangeProperty.Maker(PR_BLOCK_PROGRESSION_DIMENSION);
         m.setInherited(false);
-        m.setPercentBase(LengthBase.BLOCK_HEIGHT);
+        m.setPercentBase(LengthBase.CONTAINING_BLOCK_HEIGHT);
 
         l = new LengthProperty.Maker(CP_MINIMUM);
         l.setDefault("auto");
         l.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
-        l.setPercentBase(LengthBase.CONTAINING_BOX);
+        l.setPercentBase(LengthBase.CONTAINING_BLOCK_HEIGHT);
         l.setByShorthand(true);
         m.addSubpropMaker(l);
 
         l = new LengthProperty.Maker(CP_OPTIMUM);
         l.setDefault("auto");
         l.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
-        l.setPercentBase(LengthBase.CONTAINING_BOX);
+        l.setPercentBase(LengthBase.CONTAINING_BLOCK_HEIGHT);
         l.setByShorthand(true);
         m.addSubpropMaker(l);
 
         l = new LengthProperty.Maker(CP_MAXIMUM);
         l.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
         l.setDefault("auto");
-        l.setPercentBase(LengthBase.CONTAINING_BOX);
+        l.setPercentBase(LengthBase.CONTAINING_BLOCK_HEIGHT);
         l.setByShorthand(true);
         m.addSubpropMaker(l);
 
@@ -1462,33 +1463,33 @@ public class FOPropertyMapping implements Constants {
         l  = new LengthProperty.Maker(PR_HEIGHT);
         l.setInherited(false);
         l.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
-        l.setPercentBase(LengthBase.BLOCK_HEIGHT);
+        l.setPercentBase(LengthBase.CONTAINING_BLOCK_HEIGHT);
         l.setDefault("auto");
         addPropertyMaker("height", l);
 
         // inline-progression-dimension
         m = new LengthRangeProperty.Maker(PR_INLINE_PROGRESSION_DIMENSION);
         m.setInherited(false);
-        m.setPercentBase(LengthBase.BLOCK_WIDTH);
+        m.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
 
         l = new LengthProperty.Maker(CP_MINIMUM);
         l.setDefault("auto");
         l.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
-        l.setPercentBase(LengthBase.CONTAINING_BOX);
+        l.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         l.setByShorthand(true);
         m.addSubpropMaker(l);
 
         l = new LengthProperty.Maker(CP_OPTIMUM);
         l.setDefault("auto");
         l.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
-        l.setPercentBase(LengthBase.CONTAINING_BOX);
+        l.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         l.setByShorthand(true);
         m.addSubpropMaker(l);
 
         l = new LengthProperty.Maker(CP_MAXIMUM);
         l.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
         l.setDefault("auto");
-        l.setPercentBase(LengthBase.CONTAINING_BOX);
+        l.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         l.setByShorthand(true);
         m.addSubpropMaker(l);
 
@@ -1547,7 +1548,7 @@ public class FOPropertyMapping implements Constants {
         l  = new LengthProperty.Maker(PR_WIDTH);
         l.setInherited(false);
         l.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
-        l.setPercentBase(LengthBase.BLOCK_WIDTH);
+        l.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         l.setDefault("auto");
         addPropertyMaker("width", l);
 
@@ -1679,7 +1680,7 @@ public class FOPropertyMapping implements Constants {
         m  = new LengthProperty.Maker(PR_TEXT_INDENT);
         m.setInherited(true);
         m.setDefault("0pt");
-        m.setPercentBase(LengthBase.BLOCK_WIDTH);
+        m.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         addPropertyMaker("text-indent", m);
 
         // white-space-collapse
@@ -1957,29 +1958,29 @@ public class FOPropertyMapping implements Constants {
         m.setInherited(true);
         m.setDefault("use-font-metrics", true);
         m.addKeyword("use-font-metrics", "0pt");
-        m.setPercentBase(LengthBase.CONTAINING_BOX);
+        m.setPercentBase(LengthBase.PARENT_AREA_WIDTH);
         addPropertyMaker("leader-pattern-width", m);
 
         // leader-length
         m  = new LengthRangeProperty.Maker(PR_LEADER_LENGTH);
         m.setInherited(true);
-        m.setPercentBase(LengthBase.CONTAINING_BOX);
+        m.setPercentBase(LengthBase.PARENT_AREA_WIDTH);
 
         sub = new LengthProperty.Maker(CP_MINIMUM);
         sub.setDefault("0pt");
-        sub.setPercentBase(LengthBase.BLOCK_WIDTH);
+        sub.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         sub.setByShorthand(true);
         m.addSubpropMaker(sub);
 
         sub = new LengthProperty.Maker(CP_OPTIMUM);
         sub.setDefault("12.0pt");
-        sub.setPercentBase(LengthBase.BLOCK_WIDTH);
+        sub.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         sub.setByShorthand(true);
         m.addSubpropMaker(sub);
 
         sub = new LengthProperty.Maker(CP_MAXIMUM);
         sub.setDefault("100%", true);
-        sub.setPercentBase(LengthBase.BLOCK_WIDTH);
+        sub.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         sub.setByShorthand(true);
         m.addSubpropMaker(sub);
         addPropertyMaker("leader-length", m);
@@ -2190,6 +2191,7 @@ public class FOPropertyMapping implements Constants {
         m  = new LengthProperty.Maker(PR_EXTENT);
         m.setInherited(true);
         m.setDefault("0pt");
+        m.setPercentBase(LengthBase.CUSTOM_BASE);
         addPropertyMaker("extent", m);
 
         // flow-name
@@ -2376,7 +2378,7 @@ public class FOPropertyMapping implements Constants {
         m  = new LengthProperty.Maker(PR_COLUMN_WIDTH);
         m.setInherited(false);
         m.setDefault("proportional-column-width(1)", true);
-        m.setPercentBase(LengthBase.BLOCK_WIDTH);
+        m.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         addPropertyMaker("column-width", m);
 
         // empty-cells
@@ -2651,13 +2653,14 @@ public class FOPropertyMapping implements Constants {
         m.setInherited(false);
         m.setDefault("");
         m.setDatatypeParser(new BoxPropShorthandParser());
-        m.setPercentBase(LengthBase.BLOCK_WIDTH);
+        m.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         addPropertyMaker("margin", m);
 
         // padding
         m  = new ListProperty.Maker(PR_PADDING);
         m.setInherited(false);
         m.setDatatypeParser(new BoxPropShorthandParser());
+        m.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         addPropertyMaker("padding", m);
 
         // page-break-after

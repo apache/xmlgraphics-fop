@@ -41,7 +41,7 @@
   </fo>
   <checks>
     <eval expected="360000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@ipd"/>
-    <eval expected="50214" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@bpd"/>
+    <eval expected="51864" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@bpd"/>
     <eval expected="46080" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea/viewport/@ipd"/>
     <eval expected="46080" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea/viewport/@ipda"/>
     <eval expected="46080" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea/viewport/@bpd"/>

@@ -22,11 +22,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.fop.area.Area;
+import org.apache.fop.datatypes.PercentBaseContext;
+import org.apache.fop.fo.FObj;
 
 /**
  * The interface for all LayoutManagers.
  */
-public interface LayoutManager {
+public interface LayoutManager extends PercentBaseContext {
 
     /**
      * Set the parent layout manager.
@@ -42,6 +44,12 @@ public interface LayoutManager {
      */
     LayoutManager getParent();
 
+    /**
+     * initialize the layout manager. Allows each layout manager 
+     * to calculate often used values.
+     */
+    public void initialize();
+    
     /**
      * Get the active PageSequenceLayoutManager instance for this
      * layout process.
@@ -143,11 +151,46 @@ public interface LayoutManager {
      * of the node assigned to the LM, after changes have been applied
      *
      * @param oldList        the elements to replace
-     * @param flaggedPenalty the penalty value for hyphenated lines
      * @param alignment      the desired text alignment
      * @return               the updated list of KnuthElements
      */
     LinkedList getChangedKnuthElements(List oldList, /*int flaggedPenalty,*/
                                        int alignment);
+    
+    /**
+     * Returns the IPD of the content area
+     * @return the IPD of the content area
+     */
+    int getContentAreaIPD();
    
+    /**
+     * Returns the BPD of the content area
+     * @return the BPD of the content area
+     */
+    int getContentAreaBPD();
+   
+    /**
+     * Returns an indication if the layout manager generates a reference area.
+     * @return True if the layout manager generates a reference area
+     */
+    boolean getGeneratesReferenceArea();
+
+    /**
+     * Returns an indication if the layout manager generates a block area.
+     * @return True if the layout manager generates a block area
+     */
+    boolean getGeneratesBlockArea();
+
+    /**
+     * Returns an indication if the layout manager generates a line area.
+     * @return True if the layout manager generates a line area
+     */
+    boolean getGeneratesLineArea();
+    
+    /**
+     * Returns the fo this layout manager is associated with.
+     * @return The fo for this layout manager or null.
+     */
+    FObj getFObj();
+    
 }

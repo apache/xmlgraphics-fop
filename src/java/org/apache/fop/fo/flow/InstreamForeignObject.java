@@ -285,17 +285,6 @@ public class InstreamForeignObject extends FObj {
         return FO_INSTREAM_FOREIGN_OBJECT;
     }
 
-    /** @see org.apache.fop.fo.FObj */
-    public Number getLayoutDimension(PercentBase.LayoutDimension key) {
-        if (key == PercentBase.IMAGE_INTRINSIC_WIDTH) {
-            return new Integer(getIntrinsicWidth());
-        } else if (key == PercentBase.IMAGE_INTRINSIC_HEIGHT) {
-            return new Integer(getIntrinsicHeight());
-        } else {
-            return super.getLayoutDimension(key);
-        }
-    }
-    
     /**
      * Preloads the image so the intrinsic size is available.
      */

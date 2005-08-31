@@ -137,9 +137,9 @@ public class SpaceProperty extends LengthRangeProperty {
 
     public String toString() {
         return "Space[" +
-        "min:" + getMinimum().getObject() + 
-        ", max:" + getMaximum().getObject() + 
-        ", opt:" + getOptimum().getObject() + 
+        "min:" + getMinimum(null).getObject() + 
+        ", max:" + getMaximum(null).getObject() + 
+        ", opt:" + getOptimum(null).getObject() + 
         ", precedence:" + precedence.getObject() + 
         ", conditionality:" + conditionality.getObject() + "]";
     }

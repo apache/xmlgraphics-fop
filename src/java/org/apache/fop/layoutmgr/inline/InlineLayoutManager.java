@@ -67,31 +67,30 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
     public InlineLayoutManager(InlineLevel node) {
         super(node);
         fobj = node;
-        initialize();
     }
     
     private Inline getInlineFO() {
         return (Inline)fobj;
     }
     
-    private void initialize() {
+    public void initialize() {
         inlineProps = fobj.getCommonMarginInline();
         borderProps = fobj.getCommonBorderPaddingBackground();
 
-        int iPad = borderProps.getPadding(CommonBorderPaddingBackground.BEFORE, false);
+        int iPad = borderProps.getPadding(CommonBorderPaddingBackground.BEFORE, false, this);
         iPad += borderProps.getBorderWidth(CommonBorderPaddingBackground.BEFORE,
                                              false);
-        iPad += borderProps.getPadding(CommonBorderPaddingBackground.AFTER, false);
+        iPad += borderProps.getPadding(CommonBorderPaddingBackground.AFTER, false, this);
         iPad += borderProps.getBorderWidth(CommonBorderPaddingBackground.AFTER, false);
         extraBPD = new MinOptMax(iPad);
     }
 
     protected MinOptMax getExtraIPD(boolean bNotFirst, boolean bNotLast) {
         int iBP = borderProps.getPadding(CommonBorderPaddingBackground.START,
-                                           bNotFirst);
+                                           bNotFirst, this);
         iBP += borderProps.getBorderWidth(CommonBorderPaddingBackground.START,
                                             bNotFirst);
-        iBP += borderProps.getPadding(CommonBorderPaddingBackground.END, bNotLast);
+        iBP += borderProps.getPadding(CommonBorderPaddingBackground.END, bNotLast, this);
         iBP += borderProps.getBorderWidth(CommonBorderPaddingBackground.END, bNotLast);
         return new MinOptMax(iBP);
     }
@@ -99,14 +98,14 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
 
     protected boolean hasLeadingFence(boolean bNotFirst) {
         int iBP = borderProps.getPadding(CommonBorderPaddingBackground.START,
-                                           bNotFirst);
+                                           bNotFirst, this);
         iBP += borderProps.getBorderWidth(CommonBorderPaddingBackground.START,
                                             bNotFirst);
         return (iBP > 0);
     }
 
     protected boolean hasTrailingFence(boolean bNotLast) {
-        int iBP = borderProps.getPadding(CommonBorderPaddingBackground.END, bNotLast);
+        int iBP = borderProps.getPadding(CommonBorderPaddingBackground.END, bNotLast, this);
         iBP += borderProps.getBorderWidth(CommonBorderPaddingBackground.END, bNotLast);
         return (iBP > 0);
     }
@@ -138,11 +137,11 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
         
         // Add border and padding to current area and set flags (FIRST, LAST ...)
         TraitSetter.setBorderPaddingTraits(getCurrentArea(),
-                                           borderProps, bNotFirst, bNotLast);
+                                           borderProps, bNotFirst, bNotLast, this);
 
         if (borderProps != null) {
-            TraitSetter.addBorders(getCurrentArea(), borderProps);
-            TraitSetter.addBackground(getCurrentArea(), borderProps);
+            TraitSetter.addBorders(getCurrentArea(), borderProps, this);
+            TraitSetter.addBackground(getCurrentArea(), borderProps, this);
         }
     }
 
@@ -166,7 +165,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
             // not be the first area created by this inline
             childLC = new LayoutContext(lc);
             if (getSpaceStart() != null) {
-                lc.getLeadingSpace().addSpace(new SpaceVal(getSpaceStart()));
+                lc.getLeadingSpace().addSpace(new SpaceVal(getSpaceStart(), this));
             }
 
             // Check for "fence"
@@ -308,8 +307,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
      *
      * @param parentIter Iterator over Position information returned
      * by this LayoutManager.
-     * @param dSpaceAdjust Factor controlling how much extra space to add
-     * in order to justify the line.
+     * @param context layout context.
      */
     public void addAreas(PositionIterator parentIter,
                          LayoutContext context) {
@@ -331,7 +329,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
         }
 
         if (getSpaceStart() != null) {
-            context.getLeadingSpace().addSpace(new SpaceVal(getSpaceStart()));
+            context.getLeadingSpace().addSpace(new SpaceVal(getSpaceStart(), this));
         }
 
         // "unwrap" the NonLeafPositions stored in parentIter
@@ -391,11 +389,12 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
         }
         // Add own trailing space to parent context (or set on area?)
         if (context.getTrailingSpace() != null  && getSpaceEnd() != null) {
-            context.getTrailingSpace().addSpace(new SpaceVal(getSpaceEnd()));
+            context.getTrailingSpace().addSpace(new SpaceVal(getSpaceEnd(), this));
         }
-        setTraits(bAreaCreated, !bIsLast);
         
         parentLM.addChildArea(getCurrentArea());
+        setTraits(bAreaCreated, !bIsLast);
+
         context.setFlags(LayoutContext.LAST_AREA, bIsLast);
         bAreaCreated = true;
     }

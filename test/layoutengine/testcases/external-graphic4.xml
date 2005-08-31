@@ -18,24 +18,21 @@
 <testcase>
   <info>
     <p>
-      This test checks external-graphics. An oversized image is to be squeezed into page using min/opt/max values.
+      This test checks external-graphics with relative content-height
     </p>
   </info>
   <fo>
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
       <fo:layout-master-set>
-        <fo:simple-page-master master-name="normal" page-width="21cm" page-height="29.7cm" margin="2cm">
-          <fo:region-body background-color="yellow"/>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
         </fo:simple-page-master>
       </fo:layout-master-set>
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
-          <fo:block font-size="8pt">This first block is only to force an infinite loop if the image is not scaled down.</fo:block>
-          <!-- TODO If you remove the above block, the image is placed on the page although it's too big. No warnings. -->
+          <fo:block>plain external-graphic</fo:block>
           <fo:block>
-            <fo:external-graphic src="../../resources/images/big-image.png" 
-                inline-progression-dimension.maximum="100%" block-progression-dimension.maximum="100%"
-                content-width="scale-to-fit" content-height="scale-to-fit" overflow="hidden"/>
+            <fo:external-graphic src="../../resources/images/bgimg300dpi.jpg" content-height="200%" content-width="200%" />EOG
           </fo:block>
           <fo:block>EOF</fo:block>
         </fo:flow>
@@ -43,10 +40,10 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="0 0 595275 841889" xpath="//pageViewport/@bounds"/>
-    <eval expected="481891" xpath="//regionBody/@ipda"/>
-    <eval expected="728505" xpath="//regionBody/@bpda"/>
-    <eval expected="481891" xpath="//flow/block[2]/lineArea/viewport/@ipda"/>
-    <eval expected="728505" xpath="//flow/block[2]/lineArea/viewport/@bpda + //flow/block[1]/@bpda"/>
+    <eval expected="360000" xpath="//flow/block[2]/@ipd"/>
+    <eval expected="92160" xpath="//flow/block[2]/lineArea/viewport/@ipd"/>
+    <eval expected="92160" xpath="//flow/block[2]/lineArea/viewport/@ipda"/>
+    <eval expected="92160" xpath="//flow/block[2]/lineArea/viewport/@bpd"/>
+    <eval expected="92160" xpath="//flow/block[2]/lineArea/viewport/@bpda"/>
   </checks>
 </testcase>

@@ -62,29 +62,37 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     protected boolean bSpaceBeforeServed = false;
     /** Reference IPD available */
     protected int referenceIPD = 0;
-
-    /* holds the (one-time use) fo:block space-before
-       and -after properties.  Large fo:blocks are split
-       into multiple Area.Blocks to accomodate the subsequent
-       regions (pages) they are placed on.  space-before
-       is applied at the beginning of the first
-       Block and space-after at the end of the last Block
-       used in rendering the fo:block.
-    */
+    /**
+     * Holds the (one-time use) fo:block space-before
+     * and -after properties.  Large fo:blocks are split
+     * into multiple Area. Blocks to accomodate the subsequent
+     * regions (pages) they are placed on.  space-before
+     * is applied at the beginning of the first
+     * Block and space-after at the end of the last Block
+     * used in rendering the fo:block.
+     */
     protected MinOptMax foSpaceBefore = null;
+    /** see foSpaceBefore */
     protected MinOptMax foSpaceAfter = null;
 
     private int lastGeneratedPosition = -1;
     private int smallestPosNumberChecked = Integer.MAX_VALUE;
 
     private Position auxiliaryPosition;
+
+    private int contentAreaIPD = 0;
     
+    /**
+     * @param the fo this LM deals with
+     */
     public BlockStackingLayoutManager(FObj node) {
         super(node);
+        setGeneratesBlockArea(true);
         fobj = node;
     }
 
-    /** return current area being filled
+    /** 
+     * @return current area being filled
      */
     protected BlockParent getCurrentArea() {
         return this.parentArea;
@@ -93,6 +101,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
 
     /**
      * Set the current area being filled.
+     * @param parentArea the current area to be filled
      */
     protected void setCurrentArea(BlockParent parentArea) {
         this.parentArea = parentArea;
@@ -240,6 +249,9 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         return (int) Math.ceil((float)len / bpUnit);
     }
 
+    /**
+     * @see LayoutManager#getNextKnuthElements(LayoutContext, int)
+     */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         /* LF *///System.err.println("BLM.getNextKnuthElements> keep-together = "
               // + layoutProps.keepTogether.getType());
@@ -251,21 +263,21 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         BlockLevelLayoutManager prevLM = null; // previously active LM
 
         referenceIPD = context.getRefIPD();
+        
         int iIndents = 0;
         int bIndents = 0;
         if (fobj instanceof org.apache.fop.fo.flow.Block) {
             org.apache.fop.fo.flow.Block block = (org.apache.fop.fo.flow.Block)fobj;
-            iIndents = block.getCommonMarginBlock().startIndent.getValue() 
-                     + block.getCommonMarginBlock().endIndent.getValue();
-            bIndents = block.getCommonBorderPaddingBackground().getBPPaddingAndBorder(false);
+            iIndents = block.getCommonMarginBlock().startIndent.getValue(this) 
+                     + block.getCommonMarginBlock().endIndent.getValue(this);
+            bIndents = block.getCommonBorderPaddingBackground().getBPPaddingAndBorder(false, this);
         }
         int ipd = referenceIPD - iIndents;
 
         MinOptMax stackSize = new MinOptMax();
 
         // Set context for percentage property values.
-        fobj.setLayoutDimension(PercentBase.BLOCK_IPD, ipd);
-        fobj.setLayoutDimension(PercentBase.BLOCK_BPD, -1);
+        setContentAreaIPD(ipd);
 
         LinkedList returnedList = null;
         LinkedList contentList = new LinkedList();
@@ -437,6 +449,9 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         return returnList;
     }
 
+    /**
+     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#negotiateBPDAdjustment(int, org.apache.fop.layoutmgr.KnuthElement)
+     */
     public int negotiateBPDAdjustment(int adj, KnuthElement lastElement) {
 /*LF*/  //System.out.println("  BLM.negotiateBPDAdjustment> " + adj);
 /*LF*/  //System.out.println("  lastElement e' " + (lastElement.isPenalty() 
@@ -517,6 +532,9 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         }
     }
 
+    /**
+     * @see BlockLevelLayoutManager#discardSpace(KnuthGlue)
+     */
     public void discardSpace(KnuthGlue spaceGlue) {
         //System.out.println("  BLM.discardSpace> " + spaceGlue.getPosition().getClass().getName());
         Position innerPosition = ((NonLeafPosition) spaceGlue.getPosition()).getPosition();
@@ -544,6 +562,9 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         }
     }
 
+    /**
+     * @see LayoutManager#getChangedKnuthElements(List, int)
+     */
     public LinkedList getChangedKnuthElements(List oldList, int alignment) {
 /*LF*/  //System.out.println("");
 /*LF*/  //System.out.println("  BLM.getChangedKnuthElements> inizio: oldList.size() = " 
@@ -775,7 +796,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     /**
      * Creates Knuth elements for before border padding and adds them to the return list.
      * @param returnList return list to add the additional elements to
-     * @param returnPosition applicable return position
      */
     protected void addKnuthElementsForBorderPaddingBefore(LinkedList returnList/*, 
             Position returnPosition*/) {
@@ -791,7 +811,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         if (borderAndPadding != null) {
             //TODO Handle conditionality
             int bpBefore = borderAndPadding.getBorderBeforeWidth(false)
-                         + borderAndPadding.getPaddingBefore(false);
+                         + borderAndPadding.getPaddingBefore(false, this);
             if (bpBefore > 0) {
                 returnList.add(new KnuthBox(bpBefore, getAuxiliaryPosition(), true));
             }
@@ -801,7 +821,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     /**
      * Creates Knuth elements for after border padding and adds them to the return list.
      * @param returnList return list to add the additional elements to
-     * @param returnPosition applicable return position
      */
     protected void addKnuthElementsForBorderPaddingAfter(LinkedList returnList/*, 
             Position returnPosition*/) {
@@ -817,7 +836,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         if (borderAndPadding != null) {
             //TODO Handle conditionality
             int bpAfter = borderAndPadding.getBorderAfterWidth(false)
-                        + borderAndPadding.getPaddingAfter(false);
+                        + borderAndPadding.getPaddingAfter(false, this);
             if (bpAfter > 0) {
                 returnList.add(new KnuthBox(bpAfter, getAuxiliaryPosition(), true));
             }
@@ -827,7 +846,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     /**
      * Creates Knuth elements for break-before and adds them to the return list.
      * @param returnList return list to add the additional elements to
-     * @param returnPosition applicable return position
      * @return true if an element has been added due to a break-before.
      */
     protected boolean addKnuthElementsForBreakBefore(LinkedList returnList/*, 
@@ -856,7 +874,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     /**
      * Creates Knuth elements for break-after and adds them to the return list.
      * @param returnList return list to add the additional elements to
-     * @param returnPosition applicable return position
      * @return true if an element has been added due to a break-after.
      */
     protected boolean addKnuthElementsForBreakAfter(LinkedList returnList/*, 
@@ -885,7 +902,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     /**
      * Creates Knuth elements for space-before and adds them to the return list.
      * @param returnList return list to add the additional elements to
-     * @param returnPosition applicable return position
      * @param alignment vertical alignment
      */
     protected void addKnuthElementsForSpaceBefore(LinkedList returnList/*, 
@@ -907,8 +923,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         // append elements representing space-before
         if (bpUnit > 0
                 || spaceBefore != null
-                   && !(spaceBefore.getMinimum().getLength().getValue() == 0 
-                        && spaceBefore.getMaximum().getLength().getValue() == 0)) {
+                   && !(spaceBefore.getMinimum(this).getLength().getValue(this) == 0 
+                        && spaceBefore.getMaximum(this).getLength().getValue(this) == 0)) {
             if (spaceBefore != null && !spaceBefore.getSpace().isDiscard()) {
                 // add elements to prevent the glue to be discarded
                 returnList.add(new KnuthBox(0, getAuxiliaryPosition(), false));
@@ -921,16 +937,16 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                         getAuxiliaryPosition(), true));
             } else /*if (alignment == EN_JUSTIFY)*/ {
                 returnList.add(new KnuthGlue(
-                        spaceBefore.getOptimum().getLength().getValue(),
-                        spaceBefore.getMaximum().getLength().getValue()
-                                - spaceBefore.getOptimum().getLength().getValue(),
-                        spaceBefore.getOptimum().getLength().getValue()
-                                - spaceBefore.getMinimum().getLength().getValue(),
+                        spaceBefore.getOptimum(this).getLength().getValue(this),
+                        spaceBefore.getMaximum(this).getLength().getValue(this)
+                                - spaceBefore.getOptimum(this).getLength().getValue(this),
+                        spaceBefore.getOptimum(this).getLength().getValue(this)
+                                - spaceBefore.getMinimum(this).getLength().getValue(this),
                         BlockLevelLayoutManager.SPACE_BEFORE_ADJUSTMENT, 
                         getAuxiliaryPosition(), true));
             } /*else {
                 returnList.add(new KnuthGlue(
-                        spaceBefore.getOptimum().getLength().getValue(), 
+                        spaceBefore.getOptimum().getLength().getValue(this), 
                         0, 0, BlockLevelLayoutManager.SPACE_BEFORE_ADJUSTMENT,
                         returnPosition, true));
             }*/
@@ -940,7 +956,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     /**
      * Creates Knuth elements for space-after and adds them to the return list.
      * @param returnList return list to add the additional elements to
-     * @param returnPosition applicable return position
      * @param alignment vertical alignment
      */
     protected void addKnuthElementsForSpaceAfter(LinkedList returnList/*, Position returnPosition*/, 
@@ -962,8 +977,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         // append elements representing space-after
         if (bpUnit > 0
                 || spaceAfter != null
-                   && !(spaceAfter.getMinimum().getLength().getValue() == 0 
-                        && spaceAfter.getMaximum().getLength().getValue() == 0)) {
+                   && !(spaceAfter.getMinimum(this).getLength().getValue(this) == 0 
+                        && spaceAfter.getMaximum(this).getLength().getValue(this) == 0)) {
             if (spaceAfter != null && !spaceAfter.getSpace().isDiscard()) {
                 returnList.add(new KnuthPenalty(0, KnuthElement.INFINITE,
                         false, getAuxiliaryPosition(), false));
@@ -974,16 +989,16 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                         getAuxiliaryPosition(), true));
             } else /*if (alignment == EN_JUSTIFY)*/ {
                 returnList.add(new KnuthGlue(
-                        spaceAfter.getOptimum().getLength().getValue(),
-                        spaceAfter.getMaximum().getLength().getValue()
-                                - spaceAfter.getOptimum().getLength().getValue(),
-                        spaceAfter.getOptimum().getLength().getValue()
-                                - spaceAfter.getMinimum().getLength().getValue(),
+                        spaceAfter.getOptimum(this).getLength().getValue(this),
+                        spaceAfter.getMaximum(this).getLength().getValue(this)
+                                - spaceAfter.getOptimum(this).getLength().getValue(this),
+                        spaceAfter.getOptimum(this).getLength().getValue(this)
+                                - spaceAfter.getMinimum(this).getLength().getValue(this),
                         BlockLevelLayoutManager.SPACE_AFTER_ADJUSTMENT, getAuxiliaryPosition(),
                         (!spaceAfter.getSpace().isDiscard()) ? false : true));
             } /*else {
                 returnList.add(new KnuthGlue(
-                        spaceAfter.getOptimum().getLength().getValue(), 0, 0,
+                        spaceAfter.getOptimum().getLength().getValue(this), 0, 0,
                         BlockLevelLayoutManager.SPACE_AFTER_ADJUSTMENT, returnPosition,
                         (!spaceAfter.getSpace().isDiscard()) ? false : true));
             }*/
@@ -1378,5 +1393,25 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         }
     }
 
+    /**
+     * Returns the IPD of the content area
+     * @return the IPD of the content area
+     */
+    public int getContentAreaIPD() {
+        return contentAreaIPD;
+    }
+   
+    protected void setContentAreaIPD(int contentAreaIPD) {
+        this.contentAreaIPD = contentAreaIPD;
+    }
+    
+    /**
+     * Returns the BPD of the content area
+     * @return the BPD of the content area
+     */
+    public int getContentAreaBPD() {
+        return -1;
+    }
+    
 }
 
