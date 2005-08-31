@@ -11,6 +11,7 @@ background-image7.xml
 block-container4a.xml
 external-graphic1.xml
 external-graphic2.xml
+external-graphic4.xml
 inline-block2.xml
 inline-container1.xml
 keep-together-inline1.xml
