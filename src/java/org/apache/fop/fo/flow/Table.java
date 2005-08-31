@@ -132,11 +132,13 @@ public class Table extends FObj {
         PropertyList colPList = new StaticPropertyList(defaultColumn, pList);
         colPList.setWritingMode();
         defaultColumn.bind(colPList);
-        
+
+        /* TODO hasPadding requires context for evaluation - need to move this to layout
         if (borderCollapse != EN_SEPARATE && commonBorderPaddingBackground.hasPadding()) {
             //See "17.6.2 The collapsing border model" in CSS2
             getLogger().error("Table may not have padding when using the collapsing border model.");
         }
+        */
         if (borderCollapse != EN_SEPARATE) {
             getLogger().warn("The collapsing border model on an fo:table "
                     + "is currently not supported by FOP");

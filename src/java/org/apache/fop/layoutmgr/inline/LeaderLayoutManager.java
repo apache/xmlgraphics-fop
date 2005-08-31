@@ -23,7 +23,6 @@ import org.apache.fop.area.inline.FilledArea;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.layoutmgr.KnuthElement;
@@ -40,6 +39,8 @@ import org.apache.fop.traits.MinOptMax;
 
 import java.util.List;
 import java.util.LinkedList;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager.AreaInfo;
 
 /**
  * LayoutManager for the fo:leader formatting object
@@ -50,6 +51,8 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
     
     private LinkedList contentList = null;
     private ContentLayoutManager clm = null;
+    
+    private int contentAreaIPD = 0;
 
     /**
      * Constructor
@@ -60,7 +63,10 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
     public LeaderLayoutManager(Leader node) {
         super(node);
         fobj = node;
-        font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo());
+    }
+    
+    public void initialize() {
+        font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
         // the property leader-alignment does not affect vertical positioning
         // (see section 7.21.1 in the XSL Recommendation)
         // setAlignment(node.getLeaderAlignment());
@@ -77,10 +83,10 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
 
     private MinOptMax getLeaderAllocIPD(int ipd) {
         // length of the leader
-        fobj.setLayoutDimension(PercentBase.BLOCK_IPD, ipd);
-        int opt = fobj.getLeaderLength().getOptimum().getLength().getValue();
-        int min = fobj.getLeaderLength().getMinimum().getLength().getValue();
-        int max = fobj.getLeaderLength().getMaximum().getLength().getValue();
+        setContentAreaIPD(ipd);
+        int opt = fobj.getLeaderLength().getOptimum(this).getLength().getValue(this);
+        int min = fobj.getLeaderLength().getMinimum(this).getLength().getValue(this);
+        int max = fobj.getLeaderLength().getMaximum(this).getLength().getValue(this);
         return new MinOptMax(min, opt, max);
     }
 
@@ -91,10 +97,12 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             org.apache.fop.area.inline.Leader leader = 
                 new org.apache.fop.area.inline.Leader();
             leader.setRuleStyle(fobj.getRuleStyle());
-            leader.setRuleThickness(fobj.getRuleThickness().getValue());
+            leader.setRuleThickness(fobj.getRuleThickness().getValue(this));
+            leader.setBPD(fobj.getRuleThickness().getValue(this));
             leaderArea = leader;
         } else if (fobj.getLeaderPattern() == EN_SPACE) {
             leaderArea = new Space();
+            leaderArea.setBPD(font.getAscender());
         } else if (fobj.getLeaderPattern() == EN_DOTS) {
             TextArea t = new TextArea();
             char dot = '.'; // userAgent.getLeaderDotCharacter();
@@ -105,10 +113,10 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             t.addTrait(Trait.FONT_SIZE, new Integer(font.getFontSize()));
             int width = font.getCharWidth(dot);
             Space spacer = null;
-            if (fobj.getLeaderPatternWidth().getValue() > width) {
+            if (fobj.getLeaderPatternWidth().getValue(this) > width) {
                 spacer = new Space();
-                spacer.setIPD(fobj.getLeaderPatternWidth().getValue() - width);
-                width = fobj.getLeaderPatternWidth().getValue();
+                spacer.setIPD(fobj.getLeaderPatternWidth().getValue(this) - width);
+                width = fobj.getLeaderPatternWidth().getValue(this);
             }
             FilledArea fa = new FilledArea();
             fa.setUnitWidth(width);
@@ -142,10 +150,10 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             contentList = clm.getNextKnuthElements(new LayoutContext(0), 0);
             int width = clm.getStackingSize();
             Space spacer = null;
-            if (fobj.getLeaderPatternWidth().getValue() > width) {
+            if (fobj.getLeaderPatternWidth().getValue(this) > width) {
                 spacer = new Space();
-                spacer.setIPD(fobj.getLeaderPatternWidth().getValue() - width);
-                width = fobj.getLeaderPatternWidth().getValue();
+                spacer.setIPD(fobj.getLeaderPatternWidth().getValue(this) - width);
+                width = fobj.getLeaderPatternWidth().getValue(this);
             }
             fa.setUnitWidth(width);
             if (spacer != null) {
@@ -334,4 +342,24 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
     protected void addId() {
         getPSLM().addIDToPage(fobj.getId());
     }
+
+    /**
+     * @see org.apache.fop.datatypes.PercentBaseContext#getBaseLength(int, FObj)
+     */
+    public int getBaseLength(int lengthBase, FObj fobj) {
+        return getParent().getBaseLength(lengthBase, getParent().getFObj());
+    }
+
+    /**
+     * Returns the IPD of the content area
+     * @return the IPD of the content area
+     */
+    public int getContentAreaIPD() {
+        return contentAreaIPD;
+    }
+   
+    private void setContentAreaIPD(int contentAreaIPD) {
+        this.contentAreaIPD = contentAreaIPD;
+    }
+    
 }

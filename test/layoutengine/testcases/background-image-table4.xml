@@ -18,7 +18,7 @@
 <testcase>
   <info>
     <p>
-      This test checks background image on a table.
+      This test checks background image on a fo:table-cell.
     </p>
   </info>
   <variables>
@@ -37,22 +37,9 @@
             <fo:table-column column-number="1" />
             <fo:table-column column-number="2" />
             <fo:table-column column-number="3" />
-            <fo:table-header>
-              <fo:table-row>
-                <fo:table-cell>
-                  <fo:block>Header Col 1</fo:block>
-                </fo:table-cell>
-                <fo:table-cell>
-                  <fo:block>Header Col 2</fo:block>
-                </fo:table-cell>
-                <fo:table-cell>
-                  <fo:block>Header Col 3</fo:block>
-                </fo:table-cell>
-              </fo:table-row>
-            </fo:table-header>
             <fo:table-body>
               <fo:table-row>
-                <fo:table-cell background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center" background-image="##img">
+                <fo:table-cell>
                   <fo:block>Row 1 Col 1</fo:block>
                 </fo:table-cell>
                 <fo:table-cell>
@@ -63,45 +50,42 @@
                 </fo:table-cell>
               </fo:table-row>
               <fo:table-row>
-                <fo:table-cell>
+                <fo:table-cell background-color="yellow" background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center" background-image="##img">
+                  <fo:block>Row 2 Col 1</fo:block>
+                  <fo:block>Row 2 Col 1</fo:block>
+                  <fo:block>Row 2 Col 1</fo:block>
+                  <fo:block>Row 2 Col 1</fo:block>
                   <fo:block>Row 2 Col 1</fo:block>
                 </fo:table-cell>
-                <fo:table-cell>
+                <fo:table-cell padding="5pt" display-align="center" background-color="blue" background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center" background-image="##img">
                   <fo:block>Row 2 Col 2</fo:block>
                 </fo:table-cell>
-                <fo:table-cell>
+                <fo:table-cell display-align="center" background-color="yellow" background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center" background-image="##img">
                   <fo:block>Row 2 Col 3</fo:block>
-                </fo:table-cell>
-              </fo:table-row>
-              <fo:table-row>
-                <fo:table-cell>
-                  <fo:block>Row 3 Col 1</fo:block>
-                </fo:table-cell>
-                <fo:table-cell>
-                  <fo:block>Row 3 Col 2</fo:block>
-                </fo:table-cell>
-                <fo:table-cell>
-                  <fo:block>Row 3 Col 3</fo:block>
-                </fo:table-cell>
-              </fo:table-row>
-              <fo:table-row>
-                <fo:table-cell>
-                  <fo:block>Row 4 Col 1</fo:block>
-                </fo:table-cell>
-                <fo:table-cell>
-                  <fo:block>Row 4 Col 2</fo:block>
-                </fo:table-cell>
-                <fo:table-cell>
-                  <fo:block>Row 4 Col 3</fo:block>
                 </fo:table-cell>
               </fo:table-row>
             </fo:table-body>
           </fo:table>
-          <fo:block>Table with centered row 1 col 1 background</fo:block>
+          <fo:block>Table with centered background images on row 2 col 1, and 3</fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
   </fo>
   <checks>
+    <!-- first cell in row 2 -->
+    <eval expected="120000" xpath="//flow/block/block[4]/@ipd"/>
+    <eval expected="72000" xpath="//flow/block/block[4]/@bpd"/>
+    <eval expected="72000" xpath="//flow/block/block[4]/@bpda"/>
+    <eval expected="color=#ffff00,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=36960,vertical=12960" xpath="//flow/block/block[4]/@background"/>
+    <!-- second cell in row 2 -->
+    <eval expected="110000" xpath="//flow/block/block[5]/@ipd"/>
+    <eval expected="62000" xpath="//flow/block/block[5]/@bpd"/>
+    <eval expected="72000" xpath="//flow/block/block[5]/@bpda"/>
+    <eval expected="color=#0000ff,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=36960,vertical=12960" xpath="//flow/block/block[5]/@background"/>
+    <!-- second cell in row 2 -->
+    <eval expected="120000" xpath="//flow/block/block[6]/@ipd"/>
+    <eval expected="72000" xpath="//flow/block/block[6]/@bpd"/>
+    <eval expected="72000" xpath="//flow/block/block[6]/@bpda"/>
+    <eval expected="color=#ffff00,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=36960,vertical=12960" xpath="//flow/block/block[6]/@background"/>
   </checks>
 </testcase>

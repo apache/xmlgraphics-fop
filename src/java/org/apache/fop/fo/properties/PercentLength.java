@@ -18,6 +18,7 @@
 
 package org.apache.fop.fo.properties;
 
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.expr.PropertyException;
 
@@ -37,6 +38,8 @@ public class PercentLength extends LengthProperty {
      * {@link #factor} should be applied to compute the actual length
      */
     private PercentBase lbase = null;
+    
+    private double resolvedValue;
 
     /**
      * Main constructor. Construct an object based on a factor (the percent,
@@ -80,8 +83,19 @@ public class PercentLength extends LengthProperty {
      * @see org.apache.fop.datatypes.Numeric#getNumericValue()
      */
     public double getNumericValue() {
+        return getNumericValue(null);
+    }
+
+    /**
+     * Return the value of this Numeric.
+     * @param context Evaluation context
+     * @return the length in millipoints
+     * @see Numeric#getNumericValue(Object)
+     */
+    public double getNumericValue(PercentBaseContext context) {
         try {
-            return factor * lbase.getBaseLength();
+            resolvedValue = factor * lbase.getBaseLength(context);
+            return resolvedValue;
         } catch (PropertyException exc) {
             log.error(exc);
             return 0;
@@ -94,6 +108,14 @@ public class PercentLength extends LengthProperty {
      */
     public int getValue() {
         return (int) getNumericValue();
+    }
+
+    /**
+     * Return the value of this numeric as a length in millipoints. 
+     * @param Evaluation context
+     */
+    public int getValue(PercentBaseContext context) {
+        return (int) getNumericValue(context);
     }
 
     /**

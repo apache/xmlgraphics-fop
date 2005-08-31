@@ -20,14 +20,18 @@ package org.apache.fop.layoutmgr.inline;
 
 // Java
 import java.awt.geom.Rectangle2D;
+import java.util.LinkedList;
 
 // FOP
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.LengthBase;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.ExternalGraphic;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.TraitSetter;
 
 /**
@@ -57,11 +61,6 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
     public ExternalGraphicLayoutManager(ExternalGraphic node) {
         super(node);
         fobj = node;
-        setup();
-        InlineArea area = getExternalGraphicInlineArea();
-        setCurrentArea(area);
-        setAlignment(fobj.getVerticalAlign());
-        setLead(viewHeight);
     }
 
     /**
@@ -71,22 +70,22 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
      */
     private void setup() {
         // assume lr-tb for now and just use the .optimum value of the range
-        Length ipd = fobj.getInlineProgressionDimension().getOptimum().getLength();
+        Length ipd = fobj.getInlineProgressionDimension().getOptimum(this).getLength();
         if (ipd.getEnum() != EN_AUTO) {
-            viewWidth = ipd.getValue();
+            viewWidth = ipd.getValue(this);
         } else {
             ipd = fobj.getWidth();
             if (ipd.getEnum() != EN_AUTO) {
-                viewWidth = ipd.getValue();
+                viewWidth = ipd.getValue(this);
             }
         }
-        Length bpd = fobj.getBlockProgressionDimension().getOptimum().getLength();
+        Length bpd = fobj.getBlockProgressionDimension().getOptimum(this).getLength();
         if (bpd.getEnum() != EN_AUTO) {
-            viewHeight = bpd.getValue();
+            viewHeight = bpd.getValue(this);
         } else {
             bpd = fobj.getHeight();
             if (bpd.getEnum() != EN_AUTO) {
-                viewHeight = bpd.getValue();
+                viewHeight = bpd.getValue(this);
             }
         }
 
@@ -99,7 +98,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
                     cheight = viewHeight;
                 }
             } else {
-                cheight = ch.getValue();
+                cheight = ch.getValue(this);
             }
         }
         Length cw = fobj.getContentWidth();
@@ -109,7 +108,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
                     cwidth = viewWidth;
                 }
             } else {
-                cwidth = cw.getValue();
+                cwidth = cw.getValue(this);
             }
         }
 
@@ -189,10 +188,10 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
         CommonBorderPaddingBackground borderProps = fobj.getCommonBorderPaddingBackground();
         
         //Determine extra BPD from borders etc.
-        int beforeBPD = borderProps.getPadding(CommonBorderPaddingBackground.BEFORE, false);
+        int beforeBPD = borderProps.getPadding(CommonBorderPaddingBackground.BEFORE, false, this);
         beforeBPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.BEFORE,
                                              false);
-        int afterBPD = borderProps.getPadding(CommonBorderPaddingBackground.AFTER, false);
+        int afterBPD = borderProps.getPadding(CommonBorderPaddingBackground.AFTER, false, this);
         afterBPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.AFTER, false);
         
         yoffset += beforeBPD;
@@ -201,10 +200,10 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
         
         //Determine extra IPD from borders etc.
         int startIPD = borderProps.getPadding(CommonBorderPaddingBackground.START,
-                false/*bNotFirst*/);
+                false/*bNotFirst*/, this);
         startIPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.START,
                  false/*bNotFirst*/);
-        int endIPD = borderProps.getPadding(CommonBorderPaddingBackground.END, false/*bNotLast*/);
+        int endIPD = borderProps.getPadding(CommonBorderPaddingBackground.END, false/*bNotLast*/, this);
         endIPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.END, false/*bNotLast*/);
         
         xoffset += startIPD;
@@ -214,6 +213,19 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
         placement = new Rectangle2D.Float(xoffset, yoffset, cwidth, cheight);
     }
 
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(LayoutContext, int)
+     */
+    public LinkedList getNextKnuthElements(LayoutContext context,
+                                           int alignment) {
+        setup();
+        InlineArea area = getExternalGraphicInlineArea();
+        setCurrentArea(area);
+        setAlignment(fobj.getVerticalAlign());
+        setLead(viewHeight);
+        return super.getNextKnuthElements(context, alignment);
+    }
+    
      /**
       * Get the inline area for this external grpahic.
       * This creates the image area and puts it inside a viewport.
@@ -232,8 +244,8 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
          vp.setOffset(0);
 
          // Common Border, Padding, and Background Properties
-         TraitSetter.addBorders(vp, fobj.getCommonBorderPaddingBackground());
-         TraitSetter.addBackground(vp, fobj.getCommonBorderPaddingBackground());
+         TraitSetter.addBorders(vp, fobj.getCommonBorderPaddingBackground(), this);
+         TraitSetter.addBackground(vp, fobj.getCommonBorderPaddingBackground(), this);
 
          return vp;
      }
@@ -242,5 +254,38 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
     protected void addId() {
          getPSLM().addIDToPage(fobj.getId());
      }
+
+    // --------- Property Resolution related functions --------- //
+    
+    /**
+     * @see org.apache.fop.datatypes.PercentBaseContext#getBaseLength(int, FObj)
+     */
+    public int getBaseLength(int lengthBase, FObj fobj) {
+        switch (lengthBase) {
+        case LengthBase.IMAGE_INTRINSIC_WIDTH:
+            return getIntrinsicWidth();
+        case LengthBase.IMAGE_INTRINSIC_HEIGHT:
+            return getIntrinsicHeight();
+        default: // Delegate to super class
+            return super.getBaseLength(lengthBase, fobj);
+        }
+    }
+
+    /**
+     * Returns the intrinsic width of the e-g.
+     * @return the width of the element
+     */
+    protected int getIntrinsicWidth() {
+        return fobj.getIntrinsicWidth();
+    }
+
+    /**
+     * Returns the intrinsic height of the e-g.
+     * @return the height of the element
+     */
+    protected int getIntrinsicHeight() {
+        return fobj.getIntrinsicHeight();
+    }
+
 }
 

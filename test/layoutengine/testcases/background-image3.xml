@@ -33,18 +33,19 @@
       </fo:layout-master-set>
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
-          <fo:block-container height="100%" width="100%" background-color="yellow">
-          <fo:block background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center" background-image="##img">
-             normal block<fo:block/>
-             normal block
-          </fo:block>
+          <fo:block-container height="50%" width="50%" background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center" background-image="##img">
+            <fo:block background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center" background-image="##img">
+              normal block<fo:block/>
+              normal block
+            </fo:block>
           </fo:block-container>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
   </fo>
   <checks>
-    <eval expected="color=#ffff00" xpath="//flow/block[1]/@background"/>
-    <eval expected="color=null,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=136960,vertical=-8640" xpath="//flow/block[1]/block[1]/block[1]/@background"/>
+    <eval expected="color=null,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=136960,vertical=136960" xpath="//regionViewport/@background"/>
+    <eval expected="color=null,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=56960,vertical=56960" xpath="//flow/block[1]/@background"/>
+    <eval expected="color=null,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=56960,vertical=-8640" xpath="//flow/block[1]/block[1]/block[1]/@background"/>
   </checks>
 </testcase>

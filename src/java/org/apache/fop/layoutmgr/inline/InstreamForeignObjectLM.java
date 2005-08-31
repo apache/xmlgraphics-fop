@@ -20,15 +20,19 @@ package org.apache.fop.layoutmgr.inline;
 
 // Java
 import java.awt.geom.Rectangle2D;
+import java.util.LinkedList;
 
 // FOP
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.fo.XMLObj;
 import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Viewport;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.layoutmgr.LayoutContext;
 
 /**
  * LayoutManager for the fo:instream-foreign-object formatting object
@@ -40,14 +44,11 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
     /**
      * Constructor
      * @param node the formatting object that creates this area
+     * @param parent the parent layout manager
      */
     public InstreamForeignObjectLM(InstreamForeignObject node) {
         super(node);
         fobj = node;
-        Viewport areaCurrent = getInlineArea();
-        setCurrentArea(areaCurrent);
-        setAlignment(node.getVerticalAlign());
-        setLead(areaCurrent.getBPD());
     }
 
     /**
@@ -73,29 +74,29 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
         int ipd = -1;
         boolean bpdauto = false;
         if (hasLH) {
-            bpd = fobj.getLineHeight().getValue();
+            bpd = fobj.getLineHeight().getValue(this);
         } else {
             // this property does not apply when the line-height applies
             // isn't the block-progression-dimension always in the same
             // direction as the line height?
-            len = fobj.getBlockProgressionDimension().getOptimum().getLength();
+            len = fobj.getBlockProgressionDimension().getOptimum(this).getLength();
             if (len.getEnum() != EN_AUTO) {
-                bpd = len.getValue();
+                bpd = len.getValue(this);
             } else {
                 len = fobj.getHeight();
                 if (len.getEnum() != EN_AUTO) {
-                    bpd = len.getValue();
+                    bpd = len.getValue(this);
                 }
             }
         }
 
-        len = fobj.getInlineProgressionDimension().getOptimum().getLength();
+        len = fobj.getInlineProgressionDimension().getOptimum(this).getLength();
         if (len.getEnum() != EN_AUTO) {
-            ipd = len.getValue();
+            ipd = len.getValue(this);
         } else {
             len = fobj.getWidth();
             if (len.getEnum() != EN_AUTO) {
-                ipd = len.getValue();
+                ipd = len.getValue(this);
             }
         }
 
@@ -110,7 +111,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
                     cwidth = ipd;
                 }
             } else {
-                cwidth = len.getValue();
+                cwidth = len.getValue(this);
             }
         }
         len = fobj.getContentHeight();
@@ -120,7 +121,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
                     cwidth = bpd;
                 }
             } else {
-                cheight = len.getValue();
+                cheight = len.getValue(this);
             }
         }
 
@@ -172,10 +173,10 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
         CommonBorderPaddingBackground borderProps = fobj.getCommonBorderPaddingBackground();
         
         //Determine extra BPD from borders etc.
-        int beforeBPD = borderProps.getPadding(CommonBorderPaddingBackground.BEFORE, false);
+        int beforeBPD = borderProps.getPadding(CommonBorderPaddingBackground.BEFORE, false, this);
         beforeBPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.BEFORE,
                                              false);
-        int afterBPD = borderProps.getPadding(CommonBorderPaddingBackground.AFTER, false);
+        int afterBPD = borderProps.getPadding(CommonBorderPaddingBackground.AFTER, false, this);
         afterBPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.AFTER, false);
         
         yoffset += beforeBPD;
@@ -184,10 +185,10 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
         
         //Determine extra IPD from borders etc.
         int startIPD = borderProps.getPadding(CommonBorderPaddingBackground.START,
-                false/*bNotFirst*/);
+                false/*bNotFirst*/, this);
         startIPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.START,
                  false/*bNotFirst*/);
-        int endIPD = borderProps.getPadding(CommonBorderPaddingBackground.END, false/*bNotLast*/);
+        int endIPD = borderProps.getPadding(CommonBorderPaddingBackground.END, false/*bNotLast*/, this);
         endIPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.END, false/*bNotLast*/);
         
         xoffset += startIPD;
@@ -212,10 +213,22 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
         vp.setOffset(0);
 
         // Common Border, Padding, and Background Properties
-        TraitSetter.addBorders(vp, fobj.getCommonBorderPaddingBackground());
-        TraitSetter.addBackground(vp, fobj.getCommonBorderPaddingBackground());
+        TraitSetter.addBorders(vp, fobj.getCommonBorderPaddingBackground(), this);
+        TraitSetter.addBackground(vp, fobj.getCommonBorderPaddingBackground(), this);
 
         return vp;
+    }
+    
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(LayoutContext, int)
+     */
+    public LinkedList getNextKnuthElements(LayoutContext context,
+                                           int alignment) {
+        Viewport areaCurrent = getInlineArea();
+        setCurrentArea(areaCurrent);
+        setAlignment(fobj.getVerticalAlign());
+        setLead(areaCurrent.getBPD());
+        return super.getNextKnuthElements(context, alignment);
     }
     
     /**
@@ -224,5 +237,38 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
     protected void addId() {
         getPSLM().addIDToPage(fobj.getId());
     }
+
+    // --------- Property Resolution related functions --------- //
+    
+    /**
+     * @see org.apache.fop.datatypes.PercentBaseContext#getBaseLength(int, FObj)
+     */
+    public int getBaseLength(int lengthBase, FObj fobj) {
+        switch (lengthBase) {
+        case LengthBase.IMAGE_INTRINSIC_WIDTH:
+            return getIntrinsicWidth();
+        case LengthBase.IMAGE_INTRINSIC_HEIGHT:
+            return getIntrinsicHeight();
+        default: // Delegate to super class
+            return super.getBaseLength(lengthBase, fobj);
+        }
+    }
+
+    /**
+     * Returns the intrinsic width of the e-g.
+     * @return the width of the element
+     */
+    protected int getIntrinsicWidth() {
+        return fobj.getIntrinsicWidth();
+    }
+
+    /**
+     * Returns the intrinsic height of the e-g.
+     * @return the height of the element
+     */
+    protected int getIntrinsicHeight() {
+        return fobj.getIntrinsicHeight();
+    }
+
 }
 

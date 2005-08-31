@@ -18,6 +18,8 @@
 
 package org.apache.fop.fo.properties;
 
+import org.apache.fop.datatypes.PercentBaseContext;
+
 /**
  * An absolute length quantity in XSL
  */
@@ -99,10 +101,30 @@ public class FixedLength extends LengthProperty {
     }
 
     /**
-     * Returns the value as numeric.
+     * Returns the length in 1/1000ths of a point (millipoints)
+     * @param Evaluation context
      * @return the length in millipoints
      */
+    public int getValue(PercentBaseContext context) {
+        return millipoints;
+    }
+
+    /**
+     * Returns the value as numeric.
+     * @return the length in millipoints
+     * @see Numeric#getNumericValue()
+     */
     public double getNumericValue() {
+        return millipoints;
+    }
+
+    /**
+     * Return the value of this Numeric.
+     * @param context Evaluation context
+     * @return the length in millipoints
+     * @see Numeric#getNumericValue(Object)
+     */
+    public double getNumericValue(PercentBaseContext context) {
         return millipoints;
     }
 

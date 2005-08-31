@@ -18,7 +18,7 @@
 <testcase>
   <info>
     <p>
-      This test checks background image on a table.
+      This test checks background image on a fo:table-header and footer.
     </p>
   </info>
   <variables>
@@ -37,7 +37,7 @@
             <fo:table-column column-number="1" />
             <fo:table-column column-number="2" />
             <fo:table-column column-number="3" />
-            <fo:table-header background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center" background-image="##img">
+            <fo:table-header background-color="yellow" background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center" background-image="##img">
               <fo:table-row>
                 <fo:table-cell>
                   <fo:block>Header Col 1</fo:block>
@@ -50,8 +50,21 @@
                 </fo:table-cell>
               </fo:table-row>
             </fo:table-header>
-            <fo:table-body>
+            <fo:table-footer background-color="yellow" background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center" background-image="##img">
               <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Footer Col 1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Footer Col 2</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>Footer Col 3</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-footer>
+            <fo:table-body background-color="blue">
+              <fo:table-row height="4in" background-color="blue">
                 <fo:table-cell>
                   <fo:block>Row 1 Col 1</fo:block>
                 </fo:table-cell>
@@ -62,7 +75,7 @@
                   <fo:block>Row 1 Col 3</fo:block>
                 </fo:table-cell>
               </fo:table-row>
-              <fo:table-row>
+              <fo:table-row height="4in" background-color="blue">
                 <fo:table-cell>
                   <fo:block>Row 2 Col 1</fo:block>
                 </fo:table-cell>
@@ -73,35 +86,15 @@
                   <fo:block>Row 2 Col 3</fo:block>
                 </fo:table-cell>
               </fo:table-row>
-              <fo:table-row>
-                <fo:table-cell>
-                  <fo:block>Row 3 Col 1</fo:block>
-                </fo:table-cell>
-                <fo:table-cell>
-                  <fo:block>Row 3 Col 2</fo:block>
-                </fo:table-cell>
-                <fo:table-cell>
-                  <fo:block>Row 3 Col 3</fo:block>
-                </fo:table-cell>
-              </fo:table-row>
-              <fo:table-row>
-                <fo:table-cell>
-                  <fo:block>Row 4 Col 1</fo:block>
-                </fo:table-cell>
-                <fo:table-cell>
-                  <fo:block>Row 4 Col 2</fo:block>
-                </fo:table-cell>
-                <fo:table-cell>
-                  <fo:block>Row 4 Col 3</fo:block>
-                </fo:table-cell>
-              </fo:table-row>
             </fo:table-body>
           </fo:table>
-          <fo:block>Table with centered header background</fo:block>
+          <fo:block>Table with centered background image in header and footer</fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
   </fo>
   <checks>
+  <!-- backgrounds on table-header/footer are not supported at the time this test
+  was written. Therefore no checks! -->
   </checks>
 </testcase>

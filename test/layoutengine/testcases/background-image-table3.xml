@@ -18,7 +18,7 @@
 <testcase>
   <info>
     <p>
-      This test checks background image on a table.
+      This test checks background image on a fo:table-row.
     </p>
   </info>
   <variables>
@@ -51,7 +51,7 @@
               </fo:table-row>
             </fo:table-header>
             <fo:table-body>
-              <fo:table-row background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center" background-image="##img">
+              <fo:table-row height="1in" background-color="yellow" background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center" background-image="##img">
                 <fo:table-cell>
                   <fo:block>Row 1 Col 1</fo:block>
                 </fo:table-cell>
@@ -73,35 +73,16 @@
                   <fo:block>Row 2 Col 3</fo:block>
                 </fo:table-cell>
               </fo:table-row>
-              <fo:table-row>
-                <fo:table-cell>
-                  <fo:block>Row 3 Col 1</fo:block>
-                </fo:table-cell>
-                <fo:table-cell>
-                  <fo:block>Row 3 Col 2</fo:block>
-                </fo:table-cell>
-                <fo:table-cell>
-                  <fo:block>Row 3 Col 3</fo:block>
-                </fo:table-cell>
-              </fo:table-row>
-              <fo:table-row>
-                <fo:table-cell>
-                  <fo:block>Row 4 Col 1</fo:block>
-                </fo:table-cell>
-                <fo:table-cell>
-                  <fo:block>Row 4 Col 2</fo:block>
-                </fo:table-cell>
-                <fo:table-cell>
-                  <fo:block>Row 4 Col 3</fo:block>
-                </fo:table-cell>
-              </fo:table-row>
             </fo:table-body>
           </fo:table>
-          <fo:block>Table with centered row 1 background</fo:block>
+          <fo:block>Table with centered background image on row 1</fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
   </fo>
   <checks>
+    <eval expected="360000" xpath="//flow/block/block[4]/@ipd"/>
+    <eval expected="72000" xpath="//flow/block/block[4]/@bpd"/>
+    <eval expected="color=#ffff00,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=156960,vertical=12960" xpath="//flow/block/block[4]/@background"/>
   </checks>
 </testcase>

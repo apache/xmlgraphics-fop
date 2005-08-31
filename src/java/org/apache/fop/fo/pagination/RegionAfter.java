@@ -24,6 +24,8 @@ import java.awt.Rectangle;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.datatypes.FODimension;
+import org.apache.fop.datatypes.LengthBase;
+import org.apache.fop.datatypes.SimplePercentBaseContext;
 
 /**
  * The fo:region-after element.
@@ -40,16 +42,29 @@ public class RegionAfter extends RegionBA {
     /**
      * @see org.apache.fop.fo.pagination.Region#getViewportRectangle(FODimension)
      */
-    public Rectangle getViewportRectangle (FODimension reldims) {
+    public Rectangle getViewportRectangle (FODimension reldims, FODimension pageViewPortRect) {
         // Depends on extent, precedence ans writing mode
+        /* Special rules apply to resolving extent.
+         * In the property subsystem the extent property is configured to 
+         * using BLOCK_WIDTH as its percent base.
+         * However, depending on the writing mode extent import resolved either
+         * against the page width or the page height.
+         */
         Rectangle vpRect;
+        SimplePercentBaseContext pageWidthContext 
+            = new SimplePercentBaseContext(null, LengthBase.CUSTOM_BASE, pageViewPortRect.ipd);
+        SimplePercentBaseContext pageHeightContext
+            = new SimplePercentBaseContext(null, LengthBase.CUSTOM_BASE, pageViewPortRect.bpd);
+        SimplePercentBaseContext neighbourContext;
         if (getWritingMode() == EN_LR_TB || getWritingMode() == EN_RL_TB) {
-            vpRect = new Rectangle(0, reldims.bpd - getExtent().getValue(), reldims.ipd, getExtent().getValue());
+            neighbourContext = pageWidthContext;
+            vpRect = new Rectangle(0, reldims.bpd - getExtent().getValue(pageHeightContext), reldims.ipd, getExtent().getValue(pageHeightContext));
         } else {
-            vpRect = new Rectangle(0, reldims.bpd - getExtent().getValue(), getExtent().getValue(), reldims.ipd);
+            neighbourContext = pageHeightContext;
+            vpRect = new Rectangle(0, reldims.bpd - getExtent().getValue(pageWidthContext), getExtent().getValue(pageWidthContext), reldims.ipd);
         }
         if (getPrecedence() == EN_FALSE) {
-            adjustIPD(vpRect, getWritingMode());
+            adjustIPD(vpRect, getWritingMode(), neighbourContext);
         }
         return vpRect;
     }

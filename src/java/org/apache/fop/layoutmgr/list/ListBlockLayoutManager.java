@@ -42,6 +42,7 @@ import java.util.List;
  * the list block area..
  */
 public class ListBlockLayoutManager extends BlockStackingLayoutManager {
+
     private Block curBlockArea;
 
     //TODO space-before|after: handle space-resolution rules
@@ -72,10 +73,10 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
     /**
      * Create a new list block layout manager.
      * @param node list-block to create the layout manager for
+     * @param parent the parent layout manager
      */
     public ListBlockLayoutManager(ListBlock node) {
         super(node);
-        initialize();
     }
 
     /**
@@ -86,15 +87,15 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
         return (ListBlock)fobj;
     }
 
-    private void initialize() {
-        foSpaceBefore = new SpaceVal(getListBlockFO().getCommonMarginBlock().spaceBefore).getSpace();
-        foSpaceAfter = new SpaceVal(getListBlockFO().getCommonMarginBlock().spaceAfter).getSpace();
+    public void initialize() {
+        foSpaceBefore = new SpaceVal(getListBlockFO().getCommonMarginBlock().spaceBefore, this).getSpace();
+        foSpaceAfter = new SpaceVal(getListBlockFO().getCommonMarginBlock().spaceAfter, this).getSpace();
     }
 
     private int getIPIndents() {
         int iIndents = 0;
-        iIndents += getListBlockFO().getCommonMarginBlock().startIndent.getValue();
-        iIndents += getListBlockFO().getCommonMarginBlock().endIndent.getValue();
+        iIndents += getListBlockFO().getCommonMarginBlock().startIndent.getValue(this);
+        iIndents += getListBlockFO().getCommonMarginBlock().endIndent.getValue(this);
         return iIndents;
     }
     
@@ -180,6 +181,11 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
             getCurrentPV().addMarkers(markers, false, isFirst(firstPos), isLast(lastPos));
         }
 
+        // We are done with this area add the background
+        TraitSetter.addBackground(curBlockArea, 
+                getListBlockFO().getCommonBorderPaddingBackground(),
+                this);
+
         flush();
 
         // if adjusted space after
@@ -212,18 +218,17 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
             // set traits
             TraitSetter.setProducerID(curBlockArea, getListBlockFO().getId());
             TraitSetter.addBorders(curBlockArea, 
-                    getListBlockFO().getCommonBorderPaddingBackground());
+            getListBlockFO().getCommonBorderPaddingBackground(), this);
             TraitSetter.addMargins(curBlockArea,
                     getListBlockFO().getCommonBorderPaddingBackground(), 
-                    getListBlockFO().getCommonMarginBlock());
+                    getListBlockFO().getCommonMarginBlock(),
+                    this);
             TraitSetter.addBreaks(curBlockArea, 
                     getListBlockFO().getBreakBefore(), 
                     getListBlockFO().getBreakAfter());
             
             int contentIPD = referenceIPD - getIPIndents();
             curBlockArea.setIPD(contentIPD);
-            TraitSetter.addBackground(curBlockArea, 
-                    getListBlockFO().getCommonBorderPaddingBackground());
             
             setCurrentArea(curBlockArea);
         }

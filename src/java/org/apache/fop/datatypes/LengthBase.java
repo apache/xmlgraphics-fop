@@ -36,67 +36,59 @@ public class LengthBase implements PercentBase {
     /** constant for an inh font-size percent-based length */
     public static final int INH_FONTSIZE = 2;
     /** constant for a containing box percent-based length */
-    public static final int CONTAINING_BOX = 3;
+    public static final int PARENT_AREA_WIDTH = 3;
     /** constant for a containing refarea percent-based length */
-    public static final int CONTAINING_REFAREA = 4;
+    public static final int CONTAINING_REFAREA_WIDTH = 4;
     /** constant for a containing block percent-based length */
-    public static final int BLOCK_WIDTH = 5;
+    public static final int CONTAINING_BLOCK_WIDTH = 5;
     /** constant for a containing block percent-based length */
-    public static final int BLOCK_HEIGHT = 6;
+    public static final int CONTAINING_BLOCK_HEIGHT = 6;
     /** constant for a image intrinsic percent-based length */
     public static final int IMAGE_INTRINSIC_WIDTH = 7;
     /** constant for a image intrinsic percent-based length */
     public static final int IMAGE_INTRINSIC_HEIGHT = 8;
+    /** constant for a image background position horizontal percent-based length */
+    public static final int IMAGE_BACKGROUND_POSITION_HORIZONTAL = 9;
+    /** constant for a image background position vertical percent-based length */
+    public static final int IMAGE_BACKGROUND_POSITION_VERTICAL = 10;
 
     /** array of valid percent-based length types */
     public static final int[] PERCENT_BASED_LENGTH_TYPES
-            = {CUSTOM_BASE, FONTSIZE, INH_FONTSIZE, CONTAINING_BOX,
-               CONTAINING_REFAREA, 
-               IMAGE_INTRINSIC_WIDTH, IMAGE_INTRINSIC_HEIGHT};
+            = {CUSTOM_BASE, FONTSIZE, INH_FONTSIZE, PARENT_AREA_WIDTH,
+               CONTAINING_REFAREA_WIDTH, 
+               IMAGE_INTRINSIC_WIDTH, IMAGE_INTRINSIC_HEIGHT,
+               IMAGE_BACKGROUND_POSITION_HORIZONTAL, IMAGE_BACKGROUND_POSITION_VERTICAL
+            };
 
     /**
-     * FO parent of the FO for which this property is to be calculated.
+     * The FO for which this property is to be calculated.
      */
-    protected /* final */ FObj parentFO;
-
-    /**
-     * PropertyList for the FO where this property is calculated.
-     */
-    private /* final */ PropertyList propertyList;
+    protected /* final */ FObj fobj;
 
     /**
      * One of the defined types of LengthBase
      */
     private /* final */ int iBaseType;
 
+    private Length fontSize;
+    
     /**
      * Constructor
      * @param parentFO parent FO for this
      * @param plist property list for this
      * @param iBaseType a member of {@link #PERCENT_BASED_LENGTH_TYPES}
      */
-    public LengthBase(FObj parentFO, PropertyList plist, int iBaseType) {
-        this.parentFO = parentFO;
-        this.propertyList = plist;
+    public LengthBase(FObj parentFO, PropertyList plist, int iBaseType) throws PropertyException {
+        this.fobj = plist.getFObj();
         this.iBaseType = iBaseType;
-    }
-
-    /**
-     * Accessor for parentFO object from subclasses which define
-     * custom kinds of LengthBase calculations.
-     * @return this object's parent FO
-     */
-    protected FObj getParentFO() {
-        return parentFO;
-    }
-
-    /**
-     * Accessor for propertyList object from subclasses which define
-     * custom kinds of LengthBase calculations.
-     * @return this object's PropertyList
-     */
-    protected PropertyList getPropertyList() {
-        return propertyList;
+        switch (iBaseType) {
+        case FONTSIZE:
+            this.fontSize = plist.get(Constants.PR_FONT_SIZE).getLength();
+            break;
+        case INH_FONTSIZE:
+            this.fontSize = plist.getInherited(Constants.PR_FONT_SIZE).getLength();
+            break;
+        }
     }
 
     /**
@@ -114,42 +106,17 @@ public class LengthBase implements PercentBase {
     }
 
     /** @see org.apache.fop.datatypes.PercentBase#getBaseLength() */
-    public int getBaseLength() throws PropertyException {
-        //TODO Don't use propertyList here
-        //See http://nagoya.apache.org/eyebrowse/ReadMsg?listName=fop-dev@xml.apache.org&msgNo=10342
-        switch (iBaseType) {
-        case FONTSIZE:
-            return propertyList.get(Constants.PR_FONT_SIZE).getLength().getValue();
-        case INH_FONTSIZE:
-            return propertyList.getInherited(Constants.PR_FONT_SIZE).getLength().getValue();
-        case BLOCK_WIDTH:
-            return parentFO.getLayoutDimension(PercentBase.BLOCK_IPD).intValue();
-        case BLOCK_HEIGHT:
-            return parentFO.getLayoutDimension(PercentBase.BLOCK_BPD).intValue();
-        case CONTAINING_REFAREA:    // example: start-indent, end-indent
-            FObj fo;
-            fo = parentFO;
-            while (fo != null && !fo.generatesReferenceAreas()) {
-                fo = fo.findNearestAncestorFObj();
+    public int getBaseLength(PercentBaseContext context) throws PropertyException {
+        int baseLength = 0;
+        if (context != null) {
+            if (iBaseType == FONTSIZE || iBaseType == INH_FONTSIZE) {
+                return fontSize.getValue(context);
             }
-            if (fo != null && fo instanceof FObj) {
-                return fo.getLayoutDimension(PercentBase.BLOCK_IPD).intValue();
-            } else {
-                return 0;
-            }
-        case IMAGE_INTRINSIC_WIDTH:
-            return propertyList.getFObj()
-                .getLayoutDimension(PercentBase.IMAGE_INTRINSIC_WIDTH).intValue();
-        case IMAGE_INTRINSIC_HEIGHT:
-            return propertyList.getFObj()
-                .getLayoutDimension(PercentBase.IMAGE_INTRINSIC_HEIGHT).intValue();
-        case CUSTOM_BASE:
-            //log.debug("!!! LengthBase.getBaseLength() called on CUSTOM_BASE type !!!");
-            return 0;
-        default:
-            parentFO.getLogger().error("Unknown base type for LengthBase.");
-            return 0;
+            baseLength =  context.getBaseLength(iBaseType,  fobj);
+        } else {
+            fobj.getLogger().error("getBaseLength called without context");
         }
+        return baseLength;
     }
 
 }

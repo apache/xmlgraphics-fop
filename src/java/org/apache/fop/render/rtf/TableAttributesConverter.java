@@ -142,34 +142,34 @@ public class TableAttributesConverter {
         //TODO Make this configurable
         if (reproduceMSWordBug) {
             //MS Word has a bug where padding left and top are exchanged
-            padding = border.getPaddingStart(false);
+            padding = border.getPaddingStart(false, null); // TODO do we need a real context here?
             if (padding != 0) {
                 attrib.setTwips(ITableAttributes.ATTR_CELL_PADDING_TOP, padding);
                 attrib.set(ITableAttributes.ATTR_CELL_U_PADDING_TOP, 3 /*=twips*/);
             }
-            padding = border.getPaddingBefore(false);
+            padding = border.getPaddingBefore(false, null); // TODO do we need a real context here?
             if (padding != 0) {
                 attrib.setTwips(ITableAttributes.ATTR_CELL_PADDING_LEFT, padding);
                 attrib.set(ITableAttributes.ATTR_CELL_U_PADDING_LEFT, 3 /*=twips*/);
             }
         } else {
-            padding = border.getPaddingStart(false);
+            padding = border.getPaddingStart(false, null); // TODO do we need a real context here?
             if (padding != 0) {
                 attrib.setTwips(ITableAttributes.ATTR_CELL_PADDING_LEFT, padding);
                 attrib.set(ITableAttributes.ATTR_CELL_U_PADDING_LEFT, 3 /*=twips*/);
             }
-            padding = border.getPaddingBefore(false);
+            padding = border.getPaddingBefore(false, null); // TODO do we need a real context here?
             if (padding != 0) {
                 attrib.setTwips(ITableAttributes.ATTR_CELL_PADDING_TOP, padding);
                 attrib.set(ITableAttributes.ATTR_CELL_U_PADDING_TOP, 3 /*=twips*/);
             }
         }
-        padding = border.getPaddingEnd(false);
+        padding = border.getPaddingEnd(false, null);  // TODO do we need a real context here?
         if (padding != 0) {
             attrib.setTwips(ITableAttributes.ATTR_CELL_PADDING_RIGHT, padding);
             attrib.set(ITableAttributes.ATTR_CELL_U_PADDING_RIGHT, 3 /*=twips*/);
         }
-        padding = border.getPaddingAfter(false);
+        padding = border.getPaddingAfter(false, null); // TODO do we need a real context here?
         if (padding != 0) {
             attrib.setTwips(ITableAttributes.ATTR_CELL_PADDING_BOTTOM, padding);
             attrib.set(ITableAttributes.ATTR_CELL_U_PADDING_BOTTOM, 3 /*=twips*/);

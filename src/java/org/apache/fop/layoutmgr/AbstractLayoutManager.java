@@ -22,6 +22,8 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.PageViewport;
+import org.apache.fop.datatypes.LengthBase;
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.RetrieveMarker;
 
@@ -37,7 +39,8 @@ import java.util.Map;
 /**
  * The base class for most LayoutManagers.
  */
-public abstract class AbstractLayoutManager implements LayoutManager, Constants {
+public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager 
+    implements Constants {
     protected LayoutManager parentLM = null;
     protected List childLMs = null;
     protected ListIterator fobjIter = null;
@@ -49,12 +52,7 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     /** child LM and child LM iterator during getNextBreakPoss phase */
     protected LayoutManager curChildLM = null;
     protected ListIterator childLMiter = null;
-
-    /**
-     * logging instance
-     */
-    protected static Log log = LogFactory.getLog(LayoutManager.class);
-
+    
     /**
      * Abstract layout manager.
      */
@@ -67,6 +65,7 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
      * @param fo the formatting object for this layout manager
      */
     public AbstractLayoutManager(FObj fo) {
+        super(fo);
         if (fo == null) {
             throw new IllegalStateException("Null formatting object found.");
         }
@@ -83,6 +82,10 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
         return this.parentLM;
     }
 
+    public void initialize() {
+        // Empty
+    }
+
     /**
      * Return currently active child LayoutManager or null if
      * all children have finished layout.
@@ -95,6 +98,7 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
         }
         while (childLMiter.hasNext()) {
             curChildLM = (LayoutManager) childLMiter.next();
+            curChildLM.initialize();
             return curChildLM;
         }
         return null;
@@ -157,6 +161,9 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     public void addAreas(PositionIterator posIter, LayoutContext context) {
     }
 
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(LayoutContext, int)
+     */
     public LinkedList getNextKnuthElements(LayoutContext context,
                                            int alignment) {
         log.warn("null implementation of getNextKnuthElements() called!");
@@ -283,4 +290,5 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
             addChildLM(lm);
         }
     }
+
 }

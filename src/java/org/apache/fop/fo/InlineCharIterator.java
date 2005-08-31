@@ -40,9 +40,9 @@ public class InlineCharIterator extends RecursiveCharIterator {
 
     private void checkBoundaries(CommonBorderPaddingBackground bpb) {
         bStartBoundary = (bpb.getBorderStartWidth(false) > 0
-                       || bpb.getPaddingStart(false) > 0);
+                       || bpb.getPaddingStart(false, null) > 0); // TODO do we need context here?
         bEndBoundary = (bpb.getBorderEndWidth(false) > 0
-                     || bpb.getPaddingEnd(false) > 0);
+                     || bpb.getPaddingEnd(false, null) > 0); // TODO do we need context here?
     }
 
     /**

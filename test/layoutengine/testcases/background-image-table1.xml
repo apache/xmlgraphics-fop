@@ -18,7 +18,7 @@
 <testcase>
   <info>
     <p>
-      This test checks background image on a table.
+      This test checks background image on a fo:table.
     </p>
   </info>
   <variables>
@@ -33,7 +33,7 @@
       </fo:layout-master-set>
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
-          <fo:table background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center" background-image="##img">
+          <fo:table background-color="yellow" background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center" background-image="##img">
             <fo:table-column column-number="1" />
             <fo:table-column column-number="2" />
             <fo:table-column column-number="3" />
@@ -97,12 +97,12 @@
               </fo:table-row>
             </fo:table-body>
           </fo:table>
-          <fo:block>Table with centered background</fo:block>
+          <fo:block>Table with centered background image</fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
   </fo>
   <checks>
-    <eval expected="color=null,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=156960,vertical=12960" xpath="//flow/block[1]/@background"/>
+    <eval expected="color=#ffff00,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=156960,vertical=12960" xpath="//flow/block[1]/@background"/>
   </checks>
 </testcase>

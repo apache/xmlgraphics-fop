@@ -18,7 +18,7 @@
 <testcase>
   <info>
     <p>
-      This test checks background image on a table.
+      This test checks background image on a fo:table-body.
     </p>
   </info>
   <variables>
@@ -50,7 +50,7 @@
                 </fo:table-cell>
               </fo:table-row>
             </fo:table-header>
-            <fo:table-body background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center" background-image="##img">
+            <fo:table-body background-color="yellow" background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center" background-image="##img">
               <fo:table-row>
                 <fo:table-cell>
                   <fo:block>Row 1 Col 1</fo:block>
@@ -97,11 +97,13 @@
               </fo:table-row>
             </fo:table-body>
           </fo:table>
-          <fo:block>Table with centered body background</fo:block>
+          <fo:block>Table with centered background image on body</fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
   </fo>
   <checks>
+  <!-- backgrounds on table-body are not supported at the time this test
+  was written. Therefore no checks! -->
   </checks>
 </testcase>

@@ -57,7 +57,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
     private LinkedList bodyList = null;
 
     private int listItemHeight;
-
+    
     //TODO space-before|after: handle space-resolution rules
     
     private boolean keepWithNextPendingOnLabel;
@@ -122,7 +122,6 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         super(node);
         setLabel(node.getLabel());
         setBody(node.getBody());
-        initialize();
     }
 
     /**
@@ -151,15 +150,15 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         body.setParent(this);
     }
 
-    private void initialize() {
-        foSpaceBefore = new SpaceVal(getListItemFO().getCommonMarginBlock().spaceBefore).getSpace();
-        foSpaceAfter = new SpaceVal(getListItemFO().getCommonMarginBlock().spaceAfter).getSpace();
+    public void initialize() {
+        foSpaceBefore = new SpaceVal(getListItemFO().getCommonMarginBlock().spaceBefore, this).getSpace();
+        foSpaceAfter = new SpaceVal(getListItemFO().getCommonMarginBlock().spaceAfter, this).getSpace();
     }
 
     private int getIPIndents() {
         int iIndents = 0;
-        iIndents += getListItemFO().getCommonMarginBlock().startIndent.getValue();
-        iIndents += getListItemFO().getCommonMarginBlock().endIndent.getValue();
+        iIndents += getListItemFO().getCommonMarginBlock().startIndent.getValue(this);
+        iIndents += getListItemFO().getCommonMarginBlock().endIndent.getValue(this);
         return iIndents;
     }
     
@@ -178,6 +177,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         // label
         childLC = new LayoutContext(0);
         childLC.setRefIPD(context.getRefIPD());
+        label.initialize();
         labelList = label.getNextKnuthElements(childLC, alignment);
         if (childLC.isKeepWithPreviousPending()) {
             context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
@@ -187,6 +187,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         // body
         childLC = new LayoutContext(0);
         childLC.setRefIPD(context.getRefIPD());
+        body.initialize();
         bodyList = body.getNextKnuthElements(childLC, alignment);
         if (childLC.isKeepWithPreviousPending()) {
             context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
@@ -504,6 +505,11 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
             getCurrentPV().addMarkers(markers, false, isFirst(firstPos), isLast(lastPos));
         }
 
+        // We are done with this area add the background
+        TraitSetter.addBackground(curBlockArea, 
+                getListItemFO().getCommonBorderPaddingBackground(),
+                this);
+
         flush();
 
         // if adjusted space after
@@ -545,12 +551,10 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
             // set traits
             TraitSetter.setProducerID(curBlockArea, getListItemFO().getId());
             TraitSetter.addBorders(curBlockArea, 
-                    getListItemFO().getCommonBorderPaddingBackground());
-            TraitSetter.addBackground(curBlockArea, 
-                    getListItemFO().getCommonBorderPaddingBackground());
+                    getListItemFO().getCommonBorderPaddingBackground(), this);
             TraitSetter.addMargins(curBlockArea,
                     getListItemFO().getCommonBorderPaddingBackground(), 
-                    getListItemFO().getCommonMarginBlock());
+                    getListItemFO().getCommonMarginBlock(), this);
             TraitSetter.addBreaks(curBlockArea, 
                     getListItemFO().getBreakBefore(), 
                     getListItemFO().getBreakAfter());

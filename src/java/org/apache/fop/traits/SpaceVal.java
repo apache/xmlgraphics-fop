@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
  
 package org.apache.fop.traits;
 
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.SpaceProperty;
@@ -37,11 +38,12 @@ public class SpaceVal {
     /**
      * Constructor for SpaceVal objects based on Space objects.
      * @param spaceprop Space object to use
+     * @param context Percentage evaluation context
      */
-    public SpaceVal(SpaceProperty spaceprop) {
-        space = new MinOptMax(spaceprop.getMinimum().getLength().getValue(),
-                              spaceprop.getOptimum().getLength().getValue(),
-                              spaceprop.getMaximum().getLength().getValue());
+    public SpaceVal(SpaceProperty spaceprop, PercentBaseContext context) {
+        space = new MinOptMax(spaceprop.getMinimum(context).getLength().getValue(context),
+                              spaceprop.getOptimum(context).getLength().getValue(context),
+                              spaceprop.getMaximum(context).getLength().getValue(context));
         bConditional = 
                 (spaceprop.getConditionality().getEnum() == Constants.EN_DISCARD);
         Property precProp = spaceprop.getPrecedence();
@@ -69,7 +71,9 @@ public class SpaceVal {
         this.iPrecedence = iPrecedence;
     }
 
-    static public SpaceVal makeWordSpacing(Property wordSpacing, SpaceVal letterSpacing, Font fs) {
+    static public SpaceVal makeWordSpacing(Property wordSpacing, 
+                                           SpaceVal letterSpacing, 
+                                           Font fs) {
         if (wordSpacing.getEnum() == Constants.EN_NORMAL) {
             // give word spaces the possibility to shrink by a third,
             // and stretch by a half;
@@ -80,7 +84,7 @@ public class SpaceVal {
                      (space, MinOptMax.multiply(letterSpacing.getSpace(), 2)),
                      true, true, 0);
         } else {
-            return new SpaceVal(wordSpacing.getSpace());
+            return new SpaceVal(wordSpacing.getSpace(), null);
         }        
     }
 
@@ -89,7 +93,7 @@ public class SpaceVal {
             // letter spaces are set to zero (or use different values?)
             return new SpaceVal(new MinOptMax(0), true, true, 0);
         } else {
-            return new SpaceVal(letterSpacing.getSpace());
+            return new SpaceVal(letterSpacing.getSpace(), null);
         }
     }
 

@@ -54,10 +54,14 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
     public CharacterLayoutManager(Character node) {
         super(node);
         fobj = node;
-        InlineArea inline = getCharacterInlineArea(node);
+    }
+    
+    public void initialize() {
+        InlineArea inline = getCharacterInlineArea(fobj);
         setCurrentArea(inline);
+        
         setAlignment(fobj.getVerticalAlign());
-        fs = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo());
+        fs = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
 
         SpaceVal ls = SpaceVal.makeLetterSpacing(fobj.getLetterSpacing());
         letterSpaceIPD = ls.getSpace();

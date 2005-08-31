@@ -30,18 +30,6 @@ public interface PercentBase {
     
     /** table units */
     LayoutDimension TABLE_UNITS = new LayoutDimension("table-units");
-    /** Block IPD */
-    LayoutDimension BLOCK_IPD = new LayoutDimension("block-ipd");
-    /** Block BPD */
-    LayoutDimension BLOCK_BPD = new LayoutDimension("block-bpd");
-    /** Reference Area IPD */
-    LayoutDimension REFERENCE_AREA_IPD = new LayoutDimension("reference-area-ipd");
-    /** Reference Area BPD */
-    LayoutDimension REFERENCE_AREA_BPD = new LayoutDimension("reference-area-bpd");
-    /** Intrinsic width of an image or foreign-object */ 
-    LayoutDimension IMAGE_INTRINSIC_WIDTH = new LayoutDimension("image-intrinsic-width");
-    /** Intrinsic height of an image or foreign-object */ 
-    LayoutDimension IMAGE_INTRINSIC_HEIGHT = new LayoutDimension("image-intrinsic-heigth");
     
     /**
      * Determines whether a numeric property is created or one with a percentage
@@ -53,13 +41,14 @@ public interface PercentBase {
     double getBaseValue();
 
     /**
+     * @param context The context for percentage evaluation
      * @return the integer size in millipoints of the object (this will be used 
      * as the base to which a percentage will be applied to compute the length 
      * of the referencing item)
      * @throws PropertyException if a problem occurs during evaluation of this
      *     value.
      */
-    int getBaseLength() throws PropertyException;
+    int getBaseLength(PercentBaseContext context) throws PropertyException;
     
     /** Enum class for dimension types. */
     public class LayoutDimension {

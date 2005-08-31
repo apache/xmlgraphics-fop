@@ -18,6 +18,7 @@
 
 package org.apache.fop.layoutmgr;
 
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.traits.MinOptMax;
@@ -31,18 +32,20 @@ public class MinOptMaxUtil {
      * Restricts a MinOptMax using the values from a LengthRangeProperty.
      * @param mom MinOptMax to restrict
      * @param lr restricting source
+     * @param context Percentage evaluation context
      */
-    public static void restrict(MinOptMax mom, LengthRangeProperty lr) {
+    public static void restrict(MinOptMax mom, LengthRangeProperty lr, 
+                                PercentBaseContext context) {
         if (lr.getEnum() != Constants.EN_AUTO) {
-            if (lr.getMinimum().getEnum() != Constants.EN_AUTO) {
-                int min = lr.getMinimum().getLength().getValue();
+            if (lr.getMinimum(context).getEnum() != Constants.EN_AUTO) {
+                int min = lr.getMinimum(context).getLength().getValue(context);
                 if (min > mom.min) {
                     mom.min = min;
                     fixAfterMinChanged(mom);
                 }
             }
-            if (lr.getMaximum().getEnum() != Constants.EN_AUTO) {
-                int max = lr.getMaximum().getLength().getValue();
+            if (lr.getMaximum(context).getEnum() != Constants.EN_AUTO) {
+                int max = lr.getMaximum(context).getLength().getValue(context);
                 if (max < mom.max) {
                     mom.max = max;
                     if (mom.max < mom.opt) {
@@ -51,8 +54,8 @@ public class MinOptMaxUtil {
                     }
                 }
             }
-            if (lr.getOptimum().getEnum() != Constants.EN_AUTO) {
-                int opt = lr.getOptimum().getLength().getValue();
+            if (lr.getOptimum(context).getEnum() != Constants.EN_AUTO) {
+                int opt = lr.getOptimum(context).getLength().getValue(context);
                 if (opt > mom.min) {
                     mom.opt = opt;
                     if (mom.opt > mom.max) {
@@ -63,6 +66,13 @@ public class MinOptMaxUtil {
         }
     }
 
+    /**
+     * Extend the minimum length to the given length.
+     * @param mom the min/opt/max trait
+     * @param len the new minimum length
+     * @param optToLen if set adjusts the optimum length to be the smaller of the
+     * minimum length and the given length
+     */
     public static void extendMinimum(MinOptMax mom, int len, boolean optToLen) {
         if (mom.min < len) {
             mom.min = len;
@@ -91,17 +101,18 @@ public class MinOptMaxUtil {
     /**
      * Converts a LengthRangeProperty to a MinOptMax.
      * @param prop LengthRangeProperty
+     * @param context Percentage evaluation context
      * @return the requested MinOptMax instance
      */
-    public static MinOptMax toMinOptMax(LengthRangeProperty prop) {
+    public static MinOptMax toMinOptMax(LengthRangeProperty prop, PercentBaseContext context) {
         MinOptMax mom = new MinOptMax(
-                (prop.getMinimum().isAuto() 
-                        ? 0 : prop.getMinimum().getLength().getValue()),
-                (prop.getOptimum().isAuto() 
-                        ? 0 : prop.getOptimum().getLength().getValue()),
-                (prop.getMinimum().isAuto() 
+                (prop.getMinimum(context).isAuto() 
+                        ? 0 : prop.getMinimum(context).getLength().getValue(context)),
+                (prop.getOptimum(context).isAuto() 
+                        ? 0 : prop.getOptimum(context).getLength().getValue(context)),
+                (prop.getMinimum(context).isAuto() 
                         ? Integer.MAX_VALUE 
-                        : prop.getMaximum().getLength().getValue()));
+                        : prop.getMaximum(context).getLength().getValue(context)));
         return mom;
     }
     

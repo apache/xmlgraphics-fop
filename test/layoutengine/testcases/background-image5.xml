@@ -18,7 +18,7 @@
 <testcase>
   <info>
     <p>
-      This test checks background image on a fo:basic-link.
+      This test checks background image on a fo:inline.
     </p>
   </info>
   <variables>
@@ -34,12 +34,15 @@
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
           <fo:block>
-            Why is <fo:inline font-size="96pt" background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center" background-image="##img" background-color="lightgray">FOP</fo:inline> so cool?
+            Why is <fo:inline font-size="96pt" background-color="yellow" background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center" background-image="##img">FOP</fo:inline> so cool?
           </fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
   </fo>
   <checks>
+    <eval expected="197376" xpath="//flow/block/lineArea/inlineparent/@ipd"/>
+    <eval expected="92100" xpath="//flow/block/lineArea/inlineparent/@bpd"/>
+    <eval expected="color=#ffff00,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=75648,vertical=23010" xpath="//flow/block/lineArea/inlineparent/@background"/>
   </checks>
 </testcase>

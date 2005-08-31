@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ public class BidiLayoutManager extends LeafNodeLayoutManager {
 
     public BidiLayoutManager(BidiOverride node, InlineLayoutManager cLM) {
         super(node);
+        setParent(cLM);
         children = new ArrayList();
 /*
         for (int count = cLM.size() - 1; count >= 0; count--) {

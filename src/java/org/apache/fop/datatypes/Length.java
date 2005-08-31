@@ -27,4 +27,12 @@ public interface Length extends Numeric {
      * @return the length in millipoints
      */
     public int getValue();
+    
+    /**
+     * Returns the length in 1/1000ths of a point (millipoints)
+     * @param context The context for the length calculation (for percentage based lengths)
+     * @return the length in millipoints
+     */
+    public int getValue(PercentBaseContext context);
+
 }

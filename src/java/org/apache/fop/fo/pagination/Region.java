@@ -81,8 +81,8 @@ public abstract class Region extends FObj {
             }
         }
         
-        if (getCommonBorderPaddingBackground().getBPPaddingAndBorder(false) != 0
-                || getCommonBorderPaddingBackground().getIPPaddingAndBorder(false) != 0) {
+        if (getCommonBorderPaddingBackground().getBPPaddingAndBorder(false, null) != 0 //TODO do we need context here?
+                || getCommonBorderPaddingBackground().getIPPaddingAndBorder(false, null) != 0) { //TODO do we need context here?
             throw new PropertyException("Border and padding for a region "
                     + "must be '0' (See 6.4.13 in XSL 1.0).");
         }
@@ -99,9 +99,11 @@ public abstract class Region extends FObj {
 
     /**
      * @param pageRefRect reference dimension of the page area.
+     * @param pageViewRectRect page view port dimensions.
      * @return the rectangle for the viewport area
      */
-    public abstract Rectangle getViewportRectangle(FODimension pageRefRect);
+    public abstract Rectangle getViewportRectangle(FODimension pageRefRect
+                                            , FODimension pageViewPortRect);
 
     /**
      * Returns the default region name (xsl-region-before, xsl-region-start,

@@ -243,6 +243,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                             FootnoteBodyLayoutManager fblm 
                                 = (FootnoteBodyLayoutManager) footnoteBodyIterator.next();
                             fblm.setParent(childFLM);
+                            fblm.initialize();
                             ((KnuthBlockBox) element).addElementList(
                                     fblm.getNextKnuthElements(footnoteContext, alignment));
                         }

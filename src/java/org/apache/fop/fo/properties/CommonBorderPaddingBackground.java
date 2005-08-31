@@ -20,6 +20,7 @@ package org.apache.fop.fo.properties;
 
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
@@ -224,6 +225,14 @@ public class CommonBorderPaddingBackground implements Cloneable {
     }
     
     /**
+     * Set padding.
+     * @param source the padding info to copy from
+     */
+    public void setPadding(CommonBorderPaddingBackground source) {
+        this.padding = source.padding;
+    }
+    
+    /**
      * @return the background image as a preloaded FopImage, null if there is
      *     no background image.
      */
@@ -247,20 +256,20 @@ public class CommonBorderPaddingBackground implements Cloneable {
         return getBorderWidth(AFTER, bDiscard);
     }
 
-    public int getPaddingStart(boolean bDiscard) {
-        return getPadding(START, bDiscard);
+    public int getPaddingStart(boolean bDiscard, PercentBaseContext context) {
+        return getPadding(START, bDiscard, context);
     }
 
-    public int getPaddingEnd(boolean bDiscard) {
-        return getPadding(END, bDiscard);
+    public int getPaddingEnd(boolean bDiscard, PercentBaseContext context) {
+        return getPadding(END, bDiscard, context);
     }
 
-    public int getPaddingBefore(boolean bDiscard) {
-        return getPadding(BEFORE, bDiscard);
+    public int getPaddingBefore(boolean bDiscard, PercentBaseContext context) {
+        return getPadding(BEFORE, bDiscard, context);
     }
 
-    public int getPaddingAfter(boolean bDiscard) {
-        return getPadding(AFTER, bDiscard);
+    public int getPaddingAfter(boolean bDiscard, PercentBaseContext context) {
+        return getPadding(AFTER, bDiscard, context);
     }
 
     public int getBorderWidth(int side, boolean bDiscard) {
@@ -290,11 +299,11 @@ public class CommonBorderPaddingBackground implements Cloneable {
         }
     }
 
-    public int getPadding(int side, boolean bDiscard) {
+    public int getPadding(int side, boolean bDiscard, PercentBaseContext context) {
         if ((padding[side] == null) || (bDiscard && padding[side].isDiscard())) {
             return 0;
         } else {
-            return padding[side].getLengthValue();
+            return padding[side].getLengthValue(context);
         }
     }
 
@@ -302,11 +311,12 @@ public class CommonBorderPaddingBackground implements Cloneable {
      * Return all the border and padding width in the inline progression 
      * dimension.
      * @param bDiscard the discard flag.
+     * @param context for percentage evaluation.
      * @return all the padding and border width.
      */
-    public int getIPPaddingAndBorder(boolean bDiscard) {
-        return getPaddingStart(bDiscard) 
-            + getPaddingEnd(bDiscard) 
+    public int getIPPaddingAndBorder(boolean bDiscard, PercentBaseContext context) {
+        return getPaddingStart(bDiscard, context) 
+            + getPaddingEnd(bDiscard, context) 
             + getBorderStartWidth(bDiscard) 
             + getBorderEndWidth(bDiscard);        
     }
@@ -315,10 +325,11 @@ public class CommonBorderPaddingBackground implements Cloneable {
      * Return all the border and padding height in the block progression 
      * dimension.
      * @param bDiscard the discard flag.
+     * @param context for percentage evaluation
      * @return all the padding and border height.
      */
-    public int getBPPaddingAndBorder(boolean bDiscard) {
-        return getPaddingBefore(bDiscard) + getPaddingAfter(bDiscard) +
+    public int getBPPaddingAndBorder(boolean bDiscard, PercentBaseContext context) {
+        return getPaddingBefore(bDiscard, context) + getPaddingAfter(bDiscard, context) +
                getBorderBeforeWidth(bDiscard) + getBorderAfterWidth(bDiscard);        
     }
 
@@ -328,8 +339,8 @@ public class CommonBorderPaddingBackground implements Cloneable {
         getBorderStartWidth(false) + ", " + getBorderEndWidth(false) + ")\n" +
         "Border Colors: (" + getBorderColor(BEFORE) + ", " + getBorderColor(AFTER) + ", " +
         getBorderColor(START) + ", " + getBorderColor(END) + ")\n" +
-        "Padding: (" + getPaddingBefore(false) + ", " + getPaddingAfter(false) + ", " +
-        getPaddingStart(false) + ", " + getPaddingEnd(false) + ")\n";
+        "Padding: (" + getPaddingBefore(false, null) + ", " + getPaddingAfter(false, null) + ", " +
+        getPaddingStart(false, null) + ", " + getPaddingEnd(false, null) + ")\n";
     }
 
     /**
@@ -345,9 +356,12 @@ public class CommonBorderPaddingBackground implements Cloneable {
                 + getBorderStartWidth(false) + getBorderEndWidth(false)) > 0);
     }
 
-    /** @return true if padding is non-zero. */
-    public boolean hasPadding() {
-        return ((getPaddingBefore(false) + getPaddingAfter(false) 
-                + getPaddingStart(false) + getPaddingEnd(false)) > 0);
+    /** 
+     * @param context for percentage based evaluation.
+     * @return true if padding is non-zero. 
+     */
+    public boolean hasPadding(PercentBaseContext context) {
+        return ((getPaddingBefore(false, context) + getPaddingAfter(false, context) 
+                + getPaddingStart(false, context) + getPaddingEnd(false, context)) > 0);
     }
 }

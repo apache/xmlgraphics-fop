@@ -18,6 +18,7 @@
 
 package org.apache.fop.fo.properties;
 
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.FObj;
 
@@ -77,11 +78,30 @@ public class TableColLength extends LengthProperty {
     }
 
     /**
+     * Return the value of this Numeric.
+     * @param context Evaluation context
+     * @return the value
+     * @see Numeric#getNumericValue(Object)
+     */
+    public double getNumericValue(PercentBaseContext context) {
+        return getNumericValue();
+    }
+
+    /**
      * Return the value as a length.
      * @see org.apache.fop.datatypes.Length#getValue()
      */
     public int getValue() {
         return (int) (tcolUnits * column.getLayoutDimension(PercentBase.TABLE_UNITS).floatValue());
+    }
+
+    /**
+     * Returns the length in 1/1000ths of a point (millipoints)
+     * @param Evaluation context
+     * @return the length in millipoints
+     */
+    public int getValue(PercentBaseContext context) {
+        return getValue();
     }
 
     /**

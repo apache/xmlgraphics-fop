@@ -245,6 +245,9 @@ public class GridUnit {
         this.effBorders.setBorderInfo(
                 borderModel.determineWinner(this, other, 
                         side, resFlags), side);
+        if (cell != null) {
+            this.effBorders.setPadding(this.cell.getCommonBorderPaddingBackground());
+        }
     }
     
     /**

@@ -39,6 +39,8 @@ import org.apache.fop.traits.SpaceVal;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import org.apache.fop.datatypes.LengthBase;
+import org.apache.fop.fo.FObj;
 
 /**
  * LayoutManager for a table FO.
@@ -58,12 +60,12 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     private Block curBlockArea;
 
     private int referenceIPD;
+    private int referenceBPD;
     private boolean autoLayout = true;
 
     //TODO space-before|after: handle space-resolution rules
     private MinOptMax spaceBefore;
     private MinOptMax spaceAfter;
-    
     
     /**
      * Create a new table layout manager.
@@ -73,7 +75,6 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         super(node);
         fobj = node;
         this.columns = new ColumnSetup(node);
-        initialize();
     }
 
     /** @return the table FO */
@@ -88,20 +89,20 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         return this.columns;
     }
     
-    private void initialize() {
-        spaceBefore = new SpaceVal(fobj.getCommonMarginBlock().spaceBefore).getSpace();
-        spaceAfter = new SpaceVal(fobj.getCommonMarginBlock().spaceAfter).getSpace();
+    public void initialize() {
+        spaceBefore = new SpaceVal(fobj.getCommonMarginBlock().spaceBefore, this).getSpace();
+        spaceAfter = new SpaceVal(fobj.getCommonMarginBlock().spaceAfter, this).getSpace();
         
         if (!fobj.isAutoLayout() 
-                && fobj.getInlineProgressionDimension().getOptimum().getEnum() != EN_AUTO) {
+                && fobj.getInlineProgressionDimension().getOptimum(this).getEnum() != EN_AUTO) {
             autoLayout = false;
         }
     }
 
     private int getIPIndents() {
         int iIndents = 0;
-        iIndents += fobj.getCommonMarginBlock().startIndent.getValue();
-        iIndents += fobj.getCommonMarginBlock().endIndent.getValue();
+        iIndents += fobj.getCommonMarginBlock().startIndent.getValue(this);
+        iIndents += fobj.getCommonMarginBlock().endIndent.getValue(this);
         return iIndents;
     }
     
@@ -120,9 +121,11 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             }
         }
 
+        referenceBPD = context.getStackLimit().opt;
         referenceIPD = context.getRefIPD();
-        if (fobj.getInlineProgressionDimension().getOptimum().getEnum() != EN_AUTO) {
-            referenceIPD = fobj.getInlineProgressionDimension().getOptimum().getLength().getValue();
+
+        if (fobj.getInlineProgressionDimension().getOptimum(this).getEnum() != EN_AUTO) {
+            referenceIPD = fobj.getInlineProgressionDimension().getOptimum(this).getLength().getValue(this);
         } else if( !fobj.isAutoLayout() ) {
             log.info("table-layout=\"fixed\" and width=\"auto\", but auto-layout not supported " + 
                      "=> assuming width=\"100%\"");
@@ -141,11 +144,6 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             stackSize.add(spaceBefore);
         }
 
-        fobj.setLayoutDimension(PercentBase.BLOCK_IPD, referenceIPD);
-        fobj.setLayoutDimension(PercentBase.BLOCK_BPD, context.getStackLimit().opt);
-        fobj.setLayoutDimension(PercentBase.REFERENCE_AREA_IPD, referenceIPD);
-        fobj.setLayoutDimension(PercentBase.REFERENCE_AREA_BPD, context.getStackLimit().opt);
-
         // either works out table of column widths or if proportional-column-width function
         // is used works out total factor, so that value of single unit can be computed.
         int sumCols = 0;
@@ -153,7 +151,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         for (Iterator i = columns.iterator(); i.hasNext(); ) {
             TableColumn column = (TableColumn) i.next();
             Length width = column.getColumnWidth();
-            sumCols += width.getValue();
+            sumCols += width.getValue(this);
             if (width instanceof TableColLength) {
                 factors += ((TableColLength) width).getTableUnits();
             }
@@ -284,7 +282,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         addBlockSpacing(adjust, spaceBefore);
         spaceBefore = null;
 
-        int startXOffset = fobj.getCommonMarginBlock().startIndent.getValue();
+        int startXOffset = fobj.getCommonMarginBlock().startIndent.getValue(this);
         
         // add column, body then row areas
 
@@ -301,12 +299,15 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         curBlockArea.setBPD(tableHeight);
 
         if (fobj.isSeparateBorderModel()) {
-            TraitSetter.addBorders(curBlockArea, fobj.getCommonBorderPaddingBackground());
+            TraitSetter.addBorders(curBlockArea, fobj.getCommonBorderPaddingBackground(), this);
         }
-        TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
+        TraitSetter.addBackground(curBlockArea, 
+                fobj.getCommonBorderPaddingBackground(),
+                this);
         TraitSetter.addMargins(curBlockArea,
                 fobj.getCommonBorderPaddingBackground(), 
-                fobj.getCommonMarginBlock());
+                fobj.getCommonMarginBlock(),
+                this);
         TraitSetter.addBreaks(curBlockArea, 
                 fobj.getBreakBefore(), fobj.getBreakAfter());
 
@@ -413,5 +414,41 @@ public class TableLayoutManager extends BlockStackingLayoutManager
                 || !fobj.getKeepWithNext().getWithinColumn().isAuto();
     }
 
+    // --------- Property Resolution related functions --------- //
+
+    /**
+     * @see org.apache.fop.datatypes.PercentBaseContext#getBaseLength(int, FObj)
+     */
+    public int getBaseLength(int lengthBase, FObj fobj) {
+        // Special handler for TableColumn width specifications
+        if (fobj instanceof TableColumn && fobj.getParent() == getFObj()) {
+            switch (lengthBase) {
+            case LengthBase.CONTAINING_BLOCK_WIDTH:
+                return getContentAreaIPD();
+            default:
+                log.error("Unknown base type for LengthBase.");
+                return 0;
+            }
+        } else {
+            return super.getBaseLength(lengthBase, fobj);
+        }
+    }
+    
+    /**
+     * Returns the IPD of the content area
+     * @return the IPD of the content area
+     */
+    public int getContentAreaIPD() {
+        return referenceIPD;
+    }
+   
+    /**
+     * Returns the BPD of the content area
+     * @return the BPD of the content area
+     */
+    public int getContentAreaBPD() {
+        return referenceBPD;
+    }
+    
 }
 
