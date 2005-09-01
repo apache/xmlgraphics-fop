@@ -86,7 +86,7 @@ public class SVGElement extends SVGObj {
             if (baseURL != null) {
                 SVGOMDocument svgdoc = (SVGOMDocument)doc; 
                 svgdoc.setURLObject(baseURL);
-                svgdoc.setDocumentURI(baseURL.toString());
+                //svgdoc.setDocumentURI(baseURL.toString());
             }
         } catch (Exception e) {
             getLogger().error("Could not set base URL for svg", e);
