@@ -18,7 +18,7 @@
 <testcase>
   <info>
     <p>
-      This test checks background image on lists (list-block).
+      This test checks background image on lists (list-item).
     </p>
   </info>
   <variables>
