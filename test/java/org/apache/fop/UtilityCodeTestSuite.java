@@ -20,6 +20,7 @@ package org.apache.fop;
 
 import org.apache.fop.util.ASCII85InputStreamTestCase;
 import org.apache.fop.util.ASCII85OutputStreamTestCase;
+import org.apache.fop.util.PDFNumberTestCase;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -39,6 +40,7 @@ public class UtilityCodeTestSuite {
         //$JUnit-BEGIN$
         suite.addTest(new TestSuite(ASCII85OutputStreamTestCase.class));
         suite.addTest(new TestSuite(ASCII85InputStreamTestCase.class));
+        suite.addTest(new TestSuite(PDFNumberTestCase.class));
         //$JUnit-END$
         return suite;
     }
