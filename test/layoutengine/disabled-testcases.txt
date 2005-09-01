@@ -5,6 +5,7 @@ block_space-before_space-after_2.xml
 block_word-spacing.xml
 block_word-spacing_text-align_justify.xml
 external-graphic_content-height_content-width.xml
+external-graphic_oversized.xml
 inline-block_keep-together.xml
 inline_block_nested_3.xml
 inline-container_block_nested.xml
