@@ -18,6 +18,12 @@
  
 package org.apache.fop.pdf;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
+
+import com.sun.corba.se.internal.orbutil.Lock;
+
 /**
  * This class represents a simple number object. It also contains contains some 
  * utility methods for outputing numbers to PDF.
@@ -53,41 +59,20 @@ public class PDFNumber extends PDFObject {
     }
 
     /**
-     * Output a double value to a string suitable for PDF.
+     * Output a double value to a string suitable for PDF (6 decimal digits).
      *
      * @param doubleDown the double value
      * @return the value as a string
      */
     public static String doubleOut(double doubleDown) {
-        StringBuffer p = new StringBuffer();
-        if (doubleDown < 0) {
-            doubleDown = -doubleDown;
-            p.append("-");
-        }
-        double trouble = doubleDown % 1;
-
-        if (trouble > 0.950) {
-            p.append((int)doubleDown + 1);
-        } else if (trouble < 0.050) {
-            p.append((int)doubleDown);
-        } else {
-            String doubleString = new String(doubleDown + "");
-            int decimal = doubleString.indexOf(".");
-            if (decimal != -1) {
-                p.append(doubleString.substring(0, decimal));
-
-                if ((doubleString.length() - decimal) > 6) {
-                    p.append(doubleString.substring(decimal, decimal + 6));
-                } else {
-                    p.append(doubleString.substring(decimal));
-                }
-            } else {
-                p.append(doubleString);
-            }
-        }
-        return (p.toString());
+        return doubleOut(doubleDown, 6);
     }
 
+    // Static cache. Possible concurrency implications. See comment in doubleOut(double, int).
+    private static DecimalFormat[] decimalFormatCache = new DecimalFormat[17];
+    
+    private static final String BASE_FORMAT = "0.################";
+    
     /**
      * Output a double value to a string suitable for PDF.
      * In this method it is possible to set the maximum
@@ -98,33 +83,24 @@ public class PDFNumber extends PDFObject {
      * @return the value as a string
      */
     public static String doubleOut(double doubleDown, int dec) {
-        StringBuffer p = new StringBuffer();
-        if (doubleDown < 0) {
-            doubleDown = -doubleDown;
-            p.append("-");
+        if (dec < 0 || dec >= decimalFormatCache.length) {
+            throw new IllegalArgumentException("Parameter dec must be between 1 and " 
+                    + (decimalFormatCache.length + 1));
         }
-        double trouble = doubleDown % 1;
-
-        if (trouble > (1.0 - (5.0 / (Math.pow(10.0, dec))))) {
-            p.append((int)doubleDown + 1);
-        } else if (trouble < (5.0 / (Math.pow(10.0, dec)))) {
-            p.append((int)doubleDown);
-        } else {
-            String doubleString = new String(doubleDown + "");
-            int decimal = doubleString.indexOf(".");
-            if (decimal != -1) {
-                p.append(doubleString.substring(0, decimal));
-
-                if ((doubleString.length() - decimal) > dec) {
-                    p.append(doubleString.substring(decimal, decimal + dec));
-                } else {
-                    p.append(doubleString.substring(decimal));
-                }
-            } else {
-                p.append(doubleString);
+        if (decimalFormatCache[dec] == null) {
+            //We don't care about the rare case where a DecimalFormat might be replaced in
+            //a multi-threaded environment, so we don't synchronize the access to the static
+            //array (mainly for performance reasons). After all, the DecimalFormat instances
+            //read-only objects so it doesn't matter which instance is used as long as one
+            //is available.
+            String s = "0";
+            if (dec > 0) {
+                s = BASE_FORMAT.substring(0, dec + 2);
             }
+            DecimalFormat df = new DecimalFormat(s, new DecimalFormatSymbols(Locale.US));
+            decimalFormatCache[dec] = df;
         }
-        return (p.toString());
+        return decimalFormatCache[dec].format(doubleDown);
     }
 
     /**
