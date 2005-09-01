@@ -86,6 +86,7 @@ public class SVGElement extends SVGObj {
             if (baseURL != null) {
                 SVGOMDocument svgdoc = (SVGOMDocument)doc; 
                 svgdoc.setURLObject(baseURL);
+                //The following line should not be called to leave FOP compatible to Batik 1.6.
                 //svgdoc.setDocumentURI(baseURL.toString());
             }
         } catch (Exception e) {
