@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableColumn;
-import org.apache.fop.layoutmgr.LayoutManager;
 
 /**
  * This class represents a primary grid unit of a spanned cell.

@@ -66,9 +66,6 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.fonts.FontSetup;
-import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontMetrics;
 
 /**
  * Renderer that renders areas to XML for debugging purposes.

@@ -35,7 +35,6 @@ import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
-import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
 
 import java.util.ArrayList;

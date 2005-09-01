@@ -24,7 +24,6 @@ import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFState;
 import org.apache.fop.pdf.PDFStream;
-import org.apache.fop.pdf.PDFNumber;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.svg.PDFTextElementBridge;
 import org.apache.fop.svg.PDFAElementBridge;

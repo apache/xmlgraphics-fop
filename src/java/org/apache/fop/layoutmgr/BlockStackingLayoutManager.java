@@ -26,7 +26,6 @@ import java.util.ListIterator;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockParent;
 import org.apache.fop.area.Block;
-import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.SpaceProperty;

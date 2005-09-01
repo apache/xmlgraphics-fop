@@ -30,7 +30,6 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonTextDecoration;
-import org.apache.fop.fo.properties.PercentLength;
 
 /**
  * This is a helper class used for setting common traits on areas.
