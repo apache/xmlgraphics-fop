@@ -18,7 +18,7 @@
 <testcase>
   <info>
     <p>
-      This test checks lists. It is a regression test. list1 tested the indenting fine, but here there's 
+      This test checks lists. It is a regression test. list-block tested the indenting fine, but here there's 
       a page margin that can result in wrong values if the reference area block ipd isn't reported correctly.
     </p>
   </info>
