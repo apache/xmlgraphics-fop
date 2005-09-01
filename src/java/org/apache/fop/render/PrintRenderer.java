@@ -19,16 +19,11 @@
 package org.apache.fop.render;
 
 // FOP
-import org.apache.fop.area.Area;
-import org.apache.fop.area.Trait;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
-import org.apache.fop.image.FopImage;
-import org.apache.fop.traits.BorderProps;
 
 // Java
 import java.awt.Color;
-import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 /** Abstract base class of "Print" type renderers.  */

@@ -24,7 +24,6 @@ import java.util.ListIterator;
 import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
-import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.pagination.SideRegion;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager;

@@ -40,7 +40,6 @@ import org.apache.fop.traits.MinOptMax;
 import java.util.List;
 import java.util.LinkedList;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager.AreaInfo;
 
 /**
  * LayoutManager for the fo:leader formatting object

@@ -37,7 +37,6 @@ import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.Trait;
-import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.traits.MinOptMax;
 
 /**

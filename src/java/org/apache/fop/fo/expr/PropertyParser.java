@@ -22,7 +22,6 @@ import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.properties.ColorTypeProperty;
 import org.apache.fop.fo.properties.FixedLength;
-import org.apache.fop.fo.properties.LengthProperty;
 import org.apache.fop.fo.properties.ListProperty;
 import org.apache.fop.fo.properties.NumberProperty;
 import org.apache.fop.fo.properties.PercentLength;

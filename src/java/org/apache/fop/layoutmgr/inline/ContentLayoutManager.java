@@ -40,8 +40,6 @@ import java.util.ListIterator;
 import java.util.ArrayList;
 import org.apache.fop.traits.MinOptMax;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.fop.area.Block;
 
 /**

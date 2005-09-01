@@ -22,13 +22,8 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.PageViewport;
-import org.apache.fop.datatypes.LengthBase;
-import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.RetrieveMarker;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.util.LinkedList;
 import java.util.List;

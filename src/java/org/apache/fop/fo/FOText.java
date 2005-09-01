@@ -30,7 +30,6 @@ import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.fo.properties.CommonTextDecoration;
-import org.apache.fop.fo.properties.EnumLength;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.SpaceProperty;
 
