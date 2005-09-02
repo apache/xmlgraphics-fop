@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,8 +50,7 @@ public class PlanElement extends PlanObj {
      */
     public void processNode(String elementName, Locator locator, 
                             Attributes attlist, PropertyList propertyList)
-        throws FOPException
-    {
+        throws FOPException {
         super.processNode(elementName, locator, attlist, propertyList);
         createBasicDocument();
     }
@@ -80,9 +79,9 @@ public class PlanElement extends PlanObj {
     }
 
     /**
-     * @see org.apache.fop.fo.XMLObj#getDocument()
+     * @see org.apache.fop.fo.XMLObj#getDOMDocument()
      */
-    public Document getDocument() {
+    public Document getDOMDocument() {
         convertToSVG();
         return doc;
     }
