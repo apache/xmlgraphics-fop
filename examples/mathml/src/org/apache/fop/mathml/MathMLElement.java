@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -104,12 +104,12 @@ public class MathMLElement extends MathMLObj {
 
     /**
      * Create the SVG from MathML.
+     * @param base the root element
      * @return the DOM document containing SVG
      */
     public static Document createSVG(MathBase base) {
 
-        DOMImplementation impl =
-            SVGDOMImplementation.getDOMImplementation();
+        DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
         String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
         Document svgdocument = impl.createDocument(svgNS, "svg", null);
 
@@ -140,10 +140,8 @@ public class MathMLElement extends MathMLObj {
 
     }
 
-    /**
-     * @see org.apache.fop.fo.XMLObj#getDocument()
-     */
-    public Document getDocument() {
+    /** @see org.apache.fop.fo.XMLObj#getDOMDocument() */
+    public Document getDOMDocument() {
         convertToSVG();
         return doc;
     }
