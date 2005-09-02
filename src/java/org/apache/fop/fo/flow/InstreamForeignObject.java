@@ -327,4 +327,10 @@ public class InstreamForeignObject extends FObj {
     protected void addChildNode(FONode child) throws FOPException {
         super.addChildNode(child);
     }
+
+    /** @return the XMLObj child node of the instream-foreign-object. */
+    public XMLObj getChildXMLObj() {
+        return (XMLObj) childNodes.get(0);
+    }
+    
 }

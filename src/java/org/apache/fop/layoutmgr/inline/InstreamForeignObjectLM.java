@@ -57,7 +57,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
      * @return the viewport inline area
      */
     private Viewport getInlineArea() {
-        XMLObj child = (XMLObj) fobj.childNodes.get(0);
+        XMLObj child = (XMLObj) fobj.getChildXMLObj();
 
         // viewport size is determined by block-progression-dimension
         // and inline-progression-dimension

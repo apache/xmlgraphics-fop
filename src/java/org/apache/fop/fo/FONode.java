@@ -29,17 +29,19 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.extensions.svg.SVGElementMapping;
 import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.util.CharUtilities;
 
 /**
- * base class for nodes in the XML tree
+ * Base class for nodes in the XML tree
  */
 public abstract class FONode implements Cloneable {
 
-    protected static String FO_URI = FOElementMapping.URI;
+    /** the XSL-FO namespace URI */
+    protected static final String FO_URI = FOElementMapping.URI;
 
     /** Parent FO node */
     protected FONode parent;
@@ -50,10 +52,12 @@ public abstract class FONode implements Cloneable {
      *   information
      */
     public Locator locator;
+    //TODO Make private or protected and access via getLocator()
 
     /** Logger for fo-tree related messages **/
-    private static Log log = LogFactory.getLog(FONode.class);
-
+    protected static Log log = LogFactory.getLog(FONode.class);
+    //TODO Remove getLogger() method!
+    
     /**
      * Main constructor.
      * @param parent parent of this node
@@ -68,9 +72,10 @@ public abstract class FONode implements Cloneable {
      * @param parent the intended parent of the clone
      * @param removeChildren if true, clean the list of child nodes
      * @return the cloned FO node
+     * @throws FOPException if there's a problem while cloning the node
      */
     public FONode clone(FONode parent, boolean removeChildren)
-        throws FOPException {
+                throws FOPException {
         FONode foNode = (FONode) clone();
         foNode.parent = parent;
         parent.addChildNode(foNode);
@@ -86,8 +91,9 @@ public abstract class FONode implements Cloneable {
     protected Object clone() {
         try {
             return super.clone();
-        } catch (CloneNotSupportedException e) { }
-        return null;
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
     }
 
     /**
@@ -100,6 +106,11 @@ public abstract class FONode implements Cloneable {
         }
     }
 
+    /** @return the location information for this element or null, if not available  */
+    public Locator getLocator() {
+        return this.locator;
+    }
+    
     /**
      * Recursively goes up the FOTree hierarchy until the fo:root is found,
      * which returns the parent FOEventHandler.
@@ -132,11 +143,15 @@ public abstract class FONode implements Cloneable {
      * @param elementName element name (e.g., "fo:block")
      * @param locator Locator object (ignored by default)
      * @param attlist Collection of attributes passed to us from the parser.
+     * @param parent the property list of the parent node
      * @throws FOPException for errors or inconsistencies in the attributes
     */
     public void processNode(String elementName, Locator locator, 
             Attributes attlist, PropertyList parent) throws FOPException {
-        log.debug("name = " + elementName);
+        if (log.isDebugEnabled()) {
+            log.debug("Unhandled element: " + elementName 
+                    + (locator != null ? " at " + getLocatorString(locator) : ""));
+        }
     }
 
     /**
@@ -146,8 +161,10 @@ public abstract class FONode implements Cloneable {
      * @param foEventHandler The FOEventHandler where the PropertyListMaker 
      *              instance can be found.
      * @return A new property list.
+     * @throws FOPException if there's a problem during processing
      */
-    protected PropertyList createPropertyList(PropertyList parent, FOEventHandler foEventHandler) throws FOPException {
+    protected PropertyList createPropertyList(PropertyList parent, FOEventHandler foEventHandler) 
+                throws FOPException {
         return null;
     }
 
@@ -156,12 +173,15 @@ public abstract class FONode implements Cloneable {
      * incoming node is valid for the this (parent) node (e.g., checking to
      * see that fo:table is not an immediate child of fo:root)
      * called within FObj constructor
+     * @param loc location in the FO source file
      * @param namespaceURI namespace of incoming node
      * @param localName (e.g. "table" for "fo:table")
      * @throws ValidationException if incoming node not valid for parent
      */
     protected void validateChildNode(Locator loc, String namespaceURI, String localName) 
-        throws ValidationException {}
+            throws ValidationException {
+        //nop
+    }
 
     /**
      * Adds characters (does nothing here)
@@ -179,25 +199,31 @@ public abstract class FONode implements Cloneable {
     }
 
     /**
-    *
-    */
+     * Called after processNode() is called. Subclasses can do additional processing.
+     * @throws FOPException if there's a problem during processing
+     */
     protected void startOfNode() throws FOPException {
         // do nothing by default
    }
 
     /**
-     *  Primarily used for making final content model validation checks
-     *  and/or informing the FOEventHandler that the end of this FO
-     *  has been reached.
+     * Primarily used for making final content model validation checks
+     * and/or informing the FOEventHandler that the end of this FO
+     * has been reached.
+     * @throws FOPException if there's a problem during processing
      */
     protected void endOfNode() throws FOPException {
         // do nothing by default
     }
 
     /**
+     * Adds a node as a child of this node. The default implementation of this method
+     * just ignores any child node being added.
      * @param child child node to be added to the childNodes of this node
+     * @throws FOPException if there's a problem during processing
      */
     protected void addChildNode(FONode child) throws FOPException {
+        // do nothing by default
     }
 
     /**
@@ -260,9 +286,10 @@ public abstract class FONode implements Cloneable {
             return "fox:" + localName;
         } else if (namespaceURI.equals(SVGElementMapping.URI)) {
             return "svg:" + localName;
-        } else
-            return "(Namespace URI: \"" + namespaceURI + "\", " +
-                "Local Name: \"" + localName + "\")";
+        } else {
+            return "(Namespace URI: \"" + namespaceURI + "\", "
+                    + "Local Name: \"" + localName + "\")";
+        }
     }
 
     /**
@@ -270,11 +297,12 @@ public abstract class FONode implements Cloneable {
      * (e.g., not specifying either an internal- or an external-destination
      * property for an FO:link)
      * @param problem text to display that indicates the problem
+     * @throws ValidationException the validation error provoked by the method call
      */
     protected void attributeError(String problem) 
-        throws ValidationException {
-        throw new ValidationException(errorText(locator) + getName() + ", " + 
-            problem, locator);
+                throws ValidationException {
+        throw new ValidationException(errorText(locator) + getName() 
+                + ", " + problem, locator);
     }
 
     /**
@@ -283,7 +311,7 @@ public abstract class FONode implements Cloneable {
      * @param problem text to display that indicates the problem
      */
     protected void attributeWarning(String problem) {
-        getLogger().warn(errorText(locator) + getName() + ", " + problem);
+        log.warn(errorText(locator) + getName() + ", " + problem);
     }
 
     /**
@@ -292,11 +320,12 @@ public abstract class FONode implements Cloneable {
      * @param loc org.xml.sax.Locator object of the error (*not* parent node)
      * @param nsURI namespace URI of incoming invalid node
      * @param lName local name (i.e., no prefix) of incoming node 
+     * @throws ValidationException the validation error provoked by the method call
      */
     protected void tooManyNodesError(Locator loc, String nsURI, String lName) 
-        throws ValidationException {
-        throw new ValidationException(errorText(loc) + "For " + getName() + 
-            ", only one " + getNodeString(nsURI, lName) + " may be declared.", 
+                throws ValidationException {
+        throw new ValidationException(errorText(loc) + "For " + getName() 
+            + ", only one " + getNodeString(nsURI, lName) + " may be declared.", 
             loc);
     }
 
@@ -306,11 +335,12 @@ public abstract class FONode implements Cloneable {
      * This overrloaded method helps make the caller code better self-documenting
      * @param loc org.xml.sax.Locator object of the error (*not* parent node)
      * @param offendingNode incoming node that would cause a duplication.
+     * @throws ValidationException the validation error provoked by the method call
      */
     protected void tooManyNodesError(Locator loc, String offendingNode) 
-        throws ValidationException {
-        throw new ValidationException(errorText(loc) + "For " + getName() + 
-            ", only one " + offendingNode + " may be declared.", loc);
+                throws ValidationException {
+        throw new ValidationException(errorText(loc) + "For " + getName() 
+            + ", only one " + offendingNode + " may be declared.", loc);
     }
 
     /**
@@ -319,6 +349,7 @@ public abstract class FONode implements Cloneable {
      * @param loc org.xml.sax.Locator object of the error (*not* parent node)
      * @param tooLateNode string name of node that should be earlier in document
      * @param tooEarlyNode string name of node that should be later in document
+     * @throws ValidationException the validation error provoked by the method call
      */
     protected void nodesOutOfOrderError(Locator loc, String tooLateNode, 
         String tooEarlyNode) throws ValidationException {
@@ -332,9 +363,10 @@ public abstract class FONode implements Cloneable {
      * @param loc org.xml.sax.Locator object of the error (*not* parent node)
      * @param nsURI namespace URI of incoming invalid node
      * @param lName local name (i.e., no prefix) of incoming node 
+     * @throws ValidationException the validation error provoked by the method call
      */
     protected void invalidChildError(Locator loc, String nsURI, String lName) 
-        throws ValidationException {
+                throws ValidationException {
         invalidChildError(loc, nsURI, lName, null);
     }
     
@@ -345,62 +377,71 @@ public abstract class FONode implements Cloneable {
      * @param nsURI namespace URI of incoming invalid node
      * @param lName local name (i.e., no prefix) of incoming node
      * @param ruleViolated text explanation of problem
+     * @throws ValidationException the validation error provoked by the method call
      */
     protected void invalidChildError(Locator loc, String nsURI, String lName,
-        String ruleViolated)
-        throws ValidationException {
-        throw new ValidationException(errorText(loc) + getNodeString(nsURI, lName) + 
-            " is not a valid child element of " + getName() 
+                String ruleViolated)
+                throws ValidationException {
+        throw new ValidationException(errorText(loc) + getNodeString(nsURI, lName) 
+            + " is not a valid child element of " + getName() 
             + ((ruleViolated != null) ? ": " + ruleViolated : "."), loc);
     }
 
     /**
      * Helper function to throw an error caused by missing mandatory child elements.
      * E.g., fo:layout-master-set not having any page-master child element.
-     * @param contentModel The XSL Content Model for the fo: object or a similar description indicating the necessary child elements.
+     * @param contentModel The XSL Content Model for the fo: object or a similar description 
+     *                     indicating the necessary child elements.
+     * @throws ValidationException the validation error provoked by the method call
      */
     protected void missingChildElementError(String contentModel)
-        throws ValidationException {
-        throw new ValidationException(errorText(locator) + getName() + 
-            " is missing child elements. \nRequired Content Model: " 
+                throws ValidationException {
+        throw new ValidationException(errorText(locator) + getName() 
+            + " is missing child elements. \nRequired Content Model: " 
             + contentModel, locator);
     }
 
     /**
      * Helper function to throw an error caused by missing mandatory properties
      * @param propertyName the name of the missing property.
+     * @throws ValidationException the validation error provoked by the method call
      */
     protected void missingPropertyError(String propertyName)
-        throws ValidationException {
-        throw new ValidationException(errorText(locator) + getName() +
-            " is missing required \"" + propertyName + "\" property.", locator);
+                throws ValidationException {
+        throw new ValidationException(errorText(locator) + getName()
+            + " is missing required \"" + propertyName + "\" property.", locator);
     }
 
     /**
-     * Helper function to return "Error (line#/column#)" string for
+     * Helper function to return "Error(line#/column#)" string for
      * above exception messages
      * @param loc org.xml.sax.Locator object
      * @return String opening error text
      */
     protected static String errorText(Locator loc) {
-        if (loc == null) {
-            return "Error(Unknown location): ";
-        } else {
-            return "Error(" + loc.getLineNumber() + "/" + loc.getColumnNumber() + "): ";
-        }
+        return "Error(" + getLocatorString(loc) + "): ";
     }
 
     /**
-     * Helper function to return "Warning (line#/column#)" string for
+     * Helper function to return "Warning(line#/column#)" string for
      * warning messages
      * @param loc org.xml.sax.Locator object
      * @return String opening warning text
      */
     protected static String warningText(Locator loc) {
+        return "Warning(" + getLocatorString(loc) + "): ";
+    }
+    
+    /**
+     * Helper function to format a Locator instance.
+     * @param loc org.xml.sax.Locator object
+     * @return String the formatted text
+     */
+    protected static String getLocatorString(Locator loc) {
         if (loc == null) {
-            return "Warning(Unknown location): ";
+            return "Unknown location";
         } else {
-            return "Warning(" + loc.getLineNumber() + "/" + loc.getColumnNumber() + "): ";
+            return loc.getLineNumber() + "/" + loc.getColumnNumber();
         }
     }
 
@@ -429,5 +470,16 @@ public abstract class FONode implements Cloneable {
         return Constants.FO_UNKNOWN_NODE;
     }
 
+    /**
+     * This method is overridden by extension elements and allows the extension element
+     * to return a pass-through attachment which the parent formatting objects should simply
+     * carry with them but otherwise ignore. This mechanism is used to pass non-standard 
+     * information from the FO tree through to the layout engine and the renderers. 
+     * @return the extension attachment if one is created by the extension element, null otherwise.
+     */
+    public ExtensionAttachment getExtensionAttachment() {
+        return null;
+    }
+    
 }
 

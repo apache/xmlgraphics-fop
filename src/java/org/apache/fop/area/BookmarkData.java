@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import org.apache.fop.fo.pagination.bookmarks.Bookmark;
  * its child bookmark-items, or a bookmark-item and the child
  * child bookmark-items under it.
  */
-public class BookmarkData extends OffDocumentItem implements Resolvable {
+public class BookmarkData extends AbstractOffDocumentItem implements Resolvable {
     private ArrayList subData = new ArrayList();
 
     // bookmark-title for this fo:bookmark

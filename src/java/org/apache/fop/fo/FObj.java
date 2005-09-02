@@ -18,6 +18,7 @@
 
 package org.apache.fop.fo;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -26,6 +27,7 @@ import java.util.Set;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.PercentBase;
+import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.properties.PropertyMaker;
 import org.xml.sax.Attributes;
@@ -35,11 +37,16 @@ import org.xml.sax.Locator;
  * Base class for representation of formatting objects and their processing.
  */
 public abstract class FObj extends FONode implements Constants {
-    public static PropertyMaker[] propertyListTable = null;
+    
+    /** the list of property makers */
+    private static PropertyMaker[] propertyListTable = null;
     
     /** The immediate child nodes of this node. */
-    public List childNodes = null;
+    protected List childNodes = null;
 
+    /** The list of extension attachments, null if none */
+    private List extensionAttachments = null;
+    
     /** Used to indicate if this FO is either an Out Of Line FO (see rec)
         or a descendant of one.  Used during validateChildNode() FO 
         validation.
@@ -64,7 +71,7 @@ public abstract class FObj extends FONode implements Constants {
         
         // determine if isOutOfLineFODescendant should be set
         if (parent != null && parent instanceof FObj) {
-            if (((FObj)parent).getIsOutOfLineFODescendant() == true) {
+            if (((FObj)parent).getIsOutOfLineFODescendant()) {
                 isOutOfLineFODescendant = true;
             } else {
                 int foID = getNameId();
@@ -97,6 +104,15 @@ public abstract class FObj extends FONode implements Constants {
         }
         return fobj;
     }
+    
+    /**
+     * Returns the PropertyMaker for a given property ID.
+     * @param propId the property ID
+     * @return the requested Property Maker
+     */
+    public static PropertyMaker getPropertyMakerFor(int propId) {
+        return propertyListTable[propId];
+    }
 
     /**
      * @see org.apache.fop.fo.FONode#processNode
@@ -111,6 +127,7 @@ public abstract class FObj extends FONode implements Constants {
 
     /**
      * Create a default property list for this element. 
+     * @see org.apache.fop.fo.FONode
      */
     protected PropertyList createPropertyList(PropertyList parent, 
                     FOEventHandler foEventHandler) throws FOPException {
@@ -122,7 +139,7 @@ public abstract class FObj extends FONode implements Constants {
      * Must be overridden in all FObj subclasses that have properties
      * applying to it.
      * @param pList the PropertyList where the properties can be found.
-     * @throws FOPException
+     * @throws FOPException if there is a problem binding the values
      */
     public void bind(PropertyList pList) throws FOPException {
     }
@@ -132,16 +149,18 @@ public abstract class FObj extends FONode implements Constants {
      * Most formatting objects can have an id that can be referenced.
      * This methods checks that the id isn't already used by another
      * fo and sets the id attribute of this object.
+     * @param id ID to check
+     * @throws ValidationException if the ID is already defined elsewhere
      */
-     protected void checkId(String id) throws ValidationException {
+    protected void checkId(String id) throws ValidationException {
         if (!id.equals("")) {
             Set idrefs = getFOEventHandler().getIDReferences();
             if (!idrefs.contains(id)) {
                 idrefs.add(id);
             } else {
-                throw new ValidationException("Property id \"" + id + 
-                        "\" previously used; id values must be unique" +
-                        " in document.", locator);
+                throw new ValidationException("Property id \"" + id 
+                        + "\" previously used; id values must be unique"
+                        + " in document.", locator);
             }
         }
     }
@@ -158,14 +177,20 @@ public abstract class FObj extends FONode implements Constants {
      * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
     protected void addChildNode(FONode child) throws FOPException {
-        if (PropertySets.canHaveMarkers(getNameId()) && 
-            child.getNameId() == FO_MARKER) {
-                addMarker((Marker) child);
+        if (PropertySets.canHaveMarkers(getNameId()) && child.getNameId() == FO_MARKER) {
+            addMarker((Marker)child);
         } else {
-            if (childNodes == null) {
-                childNodes = new java.util.ArrayList();
+            ExtensionAttachment attachment = child.getExtensionAttachment();
+            if (attachment != null) {
+                //This removes the element from the normal children, so no layout manager
+                //is being created for them as they are only additional information.
+                addExtensionAttachment(attachment);
+            } else {
+                if (childNodes == null) {
+                    childNodes = new java.util.ArrayList();
+                }
+                childNodes.add(child);
             }
-            childNodes.add(child);
         }
     }
 
@@ -194,6 +219,7 @@ public abstract class FObj extends FONode implements Constants {
      * Assign the size of a layout dimension to the key. 
      * @param key the Layout dimension, from PercentBase.
      * @param dimension The layout length.
+     * TODO Remove when possible!
      */
     public void setLayoutDimension(PercentBase.LayoutDimension key, int dimension) {
         if (layoutDimension == null) {
@@ -206,6 +232,7 @@ public abstract class FObj extends FONode implements Constants {
      * Assign the size of a layout dimension to the key. 
      * @param key the Layout dimension, from PercentBase.
      * @param dimension The layout length.
+     * TODO Remove when possible!
      */
     public void setLayoutDimension(PercentBase.LayoutDimension key, float dimension) {
         if (layoutDimension == null) {
@@ -218,6 +245,7 @@ public abstract class FObj extends FONode implements Constants {
      * Return the size associated with the key.
      * @param key The layout dimension key.
      * @return the length.
+     * TODO Remove when possible!
      */
     public Number getLayoutDimension(PercentBase.LayoutDimension key) {
         if (layoutDimension != null) {
@@ -349,14 +377,14 @@ public abstract class FObj extends FONode implements Constants {
      * @return true if a member, false if not
      */
     protected boolean isBlockItem(String nsURI, String lName) {
-        return (FO_URI.equals(nsURI) && 
-            (lName.equals("block") 
-            || lName.equals("table") 
-            || lName.equals("table-and-caption") 
-            || lName.equals("block-container")
-            || lName.equals("list-block") 
-            || lName.equals("float")
-            || isNeutralItem(nsURI, lName)));
+        return (FO_URI.equals(nsURI) 
+                && (lName.equals("block") 
+                        || lName.equals("table") 
+                        || lName.equals("table-and-caption") 
+                        || lName.equals("block-container")
+                        || lName.equals("list-block") 
+                        || lName.equals("float")
+                        || isNeutralItem(nsURI, lName)));
     }
 
     /**
@@ -368,21 +396,22 @@ public abstract class FObj extends FONode implements Constants {
      * @return true if a member, false if not
      */
     protected boolean isInlineItem(String nsURI, String lName) {
-        return (FO_URI.equals(nsURI) && 
-            (lName.equals("bidi-override") 
-            || lName.equals("character") 
-            || lName.equals("external-graphic") 
-            || lName.equals("instream-foreign-object")
-            || lName.equals("inline") 
-            || lName.equals("inline-container")
-            || lName.equals("leader") 
-            || lName.equals("page-number") 
-            || lName.equals("page-number-citation")
-            || lName.equals("basic-link")
-            || (lName.equals("multi-toggle")
-                && (getNameId() == FO_MULTI_CASE || findAncestor(FO_MULTI_CASE) > 0))
-            || (lName.equals("footnote") && !isOutOfLineFODescendant)
-            || isNeutralItem(nsURI, lName)));
+        return (FO_URI.equals(nsURI) 
+                && (lName.equals("bidi-override") 
+                        || lName.equals("character") 
+                        || lName.equals("external-graphic") 
+                        || lName.equals("instream-foreign-object")
+                        || lName.equals("inline") 
+                        || lName.equals("inline-container")
+                        || lName.equals("leader") 
+                        || lName.equals("page-number") 
+                        || lName.equals("page-number-citation")
+                        || lName.equals("basic-link")
+                        || (lName.equals("multi-toggle")
+                                && (getNameId() == FO_MULTI_CASE 
+                                        || findAncestor(FO_MULTI_CASE) > 0))
+                        || (lName.equals("footnote") && !isOutOfLineFODescendant)
+                        || isNeutralItem(nsURI, lName)));
     }
 
     /**
@@ -406,12 +435,12 @@ public abstract class FObj extends FONode implements Constants {
      * @return true if a member, false if not
      */
     protected boolean isNeutralItem(String nsURI, String lName) {
-        return (FO_URI.equals(nsURI) && 
-            (lName.equals("multi-switch") 
-            || lName.equals("multi-properties")
-            || lName.equals("wrapper") 
-            || (!isOutOfLineFODescendant && lName.equals("float"))
-            || lName.equals("retrieve-marker")));
+        return (FO_URI.equals(nsURI) 
+                && (lName.equals("multi-switch") 
+                        || lName.equals("multi-properties")
+                        || lName.equals("wrapper") 
+                        || (!isOutOfLineFODescendant && lName.equals("float"))
+                        || lName.equals("retrieve-marker")));
     }
     
     /**
@@ -433,5 +462,33 @@ public abstract class FObj extends FONode implements Constants {
         }
         return -1;
     }
+    
+    /**
+     * Add a new extension attachment to this FObj. See org.apache.fop.fo.FONode for details.
+     * @param attachment the attachment to add.
+     */
+    public void addExtensionAttachment(ExtensionAttachment attachment) {
+        if (attachment == null) {
+            throw new NullPointerException("Parameter attachment must not be null");
+        }
+        if (extensionAttachments == null) {
+            extensionAttachments = new java.util.ArrayList();
+        }
+        if (log.isDebugEnabled()) {
+            getLogger().debug("ExtensionAttachment of category " + attachment.getCategory() 
+                    + " added to " + getName() + ": " + attachment);
+        }
+        extensionAttachments.add(attachment);
+    }
+    
+    /** @return the extension attachments of this FObj. */
+    public List getExtensionAttachments() {
+        if (extensionAttachments == null) {
+            return Collections.EMPTY_LIST;
+        } else {
+            return extensionAttachments;
+        }
+    }
+    
 }
 

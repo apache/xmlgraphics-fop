@@ -452,7 +452,7 @@ abstract public class PropertyList {
         if (propId < 1 || propId > Constants.PROPERTY_COUNT) {
             return null;
         } else {
-            return FObj.propertyListTable[propId];
+            return FObj.getPropertyMakerFor(propId);
         }
     }
 
