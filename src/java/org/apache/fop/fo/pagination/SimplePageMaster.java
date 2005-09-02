@@ -106,8 +106,8 @@ public class SimplePageMaster extends FObj {
      */
     protected void endOfNode() throws FOPException {
         if (!hasRegionBody) {
-            missingChildElementError("(region-body, region-before?," +
-                " region-after?, region-start?, region-end?)");
+            missingChildElementError(
+                    "(region-body, region-before?, region-after?, region-start?, region-end?)");
         }
     }
 
@@ -182,8 +182,12 @@ public class SimplePageMaster extends FObj {
     /**
      * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
-    protected void addChildNode(FONode child) {
-        addRegion((Region)child);
+    protected void addChildNode(FONode child) throws FOPException {
+        if (child instanceof Region) {
+            addRegion((Region)child);
+        } else {
+            super.addChildNode(child);
+        }
     }
 
     /**
@@ -229,45 +233,32 @@ public class SimplePageMaster extends FObj {
         return false;
     }
 
-    /**
-     * Return the Common Margin Properties-Block.
-     */
+    /** @return the Common Margin Properties-Block. */
     public CommonMarginBlock getCommonMarginBlock() {
         return commonMarginBlock;
     }
 
-    /**
-     * Return "master-name" property.
-     */
+    /** @return "master-name" property. */
     public String getMasterName() {
         return masterName;
     }
 
-    /**
-     * Return the "page-width" property.
-     */
+    /** @return the "page-width" property. */
     public Length getPageWidth() {
         return pageWidth;
     }
 
-    /**
-     * Return the "page-height" property.
-     */
+    /** @return the "page-height" property. */
     public Length getPageHeight() {
         return pageHeight;
     }
-
     
-    /**
-     * Return the "writing-mode" property.
-     */
+    /** @return the "writing-mode" property. */
     public int getWritingMode() {
         return writingMode;
     }
     
-    /**
-     * Return the "reference-orientation" property.
-     */
+    /** @return the "reference-orientation" property. */
     public int getReferenceOrientation() {
         return referenceOrientation.getValue();
     }

@@ -22,6 +22,7 @@ package org.apache.fop.render.ps;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
@@ -34,6 +35,9 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.CTM;
+import org.apache.fop.area.LineArea;
+import org.apache.fop.area.OffDocumentExtensionAttachment;
+import org.apache.fop.area.OffDocumentItem;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
@@ -46,6 +50,7 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.image.EPSImage;
@@ -54,6 +59,7 @@ import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.XMLImage;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.RendererContext;
+import org.apache.fop.render.ps.extensions.PSSetupCode;
 import org.apache.fop.util.CharUtilities;
 
 import org.w3c.dom.Document;
@@ -93,7 +99,11 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
     private boolean ioTrouble = false;
 
     private boolean inTextMode = false;
+    private boolean firstPageSequenceReceived = false;
 
+    /** Used to temporarily store PSSetupCode instance until they can be written. */
+    private List setupCodeList;
+    
     /**
      * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
      */
@@ -568,17 +578,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
         gen.writeDSCComment(DSCConstants.BEGIN_DEFAULTS);
         gen.writeDSCComment(DSCConstants.END_DEFAULTS);
 
-        //Prolog
-        gen.writeDSCComment(DSCConstants.BEGIN_PROLOG);
-        PSProcSets.writeFOPStdProcSet(gen);
-        PSProcSets.writeFOPEPSProcSet(gen);
-        gen.writeDSCComment(DSCConstants.END_PROLOG);
-
-        //Setup
-        gen.writeDSCComment(DSCConstants.BEGIN_SETUP);
-        PSProcSets.writeFontDict(gen, fontInfo);
-        gen.writeln("FOPFonts begin");
-        gen.writeDSCComment(DSCConstants.END_SETUP);
+        //Prolog and Setup written right before the first page-sequence, see startPageSequence()
     }
 
     /**
@@ -590,6 +590,76 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
         gen.writeResources(false);
         gen.writeDSCComment(DSCConstants.EOF);
         gen.flush();
+    }
+
+    /** @see org.apache.fop.render.Renderer */
+    public void processOffDocumentItem(OffDocumentItem oDI) {
+        log.debug("Handling OffDocumentItem: " + oDI.getName());
+        if (oDI instanceof OffDocumentExtensionAttachment) {
+            ExtensionAttachment attachment = ((OffDocumentExtensionAttachment)oDI).getAttachment();
+            if (PSSetupCode.CATEGORY.equals(attachment.getCategory())) {
+                PSSetupCode setupCode = (PSSetupCode)attachment;
+                if (setupCodeList == null) {
+                    setupCodeList = new java.util.ArrayList();
+                }
+                setupCodeList.add(setupCode);
+            }
+        }
+        super.processOffDocumentItem(oDI);
+    }
+    
+    /** @see org.apache.fop.render.Renderer#startPageSequence(org.apache.fop.area.LineArea) */
+    public void startPageSequence(LineArea seqTitle) {
+        super.startPageSequence(seqTitle);
+        if (!firstPageSequenceReceived) {
+            //Do this only once, as soon as we have all the content for the Setup section!
+            try {
+                //Prolog
+                gen.writeDSCComment(DSCConstants.BEGIN_PROLOG);
+                PSProcSets.writeFOPStdProcSet(gen);
+                PSProcSets.writeFOPEPSProcSet(gen);
+                gen.writeDSCComment(DSCConstants.END_PROLOG);
+
+                //Setup
+                gen.writeDSCComment(DSCConstants.BEGIN_SETUP);
+                writeSetupCodeList(setupCodeList, "SetupCode");
+                PSProcSets.writeFontDict(gen, fontInfo);
+                gen.writeln("FOPFonts begin");
+                gen.writeDSCComment(DSCConstants.END_SETUP);
+            } catch (IOException ioe) {
+                handleIOTrouble(ioe);
+            }
+            
+            firstPageSequenceReceived = true;
+        }
+    }
+    
+    /**
+     * Formats and writes a List of PSSetupCode instances to the output stream.
+     * @param setupCodeList a List of PSSetupCode instances
+     * @param type the type of code section
+     */
+    private void writeSetupCodeList(List setupCodeList, String type) throws IOException {
+        if (setupCodeList != null) {
+            Iterator i = setupCodeList.iterator();
+            while (i.hasNext()) {
+                PSSetupCode setupCode = (PSSetupCode)i.next();
+                gen.commentln("%FOPBegin" + type + ": (" 
+                        + (setupCode.getName() != null ? setupCode.getName() : "") 
+                        + ")");
+                LineNumberReader reader = new LineNumberReader(
+                        new java.io.StringReader(setupCode.getContent()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    line = line.trim();
+                    if (line.length() > 0) {
+                        gen.writeln(line.trim());
+                    }
+                }
+                gen.commentln("%FOPEnd" + type);
+                i.remove();
+            }
+        }
     }
 
     /**
@@ -641,7 +711,23 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
         }
         gen.writeDSCComment(DSCConstants.PAGE_RESOURCES, 
                 new Object[] {PSGenerator.ATEND});
+        gen.commentln("%FOPSimplePageMaster: " + page.getSPM().getMasterName());
         gen.writeDSCComment(DSCConstants.BEGIN_PAGE_SETUP);
+        
+        //Handle PSSetupCode instances on simple-page-master
+        if (page.getSPM().getExtensionAttachments().size() > 0) {
+            List list = new java.util.ArrayList();
+            //Extract all PSSetupCode instances from the attachment list on the s-p-m
+            Iterator i = page.getSPM().getExtensionAttachments().iterator();
+            while (i.hasNext()) {
+                ExtensionAttachment attachment = (ExtensionAttachment)i.next();
+                if (PSSetupCode.CATEGORY.equals(attachment.getCategory())) {
+                    list.add(attachment);
+                }
+            }
+            writeSetupCodeList(list, "PageSetupCode");
+        }
+        
         if (rotate) {
             gen.writeln(Math.round(pspageheight) + " 0 translate");
             gen.writeln("90 rotate");
@@ -652,7 +738,6 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
                 + Math.round(pspageheight) + "]");
         gen.writeln("/ImagingBBox null");
         gen.writeln(">> setpagedevice");
-        //gen.writeln("0.001 0.001 scale");
         concatMatrix(1, 0, 0, -1, 0, pageheight / 1000f);
 
         gen.writeDSCComment(DSCConstants.END_PAGE_SETUP);

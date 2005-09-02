@@ -19,42 +19,52 @@
 package org.apache.fop.area;
 
 /**
- * Interface for objects that are processed by the renderer outside
+ * Abstract base class for objects that are processed by the renderer outside
  * of the actual document.
- * An object implementing this interface can be handled by the renderer according to these
- * possibilities: IMMEDIATELY, AFTER_PAGE or END_OF_DOC.
+ * This object can be handled by the renderer according to these
+ * possibilities: IMMEDIATELY, AFTER_PAGE, START_OF_DOC or END_OF_DOC.
  */
-public interface OffDocumentItem {
+public abstract class AbstractOffDocumentItem implements OffDocumentItem {
 
     /**
      * Process this extension immediately when
      * being handled by the area tree.
      */
-    int IMMEDIATELY = 0;
+    public static final int IMMEDIATELY = 0;
 
     /**
      * Process this extension after the next page is rendered
      * or prepared when being handled by the area tree.
      */
-    int AFTER_PAGE = 1;
+    public static final int AFTER_PAGE = 1;
 
     /**
      * Process this extension at the end of the document once
      * all pages have been fully rendered.
      */
-    int END_OF_DOC = 2;
+    public static final int END_OF_DOC = 2;
 
+    /**
+     * Process this extension at the start of the document right
+     * before the first page-sequence is processed.
+     */
+    public static final int START_OF_DOC = 2;
+
+    
+    /** Indicates in what phase the item should be processed. */
+    protected int whenToProcess = IMMEDIATELY;
     
     /**
      * Get an indicator of when this item should be processed
-     * @return int constant (IMMEDIATELY, AFTER_PAGE, END_OF_DOC)
+     * @return int constant (IMMEDIATELY, AFTER_PAGE, START_OF_DOC, END_OF_DOC)
      */
-    int getWhenToProcess();
+    public int getWhenToProcess() {
+        return whenToProcess;
+    }
 
     /**
      * Return a human-readable name for this ODI (for error messages, etc.)
      * @return String name of ODI
      */
-    String getName();
-    
+    public abstract String getName();
 }

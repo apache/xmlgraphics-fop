@@ -15,6 +15,7 @@
  */
 
 /* $Id$ */
+
 package org.apache.fop.area;
 
 // Java
@@ -37,6 +38,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FormattingResults;
 import org.apache.fop.fo.FOEventHandler;
+import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.fo.pagination.bookmarks.BookmarkTree;
@@ -250,6 +252,26 @@ public class AreaTreeHandler extends FOEventHandler {
         }
     }
 
+    /** @see org.apache.fop.fo.FOEventHandler */
+    public void startPageSequence(PageSequence pageSequence) {
+        rootFObj = pageSequence.getRoot();
+
+        //extension attachments from fo:root
+        wrapAndAddExtensionAttachments(rootFObj.getExtensionAttachments());
+        //extension attachments from fo:declarations
+        if (rootFObj.getDeclarations() != null) {
+            wrapAndAddExtensionAttachments(rootFObj.getDeclarations().getExtensionAttachments());
+        }
+    }
+    
+    private void wrapAndAddExtensionAttachments(List list) {
+        Iterator i = list.iterator();
+        while (i.hasNext()) {
+            ExtensionAttachment attachment = (ExtensionAttachment)i.next();
+            addOffDocumentItem(new OffDocumentExtensionAttachment(attachment));
+        }
+    }
+    
     /**
      * End the PageSequence.
      * The PageSequence formats Pages and adds them to the AreaTree.
@@ -264,8 +286,6 @@ public class AreaTreeHandler extends FOEventHandler {
             log.debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
         }
 
-        rootFObj = pageSequence.getRoot();
-
         // If no main flow, nothing to layout!
         if (pageSequence.getMainFlow() != null) {
             PageSequenceLayoutManager pageSLM;
@@ -275,6 +295,11 @@ public class AreaTreeHandler extends FOEventHandler {
         }
     }
 
+    /**
+     * Called by the PageSequenceLayoutManager when it is finished with a page-sequence.
+     * @param pageSequence the page-sequence just finished
+     * @param pageCount The number of pages generated for the page-sequence
+     */
     public void notifyPageSequenceFinished(PageSequence pageSequence,
                                            int pageCount) {
         this.results.haveFormattedPageSequence(pageSequence, 

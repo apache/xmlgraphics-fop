@@ -25,7 +25,9 @@ import java.util.HashMap;
  * Element mapping class for all XSL-FO elements.
  */
 public class FOElementMapping extends ElementMapping {
-    public static String URI = "http://www.w3.org/1999/XSL/Format";
+    
+    /** The XSL-FO namespace URI */
+    public static final String URI = "http://www.w3.org/1999/XSL/Format";
 
     /**
      * Basic constructor; inititializes the namespace URI for the fo: namespace
