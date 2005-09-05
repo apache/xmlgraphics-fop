@@ -335,6 +335,7 @@ public class RTFHandler extends FOEventHandler {
             
             textrun.addParagraphBreak();
             textrun.pushAttributes(rtfAttr);
+            textrun.addBookmark(bl.getId());
         } catch (IOException ioe) {
             // TODO could we throw Exception in all FOEventHandler events?
             log.error("startBlock: " + ioe.getMessage());
@@ -550,6 +551,7 @@ public class RTFHandler extends FOEventHandler {
                     
             RtfTextrun textrun = container.getTextrun();
             textrun.pushAttributes(rtfAttr);
+            textrun.addBookmark(inl.getId());
         } catch (IOException ioe) {
             log.error("startInline:" + ioe.getMessage());
             throw new RuntimeException(ioe.getMessage());
