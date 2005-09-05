@@ -149,6 +149,13 @@ public class RtfTextrun extends RtfContainer {
         return new RtfHyperLink(this, writer, attr);
     }
     
+    public void addBookmark(String id) throws IOException {
+       if (id != "") {
+            // if id is not empty, add boormark
+           new RtfBookmark(this, writer, id);
+       }
+    }
+    
     public RtfExternalGraphic newImage() throws IOException {
         return new RtfExternalGraphic(this, writer);
     }
