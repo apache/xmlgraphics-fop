@@ -483,7 +483,6 @@ list of possible build targets.
         <include name="org/apache/fop/area/AreaTreeControl*"/>
         <include name="org/apache/fop/svg/**"/>
         <include name="org/apache/fop/fonts/**"/>
-        <!--include name="org/apache/fop/layout/Font*.class"/-->
         <include name="org/apache/fop/image/FopImag*.class"/>
         <include name="org/apache/fop/image/Jpeg*"/>
         <include name="org/apache/fop/image/EPS*"/>
@@ -492,6 +491,7 @@ list of possible build targets.
         <include name="org/apache/fop/util/CMYKColorSpace*.class"/>
         <include name="org/apache/fop/util/ASCII*.class"/>
         <include name="org/apache/fop/util/*OutputStream.class"/>
+        <include name="org/apache/fop/util/SubInputStream.class"/>
         <include name="org/apache/fop/util/Finalizable.class"/>
       </patternset>
       <!-- PDF transcoder -->
