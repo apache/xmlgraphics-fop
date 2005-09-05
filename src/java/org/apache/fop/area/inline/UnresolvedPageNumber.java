@@ -20,6 +20,7 @@ package org.apache.fop.area.inline;
 
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Resolvable;
+import org.apache.fop.fonts.Font;
 
 import java.util.List;
 
@@ -31,14 +32,17 @@ import java.util.List;
 public class UnresolvedPageNumber extends TextArea implements Resolvable {
     private boolean resolved = false;
     private String pageIDRef;
+    private Font font;
 
     /**
      * Create a new unresolvable page number.
      *
      * @param id the id reference for resolving this
+     * @param f  the font for formatting the page number
      */
-    public UnresolvedPageNumber(String id) {
+    public UnresolvedPageNumber(String id, Font f) {
         pageIDRef = id;
+        font = f;
         text = "?";
     }
 
@@ -65,8 +69,11 @@ public class UnresolvedPageNumber extends TextArea implements Resolvable {
         if (pageIDRef.equals(id) && pages != null) {
             resolved = true;
             PageViewport page = (PageViewport)pages.get(0);
-            text = page.getPageNumberString();
-            /**@todo Update IPD ??? */
+            setTextArea(page.getPageNumberString());
+            // update ipd
+            updateIPD(getStringWidth(text));
+            // set the Font object to null, as we don't need it any more
+            font = null;
         }
     }
 
@@ -77,5 +84,29 @@ public class UnresolvedPageNumber extends TextArea implements Resolvable {
      */
     public boolean isResolved() {
        return resolved;
+    }
+
+    /**
+     * recursively apply the variation factor to all descendant areas
+     * @param variationFactor the variation factor that must be applied to adjustment ratios
+     * @param lineStretch     the total stretch of the line
+     * @param lineShrink      the total shrink of the line
+     * @return true if there is an UnresolvedArea descendant
+     */
+    public boolean applyVariationFactor(double variationFactor,
+                                        int lineStretch, int lineShrink) {
+        return true;
+    }
+
+    /**
+     * @param str string to be measured
+     * @return width of the string
+     */
+    private int getStringWidth(String str) {
+        int width = 0;
+        for (int count = 0; count < str.length(); count++) {
+            width += font.getCharWidth(str.charAt(count));
+        }
+        return width;
     }
 }

@@ -344,8 +344,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         }
         iTotalAdjust += (iWordSpaceDim - wordSpaceIPD.opt) * iWScount;
 
-        TextArea t = createTextArea(str, realWidth.opt + iTotalAdjust,
-                                    context);
+        TextArea t = createTextArea(str, realWidth, iTotalAdjust, context,
+                                    wordSpaceIPD.opt - spaceCharIPD);
 
         // iWordSpaceDim is computed in relation to wordSpaceIPD.opt
         // but the renderer needs to know the adjustment in relation
@@ -362,7 +362,11 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         t.setTextLetterSpaceAdjust(iLetterSpaceDim);
         t.setTextWordSpaceAdjust(iWordSpaceDim - spaceCharIPD
                                  - 2 * t.getTextLetterSpaceAdjust());
-        
+        if (context.getIPDAdjust() != 0) {
+            // add information about space width
+            t.setSpaceDifference(wordSpaceIPD.opt - spaceCharIPD
+                                 - 2 * t.getTextLetterSpaceAdjust());
+        }
         word = t;
         if (word != null) {
             parentLM.addChildArea(word);
@@ -374,13 +378,25 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
      * This creates a TextArea and sets up the various attributes.
      *
      * @param str the string for the TextArea
-     * @param width the width that the TextArea uses
+     * @param width the MinOptMax width of the content
+     * @param adjust the total ipd adjustment with respect to the optimal width
      * @param base the baseline position
      * @return the new word area
      */
-    protected TextArea createTextArea(String str, int width, LayoutContext context) {
-        TextArea textArea = new TextArea();
-        textArea.setIPD(width);
+    protected TextArea createTextArea(String str, MinOptMax width, int adjust,
+                                      LayoutContext context, int spaceDiff) {
+        TextArea textArea;
+        if (context.getIPDAdjust() == 0.0) {
+            // create just a TextArea
+            textArea = new TextArea();
+        } else {
+            // justified area: create a TextArea with extra info
+            // about potential adjustments
+            textArea = new TextArea(width.max - width.opt,
+                                    width.opt - width.min,
+                                    adjust);
+        }
+        textArea.setIPD(width.opt + adjust);
         textArea.setBPD(fs.getAscender() - fs.getDescender());
         int bpd = textArea.getBPD();
         switch (verticalAlignment) {

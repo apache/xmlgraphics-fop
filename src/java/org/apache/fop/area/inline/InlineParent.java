@@ -65,5 +65,22 @@ public class InlineParent extends InlineArea {
         return inlines;
     }
 
+    /**
+     * recursively apply the variation factor to all descendant areas
+     * @param variationFactor the variation factor that must be applied to adjustments
+     * @param lineStretch     the total stretch of the line
+     * @param lineShrink      the total shrink of the line
+     * @return true if there is an UnresolvedArea descendant
+     */
+    public boolean applyVariationFactor(double variationFactor,
+                                        int lineStretch, int lineShrink) {
+        boolean bUnresolvedAreasPresent = false;
+        // recursively apply variation factor to descendant areas 
+        for (int i = 0, len = inlines.size(); i < len; i++) {
+            bUnresolvedAreasPresent |= ((InlineArea)inlines.get(i))
+                .applyVariationFactor(variationFactor, lineStretch, lineShrink);
+        }
+        return bUnresolvedAreasPresent;
+    }
 }
 

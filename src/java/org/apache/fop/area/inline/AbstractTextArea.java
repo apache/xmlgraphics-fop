@@ -23,9 +23,44 @@ package org.apache.fop.area.inline;
  */
 public abstract class AbstractTextArea extends InlineArea {
 
+    /**
+     * this class stores information about spaces and potential adjustments
+     * that can be used in order to re-compute adjustments when a
+     * page-number or a page-number-citation is resolved
+     */
+    protected class TextAdjustingInfo extends InlineAdjustingInfo {
+
+        // difference between the optimal width of a space
+        // and the default width of a space according to the font
+        // (this is equivalent to the property word-spacing.optimum)
+        protected int spaceDifference = 0;
+        
+        protected TextAdjustingInfo(int stretch, int shrink, int adj) {
+            super(stretch, shrink, adj);
+        }
+    }
+
     private int iTextWordSpaceAdjust = 0;
     private int iTextLetterSpaceAdjust = 0;
+    private TextAdjustingInfo adjustingInfo = null;
 
+    /**
+     * Default onstructor
+     */
+    public AbstractTextArea() {
+    }
+
+    /**
+     * Constructor with extra parameters:
+     * create a TextAdjustingInfo object
+     * @param stretch  the available stretch of the text
+     * @param shrink   the available shrink of the text
+     * @param adj      the current adjustment of the area
+     */
+    public AbstractTextArea(int stretch, int shrink, int adj) {
+        adjustingInfo = new TextAdjustingInfo(stretch, shrink, adj);
+    }
+    
     /**
      * Get text word space adjust.
      *
@@ -59,5 +94,57 @@ public abstract class AbstractTextArea extends InlineArea {
      */
     public void setTextLetterSpaceAdjust(int iTLSadjust) {
         iTextLetterSpaceAdjust = iTLSadjust;
+    }
+
+    /**
+     * Set the difference between optimal width of a space and 
+     * default width of a space according to the font; this part
+     * of the space adjustment is fixed and must not be 
+     * multiplied by the variation factor.
+     * @param spaceDiff the space difference
+     */
+    public void setSpaceDifference(int spaceDiff) {
+        adjustingInfo.spaceDifference = spaceDiff;
+    }
+
+    /**
+     * recursively apply the variation factor to all descendant areas
+     * @param variationFactor the variation factor that must be applied to adjustments
+     * @param lineStretch     the total stretch of the line
+     * @param lineShrink      the total shrink of the line
+     * @return true if there is an UnresolvedArea descendant
+     */
+    public boolean applyVariationFactor(double variationFactor,
+                                        int lineStretch, int lineShrink) {
+        if (adjustingInfo != null) {
+            // compute the new adjustments:
+            // if the variation factor is negative, it means that before 
+            // the ipd variation the line had to stretch and now it has
+            // to shrink (or vice versa);
+            // in this case, if the stretch and shrink are not equally 
+            // divided among the inline areas, we must compute a 
+            // balancing factor
+            double balancingFactor = 1.0;
+            if (variationFactor < 0) {
+                if (iTextWordSpaceAdjust < 0) {
+                    // from a negative adjustment to a positive one
+                    balancingFactor = ((double) adjustingInfo.availableStretch / adjustingInfo.availableShrink)
+                            * ((double) lineShrink / lineStretch);
+                } else {
+                    // from a positive adjustment to a negative one
+                    balancingFactor = ((double) adjustingInfo.availableShrink / adjustingInfo.availableStretch)
+                            * ((double) lineStretch / lineShrink);
+                }
+            }
+            iTextWordSpaceAdjust = (int) ((iTextWordSpaceAdjust - adjustingInfo.spaceDifference)
+                    * variationFactor * balancingFactor)
+                    + adjustingInfo.spaceDifference;
+            iTextLetterSpaceAdjust *= variationFactor;
+            // update the ipd of the area
+            int oldAdjustment = adjustingInfo.adjustment;
+            adjustingInfo.adjustment *= balancingFactor * variationFactor;
+            ipd += adjustingInfo.adjustment - oldAdjustment;
+        }
+        return false;
     }
 }
