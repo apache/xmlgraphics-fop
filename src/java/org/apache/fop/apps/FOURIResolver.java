@@ -110,9 +110,9 @@ public class FOURIResolver
                     String scheme = baseURL.getProtocol() + ":";
                     if (href.startsWith(scheme)) {
                         href = href.substring(scheme.length());
-                    }
-                    if ("file:".equals(scheme) && href.indexOf(':') >= 0) {
-                        href = "/" + href; //Absolute file URL doesn't have a leading slash
+                        if ("file:".equals(scheme) && href.indexOf(':') >= 0) {
+                            href = "/" + href; //Absolute file URL doesn't have a leading slash
+                        }
                     }
                     absoluteURL = new URL(baseURL, href);
                 } catch (MalformedURLException mfue) {
