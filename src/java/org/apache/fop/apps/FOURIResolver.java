@@ -18,6 +18,7 @@
 
 package org.apache.fop.apps;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import javax.xml.transform.Source;
@@ -62,52 +63,65 @@ public class FOURIResolver
         throws javax.xml.transform.TransformerException {
         
         URL absoluteURL = null;
-        URL baseURL = toBaseURL(base);
-        if (baseURL == null) {
-            // We don't have a valid baseURL just use the URL as given
+        File f = new File(href);
+        if (f.exists()) {
             try {
-                absoluteURL = new URL(href);
-            } catch (MalformedURLException mue) {
+                absoluteURL = f.toURL();
+            } catch (MalformedURLException mfue) {
+                log.error("Could not convert filename to URL: " + mfue.getMessage(), mfue); 
+            }
+        } else {
+            URL baseURL = toBaseURL(base);
+            if (baseURL == null) {
+                // We don't have a valid baseURL just use the URL as given
                 try {
-                    // the above failed, we give it another go in case
-                    // the href contains only a path then file: is assumed
-                    absoluteURL = new URL("file:" + href);
+                    absoluteURL = new URL(href);
+                } catch (MalformedURLException mue) {
+                    try {
+                        // the above failed, we give it another go in case
+                        // the href contains only a path then file: is assumed
+                        absoluteURL = new URL("file:" + href);
+                    } catch (MalformedURLException mfue) {
+                        log.error("Error with URL '" + href + "': " + mue.getMessage(), mue);
+                        return null;
+                    }
+                }
+            } else {
+                try {
+                    /*
+                        This piece of code is based on the following statement in RFC2396 section 5.2:
+
+                        3) If the scheme component is defined, indicating that the reference
+                           starts with a scheme name, then the reference is interpreted as an
+                           absolute URI and we are done.  Otherwise, the reference URI's
+                           scheme is inherited from the base URI's scheme component.
+
+                           Due to a loophole in prior specifications [RFC1630], some parsers
+                           allow the scheme name to be present in a relative URI if it is the
+                           same as the base URI scheme.  Unfortunately, this can conflict
+                           with the correct parsing of non-hierarchical URI.  For backwards
+                           compatibility, an implementation may work around such references
+                           by removing the scheme if it matches that of the base URI and the
+                           scheme is known to always use the <hier_part> syntax.
+
+                        The URL class does not implement this work around, so we do.
+                    */
+
+                    String scheme = baseURL.getProtocol() + ":";
+                    if (href.startsWith(scheme)) {
+                        href = href.substring(scheme.length());
+                    }
+                    if ("file:".equals(scheme) && href.indexOf(':') >= 0) {
+                        href = "/" + href; //Absolute file URL doesn't have a leading slash
+                    }
+                    absoluteURL = new URL(baseURL, href);
                 } catch (MalformedURLException mfue) {
-                    log.error("Error with URL '" + href + "': " + mue.getMessage(), mue);
+                    log.error("Error with URL '" + href + "': " + mfue.getMessage(), mfue);
                     return null;
                 }
             }
-        } else {
-            try {
-                /*
-                    This piece of code is based on the following statement in RFC2396 section 5.2:
-
-                    3) If the scheme component is defined, indicating that the reference
-                       starts with a scheme name, then the reference is interpreted as an
-                       absolute URI and we are done.  Otherwise, the reference URI's
-                       scheme is inherited from the base URI's scheme component.
-
-                       Due to a loophole in prior specifications [RFC1630], some parsers
-                       allow the scheme name to be present in a relative URI if it is the
-                       same as the base URI scheme.  Unfortunately, this can conflict
-                       with the correct parsing of non-hierarchical URI.  For backwards
-                       compatibility, an implementation may work around such references
-                       by removing the scheme if it matches that of the base URI and the
-                       scheme is known to always use the <hier_part> syntax.
-
-                    The URL class does not implement this work around, so we do.
-                */
-
-                String scheme = baseURL.getProtocol() + ":";
-                if (href.startsWith(scheme)) {
-                    href = href.substring(scheme.length());
-                }
-                absoluteURL = new URL(baseURL, href);
-            } catch (MalformedURLException mfue) {
-                log.error("Error with URL '" + href + "': " + mfue.getMessage(), mfue);
-                return null;
-            }
         }
+        
         try {
             return new StreamSource(absoluteURL.openStream(), absoluteURL.toExternalForm());
         } catch (java.io.IOException ioe) {
