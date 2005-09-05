@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,9 @@
 
 /* $Id$ */
 
-
 package org.apache.fop.render.rtf;
 
 //FOP
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
@@ -51,21 +48,19 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfText;
  *  @author Chris Scott
  *  @author rmarra
  */
-
 class TextAttributesConverter {
-    private static Log log = new SimpleLog("FOP/RTF");
-
+    
     /**
      * Converts all known text FO properties to RtfAttributes
      * @param props list of FO properites, which are to be converted
      */
     public static RtfAttributes convertAttributes(Block fobj)
-    throws FOPException {
+                throws FOPException {
         FOPRtfAttributes attrib = new FOPRtfAttributes();
         attrFont(fobj.getCommonFont(), attrib);
         attrFontColor(fobj.getColor(), attrib);
         //attrTextDecoration(fobj.getTextDecoration(), attrib);
-        attrBackgroundColor(fobj.getCommonBorderPaddingBackground(), attrib);
+        attrBlockBackgroundColor(fobj.getCommonBorderPaddingBackground(), attrib);
         attrBlockMargin(fobj.getCommonMarginBlock(), attrib);
         attrBlockTextAlign(fobj.getTextAlign(), attrib);
 
@@ -77,7 +72,7 @@ class TextAttributesConverter {
      * @param props list of FO properites, which are to be converted
      */
     public static RtfAttributes convertBlockContainerAttributes(BlockContainer fobj)
-    throws FOPException {
+                throws FOPException {
         FOPRtfAttributes attrib = new FOPRtfAttributes();
         attrBackgroundColor(fobj.getCommonBorderPaddingBackground(), attrib);
         attrBlockMargin(fobj.getCommonMarginBlock(), attrib);
@@ -166,7 +161,8 @@ class TextAttributesConverter {
 
 
 
-    private static void attrTextDecoration(CommonTextDecoration textDecoration, RtfAttributes rtfAttr) {
+    private static void attrTextDecoration(CommonTextDecoration textDecoration, 
+                RtfAttributes rtfAttr) {
         if (textDecoration == null) {
             return;
         }
@@ -196,11 +192,13 @@ class TextAttributesConverter {
 
     /*
     private static void attrBlockDimension(FObj fobj, FOPRtfAttributes rtfAttr) {
-        Length ipd = fobj.getProperty(Constants.PR_INLINE_PROGRESSION_DIMENSION).getLengthRange().getOptimum().getLength();
+        Length ipd = fobj.getProperty(Constants.PR_INLINE_PROGRESSION_DIMENSION)
+                .getLengthRange().getOptimum().getLength();
         if (ipd.getEnum() != Constants.EN_AUTO) {
             rtfAttr.set(RtfText.FRAME_WIDTH, ipd);
         }
-        Length bpd = fobj.getProperty(Constants.PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange().getOptimum().getLength();
+        Length bpd = fobj.getProperty(Constants.PR_BLOCK_PROGRESSION_DIMENSION)
+                .getLengthRange().getOptimum().getLength();
         if (bpd.getEnum() != Constants.EN_AUTO) {
             rtfAttr.set(RtfText.FRAME_HEIGHT, bpd);
         }
@@ -228,12 +226,26 @@ class TextAttributesConverter {
     }
 
     /**
+     * Reads background-color for block from <code>bpb</code> and writes it to
+     * <code>rtfAttr</code>.
+     */
+    private static void attrBlockBackgroundColor(
+                CommonBorderPaddingBackground bpb, RtfAttributes rtfAttr) {
+        if (bpb.hasBackground()) {
+            rtfAttr.set(RtfText.SHADING, RtfText.FULL_SHADING);
+            rtfAttr.set(RtfText.SHADING_FRONT_COLOR,
+                    convertFOPColorToRTF(bpb.backgroundColor));
+        }
+    }
+
+    /**
      * Reads background-color from bl and writes it to rtfAttr.
      *
      * @param bl the Block object the properties are read from
      * @param rtfAttr the RtfAttributes object the attributes are written to
      */
-    private static void attrBackgroundColor(CommonBorderPaddingBackground bpb, RtfAttributes rtfAttr) {
+    private static void attrBackgroundColor(CommonBorderPaddingBackground bpb, 
+                RtfAttributes rtfAttr) {
         ColorType fopValue = bpb.backgroundColor;
         int rtfColor = 0;
         /* FOP uses a default background color of "transparent", which is
@@ -258,9 +270,9 @@ class TextAttributesConverter {
        
        int s = baselineShift.getEnum();
        
-       if (s==Constants.EN_SUPER) {
+       if (s == Constants.EN_SUPER) {
            rtfAttr.set(RtfText.ATTR_SUPERSCRIPT);
-       } else if (s==Constants.EN_SUB) {
+       } else if (s == Constants.EN_SUB) {
            rtfAttr.set(RtfText.ATTR_SUBSCRIPT);
        }
    }

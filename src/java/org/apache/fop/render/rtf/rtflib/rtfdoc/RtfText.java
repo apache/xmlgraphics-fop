@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,6 +74,14 @@ public class RtfText extends RtfElement {
     public static final String ATTR_SUPERSCRIPT = "super";
     /** constant for subscript */
     public static final String ATTR_SUBSCRIPT = "sub";
+
+    /** RtfText attributes: paragraph shading attributes */
+    /** Constant for the shading of the paragraph */
+    public static final String SHADING = "shading";
+    /** Constant for the document's color tableshading of the paragraph */    
+    public static final String SHADING_FRONT_COLOR = "cfpat";
+    /** Constant for the 100% shading of the paragraph */
+    public static final int FULL_SHADING = 10000;
 
     /** RtfText attributes: alignment attributes */
     /** constant for align center */
