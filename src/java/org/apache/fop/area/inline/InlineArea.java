@@ -19,6 +19,7 @@
 package org.apache.fop.area.inline;
 
 import org.apache.fop.area.Area;
+import org.apache.fop.area.LineArea;
 import org.apache.fop.area.Trait;
 
 /**
@@ -27,11 +28,45 @@ import org.apache.fop.area.Trait;
  * in a line area.
  */
 public class InlineArea extends Area {
+    
+    /**
+     * this class stores information about potential adjustments
+     * that can be used in order to re-compute adjustments when a
+     * page-number or a page-number-citation is resolved
+     */
+    protected class InlineAdjustingInfo {
+        // stretch of the inline area
+        protected int availableStretch;
+        // shrink of the inline area
+        protected int availableShrink;
+        // total adjustment (= ipd - width of fixed elements)
+        protected int adjustment;
+        
+        protected InlineAdjustingInfo(int stretch, int shrink, int adj) {
+            availableStretch = stretch;
+            availableShrink = shrink;
+            adjustment = adj;
+        }
+    }
+    
     /**
      * offset position from top of parent area
      */
     protected int verticalPosition = 0;
-
+    
+    /**
+     * parent area
+     * it is needed in order to recompute adjust ratio and indents
+     * when a page-number or a page-number-citation is resolved
+     */
+    private Area parentArea = null;
+    
+    /**
+     * ipd variation of child areas: if this area has not already
+     * been added and cannot notify its parent area, store the variation
+     * and wait for the parent area to be set
+     */
+    private int storedIPDVariation = 0;
 
     /**
      * Increase the inline progression dimensions of this area.
@@ -66,6 +101,36 @@ public class InlineArea extends Area {
     public int getOffset() {
         return verticalPosition;
     }
+
+    /**
+     * @param parentArea The parentArea to set.
+     */
+    public void setParentArea(Area parentArea) {
+        this.parentArea = parentArea;
+        // notify the parent area about ipd variations
+        if (storedIPDVariation > 0) {
+            notifyIPDVariation(storedIPDVariation);
+            storedIPDVariation = 0;
+        }
+    }
+
+    /**
+     * @return Returns the parentArea.
+     */
+    public Area getParentArea() {
+        return parentArea;
+    }
+    
+    /**
+     * Override Area.addChildArea(Area)
+     * set the parent for the child area
+     */
+    public void addChildArea(Area childArea) {
+        super.addChildArea(childArea);
+        if (childArea instanceof InlineArea) {
+            ((InlineArea) childArea).setParentArea(this);
+        }
+    }
     
     /** @return true if the inline area is underlined. */
     public boolean hasUnderline() {
@@ -87,5 +152,43 @@ public class InlineArea extends Area {
         return getBooleanTrait(Trait.BLINK);
     }
     
+    /**
+     * set the ipd and notify the parent area about the variation;
+     * this happens when a page-number or a page-number-citation
+     * is resolved to its actual value
+     * @param newIPD the new ipd of the area
+     */
+    public void updateIPD(int newIPD) {
+        // default behaviour: do nothing
+    }
+    
+    /**
+     * recursively apply the variation factor to all descendant areas
+     * @param variationFactor the variation factor that must be applied to adjustments
+     * @param lineStretch     the total stretch of the line
+     * @param lineShrink      the total shrink of the line
+     * @return true if there is an UnresolvedArea descendant
+     */
+    public boolean applyVariationFactor(double variationFactor,
+                                        int lineStretch, int lineShrink) {
+        // default behaviour: simply return false
+        return false;
+    }
+    
+    /**
+     * notify the parent area about the ipd variation of this area
+     * or of a descendant area
+     * @param ipdVariation the difference between new and old ipd
+     */
+    protected void notifyIPDVariation(int ipdVariation) {
+        if (getParentArea() instanceof InlineArea) {
+            ((InlineArea) getParentArea()).notifyIPDVariation(ipdVariation);
+        } else if (getParentArea() instanceof LineArea) {
+            ((LineArea) getParentArea()).handleIPDVariation(ipdVariation);
+        } else if (getParentArea() == null) {
+            // parent area not yet set: store the variations
+            storedIPDVariation += ipdVariation;
+        }
+    }
 }
 

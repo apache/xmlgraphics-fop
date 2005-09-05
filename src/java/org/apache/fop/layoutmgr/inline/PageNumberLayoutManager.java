@@ -25,6 +25,7 @@ import org.apache.fop.area.Trait;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.TraitSetter;
+import org.apache.fop.traits.MinOptMax;
 
 /**
  * LayoutManager for the fo:page-number formatting object
@@ -53,10 +54,7 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         // get page string from parent, build area
         TextArea text = new TextArea();
         String str = getCurrentPV().getPageNumberString();
-        int width = 0;
-        for (int count = 0; count < str.length(); count++) {
-            width += font.getCharWidth(str.charAt(count));
-        }
+        int width = getStringWidth(str);
         text.setTextArea(str);
         text.setIPD(width);
         text.setBPD(font.getAscender() - font.getDescender());
@@ -64,7 +62,7 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         text.addTrait(Trait.FONT_NAME, font.getFontName());
         text.addTrait(Trait.FONT_SIZE,
                         new Integer(font.getFontSize()));
-        text.addTrait(Trait.COLOR, fobj.getColor());
+        text.addTrait(Trait.COLOR, fobj.getColor());        
 
         TraitSetter.addTextDecoration(text, fobj.getTextDecoration());
 
@@ -98,7 +96,24 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
     }
     
     private void updateContent(TextArea area) {
+        // get the page number of the page actually being built
         area.setTextArea(getCurrentPV().getPageNumberString());
+        // update the ipd of the area
+        area.updateIPD(getStringWidth(area.getTextArea()));
+        // update the width stored in the AreaInfo object
+        areaInfo.ipdArea = new MinOptMax(area.getIPD());
+    }
+
+    /**
+     * @param str string to be measured
+     * @return width of the string
+     */
+    private int getStringWidth(String str) {
+        int width = 0;
+        for (int count = 0; count < str.length(); count++) {
+            width += font.getCharWidth(str.charAt(count));
+        }
+        return width;
     }
     
     protected void addId() {

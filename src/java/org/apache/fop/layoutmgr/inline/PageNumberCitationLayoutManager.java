@@ -97,7 +97,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
             resolved = true;
         } else {
             resolved = false;
-            inline = new UnresolvedPageNumber(fobj.getRefId());
+            inline = new UnresolvedPageNumber(fobj.getRefId(), font);
             String str = "MMM"; // reserve three spaces for page number
             int width = getStringWidth(str);
             inline.setIPD(width);

@@ -1606,7 +1606,13 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 LayoutManager lastLM = null;
     
                 LineBreakPosition lbp = (LineBreakPosition) pos;
-                LineArea lineArea = new LineArea();
+                iCurrParIndex = lbp.iParIndex;
+                KnuthSequence seq = (KnuthSequence) knuthParagraphs.get(iCurrParIndex); 
+                iEndElement = lbp.getLeafPos();
+    
+                //LineArea lineArea = new LineArea();
+                LineArea lineArea = new LineArea((lbp.getLeafPos() < seq.size() - 1 ? bTextAlignment : bTextAlignmentLast),
+                                                 lbp.difference, lbp.availableStretch, lbp.availableShrink);
                 lineArea.setStartIndent(lbp.startIndent);
                 lineArea.setBPD(lbp.lineHeight);
                 lineArea.setIPD(lbp.lineWidth);
@@ -1616,10 +1622,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 lc.setTopShift(lbp.topShift);
                 lc.setBottomShift(lbp.bottomShift);
 
-                iCurrParIndex = lbp.iParIndex;
-                KnuthSequence seq = (KnuthSequence) knuthParagraphs.get(iCurrParIndex); 
-                iEndElement = lbp.getLeafPos();
-    
                 if (seq instanceof Paragraph) {
                     Paragraph currPar = (Paragraph) seq;
                     // ignore the first elements added by the LineLayoutManager
@@ -1707,6 +1709,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     && (!context.isLastArea() || parentIter.hasNext())) {
                     lineArea.setBPD(lineArea.getBPD() + context.getSpaceAfter());
                 }
+                lineArea.finalize();
                 parentLM.addChildArea(lineArea);
             } else if (pos instanceof NonLeafPosition) {
                 // Nested block-level content;

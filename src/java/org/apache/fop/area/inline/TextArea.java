@@ -35,6 +35,17 @@ public class TextArea extends AbstractTextArea {
     }
 
     /**
+     * Constructor with extra parameters:
+     * create a TextAdjustingInfo object
+     * @param stretch  the available stretch of the text
+     * @param shrink   the available shrink of the text
+     * @param adj      the current total adjustment
+     */
+    public TextArea(int stretch, int shrink, int adj) {
+        super(stretch, shrink, adj);
+    }
+
+    /**
      * Set the text string
      *
      * @param t the text string
@@ -50,6 +61,23 @@ public class TextArea extends AbstractTextArea {
      */
     public String getTextArea() {
         return text;
+    }
+
+    /**
+     * set the ipd and notify the parent area about the variation;
+     * this happens when a page-number or a page-number-citation
+     * is resolved to its actual value
+     * @param newIPD the new ipd of the area
+     */
+    public void updateIPD(int newIPD) {
+        // remember the old ipd
+        int oldIPD = getIPD();
+        // set the new ipd
+        setIPD(newIPD);
+        // check if the line needs to be adjusted because of the ipd variation
+        if (newIPD != oldIPD) {
+            notifyIPDVariation(newIPD - oldIPD);
+        }
     }
 
 }
