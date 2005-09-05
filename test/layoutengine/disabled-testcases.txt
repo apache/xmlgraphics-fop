@@ -1,5 +1,5 @@
 character_background-image.xml
-block-container_reference-orientation_#36391.xml
+block-container_reference-orientation_bug36391.xml
 block_font-stretch.xml
 block_space-before_space-after_2.xml
 block_word-spacing.xml
@@ -24,7 +24,7 @@ page-number-citation_complex_1.xml
 page-number-citation_complex_2.xml
 page-number_initial-page-number_2.xml
 region-body_column-count_footnote.xml
-region-body_column-count_#36356.xml
+region-body_column-count_bug36356.xml
 table-body_background-image.xml
 table_border-collapse_collapse_1.xml
 table_border-collapse_collapse_2.xml
