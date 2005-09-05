@@ -99,11 +99,11 @@ public abstract class Region extends FObj {
 
     /**
      * @param pageRefRect reference dimension of the page area.
-     * @param pageViewRectRect page view port dimensions.
+     * @param spm the simple page master this region belongs to.
      * @return the rectangle for the viewport area
      */
     public abstract Rectangle getViewportRectangle(FODimension pageRefRect
-                                            , FODimension pageViewPortRect);
+                                                   , SimplePageMaster spm);
 
     /**
      * Returns the default region name (xsl-region-before, xsl-region-start,

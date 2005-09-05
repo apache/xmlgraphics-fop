@@ -375,6 +375,7 @@ public class XMLRenderer extends PrintRenderer {
             atts.clear();
             addAreaAttributes(region);
             addTraitAttributes(region);
+            addAttribute("ctm", region.getCTM().toString());
             if (region.getRegionClass() == FO_REGION_BEFORE) {
                 startElement("regionBefore", atts);
                 renderRegion(region);
@@ -524,6 +525,7 @@ public class XMLRenderer extends PrintRenderer {
         atts.clear();
         addAreaAttributes(viewport);
         addTraitAttributes(viewport);
+        addAttribute("offset", viewport.getOffset());
         startElement("viewport", atts);
         super.renderViewport(viewport);
         endElement("viewport");
@@ -554,6 +556,8 @@ public class XMLRenderer extends PrintRenderer {
     /**
      * Renders an fo:foreing-object.
      * @param fo the foreign object
+     * @param pos the position of the foreign object
+     * @see org.apache.fop.render.AbstractRenderer#renderForeignObject(ForeignObject, Rectangle2D)
      */
     public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
         atts.clear();
@@ -622,6 +626,9 @@ public class XMLRenderer extends PrintRenderer {
         endElement("inlineparent");
     }
 
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#renderInlineBlockParent(InlineBlockParent)
+     */
     protected void renderInlineBlockParent(InlineBlockParent ibp) {
         atts.clear();
         addAreaAttributes(ibp);

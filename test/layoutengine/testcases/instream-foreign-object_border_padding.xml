@@ -31,29 +31,65 @@
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
           <fo:block background-color="orange">
-            <fo:instream-foreign-object content-width="20pt" content-height="20pt" border="solid 5pt" padding="5pt" background-color="white">
+            <fo:instream-foreign-object content-width="20pt" content-height="20pt" border-style="solid" border-width="5pt 10pt 20pt 15pt" padding="15pt 20pt 10pt 5pt" background-color="white">
               <svg:svg viewBox="0 0 20 20">
                 <svg:g style="fill:red; stroke:#000000">
                   <svg:rect x="0" y="0" width="15" height="15"/>
                   <svg:rect x="5" y="5" width="15" height="15"/>
                 </svg:g>
               </svg:svg>
-            </fo:instream-foreign-object>
+            </fo:instream-foreign-object> Normal font
+          </fo:block>
+          <fo:block background-color="yellow" font-size="100pt">
+            <fo:instream-foreign-object content-width="20pt" content-height="20pt" border-style="solid" border-width="5pt 10pt 20pt 15pt" padding="15pt 20pt 10pt 5pt" background-color="white">
+              <svg:svg viewBox="0 0 20 20">
+                <svg:g style="fill:red; stroke:#000000">
+                  <svg:rect x="0" y="0" width="15" height="15"/>
+                  <svg:rect x="5" y="5" width="15" height="15"/>
+                </svg:g>
+              </svg:svg>
+            </fo:instream-foreign-object> FOP
+          </fo:block>
+          <fo:block font-size="9pt">
+           In both blocks we have a setting of border-width="5pt 10pt 20pt 15pt" padding="15pt 20pt 10pt 5pt" on the i-f-o.
+           In the first block the i-f-o determines the height of the line in the 2nd block the font is bigger than the i-f-o.
           </fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
   </fo>
   <checks>
-    <eval expected="10000 10000 10000 10000" xpath="//flow/block[1]/lineArea/viewport/@bap"/>
+    <!-- first i-f-o -->
+    <eval expected="20000" xpath="//flow/block[1]/lineArea/viewport/@ipd"/>
+    <eval expected="20000" xpath="//flow/block[1]/lineArea/viewport/@bpd"/>
+    <eval expected="70000" xpath="//flow/block[1]/lineArea/viewport/@bpda"/>
+    <eval expected="1650" xpath="//flow/block[1]/lineArea/viewport/@offset"/>
+    <eval expected="20000 30000 20000 30000" xpath="//flow/block[1]/lineArea/viewport/@bap"/>
     <eval expected="color=#ffffff" xpath="//flow/block[1]/lineArea/viewport/@background"/>
     <eval expected="(solid,#000000,5000)" xpath="//flow/block[1]/lineArea/viewport/@border-before"/>
-    <eval expected="(solid,#000000,5000)" xpath="//flow/block[1]/lineArea/viewport/@border-after"/>
-    <eval expected="(solid,#000000,5000)" xpath="//flow/block[1]/lineArea/viewport/@border-start"/>
-    <eval expected="(solid,#000000,5000)" xpath="//flow/block[1]/lineArea/viewport/@border-end"/>
-    <eval expected="5000" xpath="//flow/block[1]/lineArea/viewport/@padding-before"/>
-    <eval expected="5000" xpath="//flow/block[1]/lineArea/viewport/@padding-after"/>
+    <eval expected="(solid,#000000,20000)" xpath="//flow/block[1]/lineArea/viewport/@border-after"/>
+    <eval expected="(solid,#000000,15000)" xpath="//flow/block[1]/lineArea/viewport/@border-start"/>
+    <eval expected="(solid,#000000,10000)" xpath="//flow/block[1]/lineArea/viewport/@border-end"/>
+    <eval expected="15000" xpath="//flow/block[1]/lineArea/viewport/@padding-before"/>
+    <eval expected="10000" xpath="//flow/block[1]/lineArea/viewport/@padding-after"/>
     <eval expected="5000" xpath="//flow/block[1]/lineArea/viewport/@padding-start"/>
-    <eval expected="5000" xpath="//flow/block[1]/lineArea/viewport/@padding-end"/>
+    <eval expected="20000" xpath="//flow/block[1]/lineArea/viewport/@padding-end"/>
+    <eval expected="20000 20000 20000 20000" xpath="//flow/block[1]/lineArea/viewport/foreignObject/@pos"/>
+    <!-- second i-f-o -->
+    <eval expected="20000" xpath="//flow/block[2]/lineArea/viewport/@ipd"/>
+    <eval expected="20000" xpath="//flow/block[2]/lineArea/viewport/@bpd"/>
+    <eval expected="70000" xpath="//flow/block[2]/lineArea/viewport/@bpda"/>
+    <eval expected="15550" xpath="//flow/block[2]/lineArea/viewport/@offset"/>
+    <eval expected="20000 30000 20000 30000" xpath="//flow/block[2]/lineArea/viewport/@bap"/>
+    <eval expected="color=#ffffff" xpath="//flow/block[2]/lineArea/viewport/@background"/>
+    <eval expected="(solid,#000000,5000)" xpath="//flow/block[2]/lineArea/viewport/@border-before"/>
+    <eval expected="(solid,#000000,20000)" xpath="//flow/block[2]/lineArea/viewport/@border-after"/>
+    <eval expected="(solid,#000000,15000)" xpath="//flow/block[2]/lineArea/viewport/@border-start"/>
+    <eval expected="(solid,#000000,10000)" xpath="//flow/block[2]/lineArea/viewport/@border-end"/>
+    <eval expected="15000" xpath="//flow/block[2]/lineArea/viewport/@padding-before"/>
+    <eval expected="10000" xpath="//flow/block[2]/lineArea/viewport/@padding-after"/>
+    <eval expected="5000" xpath="//flow/block[2]/lineArea/viewport/@padding-start"/>
+    <eval expected="20000" xpath="//flow/block[2]/lineArea/viewport/@padding-end"/>
+    <eval expected="20000 20000 20000 20000" xpath="//flow/block[2]/lineArea/viewport/foreignObject/@pos"/>
   </checks>
 </testcase>
