@@ -1174,6 +1174,12 @@ public class RTFHandler extends FOEventHandler {
             } else {
                 endBlock( (Block) foNode);
             }
+        } else if (foNode instanceof BlockContainer) {
+            if (bStart) {
+                startBlockContainer( (BlockContainer) foNode);
+            } else {
+                endBlockContainer( (BlockContainer) foNode);
+            }
         } else if (foNode instanceof BasicLink) {
             //BasicLink must be placed before Inline
             if (bStart) {
@@ -1257,6 +1263,8 @@ public class RTFHandler extends FOEventHandler {
             } else {
                 endCell( (TableCell) foNode);
             }
+        } else {
+            log.warn("Ignored deferred event for " + foNode);
         }
     }
     

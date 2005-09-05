@@ -52,7 +52,7 @@ public class BorderAttributesConverter {
             attrs.set(IBorderAttributes.BORDER_COLOR, border.getBorderColor(side));
             attrs.set(convertAttributetoRtf(styleEnum));
             //division by 50 to convert millipoints to twips
-            attrs.set(IBorderAttributes.BORDER_WIDTH, border.getBorderWidth(side, false)/50);
+            attrs.set(IBorderAttributes.BORDER_WIDTH, border.getBorderWidth(side, false) / 50);
             attributes.set(controlWord, attrs);
         }
     }

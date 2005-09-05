@@ -23,6 +23,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.BlockContainer;
@@ -33,11 +34,12 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonTextDecoration;
+import org.apache.fop.render.rtf.BorderAttributesConverter;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.IBorderAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfColorTable;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFontManager;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfText;
-
 
 /**  Converts FO properties to RtfAttributes
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
@@ -63,6 +65,7 @@ class TextAttributesConverter {
         attrBlockBackgroundColor(fobj.getCommonBorderPaddingBackground(), attrib);
         attrBlockMargin(fobj.getCommonMarginBlock(), attrib);
         attrBlockTextAlign(fobj.getTextAlign(), attrib);
+        attrBorder(fobj.getCommonBorderPaddingBackground(), attrib, fobj);
 
         return attrib;
     }
@@ -77,6 +80,7 @@ class TextAttributesConverter {
         attrBackgroundColor(fobj.getCommonBorderPaddingBackground(), attrib);
         attrBlockMargin(fobj.getCommonMarginBlock(), attrib);
         //attrBlockDimension(fobj, attrib);
+        attrBorder(fobj.getCommonBorderPaddingBackground(), attrib, fobj);
 
         return attrib;
     }
@@ -122,6 +126,7 @@ class TextAttributesConverter {
         attrFontColor(fobj.getColor(), attrib);
 
         attrBackgroundColor(fobj.getCommonBorderPaddingBackground(), attrib);
+        attrInlineBorder(fobj.getCommonBorderPaddingBackground(), attrib);
         return attrib;
     }
 
@@ -185,8 +190,8 @@ class TextAttributesConverter {
                 cmb.spaceBefore.getOptimum(null).getLength());
         rtfAttr.setTwips(RtfText.SPACE_AFTER, 
                 cmb.spaceAfter.getOptimum(null).getLength());
-        rtfAttr.setTwips(RtfText.LEFT_INDENT_BODY, cmb.marginLeft);
-        rtfAttr.setTwips(RtfText.RIGHT_INDENT_BODY, cmb.marginRight);
+        rtfAttr.setTwips(RtfText.LEFT_INDENT_BODY, cmb.startIndent);
+        rtfAttr.setTwips(RtfText.RIGHT_INDENT_BODY, cmb.endIndent);
     }
 
 
@@ -236,6 +241,58 @@ class TextAttributesConverter {
             rtfAttr.set(RtfText.SHADING_FRONT_COLOR,
                     convertFOPColorToRTF(bpb.backgroundColor));
         }
+    }
+
+    /** Adds border information from <code>bpb</code> to <code>rtrAttr</code>. */
+    private static void attrBorder(CommonBorderPaddingBackground bpb,
+           RtfAttributes rtfAttr, FONode fobj) {
+       if (hasBorder(fobj.getParent())) {
+           attrInlineBorder(bpb, rtfAttr);
+           return;
+       }
+
+       BorderAttributesConverter.makeBorder(bpb,
+               CommonBorderPaddingBackground.BEFORE, rtfAttr,
+               IBorderAttributes.BORDER_TOP);
+       BorderAttributesConverter.makeBorder(bpb,
+               CommonBorderPaddingBackground.AFTER, rtfAttr,
+               IBorderAttributes.BORDER_BOTTOM);
+       BorderAttributesConverter.makeBorder(bpb,
+               CommonBorderPaddingBackground.START, rtfAttr,
+               IBorderAttributes.BORDER_LEFT);
+       BorderAttributesConverter.makeBorder(bpb,
+               CommonBorderPaddingBackground.END, rtfAttr,
+               IBorderAttributes.BORDER_RIGHT);
+    }
+
+    /** @return true, if element <code>node</code> has border. */
+    private static boolean hasBorder(FONode node) {
+        while (node != null) {
+            CommonBorderPaddingBackground commonBorderPaddingBackground = null;
+            if (node instanceof Block) {
+                Block block = (Block) node;
+                commonBorderPaddingBackground = block.getCommonBorderPaddingBackground(); 
+            } else if (node instanceof BlockContainer) { 
+                BlockContainer container = (BlockContainer) node;
+                commonBorderPaddingBackground = container.getCommonBorderPaddingBackground();
+            } 
+
+            if (commonBorderPaddingBackground != null 
+                    && commonBorderPaddingBackground.hasBorder()) {
+                return true;
+            }
+
+            node = node.getParent();
+        }
+        return false; 
+    }
+
+    /** Adds inline border information from <code>bpb</code> to <code>rtrAttr</code>. */
+    private static void attrInlineBorder(CommonBorderPaddingBackground bpb,
+            RtfAttributes rtfAttr) {
+        BorderAttributesConverter.makeBorder(bpb,
+                CommonBorderPaddingBackground.BEFORE, rtfAttr,
+                IBorderAttributes.BORDER_CHARACTER);
     }
 
     /**
