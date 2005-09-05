@@ -29,8 +29,8 @@ import java.util.Map;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.io.CopyUtils;
 import org.apache.commons.io.EndianUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontType;
@@ -163,7 +163,7 @@ public class PSFontUtils {
 
                     SubInputStream sin = new SubInputStream(in, dataSegLen);
                     ASCIIHexOutputStream hexOut = new ASCIIHexOutputStream(gen.getOutputStream());
-                    IOUtils.copy(sin, hexOut);
+                    CopyUtils.copy(sin, hexOut);
                     gen.newLine();
                     break;
                 case 3: //EOF
