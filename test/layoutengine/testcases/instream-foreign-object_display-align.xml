@@ -32,7 +32,7 @@
         <fo:flow flow-name="xsl-region-body">
           <fo:block>plain instream-foreign-object</fo:block>
           <fo:block>
-            <fo:instream-foreign-object content-width="20pt" content-height="20pt" block-progression-dimension="30pt">
+            <fo:instream-foreign-object content-width="20pt" content-height="20pt" block-progression-dimension="30pt" background-color="yellow">
               <svg:svg viewBox="0 0 20 20">
                 <svg:g style="fill:red; stroke:#000000">
                   <svg:rect x="0" y="0" width="15" height="15"/>
@@ -43,7 +43,7 @@
           </fo:block>
           <fo:block>instream-foreign-object with display-align="auto"</fo:block>
           <fo:block>
-            <fo:instream-foreign-object content-width="20pt" content-height="20pt" display-align="auto" block-progression-dimension="30pt">
+            <fo:instream-foreign-object content-width="20pt" content-height="20pt" display-align="auto" block-progression-dimension="30pt" background-color="yellow">
               <svg:svg viewBox="0 0 20 20">
                 <svg:g style="fill:red; stroke:#000000">
                   <svg:rect x="0" y="0" width="15" height="15"/>
@@ -54,7 +54,7 @@
           </fo:block>
           <fo:block>instream-foreign-object with display-align="before"</fo:block>
           <fo:block>
-            <fo:instream-foreign-object content-width="20pt" content-height="20pt" display-align="before" block-progression-dimension="30pt">
+            <fo:instream-foreign-object content-width="20pt" content-height="20pt" display-align="before" block-progression-dimension="30pt" background-color="yellow">
               <svg:svg viewBox="0 0 20 20">
                 <svg:g style="fill:red; stroke:#000000">
                   <svg:rect x="0" y="0" width="15" height="15"/>
@@ -65,7 +65,7 @@
           </fo:block>
           <fo:block>instream-foreign-object with display-align="center"</fo:block>
           <fo:block>
-            <fo:instream-foreign-object content-width="20pt" content-height="20pt" display-align="center" block-progression-dimension="30pt">
+            <fo:instream-foreign-object content-width="20pt" content-height="20pt" display-align="center" block-progression-dimension="30pt" background-color="yellow">
               <svg:svg viewBox="0 0 20 20">
                 <svg:g style="fill:red; stroke:#000000">
                   <svg:rect x="0" y="0" width="15" height="15"/>
@@ -76,7 +76,7 @@
           </fo:block>
           <fo:block>instream-foreign-object with display-align="after"</fo:block>
           <fo:block>
-            <fo:instream-foreign-object content-width="20pt" content-height="20pt" display-align="after" block-progression-dimension="30pt">
+            <fo:instream-foreign-object content-width="20pt" content-height="20pt" display-align="after" block-progression-dimension="30pt" background-color="yellow">
               <svg:svg viewBox="0 0 20 20">
                 <svg:g style="fill:red; stroke:#000000">
                   <svg:rect x="0" y="0" width="15" height="15"/>

@@ -39,20 +39,20 @@
             <fo:table-column />
             <fo:table-body>
               <fo:table-row>
-                <fo:table-cell margin="0pt" padding="5pt" height="1in" background-color="blue" 
+                <fo:table-cell margin="0pt" padding="5pt 10pt 20pt 15pt" height="1in" background-color="blue" 
                    background-image="##img"
                    background-position-horizontal="right" 
                    background-repeat="no-repeat">
                   <fo:block>image in top right corner</fo:block>
                 </fo:table-cell>
-                <fo:table-cell margin="0pt" padding="5pt" height="1in" background-color="green" 
+                <fo:table-cell margin="0pt" padding="5pt 10pt 20pt 15pt" height="1in" background-color="green" 
                    background-image="##img"
                    background-position-horizontal="right" 
                    background-position-vertical="center" 
                    background-repeat="no-repeat">
                   <fo:block>image in center right</fo:block>
                 </fo:table-cell>
-                <fo:table-cell margin="0pt" padding="5pt" height="1in" background-color="yellow" 
+                <fo:table-cell margin="0pt" padding="5pt 10pt 20pt 15pt" height="1in" background-color="yellow" 
                    background-image="##img"
                    background-position-horizontal="right" 
                    background-position-vertical="bottom" 
@@ -61,20 +61,20 @@
                 </fo:table-cell>
               </fo:table-row>
               <fo:table-row>
-                <fo:table-cell margin="0pt" padding="5pt" height="1in" background-color="yellow" 
+                <fo:table-cell margin="0pt" padding="5pt 10pt 20pt 15pt" height="1in" background-color="yellow" 
                    background-image="##img"
                    background-position-horizontal="center" 
                    background-repeat="no-repeat">
                   <fo:block>image in top center</fo:block>
                 </fo:table-cell>
-                <fo:table-cell margin="0pt" padding="5pt" height="1in" background-color="blue" 
+                <fo:table-cell margin="0pt" padding="5pt 10pt 20pt 15pt" height="1in" background-color="blue" 
                    background-image="##img"
                    background-position-horizontal="center" 
                    background-position-vertical="center" 
                    background-repeat="no-repeat">
                   <fo:block>image in center</fo:block>
                 </fo:table-cell>
-                <fo:table-cell margin="0pt" padding="5pt" height="1in" background-color="green" 
+                <fo:table-cell margin="0pt" padding="5pt 10pt 20pt 15pt" height="1in" background-color="green" 
                    background-image="##img"
                    background-position-horizontal="center" 
                    background-position-vertical="bottom" 
@@ -83,18 +83,18 @@
                 </fo:table-cell>
               </fo:table-row>
               <fo:table-row>
-                <fo:table-cell margin="0pt" padding="5pt" height="1in" background-color="green" 
+                <fo:table-cell margin="0pt" padding="5pt 10pt 20pt 15pt" height="1in" background-color="green" 
                    background-image="##img"
                    background-repeat="no-repeat">
                   <fo:block>image in top left</fo:block>
                 </fo:table-cell>
-                <fo:table-cell margin="0pt" padding="5pt" height="1in" background-color="yellow" 
+                <fo:table-cell margin="0pt" padding="5pt 10pt 20pt 15pt" height="1in" background-color="yellow" 
                    background-image="##img"
                    background-position-vertical="center" 
                    background-repeat="no-repeat">
                   <fo:block>image in center left</fo:block>
                 </fo:table-cell>
-                <fo:table-cell margin="0pt" padding="5pt" height="1in" background-color="blue" 
+                <fo:table-cell margin="0pt" padding="5pt 10pt 20pt 15pt" height="1in" background-color="blue" 
                    background-image="##img"
                    background-position-vertical="bottom" 
                    background-repeat="no-repeat">
@@ -111,20 +111,20 @@
     <!-- first cell in row 1 -->
     <eval expected="color=#0000ff,url=../../resources/images/box1.png,repeat=no-repeat,horiz=69991,vertical=0" xpath="//flow/block/block[1]/@background"/>
     <!-- second cell in row 1 -->
-    <eval expected="color=#008000,url=../../resources/images/box1.png,repeat=no-repeat,horiz=69991,vertical=20995" xpath="//flow/block/block[2]/@background"/>
+    <eval expected="color=#008000,url=../../resources/images/box1.png,repeat=no-repeat,horiz=69991,vertical=28495" xpath="//flow/block/block[2]/@background"/>
     <!-- third cell in row 1 -->
-    <eval expected="color=#ffff00,url=../../resources/images/box1.png,repeat=no-repeat,horiz=69991,vertical=41991" xpath="//flow/block/block[3]/@background"/>
+    <eval expected="color=#ffff00,url=../../resources/images/box1.png,repeat=no-repeat,horiz=69991,vertical=56991" xpath="//flow/block/block[3]/@background"/>
     <!-- first cell in row 2 -->
     <eval expected="color=#ffff00,url=../../resources/images/box1.png,repeat=no-repeat,horiz=34995,vertical=0" xpath="//flow/block/block[4]/@background"/>
     <!-- second cell in row 2 -->
-    <eval expected="color=#0000ff,url=../../resources/images/box1.png,repeat=no-repeat,horiz=34995,vertical=20995" xpath="//flow/block/block[5]/@background"/>
+    <eval expected="color=#0000ff,url=../../resources/images/box1.png,repeat=no-repeat,horiz=34995,vertical=28495" xpath="//flow/block/block[5]/@background"/>
     <!-- third cell in row 2 -->
-    <eval expected="color=#008000,url=../../resources/images/box1.png,repeat=no-repeat,horiz=34995,vertical=41991" xpath="//flow/block/block[6]/@background"/>
+    <eval expected="color=#008000,url=../../resources/images/box1.png,repeat=no-repeat,horiz=34995,vertical=56991" xpath="//flow/block/block[6]/@background"/>
     <!-- first cell in row 3 -->
     <eval expected="color=#008000,url=../../resources/images/box1.png,repeat=no-repeat,horiz=0,vertical=0" xpath="//flow/block/block[7]/@background"/>
     <!-- second cell in row 3 -->
-    <eval expected="color=#ffff00,url=../../resources/images/box1.png,repeat=no-repeat,horiz=0,vertical=20995" xpath="//flow/block/block[8]/@background"/>
+    <eval expected="color=#ffff00,url=../../resources/images/box1.png,repeat=no-repeat,horiz=0,vertical=28495" xpath="//flow/block/block[8]/@background"/>
     <!-- third cell in row 3 -->
-    <eval expected="color=#0000ff,url=../../resources/images/box1.png,repeat=no-repeat,horiz=0,vertical=41991" xpath="//flow/block/block[9]/@background"/>
+    <eval expected="color=#0000ff,url=../../resources/images/box1.png,repeat=no-repeat,horiz=0,vertical=56991" xpath="//flow/block/block[9]/@background"/>
   </checks>
 </testcase>

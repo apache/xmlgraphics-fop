@@ -4,11 +4,12 @@ block_font-stretch.xml
 block_space-before_space-after_2.xml
 block_word-spacing.xml
 block_word-spacing_text-align_justify.xml
-external-graphic_content-height_content-width.xml
 external-graphic_oversized.xml
 inline-block_keep-together.xml
 inline_block_nested_3.xml
+inline_border_padding.xml
 inline-container_block_nested.xml
+inline-container_border_padding.xml
 inline_letter-spacing.xml
 inline_word-spacing.xml
 inline_word-spacing_text-align_justify.xml
@@ -24,7 +25,6 @@ page-number-citation_complex_2.xml
 page-number_initial-page-number_2.xml
 region-body_column-count_footnote.xml
 region-body_column-count_#36356.xml
-region-body_margin_relative_writing-mode_rl-tb.xml
 table-body_background-image.xml
 table_border-collapse_collapse_1.xml
 table_border-collapse_collapse_2.xml

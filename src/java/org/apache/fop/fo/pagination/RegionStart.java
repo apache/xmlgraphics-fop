@@ -39,32 +39,40 @@ public class RegionStart extends RegionSE {
     }
 
     /**
-     * @see org.apache.fop.fo.pagination.Region#getViewportRectangle(FODimension)
+     * @see org.apache.fop.fo.pagination.Region#getViewportRectangle(FODimension, SimplePageMaster)
      */
-    public Rectangle getViewportRectangle (FODimension reldims, FODimension pageViewPortRect) {
-        // Depends on extent, precedence and writing mode
-        // This is the rectangle relative to the page-reference area in
-        // writing-mode relative coordinates
-        /* Special rules apply to resolving extent.
-         * In the property subsystem the extent property is configured to 
-         * using BLOCK_WIDTH as its percent base.
-         * However, depending on the writing mode extent import resolved either
-         * against the page width or the page height.
+    public Rectangle getViewportRectangle (FODimension reldims, SimplePageMaster spm) {
+        /* Special rules apply to resolving extent as values are resolved relative 
+         * to the page size and reference orientation.
          */
-        Rectangle vpRect;
-        SimplePercentBaseContext pageWidthContext 
-            = new SimplePercentBaseContext(null, LengthBase.CUSTOM_BASE, pageViewPortRect.ipd);
-        SimplePercentBaseContext pageHeightContext
-            = new SimplePercentBaseContext(null, LengthBase.CUSTOM_BASE, pageViewPortRect.bpd);
+        SimplePercentBaseContext pageWidthContext;
+        SimplePercentBaseContext pageHeightContext;
+        if (spm.getReferenceOrientation() % 180 == 0) {
+            pageWidthContext = new SimplePercentBaseContext(null, 
+                                                            LengthBase.CUSTOM_BASE,
+                                                            spm.getPageWidth().getValue());
+            pageHeightContext = new SimplePercentBaseContext(null,
+                                                             LengthBase.CUSTOM_BASE,
+                                                             spm.getPageHeight().getValue());
+        } else {
+            // invert width and height since top left are rotated by 90 (cl or ccl)
+            pageWidthContext = new SimplePercentBaseContext(null, 
+                                                            LengthBase.CUSTOM_BASE,
+                                                            spm.getPageHeight().getValue());
+            pageHeightContext = new SimplePercentBaseContext(null,
+                                                             LengthBase.CUSTOM_BASE,
+                                                             spm.getPageWidth().getValue());
+        }
         SimplePercentBaseContext neighbourContext;
-        if (getWritingMode() == EN_LR_TB || getWritingMode() == EN_RL_TB) {
+        Rectangle vpRect;
+        if (spm.getWritingMode() == EN_LR_TB || spm.getWritingMode() == EN_RL_TB) {
             neighbourContext = pageHeightContext;
             vpRect = new Rectangle(0, 0, getExtent().getValue(pageWidthContext), reldims.bpd);
         } else {
             neighbourContext = pageWidthContext;
             vpRect = new Rectangle(0, 0, reldims.bpd, getExtent().getValue(pageHeightContext));
         }
-        adjustIPD(vpRect, getWritingMode(), neighbourContext);
+        adjustIPD(vpRect, spm.getWritingMode(), neighbourContext);
         return vpRect;
     }
 

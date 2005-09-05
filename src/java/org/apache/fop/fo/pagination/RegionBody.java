@@ -63,13 +63,14 @@ public class RegionBody extends Region {
              * these cases, but we will need to be able to change Numeric
              * values in order to do this.
              */
-            attributeError("If overflow property is set to \"scroll\"," +
-                    " a column-count other than \"1\" may not be specified.");
+            attributeError("If overflow property is set to \"scroll\"," 
+                    + " a column-count other than \"1\" may not be specified.");
         }
     }
 
     /**
      * Return the Common Margin Properties-Block.
+     * @return the Common Margin Properties-Block.
      */
     public CommonMarginBlock getCommonMarginBlock() {
         return commonMarginBlock;
@@ -77,6 +78,7 @@ public class RegionBody extends Region {
 
     /**
      * Return the "column-count" property.
+     * @return the "column-count" property.
      */
     public int getColumnCount() {
         return columnCount.getValue();
@@ -84,35 +86,60 @@ public class RegionBody extends Region {
 
     /**
      * Return the "column-gap" property.
+     * @return the "column-gap" property.
      */
     public int getColumnGap() {
         return columnGap.getValue();
     }
 
     /**
-     * @see org.apache.fop.fo.pagination.Region#getViewportRectangle(FODimension)
+     * @see org.apache.fop.fo.pagination.Region#getViewportRectangle(FODimension, SimplePageMaster)
      */
-    public Rectangle getViewportRectangle (FODimension reldims, FODimension pageViewPortRect) {
+    public Rectangle getViewportRectangle (FODimension reldims, SimplePageMaster spm) {
         /* Special rules apply to resolving margins in the page context.
          * Contrary to normal margins in this case top and bottom margin
          * are resolved relative to the height. In the property subsystem
          * all margin properties are configured to using BLOCK_WIDTH.
          * That's why we 'cheat' here and setup a context for the height but
          * use the LengthBase.BLOCK_WIDTH.
-         * Also the values are resolved relative to the page size.
+         * Also the values are resolved relative to the page size 
+         * and reference orientation.
          */
-        SimplePercentBaseContext pageWidthContext 
-            = new SimplePercentBaseContext(null, LengthBase.CONTAINING_BLOCK_WIDTH, pageViewPortRect.ipd);
-        SimplePercentBaseContext pageHeightContext
-            = new SimplePercentBaseContext(null, LengthBase.CONTAINING_BLOCK_WIDTH, pageViewPortRect.bpd);
+        SimplePercentBaseContext pageWidthContext;
+        SimplePercentBaseContext pageHeightContext;
+        if (spm.getReferenceOrientation() % 180 == 0) {
+            pageWidthContext = new SimplePercentBaseContext(null, 
+                                                            LengthBase.CONTAINING_BLOCK_WIDTH,
+                                                            spm.getPageWidth().getValue());
+            pageHeightContext = new SimplePercentBaseContext(null,
+                                                             LengthBase.CONTAINING_BLOCK_WIDTH,
+                                                             spm.getPageHeight().getValue());
+        } else {
+            // invert width and height since top left are rotated by 90 (cl or ccl)
+            pageWidthContext = new SimplePercentBaseContext(null, 
+                                                            LengthBase.CONTAINING_BLOCK_WIDTH,
+                                                            spm.getPageHeight().getValue());
+            pageHeightContext = new SimplePercentBaseContext(null,
+                                                             LengthBase.CONTAINING_BLOCK_WIDTH,
+                                                             spm.getPageWidth().getValue());
+        }
 
-        int left = commonMarginBlock.marginLeft.getValue(pageWidthContext);
-        int right = commonMarginBlock.marginRight.getValue(pageWidthContext);
-        int top = commonMarginBlock.marginTop.getValue(pageHeightContext);
-        int bottom = commonMarginBlock.marginBottom.getValue(pageHeightContext);
-        return new Rectangle(left, top,
-                    reldims.ipd - left - right,
-                    reldims.bpd - top - bottom);
+        int start;
+        int end;
+        if (spm.getWritingMode() == EN_LR_TB) { // Left-to-right
+            start = commonMarginBlock.marginLeft.getValue(pageWidthContext);
+            end = commonMarginBlock.marginRight.getValue(pageWidthContext);
+        } else { // all other supported modes are right-to-left
+            start = commonMarginBlock.marginRight.getValue(pageWidthContext);
+            end = commonMarginBlock.marginLeft.getValue(pageWidthContext);
+        }
+        int before = commonMarginBlock.spaceBefore.getOptimum(pageHeightContext)
+                        .getLength().getValue(pageHeightContext);
+        int after = commonMarginBlock.spaceAfter.getOptimum(pageHeightContext)
+                        .getLength().getValue(pageHeightContext);
+        return new Rectangle(start, before,
+                    reldims.ipd - start - end,
+                    reldims.bpd - before - after);
     }
 
     /**

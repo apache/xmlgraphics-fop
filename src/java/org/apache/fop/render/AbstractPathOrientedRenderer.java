@@ -187,8 +187,11 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
                         for (int y = 0; y < vertCount; y++) {
                             // place once
                             Rectangle2D pos;
-                            pos = new Rectangle2D.Float(sx + (x * fopimage.getIntrinsicWidth()),
-                                                        sy + (y * fopimage.getIntrinsicHeight()),
+                            // Image positions are relative to the currentIP/BP
+                            pos = new Rectangle2D.Float(sx - currentIPPosition 
+                                                            + (x * fopimage.getIntrinsicWidth()),
+                                                        sy - currentBPPosition
+                                                            + (y * fopimage.getIntrinsicHeight()),
                                                         fopimage.getIntrinsicWidth(),
                                                         fopimage.getIntrinsicHeight());
                             drawImage(back.getURL(), pos);

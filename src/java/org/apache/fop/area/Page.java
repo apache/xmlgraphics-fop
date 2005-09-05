@@ -92,14 +92,21 @@ public class Page implements Serializable, Cloneable {
          * use the LengthBase.BLOCK_WIDTH.
          */
         SimplePercentBaseContext pageWidthContext 
-            = new SimplePercentBaseContext(null, LengthBase.CONTAINING_BLOCK_WIDTH, pageViewPortDims.ipd);
+            = new SimplePercentBaseContext(null, LengthBase.CONTAINING_BLOCK_WIDTH
+                                            , pageViewPortDims.ipd);
         SimplePercentBaseContext pageHeightContext
-            = new SimplePercentBaseContext(null, LengthBase.CONTAINING_BLOCK_WIDTH, pageViewPortDims.bpd);
+            = new SimplePercentBaseContext(null, LengthBase.CONTAINING_BLOCK_WIDTH
+                                            , pageViewPortDims.bpd);
 
-        Rectangle pageRefRect =
-            new Rectangle(mProps.marginLeft.getValue(pageWidthContext), mProps.marginTop.getValue(pageHeightContext),
-            pageViewPortDims.ipd - mProps.marginLeft.getValue(pageWidthContext) - mProps.marginRight.getValue(pageWidthContext),
-            pageViewPortDims.bpd - mProps.marginTop.getValue(pageHeightContext) - mProps.marginBottom.getValue(pageHeightContext));
+        Rectangle pageRefRect 
+            =  new Rectangle(mProps.marginLeft.getValue(pageWidthContext)
+                            , mProps.marginTop.getValue(pageHeightContext)
+                            , pageViewPortDims.ipd 
+                                - mProps.marginLeft.getValue(pageWidthContext) 
+                                - mProps.marginRight.getValue(pageWidthContext)
+                            , pageViewPortDims.bpd 
+                                - mProps.marginTop.getValue(pageHeightContext)
+                                - mProps.marginBottom.getValue(pageHeightContext));
 
         // Set up the CTM on the page reference area based on writing-mode
         // and reference-orientation
@@ -112,7 +119,7 @@ public class Page implements Serializable, Cloneable {
         for (Iterator regenum = spm.getRegions().values().iterator();
             regenum.hasNext();) {
             Region r = (Region)regenum.next();
-            RegionViewport rvp = makeRegionViewport(r, reldims, pageCTM, pageViewPortDims);
+            RegionViewport rvp = makeRegionViewport(r, reldims, pageCTM, spm);
             if (r.getNameId() == Constants.FO_REGION_BODY) {
                 rr = new BodyRegion((RegionBody) r, rvp);
             } else {
@@ -133,13 +140,15 @@ public class Page implements Serializable, Cloneable {
     
     /**
      * Creates a RegionViewport Area object for this pagination Region.
+     * @param r the region the viewport is to be created for
      * @param reldims relative dimensions
      * @param pageCTM page coordinate transformation matrix
+     * @param spm the simple-page-master for this page
      * @return the new region viewport
      */
     private RegionViewport makeRegionViewport(Region r, FODimension reldims, CTM pageCTM,
-        FODimension pageViewPortDims) {
-        Rectangle2D relRegionRect = r.getViewportRectangle(reldims, pageViewPortDims);
+        SimplePageMaster spm) {
+        Rectangle2D relRegionRect = r.getViewportRectangle(reldims, spm);
         Rectangle2D absRegionRect = pageCTM.transform(relRegionRect);
         // Get the region viewport rectangle in absolute coords by
         // transforming it using the page CTM

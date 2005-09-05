@@ -18,40 +18,18 @@
 
 package org.apache.fop.layoutmgr.inline;
 
-// Java
 import java.awt.geom.Rectangle2D;
-import java.util.LinkedList;
-
-// FOP
+import org.apache.fop.area.Area;
 import org.apache.fop.area.inline.Image;
-import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.inline.Viewport;
-import org.apache.fop.datatypes.Length;
-import org.apache.fop.datatypes.LengthBase;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.ExternalGraphic;
-import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
-import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.TraitSetter;
+
 
 /**
  * LayoutManager for the fo:external-graphic formatting object
  */
-public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
+public class ExternalGraphicLayoutManager extends AbstractGraphicsLayoutManager {
     
     private ExternalGraphic fobj;
-
-    private int breakAfter;
-    private int breakBefore;
-    private int align;
-    private int startIndent;
-    private int endIndent;
-    private int spaceBefore;
-    private int spaceAfter;
-    private int viewWidth = -1;
-    private int viewHeight = -1;
-    private boolean clip = false;
-    private Rectangle2D placement = null;
 
     /**
      * Constructor
@@ -68,6 +46,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
      * This gets the sizes for the image and the dimensions and clipping.
      * @todo see if can simplify property handling logic
      */
+    /*
     private void setup() {
         // assume lr-tb for now and just use the .optimum value of the range
         Length ipd = fobj.getInlineProgressionDimension().getOptimum(this).getLength();
@@ -195,97 +174,35 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
         afterBPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.AFTER, false);
         
         yoffset += beforeBPD;
+        viewBPD = viewHeight;
         viewHeight += beforeBPD;
         viewHeight += afterBPD;
         
         //Determine extra IPD from borders etc.
         int startIPD = borderProps.getPadding(CommonBorderPaddingBackground.START,
-                false/*bNotFirst*/, this);
+                false, this);
         startIPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.START,
-                 false/*bNotFirst*/);
-        int endIPD = borderProps.getPadding(CommonBorderPaddingBackground.END, false/*bNotLast*/, this);
-        endIPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.END, false/*bNotLast*/);
+                 false);
+        int endIPD = borderProps.getPadding(CommonBorderPaddingBackground.END, false, this);
+        endIPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.END, false);
         
         xoffset += startIPD;
+        viewIPD = viewWidth;
         viewWidth += startIPD;
         viewWidth += endIPD;
         
         placement = new Rectangle2D.Float(xoffset, yoffset, cwidth, cheight);
     }
-
-    /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(LayoutContext, int)
-     */
-    public LinkedList getNextKnuthElements(LayoutContext context,
-                                           int alignment) {
-        setup();
-        InlineArea area = getExternalGraphicInlineArea();
-        setCurrentArea(area);
-        setAlignment(fobj.getVerticalAlign());
-        setLead(viewHeight);
-        return super.getNextKnuthElements(context, alignment);
-    }
-    
-     /**
-      * Get the inline area for this external grpahic.
-      * This creates the image area and puts it inside a viewport.
-      *
-      * @return the viewport containing the image area
-      */
-     public InlineArea getExternalGraphicInlineArea() {
-         Image imArea = new Image(fobj.getSrc());
-         TraitSetter.setProducerID(imArea, fobj.getId());
-         Viewport vp = new Viewport(imArea);
-         TraitSetter.setProducerID(vp, fobj.getId());
-         vp.setIPD(viewWidth);
-         vp.setBPD(viewHeight);
-         vp.setClip(clip);
-         vp.setContentPosition(placement);
-         vp.setOffset(0);
-
-         // Common Border, Padding, and Background Properties
-         TraitSetter.addBorders(vp, fobj.getCommonBorderPaddingBackground(), this);
-         TraitSetter.addBackground(vp, fobj.getCommonBorderPaddingBackground(), this);
-
-         return vp;
-     }
-     
-    /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#addId() */
-    protected void addId() {
-         getPSLM().addIDToPage(fobj.getId());
-     }
-
-    // --------- Property Resolution related functions --------- //
+    */
     
     /**
-     * @see org.apache.fop.datatypes.PercentBaseContext#getBaseLength(int, FObj)
+     * Get the inline area created by this element.
+     *
+     * @return the inline area
      */
-    public int getBaseLength(int lengthBase, FObj fobj) {
-        switch (lengthBase) {
-        case LengthBase.IMAGE_INTRINSIC_WIDTH:
-            return getIntrinsicWidth();
-        case LengthBase.IMAGE_INTRINSIC_HEIGHT:
-            return getIntrinsicHeight();
-        default: // Delegate to super class
-            return super.getBaseLength(lengthBase, fobj);
-        }
+    protected Area getChildArea() {
+        return new Image(fobj.getSrc());
     }
-
-    /**
-     * Returns the intrinsic width of the e-g.
-     * @return the width of the element
-     */
-    protected int getIntrinsicWidth() {
-        return fobj.getIntrinsicWidth();
-    }
-
-    /**
-     * Returns the intrinsic height of the e-g.
-     * @return the height of the element
-     */
-    protected int getIntrinsicHeight() {
-        return fobj.getIntrinsicHeight();
-    }
-
+    
 }
 
