@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 2001-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,6 @@
 package org.apache.fop.render.ps;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.apache.fop.fonts.Typeface;
-import org.apache.fop.fonts.Glyphs;
-import org.apache.fop.fonts.FontInfo;
 
 /**
  * This class defines the basic resources (procsets) used by FOP's PostScript
@@ -209,78 +203,6 @@ public final class PSProcSets {
      */
     public static void writeFOPEPSProcSet(PSGenerator gen) throws IOException {
         ((EPSProcSet)EPS_PROCSET).writeTo(gen);
-    }
-
-    /**
-     * Generates the PostScript code for the font dictionary.
-     * @param gen PostScript generator to use for output
-     * @param fontInfo available fonts
-     * @throws IOException in case of an I/O problem
-     */
-    public static void writeFontDict(PSGenerator gen, FontInfo fontInfo) 
-                throws IOException {
-        gen.commentln("%FOPBeginFontDict");
-        gen.writeln("/FOPFonts 100 dict dup begin");
-
-        // write("/gfF1{/Helvetica findfont} bd");
-        // write("/gfF3{/Helvetica-Bold findfont} bd");
-        Map fonts = fontInfo.getFonts();
-        Iterator iter = fonts.keySet().iterator();
-        while (iter.hasNext()) {
-            String key = (String)iter.next();
-            Typeface fm = (Typeface)fonts.get(key);
-            gen.writeln("/" + key + " /" + fm.getFontName() + " def");
-        }
-        gen.writeln("end def");
-        gen.commentln("%FOPEndFontDict");
-        gen.commentln("%FOPBeginFontReencode");
-        defineWinAnsiEncoding(gen);
-        
-        //Rewrite font encodings
-        iter = fonts.keySet().iterator();
-        while (iter.hasNext()) {
-            String key = (String)iter.next();
-            Typeface fm = (Typeface)fonts.get(key);
-            if (null == fm.getEncoding()) {
-                //ignore (ZapfDingbats and Symbol run through here
-                //TODO: ZapfDingbats and Symbol should get getEncoding() fixed!
-            } else if ("WinAnsiEncoding".equals(fm.getEncoding())) {
-                gen.writeln("/" + fm.getFontName() + " findfont");
-                gen.writeln("dup length dict begin");
-                gen.writeln("  {1 index /FID ne {def} {pop pop} ifelse} forall");
-                gen.writeln("  /Encoding " + fm.getEncoding() + " def");
-                gen.writeln("  currentdict");
-                gen.writeln("end");
-                gen.writeln("/" + fm.getFontName() + " exch definefont pop");
-            } else {
-                System.out.println("Only WinAnsiEncoding is supported. Font '" 
-                    + fm.getFontName() + "' asks for: " + fm.getEncoding());
-            }
-        }
-        gen.commentln("%FOPEndFontReencode");
-    }
-
-    private static void defineWinAnsiEncoding(PSGenerator gen) throws IOException {
-        gen.writeln("/WinAnsiEncoding [");
-        for (int i = 0; i < Glyphs.WINANSI_ENCODING.length; i++) {
-            if (i > 0) {
-                if ((i % 5) == 0) {
-                    gen.newLine();
-                } else {
-                    gen.write(" ");
-                }
-            }
-            final char ch = Glyphs.WINANSI_ENCODING[i];
-            final String glyphname = Glyphs.charToGlyphName(ch);
-            if ("".equals(glyphname)) {
-                gen.write("/" + Glyphs.NOTDEF);
-            } else {
-                gen.write("/");
-                gen.write(glyphname);
-            }
-        }
-        gen.newLine();
-        gen.writeln("] def");
     }
 
 }
