@@ -31,6 +31,8 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.Stack;
 
+import javax.xml.transform.Source;
+
 /**
  * This class is used to output PostScript code to an OutputStream.
  *
@@ -82,6 +84,17 @@ public class PSGenerator {
      */
     public int getPSLevel() {
         return 2; 
+    }
+    
+    /**
+     * Attempts to resolve the given URI. PSGenerator should be subclasses to provide more
+     * sophisticated URI resolution.
+     * @param uri URI to access
+     * @return A {@link javax.xml.transform.Source} object, or null if the URI
+     * cannot be resolved. 
+     */
+    public Source resolveURI(String uri) {
+        return new javax.xml.transform.stream.StreamSource(uri);
     }
     
     /**
@@ -241,15 +254,15 @@ public class PSGenerator {
             initialSize += initialSize / 2;
             StringBuffer sb = new StringBuffer(initialSize);
             if ((Long.getLong(text) != null) 
-                    || (text.indexOf(" ") >= 0) 
+                    || (text.indexOf(' ') >= 0) 
                     || forceParentheses) {
                         
-                sb.append("(");
+                sb.append('(');
                 for (int i = 0; i < text.length(); i++) {
                     final char c = text.charAt(i);
                     escapeChar(c, sb);
                 }
-                sb.append(")");
+                sb.append(')');
                 return sb.toString();
             } else {
                 return text;
@@ -315,6 +328,8 @@ public class PSGenerator {
                 } else if (params[i] instanceof Date) {
                     DateFormat datef = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                     tempBuffer.append(convertStringToDSC(datef.format((Date)params[i])));
+                } else if (params[i] instanceof PSResource) {
+                    tempBuffer.append(((PSResource)params[i]).getResourceSpecification());
                 } else {
                     throw new IllegalArgumentException("Unsupported parameter type: " 
                             + params[i].getClass().getName());
@@ -528,6 +543,15 @@ public class PSGenerator {
     }
 
     /**
+     * Indicates whether a particular resource is supplied, rather than needed.
+     * @param res the resource
+     * @return true if the resource is registered as being supplied.
+     */
+    public boolean isResourceSupplied(PSResource res) {
+        return documentSuppliedResources.contains(res);
+    }
+
+    /**
      * Writes a DSC comment for the accumulated used resources, either at page level or
      * at document level.
      * @param pageLevel true if the DSC comment for the page level should be generated, 
@@ -562,9 +586,7 @@ public class PSGenerator {
                 tempBuffer.append("%%+ ");
             }
             PSResource res = (PSResource)i.next();
-            tempBuffer.append(res.getType());
-            tempBuffer.append(" ");
-            tempBuffer.append(res.getName());
+            tempBuffer.append(res.getResourceSpecification());
             first = false;
         }
         writeln(tempBuffer.toString());

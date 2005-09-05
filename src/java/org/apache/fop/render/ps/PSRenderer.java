@@ -28,6 +28,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.transform.Source;
+
 // FOP
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
@@ -103,6 +105,9 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
 
     /** Used to temporarily store PSSetupCode instance until they can be written. */
     private List setupCodeList;
+
+    /** This is a map of PSResource instances of all fonts defined (key: font key) */
+    private Map fontResources;
     
     /**
      * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
@@ -561,7 +566,12 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
         log.debug("rendering areas to PostScript");
 
         //Setup for PostScript generation
-        this.gen = new PSGenerator(outputStream);
+        this.gen = new PSGenerator(outputStream) {
+            /** Need to subclass PSGenerator to have better URI resolution */
+            public Source resolveURI(String uri) {
+                return userAgent.resolveURI(uri);
+            }
+        };
         this.currentPageNumber = 0;
 
         //PostScript Header
@@ -585,6 +595,20 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
      * @see org.apache.fop.render.Renderer#stopRenderer()
      */
     public void stopRenderer() throws IOException {
+        //Notify resource usage for font which are not supplied
+        Map fonts = fontInfo.getUsedFonts();
+        Iterator e = fonts.keySet().iterator();
+        while (e.hasNext()) {
+            String key = (String)e.next();
+            //Typeface font = (Typeface)fonts.get(key);
+            PSResource res = (PSResource)this.fontResources.get(key);
+            boolean supplied = gen.isResourceSupplied(res);
+            if (!supplied) {
+                gen.notifyResourceUsage(res, true);
+            }
+        }
+        
+        //Write trailer
         gen.writeDSCComment(DSCConstants.TRAILER);
         gen.writeDSCComment(DSCConstants.PAGES, new Integer(this.currentPageNumber));
         gen.writeResources(false);
@@ -623,7 +647,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
                 //Setup
                 gen.writeDSCComment(DSCConstants.BEGIN_SETUP);
                 writeSetupCodeList(setupCodeList, "SetupCode");
-                PSProcSets.writeFontDict(gen, fontInfo);
+                this.fontResources = PSFontUtils.writeFontDict(gen, fontInfo);
                 gen.writeln("FOPFonts begin");
                 gen.writeDSCComment(DSCConstants.END_SETUP);
             } catch (IOException ioe) {

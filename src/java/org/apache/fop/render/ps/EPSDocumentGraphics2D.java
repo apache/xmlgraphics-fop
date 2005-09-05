@@ -1,5 +1,5 @@
 /*
- * Copyright 2003,2004 The Apache Software Foundation.
+ * Copyright 2003-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import org.apache.fop.apps.Fop;
  * This class is a wrapper for the <tt>AbstractPSDocumentGraphics2D</tt> that
  * is used to create EPS (Encapsulated PostScript) files instead of PS file.
  *
- * @author <a href="mailto:jeremias@apache.org">Jeremias Maerki</a>
  * @version $Id$
  * @see org.apache.fop.render.ps.PSGraphics2D
  * @see org.apache.fop.render.ps.AbstractPSDocumentGraphics2D
@@ -70,7 +69,7 @@ public class EPSDocumentGraphics2D extends AbstractPSDocumentGraphics2D {
         PSProcSets.writeFOPStdProcSet(gen);
         PSProcSets.writeFOPEPSProcSet(gen);
         if (fontInfo != null) {
-            PSProcSets.writeFontDict(gen, fontInfo);
+            PSFontUtils.writeFontDict(gen, fontInfo);
         }
         gen.writeDSCComment(DSCConstants.END_PROLOG);
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,6 @@ import org.apache.fop.fonts.FontSetup;
  * <tt>PSGraphics2D</tt>.
  *
  * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
- * @author <a href="mailto:jeremias@apache.org">Jeremias Maerki</a>
  * @version $Id$
  * @see org.apache.fop.render.ps.PSGraphics2D
  */
@@ -114,7 +113,7 @@ public class PSDocumentGraphics2D extends AbstractPSDocumentGraphics2D {
         PSProcSets.writeFOPStdProcSet(gen);
         PSProcSets.writeFOPEPSProcSet(gen);
         if (fontInfo != null) {
-            PSProcSets.writeFontDict(gen, fontInfo);
+            PSFontUtils.writeFontDict(gen, fontInfo);
         }
         gen.writeDSCComment(DSCConstants.END_SETUP);
     }
