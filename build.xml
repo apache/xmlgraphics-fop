@@ -154,12 +154,12 @@ list of possible build targets.
   <property name="version" value="1.0dev"/>
   <property name="year" value="1999-2005"/>
 
-  <property name="debug" value="on"/>
-  <property name="optimize" value="off"/>
-  <property name="deprecation" value="on"/>
+  <property name="javac.debug" value="on"/>
+  <property name="javac.optimize" value="off"/>
+  <property name="javac.deprecation" value="on"/>
   <property name="javac.source" value="1.3"/>
   <property name="javac.target" value="1.3"/>
-    
+  <property name="javac.fork" value="off"/>
 
   <property name="junit.fork" value="on"/>
 
@@ -360,8 +360,9 @@ list of possible build targets.
   <target name="compile-java" depends="init, codegen" description="Compiles the source code">
     <!-- create directories -->
     <mkdir dir="${build.classes.dir}"/>
-    <javac destdir="${build.classes.dir}" debug="${debug}" deprecation="${deprecation}"
-           optimize="${optimize}" source="${javac.source}" target="${javac.target}">
+    <javac destdir="${build.classes.dir}" fork="javac.fork" debug="${javac.debug}"
+           deprecation="${javac.deprecation}" optimize="${javac.optimize}"
+           source="${javac.source}" target="${javac.target}">
       <src path="${build.gensrc.dir}"/>
       <src path="${src.java.dir}"/>
       <src refid="graphics-configuration-adapter"/>
@@ -580,7 +581,10 @@ list of possible build targets.
   <!-- =================================================================== -->
   <target name="junit" depends="package, transcoder-pkg" description="Runs FOP's JUnit tests" if="junit.present">
     <mkdir dir="${build.dir}/test-classes"/>
-    <javac destdir="${build.dir}/test-classes" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}">
+    <javac destdir="${build.dir}/test-classes" fork="javac.fork"
+           debug="${javac.debug}" deprecation="${javac.deprecation}"
+           optimize="${javac.optimize}" source="${javac.source}"
+           target="${javac.target}">
       <src path="${basedir}/test/java"/>
       <classpath>
         <path refid="libs-build-classpath"/>
