@@ -166,6 +166,10 @@ public class SVGReader implements ImageReader {
 
                 FopImage.ImageInfo info = new FopImage.ImageInfo();
 
+                //Set the resolution to that of the FOUserAgent
+                info.dpiHorizontal = 25.4f / pixelUnitToMM;
+                info.dpiVertical = info.dpiHorizontal;
+                
                 info.originalURI = uri;
                 info.mimeType = getMimeType();
                 info.str = SVGDOMImplementation.SVG_NAMESPACE_URI;
@@ -182,8 +186,7 @@ public class SVGReader implements ImageReader {
                 SVGUserAgent userAg = new SVGUserAgent(pixelUnitToMM,
                             new AffineTransform());
                 BridgeContext ctx = new BridgeContext(userAg);
-                UnitProcessor.Context uctx =
-                        UnitProcessor.createContext(ctx, e);
+                UnitProcessor.Context uctx = UnitProcessor.createContext(ctx, e);
 
                 // 'width' attribute - default is 100%
                 s = e.getAttributeNS(null,
@@ -191,8 +194,8 @@ public class SVGReader implements ImageReader {
                 if (s.length() == 0) {
                     s = SVGOMDocument.SVG_SVG_WIDTH_DEFAULT_VALUE;
                 }
-                info.width = (int) UnitProcessor.svgHorizontalLengthToUserSpace(
-                        s, SVGOMDocument.SVG_WIDTH_ATTRIBUTE, uctx);
+                info.width = Math.round(UnitProcessor.svgHorizontalLengthToUserSpace(
+                        s, SVGOMDocument.SVG_WIDTH_ATTRIBUTE, uctx));
 
                 // 'height' attribute - default is 100%
                 s = e.getAttributeNS(null,
@@ -200,8 +203,8 @@ public class SVGReader implements ImageReader {
                 if (s.length() == 0) {
                     s = SVGOMDocument.SVG_SVG_HEIGHT_DEFAULT_VALUE;
                 }
-                info.height = (int) UnitProcessor.svgVerticalLengthToUserSpace(
-                        s, SVGOMDocument.SVG_HEIGHT_ATTRIBUTE, uctx);
+                info.height = Math.round(UnitProcessor.svgVerticalLengthToUserSpace(
+                        s, SVGOMDocument.SVG_HEIGHT_ATTRIBUTE, uctx));
 
                 return info;
             } catch (NoClassDefFoundError ncdfe) {
