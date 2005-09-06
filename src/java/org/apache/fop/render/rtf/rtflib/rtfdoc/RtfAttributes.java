@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -147,7 +147,7 @@ implements java.lang.Cloneable {
     /**
      * Set an attribute that has nested attributes as value
      * @param name name of attribute
-     * @param type value of the nested attributes
+     * @param value value of the nested attributes
      * @return this (which now contains the new entry)
      */
     public RtfAttributes set(String name, RtfAttributes value) {
@@ -214,5 +214,18 @@ implements java.lang.Cloneable {
         } else {
             xslAttributes = new org.xml.sax.helpers.AttributesImpl(pAttribs);
         }
+    }
+    
+    /**
+     * Add integer value <code>addValue</code> to attribute with name <code>name</code>.
+     * If there is no such setted attribute, then value of this attribure is equal to 
+     * <code>addValue</code>.
+     * @param addValue the increment of value
+     * @param name the name of attribute
+     */
+    public void addIntegerValue(int addValue, String name) {
+        Integer value = (Integer) getValue(name);
+        int v = (value != null) ? value.intValue() : 0; 
+        set(name, v + addValue);
     }
 }
