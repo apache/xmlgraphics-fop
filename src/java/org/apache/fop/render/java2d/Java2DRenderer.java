@@ -46,10 +46,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.batik.bridge.BridgeContext;
-import org.apache.batik.bridge.GVTBuilder;
-import org.apache.batik.dom.svg.SVGDOMImplementation;
-import org.apache.batik.gvt.GraphicsNode;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Area;
@@ -75,11 +71,8 @@ import org.apache.fop.image.XMLImage;
 import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.pdf.CTMHelper;
-import org.apache.fop.svg.SVGUserAgent;
 import org.apache.fop.traits.BorderProps;
 import org.w3c.dom.Document;
-import org.w3c.dom.svg.SVGDocument;
-import org.w3c.dom.svg.SVGSVGElement;
 
 /**
  * The <code>Java2DRenderer</code> class provides the abstract technical
@@ -159,6 +152,8 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
      */
     public void setUserAgent(FOUserAgent foUserAgent) {
         super.setUserAgent(foUserAgent);
+        Java2DSVGHandler xmlHandler = new Java2DSVGHandler();
+        userAgent.getXMLHandlerRegistry().addXMLHandler(xmlHandler);
         userAgent.setRendererOverride(this); // for document regeneration
     }
 
@@ -932,9 +927,9 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
     }
 
     /**
-     * draws an image
+     * Draws an image
      *
-     * @param url URL of the bitmap
+     * @param pUrl URL of the bitmap
      * @param pos Position of the bitmap
      */
     protected void putImage(String pUrl, Rectangle2D pos) {
@@ -968,8 +963,9 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
                 return;
             }
             Document doc = ((XMLImage) fopimage).getDocument();
-            renderSVGDocument(doc, pos); // TODO check if ok.
+            String ns = ((XMLImage) fopimage).getNameSpace();
 
+            renderDocument(doc, ns, pos);
         } else if ("image/eps".equals(mime)) {
             log.warn("EPS images are not supported by this renderer");
             currentBPPosition += (h * 1000);
@@ -1028,12 +1024,7 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
     public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
         Document doc = fo.getDocument();
         String ns = fo.getNameSpace();
-        if (SVGDOMImplementation.SVG_NAMESPACE_URI.equals(ns)) {
-            renderSVGDocument(doc, pos);
-        } else {
-            renderDocument(doc, ns, pos);
-        }
-        // this.currentXPosition += area.getContentWidth();
+        renderDocument(doc, ns, pos);
     }
 
     /**
@@ -1047,90 +1038,18 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
         RendererContext context;
         context = new RendererContext(this, MIME_TYPE);
         context.setUserAgent(userAgent);
-        // TODO implement
-        /*
-         * context.setProperty(PDFSVGHandler.PDF_DOCUMENT, pdfDoc);
-         * context.setProperty(PDFSVGHandler.OUTPUT_STREAM, ostream);
-         * context.setProperty(PDFSVGHandler.PDF_STATE, currentState);
-         * context.setProperty(PDFSVGHandler.PDF_PAGE, currentPage);
-         * context.setProperty(PDFSVGHandler.PDF_CONTEXT, currentContext == null ?
-         * currentPage : currentContext);
-         * context.setProperty(PDFSVGHandler.PDF_CONTEXT, currentContext);
-         * context.setProperty(PDFSVGHandler.PDF_STREAM, currentStream);
-         * context.setProperty(PDFSVGHandler.PDF_XPOS, new
-         * Integer(currentIPPosition + (int) pos.getX()));
-         * context.setProperty(PDFSVGHandler.PDF_YPOS, new
-         * Integer(currentBPPosition + (int) pos.getY()));
-         * context.setProperty(PDFSVGHandler.PDF_FONT_INFO, fontInfo);
-         * context.setProperty(PDFSVGHandler.PDF_FONT_NAME, currentFontName);
-         * context.setProperty(PDFSVGHandler.PDF_FONT_SIZE, new
-         * Integer(currentFontSize));
-         * context.setProperty(PDFSVGHandler.PDF_WIDTH, new Integer((int)
-         * pos.getWidth())); context.setProperty(PDFSVGHandler.PDF_HEIGHT, new
-         * Integer((int) pos.getHeight())); renderXML(userAgent, context, doc,
-         * ns);
-         */
-    }
 
-    protected void renderSVGDocument(Document doc, Rectangle2D pos) {
-
-        int x = currentIPPosition; // TODO + area.getXOffset();
-        int y = currentBPPosition;
-
-        RendererContext context;
-        context = new RendererContext(this, MIME_TYPE);
-        context.setUserAgent(userAgent);
-
-        SVGUserAgent ua = new SVGUserAgent(context.getUserAgent()
-                .getPixelUnitToMillimeter(), new AffineTransform());
-
-        GVTBuilder builder = new GVTBuilder();
-        BridgeContext ctx = new BridgeContext(ua);
-
-        GraphicsNode root;
-        try {
-            root = builder.build(ctx, doc);
-        } catch (Exception e) {
-            log.error(
-                    "svg graphic could not be built: " + e.getMessage(), e);
-            return;
-        }
-
-        // If no viewbox is defined in the svg file, a viewbox of 100x100 is
-        // assumed, as defined in SVGUserAgent.getViewportSize()
-        float iw = (float) ctx.getDocumentSize().getWidth() * 1000f;
-        float ih = (float) ctx.getDocumentSize().getHeight() * 1000f;
-
-        float w = (float) pos.getWidth();
-        float h = (float) pos.getHeight();
-
-        // correct integer roundoff
-        state.getGraph().translate(x / 1000, y / 1000);
-
-        SVGSVGElement svg = ((SVGDocument) doc).getRootElement();
-        // Aspect ratio preserved by layout engine, not here
-        AffineTransform at = AffineTransform.getScaleInstance(w / iw, h / ih);
-        AffineTransform inverse = null;
-        try {
-            inverse = at.createInverse();
-        } catch (NoninvertibleTransformException e) {
-            log.warn(e);
-        }
-        if (!at.isIdentity()) {
-            state.getGraph().transform(at);
-        }
-
-        try {
-            root.paint(state.getGraph());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if (inverse != null && !inverse.isIdentity()) {
-            state.getGraph().transform(inverse);
-        }
-        // correct integer roundoff
-        state.getGraph().translate(-(x + 500) / 1000, -(y + 500) / 1000);
+        context.setProperty(Java2DSVGHandler.JAVA2D_STATE, state);
+        context.setProperty(Java2DSVGHandler.JAVA2D_XPOS,
+                            new Integer(currentIPPosition + (int)pos.getX()));
+        context.setProperty(Java2DSVGHandler.JAVA2D_YPOS,
+                            new Integer(currentBPPosition + (int)pos.getY()));
+        context.setProperty(Java2DSVGHandler.JAVA2D_WIDTH,
+                            new Integer((int)pos.getWidth()));
+        context.setProperty(Java2DSVGHandler.JAVA2D_HEIGHT,
+                            new Integer((int) pos.getHeight()));
+        
+        renderXML(context, doc, ns);
     }
 
     /**
