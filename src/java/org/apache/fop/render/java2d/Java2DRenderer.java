@@ -48,7 +48,6 @@ import java.util.Map;
 
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
-import org.apache.batik.bridge.ViewBox;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.fop.apps.FOPException;
@@ -1096,15 +1095,21 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
                     "svg graphic could not be built: " + e.getMessage(), e);
             return;
         }
-        float w = (float) ctx.getDocumentSize().getWidth() * 1000f;
-        float h = (float) ctx.getDocumentSize().getHeight() * 1000f;
+
+        // If no viewbox is defined in the svg file, a viewbox of 100x100 is
+        // assumed, as defined in SVGUserAgent.getViewportSize()
+        float iw = (float) ctx.getDocumentSize().getWidth() * 1000f;
+        float ih = (float) ctx.getDocumentSize().getHeight() * 1000f;
+
+        float w = (float) pos.getWidth();
+        float h = (float) pos.getHeight();
 
         // correct integer roundoff
         state.getGraph().translate(x / 1000, y / 1000);
 
         SVGSVGElement svg = ((SVGDocument) doc).getRootElement();
-        AffineTransform at = ViewBox.getPreserveAspectRatioTransform(svg,
-                w / 1000f, h / 1000f);
+        // Aspect ratio preserved by layout engine, not here
+        AffineTransform at = AffineTransform.getScaleInstance(w / iw, h / ih);
         AffineTransform inverse = null;
         try {
             inverse = at.createInverse();
@@ -1125,10 +1130,7 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
             state.getGraph().transform(inverse);
         }
         // correct integer roundoff
-        // currentState.getCurrentGraphics().translate(-x / 1000f, y / 1000f -
-        // pageHeight);
-        state.getGraph().translate(-(x + 500) / 1000,
-                (y + 500) / 1000 - pageHeight);
+        state.getGraph().translate(-(x + 500) / 1000, -(y + 500) / 1000);
     }
 
     /**
