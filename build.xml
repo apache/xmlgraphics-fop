@@ -160,6 +160,9 @@ list of possible build targets.
   <property name="javac.source" value="1.3"/>
   <property name="javac.target" value="1.3"/>
     
+
+  <property name="junit.fork" value="on"/>
+
   <property name="javadoc.packages" value="org.apache.fop.*"/>
   
   <property name="src.dir" value="${basedir}/src"/>
@@ -181,6 +184,10 @@ list of possible build targets.
 
   <property name="build.viewer.resources.dir" value="${build.classes.dir}/org/apache/fop/render/awt/viewer/resources"/>
   <property name="build.viewer.images.dir" value="${build.classes.dir}/org/apache/fop/render/awt/viewer/images"/>
+
+  <property name="build.property.examples.mime.type" value="application/pdf"/>
+
+  <property name="layoutengine.disabled" value="test/layoutengine/disabled-testcases.txt"/>
 
   <property name="dist.bin.dir" value="${basedir}/dist-bin"/>
   <property name="dist.src.dir" value="${basedir}/dist-src"/>
