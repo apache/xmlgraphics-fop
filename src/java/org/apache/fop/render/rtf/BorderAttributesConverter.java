@@ -30,6 +30,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IBorderAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfText;
 
 /** Constants for RTF border attribute names, and a static method for converting
  *  fo attribute strings. */
@@ -54,6 +55,23 @@ public class BorderAttributesConverter {
             //division by 50 to convert millipoints to twips
             attrs.set(IBorderAttributes.BORDER_WIDTH, border.getBorderWidth(side, false) / 50);
             attributes.set(controlWord, attrs);
+            attrs.setTwips(IBorderAttributes.BORDER_SPACE, border.getPadding(side, false, null));
+            attributes.set(controlWord, attrs);
+        } else {
+            // Here padding specified, but corresponding border is not available
+            
+            // Padding in millipoints
+            double paddingPt = border.getPadding(side, false, null) / 1000.0;
+            // Padding in twips
+            int padding = (int) Math.round(paddingPt * FoUnitsConverter.POINT_TO_TWIPS);
+            
+            // Add padding to corresponding space (space-before or space-after)
+            // if side == START or END, do nothing
+            if (side == CommonBorderPaddingBackground.BEFORE) {
+                attributes.addIntegerValue(padding, RtfText.SPACE_BEFORE);
+            } else if (side == CommonBorderPaddingBackground.AFTER) {
+                attributes.addIntegerValue(padding, RtfText.SPACE_AFTER);
+            }
         }
     }
 
