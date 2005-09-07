@@ -706,7 +706,6 @@ list of possible build targets.
     <javadoc
         packagenames="${javadoc.packages}"
         destdir="${build.javadocs.dir}"
-        classpathref="libs-build-classpath"
         author="true"
         version="true"
         windowtitle="${NAME} API"
@@ -718,6 +717,10 @@ list of possible build targets.
         public="${javadoc.public}"
         package="${javadoc.package}"
         private="${javadoc.private}">
+      <classpath>
+        <pathelement location="${env.ANT_HOME}/lib/ant.jar"/>
+        <path refid="libs-build-classpath"/>
+      </classpath>
       <sourcepath>
         <pathelement path="${src.java.dir}"/>
         <pathelement path="${build.gensrc.dir}"/>
