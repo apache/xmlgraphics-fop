@@ -29,29 +29,29 @@ public interface ColorType {
      * Returns the blue component of the color.
      * @return float a value between 0.0 and 1.0
      */
-    public float getBlue();
+    float getBlue();
 
     /**
      * Returns the green component of the color.
      * @return float a value between 0.0 and 1.0
      */
-    public float getGreen();
+    float getGreen();
 
     /**
      * Returns the red component of the color.
      * @return float a value between 0.0 and 1.0
      */
-    public float getRed();
+    float getRed();
 
     /**
      * Returns the alpha (degree of opaque-ness) component of the color.
      * @return float a value between 0.0 (fully transparent) and 1.0 (fully opaque)
      */
-    public float getAlpha();
+    float getAlpha();
 
     /**
      * Returns an AWT instance of this color
      * @return float the AWT color represented by this ColorType instance
      */
-    public Color getAWTColor();
+    Color getAWTColor();
 }

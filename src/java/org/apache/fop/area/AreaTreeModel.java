@@ -60,7 +60,7 @@ public class AreaTreeModel {
     }
 
     /**
-     * Add a page to this moel.
+     * Add a page to this model.
      * @param page the page to add to the model.
      */
     public void addPage(PageViewport page) {
@@ -75,6 +75,7 @@ public class AreaTreeModel {
 
     /**
      * Signal the end of the document for any processing.
+     * @throws SAXException if a problem was encountered.
      */
     public void endDocument() throws SAXException {};
 

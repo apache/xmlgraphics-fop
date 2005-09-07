@@ -35,6 +35,13 @@ public abstract class AbstractTextArea extends InlineArea {
         // (this is equivalent to the property word-spacing.optimum)
         protected int spaceDifference = 0;
         
+        /**
+         * Constructor
+         *
+         * @param stretch the available space for stretching
+         * @param shrink the available space for shrinking
+         * @param adj space adjustment type
+         */
         protected TextAdjustingInfo(int stretch, int shrink, int adj) {
             super(stretch, shrink, adj);
         }
@@ -45,7 +52,7 @@ public abstract class AbstractTextArea extends InlineArea {
     private TextAdjustingInfo adjustingInfo = null;
 
     /**
-     * Default onstructor
+     * Default constructor
      */
     public AbstractTextArea() {
     }

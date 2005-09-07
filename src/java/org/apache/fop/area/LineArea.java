@@ -192,6 +192,8 @@ public class LineArea extends Area {
                     finalize();
                 }
                 break;
+            default:
+                throw new RuntimeException();
         }
     }
     

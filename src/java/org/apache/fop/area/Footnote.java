@@ -56,14 +56,29 @@ public class Footnote extends BlockParent {
         return separator;
     }
 
+    /**
+     * Set the relative position of the footnote inside the body region.
+     *
+     * @param top the relative position.
+     */
     public void setTop(int top) {
         this.top = top;
     }
 
+    /**
+     * Get the relative position of the footnote inside the body region.
+     *
+     * @return the relative position.
+     */
     public int getTop() {
         return top;
     }
 
+    /**
+     * Add a block area as child to the footnote area
+     *
+     * @param child the block area.
+     */
     public void addBlock(Block child) {
         if (children == null) {
             children = new ArrayList();
@@ -72,10 +87,20 @@ public class Footnote extends BlockParent {
         children.add(child);
     }
 
+    /**
+     * Get all child areas.
+     *
+     * @return the list of child areas. Maybe null.
+     */
     public List getChildAreas() {
         return children;
     }
 
+    /**
+     * Check whether there are child areas.
+     *
+     * @return the result.
+     */
     public boolean isEmpty() {
         return children == null || children.size() == 0;
     }

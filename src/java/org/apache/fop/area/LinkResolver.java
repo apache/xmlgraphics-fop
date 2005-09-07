@@ -54,6 +54,11 @@ public class LinkResolver implements Resolvable, Serializable {
         return resolved;
     }
 
+    /**
+     * Get the references for this link.
+     *
+     * @return the String array of references.
+     */
     public String[] getIDRefs() {
         return new String[] {idRef};
     }

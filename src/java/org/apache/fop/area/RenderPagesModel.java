@@ -152,8 +152,8 @@ public class RenderPagesModel extends AreaTreeModel {
                     if (!p.isResolved()) {
                         String[] idrefs = p.getIDRefs();
                         for (int count = 0; count < idrefs.length; count++) {
-                            log.warn("Page " + p.getPageNumberString() + 
-                                ": Unresolved id reference \"" + idrefs[count] 
+                            log.warn("Page " + p.getPageNumberString()
+                                + ": Unresolved id reference \"" + idrefs[count] 
                                 + "\" found.");
                         }
                     }
@@ -200,6 +200,8 @@ public class RenderPagesModel extends AreaTreeModel {
             case OffDocumentItem.END_OF_DOC:
                 endDocODI.add(oDI);
                 break;
+            default:
+                throw new RuntimeException();
         }
     }
 
