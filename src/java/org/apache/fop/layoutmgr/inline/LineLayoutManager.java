@@ -72,6 +72,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         bTextAlignment = fobj.getTextAlign();
         bTextAlignmentLast = fobj.getTextAlignLast();
         textIndent = fobj.getTextIndent();
+        lastLineEndIndent = fobj.getLastLineEndIndent();
         hyphProps = fobj.getCommonHyphenation();
         
         //
@@ -135,6 +136,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     private int bTextAlignmentLast;
     private int effectiveAlignment;
     private Length textIndent;
+    private Length lastLineEndIndent;
     private int iIndents = 0;
     private CommonHyphenation hyphProps;
     //private LayoutProps layoutProps;
@@ -185,17 +187,19 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         private int textAlignment;
         private int textAlignmentLast;
         private int textIndent;
+        private int lastLineEndIndent;
         private int lineWidth;
         // the LM which created the paragraph
         private LineLayoutManager layoutManager;
 
         public Paragraph(LineLayoutManager llm, int alignment, int alignmentLast,
-                         int indent) {
+                         int indent, int endIndent) {
             super(true);
             layoutManager = llm;
             textAlignment = alignment;
             textAlignmentLast = alignmentLast;
             textIndent = indent;
+            lastLineEndIndent = endIndent;
         }
 
         public void startParagraph(int lw) {
@@ -207,9 +211,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             // set the minimum amount of empty space at the end of the
             // last line
             if (bTextAlignment == EN_CENTER) {
-                lineFiller = new MinOptMax(0); 
+                lineFiller = new MinOptMax(lastLineEndIndent); 
             } else {
-                lineFiller = new MinOptMax(0, (int)(lineWidth / 12), lineWidth); 
+                lineFiller = new MinOptMax(lastLineEndIndent, lastLineEndIndent, lineWidth); 
             }
 
             // add auxiliary elements at the beginning of the paragraph
@@ -244,7 +248,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     && bTextAlignmentLast != EN_JUSTIFY) {
                     this.add(new KnuthGlue(0, 3 * DEFAULT_SPACE_WIDTH, 0,
                                            null, false));
-                    this.add(new KnuthPenalty(0, -KnuthElement.INFINITE,
+                    this.add(new KnuthPenalty(lineFiller.opt, -KnuthElement.INFINITE,
                                               false, null, false));
                     ignoreAtEnd = 2;
                 } else if (bTextAlignmentLast != EN_JUSTIFY) {
@@ -253,15 +257,15 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     // and the forced break
                     this.add(new KnuthPenalty(0, KnuthElement.INFINITE, 
                                               false, null, false));
-                    this.add(new KnuthGlue(lineFiller.opt, 
+                    this.add(new KnuthGlue(0, 
                             lineFiller.max - lineFiller.opt, 
                             lineFiller.opt - lineFiller.min, null, false));
-                    this.add(new KnuthPenalty(0, -KnuthElement.INFINITE,
+                    this.add(new KnuthPenalty(lineFiller.opt, -KnuthElement.INFINITE,
                                               false, null, false));
                     ignoreAtEnd = 3;
                 } else {
                     // add only the element representing the forced break
-                    this.add(new KnuthPenalty(0, -KnuthElement.INFINITE,
+                    this.add(new KnuthPenalty(lineFiller.opt, -KnuthElement.INFINITE,
                                               false, null, false));
                     ignoreAtEnd = 1;
                 }
@@ -393,7 +397,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             // compute indent and adjustment ratio, according to
             // the value of text-align and text-align-last
             int indent = 0;
-            int difference = (bestActiveNode.line < total) ? bestActiveNode.difference : bestActiveNode.difference + fillerMinWidth;
+            int difference = bestActiveNode.difference;
             int textAlign = (bestActiveNode.line < total) ? alignment : alignmentLast;
             indent += (textAlign == Constants.EN_CENTER) ?
                           difference / 2 :
@@ -740,7 +744,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                         if (lastPar == null) { 
                             lastPar = new Paragraph(this, 
                                                     bTextAlignment, bTextAlignmentLast, 
-                                                    textIndent.getValue(this));
+                                                    textIndent.getValue(this), lastLineEndIndent.getValue(this));
                             lastPar.startParagraph(availIPD.opt);
                             if (log.isTraceEnabled()) {
                                 trace.append(" [");
@@ -1610,7 +1614,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 KnuthSequence seq = (KnuthSequence) knuthParagraphs.get(iCurrParIndex); 
                 iEndElement = lbp.getLeafPos();
     
-                //LineArea lineArea = new LineArea();
                 LineArea lineArea = new LineArea((lbp.getLeafPos() < seq.size() - 1 ? bTextAlignment : bTextAlignmentLast),
                                                  lbp.difference, lbp.availableStretch, lbp.availableShrink);
                 lineArea.setStartIndent(lbp.startIndent);
@@ -1627,9 +1630,13 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     // ignore the first elements added by the LineLayoutManager
                     iStartElement += (iStartElement == 0) ? currPar.ignoreAtStart : 0;
                     
-                    // ignore the last elements added by the LineLayoutManager
-                    iEndElement -= (iEndElement == (currPar.size() - 1))
-                    ? currPar.ignoreAtEnd : 0;
+                    // if this is the last line area that for this paragraph,
+                    // ignore the last elements added by the LineLayoutManager and
+                    // subtract the last-line-end-indent from the area ipd
+                    if (iEndElement == (currPar.size() - 1)) {
+                        iEndElement -= currPar.ignoreAtEnd;
+                        lineArea.setIPD(lineArea.getIPD() - lastLineEndIndent.getValue(this));
+                    }
                 }
                 
                 // ignore the last element in the line if it is a KnuthGlue object

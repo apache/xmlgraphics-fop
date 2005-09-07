@@ -1582,6 +1582,7 @@ public class FOPropertyMapping implements Constants {
         m  = new LengthProperty.Maker(PR_LAST_LINE_END_INDENT);
         m.setInherited(true);
         m.setDefault("0pt");
+        m.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         addPropertyMaker("last-line-end-indent", m);
 
         // line-height
