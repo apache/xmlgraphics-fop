@@ -298,6 +298,13 @@ public class Block extends FObjMixed {
     }
 
     /**
+     * @return the "last-line-end-indent" property.
+     */
+    public Length getLastLineEndIndent() {
+        return lastLineEndIndent;
+    }
+
+    /**
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
      * XSL Content Model: marker* initial-property-set? (#PCDATA|%inline;|%block;)*
      * Additionally: "An fo:bidi-override that is a descendant of an fo:leader
