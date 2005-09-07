@@ -55,6 +55,8 @@
     <module name="com.puppycrawl.tools.checkstyle.checks.coding.HiddenFieldCheck">
       <property name="severity" value="warning"/>
       <property name="tokens" value="PARAMETER_DEF, VARIABLE_DEF"/>
+      <property name="ignoreConstructorParameter" value="true"/>
+      <property name="ignoreSetter" value="true"/>
     </module>
     <module name="com.puppycrawl.tools.checkstyle.checks.coding.InnerAssignmentCheck">
       <property name="severity" value="warning"/>
