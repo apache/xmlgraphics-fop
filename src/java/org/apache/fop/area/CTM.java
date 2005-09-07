@@ -115,17 +115,15 @@ public class CTM implements Serializable {
         switch (wm) {
             case Constants.EN_LR_TB:
                 return new CTM(CTM_LRTB);
-            case Constants.EN_RL_TB: {
-                    wmctm = new CTM(CTM_RLTB);
-                    wmctm.e = ipd;
-                    return wmctm;
-                }
+            case Constants.EN_RL_TB: 
+                wmctm = new CTM(CTM_RLTB);
+                wmctm.e = ipd;
+                return wmctm;
                 //return  CTM_RLTB.translate(ipd, 0);
-            case Constants.EN_TB_RL: { // CJK
-                    wmctm = new CTM(CTM_TBRL);
-                    wmctm.e = bpd;
-                    return wmctm;
-                }
+            case Constants.EN_TB_RL:  // CJK
+                wmctm = new CTM(CTM_TBRL);
+                wmctm.e = bpd;
+                return wmctm;
                 //return CTM_TBRL.translate(0, ipd);
             default:
                 return null;
@@ -248,6 +246,8 @@ public class CTM implements Serializable {
 
     /**
      * Construct a coordinate transformation matrix (CTM).
+     * @param absRefOrient absolute reference orientation
+     * @param writingmode the writing mode
      * @param absVPrect absolute viewpoint rectangle
      * @param reldims relative dimensions
      * @return CTM the coordinate transformation matrix (CTM)
@@ -294,6 +294,8 @@ public class CTM implements Serializable {
                 case -90:
                     ctm = ctm.translate(height, 0); // height = absVPrect.width
                     break;
+                default:
+                    throw new RuntimeException();
             }
             ctm = ctm.rotate(absRefOrient);
         }

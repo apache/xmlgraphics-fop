@@ -421,7 +421,6 @@ public class FOUserAgent {
      */
     public Source resolveURI(String uri) {
         Source source = null;
-        URIResolver uriResolver = getURIResolver();
         if (uriResolver != null) {
             try {
                 source = uriResolver.resolve(uri, getBaseURL());

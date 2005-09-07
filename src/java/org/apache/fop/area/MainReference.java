@@ -36,6 +36,8 @@ public class MainReference extends Area {
 
     /**
      * Constructor
+     *
+     * @param parent the body region this reference area is placed in.
      */
     public MainReference(BodyRegion parent) {
         this.parent = parent;
@@ -46,11 +48,12 @@ public class MainReference extends Area {
      * Add a span area to this area.
      *
      * @param spanAll whether to make a single-column span
+     * @return the created span area.
      */
     public Span createSpan(boolean spanAll) {
         RegionViewport rv = parent.getRegionViewport();
-        int ipdWidth = (int) parent.getIPD() -
-            rv.getBorderAndPaddingWidthStart() - rv.getBorderAndPaddingWidthEnd();
+        int ipdWidth = (int) parent.getIPD()
+            - rv.getBorderAndPaddingWidthStart() - rv.getBorderAndPaddingWidthEnd();
         
         Span newSpan = new Span(((spanAll) ? 1 : getColumnCount()), 
                 getColumnGap(), ipdWidth);
@@ -72,7 +75,7 @@ public class MainReference extends Area {
      * @return the active span.
      */
     public Span getCurrentSpan() {
-        return (Span) spanAreas.get(spanAreas.size()-1);
+        return (Span) spanAreas.get(spanAreas.size() - 1);
     }
 
     /**
@@ -85,7 +88,7 @@ public class MainReference extends Area {
         if (isEmpty) {
             int areaCount = 0;
             if (spanAreas != null) {
-                for (Iterator spaniter = spanAreas.iterator(); spaniter.hasNext(); ) {
+                for (Iterator spaniter = spanAreas.iterator(); spaniter.hasNext();) {
                     Span spanArea = (Span) spaniter.next();
                     for (int i = 0; i < spanArea.getColumnCount(); i++) {
                         NormalFlow flow = spanArea.getNormalFlow(i);

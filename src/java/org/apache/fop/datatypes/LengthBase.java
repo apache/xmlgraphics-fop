@@ -77,6 +77,7 @@ public class LengthBase implements PercentBase {
      * @param parentFO parent FO for this
      * @param plist property list for this
      * @param iBaseType a member of {@link #PERCENT_BASED_LENGTH_TYPES}
+     * @throws PropertyException
      */
     public LengthBase(FObj parentFO, PropertyList plist, int iBaseType) throws PropertyException {
         this.fobj = plist.getFObj();
@@ -87,6 +88,10 @@ public class LengthBase implements PercentBase {
             break;
         case INH_FONTSIZE:
             this.fontSize = plist.getInherited(Constants.PR_FONT_SIZE).getLength();
+            break;
+        default:
+            // TODO: pacify CheckStyle
+            // throw new RuntimeException();
             break;
         }
     }

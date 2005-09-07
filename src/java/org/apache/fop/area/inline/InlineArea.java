@@ -42,6 +42,13 @@ public class InlineArea extends Area {
         // total adjustment (= ipd - width of fixed elements)
         protected int adjustment;
         
+        /**
+         * Constructor
+         *
+         * @param stretch the available space for stretching
+         * @param shrink the available space for shrinking
+         * @param adj space adjustment type
+         */
         protected InlineAdjustingInfo(int stretch, int shrink, int adj) {
             availableStretch = stretch;
             availableShrink = shrink;
@@ -122,8 +129,9 @@ public class InlineArea extends Area {
     }
     
     /**
-     * Override Area.addChildArea(Area)
-     * set the parent for the child area
+     * Set the parent for the child area.
+     *
+     * @see org.apache.fop.area.inline.Area#addChildArea(Area)
      */
     public void addChildArea(Area childArea) {
         super.addChildArea(childArea);
@@ -132,7 +140,9 @@ public class InlineArea extends Area {
         }
     }
     
-    /** @return true if the inline area is underlined. */
+    /**
+     *@return true if the inline area is underlined.
+     */
     public boolean hasUnderline() {
         return getBooleanTrait(Trait.UNDERLINE);
     }

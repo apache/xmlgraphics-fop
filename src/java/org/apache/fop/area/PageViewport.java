@@ -94,6 +94,7 @@ public class PageViewport implements Resolvable, Cloneable {
     /**
      * Create a page viewport 
      * @param spm SimplePageMaster indicating the page and region dimensions
+     * @param pageStr the page number as string.
      * @param p Page Reference Area
      * @param bounds Page Viewport dimensions
      */
@@ -183,8 +184,8 @@ public class PageViewport implements Resolvable, Cloneable {
      * @return String array of idref's that still have not been resolved
      */
     public String[] getIDRefs() {
-        return (unresolvedIDRefs == null) ? null :
-            (String[]) unresolvedIDRefs.keySet().toArray(new String[] {});
+        return (unresolvedIDRefs == null) ? null
+            : (String[]) unresolvedIDRefs.keySet().toArray(new String[] {});
     }
 
     /**
@@ -288,9 +289,8 @@ public class PageViewport implements Resolvable, Cloneable {
                     }
                 }
             }
-        }
-        // at the end of the area, register is-last and any areas
-        else {
+        } else {
+            // at the end of the area, register is-last and any areas
             if (islast) {
                 if (markerLastEnd == null) {
                     markerLastEnd = new HashMap();
@@ -357,6 +357,8 @@ public class PageViewport implements Resolvable, Cloneable {
                     posName = "LastAny after " + posName;
                 }
             break;
+            default:
+                throw new RuntimeException();
         }
         if (log.isTraceEnabled()) {
             log.trace("page " + pageNumberString + ": " + "Retrieving marker " + name 
