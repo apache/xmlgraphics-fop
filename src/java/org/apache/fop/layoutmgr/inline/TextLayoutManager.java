@@ -458,14 +458,14 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                                       wordSpaceIPD, false));
                     sequence.add
                         (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
-                                       new LeafPosition(this, vecAreaInfo.size() - 1), false));
+                                       new LeafPosition(this, -1), false));
                     sequence.add
                         (new KnuthPenalty(0, 0, false,
                                           new LeafPosition(this, -1), true));
                     sequence.add
                         (new KnuthGlue(wordSpaceIPD.opt,
                                        - 6 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
-                                       new LeafPosition(this, -1), true));
+                                       new LeafPosition(this, vecAreaInfo.size() - 1), true));
                     sequence.add
                         (new KnuthInlineBox(0, 0, 0, 0,
                                       new LeafPosition(this, -1), true));
@@ -486,14 +486,14 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                                       wordSpaceIPD, false));
                     sequence.add
                         (new KnuthGlue(0, 3 * wordSpaceIPD.opt, 0,
-                                       new LeafPosition(this, vecAreaInfo.size() - 1), false));
+                                       new LeafPosition(this, -1), false));
                     sequence.add
                         (new KnuthPenalty(0, 0, false,
                                           new LeafPosition(this, -1), true));
                     sequence.add
                         (new KnuthGlue(wordSpaceIPD.opt,
                                        - 3 * wordSpaceIPD.opt, 0,
-                                       new LeafPosition(this, -1), true));
+                                       new LeafPosition(this, vecAreaInfo.size() - 1), true));
                     iNextStart ++;
                     break;
 
