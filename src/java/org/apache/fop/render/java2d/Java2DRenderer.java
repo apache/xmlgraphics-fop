@@ -204,22 +204,31 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
         }
     }
 
-    /** @return The 0-based current page number */
+    /**
+     * @return The 0-based current page number
+     */
     public int getCurrentPageNumber() {
         return currentPageNumber;
     }
 
-    /** @param The 0-based current page number */
+    /**
+     * @param c the 0-based current page number
+     */
     public void setCurrentPageNumber(int c) {
         this.currentPageNumber = c;
     }
 
-    /** @return The 0-based total number of rendered pages  */
+    /**
+     * @return The 0-based total number of rendered pages
+     */
     public int getNumberOfPages() {
             return numberOfPages;
     }
 
-    /** clears the ViewportList, in case the document is reloaded */
+    /**
+     * Clears the ViewportList.
+     * Used if the document is reloaded.
+     */
     public void clearViewportList() {
         pageViewportList.clear();
         setCurrentPageNumber(0);
@@ -238,7 +247,8 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
      */
     public void renderPage(PageViewport pageViewport) 
                 throws IOException, FOPException {
-        pageViewportList.add(pageViewport.clone()); // FIXME clone
+        // TODO clone
+        pageViewportList.add(pageViewport.clone());
         currentPageNumber++;
     }
 
@@ -547,7 +557,7 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
      * Draw the background and borders. This draws the background and border
      * traits for an area given the position.
      *
-     * @param block the area to get the traits from
+     * @param area the area whose traits are used
      * @param startx the start x position
      * @param starty the start y position
      * @param width the width of the area

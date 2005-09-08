@@ -93,7 +93,7 @@ public class CompoundPropertyMaker extends PropertyMaker {
      * of compound property types, such as "space".
      * Overridden by property maker subclasses which handle
      * compound properties.
-     * @param subprop The Constants ID of the component for which a Maker is to
+     * @param subpropId the id of the component for which a Maker is to
      * returned, for example CP_OPTIMUM, if the FO attribute is
      * space.optimum='10pt'.
      * @return the Maker object specified
@@ -139,7 +139,7 @@ public class CompoundPropertyMaker extends PropertyMaker {
      * the default value.
      * @param subpropId  The subproperty id of the property being retrieved.
      *        Is 0 when retriving a base property.
-     * @param propertylist The PropertyList object being built for this FO.
+     * @param propertyList The PropertyList object being built for this FO.
      * @param bTryInherit true if inherited properties should be examined.
      * @param bTryDefault true if the default value should be returned. 
      */

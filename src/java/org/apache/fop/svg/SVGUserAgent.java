@@ -46,9 +46,8 @@ public class SVGUserAgent extends UserAgentAdapter {
 
     /**
      * Creates a new SVGUserAgent.
-     * @param log an Commons logging instance
-     * @param pixelUnitToMM The pixel to millimeter conversion factor 
-     *                  currently in effect
+     * @param pixelUnitToMM the pixel to millimeter conversion factor
+     * currently in effect
      * @param at the current transform
      */
     public SVGUserAgent(float pixelUnitToMM, AffineTransform at) {

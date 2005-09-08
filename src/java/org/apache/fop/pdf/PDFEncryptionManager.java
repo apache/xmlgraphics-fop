@@ -76,7 +76,6 @@ public class PDFEncryptionManager {
      * the necessary cryptographic support is available.
      * @param params the PDF encryption params or null to disable encryption
      * @param pdf the PDF document to setup encryption for
-     * @param log the logger to send warnings to
      */
     public static void setupPDFEncryption(PDFEncryptionParams params, 
                                           PDFDocument pdf) {

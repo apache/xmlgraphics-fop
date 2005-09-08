@@ -28,7 +28,7 @@ import org.apache.fop.fo.expr.PropertyException;
 public class BoxPropShorthandParser extends GenericShorthandParser {
 
     /**
-     * @see org.apache.fop.fo.GenericShorthandParser#GenericShorthandParser()
+     * Default constructor.
      */
     public BoxPropShorthandParser() {
     }
@@ -38,7 +38,7 @@ public class BoxPropShorthandParser extends GenericShorthandParser {
      * Set the given property based on the number of values set.
      * Example: padding, border-width, border-color, border-style, margin
      * @see org.apache.fop.fo.GenericShorthandParser#convertValueForProperty(
-     * int, ListProperty, PropertyMaker, PropertyList)
+     * int, Property, PropertyMaker, PropertyList)
      */
     protected Property convertValueForProperty(int propId,
                                                Property property,

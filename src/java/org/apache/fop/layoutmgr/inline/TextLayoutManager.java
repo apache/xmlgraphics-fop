@@ -380,8 +380,9 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
      * @param str the string for the TextArea
      * @param width the MinOptMax width of the content
      * @param adjust the total ipd adjustment with respect to the optimal width
-     * @param base the baseline position
-     * @return the new word area
+     * @param context the layout context
+     * @param spaceDiff unused
+     * @return the new text area
      */
     protected TextArea createTextArea(String str, MinOptMax width, int adjust,
                                       LayoutContext context, int spaceDiff) {

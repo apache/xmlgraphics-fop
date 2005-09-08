@@ -247,7 +247,7 @@ public class CTM implements Serializable {
     /**
      * Construct a coordinate transformation matrix (CTM).
      * @param absRefOrient absolute reference orientation
-     * @param writingmode the writing mode
+     * @param writingMode the writing mode
      * @param absVPrect absolute viewpoint rectangle
      * @param reldims relative dimensions
      * @return CTM the coordinate transformation matrix (CTM)

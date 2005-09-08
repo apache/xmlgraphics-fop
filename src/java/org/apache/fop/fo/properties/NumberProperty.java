@@ -35,7 +35,7 @@ public class NumberProperty extends Property implements Numeric {
 
         /**
          * Constructor for NumberProperty.Maker
-         * @param propName the name of the property
+         * @param propId the id of the property for which a Maker should be created
          */
         public Maker(int propId) {
             super(propId);
@@ -109,7 +109,7 @@ public class NumberProperty extends Property implements Numeric {
      * Return the value of this Numeric.
      * @param context Evaluation context
      * @return The value as a double.
-     * @see Numeric#getNumericValue(Object)
+     * @see Numeric#getNumericValue(PercentBaseContext)
      */
     public double getNumericValue(PercentBaseContext context) {
         return getNumericValue();
@@ -123,7 +123,7 @@ public class NumberProperty extends Property implements Numeric {
      * Return the value
      * @param context Evaluation context
      * @return The value as an int.
-     * @see Numeric#getValue(Object)
+     * @see Numeric#getValue(PercentBaseContext)
      */
     public int getValue(PercentBaseContext context) {
         return getValue();

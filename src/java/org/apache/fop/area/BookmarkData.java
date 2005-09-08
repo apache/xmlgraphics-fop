@@ -177,7 +177,7 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
      * id reference.
      *
      * @see org.apache.fop.area.Resolvable#resolveIDRef(String, List)
-     * @todo check to make sure works when multiple bookmark-items
+     * @todo check to make sure it works if multiple bookmark-items
      * have the same idref
      */
     public void resolveIDRef(String id, List pages) {

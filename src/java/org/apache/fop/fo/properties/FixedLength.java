@@ -58,6 +58,7 @@ public class FixedLength extends LengthProperty {
      * @param unit input unit specifier (in, cm, etc.)
      */
     protected void convert(double dvalue, String unit) {
+        // TODO: the whole routine smells fishy.
 
         int assumedResolution = 1;    // points/pixel
 
@@ -71,6 +72,7 @@ public class FixedLength extends LengthProperty {
             // Do nothing.
             // dvalue = dvalue;
         } else if (unit.equals("mpt")) { //mpt is non-standard!!! mpt=millipoints
+            // TODO: this seems to be wrong.
             // Do nothing.
             // dvalue = dvalue;
         } else if (unit.equals("pc")) {
@@ -80,6 +82,7 @@ public class FixedLength extends LengthProperty {
              * dvalue = dvalue * fontsize;
              */
         } else if (unit.equals("px")) {
+            // TODO: get resolution from user agent?
             dvalue = dvalue * assumedResolution;
         } else {
             dvalue = 0;
@@ -93,36 +96,28 @@ public class FixedLength extends LengthProperty {
     }
 
     /**
-     * Returns the length in 1/1000ths of a point (millipoints)
-     * @return the length in millipoints
+     * @see org.apache.fop.datatypes.Numeric#getValue()
      */
     public int getValue() {
         return millipoints;
     }
 
     /**
-     * Returns the length in 1/1000ths of a point (millipoints)
-     * @param Evaluation context
-     * @return the length in millipoints
+     * @see org.apache.fop.datatypes.Numeric#getValue(PercentBaseContext)
      */
     public int getValue(PercentBaseContext context) {
         return millipoints;
     }
 
     /**
-     * Returns the value as numeric.
-     * @return the length in millipoints
-     * @see Numeric#getNumericValue()
+     * @see org.apache.fop.datatypes.Numeric#getNumericValue()
      */
     public double getNumericValue() {
         return millipoints;
     }
 
     /**
-     * Return the value of this Numeric.
-     * @param context Evaluation context
-     * @return the length in millipoints
-     * @see Numeric#getNumericValue(Object)
+     * @see org.apache.fop.datatypes.Numeric#getNumericValue(PercentBaseContext)
      */
     public double getNumericValue(PercentBaseContext context) {
         return millipoints;

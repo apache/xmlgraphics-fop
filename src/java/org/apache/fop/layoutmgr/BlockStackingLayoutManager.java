@@ -82,7 +82,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     private int contentAreaIPD = 0;
     
     /**
-     * @param the fo this LM deals with
+     * @param node the fo this LM deals with
      */
     public BlockStackingLayoutManager(FObj node) {
         super(node);

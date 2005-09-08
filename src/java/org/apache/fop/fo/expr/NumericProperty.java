@@ -61,9 +61,7 @@ public class NumericProperty extends Property implements Numeric, Length {
     }
 
     /**
-     * Return the value.
-     * @param Evaluation context
-     * @see Numeric#getNumericValue(Object)
+     * @see Numeric#getNumericValue(PercentBaseContext)
      */
     public double getNumericValue(PercentBaseContext context) {
         return value;
@@ -92,15 +90,14 @@ public class NumericProperty extends Property implements Numeric, Length {
     }
 
     /**
-     * Return the value of this numeric as a length in millipoints. 
+     * @see org.apache.fop.datatypes.Numeric#getValue()
      */
     public int getValue() {
         return (int) value;
     }
 
     /**
-     * Return the value of this numeric as a length in millipoints. 
-     * @param Evaluation context
+     * @see org.apache.fop.datatypes.Numeric#getValue(PercentBaseContext)
      */
     public int getValue(PercentBaseContext context) {
         return (int) value;

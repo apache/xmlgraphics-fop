@@ -236,7 +236,7 @@ public class Root extends FObj {
 
     /**
      * Sets the associated Declarations.
-     * @param Declarations the Declarations to use
+     * @param declarations the Declarations to use
      */
     public void setDeclarations(Declarations declarations) {
         this.declarations = declarations;

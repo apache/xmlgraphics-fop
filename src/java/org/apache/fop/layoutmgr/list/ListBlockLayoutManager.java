@@ -73,7 +73,6 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
     /**
      * Create a new list block layout manager.
      * @param node list-block to create the layout manager for
-     * @param parent the parent layout manager
      */
     public ListBlockLayoutManager(ListBlock node) {
         super(node);

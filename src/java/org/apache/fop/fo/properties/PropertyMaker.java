@@ -163,7 +163,7 @@ public class PropertyMaker implements Cloneable {
 
     /**
      * Set the shorthand datatype parser.
-     * @param subproperty
+     * @param parser the shorthand parser
      */
     public void setDatatypeParser(ShorthandParser parser) {
         datatypeParser = parser;
@@ -197,11 +197,11 @@ public class PropertyMaker implements Cloneable {
     }
 
     /**
-     * Set the byShorthand flag which only is applicable for subproperty 
+     * Set the setByShorthand flag which only is applicable for subproperty 
      * makers. It should be true for the subproperties which must be 
      * assigned a value when the base property is assigned a attribute 
      * value directly.
-     * @param defaultValue
+     * @param setByShorthand
      */
     public void setByShorthand(boolean setByShorthand) {
         this.setByShorthand = setByShorthand;
@@ -273,7 +273,7 @@ public class PropertyMaker implements Cloneable {
      * the default value.
      * @param subpropId  The subproperty id of the property being retrieved.
      *        Is 0 when retriving a base property.
-     * @param propertylist The PropertyList object being built for this FO.
+     * @param propertyList The PropertyList object being built for this FO.
      * @param bTryInherit true if inherited properties should be examined.
      * @param bTryDefault true if the default value should be returned. 
      */
@@ -319,7 +319,7 @@ public class PropertyMaker implements Cloneable {
      * property.
      * @param p A property value for a compound property type such as
      * SpaceProperty.
-     * @param subprop The Constants ID of the component whose value is to be
+     * @param subpropId the id of the component whose value is to be
      * returned.
      * NOTE: this is only to ease porting when calls are made to
      * PropertyList.get() using a component name of a compound property,
@@ -503,8 +503,8 @@ public class PropertyMaker implements Cloneable {
      * initializers "thin", "medium", or "thick". The FOPropertyMapping
      * file specifies a length value equivalent for these keywords,
      * such as "0.5pt" for "thin".
-     * @param value The string value of property attribute.
-     * @return A String containging a parseable equivalent or null if
+     * @param keyword the string value of property attribute.
+     * @return a String containing a parseable equivalent or null if
      * the passed value isn't a keyword initializer for this Property.
      */
     protected String checkValueKeywords(String keyword) {
@@ -514,6 +514,7 @@ public class PropertyMaker implements Cloneable {
                 return value;
             }
         }
+        // TODO: should return null here?
         return keyword;            
     }
 

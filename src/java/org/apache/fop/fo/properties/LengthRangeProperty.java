@@ -43,7 +43,7 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
     public static class Maker extends CompoundPropertyMaker {
 
         /**
-         * @param name name of property for which to create Maker
+         * @param propId the id of the property for which a Maker should be created
          */
         public Maker(int propId) {
             super(propId);

@@ -79,7 +79,6 @@ public class PercentLength extends LengthProperty {
     }
 
     /**
-     * Return the value of this Numeric.
      * @see org.apache.fop.datatypes.Numeric#getNumericValue()
      */
     public double getNumericValue() {
@@ -87,10 +86,7 @@ public class PercentLength extends LengthProperty {
     }
 
     /**
-     * Return the value of this Numeric.
-     * @param context Evaluation context
-     * @return the length in millipoints
-     * @see Numeric#getNumericValue(Object)
+     * @see org.apache.fop.datatypes.Numeric#getNumericValue(PercentBaseContext)
      */
     public double getNumericValue(PercentBaseContext context) {
         try {
@@ -111,8 +107,7 @@ public class PercentLength extends LengthProperty {
     }
 
     /**
-     * Return the value of this numeric as a length in millipoints. 
-     * @param Evaluation context
+     * @see org.apache.fop.datatypes.Numeric#getValue(PercentBaseContext)
      */
     public int getValue(PercentBaseContext context) {
         return (int) getNumericValue(context);

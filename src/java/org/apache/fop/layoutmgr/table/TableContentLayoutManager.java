@@ -1135,7 +1135,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
     // --------- Property Resolution related functions --------- //
     
     /**
-     * @see org.apache.fop.datatypes.PercentBaseContext#getBaseLength(int, fobj)
+     * @see org.apache.fop.datatypes.PercentBaseContext#getBaseLength(int, FObj)
      */
     public int getBaseLength(int lengthBase, FObj fobj) {
         return tableLM.getBaseLength(lengthBase, fobj);

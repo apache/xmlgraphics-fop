@@ -33,7 +33,7 @@ public class EnumProperty extends Property {
     public static class Maker extends PropertyMaker {
 
         /**
-         * @param propName name of property for which a Maker should be created
+         * @param propId the id of the property for which a Maker should be created
          */
         public Maker(int propId) {
             super(propId);

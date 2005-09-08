@@ -164,10 +164,9 @@ public class FontSetup {
     }
 
     /**
-     * Add fonts from configuration file starting with
-     * internalnames F<num>
+     * Add fonts from configuration file starting with internal name F<num>.
      * @param fontInfo the font info object to set up
-     * @param fontInfos ???
+     * @param fontInfoList
      * @param num starting index for internal font numbering
      */
     public static void addConfiguredFonts(FontInfo fontInfo, List fontInfoList, int num) {

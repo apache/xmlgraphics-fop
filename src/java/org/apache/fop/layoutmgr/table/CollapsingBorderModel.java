@@ -48,12 +48,13 @@ public abstract class CollapsingBorderModel {
     //public static final int FIRST_ROW_IN_GROUP      = 4;
     /** Indicates that the cell is/end in the last row of a body/table-header/table-footer */
     //public static final int LAST_ROW_IN_GROUP       = 8;
-    
+
+    // TODO: this is not MT safe. Must be removed.
     private static CollapsingBorderModel collapse = null;
     private static CollapsingBorderModel collapseWithPrecedence = null;
     
     /**
-     * @param cellLM the cell
+     * @param borderCollapse border collapse control
      * @return the border model for the cell
      */
     public static CollapsingBorderModel getBorderModelFor(int borderCollapse) {

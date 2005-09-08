@@ -44,7 +44,6 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
     /**
      * Constructor
      * @param node the formatting object that creates this area
-     * @param parent the parent layout manager
      */
     public AbstractGraphicsLayoutManager(AbstractGraphics node) {
         super(node);
@@ -242,7 +241,7 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
      * to take the border/padding into account as well.
      * @param area the inline area to be updated
      * @param context the layout context used for adding the area
-     * @see LeafNodeLayoutManager#offsetArea(InlineArae, LayoutContext)
+     * @see LeafNodeLayoutManager#offsetArea(InlineArea, LayoutContext)
      */
     protected void offsetArea(InlineArea area, LayoutContext context) {
         int bpd = area.getBPD()

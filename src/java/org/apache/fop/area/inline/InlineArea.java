@@ -131,7 +131,7 @@ public class InlineArea extends Area {
     /**
      * Set the parent for the child area.
      *
-     * @see org.apache.fop.area.inline.Area#addChildArea(Area)
+     * @see org.apache.fop.area.Area#addChildArea(Area)
      */
     public void addChildArea(Area childArea) {
         super.addChildArea(childArea);
