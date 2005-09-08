@@ -687,6 +687,16 @@ list of possible build targets.
   <!-- Creates the API documentation                                       -->
   <!-- =================================================================== -->
   <target name="javadocs" depends="codegen" description="Generates javadocs">
+    <condition property="javadoc.version.ok">
+      <not>
+        <or>
+          <equals arg1="${ant.java.version}" arg2="1.1"/>
+          <equals arg1="${ant.java.version}" arg2="1.2"/>
+          <equals arg1="${ant.java.version}" arg2="1.3"/>
+        </or>
+      </not>
+    </condition>
+    <fail message="Building FOP javadocs requires at least Java 1.4" unless="javadoc.version.ok"/>
     <property name="javadoc.public"  value="false"/>
     <property name="javadoc.package" value="false"/>
     <property name="javadoc.private" value="false"/>
@@ -726,6 +736,7 @@ list of possible build targets.
         <pathelement path="${build.gensrc.dir}"/>
         <path refid="graphics-configuration-adapter"/>
       </sourcepath>
+      <tag name="todo" scope="all" description="To do:"/>
       <group title="Control and Startup">
         <package name="org.apache.fop.apps"/>
         <package name="org.apache.fop.configuration"/>

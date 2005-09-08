@@ -75,10 +75,10 @@ public class Footnote extends FObj {
     /**
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
      * XSL Content Model: (inline,footnote-body)
-     * @todo: implement additional constraint: An fo:footnote is not permitted
-     *      to have an fo:float, fo:footnote, or fo:marker as a descendant.
-     * @todo: implement additional constraint: An an fo:footnote is not 
-     *      permitted to have as a descendant an fo:block-container that 
+     * @todo implement additional constraint: A fo:footnote is not permitted
+     *      to have a fo:float, fo:footnote, or fo:marker as a descendant.
+     * @todo implement additional constraint: A fo:footnote is not 
+     *      permitted to have as a descendant a fo:block-container that 
      *      generates an absolutely positioned area.
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
