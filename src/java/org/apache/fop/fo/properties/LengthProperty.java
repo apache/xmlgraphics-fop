@@ -37,7 +37,7 @@ abstract public class LengthProperty extends Property
         private boolean autoOk = false;
 
         /**
-         * @param name name of property for which Maker should be created
+         * @param propId the id of the property for which a Maker should be created
          */
         public Maker(int propId) {
             super(propId);

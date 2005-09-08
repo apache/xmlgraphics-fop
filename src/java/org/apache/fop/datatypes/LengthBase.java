@@ -110,7 +110,9 @@ public class LengthBase implements PercentBase {
         return 1.0;
     }
 
-    /** @see org.apache.fop.datatypes.PercentBase#getBaseLength() */
+    /**
+     * @see org.apache.fop.datatypes.PercentBase#getBaseLength(PercentBaseContext)
+     */
     public int getBaseLength(PercentBaseContext context) throws PropertyException {
         int baseLength = 0;
         if (context != null) {

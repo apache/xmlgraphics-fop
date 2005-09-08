@@ -71,7 +71,7 @@ public interface Numeric {
 
     /**
      * Returns the value of this numeric as an int.
-     * @param conext The context for the length calculation (for percentage based lengths)
+     * @param context the context for the length calculation (for percentage based lengths)
      * @return the value as an integer.
      */
     public int getValue(PercentBaseContext context);

@@ -39,7 +39,7 @@ public class CondLengthProperty extends Property implements CompoundDatatype {
     public static class Maker extends CompoundPropertyMaker {
 
         /**
-         * @param name of property for which a Maker should be created
+         * @param propId the id of the property for which a Maker should be created
          */
         public Maker(int propId) {
             super(propId);

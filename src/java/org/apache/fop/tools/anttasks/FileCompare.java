@@ -80,14 +80,16 @@ public class FileCompare {
 
     /**
      * Compares two files to see if they are equal
-     * @param true if files are same, false otherwise
+     * @param f1 first file to compare
+     * @param f2 second file to compare
+     * @return true if files are same, false otherwise
      */
     public static boolean compareFiles(File f1, File f2) throws IOException {
         return (compareFileSize(f1, f2) && compareBytes(f1, f2));
     }
 
     /**
-     * Does a byte compare of two files
+     * Compare the contents of two files.
      * @param true if files are same byte-by-byte, false otherwise
      */
     private static boolean compareBytes(File file1, File file2) throws IOException {

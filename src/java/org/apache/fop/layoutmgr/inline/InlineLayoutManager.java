@@ -117,7 +117,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
         return inlineProps.spaceEnd;
     }
     
-    /** @see org.apache.fop.layoutmgr.inline.InlineStackingLayoutManager#createArea() */
+    /** @see org.apache.fop.layoutmgr.inline.InlineLayoutManager#createArea(boolean) */
     protected InlineArea createArea(boolean bInlineParent) {
         InlineArea area;
         if (bInlineParent) {

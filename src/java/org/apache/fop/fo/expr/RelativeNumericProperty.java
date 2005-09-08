@@ -128,16 +128,14 @@ public class RelativeNumericProperty extends Property implements Numeric, Length
 
     /**
      * Return the resolved (calculated) value of the expression. 
-     * @see Numeric#getNumericValue()
+     * @see org.apache.fop.datatypes.Numeric#getNumericValue()
      */
     public double getNumericValue() throws PropertyException {
         return getResolved(null).getNumericValue(null);
     }
 
     /**
-     * Return the value.
-     * @param Evaluation context
-     * @see Numeric#getNumericValue(Object)
+     * @see org.apache.fop.datatypes.Numeric#getNumericValue(PercentBaseContext)
      */
     public double getNumericValue(PercentBaseContext context) throws PropertyException {
         return getResolved(context).getNumericValue(context);
@@ -174,7 +172,7 @@ public class RelativeNumericProperty extends Property implements Numeric, Length
     }
 
     /**
-     * Return a resolved length.
+     * @see org.apache.fop.datatypes.Numeric#getValue()
      */
     public int getValue() {
         try {
@@ -186,8 +184,7 @@ public class RelativeNumericProperty extends Property implements Numeric, Length
     }
 
     /**
-     * Return the value of this numeric as a length in millipoints. 
-     * @param Evaluation context
+     * @see org.apache.fop.datatypes.Numeric#getValue(PercentBaseContext)
      */
     public int getValue(PercentBaseContext context) {
         try {
@@ -199,7 +196,8 @@ public class RelativeNumericProperty extends Property implements Numeric, Length
     }
 
     /**
-     * Return a string represention of the expression. Only used for debugging. 
+     * Return a string represention of the expression. Only used for debugging.
+     * @return the string representation.
      */
     public String toString() {
         switch (operation) {

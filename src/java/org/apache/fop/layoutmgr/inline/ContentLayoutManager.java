@@ -74,7 +74,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
         this.parentLM = pslm;
         holder = new LineArea();
 
-        setUserAgent(foTitle.getUserAgent());
+        //        setUserAgent(foTitle.getUserAgent());
 
         // use special layout manager to add the inline areas
         // to the Title.
@@ -186,18 +186,20 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
      *
      * @param ua the user agent
      */
-    public void setUserAgent(FOUserAgent ua) {
-        userAgent = ua;
-    }
+//     public void setUserAgent(FOUserAgent ua) {
+//         userAgent = ua;
+//     }
 
     /**
      * @see org.apache.fop.layoutmgr.LayoutManager#getUserAgent()
      */
-    public FOUserAgent getUserAgent() {
-        return userAgent;
-    }
+//     public FOUserAgent getUserAgent() {
+//         return userAgent;
+//     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#setParent(LayoutManager)
+     */
     public void setParent(LayoutManager lm) {
         parentLM = lm;
     }
@@ -206,30 +208,36 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
         return this.parentLM;
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#isFinished()
+     */
     public boolean isFinished() {
         return false;
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#setFinished(boolean)
+     */
     public void setFinished(boolean isFinished) {
         //to be done
     }
 
-    /** @see org.apache.fop.layoutmgr.LayoutManager */
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#resetPosition(Position)
+     */
     public void resetPosition(Position position) {
         //to be done
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#createNextChildLMs
+     * @see org.apache.fop.layoutmgr.LayoutManager#createNextChildLMs(int)
      */
     public boolean createNextChildLMs(int pos) {
         return false;
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getChildLMs
+     * @see org.apache.fop.layoutmgr.LayoutManager#getChildLMs()
      */
     public List getChildLMs() {
         List childLMs = new ArrayList(1);

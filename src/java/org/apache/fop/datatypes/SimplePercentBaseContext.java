@@ -44,7 +44,7 @@ public class SimplePercentBaseContext implements PercentBaseContext {
 
     /**
      * Returns the value for the given lengthBase.
-     * @see org.apache.fop.datatypes.PercentBaseContext#getBaseLength(int, fobj)
+     * @see org.apache.fop.datatypes.PercentBaseContext#getBaseLength(int, FObj)
      */
     public int getBaseLength(int lengthBase, FObj fobj) {
         // if its for us return our value otherwise delegate to parent context

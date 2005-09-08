@@ -24,9 +24,9 @@ import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * A maker which calculates the line-height property.
- * This property maker is special because line-height inherit the specified
+ * This property maker is special because line-height inherits the specified
  * value, instead of the computed value.
- * So when a line-height is create based on a attribute, the specified value
+ * So when a line-height is create based on an attribute, the specified value
  * is stored in the property and in compute() the stored specified value of
  * the nearest specified is used to recalculate the line-height.  
  */
@@ -60,7 +60,7 @@ public class LineHeightPropertyMaker extends SpaceProperty.Maker {
     }
 
     /**
-     * @see SpaceProperty#convertProperty(Property, PropertyList, FObj)
+     * @see SpaceProperty.Maker#convertProperty(Property, PropertyList, FObj)
      */
     public Property convertProperty(Property p,
             PropertyList propertyList,

@@ -84,7 +84,7 @@ public class FOPException extends SAXException {
 
     /**
      * Set a location associated with the exception.
-     * @param location the locator holding the location.
+     * @param locator the locator holding the location.
      */
     public void setLocator(Locator locator) {
         if (locator != null) {

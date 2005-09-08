@@ -78,10 +78,7 @@ public class TableColLength extends LengthProperty {
     }
 
     /**
-     * Return the value of this Numeric.
-     * @param context Evaluation context
-     * @return the value
-     * @see Numeric#getNumericValue(Object)
+     * @see org.apache.fop.datatypes.Numeric#getNumericValue(PercentBaseContext)
      */
     public double getNumericValue(PercentBaseContext context) {
         return getNumericValue();
@@ -96,9 +93,7 @@ public class TableColLength extends LengthProperty {
     }
 
     /**
-     * Returns the length in 1/1000ths of a point (millipoints)
-     * @param Evaluation context
-     * @return the length in millipoints
+     * @see org.apache.fop.datatypes.Numeric#getValue(PercentBaseContext)
      */
     public int getValue(PercentBaseContext context) {
         return getValue();

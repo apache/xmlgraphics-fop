@@ -38,7 +38,6 @@ public abstract class KnuthElement {
      * Create a new KnuthElement.
      * This class being abstract, this can be called only by subclasses.
      *
-     * @param t    the type of this element (one of the KNUTH_* constants)
      * @param w    the width of this element
      * @param pos  the Position stored in this element
      * @param bAux is this an auxiliary element?

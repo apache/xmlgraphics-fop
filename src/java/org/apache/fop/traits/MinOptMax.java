@@ -55,17 +55,16 @@ public class MinOptMax implements java.io.Serializable, Cloneable {
      * @param max the maximum value
      */
     public MinOptMax(int min, int opt, int max) {
+        // TODO: assert min<=opt<=max
         this.min = min;
         this.opt = opt;
         this.max = max;
     }
 
     /**
-     * New min/opt/max with the three values.
+     * Copy constructor.
      *
-     * @param min the minimum value
-     * @param opt the optimum value
-     * @param max the maximum value
+     * @param op the MinOptMax object to copy
      */
     public MinOptMax(MinOptMax op) {
         this.min = op.min;
@@ -73,6 +72,7 @@ public class MinOptMax implements java.io.Serializable, Cloneable {
         this.max = op.max;
     }
 
+    // TODO: remove this.
     /**
      * @see java.lang.Object#clone()
      */
@@ -114,6 +114,7 @@ public class MinOptMax implements java.io.Serializable, Cloneable {
      * @return MinOptMax new instance
      */
     public static MinOptMax multiply(MinOptMax op1, double mult) {
+        // TODO: assert mult>0
         return new MinOptMax((int)(op1.min * mult),
                              (int)(op1.opt * mult), (int)(op1.max * mult));
     }
@@ -129,18 +130,21 @@ public class MinOptMax implements java.io.Serializable, Cloneable {
     }
 
     /**
-     * Adds another MinOptMax instance to this one.
-     * @param op the other instance
+     * Adds min, opt and max to their counterpart components.
+     * @param min the value to add to the minimum value
+     * @param opt the value to add to the optimum value
+     * @param max the value to add to the maximum value
      */
     public void add(int min, int opt, int max) {
         this.min += min;
         this.opt += opt;
         this.max += max;
+        // TODO: assert min<=opt<=max
     }
 
     /**
-     * Adds another MinOptMax instance to this one.
-     * @param op the other instance
+     * Adds a length to all components.
+     * @param len the length to add
      */
     public void add(int len) {
         this.min += len;
@@ -150,7 +154,7 @@ public class MinOptMax implements java.io.Serializable, Cloneable {
 
 
     /**
-     * Subtracts from this instance using another.
+     * Subtracts another MinOptMax instance from this one.
      * @param op the other instance
      */
     public void subtract(MinOptMax op) {
