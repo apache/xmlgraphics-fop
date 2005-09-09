@@ -49,7 +49,7 @@ public abstract class CollapsingBorderModel {
     /** Indicates that the cell is/end in the last row of a body/table-header/table-footer */
     //public static final int LAST_ROW_IN_GROUP       = 8;
 
-    // TODO: this is not MT safe. Must be removed.
+    //These statics are used singleton-style. No MT issues here.
     private static CollapsingBorderModel collapse = null;
     private static CollapsingBorderModel collapseWithPrecedence = null;
     
