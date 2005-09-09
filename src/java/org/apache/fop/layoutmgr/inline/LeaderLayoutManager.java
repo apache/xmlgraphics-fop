@@ -139,7 +139,6 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             FilledArea fa = new FilledArea();
 
             clm = new ContentLayoutManager(fa, this);
-            clm.setUserAgent(fobj.getUserAgent());
             addChildLM(clm);
 
             InlineLayoutManager lm;

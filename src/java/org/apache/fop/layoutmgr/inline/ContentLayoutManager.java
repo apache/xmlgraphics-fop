@@ -182,28 +182,13 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
     }
 
     /**
-     * Set the user agent.
-     *
-     * @param ua the user agent
-     */
-//     public void setUserAgent(FOUserAgent ua) {
-//         userAgent = ua;
-//     }
-
-    /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getUserAgent()
-     */
-//     public FOUserAgent getUserAgent() {
-//         return userAgent;
-//     }
-
-    /**
      * @see org.apache.fop.layoutmgr.LayoutManager#setParent(LayoutManager)
      */
     public void setParent(LayoutManager lm) {
         parentLM = lm;
     }
 
+    /** @see org.apache.fop.layoutmgr.LayoutManager#getParent() */
     public LayoutManager getParent() {
         return this.parentLM;
     }
