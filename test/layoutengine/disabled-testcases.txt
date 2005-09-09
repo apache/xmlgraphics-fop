@@ -2,6 +2,7 @@ character_background-image.xml
 block-container_reference-orientation_bug36391.xml
 block_font-stretch.xml
 block_space-before_space-after_2.xml
+block_space-before_space-after_3.xml
 block_word-spacing.xml
 block_word-spacing_text-align_justify.xml
 external-graphic_oversized.xml
