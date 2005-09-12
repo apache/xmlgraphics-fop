@@ -31,6 +31,8 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.fo.Constants;
 
+import org.apache.fop.fotreetest.ext.TestElementMapping;
+
 /**
  * Test driver class for FO tree tests.
  */
@@ -56,6 +58,7 @@ public class FOTreeTester {
         FOUserAgent ua = new FOUserAgent();
         ua.setBaseURL(testFile.getParentFile().toURL().toString());
         ua.setFOEventHandlerOverride(new DummyFOEventHandler(ua));
+        ua.addElementMapping(new TestElementMapping());
         Fop fop = new Fop(Constants.RENDER_XML, ua);
         
         SAXResult fores = new SAXResult(fop.getDefaultHandler());
