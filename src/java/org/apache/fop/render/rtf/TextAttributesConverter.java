@@ -135,7 +135,10 @@ class TextAttributesConverter {
                 RtfFontManager.getInstance().getFontNumber(font.fontFamily));
         rtfAttr.setHalfPoints(RtfText.ATTR_FONT_SIZE, font.fontSize);
 
-        if (font.fontWeight == Constants.EN_700) {
+        if (font.fontWeight == Constants.EN_700
+                || font.fontWeight == Constants.EN_800
+                || font.fontWeight == Constants.EN_900) {
+            //Everything from 700 and above is declared as bold
             rtfAttr.set("b", 1);
         } else {
             rtfAttr.set("b", 0);
