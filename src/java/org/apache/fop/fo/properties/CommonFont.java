@@ -62,7 +62,7 @@ public class CommonFont {
     /**
      * The "font-style" property.
      */
-    public String fontStyle;
+    public int fontStyle;
 
     /**
      * The "font-variant" property.
@@ -72,7 +72,7 @@ public class CommonFont {
     /**
      * The "font-weight" property.
      */
-    public String fontWeight;
+    public int fontWeight;
 
     private Font fontState;
 
@@ -86,9 +86,9 @@ public class CommonFont {
         fontSize = pList.get(Constants.PR_FONT_SIZE).getLength();
         fontStretch = pList.get(Constants.PR_FONT_STRETCH).getEnum();
         fontSizeAdjust = pList.get(Constants.PR_FONT_SIZE_ADJUST).getNumeric();
-        fontStyle = pList.get(Constants.PR_FONT_STYLE).getString();
+        fontStyle = pList.get(Constants.PR_FONT_STYLE).getEnum();
         fontVariant = pList.get(Constants.PR_FONT_VARIANT).getEnum();
-        fontWeight = pList.get(Constants.PR_FONT_WEIGHT).getString();
+        fontWeight = pList.get(Constants.PR_FONT_WEIGHT).getEnum();
     }
 
     /**
@@ -102,27 +102,40 @@ public class CommonFont {
             /**@todo this is ugly. need to improve. */
 
             int font_weight = 400;
-            if (fontWeight.equals("bolder")) {
+            if (fontWeight == Constants.EN_BOLDER) {
                 // +100 from inherited
-            } else if (fontWeight.equals("lighter")) {
+            } else if (fontWeight == Constants.EN_LIGHTER) {
                 // -100 from inherited
             } else {
-                try {
-                    font_weight = Integer.parseInt(fontWeight);
-                } catch (NumberFormatException nfe) {
-                } /** TODO: log that exception */
-            }
-            font_weight = ((int) font_weight / 100) * 100;
-            if (font_weight < 100) {
-                font_weight = 100;
-            } else if (font_weight > 900) {
-                font_weight = 900;
+                switch (fontWeight) {
+                case Constants.EN_100: font_weight = 100; break;
+                case Constants.EN_200: font_weight = 200; break;
+                case Constants.EN_300: font_weight = 300; break;
+                case Constants.EN_400: font_weight = 400; break;
+                case Constants.EN_500: font_weight = 500; break;
+                case Constants.EN_600: font_weight = 600; break;
+                case Constants.EN_700: font_weight = 700; break;
+                case Constants.EN_800: font_weight = 800; break;
+                case Constants.EN_900: font_weight = 900; break;
+                }
             }
 
+            String style = "normal";
+            switch (fontStyle) {
+            case Constants.EN_ITALIC: 
+                style = "italic";
+                break;
+            case Constants.EN_OBLIQUE: 
+                style = "oblique";
+                break;
+            case Constants.EN_BACKSLANT: 
+                style = "backslant";
+                break;
+            }
             // NOTE: this is incomplete. font-size may be specified with
             // various kinds of keywords too
             //int fontVariant = propertyList.get("font-variant").getEnum();
-            String fname = fontInfo.fontLookup(fontFamily, fontStyle,
+            String fname = fontInfo.fontLookup(fontFamily, style,
                                                font_weight);
             FontMetrics metrics = fontInfo.getMetricsFor(fname);
             fontState = new Font(fname, metrics, fontSize.getValue(context));

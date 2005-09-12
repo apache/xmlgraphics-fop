@@ -135,13 +135,13 @@ class TextAttributesConverter {
                 RtfFontManager.getInstance().getFontNumber(font.fontFamily));
         rtfAttr.setHalfPoints(RtfText.ATTR_FONT_SIZE, font.fontSize);
 
-        if (font.fontWeight.equals("bold") || font.fontWeight.equals("700")) {
+        if (font.fontWeight == Constants.EN_700) {
             rtfAttr.set("b", 1);
         } else {
             rtfAttr.set("b", 0);
         }
         
-        if (font.fontStyle.equals("italic")) {
+        if (font.fontStyle == Constants.EN_ITALIC) {
             rtfAttr.set(RtfText.ATTR_ITALIC, 1);
         } else {
             rtfAttr.set(RtfText.ATTR_ITALIC, 0);

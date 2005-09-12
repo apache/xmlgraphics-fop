@@ -1070,6 +1070,34 @@ public interface Constants {
     int EN_X_FILL = 162;
     /** Enumeration constant - non-standard for display-align */
     int EN_X_DISTRIBUTE = 163;
+    /** Enumeration constant */
+    int EN_ITALIC = 164;
+    /** Enumeration constant */
+    int EN_OBLIQUE = 165;
+    /** Enumeration constant */
+    int EN_BACKSLANT = 166;
+    /** Enumeration constant */
+    int EN_BOLDER = 167;
+    /** Enumeration constant */
+    int EN_LIGHTER = 168;
+    /** Enumeration constant */
+    int EN_100 = 168;
+    /** Enumeration constant */
+    int EN_200 = 169;
+    /** Enumeration constant */
+    int EN_300 = 170;
+    /** Enumeration constant */
+    int EN_400 = 171;
+    /** Enumeration constant */
+    int EN_500 = 172;
+    /** Enumeration constant */
+    int EN_600 = 173;
+    /** Enumeration constant */
+    int EN_700 = 174;
+    /** Enumeration constant */
+    int EN_800 = 175;
+    /** Enumeration constant */
+    int EN_900 = 176;
     /** Number of enumeration constants defined */
-    int ENUM_COUNT = 163;
+    int ENUM_COUNT = 176;
 }
