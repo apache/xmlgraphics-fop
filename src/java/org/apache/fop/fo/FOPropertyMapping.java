@@ -1124,8 +1124,13 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("font-size-adjust", m);
 
         // font-style
-        m  = new StringProperty.Maker(PR_FONT_STYLE);
+        m  = new EnumProperty.Maker(PR_FONT_STYLE);
         m.setInherited(true);
+        m.addEnum("normal", getEnumProperty(EN_NORMAL, "NORMAL"));
+        m.addEnum("italic", getEnumProperty(EN_ITALIC, "ITALIC"));
+        m.addEnum("oblique", getEnumProperty(EN_OBLIQUE, "OBLIQUE"));
+        m.addEnum("backslant", getEnumProperty(EN_BACKSLANT, "BACKSLANT"));
+
         m.setDefault("normal");
         addPropertyMaker("font-style", m);
 
@@ -1138,10 +1143,21 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("font-variant", m);
 
         // font-weight
-        m  = new StringProperty.Maker(PR_FONT_WEIGHT);
+        m  = new EnumProperty.Maker(PR_FONT_WEIGHT);
         m.setInherited(true);
         m.addKeyword("normal", "400");
         m.addKeyword("bold", "700");
+        m.addEnum("bolder",getEnumProperty(EN_BOLDER, "BOLDER"));
+        m.addEnum("lighter",getEnumProperty(EN_LIGHTER, "LIGHTER"));
+        m.addEnum("100",getEnumProperty(EN_100, "100"));
+        m.addEnum("200",getEnumProperty(EN_200, "200"));
+        m.addEnum("300",getEnumProperty(EN_300, "300"));
+        m.addEnum("400",getEnumProperty(EN_400, "400"));
+        m.addEnum("500",getEnumProperty(EN_500, "500"));
+        m.addEnum("600",getEnumProperty(EN_600, "600"));
+        m.addEnum("700",getEnumProperty(EN_700, "700"));
+        m.addEnum("800",getEnumProperty(EN_800, "800"));
+        m.addEnum("900",getEnumProperty(EN_900, "900"));
         m.setDefault("400");
         addPropertyMaker("font-weight", m);
     }
