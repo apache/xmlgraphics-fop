@@ -48,7 +48,7 @@ public class AssertElement extends TestObj {
                             Locator locator, 
                             Attributes attlist, 
                             PropertyList propertyList) throws FOPException {
-        super.processNode(elementName, locator, attlist, propertyList);
+        //super.processNode(elementName, locator, attlist, propertyList);
 
         ResultCollector collector = ResultCollector.getInstance();
         String propName = attlist.getValue("property"); 
