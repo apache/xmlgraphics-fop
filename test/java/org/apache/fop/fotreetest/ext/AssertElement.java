@@ -57,7 +57,7 @@ public class AssertElement extends TestObj {
             collector.notifyException(new IllegalArgumentException(
                     "Property not found: " + propName));
         } else {
-            Property prop = propertyList.get(propID);
+            Property prop = propertyList.getParentPropertyList().get(propID);
             String s = String.valueOf(prop);
             String expected = attlist.getValue("expected");
             if (!expected.equals(s)) {
