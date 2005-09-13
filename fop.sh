@@ -79,6 +79,8 @@ fi
 
 # add fop.jar, which resides in $FOP_HOME/build
 LOCALCLASSPATH=${FOP_HOME}/build/fop.jar:$LOCALCLASSPATH
+# add fop-hyph.jar, which may reside in $FOP_HOME/build
+LOCALCLASSPATH=${FOP_HOME}/build/fop-hyph.jar:$LOCALCLASSPATH
 
 # add in the dependency .jar files, which reside in $FOP_HOME/lib
 DIRLIBS=${FOP_HOME}/lib/*.jar
