@@ -438,104 +438,24 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                                            int alignment) {
         LinkedList returnList = new LinkedList();
         KnuthSequence sequence = new KnuthSequence(true);
+        AreaInfo ai = null;
         returnList.add(sequence);
 
         while (iNextStart < textArray.length) {
             if (textArray[iNextStart] == SPACE
                 || textArray[iNextStart] == NBSPACE) {
-                // normal, breaking space
-                // or non-breaking space
-                if (textArray[iNextStart] == NBSPACE) {
-                    sequence.add
-                        (new KnuthPenalty(0, KnuthElement.INFINITE, false,
-                                          new LeafPosition(this, vecAreaInfo.size() - 1),
-                                          false));
-                }
-                switch (alignment) {
-                case EN_CENTER :
-                    vecAreaInfo.add
-                        (new AreaInfo(iNextStart, (short) (iNextStart + 1),
-                                      (short) 1, (short) 0,
-                                      wordSpaceIPD, false));
-                    sequence.add
-                        (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
-                                       new LeafPosition(this, -1), false));
-                    sequence.add
-                        (new KnuthPenalty(0, 0, false,
-                                          new LeafPosition(this, -1), true));
-                    sequence.add
-                        (new KnuthGlue(wordSpaceIPD.opt,
-                                       - 6 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
-                                       new LeafPosition(this, vecAreaInfo.size() - 1), true));
-                    sequence.add
-                        (new KnuthInlineBox(0, 0, 0, 0,
-                                      new LeafPosition(this, -1), true));
-                    sequence.add
-                        (new KnuthPenalty(0, KnuthElement.INFINITE, false,
-                                          new LeafPosition(this, -1), true));
-                    sequence.add
-                        (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
-                                       new LeafPosition(this, -1), true));
-                    iNextStart ++;
-                    break;
+                // normal space or non-breaking space:
+                // create the AreaInfo object
+                ai = new AreaInfo(iNextStart, (short) (iNextStart + 1),
+                        (short) 1, (short) 0,
+                        wordSpaceIPD, false); 
+                vecAreaInfo.add(ai);
 
-                case EN_START  : // fall through
-                case EN_END    :
-                    vecAreaInfo.add
-                        (new AreaInfo(iNextStart, (short) (iNextStart + 1),
-                                      (short) 1, (short) 0,
-                                      wordSpaceIPD, false));
-                    sequence.add
-                        (new KnuthGlue(0, 3 * wordSpaceIPD.opt, 0,
-                                       new LeafPosition(this, -1), false));
-                    sequence.add
-                        (new KnuthPenalty(0, 0, false,
-                                          new LeafPosition(this, -1), true));
-                    sequence.add
-                        (new KnuthGlue(wordSpaceIPD.opt,
-                                       - 3 * wordSpaceIPD.opt, 0,
-                                       new LeafPosition(this, vecAreaInfo.size() - 1), true));
-                    iNextStart ++;
-                    break;
+                // create the elements
+                sequence.addAll
+                (createElementsForASpace(alignment, ai, vecAreaInfo.size() - 1));
 
-                case EN_JUSTIFY:
-                    vecAreaInfo.add
-                        (new AreaInfo(iNextStart, (short) (iNextStart + 1),
-                                      (short) 1, (short) 0,
-                                      wordSpaceIPD, false));
-                    sequence.add
-                        (new KnuthGlue(wordSpaceIPD.opt,
-                                       wordSpaceIPD.max - wordSpaceIPD.opt,
-                                       wordSpaceIPD.opt - wordSpaceIPD.min,
-                                       new LeafPosition(this, vecAreaInfo.size() - 1), false));
-                    iNextStart ++;
-                    break;
-
-                default:
-                    vecAreaInfo.add
-                        (new AreaInfo(iNextStart, (short) (iNextStart + 1),
-                                      (short) 1, (short) 0,
-                                      wordSpaceIPD, false));
-                    sequence.add
-                        (new KnuthGlue(wordSpaceIPD.opt,
-                                       wordSpaceIPD.max - wordSpaceIPD.opt, 0,
-                                       new LeafPosition(this, vecAreaInfo.size() - 1), false));
-                    iNextStart ++;
-                }
-            } else if (textArray[iNextStart] == NBSPACE) {
-                // non breaking space
-                vecAreaInfo.add
-                    (new AreaInfo(iNextStart, (short) (iNextStart + 1),
-                                  (short) 1, (short) 0,
-                                  wordSpaceIPD, false));
-                sequence.add
-                    (new KnuthPenalty(0, KnuthElement.INFINITE, false,
-                                      new LeafPosition(this, vecAreaInfo.size() - 1), false));
-                sequence.add
-                    (new KnuthGlue(wordSpaceIPD.opt,
-                                   wordSpaceIPD.max - wordSpaceIPD.opt,
-                                   wordSpaceIPD.opt - wordSpaceIPD.min,
-                                   new LeafPosition(this, vecAreaInfo.size() - 1), false));
+                // advance to the next character
                 iNextStart ++;
             } else if (textArray[iNextStart] == NEWLINE) {
                 // linefeed; this can happen when linefeed-treatment="preserve"
@@ -545,6 +465,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                                       false, null, false));
                 sequence = new KnuthSequence(true);
                 returnList.add(sequence);
+
+                // advance to the next character
                 iNextStart ++;
             } else {
                 // the beginning of a word
@@ -554,63 +476,37 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 for (; iTempStart < textArray.length
                         && textArray[iTempStart] != SPACE
                         && textArray[iTempStart] != NBSPACE
-                     && textArray[iTempStart] != NEWLINE
-                     && !(iTempStart > iNextStart
-                          && alignment == EN_JUSTIFY
-                          && BREAK_CHARS.indexOf(textArray[iTempStart - 1]) >= 0);
+                        && textArray[iTempStart] != NEWLINE
+                        && !(iTempStart > iNextStart
+                             && alignment == EN_JUSTIFY
+                             && BREAK_CHARS.indexOf(textArray[iTempStart - 1]) >= 0);
                         iTempStart++) {
                     wordIPD.add(fs.getCharWidth(textArray[iTempStart]));
                 }
                 int iLetterSpaces = iTempStart - iThisStart - 1;
                 wordIPD.add(MinOptMax.multiply(letterSpaceIPD, iLetterSpaces));
-                vecAreaInfo.add
-                    (new AreaInfo(iThisStart, iTempStart, (short) 0,
-                                  (short) iLetterSpaces,
-                                  wordIPD, false));
-                if (letterSpaceIPD.min == letterSpaceIPD.max) {
-                    // constant letter space; simply return a box
-                    // whose width includes letter spaces
-                    sequence.add
-                        (new KnuthInlineBox(wordIPD.opt, lead, total, middle,
-                                      new LeafPosition(this, vecAreaInfo.size() - 1), false));
-                } else {
-                    // adjustable letter space;
-                    // some other KnuthElements are needed
-                    sequence.add
-                        (new KnuthInlineBox(wordIPD.opt - iLetterSpaces * letterSpaceIPD.opt,
-                                      lead, total, middle,
-                                      new LeafPosition(this, vecAreaInfo.size() - 1), false));
-                    sequence.add
-                        (new KnuthPenalty(0, KnuthElement.INFINITE, false,
-                                          new LeafPosition(this, -1), true));
-                    sequence.add
-                        (new KnuthGlue(iLetterSpaces * letterSpaceIPD.opt,
-                                       iLetterSpaces * (letterSpaceIPD.max - letterSpaceIPD.opt),
-                                       iLetterSpaces * (letterSpaceIPD.opt - letterSpaceIPD.min),
-                                       new LeafPosition(this, -1), true));
-                    sequence.add
-                        (new KnuthInlineBox(0, lead, total, middle,
-                                            new LeafPosition(this, -1), true));
-                }
-                // if the last character is '-' or '/', it could be used as a line end;
-                // add a flagged penalty element and glue element representing a suppressible 
-                // letter space if the next character is not a space
+
+                // create the AreaInfo object
+                ai = new AreaInfo(iThisStart, iTempStart, (short) 0,
+                        (short) iLetterSpaces,
+                        wordIPD, false);
+                // if the last character is '-' or '/' and other characters
+                // follows, it could be used as a line end; update the
+                // information in the AreaInfo, adding one more letter space
                 if (BREAK_CHARS.indexOf(textArray[iTempStart - 1]) >= 0
                     && iTempStart < textArray.length
                     && textArray[iTempStart] != SPACE
                     && textArray[iTempStart] != NBSPACE) {
-                    sequence.add
-                        (new KnuthPenalty(0, KnuthPenalty.FLAGGED_PENALTY, true,
-                                          new LeafPosition(this, -1), false));
-                    sequence.add
-                        (new KnuthGlue(letterSpaceIPD.opt,
-                                       letterSpaceIPD.max - letterSpaceIPD.opt,
-                                       letterSpaceIPD.opt - letterSpaceIPD.min,
-                                       new LeafPosition(this, -1), false));
-                    // update the information in the AreaInfo, adding one more letter space
-                    AreaInfo ai = (AreaInfo) vecAreaInfo.get(vecAreaInfo.size() - 1);
                     ai.iLScount ++;
                 }
+                vecAreaInfo.add(ai);
+
+                // create the elements
+                sequence.addAll
+                (createElementsForAWordFragment(alignment, ai,
+                        vecAreaInfo.size() - 1, letterSpaceIPD));
+
+                // advance to the next character
                 iNextStart = iTempStart;
             }
         } // end of while
@@ -757,7 +653,6 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     }
 
     public LinkedList getChangedKnuthElements(List oldList,
-                                              /*int flaggedPenalty,*/
                                               int alignment) {
         if (isFinished()) {
             return null;
@@ -769,118 +664,14 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             AreaInfo ai = (AreaInfo) vecAreaInfo.get(iReturnedIndex);
             if (ai.iWScount == 0) {
                 // ai refers either to a word or a word fragment
-
-                // if the last character is '-' or '/' and the next character is not a space
-                // one of the letter spaces must be represented using a penalty and a glue,
-                // and its width must be subtracted
-                if (BREAK_CHARS.indexOf(textArray[ai.iBreakIndex - 1]) >= 0
-                    && ai.iLScount == (ai.iBreakIndex - ai.iStartIndex)) {
-                    ai.ipdArea.add(new MinOptMax(-letterSpaceIPD.min, -letterSpaceIPD.opt, -letterSpaceIPD.max));
-                }
-                if (letterSpaceIPD.min == letterSpaceIPD.max) {
-                    returnList.add
-                        (new KnuthInlineBox(ai.ipdArea.opt, lead, total, middle,
-                                      new LeafPosition(this, iReturnedIndex), false));
-                } else {
-                    returnList.add
-                        (new KnuthInlineBox(ai.ipdArea.opt
-                                      - ai.iLScount * letterSpaceIPD.opt,
-                                      lead, total, middle, 
-                                      new LeafPosition(this, iReturnedIndex), false));
-                    returnList.add
-                        (new KnuthPenalty(0, KnuthElement.INFINITE, false,
-                                          new LeafPosition(this, -1), true));
-                    returnList.add
-                        (new KnuthGlue(ai.iLScount * letterSpaceIPD.opt,
-                                       ai.iLScount * (letterSpaceIPD.max - letterSpaceIPD.opt),
-                                       ai.iLScount * (letterSpaceIPD.opt - letterSpaceIPD.min),
-                                       new LeafPosition(this, -1), true));
-                    returnList.add
-                        (new KnuthInlineBox(0, 0, 0, 0,
-                                      new LeafPosition(this, -1), true));
-                }
-                if (ai.bHyphenated) {
-                    returnList.add
-                        (new KnuthPenalty(hyphIPD, KnuthPenalty.FLAGGED_PENALTY, true,
-                                          new LeafPosition(this, -1), false));
-                }
-                // if the last character is '-' or '/', it could be used as a line end;
-                // add a flagged penalty element and a glue element representing a suppressible 
-                // letter space if the next character is not a space
-                if (BREAK_CHARS.indexOf(textArray[ai.iBreakIndex - 1]) >= 0
-                    && ai.iLScount == (ai.iBreakIndex - ai.iStartIndex)) {
-                    returnList.add
-                        (new KnuthPenalty(0, KnuthPenalty.FLAGGED_PENALTY, true,
-                                          new LeafPosition(this, -1), false));
-                    returnList.add
-                        (new KnuthGlue(letterSpaceIPD.opt,
-                                       letterSpaceIPD.max - letterSpaceIPD.opt,
-                                       letterSpaceIPD.opt - letterSpaceIPD.min,
-                                       new LeafPosition(this, -1), false));
-                }
-                iReturnedIndex ++;
+                returnList.addAll
+                (createElementsForAWordFragment(alignment, ai, iReturnedIndex, letterSpaceIPD));
             } else {
                 // ai refers to a space
-                if (textArray[ai.iStartIndex] == NBSPACE) {
-                    returnList.add
-                        (new KnuthPenalty(0, KnuthElement.INFINITE, false,
-                                          new LeafPosition(this, -1),
-                                          false));
-                }
-                switch (alignment) {
-                case EN_CENTER :
-                    returnList.add
-                        (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
-                                       new LeafPosition(this, iReturnedIndex), false));
-                    returnList.add
-                        (new KnuthPenalty(0, 0, false,
-                                          new LeafPosition(this, -1), true));
-                    returnList.add
-                        (new KnuthGlue(wordSpaceIPD.opt,
-                                       - 6 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
-                                       new LeafPosition(this, -1), true));
-                    returnList.add
-                        (new KnuthInlineBox(0, 0, 0, 0,
-                                      new LeafPosition(this, -1), true));
-                    returnList.add
-                        (new KnuthPenalty(0, KnuthElement.INFINITE, false,
-                                          new LeafPosition(this, -1), true));
-                    returnList.add
-                        (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
-                                       new LeafPosition(this, -1), true));
-                    iReturnedIndex ++;
-                    break;
-                case EN_START  : // fall through
-                case EN_END    :
-                    returnList.add
-                        (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
-                                       new LeafPosition(this, iReturnedIndex), false));
-                    returnList.add
-                        (new KnuthPenalty(0, 0, false,
-                                          new LeafPosition(this, -1), true));
-                    returnList.add
-                        (new KnuthGlue(wordSpaceIPD.opt,
-                                       - 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
-                                       new LeafPosition(this, -1), true));
-                    iReturnedIndex ++;
-                    break;
-                case EN_JUSTIFY:
-                    returnList.add
-                        (new KnuthGlue(wordSpaceIPD.opt,
-                                       wordSpaceIPD.max - wordSpaceIPD.opt,
-                                       wordSpaceIPD.opt - wordSpaceIPD.min,
-                                       new LeafPosition(this, iReturnedIndex), false));
-                    iReturnedIndex ++;
-                    break;
-                    
-                default:
-                    returnList.add
-                        (new KnuthGlue(wordSpaceIPD.opt,
-                                       wordSpaceIPD.max - wordSpaceIPD.opt, 0,
-                                       new LeafPosition(this, iReturnedIndex), false));
-                    iReturnedIndex ++;
-                }
+                returnList.addAll
+                (createElementsForASpace(alignment, ai, iReturnedIndex));
             }
+            iReturnedIndex ++;
         } // end of while
         setFinished(true);
         return returnList;
@@ -893,6 +684,150 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             sbChars.append(new String(textArray, ai.iStartIndex,
                                       ai.iBreakIndex - ai.iStartIndex));
         }
+    }
+
+    private LinkedList createElementsForASpace(int alignment,
+            AreaInfo ai, int leafValue) {
+        //TODO: handling of special spaces
+        //      (U+2000 to U+200A fixed spaces, U+200B zero-width space)
+        LinkedList spaceElements = new LinkedList();
+        LeafPosition mainPosition = new LeafPosition(this, leafValue);
+        
+        // add a penalty to avoid the next glue element to be
+        // a feasible line break
+        if (textArray[ai.iStartIndex] == NBSPACE) {
+            spaceElements.add
+            (new KnuthPenalty(0, KnuthElement.INFINITE, false,
+                    new LeafPosition(this, -1),
+                    true));
+        }
+        
+        switch (alignment) {
+        case EN_CENTER :
+            // centered text:
+            // if the second element is chosen as a line break these elements 
+            // add a constant amount of stretch at the end of a line and at the
+            // beginning of the next one, otherwise they don't add any stretch
+            spaceElements.add
+            (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
+                    new LeafPosition(this, -1), true));
+            spaceElements.add
+            (new KnuthPenalty(0,
+                    (textArray[ai.iStartIndex] == NBSPACE ? KnuthElement.INFINITE : 0),
+                    false, new LeafPosition(this, -1), true));
+            spaceElements.add
+            (new KnuthGlue(ai.ipdArea.opt,
+                    - 6 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
+                    mainPosition, false));
+            spaceElements.add
+            (new KnuthInlineBox(0, 0, 0, 0,
+                    new LeafPosition(this, -1), true));
+            spaceElements.add
+            (new KnuthPenalty(0, KnuthElement.INFINITE, false,
+                    new LeafPosition(this, -1), true));
+            spaceElements.add
+            (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
+                    new LeafPosition(this, -1), true));
+            break;
+            
+        case EN_START  : // fall through
+        case EN_END    :
+            // left- or right-aligned text:
+            // if the second element is chosen as a line break these elements 
+            // add a constant amount of stretch at the end of a line, otherwise
+            // they don't add any stretch
+            spaceElements.add
+            (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
+                    new LeafPosition(this, -1), false));
+            spaceElements.add
+            (new KnuthPenalty(0, 0, false,
+                    new LeafPosition(this, -1), true));
+            spaceElements.add
+            (new KnuthGlue(ai.ipdArea.opt,
+                    - 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
+                    mainPosition, true));
+            break;
+            
+        case EN_JUSTIFY:
+            // justified text:
+            // the stretch and shrink depends on the space width
+            spaceElements.add
+            (new KnuthGlue(ai.ipdArea.opt,
+                    ai.ipdArea.max - ai.ipdArea.opt,
+                    ai.ipdArea.opt - ai.ipdArea.min,
+                    mainPosition, false));
+            break;
+            
+        default:
+            // last line justified, the other lines unjustified:
+            // use only the space stretch
+            spaceElements.add
+            (new KnuthGlue(ai.ipdArea.opt,
+                    ai.ipdArea.max - ai.ipdArea.opt, 0,
+                    mainPosition, false));
+        }
+        
+        return spaceElements;
+    }
+
+    private LinkedList createElementsForAWordFragment(int alignment,
+            AreaInfo ai, int leafValue, MinOptMax letterSpaceWidth) {
+        LinkedList wordElements = new LinkedList();
+        LeafPosition mainPosition = new LeafPosition(this, leafValue);
+        int unsuppressibleLetterSpaces = ai.iLScount;
+
+        // if the last character of the word fragment is '-' or '/' and
+        // the next one is not a space, the fragment could end a line;
+        // in this case, it loses one of its letter spaces;
+        if (BREAK_CHARS.indexOf(textArray[ai.iBreakIndex - 1]) >= 0
+                && ai.iLScount == (ai.iBreakIndex - ai.iStartIndex)) {
+            unsuppressibleLetterSpaces --;
+        }
+
+        if (letterSpaceWidth.min == letterSpaceWidth.max) {
+            // constant letter spacing
+            wordElements.add
+                (new KnuthInlineBox(ai.ipdArea.opt, lead, total, middle,
+                              mainPosition, false));
+        } else {
+            // adjustable letter spacing
+            wordElements.add
+                (new KnuthInlineBox(ai.ipdArea.opt
+                              - ai.iLScount * letterSpaceWidth.opt,
+                              lead, total, middle, 
+                              mainPosition, false));
+            wordElements.add
+                (new KnuthPenalty(0, KnuthElement.INFINITE, false,
+                                  new LeafPosition(this, -1), true));
+            wordElements.add
+                (new KnuthGlue(unsuppressibleLetterSpaces * letterSpaceWidth.opt,
+                               unsuppressibleLetterSpaces * (letterSpaceWidth.max - letterSpaceWidth.opt),
+                               unsuppressibleLetterSpaces * (letterSpaceWidth.opt - letterSpaceWidth.min),
+                               new LeafPosition(this, -1), true));
+            wordElements.add
+                (new KnuthInlineBox(0, 0, 0, 0,
+                              new LeafPosition(this, -1), true));
+        }
+        if (ai.bHyphenated) {
+            wordElements.add
+                (new KnuthPenalty(hyphIPD, KnuthPenalty.FLAGGED_PENALTY, true,
+                                  new LeafPosition(this, -1), false));
+        }
+        // add a flagged penalty element and a glue element representing a suppressible 
+        // letter space if the next character is not a space
+        if (ai.iLScount - unsuppressibleLetterSpaces == 1) {
+            wordElements.add
+                (new KnuthPenalty(0, KnuthPenalty.FLAGGED_PENALTY, true,
+                                  new LeafPosition(this, -1), false));
+            wordElements.add
+                (new KnuthGlue(letterSpaceWidth.opt,
+                               letterSpaceWidth.max - letterSpaceWidth.opt,
+                               letterSpaceWidth.opt - letterSpaceWidth.min,
+                               new LeafPosition(this, -1), false));
+        }
+
+
+        return wordElements;
     }
 }
 
