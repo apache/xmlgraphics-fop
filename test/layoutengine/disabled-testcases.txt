@@ -35,3 +35,4 @@ table-column_first-row-width.xml
 table-header_background-image.xml
 table-row_keep-with-previous.xml
 table_table-layout_fixed_2.xml
+table_border-width_conditionality.xml
