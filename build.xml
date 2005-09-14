@@ -51,7 +51,7 @@ Call the Ant (see above) with the parameter "-projecthelp" to get a
 list of possible build targets.
 
 ============================================================================ -->
-<project default="all" basedir=".">
+<project default="all" basedir="." name="fop">
 
   <!-- See build.properties and build-local.properties for overriding build settings. -->
   <!-- build-local.properties is not stored in SVN and overrides values from build.properties -->
@@ -151,7 +151,7 @@ list of possible build targets.
   <property name="Name" value="Fop"/>
   <property name="name" value="fop"/>
   <property name="NAME" value="FOP"/>
-  <property name="version" value="1.0dev"/>
+  <property name="version" value="0.90svn"/>
   <property name="year" value="1999-2005"/>
 
   <property name="javac.debug" value="on"/>
