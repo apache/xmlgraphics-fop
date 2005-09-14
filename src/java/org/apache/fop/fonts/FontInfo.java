@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The Apache Software Foundation.
+ * Copyright 2004-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,16 @@
 package org.apache.fop.fonts;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.fop.layoutmgr.AbstractBreaker;
 
 
 /**
@@ -36,6 +42,9 @@ import java.util.Map;
  */
 public class FontInfo {
     
+    /** logging instance */
+    protected static Log log = LogFactory.getLog(FontInfo.class);
+
     /** Map containing fonts that have been used */
     private Map usedFonts;
     
@@ -44,6 +53,8 @@ public class FontInfo {
     
     /** look up a font-name to get a font (that implements FontMetrics at least) */
     private Map fonts;
+    
+    private Collection loggedFontKeys;
 
     /**
      * Main constructor
@@ -116,13 +127,9 @@ public class FontInfo {
 
             // then try any family with orig weight
             if (f == null) {
+                notifyFontReplacement(key);
                 key = createFontKey("any", style, weight);
                 f = (String)triplets.get(key);
-            }
-
-            // then try any family with adjusted weight
-            if (f == null) {
-                f = findAdjustWeight(family, style, weight);
             }
 
             // then use default
@@ -136,6 +143,16 @@ public class FontInfo {
         return f;
     }
 
+    private void notifyFontReplacement(String key) {
+        if (loggedFontKeys == null) {
+            loggedFontKeys = new java.util.HashSet();
+        }
+        if (!loggedFontKeys.contains(key)) {
+            loggedFontKeys.add(key);
+            log.warn("Font '" + key + "' not found. Substituting with default font.");
+        }
+    }
+    
     /**
      * Find a font with a given family and style by trying
      * different font weights according to the spec.
