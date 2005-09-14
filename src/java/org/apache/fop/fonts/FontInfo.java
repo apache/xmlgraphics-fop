@@ -21,14 +21,12 @@ package org.apache.fop.fonts;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.layoutmgr.AbstractBreaker;
 
 
 /**
@@ -257,7 +255,7 @@ public class FontInfo {
      */
     private String getTripletFor(String fontName) {
         List foundTriplets = new ArrayList();
-        for (Iterator iter = triplets.entrySet().iterator(); iter.hasNext(); ) {
+        for (Iterator iter = triplets.entrySet().iterator(); iter.hasNext();) {
             Map.Entry tripletEntry = (Map.Entry) iter.next();
             if (fontName.equals(((String)tripletEntry.getValue()))) {
                 foundTriplets.add(tripletEntry.getKey());
