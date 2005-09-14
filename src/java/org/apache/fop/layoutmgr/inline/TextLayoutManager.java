@@ -699,7 +699,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             spaceElements.add
             (new KnuthPenalty(0, KnuthElement.INFINITE, false,
                     new LeafPosition(this, -1),
-                    true));
+                    false));
         }
         
         switch (alignment) {
@@ -710,24 +710,24 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             // beginning of the next one, otherwise they don't add any stretch
             spaceElements.add
             (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
-                    new LeafPosition(this, -1), true));
+                    new LeafPosition(this, -1), false));
             spaceElements.add
             (new KnuthPenalty(0,
                     (textArray[ai.iStartIndex] == NBSPACE ? KnuthElement.INFINITE : 0),
-                    false, new LeafPosition(this, -1), true));
+                    false, new LeafPosition(this, -1), false));
             spaceElements.add
             (new KnuthGlue(ai.ipdArea.opt,
                     - 6 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                     mainPosition, false));
             spaceElements.add
             (new KnuthInlineBox(0, 0, 0, 0,
-                    new LeafPosition(this, -1), true));
+                    new LeafPosition(this, -1), false));
             spaceElements.add
             (new KnuthPenalty(0, KnuthElement.INFINITE, false,
-                    new LeafPosition(this, -1), true));
+                    new LeafPosition(this, -1), false));
             spaceElements.add
             (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
-                    new LeafPosition(this, -1), true));
+                    new LeafPosition(this, -1), false));
             break;
             
         case EN_START  : // fall through
@@ -741,11 +741,11 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                     new LeafPosition(this, -1), false));
             spaceElements.add
             (new KnuthPenalty(0, 0, false,
-                    new LeafPosition(this, -1), true));
+                    new LeafPosition(this, -1), false));
             spaceElements.add
             (new KnuthGlue(ai.ipdArea.opt,
                     - 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
-                    mainPosition, true));
+                    mainPosition, false));
             break;
             
         case EN_JUSTIFY:
@@ -809,13 +809,12 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                               new LeafPosition(this, -1), true));
         }
         if (ai.bHyphenated) {
-            wordElements.add
-                (new KnuthPenalty(hyphIPD, KnuthPenalty.FLAGGED_PENALTY, true,
-                                  new LeafPosition(this, -1), false));
+            wordElements.addAll(createElementsForAHyphen(alignment));
         }
         // add a flagged penalty element and a glue element representing a suppressible 
         // letter space if the next character is not a space
         if (ai.iLScount - unsuppressibleLetterSpaces == 1) {
+            //TODO: this is correct only if text is justified
             wordElements.add
                 (new KnuthPenalty(0, KnuthPenalty.FLAGGED_PENALTY, true,
                                   new LeafPosition(this, -1), false));
@@ -828,6 +827,68 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
 
         return wordElements;
+    }
+
+    private LinkedList createElementsForAHyphen(int alignment) {
+        LinkedList hyphenElements = new LinkedList();
+        
+        switch (alignment) {
+        case EN_CENTER :
+            // centered text:
+            // if the second element is chosen as a line break these elements 
+            // add a constant amount of stretch at the end of a line and at the
+            // beginning of the next one, otherwise they don't add any stretch
+            hyphenElements.add
+            (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
+                    new LeafPosition(this, -1), false));
+            hyphenElements.add
+            (new KnuthPenalty(hyphIPD,
+                    KnuthPenalty.FLAGGED_PENALTY, true,
+                    new LeafPosition(this, -1), false));
+            hyphenElements.add
+            (new KnuthGlue(0,
+                    - 6 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
+                    new LeafPosition(this, -1), false));
+            hyphenElements.add
+            (new KnuthInlineBox(0, 0, 0, 0,
+                    new LeafPosition(this, -1), false));
+            hyphenElements.add
+            (new KnuthPenalty(0, KnuthElement.INFINITE, true,
+                    new LeafPosition(this, -1), false));
+            hyphenElements.add
+            (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
+                    new LeafPosition(this, -1), false));
+            break;
+            
+        case EN_START  : // fall through
+        case EN_END    :
+            // left- or right-aligned text:
+            // if the second element is chosen as a line break these elements 
+            // add a constant amount of stretch at the end of a line, otherwise
+            // they don't add any stretch
+            hyphenElements.add
+            (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
+                    new LeafPosition(this, -1), false));
+            hyphenElements.add
+            (new KnuthPenalty(hyphIPD,
+                    KnuthPenalty.FLAGGED_PENALTY, true,
+                    new LeafPosition(this, -1), false));
+             hyphenElements.add
+            (new KnuthGlue(0,
+                    - 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
+                    new LeafPosition(this, -1), false));
+            break;
+            
+        default:
+            // justified text, or last line justified:
+            // just a flagged penalty
+            hyphenElements.add
+            (new KnuthPenalty(hyphIPD,
+                    KnuthPenalty.FLAGGED_PENALTY, true,
+                    new LeafPosition(this, -1), false));
+        }
+        
+        return hyphenElements;
     }
 }
 
