@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+         xmlns:test="http://xmlgraphics.apache.org/fop/test">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="normal" page-width="5in" page-height="2in" 
+          margin="20pt">
+      <fo:region-body background-color="yellow"/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence id="page-sequence1" master-reference="normal" white-space-collapse="true">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block>The following table has explicit columns.</fo:block>
+      <fo:table table-layout="fixed" border-collapse="separate">
+        <fo:table-column column-width="proportional-column-width(1)">
+          <test:assert property="column-number" expected="1" />
+        </fo:table-column>
+        <fo:table-column column-width="proportional-column-width(2)">
+          <test:assert property="column-number" expected="2" />
+        </fo:table-column>
+        <fo:table-column column-width="proportional-column-width(1)">
+          <test:assert property="column-number" expected="3" />
+        </fo:table-column>
+        <fo:table-header>
+          <fo:table-row>
+            <fo:table-cell number-columns-spanned="3">
+              <test:assert property="column-number" expected="1" />
+              <fo:block>header cell</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-header>
+        <fo:table-footer>
+          <fo:table-row>
+            <fo:table-cell>
+              <test:assert property="column-number" expected="1" />
+              <fo:block>footer cell 1</fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <test:assert property="column-number" expected="2" />
+              <fo:block>footer cell 2</fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <test:assert property="column-number" expected="3" />
+              <fo:block>footer cell 3</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-footer>
+        <fo:table-body>
+          <fo:table-row>
+            <fo:table-cell number-columns-spanned="2">
+              <test:assert property="column-number" expected="1" />
+              <fo:block>body-content</fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <test:assert property="column-number" expected="3" />
+              <fo:block>cell-content</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell number-rows-spanned="2">
+              <test:assert property="column-number" expected="1" />
+              <fo:block>cell-content</fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <test:assert property="column-number" expected="2" />
+              <fo:block>cell-content</fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <test:assert property="column-number" expected="3" />
+              <fo:block>cell-content</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell number-rows-spanned="2">
+              <test:assert property="column-number" expected="2" />
+              <fo:block>cell-content</fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <test:assert property="column-number" expected="3" />
+              <fo:block>cell-content</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell>
+              <test:assert property="column-number" expected="1" />
+              <fo:block>cell-content</fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <test:assert property="column-number" expected="3" />
+              <fo:block>cell-content</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-body>
+      </fo:table>
+      <fo:block>The following table has implicit columns.</fo:block>
+      <fo:table table-layout="fixed" border-collapse="separate">
+        <fo:table-header>
+          <fo:table-row>
+            <fo:table-cell number-columns-spanned="3">
+              <test:assert property="column-number" expected="1" />
+              <fo:block>header cell</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-header>
+        <fo:table-footer>
+          <fo:table-row>
+            <fo:table-cell>
+              <test:assert property="column-number" expected="1" />
+              <fo:block>footer cell 1</fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <test:assert property="column-number" expected="2" />
+              <fo:block>footer cell 2</fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <test:assert property="column-number" expected="3" />
+              <fo:block>footer cell 3</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-footer>
+        <fo:table-body>
+          <fo:table-row>
+            <fo:table-cell number-columns-spanned="2">
+              <test:assert property="column-number" expected="1" />
+              <fo:block>body-content</fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <test:assert property="column-number" expected="3" />
+              <fo:block>cell-content</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell number-rows-spanned="2">
+              <test:assert property="column-number" expected="1" />
+              <fo:block>cell-content</fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <test:assert property="column-number" expected="2" />
+              <fo:block>cell-content</fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <test:assert property="column-number" expected="3" />
+              <fo:block>cell-content</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell number-rows-spanned="2">
+              <test:assert property="column-number" expected="2" />
+              <fo:block>cell-content</fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <test:assert property="column-number" expected="3" />
+              <fo:block>cell-content</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell>
+              <test:assert property="column-number" expected="1" />
+              <fo:block>cell-content</fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <test:assert property="column-number" expected="3" />
+              <fo:block>cell-content</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-body>
+      </fo:table>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
