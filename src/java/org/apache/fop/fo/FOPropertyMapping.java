@@ -997,7 +997,7 @@ public class FOPropertyMapping implements Constants {
         // padding-before
         m  = new CondLengthProperty.Maker(PR_PADDING_BEFORE);
         m.useGeneric(genericCondPadding);
-        m.getSubpropMaker(CP_CONDITIONALITY).setDefault("retain");
+        m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_PADDING_TOP, PR_PADDING_TOP,
                 PR_PADDING_RIGHT);
@@ -1007,7 +1007,7 @@ public class FOPropertyMapping implements Constants {
         // padding-after
         m  = new CondLengthProperty.Maker(PR_PADDING_AFTER);
         m.useGeneric(genericCondPadding);
-        m.getSubpropMaker(CP_CONDITIONALITY).setDefault("retain");
+        m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_PADDING_BOTTOM, PR_PADDING_BOTTOM,
                 PR_PADDING_LEFT);
