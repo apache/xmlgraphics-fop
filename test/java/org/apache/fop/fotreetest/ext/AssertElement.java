@@ -62,7 +62,9 @@ public class AssertElement extends TestObj {
             String expected = attlist.getValue("expected");
             if (!expected.equals(s)) {
                 collector.notifyException(new IllegalStateException("Property '" + propName 
-                        + "' expected to evaluate to '" + expected + "' but got: " + s));
+                        + "' expected to evaluate to '" + expected + "' but got: " + s
+                        + "\nLine #" + locator.getLineNumber() 
+                        + " Column #" + locator.getColumnNumber()));
             }
         }
         
