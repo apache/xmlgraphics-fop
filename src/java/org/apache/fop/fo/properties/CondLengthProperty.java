@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,8 +57,7 @@ public class CondLengthProperty extends Property implements CompoundDatatype {
          * @see CompoundPropertyMaker#convertProperty
          */        
         public Property convertProperty(Property p, PropertyList propertyList, FObj fo)
-            throws PropertyException
-        {
+                    throws PropertyException {
             if (p instanceof KeepProperty) {
                 return p;
             }
@@ -125,17 +124,18 @@ public class CondLengthProperty extends Property implements CompoundDatatype {
 
     /**
      * Returns the computed length value.
+     * @param context The context for the length calculation (for percentage based lengths)
      * @return the length in millipoints
      */
     public int getLengthValue(PercentBaseContext context) {
         return this.length.getLength().getValue(context);
     }
 
+    /** @see java.lang.Object#toString() */
     public String toString() {
-        return "CondLength[" + (isDiscard() ? "discard, " : "") +
-        length.getObject().toString() + "]";
+        return "CondLength[" + length.getObject().toString() 
+                + ", conditionality:" + conditionality + "]";
     }    
-
 
     /**
      * @return this.condLength
