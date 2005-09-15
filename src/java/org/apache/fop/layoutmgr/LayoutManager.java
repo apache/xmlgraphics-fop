@@ -150,14 +150,38 @@ public interface LayoutManager extends PercentBaseContext {
      * Get a sequence of KnuthElements representing the content 
      * of the node assigned to the LM, after changes have been applied
      *
-     * @todo Add a detailed explanation what exactly "changes" mean here and what the 
-     *       method's purpose is.
+     * In the context of line breaking, this method is called after hyphenation has
+     * been performed, in order to receive the sequence of elements representing the 
+     * text together with all possibile hyphenation points.
+     * For example, if the text "representation" originates a single box element
+     * when getNextKnuthElements() is called, it will be now split in syllables
+     * (rep-re-sen-ta-tion) each one originating a box and divided by additional
+     * elements allowing a line break.
+     * 
+     * In the context of page breaking, this method is called only if the pages need
+     * to be "vertically justified" modifying (also) the quantity of lines created by
+     * the paragraphs, and after a first page breaking has been performed.
+     * According to the result of the first page breaking, each paragraph now knows
+     * how many lines it must create (among the existing layout possibilities) and 
+     * has to create a sequence of elements representing this layout; in particular,
+     * each box, representing a line, will contain a LineBreakPositions that will be
+     * used in the addAreas() phase.
+     * 
+     * LMs having children look at the old list of elements in order to know which
+     * ones they must get the new elements from, as break conditions of preserved
+     * linefeeds can divide children into smaller groups (page sequences or 
+     * paragraphs).
+     * LMs having no children can simply return the old elements if they have nothing
+     * to change.
+     *
+     * Inline LMs need to know the text alignment because it affects the elements
+     * representing feasible breaks between syllables.
+     * 
      * @param oldList        the elements to replace
      * @param alignment      the desired text alignment
      * @return               the updated list of KnuthElements
      */
-    LinkedList getChangedKnuthElements(List oldList, /*int flaggedPenalty,*/
-                                       int alignment);
+    LinkedList getChangedKnuthElements(List oldList, int alignment);
     
     /**
      * Returns the IPD of the content area
