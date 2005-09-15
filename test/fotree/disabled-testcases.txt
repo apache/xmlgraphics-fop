@@ -1,2 +1,3 @@
 demo-test-failure.fo
+column-number_body.fo
 column-number_rows.fo
