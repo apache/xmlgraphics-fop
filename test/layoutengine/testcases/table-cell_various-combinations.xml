@@ -33,22 +33,22 @@
           <fo:table table-layout="fixed" border-collapse="separate">
             <fo:table-column column-width="100%"/>
             <fo:table-body>
-              <fo:table-cell starts-row="true">
+              <fo:table-cell starts-row="true" ends-row="true">
                 <fo:block>plain block</fo:block>
               </fo:table-cell>
-              <fo:table-cell starts-row="true" border="solid 5pt" background-color="yellow">
+              <fo:table-cell starts-row="true" border="solid 5pt" background-color="yellow" ends-row="true">
                 <fo:block>cell with border</fo:block>
               </fo:table-cell>
-              <fo:table-cell starts-row="true" padding="5pt">
+              <fo:table-cell starts-row="true" padding="5pt" ends-row="true">
                 <fo:block background-color="orange">cell with padding</fo:block>
               </fo:table-cell>
-              <fo:table-cell starts-row="true" border="solid 5pt" padding="5pt" background-color="yellow">
+              <fo:table-cell starts-row="true" border="solid 5pt" padding="5pt" background-color="yellow" ends-row="true">
                 <fo:block background-color="orange">cell with border and padding</fo:block>
               </fo:table-cell>
-              <fo:table-cell starts-row="true" border="solid 5pt" height="30pt" display-align="center">
+              <fo:table-cell starts-row="true" border="solid 5pt" height="30pt" display-align="center" ends-row="true">
                 <fo:block>cell with border and height</fo:block>
               </fo:table-cell>
-              <fo:table-cell starts-row="true" padding="5pt" height="30pt" display-align="center" background-color="yellow">
+              <fo:table-cell starts-row="true" padding="5pt" height="30pt" display-align="center" background-color="yellow" ends-row="true">
                 <fo:block background-color="orange">cell with padding and height</fo:block>
               </fo:table-cell>
             </fo:table-body>
