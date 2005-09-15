@@ -75,7 +75,7 @@ public class CommonBorderPaddingBackground implements Cloneable {
     public static final int START = 2;
     /** the "end" edge */ 
     public static final int END = 3;
-
+    
     public static class BorderInfo implements Cloneable {
         private int mStyle; // Enum for border style
         private ColorType mColor; // Border color
@@ -139,6 +139,7 @@ public class CommonBorderPaddingBackground implements Cloneable {
      * @throws PropertyException if there's an error while binding the properties
      */
     public CommonBorderPaddingBackground(PropertyList pList, FObj fobj) throws PropertyException {
+        
         backgroundAttachment = pList.get(Constants.PR_BACKGROUND_ATTACHMENT).getEnum();
         backgroundColor = pList.get(Constants.PR_BACKGROUND_COLOR).getColorType();
         if (backgroundColor.getAlpha() == 0) {
@@ -201,9 +202,9 @@ public class CommonBorderPaddingBackground implements Cloneable {
         // If style = none, force width to 0, don't get Color (spec 7.7.20)
         int style = pList.get(styleProp).getEnum();
         if (style != Constants.EN_NONE) {
-            setBorderInfo(new BorderInfo(style, 
-                    pList.get(widthProp).getCondLength(), 
-                    pList.get(colorProp).getColorType()), side);
+            setBorderInfo(new BorderInfo(style,
+                pList.get(widthProp).getCondLength(),
+                pList.get(colorProp).getColorType()), side);
         }
     }
     
@@ -364,4 +365,5 @@ public class CommonBorderPaddingBackground implements Cloneable {
         return ((getPaddingBefore(false, context) + getPaddingAfter(false, context) 
                 + getPaddingStart(false, context) + getPaddingEnd(false, context)) > 0);
     }
+    
 }

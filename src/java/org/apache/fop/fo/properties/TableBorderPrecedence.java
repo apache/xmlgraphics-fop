@@ -37,8 +37,8 @@ public class TableBorderPrecedence extends NumberProperty.Maker{
     }
     
     /**
-     * Recalculate the line-height value based on the nearest specified
-     * value.
+     * Set default precedence according to the parent FObj
+     * 
      * @see PropertyMaker#compute(PropertyList)
      */
     public Property make(PropertyList propertyList) throws PropertyException {

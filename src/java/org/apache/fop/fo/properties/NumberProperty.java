@@ -86,7 +86,7 @@ public class NumberProperty extends Property implements Numeric {
     public NumberProperty(int num) {
         this.number = new Integer(num);
     }
-
+    
     /**
      * Plain number always has a dimension of 0.
      * @return a dimension of 0.
