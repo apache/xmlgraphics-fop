@@ -59,7 +59,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
 
     private Block curBlockArea;
 
-    private int referenceIPD;
+    private int contentIPD;
     private int referenceBPD;
     private boolean autoLayout = true;
 
@@ -125,15 +125,20 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         referenceIPD = context.getRefIPD();
 
         if (fobj.getInlineProgressionDimension().getOptimum(this).getEnum() != EN_AUTO) {
-            referenceIPD = fobj.getInlineProgressionDimension().getOptimum(this).getLength().getValue(this);
-        } else if( !fobj.isAutoLayout() ) {
-            log.info("table-layout=\"fixed\" and width=\"auto\", but auto-layout not supported " + 
-                     "=> assuming width=\"100%\"");
+            referenceIPD = fobj.getInlineProgressionDimension().getOptimum(this)
+                    .getLength().getValue(this);
+            contentIPD = referenceIPD;
+        } else {
+            if (!fobj.isAutoLayout()) {
+                log.info("table-layout=\"fixed\" and width=\"auto\", "
+                        + "but auto-layout not supported " 
+                        + "=> assuming width=\"100%\"");
+            }
+            contentIPD = referenceIPD - getIPIndents();
         }
         if (referenceIPD > context.getRefIPD()) {
             log.warn("Allocated IPD exceeds available reference IPD");
         }
-        int contentIPD = referenceIPD - getIPIndents();
 
         MinOptMax stackSize = new MinOptMax();
         //Add spacing
@@ -291,7 +296,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         LayoutContext lc = new LayoutContext(0);
 
 
-        lc.setRefIPD(referenceIPD - getIPIndents());
+        lc.setRefIPD(contentIPD);
         contentLM.setStartXOffset(startXOffset);
         contentLM.addAreas(parentIter, lc);
         tableHeight += contentLM.getUsedBPD();
@@ -342,7 +347,6 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             
             TraitSetter.setProducerID(curBlockArea, getTable().getId());
 
-            int contentIPD = referenceIPD - getIPIndents();
             curBlockArea.setIPD(contentIPD);
             
             setCurrentArea(curBlockArea);
