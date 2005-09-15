@@ -48,7 +48,7 @@ public interface LayoutManager extends PercentBaseContext {
      * initialize the layout manager. Allows each layout manager 
      * to calculate often used values.
      */
-    public void initialize();
+    void initialize();
     
     /**
      * Get the active PageSequenceLayoutManager instance for this
@@ -150,6 +150,8 @@ public interface LayoutManager extends PercentBaseContext {
      * Get a sequence of KnuthElements representing the content 
      * of the node assigned to the LM, after changes have been applied
      *
+     * @todo Add a detailed explanation what exactly "changes" mean here and what the 
+     *       method's purpose is.
      * @param oldList        the elements to replace
      * @param alignment      the desired text alignment
      * @return               the updated list of KnuthElements
