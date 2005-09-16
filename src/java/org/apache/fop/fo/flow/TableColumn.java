@@ -48,12 +48,24 @@ public class TableColumn extends FObj {
     private int visibility;
     // End of property values
     
+    private boolean defaultColumn;
+    
     /**
      * @param parent FONode that is the parent of this object
      */
     public TableColumn(FONode parent) {
-        super(parent);
+        this(parent, false);
     }
+    
+    /**
+     * @param parent FONode that is the parent of this object
+     * @param defaultColumn true if this table-column has been manually created as a default column
+     */
+    public TableColumn(FONode parent, boolean defaultColumn) {
+        super(parent);
+        this.defaultColumn = defaultColumn;
+    }
+    
 
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
@@ -155,6 +167,16 @@ public class TableColumn extends FObj {
     /** @see org.apache.fop.fo.FObj#getNameId() */
     public int getNameId() {
         return FO_TABLE_COLUMN;
+    }
+    
+    /**
+     * Indicates whether this table-column has been created as default column for this table in
+     * case no table-columns have been defined. Note that this only used to provide better
+     * user feedback (see ColumnSetup).
+     * @return true if this table-column has been created as default column
+     */
+    public boolean isDefaultColumn() {
+        return defaultColumn;
     }
     
     /** @see java.lang.Object#toString() */

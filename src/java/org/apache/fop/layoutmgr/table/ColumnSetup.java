@@ -41,6 +41,10 @@ public class ColumnSetup {
     private List columns = new java.util.ArrayList();
     private int maxColIndexReferenced = 0;
     
+    /**
+     * Main Constructor.
+     * @param table the table to construct this column setup for
+     */
     public ColumnSetup(Table table) {
         this.table = table;
         prepareExplicitColumns();
@@ -89,7 +93,20 @@ public class ColumnSetup {
     public TableColumn getColumn(int index) {
         int size = columns.size();
         if (index > size) {
-            maxColIndexReferenced = Math.max(maxColIndexReferenced, index);
+            if (index > maxColIndexReferenced) {
+                maxColIndexReferenced = index;
+                if (!(size == 1 && getColumn(1).isDefaultColumn())) {
+                    log.warn("There are fewer table-columns than are needed. Column " 
+                            + index + " was accessed although only " 
+                            + size + " columns have been defined. "
+                            + "The last defined column will be reused.");
+                    if (!table.isAutoLayout()) {
+                        log.warn("Please note that according XSL-FO 1.0 (4.26.9) says that "
+                                + "the 'column-width' property must be specified for every "
+                                + "column, unless the automatic table layout is used.");
+                    }
+                }
+            }
             return (TableColumn)columns.get(size - 1);
         } else {
             return (TableColumn)columns.get(index - 1);
