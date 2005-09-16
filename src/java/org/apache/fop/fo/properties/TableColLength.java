@@ -18,8 +18,8 @@
 
 package org.apache.fop.fo.properties;
 
+import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.PercentBaseContext;
-import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.FObj;
 
 /**
@@ -40,13 +40,14 @@ public class TableColLength extends LengthProperty {
     private double tcolUnits;
 
     /**
-     * The column the this column-units are defined on. 
+     * The column the column-units are defined on. 
      */
     private FObj column;
 
     /**
      * Construct an object with tcolUnits of proportional measure.
      * @param tcolUnits number of table-column proportional units
+     * @param column the column the column-units are defined on
      */
     public TableColLength(double tcolUnits, FObj column) {
         this.tcolUnits = tcolUnits;
@@ -74,14 +75,15 @@ public class TableColLength extends LengthProperty {
      * @see org.apache.fop.datatypes.Numeric#getNumericValue()
      */
     public double getNumericValue() {
-        return tcolUnits * column.getLayoutDimension(PercentBase.TABLE_UNITS).floatValue();
+        throw new UnsupportedOperationException(
+                "Must call getNumericValue with PercentageBaseContext");
     }
 
     /**
      * @see org.apache.fop.datatypes.Numeric#getNumericValue(PercentBaseContext)
      */
     public double getNumericValue(PercentBaseContext context) {
-        return getNumericValue();
+        return tcolUnits * context.getBaseLength(LengthBase.TABLE_UNITS, column);
     }
 
     /**
@@ -89,14 +91,15 @@ public class TableColLength extends LengthProperty {
      * @see org.apache.fop.datatypes.Length#getValue()
      */
     public int getValue() {
-        return (int) (tcolUnits * column.getLayoutDimension(PercentBase.TABLE_UNITS).floatValue());
+        throw new UnsupportedOperationException(
+                "Must call getValue with PercentageBaseContext");
     }
 
     /**
      * @see org.apache.fop.datatypes.Numeric#getValue(PercentBaseContext)
      */
     public int getValue(PercentBaseContext context) {
-        return getValue();
+        return (int) (tcolUnits * context.getBaseLength(LengthBase.TABLE_UNITS, column));
     }
 
     /**

@@ -51,13 +51,16 @@ public class LengthBase implements PercentBase {
     public static final int IMAGE_BACKGROUND_POSITION_HORIZONTAL = 9;
     /** constant for a image background position vertical percent-based length */
     public static final int IMAGE_BACKGROUND_POSITION_VERTICAL = 10;
+    /** constant for a table-unit-based length */
+    public static final int TABLE_UNITS = 11;
 
     /** array of valid percent-based length types */
     public static final int[] PERCENT_BASED_LENGTH_TYPES
             = {CUSTOM_BASE, FONTSIZE, INH_FONTSIZE, PARENT_AREA_WIDTH,
                CONTAINING_REFAREA_WIDTH, 
                IMAGE_INTRINSIC_WIDTH, IMAGE_INTRINSIC_HEIGHT,
-               IMAGE_BACKGROUND_POSITION_HORIZONTAL, IMAGE_BACKGROUND_POSITION_VERTICAL
+               IMAGE_BACKGROUND_POSITION_HORIZONTAL, IMAGE_BACKGROUND_POSITION_VERTICAL,
+               TABLE_UNITS
             };
 
     /**
@@ -77,7 +80,7 @@ public class LengthBase implements PercentBase {
      * @param parentFO parent FO for this
      * @param plist property list for this
      * @param iBaseType a member of {@link #PERCENT_BASED_LENGTH_TYPES}
-     * @throws PropertyException
+     * @throws PropertyException In case an problem occurs while evaluating values
      */
     public LengthBase(FObj parentFO, PropertyList plist, int iBaseType) throws PropertyException {
         this.fobj = plist.getFObj();
