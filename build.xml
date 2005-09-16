@@ -119,7 +119,6 @@ list of possible build targets.
     </fileset>
     <fileset dir="${optional.lib.dir}">
       <include name="*.jar"/>
-      <exclude name="ant.jar"/>
     </fileset>
     <fileset dir="${basedir}/build">
       <include name="fop.jar"/>
@@ -473,7 +472,60 @@ list of possible build targets.
     </war>
   </target>
 
-  <target name="transcoder-pkg" depends="compile-java" description="Generates the jar for the transcoder package for Batik">
+  <patternset id="transcoder-classes">
+    <!-- General classes -->
+    <patternset>
+      <include name="org/apache/fop/apps/Fop.class"/>
+      <include name="org/apache/fop/apps/FOPException.class"/>
+      <include name="org/apache/fop/fo/Constants.class"/>
+      <include name="org/apache/fop/fo/FOTreeBuilder.class"/>
+      <include name="org/apache/fop/area/AreaTreeControl*"/>
+      <include name="org/apache/fop/svg/**"/>
+      <include name="org/apache/fop/fonts/**"/>
+      <include name="org/apache/fop/image/FopImag*.class"/>
+      <include name="org/apache/fop/image/Jpeg*"/>
+      <include name="org/apache/fop/image/EPS*"/>
+      <include name="org/apache/fop/image/Abstract*"/>
+      <include name="org/apache/fop/image/analyser/*.class"/>
+      <include name="org/apache/fop/util/CMYKColorSpace*.class"/>
+      <include name="org/apache/fop/util/ASCII*.class"/>
+      <include name="org/apache/fop/util/*OutputStream.class"/>
+      <include name="org/apache/fop/util/SubInputStream.class"/>
+      <include name="org/apache/fop/util/Finalizable.class"/>
+    </patternset>
+    <!-- PDF transcoder -->
+    <patternset>
+      <include name="org/apache/fop/render/pdf/**"/>
+      <exclude name="org/apache/fop/render/pdf/PDFRenderer.class"/>
+      <exclude name="org/apache/fop/render/pdf/PDFXMLHandler*"/>
+      <include name="org/apache/fop/pdf/**"/>
+    </patternset>
+    <!-- PS transcoder -->
+    <patternset>
+      <include name="org/apache/fop/render/ps/**"/>
+      <exclude name="org/apache/fop/render/pdf/PSRenderer.class"/>
+      <exclude name="org/apache/fop/render/pdf/PSXMLHandler*"/>
+    </patternset>
+  </patternset>
+
+  <fileset dir="${build.classes.dir}" id="transcoder-classes-files">
+    <patternset refid="transcoder-classes"/>
+  </fileset>
+  
+  <fileset dir="${lib.dir}" id="transcoder-lib-files">
+    <include name="commons-io*.jar"/>
+    <include name="avalon-framework*.jar"/>
+    <include name="commons-logging*.jar"/>
+  </fileset>
+  
+  <target name="uptodate-transcoder-pkg" depends="compile-java">
+    <uptodate property="transcoder.pkg.uptodate" targetfile="${build.dir}/fop-transcoder.jar">
+      <srcfiles refid="transcoder-classes-files"/>
+      <srcfiles refid="transcoder-lib-files"/>
+    </uptodate>
+  </target>
+
+  <target name="transcoder-pkg" depends="uptodate-transcoder-pkg, compile-java" description="Generates the jar for the transcoder package for Batik" unless="transcoder.pkg.uptodate">
     <echo message="Creating the jar file ${build.dir}/fop-transcoder.jar"/>
 
     <property name="fop-transcoder.name" value="FOP Transcoder Package"/>
@@ -482,47 +534,9 @@ list of possible build targets.
       <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
     </tstamp>
 
-    <patternset id="transcoder-classes">
-      <!-- General classes -->
-      <patternset>
-        <include name="org/apache/fop/apps/Fop.class"/>
-        <include name="org/apache/fop/apps/FOPException.class"/>
-        <include name="org/apache/fop/fo/Constants.class"/>
-        <include name="org/apache/fop/fo/FOTreeBuilder.class"/>
-        <include name="org/apache/fop/area/AreaTreeControl*"/>
-        <include name="org/apache/fop/svg/**"/>
-        <include name="org/apache/fop/fonts/**"/>
-        <include name="org/apache/fop/image/FopImag*.class"/>
-        <include name="org/apache/fop/image/Jpeg*"/>
-        <include name="org/apache/fop/image/EPS*"/>
-        <include name="org/apache/fop/image/Abstract*"/>
-        <include name="org/apache/fop/image/analyser/*.class"/>
-        <include name="org/apache/fop/util/CMYKColorSpace*.class"/>
-        <include name="org/apache/fop/util/ASCII*.class"/>
-        <include name="org/apache/fop/util/*OutputStream.class"/>
-        <include name="org/apache/fop/util/SubInputStream.class"/>
-        <include name="org/apache/fop/util/Finalizable.class"/>
-      </patternset>
-      <!-- PDF transcoder -->
-      <patternset>
-        <include name="org/apache/fop/render/pdf/**"/>
-        <exclude name="org/apache/fop/render/pdf/PDFRenderer.class"/>
-        <exclude name="org/apache/fop/render/pdf/PDFXMLHandler*"/>
-        <include name="org/apache/fop/pdf/**"/>
-      </patternset>
-      <!-- PS transcoder -->
-      <patternset>
-        <include name="org/apache/fop/render/ps/**"/>
-        <exclude name="org/apache/fop/render/pdf/PSRenderer.class"/>
-        <exclude name="org/apache/fop/render/pdf/PSXMLHandler*"/>
-      </patternset>
-    </patternset>
-
     <!-- lean transcoder jar -->
     <jar jarfile="${build.dir}/fop-transcoder.jar">
-      <fileset dir="${build.classes.dir}">
-        <patternset refid="transcoder-classes"/>
-      </fileset>
+      <fileset refid="transcoder-classes-files"/>
       <manifest>
         <attribute name="Implementation-Title" value="${fop-transcoder.name}"/>
         <attribute name="Implementation-Version" value="${fop-transcoder.version}"/>
@@ -547,11 +561,7 @@ list of possible build targets.
         <include name="org/apache/commons/io/output/ByteArrayOutputStream.class"/>
         <include name="org/apache/commons/io/output/CountingOutputStream.class"/>
       </patternset>
-      <fileset dir="${lib.dir}">
-        <include name="commons-io*.jar"/>
-        <include name="avalon-framework*.jar"/>
-        <include name="commons-logging*.jar"/>
-       </fileset>
+      <fileset refid="transcoder-lib-files"/>
     </unjar>
     <mkdir dir="${transcoder-deps}/legal"/>
     <copy todir="${transcoder-deps}/legal">
@@ -562,9 +572,7 @@ list of possible build targets.
       </fileset>
     </copy>
     <jar jarfile="${build.dir}/fop-transcoder-allinone.jar">
-      <fileset dir="${build.classes.dir}">
-        <patternset refid="transcoder-classes"/>
-      </fileset>
+      <fileset refid="transcoder-classes-files"/>
       <fileset dir="${transcoder-deps}"/>
       <manifest>
         <attribute name="Implementation-Title" value="${fop-transcoder.name}"/>
