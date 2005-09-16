@@ -83,8 +83,8 @@ public abstract class Region extends FObj {
         
         if (getCommonBorderPaddingBackground().getBPPaddingAndBorder(false, null) != 0 //TODO do we need context here?
                 || getCommonBorderPaddingBackground().getIPPaddingAndBorder(false, null) != 0) { //TODO do we need context here?
-            throw new PropertyException("Border and padding for a region "
-                    + "must be '0' (See 6.4.13 in XSL 1.0).");
+            throw new PropertyException("Border and padding for region \""
+                    +regionName+ "\" must be '0' (See 6.4.13 in XSL 1.0).");
         }
     }
 
