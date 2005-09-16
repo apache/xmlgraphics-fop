@@ -74,7 +74,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         textIndent = fobj.getTextIndent();
         lastLineEndIndent = fobj.getLastLineEndIndent();
         hyphProps = fobj.getCommonHyphenation();
-        
+        wrapOption = fobj.getWrapOption();
         //
         effectiveAlignment = getEffectiveAlignment(bTextAlignment, bTextAlignmentLast);
     }
@@ -139,6 +139,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     private Length lastLineEndIndent;
     private int iIndents = 0;
     private CommonHyphenation hyphProps;
+    private int wrapOption = EN_WRAP;
     //private LayoutProps layoutProps;
 
     private Length lineHeight;
@@ -404,8 +405,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                           (textAlign == Constants.EN_END) ? difference : 0;
             indent += (bestActiveNode.line == 1 && bFirst) ? 
                           textIndent : 0;
-            double ratio = (textAlign == Constants.EN_JUSTIFY
-                            || bestActiveNode.adjustRatio < 0) ? bestActiveNode.adjustRatio : 0;
+            double ratio = (textAlign == Constants.EN_JUSTIFY) ? bestActiveNode.adjustRatio : 0;
 
             // add nodes at the beginning of the list, as they are found
             // backwards, from the last one to the first one
@@ -518,9 +518,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
         public int findBreakingPoints(Paragraph par, /*int lineWidth,*/
                                       double threshold, boolean force,
-                                      boolean hyphenationAllowed) {
+                                      int allowedBreaks) {
             return super.findBreakingPoints(par, /*lineWidth,*/ 
-                    threshold, force, hyphenationAllowed);
+                    threshold, force, allowedBreaks);
         }
 
         protected int filterActiveNodes() {
@@ -1025,10 +1025,15 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         }
    
         // first try
-        boolean bHyphenationAllowed = false;
+        int allowedBreaks;
+        if (wrapOption == EN_NO_WRAP) {
+            allowedBreaks = BreakingAlgorithm.ONLY_FORCED_BREAKS;
+        } else {
+            allowedBreaks = BreakingAlgorithm.NO_FLAGGED_PENALTIES;
+        }
         alg.setConstantLineWidth(iLineWidth);
         iBPcount = alg.findBreakingPoints(currPar,
-                                          maxAdjustment, false, bHyphenationAllowed);
+                                          maxAdjustment, false, allowedBreaks);
         if (iBPcount == 0 || alignment == EN_JUSTIFY) {
             // if the first try found a set of breaking points, save them
             if (iBPcount > 0) {
@@ -1041,9 +1046,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager
    
             // now try something different
             log.debug("Hyphenation possible? " + (hyphProps.hyphenate == EN_TRUE));
-            if (hyphProps.hyphenate == EN_TRUE) {
+            if (hyphProps.hyphenate == EN_TRUE
+                && !(allowedBreaks == BreakingAlgorithm.ONLY_FORCED_BREAKS)) {
                 // consider every hyphenation point as a legal break
-                bHyphenationAllowed = true;
+                allowedBreaks = BreakingAlgorithm.ALL_BREAKS;
             } else {
                 // try with a higher threshold
                 maxAdjustment = 5;
@@ -1051,7 +1057,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
    
             if ((iBPcount
                  = alg.findBreakingPoints(currPar,
-                                          maxAdjustment, false, bHyphenationAllowed)) == 0) {
+                                          maxAdjustment, false, allowedBreaks)) == 0) {
                 // the second try failed too, try with a huge threshold
                 // and force the algorithm to find
                 // a set of breaking points
@@ -1060,7 +1066,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 maxAdjustment = 20;
                 iBPcount
                     = alg.findBreakingPoints(currPar,
-                                             maxAdjustment, true, bHyphenationAllowed);
+                                             maxAdjustment, true, allowedBreaks);
             }
    
             // use non-hyphenated breaks, when possible
@@ -1080,7 +1086,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     int savedLineWidth = iLineWidth;
                     iLineWidth = (int) (iLineWidth * 0.95);
                     iBPcount = alg.findBreakingPoints(currPar,
-                             maxAdjustment, true, bHyphenationAllowed);
+                             maxAdjustment, true, allowedBreaks);
                     // use normal lines, when possible
                     lineLayouts.restorePossibilities();
                     iLineWidth = savedLineWidth;
@@ -1093,7 +1099,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     iLineWidth = (int) (iLineWidth * 1.05);
                     alg.setConstantLineWidth(iLineWidth);
                     iBPcount = alg.findBreakingPoints(currPar,
-                            maxAdjustment, true, bHyphenationAllowed);
+                            maxAdjustment, true, allowedBreaks);
                     // use normal lines, when possible
                     lineLayouts.restorePossibilities();
                     iLineWidth = savedLineWidth;

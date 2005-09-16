@@ -237,7 +237,7 @@ public abstract class AbstractBreaker {
                 //iOptPageCount = alg.firstFit(effectiveList, flowBPD, 1, true);
                 alg.setConstantLineWidth(flowBPD);
                 iOptPageCount = alg.findBreakingPoints(effectiveList, /*flowBPD,*/
-                            1, true, true);
+                            1, true, BreakingAlgorithm.ALL_BREAKS);
                 log.debug("PLM> iOptPageCount= " + iOptPageCount
                         + " pageBreaks.size()= " + alg.getPageBreaks().size());
 
@@ -519,7 +519,7 @@ public abstract class AbstractBreaker {
         int iOptPageNumber;
         alg.setConstantLineWidth(availableBPD);
         iOptPageNumber = alg.findBreakingPoints(blockList, /*availableBPD,*/
-                1, true, true);
+                1, true, BreakingAlgorithm.ALL_BREAKS);
         log.debug("PLM> iOptPageNumber= " + iOptPageNumber);
 
         // 

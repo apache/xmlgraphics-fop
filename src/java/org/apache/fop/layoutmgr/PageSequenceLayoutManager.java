@@ -340,7 +340,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 //alg.setConstantLineWidth(flowBPD);
                 int iOptPageCount = algRestart.findBreakingPoints(effectiveList,
                             newStartPos,
-                            1, true, true);
+                            1, true, BreakingAlgorithm.ALL_BREAKS);
                 AbstractBreaker.log.debug("restart: iOptPageCount= " + iOptPageCount
                         + " pageBreaks.size()= " + algRestart.getPageBreaks().size());
                 if (iOptPageCount > getCurrentPV().getBodyRegion().getColumnCount()) {
