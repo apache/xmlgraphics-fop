@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.properties.PropertyMaker;
@@ -55,9 +54,6 @@ public abstract class FObj extends FONode implements Constants {
 
     /** Markers added to this element. */
     protected Map markers = null;
-
-    /** Dynamic layout dimension. Used to resolve relative lengths. */
-    protected Map layoutDimension = null;
 
     /**
      * Create a new formatting object.
@@ -211,53 +207,6 @@ public abstract class FObj extends FONode implements Constants {
             par = par.parent;
         }
         return (FObj) par;
-    }
-
-    /* This section is the implemenation of the property context. */
-
-    /**
-     * Assign the size of a layout dimension to the key. 
-     * @param key the Layout dimension, from PercentBase.
-     * @param dimension The layout length.
-     * TODO Remove when possible!
-     */
-    public void setLayoutDimension(PercentBase.LayoutDimension key, int dimension) {
-        if (layoutDimension == null) {
-            layoutDimension = new java.util.HashMap();
-        }
-        layoutDimension.put(key, new Integer(dimension));
-    }
-    
-    /**
-     * Assign the size of a layout dimension to the key. 
-     * @param key the Layout dimension, from PercentBase.
-     * @param dimension The layout length.
-     * TODO Remove when possible!
-     */
-    public void setLayoutDimension(PercentBase.LayoutDimension key, float dimension) {
-        if (layoutDimension == null) {
-            layoutDimension = new java.util.HashMap();
-        }
-        layoutDimension.put(key, new Float(dimension));
-    }
-    
-    /**
-     * Return the size associated with the key.
-     * @param key The layout dimension key.
-     * @return the length.
-     * TODO Remove when possible!
-     */
-    public Number getLayoutDimension(PercentBase.LayoutDimension key) {
-        if (layoutDimension != null) {
-            Number result = (Number) layoutDimension.get(key);
-            if (result != null) {
-                return result;
-            }
-        }
-        if (parent != null) {
-            return ((FObj) parent).getLayoutDimension(key);
-        }
-        return new Integer(0);
     }
 
     /**

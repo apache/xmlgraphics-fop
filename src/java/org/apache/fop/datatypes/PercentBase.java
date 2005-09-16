@@ -26,11 +26,6 @@ import org.apache.fop.fo.expr.PropertyException;
  */
 public interface PercentBase {
     
-    //Types of values to store in layoutDimension on FObj
-    
-    /** table units */
-    LayoutDimension TABLE_UNITS = new LayoutDimension("table-units");
-    
     /**
      * Determines whether a numeric property is created or one with a percentage
      * base.
@@ -38,6 +33,10 @@ public interface PercentBase {
      */
     int getDimension();
     
+    /**
+     * @return the base value (this will be used as the base to which a percentage will be 
+     *         applied to compute the length of the referencing item)
+     */
     double getBaseValue();
 
     /**
@@ -50,22 +49,4 @@ public interface PercentBase {
      */
     int getBaseLength(PercentBaseContext context) throws PropertyException;
     
-    /** Enum class for dimension types. */
-    public class LayoutDimension {
-        
-        private String name;
-        
-        /**
-         * Constructor to add a new named item.
-         * @param name Name of the item.
-         */
-        protected LayoutDimension(String name) {
-            this.name = name;
-        }
-        
-        /** @see java.lang.Object#toString() */
-        public String toString() {
-            return super.toString() + "[" + name + "]";
-        }
-    }
 }

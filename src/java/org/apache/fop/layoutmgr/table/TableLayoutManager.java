@@ -19,7 +19,6 @@
 package org.apache.fop.layoutmgr.table;
 
 import org.apache.fop.datatypes.Length;
-import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableColumn;
 import org.apache.fop.fo.properties.TableColLength;
@@ -61,6 +60,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
 
     private int contentIPD;
     private int referenceBPD;
+    private double tableUnits;
     private boolean autoLayout = true;
 
     //TODO space-before|after: handle space-resolution rules
@@ -89,6 +89,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         return this.columns;
     }
     
+    /** @see org.apache.fop.layoutmgr.LayoutManager#initialize() */
     public void initialize() {
         spaceBefore = new SpaceVal(fobj.getCommonMarginBlock().spaceBefore, this).getSpace();
         spaceAfter = new SpaceVal(fobj.getCommonMarginBlock().spaceAfter, this).getSpace();
@@ -153,7 +154,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         // is used works out total factor, so that value of single unit can be computed.
         int sumCols = 0;
         float factors = 0;
-        for (Iterator i = columns.iterator(); i.hasNext(); ) {
+        for (Iterator i = columns.iterator(); i.hasNext();) {
             TableColumn column = (TableColumn) i.next();
             Length width = column.getColumnWidth();
             sumCols += width.getValue(this);
@@ -164,9 +165,8 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         // sets TABLE_UNITS in case where one or more oldColumns is defined using 
         // proportional-column-width
         if (sumCols < contentIPD) {
-            if (fobj.getLayoutDimension(PercentBase.TABLE_UNITS).floatValue() == 0.0) {
-                fobj.setLayoutDimension(PercentBase.TABLE_UNITS,
-                                      (contentIPD - sumCols) / factors);
+            if (tableUnits == 0.0) {
+                this.tableUnits = (contentIPD - sumCols) / factors;
             }
         }
 
@@ -434,7 +434,12 @@ public class TableLayoutManager extends BlockStackingLayoutManager
                 return 0;
             }
         } else {
-            return super.getBaseLength(lengthBase, fobj);
+            switch (lengthBase) {
+            case LengthBase.TABLE_UNITS:
+                return (int)this.tableUnits;
+            default:
+                return super.getBaseLength(lengthBase, fobj);
+            }
         }
     }
     
