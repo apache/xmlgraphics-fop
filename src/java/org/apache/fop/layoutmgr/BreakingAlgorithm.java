@@ -47,6 +47,11 @@ public abstract class BreakingAlgorithm {
 
     private static final int MAX_RECOVERY_ATTEMPTS = 50;
 
+    // constants identifying a subset of the feasible breaks
+    public static final int ALL_BREAKS = 0;            // all feasible breaks are ok
+    public static final int NO_FLAGGED_PENALTIES = 1; // this forbids hyphenation
+    public static final int ONLY_FORCED_BREAKS = 2;   // wrap-option = "no-wrap"
+
     // parameters of Knuth's algorithm:
     // penalty value for flagged penalties
     private int flaggedPenalty = 50;
@@ -324,14 +329,14 @@ public abstract class BreakingAlgorithm {
     
     public int findBreakingPoints(KnuthSequence par, /*int lineWidth,*/
             double threshold, boolean force,
-            boolean hyphenationAllowed) {
-        return findBreakingPoints(par, 0, threshold, force, hyphenationAllowed);
+            int allowedBreaks) {
+        return findBreakingPoints(par, 0, threshold, force, allowedBreaks);
     }
     
     public int findBreakingPoints(KnuthSequence par, int startIndex,
                                   /*int lineWidth,*/
                                   double threshold, boolean force,
-                                  boolean hyphenationAllowed) {
+                                  int allowedBreaks) {
         this.par = par;
         this.threshold = threshold;
         this.force = force;
@@ -378,7 +383,9 @@ public abstract class BreakingAlgorithm {
             } else if (thisElement.isGlue()) {
                 // a KnuthGlue object is a legal line break
                 // only if the previous object is a KnuthBox
-                if (previousIsBox) {
+                // consider these glues according to the value of allowedBreaks
+                if (previousIsBox
+                    && !(allowedBreaks == ONLY_FORCED_BREAKS)) {
                     considerLegalBreak(thisElement, i);
                 }
                 totalWidth += thisElement.getW();
@@ -388,10 +395,11 @@ public abstract class BreakingAlgorithm {
             } else {
                 // a KnuthPenalty is a legal line break
                 // only if its penalty is not infinite;
-                // if hyphenationAllowed is false, ignore flagged penalties
-                if (((KnuthPenalty) thisElement).getP()
-                    < KnuthElement.INFINITE
-                    && (hyphenationAllowed || !((KnuthPenalty) thisElement).isFlagged())) {
+                // consider all penalties, non-flagged penalties or non-forcing penalties
+                // according to the value of allowedBreaks
+                if (((KnuthPenalty) thisElement).getP() < KnuthElement.INFINITE
+                    && (!(allowedBreaks == NO_FLAGGED_PENALTIES) || !(((KnuthPenalty) thisElement).isFlagged()))
+                    && (!(allowedBreaks == ONLY_FORCED_BREAKS) || ((KnuthPenalty) thisElement).getP() == -KnuthElement.INFINITE)) {
                     considerLegalBreak(thisElement, i);
                 }
                 previousIsBox = false;

@@ -305,6 +305,13 @@ public class Block extends FObjMixed {
     }
 
     /**
+     * @return the "wrap-option" property.
+     */
+    public int getWrapOption() {
+        return wrapOption;
+    }
+
+    /**
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
      * XSL Content Model: marker* initial-property-set? (#PCDATA|%inline;|%block;)*
      * Additionally: "An fo:bidi-override that is a descendant of an fo:leader
