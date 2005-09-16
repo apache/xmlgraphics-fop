@@ -128,7 +128,7 @@ public class Table extends FObj {
         writingMode = pList.get(PR_WRITING_MODE).getEnum();
 
         //Create default column in case no table-columns will be defined.
-        defaultColumn = new TableColumn(this);
+        defaultColumn = new TableColumn(this, true);
         PropertyList colPList = new StaticPropertyList(defaultColumn, pList);
         colPList.setWritingMode();
         defaultColumn.bind(colPList);
