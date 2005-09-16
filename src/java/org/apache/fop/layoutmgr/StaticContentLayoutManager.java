@@ -71,10 +71,13 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         targetBlock = block; 
     }
 
-    /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(org.apache.fop.layoutmgr.LayoutContext, int)
-     */
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+        if (true) {
+            throw new UnsupportedOperationException(
+                "Shouldn't this method be emptied because it's never called at all?");
+        }
+        //TODO Empty this method?!?
         // set layout dimensions
         setContentAreaIPD(context.getRefIPD());
         setContentAreaBPD(context.getStackLimit().opt);
@@ -214,6 +217,8 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
             targetBPD = targetRegion.getBPD();
             targetAlign = regionFO.getDisplayAlign();
         }
+        setContentAreaIPD(targetIPD);
+        setContentAreaBPD(targetBPD);
         breaker = new StaticContentBreaker(this, targetIPD, targetAlign);
         breaker.doLayout(targetBPD);
         if (breaker.isOverflow()) {
@@ -326,6 +331,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         return contentAreaIPD;
     }
    
+    /** @see org.apache.fop.layoutmgr.BlockStackingLayoutManager#setContentAreaIPD(int) */
     protected void setContentAreaIPD(int contentAreaIPD) {
         this.contentAreaIPD = contentAreaIPD;
     }

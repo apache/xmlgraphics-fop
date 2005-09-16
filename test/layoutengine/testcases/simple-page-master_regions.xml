@@ -18,7 +18,8 @@
 <testcase>
   <info>
     <p>
-      This test checks page-masters (all regions).
+      This test checks page-masters (all regions). The empty block-containers are used to check that all the base widths are set correctly so
+      length evaluation using percentages is possible.
     </p>
   </info>
   <fo>
@@ -34,24 +35,39 @@
       </fo:layout-master-set>
       <fo:page-sequence master-reference="master1" white-space-collapse="true" orphans="0" widows="0">
         <fo:static-content flow-name="xsl-region-before">
+          <fo:block-container absolute-position="absolute" width="100%" height="100%" top="0pt" left="0pt">
+            <fo:block/>
+          </fo:block-container>
           <fo:block>region-before1</fo:block>
           <fo:block>region-before2</fo:block>
           <fo:block>region-before3</fo:block>
         </fo:static-content>
         <fo:static-content flow-name="xsl-region-after">
+          <fo:block-container absolute-position="absolute" width="100%" height="100%" top="0pt" left="0pt">
+            <fo:block/>
+          </fo:block-container>
           <fo:block font-size="50%">region-after1 with precedence and display-align="after"</fo:block>
         </fo:static-content>
         <fo:static-content flow-name="xsl-region-start">
+          <fo:block-container absolute-position="absolute" width="100%" height="100%" top="0pt" left="0pt">
+            <fo:block/>
+          </fo:block-container>
           <fo:block>region-start1</fo:block>
           <fo:block>region-start2</fo:block>
           <fo:block>region-start3</fo:block>
         </fo:static-content>
         <fo:static-content flow-name="xsl-region-end">
+          <fo:block-container absolute-position="absolute" width="100%" height="100%" top="0pt" left="0pt">
+            <fo:block/>
+          </fo:block-container>
           <fo:block>region-end1</fo:block>
           <fo:block>region-end2</fo:block>
           <fo:block>region-end3</fo:block>
         </fo:static-content>
         <fo:flow flow-name="xsl-region-body">
+          <fo:block-container absolute-position="absolute" width="100%" height="100%" top="0pt" left="0pt">
+            <fo:block/>
+          </fo:block-container>
           <fo:block>testing all-regions1</fo:block>
           <fo:block>testing all-regions2</fo:block>
           <fo:block>testing all-regions3</fo:block>
@@ -64,24 +80,34 @@
     
     <eval expected="20000" xpath="//regionBefore/@bpda"/>
     <eval expected="300000" xpath="//regionBefore/@ipda"/>
+    <eval expected="20000" xpath="//regionBefore/block[@positioning='absolute']/@bpda"/>
+    <eval expected="300000" xpath="//regionBefore/block[@positioning='absolute']/@ipda"/>
     <eval expected="color=#ffcccc" xpath="//regionBefore/../@background"/>
     
     <eval expected="20000" xpath="//regionAfter/@bpda"/>
     <eval expected="340000" xpath="//regionAfter/@ipda"/>
+    <eval expected="20000" xpath="//regionAfter/block[@positioning='absolute']/@bpda"/>
+    <eval expected="340000" xpath="//regionAfter/block[@positioning='absolute']/@ipda"/>
     <!-- 360pt due to precendence -->
     <eval expected="color=#cccccc" xpath="//regionAfter/../@background"/>
     
     <eval expected="320000" xpath="//regionStart/@bpda"/>
     <eval expected="20000" xpath="//regionStart/@ipda"/>
+    <eval expected="320000" xpath="//regionStart/block[@positioning='absolute']/@bpda"/>
+    <eval expected="20000" xpath="//regionStart/block[@positioning='absolute']/@ipda"/>
     <eval expected="color=#ccffcc" xpath="//regionStart/../@background"/>
     
     <eval expected="20000" xpath="//regionEnd/@bpda"/>
     <eval expected="320000" xpath="//regionEnd/@ipda"/>
+    <eval expected="20000" xpath="//regionEnd/block[@positioning='absolute']/@bpda"/>
+    <eval expected="320000" xpath="//regionEnd/block[@positioning='absolute']/@ipda"/>
     <!-- bpd and ipd flipped due to reference-orientation -->
     <eval expected="color=#ccccff" xpath="//regionEnd/../@background"/>
     
     <eval expected="280000" xpath="//regionBody/@bpda"/>
     <eval expected="280000" xpath="//regionBody/@ipda"/>
+    <eval expected="280000" xpath="//regionBody/mainReference/span/flow/block[@positioning='absolute']/@bpda"/>
+    <eval expected="280000" xpath="//regionBody/mainReference/span/flow/block[@positioning='absolute']/@ipda"/>
     <eval expected="color=#ffffcc" xpath="//regionBody/../@background"/>
     
   </checks>
