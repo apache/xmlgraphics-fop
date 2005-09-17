@@ -462,11 +462,16 @@ public class CommandLineOptions implements Constants {
     }
 
     private void setLogLevel(String level) {
-        // Set the evel for future loggers.
+        // Set the level for future loggers.
         LogFactory.getFactory().setAttribute("level", level);
         if (log instanceof CommandLineLogger) {
             // Set the level for the logger creates already.
             ((CommandLineLogger) log).setLogLevel(level);
+        } else {
+            log.warn("Setting the log level to debug probably failed.");
+            log.warn("Configure the log level using Java system properties,");
+            log.warn("or use FOP's command line logger,");
+            log.warn("which is the default on the command line.");
         }
     }
         
@@ -819,6 +824,10 @@ public class CommandLineOptions implements Constants {
             break;
         case RENDER_SVG:
             log.info("svg");
+            log.info("output file: " + outfile.toString());
+            break;
+        case RENDER_XML:
+            log.info("area tree");
             log.info("output file: " + outfile.toString());
             break;
         default:
