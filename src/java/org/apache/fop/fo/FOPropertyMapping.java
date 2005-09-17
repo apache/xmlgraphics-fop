@@ -28,6 +28,7 @@ import org.apache.fop.fo.properties.BorderWidthPropertyMaker;
 import org.apache.fop.fo.properties.BoxPropShorthandParser;
 import org.apache.fop.fo.properties.CharacterProperty;
 import org.apache.fop.fo.properties.ColorTypeProperty;
+import org.apache.fop.fo.properties.ColumnNumberPropertyMaker;
 import org.apache.fop.fo.properties.CondLengthProperty;
 import org.apache.fop.fo.properties.CorrespondingPropertyMaker;
 import org.apache.fop.fo.properties.DimensionPropertyMaker;
@@ -2386,9 +2387,7 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("caption-side", m);
 
         // column-number
-        m  = new NumberProperty.Maker(PR_COLUMN_NUMBER);
-        m.setInherited(false);
-        m.setDefault("0");
+        m  = new ColumnNumberPropertyMaker(PR_COLUMN_NUMBER);
         addPropertyMaker("column-number", m);
 
         // column-width

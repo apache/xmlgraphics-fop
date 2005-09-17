@@ -19,6 +19,7 @@
 package org.apache.fop.fo.flow;
 
 // Java
+import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -39,23 +40,24 @@ import org.apache.fop.fo.properties.CommonRelativePosition;
 /**
  * Class modelling the fo:table-body object.
  */
-public class TableBody extends FObj {
+public class TableBody extends TableFObj {
     // The value of properties relevant for fo:table-body.
     private CommonAccessibility commonAccessibility;
     private CommonAural commonAural;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonRelativePosition commonRelativePosition;
-    private Numeric borderAfterPrecedence;
-    private Numeric borderBeforePrecedence;
-    private Numeric borderEndPrecedence;
-    private Numeric borderStartPrecedence;
     private int visibility;
     // End of property values
     
     private PropertyList savedPropertyList;
 
     protected boolean tableRowsFound = false;
-    protected boolean tableCellsFound = false;   
+    protected boolean tableCellsFound = false;
+    
+    private int columnIndex = 1;
+    protected List pendingSpans;
+    protected BitSet usedColumnIndices = new BitSet();
+    private boolean firstRow = true;
     
     /**
      * @param parent FONode that is the parent of the object
@@ -72,12 +74,8 @@ public class TableBody extends FObj {
         commonAural = pList.getAuralProps();
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonRelativePosition = pList.getRelativePositionProps();
-        borderAfterPrecedence = pList.get(PR_BORDER_AFTER_PRECEDENCE).getNumeric();
-        borderBeforePrecedence = pList.get(PR_BORDER_BEFORE_PRECEDENCE).getNumeric();
-        borderEndPrecedence = pList.get(PR_BORDER_END_PRECEDENCE).getNumeric();
-        borderStartPrecedence = pList.get(PR_BORDER_START_PRECEDENCE).getNumeric();
         visibility = pList.get(PR_VISIBILITY).getEnum();
-        
+        super.bind(pList);
         //Used by convertCellsToRows()
         savedPropertyList = pList;
     }
@@ -86,6 +84,7 @@ public class TableBody extends FObj {
      * @see org.apache.fop.fo.FONode#startOfNode
      */
     protected void startOfNode() throws FOPException {
+        initPendingSpans();
         getFOEventHandler().startBody(this);
     }
 
@@ -107,7 +106,10 @@ public class TableBody extends FObj {
         if (tableCellsFound) {
             convertCellsToRows();
         }*/
-        savedPropertyList = null; //Release reference
+        //release references
+        savedPropertyList = null;
+        pendingSpans = null;
+        usedColumnIndices = null;
     }
 
     /**
@@ -140,6 +142,78 @@ public class TableBody extends FObj {
             }
         } else {
             invalidChildError(loc, nsURI, localName);
+        }
+    }
+    
+    /**
+     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
+     */
+    protected void addChildNode(FONode child) throws FOPException {
+        if( child.getNameId() == FO_TABLE_CELL ) {
+            addCellNode( (TableCell) child);
+        } else {
+            super.addChildNode(child);
+        }
+    }
+
+    /**
+     * Adds a cell to the list of child nodes, and updates the columnIndex
+     * used for determining the initial value of column-number
+     * 
+     * @param cell  cell to add
+     * @throws FOPException
+     */
+    private void addCellNode(TableCell cell) throws FOPException {
+        //if firstRow flag is still true, the cell starts a row, 
+        //and there was a previous cell that didn't explicitly
+        //end the previous row => set firstRow flag to false
+        if( firstRow && cell.startsRow() && !lastCellEndedRow() ) {
+            firstRow = false;
+        }
+        int rowSpan = cell.getNumberRowsSpanned();
+        int colSpan = cell.getNumberColumnsSpanned();
+        //if there were no explicit columns, pendingSpans
+        //will not be properly initialized for the first row
+        if( firstRow && ((Table) parent).columns == null ) {
+            if( pendingSpans == null ) {
+                pendingSpans = new java.util.ArrayList();
+            }
+            for( int i = colSpan; --i >= 0; ) {
+                pendingSpans.add(null);
+            }
+        }
+        //if the current cell spans more than one row,
+        //update pending span list for the next row
+        if( rowSpan > 1 ) {
+            for( int i = colSpan; --i >= 0; ) {
+                pendingSpans.set(columnIndex - 1 + i, 
+                        new PendingSpan(rowSpan));
+            }
+        }
+        //flag column indices used by this cell,
+        //take into account that possibly not all column-numbers
+        //are used by columns in the parent table (if any),
+        //so a cell spanning three columns, might actually
+        //take up more than three columnIndices...
+        int startIndex = columnIndex - 1;
+        int endIndex = startIndex + colSpan;
+        if( ((Table) parent).columns != null ) {
+            List cols = ((Table) parent).columns;
+            int tmpIndex = endIndex;
+            for( int i = startIndex; i <= tmpIndex; ++i ) {
+                if( i < cols.size() && cols.get(i) == null ) {
+                    endIndex++;
+                }
+            }
+        }
+        usedColumnIndices.set(startIndex, endIndex);
+        setNextColumnIndex();
+        super.addChildNode(cell);
+        if( cell.endsRow() ) {
+            if( firstRow ) {
+                firstRow = false;
+            }
+            resetColumnIndex();
         }
     }
 
@@ -214,6 +288,111 @@ public class TableBody extends FObj {
     public boolean isLast(TableRow obj) {
         return (childNodes.size() > 0) 
             && (childNodes.get(childNodes.size() - 1) == obj);
+    }
+    
+    /**
+     * Initializes pending spans list; used for correctly
+     * assigning initial value for column-number for the
+     * cells of following rows
+     *
+     */
+    protected void initPendingSpans() {
+        if( ((Table) parent).columns != null ) {
+            List tableCols = ((Table) parent).columns;
+            pendingSpans = new java.util.ArrayList(tableCols.size());
+            for( int i = tableCols.size(); --i >= 0; ) {
+                pendingSpans.add(null);
+            }
+        }
+    }
+        
+    /**
+     * Returns the current column index of the TableBody
+     * 
+     * @return the next column number to use
+     */
+    public int getCurrentColumnIndex() {
+        return columnIndex;
+    }
+
+    /**
+     * Sets the current column index to a specific value
+     * (used by TableCell.bind() in case the column-number
+     * was explicitly specified)
+     * 
+     */
+    protected void setCurrentColumnIndex(int newIndex) {
+        columnIndex = newIndex;
+    }
+
+    /**
+     * Resets the current column index for the TableBody
+     *
+     */
+    public void resetColumnIndex() {
+        columnIndex = 1;
+        usedColumnIndices.clear();
+        PendingSpan pSpan;
+        for( int i = pendingSpans.size(); --i >= 0; ) {
+            pSpan = (PendingSpan) pendingSpans.get(i);
+            if( pSpan != null ) {
+                pSpan.rowsLeft--;
+                if( pSpan.rowsLeft == 0 ) {
+                    pendingSpans.set(i, null);
+                }
+            }
+            usedColumnIndices.set(i, pendingSpans.get(i) != null);
+        }
+        if( !firstRow ) {
+            setNextColumnIndex();
+        }
+    }
+
+    /**
+     * Increases columnIndex to the next available value
+     *
+     */
+    private void setNextColumnIndex() {
+        while( usedColumnIndices.get(columnIndex - 1) ) {
+            //increment columnIndex
+            columnIndex++;
+            //if the table has explicit columns, and
+            //the updated index is not assigned to any
+            //column, increment further until the next
+            //index occupied by a column...
+            if( ((Table) parent).columns != null ) {
+                while( columnIndex <= ((Table) parent).columns.size()
+                        && !((Table) parent).isColumnNumberUsed(columnIndex) ) {
+                    columnIndex++;
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks whether the previous cell had 'ends-row="true"'
+     * 
+     * @return false only if there was a previous cell, which
+     *         had ends-row="false" (implicit or explicit)
+     */
+    public boolean lastCellEndedRow() {
+        if( childNodes != null ) {
+            FONode prevNode = (FONode) childNodes.get(childNodes.size() - 1);
+            if( prevNode.getNameId() == FO_TABLE_CELL ) {
+                return ((TableCell) prevNode).endsRow();
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Checks whether a given column-number is already in use
+     * for the current row (used by TableCell.bind());
+     * 
+     * @return true if column-number is already occupied
+     */
+    protected boolean isColumnNumberUsed(int colNr) {
+        return usedColumnIndices.get(colNr - 1);
     }
 }
 

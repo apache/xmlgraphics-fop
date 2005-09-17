@@ -60,7 +60,7 @@ public class ColumnSetup {
             ListIterator iter = rawCols.listIterator();
             while (iter.hasNext()) {
                 TableColumn col = (TableColumn)iter.next();
-                if (col.hasColumnNumber()) {
+                if( col != null ) {
                     colnum = col.getColumnNumber();
                 }
                 for (int i = 0; i < col.getNumberColumnsRepeated(); i++) {
@@ -151,7 +151,9 @@ public class ColumnSetup {
     public int getXOffset(int col, PercentBaseContext context) {
         int xoffset = 0;
         for (int i = 1; i < col; i++) {
-            xoffset += getColumn(i).getColumnWidth().getValue(context);
+            if( getColumn(i) != null ) {
+                xoffset += getColumn(i).getColumnWidth().getValue(context);
+            }
         }
         return xoffset;
     }

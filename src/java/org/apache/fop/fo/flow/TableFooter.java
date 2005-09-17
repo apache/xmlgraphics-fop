@@ -39,7 +39,8 @@ public class TableFooter extends TableBody {
      * @see org.apache.fop.fo.FONode#startOfNode
      */
     protected void startOfNode() throws FOPException {
-//      getFOEventHandler().startBody(this);
+        initPendingSpans();
+        //getFOEventHandler().startBody(this);
     }
 
     /**

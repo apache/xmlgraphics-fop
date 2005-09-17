@@ -38,16 +38,12 @@ import org.apache.fop.fo.properties.LengthRangeProperty;
  * Class modelling the fo:table-cell object.
  * @todo check need for all instance variables stored here
  */
-public class TableCell extends FObj {
+public class TableCell extends TableFObj {
     // The value of properties relevant for fo:table-cell.
     private CommonAccessibility commonAccessibility;
     private CommonAural commonAural;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonRelativePosition commonRelativePosition;
-    private Numeric borderAfterPrecedence;
-    private Numeric borderBeforePrecedence;
-    private Numeric borderEndPrecedence;
-    private Numeric borderStartPrecedence;
     private LengthRangeProperty blockProgressionDimension;
     private int borderCollapse; //inherited from fo:table
     private LengthPairProperty borderSeparation; //inherited from fo:table
@@ -118,10 +114,6 @@ public class TableCell extends FObj {
         commonAural = pList.getAuralProps();
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonRelativePosition = pList.getRelativePositionProps();
-        borderAfterPrecedence = pList.get(PR_BORDER_AFTER_PRECEDENCE).getNumeric();
-        borderBeforePrecedence = pList.get(PR_BORDER_BEFORE_PRECEDENCE).getNumeric();
-        borderEndPrecedence = pList.get(PR_BORDER_END_PRECEDENCE).getNumeric();
-        borderStartPrecedence = pList.get(PR_BORDER_START_PRECEDENCE).getNumeric();
         blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
         borderCollapse = pList.get(PR_BORDER_COLLAPSE).getEnum();
         borderSeparation = pList.get(PR_BORDER_SEPARATION).getLengthPair();
@@ -137,6 +129,24 @@ public class TableCell extends FObj {
         numberRowsSpanned = pList.get(PR_NUMBER_ROWS_SPANNED).getNumeric();
         startsRow = pList.get(PR_STARTS_ROW).getEnum();
         width = pList.get(PR_WIDTH).getLength();
+        super.bind(pList);
+        
+        //check if any of the column-numbers occupied by this cell
+        //are already in use in the current row...
+        for( int i = getColumnNumber(); 
+                ++i <= getColumnNumber() + getNumberColumnsSpanned(); ) {
+            if( ((TableFObj) parent).isColumnNumberUsed(i - 1) ) {
+                throw new FOPException("cell overlaps in column " + (i - 1),
+                              locator);
+            }
+        }
+        //if column-number was explicitly specified, force the parent's current
+        //column index to the specified value, so that the updated index will
+        //be the correct initial value for the next cell (see Rec 7.26.8)
+        if( pList.getExplicit(PR_COLUMN_NUMBER) != null ) {
+            ((TableFObj) parent).setCurrentColumnIndex(
+                    pList.getExplicit(PR_COLUMN_NUMBER).getNumeric().getValue());
+        }
     }
 
     /**
@@ -156,7 +166,11 @@ public class TableCell extends FObj {
         if (!blockItemFound) {
             missingChildElementError("marker* (%block;)+");
         }
-        //TODO Complain about startsRow|endsRow=true if parent is a table-row
+        if( (startsRow() || endsRow()) 
+                && getParent().getNameId() == FO_TABLE_ROW ) {
+            getLogger().warn("starts-row/ends-row for fo:table-cells "
+                    + "non-applicable for children of an fo:table-row.");
+        }
         getFOEventHandler().endCell(this);
     }
 
@@ -288,17 +302,10 @@ public class TableCell extends FObj {
     }
 
     /**
-     * @return true if the "column-number" property was set.
-     */
-    public boolean hasColumnNumber() {
-        return (columnNumber.getValue() >= 1);
-    }
-
-    /**
      * @return the "column-number" property.
      */
     public int getColumnNumber() {
-        return Math.max(columnNumber.getValue(), 0);
+        return columnNumber.getValue();
     }
 
     /** @return true if "empty-cells" is "show" */
