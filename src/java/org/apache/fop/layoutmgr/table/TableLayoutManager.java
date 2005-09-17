@@ -156,10 +156,12 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         float factors = 0;
         for (Iterator i = columns.iterator(); i.hasNext();) {
             TableColumn column = (TableColumn) i.next();
-            Length width = column.getColumnWidth();
-            sumCols += width.getValue(this);
-            if (width instanceof TableColLength) {
-                factors += ((TableColLength) width).getTableUnits();
+            if( column != null ) {
+                Length width = column.getColumnWidth();
+                sumCols += width.getValue(this);
+                if (width instanceof TableColLength) {
+                    factors += ((TableColLength) width).getTableUnits();
+                }
             }
         }
         // sets TABLE_UNITS in case where one or more oldColumns is defined using 

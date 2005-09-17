@@ -362,15 +362,12 @@ public class TableRowIterator {
         while (iter.hasNext()) {
             TableCell cell = (TableCell)iter.next();
             
-            if (cell.hasColumnNumber()) {
-                colnum = cell.getColumnNumber();
-            } else {
-                //Skip columns with spanning grid units
-                while (safelyGetListItem(gridUnits, colnum - 1) != null) {
-                    colnum++;
-                }
-            }
+            colnum = cell.getColumnNumber();
 
+            //TODO: remove the check below???
+            //shouldn't happen here, since
+            //overlapping cells already caught in 
+            //fo.flow.TableCell.bind()...
             if (safelyGetListItem(gridUnits, colnum - 1) != null) {
                 log.error("Overlapping cell at position " + colnum);
                 //TODO throw layout exception

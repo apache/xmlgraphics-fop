@@ -34,13 +34,9 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 /**
  * Class modelling the fo:table-column object.
  */
-public class TableColumn extends FObj {
+public class TableColumn extends TableFObj {
     // The value of properties relevant for fo:table-column.
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
-    private Numeric borderAfterPrecedence;
-    private Numeric borderBeforePrecedence;
-    private Numeric borderEndPrecedence;
-    private Numeric borderStartPrecedence;
     private Numeric columnNumber;
     private Length columnWidth;
     private Numeric numberColumnsRepeated;
@@ -72,21 +68,32 @@ public class TableColumn extends FObj {
      */
     public void bind(PropertyList pList) throws FOPException {
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
-        borderAfterPrecedence = pList.get(PR_BORDER_AFTER_PRECEDENCE).getNumeric();
-        borderBeforePrecedence = pList.get(PR_BORDER_BEFORE_PRECEDENCE).getNumeric();
-        borderEndPrecedence = pList.get(PR_BORDER_END_PRECEDENCE).getNumeric();
-        borderStartPrecedence = pList.get(PR_BORDER_START_PRECEDENCE).getNumeric();
         columnNumber = pList.get(PR_COLUMN_NUMBER).getNumeric();
         columnWidth = pList.get(PR_COLUMN_WIDTH).getLength();
         numberColumnsRepeated = pList.get(PR_NUMBER_COLUMNS_REPEATED).getNumeric();
         numberColumnsSpanned = pList.get(PR_NUMBER_COLUMNS_SPANNED).getNumeric();
         visibility = pList.get(PR_VISIBILITY).getEnum();
+        super.bind(pList);
         
-        if (columnNumber.getValue() < 0) {
-            //not catching 0 here because it is the indication that no 
-            //column-number has been specified
-            throw new PropertyException("column-number must be 1 or bigger, "
-                    + "but got " + columnNumber.getValue());
+        if( pList.getExplicit(PR_COLUMN_NUMBER) != null ) {
+            if (columnNumber.getValue() <= 0) {
+                //TODO: This is actually a non-fatal error. See Rec 7.26.8:
+                //"A positive integer. If a negative or non-integer value 
+                // is provided, the value will be rounded to the
+                // nearest integer value greater than or equal to 1."
+                throw new PropertyException("column-number must be 1 or bigger, "
+                        + "but got " + columnNumber);
+            } else if( ((Table) parent).isColumnNumberUsed(columnNumber.getValue()) ) {
+                throw new PropertyException("specified column-number \""
+                        + columnNumber 
+                        + "\" has already been assigned to a previous column");
+            } else {
+                //force parent table's current column index
+                //to the specified value, so that the updated index
+                //will be the correct initial value for the next column
+                //(see Rec 7.26.8)
+                ((Table) parent).setCurrentColumnIndex(columnNumber.getValue());
+            }
         }
         if (numberColumnsRepeated.getValue() <= 0) {
             throw new PropertyException("number-columns-repeated must be 1 or bigger, "
@@ -136,13 +143,6 @@ public class TableColumn extends FObj {
     }
 
     /**
-     * @return true if the "column-number" property was set.
-     */
-    public boolean hasColumnNumber() {
-        return (columnNumber.getValue() >= 1);
-    }
-
-    /**
      * @return the "column-number" property.
      */
     public int getColumnNumber() {
@@ -182,9 +182,7 @@ public class TableColumn extends FObj {
     /** @see java.lang.Object#toString() */
     public String toString() {
         StringBuffer sb = new StringBuffer("fo:table-column");
-        if (hasColumnNumber()) {
-            sb.append(" column-number=").append(getColumnNumber());
-        }
+        sb.append(" column-number=").append(getColumnNumber());
         if (getNumberColumnsRepeated() > 1) {
             sb.append(" number-columns-repeated=").append(getNumberColumnsRepeated());
         }

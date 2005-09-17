@@ -18,6 +18,7 @@
 
 package org.apache.fop.fo.flow;
 
+import java.util.BitSet;
 import java.util.List;
 
 import org.xml.sax.Locator;
@@ -41,7 +42,7 @@ import org.apache.fop.fo.properties.LengthRangeProperty;
 /**
  * Class modelling the fo:table object.
  */
-public class Table extends FObj {
+public class Table extends TableFObj {
     // The value of properties relevant for fo:table.
     private CommonAccessibility commonAccessibility;
     private CommonAural commonAural;
@@ -49,12 +50,8 @@ public class Table extends FObj {
     private CommonMarginBlock commonMarginBlock;
     private CommonRelativePosition commonRelativePosition;
     private LengthRangeProperty blockProgressionDimension;
-    private Numeric borderAfterPrecedence;
-    private Numeric borderBeforePrecedence;
     private int borderCollapse;
-    private Numeric borderEndPrecedence;
     private LengthPairProperty borderSeparation;
-    private Numeric borderStartPrecedence;
     private int breakAfter;
     private int breakBefore;
     private String id;
@@ -75,6 +72,8 @@ public class Table extends FObj {
 
     /** collection of columns in this table */
     protected List columns = null;
+    private BitSet usedColumnIndices = new BitSet();
+    private int columnIndex = 1;
     private TableBody tableHeader = null;
     private TableBody tableFooter = null;
   
@@ -106,12 +105,8 @@ public class Table extends FObj {
         commonMarginBlock = pList.getMarginBlockProps();
         commonRelativePosition = pList.getRelativePositionProps();
         blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
-        borderAfterPrecedence = pList.get(PR_BORDER_AFTER_PRECEDENCE).getNumeric();
-        borderBeforePrecedence = pList.get(PR_BORDER_BEFORE_PRECEDENCE).getNumeric();
         borderCollapse = pList.get(PR_BORDER_COLLAPSE).getEnum();
-        borderEndPrecedence = pList.get(PR_BORDER_END_PRECEDENCE).getNumeric();
         borderSeparation = pList.get(PR_BORDER_SEPARATION).getLengthPair();
-        borderStartPrecedence = pList.get(PR_BORDER_START_PRECEDENCE).getNumeric();
         breakAfter = pList.get(PR_BREAK_AFTER).getEnum();
         breakBefore = pList.get(PR_BREAK_BEFORE).getEnum();
         id = pList.get(PR_ID).getString();
@@ -126,6 +121,7 @@ public class Table extends FObj {
         tableOmitHeaderAtBreak = pList.get(PR_TABLE_OMIT_HEADER_AT_BREAK).getEnum();
         //width = pList.get(PR_WIDTH).getLength();
         writingMode = pList.get(PR_WRITING_MODE).getEnum();
+        super.bind(pList);
 
         //Create default column in case no table-columns will be defined.
         defaultColumn = new TableColumn(this, true);
@@ -213,7 +209,8 @@ public class Table extends FObj {
            missingChildElementError(
                    "(marker*,table-column*,table-header?,table-footer?,table-body+)");
         }
-
+        //release reference
+        usedColumnIndices = null;
         getFOEventHandler().endTable(this);
     }
 
@@ -222,10 +219,7 @@ public class Table extends FObj {
      */
     protected void addChildNode(FONode child) throws FOPException {
         if (child.getName().equals("fo:table-column")) {
-            if (columns == null) {
-                columns = new java.util.ArrayList();
-            }
-            columns.add(((TableColumn)child));
+            addColumnNode((TableColumn) child);
         } else if (child.getName().equals("fo:table-footer")) {
             tableFooter = (TableBody)child;
         } else if (child.getName().equals("fo:table-header")) {
@@ -236,6 +230,48 @@ public class Table extends FObj {
         }
     }
 
+    /**
+     * Adds a column to the columns List, and updates the columnIndex
+     * used for determining initial values for column-number
+     * 
+     * @param col   the column to add
+     * @throws FOPException
+     */
+    private void addColumnNode(TableColumn col) throws FOPException {
+        int colNumber = col.getColumnNumber();
+        int colRepeat = col.getNumberColumnsRepeated();
+        if (columns == null) {
+            columns = new java.util.ArrayList();
+        }
+        if( columns.size() < colNumber ) {
+            //add nulls for non-occupied indices between
+            //the last column up to and including the current one
+            while( columns.size() < colNumber ) {
+                columns.add(null);
+            }
+        }
+        //replace the null-value with the actual column
+        columns.set(colNumber - 1, col);
+        if( colRepeat > 1 ) {
+            //in case column is repeated:
+            //for the time being, add the same column 
+            //(colRepeat - 1) times to the columns list
+            //TODO: need to force the column-number
+            //TODO: need to make sure START/END BorderInfo
+            //      are completely independent instances (clones?)
+            //      = necessary for border-collapse="collapse"
+            //        if collapsing is handled in FOTree
+            for( int i = colRepeat - 1; --i >= 0; ) {
+                columns.add(col);
+            }
+        }
+        //flag column indices used by this column
+        usedColumnIndices.set(colNumber - 1, colNumber - 1 + colRepeat);
+        //set index for the next column to use
+        while( usedColumnIndices.get(columnIndex - 1) ) {
+            columnIndex++;
+        }
+    }
     /** @return true of table-layout="auto" */
     public boolean isAutoLayout() {
         return (tableLayout != EN_FIXED);
@@ -375,5 +411,34 @@ public class Table extends FObj {
      */
     public int getNameId() {
         return FO_TABLE;
+    }
+
+    /**
+     * Returns the current column index of the Table
+     * 
+     * @return the next column number to use
+     */
+    public int getCurrentColumnIndex() {
+        return columnIndex;
+    }
+
+    /**
+     * Sets the current column index of the given Table
+     * (used by TableColumn.bind() in case the column-number
+     * was explicitly specified)
+     * 
+     */
+    protected void setCurrentColumnIndex(int newIndex) {
+        columnIndex = newIndex;
+    }
+
+    /**
+     * Checks if a certain column-number is already occupied
+     * 
+     * @param colNr the column-number to check
+     * @return true if column-number is already in use
+     */
+    protected boolean isColumnNumberUsed(int colNr) {
+        return usedColumnIndices.get(colNr - 1);
     }
 }
