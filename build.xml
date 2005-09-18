@@ -167,7 +167,6 @@ list of possible build targets.
   <property name="src.dir" value="${basedir}/src"/>
   <property name="src.codegen.dir" value="${src.dir}/codegen"/>
   <property name="src.java.dir" value="${src.dir}/java"/>
-  <property name="src.hyph.dir" value="${src.dir}/hyph"/>
   <property name="src.viewer.resources.dir" value="${src.java.dir}/org/apache/fop/render/awt/viewer/resources"/>
   <property name="src.viewer.images.dir" value="${src.java.dir}/org/apache/fop/render/awt/viewer/images"/>
   <property name="xdocs.dir" value="${src.dir}/documentation/content/xdocs"/>
@@ -396,9 +395,6 @@ list of possible build targets.
     <mkdir dir="${build.dir}/hyph"/>
     <serHyph targetDir="${build.dir}/hyph">
       <fileset dir="${user.hyph.dir}">
-        <include name="*.xml"/>
-      </fileset>
-      <fileset dir="${src.hyph.dir}">
         <include name="*.xml"/>
       </fileset>
     </serHyph>
