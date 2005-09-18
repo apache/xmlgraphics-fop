@@ -144,8 +144,7 @@ public class TableCell extends TableFObj {
         //column index to the specified value, so that the updated index will
         //be the correct initial value for the next cell (see Rec 7.26.8)
         if( pList.getExplicit(PR_COLUMN_NUMBER) != null ) {
-            ((TableFObj) parent).setCurrentColumnIndex(
-                    pList.getExplicit(PR_COLUMN_NUMBER).getNumeric().getValue());
+            ((TableFObj) parent).setCurrentColumnIndex(columnNumber.getValue());
         }
     }
 
