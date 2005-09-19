@@ -468,10 +468,10 @@ public class CommandLineOptions implements Constants {
             // Set the level for the logger creates already.
             ((CommandLineLogger) log).setLogLevel(level);
         } else {
-            log.warn("Setting the log level to debug probably failed.");
-            log.warn("Configure the log level using Java system properties,");
-            log.warn("or use FOP's command line logger,");
-            log.warn("which is the default on the command line.");
+            //log.warn("Setting the log level to debug probably failed.");
+            //log.warn("Configure the log level using Java system properties,");
+            //log.warn("or use FOP's command line logger,");
+            //log.warn("which is the default on the command line.");
         }
     }
         
