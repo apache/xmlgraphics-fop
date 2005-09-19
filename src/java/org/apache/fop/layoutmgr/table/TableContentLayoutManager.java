@@ -439,7 +439,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
                                 i < primary.getStartCol() 
                                         + primary.getCell().getNumberColumnsSpanned();
                                 i++) {
-                            if( getTableLM().getColumns().getColumn(i + 1) != null ) {
+                            if (getTableLM().getColumns().getColumn(i + 1) != null) {
                                 spanWidth += getTableLM().getColumns().getColumn(i + 1)
                                     .getColumnWidth().getValue(getTableLM());
                             }
