@@ -30,29 +30,31 @@ public class ColumnNumberPropertyMaker extends NumberProperty.Maker {
     public ColumnNumberPropertyMaker(int propId) {
         super(propId);
     }
-    
+
     /**
-     * Set default column-number from parent's currentColumnIndex
-     * 
+     * Set default column-number from parent's currentColumnIndex.
+     *
+     * @param   propertyList
      * @return  the default value for column-number
+     * @throws  PropertyException
      */
     public Property make(PropertyList propertyList) throws PropertyException {
         FObj fo = propertyList.getFObj();
-        
-        if( fo.getNameId() == Constants.FO_TABLE_CELL 
-                || fo.getNameId() == Constants.FO_TABLE_COLUMN ) {
+
+        if (fo.getNameId() == Constants.FO_TABLE_CELL
+                || fo.getNameId() == Constants.FO_TABLE_COLUMN) {
             TableFObj parent = (TableFObj) propertyList.getParentFObj();
             int columnIndex = parent.getCurrentColumnIndex();
-            if( fo.getNameId() == Constants.FO_TABLE_CELL 
-                    && parent.getNameId() == Constants.FO_TABLE_BODY ) {
+            if (fo.getNameId() == Constants.FO_TABLE_CELL
+                    && parent.getNameId() == Constants.FO_TABLE_BODY) {
                 boolean startsRow = propertyList.get(Constants.PR_STARTS_ROW)
                     .getEnum() == Constants.EN_TRUE;
-                
-                //cell w/ starts-row="true", but previous cell 
+
+                //cell w/ starts-row="true", but previous cell
                 //didn't have ends-row="true", so index has still has
                 //to be reset (for other cases this already happened in
                 //body.addChildNode())
-                if( startsRow && !((TableBody) parent).lastCellEndedRow() ) {
+                if (startsRow && !((TableBody) parent).lastCellEndedRow()) {
                     //reset column index, and reassign...
                     ((TableBody) parent).resetColumnIndex();
                     columnIndex = parent.getCurrentColumnIndex();
@@ -60,8 +62,9 @@ public class ColumnNumberPropertyMaker extends NumberProperty.Maker {
             }
             return new NumberProperty(columnIndex);
         } else {
-            throw new PropertyException("column-number property is only allowed on " 
-                    + "fo:table-cell or fo:table-column, not on " + fo.getName());
+            throw new PropertyException("column-number property is only allowed"
+                    + " on fo:table-cell or fo:table-column, not on "
+                    + fo.getName());
         }
     }
 }

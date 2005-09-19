@@ -1,3 +1,21 @@
+/*
+ * Copyright 2005 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* $Id$ */
+
 package org.apache.fop.fo.flow;
 
 import org.apache.fop.apps.FOPException;
@@ -7,6 +25,10 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 
+/**
+ * Superclass for table-related FOs
+ *
+ */
 
 public abstract class TableFObj extends FObj {
 
@@ -14,25 +36,39 @@ public abstract class TableFObj extends FObj {
     private Numeric borderBeforePrecedence;
     private Numeric borderEndPrecedence;
     private Numeric borderStartPrecedence;
-        
+    
+    /**
+     * Used for determining initial values for column-numbers
+     * in case of row-spanning cells
+     * (for clarity)
+     *
+     */
     protected static class PendingSpan {
+        
         protected int rowsLeft;
         
-        public PendingSpan( int rows ) {
+        /**
+         * Constructor
+         * 
+         * @param rows  number of rows spanned
+         */
+        public PendingSpan(int rows) {
             rowsLeft = rows;
-        }
-        
-        public String toString() {
-            StringBuffer sb = new StringBuffer();
-            sb.append("pending span: rowsLeft=").append(rowsLeft);
-            return sb.toString();
-        }
+        }        
     }
     
+    /**
+     * Main constructor
+     * 
+     * @param parent    the parent node
+     */
     public TableFObj(FONode parent) {
         super(parent);
     }
-    
+
+    /**
+     * @see FObj#bind(PropertyList)
+     */
     public void bind(PropertyList pList) throws FOPException {
         borderAfterPrecedence = pList.get(PR_BORDER_AFTER_PRECEDENCE).getNumeric();
         borderBeforePrecedence = pList.get(PR_BORDER_BEFORE_PRECEDENCE).getNumeric();
@@ -59,20 +95,7 @@ public abstract class TableFObj extends FObj {
             return null;
         }
     }
-    
-    protected void setBorderPrecedence(int side, Numeric newPrecedence) {
-        switch( side ) {
-        case CommonBorderPaddingBackground.BEFORE:
-            borderBeforePrecedence = newPrecedence;
-        case CommonBorderPaddingBackground.AFTER:
-            borderAfterPrecedence = newPrecedence;
-        case CommonBorderPaddingBackground.START:
-            borderStartPrecedence = newPrecedence;
-        case CommonBorderPaddingBackground.END:
-            borderEndPrecedence = newPrecedence;
-        }
-    }
-    
+        
     /**
      * Returns the current column index of the given TableFObj
      * (overridden for Table, TableBody, TableRow)
@@ -85,7 +108,11 @@ public abstract class TableFObj extends FObj {
     
     /**
      * Sets the current column index of the given TableFObj
+     * used when a value for column-number is explicitly
+     * specified on the child FO (TableCell or TableColumn)
      * (overridden for Table, TableBody, TableRow)
+     * 
+     * @param   newIndex    new value for column index
      */
     protected void setCurrentColumnIndex(int newIndex) {
         //do nothing by default
