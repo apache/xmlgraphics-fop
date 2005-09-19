@@ -60,7 +60,7 @@ public class ColumnSetup {
             ListIterator iter = rawCols.listIterator();
             while (iter.hasNext()) {
                 TableColumn col = (TableColumn)iter.next();
-                if( col != null ) {
+                if (col != null) {
                     colnum = col.getColumnNumber();
                 }
                 for (int i = 0; i < col.getNumberColumnsRepeated(); i++) {
@@ -101,7 +101,7 @@ public class ColumnSetup {
                             + size + " columns have been defined. "
                             + "The last defined column will be reused.");
                     if (!table.isAutoLayout()) {
-                        log.warn("Please note that according XSL-FO 1.0 (4.26.9) says that "
+                        log.warn("Please note that according XSL-FO 1.0 (7.26.9) says that "
                                 + "the 'column-width' property must be specified for every "
                                 + "column, unless the automatic table layout is used.");
                     }
@@ -151,7 +151,7 @@ public class ColumnSetup {
     public int getXOffset(int col, PercentBaseContext context) {
         int xoffset = 0;
         for (int i = 1; i < col; i++) {
-            if( getColumn(i) != null ) {
+            if (getColumn(i) != null) {
                 xoffset += getColumn(i).getColumnWidth().getValue(context);
             }
         }

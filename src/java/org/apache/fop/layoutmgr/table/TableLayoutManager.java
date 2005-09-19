@@ -156,7 +156,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         float factors = 0;
         for (Iterator i = columns.iterator(); i.hasNext();) {
             TableColumn column = (TableColumn) i.next();
-            if( column != null ) {
+            if (column != null) {
                 Length width = column.getColumnWidth();
                 sumCols += width.getValue(this);
                 if (width instanceof TableColLength) {
@@ -462,4 +462,3 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     }
     
 }
-
