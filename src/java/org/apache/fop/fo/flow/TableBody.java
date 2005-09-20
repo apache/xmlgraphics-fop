@@ -50,11 +50,15 @@ public class TableBody extends TableFObj {
     
     private PropertyList savedPropertyList;
 
-    //used for validation
+    /**
+     * used for validation
+     */
     protected boolean tableRowsFound = false;
     protected boolean tableCellsFound = false;
     
-    //used for initial values of column-number property
+    /**
+     * used for initial values of column-number property
+     */
     protected List pendingSpans;
     protected BitSet usedColumnIndices = new BitSet();
     private int columnIndex = 1;
@@ -175,7 +179,7 @@ public class TableBody extends TableFObj {
         int colSpan = cell.getNumberColumnsSpanned();
         //if there were no explicit columns, pendingSpans
         //will not be properly initialized for the first row
-        if (firstRow && ((Table) parent).columns == null) {
+        if (firstRow && getTable().columns == null) {
             if (pendingSpans == null) {
                 pendingSpans = new java.util.ArrayList();
             }
@@ -198,8 +202,8 @@ public class TableBody extends TableFObj {
         //take up more than three columnIndices...
         int startIndex = columnIndex - 1;
         int endIndex = startIndex + colSpan;
-        if (((Table) parent).columns != null) {
-            List cols = ((Table) parent).columns;
+        if (getTable().columns != null) {
+            List cols = getTable().columns;
             int tmpIndex = endIndex;
             for (int i = startIndex; i <= tmpIndex; ++i) {
                 if (i < cols.size() && cols.get(i) == null) {
@@ -298,8 +302,8 @@ public class TableBody extends TableFObj {
      *
      */
     protected void initPendingSpans() {
-        if (((Table) parent).columns != null) {
-            List tableCols = ((Table) parent).columns;
+        if (getTable().columns != null) {
+            List tableCols = getTable().columns;
             pendingSpans = new java.util.ArrayList(tableCols.size());
             for (int i = tableCols.size(); --i >= 0;) {
                 pendingSpans.add(null);
@@ -362,9 +366,9 @@ public class TableBody extends TableFObj {
             //the updated index is not assigned to any
             //column, increment further until the next
             //index occupied by a column...
-            if (((Table) parent).columns != null) {
-                while (columnIndex <= ((Table) parent).columns.size()
-                        && !((Table) parent).isColumnNumberUsed(columnIndex) ) {
+            if (getTable().columns != null) {
+                while (columnIndex <= getTable().columns.size()
+                        && !getTable().isColumnNumberUsed(columnIndex) ) {
                     columnIndex++;
                 }
             }
@@ -396,6 +400,6 @@ public class TableBody extends TableFObj {
      */
     protected boolean isColumnNumberUsed(int colNr) {
         return usedColumnIndices.get(colNr - 1);
-    }
+    }    
 }
 

@@ -133,17 +133,29 @@ public class TableCell extends TableFObj {
         
         //check if any of the column-numbers occupied by this cell
         //are already in use in the current row...
-        for( int i = getColumnNumber(); 
-                ++i <= getColumnNumber() + getNumberColumnsSpanned(); ) {
-            if( ((TableFObj) parent).isColumnNumberUsed(i - 1) ) {
-                throw new FOPException("cell overlaps in column " + (i - 1),
-                              locator);
+        int i = -1;
+        int columnIndex = columnNumber.getValue();
+        while (++i < getNumberColumnsSpanned()) {
+            //if table has explicit columns and the column-number isn't
+            //assigned to any column, increment further until the next
+            //column is encountered
+            if (getTable().columns != null) {
+                while (columnIndex <= getTable().columns.size()
+                        && !getTable().isColumnNumberUsed(columnIndex)) {
+                    columnIndex++;
+                }
+            }
+            //if column-number is already in use by another cell
+            //in the current row => error!
+            if (((TableFObj) parent).isColumnNumberUsed(columnIndex)) {
+                throw new FOPException("fo:table-cell overlaps in column "
+                        + i, locator);
             }
         }
         //if column-number was explicitly specified, force the parent's current
         //column index to the specified value, so that the updated index will
         //be the correct initial value for the next cell (see Rec 7.26.8)
-        if( pList.getExplicit(PR_COLUMN_NUMBER) != null ) {
+        if (pList.getExplicit(PR_COLUMN_NUMBER) != null) {
             ((TableFObj) parent).setCurrentColumnIndex(columnNumber.getValue());
         }
     }
@@ -165,7 +177,7 @@ public class TableCell extends TableFObj {
         if (!blockItemFound) {
             missingChildElementError("marker* (%block;)+");
         }
-        if( (startsRow() || endsRow()) 
+        if ((startsRow() || endsRow()) 
                 && getParent().getNameId() == FO_TABLE_ROW ) {
             getLogger().warn("starts-row/ends-row for fo:table-cells "
                     + "non-applicable for children of an fo:table-row.");
@@ -192,6 +204,8 @@ public class TableCell extends TableFObj {
 
     /**
      * Set position relative to table (set by body?)
+     * 
+     * @param offset    new offset
      */
     public void setStartOffset(int offset) {
         startOffset = offset;
