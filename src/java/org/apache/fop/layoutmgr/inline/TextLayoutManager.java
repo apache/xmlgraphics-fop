@@ -557,6 +557,36 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         return oldList;
     }
 
+    /**
+     * remove the AreaInfo object represented by the given elements,
+     * so that it won't generate any element when getChangedKnuthElements
+     * will be called
+     *
+     * @param oldList the elements representing the word space
+     */
+    public void removeWordSpace(List oldList) {
+        // find the element storing the Position whose value
+        // points to the AreaInfo object
+        ListIterator oldListIterator = oldList.listIterator();
+        if (((KnuthElement) ((LinkedList) oldList).getFirst()).isPenalty()) {
+            // non breaking space: oldList starts with a penalty
+            oldListIterator.next();
+        }
+        if (oldList.size() > 2) {
+            // alignment is either center, start or end:
+            // the first two elements does not store the needed Position
+            oldListIterator.next();
+            oldListIterator.next();
+        }
+        int leafValue = ((LeafPosition) ((KnuthElement) oldListIterator.next()).getPosition()).getLeafPos();
+        // only the last word space can be a trailing space!
+        if (leafValue == vecAreaInfo.size() - 1) {
+            vecAreaInfo.remove(leafValue);
+        } else {
+            log.error("trying to remove a non-trailing word space");
+        }
+    }
+
     public void hyphenate(Position pos, HyphContext hc) {
         AreaInfo ai
             = (AreaInfo) vecAreaInfo.get(((LeafPosition) pos).getLeafPos());

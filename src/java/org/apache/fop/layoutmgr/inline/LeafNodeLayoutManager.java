@@ -302,6 +302,16 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
         return oldList;
     }
 
+    /**
+     * Remove the word space represented by the given elements
+     *
+     * @param oldList the elements representing the word space
+     */
+    public void removeWordSpace(List oldList) {
+        // do nothing
+        log.warn(this.getClass().getName() + " should not receive a call to removeWordSpace(list)");
+    }
+
     public void getWordChars(StringBuffer sbChars, Position pos) {
     }
 

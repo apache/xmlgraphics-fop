@@ -39,6 +39,14 @@ public interface InlineLevelLayoutManager extends LayoutManager {
     List addALetterSpaceTo(List oldList);
 
     /**
+     * Tell the LM to modify its data, removing the word space 
+     * represented by the given elements
+     *
+     * @param oldList the elements representing the word space
+     */
+    void removeWordSpace(List oldList);
+
+    /**
      * Get the word chars corresponding to the given position
      *
      * @param sbChars the StringBuffer used to append word chars
