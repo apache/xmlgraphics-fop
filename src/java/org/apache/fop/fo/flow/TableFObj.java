@@ -133,19 +133,6 @@ public abstract class TableFObj extends FObj {
     }
     
     /**
-     * Checks whether a given column-number is assigned to 
-     * an explicit column in the parent table
-     * (overridden for TableBody, TableRow)
-     * 
-     * @param colNr the column-number to check
-     * @return true if the table has explicit columns, and
-     *              the column-number is in use
-     */
-    protected boolean isColumnNumberUsedInTable(int colNr) {
-        return false;
-    }
-    
-    /**
      * Convenience method to returns a reference 
      * to the base Table instance
      * 
