@@ -182,8 +182,8 @@ list of possible build targets.
 
   <property name="dist.bin.dir" value="${basedir}/dist-bin"/>
   <property name="dist.src.dir" value="${basedir}/dist-src"/>
-  <property name="dist.bin.result.dir" value="${dist.bin.dir}/${Name}-${version}"/>
-  <property name="dist.src.result.dir" value="${dist.src.dir}/${Name}-${version}"/>
+  <property name="dist.bin.result.dir" value="${dist.bin.dir}/${name}-${version}"/>
+  <property name="dist.src.result.dir" value="${dist.src.dir}/${name}-${version}"/>
 
   <!-- =================================================================== -->
   <!-- Initialization target                                               -->
@@ -613,12 +613,12 @@ list of possible build targets.
       </batchtest>
     </junit>
     <echo message="Running basic functionality tests for fop-transcoder-allinone.jar"/>
-  	<!-- These are the same tests as in the block above but testing the "allinone" JAR
-  	     instead. Please don't add any additional paths other than the test classes, the
-  	     allinone JAR and the any Batik JARs to the classpath. If this fails, but the
-  	     previous test block succeeded it indicates that the packaging of the allinone
-  	     JAR needs to be updated.
-  	-->
+    <!-- These are the same tests as in the block above but testing the "allinone" JAR
+         instead. Please don't add any additional paths other than the test classes, the
+         allinone JAR and the any Batik JARs to the classpath. If this fails, but the
+         previous test block succeeded it indicates that the packaging of the allinone
+         JAR needs to be updated.
+    -->
     <mkdir dir="${build.dir}/test-reports/fop-transcoder-allinone"/>
     <junit haltonerror="yes" fork="${junit.fork}">
       <sysproperty key="basedir" value="${basedir}"/>
@@ -923,10 +923,10 @@ list of possible build targets.
     <copy todir="${dist.bin.result.dir}/build" file="build/fop.jar"/>
     <chmod file="${dist.bin.result.dir}/fop.sh" perm="ugo+rx"/>
 
-    <zip zipfile="${Name}-${version}-bin.zip" basedir="${dist.bin.dir}" includes="**"/>
-    <tar tarfile="${Name}-${version}-bin.tar" basedir="${dist.bin.dir}" includes="**"/>
-    <gzip zipfile="${Name}-${version}-bin.tar.gz" src="${Name}-${version}-bin.tar"/>
-    <delete file="${Name}-${version}-bin.tar"/>
+    <zip zipfile="${name}-${version}-bin.zip" basedir="${dist.bin.dir}" includes="**"/>
+    <tar tarfile="${name}-${version}-bin.tar" basedir="${dist.bin.dir}" includes="**"/>
+    <gzip zipfile="${name}-${version}-bin.tar.gz" src="${name}-${version}-bin.tar"/>
+    <delete file="${name}-${version}-bin.tar"/>
   </target>
 
   <target name="dist-src" depends="all, javadocs">
@@ -943,10 +943,10 @@ list of possible build targets.
     <chmod file="${dist.src.result.dir}/build.sh" perm="ugo+rx"/>
     <chmod file="${dist.src.result.dir}/fop.sh" perm="ugo+rx"/>
 
-    <zip zipfile="${Name}-${version}-src.zip" basedir="${dist.src.dir}" includes="**"/>
-    <tar tarfile="${Name}-${version}-src.tar" basedir="${dist.src.dir}" includes="**"/>
-    <gzip zipfile="${Name}-${version}-src.tar.gz" src="${Name}-${version}-src.tar"/>
-    <delete file="${Name}-${version}-src.tar"/>
+    <zip zipfile="${name}-${version}-src.zip" basedir="${dist.src.dir}" includes="**"/>
+    <tar tarfile="${name}-${version}-src.tar" basedir="${dist.src.dir}" includes="**"/>
+    <gzip zipfile="${name}-${version}-src.tar.gz" src="${name}-${version}-src.tar"/>
+    <delete file="${name}-${version}-src.tar"/>
   </target>
 
   <!-- =================================================================== -->
