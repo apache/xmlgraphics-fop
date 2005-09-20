@@ -80,6 +80,7 @@ list of possible build targets.
     <include name="lib/xercesImpl-*.jar"/>
     <include name="lib/xalan-*.jar"/>
     <include name="lib/xml-apis*.jar"/>
+    <include name="lib/serializer*.jar"/>
     <include name="lib/batik*.jar"/>
     <include name="lib/avalon-framework*.jar"/>
     <include name="lib/commons-logging*.jar"/>
