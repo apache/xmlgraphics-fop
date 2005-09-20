@@ -285,35 +285,40 @@ public class LineLayoutManager extends InlineStackingLayoutManager
          * representing each space has a different "pattern"
          */
         private void removeElementsForTrailingSpaces() {
-            KnuthElement removedElement;
+            LinkedList removedElements;
+            InlineLevelLayoutManager inlineLM;
             int effectiveAlignment = getEffectiveAlignment(textAlignment, textAlignmentLast);
             while (this.size() > ignoreAtStart
                    && ((KnuthElement) this.get(this.size() - 1)).isGlue()) {
+                removedElements = new LinkedList();
+                inlineLM = (InlineLevelLayoutManager)
+                    ((KnuthElement) this.get(this.size() - 1)).getLayoutManager();
                 if (effectiveAlignment == EN_CENTER) {
                     // centered text: the pattern is
                     //     <glue> <penaly> <glue> <box> <penaly> <glue>
-                    removedElement = (KnuthGlue) this.remove(this.size() - 1);
-                    removedElement = (KnuthPenalty) this.remove(this.size() - 1);
-                    removedElement = (KnuthBox) this.remove(this.size() - 1);
-                    removedElement = (KnuthGlue) this.remove(this.size() - 1);
-                    removedElement = (KnuthPenalty) this.remove(this.size() - 1);
-                    removedElement = (KnuthGlue) this.remove(this.size() - 1);
+                    removedElements.addFirst((KnuthGlue) this.remove(this.size() - 1));
+                    removedElements.addFirst((KnuthPenalty) this.remove(this.size() - 1));
+                    removedElements.addFirst((KnuthBox) this.remove(this.size() - 1));
+                    removedElements.addFirst((KnuthGlue) this.remove(this.size() - 1));
+                    removedElements.addFirst((KnuthPenalty) this.remove(this.size() - 1));
+                    removedElements.addFirst((KnuthGlue) this.remove(this.size() - 1));
                 } else if (effectiveAlignment == EN_START || effectiveAlignment == EN_END) {
                     // left- or right-aligned text: the pattern is
                     //     <glue> <penalty> <glue>
-                    removedElement = (KnuthGlue) this.remove(this.size() - 1);
-                    removedElement = (KnuthPenalty) this.remove(this.size() - 1);
-                    removedElement = (KnuthGlue) this.remove(this.size() - 1);
+                    removedElements.addFirst((KnuthGlue) this.remove(this.size() - 1));
+                    removedElements.addFirst((KnuthPenalty) this.remove(this.size() - 1));
+                    removedElements.addFirst((KnuthGlue) this.remove(this.size() - 1));
                 } else {
                     // justified text: the pattern is
                     //     <glue>
-                    removedElement = (KnuthGlue) this.remove(this.size() - 1);
+                    removedElements.add((KnuthGlue) this.remove(this.size() - 1));
                 }
                 // if the space was a non-breaking one, there is also a penalty
                 if (this.size() > ignoreAtStart
                     && ((KnuthElement) this.get(this.size() - 1)).isPenalty()) {
-                    removedElement = (KnuthPenalty) this.remove(this.size() - 1);
+                    removedElements.addFirst((KnuthPenalty) this.remove(this.size() - 1));
                 }
+                inlineLM.removeWordSpace(removedElements);
             }
         }
 
@@ -405,7 +410,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                           (textAlign == Constants.EN_END) ? difference : 0;
             indent += (bestActiveNode.line == 1 && bFirst) ? 
                           textIndent : 0;
-            double ratio = (textAlign == Constants.EN_JUSTIFY) ? bestActiveNode.adjustRatio : 0;
+            double ratio = (textAlign == Constants.EN_JUSTIFY
+                || difference < 0 && -difference <= bestActiveNode.availableShrink) ?
+                bestActiveNode.adjustRatio : 0;
 
             // add nodes at the beginning of the list, as they are found
             // backwards, from the last one to the first one
@@ -1807,6 +1814,5 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     public boolean getGeneratesLineArea() {
         return true;
     }
-   
 }
 

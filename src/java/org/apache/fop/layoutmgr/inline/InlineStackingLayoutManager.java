@@ -247,6 +247,27 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager
         return oldList;
     }
 
+    /**
+     * remove the AreaInfo object represented by the given elements,
+     * so that it won't generate any element when getChangedKnuthElements
+     * will be called
+     *
+     * @param oldList the elements representing the word space
+     */
+    public void removeWordSpace(List oldList) {
+        ListIterator oldListIterator = oldList.listIterator();
+        KnuthElement element = null;
+        // "unwrap" the Position stored in each element of oldList
+        while (oldListIterator.hasNext()) {
+            element = (KnuthElement) oldListIterator.next();
+            element.setPosition(((NonLeafPosition)element.getPosition()).getPosition());
+        }
+
+        ((InlineLevelLayoutManager)
+                   element.getLayoutManager()).removeWordSpace(oldList);
+
+    }
+
     public void getWordChars(StringBuffer sbChars, Position pos) {
         Position newPos = ((NonLeafPosition) pos).getPosition();
         ((InlineLevelLayoutManager)
