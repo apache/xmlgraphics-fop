@@ -127,15 +127,6 @@ list of possible build targets.
     </fileset>
   </path>
 
-  <path id="checkstylepath">
-    <fileset dir="${basedir}/lib">
-      <include name="checkstyle-all-*.jar"/>
-    </fileset>
-    <fileset dir="${optional.lib.dir}">
-      <include name="checkstyle-all-*.jar"/>
-    </fileset>
-  </path>
-
   <patternset id="exclude-jimi">
     <exclude name="org/apache/fop/image/JimiImage.java" unless="jimi.present"/>
   </patternset>
@@ -818,24 +809,103 @@ list of possible build targets.
   <!-- =================================================================== -->
   <!-- Checkstyle                                                          -->
   <!-- =================================================================== -->
-  <target name="checkstyle" depends="codegen" description="Runs Checkstyle for a code quality report">
-    <available property="checkstyle.available" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="checkstylepath"/>
-    <fail message="Please put checkstyle-all-*.jar in the lib directory. Get it from http://checkstyle.sourceforge.net" unless="checkstyle.available"/>
-    <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="checkstylepath"/>
+  <property name="checkstyle.home.dir" value="${optional.lib.dir}"/>
+  <property name="checkstyle.noframes.xslt" value="${checkstyle.home.dir}/contrib/checkstyle-noframes.xsl"/>
 
-    <checkstyle config="checkstyle-3.5-fop-head.xml" failonviolation="false"
-                classpathref="libs-run-classpath">
+  <path id="checkstyle-path">
+    <fileset dir="${basedir}/lib">
+      <include name="checkstyle-all-*.jar"/>
+      <include name="checkstyle-*.jar"/>
+      <include name="antlr*.jar"/>
+      <include name="commons-beanutils*.jar"/>
+      <include name="commons-collections*.jar"/>
+      <include name="commons-logging*.jar"/>
+      <include name="jakarta-regexp*.jar"/>      
+    </fileset>
+    <fileset dir="${checkstyle.home.dir}">
+      <include name="checkstyle-all-*.jar"/>
+      <include name="checkstyle-*.jar"/>
+      <include name="antlr*.jar"/>
+      <include name="commons-beanutils*.jar"/>
+      <include name="commons-collections*.jar"/>
+      <include name="commons-logging*.jar"/>
+      <include name="jakarta-regexp*.jar"/>      
+    </fileset>
+    <!--fileset dir="${optional.lib.dir}">
+      <include name="checkstyle-all-*.jar"/>
+      <include name="checkstyle-*.jar"/>
+      <include name="antlr*.jar"/>
+      <include name="commons-beanutils*.jar"/>
+      <include name="commons-collections*.jar"/>
+      <include name="commons-logging*.jar"/>
+      <include name="jakarta-regexp*.jar"/>      
+    </fileset-->
+  </path>
+
+  <path id="checkstyle-runpath">
+    <path refid="checkstyle-path"/>
+    <fileset dir="${basedir}/build">
+      <include name="fop.jar"/>
+      <include name="fop-hyph.jar" />
+    </fileset>
+  </path>
+
+  <target name="checkstyle-avail" depends="init">
+    <available property="checkstyle.available" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="checkstyle-path"/>
+    <available property="checkstyle.4.x" classname="com.puppycrawl.tools.checkstyle.checks.coding.ModifiedControlVariableCheck" classpathref="checkstyle-path"/>
+    <available property="checkstyle.noframes.xslt.available" file="${checkstyle.noframes.xslt}"/>
+    <condition property="checkstyle.message" value="Checkstyle 4.x Support PRESENT">
+      <and>
+        <equals arg1="${checkstyle.available}" arg2="true"/>
+        <equals arg1="${checkstyle.4.x}" arg2="true"/>
+      </and>
+    </condition>
+    <condition property="checkstyle.message" value="Checkstyle 3.x Support PRESENT">
+      <equals arg1="${checkstyle.available}" arg2="true"/>
+    </condition>
+    <condition property="checkstyle.message" value="Checkstyle Support NOT Present">
+      <not>
+        <equals arg1="${checkstyle.available}" arg2="true"/>
+      </not>
+    </condition>
+    <echo message="${checkstyle.message}"/>
+    <condition property="checkstyle.config" value="checkstyle-4.0.xml">
+      <equals arg1="${checkstyle.4.x}" arg2="true"/>
+    </condition>
+    <condition property="checkstyle.config" value="checkstyle-3.5-fop-head.xml">
+      <not>
+        <equals arg1="${checkstyle.4.x}" arg2="true"/>
+      </not>
+    </condition>
+    <condition property="checkstyle.noframes.xslt.message" value="Checkstyle HTML style sheet support PRESENT">
+      <equals arg1="${checkstyle.noframes.xslt.available}" arg2="true"/>
+    </condition>
+    <condition property="checkstyle.noframes.xslt.message" value="Checkstyle HTML style sheet support NOT Present">
+      <not>
+        <equals arg1="${checkstyle.noframes.xslt.available}" arg2="true"/>
+      </not>
+    </condition>
+    <echo message="${checkstyle.noframes.xslt.message}"/>
+  </target>
+
+  <target name="checkstyle-check" depends="checkstyle-avail, codegen" if="checkstyle.available">
+    
+    <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="checkstyle-runpath"/>
+    <!--checkstyle config="checkstyle-3.5-fop-head.xml" failonviolation="false"
+                classpathref="checkstyle-path"-->
+    <checkstyle config="checkstyle-4.0.xml" failonviolation="false"
+                classpathref="checkstyle-runpath">
       <fileset dir="${src.java.dir}" includes="**/*.java"/>
       <formatter type="plain" toFile="${build.dir}/checkstyle_report.txt"/>
       <formatter type="xml" toFile="${build.dir}/checkstyle_report.xml"/>
     </checkstyle>
-    <available property="checkstyle.stylesheet.available" file="checkstyle-noframes.xsl"/>
-    <antcall target="checkstyle-html"/>
   </target>
 
-  <target name="checkstyle-html" if="checkstyle.stylesheet.available">
-    <style in="${build.dir}/checkstyle_report.xml" out="${build.dir}/checkstyle_report.html" style="checkstyle-noframes.xsl"/>
+  <target name="checkstyle-html" depends="checkstyle-avail, checkstyle-check" if="checkstyle.noframes.xslt.available">
+    <style in="${build.dir}/checkstyle_report.xml" out="${build.dir}/checkstyle_report.html" style="${checkstyle.noframes.xslt}"/>
   </target>
+
+  <target name="checkstyle" depends="checkstyle-avail, checkstyle-check, checkstyle-html" description="Runs Checkstyle for a code quality report"/>
 
   <!-- =================================================================== -->
   <!-- Creates the distribution                                            -->
