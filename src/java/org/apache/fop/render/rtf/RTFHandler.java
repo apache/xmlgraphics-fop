@@ -1247,6 +1247,12 @@ public class RTFHandler extends FOEventHandler {
             } else {
                 endTable( (Table) foNode);
             }
+        } else if (foNode instanceof TableBody) {
+            if (bStart) {
+                startBody( (TableBody) foNode);
+            } else {
+                endBody( (TableBody) foNode);
+            }
         } else if (foNode instanceof TableColumn) {
             if (bStart) {
                 startColumn( (TableColumn) foNode);
