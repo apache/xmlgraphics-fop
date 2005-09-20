@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.1//EN" "http://www.puppycrawl.com/dtds/configuration_1_1.dtd">
+<module name="Checker">
+  <module name="TreeWalker">
+    <module name="RegexpHeader">
+      <property name="headerFile" value="checkstyle.header"/>
+      <property name="severity" value="warning"/>
+    </module>
+    <module name="ArrayTypeStyleCheck">
+      <property name="javaStyle" value="true"/>
+      <property name="severity" value="warning"/>
+    </module>
+    <module name="ModifierOrderCheck">
+      <property name="severity" value="warning"/>
+    </module>
+    <module name="RedundantModifierCheck">
+      <property name="severity" value="warning"/>
+      <property name="tokens" value="METHOD_DEF, VARIABLE_DEF"/>
+    </module>
+    <module name="UpperEllCheck">
+      <property name="severity" value="warning"/>
+    </module>
+    <module name="AvoidNestedBlocksCheck">
+      <property name="severity" value="warning"/>
+    </module>
+    <module name="EmptyBlockCheck">
+      <property name="option" value="text"/>
+      <property name="severity" value="warning"/>
+      <property name="tokens" value="LITERAL_CATCH, LITERAL_DO, LITERAL_ELSE, LITERAL_FINALLY, LITERAL_IF, LITERAL_FOR, LITERAL_TRY, LITERAL_WHILE, STATIC_INIT"/>
+    </module>
+    <module name="LeftCurlyCheck">
+      <property name="maxLineLength" value="100"/>
+      <property name="option" value="eol"/>
+      <property name="severity" value="warning"/>
+      <property name="tokens" value="CLASS_DEF, CTOR_DEF, INTERFACE_DEF, LITERAL_CATCH, LITERAL_DO, LITERAL_ELSE, LITERAL_FINALLY, LITERAL_FOR, LITERAL_IF, LITERAL_SWITCH, LITERAL_SYNCHRONIZED, LITERAL_TRY, LITERAL_WHILE, METHOD_DEF"/>
+    </module>
+    <module name="NeedBracesCheck">
+      <property name="severity" value="warning"/>
+      <property name="tokens" value="LITERAL_DO, LITERAL_ELSE, LITERAL_IF, LITERAL_FOR, LITERAL_WHILE"/>
+    </module>
+    <module name="RightCurlyCheck">
+      <property name="option" value="same"/>
+      <property name="severity" value="warning"/>
+      <property name="tokens" value="LITERAL_CATCH, LITERAL_ELSE, LITERAL_TRY"/>
+    </module>
+    <module name="DoubleCheckedLockingCheck">
+      <property name="severity" value="warning"/>
+    </module>
+    <module name="EmptyStatementCheck">
+      <property name="severity" value="warning"/>
+    </module>
+    <module name="EqualsHashCodeCheck">
+      <property name="severity" value="warning"/>
+    </module>
+    <module name="HiddenFieldCheck">
+      <property name="severity" value="warning"/>
+      <property name="tokens" value="PARAMETER_DEF, VARIABLE_DEF"/>
+      <property name="ignoreConstructorParameter" value="true"/>
+      <property name="ignoreSetter" value="true"/>
+    </module>
+    <module name="InnerAssignmentCheck">
+      <property name="severity" value="warning"/>
+      <property name="tokens" value="ASSIGN, BAND_ASSIGN, BOR_ASSIGN, BSR_ASSIGN, BXOR_ASSIGN, DIV_ASSIGN, MINUS_ASSIGN, MOD_ASSIGN, PLUS_ASSIGN, SL_ASSIGN, SR_ASSIGN, STAR_ASSIGN"/>
+    </module>
+    <module name="MissingSwitchDefaultCheck">
+      <property name="severity" value="warning"/>
+    </module>
+    <module name="RedundantThrowsCheck">
+      <property name="allowSubclasses" value="false"/>
+      <property name="allowUnchecked" value="false"/>
+      <property name="severity" value="warning"/>
+    </module>
+    <module name="SimplifyBooleanExpressionCheck">
+      <property name="severity" value="warning"/>
+    </module>
+    <module name="SimplifyBooleanReturnCheck">
+      <property name="severity" value="warning"/>
+    </module>
+    <module name="FinalClassCheck">
+      <property name="severity" value="warning"/>
+    </module>
+    <module name="HideUtilityClassConstructorCheck">
+      <property name="severity" value="warning"/>
+    </module>
+    <module name="VisibilityModifierCheck">
+      <property name="packageAllowed" value="false"/>
+      <property name="protectedAllowed" value="true"/>
+      <property name="publicMemberPattern" value="^serialVersionUID"/>
+      <property name="severity" value="warning"/>
+    </module>
+    <module name="AvoidStarImportCheck">
+      <property name="severity" value="error"/>
+    </module>
+    <module name="JavadocMethodCheck">
+      <property name="allowMissingParamTags" value="false"/>
+      <property name="allowMissingReturnTag" value="false"/>
+      <property name="allowMissingThrowsTags" value="false"/>
+      <property name="allowThrowsTagsForSubclasses" value="false"/>
+      <property name="allowUndeclaredRTE" value="false"/>
+      <property name="scope" value="protected"/>
+      <property name="severity" value="warning"/>
+      <property name="tokens" value="METHOD_DEF, CTOR_DEF"/>
+    </module>
+    <module name="JavadocTypeCheck">
+      <property name="scope" value="protected"/>
+      <property name="severity" value="warning"/>
+      <property name="tokens" value="CLASS_DEF, INTERFACE_DEF"/>
+    </module>
+    <module name="JavadocVariableCheck">
+      <property name="scope" value="protected"/>
+      <property name="severity" value="warning"/>
+    </module>
+    <module name="ConstantNameCheck">
+      <property name="format" value="^[A-Z](_?[A-Z0-9]+)*$"/>
+      <property name="severity" value="warning"/>
+    </module>
+    <module name="LocalFinalVariableNameCheck">
+      <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
+      <property name="severity" value="warning"/>
+    </module>
+    <module name="LocalVariableNameCheck">
+      <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
+      <property name="severity" value="warning"/>
+    </module>
+    <module name="MemberNameCheck">
+      <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
+      <property name="severity" value="warning"/>
+    </module>
+    <module name="MethodNameCheck">
+      <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
+      <property name="severity" value="warning"/>
+    </module>
+    <module name="PackageNameCheck">
+      <property name="format" value="^[a-z]+(\.[a-zA-Z_][a-zA-Z0-9_]*)*$"/>
+      <property name="severity" value="warning"/>
+    </module>
+    <module name="ParameterNameCheck">
+      <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
+      <property name="severity" value="warning"/>
+    </module>
+    <module name="StaticVariableNameCheck">
+      <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
+      <property name="severity" value="warning"/>
+    </module>
+    <module name="TypeNameCheck">
+      <property name="format" value="^[A-Z][a-zA-Z0-9]*$"/>
+      <property name="severity" value="warning"/>
+      <property name="tokens" value="CLASS_DEF, INTERFACE_DEF"/>
+    </module>
+    <module name="FileLengthCheck">
+      <property name="max" value="2000"/>
+      <property name="severity" value="warning"/>
+    </module>
+    <module name="LineLengthCheck">
+      <property name="ignorePattern" value="^$"/>
+      <property name="max" value="100"/>
+      <property name="severity" value="warning"/>
+      <property name="tabWidth" value="4"/>
+    </module>
+    <module name="MethodLengthCheck">
+      <property name="max" value="150"/>
+      <property name="severity" value="warning"/>
+      <property name="tokens" value="METHOD_DEF, CTOR_DEF"/>
+    </module>
+    <module name="ParameterNumberCheck">
+      <property name="max" value="7"/>
+      <property name="severity" value="warning"/>
+      <property name="tokens" value="METHOD_DEF, CTOR_DEF"/>
+    </module>
+    <module name="EmptyForIteratorPadCheck">
+      <property name="option" value="nospace"/>
+      <property name="severity" value="warning"/>
+    </module>
+    <module name="NoWhitespaceAfterCheck">
+      <property name="allowLineBreaks" value="true"/>
+      <property name="severity" value="warning"/>
+      <property name="tokens" value="ARRAY_INIT, BNOT, DEC, DOT, INC, LNOT, UNARY_MINUS, UNARY_PLUS"/>
+    </module>
+    <module name="NoWhitespaceBeforeCheck">
+      <property name="allowLineBreaks" value="true"/>
+      <property name="severity" value="warning"/>
+      <property name="tokens" value="SEMI, POST_DEC, POST_INC"/>
+    </module>
+    <module name="OperatorWrapCheck">
+      <property name="option" value="nl"/>
+      <property name="severity" value="warning"/>
+      <property name="tokens" value="ASSIGN, BAND, BAND_ASSIGN, BOR, BOR_ASSIGN, BSR, BSR_ASSIGN, BXOR, BXOR_ASSIGN, COLON, DIV, DIV_ASSIGN, EQUAL, GE, GT, LAND, LE, LITERAL_INSTANCEOF, LOR, LT, MINUS, MINUS_ASSIGN, MOD, MOD_ASSIGN, NOT_EQUAL, PLUS, PLUS_ASSIGN, QUESTION, SL, SL_ASSIGN, SR, SR_ASSIGN, STAR, STAR_ASSIGN"/>
+    </module>
+    <module name="TabCharacterCheck">
+      <property name="severity" value="error"/>
+    </module>
+    <module name="WhitespaceAfterCheck">
+      <property name="severity" value="warning"/>
+      <property name="tokens" value="COMMA, SEMI"/>
+    </module>
+    <module name="WhitespaceAroundCheck">
+      <property name="severity" value="warning"/>
+      <property name="tokens" value="ASSIGN, BAND, BAND_ASSIGN, BOR, BOR_ASSIGN, BSR, BSR_ASSIGN, BXOR, BXOR_ASSIGN, COLON, DIV, DIV_ASSIGN, EQUAL, GE, GT, LAND, LCURLY, LE, LITERAL_ASSERT, LITERAL_CATCH, LITERAL_DO, LITERAL_ELSE, LITERAL_FINALLY, LITERAL_FOR, LITERAL_IF, LITERAL_RETURN, LITERAL_SYNCHRONIZED, LITERAL_TRY, LITERAL_WHILE, LOR, LT, MINUS, MINUS_ASSIGN, MOD, MOD_ASSIGN, NOT_EQUAL, PLUS, PLUS_ASSIGN, QUESTION, RCURLY, SL, SLIST, SL_ASSIGN, SR, SR_ASSIGN, STAR, STAR_ASSIGN"/>
+    </module>
+  </module>
+</module>
