@@ -2388,6 +2388,7 @@ public class FOPropertyMapping implements Constants {
 
         // column-number
         m  = new ColumnNumberPropertyMaker(PR_COLUMN_NUMBER);
+        m.setInherited(false);
         addPropertyMaker("column-number", m);
 
         // column-width
