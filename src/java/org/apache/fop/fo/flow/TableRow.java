@@ -109,7 +109,7 @@ public class TableRow extends TableFObj {
     protected void startOfNode() throws FOPException {
         pendingSpans = ((TableBody) parent).pendingSpans;
         usedColumnIndices = ((TableBody) parent).usedColumnIndices;
-        while( usedColumnIndices.get(columnIndex - 1) ) {
+        while (usedColumnIndices.get(columnIndex - 1)) {
             columnIndex++;
         }
         
@@ -124,8 +124,8 @@ public class TableRow extends TableFObj {
         if (childNodes == null) {
             missingChildElementError("(table-cell+)");
         }
-        if( ((TableBody) parent).isFirst(this) 
-                && ((Table) parent.getParent()).columns == null ) {
+        if (((TableBody) parent).isFirst(this) 
+                && getTable().columns == null ) {
             //force parent body's pendingSpans
             //to the one accumulated after processing this row
             ((TableBody) parent).pendingSpans = pendingSpans;
@@ -155,20 +155,20 @@ public class TableRow extends TableFObj {
         TableCell cell = (TableCell) child;
         int rowSpan = cell.getNumberRowsSpanned();
         int colSpan = cell.getNumberColumnsSpanned();
-        if( ((TableBody) parent).isFirst(this) 
-                && ((Table) parent.getParent()).columns == null ) {
-            if( pendingSpans == null ) {
+        if (((TableBody) parent).isFirst(this) 
+                && getTable().columns == null ) {
+            if (pendingSpans == null) {
                 pendingSpans = new java.util.ArrayList();
             }
             pendingSpans.add(null);
-            if( usedColumnIndices == null ) {
+            if (usedColumnIndices == null) {
                 usedColumnIndices = new BitSet();
             }
         }
         //if the current cell spans more than one row,
         //update pending span list for the next row
-        if( rowSpan > 1 ) {
-            for( int i = colSpan; --i >= 0; ) {
+        if (rowSpan > 1) {
+            for (int i = colSpan; --i >= 0;) {
                 pendingSpans.set(columnIndex - 1 + i, 
                         new PendingSpan(rowSpan));
             }
@@ -180,18 +180,18 @@ public class TableRow extends TableFObj {
         //take up more than three columnIndices...
         int startIndex = columnIndex - 1;
         int endIndex = startIndex + colSpan;
-        if( ((Table) parent.getParent()).columns != null ) {
-            List cols = ((Table) parent.getParent()).columns;
+        if (getTable().columns != null) {
+            List cols = getTable().columns;
             int tmpIndex = endIndex;
-            for( int i = startIndex; i <= tmpIndex; ++i ) {
-                if( i < cols.size() && cols.get(i) == null ) {
+            for (int i = startIndex; i <= tmpIndex; ++i) {
+                if (i < cols.size() && cols.get(i) == null) {
                     endIndex++;
                 }
             }
         }
         usedColumnIndices.set(startIndex, endIndex);
         //update columnIndex for the next cell
-        while( usedColumnIndices.get(columnIndex - 1) ) {
+        while (usedColumnIndices.get(columnIndex - 1)) {
             columnIndex++;
         }
         super.addChildNode(cell);
@@ -301,6 +301,7 @@ public class TableRow extends TableFObj {
      * in case a column-number was explicitly specified
      * (used by TableCell.bind())
      * 
+     * @param newIndex  new value for column index
      */
     protected void setCurrentColumnIndex(int newIndex) {
         columnIndex = newIndex;
@@ -310,6 +311,7 @@ public class TableRow extends TableFObj {
      * Checks whether a given column-number is already in use
      * for the current row (used by TableCell.bind());
      * 
+     * @param colNr the column-number to check
      * @return true if column-number is already occupied
      */
     protected boolean isColumnNumberUsed(int colNr) {

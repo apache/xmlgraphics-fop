@@ -427,6 +427,7 @@ public class Table extends TableFObj {
      * (used by TableColumn.bind() in case the column-number
      * was explicitly specified)
      * 
+     * @param   newIndex    the new value for column index
      */
     protected void setCurrentColumnIndex(int newIndex) {
         columnIndex = newIndex;

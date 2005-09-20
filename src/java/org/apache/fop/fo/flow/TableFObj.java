@@ -45,6 +45,9 @@ public abstract class TableFObj extends FObj {
      */
     protected static class PendingSpan {
         
+        /**
+         * member variable holding the number of rows left
+         */
         protected int rowsLeft;
         
         /**
@@ -127,6 +130,38 @@ public abstract class TableFObj extends FObj {
      */
     protected boolean isColumnNumberUsed(int colNr) {
         return false;
+    }
+    
+    /**
+     * Checks whether a given column-number is assigned to 
+     * an explicit column in the parent table
+     * (overridden for TableBody, TableRow)
+     * 
+     * @param colNr the column-number to check
+     * @return true if the table has explicit columns, and
+     *              the column-number is in use
+     */
+    protected boolean isColumnNumberUsedInTable(int colNr) {
+        return false;
+    }
+    
+    /**
+     * Convenience method to returns a reference 
+     * to the base Table instance
+     * 
+     * @return  the base table instance
+     * 
+     */
+    protected Table getTable() {
+        if (this.getNameId() == FO_TABLE) {
+            //node is a Table
+            //=> return itself
+            return (Table) this;
+        } else {
+            //any other Table-node
+            //=> recursive call to parent.getTable()
+            return ((TableFObj) parent).getTable();
+        }
     }
     
     /**

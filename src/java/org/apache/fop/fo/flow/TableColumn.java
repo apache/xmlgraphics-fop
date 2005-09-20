@@ -75,7 +75,7 @@ public class TableColumn extends TableFObj {
         visibility = pList.get(PR_VISIBILITY).getEnum();
         super.bind(pList);
         
-        if( pList.getExplicit(PR_COLUMN_NUMBER) != null ) {
+        if (pList.getExplicit(PR_COLUMN_NUMBER) != null) {
             if (columnNumber.getValue() <= 0) {
                 //TODO: This is actually a non-fatal error. See Rec 7.26.8:
                 //"A positive integer. If a negative or non-integer value 
@@ -83,7 +83,7 @@ public class TableColumn extends TableFObj {
                 // nearest integer value greater than or equal to 1."
                 throw new PropertyException("column-number must be 1 or bigger, "
                         + "but got " + columnNumber);
-            } else if( ((Table) parent).isColumnNumberUsed(columnNumber.getValue()) ) {
+            } else if (getTable().isColumnNumberUsed(columnNumber.getValue())) {
                 throw new PropertyException("specified column-number \""
                         + columnNumber 
                         + "\" has already been assigned to a previous column");
@@ -92,7 +92,7 @@ public class TableColumn extends TableFObj {
                 //to the specified value, so that the updated index
                 //will be the correct initial value for the next column
                 //(see Rec 7.26.8)
-                ((Table) parent).setCurrentColumnIndex(columnNumber.getValue());
+                getTable().setCurrentColumnIndex(columnNumber.getValue());
             }
         }
         if (numberColumnsRepeated.getValue() <= 0) {
