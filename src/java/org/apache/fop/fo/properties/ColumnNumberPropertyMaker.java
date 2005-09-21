@@ -25,6 +25,11 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.flow.TableFObj;
 import org.apache.fop.fo.flow.TableBody;
 
+/**
+ * Maker class for the column-number property on table-cells and
+ * table-columns
+ *
+ */
 public class ColumnNumberPropertyMaker extends NumberProperty.Maker {
 
     public ColumnNumberPropertyMaker(int propId) {
@@ -66,5 +71,32 @@ public class ColumnNumberPropertyMaker extends NumberProperty.Maker {
                     + " on fo:table-cell or fo:table-column, not on "
                     + fo.getName());
         }
+    }
+    
+    /**
+     * Check the value of the column-number property. 
+     * Return the parent's column index (initial value) in case 
+     * of a negative or zero value
+     * 
+     * @see org.apache.fop.fo.properties.PropertyMaker#get(int, PropertyList, boolean, boolean)
+     */
+    public Property get(int subpropId, PropertyList propertyList,
+                        boolean tryInherit, boolean tryDefault) 
+            throws PropertyException {
+        
+        Property p = super.get(0, propertyList, tryInherit, tryDefault);
+        FObj fo = propertyList.getFObj();
+        
+        if (p.getNumeric().getValue() <= 0) {
+            TableFObj parent = (TableFObj) propertyList.getParentFObj();
+            int columnIndex = parent.getCurrentColumnIndex();
+            fo.getLogger().warn("Specified negative or zero value for "
+                    + "column-number on " + fo.getName() + ": "
+                    + p.getNumeric().getValue() + " forced to " 
+                    + columnIndex);
+            return new NumberProperty(columnIndex);
+        }
+        //TODO: check for non-integer value and round
+        return p;
     }
 }

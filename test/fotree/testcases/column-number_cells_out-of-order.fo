@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<!-- $Id: $ -->
+<!-- $Id:$ -->
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
          xmlns:test="http://xmlgraphics.apache.org/fop/test">
   <fo:layout-master-set>

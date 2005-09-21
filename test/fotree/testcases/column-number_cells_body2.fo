@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<!-- $Id: $ -->
+<!-- $Id:$ -->
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
          xmlns:test="http://xmlgraphics.apache.org/fop/test">
   <fo:layout-master-set>
@@ -57,6 +57,10 @@
           <fo:table-cell>
             <test:assert property="column-number" expected="5" />
             <fo:block>cell5</fo:block>
+          </fo:table-cell>
+          <fo:table-cell>
+            <test:assert property="column-number" expected="6" />
+            <fo:block>cell5b</fo:block>
           </fo:table-cell>
           <fo:table-cell starts-row="true">
             <test:assert property="column-number" expected="1" />
