@@ -76,15 +76,8 @@ public class TableColumn extends TableFObj {
         super.bind(pList);
         
         if (pList.getExplicit(PR_COLUMN_NUMBER) != null) {
-            if (columnNumber.getValue() <= 0) {
-                //TODO: This is actually a non-fatal error. See Rec 7.26.8:
-                //"A positive integer. If a negative or non-integer value 
-                // is provided, the value will be rounded to the
-                // nearest integer value greater than or equal to 1."
-                throw new PropertyException("column-number must be 1 or bigger, "
-                        + "but got " + columnNumber);
-            } else if (getTable().isColumnNumberUsed(columnNumber.getValue())) {
-                throw new PropertyException("specified column-number \""
+            if (getTable().isColumnNumberUsed(columnNumber.getValue())) {
+                throw new PropertyException("Specified column-number \""
                         + columnNumber 
                         + "\" has already been assigned to a previous column");
             } else {
