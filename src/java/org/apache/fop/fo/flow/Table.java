@@ -266,7 +266,9 @@ public class Table extends TableFObj {
             }
         }
         //flag column indices used by this column
-        usedColumnIndices.set(colNumber - 1, colNumber - 1 + colRepeat);
+        for (int i = colNumber - 1; i < colNumber - 1 + colRepeat; i++) {
+            usedColumnIndices.set(i);
+        }
         //set index for the next column to use
         while( usedColumnIndices.get(columnIndex - 1) ) {
             columnIndex++;

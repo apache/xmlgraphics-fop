@@ -211,7 +211,9 @@ public class TableBody extends TableFObj {
                 }
             }
         }
-        usedColumnIndices.set(startIndex, endIndex);
+        for (int i = startIndex; i < endIndex; i++) {
+            usedColumnIndices.set(i);
+        }
         setNextColumnIndex();
         super.addChildNode(cell);
         if (cell.endsRow()) {
@@ -337,7 +339,9 @@ public class TableBody extends TableFObj {
      */
     public void resetColumnIndex() {
         columnIndex = 1;
-        usedColumnIndices.clear();
+        for (int i = 0; i < usedColumnIndices.size(); i++) {
+            usedColumnIndices.clear(i);
+        }
         PendingSpan pSpan;
         for (int i = pendingSpans.size(); --i >= 0;) {
             pSpan = (PendingSpan) pendingSpans.get(i);
@@ -347,7 +351,11 @@ public class TableBody extends TableFObj {
                     pendingSpans.set(i, null);
                 }
             }
-            usedColumnIndices.set(i, pendingSpans.get(i) != null);
+            if (pendingSpans.get(i) != null) {
+                usedColumnIndices.set(i);
+            } else {
+                usedColumnIndices.clear(i);
+            }
         }
         if (!firstRow) {
             setNextColumnIndex();
