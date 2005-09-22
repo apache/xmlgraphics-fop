@@ -189,7 +189,9 @@ public class TableRow extends TableFObj {
                 }
             }
         }
-        usedColumnIndices.set(startIndex, endIndex);
+        for (int i = startIndex; i < endIndex; i++) {
+            usedColumnIndices.set(i);
+        }
         //update columnIndex for the next cell
         while (usedColumnIndices.get(columnIndex - 1)) {
             columnIndex++;
