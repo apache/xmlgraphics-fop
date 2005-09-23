@@ -77,6 +77,14 @@ public abstract class TableFObj extends FObj {
         borderBeforePrecedence = pList.get(PR_BORDER_BEFORE_PRECEDENCE).getNumeric();
         borderEndPrecedence = pList.get(PR_BORDER_END_PRECEDENCE).getNumeric();
         borderStartPrecedence = pList.get(PR_BORDER_START_PRECEDENCE).getNumeric();
+        //Complain if table has separate border-model and fo is not a table or cell
+        //see: Rec 6.7.4, 6.7.6 - 6.7.9
+        if (getNameId() != FO_TABLE && getNameId() != FO_TABLE_CELL
+                && getTable().isSeparateBorderModel()
+                && getCommonBorderPaddingBackground().hasBorderInfo()) {
+            getLogger().warn("Borders on " + getName() 
+                    + " non-applicable for table with border-collapse=\"separate\"");
+        }
     }
     
     /**
@@ -85,7 +93,7 @@ public abstract class TableFObj extends FObj {
      * @return the "border-precedence" value for the given side
      */
     public Numeric getBorderPrecedence(int side) {
-        switch( side ) {
+        switch (side) {
         case CommonBorderPaddingBackground.BEFORE:
             return borderBeforePrecedence;
         case CommonBorderPaddingBackground.AFTER:
@@ -98,7 +106,7 @@ public abstract class TableFObj extends FObj {
             return null;
         }
     }
-        
+
     /**
      * Returns the current column index of the given TableFObj
      * (overridden for Table, TableBody, TableRow)

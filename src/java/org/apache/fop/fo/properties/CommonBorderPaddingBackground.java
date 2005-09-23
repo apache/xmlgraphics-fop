@@ -366,4 +366,9 @@ public class CommonBorderPaddingBackground implements Cloneable {
                 + getPaddingStart(false, context) + getPaddingEnd(false, context)) > 0);
     }
     
+    /** @return true if there are any borders defined. */
+    public boolean hasBorderInfo() {
+        return (borderInfo[BEFORE] != null || borderInfo[AFTER] != null
+                || borderInfo[START] != null || borderInfo[END] != null);
+    }
 }
