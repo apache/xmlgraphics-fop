@@ -163,8 +163,20 @@ public class MinOptMax implements java.io.Serializable, Cloneable {
         max -= op.min;
     }
 
+    /** @see java.lang.Object#toString() */
     public String toString() {
-        return "MinOptMax: min=" + min + "; opt=" + opt + "; max=" + max;
+        StringBuffer sb = new StringBuffer();
+        sb.append("MinOptMax[min=");
+        if (min != opt) {
+            sb.append(min).append("; ");
+        }
+        sb.append("opt=");
+        if (opt != max) {
+            sb.append(opt).append("; ");
+        }
+        sb.append("max=").append(max);
+        sb.append("]");
+        return sb.toString();
     }
 }
 
