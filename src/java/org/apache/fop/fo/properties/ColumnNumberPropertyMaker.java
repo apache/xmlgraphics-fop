@@ -86,9 +86,9 @@ public class ColumnNumberPropertyMaker extends NumberProperty.Maker {
         
         Property p = super.get(0, propertyList, tryInherit, tryDefault);
         FObj fo = propertyList.getFObj();
+        TableFObj parent = (TableFObj) propertyList.getParentFObj();
         
         if (p.getNumeric().getValue() <= 0) {
-            TableFObj parent = (TableFObj) propertyList.getParentFObj();
             int columnIndex = parent.getCurrentColumnIndex();
             fo.getLogger().warn("Specified negative or zero value for "
                     + "column-number on " + fo.getName() + ": "
@@ -97,6 +97,13 @@ public class ColumnNumberPropertyMaker extends NumberProperty.Maker {
             return new NumberProperty(columnIndex);
         }
         //TODO: check for non-integer value and round
+        
+        //if column-number was explicitly specified, force the parent's current
+        //column index to the specified value, so that the updated index will
+        //be the correct initial value for the next cell (see Rec 7.26.8)
+        if (propertyList.getExplicit(Constants.PR_COLUMN_NUMBER) != null) {
+            parent.setCurrentColumnIndex(p.getNumeric().getValue());
+        }
         return p;
     }
 }

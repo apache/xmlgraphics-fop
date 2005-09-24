@@ -125,7 +125,7 @@ public abstract class TableFObj extends FObj {
      * 
      * @param   newIndex    new value for column index
      */
-    protected void setCurrentColumnIndex(int newIndex) {
+    public void setCurrentColumnIndex(int newIndex) {
         //do nothing by default
     }
     

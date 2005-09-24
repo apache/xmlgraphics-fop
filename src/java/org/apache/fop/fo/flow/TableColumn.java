@@ -75,18 +75,9 @@ public class TableColumn extends TableFObj {
         visibility = pList.get(PR_VISIBILITY).getEnum();
         super.bind(pList);
         
-        if (pList.getExplicit(PR_COLUMN_NUMBER) != null) {
-            if (getTable().isColumnNumberUsed(columnNumber.getValue())) {
-                throw new PropertyException("Specified column-number \""
-                        + columnNumber 
-                        + "\" has already been assigned to a previous column");
-            } else {
-                //force parent table's current column index
-                //to the specified value, so that the updated index
-                //will be the correct initial value for the next column
-                //(see Rec 7.26.8)
-                getTable().setCurrentColumnIndex(columnNumber.getValue());
-            }
+        if (getTable().isColumnNumberUsed(columnNumber.getValue())) {
+            throw new PropertyException("column-number \"" + columnNumber 
+                    + "\" has already been assigned to a previous column");
         }
         if (numberColumnsRepeated.getValue() <= 0) {
             throw new PropertyException("number-columns-repeated must be 1 or bigger, "

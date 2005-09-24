@@ -149,14 +149,8 @@ public class TableCell extends TableFObj {
             //in the current row => error!
             if (((TableFObj) parent).isColumnNumberUsed(columnIndex)) {
                 throw new FOPException("fo:table-cell overlaps in column "
-                        + i, locator);
+                        + columnIndex, locator);
             }
-        }
-        //if column-number was explicitly specified, force the parent's current
-        //column index to the specified value, so that the updated index will
-        //be the correct initial value for the next cell (see Rec 7.26.8)
-        if (pList.getExplicit(PR_COLUMN_NUMBER) != null) {
-            ((TableFObj) parent).setCurrentColumnIndex(columnNumber.getValue());
         }
     }
 
