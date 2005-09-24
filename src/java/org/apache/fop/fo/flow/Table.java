@@ -442,9 +442,5 @@ public class Table extends TableFObj {
      */
     protected boolean isColumnNumberUsed(int colNr) {
         return usedColumnIndices.get(colNr - 1);
-    }
-    
-    /**
-     * Return the usedColumnIndices BitSet
-     */
+    }    
 }
