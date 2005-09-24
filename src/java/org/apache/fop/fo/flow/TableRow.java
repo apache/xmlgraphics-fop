@@ -305,7 +305,7 @@ public class TableRow extends TableFObj {
      * 
      * @param newIndex  new value for column index
      */
-    protected void setCurrentColumnIndex(int newIndex) {
+    public void setCurrentColumnIndex(int newIndex) {
         columnIndex = newIndex;
     }
 

@@ -329,7 +329,7 @@ public class TableBody extends TableFObj {
      * 
      * @param newIndex  the new column index
      */
-    protected void setCurrentColumnIndex(int newIndex) {
+    public void setCurrentColumnIndex(int newIndex) {
         columnIndex = newIndex;
     }
 
