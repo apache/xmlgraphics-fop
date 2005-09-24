@@ -66,7 +66,11 @@ import org.apache.fop.render.XMLHandlerRegistry;
 public class FOUserAgent {
 
     /** Defines the default resolution (72dpi) for FOP */
-    public static final float DEFAULT_PX2MM = (25.4f / 72); //dpi (=25.4/dpi) 
+    public static final float DEFAULT_PX2MM = (25.4f / 72); //dpi (=25.4/dpi)
+    /** Defines the default page-height */
+    public static final String DEFAULT_PAGE_HEIGHT = "11in";
+    /** Defines the default page-width */
+    public static final String DEFAULT_PAGE_WIDTH = "8.26in";
     
     /** Registry for XML handlers */
     private XMLHandlerRegistry xmlHandlers = new XMLHandlerRegistry();
@@ -80,6 +84,8 @@ public class FOUserAgent {
     
     private PDFEncryptionParams pdfEncryptionParams;
     private float px2mm = DEFAULT_PX2MM;
+    private String pageHeight = DEFAULT_PAGE_HEIGHT;
+    private String pageWidth = DEFAULT_PAGE_WIDTH;
     private Map rendererOptions = new java.util.HashMap();
     private File outputFile = null;
     private Renderer rendererOverride = null;
@@ -471,7 +477,47 @@ public class FOUserAgent {
     public void setResolution(int dpi) {
         this.px2mm = (float)(25.4 / dpi);
     }
-
+    
+    /**
+     * Gets the default page-height to use as fallback,
+     * in case page-height="auto"
+     * 
+     * @return the page-height, as a String
+     */
+    public String getPageHeight() {
+        return this.pageHeight;
+    }
+    
+    /**
+     * Sets the page-height to use as fallback, in case
+     * page-height="auto"
+     * 
+     * @param pageHeight    page-height as a String
+     */
+    public void setPageHeight(String pageHeight) {
+        this.pageHeight = pageHeight;
+    }
+    
+    /**
+     * Gets the default page-width to use as fallback,
+     * in case page-width="auto"
+     * 
+     * @return the page-width, as a String
+     */
+    public String getPageWidth() {
+        return this.pageWidth;
+    }
+    
+    /**
+     * Sets the page-width to use as fallback, in case
+     * page-width="auto"
+     * 
+     * @param pageWidth    page-width as a String
+     */
+    public void setPageWidth(String pageWidth) {
+        this.pageWidth = pageWidth;
+    }
+    
     /**
      * If to create hot links to footnotes and before floats.
      * @return True if hot links should be created
