@@ -44,6 +44,7 @@ import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.fo.properties.LineHeightPropertyMaker;
 import org.apache.fop.fo.properties.ListProperty;
 import org.apache.fop.fo.properties.NumberProperty;
+import org.apache.fop.fo.properties.PageDimensionMaker;
 import org.apache.fop.fo.properties.PositionShorthandParser;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyMaker;
@@ -2278,12 +2279,11 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("odd-or-even", m);
 
         // page-height
-        l  = new LengthProperty.Maker(PR_PAGE_HEIGHT);
+        l  = new PageDimensionMaker(PR_PAGE_HEIGHT);
         l.setInherited(false);
         l.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
         l.addEnum("indefinite", getEnumProperty(EN_INDEFINITE, "INDEFINITE"));
-        // TODO: default should be 'auto'
-        l.setDefault("11in");
+        l.setDefault("auto");
         addPropertyMaker("page-height", l);
 
         // page-position
@@ -2297,12 +2297,11 @@ public class FOPropertyMapping implements Constants {
         addPropertyMaker("page-position", m);
 
         // page-width
-        l  = new LengthProperty.Maker(PR_PAGE_WIDTH);
+        l  = new PageDimensionMaker(PR_PAGE_WIDTH);
         l.setInherited(false);
         l.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
         l.addEnum("indefinite", getEnumProperty(EN_INDEFINITE, "INDEFINITE"));
-        // TODO: default should be 'auto'
-        l.setDefault("8in");
+        l.setDefault("auto");
         addPropertyMaker("page-width", l);
 
         // precedence
