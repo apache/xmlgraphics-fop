@@ -129,17 +129,16 @@ public class Table extends TableFObj {
         colPList.setWritingMode();
         defaultColumn.bind(colPList);
 
-        /* TODO hasPadding requires context for evaluation - need to move this to layout
-        if (borderCollapse != EN_SEPARATE && commonBorderPaddingBackground.hasPadding()) {
+        if (borderCollapse != EN_SEPARATE && commonBorderPaddingBackground.hasPaddingInfo()) {
             //See "17.6.2 The collapsing border model" in CSS2
-            getLogger().error("Table may not have padding when using the collapsing border model.");
+            getLogger().warn("Table may not have padding when using the collapsing "
+                    + "border model. Padding will be ignored.");
         }
-        */
         if (borderCollapse != EN_SEPARATE) {
             getLogger().warn("The collapsing border model on an fo:table "
                     + "is currently not supported by FOP");
         }
-        if( tableLayout == EN_AUTO ) {
+        if (tableLayout == EN_AUTO) {
             getLogger().warn("table-layout=\"auto\" is currently not supported by FOP");
         }
     }
@@ -243,16 +242,16 @@ public class Table extends TableFObj {
         if (columns == null) {
             columns = new java.util.ArrayList();
         }
-        if( columns.size() < colNumber ) {
+        if (columns.size() < colNumber) {
             //add nulls for non-occupied indices between
             //the last column up to and including the current one
-            while( columns.size() < colNumber ) {
+            while (columns.size() < colNumber) {
                 columns.add(null);
             }
         }
         //replace the null-value with the actual column
         columns.set(colNumber - 1, col);
-        if( colRepeat > 1 ) {
+        if (colRepeat > 1) {
             //in case column is repeated:
             //for the time being, add the same column 
             //(colRepeat - 1) times to the columns list
@@ -261,7 +260,7 @@ public class Table extends TableFObj {
             //      are completely independent instances (clones?)
             //      = necessary for border-collapse="collapse"
             //        if collapsing is handled in FOTree
-            for( int i = colRepeat - 1; --i >= 0; ) {
+            for (int i = colRepeat - 1; --i >= 0;) {
                 columns.add(col);
             }
         }
@@ -270,7 +269,7 @@ public class Table extends TableFObj {
             usedColumnIndices.set(i);
         }
         //set index for the next column to use
-        while( usedColumnIndices.get(columnIndex - 1) ) {
+        while (usedColumnIndices.get(columnIndex - 1)) {
             columnIndex++;
         }
     }
@@ -431,7 +430,7 @@ public class Table extends TableFObj {
      * 
      * @param   newIndex    the new value for column index
      */
-    protected void setCurrentColumnIndex(int newIndex) {
+    public void setCurrentColumnIndex(int newIndex) {
         columnIndex = newIndex;
     }
 
@@ -444,4 +443,8 @@ public class Table extends TableFObj {
     protected boolean isColumnNumberUsed(int colNr) {
         return usedColumnIndices.get(colNr - 1);
     }
+    
+    /**
+     * Return the usedColumnIndices BitSet
+     */
 }
