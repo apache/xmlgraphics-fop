@@ -129,11 +129,11 @@ public class Table extends TableFObj {
         colPList.setWritingMode();
         defaultColumn.bind(colPList);
 
-        if (borderCollapse != EN_SEPARATE && commonBorderPaddingBackground.hasPaddingInfo()) {
+        /*if (borderCollapse != EN_SEPARATE && commonBorderPaddingBackground.hasPadding()) {
             //See "17.6.2 The collapsing border model" in CSS2
             getLogger().warn("Table may not have padding when using the collapsing "
                     + "border model. Padding will be ignored.");
-        }
+        }*/
         if (borderCollapse != EN_SEPARATE) {
             getLogger().warn("The collapsing border model on an fo:table "
                     + "is currently not supported by FOP");
