@@ -53,8 +53,8 @@ public class PageDimensionMaker extends LengthProperty.Maker {
         Property p = super.get(0, propertyList, tryInherit, tryDefault);    
         FObj fo = propertyList.getFObj();
         String fallbackValue = (propId == Constants.PR_PAGE_HEIGHT)
-        ? fo.getFOEventHandler().getUserAgent().getPageHeight()
-            : fo.getFOEventHandler().getUserAgent().getPageWidth();
+            ? fo.getFOEventHandler().getUserAgent().getPageHeight()
+                    : fo.getFOEventHandler().getUserAgent().getPageWidth();
         
         if (p.getEnum() == Constants.EN_INDEFINITE) {
             int otherId = (propId == Constants.PR_PAGE_HEIGHT) 
@@ -78,18 +78,20 @@ public class PageDimensionMaker extends LengthProperty.Maker {
                                      || refOrientation == -270))) {
                     //set page-width to "auto" = use the fallback from FOUserAgent
                     if (propId == Constants.PR_PAGE_WIDTH) {
+                        fo.getLogger().warn("Both page-width and page-height set to "
+                                + "\"indefinite\". Forcing page-width to \"auto\"");
                         return make(propertyList, fallbackValue, fo);
                     }
                 } else {
                     //set page-height to "auto" = use fallback from FOUserAgent
+                    fo.getLogger().warn("Both page-width and page-height set to "
+                            + "\"indefinite\". Forcing page-height to \"auto\"");
                     if (propId == Constants.PR_PAGE_HEIGHT) {
                         return make(propertyList, fallbackValue, fo);
                     }
                 }
             }
-        }
-        
-        if (p.isAuto()) {
+        } else if (p.isAuto()) {
             return make(propertyList, fallbackValue, fo);
         }
         
