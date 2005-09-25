@@ -67,7 +67,156 @@ public class RtfExternalGraphic extends RtfElement {
             super(reason);
         }
     }
+    
+    //////////////////////////////////////////////////
+    // Supported Formats
+    //////////////////////////////////////////////////
+    private static class FormatBase {
 
+        /**
+         * Determines whether the image is in the according format.
+         *
+         * @param data Image
+         *
+         * @return
+         * true    If according type\n
+         * false   Other type
+         */
+        public static boolean isFormat(byte[] data) {
+            return false;
+        }
+        
+        /**
+         * Convert image data if necessary - for example when format is not supported by rtf.
+         *
+         * @param data Image
+         * @param type Format type
+         */
+        public FormatBase convert(FormatBase format, byte[] data) {
+            return format;
+        }
+        
+        /**
+         * Determine image file format.
+         *
+         * @param data Image
+         *
+         * @return Image format class
+         */
+
+        public static FormatBase determineFormat(byte[] data) {
+            int type = ImageConstants.I_NOT_SUPPORTED;
+
+            if (FormatPNG.isFormat(data)) {
+                return new FormatPNG();
+            } else if (FormatJPG.isFormat(data)) {
+                return new FormatJPG();
+            } else if (FormatEMF.isFormat(data)) {
+                return new FormatEMF();
+            } else if (FormatGIF.isFormat(data)) {
+                return new FormatGIF();
+            } else if (FormatBMP.isFormat(data)) {
+                return new FormatBMP();
+            } else {
+                return null;
+            }
+        }
+        
+        /**
+         * Get image type.
+         *
+         * @return Image format class
+         */
+        public int getType() {
+            return ImageConstants.I_NOT_SUPPORTED;
+        }
+        
+        /**
+         * Get rtf tag.
+         *
+         * @return Rtf tag for image format.
+         */
+        public String getRtfTag() {
+            return "";
+        }
+    }
+    
+    private static class FormatGIF extends FormatBase {
+        public static boolean isFormat(byte[] data) {
+            // Indentifier "GIF8" on position 0
+            byte [] pattern = new byte [] {(byte) 0x47, (byte) 0x49, (byte) 0x46, (byte) 0x38};
+
+            return ImageUtil.compareHexValues(pattern, data, 0, true);
+        }
+        
+        public int getType() {
+            return ImageConstants.I_GIF;
+        }
+    }
+    
+    private static class FormatEMF extends FormatBase {
+        public static boolean isFormat(byte[] data) {
+            // No offical Indentifier known
+            byte [] pattern = new byte [] {(byte) 0x01, (byte) 0x00, (byte) 0x00};
+
+            return ImageUtil.compareHexValues(pattern, data, 0, true);
+        }
+        
+        public int getType() {
+            return ImageConstants.I_EMF;
+        }
+        
+        public String getRtfTag() {
+            return "emfblip";
+        }
+    }
+    
+    private  static class FormatBMP extends FormatBase {
+        public static boolean isFormat(byte[] data) {
+            byte [] pattern = new byte [] {(byte) 0x42, (byte) 0x4D};
+
+            return ImageUtil.compareHexValues(pattern, data, 0, true);
+        }
+        
+        public int getType() {
+            return ImageConstants.I_BMP;
+        }
+    }
+    
+    private static class FormatJPG extends FormatBase {
+        public static boolean isFormat(byte[] data) {
+            // Indentifier "0xFFD8" on position 0
+            byte [] pattern = new byte [] {(byte) 0xFF, (byte) 0xD8};
+
+            return ImageUtil.compareHexValues(pattern, data, 0, true);
+        }
+      
+        public int getType() {
+            return ImageConstants.I_JPG;
+        }
+        
+        public String getRtfTag() {
+            return "jpegblip";
+        }
+    }
+    
+    private static class FormatPNG extends FormatBase {
+        public static boolean isFormat(byte[] data) {
+            // Indentifier "PNG" on position 1
+            byte [] pattern = new byte [] {(byte) 0x50, (byte) 0x4E, (byte) 0x47};
+
+            return ImageUtil.compareHexValues(pattern, data, 1, true);
+        }
+        
+        public int getType() {
+            return ImageConstants.I_PNG;
+        }
+        
+        public String getRtfTag() {
+            return "pngblip";
+        }
+    }
+    
     //////////////////////////////////////////////////
     // @@ Members
     //////////////////////////////////////////////////
@@ -131,8 +280,8 @@ public class RtfExternalGraphic extends RtfElement {
      /** The image data */
      private byte[] imagedata = null;
 
-     /** The image type */
-     private int imagetype;
+     /** The image format */
+     FormatBase imageformat;
 
     //////////////////////////////////////////////////
     // @@ Construction
@@ -232,43 +381,16 @@ public class RtfExternalGraphic extends RtfElement {
 
         // Determine image file format
         String file = url.getFile ();
-        imagetype = determineImageType(imagedata, file.substring(file.lastIndexOf(".") + 1));
-
-        if (imagetype >= ImageConstants.I_TO_CONVERT_BASIS) {
-            // convert
-            int to = ImageConstants.CONVERT_TO[imagetype - ImageConstants.I_TO_CONVERT_BASIS];
-
-//            if (to == ImageConstants.I_JPG) {
-//                ByteArrayOutputStream out = null;
-//                try {
-//                    //convert to jpeg
-//                    out = new ByteArrayOutputStream();
-//                    Encoder jpgEncoder = new Encoder(graphicCompressionRate, out);
-//                    jpgEncoder.encodeJPEG(imagedata);
-//                    imagedata = out.toByteArray();
-//                    type = to;
-//                }
-//                catch (JPEGException e) {
-//                    e.setMessage("Image from tag <fo:external-graphic> could "
-//                            + "not be created (src = '" + url + "'");
-//                }
-//                finally {
-//                    out.close();
-//                }
-//            } else {
-                imagetype = ImageConstants.I_NOT_SUPPORTED;
-//            }
-        }
-
-
-        if (imagetype == ImageConstants.I_NOT_SUPPORTED) {
+        imageformat = FormatBase.determineFormat(imagedata);
+        imageformat = imageformat.convert(imageformat, imagedata);
+        
+        if (imageformat.getType() == ImageConstants.I_NOT_SUPPORTED
+                | imageformat.getRtfTag() == "") {
             throw new ExternalGraphicException("The tag <fo:external-graphic> "
                     + "does not support "
                     + file.substring(file.lastIndexOf(".") + 1)
                     + " - image type.");
         }
-
-        String rtfImageCode = ImageConstants.RTF_TAGS[imagetype];
 
         // Writes the beginning of the rtf image
 
@@ -279,7 +401,7 @@ public class RtfExternalGraphic extends RtfElement {
 
         StringBuffer buf = new StringBuffer(imagedata.length * 3);
 
-        writeControlWord(rtfImageCode);
+        writeControlWord(imageformat.getRtfTag());
 
         computeImageSize();
         writeSizeInfo();
@@ -313,10 +435,10 @@ public class RtfExternalGraphic extends RtfElement {
     }
 
     private void computeImageSize () {
-        if (imagetype == ImageConstants.I_PNG) {
+        if (imageformat.getType() == ImageConstants.I_PNG) {
             width = ImageUtil.getIntFromByteArray(imagedata, 16, 4, true);
             height = ImageUtil.getIntFromByteArray(imagedata, 20, 4, true);
-        } else if (imagetype == ImageConstants.I_JPG) {
+        } else if (imageformat.getType() == ImageConstants.I_JPG) {
             int basis = -1;
             byte ff = (byte) 0xff;
             byte c0 = (byte) 0xc0;
@@ -340,7 +462,7 @@ public class RtfExternalGraphic extends RtfElement {
                 width = ImageUtil.getIntFromByteArray(imagedata, basis + 2, 2, true);
                 height = ImageUtil.getIntFromByteArray(imagedata, basis, 2, true);
             }
-        } else if (imagetype == ImageConstants.I_EMF) {
+        } else if (imageformat.getType() == ImageConstants.I_EMF) {
             width = ImageUtil.getIntFromByteArray(imagedata, 151, 4, false);
             height = ImageUtil.getIntFromByteArray(imagedata, 155, 4, false);
         }
@@ -474,116 +596,6 @@ public class RtfExternalGraphic extends RtfElement {
     //////////////////////////////////////////////////
     // @@ Helpers
     //////////////////////////////////////////////////
-
-
-    /**
-     * Determines wheter the image is a jpeg.
-     *
-     * @param imagedata Image
-     *
-     * @return
-     * true    If JPEG type\n
-     * false   Other type
-     */
-    private boolean isJPEG(byte[] data) {
-        // Indentifier "0xFFD8" on position 0
-        byte [] pattern = new byte [] {(byte) 0xFF, (byte) 0xD8};
-
-        return ImageUtil.compareHexValues(pattern, data, 0, true);
-    }
-
-    /**
-     * Determines wheter the image is a png.
-     *
-     * @param data Image
-     *
-     * @return
-     * true    If PNG type\n
-     * false   Other type
-     */
-    private boolean isPNG(byte[] data) {
-        // Indentifier "PNG" on position 1
-        byte [] pattern = new byte [] {(byte) 0x50, (byte) 0x4E, (byte) 0x47};
-
-        return ImageUtil.compareHexValues(pattern, data, 1, true);
-    }
-
-    /**
-     * Determines wheter the image is a emf.
-     *
-     * @param data Image
-     *
-     * @return
-     * true    If EMF type\n
-     * false   Other type
-     */
-    private boolean isEMF(byte[] data) {
-        // No offical Indentifier known
-        byte [] pattern = new byte [] {(byte) 0x01, (byte) 0x00, (byte) 0x00};
-
-        return ImageUtil.compareHexValues(pattern, data, 0, true);
-    }
-
-    /**
-     * Determines wheter the image is a gif.
-     *
-     * @param data Image
-     *
-     * @return
-     * true    If GIF type\n
-     * false   Other type
-     */
-    private boolean isGIF(byte[] data) {
-        // Indentifier "GIF8" on position 0
-        byte [] pattern = new byte [] {(byte) 0x47, (byte) 0x49, (byte) 0x46, (byte) 0x38};
-
-        return ImageUtil.compareHexValues(pattern, data, 0, true);
-    }
-
-    /**
-     * Determines wheter the image is a gif.
-     *
-     * @param data Image
-     *
-     * @return
-     * true    If BMP type\n
-     * false   Other type
-     */
-    private boolean isBMP(byte[] data) {
-        // Indentifier "BM" on position 0
-        byte [] pattern = new byte [] {(byte) 0x42, (byte) 0x4D};
-
-        return ImageUtil.compareHexValues(pattern, data, 0, true);
-    }
-
-    /**
-     * Determine image file format.
-     *
-     * @param data Image
-     * @param ext Image extension
-     *
-     * @return Image type by ImageConstants.java
-     */
-    private int determineImageType(byte [] data, String ext) {
-        int type = ImageConstants.I_NOT_SUPPORTED;
-
-        if (isPNG(data)) {
-            type = ImageConstants.I_PNG;
-        } else if (isJPEG(data)) {
-            type = ImageConstants.I_JPG_C;
-        } else if (isEMF(data)) {
-            type = ImageConstants.I_EMF;
-        } else if (isGIF(data)) {
-            type = ImageConstants.I_GIF;
-        } else {
-            Object tmp = ImageConstants.SUPPORTED_IMAGE_TYPES.get(ext.toLowerCase());
-            if (tmp != null) {
-                type = ((Integer) tmp).intValue();
-            }
-        }
-
-        return type;
-    }
 
     /**
      * @return true if this element would generate no "useful" RTF content

@@ -1170,6 +1170,10 @@ public class RTFHandler extends FOEventHandler {
             } else {
                 endStatic();
             }
+        } else if (foNode instanceof ExternalGraphic) {
+            if (bStart) {
+                image( (ExternalGraphic) foNode );
+            }
         } else if (foNode instanceof Block) {
             if (bStart) {
                 startBlock( (Block) foNode);
