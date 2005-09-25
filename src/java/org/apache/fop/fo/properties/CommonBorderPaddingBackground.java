@@ -371,10 +371,4 @@ public class CommonBorderPaddingBackground implements Cloneable {
         return (borderInfo[BEFORE] != null || borderInfo[AFTER] != null
                 || borderInfo[START] != null || borderInfo[END] != null);
     }
-    
-    /** @return true if there is any padding (no evaluation) */
-    public boolean hasPaddingInfo() {
-        return (padding[BEFORE] != null || padding[AFTER] != null
-                || padding[START] != null || padding[END] != null);
-    }
 }
