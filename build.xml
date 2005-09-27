@@ -185,6 +185,11 @@ list of possible build targets.
   <property name="dist.bin.result.dir" value="${dist.bin.dir}/${name}-${version}"/>
   <property name="dist.src.result.dir" value="${dist.src.dir}/${name}-${version}"/>
 
+  <!-- Importing Apache Forrest for building the docs -->
+  <property environment="env"/>
+  <property name="forrest.home" value="${env.FORREST_HOME}"/>
+  <import file="${env.FORREST_HOME}/main/forrest.build.xml"/>
+
   <!-- =================================================================== -->
   <!-- Initialization target                                               -->
   <!-- =================================================================== -->
@@ -907,6 +912,15 @@ list of possible build targets.
 
   <target name="checkstyle" depends="checkstyle-avail, checkstyle-check, checkstyle-html" description="Runs Checkstyle for a code quality report"/>
 
+  <!-- =================================================================== -->
+  <!-- Creates the documentation                                           -->
+  <!-- =================================================================== -->
+  <target name="docs" depends="site" description="Generates documentation">
+    <echo message="Building documentation with Forrest..."/>
+    <echo message="Make sure that you have installed Apache Forrest and"/>
+    <echo message="the FORREST_HOME environment variable is set (see http://forrest.apache.org/)"/>
+  </target>
+  
   <!-- =================================================================== -->
   <!-- Creates the distribution                                            -->
   <!-- =================================================================== -->
