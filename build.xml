@@ -188,7 +188,7 @@ list of possible build targets.
   <!-- Importing Apache Forrest for building the docs -->
   <property environment="env"/>
   <property name="forrest.home" value="${env.FORREST_HOME}"/>
-  <import file="${env.FORREST_HOME}/main/forrest.build.xml"/>
+  <import file="${env.FORREST_HOME}/main/forrest.build.xml" optional="true"/>
 
   <!-- =================================================================== -->
   <!-- Initialization target                                               -->
@@ -915,10 +915,13 @@ list of possible build targets.
   <!-- =================================================================== -->
   <!-- Creates the documentation                                           -->
   <!-- =================================================================== -->
-  <target name="docs" depends="site" description="Generates documentation">
+  <target name="docs" description="Generates documentation">
     <echo message="Building documentation with Forrest..."/>
     <echo message="Make sure that you have installed Apache Forrest and"/>
     <echo message="the FORREST_HOME environment variable is set (see http://forrest.apache.org/)"/>
+    <echo message="FORREST_HOME = ${forrest.home}"/>
+
+    <antcall target="site"/>
   </target>
   
   <!-- =================================================================== -->
