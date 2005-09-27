@@ -93,19 +93,18 @@ public class LineLayoutManager extends InlineStackingLayoutManager
      * inline break positions.
      */
     private static class LineBreakPosition extends LeafPosition {
-        // int iPos;
-        int iParIndex; // index of the Paragraph this Position refers to
-        int availableShrink;
-        int availableStretch;
-        int difference;
-        double dAdjust; // Percentage to adjust (stretch or shrink)
-        double ipdAdjust; // Percentage to adjust (stretch or shrink)
-        int startIndent;
-        int lineHeight;
-        int lineWidth;
-        int baseline;
-        int topShift;
-        int bottomShift;
+        private int iParIndex; // index of the Paragraph this Position refers to
+        private int availableShrink;
+        private int availableStretch;
+        private int difference;
+        private double dAdjust; // Percentage to adjust (stretch or shrink)
+        private double ipdAdjust; // Percentage to adjust (stretch or shrink)
+        private int startIndent;
+        private int lineHeight;
+        private int lineWidth;
+        private int baseline;
+        private int topShift;
+        private int bottomShift;
 
         LineBreakPosition(LayoutManager lm, int index, int iBreakIndex,
                           int shrink, int stretch, int diff,

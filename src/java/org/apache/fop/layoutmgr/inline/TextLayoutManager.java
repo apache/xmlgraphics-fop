@@ -287,6 +287,12 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         }
         if (ai == null) {
             return;
+        } else if (ai.iLScount == ai.iBreakIndex - ai.iStartIndex
+                   && context.isLastArea()) {
+            // the line ends at a character like "/" or "-";
+            // remove the letter space after the last character
+            realWidth.add(MinOptMax.multiply(letterSpaceIPD, -1));
+            iLScount --;
         }
 
         // Make an area containing all characters between start and end.
@@ -343,6 +349,15 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             // there are no word spaces in this area
         }
         iTotalAdjust += (iWordSpaceDim - wordSpaceIPD.opt) * iWScount;
+        if (iTotalAdjust != iDifference) {
+            // the applied adjustment is greater or smaller than the needed one
+            log.trace("TextLM.addAreas: error in word / letter space adjustment = " 
+                    + (iTotalAdjust - iDifference));
+            // set iTotalAdjust = iDifference, so that the width of the TextArea
+            // will counterbalance the error and the other inline areas will be
+            // placed correctly
+            iTotalAdjust = iDifference;
+        }
 
         TextArea t = createTextArea(str, realWidth, iTotalAdjust, context,
                                     wordSpaceIPD.opt - spaceCharIPD);
@@ -478,27 +493,26 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         && textArray[iTempStart] != NBSPACE
                         && textArray[iTempStart] != NEWLINE
                         && !(iTempStart > iNextStart
-                             && alignment == EN_JUSTIFY
                              && BREAK_CHARS.indexOf(textArray[iTempStart - 1]) >= 0);
                         iTempStart++) {
                     wordIPD.add(fs.getCharWidth(textArray[iTempStart]));
                 }
                 int iLetterSpaces = iTempStart - iThisStart - 1;
+                // if the last character is '-' or '/' and the next one
+                // is not a space, it could be used as a line end;
+                // add one more letter space, in case other text follows
+                if (BREAK_CHARS.indexOf(textArray[iTempStart - 1]) >= 0
+                    && iTempStart < textArray.length
+                    && textArray[iTempStart] != SPACE
+                    && textArray[iTempStart] != NBSPACE) {
+                    iLetterSpaces ++;
+                }
                 wordIPD.add(MinOptMax.multiply(letterSpaceIPD, iLetterSpaces));
 
                 // create the AreaInfo object
                 ai = new AreaInfo(iThisStart, iTempStart, (short) 0,
                         (short) iLetterSpaces,
                         wordIPD, false);
-                // if the last character is '-' or '/' and other characters
-                // follows, it could be used as a line end; update the
-                // information in the AreaInfo, adding one more letter space
-                if (BREAK_CHARS.indexOf(textArray[iTempStart - 1]) >= 0
-                    && iTempStart < textArray.length
-                    && textArray[iTempStart] != SPACE
-                    && textArray[iTempStart] != NBSPACE) {
-                    ai.iLScount ++;
-                }
                 vecAreaInfo.add(ai);
 
                 // create the elements
@@ -804,79 +818,79 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             AreaInfo ai, int leafValue, MinOptMax letterSpaceWidth) {
         LinkedList wordElements = new LinkedList();
         LeafPosition mainPosition = new LeafPosition(this, leafValue);
-        int unsuppressibleLetterSpaces = ai.iLScount;
 
-        // if the last character of the word fragment is '-' or '/' and
-        // the next one is not a space, the fragment could end a line;
-        // in this case, it loses one of its letter spaces;
-        if (BREAK_CHARS.indexOf(textArray[ai.iBreakIndex - 1]) >= 0
-                && ai.iLScount == (ai.iBreakIndex - ai.iStartIndex)) {
-            unsuppressibleLetterSpaces --;
-        }
+        // if the last character of the word fragment is '-' or '/',
+        // the fragment could end a line; in this case, it loses one
+        // of its letter spaces;
+        boolean bSuppressibleLetterSpace =
+            ai.iLScount == (ai.iBreakIndex - ai.iStartIndex)
+            && BREAK_CHARS.indexOf(textArray[ai.iBreakIndex - 1]) >= 0;
 
         if (letterSpaceWidth.min == letterSpaceWidth.max) {
             // constant letter spacing
             wordElements.add
-                (new KnuthInlineBox(ai.ipdArea.opt, lead, total, middle,
-                              mainPosition, false));
+            (new KnuthInlineBox(
+                    bSuppressibleLetterSpace ?
+                            ai.ipdArea.opt - letterSpaceWidth.opt :
+                            ai.ipdArea.opt,
+                    lead, total, middle,
+                    mainPosition, false));
         } else {
             // adjustable letter spacing
+            int unsuppressibleLetterSpaces = bSuppressibleLetterSpace ? 
+                    ai.iLScount - 1 :
+                    ai.iLScount;
             wordElements.add
-                (new KnuthInlineBox(ai.ipdArea.opt
-                              - ai.iLScount * letterSpaceWidth.opt,
-                              lead, total, middle, 
-                              mainPosition, false));
+            (new KnuthInlineBox(ai.ipdArea.opt
+                    - ai.iLScount * letterSpaceWidth.opt,
+                    lead, total, middle, 
+                    mainPosition, false));
             wordElements.add
-                (new KnuthPenalty(0, KnuthElement.INFINITE, false,
-                                  new LeafPosition(this, -1), true));
+            (new KnuthPenalty(0, KnuthElement.INFINITE, false,
+                    new LeafPosition(this, -1), true));
             wordElements.add
-                (new KnuthGlue(unsuppressibleLetterSpaces * letterSpaceWidth.opt,
-                               unsuppressibleLetterSpaces * (letterSpaceWidth.max - letterSpaceWidth.opt),
-                               unsuppressibleLetterSpaces * (letterSpaceWidth.opt - letterSpaceWidth.min),
-                               new LeafPosition(this, -1), true));
+            (new KnuthGlue(unsuppressibleLetterSpaces * letterSpaceWidth.opt,
+                    unsuppressibleLetterSpaces * (letterSpaceWidth.max - letterSpaceWidth.opt),
+                    unsuppressibleLetterSpaces * (letterSpaceWidth.opt - letterSpaceWidth.min),
+                    new LeafPosition(this, -1), true));
             wordElements.add
-                (new KnuthInlineBox(0, 0, 0, 0,
-                              new LeafPosition(this, -1), true));
+            (new KnuthInlineBox(0, 0, 0, 0,
+                    new LeafPosition(this, -1), true));
         }
+ 
+        // extra-elements if the word fragment is the end of a syllable,
+        // or it ends with a character that can be used as a line break
         if (ai.bHyphenated) {
-            wordElements.addAll(createElementsForAHyphen(alignment));
+            // the word fragment ends at the end of a syllable:
+            // if a break occurs the content width increases,
+            // otherwise nothing happens
+            wordElements.addAll(createElementsForAHyphen(alignment, hyphIPD, new MinOptMax(0)));
+        } else if (bSuppressibleLetterSpace) {
+            // the word framgent ends with a character that acts as a hyphen
+            // if a break occurs the width does not increase,
+            // otherwise there is one more letter space
+            wordElements.addAll(createElementsForAHyphen(alignment, 0, letterSpaceWidth));
         }
-        // add a flagged penalty element and a glue element representing a suppressible 
-        // letter space if the next character is not a space
-        if (ai.iLScount - unsuppressibleLetterSpaces == 1) {
-            //TODO: this is correct only if text is justified
-            wordElements.add
-                (new KnuthPenalty(0, KnuthPenalty.FLAGGED_PENALTY, true,
-                                  new LeafPosition(this, -1), false));
-            wordElements.add
-                (new KnuthGlue(letterSpaceWidth.opt,
-                               letterSpaceWidth.max - letterSpaceWidth.opt,
-                               letterSpaceWidth.opt - letterSpaceWidth.min,
-                               new LeafPosition(this, -1), false));
-        }
-
 
         return wordElements;
     }
 
-    private LinkedList createElementsForAHyphen(int alignment) {
+    private LinkedList createElementsForAHyphen(int alignment,
+            int widthIfBreakOccurs, MinOptMax widthIfNoBreakOccurs) {
         LinkedList hyphenElements = new LinkedList();
         
         switch (alignment) {
         case EN_CENTER :
             // centered text:
-            // if the second element is chosen as a line break these elements 
-            // add a constant amount of stretch at the end of a line and at the
-            // beginning of the next one, otherwise they don't add any stretch
             hyphenElements.add
             (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                     new LeafPosition(this, -1), false));
             hyphenElements.add
-            (new KnuthPenalty(hyphIPD,
+            (new KnuthPenalty(widthIfBreakOccurs,
                     KnuthPenalty.FLAGGED_PENALTY, true,
                     new LeafPosition(this, -1), false));
             hyphenElements.add
-            (new KnuthGlue(0,
+            (new KnuthGlue(widthIfNoBreakOccurs.opt,
                     - 6 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                     new LeafPosition(this, -1), false));
             hyphenElements.add
@@ -893,18 +907,15 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         case EN_START  : // fall through
         case EN_END    :
             // left- or right-aligned text:
-            // if the second element is chosen as a line break these elements 
-            // add a constant amount of stretch at the end of a line, otherwise
-            // they don't add any stretch
             hyphenElements.add
             (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                     new LeafPosition(this, -1), false));
             hyphenElements.add
-            (new KnuthPenalty(hyphIPD,
+            (new KnuthPenalty(widthIfBreakOccurs,
                     KnuthPenalty.FLAGGED_PENALTY, true,
                     new LeafPosition(this, -1), false));
              hyphenElements.add
-            (new KnuthGlue(0,
+            (new KnuthGlue(widthIfNoBreakOccurs.opt,
                     - 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                     new LeafPosition(this, -1), false));
             break;
@@ -913,9 +924,19 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             // justified text, or last line justified:
             // just a flagged penalty
             hyphenElements.add
-            (new KnuthPenalty(hyphIPD,
+            (new KnuthPenalty(widthIfBreakOccurs,
                     KnuthPenalty.FLAGGED_PENALTY, true,
                     new LeafPosition(this, -1), false));
+            // extra elements representing a letter space that is suppressed
+            // if a break occurs
+            if (widthIfNoBreakOccurs.min != 0
+                || widthIfNoBreakOccurs.max != 0) {
+                hyphenElements.add
+                (new KnuthGlue(widthIfNoBreakOccurs.opt,
+                        widthIfNoBreakOccurs.max - widthIfNoBreakOccurs.opt,
+                        widthIfNoBreakOccurs.opt - widthIfNoBreakOccurs.min,
+                        new LeafPosition(this, -1), false));
+            }
         }
         
         return hyphenElements;
