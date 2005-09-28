@@ -64,7 +64,7 @@
     </section>
     <section id="install">
       <title>Installing Custom Hyphenation Patterns</title>
-      <p>To install custom a custom hyphenation pattern for use with FOP:</p>
+      <p>To install a custom hyphenation pattern for use with FOP:</p>
       <ol>
         <li>Convert the TeX hyphenation pattern file to the FOP format. The FOP
          format is an xml file conforming to the DTD found at
@@ -96,7 +96,8 @@
              in a directory of your choice (and append the full path to the JAR to 
              the environment variable <code>FOP_HYPHENATION_PATH</code>).</li>
             <li>Download the desired FOP-compatible hyphenation pattern file(s) from 
-             <fork href="http://offo.sourceforge.net/hyphenation/index.html">OFFO</fork>, 
+             <fork href="http://offo.sourceforge.net/hyphenation/index.html">OFFO</fork>,
+             and/or take your self created hyphenation pattern file(s), 
              <ul>
                 <li>place them in the directory <code>{fop-dir}/hyph</code>, </li>
                 <li>or place them in a directory of your choice and set the Ant variable
