@@ -171,13 +171,13 @@ public class CommandLineOptions implements Constants {
             } else if (args[i].equals("-s")) {
                 suppressLowLevelAreas = Boolean.TRUE;
             } else if (args[i].equals("-d")) {
-                setLogLevel("debug");
+                setLogOption("debug", "debug");
             } else if (args[i].equals("-r")) {
                 foUserAgent.setStrictValidation(false);
             } else if (args[i].equals("-dpi")) {
                 i = i + parseResolution(args, i);
             } else if (args[i].equals("-q") || args[i].equals("--quiet")) {
-                setLogLevel("error");
+                setLogOption("quiet", "error");
             } else if (args[i].equals("-fo")) {
                 i = i + parseFOInputOption(args, i);
             } else if (args[i].equals("-xsl")) {
@@ -461,17 +461,24 @@ public class CommandLineOptions implements Constants {
         }
     }
 
+    private void setLogOption (String option, String level) {
+        if (log instanceof CommandLineLogger
+            || System.getProperty("org.apache.commons.logging.Log") == null) {
+            setLogLevel(level);
+        } else if (log != null) {
+            log.warn("The option " + option + " can only be used");
+            log.warn("with FOP's command line logger,");
+            log.warn("which is the default on the command line.");
+            log.warn("Configure other loggers using Java system properties.");
+        }
+    }
+
     private void setLogLevel(String level) {
         // Set the level for future loggers.
         LogFactory.getFactory().setAttribute("level", level);
         if (log instanceof CommandLineLogger) {
-            // Set the level for the logger creates already.
+            // Set the level for the logger created already.
             ((CommandLineLogger) log).setLogLevel(level);
-        } else {
-            //log.warn("Setting the log level to debug probably failed.");
-            //log.warn("Configure the log level using Java system properties,");
-            //log.warn("or use FOP's command line logger,");
-            //log.warn("which is the default on the command line.");
         }
     }
         
