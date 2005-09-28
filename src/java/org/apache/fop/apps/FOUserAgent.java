@@ -353,10 +353,9 @@ public class FOUserAgent {
      */
     public void initUserConfig() throws ConfigurationException {
         log.info("Initializing User Agent Configuration");
-        Configuration cfgUserAgent = userConfig.getChild("userAgent");
-        if (cfgUserAgent.getChild("base", false) != null) {
+        if (userConfig.getChild("base", false) != null) {
             try {
-                String cfgBaseDir = cfgUserAgent.getChild("base")
+                String cfgBaseDir = userConfig.getChild("base")
                                     .getAttribute("url");
                 File dir = new File(cfgBaseDir);
                 if (dir.isDirectory()) {
@@ -372,18 +371,19 @@ public class FOUserAgent {
             }
             log.info("Base URL set to: " + baseURL);
         }
-        if (cfgUserAgent.getChild("pixelToMillimeter", false) != null) {
-            this.px2mm = cfgUserAgent.getChild("pixelToMillimeter")
+        if (userConfig.getChild("pixelToMillimeter", false) != null) {
+            this.px2mm = userConfig.getChild("pixelToMillimeter")
                             .getAttributeAsFloat("value", DEFAULT_PX2MM);
             log.info("pixelToMillimeter set to: " + px2mm);
         }
-        if (cfgUserAgent.getChild("pageHeight", false) != null) {
-            setPageHeight(cfgUserAgent.getChild("pageHeight")
+        Configuration pageConfig = userConfig.getChild("pagesettings");
+        if (pageConfig.getChild("pageHeight", false) != null) {
+            setPageHeight(pageConfig.getChild("pageHeight")
                             .getAttribute("value"));
             log.info("Default page-height set to: " + pageHeight);
         }
-        if (cfgUserAgent.getChild("pageWidth", false) != null) {
-            setPageWidth(cfgUserAgent.getChild("pageWidth")
+        if (pageConfig.getChild("pageWidth", false) != null) {
+            setPageWidth(pageConfig.getChild("pageWidth")
                             .getAttribute("value"));
             log.info("Default page-width set to: " + pageWidth);
         }

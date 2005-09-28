@@ -14,16 +14,16 @@ the location of this file.
 <!-- NOTE: This is the version of the configuration -->
 <fop version="1.0">
 
-  <userAgent>
-    <base url="./"/>
-    <!-- pixel to millimeter to specify dpi, 72dpi -->
-    <pixelToMillimeter value="0.35277777777777777778"/>
-    <!-- default page-height and page-width, in case
-         value is specified as auto -->
+  <base url="./"/>
+  <!-- pixel to millimeter to specify dpi, 72dpi -->
+  <pixelToMillimeter value="0.35277777777777777778"/>
+  <pagesettings>
+  <!-- default page-height and page-width, in case
+       value is specified as auto -->
     <pageHeight value="11in"/>
     <pageWidth value="8.26in"/>
-  </userAgent>
-
+  </pagesettings>
+  
   <!-- Information for specific renderers -->
   <!-- Uses renderer mime type for renderers -->
   <renderers>
