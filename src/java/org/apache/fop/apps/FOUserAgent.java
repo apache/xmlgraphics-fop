@@ -20,6 +20,9 @@ package org.apache.fop.apps;
 
 // Java
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.net.MalformedURLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -325,6 +328,12 @@ public class FOUserAgent {
      */
     public void setUserConfig(Configuration userConfig) {
         this.userConfig = userConfig;
+        try {
+            initUserConfig();
+        } catch (ConfigurationException cfge) {
+            log.error("Error initializing User Agent configuration: "
+                    + cfge.getMessage());
+        }
     }
 
     /**
@@ -333,6 +342,51 @@ public class FOUserAgent {
      */
     public Configuration getUserConfig() {
         return userConfig;
+    }
+    
+    /**
+     * Initializes user agent settings from the user configuration
+     * file, if present: baseURL, resolution, default page size,...
+     * 
+     * @throws ConfigurationException when there is an entry that 
+     *          misses the required attribute
+     */
+    public void initUserConfig() throws ConfigurationException {
+        log.info("Initializing User Agent Configuration");
+        Configuration cfgUserAgent = userConfig.getChild("userAgent");
+        if (cfgUserAgent.getChild("base", false) != null) {
+            try {
+                String cfgBaseDir = cfgUserAgent.getChild("base")
+                                    .getAttribute("url");
+                File dir = new File(cfgBaseDir);
+                if (dir.isDirectory()) {
+                    cfgBaseDir = "file://" + dir.getCanonicalPath() 
+                        + System.getProperty("file.separator");
+                }
+                URL cfgBaseURL = new URL(cfgBaseDir);
+                setBaseURL(cfgBaseDir);
+            } catch (MalformedURLException mue) {
+                log.error("Base URL in user config is malformed!");
+            } catch (IOException ioe) {
+                log.error("Error converting relative base directory to absolute URL.");
+            }
+            log.info("Base URL set to: " + baseURL);
+        }
+        if (cfgUserAgent.getChild("pixelToMillimeter", false) != null) {
+            this.px2mm = cfgUserAgent.getChild("pixelToMillimeter")
+                            .getAttributeAsFloat("value", DEFAULT_PX2MM);
+            log.info("pixelToMillimeter set to: " + px2mm);
+        }
+        if (cfgUserAgent.getChild("pageHeight", false) != null) {
+            setPageHeight(cfgUserAgent.getChild("pageHeight")
+                            .getAttribute("value"));
+            log.info("Default page-height set to: " + pageHeight);
+        }
+        if (cfgUserAgent.getChild("pageWidth", false) != null) {
+            setPageWidth(cfgUserAgent.getChild("pageWidth")
+                            .getAttribute("value"));
+            log.info("Default page-width set to: " + pageWidth);
+        }
     }
 
     /**
