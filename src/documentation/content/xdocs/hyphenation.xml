@@ -31,7 +31,7 @@
        language specific pattern and other data for operation.</p>
       <p>Because of <link href="#license-issues">licensing issues</link> (and for 
        convenience), all hyphenation patterns for FOP are made available through 
-       the <fork href="http://offo.sourceforge.net/hyphenation.html">Objects For 
+       the <fork href="http://offo.sourceforge.net/hyphenation/index.html">Objects For 
        Formatting Objects</fork> project.</p>
       <note>If you have made improvements to an existing FOP hyphenation pattern, 
        or if you have created one from scratch, please consider contributing these 
@@ -91,24 +91,25 @@
         <li>There are basically three ways to make the FOP-compatible hyphenation pattern 
           file(s) accessible to FOP:
           <ul>
-            <li>Download the precompiled JAR from <fork href="http://offo.sourceforge.net/hyphenation.html">OFFO
+            <li>Download the precompiled JAR from <fork href="http://offo.sourceforge.net/hyphenation/index.html">OFFO
             </fork> and place it either in the <code>{fop-dir}/lib</code> directory, or 
              in a directory of your choice (and append the full path to the JAR to 
              the environment variable <code>FOP_HYPHENATION_PATH</code>).</li>
             <li>Download the desired FOP-compatible hyphenation pattern file(s) from 
-             <fork href="http://offo.sourceforge.net/hyphenation.html">OFFO</fork>, 
+             <fork href="http://offo.sourceforge.net/hyphenation/index.html">OFFO</fork>, 
              <ul>
                 <li>place them in the directory <code>{fop-dir}/hyph</code>, </li>
                 <li>or place them in a directory of your choice and set the Ant variable
-                <code>hyph.dir</code> to point to that directory (in
+                <code>user.hyph.dir</code> to point to that directory (in
                 <code>build-local.properties</code>),</li>
              </ul>
              and run Ant with build target
-             <code>hyphenation-jar</code>. This will create a JAR containing the 
+             <code>jar-hyphenation</code>. This will create a JAR containing the 
              compiled patterns in <code>{fop-dir}/build</code> that will be added to the 
              classpath on the next run.
              (When FOP is built from scratch, and there are pattern source file(s) 
-             present in <code>{fop-dir}/hyph</code>, this JAR will automatically 
+             present in the directory pointed to by the
+             <code>user.hyph.dir</code> variable, this JAR will automatically 
              be created from the supplied pattern(s)).</li>
             <li>Put the pattern source file(s) into a directory of your choice and 
              configure FOP to look for custom patterns in this directory, by setting the
@@ -131,7 +132,7 @@
     <p>If you would like to build your own hyphenation pattern files, or modify
      existing ones, this section will help you understand how to do so. Even
      when creating a pattern file from scratch, it may be beneficial to start
-     with an existing file and modify it. See <fork href="http://offo.sourceforge.net/hyphenation.html">
+     with an existing file and modify it. See <fork href="http://offo.sourceforge.net/hyphenation/index.html">
      OFFO's Hyphenation page</fork> for examples. 
      Here is a brief explanation of the contents of FOP's hyphenation patterns:</p>
     <warning>The remaining content of this section should be considered "draft"
