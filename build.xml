@@ -389,8 +389,8 @@ list of possible build targets.
       <pathelement location="${build.classes.dir}"/>
     </path>
     <taskdef name="serHyph" classname="org.apache.fop.tools.anttasks.SerializeHyphPattern" classpathref="hyph-classpath"/>
-    <mkdir dir="${build.dir}/hyph"/>
-    <serHyph targetDir="${build.dir}/hyph">
+    <mkdir dir="${build.classes.dir}/hyph"/>
+    <serHyph targetDir="${build.classes.dir}/hyph">
       <fileset dir="${user.hyph.dir}">
         <include name="*.xml"/>
       </fileset>
@@ -399,7 +399,7 @@ list of possible build targets.
 
   <target name="uptodate-jar-hyphenation" depends="compile-hyphenation">
     <uptodate property="jar.hyphenation.uptodate" targetfile="${build.dir}/fop-hyph.jar">
-      <srcfiles dir="${build.dir}/hyph"/>
+      <srcfiles dir="${build.classes.dir}/hyph"/>
     </uptodate>
   </target>
 
@@ -407,7 +407,7 @@ list of possible build targets.
     <tstamp>
       <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
     </tstamp>
-    <jar jarfile="${build.dir}/fop-hyph.jar" basedir="${build.dir}" includes="hyph/*.hyp">
+    <jar jarfile="${build.dir}/fop-hyph.jar" basedir="${build.classes.dir}" includes="hyph/*.hyp">
       <manifest>
         <attribute name="Implementation-Title" value="${Name}"/>
         <attribute name="Implementation-Version" value="${version}"/>
