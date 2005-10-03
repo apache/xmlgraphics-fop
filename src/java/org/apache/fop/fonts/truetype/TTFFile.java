@@ -449,24 +449,24 @@ public class TTFFile {
         UnicodeMapping um = (UnicodeMapping)e.next();
         UnicodeMapping lastMapping = um;
 
-        tce.setUnicodeStart(um.getUIdx());
-        tce.setGlyphStartIndex(um.getGIdx());
+        tce.setUnicodeStart(um.getUnicodeIndex());
+        tce.setGlyphStartIndex(um.getGlyphIndex());
 
         while (e.hasNext()) {
             um = (UnicodeMapping)e.next();
-            if (((lastMapping.getUIdx() + 1) != um.getUIdx())
-                    || ((lastMapping.getGIdx() + 1) != um.getGIdx())) {
-                tce.setUnicodeEnd(lastMapping.getUIdx());
+            if (((lastMapping.getUnicodeIndex() + 1) != um.getUnicodeIndex())
+                    || ((lastMapping.getGlyphIndex() + 1) != um.getGlyphIndex())) {
+                tce.setUnicodeEnd(lastMapping.getUnicodeIndex());
                 cmaps.add(tce);
 
                 tce = new TTFCmapEntry();
-                tce.setUnicodeStart(um.getUIdx());
-                tce.setGlyphStartIndex(um.getGIdx());
+                tce.setUnicodeStart(um.getUnicodeIndex());
+                tce.setGlyphStartIndex(um.getGlyphIndex());
             }
             lastMapping = um;
         }
 
-        tce.setUnicodeEnd(um.getUIdx());
+        tce.setUnicodeEnd(um.getUnicodeIndex());
         cmaps.add(tce);
     }
 
@@ -1279,28 +1279,28 @@ public class TTFFile {
  */
 class UnicodeMapping {
 
-    private int uIdx;
-    private int gIdx;
+    private int unicodeIndex;
+    private int glyphIndex;
 
-    UnicodeMapping(int gIdx, int uIdx) {
-        this.uIdx = uIdx;
-        this.gIdx = gIdx;
+    UnicodeMapping(int glyphIndex, int unicodeIndex) {
+        this.unicodeIndex = unicodeIndex;
+        this.glyphIndex = glyphIndex;
     }
 
     /**
-     * Returns the gIdx.
-     * @return int
+     * Returns the glyphIndex.
+     * @return the glyph index
      */
-    public int getGIdx() {
-        return gIdx;
+    public int getGlyphIndex() {
+        return glyphIndex;
     }
 
     /**
-     * Returns the uIdx.
-     * @return int
+     * Returns the unicodeIndex.
+     * @return the Unicode index
      */
-    public int getUIdx() {
-        return uIdx;
+    public int getUnicodeIndex() {
+        return unicodeIndex;
     }
 
 }

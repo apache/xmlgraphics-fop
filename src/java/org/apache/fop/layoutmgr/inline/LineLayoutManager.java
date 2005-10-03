@@ -69,21 +69,21 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     private Block fobj; 
     
     public void initialize() {
-        bTextAlignment = fobj.getTextAlign();
-        bTextAlignmentLast = fobj.getTextAlignLast();
+        textAlignment = fobj.getTextAlign();
+        textAlignmentLast = fobj.getTextAlignLast();
         textIndent = fobj.getTextIndent();
         lastLineEndIndent = fobj.getLastLineEndIndent();
-        hyphProps = fobj.getCommonHyphenation();
+        hyphenationProperties = fobj.getCommonHyphenation();
         wrapOption = fobj.getWrapOption();
         //
-        effectiveAlignment = getEffectiveAlignment(bTextAlignment, bTextAlignmentLast);
+        effectiveAlignment = getEffectiveAlignment(textAlignment, textAlignmentLast);
     }
 
     private int getEffectiveAlignment(int alignment, int alignmentLast) {
-        if (bTextAlignment != EN_JUSTIFY && bTextAlignmentLast == EN_JUSTIFY) {
+        if (textAlignment != EN_JUSTIFY && textAlignmentLast == EN_JUSTIFY) {
             return 0;
         } else {
-            return bTextAlignment;
+            return textAlignment;
         }
     }
     
@@ -128,16 +128,13 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     }
 
 
-    /** Break positions returned by inline content. */
-    private List vecInlineBreaks = new java.util.ArrayList();
-
-    private int bTextAlignment = EN_JUSTIFY;
-    private int bTextAlignmentLast;
+    private int textAlignment = EN_JUSTIFY;
+    private int textAlignmentLast;
     private int effectiveAlignment;
     private Length textIndent;
     private Length lastLineEndIndent;
     private int iIndents = 0;
-    private CommonHyphenation hyphProps;
+    private CommonHyphenation hyphenationProperties;
     private int wrapOption = EN_WRAP;
     //private LayoutProps layoutProps;
 
@@ -210,14 +207,14 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         public void startSequence() {
             // set the minimum amount of empty space at the end of the
             // last line
-            if (bTextAlignment == EN_CENTER) {
+            if (textAlignment == EN_CENTER) {
                 lineFiller = new MinOptMax(lastLineEndIndent); 
             } else {
                 lineFiller = new MinOptMax(lastLineEndIndent, lastLineEndIndent, lineWidth); 
             }
 
             // add auxiliary elements at the beginning of the paragraph
-            if (bTextAlignment == EN_CENTER && bTextAlignmentLast != EN_JUSTIFY) {
+            if (textAlignment == EN_CENTER && textAlignmentLast != EN_JUSTIFY) {
                 this.add(new KnuthGlue(0, 3 * DEFAULT_SPACE_WIDTH, 0,
                                        null, false));
                 ignoreAtStart ++;
@@ -244,14 +241,14 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             // remove elements representig spaces at the end of the paragraph
             removeElementsForTrailingSpaces();
             if (this.size() > ignoreAtStart) {
-                if (bTextAlignment == EN_CENTER
-                    && bTextAlignmentLast != EN_JUSTIFY) {
+                if (textAlignment == EN_CENTER
+                    && textAlignmentLast != EN_JUSTIFY) {
                     this.add(new KnuthGlue(0, 3 * DEFAULT_SPACE_WIDTH, 0,
                                            null, false));
                     this.add(new KnuthPenalty(lineFiller.opt, -KnuthElement.INFINITE,
                                               false, null, false));
                     ignoreAtEnd = 2;
-                } else if (bTextAlignmentLast != EN_JUSTIFY) {
+                } else if (textAlignmentLast != EN_JUSTIFY) {
                     // add the elements representing the space
                     // at the end of the last line
                     // and the forced break
@@ -607,9 +604,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         MinOptMax availIPD = context.getStackLimit();
 
         clearPrevIPD();
-        int iPrevLineEnd = vecInlineBreaks.size();
-
-        if (iPrevLineEnd == 0 && bTextAlignment == EN_START) {
+        if (textAlignment == EN_START) {
             availIPD.subtract(new MinOptMax(textIndent.getValue(this)));
         }
 
@@ -749,7 +744,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                         // else this is the last paragraph
                         if (lastPar == null) { 
                             lastPar = new Paragraph(this, 
-                                                    bTextAlignment, bTextAlignmentLast, 
+                                                    textAlignment, textAlignmentLast, 
                                                     textIndent.getValue(this), lastLineEndIndent.getValue(this));
                             lastPar.startParagraph(availIPD.opt);
                             if (log.isTraceEnabled()) {
@@ -842,7 +837,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         if (!findBreakingPoints(par, lineWidth, maxAdjustment, false)) {
             // the first try failed, now try something different
             log.debug("No set of breaking points found with maxAdjustment = " + maxAdjustment);
-            if (hyphProps.hyphenate == Constants.EN_TRUE) {
+            if (hyphenationProperties.hyphenate == Constants.EN_TRUE) {
                 // consider every hyphenation point as a legal break
                 findHyphenationPoints(par);
             } else {
@@ -854,7 +849,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 // the second try failed too, try with a huge threshold;
                 // if this fails too, use a different algorithm
                 log.debug("No set of breaking points found with maxAdjustment = " + maxAdjustment
-                          + (hyphProps.hyphenate == Constants.EN_TRUE ? " and hyphenation" : ""));
+                          + (hyphenationProperties.hyphenate == Constants.EN_TRUE ? " and hyphenation" : ""));
                 maxAdjustment = 20;
                 if (!findBreakingPoints(par, lineWidth, maxAdjustment, true)) {
                     log.debug("No set of breaking points found, using first-fit algorithm");
@@ -885,7 +880,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 difference += par.lineFillerWidth;
             }    
             int textAlign = (line < lines)
-                ? bTextAlignment : bTextAlignmentLast;
+                ? textAlignment : textAlignmentLast;
             int indent = (textAlign == EN_CENTER)
                 ? difference / 2
                 : (textAlign == EN_END) ? difference : 0;
@@ -1020,13 +1015,13 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         double maxAdjustment = 1;
         int iBPcount = 0;
         LineBreakingAlgorithm alg = new LineBreakingAlgorithm(alignment,
-                bTextAlignment, bTextAlignmentLast,
+                textAlignment, textAlignmentLast,
                                         textIndent.getValue(this), currPar.lineFiller.opt,
                                         lineHeight.getValue(this), lead, follow, middleShift,
                                         (knuthParagraphs.indexOf(currPar) == 0),
                                         this);
    
-        if (hyphProps.hyphenate == EN_TRUE) {
+        if (hyphenationProperties.hyphenate == EN_TRUE) {
             findHyphenationPoints(currPar);
         }
    
@@ -1051,8 +1046,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             }
    
             // now try something different
-            log.debug("Hyphenation possible? " + (hyphProps.hyphenate == EN_TRUE));
-            if (hyphProps.hyphenate == EN_TRUE
+            log.debug("Hyphenation possible? " + (hyphenationProperties.hyphenate == EN_TRUE));
+            if (hyphenationProperties.hyphenate == EN_TRUE
                 && !(allowedBreaks == BreakingAlgorithm.ONLY_FORCED_BREAKS)) {
                 // consider every hyphenation point as a legal break
                 allowedBreaks = BreakingAlgorithm.ALL_BREAKS;
@@ -1068,7 +1063,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 // and force the algorithm to find
                 // a set of breaking points
                 log.debug("No set of breaking points found with maxAdjustment = " + maxAdjustment
-                                 + (hyphProps.hyphenate == EN_TRUE ? " and hyphenation" : ""));
+                                 + (hyphenationProperties.hyphenate == EN_TRUE ? " and hyphenation" : ""));
                 maxAdjustment = 20;
                 iBPcount
                     = alg.findBreakingPoints(currPar,
@@ -1082,7 +1077,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                is justify and the paragraph has only one layout, try using 
                shorter or longer lines */
             //TODO This code snippet is disabled. Reenable?
-            if (false && alignment == EN_JUSTIFY && bTextAlignment == EN_JUSTIFY) {
+            if (false && alignment == EN_JUSTIFY && textAlignment == EN_JUSTIFY) {
                 //System.out.println("LLM.getNextKnuthElements> layouts with more lines? " + lineLayouts.canUseMoreLines());
                 //System.out.println("                          layouts with fewer lines? " + lineLayouts.canUseLessLines());
                 if (!lineLayouts.canUseMoreLines()) {
@@ -1546,7 +1541,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     private HyphContext getHyphenContext(StringBuffer sbChars) {
         // Find all hyphenation points in this word
         // (get in an array of offsets)
-        // hyphProps are from the block level?.
+        // hyphenationProperties are from the block level?.
         // Note that according to the spec,
         // they also "apply to" fo:character.
         // I don't know what that means, since
@@ -1558,10 +1553,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         // since these properties inherit and could be specified
         // on an inline or wrapper below the block level.
         Hyphenation hyph
-            = Hyphenator.hyphenate(hyphProps.language,
-                                   hyphProps.country, sbChars.toString(),
-                                   hyphProps.hyphenationRemainCharacterCount,
-                                   hyphProps.hyphenationPushCharacterCount);
+            = Hyphenator.hyphenate(hyphenationProperties.language,
+                                   hyphenationProperties.country, sbChars.toString(),
+                                   hyphenationProperties.hyphenationRemainCharacterCount,
+                                   hyphenationProperties.hyphenationPushCharacterCount);
         // They hyph structure contains the information we need
         // Now start from prev: reset to that position, ask that LM to get
         // a Position for the first hyphenation offset. If the offset isn't in
@@ -1626,7 +1621,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 KnuthSequence seq = (KnuthSequence) knuthParagraphs.get(iCurrParIndex); 
                 iEndElement = lbp.getLeafPos();
     
-                LineArea lineArea = new LineArea((lbp.getLeafPos() < seq.size() - 1 ? bTextAlignment : bTextAlignmentLast),
+                LineArea lineArea = new LineArea((lbp.getLeafPos() < seq.size() - 1 ? textAlignment : textAlignmentLast),
                                                  lbp.difference, lbp.availableStretch, lbp.availableShrink);
                 lineArea.setStartIndent(lbp.startIndent);
                 lineArea.setBPD(lbp.lineHeight);
@@ -1691,7 +1686,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 /* extension (not in the XSL FO recommendation): if the left and right margins
                    have been optimized, recompute indents and / or adjust ratio, according
                    to the paragraph horizontal alignment */
-                if (false && bTextAlignment == EN_JUSTIFY) {
+                if (false && textAlignment == EN_JUSTIFY) {
                     // re-compute space adjust ratio
                     int updatedDifference = context.getStackLimit().opt - lbp.lineWidth + lbp.difference;
                     double updatedRatio = 0.0;
@@ -1703,11 +1698,11 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     lc.setIPDAdjust(updatedRatio);
                     //System.out.println("LLM.addAreas> old difference = " + lbp.difference + " new difference = " + updatedDifference);
                     //System.out.println("              old ratio = " + lbp.ipdAdjust + " new ratio = " + updatedRatio);
-                } else if (false && bTextAlignment == EN_CENTER) {
+                } else if (false && textAlignment == EN_CENTER) {
                     // re-compute indent
                     int updatedIndent = lbp.startIndent + (context.getStackLimit().opt - lbp.lineWidth) / 2;
                     lineArea.setStartIndent(updatedIndent);
-                } else if (false && bTextAlignment == EN_END) {
+                } else if (false && textAlignment == EN_END) {
                     // re-compute indent
                     int updatedIndent = lbp.startIndent + (context.getStackLimit().opt - lbp.lineWidth);
                     lineArea.setStartIndent(updatedIndent);
