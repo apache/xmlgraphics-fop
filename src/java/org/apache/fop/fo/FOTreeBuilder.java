@@ -247,8 +247,10 @@ public class FOTreeBuilder extends DefaultHandler {
         if (rootFObj == null) {
             if (!namespaceURI.equals(FOElementMapping.URI) 
                 || !localName.equals("root")) {
-                throw new SAXException(new IllegalArgumentException(
-                    "Error:  First element must be fo:root formatting object"));
+                throw new SAXException(new ValidationException(
+                    "Error: First element must be the fo:root formatting object. Found " 
+                        + FONode.getNodeString(namespaceURI, localName) + " instead."
+                        + " Please make sure you're producing a valid XSL-FO document."));
             }
         } else { // check that incoming node is valid for currentFObj
             if (namespaceURI.equals(FOElementMapping.URI)) {
@@ -293,6 +295,10 @@ public class FOTreeBuilder extends DefaultHandler {
      */
     public void endElement(String uri, String localName, String rawName)
                 throws FOPException {
+        if (currentFObj == null) {
+            throw new FOPException("No current FO is available. The input document may not be "
+                    + "a valid XSL-FO document.");
+        }
         currentFObj.endOfNode();
 
         if (currentPropertyList.getFObj() == currentFObj) {
