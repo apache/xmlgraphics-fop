@@ -434,8 +434,7 @@ public abstract class BreakingAlgorithm {
                 }
 
                 log.debug("Restarting at node " + lastForced);
-                restartFrom(lastForced, i);
-                i = lastForced.position;
+                i = restartFrom(lastForced, i);
             }
         }
         finish();
@@ -487,7 +486,7 @@ public abstract class BreakingAlgorithm {
     protected void handleBox(KnuthBox box) {
     }
 
-    protected void restartFrom(KnuthNode restartingNode, int currentIndex) {
+    protected int restartFrom(KnuthNode restartingNode, int currentIndex) {
         restartingNode.totalDemerits = 0;
         addNode(restartingNode.line, restartingNode);
         startLine = restartingNode.line;
@@ -496,6 +495,16 @@ public abstract class BreakingAlgorithm {
         totalStretch = restartingNode.totalStretch;
         totalShrink = restartingNode.totalShrink;
         lastTooShort = lastTooLong = null;
+        // the width, stretch and shrink already include the width,
+        // stretch and shrink of the suppressed glues;
+        // advance in the sequence in order to avoid taking into account
+        // these elements twice
+        int restartingIndex = restartingNode.position;
+        while (restartingIndex + 1 < par.size()
+               && !(getElement(restartingIndex + 1).isBox())) {
+            restartingIndex ++;
+        }
+        return restartingIndex;
     }
 
     protected void considerLegalBreak(KnuthElement element, int elementIdx) {
@@ -554,10 +563,33 @@ public abstract class BreakingAlgorithm {
                 if (force && (r <= -1 || r > threshold)) {
                     int fitnessClass = computeFitness(r);
                     double demerits = computeDemerits(node, element, fitnessClass, r);
+                    int newWidth = totalWidth;
+                    int newStretch = totalStretch;
+                    int newShrink = totalShrink;
+
+                    // add the width, stretch and shrink of glue elements after 
+                    // the break
+                    // this does not affect the dimension of the line / page, only
+                    // the values stored in the node; these would be as if the break
+                    // was just before the next box element, thus ignoring glues and
+                    // penalties between the "real" break and the following box
+                    for (int i = elementIdx; i < par.size(); i++) {
+                        KnuthElement tempElement = getElement(i);
+                        if (tempElement.isBox()) {
+                            break;
+                        } else if (tempElement.isGlue()) {
+                            newWidth += tempElement.getW();
+                            newStretch += tempElement.getY();
+                            newShrink += tempElement.getZ();
+                        } else if (tempElement.isForcedBreak() && i != elementIdx) {
+                            break;
+                        }
+                    }
+
                     if (r <= -1) {
                         if (lastTooLong == null || demerits < lastTooLong.totalDemerits) {
                             lastTooLong = createNode(elementIdx, line + 1, fitnessClass,
-                                    totalWidth, totalStretch, totalShrink,
+                                    newWidth, newStretch, newShrink,
                                     r, availableShrink, availableStretch,
                                     difference, demerits, node);
                             if (log.isTraceEnabled()) {
@@ -573,7 +605,7 @@ public abstract class BreakingAlgorithm {
                                         difference, fitnessClass);
                             }
                             lastTooShort = createNode(elementIdx, line + 1, fitnessClass,
-                                    totalWidth, totalStretch, totalShrink,
+                                    newWidth, newStretch, newShrink,
                                     r, availableShrink, availableStretch,
                                     difference, demerits, node);
                             if (log.isTraceEnabled()) {
@@ -596,6 +628,12 @@ public abstract class BreakingAlgorithm {
         int newStretch = totalStretch;
         int newShrink = totalShrink;
 
+        // add the width, stretch and shrink of glue elements after 
+        // the break
+        // this does not affect the dimension of the line / page, only
+        // the values stored in the node; these would be as if the break
+        // was just before the next box element, thus ignoring glues and
+        // penalties between the "real" break and the following box
         for (int i = elementIdx; i < par.size(); i++) {
             KnuthElement tempElement = getElement(i);
             if (tempElement.isBox()) {
