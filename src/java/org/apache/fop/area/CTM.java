@@ -137,13 +137,13 @@ public class CTM implements Serializable {
      * @return CTM The result of multiplying premult * this.
      */
     public CTM multiply(CTM premult) {
-        CTM rslt = new CTM ((premult.a * a) + (premult.b * c),
-                            (premult.a * b) + (premult.b * d),
-                            (premult.c * a) + (premult.d * c),
-                            (premult.c * b) + (premult.d * d),
-                            (premult.e * a) + (premult.f * c) + e,
-                            (premult.e * b) + (premult.f * d) + f);
-        return rslt;
+        CTM result = new CTM ((premult.a * a) + (premult.b * c),
+                              (premult.a * b) + (premult.b * d),
+                              (premult.c * a) + (premult.d * c),
+                              (premult.c * b) + (premult.d * d),
+                              (premult.e * a) + (premult.f * c) + e,
+                              (premult.e * b) + (premult.f * d) + f);
+        return result;
     }
 
     /**

@@ -42,7 +42,7 @@ import java.awt.event.ActionListener;
  */
 public class GoToPageDialog extends JDialog {
     
-    private JTextField pgNbField;
+    private JTextField pageNumberField;
     private int pageNumber = -1;
 
     /**
@@ -61,7 +61,7 @@ public class GoToPageDialog extends JDialog {
         JPanel panel1 = new JPanel();
         GridBagLayout gridBagLayout1 = new GridBagLayout();
         JLabel pgNbLabel = new JLabel();
-        pgNbField = new JTextField();
+        pageNumberField = new JTextField();
         JButton okButton = new JButton();
         JButton cancelButton = new JButton();
         panel1.setLayout(gridBagLayout1);
@@ -85,7 +85,7 @@ public class GoToPageDialog extends JDialog {
                                           GridBagConstraints.WEST,
                                           GridBagConstraints.NONE,
                                           new Insets(10, 10, 10, 5), 0, 0));
-        panel1.add(pgNbField,
+        panel1.add(pageNumberField,
                    new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0,
                                           GridBagConstraints.WEST,
                                           GridBagConstraints.BOTH,
@@ -104,10 +104,10 @@ public class GoToPageDialog extends JDialog {
 
     private void okButtonActionPerformed(ActionEvent e) {
         try {
-            pageNumber = Integer.parseInt(pgNbField.getText());
+            pageNumber = Integer.parseInt(pageNumberField.getText());
             dispose();
         } catch (NumberFormatException nfe) {
-            pgNbField.setText("???");
+            pageNumberField.setText("???");
         }
 
     }

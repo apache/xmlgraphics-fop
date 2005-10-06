@@ -134,11 +134,11 @@ public class PropertyMaker implements Cloneable {
     }
 
     /**
-     * Return a subproperty maker for the subpropId. 
-     * @param subpropId The subpropId of the maker. 
+     * Return a subproperty maker for the subpropertyId. 
+     * @param subpropertyId The subpropertyId of the maker. 
      * @return The subproperty maker.
      */
-    public PropertyMaker getSubpropMaker(int subpropId) {
+    public PropertyMaker getSubpropMaker(int subpropertyId) {
         throw new RuntimeException("Unable to add subproperties"); 
     }
 
@@ -234,7 +234,7 @@ public class PropertyMaker implements Cloneable {
      * happens in computeProperty.
      */
     public Property findProperty(PropertyList propertyList, 
-                                 boolean bTryInherit)
+                                 boolean tryInherit)
         throws PropertyException
     {
         Property p = null;
@@ -256,7 +256,7 @@ public class PropertyMaker implements Cloneable {
                 p = getShorthand(propertyList);
             }
         }
-        if (p == null && bTryInherit) {    
+        if (p == null && tryInherit) {    
             // else inherit (if has parent and is inheritable)
             PropertyList parentPropertyList = propertyList.getParentPropertyList(); 
             if (parentPropertyList != null && isInherited()) {
@@ -271,19 +271,19 @@ public class PropertyMaker implements Cloneable {
      * this will try to compute it based on other properties, or if it is
      * inheritable, to return the inherited value. If all else fails, it returns
      * the default value.
-     * @param subpropId  The subproperty id of the property being retrieved.
+     * @param subpropertyId  The subproperty id of the property being retrieved.
      *        Is 0 when retriving a base property.
      * @param propertyList The PropertyList object being built for this FO.
-     * @param bTryInherit true if inherited properties should be examined.
-     * @param bTryDefault true if the default value should be returned. 
+     * @param tryInherit true if inherited properties should be examined.
+     * @param tryDefault true if the default value should be returned. 
      */
-    public Property get(int subpropId, PropertyList propertyList,
-                        boolean bTryInherit, boolean bTryDefault)
+    public Property get(int subpropertyId, PropertyList propertyList,
+                        boolean tryInherit, boolean tryDefault)
         throws PropertyException
     {
-        Property p = findProperty(propertyList, bTryInherit);
+        Property p = findProperty(propertyList, tryInherit);
 
-        if (p == null && bTryDefault) {    // default value for this FO!
+        if (p == null && tryDefault) {    // default value for this FO!
             p = make(propertyList);
         }
         return p;
@@ -319,7 +319,7 @@ public class PropertyMaker implements Cloneable {
      * property.
      * @param p A property value for a compound property type such as
      * SpaceProperty.
-     * @param subpropId the id of the component whose value is to be
+     * @param subpropertyId the id of the component whose value is to be
      * returned.
      * NOTE: this is only to ease porting when calls are made to
      * PropertyList.get() using a component name of a compound property,
@@ -329,9 +329,9 @@ public class PropertyMaker implements Cloneable {
      * compound properties.
      * @return the Property containing the subproperty
      */
-    public Property getSubprop(Property p, int subpropId) {
+    public Property getSubprop(Property p, int subpropertyId) {
         CompoundDatatype val = (CompoundDatatype) p.getObject();
-        return val.getComponent(subpropId);
+        return val.getComponent(subpropertyId);
     }
 
     /**
@@ -341,18 +341,18 @@ public class PropertyMaker implements Cloneable {
      * without modifying it.
      * It is overridden by property maker subclasses which handle
      * compound properties.
-     * @param baseProp The Property object representing the compound property,
+     * @param baseProperty The Property object representing the compound property,
      * such as SpaceProperty.
-     * @param partId The ID of the component whose value is specified.
-     * @param subProp A Property object holding the specified value of the
+     * @param subpropertyId The ID of the component whose value is specified.
+     * @param subproperty A Property object holding the specified value of the
      * component to be set.
      * @return The modified compound property object.
      */
-    protected Property setSubprop(Property baseProp, int partId,
-                                  Property subProp) {
-        CompoundDatatype val = (CompoundDatatype) baseProp.getObject();
-        val.setComponent(partId, subProp, false);
-        return baseProp;
+    protected Property setSubprop(Property baseProperty, int subpropertyId,
+                                  Property subproperty) {
+        CompoundDatatype val = (CompoundDatatype) baseProperty.getObject();
+        val.setComponent(subpropertyId, subproperty, false);
+        return baseProperty;
     }
 
     /**
@@ -427,23 +427,23 @@ public class PropertyMaker implements Cloneable {
     /**
      * Make a property value for a compound property. If the property
      * value is already partially initialized, this method will modify it.
-     * @param baseProp The Property object representing the compound property,
+     * @param baseProperty The Property object representing the compound property,
      * for example: SpaceProperty.
-     * @param subpropId The Constants ID of the subproperty (component)
+     * @param subpropertyId The Constants ID of the subproperty (component)
      *        whose value is specified.
      * @param propertyList The propertyList being built.
      * @param fo The parent FO for the FO whose property is being made.
      * @param value the value of the
-     * @return baseProp (or if null, a new compound property object) with
+     * @return baseProperty (or if null, a new compound property object) with
      * the new subproperty added
      * @throws PropertyException for invalid or inconsistent FO input
      */
-    public Property make(Property baseProp, int subpropId,
+    public Property make(Property baseProperty, int subpropertyId,
                          PropertyList propertyList, String value,
                          FObj fo) throws PropertyException {
         //getLogger().error("compound property component "
         //                       + partName + " unknown.");
-        return baseProp;
+        return baseProperty;
     }
 
     public Property convertShorthandProperty(PropertyList propertyList,
