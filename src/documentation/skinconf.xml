@@ -340,10 +340,23 @@ which will be used to configure the chosen Forrest skin.
     <disable-copyright-footer>false</disable-copyright-footer>
   </pdf>
 
-  <!-- Credits are typically rendered as a set of small clickable
+  <!-- 
+    Credits are typically rendered as a set of small clickable
     images in the page footer.
-    Use box-location="alt" to move the credit to an alternate location
-    (if the skin supports it). 
+    
+    Use box-location="alt" to move the credits to an alternate location
+    (if the skin supports it).
+
+    For example, pelt skin:
+    - box-location="alt" will place the logo at the end of the
+      left-hand coloured menu panel.
+    - box-location="alt2" will place them underneath that panel
+      in the left-hand whitespace.
+    - Otherwise they are placed next to the compatibility icons
+      at the bottom of the screen.
+
+    Comment out the whole <credit>-element if you want no credits in the
+    web pages 
   -->
   <credits>
     <credit box-location="alt">
@@ -353,7 +366,7 @@ which will be used to configure the chosen Forrest skin.
       <width>88</width>
       <height>31</height>
     </credit>
-    <credit box-location="alt">
+    <credit box-location="alt2">
       <name>ApacheCon US 2005</name>
       <url>http://apachecon.com/2005/US/</url>
       <image>http://apache.org/images/ac2005us_blue_125x125.jpg</image>
