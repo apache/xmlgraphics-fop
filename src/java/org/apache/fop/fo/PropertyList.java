@@ -205,18 +205,18 @@ abstract public class PropertyList {
      */
     public void setWritingMode() throws PropertyException {
         FObj p = fobj.findNearestAncestorFObj();
-        // If this is a RA or the root, use the property value.
+        // If this is a reference area or the root, use the property value.
         if (fobj.generatesReferenceAreas() || p == null) {
             writingMode = get(Constants.PR_WRITING_MODE).getEnum();
         } else {
-            // Otherwise steal the wm value from the parent.
+            // Otherwise get the writing mode value from the parent.
             writingMode = getParentPropertyList().getWritingMode();
         }
     }
 
     /**
      * Return the "writing-mode" property value. 
-     * @return The "writing-mode" property value.
+     * @return the "writing-mode" property value.
      */
     public int getWritingMode() {
         return writingMode;
@@ -308,12 +308,12 @@ abstract public class PropertyList {
             } else { // e.g. "leader-length.maximum"
                 Property baseProperty = findBaseProperty(attributes,
                         parentFO, propId, basePropertyName, propertyMaker);
-                int subpropId = FOPropertyMapping.getSubPropertyId(subPropertyName);
-                if (subpropId == -1) {
+                int subpropertyId = FOPropertyMapping.getSubPropertyId(subPropertyName);
+                if (subpropertyId == -1) {
                     handleInvalidProperty(attributeName);
                     return;
                 }
-                prop = propertyMaker.make(baseProperty, subpropId,
+                prop = propertyMaker.make(baseProperty, subpropertyId,
                         this, attributeValue, parentFO);
             }
             if (prop != null) {
@@ -328,7 +328,7 @@ abstract public class PropertyList {
     private Property findBaseProperty(Attributes attributes,
                                       FObj parentFO,
                                       int propId,
-                                      String basePropName,
+                                      String basePropertyName,
                                       PropertyMaker propertyMaker)
             throws PropertyException {
 
@@ -345,7 +345,7 @@ abstract public class PropertyList {
         /* Otherwise If it is specified later in this list of Attributes, create it now
          * e.g. <fo:leader xxxx.maximum="200pt" xxxx="200pt"... />
          */
-        String basePropertyValue = attributes.getValue(basePropName);
+        String basePropertyValue = attributes.getValue(basePropertyName);
         
         if (basePropertyValue != null && propertyMaker != null) {
             baseProperty = propertyMaker.make(this, basePropertyValue,
@@ -370,12 +370,12 @@ abstract public class PropertyList {
      * @return the base portion of the attribute
      */
     private static String findBasePropertyName(String attributeName) {
-        int sepCharIndex = attributeName.indexOf('.');
-        String basePropName = attributeName;
-        if (sepCharIndex > -1) {
-            basePropName = attributeName.substring(0, sepCharIndex);
+        int separatorCharIndex = attributeName.indexOf('.');
+        String basePropertyName = attributeName;
+        if (separatorCharIndex > -1) {
+            basePropertyName = attributeName.substring(0, separatorCharIndex);
         }
-        return basePropName;
+        return basePropertyName;
     }
 
     /**
@@ -386,12 +386,12 @@ abstract public class PropertyList {
      * @return the sub portion of the attribute
      */
     private static String findSubPropertyName(String attributeName) {
-        int sepCharIndex = attributeName.indexOf('.');
-        String subPropName = null;
-        if (sepCharIndex > -1) {
-            subPropName = attributeName.substring(sepCharIndex + 1);
+        int separatorCharIndex = attributeName.indexOf('.');
+        String subpropertyName = null;
+        if (separatorCharIndex > -1) {
+            subpropertyName = attributeName.substring(separatorCharIndex + 1);
         }
-        return subPropName;
+        return subpropertyName;
     }
 
     /**
@@ -467,8 +467,8 @@ abstract public class PropertyList {
     }
     
     /**
-     * Constructs a HyphenationProps objects.
-     * @return a HyphenationProps object
+     * Constructs a CommonHyphenation object.
+     * @return the CommonHyphenation object
      * @throws PropertyException if there's a problem while processing the properties
      */
     public CommonHyphenation getHyphenationProps() throws PropertyException {
@@ -476,8 +476,8 @@ abstract public class PropertyList {
     }
     
     /**
-     * Constructs a MarginProps objects.
-     * @return a MarginProps object
+     * Constructs a CommonMarginBlock object.
+     * @return the CommonMarginBlock object
      * @throws PropertyException if there's a problem while processing the properties
      */
     public CommonMarginBlock getMarginBlockProps() throws PropertyException {
@@ -485,8 +485,8 @@ abstract public class PropertyList {
     }
     
     /**
-     * Constructs a MarginInlineProps objects.
-     * @return a MarginInlineProps object
+     * Constructs a CommonMarginInline object.
+     * @return the CommonMarginInline object
      * @throws PropertyException if there's a problem while processing the properties
      */
     public CommonMarginInline getMarginInlineProps() throws PropertyException {
@@ -494,8 +494,8 @@ abstract public class PropertyList {
     }
     
     /**
-     * Constructs a AccessibilityProps objects. 
-     * @return a AccessibilityProps object
+     * Constructs a CommonAccessibility object. 
+     * @return the CommonAccessibility object
      * @throws PropertyException if there's a problem while processing the properties
      */
     public CommonAccessibility getAccessibilityProps() throws PropertyException {
@@ -503,8 +503,8 @@ abstract public class PropertyList {
     }
 
     /**
-     * Constructs a AuralProps objects.
-     * @return a AuralProps object
+     * Constructs a CommonAural object.
+     * @return the CommonAural object
      * @throws PropertyException if there's a problem while processing the properties
      */
     public CommonAural getAuralProps() throws PropertyException {
@@ -522,8 +522,8 @@ abstract public class PropertyList {
     }
     
     /**
-     * Constructs a AbsolutePositionProps objects.
-     * @return a AbsolutePositionProps object
+     * Constructs a CommonAbsolutePosition object.
+     * @return the CommonAbsolutePosition object
      * @throws PropertyException if there's a problem while processing the properties
      */
     public CommonAbsolutePosition getAbsolutePositionProps() throws PropertyException {

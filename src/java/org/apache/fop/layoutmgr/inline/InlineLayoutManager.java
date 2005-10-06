@@ -53,7 +53,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
     private CommonMarginInline inlineProps = null;
     private CommonBorderPaddingBackground borderProps = null;
 
-    private boolean bAreaCreated = false;
+    private boolean areaCreated = false;
     private LayoutManager lastChildLM = null; // Set when return last breakposs;
 
     /**
@@ -77,37 +77,33 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
         inlineProps = fobj.getCommonMarginInline();
         borderProps = fobj.getCommonBorderPaddingBackground();
 
-        int iPad = borderProps.getPadding(CommonBorderPaddingBackground.BEFORE, false, this);
-        iPad += borderProps.getBorderWidth(CommonBorderPaddingBackground.BEFORE,
+        int padding = borderProps.getPadding(CommonBorderPaddingBackground.BEFORE, false, this);
+        padding += borderProps.getBorderWidth(CommonBorderPaddingBackground.BEFORE,
                                              false);
-        iPad += borderProps.getPadding(CommonBorderPaddingBackground.AFTER, false, this);
-        iPad += borderProps.getBorderWidth(CommonBorderPaddingBackground.AFTER, false);
-        extraBPD = new MinOptMax(iPad);
+        padding += borderProps.getPadding(CommonBorderPaddingBackground.AFTER, false, this);
+        padding += borderProps.getBorderWidth(CommonBorderPaddingBackground.AFTER, false);
+        extraBPD = new MinOptMax(padding);
     }
 
-    protected MinOptMax getExtraIPD(boolean bNotFirst, boolean bNotLast) {
-        int iBP = borderProps.getPadding(CommonBorderPaddingBackground.START,
-                                           bNotFirst, this);
-        iBP += borderProps.getBorderWidth(CommonBorderPaddingBackground.START,
-                                            bNotFirst);
-        iBP += borderProps.getPadding(CommonBorderPaddingBackground.END, bNotLast, this);
-        iBP += borderProps.getBorderWidth(CommonBorderPaddingBackground.END, bNotLast);
-        return new MinOptMax(iBP);
+    protected MinOptMax getExtraIPD(boolean isNotFirst, boolean isNotLast) {
+        int borderAndPadding = borderProps.getPadding(CommonBorderPaddingBackground.START,
+                                           isNotFirst, this);
+        borderAndPadding += borderProps.getBorderWidth(CommonBorderPaddingBackground.START,
+                                            isNotFirst);
+        borderAndPadding += borderProps.getPadding(CommonBorderPaddingBackground.END, isNotLast, this);
+        borderAndPadding += borderProps.getBorderWidth(CommonBorderPaddingBackground.END, isNotLast);
+        return new MinOptMax(borderAndPadding);
     }
 
 
-    protected boolean hasLeadingFence(boolean bNotFirst) {
-        int iBP = borderProps.getPadding(CommonBorderPaddingBackground.START,
-                                           bNotFirst, this);
-        iBP += borderProps.getBorderWidth(CommonBorderPaddingBackground.START,
-                                            bNotFirst);
-        return (iBP > 0);
+    protected boolean hasLeadingFence(boolean isNotFirst) {
+        return borderProps.getPadding(CommonBorderPaddingBackground.START, isNotFirst, this)>0
+            || borderProps.getBorderWidth(CommonBorderPaddingBackground.START, isNotFirst)>0;
     }
 
-    protected boolean hasTrailingFence(boolean bNotLast) {
-        int iBP = borderProps.getPadding(CommonBorderPaddingBackground.END, bNotLast, this);
-        iBP += borderProps.getBorderWidth(CommonBorderPaddingBackground.END, bNotLast);
-        return (iBP > 0);
+    protected boolean hasTrailingFence(boolean isNotLast) {
+        return borderProps.getPadding(CommonBorderPaddingBackground.END, isNotLast, this)>0
+            || borderProps.getBorderWidth(CommonBorderPaddingBackground.END, isNotLast)>0;
     }
 
     protected SpaceProperty getSpaceStart() {
@@ -118,9 +114,9 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
     }
     
     /** @see org.apache.fop.layoutmgr.inline.InlineLayoutManager#createArea(boolean) */
-    protected InlineArea createArea(boolean bInlineParent) {
+    protected InlineArea createArea(boolean hasInlineParent) {
         InlineArea area;
-        if (bInlineParent) {
+        if (hasInlineParent) {
             area = new InlineParent();
             area.setOffset(0);
         } else {
@@ -133,11 +129,11 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
     /**
      * @see org.apache.fop.layoutmgr.inline.InlineStackingLayoutManager#setTraits(boolean, boolean)
      */
-    protected void setTraits(boolean bNotFirst, boolean bNotLast) {
+    protected void setTraits(boolean isNotFirst, boolean isNotLast) {
         
         // Add border and padding to current area and set flags (FIRST, LAST ...)
         TraitSetter.setBorderPaddingTraits(getCurrentArea(),
-                                           borderProps, bNotFirst, bNotLast, this);
+                                           borderProps, isNotFirst, isNotLast, this);
 
         if (borderProps != null) {
             TraitSetter.addBorders(getCurrentArea(), borderProps, this);
@@ -315,29 +311,24 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
 
         setChildContext(new LayoutContext(context)); // Store current value
 
-        // If has fence, make a new leadingSS
-        /* How to know if first area created by this LM? Keep a count and
-         * reset it if getNextBreakPoss() is called again.
-         */
-        if (hasLeadingFence(bAreaCreated)) {
+        // If this LM has fence, make a new leading space specifier.
+        if (hasLeadingFence(areaCreated)) {
             getContext().setLeadingSpace(new SpaceSpecifier(false));
-            getContext().setFlags(LayoutContext.RESOLVE_LEADING_SPACE,
-                                  true);
+            getContext().setFlags(LayoutContext.RESOLVE_LEADING_SPACE, true);
         } else {
-            getContext().setFlags(LayoutContext.RESOLVE_LEADING_SPACE,
-                                  false);
+            getContext().setFlags(LayoutContext.RESOLVE_LEADING_SPACE, false);
         }
 
         if (getSpaceStart() != null) {
             context.getLeadingSpace().addSpace(new SpaceVal(getSpaceStart(), this));
         }
 
-        // "unwrap" the NonLeafPositions stored in parentIter
-        // and put them in a new list; 
-        // also set lastLM to be the LayoutManager which created
-        // the last Position: if the LAST_AREA flag is set in context,
-        // it must be also set in the LayoutContext given to lastLM,
-        // but unset in the LayoutContext given to the other LMs
+        // "Unwrap" the NonLeafPositions stored in parentIter and put
+        // them in a new list.  Set lastLM to be the LayoutManager
+        // which created the last Position: if the LAST_AREA flag is
+        // set in the layout context, it must be also set in the
+        // layout context given to lastLM, but must be cleared in the
+        // layout context given to the other LMs.
         LinkedList positionList = new LinkedList();
         NonLeafPosition pos = null;
         LayoutManager lastLM = null; // last child LM in this iterator
@@ -358,8 +349,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
 
         LayoutManager prevLM = null;
         LayoutManager childLM;
-        while ((childLM = childPosIter.getNextChildLM())
-               != null) {
+        while ((childLM = childPosIter.getNextChildLM()) != null) {
             getContext().setFlags(LayoutContext.LAST_AREA,
                                   context.isLastArea() && childLM == lastLM);
             childLM.addAreas(childPosIter, getContext());
@@ -368,23 +358,21 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
             prevLM = childLM;
         }
 
-        /* If has trailing fence,
-         * resolve trailing space specs from descendants.
-         * Otherwise, propagate any trailing space specs to parent LM via
-         * the context object.
-         * If the last child LM called return ISLAST in the context object
-         * and it is the last child LM for this LM, then this must be
-         * the last area for the current LM also.
+        /* If this LM has a trailing fence, resolve trailing space
+         * specs from descendants.  Otherwise, propagate any trailing
+         * space specs to the parent LM via the layout context.  If
+         * the last child LM called returns LAST_AREA in the layout
+         * context and it is the last child LM for this LM, then this
+         * must be the last area for the current LM too.
          */
-        boolean bIsLast =
-          (getContext().isLastArea() && prevLM == lastChildLM);
-        if (hasTrailingFence(bIsLast)) {
+        boolean isLast = (getContext().isLastArea() && prevLM == lastChildLM);
+        if (hasTrailingFence(isLast)) {
             addSpace(getCurrentArea(),
                      getContext().getTrailingSpace().resolve(false),
                      getContext().getSpaceAdjust());
             context.setTrailingSpace(new SpaceSpecifier(false));
         } else {
-            // Propagate trailing space-spec sequence to parent LM in context
+            // Propagate trailing space-spec sequence to parent LM in context.
             context.setTrailingSpace(getContext().getTrailingSpace());
         }
         // Add own trailing space to parent context (or set on area?)
@@ -393,10 +381,10 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
         }
         
         parentLM.addChildArea(getCurrentArea());
-        setTraits(bAreaCreated, !bIsLast);
+        setTraits(areaCreated, !isLast);
 
-        context.setFlags(LayoutContext.LAST_AREA, bIsLast);
-        bAreaCreated = true;
+        context.setFlags(LayoutContext.LAST_AREA, isLast);
+        areaCreated = true;
     }
 
     public void addChildArea(Area childArea) {

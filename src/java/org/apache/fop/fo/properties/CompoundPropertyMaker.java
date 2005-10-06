@@ -76,7 +76,7 @@ public class CompoundPropertyMaker extends PropertyMaker {
     public void addSubpropMaker(PropertyMaker subproperty) {
         // Place the base propId in the propId of the subproperty.
         subproperty.propId &= Constants.COMPOUND_MASK;
-        subproperty.propId |= this.propId;
+        subproperty.propId |= propId;
         
         subproperties[getSubpropIndex(subproperty.getPropId())] = subproperty;
 
@@ -93,13 +93,13 @@ public class CompoundPropertyMaker extends PropertyMaker {
      * of compound property types, such as "space".
      * Overridden by property maker subclasses which handle
      * compound properties.
-     * @param subpropId the id of the component for which a Maker is to
+     * @param subpropertyId the id of the component for which a Maker is to
      * returned, for example CP_OPTIMUM, if the FO attribute is
      * space.optimum='10pt'.
      * @return the Maker object specified
      */
-    public PropertyMaker getSubpropMaker(int subpropId) {
-        return subproperties[getSubpropIndex(subpropId)];
+    public PropertyMaker getSubpropMaker(int subpropertyId) {
+        return subproperties[getSubpropIndex(subpropertyId)];
     }
     
     /**
@@ -109,8 +109,8 @@ public class CompoundPropertyMaker extends PropertyMaker {
      * @param propId the property id of the sub property.
      * @return the array index.
      */
-    private int getSubpropIndex(int subpropId) {
-        return ((subpropId & Constants.COMPOUND_MASK) >>
+    private int getSubpropIndex(int subpropertyId) {
+        return ((subpropertyId & Constants.COMPOUND_MASK) >>
                                     Constants.COMPOUND_SHIFT)-1;
     }
 
@@ -137,19 +137,19 @@ public class CompoundPropertyMaker extends PropertyMaker {
      * this will try to compute it based on other properties, or if it is
      * inheritable, to return the inherited value. If all else fails, it returns
      * the default value.
-     * @param subpropId  The subproperty id of the property being retrieved.
+     * @param subpropertyId  The subproperty id of the property being retrieved.
      *        Is 0 when retriving a base property.
      * @param propertyList The PropertyList object being built for this FO.
-     * @param bTryInherit true if inherited properties should be examined.
-     * @param bTryDefault true if the default value should be returned. 
+     * @param tryInherit true if inherited properties should be examined.
+     * @param tryDefault true if the default value should be returned. 
      */
-    public Property get(int subpropId, PropertyList propertyList,
-                        boolean bTryInherit, boolean bTryDefault)
+    public Property get(int subpropertyId, PropertyList propertyList,
+                        boolean tryInherit, boolean tryDefault)
         throws PropertyException
     {
-        Property p = super.get(subpropId, propertyList, bTryInherit, bTryDefault);
-        if (subpropId != 0 && p != null) {
-            p = getSubprop(p, subpropId);
+        Property p = super.get(subpropertyId, propertyList, tryInherit, tryDefault);
+        if (subpropertyId != 0 && p != null) {
+            p = getSubprop(p, subpropertyId);
         }
         return p;
     }
@@ -168,7 +168,7 @@ public class CompoundPropertyMaker extends PropertyMaker {
     protected Property convertProperty(Property p,
                                     PropertyList propertyList,
                                     FObj fo) throws PropertyException {
-        // delegate to the subprop maker to do conversions
+        // Delegate to the subproperty maker to do conversions.
         p = shorthandMaker.convertProperty(p, propertyList, fo);
         
         if (p != null) {
@@ -217,36 +217,36 @@ public class CompoundPropertyMaker extends PropertyMaker {
     /**
      * Return a property value for a compound property. If the property
      * value is already partially initialized, this method will modify it.
-     * @param baseProp The Property object representing the compound property,
+     * @param baseProperty The Property object representing the compound property,
      * for example: SpaceProperty.
-     * @param subpropId The Constants ID of the subproperty (component)
+     * @param subpropertyId The Constants ID of the subproperty (component)
      *        whose value is specified.
      * @param propertyList The propertyList being built.
      * @param fo The parent FO for the FO whose property is being made.
      * @param value the value of the
-     * @return baseProp (or if null, a new compound property object) with
+     * @return baseProperty (or if null, a new compound property object) with
      * the new subproperty added
      * @throws PropertyException for invalid or inconsistent FO input
      */
-    public Property make(Property baseProp, int subpropId,
+    public Property make(Property baseProperty, int subpropertyId,
                          PropertyList propertyList, String value,
                          FObj fo) throws PropertyException {
-        if (baseProp == null) {
-            baseProp = makeCompound(propertyList, fo);
+        if (baseProperty == null) {
+            baseProperty = makeCompound(propertyList, fo);
         }
 
-        PropertyMaker spMaker = getSubpropMaker(subpropId);
+        PropertyMaker spMaker = getSubpropMaker(subpropertyId);
 
         if (spMaker != null) {
             Property p = spMaker.make(propertyList, value, fo);
             if (p != null) {
-                return setSubprop(baseProp, subpropId & Constants.COMPOUND_MASK, p);
+                return setSubprop(baseProperty, subpropertyId & Constants.COMPOUND_MASK, p);
             }
         } else {
             //getLogger().error("compound property component "
             //                       + partName + " unknown.");
         }
-        return baseProp;
+        return baseProperty;
     }
     
     /**
@@ -264,10 +264,10 @@ public class CompoundPropertyMaker extends PropertyMaker {
         Property p = makeNewProperty();
         CompoundDatatype data = (CompoundDatatype) p.getObject();
         for (int i = 0; i < Constants.COMPOUND_COUNT; i++) {
-            PropertyMaker submaker = subproperties[i];
-            if (submaker != null) {
-                Property subprop = submaker.make(propertyList);
-                data.setComponent(submaker.getPropId() & Constants.COMPOUND_MASK, subprop, true);
+            PropertyMaker subpropertyMaker = subproperties[i];
+            if (subpropertyMaker != null) {
+                Property subproperty = subpropertyMaker.make(propertyList);
+                data.setComponent(subpropertyMaker.getPropId() & Constants.COMPOUND_MASK, subproperty, true);
             }
         }
         return p;

@@ -65,7 +65,7 @@ public class GridUnit {
     /** index of grid unit within cell in row direction */
     private int rowSpanIndex;
     /** effective borders for a cell slot */
-    private CommonBorderPaddingBackground effBorders;
+    private CommonBorderPaddingBackground effectiveBorders;
     /** flags for the grid unit */
     private byte flags = 0;
     
@@ -87,16 +87,16 @@ public class GridUnit {
     }
     
     public TableCell getCell() {
-        return this.cell;
+        return cell;
     }
     
     public TableColumn getColumn() {
-        return this.column;
+        return column;
     }
     
     public TableRow getRow() {
-        if (this.row != null) {
-            return this.row;
+        if (row != null) {
+            return row;
         } else if (getCell().getParent() instanceof TableRow) {
             return (TableRow)getCell().getParent();
         } else {
@@ -106,10 +106,10 @@ public class GridUnit {
     
     /**
      * Sets the table-row FO, if applicable.
-     * @param rowFO the table-row FO
+     * @param row the table-row FO
      */
-    public void setRow(TableRow rowFO) {
-        this.row = rowFO;
+    public void setRow(TableRow row) {
+        this.row = row;
     }
 
     public TableBody getBody() {
@@ -135,7 +135,7 @@ public class GridUnit {
      * @return the primary grid unit if this is a spanned grid unit
      */
     public PrimaryGridUnit getPrimary() {
-        return (isPrimary() ? (PrimaryGridUnit)this : this.primary);
+        return (isPrimary() ? (PrimaryGridUnit)this : primary);
     }
 
     public boolean isPrimary() {
@@ -143,11 +143,11 @@ public class GridUnit {
     }
     
     public boolean isEmpty() {
-        return this.cell == null;
+        return cell == null;
     }
     
     public int getStartCol() {
-        return this.startCol;
+        return startCol;
     }
     
     /** @return true if the grid unit is the last in column spanning direction */
@@ -172,14 +172,14 @@ public class GridUnit {
      * @return the index of the grid unit inside a cell in row direction
      */
     public int getRowSpanIndex() {
-        return this.rowSpanIndex;
+        return rowSpanIndex;
     }
     
     /**
      * @return the index of the grid unit inside a cell in column direction
      */
     public int getColSpanIndex() {
-        return this.colSpanIndex;
+        return colSpanIndex;
     }
 
     /**
@@ -201,7 +201,7 @@ public class GridUnit {
      * @return the resolved normal borders for this grid unit
      */
     public CommonBorderPaddingBackground getBorders() {
-        return this.effBorders;
+        return effectiveBorders;
     }
     
     /**
@@ -217,7 +217,7 @@ public class GridUnit {
      */
     public void assignBorderForSeparateBorderModel() {
         if (cell != null) {
-            this.effBorders = cell.getCommonBorderPaddingBackground();
+            effectiveBorders = cell.getCommonBorderPaddingBackground();
         }
     }
     
@@ -239,14 +239,13 @@ public class GridUnit {
     public void resolveBorder(GridUnit other, int side, int resFlags) {
         CollapsingBorderModel borderModel = CollapsingBorderModel.getBorderModelFor(
                 getTable().getBorderCollapse());
-        if (this.effBorders == null) {
-            this.effBorders = new CommonBorderPaddingBackground();
+        if (effectiveBorders == null) {
+            effectiveBorders = new CommonBorderPaddingBackground();
         }
-        this.effBorders.setBorderInfo(
-                borderModel.determineWinner(this, other, 
+        effectiveBorders.setBorderInfo(borderModel.determineWinner(this, other, 
                         side, resFlags), side);
         if (cell != null) {
-            this.effBorders.setPadding(this.cell.getCommonBorderPaddingBackground());
+            effectiveBorders.setPadding(cell.getCommonBorderPaddingBackground());
         }
     }
     
@@ -288,22 +287,22 @@ public class GridUnit {
 
     /** @see java.lang.Object#toString() */
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuffer buffer = new StringBuffer();
         if (isEmpty()) {
-            sb.append("EMPTY");
+            buffer.append("EMPTY");
         } else if (isPrimary()) {
-            sb.append("Primary");
+            buffer.append("Primary");
         }
-        sb.append("GridUnit:");
+        buffer.append("GridUnit:");
         if (colSpanIndex > 0) {
-            sb.append(" colSpan=").append(colSpanIndex);
+            buffer.append(" colSpan=").append(colSpanIndex);
         }
         if (rowSpanIndex > 0) {
-            sb.append(" rowSpan=").append(rowSpanIndex);
+            buffer.append(" rowSpan=").append(rowSpanIndex);
         }
-        sb.append(" startCol=").append(startCol);
-        sb.append(" flags=").append(Integer.toBinaryString(flags));
-        return sb.toString();
+        buffer.append(" startCol=").append(startCol);
+        buffer.append(" flags=").append(Integer.toBinaryString(flags));
+        return buffer.toString();
     }
 
 }
