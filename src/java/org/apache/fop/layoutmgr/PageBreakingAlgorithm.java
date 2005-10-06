@@ -216,8 +216,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         }
     }
 
-    protected void restartFrom(KnuthNode restartingNode, int currentIndex) {
-        super.restartFrom(restartingNode, currentIndex);
+    protected int restartFrom(KnuthNode restartingNode, int currentIndex) {
+        int returnValue = super.restartFrom(restartingNode, currentIndex);
         newFootnotes = false;
         if (footnotesPending) {
             // remove from footnotesList the note lists that will be met
@@ -230,6 +230,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 }
             }
         }
+        return returnValue;
     }
 
     private void resetFootnotes(LinkedList elementLists) {
