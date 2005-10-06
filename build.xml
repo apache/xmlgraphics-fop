@@ -896,9 +896,7 @@ list of possible build targets.
   <target name="checkstyle-check" depends="checkstyle-avail, codegen" if="checkstyle.available">
     
     <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="checkstyle-runpath"/>
-    <!--checkstyle config="checkstyle-3.5-fop-head.xml" failonviolation="false"
-                classpathref="checkstyle-path"-->
-    <checkstyle config="checkstyle-4.0.xml" failonviolation="false"
+    <checkstyle config="${checkstyle.config}" failonviolation="false"
                 classpathref="checkstyle-runpath">
       <fileset dir="${src.java.dir}" includes="**/*.java"/>
       <formatter type="plain" toFile="${build.dir}/checkstyle_report.txt"/>
