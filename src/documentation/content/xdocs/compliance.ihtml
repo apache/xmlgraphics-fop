@@ -736,13 +736,11 @@
       <td class="yes">
         yes
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="center">
-        <ul>
-          <li>[Trunk] Does not support block-level objects as children.</li>
-        </ul>
+        &nbsp;
       </td>
     </tr>
     <tr>
@@ -3415,8 +3413,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -3435,8 +3433,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -3455,16 +3453,13 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
             [0.20.5] Only values "super" and "sub" have been implemented.
-          </li>
-          <li>
-            [Trunk] TODO TBD
           </li>
         </ul>
       </td>
@@ -3512,8 +3507,8 @@
       <td class="no">
         no
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -4062,8 +4057,8 @@
       <td class="yes">
         yes
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="center">
         &nbsp;
@@ -4681,8 +4676,8 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
@@ -4690,10 +4685,7 @@
             [0.20.5] not value "use-content"
           </li>
           <li>
-            [Trunk] TODO: values "rule" and "space"
-          </li>
-          <li>
-            Note: Support for value "use-content" is not required for compliance - fallback "space".
+            [Trunk] Note: Support for value "use-content" is not required for compliance - fallback "space".
           </li>
         </ul>
       </td>
@@ -4711,15 +4703,11 @@
       <td class="yes">
         yes
       </td>
-      <td class="partial">
+      <td class="yes">
         partial
       </td>
       <td align="left">
-        <ul>
-          <li>
-            [Trunk] TODO leader-length=&lt;percentage&gt;
-          </li>
-        </ul>
+        &nbsp;
       </td>
     </tr>
     <tr>
@@ -4759,13 +4747,11 @@
       <td class="yes">
         yes
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="left">
-        <ul>
-          <li>[Trunk] TODO Requires implementation of leader-pattern="rule"</li>
-        </ul>
+        &nbsp;
       </td>
     </tr>
     <tr>
@@ -4781,13 +4767,11 @@
       <td class="yes">
         yes
       </td>
-      <td class="no">
-        no
+      <td class="yes">
+        yes
       </td>
       <td align="left">
-        <ul>
-          <li>[Trunk] TODO Requires implementation of leader-pattern="rule"</li>
-        </ul>
+        &nbsp;
       </td>
     </tr>
     <tr>
@@ -6766,16 +6750,13 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="left">
         <ul>
           <li>
             [0.20.5] Only works as a shorthand for baseline-shift property.
-          </li>
-          <li>
-            [Trunk] No &lt;percentage&gt; or &lt;length&gt; values possible.
           </li>
         </ul>
       </td>
