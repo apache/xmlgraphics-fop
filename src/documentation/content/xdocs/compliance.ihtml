@@ -4057,11 +4057,15 @@
       <td class="yes">
         yes
       </td>
-      <td class="yes">
-        yes
+      <td class="partial">
+        partial
       </td>
-      <td align="center">
-        &nbsp;
+      <td align="left">
+        <ul>
+          <li>
+            [Trunk] Only supported on fo:block.
+          </li>
+        </ul>
       </td>
     </tr>
     <tr>
