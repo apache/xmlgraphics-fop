@@ -31,24 +31,12 @@
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
           <fo:block>
-            <fo:leader leader-pattern="use-content"/>
-               Default dots pattern
+            <fo:leader leader-length="36pt" leader-pattern="use-content">x</fo:leader>
+               Content is "x"
           </fo:block>
           <fo:block>
-            <fo:leader leader-pattern="use-content" leader-pattern-width="use-font-metrics"/>
-                leader-pattern-width="use-font-metrics"
-          </fo:block>
-          <fo:block>
-            <fo:leader leader-pattern="use-content" leader-length="20mm" leader-pattern-width="5mm"/>
-                 leader-length="20mm" leader-pattern-width="5mm"
-          </fo:block>
-          <fo:block>
-            <fo:leader leader-pattern="use-content" leader-pattern-width="1pt"/>
-                leader-pattern-width="1pt"
-          </fo:block>
-          <fo:block>
-            <fo:leader leader-pattern="use-content" leader-pattern-width="5%"/>
-                leader-pattern-width="5%"
+            <fo:leader leader-length="36pt" leader-pattern="use-content"><fo:inline background-color="yellow">=></fo:inline></fo:leader>
+               Content is "=>" with background
           </fo:block>
         </fo:flow>
       </fo:page-sequence>

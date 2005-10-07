@@ -22,6 +22,7 @@ import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.Trait;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.TraitSetter;
@@ -46,10 +47,29 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         fobj = node;
     }
     
+    /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#get(LayoutContext) */
     public void initialize() {
         font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
+        setCommonBorderPaddingBackground(fobj.getCommonBorderPaddingBackground());
     }
 
+    /**
+     * @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager
+     *                                                      #makeAlignmentContext(LayoutContext)
+     */
+    protected AlignmentContext makeAlignmentContext(LayoutContext context) {
+        return new AlignmentContext(
+                font
+                , fobj.getLineHeight().getOptimum(this).getLength().getValue(this)
+                , fobj.getAlignmentAdjust()
+                , fobj.getAlignmentBaseline()
+                , fobj.getBaselineShift()
+                , fobj.getDominantBaseline()
+                , context.getAlignmentContext()
+            );
+    }
+
+    /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#get(LayoutContext) */
     public InlineArea get(LayoutContext context) {
         // get page string from parent, build area
         TextArea text = new TextArea();
@@ -58,7 +78,7 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         text.setTextArea(str);
         text.setIPD(width);
         text.setBPD(font.getAscender() - font.getDescender());
-        text.setOffset(font.getAscender());
+        text.setBaselineOffset(font.getAscender());
         text.addTrait(Trait.FONT_NAME, font.getFontName());
         text.addTrait(Trait.FONT_SIZE,
                         new Integer(font.getFontSize()));
@@ -69,16 +89,12 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         return text;
     }
     
-    
     /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#getLead() */
     public int getLead() {
         return font.getAscender();
     }
     
-    protected void offsetArea(InlineArea area, LayoutContext context) {
-        area.setOffset(context.getBaseline());
-    }
-    
+    /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#getEffectiveArea() */
     protected InlineArea getEffectiveArea() {
         TextArea baseArea = (TextArea)curArea;
         //TODO Maybe replace that with a clone() call or better, a copy constructor
@@ -89,6 +105,7 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         ta.setIPD(baseArea.getIPD());
         ta.setBPD(baseArea.getBPD());
         ta.setOffset(baseArea.getOffset());
+        ta.setBaselineOffset(baseArea.getBaselineOffset());
         ta.addTrait(Trait.FONT_NAME, font.getFontName()); //only to initialize the trait map
         ta.getTraits().putAll(baseArea.getTraits());
         updateContent(ta);
@@ -116,6 +133,7 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         return width;
     }
     
+    /** @see org.apache.fop.layoutmgr.inline.LeafLayoutManager#addId */
     protected void addId() {
         getPSLM().addIDToPage(fobj.getId());
     }

@@ -49,7 +49,6 @@ public class Inline extends InlineLevel {
     private KeepProperty keepTogether;
     private KeepProperty keepWithNext;
     private KeepProperty keepWithPrevious;
-    private int verticalAlign;
     private Length width;
     private int wrapOption;
     // End of property values
@@ -82,7 +81,6 @@ public class Inline extends InlineLevel {
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
-        verticalAlign = pList.get(PR_VERTICAL_ALIGN).getEnum();
         width = pList.get(PR_WIDTH).getLength();
         wrapOption = pList.get(PR_WRAP_OPTION).getEnum();
     }
@@ -157,12 +155,33 @@ public class Inline extends InlineLevel {
     }
 
     /**
-     * Return the "vertical-align" property.
+     * @return the "alignment-adjust" property
      */
-    public int getVerticalAlign() {
-        return verticalAlign; 
+    public Length getAlignmentAdjust() {
+        return alignmentAdjust;
     }
-
+    
+    /**
+     * @return the "alignment-baseline" property
+     */
+    public int getAlignmentBaseline() {
+        return alignmentBaseline;
+    }
+    
+    /**
+     * @return the "baseline-shift" property
+     */
+    public Length getBaselineShift() {
+        return baselineShift;
+    }
+    
+    /**
+     * @return the "dominant-baseline" property
+     */
+    public int getDominantBaseline() {
+        return dominantBaseline;
+    }
+    
     /**
      * @see org.apache.fop.fo.FObjMixed#charIterator
      */

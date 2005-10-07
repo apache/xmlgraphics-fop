@@ -211,13 +211,14 @@ public class Area implements Serializable {
 
     /**
      * Get the allocation block progression dimension of this area.
-     * This adds the content, borders and the padding to find the
+     * This adds the content, borders, padding and spaces to find the
      * total allocated BPD.
      *
-     * @return the total IPD allocation for this area
+     * @return the total BPD allocation for this area
      */
     public int getAllocBPD() {
-        return getBorderAndPaddingWidthBefore() + getBPD() + getBorderAndPaddingWidthAfter();
+        return getSpaceBefore() + getBorderAndPaddingWidthBefore() + getBPD() 
+                + getBorderAndPaddingWidthAfter() + getSpaceAfter();
     }
 
     /**
@@ -300,6 +301,63 @@ public class Area implements Serializable {
 
         return margin;
     }
+
+    /**
+     * Returns the space before
+     *
+     * @return width in millipoints
+     */
+    public int getSpaceBefore() {
+        int margin = 0;
+        Integer space = (Integer) getTrait(Trait.SPACE_BEFORE);
+        if (space != null) {
+            margin = space.intValue();
+        }
+        return margin;
+    }
+    
+    /**
+     * Returns the space after
+     *
+     * @return width in millipoints
+     */
+    public int getSpaceAfter() {
+        int margin = 0;
+        Integer space = (Integer) getTrait(Trait.SPACE_AFTER);
+        if (space != null) {
+            margin = space.intValue();
+        }
+        return margin;
+    }
+    
+    /**
+     * Returns the space start
+     *
+     * @return width in millipoints
+     */
+    public int getSpaceStart() {
+        int margin = 0;
+        Integer space = (Integer) getTrait(Trait.SPACE_START);
+        if (space != null) {
+            margin = space.intValue();
+        }
+        return margin;
+    }
+    
+    /**
+     * Returns the space end
+     *
+     * @return width in millipoints
+     */
+    public int getSpaceEnd() {
+        int margin = 0;
+        Integer space = (Integer) getTrait(Trait.SPACE_END);
+        if (space != null) {
+            margin = space.intValue();
+        }
+        return margin;
+    }
+    
     /**
      * Add a child to this area.
      * The default is to do nothing. Subclasses must override

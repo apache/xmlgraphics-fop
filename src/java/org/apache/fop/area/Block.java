@@ -95,7 +95,7 @@ public class Block extends BlockParent {
         if (children == null) {
             children = new ArrayList();
         }
-        bpd += line.getBPD();
+        bpd += line.getAllocBPD();
         children.add(line);
     }
 

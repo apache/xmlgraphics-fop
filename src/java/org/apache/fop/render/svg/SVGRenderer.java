@@ -391,7 +391,8 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
     public void renderText(TextArea text) {
         Element textElement = SVGUtilities.createText(svgDocument,
                                                currentIPPosition / 1000,
-                                               (currentBPPosition + text.getOffset()) / 1000,
+                                               (currentBPPosition + text.getOffset() 
+                                                + text.getBaselineOffset()) / 1000,
                                                text.getTextArea());
         currentPageG.appendChild(textElement);
 
@@ -404,7 +405,8 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
     public void renderCharacter(org.apache.fop.area.inline.Character ch) {
         Element text = SVGUtilities.createText(svgDocument,
                                                currentIPPosition / 1000,
-                                               (currentBPPosition + ch.getOffset()) / 1000,
+                                               (currentBPPosition + ch.getOffset()
+                                                + ch.getBaselineOffset()) / 1000,
                                                "" + ch.getChar());
         currentPageG.appendChild(text);
 

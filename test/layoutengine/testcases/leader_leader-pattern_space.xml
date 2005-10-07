@@ -47,13 +47,13 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="14400" xpath="//flow/block[1]/lineArea/@bpd"/>
+    <eval expected="11100" xpath="//flow/block[1]/lineArea/@bpd"/>
     <eval expected="360000" xpath="//flow/block[1]/lineArea/@ipd"/>
     <eval expected="12000" xpath="//flow/block[1]/lineArea/space/@ipd"/>
-    <eval expected="14400" xpath="//flow/block[2]/lineArea/@bpd"/>
+    <eval expected="11100" xpath="//flow/block[2]/lineArea/@bpd"/>
     <eval expected="360000" xpath="//flow/block[2]/lineArea/@ipd"/>
     <eval expected="36000" xpath="//flow/block[2]/lineArea/space/@ipd"/>
-    <eval expected="14400" xpath="//flow/block[3]/lineArea/@bpd"/>
+    <eval expected="11100" xpath="//flow/block[3]/lineArea/@bpd"/>
     <eval expected="360000" xpath="//flow/block[3]/lineArea/@ipd"/>
     <eval expected="18000" xpath="//flow/block[3]/lineArea/space/@ipd"/>
   </checks>

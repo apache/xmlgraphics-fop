@@ -48,7 +48,7 @@ public class BidiOverride extends FObjMixed {
     private ColorTypeProperty prColor;
     // private ToBeImplementedProperty prDirection;
     // private ToBeImplementedProperty prLetterSpacing;
-    private Length prLineHeight;
+    private SpaceProperty lineHeight;
     // private ToBeImplementedProperty prScoreSpaces;
     // private ToBeImplementedProperty prUnicodeBidi;
     private SpaceProperty prWordSpacing;
@@ -69,13 +69,11 @@ public class BidiOverride extends FObjMixed {
        int lvlFootnote = findAncestor(FO_FOOTNOTE);
 
        if (lvlLeader > 0) {
-           if (lvlInCntr < 0 ||
-               (lvlInCntr > 0 && lvlInCntr > lvlLeader)) {
+           if (lvlInCntr < 0 || (lvlInCntr > 0 && lvlInCntr > lvlLeader)) {
                canHaveBlockLevelChildren = false;
            }
        } else if (lvlInline > 0 && lvlFootnote == (lvlInline + 1)) {
-           if (lvlInCntr < 0 ||
-           (lvlInCntr > 0 && lvlInCntr > lvlInline)) {
+           if (lvlInCntr < 0 || (lvlInCntr > 0 && lvlInCntr > lvlInline)) {
                canHaveBlockLevelChildren = false;
            }
        }
@@ -92,7 +90,7 @@ public class BidiOverride extends FObjMixed {
         prColor = pList.get(PR_COLOR).getColorType();
         // prDirection = pList.get(PR_DIRECTION);
         // prLetterSpacing = pList.get(PR_LETTER_SPACING);
-        prLineHeight = pList.get(PR_LINE_HEIGHT).getLength();
+        lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         // prScoreSpaces = pList.get(PR_SCORE_SPACES);
         // prUnicodeBidi = pList.get(PR_UNICODE_BIDI);
         prWordSpacing = pList.get(PR_WORD_SPACING).getSpace();
@@ -116,14 +114,21 @@ public class BidiOverride extends FObjMixed {
         } else if (!isBlockOrInlineItem(nsURI, localName)) {
             invalidChildError(loc, nsURI, localName);
         } else if (!canHaveBlockLevelChildren && isBlockItem(nsURI, localName)) {
-            String ruleViolated = "An fo:bidi-override" +
-                " that is a descendant of an fo:leader or of the fo:inline child" +
-                " of an fo:footnote may not have block-level children, unless it" +
-                " has a nearer ancestor that is an fo:inline-container.";
+            String ruleViolated = "An fo:bidi-override"
+                + " that is a descendant of an fo:leader or of the fo:inline child"
+                + " of an fo:footnote may not have block-level children, unless it" 
+                + " has a nearer ancestor that is an fo:inline-container.";
             invalidChildError(loc, nsURI, localName, ruleViolated);
         } else {
             blockOrInlineItemFound = true;
         }
+    }
+
+    /**
+     * @return the "line-height" property.
+     */
+    public SpaceProperty getLineHeight() {
+        return lineHeight;
     }
 
     /**

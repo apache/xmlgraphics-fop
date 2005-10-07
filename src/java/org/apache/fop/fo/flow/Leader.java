@@ -39,7 +39,6 @@ public class Leader extends InlineLevel {
     private CommonRelativePosition commonRelativePosition;
     private Length alignmentAdjust;
     private int alignmentBaseline;
-    private int verticalAlign;
     private Length baselineShift;
     private int dominantBaseline;
     private Length textDepth;
@@ -73,7 +72,6 @@ public class Leader extends InlineLevel {
         commonRelativePosition = pList.getRelativePositionProps();
         alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
         alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
-        verticalAlign = pList.get(PR_VERTICAL_ALIGN).getEnum();
         baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
         textDepth = pList.get(PR_TEXT_DEPTH).getLength();
@@ -167,12 +165,33 @@ public class Leader extends InlineLevel {
     }
 
     /**
-     * @return the "vertical-align" property.
+     * @return the "alignment-adjust" property
      */
-    public int getVerticalAlign() {
-        return verticalAlign; 
+    public Length getAlignmentAdjust() {
+        return alignmentAdjust;
     }
-
+    
+    /**
+     * @return the "alignment-baseline" property
+     */
+    public int getAlignmentBaseline() {
+        return alignmentBaseline;
+    }
+    
+    /**
+     * @return the "baseline-shift" property
+     */
+    public Length getBaselineShift() {
+        return baselineShift;
+    }
+    
+    /**
+     * @return the "dominant-baseline" property
+     */
+    public int getDominantBaseline() {
+        return dominantBaseline;
+    }
+    
     /**
      * @see org.apache.fop.fo.FObj#getName()
      */

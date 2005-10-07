@@ -35,23 +35,23 @@
                Default dots pattern
           </fo:block>
           <fo:block>
-            <fo:leader leader-pattern="dots" leader-pattern-width="use-font-metrics"/>
+            <fo:leader leader-pattern="dots" leader-pattern-width="use-font-metrics" background-color="yellow"/>
                 leader-pattern-width="use-font-metrics"
           </fo:block>
           <fo:block>
-            <fo:leader leader-pattern="dots" leader-length="20mm" leader-pattern-width="5mm"/>
+            <fo:leader leader-pattern="dots" leader-length="20mm" leader-pattern-width="5mm" background-color="yellow"/>
                  leader-length="20mm" leader-pattern-width="5mm"
           </fo:block>
           <fo:block>
-            <fo:leader leader-pattern="dots" leader-length="20%" leader-pattern-width="5mm"/>
+            <fo:leader leader-pattern="dots" leader-length="20%" leader-pattern-width="5mm" background-color="yellow"/>
                  leader-length="20%" leader-pattern-width="5mm"
           </fo:block>
           <fo:block>
-            <fo:leader leader-pattern="dots" leader-pattern-width="1pt"/>
+            <fo:leader leader-pattern="dots" leader-pattern-width="1pt" background-color="yellow"/>
                 leader-pattern-width="1pt"
           </fo:block>
           <fo:block>
-            <fo:leader leader-pattern="dots" leader-length="20%" leader-pattern-width="5%"/>
+            <fo:leader leader-pattern="dots" leader-length="20%" leader-pattern-width="5%" background-color="yellow"/>
                 leader-length="20%" leader-pattern-width="5%"
           </fo:block>
         </fo:flow>
@@ -59,29 +59,29 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="14400" xpath="//flow/block[1]/lineArea/@bpd"/>
+    <eval expected="11100" xpath="//flow/block[1]/lineArea/@bpd"/>
     <eval expected="360000" xpath="//flow/block[1]/lineArea/@ipd"/>
     <eval expected="12000" xpath="//flow/block[1]/lineArea/inlineparent/@ipd"/>
     <eval expected="3" xpath="count(//flow/block[1]/lineArea/inlineparent/text)"/>
-    <eval expected="14400" xpath="//flow/block[2]/lineArea/@bpd"/>
+    <eval expected="11100" xpath="//flow/block[2]/lineArea/@bpd"/>
     <eval expected="360000" xpath="//flow/block[2]/lineArea/@ipd"/>
     <eval expected="12000" xpath="//flow/block[2]/lineArea/inlineparent/@ipd"/>
     <eval expected="3" xpath="count(//flow/block[2]/lineArea/inlineparent/text)"/>
-    <eval expected="14400" xpath="//flow/block[3]/lineArea/@bpd"/>
+    <eval expected="11100" xpath="//flow/block[3]/lineArea/@bpd"/>
     <eval expected="360000" xpath="//flow/block[3]/lineArea/@ipd"/>
     <eval expected="56692" xpath="//flow/block[3]/lineArea/inlineparent/@ipd"/>
     <eval expected="4" xpath="count(//flow/block[3]/lineArea/inlineparent/text)"/>
     <eval expected="4" xpath="count(//flow/block[3]/lineArea/inlineparent/space)"/>
-    <eval expected="14400" xpath="//flow/block[4]/lineArea/@bpd"/>
+    <eval expected="11100" xpath="//flow/block[4]/lineArea/@bpd"/>
     <eval expected="360000" xpath="//flow/block[4]/lineArea/@ipd"/>
     <eval expected="72000" xpath="//flow/block[4]/lineArea/inlineparent/@ipd"/>
     <eval expected="5" xpath="count(//flow/block[4]/lineArea/inlineparent/text)"/>
     <eval expected="5" xpath="count(//flow/block[4]/lineArea/inlineparent/space)"/>
-    <eval expected="14400" xpath="//flow/block[5]/lineArea/@bpd"/>
+    <eval expected="11100" xpath="//flow/block[5]/lineArea/@bpd"/>
     <eval expected="360000" xpath="//flow/block[5]/lineArea/@ipd"/>
     <eval expected="12000" xpath="//flow/block[5]/lineArea/inlineparent/@ipd"/>
     <eval expected="3" xpath="count(//flow/block[5]/lineArea/inlineparent/text)"/>
-    <eval expected="14400" xpath="//flow/block[6]/lineArea/@bpd"/>
+    <eval expected="11100" xpath="//flow/block[6]/lineArea/@bpd"/>
     <eval expected="360000" xpath="//flow/block[6]/lineArea/@ipd"/>
     <eval expected="72000" xpath="//flow/block[6]/lineArea/inlineparent/@ipd"/>
     <eval expected="4" xpath="count(//flow/block[6]/lineArea/inlineparent/text)"/>

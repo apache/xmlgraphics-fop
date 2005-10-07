@@ -30,6 +30,8 @@ import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.InlineBlockParent;
+import org.apache.fop.area.inline.InlineParent;
+import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.Constants;
@@ -365,14 +367,48 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         }
     }
     
+    /** 
+     * Common method to render the background and borders for any inline area.
+     * The all borders and padding are drawn outside the specified area.
+     * @param area the inline area for which the background, border and padding is to be
+     * rendered
+     */
+    protected void renderInlineAreaBackAndBorders(InlineArea area) {
+        float x = currentIPPosition / 1000f;
+        float y = (currentBPPosition + area.getOffset()) / 1000f;
+        float width = area.getIPD() / 1000f;
+        float height = area.getBPD() / 1000f;
+        float borderPaddingStart = area.getBorderAndPaddingWidthStart() / 1000f;
+        float borderPaddingBefore = area.getBorderAndPaddingWidthBefore() / 1000f;
+        float bpwidth = borderPaddingStart 
+                + (area.getBorderAndPaddingWidthEnd() / 1000f);
+        float bpheight = borderPaddingBefore
+                + (area.getBorderAndPaddingWidthAfter() / 1000f);
+        
+        if (height != 0.0f || bpheight != 0.0f && bpwidth != 0.0f) {
+            drawBackAndBorders(area, x, y - borderPaddingBefore
+                                , width + bpwidth
+                                , height + bpheight);
+        }
+        
+    }
+    
+    /** @see org.apache.fop.render.AbstractRenderer#renderInlineSpace(Space) */
+    protected void renderInlineSpace(Space space) {
+        space.setBPD(0);
+        renderInlineAreaBackAndBorders(space);
+        super.renderInlineSpace(space);
+    }
+    
+    /** @see org.apache.fop.render.AbstractRenderer#renderInlineParent(InlineParent) */
+    protected void renderInlineParent(InlineParent ip) {
+        renderInlineAreaBackAndBorders(ip);
+        super.renderInlineParent(ip);
+    }
+
     /** @see org.apache.fop.render.AbstractRenderer */
     protected void renderInlineBlockParent(InlineBlockParent ibp) {
-        float start = currentIPPosition / 1000f;
-        float top = (ibp.getOffset() + currentBPPosition) / 1000f;
-        float width = ibp.getIPD() / 1000f;
-        float height = ibp.getBPD() / 1000f;
-        drawBackAndBorders(ibp, start, top, width, height);
-        
+        renderInlineAreaBackAndBorders(ibp);
         super.renderInlineBlockParent(ibp);
     }
     

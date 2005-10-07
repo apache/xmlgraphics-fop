@@ -152,7 +152,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
      */
     private LineLayoutManager createLineManager(LayoutManager firstlm) {
         LineLayoutManager llm;
-        llm = new LineLayoutManager(getBlockFO(), lineHeight, lead, follow, middleShift);
+        llm = new LineLayoutManager(getBlockFO(), lineHeight, lead, follow);
         List inlines = new java.util.ArrayList();
         inlines.add(firstlm);
         while (proxyLMiter.hasNext()) {

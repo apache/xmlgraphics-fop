@@ -46,7 +46,7 @@ import org.apache.fop.fo.FObj;
  */
 public class LeaderLayoutManager extends LeafNodeLayoutManager {
     private Leader fobj;
-    Font font = null;
+    private Font font = null;
     
     private LinkedList contentList = null;
     private ContentLayoutManager clm = null;
@@ -57,35 +57,52 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
      * Constructor
      *
      * @param node the formatting object that creates this area
-     * @todo better null checking of font object
      */
     public LeaderLayoutManager(Leader node) {
         super(node);
         fobj = node;
     }
     
+    /** @see LayoutManager#initialize */
     public void initialize() {
         font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
         // the property leader-alignment does not affect vertical positioning
         // (see section 7.21.1 in the XSL Recommendation)
         // setAlignment(node.getLeaderAlignment());
-        setAlignment(fobj.getVerticalAlign());
+        setCommonBorderPaddingBackground(fobj.getCommonBorderPaddingBackground());
     }
 
+    /**
+     * Return the inline area for this leader.
+     * @param context the layout context
+     * @return the inline area
+     */
     public InlineArea get(LayoutContext context) {
         return getLeaderInlineArea();
     }
 
+    /**
+     * Return the allocated IPD for this area.
+     * @param refIPD the IPD of the reference area
+     * @return the allocated IPD
+     */
     protected MinOptMax getAllocationIPD(int refIPD) {
         return getLeaderAllocIPD(refIPD);
     }
 
     private MinOptMax getLeaderAllocIPD(int ipd) {
         // length of the leader
-        setContentAreaIPD(ipd);
-        int opt = fobj.getLeaderLength().getOptimum(this).getLength().getValue(this);
-        int min = fobj.getLeaderLength().getMinimum(this).getLength().getValue(this);
-        int max = fobj.getLeaderLength().getMaximum(this).getLength().getValue(this);
+        int borderPaddingWidth = 0;
+        if (commonBorderPaddingBackground != null) {
+            borderPaddingWidth = commonBorderPaddingBackground.getIPPaddingAndBorder(false, this);
+        }
+        setContentAreaIPD(ipd - borderPaddingWidth);
+        int opt = fobj.getLeaderLength().getOptimum(this).getLength().getValue(this)
+                    - borderPaddingWidth;
+        int min = fobj.getLeaderLength().getMinimum(this).getLength().getValue(this)
+                    - borderPaddingWidth;
+        int max = fobj.getLeaderLength().getMaximum(this).getLength().getValue(this)
+                    - borderPaddingWidth;
         return new MinOptMax(min, opt, max);
     }
 
@@ -93,24 +110,31 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         InlineArea leaderArea = null;
 
         if (fobj.getLeaderPattern() == EN_RULE) {
-            org.apache.fop.area.inline.Leader leader = 
-                new org.apache.fop.area.inline.Leader();
-            leader.setRuleStyle(fobj.getRuleStyle());
-            leader.setRuleThickness(fobj.getRuleThickness().getValue(this));
-            leader.setBPD(fobj.getRuleThickness().getValue(this));
-            leaderArea = leader;
+            if (fobj.getRuleStyle() != EN_NONE) {
+                org.apache.fop.area.inline.Leader leader 
+                    = new org.apache.fop.area.inline.Leader();
+                leader.setRuleStyle(fobj.getRuleStyle());
+                leader.setRuleThickness(fobj.getRuleThickness().getValue(this));
+                leader.setBPD(fobj.getRuleThickness().getValue(this));
+                leaderArea = leader;
+            } else {
+                leaderArea = new Space();
+                leaderArea.setBPD(1);
+            }
         } else if (fobj.getLeaderPattern() == EN_SPACE) {
             leaderArea = new Space();
-            leaderArea.setBPD(font.getAscender());
+            leaderArea.setBPD(1);
         } else if (fobj.getLeaderPattern() == EN_DOTS) {
             TextArea t = new TextArea();
             char dot = '.'; // userAgent.getLeaderDotCharacter();
 
+            int width = font.getCharWidth(dot);
             t.setTextArea("" + dot);
-            t.setIPD(font.getCharWidth(dot));
+            t.setIPD(width);
+            t.setBPD(width);
+            t.setBaselineOffset(width);
             t.addTrait(Trait.FONT_NAME, font.getFontName());
             t.addTrait(Trait.FONT_SIZE, new Integer(font.getFontSize()));
-            int width = font.getCharWidth(dot);
             Space spacer = null;
             if (fobj.getLeaderPatternWidth().getValue(this) > width) {
                 spacer = new Space();
@@ -123,7 +147,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             if (spacer != null) {
                 fa.addChildArea(spacer);
             }
-            fa.setBPD(font.getAscender());
+            fa.setBPD(t.getBPD());
 
             leaderArea = fa;
         } else if (fobj.getLeaderPattern() == EN_USECONTENT) {
@@ -163,68 +187,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         return leaderArea;
      }
 
-    protected void offsetArea(InlineArea area, LayoutContext context) {
-        int pattern = fobj.getLeaderPattern();
-        int bpd = area.getBPD();
-
-        switch (pattern) {
-            case EN_RULE: 
-                switch (verticalAlignment) {
-                    case EN_TOP:
-                        area.setOffset(0);
-                    break;
-                    case EN_MIDDLE:
-                        area.setOffset(context.getMiddleBaseline() - bpd / 2);
-                    break;
-                    case EN_BOTTOM:
-                        area.setOffset(context.getLineHeight() - bpd);
-                    break;
-                    case EN_BASELINE: // fall through
-                    default:
-                        area.setOffset(context.getBaseline() - bpd);
-                    break;
-                }
-            break;
-            case EN_DOTS: 
-                switch (verticalAlignment) {
-                    case EN_TOP:
-                        area.setOffset(0);
-                    break;
-                    case EN_MIDDLE:
-                        area.setOffset(context.getMiddleBaseline());
-                    break;
-                    case EN_BOTTOM:
-                        area.setOffset(context.getLineHeight() - bpd + font.getAscender());
-                    break;
-                    case EN_BASELINE: // fall through
-                    default:
-                        area.setOffset(context.getBaseline());
-                    break;
-                }
-            break;
-            case EN_SPACE: 
-                // nothing to do
-            break;
-            case EN_USECONTENT: 
-                switch (verticalAlignment) {
-                    case EN_TOP:
-                        area.setOffset(0);
-                    break;
-                    case EN_MIDDLE:
-                        area.setOffset(context.getMiddleBaseline());
-                    break;
-                    case EN_BOTTOM:
-                        area.setOffset(context.getLineHeight() - bpd);
-                    break;
-                    case EN_BASELINE: // fall through
-                    default:
-                        area.setOffset(context.getBaseline());
-                    break;
-                }
-            break;
-        }
-    }
-
+    /** @see LeafNodeLayoutManager#addAreas(PositionIterator, LayoutContext) */
     public void addAreas(PositionIterator posIter, LayoutContext context) {
         if (fobj.getLeaderPattern() != EN_USECONTENT) {
             // use LeafNodeLayoutManager.addAreas()
@@ -247,6 +210,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         }
     }
 
+    /** @see LayoutManager#getNextKnuthElements(LayoutContext, int) */
     public LinkedList getNextKnuthElements(LayoutContext context,
                                            int alignment) {
         MinOptMax ipd;
@@ -258,30 +222,22 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             return null;
         }
 
+        alignmentContext = new AlignmentContext(curArea.getBPD()
+                                    , fobj.getAlignmentAdjust()
+                                    , fobj.getAlignmentBaseline()
+                                    , fobj.getBaselineShift()
+                                    , fobj.getDominantBaseline()
+                                    , context.getAlignmentContext());
+
         ipd = getAllocationIPD(context.getRefIPD());
 
-        int bpd = curArea.getBPD();
-        int lead = 0;
-        int total = 0;
-        int middle = 0;
-        switch (verticalAlignment) {
-            case EN_MIDDLE  : middle = bpd / 2 ;
-                                         break;
-            case EN_TOP     : // fall through
-            case EN_BOTTOM  : total = bpd;
-                                         break;
-            case EN_BASELINE: // fall through
-            default:                     lead = bpd;
-                                         break;
-        }
-
         // create the AreaInfo object to store the computed values
-        areaInfo = new AreaInfo((short) 0, ipd, false,
-                                lead, total, middle);
+        areaInfo = new AreaInfo((short) 0, ipd, false, context.getAlignmentContext());
 
+        addKnuthElementsForBorderPaddingStart(seq);
+        
         // node is a fo:Leader
-        seq.add(new KnuthInlineBox(0, areaInfo.lead, areaInfo.total,
-                                    areaInfo.middle,
+        seq.add(new KnuthInlineBox(0, alignmentContext,
                                     new LeafPosition(this, -1), true));
         seq.add(new KnuthPenalty(0, KnuthElement.INFINITE, false,
                                         new LeafPosition(this, -1), true));
@@ -290,28 +246,31 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
                            areaInfo.ipdArea.max - areaInfo.ipdArea.opt,
                            areaInfo.ipdArea.opt - areaInfo.ipdArea.min, 
                            new LeafPosition(this, 0), false));
-        seq.add(new KnuthInlineBox(0, areaInfo.lead, areaInfo.total,
-                                    areaInfo.middle,
+        seq.add(new KnuthInlineBox(0, alignmentContext,
                                     new LeafPosition(this, -1), true));
 
+        addKnuthElementsForBorderPaddingEnd(seq);
+        
         LinkedList returnList = new LinkedList();
         returnList.add(seq);
         setFinished(true);
         return returnList;
     }
 
+    /** @see InlineLevelLayoutManager#hyphenate(Position, HyphContext) */
     public void hyphenate(Position pos, HyphContext hc) {
         // use the AbstractLayoutManager.hyphenate() null implementation
         super.hyphenate(pos, hc);
     }
 
+    /** @see InlineLevelLayoutManager#applyChanges(list) */
     public boolean applyChanges(List oldList) {
         setFinished(false);
         return false;
     }
 
+    /** @see LayoutManager#getNextKnuthElements(LayoutContext, int) */
     public LinkedList getChangedKnuthElements(List oldList,
-                                              int flaggedPenalty,
                                               int alignment) {
         if (isFinished()) {
             return null;
@@ -319,8 +278,9 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
 
         LinkedList returnList = new LinkedList();
 
-        returnList.add(new KnuthInlineBox(0, areaInfo.lead, areaInfo.total,
-                                    areaInfo.middle,
+        addKnuthElementsForBorderPaddingStart(returnList);
+        
+        returnList.add(new KnuthInlineBox(0, areaInfo.alignmentContext,
                                     new LeafPosition(this, -1), true));
         returnList.add(new KnuthPenalty(0, KnuthElement.INFINITE, false,
                                         new LeafPosition(this, -1), true));
@@ -329,14 +289,16 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
                            areaInfo.ipdArea.max - areaInfo.ipdArea.opt,
                            areaInfo.ipdArea.opt - areaInfo.ipdArea.min, 
                            new LeafPosition(this, 0), false));
-        returnList.add(new KnuthInlineBox(0, areaInfo.lead, areaInfo.total,
-                                    areaInfo.middle,
+        returnList.add(new KnuthInlineBox(0, areaInfo.alignmentContext,
                                     new LeafPosition(this, -1), true));
 
+        addKnuthElementsForBorderPaddingEnd(returnList);
+        
         setFinished(true);
         return returnList;
     }
 
+    /** @see LeafNodeLayoutManager#addId */
     protected void addId() {
         getPSLM().addIDToPage(fobj.getId());
     }

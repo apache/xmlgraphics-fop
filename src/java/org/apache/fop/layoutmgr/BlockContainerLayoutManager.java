@@ -225,6 +225,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                 childLC.setStackLimit(MinOptMax.subtract(context
                         .getStackLimit(), stackLimit));
                 childLC.setRefIPD(relDims.ipd);
+                childLC.setWritingMode(getBlockContainerFO().getWritingMode());
 
                 // get elements from curLM
                 returnedList = curLM.getNextKnuthElements(childLC, alignment);
@@ -523,6 +524,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         protected LayoutContext createLayoutContext() {
             LayoutContext lc = super.createLayoutContext();
             lc.setRefIPD(ipd.opt);
+            lc.setWritingMode(getBlockContainerFO().getWritingMode());
             return lc;
         }
         
@@ -534,7 +536,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                 LayoutContext childLC = new LayoutContext(0);
                 childLC.setStackLimit(context.getStackLimit());
                 childLC.setRefIPD(context.getRefIPD());
-
+                childLC.setWritingMode(getBlockContainerFO().getWritingMode());
+                
                 LinkedList returnedList = null;
                 if (!curLM.isFinished()) {
                     returnedList = curLM.getNextKnuthElements(childLC, alignment);

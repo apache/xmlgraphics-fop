@@ -55,6 +55,7 @@ import org.apache.fop.fo.properties.StringProperty;
 import org.apache.fop.fo.properties.TableBorderPrecedence;
 import org.apache.fop.fo.properties.TextDecorationProperty;
 import org.apache.fop.fo.properties.ToBeImplementedProperty;
+import org.apache.fop.fo.properties.VerticalAlignShorthandParser;
 
 /**
  * This class creates and returns an array of Property.Maker instances
@@ -1349,6 +1350,8 @@ public class FOPropertyMapping implements Constants {
         m.addEnum("text-top", getEnumProperty(EN_TEXT_TOP, "TEXT_TOP"));
         m.addEnum("text-bottom", getEnumProperty(EN_TEXT_BOTTOM, "TEXT_BOTTOM"));
         m.setDefault("auto");
+        m.setPercentBase(LengthBase.ALIGNMENT_ADJUST);
+        m.addShorthand(s_generics[PR_VERTICAL_ALIGN]);
         addPropertyMaker("alignment-adjust", m);
 
         // alignment-baseline
@@ -1366,7 +1369,12 @@ public class FOPropertyMapping implements Constants {
         m.addEnum("alphabetic", getEnumProperty(EN_ALPHABETIC, "ALPHABETIC"));
         m.addEnum("hanging", getEnumProperty(EN_HANGING, "HANGING"));
         m.addEnum("mathematical", getEnumProperty(EN_MATHEMATICAL, "MATHEMATICAL"));
+        m.addEnum("top", getEnumProperty(EN_TOP, "TOP"));
+        m.addEnum("bottom", getEnumProperty(EN_BOTTOM, "BOTTOM"));
+        m.addEnum("text-top", getEnumProperty(EN_TEXT_TOP, "TEXT_TOP"));
+        m.addEnum("text-bottom", getEnumProperty(EN_TEXT_BOTTOM, "TEXT_BOTTOM"));
         m.setDefault("auto");
+        m.addShorthand(s_generics[PR_VERTICAL_ALIGN]);
         addPropertyMaker("alignment-baseline", m);
 
         // baseline-shift
@@ -1376,6 +1384,8 @@ public class FOPropertyMapping implements Constants {
         m.addEnum("sub", getEnumProperty(EN_SUB, "SUB"));
         m.addEnum("super", getEnumProperty(EN_SUPER, "SUPER"));
         m.setDefault("baseline");
+        m.addShorthand(s_generics[PR_VERTICAL_ALIGN]);
+        m.setPercentBase(LengthBase.CUSTOM_BASE);
         addPropertyMaker("baseline-shift", m);
 
         // display-align
@@ -1406,6 +1416,7 @@ public class FOPropertyMapping implements Constants {
         m.addEnum("text-after-edge", getEnumProperty(EN_TEXT_AFTER_EDGE, "TEXT_AFTER_EDGE"        ));
         m.addEnum("text-before-edge", getEnumProperty(EN_TEXT_BEFORE_EDGE, "TEXT_BEFORE_EDGE"));
         m.setDefault("auto");
+        m.addShorthand(s_generics[PR_VERTICAL_ALIGN]);
         addPropertyMaker("dominant-baseline", m);
 
         // relative-align
@@ -2488,6 +2499,7 @@ public class FOPropertyMapping implements Constants {
         m.setInherited(false);
         m.addEnum("use-font-metrics", getEnumProperty(EN_USE_FONT_METRICS, "USE_FONT_METRICS"));
         m.setDefault("use-font-metrics");
+        m.setPercentBase(LengthBase.FONTSIZE);
         addPropertyMaker("text-altitude", m);
 
         // text-depth
@@ -2495,6 +2507,7 @@ public class FOPropertyMapping implements Constants {
         m.setInherited(false);
         m.addEnum("use-font-metrics", getEnumProperty(EN_USE_FONT_METRICS, "USE_FONT_METRICS"));
         m.setDefault("use-font-metrics");
+        m.setPercentBase(LengthBase.FONTSIZE);
         addPropertyMaker("text-depth", m);
 
         // unicode-bidi
@@ -2720,8 +2733,8 @@ public class FOPropertyMapping implements Constants {
         m.setDefault("auto");
         addPropertyMaker("size", m);
 
-        // vertical-align TODO: Should be a LengthProperty.
-        m  = new EnumProperty.Maker(PR_VERTICAL_ALIGN);
+        // vertical-align
+        m  = new LengthProperty.Maker(PR_VERTICAL_ALIGN);
         m.setInherited(false);
         m.addEnum("baseline", getEnumProperty(EN_BASELINE, "BASELINE"));
         m.addEnum("middle", getEnumProperty(EN_MIDDLE, "MIDDLE"));
@@ -2731,6 +2744,7 @@ public class FOPropertyMapping implements Constants {
         m.addEnum("text-bottom", getEnumProperty(EN_TEXT_BOTTOM, "TEXT_BOTTOM"));
         m.addEnum("top", getEnumProperty(EN_TOP, "TOP"));
         m.addEnum("bottom", getEnumProperty(EN_BOTTOM, "BOTTOM"));
+        m.setDatatypeParser(new VerticalAlignShorthandParser());
         m.setDefault("baseline");
         addPropertyMaker("vertical-align", m);
 

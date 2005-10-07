@@ -31,169 +31,146 @@
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
           <fo:block>
-            <fo:leader leader-pattern="rule"/>
+            <fo:leader leader-length="36pt" leader-pattern="rule" background-color="yellow"/>
                No rule-style given
           </fo:block>
           <fo:block>
-            <fo:leader leader-pattern="rule" rule-style="none"/>
+            <fo:leader leader-length="36pt" leader-pattern="rule" rule-style="none" background-color="yellow"/>
                rule-style="none"
           </fo:block>
           <fo:block>
-            <fo:leader leader-pattern="rule" rule-style="dotted"/>
+            <fo:leader leader-length="36pt" leader-pattern="rule" rule-style="dotted" background-color="yellow"/>
                rule-style="dotted"
           </fo:block>
           <fo:block>
-            <fo:leader leader-pattern="rule" rule-style="dashed"/>
+            <fo:leader leader-length="36pt" leader-pattern="rule" rule-style="dashed" background-color="yellow"/>
                rule-style="dashed"
           </fo:block>
           <fo:block>
-            <fo:leader leader-pattern="rule" rule-style="solid"/>
+            <fo:leader leader-length="36pt" leader-pattern="rule" rule-style="solid" background-color="yellow"/>
                rule-style="solid"
           </fo:block>
           <fo:block>
-            <fo:leader leader-pattern="rule" rule-style="double"/>
+            <fo:leader leader-length="36pt" leader-pattern="rule" rule-style="double" background-color="yellow"/>
                rule-style="double"
           </fo:block>
           <fo:block>
-            <fo:leader leader-pattern="rule" rule-style="groove"/>
+            <fo:leader leader-length="36pt" leader-pattern="rule" rule-style="groove" background-color="yellow"/>
                rule-style="groove"
           </fo:block>
           <fo:block>
-            <fo:leader leader-pattern="rule" rule-style="ridge"/>
+            <fo:leader leader-length="36pt" leader-pattern="rule" rule-style="ridge" background-color="yellow"/>
                rule-style="ridge"
           </fo:block>
           <fo:block>
-            <fo:leader leader-pattern="rule" rule-style="dotted" rule-thickness="3pt"/>
+            <fo:leader leader-length="36pt" leader-pattern="rule" rule-style="dotted" rule-thickness="3pt" background-color="yellow"/>
                rule-style="dotted" rule-thickness="3pt"
           </fo:block>
           <fo:block>
-            <fo:leader leader-pattern="rule" rule-style="dashed" rule-thickness="3pt"/>
+            <fo:leader leader-length="36pt" leader-pattern="rule" rule-style="dashed" rule-thickness="3pt" background-color="yellow"/>
                rule-style="dashed" rule-thickness="3pt"
           </fo:block>
           <fo:block>
-            <fo:leader leader-pattern="rule" rule-style="solid" rule-thickness="3pt"/>
+            <fo:leader leader-length="36pt" leader-pattern="rule" rule-style="solid" rule-thickness="3pt" background-color="yellow"/>
                rule-style="solid" rule-thickness="3pt"
           </fo:block>
           <fo:block>
-            <fo:leader leader-pattern="rule" rule-style="double" rule-thickness="3pt"/>
+            <fo:leader leader-length="36pt" leader-pattern="rule" rule-style="double" rule-thickness="3pt" background-color="yellow"/>
                rule-style="double" rule-thickness="3pt"
           </fo:block>
           <fo:block>
-            <fo:leader leader-pattern="rule" rule-style="groove" rule-thickness="3pt"/>
+            <fo:leader leader-length="36pt" leader-pattern="rule" rule-style="groove" rule-thickness="3pt" background-color="yellow"/>
                rule-style="groove" rule-thickness="3pt"
           </fo:block>
           <fo:block>
-            <fo:leader leader-pattern="rule" rule-style="ridge" rule-thickness="3pt"/>
+            <fo:leader leader-length="36pt" leader-pattern="rule" rule-style="ridge" rule-thickness="3pt" background-color="yellow"/>
                rule-style="ridge" rule-thickness="3pt"
-          </fo:block>
-          <fo:block>
-            <fo:leader leader-pattern="rule" alignment-baseline="middle"/>
-               No rule-style given alignment-baseline="middle"
-          </fo:block>
-          <fo:block>
-            <fo:leader leader-pattern="rule" rule-style="none" alignment-baseline="middle"/>
-               rule-style="none" alignment-baseline="middle"
-          </fo:block>
-          <fo:block>
-            <fo:leader leader-pattern="rule" rule-style="dotted" alignment-baseline="middle"/>
-               rule-style="dotted" alignment-baseline="middle"
-          </fo:block>
-          <fo:block>
-            <fo:leader leader-pattern="rule" rule-style="dashed" alignment-baseline="middle"/>
-               rule-style="dashed" alignment-baseline="middle"
-          </fo:block>
-          <fo:block>
-            <fo:leader leader-pattern="rule" rule-style="solid" alignment-baseline="middle"/>
-               rule-style="solid" alignment-baseline="middle"
-          </fo:block>
-          <fo:block>
-            <fo:leader leader-pattern="rule" rule-style="double" alignment-baseline="middle"/>
-               rule-style="double" alignment-baseline="middle"
-          </fo:block>
-          <fo:block>
-            <fo:leader leader-pattern="rule" rule-style="groove" alignment-baseline="middle"/>
-               rule-style="groove" alignment-baseline="middle"
-          </fo:block>
-          <fo:block>
-            <fo:leader leader-pattern="rule" rule-style="ridge" alignment-baseline="middle"/>
-               rule-style="ridge" alignment-baseline="middle"
           </fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
   </fo>
   <checks>
-    <eval expected="14400" xpath="//flow/block[1]/lineArea/@bpd"/>
+    <eval expected="11100" xpath="//flow/block[1]/lineArea/@bpd"/>
     <eval expected="360000" xpath="//flow/block[1]/lineArea/@ipd"/>
-    <eval expected="12000" xpath="//flow/block[1]/lineArea/leader/@ipd"/>
+    <eval expected="36000" xpath="//flow/block[1]/lineArea/leader/@ipd"/>
     <eval expected="solid" xpath="//flow/block[1]/lineArea/leader/@ruleStyle"/>
     <eval expected="1000" xpath="//flow/block[1]/lineArea/leader/@ruleThickness"/>
-    <eval expected="14400" xpath="//flow/block[2]/lineArea/@bpd"/>
+
+    <eval expected="11100" xpath="//flow/block[2]/lineArea/@bpd"/>
     <eval expected="360000" xpath="//flow/block[2]/lineArea/@ipd"/>
-    <eval expected="12000" xpath="//flow/block[2]/lineArea/leader/@ipd"/>
-    <eval expected="--NYI--" xpath="//flow/block[2]/lineArea/leader/@ruleStyle"/>
-    <eval expected="1000" xpath="//flow/block[2]/lineArea/leader/@ruleThickness"/>
-    <eval expected="14400" xpath="//flow/block[3]/lineArea/@bpd"/>
+    <eval expected="36000" xpath="//flow/block[2]/lineArea/space/@ipd"/>
+
+    <eval expected="11100" xpath="//flow/block[3]/lineArea/@bpd"/>
     <eval expected="360000" xpath="//flow/block[3]/lineArea/@ipd"/>
-    <eval expected="12000" xpath="//flow/block[3]/lineArea/leader/@ipd"/>
+    <eval expected="36000" xpath="//flow/block[3]/lineArea/leader/@ipd"/>
     <eval expected="dotted" xpath="//flow/block[3]/lineArea/leader/@ruleStyle"/>
     <eval expected="1000" xpath="//flow/block[3]/lineArea/leader/@ruleThickness"/>
-    <eval expected="14400" xpath="//flow/block[4]/lineArea/@bpd"/>
+
+    <eval expected="11100" xpath="//flow/block[4]/lineArea/@bpd"/>
     <eval expected="360000" xpath="//flow/block[4]/lineArea/@ipd"/>
-    <eval expected="12000" xpath="//flow/block[4]/lineArea/leader/@ipd"/>
+    <eval expected="36000" xpath="//flow/block[4]/lineArea/leader/@ipd"/>
     <eval expected="dashed" xpath="//flow/block[4]/lineArea/leader/@ruleStyle"/>
     <eval expected="1000" xpath="//flow/block[4]/lineArea/leader/@ruleThickness"/>
-    <eval expected="14400" xpath="//flow/block[5]/lineArea/@bpd"/>
+
+    <eval expected="11100" xpath="//flow/block[5]/lineArea/@bpd"/>
     <eval expected="360000" xpath="//flow/block[5]/lineArea/@ipd"/>
-    <eval expected="12000" xpath="//flow/block[5]/lineArea/leader/@ipd"/>
+    <eval expected="36000" xpath="//flow/block[5]/lineArea/leader/@ipd"/>
     <eval expected="solid" xpath="//flow/block[5]/lineArea/leader/@ruleStyle"/>
     <eval expected="1000" xpath="//flow/block[5]/lineArea/leader/@ruleThickness"/>
-    <eval expected="14400" xpath="//flow/block[6]/lineArea/@bpd"/>
+
+    <eval expected="11100" xpath="//flow/block[6]/lineArea/@bpd"/>
     <eval expected="360000" xpath="//flow/block[6]/lineArea/@ipd"/>
-    <eval expected="12000" xpath="//flow/block[6]/lineArea/leader/@ipd"/>
+    <eval expected="36000" xpath="//flow/block[6]/lineArea/leader/@ipd"/>
     <eval expected="double" xpath="//flow/block[6]/lineArea/leader/@ruleStyle"/>
     <eval expected="1000" xpath="//flow/block[6]/lineArea/leader/@ruleThickness"/>
-    <eval expected="14400" xpath="//flow/block[7]/lineArea/@bpd"/>
+
+    <eval expected="11100" xpath="//flow/block[7]/lineArea/@bpd"/>
     <eval expected="360000" xpath="//flow/block[7]/lineArea/@ipd"/>
-    <eval expected="12000" xpath="//flow/block[7]/lineArea/leader/@ipd"/>
+    <eval expected="36000" xpath="//flow/block[7]/lineArea/leader/@ipd"/>
     <eval expected="groove" xpath="//flow/block[7]/lineArea/leader/@ruleStyle"/>
     <eval expected="1000" xpath="//flow/block[7]/lineArea/leader/@ruleThickness"/>
-    <eval expected="14400" xpath="//flow/block[8]/lineArea/@bpd"/>
+
+    <eval expected="11100" xpath="//flow/block[8]/lineArea/@bpd"/>
     <eval expected="360000" xpath="//flow/block[8]/lineArea/@ipd"/>
-    <eval expected="12000" xpath="//flow/block[8]/lineArea/leader/@ipd"/>
+    <eval expected="36000" xpath="//flow/block[8]/lineArea/leader/@ipd"/>
     <eval expected="ridge" xpath="//flow/block[8]/lineArea/leader/@ruleStyle"/>
     <eval expected="1000" xpath="//flow/block[8]/lineArea/leader/@ruleThickness"/>
-    <eval expected="14400" xpath="//flow/block[9]/lineArea/@bpd"/>
+
+    <eval expected="11100" xpath="//flow/block[9]/lineArea/@bpd"/>
     <eval expected="360000" xpath="//flow/block[9]/lineArea/@ipd"/>
-    <eval expected="12000" xpath="//flow/block[9]/lineArea/leader/@ipd"/>
+    <eval expected="36000" xpath="//flow/block[9]/lineArea/leader/@ipd"/>
     <eval expected="dotted" xpath="//flow/block[9]/lineArea/leader/@ruleStyle"/>
     <eval expected="3000" xpath="//flow/block[9]/lineArea/leader/@ruleThickness"/>
-    <eval expected="14400" xpath="//flow/block[10]/lineArea/@bpd"/>
+
+    <eval expected="11100" xpath="//flow/block[10]/lineArea/@bpd"/>
     <eval expected="360000" xpath="//flow/block[10]/lineArea/@ipd"/>
-    <eval expected="12000" xpath="//flow/block[10]/lineArea/leader/@ipd"/>
+    <eval expected="36000" xpath="//flow/block[10]/lineArea/leader/@ipd"/>
     <eval expected="dashed" xpath="//flow/block[10]/lineArea/leader/@ruleStyle"/>
     <eval expected="3000" xpath="//flow/block[10]/lineArea/leader/@ruleThickness"/>
-    <eval expected="14400" xpath="//flow/block[11]/lineArea/@bpd"/>
+
+    <eval expected="11100" xpath="//flow/block[11]/lineArea/@bpd"/>
     <eval expected="360000" xpath="//flow/block[11]/lineArea/@ipd"/>
-    <eval expected="12000" xpath="//flow/block[11]/lineArea/leader/@ipd"/>
+    <eval expected="36000" xpath="//flow/block[11]/lineArea/leader/@ipd"/>
     <eval expected="solid" xpath="//flow/block[11]/lineArea/leader/@ruleStyle"/>
     <eval expected="3000" xpath="//flow/block[11]/lineArea/leader/@ruleThickness"/>
-    <eval expected="14400" xpath="//flow/block[12]/lineArea/@bpd"/>
+
+    <eval expected="11100" xpath="//flow/block[12]/lineArea/@bpd"/>
     <eval expected="360000" xpath="//flow/block[12]/lineArea/@ipd"/>
-    <eval expected="12000" xpath="//flow/block[12]/lineArea/leader/@ipd"/>
+    <eval expected="36000" xpath="//flow/block[12]/lineArea/leader/@ipd"/>
     <eval expected="double" xpath="//flow/block[12]/lineArea/leader/@ruleStyle"/>
     <eval expected="3000" xpath="//flow/block[12]/lineArea/leader/@ruleThickness"/>
-    <eval expected="14400" xpath="//flow/block[13]/lineArea/@bpd"/>
+
+    <eval expected="11100" xpath="//flow/block[13]/lineArea/@bpd"/>
     <eval expected="360000" xpath="//flow/block[13]/lineArea/@ipd"/>
-    <eval expected="12000" xpath="//flow/block[13]/lineArea/leader/@ipd"/>
+    <eval expected="36000" xpath="//flow/block[13]/lineArea/leader/@ipd"/>
     <eval expected="groove" xpath="//flow/block[13]/lineArea/leader/@ruleStyle"/>
     <eval expected="3000" xpath="//flow/block[13]/lineArea/leader/@ruleThickness"/>
-    <eval expected="14400" xpath="//flow/block[14]/lineArea/@bpd"/>
+
+    <eval expected="11100" xpath="//flow/block[14]/lineArea/@bpd"/>
     <eval expected="360000" xpath="//flow/block[14]/lineArea/@ipd"/>
-    <eval expected="12000" xpath="//flow/block[14]/lineArea/leader/@ipd"/>
+    <eval expected="36000" xpath="//flow/block[14]/lineArea/leader/@ipd"/>
     <eval expected="ridge" xpath="//flow/block[14]/lineArea/leader/@ruleStyle"/>
     <eval expected="3000" xpath="//flow/block[14]/lineArea/leader/@ruleThickness"/>
-    <!-- No checks for the "alignment-baseline=..." section as this property is currently
-     not supported -->
   </checks>
 </testcase>

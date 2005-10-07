@@ -821,6 +821,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
     }
     
     private void renderText(AbstractTextArea area, String text) {
+        renderInlineAreaBackAndBorders(area);
         String fontname = (String)area.getTrait(Trait.FONT_NAME);
         int fontsize = area.getTraitAsInteger(Trait.FONT_SIZE);
 
@@ -829,7 +830,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
 
         //Determine position
         int rx = currentIPPosition;
-        int bl = currentBPPosition + area.getOffset();
+        int bl = currentBPPosition + area.getOffset() + area.getBaselineOffset();
 
         useFont(fontname, fontsize);
         ColorType ct = (ColorType)area.getTrait(Trait.COLOR);
@@ -976,12 +977,6 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
     
     /** @see org.apache.fop.render.AbstractRenderer */
     protected void renderInlineParent(InlineParent ip) {
-        float start = currentIPPosition / 1000f;
-        float top = (ip.getOffset() + currentBPPosition) / 1000f;
-        float width = ip.getIPD() / 1000f;
-        float height = ip.getBPD() / 1000f;
-        drawBackAndBorders(ip, start, top, width, height);
-
         super.renderInlineParent(ip);
     }
     

@@ -18,19 +18,24 @@
 
 package org.apache.fop.layoutmgr.inline;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.layoutmgr.AbstractLayoutManager;
+import org.apache.fop.layoutmgr.KnuthGlue;
+import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.KnuthSequence;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
+import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.traits.MinOptMax;
 
-import java.util.List;
-import java.util.LinkedList;
 
 /**
  * Base LayoutManager for leaf-node FObj, ie: ones which have no children.
@@ -45,11 +50,16 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
      * The inline area that this leafnode will add.
      */
     protected InlineArea curArea = null;
-    protected int verticalAlignment;
-    private int lead;
+    /** Any border, padding and background properties applying to this area */
+    protected CommonBorderPaddingBackground commonBorderPaddingBackground = null;
+    /** The alignment context applying to this area */
+    protected AlignmentContext alignmentContext = null;
+    
     private MinOptMax ipd;
 
-    protected boolean bSomethingChanged = false;
+    /** Flag to indicate if something was changed as part of the getChangeKnuthElements sequence */
+    protected boolean isSomethingChanged = false;
+    /** Our area info for the Knuth elements */
     protected AreaInfo areaInfo = null;
 
     /**
@@ -59,19 +69,16 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
         protected short iLScount;
         protected MinOptMax ipdArea;
         protected boolean bHyphenated;
-        protected int lead;
-        protected int total;
-        protected int middle;
+        protected AlignmentContext alignmentContext;
 
         public AreaInfo(short iLS, MinOptMax ipd, boolean bHyph,
-                        int l, int t, int m) {
+                        AlignmentContext alignmentContext) {
             iLScount = iLS;
             ipdArea = ipd;
             bHyphenated = bHyph;
-            lead = l;
-            total = t;
-            middle = m;
+            this.alignmentContext = alignmentContext;
         }
+        
     }
 
 
@@ -117,29 +124,6 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
     }
 
     /**
-     * Set the alignment of the inline area.
-     * @param al the vertical alignment positioning
-     */
-    public void setAlignment(int al) {
-        verticalAlignment = al;
-    }
-
-    /**
-     * Set the lead for this inline area.
-     * The lead is the distance from the top of the object
-     * to the baseline.
-     * @param l the lead value
-     */
-    public void setLead(int l) {
-        lead = l;
-    }
-    
-    /** @return the lead value (distance from the top of the object to the baseline) */
-    public int getLead() {
-        return this.lead;
-    }
-
-    /**
      * This is a leaf-node, so this method is never called.
      * @param childArea the childArea to add
      */
@@ -153,6 +137,15 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
      */
     public Area getParentArea(Area childArea) {
         return null;
+    }
+
+    /**
+     * Set the border and padding properties of the inline area.
+     * @param commonBorderPaddingBackground the alignment adjust property
+     */
+    protected void setCommonBorderPaddingBackground(
+            CommonBorderPaddingBackground commonBorderPaddingBackground) {
+        this.commonBorderPaddingBackground = commonBorderPaddingBackground;
     }
 
     /**
@@ -178,6 +171,13 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
         if (area.getAllocIPD() > 0 || area.getAllocBPD() > 0) {
             offsetArea(area, context);
             widthAdjustArea(area, context);
+            if (commonBorderPaddingBackground != null) {
+                // Add border and padding to area
+                TraitSetter.setBorderPaddingTraits(area,
+                                                   commonBorderPaddingBackground,
+                                                   false, false, this);
+                TraitSetter.addBackground(area, commonBorderPaddingBackground, this);
+            }
             parentLM.addChildArea(area);
         }
 
@@ -212,22 +212,19 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
      * @param context the layout context used for adding the area
      */
     protected void offsetArea(InlineArea area, LayoutContext context) {
-        int bpd = area.getBPD();
-        switch (verticalAlignment) {
-            case EN_MIDDLE:
-                area.setOffset(context.getMiddleBaseline() - bpd / 2);
-            break;
-            case EN_TOP:
-                area.setOffset(context.getTopBaseline());
-            break;
-            case EN_BOTTOM:
-                area.setOffset(context.getBottomBaseline() - bpd);
-            break;
-            case EN_BASELINE:
-            default:
-                area.setOffset(context.getBaseline() - bpd);
-            break;
-        }
+        area.setOffset(alignmentContext.getOffset());
+    }
+
+    /**
+     * Creates a new alignment context or returns the current
+     * alignment context.
+     * This is used for vertical alignment.
+     * Subclasses should override this if necessary.
+     * @param context the layout context used
+     * @return the appropriate alignment context
+     */
+    protected AlignmentContext makeAlignmentContext(LayoutContext context) {
+        return context.getAlignmentContext();
     }
 
     /**
@@ -249,54 +246,42 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
         }
         area.setIPD(width);
     }
-
-    public LinkedList getNextKnuthElements(LayoutContext context,
-                                           int alignment) {
-        MinOptMax ipd;
+    
+    /** @see LayoutManager#getNextKnuthElements(LayoutContext, int) */
+    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         curArea = get(context);
-
+        
         if (curArea == null) {
             setFinished(true);
             return null;
         }
-        ipd = getAllocationIPD(context.getRefIPD());
 
-        int bpd = curArea.getBPD();
-        int lead = 0;
-        int total = 0;
-        int middle = 0;
-        switch (verticalAlignment) {
-            case EN_MIDDLE  : middle = bpd / 2 ;
-                                         lead = bpd / 2 ;
-                                         break;
-            case EN_TOP     : total = bpd;
-                                         break;
-            case EN_BOTTOM  : total = bpd;
-                                         break;
-            case EN_BASELINE:
-            default:                     
-                //lead = bpd;
-                lead = getLead();
-                total = bpd;
-                break;
-        }
+        alignmentContext = makeAlignmentContext(context);
+        
+        MinOptMax ipd = getAllocationIPD(context.getRefIPD());
 
         // create the AreaInfo object to store the computed values
-        areaInfo = new AreaInfo((short) 0, ipd, false,
-                                lead, total, middle);
+        areaInfo = new AreaInfo((short) 0, ipd, false, alignmentContext);
 
         // node is a fo:ExternalGraphic, fo:InstreamForeignObject,
         // fo:PageNumber or fo:PageNumberCitation
         KnuthSequence seq = new KnuthSequence(true);
-        seq.add(new KnuthInlineBox(areaInfo.ipdArea.opt, areaInfo.lead,
-                                    areaInfo.total, areaInfo.middle,
-                                    new LeafPosition(this, 0), false));
+
+        addKnuthElementsForBorderPaddingStart(seq);
+        
+        seq.add(new KnuthInlineBox(areaInfo.ipdArea.opt, alignmentContext,
+                                    notifyPos(new LeafPosition(this, 0)), false));
+
+        addKnuthElementsForBorderPaddingEnd(seq);
+        
         LinkedList returnList = new LinkedList();
+
         returnList.add(seq);
         setFinished(true);
         return returnList;
     }
 
+    /** @see InlineLevelLayoutManager#addALetterSpaceTo(List) */
     public List addALetterSpaceTo(List oldList) {
         // return the unchanged elements
         return oldList;
@@ -312,19 +297,22 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
         log.warn(this.getClass().getName() + " should not receive a call to removeWordSpace(list)");
     }
 
+    /** @see InlineLevelLayoutManager#getWordChars(StringBuffer, Position) */
     public void getWordChars(StringBuffer sbChars, Position pos) {
     }
 
+    /** @see InlineLevelLayoutManager#hyphenate(Position, HyphContext) */
     public void hyphenate(Position pos, HyphContext hc) {
     }
 
+    /** @see InlineLevelLayoutManager#applyChanges(List) */
     public boolean applyChanges(List oldList) {
         setFinished(false);
         return false;
     }
 
+    /** @see LayoutManager#getChangedKnuthElements(List, int) */
     public LinkedList getChangedKnuthElements(List oldList,
-                                              /*int flaggedPenalty,*/
                                               int alignment) {
         if (isFinished()) {
             return null;
@@ -332,14 +320,54 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
 
         LinkedList returnList = new LinkedList();
 
+        addKnuthElementsForBorderPaddingStart(returnList);
+        
         // fobj is a fo:ExternalGraphic, fo:InstreamForeignObject,
         // fo:PageNumber or fo:PageNumberCitation
-        returnList.add(new KnuthInlineBox(areaInfo.ipdArea.opt, areaInfo.lead,
-                                          areaInfo.total, areaInfo.middle,
-                                          new LeafPosition(this, 0), true));
+        returnList.add(new KnuthInlineBox(areaInfo.ipdArea.opt, areaInfo.alignmentContext, 
+                                          notifyPos(new LeafPosition(this, 0)), true));
 
+        addKnuthElementsForBorderPaddingEnd(returnList);
+        
         setFinished(true);
         return returnList;
     }
+    
+    /**
+     * Creates Knuth elements for start border padding and adds them to the return list.
+     * @param returnList return list to add the additional elements to
+     */
+    protected void addKnuthElementsForBorderPaddingStart(List returnList) {
+        //Border and Padding (start)
+        if (commonBorderPaddingBackground != null) {
+            int ipStart = commonBorderPaddingBackground.getBorderStartWidth(false)
+                         + commonBorderPaddingBackground.getPaddingStart(false, this);
+            if (ipStart > 0) {
+                // Add a non breakable glue
+                returnList.add(new KnuthPenalty(0, KnuthPenalty.INFINITE, 
+                                                false, new LeafPosition(this, -1), true));
+                returnList.add(new KnuthGlue(ipStart, 0, 0, new LeafPosition(this, -1), true));
+            }
+        }
+    }
+
+    /**
+     * Creates Knuth elements for end border padding and adds them to the return list.
+     * @param returnList return list to add the additional elements to
+     */
+    protected void addKnuthElementsForBorderPaddingEnd(List returnList) {
+        //Border and Padding (after)
+        if (commonBorderPaddingBackground != null) {
+            int ipEnd = commonBorderPaddingBackground.getBorderEndWidth(false)
+                        + commonBorderPaddingBackground.getPaddingEnd(false, this);
+            if (ipEnd > 0) {
+                // Add a non breakable glue
+                returnList.add(new KnuthPenalty(0, KnuthPenalty.INFINITE,
+                                                false, new LeafPosition(this, -1), true));
+                returnList.add(new KnuthGlue(ipEnd, 0, 0, new LeafPosition(this, -1), true));
+            }
+        }
+    }
+
 }
 

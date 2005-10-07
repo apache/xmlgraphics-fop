@@ -42,7 +42,7 @@
   </fo>
   <checks>
     <eval expected="197376" xpath="//flow/block/lineArea/inlineparent/@ipd"/>
-    <eval expected="92100" xpath="//flow/block/lineArea/inlineparent/@bpd"/>
-    <eval expected="color=#ffff00,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=75648,vertical=23010" xpath="//flow/block/lineArea/inlineparent/@background"/>
+    <eval expected="88800" xpath="//flow/block/lineArea/inlineparent/@bpd"/>
+    <eval expected="color=#ffff00,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=75648,vertical=21360" xpath="//flow/block/lineArea/inlineparent/@background"/>
   </checks>
 </testcase>

@@ -30,9 +30,10 @@ public abstract class AbstractTextArea extends InlineArea {
      */
     protected class TextAdjustingInfo extends InlineAdjustingInfo {
 
-        // difference between the optimal width of a space
-        // and the default width of a space according to the font
-        // (this is equivalent to the property word-spacing.optimum)
+        /** difference between the optimal width of a space
+         * and the default width of a space according to the font
+         * (this is equivalent to the property word-spacing.optimum)
+         */
         protected int spaceDifference = 0;
         
         /**
@@ -47,9 +48,10 @@ public abstract class AbstractTextArea extends InlineArea {
         }
     }
 
-    private int iTextWordSpaceAdjust = 0;
-    private int iTextLetterSpaceAdjust = 0;
+    private int textWordSpaceAdjust = 0;
+    private int textLetterSpaceAdjust = 0;
     private TextAdjustingInfo adjustingInfo = null;
+    private int baselineOffset = 0;
 
     /**
      * Default constructor
@@ -74,33 +76,34 @@ public abstract class AbstractTextArea extends InlineArea {
      * @return the text word space adjustment
      */
     public int getTextWordSpaceAdjust() {
-        return iTextWordSpaceAdjust;
+        return textWordSpaceAdjust;
     }
 
     /**
      * Set text word space adjust.
      *
-     * @param iTWSadjust the text word space adjustment
+     * @param textWordSpaceAdjust the text word space adjustment
      */
-    public void setTextWordSpaceAdjust(int iTWSadjust) {
-        iTextWordSpaceAdjust = iTWSadjust;
+    public void setTextWordSpaceAdjust(int textWordSpaceAdjust) {
+        this.textWordSpaceAdjust = textWordSpaceAdjust;
     }
+
     /**
      * Get text letter space adjust.
      *
      * @return the text letter space adjustment
      */
     public int getTextLetterSpaceAdjust() {
-        return iTextLetterSpaceAdjust;
+        return textLetterSpaceAdjust;
     }
 
     /**
      * Set text letter space adjust.
      *
-     * @param iTLSadjust the text letter space adjustment
+     * @param textLetterSpaceAdjust the text letter space adjustment
      */
-    public void setTextLetterSpaceAdjust(int iTLSadjust) {
-        iTextLetterSpaceAdjust = iTLSadjust;
+    public void setTextLetterSpaceAdjust(int textLetterSpaceAdjust) {
+        this.textLetterSpaceAdjust = textLetterSpaceAdjust;
     }
 
     /**
@@ -133,25 +136,46 @@ public abstract class AbstractTextArea extends InlineArea {
             // balancing factor
             double balancingFactor = 1.0;
             if (variationFactor < 0) {
-                if (iTextWordSpaceAdjust < 0) {
+                if (textWordSpaceAdjust < 0) {
                     // from a negative adjustment to a positive one
-                    balancingFactor = ((double) adjustingInfo.availableStretch / adjustingInfo.availableShrink)
+                    balancingFactor 
+                        = ((double) adjustingInfo.availableStretch / adjustingInfo.availableShrink)
                             * ((double) lineShrink / lineStretch);
                 } else {
                     // from a positive adjustment to a negative one
-                    balancingFactor = ((double) adjustingInfo.availableShrink / adjustingInfo.availableStretch)
+                    balancingFactor 
+                        = ((double) adjustingInfo.availableShrink / adjustingInfo.availableStretch)
                             * ((double) lineStretch / lineShrink);
                 }
             }
-            iTextWordSpaceAdjust = (int) ((iTextWordSpaceAdjust - adjustingInfo.spaceDifference)
+            textWordSpaceAdjust = (int) ((textWordSpaceAdjust - adjustingInfo.spaceDifference)
                     * variationFactor * balancingFactor)
                     + adjustingInfo.spaceDifference;
-            iTextLetterSpaceAdjust *= variationFactor;
+            textLetterSpaceAdjust *= variationFactor;
             // update the ipd of the area
             int oldAdjustment = adjustingInfo.adjustment;
             adjustingInfo.adjustment *= balancingFactor * variationFactor;
             ipd += adjustingInfo.adjustment - oldAdjustment;
         }
         return false;
+    }
+
+    /**
+     * Get baseline offset, i.e. the distance from the before edge
+     * of this area to the nominal baseline.
+     *
+     * @return the baseline offset
+     */
+    public int getBaselineOffset() {
+        return baselineOffset;
+    }
+
+    /**
+     * Set the baseline offset.
+     *
+     * @param baselineOffset the baseline offset
+     */
+    public void setBaselineOffset(int baselineOffset) {
+        this.baselineOffset = baselineOffset;
     }
 }

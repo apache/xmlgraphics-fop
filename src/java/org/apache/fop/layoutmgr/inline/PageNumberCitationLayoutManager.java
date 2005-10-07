@@ -25,6 +25,7 @@ import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.UnresolvedPageNumber;
 import org.apache.fop.area.inline.TextArea;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
@@ -53,15 +54,37 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
         fobj = node;
     }
     
+    /** @see org.apache.fop.layoutmgr.LayoutManager#initialize */
     public void initialize() {
         font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
+        setCommonBorderPaddingBackground(fobj.getCommonBorderPaddingBackground());
     }
 
+    /**
+     * @see LeafNodeLayoutManager.makeAlignmentContext(LayoutContext)
+     */
+    protected AlignmentContext makeAlignmentContext(LayoutContext context) {
+        return new AlignmentContext(
+                font
+                , fobj.getLineHeight().getOptimum(this).getLength().getValue(this)
+                , fobj.getAlignmentAdjust()
+                , fobj.getAlignmentBaseline()
+                , fobj.getBaselineShift()
+                , fobj.getDominantBaseline()
+                , context.getAlignmentContext()
+            );
+    }
+
+    /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#get(LayoutContext) */
     public InlineArea get(LayoutContext context) {
         curArea = getPageNumberCitationInlineArea(parentLM);
         return curArea;
     }
     
+    /**
+     * @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#addAreas(PositionIterator
+     *                                                                      , LayoutContext) 
+     */
     public void addAreas(PositionIterator posIter, LayoutContext context) {
         super.addAreas(posIter, context);
         if (!resolved) {
@@ -74,17 +97,13 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
         return font.getAscender();
     }
 
-    protected void offsetArea(InlineArea area, LayoutContext context) {
-        area.setOffset(context.getBaseline());
-    }
-
     /**
      * if id can be resolved then simply return a word, otherwise
      * return a resolvable area
      */
     private InlineArea getPageNumberCitationInlineArea(LayoutManager parentLM) {
         PageViewport page = getPSLM().getFirstPVWithID(fobj.getRefId());
-        InlineArea inline = null;
+        TextArea inline = null;
         if (page != null) {
             String str = page.getPageNumberString();
             // get page string from parent, build area
@@ -105,7 +124,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
         }
         TraitSetter.setProducerID(inline, fobj.getId());
         inline.setBPD(font.getAscender() - font.getDescender());
-        inline.setOffset(font.getAscender());
+        inline.setBaselineOffset(font.getAscender());
         inline.addTrait(Trait.FONT_NAME, font.getFontName());
         inline.addTrait(Trait.FONT_SIZE, new Integer(font.getFontSize()));
         inline.addTrait(Trait.COLOR, fobj.getColor());
@@ -125,7 +144,8 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
         }
         return width;
     }
-    
+
+    /** @see org.apache.fop.layoutmgr.inline.LeafLayoutManager#addId */
     protected void addId() {
         getPSLM().addIDToPage(fobj.getId());
     }

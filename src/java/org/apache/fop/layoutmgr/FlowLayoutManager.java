@@ -93,7 +93,8 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
             LayoutContext childLC = new LayoutContext(0);
             childLC.setStackLimit(context.getStackLimit());
             childLC.setRefIPD(context.getRefIPD());
-
+            childLC.setWritingMode(getCurrentPV().getSPM().getWritingMode());
+            
             // get elements from curLM
             returnedList = curLM.getNextKnuthElements(childLC, alignment);
             //log.debug("FLM.getNextKnuthElements> returnedList.size() = " + returnedList.size());
