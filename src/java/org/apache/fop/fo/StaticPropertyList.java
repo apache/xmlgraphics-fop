@@ -65,9 +65,6 @@ public class StaticPropertyList extends PropertyList {
     {
         Property p = values[propId];
         if (p == null) {
-            if (propId == 94) {
-                propId = propId;
-            }
             p = values[propId] = super.get(propId, bTryInherit, bTryDefault);
         }
         return p;
