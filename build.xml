@@ -35,7 +35,7 @@ If everything is right and all the required packages are visible, this action
 will generate a file called "fop.jar" in the "./build" directory.
 
 If you experience any problems with the build please visit the FOP website for
-more information: http://xml.apache.org/fop
+more information: http://xmlgraphics.apache.org/fop
 
 
 Build targets
@@ -411,7 +411,7 @@ list of possible build targets.
       <manifest>
         <attribute name="Implementation-Title" value="${Name}"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The Apache Software Foundation (http://xml.apache.org/fop/)"/>
+        <attribute name="Implementation-Vendor" value="The Apache Software Foundation (http://xmlgraphics.apache.org/fop/)"/>
         <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
       </manifest>
     </jar>
@@ -439,7 +439,7 @@ list of possible build targets.
         <!--attribute name="Class-Path" value="${manifest-classpath}"/-->
         <attribute name="Implementation-Title" value="${Name}"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The Apache Software Foundation (http://xml.apache.org/fop/)"/>
+        <attribute name="Implementation-Vendor" value="The Apache Software Foundation (http://xmlgraphics.apache.org/fop/)"/>
         <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
       </manifest>
     </jar>
@@ -533,7 +533,7 @@ list of possible build targets.
       <manifest>
         <attribute name="Implementation-Title" value="${fop-transcoder.name}"/>
         <attribute name="Implementation-Version" value="${fop-transcoder.version}"/>
-        <attribute name="Implementation-Vendor" value="The Apache Software Foundation (http://xml.apache.org/fop/)"/>
+        <attribute name="Implementation-Vendor" value="The Apache Software Foundation (http://xmlgraphics.apache.org/fop/)"/>
         <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
       </manifest>
     </jar>
@@ -570,7 +570,7 @@ list of possible build targets.
       <manifest>
         <attribute name="Implementation-Title" value="${fop-transcoder.name}"/>
         <attribute name="Implementation-Version" value="${fop-transcoder.version}"/>
-        <attribute name="Implementation-Vendor" value="The Apache Software Foundation (http://xml.apache.org/fop/)"/>
+        <attribute name="Implementation-Vendor" value="The Apache Software Foundation (http://xmlgraphics.apache.org/fop/)"/>
         <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
       </manifest>
     </jar>
@@ -597,7 +597,7 @@ list of possible build targets.
     </javac>
   </target>
 
-  <target name="junit" depends="junit-compile" description="Runs FOP's JUnit tests" if="junit.present">
+  <target name="junit-transcoder" depends="junit-compile" description="Runs FOP's JUnit transcoder tests" if="junit.present">
     <echo message="Running basic functionality tests for fop-transcoder.jar"/>
     <mkdir dir="${build.dir}/test-reports/fop-transcoder"/>
     <junit haltonerror="yes" fork="${junit.fork}">
@@ -646,6 +646,9 @@ list of possible build targets.
         </fileset>
       </batchtest>
     </junit>
+  </target>
+
+  <target name="junit-basic" depends="junit-compile" description="Runs FOP's JUnit basic tests" if="junit.present">
     <echo message="Running basic functionality tests for fop.jar"/>
     <mkdir dir="${build.dir}/test-reports/fop"/>
     <junit haltonerror="yes" fork="${junit.fork}">
@@ -666,6 +669,27 @@ list of possible build targets.
         </fileset>
       </batchtest>
     </junit>
+  </target>
+
+  <target name="hyphenation-present" depends="junit-compile" if="junit.present">
+    <condition property="hyphenation.present">
+      <and><!-- All the hyphenation files required by the layout test cases to be listed here -->
+        <available resource="hyph/en.hyp" classpathref="libs-build-classpath"/>
+        <available resource="hyph/de.hyp" classpathref="libs-build-classpath"/>
+      </and>
+    </condition>
+    <condition property="hyphenation.message" value="Hyphenation Support PRESENT">
+      <equals arg1="${hyphenation.present}" arg2="true"/>
+    </condition>
+    <condition property="hyphenation.message" value="Hyphenation Support NOT Present - Some layout tests require hyphenation support">
+      <not>
+        <equals arg1="${hyphenation.present}" arg2="true"/>
+      </not>
+    </condition>
+    <echo message="${hyphenation.message}"/>
+  </target>
+
+  <target name="junit-layout" depends="hyphenation-present, junit-compile" description="Runs FOP's JUnit layout tests" if="hyphenation.present">
     <echo message="Running layout engine tests"/>
     <mkdir dir="${build.dir}/test-reports/fop"/>
     <junit haltonerror="yes" fork="${junit.fork}">
@@ -709,6 +733,8 @@ list of possible build targets.
       </batchtest>
     </junit>
   </target>
+
+  <target name="junit" depends="junit-basic, junit-transcoder, junit-layout, junit-fotree" description="Runs all of FOP's JUnit tests" if="junit.present" />
 
   <!-- =================================================================== -->
   <!-- Creates the API documentation                                       -->
