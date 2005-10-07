@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.util.Hashtable;
+import java.util.Set;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This class is the main entry point to the hyphenation package.
@@ -34,8 +38,13 @@ import java.util.Hashtable;
  */
 public class Hyphenator {
     
+    /** logging instance */
+    protected static Log log = LogFactory.getLog(Hyphenator.class);
+
     /**@todo Don't use statics */
     private static Hashtable hyphenTrees = new Hashtable();
+    /** Used to avoid multiple error messages for the same language if a pattern file is missing. */
+    private static Set missingHyphenationTrees;
 
     private HyphenationTree hyphenTree = null;
     private int remainCharCount = 2;
@@ -56,6 +65,10 @@ public class Hyphenator {
         if (country != null && !country.equals("none")) {
             key += "_" + country;
         }
+        // See if there was an error finding this hyphenation tree before
+        if (missingHyphenationTrees != null && missingHyphenationTrees.contains(key)) {
+            return null;
+        }
         // first try to find it in the cache
         if (hyphenTrees.containsKey(key)) {
             return (HyphenationTree)hyphenTrees.get(key);
@@ -75,9 +88,11 @@ public class Hyphenator {
         if (hTree != null) {
             hyphenTrees.put(key, hTree);
         } else {
-            /**@todo Proper logging please */
-            //log.error("Couldn't find hyphenation pattern "
-            //                       + key);
+            log.error("Couldn't find hyphenation pattern " + key);
+            if (missingHyphenationTrees == null) {
+                missingHyphenationTrees = new java.util.HashSet();
+            }
+            missingHyphenationTrees.add(key);
         }
         return hTree;
     }
@@ -177,8 +192,7 @@ public class Hyphenator {
                             new FileInputStream(hyphenFile)));
                 hTree = (HyphenationTree)ois.readObject();
             } catch (Exception e) {
-                /**@todo Proper logging please */
-                e.printStackTrace();
+                log.error("Error while loading the hyphenation file", e);
             } finally {
                 if (ois != null) {
                     try {
