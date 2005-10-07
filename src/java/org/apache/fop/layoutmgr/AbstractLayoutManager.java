@@ -36,18 +36,27 @@ import java.util.Map;
  */
 public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager 
     implements Constants {
+
+    /** Parent LayoutManager for this LayoutManager */
     protected LayoutManager parentLM = null;
+    /** List of child LayoutManagers */
     protected List childLMs = null;
+    /** Iterator for child LayoutManagers */
     protected ListIterator fobjIter = null;
+    /** Marker map for markers related to this LayoutManager */
     protected Map markers = null;
 
     /** True if this LayoutManager has handled all of its content. */
     private boolean bFinished = false;
     
-    /** child LM and child LM iterator during getNextBreakPoss phase */
+    /** child LM and child LM iterator during getNextKnuthElement phase */
     protected LayoutManager curChildLM = null;
+    /** child LM and child LM iterator during getNextKnuthElement phase */
     protected ListIterator childLMiter = null;
     
+    private int lastGeneratedPosition = -1;
+    private int smallestPosNumberChecked = Integer.MAX_VALUE;
+
     /**
      * Abstract layout manager.
      */
@@ -69,14 +78,17 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         childLMiter = new LMiter(this);
     }
 
+    /** @see LayoutManager#setParent(LayoutManager) */
     public void setParent(LayoutManager lm) {
         this.parentLM = lm;
     }
 
+    /** @see LayoutManager#getParent */
     public LayoutManager getParent() {
         return this.parentLM;
     }
 
+    /** @see LayoutManager#initialize */
     public void initialize() {
         // Empty
     }
@@ -86,6 +98,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
      * all children have finished layout.
      * Note: child must implement LayoutManager! If it doesn't, skip it
      * and print a warning.
+     * @return the current child LayoutManager
      */
     protected LayoutManager getChildLM() {
         if (curChildLM != null && !curChildLM.isFinished()) {
@@ -97,6 +110,14 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
             return curChildLM;
         }
         return null;
+    }
+
+    /**
+     * Return indication if getChildLM will return another LM.
+     * @return true if another child LM is still available
+     */
+    protected boolean hasNextChildLM() {
+        return childLMiter.hasNext();
     }
 
     /**
@@ -131,6 +152,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         }
     }
 
+    /** @see LayoutManager#resetPosition(Position) */
     public void resetPosition(Position resetPos) {
         //  if (resetPos == null) {
         //      reset(null);
@@ -146,12 +168,18 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         return bFinished;
     }
 
+    /**
+     * Set the flag indicating the LayoutManager has handled all of its content.
+     * @param fin the flag value to be set
+     */
     public void setFinished(boolean fin) {
         bFinished = fin;
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#addAreas(org.apache.fop.layoutmgr.PositionIterator, org.apache.fop.layoutmgr.LayoutContext)
+     * @see org.apache.fop.layoutmgr.LayoutManager#addAreas(
+     *                                              org.apache.fop.layoutmgr.PositionIterator
+     *                                              , org.apache.fop.layoutmgr.LayoutContext)
      */
     public void addAreas(PositionIterator posIter, LayoutContext context) {
     }
@@ -166,8 +194,10 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         return null;
     }
 
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(List, int)
+     */
     public LinkedList getChangedKnuthElements(List oldList,
-                                              /*int flaggedPenalty,*/
                                               int alignment) {
         log.warn("null implementation of getChangeKnuthElement() called!");
         return null;
@@ -182,6 +212,8 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
      * Finally, based on the dimensions of the parent area, it initializes
      * its own area. This includes setting the content IPD and the maximum
      * BPD.
+     * @param childArea the child area for which the parent area is wanted
+     * @return the parent area for the given child
      */
     public Area getParentArea(Area childArea) {
         return null;
@@ -191,6 +223,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
      * Add a child area to the current area. If this causes the maximum
      * dimension of the current area to be exceeded, the parent LM is called
      * to add it.
+     * @param childArea the child area to be added
      */
     public void addChildArea(Area childArea) {
     }
@@ -284,6 +317,55 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
             LayoutManager lm = (LayoutManager) iter.next();
             addChildLM(lm);
         }
+    }
+
+    /**
+     * Adds a Position to the Position participating in the first|last determination by assigning
+     * it a unique position index.
+     * @param pos the Position
+     * @return the same Position but with a position index
+     */
+    protected Position notifyPos(Position pos) {
+        if (pos.getIndex() >= 0) {
+            throw new IllegalStateException("Position already got its index");
+        }
+        lastGeneratedPosition++;
+        pos.setIndex(lastGeneratedPosition);
+        return pos;
+    }
+    
+    /**
+     * Indicates whether the given Position is the first area-generating Position of this LM.
+     * @param pos the Position (must be one with a position index)
+     * @return True if it is the first Position
+     */
+    public boolean isFirst(Position pos) {
+        //log.trace("isFirst() smallestPosNumberChecked=" + smallestPosNumberChecked + " " + pos);
+        if (pos.getIndex() < 0) {
+            throw new IllegalArgumentException("Only Positions with an index can be checked");
+        }
+        if (pos.getIndex() == this.smallestPosNumberChecked) {
+            return true;
+        } else if (pos.getIndex() < this.smallestPosNumberChecked) {
+            this.smallestPosNumberChecked = pos.getIndex();
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Indicates whether the given Position is the last area-generating Position of this LM.
+     * @param pos the Position (must be one with a position index)
+     * @return True if it is the last Position
+     */
+    public boolean isLast(Position pos) {
+        //log.trace("isLast() lastGenPos=" + lastGeneratedPosition + " " + pos);
+        if (pos.getIndex() < 0) {
+            throw new IllegalArgumentException("Only Positions with an index can be checked");
+        }
+        return (pos.getIndex() == this.lastGeneratedPosition
+                && isFinished());
     }
 
 }

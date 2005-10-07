@@ -569,13 +569,19 @@ public abstract class AbstractRenderer
      */
     protected void renderLineArea(LineArea line) {
         List children = line.getInlineAreas();
-
+        int saveBP = currentBPPosition;
+        currentBPPosition += line.getSpaceBefore();
         for (int count = 0; count < children.size(); count++) {
             InlineArea inline = (InlineArea) children.get(count);
             renderInlineArea(inline);
         }
+        currentBPPosition = saveBP;
     }
 
+    /**
+     * Render the given InlineArea.
+     * @param inlineArea inline area text to render
+     */
     protected void renderInlineArea(InlineArea inlineArea) {
         if (inlineArea instanceof TextArea) {
             renderText((TextArea) inlineArea);
@@ -595,10 +601,18 @@ public abstract class AbstractRenderer
     }
 
 
+    /**
+     * Render the given Character.
+     * @param ch the character to render
+     */
     protected void renderCharacter(Character ch) {
         currentIPPosition += ch.getAllocIPD();
     }
 
+    /**
+     * Render the given Space.
+     * @param space the space to render
+     */
     protected void renderInlineSpace(Space space) {
         // an inline space moves the inline progression position
         // for the current block by the width or height of the space
@@ -607,23 +621,43 @@ public abstract class AbstractRenderer
         currentIPPosition += space.getAllocIPD();
     }
 
+    /**
+     * Render the given Leader.
+     * @param area the leader to render
+     */
     protected void renderLeader(Leader area) {
         currentIPPosition += area.getAllocIPD();
     }
 
+    /**
+     * Render the given TextArea.
+     * @param text the text to render
+     */
     protected void renderText(TextArea text) {
         currentIPPosition += text.getAllocIPD();
     }
 
+    /**
+     * Render the given InlineParent.
+     * @param ip the inline parent to render
+     */
     protected void renderInlineParent(InlineParent ip) {
         int saveIP = currentIPPosition;
+        int saveBP = currentBPPosition;
+        currentIPPosition += ip.getBorderAndPaddingWidthStart();
+        currentBPPosition += ip.getOffset();
         Iterator iter = ip.getChildAreas().iterator();
         while (iter.hasNext()) {
             renderInlineArea((InlineArea) iter.next()); 
         }
         currentIPPosition = saveIP + ip.getAllocIPD();
+        currentBPPosition = saveBP;
     }
 
+    /**
+     * Render the given InlineBlockParent.
+     * @param ibp the inline block parent to render
+     */
     protected void renderInlineBlockParent(InlineBlockParent ibp) {
         // For inline content the BP position is updated by the enclosing line area
         int saveBP = currentBPPosition;
@@ -631,6 +665,10 @@ public abstract class AbstractRenderer
         currentBPPosition = saveBP;
     }
 
+    /**
+     * Render the given Viewport.
+     * @param viewport the viewport to render
+     */
     protected void renderViewport(Viewport viewport) {
         Area content = viewport.getContent();
         int saveBP = currentBPPosition;

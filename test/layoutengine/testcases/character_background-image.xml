@@ -18,7 +18,7 @@
 <testcase>
   <info>
     <p>
-      This test checks background image on a character.
+      This test checks fo:character with background-image property.
     </p>
   </info>
   <variables>
@@ -33,13 +33,16 @@
       </fo:layout-master-set>
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
-          <fo:block>
-            <fo:character font-size="96pt" character="A" background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center" background-image="##img" />
+          <fo:block font-size="24pt">
+            <fo:character font-size="96pt" character="A" background-color="yellow" background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center" background-image="##img" />
+            <fo:character font-size="48pt" character="g" background-color="yellow" background-repeat="no-repeat" background-position-horizontal="center" background-position-vertical="center" background-image="##img" />
           </fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
   </fo>
   <checks>
+    <eval expected="color=#ffff00,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=8976,vertical=21360" xpath="//flow/block[1]/lineArea/char[1]/@background"/>
+    <eval expected="color=#ffff00,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=-9696,vertical=-840" xpath="//flow/block[1]/lineArea/char[2]/@background"/>
   </checks>
 </testcase>

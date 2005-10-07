@@ -48,7 +48,7 @@ public class InitialPropertySet extends FObj {
     private ColorTypeProperty color;
     private String id;
     // private ToBeImplementedProperty letterSpacing;
-    private Length lineHeight;
+    private SpaceProperty lineHeight;
     private int scoreSpaces;
     private int textDecoration;
     // private ToBeImplementedProperty textShadow;
@@ -75,7 +75,7 @@ public class InitialPropertySet extends FObj {
         color = pList.get(PR_COLOR).getColorType();
         id = pList.get(PR_ID).getString();
         // letterSpacing = pList.get(PR_LETTER_SPACING);
-        lineHeight = pList.get(PR_LINE_HEIGHT).getLength();
+        lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         scoreSpaces = pList.get(PR_SCORE_SPACES).getEnum();
         textDecoration = pList.get(PR_TEXT_DECORATION).getEnum();
         // textShadow = pList.get(PR_TEXT_SHADOW);
@@ -97,6 +97,13 @@ public class InitialPropertySet extends FObj {
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws ValidationException {
             invalidChildError(loc, nsURI, localName);
+    }
+
+    /**
+     * @return the "line-height" property.
+     */
+    public SpaceProperty getLineHeight() {
+        return lineHeight;
     }
 
     /**

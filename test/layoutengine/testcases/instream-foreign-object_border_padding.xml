@@ -63,7 +63,7 @@
     <eval expected="20000" xpath="//flow/block[1]/lineArea/viewport/@ipd"/>
     <eval expected="20000" xpath="//flow/block[1]/lineArea/viewport/@bpd"/>
     <eval expected="70000" xpath="//flow/block[1]/lineArea/viewport/@bpda"/>
-    <eval expected="1650" xpath="//flow/block[1]/lineArea/viewport/@offset"/>
+    <eval expected="0" xpath="//flow/block[1]/lineArea/viewport/@offset"/>
     <eval expected="20000 30000 20000 30000" xpath="//flow/block[1]/lineArea/viewport/@bap"/>
     <eval expected="color=#ffffff" xpath="//flow/block[1]/lineArea/viewport/@background"/>
     <eval expected="(solid,#000000,5000)" xpath="//flow/block[1]/lineArea/viewport/@border-before"/>
@@ -79,7 +79,7 @@
     <eval expected="20000" xpath="//flow/block[2]/lineArea/viewport/@ipd"/>
     <eval expected="20000" xpath="//flow/block[2]/lineArea/viewport/@bpd"/>
     <eval expected="70000" xpath="//flow/block[2]/lineArea/viewport/@bpda"/>
-    <eval expected="15550" xpath="//flow/block[2]/lineArea/viewport/@offset"/>
+    <eval expected="1800" xpath="//flow/block[2]/lineArea/viewport/@offset"/>
     <eval expected="20000 30000 20000 30000" xpath="//flow/block[2]/lineArea/viewport/@bap"/>
     <eval expected="color=#ffffff" xpath="//flow/block[2]/lineArea/viewport/@background"/>
     <eval expected="(solid,#000000,5000)" xpath="//flow/block[2]/lineArea/viewport/@border-before"/>

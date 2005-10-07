@@ -22,6 +22,9 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.flow.Character;
+import org.apache.fop.fo.flow.ExternalGraphic;
+import org.apache.fop.fo.flow.InstreamForeignObject;
 
 /**
  * Models a length which can be used as a factor in a percentage length
@@ -53,15 +56,8 @@ public class LengthBase implements PercentBase {
     public static final int IMAGE_BACKGROUND_POSITION_VERTICAL = 10;
     /** constant for a table-unit-based length */
     public static final int TABLE_UNITS = 11;
-
-    /** array of valid percent-based length types */
-    public static final int[] PERCENT_BASED_LENGTH_TYPES
-            = {CUSTOM_BASE, FONTSIZE, INH_FONTSIZE, PARENT_AREA_WIDTH,
-               CONTAINING_REFAREA_WIDTH, 
-               IMAGE_INTRINSIC_WIDTH, IMAGE_INTRINSIC_HEIGHT,
-               IMAGE_BACKGROUND_POSITION_HORIZONTAL, IMAGE_BACKGROUND_POSITION_VERTICAL,
-               TABLE_UNITS
-            };
+    /** constant for a alignment adjust percent-based length */
+    public static final int ALIGNMENT_ADJUST = 12;
 
     /**
      * The FO for which this property is to be calculated.
@@ -73,7 +69,8 @@ public class LengthBase implements PercentBase {
      */
     private /* final */ int iBaseType;
 
-    private Length fontSize;
+    /** For percentages based on other length properties */
+    private Length baseLength;
     
     /**
      * Constructor
@@ -87,10 +84,10 @@ public class LengthBase implements PercentBase {
         this.iBaseType = iBaseType;
         switch (iBaseType) {
         case FONTSIZE:
-            this.fontSize = plist.get(Constants.PR_FONT_SIZE).getLength();
+            this.baseLength = plist.get(Constants.PR_FONT_SIZE).getLength();
             break;
         case INH_FONTSIZE:
-            this.fontSize = plist.getInherited(Constants.PR_FONT_SIZE).getLength();
+            this.baseLength = plist.getInherited(Constants.PR_FONT_SIZE).getLength();
             break;
         default:
             // TODO: pacify CheckStyle
@@ -117,16 +114,16 @@ public class LengthBase implements PercentBase {
      * @see org.apache.fop.datatypes.PercentBase#getBaseLength(PercentBaseContext)
      */
     public int getBaseLength(PercentBaseContext context) throws PropertyException {
-        int baseLength = 0;
+        int baseLen = 0;
         if (context != null) {
             if (iBaseType == FONTSIZE || iBaseType == INH_FONTSIZE) {
-                return fontSize.getValue(context);
+                return baseLength.getValue(context);
             }
-            baseLength =  context.getBaseLength(iBaseType,  fobj);
+            baseLen =  context.getBaseLength(iBaseType,  fobj);
         } else {
             fobj.getLogger().error("getBaseLength called without context");
         }
-        return baseLength;
+        return baseLen;
     }
 
 }

@@ -57,7 +57,7 @@ public class PageNumber extends FObj {
     private KeepProperty keepWithNext;
     private KeepProperty keepWithPrevious;
     // private ToBeImplementedProperty letterSpacing;
-    private Length lineHeight;
+    private SpaceProperty lineHeight;
     private int scoreSpaces;
     private Length textAltitude;
     /** Holds the text decoration values. May be null */
@@ -98,7 +98,7 @@ public class PageNumber extends FObj {
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
         // letterSpacing = pList.get(PR_LETTER_SPACING);
-        lineHeight = pList.get(PR_LINE_HEIGHT).getLength();
+        lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         scoreSpaces = pList.get(PR_SCORE_SPACES).getEnum();
         textAltitude = pList.get(PR_TEXT_ALTITUDE).getLength();
         textDecoration = pList.getTextDecorationProps();
@@ -162,7 +162,42 @@ public class PageNumber extends FObj {
         return textDecoration; 
     }
 
-    /** @see org.apache.fop.fo.FONode#getName() */
+    /**
+     * @return the "alignment-adjust" property
+     */
+    public Length getAlignmentAdjust() {
+        return alignmentAdjust;
+    }
+    
+    /**
+     * @return the "alignment-baseline" property
+     */
+    public int getAlignmentBaseline() {
+        return alignmentBaseline;
+    }
+    
+    /**
+     * @return the "baseline-shift" property
+     */
+    public Length getBaselineShift() {
+        return baselineShift;
+    }
+    
+    /**
+     * @return the "dominant-baseline" property
+     */
+    public int getDominantBaseline() {
+        return dominantBaseline;
+    }
+    
+    /**
+     * @return the "line-height" property
+     */
+    public SpaceProperty getLineHeight() {
+        return lineHeight;
+    }
+    
+   /** @see org.apache.fop.fo.FONode#getName() */
     public String getName() {
         return "fo:page-number";
     }

@@ -29,6 +29,7 @@ import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonMarginInline;
+import org.apache.fop.fo.properties.SpaceProperty;
 
 /**
  * Class modelling the commonalities of several inline-level
@@ -43,7 +44,7 @@ public abstract class InlineLevel extends FObjMixed {
     protected CommonAural commonAural;
     protected CommonFont commonFont;
     protected ColorType color;
-    protected Length lineHeight;
+    protected SpaceProperty lineHeight;
     protected int visibility;
     // End of property values
 
@@ -64,7 +65,7 @@ public abstract class InlineLevel extends FObjMixed {
         commonAural = pList.getAuralProps();
         commonFont = pList.getFontProps();
         color = pList.get(PR_COLOR).getColorType();
-        lineHeight = pList.get(PR_LINE_HEIGHT).getLength();
+        lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         visibility = pList.get(PR_VISIBILITY).getEnum();
     }
 
@@ -95,5 +96,13 @@ public abstract class InlineLevel extends FObjMixed {
     public ColorType getColor() {
         return color;
     }
+
+    /**
+     * @return the "line-height" property
+     */
+    public SpaceProperty getLineHeight() {
+        return lineHeight;
+    }
+    
 }
 

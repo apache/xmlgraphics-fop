@@ -38,6 +38,7 @@ import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.Property;
+import org.apache.fop.fo.properties.SpaceProperty;
 
 /**
  * This class represents the flow object 'fo:character'. Its use is defined by
@@ -75,14 +76,13 @@ public class Character extends FObj {
     private KeepProperty keepWithNext;
     private KeepProperty keepWithPrevious;
     private Property letterSpacing;
-    private Length lineHeight;
+    private SpaceProperty lineHeight;
     private int scoreSpaces;
     private int suppressAtLineBreak;
     /** Holds the text decoration values. May be null */
     private CommonTextDecoration textDecoration;
     // private ToBeImplementedProperty textShadow;
     private int textTransform;
-    private int verticalAlign;
     private int visibility;
     private Property wordSpacing;
     // End of property values
@@ -125,13 +125,12 @@ public class Character extends FObj {
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
         letterSpacing = pList.get(PR_LETTER_SPACING);
-        lineHeight = pList.get(PR_LINE_HEIGHT).getLength();
+        lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         scoreSpaces = pList.get(PR_SCORE_SPACES).getEnum();
         suppressAtLineBreak = pList.get(PR_SUPPRESS_AT_LINE_BREAK).getEnum();
         textDecoration = pList.getTextDecorationProps();
         // textShadow = pList.get(PR_TEXT_SHADOW);
         textTransform = pList.get(PR_TEXT_TRANSFORM).getEnum();
-        verticalAlign = pList.get(PR_VERTICAL_ALIGN).getEnum();
         visibility = pList.get(PR_VISIBILITY).getEnum();
         wordSpacing = pList.get(PR_WORD_SPACING);
     }
@@ -197,6 +196,34 @@ public class Character extends FObj {
     }
 
     /**
+     * @return the "alignment-adjust" property
+     */
+    public Length getAlignmentAdjust() {
+        return alignmentAdjust;
+    }
+    
+    /**
+     * @return the "alignment-baseline" property
+     */
+    public int getAlignmentBaseline() {
+        return alignmentBaseline;
+    }
+    
+    /**
+     * @return the "baseline-shift" property
+     */
+    public Length getBaselineShift() {
+        return baselineShift;
+    }
+    
+    /**
+     * @return the "dominant-baseline" property
+     */
+    public int getDominantBaseline() {
+        return dominantBaseline;
+    }
+    
+    /**
      * @return the "id" property.
      */
     public String getId() {
@@ -210,6 +237,13 @@ public class Character extends FObj {
         return letterSpacing; 
     }
 
+    /**
+     * @return the "line-height" property.
+     */
+    public SpaceProperty getLineHeight() {
+        return lineHeight;
+    }
+
     /** @return the "text-decoration" property. */
     public CommonTextDecoration getTextDecoration() {
         return textDecoration; 
@@ -220,13 +254,6 @@ public class Character extends FObj {
      */
     public Property getWordSpacing() {
         return wordSpacing; 
-    }
-
-    /**
-     * @return the "vertical-align" property.
-     */
-    public int getVerticalAlign() {
-        return verticalAlign; 
     }
 
     /**

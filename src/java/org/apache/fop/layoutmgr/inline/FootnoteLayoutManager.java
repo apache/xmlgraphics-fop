@@ -79,7 +79,7 @@ public class FootnoteLayoutManager extends AbstractLayoutManager
             //Inline part of the footnote is empty. Need to send back an auxiliary
             //zero-width, zero-height inline box so the footnote gets painted.
             KnuthSequence seq = new KnuthSequence(true);
-            seq.add(new KnuthInlineBox(0, 0, 0, 0, null, true));
+            seq.add(new KnuthInlineBox(0, null, null, true));
             returnedList.add(seq);
         }
         setFinished(true);

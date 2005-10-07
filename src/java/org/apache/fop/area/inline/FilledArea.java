@@ -46,9 +46,11 @@ public class FilledArea extends InlineParent {
      *
      * @param v the offset
      */
+    /*
     public void setOffset(int v) {
         setChildOffset(inlines.listIterator(), v);
     }
+    */
 
     private void setChildOffset(ListIterator childrenIterator, int v) {
         while (childrenIterator.hasNext()) {

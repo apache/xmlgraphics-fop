@@ -18,53 +18,34 @@
 
 package org.apache.fop.layoutmgr.inline;
 
+import org.apache.fop.layoutmgr.inline.AlignmentContext;
 import org.apache.fop.layoutmgr.FootnoteBodyLayoutManager;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.Position;
 
 public class KnuthInlineBox extends KnuthBox {
     
-    private int lead;
-    private int total;
-    private int middle;
     private FootnoteBodyLayoutManager footnoteBodyLM = null;
+    private AlignmentContext alignmentContext = null;
 
     /**
      * Create a new KnuthBox.
      *
      * @param w    the width of this box
-     * @param l    the height of this box above the main baseline
-     * @param t    the total height of this box
-     * @param m    the height of this box above and below the middle baseline
+     * @param alignmentContext the alignmentContext for this box
      * @param pos  the Position stored in this box
      * @param bAux is this box auxiliary?
      */
-    public KnuthInlineBox(int w, int l, int t, int m, Position pos, boolean bAux) {
+    public KnuthInlineBox(int w, AlignmentContext alignmentContext, Position pos, boolean bAux) {
         super(w, pos, bAux);
-        lead = l;
-        total = t;
-        middle = m;
+        this.alignmentContext = alignmentContext;
     }
 
     /**
-     * @return the height of this box above the main baseline.
+     * @return the alignment context.
      */
-    public int getLead() {
-        return lead;
-    }
-
-    /**
-     * @return the total height of this box.
-     */
-    public int getTotal() {
-        return total;
-    }
-
-    /**
-     * @return the height of this box above and below the middle baseline.
-     */
-    public int getMiddle() {
-        return middle;
+    public AlignmentContext getAlignmentContext() {
+        return alignmentContext;
     }
 
     /**
@@ -92,9 +73,6 @@ public class KnuthInlineBox extends KnuthBox {
     /** @see java.lang.Object#toString() */
     public String toString() {
         StringBuffer sb = new StringBuffer(super.toString());
-        sb.append(" lead=").append(lead);
-        sb.append(" total=").append(total);
-        sb.append(" middle=").append(middle);
         return sb.toString();
     }
 }

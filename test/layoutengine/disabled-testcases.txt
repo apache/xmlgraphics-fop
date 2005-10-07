@@ -1,5 +1,5 @@
-character_background-image.xml
 block-container_reference-orientation_bug36391.xml
+block_font-family_asian.xml
 block_font-stretch.xml
 block_padding_2.xml
 block_space-before_space-after_2.xml
@@ -9,7 +9,7 @@ block_word-spacing_text-align_justify.xml
 external-graphic_oversized.xml
 inline-block_keep-together.xml
 inline_block_nested_3.xml
-inline_border_padding.xml
+inline_border_padding_block_nested.xml
 inline-container_block_nested.xml
 inline-container_border_padding.xml
 inline_letter-spacing.xml
@@ -23,6 +23,7 @@ list-item_space-before_space-after_2.xml
 page-breaking_4.xml
 page-breaking_6.xml
 page-height_indefinite_simple.xml
+page-number-citation_background-image.xml
 page-number-citation_complex_1.xml
 page-number-citation_complex_2.xml
 page-number_initial-page-number_2.xml

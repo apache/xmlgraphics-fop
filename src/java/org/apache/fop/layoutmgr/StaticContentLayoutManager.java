@@ -279,6 +279,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
                 LayoutContext childLC = new LayoutContext(0);
                 childLC.setStackLimit(context.getStackLimit());
                 childLC.setRefIPD(context.getRefIPD());
+                childLC.setWritingMode(context.getWritingMode());
 
                 LinkedList returnedList = null;
                 if (!curLM.isFinished()) {

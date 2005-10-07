@@ -118,21 +118,9 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
         ListIterator contentIter = contentList.listIterator();
         while (contentIter.hasNext()) {
             KnuthElement element = (KnuthElement) contentIter.next();
-            if (element.isBox()) {
+            if (element instanceof KnuthInlineBox) {
                 KnuthInlineBox box = (KnuthInlineBox) element;
-                if (box.getLead() > lineLead) {
-                    lineLead = box.getLead();
-                }
-                if (box.getTotal() > maxtb) {
-                    maxtb = box.getTotal();
-                }
-                // Is this needed? cf. LineLM.makeLineBreakPosition
-                // if (box.getMiddle() > lineLead) {
-                //     lineLead = box.getMiddle();
-                // }
-                if (box.getMiddle() > middlefollow) {
-                    middlefollow = box.getMiddle();
-                }
+                // TODO handle alignment here?
             }
         }
 
@@ -141,8 +129,6 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
         }
 
         LayoutContext lc = new LayoutContext(0);
-        lc.setBaseline(lineLead);
-        lc.setLineHeight(lineHeight);
 
         lc.setFlags(LayoutContext.RESOLVE_LEADING_SPACE, true);
         lc.setLeadingSpace(new SpaceSpecifier(false));

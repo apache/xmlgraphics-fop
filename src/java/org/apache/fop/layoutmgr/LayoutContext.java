@@ -21,6 +21,7 @@ package org.apache.fop.layoutmgr;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.layoutmgr.inline.HyphContext;
 import org.apache.fop.traits.MinOptMax;
+import org.apache.fop.layoutmgr.inline.AlignmentContext;
 
 
 /**
@@ -82,6 +83,9 @@ public class LayoutContext {
     /** inline-progression-dimension of nearest ancestor reference area */
     int refIPD;
 
+    /** the writing mode established by the nearest ancestor reference area */
+    private int writingMode = Constants.EN_LR_TB;
+
     /** Current pending space-after or space-end from preceding area */
     SpaceSpecifier trailingSpace;
 
@@ -100,17 +104,23 @@ public class LayoutContext {
     /** Stretch or shrink value when adding spaces. */
     private double dSpaceAdjust = 0.0;
 
-    private int iLineHeight;
-    private int iBaseline;
-    private int iMiddleShift;
-    private int iTopShift; /*LF*/
-    private int iBottomShift; /*LF*/
-    private int iSpaceBefore; /*LF*/
-    private int iSpaceAfter; /*LF*/
+    private AlignmentContext alignmentContext = null;
+    
+    /** Amount of space before / start */
+    private int spaceBefore = 0;
+    
+    /** Amount of space after / end */
+    private int spaceAfter = 0;
+    
+    /** Amount of space to reserve at the beginning of each line */
+    private int lineStartBorderAndPaddingWidth = 0;
+    /** Amount of space to reserve at the end of each line */
+    private int lineEndBorderAndPaddingWidth = 0;
 
     public LayoutContext(LayoutContext parentLC) {
         this.flags = parentLC.flags;
         this.refIPD = parentLC.refIPD;
+        this.writingMode = parentLC.writingMode;
         this.stackLimit = null; // Don't reference parent MinOptMax!
         this.leadingSpace = parentLC.leadingSpace; //???
         this.trailingSpace = parentLC.trailingSpace; //???
@@ -118,13 +128,9 @@ public class LayoutContext {
         this.bpAlignment = parentLC.bpAlignment;
         this.dSpaceAdjust = parentLC.dSpaceAdjust;
         this.ipdAdjust = parentLC.ipdAdjust;
-        this.iLineHeight = parentLC.iLineHeight;
-        this.iBaseline = parentLC.iBaseline;
-        this.iMiddleShift = parentLC.iMiddleShift;
-/*LF*/  this.iTopShift = parentLC.iTopShift;
-/*LF*/  this.iBottomShift = parentLC.iBottomShift;
-/*LF*/  this.iSpaceBefore = parentLC.iSpaceBefore;
-/*LF*/  this.iSpaceAfter = parentLC.iSpaceAfter;
+        this.alignmentContext = parentLC.alignmentContext;
+        this.lineStartBorderAndPaddingWidth = parentLC.lineStartBorderAndPaddingWidth;
+        this.lineEndBorderAndPaddingWidth = parentLC.lineEndBorderAndPaddingWidth;
         // Copy other fields as necessary. Use clone???
     }
 
@@ -257,60 +263,50 @@ public class LayoutContext {
         return ipdAdjust;
     }
 
-    public void setLineHeight(int lh) {
-        iLineHeight = lh;
-    }
-
-    public int getLineHeight() {
-        return iLineHeight;
-    }
-
-    public void setBaseline(int bl) {
-        iBaseline = bl;
-    }
-
-    public int getBaseline() {
-        return iBaseline;
+    public void setAlignmentContext(AlignmentContext alignmentContext) {
+        this.alignmentContext = alignmentContext;
     }
     
-    public void setMiddleShift(int ms) {
-        iMiddleShift = ms;
+    public AlignmentContext getAlignmentContext() {
+        return this.alignmentContext;
     }
 
-    public int getMiddleBaseline() {
-        return iBaseline + iMiddleShift;
+    public void resetAlignmentContext() {
+        if (this.alignmentContext != null) {
+            this.alignmentContext = this.alignmentContext.getParentAlignmentContext();
+        }
     }
     
-    public void setTopShift(int ts) {
-        iTopShift = ts;
-    }
-
-    public int getTopBaseline() {
-        return iBaseline + iTopShift;
-    }
-
-    public void setBottomShift(int bs) {
-        iBottomShift = bs;
-    }
-
-    public int getBottomBaseline() {
-        return iBaseline + iBottomShift;
-    }
-
-    public int getSpaceBefore() {
-        return iSpaceBefore;
+    /**
+     * Get the width to be reserved for border and padding at the start of the line.
+     * @return the width to be reserved
+     */
+    public int getLineStartBorderAndPaddingWidth() {
+        return lineStartBorderAndPaddingWidth;
     }
     
-    public void setSpaceBefore(int sp) {
-        iSpaceBefore = sp;
+    /**
+     * Set the width to be reserved for border and padding at the start of the line.
+     * @param lineStartBorderAndPaddingWidth the width to be reserved
+     */
+    public void setLineStartBorderAndPaddingWidth(int lineStartBorderAndPaddingWidth) {
+        this.lineStartBorderAndPaddingWidth = lineStartBorderAndPaddingWidth;
     }
-
-    public int getSpaceAfter() {
-        return iSpaceAfter;
+    
+    /**
+     * Get the width to be reserved for border and padding at the end of the line.
+     * @return the width to be reserved
+     */
+    public int getLineEndBorderAndPaddingWidth() {
+        return lineEndBorderAndPaddingWidth;
     }
-
-    public void setSpaceAfter(int sp) {
-        iSpaceAfter = sp;
+    
+    /**
+     * Set the width to be reserved for border and padding at the end of the line.
+     * @param lineEndBorderAndPaddingWidth the width to be reserved
+     */
+    public void setLineEndBorderAndPaddingWidth(int lineEndBorderAndPaddingWidth) {
+        this.lineEndBorderAndPaddingWidth = lineEndBorderAndPaddingWidth;
     }
     
     /**
@@ -335,6 +331,54 @@ public class LayoutContext {
         }
     }
     
+    /** 
+     * Get the writing mode of the relevant reference area.
+     * @return the applicable writing mode
+     */
+    public int getWritingMode() {
+        return writingMode;
+    }
+
+    /** 
+     * Set the writing mode.
+     * @param writingMode the writing mode
+     */
+    public void setWritingMode(int writingMode) {
+        this.writingMode = writingMode;
+    }
+
+    /**
+     * Get the current amount of space before / start
+     * @return the space before / start amount
+     */
+    public int getSpaceBefore() {
+        return spaceBefore;
+    }
+
+    /**
+     * Set the amount of space before / start
+     * @param spaceBefore the amount of space before / start
+     */
+    public void setSpaceBefore(int spaceBefore) {
+        this.spaceBefore = spaceBefore;
+    }
+
+    /**
+     * Get the current amount of space after / end
+     * @return the space after / end amount
+     */
+    public int getSpaceAfter() {
+        return spaceAfter;
+    }
+
+    /**
+     * Set the amount of space after / end
+     * @param spaceAfter the amount of space after / end
+     */
+    public void setSpaceAfter(int spaceAfter) {
+        this.spaceAfter = spaceAfter;
+    }
+    
     /** @see java.lang.Object#toString() */
     public String toString() {
         return "Layout Context:" +
@@ -344,17 +388,15 @@ public class LayoutContext {
         "\nReference IPD: \t" + getRefIPD() +
         "\nSpace Adjust: \t" + getSpaceAdjust() + 
         "\nIPD Adjust: \t" + getIPDAdjust() +
-        "\nLine Height: \t" + getLineHeight() +
-        "\nBaseline: \t" + getBaseline() +
-        "\nMiddle Baseline: \t" + getMiddleBaseline() +
         "\nResolve Leading Space: \t" + resolveLeadingSpace() +
         "\nSuppress Leading Space: \t" + suppressLeadingSpace() +
         "\nIs First Area: \t" + isFirstArea() + 
         "\nStarts New Area: \t" + startsNewArea() + 
         "\nIs Last Area: \t" + isLastArea() +
         "\nTry Hyphenate: \t" + tryHyphenate() + 
-        "\nKeeps: \t[" + (isKeepWithNextPending()?"keep-with-next":"") + "][" 
-            + (isKeepWithPreviousPending()?"keep-with-previous":"") + "] pending";
+        "\nKeeps: \t[" + (isKeepWithNextPending() ? "keep-with-next" : "") + "][" 
+            + (isKeepWithPreviousPending() ? "keep-with-previous" : "") + "] pending";
     }
+
 }
 

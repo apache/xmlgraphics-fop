@@ -33,9 +33,11 @@ import org.apache.fop.fo.FObj;
 public abstract class AbstractBaseLayoutManager 
     implements LayoutManager, PercentBaseContext {
     
+    /** Indicator if this LM generates reference areas */
     protected boolean generatesReferenceArea = false;
+    /** Indicator if this LM generates block areas */
     protected boolean generatesBlockArea = false;
-    
+    /** The formatting object for this LM */
     protected FObj fobj = null;
 
     /**
@@ -258,6 +260,9 @@ public abstract class AbstractBaseLayoutManager
         return false;
     }
     
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#getFObj
+     */
     public FObj getFObj() {
         return fobj;
     }

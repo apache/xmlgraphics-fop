@@ -79,13 +79,13 @@
     <eval expected="360000" xpath="//pageViewport[1]/page/regionViewport/regionBody/footnote/block[1]/@ipd"/>
     <eval expected="3" xpath="count(//pageViewport[1]/page/regionViewport/regionBody/footnote/block)"/>
     <eval expected="7400" xpath="//pageViewport[1]/page/regionViewport/regionBody/footnote/block[1]/@bpd"/>
-    <eval expected="7200" xpath="//pageViewport[1]/page/regionViewport/regionBody/footnote/block[1]/block[1]/lineArea/@bpd"/>
+    <eval expected="5550" xpath="//pageViewport[1]/page/regionViewport/regionBody/footnote/block[1]/block[1]/lineArea/@bpd"/>
     <eval expected="I'm a block serving as a footnote separator. I'm on page 1." xpath="//pageViewport[1]/page/regionViewport/regionBody/footnote/block[1]/block[1]/lineArea"/>
     <eval expected="14400" xpath="//pageViewport[1]/page/regionViewport/regionBody/footnote/block[2]/@bpd"/>
-    <eval expected="14400" xpath="//pageViewport[1]/page/regionViewport/regionBody/footnote/block[2]/lineArea/@bpd"/>
+    <eval expected="11100" xpath="//pageViewport[1]/page/regionViewport/regionBody/footnote/block[2]/lineArea/@bpd"/>
     <eval expected="1I'm a footnote!" xpath="//pageViewport[1]/page/regionViewport/regionBody/footnote/block[2]/lineArea"/>
     <eval expected="14400" xpath="//pageViewport[1]/page/regionViewport/regionBody/footnote/block[3]/@bpd"/>
-    <eval expected="14400" xpath="//pageViewport[1]/page/regionViewport/regionBody/footnote/block[3]/lineArea/@bpd"/>
+    <eval expected="11100" xpath="//pageViewport[1]/page/regionViewport/regionBody/footnote/block[3]/lineArea/@bpd"/>
     <eval expected="2I'm another footnote!" xpath="//pageViewport[1]/page/regionViewport/regionBody/footnote/block[3]/lineArea"/>
     <!-- page break checks -->
     <eval expected="filling 10..." xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[last()]/lineArea"/>
@@ -102,10 +102,10 @@
     <eval expected="2" xpath="count(//pageViewport[3]/page/regionViewport/regionBody/footnote/block)"/>
     <eval expected="360000" xpath="//pageViewport[3]/page/regionViewport/regionBody/footnote/block[1]/@ipd"/>
     <eval expected="7400" xpath="//pageViewport[3]/page/regionViewport/regionBody/footnote/block[1]/@bpd"/>
-    <eval expected="7200" xpath="//pageViewport[3]/page/regionViewport/regionBody/footnote/block[1]/block[1]/lineArea/@bpd"/>
+    <eval expected="5550" xpath="//pageViewport[3]/page/regionViewport/regionBody/footnote/block[1]/block[1]/lineArea/@bpd"/>
     <eval expected="I'm a block serving as a footnote separator. I'm on page 3." xpath="//pageViewport[3]/page/regionViewport/regionBody/footnote/block[1]/block[1]/lineArea"/>
     <eval expected="14400" xpath="//pageViewport[3]/page/regionViewport/regionBody/footnote/block[2]/@bpd"/>
-    <eval expected="14400" xpath="//pageViewport[3]/page/regionViewport/regionBody/footnote/block[2]/lineArea/@bpd"/>
+    <eval expected="11100" xpath="//pageViewport[3]/page/regionViewport/regionBody/footnote/block[2]/lineArea/@bpd"/>
     <eval expected="I come from an empty block at the end of the flow!" xpath="//pageViewport[3]/page/regionViewport/regionBody/footnote/block[2]/lineArea"/>
   </checks>
 </testcase>

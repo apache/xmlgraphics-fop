@@ -49,6 +49,10 @@ import java.util.ListIterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import org.apache.fop.area.Trait;
+import org.apache.fop.fonts.Font;
+import org.apache.fop.layoutmgr.BreakingAlgorithm.KnuthNode;
+import org.apache.fop.layoutmgr.inline.InlineStackingLayoutManager.StackingIter;
 
 import org.apache.fop.traits.MinOptMax;
 
@@ -102,14 +106,14 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         private int startIndent;
         private int lineHeight;
         private int lineWidth;
+        private int spaceBefore;
+        private int spaceAfter;
         private int baseline;
-        private int topShift;
-        private int bottomShift;
 
         LineBreakPosition(LayoutManager lm, int index, int iBreakIndex,
                           int shrink, int stretch, int diff,
                           double ipdA, double adjust, int ind,
-                          int lh, int lw, int bl, int ts, int bs) {
+                          int lh, int lw, int sb, int sa, int bl) {
             super(lm, iBreakIndex);
             availableShrink = shrink;
             availableStretch = stretch;
@@ -120,9 +124,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             startIndent = ind;
             lineHeight = lh;
             lineWidth = lw;
+            spaceBefore = sb;
+            spaceAfter = sa;
             baseline = bl;
-            topShift = ts;
-            bottomShift = bs;
         }
         
     }
@@ -141,8 +145,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     private Length lineHeight;
     private int lead;
     private int follow;
-    // offset of the middle baseline with respect to the main baseline
-    private int middleShift;
+    private AlignmentContext alignmentContext = null;
 
     private List knuthParagraphs = null;
     private int iReturnedLBP = 0;
@@ -157,16 +160,20 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     private List lineLayoutsList;
     private int iLineWidth = 0;
 
-    // this constant is used to create elements when text-align is center:
-    // every TextLM descendant of LineLM must use the same value, 
-    // otherwise the line breaking algorithm does not find the right
-    // break point
+    /**
+     * this constant is used to create elements when text-align is center:
+     * every TextLM descendant of LineLM must use the same value, 
+     * otherwise the line breaking algorithm does not find the right
+     * break point
+     */
     public static final int DEFAULT_SPACE_WIDTH = 3336;
 
 
-    // this class is used to remember
-    // which was the first element in the paragraph
-    // returned by each LM
+    /**
+     * This class is used to remember
+     * which was the first element in the paragraph
+     * returned by each LM.
+     */
     private class Update {
         private InlineLevelLayoutManager inlineLM;
         private int iFirstIndex;
@@ -217,16 +224,16 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             if (textAlignment == EN_CENTER && textAlignmentLast != EN_JUSTIFY) {
                 this.add(new KnuthGlue(0, 3 * DEFAULT_SPACE_WIDTH, 0,
                                        null, false));
-                ignoreAtStart ++;
+                ignoreAtStart++;
             }
 
             // add the element representing text indentation
             // at the beginning of the first paragraph
             if (knuthParagraphs.size() == 0
                         && fobj.getTextIndent().getValue(layoutManager) != 0) {
-                this.add(new KnuthInlineBox(fobj.getTextIndent().getValue(layoutManager), 0, 0, 0,
+                this.add(new KnuthInlineBox(fobj.getTextIndent().getValue(layoutManager), null, 
                                       null, false));
-                ignoreAtStart ++;
+                ignoreAtStart++;
             }
         }
 
@@ -364,14 +371,13 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         private int lineHeight;
         private int lead;
         private int follow;
-        private int middleshift;
         private int maxDiff;
         private static final double MAX_DEMERITS = 10e6;
 
         public LineBreakingAlgorithm (int pageAlign,
                                       int textAlign, int textAlignLast,
                                       int indent, int fillerWidth,
-                                      int lh, int ld, int fl, int ms, boolean first,
+                                      int lh, int ld, int fl, boolean first,
                                       LineLayoutManager llm) {
             super(textAlign, textAlignLast, first, false);
             pageAlignment = pageAlign;
@@ -380,7 +386,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             lineHeight = lh;
             lead = ld;
             follow = fl;
-            middleshift = ms;
             thisLLM = llm;
             activePossibility = -1;
             maxDiff = fobj.getWidows() >= fobj.getOrphans() 
@@ -402,13 +407,11 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             int difference = bestActiveNode.difference;
             int textAlign = (bestActiveNode.line < total) ? alignment : alignmentLast;
             indent += (textAlign == Constants.EN_CENTER) ?
-                          difference / 2 :
-                          (textAlign == Constants.EN_END) ? difference : 0;
-            indent += (bestActiveNode.line == 1 && bFirst) ? 
-                          textIndent : 0;
+                          difference / 2 : (textAlign == Constants.EN_END) ? difference : 0;
+            indent += (bestActiveNode.line == 1 && bFirst) ? textIndent : 0;
             double ratio = (textAlign == Constants.EN_JUSTIFY
-                || difference < 0 && -difference <= bestActiveNode.availableShrink) ?
-                bestActiveNode.adjustRatio : 0;
+                || difference < 0 && -difference <= bestActiveNode.availableShrink)
+                        ? bestActiveNode.adjustRatio : 0;
 
             // add nodes at the beginning of the list, as they are found
             // backwards, from the last one to the first one
@@ -420,7 +423,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             }
 
             if (addedPositions == lineLayouts.getLineCount(activePossibility)) {
-                activePossibility ++;
+                activePossibility++;
                 addedPositions = 0;
                 //System.out.println(" ");
             }
@@ -431,7 +434,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                                                                bestActiveNode.position,
                                                                bestActiveNode.availableShrink - (addedPositions > 0 ? 0 : ((Paragraph)par).lineFiller.opt - ((Paragraph)par).lineFiller.min), bestActiveNode.availableStretch, difference, ratio, indent),
                                          activePossibility);
-            addedPositions ++;
+            addedPositions++;
         }
 
         /* reset activePossibility, as if breakpoints have not yet been computed
@@ -447,14 +450,11 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                                                         double ratio,
                                                         int indent) {
             // line height calculation
-
             int halfLeading = (lineHeight - lead - follow) / 2;
             // height before the main baseline
             int lineLead = lead;
-            // maximum size of top and bottom alignment
-            int maxtb = follow;
-            // max size of middle alignment before and after the middle baseline
-            int middlefollow = maxtb;
+            // maximum follow 
+            int lineFollow = follow;
             // true if this line contains only zero-height, auxiliary boxes
             // and the actual line width is 0; in this case, the line "collapses"
             // i.e. the line area will have bpd = 0
@@ -465,57 +465,60 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             if (fobj.getLineStackingStrategy() != EN_FONT_HEIGHT) {
                 ListIterator inlineIterator
                     = par.listIterator(firstElementIndex);
+                AlignmentContext lastAC = null;
+                int maxIgnoredHeight = 0; // See spec 7.13
                 for (int j = firstElementIndex;
                      j <= lastElementIndex;
                      j++) {
                     KnuthElement element = (KnuthElement) inlineIterator.next();
-                    if (element.isBox()) {
-                        if (((KnuthInlineBox) element).getLead() > lineLead) {
-                            lineLead = ((KnuthInlineBox) element).getLead();
-                        }
-                        if (((KnuthInlineBox) element).getTotal() > maxtb) {
-                            maxtb = ((KnuthInlineBox) element).getTotal();
-                        }
-                        if (((KnuthInlineBox) element).getMiddle() > lineLead + middleShift) {
-                            lineLead += ((KnuthInlineBox) element).getMiddle()
-                                        - lineLead - middleShift;
-                        }
-                        if (((KnuthInlineBox) element).getMiddle() > middlefollow - middleShift) {
-                            middlefollow += ((KnuthInlineBox) element).getMiddle()
-                                            - middlefollow + middleShift;
+                    if (element instanceof KnuthInlineBox ) {
+                        AlignmentContext ac = ((KnuthInlineBox) element).getAlignmentContext();
+                        if (ac != null && lastAC != ac) {
+                            if (!ac.usesInitialBaselineTable()
+                                || ac.getAlignmentBaselineIdentifier() != EN_BEFORE_EDGE
+                                   && ac.getAlignmentBaselineIdentifier() != EN_AFTER_EDGE) {
+                                int alignmentOffset = ac.getTotalAlignmentBaselineOffset();
+                                if (alignmentOffset + ac.getAltitude() > lineLead) {
+                                    lineLead = alignmentOffset + ac.getAltitude();
+                                }
+                                if (ac.getDepth() - alignmentOffset > lineFollow)  {
+                                    lineFollow = ac.getDepth() - alignmentOffset;
+                                }
+                            } else {
+                                if (ac.getHeight() > maxIgnoredHeight) {
+                                    maxIgnoredHeight = ac.getHeight();
+                                }
+                            }
+                            lastAC = ac;
                         }
                         if (bZeroHeightLine
-                            && (!element.isAuxiliary()
-                                || ((KnuthInlineBox) element).getTotal() > 0
-                                || ((KnuthInlineBox) element).getLead() > 0
-                                || ((KnuthInlineBox) element).getMiddle() > 0)) {
+                            && (!element.isAuxiliary() || ac != null && ac.getHeight() > 0)) {
                             bZeroHeightLine = false;
                         }
                     }
                 }
 
-                if (maxtb - lineLead > middlefollow) {
-                    middlefollow = maxtb - lineLead;
+                if (lineFollow < maxIgnoredHeight - lineLead) {
+                    lineFollow = maxIgnoredHeight - lineLead;
                 }
             }
 
-            constantLineHeight = lineLead + middlefollow + (lineHeight - lead - follow);
+            constantLineHeight = lineLead + lineFollow;
 
             if (bZeroHeightLine) {
                 return new LineBreakPosition(thisLLM,
                                              knuthParagraphs.indexOf(par),
                                              lastElementIndex,
                                              availableShrink, availableStretch, difference, ratio, 0, indent,
-                                             0, iLineWidth,
-                                             0, 0, 0);
+                                             0, iLineWidth, 0, 0, 0);
             } else {
                 return new LineBreakPosition(thisLLM,
                                              knuthParagraphs.indexOf(par),
                                              lastElementIndex,
                                              availableShrink, availableStretch, difference, ratio, 0, indent,
-                                             lineLead + middlefollow + (lineHeight - lead - follow), iLineWidth,
-                                             lineLead + halfLeading,
-                                             - lineLead, middlefollow);
+                                             lineLead + lineFollow, 
+                                             iLineWidth, halfLeading, halfLeading,
+                                             lineLead);
             }
         }
 
@@ -577,12 +580,12 @@ public class LineLayoutManager extends InlineStackingLayoutManager
      * Create a new Line Layout Manager.
      * This is used by the block layout manager to create
      * line managers for handling inline areas flowing into line areas.
-     *
+     * @param block the block formatting object
      * @param lh the default line height
      * @param l the default lead, from top to baseline
      * @param f the default follow, from baseline to bottom
      */
-    public LineLayoutManager(Block block, Length lh, int l, int f, int ms) {
+    public LineLayoutManager(Block block, Length lh, int l, int f) {
         super(block);
         fobj = block;
         // the child FObj are owned by the parent BlockLM
@@ -591,14 +594,16 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         lineHeight = lh;
         lead = l;
         follow = f;
-        middleShift = ms;
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+        Font fs = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
+        alignmentContext = new AlignmentContext(fs, lineHeight.getValue(this), context.getWritingMode());
+        context.setAlignmentContext(alignmentContext);
         // Get a break from currently active child LM
         // Set up constraints for inline level managers
-        InlineLevelLayoutManager curLM ; // currently active LM
+        InlineLevelLayoutManager curLM; // currently active LM
 
         // IPD remaining in line
         MinOptMax availIPD = context.getStackLimit();
@@ -775,8 +780,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                             if (lastPar.size() == 0) {
                                 //only a forced linefeed on this line 
                                 //-> compensate with a zero width box
-                                lastPar.add(new KnuthInlineBox(0, 0, 0, 0,
-                                        null, false));
+                                lastPar.add(new KnuthInlineBox(0, null, null, false));
                             }
                             lastPar.endParagraph();
                             ElementListObserver.observe(lastPar, "line", null);
@@ -905,9 +909,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         // height above the main baseline
         int lineLead = lead + halfLeading;
         // maximum size of top and bottom alignment
-        int maxtb = follow + halfLeading;
-        // max size of middle alignment above and below the middle baseline
-        int middlefollow = maxtb;
+        int lineFollow = follow + halfLeading;
 
         ListIterator inlineIterator
             = par.listIterator(firstElementIndex);
@@ -920,8 +922,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 if (box.getLead() > lineLead) {
                     lineLead = box.getLead();
                 }
-                if (box.getTotal() > maxtb) {
-                    maxtb = box.getTotal();
+                if (box.getTotal() > lineFollow) {
+                    lineFollow = box.getTotal();
                 }
                 if (box.getMiddle() > lineLead + middleShift) {
                     lineLead += box.getMiddle()
@@ -934,8 +936,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             }
         }
 
-        if (maxtb - lineLead > middlefollow) {
-                    middlefollow = maxtb - lineLead;
+        if (lineFollow - lineLead > middlefollow) {
+                    middlefollow = lineFollow - lineLead;
         }
 
         breakpoints.add(insertIndex,
@@ -985,7 +987,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         //TODO Should this really create only a single LineBreakPosition???
         //This creates an implicit keep-together on the nested block-level FOs.
         lineLayouts = new LineLayoutPossibilities();
-        lineLayouts.addPossibility(1,0);
+        lineLayouts.addPossibility(1, 0);
         int lineHeight = 0, lineStretch = 0, lineShrink = 0;
         ListIterator seqIterator = seq.listIterator();
         while (seqIterator.hasNext()) {
@@ -1015,9 +1017,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         double maxAdjustment = 1;
         int iBPcount = 0;
         LineBreakingAlgorithm alg = new LineBreakingAlgorithm(alignment,
-                textAlignment, textAlignmentLast,
+                                        textAlignment, textAlignmentLast,
                                         textIndent.getValue(this), currPar.lineFiller.opt,
-                                        lineHeight.getValue(this), lead, follow, middleShift,
+                                        lineHeight.getValue(this), lead, follow,
                                         (knuthParagraphs.indexOf(currPar) == 0),
                                         this);
    
@@ -1121,7 +1123,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     
         LinkedList returnList = new LinkedList();
         
-        for (int p = 0; p < knuthParagraphs.size(); p ++) {
+        for (int p = 0; p < knuthParagraphs.size(); p++) {
             // null penalty between paragraphs
             if (p > 0
                 && !((BlockLevelLayoutManager) parentLM).mustKeepTogether()) {
@@ -1138,8 +1140,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     KnuthElement tempElement;
                     tempElement = (KnuthElement) listIter.next();
                     if (tempElement.getLayoutManager() != this) {
-                        tempElement.setPosition(new NonLeafPosition(this,
-                                tempElement.getPosition()));
+                        tempElement.setPosition(notifyPos(new NonLeafPosition(this,
+                                tempElement.getPosition())));
                     }
                     targetList.add(tempElement);
                 }
@@ -1181,7 +1183,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     }
                     startIndex = endIndex + 1;
                     LineBreakPosition lbp = (LineBreakPosition) lineLayouts.getChosenPosition(i);
-                    returnList.add(new KnuthBlockBox(lbp.lineHeight, footnoteList, lbp, false));
+                    returnList.add(new KnuthBlockBox(lbp.lineHeight + lbp.spaceBefore + lbp.spaceAfter
+                                                    , footnoteList, lbp, false));
                     /* // add stretch and shrink to the returnlist
                     if (!seq.isInlineSequence()
                             && lbp.availableStretch != 0 || lbp.availableShrink != 0) {
@@ -1322,14 +1325,23 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         }
     }
 
+    /**
+     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepTogether
+     */
     public boolean mustKeepTogether() {
         return false;
     }
 
+    /**
+     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithPrevious
+     */
     public boolean mustKeepWithPrevious() {
         return false;
     }
 
+    /**
+     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithNext
+     */
     public boolean mustKeepWithNext() {
         return false;
     }
@@ -1351,19 +1363,21 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         return lineNumberDifference * constantLineHeight;
     }
 
+    /**
+     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#discardSpace(KnuthGlue)
+     */
     public void discardSpace(KnuthGlue spaceGlue) {
     }
 
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(List, int)
+     */
     public LinkedList getChangedKnuthElements(List oldList, int alignment) {
         LinkedList returnList = new LinkedList();
-        for (int p = 0;
-             p < knuthParagraphs.size();
-             p ++) {
+        for (int p = 0; p < knuthParagraphs.size(); p++) {
             lineLayouts = (LineLayoutPossibilities)lineLayoutsList.get(p);
             //System.out.println("demerits of the chosen layout: " + lineLayouts.getChosenDemerits());
-            for (int i = 0;
-                 i < lineLayouts.getChosenLineCount();
-                 i ++) {
+            for (int i = 0; i < lineLayouts.getChosenLineCount(); i++) {
                 if (!((BlockLevelLayoutManager) parentLM).mustKeepTogether()
                     && i >= fobj.getOrphans()
                     && i <= lineLayouts.getChosenLineCount() - fobj.getWidows()) {
@@ -1401,7 +1415,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
      * find hyphenation points for every word int the current paragraph
      * @ param currPar the paragraph whose words will be hyphenated
      */
-    private void findHyphenationPoints(Paragraph currPar){
+    private void findHyphenationPoints(Paragraph currPar) {
         // hyphenate every word
         ListIterator currParIterator
             = currPar.listIterator(currPar.ignoreAtStart);
@@ -1447,7 +1461,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                             updateList.add(new Update(currLM, currParIterator.previousIndex()));
                         }
                         // append text to recreate the whole word
-                        boxCount ++;
+                        boxCount++;
                         currLM.getWordChars(sbChars, nextElement.getPosition());
                     } else if (!nextElement.isAuxiliary()) {
                         // a non-auxiliary non-box KnuthElement: stop
@@ -1455,8 +1469,12 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                         currParIterator.previous(); 
                         break;
                     } else {
+                        if (currLM != nextElement.getLayoutManager()) {
+                            currLM = (InlineLevelLayoutManager) nextElement.getLayoutManager();
+                            updateList.add(new Update(currLM, currParIterator.previousIndex()));
+                        }
                         // an auxiliary KnuthElement: simply ignore it
-                        auxCount ++;
+                        auxCount++;
                     }
                 }
                 log.trace(" Word to hyphenate: " + sbChars.toString());
@@ -1528,13 +1546,21 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         updateList.clear();
     }
 
-    /** Line area is always considered to act as a fence. */
-    protected boolean hasLeadingFence(boolean bNotFirst) {
+    /**
+     * Line area is always considered to act as a fence.
+     * @param isNotFirst ignored
+     * @return always true
+     */
+    protected boolean hasLeadingFence(boolean isNotFirst) {
         return true;
     }
 
-    /** Line area is always considered to act as a fence. */
-    protected boolean hasTrailingFence(boolean bNotLast) {
+    /**
+     * Line area is always considered to act as a fence.
+     * @param isNotLast ignored
+     * @return always true
+     */
+    protected boolean hasTrailingFence(boolean isNotLast) {
         return true;
     }
 
@@ -1607,6 +1633,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                          LayoutContext context) {
         LayoutManager childLM;
         LayoutContext lc = new LayoutContext(0);
+        lc.setAlignmentContext(alignmentContext);
         int iCurrParIndex;
         while (parentIter.hasNext()) {
             Position pos = (Position) parentIter.next();
@@ -1626,11 +1653,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 lineArea.setStartIndent(lbp.startIndent);
                 lineArea.setBPD(lbp.lineHeight);
                 lineArea.setIPD(lbp.lineWidth);
-                lc.setBaseline(lbp.baseline);
-                lc.setLineHeight(lbp.lineHeight);
-                lc.setMiddleShift(middleShift);
-                lc.setTopShift(lbp.topShift);
-                lc.setBottomShift(lbp.bottomShift);
+                lineArea.addTrait(Trait.SPACE_BEFORE, new Integer(lbp.spaceBefore));
+                lineArea.addTrait(Trait.SPACE_AFTER, new Integer(lbp.spaceAfter));
+                alignmentContext.resizeLine(lbp.lineHeight, lbp.baseline);
 
                 if (seq instanceof Paragraph) {
                     Paragraph currPar = (Paragraph) seq;
@@ -1650,7 +1675,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 seqIterator = seq.listIterator(iEndElement);
                 tempElement = (KnuthElement) seqIterator.next();
                 if (tempElement.isGlue()) {
-                    iEndElement --;
+                    iEndElement--;
                     // this returns the same KnuthElement
                     seqIterator.previous();
                     tempElement = (KnuthElement) seqIterator.previous();
@@ -1663,7 +1688,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 tempElement = (KnuthElement) seqIterator.next();
                 while (!tempElement.isBox() && seqIterator.hasNext()) {
                     tempElement = (KnuthElement) seqIterator.next();
-                    iStartElement ++;
+                    iStartElement++;
                 }
     
                 // Add the inline areas to lineArea
@@ -1700,11 +1725,13 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     //System.out.println("              old ratio = " + lbp.ipdAdjust + " new ratio = " + updatedRatio);
                 } else if (false && textAlignment == EN_CENTER) {
                     // re-compute indent
-                    int updatedIndent = lbp.startIndent + (context.getStackLimit().opt - lbp.lineWidth) / 2;
+                    int updatedIndent = lbp.startIndent
+                                            + (context.getStackLimit().opt - lbp.lineWidth) / 2;
                     lineArea.setStartIndent(updatedIndent);
                 } else if (false && textAlignment == EN_END) {
                     // re-compute indent
-                    int updatedIndent = lbp.startIndent + (context.getStackLimit().opt - lbp.lineWidth);
+                    int updatedIndent = lbp.startIndent 
+                                            + (context.getStackLimit().opt - lbp.lineWidth);
                     lineArea.setStartIndent(updatedIndent);
                 }
 
@@ -1780,6 +1807,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         setCurrentArea(null); // ?? necessary
     }
 
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#addChildArea(Area)
+     */
     public void addChildArea(Area childArea) {
         // Make sure childArea is inline area
         if (childArea instanceof InlineArea) {

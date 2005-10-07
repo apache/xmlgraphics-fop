@@ -732,7 +732,7 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
     public void renderText(TextArea text) {
 
         float x = currentIPPosition;
-        float y = currentBPPosition + text.getOffset(); // baseline
+        float y = currentBPPosition + text.getOffset() + text.getBaselineOffset(); // baseline
 
         String name = (String) text.getTrait(Trait.FONT_NAME);
         int size = ((Integer) text.getTrait(Trait.FONT_SIZE)).intValue();
@@ -761,7 +761,7 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
     public void renderCharacter(Character ch) {
 
         float x = currentIPPosition;
-        float y = currentBPPosition + ch.getOffset(); // baseline
+        float y = currentBPPosition + ch.getOffset() + ch.getBaselineOffset(); // baseline
 
         String name = (String) ch.getTrait(Trait.FONT_NAME);
         int size = ((Integer) ch.getTrait(Trait.FONT_SIZE)).intValue();

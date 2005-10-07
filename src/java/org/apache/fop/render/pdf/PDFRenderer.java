@@ -967,10 +967,9 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     public void renderInlineParent(InlineParent ip) {
         float start = currentIPPosition / 1000f;
         float top = (ip.getOffset() + currentBPPosition) / 1000f;
+
         float width = ip.getIPD() / 1000f;
         float height = ip.getBPD() / 1000f;
-        drawBackAndBorders(ip, start, top, width, height);
-
         // render contents
         super.renderInlineParent(ip);
 
@@ -1011,6 +1010,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @see org.apache.fop.render.AbstractRenderer#renderCharacter(Character)
      */
     public void renderCharacter(Character ch) {
+        renderInlineAreaBackAndBorders(ch);
+
         beginTextObject();
         StringBuffer pdf = new StringBuffer();
 
@@ -1034,8 +1035,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         // word.getOffset() = only height of text itself
         // currentBlockIPPosition: 0 for beginning of line; nonzero
         //  where previous line area failed to take up entire allocated space
-        int rx = currentIPPosition;
-        int bl = currentBPPosition + ch.getOffset();
+        int rx = currentIPPosition + ch.getBorderAndPaddingWidthStart();
+        int bl = currentBPPosition + ch.getOffset() + ch.getBaselineOffset();
 
 /*        System.out.println("Text = " + ch.getTextArea() +
             "; text width: " + ch.getWidth() +
@@ -1085,6 +1086,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @see org.apache.fop.render.AbstractRenderer#renderText(TextArea)
      */
     public void renderText(TextArea text) {
+        renderInlineAreaBackAndBorders(text);
         beginTextObject();
         StringBuffer pdf = new StringBuffer();
 
@@ -1106,8 +1108,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         // word.getOffset() = only height of text itself
         // currentBlockIPPosition: 0 for beginning of line; nonzero
         //  where previous line area failed to take up entire allocated space
-        int rx = currentIPPosition;
-        int bl = currentBPPosition + text.getOffset();
+        int rx = currentIPPosition + text.getBorderAndPaddingWidthStart();
+        int bl = currentBPPosition + text.getOffset() + text.getBaselineOffset();
 
 /*        System.out.println("Text = " + text.getTextArea() +
             "; text width: " + text.getWidth() +
@@ -1448,6 +1450,9 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @param area the leader area to render
      */
     public void renderLeader(Leader area) {
+        renderInlineAreaBackAndBorders(area);
+
+        currentState.push();
         saveGraphicsState();
         int style = area.getRuleStyle();
         boolean alt = false;
@@ -1467,19 +1472,23 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 alt = true;
             break;
         }
-        float startx = ((float) currentIPPosition) / 1000f;
-        float starty = ((currentBPPosition + area.getOffset()) / 1000f);
-        float endx = (currentIPPosition + area.getIPD()) / 1000f;
+        float startx = (currentIPPosition + area.getBorderAndPaddingWidthStart()) / 1000f;
+        float starty = (currentBPPosition + area.getOffset()) / 1000f;
+        float endx = (currentIPPosition + area.getBorderAndPaddingWidthStart() 
+                        + area.getIPD()) / 1000f;
+        // PDF draws lines centered on the Y coordiante, therefore we need to
+        // add half of the line thickness to the Y positions.
         if (!alt) {
             updateLineWidth(area.getRuleThickness() / 1000f);
-            drawLine(startx, starty, endx, starty);
+            drawLine(startx, starty + area.getRuleThickness() / 2000f
+                    , endx, starty + area.getRuleThickness() / 2000f);
         } else {
             if (style == EN_DOUBLE) {
                 float third = area.getRuleThickness() / 3000f;
                 updateLineWidth(third);
-                drawLine(startx, starty, endx, starty);
+                drawLine(startx, starty + 0.5f * third, endx, starty + 0.5f * third);
 
-                drawLine(startx, (starty + 2 * third), endx, (starty + 2 * third));
+                drawLine(startx, (starty + 2.5f * third), endx, (starty + 2.5f * third));
             } else {
                 float half = area.getRuleThickness() / 2000f;
 
@@ -1512,6 +1521,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         }
 
         restoreGraphicsState();
+        currentState.pop();
         beginTextObject();
         super.renderLeader(area);
     }

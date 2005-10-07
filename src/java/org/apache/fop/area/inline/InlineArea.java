@@ -35,11 +35,11 @@ public class InlineArea extends Area {
      * page-number or a page-number-citation is resolved
      */
     protected class InlineAdjustingInfo {
-        // stretch of the inline area
+        /** stretch of the inline area */
         protected int availableStretch;
-        // shrink of the inline area
+        /** shrink of the inline area */
         protected int availableShrink;
-        // total adjustment (= ipd - width of fixed elements)
+        /** total adjustment (= ipd - width of fixed elements) */
         protected int adjustment;
         
         /**
@@ -57,9 +57,9 @@ public class InlineArea extends Area {
     }
     
     /**
-     * offset position from top of parent area
+     * offset position from before edge of parent area
      */
-    protected int verticalPosition = 0;
+    protected int offset = 0;
     
     /**
      * parent area
@@ -88,25 +88,23 @@ public class InlineArea extends Area {
     /**
      * Set the offset of this inline area.
      * This is used to set the offset of the inline area
-     * which is normally relative to the top of the line
-     * or the baseline.
+     * which is relative to the before edge of the parent area.
      *
-     * @param v the offset
+     * @param offset the offset
      */
-    public void setOffset(int v) {
-        verticalPosition = v;
+    public void setOffset(int offset) {
+        this.offset = offset;
     }
 
     /**
      * Get the offset of this inline area.
      * This returns the offset of the inline area
-     * which is normally relative to the top of the line
-     * or the baseline.
+     * which is relative to the before edge of the parent area.
      *
      * @return the offset
      */
     public int getOffset() {
-        return verticalPosition;
+        return offset;
     }
 
     /**

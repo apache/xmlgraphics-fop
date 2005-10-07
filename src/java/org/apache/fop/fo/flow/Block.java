@@ -18,6 +18,7 @@
 
 package org.apache.fop.fo.flow;
 
+import java.util.Iterator;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
@@ -378,7 +379,7 @@ public class Block extends FObjMixed {
             boolean bInWS = false;
             boolean bPrevWasLF = false;
             
-            /* bSeenNonWSYet is an indicator used for trimming all leading 
+            /* seenNonWSYet is an indicator used for trimming all leading 
                whitespace for the first inline child of the block
             */
             boolean bSeenNonWSYet = false;

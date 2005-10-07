@@ -512,7 +512,6 @@ public class XMLRenderer extends PrintRenderer {
         if (line.getStartIndent() != 0) {
             addAttribute("start-indent", line.getStartIndent());
         }
-        addAttribute("vpos", currentBPPosition);
         startElement("lineArea", atts);
         super.renderLineArea(line);
         endElement("lineArea");
@@ -577,8 +576,10 @@ public class XMLRenderer extends PrintRenderer {
      */
     protected void renderCharacter(org.apache.fop.area.inline.Character ch) {
         atts.clear();
+        addAreaAttributes(ch);
         addTraitAttributes(ch);
-        addAttribute("vpos", ch.getOffset());
+        addAttribute("offset", ch.getOffset());
+        addAttribute("baseline", ch.getBaselineOffset());
         startElement("char", atts);
         characters(ch.getChar());
         endElement("char");
@@ -590,6 +591,8 @@ public class XMLRenderer extends PrintRenderer {
     protected void renderInlineSpace(Space space) {
         atts.clear();
         addAreaAttributes(space);
+        addTraitAttributes(space);
+        addAttribute("offset", space.getOffset());
         startElement("space", atts);
         endElement("space");
     }
@@ -605,7 +608,8 @@ public class XMLRenderer extends PrintRenderer {
         if (text.getTextLetterSpaceAdjust() != 0) {
             addAttribute("tlsadjust", text.getTextLetterSpaceAdjust());
         }
-        addAttribute("vpos", text.getOffset());
+        addAttribute("offset", text.getOffset());
+        addAttribute("baseline", text.getBaselineOffset());
         addAreaAttributes(text);
         addTraitAttributes(text);
         startElement("text", atts);
@@ -621,6 +625,7 @@ public class XMLRenderer extends PrintRenderer {
         atts.clear();
         addAreaAttributes(ip);
         addTraitAttributes(ip);
+        addAttribute("offset", ip.getOffset());
         startElement("inlineparent", atts);
         super.renderInlineParent(ip);
         endElement("inlineparent");
@@ -661,11 +666,16 @@ public class XMLRenderer extends PrintRenderer {
             case EN_RIDGE:
                 style = "ridge";
                 break;
+            case EN_NONE:
+                style = "none";
+                break;
             default:
                 style = "--NYI--";
         }
         atts.clear();
         addAreaAttributes(area);
+        addTraitAttributes(area);
+        addAttribute("offset", area.getOffset());
         addAttribute("ruleStyle", style);
         addAttribute("ruleThickness", area.getRuleThickness());
         startElement("leader", atts);

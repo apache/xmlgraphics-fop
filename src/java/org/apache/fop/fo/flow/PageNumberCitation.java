@@ -60,7 +60,7 @@ public class PageNumberCitation extends FObj {
     private KeepProperty keepWithNext;
     private KeepProperty keepWithPrevious;
     // private ToBeImplementedProperty letterSpacing;
-    private Length lineHeight;
+    private SpaceProperty lineHeight;
     private String refId;
     private int scoreSpaces;
     private Length textAltitude;
@@ -102,7 +102,7 @@ public class PageNumberCitation extends FObj {
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
         // letterSpacing = pList.get(PR_LETTER_SPACING);
-        lineHeight = pList.get(PR_LINE_HEIGHT).getLength();
+        lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         refId = pList.get(PR_REF_ID).getString();
         scoreSpaces = pList.get(PR_SCORE_SPACES).getEnum();
         textAltitude = pList.get(PR_TEXT_ALTITUDE).getLength();
@@ -150,6 +150,46 @@ public class PageNumberCitation extends FObj {
     /** @return the "text-decoration" property. */
     public CommonTextDecoration getTextDecoration() {
         return textDecoration; 
+    }
+    
+    /**
+     * @return the "alignment-adjust" property
+     */
+    public Length getAlignmentAdjust() {
+        return alignmentAdjust;
+    }
+    
+    /**
+     * @return the "alignment-baseline" property
+     */
+    public int getAlignmentBaseline() {
+        return alignmentBaseline;
+    }
+    
+    /**
+     * @return the "baseline-shift" property
+     */
+    public Length getBaselineShift() {
+        return baselineShift;
+    }
+    
+    /**
+     * @return the "dominant-baseline" property
+     */
+    public int getDominantBaseline() {
+        return dominantBaseline;
+    }
+    
+    /** @return the Common Border, Padding, and Background Properties. */
+    public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
+        return commonBorderPaddingBackground;
+    }
+
+    /**
+     * @return the "line-height" property
+     */
+    public SpaceProperty getLineHeight() {
+        return lineHeight;
     }
     
     /** @return the "id" property. */

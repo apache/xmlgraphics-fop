@@ -32,6 +32,7 @@ import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
+import org.apache.fop.fo.properties.SpaceProperty;
 
 /**
  * Class modelling the fo:inline-container object.
@@ -55,7 +56,7 @@ public class InlineContainer extends FObj {
     private KeepProperty keepTogether;
     private KeepProperty keepWithNext;
     private KeepProperty keepWithPrevious;
-    private Length lineHeight;
+    private SpaceProperty lineHeight;
     private int overflow;
     private Numeric referenceOrientation;
     private Length width;
@@ -92,7 +93,7 @@ public class InlineContainer extends FObj {
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
-        lineHeight = pList.get(PR_LINE_HEIGHT).getLength();
+        lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         overflow = pList.get(PR_OVERFLOW).getEnum();
         referenceOrientation = pList.get(PR_REFERENCE_ORIENTATION).getNumeric();
         width = pList.get(PR_WIDTH).getLength();
@@ -133,6 +134,41 @@ public class InlineContainer extends FObj {
     }
 
     /**
+     * @return the "alignment-adjust" property
+     */
+    public Length getAlignmentAdjust() {
+        return alignmentAdjust;
+    }
+    
+    /**
+     * @return the "alignment-baseline" property
+     */
+    public int getAlignmentBaseline() {
+        return alignmentBaseline;
+    }
+    
+    /**
+     * @return the "baseline-shift" property
+     */
+    public Length getBaselineShift() {
+        return baselineShift;
+    }
+    
+    /**
+     * @return the "dominant-baseline" property
+     */
+    public int getDominantBaseline() {
+        return dominantBaseline;
+    }
+    
+    /**
+     * @return the "line-height" property.
+     */
+    public SpaceProperty getLineHeight() {
+        return lineHeight;
+    }
+
+    /**
      * @return the "id" property.
      */
     public String getId() {
@@ -152,4 +188,5 @@ public class InlineContainer extends FObj {
     public int getNameId() {
         return FO_INLINE_CONTAINER;
     }
+    
 }

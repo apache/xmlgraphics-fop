@@ -39,6 +39,7 @@ import org.apache.fop.layoutmgr.TraitSetter;
  */
 public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManager {
     
+    /** The graphics object this LM deals with */
     protected AbstractGraphics fobj;
     
     /**
@@ -72,7 +73,7 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
         int ipd = -1;
         boolean bpdauto = false;
         if (hasLH) {
-            bpd = fobj.getLineHeight().getValue(this);
+            bpd = fobj.getLineHeight().getOptimum(this).getLength().getValue(this);
         } else {
             // this property does not apply when the line-height applies
             // isn't the block-progression-dimension always in the same
@@ -183,11 +184,11 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
         
         //Determine extra IPD from borders etc.
         int startIPD = borderProps.getPadding(CommonBorderPaddingBackground.START,
-                false/*bNotFirst*/, this);
+                false, this);
         startIPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.START,
-                 false/*bNotFirst*/);
-        int endIPD = borderProps.getPadding(CommonBorderPaddingBackground.END, false/*bNotLast*/, this);
-        endIPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.END, false/*bNotLast*/);
+                 false);
+        int endIPD = borderProps.getPadding(CommonBorderPaddingBackground.END, false, this);
+        endIPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.END, false);
         
         xoffset += startIPD;
         //ipd += startIPD;
@@ -220,48 +221,28 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
                                            int alignment) {
         Viewport areaCurrent = getInlineArea();
         setCurrentArea(areaCurrent);
-        setAlignment(fobj.getVerticalAlign());
-        setLead(areaCurrent.getAllocBPD());
         return super.getNextKnuthElements(context, alignment);
     }
     
+    /**
+     * @see LeafNodeLayoutManager.makeAlignmentContext(LayoutContext)
+     */
+    protected AlignmentContext makeAlignmentContext(LayoutContext context) {
+        return new AlignmentContext(
+                get(context).getAllocBPD()
+                , fobj.getAlignmentAdjust()
+                , fobj.getAlignmentBaseline()
+                , fobj.getBaselineShift()
+                , fobj.getDominantBaseline()
+                , context.getAlignmentContext()
+            );
+    }
+
     /**
      * @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#addId()
      */
     protected void addId() {
         getPSLM().addIDToPage(fobj.getId());
-    }
-
-    /**
-     * Offset this area.
-     * Offset the inline area in the bpd direction when adding the
-     * inline area.
-     * This is used for vertical alignment.
-     * External graphic uses the large allocation rectangle so we have
-     * to take the border/padding into account as well.
-     * @param area the inline area to be updated
-     * @param context the layout context used for adding the area
-     * @see LeafNodeLayoutManager#offsetArea(InlineArea, LayoutContext)
-     */
-    protected void offsetArea(InlineArea area, LayoutContext context) {
-        int bpd = area.getBPD()
-                    + area.getBorderAndPaddingWidthBefore()
-                    + area.getBorderAndPaddingWidthAfter();
-        switch (verticalAlignment) {
-            case EN_MIDDLE:
-                area.setOffset(context.getMiddleBaseline() - bpd / 2);
-            break;
-            case EN_TOP:
-                area.setOffset(context.getTopBaseline());
-            break;
-            case EN_BOTTOM:
-                area.setOffset(context.getBottomBaseline() - bpd);
-            break;
-            case EN_BASELINE:
-            default:
-                area.setOffset(context.getBaseline() - bpd);
-            break;
-        }
     }
 
     /**
@@ -282,6 +263,8 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
             return getIntrinsicWidth();
         case LengthBase.IMAGE_INTRINSIC_HEIGHT:
             return getIntrinsicHeight();
+        case LengthBase.ALIGNMENT_ADJUST:
+            return get(null).getBPD();
         default: // Delegate to super class
             return super.getBaseLength(lengthBase, fobj);
         }

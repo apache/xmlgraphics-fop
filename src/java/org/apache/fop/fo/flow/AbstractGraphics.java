@@ -30,6 +30,7 @@ import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
+import org.apache.fop.fo.properties.SpaceProperty;
 
 /**
  * Common base class for instream-foreign-object and external-graphics
@@ -59,12 +60,11 @@ public abstract class AbstractGraphics extends FObj {
     private LengthRangeProperty inlineProgressionDimension;
     private KeepProperty keepWithNext;
     private KeepProperty keepWithPrevious;
-    private Length lineHeight;
+    private SpaceProperty lineHeight;
     private int overflow;
     private int scaling;
     private int scalingMethod;
     private int textAlign;
-    private int verticalAlign; // shorthand!!!
     private Length width;
     // End of property values
 
@@ -101,12 +101,11 @@ public abstract class AbstractGraphics extends FObj {
         inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
-        lineHeight = pList.get(PR_LINE_HEIGHT).getLength();
+        lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         overflow = pList.get(PR_OVERFLOW).getEnum();
         scaling = pList.get(PR_SCALING).getEnum();
         scalingMethod = pList.get(PR_SCALING_METHOD).getEnum();
         textAlign = pList.get(PR_TEXT_ALIGN).getEnum();
-        verticalAlign = pList.get(PR_VERTICAL_ALIGN).getEnum();
         width = pList.get(PR_WIDTH).getLength();
     }
 
@@ -177,7 +176,7 @@ public abstract class AbstractGraphics extends FObj {
     /**
      * @return the "line-height" property.
      */
-    public Length getLineHeight() {
+    public SpaceProperty getLineHeight() {
         return lineHeight;
     }
 
@@ -231,19 +230,40 @@ public abstract class AbstractGraphics extends FObj {
     }
 
     /**
-     * @return the "vertical-align" property.
-     */
-    public int getVerticalAlign() {
-        return verticalAlign;
-    }
-
-    /**
      * @return the "overflow" property.
      */
     public int getOverflow() {
         return overflow;
     }
 
+    /**
+     * @return the "alignment-adjust" property
+     */
+    public Length getAlignmentAdjust() {
+        return alignmentAdjust;
+    }
+    
+    /**
+     * @return the "alignment-baseline" property
+     */
+    public int getAlignmentBaseline() {
+        return alignmentBaseline;
+    }
+    
+    /**
+     * @return the "baseline-shift" property
+     */
+    public Length getBaselineShift() {
+        return baselineShift;
+    }
+    
+    /**
+     * @return the "dominant-baseline" property
+     */
+    public int getDominantBaseline() {
+        return dominantBaseline;
+    }
+    
     /**
      * @see org.apache.fop.fo.IntrinsicSizeAccess#getIntrinsicWidth()
      */

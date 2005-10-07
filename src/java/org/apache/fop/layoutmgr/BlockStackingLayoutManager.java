@@ -74,9 +74,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     /** see foSpaceBefore */
     protected MinOptMax foSpaceAfter = null;
 
-    private int lastGeneratedPosition = -1;
-    private int smallestPosNumberChecked = Integer.MAX_VALUE;
-
     private Position auxiliaryPosition;
 
     private int contentAreaIPD = 0;
@@ -181,55 +178,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         if (getCurrentArea() != null) {
             parentLM.addChildArea(getCurrentArea());
         }
-    }
-
-    /**
-     * Adds a Position to the Position participating in the first|last determination by assigning
-     * it a unique position index.
-     * @param pos the Position
-     * @return the same Position but with a position index
-     */
-    protected Position notifyPos(Position pos) {
-        if (pos.getIndex() >= 0) {
-            throw new IllegalStateException("Position already got its index");
-        }
-        lastGeneratedPosition++;
-        pos.setIndex(lastGeneratedPosition);
-        return pos;
-    }
-    
-    /**
-     * Indicates whether the given Position is the first area-generating Position of this LM.
-     * @param pos the Position (must be one with a position index)
-     * @return True if it is the first Position
-     */
-    public boolean isFirst(Position pos) {
-        //log.trace("isFirst() smallestPosNumberChecked=" + smallestPosNumberChecked + " " + pos);
-        if (pos.getIndex() < 0) {
-            throw new IllegalArgumentException("Only Positions with an index can be checked");
-        }
-        if (pos.getIndex() == this.smallestPosNumberChecked) {
-            return true;
-        } else if (pos.getIndex() < this.smallestPosNumberChecked) {
-            this.smallestPosNumberChecked = pos.getIndex();
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
-    /**
-     * Indicates whether the given Position is the last area-generating Position of this LM.
-     * @param pos the Position (must be one with a position index)
-     * @return True if it is the last Position
-     */
-    public boolean isLast(Position pos) {
-        //log.trace("isLast() lastGenPos=" + lastGeneratedPosition + " " + pos);
-        if (pos.getIndex() < 0) {
-            throw new IllegalArgumentException("Only Positions with an index can be checked");
-        }
-        return (pos.getIndex() == this.lastGeneratedPosition
-                && isFinished());
     }
 
     /** @return a cached auxiliary Position instance used for things like spaces. */
@@ -1400,6 +1348,10 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         return contentAreaIPD;
     }
    
+    /**
+     * Sets the IPD of the content area
+     * @param contentAreaIPD the IPD of the content area
+     */
     protected void setContentAreaIPD(int contentAreaIPD) {
         this.contentAreaIPD = contentAreaIPD;
     }
