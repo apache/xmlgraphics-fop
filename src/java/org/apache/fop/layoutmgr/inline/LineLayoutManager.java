@@ -449,8 +449,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                                                         int availableShrink, int availableStretch, int difference,
                                                         double ratio,
                                                         int indent) {
-            // line height calculation
-            int halfLeading = (lineHeight - lead - follow) / 2;
+            // line height calculation - spaceBefore may differ from spaceAfter
+            // by 1mpt due to rounding
+            int spaceBefore = (lineHeight - lead - follow) / 2;
+            int spaceAfter = lineHeight - lead - follow - spaceBefore;
             // height before the main baseline
             int lineLead = lead;
             // maximum follow 
@@ -517,7 +519,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                                              lastElementIndex,
                                              availableShrink, availableStretch, difference, ratio, 0, indent,
                                              lineLead + lineFollow, 
-                                             iLineWidth, halfLeading, halfLeading,
+                                             iLineWidth, spaceBefore, spaceAfter,
                                              lineLead);
             }
         }

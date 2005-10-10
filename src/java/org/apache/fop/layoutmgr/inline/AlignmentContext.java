@@ -167,7 +167,7 @@ public class AlignmentContext implements Constants {
      * Creates a new instance of AlignmentContext based simply
      * on the font and the writing mode.
      * @param font the font
-     * @param lineHeight the omputed value of the lineHeight property
+     * @param lineHeight the computed value of the lineHeight property
      * @param writingMode the current writing mode
      */
     public AlignmentContext(Font font, int lineHeight, int writingMode) {
