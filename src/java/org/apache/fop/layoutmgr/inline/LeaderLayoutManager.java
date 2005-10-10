@@ -78,7 +78,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
      * @return the inline area
      */
     public InlineArea get(LayoutContext context) {
-        return getLeaderInlineArea();
+        return getLeaderInlineArea(context);
     }
 
     /**
@@ -106,7 +106,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         return new MinOptMax(min, opt, max);
     }
 
-    private InlineArea getLeaderInlineArea() {
+    private InlineArea getLeaderInlineArea(LayoutContext context) {
         InlineArea leaderArea = null;
 
         if (fobj.getLeaderPattern() == EN_RULE) {
@@ -168,8 +168,11 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             InlineLayoutManager lm;
             lm = new InlineLayoutManager(fobj);
             clm.addChildLM(lm);
+            lm.initialize();
 
-            contentList = clm.getNextKnuthElements(new LayoutContext(0), 0);
+            LayoutContext childContext = new LayoutContext(0);
+            childContext.setAlignmentContext(context.getAlignmentContext());
+            contentList = clm.getNextKnuthElements(childContext, 0);
             int width = clm.getStackingSize();
             Space spacer = null;
             if (fobj.getLeaderPatternWidth().getValue(this) > width) {
@@ -200,7 +203,6 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             // add content areas
             KnuthPossPosIter contentIter = new KnuthPossPosIter(contentList, 0, contentList.size());
             clm.addAreas(contentIter, context);
-            offsetArea(curArea, context);
 
             parentLM.addChildArea(curArea);
 

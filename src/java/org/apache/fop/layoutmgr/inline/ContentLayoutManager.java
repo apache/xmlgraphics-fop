@@ -24,6 +24,7 @@ import org.apache.fop.fo.pagination.Title;
 import org.apache.fop.layoutmgr.AbstractBaseLayoutManager;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthPossPosIter;
+import org.apache.fop.layoutmgr.KnuthSequence;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.PageSequenceLayoutManager;
@@ -38,6 +39,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.ArrayList;
+import java.util.Iterator;
 import org.apache.fop.traits.MinOptMax;
 
 import org.apache.fop.area.Block;
@@ -243,8 +245,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
         }
     }
 
-    public LinkedList getNextKnuthElements(LayoutContext context,
-                                           int alignment) {
+    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         LinkedList contentList = new LinkedList();
         LinkedList returnedList;
 
@@ -256,9 +257,20 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
                 // move elements to contentList, and accumulate their size
                KnuthElement contentElement;
                while (returnedList.size() > 0) {
-                    contentElement = (KnuthElement)returnedList.removeFirst();
-                    stackSize += contentElement.getW();
-                    contentList.add(contentElement);
+                    Object obj = returnedList.removeFirst();
+                    // Shit contentElement = (KnuthElement)returnedList.removeFirst();
+                    if (obj instanceof KnuthSequence) {
+                        KnuthSequence ks = (KnuthSequence)obj;
+                        for (Iterator it = ks.iterator(); it.hasNext(); ) {
+                            contentElement = (KnuthElement)it.next();
+                            stackSize += contentElement.getW();
+                            contentList.add(contentElement);
+                        }
+                    } else {
+                        contentElement = (KnuthElement)obj;
+                        stackSize += contentElement.getW();
+                        contentList.add(contentElement);
+                    }
                 }
             }
         }

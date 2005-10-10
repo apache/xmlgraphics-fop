@@ -167,7 +167,9 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         } else {
             area = new InlineBlockParent();
         }
-        TraitSetter.setProducerID(area, getInlineFO().getId());
+        if (fobj instanceof Inline) {
+            TraitSetter.setProducerID(area, getInlineFO().getId());
+        }
         return area;
     }
     
@@ -551,7 +553,9 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     
     /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#addId() */
     protected void addId() {
-        getPSLM().addIDToPage(getInlineFO().getId());
+        if (fobj instanceof Inline) {
+            getPSLM().addIDToPage(getInlineFO().getId());
+        }
     }
     
 }
