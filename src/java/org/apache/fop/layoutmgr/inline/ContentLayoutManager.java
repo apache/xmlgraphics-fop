@@ -258,7 +258,6 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
                KnuthElement contentElement;
                while (returnedList.size() > 0) {
                     Object obj = returnedList.removeFirst();
-                    // Shit contentElement = (KnuthElement)returnedList.removeFirst();
                     if (obj instanceof KnuthSequence) {
                         KnuthSequence ks = (KnuthSequence)obj;
                         for (Iterator it = ks.iterator(); it.hasNext(); ) {
