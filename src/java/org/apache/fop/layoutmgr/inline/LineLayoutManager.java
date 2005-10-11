@@ -695,25 +695,43 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 if (returnedList.size() == 0) {
                     continue;
                 }
-                // does the first element of the first paragraph add to an existing word?
+
                 if (lastPar != null) {
-                    Object obj = returnedList.getFirst();
-                    KnuthElement thisElement;
-                    if (obj instanceof KnuthElement) {
-                        thisElement = (KnuthElement)obj;
-                    } else {
-                        KnuthSequence firstSeq = (KnuthSequence) obj;
-                        if (!firstSeq.isInlineSequence()) {
-                            log.error("Expect inline sequence as first sequence when last paragraph is not null");
+                    Object firstObj;
+                    KnuthSequence firstSeq = null;
+                    firstObj = returnedList.getFirst();
+                    if (firstObj instanceof KnuthSequence) {
+                        firstSeq = (KnuthSequence) firstObj;
+                    }
+                    
+                    // finish last paragraph before a new block sequence
+                    if (firstSeq != null && !firstSeq.isInlineSequence()) {
+                        lastPar.endParagraph();
+                        ElementListObserver.observe(lastPar, "line", null);
+                        lastPar = null;
+                        if (log.isTraceEnabled()) {
+                            trace.append(" ]");
                         }
-                        thisElement = (KnuthElement) firstSeq.get(0);
+                        bPrevWasKnuthBox = false;
                     }
-                    if (thisElement.isBox() && !thisElement.isAuxiliary()
-                            && bPrevWasKnuthBox) {
-                        lastPar.addALetterSpace();
+                
+                    // does the first element of the first paragraph add to an existing word?
+                    if (lastPar != null) {
+                        KnuthElement thisElement;
+                        if (firstObj instanceof KnuthElement) {
+                            thisElement = (KnuthElement) firstObj;
+                        } else {
+                            thisElement = (KnuthElement) firstSeq.get(0);
+                        }
+                        if (thisElement.isBox() && !thisElement.isAuxiliary()
+                                && bPrevWasKnuthBox) {
+                            lastPar.addALetterSpace();
+                        }
                     }
+
                 }
 
+                
                 // loop over the KnuthSequences (and single KnuthElements) in returnedList
                 // (LeafNodeLM descendants may also skip wrapping elements in KnuthSequences
                 // to cause fewer container structures)
