@@ -659,6 +659,7 @@ public abstract class AbstractRenderer
      * @param ibp the inline block parent to render
      */
     protected void renderInlineBlockParent(InlineBlockParent ibp) {
+        currentIPPosition += ibp.getBorderAndPaddingWidthStart();
         // For inline content the BP position is updated by the enclosing line area
         int saveBP = currentBPPosition;
         renderBlock(ibp.getChildArea());

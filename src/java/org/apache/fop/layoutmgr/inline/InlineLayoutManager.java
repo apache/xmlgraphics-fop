@@ -235,12 +235,12 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
 
         if (borderProps != null) {
             childLC.setLineStartBorderAndPaddingWidth(context.getLineStartBorderAndPaddingWidth()
-                + borderProps.getPadding(CommonBorderPaddingBackground.START, true, this)
-                + borderProps.getBorderWidth(CommonBorderPaddingBackground.START, true)
+                + borderProps.getPaddingStart(true, this)
+                + borderProps.getBorderStartWidth(true)
              );
             childLC.setLineEndBorderAndPaddingWidth(context.getLineEndBorderAndPaddingWidth()
-                + borderProps.getPadding(CommonBorderPaddingBackground.END, true, this)
-                + borderProps.getBorderWidth(CommonBorderPaddingBackground.END, true)
+                + borderProps.getPaddingEnd(true, this)
+                + borderProps.getBorderEndWidth(true)
              );
         }
         
@@ -250,7 +250,10 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
                 // Leave room for start/end border and padding
                 if (borderProps != null) {
                     childLC.setRefIPD(childLC.getRefIPD()
-                            - borderProps.getIPPaddingAndBorder(false, this));
+                            - borderProps.getPaddingStart(lastChildLM != null, this)
+                            - borderProps.getBorderStartWidth(lastChildLM != null)
+                            - borderProps.getPaddingEnd(hasNextChildLM(), this)
+                            - borderProps.getBorderEndWidth(hasNextChildLM()));
                 }
             }
             // get KnuthElements from curLM
