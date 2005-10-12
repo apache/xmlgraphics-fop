@@ -674,8 +674,8 @@ list of possible build targets.
   <target name="hyphenation-present" depends="junit-compile" if="junit.present">
     <condition property="hyphenation.present">
       <and><!-- All the hyphenation files required by the layout test cases to be listed here -->
-        <available resource="hyph/en.hyp" classpathref="libs-build-classpath"/>
-        <available resource="hyph/de.hyp" classpathref="libs-build-classpath"/>
+        <available resource="hyph/en.hyp" classpathref="libs-run-classpath"/>
+        <available resource="hyph/de.hyp" classpathref="libs-run-classpath"/>
       </and>
     </condition>
     <condition property="hyphenation.message" value="Hyphenation Support PRESENT">
@@ -699,10 +699,7 @@ list of possible build targets.
       <formatter type="brief" usefile="false"/>
       <classpath>
         <pathelement location="${build.dir}/test-classes"/>
-        <path refid="libs-build-classpath"/>
-        <fileset dir="build">
-          <include name="fop.jar"/>
-        </fileset>
+        <path refid="libs-run-classpath"/>
       </classpath>
       <batchtest todir="${build.dir}/test-reports/fop">
         <fileset dir="${build.dir}/test-classes">
