@@ -135,6 +135,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             t.setBaselineOffset(width);
             t.addTrait(Trait.FONT_NAME, font.getFontName());
             t.addTrait(Trait.FONT_SIZE, new Integer(font.getFontSize()));
+            t.addTrait(Trait.COLOR, fobj.getColor());
             Space spacer = null;
             if (fobj.getLeaderPatternWidth().getValue(this) > width) {
                 spacer = new Space();
