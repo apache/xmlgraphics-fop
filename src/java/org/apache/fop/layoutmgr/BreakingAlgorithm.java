@@ -526,7 +526,7 @@ public abstract class BreakingAlgorithm {
                 int availableShrink = totalShrink - node.totalShrink;
                 int availableStretch = totalStretch - node.totalStretch;
                 if (log.isTraceEnabled()) {
-                    log.trace("\tr=" + r);
+                    log.trace("\tr=" + r + " difference=" + difference);
                     log.trace("\tline=" + line);
                 }
 
