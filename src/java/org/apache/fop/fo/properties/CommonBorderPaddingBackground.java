@@ -307,6 +307,15 @@ public class CommonBorderPaddingBackground implements Cloneable {
             return padding[side].getLengthValue(context);
         }
     }
+    
+    /**
+     * Returns the CondLengthProperty for the padding on one side.
+     * @param side the side
+     * @return the requested CondLengthProperty
+     */
+    public CondLengthProperty getPaddingLengthProperty(int side) {
+        return padding[side];
+    }
 
     /**
      * Return all the border and padding width in the inline progression 
