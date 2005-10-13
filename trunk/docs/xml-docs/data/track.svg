@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!--
+  Copyright 1999-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20001102//EN"
+      "http://www.w3.org/TR/2000/CR-SVG-20001102/DTD/svg-20001102.dtd">
+<svg width="585" height="175" xmlns="http://www.w3.org/2000/svg">
+<rect width="100%" height="100%" style="fill:white"/>
+
+<defs>
+<g id="event">
+<path d="M0 0v15h-10l10-15z" style="fill:black"/>
+</g>
+<g id="fade">
+<line x1="0" y1="0" x2="0" y2="10" style="stroke-width:0.5;stroke:white"/>
+<line x1="-1" y1="0" x2="-1" y2="10" style="stroke-width:0.5;stroke:white"/>
+<line x1="-3" y1="0" x2="-3" y2="10" style="stroke-width:0.8;stroke:white"/>
+<line x1="-6" y1="0" x2="-6" y2="10" style="stroke-width:1.2;stroke:white"/>
+<line x1="-10" y1="0" x2="-10" y2="10" style="stroke-width:2;stroke:white"/>
+<line x1="-16" y1="0" x2="-16" y2="10" style="stroke-width:3;stroke:white"/>
+<line x1="-24" y1="0" x2="-24" y2="10" style="stroke-width:4;stroke:white"/>
+</g>
+<g id="break">
+<path d="m0 0l5-10l10 0l-5 10l4 0l-5 10l-10 0l5-10l-4 0z" style="fill:white;stroke:none"/>
+</g>
+</defs>
+
+<g transform="translate(0,105)">
+<rect width="580" height="15" style="fill:darkblue;stroke:black;stroke-width:5"/>
+<use xlink:href="#fade" transform="translate(582.5,-2.5) scale(2,2.1)"/>
+
+<rect x="100" y="-100" width="480" height="10" style="fill:darkred;stroke:black;stroke-width:3"/>
+<use xlink:href="#fade" transform="translate(581.5,-101.5) scale(1.3,1.4)"/>
+
+<path transform="translate(87 0)" d="m0 2l12 0l0-100l18 0l0 6l-8 0l0 106l-23 0z" style="fill:darkred;stroke:black;stroke-width:2.5"/>
+
+<use xlink:href="#event" transform="translate(20,16)"/>
+<text x="5" y="46">FOP 0.20.2</text>
+<text x="5" y="56" style="font-size:8;color:grey">29th Sept 2001</text>
+
+<use xlink:href="#event" transform="translate(100,16)"/>
+<text x="90" y="46">branch</text>
+<text x="90" y="56" style="font-size:8;color:grey">"fop-0_20_2-maintain"</text>
+<text x="90" y="65" style="font-size:8;color:grey">22nd Oct 2001</text>
+
+<use xlink:href="#event" transform="translate(150,-89)"/>
+<text x="140" y="-59">FOP 0.20.3</text>
+<text x="140" y="-49" style="font-size:8;color:grey">4th March 2002</text>
+
+<use xlink:href="#event" transform="translate(240,-89)"/>
+<text x="230" y="-59">FOP 0.20.4</text>
+<text x="230" y="-49" style="font-size:8;color:grey">12th June 2002</text>
+
+<use xlink:href="#event" transform="translate(330,-89)"/>
+<text x="320" y="-59">FOP 0.20.5</text>
+<text x="320" y="-49" style="font-size:8;color:grey">TBA</text>
+
+<use xlink:href="#break" transform="translate(380,-94)"/>
+
+<use xlink:href="#break" transform="translate(260,8) scale(1.3)"/>
+<text x="240" y="40">redesign</text>
+
+<use xlink:href="#event" transform="translate(400,16)"/>
+<text x="390" y="46">FOP 1.0DR1</text>
+<text x="390" y="56" style="font-size:8;color:grey"></text>
+
+</g>
+
+<!--
+<g id="legend" transform="translate(5,195)">
+<use xlink:href="#event" transform="translate(10,0)"/>
+<text x="15" y="12">Event</text>
+</g>
+-->
+
+</svg>
+

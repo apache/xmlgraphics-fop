@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks certain aspects of the area tree generation for table-cells.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:table table-layout="fixed" border-collapse="separate">
+            <fo:table-column column-width="100%"/>
+            <fo:table-body>
+              <fo:table-cell starts-row="true" ends-row="true">
+                <fo:block>plain block</fo:block>
+              </fo:table-cell>
+              <fo:table-cell starts-row="true" border="solid 5pt" background-color="yellow" ends-row="true">
+                <fo:block>cell with border</fo:block>
+              </fo:table-cell>
+              <fo:table-cell starts-row="true" padding="5pt" ends-row="true">
+                <fo:block background-color="orange">cell with padding</fo:block>
+              </fo:table-cell>
+              <fo:table-cell starts-row="true" border="solid 5pt" padding="5pt" background-color="yellow" ends-row="true">
+                <fo:block background-color="orange">cell with border and padding</fo:block>
+              </fo:table-cell>
+              <fo:table-cell starts-row="true" border="solid 5pt" height="30pt" display-align="center" ends-row="true">
+                <fo:block>cell with border and height</fo:block>
+              </fo:table-cell>
+              <fo:table-cell starts-row="true" padding="5pt" height="30pt" display-align="center" background-color="yellow" ends-row="true">
+                <fo:block background-color="orange">cell with padding and height</fo:block>
+              </fo:table-cell>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- row 1 -->
+    <eval expected="360000" xpath="//flow/block[1]/block[1]/@ipd"/>
+    <eval expected="360000" xpath="//flow/block[1]/block[1]/@ipda"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[1]/@bpd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[1]/@bpda"/>
+    <eval expected="360000" xpath="//flow/block[1]/block[1]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[1]/block[1]/@bpd"/>
+
+    <!-- row 2 -->
+    <eval expected="5000" xpath="//flow/block[1]/block[2]/@left-offset"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[2]/@top-offset"/>
+    <eval expected="350000" xpath="//flow/block[1]/block[2]/@ipd"/>
+    <eval expected="360000" xpath="//flow/block[1]/block[2]/@ipda"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[2]/@bpd"/>
+    <eval expected="24400" xpath="//flow/block[1]/block[2]/@bpda"/>
+    <eval expected="350000" xpath="//flow/block[1]/block[2]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[2]/block[1]/@bpd"/>
+
+    <!-- row 3 -->
+    <eval expected="5000" xpath="//flow/block[1]/block[3]/@left-offset"/>
+    <eval expected="38800" xpath="//flow/block[1]/block[3]/@top-offset"/>
+    <eval expected="350000" xpath="//flow/block[1]/block[3]/@ipd"/>
+    <eval expected="360000" xpath="//flow/block[1]/block[3]/@ipda"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[3]/@bpd"/>
+    <eval expected="24400" xpath="//flow/block[1]/block[3]/@bpda"/>
+    <eval expected="350000" xpath="//flow/block[1]/block[3]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[3]/block[1]/@bpd"/>
+
+    <!-- row 4 -->
+    <eval expected="10000" xpath="//flow/block[1]/block[4]/@left-offset"/>
+    <eval expected="63200" xpath="//flow/block[1]/block[4]/@top-offset"/>
+    <eval expected="340000" xpath="//flow/block[1]/block[4]/@ipd"/>
+    <eval expected="360000" xpath="//flow/block[1]/block[4]/@ipda"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[4]/@bpd"/>
+    <eval expected="34400" xpath="//flow/block[1]/block[4]/@bpda"/>
+    <eval expected="340000" xpath="//flow/block[1]/block[4]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[4]/block[1]/@bpd"/>
+
+    <!-- row 5 -->
+    <eval expected="5000" xpath="//flow/block[1]/block[5]/@left-offset"/>
+    <eval expected="97600" xpath="//flow/block[1]/block[5]/@top-offset"/>
+    <eval expected="350000" xpath="//flow/block[1]/block[5]/@ipd"/>
+    <eval expected="360000" xpath="//flow/block[1]/block[5]/@ipda"/>
+    <eval expected="30000" xpath="//flow/block[1]/block[5]/@bpd"/>
+    <eval expected="40000" xpath="//flow/block[1]/block[5]/@bpda"/>
+    <eval expected="7800" xpath="//flow/block[1]/block[5]/block[1]/@bpd"/> <!--spacer-->
+    <eval expected="350000" xpath="//flow/block[1]/block[5]/block[2]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[5]/block[2]/@bpd"/>
+    
+    <!-- row 6 -->
+    <eval expected="5000" xpath="//flow/block[1]/block[6]/@left-offset"/>
+    <eval expected="137600" xpath="//flow/block[1]/block[6]/@top-offset"/>
+    <eval expected="350000" xpath="//flow/block[1]/block[6]/@ipd"/>
+    <eval expected="360000" xpath="//flow/block[1]/block[6]/@ipda"/>
+    <eval expected="30000" xpath="//flow/block[1]/block[6]/@bpd"/>
+    <eval expected="40000" xpath="//flow/block[1]/block[6]/@bpda"/>
+    <eval expected="7800" xpath="//flow/block[1]/block[6]/block[1]/@bpd"/> <!--spacer-->
+    <eval expected="350000" xpath="//flow/block[1]/block[6]/block[2]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[6]/block[2]/@bpd"/>
+    
+    <element-list category="breaker">
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <box w="24400"/>
+      <penalty w="0" p="0"/>
+      <box w="24400"/>
+      <penalty w="0" p="0"/>
+      <box w="34400"/>
+      <penalty w="0" p="0"/>
+      <box w="40000"/>
+      <penalty w="0" p="0"/>
+      <box w="40000"/>
+      <skip>3</skip>
+    </element-list>
+    
+  </checks>
+</testcase>

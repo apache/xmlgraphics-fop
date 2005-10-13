@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  * Copyright 2004 The Apache Software Foundation.
+  * 
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  * 
+  *      http://www.apache.org/licenses/LICENSE-2.0
+  * 
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  -->
+
+<!-- $Id$ -->
+
+<!--
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                         "docbookx.dtd">
+  -->
+
+  <chapter>
+	<title>Fonts</title>
+
+	<section>
+	  <title>Font setup</title>
+
+	<para>Terminology:
+<itemizedlist>
+		<listitem>
+		  <simpara>Index, font index: The index of a character in a
+font, i.e. the place of the glyph for a character in a font.</simpara>
+		</listitem>
+		<listitem>
+		  <simpara>Code point: The same as font index.</simpara>
+		</listitem>
+		<listitem>
+		  <simpara>Character value: The two-byte
+(<literal>char</literal>) value by which a character is represented in
+memory and in Unicode. Note that this only works straightforwardly for
+the basal plane (BMP) of Unicode, i.e. for <literal>characters &lt;=
+0xFFFF</literal>.</simpara>
+		</listitem>
+		<listitem>
+		  <simpara>Unicode code point: The same as the character
+value.</simpara>
+		</listitem>
+	  </itemizedlist></para>
+
+	<para>During compilation for each of the 14 base fonts a class is
+generated from the XML font metric files.  Each font class contains
+the metric information and an encoding table (a
+<literal>CodePointMapping</literal> object). The metric information is
+static, the encoding table is an object member.</para>
+
+	<para>During compilation also a class
+<literal>CodePointMapping</literal> is generated, which contains the
+known encodings as static values. For each known encoding it contains
+a table as a static final array of int. The array holds an alternation
+of font index and character value; in fact it is a mapping from
+<literal>table[2i]</literal> to <literal>table[2i+1]</literal>, where
+<literal>table[2i]</literal> is the font index and
+<literal>table[2i+1]</literal> is the character.</para>
+
+	<para>When an encoding is needed in the process, a
+<literal>CodePointMapping</literal> object is created from the
+encoding table. It contains a table (<literal>char array</literal>)
+called <literal>latin1Map</literal> of the font indices for the
+characters of the Latin1 range (<literal>0-0xFF</literal>) in
+character value order. It also contains two tables (<literal>char
+array</literal>s), called characters and codepoints, for the higher
+character values. The table characters contains the character values
+in order, and the table codepoints contains the corresponding font
+indexes for this encoding in the same order. The characters can be
+retrieved from these tables as follows:
+
+<screen>char &lt;= 0xFF: index = latin1Map[character]
+char > 0xFF:
+	 find i such that characters[i] == char;
+	 then index = codepoints[i]
+</screen></para>
+
+	<para>In the code the characters are retrieved from the
+<literal>CodePointMapping</literal> object with its method
+<literal>mapChar(char c)</literal>.</para>
+
+	<para>In FOP's preparation stage the fonts are set up in the
+method <literal>Driver.getContentHandler</literal>. It calls the
+<literal>renderer</literal>'s method
+<literal>setupFontInfo(currentDocument)</literal>. The
+<literal>Document</literal> object <literal>currentDocument</literal>
+(which is the <literal>foTreeControl</literal> object) is able to
+store the font setup info and has methods to access the fonts
+registered with it.</para>
+
+<para>The <literal>PrintRenderer</literal> (PostScript and PDF) then
+calls <literal>FontSetup.setup(fontInfo, fontList)</literal>, where
+<literal>fontInfo</literal> is <literal>the</literal> Document object
+and <literal>fontList</literal> is the list of user configured fonts
+registered with the <literal>renderer</literal> in its member
+<literal>fontList</literal>. 
+	<screen>
+  [1] org.apache.fop.fonts.FontSetup.setup (FontSetup.java:98)
+  [2] org.apache.fop.render.PrintRenderer.setupFontInfo (PrintRenderer.java:77)
+  [3] org.apache.fop.apps.Driver.getContentHandler (Driver.java:551)
+  [4] org.apache.fop.apps.Driver.render (Driver.java:602)
+  [5] org.apache.fop.apps.Driver.render (Driver.java:589)
+  [6] org.apache.fop.apps.Fop.main (Fop.java:102)
+</screen></para>
+
+	  <para><literal>FontSetup.setup</literal> takes three actions:
+<orderedlist>
+		<listitem>
+		  <simpara>An object is created for each of the base 14 fonts
+and registered with the <literal>fontInfo</literal> object in its
+member fonts.</simpara>
+		</listitem>
+		<listitem>
+		  <simpara>A series of triplets (family, style, weight) is set
+up. To each triplet a font is assigned; this font will be used when a
+font with the characteristics of that triplet is requested. The
+triplets registered with <literal>fontInfo</literal> in its member
+<literal>triplets</literal>. The member <literal>triplets</literal> is
+a map which uses a string of the form
+<literal>family,style,weight</literal> as a key. There is also a class
+<literal>FontTriplet</literal>, which is not used.</simpara>
+		</listitem>
+
+		<listitem>
+		  <simpara>The user configured fonts are added.</simpara>
+		</listitem>
+	  </orderedlist></para>
+
+	<para>In the following listing <literal>treeBuilder</literal> is
+the tree builder object set up in the preparation stage, and
+<literal>foTreeControl</literal> is the document object. The list of
+user configured fonts of the <literal>renderer</literal> is empty, and
+the list of used fonts is still empty.
+
+<screen>
+ treeBuilder.foTreeControl.fonts = "{
+  F1=org.apache.fop.fonts.base14.Helvetica@e3c624,
+  F2=org.apache.fop.fonts.base14.HelveticaOblique@e020c9,
+  F3=org.apache.fop.fonts.base14.HelveticaBold@13e58d4,
+  F4=org.apache.fop.fonts.base14.HelveticaBoldOblique@15a6029,
+  F5=org.apache.fop.fonts.base14.TimesRoman@17494c8,
+  F6=org.apache.fop.fonts.base14.TimesItalic@1e57e8f,
+  F7=org.apache.fop.fonts.base14.TimesBold@888e6c,
+  F8=org.apache.fop.fonts.base14.TimesBoldItalic@d3db51,
+  F9=org.apache.fop.fonts.base14.Courier@5f6303,
+  F10=org.apache.fop.fonts.base14.CourierOblique@117f31e,
+  F11=org.apache.fop.fonts.base14.CourierBold@1d7fbfb,
+  F12=org.apache.fop.fonts.base14.CourierBoldOblique@5d9084
+  F13=org.apache.fop.fonts.base14.Symbol@39e5b5,
+  F14=org.apache.fop.fonts.base14.ZapfDingbats@1b5998f,
+}"
+</screen>
+
+<screen>
+ treeBuilder.foTreeControl.triplets = "{
+  Computer-Modern-Typewriter,normal,400=F9,
+  Courier,italic,400=F10,
+  Courier,italic,700=F12,
+  Courier,normal,400=F9,
+  Courier,normal,700=F11,
+  Courier,oblique,400=F10,
+  Courier,oblique,700=F12,
+  Helvetica,italic,400=F2,
+  Helvetica,italic,700=F4,
+  Helvetica,normal,400=F1,
+  Helvetica,normal,700=F3,
+  Helvetica,oblique,400=F2,
+  Helvetica,oblique,700=F4,
+  Symbol,normal,400=F13,
+  Times Roman,italic,400=F6,
+  Times Roman,italic,700=F8,
+  Times Roman,normal,400=F5,
+  Times Roman,normal,700=F7,
+  Times Roman,oblique,400=F6,
+  Times Roman,oblique,700=F8,
+  Times,italic,400=F6,
+  Times,italic,700=F8,
+  Times,normal,400=F5,
+  Times,normal,700=F7,
+  Times,oblique,400=F6,
+  Times,oblique,700=F8,
+  Times-Roman,italic,400=F6,
+  Times-Roman,italic,700=F8,
+  Times-Roman,normal,400=F5,
+  Times-Roman,normal,700=F7,
+  Times-Roman,oblique,400=F6,
+  Times-Roman,oblique,700=F8,
+  ZapfDingbats,normal,400=F14,
+  any,italic,400=F6,
+  any,italic,700=F8,
+  any,normal,400=F5,
+  any,normal,700=F7,
+  any,oblique,400=F6,
+  any,oblique,700=F8,
+  monospace,italic,400=F10,
+  monospace,italic,700=F12,
+  monospace,normal,400=F9,
+  monospace,normal,700=F11,
+  monospace,oblique,400=F10,
+  monospace,oblique,700=F12,
+  sans-serif,italic,400=F2,
+  sans-serif,italic,700=F4,
+  sans-serif,normal,400=F1,
+  sans-serif,normal,700=F3,
+  sans-serif,oblique,400=F2,
+  sans-serif,oblique,700=F4,
+  serif,italic,400=F6,
+  serif,italic,700=F8,
+  serif,normal,400=F5,
+  serif,normal,700=F7,
+  serif,oblique,400=F6
+  serif,oblique,700=F8,
+}"
+</screen>
+
+<screen>
+ treeBuilder.foTreeControl.atModel.renderer.fontList = null
+ treeBuilder.foTreeControl.usedFonts = "{}"
+</screen></para>
+
+	<para>User configured fonts should be listed in the member
+<literal>fontList</literal> of the <literal>renderer</literal>. The
+objects in the list are <literal>EmbedFontInfo</literal> objects. They
+are created from the path to the metrics file, boolean kerning, the
+list of triplets for which this font may be used, the path to the font
+file. The triplets are <literal>FontTriplet</literal> objects. The
+list may be created from an Avalon configuration object with
+<literal>FontSetup.buildFontListFromConfiguration(Configuration
+cfg)</literal>.</para>
+
+	<para><literal>>FontSetup.addConfiguredFonts</literal> creates a
+<literal>LazyFont</literal> font object from each
+<literal>EmbedFontInfo</literal> object. <literal>LazyFont</literal>
+fonts are not loaded until they are actually used. This makes it
+possible to register a large number of fonts at low cost.</para>
+
+	<para>Font weights are integers between 100 and 900.
+<literal>Font.NORMAL</literal> and <literal>Font.BOLD</literal> are
+set to 400 and 700, respectively. See
+<literal>FontUtil.parseCSS2FontWeight</literal>.</para>
+
+	</section>
+
+	<section>
+	  <title>Classes and interfaces used in the font package</title>
+
+	<screen>IF FontMetrics
+SubIF FontDescriptor
+
+IF MutableFont
+
+Abstract Class TypeFace: FontMetrics
+Classes Courier etc.
+
+Abstract Class TypeFace: FontMetrics
+Abstract Class CustomFont: FontDescriptor, MutableFont
+Abstract Class CIDFont, Class SingleByteFont
+Class MultiByteFont (sub CIDFont)
+
+Abstract Class TypeFace: FontMetrics
+Abstract Class CustomFont: FontDescriptor, MutableFont
+Class SingleByteFont
+
+Abstract Class TypeFace: FontMetrics
+Class LazyFont: FontDescriptor
+
+Abstract Class TypeFace: FontMetrics
+Class FontMetricsMapper, for AWT fonts
+</screen>
+
+	<para><literal>SingleByteFont</literal>,
+<literal>MultiByteFont</literal>: A font is not really single or
+multibyte. Rather the name <literal>SingleByteFont</literal> indicates
+that the font does not contain more than 256 glyphs; the
+implementation is optimized for this. In
+<literal>MultiByteFont</literal> (actually CIDFont Type2) the
+implementation is optimized for fonts with an unknown number of
+glyphs.</para>
+
+	</section>
+
+  </chapter>
+
+<!-- Local Variables: --> 
+<!-- current-language-environment: UTF-8 -->
+<!-- coding: utf-8 --> 
+<!-- default-input-method: TeX --> 
+<!-- End: -->

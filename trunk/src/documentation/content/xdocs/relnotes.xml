@@ -1,0 +1,147 @@
+<?xml version="1.0" standalone="no"?>
+<!--
+  Copyright 1999-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/document-v12.dtd">
+
+<document>
+  <header>
+    <title>Release Notes</title>
+    <version>$Revision$</version>
+  </header>
+
+    <body>
+<section>
+  <title>FOP 0.20.5</title>
+  <p>This is the last planned release in the 0.20.x series (aka maintenance branch).</p>
+  <p>Important changes since the last release (0.20.4):</p>
+  <ul>
+    <li>Some hyphenation patterns (cs, da, de, de_DR, el, en, en_US, fr, nl,
+      no, sk, tr) have been removed due to licensing reasons
+      (en_GB hyphenation has been renamed to en).
+      We're still working on this issue
+      (see <link href="http://wiki.apache.org/xmlgraphics-fop/FOPAudits/March2003">
+      Wiki</link> for details).
+    </li>
+    <li>Documentation is now built with <link href="http://xml.apache.org/forrest/">
+        Forrest</link> (version 0.4). You need to install Forrest if you want build the docs
+        yourself. (See
+        <link href="http://xml.apache.org/forrest/your-project.html">Using Forrest</link>)
+    </li>
+    <li>The following JARs have been updated:
+        Xerces to version 2.2.1, Xalan to version 2.4.1 and Batik to version 1.5beta4.
+    </li>
+    <li>FOP has been compiled with Jimi support, but Jimi is not included in the
+        FOP distribution. To use it, first download
+        <link href="http://java.sun.com/products/jimi/">Jimi</link>, then extract
+        the archive, then
+        copy JimiProClasses.zip to FOP's lib dir and rename it to jimi-1.0.jar.
+    </li>
+    <li>FOP has been compiled with JAI support, but JAI is not included in the
+        FOP distribution. To use it, simply install
+        <link href="http://java.sun.com/products/java-media/jai">JAI</link>.
+    </li>
+    <li>Links in PDF won't generate multiple link rectangles anymore. If this causes
+        a problem you can set the system property "links.merge" to "no".
+    </li>
+    <li>FOP has been compiled with cryptography support. See <link href="pdfencryption.html">
+      PDF encryption</link> for details about installation and usage.
+    </li>
+    <li>The behaviour of leader has changed. See
+      <link href="http://issues.apache.org/bugzilla/show_bug.cgi?id=19341">bug #19341</link>,
+      <link href="http://issues.apache.org/bugzilla/show_bug.cgi?id=19465">bug #19465</link>
+      and <code>leader.fo</code> (examples).
+    </li>
+    <li>
+      For a more detailed list of changes, see the CHANGES file in the root of the
+      FOP distribution.
+    </li>
+  </ul>
+
+</section>
+<section>
+  <title>FOP 0.20.4</title>
+  <p>Important changes since 0.20.3:</p>
+    <ul>
+       <li>FOP should now work with any JAXP1.1 compliant parser/transformer.
+         It has been successfully tested with Xerces/Xalan, Saxon and JDK1.4
+         (which includes Crimson and Xalan).
+       </li>
+       <li>The following JARs have been updated:
+         Xerces to version 2.0.1, Xalan to version 2.3.1 and Batik to version 1.5beta2.
+      </li>
+      <li>FOP has been compiled with Jimi support this time
+        but you still have to download
+        <link href="http://java.sun.com/products/jimi/">Jimi</link>
+        and copy it to lib/ to get PNG support (no need to build FOP yourself though).
+      </li>
+      <li>Building FOP with JDK1.2 does not work. Running is ok except
+        support for additional truetype fonts in AWT Viewer.
+      </li>
+      <li>Logging has been changed from LogKit to Avalon's Logger Interface.
+        (see <link href="embedding.html">Embedding</link> for details).
+      </li>
+      <li>Building under JDK 1.4:
+         You need to add a method in
+         <code>src/org/apache/fop/svg/PDFGraphics2D.java</code>
+         (search for jdk1.4 and remove the comments)
+      </li>
+      <li>To decrease the size of the distributions, ant, xml-docs, design-docs
+        and the hyphenation sources have been removed from the binary distribution.
+        Javadocs have been removed from the source distribution (use
+        <code>build javadocs</code> to generate them).
+      </li>
+      <li>Documentaion generation is broken in the maintenance branch at the moment
+       (Stylebook needs xerces1). The docs for this release are generated from the trunk.
+      </li>
+      <li>
+        For a more detailed list of changes, see the CHANGES file in the root of the FOP distribution.
+      </li>
+      </ul>
+ </section>
+
+<section>
+  <title>FOP 0.20.3</title>
+  <p>Important Information:</p>
+    <ul>
+       <li>This version supports the
+         <link href="http://www.w3.org/TR/2001/REC-xsl-20011015/">XSL-FO Version 1.0
+         W3C Recommendation</link> syntax. So don't forget to update your
+         Stylesheets:
+         <br/>Just rename the <code>master-name</code> property to <code>master-reference</code>
+         on <code>fo:page-sequence</code>, <code>fo:single-page-master-reference</code>,
+         <code>fo:repeatable-page-master-reference</code> and
+         <code>fo:conditional-page-master-reference</code>.</li>
+       <li>JDK 1.2 (or later) is required</li>
+       <li>Jimi has been removed for licensing reasons
+         <br/>If you need PNG support you have to download
+           <link href="http://java.sun.com/products/jimi/">Jimi</link>,
+           copy it to lib/ and build FOP yourself</li>
+      <li>Building under JDK 1.4:
+        <br/>You need to add a method in
+         <code>src/org/apache/fop/svg/PDFGraphics2D.java</code>
+         (search for jdk1.4 and remove the comments)
+       </li>
+       <li>
+        For a more detailed list of changes, see the CHANGES file in the root of the FOP distribution.
+       </li>
+      </ul>
+ </section>
+
+    </body>
+</document>
+

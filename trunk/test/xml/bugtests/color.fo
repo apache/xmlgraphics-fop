@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+      <fo:simple-page-master master-name="simplePM"
+                    page-height="25cm"
+                    page-width="20cm"
+                    margin-top="1cm"
+                    margin-bottom="1cm"
+                    margin-left="1.5cm"
+                    margin-right="1.5cm">
+        <fo:region-body margin-top="3cm" margin-bottom="3cm"/>
+        <fo:region-before extent="2.5cm"/>
+        <fo:region-after extent="2.5cm"/>
+      </fo:simple-page-master>
+  </fo:layout-master-set>
+
+  <fo:page-sequence master-reference="simplePM">
+      <fo:flow flow-name="xsl-region-body">
+      <fo:block color="#C00000">
+        This is a simple fo text in red color.
+          <fo:leader leader-pattern="rule" rule-thickness="3.0pt"></fo:leader>
+      </fo:block>
+
+      <fo:block color="#00C000">
+        This is a simple fo text in green color followed by black line.
+          <fo:leader color="#000000" leader-pattern="rule" rule-thickness="3.0pt"></fo:leader>
+      </fo:block>
+
+      <fo:block color="#0000C0">
+        This is a simple fo text in blue color.
+        <fo:inline color="#C055C0">This is in</fo:inline>
+        <fo:inline color="#550055">the same sentence</fo:inline>
+        This is text in blue again
+          <fo:leader leader-pattern="rule" rule-thickness="3.0pt"></fo:leader>
+      </fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

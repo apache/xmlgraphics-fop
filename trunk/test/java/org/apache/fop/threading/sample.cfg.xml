@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <threads>2</threads>
+  <output-dir>C:/Dev/FOP/temp/out</output-dir>
+  <foprocessor>
+    <!--basedir>C:/Dev/FOP/temp</basedir>
+    <fontbasedir>C:/Dev/FOP/temp/fonts</fontbasedir>
+    <userconfig>C:/Dev/FOP/temp/userconfig.xml</userconfig>
+    <strokesvgtext>true</strokesvgtext-->
+  </foprocessor>
+  <tasks repeat="2">
+    <task fo="C:/Dev/FOP/temp/helloworld.fo"/>
+    <task xml="C:/Dev/FOP/temp/page-x-of-y.xml" xslt="C:/Dev/FOP/temp/page-x-of-y.xsl"/>
+  </tasks>
+</config>

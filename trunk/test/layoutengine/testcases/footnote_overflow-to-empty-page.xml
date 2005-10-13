@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<testcase>
+  <info>
+    <p>
+      This test checks the creation of a page containing the remaining of a footnote and no content lines.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="simple"
+                                page-height="841.9pt"
+                                page-width="595.3pt"
+                                margin-top="112.42pt"
+                                margin-bottom="69.48pt"
+                                margin-left="99.88pt"
+                                margin-right="99.88pt">
+          <fo:region-body margin-top="120pt"
+                          margin-bottom="140pt"
+                          background-color="lightgrey"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="simple">
+        <fo:flow flow-name="xsl-region-body" font-family="Courier">
+          <fo:block background-color="white" line-height="20pt" line-stacking-strategy="font-height">line 1.  There is a footnote citation in the last</fo:block>
+          <fo:block background-color="white" line-height="20pt" line-stacking-strategy="font-height">line 2.  content line of this page.</fo:block>
+          <fo:block background-color="white" line-height="20pt" line-stacking-strategy="font-height">line 3.  The footnote body does not fit in the</fo:block>
+          <fo:block background-color="white" line-height="20pt" line-stacking-strategy="font-height">line 4.  remaining space so it is broken: the last</fo:block>
+          <fo:block background-color="white" line-height="20pt" line-stacking-strategy="font-height">line 5.  part of it will be placed in a new page</fo:block>
+          <fo:block background-color="white" line-height="20pt" line-stacking-strategy="font-height">line 6.  with no content lines.</fo:block>
+          <fo:block background-color="white" line-height="20pt" line-stacking-strategy="font-height">line 7.  ---------+---------+---------+---------+------</fo:block>
+          <fo:block background-color="white" line-height="20pt" line-stacking-strategy="font-height">line 8.</fo:block>
+          <fo:block background-color="white" line-height="20pt" line-stacking-strategy="font-height">line 9.</fo:block>
+          <fo:block background-color="white" line-height="20pt" line-stacking-strategy="font-height">line 10.</fo:block>
+          <fo:block background-color="white" line-height="20pt" line-stacking-strategy="font-height">line 11.</fo:block>
+          <fo:block background-color="white" line-height="20pt" line-stacking-strategy="font-height">line 12.</fo:block>
+          <fo:block background-color="white" line-height="20pt" line-stacking-strategy="font-height">line 13.</fo:block>
+          <fo:block background-color="white" line-height="20pt" line-stacking-strategy="font-height">line 14.</fo:block>
+          <fo:block background-color="white" line-height="20pt" line-stacking-strategy="font-height">line 15.</fo:block>
+          <fo:block background-color="white" line-height="20pt" line-stacking-strategy="font-height">line 16.</fo:block>
+          <fo:block background-color="white" line-height="20pt" line-stacking-strategy="font-height">line 17.</fo:block>
+          <fo:block background-color="white" line-height="20pt" line-stacking-strategy="font-height">line 18.
+            <fo:footnote>
+              <fo:inline font-size="50%" vertical-align="top">1</fo:inline>
+              <fo:footnote-body>
+                <fo:block background-color="pink" line-height="20pt" line-stacking-strategy="font-height"><fo:inline font-size="50%" vertical-align="top">1</fo:inline> footnote line 1/3.</fo:block>
+                <fo:block background-color="pink" line-height="20pt" line-stacking-strategy="font-height">footnote line 2/3.</fo:block>
+                <fo:block background-color="pink" line-height="20pt" line-stacking-strategy="font-height">footnote line 3/3.</fo:block>
+              </fo:footnote-body>
+            </fo:footnote>
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="2" xpath="count(//pageViewport)"/>
+    <!-- last content line in page 1 -->
+    <eval expected="line 18. " xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[last()]/lineArea/text[1]"/>
+    <eval expected="1" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[last()]/lineArea/inlineparent/text[1]"/>
+    <!-- last footnote line in page 1 -->
+    <eval expected="footnote line 2/3." xpath="//pageViewport[1]/page/regionViewport/regionBody/footnote//block[last()]/lineArea/text[1]"/>
+    <!-- first footnote line in page 2 -->
+    <eval expected="footnote line 3/3." xpath="//pageViewport[2]/page/regionViewport/regionBody/footnote//block[1]/lineArea/text[1]"/>
+  </checks>
+</testcase>
