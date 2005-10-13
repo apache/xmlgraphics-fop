@@ -21,6 +21,8 @@ package org.apache.fop.layoutmgr;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import org.apache.fop.layoutmgr.SpaceResolver.SpaceHandlingBreakPosition;
+
 public class AreaAdditionUtil {
 
     private static class StackingIter extends PositionIterator {
@@ -52,6 +54,10 @@ public class AreaAdditionUtil {
         Position pos;
         while (parentIter.hasNext()) {
             pos = (Position)parentIter.next();
+            if (pos == null) {
+                //positionList.add(new IgnorePosition(null));
+                continue;
+            }
             if (pos.getIndex() >= 0) {
                 if (firstPos == null) {
                     firstPos = pos;
@@ -65,6 +71,8 @@ public class AreaAdditionUtil {
                 if (firstLM == null) {
                     firstLM = lastLM;
                 }
+            } else if (pos instanceof SpaceHandlingBreakPosition) {
+                positionList.add(pos);
             } else {
                 // pos was created by this LM, so it must be ignored
             }

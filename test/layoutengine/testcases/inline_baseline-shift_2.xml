@@ -111,61 +111,62 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="16415" xpath="//flow/block[2]/lineArea[1]/@bpd"/>
+    <eval expected="16415" xpath="//flow/block[1]/lineArea[1]/@bpd"/>
+    <eval expected="0" xpath="//flow/block[1]/lineArea[1]/text[1]/@offset"/>
+    <eval expected="5487" xpath="//flow/block[1]/lineArea[1]/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[1]/lineArea[1]/inlineparent/text[1]/@offset"/>
+    <eval expected="3528" xpath="//flow/block[1]/lineArea[1]/inlineparent/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[1]/lineArea[1]/inlineparent/inlineparent/text/@offset"/>
+    <eval expected="0" xpath="//flow/block[1]/lineArea[1]/inlineparent/text[2]/@offset"/>
+    <eval expected="0" xpath="//flow/block[1]/lineArea[1]/text[2]/@offset"/>
+    
+    <eval expected="14737" xpath="//flow/block[2]/lineArea[1]/@bpd"/>
     <eval expected="0" xpath="//flow/block[2]/lineArea[1]/text[1]/@offset"/>
     <eval expected="5487" xpath="//flow/block[2]/lineArea[1]/inlineparent/@offset"/>
     <eval expected="0" xpath="//flow/block[2]/lineArea[1]/inlineparent/text[1]/@offset"/>
-    <eval expected="3528" xpath="//flow/block[2]/lineArea[1]/inlineparent/inlineparent/@offset"/>
+    <eval expected="-3794" xpath="//flow/block[2]/lineArea[1]/inlineparent/inlineparent/@offset"/>
     <eval expected="0" xpath="//flow/block[2]/lineArea[1]/inlineparent/inlineparent/text/@offset"/>
     <eval expected="0" xpath="//flow/block[2]/lineArea[1]/inlineparent/text[2]/@offset"/>
     <eval expected="0" xpath="//flow/block[2]/lineArea[1]/text[2]/@offset"/>
     
-    <eval expected="14737" xpath="//flow/block[5]/lineArea[1]/@bpd"/>
-    <eval expected="0" xpath="//flow/block[5]/lineArea[1]/text[1]/@offset"/>
-    <eval expected="5487" xpath="//flow/block[5]/lineArea[1]/inlineparent/@offset"/>
+    <eval expected="21194" xpath="//flow/block[3]/lineArea[1]/@bpd"/>
+    <eval expected="8244" xpath="//flow/block[3]/lineArea[1]/text[1]/@offset"/>
+    <eval expected="3794" xpath="//flow/block[3]/lineArea[1]/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[3]/lineArea[1]/inlineparent/text[1]/@offset"/>
+    <eval expected="-3794" xpath="//flow/block[3]/lineArea[1]/inlineparent/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[3]/lineArea[1]/inlineparent/inlineparent/text/@offset"/>
+    <eval expected="0" xpath="//flow/block[3]/lineArea[1]/inlineparent/text[2]/@offset"/>
+    <eval expected="8244" xpath="//flow/block[3]/lineArea[1]/text[2]/@offset"/>
+    
+    <eval expected="17400" xpath="//flow/block[4]/lineArea[1]/@bpd"/>
+    <eval expected="4450" xpath="//flow/block[4]/lineArea[1]/text[1]/@offset"/>
+    <eval expected="0" xpath="//flow/block[4]/lineArea[1]/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[4]/lineArea[1]/inlineparent/text[1]/@offset"/>
+    <eval expected="3528" xpath="//flow/block[4]/lineArea[1]/inlineparent/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[4]/lineArea[1]/inlineparent/inlineparent/text/@offset"/>
+    <eval expected="0" xpath="//flow/block[4]/lineArea[1]/inlineparent/text[2]/@offset"/>
+    <eval expected="4450" xpath="//flow/block[4]/lineArea[1]/text[2]/@offset"/>
+    
+    <eval expected="15118" xpath="//flow/block[5]/lineArea[1]/@bpd"/>
+    <eval expected="2168" xpath="//flow/block[5]/lineArea[1]/text[1]/@offset"/>
+    <eval expected="0" xpath="//flow/block[5]/lineArea[1]/inlineparent/@offset"/>
     <eval expected="0" xpath="//flow/block[5]/lineArea[1]/inlineparent/text[1]/@offset"/>
-    <eval expected="-3794" xpath="//flow/block[5]/lineArea[1]/inlineparent/inlineparent/@offset"/>
+    <eval expected="7436" xpath="//flow/block[5]/lineArea[1]/inlineparent/inlineparent/@offset"/>
     <eval expected="0" xpath="//flow/block[5]/lineArea[1]/inlineparent/inlineparent/text/@offset"/>
     <eval expected="0" xpath="//flow/block[5]/lineArea[1]/inlineparent/text[2]/@offset"/>
-    <eval expected="0" xpath="//flow/block[5]/lineArea[1]/text[2]/@offset"/>
+    <eval expected="2168" xpath="//flow/block[5]/lineArea[1]/text[2]/@offset"/>
     
-    <eval expected="21194" xpath="//flow/block[8]/lineArea[1]/@bpd"/>
-    <eval expected="8244" xpath="//flow/block[8]/lineArea[1]/text[1]/@offset"/>
-    <eval expected="3794" xpath="//flow/block[8]/lineArea[1]/inlineparent/@offset"/>
-    <eval expected="0" xpath="//flow/block[8]/lineArea[1]/inlineparent/text[1]/@offset"/>
-    <eval expected="-3794" xpath="//flow/block[8]/lineArea[1]/inlineparent/inlineparent/@offset"/>
-    <eval expected="0" xpath="//flow/block[8]/lineArea[1]/inlineparent/inlineparent/text/@offset"/>
-    <eval expected="0" xpath="//flow/block[8]/lineArea[1]/inlineparent/text[2]/@offset"/>
-    <eval expected="8244" xpath="//flow/block[8]/lineArea[1]/text[2]/@offset"/>
-    
-    <eval expected="17400" xpath="//flow/block[11]/lineArea[1]/@bpd"/>
-    <eval expected="4450" xpath="//flow/block[11]/lineArea[1]/text[1]/@offset"/>
-    <eval expected="0" xpath="//flow/block[11]/lineArea[1]/inlineparent/@offset"/>
-    <eval expected="0" xpath="//flow/block[11]/lineArea[1]/inlineparent/text[1]/@offset"/>
-    <eval expected="3528" xpath="//flow/block[11]/lineArea[1]/inlineparent/inlineparent/@offset"/>
-    <eval expected="0" xpath="//flow/block[11]/lineArea[1]/inlineparent/inlineparent/text/@offset"/>
-    <eval expected="0" xpath="//flow/block[11]/lineArea[1]/inlineparent/text[2]/@offset"/>
-    <eval expected="4450" xpath="//flow/block[11]/lineArea[1]/text[2]/@offset"/>
-    
-    <eval expected="15118" xpath="//flow/block[14]/lineArea[1]/@bpd"/>
-    <eval expected="2168" xpath="//flow/block[14]/lineArea[1]/text[1]/@offset"/>
-    <eval expected="0" xpath="//flow/block[14]/lineArea[1]/inlineparent/@offset"/>
-    <eval expected="0" xpath="//flow/block[14]/lineArea[1]/inlineparent/text[1]/@offset"/>
-    <eval expected="7436" xpath="//flow/block[14]/lineArea[1]/inlineparent/inlineparent/@offset"/>
-    <eval expected="0" xpath="//flow/block[14]/lineArea[1]/inlineparent/inlineparent/text/@offset"/>
-    <eval expected="0" xpath="//flow/block[14]/lineArea[1]/inlineparent/text[2]/@offset"/>
-    <eval expected="2168" xpath="//flow/block[14]/lineArea[1]/text[2]/@offset"/>
-    
-    <eval expected="39060" xpath="//flow/block[17]/lineArea[1]/@bpd"/>
-    <eval expected="25086" xpath="//flow/block[17]/lineArea[1]/text[1]/@offset"/>
-    <eval expected="14892" xpath="//flow/block[17]/lineArea[1]/inlineparent/@offset"/>
-    <eval expected="0" xpath="//flow/block[17]/lineArea[1]/inlineparent/text[1]/@offset"/>
-    <eval expected="1968" xpath="//flow/block[17]/lineArea[1]/inlineparent/inlineparent/@offset"/>
-    <eval expected="0" xpath="//flow/block[17]/lineArea[1]/inlineparent/inlineparent/text[1]/@offset"/>
-    <eval expected="-16860" xpath="//flow/block[17]/lineArea[1]/inlineparent/inlineparent/inlineparent/@offset"/>
-    <eval expected="0" xpath="//flow/block[17]/lineArea[1]/inlineparent/inlineparent/inlineparent/text/@offset"/>
-    <eval expected="0" xpath="//flow/block[17]/lineArea[1]/inlineparent/inlineparent/text[1]/@offset"/>
-    <eval expected="0" xpath="//flow/block[17]/lineArea[1]/inlineparent/text[2]/@offset"/>
-    <eval expected="25086" xpath="//flow/block[17]/lineArea[1]/text[2]/@offset"/>
+    <eval expected="39060" xpath="//flow/block[6]/lineArea[1]/@bpd"/>
+    <eval expected="25086" xpath="//flow/block[6]/lineArea[1]/text[1]/@offset"/>
+    <eval expected="14892" xpath="//flow/block[6]/lineArea[1]/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[6]/lineArea[1]/inlineparent/text[1]/@offset"/>
+    <eval expected="1968" xpath="//flow/block[6]/lineArea[1]/inlineparent/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[6]/lineArea[1]/inlineparent/inlineparent/text[1]/@offset"/>
+    <eval expected="-16860" xpath="//flow/block[6]/lineArea[1]/inlineparent/inlineparent/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[6]/lineArea[1]/inlineparent/inlineparent/inlineparent/text/@offset"/>
+    <eval expected="0" xpath="//flow/block[6]/lineArea[1]/inlineparent/inlineparent/text[1]/@offset"/>
+    <eval expected="0" xpath="//flow/block[6]/lineArea[1]/inlineparent/text[2]/@offset"/>
+    <eval expected="25086" xpath="//flow/block[6]/lineArea[1]/text[2]/@offset"/>
   </checks>
 </testcase>
+

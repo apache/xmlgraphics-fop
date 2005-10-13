@@ -28,6 +28,7 @@ import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.TraitSetter;
@@ -114,7 +115,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         
         if (!bBreakBeforeServed) {
             try {
-                if (addKnuthElementsForBreakBefore(returnList)) {
+                if (addKnuthElementsForBreakBefore(returnList, context)) {
                     return returnList;
                 }
             } finally {
@@ -205,8 +206,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         log.debug(returnedList);
         
         if (returnedList.size() == 1
-                && ((KnuthElement) returnedList.getFirst()).isPenalty()
-                && ((KnuthPenalty) returnedList.getFirst()).getP() == -KnuthElement.INFINITE) {
+                && ((ListElement)returnedList.getFirst()).isForcedBreak()) {
             // a descendant of this block has break-before
             if (returnList.size() == 0) {
                 // the first child (or its first child ...) has
@@ -250,8 +250,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             }*/
             contentList.addAll(returnedList);
             if (returnedList.size() > 0) {
-                if (((KnuthElement) returnedList.getLast()).isPenalty()
-                        && ((KnuthPenalty) returnedList.getLast()).getP() == -KnuthElement.INFINITE) {
+                if (((ListElement)returnedList.getLast()).isForcedBreak()) {
                     // a descendant of this block has break-after
                     if (false /*curLM.isFinished()*/) {
                         // there is no other content in this block;
@@ -267,7 +266,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             }
         }
         wrapPositionElements(contentList, returnList);
-        addKnuthElementsForBreakAfter(returnList);
+        addKnuthElementsForBreakAfter(returnList, context);
         setFinished(true);
         return returnList;
     }

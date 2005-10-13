@@ -41,23 +41,36 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="0" xpath="//flow/block[1]/@ipd"/>
-    <eval expected="18000" xpath="//flow/block[1]/@bpd"/>
-    <eval expected="324000" xpath="//flow/block[2]/@ipd"/>
-    <eval expected="18000" xpath="//flow/block[2]/@start-indent"/>
-    <eval expected="18000" xpath="//flow/block[2]/@end-indent"/>
-    <eval expected="18000" xpath="//flow/block[2]/@space-start"/>
-    <eval expected="18000" xpath="//flow/block[2]/@space-end"/>
-    <eval expected="0" xpath="//flow/block[2]/block[1]/@ipd"/>
-    <eval expected="16200" xpath="//flow/block[2]/block[1]/@bpd"/>
-    <eval expected="291600" xpath="//flow/block[2]/block[2]/@ipd"/>
-    <eval expected="34200" xpath="//flow/block[2]/block[2]/@start-indent"/>
-    <eval expected="34200" xpath="//flow/block[2]/block[2]/@end-indent"/>
-    <eval expected="34200" xpath="//flow/block[2]/block[2]/@space-start"/>
-    <eval expected="34200" xpath="//flow/block[2]/block[2]/@space-end"/>
-    <eval expected="0" xpath="//flow/block[2]/block[3]/@ipd"/>
-    <eval expected="16200" xpath="//flow/block[2]/block[3]/@bpd"/>
-    <eval expected="0" xpath="//flow/block[3]/@ipd"/>
-    <eval expected="18000" xpath="//flow/block[3]/@bpd"/>
+    <element-list category="breaker">
+      <box w="0"/>
+      <penalty w="0" p="INF"/>
+      <glue w="18000" y="0" z="0"/>
+      <box w="14400"/>
+      <box w="14400"/>
+      <penalty w="0" p="INF"/>
+      <glue w="18000" y="0" z="0"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      <box w="14400"/>
+      <skip>3</skip>
+    </element-list>
+  
+    <eval expected="18000" xpath="//flow/block[1]/@space-before"/>
+    <eval expected="324000" xpath="//flow/block[1]/@ipd"/>
+    <eval expected="18000" xpath="//flow/block[1]/@start-indent"/>
+    <eval expected="18000" xpath="//flow/block[1]/@end-indent"/>
+    <eval expected="18000" xpath="//flow/block[1]/@space-start"/>
+    <eval expected="18000" xpath="//flow/block[1]/@space-end"/>
+    
+    <true xpath="not(boolean(//flow/block[1]/block[1]/@space-before))"/>  <!-- space collapsed under space resolution rules -->
+    <eval expected="291600" xpath="//flow/block[1]/block[1]/@ipd"/>
+    <eval expected="34200" xpath="//flow/block[1]/block[1]/@start-indent"/>
+    <eval expected="34200" xpath="//flow/block[1]/block[1]/@end-indent"/>
+    <eval expected="34200" xpath="//flow/block[1]/block[1]/@space-start"/>
+    <eval expected="34200" xpath="//flow/block[1]/block[1]/@space-end"/>
+    <true xpath="not(boolean(//flow/block[1]/block[1]/@space-after))"/>  <!-- space collapsed under space resolution rules -->
+    <true xpath="not(boolean(//flow/block[1]/block[2]))"/>
+    
+    <eval expected="18000" xpath="//flow/block[1]/@space-after"/>
   </checks>
 </testcase>

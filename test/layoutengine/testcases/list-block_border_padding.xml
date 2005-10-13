@@ -66,124 +66,124 @@
     <eval expected="360000" xpath="//flow/@ipd"/>
     
     <!-- spacer block for space-before on list-block -->
-    <eval expected="5000" xpath="//flow/block[2]/@bpd"/>
+    <eval expected="5000" xpath="//flow/block[2]/@space-before"/>
     
     <!-- list-block -->
-    <eval expected="360000" xpath="//flow/block[3]/@ipda"/>
-    <eval expected="340000" xpath="//flow/block[3]/@ipd"/>
-    <!--eval expected="??" xpath="//flow/block[3]/@bpda"/>
-    <eval expected="??" xpath="//flow/block[3]/@bpd"/-->
-    <eval expected="10000 10000 10000 10000" xpath="//flow/block[3]/@bap"/>
-    <eval expected="5000" xpath="//flow/block[3]/@padding-before"/>
-    <eval expected="5000" xpath="//flow/block[3]/@padding-after"/>
-    <eval expected="5000" xpath="//flow/block[3]/@padding-start"/>
-    <eval expected="5000" xpath="//flow/block[3]/@padding-end"/>
-    <eval expected="10000" xpath="//flow/block[3]/@start-indent"/>
-    <eval expected="10000" xpath="//flow/block[3]/@end-indent"/>
+    <eval expected="360000" xpath="//flow/block[2]/@ipda"/>
+    <eval expected="340000" xpath="//flow/block[2]/@ipd"/>
+    <!--eval expected="??" xpath="//flow/block[2]/@bpda"/>
+    <eval expected="??" xpath="//flow/block[2]/@bpd"/-->
+    <eval expected="10000 10000 10000 10000" xpath="//flow/block[2]/@bap"/>
+    <eval expected="5000" xpath="//flow/block[2]/@padding-before"/>
+    <eval expected="5000" xpath="//flow/block[2]/@padding-after"/>
+    <eval expected="5000" xpath="//flow/block[2]/@padding-start"/>
+    <eval expected="5000" xpath="//flow/block[2]/@padding-end"/>
+    <eval expected="10000" xpath="//flow/block[2]/@start-indent"/>
+    <eval expected="10000" xpath="//flow/block[2]/@end-indent"/>
     
     <!-- first list-item -->
-    <eval expected="340000" xpath="//flow/block[3]/block[1]/@ipda"/>
-    <eval expected="340000" xpath="//flow/block[3]/block[1]/@ipd"/>
-    <eval expected="14400" xpath="//flow/block[3]/block[1]/@bpda"/>
-    <eval expected="14400" xpath="//flow/block[3]/block[1]/@bpd"/>
-    <eval expected="10000" xpath="//flow/block[3]/block[1]/@start-indent"/>
-    <eval expected="10000" xpath="//flow/block[3]/block[1]/@end-indent"/>
+    <eval expected="340000" xpath="//flow/block[2]/block[1]/@ipda"/>
+    <eval expected="340000" xpath="//flow/block[2]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[1]/@bpda"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[1]/@bpd"/>
+    <eval expected="10000" xpath="//flow/block[2]/block[1]/@start-indent"/>
+    <eval expected="10000" xpath="//flow/block[2]/block[1]/@end-indent"/>
 
-    <eval expected="340000" xpath="//flow/block[3]/block[1]/block[1]/@ipd"/>
-    <eval expected="14400" xpath="//flow/block[3]/block[1]/block[1]/@bpd"/>
-    <eval expected="40000" xpath="//flow/block[3]/block[1]/block[1]/block[1]/@ipda"/>
-    <eval expected="40000" xpath="//flow/block[3]/block[1]/block[1]/block[1]/@ipd"/>
-    <eval expected="14400" xpath="//flow/block[3]/block[1]/block[1]/block[1]/@bpda"/>
-    <eval expected="14400" xpath="//flow/block[3]/block[1]/block[1]/block[1]/@bpda"/>
-    <eval expected="10000" xpath="//flow/block[3]/block[1]/block[1]/block[1]/@start-indent"/>
-    <eval expected="310000" xpath="//flow/block[3]/block[1]/block[1]/block[1]/@end-indent"/>
-    <eval expected="10000" xpath="//flow/block[3]/block[1]/block[1]/block[1]/@space-start"/>
-    <eval expected="310000" xpath="//flow/block[3]/block[1]/block[1]/block[1]/@space-end"/>
+    <eval expected="340000" xpath="//flow/block[2]/block[1]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[1]/block[1]/@bpd"/>
+    <eval expected="40000" xpath="//flow/block[2]/block[1]/block[1]/block[1]/@ipda"/>
+    <eval expected="40000" xpath="//flow/block[2]/block[1]/block[1]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[1]/block[1]/block[1]/@bpda"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[1]/block[1]/block[1]/@bpda"/>
+    <eval expected="10000" xpath="//flow/block[2]/block[1]/block[1]/block[1]/@start-indent"/>
+    <eval expected="310000" xpath="//flow/block[2]/block[1]/block[1]/block[1]/@end-indent"/>
+    <eval expected="10000" xpath="//flow/block[2]/block[1]/block[1]/block[1]/@space-start"/>
+    <eval expected="310000" xpath="//flow/block[2]/block[1]/block[1]/block[1]/@space-end"/>
     
-    <eval expected="340000" xpath="//flow/block[3]/block[1]/block[2]/@ipd"/>
-    <eval expected="14400" xpath="//flow/block[3]/block[1]/block[2]/@bpd"/>
-    <eval expected="290000" xpath="//flow/block[3]/block[1]/block[2]/block[1]/@ipda"/>
-    <eval expected="280000" xpath="//flow/block[3]/block[1]/block[2]/block[1]/@ipd"/>
-    <eval expected="14400" xpath="//flow/block[3]/block[1]/block[2]/block[1]/@bpda"/>
-    <eval expected="14400" xpath="//flow/block[3]/block[1]/block[2]/block[1]/@bpda"/>
-    <eval expected="65000" xpath="//flow/block[3]/block[1]/block[2]/block[1]/@start-indent"/>
-    <eval expected="15000" xpath="//flow/block[3]/block[1]/block[2]/block[1]/@end-indent"/>
-    <eval expected="60000" xpath="//flow/block[3]/block[1]/block[2]/block[1]/@space-start"/>
-    <eval expected="10000" xpath="//flow/block[3]/block[1]/block[2]/block[1]/@space-end"/>
+    <eval expected="340000" xpath="//flow/block[2]/block[1]/block[2]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[1]/block[2]/@bpd"/>
+    <eval expected="290000" xpath="//flow/block[2]/block[1]/block[2]/block[1]/@ipda"/>
+    <eval expected="280000" xpath="//flow/block[2]/block[1]/block[2]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[1]/block[2]/block[1]/@bpda"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[1]/block[2]/block[1]/@bpda"/>
+    <eval expected="65000" xpath="//flow/block[2]/block[1]/block[2]/block[1]/@start-indent"/>
+    <eval expected="15000" xpath="//flow/block[2]/block[1]/block[2]/block[1]/@end-indent"/>
+    <eval expected="60000" xpath="//flow/block[2]/block[1]/block[2]/block[1]/@space-start"/>
+    <eval expected="10000" xpath="//flow/block[2]/block[1]/block[2]/block[1]/@space-end"/>
     
     <!-- spacer block for space-before on second list-item -->
-    <eval expected="5000" xpath="//flow/block[3]/block[2]/@bpd"/>
+    <eval expected="5000" xpath="//flow/block[2]/block[2]/@space-before"/>
 
     <!-- second list-item -->
-    <eval expected="340000" xpath="//flow/block[3]/block[3]/@ipda"/>
-    <eval expected="340000" xpath="//flow/block[3]/block[3]/@ipd"/>
-    <eval expected="14400" xpath="//flow/block[3]/block[3]/@bpda"/>
-    <eval expected="14400" xpath="//flow/block[3]/block[3]/@bpd"/>
-    <eval expected="10000" xpath="//flow/block[3]/block[3]/@start-indent"/>
-    <eval expected="10000" xpath="//flow/block[3]/block[3]/@end-indent"/>
+    <eval expected="340000" xpath="//flow/block[2]/block[2]/@ipda"/>
+    <eval expected="340000" xpath="//flow/block[2]/block[2]/@ipd"/>
+    <eval expected="29400" xpath="//flow/block[2]/block[2]/@bpda"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[2]/@bpd"/>
+    <eval expected="10000" xpath="//flow/block[2]/block[2]/@start-indent"/>
+    <eval expected="10000" xpath="//flow/block[2]/block[2]/@end-indent"/>
 
-    <eval expected="340000" xpath="//flow/block[3]/block[3]/block[1]/@ipd"/>
-    <eval expected="14400" xpath="//flow/block[3]/block[3]/block[1]/@bpd"/>
-    <eval expected="40000" xpath="//flow/block[3]/block[3]/block[1]/block[1]/@ipda"/>
-    <eval expected="40000" xpath="//flow/block[3]/block[3]/block[1]/block[1]/@ipd"/>
-    <eval expected="14400" xpath="//flow/block[3]/block[3]/block[1]/block[1]/@bpda"/>
-    <eval expected="14400" xpath="//flow/block[3]/block[3]/block[1]/block[1]/@bpda"/>
-    <eval expected="10000" xpath="//flow/block[3]/block[3]/block[1]/block[1]/@start-indent"/>
-    <eval expected="310000" xpath="//flow/block[3]/block[3]/block[1]/block[1]/@end-indent"/>
-    <eval expected="10000" xpath="//flow/block[3]/block[3]/block[1]/block[1]/@space-start"/>
-    <eval expected="310000" xpath="//flow/block[3]/block[3]/block[1]/block[1]/@space-end"/>
+    <eval expected="340000" xpath="//flow/block[2]/block[2]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[2]/block[1]/@bpd"/>
+    <eval expected="40000" xpath="//flow/block[2]/block[2]/block[1]/block[1]/@ipda"/>
+    <eval expected="40000" xpath="//flow/block[2]/block[2]/block[1]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[2]/block[1]/block[1]/@bpda"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[2]/block[1]/block[1]/@bpda"/>
+    <eval expected="10000" xpath="//flow/block[2]/block[2]/block[1]/block[1]/@start-indent"/>
+    <eval expected="310000" xpath="//flow/block[2]/block[2]/block[1]/block[1]/@end-indent"/>
+    <eval expected="10000" xpath="//flow/block[2]/block[2]/block[1]/block[1]/@space-start"/>
+    <eval expected="310000" xpath="//flow/block[2]/block[2]/block[1]/block[1]/@space-end"/>
     
-    <eval expected="340000" xpath="//flow/block[3]/block[3]/block[2]/@ipd"/>
-    <eval expected="14400" xpath="//flow/block[3]/block[3]/block[2]/@bpd"/>
-    <eval expected="295000" xpath="//flow/block[3]/block[3]/block[2]/block[1]/@ipda"/>
-    <eval expected="285000" xpath="//flow/block[3]/block[3]/block[2]/block[1]/@ipd"/>
-    <eval expected="14400" xpath="//flow/block[3]/block[3]/block[2]/block[1]/@bpda"/>
-    <eval expected="14400" xpath="//flow/block[3]/block[3]/block[2]/block[1]/@bpda"/>
-    <eval expected="60000" xpath="//flow/block[3]/block[3]/block[2]/block[1]/@start-indent"/>
-    <eval expected="15000" xpath="//flow/block[3]/block[3]/block[2]/block[1]/@end-indent"/>
-    <eval expected="55000" xpath="//flow/block[3]/block[3]/block[2]/block[1]/@space-start"/>
-    <eval expected="10000" xpath="//flow/block[3]/block[3]/block[2]/block[1]/@space-end"/>
+    <eval expected="340000" xpath="//flow/block[2]/block[2]/block[2]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[2]/block[2]/@bpd"/>
+    <eval expected="295000" xpath="//flow/block[2]/block[2]/block[2]/block[1]/@ipda"/>
+    <eval expected="285000" xpath="//flow/block[2]/block[2]/block[2]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[2]/block[2]/block[1]/@bpda"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[2]/block[2]/block[1]/@bpda"/>
+    <eval expected="60000" xpath="//flow/block[2]/block[2]/block[2]/block[1]/@start-indent"/>
+    <eval expected="15000" xpath="//flow/block[2]/block[2]/block[2]/block[1]/@end-indent"/>
+    <eval expected="55000" xpath="//flow/block[2]/block[2]/block[2]/block[1]/@space-start"/>
+    <eval expected="10000" xpath="//flow/block[2]/block[2]/block[2]/block[1]/@space-end"/>
 
     <!-- spacer block for space-after on second list-item -->
-    <eval expected="10000" xpath="//flow/block[3]/block[4]/@bpd"/>
+    <eval expected="10000" xpath="//flow/block[2]/block[2]/@space-after"/>
 
     <!-- third list-item -->
-    <eval expected="340000" xpath="//flow/block[3]/block[5]/@ipda"/>
-    <eval expected="320000" xpath="//flow/block[3]/block[5]/@ipd"/>
-    <eval expected="34400" xpath="//flow/block[3]/block[5]/@bpda"/>
-    <eval expected="14400" xpath="//flow/block[3]/block[5]/@bpd"/>
-    <eval expected="10000 10000 10000 10000" xpath="//flow/block[3]/block[5]/@bap"/>
-    <eval expected="5000" xpath="//flow/block[3]/block[5]/@padding-before"/>
-    <eval expected="5000" xpath="//flow/block[3]/block[5]/@padding-after"/>
-    <eval expected="5000" xpath="//flow/block[3]/block[5]/@padding-start"/>
-    <eval expected="5000" xpath="//flow/block[3]/block[5]/@padding-end"/>
-    <eval expected="20000" xpath="//flow/block[3]/block[5]/@start-indent"/>
-    <eval expected="20000" xpath="//flow/block[3]/block[5]/@end-indent"/>
+    <eval expected="340000" xpath="//flow/block[2]/block[3]/@ipda"/>
+    <eval expected="320000" xpath="//flow/block[2]/block[3]/@ipd"/>
+    <eval expected="34400" xpath="//flow/block[2]/block[3]/@bpda"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[3]/@bpd"/>
+    <eval expected="10000 10000 10000 10000" xpath="//flow/block[2]/block[3]/@bap"/>
+    <eval expected="5000" xpath="//flow/block[2]/block[3]/@padding-before"/>
+    <eval expected="5000" xpath="//flow/block[2]/block[3]/@padding-after"/>
+    <eval expected="5000" xpath="//flow/block[2]/block[3]/@padding-start"/>
+    <eval expected="5000" xpath="//flow/block[2]/block[3]/@padding-end"/>
+    <eval expected="20000" xpath="//flow/block[2]/block[3]/@start-indent"/>
+    <eval expected="20000" xpath="//flow/block[2]/block[3]/@end-indent"/>
 
-    <eval expected="320000" xpath="//flow/block[3]/block[5]/block[1]/@ipd"/>
-    <eval expected="14400" xpath="//flow/block[3]/block[5]/block[1]/@bpd"/>
-    <eval expected="40000" xpath="//flow/block[3]/block[5]/block[1]/block[1]/@ipda"/>
-    <eval expected="40000" xpath="//flow/block[3]/block[5]/block[1]/block[1]/@ipd"/>
-    <eval expected="14400" xpath="//flow/block[3]/block[5]/block[1]/block[1]/@bpda"/>
-    <eval expected="14400" xpath="//flow/block[3]/block[5]/block[1]/block[1]/@bpda"/>
-    <eval expected="20000" xpath="//flow/block[3]/block[5]/block[1]/block[1]/@start-indent"/>
-    <eval expected="300000" xpath="//flow/block[3]/block[5]/block[1]/block[1]/@end-indent"/>
-    <eval expected="20000" xpath="//flow/block[3]/block[5]/block[1]/block[1]/@space-start"/>
-    <eval expected="300000" xpath="//flow/block[3]/block[5]/block[1]/block[1]/@space-end"/>
+    <eval expected="320000" xpath="//flow/block[2]/block[3]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[3]/block[1]/@bpd"/>
+    <eval expected="40000" xpath="//flow/block[2]/block[3]/block[1]/block[1]/@ipda"/>
+    <eval expected="40000" xpath="//flow/block[2]/block[3]/block[1]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[3]/block[1]/block[1]/@bpda"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[3]/block[1]/block[1]/@bpda"/>
+    <eval expected="20000" xpath="//flow/block[2]/block[3]/block[1]/block[1]/@start-indent"/>
+    <eval expected="300000" xpath="//flow/block[2]/block[3]/block[1]/block[1]/@end-indent"/>
+    <eval expected="20000" xpath="//flow/block[2]/block[3]/block[1]/block[1]/@space-start"/>
+    <eval expected="300000" xpath="//flow/block[2]/block[3]/block[1]/block[1]/@space-end"/>
     
-    <eval expected="320000" xpath="//flow/block[3]/block[5]/block[2]/@ipd"/>
-    <eval expected="14400" xpath="//flow/block[3]/block[5]/block[2]/@bpd"/>
-    <eval expected="280000" xpath="//flow/block[3]/block[5]/block[2]/block[1]/@ipda"/>
-    <eval expected="270000" xpath="//flow/block[3]/block[5]/block[2]/block[1]/@ipd"/>
-    <eval expected="14400" xpath="//flow/block[3]/block[5]/block[2]/block[1]/@bpda"/>
-    <eval expected="14400" xpath="//flow/block[3]/block[5]/block[2]/block[1]/@bpda"/>
-    <eval expected="70000" xpath="//flow/block[3]/block[5]/block[2]/block[1]/@start-indent"/>
-    <eval expected="20000" xpath="//flow/block[3]/block[5]/block[2]/block[1]/@end-indent"/>
-    <eval expected="65000" xpath="//flow/block[3]/block[5]/block[2]/block[1]/@space-start"/>
-    <eval expected="15000" xpath="//flow/block[3]/block[5]/block[2]/block[1]/@space-end"/>
+    <eval expected="320000" xpath="//flow/block[2]/block[3]/block[2]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[3]/block[2]/@bpd"/>
+    <eval expected="280000" xpath="//flow/block[2]/block[3]/block[2]/block[1]/@ipda"/>
+    <eval expected="270000" xpath="//flow/block[2]/block[3]/block[2]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[3]/block[2]/block[1]/@bpda"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[3]/block[2]/block[1]/@bpda"/>
+    <eval expected="70000" xpath="//flow/block[2]/block[3]/block[2]/block[1]/@start-indent"/>
+    <eval expected="20000" xpath="//flow/block[2]/block[3]/block[2]/block[1]/@end-indent"/>
+    <eval expected="65000" xpath="//flow/block[2]/block[3]/block[2]/block[1]/@space-start"/>
+    <eval expected="15000" xpath="//flow/block[2]/block[3]/block[2]/block[1]/@space-end"/>
 
     <!-- spacer block for space-after on list-block -->
-    <eval expected="10000" xpath="//flow/block[4]/@bpd"/>
+    <eval expected="10000" xpath="//flow/block[2]/@space-after"/>
     
   </checks>
 </testcase>

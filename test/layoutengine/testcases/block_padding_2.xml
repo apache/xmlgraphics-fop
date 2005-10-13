@@ -44,39 +44,61 @@
   </fo>
   <checks>
     <element-list category="breaker">
-      <box w="30000"/>
+      <box w="0"/>
+      <penalty w="0" p="INF"/>
+      <glue w="30000" aux="true"/>
+      
       <box w="14400"/>
-      <penalty w="30000" p="0"/> <!-- w="30000" is for the padding-after -->
-      <glue w="-30000" aux="true"/> <!-- get's discarded if a break happens on the penalty above -->
+      
+      <glue w="30000" aux="true"/> <!-- w="30000" is for the padding-after -->
+      <penalty w="0" p="0"/>
+      <glue w="-60000" aux="true"/> <!-- difference between break and no-break situation -->
       <box w="0"/>
       <penalty w="0" p="INF"/>
       <glue w="30000" aux="true"/> <!-- w="30000" is for the padding-before -->
+      
       <box w="14400"/>
-      <penalty w="30000" p="0"/>
-      <glue w="-30000" aux="true"/>
+      
+      <glue w="30000" aux="true"/>
+      <penalty w="0" p="0"/>
+      <glue w="-60000" aux="true"/>
       <box w="0"/>
       <penalty w="0" p="INF"/>
       <glue w="30000" aux="true"/>
+      
       <box w="14400"/>
-      <penalty w="30000" p="0"/>
-      <glue w="-30000" aux="true"/>
+
+      <glue w="30000" aux="true"/>
+      <penalty w="0" p="0"/>
+      <glue w="-60000" aux="true"/>
       <box w="0"/>
       <penalty w="0" p="INF"/>
       <glue w="30000" aux="true"/>
+      
       <box w="14400"/>
-      <penalty w="30000" p="0"/>
-      <glue w="-30000" aux="true"/>
+
+      <glue w="30000" aux="true"/>
+      <penalty w="0" p="0"/>
+      <glue w="-60000" aux="true"/>
       <box w="0"/>
       <penalty w="0" p="INF"/>
       <glue w="30000" aux="true"/>
+      
       <box w="14400"/>
-      <penalty w="30000" p="0"/>
-      <glue w="-30000" aux="true"/>
+
+      <glue w="30000" aux="true"/>
+      <penalty w="0" p="0"/>
+      <glue w="-60000" aux="true"/>
       <box w="0"/>
       <penalty w="0" p="INF"/>
       <glue w="30000" aux="true"/>
+      
       <box w="14400"/>
-      <box w="30000"/>
+      
+      <box w="0"/>
+      <penalty w="0" p="INF"/>
+      <glue w="30000" aux="true"/>
+      
       <skip>3</skip>
     </element-list>
   </checks>

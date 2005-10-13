@@ -48,6 +48,7 @@ import org.apache.fop.layoutmgr.MinOptMaxUtil;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.TraitSetter;
+import org.apache.fop.layoutmgr.SpaceResolver.SpaceHandlingBreakPosition;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -589,10 +590,12 @@ public class TableContentLayoutManager implements PercentBaseContext {
         Position lastPos = null;
         while (parentIter.hasNext()) {
             Position pos = (Position)parentIter.next();
-            if (firstPos == null) {
-                firstPos = pos;
+            if (!(pos instanceof SpaceHandlingBreakPosition)) {
+                if (firstPos == null) {
+                    firstPos = pos;
+                }
+                lastPos = pos;
             }
-            lastPos = pos;
             if (pos instanceof TableHeaderFooterPosition) {
                 TableHeaderFooterPosition thfpos = (TableHeaderFooterPosition)pos;
                 //these positions need to be unpacked

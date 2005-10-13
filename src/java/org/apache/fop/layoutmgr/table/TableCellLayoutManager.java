@@ -27,12 +27,14 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.layoutmgr.AreaAdditionUtil;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
+import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
-import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.Position;
+import org.apache.fop.layoutmgr.SpaceResolver;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
@@ -43,7 +45,8 @@ import org.apache.fop.traits.MinOptMax;
  * LayoutManager for a table-cell FO.
  * A cell contains blocks. These blocks fill the cell.
  */
-public class TableCellLayoutManager extends BlockStackingLayoutManager implements BlockLevelLayoutManager {
+public class TableCellLayoutManager extends BlockStackingLayoutManager 
+            implements BlockLevelLayoutManager {
     
     private TableCell fobj;
     private PrimaryGridUnit gridUnit;
@@ -82,6 +85,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager implement
         return fobj.isSeparateBorderModel();
     }
     
+    /** @see org.apache.fop.layoutmgr.LayoutManager#initialize() */
     public void initialize() {
         borderAndPaddingBPD = 0;
         borderAndPaddingBPD += fobj.getCommonBorderPaddingBackground().getBorderBeforeWidth(false);
@@ -89,8 +93,10 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager implement
         if (!isSeparateBorderModel()) {
             borderAndPaddingBPD /= 2;
         }
-        borderAndPaddingBPD += fobj.getCommonBorderPaddingBackground().getPaddingBefore(false, this);
-        borderAndPaddingBPD += fobj.getCommonBorderPaddingBackground().getPaddingAfter(false, this);
+        borderAndPaddingBPD += fobj.getCommonBorderPaddingBackground()
+                .getPaddingBefore(false, this);
+        borderAndPaddingBPD += fobj.getCommonBorderPaddingBackground()
+                .getPaddingAfter(false, this);
     }
     
     /**
@@ -159,8 +165,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager implement
             }
             
             if (returnedList.size() == 1
-                    && ((KnuthElement) returnedList.getFirst()).isPenalty()
-                    && ((KnuthPenalty) returnedList.getFirst()).getP() == -KnuthElement.INFINITE) {
+                    && ((ListElement)returnedList.getFirst()).isForcedBreak()) {
                 // a descendant of this block has break-before
                 if (returnList.size() == 0) {
                     // the first child (or its first child ...) has
@@ -176,6 +181,9 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager implement
                 returnedList = new LinkedList();
                 wrapPositionElements(contentList, returnList);
 
+                //Space resolution
+                SpaceResolver.resolveElementList(returnList);
+                
                 return returnList;
             } else {
                 if (prevLM != null) {
@@ -189,13 +197,17 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager implement
                         childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
                         // add an infinite penalty to forbid a break between
                         // blocks
-                        contentList.add(new KnuthPenalty(0,
-                                KnuthElement.INFINITE, false,
-                                new Position(this), false));
+                        contentList.add(new BreakElement(
+                                new Position(this), KnuthElement.INFINITE, context));
+                        //contentList.add(new KnuthPenalty(0,
+                        //        KnuthElement.INFINITE, false,
+                        //        new Position(this), false));
                     } else if (!((KnuthElement) contentList.getLast()).isGlue()) {
                         // add a null penalty to allow a break between blocks
-                        contentList.add(new KnuthPenalty(0, 0, false,
-                                new Position(this), false));
+                        contentList.add(new BreakElement(
+                                new Position(this), 0, context));
+                        //contentList.add(new KnuthPenalty(0, 0, false,
+                        //        new Position(this), false));
                     } else {
                         // the last element in contentList is a glue;
                         // it is a feasible breakpoint, there is no need to add
@@ -207,9 +219,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager implement
                     //Avoid NoSuchElementException below (happens with empty blocks)
                     continue;
                 }
-                if (((KnuthElement) returnedList.getLast()).isPenalty()
-                        && ((KnuthPenalty) returnedList.getLast()).getP() 
-                                == -KnuthElement.INFINITE) {
+                if (((ListElement)returnedList.getLast()).isForcedBreak()) {
                     // a descendant of this block has break-after
                     if (curLM.isFinished()) {
                         // there is no other content in this block;
@@ -220,6 +230,9 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager implement
                     returnedList = new LinkedList();
                     wrapPositionElements(contentList, returnList);
 
+                    //Space resolution
+                    SpaceResolver.resolveElementList(returnList);
+                    
                     return returnList;
                 }
             }
@@ -233,6 +246,9 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager implement
 
         returnedList = new LinkedList();
         wrapPositionElements(contentList, returnList);
+        
+        //Space resolution
+        SpaceResolver.resolveElementList(returnList);
         
         setFinished(true);
         return returnList;

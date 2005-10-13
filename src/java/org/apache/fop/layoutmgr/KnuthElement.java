@@ -26,12 +26,12 @@ package org.apache.fop.layoutmgr;
  * special feature (for example, the additional elements used to represent
  * a space when text alignment is right, left or center).
  */
-public abstract class KnuthElement {
+public abstract class KnuthElement extends ListElement {
 
+    /** The value used as an infinite indicator. */
     public static final int INFINITE = 1000;
 
     private int width;
-    private Position position;
     private boolean bIsAuxiliary;
 
     /**
@@ -43,84 +43,39 @@ public abstract class KnuthElement {
      * @param bAux is this an auxiliary element?
      */
     protected KnuthElement(int w, Position pos, boolean bAux) {
+        super(pos);
         width = w;
-        position = pos;
         bIsAuxiliary = bAux;
     }
 
-    /**
-     * Return true if this element is a KnuthBox.
-     */
-    public boolean isBox() {
-        return false;
-    }
-
-    /**
-     * Return true if this element is a KnuthGlue.
-     */
-    public boolean isGlue() {
-        return false;
-    }
-
-    /**
-     * Return true if this element is a KnuthPenalty.
-     */
-    public boolean isPenalty() {
-        return false;
-    }
-
-    /**
-     * Return true if this element is an auxiliary one.
-     */
+    /** @return true if this element is an auxiliary one. */
     public boolean isAuxiliary() {
         return bIsAuxiliary;
     }
 
-    /**
-     * Return the width of this element.
-     */
+    /** @return the width of this element. */
     public int getW() {
         return width;
     }
 
+    /** @return the penalty value of this element, if applicable. */ 
     public int getP() {
         throw new RuntimeException("Element is not a penalty");
     }
 
+    /** @return the stretch value of this element, if applicable. */ 
     public int getY() {
         throw new RuntimeException("Element is not a glue");
     }
 
+    /** @return the shrink value of this element, if applicable. */ 
     public int getZ() {
         throw new RuntimeException("Element is not a glue");
     }
-
-    public boolean isForcedBreak() {
+    
+    /** @see org.apache.fop.layoutmgr.ListElement#isUnresolvedElement() */
+    public boolean isUnresolvedElement() {
         return false;
     }
 
-    /**
-     * Return the Position stored in this element.
-     */
-    public Position getPosition() {
-        return position;
-    }
-
-    /**
-     * Change the Position stored in this element.
-     */
-    public void setPosition(Position pos) {
-        position = pos;
-    }
-
-    /**
-     * Return the LayoutManager responsible for this element.
-     */
-    public LayoutManager getLayoutManager() {
-        if (position != null) {
-            return position.getLM();
-        } else {
-            return null;
-        }
-    }
 }

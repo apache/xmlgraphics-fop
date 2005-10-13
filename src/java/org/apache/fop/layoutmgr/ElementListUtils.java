@@ -133,4 +133,14 @@ public class ElementListUtils {
         return calcContentLength(elems, 0, elems.size() - 1);
     }
     
+    /**
+     * Indicates whether the given element list ends with a forced break.
+     * @param elems the element list
+     * @return true if the list ends with a forced break
+     */
+    public static boolean endsWithForcedBreak(LinkedList elems) {
+        ListElement last = (ListElement)elems.getLast();
+        return last.isForcedBreak();
+    }
+    
 }

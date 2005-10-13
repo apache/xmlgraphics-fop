@@ -162,6 +162,11 @@ public class MinOptMax implements java.io.Serializable, Cloneable {
         opt -= op.opt;
         max -= op.min;
     }
+    
+    /** @return true if this instance represents a zero-width length (min=opt=max=0) */
+    public boolean isNonZero() {
+        return (min != 0 || max != 0);
+    }
 
     /** @see java.lang.Object#toString() */
     public String toString() {
