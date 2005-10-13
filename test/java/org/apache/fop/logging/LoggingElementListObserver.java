@@ -23,7 +23,7 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.layoutmgr.KnuthElement;
+import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.ElementListObserver.Observer;
 
 /**
@@ -49,9 +49,9 @@ public class LoggingElementListObserver implements Observer {
             return;
         }
         ListIterator tempIter = elementList.listIterator();
-        KnuthElement temp;
+        ListElement temp;
         while (tempIter.hasNext()) {
-            temp = (KnuthElement) tempIter.next();
+            temp = (ListElement) tempIter.next();
             if (temp.isBox()) {
                 log.debug(tempIter.previousIndex()
                         + ") " + temp);

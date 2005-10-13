@@ -201,6 +201,11 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         ListIterator elementListsIterator = elementLists.listIterator();
         while (elementListsIterator.hasNext()) {
             LinkedList noteList = (LinkedList) elementListsIterator.next();
+            
+            //Space resolution (Note: this does not respect possible stacking constraints 
+            //between footnotes!)
+            SpaceResolver.resolveElementList(noteList);
+            
             int noteLength = 0;
             footnotesList.add(noteList);
             ListIterator noteListIterator = noteList.listIterator();

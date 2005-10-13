@@ -84,6 +84,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
                 log.debug("span change from " + currentSpan + " to " + span);
                 context.signalSpanChange(span);
                 currentSpan = span;
+                SpaceResolver.resolveElementList(returnList);
                 return returnList;
             }
             
@@ -109,10 +110,10 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
             wrapPositionElements(tempList, returnedList);
 
             if (returnedList.size() == 1
-                && ((KnuthElement)returnedList.getFirst()).isPenalty()
-                && ((KnuthPenalty)returnedList.getFirst()).getP() == -KnuthElement.INFINITE) {
+                && ElementListUtils.endsWithForcedBreak(returnedList)) {
                 // a descendant of this flow has break-before
                 returnList.addAll(returnedList);
+                SpaceResolver.resolveElementList(returnList);
                 return returnList;
             } else {
                 if (returnList.size() > 0) {
@@ -123,20 +124,19 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
                         context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING, false);
                         childLC.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING, false);
                         // add an infinite penalty to forbid a break between blocks
-                        returnList.add(new KnuthPenalty(0, KnuthElement.INFINITE, false, 
-                                new Position(this), false));
-                    } else if (!((KnuthElement) returnList.getLast()).isGlue()) {
+                        returnList.add(new BreakElement(
+                                new Position(this), KnuthElement.INFINITE, context));
+                    } else if (!((ListElement) returnList.getLast()).isGlue()) {
                         // add a null penalty to allow a break between blocks
-                        returnList.add(new KnuthPenalty(0, 0, false, 
-                                new Position(this), false));
+                        returnList.add(new BreakElement(
+                                new Position(this), 0, context));
                     }
                 }
-                if (returnedList.size() > 0) { // controllare!
+                if (returnedList.size() > 0) {
                     returnList.addAll(returnedList);
-                    if (((KnuthElement)returnedList.getLast()).isPenalty()
-                        && ((KnuthPenalty)returnedList.getLast()).getP() 
-                                == -KnuthElement.INFINITE) {
+                    if (ElementListUtils.endsWithForcedBreak(returnedList)) {
                         // a descendant of this flow has break-after
+                        SpaceResolver.resolveElementList(returnList);
                         return returnList;
                     }
                 }
@@ -148,6 +148,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
             }
         }
 
+        SpaceResolver.resolveElementList(returnList);
         setFinished(true);
 
         if (returnList.size() > 0) {

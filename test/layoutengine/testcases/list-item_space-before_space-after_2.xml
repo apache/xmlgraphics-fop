@@ -89,21 +89,37 @@
       instead of optimum and the addAreas stage doesn't create smaller space-before/after 
       spacers. -->
     
+    <!-- We don't check the exact effective space-before value, but simply make sure it's smaller than 12pt=1em in this test case -->
+    <true xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/block[1]/@space-before &lt; 12000"/>
+    
     <element-list category="breaker">
       <box w="14400"/>
+      
       <penalty w="0" p="0"/>
-      <glue w="12000"/> <!-- TODO Check shrink/stretch -->
+      
+      <glue w="12000" y="0" z="12000"/>
       <box w="14400"/>
+      
       <penalty w="0" p="0"/>
-      <glue w="12000"/>
+      
+      <glue w="12000"  y="0" z="12000"/>
       <box w="14400"/>
+      
       <penalty w="0" p="0"/>
-      <glue w="12000"/>
+      
+      <glue w="12000" y="0" z="12000"/>
       <box w="14400"/>
-      <glue w="12000"/>
+      
+      <penalty w="0" p="0"/>
+      
+      <glue w="12000" y="0" z="12000"/>
       <box w="14400"/>
-      <glue w="12000"/>
+      
+      <penalty w="0" p="0"/>
+      
+      <glue w="12000" y="0" z="12000"/>
       <box w="14400"/>
+      
       <skip>3</skip>
     </element-list>
   </checks>

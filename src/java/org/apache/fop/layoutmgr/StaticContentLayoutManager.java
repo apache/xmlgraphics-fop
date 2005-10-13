@@ -287,9 +287,9 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
                 }
                 if (returnedList != null) {
                     lm.wrapPositionElements(returnedList, returnList);
-                    //returnList.addAll(returnedList);
                 }
             }
+            SpaceResolver.resolveElementList(returnList);
             setFinished(true);
             return returnList;
         }

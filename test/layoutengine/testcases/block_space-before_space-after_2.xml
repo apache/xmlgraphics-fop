@@ -28,7 +28,7 @@
           <fo:region-body/>
         </fo:simple-page-master>
       </fo:layout-master-set>
-      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+      <fo:page-sequence master-reference="normal" id="retain">
         <fo:flow flow-name="xsl-region-body">
           <fo:block space-before.optimum="20pt" space-before.conditionality="retain" space-after.optimum="10pt" space-after.conditionality="retain" text-align="justify">
 In olden times when wishing still helped one, there lived a king whose daughters 
@@ -44,7 +44,7 @@ Two blocks, testing conditionality="retain".
           </fo:block>
         </fo:flow>
       </fo:page-sequence>
-      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+      <fo:page-sequence master-reference="normal" id="discard">
         <fo:flow flow-name="xsl-region-body">
           <fo:block space-before.optimum="20pt" space-before.conditionality="discard" space-after.optimum="10pt" space-after.conditionality="discard" text-align="justify">
 In olden times when wishing still helped one, there lived a king whose daughters 
@@ -63,5 +63,96 @@ Two blocks, testing conditionality="discard".
     </fo:root>
   </fo>
   <checks>
+    <element-list category="breaker" id="retain">
+      <box w="0"/> <!-- Helper box bearing the SpaceHandlingPosition and making sure the glue gets processed -->
+      <penalty w="0" p="INF"/>
+      <glue w="20000" y="0" z="20000"/>
+      
+      <box w="14400"/>
+      <box w="14400"/>
+      
+      <penalty w="0" p="INF"/>
+      <glue w="10000" y="0" z="10000"/>
+      <penalty w="0" p="0"/>
+      <glue w="-30000" y="0" z="-30000"/>
+      <box w="0"/>
+      <penalty w="0" p="INF"/>
+      <glue w="20000" y="0" z="20000"/>
+      
+      <box w="14400"/>
+      
+      <penalty w="0" p="INF"/>
+      <glue w="10000" y="0" z="10000"/>
+      <penalty w="0" p="0"/>
+      <glue w="-30000" y="0" z="-30000"/>
+      <box w="0"/>
+      <penalty w="0" p="INF"/>
+      <glue w="20000" y="0" z="20000"/>
+      
+      <box w="14400"/>
+      
+      <!-- skip three more lines -->
+      <skip>8</skip>
+      <skip>8</skip>
+      <skip>8</skip>
+      
+      <penalty w="0" p="INF"/>
+      <glue w="10000" y="0" z="10000"/>
+      <penalty w="0" p="0"/>
+      <glue w="-30000" y="0" z="-30000"/>
+      <box w="0"/>
+      <penalty w="0" p="INF"/>
+      <glue w="20000" y="0" z="20000"/>
+      
+      <box w="14400"/>
+      <box w="14400"/>
+      
+      <penalty w="0" p="INF" aux="true"/>
+      <glue w="10000" aux="true"/>
+      <penalty w="0" p="0"/>
+      <glue w="-10000" aux="true"/>
+      
+      <box w="0" aux="true"/>
+      <penalty w="0" p="INF" aux="true"/>
+      <glue w="10000" aux="true"/>
+      
+      <box w="14400"/> <!-- second block -->
+      
+      <box w="0" aux="true"/>
+      <penalty w="0" p="INF" aux="true"/>
+      <glue w="20000" aux="true"/>
+      
+      <box w="0" aux="true"/> <!-- This is used to make sure the preceding glue is not cut off -->
+      
+      <skip>3</skip>
+    </element-list>
+    <element-list category="breaker" id="discard">
+      <box w="0"/> <!-- Helper box used to notify the LM for the addAreas stage about the discarded spaces -->
+      <box w="14400"/>
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <glue w="10000"/>
+      
+      <box w="14400"/> <!-- second block -->
+      
+      <box w="0"/> <!-- SpaceHandlingPosition-bearing helper box -->
+      
+      <box w="0"/> <!-- This is used to make sure the preceding glue is not cut off -->
+      
+      <skip>3</skip>
+    </element-list>
   </checks>
 </testcase>

@@ -227,7 +227,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             if (contentList != null) {
                 ListIterator contentListIterator = contentList.listIterator();
                 while (contentListIterator.hasNext()) {
-                    KnuthElement element = (KnuthElement) contentListIterator.next();
+                    ListElement element = (ListElement) contentListIterator.next();
                     if (element instanceof KnuthBlockBox
                         && ((KnuthBlockBox) element).hasAnchors()) {
                         // element represents a line with footnote citations
@@ -422,6 +422,12 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         
         protected LayoutManager getCurrentChildLM() {
             return childFLM;
+        }
+        
+        /** @see org.apache.fop.layoutmgr.AbstractBreaker#observeElementList(java.util.List) */
+        protected void observeElementList(List elementList) {
+            ElementListObserver.observe(elementList, "breaker", 
+                    ((PageSequence)pslm.getFObj()).getId());
         }
         
     }

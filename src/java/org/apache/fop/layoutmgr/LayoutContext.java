@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,9 @@
 
 package org.apache.fop.layoutmgr;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.fop.fo.Constants;
 import org.apache.fop.layoutmgr.inline.HyphContext;
 import org.apache.fop.traits.MinOptMax;
@@ -25,7 +28,7 @@ import org.apache.fop.layoutmgr.inline.AlignmentContext;
 
 
 /**
- * This class is used to pass information to the getNextBreakPoss()
+ * This class is used to pass information to the getNextKnuthElements()
  * method. It is set up by higher level LM and used by lower level LM.
  */
 public class LayoutContext {
@@ -91,6 +94,18 @@ public class LayoutContext {
 
     /** Current pending space-before or space-start from ancestor areas */
     SpaceSpecifier leadingSpace;
+    
+    /**
+     * A list of pending marks (border and padding) on the after edge when a page break occurs. 
+     * May be null.
+     */
+    private List pendingAfterMarks;
+    
+    /**
+     * A list of pending marks (border and padding) on the before edge when a page break occurs. 
+     * May be null.
+     */
+    private List pendingBeforeMarks;
 
     /** Current hyphenation context. May be null. */
     private HyphContext hyphContext = null;
@@ -117,6 +132,10 @@ public class LayoutContext {
     /** Amount of space to reserve at the end of each line */
     private int lineEndBorderAndPaddingWidth = 0;
 
+    /**
+     * Copy constructor for creating child layout contexts.
+     * @param parentLC the parent layout context to copy from
+     */
     public LayoutContext(LayoutContext parentLC) {
         this.flags = parentLC.flags;
         this.refIPD = parentLC.refIPD;
@@ -131,9 +150,14 @@ public class LayoutContext {
         this.alignmentContext = parentLC.alignmentContext;
         this.lineStartBorderAndPaddingWidth = parentLC.lineStartBorderAndPaddingWidth;
         this.lineEndBorderAndPaddingWidth = parentLC.lineEndBorderAndPaddingWidth;
-        // Copy other fields as necessary. Use clone???
+        copyPendingMarksFrom(parentLC);
+        // Copy other fields as necessary.
     }
 
+    /**
+     * Main constructor.
+     * @param flags the initial flags
+     */
     public LayoutContext(int flags) {
         this.flags = flags;
         this.refIPD = 0;
@@ -142,6 +166,15 @@ public class LayoutContext {
         trailingSpace = null;
     }
 
+    public void copyPendingMarksFrom(LayoutContext source) {
+        if (source.pendingAfterMarks != null) {
+            this.pendingAfterMarks = new java.util.ArrayList(source.pendingAfterMarks); 
+        }
+        if (source.pendingBeforeMarks != null) {
+            this.pendingBeforeMarks = new java.util.ArrayList(source.pendingBeforeMarks); 
+        }
+    }
+    
     public void setFlags(int flags) {
         setFlags(flags, true);
     }
@@ -206,6 +239,56 @@ public class LayoutContext {
         return trailingSpace;
     }
 
+    /**
+     * Adds a border or padding element to the pending list which will be used to generate
+     * the right element list for break possibilities. Conditionality resolution will be done
+     * elsewhere.
+     * @param element the border, padding or space element
+     */
+    public void addPendingAfterMark(UnresolvedListElementWithLength element) {
+        if (this.pendingAfterMarks == null) {
+            this.pendingAfterMarks = new java.util.ArrayList();
+        }
+        this.pendingAfterMarks.add(element);
+    }
+    
+    /**
+     * @return the pending border and padding elements at the after edge
+     * @see addPendingAfterMark(BorderOrPaddingElement)
+     */
+    public List getPendingAfterMarks() {
+        if (this.pendingAfterMarks != null) {
+            return Collections.unmodifiableList(this.pendingAfterMarks);
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * Adds a border or padding element to the pending list which will be used to generate
+     * the right element list for break possibilities. Conditionality resolution will be done
+     * elsewhere.
+     * @param element the border, padding or space element
+     */
+    public void addPendingBeforeMark(UnresolvedListElementWithLength element) {
+        if (this.pendingBeforeMarks == null) {
+            this.pendingBeforeMarks = new java.util.ArrayList();
+        }
+        this.pendingBeforeMarks.add(element);
+    }
+    
+    /**
+     * @return the pending border and padding elements at the before edge
+     * @see addPendingBeforeMark(BorderOrPaddingElement)
+     */
+    public List getPendingBeforeMarks() {
+        if (this.pendingBeforeMarks != null) {
+            return Collections.unmodifiableList(this.pendingBeforeMarks);
+        } else {
+            return null;
+        }
+    }
+    
     public void setStackLimit(MinOptMax limit) {
         stackLimit = limit;
     }
