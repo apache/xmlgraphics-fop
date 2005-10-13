@@ -23,6 +23,9 @@ import java.util.LinkedList;
 
 import org.apache.fop.layoutmgr.SpaceResolver.SpaceHandlingBreakPosition;
 
+/**
+ * Utility class which provides common code for the addAreas stage.
+ */
 public class AreaAdditionUtil {
 
     private static class StackingIter extends PositionIterator {
@@ -39,6 +42,12 @@ public class AreaAdditionUtil {
         }
     }
 
+    /**
+     * Creates the child areas for the given layout manager.
+     * @param bslm the BlockStackingLayoutManager instance for which "addAreas" is performed.
+     * @param parentIter the position iterator
+     * @param layoutContext the layout context
+     */
     public static void addAreas(BlockStackingLayoutManager bslm, 
             PositionIterator parentIter, LayoutContext layoutContext) {
         LayoutManager childLM = null;
@@ -55,7 +64,6 @@ public class AreaAdditionUtil {
         while (parentIter.hasNext()) {
             pos = (Position)parentIter.next();
             if (pos == null) {
-                //positionList.add(new IgnorePosition(null));
                 continue;
             }
             if (pos.getIndex() >= 0) {
