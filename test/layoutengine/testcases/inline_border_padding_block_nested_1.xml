@@ -57,25 +57,6 @@
             after block</fo:inline>
             After inline
           </fo:block>
-         <!-- This test currently fails with a ClassCastException on this commented out block
-          <fo:block background-color="silver" margin="3pt 0pt 3pt 0pt">
-            Before inline
-              <fo:inline 
-                border="solid 1pt red"
-                border-start-width.length="1pt" 
-                border-end-width.length="1pt" 
-                padding="1pt"
-                padding-start.length="2pt" 
-                padding-start.conditionality="retain" 
-                padding-end.length="2pt" 
-                padding-end.conditionality="retain" 
-                background-color="yellow">before block
-                <fo:block>As far as the laws of mathematics refer to reality, they are not certain,
-            and as far as they are certain, they do not refer to reality - Albert Einstein</fo:block>
-            after block</fo:inline>
-            After inline with conditionality="retain"
-          </fo:block>
-          -->
         </fo:flow>
       </fo:page-sequence>
     </fo:root>

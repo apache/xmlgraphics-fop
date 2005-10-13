@@ -1,5 +1,4 @@
 block-container_reference-orientation_bug36391.xml
-block_font-family_asian.xml
 block_font-stretch.xml
 block_padding_2.xml
 block_space-before_space-after_2.xml
@@ -9,7 +8,7 @@ block_word-spacing_text-align_justify.xml
 external-graphic_oversized.xml
 inline-block_keep-together.xml
 inline_block_nested_3.xml
-inline_border_padding_block_nested.xml
+inline_border_padding_block_nested_2.xml
 inline-container_block_nested.xml
 inline-container_border_padding.xml
 inline_letter-spacing.xml
