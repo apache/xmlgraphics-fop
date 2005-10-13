@@ -185,7 +185,22 @@ public class ElementListCheck implements LayoutEngineCheck {
                                     + " but got: " + knuthEl.getW());
                         }
                     }
-                    //TODO Check stretch and shrink
+                    if (domEl.getAttribute("y").length() > 0) {
+                        int stretch = Integer.parseInt(domEl.getAttribute("y"));
+                        if (stretch != knuthEl.getY()) {
+                            fail("Expected y=" + stretch 
+                                    + " (stretch) at position " + pos 
+                                    + " but got: " + knuthEl.getY());
+                        }
+                    }
+                    if (domEl.getAttribute("z").length() > 0) {
+                        int shrink = Integer.parseInt(domEl.getAttribute("z"));
+                        if (shrink != knuthEl.getZ()) {
+                            fail("Expected z=" + shrink 
+                                    + " (shrink) at position " + pos 
+                                    + " but got: " + knuthEl.getZ());
+                        }
+                    }
                 } else {
                     throw new IllegalArgumentException("Invalid child node for 'element-list': " 
                             + domEl.getLocalName()
