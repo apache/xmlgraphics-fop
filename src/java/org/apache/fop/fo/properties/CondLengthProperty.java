@@ -134,7 +134,9 @@ public class CondLengthProperty extends Property implements CompoundDatatype {
     /** @see java.lang.Object#toString() */
     public String toString() {
         return "CondLength[" + length.getObject().toString() 
-                + ", conditionality:" + conditionality + "]";
+                + ", " + (isDiscard() 
+                        ? conditionality.toString().toLowerCase() 
+                        : conditionality.toString()) + "]";
     }    
 
     /**
