@@ -1,0 +1,971 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  * Copyright 2004 The Apache Software Foundation.
+  * 
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  * 
+  *      http://www.apache.org/licenses/LICENSE-2.0
+  * 
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  -->
+
+<!-- $Id$ -->
+
+<!--
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                         "docbookx.dtd">
+  -->
+
+  <chapter>
+	<title>Phase 2b: The <literal>addAreas</literal> call tree</title>
+
+	<section>
+	  <title>Overview</title>
+
+	  <para>This section presents a verbose overview of the
+<literal>addAreas</literal> call tree. The following section presents
+the Layout Managers in more detail.</para>
+
+	<itemizedlist>
+
+	  <listitem>
+		<simpara>FlowLM receives from its parent LM an iterator with a
+single pagebreak. The first belongs to BlockLM1, the second belongs to
+BlockLM2. FlowLM itself holds 2 child BPs. The flow consists of two
+blocks. FlowLM sets up an iterator with its 2 BPs.</simpara>
+	  </listitem>
+
+	  <listitem>
+		<simpara>BlockLM1 receives from its parent LM the iterator
+with those 2 BPs, of which only the first one belongs to it. Its leaf
+position is 13. BlockLM itself holds 14 child BPs, which all belong to
+a single LineLM. The block consists of 14 lines. BlockLM sets up an
+iterator corresponding to the first BP, containing the child BPs
+0–13.</simpara>
+	  </listitem>
+
+	  <listitem>
+		<simpara>LineLM receives from its parent LM an iterator with
+those 14 BPs. The leaf positions are 3, 6, 11, 12, 13, 16, 19, 21, 23,
+24, 25, 26, 27, 28. LineLM itself holds 29 child BPs, which all belong
+to a single TextLM. LineLM maintains the position of the next BP in
+<literal>vecInlineBreaks</literal>, <literal>iStartPos</literal>.
+Initially it is set to 0.  For each of its 14 BPs in the iterator,
+LineLM sets up an iterator with the child BPs in
+<literal>vecInlineBreaks</literal> from <literal>iStartPos</literal>
+up to an including the index <literal>iLeafPos</literal> to which the
+iterator BP points. Then it <literal>updates</literal> iStartPos to
+point to the next child BP. The iterators contain the child BP ranges:
+0–3, 4–6, 7–11, 12, 13, 14–16, 17–19, 20–21, 22–23, 24, 25, 26, 27,
+28.</simpara>
+
+		<screen>while (parentIter.hasNext()) {
+    LineBreakPosition lbp = (LineBreakPosition) parentIter.next();
+	...
+    PositionIterator inlinePosIter =
+      new BreakPossPosIter(vecInlineBreaks, iStartPos,
+                           lbp.getLeafPos() + 1);
+    iStartPos = lbp.getLeafPos() + 1;
+	...
+    while ((childLM = inlinePosIter.getNextChildLM()) != null) {
+        childLM.addAreas(inlinePosIter, lc);
+		...
+	}
+	...
+}
+</screen>
+	  </listitem>
+
+	  <listitem>
+<simpara>TextLM receives from its parent LM an iterator with the BPs
+0–3. The leaf positions are 0, 1, 2, 3. It has itself 47 items in
+<literal>vecAreaInfo</literal>. It iterates over the 4 corresponding
+AIs, records the start of the first one, counts the word spaces, and
+records the end of the last one. This line contains the characters
+from 0 up to 13 and has no word spaces.</simpara>
+	  </listitem>
+
+	  <listitem>
+		<simpara>TextLM receives from its parent LM an iterator with
+the BPs 4–6. The leaf positions are 5, 7, 8. It iterates over the
+three corresponding AIs. This line contains the characters from 13 up
+to 26 and has one word space. Note that the AIs 4 and 6 remain unused
+because they do not have a corresponding BP. These AIs represent areas
+that were too long, and over which the LM backed up.</simpara>
+	  </listitem>
+
+	  <listitem>
+		<simpara>TextLM receives from its parent LM an iterator with
+the BPs 7–11. The leaf positions are 11, 12, 13, 14, 15. It iterates
+over the five corresponding AIs. This line contains the characters
+from 26 up to 40 and has no word spaces. Note that the AIs 9 and 10
+remain unused because they do not have a corresponding BP.</simpara>
+	  </listitem>
+
+	  <listitem>
+		<simpara>TextLM receives from its parent LM an iterator with
+the single BP 12. The leaf position is 16. This line contains the
+characters from 40 up to 42 and has no word spaces.</simpara>
+	  </listitem>
+
+	  <listitem>
+		<simpara>TextLM receives from its parent LM an iterator with
+the single BP 13. The leaf position is 18. This line contains the
+characters from 43 up to 60 and has no word spaces. Note that the AI
+17 remains unused because it does not have a corresponding BP. Note
+also that character 42 has been dropped, because it would be a leading
+space.</simpara>
+	  </listitem>
+
+	  <listitem>
+		<simpara>etc. until all 14 line areas are done. LineLM
+returns.</simpara>
+	  </listitem>
+
+	  <listitem>
+		<simpara>The second BP in the iterator from FlowLM belongs to
+BlockLM2. The loop <literal>while (parentIter.hasNext())</literal>
+ends because the LM of the next object is different from the current
+LM (<literal>BreakPossPosIter.checkNext()</literal>), and BlockLM1
+returns. FlowLM's loop <literal>while ((childLM =
+breakPosIter.getNextChildLM()) != null)</literal> then passes the
+iterator to BlockLM2.</simpara>
+	  </listitem>
+
+	  <listitem>
+		<simpara>BlockLM2 receives from its parent LM the iterator with those 2
+BPs. The cursor is at one, because BlockLM1 has used the first object.
+Only the second BP belongs to BlockLM2. Its leaf position is
+0. BlockLM itself holds 1 child BP, belonging to a LineLM. The block
+consists of a single line. BlockLM sets up an iterator corresponding
+to the second BP, containing a single child BP.</simpara>
+	  </listitem>
+
+	  <listitem>
+<simpara>LineLM receives from its parent LM an iterator with that BP.
+The leaf position is 1. LineLM itself holds 2 child BPs, one belonging
+to a TextLM, the other to <literal>AddLMVisitor$2</literal>. LineLM
+sets up an iterator corresponding to the BP, containing its two child
+BPs.</simpara>
+	  </listitem>
+
+	  <listitem>
+<simpara>TextLM receives from its parent LM an iterator with the BPs 0
+and 1, of which only the first belongs to it. Its leaf position is 0.
+It iterates over the corresponding AI. This text area contains the
+characters from 0 up to 1, i.e. <literal>" "</literal>, and has one
+word space. This converted to a space area.</simpara>
+	  </listitem>
+
+	  <listitem>
+		<simpara><literal>AddLMVisitor$2</literal> receives from its
+parent LM an iterator with the BPs 0 and 1.  The cursor is at one,
+because TextLM has used the first object. Only the second BP belongs
+to <literal>AddLMVisitor$2</literal>. Its leaf position is
+0.</simpara>
+	  </listitem>
+
+	  <listitem>
+		<simpara>This completes the line. LineLM returns.</simpara>
+	  </listitem>
+
+	  <listitem>
+		<simpara>BlockLM2 returns.</simpara>
+	  </listitem>
+
+	  <listitem>
+		<simpara>FlowLM returns.</simpara>
+	  </listitem>
+	</itemizedlist>
+
+	</section>
+
+	<section>
+	  <title>Detailed overviews</title>
+
+	  <section>
+		<title>PageLM</title>
+
+<screen>
+ bbp = {
+    breakps: instance of org.apache.fop.layoutmgr.BreakPoss(id=1167)
+    org.apache.fop.layoutmgr.LeafPosition.iLeafPos: 0
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.FlowLayoutManager(id=1169)
+}
+
+ bbp.breakps.position = {
+    iLeafPos: 1
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.FlowLayoutManager(id=1169)
+}
+
+ list = "[org.apache.fop.layoutmgr.BreakPoss@1aa2c23]"
+
+ list.get(0).position = {
+    iLeafPos: 1
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.FlowLayoutManager(id=1169)
+}
+
+ list.get(0).position.layoutManager = "org.apache.fop.layoutmgr.FlowLayoutManager@6963d0"
+</screen>
+	  </section>
+
+	  <section>
+		<title>FlowLM</title>
+
+<screen>
+ this = "org.apache.fop.layoutmgr.FlowLayoutManager@6963d0"
+
+ lfp = {
+    iLeafPos: 1
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.FlowLayoutManager(id=1169)
+}
+
+ iStartPos = 0
+
+ blockBreaks = "[org.apache.fop.layoutmgr.BreakPoss@111bfbc, org.apache.fop.layoutmgr.BreakPoss@4310d0]"
+
+ blockBreaks.get(iStartPos).position = {
+    iLeafPos: 13
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.BlockLayoutManager(id=1183)
+}
+
+ blockBreaks.get(iStartPos).position.layoutManager = "org.apache.fop.layoutmgr.BlockLayoutManager@19e09a4"
+
+ blockBreaks.get(iStartPos+1).position = {
+    iLeafPos: 0
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.BlockLayoutManager(id=1186)
+}
+
+ blockBreaks.get(iStartPos+1).position.layoutManager = "org.apache.fop.layoutmgr.BlockLayoutManager@144b18f"
+</screen>
+	  </section>
+
+	  <section>
+		<title>BlockLM1</title>
+
+<screen>
+ this = "org.apache.fop.layoutmgr.BlockLayoutManager@19e09a4"
+
+ lfp = {
+    iLeafPos: 13
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.BlockLayoutManager(id=1183)
+}
+
+ iStartPos = 0
+
+ childBreaks = "[
+org.apache.fop.layoutmgr.BreakPoss@2b249,
+org.apache.fop.layoutmgr.BreakPoss@106daba,
+org.apache.fop.layoutmgr.BreakPoss@1021f34,
+org.apache.fop.layoutmgr.BreakPoss@4eb043,
+org.apache.fop.layoutmgr.BreakPoss@163956,
+org.apache.fop.layoutmgr.BreakPoss@10e434d,
+org.apache.fop.layoutmgr.BreakPoss@16477d9,
+org.apache.fop.layoutmgr.BreakPoss@f864fe,
+org.apache.fop.layoutmgr.BreakPoss@1ae9aaa,
+org.apache.fop.layoutmgr.BreakPoss@2c17f7,
+org.apache.fop.layoutmgr.BreakPoss@d9896e,
+org.apache.fop.layoutmgr.BreakPoss@1cda59b,
+org.apache.fop.layoutmgr.BreakPoss@33788d,
+org.apache.fop.layoutmgr.BreakPoss@12fb0af
+]"
+
+ childBreaks.get(0).position = {
+    dAdjust: 0.0
+    ipdAdjust: 1.0
+    startIndent: 0
+    lineHeight: 19200
+    baseline: 17000
+    org.apache.fop.layoutmgr.LeafPosition.iLeafPos: 3
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.LineLayoutManager(id=1199)
+}
+
+ childBreaks.get(0).position.layoutManager = "org.apache.fop.layoutmgr.LineLayoutManager@c06258"
+
+ childBreaks.get(1).position = {
+    dAdjust: 0.0
+    ipdAdjust: 1.0
+    startIndent: 0
+    lineHeight: 19200
+    baseline: 17000
+    org.apache.fop.layoutmgr.LeafPosition.iLeafPos: 6
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.LineLayoutManager(id=1199)
+}
+
+ childBreaks.get(1).position.layoutManager = "org.apache.fop.layoutmgr.LineLayoutManager@c06258"
+
+ childBreaks.get(2).position = {
+    dAdjust: 0.0
+    ipdAdjust: 1.0
+    startIndent: 0
+    lineHeight: 19200
+    baseline: 17000
+    org.apache.fop.layoutmgr.LeafPosition.iLeafPos: 11
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.LineLayoutManager(id=1199)
+}
+
+ childBreaks.get(2).position.layoutManager = "org.apache.fop.layoutmgr.LineLayoutManager@c06258"
+
+ childBreaks.get(3).position = {
+    dAdjust: 7.0
+    ipdAdjust: 1.0
+    startIndent: 0
+    lineHeight: 19200
+    baseline: 17000
+    org.apache.fop.layoutmgr.LeafPosition.iLeafPos: 12
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.LineLayoutManager(id=1199)
+}
+
+ childBreaks.get(3).position.layoutManager = "org.apache.fop.layoutmgr.LineLayoutManager@c06258"
+
+ childBreaks.get(4).position = {
+    dAdjust: 0.0
+    ipdAdjust: -1.0
+    startIndent: 0
+    lineHeight: 19200
+    baseline: 17000
+    org.apache.fop.layoutmgr.LeafPosition.iLeafPos: 13
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.LineLayoutManager(id=1199)
+}
+
+ childBreaks.get(4).position.layoutManager = "org.apache.fop.layoutmgr.LineLayoutManager@c06258"
+
+ childBreaks.get(5).position = {
+    dAdjust: 0.0
+    ipdAdjust: 1.0
+    startIndent: 0
+    lineHeight: 19200
+    baseline: 17000
+    org.apache.fop.layoutmgr.LeafPosition.iLeafPos: 16
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.LineLayoutManager(id=1199)
+}
+
+ childBreaks.get(5).position.layoutManager = "org.apache.fop.layoutmgr.LineLayoutManager@c06258"
+
+ childBreaks.get(6).position = {
+    dAdjust: 0.0
+    ipdAdjust: 1.0
+    startIndent: 0
+    lineHeight: 19200
+    baseline: 17000
+    org.apache.fop.layoutmgr.LeafPosition.iLeafPos: 19
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.LineLayoutManager(id=1199)
+}
+
+ childBreaks.get(6).position.layoutManager = "org.apache.fop.layoutmgr.LineLayoutManager@c06258"
+
+ childBreaks.get(7).position = {
+    dAdjust: 0.0
+    ipdAdjust: 1.0
+    startIndent: 0
+    lineHeight: 19200
+    baseline: 17000
+    org.apache.fop.layoutmgr.LeafPosition.iLeafPos: 21
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.LineLayoutManager(id=1199)
+}
+
+ childBreaks.get(7).position.layoutManager = "org.apache.fop.layoutmgr.LineLayoutManager@c06258"
+
+ childBreaks.get(8).position = {
+    dAdjust: 0.0
+    ipdAdjust: 1.0
+    startIndent: 0
+    lineHeight: 19200
+    baseline: 17000
+    org.apache.fop.layoutmgr.LeafPosition.iLeafPos: 23
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.LineLayoutManager(id=1199)
+}
+
+ childBreaks.get(8).position.layoutManager = "org.apache.fop.layoutmgr.LineLayoutManager@c06258"
+
+ childBreaks.get(9).position = {
+    dAdjust: 0.0
+    ipdAdjust: 1.0
+    startIndent: 0
+    lineHeight: 19200
+    baseline: 17000
+    org.apache.fop.layoutmgr.LeafPosition.iLeafPos: 24
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.LineLayoutManager(id=1199)
+}
+
+ childBreaks.get(9).position.layoutManager = "org.apache.fop.layoutmgr.LineLayoutManager@c06258"
+
+ childBreaks.get(10).position = {
+    dAdjust: 0.0
+    ipdAdjust: 1.0
+    startIndent: 0
+    lineHeight: 19200
+    baseline: 17000
+    org.apache.fop.layoutmgr.LeafPosition.iLeafPos: 25
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.LineLayoutManager(id=1199)
+}
+
+ childBreaks.get(10).position.layoutManager = "org.apache.fop.layoutmgr.LineLayoutManager@c06258"
+
+ childBreaks.get(11).position = {
+    dAdjust: 0.0
+    ipdAdjust: 1.0
+    startIndent: 0
+    lineHeight: 19200
+    baseline: 17000
+    org.apache.fop.layoutmgr.LeafPosition.iLeafPos: 26
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.LineLayoutManager(id=1199)
+}
+
+ childBreaks.get(11).position.layoutManager = "org.apache.fop.layoutmgr.LineLayoutManager@c06258"
+
+ childBreaks.get(12).position = {
+    dAdjust: 0.0
+    ipdAdjust: 1.0
+    startIndent: 0
+    lineHeight: 19200
+    baseline: 17000
+    org.apache.fop.layoutmgr.LeafPosition.iLeafPos: 27
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.LineLayoutManager(id=1199)
+}
+
+ childBreaks.get(12).position.layoutManager = "org.apache.fop.layoutmgr.LineLayoutManager@c06258"
+
+ childBreaks.get(13).position = {
+    dAdjust: 0.0
+    ipdAdjust: 1.0
+    startIndent: 0
+    lineHeight: 19200
+    baseline: 17000
+    org.apache.fop.layoutmgr.LeafPosition.iLeafPos: 28
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.LineLayoutManager(id=1199)
+}
+
+ childBreaks.get(13).position.layoutManager = "org.apache.fop.layoutmgr.LineLayoutManager@c06258"
+</screen>
+	  </section>
+
+	  <section>
+		<title>LineLM</title>
+
+<screen>
+ this = "org.apache.fop.layoutmgr.LineLayoutManager@c06258"
+
+ lbp = {
+    dAdjust: 0.0
+    ipdAdjust: 1.0
+    startIndent: 0
+    lineHeight: 19200
+    baseline: 17000
+    org.apache.fop.layoutmgr.LeafPosition.iLeafPos: 3
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.LineLayoutManager(id=1199)
+}
+
+ iStartPos = 0
+
+ vecInlineBreaks = "[
+org.apache.fop.layoutmgr.BreakPoss@17e4dee,
+org.apache.fop.layoutmgr.BreakPoss@12e7c6a,
+org.apache.fop.layoutmgr.BreakPoss@ea5461,
+org.apache.fop.layoutmgr.BreakPoss@49cf9f,
+org.apache.fop.layoutmgr.BreakPoss@1de0b5e,
+org.apache.fop.layoutmgr.BreakPoss@bc5596,
+org.apache.fop.layoutmgr.BreakPoss@970c0e,
+org.apache.fop.layoutmgr.BreakPoss@987197,
+org.apache.fop.layoutmgr.BreakPoss@497904,
+org.apache.fop.layoutmgr.BreakPoss@1a7f9dc,
+org.apache.fop.layoutmgr.BreakPoss@104e28b,
+org.apache.fop.layoutmgr.BreakPoss@1b54362,
+org.apache.fop.layoutmgr.BreakPoss@15b0e2c,
+org.apache.fop.layoutmgr.BreakPoss@ff9053,
+org.apache.fop.layoutmgr.BreakPoss@5c7734,
+org.apache.fop.layoutmgr.BreakPoss@96212a,
+org.apache.fop.layoutmgr.BreakPoss@5b675e,
+org.apache.fop.layoutmgr.BreakPoss@df83e5,
+org.apache.fop.layoutmgr.BreakPoss@4c6320,
+org.apache.fop.layoutmgr.BreakPoss@ffd135,
+org.apache.fop.layoutmgr.BreakPoss@1000bcf,
+org.apache.fop.layoutmgr.BreakPoss@754fc,
+org.apache.fop.layoutmgr.BreakPoss@15c998a,
+org.apache.fop.layoutmgr.BreakPoss@6458a6,
+org.apache.fop.layoutmgr.BreakPoss@1f82ab4,
+org.apache.fop.layoutmgr.BreakPoss@1bb9696,
+org.apache.fop.layoutmgr.BreakPoss@9b6220,
+org.apache.fop.layoutmgr.BreakPoss@1474e45,
+org.apache.fop.layoutmgr.BreakPoss@63a721
+]"
+
+ vecInlineBreaks.get(0).position = {
+    iLeafPos: 0
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecInlineBreaks.get(0).position.layoutManager = "org.apache.fop.layoutmgr.TextLayoutManager@57ea52"
+
+ vecInlineBreaks.get(1).position = {
+    iLeafPos: 1
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecInlineBreaks.get(1).position.layoutManager = "org.apache.fop.layoutmgr.TextLayoutManager@57ea52"
+
+ vecInlineBreaks.get(2).position = {
+    iLeafPos: 2
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecInlineBreaks.get(2).position.layoutManager = "org.apache.fop.layoutmgr.TextLayoutManager@57ea52"
+
+ vecInlineBreaks.get(3).position = {
+    iLeafPos: 3
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecInlineBreaks.get(3).position.layoutManager = "org.apache.fop.layoutmgr.TextLayoutManager@57ea52"
+
+ vecInlineBreaks.get(4).position = {
+    iLeafPos: 5
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecInlineBreaks.get(4).position.layoutManager = "org.apache.fop.layoutmgr.TextLayoutManager@57ea52"
+
+ vecInlineBreaks.get(5).position = {
+    iLeafPos: 7
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecInlineBreaks.get(5).position.layoutManager = "org.apache.fop.layoutmgr.TextLayoutManager@57ea52"
+
+ vecInlineBreaks.get(6).position = {
+    iLeafPos: 8
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecInlineBreaks.get(6).position.layoutManager = "org.apache.fop.layoutmgr.TextLayoutManager@57ea52"
+
+ vecInlineBreaks.get(7).position = {
+    iLeafPos: 11
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecInlineBreaks.get(7).position.layoutManager = "org.apache.fop.layoutmgr.TextLayoutManager@57ea52"
+
+ vecInlineBreaks.get(8).position = {
+    iLeafPos: 12
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecInlineBreaks.get(8).position.layoutManager = "org.apache.fop.layoutmgr.TextLayoutManager@57ea52"
+
+ vecInlineBreaks.get(9).position = {
+    iLeafPos: 13
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecInlineBreaks.get(9).position.layoutManager = "org.apache.fop.layoutmgr.TextLayoutManager@57ea52"
+
+ vecInlineBreaks.get(10).position = {
+    iLeafPos: 14
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecInlineBreaks.get(10).position.layoutManager = "org.apache.fop.layoutmgr.TextLayoutManager@57ea52"
+
+ vecInlineBreaks.get(11).position = {
+    iLeafPos: 15
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecInlineBreaks.get(11).position.layoutManager = "org.apache.fop.layoutmgr.TextLayoutManager@57ea52"
+
+ vecInlineBreaks.get(12).position = {
+    iLeafPos: 16
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecInlineBreaks.get(12).position.layoutManager = "org.apache.fop.layoutmgr.TextLayoutManager@57ea52"
+
+ vecInlineBreaks.get(13).position = {
+    iLeafPos: 18
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecInlineBreaks.get(13).position.layoutManager = "org.apache.fop.layoutmgr.TextLayoutManager@57ea52"
+
+ vecInlineBreaks.get(14).position = {
+    iLeafPos: 20
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecInlineBreaks.get(14).position.layoutManager = "org.apache.fop.layoutmgr.TextLayoutManager@57ea52"
+
+ vecInlineBreaks.get(15).position = {
+    iLeafPos: 21
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecInlineBreaks.get(15).position.layoutManager = "org.apache.fop.layoutmgr.TextLayoutManager@57ea52"
+
+ vecInlineBreaks.get(16).position = {
+    iLeafPos: 22
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecInlineBreaks.get(16).position.layoutManager = "org.apache.fop.layoutmgr.TextLayoutManager@57ea52"
+
+ vecInlineBreaks.get(17).position = {
+    iLeafPos: 23
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecInlineBreaks.get(17).position.layoutManager = "org.apache.fop.layoutmgr.TextLayoutManager@57ea52"
+
+ vecInlineBreaks.get(18).position = {
+    iLeafPos: 25
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecInlineBreaks.get(18).position.layoutManager = "org.apache.fop.layoutmgr.TextLayoutManager@57ea52"
+</screen>
+	  </section>
+
+	  <section>
+		<title>TextLM</title>
+
+<screen>
+ this = "org.apache.fop.layoutmgr.TextLayoutManager@57ea52"
+
+ this.chars = {
+w, a, t, e, r, s, t, a, a, t, s, i, n, g, e, n, i, e, u, r,
+  , m, i, n, i, s, t, e, r, s, p, o, r, t, e, f, e, u, i, l, l, e,
+  , a, a, n, d, a, c, h, t, s, t, r, e, k, k, e, r, .,
+  , V, e, r, n, e, d, e, r, l, a, n, d, s, t, e,
+  , v, a, k, l, i, t, e, r, a, t, u, u, r,
+  , v, e, r, s, c, h, i, l, l, e, n, d,
+  , v, e, r, h, o, l, l, a, n, d, s, t, e,
+  , v, a, k, l, i, t, e, r, a, t, u, u, r, .,
+  , b, e, s, t, u, u, r, s, t, a, k, e, n,
+  , l, a, n, d, s, t, a, a, l,
+  , b, e, l, a, n, g, r, i, j, k, .
+}
+
+ tbpNext = {
+    iLeafPos: 0
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecAreaInfo = "[
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@107bd0d,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@12922f6,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@1b66b06,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@12c9557,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@9f0d,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@ca3783,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@2a6ff,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@21d23b,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@7124af,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@1f7708,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@1bfbfb8,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@1c3e9ba,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@125d61e,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@10c6cfc,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@c72243,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@19a8416,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@155d3a3,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@1b994de,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@dc9766,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@57e787,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@1217e67,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@1f1bd98,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@1d686c1,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@128edf2,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@1dddba,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@c7e8a7,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@7b4703,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@1732ed2,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@1071521,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@1fc3c84,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@e93999,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@1c486f2,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@1779885,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@be76c7,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@682406,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@115126e,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@6d2380,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@135b1f3,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@35e6e3,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@c9630a,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@185572a,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@11daa0e,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@879860,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@24de7d,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@8b058b,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@1192059,
+org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@9ac0f5
+]"
+
+ vecAreaInfo.get(0) = {
+    iStartIndex: 0
+    iBreakIndex: 2
+    iWScount: 0
+    ipdArea: instance of org.apache.fop.traits.MinOptMax(id=1304)
+    this$0: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecAreaInfo.get(1) = {
+    iStartIndex: 2
+    iBreakIndex: 5
+    iWScount: 0
+    ipdArea: instance of org.apache.fop.traits.MinOptMax(id=1308)
+    this$0: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecAreaInfo.get(2) = {
+    iStartIndex: 5
+    iBreakIndex: 11
+    iWScount: 0
+    ipdArea: instance of org.apache.fop.traits.MinOptMax(id=1310)
+    this$0: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecAreaInfo.get(3) = {
+    iStartIndex: 11
+    iBreakIndex: 13
+    iWScount: 0
+    ipdArea: instance of org.apache.fop.traits.MinOptMax(id=1312)
+    this$0: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecAreaInfo.get(4) = {
+    iStartIndex: 13
+    iBreakIndex: 15
+    iWScount: 0
+    ipdArea: instance of org.apache.fop.traits.MinOptMax(id=1314)
+    this$0: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecAreaInfo.get(5) = {
+    iStartIndex: 13
+    iBreakIndex: 20
+    iWScount: 0
+    ipdArea: instance of org.apache.fop.traits.MinOptMax(id=1316)
+    this$0: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecAreaInfo.get(6) = {
+    iStartIndex: 20
+    iBreakIndex: 42
+    iWScount: 1
+    ipdArea: instance of org.apache.fop.traits.MinOptMax(id=1318)
+    this$0: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecAreaInfo.get(7) = {
+    iStartIndex: 20
+    iBreakIndex: 23
+    iWScount: 1
+    ipdArea: instance of org.apache.fop.traits.MinOptMax(id=1320)
+    this$0: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecAreaInfo.get(8) = {
+    iStartIndex: 23
+    iBreakIndex: 26
+    iWScount: 0
+    ipdArea: instance of org.apache.fop.traits.MinOptMax(id=1322)
+    this$0: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecAreaInfo.get(9) = {
+    iStartIndex: 26
+    iBreakIndex: 30
+    iWScount: 0
+    ipdArea: instance of org.apache.fop.traits.MinOptMax(id=1324)
+    this$0: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecAreaInfo.get(10) = {
+    iStartIndex: 26
+    iBreakIndex: 42
+    iWScount: 0
+    ipdArea: instance of org.apache.fop.traits.MinOptMax(id=1326)
+    this$0: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecAreaInfo.get(11) = {
+    iStartIndex: 26
+    iBreakIndex: 29
+    iWScount: 0
+    ipdArea: instance of org.apache.fop.traits.MinOptMax(id=1328)
+    this$0: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecAreaInfo.get(12) = {
+    iStartIndex: 29
+    iBreakIndex: 30
+    iWScount: 0
+    ipdArea: instance of org.apache.fop.traits.MinOptMax(id=1330)
+    this$0: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecAreaInfo.get(13) = {
+    iStartIndex: 30
+    iBreakIndex: 33
+    iWScount: 0
+    ipdArea: instance of org.apache.fop.traits.MinOptMax(id=1332)
+    this$0: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecAreaInfo.get(14) = {
+    iStartIndex: 33
+    iBreakIndex: 35
+    iWScount: 0
+    ipdArea: instance of org.apache.fop.traits.MinOptMax(id=1334)
+    this$0: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecAreaInfo.get(15) = {
+    iStartIndex: 35
+    iBreakIndex: 40
+    iWScount: 0
+    ipdArea: instance of org.apache.fop.traits.MinOptMax(id=1336)
+    this$0: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecAreaInfo.get(16) = {
+    iStartIndex: 40
+    iBreakIndex: 42
+    iWScount: 0
+    ipdArea: instance of org.apache.fop.traits.MinOptMax(id=1338)
+    this$0: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecAreaInfo.get(17) = {
+    iStartIndex: 42
+    iBreakIndex: 60
+    iWScount: 1
+    ipdArea: instance of org.apache.fop.traits.MinOptMax(id=1340)
+    this$0: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+
+ vecAreaInfo.get(18) = {
+    iStartIndex: 43
+    iBreakIndex: 60
+    iWScount: 0
+    ipdArea: instance of org.apache.fop.traits.MinOptMax(id=1342)
+    this$0: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1246)
+}
+</screen>
+	  </section>
+
+	  <section>
+		<title>BlockLM2</title>
+
+<screen>
+ this = "org.apache.fop.layoutmgr.BlockLayoutManager@144b18f"
+
+ lfp = {
+    iLeafPos: 0
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.BlockLayoutManager(id=1186)
+}
+
+ iStartPos = 0
+
+ childBreaks = "[org.apache.fop.layoutmgr.BreakPoss@145f939]"
+
+ childBreaks.get(0).position = {
+    dAdjust: 0.0
+    ipdAdjust: -1.0
+    startIndent: 0
+    lineHeight: 14400
+    baseline: 12750
+    org.apache.fop.layoutmgr.LeafPosition.iLeafPos: 1
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.LineLayoutManager(id=1377)
+}
+
+ childBreaks.get(0).position.layoutManager = "org.apache.fop.layoutmgr.LineLayoutManager@df2d38"
+</screen>
+	  </section>
+
+	  <section>
+		<title>LineLM</title>
+
+<screen>
+ this = "org.apache.fop.layoutmgr.LineLayoutManager@df2d38"
+
+ lbp = {
+    dAdjust: 0.0
+    ipdAdjust: -1.0
+    startIndent: 0
+    lineHeight: 14400
+    baseline: 12750
+    org.apache.fop.layoutmgr.LeafPosition.iLeafPos: 1
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.LineLayoutManager(id=1377)
+}
+
+ iStartPos = 0
+
+ vecInlineBreaks = "[
+org.apache.fop.layoutmgr.BreakPoss@eb67e8,
+org.apache.fop.layoutmgr.BreakPoss@f2ea42
+]"
+
+ vecInlineBreaks.get(0).position = {
+    iLeafPos: 0
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1385)
+}
+
+ vecInlineBreaks.get(0).position.layoutManager = "org.apache.fop.layoutmgr.TextLayoutManager@e265d0"
+
+ vecInlineBreaks.get(1).position = {
+    iLeafPos: 0
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.AddLMVisitor$2(id=1389)
+}
+
+ vecInlineBreaks.get(1).position.layoutManager = "org.apache.fop.layoutmgr.AddLMVisitor$2@2f356f"
+</screen>
+	  </section>
+
+	  <section>
+		<title>TextLM</title>
+
+<screen>
+ this = "org.apache.fop.layoutmgr.TextLayoutManager@e265d0"
+
+ this.chars = {
+
+}
+
+ tbpNext = {
+    iLeafPos: 0
+    org.apache.fop.layoutmgr.Position.layoutManager: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1385)
+}
+
+ vecAreaInfo = "[org.apache.fop.layoutmgr.TextLayoutManager$AreaInfo@996cca]"
+
+ vecAreaInfo.get(0) = {
+    iStartIndex: 0
+    iBreakIndex: 1
+    iWScount: 1
+    ipdArea: instance of org.apache.fop.traits.MinOptMax(id=1396)
+    this$0: instance of org.apache.fop.layoutmgr.TextLayoutManager(id=1385)
+}
+</screen>
+	  </section>
+
+	  <section>
+		<title><literal>AddLMVisitor$2</literal></title>
+			<simpara>No data</simpara>
+	  </section>
+
+	</section>
+  </chapter>
+
+<!-- Local Variables: --> 
+<!-- current-language-environment: UTF-8 -->
+<!-- coding: utf-8 --> 
+<!-- default-input-method: TeX --> 
+<!-- End: -->

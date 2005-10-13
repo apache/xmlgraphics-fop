@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks lists.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:list-block>
+            <fo:list-item>
+              <fo:list-item-label>
+                <fo:block background-color="lightgray">label</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body>
+                <fo:block>value</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item>
+              <fo:list-item-label start-indent="10pt" end-indent="label-end()">
+                <fo:block background-color="lightgray">label</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="100pt">
+                <fo:block border-left="solid 0.1pt">value</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block background-color="lightgray">label</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block border-left="solid 0.1pt">value</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+          </fo:list-block>
+          <fo:list-block provisional-distance-between-starts="50pt" provisional-label-separation="10pt">
+            <fo:list-item margin-left="10pt">
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block text-align="end" background-color="lightgray">label</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block border-left="solid 0.1pt">value</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+          </fo:list-block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- list-block -->
+    <eval expected="360000" xpath="//flow/block[1]/@ipd"/>
+    <eval expected="43200" xpath="//flow/block[1]/@bpd"/>
+    
+    <!-- first list-item -->
+    <eval expected="360000" xpath="//flow/block[1]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[1]/@bpd"/>
+    <!-- label of first list-item -->
+    <eval expected="360000" xpath="//flow/block[1]/block[1]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[1]/block[1]/@bpd"/>
+    <!-- content of label of second list-item -->
+    <eval expected="360000" xpath="//flow/block[1]/block[1]/block[2]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[1]/block[2]/block[1]/@bpd"/>
+    <true xpath="not(//flow/block[1]/block[1]/block[1]/block[1]/@start-indent)"/>
+    <true xpath="not(//flow/block[1]/block[1]/block[1]/block[1]/@end-indent)"/>
+    <!-- body of first list-item -->
+    <eval expected="360000" xpath="//flow/block[1]/block[1]/block[2]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[1]/block[2]/@bpd"/>
+    <!-- content of body of first list-item -->
+    <eval expected="360000" xpath="//flow/block[1]/block[1]/block[2]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[1]/block[2]/block[1]/@bpd"/>
+    <true xpath="not(//flow/block[1]/block[1]/block[2]/block[1]/@start-indent)"/>
+    <true xpath="not(//flow/block[1]/block[1]/block[2]/block[1]/@end-indent)"/>
+
+    <!-- second list-item -->
+    <eval expected="360000" xpath="//flow/block[1]/block[2]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[2]/@bpd"/>
+    <!-- label of second list-item -->
+    <eval expected="360000" xpath="//flow/block[1]/block[2]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[2]/block[1]/@bpd"/>
+    <!-- content of label of second list-item -->
+    <eval expected="8000" xpath="//flow/block[1]/block[2]/block[1]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[2]/block[1]/block[1]/@bpd"/>
+    <eval expected="10000" xpath="//flow/block[1]/block[2]/block[1]/block[1]/@start-indent"/>
+    <eval expected="342000" xpath="//flow/block[1]/block[2]/block[1]/block[1]/@end-indent"/>
+    <!-- body of second list-item -->
+    <eval expected="360000" xpath="//flow/block[1]/block[2]/block[2]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[2]/block[2]/@bpd"/>
+    <!-- content of body of second list-item -->
+    <eval expected="260000" xpath="//flow/block[1]/block[2]/block[2]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[2]/block[2]/block[1]/@bpd"/>
+    <eval expected="100000" xpath="//flow/block[1]/block[2]/block[2]/block[1]/@start-indent"/>
+    <true xpath="not(//flow/block[1]/block[2]/block[2]/block[1]/@end-indent)"/>
+
+    <!-- third list-item -->
+    <eval expected="360000" xpath="//flow/block[1]/block[3]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[3]/@bpd"/>
+    <!-- label of third list-item -->
+    <eval expected="360000" xpath="//flow/block[1]/block[3]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[3]/block[1]/@bpd"/>
+    <!-- content of label of third list-item -->
+    <eval expected="18000" xpath="//flow/block[1]/block[3]/block[1]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[3]/block[1]/block[1]/@bpd"/>
+    <true xpath="not(//flow/block[1]/block[3]/block[1]/block[1]/@start-indent)"/>
+    <eval expected="342000" xpath="//flow/block[1]/block[3]/block[1]/block[1]/@end-indent"/>
+    <!-- body of third list-item -->
+    <eval expected="360000" xpath="//flow/block[1]/block[3]/block[2]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[3]/block[2]/@bpd"/>
+    <!-- content of body of third list-item -->
+    <eval expected="336000" xpath="//flow/block[1]/block[3]/block[2]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[3]/block[2]/block[1]/@bpd"/>
+    <eval expected="24000" xpath="//flow/block[1]/block[3]/block[2]/block[1]/@start-indent"/>
+    <true xpath="not(//flow/block[1]/block[3]/block[2]/block[1]/@end-indent)"/>
+
+    <!-- second list-block -->
+    <eval expected="360000" xpath="//flow/block[2]/@ipda"/>
+    <eval expected="360000" xpath="//flow/block[2]/@ipd"/>
+    <!-- fourth list-item -->
+    <eval expected="350000" xpath="//flow/block[2]/block[1]/@ipda"/>
+    <eval expected="350000" xpath="//flow/block[2]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[1]/@bpda"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[1]/@bpd"/>
+    <!-- label of third list-item -->
+    <eval expected="350000" xpath="//flow/block[2]/block[1]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[1]/block[1]/@bpd"/>
+    <!-- content of label of third list-item -->
+    <eval expected="40000" xpath="//flow/block[2]/block[1]/block[1]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[1]/block[1]/block[1]/@bpd"/>
+    <eval expected="10000" xpath="//flow/block[2]/block[1]/block[1]/block[1]/@start-indent"/>
+    <eval expected="310000" xpath="//flow/block[2]/block[1]/block[1]/block[1]/@end-indent"/>
+    <!-- body of third list-item -->
+    <eval expected="350000" xpath="//flow/block[2]/block[1]/block[2]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[1]/block[2]/@bpd"/>
+    <!-- content of body of third list-item -->
+    <eval expected="300000" xpath="//flow/block[2]/block[1]/block[2]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[1]/block[2]/block[1]/@bpd"/>
+    <eval expected="60000" xpath="//flow/block[2]/block[1]/block[2]/block[1]/@start-indent"/>
+    <true xpath="not(//flow/block[2]/block[1]/block[2]/block[1]/@end-indent)"/>
+  </checks>
+</testcase>

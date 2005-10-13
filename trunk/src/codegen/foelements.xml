@@ -1,0 +1,1101 @@
+<!--
+  Copyright 1999-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<root>
+<common>
+    <name>CommonAccessibilityProperties</name>
+    <property>source-document</property>
+    <property>role</property>
+</common>
+
+
+<common>
+    <name>CommonAbsolutePositionProperties</name>
+    <property>absolute-position</property>
+    <property>position</property>
+    <property>top</property>
+    <property>right</property>
+    <property>bottom</property>
+    <property>left</property>
+</common>
+    
+<common>
+    <name>CommonAuralProperties</name>
+    <property>azimuth</property>
+    <property>cue-after</property>
+    <property>cue-before</property>
+    <property>cue</property>
+    <property>elevation</property>
+    <property>pause-after</property>
+    <property>pause-before</property>
+    <property>pause</property>
+    <property>pitch</property>
+    <property>pitch-range</property>
+    <property>play-during</property>
+    <property>richness</property>
+    <property>speak</property>
+    <property>speak-header</property>
+    <property>speak-numeral</property>
+    <property>speak-punctuation</property>
+    <property>speech-rate</property>
+    <property>stress</property>
+    <property>voice-family</property>
+    <property>volume</property>
+</common>
+    
+<common>
+    <name>CommonBorderPaddingBackgroundProperties</name>
+    <property>background-attachment</property>
+    <property>background-color</property>
+    <property>background-image</property>
+    <property>background-repeat</property>
+    <property>background-position-horizontal</property>
+    <property>background-position-vertical</property>
+    <property>border-before-color</property>
+    <property>border-before-style</property>
+    <property>border-before-width</property>
+    <property>border-after-color</property>
+    <property>border-after-style</property>
+    <property>border-after-width</property>
+    <property>border-start-color</property>
+    <property>border-start-style</property>
+    <property>border-start-width</property>
+    <property>border-end-color</property>
+    <property>border-end-style</property>
+    <property>border-end-width</property>
+    <property>border-top-color</property>
+    <property>border-top-style</property>
+    <property>border-top-width</property>
+    <property>border-bottom-color</property>
+    <property>border-bottom-style</property>
+    <property>border-bottom-width</property>
+    <property>border-left-color</property>
+    <property>border-left-style</property>
+    <property>border-left-width</property>
+    <property>border-right-color</property>
+    <property>border-right-style</property>
+    <property>border-right-width</property>
+    <property>padding-before</property>
+    <property>padding-after</property>
+    <property>padding-start</property>
+    <property>padding-end</property>
+    <property>padding-top</property>
+    <property>padding-bottom</property>
+    <property>padding-left</property>
+    <property>padding-right</property>
+
+    <!-- shorthands -->
+    <property>border</property>
+    <property>border-style</property>
+    <property>border-width</property>
+    <property>border-color</property>
+    <property>border-top</property>
+    <property>border-bottom</property>
+    <property>border-left</property>
+    <property>border-right</property>
+    <property>padding</property>
+
+</common>
+    
+<common>
+    <name>CommonFontProperties</name>
+    <property>font</property>
+    <property>font-family</property>
+    <property>font-selection-strategy</property>
+    <property>font-size</property>
+    <property>font-stretch</property>
+    <property>font-size-adjust</property>
+    <property>font-style</property>
+    <property>font-variant</property>
+    <property>font-weight</property>
+</common>
+    
+<common>
+    <name>CommonHyphenationProperties</name>
+    <property>country</property>
+    <property>language</property>
+    <property>script</property>
+    <property>hyphenate</property>
+    <property>hyphenation-character</property>
+    <property>hyphenation-push-character-count</property>
+    <property>hyphenation-remain-character-count</property>
+</common>
+
+<common>
+    <name>CommonMarginPropertiesBlock</name>
+    <property>margin</property>
+    <property>margin-top</property>
+    <property>margin-bottom</property>
+    <property>margin-left</property>
+    <property>margin-right</property>
+    <property>space-before</property>
+    <property>space-after</property>
+    <property>start-indent</property>
+    <property>end-indent</property>
+</common>
+
+    
+<common>
+    <name>CommonMarginPropertiesInline</name>
+    <property>space-end</property>
+    <property>space-start</property>
+</common>
+    
+<common>
+    <name>CommonRelativePositionProperties</name>
+    <property>relative-position</property>
+</common>
+
+
+
+
+<element>
+    <name>root</name>
+    <property>media-usage</property>
+    <content>layout-master-set</content>
+    <content>declaration</content>
+    <content>page-sequence</content>
+</element>
+
+<element>
+    <name>declaration</name>
+    <content>color-profile</content>
+</element>
+
+<element>
+    <name>color-profile</name>
+    <property>src</property>
+    <property>color-profile-name</property>
+    <property>rendering-intent</property>
+</element>
+
+<element>
+    <name>page-sequence</name>
+    <property>country</property> 
+    <property>format</property> 
+    <property>language</property> 
+    <property>letter-value</property> 
+    <property>grouping-separator</property> 
+    <property>grouping-size</property> 
+    <property>id</property> 
+    <property>initial-page-number</property> 
+    <property>force-page-count</property> 
+    <property>master-reference</property> 
+    <content>title</content>
+    <content>static-content</content>
+    <content>flow</content>
+</element>
+
+<element>
+    <name>layout-master-set</name>
+    <property>master-name</property> 
+    <content>simple-page-master</content>
+    <content>page-sequence-master</content>
+</element>
+
+<element>
+    <name>page-sequence-master</name>
+    <property>master-name</property> 
+    <content>single-page-master-reference</content>
+    <content>repeatable-page-master-reference</content>
+    <content>repeatable-page-master-alternatives</content>
+</element>
+
+<element>
+    <name>single-page-master-reference</name>
+    <property>master-reference</property>
+</element>
+
+<element>
+    <name>repeatable-page-master-reference</name>
+    <property>master-reference</property> 
+    <property>maximum-repeats</property> 
+</element>
+
+<element>
+    <name>repeatable-page-master-alternatives</name>
+    <property>maximum-repeats</property> 
+    <content>conditional-page-master-reference</content>
+</element>
+
+<element>
+    <name>conditional-page-master-reference</name>
+    <property>master-reference</property> 
+    <property>page-position</property> 
+    <property>odd-or-even</property> 
+    <property>blank-or-not-blank</property> 
+</element>
+
+<element>
+    <name>simple-page-master</name>
+    <common-ref>CommonMarginPropertiesBlock</common-ref> 
+    <property>master-name</property> 
+    <property>page-height</property> 
+    <property>page-width</property> 
+    <property>reference-orientation</property> 
+    <property>writing-mode</property> 
+    <content>region-body</content>
+    <content>region-before</content>
+    <content>region-after</content>
+    <content>region-start</content>
+    <content>region-end</content>
+</element>
+
+<element>
+    <name>region-body</name>
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+    <common-ref>CommonMarginPropertiesBlock</common-ref> 
+    <property>clip</property> 
+    <property>column-count</property> 
+    <property>column-gap</property> 
+    <property>display-align</property> 
+    <property>overflow</property> 
+    <property>region-name</property> 
+    <property>reference-orientation</property> 
+    <property>writing-mode</property> 
+
+</element>
+
+<element>
+    <name>region-before</name>
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+    <property>clip</property> 
+    <property>display-align</property> 
+    <property>extent</property> 
+    <property>overflow</property> 
+    <property>precedence</property> 
+    <property>region-name</property> 
+    <property>reference-orientation</property> 
+    <property>writing-mode</property> 
+
+</element>
+
+<element>
+    <name>region-after</name>
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+    <property>clip</property> 
+    <property>display-align</property> 
+    <property>extent</property> 
+    <property>overflow</property> 
+    <property>precedence</property> 
+    <property>region-name</property> 
+    <property>reference-orientation</property> 
+    <property>writing-mode</property> 
+
+</element>
+
+<element>
+    <name>region-start</name>
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+    <property>clip</property> 
+    <property>display-align</property> 
+    <property>extent</property> 
+    <property>overflow</property> 
+    <property>region-name</property> 
+    <property>reference-orientation</property> 
+    <property>writing-mode</property> 
+
+</element>
+
+<element>
+    <name>region-end</name>
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+    <property>clip</property> 
+    <property>display-align</property> 
+    <property>extent</property> 
+    <property>overflow</property> 
+    <property>region-name</property> 
+    <property>reference-orientation</property> 
+    <property>writing-mode</property> 
+
+</element>
+
+<element>
+    <name>flow</name>
+    <property>flow-name</property> 
+    <content>%block;</content>
+</element>
+
+<element>
+    <name>static-content</name>
+    <property>flow-name</property>
+    <content>%block;</content>
+</element>
+
+<element>
+    <name>title</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <common-ref>CommonAuralProperties</common-ref> 
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+    <common-ref>CommonFontProperties</common-ref> 
+    <common-ref>CommonMarginPropertiesInline</common-ref> 
+    <property>color</property> 
+    <property>line-height</property> 
+    <property>visibility</property> 
+    <content>%inline;</content>
+</element>
+
+<element>
+    <name>block</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <common-ref>CommonAuralProperties</common-ref> 
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+    <common-ref>CommonFontProperties</common-ref> 
+    <common-ref>CommonHyphenationProperties</common-ref> 
+    <common-ref>CommonMarginPropertiesBlock</common-ref> 
+    <common-ref>CommonRelativePositionProperties</common-ref> 
+    <property>page-break-after</property> 
+    <property>page-break-before</property> 
+    <property>break-after</property> 
+    <property>break-before</property> 
+    <property>color</property> 
+    <property>text-depth</property> 
+    <property>text-altitude</property> 
+    <property>hyphenation-keep</property> 
+    <property>hyphenation-ladder-count</property> 
+    <property>id</property> 
+    <!-- property>intrusion-displace</property --> 
+    <property>page-break-inside</property> 
+    <property>keep-together</property> 
+    <property>keep-with-next</property> 
+    <property>keep-with-previous</property> 
+    <property>last-line-end-indent</property> 
+    <property>linefeed-treatment</property> 
+    <property>line-height</property> 
+    <property>line-height-shift-adjustment</property> 
+    <property>line-stacking-strategy</property> 
+    <property>orphans</property> 
+    <property>white-space-treatment</property> 
+    <property>span</property> 
+    <property>text-align</property> 
+    <property>text-align-last</property> 
+    <property>text-indent</property> 
+    <property>visibility</property> 
+    <property>white-space-collapse</property> 
+    <property>widows</property> 
+    <property>wrap-option</property> 
+    <content>%inline;</content>
+    <content>%block;</content>
+</element>
+
+<element>
+    <name>block-container</name>
+    <common-ref>CommonAbsolutePositionProperties</common-ref> 
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+    <common-ref>CommonMarginPropertiesBlock</common-ref> 
+    <property>block-progression-dimension</property> 
+    <property>page-break-after</property> 
+    <property>page-break-before</property> 
+    <property>break-after</property> 
+    <property>break-before</property> 
+    <property>clip</property> 
+    <property>display-align</property> 
+    <property>height</property> 
+    <property>id</property> 
+    <property>inline-progression-dimension</property> 
+    <!--property>intrusion-displace</property --> 
+    <property>page-break-inside</property> 
+    <property>keep-together</property> 
+    <property>keep-with-next</property> 
+    <property>keep-with-previous</property> 
+    <property>overflow</property> 
+    <property>reference-orientation</property> 
+    <property>span</property> 
+    <property>width</property> 
+    <property>writing-mode</property> 
+    <property>z-index</property> 
+    <content>%block;</content>
+</element>
+
+<element>
+    <name>bidi-override</name>
+    <common-ref>CommonAuralProperties</common-ref> 
+    <common-ref>CommonFontProperties</common-ref> 
+    <common-ref>CommonRelativePositionProperties</common-ref> 
+    <property>color</property> 
+    <property>direction</property> 
+    <property>id</property> 
+    <property>letter-spacing</property> 
+    <property>line-height</property> 
+    <property>score-spaces</property> 
+    <property>unicode-bidi</property> 
+    <property>word-spacing</property> 
+    <content>%inline;</content>
+    <content>%block;</content>
+</element>
+
+<element>
+    <name>character</name>
+    <common-ref>CommonAuralProperties</common-ref> 
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+    <common-ref>CommonFontProperties</common-ref> 
+    <common-ref>CommonHyphenationProperties</common-ref> 
+    <common-ref>CommonMarginPropertiesInline</common-ref> 
+    <common-ref>CommonRelativePositionProperties</common-ref> 
+    <property>vertical-align</property> 
+    <property>alignment-adjust</property> 
+    <property>treat-as-word-space</property> 
+    <property>alignment-baseline</property> 
+    <property>baseline-shift</property> 
+    <property>character</property> 
+    <property>color</property> 
+    <property>dominant-baseline</property> 
+    <property>text-depth</property> 
+    <property>text-altitude</property> 
+    <property>glyph-orientation-horizontal</property> 
+    <property>glyph-orientation-vertical</property> 
+    <property>id</property> 
+    <property>keep-with-next</property> 
+    <property>keep-with-previous</property> 
+    <property>letter-spacing</property> 
+    <property>line-height</property> 
+    <property>score-spaces</property> 
+    <property>suppress-at-line-break</property> 
+    <property>text-decoration</property> 
+    <property>text-shadow</property> 
+    <property>text-transform</property> 
+    <property>visibility</property> 
+    <property>word-spacing</property> 
+
+</element>
+
+<element>
+    <name>initial-property-set</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <common-ref>CommonAuralProperties</common-ref> 
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+    <common-ref>CommonFontProperties</common-ref> 
+    <common-ref>CommonRelativePositionProperties</common-ref> 
+    <property>color</property> 
+    <property>id</property> 
+    <property>letter-spacing</property> 
+    <property>line-height</property> 
+    <property>score-spaces</property> 
+    <property>text-decoration</property> 
+    <property>text-shadow</property> 
+    <property>text-transform</property> 
+    <property>word-spacing</property> 
+
+</element>
+
+<element>
+    <name>external-graphic</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <common-ref>CommonAuralProperties</common-ref> 
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+    <common-ref>CommonMarginPropertiesInline</common-ref> 
+    <common-ref>CommonRelativePositionProperties</common-ref> 
+    <property>vertical-align</property> 
+    <property>alignment-adjust</property> 
+    <property>alignment-baseline</property> 
+    <property>baseline-shift</property> 
+    <property>block-progression-dimension</property> 
+    <property>clip</property> 
+    <property>content-height</property> 
+    <property>content-type</property> 
+    <property>content-width</property> 
+    <property>display-align</property> 
+    <property>dominant-baseline</property> 
+    <property>height</property> 
+    <property>id</property> 
+    <property>inline-progression-dimension</property> 
+    <property>keep-with-next</property> 
+    <property>keep-with-previous</property> 
+    <property>line-height</property> 
+    <property>overflow</property> 
+    <property>scaling</property> 
+    <property>scaling-method</property> 
+    <property>src</property> 
+    <property>text-align</property> 
+    <property>width</property> 
+
+</element>
+
+<element>
+    <name>instream-foreign-object</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <common-ref>CommonAuralProperties</common-ref> 
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+    <common-ref>CommonMarginPropertiesInline</common-ref> 
+    <common-ref>CommonRelativePositionProperties</common-ref> 
+    <property>vertical-align</property> 
+    <property>alignment-adjust</property> 
+    <property>alignment-baseline</property> 
+    <property>baseline-shift</property> 
+    <property>block-progression-dimension</property> 
+    <property>clip</property> 
+    <property>content-height</property> 
+    <property>content-type</property> 
+    <property>content-width</property> 
+    <property>display-align</property> 
+    <property>dominant-baseline</property> 
+    <property>height</property> 
+    <property>id</property> 
+    <property>inline-progression-dimension</property> 
+    <property>keep-with-next</property> 
+    <property>keep-with-previous</property> 
+    <property>line-height</property> 
+    <property>overflow</property> 
+    <property>scaling</property> 
+    <property>scaling-method</property> 
+    <property>text-align</property> 
+    <property>width</property> 
+
+</element>
+
+<element>
+    <name>inline</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <common-ref>CommonAuralProperties</common-ref> 
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+    <common-ref>CommonFontProperties</common-ref> 
+    <common-ref>CommonMarginPropertiesInline</common-ref> 
+    <common-ref>CommonRelativePositionProperties</common-ref> 
+    <property>vertical-align</property> 
+    <property>alignment-adjust</property> 
+    <property>alignment-baseline</property> 
+    <property>baseline-shift</property> 
+    <property>block-progression-dimension</property> 
+    <property>color</property> 
+    <property>dominant-baseline</property> 
+    <property>height</property> 
+    <property>id</property> 
+    <property>inline-progression-dimension</property> 
+    <property>page-break-inside</property> 
+    <property>keep-together</property> 
+    <property>keep-with-next</property> 
+    <property>keep-with-previous</property> 
+    <property>line-height</property> 
+    <property>text-decoration</property> 
+    <property>visibility</property> 
+    <property>width</property> 
+    <property>wrap-option</property> 
+    <content>%inline;</content>
+    <content>%block;</content>
+</element>
+
+<element>
+    <name>inline-container</name>
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+    <common-ref>CommonMarginPropertiesInline</common-ref> 
+    <common-ref>CommonRelativePositionProperties</common-ref> 
+    <property>vertical-align</property> 
+    <property>alignment-adjust</property> 
+    <property>alignment-baseline</property> 
+    <property>baseline-shift</property> 
+    <property>block-progression-dimension</property> 
+    <property>clip</property> 
+    <property>display-align</property> 
+    <property>dominant-baseline</property> 
+    <property>height</property> 
+    <property>id</property> 
+    <property>inline-progression-dimension</property> 
+    <property>page-break-inside</property> 
+    <property>keep-together</property> 
+    <property>keep-with-next</property> 
+    <property>keep-with-previous</property> 
+    <property>line-height</property> 
+    <property>overflow</property> 
+    <property>reference-orientation</property> 
+    <property>width</property> 
+    <property>writing-mode</property> 
+    <content>%block;</content>
+</element>
+
+<element>
+    <name>leader</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <common-ref>CommonAuralProperties</common-ref> 
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+    <common-ref>CommonFontProperties</common-ref> 
+    <common-ref>CommonMarginPropertiesInline</common-ref> 
+    <common-ref>CommonRelativePositionProperties</common-ref> 
+    <property>vertical-align</property> 
+    <property>alignment-adjust</property> 
+    <property>alignment-baseline</property> 
+    <property>baseline-shift</property> 
+    <property>color</property> 
+    <property>dominant-baseline</property> 
+    <property>text-depth</property> 
+    <property>text-altitude</property> 
+    <property>id</property> 
+    <property>keep-with-next</property> 
+    <property>keep-with-previous</property> 
+    <property>leader-alignment</property> 
+    <property>leader-length</property> 
+    <property>leader-pattern</property> 
+    <property>leader-pattern-width</property> 
+    <property>rule-style</property> 
+    <property>rule-thickness</property> 
+    <property>letter-spacing</property> 
+    <property>line-height</property> 
+    <property>text-shadow</property> 
+    <property>visibility</property> 
+    <property>word-spacing</property> 
+    <content>%inline;</content>
+</element>
+
+<element>
+    <name>page-number</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <common-ref>CommonAuralProperties</common-ref> 
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+    <common-ref>CommonFontProperties</common-ref> 
+    <common-ref>CommonMarginPropertiesInline</common-ref> 
+    <common-ref>CommonRelativePositionProperties</common-ref> 
+    <property>vertical-align</property> 
+    <property>alignment-adjust</property> 
+    <property>alignment-baseline</property> 
+    <property>baseline-shift</property> 
+    <property>dominant-baseline</property> 
+    <property>id</property> 
+    <property>keep-with-next</property> 
+    <property>keep-with-previous</property> 
+    <property>letter-spacing</property> 
+    <property>line-height</property> 
+    <property>score-spaces</property> 
+    <property>text-altitude</property> 
+    <property>text-decoration</property> 
+    <property>text-depth</property> 
+    <property>text-shadow</property> 
+    <property>text-transform</property> 
+    <property>visibility</property> 
+    <property>word-spacing</property> 
+    <property>wrap-option</property> 
+
+</element>
+
+<element>
+    <name>page-number-citation</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <common-ref>CommonAuralProperties</common-ref> 
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+    <common-ref>CommonFontProperties</common-ref> 
+    <common-ref>CommonMarginPropertiesInline</common-ref> 
+    <common-ref>CommonRelativePositionProperties</common-ref> 
+    <property>vertical-align</property> 
+    <property>alignment-adjust</property> 
+    <property>alignment-baseline</property> 
+    <property>baseline-shift</property> 
+    <property>dominant-baseline</property> 
+    <property>id</property> 
+    <property>keep-with-next</property> 
+    <property>keep-with-previous</property> 
+    <property>letter-spacing</property> 
+    <property>line-height</property> 
+    <property>ref-id</property> 
+    <property>score-spaces</property> 
+    <property>text-altitude</property> 
+    <property>text-decoration</property> 
+    <property>text-depth</property> 
+    <property>text-shadow</property> 
+    <property>text-transform</property> 
+    <property>visibility</property> 
+    <property>word-spacing</property> 
+    <property>wrap-option</property> 
+
+</element>
+
+<element>
+    <name>table-and-caption</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <common-ref>CommonAuralProperties</common-ref> 
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+    <common-ref>CommonMarginPropertiesBlock</common-ref> 
+    <common-ref>CommonRelativePositionProperties</common-ref> 
+    <property>page-break-after</property> 
+    <property>page-break-before</property> 
+    <property>break-after</property> 
+    <property>break-before</property> 
+    <property>caption-side</property> 
+    <property>id</property> 
+    <!--property>intrusion-displace</property --> 
+    <property>page-break-inside</property> 
+    <property>keep-together</property> 
+    <property>keep-with-next</property> 
+    <property>keep-with-previous</property> 
+    <property>text-align</property> 
+    <content>table-caption</content>
+    <content>table</content>
+</element>
+
+<element>
+    <name>table</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <common-ref>CommonAuralProperties</common-ref> 
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+    <common-ref>CommonMarginPropertiesBlock</common-ref> 
+    <common-ref>CommonRelativePositionProperties</common-ref> 
+    <property>block-progression-dimension</property> 
+    <property>border-after-precedence</property> 
+    <property>border-before-precedence</property> 
+    <property>border-spacing</property> 
+    <property>border-collapse</property> 
+    <property>border-end-precedence</property> 
+    <property>border-separation</property> 
+    <property>border-start-precedence</property> 
+    <property>page-break-after</property> 
+    <property>page-break-before</property> 
+    <property>break-after</property> 
+    <property>break-before</property> 
+    <property>id</property> 
+    <property>inline-progression-dimension</property> 
+    <!--property>intrusion-displace</property --> 
+    <property>height</property> 
+    <property>page-break-inside</property> 
+    <property>keep-together</property> 
+    <property>keep-with-next</property> 
+    <property>keep-with-previous</property> 
+    <property>table-layout</property> 
+    <property>table-omit-footer-at-break</property> 
+    <property>table-omit-header-at-break</property> 
+    <property>width</property> 
+    <property>writing-mode</property> 
+    <content>table-column</content>
+    <content>table-header</content>
+    <content>table-footer</content>
+    <content>table-body</content>
+</element>
+
+<element>
+    <name>table-column</name>
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+<!--
+NOTE: 
+Only the background properties from this set apply. If the value of border-collapse is "collapse" or "collapse-with-precedence" for the table the border properties also apply.
+-->
+    <property>border-after-precedence</property> 
+    <property>border-before-precedence</property> 
+    <property>border-end-precedence</property> 
+    <property>border-start-precedence</property> 
+    <property>column-number</property> 
+    <property>column-width</property> 
+    <property>number-columns-repeated</property> 
+    <property>number-columns-spanned</property> 
+    <property>visibility</property> 
+
+</element>
+
+<element>
+    <name>table-caption</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <common-ref>CommonAuralProperties</common-ref> 
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+    <common-ref>CommonRelativePositionProperties</common-ref> 
+    <property>block-progression-dimension</property> 
+    <property>height</property> 
+    <property>id</property> 
+    <property>inline-progression-dimension</property> 
+    <!--property>intrusion-displace</property --> 
+    <property>page-break-inside</property> 
+    <property>keep-together</property> 
+    <property>width</property> 
+    <content>%block;</content>
+</element>
+
+<element>
+    <name>table-header</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <common-ref>CommonAuralProperties</common-ref> 
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+<!--
+NOTE: 
+Only the background properties from this set apply. If the value of border-collapse is "collapse" or "collapse-with-precedence" for the table the border properties also apply.
+-->
+    <common-ref>CommonRelativePositionProperties</common-ref> 
+    <property>border-after-precedence</property> 
+    <property>border-before-precedence</property> 
+    <property>border-end-precedence</property> 
+    <property>border-start-precedence</property> 
+    <property>id</property> 
+    <property>visibility</property> 
+    <content>table-row</content>
+    <content>table-cell</content>
+</element>
+
+<element>
+    <name>table-footer</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <common-ref>CommonAuralProperties</common-ref> 
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+<!--
+NOTE: 
+Only the background properties from this set apply. If the value of border-collapse is "collapse" or "collapse-with-precedence" for the table the border properties also apply.
+-->
+    <common-ref>CommonRelativePositionProperties</common-ref> 
+    <property>border-after-precedence</property> 
+    <property>border-before-precedence</property> 
+    <property>border-end-precedence</property> 
+    <property>border-start-precedence</property> 
+    <property>id</property> 
+    <property>visibility</property> 
+    <content>table-row</content>
+    <content>table-cell</content>
+</element>
+
+<element>
+    <name>table-body</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <common-ref>CommonAuralProperties</common-ref> 
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+<!--
+NOTE: 
+Only the background properties from this set apply. If the value of border-collapse is "collapse" or "collapse-with-precedence" for the table the border properties also apply.
+-->
+
+    <common-ref>CommonRelativePositionProperties</common-ref> 
+    <property>border-after-precedence</property> 
+    <property>border-before-precedence</property> 
+    <property>border-end-precedence</property> 
+    <property>border-start-precedence</property> 
+    <property>id</property> 
+    <property>visibility</property> 
+    <content>table-row</content>
+    <content>table-cell</content>
+</element>
+
+<element>
+    <name>table-row</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <property>block-progression-dimension</property> 
+    <common-ref>CommonAuralProperties</common-ref> 
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+<!--
+NOTE: 
+Only the background properties from this set apply. If the value of border-collapse is "collapse" or "collapse-with-precedence" for the table the border properties also apply.
+-->
+    <common-ref>CommonRelativePositionProperties</common-ref> 
+    <property>border-after-precedence</property> 
+    <property>border-before-precedence</property> 
+    <property>border-end-precedence</property> 
+    <property>border-start-precedence</property> 
+    <property>page-break-after</property> 
+    <property>page-break-before</property> 
+    <property>break-after</property> 
+    <property>break-before</property> 
+    <property>id</property> 
+    <property>height</property> 
+    <property>page-break-inside</property> 
+    <property>keep-together</property> 
+    <property>keep-with-next</property> 
+    <property>keep-with-previous</property> 
+    <property>visibility</property> 
+    <content>table-cell</content>
+</element>
+
+<element>
+    <name>table-cell</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <common-ref>CommonAuralProperties</common-ref> 
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+    <common-ref>CommonRelativePositionProperties</common-ref> 
+    <property>border-after-precedence</property> 
+    <property>border-before-precedence</property> 
+    <property>border-end-precedence</property> 
+    <property>border-start-precedence</property> 
+    <property>block-progression-dimension</property> 
+    <property>column-number</property> 
+    <property>display-align</property> 
+    <property>relative-align</property> 
+    <property>empty-cells</property> 
+    <property>ends-row</property> 
+    <property>height</property> 
+    <property>id</property> 
+    <property>inline-progression-dimension</property> 
+    <property>number-columns-spanned</property> 
+    <property>number-rows-spanned</property> 
+    <property>starts-row</property> 
+    <property>width</property> 
+    <content>%block;</content>
+</element>
+
+<element>
+    <name>list-block</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <common-ref>CommonAuralProperties</common-ref> 
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+    <common-ref>CommonMarginPropertiesBlock</common-ref> 
+    <common-ref>CommonRelativePositionProperties</common-ref> 
+    <property>page-break-after</property> 
+    <property>page-break-before</property> 
+    <property>break-after</property> 
+    <property>break-before</property> 
+    <property>id</property> 
+    <!--property>intrusion-displace</property --> 
+    <property>page-break-inside</property> 
+    <property>keep-together</property> 
+    <property>keep-with-next</property> 
+    <property>keep-with-previous</property> 
+    <property>provisional-distance-between-starts</property> 
+    <property>provisional-label-separation</property> 
+    <content>list-item</content>
+</element>
+
+<element>
+    <name>list-item</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <common-ref>CommonAuralProperties</common-ref> 
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+    <common-ref>CommonMarginPropertiesBlock</common-ref> 
+    <common-ref>CommonRelativePositionProperties</common-ref> 
+    <property>page-break-after</property> 
+    <property>page-break-before</property> 
+    <property>break-after</property> 
+    <property>break-before</property> 
+    <property>id</property> 
+    <!--property>intrusion-displace</property --> 
+    <property>page-break-inside</property> 
+    <property>keep-together</property> 
+    <property>keep-with-next</property> 
+    <property>keep-with-previous</property> 
+    <property>relative-align</property> 
+    <content>list-item-label</content>
+    <content>list-item-body</content>
+</element>
+
+<element>
+    <name>list-item-body</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <property>id</property> 
+    <property>page-break-inside</property> 
+    <property>keep-together</property> 
+    <content>%block;</content>
+</element>
+
+<element>
+    <name>list-item-label</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <property>id</property> 
+    <property>page-break-inside</property> 
+    <property>keep-together</property> 
+    <content>%block;</content>
+</element>
+
+<element>
+    <name>basic-link</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <common-ref>CommonAuralProperties</common-ref> 
+    <common-ref>CommonBorderPaddingBackgroundProperties</common-ref> 
+    <common-ref>CommonMarginPropertiesInline</common-ref> 
+    <common-ref>CommonRelativePositionProperties</common-ref> 
+    <property>vertical-align</property> 
+    <property>alignment-adjust</property> 
+    <property>alignment-baseline</property> 
+    <property>baseline-shift</property> 
+    <property>destination-placement-offset</property> 
+    <property>dominant-baseline</property> 
+    <property>external-destination</property> 
+    <property>id</property> 
+    <property>indicate-destination</property> 
+    <property>internal-destination</property> 
+    <property>page-break-inside</property> 
+    <property>keep-together</property> 
+    <property>keep-with-next</property> 
+    <property>keep-with-previous</property> 
+    <property>line-height</property> 
+    <property>show-destination</property> 
+    <property>target-processing-context</property> 
+    <property>target-presentation-context</property> 
+    <property>target-stylesheet</property> 
+    <content>%inline;</content>
+    <content>%block;</content>
+</element>
+
+<element>
+    <name>multi-switch</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <property>auto-restore</property> 
+    <property>id</property> 
+    <content>multi-case</content>
+</element>
+
+<element>
+    <name>multi-case</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <property>id</property> 
+    <property>starting-state</property> 
+    <property>case-name</property> 
+    <property>case-title</property> 
+    <content>%inline;</content>
+    <content>%block;</content>
+</element>
+
+<element>
+    <name>multi-toggle</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <property>id</property> 
+    <property>switch-to</property> 
+    <content>%inline;</content>
+    <content>%block;</content>
+</element>
+
+<element>
+    <name>multi-properties</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <property>id</property> 
+    <content>multi-property-set</content>
+    <content>wrapper</content>
+</element>
+
+<element>
+    <name>multi-property-set</name>
+    <property>id</property> 
+    <property>active-state</property>
+</element>
+
+<element>
+    <name>float</name>
+    <property>float</property> 
+    <property>clear</property>
+    <content>%block;</content>
+</element>
+
+<element>
+    <name>footnote</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <content>inline</content>
+    <content>footnote-body</content>
+</element>
+
+<element>
+    <name>footnote-body</name>
+    <common-ref>CommonAccessibilityProperties</common-ref> 
+    <content>%block;</content>
+</element>
+
+<element>
+    <name>wrapper</name>
+    <property>id</property>
+    <content>%inline;</content>
+    <content>%block;</content>
+</element>
+
+<element>
+    <name>marker</name>
+    <property>marker-class-name</property>
+    <content>%inline;</content>
+    <content>%block;</content>
+</element>
+
+<element>
+    <name>retrieve-marker</name>
+    <property>retrieve-class-name</property> 
+    <property>retrieve-position</property> 
+    <property>retrieve-boundary</property> 
+</element>
+
+</root>
+

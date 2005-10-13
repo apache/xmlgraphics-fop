@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks keep-with-next on content inside tables.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg" white-space-collapse="true" widows="0" orphans="0">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="4.5 * 14.4pt">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>block1</fo:block>
+          <fo:table table-layout="fixed">
+            <fo:table-column/>
+            <fo:table-column/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell id="cell1">
+                  <fo:block>line1</fo:block>
+                  <fo:block>line2</fo:block>
+                </fo:table-cell>
+                <fo:table-cell id="cell2">
+                  <fo:block keep-with-next.within-page="always">line1</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell id="cell3">
+                  <fo:block>line1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell id="cell4">
+                  <fo:block keep-with-next.within-page="always">line1</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+          <fo:block>block2</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <element-list category="table-cell" id="cell1">
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+    </element-list>
+    <element-list category="table-cell" id="cell2">
+      <box w="14400"/>
+    </element-list>
+    <element-list category="breaker" index="0">
+      <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <box w="14400"/>
+      <penalty w="0" p="INF"/>
+      <box w="14400"/>
+      <penalty w="0" p="INF"/>
+      <box w="14400"/>
+      <penalty w="0" p="INF"/>
+      <box w="14400"/>
+      <skip>3</skip>
+    </element-list>
+  </checks>
+</testcase>

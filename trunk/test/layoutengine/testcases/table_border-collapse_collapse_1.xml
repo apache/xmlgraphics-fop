@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks tables with collapse border model. Simple cell borders to start with.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in" margin="20pt">
+          <fo:region-body margin="0pt"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block-container height="20pt"  background-color="lightgray">
+            <fo:block>block before table</fo:block>
+          </fo:block-container>
+          <fo:block margin="0pt" border="groove 5pt green" border-right="15pt" height="20pt">normal border here</fo:block>
+          <fo:block-container margin-left="150pt" width="150pt + 7.5pt" height="5pt" background-color="gray">
+            <fo:block/>
+          </fo:block-container>
+          <fo:block-container margin-left="150pt + 7.5pt" width="150pt - 7.5pt - 7.5pt" height="5pt" background-color="gray">
+            <fo:block/>
+          </fo:block-container>
+          <fo:table table-layout="fixed" width="100%" border-collapse="collapse" background-color="rgb(90%, 90%, 100%)">
+            <fo:table-column column-width="150pt"/>
+            <fo:table-column column-width="150pt"/>
+            <fo:table-body>
+              <fo:table-row height="50pt">
+                <fo:table-cell border="solid 15pt blue">
+                  <fo:block text-align="justify">cell1 cell1 cell1 cell1 cell1 cell1 cell1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell background-color="yellow" border="solid 5pt black" border-right="groove 15pt red" border-top="dotted 5pt black" border-bottom="dotted 5pt green">
+                  <fo:block text-align="justify">cell2 cell2 cell2 cell2 cell2 cell2 cell2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell background-color="orange">
+                  <fo:block>cell3</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="solid 10pt red" border-top="dotted 5pt red">
+                  <fo:block>cell4</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+          <fo:block background-color="lightgray">block after table</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- table dimensions -->
+    <eval expected="320000" xpath="//flow/block[5]/@ipd"/>
+    <eval expected="71900" xpath="//flow/block[5]/@bpd"/>
+    
+    <!-- cell 1 -->
+    <true xpath="//flow/block[5]/block[1]/@is-reference-area"/>
+    <eval expected="7500" xpath="//flow/block[5]/block[1]/@left-offset"/>
+    <eval expected="7500" xpath="//flow/block[5]/block[1]/@top-offset"/>
+    <eval expected="135000" xpath="//flow/block[5]/block[1]/@ipd"/>
+    <eval expected="35000" xpath="//flow/block[5]/block[1]/@bpd"/>
+    <eval expected="(solid,#0000ff,15000,collapse-outer)" xpath="//flow/block[5]/block[1]/@border-before"/>
+    <eval expected="(solid,#0000ff,15000,collapse-inner)" xpath="//flow/block[5]/block[1]/@border-after"/>
+    <eval expected="(solid,#0000ff,15000,collapse-outer)" xpath="//flow/block[5]/block[1]/@border-start"/>
+    <eval expected="(solid,#0000ff,15000,collapse-inner)" xpath="//flow/block[5]/block[1]/@border-end"/>
+    <eval expected="135000" xpath="//flow/block[5]/block[1]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[5]/block[1]/block[1]/@bpd"/>
+
+    <!-- cell 2 -->
+    <true xpath="//flow/block[5]/block[2]/@is-reference-area"/>
+    <eval expected="157500" xpath="//flow/block[5]/block[2]/@left-offset"/>
+    <eval expected="2500" xpath="//flow/block[5]/block[2]/@top-offset"/>
+    <eval expected="135000" xpath="//flow/block[5]/block[2]/@ipd"/>
+    <eval expected="40000" xpath="//flow/block[5]/block[2]/@bpd"/>
+    <eval expected="(dotted,#000000,5000,collapse-outer)" xpath="//flow/block[5]/block[2]/@border-before"/>
+    <eval expected="(dotted,#00ff00,5000,collapse-inner)" xpath="//flow/block[5]/block[2]/@border-after"/>
+    <eval expected="(solid,#0000ff,15000,collapse-inner)" xpath="//flow/block[5]/block[2]/@border-start"/>
+    <eval expected="(groove,#ff0000,15000,collapse-outer)" xpath="//flow/block[5]/block[2]/@border-end"/>
+    <eval expected="color=#ffff00,repeat=0,horiz=0,vertical=0" xpath="//flow/block[5]/block[2]/@background"/>
+    <eval expected="135000" xpath="//flow/block[5]/block[2]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[5]/block[2]/block[1]/@bpd"/>
+
+    <!-- cell 3 -->
+    <true xpath="//flow/block[5]/block[3]/@is-reference-area"/>
+    <true xpath="not(boolean(//flow/block[5]/block[3]/@left-offset)) or (//flow/block[5]/block[3]/@left-offset = 0)"/>
+    <eval expected="57500" xpath="//flow/block[5]/block[3]/@top-offset"/>
+    <eval expected="145000" xpath="//flow/block[5]/block[3]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[5]/block[3]/@bpd"/>
+    <eval expected="(solid,#0000ff,15000,collapse-inner)" xpath="//flow/block[5]/block[3]/@border-before"/>
+    <true xpath="not(boolean(//flow/block[5]/block[3]/@border-after))"/>
+    <true xpath="not(boolean(//flow/block[5]/block[3]/@border-start))"/>
+    <eval expected="(solid,#ff0000,10000,collapse-inner)" xpath="//flow/block[5]/block[3]/@border-end"/>
+    <eval expected="color=#ffa500,repeat=0,horiz=0,vertical=0" xpath="//flow/block[5]/block[3]/@background"/>
+    <eval expected="145000" xpath="//flow/block[5]/block[3]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[5]/block[3]/block[1]/@bpd"/>
+
+    <!-- cell 4 -->
+    <true xpath="//flow/block[5]/block[4]/@is-reference-area"/>
+    <eval expected="155000" xpath="//flow/block[5]/block[4]/@left-offset"/>
+    <eval expected="52500" xpath="//flow/block[5]/block[4]/@top-offset"/>
+    <eval expected="140000" xpath="//flow/block[5]/block[4]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[5]/block[4]/@bpd"/>
+    <eval expected="(dotted,#ff0000,5000,collapse-inner)" xpath="//flow/block[5]/block[3]/@border-before"/>
+    <eval expected="(solid,#ff0000,10000,collapse-outer)" xpath="//flow/block[5]/block[3]/@border-after"/>
+    <eval expected="(solid,#ff0000,10000,collapse-inner)" xpath="//flow/block[5]/block[3]/@border-start"/>
+    <eval expected="(solid,#ff0000,10000,collapse-outer)" xpath="//flow/block[5]/block[3]/@border-end"/>
+    <eval expected="140000" xpath="//flow/block[5]/block[4]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[5]/block[4]/block[1]/@bpd"/>
+  </checks>
+</testcase>

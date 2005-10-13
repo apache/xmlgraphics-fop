@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  Copyright 1999-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
+
+<!-- $Id$ -->
+
+<document>
+  <header>
+    <title>Layout managers</title>
+    <authors>
+      <person name="Peter B. West" email="pbwest@powerup.com.au"/>
+    </authors>
+  </header>
+  <body>
+    <section>
+      <title>Layout managers in FOP</title>
+      <p>
+	What do the layout managers do?  Most layout is is "automatic"
+	in the sense of being a straightforward stacking operation.
+	Sibling inline-areas, including fo:character areas, are
+	stacked in line-areas in the inline-progression-direction.
+	Sibling block-areas, including line-areas, are stacked in the
+	block-progression-direction.
+      </p>
+      <p>
+	In the simple cases in which both the available
+	block-progression-dimension and the available
+	inline-progression-dimension are known, this process can be
+	driven bottom-up.  Available dimensions trickle down from the
+	top, and the bottom level galleys can determine when their
+	available areas are full and suspend pending the arrival of
+	more areas.  Such full notifications bubble back up the tree
+	of active galleys.  E.g., if an inline galley fills a
+	line-area of a given inline-p-d and suspends while still
+	within the available block-p-d, the parent block-area galley
+	will simply stack the inline-area and notify the inline galley
+	to continue.  If the inline-galley discovers that the next
+	line-area that it would generate will not fit in the the
+	block-p-d, it suspends with a notification to that effect to
+	its parent.  
+      </p>
+      <p>
+	In more complex cases the dimensions may not be fully
+	specified, or decisions about layout may depend on later
+	layout.  In all such cases some layout look-ahead is required
+	which can report results back to higher layout levels.  The
+	job for a layout manager in these cirucmstances is to evaluate
+	the information flowing back and set parameters for the best
+	fit layout.
+      </p>
+    </section>
+  </body>
+</document>

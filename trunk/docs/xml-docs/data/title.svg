@@ -1,0 +1,59 @@
+<?xml version="1.0" standalone="no"?>
+<!--
+  Copyright 1999-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20001102//EN"
+  "http://www.w3.org/TR/2000/CR-SVG-20001102/DTD/svg-20001102.dtd">
+<svg width="300" height="100" viewBox="0 0 340 150">
+  <filter id="grey_bevel_shadow" filterUnits="objectBoundingBox" x="-10%"
+    y="-10%" width="150%" height="150%">
+    <feGaussianBlur result="blurredAlpha" in="SourceAlpha" stdDeviation="3"/>
+    <feOffset result="offsetBlurredAlpha" in="blurredAlpha" dx="2" dy="1"/>
+    <feDiffuseLighting result="bumpMapDiffuse" in="blurredAlpha" surfaceScale="5"
+      diffuseConstant="0.5" style="
+      lighting-color:rgb(255,255,255)">
+      <feDistantLight azimuth="135" elevation="60"/>
+    </feDiffuseLighting>
+    <feComposite result="litPaint" in="bumpMapDiffuse" operator="arithmetic" k1="1"
+      k2="0" k3="0" k4="0" in2="SourceGraphic"/>
+    <feSpecularLighting result="bumpMapSpecular" in="blurredAlpha" surfaceScale="5"
+      specularConstant="0.5" specularExponent="10" style="
+      lighting-color:rgb(255,255,255)">
+      <feDistantLight azimuth="135" elevation="60"/>
+    </feSpecularLighting>
+    <feComposite result="litPaint" in="litPaint" operator="arithmetic" k1="0"
+      k2="1" k3="1" k4="0" in2="bumpMapSpecular"/>
+    <feComposite result="litPaint" in="litPaint" operator="in" in2="SourceAlpha"/>
+    <feMerge>
+      <feMergeNode in="offsetBlurredAlpha"/>
+      <feMergeNode in="litPaint"/>
+    </feMerge>
+  </filter>
+<use style="opacity:0.6" x="100" y="5" width="150" height="145" xlink:href="logo.svg#FOP_Mark"/>
+  <g transform="translate(0,10)">
+    <path style="stroke-width:1;stroke-opacity:1;stroke:rgb(0,0,0);fill-opacity:1;fill:rgb(0,0,0);
+      opacity:1;filter:url(#grey_bevel_shadow)"
+      d="M35.87 66.07 L35.87 94.553 Q35.87 111.526 37.6948 114.383 Q39.5197 117.24 46.9811 117.24 L52.87 117.24 L52.87 122.51 Q37.0972 122 27.718 122 Q18.2538 122 3.23 122.51 L3.23 117.24 L9.86531 117.24 Q16.9947 117.24 18.6123 114.508 Q20.23 111.776 20.23 94.5609 L20.23 32.0673 Q20.23 15.2639 18.4477 12.532 Q16.6653 9.8 9.20125 9.8 L3.23 9.8 L3.23 4.53 Q16.9894 5.04 28.0128 5.04 L75.6686 4.19 Q83.13 4.19 89.76 4.87 Q87.117 13.8295 86.87 30.0991 L81.43 30.0991 Q80.9359 21.4663 79.4484 14.6583 Q68.1408 11.67 56.5861 11.67 Q46.5162 11.67 36.8608 12.7484 Q35.87 23.5461 35.87 32.3489 L35.87 58.76 Q40.8053 58.93 45.5759 58.93 Q57.9142 58.93 67.2111 58.2659 Q70.3348 58.0986 71.4465 56.894 Q72.5581 55.6894 73.2966 50.4539 L74.12 44.14 L79.39 44.14 Q78.795 59.3311 78.795 63.6475 L78.88 83.24 L73.44 83.24 L73.44 76.8517 Q73.44 69.2177 70.55 67.5588 Q67.66 65.9 48.4208 65.9 C48.4208 65.9 43.1375 65.9 35.87 66.07 z"/>
+    <path style="stroke-width:1;stroke-opacity:1;stroke:rgb(0,0,0);fill-opacity:1;fill:rgb(0,0,0);
+      opacity:1;filter:url(#grey_bevel_shadow)"
+      d="M98.43 63.4775 Q98.43 36.1819 116.022 19.5059 Q133.615 2.83 162.908 2.83 Q191.619 2.83 207.925 18.3027 Q224.23 33.7753 224.23 59.4134 Q224.23 87.0411 205.311 105.626 Q186.392 124.21 157.595 124.21 Q139.589 124.21 126.561 116.909 Q113.533 109.609 105.982 95.5863 C105.982 95.5863 98.43 81.5639 98.43 63.4775 zM115.26 56.6748 Q115.26 75.4253 121.692 89.3202 Q128.124 103.215 138.914 110.143 Q149.704 117.07 163.564 117.07 Q176.428 117.07 186.054 111.18 Q195.681 105.29 201.2 93.5927 Q206.72 81.8959 206.72 65.1377 Q206.72 47.5506 200.62 35.0649 Q194.52 22.5792 183.896 16.2746 Q173.272 9.97 158.748 9.97 Q145.47 9.97 135.842 15.5282 Q126.214 21.0864 120.737 31.8296 C120.737 31.8296 115.26 42.5728 115.26 56.6748 z"/>
+    <path style="stroke-width:1;stroke-opacity:1;stroke:rgb(0,0,0);fill-opacity:1;fill:rgb(0,0,0);
+      opacity:1;filter:url(#grey_bevel_shadow)"
+      d="M265.102 13.7127 Q264.52 25.6286 264.52 39.117 L264.52 86.3717 Q264.52 111.282 266.013 114.261 Q267.506 117.24 275.798 117.24 L281.52 117.24 L281.52 122.51 Q266.828 122 258.36 122 Q250.888 122 231.88 122.51 L231.88 117.24 L239.344 117.24 Q244.569 117.24 246.06 115.956 Q247.552 114.671 247.968 110.738 Q248.383 106.804 248.88 86.6719 L248.88 42.4373 L248.63 25.2912 Q248.466 14.6052 246.351 12.2026 Q244.237 9.8 236.026 9.8 L231.88 9.8 L231.88 4.53 Q242.258 4.87 258.201 4.87 Q267.585 4.87 279.042 4.36 Q286.599 4.02 290.501 4.02 Q310.595 4.02 319.73 11.3433 Q328.78 18.6639 328.78 31.1456 Q328.78 40.2141 323.555 48.5759 Q318.33 56.9378 308.752 62.0139 Q299.173 67.09 288.309 67.09 Q283.332 67.09 275.868 65.5202 L274.21 59.27 Q281.507 61.14 286.397 61.14 Q297.84 61.14 304.555 54.2178 Q311.27 47.2956 311.27 35.2734 Q311.27 23.6656 304.087 17.1578 Q296.905 10.65 282.705 10.65 C282.705 10.65 274.651 10.65 265.102 13.7127 z"/>
+  </g>
+
+</svg>
+

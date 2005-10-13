@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks block level word-spacing.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="6in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>Next block has no word-spacing property:</fo:block>
+          <fo:block>Default space between words is defined to be the inline-progression-dimension
+          of the glyph-area obtained by formatting the current fo:character whose
+          treat-as-word-space trait has the value "true".</fo:block>
+          <fo:block>Next block has word-spacing="normal":</fo:block>
+          <fo:block word-spacing="normal">Default space between words is defined to be the inline-progression-dimension
+          of the glyph-area obtained by formatting the current fo:character whose
+          treat-as-word-space trait has the value "true".</fo:block>
+          <fo:block>Next block has word-spacing="0pt":</fo:block>
+          <fo:block word-spacing="0pt">Default space between words is defined to be the inline-progression-dimension
+          of the glyph-area obtained by formatting the current fo:character whose
+          treat-as-word-space trait has the value "true".</fo:block>
+          <fo:block>Next block has word-spacing="-2pt":</fo:block>
+          <fo:block word-spacing="-2pt">Default space between words is defined to be the inline-progression-dimension
+          of the glyph-area obtained by formatting the current fo:character whose
+          treat-as-word-space trait has the value "true".</fo:block>
+          <fo:block>Next block has word-spacing.optimum="6pt" word-spacing.minimum="3pt" word-spacing.maximum="12pt":</fo:block>
+          <fo:block word-spacing.optimum="6pt" word-spacing.minimum="3pt" word-spacing.maximum="12pt">Default space between words is defined to be the inline-progression-dimension
+          of the glyph-area obtained by formatting the current fo:character whose
+          treat-as-word-space trait has the value "true".</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+  </checks>
+</testcase>

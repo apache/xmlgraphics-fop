@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks multi-column documents. This test: footnotes in multi-column documents (no spans).
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="360pt" page-height="2in">
+          <fo:region-body column-count="2" column-gap="20pt"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:static-content flow-name="xsl-footnote-separator">
+          <fo:block border-top="solid 5pt red"/>
+        </fo:static-content>
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>line1</fo:block>
+          <fo:block>line2</fo:block>
+          <fo:block>line3</fo:block>
+          <fo:block>line4</fo:block>
+          <fo:block>line5<fo:footnote><fo:inline>x</fo:inline><fo:footnote-body><fo:block background-color="orange">A footnote</fo:block></fo:footnote-body></fo:footnote></fo:block>
+          <fo:block>line6</fo:block>
+          <fo:block>line7</fo:block>
+          <fo:block>line8</fo:block>
+          <fo:block>line9</fo:block>
+          <fo:block>line10</fo:block>
+          <fo:block>line11<fo:footnote><fo:inline>x</fo:inline><fo:footnote-body><fo:block background-color="orange">Another footnote on the second column</fo:block></fo:footnote-body></fo:footnote></fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="1" xpath="count(//pageViewport)"/>
+    
+    <eval expected="1" xpath="count(//regionBody/mainReference/span)"/>
+    <!-- room for 7 lines -->
+    <eval expected="7" xpath="//regionBody/mainReference/span/@bpd div 14400"/>
+    
+    <!-- 2 columns -->
+    <eval expected="2" xpath="count(//regionBody/mainReference/span/flow)"/>
+    <!-- 7 lines in first column -->
+    <eval expected="7" xpath="count(//regionBody/mainReference/span/flow[1]/block)"/>
+    <eval expected="7" xpath="//regionBody/mainReference/span/flow[1]/@bpd div 14400"/>
+    <!-- 4 lines in second column -->
+    <eval expected="4" xpath="count(//regionBody/mainReference/span/flow[2]/block)"/>
+    <eval expected="4" xpath="//regionBody/mainReference/span/flow[2]/@bpd div 14400"/>
+  </checks>
+</testcase>

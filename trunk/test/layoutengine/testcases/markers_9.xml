@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks markers on broken table-bodies.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="2in">
+          <fo:region-body margin="0.5in 0"/>
+          <fo:region-before extent="0.5in"/>
+          <fo:region-after extent="0.5in"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:static-content flow-name="xsl-region-before">
+          <fo:block background-color="yellow">
+            <fo:retrieve-marker retrieve-class-name="test" retrieve-boundary="page" retrieve-position="first-including-carryover"/>
+          </fo:block>
+          <fo:block background-color="yellow">
+            <fo:retrieve-marker retrieve-class-name="test" retrieve-boundary="page" retrieve-position="first-starting-within-page"/>
+          </fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="xsl-region-after">
+          <fo:block text-align="end" background-color="yellow">
+            <fo:retrieve-marker retrieve-class-name="test" retrieve-boundary="page" retrieve-position="last-starting-within-page"/>
+          </fo:block>
+          <fo:block text-align="end" background-color="yellow">
+            <fo:retrieve-marker retrieve-class-name="test" retrieve-boundary="page" retrieve-position="last-ending-within-page"/>
+          </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="xsl-region-body">
+          <fo:table color="black">
+            <fo:table-column number-columns-repeated="2"/>
+            <fo:table-body>
+              <fo:marker marker-class-name="test">body1</fo:marker>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>blah</fo:block>
+                  <fo:block>blah</fo:block>
+                  <fo:block>blah</fo:block>
+                  <fo:block>blah</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>blah</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>blah</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>blah</fo:block>
+                  <fo:block>blah</fo:block>
+                  <fo:block>blah</fo:block>
+                  <fo:block>blah</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+          <fo:table color="red">
+            <fo:table-column number-columns-repeated="2"/>
+            <fo:table-body>
+              <fo:marker marker-class-name="test">body2</fo:marker>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>blah</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>blah</fo:block>
+                  <fo:block>blah</fo:block>
+                  <fo:block>blah</fo:block>
+                  <fo:block>blah</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>blah</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+          <fo:table color="blue">
+            <fo:table-column number-columns-repeated="2"/>
+            <fo:table-body>
+              <fo:marker marker-class-name="test">body3</fo:marker>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>blah</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>blah</fo:block>
+                  <fo:block>blah</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell column-number="2">
+                  <fo:block>blah</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+            <fo:table-body color="cyan">
+              <fo:marker marker-class-name="test">body4</fo:marker>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>blah</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>blah</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+          <fo:table>
+            <fo:table-column number-columns-repeated="2"/>
+            <fo:table-body color="black">
+              <fo:marker marker-class-name="test">body5</fo:marker>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>blah</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>blah</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+            <fo:table-body color="green">
+              <fo:marker marker-class-name="test">body6</fo:marker>
+              <fo:table-row>
+                <fo:table-cell number-rows-spanned="3">
+                  <fo:block>blah1</fo:block>
+                  <fo:block>blah2</fo:block>
+                  <fo:block>blah3</fo:block>
+                  <fo:block>blah4</fo:block>
+                  <fo:block>blah5</fo:block>
+                  <fo:block>blah6</fo:block>
+                  <fo:block>blah7</fo:block>
+                  <fo:block>blah8</fo:block>
+                  <fo:block>blah9</fo:block>
+                  <fo:block>blah10</fo:block>
+                  <fo:block>blah11</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>blah</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>blah</fo:block>
+                  <fo:block>blah</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <!--fo:table-row>
+                <fo:table-cell>
+                  <fo:block>blah</fo:block>
+                </fo:table-cell>
+              </fo:table-row-->
+            </fo:table-body>
+            <fo:table-body color="black">
+              <fo:marker marker-class-name="test">body7</fo:marker>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>blah</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>blah</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <true xpath="starts-with(//pageViewport[@nr=1]//regionBefore/block[1],'body1')"/>
+    <true xpath="starts-with(//pageViewport[@nr=1]//regionBefore/block[2],'body1')"/>
+    <true xpath="starts-with(//pageViewport[@nr=1]//regionAfter/block[1],'body1')"/>
+    <true xpath="starts-with(//pageViewport[@nr=1]//regionAfter/block[2],'body1')"/>
+
+    <true xpath="starts-with(//pageViewport[@nr=2]//regionBefore/block[1],'body1')"/>
+    <true xpath="starts-with(//pageViewport[@nr=2]//regionBefore/block[2],'body2')"/>
+    <true xpath="starts-with(//pageViewport[@nr=2]//regionAfter/block[1],'body2')"/>
+    <true xpath="starts-with(//pageViewport[@nr=2]//regionAfter/block[2],'body1')"/>
+
+    <true xpath="starts-with(//pageViewport[@nr=3]//regionBefore/block[1],'body2')"/>
+    <true xpath="starts-with(//pageViewport[@nr=3]//regionBefore/block[2],'body3')"/>
+    <true xpath="starts-with(//pageViewport[@nr=3]//regionAfter/block[1],'body3')"/>
+    <true xpath="starts-with(//pageViewport[@nr=3]//regionAfter/block[2],'body2')"/>
+
+    <true xpath="starts-with(//pageViewport[@nr=4]//regionBefore/block[1],'body3')"/>
+    <true xpath="starts-with(//pageViewport[@nr=4]//regionBefore/block[2],'body4')"/>
+    <true xpath="starts-with(//pageViewport[@nr=4]//regionAfter/block[1],'body6')"/>
+    <true xpath="starts-with(//pageViewport[@nr=4]//regionAfter/block[2],'body5')"/>
+
+    <true xpath="starts-with(//pageViewport[@nr=5]//regionBefore/block[1],'body6')"/>
+    <true xpath="starts-with(//pageViewport[@nr=5]//regionBefore/block[2],'body6')"/>
+    <true xpath="starts-with(//pageViewport[@nr=5]//regionAfter/block[1],'body6')"/>
+    <true xpath="starts-with(//pageViewport[@nr=5]//regionAfter/block[2],'body6')"/>
+  </checks>
+</testcase>
