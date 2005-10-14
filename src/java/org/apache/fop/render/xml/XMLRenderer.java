@@ -638,6 +638,7 @@ public class XMLRenderer extends PrintRenderer {
         atts.clear();
         addAreaAttributes(ibp);
         addTraitAttributes(ibp);
+        addAttribute("offset", ibp.getOffset());
         startElement("inlineblockparent", atts);
         super.renderInlineBlockParent(ibp);
         endElement("inlineblockparent");

@@ -662,6 +662,7 @@ public abstract class AbstractRenderer
         currentIPPosition += ibp.getBorderAndPaddingWidthStart();
         // For inline content the BP position is updated by the enclosing line area
         int saveBP = currentBPPosition;
+        currentBPPosition += ibp.getOffset();
         renderBlock(ibp.getChildArea());
         currentBPPosition = saveBP;
     }
