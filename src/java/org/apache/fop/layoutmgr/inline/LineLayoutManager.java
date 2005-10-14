@@ -296,8 +296,14 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 removedElements = new LinkedList();
                 inlineLM = (InlineLevelLayoutManager)
                     ((KnuthElement) this.get(this.size() - 1)).getLayoutManager();
-                if (effectiveAlignment == EN_CENTER) {
-                    // centered text: the pattern is
+                if (effectiveAlignment == EN_CENTER
+                    || this.size() > 6
+                       && ((KnuthElement) this.get(this.size() - 6)).isGlue()
+                       && ((KnuthElement) this.get(this.size() - 5)).isPenalty()
+                       && ((KnuthElement) this.get(this.size() - 4)).isGlue()
+                       && ((KnuthElement) this.get(this.size() - 3)).isBox()
+                       && ((KnuthElement) this.get(this.size() - 2)).isPenalty()) {
+                    // centered text (or text with inline borders and padding): the pattern is
                     //     <glue> <penaly> <glue> <box> <penaly> <glue>
                     removedElements.addFirst((KnuthGlue) this.remove(this.size() - 1));
                     removedElements.addFirst((KnuthPenalty) this.remove(this.size() - 1));
