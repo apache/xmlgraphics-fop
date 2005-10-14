@@ -19,8 +19,6 @@
   <info>
     <p>
       This test checks fo:inlines with border and padding properties and nested inner blocks.
-      The 2nd and 3rd tests currently fail with a class cast exception - once that is fixed the checks
-      below need to be updated to the correct measurements.
     </p>
   </info>
   <fo>
@@ -153,13 +151,13 @@
     <eval expected="2000" xpath="//flow/block[8]/lineArea[2]/inlineblockparent/@padding-start"/>
     <eval expected="2000" xpath="//flow/block[8]/lineArea[2]/inlineblockparent/@padding-end"/>
     <eval expected="46130" xpath="//flow/block[8]/lineArea[3]/inlineparent/@ipd"/>
-    <eval expected="49130" xpath="//flow/block[8]/lineArea[3]/inlineparent/@ipda"/>
+    <eval expected="52130" xpath="//flow/block[8]/lineArea[3]/inlineparent/@ipda"/>
     <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[8]/lineArea[3]/inlineparent/@border-after"/>
     <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[8]/lineArea[3]/inlineparent/@border-before"/>
     <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[8]/lineArea[3]/inlineparent/@border-start"/>
     <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[8]/lineArea[3]/inlineparent/@border-end"/>
-    <eval expected="1000" xpath="//flow/block[8]/lineArea[3]/inlineparent/@padding-after"/>
-    <eval expected="1000" xpath="//flow/block[8]/lineArea[3]/inlineparent/@padding-before"/>
+    <eval expected="2000" xpath="//flow/block[8]/lineArea[3]/inlineparent/@padding-after"/>
+    <eval expected="2000" xpath="//flow/block[8]/lineArea[3]/inlineparent/@padding-before"/>
     <eval expected="2000" xpath="//flow/block[8]/lineArea[3]/inlineparent/@padding-start"/>
     <eval expected="2000" xpath="//flow/block[8]/lineArea[3]/inlineparent/@padding-end"/>
     
