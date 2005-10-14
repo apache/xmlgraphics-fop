@@ -71,8 +71,6 @@
             <fo:inline 
               border="solid 1pt red"
               border-start-width.length="1pt" 
-              border-end-width.length="1pt" 
-              border-start-width.length="1pt" 
               border-start-width.conditionality="retain" 
               border-end-width.length="1pt" 
               border-end-width.conditionality="retain" 
