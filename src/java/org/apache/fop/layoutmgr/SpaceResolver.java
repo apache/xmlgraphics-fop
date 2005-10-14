@@ -631,5 +631,53 @@ public class SpaceResolver {
             first = false;
         }
     }
+    
+    /**
+     * Inspects an effective element list and notifies all layout managers about the state of
+     * the spaces and conditional lengths.
+     * @param effectiveList the effective element list
+     * @param startElementIndex index of the first element in the part to be processed
+     * @param endElementIndex index of the last element in the part to be processed
+     * @param lastBreak index of the the break possibility just before this part (used to
+     *                  identify a break condition, lastBreak <= 0 represents a no-break condition)
+     */
+    public static void performConditionalsNotification(List effectiveList, 
+            int startElementIndex, int endElementIndex, int lastBreak) {
+        KnuthElement el = null;
+        if (lastBreak > 0) {
+            el = (KnuthElement)effectiveList.get(lastBreak);
+        }
+        SpaceResolver.SpaceHandlingBreakPosition beforeBreak = null;
+        SpaceResolver.SpaceHandlingBreakPosition afterBreak = null;
+        if (el != null && el.isPenalty()) {
+            Position pos = el.getPosition();
+            if (pos instanceof SpaceResolver.SpaceHandlingBreakPosition) {
+                beforeBreak = (SpaceResolver.SpaceHandlingBreakPosition)pos; 
+                beforeBreak.notifyBreakSituation(true, RelSide.BEFORE);
+            }
+        }
+        el = (KnuthElement)effectiveList.get(endElementIndex);
+        if (el != null && el.isPenalty()) {
+            Position pos = el.getPosition();
+            if (pos instanceof SpaceResolver.SpaceHandlingBreakPosition) {
+                afterBreak = (SpaceResolver.SpaceHandlingBreakPosition)pos; 
+                afterBreak.notifyBreakSituation(true, RelSide.AFTER);
+            }
+        }
+        for (int i = startElementIndex; i <= endElementIndex; i++) {
+            Position pos = ((KnuthElement)effectiveList.get(i)).getPosition();
+            if (pos instanceof SpaceResolver.SpaceHandlingPosition) {
+                ((SpaceResolver.SpaceHandlingPosition)pos).notifySpaceSituation();
+            } else if (pos instanceof SpaceResolver.SpaceHandlingBreakPosition) {
+                SpaceResolver.SpaceHandlingBreakPosition noBreak;
+                noBreak = (SpaceResolver.SpaceHandlingBreakPosition)pos;
+                if (noBreak != beforeBreak && noBreak != afterBreak) {
+                    noBreak.notifyBreakSituation(false, null);
+                }
+            }
+        }
+    }
+    
+    
 
 }
