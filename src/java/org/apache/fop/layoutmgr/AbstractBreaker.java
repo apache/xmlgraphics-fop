@@ -379,7 +379,7 @@ public abstract class AbstractBreaker {
                 /* *** *** non-standard extension *** *** */
 
                 // Handle SpaceHandling(Break)Positions, see SpaceResolver!
-                performConditionalsNotification(effectiveList, 
+                SpaceResolver.performConditionalsNotification(effectiveList, 
                         startElementIndex, endElementIndex, lastBreak);
                 
                 // Add areas now!
@@ -404,43 +404,6 @@ public abstract class AbstractBreaker {
      * @param endElementIndex end index of the part
      * @param lastBreak index of the last break element
      */
-    private void performConditionalsNotification(BlockSequence effectiveList, 
-            int startElementIndex, int endElementIndex, int lastBreak) {
-        KnuthElement el = null;
-        if (lastBreak > 0) {
-            el = effectiveList.getElement(lastBreak);
-        }
-        SpaceResolver.SpaceHandlingBreakPosition beforeBreak = null;
-        SpaceResolver.SpaceHandlingBreakPosition afterBreak = null;
-        if (el != null && el.isPenalty()) {
-            Position pos = el.getPosition();
-            if (pos instanceof SpaceResolver.SpaceHandlingBreakPosition) {
-                beforeBreak = (SpaceResolver.SpaceHandlingBreakPosition)pos; 
-                beforeBreak.notifyBreakSituation(true, RelSide.BEFORE);
-            }
-        }
-        el = effectiveList.getElement(endElementIndex);
-        if (el != null && el.isPenalty()) {
-            Position pos = el.getPosition();
-            if (pos instanceof SpaceResolver.SpaceHandlingBreakPosition) {
-                afterBreak = (SpaceResolver.SpaceHandlingBreakPosition)pos; 
-                afterBreak.notifyBreakSituation(true, RelSide.AFTER);
-            }
-        }
-        for (int i = startElementIndex; i <= endElementIndex; i++) {
-            Position pos = effectiveList.getElement(i).getPosition();
-            if (pos instanceof SpaceResolver.SpaceHandlingPosition) {
-                ((SpaceResolver.SpaceHandlingPosition)pos).notifySpaceSituation();
-            } else if (pos instanceof SpaceResolver.SpaceHandlingBreakPosition) {
-                SpaceResolver.SpaceHandlingBreakPosition noBreak;
-                noBreak = (SpaceResolver.SpaceHandlingBreakPosition)pos;
-                if (noBreak != beforeBreak && noBreak != afterBreak) {
-                    noBreak.notifyBreakSituation(false, null);
-                }
-            }
-        }
-    }
-    
     /**
      * Handles span changes reported through the <code>LayoutContext</code>. 
      * Only used by the PSLM and called by <code>getNextBlockList()</code>.

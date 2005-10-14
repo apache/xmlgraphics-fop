@@ -470,6 +470,31 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         int bodyFirstIndex = ((ListItemPosition) positionList.getFirst()).getBodyFirstIndex();
         int bodyLastIndex = ((ListItemPosition) positionList.getLast()).getBodyLastIndex();
 
+        int lastBreak;
+        //Determine last break if any
+        lastBreak = labelFirstIndex - 1;
+        while (lastBreak >= 0) {
+            KnuthElement el = (KnuthElement)labelList.get(lastBreak);
+            if (el.isPenalty() && el.getP() < KnuthElement.INFINITE) {
+                break;
+            }
+            lastBreak--;
+        }
+        SpaceResolver.performConditionalsNotification(labelList, 
+                labelFirstIndex, labelLastIndex, lastBreak);
+
+        //Determine last break if any
+        lastBreak = bodyFirstIndex - 1;
+        while (lastBreak >= 0) {
+            KnuthElement el = (KnuthElement)bodyList.get(lastBreak);
+            if (el.isPenalty() && el.getP() < KnuthElement.INFINITE) {
+                break;
+            }
+            lastBreak--;
+        }
+        SpaceResolver.performConditionalsNotification(bodyList, 
+                bodyFirstIndex, bodyLastIndex, lastBreak);
+        
         // add label areas
         if (labelFirstIndex <= labelLastIndex) {
             KnuthPossPosIter labelIter = new KnuthPossPosIter(labelList, 
