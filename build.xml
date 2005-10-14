@@ -606,7 +606,7 @@ list of possible build targets.
       <formatter type="brief" usefile="false"/>
       <classpath>
         <pathelement location="${build.dir}/test-classes"/>
-        <path refid="libs-run-classpath"/>
+        <path refid="libs-build-classpath"/>
         <fileset dir="${build.dir}">
           <include name="fop-transcoder.jar"/>
         </fileset>
