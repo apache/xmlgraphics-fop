@@ -447,6 +447,13 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         parent.setBPD(alignmentContext.getHeight());
         if (parent instanceof InlineParent) {
             parent.setOffset(alignmentContext.getOffset());
+        } else if (parent instanceof InlineBlockParent) {
+            // All inline elements are positioned by the renderers relative to
+            // the before edge of their content rectangle
+            if (borderProps != null) {
+                parent.setOffset(borderProps.getPaddingBefore(false, this)
+                                + borderProps.getBorderBeforeWidth(false));
+            }
         }
         setCurrentArea(parent);
         

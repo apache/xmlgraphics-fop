@@ -90,6 +90,7 @@
   <checks>
     <eval expected="344000" xpath="//flow/block[2]/lineArea[2]/inlineblockparent/@ipd"/>
     <eval expected="350000" xpath="//flow/block[2]/lineArea[2]/inlineblockparent/@ipda"/>
+    <eval expected="3000" xpath="//flow/block[2]/lineArea[2]/inlineblockparent/@offset"/>
     <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[2]/lineArea[2]/inlineblockparent/@border-after"/>
     <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[2]/lineArea[2]/inlineblockparent/@border-before"/>
     <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[2]/lineArea[2]/inlineblockparent/@border-start"/>
@@ -121,6 +122,7 @@
     <eval expected="2000" xpath="//flow/block[5]/lineArea[1]/inlineparent/@padding-end"/>
     <eval expected="344000" xpath="//flow/block[5]/lineArea[2]/inlineblockparent/@ipd"/>
     <eval expected="350000" xpath="//flow/block[5]/lineArea[2]/inlineblockparent/@ipda"/>
+    <eval expected="3000" xpath="//flow/block[5]/lineArea[2]/inlineblockparent/@offset"/>
     <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[5]/lineArea[2]/inlineblockparent/@border-after"/>
     <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[5]/lineArea[2]/inlineblockparent/@border-before"/>
     <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[5]/lineArea[2]/inlineblockparent/@border-start"/>
@@ -142,6 +144,7 @@
     <eval expected="2000" xpath="//flow/block[8]/lineArea[1]/inlineparent/@padding-end"/>
     <eval expected="344000" xpath="//flow/block[8]/lineArea[2]/inlineblockparent/@ipd"/>
     <eval expected="350000" xpath="//flow/block[8]/lineArea[2]/inlineblockparent/@ipda"/>
+    <eval expected="3000" xpath="//flow/block[8]/lineArea[2]/inlineblockparent/@offset"/>
     <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[8]/lineArea[2]/inlineblockparent/@border-after"/>
     <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[8]/lineArea[2]/inlineblockparent/@border-before"/>
     <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[8]/lineArea[2]/inlineblockparent/@border-start"/>
