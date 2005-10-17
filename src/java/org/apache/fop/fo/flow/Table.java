@@ -24,6 +24,7 @@ import java.util.List;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.ValidationPercentBaseContext;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.StaticPropertyList;
@@ -127,17 +128,19 @@ public class Table extends TableFObj {
         colPList.setWritingMode();
         defaultColumn.bind(colPList);
 
-        /*if (borderCollapse != EN_SEPARATE && commonBorderPaddingBackground.hasPadding()) {
-            //See "17.6.2 The collapsing border model" in CSS2
-            getLogger().warn("Table may not have padding when using the collapsing "
-                    + "border model. Padding will be ignored.");
-        }*/
         if (borderCollapse != EN_SEPARATE) {
-            getLogger().warn("The collapsing border model on an fo:table "
+            attributeWarning("The collapsing border model on an fo:table "
                     + "is currently not supported by FOP");
         }
         if (tableLayout == EN_AUTO) {
-            getLogger().warn("table-layout=\"auto\" is currently not supported by FOP");
+            attributeWarning("table-layout=\"auto\" is currently not supported by FOP");
+        }
+        if (!isSeparateBorderModel() && getCommonBorderPaddingBackground().hasPadding(
+                ValidationPercentBaseContext.getPseudoContextForValidationPurposes())) {
+            //See "17.6.2 The collapsing border model" in CSS2
+            attributeWarning("In collapsing border model a table does not have padding"
+                    + " (see http://www.w3.org/TR/REC-CSS2/tables.html#collapsing-borders)"
+                    + ", but a non-zero value for padding was found. The padding will be ignored.");
         }
     }
 
