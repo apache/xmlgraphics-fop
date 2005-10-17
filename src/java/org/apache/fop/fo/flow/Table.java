@@ -24,9 +24,7 @@ import java.util.List;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.StaticPropertyList;
 import org.apache.fop.fo.ValidationException;
@@ -217,11 +215,11 @@ public class Table extends TableFObj {
      * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
     protected void addChildNode(FONode child) throws FOPException {
-        if (child.getName().equals("fo:table-column")) {
+        if ("fo:table-column".equals(child.getName())) {
             addColumnNode((TableColumn) child);
-        } else if (child.getName().equals("fo:table-footer")) {
+        } else if ("fo:table-footer".equals(child.getName())) {
             tableFooter = (TableBody)child;
-        } else if (child.getName().equals("fo:table-header")) {
+        } else if ("fo:table-header".equals(child.getName())) {
             tableHeader = (TableBody)child;
         } else {
             // add bodies
