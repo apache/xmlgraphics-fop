@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,9 @@ public class PDFPage extends PDFResourceContext {
      */
     protected int pageheight;
 
+    /** the page index (zero-based) */
+    protected int pageIndex;
+    
     /**
      * Duration to display page
      */
@@ -59,41 +62,38 @@ public class PDFPage extends PDFResourceContext {
     protected TransitionDictionary trDictionary = null;
 
     /**
-     * create a /Page object
+     * Create a /Page object
      *
      * @param resources the /Resources object
      * @param contents the content stream
-     * @param pagewidth the page's width in points
-     * @param pageheight the page's height in points
+     * @param pageWidth the page's width in points
+     * @param pageHeight the page's height in points
+     * @param pageIndex the page's zero-based index (or -1 if the page number is auto-determined)
      */
     public PDFPage(PDFResources resources, PDFStream contents,
-                   int pagewidth, int pageheight) {
+                   int pageWidth, int pageHeight, int pageIndex) {
 
         /* generic creation of object */
         super(resources);
 
         /* set fields using parameters */
         this.contents = contents;
-        this.pagewidth = pagewidth;
-        this.pageheight = pageheight;
+        this.pagewidth = pageWidth;
+        this.pageheight = pageHeight;
+        this.pageIndex = pageIndex;
     }
 
     /**
-     * create a /Page object
+     * Create a /Page object
      *
      * @param resources the /Resources object
-     * @param pagewidth the page's width in points
-     * @param pageheight the page's height in points
+     * @param pageWidth the page's width in points
+     * @param pageHeight the page's height in points
+     * @param pageIndex the page's zero-based index (or -1 if the page number is auto-determined)
      */
     public PDFPage(PDFResources resources,
-                   int pagewidth, int pageheight) {
-
-        /* generic creation of object */
-        super(resources);
-
-        /* set fields using parameters */
-        this.pagewidth = pagewidth;
-        this.pageheight = pageheight;
+                   int pageWidth, int pageHeight, int pageIndex) {
+        this(resources, null, pageWidth, pageHeight, pageIndex);
     }
 
     /**
@@ -143,6 +143,14 @@ public class PDFPage extends PDFResourceContext {
         return this.pageheight;
     }
 
+    /**
+     * @return the page Index of this page (zero-based), -1 if it the page index should
+     *         automatically be determined.
+     */
+    public int getPageIndex() {
+        return this.pageIndex;
+    }
+    
     /**
      * @see org.apache.fop.pdf.PDFObject#toPDFString()
      */

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +72,19 @@ public class PDFPages extends PDFObject {
      * @param page the child page
      */
     public void notifyKidRegistered(PDFPage page) {
-        this.kids.add(page.referencePDF());
+        int idx = page.getPageIndex();
+        if (idx >= 0) {
+            while (idx > this.kids.size() - 1) {
+                this.kids.add(null);
+            }
+            if (this.kids.get(idx) != null) {
+                throw new IllegalStateException("A page already exists at index " 
+                        + idx + " (zero-based).");
+            }
+            this.kids.set(idx, page.referencePDF());
+        } else {
+            this.kids.add(page.referencePDF());
+        }
     }
 
     /**
@@ -102,7 +114,11 @@ public class PDFPages extends PDFObject {
             append(this.getCount()).
             append("\n/Kids [");
         for (int i = 0; i < kids.size(); i++) {
-            sb.append(kids.get(i)).append(" ");
+            Object kid = kids.get(i);
+            if (kid == null) {
+                throw new IllegalStateException("Gap in the kids list!");
+            }
+            sb.append(kid).append(" ");
         }
         sb.append("] >>\nendobj\n");
         return sb.toString();

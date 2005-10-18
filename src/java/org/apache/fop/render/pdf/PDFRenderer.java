@@ -283,7 +283,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @see org.apache.fop.render.Renderer#supportsOutOfOrder()
      */
     public boolean supportsOutOfOrder() {
-        return false;
+        //return false;
+        return true;
     }
 
     /**
@@ -402,6 +403,14 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @param page the page to prepare
      */
     public void preparePage(PageViewport page) {
+        setupPage(page);
+        if (pages == null) {
+            pages = new java.util.HashMap();
+        }
+        pages.put(page, currentPage);
+    }
+
+    private void setupPage(PageViewport page) {
         this.pdfResources = this.pdfDoc.getResources();
 
         Rectangle2D bounds = page.getViewArea();
@@ -409,15 +418,12 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         double h = bounds.getHeight();
         currentPage = this.pdfDoc.getFactory().makePage(
             this.pdfResources,
-            (int) Math.round(w / 1000), (int) Math.round(h / 1000));
-        if (pages == null) {
-            pages = new java.util.HashMap();
-        }
-        pages.put(page, currentPage);
+            (int) Math.round(w / 1000), (int) Math.round(h / 1000),
+            page.getPageIndex());
         pageReferences.put(page.getKey(), currentPage.referencePDF());
         pvReferences.put(page.getKey(), page);
     }
-
+    
     /**
      * This method creates a pdf stream for the current page
      * uses it as the contents of a new page. The page is written
@@ -428,22 +434,15 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
                 throws IOException, FOPException {
         if (pages != null
                 && (currentPage = (PDFPage) pages.get(page)) != null) {
+            //Retrieve previously prepared page (out-of-line rendering)
             pages.remove(page);
-            Rectangle2D bounds = page.getViewArea();
-            double h = bounds.getHeight();
-            pageHeight = (int) h;
         } else {
-            this.pdfResources = this.pdfDoc.getResources();
-            Rectangle2D bounds = page.getViewArea();
-            double w = bounds.getWidth();
-            double h = bounds.getHeight();
-            pageHeight = (int) h;
-            currentPage = this.pdfDoc.getFactory().makePage(
-                this.pdfResources,
-                (int) Math.round(w / 1000), (int) Math.round(h / 1000));
-            pageReferences.put(page.getKey(), currentPage.referencePDF());
-            pvReferences.put(page.getKey(), page);
+            setupPage(page);
         }
+        Rectangle2D bounds = page.getViewArea();
+        double h = bounds.getHeight();
+        pageHeight = (int) h;
+
         currentStream = this.pdfDoc.getFactory()
             .makeStream(PDFFilterList.CONTENT_FILTER, false);
 
