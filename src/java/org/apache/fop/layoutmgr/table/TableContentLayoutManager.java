@@ -36,6 +36,7 @@ import org.apache.fop.fo.flow.TableBody;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.LengthRangeProperty;
+import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthBox;
@@ -44,6 +45,7 @@ import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.MinOptMaxUtil;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
@@ -200,16 +202,22 @@ public class TableContentLayoutManager implements PercentBaseContext {
             if (rowFO != null && rowFO.getBreakBefore() != Constants.EN_AUTO) {
                 log.info("break-before found");
                 if (returnList.size() > 0) {
-                    KnuthElement last = (KnuthElement)returnList.getLast();
+                    ListElement last = (ListElement)returnList.getLast();
                     if (last.isPenalty()) {
                         KnuthPenalty pen = (KnuthPenalty)last;
                         pen.setP(-KnuthPenalty.INFINITE);
                         pen.setBreakClass(rowFO.getBreakBefore());
+                    } else if (last instanceof BreakElement) {
+                        BreakElement breakPoss = (BreakElement)last;
+                        breakPoss.setPenaltyValue(-KnuthPenalty.INFINITE);
+                        breakPoss.setBreakClass(rowFO.getBreakBefore());
                     }
                 } else {
                     if (!firstBreakBeforeServed) {
-                        returnList.add(new KnuthPenalty(0, -KnuthPenalty.INFINITE, 
-                                false, rowFO.getBreakBefore(), new Position(getTableLM()), true));
+                        //returnList.add(new KnuthPenalty(0, -KnuthPenalty.INFINITE, 
+                        //        false, rowFO.getBreakBefore(), new Position(getTableLM()), true));
+                        returnList.add(new BreakElement(new Position(getTableLM()),
+                                0, -KnuthPenalty.INFINITE, rowFO.getBreakBefore(), context));
                         iter.backToPreviousRow();
                         firstBreakBeforeServed = true;
                         break;
@@ -235,12 +243,12 @@ public class TableContentLayoutManager implements PercentBaseContext {
                 log.debug("child LM (row group) signals pending keep-with-previous");
                 if (returnList.size() > 0) {
                     //Modify last penalty
-                    KnuthElement last = (KnuthElement)returnList.getLast();
+                    ListElement last = (ListElement)returnList.getLast();
                     if (last.isPenalty()) {
-                        KnuthPenalty pen = (KnuthPenalty)last;
+                        BreakElement breakPoss = (BreakElement)last;
                         //Only honor keep if there's no forced break
-                        if (!pen.isForcedBreak()) {
-                            pen.setP(KnuthPenalty.INFINITE);
+                        if (!breakPoss.isForcedBreak()) {
+                            breakPoss.setPenaltyValue(KnuthPenalty.INFINITE);
                         }
                     }
                 }
@@ -251,11 +259,15 @@ public class TableContentLayoutManager implements PercentBaseContext {
             if (rowFO != null && rowFO.getBreakAfter() != Constants.EN_AUTO) {
                 log.info("break-after found");
                 if (returnList.size() > 0) {
-                    KnuthElement last = (KnuthElement)returnList.getLast();
-                    if (last.isPenalty()) {
+                    ListElement last = (ListElement)returnList.getLast();
+                    if (last instanceof KnuthPenalty) {
                         KnuthPenalty pen = (KnuthPenalty)last;
                         pen.setP(-KnuthPenalty.INFINITE);
                         pen.setBreakClass(rowFO.getBreakAfter());
+                    } else if (last instanceof BreakElement) {
+                        BreakElement breakPoss = (BreakElement)last;
+                        breakPoss.setPenaltyValue(-KnuthPenalty.INFINITE);
+                        breakPoss.setBreakClass(rowFO.getBreakAfter());
                     }
                 }
             }
@@ -263,10 +275,9 @@ public class TableContentLayoutManager implements PercentBaseContext {
         
         if (returnList.size() > 0) {
             //Remove last penalty
-            KnuthElement last = (KnuthElement)returnList.getLast();
-            if (last.isPenalty()) {
-                KnuthPenalty pen = (KnuthPenalty)last;
-                if (!pen.isForcedBreak()) {
+            ListElement last = (ListElement)returnList.getLast();
+            if (last.isPenalty() || last instanceof BreakElement) {
+                if (!last.isForcedBreak()) {
                     //Only remove if we don't signal a forced break
                     returnList.removeLast();
                 }
@@ -462,9 +473,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
                         ElementListObserver.observe(elems, "table-cell", primary.getCell().getId());
 
                         if ((elems.size() > 0) 
-                                && ((KnuthElement)elems.getLast()).isPenalty()
-                                && ((KnuthPenalty)elems.getLast()).getP() 
-                                        == -KnuthElement.INFINITE) {
+                                && ((KnuthElement)elems.getLast()).isForcedBreak()) {
                             // a descendant of this block has break-after
                             log.warn("Descendant of table-cell signals break: " 
                                     + primary.getCellLM().isFinished());
@@ -588,13 +597,23 @@ public class TableContentLayoutManager implements PercentBaseContext {
         List footerElements = null;
         Position firstPos = null;
         Position lastPos = null;
+        Position lastCheckPos = null;
         while (parentIter.hasNext()) {
             Position pos = (Position)parentIter.next();
-            if (!(pos instanceof SpaceHandlingBreakPosition)) {
-                if (firstPos == null) {
-                    firstPos = pos;
-                }
-                lastPos = pos;
+            if (pos instanceof SpaceHandlingBreakPosition) {
+                //This position has only been needed before addAreas was called, now we need the
+                //original one created by the layout manager.
+                pos = ((SpaceHandlingBreakPosition)pos).getOriginalBreakPosition();
+            }
+            if (pos == null) {
+                continue;
+            }
+            if (firstPos == null) {
+                firstPos = pos;
+            }
+            lastPos = pos;
+            if (pos.getIndex() >= 0) {
+                lastCheckPos = pos;
             }
             if (pos instanceof TableHeaderFooterPosition) {
                 TableHeaderFooterPosition thfpos = (TableHeaderFooterPosition)pos;
@@ -630,7 +649,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
         Map markers = getTableLM().getTable().getMarkers();
         if (markers != null) {
             getTableLM().getCurrentPV().addMarkers(markers, 
-                    true, getTableLM().isFirst(firstPos), getTableLM().isLast(lastPos));
+                    true, getTableLM().isFirst(firstPos), getTableLM().isLast(lastCheckPos));
         }
         
         if (headerElements != null) {
@@ -658,7 +677,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
 
         if (markers != null) {
             getTableLM().getCurrentPV().addMarkers(markers, 
-                    false, getTableLM().isFirst(firstPos), getTableLM().isLast(lastPos));
+                    false, getTableLM().isFirst(firstPos), getTableLM().isLast(lastCheckPos));
         }
     }
     

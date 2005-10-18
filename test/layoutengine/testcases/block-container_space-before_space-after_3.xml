@@ -35,7 +35,7 @@
             <fo:block>line 2</fo:block>
           </fo:block-container>
           <fo:block>A block between block-containers.</fo:block>
-          <fo:block-container background-color="yellow" id="page1-bc1">
+          <fo:block-container background-color="yellow" id="page1-bc2">
             <!-- ATM, the block-container without height behaves like a block which is wrong. It generates a viewport/reference pair. -->
             <fo:block space-before="1em">line 1</fo:block>
             <fo:block>line 2</fo:block>

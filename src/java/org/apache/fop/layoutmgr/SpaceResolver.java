@@ -412,7 +412,7 @@ public class SpaceResolver {
             }
             iter.add(new KnuthPenalty(breakPoss.getPenaltyWidth(), breakPoss.getPenaltyValue(), 
                     false, breakPoss.getBreakClass(), 
-                    new SpaceHandlingBreakPosition(this), false));
+                    new SpaceHandlingBreakPosition(this, breakPoss), false));
             //if (glue2.isNonZero()) {
             if (glue2w != 0 || glue2stretch != 0 || glue2shrink != 0) {
                 /*
@@ -453,14 +453,20 @@ public class SpaceResolver {
     public class SpaceHandlingBreakPosition extends Position {
 
         private SpaceResolver resolver;
+        private Position originalPosition;
         
         /**
          * Main constructor.
          * @param resolver the space resolver that provides the info about the actual situation
          */
-        public SpaceHandlingBreakPosition(SpaceResolver resolver) {
+        public SpaceHandlingBreakPosition(SpaceResolver resolver, BreakElement breakPoss) {
             super(null);
             this.resolver = resolver;
+            this.originalPosition = breakPoss.getPosition();
+            //Unpack since the SpaceHandlingBreakPosition is a non-wrapped Position, too
+            while (this.originalPosition instanceof NonLeafPosition) {
+                this.originalPosition = this.originalPosition.getPosition();
+            }
         }
         
         /** @return the space resolver */
@@ -498,8 +504,18 @@ public class SpaceResolver {
         /** @see java.lang.Object#toString() */
         public String toString() {
             StringBuffer sb = new StringBuffer();
-            sb.append("SpaceHandlingBreakPosition");
+            sb.append("SpaceHandlingBreakPosition(");
+            sb.append(this.originalPosition);
+            sb.append(")");
             return sb.toString();
+        }
+
+        /** 
+         * @return the original Position instance set at the BreakElement that this Position was
+         *         created for.
+         */
+        public Position getOriginalBreakPosition() {
+            return this.originalPosition;
         }
     }
     

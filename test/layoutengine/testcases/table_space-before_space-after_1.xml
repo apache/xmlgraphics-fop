@@ -18,27 +18,28 @@
 <testcase>
   <info>
     <p>
-      This test checks spaces on tables.
+      This test checks space properties on table.
     </p>
   </info>
   <fo>
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
       <fo:layout-master-set>
-        <fo:simple-page-master master-name="normal" page-width="5in" page-height="1.7in">
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="1.8in">
           <fo:region-body/>
         </fo:simple-page-master>
       </fo:layout-master-set>
       <fo:page-sequence master-reference="normal" id="retain">
         <fo:flow flow-name="xsl-region-body">
-          <fo:list-block provisional-distance-between-starts="8pt" provisional-label-separation="5pt" 
-              space-before="20pt" space-before.conditionality="retain" 
-              space-after="10pt" space-after.conditionality="retain">
-            <fo:list-item space-before="1em">
-              <fo:list-item-label end-indent="label-end()">
-                <fo:block>•</fo:block>
-              </fo:list-item-label>
-              <fo:list-item-body start-indent="body-start()">
-                <fo:block text-align="justify">
+          <fo:table table-layout="fixed" width="100%" border-collapse="separate" space-before="20pt" space-before.conditionality="retain" space-after="10pt" space-after.conditionality="retain">
+            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-column column-width="proportional-column-width(9)"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>cell1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+            <fo:block text-align="justify">
 In olden times when wishing still helped one, there lived a king whose daughters 
 were all beautiful; and the youngest was so beautiful that the sun itself, which 
 has seen so much, was astonished whenever it shone in her face. Close by the king's 
@@ -46,34 +47,28 @@ castle lay a great dark forest, and under an old lime-tree in the forest was a w
 and when the day was very warm, the king's child went out into the forest and sat 
 down by the side of the cool fountain; and when she was bored she took a golden ball, 
 and threw it up on high and caught it; and this ball was her favorite plaything.
-                </fo:block>
-              </fo:list-item-body>
-            </fo:list-item>
-            <fo:list-item>
-              <fo:list-item-label end-indent="label-end()">
-                <fo:block>•</fo:block>
-              </fo:list-item-label>
-              <fo:list-item-body start-indent="body-start()">
-                <fo:block>here is text in the list item body</fo:block>
-              </fo:list-item-body>
-            </fo:list-item>
-          </fo:list-block>
-          <fo:block space-before.optimum="10pt" space-before.conditionality="retain" space-after.optimum="20pt" space-after.conditionality="retain">
+            </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+          <fo:block space-before.optimum="10pt" space-before.conditionality="retain" space-after="20pt" space-after.conditionality="retain">
 Two blocks, testing conditionality="retain".
           </fo:block>
         </fo:flow>
       </fo:page-sequence>
       <fo:page-sequence master-reference="normal" id="discard">
         <fo:flow flow-name="xsl-region-body">
-          <fo:list-block provisional-distance-between-starts="8pt" provisional-label-separation="5pt" 
-              space-before="20pt" space-before.conditionality="discard" 
-              space-after="10pt" space-after.conditionality="discard">
-            <fo:list-item space-before="1em">
-              <fo:list-item-label end-indent="label-end()">
-                <fo:block>•</fo:block>
-              </fo:list-item-label>
-              <fo:list-item-body start-indent="body-start()">
-                <fo:block text-align="justify">
+          <fo:table table-layout="fixed" width="100%" border-collapse="separate" space-before="20pt" space-before.conditionality="discard" space-after="10pt" space-after.conditionality="discard">
+            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-column column-width="proportional-column-width(9)"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>cell1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+            <fo:block text-align="justify">
 In olden times when wishing still helped one, there lived a king whose daughters 
 were all beautiful; and the youngest was so beautiful that the sun itself, which 
 has seen so much, was astonished whenever it shone in her face. Close by the king's 
@@ -81,19 +76,12 @@ castle lay a great dark forest, and under an old lime-tree in the forest was a w
 and when the day was very warm, the king's child went out into the forest and sat 
 down by the side of the cool fountain; and when she was bored she took a golden ball, 
 and threw it up on high and caught it; and this ball was her favorite plaything.
-                </fo:block>
-              </fo:list-item-body>
-            </fo:list-item>
-            <fo:list-item>
-              <fo:list-item-label end-indent="label-end()">
-                <fo:block>•</fo:block>
-              </fo:list-item-label>
-              <fo:list-item-body start-indent="body-start()">
-                <fo:block>here is text in the list item body</fo:block>
-              </fo:list-item-body>
-            </fo:list-item>
-          </fo:list-block>
-          <fo:block space-before.optimum="10pt" space-before.conditionality="discard" space-after.optimum="20pt" space-after.conditionality="discard">
+            </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+          <fo:block space-before="10pt" space-before.conditionality="discard" space-after="20pt" space-after.conditionality="discard">
 Two blocks, testing conditionality="discard".
           </fo:block>
         </fo:flow>
@@ -103,6 +91,16 @@ Two blocks, testing conditionality="discard".
   <checks>
     <element-list category="breaker" id="retain">
       <box w="0"/> <!-- Helper box bearing the SpaceHandlingPosition and making sure the glue gets processed -->
+      <penalty w="0" p="INF"/>
+      <glue w="20000"/>
+      
+      <box w="0"/>
+      
+      <penalty w="0" p="INF"/>
+      <glue w="10000"/>
+      <penalty w="14400"/> <!-- p is not of interest here -->
+      <glue w="-30000"/>
+      <box w="0"/>
       <penalty w="0" p="INF"/>
       <glue w="20000"/>
       
@@ -118,20 +116,12 @@ Two blocks, testing conditionality="discard".
       
       <box w="14400"/>
       
-      <penalty w="0" p="INF"/>
-      <glue w="10000"/>
-      <penalty w="0" p="0"/>
-      <glue w="-30000"/>
-      <box w="0"/>
-      <penalty w="0" p="INF"/>
-      <glue w="20000"/>
-      
-      <box w="14400"/>
-      
       <!-- skip three more lines -->
       <skip>8</skip>
       <skip>8</skip>
       <skip>8</skip>
+      <skip>8</skip>
+      <skip>8</skip>
       
       <penalty w="0" p="INF"/>
       <glue w="10000"/>
@@ -141,17 +131,7 @@ Two blocks, testing conditionality="discard".
       <penalty w="0" p="INF"/>
       <glue w="20000"/>
       
-      <box w="28800"/> <!-- end of first list item -->
-      
-      <penalty w="0" p="INF"/>
-      <glue w="10000"/>
-      <penalty w="0" p="0"/>
-      <glue w="-30000"/>
-      <box w="0"/>
-      <penalty w="0" p="INF"/>
-      <glue w="20000"/>
-      
-      <box w="14400"/> <!-- second list-item -->
+      <box w="28800"/> <!-- end of table -->
       
       <penalty w="0" p="INF" aux="true"/>
       <glue w="10000"/>
@@ -174,6 +154,8 @@ Two blocks, testing conditionality="discard".
     </element-list>
     <element-list category="breaker" id="discard">
       <box w="0"/> <!-- Helper box used to notify the LM for the addAreas stage about the discarded spaces -->
+      <box w="0"/>
+      <penalty w="14400"/> <!-- p is not of interest here -->
       <box w="28800"/>
       <penalty w="0" p="0"/>
       <box w="14400"/>
@@ -186,9 +168,9 @@ Two blocks, testing conditionality="discard".
       <penalty w="0" p="0"/>
       <box w="14400"/>
       <penalty w="0" p="0"/>
-      <box w="28800"/>
-      <penalty w="0" p="0"/>
       <box w="14400"/>
+      <penalty w="0" p="0"/>
+      <box w="28800"/>
       <penalty w="0" p="0"/>
       <glue w="10000"/>
       
@@ -200,7 +182,7 @@ Two blocks, testing conditionality="discard".
       
       <skip>3</skip>
     </element-list>
-
+    
     <eval expected="4" xpath="count(//pageViewport)"/>
     
     <!-- 1: retain -->

@@ -65,15 +65,15 @@ public class KnuthPossPosIter extends PositionIterator {
         return super.next();
     }
 
-    public KnuthElement getKE() {
-        return (KnuthElement) peekNext();
+    public ListElement getKE() {
+        return (ListElement) peekNext();
     }
 
     protected LayoutManager getLM(Object nextObj) {
-        return ((KnuthElement) nextObj).getLayoutManager();
+        return ((ListElement) nextObj).getLayoutManager();
     }
 
     protected Position getPos(Object nextObj) {
-        return ((KnuthElement) nextObj).getPosition();
+        return ((ListElement) nextObj).getPosition();
     }
 }

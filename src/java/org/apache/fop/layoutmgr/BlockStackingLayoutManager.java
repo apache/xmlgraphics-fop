@@ -811,6 +811,15 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         } else if (fobj instanceof org.apache.fop.fo.flow.BlockContainer) {
             return ((org.apache.fop.fo.flow.BlockContainer)fobj)
                 .getCommonBorderPaddingBackground();
+        } else if (fobj instanceof org.apache.fop.fo.flow.ListBlock) {
+            return ((org.apache.fop.fo.flow.ListBlock)fobj)
+                .getCommonBorderPaddingBackground();
+        } else if (fobj instanceof org.apache.fop.fo.flow.ListItem) {
+            return ((org.apache.fop.fo.flow.ListItem)fobj)
+                .getCommonBorderPaddingBackground();
+        } else if (fobj instanceof org.apache.fop.fo.flow.Table) {
+            return ((org.apache.fop.fo.flow.Table)fobj)
+                .getCommonBorderPaddingBackground();
         } else {
             return null;
         }
@@ -830,6 +839,9 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         } else if (fobj instanceof org.apache.fop.fo.flow.ListItem) {
             return ((org.apache.fop.fo.flow.ListItem)fobj)
                 .getCommonMarginBlock().spaceBefore;
+        } else if (fobj instanceof org.apache.fop.fo.flow.Table) {
+            return ((org.apache.fop.fo.flow.Table)fobj)
+                .getCommonMarginBlock().spaceBefore;
         } else {
             return null;
         }
@@ -848,6 +860,9 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                 .getCommonMarginBlock().spaceAfter;
         } else if (fobj instanceof org.apache.fop.fo.flow.ListItem) {
             return ((org.apache.fop.fo.flow.ListItem)fobj)
+                .getCommonMarginBlock().spaceAfter;
+        } else if (fobj instanceof org.apache.fop.fo.flow.Table) {
+            return ((org.apache.fop.fo.flow.Table)fobj)
                 .getCommonMarginBlock().spaceAfter;
         } else {
             return null;
