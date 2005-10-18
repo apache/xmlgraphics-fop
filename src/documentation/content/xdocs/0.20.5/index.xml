@@ -15,18 +15,16 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE tabs PUBLIC "-//APACHE//DTD Cocoon Documentation Tab V1.0//EN"
-    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/tab-cocoon-v10.dtd">
-    
-<tabs software="FOP" title="FOP" copyright="@year@ The Apache Software Foundation" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <tab label="Home" dir=""/>
-  <tab label="Version 0.20.5" dir="0.20.5/"/>
-  <tab label="Version 0.90" dir="0.90/"/>
-  <tab label="Development" dir="dev/"/>
-  <!--
-  <tab label="Design" dir="design/"/>
-  -->
-  <!--
-  <tab label="Alt Design" dir="design/alt.design/"/>
-  -->
-</tabs>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
+<document>
+  <header>
+    <title>Apache FOP Version 0.20.5</title>
+    <version>$Revision: 201586 $</version>
+  </header>
+  <body>
+    <section id="intro">
+      <title>Introduction</title>
+      <p>These pages contain information that should be helpful for those </p>
+    </section>
+  </body>
+</document>
