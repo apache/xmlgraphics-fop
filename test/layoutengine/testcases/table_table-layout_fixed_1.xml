@@ -94,16 +94,16 @@
     <eval expected="220000" xpath="//flow/block[1]/block[2]/@ipda"/>
     <eval expected="220000" xpath="//flow/block[1]/block[2]/@ipd"/>
 
-    <eval expected="10000" xpath="//flow/block[2]/@bpda"/> <!-- space-before -->
+    <eval expected="10000" xpath="//flow/block[2]/@space-before"/>
 
     <!-- table 2 -->
-    <eval expected="310000" xpath="//flow/block[3]/@ipda"/>
-    <eval expected="300000" xpath="//flow/block[3]/@ipd"/>
-    <eval expected="100000" xpath="//flow/block[3]/block[1]/@ipda"/>
-    <eval expected="100000" xpath="//flow/block[3]/block[1]/@ipd"/>
-    <eval expected="66666" xpath="//flow/block[3]/block[2]/@ipda"/>
-    <eval expected="66666" xpath="//flow/block[3]/block[2]/@ipd"/>
-    <eval expected="133333" xpath="//flow/block[3]/block[3]/@ipda"/>
-    <eval expected="133333" xpath="//flow/block[3]/block[3]/@ipd"/>
+    <eval expected="310000" xpath="//flow/block[2]/@ipda"/>
+    <eval expected="300000" xpath="//flow/block[2]/@ipd"/>
+    <eval expected="100000" xpath="//flow/block[2]/block[1]/@ipda"/>
+    <eval expected="100000" xpath="//flow/block[2]/block[1]/@ipd"/>
+    <eval expected="66666" xpath="//flow/block[2]/block[2]/@ipda"/>
+    <eval expected="66666" xpath="//flow/block[2]/block[2]/@ipd"/>
+    <eval expected="133333" xpath="//flow/block[2]/block[3]/@ipda"/>
+    <eval expected="133333" xpath="//flow/block[2]/block[3]/@ipd"/>
   </checks>
 </testcase>

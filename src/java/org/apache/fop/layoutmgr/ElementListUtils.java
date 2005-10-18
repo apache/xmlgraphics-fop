@@ -36,13 +36,16 @@ public class ElementListUtils {
     public static void removeLegalBreaks(LinkedList elements) {
         ListIterator i = elements.listIterator();
         while (i.hasNext()) {
-            KnuthElement el = (KnuthElement)i.next();
+            ListElement el = (ListElement)i.next();
             if (el.isPenalty()) {
-                KnuthPenalty penalty = (KnuthPenalty)el;
+                BreakElement breakPoss = (BreakElement)el;
                 //Convert all penalties no break inhibitors
-                if (penalty.getP() < KnuthPenalty.INFINITE) {
+                if (breakPoss.getPenaltyValue() < KnuthPenalty.INFINITE) {
+                    breakPoss.setPenaltyValue(KnuthPenalty.INFINITE);
+                    /*
                     i.set(new KnuthPenalty(penalty.getW(), KnuthPenalty.INFINITE, 
                             penalty.isFlagged(), penalty.getPosition(), penalty.isAuxiliary()));
+                    */
                 }
             } else if (el.isGlue()) {
                 i.previous();
@@ -106,11 +109,11 @@ public class ElementListUtils {
         int count = end - start + 1;
         int len = 0;
         while (iter.hasNext()) {
-            KnuthElement el = (KnuthElement)iter.next();
+            ListElement el = (ListElement)iter.next();
             if (el.isBox()) {
-                len += el.getW();
+                len += ((KnuthElement)el).getW();
             } else if (el.isGlue()) {
-                len += el.getW();
+                len += ((KnuthElement)el).getW();
             } else {
                 //log.debug("Ignoring penalty: " + el);
                 //ignore penalties

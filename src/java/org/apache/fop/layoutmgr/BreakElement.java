@@ -66,6 +66,12 @@ public class BreakElement extends UnresolvedListElement {
         return false; //Does not really apply here
     }
 
+    /** @see org.apache.fop.layoutmgr.ListElement#isPenalty() */
+    /*
+    public boolean isPenalty() {
+        return true; //not entirely true but a BreakElement will generate a penalty later
+    }*/
+
     /** @return the penalty width */
     public int getPenaltyWidth() {
         return this.penaltyWidth;
@@ -76,6 +82,14 @@ public class BreakElement extends UnresolvedListElement {
         return this.penaltyValue;
     }
     
+    /**
+     * Sets the penalty value.
+     * @param p the new penalty value
+     */
+    public void setPenaltyValue(int p) {
+        this.penaltyValue = p;
+    }
+    
     /** @see org.apache.fop.layoutmgr.ListElement#isForcedBreak() */
     public boolean isForcedBreak() {
         return penaltyValue == -KnuthElement.INFINITE;
@@ -84,6 +98,14 @@ public class BreakElement extends UnresolvedListElement {
     /** @return the break class of this penalty (one of the break-* constants) */
     public int getBreakClass() {
         return breakClass;
+    }
+    
+    /**
+     * Sets the break class.
+     * @param breakClass the new break class
+     */
+    public void setBreakClass(int breakClass) {
+        this.breakClass = breakClass;
     }
     
     /** @return the pending border and padding elements at the before edge */

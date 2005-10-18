@@ -24,13 +24,14 @@ import org.apache.fop.fo.flow.TableColumn;
 import org.apache.fop.fo.properties.TableColLength;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
+import org.apache.fop.layoutmgr.ConditionalElementListener;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
-import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.Position;
+import org.apache.fop.layoutmgr.RelSide;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
@@ -51,7 +52,8 @@ import org.apache.fop.fo.FObj;
  * the render background.
  */
 public class TableLayoutManager extends BlockStackingLayoutManager 
-                implements BlockLevelLayoutManager {
+                implements ConditionalElementListener {
+    
     private Table fobj;
     
     private TableContentLayoutManager contentLM; 
@@ -67,6 +69,13 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     //TODO space-before|after: handle space-resolution rules
     private MinOptMax spaceBefore;
     private MinOptMax spaceAfter;
+    
+    private boolean discardBorderBefore;
+    private boolean discardBorderAfter;
+    private boolean discardPaddingBefore;
+    private boolean discardPaddingAfter;
+    private MinOptMax effSpaceBefore;
+    private MinOptMax effSpaceAfter;
     
     /**
      * Create a new table layout manager.
@@ -101,6 +110,15 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         }
     }
 
+    private void resetSpaces() {
+        this.discardBorderBefore = false;        
+        this.discardBorderAfter = false;        
+        this.discardPaddingBefore = false;        
+        this.discardPaddingAfter = false;
+        this.effSpaceBefore = foSpaceBefore;
+        this.effSpaceAfter = foSpaceAfter;
+    }
+    
     private int getIPIndents() {
         int iIndents = 0;
         iIndents += fobj.getCommonMarginBlock().startIndent.getValue(this);
@@ -142,14 +160,15 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             log.warn("Allocated IPD exceeds available reference IPD");
         }
 
-        MinOptMax stackSize = new MinOptMax();
+        //MinOptMax stackSize = new MinOptMax();
         //Add spacing
+        /*
         if (spaceAfter != null) {
             stackSize.add(spaceAfter);
         }
         if (spaceBefore != null) {
             stackSize.add(spaceBefore);
-        }
+        }*/
 
         // either works out table of column widths or if proportional-column-width function
         // is used works out total factor, so that value of single unit can be computed.
@@ -173,16 +192,27 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             }
         }
 
+        addKnuthElementsForSpaceBefore(returnList, alignment);
+        
+        if (fobj.isSeparateBorderModel()) {
+            addKnuthElementsForBorderPaddingBefore(returnList);
+        }
+
+        //Spaces, border and padding to be repeated at each break
+        addPendingMarks(context);
+
         LinkedList returnedList = null;
         LinkedList contentList = new LinkedList();
         //Position returnPosition = new NonLeafPosition(this, null);
         //Body prevLM = null;
 
         LayoutContext childLC = new LayoutContext(0);
+        /*
         childLC.setStackLimit(
               MinOptMax.subtract(context.getStackLimit(),
-                                 stackSize));
+                                 stackSize));*/
         childLC.setRefIPD(context.getRefIPD());
+        childLC.copyPendingMarksFrom(context);
 
         if (contentLM == null) {
             contentLM = new TableContentLayoutManager(this);
@@ -200,7 +230,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         //Set index values on elements coming from the content LM
         Iterator iter = returnedList.iterator();
         while (iter.hasNext()) {
-            KnuthElement el = (KnuthElement)iter.next();
+            ListElement el = (ListElement)iter.next();
             notifyPos(el.getPosition());
         }
         log.debug(returnedList);
@@ -266,8 +296,13 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             }
         }
         wrapPositionElements(contentList, returnList);
+        if (fobj.isSeparateBorderModel()) {
+            addKnuthElementsForBorderPaddingAfter(returnList);
+        }
+        addKnuthElementsForSpaceAfter(returnList, alignment);
         addKnuthElementsForBreakAfter(returnList, context);
         setFinished(true);
+        resetSpaces();
         return returnList;
     }
     
@@ -284,9 +319,9 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         getPSLM().addIDToPage(fobj.getId());
 
         // if adjusted space before
-        double adjust = layoutContext.getSpaceAdjust();
-        addBlockSpacing(adjust, spaceBefore);
-        spaceBefore = null;
+        //double adjust = layoutContext.getSpaceAdjust();
+        //addBlockSpacing(adjust, spaceBefore);
+        //spaceBefore = null;
 
         int startXOffset = fobj.getCommonMarginBlock().startIndent.getValue(this);
         
@@ -305,7 +340,12 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         curBlockArea.setBPD(tableHeight);
 
         if (fobj.isSeparateBorderModel()) {
-            TraitSetter.addBorders(curBlockArea, fobj.getCommonBorderPaddingBackground(), this);
+            TraitSetter.addBorders(curBlockArea, 
+                    getTable().getCommonBorderPaddingBackground(), 
+                    discardBorderBefore, discardBorderAfter, false, false, this);
+            TraitSetter.addPadding(curBlockArea, 
+                    getTable().getCommonBorderPaddingBackground(), 
+                    discardPaddingBefore, discardPaddingAfter, false, false, this);
         }
         TraitSetter.addBackground(curBlockArea, 
                 fobj.getCommonBorderPaddingBackground(),
@@ -316,13 +356,16 @@ public class TableLayoutManager extends BlockStackingLayoutManager
                 this);
         TraitSetter.addBreaks(curBlockArea, 
                 fobj.getBreakBefore(), fobj.getBreakAfter());
+        TraitSetter.addSpaceBeforeAfter(curBlockArea, layoutContext.getSpaceAdjust(), 
+                effSpaceBefore, effSpaceAfter);
 
         flush();
 
         // if adjusted space after
-        addBlockSpacing(adjust, spaceAfter);
+        //addBlockSpacing(adjust, spaceAfter);
 
         //bodyBreaks.clear();
+        resetSpaces();
         curBlockArea = null;
     }
 
@@ -377,17 +420,13 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         }
     }
 
-    /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#negotiateBPDAdjustment(int, org.apache.fop.layoutmgr.KnuthElement)
-     */
+    /** @see org.apache.fop.layoutmgr.BlockLevelLayoutManager */
     public int negotiateBPDAdjustment(int adj, KnuthElement lastElement) {
         // TODO Auto-generated method stub
         return 0;
     }
 
-    /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#discardSpace(org.apache.fop.layoutmgr.KnuthGlue)
-     */
+    /** @see org.apache.fop.layoutmgr.BlockLevelLayoutManager */
     public void discardSpace(KnuthGlue spaceGlue) {
         // TODO Auto-generated method stub
         
@@ -458,6 +497,51 @@ public class TableLayoutManager extends BlockStackingLayoutManager
      */
     public int getContentAreaBPD() {
         return referenceBPD;
+    }
+    
+    /** @see org.apache.fop.layoutmgr.ConditionalElementListener */
+    public void notifySpace(RelSide side, MinOptMax effectiveLength) {
+        if (RelSide.BEFORE == side) {
+            if (log.isDebugEnabled()) {
+                log.debug(this + ": Space " + side + ", " 
+                        + this.effSpaceBefore + "-> " + effectiveLength);
+            }
+            this.effSpaceBefore = effectiveLength;
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug(this + ": Space " + side + ", " 
+                        + this.effSpaceAfter + "-> " + effectiveLength);
+            }
+            this.effSpaceAfter = effectiveLength;
+        }
+    }
+
+    /** @see org.apache.fop.layoutmgr.ConditionalElementListener */
+    public void notifyBorder(RelSide side, MinOptMax effectiveLength) {
+        if (effectiveLength == null) {
+            if (RelSide.BEFORE == side) {
+                this.discardBorderBefore = true;
+            } else {
+                this.discardBorderAfter = true;
+            }
+        }
+        if (log.isDebugEnabled()) {
+            log.debug(this + ": Border " + side + " -> " + effectiveLength);
+        }
+    }
+
+    /** @see org.apache.fop.layoutmgr.ConditionalElementListener */
+    public void notifyPadding(RelSide side, MinOptMax effectiveLength) {
+        if (effectiveLength == null) {
+            if (RelSide.BEFORE == side) {
+                this.discardPaddingBefore = true;
+            } else {
+                this.discardPaddingAfter = true;
+            }
+        }
+        if (log.isDebugEnabled()) {
+            log.debug(this + ": Padding " + side + " -> " + effectiveLength);
+        }
     }
     
 }

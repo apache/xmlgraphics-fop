@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
@@ -162,7 +163,7 @@ public class TableStepper {
     private void setupElementList(int column) {
         GridUnit gu = getActiveGridUnit(column);
         EffRow row = getActiveRow();
-        if (gu.isEmpty()){
+        if (gu.isEmpty()) {
             elementLists[column] = null;
             start[column] = 0;
             end[column] = -1;
@@ -296,14 +297,6 @@ public class TableStepper {
             
             //Create elements for step
             int effPenaltyLen = penaltyLen;
-            if (isSeparateBorderModel()) {
-                CommonBorderPaddingBackground borders 
-                    = getTableLM().getTable().getCommonBorderPaddingBackground(); 
-                effPenaltyLen += borders.getBorderBeforeWidth(false); 
-                effPenaltyLen += borders.getBorderAfterWidth(false); 
-                effPenaltyLen += borders.getPaddingBefore(false, getTableLM()); 
-                effPenaltyLen += borders.getPaddingAfter(false, getTableLM()); 
-            }
             TableContentPosition tcpos = new TableContentPosition(getTableLM(), 
                     gridUnitParts, getActiveRow());
             if (returnList.size() == 0) {
@@ -345,7 +338,8 @@ public class TableStepper {
                 p = -KnuthPenalty.INFINITE; //Overrides any keeps (see 4.8 in XSL 1.0)
                 clearBreakCondition();
             }
-            returnList.add(new KnuthPenalty(effPenaltyLen, p, false, penaltyPos, false));
+            //returnList.add(new KnuthPenalty(effPenaltyLen, p, false, penaltyPos, false));
+            returnList.add(new BreakElement(penaltyPos, effPenaltyLen, p, 0, context));
 
             log.debug("step=" + step + " (+" + increase + ")"
                     + " box=" + boxLen 
@@ -364,7 +358,7 @@ public class TableStepper {
             context.setFlags(LayoutContext.KEEP_WITH_NEXT_PENDING);
         }
         if (isBreakCondition()) {
-            ((KnuthPenalty)returnList.getLast()).setP(-KnuthPenalty.INFINITE);
+            ((BreakElement)returnList.getLast()).setPenaltyValue(-KnuthPenalty.INFINITE);
         }
         lastTCPos.setFlag(TableContentPosition.LAST_IN_ROWGROUP, true);
         return returnList;
