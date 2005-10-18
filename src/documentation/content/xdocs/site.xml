@@ -15,11 +15,14 @@
   limitations under the License.
 -->
 <site label="FOP" href="" xmlns="http://apache.org/forrest/linkmap/1.0" tab="home">
-
+  <!--
+  BEGIN Home tab
+  -->
   <about label="About">
     <index label="Introduction" href="index.html"/>
     <license label="Release Notes" href="relnotes.html"/>
     <download label="Download" href="download.html"/>
+    <compliance label="Compliance" href="compliance.html" description="FOP Compliance"/>
     <help label="Getting Help" href="gethelp.html"/>
     <faqs label="FAQs" href="faq.html"/>
     <maillist label="Mailing Lists" href="maillist.html"/>
@@ -29,25 +32,7 @@
     <all_sitePDF label="Full PDF" href="wholesite.pdf"/>
     -->
   </about>
-
-  <using label="Using FOP">
-    <build label="Build" href="compiling.html"/>
-    <config label="Configure" href="configuration.html"/>
-    <run label="Run" href="running.html"/>
-    <embed label="Embed" href="embedding.html"/>
-    <servlet label="Servlets" href="servlets.html"/>
-    <ant label="Ant Task" href="anttask.html"/>
-  </using>
-
-  <features label="Features">
-    <compliance label="Compliance" href="compliance.html" description="FOP Compliance"/>
-    <ouput label="Output Targets" href="output.html"/>
-    <pdfencryption label="PDF Encryption" href="pdfencryption.html"/>
-    <graphics label="Graphics" href="graphics.html"/>
-    <fonts label="Fonts" href="fonts.html"/>
-    <hyphenation label="Hyphenation" href="hyphenation.html"/>    
-    <extensions label="Extensions" href="extensions.html"/>
-  </features>
+   
 
   <resources label="Resources">
     <xsl-fo label="XSL-FO" href="fo.html"/>
@@ -64,54 +49,63 @@
     <!--changes label="Changes" href="changes.html"/-->
     <!--todo label="Todo" href="todo.html"/-->
   </project>
+  <!--
+  END Home tab
+  -->
 
-  <development label="Development" href="dev/" tab="development">
-    <introduction label="About">
-      <basics label="Basics" href="index.html"/>
-    </introduction>
-
-    <design label="Design">
-      <basics label="Resolved" href="site:design/"/>
-      <unresolved label="Unresolved (Wiki)" href="http://wiki.apache.org/xmlgraphics-fop/FOPProjectPages"/>
-      <svg label="SVG" href="svg.html"/>
+  <!--
+  BEGIN Version 0.20.5 tab
+  -->
+  <v0205 label="Version 0.20.5" href="0.20.5/" tab="currentversion">
+    <about label="About" href="index.html"/>
+  
+    <using label="Using FOP">
+      <build label="Build" href="compiling.html"/>
+      <config label="Configure" href="configuration.html"/>
+      <run label="Run" href="running.html"/>
+      <embed label="Embed" href="embedding.html"/>
+      <servlet label="Servlets" href="servlets.html"/>
+      <ant label="Ant Task" href="anttask.html"/>
+    </using>
+    
+    <features label="Features">
+      <ouput label="Output Targets" href="output.html"/>
+      <pdfencryption label="PDF Encryption" href="pdfencryption.html"/>
+      <graphics label="Graphics" href="graphics.html"/>
+      <fonts label="Fonts" href="fonts.html"/>
+      <hyphenation label="Hyphenation" href="hyphenation.html"/>    
       <extensions label="Extensions" href="extensions.html"/>
-    </design>
+    </features>
+    
+  </v0205>
+  
+  <!--
+  END Version 0.20.5 tab
+  -->
+  
+  <!--
+  BEGIN Version 0.90 tab
+  -->
+  <v090 label="Version 0.90" href="0.90/" tab="develversion">
+    <about label="About" href="index.html"/>
+  </v090>
+  <!--
+  END Version 0.90 tab
+  -->
+  
+  <!--
+  BEGIN Development tab
+  -->
+  <introduction label="About" href="dev/" tab="development">
+    <basics label="Basics" href="index.html"/>
+  </introduction>
 
-    <develop label="Develop">
-      <api-doc label="API Doc" href="api-doc.html"/>
-    <walkthru label="Walk-Thru" href="implement.html"/>
-    <patch label="Patch Queue" href="http://issues.apache.org/bugzilla/buglist.cgi?bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;email1=&amp;emailtype1=substring&amp;emailassigned_to1=1&amp;email2=&amp;emailtype2=substring&amp;emailreporter2=1&amp;bugidtype=include&amp;bug_id=&amp;changedin=&amp;votes=&amp;chfieldfrom=&amp;chfieldto=Now&amp;chfieldvalue=&amp;product=Fop&amp;short_desc=%5BPATCH%5D&amp;short_desc_type=allwordssubstr&amp;long_desc=&amp;long_desc_type=allwordssubstr&amp;bug_file_loc=&amp;bug_file_loc_type=allwordssubstr&amp;keywords=&amp;keywords_type=anywords&amp;field0-0-0=noop&amp;type0-0-0=noop&amp;value0-0-0=&amp;namedcmd=Fop+all&amp;newqueryname=fop+patch+queue&amp;tofooter=1&amp;order=Reuse+same+sort+as+last+time"/>
-    <conventions label="Conventions" href="conventions.html"/>
-    </develop>
-
-    <test label="Test">
-      <testing label="Testing" href="testing.html"/>
-    </test>
-
-    <deploy label="Deploy">
-      <doc label="Doc Mgmt" href="doc.html"/>
-      <release label="Release" href="release.html"/>
-      <bugs label="Bugs" href="http://issues.apache.org/bugzilla/buglist.cgi?bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;email1=&amp;emailtype1=substring&amp;emailassigned_to1=1&amp;email2=&amp;emailtype2=substring&amp;emailreporter2=1&amp;bugidtype=include&amp;bug_id=&amp;changedin=&amp;votes=&amp;chfieldfrom=&amp;chfieldto=Now&amp;chfieldvalue=&amp;product=Fop&amp;short_desc=&amp;short_desc_type=allwordssubstr&amp;long_desc=&amp;long_desc_type=allwordssubstr&amp;bug_file_loc=&amp;bug_file_loc_type=allwordssubstr&amp;keywords=&amp;keywords_type=anywords&amp;field0-0-0=noop&amp;type0-0-0=noop&amp;value0-0-0=&amp;order=bugs.component"/>
-    </deploy>
-
-    <resources label="Resources">
-      <faq label="FAQs" href="faq.html"/>
-      <tools label="Tools" href="tools.html"/>
-      <viewcvs label="ViewCVS" href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop"/>
-    </resources>
-
-    <subpackages label="SubPackages">
-      <rtflib label="RTFlib" href="rtflib.html"/>
-    </subpackages>
-
-  </development>
-
-  <design label="Design" href="design/" tab="design">
-    <about label="About">
+  <design label="Design" href="dev/" tab="development">
+    <about label="About" href="design/">
       <introduction label="Introduction" href="index.html"/>
     </about>
 
-    <core-process label="Core Process">
+    <core-process label="Core Process" href="design/">
       <startup label="Startup" href="startup.html"/>
       <parsing label="XML Parsing" href="parsing.html"/>
       <fotree label="FO Tree" href="fotree.html"/>
@@ -122,7 +116,7 @@
       <renderers label="Renderers" href="renderers.html"/>
     </core-process>
 
-    <miscellaneous label="Miscellaneous">
+    <miscellaneous label="Miscellaneous" href="design/">
       <images label="Images" href="images.html"/>
       <pdflib label="PDF Library" href="pdf-library.html"/>
       <svg label="SVG" href="svg.html"/>
@@ -131,7 +125,43 @@
       <optimise label="Optimisations" href="optimise.html"/>
       <useragent label="User Agent" href="useragent.html"/>
     </miscellaneous>
+    
+    <unresolved label="Unresolved (Wiki)" href="http://wiki.apache.org/xmlgraphics-fop/FOPProjectPages"/>
+    
+    <svg label="SVG" href="svg.html"/>
+    
+    <extensions label="Extensions" href="extensions.html"/>
   </design>
+
+  <develop label="Develop" href="dev/" tab="development">
+    <api-doc label="API Doc" href="api-doc.html"/>
+    <walkthru label="Walk-Thru" href="implement.html" tab="development"/>
+    <patch label="Patch Queue" href="http://issues.apache.org/bugzilla/buglist.cgi?bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;email1=&amp;emailtype1=substring&amp;emailassigned_to1=1&amp;email2=&amp;emailtype2=substring&amp;emailreporter2=1&amp;bugidtype=include&amp;bug_id=&amp;changedin=&amp;votes=&amp;chfieldfrom=&amp;chfieldto=Now&amp;chfieldvalue=&amp;product=Fop&amp;short_desc=%5BPATCH%5D&amp;short_desc_type=allwordssubstr&amp;long_desc=&amp;long_desc_type=allwordssubstr&amp;bug_file_loc=&amp;bug_file_loc_type=allwordssubstr&amp;keywords=&amp;keywords_type=anywords&amp;field0-0-0=noop&amp;type0-0-0=noop&amp;value0-0-0=&amp;namedcmd=Fop+all&amp;newqueryname=fop+patch+queue&amp;tofooter=1&amp;order=Reuse+same+sort+as+last+time" tab="development"/>
+    <conventions label="Conventions" href="conventions.html" tab="development"/>
+  </develop>
+
+  <test label="Test" href="dev/" tab="development">
+    <testing label="Testing" href="testing.html"/>
+  </test>
+
+  <deploy label="Deploy" href="dev/" tab="development">
+    <doc label="Doc Mgmt" href="doc.html"/>
+    <release label="Release" href="release.html"/>
+    <bugs label="Bugs" href="http://issues.apache.org/bugzilla/buglist.cgi?bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;email1=&amp;emailtype1=substring&amp;emailassigned_to1=1&amp;email2=&amp;emailtype2=substring&amp;emailreporter2=1&amp;bugidtype=include&amp;bug_id=&amp;changedin=&amp;votes=&amp;chfieldfrom=&amp;chfieldto=Now&amp;chfieldvalue=&amp;product=Fop&amp;short_desc=&amp;short_desc_type=allwordssubstr&amp;long_desc=&amp;long_desc_type=allwordssubstr&amp;bug_file_loc=&amp;bug_file_loc_type=allwordssubstr&amp;keywords=&amp;keywords_type=anywords&amp;field0-0-0=noop&amp;type0-0-0=noop&amp;value0-0-0=&amp;order=bugs.component"/>
+  </deploy>
+
+  <resources label="Resources" href="dev/" tab="development">
+    <faq label="FAQs" href="faq.html"/>
+    <tools label="Tools" href="tools.html"/>
+    <viewcvs label="ViewCVS" href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop"/>
+  </resources>
+
+  <subpackages label="SubPackages" href="dev/" tab="development">
+    <rtflib label="RTFlib" href="rtflib.html"/>
+  </subpackages>
+  <!--
+  END Development tab
+  -->
 
   <!-- references label="Related Projects">
     <forrest label="Apache Forrest" href="http://forrest.apache.org/"/>
