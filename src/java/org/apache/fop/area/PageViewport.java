@@ -48,6 +48,7 @@ public class PageViewport implements Resolvable, Cloneable {
     private Rectangle2D viewArea;
     private boolean clip = false;
     private String pageNumberString = null;
+    private int pageIndex = -1; //-1 = undetermined
     private SimplePageMaster spm = null;
     private boolean blank;
 
@@ -137,6 +138,22 @@ public class PageViewport implements Resolvable, Cloneable {
         return pageNumberString;
     }
 
+    /**
+     * Sets the page index of the page in this rendering run.
+     * @param index the page index (zero-based), -1 if it is undetermined
+     */
+    public void setPageIndex(int index) {
+        this.pageIndex = index;
+    }
+    
+    /**
+     * @return the overall page index of the page in this rendering run (zero-based, 
+     *         -1 if it is undetermined).
+     */
+    public int getPageIndex() {
+        return this.pageIndex;
+    }
+    
     /**
      * Get the key for this page viewport.
      * This is used so that a serializable key can be used to

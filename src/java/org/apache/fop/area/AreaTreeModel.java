@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class AreaTreeModel {
     private List pageSequenceList = null;
+    private int currentPageSequenceIndex = -1;
     private List currentPageSequencePageList;
     private List offDocumentItems = new java.util.ArrayList();
 
@@ -57,6 +58,7 @@ public class AreaTreeModel {
     public void startPageSequence(LineArea title) {
         currentPageSequencePageList = new java.util.ArrayList();
         pageSequenceList.add(currentPageSequencePageList);
+        currentPageSequenceIndex = pageSequenceList.size() - 1;
     }
 
     /**
@@ -65,6 +67,12 @@ public class AreaTreeModel {
      */
     public void addPage(PageViewport page) {
         currentPageSequencePageList.add(page);
+        int pageIndex = 0;
+        for (int i = 0; i < currentPageSequenceIndex; i++) {
+            pageIndex += ((List)pageSequenceList.get(i)).size();
+        }
+        pageIndex += currentPageSequencePageList.size() - 1;
+        page.setPageIndex(pageIndex);
     }
 
     /**
