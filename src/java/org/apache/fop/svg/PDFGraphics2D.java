@@ -207,6 +207,17 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public PDFGraphics2D(PDFGraphics2D g) {
         super(g);
+        this.pdfDoc = g.pdfDoc;
+        this.resourceContext = g.resourceContext;
+        this.currentFontName = g.currentFontName;
+        this.currentFontSize = g.currentFontSize;
+        this.fontInfo = g.fontInfo;
+        this.pageRef = g.pageRef;
+        this.graphicsState = g.graphicsState;
+        this.currentStream = g.currentStream;
+        this.jpegCount = g.jpegCount;
+        this.outputStream = g.outputStream;
+        this.ovFontState = g.ovFontState;
     }
 
     /**
