@@ -48,7 +48,6 @@ import org.apache.fop.traits.MinOptMax;
 public class TableCellLayoutManager extends BlockStackingLayoutManager 
             implements BlockLevelLayoutManager {
     
-    private TableCell fobj;
     private PrimaryGridUnit gridUnit;
     
     private Block curBlockArea;
@@ -78,24 +77,26 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
 
     /** @return the table-cell FO */
     public TableCell getTableCell() {
-        return this.fobj;
+        return (TableCell)this.fobj;
     }
     
     private boolean isSeparateBorderModel() {
-        return fobj.isSeparateBorderModel();
+        return getTableCell().isSeparateBorderModel();
     }
     
     /** @see org.apache.fop.layoutmgr.LayoutManager#initialize() */
     public void initialize() {
         borderAndPaddingBPD = 0;
-        borderAndPaddingBPD += fobj.getCommonBorderPaddingBackground().getBorderBeforeWidth(false);
-        borderAndPaddingBPD += fobj.getCommonBorderPaddingBackground().getBorderAfterWidth(false);
+        borderAndPaddingBPD += getTableCell()
+            .getCommonBorderPaddingBackground().getBorderBeforeWidth(false);
+        borderAndPaddingBPD += getTableCell()
+            .getCommonBorderPaddingBackground().getBorderAfterWidth(false);
         if (!isSeparateBorderModel()) {
             borderAndPaddingBPD /= 2;
         }
-        borderAndPaddingBPD += fobj.getCommonBorderPaddingBackground()
+        borderAndPaddingBPD += getTableCell().getCommonBorderPaddingBackground()
                 .getPaddingBefore(false, this);
-        borderAndPaddingBPD += fobj.getCommonBorderPaddingBackground()
+        borderAndPaddingBPD += getTableCell().getCommonBorderPaddingBackground()
                 .getPaddingAfter(false, this);
     }
     
@@ -121,8 +122,8 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         if (!isSeparateBorderModel()) {
             iIndents /= 2;
         }
-        iIndents += fobj.getCommonBorderPaddingBackground().getPaddingStart(false, this);
-        iIndents += fobj.getCommonBorderPaddingBackground().getPaddingEnd(false, this);
+        iIndents += getTableCell().getCommonBorderPaddingBackground().getPaddingStart(false, this);
+        iIndents += getTableCell().getCommonBorderPaddingBackground().getPaddingEnd(false, this);
         return iIndents;
     }
     
@@ -136,7 +137,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         cellIPD = referenceIPD;
         cellIPD -= getIPIndents();
         if (isSeparateBorderModel()) {
-            int borderSep = fobj.getBorderSeparation().getLengthPair()
+            int borderSep = getTableCell().getBorderSeparation().getLengthPair()
                     .getIPD().getLength().getValue(this);
             cellIPD -= borderSep;
         }
@@ -330,11 +331,12 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                          LayoutContext layoutContext) {
         getParentArea(null);
 
-        getPSLM().addIDToPage(fobj.getId());
+        getPSLM().addIDToPage(getTableCell().getId());
 
         if (isSeparateBorderModel()) {
-            if (!emptyCell || fobj.showEmptyCells()) {
-                TraitSetter.addBorders(curBlockArea, fobj.getCommonBorderPaddingBackground(), this);
+            if (!emptyCell || getTableCell().showEmptyCells()) {
+                TraitSetter.addBorders(curBlockArea, 
+                        getTableCell().getCommonBorderPaddingBackground(), this);
             }
         } else {
             boolean[] outer = new boolean[] {
@@ -400,11 +402,11 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         //Handle display-align
         int contentBPD = getContentHeight(rowHeight, gridUnit);
         if (usedBPD < contentBPD) {
-            if (fobj.getDisplayAlign() == EN_CENTER) {
+            if (getTableCell().getDisplayAlign() == EN_CENTER) {
                 Block space = new Block();
                 space.setBPD((contentBPD - usedBPD) / 2);
                 curBlockArea.addBlock(space);
-            } else if (fobj.getDisplayAlign() == EN_AFTER) {
+            } else if (getTableCell().getDisplayAlign() == EN_AFTER) {
                 Block space = new Block();
                 space.setBPD((contentBPD - usedBPD));
                 curBlockArea.addBlock(space);
@@ -417,15 +419,15 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
 
         // Add background after we know the BPD
         if (isSeparateBorderModel()) {
-            if (!emptyCell || fobj.showEmptyCells()) {
+            if (!emptyCell || getTableCell().showEmptyCells()) {
                 TraitSetter.addBackground(curBlockArea,
-                                          fobj.getCommonBorderPaddingBackground(),
-                                          this);
+                        getTableCell().getCommonBorderPaddingBackground(),
+                        this);
             }
         } else {
             TraitSetter.addBackground(curBlockArea,
-                                      fobj.getCommonBorderPaddingBackground(),
-                                      this);
+                    getTableCell().getCommonBorderPaddingBackground(),
+                    this);
         }
         
         flush();
@@ -450,18 +452,19 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         if (curBlockArea == null) {
             curBlockArea = new Block();
             curBlockArea.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
-            TraitSetter.setProducerID(curBlockArea, fobj.getId());
+            TraitSetter.setProducerID(curBlockArea, getTableCell().getId());
             curBlockArea.setPositioning(Block.ABSOLUTE);
             int indent = 0;
             indent += startBorderWidth;
             if (!isSeparateBorderModel()) {
                 indent /= 2;
             }
-            indent += fobj.getCommonBorderPaddingBackground().getPaddingStart(false, this);
+            indent += getTableCell()
+                    .getCommonBorderPaddingBackground().getPaddingStart(false, this);
             // set position
             int halfBorderSep = 0;
             if (isSeparateBorderModel()) {
-                halfBorderSep = fobj.getBorderSeparation().getLengthPair()
+                halfBorderSep = getTableCell().getBorderSeparation().getLengthPair()
                         .getIPD().getLength().getValue(this) / 2;
             }
             int borderAdjust = 0;

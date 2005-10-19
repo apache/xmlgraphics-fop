@@ -54,8 +54,6 @@ import org.apache.fop.fo.FObj;
 public class TableLayoutManager extends BlockStackingLayoutManager 
                 implements ConditionalElementListener {
     
-    private Table fobj;
-    
     private TableContentLayoutManager contentLM; 
     private ColumnSetup columns = null;
 
@@ -79,13 +77,12 @@ public class TableLayoutManager extends BlockStackingLayoutManager
      */
     public TableLayoutManager(Table node) {
         super(node);
-        fobj = node;
         this.columns = new ColumnSetup(node);
     }
 
     /** @return the table FO */
     public Table getTable() {
-        return this.fobj;
+        return (Table)this.fobj;
     }
     
     /**
@@ -97,11 +94,14 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     
     /** @see org.apache.fop.layoutmgr.LayoutManager#initialize() */
     public void initialize() {
-        foSpaceBefore = new SpaceVal(fobj.getCommonMarginBlock().spaceBefore, this).getSpace();
-        foSpaceAfter = new SpaceVal(fobj.getCommonMarginBlock().spaceAfter, this).getSpace();
+        foSpaceBefore = new SpaceVal(
+                getTable().getCommonMarginBlock().spaceBefore, this).getSpace();
+        foSpaceAfter = new SpaceVal(
+                getTable().getCommonMarginBlock().spaceAfter, this).getSpace();
         
-        if (!fobj.isAutoLayout() 
-                && fobj.getInlineProgressionDimension().getOptimum(this).getEnum() != EN_AUTO) {
+        if (!getTable().isAutoLayout() 
+                && getTable().getInlineProgressionDimension().getOptimum(this).getEnum() 
+                    != EN_AUTO) {
             autoLayout = false;
         }
     }
@@ -117,8 +117,8 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     
     private int getIPIndents() {
         int iIndents = 0;
-        iIndents += fobj.getCommonMarginBlock().startIndent.getValue(this);
-        iIndents += fobj.getCommonMarginBlock().endIndent.getValue(this);
+        iIndents += getTable().getCommonMarginBlock().startIndent.getValue(this);
+        iIndents += getTable().getCommonMarginBlock().endIndent.getValue(this);
         return iIndents;
     }
     
@@ -140,12 +140,12 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         referenceBPD = context.getStackLimit().opt;
         referenceIPD = context.getRefIPD();
 
-        if (fobj.getInlineProgressionDimension().getOptimum(this).getEnum() != EN_AUTO) {
-            referenceIPD = fobj.getInlineProgressionDimension().getOptimum(this)
+        if (getTable().getInlineProgressionDimension().getOptimum(this).getEnum() != EN_AUTO) {
+            referenceIPD = getTable().getInlineProgressionDimension().getOptimum(this)
                     .getLength().getValue(this);
             contentIPD = referenceIPD;
         } else {
-            if (!fobj.isAutoLayout()) {
+            if (!getTable().isAutoLayout()) {
                 log.info("table-layout=\"fixed\" and width=\"auto\", "
                         + "but auto-layout not supported " 
                         + "=> assuming width=\"100%\"");
@@ -180,7 +180,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
 
         addKnuthElementsForSpaceBefore(returnList, alignment);
         
-        if (fobj.isSeparateBorderModel()) {
+        if (getTable().isSeparateBorderModel()) {
             addKnuthElementsForBorderPaddingBefore(returnList);
         }
 
@@ -282,7 +282,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             }
         }
         wrapPositionElements(contentList, returnList);
-        if (fobj.isSeparateBorderModel()) {
+        if (getTable().isSeparateBorderModel()) {
             addKnuthElementsForBorderPaddingAfter(returnList);
         }
         addKnuthElementsForSpaceAfter(returnList, alignment);
@@ -302,9 +302,9 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
-        getPSLM().addIDToPage(fobj.getId());
+        getPSLM().addIDToPage(getTable().getId());
 
-        int startXOffset = fobj.getCommonMarginBlock().startIndent.getValue(this);
+        int startXOffset = getTable().getCommonMarginBlock().startIndent.getValue(this);
         
         // add column, body then row areas
 
@@ -320,7 +320,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
 
         curBlockArea.setBPD(tableHeight);
 
-        if (fobj.isSeparateBorderModel()) {
+        if (getTable().isSeparateBorderModel()) {
             TraitSetter.addBorders(curBlockArea, 
                     getTable().getCommonBorderPaddingBackground(), 
                     discardBorderBefore, discardBorderAfter, false, false, this);
@@ -329,14 +329,14 @@ public class TableLayoutManager extends BlockStackingLayoutManager
                     discardPaddingBefore, discardPaddingAfter, false, false, this);
         }
         TraitSetter.addBackground(curBlockArea, 
-                fobj.getCommonBorderPaddingBackground(),
+                getTable().getCommonBorderPaddingBackground(),
                 this);
         TraitSetter.addMargins(curBlockArea,
-                fobj.getCommonBorderPaddingBackground(), 
-                fobj.getCommonMarginBlock(),
+                getTable().getCommonBorderPaddingBackground(), 
+                getTable().getCommonMarginBlock(),
                 this);
         TraitSetter.addBreaks(curBlockArea, 
-                fobj.getBreakBefore(), fobj.getBreakAfter());
+                getTable().getBreakBefore(), getTable().getBreakAfter());
         TraitSetter.addSpaceBeforeAfter(curBlockArea, layoutContext.getSpaceAdjust(), 
                 effSpaceBefore, effSpaceAfter);
 
@@ -415,24 +415,24 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     public boolean mustKeepTogether() {
         //TODO Keeps will have to be more sophisticated sooner or later
         return ((BlockLevelLayoutManager)getParent()).mustKeepTogether() 
-                || !fobj.getKeepTogether().getWithinPage().isAuto()
-                || !fobj.getKeepTogether().getWithinColumn().isAuto();
+                || !getTable().getKeepTogether().getWithinPage().isAuto()
+                || !getTable().getKeepTogether().getWithinColumn().isAuto();
     }
 
     /**
      * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithPrevious()
      */
     public boolean mustKeepWithPrevious() {
-        return !fobj.getKeepWithPrevious().getWithinPage().isAuto()
-                || !fobj.getKeepWithPrevious().getWithinColumn().isAuto();
+        return !getTable().getKeepWithPrevious().getWithinPage().isAuto()
+                || !getTable().getKeepWithPrevious().getWithinColumn().isAuto();
     }
 
     /**
      * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithNext()
      */
     public boolean mustKeepWithNext() {
-        return !fobj.getKeepWithNext().getWithinPage().isAuto()
-                || !fobj.getKeepWithNext().getWithinColumn().isAuto();
+        return !getTable().getKeepWithNext().getWithinPage().isAuto()
+                || !getTable().getKeepWithNext().getWithinColumn().isAuto();
     }
 
     // --------- Property Resolution related functions --------- //
