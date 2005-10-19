@@ -430,12 +430,6 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
                          LayoutContext layoutContext) {
         getParentArea(null);
 
-        // if adjusted space before
-        //double adjust = layoutContext.getSpaceAdjust();
-        //addBlockSpacing(adjust, foSpaceBefore);
-        //addBlockSpacing(adjust, effSpaceBefore);
-        //foSpaceBefore = null;
-
         getPSLM().addIDToPage(getListItemFO().getId());
 
         LayoutContext lc = new LayoutContext(0);
@@ -547,10 +541,6 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
 
         flush();
 
-        // if adjusted space after
-        //addBlockSpacing(adjust, foSpaceAfter);
-        //addBlockSpacing(adjust, effSpaceAfter);
-        
         curBlockArea = null;
         resetSpaces();
     }

@@ -147,11 +147,6 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
             addBlockSpacing(0.0, new MinOptMax(layoutContext.getSpaceBefore()));
         }
 
-        // if adjusted space before
-        //double adjust = layoutContext.getSpaceAdjust();
-        //addBlockSpacing(adjust, foSpaceBefore);
-        foSpaceBefore = null;
-        
         getPSLM().addIDToPage(getListBlockFO().getId());
 
         // the list block contains areas stacked from each list item
@@ -215,9 +210,6 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
 
         flush();
 
-        // if adjusted space after
-        //addBlockSpacing(adjust, foSpaceAfter);
-        
         curBlockArea = null;
         resetSpaces();
     }

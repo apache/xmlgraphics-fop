@@ -300,12 +300,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
         }
 
         getPSLM().addIDToPage(getBlockFO().getId());
-        /* TODO remove when markers are really ok
-        log.debug("Checking on " + this);
-        log.debug("Checking first=" + firstPos);
-        log.debug("Checking last=" + lastPos);
-        log.debug("->" + isFirst(firstPos) + "/" + isLast(lastPos));
-        */
         if (markers != null) {
             getCurrentPV().addMarkers(markers, true, isFirst(firstPos), isLast(lastPos));
         }
@@ -384,15 +378,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
             //}
         }
 
-        // if adjusted space before
-        //double adjust = layoutContext.getSpaceAdjust();
-        //addBlockSpacing(adjust, foSpaceBefore);
-        //addBlockSpacing(adjust, effSpaceBefore);
-        foSpaceBefore = null;
-        //if (bSpaceBefore) {
-        //    addBlockSpacing(0, new MinOptMax(adjustedSpaceBefore));
-        //}
-
         while ((childLM = childPosIter.getNextChildLM()) != null) {
             // set last area flag
             lc.setFlags(LayoutContext.LAST_AREA,
@@ -402,9 +387,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
             childLM.addAreas(childPosIter, lc);
         }
 
-        //int bIndents = getBlockFO().getCommonBorderPaddingBackground()
-        //                        .getBPPaddingAndBorder(false);
-
         if (markers != null) {
             getCurrentPV().addMarkers(markers, false, isFirst(firstPos), isLast(lastPos));
         }
@@ -412,13 +394,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
         TraitSetter.addSpaceBeforeAfter(curBlockArea, layoutContext.getSpaceAdjust(), 
                 effSpaceBefore, effSpaceAfter);
         flush();
-
-        // if adjusted space after
-        //addBlockSpacing(adjust, foSpaceAfter);
-        //addBlockSpacing(adjust, effSpaceAfter);
-        //if (bSpaceAfter) {
-        //    addBlockSpacing(0, new MinOptMax(adjustedSpaceAfter));
-        //}
 
         curBlockArea = null;
         resetSpaces();
@@ -463,24 +438,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
                     getBlockFO().getCommonBorderPaddingBackground(), 
                     getBlockFO().getCommonMarginBlock(),
                     this);
-
-            // Set up dimensions
-            // Get reference IPD from parentArea
-            //int referenceIPD = parentArea.getIPD();
-            //curBlockArea.setIPD(referenceIPD);
-
-            // Set the width of the block based on the parent block
-            // Need to be careful though, if parent is BC then width may not be set
-            /* TODO remove if really not used anymore
-            int parentwidth = 0;
-            if (parentArea instanceof BlockParent) {
-                parentwidth = ((BlockParent) parentArea).getIPD();
-            }
-            if (parentwidth == 0) {
-                parentwidth = referenceIPD;
-            }
-            parentwidth -= getIPIndents();
-            */
 
             setCurrentArea(curBlockArea); // ??? for generic operations
         }
