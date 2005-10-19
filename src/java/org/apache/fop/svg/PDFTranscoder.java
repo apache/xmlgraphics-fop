@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ import org.w3c.dom.svg.SVGLength;
  * millimeter conversion factor.
  *
  * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
- * @version $Id: PDFTranscoder.java,v 1.24 2003/03/07 09:51:26 jeremias Exp $
+ * @version $Id$
  */
 public class PDFTranscoder extends AbstractFOPTranscoder
         implements Configurable {
@@ -112,7 +112,6 @@ public class PDFTranscoder extends AbstractFOPTranscoder
         throws TranscoderException {
 
         graphics = new PDFDocumentGraphics2D();
-        graphics.setLogger(getLogger());
         
         try {
             if (this.cfg != null) {
