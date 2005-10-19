@@ -19,11 +19,13 @@
 package org.apache.fop.layoutmgr;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 
 import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
+import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.SideRegion;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager;
@@ -251,6 +253,16 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
             this.displayAlign = displayAlign;
         }
 
+        /** @see org.apache.fop.layoutmgr.AbstractBreaker#observeElementList(java.util.List) */
+        protected void observeElementList(List elementList) {
+            String elementListID = getStaticContentFO().getFlowName();
+            String pageSequenceID = ((PageSequence)lm.getParent().getFObj()).getId();
+            if (pageSequenceID != null && pageSequenceID.length() > 0) {
+                elementListID += "-" + pageSequenceID;
+            }
+            ElementListObserver.observe(elementList, "static-content", elementListID);
+        }
+        
         /** @see org.apache.fop.layoutmgr.AbstractBreaker#isPartOverflowRecoveryActivated() */
         protected boolean isPartOverflowRecoveryActivated() {
             //For side regions, this must be disabled because of wanted overflow.

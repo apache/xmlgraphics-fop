@@ -359,8 +359,8 @@ public class SpaceResolver {
         } else {
             if (isFirst || isLast) {
                 performSpaceResolutionRule1(secondPart, secondPartLengths);
-                performSpaceResolutionRules2to3(secondPart, secondPartLengths);
             }
+            performSpaceResolutionRules2to3(secondPart, secondPartLengths);
         }
     }
     
