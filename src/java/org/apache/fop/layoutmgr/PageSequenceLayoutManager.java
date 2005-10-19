@@ -402,10 +402,11 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                     int lastIndex = (i == pbp.footnoteLastListIndex 
                             ? pbp.footnoteLastElementIndex : elementList.size() - 1);
 
-                    FootnoteBodyLayoutManager fblm = (FootnoteBodyLayoutManager)
-                            ((KnuthElement) elementList.getFirst()).getLayoutManager();
+                    SpaceResolver.performConditionalsNotification(elementList, 
+                            firstIndex, lastIndex, -1);
                     LayoutContext childLC = new LayoutContext(0);
-                    fblm.addAreas(new KnuthPossPosIter(elementList, firstIndex, lastIndex + 1), 
+                    AreaAdditionUtil.addAreas(null, 
+                            new KnuthPossPosIter(elementList, firstIndex, lastIndex + 1), 
                             childLC);
                 }
                 // set the offset from the top margin

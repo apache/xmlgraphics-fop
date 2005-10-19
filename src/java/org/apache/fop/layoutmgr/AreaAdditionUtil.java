@@ -86,7 +86,7 @@ public class AreaAdditionUtil {
             }
         }
         
-        if (bslm.markers != null) {
+        if (bslm != null && bslm.markers != null) {
             bslm.getCurrentPV().addMarkers(bslm.markers, true, 
                     bslm.isFirst(firstPos), bslm.isLast(lastPos));
         }
@@ -107,7 +107,7 @@ public class AreaAdditionUtil {
             lc.setStackLimit(layoutContext.getStackLimit());
             childLM.addAreas(childPosIter, lc);
         }
-        if (bslm.markers != null) {
+        if (bslm != null && bslm.markers != null) {
             bslm.getCurrentPV().addMarkers(bslm.markers, false, 
                     bslm.isFirst(firstPos), bslm.isLast(lastPos));
         }

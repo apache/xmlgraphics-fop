@@ -6,6 +6,7 @@ block_space-before_space-after_8.xml
 block_word-spacing.xml
 block_word-spacing_text-align_justify.xml
 external-graphic_oversized.xml
+footnote_space-resolution.xml
 inline-block_keep-together.xml
 inline_block_nested_3.xml
 inline_border_padding_block_nested_2.xml
