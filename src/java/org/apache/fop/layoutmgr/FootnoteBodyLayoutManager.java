@@ -23,12 +23,20 @@ import org.apache.fop.fo.flow.FootnoteBody;
 
 import java.util.LinkedList;
 
+/**
+ * Layout manager for footnote bodies.
+ */
 public class FootnoteBodyLayoutManager extends BlockStackingLayoutManager {
 
+    /**
+     * Creates a new FootnoteBodyLayoutManager.
+     * @param body the footnote-body element
+     */
     public FootnoteBodyLayoutManager(FootnoteBody body) {
         super(body);
     }
 
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
         LayoutManager childLM = null;
         LayoutManager lastLM = null;
@@ -38,8 +46,6 @@ public class FootnoteBodyLayoutManager extends BlockStackingLayoutManager {
         // and put them in a new list;
         LinkedList positionList = new LinkedList();
         Position pos;
-        boolean bSpaceBefore = false;
-        boolean bSpaceAfter = false;
         while (parentIter.hasNext()) {
             pos = (Position) parentIter.next();
             //log.trace("pos = " + pos.getClass().getName() + "; " + pos);
@@ -73,14 +79,13 @@ public class FootnoteBodyLayoutManager extends BlockStackingLayoutManager {
         }
     }
 
+    /** @see org.apache.fop.layoutmgr.LayoutManager#addChildArea(org.apache.fop.area.Area) */
     public void addChildArea(Area childArea) {
         childArea.setAreaClass(Area.CLASS_FOOTNOTE);
         parentLM.addChildArea(childArea);
     }
 
-    /**
-     * convenience method that returns the FootnoteBody node
-     */
+    /** @return the FootnoteBody node */
     protected FootnoteBody getFootnodeBodyFO() {
         return (FootnoteBody) fobj;
     }

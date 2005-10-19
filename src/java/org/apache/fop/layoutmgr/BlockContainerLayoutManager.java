@@ -85,6 +85,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         super(node);
     }
     
+    /** @see org.apache.fop.layoutmgr.LayoutManager#initialize() */
     public void initialize() {
         abProps = getBlockContainerFO().getCommonAbsolutePosition();
         foBlockSpaceBefore = new SpaceVal(getBlockContainerFO().getCommonMarginBlock()
@@ -445,7 +446,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         contentRectOffsetX += getBlockContainerFO()
                 .getCommonMarginBlock().startIndent.getValue(this);
         double contentRectOffsetY = offset.getY();
-        contentRectOffsetY += getSpaceBefore();
+        contentRectOffsetY += getSpaceBefore(); //TODO Uhm, is that necessary?
         contentRectOffsetY += getBlockContainerFO()
                 .getCommonBorderPaddingBackground().getBorderBeforeWidth(false);
         contentRectOffsetY += getBlockContainerFO()
@@ -628,9 +629,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         return new Point(x, y);
     }
     
-    /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#addAreas(org.apache.fop.layoutmgr.PositionIterator, org.apache.fop.layoutmgr.LayoutContext)
-     */
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public void addAreas(PositionIterator parentIter,
             LayoutContext layoutContext) {
         getParentArea(null);
@@ -789,12 +788,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                 //}
             }
     
-            // if adjusted space before
-//            if (bSpaceBefore) {
-//                addBlockSpacing(0, new MinOptMax(adjustedSpaceBefore));
-//            }
-            //addBlockSpacing(0, effSpaceBefore);
-    
             while ((childLM = childPosIter.getNextChildLM()) != null) {
                 // set last area flag
                 lc.setFlags(LayoutContext.LAST_AREA,
@@ -804,17 +797,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                 childLM.addAreas(childPosIter, lc);
             }
         } else {
-            // if adjusted space before
-//            if (bSpaceBefore) {
-//                addBlockSpacing(0, new MinOptMax(adjustedSpaceBefore));
-//            }
-            //addBlockSpacing(0, effSpaceBefore);
             //Add child areas inside the reference area
             bcpos.getBreaker().addContainedAreas();
         }
-
-        //int bIndents = getBlockContainerFO().getCommonBorderPaddingBackground()
-        //    .getBPPaddingAndBorder(false);
 
         if (markers != null) {
             getCurrentPV().addMarkers(markers, false, isFirst(firstPos), isLast(lastPos));
@@ -823,12 +808,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         TraitSetter.addSpaceBeforeAfter(viewportBlockArea, layoutContext.getSpaceAdjust(), 
                 effSpaceBefore, effSpaceAfter);
         flush();
-
-        // if adjusted space after
-//        if (bSpaceAfter) {
-//            addBlockSpacing(0, new MinOptMax(adjustedSpaceAfter));
-//        }
-        //addBlockSpacing(0, effSpaceAfter);
 
         viewportBlockArea = null;
         referenceArea = null;
@@ -951,17 +930,13 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         }
     }
 
-    /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#negotiateBPDAdjustment(int, org.apache.fop.layoutmgr.KnuthElement)
-     */
+    /** @see org.apache.fop.layoutmgr.BlockLevelLayoutManager */
     public int negotiateBPDAdjustment(int adj, KnuthElement lastElement) {
         // TODO Auto-generated method stub
         return 0;
     }
 
-    /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#discardSpace(org.apache.fop.layoutmgr.KnuthGlue)
-     */
+    /** @see org.apache.fop.layoutmgr.BlockLevelLayoutManager */
     public void discardSpace(KnuthGlue spaceGlue) {
         // TODO Auto-generated method stub
         

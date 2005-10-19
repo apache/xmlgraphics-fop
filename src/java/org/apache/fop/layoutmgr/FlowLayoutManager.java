@@ -36,7 +36,6 @@ import java.util.ListIterator;
  */
 public class FlowLayoutManager extends BlockStackingLayoutManager
                                implements BlockLevelLayoutManager {
-    private Flow fobj;
     
     /** Array of areas currently being filled stored by area class */
     private BlockParent[] currentAreas = new BlockParent[Area.CLASS_MAX];
@@ -51,7 +50,6 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
      */
     public FlowLayoutManager(PageSequenceLayoutManager pslm, Flow node) {
         super(node);
-        fobj = node;
         setParent(pslm);
     }
 

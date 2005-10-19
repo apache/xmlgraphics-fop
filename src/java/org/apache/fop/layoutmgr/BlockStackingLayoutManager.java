@@ -53,8 +53,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     protected int adjustedSpaceAfter = 0;
     /** Only used to store the original list when createUnitElements is called */
     protected LinkedList storedList = null;
-    /** FO node */
-    protected FObj fobj;
     /** Indicates whether break before has been served or not */
     protected boolean bBreakBeforeServed = false;
     /** Indicates whether space before has been served or not */
@@ -84,7 +82,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     public BlockStackingLayoutManager(FObj node) {
         super(node);
         setGeneratesBlockArea(true);
-        fobj = node;
     }
 
     /** 
@@ -101,16 +98,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      */
     protected void setCurrentArea(BlockParent parentArea) {
         this.parentArea = parentArea;
-    }
-
-    protected MinOptMax resolveSpaceSpecifier(Area nextArea) {
-        SpaceSpecifier spaceSpec = new SpaceSpecifier(false);
-        // Area prevArea = getCurrentArea().getLast();
-        // if (prevArea != null) {
-        //     spaceSpec.addSpace(prevArea.getSpaceAfter());
-        // }
-        // spaceSpec.addSpace(nextArea.getSpaceBefore());
-        return spaceSpec.resolve(false);
     }
 
     /**
@@ -145,7 +132,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             //log.error("Child not a Block in BlockStackingLM!");
         }
 
-        MinOptMax spaceBefore = resolveSpaceSpecifier(childArea);
         parentArea.addBlock((Block) childArea);
         flush(); // hand off current area to parent
     }

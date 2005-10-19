@@ -66,10 +66,6 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     private double tableUnits;
     private boolean autoLayout = true;
 
-    //TODO space-before|after: handle space-resolution rules
-    private MinOptMax spaceBefore;
-    private MinOptMax spaceAfter;
-    
     private boolean discardBorderBefore;
     private boolean discardBorderAfter;
     private boolean discardPaddingBefore;
@@ -101,8 +97,8 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     
     /** @see org.apache.fop.layoutmgr.LayoutManager#initialize() */
     public void initialize() {
-        spaceBefore = new SpaceVal(fobj.getCommonMarginBlock().spaceBefore, this).getSpace();
-        spaceAfter = new SpaceVal(fobj.getCommonMarginBlock().spaceAfter, this).getSpace();
+        foSpaceBefore = new SpaceVal(fobj.getCommonMarginBlock().spaceBefore, this).getSpace();
+        foSpaceAfter = new SpaceVal(fobj.getCommonMarginBlock().spaceAfter, this).getSpace();
         
         if (!fobj.isAutoLayout() 
                 && fobj.getInlineProgressionDimension().getOptimum(this).getEnum() != EN_AUTO) {
@@ -159,16 +155,6 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         if (referenceIPD > context.getRefIPD()) {
             log.warn("Allocated IPD exceeds available reference IPD");
         }
-
-        //MinOptMax stackSize = new MinOptMax();
-        //Add spacing
-        /*
-        if (spaceAfter != null) {
-            stackSize.add(spaceAfter);
-        }
-        if (spaceBefore != null) {
-            stackSize.add(spaceBefore);
-        }*/
 
         // either works out table of column widths or if proportional-column-width function
         // is used works out total factor, so that value of single unit can be computed.
@@ -318,11 +304,6 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         getParentArea(null);
         getPSLM().addIDToPage(fobj.getId());
 
-        // if adjusted space before
-        //double adjust = layoutContext.getSpaceAdjust();
-        //addBlockSpacing(adjust, spaceBefore);
-        //spaceBefore = null;
-
         int startXOffset = fobj.getCommonMarginBlock().startIndent.getValue(this);
         
         // add column, body then row areas
@@ -361,10 +342,6 @@ public class TableLayoutManager extends BlockStackingLayoutManager
 
         flush();
 
-        // if adjusted space after
-        //addBlockSpacing(adjust, spaceAfter);
-
-        //bodyBreaks.clear();
         resetSpaces();
         curBlockArea = null;
     }
