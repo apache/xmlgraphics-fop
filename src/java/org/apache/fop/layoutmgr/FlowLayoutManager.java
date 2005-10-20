@@ -132,7 +132,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
                 }
                 if (returnedList.size() > 0) {
                     returnList.addAll(returnedList);
-                    if (ElementListUtils.endsWithForcedBreak(returnedList)) {
+                    if (ElementListUtils.endsWithForcedBreak(returnList)) {
                         // a descendant of this flow has break-after
                         SpaceResolver.resolveElementList(returnList);
                         return returnList;

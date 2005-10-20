@@ -181,7 +181,8 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         addKnuthElementsForSpaceBefore(returnList, alignment);
         
         if (getTable().isSeparateBorderModel()) {
-            addKnuthElementsForBorderPaddingBefore(returnList);
+            addKnuthElementsForBorderPaddingBefore(returnList, !firstVisibleMarkServed);
+            firstVisibleMarkServed = true;
         }
 
         //Spaces, border and padding to be repeated at each break
@@ -283,7 +284,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         }
         wrapPositionElements(contentList, returnList);
         if (getTable().isSeparateBorderModel()) {
-            addKnuthElementsForBorderPaddingAfter(returnList);
+            addKnuthElementsForBorderPaddingAfter(returnList, true);
         }
         addKnuthElementsForSpaceAfter(returnList, alignment);
         addKnuthElementsForBreakAfter(returnList, context);

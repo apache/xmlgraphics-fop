@@ -76,8 +76,8 @@ public abstract class AbstractBreaker {
             return this.startOn;
         }
 
-        public BlockSequence endBlockSequence() {
-            KnuthSequence temp = super.endSequence();
+        public BlockSequence endBlockSequence(Position breakPosition) {
+            KnuthSequence temp = super.endSequence(breakPosition);
             if (temp != null) {
                 BlockSequence returnSequence = new BlockSequence(startOn);
                 returnSequence.addAll(temp);
@@ -308,6 +308,10 @@ public abstract class AbstractBreaker {
             
             int displayAlign = getCurrentDisplayAlign();
             
+            //The following is needed by SpaceResolver.performConditionalsNotification()
+            //further down as there may be important Position elements in the element list trailer
+            int notificationEndElementIndex = endElementIndex;
+
             // ignore the last elements added by the
             // PageSequenceLayoutManager
             endElementIndex -= (endElementIndex == (originalList.size() - 1)) 
@@ -329,12 +333,13 @@ public abstract class AbstractBreaker {
             while (effectiveListIterator.hasNext()
                     && !(firstElement = (KnuthElement) effectiveListIterator.next())
                             .isBox()) {
+                /*
                 if (firstElement.isGlue() && firstElement.getLayoutManager() != null) {
                     // discard the space representd by the glue element
                     ((BlockLevelLayoutManager) firstElement
                             .getLayoutManager())
                             .discardSpace((KnuthGlue) firstElement);
-                }
+                }*/
                 startElementIndex++;
             }
 
@@ -380,7 +385,7 @@ public abstract class AbstractBreaker {
 
                 // Handle SpaceHandling(Break)Positions, see SpaceResolver!
                 SpaceResolver.performConditionalsNotification(effectiveList, 
-                        startElementIndex, endElementIndex, lastBreak);
+                        startElementIndex, notificationEndElementIndex, lastBreak);
                 
                 // Add areas now!
                 addAreas(new KnuthPossPosIter(effectiveList,
@@ -439,10 +444,12 @@ public abstract class AbstractBreaker {
             //Only implemented by the PSLM
             nextSequenceStartsOn = handleSpanChange(childLC, nextSequenceStartsOn);
             
+            Position breakPosition = null;
             if (((KnuthElement) returnedList.getLast()).isPenalty()
                     && ((KnuthPenalty) returnedList.getLast()).getP() == -KnuthElement.INFINITE) {
                 KnuthPenalty breakPenalty = (KnuthPenalty) returnedList
                         .removeLast();
+                breakPosition = breakPenalty.getPosition();
                 switch (breakPenalty.getBreakClass()) {
                 case Constants.EN_PAGE:
                     log.debug("PLM> break - PAGE");
@@ -468,7 +475,7 @@ public abstract class AbstractBreaker {
             }
             blockList.addAll(returnedList);
             BlockSequence seq = null;
-            seq = blockList.endBlockSequence();
+            seq = blockList.endBlockSequence(breakPosition);
             if (seq != null) {
                 blockLists.add(seq);
             }

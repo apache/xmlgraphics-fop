@@ -52,7 +52,6 @@
       <box w="14400"/>
       
       <box w="0"/> <!-- SpaceHandlingPosition -->
-      <box w="0"/>
       <skip>3</skip>
     </element-list>
 
