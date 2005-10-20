@@ -154,8 +154,6 @@ Two blocks, testing conditionality="discard".
       
       <box w="0"/> <!-- SpaceHandlingPosition-bearing helper box -->
       
-      <box w="0"/> <!-- This is used to make sure the preceding glue is not cut off -->
-      
       <skip>3</skip>
     </element-list>
   </checks>

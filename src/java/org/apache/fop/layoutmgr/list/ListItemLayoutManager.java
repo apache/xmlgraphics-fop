@@ -184,10 +184,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         
         LinkedList returnList = new LinkedList();
         
-        if (!bSpaceBeforeServed) {
-            addKnuthElementsForSpaceBefore(returnList, alignment);
-            bSpaceBeforeServed = true;
-        }
+        addKnuthElementsForSpaceBefore(returnList, alignment);
         
         //Spaces, border and padding to be repeated at each break
         addPendingMarks(context);

@@ -229,12 +229,10 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             }
         }
 
-        if (!bSpaceBeforeServed) {
-            addKnuthElementsForSpaceBefore(returnList, alignment);
-            bSpaceBeforeServed = true;
-        }
+        addKnuthElementsForSpaceBefore(returnList, alignment);
         
-        addKnuthElementsForBorderPaddingBefore(returnList);
+        addKnuthElementsForBorderPaddingBefore(returnList, !firstVisibleMarkServed);
+        firstVisibleMarkServed = true;
 
         if (autoHeight) {
             //Spaces, border and padding to be repeated at each break
@@ -256,6 +254,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                 if (returnedList.size() == 1
                         && ((KnuthElement)returnedList.getFirst()).isForcedBreak()) {
                     // a descendant of this block has break-before
+                    /*
                     if (returnList.size() == 0) {
                         // the first child (or its first child ...) has
                         // break-before;
@@ -263,7 +262,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                         // the
                         // following page
                         bSpaceBeforeServed = false;
-                    }
+                    }*/
                     contentList.addAll(returnedList);
 
                     // "wrap" the Position inside each element
@@ -352,7 +351,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                 }
             }
         }
-        addKnuthElementsForBorderPaddingAfter(returnList);
+        addKnuthElementsForBorderPaddingAfter(returnList, true);
         addKnuthElementsForSpaceAfter(returnList, alignment);
         addKnuthElementsForBreakAfter(returnList, context);
 

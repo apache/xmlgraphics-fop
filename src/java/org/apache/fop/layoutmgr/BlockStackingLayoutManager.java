@@ -55,8 +55,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     protected LinkedList storedList = null;
     /** Indicates whether break before has been served or not */
     protected boolean bBreakBeforeServed = false;
-    /** Indicates whether space before has been served or not */
-    protected boolean bSpaceBeforeServed = false;
+    /** Indicates whether the first visible mark has been returned by this LM, yet */
+    protected boolean firstVisibleMarkServed = false;
     /** Reference IPD available */
     protected int referenceIPD = 0;
     /**
@@ -218,12 +218,10 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             }
         }
 
-        if (!bSpaceBeforeServed) {
-            addKnuthElementsForSpaceBefore(returnList, alignment);
-            bSpaceBeforeServed = true;
-        }
+        addKnuthElementsForSpaceBefore(returnList, alignment);
         
-        addKnuthElementsForBorderPaddingBefore(returnList);
+        addKnuthElementsForBorderPaddingBefore(returnList, !firstVisibleMarkServed);
+        firstVisibleMarkServed = true;
 
         //Spaces, border and padding to be repeated at each break
         addPendingMarks(context);
@@ -257,6 +255,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                     && returnedList.size() == 1
                     && ((ListElement) returnedList.getFirst()).isForcedBreak()) {
                 // a descendant of this block has break-before
+                /*
                 if (returnList.size() == 0) {
                     // the first child (or its first child ...) has
                     // break-before;
@@ -264,7 +263,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                     // the
                     // following page
                     bSpaceBeforeServed = false;
-                }
+                }*/
                 contentList.addAll(returnedList);
 
                 /* extension: conversione di tutta la sequenza fin'ora ottenuta */
@@ -369,7 +368,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             returnList.add(new KnuthBox(0, notifyPos(new Position(this)), true));
         }
 
-        addKnuthElementsForBorderPaddingAfter(returnList);
+        addKnuthElementsForBorderPaddingAfter(returnList, true);
         addKnuthElementsForSpaceAfter(returnList, alignment);
         addKnuthElementsForBreakAfter(returnList, context);
 
@@ -858,7 +857,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * Creates Knuth elements for before border padding and adds them to the return list.
      * @param returnList return list to add the additional elements to
      */
-    protected void addKnuthElementsForBorderPaddingBefore(LinkedList returnList) {
+    protected void addKnuthElementsForBorderPaddingBefore(LinkedList returnList, boolean isFirst) {
         //Border and Padding (before)
         CommonBorderPaddingBackground borderAndPadding = getBorderPaddingBackground();
         if (borderAndPadding != null) {
@@ -866,14 +865,15 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                 returnList.add(new BorderElement(
                         getAuxiliaryPosition(), 
                         borderAndPadding.getBorderInfo(CommonBorderPaddingBackground.BEFORE)
-                            .getWidth(), RelSide.BEFORE, true, false, this));
+                                .getWidth(),
+                        RelSide.BEFORE, isFirst, false, this));
             }
             if (borderAndPadding.getPaddingBefore(false, this) > 0) {
                 returnList.add(new PaddingElement(
                         getAuxiliaryPosition(),
                         borderAndPadding.getPaddingLengthProperty(
                                 CommonBorderPaddingBackground.BEFORE), 
-                                RelSide.BEFORE, true, false, this));
+                        RelSide.BEFORE, isFirst, false, this));
             }
             //TODO Handle conditionality
             /*
@@ -889,7 +889,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * Creates Knuth elements for after border padding and adds them to the return list.
      * @param returnList return list to add the additional elements to
      */
-    protected void addKnuthElementsForBorderPaddingAfter(LinkedList returnList) {
+    protected void addKnuthElementsForBorderPaddingAfter(LinkedList returnList, boolean isLast) {
         //Border and Padding (after)
         CommonBorderPaddingBackground borderAndPadding = getBorderPaddingBackground();
         if (borderAndPadding != null) {
@@ -897,13 +897,15 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                 returnList.add(new PaddingElement(
                         getAuxiliaryPosition(),
                         borderAndPadding.getPaddingLengthProperty(
-                                CommonBorderPaddingBackground.AFTER), RelSide.AFTER, false, true, this));
+                                CommonBorderPaddingBackground.AFTER),
+                        RelSide.AFTER, false, isLast, this));
             }
             if (borderAndPadding.getBorderAfterWidth(false) > 0) {
                 returnList.add(new BorderElement(
                         getAuxiliaryPosition(), 
                         borderAndPadding.getBorderInfo(CommonBorderPaddingBackground.AFTER)
-                            .getWidth(), RelSide.AFTER, false, true, this));
+                                .getWidth(),
+                        RelSide.AFTER, false, isLast, this));
             }
             //TODO Handle conditionality
             /*
