@@ -255,8 +255,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             }
             if (returnedList != null
                     && returnedList.size() == 1
-                    && ((KnuthElement) returnedList.getFirst()).isPenalty()
-                    && ((KnuthPenalty) returnedList.getFirst()).getP() == -KnuthElement.INFINITE) {
+                    && ((ListElement) returnedList.getFirst()).isForcedBreak()) {
                 // a descendant of this block has break-before
                 if (returnList.size() == 0) {
                     // the first child (or its first child ...) has
