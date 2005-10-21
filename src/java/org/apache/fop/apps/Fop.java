@@ -156,6 +156,6 @@ public class Fop implements Constants {
      * @return the version string
      */
     public static String getVersion() {
-        return "1.0dev";
+        return org.apache.fop.Version.getVersion();
     }
 }
