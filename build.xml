@@ -139,7 +139,7 @@ list of possible build targets.
     <exclude name="org/apache/fop/pdf/PDFEncryptionJCE.java" unless="jce.present"/>
   </patternset>
 
-  <property name="Name" value="Fop"/>
+  <property name="Name" value="Apache FOP"/>
   <property name="name" value="fop"/>
   <property name="NAME" value="FOP"/>
   <property name="version" value="0.90svn"/>
@@ -437,10 +437,17 @@ list of possible build targets.
       <manifest>
         <attribute name="Main-Class" value="org.apache.fop.cli.Main"/>
         <!--attribute name="Class-Path" value="${manifest-classpath}"/-->
-        <attribute name="Implementation-Title" value="${Name}"/>
-        <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The Apache Software Foundation (http://xmlgraphics.apache.org/fop/)"/>
         <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
+        <section name="org/apache/fop/">
+          <attribute name="Specification-Title" value="XSL-FO - Extensible Stylesheet Language"/>
+          <attribute name="Specification-Version" value="1.0"/>
+          <attribute name="Specification-Vendor" value="World Wide Web Consortium"/>
+          <attribute name="Specification-URL" value="http://www.w3.org/TR/xsl"/>
+          <attribute name="Implementation-Title" value="${Name}"/>
+          <attribute name="Implementation-Version" value="${version}"/>
+          <attribute name="Implementation-Vendor" value="The Apache Software Foundation (http://xmlgraphics.apache.org/fop/)"/>
+          <attribute name="Implementation-URL" value="http://xmlgraphics.apache.org/fop/"/>
+        </section>
       </manifest>
     </jar>
   </target>
