@@ -355,14 +355,16 @@ public class FOUserAgent {
         log.info("Initializing User Agent Configuration");
         if (userConfig.getChild("base", false) != null) {
             try {
-                String cfgBaseDir = userConfig.getChild("base")
-                                    .getAttribute("url");
-                File dir = new File(cfgBaseDir);
-                if (dir.isDirectory()) {
-                    cfgBaseDir = "file://" + dir.getCanonicalPath() 
-                        + System.getProperty("file.separator");
+                String cfgBaseDir = userConfig.getChild("base").getValue(null);
+                if (cfgBaseDir != null) {
+                    File dir = new File(cfgBaseDir);
+                    if (dir.isDirectory()) {
+                        cfgBaseDir = "file://" + dir.getCanonicalPath() 
+                            + System.getProperty("file.separator");
+                        cfgBaseDir = cfgBaseDir.replace(
+                                System.getProperty("file.separator").charAt(0), '/');
+                    }
                 }
-                URL cfgBaseURL = new URL(cfgBaseDir);
                 setBaseURL(cfgBaseDir);
             } catch (MalformedURLException mue) {
                 log.error("Base URL in user config is malformed!");
@@ -374,17 +376,18 @@ public class FOUserAgent {
         if (userConfig.getChild("pixelToMillimeter", false) != null) {
             this.px2mm = userConfig.getChild("pixelToMillimeter")
                             .getAttributeAsFloat("value", DEFAULT_PX2MM);
-            log.info("pixelToMillimeter set to: " + px2mm);
+            log.info("pixelToMillimeter set to: " + px2mm + " (" + (25.4f / px2mm) + "dpi)");
+        } else if (userConfig.getChild("resolution", false) != null) {
+            this.px2mm = 25.4f / userConfig.getChild("resolution").getValueAsFloat(DEFAULT_PX2MM);
+            log.info("pixelToMillimeter set to: " + px2mm + " (" + (25.4f / px2mm) + "dpi)");
         }
-        Configuration pageConfig = userConfig.getChild("pagesettings");
-        if (pageConfig.getChild("pageHeight", false) != null) {
-            setPageHeight(pageConfig.getChild("pageHeight")
-                            .getAttribute("value"));
+        Configuration pageConfig = userConfig.getChild("default-page-settings");
+        if (pageConfig.getAttribute("height", null) != null) {
+            setPageHeight(pageConfig.getAttribute("height"));
             log.info("Default page-height set to: " + pageHeight);
         }
-        if (pageConfig.getChild("pageWidth", false) != null) {
-            setPageWidth(pageConfig.getChild("pageWidth")
-                            .getAttribute("value"));
+        if (pageConfig.getAttribute("width", null) != null) {
+            setPageWidth(pageConfig.getAttribute("width"));
             log.info("Default page-width set to: " + pageWidth);
         }
     }
