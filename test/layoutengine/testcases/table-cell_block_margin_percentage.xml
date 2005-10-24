@@ -57,12 +57,14 @@
     <true xpath="//flow/block[1]/block[1]/@is-reference-area"/>
     <eval expected="144000" xpath="//flow/block[1]/block[1]/@ipd"/>
     <eval expected="43200" xpath="//flow/block[1]/block[1]/@bpd"/>
-    <eval expected="115200" xpath="//flow/block[1]/block[1]/block[2]/@ipd"/>
-    <eval expected="14400" xpath="//flow/block[1]/block[1]/block[2]/@bpd"/>
-    <eval expected="14400" xpath="//flow/block[1]/block[1]/block[2]/@start-indent"/>
-    <eval expected="14400" xpath="//flow/block[1]/block[1]/block[2]/@space-start"/>
-    <eval expected="14400" xpath="//flow/block[1]/block[1]/block[2]/@end-indent"/>
-    <eval expected="14400" xpath="//flow/block[1]/block[1]/block[2]/@space-end"/>
+    <eval expected="115200" xpath="//flow/block[1]/block[1]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[1]/block[1]/@bpd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[1]/block[1]/@space-before"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[1]/block[1]/@space-after"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[1]/block[1]/@start-indent"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[1]/block[1]/@space-start"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[1]/block[1]/@end-indent"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[1]/block[1]/@space-end"/>
 
     <!-- cell 2 -->
     <true xpath="//flow/block[1]/block[2]/@is-reference-area"/>

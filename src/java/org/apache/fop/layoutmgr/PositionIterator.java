@@ -60,7 +60,7 @@ public abstract class PositionIterator implements Iterator {
         LayoutManager lm = getLM(nextObj);
         if (childLM == null) {
             childLM = lm;
-        } else if (childLM != lm) {
+        } else if (childLM != lm && lm != null) {
             // End of this sub-sequence with same child LM
             bHasNext = false;
             childLM = null;

@@ -25,6 +25,7 @@ import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.hyphenation.Hyphenation;
 import org.apache.fop.hyphenation.Hyphenator;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
+import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.BreakingAlgorithm;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.layoutmgr.KnuthBlockBox;
@@ -642,7 +643,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         }
 
         //PHASE 2: Create line breaks
-        return createLineBreaks(context.getBPAlignment());
+        return createLineBreaks(context.getBPAlignment(), context);
         /*
         LineBreakPosition lbp = null;
         if (breakpoints == null) {
@@ -979,9 +980,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     /**
      * Phase 2 of Knuth algorithm: find optimal break points.
      * @param alignment alignment in BP direction of the paragraph
+     * @param context the layout context
      * @return a list of Knuth elements representing broken lines
      */
-    private LinkedList createLineBreaks(int alignment) {
+    private LinkedList createLineBreaks(int alignment, LayoutContext context) {
 
         // find the optimal line breaking points for each paragraph
         ListIterator paragraphsIterator
@@ -1000,7 +1002,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         setFinished(true);
     
         //Post-process the line breaks found
-        return postProcessLineBreaks(alignment);
+        return postProcessLineBreaks(alignment, context);
     }
 
     /**
@@ -1143,17 +1145,19 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     /**
      * Creates the element list in BP direction for the broken lines.
      * @param alignment the currently applicable vertical alignment
+     * @param context the layout context
      * @return the newly built element list
      */
-    private LinkedList postProcessLineBreaks(int alignment) {
+    private LinkedList postProcessLineBreaks(int alignment, LayoutContext context) {
     
         LinkedList returnList = new LinkedList();
         
         for (int p = 0; p < knuthParagraphs.size(); p++) {
             // null penalty between paragraphs
-            if (p > 0
-                && !((BlockLevelLayoutManager) parentLM).mustKeepTogether()) {
-                returnList.add(new KnuthPenalty(0, 0, false, new Position(this), false));
+            if (p > 0 && !((BlockLevelLayoutManager) parentLM).mustKeepTogether()) {
+                returnList.add(new BreakElement(
+                        new Position(this), 0, context));
+                //returnList.add(new KnuthPenalty(0, 0, false, new Position(this), false));
             }
         
             lineLayouts = (LineLayoutPossibilities)lineLayoutsList.get(p);
@@ -1187,11 +1191,13 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                         i < lineLayouts.getChosenLineCount();
                         i++) {
                     if (!((BlockLevelLayoutManager) parentLM).mustKeepTogether()
-                        && i >= fobj.getOrphans()
-                        && i <= lineLayouts.getChosenLineCount() - fobj.getWidows()
-                        && returnList.size() > 0) {
+                            && i >= fobj.getOrphans()
+                            && i <= lineLayouts.getChosenLineCount() - fobj.getWidows()
+                            && returnList.size() > 0) {
                         // null penalty allowing a page break between lines
-                        returnList.add(new KnuthPenalty(0, 0, false, returnPosition, false));
+                        returnList.add(new BreakElement(
+                                returnPosition, 0, context));
+                        //returnList.add(new KnuthPenalty(0, 0, false, returnPosition, false));
                     }
                     int endIndex = ((LineBreakPosition) lineLayouts.getChosenPosition(i)).getLeafPos();
                     // create a list of the FootnoteBodyLM handling footnotes 

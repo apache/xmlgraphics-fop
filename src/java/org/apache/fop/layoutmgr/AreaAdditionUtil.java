@@ -21,6 +21,11 @@ package org.apache.fop.layoutmgr;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import org.apache.fop.layoutmgr.SpaceResolver.SpaceHandlingBreakPosition;
+
+/**
+ * Utility class which provides common code for the addAreas stage.
+ */
 public class AreaAdditionUtil {
 
     private static class StackingIter extends PositionIterator {
@@ -37,6 +42,12 @@ public class AreaAdditionUtil {
         }
     }
 
+    /**
+     * Creates the child areas for the given layout manager.
+     * @param bslm the BlockStackingLayoutManager instance for which "addAreas" is performed.
+     * @param parentIter the position iterator
+     * @param layoutContext the layout context
+     */
     public static void addAreas(BlockStackingLayoutManager bslm, 
             PositionIterator parentIter, LayoutContext layoutContext) {
         LayoutManager childLM = null;
@@ -52,6 +63,9 @@ public class AreaAdditionUtil {
         Position pos;
         while (parentIter.hasNext()) {
             pos = (Position)parentIter.next();
+            if (pos == null) {
+                continue;
+            }
             if (pos.getIndex() >= 0) {
                 if (firstPos == null) {
                     firstPos = pos;
@@ -65,12 +79,14 @@ public class AreaAdditionUtil {
                 if (firstLM == null) {
                     firstLM = lastLM;
                 }
+            } else if (pos instanceof SpaceHandlingBreakPosition) {
+                positionList.add(pos);
             } else {
                 // pos was created by this LM, so it must be ignored
             }
         }
         
-        if (bslm.markers != null) {
+        if (bslm != null && bslm.markers != null) {
             bslm.getCurrentPV().addMarkers(bslm.markers, true, 
                     bslm.isFirst(firstPos), bslm.isLast(lastPos));
         }
@@ -91,7 +107,7 @@ public class AreaAdditionUtil {
             lc.setStackLimit(layoutContext.getStackLimit());
             childLM.addAreas(childPosIter, lc);
         }
-        if (bslm.markers != null) {
+        if (bslm != null && bslm.markers != null) {
             bslm.getCurrentPV().addMarkers(bslm.markers, false, 
                     bslm.isFirst(firstPos), bslm.isLast(lastPos));
         }

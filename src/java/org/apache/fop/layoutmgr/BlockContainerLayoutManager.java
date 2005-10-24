@@ -39,7 +39,8 @@ import org.apache.fop.traits.SpaceVal;
 /**
  * LayoutManager for a block-container FO.
  */
-public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
+public class BlockContainerLayoutManager extends BlockStackingLayoutManager 
+                implements ConditionalElementListener {
     
     private BlockViewport viewportBlockArea;
     private Block referenceArea;
@@ -68,6 +69,14 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
     private MinOptMax foBlockSpaceBefore;
     private MinOptMax foBlockSpaceAfter;
     
+    private boolean discardBorderBefore;
+    private boolean discardBorderAfter;
+    private boolean discardPaddingBefore;
+    private boolean discardPaddingAfter;
+    private MinOptMax effSpaceBefore;
+    private MinOptMax effSpaceAfter;
+
+    
     /**
      * Create a new block container layout manager.
      * @param node block-container node to create the layout manager for.
@@ -76,6 +85,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         super(node);
     }
     
+    /** @see org.apache.fop.layoutmgr.LayoutManager#initialize() */
     public void initialize() {
         abProps = getBlockContainerFO().getCommonAbsolutePosition();
         foBlockSpaceBefore = new SpaceVal(getBlockContainerFO().getCommonMarginBlock()
@@ -110,6 +120,15 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             adjustedSpaceAfter = getBlockContainerFO().getCommonMarginBlock()
                 .spaceAfter.getSpace().getMinimum(this).getLength().getValue(this);
         }
+    }
+    
+    private void resetSpaces() {
+        this.discardBorderBefore = false;        
+        this.discardBorderAfter = false;        
+        this.discardPaddingBefore = false;        
+        this.discardPaddingAfter = false;
+        this.effSpaceBefore = foSpaceBefore;
+        this.effSpaceAfter = foSpaceAfter;
     }
 
     /** @return the content IPD */
@@ -151,6 +170,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
     
     /** @see org.apache.fop.layoutmgr.LayoutManager */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+        resetSpaces();
         if (isAbsoluteOrFixed()) {
             return getNextKnuthElementsAbsolute(context, alignment);
         }
@@ -201,7 +221,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         
         if (!bBreakBeforeServed) {
             try {
-                if (addKnuthElementsForBreakBefore(returnList)) {
+                if (addKnuthElementsForBreakBefore(returnList, context)) {
                     return returnList;
                 }
             } finally {
@@ -209,18 +229,20 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             }
         }
 
-        if (!bSpaceBeforeServed) {
-            addKnuthElementsForSpaceBefore(returnList, alignment);
-            bSpaceBeforeServed = true;
-        }
+        addKnuthElementsForSpaceBefore(returnList, alignment);
         
-        addKnuthElementsForBorderPaddingBefore(returnList);
+        addKnuthElementsForBorderPaddingBefore(returnList, !firstVisibleMarkServed);
+        firstVisibleMarkServed = true;
 
         if (autoHeight) {
+            //Spaces, border and padding to be repeated at each break
+            addPendingMarks(context);
+
             BlockLevelLayoutManager curLM; // currently active LM
             BlockLevelLayoutManager prevLM = null; // previously active LM
             while ((curLM = (BlockLevelLayoutManager) getChildLM()) != null) {
                 LayoutContext childLC = new LayoutContext(0);
+                childLC.copyPendingMarksFrom(context);
                 // curLM is a ?
                 childLC.setStackLimit(MinOptMax.subtract(context
                         .getStackLimit(), stackLimit));
@@ -230,10 +252,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                 // get elements from curLM
                 returnedList = curLM.getNextKnuthElements(childLC, alignment);
                 if (returnedList.size() == 1
-                        && ((KnuthElement)returnedList.getFirst()).isPenalty()
-                        && ((KnuthPenalty)returnedList.getFirst()).getP() 
-                                == -KnuthElement.INFINITE) {
+                        && ((KnuthElement)returnedList.getFirst()).isForcedBreak()) {
                     // a descendant of this block has break-before
+                    /*
                     if (returnList.size() == 0) {
                         // the first child (or its first child ...) has
                         // break-before;
@@ -241,7 +262,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                         // the
                         // following page
                         bSpaceBeforeServed = false;
-                    }
+                    }*/
                     contentList.addAll(returnedList);
 
                     // "wrap" the Position inside each element
@@ -259,13 +280,17 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                                 || curLM.mustKeepWithPrevious()) {
                             // add an infinite penalty to forbid a break between
                             // blocks
-                            contentList.add(new KnuthPenalty(0,
-                                    KnuthElement.INFINITE, false,
-                                    new Position(this), false));
+                            contentList.add(new BreakElement(
+                                    new Position(this), KnuthElement.INFINITE, context));
+                            //contentList.add(new KnuthPenalty(0,
+                            //        KnuthElement.INFINITE, false,
+                            //        new Position(this), false));
                         } else if (!((KnuthElement) contentList.getLast()).isGlue()) {
                             // add a null penalty to allow a break between blocks
-                            contentList.add(new KnuthPenalty(0, 0, false,
-                                    new Position(this), false));
+                            contentList.add(new BreakElement(
+                                    new Position(this), 0, context));
+                            //contentList.add(new KnuthPenalty(0, 0, false,
+                            //        new Position(this), false));
                         } else {
                             // the last element in contentList is a glue;
                             // it is a feasible breakpoint, there is no need to add
@@ -277,9 +302,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                         //Avoid NoSuchElementException below (happens with empty blocks)
                         continue;
                     }
-                    if (((KnuthElement) returnedList.getLast()).isPenalty()
-                            && ((KnuthPenalty) returnedList.getLast()).getP() 
-                                    == -KnuthElement.INFINITE) {
+                    if (((ListElement)returnedList.getLast()).isForcedBreak()) {
                         // a descendant of this block has break-after
                         if (curLM.isFinished()) {
                             // there is no other content in this block;
@@ -328,9 +351,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                 }
             }
         }
-        addKnuthElementsForBorderPaddingAfter(returnList);
+        addKnuthElementsForBorderPaddingAfter(returnList, true);
         addKnuthElementsForSpaceAfter(returnList, alignment);
-        addKnuthElementsForBreakAfter(returnList);
+        addKnuthElementsForBreakAfter(returnList, context);
 
         setFinished(true);
         return returnList;
@@ -422,7 +445,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         contentRectOffsetX += getBlockContainerFO()
                 .getCommonMarginBlock().startIndent.getValue(this);
         double contentRectOffsetY = offset.getY();
-        contentRectOffsetY += getSpaceBefore();
+        contentRectOffsetY += getSpaceBefore(); //TODO Uhm, is that necessary?
         contentRectOffsetY += getBlockContainerFO()
                 .getCommonBorderPaddingBackground().getBorderBeforeWidth(false);
         contentRectOffsetY += getBlockContainerFO()
@@ -544,9 +567,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                 }
                 if (returnedList != null) {
                     bclm.wrapPositionElements(returnedList, returnList);
-                    //returnList.addAll(returnedList);
                 }
             }
+            SpaceResolver.resolveElementList(returnList);
             setFinished(true);
             return returnList;
         }
@@ -605,9 +628,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         return new Point(x, y);
     }
     
-    /**
-     * @see org.apache.fop.layoutmgr.LayoutManager#addAreas(org.apache.fop.layoutmgr.PositionIterator, org.apache.fop.layoutmgr.LayoutContext)
-     */
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public void addAreas(PositionIterator parentIter,
             LayoutContext layoutContext) {
         getParentArea(null);
@@ -766,11 +787,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                 //}
             }
     
-            // if adjusted space before
-            if (bSpaceBefore) {
-                addBlockSpacing(0, new MinOptMax(adjustedSpaceBefore));
-            }
-    
             while ((childLM = childPosIter.getNextChildLM()) != null) {
                 // set last area flag
                 lc.setFlags(LayoutContext.LAST_AREA,
@@ -780,30 +796,21 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                 childLM.addAreas(childPosIter, lc);
             }
         } else {
-            // if adjusted space before
-            if (bSpaceBefore) {
-                addBlockSpacing(0, new MinOptMax(adjustedSpaceBefore));
-            }
             //Add child areas inside the reference area
             bcpos.getBreaker().addContainedAreas();
         }
-
-        //int bIndents = getBlockContainerFO().getCommonBorderPaddingBackground()
-        //    .getBPPaddingAndBorder(false);
 
         if (markers != null) {
             getCurrentPV().addMarkers(markers, false, isFirst(firstPos), isLast(lastPos));
         }
 
+        TraitSetter.addSpaceBeforeAfter(viewportBlockArea, layoutContext.getSpaceAdjust(), 
+                effSpaceBefore, effSpaceAfter);
         flush();
-
-        // if adjusted space after
-        if (bSpaceAfter) {
-            addBlockSpacing(0, new MinOptMax(adjustedSpaceAfter));
-        }
 
         viewportBlockArea = null;
         referenceArea = null;
+        resetSpaces();
     }
     
     /**
@@ -826,7 +833,11 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
 
             TraitSetter.setProducerID(viewportBlockArea, getBlockContainerFO().getId());
             TraitSetter.addBorders(viewportBlockArea, 
-                    getBlockContainerFO().getCommonBorderPaddingBackground(), this);
+                    getBlockContainerFO().getCommonBorderPaddingBackground(), 
+                    discardBorderBefore, discardBorderAfter, false, false, this);
+            TraitSetter.addPadding(viewportBlockArea, 
+                    getBlockContainerFO().getCommonBorderPaddingBackground(), 
+                    discardPaddingBefore, discardPaddingAfter, false, false, this);
             // TraitSetter.addBackground(viewportBlockArea, 
             //        getBlockContainerFO().getCommonBorderPaddingBackground(),
             //        this);
@@ -918,17 +929,13 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         }
     }
 
-    /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#negotiateBPDAdjustment(int, org.apache.fop.layoutmgr.KnuthElement)
-     */
+    /** @see org.apache.fop.layoutmgr.BlockLevelLayoutManager */
     public int negotiateBPDAdjustment(int adj, KnuthElement lastElement) {
         // TODO Auto-generated method stub
         return 0;
     }
 
-    /**
-     * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#discardSpace(org.apache.fop.layoutmgr.KnuthGlue)
-     */
+    /** @see org.apache.fop.layoutmgr.BlockLevelLayoutManager */
     public void discardSpace(KnuthGlue spaceGlue) {
         // TODO Auto-generated method stub
         
@@ -982,6 +989,51 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
     public boolean getGeneratesBlockArea() {
         return true;
     }
-   
+
+    /** @see org.apache.fop.layoutmgr.ConditionalElementListener */
+    public void notifySpace(RelSide side, MinOptMax effectiveLength) {
+        if (RelSide.BEFORE == side) {
+            if (log.isDebugEnabled()) {
+                log.debug(this + ": Space " + side + ", " 
+                        + this.effSpaceBefore + "-> " + effectiveLength);
+            }
+            this.effSpaceBefore = effectiveLength;
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug(this + ": Space " + side + ", " 
+                        + this.effSpaceAfter + "-> " + effectiveLength);
+            }
+            this.effSpaceAfter = effectiveLength;
+        }
+    }
+
+    /** @see org.apache.fop.layoutmgr.ConditionalElementListener */
+    public void notifyBorder(RelSide side, MinOptMax effectiveLength) {
+        if (effectiveLength == null) {
+            if (RelSide.BEFORE == side) {
+                this.discardBorderBefore = true;
+            } else {
+                this.discardBorderAfter = true;
+            }
+        }
+        if (log.isDebugEnabled()) {
+            log.debug(this + ": Border " + side + " -> " + effectiveLength);
+        }
+    }
+
+    /** @see org.apache.fop.layoutmgr.ConditionalElementListener */
+    public void notifyPadding(RelSide side, MinOptMax effectiveLength) {
+        if (effectiveLength == null) {
+            if (RelSide.BEFORE == side) {
+                this.discardPaddingBefore = true;
+            } else {
+                this.discardPaddingAfter = true;
+            }
+        }
+        if (log.isDebugEnabled()) {
+            log.debug(this + ": Padding " + side + " -> " + effectiveLength);
+        }
+    }
+
 }
 

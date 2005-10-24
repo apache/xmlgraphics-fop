@@ -530,8 +530,9 @@ public abstract class AbstractRenderer
             int saveBP = currentBPPosition;
 
             if (block.getPositioning() == Block.ABSOLUTE) {
-                currentIPPosition = containingIPPosition + block.getXOffset();
-                currentBPPosition = containingBPPosition + block.getYOffset();
+                currentIPPosition += block.getXOffset();
+                currentBPPosition += block.getYOffset();
+                currentBPPosition += block.getSpaceBefore();
 
                 handleBlockTraits(block);
 
@@ -545,6 +546,7 @@ public abstract class AbstractRenderer
                 // relative blocks are offset
                 currentIPPosition += block.getXOffset();
                 currentBPPosition += block.getYOffset();
+                currentBPPosition += block.getSpaceBefore();
 
                 handleBlockTraits(block);
 

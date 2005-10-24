@@ -21,6 +21,7 @@ package org.apache.fop.layoutmgr;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.traits.BorderProps;
+import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Trait;
 import org.apache.fop.datatypes.LengthBase;
@@ -105,12 +106,13 @@ public class TraitSetter {
     }
 
     /**
-     * Add borders to an area.
+     * Add borders to an area. Note: this method also adds unconditional padding. Don't use!
      * Layout managers that create areas with borders can use this to
      * add the borders to the area.
      * @param area the area to set the traits on.
      * @param bordProps border properties
      * @param context Property evaluation context
+     * @deprecated Call the other addBorders() method and addPadding separately.
      */
     public static void addBorders(Area area, CommonBorderPaddingBackground bordProps,
                                 PercentBaseContext context) {
@@ -132,6 +134,40 @@ public class TraitSetter {
         }
 
         addPadding(area, bordProps, context);
+    }
+
+    /**
+     * Add borders to an area.
+     * Layout managers that create areas with borders can use this to
+     * add the borders to the area.
+     * @param area the area to set the traits on.
+     * @param bordProps border properties
+     * @param discardBefore true if the before border should be discarded
+     * @param discardAfter true if the after border should be discarded
+     * @param discardStart true if the start border should be discarded
+     * @param discardEnd true if the end border should be discarded
+     * @param context Property evaluation context
+     */
+    public static void addBorders(Area area, CommonBorderPaddingBackground bordProps,
+                boolean discardBefore, boolean discardAfter,
+                boolean discardStart, boolean discardEnd,
+                PercentBaseContext context) {
+        BorderProps bps = getBorderProps(bordProps, CommonBorderPaddingBackground.BEFORE);
+        if (bps != null && !discardBefore) {
+            area.addTrait(Trait.BORDER_BEFORE, bps);
+        }
+        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.AFTER);
+        if (bps != null && !discardAfter) {
+            area.addTrait(Trait.BORDER_AFTER, bps);
+        }
+        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.START);
+        if (bps != null && !discardStart) {
+            area.addTrait(Trait.BORDER_START, bps);
+        }
+        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.END);
+        if (bps != null && !discardEnd) {
+            area.addTrait(Trait.BORDER_END, bps);
+        }
     }
 
     /**
@@ -174,25 +210,49 @@ public class TraitSetter {
 
     private static void addPadding(Area area, CommonBorderPaddingBackground bordProps, 
                                 PercentBaseContext context) {
-        int padding = bordProps.getPadding(CommonBorderPaddingBackground.START, false, context);
-        if (padding != 0) {
-            area.addTrait(Trait.PADDING_START, new java.lang.Integer(padding));
-        }
+        addPadding(area, bordProps, false, false, false, false, context);
+    }
 
-        padding = bordProps.getPadding(CommonBorderPaddingBackground.END, false, context);
-        if (padding != 0) {
-            area.addTrait(Trait.PADDING_END, new java.lang.Integer(padding));
-        }
-
-        padding = bordProps.getPadding(CommonBorderPaddingBackground.BEFORE, false, context);
+    /**
+     * Add padding to an area.
+     * Layout managers that create areas with padding can use this to
+     * add the borders to the area.
+     * @param area the area to set the traits on.
+     * @param bordProps border and padding properties
+     * @param discardBefore true if the before padding should be discarded
+     * @param discardAfter true if the after padding should be discarded
+     * @param discardStart true if the start padding should be discarded
+     * @param discardEnd true if the end padding should be discarded
+     * @param context Property evaluation context
+     */
+    public static void addPadding(Area area, CommonBorderPaddingBackground bordProps,
+                boolean discardBefore, boolean discardAfter,
+                boolean discardStart, boolean discardEnd,
+                PercentBaseContext context) {
+        int padding = bordProps.getPadding(CommonBorderPaddingBackground.BEFORE, 
+                discardBefore, context);
         if (padding != 0) {
             area.addTrait(Trait.PADDING_BEFORE, new java.lang.Integer(padding));
         }
 
-        padding = bordProps.getPadding(CommonBorderPaddingBackground.AFTER, false, context);
+        padding = bordProps.getPadding(CommonBorderPaddingBackground.AFTER, 
+                discardAfter, context);
         if (padding != 0) {
             area.addTrait(Trait.PADDING_AFTER, new java.lang.Integer(padding));
         }
+
+        padding = bordProps.getPadding(CommonBorderPaddingBackground.START, 
+                discardStart, context);
+        if (padding != 0) {
+            area.addTrait(Trait.PADDING_START, new java.lang.Integer(padding));
+        }
+
+        padding = bordProps.getPadding(CommonBorderPaddingBackground.END, 
+                discardEnd, context);
+        if (padding != 0) {
+            area.addTrait(Trait.PADDING_END, new java.lang.Integer(padding));
+        }
+
     }
     
     private static BorderProps getBorderProps(CommonBorderPaddingBackground bordProps, int side) {
@@ -254,9 +314,9 @@ public class TraitSetter {
                         width += backProps.getPaddingEnd(false, context);
                         back.setHoriz(backProps.backgroundPositionHorizontal.getValue(
                                 new SimplePercentBaseContext(context, 
-                                                             LengthBase.IMAGE_BACKGROUND_POSITION_HORIZONTAL,
-                                                             (width - back.getFopImage().getIntrinsicWidth())
-                                                            )
+                                    LengthBase.IMAGE_BACKGROUND_POSITION_HORIZONTAL,
+                                    (width - back.getFopImage().getIntrinsicWidth())
+                                )
                             ));
                     } else {
                         //TODO Area IPD has to be set for this to work
@@ -275,9 +335,9 @@ public class TraitSetter {
                         height += backProps.getPaddingAfter(false, context);
                         back.setVertical(backProps.backgroundPositionVertical.getValue(
                                 new SimplePercentBaseContext(context, 
-                                                             LengthBase.IMAGE_BACKGROUND_POSITION_VERTICAL,
-                                                             (height - back.getFopImage().getIntrinsicHeight())
-                                                            )
+                                     LengthBase.IMAGE_BACKGROUND_POSITION_VERTICAL,
+                                     (height - back.getFopImage().getIntrinsicHeight())
+                                )
                             ));
                     } else {
                         //TODO Area BPD has to be set for this to work
@@ -329,6 +389,32 @@ public class TraitSetter {
         }
     }
 
+    public static int getEffectiveSpace(double adjust, MinOptMax space) {
+        if (space == null) {
+            return 0;
+        }
+        int sp = space.opt;
+        if (adjust > 0) {
+            sp = sp + (int)(adjust * (space.max - space.opt));
+        } else {
+            sp = sp + (int)(adjust * (space.opt - space.min));
+        }
+        return sp;
+    }
+    
+    public static void addSpaceBeforeAfter(Area area, double adjust, 
+            MinOptMax spaceBefore, MinOptMax spaceAfter) {
+        int space;
+        space = getEffectiveSpace(adjust, spaceBefore);
+        if (space != 0) {
+            area.addTrait(Trait.SPACE_BEFORE, new Integer(space));
+        }
+        space = getEffectiveSpace(adjust, spaceAfter);
+        if (space != 0) {
+            area.addTrait(Trait.SPACE_AFTER, new Integer(space));
+        }
+    }
+    
     /**
      * Sets the traits for breaks on an area.
      * @param area the area to set the traits on.
