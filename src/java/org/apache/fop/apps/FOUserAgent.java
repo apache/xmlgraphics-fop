@@ -363,6 +363,9 @@ public class FOUserAgent {
                             + System.getProperty("file.separator");
                         cfgBaseDir = cfgBaseDir.replace(
                                 System.getProperty("file.separator").charAt(0), '/');
+                    } else {
+                        //The next statement is for validation only
+                        new URL(cfgBaseDir);
                     }
                 }
                 setBaseURL(cfgBaseDir);
