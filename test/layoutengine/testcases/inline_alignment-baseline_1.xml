@@ -69,18 +69,6 @@
           <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="14pt">
             Before <fo:inline font-size="10pt" alignment-baseline="mathematical" background-color="yellow">alignment-baseline="mathematical"</fo:inline> After
           </fo:block>
-          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="14pt">
-            Before <fo:inline font-size="10pt" alignment-baseline="top" background-color="yellow">alignment-baseline="top"</fo:inline> After
-          </fo:block>
-          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="14pt">
-            Before <fo:inline font-size="10pt" alignment-baseline="bottom" background-color="yellow">alignment-baseline="bottom"</fo:inline> After
-          </fo:block>
-          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="14pt">
-            Before <fo:inline font-size="10pt" alignment-baseline="text-top" background-color="yellow">alignment-baseline="text-top"</fo:inline> After
-          </fo:block>
-          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="14pt">
-            Before <fo:inline font-size="10pt" alignment-baseline="text-bottom" background-color="yellow">alignment-baseline="text-bottom"</fo:inline> After
-          </fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
@@ -99,9 +87,5 @@
     <eval expected="2872" xpath="//flow/block[11]/lineArea[1]/inlineparent/@offset"/>
     <eval expected="574" xpath="//flow/block[12]/lineArea[1]/inlineparent/@offset"/>
     <eval expected="1436" xpath="//flow/block[13]/lineArea[1]/inlineparent/@offset"/>
-    <eval expected="0" xpath="//flow/block[14]/lineArea[1]/inlineparent/@offset"/>
-    <eval expected="3700" xpath="//flow/block[15]/lineArea[1]/inlineparent/@offset"/>
-    <eval expected="0" xpath="//flow/block[16]/lineArea[1]/inlineparent/@offset"/>
-    <eval expected="3700" xpath="//flow/block[17]/lineArea[1]/inlineparent/@offset"/>
   </checks>
 </testcase>
