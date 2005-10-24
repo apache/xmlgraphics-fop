@@ -14,15 +14,13 @@ the location of this file.
 <!-- NOTE: This is the version of the configuration -->
 <fop version="1.0">
 
-  <base url="./"/>
-  <!-- pixel to millimeter to specify dpi, 72dpi -->
-  <pixelToMillimeter value="0.35277777777777777778"/>
-  <pagesettings>
-  <!-- default page-height and page-width, in case
+  <!-- Base URL for resolving relative URLs -->
+  <base>.</base>
+  <!-- Internal resolution in dpi (dots/pixels per inch), default: 72dpi -->
+  <resolution>72</resolution>
+  <!-- Default page-height and page-width, in case
        value is specified as auto -->
-    <pageHeight value="11in"/>
-    <pageWidth value="8.26in"/>
-  </pagesettings>
+  <default-page-settings height="11in" width="8.26in"/>
   
   <!-- Information for specific renderers -->
   <!-- Uses renderer mime type for renderers -->
