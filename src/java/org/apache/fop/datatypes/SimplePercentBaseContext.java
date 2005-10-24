@@ -31,7 +31,8 @@ public class SimplePercentBaseContext implements PercentBaseContext {
 
     /**
      * @param parentContext the context to be used for all percentages other than lengthBase
-     * @param lengthBase the particular percentage length base for which this context provides a value
+     * @param lengthBase the particular percentage length base for which this context provides 
+     *                   a value
      * @param lengthBaseValue the value to be returned for requests to the given lengthBase
      */
     public SimplePercentBaseContext(PercentBaseContext parentContext,

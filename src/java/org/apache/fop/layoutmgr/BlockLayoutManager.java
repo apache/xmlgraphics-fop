@@ -35,7 +35,8 @@ import org.apache.fop.traits.SpaceVal;
 /**
  * LayoutManager for a block FO.
  */
-public class BlockLayoutManager extends BlockStackingLayoutManager {
+public class BlockLayoutManager extends BlockStackingLayoutManager 
+            implements ConditionalElementListener {
     
     private Block curBlockArea;
 
@@ -46,6 +47,13 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     private Length lineHeight;
     private int follow = 2000;
     private int middleShift = 0;
+    
+    private boolean discardBorderBefore;
+    private boolean discardBorderAfter;
+    private boolean discardPaddingBefore;
+    private boolean discardPaddingAfter;
+    private MinOptMax effSpaceBefore;
+    private MinOptMax effSpaceAfter;
 
     /** The list of child BreakPoss instances. */
     protected List childBreaks = new java.util.ArrayList();
@@ -87,6 +95,21 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         }
     }
 
+    /** @see org.apache.fop.layoutmgr.BlockStackingLayoutManager */
+    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+        resetSpaces(); 
+        return super.getNextKnuthElements(context, alignment);
+    }
+   
+    private void resetSpaces() {
+        this.discardBorderBefore = false;        
+        this.discardBorderAfter = false;        
+        this.discardPaddingBefore = false;        
+        this.discardPaddingAfter = false;
+        this.effSpaceBefore = foSpaceBefore;
+        this.effSpaceAfter = foSpaceAfter;
+    }
+    
     /**
      * Proxy iterator for Block LM.
      * This iterator creates and holds the complete list
@@ -277,12 +300,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         }
 
         getPSLM().addIDToPage(getBlockFO().getId());
-        /* TODO remove when markers are really ok
-        log.debug("Checking on " + this);
-        log.debug("Checking first=" + firstPos);
-        log.debug("Checking last=" + lastPos);
-        log.debug("->" + isFirst(firstPos) + "/" + isLast(lastPos));
-        */
         if (markers != null) {
             getCurrentPV().addMarkers(markers, true, isFirst(firstPos), isLast(lastPos));
         }
@@ -361,14 +378,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             //}
         }
 
-        // if adjusted space before
-        double adjust = layoutContext.getSpaceAdjust();
-        addBlockSpacing(adjust, foSpaceBefore);
-        foSpaceBefore = null;
-        //if (bSpaceBefore) {
-        //    addBlockSpacing(0, new MinOptMax(adjustedSpaceBefore));
-        //}
-
         while ((childLM = childPosIter.getNextChildLM()) != null) {
             // set last area flag
             lc.setFlags(LayoutContext.LAST_AREA,
@@ -378,22 +387,16 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             childLM.addAreas(childPosIter, lc);
         }
 
-        //int bIndents = getBlockFO().getCommonBorderPaddingBackground()
-        //                        .getBPPaddingAndBorder(false);
-
         if (markers != null) {
             getCurrentPV().addMarkers(markers, false, isFirst(firstPos), isLast(lastPos));
         }
 
+        TraitSetter.addSpaceBeforeAfter(curBlockArea, layoutContext.getSpaceAdjust(), 
+                effSpaceBefore, effSpaceAfter);
         flush();
 
-        // if adjusted space after
-        addBlockSpacing(adjust, foSpaceAfter);
-        //if (bSpaceAfter) {
-        //    addBlockSpacing(0, new MinOptMax(adjustedSpaceAfter));
-        //}
-
         curBlockArea = null;
+        resetSpaces();
     }
 
     /**
@@ -426,29 +429,15 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             // set traits
             TraitSetter.setProducerID(curBlockArea, getBlockFO().getId());
             TraitSetter.addBorders(curBlockArea, 
-                    getBlockFO().getCommonBorderPaddingBackground(), this);
+                    getBlockFO().getCommonBorderPaddingBackground(), 
+                    discardBorderBefore, discardBorderAfter, false, false, this);
+            TraitSetter.addPadding(curBlockArea, 
+                    getBlockFO().getCommonBorderPaddingBackground(), 
+                    discardPaddingBefore, discardPaddingAfter, false, false, this);
             TraitSetter.addMargins(curBlockArea,
                     getBlockFO().getCommonBorderPaddingBackground(), 
                     getBlockFO().getCommonMarginBlock(),
                     this);
-
-            // Set up dimensions
-            // Get reference IPD from parentArea
-            //int referenceIPD = parentArea.getIPD();
-            //curBlockArea.setIPD(referenceIPD);
-
-            // Set the width of the block based on the parent block
-            // Need to be careful though, if parent is BC then width may not be set
-            /* TODO remove if really not used anymore
-            int parentwidth = 0;
-            if (parentArea instanceof BlockParent) {
-                parentwidth = ((BlockParent) parentArea).getIPD();
-            }
-            if (parentwidth == 0) {
-                parentwidth = referenceIPD;
-            }
-            parentwidth -= getIPIndents();
-            */
 
             setCurrentArea(curBlockArea); // ??? for generic operations
         }
@@ -533,6 +522,51 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     public boolean getGeneratesBlockArea() {
         return true;
     }
-   
+
+    /** @see org.apache.fop.layoutmgr.ConditionalElementListener */
+    public void notifySpace(RelSide side, MinOptMax effectiveLength) {
+        if (RelSide.BEFORE == side) {
+            if (log.isDebugEnabled()) {
+                log.debug(this + ": Space " + side + ", " 
+                        + this.effSpaceBefore + "-> " + effectiveLength);
+            }
+            this.effSpaceBefore = effectiveLength;
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug(this + ": Space " + side + ", " 
+                        + this.effSpaceAfter + "-> " + effectiveLength);
+            }
+            this.effSpaceAfter = effectiveLength;
+        }
+    }
+
+    /** @see org.apache.fop.layoutmgr.ConditionalElementListener */
+    public void notifyBorder(RelSide side, MinOptMax effectiveLength) {
+        if (effectiveLength == null) {
+            if (RelSide.BEFORE == side) {
+                this.discardBorderBefore = true;
+            } else {
+                this.discardBorderAfter = true;
+            }
+        }
+        if (log.isDebugEnabled()) {
+            log.debug(this + ": Border " + side + " -> " + effectiveLength);
+        }
+    }
+
+    /** @see org.apache.fop.layoutmgr.ConditionalElementListener */
+    public void notifyPadding(RelSide side, MinOptMax effectiveLength) {
+        if (effectiveLength == null) {
+            if (RelSide.BEFORE == side) {
+                this.discardPaddingBefore = true;
+            } else {
+                this.discardPaddingAfter = true;
+            }
+        }
+        if (log.isDebugEnabled()) {
+            log.debug(this + ": Padding " + side + " -> " + effectiveLength);
+        }
+    }
+
 }
 

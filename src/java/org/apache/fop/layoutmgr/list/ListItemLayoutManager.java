@@ -23,11 +23,17 @@ import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
+import org.apache.fop.layoutmgr.BreakElement;
+import org.apache.fop.layoutmgr.ConditionalElementListener;
+import org.apache.fop.layoutmgr.ElementListObserver;
+import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.NonLeafPosition;
+import org.apache.fop.layoutmgr.RelSide;
+import org.apache.fop.layoutmgr.SpaceResolver;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthBox;
@@ -35,6 +41,7 @@ import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
+import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
 
 import java.util.ArrayList;
@@ -46,7 +53,8 @@ import java.util.ListIterator;
  * LayoutManager for a list-item FO.
  * The list item contains a list item label and a list item body.
  */
-public class ListItemLayoutManager extends BlockStackingLayoutManager {
+public class ListItemLayoutManager extends BlockStackingLayoutManager 
+                    implements ConditionalElementListener {
     private ListItemContentLayoutManager label;
     private ListItemContentLayoutManager body;
 
@@ -57,20 +65,16 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
 
     private int listItemHeight;
     
-    //TODO space-before|after: handle space-resolution rules
+    private boolean discardBorderBefore;
+    private boolean discardBorderAfter;
+    private boolean discardPaddingBefore;
+    private boolean discardPaddingAfter;
+    private MinOptMax effSpaceBefore;
+    private MinOptMax effSpaceAfter;
     
     private boolean keepWithNextPendingOnLabel;
     private boolean keepWithNextPendingOnBody;
-    
-    /*
-    private class ItemPosition extends LeafPosition {
-        protected List cellBreaks;
-        protected ItemPosition(LayoutManager lm, int pos, List l) {
-            super(lm, pos);
-            cellBreaks = l;
-        }
-    }*/
-
+  
     private class ListItemPosition extends Position {
         private int iLabelFirstIndex;
         private int iLabelLastIndex;
@@ -149,11 +153,23 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         body.setParent(this);
     }
 
+    /** @see org.apache.fop.layoutmgr.LayoutManager#initialize() */
     public void initialize() {
-        foSpaceBefore = new SpaceVal(getListItemFO().getCommonMarginBlock().spaceBefore, this).getSpace();
-        foSpaceAfter = new SpaceVal(getListItemFO().getCommonMarginBlock().spaceAfter, this).getSpace();
+        foSpaceBefore = new SpaceVal(
+                getListItemFO().getCommonMarginBlock().spaceBefore, this).getSpace();
+        foSpaceAfter = new SpaceVal(
+                getListItemFO().getCommonMarginBlock().spaceAfter, this).getSpace();
     }
 
+    private void resetSpaces() {
+        this.discardBorderBefore = false;        
+        this.discardBorderAfter = false;        
+        this.discardPaddingBefore = false;        
+        this.discardPaddingAfter = false;
+        this.effSpaceBefore = foSpaceBefore;
+        this.effSpaceAfter = foSpaceAfter;
+    }
+    
     private int getIPIndents() {
         int iIndents = 0;
         iIndents += getListItemFO().getCommonMarginBlock().startIndent.getValue(this);
@@ -168,16 +184,22 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         
         LinkedList returnList = new LinkedList();
         
-        if (!bSpaceBeforeServed) {
-            addKnuthElementsForSpaceBefore(returnList, alignment);
-            bSpaceBeforeServed = true;
-        }
+        addKnuthElementsForSpaceBefore(returnList, alignment);
         
+        //Spaces, border and padding to be repeated at each break
+        addPendingMarks(context);
+
         // label
         childLC = new LayoutContext(0);
         childLC.setRefIPD(context.getRefIPD());
         label.initialize();
         labelList = label.getNextKnuthElements(childLC, alignment);
+        
+        //Space resolution as if the contents were placed in a new reference area
+        //(see 6.8.3, XSL 1.0, section on Constraints, last paragraph)
+        SpaceResolver.resolveElementList(labelList);
+        ElementListObserver.observe(labelList, "list-item-label", label.getPartFO().getId());
+        
         if (childLC.isKeepWithPreviousPending()) {
             context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
         }
@@ -188,13 +210,19 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         childLC.setRefIPD(context.getRefIPD());
         body.initialize();
         bodyList = body.getNextKnuthElements(childLC, alignment);
+
+        //Space resolution as if the contents were placed in a new reference area
+        //(see 6.8.3, XSL 1.0, section on Constraints, last paragraph)
+        SpaceResolver.resolveElementList(bodyList);
+        ElementListObserver.observe(bodyList, "list-item-body", body.getPartFO().getId());
+        
         if (childLC.isKeepWithPreviousPending()) {
             context.setFlags(LayoutContext.KEEP_WITH_PREVIOUS_PENDING);
         }
         this.keepWithNextPendingOnBody = childLC.isKeepWithNextPending();
 
         // create a combined list
-        LinkedList returnedList = getCombinedKnuthElementsForListItem(labelList, bodyList);
+        LinkedList returnedList = getCombinedKnuthElementsForListItem(labelList, bodyList, context);
 
         // "wrap" the Position inside each element
         wrapPositionElements(returnedList, returnList, true);
@@ -209,16 +237,18 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         }
 
         setFinished(true);
+        resetSpaces();
         return returnList;
     }
 
     private LinkedList getCombinedKnuthElementsForListItem(LinkedList labelElements,
-                                                           LinkedList bodyElements) {
+                                                           LinkedList bodyElements,
+                                                           LayoutContext context) {
         //Copy elements to array lists to improve element access performance
         List[] elementLists = {new ArrayList(labelElements),
                                new ArrayList(bodyElements)};
-        int[] fullHeights = {calcItemHeightFromContents(elementLists[0]),
-                            calcItemHeightFromContents(elementLists[1])};
+        int[] fullHeights = {ElementListUtils.calcContentLength(elementLists[0]),
+                ElementListUtils.calcContentLength(elementLists[1])};
         int[] partialHeights = {0, 0};
         int[] start = {-1, -1};
         int[] end = {-1, -1};
@@ -259,37 +289,12 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
                 if (keepWithNextActive || mustKeepTogether()) {
                     p = KnuthPenalty.INFINITE;
                 }
-                returnList.add(new KnuthPenalty(penaltyHeight, p, false, stepPosition, false));
+                //returnList.add(new KnuthPenalty(penaltyHeight, p, false, stepPosition, false));
+                returnList.add(new BreakElement(stepPosition, penaltyHeight, p, 0, context));
             }
         }
 
         return returnList;
-    }
-
-    private int calcItemHeightFromContents(List elements, int start, int end) {
-        ListIterator iter = elements.listIterator(start);
-        int count = end - start + 1;
-        int len = 0;
-        while (iter.hasNext()) {
-            KnuthElement el = (KnuthElement)iter.next();
-            if (el.isBox()) {
-                len += el.getW();
-            } else if (el.isGlue()) {
-                len += el.getW();
-            } else {
-                log.debug("Ignoring penalty: " + el);
-                //ignore penalties
-            }
-            count--;
-            if (count == 0) {
-                break;
-            }
-        }
-        return len;
-    }
-    
-    private int calcItemHeightFromContents(List elements) {
-        return calcItemHeightFromContents(elements, 0, elements.size() - 1);
     }
 
     private int getNextStep(List[] elementLists, int[] start, int[] end, int[] partialHeights) {
@@ -422,11 +427,6 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
                          LayoutContext layoutContext) {
         getParentArea(null);
 
-        // if adjusted space before
-        double adjust = layoutContext.getSpaceAdjust();
-        addBlockSpacing(adjust, foSpaceBefore);
-        foSpaceBefore = null;
-
         getPSLM().addIDToPage(getListItemFO().getId());
 
         LayoutContext lc = new LayoutContext(0);
@@ -461,6 +461,31 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         int bodyFirstIndex = ((ListItemPosition) positionList.getFirst()).getBodyFirstIndex();
         int bodyLastIndex = ((ListItemPosition) positionList.getLast()).getBodyLastIndex();
 
+        int lastBreak;
+        //Determine last break if any
+        lastBreak = labelFirstIndex - 1;
+        while (lastBreak >= 0) {
+            KnuthElement el = (KnuthElement)labelList.get(lastBreak);
+            if (el.isPenalty() && el.getP() < KnuthElement.INFINITE) {
+                break;
+            }
+            lastBreak--;
+        }
+        SpaceResolver.performConditionalsNotification(labelList, 
+                labelFirstIndex, labelLastIndex, lastBreak);
+
+        //Determine last break if any
+        lastBreak = bodyFirstIndex - 1;
+        while (lastBreak >= 0) {
+            KnuthElement el = (KnuthElement)bodyList.get(lastBreak);
+            if (el.isPenalty() && el.getP() < KnuthElement.INFINITE) {
+                break;
+            }
+            lastBreak--;
+        }
+        SpaceResolver.performConditionalsNotification(bodyList, 
+                bodyFirstIndex, bodyLastIndex, lastBreak);
+        
         // add label areas
         if (labelFirstIndex <= labelLastIndex) {
             KnuthPossPosIter labelIter = new KnuthPossPosIter(labelList, 
@@ -508,13 +533,13 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         TraitSetter.addBackground(curBlockArea, 
                 getListItemFO().getCommonBorderPaddingBackground(),
                 this);
+        TraitSetter.addSpaceBeforeAfter(curBlockArea, layoutContext.getSpaceAdjust(), 
+                effSpaceBefore, effSpaceAfter);
 
         flush();
 
-        // if adjusted space after
-        addBlockSpacing(adjust, foSpaceAfter);
-        
         curBlockArea = null;
+        resetSpaces();
     }
 
     /**
@@ -550,7 +575,11 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
             // set traits
             TraitSetter.setProducerID(curBlockArea, getListItemFO().getId());
             TraitSetter.addBorders(curBlockArea, 
-                    getListItemFO().getCommonBorderPaddingBackground(), this);
+                    getListItemFO().getCommonBorderPaddingBackground(), 
+                    discardBorderBefore, discardBorderAfter, false, false, this);
+            TraitSetter.addPadding(curBlockArea, 
+                    getListItemFO().getCommonBorderPaddingBackground(), 
+                    discardPaddingBefore, discardPaddingAfter, false, false, this);
             TraitSetter.addMargins(curBlockArea,
                     getListItemFO().getCommonBorderPaddingBackground(), 
                     getListItemFO().getCommonMarginBlock(), this);
@@ -610,5 +639,51 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
                 || !getListItemFO().getKeepWithNext().getWithinColumn().isAuto();
     }
 
+    /** @see org.apache.fop.layoutmgr.ConditionalElementListener */
+    public void notifySpace(RelSide side, MinOptMax effectiveLength) {
+        if (RelSide.BEFORE == side) {
+            if (log.isDebugEnabled()) {
+                log.debug(this + ": Space " + side + ", " 
+                        + this.effSpaceBefore + "-> " + effectiveLength);
+            }
+            this.effSpaceBefore = effectiveLength;
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug(this + ": Space " + side + ", " 
+                        + this.effSpaceAfter + "-> " + effectiveLength);
+            }
+            this.effSpaceAfter = effectiveLength;
+        }
+    }
+
+    /** @see org.apache.fop.layoutmgr.ConditionalElementListener */
+    public void notifyBorder(RelSide side, MinOptMax effectiveLength) {
+        if (effectiveLength == null) {
+            if (RelSide.BEFORE == side) {
+                this.discardBorderBefore = true;
+            } else {
+                this.discardBorderAfter = true;
+            }
+        }
+        if (log.isDebugEnabled()) {
+            log.debug(this + ": Border " + side + " -> " + effectiveLength);
+        }
+    }
+
+    /** @see org.apache.fop.layoutmgr.ConditionalElementListener */
+    public void notifyPadding(RelSide side, MinOptMax effectiveLength) {
+        if (effectiveLength == null) {
+            if (RelSide.BEFORE == side) {
+                this.discardPaddingBefore = true;
+            } else {
+                this.discardPaddingAfter = true;
+            }
+        }
+        if (log.isDebugEnabled()) {
+            log.debug(this + ": Padding " + side + " -> " + effectiveLength);
+        }
+    }
+
+    
 }
 

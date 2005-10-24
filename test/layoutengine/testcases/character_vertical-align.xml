@@ -50,10 +50,10 @@
     </fo:root>
   </fo>
   <checks>
+    <eval expected="7180" xpath="//flow/block[1]/lineArea/char/@offset"/>
     <eval expected="7180" xpath="//flow/block[2]/lineArea/char/@offset"/>
-    <eval expected="7180" xpath="//flow/block[5]/lineArea/char/@offset"/>
-    <eval expected="0" xpath="//flow/block[8]/lineArea/char/@offset"/>
-    <eval expected="4565" xpath="//flow/block[11]/lineArea/char/@offset"/>
-    <eval expected="9250" xpath="//flow/block[14]/lineArea/char/@offset"/>
+    <eval expected="0" xpath="//flow/block[3]/lineArea/char/@offset"/>
+    <eval expected="4565" xpath="//flow/block[4]/lineArea/char/@offset"/>
+    <eval expected="9250" xpath="//flow/block[5]/lineArea/char/@offset"/>
   </checks>
 </testcase>

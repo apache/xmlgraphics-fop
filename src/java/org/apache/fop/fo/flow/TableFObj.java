@@ -20,6 +20,7 @@ package org.apache.fop.fo.flow;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.datatypes.ValidationPercentBaseContext;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
@@ -27,9 +28,7 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 
 /**
  * Superclass for table-related FOs
- *
  */
-
 public abstract class TableFObj extends FObj {
 
     private Numeric borderAfterPrecedence;
@@ -82,8 +81,17 @@ public abstract class TableFObj extends FObj {
         if (getNameId() != FO_TABLE && getNameId() != FO_TABLE_CELL
                 && getTable().isSeparateBorderModel()
                 && getCommonBorderPaddingBackground().hasBorderInfo()) {
-            getLogger().warn("Borders on " + getName() 
-                    + " non-applicable for table with border-collapse=\"separate\"");
+            attributeWarning("In the separate border model (border-collapse=\"separate\")"
+                    + ", borders cannot be specified on a " + getName() 
+                    + ", but a non-zero value for border was found. The border will be ignored. ");
+        }
+        if (getNameId() != FO_TABLE //Separate check for fo:table in Table.java
+                && getNameId() != FO_TABLE_CELL
+                && getCommonBorderPaddingBackground().hasPadding(
+                        ValidationPercentBaseContext.getPseudoContextForValidationPurposes())) {
+            attributeWarning(getName() + " does not have padding"
+                    + " (see the property list for " + getName() + " in XSL 1.0)"
+                    + ", but a non-zero value for padding was found. The padding will be ignored.");
         }
     }
     

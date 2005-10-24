@@ -53,9 +53,19 @@ public class KnuthSequence extends ArrayList {
     }
 
     /**
+     * Finalizes a Knuth sequence.
      * @return a finalized sequence.
      */
     public KnuthSequence endSequence() {
+        return endSequence(null);
+    }
+    
+    /**
+     * Finalizes a Knuth sequence.
+     * @param breakPosition a Position instance for the last penalty (may be null)
+     * @return a finalized sequence.
+     */
+    public KnuthSequence endSequence(Position breakPosition) {
         // remove glue and penalty item at the end of the paragraph
         while (this.size() > ignoreAtStart
                && !((KnuthElement)this.get(this.size() - 1)).isBox()) {
@@ -66,7 +76,7 @@ public class KnuthSequence extends ArrayList {
             // and the forced break
             this.add(new KnuthPenalty(0, KnuthElement.INFINITE, false, null, false));
             this.add(new KnuthGlue(0, 10000000, 0, null, false));
-            this.add(new KnuthPenalty(0, -KnuthElement.INFINITE, false, null, false));
+            this.add(new KnuthPenalty(0, -KnuthElement.INFINITE, false, breakPosition, false));
             ignoreAtEnd = 3;
             return this;
         } else {

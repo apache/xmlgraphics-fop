@@ -311,7 +311,7 @@ public abstract class FONode implements Cloneable {
      * @param problem text to display that indicates the problem
      */
     protected void attributeWarning(String problem) {
-        log.warn(errorText(locator) + getName() + ", " + problem);
+        log.warn(warningText(locator) + getName() + ", " + problem);
     }
 
     /**
@@ -437,7 +437,7 @@ public abstract class FONode implements Cloneable {
      * @param loc org.xml.sax.Locator object
      * @return String the formatted text
      */
-    protected static String getLocatorString(Locator loc) {
+    public static String getLocatorString(Locator loc) {
         if (loc == null) {
             return "Unknown location";
         } else {

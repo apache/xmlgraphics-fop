@@ -24,9 +24,8 @@ import java.util.List;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.datatypes.ValidationPercentBaseContext;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.StaticPropertyList;
 import org.apache.fop.fo.ValidationException;
@@ -129,17 +128,19 @@ public class Table extends TableFObj {
         colPList.setWritingMode();
         defaultColumn.bind(colPList);
 
-        /*if (borderCollapse != EN_SEPARATE && commonBorderPaddingBackground.hasPadding()) {
-            //See "17.6.2 The collapsing border model" in CSS2
-            getLogger().warn("Table may not have padding when using the collapsing "
-                    + "border model. Padding will be ignored.");
-        }*/
         if (borderCollapse != EN_SEPARATE) {
-            getLogger().warn("The collapsing border model on an fo:table "
+            attributeWarning("The collapsing border model on an fo:table "
                     + "is currently not supported by FOP");
         }
         if (tableLayout == EN_AUTO) {
-            getLogger().warn("table-layout=\"auto\" is currently not supported by FOP");
+            attributeWarning("table-layout=\"auto\" is currently not supported by FOP");
+        }
+        if (!isSeparateBorderModel() && getCommonBorderPaddingBackground().hasPadding(
+                ValidationPercentBaseContext.getPseudoContextForValidationPurposes())) {
+            //See "17.6.2 The collapsing border model" in CSS2
+            attributeWarning("In collapsing border model a table does not have padding"
+                    + " (see http://www.w3.org/TR/REC-CSS2/tables.html#collapsing-borders)"
+                    + ", but a non-zero value for padding was found. The padding will be ignored.");
         }
     }
 
@@ -217,11 +218,11 @@ public class Table extends TableFObj {
      * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
     protected void addChildNode(FONode child) throws FOPException {
-        if (child.getName().equals("fo:table-column")) {
+        if ("fo:table-column".equals(child.getName())) {
             addColumnNode((TableColumn) child);
-        } else if (child.getName().equals("fo:table-footer")) {
+        } else if ("fo:table-footer".equals(child.getName())) {
             tableFooter = (TableBody)child;
-        } else if (child.getName().equals("fo:table-header")) {
+        } else if ("fo:table-header".equals(child.getName())) {
             tableHeader = (TableBody)child;
         } else {
             // add bodies

@@ -23,6 +23,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOPropertyMapping;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.LengthPairProperty;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fotreetest.ResultCollector;
 
@@ -51,13 +52,29 @@ public class AssertElement extends TestObj {
         //super.processNode(elementName, locator, attlist, propertyList);
 
         ResultCollector collector = ResultCollector.getInstance();
-        String propName = attlist.getValue("property"); 
+        String propName = attlist.getValue("property");
+        String component = null;
+        int dotIndex = propName.indexOf('.');
+        if (dotIndex >= 0) {
+            component = propName.substring(dotIndex + 1);
+            propName = propName.substring(0, dotIndex);
+        }
         int propID = FOPropertyMapping.getPropertyId(propName);
         if (propID < 0) {
             collector.notifyException(new IllegalArgumentException(
                     "Property not found: " + propName));
         } else {
-            Property prop = propertyList.getParentPropertyList().get(propID);
+            Property prop;
+            prop = propertyList.getParentPropertyList().get(propID);
+            if (component != null) {
+                //Access subcomponent
+                Property mainProp = prop;
+                prop = null;
+                LengthPairProperty lpp = mainProp.getLengthPair();
+                if (lpp != null) {
+                    prop = lpp.getComponent(FOPropertyMapping.getSubPropertyId(component));
+                }
+            }
             String s = String.valueOf(prop);
             String expected = attlist.getValue("expected");
             if (!expected.equals(s)) {
