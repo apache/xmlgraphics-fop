@@ -69,18 +69,6 @@
           <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="14pt">
             Before <fo:inline font-size="10pt" alignment-adjust="mathematical" background-color="yellow">alignment-adjust="mathematical"</fo:inline> After
           </fo:block>
-          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="14pt">
-            Before <fo:inline font-size="10pt" alignment-adjust="top" background-color="yellow">alignment-adjust="top"</fo:inline> After
-          </fo:block>
-          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="14pt">
-            Before <fo:inline font-size="10pt" alignment-adjust="bottom" background-color="yellow">alignment-adjust="bottom"</fo:inline> After
-          </fo:block>
-          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="14pt">
-            Before <fo:inline font-size="10pt" alignment-adjust="text-top" background-color="yellow">alignment-adjust="text-top"</fo:inline> After
-          </fo:block>
-          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="14pt">
-            Before <fo:inline font-size="10pt" alignment-adjust="text-bottom" background-color="yellow">alignment-adjust="text-bottom"</fo:inline> After
-          </fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
@@ -99,9 +87,5 @@
     <eval expected="2872" xpath="//flow/block[11]/lineArea[1]/inlineparent/@offset"/>
     <eval expected="8616" xpath="//flow/block[12]/lineArea[1]/inlineparent/@offset"/>
     <eval expected="6462" xpath="//flow/block[13]/lineArea[1]/inlineparent/@offset"/>
-    <eval expected="10052" xpath="//flow/block[14]/lineArea[1]/inlineparent/@offset"/>
-    <eval expected="802" xpath="//flow/block[15]/lineArea[1]/inlineparent/@offset"/>
-    <eval expected="10052" xpath="//flow/block[16]/lineArea[1]/inlineparent/@offset"/>
-    <eval expected="802" xpath="//flow/block[17]/lineArea[1]/inlineparent/@offset"/>
   </checks>
 </testcase>

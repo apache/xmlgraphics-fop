@@ -236,34 +236,6 @@ public class AlignmentContext implements Constants {
             case EN_MATHEMATICAL:
                 this.alignmentBaselineIdentifier = alignmentBaseline;
                 break;
-            case EN_TOP:
-                if (isHorizontalWritingMode()) {
-                    this.alignmentBaselineIdentifier = EN_BEFORE_EDGE;
-                } else {
-                    this.alignmentBaselineIdentifier = getDominantBaselineIdentifier();
-                }
-                break;
-            case EN_BOTTOM:
-                if (isHorizontalWritingMode()) {
-                    this.alignmentBaselineIdentifier = EN_AFTER_EDGE;
-                } else {
-                    this.alignmentBaselineIdentifier = getDominantBaselineIdentifier();
-                }
-                break;
-            case EN_TEXT_TOP:
-                if (isHorizontalWritingMode()) {
-                    this.alignmentBaselineIdentifier = EN_TEXT_BEFORE_EDGE;
-                } else {
-                    this.alignmentBaselineIdentifier = getDominantBaselineIdentifier();
-                }
-                break;
-            case EN_TEXT_BOTTOM:
-                if (isHorizontalWritingMode()) {
-                    this.alignmentBaselineIdentifier = EN_TEXT_AFTER_EDGE;
-                } else {
-                    this.alignmentBaselineIdentifier = getDominantBaselineIdentifier();
-                }
-                break;
         }
     }
 
@@ -296,36 +268,6 @@ public class AlignmentContext implements Constants {
             case EN_MATHEMATICAL:
                 alignmentPoint = beforeEdge 
                                     - actualBaselineTable.getBaseline(alignmentAdjust.getEnum());
-                break;
-            case EN_TOP: // fall through
-                if (isHorizontalWritingMode()) {
-                    alignmentPoint = 0;
-                } else {
-                    alignmentPoint = beforeEdge;
-                }
-                break;
-            case EN_BOTTOM:
-                if (isHorizontalWritingMode()) {
-                    alignmentPoint = beforeEdge - actualBaselineTable.getBaseline(EN_AFTER_EDGE);
-                } else {
-                    alignmentPoint = beforeEdge;
-                }
-                break;
-            case EN_TEXT_TOP:
-                if (isHorizontalWritingMode()) {
-                    alignmentPoint = beforeEdge 
-                                        - actualBaselineTable.getBaseline(EN_TEXT_BEFORE_EDGE);
-                } else {
-                    alignmentPoint = beforeEdge;
-                }
-                break;
-            case EN_TEXT_BOTTOM:
-                if (isHorizontalWritingMode()) {
-                    alignmentPoint = beforeEdge 
-                                        - actualBaselineTable.getBaseline(EN_TEXT_AFTER_EDGE);
-                } else {
-                    alignmentPoint = beforeEdge;
-                }
                 break;
             default:
                 alignmentPoint = beforeEdge

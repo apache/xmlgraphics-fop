@@ -1345,10 +1345,6 @@ public class FOPropertyMapping implements Constants {
         m.addEnum("alphabetic", getEnumProperty(EN_ALPHABETIC, "ALPHABETIC"));
         m.addEnum("hanging", getEnumProperty(EN_HANGING, "HANGING"));
         m.addEnum("mathematical", getEnumProperty(EN_MATHEMATICAL, "MATHEMATICAL"));
-        m.addEnum("top", getEnumProperty(EN_TOP, "TOP"));
-        m.addEnum("bottom", getEnumProperty(EN_BOTTOM, "BOTTOM"));
-        m.addEnum("text-top", getEnumProperty(EN_TEXT_TOP, "TEXT_TOP"));
-        m.addEnum("text-bottom", getEnumProperty(EN_TEXT_BOTTOM, "TEXT_BOTTOM"));
         m.setDefault("auto");
         m.setPercentBase(LengthBase.ALIGNMENT_ADJUST);
         m.addShorthand(s_generics[PR_VERTICAL_ALIGN]);
@@ -1369,10 +1365,6 @@ public class FOPropertyMapping implements Constants {
         m.addEnum("alphabetic", getEnumProperty(EN_ALPHABETIC, "ALPHABETIC"));
         m.addEnum("hanging", getEnumProperty(EN_HANGING, "HANGING"));
         m.addEnum("mathematical", getEnumProperty(EN_MATHEMATICAL, "MATHEMATICAL"));
-        m.addEnum("top", getEnumProperty(EN_TOP, "TOP"));
-        m.addEnum("bottom", getEnumProperty(EN_BOTTOM, "BOTTOM"));
-        m.addEnum("text-top", getEnumProperty(EN_TEXT_TOP, "TEXT_TOP"));
-        m.addEnum("text-bottom", getEnumProperty(EN_TEXT_BOTTOM, "TEXT_BOTTOM"));
         m.setDefault("auto");
         m.addShorthand(s_generics[PR_VERTICAL_ALIGN]);
         addPropertyMaker("alignment-baseline", m);
