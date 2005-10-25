@@ -29,6 +29,8 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.pdf.PDFEncryptionManager;
+import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.render.awt.AWTRenderer;
 import org.apache.fop.util.CommandLineLogger;
 
@@ -233,6 +235,18 @@ public class CommandLineOptions implements Constants {
                   } else {
                     throw new FOPException("invalid param usage: use -param <name> <value>");
                   }
+            } else if (args[i].equals("-o")) {
+                i = i + parsePDFOwnerPassword(args, i);
+            } else if (args[i].equals("-u")) {
+                i = i + parsePDFUserPassword(args, i);
+            } else if (args[i].equals("-noprint")) {
+                getPDFEncryptionParams().setAllowPrint(false);
+            } else if (args[i].equals("-nocopy")) {
+                getPDFEncryptionParams().setAllowCopyContent(false);
+            } else if (args[i].equals("-noedit")) {
+                getPDFEncryptionParams().setAllowEditContent(false);
+            } else if (args[i].equals("-noannotations")) {
+                getPDFEncryptionParams().setAllowEditAnnotations(false);
             } else {
                 printUsage();
                 return false;
@@ -449,6 +463,39 @@ public class CommandLineOptions implements Constants {
             throw new FOPException("you must specify the area-tree output file");
         } else {
             outfile = new File(args[i + 1]);
+            return 1;
+        }
+    }
+
+    private PDFEncryptionParams getPDFEncryptionParams() throws FOPException {
+        if (foUserAgent.getPDFEncryptionParams() == null) {
+            if (!PDFEncryptionManager.checkAvailableAlgorithms()) {
+                throw new FOPException("PDF encryption requested but it is not available."
+                        + " Please make sure MD5 and RC4 algorithms are available.");
+            }
+            foUserAgent.setPDFEncryptionParams(new PDFEncryptionParams());
+        }
+        return foUserAgent.getPDFEncryptionParams();
+    }
+    
+    private int parsePDFOwnerPassword(String[] args, int i) throws FOPException {
+        if ((i + 1 == args.length)
+                || (args[i + 1].charAt(0) == '-')) {
+            getPDFEncryptionParams().setOwnerPassword("");
+            return 0;
+        } else {
+            getPDFEncryptionParams().setOwnerPassword(args[i + 1]);
+            return 1;
+        }
+    }
+
+    private int parsePDFUserPassword(String[] args, int i) throws FOPException {
+        if ((i + 1 == args.length)
+                || (args[i + 1].charAt(0) == '-')) {
+            getPDFEncryptionParams().setUserPassword("");
+            return 0;
+        } else {
+            getPDFEncryptionParams().setUserPassword(args[i + 1]);
             return 1;
         }
     }
@@ -703,15 +750,21 @@ public class CommandLineOptions implements Constants {
               "\nUSAGE\nFop [options] [-fo|-xml] infile [-xsl file] "
                     + "[-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl|-ps|-txt|-at|-print] <outfile>\n"
             + " [OPTIONS]  \n"
-            + "  -d          debug mode   \n"
-            + "  -x          dump configuration settings  \n"
-            + "  -q          quiet mode  \n"
-            + "  -c cfg.xml  use additional configuration file cfg.xml\n"
-            + "  -l lang     the language to use for user information \n"
-            + "  -r          relaxed/less strict validation (where available)\n"
-            + "  -dpi xxx    resolution in dots per inch (dpi) where xxx is a number\n"
-            + "  -s          for area tree XML, down to block areas only\n"
-            + "  -v          to show FOP version being used\n\n"
+            + "  -d             debug mode   \n"
+            + "  -x             dump configuration settings  \n"
+            + "  -q             quiet mode  \n"
+            + "  -c cfg.xml     use additional configuration file cfg.xml\n"
+            + "  -l lang        the language to use for user information \n"
+            + "  -r             relaxed/less strict validation (where available)\n"
+            + "  -dpi xxx       resolution in dots per inch (dpi) where xxx is a number\n"
+            + "  -s             for area tree XML, down to block areas only\n"
+            + "  -v             to show FOP version being used\n\n"
+            + "  -o [password]  PDF file will be encrypted with option owner password\n"
+            + "  -u [password]  PDF file will be encrypted with option user password\n"
+            + "  -noprint       PDF file will be encrypted without printing permission\n"
+            + "  -nocopy        PDF file will be encrypted without copy content permission\n"
+            + "  -noedit        PDF file will be encrypted without edit content permission\n"
+            + "  -noannotations PDF file will be encrypted without edit annotation permission\n\n"
             + " [INPUT]  \n"
             + "  infile            xsl:fo input file (the same as the next) \n"
             + "  -fo  infile       xsl:fo input file  \n"

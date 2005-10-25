@@ -59,10 +59,12 @@ public class PDFEncryptionManager {
             Provider[] providers;
             providers = Security.getProviders("Cipher.RC4");
             if (providers == null) {
+                log.warn("Cipher provider for RC4 not available.");
                 return false;
             }
             providers = Security.getProviders("MessageDigest.MD5");
             if (providers == null) {
+                log.warn("MessageDigest provider for MD5 not available.");
                 return false;
             }
             return true;
