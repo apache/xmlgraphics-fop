@@ -35,7 +35,7 @@
     </section>
     <section id="self-built">
       <title>Building them Yourself</title>
-      <p>See <link href="../download.html#source">Source Download</link> for instructions on obtaining the source code. Then see <link href="../compiling.html">Building FOP</link> for instructions on running the build process. The Ant build target that you will use to generate the API documentation is "javadocs", and the results will be stored in xml-fop/build/javadocs.</p>
+      <p>See <link href="../download.html#source">Source Download</link> for instructions on obtaining the source code. Then see <link href="../trunk/compiling.html">Building FOP</link> for instructions on running the build process. The Ant build target that you will use to generate the API documentation is "javadocs", and the results will be stored in xml-fop/build/javadocs.</p>
     </section>
   </body>
 </document>

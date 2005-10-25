@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no"?>
 <!--
-  Copyright 1999-2004 The Apache Software Foundation
+  Copyright 1999-2005 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@
     <section id="build-needed">
       <title>Do You Need To Build?</title>
       <p>FOP distributions are either pre-compiled binary or source.
-If you are using a binary distribution, it is already built and there is no need to build it again. See the <link href="download.html">Download Instructions</link> for information about whether a binary or source distribution is best for your needs.
+If you are using a binary distribution, it is already built and there is no need to build it again. See the <link href="../download.html">Download Instructions</link> for information about whether a binary or source distribution is best for your needs.
       </p>
     </section>
     <section id="env">
@@ -80,7 +80,7 @@ To obtain a complete list of useful build targets:</p>
       <li>Run the build with the target of "clean", then rerun the build.</li>
       <li>Delete the build directory completely, then rerun the build.</li>
       <li>Make sure you do not have a non-FOP version of xerces.jar, xalan.jar, batik.jar, or another dependency product somewhere in your CLASSPATH.</li>
-      <li>If the build still fails, see the <link href="gethelp.html">Getting Help</link> page for further help.</li>
+      <li>If the build still fails, see the <link href="../gethelp.html">Getting Help</link> page for further help.</li>
     </ul>
   </section>
   </body>

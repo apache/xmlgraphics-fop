@@ -90,7 +90,7 @@ This certainly includes programmers, but may also include those contributing to 
       </section>
       <section id="design">
         <title>Understand FOP's Design</title>
-        <p>The design for FOP is specified under the <link href="../design/index.html">Design</link> section. This is where the information on how FOP is developed and designed
+        <p>The design for FOP is specified under the <link href="design/index.html">Design</link> section. This is where the information on how FOP is developed and designed
 internally will be kept.
     </p>
       </section>

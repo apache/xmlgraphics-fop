@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no"?>
 <!--
-  Copyright 1999-2004 The Apache Software Foundation
+  Copyright 1999-2005 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -217,7 +217,7 @@ driver.setLogger(new org.apache.avalon.framework.logger.LogKitLogger(log));]]></
     <title>Input Sources</title>
     <p>
       The input XSL-FO document is always handled internally as SAX (see the 
-      <link href="design/parsing.html">Parsing Design Document</link> for the rationale).
+      <link href="../dev/design/parsing.html">Parsing Design Document</link> for the rationale).
       However, the input itself can be provided in a variety of ways to FOP, 
       which normalizes the input (if necessary) into SAX events:
     </p>

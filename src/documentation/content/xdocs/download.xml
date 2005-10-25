@@ -131,7 +131,8 @@
       </table>
       <p>
         With any source distribution, you will need to 
-        <link href="compiling.html">Build FOP</link> from the source files.
+        build FOP from the source files. For details please see the "Build" page on the documentation tab
+        for the version you've downloaded.
       </p>
       <fixme author="jeremias">Reenable the link to the SVN snapshots once they are available.</fixme>
     </section>

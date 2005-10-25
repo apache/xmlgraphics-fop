@@ -40,7 +40,7 @@
       <question>How do I get the javadocs for FOP?</question>
       <answer>
         <p>Currently, the only way to get FOP javadocs is to <link href="../download.html">
-        Download the source code</link> and then <link href="../compiling.html">Build
+        Download the source code</link> and then <link href="../trunk/compiling.html">Build
         FOP</link> using the ant build task "javadocs".</p>
       </answer>
     </faq>

@@ -38,7 +38,7 @@
       <ul>
         <li>A java IDE (see <link href="#ide">IDE</link>).</li>
         <li>A Subversion client (see <link href="#svn">Subversion</link>).</li>
-        <li>Ant (see <link href="../compiling.html">Building FOP</link>).</li>
+        <li>Ant (see <link href="../trunk/compiling.html">Building FOP</link>).</li>
         <li>checkstyle (see <link href="conventions.html#java-checkstyle">Checkstyle</link> on the conventions page).</li>
         <li>JUnit (see <link href="testing.html#basic">Basic Testing</link>).</li>
       </ul>

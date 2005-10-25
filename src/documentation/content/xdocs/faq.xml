@@ -209,7 +209,7 @@
           If you run FOP embedded in your servlet, web application or
           other Java application, check the classpath of the
           application. Check the also the information pertaining <link
-          href="servlets.html#servlet-engine">servlet engines</link>
+          href="0.20.5/servlets.html#servlet-engine">servlet engines</link>
           for further hints.
         </p>
       </answer>
@@ -234,7 +234,7 @@
       <question>I get an OutOfMemoryException.</question>
       <answer>
         <p>
-          See <link href="running.html#memory">FOP Memory</link>.
+          See <link href="0.20.5/running.html#memory">FOP Memory</link>.
         </p>
       </answer>
     </faq>
@@ -460,7 +460,7 @@ Check the following:</p>
         <p>Other possibilities:</p>
         <ul>
           <li>The image format is not supported or not supported completely.
-          See <link href="graphics.html">FOP Graphics Formats</link> for a
+          See <link href="0.20.5/graphics.html">FOP Graphics Formats</link> for a
           list of supported formats and related issues.</li>
           <li>The graphic may be too large to fit into the intended space.</li>
           <li>There may be something (static content) that is obscuring the
@@ -472,14 +472,14 @@ Check the following:</p>
     <faq id="png-fails">
       <question>My graphical images do not work properly.</question>
       <answer>
-        <p>See <link href="graphics.html">FOP Graphics Formats</link> for a
+        <p>See <link href="0.20.5/graphics.html">FOP Graphics Formats</link> for a
         list of supported graphics formats and related issues.</p>
       </answer>
     </faq>
     <faq id="graphic-resolution">
       <question>Why is my graphic rendered at a different resolution than it was created?</question>
       <answer>
-        <p>See <link href="graphics.html#resolution">Graphics Resolution</link>.</p>
+        <p>See <link href="0.20.5/graphics.html#resolution">Graphics Resolution</link>.</p>
       </answer>
     </faq>
     <faq id="keep-with">
@@ -585,7 +585,7 @@ Check the following:</p>
       <answer>
         <p>Make sure you have set the language and/or country attributes for an appropriate XSL-FO element (fo:page-sequence, fo:block or fo:character):</p>
         <source><![CDATA[<fo:page-sequence language="fi">]]></source>
-        <p>See <link href="hyphenation.html#support">Hyphenation Support</link> for details and instructions on using hyphenation with FOP.</p>
+        <p>See <link href="0.20.5/hyphenation.html#support">Hyphenation Support</link> for details and instructions on using hyphenation with FOP.</p>
         <p>Explicitly enable hyphenation for an appropriate XSL-FO element (fo:block, fo:character):</p>
         <source><![CDATA[<fo:block hyphenate="true">]]></source>
       </answer>
@@ -597,7 +597,7 @@ Check the following:</p>
       <question>How do I use FOP in a servlet?</question>
       <answer>
         <p>
-          See <link href="embedding.html#servlet">Using FOP in a Servlet</link>.
+          See <link href="0.20.5/servlets.html">Using FOP in a Servlet</link>.
         </p>
       </answer>
     </faq>
@@ -606,7 +606,7 @@ Check the following:</p>
       transformation?</question>
       <answer>
         <p>
-          See <link href="embedding.html#servlet-transform">Using FOP in a Servlet with XSLT Transformation</link>.
+          See <link href="0.20.5/servlets.html#xslt">Using FOP in a Servlet with XSLT Transformation</link>.
         </p>
       </answer>
     </faq>
@@ -614,7 +614,7 @@ Check the following:</p>
       <question>How do I pass parameters to the XSLT transformation?</question>
       <answer>
         <p>
-          See <link href="embedding.html#servlet-transform">Using FOP in a Servlet with XSLT Transformation</link>.
+          See <link href="0.20.5/servlets.html#xslt">Using FOP in a Servlet with XSLT Transformation</link>.
         </p>
       </answer>
     </faq>
@@ -632,7 +632,7 @@ Check the following:</p>
       <question>How do I set the baseDir property in a servlet environment?</question>
       <answer>
         <p>
-          See <link href="embedding.html#config-internal">Setting the Configuration Programmatically</link>.
+          See <link href="0.20.5/embedding.html#config-internal">Setting the Configuration Programmatically</link>.
         </p>
       </answer>
     </faq>
@@ -640,7 +640,7 @@ Check the following:</p>
       <question>How do I use a user configuration file from a servlet?</question>
       <answer>
         <p>
-          See <link href="embedding.html#config-external">Using a Configuration File in an Embedded App</link>.
+          See <link href="0.20.5/embedding.html#config-external">Using a Configuration File in an Embedded App</link>.
         </p>
       </answer>
     </faq>
@@ -649,7 +649,7 @@ Check the following:</p>
         get FOP working for various servlet engines?</question>
       <answer>
         <p>
-          See <link href="embedding.html#servlet-engine">Servlet Engines</link>.
+          See <link href="0.20.5/servlets.html#servlet-engine">Servlet Engines</link>.
         </p>
       </answer>
     </faq>
@@ -657,7 +657,7 @@ Check the following:</p>
       <question>Can FOP be used in multithreaded environments?</question>
       <answer>
         <p>
-          See <link href="embedding.html#multithreading">Multithreading FOP</link>.
+          See <link href="0.20.5/embedding.html#multithreading">Multithreading FOP</link>.
         </p>
       </answer>
     </faq>
@@ -668,13 +668,13 @@ Check the following:</p>
       <question>The rendering of SVG text in my PDF is of poor quality.
 Can I control this?</question>
       <answer>
-        <p>See <link href="graphics.html#svg-pdf-text">Placing SVG Text into PDF</link>.</p>
+        <p>See <link href="0.20.5/graphics.html#svg-pdf-text">Placing SVG Text into PDF</link>.</p>
       </answer>
     </faq>
     <faq id="svg-headless">
       <question>How do I use FOP with SVG on headless servers?</question>
       <answer>
-        <p>See <link href="graphics.html#batik">FOP: Graphics (Batik)</link>.</p>
+        <p>See <link href="0.20.5/graphics.html#batik">FOP: Graphics (Batik)</link>.</p>
       </answer>
     </faq>
     <faq id="svghangs">
@@ -737,7 +737,7 @@ Can I control this?</question>
     <faq id="svg-scaling">
       <question>Why is my SVG rendered at a size different from that specified in my fo:external-graphic element?</question>
       <answer>
-        <p>See <link href="graphics.html#svg-scaling">SVG Scaling</link>.</p>
+        <p>See <link href="0.20.5/graphics.html#svg-scaling">SVG Scaling</link>.</p>
       </answer>
     </faq>
   </part>
@@ -747,7 +747,7 @@ Can I control this?</question>
       <question>How do I embed fonts in PDF?</question>
       <answer>
         <p>
-          See the <link href="fonts.html">Fonts</link> page for information
+          See the <link href="0.20.5/fonts.html">Fonts</link> page for information
           about embedding fonts.
         </p>
       </answer>
@@ -766,7 +766,7 @@ Can I control this?</question>
           set. For a variety of reasons, even those are not completely
           guaranteed to work, for example you can't use the fi
           ligature from the standard serif font. Check the <link
-          href="output.html#pdf-fonts">overview</link> for the default
+          href="0.20.5/output.html#pdf-fonts">overview</link> for the default
           PDF fonts.
         </p>
         <p>
@@ -774,7 +774,7 @@ Can I control this?</question>
           the desired character. Furthermore the font must be
           available on the machine where the PDF is viewed or it must
           have been embedded in the PDF file. See <link
-          href="fonts.html">embedding fonts</link>.
+          href="0.20.5/fonts.html">embedding fonts</link>.
         </p>
         <p>
           For most symbols, it is better to select the symbol font
@@ -792,7 +792,7 @@ Can I control this?</question>
     <faq id="pdf-postprocess">
       <question>What tools are available for post-processing my PDF document?</question>
       <answer>
-        <p>See <link href="output.html#pdf-postprocess">PDF Post-processing</link>.</p>
+        <p>See <link href="0.20.5/output.html#pdf-postprocess">PDF Post-processing</link>.</p>
       </answer>
     </faq>
     <faq id="pdf-security">
@@ -800,8 +800,8 @@ Can I control this?</question>
       to my PDF document?</question>
       <answer>
         <p>
-          See <link href="pdfencryption.html">PDF Encryption</link>.
-          See also <link href="output.html#pdf-postprocess">PDF Post-processing</link>.
+          See <link href="0.20.5/pdfencryption.html">PDF Encryption</link>.
+          See also <link href="0.20.5/output.html#pdf-postprocess">PDF Post-processing</link>.
         </p>
       </answer>
     </faq>
@@ -809,13 +809,13 @@ Can I control this?</question>
       <question>How do I add document properties (title, author, etc.) to my
       PDF document?</question>
       <answer>
-        <p>See <link href="output.html#pdf-postprocess">PDF Post-processing</link>.</p>
+        <p>See <link href="0.20.5/output.html#pdf-postprocess">PDF Post-processing</link>.</p>
       </answer>
     </faq>
     <faq id="pdf-watermark">
       <question>How do I add watermarks to my PDF document?</question>
       <answer>
-        <p>See <link href="output.html#pdf-watermark">PDF Watermarks</link>.</p>
+        <p>See <link href="0.20.5/output.html#pdf-watermark">PDF Watermarks</link>.</p>
       </answer>
     </faq>
     <faq id="pdf-print-contortion">
@@ -848,7 +848,7 @@ Can I control this?</question>
       <answer>
         <p>
           This is a problem of Internet Explorer requesting the content several
-          times. Please see the <link href="servlets.html#ie">notes on Internet Explorer</link>
+          times. Please see the <link href="0.20.5/servlets.html#ie">notes on Internet Explorer</link>
           for more information.
         </p>
       </answer>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 1999-2004 The Apache Software Foundation
+  Copyright 1999-2005 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@
     <version>$Revision$</version>
   </header>
   <body>
-    <p>See also <link href="../graphics.html#svg">SVG User Documentation</link> for more information.</p>
+    <p>See also <link href="../trunk/graphics.html#svg">SVG User Documentation</link> for more information.</p>
           <section>
             <title>Examples</title>
             <p>
