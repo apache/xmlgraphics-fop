@@ -58,7 +58,7 @@
     <li>Links in PDF won't generate multiple link rectangles anymore. If this causes
         a problem you can set the system property "links.merge" to "no".
     </li>
-    <li>FOP has been compiled with cryptography support. See <link href="pdfencryption.html">
+    <li>FOP has been compiled with cryptography support. See <link href="0.20.5/pdfencryption.html">
       PDF encryption</link> for details about installation and usage.
     </li>
     <li>The behaviour of leader has changed. See
@@ -93,7 +93,7 @@
         support for additional truetype fonts in AWT Viewer.
       </li>
       <li>Logging has been changed from LogKit to Avalon's Logger Interface.
-        (see <link href="embedding.html">Embedding</link> for details).
+        (see <link href="0.20.5/embedding.html">Embedding</link> for details).
       </li>
       <li>Building under JDK 1.4:
          You need to add a method in

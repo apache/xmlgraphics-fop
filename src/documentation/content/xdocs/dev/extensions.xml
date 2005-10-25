@@ -26,7 +26,7 @@
   <body>
     <section id="overview">
       <title>Overview</title>
-      <p>For documentation of standard FOP extensions, see the <link href="../extensions.html">User FOP Extensions</link> document.</p>
+      <p>For documentation of standard FOP extensions, see the <link href="../trunk/extensions.html">User FOP Extensions</link> document.</p>
       <p>
 If the default funtionality of FOP needs to be extended for
 some reason then you can write an extension.

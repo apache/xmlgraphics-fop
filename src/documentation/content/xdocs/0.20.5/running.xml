@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no"?>
 <!--
-  Copyright 1999-2004 The Apache Software Foundation
+  Copyright 1999-2005 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@
       <p>The following software must be installed:</p>
       <ul>
         <li>Java 1.2.x or later Runtime Environment.</li>
-        <li>FOP. The <link href="download.html">FOP distribution</link> includes all libraries that you will need to run a basic FOP installation. These can be found in the xml-fop/lib directory. These libraries include the following:
+        <li>FOP. The <link href="../download.html">FOP distribution</link> includes all libraries that you will need to run a basic FOP installation. These can be found in the xml-fop/lib directory. These libraries include the following:
           <ul>
             <li><jump href="http://xml.apache.org/xerces-j/index.html">Apache Xerces-J</jump> for XML parsing. You can use other XML parsers which support SAX and DOM.</li>
             <li><jump href="http://xml.apache.org/xalan-j/index.html">Apache Xalan-J</jump>, an XSLT processor.</li>
@@ -38,7 +38,7 @@
           </ul>
         </li>
       </ul>
-      <p>The following sofware is optional, depending on your needs:</p>
+      <p>The following software is optional, depending on your needs:</p>
       <ul>
         <li>Graphics libraries. Support for some graphics formats requires additional packages. See <link href="graphics.html">FOP: Graphics Formats</link> for details.</li>
         <li>PDF encryption. See <link href="pdfencryption.html">FOP: PDF Encryption</link> for details.</li>
@@ -115,7 +115,7 @@ Although FOP controls both of these processes, the first is included merely as a
 Only the second is part of FOP's core processing.
 If a user has a problem running FOP, it is important to determine which of these two processes is causing the problem.
 If the problem is in the first process, the user's stylesheet is likely the cause.
-The FOP development team does not have resources to help with stylesheet issues, although we have included links to some useful <link href="resources.html#specs">Specifications</link> and <link href="resources.html#articles">Books/Articles</link>.
+The FOP development team does not have resources to help with stylesheet issues, although we have included links to some useful <link href="../resources.html#specs">Specifications</link> and <link href="../resources.html#articles">Books/Articles</link>.
 If the problem is in the second process, FOP may have a bug or an unimplemented feature that does require attention from the FOP development team.</p>
       <note>The user is always responsible to provide correct XSL-FO code to FOP.</note>
       <p>In the case of using -xml and -xsl input, although the user is responsible for the XSL-FO code that is FOP's input, it is not visible to the user. To make the intermediate FO file visible, the FOP distribution includes xalan.bat (Windows batch file) and xalan.sh (Unix/Linux script), which run only the first (transformation) step, and write the results to a file.</p>
@@ -150,7 +150,7 @@ Increase memory available to the JVM. See <link href="http://java.sun.com/j2se/1
         <li>
 Avoid forward references.
 Forward references are references to some later part of a document.
-Examples include page number citations which refer to pages which follow the citation, tables of contents at the beginning of a document, and page numbering schemes that include the total number of pages in the document (<link href="faq.html#pagenum">"page N of TOTAL"</link>).
+Examples include page number citations which refer to pages which follow the citation, tables of contents at the beginning of a document, and page numbering schemes that include the total number of pages in the document (<link href="../faq.html#pagenum">"page N of TOTAL"</link>).
 Forward references cause all subsequent pages to be held in memory until the reference can be resolved, i.e. until the page with the referenced element is encountered.
 Forward references may be required by the task, but if you are getting a memory overflow, at least consider the possibility of eliminating them.
 A table of contents could be replaced by PDF bookmarks instead or moved to the end of the document (reshuffle the paper could after printing).
@@ -172,18 +172,18 @@ This can be substantial if the page sequence contains lots of FO elements.
       </ul>
       <p>
 There are currently some bugs which cause FOP to go into a nonterminating loop, which will also often result in a memory overflow.
-A characteristic symptom is continuous <link href="faq.html#boxoverflow">box overflows</link> in the log.
+A characteristic symptom is continuous <link href="../faq.html#boxoverflow">box overflows</link> in the log.
 Most of these loops are triggered by elements that do not fit in the available space, such as big images or an improperly specified width in nested block elements.
 The only workaround is to locate such problems and correct them.
       </p>
       <p>
 One of FOP's stated design goals is to be able to process input of arbitrary size.
-Addressing this goal is one of the prime motivations behind the <link href="dev/index.html">FOP Redesign</link>.
+Addressing this goal is one of the prime motivations behind the <link href="../dev/index.html">FOP Redesign</link>.
       </p>
     </section>
     <section id="problems">
       <title>Problems</title>
-      <p>If you have problems running FOP, please see the <jump href="gethelp.html">"How to get Help" page</jump>.</p>
+      <p>If you have problems running FOP, please see the <jump href="../gethelp.html">"How to get Help" page</jump>.</p>
     </section>
   </body>
 </document>

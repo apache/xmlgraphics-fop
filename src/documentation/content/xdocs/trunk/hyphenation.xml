@@ -15,11 +15,10 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
-    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/document-v12.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>FOP: Hyphenation</title>
+    <title>Apache FOP: Hyphenation</title>
     <version>$Revision$</version>
   </header>
   <body>
@@ -29,21 +28,21 @@
       <title>Introduction</title>
       <p>FOP uses Liang's hyphenation algorithm, well known from TeX. It needs
        language specific pattern and other data for operation.</p>
-      <p>Because of <link href="#license-issues">licensing issues</link> (and for 
+      <p>Because of <a href="#license-issues">licensing issues</a> (and for 
        convenience), all hyphenation patterns for FOP are made available through 
-       the <fork href="http://offo.sourceforge.net/hyphenation/index.html">Objects For 
-       Formatting Objects</fork> project.</p>
+       the <a class="fork" href="http://offo.sourceforge.net/hyphenation/index.html">Objects For 
+       Formatting Objects</a> project.</p>
       <note>If you have made improvements to an existing FOP hyphenation pattern, 
        or if you have created one from scratch, please consider contributing these 
        to OFFO so that they can benefit other FOP users as well. 
-       Please inquire on the <link href="../maillist.html#fop-user">FOP User
-       mailing list</link>.</note>
+       Please inquire on the <a href="../maillist.html#fop-user">FOP User
+       mailing list</a>.</note>
     </section>
     <section id="license-issues">
       <title>License Issues</title>
       <p>Many of the hyphenation files distributed with TeX and its offspring are
-       licenced under the <fork href="http://www.latex-project.org/lppl.html">LaTeX
-       Project Public License (LPPL)</fork>, which prevents them from being
+       licenced under the <a class="fork" href="http://www.latex-project.org/lppl.html">LaTeX
+       Project Public License (LPPL)</a>, which prevents them from being
        distributed with Apache software. The LPPL puts restrictions on file names
        in redistributed derived works which we feel can't guarantee. Some
        hyphenation pattern files have other or additional restrictions, for
@@ -59,8 +58,8 @@
     <section id="sources">
       <title>Sources of Custom Hyphenation Pattern Files</title>
       <p>The most important source of hyphenation pattern files is the
-       <fork href="http://www.ctan.org/tex-archive/language/hyphenation/">CTAN TeX
-        Archive</fork>.</p>
+       <a class="fork" href="http://www.ctan.org/tex-archive/language/hyphenation/">CTAN TeX
+        Archive</a>.</p>
     </section>
     <section id="install">
       <title>Installing Custom Hyphenation Patterns</title>
@@ -79,9 +78,9 @@
              hyphenation patterns.</li>
           </ul>
           The language and country codes must match the XSL-FO input, which
-          follows <link href="http://www.ics.uci.edu/pub/ietf/http/related/iso639.txt">ISO
-          639</link> (languages) and <link href="http://www.ics.uci.edu/pub/ietf/http/related/iso3166.txt">ISO
-          3166</link> (countries). NOTE: The ISO 639/ISO 3166 convention is that
+          follows <a href="http://www.ics.uci.edu/pub/ietf/http/related/iso639.txt">ISO
+          639</a> (languages) and <a href="http://www.ics.uci.edu/pub/ietf/http/related/iso3166.txt">ISO
+          3166</a> (countries). NOTE: The ISO 639/ISO 3166 convention is that
           language names are written in lower case, while country codes are written
           in upper case. FOP does not check whether the language and country specified
           in the FO source are actually from the current standard, but it relies
@@ -91,12 +90,12 @@
         <li>There are basically three ways to make the FOP-compatible hyphenation pattern 
           file(s) accessible to FOP:
           <ul>
-            <li>Download the precompiled JAR from <fork href="http://offo.sourceforge.net/hyphenation/index.html">OFFO
-            </fork> and place it either in the <code>{fop-dir}/lib</code> directory, or 
+            <li>Download the precompiled JAR from <a class="fork" href="http://offo.sourceforge.net/hyphenation/index.html">OFFO
+            </a> and place it either in the <code>{fop-dir}/lib</code> directory, or 
              in a directory of your choice (and append the full path to the JAR to 
              the environment variable <code>FOP_HYPHENATION_PATH</code>).</li>
             <li>Download the desired FOP-compatible hyphenation pattern file(s) from 
-             <fork href="http://offo.sourceforge.net/hyphenation/index.html">OFFO</fork>,
+             <a class="fork" href="http://offo.sourceforge.net/hyphenation/index.html">OFFO</a>,
              and/or take your self created hyphenation pattern file(s), 
              <ul>
                 <li>place them in the directory <code>{fop-dir}/hyph</code>, </li>
@@ -114,7 +113,7 @@
              be created from the supplied pattern(s)).</li>
             <li>Put the pattern source file(s) into a directory of your choice and 
              configure FOP to look for custom patterns in this directory, by setting the
-             <link href="configuration.html#hyphenation-dir">&lt;hyphenation-dir&gt;</link> 
+             <a href="configuration.html#hyphenation-dir">&lt;hyphenation-dir&gt;</a> 
              configuration option.</li>
           </ul>
         </li>
@@ -123,7 +122,7 @@
         Either of these three options will ensure hyphenation is working when using
         FOP from the command-line. If FOP is being embedded, remember to add the location(s)
         of the hyphenation JAR(s) to the CLASSPATH (option 1 and 2) or to set the 
-        <link href="configuration.html#hyphenation-dir">&lt;hyphenation-dir&gt;</link> 
+        <a href="configuration.html#hyphenation-dir">&lt;hyphenation-dir&gt;</a> 
         configuration option programmatically (option 3).
       </warning>
     </section>
@@ -133,15 +132,15 @@
     <p>If you would like to build your own hyphenation pattern files, or modify
      existing ones, this section will help you understand how to do so. Even
      when creating a pattern file from scratch, it may be beneficial to start
-     with an existing file and modify it. See <fork href="http://offo.sourceforge.net/hyphenation/index.html">
-     OFFO's Hyphenation page</fork> for examples. 
+     with an existing file and modify it. See <a class="fork" href="http://offo.sourceforge.net/hyphenation/index.html">
+     OFFO's Hyphenation page</a> for examples. 
      Here is a brief explanation of the contents of FOP's hyphenation patterns:</p>
     <warning>The remaining content of this section should be considered "draft"
      quality. It was drafted from theoretical literature, and has not been
      tested against actual FOP behavior. It may contain errors or omissions.
      Do not rely on these instructions without testing everything stated here.
      If you use these instructions, please provide feedback on the
-     <link href="../maillist.html#fop-user">FOP User mailing list</link>, either
+     <a href="../maillist.html#fop-user">FOP User mailing list</a>, either
      confirming their accuracy, or raising specific problems that we can
      address.</warning>
     <ul>
@@ -227,8 +226,8 @@
      online. The original patgen.web source, included in the TeX source distributions,
      contains valuable comments, unfortunately technical details obscure often the
      high level issues. Another important source is
-     <fork href="http://www.ctan.org/tex-archive/systems/knuth/tex/texbook.tex">The
-     TeX Book</fork>, appendix H (either read the TeX source, or run it through
+     <a class="fork" href="http://www.ctan.org/tex-archive/systems/knuth/tex/texbook.tex">The
+     TeX Book</a>, appendix H (either read the TeX source, or run it through
      TeX to typeset it). Secondary articles, for example the works by Petr Sojka,
      may alos give some much needed insigth into problems arising in automated
      hyphenation.</p>
