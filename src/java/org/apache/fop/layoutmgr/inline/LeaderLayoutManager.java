@@ -129,7 +129,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             char dot = '.'; // userAgent.getLeaderDotCharacter();
 
             int width = font.getCharWidth(dot);
-            t.setTextArea("" + dot);
+            t.setText("" + dot);
             t.setIPD(width);
             t.setBPD(width);
             t.setBaselineOffset(width);

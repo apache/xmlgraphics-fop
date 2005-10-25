@@ -75,7 +75,7 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         TextArea text = new TextArea();
         String str = getCurrentPV().getPageNumberString();
         int width = getStringWidth(str);
-        text.setTextArea(str);
+        text.setText(str);
         text.setIPD(width);
         text.setBPD(font.getAscender() - font.getDescender());
         text.setBaselineOffset(font.getAscender());
@@ -114,7 +114,7 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
     
     private void updateContent(TextArea area) {
         // get the page number of the page actually being built
-        area.setTextArea(getCurrentPV().getPageNumberString());
+        area.setText(getCurrentPV().getPageNumberString());
         // update the ipd of the area
         area.updateIPD(getStringWidth(area.getTextArea()));
         // update the width stored in the AreaInfo object

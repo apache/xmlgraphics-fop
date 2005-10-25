@@ -18,15 +18,12 @@
 
 package org.apache.fop.area.inline;
 
+import org.apache.fop.util.CharUtilities;
+
 /**
  * A text inline area.
  */
 public class TextArea extends AbstractTextArea {
-
-    /**
-     * The text for this inline area
-     */
-    protected String text;
 
     /**
      * Create a text inline area
@@ -50,8 +47,34 @@ public class TextArea extends AbstractTextArea {
      *
      * @param t the text string
      */
-    public void setTextArea(String t) {
-        text = t;
+    public void setText(String t) {
+        // split the text and create WordAreas and SpaceAreas
+        char charArray[] = t.toCharArray();
+        int wordStartIndex = -1;
+        for (int i = 0; i < charArray.length; i ++) {
+            if (CharUtilities.isAnySpace(charArray[i])) {
+                // a space character
+                // create a SpaceArea child
+                SpaceArea space = new SpaceArea(charArray[i]);
+                this.addChildArea(space);
+                space.setParentArea(this);
+            } else {
+                // a non-space character
+                if (wordStartIndex == -1) {
+                    // first character of the text, or after a space
+                    wordStartIndex = i;
+                }
+                if (i == charArray.length - 1
+                        || CharUtilities.isAnySpace(charArray[i + 1])) {
+                    // last character before the end of the text or a space:
+                    // create a WordArea child
+                    WordArea word = new WordArea(t.substring(wordStartIndex, i + 1));
+                    this.addChildArea(word);
+                    word.setParentArea(this);
+                    wordStartIndex = -1;
+                }
+            }
+        }
     }
 
     /**
@@ -60,7 +83,18 @@ public class TextArea extends AbstractTextArea {
      * @return the text string
      */
     public String getTextArea() {
-        return text;
+        StringBuffer text = new StringBuffer();
+        InlineArea child;
+        // assemble the text
+        for (int i = 0; i < inlines.size(); i ++) {
+            child = (InlineArea) inlines.get(i);
+            if (child instanceof WordArea) {
+                text.append(((WordArea) child).getWord());
+            } else {
+                text.append(((SpaceArea) child).getSpace());
+            }
+        }
+        return text.toString();
     }
 
     /**

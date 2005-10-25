@@ -59,6 +59,8 @@ import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.Character;
+import org.apache.fop.area.inline.WordArea;
+import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontInfo;
@@ -587,21 +589,24 @@ public abstract class AbstractRenderer
     protected void renderInlineArea(InlineArea inlineArea) {
         if (inlineArea instanceof TextArea) {
             renderText((TextArea) inlineArea);
+        } else if (inlineArea instanceof Character) {
+            renderCharacter((Character) inlineArea);
+        } else if (inlineArea instanceof WordArea) {
+            renderWord((WordArea) inlineArea);
+        } else if (inlineArea instanceof SpaceArea) {
+            renderSpace((SpaceArea) inlineArea);
         } else if (inlineArea instanceof InlineParent) {
             renderInlineParent((InlineParent) inlineArea);
         } else if (inlineArea instanceof InlineBlockParent) {
             renderInlineBlockParent((InlineBlockParent) inlineArea);
         } else if (inlineArea instanceof Space) {
             renderInlineSpace((Space) inlineArea);
-        } else if (inlineArea instanceof Character) {
-            renderCharacter((Character) inlineArea);
         } else if (inlineArea instanceof Viewport) {
             renderViewport((Viewport) inlineArea);
         } else if (inlineArea instanceof Leader) {
             renderLeader((Leader) inlineArea);
         }
     }
-
 
     /**
      * Render the given Character.
@@ -636,7 +641,29 @@ public abstract class AbstractRenderer
      * @param text the text to render
      */
     protected void renderText(TextArea text) {
-        currentIPPosition += text.getAllocIPD();
+        int saveIP = currentIPPosition;
+        int saveBP = currentBPPosition;
+        Iterator iter = text.getChildAreas().iterator();
+        while (iter.hasNext()) {
+            renderInlineArea((InlineArea) iter.next()); 
+        }
+        currentIPPosition = saveIP + text.getAllocIPD();
+    }
+
+    /**
+     * Render the given WordArea.
+     * @param word the word to render
+     */
+    protected void renderWord(WordArea word) {
+        currentIPPosition += word.getAllocIPD();
+    }
+
+    /**
+     * Render the given SpaceArea.
+     * @param space the space to render
+     */
+    protected void renderSpace(SpaceArea space) {
+        currentIPPosition += space.getAllocIPD();
     }
 
     /**
