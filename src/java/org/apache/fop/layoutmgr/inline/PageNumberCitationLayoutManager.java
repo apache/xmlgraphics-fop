@@ -110,7 +110,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
             TextArea text = new TextArea();
             inline = text;
             int width = getStringWidth(str);
-            text.setTextArea(str);
+            text.setText(str);
             inline.setIPD(width);
             
             resolved = true;

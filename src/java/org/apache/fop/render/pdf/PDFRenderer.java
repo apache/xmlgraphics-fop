@@ -52,6 +52,8 @@ import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.InlineParent;
+import org.apache.fop.area.inline.WordArea;
+import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.Font;
@@ -1095,11 +1097,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
         Typeface tf = (Typeface) fontInfo.getFonts().get(name);
         boolean useMultiByte = tf.isMultiByte();
-
-        // String startText = useMultiByte ? "<FEFF" : "(";
-        String startText = useMultiByte ? "<" : "(";
-        String endText = useMultiByte ? "> " : ") ";
-
+        
         updateFont(name, size, pdf);
         ColorType ct = (ColorType) text.getTrait(Trait.COLOR);
         updateColor(ct, true, pdf);
@@ -1125,7 +1123,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
 
             pdf.append("1 0 0 -1 " + (rx / 1000f) + " " + (bl / 1000f) + " Tm "
                        + (text.getTextLetterSpaceAdjust() / 1000f) + " Tc "
-                       + (text.getTextWordSpaceAdjust() / 1000f) + " Tw [" + startText);
+                       + (text.getTextWordSpaceAdjust() / 1000f) + " Tw [");
             prevWordY = bl;
             textOpen = true;
         } else {
@@ -1133,24 +1131,77 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
 
             pdf.append("1 0 0 -1 " + (rx / 1000f) + " " + (bl / 1000f) + " Tm "
                        + (text.getTextLetterSpaceAdjust() / 1000f) + " Tc "
-                       + (text.getTextWordSpaceAdjust() / 1000f) + " Tw [" + startText);
+                       + (text.getTextWordSpaceAdjust() / 1000f) + " Tw [");
             textOpen = true;
         }
         prevWordWidth = text.getIPD();
         prevWordX = rx;
-
-        String s = text.getTextArea();
-
-        FontMetrics metrics = fontInfo.getMetricsFor(name);
-        Font fs = new Font(name, metrics, size);
-        escapeText(s, fs, useMultiByte, pdf);
-        pdf.append(endText);
 
         currentStream.add(pdf.toString());
 
         renderTextDecoration(tf, size, text, bl, rx);
         
         super.renderText(text);
+    }
+    
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#renderWord(WordArea)
+     */
+    public void renderWord(WordArea word) {
+        String name = (String) word.getParentArea().getTrait(Trait.FONT_NAME);
+        int size = ((Integer) word.getParentArea().getTrait(Trait.FONT_SIZE)).intValue();
+        Typeface tf = (Typeface) fontInfo.getFonts().get(name);
+        boolean useMultiByte = tf.isMultiByte();
+
+        String startText = useMultiByte ? "<" : "(";
+        String endText = useMultiByte ? "> " : ") ";
+        
+        StringBuffer pdf = new StringBuffer();
+        
+        pdf.append(startText);
+
+        String s = word.getWord();
+        
+        FontMetrics metrics = fontInfo.getMetricsFor(name);
+        Font fs = new Font(name, metrics, size);
+        escapeText(s, fs, useMultiByte, pdf);
+        pdf.append(endText);
+        
+        currentStream.add(pdf.toString());
+
+        super.renderWord(word);
+    }
+    
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#renderSpace(SpaceArea)
+     */
+    public void renderSpace(SpaceArea space) {
+        String name = (String) space.getParentArea().getTrait(Trait.FONT_NAME);
+        int size = ((Integer) space.getParentArea().getTrait(Trait.FONT_SIZE)).intValue();
+        Typeface tf = (Typeface) fontInfo.getFonts().get(name);
+        boolean useMultiByte = tf.isMultiByte();
+
+        String startText = useMultiByte ? "<" : "(";
+        String endText = useMultiByte ? "> " : ") ";
+        
+        StringBuffer pdf = new StringBuffer();
+        
+        pdf.append(startText);
+
+        String s = space.getSpace();
+        
+        FontMetrics metrics = fontInfo.getMetricsFor(name);
+        Font fs = new Font(name, metrics, size);
+        escapeText(s, fs, useMultiByte, pdf);
+        pdf.append(endText);
+        
+        if (useMultiByte) {
+            pdf.append(-(((TextArea) space.getParentArea()).getTextWordSpaceAdjust() / (size / 1000)) + " ");
+        }
+        
+        currentStream.add(pdf.toString());
+
+        super.renderSpace(space);
     }
     
     /**

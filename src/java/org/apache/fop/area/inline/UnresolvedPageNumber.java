@@ -33,6 +33,7 @@ public class UnresolvedPageNumber extends TextArea implements Resolvable {
     private boolean resolved = false;
     private String pageIDRef;
     private Font font;
+    private String text;
 
     /**
      * Create a new unresolvable page number.
@@ -69,7 +70,7 @@ public class UnresolvedPageNumber extends TextArea implements Resolvable {
         if (pageIDRef.equals(id) && pages != null) {
             resolved = true;
             PageViewport page = (PageViewport)pages.get(0);
-            setTextArea(page.getPageNumberString());
+            setText(page.getPageNumberString());
             // update ipd
             updateIPD(getStringWidth(text));
             // set the Font object to null, as we don't need it any more

@@ -66,6 +66,8 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.TextArea;
+import org.apache.fop.area.inline.SpaceArea;
+import org.apache.fop.area.inline.WordArea;
 
 /**
  * Renderer that renders areas to XML for debugging purposes.
@@ -613,9 +615,32 @@ public class XMLRenderer extends PrintRenderer {
         addAreaAttributes(text);
         addTraitAttributes(text);
         startElement("text", atts);
-        characters(text.getTextArea());
-        endElement("text");
         super.renderText(text);
+        endElement("text");
+    }
+    
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#renderWord(WordArea)
+     */
+    protected void renderWord(WordArea word) {
+        atts.clear();
+        addAttribute("offset", word.getOffset());
+        startElement("word", atts);
+        characters(word.getWord());
+        endElement("word");
+        super.renderWord(word);
+    }
+    
+    /**
+     * @see org.apache.fop.render.AbstractRenderer#renderSpace(SpaceArea)
+     */
+    protected void renderSpace(SpaceArea space) {
+        atts.clear();
+        addAttribute("offset", space.getOffset());
+        startElement("space", atts);
+        characters(space.getSpace());
+        endElement("space");
+        super.renderSpace(space);
     }
 
     /**

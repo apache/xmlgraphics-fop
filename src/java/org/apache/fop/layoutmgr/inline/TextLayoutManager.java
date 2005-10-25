@@ -393,6 +393,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
      * @param adjust the total ipd adjustment with respect to the optimal width
      * @param context the layout context
      * @param spaceDiff unused
+     * @param firstIndex the index of the first AreaInfo used for the TextArea
+     * @param lastIndex the index of the last AreaInfo used for the TextArea
      * @return the new text area
      */
     protected TextArea createTextArea(String str, MinOptMax width, int adjust,
@@ -417,7 +419,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             textArea.setOffset(alignmentContext.getOffset());
         }
 
-        textArea.setTextArea(str);
+        textArea.setText(str);
         textArea.addTrait(Trait.FONT_NAME, font.getFontName());
         textArea.addTrait(Trait.FONT_SIZE, new Integer(font.getFontSize()));
         textArea.addTrait(Trait.COLOR, foText.getColor());

@@ -21,7 +21,7 @@ package org.apache.fop.area.inline;
 /**
  * Abstract base class for both TextArea and Character.
  */
-public abstract class AbstractTextArea extends InlineArea {
+public abstract class AbstractTextArea extends InlineParent {
 
     /**
      * this class stores information about spaces and potential adjustments
