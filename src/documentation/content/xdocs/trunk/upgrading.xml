@@ -62,8 +62,46 @@
         </li>
       </ul>
       <p>
-        So, please evaluate carefully before messing up your productive environment!
+        So, please evaluate carefully before messing up your production environment! Actually we do 
+        recommend against using the FOP development version in a production system.
       </p>
+    </section>
+    <section id="issues">
+      <title>What you need to know when you upgrade!</title>
+      <p>
+        When you use your existing FO files or XML/XSL files which work fine with FOP version
+        0.20.5 against this FOP version some things may not work as expected. The following
+        list will hopefully help you to identify and correct those problems.
+      </p>
+      <ul>
+        <li>
+          Check the <a href="../compliance.html">Compliance page</a> for the feature causing
+          trouble. It may contain the necessary information to understand and resolve the problem.
+        </li>
+        <li>
+          Not all 0.20.5 output formats are supported. PDF and Postscript should be fully supported.
+          See <a href="output.html">Output Targets</a> for a more complete description.
+        </li>
+        <li>
+          As stated above empty table cells <code>&lt;fo:table-cell&gt;&lt;/fo:table-cell&gt;</code>
+          are not allowed.
+        </li>
+        <li>
+          0.20.5 is not XSL-FO compliant with respect to sizing images or <code>instream-foreign-object</code>
+          objects. If images or SVGs are sized differently in your outputs with the new FOP version
+          check <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=37136">Bug 37136</a>
+          as it contains some hints on what to.
+        </li>
+        <li>
+          The <code>fox:outline</code> extension not implemented in this version anymore. 
+          It has been superseded by the new bookmark elements from XSL-FO 1.1.
+        </li>
+        <li>
+          The <code>fox:destination</code> extension is also not implemented in this version
+          although it may be added in the future. See also
+          <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=37157">Bug 37157</a>.
+        </li>
+      </ul>
     </section>
   </body>
 </document>
