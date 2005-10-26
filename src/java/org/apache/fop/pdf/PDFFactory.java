@@ -688,7 +688,7 @@ public class PDFFactory {
     public PDFPattern makeGradient(PDFResourceContext res, boolean radial,
                                    PDFColorSpace theColorspace,
                                    List theColors, List theBounds,
-                                   List theCoords) {
+                                   List theCoords, List theMatrix) {
         PDFShading myShad;
         PDFFunction myfunky;
         PDFFunction myfunc;
@@ -770,7 +770,7 @@ public class PDFFactory {
 
         }
 
-        myPattern = makePattern(res, 2, myShad, null, null, null);
+        myPattern = makePattern(res, 2, myShad, null, null, theMatrix);
 
         return (myPattern);
     }

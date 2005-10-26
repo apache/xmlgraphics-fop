@@ -305,12 +305,19 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
         resourceContext = page;
         pdfContext.setCurrentPage(page);
         pageRef = page.referencePDF();
-        graphicsState.setTransform(new AffineTransform(1.0, 0.0, 0.0, -1.0, 0.0, (double)height));
+
+        AffineTransform at = new AffineTransform(1.0, 0.0, 0.0, -1.0, 
+                                                 0.0, (double)height);
         currentStream.write("1 0 0 -1 0 " + height + " cm\n");
         if (svgWidth != 0) {
-            currentStream.write("" + PDFNumber.doubleOut(width / svgWidth) + " 0 0 "
-                    + PDFNumber.doubleOut(height / svgHeight) + " 0 0 cm\n");
+            double scaleX = width / svgWidth;
+            double scaleY = height / svgHeight;
+            at.scale(scaleX, scaleY);
+            currentStream.write("" + PDFNumber.doubleOut(scaleX) + " 0 0 "
+                                + PDFNumber.doubleOut(scaleY) + " 0 0 cm\n");
         }
+        // Remember the transform we installed.
+        graphicsState.setTransform(at);
 
         pdfContext.increasePageCount();
     }

@@ -68,11 +68,11 @@ public class PDFState {
         Data copy;
         try {
             copy = (Data)getData().clone();
+            getData().resetTransform();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e.getMessage());
         }
         stateStack.add(copy);
-        data.resetConcatenations();
     }
 
     /**
@@ -280,16 +280,15 @@ public class PDFState {
      * @return the calculate combined transform for the current state
      */
     public AffineTransform getTransform() {
-        AffineTransform tf;
-        AffineTransform at = new AffineTransform();
-        for (Iterator iter = stateStack.iterator(); iter.hasNext();) {
-            Data d = (Data)iter.next();
-            tf = d.transform;
-            at.concatenate(tf);
-        }
-        at.concatenate(getData().transform);
-
-        return at;
+       AffineTransform tf;
+       AffineTransform at = new AffineTransform();
+       for (Iterator iter = stateStack.iterator(); iter.hasNext();) {
+           Data d = (Data)iter.next();
+           tf = d.transform;
+           at.concatenate(tf);
+       }
+       at.concatenate(getData().transform);
+       return at;
     }
 
     /**
@@ -339,8 +338,6 @@ public class PDFState {
         public String fontName = "";
         public Shape clip = null;
         public PDFGState gstate = null;
-        /** Log of all concatenation operations */
-        public List concatenations = null;
 
         
         /** @see java.lang.Object#clone() */
@@ -362,19 +359,20 @@ public class PDFState {
             obj.fontName = this.fontName;
             obj.clip = this.clip;
             obj.gstate = this.gstate;
-            if (this.concatenations != null) {
-                obj.concatenations = new java.util.ArrayList(this.concatenations);
-            }
             return obj;
         }
         
         /**
-         * Forgets the previously made AffineTransform concatenations.
+         * Get the current Transform.
          */
-        public void resetConcatenations() {
-            this.concatenations = null;
+        public AffineTransform getTransform() {
+            return transform;
         }
-        
+
+        public void resetTransform() {
+            transform = new AffineTransform();
+        }
+
         /**
          * Concatenate the given AffineTransform with the current thus creating
          * a new viewport. Note that all concatenation operations are logged
@@ -383,16 +381,12 @@ public class PDFState {
          * @param at Transformation to perform
          */
         public void concatenate(AffineTransform at) {
-            if (this.concatenations == null) {
-                this.concatenations = new java.util.ArrayList();
-            }
-            concatenations.add(at);
             transform.concatenate(at);
         }
         
         /** @see java.lang.Object#toString() */
         public String toString() {
-            return super.toString() + ", " + this.transform + " | " + this.concatenations;
+            return super.toString() + ", " + this.transform;
         }
     }
 }

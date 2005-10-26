@@ -134,6 +134,15 @@ public class PSGraphics2D extends AbstractGraphics2D {
      */
     public PSGraphics2D(PSGraphics2D g) {
         super(g);
+
+        setPSGenerator(g.gen);
+        this.clippingDisabled = g.clippingDisabled;
+        this.font             = g.font;
+        this.overrideFont     = g.overrideFont;
+        this.currentFontName  = g.currentFontName;
+        this.currentFontSize  = g.currentFontSize;
+        this.currentColour    = g.currentColour;
+        this.fontInfo         = g.fontInfo;
     }
 
     /**
