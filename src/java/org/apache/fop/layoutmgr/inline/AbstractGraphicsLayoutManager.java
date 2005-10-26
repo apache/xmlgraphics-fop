@@ -208,7 +208,10 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
         vp.setOffset(0);
 
         // Common Border, Padding, and Background Properties
-        TraitSetter.addBorders(vp, fobj.getCommonBorderPaddingBackground(), this);
+        TraitSetter.addBorders(vp, fobj.getCommonBorderPaddingBackground()
+                                , false, false, false, false, this);
+        TraitSetter.addPadding(vp, fobj.getCommonBorderPaddingBackground()
+                                , false, false, false, false, this);
         TraitSetter.addBackground(vp, fobj.getCommonBorderPaddingBackground(), this);
 
         return vp;
@@ -225,7 +228,7 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
     }
     
     /**
-     * @see LeafNodeLayoutManager.makeAlignmentContext(LayoutContext)
+     * @see LeafNodeLayoutManager#makeAlignmentContext(LayoutContext)
      */
     protected AlignmentContext makeAlignmentContext(LayoutContext context) {
         return new AlignmentContext(

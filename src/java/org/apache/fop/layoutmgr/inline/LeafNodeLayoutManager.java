@@ -247,7 +247,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
         area.setIPD(width);
     }
     
-    /** @see LayoutManager#getNextKnuthElements(LayoutContext, int) */
+    /** @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(LayoutContext, int) */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         curArea = get(context);
         
@@ -311,7 +311,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
         return false;
     }
 
-    /** @see LayoutManager#getChangedKnuthElements(List, int) */
+    /** @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(List, int) */
     public LinkedList getChangedKnuthElements(List oldList,
                                               int alignment) {
         if (isFinished()) {

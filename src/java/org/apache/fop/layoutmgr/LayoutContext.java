@@ -254,7 +254,7 @@ public class LayoutContext {
     
     /**
      * @return the pending border and padding elements at the after edge
-     * @see addPendingAfterMark(BorderOrPaddingElement)
+     * @see #addPendingAfterMark(UnresolvedListElementWithLength)
      */
     public List getPendingAfterMarks() {
         if (this.pendingAfterMarks != null) {
@@ -279,7 +279,7 @@ public class LayoutContext {
     
     /**
      * @return the pending border and padding elements at the before edge
-     * @see addPendingBeforeMark(BorderOrPaddingElement)
+     * @see #addPendingBeforeMark(UnresolvedListElementWithLength)
      */
     public List getPendingBeforeMarks() {
         if (this.pendingBeforeMarks != null) {

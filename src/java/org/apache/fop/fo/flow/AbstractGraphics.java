@@ -265,12 +265,12 @@ public abstract class AbstractGraphics extends FObj {
     }
     
     /**
-     * @see org.apache.fop.fo.IntrinsicSizeAccess#getIntrinsicWidth()
+     * @return the graphics intrinsic width
      */
     public abstract int getIntrinsicWidth();
 
     /**
-     * @see org.apache.fop.fo.IntrinsicSizeAccess#getIntrinsicHeight()
+     * @return the graphics intrinsic height
      */
     public abstract int getIntrinsicHeight();
 }

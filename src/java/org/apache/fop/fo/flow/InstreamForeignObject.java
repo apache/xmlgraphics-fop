@@ -109,7 +109,7 @@ public class InstreamForeignObject extends AbstractGraphics {
     }
 
     /**
-     * @see org.apache.fop.fo.IntrinsicSizeAccess#getIntrinsicWidth()
+     * @see org.apache.fop.fo.flow.AbstractGraphics#getIntrinsicWidth()
      */
     public int getIntrinsicWidth() {
         prepareIntrinsicSize();
@@ -121,7 +121,7 @@ public class InstreamForeignObject extends AbstractGraphics {
     }
 
     /**
-     * @see org.apache.fop.fo.IntrinsicSizeAccess#getIntrinsicHeight()
+     * @see org.apache.fop.fo.flow.AbstractGraphics#getIntrinsicHeight()
      */
     public int getIntrinsicHeight() {
         prepareIntrinsicSize();

@@ -43,7 +43,7 @@ public class ToBeImplementedProperty extends Property {
 
     /**
      * Constructor
-     * @param propName name of Property
+     * @param propId id of Property
      */
     public ToBeImplementedProperty(int propId) {
 

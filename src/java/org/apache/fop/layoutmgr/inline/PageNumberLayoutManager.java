@@ -89,11 +89,6 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         return text;
     }
     
-    /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#getLead() */
-    public int getLead() {
-        return font.getAscender();
-    }
-    
     /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#getEffectiveArea() */
     protected InlineArea getEffectiveArea() {
         TextArea baseArea = (TextArea)curArea;
@@ -133,7 +128,7 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         return width;
     }
     
-    /** @see org.apache.fop.layoutmgr.inline.LeafLayoutManager#addId */
+    /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#addId() */
     protected void addId() {
         getPSLM().addIDToPage(fobj.getId());
     }

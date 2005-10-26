@@ -52,14 +52,14 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
      * Constructor
      *
      * @param node the fo:character formatting object
-     * @todo better null checking of node
      */
     public CharacterLayoutManager(Character node) {
+        // @todo better null checking of node
         super(node);
         fobj = node;
     }
     
-    /** @see LayoutManager#initialize */
+    /** @see org.apache.fop.layoutmgr.LayoutManager#initialize */
     public void initialize() {
         font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
         SpaceVal ls = SpaceVal.makeLetterSpacing(fobj.getLetterSpacing());
@@ -80,7 +80,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         return ch;
     }
 
-    /** @see LayoutManager#getNextKnuthElements(LayoutContext, int) */
+    /** @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(LayoutContext, int) */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         MinOptMax ipd;
         curArea = get(context);
@@ -162,7 +162,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         hc.updateOffset(1);
     }
 
-    /** @see InlineLevelLayoutManager#applyChanges(list) */
+    /** @see InlineLevelLayoutManager#applyChanges(List) */
     public boolean applyChanges(List oldList) {
         setFinished(false);
         if (isSomethingChanged) {
@@ -175,7 +175,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         }
     }
 
-    /** @see LayoutManager#getChangedKnuthElements(List, int) */
+    /** @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(List, int) */
     public LinkedList getChangedKnuthElements(List oldList, int alignment) {
         if (isFinished()) {
             return null;
