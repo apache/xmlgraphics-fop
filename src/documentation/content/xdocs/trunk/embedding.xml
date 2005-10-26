@@ -270,7 +270,7 @@ Fop fop = new Fop(Constants.RENDER_PS, userAgent);]]></source>
         <p>
           The <strong>base URL</strong> to use when resolving relative URLs. Example:
         </p>
-        <source>userAgent.setBaseURL("file://C:/Temp/");</source>
+        <source>userAgent.setBaseURL("file:///C:/Temp/");</source>
       </li>
       <li>
         <p>

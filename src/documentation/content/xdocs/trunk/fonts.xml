@@ -28,6 +28,11 @@
   <body>
     <section id="intro">
       <title>Summary</title>
+      <note>The FOP Font subsystem is currently undergoing a significant change.
+        The details provided here especially related to the generation of FOP Font
+        Metrics files and the FOP Font configuration are likely to change substantially
+        in the future.
+      </note>
       <p>The following table summarizes the font capabilities of the various FOP renderers:</p>
       <table>
         <tr>
@@ -225,8 +230,8 @@ It will display all of the font names and exit with an Exception.</p>
       <section id="register">
         <title>Register Fonts with FOP</title>
         <p>You must tell FOP how to find and use the font metrics files by registering them in the <a href="configuration.html">FOP Configuration</a>. Add entries for your custom fonts, regardless of font type, to the configuration file in a manner similar to the following:</p>
-        <source><![CDATA[<font metrics-url="file:C:/myfonts/FTL_____.xml" kerning="yes"
-      embed-url="file:C:/myfonts/FTL_____.pfb">
+        <source><![CDATA[<font metrics-url="file:///C:/myfonts/FTL_____.xml" kerning="yes"
+      embed-url="file:///C:/myfonts/FTL_____.pfb">
   <font-triplet name="FrutigerLight" style="normal" weight="normal"/>
 </font>]]></source>
         <note>Review the documentation for <a href="configuration.html">FOP Configuration</a> for instructions on making the FOP configuration available to FOP when it runs. Otherwise, FOP has no way of finding your custom font information.</note>
