@@ -63,7 +63,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         fobj = node;
     }
     
-    /** @see LayoutManager#initialize */
+    /** @see org.apache.fop.layoutmgr.LayoutManager#initialize */
     public void initialize() {
         font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
         // the property leader-alignment does not affect vertical positioning
@@ -213,7 +213,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         }
     }
 
-    /** @see LayoutManager#getNextKnuthElements(LayoutContext, int) */
+    /** @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(LayoutContext, int) */
     public LinkedList getNextKnuthElements(LayoutContext context,
                                            int alignment) {
         MinOptMax ipd;
@@ -266,13 +266,13 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         super.hyphenate(pos, hc);
     }
 
-    /** @see InlineLevelLayoutManager#applyChanges(list) */
+    /** @see InlineLevelLayoutManager#applyChanges(List) */
     public boolean applyChanges(List oldList) {
         setFinished(false);
         return false;
     }
 
-    /** @see LayoutManager#getNextKnuthElements(LayoutContext, int) */
+    /** @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(List, int) */
     public LinkedList getChangedKnuthElements(List oldList,
                                               int alignment) {
         if (isFinished()) {

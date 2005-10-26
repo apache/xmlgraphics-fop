@@ -387,7 +387,8 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
         }
     }
 
-    /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
+    /** @see org.apache.fop.render.AbstractPathOrientedRenderer#drawBackAndBorders(
+     * Area, float, float, float, float) */
     protected void drawBackAndBorders(Area area, float startx, float starty,
             float width, float height) {
         if (area.hasTrait(Trait.BACKGROUND)

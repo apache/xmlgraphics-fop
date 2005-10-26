@@ -61,7 +61,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
     }
 
     /**
-     * @see LeafNodeLayoutManager.makeAlignmentContext(LayoutContext)
+     * @see LeafNodeLayoutManager#makeAlignmentContext(LayoutContext)
      */
     protected AlignmentContext makeAlignmentContext(LayoutContext context) {
         return new AlignmentContext(
@@ -92,11 +92,6 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
         }
     }
     
-    /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#getLead() */
-    public int getLead() {
-        return font.getAscender();
-    }
-
     /**
      * if id can be resolved then simply return a word, otherwise
      * return a resolvable area
@@ -145,7 +140,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
         return width;
     }
 
-    /** @see org.apache.fop.layoutmgr.inline.LeafLayoutManager#addId */
+    /** @see org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager#addId() */
     protected void addId() {
         getPSLM().addIDToPage(fobj.getId());
     }

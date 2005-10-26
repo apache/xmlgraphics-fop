@@ -141,7 +141,7 @@ public class TestConverter {
 
     /**
      * Controls whether to set logging to debug level
-     * @param If true, debug level, if false, error level
+     * @param debug If true, debug level, if false, error level
      */
     public void setDebug(boolean debug) {
         if (debug) {

@@ -67,7 +67,7 @@ public class LengthBase implements PercentBase {
     /**
      * One of the defined types of LengthBase
      */
-    private /* final */ int iBaseType;
+    private /* final */ int baseType;
 
     /** For percentages based on other length properties */
     private Length baseLength;
@@ -76,13 +76,13 @@ public class LengthBase implements PercentBase {
      * Constructor
      * @param parentFO parent FO for this
      * @param plist property list for this
-     * @param iBaseType a member of {@link #PERCENT_BASED_LENGTH_TYPES}
+     * @param baseType a constant defining the type of teh percent base
      * @throws PropertyException In case an problem occurs while evaluating values
      */
-    public LengthBase(FObj parentFO, PropertyList plist, int iBaseType) throws PropertyException {
+    public LengthBase(FObj parentFO, PropertyList plist, int baseType) throws PropertyException {
         this.fobj = plist.getFObj();
-        this.iBaseType = iBaseType;
-        switch (iBaseType) {
+        this.baseType = baseType;
+        switch (baseType) {
         case FONTSIZE:
             this.baseLength = plist.get(Constants.PR_FONT_SIZE).getLength();
             break;
@@ -116,10 +116,10 @@ public class LengthBase implements PercentBase {
     public int getBaseLength(PercentBaseContext context) throws PropertyException {
         int baseLen = 0;
         if (context != null) {
-            if (iBaseType == FONTSIZE || iBaseType == INH_FONTSIZE) {
+            if (baseType == FONTSIZE || baseType == INH_FONTSIZE) {
                 return baseLength.getValue(context);
             }
-            baseLen =  context.getBaseLength(iBaseType,  fobj);
+            baseLen =  context.getBaseLength(baseType,  fobj);
         } else {
             fobj.getLogger().error("getBaseLength called without context");
         }

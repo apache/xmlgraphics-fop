@@ -180,7 +180,7 @@ public class BasicScaledBaselineTable implements ScaledBaselineTable, Constants 
     }
 
     /**
-     * @see ScaledBaselineTable#getScaledBaselineTable(int)
+     * @see ScaledBaselineTable#deriveScaledBaselineTable(int)
      */
     public ScaledBaselineTable deriveScaledBaselineTable(int baselineIdentifier) {
         BasicScaledBaselineTable bac 

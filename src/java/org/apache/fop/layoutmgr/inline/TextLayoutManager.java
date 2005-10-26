@@ -393,8 +393,6 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
      * @param adjust the total ipd adjustment with respect to the optimal width
      * @param context the layout context
      * @param spaceDiff unused
-     * @param firstIndex the index of the first AreaInfo used for the TextArea
-     * @param lastIndex the index of the last AreaInfo used for the TextArea
      * @return the new text area
      */
     protected TextArea createTextArea(String str, MinOptMax width, int adjust,
@@ -429,7 +427,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         return textArea;
     }
 
-    /** @see LayoutManager#getNextKnuthElements(LayoutContext, int) */
+    /** @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(LayoutContext, int) */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         lineStartBAP = context.getLineStartBorderAndPaddingWidth();
         lineEndBAP = context.getLineEndBorderAndPaddingWidth();
@@ -688,7 +686,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         return bChanged;
     }
 
-    /** @see org.aapache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(List, int) */
+    /** @see org.apache.fop.layoutmgr.LayoutManager#getChangedKnuthElements(List, int) */
     public LinkedList getChangedKnuthElements(List oldList,
                                               int alignment) {
         if (isFinished()) {
