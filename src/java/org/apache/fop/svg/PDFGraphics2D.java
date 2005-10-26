@@ -279,6 +279,15 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     }
 
     /**
+     * Get the string buffer from the currentStream, containing all
+     * the commands written into this Grpahics so far.
+     * @return the StringBuffer containing the PDF markup
+     */
+    public StringBuffer getBuffer() {
+        return currentStream.getBuffer();
+    }
+
+    /**
      * Set the Grpahics context.
      * @param c the graphics context to use
      */
@@ -829,17 +838,27 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             LinearGradientPaint gp = (LinearGradientPaint)paint;
             Color[] cols = gp.getColors();
             float[] fractions = gp.getFractions();
-            Point2D p1 = gp.getStartPoint();
-            Point2D p2 = gp.getEndPoint();
+
             //MultipleGradientPaint.CycleMethodEnum cycenum = gp.getCycleMethod();
             //boolean cyclic = (cycenum == MultipleGradientPaint.REPEAT);
-            AffineTransform transform = graphicsState.getTransform();
-            transform.concatenate(gp.getTransform());
+            // This code currently doesn't support 'repeat' as PDF has
+            // no way to support this (we need to rasterize).
+
+            // Build proper transform from gradient space to page space
+            // ('Patterns' don't get userspace transform).
+            AffineTransform transform;
+            transform = new AffineTransform(graphicsState.getTransform());
             transform.concatenate(getTransform());
+            transform.concatenate(gp.getTransform());
 
-            p1 = transform.transform(p1, null);
-            p2 = transform.transform(p2, null);
+            List theMatrix = new java.util.ArrayList();
+            double [] mat = new double[6];
+            transform.getMatrix(mat);
+            for (int idx=0; idx<mat.length; idx++) 
+                theMatrix.add(new Double(mat[idx]));
 
+            Point2D p1 = gp.getStartPoint();
+            Point2D p2 = gp.getEndPoint();
             List theCoords = new java.util.ArrayList();
             theCoords.add(new Double(p1.getX()));
             theCoords.add(new Double(p1.getY()));
@@ -874,46 +893,56 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                 }
             }
 
-            PDFColorSpace aColorSpace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
+            PDFColorSpace aColorSpace;
+            aColorSpace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
             PDFPattern myPat = pdfDoc.getFactory().makeGradient(
                     resourceContext, false, aColorSpace,
-                    someColors, theBounds, theCoords);
+                    someColors, theBounds, theCoords, theMatrix);
             currentStream.write(myPat.getColorSpaceOut(fill));
 
         } else if (paint instanceof RadialGradientPaint) {
             RadialGradientPaint rgp = (RadialGradientPaint)paint;
 
+            AffineTransform transform;
+            transform = new AffineTransform(graphicsState.getTransform());
+            transform.concatenate(getTransform());
+            transform.concatenate(rgp.getTransform());
+
+            List theMatrix = new java.util.ArrayList();
+            double [] mat = new double[6];
+            transform.getMatrix(mat);
+            for (int idx=0; idx<mat.length; idx++) 
+                theMatrix.add(new Double(mat[idx]));
+
             double ar = rgp.getRadius();
             Point2D ac = rgp.getCenterPoint();
             Point2D af = rgp.getFocusPoint();
-            AffineTransform transform = graphicsState.getTransform();
-            AffineTransform gradt = rgp.getTransform();
-            transform.concatenate(gradt);
-
-            // find largest scaling for the radius
-            double scale = gradt.getScaleX();
-            if (gradt.getScaleY() > scale) {
-                scale = gradt.getScaleY();
-            }
-            ar = ar * scale;
-            ac = transform.transform(ac, null);
-            af = transform.transform(af, null);
 
             List theCoords = new java.util.ArrayList();
-            // the center point af must be within the circle with
-            // radius ar centered at ac
-            theCoords.add(new Double(af.getX()));
-            theCoords.add(new Double(af.getY()));
+            double dx = af.getX()-ac.getX();
+            double dy = af.getY()-ac.getY();
+            double d = Math.sqrt(dx*dx+dy*dy);
+            if (d > ar) {
+                // the center point af must be within the circle with
+                // radius ar centered at ac so limit it to that.
+                double scale = (ar*.9999)/d;
+                dx = dx*scale;
+                dy = dy*scale;
+            }
+
+            theCoords.add(new Double(ac.getX()+dx)); // Fx
+            theCoords.add(new Double(ac.getY()+dy)); // Fy
             theCoords.add(new Double(0));
-            theCoords.add(new Double(ac.getX())); // Fx
-            theCoords.add(new Double(ac.getY())); // Fy
+            theCoords.add(new Double(ac.getX()));
+            theCoords.add(new Double(ac.getY()));
             theCoords.add(new Double(ar));
 
             Color[] cols = rgp.getColors();
             List someColors = new java.util.ArrayList();
             for (int count = 0; count < cols.length; count++) {
                 Color cc = cols[count];
-                someColors.add(new PDFColor(cc.getRed(), cc.getGreen(), cc.getBlue()));
+                someColors.add(new PDFColor(cc.getRed(), cc.getGreen(), 
+                                            cc.getBlue()));
             }
 
             float[] fractions = rgp.getFractions();
@@ -922,10 +951,12 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                 float offset = fractions[count];
                 theBounds.add(new Double(offset));
             }
-            PDFColorSpace colSpace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
-            PDFPattern myPat = pdfDoc.getFactory().makeGradient(
-                                    resourceContext, true, colSpace,
-                                    someColors, theBounds, theCoords);
+            PDFColorSpace colSpace;
+            colSpace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
+
+            PDFPattern myPat = pdfDoc.getFactory().makeGradient
+                (resourceContext, true, colSpace,
+                 someColors, theBounds, theCoords, theMatrix);
 
             currentStream.write(myPat.getColorSpaceOut(fill));
 
@@ -937,7 +968,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
     private void createPattern(PatternPaint pp, boolean fill) {
         preparePainting();
-        Rectangle2D rect = pp.getPatternRect();
 
         FontInfo fontInfo = new FontInfo();
         FontSetup.setup(fontInfo, null);
@@ -947,41 +977,64 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         PDFGraphics2D pattGraphic = new PDFGraphics2D(textAsShapes, fontInfo,
                                         pdfDoc, context, pageRef,
                                         "", 0);
-        pattGraphic.gc = (GraphicContext)this.gc.clone();
+        pattGraphic.setGraphicContext(new GraphicContext());
         pattGraphic.gc.validateTransformStack();
+        pattGraphic.setRenderingHints(this.getRenderingHints());
         pattGraphic.setOutputStream(outputStream);
 
         GraphicsNode gn = pp.getGraphicsNode();
-        gn.paint(pattGraphic);
+        Rectangle2D gnBBox = gn.getBounds();
+        Rectangle2D rect = pp.getPatternRect();
 
-        StringWriter pattStream = new StringWriter();
-        pattStream.write("q\n");
-
-        // this makes the pattern the right way up, since
-        // it is outside the original transform around the
-        // whole svg document
-        pattStream.write("1 0 0 -1 0 " + (rect.getHeight() + rect.getY()) + " cm\n");
-
-        pattStream.write(pattGraphic.getString());
-        pattStream.write("Q");
+        // if (!pp.getOverflow()) {
+            gn.paint(pattGraphic);
+        // } else {
+        // /* Commented out until SVN version of Batik is included */
+        //     // For overflow we need to paint the content from
+        //     // all the tiles who's overflow will intersect one
+        //     // tile (left->right, top->bottom).  Then we can
+        //     // simply replicate that tile as normal.
+        //     double gnMinX = gnBBox.getX();
+        //     double gnMaxX = gnBBox.getX() + gnBBox.getWidth();
+        //     double gnMinY = gnBBox.getY();
+        //     double gnMaxY = gnBBox.getY() + gnBBox.getHeight();
+        //     double patMaxX = rect.getX() + rect.getWidth();
+        //     double patMaxY = rect.getY() + rect.getHeight();
+        //     double stepX = rect.getWidth();
+        //     double stepY = rect.getHeight();            
+        // 
+        //     int startX = (int)((rect.getX() - gnMaxX)/stepX);
+        //     int startY = (int)((rect.getY() - gnMaxY)/stepY);
+        // 
+        //     int endX   = (int)((patMaxX - gnMinX)/stepX);
+        //     int endY   = (int)((patMaxY - gnMinY)/stepY);
+        // 
+        //     pattGraphic.translate(startX*stepX, startY*stepY);
+        //     for (int yIdx=startY; yIdx<=endY; yIdx++) {
+        //         for (int xIdx=startX; xIdx<=endX; xIdx++) {
+        //             gn.paint(pattGraphic);
+        //             pattGraphic.translate(stepX,0);
+        //         }
+        //         pattGraphic.translate(-(endX-startX+1)*stepX, stepY);
+        //     }
+        // }
 
         List bbox = new java.util.ArrayList();
-        bbox.add(new Double(0));
-        bbox.add(new Double(0));
-        bbox.add(new Double(rect.getWidth() + rect.getX()));
-        bbox.add(new Double(rect.getHeight() + rect.getY()));
+        bbox.add(new Double(rect.getX()));
+        bbox.add(new Double(rect.getHeight()+rect.getY()));
+        bbox.add(new Double(rect.getWidth() +rect.getX()));
+        bbox.add(new Double(rect.getY()));
 
-        List translate = new java.util.ArrayList();
-        AffineTransform pattt = pp.getPatternTransform();
-        pattt.translate(rect.getWidth() + rect.getX(), rect.getHeight() + rect.getY());
-        double[] flatmatrix = new double[6];
-        pattt.getMatrix(flatmatrix);
-        translate.add(new Double(flatmatrix[0]));
-        translate.add(new Double(flatmatrix[1]));
-        translate.add(new Double(flatmatrix[2]));
-        translate.add(new Double(flatmatrix[3]));
-        translate.add(new Double(flatmatrix[4]));
-        translate.add(new Double(flatmatrix[5]));
+        AffineTransform transform;
+        transform = new AffineTransform(graphicsState.getTransform());
+        transform.concatenate(getTransform());
+        transform.concatenate(pp.getPatternTransform());
+
+        List theMatrix = new java.util.ArrayList();
+        double [] mat = new double[6];
+        transform.getMatrix(mat);
+        for (int idx=0; idx<mat.length; idx++) 
+            theMatrix.add(new Double(mat[idx]));
 
         /** @todo see if pdfDoc and res can be linked here,
         (currently res <> PDFDocument's resources) so addFonts() 
@@ -991,7 +1044,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         PDFPattern myPat = pdfDoc.getFactory().makePattern(
                                 resourceContext, 1, res, 1, 1, bbox,
                                 rect.getWidth(), rect.getHeight(),
-                                translate, null, pattStream.getBuffer());
+                                theMatrix, null, 
+                                pattGraphic.getBuffer());
 
         currentStream.write(myPat.getColorSpaceOut(fill));
 

@@ -928,21 +928,18 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         comment("------ restoring context after break-out...");
         PDFState.Data data;
         Iterator i = breakOutList.iterator();
+        double[] matrix = new double[6];
         while (i.hasNext()) {
             data = (PDFState.Data)i.next();
             currentState.push();
             saveGraphicsState();
-            if (data.concatenations != null) {
-                Iterator tr = data.concatenations.iterator();
-                while (tr.hasNext()) {
-                    AffineTransform at = (AffineTransform)tr.next();
-                    currentState.setTransform(at);
-                    double[] matrix = new double[6];
-                    at.getMatrix(matrix);
-                    tempctm = new CTM(matrix[0], matrix[1], matrix[2], matrix[3], 
-                            matrix[4] * 1000, matrix[5] * 1000);
-                    currentStream.add(CTMHelper.toPDFString(tempctm) + " cm\n");
-                }
+            AffineTransform at = data.getTransform();
+            if (!at.isIdentity()) {
+                currentState.setTransform(at);
+                at.getMatrix(matrix);
+                tempctm = new CTM(matrix[0], matrix[1], matrix[2], matrix[3], 
+                                  matrix[4] * 1000, matrix[5] * 1000);
+                currentStream.add(CTMHelper.toPDFString(tempctm) + " cm\n");
             }
             //TODO Break-out: Also restore items such as line width and color
             //Left out for now because all this painting stuff is very
