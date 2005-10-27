@@ -796,6 +796,7 @@ list of possible build targets.
       </sourcepath>
       <tag name="todo" scope="all" description="To do:"/>
       <group title="Control and Startup">
+        <package name="org.apache.fop"/>
         <package name="org.apache.fop.apps"/>
         <package name="org.apache.fop.cli"/>
         <package name="org.apache.fop.configuration"/>
@@ -815,17 +816,18 @@ list of possible build targets.
       <group title="Area Tree">
         <package name="org.apache.fop.area"/>
         <package name="org.apache.fop.area.*"/>
+        <package name="org.apache.fop.traits"/>
       </group>
       <group title="Paginated Rendering">
         <package name="org.apache.fop.render"/>
         <package name="org.apache.fop.render.*"/>
-        <package name="org.apache.fop.viewer"/>
       </group>
       <group title="Structural Rendering">
         <package name="org.apache.fop.render.rtf"/>
         <package name="org.apache.fop.render.mif"/>
       </group>
       <group title="Utility">
+        <package name="org.apache.fop.hyphenation"/>
         <package name="org.apache.fop.pdf"/>
         <package name="org.apache.fop.tools"/>
         <package name="org.apache.fop.tools.*"/>
