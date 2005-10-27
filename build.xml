@@ -23,13 +23,12 @@
 Building instructions
 =====================
 
-First, install Ant (http://ant.apache.org). Check that ant.sh or ant.bat
+First, install Ant (http://ant.apache.org). Check that ant or ant.bat
 is in your search path and that JAVA_HOME and ANT_HOME are properly set.
 Next make sure your current working directory is where this very file is
 located. Then type
 
-  ant.sh (on unixes)
-  ant (on Windows)
+  ant
 
 If everything is right and all the required packages are visible, this action
 will generate a file called "fop.jar" in the "./build" directory.
@@ -77,14 +76,17 @@ list of possible build targets.
   </fileset>
 
   <fileset dir="${basedir}" id="dist.bin.lib">
-    <include name="lib/xercesImpl-*.jar"/>
-    <include name="lib/xalan-*.jar"/>
-    <include name="lib/xml-apis*.jar"/>
-    <include name="lib/serializer*.jar"/>
-    <include name="lib/batik*.jar"/>
-    <include name="lib/avalon-framework*.jar"/>
-    <include name="lib/commons-logging*.jar"/>
-    <include name="lib/commons-io*.jar"/>
+    <patternset id="dist.lib">
+      <include name="lib/avalon-framework*"/>
+      <include name="lib/batik*"/>
+      <include name="lib/commons-io*"/>
+      <include name="lib/commons-logging*"/>
+      <include name="lib/README*"/>
+      <include name="lib/serializer*"/>
+      <include name="lib/xalan-*"/>
+      <include name="lib/xerces*"/>
+      <include name="lib/xml-apis*"/>
+    </patternset>
   </fileset>
 
   <fileset dir="${basedir}" id="dist.src">
@@ -95,7 +97,10 @@ list of possible build targets.
     <include name="src/**"/>
     <include name="conf/**"/>
     <include name="docs/**"/>
-    <include name="lib/**"/>
+    <include name="hyph/**"/>
+    <patternset refid="dist.lib"/>
+    <include name="lib/servlet*"/>
+    <include name="test/**"/>
     <include name="CHANGES"/>
     <include name="LICENSE"/>
     <include name="README"/>
@@ -252,6 +257,7 @@ list of possible build targets.
       </not>
     </condition>
     <echo message="${junit.message}"/>
+   
   </target>
 
   <target name="init-filters-jdk13" depends="init-avail" unless="jdk14.present">
@@ -786,8 +792,8 @@ list of possible build targets.
         package="${javadoc.package}"
         private="${javadoc.private}">
       <classpath>
-        <pathelement location="${env.ANT_HOME}/lib/ant.jar"/>
         <path refid="libs-build-classpath"/>
+        <pathelement path="${java.class.path}"/>
       </classpath>
       <sourcepath>
         <pathelement path="${src.java.dir}"/>
@@ -963,6 +969,9 @@ list of possible build targets.
 
   <target name="dist-bin" depends="all">
     <echo message="Building the binary distribution files (zip,tar)"/>
+    <fail message="A complete binary build requires Jimi" unless="jimi.present"/>
+    <fail message="A complete binary build requires JAI" unless="jai.present"/>
+    <fail message="A complete binary build requires JCE" unless="jce.present"/>
     <mkdir dir="${dist.bin.result.dir}"/>
     <copy todir="${dist.bin.result.dir}">
       <fileset refid="dist.bin"/>
