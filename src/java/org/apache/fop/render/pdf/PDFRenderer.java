@@ -678,22 +678,6 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         }
     }
     
-    /** @see org.apache.fop.render.AbstractPathOrientedRenderer#updateLineStyle(int) */
-    private void updateLineStyle(int style) {
-        switch (style) {
-            case Constants.EN_DASHED:
-                currentStream.add("[3] 0 d\n");
-                break;
-            case Constants.EN_DOTTED:
-                currentStream.add("[1 7] 0 d\n");
-                break;
-            default:
-                // solid
-                currentStream.add("[] 0 d\n");
-                break;
-        }
-    }
-
     /**
      * Clip a rectangular area.
      * write a clipping operation given coordinates in the current
