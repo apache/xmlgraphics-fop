@@ -79,6 +79,11 @@
         The examples below are for running the shell script, but except for the build file extension, 
         the syntax is identical.
       </p>
+      <note>
+        The "ant.bat" and "ant.sh" are only available on your system if you've properly 
+        <a href="ext:ant/manual/">installed Apache Ant</a> and added Ant's location to the PATH 
+        environment variable.
+      </note>
       <p>
         The file build.xml in the FOP root directory is the blueprint that Ant uses for the build. It 
         contains information for numerous build targets, many of which are building blocks to more 
@@ -104,12 +109,16 @@
       </ul>
       <p>To run the build:</p>
       <source>ant.sh [target ...]</source>
-      <p>For example to do a normal build for the "package" target (which is the default):</p>
+      <p>For example to do a normal build for the "all" target (which is the default):</p>
       <source>ant.sh</source>
       <p>OR</p>
-      <source>ant.sh package</source>
+      <source>ant.sh all</source>
       <p>To clean the build directory first:</p>
-      <source>ant.sh clean package</source>
+      <source>ant.sh clean all</source>
+      <note>
+        If you want to shorten the build time you can just call the "package" target which
+        doesn't perform any automated tests during the build.
+      </note>
     </section>
     <section id="problems">
       <title id="Troubleshooting">Troubleshooting</title>
