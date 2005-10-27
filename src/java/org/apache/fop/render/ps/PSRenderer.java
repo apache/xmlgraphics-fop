@@ -367,26 +367,6 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
         gen.useRGBColor(toColor(col));
     }
 
-    /** @see org.apache.fop.render.AbstractPathOrientedRenderer#updateLineStyle(int) */
-    protected void updateLineStyle(int style) {
-        try {
-            switch (style) {
-                case Constants.EN_DASHED:
-                    gen.useDash("[3] 0");
-                    break;
-                case Constants.EN_DOTTED:
-                    gen.useDash("[1 7] 0");
-                    break;
-                default:
-                    // solid
-                    gen.useDash("[] 0");
-                    break;
-            }
-        } catch (IOException ioe) {
-            handleIOTrouble(ioe);
-        }
-    }
-
     /** @see org.apache.fop.render.AbstractPathOrientedRenderer#drawBackAndBorders(
      * Area, float, float, float, float) */
     protected void drawBackAndBorders(Area area, float startx, float starty,

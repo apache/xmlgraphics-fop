@@ -776,8 +776,8 @@ list of possible build targets.
         destdir="${build.javadocs.dir}"
         author="true"
         version="true"
-        windowtitle="${NAME} API"
-        doctitle="Formatting Objects Processor (FOP)"
+        windowtitle="${Name} API"
+        doctitle="Apache Formatting Objects Processor (FOP)"
         bottom="Copyright ${year} The Apache Software Foundation. All Rights Reserved."
         overview="${src.dir}/java/org/apache/fop/overview.html"
         use="true"
@@ -797,6 +797,7 @@ list of possible build targets.
       <tag name="todo" scope="all" description="To do:"/>
       <group title="Control and Startup">
         <package name="org.apache.fop.apps"/>
+        <package name="org.apache.fop.cli"/>
         <package name="org.apache.fop.configuration"/>
         <package name="org.apache.fop.messaging"/>
         <package name="org.apache.fop.servlet"/>

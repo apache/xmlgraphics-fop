@@ -32,7 +32,7 @@ import org.apache.fop.fo.FOTreeBuilder;
  * Primary class that activates the FOP process for embedded usage.
  * <P>
  * JAXP is the standard method of embedding FOP in Java programs.
- * Please check our embedding page (http://xml.apache.org/fop/embedding.html)
+ * Please check our <a href="http://xmlgraphics.apache.org/fop/embedding.html">embedding page</a>
  * for samples (these are also available within the distribution in 
  * FOP_DIR\examples\embedding)
  * <P>
