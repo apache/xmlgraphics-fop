@@ -34,19 +34,21 @@
             <fo:table-column/>
             <fo:table-column/>
             <fo:table-column/>
+            <fo:table-column/>
             <fo:table-body>
               <fo:table-row>
-                <fo:table-cell number-rows-spanned="2">
+                <!-- Note: the padding-top caused a NullPointerException -->
+                <fo:table-cell padding-top="1.2cm" number-rows-spanned="2">
                   <fo:block>row 1 col 1</fo:block>
                 </fo:table-cell>
                 <!-- absent table-cells in first row -->
               </fo:table-row>
               <fo:table-row>
-                <fo:table-cell>
+                <fo:table-cell number-columns-spanned="2">
                   <fo:block>row 2 col 2</fo:block>
                 </fo:table-cell>
                 <fo:table-cell>
-                  <fo:block>Row 2 col 3</fo:block>
+                  <fo:block>Row 2 col 4</fo:block>
                 </fo:table-cell>
               </fo:table-row>
             </fo:table-body>
@@ -56,7 +58,7 @@
     </fo:root>
   </fo>
   <checks>
-    <!-- Simply check that FOP doesn't fail with an IndexOutOfBoundsException -->
+    <!-- Simply check that FOP doesn't fail with an IndexOutOfBoundsException or an NPE -->
     <eval expected="1" xpath="count(//pageViewport)"/>
   </checks>
 </testcase>
