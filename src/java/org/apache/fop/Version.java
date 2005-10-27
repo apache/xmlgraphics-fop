@@ -33,14 +33,20 @@ public class Version {
         String version = Version.class.getPackage().getImplementationVersion();
         if (version == null) {
             //Fallback if FOP is used in a development environment
-            String revision = "$LastChangedRevision$";
-            if (revision.indexOf(":") >= 0) {
-                revision = revision.substring(1, revision.length() - 2);
-                revision = ", revision" + revision.substring(revision.lastIndexOf(" "));
+            String headURL 
+                = "$HeadURL$";
+            version = headURL;
+            final String pathPrefix = "/xmlgraphics/fop/";
+            int pos = version.indexOf(pathPrefix); 
+            if (pos >= 0) {
+                version = version.substring(pos + pathPrefix.length() - 1, version.length() - 2);
+                pos = version.indexOf("/src/");
+                version = version.substring(1, pos);
+                version = " " + version;
             } else {
-                revision = "";
+                version = "";
             }
-            version = "SVN Trunk" + revision;
+            version = "SVN" + version;
         }
         return version;
     }
