@@ -393,7 +393,7 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
                                                currentIPPosition / 1000,
                                                (currentBPPosition + text.getOffset() 
                                                 + text.getBaselineOffset()) / 1000,
-                                               text.getTextArea());
+                                               text.getText());
         currentPageG.appendChild(textElement);
 
         super.renderText(text);

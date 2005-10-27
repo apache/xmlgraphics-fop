@@ -188,7 +188,7 @@ public abstract class AbstractRenderer
             if (inline instanceof Character) {
                 sb.append(((Character) inline).getChar());
             } else if (inline instanceof TextArea) {
-                sb.append(((TextArea) inline).getTextArea());
+                sb.append(((TextArea) inline).getText());
             } else if (inline instanceof InlineParent) {
                 sb.append(convertToString(
                         ((InlineParent) inline).getChildAreas()));

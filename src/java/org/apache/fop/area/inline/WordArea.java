@@ -33,11 +33,13 @@ public class WordArea extends InlineArea {
     protected int offset = 0;
 
     /**
-     * Create a text inline area
+     * Create a word area
      * @param w the word string
+     * @param o the offset for the next area
      */
-    public WordArea(String w) {
+    public WordArea(String w, int o) {
         word = w;
+        offset = o;
     }
 
     /**

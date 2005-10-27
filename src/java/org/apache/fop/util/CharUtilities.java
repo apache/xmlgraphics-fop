@@ -120,6 +120,19 @@ public class CharUtilities {
     }
 
     /**
+     * Method to determine if the character is an adjustable
+     * space.
+     * @param c character to check
+     * @return True if the character is adjustable
+     */
+    public static boolean isAdjustableSpace(char c) {
+        //TODO: are there other kinds of adjustable spaces?
+        return
+            (c == '\u0020'    // normal space
+            /*|| c == ''*/);
+    }
+    
+    /**
      * Determines if the character represents any kind of space.
      * @param c character to check
      * @return True if the character represents any kind of space

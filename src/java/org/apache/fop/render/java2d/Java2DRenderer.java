@@ -741,7 +741,7 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
         ColorType ct = (ColorType) text.getTrait(Trait.COLOR);
         state.updateColor(ct, false, null);
 
-        String s = text.getTextArea();
+        String s = text.getText();
         state.getGraph().drawString(s, x / 1000f, y / 1000f);
 
         // getLogger().debug("renderText(): \"" + s + "\", x: "
