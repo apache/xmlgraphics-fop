@@ -70,7 +70,9 @@ public class UnresolvedPageNumber extends TextArea implements Resolvable {
         if (pageIDRef.equals(id) && pages != null) {
             resolved = true;
             PageViewport page = (PageViewport)pages.get(0);
-            setText(page.getPageNumberString());
+            // replace the text
+            removeText();
+            addWord(page.getPageNumberString(), 0);
             // update ipd
             updateIPD(getStringWidth(text));
             // set the Font object to null, as we don't need it any more

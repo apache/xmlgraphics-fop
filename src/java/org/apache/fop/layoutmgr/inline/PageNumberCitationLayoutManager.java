@@ -25,7 +25,6 @@ import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.UnresolvedPageNumber;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
@@ -105,7 +104,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
             TextArea text = new TextArea();
             inline = text;
             int width = getStringWidth(str);
-            text.setText(str);
+            text.addWord(str, 0);
             inline.setIPD(width);
             
             resolved = true;

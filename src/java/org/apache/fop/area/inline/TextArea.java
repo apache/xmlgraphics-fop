@@ -18,8 +18,6 @@
 
 package org.apache.fop.area.inline;
 
-import org.apache.fop.util.CharUtilities;
-
 /**
  * A text inline area.
  */
@@ -43,46 +41,49 @@ public class TextArea extends AbstractTextArea {
     }
 
     /**
-     * Set the text string
-     *
-     * @param t the text string
+     * Remove the old text
      */
-    public void setText(String t) {
-        // split the text and create WordAreas and SpaceAreas
-        char charArray[] = t.toCharArray();
-        int wordStartIndex = -1;
-        for (int i = 0; i < charArray.length; i ++) {
-            if (CharUtilities.isAnySpace(charArray[i])) {
-                // a space character
-                // create a SpaceArea child
-                SpaceArea space = new SpaceArea(charArray[i]);
-                this.addChildArea(space);
-                space.setParentArea(this);
-            } else {
-                // a non-space character
-                if (wordStartIndex == -1) {
-                    // first character of the text, or after a space
-                    wordStartIndex = i;
-                }
-                if (i == charArray.length - 1
-                        || CharUtilities.isAnySpace(charArray[i + 1])) {
-                    // last character before the end of the text or a space:
-                    // create a WordArea child
-                    WordArea word = new WordArea(t.substring(wordStartIndex, i + 1));
-                    this.addChildArea(word);
-                    word.setParentArea(this);
-                    wordStartIndex = -1;
-                }
-            }
-        }
+    public void removeText() {
+        inlines.clear();
     }
-
+    
     /**
-     * Get the text string.
+     * Create and add a WordArea child to this TextArea.
+     * 
+     * @param word   the word string
+     * @param offset the offset for the next area
+     */
+    public void addWord(String word, int offset) {
+        WordArea wordArea = new WordArea(word, offset);
+        addChildArea(wordArea);
+        wordArea.setParentArea(this);
+    }
+    
+    /**
+     * Create and add a SpaceArea child to this TextArea
+     * 
+     * @param space      the space character
+     * @param offset     the offset for the next area
+     * @param adjustable is this space adjustable?
+     */
+    public void addSpace(char space, int offset, boolean adjustable) {
+        SpaceArea spaceArea = new SpaceArea(space, offset, adjustable);
+        addChildArea(spaceArea);
+        spaceArea.setParentArea(this);
+    }
+    
+    /**
+     * Get the whole text string.
+     * Renderers whose space adjustment handling is not affected 
+     * by multi-byte characters can use this method to render the
+     * whole TextArea at once; the other renderers (for example 
+     * PDFRenderer) have to implement renderWord(WordArea) and 
+     * renderSpace(SpaceArea) in order to correctly place each
+     * text fragment.
      *
      * @return the text string
      */
-    public String getTextArea() {
+    public String getText() {
         StringBuffer text = new StringBuffer();
         InlineArea child;
         // assemble the text

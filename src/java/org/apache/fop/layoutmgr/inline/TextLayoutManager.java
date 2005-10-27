@@ -24,7 +24,6 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 import org.apache.fop.area.Trait;
-import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.flow.Inline;
@@ -41,6 +40,7 @@ import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
+import org.apache.fop.util.CharUtilities;
 
 /**
  * LayoutManager for text (a sequence of characters) which generates one
@@ -260,9 +260,10 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
         // Add word areas
         AreaInfo ai = null;
-        int iStart = -1;
         int iWScount = 0;
         int iLScount = 0;
+        int firstAreaInfoIndex = -1;
+        int lastAreaInfoIndex = 0;
         MinOptMax realWidth = new MinOptMax(0);
 
         /* On first area created, add any leading space.
@@ -273,12 +274,13 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             //
             if (tbpNext.getLeafPos() != -1) {
                 ai = (AreaInfo) vecAreaInfo.get(tbpNext.getLeafPos());
-                if (iStart == -1) {
-                    iStart = ai.iStartIndex;
+                if (firstAreaInfoIndex == -1) {
+                    firstAreaInfoIndex = tbpNext.getLeafPos();
                 }
                 iWScount += ai.iWScount;
                 iLScount += ai.iLScount;
                 realWidth.add(ai.ipdArea);
+                lastAreaInfoIndex = tbpNext.getLeafPos();
             }
         }
         if (ai == null) {
@@ -291,20 +293,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             iLScount--;
         }
 
-        // Make an area containing all characters between start and end.
-        InlineArea word = null;
-        int adjust = 0;
-        
-        // ignore newline character
-        if (textArray[ai.iBreakIndex - 1] == NEWLINE) {
-            adjust = 1;
-        }
-        String str = new String(textArray, iStart,
-                                ai.iBreakIndex - iStart - adjust);
-
         // add hyphenation character if the last word is hyphenated
         if (context.isLastArea() && ai.bHyphenated) {
-            str += foText.getCommonHyphenation().hyphenationCharacter;
             realWidth.add(new MinOptMax(hyphIPD));
         }
 
@@ -355,8 +345,10 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             iTotalAdjust = iDifference;
         }
 
-        TextArea t = createTextArea(str, realWidth, iTotalAdjust, context,
-                                    wordSpaceIPD.opt - spaceCharIPD);
+        TextArea t = createTextArea(realWidth, iTotalAdjust, context,
+                                    wordSpaceIPD.opt - spaceCharIPD,
+                                    firstAreaInfoIndex, lastAreaInfoIndex,
+                                    context.isLastArea());
 
         // iWordSpaceDim is computed in relation to wordSpaceIPD.opt
         // but the renderer needs to know the adjustment in relation
@@ -378,25 +370,25 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             t.setSpaceDifference(wordSpaceIPD.opt - spaceCharIPD
                                  - 2 * t.getTextLetterSpaceAdjust());
         }
-        word = t;
-        if (word != null) {
-            parentLM.addChildArea(word);
-        }
+        parentLM.addChildArea(t);
     }
 
     /**
      * Create an inline word area.
      * This creates a TextArea and sets up the various attributes.
      *
-     * @param str the string for the TextArea
      * @param width the MinOptMax width of the content
      * @param adjust the total ipd adjustment with respect to the optimal width
      * @param context the layout context
      * @param spaceDiff unused
+     * @param firstIndex the index of the first AreaInfo used for the TextArea
+     * @param lastIndex the index of the last AreaInfo used for the TextArea 
+     * @param isLastArea is this TextArea the last in a line?
      * @return the new text area
      */
-    protected TextArea createTextArea(String str, MinOptMax width, int adjust,
-                                      LayoutContext context, int spaceDiff) {
+    protected TextArea createTextArea(MinOptMax width, int adjust,
+                                      LayoutContext context, int spaceDiff,
+                                      int firstIndex, int lastIndex, boolean isLastArea) {
         TextArea textArea;
         if (context.getIPDAdjust() == 0.0) {
             // create just a TextArea
@@ -417,7 +409,38 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             textArea.setOffset(alignmentContext.getOffset());
         }
 
-        textArea.setText(str);
+        // set the text of the TextArea, split into words and spaces
+        int wordStartIndex = -1;
+        AreaInfo areaInfo;
+        for (int i = firstIndex; i <= lastIndex; i ++) {
+            areaInfo = (AreaInfo) vecAreaInfo.get(i);
+            if (areaInfo.iWScount > 0) {
+                // areaInfo stores information about a space
+                // add a space to the TextArea
+                char spaceChar = textArray[areaInfo.iStartIndex];
+                textArea.addSpace(spaceChar, 0, 
+                        CharUtilities.isAdjustableSpace(spaceChar));
+            } else {
+                // areaInfo stores information about a word fragment
+                if (wordStartIndex == -1) {
+                    // here starts a new word
+                    wordStartIndex = areaInfo.iStartIndex;
+                }
+                if (i == lastIndex || ((AreaInfo) vecAreaInfo.get(i + 1)).iWScount > 0) {
+                    // here ends a new word
+                    // add a word to the TextArea
+                    String wordChars = new String(textArray, wordStartIndex, areaInfo.iBreakIndex - wordStartIndex);
+                    if (isLastArea
+                        && i == lastIndex 
+                        && areaInfo.bHyphenated) {
+                        // add the hyphenation character
+                        wordChars += foText.getCommonHyphenation().hyphenationCharacter;
+                    }
+                    textArea.addWord(wordChars, 0);
+                    wordStartIndex = -1;
+                }
+            }
+        }
         textArea.addTrait(Trait.FONT_NAME, font.getFontName());
         textArea.addTrait(Trait.FONT_SIZE, new Integer(font.getFontSize()));
         textArea.addTrait(Trait.COLOR, foText.getColor());

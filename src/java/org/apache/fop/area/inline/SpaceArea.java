@@ -31,13 +31,22 @@ public class SpaceArea extends InlineArea {
      * The correction offset for the next area
      */
     protected int offset = 0;
+    
+    /**
+     * Is this space adjustable?
+     */
+    protected boolean isAdjustable;
 
     /**
-     * Create a text inline area
+     * Create a space area
      * @param s the space character
+     * @param o the offset for the next area
+     * @param a is this space adjustable?
      */
-    public SpaceArea(char s) {
+    public SpaceArea(char s, int o, boolean a) {
         space = new String() + s;
+        offset = o;
+        isAdjustable = a;
     }
     
     /**

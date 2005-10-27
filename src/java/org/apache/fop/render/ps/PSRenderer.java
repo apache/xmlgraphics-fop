@@ -796,7 +796,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
      * @see org.apache.fop.render.AbstractRenderer#renderText(TextArea)
      */
     public void renderText(TextArea area) {
-        String text = area.getTextArea();
+        String text = area.getText();
         renderText(area, text);
         super.renderText(area); //Updates IPD
     }
