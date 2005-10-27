@@ -26,7 +26,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.TableRow;
-import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthBox;
@@ -61,6 +60,7 @@ public class TableStepper {
     private int[] borderAfter;
     private int[] paddingAfter;
     private boolean rowBacktrackForLastStep;
+    private boolean skippedStep;
     private boolean[] keepWithNextSignals;
     private boolean[] forcedBreaks;
     
@@ -334,7 +334,16 @@ public class TableStepper {
             if (signalKeepWithNext || getTableLM().mustKeepTogether()) {
                 p = KnuthPenalty.INFINITE;
             }
+            if (skippedStep) {
+                p = KnuthPenalty.INFINITE;
+                //Need to avoid breaking because borders and/or paddding from other columns would
+                //not fit in the available space (see getNextStep())
+            }
             if (isBreakCondition()) {
+                if (skippedStep) {
+                    log.error("This is a conflict situation. The output may be wrong." 
+                            + " Please send your FO file to fop-dev@xmlgraphics.apache.org!");
+                }
                 p = -KnuthPenalty.INFINITE; //Overrides any keeps (see 4.8 in XSL 1.0)
                 clearBreakCondition();
             }
@@ -493,7 +502,9 @@ public class TableStepper {
                 minStep = Math.min(len, minStep);
             }
         }
-        log.debug("candidate steps: " + sb);
+        if (log.isDebugEnabled()) {
+            log.debug("candidate steps: " + sb + " lastStep=" + lastStep);
+        }
 
         //Check for constellations that would result in overlapping borders
         /*
@@ -502,15 +513,26 @@ public class TableStepper {
         }*/
         
         //Reset bigger-than-minimum sequences
+        //See http://people.apache.org/~jeremias/fop/NextStepAlgoNotes.pdf
         rowBacktrackForLastStep = false;
+        skippedStep = false;
         for (int i = 0; i < widths.length; i++) {
             int len = baseWidth[i] + widths[i];
             if (len > minStep) {
                 widths[i] = backupWidths[i];
                 end[i] = start[i] - 1;
                 if (baseWidth[i] + widths[i] > minStep) {
-                    log.debug("Meeeeep!");
-                    rowBacktrackForLastStep = true;
+                    log.debug("minStep vs. border/padding increase conflict:");
+                    if (activeRow == 0) {
+                        log.debug("  First row. Skip this step.");
+                        skippedStep = true;
+                    } else {
+                        log.debug("  row-span situation: backtracking to last row");
+                        //Stay on the previous row for another step because borders and padding on 
+                        //columns may make their contribution to the step bigger than the addition
+                        //of the next element for this step would make the step to grow.
+                        rowBacktrackForLastStep = true;
+                    }
                 }
             }
         }
