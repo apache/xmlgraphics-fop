@@ -90,7 +90,7 @@
       <title>Starting FOP as a Standalone Application</title>
       <p>
         The usual and recommended practice for starting FOP from the command line is to run the 
-        batch file fop.bat (Windows) or the shell script fop.sh (Unix/Linux).
+        batch file fop.bat (Windows) or the shell script fop (Unix/Linux).
         If you write your own scripts, be sure to review these standard scripts to make sure that 
         you get your environment properly configured.
       </p>
