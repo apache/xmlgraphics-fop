@@ -28,6 +28,7 @@ for arg in "$@" ; do
     fop_exec_debug=true
   elif [ my"$arg" = my"--h"  -o my"$arg" = my"--help"  ] ; then
     show_help=true
+    fop_exec_args="$fop_exec_args -h"
   else
     if [  my"$arg" = my"-h"  -o  my"$arg" = my"-help" ] ; then
       show_help=true
@@ -36,16 +37,16 @@ for arg in "$@" ; do
   fi
 done
 
-# Source/default ant configuration
+# Source/default fop configuration
 if $no_config ; then
   rpm_mode=false
 else
-  # load system-wide ant configuration
+  # load system-wide fop configuration
   if [ -f "/etc/fop.conf" ] ; then
     . /etc/fop.conf
   fi
 
-  # load user ant configuration
+  # load user fop configuration
   if [ -f "$HOME/.fop/fop.conf" ] ; then
     . $HOME/.fop/fop.conf
   fi
