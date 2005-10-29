@@ -50,14 +50,14 @@
           There is generally no need to setup a classpath. All libraries needed to compile FOP are included 
           in the source distribution and are referenced by the build script.
           You will only need to adjust the classpath if you build FOP in some other way. See the build 
-          scripts (build.bat for Windows, and build.sh for Unix) for details.
+          script build.xml for details.
         </p>
       </section>
       <section id="env-java-home">
         <title>JAVA_HOME</title>
         <p>
           The build script uses <a href="ext:ant">Apache Ant</a>, a popular 
-          Java-based build tool, which requires that the environment variable JAVA_HOME point to 
+          Java-based build tool, which usually requires that the environment variable JAVA_HOME point to 
           your local JDK root directory. This is true even if you use JDK 1.2 or above, which normally 
           does not need this setting.
         </p>
@@ -74,13 +74,11 @@
     <section id="build-script">
       <title>Run the Build Script</title>
       <p>
-        Build FOP by executing the build script (build.xml), which is located in the FOP root directory.
-        On Windows run "ant.bat", and on Unix run "ant.sh".
-        The examples below are for running the shell script, but except for the build file extension, 
-        the syntax is identical.
+        Change to the FOP root directory and build FOP by executing the build script (build.xml)
+        using the "ant" command.
       </p>
       <note>
-        The "ant.bat" and "ant.sh" are only available on your system if you've properly 
+        The "ant" command is only available on your system if you've properly 
         <a href="ext:ant/manual/">installed Apache Ant</a> and added Ant's location to the PATH 
         environment variable.
       </note>
@@ -91,7 +89,7 @@
         You may benefit from looking through this file to learn more about the various build targets.
         To obtain a complete list of useful build targets:
       </p>
-      <source>ant.sh -projecthelp</source>
+      <source>ant -projecthelp</source>
       <p>The most useful targets are:</p>
       <ul>
         <li>
@@ -108,13 +106,13 @@
         </li>
       </ul>
       <p>To run the build:</p>
-      <source>ant.sh [target ...]</source>
+      <source>ant [target ...]</source>
       <p>For example to do a normal build for the "all" target (which is the default):</p>
-      <source>ant.sh</source>
+      <source>ant</source>
       <p>OR</p>
-      <source>ant.sh all</source>
+      <source>ant all</source>
       <p>To clean the build directory first:</p>
-      <source>ant.sh clean all</source>
+      <source>ant clean all</source>
       <note>
         If you want to shorten the build time you can just call the "package" target which
         doesn't perform any automated tests during the build.
