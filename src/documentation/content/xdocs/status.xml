@@ -15,8 +15,7 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
-    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/document-v12.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <!-- Status -->
 <document>
   <header>
@@ -27,38 +26,45 @@
   <body>
     <section>
       <title>Status</title>
-      <p>[last updated March 24, 2005]</p>
+      <p>[last updated October 30, 2005]</p>
       <figure width="585" height="175" src="images/track.png" alt="Planning and branches of FOP development"/>
-      <p>This is the development status of FOP. A branch has been created for
-maintenance releases while the development is done to address various
-performance and design issues.</p>
+      <p>
+        This is the development status of Apache FOP. A branch has been created for
+        maintenance releases while the development is done to address various
+        performance and design issues. Development on the maintenance branch has
+        been halted as the focus was transferred entirely to the redesign effort.
+      </p>
     </section>
     <section>
       <title>Development Status</title>
       <p>
-        Development for 1.0DR1 is addressing the design issues for layout and
-        performance. The new design focusing on making it possible to be conformant
+        Development for FOP Trunk (aka Redesign) is addressing the design issues for layout and
+        performance. The new design is focusing on making it possible to be conformant
         to the spec and be able to handle large documents.
       </p>
       <p>
-        The developers release should have the following: similar functionality
-        to previous FOP releases, a rough API and a suitable design for
+        The first preview release will have the following: similar functionality
+        to previous FOP releases (although not in every point), some new features 
+        (like keeps on all implemented FOs), a rough API and a suitable design for
         developers to work on more functionality.
       </p>
       <p>
-        The timing of these events depends on progress made so it is not possible
-        to predict any dates. However, we think that at the current rate of progress
-        we can start releasing again in the second half of 2005.
+        We originally targeted for October 2005 to publish the first preview release
+        but it takes a little longer than expected to prepare everything for the
+        release. The first (unstable) preview release can be expected in mid-November
+        2005.
       </p>
       <p>
-        At the moment we're concentrating mainly on the layout engine which is the
-        central and trickiest part of the whole package. The infrastructure around
-        it is in relatively good shape already although there are still areas for
-        newbies to jump in and help.
+        We now have a good overall design and have been able to add several new features
+        besides recreating most of the features from 0.20.5. We are doing ongoing work
+        to make it easier for newbies to jump in and help. Furthermore, an extensive
+        test suite helps us maintain and improve the quality of the package.
       </p>
       <p>
         Of course, we also welcome any help on the layout managers. So if you 
-        want to push your brain to the limit, come and join us!
+        want to push your brain to the limit, come and join us! But don't worry:
+        there are also various other locations where you can find an easier start
+        into the code. And we're glad to help you get jumpstarted. Just ask!
       </p>
       <p>
         If you're looking for a road-map we have to disappoint you. This is Open
@@ -71,7 +77,7 @@ performance and design issues.</p>
       <title>Maintenance Status</title>
       <p>
         The latest maintenance release is FOP 0.20.5, released on July 18th, 2003.
-        See <link href="relnotes.html">release notes</link> for more details.
+        See <a href="relnotes.html">release notes</a> for more details.
         The maintenance branch has been frozen in 2004 so the team can concentrate 
         on the redesign efforts.
       </p>

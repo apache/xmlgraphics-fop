@@ -15,7 +15,7 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
     <title>Apache FOP Version 0.20.5</title>
@@ -24,7 +24,20 @@
   <body>
     <section id="intro">
       <title>Introduction</title>
-      <p>These pages contain information that should be helpful for those </p>
+      <p>
+        Version 0.20.5 represents Apache FOP's current stable release. Even though it's over two years old
+        this release will stay the first choice for those who want a stable product for use in production
+        environments, at least for another few months until the code from out redesign effort has stabilized
+        enough. This shouldn't keep you off trying out the <a href="../trunk/index.html">redesigned code</a>, 
+        though.
+      </p>
+      <p>
+        Please notice that, although we still provide support for 0.20.5, we won't fix any bugs or add any 
+        new features to this branch of development anymore.
+        Instead, please help us with <a href="../trunk/index.html">FOP Trunk</a> by trying it out and 
+        sending us your feedback. Of course, we especially appreciate any contributions in the form of 
+        documentation updates and code patches.
+      </p>
     </section>
   </body>
 </document>
