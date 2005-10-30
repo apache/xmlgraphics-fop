@@ -105,7 +105,6 @@ public class RtfExternalGraphic extends RtfElement {
          */
 
         public static FormatBase determineFormat(byte[] data) {
-            int type = ImageConstants.I_NOT_SUPPORTED;
 
             if (FormatPNG.isFormat(data)) {
                 return new FormatPNG();
@@ -361,18 +360,19 @@ public class RtfExternalGraphic extends RtfElement {
 //        getRtfFile ().getLog ().logInfo ("Writing image '" + url + "'.");
 
 
-        imagedata = null;
-        try {
-            final InputStream in = url.openStream();
+        if (imagedata == null) {
             try {
-                imagedata = IOUtils.toByteArray(url.openStream());
-            } finally {
-                IOUtils.closeQuietly(in);
-            }
-        } catch (Exception e) {
-            throw new ExternalGraphicException("The attribute 'src' of "
-                    + "<fo:external-graphic> has a invalid value: '"
-                    + url + "' (" + e + ")");
+                final InputStream in = url.openStream();
+                try {
+                    imagedata = IOUtils.toByteArray(url.openStream());
+                } finally {
+                    IOUtils.closeQuietly(in);
+                }
+            } catch (Exception e) {
+                throw new ExternalGraphicException("The attribute 'src' of "
+                        + "<fo:external-graphic> has a invalid value: '"
+                        + url + "' (" + e + ")");
+            }            
         }
 
         if (imagedata == null) {
@@ -463,8 +463,18 @@ public class RtfExternalGraphic extends RtfElement {
                 height = ImageUtil.getIntFromByteArray(imagedata, basis, 2, true);
             }
         } else if (imageformat.getType() == ImageConstants.I_EMF) {
-            width = ImageUtil.getIntFromByteArray(imagedata, 151, 4, false);
-            height = ImageUtil.getIntFromByteArray(imagedata, 155, 4, false);
+            int i = 0;
+            
+            i = ImageUtil.getIntFromByteArray(imagedata, 151, 4, false);
+            if (i != 0 ) {
+                width = i; 
+            }
+            
+            i = ImageUtil.getIntFromByteArray(imagedata, 155, 4, false);
+            if (i != 0 ) {
+                height = i;
+            }
+            
         }
     }
 
@@ -545,6 +555,16 @@ public class RtfExternalGraphic extends RtfElement {
         if (value.equalsIgnoreCase("uniform")) {
             this.scaleUniform = true;
         }
+    }
+    
+    /**
+     * Sets the binary imagedata of the image.
+     *
+     * @param imagedata Binary imagedata as read from file.
+     * @throws IOException On error
+     */
+    public void setImageData(byte[] imagedata) throws IOException {
+        this.imagedata = imagedata;
     }
 
     /**

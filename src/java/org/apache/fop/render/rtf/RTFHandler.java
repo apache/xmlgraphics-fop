@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Iterator;
+import org.apache.fop.*;
 
 // Libs
 import org.apache.commons.logging.Log;
@@ -86,6 +87,8 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfTableContainer;
 import org.apache.fop.render.rtf.rtflib.tools.BuilderContext;
 import org.apache.fop.render.rtf.rtflib.tools.TableContext;
 import org.apache.fop.fonts.FontSetup;
+import org.apache.fop.image.FopImage;
+import org.apache.fop.image.ImageFactory;
 
 /**
  * RTF Handler: generates RTF output using the structure events from
@@ -938,21 +941,72 @@ public class RTFHandler extends FOEventHandler {
             
             final RtfExternalGraphic newGraphic = c.getTextrun().newImage();
        
-            //Property p = null; 
-               
-            //get source file
-            newGraphic.setURL(eg.getSrc());
+            //set URL
+            String url = eg.getURL();
+            newGraphic.setURL(url);
+                       
+            //set image data
+            ImageFactory fact = ImageFactory.getInstance();
+            FopImage fopimage = fact.getImage(url, eg.getUserAgent());
+            fopimage.load(fopimage.ORIGINAL_DATA);
             
-            //get scaling
+            newGraphic.setImageData(fopimage.getRessourceBytes());
+            
+            //set scaling
             if (eg.getScaling() == Constants.EN_UNIFORM) {
                 newGraphic.setScaling ("uniform");
             }
             
             //get width
-            newGraphic.setWidth(eg.getWidth().getValue() / 1000f + "pt");
+            int width = 0;
+            if (eg.getWidth().getEnum() == Constants.EN_AUTO) {
+                width = fopimage.getIntrinsicWidth();
+            } else {
+                width = eg.getWidth().getValue();
+            }
             
             //get height
-            newGraphic.setHeight(eg.getHeight().getValue() / 1000f + "pt");
+            int height = 0;
+            if (eg.getWidth().getEnum() == Constants.EN_AUTO) {
+                height = fopimage.getIntrinsicHeight();
+            } else {
+                height = eg.getHeight().getValue();
+            }
+            
+            //get content-width
+            int contentwidth = 0;
+            if (eg.getContentWidth().getEnum() 
+                    == Constants.EN_AUTO) {
+                contentwidth = fopimage.getIntrinsicWidth();
+            } else if(eg.getContentWidth().getEnum() 
+                    == Constants.EN_SCALE_TO_FIT) {
+                contentwidth = width;
+            } else {
+                //TODO: check, if the value is a percent value
+                contentwidth = eg.getContentWidth().getValue();                    
+            }
+            
+            //get content-width
+            int contentheight = 0;
+            if (eg.getContentHeight().getEnum() 
+                    == Constants.EN_AUTO) {
+                
+                contentheight = fopimage.getIntrinsicHeight();
+                
+            } else if(eg.getContentHeight().getEnum() 
+                    == Constants.EN_SCALE_TO_FIT) {
+                
+                contentheight = height;
+            } else {
+                //TODO: check, if the value is a percent value
+                contentheight = eg.getContentHeight().getValue();                    
+            }
+                        
+            //set width in rtf
+            newGraphic.setWidth((long) (contentwidth / 1000f) + "pt");
+            
+            //set height in rtf
+            newGraphic.setHeight((long) (contentheight / 1000f) + "pt");
 
             //TODO: make this configurable:
             //      int compression = m_context.m_options.getRtfExternalGraphicCompressionRate ();

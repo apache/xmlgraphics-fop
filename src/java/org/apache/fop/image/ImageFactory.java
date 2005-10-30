@@ -71,6 +71,7 @@ public final class ImageFactory {
         ImageProvider pngImage = new ImageProvider("PNGImage", "org.apache.fop.image.PNGImage");
         ImageProvider tiffImage = new ImageProvider("TIFFImage", "org.apache.fop.image.TIFFImage");
         ImageProvider xmlImage = new ImageProvider("XMLImage", "org.apache.fop.image.XMLImage");
+        ImageProvider emfImage = new ImageProvider("EMFImage", "org.apache.fop.image.EmfImage");
         
         ImageMimeType imt = new ImageMimeType("image/gif");
         imageMimeTypes.put(imt.getMimeType(), imt);
@@ -113,7 +114,10 @@ public final class ImageFactory {
         imt = new ImageMimeType("text/xml");
         imageMimeTypes.put(imt.getMimeType(), imt);
         imt.addProvider(xmlImage);
-
+        
+        imt = new ImageMimeType("image/emf");
+        imageMimeTypes.put(imt.getMimeType(), imt);
+        imt.addProvider(emfImage);
     }
 
     /**

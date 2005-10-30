@@ -50,6 +50,7 @@ public class ImageReaderFactory {
         registerFormat(new PNGReader());
         registerFormat(new TIFFReader());
         registerFormat(new EPSReader());
+        registerFormat(new EMFReader());
         // the xml parser through batik closes the stream when finished
         // so there is a workaround in the SVGReader
         registerFormat(new SVGReader());
