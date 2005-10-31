@@ -63,10 +63,29 @@ the nested block should be indented as well.
   <checks>
     <eval expected="20000" xpath="//flow/block[1]/lineArea[1]/@start-indent"/>
     <true xpath="boolean(not(//flow/block[1]/lineArea[2]/@start-indent))"/>
-    <true xpath="boolean(not(//flow/block[1]/lineArea[10]/@start-indent))"/>
+    <eval expected="11" xpath="count(//flow/block[1]/lineArea[1]/text/word)"/>
+    <eval expected="10" xpath="count(//flow/block[1]/lineArea[2]/text/word)"/>
+    <eval expected="12" xpath="count(//flow/block[1]/lineArea[3]/text/word)"/>
+    <eval expected="12" xpath="count(//flow/block[1]/lineArea[4]/text/word)"/>
+    <eval expected="14" xpath="count(//flow/block[1]/lineArea[5]/text/word)"/>
+    <eval expected="14" xpath="count(//flow/block[1]/lineArea[6]/text/word)"/>
+    <eval expected="14" xpath="count(//flow/block[1]/lineArea[7]/text/word)"/>
+    <eval expected="15" xpath="count(//flow/block[1]/lineArea[8]/text/word)"/>
+    <eval expected="10" xpath="count(//flow/block[1]/lineArea[9]/text/word)"/>
+    <true xpath="boolean(not(//flow/block[1]/lineArea[9]/@start-indent))"/>
+
     <eval expected="20000" xpath="//flow/block[2]/lineArea[1]/@start-indent"/>
     <true xpath="boolean(not(//flow/block[2]/lineArea[2]/@start-indent))"/>
-    <true xpath="boolean(not(//flow/block[2]/lineArea[10]/@start-indent))"/>
+    <eval expected="11" xpath="count(//flow/block[2]/lineArea[1]/text/word)"/>
+    <eval expected="11" xpath="count(//flow/block[2]/lineArea[2]/text/word)"/>
+    <eval expected="12" xpath="count(//flow/block[2]/lineArea[3]/text/word)"/>
+    <eval expected="14" xpath="count(//flow/block[2]/lineArea[4]/text/word)"/>
+    <eval expected="14" xpath="count(//flow/block[2]/lineArea[5]/text/word)"/>
+    <eval expected="14" xpath="count(//flow/block[2]/lineArea[6]/text/word)"/>
+    <eval expected="14" xpath="count(//flow/block[2]/lineArea[7]/text/word)"/>
+    <eval expected="15" xpath="count(//flow/block[2]/lineArea[8]/text/word)"/>
+    <eval expected="7" xpath="count(//flow/block[2]/lineArea[9]/text/word)"/>
+    <true xpath="boolean(not(//flow/block[2]/lineArea[9]/@start-indent))"/>
 
     <eval expected="20000" xpath="//flow/block[3]/child::*[1]/@start-indent"/>
     <eval expected="20000" xpath="//flow/block[3]/child::*[2]/lineArea[1]/@start-indent"/>
