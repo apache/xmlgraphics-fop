@@ -618,9 +618,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         MinOptMax availIPD = context.getStackLimit();
 
         clearPrevIPD();
-        if (textAlignment == EN_START) {
-            availIPD.subtract(new MinOptMax(textIndent.getValue(this)));
-        }
 
         //PHASE 1: Create Knuth elements
         if (knuthParagraphs == null) {
