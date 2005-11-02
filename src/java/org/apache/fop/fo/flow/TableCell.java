@@ -168,8 +168,13 @@ public class TableCell extends TableFObj {
      * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws FOPException {
-        if (!blockItemFound && getUserAgent().validateStrictly()) {
-            missingChildElementError("marker* (%block;)+");
+        if (!blockItemFound) {
+            if (getUserAgent().validateStrictly()) {
+                missingChildElementError("marker* (%block;)+");
+            } else if (childNodes.size() > 0) {
+                getLogger().warn("fo:table-cell content that is not enclosed by a "
+                        + "fo:block will be dropped/ignored.");
+            }
         }
         if ((startsRow() || endsRow()) 
                 && getParent().getNameId() == FO_TABLE_ROW ) {
