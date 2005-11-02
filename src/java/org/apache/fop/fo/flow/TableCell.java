@@ -168,7 +168,7 @@ public class TableCell extends TableFObj {
      * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws FOPException {
-        if (!blockItemFound) {
+        if (!blockItemFound && getUserAgent().validateStrictly()) {
             missingChildElementError("marker* (%block;)+");
         }
         if ((startsRow() || endsRow()) 
