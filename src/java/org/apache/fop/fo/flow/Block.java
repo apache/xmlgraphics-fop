@@ -375,23 +375,41 @@ public class Block extends FObjMixed {
 
     private void handleWhiteSpace() {
         //getLogger().debug("fo:block: handleWhiteSpace");
-        if (firstInlineChild != null) {
-            boolean bInWS = false;
-            boolean bPrevWasLF = false;
-            
-            /* seenNonWSYet is an indicator used for trimming all leading 
-               whitespace for the first inline child of the block
-            */
-            boolean bSeenNonWSYet = false;
-            RecursiveCharIterator charIter =
-              new RecursiveCharIterator(this, firstInlineChild);
-            LFchecker lfCheck = new LFchecker(charIter);
+        if (firstInlineChild == null) {
+            return; // Nothing to do
+        }
+        
+        boolean inWS = false; // True if we are in a run of white space
+        /*
+         * True if the last non white space char seen was a linefeed.
+         * We start from the beginning of a line so it defaults to True.
+         */
+        boolean prevWasLF = true; 
 
-            while (charIter.hasNext()) {
-                char currentChar = charIter.nextChar();
-                switch (CharUtilities.classOf(currentChar)) {
-                    case CharUtilities.XMLWHITESPACE:
-                        /* Some kind of whitespace character, except linefeed. */
+        RecursiveCharIterator charIter =
+          new RecursiveCharIterator(this, firstInlineChild);
+        EOLchecker lfCheck = new EOLchecker(charIter);
+
+        while (charIter.hasNext()) {
+            char currentChar = charIter.nextChar();
+            int currentCharClass = CharUtilities.classOf(currentChar);
+            if (currentCharClass == CharUtilities.LINEFEED
+                && linefeedTreatment == EN_TREAT_AS_SPACE) {
+                // if we have a linefeed and it is suppose to be treated
+                // like a space, that's what we do and continue
+                currentChar = ' ';
+                charIter.replaceChar(' ');
+                currentCharClass = CharUtilities.classOf(currentChar);
+            }
+            switch (CharUtilities.classOf(currentChar)) {
+                case CharUtilities.XMLWHITESPACE:
+                    /* Some kind of whitespace character, except linefeed. */
+                    if (inWS && whiteSpaceCollapse == EN_TRUE) {
+                        // We are in a run of whitespace and should collapse
+                        // Just delete the char
+                        charIter.remove();
+                    } else {
+                        // Do the white space treatment here
                         boolean bIgnore = false;
 
                         switch (whiteSpaceTreatment) {
@@ -399,14 +417,16 @@ public class Block extends FObjMixed {
                                 bIgnore = true;
                                 break;
                             case Constants.EN_IGNORE_IF_BEFORE_LINEFEED:
-                                bIgnore = lfCheck.nextIsLF();
+                                bIgnore = linefeedTreatment == Constants.EN_PRESERVE
+                                            && lfCheck.nextIsLF();
                                 break;
                             case Constants.EN_IGNORE_IF_SURROUNDING_LINEFEED:
-                                bIgnore = (bPrevWasLF
-                                           || lfCheck.nextIsLF());
+                                bIgnore = (prevWasLF
+                                           || (linefeedTreatment == Constants.EN_PRESERVE
+                                               && lfCheck.nextIsLF()));
                                 break;
                             case Constants.EN_IGNORE_IF_AFTER_LINEFEED:
-                                bIgnore = bPrevWasLF;
+                                bIgnore = prevWasLF;
                                 break;
                             case Constants.EN_PRESERVE:
                                 // nothing to do now, replacement takes place later
@@ -415,111 +435,79 @@ public class Block extends FObjMixed {
                         // Handle ignore and replacement
                         if (bIgnore) {
                             charIter.remove();
-                        } else if (whiteSpaceCollapse == EN_TRUE) {
-                            if (bInWS || (linefeedTreatment == Constants.EN_PRESERVE
-                                        && (bPrevWasLF || lfCheck.nextIsLF()))) {
-                                charIter.remove();
-                            } else {
-                                // this is to retain a single space between words
-                                bInWS = true;
-                                // remove the space if no word in block 
-                                // encountered yet
-                                if (!bSeenNonWSYet) {
-                                    charIter.remove();
-                                } else {
-                                    if (currentChar != '\u0020') {
-                                        charIter.replaceChar('\u0020');
-                                    }
-                                }
-                            }
                         } else {
-                            // !bWScollapse
+                            // this is to retain a single space between words
+                            inWS = true;
                             if (currentChar != '\u0020') {
                                 charIter.replaceChar('\u0020');
                             }
                         }
-                        break;
+                    }
+                    break;
 
-                    case CharUtilities.LINEFEED:
-                        /* A linefeed */
-                        lfCheck.reset();
-                        bPrevWasLF = true; // for following whitespace
+                case CharUtilities.LINEFEED:
+                    /* A linefeed */
+                    switch (linefeedTreatment) {
+                        case Constants.EN_IGNORE:
+                            charIter.remove();
+                            break;
+                        case Constants.EN_TREAT_AS_ZERO_WIDTH_SPACE:
+                            charIter.replaceChar(CharUtilities.ZERO_WIDTH_SPACE);
+                            inWS = false;
+                            break;
+                        case Constants.EN_PRESERVE:
+                            lfCheck.reset();
+                            inWS = false;
+                            prevWasLF = true; // for following whitespace
+                            break;
+                    }
+                    break;
 
-                        switch (linefeedTreatment) {
-                            case Constants.EN_IGNORE:
-                                charIter.remove();
-                                break;
-                            case Constants.EN_TREAT_AS_SPACE:
-                                if (bInWS) {
-                                    // only if bWScollapse=true
-                                    charIter.remove();
-                                } else {
-                                    if (whiteSpaceCollapse == EN_TRUE) {
-                                        bInWS = true;
-                                        // remove the linefeed if no word in block 
-                                        // encountered yet
-                                        if (!bSeenNonWSYet) {
-                                            charIter.remove();
-                                        }
-                                    }
-                                    charIter.replaceChar('\u0020');
-                                }
-                                break;
-                            case Constants.EN_TREAT_AS_ZERO_WIDTH_SPACE:
-                                charIter.replaceChar('\u200b');
-                                // Fall through: this isn't XML whitespace
-                            case Constants.EN_PRESERVE:
-                                bInWS = false;
-                                break;
-                        }
-                        break;
+                case CharUtilities.EOT:
+                    // A "boundary" objects such as non-character inline
+                    // or nested block object was encountered.
+                    // If any whitespace run in progress, finish it.
+                    // FALL THROUGH
 
-                    case CharUtilities.EOT:
-                        // A "boundary" objects such as non-character inline
-                        // or nested block object was encountered.
-                        // If any whitespace run in progress, finish it.
-                        // FALL THROUGH
-
-                    case CharUtilities.UCWHITESPACE: // Non XML-whitespace
-                    case CharUtilities.NONWHITESPACE:
-                        /* Any other character */
-                        bInWS = bPrevWasLF = false;
-                        bSeenNonWSYet = true;
-                        lfCheck.reset();
-                        break;
-                }
+                default:
+                    /* Any other character */
+                    inWS = prevWasLF = false;
+                    lfCheck.reset();
+                    break;
             }
-            firstInlineChild = null;
         }
+        firstInlineChild = null;
     }
 
-    private static class LFchecker {
-        private boolean bNextIsLF = false;
+    private static class EOLchecker {
+        private boolean nextIsEOL = false;
         private RecursiveCharIterator charIter;
 
-        LFchecker(RecursiveCharIterator charIter) {
+        EOLchecker(RecursiveCharIterator charIter) {
             this.charIter = charIter;
         }
 
         boolean nextIsLF() {
-            if (bNextIsLF == false) {
+            if (nextIsEOL == false) {
                 CharIterator lfIter = charIter.mark();
                 while (lfIter.hasNext()) {
-                    char c = lfIter.nextChar();
-                    if (c == '\n') {
-                        bNextIsLF = true;
-                        break;
-                    } else if (CharUtilities.classOf(c)
-                            != CharUtilities.XMLWHITESPACE) {
-                        break;
+                    int charClass = CharUtilities.classOf(lfIter.nextChar());
+                    if (charClass == CharUtilities.LINEFEED) {
+                        nextIsEOL = true;
+                        return nextIsEOL;
+                    } else if (charClass != CharUtilities.XMLWHITESPACE) {
+                        return nextIsEOL;
                     }
                 }
+                // No more characters == end of block == end of line
+                nextIsEOL = true;
+                return nextIsEOL;
             }
-            return bNextIsLF;
+            return nextIsEOL;
         }
 
         void reset() {
-            bNextIsLF = false;
+            nextIsEOL = false;
         }
     }
      

@@ -117,7 +117,7 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
         if (len.getEnum() != EN_AUTO) {
             if (len.getEnum() == EN_SCALE_TO_FIT) {
                 if (bpd != -1) {
-                    cwidth = bpd;
+                    cheight = bpd;
                 }
             } else {
                 cheight = len.getValue(this);
