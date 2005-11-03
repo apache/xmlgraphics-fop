@@ -200,7 +200,7 @@ public class XMLRenderer extends PrintRenderer {
             handleSAXException(saxe);
         }
     }
-    
+   
     /**
      * Adds a new attribute to the protected member variable "atts".
      * @param name name of the attribute

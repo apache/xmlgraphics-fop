@@ -22,10 +22,13 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.util.CharUtilities;
 import java.util.NoSuchElementException;
 
-
+/**
+ * A recursive char iterator that indicates boundaries by returning
+ * an EOT char.
+ */
 public class InlineCharIterator extends RecursiveCharIterator {
-    private boolean bStartBoundary = false;
-    private boolean bEndBoundary = false;
+    private boolean startBoundary = false;
+    private boolean endBoundary = false;
 
     /**
      * @param fobj the object for whose character contents and for whose
@@ -39,20 +42,25 @@ public class InlineCharIterator extends RecursiveCharIterator {
 
 
     private void checkBoundaries(CommonBorderPaddingBackground bpb) {
-        bStartBoundary = (bpb.getBorderStartWidth(false) > 0
+        /* Current understanding is that an <fo:inline> is always a boundary for
+         * whitespace collapse if it has a border or not
+        startBoundary = (bpb.getBorderStartWidth(false) > 0
                        || bpb.getPaddingStart(false, null) > 0); // TODO do we need context here?
-        bEndBoundary = (bpb.getBorderEndWidth(false) > 0
+        endBoundary = (bpb.getBorderEndWidth(false) > 0
                      || bpb.getPaddingEnd(false, null) > 0); // TODO do we need context here?
+         */
+        startBoundary = true;
+        endBoundary = true;
     }
 
     /**
      * @return true if there are more characters
      */
     public boolean hasNext() {
-        if (bStartBoundary) {
+        if (startBoundary) {
             return true;
         }
-        return (super.hasNext() || bEndBoundary);
+        return (super.hasNext() || endBoundary);
         /* If super.hasNext() returns false,
          * we return true if we are going to return a "boundary" signal
          * else false.
@@ -64,8 +72,8 @@ public class InlineCharIterator extends RecursiveCharIterator {
      * @throws NoSuchElementException if there are no more characters
      */
     public char nextChar() throws NoSuchElementException {
-        if (bStartBoundary) {
-            bStartBoundary = false;
+        if (startBoundary) {
+            startBoundary = false;
             return CharUtilities.CODE_EOT;
         }
         try {
@@ -73,8 +81,8 @@ public class InlineCharIterator extends RecursiveCharIterator {
         } catch (NoSuchElementException e) {
             // Underlying has nothing more to return
             // Check end boundary char
-            if (bEndBoundary) {
-                bEndBoundary = false;
+            if (endBoundary) {
+                endBoundary = false;
                 return CharUtilities.CODE_EOT;
             } else {
                 throw e;

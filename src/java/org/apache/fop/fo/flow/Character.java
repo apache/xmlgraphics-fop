@@ -18,15 +18,12 @@
 
 package org.apache.fop.fo.flow;
 
-import org.xml.sax.Locator;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.CharIterator;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.OneCharIterator;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonAural;
@@ -39,6 +36,11 @@ import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.SpaceProperty;
+import org.apache.fop.util.CharUtilities;
+
+import org.xml.sax.Locator;
+
+import java.util.NoSuchElementException;
 
 /**
  * This class represents the flow object 'fo:character'. Its use is defined by
@@ -156,8 +158,7 @@ public class Character extends FObj {
      * @see org.apache.fop.fo.FObj#charIterator
      */
     public CharIterator charIterator() {
-        return new OneCharIterator(character);
-        // But what if the character is ignored due to white space handling?
+        return new TextCharIterator();
     }
 
     /**
@@ -270,4 +271,31 @@ public class Character extends FObj {
         return FO_CHARACTER;
     }
     
+    private class TextCharIterator extends CharIterator {
+
+        private boolean bFirst = character != CharUtilities.CODE_EOT;
+        
+        public boolean hasNext() {
+            return bFirst;
+        }
+
+        public char nextChar() {
+            if (bFirst) {
+                bFirst = false;
+                return character;
+            } else {
+                throw new NoSuchElementException();
+            }
+        }
+
+        public void remove() {
+            character = CharUtilities.CODE_EOT;
+        }
+
+        public void replaceChar(char c) {
+            character = c;
+        }
+
+    }
+
 }

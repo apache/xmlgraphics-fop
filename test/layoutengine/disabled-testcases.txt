@@ -1,8 +1,12 @@
 block-container_reference-orientation_bug36391.xml
 block-container_space-before_space-after_3.xml
 block_font-stretch.xml
+block_linefeed-treatment.xml
 block_padding_2.xml
 block_space-before_space-after_8.xml
+block_white-space-collapse_2.xml
+block_white-space-treatment_1.xml
+block_white-space-treatment_2.xml
 block_word-spacing.xml
 block_word-spacing_text-align_justify.xml
 external-graphic_oversized.xml

@@ -78,6 +78,7 @@ import org.apache.fop.layoutmgr.inline.WrapperLayoutManager;
 import org.apache.fop.layoutmgr.list.ListBlockLayoutManager;
 import org.apache.fop.layoutmgr.list.ListItemLayoutManager;
 import org.apache.fop.layoutmgr.table.TableLayoutManager;
+import org.apache.fop.util.CharUtilities;
 
 /**
  * The default LayoutManager maker class
@@ -287,7 +288,10 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
 
     public static class CharacterLayoutManagerMaker extends Maker {
         public void make(FONode node, List lms) {
-            lms.add(new CharacterLayoutManager((Character) node));
+            Character foCharacter = (Character) node;
+            if (foCharacter.getCharacter() != CharUtilities.CODE_EOT) {
+                lms.add(new CharacterLayoutManager(foCharacter));
+            }
         }
     }
 
