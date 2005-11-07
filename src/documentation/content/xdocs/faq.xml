@@ -194,7 +194,7 @@
         <p>If you are running FOP from the command line:</p>
         <ul>
           <li>
-            Use the <code>fop.bat</code> or <code>fop.sh</code> command file from the FOP
+            Use the <code>fop.bat</code>, <code>fop</code> or <code>fop.sh</code> command file from the FOP
             distribution. If you have a FOP version older than 0.20.5,
             ensure the directory where FOP and these files have been
             installed is the current working directory.
@@ -211,6 +211,11 @@
           application. Check the also the information pertaining <link
           href="0.20.5/servlets.html#servlet-engine">servlet engines</link>
           for further hints.
+        </p>
+        <p>
+          If you downloaded the source distribution, or a snapshop
+          from the repository, remember you have to build the FOP jars
+          first.
         </p>
       </answer>
     </faq>
@@ -293,10 +298,11 @@
           relied upon to catch all.
         </p>
         <p>
-          If you use XSLT, problems in your style sheet and in your source XML
-          also can produce a NullPointerException. Run the transformation
-          separately to check for this, usually you'll get a detailed error
-          message from the XSLT processor.
+          If you use XSLT, problems in your style sheet and in your
+          source XML also can produce a NullPointerException. <link
+          href="0.20.5/running.html#check-input">Run the transformation
+          separately</link> to check for this, usually you'll get a
+          detailed error message from the XSLT processor.
         </p>
         <p>
           If you turn on debugging with the "<code>-d</code>" option you may be able to
@@ -371,8 +377,9 @@
           resolving relative URLs pointing to font metric files.
         </p>
         <p>
-          Try also setting the fontBaseDir configuration. (FIXME: add
-          link to congfiguration page)
+          Try also setting the <link
+          href="0.20.5/configuration.html#summary-key-value">fontBaseDir
+          configuration</link>.
         </p>
       </answer>
     </faq>
@@ -448,14 +455,15 @@ Check the following:</p>
         <ul>
           <li>Empty or wrong baseDir setting.</li>
           <li>Spelling errors in the file name (including using the wrong case).</li>
-          <li>Security Problems (i.e. image was not delivered because FOP is not
-          allowed to read the file). This is especially a problem if the external
-          file is retrieved over HTTP. Possible issues include security settings
-          on the server, server configuration, and missing cookies or other
+          <li>Security Problems (i.e. the image could not be accessed
+          because FOP is not allowed to read the file). This is
+          especially a problem if the external file is retrieved over
+          HTTP. Possible issues include security settings on the
+          server, server configuration, and missing cookies or other
           authorization information. Any easy way to check this is to
-          cut&amp;paste the source URL from the fo:external-graphic into
-          the Location field of a browser <strong>on the machine where the
-          FOP process will be running</strong>.</li>
+          cut&amp;paste the source URL from the fo:external-graphic
+          into the Location field of a browser <strong>on the machine
+          where the FOP process will be running</strong>.</li>
         </ul>
         <p>Other possibilities:</p>
         <ul>
@@ -493,7 +501,7 @@ Check the following:</p>
         </p>
         <p>
           The concept is called &#8220;blind table&#8221;. The table is used for
-          pure layout reasons and not obvious in the output.
+          pure layout reasons and is not obvious in the output.
         </p>
         <p>
           An example of an image and the image caption to be kept together:
@@ -528,7 +536,7 @@ Check the following:</p>
         <p>
           Also, the <code>fo:table-with-caption</code> element is not implemented, tables
           within such an element are dropped too. FOP generates an error
-          message for this problem. The DocBook style sheets generate
+          message for this problem. Older DocBook style sheets generate
           <code>fo:table-with-caption</code> elements, so watch out.
         </p>
       </answer>
