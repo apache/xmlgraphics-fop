@@ -1,4 +1,4 @@
-/*
+ï»¿/*
  * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -1353,7 +1353,7 @@ public class RTFHandler extends FOEventHandler {
             
             if (regionAfter != null) {
                 recurseFONode(regionAfter);
-            }            
+            }
             
             recurseFONode( pageSequence.getMainFlow() );
         } else if (foNode instanceof Table) {
@@ -1395,13 +1395,13 @@ public class RTFHandler extends FOEventHandler {
                 for (Iterator it = foNode.getChildNodes(); it.hasNext();) {
                     FONode fn = (FONode)it.next();
                     if (log.isTraceEnabled()) {
-                        log.trace("  ChildNode for " + fn + " (" + fn.getName() + ")");
+                        log.trace("  ChildNode for " + fn + " (" + fn.getName() + ")");
                     }
                     recurseFONode(fn);
                 }
             }
         }
-                
+
         invokeDeferredEvent(foNode, false);
     }
 }
