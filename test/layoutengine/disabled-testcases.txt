@@ -34,7 +34,6 @@ table-body_background-image.xml
 table_border-collapse_collapse_1.xml
 table_border-collapse_collapse_2.xml
 table_border_padding.xml
-table_bug37270.xml
 table-cell_block_keep-with-previous.xml
 table-cell_border_padding_conditionality.xml
 table-column_first-row-width.xml

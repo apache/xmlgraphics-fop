@@ -38,17 +38,28 @@
             <fo:table-body>
               <fo:table-row>
                 <!-- Note: the padding-top caused a NullPointerException -->
-                <fo:table-cell padding-top="1.2cm" number-rows-spanned="2">
+                <fo:table-cell padding-top="40pt" number-rows-spanned="3" background-color="yellow" id="left">
                   <fo:block>row 1 col 1</fo:block>
                 </fo:table-cell>
                 <!-- absent table-cells in first row -->
+                <!--fo:table-cell column-number="4">
+                  <fo:block>xxxxx</fo:block>
+                </fo:table-cell-->
               </fo:table-row>
-              <fo:table-row>
-                <fo:table-cell number-columns-spanned="2">
+              <fo:table-row background-color="orange">
+                <fo:table-cell number-columns-spanned="2" id="r2c2">
                   <fo:block>row 2 col 2</fo:block>
                 </fo:table-cell>
-                <fo:table-cell>
+                <fo:table-cell id="r2c4">
                   <fo:block>Row 2 col 4</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell number-columns-spanned="2" id="r3c2">
+                  <fo:block>row 3 col 2</fo:block>
+                </fo:table-cell>
+                <fo:table-cell id="r3c4">
+                  <fo:block>Row 3 col 4</fo:block>
                 </fo:table-cell>
               </fo:table-row>
             </fo:table-body>
@@ -59,6 +70,20 @@
   </fo>
   <checks>
     <!-- Simply check that FOP doesn't fail with an IndexOutOfBoundsException or an NPE -->
-    <eval expected="1" xpath="count(//pageViewport)"/>
+    <element-list category="breaker">
+      <box w="0"/>
+      <penalty w="14400"/> <!-- p > 0 && p <= INF -->
+      <box w="14400"/>
+      <penalty w="14400"/> <!-- p > 0 && p <= INF -->
+      <box w="40000"/>
+      <skip>3</skip>
+    </element-list>
+    
+    <!-- Checking vertical position here. I had trouble with this while debugging. -->
+    <true xpath="not(boolean(//block[@prod-id='left']/@top-offset))"/>
+    <true xpath="not(boolean(//block[@prod-id='r2c2']/@top-offset))"/>
+    <true xpath="not(boolean(//block[@prod-id='r2c4']/@top-offset))"/>
+    <eval expected="14400" xpath="//block[@prod-id='r3c2']/@top-offset"/>
+    <eval expected="14400" xpath="//block[@prod-id='r3c4']/@top-offset"/>
   </checks>
 </testcase>

@@ -107,11 +107,16 @@ public class TableStepper {
     }
     
     private GridUnit getActiveGridUnit(int column) {
-        return getActiveRow().getGridUnit(column);
+        return getActiveRow().safelyGetGridUnit(column);
     }
     
     private PrimaryGridUnit getActivePrimaryGridUnit(int column) {
-        return getActiveGridUnit(column).getPrimary();
+        GridUnit gu = getActiveGridUnit(column);
+        if (gu == null) {
+            return null;
+        } else {
+            return gu.getPrimary();
+        }
     }
     
     private void calcTotalHeight() {
@@ -163,7 +168,7 @@ public class TableStepper {
     private void setupElementList(int column) {
         GridUnit gu = getActiveGridUnit(column);
         EffRow row = getActiveRow();
-        if (gu.isEmpty()) {
+        if (gu == null || gu.isEmpty()) {
             elementLists[column] = null;
             start[column] = 0;
             end[column] = -1;
@@ -243,6 +248,7 @@ public class TableStepper {
         TableContentPosition lastTCPos = null;
         LinkedList returnList = new LinkedList();
         while ((step = getNextStep(laststep)) >= 0) {
+            int normalRow = activeRow;
             if (rowBacktrackForLastStep) {
                 //Even though we've already switched to the next row, we have to 
                 //calculate as if we were still on the previous row
@@ -257,7 +263,7 @@ public class TableStepper {
             List gridUnitParts = new java.util.ArrayList(maxColumnCount);
             for (int i = 0; i < start.length; i++) {
                 if (end[i] >= start[i]) {
-                    PrimaryGridUnit pgu = getActivePrimaryGridUnit(i);
+                    PrimaryGridUnit pgu = rowGroup[startRow[i]].getGridUnit(i).getPrimary();
                     if (start[i] == 0 && end[i] == 0 
                             && elementLists[i].size() == 1
                             && elementLists[i].get(0) instanceof KnuthBoxCellWithBPD) {
@@ -298,12 +304,15 @@ public class TableStepper {
             //Create elements for step
             int effPenaltyLen = penaltyLen;
             TableContentPosition tcpos = new TableContentPosition(getTableLM(), 
-                    gridUnitParts, getActiveRow());
+                    gridUnitParts, rowGroup[normalRow]);
             if (returnList.size() == 0) {
                 tcpos.setFlag(TableContentPosition.FIRST_IN_ROWGROUP, true);
             }
             lastTCPos = tcpos;
-            log.debug(" - " + rowBacktrackForLastStep + " - " + activeRow + " - " + tcpos);
+            if (log.isDebugEnabled()) {
+                log.debug(" - backtrack=" + rowBacktrackForLastStep 
+                        + " - row=" + activeRow + " - " + tcpos);
+            }
             returnList.add(new KnuthBox(boxLen, tcpos, false));
             TableHFPenaltyPosition penaltyPos = new TableHFPenaltyPosition(getTableLM());
             if (bodyType == TableRowIterator.BODY) {
@@ -409,7 +418,9 @@ public class TableStepper {
                             + "in progress (See XSL 1.0, 7.19.1)");
                 }
                 activeRow++;
-                log.debug("===> new row: " + activeRow);
+                if (log.isDebugEnabled()) {
+                    log.debug("===> new row: " + activeRow);
+                }
                 initializeElementLists();
                 for (int i = 0; i < backupWidths.length; i++) {
                     if (end[i] < 0) {
@@ -479,8 +490,10 @@ public class TableStepper {
                     borderAfter[i] = getActivePrimaryGridUnit(i).getHalfMaxAfterBorderWidth();
                 }
             }
-            log.debug("borders before=" + borderBefore[i] + " after=" + borderAfter[i]);
-            log.debug("padding before=" + paddingBefore[i] + " after=" + paddingAfter[i]);
+            if (log.isTraceEnabled()) {
+                log.trace("borders before=" + borderBefore[i] + " after=" + borderAfter[i]);
+                log.trace("padding before=" + paddingBefore[i] + " after=" + paddingAfter[i]);
+            }
         }
         if (seqCount == 0) {
             return -1;
