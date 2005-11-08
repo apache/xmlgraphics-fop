@@ -64,7 +64,7 @@ public class RtfFootnote extends RtfContainer
         
         writeGroupMark(true);
         writeControlWord("footnote");
-        writeControlWord("ftnallt");      
+        writeControlWord("ftnalt");      
         
         body.writeRtfContent();
         
