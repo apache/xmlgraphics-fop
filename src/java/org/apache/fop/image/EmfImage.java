@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
+/* $Id$ */
 
 package org.apache.fop.image;
-
-// Java
-import java.io.ByteArrayOutputStream;
 
 import org.apache.commons.io.IOUtils;
 
 /**
  * Enhanced metafile image.
- * This supports loading a emf image.
+ * This supports loading a EMF image.
  *
  * @author Peter Herweg
  * @see AbstractFopImage
  * @see FopImage
  */
 public class EmfImage extends AbstractFopImage {
+    
     /**
      * Create a bitmap image with the image data.
      *
@@ -41,31 +40,23 @@ public class EmfImage extends AbstractFopImage {
     }
 
     /**
-     * Load the original jpeg data.
-     * This loads the original jpeg data and reads the color space,
+     * Load the original EMF data.
+     * This loads the original EMF data and reads the color space,
      * and icc profile if any.
      *
      * @return true if loaded false for any error
      */
     protected boolean loadOriginalData() {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
         try {
-            byte[] readBuf = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(readBuf)) != -1) {
-                baos.write(readBuf, 0, bytesRead);
-            }
+            this.raw = IOUtils.toByteArray(inputStream);
         } catch (java.io.IOException ex) {
-            log.error("Error while loading image (Emf): " + ex.getMessage(), ex);
+            log.error("Error while loading image (EMF): " + ex.getMessage(), ex);
             return false;
         } finally {
             IOUtils.closeQuietly(inputStream);
             inputStream = null;
         }
 
-        this.raw = baos.toByteArray();
-        
         return true;
     }
 }

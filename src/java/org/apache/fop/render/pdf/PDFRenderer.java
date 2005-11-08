@@ -1394,6 +1394,9 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
             placeImage((float) pos.getX() / 1000,
                        (float) pos.getY() / 1000, w, h, xobj);
         } else {
+            if (!fopimage.load(FopImage.BITMAP)) {
+                return;
+            }
             FopPDFImage pdfimage = new FopPDFImage(fopimage, url);
             int xobj = pdfDoc.addImage(currentContext, pdfimage).getXNumber();
             fact.releaseImage(url, userAgent);
