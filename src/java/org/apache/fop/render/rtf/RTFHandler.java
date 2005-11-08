@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Iterator;
-import org.apache.fop.*;
 
 // Libs
 import org.apache.commons.logging.Log;
@@ -948,7 +947,7 @@ public class RTFHandler extends FOEventHandler {
             //set image data
             ImageFactory fact = ImageFactory.getInstance();
             FopImage fopimage = fact.getImage(url, eg.getUserAgent());
-            fopimage.load(fopimage.ORIGINAL_DATA);
+            fopimage.load(FopImage.ORIGINAL_DATA);
             
             newGraphic.setImageData(fopimage.getRessourceBytes());
             
@@ -978,7 +977,7 @@ public class RTFHandler extends FOEventHandler {
             if (eg.getContentWidth().getEnum() 
                     == Constants.EN_AUTO) {
                 contentwidth = fopimage.getIntrinsicWidth();
-            } else if(eg.getContentWidth().getEnum() 
+            } else if (eg.getContentWidth().getEnum() 
                     == Constants.EN_SCALE_TO_FIT) {
                 contentwidth = width;
             } else {
@@ -993,7 +992,7 @@ public class RTFHandler extends FOEventHandler {
                 
                 contentheight = fopimage.getIntrinsicHeight();
                 
-            } else if(eg.getContentHeight().getEnum() 
+            } else if (eg.getContentHeight().getEnum() 
                     == Constants.EN_SCALE_TO_FIT) {
                 
                 contentheight = height;
@@ -1361,17 +1360,17 @@ public class RTFHandler extends FOEventHandler {
             Table table = (Table) foNode;
             
             //recurse all table-columns
-            for(Iterator it = table.getColumns().iterator(); it.hasNext();) {
+            for (Iterator it = table.getColumns().iterator(); it.hasNext();) {
                 recurseFONode( (FONode) it.next() );
             }
             
             //recurse table-header
-            if (table.getTableHeader()!=null) {
+            if (table.getTableHeader() != null) {
                 recurseFONode( table.getTableHeader() );
             }
             
             //recurse table-footer
-            if (table.getTableFooter()!=null) {
+            if (table.getTableFooter() != null) {
                 recurseFONode( table.getTableFooter() );
             }
             
@@ -1383,13 +1382,22 @@ public class RTFHandler extends FOEventHandler {
         } else if (foNode instanceof ListItem) {
             ListItem item = (ListItem) foNode;
             
-            recurseFONode( item.getLabel());
-            recurseFONode( item.getBody());
+            recurseFONode(item.getLabel());
+            recurseFONode(item.getBody());
+        } else if (foNode instanceof Footnote) {
+            Footnote fn = (Footnote)foNode;
+
+            recurseFONode(fn.getFootnoteCitation());
+            recurseFONode(fn.getFootnoteBody());
         } else {
             //Any other FO-Object: Simply recurse through all childNodes.
             if (foNode.getChildNodes() != null) {
                 for (Iterator it = foNode.getChildNodes(); it.hasNext();) {
-                    recurseFONode( (FONode) it.next() );                       
+                    FONode fn = (FONode)it.next();
+                    if (log.isTraceEnabled()) {
+                        log.trace("  ChildNode for " + fn + " (" + fn.getName() + ")");
+                    }
+                    recurseFONode(fn);
                 }
             }
         }
