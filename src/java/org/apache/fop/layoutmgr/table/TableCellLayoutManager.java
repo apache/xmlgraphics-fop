@@ -203,7 +203,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                         //contentList.add(new KnuthPenalty(0,
                         //        KnuthElement.INFINITE, false,
                         //        new Position(this), false));
-                    } else if (!((KnuthElement) contentList.getLast()).isGlue()) {
+                    } else if (!((ListElement) contentList.getLast()).isGlue()) {
                         // add a null penalty to allow a break between blocks
                         contentList.add(new BreakElement(
                                 new Position(this), 0, context));
