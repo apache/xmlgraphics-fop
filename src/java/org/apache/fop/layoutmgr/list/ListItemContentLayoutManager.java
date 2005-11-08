@@ -128,6 +128,9 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
         Position pos;
         while (parentIter.hasNext()) {
             pos = (Position)parentIter.next();
+            if (pos == null) {
+                continue;
+            }
             if (pos.getIndex() >= 0) {
                 if (firstPos == null) {
                     firstPos = pos;
