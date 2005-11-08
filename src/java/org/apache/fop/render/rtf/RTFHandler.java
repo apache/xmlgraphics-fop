@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2005 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -95,7 +95,7 @@ import org.apache.fop.image.ImageFactory;
  *
  * @author Bertrand Delacretaz <bdelacretaz@codeconsult.ch>
  * @author Trembicki-Guy, Ed <GuyE@DNB.com>
- * @author Boris Poudérous <boris.pouderous@eads-telecom.com>
+ * @author Boris PoudÃ©rous <boris.pouderous@eads-telecom.com>
  * @author Peter Herweg <pherweg@web.de>
  * @author Andreas Putz <a.putz@skynamics.com>
  */
@@ -168,12 +168,12 @@ public class RTFHandler extends FOEventHandler {
             }
 
             sect = docArea.newSection();
-            
+
             //read page size and margins, if specified
-            
+
             String reference = pageSeq.getMasterReference();
 
-            SimplePageMaster pagemaster 
+            SimplePageMaster pagemaster
                     = pageSeq.getRoot().getLayoutMasterSet().getSimplePageMaster(reference);
 
             //only simple-page-master supported, so pagemaster may be null
@@ -207,7 +207,7 @@ public class RTFHandler extends FOEventHandler {
             bDefer = false;
             recurseFONode(pageSeq);
             bDefer = true;
-            
+
             return;
         } else {
             builderContext.popContainer();
@@ -231,7 +231,7 @@ public class RTFHandler extends FOEventHandler {
                     RtfAttributes attr = new RtfAttributes();
                     attr.set(RtfBefore.HEADER);
 
-                    final IRtfBeforeContainer contBefore 
+                    final IRtfBeforeContainer contBefore
                         = (IRtfBeforeContainer)builderContext.getContainer
                                 (IRtfBeforeContainer.class, true, this);
                     contBefore.newBefore(attr);
@@ -253,7 +253,7 @@ public class RTFHandler extends FOEventHandler {
                 bHeaderSpecified = true;
                 bPrevHeaderSpecified = true;
 
-                final IRtfBeforeContainer c 
+                final IRtfBeforeContainer c
                     = (IRtfBeforeContainer)builderContext.getContainer(
                         IRtfBeforeContainer.class,
                         true, this);
@@ -270,7 +270,7 @@ public class RTFHandler extends FOEventHandler {
                 bFooterSpecified = true;
                 bPrevFooterSpecified = true;
 
-                final IRtfAfterContainer c 
+                final IRtfAfterContainer c
                     = (IRtfAfterContainer)builderContext.getContainer(
                         IRtfAfterContainer.class,
                         true, this);
@@ -323,18 +323,18 @@ public class RTFHandler extends FOEventHandler {
         if (bDefer) {
             return;
         }
-       
+
         try {
             RtfAttributes rtfAttr
                 = TextAttributesConverter.convertAttributes(bl);
-                    
-            IRtfTextrunContainer container 
+
+            IRtfTextrunContainer container
                 = (IRtfTextrunContainer)builderContext.getContainer(
                     IRtfTextrunContainer.class,
                     true, this);
 
             RtfTextrun textrun = container.getTextrun();
-            
+
             textrun.addParagraphBreak();
             textrun.pushAttributes(rtfAttr);
             textrun.addBookmark(bl.getId());
@@ -357,18 +357,18 @@ public class RTFHandler extends FOEventHandler {
         if (bDefer) {
             return;
         }
-        
+
         try {
-            IRtfTextrunContainer container 
+            IRtfTextrunContainer container
                 = (IRtfTextrunContainer)builderContext.getContainer(
                     IRtfTextrunContainer.class,
                     true, this);
-                    
+
             RtfTextrun textrun = container.getTextrun();
-            
+
             textrun.addParagraphBreak();
             textrun.popAttributes();
-            
+
         } catch (IOException ioe) {
             log.error("startBlock:" + ioe.getMessage());
             throw new RuntimeException(ioe.getMessage());
@@ -385,18 +385,18 @@ public class RTFHandler extends FOEventHandler {
         if (bDefer) {
             return;
         }
-       
+
         try {
             RtfAttributes rtfAttr
                 = TextAttributesConverter.convertBlockContainerAttributes(blc);
-                    
-            IRtfTextrunContainer container 
+
+            IRtfTextrunContainer container
                 = (IRtfTextrunContainer)builderContext.getContainer(
                     IRtfTextrunContainer.class,
                     true, this);
 
             RtfTextrun textrun = container.getTextrun();
-            
+
             textrun.addParagraphBreak();
             textrun.pushAttributes(rtfAttr);
         } catch (IOException ioe) {
@@ -416,18 +416,18 @@ public class RTFHandler extends FOEventHandler {
         if (bDefer) {
             return;
         }
-        
+
         try {
-            IRtfTextrunContainer container 
+            IRtfTextrunContainer container
                 = (IRtfTextrunContainer)builderContext.getContainer(
                     IRtfTextrunContainer.class,
                     true, this);
-                    
+
             RtfTextrun textrun = container.getTextrun();
-            
+
             textrun.addParagraphBreak();
             textrun.popAttributes();
-            
+
         } catch (IOException ioe) {
             log.error("startBlock:" + ioe.getMessage());
             throw new RuntimeException(ioe.getMessage());
@@ -449,10 +449,10 @@ public class RTFHandler extends FOEventHandler {
         TableContext tableContext = new TableContext(builderContext);
 
         try {
-            RtfAttributes atts 
+            RtfAttributes atts
                 = TableAttributesConverter.convertTableAttributes(tbl);
-            
-            final IRtfTableContainer tc 
+
+            final IRtfTableContainer tc
                 = (IRtfTableContainer)builderContext.getContainer(
                     IRtfTableContainer.class, true, null);
             builderContext.pushContainer(tc.newTable(atts, tableContext));
@@ -546,11 +546,11 @@ public class RTFHandler extends FOEventHandler {
         try {
             RtfAttributes rtfAttr
                 = TextAttributesConverter.convertCharacterAttributes(inl);
-                    
+
             IRtfTextrunContainer container
                 = (IRtfTextrunContainer)builderContext.getContainer(
                     IRtfTextrunContainer.class, true, this);
-                    
+
             RtfTextrun textrun = container.getTextrun();
             textrun.pushAttributes(rtfAttr);
             textrun.addBookmark(inl.getId());
@@ -579,7 +579,7 @@ public class RTFHandler extends FOEventHandler {
             IRtfTextrunContainer container
                 = (IRtfTextrunContainer)builderContext.getContainer(
                     IRtfTextrunContainer.class, true, this);
-                    
+
             RtfTextrun textrun = container.getTextrun();
             textrun.popAttributes();
         } catch (IOException ioe) {
@@ -642,7 +642,7 @@ public class RTFHandler extends FOEventHandler {
 
             RtfAttributes atts = TableAttributesConverter.convertRowAttributes(tr,
                     tbl.getHeaderAttribs());
-                    
+
             if (tr.getParent() instanceof TableHeader) {
                 atts.set(ITableAttributes.ATTR_HEADER);
             }
@@ -818,7 +818,7 @@ public class RTFHandler extends FOEventHandler {
         try {
             RtfListItem item
                 = (RtfListItem)builderContext.getContainer(RtfListItem.class, true, this);
-                
+
             RtfListItemLabel label = item.new RtfListItemLabel(item);
             builderContext.pushContainer(label);
         } catch (IOException ioe) {
@@ -890,19 +890,19 @@ public class RTFHandler extends FOEventHandler {
             IRtfTextrunContainer container
                 = (IRtfTextrunContainer)builderContext.getContainer(
                     IRtfTextrunContainer.class, true, this);
-            
+
             RtfTextrun textrun = container.getTextrun();
-            
+
             RtfHyperLink link = textrun.addHyperlink(new RtfAttributes());
-            
+
             if (basicLink.getExternalDestination() != null) {
                 link.setExternalURL(basicLink.getExternalDestination());
             } else {
                 link.setInternalURL(basicLink.getInternalDestination());
             }
-            
+
             builderContext.pushContainer(link);
-            
+
         } catch (IOException ioe) {
             log.error("startLink:" + ioe.getMessage());
             throw new RuntimeException(ioe.getMessage());
@@ -932,30 +932,30 @@ public class RTFHandler extends FOEventHandler {
         }
 
         try {
-       
-        
-            final IRtfTextrunContainer c 
+
+
+            final IRtfTextrunContainer c
                 = (IRtfTextrunContainer)builderContext.getContainer(
                     IRtfTextrunContainer.class, true, this);
-            
+
             final RtfExternalGraphic newGraphic = c.getTextrun().newImage();
-       
+
             //set URL
             String url = eg.getURL();
             newGraphic.setURL(url);
-                       
+
             //set image data
             ImageFactory fact = ImageFactory.getInstance();
             FopImage fopimage = fact.getImage(url, eg.getUserAgent());
             fopimage.load(FopImage.ORIGINAL_DATA);
-            
+
             newGraphic.setImageData(fopimage.getRessourceBytes());
-            
+
             //set scaling
             if (eg.getScaling() == Constants.EN_UNIFORM) {
                 newGraphic.setScaling ("uniform");
             }
-            
+
             //get width
             int width = 0;
             if (eg.getWidth().getEnum() == Constants.EN_AUTO) {
@@ -963,7 +963,7 @@ public class RTFHandler extends FOEventHandler {
             } else {
                 width = eg.getWidth().getValue();
             }
-            
+
             //get height
             int height = 0;
             if (eg.getWidth().getEnum() == Constants.EN_AUTO) {
@@ -971,39 +971,39 @@ public class RTFHandler extends FOEventHandler {
             } else {
                 height = eg.getHeight().getValue();
             }
-            
+
             //get content-width
             int contentwidth = 0;
-            if (eg.getContentWidth().getEnum() 
+            if (eg.getContentWidth().getEnum()
                     == Constants.EN_AUTO) {
                 contentwidth = fopimage.getIntrinsicWidth();
-            } else if (eg.getContentWidth().getEnum() 
+            } else if (eg.getContentWidth().getEnum()
                     == Constants.EN_SCALE_TO_FIT) {
                 contentwidth = width;
             } else {
                 //TODO: check, if the value is a percent value
-                contentwidth = eg.getContentWidth().getValue();                    
+                contentwidth = eg.getContentWidth().getValue();
             }
-            
+
             //get content-width
             int contentheight = 0;
-            if (eg.getContentHeight().getEnum() 
+            if (eg.getContentHeight().getEnum()
                     == Constants.EN_AUTO) {
-                
+
                 contentheight = fopimage.getIntrinsicHeight();
-                
-            } else if (eg.getContentHeight().getEnum() 
+
+            } else if (eg.getContentHeight().getEnum()
                     == Constants.EN_SCALE_TO_FIT) {
-                
+
                 contentheight = height;
             } else {
                 //TODO: check, if the value is a percent value
-                contentheight = eg.getContentHeight().getValue();                    
+                contentheight = eg.getContentHeight().getValue();
             }
-                        
+
             //set width in rtf
             newGraphic.setWidth((long) (contentwidth / 1000f) + "pt");
-            
+
             //set height in rtf
             newGraphic.setHeight((long) (contentheight / 1000f) + "pt");
 
@@ -1012,7 +1012,7 @@ public class RTFHandler extends FOEventHandler {
             int compression = 0;
             if (compression != 0) {
                 if (!newGraphic.setCompressionRate(compression)) {
-                    log.warn("The compression rate " + compression 
+                    log.warn("The compression rate " + compression
                         + " is invalid. The value has to be between 1 and 100 %.");
                 }
             }
@@ -1042,16 +1042,16 @@ public class RTFHandler extends FOEventHandler {
         }
 
         try {
-            IRtfTextrunContainer container 
+            IRtfTextrunContainer container
                 = (IRtfTextrunContainer)builderContext.getContainer(
                     IRtfTextrunContainer.class,
                     true, this);
 
             RtfTextrun textrun = container.getTextrun();
             RtfFootnote rtfFootnote = textrun.addFootnote();
-            
+
             builderContext.pushContainer(rtfFootnote);
-            
+
         } catch (IOException ioe) {
             // TODO could we throw Exception in all FOEventHandler events?
             log.error("startFootnote: " + ioe.getMessage());
@@ -1061,7 +1061,7 @@ public class RTFHandler extends FOEventHandler {
             throw new RuntimeException("Exception: " + e);
         }
     }
-    
+
     /**
      * @see org.apache.fop.fo.FOEventHandler#endFootnote(Footnote)
      */
@@ -1072,7 +1072,7 @@ public class RTFHandler extends FOEventHandler {
 
         builderContext.popContainer();
     }
-    
+
     /**
      * @see org.apache.fop.fo.FOEventHandler#startFootnoteBody(FootnoteBody)
      */
@@ -1097,7 +1097,7 @@ public class RTFHandler extends FOEventHandler {
             throw new RuntimeException("Exception: " + e);
         }
     }
-    
+
     /**
      * @see org.apache.fop.fo.FOEventHandler#endFootnoteBody(FootnoteBody)
      */
@@ -1136,16 +1136,16 @@ public class RTFHandler extends FOEventHandler {
         if (bDefer) {
             return;
         }
-        
+
         try {
             IRtfTextrunContainer container
                 = (IRtfTextrunContainer)builderContext.getContainer(
                     IRtfTextrunContainer.class, true, this);
-           
+
             RtfTextrun textrun = container.getTextrun();
             RtfAttributes rtfAttr
                 = TextAttributesConverter.convertCharacterAttributes(text);
-            
+
             textrun.pushAttributes(rtfAttr);
             textrun.addString(new String(data, start, length - start));
             textrun.popAttributes();
@@ -1172,11 +1172,11 @@ public class RTFHandler extends FOEventHandler {
             RtfAttributes rtfAttr
                 = TextAttributesConverter.convertCharacterAttributes(
                     pagenum);
-                    
+
             IRtfTextrunContainer container
                 = (IRtfTextrunContainer)builderContext.getContainer(
                     IRtfTextrunContainer.class, true, this);
-                    
+
             RtfTextrun textrun = container.getTextrun();
             textrun.addPageNumber(rtfAttr);
         } catch (IOException ioe) {
@@ -1197,12 +1197,12 @@ public class RTFHandler extends FOEventHandler {
             return;
         }
     }
-    
+
     /**
-     * Calls the appropriate event handler for the passed FObj. 
+     * Calls the appropriate event handler for the passed FObj.
      *
      * @param foNode FO node whose event is to be called
-     * @param bStart TRUE calls the start handler, FALSE the end handler 
+     * @param bStart TRUE calls the start handler, FALSE the end handler
      */
     private void invokeDeferredEvent(FONode foNode, boolean bStart) {
         if (foNode instanceof PageSequence) {
@@ -1332,56 +1332,56 @@ public class RTFHandler extends FOEventHandler {
             log.warn("Ignored deferred event for " + foNode);
         }
     }
-    
+
     /**
-     * Calls the event handlers for the passed FONode and all its elements. 
+     * Calls the event handlers for the passed FONode and all its elements.
      *
      * @param foNode FONode object which shall be recursed
      */
     private void recurseFONode(FONode foNode) {
         invokeDeferredEvent(foNode, true);
-        
+
         if (foNode instanceof PageSequence) {
             PageSequence pageSequence = (PageSequence) foNode;
-                        
+
             FONode regionBefore = (FONode) pageSequence.flowMap.get("xsl-region-before");
             FONode regionAfter  = (FONode) pageSequence.flowMap.get("xsl-region-after");
-            
+
             if (regionBefore != null) {
                 recurseFONode(regionBefore);
             }
-            
+
             if (regionAfter != null) {
                 recurseFONode(regionAfter);
             }
-            
+
             recurseFONode( pageSequence.getMainFlow() );
         } else if (foNode instanceof Table) {
             Table table = (Table) foNode;
-            
+
             //recurse all table-columns
             for (Iterator it = table.getColumns().iterator(); it.hasNext();) {
                 recurseFONode( (FONode) it.next() );
             }
-            
+
             //recurse table-header
             if (table.getTableHeader() != null) {
                 recurseFONode( table.getTableHeader() );
             }
-            
+
             //recurse table-footer
             if (table.getTableFooter() != null) {
                 recurseFONode( table.getTableFooter() );
             }
-            
+
             if (foNode.getChildNodes() != null) {
                 for (Iterator it = foNode.getChildNodes(); it.hasNext();) {
-                    recurseFONode( (FONode) it.next() );                       
+                    recurseFONode( (FONode) it.next() );
                 }
             }
         } else if (foNode instanceof ListItem) {
             ListItem item = (ListItem) foNode;
-            
+
             recurseFONode(item.getLabel());
             recurseFONode(item.getBody());
         } else if (foNode instanceof Footnote) {
