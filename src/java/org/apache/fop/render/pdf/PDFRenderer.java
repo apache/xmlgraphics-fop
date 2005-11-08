@@ -1120,9 +1120,9 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
 
         currentStream.add(pdf.toString());
 
-        renderTextDecoration(tf, size, text, bl, rx);
-        
         super.renderText(text);
+
+        renderTextDecoration(tf, size, text, bl, rx);
     }
     
     /**
