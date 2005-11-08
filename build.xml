@@ -68,7 +68,7 @@ list of possible build targets.
     <include name="README"/>
     <include name="STATUS"/>
     <include name="fop.bat"/>
-    <include name="fop.sh"/>
+    <include name="fop"/>
     <exclude name="src/**"/>
     <exclude name="dist/**"/>
     <exclude name="build/**"/>
@@ -107,7 +107,7 @@ list of possible build targets.
     <include name="STATUS"/>
     <include name="build*"/>
     <include name="fop.bat"/>
-    <include name="fop.sh"/>
+    <include name="fop"/>
   </fileset>
 
   <path id="libs-build-classpath">
@@ -979,7 +979,7 @@ list of possible build targets.
     </copy>
     <mkdir dir="${dist.bin.result.dir}/build"/>
     <copy todir="${dist.bin.result.dir}/build" file="build/fop.jar"/>
-    <chmod file="${dist.bin.result.dir}/fop.sh" perm="ugo+rx"/>
+    <chmod file="${dist.bin.result.dir}/fop" perm="ugo+rx"/>
 
     <zip zipfile="${name}-${version}-bin.zip" basedir="${dist.bin.dir}" includes="**"/>
     <tar tarfile="${name}-${version}-bin.tar" basedir="${dist.bin.dir}" includes="**"/>
@@ -999,7 +999,7 @@ list of possible build targets.
     <mkdir dir="${dist.src.result.dir}/build"/>
     <copy todir="${dist.src.result.dir}/build" file="build/fop.jar"/>
     <chmod file="${dist.src.result.dir}/build.sh" perm="ugo+rx"/>
-    <chmod file="${dist.src.result.dir}/fop.sh" perm="ugo+rx"/>
+    <chmod file="${dist.src.result.dir}/fop" perm="ugo+rx"/>
 
     <zip zipfile="${name}-${version}-src.zip" basedir="${dist.src.dir}" includes="**"/>
     <tar tarfile="${name}-${version}-src.tar" basedir="${dist.src.dir}" includes="**"/>
