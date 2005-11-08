@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2005 The Apache Software Foundation.
+ * Copyright 2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/* $Id$ */
 
 package org.apache.fop.image.analyser;
 
@@ -53,8 +55,8 @@ public class EMFReader implements ImageReader {
     public FopImage.ImageInfo verifySignature(String uri, InputStream bis,
                 FOUserAgent ua) throws IOException {
         byte[] header = getDefaultHeader(bis);
-        boolean supported = 
-                 ( (header[SIGNATURE_OFFSET + 0] == (byte) 0x20)
+        boolean supported 
+                = ( (header[SIGNATURE_OFFSET + 0] == (byte) 0x20)
                 && (header[SIGNATURE_OFFSET + 1] == (byte) 0x45)
                 && (header[SIGNATURE_OFFSET + 2] == (byte) 0x4D)
                 && (header[SIGNATURE_OFFSET + 3] == (byte) 0x46) );
@@ -114,8 +116,8 @@ public class EMFReader implements ImageReader {
         byte4 = header[VRES_PIXEL_OFFSET + 3] & 0xff;
         long vresPixel = (long) ((byte4 << 24) | (byte3 << 16) | (byte2 << 8) | byte1);
         
-        info.dpiHorizontal = hresPixel / (hresMM/25.4);
-        info.dpiVertical   = vresPixel / (vresMM/25.4);;
+        info.dpiHorizontal = hresPixel / (hresMM / 25.4f);
+        info.dpiVertical   = vresPixel / (vresMM / 25.4f);
         
         //width
         byte1 = header[WIDTH_OFFSET] & 0xff;
@@ -124,7 +126,7 @@ public class EMFReader implements ImageReader {
         byte4 = header[WIDTH_OFFSET + 3] & 0xff;
         value = (long) ((byte4 << 24) | (byte3 << 16)
                 | (byte2 << 8) | byte1);
-        value = (long) (value / 100f / 25.4 * info.dpiHorizontal);
+        value = Math.round(value / 100f / 25.4f * info.dpiHorizontal);
         info.width = (int) (value & 0xffffffff);
 
         //height
@@ -133,7 +135,7 @@ public class EMFReader implements ImageReader {
         byte3 = header[HEIGHT_OFFSET + 2] & 0xff;
         byte4 = header[HEIGHT_OFFSET + 3] & 0xff;
         value = (long) ((byte4 << 24) | (byte3 << 16) | (byte2 << 8) | byte1);
-        value = (long) (value / 100f / 25.4 * info.dpiVertical);
+        value = Math.round(value / 100f / 25.4f * info.dpiVertical);
         info.height = (int) (value & 0xffffffff);
 
         return info;
