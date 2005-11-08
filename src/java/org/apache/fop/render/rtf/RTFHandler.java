@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -95,7 +95,7 @@ import org.apache.fop.image.ImageFactory;
  *
  * @author Bertrand Delacretaz <bdelacretaz@codeconsult.ch>
  * @author Trembicki-Guy, Ed <GuyE@DNB.com>
- * @author Boris Poudérous <boris.pouderous@eads-telecom.com>
+ * @author Boris Poud�rous <boris.pouderous@eads-telecom.com>
  * @author Peter Herweg <pherweg@web.de>
  * @author Andreas Putz <a.putz@skynamics.com>
  */
