@@ -438,8 +438,10 @@ public class TableContentLayoutManager implements PercentBaseContext {
                             //Check for bpd on row, see CSS21, 17.5.3 Table height algorithms
                             LengthRangeProperty bpd = tableRow.getBlockProgressionDimension();
                             if (!bpd.getMinimum(getTableLM()).isAuto()) {
-                                minContentHeight = Math.max(minContentHeight, 
-                                        bpd.getMinimum(getTableLM()).getLength().getValue(getTableLM()));
+                                minContentHeight = Math.max(
+                                        minContentHeight, 
+                                        bpd.getMinimum(
+                                                getTableLM()).getLength().getValue(getTableLM()));
                             }
                             MinOptMaxUtil.restrict(explicitRowHeights[rgi], bpd, getTableLM());
                             
@@ -502,12 +504,14 @@ public class TableContentLayoutManager implements PercentBaseContext {
                         int effCellContentHeight = minContentHeight;
                         LengthRangeProperty bpd = primary.getCell().getBlockProgressionDimension();
                         if (!bpd.getMinimum(getTableLM()).isAuto()) {
-                            effCellContentHeight = Math.max(effCellContentHeight,
-                                    bpd.getMinimum(getTableLM()).getLength().getValue(getTableLM()));
+                            effCellContentHeight = Math.max(
+                                effCellContentHeight,
+                                bpd.getMinimum(getTableLM()).getLength().getValue(getTableLM()));
                         }
                         if (!bpd.getOptimum(getTableLM()).isAuto()) {
-                            effCellContentHeight = Math.max(effCellContentHeight,
-                                    bpd.getOptimum(getTableLM()).getLength().getValue(getTableLM()));
+                            effCellContentHeight = Math.max(
+                                effCellContentHeight,
+                                bpd.getOptimum(getTableLM()).getLength().getValue(getTableLM()));
                         }
                         if (gu.getRowSpanIndex() == 0) {
                             //TODO ATM only non-row-spanned cells are taken for this
@@ -770,21 +774,29 @@ public class TableContentLayoutManager implements PercentBaseContext {
         }
         
         public void handleTableContentPosition(TableContentPosition tcpos) {
-            log.debug("===handleTableContentPosition(" + tcpos);
             if (lastRow != tcpos.row && lastRow != null) {
                 addAreasAndFlushRow(false);
                 yoffset += lastRowHeight;
                 this.accumulatedBPD += lastRowHeight;
             }
-            rowFO = null;
+            if (log.isDebugEnabled()) {
+                log.debug("===handleTableContentPosition(" + tcpos);
+            }
+            rowFO = tcpos.row.getTableRow();
             lastRow = tcpos.row;
             Iterator partIter = tcpos.gridUnitParts.iterator();
             //Iterate over all grid units in the current step
             while (partIter.hasNext()) {
                 GridUnitPart gup = (GridUnitPart)partIter.next();
-                log.debug(">" + gup);
+                if (log.isDebugEnabled()) {
+                    log.debug(">" + gup);
+                }
                 int colIndex = gup.pgu.getStartCol();
                 if (gridUnits[colIndex] != gup.pgu) {
+                    if (gridUnits[colIndex] != null) {
+                        log.warn("Replacing GU in slot " + colIndex 
+                                + ". Some content may not be painted.");
+                    }
                     gridUnits[colIndex] = gup.pgu;
                     start[colIndex] = gup.start;
                     end[colIndex] = gup.end;
@@ -794,10 +806,6 @@ public class TableContentLayoutManager implements PercentBaseContext {
                     }
                     end[colIndex] = gup.end;
                 }
-                if (rowFO == null) {
-                    //Find the row if any
-                    rowFO = gridUnits[colIndex].getRow();
-                }
             }
         }
         
@@ -806,37 +814,51 @@ public class TableContentLayoutManager implements PercentBaseContext {
             int readyCount = 0;
             
             int bt = lastRow.getBodyType();
+            if (log.isDebugEnabled()) {
+                log.debug("Remembering yoffset for row " + lastRow.getIndex() + ": " + yoffset);
+            }
             rowOffsets[bt].put(new Integer(lastRow.getIndex()), new Integer(yoffset));
 
             for (int i = 0; i < gridUnits.length; i++) {
                 if ((gridUnits[i] != null) 
                         && (forcedFlush || (end[i] == gridUnits[i].getElements().size() - 1))) {
-                    log.debug("getting len for " + i + " " 
-                            + start[i] + "-" + end[i]);
+                    if (log.isTraceEnabled()) {
+                        log.trace("getting len for " + i + " " 
+                                + start[i] + "-" + end[i]);
+                    }
                     readyCount++;
                     int len = ElementListUtils.calcContentLength(
                             gridUnits[i].getElements(), start[i], end[i]);
                     partLength[i] = len;
-                    log.debug("len of part: " + len);
+                    if (log.isTraceEnabled()) {
+                        log.trace("len of part: " + len);
+                    }
 
                     if (start[i] == 0) {
                         LengthRangeProperty bpd = gridUnits[i].getCell()
                                 .getBlockProgressionDimension();
                         if (!bpd.getMinimum(getTableLM()).isAuto()) {
-                            if (bpd.getMinimum(getTableLM()).getLength().getValue(getTableLM()) > 0) {
-                                len = Math.max(len, bpd.getMinimum(getTableLM()).getLength().getValue(getTableLM()));
+                            int min = bpd.getMinimum(getTableLM())
+                                        .getLength().getValue(getTableLM()); 
+                            if (min > 0) {
+                                len = Math.max(len, bpd.getMinimum(getTableLM())
+                                        .getLength().getValue(getTableLM()));
                             }
                         }
                         if (!bpd.getOptimum(getTableLM()).isAuto()) {
-                            if (bpd.getOptimum(getTableLM()).getLength().getValue(getTableLM()) > 0) {
-                                len = Math.max(len, bpd.getOptimum(getTableLM()).getLength().getValue(getTableLM()));
+                            int opt = bpd.getOptimum(getTableLM())
+                                        .getLength().getValue(getTableLM());
+                            if (opt > 0) {
+                                len = Math.max(len, opt);
                             }
                         }
                         if (gridUnits[i].getRow() != null) {
                             bpd = gridUnits[i].getRow().getBlockProgressionDimension();
                             if (!bpd.getMinimum(getTableLM()).isAuto()) {
-                                if (bpd.getMinimum(getTableLM()).getLength().getValue(getTableLM()) > 0) {
-                                    len = Math.max(len, bpd.getMinimum(getTableLM()).getLength().getValue(getTableLM()));
+                                int min = bpd.getMinimum(getTableLM()).getLength()
+                                            .getValue(getTableLM()); 
+                                if (min > 0) {
+                                    len = Math.max(len, min);
                                 }
                             }
                         }
@@ -897,22 +919,30 @@ public class TableContentLayoutManager implements PercentBaseContext {
             return actualRowHeight;
         }
 
-        private void addAreasForCell(PrimaryGridUnit pgu, int start, int end, 
+        private void addAreasForCell(PrimaryGridUnit pgu, int startPos, int endPos, 
                 EffRow row, int contentHeight, int rowHeight) {
             int bt = row.getBodyType();
             if (firstRow[bt] < 0) {
                 firstRow[bt] = row.getIndex();
             }
             //Determine the first row in this sequence
-            //TODO Maybe optimize since addAreasAndFlushRow uses almost the same code
             int startRow = Math.max(pgu.getStartRow(), firstRow[bt]);
-            int effYOffset = ((Integer)rowOffsets[bt].get(new Integer(startRow))).intValue();
+            //Determine y offset for the cell
+            Integer offset = (Integer)rowOffsets[bt].get(new Integer(startRow));
+            while (offset == null) {
+                startRow--;
+                offset = (Integer)rowOffsets[bt].get(new Integer(startRow));
+            }
+            int effYOffset = offset.intValue();
             int effCellHeight = rowHeight;
             effCellHeight += yoffset - effYOffset;
-            log.debug("current row: " + row.getIndex());
-            log.debug("start row: " + pgu.getStartRow() + " " + yoffset + " " + effYOffset);
-            log.debug("contentHeight: " + contentHeight + " rowHeight=" + rowHeight 
-                    + " effCellHeight=" + effCellHeight);
+            if (log.isDebugEnabled()) {
+                log.debug("Creating area for cell:");
+                log.debug("  current row: " + row.getIndex());
+                log.debug("  start row: " + pgu.getStartRow() + " " + yoffset + " " + effYOffset);
+                log.debug("  contentHeight: " + contentHeight + " rowHeight=" + rowHeight 
+                        + " effCellHeight=" + effCellHeight);
+            }
             TableCellLayoutManager cellLM = pgu.getCellLM();
             cellLM.setXOffset(getXOffsetOfGridUnit(pgu));
             cellLM.setYOffset(effYOffset);
@@ -920,7 +950,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
             cellLM.setRowHeight(effCellHeight);
             //cellLM.setRowHeight(row.getHeight().opt);
             cellLM.addAreas(new KnuthPossPosIter(pgu.getElements(), 
-                    start, end + 1), layoutContext);
+                    startPos, endPos + 1), layoutContext);
         }
         
     }
@@ -957,7 +987,8 @@ public class TableContentLayoutManager implements PercentBaseContext {
             rowBackground.setXOffset(this.startXOffset);
             rowBackground.setYOffset(yoffset);
             getTableLM().addChildArea(rowBackground);
-            TraitSetter.addBackground(rowBackground, row.getCommonBorderPaddingBackground(), getTableLM());
+            TraitSetter.addBackground(rowBackground, 
+                    row.getCommonBorderPaddingBackground(), getTableLM());
         }
     }
     
@@ -1079,8 +1110,10 @@ public class TableContentLayoutManager implements PercentBaseContext {
         public String toString() {
             StringBuffer sb = new StringBuffer("TableContentPosition:");
             sb.append(getIndex());
-            sb.append("[").append(getFlag(FIRST_IN_ROWGROUP) ? "F" : "-");
-            sb.append((getFlag(LAST_IN_ROWGROUP) ? "L" : "-")).append("]");
+            sb.append("[");
+            sb.append(row.getIndex()).append("/");
+            sb.append(getFlag(FIRST_IN_ROWGROUP) ? "F" : "-");
+            sb.append(getFlag(LAST_IN_ROWGROUP) ? "L" : "-").append("]");
             sb.append("(");
             sb.append(gridUnitParts);
             sb.append(")");
