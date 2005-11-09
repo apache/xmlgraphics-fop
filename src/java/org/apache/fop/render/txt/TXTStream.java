@@ -26,8 +26,11 @@ import java.io.OutputStream;
  */
 public class TXTStream {
     
+    private static final String DEFAULT_ENCODING = "UTF-8";
+    
     private OutputStream out = null;
     private boolean doOutput = true;
+    private String encoding = DEFAULT_ENCODING;
 
     /**
      * Main constructor.
@@ -47,7 +50,7 @@ public class TXTStream {
         }
 
         try {
-            byte[] buff = str.getBytes("UTF-8");
+            byte[] buff = str.getBytes(encoding);
             out.write(buff);
         } catch (IOException e) {
             throw new RuntimeException(e.toString());
@@ -61,6 +64,16 @@ public class TXTStream {
     public void setDoOutput(boolean doout) {
         doOutput = doout;
     }
-
+    
+    /**
+     * Set the encoding for the text stream.
+     * @param encoding the encoding, if null, "UTF-8" is chosen as default
+     */
+    public void setEncoding(String encoding) {
+        if (encoding != null)
+            this.encoding = encoding;
+        else
+            this.encoding = DEFAULT_ENCODING;
+    }
 }
 
