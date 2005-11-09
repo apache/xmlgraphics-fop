@@ -118,6 +118,16 @@
               </fo:block>
             </fo:block>
           </fo:block>
+          <fo:block font-size="36pt">font-size="36pt"
+            <fo:block font-size="0.5em">font-size="0.5em"
+              <fo:block font-size="0.5em">font-size="0.5em"
+                <fo:block font-size="2em">font-size="2em"
+                  <fo:block font-size="2em">font-size="2em"
+                  </fo:block>
+                </fo:block>
+              </fo:block>
+            </fo:block>
+          </fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
@@ -163,5 +173,14 @@
     <eval expected="51598" xpath="//flow/block[8]/block/block/lineArea/text/@font-size"/>
     <eval expected="42998" xpath="//flow/block[8]/block/block/block/lineArea/text/@font-size"/>
     <eval expected="35832" xpath="//flow/block[8]/block/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="14400" xpath="//flow/block[9]/lineArea/text/@font-size"/>
+    <eval expected="17280" xpath="//flow/block[9]/block/lineArea/text/@font-size"/>
+    <eval expected="14400" xpath="//flow/block[9]/block/block/lineArea/text/@font-size"/>
+    <eval expected="12000" xpath="//flow/block[9]/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="36000" xpath="//flow/block[10]/lineArea/text/@font-size"/>
+    <eval expected="18000" xpath="//flow/block[10]/block/lineArea/text/@font-size"/>
+    <eval expected="9000" xpath="//flow/block[10]/block/block/lineArea/text/@font-size"/>
+    <eval expected="18000" xpath="//flow/block[10]/block/block/block/lineArea/text/@font-size"/>
+    <eval expected="36000" xpath="//flow/block[10]/block/block/block/block/lineArea/text/@font-size"/>
   </checks>
 </testcase>
