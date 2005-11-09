@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.apache.avalon.framework.configuration.Configuration;
+import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.CTM;
@@ -99,10 +101,31 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     /** Saves current coordinate transformation. */
     private TXTState currentState = new TXTState();
 
+    private String encoding;
+    
     /**
      * Constructs a newly allocated <code>TXTRenderer</code> object.
      */
     public TXTRenderer() {
+    }
+
+    /** @see org.apache.fop.render.AbstractRenderer#getMimeType() */
+    public String getMimeType() {
+        return "text/plain";
+    }
+
+    /** @see org.apache.fop.render.AbstractRenderer */
+    public void configure(Configuration conf) throws ConfigurationException {
+        super.configure(conf);
+        this.encoding = conf.getChild("encoding", true).getValue(null);
+    }
+    
+    /**
+     * Sets the encoding of the target file.
+     * @param encoding the encoding, null to select the default encoding (UTF-8)
+     */
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
     }
 
     /**
@@ -271,6 +294,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
         log.info("Rendering areas to TEXT.");
         this.outputStream = os;
         currentStream = new TXTStream(os);
+        currentStream.setEncoding(this.encoding);
         firstPage = true;
     }
 
