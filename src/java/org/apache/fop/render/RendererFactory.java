@@ -33,6 +33,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.render.mif.MIFHandler;
 import org.apache.fop.render.rtf.RTFHandler;
+import org.apache.fop.render.txt.TXTHandler;
 
 /**
  * Factory for FOEventHandlers and Renderers.
@@ -132,6 +133,8 @@ public class RendererFactory {
                 return new MIFHandler(userAgent, out);
             } else if (renderType == Constants.RENDER_RTF) {
                 return new RTFHandler(userAgent, out);
+            } else if (renderType == Constants.RENDER_TXT) {
+                 return new TXTHandler(userAgent, out);
             } else {
                 if (renderType < Constants.RENDER_MIN_CONST 
                     || renderType > Constants.RENDER_MAX_CONST) {
