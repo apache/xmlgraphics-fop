@@ -45,6 +45,7 @@ import org.apache.batik.ext.awt.g2d.AbstractGraphics2D;
 import org.apache.batik.ext.awt.g2d.GraphicContext;
 import org.apache.batik.ext.awt.RadialGradientPaint;
 import org.apache.batik.ext.awt.LinearGradientPaint;
+import org.apache.batik.ext.awt.MultipleGradientPaint;
 import org.apache.batik.ext.awt.RenderingHintsKeyExt;
 import org.apache.batik.gvt.PatternPaint;
 import org.apache.batik.gvt.GraphicsNode;
@@ -61,22 +62,26 @@ import java.awt.Image;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.Paint;
+import java.awt.PaintContext;
 import java.awt.Rectangle;
 import java.awt.Dimension;
 import java.awt.BasicStroke;
 import java.awt.AlphaComposite;
 import java.awt.geom.AffineTransform;
+import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.DirectColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferInt;
 import java.awt.image.ImageObserver;
 import java.awt.image.RenderedImage;
 import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 import java.awt.image.renderable.RenderableImage;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.color.ColorSpace;
 import java.io.StringWriter;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -129,7 +134,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * The count of JPEG images added to document so they recieve
      * unique keys.
      */
-    protected int jpegCount = 0;
+    protected int[] jpegCount = {0};
 
     /**
      * The current font information.
@@ -376,12 +381,11 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     public void addJpegImage(JpegImage jpeg, float x, float y, 
                              float width, float height) {
         preparePainting();
-        String key = "__AddJPEG_" + jpegCount;
-        jpegCount++;
+        String key = "__AddJPEG_" + jpegCount[0];
+        jpegCount[0]++;
         FopPDFImage fopimage = new FopPDFImage(jpeg, key);
         int xObjectNum = this.pdfDoc.addImage(resourceContext, 
                                               fopimage).getXNumber();
-
         AffineTransform at = getTransform();
         double[] matrix = new double[6];
         at.getMatrix(matrix);
@@ -709,7 +713,18 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
         Paint paint = getPaint();
         if (graphicsState.setPaint(paint)) {
-            applyPaint(paint, false);
+            if (!applyPaint(paint, false)) {
+                // Stroke the shape and use it to 'clip'
+                // the paint contents.
+                Shape ss = getStroke().createStrokedShape(s);
+                applyUnknownPaint(paint, ss);
+
+                if (newClip || newTransform) {
+                    currentStream.write("Q\n");
+                    graphicsState.pop();
+                }
+                return;
+            }
         }
         applyStroke(getStroke());
 
@@ -831,18 +846,28 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @param paint the paint to convert to PDF
      * @param fill true if the paint should be set for filling
      */
-    protected void applyPaint(Paint paint, boolean fill) {
+    protected boolean applyPaint(Paint paint, boolean fill) {
         preparePainting();
 
+        if (paint instanceof Color) {
+            return true;
+        }
         if (paint instanceof LinearGradientPaint) {
             LinearGradientPaint gp = (LinearGradientPaint)paint;
+
+            // This code currently doesn't support 'repeat'.
+            // For linear gradients it is possible to construct
+            // a 'tile' that is repeated with a PDF pattern, but
+            // it would be very tricky as you would have to rotate
+            // the coordinate system so the repeat was axially
+            // aligned.  At this point I'm just going to rasterize it.
+            MultipleGradientPaint.CycleMethodEnum cycle = gp.getCycleMethod();
+            if (cycle != MultipleGradientPaint.NO_CYCLE) {
+                return false;
+            }
+
             Color[] cols = gp.getColors();
             float[] fractions = gp.getFractions();
-
-            //MultipleGradientPaint.CycleMethodEnum cycenum = gp.getCycleMethod();
-            //boolean cyclic = (cycenum == MultipleGradientPaint.REPEAT);
-            // This code currently doesn't support 'repeat' as PDF has
-            // no way to support this (we need to rasterize).
 
             // Build proper transform from gradient space to page space
             // ('Patterns' don't get userspace transform).
@@ -854,8 +879,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             List theMatrix = new java.util.ArrayList();
             double [] mat = new double[6];
             transform.getMatrix(mat);
-            for (int idx=0; idx<mat.length; idx++) 
+            for (int idx = 0; idx < mat.length; idx++) {
                 theMatrix.add(new Double(mat[idx]));
+            }
 
             Point2D p1 = gp.getStartPoint();
             Point2D p2 = gp.getEndPoint();
@@ -885,6 +911,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
             for (int count = 0; count < cols.length; count++) {
                 Color c1 = cols[count];
+                if (c1.getAlpha() != 255) {
+                    return false;  // PDF can't do alpha
+                }
+
                 PDFColor color1 = new PDFColor(c1.getRed(), c1.getGreen(),
                                                c1.getBlue());
                 someColors.add(color1);
@@ -900,8 +930,22 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                     someColors, theBounds, theCoords, theMatrix);
             currentStream.write(myPat.getColorSpaceOut(fill));
 
-        } else if (paint instanceof RadialGradientPaint) {
+            return true;
+        }
+        if (paint instanceof RadialGradientPaint) {
             RadialGradientPaint rgp = (RadialGradientPaint)paint;
+
+            // There is essentially no way to support repeate
+            // in PDF for radial gradients (the one option would
+            // be to 'grow' the outer circle until it fully covered
+            // the bounds and then grow the stops accordingly, the
+            // problem is that this may require an extremely large
+            // number of stops for cases where the focus is near
+            // the edge of the outer circle).  so we rasterize.
+            MultipleGradientPaint.CycleMethodEnum cycle = rgp.getCycleMethod();
+            if (cycle != MultipleGradientPaint.NO_CYCLE) {
+                return false;
+            }
 
             AffineTransform transform;
             transform = new AffineTransform(graphicsState.getTransform());
@@ -911,27 +955,28 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             List theMatrix = new java.util.ArrayList();
             double [] mat = new double[6];
             transform.getMatrix(mat);
-            for (int idx=0; idx<mat.length; idx++) 
+            for (int idx = 0; idx < mat.length; idx++) {
                 theMatrix.add(new Double(mat[idx]));
+            }
 
             double ar = rgp.getRadius();
             Point2D ac = rgp.getCenterPoint();
             Point2D af = rgp.getFocusPoint();
 
             List theCoords = new java.util.ArrayList();
-            double dx = af.getX()-ac.getX();
-            double dy = af.getY()-ac.getY();
-            double d = Math.sqrt(dx*dx+dy*dy);
+            double dx = af.getX() - ac.getX();
+            double dy = af.getY() - ac.getY();
+            double d = Math.sqrt(dx * dx + dy * dy);
             if (d > ar) {
                 // the center point af must be within the circle with
                 // radius ar centered at ac so limit it to that.
-                double scale = (ar*.9999)/d;
-                dx = dx*scale;
-                dy = dy*scale;
+                double scale = (ar * .9999) / d;
+                dx = dx * scale;
+                dy = dy * scale;
             }
 
-            theCoords.add(new Double(ac.getX()+dx)); // Fx
-            theCoords.add(new Double(ac.getY()+dy)); // Fy
+            theCoords.add(new Double(ac.getX() + dx)); // Fx
+            theCoords.add(new Double(ac.getY() + dy)); // Fy
             theCoords.add(new Double(0));
             theCoords.add(new Double(ac.getX()));
             theCoords.add(new Double(ac.getY()));
@@ -941,6 +986,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             List someColors = new java.util.ArrayList();
             for (int count = 0; count < cols.length; count++) {
                 Color cc = cols[count];
+                if (cc.getAlpha() != 255) {
+                    return false;  // PDF can't do alpha
+                }
+
                 someColors.add(new PDFColor(cc.getRed(), cc.getGreen(), 
                                             cc.getBlue()));
             }
@@ -960,13 +1009,16 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
             currentStream.write(myPat.getColorSpaceOut(fill));
 
-        } else if (paint instanceof PatternPaint) {
+            return true;
+        } 
+        if (paint instanceof PatternPaint) {
             PatternPaint pp = (PatternPaint)paint;
-            createPattern(pp, fill);
+            return createPattern(pp, fill);
         }
+        return false; // unknown paint
     }
 
-    private void createPattern(PatternPaint pp, boolean fill) {
+    private boolean createPattern(PatternPaint pp, boolean fill) {
         preparePainting();
 
         FontInfo fontInfo = new FontInfo();
@@ -1021,8 +1073,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
         List bbox = new java.util.ArrayList();
         bbox.add(new Double(rect.getX()));
-        bbox.add(new Double(rect.getHeight()+rect.getY()));
-        bbox.add(new Double(rect.getWidth() +rect.getX()));
+        bbox.add(new Double(rect.getHeight() + rect.getY()));
+        bbox.add(new Double(rect.getWidth() + rect.getX()));
         bbox.add(new Double(rect.getY()));
 
         AffineTransform transform;
@@ -1033,8 +1085,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         List theMatrix = new java.util.ArrayList();
         double [] mat = new double[6];
         transform.getMatrix(mat);
-        for (int idx=0; idx<mat.length; idx++) 
+        for (int idx = 0; idx < mat.length; idx++) {
             theMatrix.add(new Double(mat[idx]));
+        }
 
         /** @todo see if pdfDoc and res can be linked here,
         (currently res <> PDFDocument's resources) so addFonts() 
@@ -1061,6 +1114,124 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                 // ignore exception, will be thrown again later
             }
         }
+        return true;
+    }
+
+    protected boolean applyUnknownPaint(Paint paint, Shape shape) {
+        preparePainting();
+
+        Shape clip = getClip();
+        Rectangle2D usrClipBounds, usrBounds;
+        usrBounds = shape.getBounds2D();
+        usrClipBounds  = clip.getBounds2D();
+        if (!usrClipBounds.intersects(usrBounds)) {
+            return true;
+        }
+        Rectangle2D.intersect(usrBounds, usrClipBounds, usrBounds);
+        double usrX = usrBounds.getX();
+        double usrY = usrBounds.getY();
+        double usrW = usrBounds.getWidth();
+        double usrH = usrBounds.getHeight();
+
+        Rectangle devShapeBounds, devClipBounds, devBounds;
+        AffineTransform at = getTransform();
+        devShapeBounds = at.createTransformedShape(shape).getBounds();
+        devClipBounds  = at.createTransformedShape(clip).getBounds();
+        if (!devClipBounds.intersects(devShapeBounds)) {
+            return true;
+        }
+        devBounds = devShapeBounds.intersection(devClipBounds);
+        int devX = devBounds.x;
+        int devY = devBounds.y;
+        int devW = devBounds.width;
+        int devH = devBounds.height;
+
+        ColorSpace rgbCS = ColorSpace.getInstance(ColorSpace.CS_sRGB);
+        ColorModel rgbCM = new DirectColorModel
+            (rgbCS, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000,
+             false, DataBuffer.TYPE_BYTE);
+
+        PaintContext pctx = paint.createContext(rgbCM, devBounds, usrBounds, 
+                                                at, getRenderingHints());
+        PDFXObject imageInfo = pdfDoc.getImage
+            ("TempImage:" + pctx.toString());
+        if (imageInfo != null) {
+            resourceContext.getPDFResources().addXObject(imageInfo);
+        } else {
+            Raster r = pctx.getRaster(devX, devY, devW, devH);
+            WritableRaster wr = (WritableRaster)r;
+            wr = wr.createWritableTranslatedChild(0, 0);
+
+            ColorModel pcm = pctx.getColorModel();
+            BufferedImage bi = new BufferedImage
+                (pcm, wr, pcm.isAlphaPremultiplied(), null);
+            final byte[] rgb  = new byte[devW * devH * 3];
+            final int[]  line = new int[devW];
+            final byte[] mask;
+            int x, y, val, rgbIdx = 0;
+        
+            if (pcm.hasAlpha()) {
+                mask = new byte[devW * devH];
+                int maskIdx = 0;
+                for (y = 0; y < devH; y++) {
+                    bi.getRGB(0, y, devW, 1, line, 0, devW);
+                    for (x = 0; x < devW; x++) {
+                        val = line[x];
+                        mask[maskIdx++] = (byte)(val >>> 24);
+                        rgb[rgbIdx++]   = (byte)((val >> 16) & 0x0FF);
+                        rgb[rgbIdx++]   = (byte)((val >> 8 ) & 0x0FF);
+                        rgb[rgbIdx++]   = (byte)((val      ) & 0x0FF);
+                    }
+                }
+            } else {
+                mask = null;
+                for (y = 0; y < devH; y++) {
+                    bi.getRGB(0, y, devW, 1, line, 0, devW);
+                    for (x = 0; x < devW; x++) {
+                        val = line[x];
+                        rgb[rgbIdx++]  = (byte)((val >> 16) & 0x0FF);
+                        rgb[rgbIdx++]  = (byte)((val >> 8 ) & 0x0FF);
+                        rgb[rgbIdx++]  = (byte)((val      ) & 0x0FF);
+                    }
+                }
+            }
+
+            String maskRef = null;
+            if (mask != null) {
+                BitmapImage fopimg = new BitmapImage
+                    ("TempImageMask:" + pctx.toString(), devW, devH, mask, null);
+                fopimg.setColorSpace(new PDFColorSpace(PDFColorSpace.DEVICE_GRAY));
+                PDFXObject xobj = pdfDoc.addImage(resourceContext, fopimg);
+                maskRef = xobj.referencePDF();
+
+                if (outputStream != null) {
+                    try {
+                        this.pdfDoc.output(outputStream);
+                    } catch (IOException ioe) {
+                        // ignore exception, will be thrown again later
+                    }
+                }
+            }
+            BitmapImage fopimg;
+            fopimg = new BitmapImage("TempImage:" + pctx.toString(),
+                                     devW, devH, rgb, maskRef);
+            fopimg.setTransparent(new PDFColor(255, 255, 255));
+            imageInfo = pdfDoc.addImage(resourceContext, fopimg);
+            if (outputStream != null) {
+                try {
+                    this.pdfDoc.output(outputStream);
+                } catch (IOException ioe) {
+                    // ignore exception, will be thrown again later
+                }
+            }
+        }
+
+        currentStream.write("q\n");
+        writeClip(shape);
+        currentStream.write("" + usrW + " 0 0 " + (-usrH) + " " + usrX
+                            + " " + (usrY + usrH) + " cm\n" + "/Im"
+                            + imageInfo.getXNumber() + " Do\nQ\n");
+        return true;
     }
 
     /**
@@ -1512,7 +1683,16 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
         Paint paint = getPaint();
         if (graphicsState.setPaint(paint)) {
-            applyPaint(paint, true);
+            if (!applyPaint(paint, true)) {
+                // Use the shape to 'clip' the paint contents.
+                applyUnknownPaint(paint, s);
+
+                if (newClip || newTransform) {
+                    currentStream.write("Q\n");
+                    graphicsState.pop();
+                }
+                return;
+            }
         }
 
         //PathIterator iter = s.getPathIterator(getTransform());
