@@ -30,7 +30,11 @@ public class Version {
      * @return the version string
      */
     public static String getVersion() {
-        String version = Version.class.getPackage().getImplementationVersion();
+        String version = null;
+        Package jarinfo = Version.class.getPackage();
+        if (jarinfo != null) {
+            version = jarinfo.getImplementationVersion();
+        }
         if (version == null) {
             //Fallback if FOP is used in a development environment
             String headURL 
