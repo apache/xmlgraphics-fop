@@ -30,8 +30,6 @@ import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.bridge.UserAgent;
 import org.apache.batik.ext.awt.RenderingHintsKeyExt;
-import org.apache.batik.gvt.TextPainter;
-import org.apache.batik.gvt.renderer.StrokingTextPainter;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.ImageTranscoder;
@@ -69,6 +67,8 @@ public class PDFTranscoder extends AbstractFOPTranscoder
         implements Configurable {
 
     private   Configuration         cfg      = null;
+    
+    /** Graphics2D instance that is used to paint to */
     protected PDFDocumentGraphics2D graphics = null;
 
     /**
@@ -149,10 +149,12 @@ public class PDFTranscoder extends AbstractFOPTranscoder
             if (hints.containsKey(ImageTranscoder.KEY_BACKGROUND_COLOR)) {
                 graphics.setBackgroundColor
                     ((Color)hints.get(ImageTranscoder.KEY_BACKGROUND_COLOR));
-        }
+            }
             graphics.setGraphicContext
                 (new org.apache.batik.ext.awt.g2d.GraphicContext());
-            graphics.setTransform(curTxf);
+            graphics.preparePainting();
+
+            graphics.transform(curTxf);
             graphics.setRenderingHint
                 (RenderingHintsKeyExt.KEY_TRANSCODING,
                  RenderingHintsKeyExt.VALUE_TRANSCODING_VECTOR);
@@ -165,31 +167,49 @@ public class PDFTranscoder extends AbstractFOPTranscoder
         }
     }
 
+    /** @see org.apache.batik.transcoder.SVGAbstractTranscoder#createBridgeContext() */
     protected BridgeContext createBridgeContext() {
-        /*boolean stroke = true;
-        if (hints.containsKey(KEY_STROKE_TEXT)) {
-            stroke = ((Boolean)hints.get(KEY_STROKE_TEXT)).booleanValue();
-        }*/
+        BridgeContext ctx = new PDFBridgeContext(userAgent);
 
-        BridgeContext ctx = new BridgeContext(userAgent);
-        TextPainter textPainter = null;
-        textPainter = new StrokingTextPainter();
-        ctx.setTextPainter(textPainter);
-        /*if (!stroke) {
-            textPainter = new PDFTextPainter(graphics.getFontInfo());
-            ctx.setTextPainter(textPainter);
-        }*/
-
-        PDFTextElementBridge pdfTextElementBridge;
-        pdfTextElementBridge = new PDFTextElementBridge(graphics.getFontInfo());
-        ctx.putBridge(pdfTextElementBridge);
-
-        PDFAElementBridge pdfAElementBridge = new PDFAElementBridge();
-        AffineTransform currentTransform = new AffineTransform(1, 0, 0, 1, 0, 0);
-        pdfAElementBridge.setCurrentTransform(currentTransform);
-        ctx.putBridge(pdfAElementBridge);
-        ctx.putBridge(new PDFImageElementBridge());
         return ctx;
+    }
+
+    /**
+     * BridgeContext which registers the custom bridges for PDF output.
+     */
+    public class PDFBridgeContext extends BridgeContext {
+        /**
+         * Constructs a new bridge context.
+         * @param userAgent the user agent
+         */
+        public PDFBridgeContext(UserAgent userAgent) {
+            super(userAgent);
+        }
+
+        /** @see org.apache.batik.bridge.BridgeContext#registerSVGBridges() */
+        public void registerSVGBridges() {
+            super.registerSVGBridges();
+
+            /*
+            boolean stroke = true;
+            if (hints.containsKey(KEY_STROKE_TEXT)) {
+                stroke = ((Boolean)hints.get(KEY_STROKE_TEXT)).booleanValue();
+            }
+            if (!stroke) {
+                textPainter = new PDFTextPainter(graphics.getFontInfo());
+                ctx.setTextPainter(textPainter);
+            }
+            */
+
+            putBridge(new PDFTextElementBridge(graphics.getFontInfo()));
+
+            PDFAElementBridge pdfAElementBridge = new PDFAElementBridge();
+            pdfAElementBridge.setCurrentTransform(new AffineTransform());
+            putBridge(pdfAElementBridge);
+
+            putBridge(new PDFImageElementBridge());
+        }
+        
     }
 
 }
