@@ -25,7 +25,6 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.expr.PropertyException;
@@ -127,6 +126,14 @@ public class TableColumn extends TableFObj {
     }
 
     /**
+     * Sets the column width.
+     * @param columnWidth the column width
+     */
+    public void setColumnWidth(Length columnWidth) {
+        this.columnWidth = columnWidth;
+    }
+
+    /**
      * @return the "column-number" property.
      */
     public int getColumnNumber() {
@@ -176,5 +183,6 @@ public class TableColumn extends TableFObj {
         sb.append(" column-width=").append(getColumnWidth());
         return sb.toString();
     }
+
 }
 
