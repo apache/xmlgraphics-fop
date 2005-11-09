@@ -53,6 +53,9 @@ public class StaticPropertyList extends PropertyList {
      */
     public void putExplicit(int propId, Property value) {
         explicit[propId] = value;
+        if (values[propId] != null) { // if the cached value is set overwrite it
+            values[propId] = value;
+        }
     }
 
     /**
