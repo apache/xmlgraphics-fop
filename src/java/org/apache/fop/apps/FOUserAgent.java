@@ -69,7 +69,9 @@ import org.apache.fop.render.XMLHandlerRegistry;
 public class FOUserAgent {
 
     /** Defines the default resolution (72dpi) for FOP */
-    public static final float DEFAULT_PX2MM = (25.4f / 72); //dpi (=25.4/dpi)
+    public static final float DEFAULT_RESOLUTION = 72.0f; //dpi
+    /** Defines the default resolution (72dpi) for FOP */
+    public static final float DEFAULT_PX2MM = (25.4f / DEFAULT_RESOLUTION); //dpi (=25.4/dpi)
     /** Defines the default page-height */
     public static final String DEFAULT_PAGE_HEIGHT = "11in";
     /** Defines the default page-width */
@@ -86,7 +88,7 @@ public class FOUserAgent {
     private URIResolver foURIResolver = new FOURIResolver();
     
     private PDFEncryptionParams pdfEncryptionParams;
-    private float px2mm = DEFAULT_PX2MM;
+    private float resolution = DEFAULT_RESOLUTION;
     private String pageHeight = DEFAULT_PAGE_HEIGHT;
     private String pageWidth = DEFAULT_PAGE_WIDTH;
     private Map rendererOptions = new java.util.HashMap();
@@ -377,12 +379,15 @@ public class FOUserAgent {
             log.info("Base URL set to: " + baseURL);
         }
         if (userConfig.getChild("pixelToMillimeter", false) != null) {
-            this.px2mm = userConfig.getChild("pixelToMillimeter")
+            this.resolution = 25.4f / userConfig.getChild("pixelToMillimeter")
                             .getAttributeAsFloat("value", DEFAULT_PX2MM);
-            log.info("pixelToMillimeter set to: " + px2mm + " (" + (25.4f / px2mm) + "dpi)");
+            log.info("resolution set to: " + resolution 
+                    + "dpi (px2mm=" + getPixelUnitToMillimeter() + ")");
         } else if (userConfig.getChild("resolution", false) != null) {
-            this.px2mm = 25.4f / userConfig.getChild("resolution").getValueAsFloat(DEFAULT_PX2MM);
-            log.info("pixelToMillimeter set to: " + px2mm + " (" + (25.4f / px2mm) + "dpi)");
+            this.resolution 
+                = 25.4f / userConfig.getChild("resolution").getValueAsFloat(DEFAULT_RESOLUTION);
+            log.info("resolution set to: " + resolution 
+                    + "dpi (px2mm=" + getPixelUnitToMillimeter() + ")");
         }
         Configuration pageConfig = userConfig.getChild("default-page-settings");
         if (pageConfig.getAttribute("height", null) != null) {
@@ -527,7 +532,12 @@ public class FOUserAgent {
      * @return float conversion factor
      */
     public float getPixelUnitToMillimeter() {
-        return this.px2mm;
+        return 25.4f / this.resolution; 
+    }
+    
+    /** @return the resolution for resolution-dependant output */
+    public float getResolution() {
+        return this.resolution;
     }
 
     /**
@@ -535,7 +545,7 @@ public class FOUserAgent {
      * @param dpi resolution in dpi
      */
     public void setResolution(int dpi) {
-        this.px2mm = (float)(25.4 / dpi);
+        this.resolution = dpi;
     }
     
     /**
