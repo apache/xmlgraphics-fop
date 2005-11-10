@@ -21,10 +21,12 @@ package org.apache.fop.render.pdf;
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.pdf.PDFDocument;
+import org.apache.fop.pdf.PDFNumber;
 import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFState;
 import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.pdf.PDFResourceContext;
+import org.apache.fop.svg.PDFBridgeContext;
 import org.apache.fop.svg.PDFTextElementBridge;
 import org.apache.fop.svg.PDFAElementBridge;
 import org.apache.fop.svg.PDFGraphics2D;
@@ -41,12 +43,14 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.OutputStream;
 
+import org.apache.batik.bridge.Bridge;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.ViewBox;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 
 import org.apache.batik.gvt.GraphicsNode;
+import org.apache.batik.util.SVGConstants;
 
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGSVGElement;
@@ -222,22 +226,26 @@ public class PDFSVGHandler implements XMLHandler {
             int xOffset = pdfInfo.currentXPosition;
             int yOffset = pdfInfo.currentYPosition;
 
-            SVGUserAgent ua
-                 = new SVGUserAgent(context.getUserAgent().getPixelUnitToMillimeter(),
-                        new AffineTransform());
+            log.debug("Generating SVG at " 
+                    + context.getUserAgent().getResolution()
+                    + "dpi.");
+            
+            final int uaResolution = 72; //Should not be changed
+            final float deviceResolution 
+                        = context.getUserAgent().getResolution(); 
+            SVGUserAgent ua = new SVGUserAgent(25.4f / uaResolution, new AffineTransform());
 
             GVTBuilder builder = new GVTBuilder();
-            BridgeContext ctx = new BridgeContext(ua);
-            PDFTextElementBridge tBridge = new PDFTextElementBridge(pdfInfo.fi);
-            ctx.putBridge(tBridge);
+            
+            //TODO This AffineTransform here has to be fixed!!! 
+            AffineTransform linkTransform = pdfInfo.pdfState.getTransform();
+            linkTransform.translate(xOffset / 1000f, yOffset / 1000f);
 
-            PDFAElementBridge aBridge = new PDFAElementBridge();
-            // to get the correct transform we need to use the PDFState
-            AffineTransform transform = pdfInfo.pdfState.getTransform();
-            transform.translate(xOffset / 1000f, yOffset / 1000f);
-            aBridge.setCurrentTransform(transform);
-            ctx.putBridge(aBridge);
-
+            final boolean strokeText = false;
+            BridgeContext ctx = new PDFBridgeContext(ua, 
+                    (strokeText ? null : pdfInfo.fi),
+                    linkTransform);
+            
             GraphicsNode root;
             try {
                 root = builder.build(ctx, doc);
@@ -290,9 +298,19 @@ public class PDFSVGHandler implements XMLHandler {
                                      pdfInfo.currentFontSize);
             graphics.setGraphicContext(new org.apache.batik.ext.awt.g2d.GraphicContext());
             pdfInfo.pdfState.push();
-            transform = new AffineTransform();
+            AffineTransform transform = new AffineTransform();
             // scale to viewbox
             transform.translate(xOffset / 1000f, yOffset / 1000f);
+
+            if (deviceResolution != uaResolution) {
+                //Scale for higher resolution on-the-fly images from Batik
+                double s = uaResolution / deviceResolution;
+                at.scale(s, s);
+                pdfInfo.currentStream.add("" + PDFNumber.doubleOut(s) + " 0 0 "
+                                    + PDFNumber.doubleOut(s) + " 0 0 cm\n");
+                graphics.scale(1 / s, 1 / s);
+            }
+
             pdfInfo.pdfState.setTransform(transform);
             graphics.setPDFState(pdfInfo.pdfState);
             graphics.setOutputStream(pdfInfo.outputStream);
