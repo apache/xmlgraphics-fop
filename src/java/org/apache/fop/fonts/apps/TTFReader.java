@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 //FOP
-import org.apache.fop.apps.Fop;
+import org.apache.fop.Version;
 import org.apache.fop.fonts.truetype.FontFileReader;
 import org.apache.fop.fonts.truetype.TTFCmapEntry;
 import org.apache.fop.fonts.truetype.TTFFile;
@@ -52,6 +52,18 @@ public class TTFReader {
      */
     protected static Log log;
 
+    /**
+     * Main constructor.
+     */
+    public TTFReader() {
+        // Create logger if necessary here to allow embedding of TTFReader in
+        // other applications. There is a possible but harmless synchronization
+        // issue.
+        if (log == null) {
+            log = LogFactory.getLog(TTFReader.class);
+        }
+    }
+    
     /**
      * Parse commandline arguments. put options in the HashMap and return
      * arguments in the String array
@@ -154,11 +166,10 @@ public class TTFReader {
         } else {
             setLogLevel("info");
         }
-        log = LogFactory.getLog(TTFReader.class);
 
         TTFReader app = new TTFReader();
 
-        log.info("TTF Reader for Apache FOP " + Fop.getVersion() + "\n");
+        log.info("TTF Reader for Apache FOP " + Version.getVersion() + "\n");
 
         if (options.get("-enc") != null) {
             String enc = (String)options.get("-enc");

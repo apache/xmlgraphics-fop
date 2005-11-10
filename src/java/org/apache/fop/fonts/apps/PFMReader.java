@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 //FOP
-import org.apache.fop.apps.Fop;
+import org.apache.fop.Version;
 import org.apache.fop.fonts.type1.PFMFile;
 import org.apache.fop.util.CommandLineLogger;
 
@@ -51,6 +51,18 @@ public class PFMReader {
      */
     protected static Log log;
 
+    /**
+     * Main constructor.
+     */
+    public PFMReader() {
+        // Create logger if necessary here to allow embedding of PFMReader in
+        // other applications. There is a possible but harmless synchronization
+        // issue.
+        if (log == null) {
+            log = LogFactory.getLog(PFMReader.class);
+        }
+    }
+    
     /**
      * Parse commandline arguments. put options in the HashMap and return
      * arguments in the String array
@@ -138,11 +150,10 @@ public class PFMReader {
         } else {
             setLogLevel("info");
         }
-        log = LogFactory.getLog(PFMReader.class);
-
+        
         PFMReader app = new PFMReader();
 
-        log.info("PFM Reader for Apache FOP " + Fop.getVersion() + "\n");
+        log.info("PFM Reader for Apache FOP " + Version.getVersion() + "\n");
 
         if (options.get("-ef") != null) {
             embFile = (String)options.get("-ef");
