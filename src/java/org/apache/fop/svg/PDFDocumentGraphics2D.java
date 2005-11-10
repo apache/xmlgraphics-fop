@@ -67,6 +67,8 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
     private float svgWidth;
     private float svgHeight;
 
+    /** Normal PDF resolution (72dpi) */
+    public static final int NORMAL_PDF_RESOLUTION = 72;
     /** Default device resolution (300dpi is a resonable quality for most purposes) */
     public static final int DEFAULT_NATIVE_DPI = 300;
   
@@ -343,8 +345,8 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
             currentStream.write("" + PDFNumber.doubleOut(scaleX) + " 0 0 "
                                 + PDFNumber.doubleOut(scaleY) + " 0 0 cm\n");
         }
-        if (deviceDPI != DEFAULT_NATIVE_DPI) {
-            double s = DEFAULT_NATIVE_DPI / deviceDPI;
+        if (deviceDPI != NORMAL_PDF_RESOLUTION) {
+            double s = NORMAL_PDF_RESOLUTION / deviceDPI;
             at.scale(s, s);
             currentStream.write("" + PDFNumber.doubleOut(s) + " 0 0 "
                                 + PDFNumber.doubleOut(s) + " 0 0 cm\n");
