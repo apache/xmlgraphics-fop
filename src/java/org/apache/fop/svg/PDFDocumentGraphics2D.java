@@ -67,11 +67,22 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
     private float svgWidth;
     private float svgHeight;
 
-    /** Initial clipping area, used to restore to original setting when a new page is started. */
-    protected Shape initialClip;
+    /** Default device resolution (300dpi is a resonable quality for most purposes) */
+    public static final int DEFAULT_NATIVE_DPI = 300;
+  
     /**
-     * Initial transformation matrix, used to restore to original setting when a new page is 
-     * started.
+     * The device resolution may be different from the normal target resolution. See
+     * http://issues.apache.org/bugzilla/show_bug.cgi?id=37305
+     */
+    private float deviceDPI = DEFAULT_NATIVE_DPI;
+
+    /** Initial clipping area, used to restore to original setting
+     * when a new page is started. */
+    protected Shape initialClip;
+
+    /**
+     * Initial transformation matrix, used to restore to original
+     * setting when a new page is started.
      */
     protected AffineTransform initialTransform;
 
@@ -180,6 +191,22 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
 
         pdfDoc.outputHeader(stream);
         setOutputStream(stream);
+    }
+
+    /**
+     * Set the device resolution for rendering.  Will take effect at the
+     * start of the next page.
+     * @param deviceDPI the device resolution (in dpi)
+     */
+    public void setDeviceDPI(float deviceDPI) {
+        this.deviceDPI = deviceDPI;
+    }
+
+    /**
+     * @return the device resolution (in dpi) for rendering.
+     */
+    public float getDeviceDPI() {
+        return deviceDPI;
     }
 
     /**
@@ -315,6 +342,14 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
             at.scale(scaleX, scaleY);
             currentStream.write("" + PDFNumber.doubleOut(scaleX) + " 0 0 "
                                 + PDFNumber.doubleOut(scaleY) + " 0 0 cm\n");
+        }
+        if (deviceDPI != DEFAULT_NATIVE_DPI) {
+            double s = DEFAULT_NATIVE_DPI / deviceDPI;
+            at.scale(s, s);
+            currentStream.write("" + PDFNumber.doubleOut(s) + " 0 0 "
+                                + PDFNumber.doubleOut(s) + " 0 0 cm\n");
+            
+            scale(1 / s, 1 / s);
         }
         // Remember the transform we installed.
         graphicsState.setTransform(at);

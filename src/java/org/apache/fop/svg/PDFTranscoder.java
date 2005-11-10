@@ -32,7 +32,9 @@ import org.apache.batik.bridge.UserAgent;
 import org.apache.batik.ext.awt.RenderingHintsKeyExt;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderOutput;
+import org.apache.batik.transcoder.TranscodingHints;
 import org.apache.batik.transcoder.image.ImageTranscoder;
+import org.apache.batik.transcoder.keys.FloatKey;
 import org.w3c.dom.Document;
 import org.w3c.dom.svg.SVGLength;
 
@@ -66,7 +68,13 @@ import org.w3c.dom.svg.SVGLength;
 public class PDFTranscoder extends AbstractFOPTranscoder
         implements Configurable {
 
-    private   Configuration         cfg      = null;
+    /**
+     * The key is used to specify the resolution for on-the-fly images generated
+     * due to complex effects like gradients and filters. 
+     */
+    public static final TranscodingHints.Key KEY_DEVICE_RESOLUTION = new FloatKey();
+
+    private Configuration cfg = null;
     
     /** Graphics2D instance that is used to paint to */
     protected PDFDocumentGraphics2D graphics = null;
@@ -143,6 +151,9 @@ public class PDFTranscoder extends AbstractFOPTranscoder
         //int h = (int)(height + 0.5);
 
         try {
+            if (hints.containsKey(KEY_DEVICE_RESOLUTION)) {
+                graphics.setDeviceDPI(((Float)hints.get(KEY_DEVICE_RESOLUTION)).floatValue());
+            }
             graphics.setupDocument(output.getOutputStream(), w, h);
             graphics.setSVGDimension(width, height);
 
