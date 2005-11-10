@@ -19,7 +19,6 @@
 package org.apache.fop.svg;
 
 import java.awt.Color;
-import java.awt.geom.AffineTransform;
 import java.io.IOException;
 
 import org.apache.avalon.framework.configuration.Configurable;
@@ -180,47 +179,8 @@ public class PDFTranscoder extends AbstractFOPTranscoder
 
     /** @see org.apache.batik.transcoder.SVGAbstractTranscoder#createBridgeContext() */
     protected BridgeContext createBridgeContext() {
-        BridgeContext ctx = new PDFBridgeContext(userAgent);
-
+        BridgeContext ctx = new PDFBridgeContext(userAgent, graphics.getFontInfo());
         return ctx;
-    }
-
-    /**
-     * BridgeContext which registers the custom bridges for PDF output.
-     */
-    public class PDFBridgeContext extends BridgeContext {
-        /**
-         * Constructs a new bridge context.
-         * @param userAgent the user agent
-         */
-        public PDFBridgeContext(UserAgent userAgent) {
-            super(userAgent);
-        }
-
-        /** @see org.apache.batik.bridge.BridgeContext#registerSVGBridges() */
-        public void registerSVGBridges() {
-            super.registerSVGBridges();
-
-            /*
-            boolean stroke = true;
-            if (hints.containsKey(KEY_STROKE_TEXT)) {
-                stroke = ((Boolean)hints.get(KEY_STROKE_TEXT)).booleanValue();
-            }
-            if (!stroke) {
-                textPainter = new PDFTextPainter(graphics.getFontInfo());
-                ctx.setTextPainter(textPainter);
-            }
-            */
-
-            putBridge(new PDFTextElementBridge(graphics.getFontInfo()));
-
-            PDFAElementBridge pdfAElementBridge = new PDFAElementBridge();
-            pdfAElementBridge.setCurrentTransform(new AffineTransform());
-            putBridge(pdfAElementBridge);
-
-            putBridge(new PDFImageElementBridge());
-        }
-        
     }
 
 }
