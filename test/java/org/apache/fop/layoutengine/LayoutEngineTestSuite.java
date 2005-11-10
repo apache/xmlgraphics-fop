@@ -96,7 +96,11 @@ public class LayoutEngineTestSuite {
             filter = new SuffixFileFilter(".xml");
             filter = decorateWithDisabledList(filter);
         }
-        Collection files = FileUtils.listFiles(new File(mainDir, "testcases"), 
+        String testset = System.getProperty("fop.layoutengine.testset");
+        if (testset == null) {
+            testset = "standard";
+        }
+        Collection files = FileUtils.listFiles(new File(mainDir, testset + "-testcases"), 
                 filter, TrueFileFilter.INSTANCE);
         String privateTests = System.getProperty("fop.layoutengine.private");
         if ("true".equalsIgnoreCase(privateTests)) {

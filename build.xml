@@ -614,7 +614,7 @@ list of possible build targets.
   <target name="junit-transcoder" depends="junit-compile" description="Runs FOP's JUnit transcoder tests" if="junit.present">
     <echo message="Running basic functionality tests for fop-transcoder.jar"/>
     <mkdir dir="${build.dir}/test-reports/fop-transcoder"/>
-    <junit haltonerror="yes" fork="${junit.fork}">
+    <junit haltonerror="no" fork="${junit.fork}">
       <sysproperty key="basedir" value="${basedir}"/>
       <sysproperty key="jawa.awt.headless" value="true"/>
       <formatter type="brief" usefile="false"/>
@@ -639,7 +639,7 @@ list of possible build targets.
          JAR needs to be updated.
     -->
     <mkdir dir="${build.dir}/test-reports/fop-transcoder-allinone"/>
-    <junit haltonerror="yes" fork="${junit.fork}">
+    <junit haltonerror="no" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
       <sysproperty key="basedir" value="${basedir}"/>
       <sysproperty key="jawa.awt.headless" value="true"/>
       <formatter type="brief" usefile="false"/>
@@ -665,7 +665,7 @@ list of possible build targets.
   <target name="junit-basic" depends="junit-compile" description="Runs FOP's JUnit basic tests" if="junit.present">
     <echo message="Running basic functionality tests for fop.jar"/>
     <mkdir dir="${build.dir}/test-reports/fop"/>
-    <junit haltonerror="yes" fork="${junit.fork}">
+    <junit haltonerror="no" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
       <sysproperty key="basedir" value="${basedir}"/>
       <sysproperty key="jawa.awt.headless" value="true"/>
       <formatter type="brief" usefile="false"/>
@@ -695,7 +695,7 @@ list of possible build targets.
     <condition property="hyphenation.message" value="Hyphenation Support PRESENT">
       <equals arg1="${hyphenation.present}" arg2="true"/>
     </condition>
-    <condition property="hyphenation.message" value="Hyphenation Support NOT Present - Some layout tests require hyphenation support">
+    <condition property="hyphenation.message" value="Hyphenation Support NOT Present - Layout tests which require hyphenation are NOT being run!">
       <not>
         <equals arg1="${hyphenation.present}" arg2="true"/>
       </not>
@@ -703,13 +703,14 @@ list of possible build targets.
     <echo message="${hyphenation.message}"/>
   </target>
 
-  <target name="junit-layout" depends="hyphenation-present, junit-compile" description="Runs FOP's JUnit layout tests" if="hyphenation.present">
-    <echo message="Running layout engine tests"/>
+  <target name="junit-layout-standard" depends="junit-compile" description="Runs FOP's standard JUnit layout tests">
+    <echo message="Running standard layout engine tests"/>
     <mkdir dir="${build.dir}/test-reports/fop"/>
-    <junit haltonerror="yes" fork="${junit.fork}">
+    <junit haltonerror="no" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
       <sysproperty key="basedir" value="${basedir}"/>
       <sysproperty key="jawa.awt.headless" value="true"/>
       <sysproperty key="fop.layoutengine.disabled" value="${layoutengine.disabled}"/>
+      <sysproperty key="fop.layoutengine.testset" value="standard"/>
       <formatter type="brief" usefile="false"/>
       <classpath>
         <pathelement location="${build.dir}/test-classes"/>
@@ -723,9 +724,32 @@ list of possible build targets.
     </junit>
   </target>
 
+  <target name="junit-layout-hyphenation" depends="hyphenation-present, junit-compile" description="Runs FOP's JUnit hyphenation layout tests" if="hyphenation.present">
+    <echo message="Running hyphenation layout engine tests"/>
+    <mkdir dir="${build.dir}/test-reports/fop"/>
+    <junit haltonerror="no" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
+      <sysproperty key="basedir" value="${basedir}"/>
+      <sysproperty key="jawa.awt.headless" value="true"/>
+      <sysproperty key="fop.layoutengine.disabled" value="${layoutengine.disabled}"/>
+      <sysproperty key="fop.layoutengine.testset" value="hyphenation"/>
+      <formatter type="brief" usefile="false"/>
+      <classpath>
+        <pathelement location="${build.dir}/test-classes"/>
+        <path refid="libs-run-classpath"/>
+      </classpath>
+      <batchtest todir="${build.dir}/test-reports/fop">
+        <fileset dir="${build.dir}/test-classes">
+          <include name="org/apache/fop/layoutengine/LayoutEngineTestSuite.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <target name="junit-layout" depends="junit-layout-standard, junit-layout-hyphenation" description="Runs all FOP's JUnit layout tests" />
+  
   <target name="junit-fotree" depends="junit-compile" description="Runs FOP's FO tree JUnit tests" if="junit.present">
     <echo message="Running fo tree tests"/>
-    <junit haltonerror="yes" fork="${junit.fork}">
+    <junit haltonerror="no" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
       <sysproperty key="basedir" value="${basedir}"/>
       <sysproperty key="jawa.awt.headless" value="true"/>
       <sysproperty key="fop.layoutengine.disabled" value="${fotree.disabled}"/>
@@ -745,7 +769,25 @@ list of possible build targets.
     </junit>
   </target>
 
-  <target name="junit" depends="junit-basic, junit-transcoder, junit-layout, junit-fotree" description="Runs all of FOP's JUnit tests" if="junit.present" />
+  <target name="junit" depends="junit-basic, junit-transcoder, junit-layout, junit-fotree" description="Runs all of FOP's JUnit tests" if="junit.present">
+    <fail>
+      <condition>
+        <or>
+          <isset property="fop.junit.error"/>
+          <isset property="fop.junit.failure"/>
+          <not>
+            <isset property="hyphenation.present"/>
+          </not>
+        </or>
+      </condition>
+NOTE:
+**************************************************************************
+* One or more of the Junit tests had Failures or Errors or were skipped! *
+*         Please check the output above for relevant messages.           *
+**************************************************************************
+    </fail>
+    <echo>All Junit tests passed!</echo>
+  </target>
 
   <!-- =================================================================== -->
   <!-- Creates the API documentation                                       -->
