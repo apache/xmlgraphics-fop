@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks display-align on in-flow block-containers. It also tests space-before|after in conjunction with reference-orientation.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block-container width="120pt" height="80pt" reference-orientation="0" display-align="auto" background-color="yellow">
+            <fo:block background-color="orange">display-align = "auto"</fo:block>
+            <fo:block background-color="orange">ro = 0</fo:block>
+          </fo:block-container>
+          <fo:block-container width="80pt" height="120pt" reference-orientation="90" display-align="before" background-color="yellow" space-before="10pt" space-after="10pt">
+            <fo:block background-color="orange">display-align = "before"</fo:block>
+            <fo:block background-color="orange">ro = 90</fo:block>
+          </fo:block-container>
+          <fo:block-container width="120pt" height="80pt" reference-orientation="180" display-align="center" background-color="yellow">
+            <fo:block background-color="orange">display-align = "center"</fo:block>
+            <fo:block background-color="orange">ro = 180</fo:block>
+          </fo:block-container>
+          <fo:block-container width="80pt" height="120pt" reference-orientation="270" display-align="after" background-color="yellow" space-before="10pt">
+            <fo:block background-color="orange">display-align = "after"</fo:block>
+            <fo:block background-color="orange">ro = 270</fo:block>
+          </fo:block-container>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- first block-container -->
+    <true xpath="//flow/block[1]/@is-viewport-area"/>
+    <eval expected="[1.0 0.0 0.0 1.0 0.0 0.0]" xpath="//flow/block[1]/@ctm"/>
+    <eval expected="120000" xpath="//flow/block[1]/@ipd"/>
+    <eval expected="120000" xpath="//flow/block[1]/@ipda"/>
+    <eval expected="80000" xpath="//flow/block[1]/@bpd"/>
+    <eval expected="80000" xpath="//flow/block[1]/@bpda"/>
+    <!--   -> reference area -->
+    <true xpath="//flow/block[1]/block[1]/@is-reference-area"/>
+    <eval expected="120000" xpath="//flow/block[1]/block[1]/@ipd"/>
+    <eval expected="120000" xpath="//flow/block[1]/block[1]/@ipda"/>
+    <eval expected="28800" xpath="//flow/block[1]/block[1]/@bpd"/>
+    <eval expected="28800" xpath="//flow/block[1]/block[1]/@bpda"/>
+
+    <!-- space-before of second block-container -->
+    <eval expected="10000" xpath="//flow/block[2]/@space-before"/>
+    
+    <!-- second block-container -->
+    <true xpath="//flow/block[2]/@is-viewport-area"/>
+    <eval expected="[0.0 -1.0 1.0 0.0 0.0 80000.0]" xpath="//flow/block[2]/@ctm"/>
+    <eval expected="120000" xpath="//flow/block[2]/@ipd"/>
+    <eval expected="120000" xpath="//flow/block[2]/@ipda"/>
+    <eval expected="80000" xpath="//flow/block[2]/@bpd"/>
+    <eval expected="100000" xpath="//flow/block[2]/@bpda"/>
+    <!--   -> reference area -->
+    <true xpath="//flow/block[2]/block[1]/@is-reference-area"/>
+    <eval expected="80000" xpath="//flow/block[2]/block[1]/@ipd"/>
+    <eval expected="80000" xpath="//flow/block[2]/block[1]/@ipda"/>
+    <eval expected="43200" xpath="//flow/block[2]/block[1]/@bpd"/>
+    <eval expected="43200" xpath="//flow/block[2]/block[1]/@bpda"/>
+
+    <!-- space-after of second block-container -->
+    <eval expected="10000" xpath="//flow/block[2]/@space-after"/>
+
+    <!-- third block-container -->
+    <true xpath="//flow/block[3]/@is-viewport-area"/>
+    <eval expected="[-1.0 -0.0 0.0 -1.0 120000.0 80000.0]" xpath="//flow/block[3]/@ctm"/>
+    <eval expected="120000" xpath="//flow/block[3]/@ipd"/>
+    <eval expected="120000" xpath="//flow/block[3]/@ipda"/>
+    <eval expected="80000" xpath="//flow/block[3]/@bpd"/>
+    <eval expected="80000" xpath="//flow/block[3]/@bpda"/>
+    <!--   -> reference area -->
+    <true xpath="//flow/block[3]/block[1]/@is-reference-area"/>
+    <eval expected="120000" xpath="//flow/block[3]/block[1]/@ipd"/>
+    <eval expected="120000" xpath="//flow/block[3]/block[1]/@ipda"/>
+    <eval expected="61600" xpath="//flow/block[3]/block[1]/@bpd"/>
+    <eval expected="61600" xpath="//flow/block[3]/block[1]/@bpda"/>
+    <!-- contents (spacer first, then three lines) -->
+    <eval expected="18400" xpath="//flow/block[3]/block[1]/block[1]/@bpda"/>
+    <eval expected="28800" xpath="//flow/block[3]/block[1]/block[2]/@bpda"/>
+    <eval expected="14400" xpath="//flow/block[3]/block[1]/block[3]/@bpda"/>
+
+    <!-- space-before of fourth block-container -->
+    <eval expected="10000" xpath="//flow/block[4]/@space-before"/>
+    
+    <!-- fourth block-container -->
+    <true xpath="//flow/block[4]/@is-viewport-area"/>
+    <eval expected="[0.0 1.0 -1.0 0.0 120000.0 0.0]" xpath="//flow/block[4]/@ctm"/>
+    <eval expected="120000" xpath="//flow/block[4]/@ipd"/>
+    <eval expected="120000" xpath="//flow/block[4]/@ipda"/>
+    <eval expected="80000" xpath="//flow/block[4]/@bpd"/>
+    <eval expected="90000" xpath="//flow/block[4]/@bpda"/>
+    <!--   -> reference area -->
+    <true xpath="//flow/block[4]/block[1]/@is-reference-area"/>
+    <eval expected="80000" xpath="//flow/block[4]/block[1]/@ipd"/>
+    <eval expected="80000" xpath="//flow/block[4]/block[1]/@ipda"/>
+    <eval expected="120000" xpath="//flow/block[4]/block[1]/@bpd"/>
+    <eval expected="120000" xpath="//flow/block[4]/block[1]/@bpda"/>
+    <!-- contents (spacer first, then three lines) -->
+    <eval expected="76800" xpath="//flow/block[4]/block[1]/block[1]/@bpda"/>
+    <eval expected="28800" xpath="//flow/block[4]/block[1]/block[2]/@bpda"/>
+    <eval expected="14400" xpath="//flow/block[4]/block[1]/block[3]/@bpda"/>
+
+  </checks>
+</testcase>

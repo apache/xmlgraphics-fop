@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks inline level alignment-adjust.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="14pt">
+            Before <fo:inline font-size="10pt" background-color="yellow">alignment-adjust not specified</fo:inline> After
+          </fo:block>
+          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="14pt">
+            Before <fo:inline font-size="10pt" alignment-adjust="auto" background-color="yellow">alignment-adjust="auto"</fo:inline> After
+          </fo:block>
+          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="14pt">
+            Before <fo:inline font-size="10pt" alignment-adjust="baseline" background-color="yellow">alignment-adjust="baseline"</fo:inline> After
+          </fo:block>
+          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="14pt">
+            Before <fo:inline font-size="10pt" alignment-adjust="before-edge" background-color="yellow">alignment-adjust="before-edge"</fo:inline> After
+          </fo:block>
+          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="14pt">
+            Before <fo:inline font-size="10pt" alignment-adjust="text-before-edge" background-color="yellow">alignment-adjust="text-before-edge"</fo:inline> After
+          </fo:block>
+          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="14pt">
+            Before <fo:inline font-size="10pt" alignment-adjust="central" background-color="yellow">alignment-adjust="central"</fo:inline> After
+          </fo:block>
+          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="14pt">
+            Before <fo:inline font-size="10pt" alignment-adjust="middle" background-color="yellow">alignment-adjust="middle"</fo:inline> After
+          </fo:block>
+          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="14pt">
+            Before <fo:inline font-size="10pt" alignment-adjust="after-edge" background-color="yellow">alignment-adjust="after-edge"</fo:inline> After
+          </fo:block>
+          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="14pt">
+            Before <fo:inline font-size="10pt" alignment-adjust="text-after-edge" background-color="yellow">alignment-adjust="text-after-edge"</fo:inline> After
+          </fo:block>
+          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="14pt">
+            Before <fo:inline font-size="10pt" alignment-adjust="ideographic" background-color="yellow">alignment-adjust="ideographic"</fo:inline> After
+          </fo:block>
+          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="14pt">
+            Before <fo:inline font-size="10pt" alignment-adjust="alphabetic" background-color="yellow">alignment-adjust="alphabetic"</fo:inline> After
+          </fo:block>
+          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="14pt">
+            Before <fo:inline font-size="10pt" alignment-adjust="hanging" background-color="yellow">alignment-adjust="hanging"</fo:inline> After
+          </fo:block>
+          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="14pt">
+            Before <fo:inline font-size="10pt" alignment-adjust="mathematical" background-color="yellow">alignment-adjust="mathematical"</fo:inline> After
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="2872" xpath="//flow/block[1]/lineArea[1]/inlineparent/@offset"/>
+    <eval expected="2872" xpath="//flow/block[2]/lineArea[1]/inlineparent/@offset"/>
+    <eval expected="2872" xpath="//flow/block[3]/lineArea[1]/inlineparent/@offset"/>
+    <eval expected="10052" xpath="//flow/block[4]/lineArea[1]/inlineparent/@offset"/>
+    <eval expected="10052" xpath="//flow/block[5]/lineArea[1]/inlineparent/@offset"/>
+    <eval expected="5427" xpath="//flow/block[6]/lineArea[1]/inlineparent/@offset"/>
+    <eval expected="5487" xpath="//flow/block[7]/lineArea[1]/inlineparent/@offset"/>
+    <eval expected="802" xpath="//flow/block[8]/lineArea[1]/inlineparent/@offset"/>
+    <eval expected="802" xpath="//flow/block[9]/lineArea[1]/inlineparent/@offset"/>
+    <eval expected="802" xpath="//flow/block[10]/lineArea[1]/inlineparent/@offset"/>
+    <eval expected="2872" xpath="//flow/block[11]/lineArea[1]/inlineparent/@offset"/>
+    <eval expected="8616" xpath="//flow/block[12]/lineArea[1]/inlineparent/@offset"/>
+    <eval expected="6462" xpath="//flow/block[13]/lineArea[1]/inlineparent/@offset"/>
+  </checks>
+</testcase>
