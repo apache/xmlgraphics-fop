@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks text-align and text-align-last in special conditions.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="simple" page-height="10in" page-width="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="simple" id="bla1">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block text-align-last="justify">Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</fo:block>
+          <!-- The next block is pretty much like the previous but there is a linefeed that is converted to a space which is then
+               removed by LineLM.removeElementsForTrailingSpaces(). There used to be a ClassCastException here. -->
+          <fo:block text-align-last="justify" background-color="yellow">Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+          </fo:block>
+          <fo:block text-align="justify">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- all three blocks must be identical -->
+    <true xpath="not(boolean(//flow/block[1]/lineArea[1]/@start-indent))"/>
+    <true xpath="not(boolean(//flow/block[2]/lineArea[1]/@start-indent))"/>
+    <true xpath="not(boolean(//flow/block[3]/lineArea[1]/@start-indent))"/>
+    <true xpath="//flow/block[1]/lineArea[1]/text/@ipd = //flow/block[2]/lineArea[1]/text/@ipd"/>
+    <true xpath="//flow/block[1]/lineArea[1]/text/@ipd &gt; //flow/block[3]/lineArea[1]/text/@ipd"/>
+  </checks>
+</testcase>

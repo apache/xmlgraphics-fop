@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks inlines with border and padding properties.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in" margin="5pt">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true" language="en">
+        <fo:flow flow-name="xsl-region-body" font-size="10pt">
+          <fo:block background-color="silver" margin="2pt 0pt 2pt 0pt">
+            To <fo:inline border="solid 1pt red" background-color="yellow">emphasize</fo:inline> a word we give it a 1pt border and a background.
+          </fo:block>
+          <fo:block background-color="silver" margin="10pt 0pt 10pt 0pt">
+            Demonstrates a big border <fo:inline border="solid 5pt red" padding="5pt" background-color="yellow">inline with border="solid 5pt red" padding="5pt"</fo:inline> extending over the small allocation rectangle to the top and bottom.
+          </fo:block>
+          <fo:block background-color="silver" margin="10pt 0pt 10pt 0pt">
+            Demonstrates <fo:inline border-style="solid" border-width="1pt 2pt 3pt 4pt" border-color="red" padding="1pt 2pt 3pt 4pt" background-color="yellow">unsymmetric borders and padding</fo:inline> but the baselines should align.
+          </fo:block>
+          <fo:block background-color="silver" margin="10pt 0pt 10pt 0pt" font-size="20pt">
+            Big border <fo:inline border="solid 5pt red" padding="5pt" background-color="yellow" font-size="8pt">with a smaller font</fo:inline> but the baselines should align.
+          </fo:block>
+          <fo:block background-color="silver" margin="3pt 0pt 3pt 0pt">
+            This demonstrates correct line breaking of a fo:inline because it does fit nicely..
+            This demonstrates correct line breaking of a fo:inline because it does fit <fo:inline border="solid 1pt red" padding-start="2pt" padding-end="2pt" background-color="yellow">nicely..
+            Not really as we started a fo:inline with border/padding just before the word "nicely" which forces it to the next line.</fo:inline>
+          </fo:block>
+          <fo:block background-color="silver" margin="3pt 0pt 3pt 0pt">
+            Demonstrates nested
+              <fo:inline border="solid 2pt red" padding-start="2pt" padding-end="2pt" background-color="yellow">inlines
+                <fo:inline border="solid 1pt green" padding-start="2pt" padding-end="2pt" background-color="orange">finishing together
+                </fo:inline>
+              </fo:inline>
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="48350" xpath="//flow/block[1]/lineArea/inlineparent/@ipd"/>
+    <eval expected="50350" xpath="//flow/block[1]/lineArea/inlineparent/@ipda"/>
+    <eval expected="0" xpath="//flow/block[1]/lineArea/inlineparent/@offset"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[1]/lineArea/inlineparent/@border-after"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[1]/lineArea/inlineparent/@border-before"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[1]/lineArea/inlineparent/@border-end"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[1]/lineArea/inlineparent/@border-start"/>
+    
+    <eval expected="208190" xpath="//flow/block[2]/lineArea/inlineparent/@ipd"/>
+    <eval expected="228190" xpath="//flow/block[2]/lineArea/inlineparent/@ipda"/>
+    <eval expected="0" xpath="//flow/block[2]/lineArea/inlineparent/@offset"/>
+    <eval expected="(solid,#ff0000,5000)" xpath="//flow/block[2]/lineArea/inlineparent/@border-after"/>
+    <eval expected="(solid,#ff0000,5000)" xpath="//flow/block[2]/lineArea/inlineparent/@border-before"/>
+    <eval expected="(solid,#ff0000,5000)" xpath="//flow/block[2]/lineArea/inlineparent/@border-end"/>
+    <eval expected="(solid,#ff0000,5000)" xpath="//flow/block[2]/lineArea/inlineparent/@border-start"/>
+    <eval expected="5000" xpath="//flow/block[2]/lineArea/inlineparent/@padding-after"/>
+    <eval expected="5000" xpath="//flow/block[2]/lineArea/inlineparent/@padding-before"/>
+    <eval expected="5000" xpath="//flow/block[2]/lineArea/inlineparent/@padding-end"/>
+    <eval expected="5000" xpath="//flow/block[2]/lineArea/inlineparent/@padding-start"/>
+    
+    <eval expected="151170" xpath="//flow/block[3]/lineArea/inlineparent/@ipd"/>
+    <eval expected="163170" xpath="//flow/block[3]/lineArea/inlineparent/@ipda"/>
+    <eval expected="0" xpath="//flow/block[3]/lineArea/inlineparent/@offset"/>
+    <eval expected="(solid,#ff0000,3000)" xpath="//flow/block[3]/lineArea/inlineparent/@border-after"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[3]/lineArea/inlineparent/@border-before"/>
+    <eval expected="(solid,#ff0000,2000)" xpath="//flow/block[3]/lineArea/inlineparent/@border-end"/>
+    <eval expected="(solid,#ff0000,4000)" xpath="//flow/block[3]/lineArea/inlineparent/@border-start"/>
+    <eval expected="3000" xpath="//flow/block[3]/lineArea/inlineparent/@padding-after"/>
+    <eval expected="1000" xpath="//flow/block[3]/lineArea/inlineparent/@padding-before"/>
+    <eval expected="2000" xpath="//flow/block[3]/lineArea/inlineparent/@padding-end"/>
+    <eval expected="4000" xpath="//flow/block[3]/lineArea/inlineparent/@padding-start"/>
+    
+    <eval expected="64464" xpath="//flow/block[4]/lineArea/inlineparent/@ipd"/>
+    <eval expected="84464" xpath="//flow/block[4]/lineArea/inlineparent/@ipda"/>
+    <eval expected="8616" xpath="//flow/block[4]/lineArea/inlineparent/@offset"/>
+    <eval expected="(solid,#ff0000,5000)" xpath="//flow/block[4]/lineArea/inlineparent/@border-after"/>
+    <eval expected="(solid,#ff0000,5000)" xpath="//flow/block[4]/lineArea/inlineparent/@border-before"/>
+    <eval expected="(solid,#ff0000,5000)" xpath="//flow/block[4]/lineArea/inlineparent/@border-end"/>
+    <eval expected="(solid,#ff0000,5000)" xpath="//flow/block[4]/lineArea/inlineparent/@border-start"/>
+    <eval expected="5000" xpath="//flow/block[4]/lineArea/inlineparent/@padding-after"/>
+    <eval expected="5000" xpath="//flow/block[4]/lineArea/inlineparent/@padding-before"/>
+    <eval expected="5000" xpath="//flow/block[4]/lineArea/inlineparent/@padding-end"/>
+    <eval expected="5000" xpath="//flow/block[4]/lineArea/inlineparent/@padding-start"/>
+    
+    <eval expected="340710" xpath="//flow/block[5]/lineArea[3]/inlineparent/@ipd"/>
+    <eval expected="343710" xpath="//flow/block[5]/lineArea[3]/inlineparent/@ipda"/>
+    <eval expected="0" xpath="//flow/block[5]/lineArea[3]/inlineparent/@offset"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[5]/lineArea[3]/inlineparent/@border-after"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[5]/lineArea[3]/inlineparent/@border-before"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[5]/lineArea[3]/inlineparent/@border-start"/>
+    <eval expected="2000" xpath="//flow/block[5]/lineArea[3]/inlineparent/@padding-start"/>
+    <eval expected="193840" xpath="//flow/block[5]/lineArea[4]/inlineparent/@ipd"/>
+    <eval expected="196840" xpath="//flow/block[5]/lineArea[4]/inlineparent/@ipda"/>
+    <eval expected="0" xpath="//flow/block[5]/lineArea[4]/inlineparent/@offset"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[5]/lineArea[4]/inlineparent/@border-after"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[5]/lineArea[4]/inlineparent/@border-before"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[5]/lineArea[4]/inlineparent/@border-end"/>
+    <eval expected="2000" xpath="//flow/block[5]/lineArea[4]/inlineparent/@padding-end"/>
+    
+    <eval expected="118830" xpath="//flow/block[6]/lineArea/inlineparent/@ipd"/>
+    <eval expected="126830" xpath="//flow/block[6]/lineArea/inlineparent/@ipda"/>
+    <eval expected="0" xpath="//flow/block[6]/lineArea/inlineparent/@offset"/>
+    <eval expected="(solid,#ff0000,2000)" xpath="//flow/block[6]/lineArea/inlineparent/@border-after"/>
+    <eval expected="(solid,#ff0000,2000)" xpath="//flow/block[6]/lineArea/inlineparent/@border-before"/>
+    <eval expected="(solid,#ff0000,2000)" xpath="//flow/block[6]/lineArea/inlineparent/@border-end"/>
+    <eval expected="(solid,#ff0000,2000)" xpath="//flow/block[6]/lineArea/inlineparent/@border-start"/>
+    <eval expected="2000" xpath="//flow/block[6]/lineArea/inlineparent/@padding-end"/>
+    <eval expected="2000" xpath="//flow/block[6]/lineArea/inlineparent/@padding-start"/>
+    <eval expected="78930" xpath="//flow/block[6]/lineArea/inlineparent/inlineparent/@ipd"/>
+    <eval expected="84930" xpath="//flow/block[6]/lineArea/inlineparent/inlineparent/@ipda"/>
+    <eval expected="0" xpath="//flow/block[6]/lineArea/inlineparent/inlineparent/@offset"/>
+    <eval expected="(solid,#008000,1000)" xpath="//flow/block[6]/lineArea/inlineparent/inlineparent/@border-after"/>
+    <eval expected="(solid,#008000,1000)" xpath="//flow/block[6]/lineArea/inlineparent/inlineparent/@border-before"/>
+    <eval expected="(solid,#008000,1000)" xpath="//flow/block[6]/lineArea/inlineparent/inlineparent/@border-end"/>
+    <eval expected="(solid,#008000,1000)" xpath="//flow/block[6]/lineArea/inlineparent/inlineparent/@border-start"/>
+    <eval expected="2000" xpath="//flow/block[6]/lineArea/inlineparent/inlineparent/@padding-end"/>
+    <eval expected="2000" xpath="//flow/block[6]/lineArea/inlineparent/inlineparent/@padding-start"/>
+  </checks>
+</testcase>
