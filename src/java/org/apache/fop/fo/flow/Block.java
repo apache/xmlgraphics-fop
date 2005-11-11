@@ -18,7 +18,6 @@
 
 package org.apache.fop.fo.flow;
 
-import java.util.Iterator;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
@@ -516,11 +515,9 @@ public class Block extends FObjMixed {
         return NullCharIterator.getInstance();
     }
 
-    /**
-     * @see org.apache.fop.fo.FONode#getName()
-     */
-    public String getName() {
-        return "fo:block";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "block";
     }
 
     /**

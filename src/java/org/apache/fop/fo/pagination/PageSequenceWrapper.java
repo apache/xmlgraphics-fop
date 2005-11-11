@@ -73,32 +73,24 @@ public class PageSequenceWrapper extends FObj {
         }
     }
 
-    /**
-     * Return the "id" property.
-     */
+    /** @return the "id" property. */
     public String getId() {
         return id;
     }
 
-    /**
-     * Return the "id" property.
-     */
+    /** @return the "index-class" property. */
     public String getIndexClass() {
         return indexClass;
     }
 
-    /**
-     * Return the "id" property.
-     */
+    /** @return the "index-key" property. */
     public String getIndexKey() {
         return indexKey;
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
-    public String getName() {
-        return "fo:page-sequence-wrapper";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "page-sequence-wrapper";
     }
 
     /**

@@ -76,11 +76,9 @@ public class BookmarkTitle extends FObj {
         return title;
     }
     
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
-    public String getName() {
-        return "fo:bookmark-title";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "bookmark-title";
     }
 
     /**

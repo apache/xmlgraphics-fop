@@ -401,11 +401,9 @@ public class Table extends TableFObj {
         return id;
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
-    public String getName() {
-        return "fo:table";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "table";
     }
 
     /**

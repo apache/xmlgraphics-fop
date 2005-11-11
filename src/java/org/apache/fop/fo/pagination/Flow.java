@@ -120,11 +120,9 @@ public class Flow extends FObj {
         return flowName;
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
-    public String getName() {
-        return "fo:flow";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "flow";
     }
     
     /**

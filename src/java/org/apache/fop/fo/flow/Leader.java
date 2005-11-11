@@ -192,11 +192,9 @@ public class Leader extends InlineLevel {
         return dominantBaseline;
     }
     
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
-    public String getName() {
-        return "fo:leader";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "leader";
     }
 
     /**

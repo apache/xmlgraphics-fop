@@ -214,11 +214,9 @@ public class LayoutMasterSet extends FObj {
         return false;
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
-    public String getName() {
-        return "fo:layout-master-set";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "layout-master-set";
     }
     
     /**

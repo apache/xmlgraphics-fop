@@ -146,11 +146,9 @@ public class ConditionalPageMasterReference extends FObj {
         return masterReference;
     }
     
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
-    public String getName() {
-        return "fo:conditional-page-master-reference";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "conditional-page-master-reference";
     }
     
     /**

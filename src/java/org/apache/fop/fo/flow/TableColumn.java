@@ -150,9 +150,9 @@ public class TableColumn extends TableFObj {
         return numberColumnsSpanned.getValue();
     }
     
-    /** @see org.apache.fop.fo.FONode#getName() */
-    public String getName() {
-        return "fo:table-column";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "table-column";
     }
 
     /** @see org.apache.fop.fo.FObj#getNameId() */

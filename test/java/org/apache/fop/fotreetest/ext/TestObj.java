@@ -23,9 +23,9 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 
 /**
- * Catch all FOP Test objects as default element.
+ * Base class for all FOP Test objects.
  */
-public class TestObj extends FObj {
+public abstract class TestObj extends FObj {
 
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
@@ -34,11 +34,10 @@ public class TestObj extends FObj {
         super(parent);
     }
 
-    /**
-     * @see org.apache.fop.fo.XMLObj#getNameSpace()
-     */
-    public String getNameSpace() {
+    /** @see org.apache.fop.fo.FONode#getNamespaceURI() */
+    public String getNamespaceURI() {
         return TestElementMapping.NAMESPACE;
     }
+
 }
 

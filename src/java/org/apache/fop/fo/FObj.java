@@ -412,6 +412,17 @@ public abstract class FObj extends FONode implements Constants {
         return -1;
     }
     
+    
+    /** @see org.apache.fop.fo.FONode#getNamespaceURI() */
+    public String getNamespaceURI() {
+        return FOElementMapping.URI;
+    }
+
+    /** @see org.apache.fop.fo.FONode#getNormalNamespacePrefix() */
+    public String getNormalNamespacePrefix() {
+        return "fo";
+    }
+
     /**
      * Add a new extension attachment to this FObj. See org.apache.fop.fo.FONode for details.
      * @param attachment the attachment to add.

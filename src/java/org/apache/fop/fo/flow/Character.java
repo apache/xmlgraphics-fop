@@ -257,11 +257,9 @@ public class Character extends FObj {
         return wordSpacing; 
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
-    public String getName() {
-        return "fo:character";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "character";
     }
     
     /**

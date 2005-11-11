@@ -104,11 +104,9 @@ public class ExternalGraphic extends AbstractGraphics {
         return url;
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
-    public String getName() {
-        return "fo:external-graphic";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "external-graphic";
     }
 
     /**

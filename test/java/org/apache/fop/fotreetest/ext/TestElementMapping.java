@@ -41,13 +41,6 @@ public class TestElementMapping extends ElementMapping {
         if (foObjs == null) {
             foObjs = new java.util.HashMap();
             foObjs.put("assert", new AssertMaker());
-            foObjs.put(DEFAULT, new TestMaker());
-        }
-    }
-
-    static class TestMaker extends ElementMapping.Maker {
-        public FONode make(FONode parent) {
-            return new TestObj(parent);
         }
     }
 

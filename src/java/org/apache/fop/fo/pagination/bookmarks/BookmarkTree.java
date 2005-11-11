@@ -79,8 +79,9 @@ public class BookmarkTree extends FObj {
         return bookmarks;
     }
 
-    public String getName() {
-        return "fo:bookmark-tree";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "bookmark-tree";
     }
 
     /**

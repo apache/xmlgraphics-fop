@@ -81,18 +81,14 @@ public class Wrapper extends FObjMixed {
         }
     }
 
-    /**
-     * Return the "id" property.
-     */
+    /** @return the "id" property. */
     public String getId() {
         return id;
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
-    public String getName() {
-        return "fo:wrapper";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "wrapper";
     }
 
     /**

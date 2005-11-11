@@ -210,11 +210,9 @@ public class PageSequenceMaster extends FObj {
         return pageMaster;
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
-    public String getName() {
-        return "fo:page-sequence-master";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "page-sequence-master";
     }
     
     /**

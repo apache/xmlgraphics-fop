@@ -91,25 +91,9 @@ public abstract class XMLObj extends FONode {
          return null;
     }
 
-    /**
-     * Returns the name of the object
-     * @return the name of this object
-     */
-    public String getName() {
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
         return name;
-    }
-
-    /**
-     * @return string containing the namespace for this node
-     */
-    public abstract String getNameSpace();
-
-    /**
-     * @return string containing the namespace for this document (which is the
-     * same namespace as for this node ??)
-     */
-    public String getDocumentNamespace() {
-        return getNameSpace();
     }
 
     private static HashMap ns = new HashMap();
@@ -124,7 +108,7 @@ public abstract class XMLObj extends FONode {
      */
     public void addElement(Document doc, Element parent) {
         this.doc = doc;
-        element = doc.createElementNS(getNameSpace(), name);
+        element = doc.createElementNS(getNamespaceURI(), name);
 
         for (int count = 0; count < attr.getLength(); count++) {
             String rf = attr.getValue(count);
@@ -222,5 +206,6 @@ public abstract class XMLObj extends FONode {
         org.w3c.dom.Text text = doc.createTextNode(str);
         element.appendChild(text);
     }
+
 }
 

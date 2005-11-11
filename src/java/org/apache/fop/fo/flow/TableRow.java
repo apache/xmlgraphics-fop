@@ -279,9 +279,9 @@ public class TableRow extends TableFObj {
         return commonBorderPaddingBackground;
     }
     
-    /** @see org.apache.fop.fo.FObj#getName() */
-    public String getName() {
-        return "fo:table-row";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "table-row";
     }
 
     /** @see org.apache.fop.fo.FObj#getNameId() */

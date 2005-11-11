@@ -44,6 +44,7 @@ public class BatikExtensionElementMapping extends ElementMapping {
      */
     private final String getAParserClassName() {
         try {
+            //TODO Remove when Batik uses JAXP instead of SAX directly.
             SAXParserFactory factory = SAXParserFactory.newInstance();
             return factory.newSAXParser().getXMLReader().getClass().getName();
         } catch (Exception e) {

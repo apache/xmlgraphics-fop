@@ -143,11 +143,9 @@ public class Bookmark extends FObj {
         return childBookmarks;
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
-    public String getName() {
-        return "fo:bookmark";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "bookmark";
     }
 
     /**

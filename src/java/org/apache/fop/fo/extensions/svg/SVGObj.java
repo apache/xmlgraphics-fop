@@ -26,8 +26,9 @@ import org.apache.fop.fo.XMLObj;
  * This aids in the construction of the SVG Document.
  */
 public class SVGObj extends XMLObj {
+    
     /**
-     * constructs an svg object (called by Maker).
+     * Constructs an SVG object (called by Maker).
      *
      * @param parent the parent formatting object
      */
@@ -35,12 +36,15 @@ public class SVGObj extends XMLObj {
         super(parent);
     }
 
-    /**
-     * Get the namespace for svg.
-     * @return the svg namespace
-     */
-    public String getNameSpace() {
-        return "http://www.w3.org/2000/svg";
+    /** @see org.apache.fop.fo.FONode#getNamespaceURI() */
+    public String getNamespaceURI() {
+        return SVGElementMapping.URI;
     }
+
+    /** @see org.apache.fop.fo.FONode#getNormalNamespacePrefix() */
+    public String getNormalNamespacePrefix() {
+        return "svg";
+    }
+    
 }
 

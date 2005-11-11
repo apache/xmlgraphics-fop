@@ -71,16 +71,12 @@ public class StaticContent extends Flow {
         }
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
-    public String getName() {
-        return "fo:static-content";
+    /** @see org.apache.fop.fo.FObj#getLocalName() */
+    public String getLocalName() {
+        return "static-content";
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getNameId()
-     */
+    /** @see org.apache.fop.fo.FObj#getNameId() */
     public int getNameId() {
         return FO_STATIC_CONTENT;
     }

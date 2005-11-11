@@ -133,9 +133,9 @@ public class RepeatablePageMasterReference extends FObj
         }
     }
     
-    /** @see org.apache.fop.fo.FObj#getName() */
-    public String getName() {
-        return "fo:repeatable-page-master-reference";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "repeatable-page-master-reference";
     }
 
     /** @see org.apache.fop.fo.FObj#getNameId() */

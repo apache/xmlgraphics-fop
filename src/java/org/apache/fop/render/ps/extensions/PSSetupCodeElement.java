@@ -44,9 +44,9 @@ public class PSSetupCodeElement extends AbstractPSExtensionObject {
         }
     }
     
-    /** @see org.apache.fop.fo.FONode#getName() */
-    public String getName() {
-        return "fox:ps-setup-code";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "ps-setup-code";
     }
     
 }

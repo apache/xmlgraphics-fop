@@ -87,5 +87,10 @@ public class AssertElement extends TestObj {
         
     }
 
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "assert";
+    }
+    
 }
 

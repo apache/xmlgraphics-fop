@@ -48,7 +48,7 @@ public class InstreamForeignObjectLM extends AbstractGraphicsLayoutManager {
         XMLObj child = (XMLObj) fobj.getChildXMLObj();
 
         org.w3c.dom.Document doc = child.getDOMDocument();
-        String ns = child.getDocumentNamespace();
+        String ns = child.getNamespaceURI();
 
         return new ForeignObject(doc, ns);
     }

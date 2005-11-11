@@ -265,11 +265,9 @@ public class TableBody extends TableFObj {
         return commonBorderPaddingBackground;
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
-    public String getName() {
-        return "fo:table-body";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "table-body";
     }
 
     /**
