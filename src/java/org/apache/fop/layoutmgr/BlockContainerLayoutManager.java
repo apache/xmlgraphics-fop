@@ -609,9 +609,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             //Rendering all parts (not just the first) at once for the case where the parts that 
             //overflow should be visible.
             //TODO Check if this has any unwanted side-effects. Feels a bit like a hack.
-            addAreas(this.deferredAlg, 
-                    /*1*/ this.deferredAlg.getPageBreaks().size(), 
-                    this.deferredOriginalList, this.deferredEffectiveList);
+            this.addAreas(this.deferredAlg, 
+                          /*1*/ this.deferredAlg.getPageBreaks().size(), 
+                          this.deferredOriginalList, this.deferredEffectiveList);
         }
         
     }
