@@ -76,7 +76,8 @@ public class XMLHandlerRegistry {
                                                + classname);
         } catch (ClassCastException e) {
             throw new IllegalArgumentException(classname
-                                               + " is not an ElementMapping");
+                                               + " is not an " 
+                                               + XMLHandler.class.getName());
         }
     }
     

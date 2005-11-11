@@ -58,17 +58,17 @@ public class RenderPagesModel extends AreaTreeModel {
     /**
      * Create a new render pages model with the given renderer.
      * @param userAgent FOUserAgent object for process
-     * @param renderType Desired fo.Constants output type (RENDER_PDF, 
-     *   RENDER_PS, etc.)
+     * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
      * @param fontInfo FontInfo object
      * @param stream OutputStream
      * @throws FOPException if the renderer cannot be properly initialized
      */
-    public RenderPagesModel (FOUserAgent userAgent, int renderType, 
+    public RenderPagesModel (FOUserAgent userAgent, String outputFormat, 
         FontInfo fontInfo, OutputStream stream) throws FOPException {
 
         super();
-        renderer = RendererFactory.createRenderer(userAgent, renderType);
+        renderer = userAgent.getRendererFactory().createRenderer(
+                userAgent, outputFormat);
 
         try {
             renderer.setupFontInfo(fontInfo);

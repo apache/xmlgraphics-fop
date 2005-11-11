@@ -307,6 +307,7 @@ public class PSSVGHandler implements XMLHandler {
                 gen.writeln("newpath");
                 gen.defineRect(xOffset / 1000f, yOffset / 1000f, 
                         psInfo.getWidth() / 1000f, psInfo.getWidth() / 1000f);
+                //TODO Is the above correct? Twice getWidth??????????????
                 gen.writeln("clip");
                 
                 // transform so that the coordinates (0,0) is from the top left
@@ -337,7 +338,7 @@ public class PSSVGHandler implements XMLHandler {
                                            + e.getMessage(), e);
                 }
 
-                psInfo.psGenerator.restoreGraphicsState();
+                gen.restoreGraphicsState();
                 gen.commentln("%FOPEndSVG");
             } catch (IOException ioe) {
                 log.error("SVG graphic could not be rendered: "

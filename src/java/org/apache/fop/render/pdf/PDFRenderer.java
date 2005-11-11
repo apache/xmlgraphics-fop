@@ -38,6 +38,7 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.Page;
@@ -78,6 +79,7 @@ import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.pdf.PDFText;
 import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
+import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.fo.Constants;
 
@@ -102,7 +104,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
     /**
      * The mime type for pdf
      */
-    public static final String MIME_TYPE = "application/pdf";
+    public static final String MIME_TYPE = MimeConstants.MIME_PDF;
 
     /** Controls whether comments are written to the PDF stream. */
     protected static final boolean WRITE_COMMENTS = true;
@@ -338,6 +340,11 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         }
     }
     
+    /** @see org.apache.fop.render.Renderer#getGraphics2DAdapter() */
+    public Graphics2DAdapter getGraphics2DAdapter() {
+        return new PDFGraphics2DAdapter(this);
+    }
+
     /** 
      * writes out a comment.
      * @param text text for the comment

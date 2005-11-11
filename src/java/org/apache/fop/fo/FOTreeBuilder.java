@@ -30,7 +30,6 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FormattingResults;
 import org.apache.fop.area.AreaTreeHandler;
-import org.apache.fop.render.RendererFactory;
 import org.apache.fop.util.Service;
 import org.apache.fop.fo.ElementMapping.Maker;
 import org.apache.fop.fo.pagination.Root;
@@ -94,19 +93,20 @@ public class FOTreeBuilder extends DefaultHandler {
     
     /**
      * FOTreeBuilder constructor
-     * @param renderType output type as defined in Constants class
+     * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
      * @param foUserAgent in effect for this process
      * @param stream OutputStream to direct results
      * @throws FOPException if the FOTreeBuilder cannot be properly created
      */
-    public FOTreeBuilder(int renderType, FOUserAgent foUserAgent, 
+    public FOTreeBuilder(String outputFormat, FOUserAgent foUserAgent, 
         OutputStream stream) throws FOPException {
 
         this.userAgent = foUserAgent;
         
         //This creates either an AreaTreeHandler and ultimately a Renderer, or
         //one of the RTF-, MIF- etc. Handlers.
-        foEventHandler = RendererFactory.createFOEventHandler(foUserAgent, renderType, stream);
+        foEventHandler = foUserAgent.getRendererFactory().createFOEventHandler(
+                foUserAgent, outputFormat, stream);
         foEventHandler.setPropertyListMaker(new PropertyListMaker() {
             public PropertyList make(FObj fobj, PropertyList parentPropertyList) {
                 return new StaticPropertyList(fobj, parentPropertyList);
@@ -296,13 +296,21 @@ public class FOTreeBuilder extends DefaultHandler {
     public void endElement(String uri, String localName, String rawName)
                 throws FOPException {
         if (currentFObj == null) {
-            throw new FOPException("No current FO is available. The input document may not be "
-                    + "a valid XSL-FO document.");
+            throw new IllegalStateException(
+                    "endElement() called for " + rawName + " where there is no current element.");
+        } else if (!currentFObj.getLocalName().equals(localName) 
+                || !currentFObj.getNamespaceURI().equals(uri)) {
+            log.warn("Mismatch: " + currentFObj.getLocalName() 
+                    + " (" + currentFObj.getNamespaceURI() 
+                    + ") vs. " + localName + " (" + uri + ")");
         }
         currentFObj.endOfNode();
 
         if (currentPropertyList.getFObj() == currentFObj) {
             currentPropertyList = currentPropertyList.getParentPropertyList();
+        }
+        if (currentFObj.getParent() == null) {
+            log.debug("endElement for top-level " + currentFObj.getName());
         }
         currentFObj = currentFObj.getParent();
     }

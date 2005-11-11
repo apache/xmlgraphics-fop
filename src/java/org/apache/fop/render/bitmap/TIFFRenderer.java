@@ -41,6 +41,7 @@ import org.apache.batik.ext.awt.image.codec.tiff.TIFFImageEncoder;
 import org.apache.batik.ext.awt.image.rendered.FormatRed;
 import org.apache.commons.logging.Log;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.java2d.Java2DRenderer;
 
 /**
@@ -67,7 +68,7 @@ import org.apache.fop.render.java2d.Java2DRenderer;
 public class TIFFRenderer extends Java2DRenderer {
 
     /** The MIME type for tiff-Rendering */
-    public static final String MIME_TYPE = "image/tiff";
+    public static final String MIME_TYPE = MimeConstants.MIME_TIFF;
 
     /** */
     private TIFFEncodeParam renderParams;

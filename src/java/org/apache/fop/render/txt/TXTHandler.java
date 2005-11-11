@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.datatypes.CompoundDatatype;
 import org.apache.fop.datatypes.Length;
@@ -94,7 +95,7 @@ public class TXTHandler extends AreaTreeHandler {
      */
     public TXTHandler(FOUserAgent userAgent, OutputStream stream)
             throws FOPException {
-        super(userAgent, Constants.RENDER_TXT, stream);
+        super(userAgent, MimeConstants.MIME_PLAIN_TEXT, stream);
     }
 
     /**

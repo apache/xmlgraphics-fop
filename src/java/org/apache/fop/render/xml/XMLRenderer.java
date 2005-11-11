@@ -42,6 +42,7 @@ import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BeforeFloat;
 import org.apache.fop.area.Block;
@@ -79,7 +80,7 @@ import org.apache.fop.area.inline.WordArea;
 public class XMLRenderer extends PrintRenderer {
 
     /** XML MIME type */
-    public static final String XML_MIME_TYPE = "application/x-fop-areatree";
+    public static final String XML_MIME_TYPE = MimeConstants.MIME_FOP_AREA_TREE;
 
     /** Main namespace in use. */
     public static final String NS = "";

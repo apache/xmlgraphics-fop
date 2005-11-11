@@ -44,7 +44,10 @@ import org.apache.fop.fo.FOTreeBuilder;
 public class Fop implements Constants {
 
     // desired output type: RENDER_PDF, RENDER_PS, etc.
-    private int renderType = NOT_SET;
+    //private int renderType = NOT_SET;
+    
+    // desired output format: MIME type such as "application/pdf", "application/postscript" etc.
+    private String outputFormat = null;
 
     // output stream to send results to
     private OutputStream stream = null;
@@ -54,6 +57,32 @@ public class Fop implements Constants {
 
     // FOTreeBuilder object to maintain reference for access to results
     private FOTreeBuilder foTreeBuilder = null;
+
+    /**
+     * Constructor for use with already-created FOUserAgents. It uses MIME types to select the 
+     * output format (ex. "application/pdf" for PDF).
+     * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
+     * @param ua FOUserAgent object
+     * @throws IllegalArgumentException if an unsupported renderer type was requested.
+     */
+    public Fop(String outputFormat, FOUserAgent ua) {
+        this.outputFormat = outputFormat;
+
+        foUserAgent = ua;
+        if (foUserAgent == null) {
+            foUserAgent = new FOUserAgent();
+        }
+    }
+
+    /**
+     * Constructor for FOP with a default FOUserAgent. It uses MIME types to select the 
+     * output format (ex. "application/pdf" for PDF).
+     * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
+     * @throws IllegalArgumentException if an unsupported renderer type was requested.
+     */
+    public Fop(String outputFormat) {
+        this(outputFormat, null);
+    }
 
     /**
      * Constructor for use with already-created FOUserAgents
@@ -76,18 +105,7 @@ public class Fop implements Constants {
      * @throws IllegalArgumentException if an unsupported renderer type was requested.
      */
     public Fop(int renderType, FOUserAgent ua) {
-        if (renderType < Constants.RENDER_MIN_CONST 
-            || renderType > Constants.RENDER_MAX_CONST) {
-            throw new IllegalArgumentException(
-                "Invalid render type #" + renderType);
-        }
-
-        this.renderType = renderType;
-
-        foUserAgent = ua;
-        if (foUserAgent == null) {
-            foUserAgent = new FOUserAgent();
-        }
+        this(getMimeTypeForRenderType(renderType), ua);
     }
 
     /**
@@ -95,9 +113,34 @@ public class Fop implements Constants {
      * @see org.apache.fop.apps.Fop#Fop(int, FOUserAgent)
      */
     public Fop(int renderType) {
-        this(renderType, new FOUserAgent());
+        this(renderType, null);
     }
 
+    private static String getMimeTypeForRenderType(int renderType) {
+        switch(renderType) {
+        case Constants.RENDER_PDF: return MimeConstants.MIME_PDF;
+        case Constants.RENDER_PS: return MimeConstants.MIME_POSTSCRIPT;
+        case Constants.RENDER_PCL: return MimeConstants.MIME_PCL;
+        case Constants.RENDER_MIF: return MimeConstants.MIME_MIF;
+        case Constants.RENDER_RTF: return MimeConstants.MIME_RTF;
+        case Constants.RENDER_SVG: return MimeConstants.MIME_SVG;
+        case Constants.RENDER_TXT: return MimeConstants.MIME_PLAIN_TEXT;
+
+        //Bitmap formats
+        case Constants.RENDER_PNG: return MimeConstants.MIME_PNG;
+        case Constants.RENDER_TIFF: return MimeConstants.MIME_TIFF;
+        
+        //Area tree XML: FOP-specific
+        case Constants.RENDER_XML: return MimeConstants.MIME_FOP_AREA_TREE;
+        
+        //Non-standard pseudo MIME types
+        case Constants.RENDER_AWT: return MimeConstants.MIME_FOP_AWT_PREVIEW;
+        case Constants.RENDER_PRINT: return MimeConstants.MIME_FOP_PRINT;
+        default:
+            throw new IllegalArgumentException("Illegal renderType value: " + renderType);
+        }
+    }
+    
     /**
      * Get the FOUserAgent instance for this process
      * @return the user agent
@@ -128,7 +171,7 @@ public class Fop implements Constants {
      */
     public DefaultHandler getDefaultHandler() throws FOPException {
         if (foTreeBuilder == null) {
-            this.foTreeBuilder = new FOTreeBuilder(renderType, foUserAgent, stream);
+            this.foTreeBuilder = new FOTreeBuilder(outputFormat, foUserAgent, stream);
         }
         return this.foTreeBuilder;
     }

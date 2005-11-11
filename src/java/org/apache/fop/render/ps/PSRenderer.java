@@ -59,6 +59,7 @@ import org.apache.fop.image.EPSImage;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.XMLImage;
+import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.ps.extensions.PSSetupCode;
@@ -132,6 +133,11 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
         super.setUserAgent(agent);
         PSSVGHandler xmlHandler = new PSSVGHandler();
         userAgent.getXMLHandlerRegistry().addXMLHandler(xmlHandler);
+    }
+
+    /** @see org.apache.fop.render.Renderer#getGraphics2DAdapter() */
+    public Graphics2DAdapter getGraphics2DAdapter() {
+        return new PSGraphics2DAdapter(this);
     }
 
     /**

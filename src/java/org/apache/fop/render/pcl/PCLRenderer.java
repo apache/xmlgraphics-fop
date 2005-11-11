@@ -19,6 +19,7 @@
 package org.apache.fop.render.pcl;
 
 // FOP
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.PrintRenderer;
 
 // Java
@@ -33,7 +34,7 @@ import java.io.OutputStream;
 public class PCLRenderer extends PrintRenderer {
 
     /** The MIME type for PCL */
-    public static final String MIME_TYPE = "application/vnd.hp-PCL";
+    public static final String MIME_TYPE = MimeConstants.MIME_PCL_ALT;
 
     /**
      * the current stream to add PCL commands to
@@ -156,6 +157,7 @@ public class PCLRenderer extends PrintRenderer {
 
     public void startRenderer(OutputStream outputStream) throws IOException {
         log.info("rendering areas to PCL");
+        log.fatal("The PCL Renderer is non-functional at this time. Please help resurrect it!");
         currentStream = new PCLStream(outputStream);
 
         // Set orientation.

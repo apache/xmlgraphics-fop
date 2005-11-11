@@ -103,16 +103,15 @@ public class AreaTreeHandler extends FOEventHandler {
     /**
      * Constructor.
      * @param userAgent FOUserAgent object for process
-     * @param renderType Desired fo.Constants output type (RENDER_PDF, 
-     *   RENDER_PS, etc.)
+     * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
      * @param stream OutputStream
      * @throws FOPException if the RenderPagesModel cannot be created
      */
-    public AreaTreeHandler (FOUserAgent userAgent, int renderType, 
+    public AreaTreeHandler (FOUserAgent userAgent, String outputFormat, 
                 OutputStream stream) throws FOPException {
         super(userAgent);
 
-        model = new RenderPagesModel(userAgent, renderType, fontInfo,
+        model = new RenderPagesModel(userAgent, outputFormat, fontInfo,
             stream);
             
         lmMaker = userAgent.getLayoutManagerMakerOverride();

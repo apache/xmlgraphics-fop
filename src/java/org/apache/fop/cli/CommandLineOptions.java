@@ -28,6 +28,7 @@ import java.util.Vector;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.pdf.PDFEncryptionManager;
 import org.apache.fop.pdf.PDFEncryptionParams;
@@ -73,7 +74,7 @@ public class CommandLineOptions implements Constants {
     /* input mode */
     private int inputmode = NOT_SET;
     /* output mode */
-    private int outputmode = NOT_SET;
+    private String outputmode = null;
 
     private FOUserAgent foUserAgent;
     
@@ -132,7 +133,7 @@ public class CommandLineOptions implements Constants {
         
         inputHandler = createInputHandler();
         
-        if (outputmode == RENDER_AWT) {
+        if (outputmode.equals(MimeConstants.MIME_FOP_AWT_PREVIEW)) {
             AWTRenderer renderer = new AWTRenderer();
             renderer.setRenderable(inputHandler); //set before user agent!
             renderer.setUserAgent(foUserAgent);
@@ -217,6 +218,8 @@ public class CommandLineOptions implements Constants {
                 i = i + parseSVGOutputOption(args, i);
             } else if (args[i].equals("-foout")) {
                 i = i + parseFOOutputOption(args, i);
+            } else if (args[i].equals("-out")) {
+                i = i + parseCustomOutputOption(args, i);
             } else if (args[i].charAt(0) != '-') {
                 i = i + parseUnknownOption(args, i);
             } else if (args[i].equals("-at")) {
@@ -323,15 +326,15 @@ public class CommandLineOptions implements Constants {
     }
 
     private int parseAWTOutputOption(String[] args, int i) throws FOPException {
-        setOutputMode(RENDER_AWT);
+        setOutputMode(MimeConstants.MIME_FOP_AWT_PREVIEW);
         return 0;
     }
 
     private int parsePDFOutputOption(String[] args, int i) throws FOPException {
-        setOutputMode(RENDER_PDF);
+        setOutputMode(MimeConstants.MIME_PDF);
         if ((i + 1 == args.length)
                 || (args[i + 1].charAt(0) == '-')) {
-            throw new FOPException("you must specify the pdf output file");
+            throw new FOPException("you must specify the PDF output file");
         } else {
             outfile = new File(args[i + 1]);
             return 1;
@@ -339,10 +342,10 @@ public class CommandLineOptions implements Constants {
     }
 
     private int parseMIFOutputOption(String[] args, int i) throws FOPException {
-        setOutputMode(RENDER_MIF);
+        setOutputMode(MimeConstants.MIME_MIF);
         if ((i + 1 == args.length)
                 || (args[i + 1].charAt(0) == '-')) {
-            throw new FOPException("you must specify the mif output file");
+            throw new FOPException("you must specify the MIF output file");
         } else {
             outfile = new File(args[i + 1]);
             return 1;
@@ -350,10 +353,10 @@ public class CommandLineOptions implements Constants {
     }
 
     private int parseRTFOutputOption(String[] args, int i) throws FOPException {
-        setOutputMode(RENDER_RTF);
+        setOutputMode(MimeConstants.MIME_RTF);
         if ((i + 1 == args.length)
                 || (args[i + 1].charAt(0) == '-')) {
-            throw new FOPException("you must specify the rtf output file");
+            throw new FOPException("you must specify the RTF output file");
         } else {
             outfile = new File(args[i + 1]);
             return 1;
@@ -361,10 +364,10 @@ public class CommandLineOptions implements Constants {
     }
 
     private int parseTIFFOutputOption(String[] args, int i) throws FOPException {
-        setOutputMode(RENDER_TIFF);
+        setOutputMode(MimeConstants.MIME_TIFF);
         if ((i + 1 == args.length)
                 || (args[i + 1].charAt(0) == '-')) {
-            throw new FOPException("you must specify the tiff output file");
+            throw new FOPException("you must specify the TIFF output file");
         } else {
             outfile = new File(args[i + 1]);
             return 1;
@@ -372,10 +375,10 @@ public class CommandLineOptions implements Constants {
     }
 
     private int parsePNGOutputOption(String[] args, int i) throws FOPException {
-        setOutputMode(RENDER_PNG);
+        setOutputMode(MimeConstants.MIME_PNG);
         if ((i + 1 == args.length)
                 || (args[i + 1].charAt(0) == '-')) {
-            throw new FOPException("you must specify the png output file");
+            throw new FOPException("you must specify the PNG output file");
         } else {
             outfile = new File(args[i + 1]);
             return 1;
@@ -383,15 +386,15 @@ public class CommandLineOptions implements Constants {
     }
 
     private int parsePrintOutputOption(String[] args, int i) throws FOPException {
-        setOutputMode(RENDER_PRINT);
+        setOutputMode(MimeConstants.MIME_FOP_PRINT);
         return 0;
     }
 
     private int parsePCLOutputOption(String[] args, int i) throws FOPException {
-        setOutputMode(RENDER_PCL);
+        setOutputMode(MimeConstants.MIME_PCL);
         if ((i + 1 == args.length)
                 || (args[i + 1].charAt(0) == '-')) {
-            throw new FOPException("you must specify the pdf output file");
+            throw new FOPException("you must specify the PDF output file");
         } else {
             outfile = new File(args[i + 1]);
             return 1;
@@ -399,7 +402,7 @@ public class CommandLineOptions implements Constants {
     }
 
     private int parsePostscriptOutputOption(String[] args, int i) throws FOPException {
-        setOutputMode(RENDER_PS);
+        setOutputMode(MimeConstants.MIME_POSTSCRIPT);
         if ((i + 1 == args.length)
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the PostScript output file");
@@ -410,7 +413,7 @@ public class CommandLineOptions implements Constants {
     }
 
     private int parseTextOutputOption(String[] args, int i) throws FOPException {
-        setOutputMode(RENDER_TXT);
+        setOutputMode(MimeConstants.MIME_PLAIN_TEXT);
         if ((i + 1 == args.length)
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the text output file");
@@ -421,10 +424,10 @@ public class CommandLineOptions implements Constants {
     }
 
     private int parseSVGOutputOption(String[] args, int i) throws FOPException {
-        setOutputMode(RENDER_SVG);
+        setOutputMode(MimeConstants.MIME_SVG);
         if ((i + 1 == args.length)
                 || (args[i + 1].charAt(0) == '-')) {
-            throw new FOPException("you must specify the svg output file");
+            throw new FOPException("you must specify the SVG output file");
         } else {
             outfile = new File(args[i + 1]);
             return 1;
@@ -432,7 +435,7 @@ public class CommandLineOptions implements Constants {
     }
 
     private int parseFOOutputOption(String[] args, int i) throws FOPException {
-        setOutputMode(RENDER_NONE);
+        setOutputMode(MimeConstants.MIME_XSL_FO);
         if ((i + 1 == args.length)
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the FO output file");
@@ -442,12 +445,37 @@ public class CommandLineOptions implements Constants {
         }
     }
 
+    private int parseCustomOutputOption(String[] args, int i) throws FOPException {
+        String mime = null;
+        if ((i + 1 < args.length)
+                || (args[i + 1].charAt(0) != '-')) {
+            mime = args[i + 1];
+            if ("list".equals(mime)) {
+                String[] mimes = foUserAgent.getRendererFactory().listSupportedMimeTypes();
+                System.out.println("Supported MIME types:");
+                for (int j = 0; j < mimes.length; j++) {
+                    System.out.println("  " + mimes[j]);
+                }
+                System.exit(0);
+            }
+        }
+        if ((i + 2 >= args.length)
+                || (args[i + 1].charAt(0) == '-')
+                || (args[i + 2].charAt(0) == '-')) {
+            throw new FOPException("you must specify the output format and the output file");
+        } else {
+            setOutputMode(mime);
+            outfile = new File(args[i + 2]);
+            return 2;
+        }
+    }
+
     private int parseUnknownOption(String[] args, int i) throws FOPException {
         if (inputmode == NOT_SET) {
             inputmode = FO_INPUT;
             fofile = new File(args[i]);
-        } else if (outputmode == NOT_SET) {
-            outputmode = RENDER_PDF;
+        } else if (outputmode == null) {
+            outputmode = MimeConstants.MIME_PDF;
             outfile = new File(args[i]);
         } else {
             throw new FOPException("Don't know what to do with "
@@ -457,7 +485,7 @@ public class CommandLineOptions implements Constants {
     }
 
     private int parseAreaTreeOption(String[] args, int i) throws FOPException {
-        setOutputMode(RENDER_XML);
+        setOutputMode(MimeConstants.MIME_FOP_AREA_TREE);
         if ((i + 1 == args.length)
                 || (args[i + 1].charAt(0) == '-')) {
             throw new FOPException("you must specify the area-tree output file");
@@ -500,9 +528,9 @@ public class CommandLineOptions implements Constants {
         }
     }
 
-    private void setOutputMode(int mode) throws FOPException {
-        if (outputmode == NOT_SET) {
-            outputmode = mode;
+    private void setOutputMode(String mime) throws FOPException {
+        if (outputmode == null) {
+            outputmode = mime;
         } else {
             throw new FOPException("you can only set one output method");
         }
@@ -537,11 +565,13 @@ public class CommandLineOptions implements Constants {
             throw new FOPException("No input file specified");
         }
 
-        if (outputmode == NOT_SET) {
+        if (outputmode == null) {
             throw new FOPException("No output file specified");
         }
 
-        if ((outputmode == RENDER_AWT || outputmode == RENDER_PRINT) && outfile != null) {
+        if ((outputmode.equals(MimeConstants.MIME_FOP_AWT_PREVIEW) 
+                || outputmode.equals(MimeConstants.MIME_FOP_PRINT)) 
+                    && outfile != null) {
             throw new FOPException("Output file may not be specified " 
                     + "for AWT or PRINT output");
         }
@@ -577,7 +607,7 @@ public class CommandLineOptions implements Constants {
             }
 
         } else if (inputmode == FO_INPUT) {
-            if (outputmode == RENDER_NONE) {
+            if (outputmode.equals(MimeConstants.MIME_XSL_FO)) {
                 throw new FOPException(
                         "FO output mode is only available if you use -xml and -xsl");
             }
@@ -619,32 +649,17 @@ public class CommandLineOptions implements Constants {
      }
 
     /**
-     * @return the type chosen renderer
-     * @throws FOPException for invalid output modes
+     * @return the chosen output format (MIME type)
+     * @throws FOPException for invalid output formats
      */
-    protected int getRenderer() throws FOPException {
-        switch (outputmode) {
-        case RENDER_PDF:
-        case RENDER_AWT:
-        case RENDER_MIF:
-        case RENDER_PRINT:
-        case RENDER_PCL:
-        case RENDER_PS:
-        case RENDER_TXT:
-        case RENDER_SVG:
-        case RENDER_RTF:
-        case RENDER_TIFF:
-        case RENDER_PNG:
-        case RENDER_NONE:
-            return outputmode;
-        case RENDER_XML:
-            foUserAgent.getRendererOptions().put("fineDetail", isCoarseAreaXml());
-            return RENDER_XML;
-        case NOT_SET:
+    protected String getOutputFormat() throws FOPException {
+        if (outputmode == null) {
             throw new FOPException("Renderer has not been set!");
-        default:
-            throw new FOPException("Invalid Renderer setting!");
         }
+        if (outputmode.equals(MimeConstants.MIME_FOP_AREA_TREE)) {
+            foUserAgent.getRendererOptions().put("fineDetail", isCoarseAreaXml());
+        }
+        return outputmode;
     }
 
     /**
@@ -669,14 +684,6 @@ public class CommandLineOptions implements Constants {
      */
     protected FOUserAgent getFOUserAgent() {
         return foUserAgent;
-    }
-
-    /**
-     * Returns the output mode (output format, ex. NOT_SET or RENDER_PDF)
-     * @return the output mode
-     */
-    public int getOutputMode() {
-        return outputmode;
     }
 
     /**
@@ -786,7 +793,11 @@ public class CommandLineOptions implements Constants {
             + "  -svg outfile      input will be rendered as an svg slides file (outfile req'd) \n"
             + "  -at outfile       representation of area tree as XML (outfile req'd) \n"
             + "  -print            input file will be rendered and sent to the printer \n"
-            + "                    see options with \"-print help\" \n\n"
+            + "                    see options with \"-print help\" \n"
+            + "  -out mime outfile input will be rendered using the given MIME type\n"
+            + "                    (outfile req'd) Example: \"-out application/pdf D:\\out.pdf\"\n"
+            + "                    (Tip: \"-out list\" prints the list of supported MIME types)\n"
+            + "\n"
             + "  -foout outfile    input will only be XSL transformed. The intermediate \n"
             + "                    XSL-FO file is saved and no rendering is performed. \n"
             + "                    (Only available if you use -xml and -xsl parameters)\n\n"
@@ -832,66 +843,26 @@ public class CommandLineOptions implements Constants {
             log.info("unknown input type");
         }
         log.info("Output mode: ");
-        switch (outputmode) {
-        case NOT_SET:
+        if (outputmode == null) {
             log.info("not set");
-            break;
-        case RENDER_PDF:
-            log.info("pdf");
-            log.info("output file: " + outfile.toString());
-            break;
-        case RENDER_AWT:
+        } else if (MimeConstants.MIME_FOP_AWT_PREVIEW.equals(outputmode)) {
             log.info("awt on screen");
             if (outfile != null) {
                 log.error("awt mode, but outfile is set:");
                 log.info("out file: " + outfile.toString());
             }
-            break;
-        case RENDER_MIF:
-            log.info("mif");
-            log.info("output file: " + outfile.toString());
-            break;
-        case RENDER_RTF:
-            log.info("rtf");
-            log.info("output file: " + outfile.toString());
-            break;
-        case RENDER_TIFF:
-            log.info("tiff");
-            log.info("output file: " + outfile.toString());
-            break;
-        case RENDER_PNG:
-            log.info("png");
-            log.info("output file: " + outfile.toString());
-            break;
-        case RENDER_PRINT:
+        } else if (MimeConstants.MIME_FOP_PRINT.equals(outputmode)) {
             log.info("print directly");
             if (outfile != null) {
                 log.error("print mode, but outfile is set:");
                 log.error("out file: " + outfile.toString());
             }
-            break;
-        case RENDER_PCL:
-            log.info("pcl");
-            log.info("output file: " + outfile.toString());
-            break;
-        case RENDER_PS:
-            log.info("PostScript");
-            log.info("output file: " + outfile.toString());
-            break;
-        case RENDER_TXT:
-            log.info("txt");
-            log.info("output file: " + outfile.toString());
-            break;
-        case RENDER_SVG:
-            log.info("svg");
-            log.info("output file: " + outfile.toString());
-            break;
-        case RENDER_XML:
+        } else if (MimeConstants.MIME_FOP_AREA_TREE.equals(outputmode)) {
             log.info("area tree");
             log.info("output file: " + outfile.toString());
-            break;
-        default:
-            log.info("unknown input type");
+        } else {
+            log.info(outputmode);
+            log.info("output file: " + outfile.toString());
         }
 
         log.info("OPTIONS");
