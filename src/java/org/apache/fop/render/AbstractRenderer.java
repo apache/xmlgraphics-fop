@@ -155,6 +155,11 @@ public abstract class AbstractRenderer
      */
     public void processOffDocumentItem(OffDocumentItem oDI) { }
 
+    /** @see org.apache.fop.render.Renderer#getGraphics2DAdapter() */
+    public Graphics2DAdapter getGraphics2DAdapter() {
+        return null;
+    }
+    
     /**
      * Prepare a page for rendering. This is called if the renderer supports
      * out of order rendering. The renderer should prepare the page so that a

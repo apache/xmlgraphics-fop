@@ -73,10 +73,14 @@ public class Java2DSVGHandler implements XMLHandler {
      */
     public static final String JAVA2D_YPOS = "ypos";
 
+    private String mimeType;
+    
     /**
      * Create a new Java2D XML handler for use by the Java2D renderer.
+     * @param MIME type that this handler is used for
      */
-    public Java2DSVGHandler() {
+    public Java2DSVGHandler(String mime) {
+        this.mimeType = mime;
     }
 
     /** @see org.apache.fop.render.XMLHandler */
@@ -178,7 +182,7 @@ public class Java2DSVGHandler implements XMLHandler {
             AffineTransform origTransform = info.state.getGraph().getTransform();
             
             // correct integer roundoff
-            info.state.getGraph().translate(x / 1000, y / 1000);
+            info.state.getGraph().translate(x / 1000f, y / 1000f);
             
             //SVGSVGElement svg = ((SVGDocument) doc).getRootElement();
             // Aspect ratio preserved by layout engine, not here
@@ -199,7 +203,7 @@ public class Java2DSVGHandler implements XMLHandler {
     
     /** @see org.apache.fop.render.XMLHandler#getMimeType() */
     public String getMimeType() {
-        return Java2DRenderer.MIME_TYPE;
+        return this.mimeType;
     }
 
     /** @see org.apache.fop.render.XMLHandler#getNamespace() */

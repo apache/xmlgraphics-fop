@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ package org.apache.fop.render.mif;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.flow.BasicLink;
@@ -57,6 +59,9 @@ import org.xml.sax.SAXException;
  */
 public class MIFHandler extends FOEventHandler {
 
+    /** Logger */
+    private static Log log = LogFactory.getLog(MIFHandler.class);
+
     /** the MIFFile instance */
     protected MIFFile mifFile;
     
@@ -82,6 +87,7 @@ public class MIFHandler extends FOEventHandler {
      * @see org.apache.fop.fo.FOEventHandler#startDocument()
      */
     public void startDocument() throws SAXException {
+        log.fatal("The MIF Handler is non-functional at this time. Please help resurrect it!");
         mifFile = new MIFFile();
         try {
             mifFile.output(outStream);

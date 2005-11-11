@@ -39,6 +39,7 @@ import java.io.IOException;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.datatypes.ColorType;
@@ -56,7 +57,7 @@ import org.apache.fop.render.java2d.Java2DRenderer;
 public class AWTRenderer extends Java2DRenderer implements Pageable {
 
     /** The MIME type for AWT-Rendering */
-    public static final String MIME_TYPE = "application/X-awt";
+    public static final String MIME_TYPE = MimeConstants.MIME_FOP_AWT_PREVIEW;
 
     /** The resource bundle used for AWT messages. */
     protected Translator translator = null;

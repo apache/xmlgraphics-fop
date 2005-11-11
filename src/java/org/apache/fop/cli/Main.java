@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.MimeConstants;
 
 /**
  * Main command-line class for Apache FOP.
@@ -148,8 +149,9 @@ public class Main {
             foUserAgent = options.getFOUserAgent();
             
             Fop fop = null;
-            if (options.getOutputMode() != CommandLineOptions.RENDER_NONE) {
-                fop = new Fop(options.getRenderer(), foUserAgent);
+            String outputFormat = options.getOutputFormat();
+            if (!MimeConstants.MIME_XSL_FO.equals(outputFormat)) {
+                fop = new Fop(outputFormat, foUserAgent);
             }
 
             try {
@@ -175,7 +177,7 @@ public class Main {
             // System.exit(0) called to close AWT/SVG-created threads, if any.
             // AWTRenderer closes with window shutdown, so exit() should not
             // be called here
-            if (options.getOutputMode() != CommandLineOptions.RENDER_AWT) {
+            if (!MimeConstants.MIME_FOP_AWT_PREVIEW.equals(outputFormat)) {
                 System.exit(0);
             }
         } catch (Exception e) {

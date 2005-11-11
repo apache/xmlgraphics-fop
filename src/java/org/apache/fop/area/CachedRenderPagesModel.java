@@ -46,11 +46,11 @@ public class CachedRenderPagesModel extends RenderPagesModel {
 
     /**
      * Constructor
-     * @see org.apache.fop.area.RenderPagesModel#RenderPagesModel(FOUserAgent, int, FontInfo, OutputStream)
+     * @see org.apache.fop.area.RenderPagesModel#RenderPagesModel(FOUserAgent, String, FontInfo, OutputStream)
      */
-    public CachedRenderPagesModel (FOUserAgent userAgent, int renderType, 
-        FontInfo fontInfo, OutputStream stream) throws FOPException {
-        super(userAgent, renderType, fontInfo, stream);
+    public CachedRenderPagesModel (FOUserAgent userAgent, String outputFormat, 
+            FontInfo fontInfo, OutputStream stream) throws FOPException {
+        super(userAgent, outputFormat, fontInfo, stream);
     }
 
     /**

@@ -114,8 +114,13 @@ public interface Renderer {
      *
      * @param ext  The extension element to be rendered
      */
-    public void processOffDocumentItem(OffDocumentItem ext);
+    void processOffDocumentItem(OffDocumentItem ext);
 
+    /**
+     * @return the adapter for painting Java2D images (or null if not supported)
+     */
+    Graphics2DAdapter getGraphics2DAdapter();
+    
     /**
      * This is called if the renderer supports out of order rendering. The
      * renderer should prepare the page so that a page further on in the set of

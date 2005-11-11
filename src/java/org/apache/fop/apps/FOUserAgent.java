@@ -44,6 +44,7 @@ import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
 import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.render.RendererFactory;
 import org.apache.fop.render.XMLHandlerRegistry;
 
 /**
@@ -76,6 +77,9 @@ public class FOUserAgent {
     public static final String DEFAULT_PAGE_HEIGHT = "11in";
     /** Defines the default page-width */
     public static final String DEFAULT_PAGE_WIDTH = "8.26in";
+    
+    /** Factory for Renderers and FOEventHandlers */
+    private RendererFactory rendererFactory = new RendererFactory();
     
     /** Registry for XML handlers */
     private XMLHandlerRegistry xmlHandlers = new XMLHandlerRegistry();
@@ -592,8 +596,16 @@ public class FOUserAgent {
      * If to create hot links to footnotes and before floats.
      * @return True if hot links should be created
      */
+    /* TODO This method is never referenced!
     public boolean linkToFootnotes() {
         return true;
+    }*/
+
+    /**
+     * @return the RendererFactory
+     */
+    public RendererFactory getRendererFactory() {
+        return this.rendererFactory;
     }
 
     /**

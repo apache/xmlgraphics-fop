@@ -26,7 +26,6 @@ import java.awt.RenderingHints;
 import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
-import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -69,6 +68,7 @@ import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.XMLImage;
 import org.apache.fop.render.AbstractRenderer;
+import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.pdf.CTMHelper;
 import org.apache.fop.traits.BorderProps;
@@ -99,9 +99,6 @@ import org.w3c.dom.Document;
  *
  */
 public abstract class Java2DRenderer extends AbstractRenderer implements Printable {
-
-    /** The MIME type for Java2D-Rendering */
-    public static final String MIME_TYPE = "application/X-Java2D";
 
     /** The scale factor for the image size, values: ]0 ; 1] */
     protected double scaleFactor = 1;
@@ -152,7 +149,7 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
      */
     public void setUserAgent(FOUserAgent foUserAgent) {
         super.setUserAgent(foUserAgent);
-        Java2DSVGHandler xmlHandler = new Java2DSVGHandler();
+        Java2DSVGHandler xmlHandler = new Java2DSVGHandler(getMimeType());
         userAgent.getXMLHandlerRegistry().addXMLHandler(xmlHandler);
         userAgent.setRendererOverride(this); // for document regeneration
     }
@@ -160,11 +157,6 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
     /** @return the FOUserAgent */
     public FOUserAgent getUserAgent() {
         return userAgent;
-    }
-
-    /** @see org.apache.fop.render.AbstractRenderer */
-    public String getMimeType() {
-        return MIME_TYPE;
     }
 
     /**
@@ -176,6 +168,11 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
         BufferedImage fontImage = new BufferedImage(100, 100,
                 BufferedImage.TYPE_INT_RGB);
         FontSetup.setup(fontInfo, fontImage.createGraphics());
+    }
+
+    /** @see org.apache.fop.render.Renderer#getGraphics2DAdapter() */
+    public Graphics2DAdapter getGraphics2DAdapter() {
+        return new Java2DGraphics2DAdapter(state);
     }
 
     /**
@@ -1046,7 +1043,7 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
      */
     public void renderDocument(Document doc, String ns, Rectangle2D pos) {
         RendererContext context;
-        context = new RendererContext(this, MIME_TYPE);
+        context = new RendererContext(this, getMimeType());
         context.setUserAgent(userAgent);
 
         context.setProperty(Java2DSVGHandler.JAVA2D_STATE, state);

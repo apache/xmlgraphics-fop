@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import org.apache.batik.ext.awt.image.codec.PNGEncodeParam;
 import org.apache.batik.ext.awt.image.codec.PNGImageEncoder;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.render.java2d.Java2DRenderer;
 
@@ -22,7 +23,7 @@ import org.apache.fop.render.java2d.Java2DRenderer;
 public class PNGRenderer extends Java2DRenderer {
 
     /** The MIME type for png-Rendering */
-    public static final String MIME_TYPE = "image/png";
+    public static final String MIME_TYPE = MimeConstants.MIME_PNG;
 
     /** The file syntax prefix, eg. "page" will output "page1.png" etc */
     private String filePrefix;
