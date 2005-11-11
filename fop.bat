@@ -39,6 +39,7 @@ rem set LOGLEVEL=-Dorg.apache.commons.logging.simplelog.defaultlog=INFO
 set LIBDIR=%LOCAL_FOP_HOME%lib
 
 set LOCALCLASSPATH=%LOCAL_FOP_HOME%build\fop.jar
+set LOCALCLASSPATH=%LOCALCLASSPATH%;%LOCAL_FOP_HOME%build\fop-sandbox.jar
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%LOCAL_FOP_HOME%build\fop-hyph.jar
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\xml-apis-1.3.02.jar
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\xercesImpl-2.7.1.jar

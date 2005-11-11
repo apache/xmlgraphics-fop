@@ -64,8 +64,6 @@ public class RendererFactory {
     private void registerStandardRenderers() {
         addRendererMaker(new org.apache.fop.render.pdf.PDFRendererMaker());
         addRendererMaker(new org.apache.fop.render.ps.PSRendererMaker());
-        addRendererMaker(new org.apache.fop.render.pcl.PCLRendererMaker());
-        addRendererMaker(new org.apache.fop.render.svg.SVGRendererMaker());
         addRendererMaker(new org.apache.fop.render.txt.TXTRendererMaker());
         addRendererMaker(new org.apache.fop.render.bitmap.PNGRendererMaker());
         addRendererMaker(new org.apache.fop.render.bitmap.TIFFRendererMaker());
@@ -77,7 +75,6 @@ public class RendererFactory {
     
     private void registerStandardEventHandlers() {
         addFOEventHandlerMaker(new org.apache.fop.render.rtf.RTFFOEventHandlerMaker());
-        addFOEventHandlerMaker(new org.apache.fop.render.mif.MIFFOEventHandlerMaker());
     }
     
     /**
