@@ -77,7 +77,7 @@ public class Java2DSVGHandler implements XMLHandler {
     
     /**
      * Create a new Java2D XML handler for use by the Java2D renderer.
-     * @param MIME type that this handler is used for
+     * @param mime MIME type that this handler is used for
      */
     public Java2DSVGHandler(String mime) {
         this.mimeType = mime;

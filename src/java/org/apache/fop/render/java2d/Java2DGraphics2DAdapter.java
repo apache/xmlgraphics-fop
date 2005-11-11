@@ -37,7 +37,7 @@ public class Java2DGraphics2DAdapter implements Graphics2DAdapter {
 
     /**
      * Main constructor
-     * @param renderer the Renderer instance to which this instance belongs
+     * @param state the state tracker for this rendering run
      */
     public Java2DGraphics2DAdapter(Java2DGraphicsState state) {
         this.state = state;
