@@ -164,6 +164,7 @@ list of possible build targets.
   <property name="src.dir" value="${basedir}/src"/>
   <property name="src.codegen.dir" value="${src.dir}/codegen"/>
   <property name="src.java.dir" value="${src.dir}/java"/>
+  <property name="src.sandbox.dir" value="${src.dir}/sandbox"/>
   <property name="src.viewer.resources.dir" value="${src.java.dir}/org/apache/fop/render/awt/viewer/resources"/>
   <property name="src.viewer.images.dir" value="${src.java.dir}/org/apache/fop/render/awt/viewer/images"/>
   <property name="xdocs.dir" value="${src.dir}/documentation/content/xdocs"/>
@@ -174,6 +175,7 @@ list of possible build targets.
   <property name="build.dir" value="${basedir}/build"/>
   <property name="build.gensrc.dir" value="${build.dir}/gensrc"/>
   <property name="build.classes.dir" value="${build.dir}/classes"/>
+  <property name="build.sandbox-classes.dir" value="${build.dir}/sandbox-classes"/>
   <property name="build.javadocs.dir" value="${build.dir}/javadocs"/>
   <property name="build.examples.dir" value="${build.dir}/examples"/>
 
@@ -383,6 +385,23 @@ list of possible build targets.
     <copy todir="${build.viewer.images.dir}">
       <fileset dir="${src.viewer.images.dir}"/>
     </copy>
+
+    <mkdir dir="${build.sandbox-classes.dir}"/>
+    <javac destdir="${build.sandbox-classes.dir}" fork="javac.fork" debug="${javac.debug}"
+           deprecation="${javac.deprecation}" optimize="${javac.optimize}"
+           source="${javac.source}" target="${javac.target}">
+      <src path="${src.sandbox.dir}"/>
+      <patternset includes="**/*.java"/>
+      <classpath>
+        <path refid="libs-build-classpath"/>
+        <pathelement location="${build.classes.dir}"/>
+      </classpath>
+    </javac>
+    <copy todir="${build.sandbox-classes.dir}">
+      <fileset dir="${src.sandbox.dir}">
+        <include name="META-INF/**"/>
+      </fileset>
+    </copy>
   </target>
 
 
@@ -433,16 +452,9 @@ list of possible build targets.
     <tstamp>
       <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
     </tstamp>
-    <pathconvert property="manifest-classpath" dirsep="/" pathsep=" " refid="libs-run-classpath">
-      <map from="${basedir}${file.separator}lib${file.separator}" to=""/>
-      <map from="${basedir}${file.separator}build${file.separator}fop.jar" to=""/>
-      <map from="${optional.lib.dir}${file.separator}" to=""/>
-    </pathconvert>
-
     <jar jarfile="${build.dir}/fop.jar" basedir="${build.classes.dir}" includes="org/**">
       <manifest>
         <attribute name="Main-Class" value="org.apache.fop.cli.Main"/>
-        <!--attribute name="Class-Path" value="${manifest-classpath}"/-->
         <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
         <section name="org/apache/fop/">
           <attribute name="Specification-Title" value="XSL-FO - Extensible Stylesheet Language"/>
@@ -458,10 +470,27 @@ list of possible build targets.
     </jar>
   </target>
 
+  <target name="uptodate-jar-sandbox" depends="compile-java">
+    <uptodate property="jar.sandbox.uptodate" targetfile="${build.dir}/fop-sandbox.jar">
+      <srcfiles dir= "${build.sandbox-classes.dir}"/>
+    </uptodate>
+  </target>
+
+  <target name="jar-sandbox" depends="compile-java,uptodate-jar-sandbox" description="Generates the sandbox jar file" unless="jar.sandbox.uptodate">
+    <tstamp>
+      <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
+    </tstamp>
+    <jar jarfile="${build.dir}/fop-sandbox.jar" basedir="${build.sandbox-classes.dir}">
+      <manifest>
+        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
+      </manifest>
+    </jar>
+  </target>
+
   <!-- =================================================================== -->
   <!-- Creates the class package                                           -->
   <!-- =================================================================== -->
-  <target name="package" depends="jar-main,jar-hyphenation" description="Generates the jar files"/>
+  <target name="package" depends="jar-main,jar-hyphenation,jar-sandbox" description="Generates the jar files"/>
   
   <target name="servlet" depends="package" description="Generates the WAR with the sample FOP servlet">
     <echo message="Creating the WAR file"/>
@@ -839,6 +868,7 @@ NOTE:
       </classpath>
       <sourcepath>
         <pathelement path="${src.java.dir}"/>
+        <pathelement path="${src.sandbox.dir}"/>
         <pathelement path="${build.gensrc.dir}"/>
         <path refid="graphics-configuration-adapter"/>
       </sourcepath>
