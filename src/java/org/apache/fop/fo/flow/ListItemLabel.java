@@ -49,11 +49,9 @@ public class ListItemLabel extends AbstractListItemPart {
         getFOEventHandler().endListLabel();
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
-    public String getName() {
-        return "fo:list-item-label";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "list-item-label";
     }
     
     /**

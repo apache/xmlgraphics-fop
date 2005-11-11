@@ -263,11 +263,9 @@ public class SimplePageMaster extends FObj {
         return referenceOrientation.getValue();
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
-    public String getName() {
-        return "fo:simple-page-master";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "simple-page-master";
     }
 
     /**

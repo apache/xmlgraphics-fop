@@ -79,11 +79,9 @@ public class InstreamForeignObject extends AbstractGraphics {
         }
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
-    public String getName() {
-        return "fo:instream-foreign-object";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "instream-foreign-object";
     }
     
     /**

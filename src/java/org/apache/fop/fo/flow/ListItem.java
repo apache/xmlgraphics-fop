@@ -207,11 +207,9 @@ public class ListItem extends FObj {
         return body;
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
-    public String getName() {
-        return "fo:list-item";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "list-item";
     }
     
     /**

@@ -127,16 +127,12 @@ public class BasicLink extends Inline {
         return externalDestination;
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
-    public String getName() {
-        return "fo:basic-link";
+    /** @see org.apache.fop.fo.FObj#getLocalName() */
+    public String getLocalName() {
+        return "basic-link";
     }
     
-    /**
-     * @see org.apache.fop.fo.FObj#getNameId()
-     */
+    /** @see org.apache.fop.fo.FObj#getNameId() */
     public int getNameId() {
         return FO_BASIC_LINK;
     }

@@ -164,9 +164,9 @@ public class RepeatablePageMasterAlternatives extends FObj
         }
     }
     
-    /** @see org.apache.fop.fo.FONode#getName() */
-    public String getName() {
-        return "fo:repeatable-page-master-alternatives";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "repeatable-page-master-alternatives";
     }
 
     /** @see org.apache.fop.fo.FObj#getNameId() */

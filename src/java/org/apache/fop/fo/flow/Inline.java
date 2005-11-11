@@ -189,11 +189,9 @@ public class Inline extends InlineLevel {
         return new InlineCharIterator(this, commonBorderPaddingBackground);
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
-    public String getName() {
-        return "fo:inline";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "inline";
     }
     
     /**

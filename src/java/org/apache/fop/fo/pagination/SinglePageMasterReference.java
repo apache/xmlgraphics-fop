@@ -109,9 +109,9 @@ public class SinglePageMasterReference extends FObj
         }
     }
     
-    /** @see org.apache.fop.fo.FONode#getName() */
-    public String getName() {
-        return "fo:single-page-master-reference";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "single-page-master-reference";
     }
 
     /** @see org.apache.fop.fo.FObj#getNameId() */

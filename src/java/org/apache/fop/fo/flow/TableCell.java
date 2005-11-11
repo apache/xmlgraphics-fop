@@ -383,11 +383,9 @@ public class TableCell extends TableFObj {
         return (endsRow == EN_TRUE);
     }
     
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
-    public String getName() {
-        return "fo:table-cell";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "table-cell";
     }
 
     /**

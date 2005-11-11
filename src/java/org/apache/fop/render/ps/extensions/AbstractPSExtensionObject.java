@@ -64,11 +64,16 @@ public abstract class AbstractPSExtensionObject extends FONode {
         }
     }
 
-    /** @see org.apache.fop.fo.XMLObj#getNameSpace() */
-    public String getNameSpace() {
+    /** @see org.apache.fop.fo.FONode#getNamespaceURI() */
+    public String getNamespaceURI() {
         return PSExtensionElementMapping.NAMESPACE;
     }
     
+    /**@see org.apache.fop.fo.FONode#getNormalNamespacePrefix() */
+    public String getNormalNamespacePrefix() {
+        return "fox";
+    }
+
     /** @see org.apache.fop.fo.FONode#processNode */
     public void processNode(String elementName, Locator locator, 
                             Attributes attlist, PropertyList propertyList)
@@ -92,5 +97,6 @@ public abstract class AbstractPSExtensionObject extends FONode {
     public ExtensionAttachment getExtensionAttachment() {
         return this.setupCode;
     }
+
 }
 

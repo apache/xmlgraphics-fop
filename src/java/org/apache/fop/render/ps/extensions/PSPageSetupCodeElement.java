@@ -44,9 +44,9 @@ public class PSPageSetupCodeElement extends AbstractPSExtensionObject {
         }
     }
     
-    /** @see org.apache.fop.fo.FONode#getName() */
-    public String getName() {
-        return "fox:ps-page-setup-code";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "ps-page-setup-code";
     }
 
 }

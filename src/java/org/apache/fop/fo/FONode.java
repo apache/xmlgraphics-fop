@@ -454,13 +454,42 @@ public abstract class FONode implements Cloneable {
     }
 
     /**
-     * Returns the name of the node
-     * @return the name of this node
+     * Returns the fully qualified name of the node
+     * @return the fully qualified name of this node
      */
     public String getName() {
-        return null;
+        return getName(getNormalNamespacePrefix());
     }
 
+    /**
+     * Returns the fully qualified name of the node
+     * @param prefix the namespace prefix to build the name with (may be null)
+     * @return the fully qualified name of this node
+     */
+    public String getName(String prefix) {
+        if (prefix != null) {
+            StringBuffer sb = new StringBuffer();
+            sb.append(prefix).append(':').append(getLocalName());
+            return sb.toString();
+        } else {
+            return getLocalName();
+        }
+    }
+
+    /**
+     * Returns the local name (i.e. without namespace prefix) of the node
+     * @return the local name of this node
+     */
+    public abstract String getLocalName();
+
+    /** @return the normally ussed namespace prefix for this kind of node (ex. "fo" for XSL-FO) */
+    public abstract String getNormalNamespacePrefix();
+    
+    /** @return the namespace URI for this node */
+    public String getNamespaceURI() {
+        return null;
+    }
+    
     /**
      * Returns the Constants class integer value of this node
      * @return the integer enumeration of this FO (e.g., FO_ROOT)

@@ -49,11 +49,9 @@ public class ListItemBody extends AbstractListItemPart {
         getFOEventHandler().endListBody();
     }
     
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
-    public String getName() {
-        return "fo:list-item-body";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "list-item-body";
     }
     
     /**

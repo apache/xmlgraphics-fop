@@ -76,11 +76,9 @@ public class MultiCase extends FObj {
         return startingState;
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
-    public String getName() {
-        return "fo:multi-case";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "multi-case";
     }
 
     /**

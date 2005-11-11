@@ -54,16 +54,12 @@ public class TableFooter extends TableBody {
 //      convertCellsToRows();
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
-    public String getName() {
-        return "fo:table-footer";
+    /** @see org.apache.fop.fo.FObj#getLocalName() */
+    public String getLocalName() {
+        return "table-footer";
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getNameId()
-     */
+    /** @see org.apache.fop.fo.FObj#getNameId() */
     public int getNameId() {
         return FO_TABLE_FOOTER;
     }

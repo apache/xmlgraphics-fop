@@ -86,10 +86,8 @@ public class PlanElement extends PlanObj {
         return doc;
     }
 
-    /**
-     * @see org.apache.fop.fo.XMLObj#getDocumentNamespace()
-     */
-    public String getDocumentNamespace() {
+    /** @see org.apache.fop.fo.FONode#getNamespaceURI() */
+    public String getNamespaceURI() {
         if (svgDoc == null) {
             return PlanElementMapping.NAMESPACE;
         }

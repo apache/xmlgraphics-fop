@@ -596,6 +596,11 @@ public class FOText extends FONode {
         return textDecoration; 
     }
 
+    /** @return the baseline-shift property */
+    public Length getBaseLineShift() {
+        return baselineShift;
+    }
+
     /** @see java.lang.Object#toString() */
     public String toString() {
         StringBuffer sb = new StringBuffer(super.toString());
@@ -603,8 +608,14 @@ public class FOText extends FONode {
         return sb.toString();
     }
  
-    public Length getBaseLineShift() {
-        return baselineShift;
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return null;
+    }
+
+    /** @see org.apache.fop.fo.FONode#getNormalNamespacePrefix() */
+    public String getNormalNamespacePrefix() {
+        return null;
     }
     
 }

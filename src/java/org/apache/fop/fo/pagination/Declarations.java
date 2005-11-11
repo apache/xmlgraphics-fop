@@ -106,8 +106,8 @@ public class Declarations extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#getName()
      */
-    public String getName() {
-        return "fo:declarations";
+    public String getLocalName() {
+        return "declarations";
     }
     
     /**

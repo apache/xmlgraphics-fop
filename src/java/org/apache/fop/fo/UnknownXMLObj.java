@@ -61,11 +61,14 @@ public class UnknownXMLObj extends XMLObj {
         this.namespace = space;
     }
 
-    /**
-     * @see XMLObj#getNameSpace
-     */
-    public String getNameSpace() {
+    /** @see org.apache.fop.fo.FONode#getNamespaceURI() */
+    public String getNamespaceURI() {
         return this.namespace;
+    }
+
+    /** @see org.apache.fop.fo.FONode#getNormalNamespacePrefix() */
+    public String getNormalNamespacePrefix() {
+        return null; //We don't know that in this case.
     }
 
     /**
@@ -88,5 +91,6 @@ public class UnknownXMLObj extends XMLObj {
         }
         super.addCharacters(data, start, length, pList, locator);
     }
+
 }
 

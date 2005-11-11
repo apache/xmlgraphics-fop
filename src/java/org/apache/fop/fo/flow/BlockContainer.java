@@ -259,11 +259,9 @@ public class BlockContainer extends FObj {
         return height;
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#getName()
-     */
-    public String getName() {
-        return "fo:block-container";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "block-container";
     }
     
     /**

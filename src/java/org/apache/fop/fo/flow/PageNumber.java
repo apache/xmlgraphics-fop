@@ -197,9 +197,9 @@ public class PageNumber extends FObj {
         return lineHeight;
     }
     
-   /** @see org.apache.fop.fo.FONode#getName() */
-    public String getName() {
-        return "fo:page-number";
+    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    public String getLocalName() {
+        return "page-number";
     }
 
     /** @see org.apache.fop.fo.FObj#getNameId() */
