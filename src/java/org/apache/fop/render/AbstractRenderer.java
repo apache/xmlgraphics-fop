@@ -379,9 +379,6 @@ public abstract class AbstractRenderer
         int saveSpanBPPos = saveBPPos;
         for (int count = 0; count < spans.size(); count++) {
             span = (Span) spans.get(count);
-            int offset = (mr.getWidth()
-                    - (mr.getColumnCount() - 1) * mr.getColumnGap())
-                    / mr.getColumnCount() + mr.getColumnGap();
             for (int c = 0; c < span.getColumnCount(); c++) {
                 NormalFlow flow = (NormalFlow) span.getNormalFlow(c);
 
@@ -389,7 +386,7 @@ public abstract class AbstractRenderer
                     currentBPPosition = saveSpanBPPos;
                     renderFlow(flow);
                     currentIPPosition += flow.getIPD();
-                    currentIPPosition += offset;
+                    currentIPPosition += mr.getColumnGap();
                 }
             }
             currentIPPosition = saveIPPos;
