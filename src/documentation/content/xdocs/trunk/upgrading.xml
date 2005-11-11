@@ -56,6 +56,10 @@
           Extensions written for version 0.20.5 will not work with the new code!
         </li>
         <li>
+          The PCL Renderer and the MIF Handler have not been resurrected, yet! They are currently non-functional
+          and hope for someone to step up and reimplement them.
+        </li>
+        <li>
           By looking at the <a href="../compliance.html">Compliance page</a> you might get the impression
           that the new code is much more advanced than version 0.20.5. That's true but there are still
           a few things that may not be handled as gracefully by the new code as by version 0.20.5.
