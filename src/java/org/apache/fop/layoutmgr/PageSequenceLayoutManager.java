@@ -191,7 +191,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 needColumnBalancing = (childLC.getNextSpan() == Constants.EN_ALL);
             }
             if (needColumnBalancing) {
-                AbstractBreaker.log.debug("Column balancing necessary for the next element list!!!");
+                AbstractBreaker.log.debug(
+                        "Column balancing necessary for the next element list!!!");
             }
             return nextSequenceStartsOn;
         }
@@ -321,7 +322,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 } else {
                     newStartPos = 0;
                 }
-                AbstractBreaker.log.debug("Restarting at " + restartPoint + ", new start position: " + newStartPos);
+                AbstractBreaker.log.debug("Restarting at " + restartPoint 
+                        + ", new start position: " + newStartPos);
 
                 //Handle page break right here to avoid any side-effects
                 handleBreakTrait(EN_PAGE);
@@ -623,7 +625,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         } else if (breakVal == Constants.EN_NONE) {
             curPV.createSpan(false);
             return;
-        } else if (breakVal == Constants.EN_COLUMN || breakVal == -1) {
+        } else if (breakVal == Constants.EN_COLUMN || breakVal <= 0) {
             if (curPV.getCurrentSpan().hasMoreFlows()) {
                 curPV.getCurrentSpan().moveToNextFlow();
             } else {
