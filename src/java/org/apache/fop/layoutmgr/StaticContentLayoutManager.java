@@ -321,7 +321,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         protected void doPhase3(PageBreakingAlgorithm alg, int partCount, 
                 BlockSequence originalList, BlockSequence effectiveList) {
             //Directly add areas after finding the breaks
-            addAreas(alg, partCount, originalList, effectiveList);
+            this.addAreas(alg, partCount, originalList, effectiveList);
             if (partCount > 1) {
                 overflow = true;
             }
