@@ -53,12 +53,12 @@
     </p>
     <source><![CDATA[
 import org.apache.fop.apps.Fop;
-import org.apache.fop.fo.Constants;
+import org.apache.fop.apps.MimeConstants;
 
 /*..*/
 
 // Step 1: Construct fop with desired output format
-Fop fop = new Fop(Constants.RENDER_PDF);
+Fop fop = new Fop(MimeConstants.MIME_PDF);
 
 // Step 2: Setup output stream.
 // Note: Using BufferedOutputStream for performance reasons (helpful with FileOutputStreams).
@@ -261,7 +261,7 @@ try {
     </p>
     <source><![CDATA[
 FOUserAgent userAgent = new FOUserAgent();
-Fop fop = new Fop(Constants.RENDER_PS, userAgent);]]></source>
+Fop fop = new Fop(MimeConstants.MIME_POSTSCRIPT, userAgent);]]></source>
     <p>
       You can do all sorts of things on the user agent:
     </p>

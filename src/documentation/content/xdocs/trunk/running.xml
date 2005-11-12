@@ -147,7 +147,10 @@ Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl
   -at outfile       representation of area tree as XML (outfile req'd)
   -print            input file will be rendered and sent to the printer
                     see options with "-print help"
-
+  -out mime outfile input will be rendered using the given MIME type
+                    (outfile req'd) Example: "-out application/pdf D:\out.pdf"
+                    (Tip: "-out list" prints the list of supported MIME types)
+                    
   -foout outfile    input will only be XSL transformed. The intermediate
                     XSL-FO file is saved and no rendering is performed.
                     (Only available if you use -xml and -xsl parameters)
