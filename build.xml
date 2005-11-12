@@ -69,6 +69,7 @@ list of possible build targets.
     <include name="STATUS"/>
     <include name="fop.bat"/>
     <include name="fop"/>
+    <exclude name="docs/**"/>
     <exclude name="src/**"/>
     <exclude name="dist/**"/>
     <exclude name="build/**"/>
@@ -96,7 +97,6 @@ list of possible build targets.
     <exclude name="build/**"/>
     <include name="src/**"/>
     <include name="conf/**"/>
-    <include name="docs/**"/>
     <include name="hyph/**"/>
     <patternset refid="dist.lib"/>
     <include name="lib/servlet*"/>
