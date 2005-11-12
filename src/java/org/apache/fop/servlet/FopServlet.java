@@ -18,7 +18,6 @@
 
 package org.apache.fop.servlet;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintWriter;
 
@@ -34,6 +33,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.impl.SimpleLog;
 
 //FOP
