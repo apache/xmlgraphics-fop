@@ -38,6 +38,7 @@ import javax.xml.transform.sax.SAXResult;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FormattingResults;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.apps.PageSequenceResults;
 
 /**
@@ -58,7 +59,7 @@ public class ExampleFO2PDF {
         
         try {
             // Construct fop with desired output format
-            Fop fop = new Fop(Fop.RENDER_PDF);
+            Fop fop = new Fop(MimeConstants.MIME_PDF);
     
             // Setup output stream.  Note: Using BufferedOutputStream
             // for performance reasons (helpful with FileOutputStreams).

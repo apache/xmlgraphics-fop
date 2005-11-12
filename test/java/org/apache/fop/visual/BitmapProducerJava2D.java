@@ -34,6 +34,7 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.commons.io.IOUtils;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fo.Constants;
 
 /**
@@ -69,7 +70,7 @@ public class BitmapProducerJava2D extends AbstractBitmapProducer implements Conf
             OutputStream out = new FileOutputStream(outputFile);
             out = new BufferedOutputStream(out);
             try {
-                Fop fop = new Fop(Constants.RENDER_PNG, userAgent);
+                Fop fop = new Fop(MimeConstants.MIME_PNG, userAgent);
                 fop.setOutputStream(out);
                 SAXResult res = new SAXResult(fop.getDefaultHandler());
                 

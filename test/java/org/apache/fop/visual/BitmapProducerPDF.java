@@ -18,7 +18,7 @@
 
 package org.apache.fop.visual;
 
-import org.apache.fop.fo.Constants;
+import org.apache.fop.apps.MimeConstants;
 
 /**
  * BitmapProducer implementation that uses the PDFRenderer and an external converter 
@@ -34,8 +34,8 @@ public class BitmapProducerPDF extends AbstractPSPDFBitmapProducer {
     }
     
     /** @see org.apache.fop.visual.AbstractPSPDFBitmapProducer#getTargetFormat() */
-    protected int getTargetFormat() {
-        return Constants.RENDER_PDF;
+    protected String getTargetFormat() {
+        return MimeConstants.MIME_PDF;
     }
     
 }

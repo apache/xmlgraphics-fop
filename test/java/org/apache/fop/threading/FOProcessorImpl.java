@@ -37,7 +37,7 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.Constants;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.avalon.framework.activity.Initializable;
 
 public class FOProcessorImpl extends AbstractLogEnabled
@@ -84,7 +84,7 @@ public class FOProcessorImpl extends AbstractLogEnabled
 
     public void process(InputStream in, Templates templates, OutputStream out) 
                 throws org.apache.fop.apps.FOPException, java.io.IOException {
-        Fop fop = new Fop(Constants.RENDER_PDF);
+        Fop fop = new Fop(MimeConstants.MIME_PDF);
         fop.setOutputStream(out);
 
         try {

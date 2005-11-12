@@ -20,7 +20,7 @@ package org.apache.fop.render.ps;
 
 import java.io.IOException;
 
-import org.apache.fop.apps.Fop;
+import org.apache.fop.Version;
 
 /**
  * This class is a wrapper for the <tt>AbstractPSDocumentGraphics2D</tt> that
@@ -54,7 +54,7 @@ public class EPSDocumentGraphics2D extends AbstractPSDocumentGraphics2D {
         //PostScript Header
         gen.writeln(DSCConstants.PS_ADOBE_30 + " " + DSCConstants.EPSF_30);
         gen.writeDSCComment(DSCConstants.CREATOR, 
-                    new String[] {"Apache FOP " + Fop.getVersion() 
+                    new String[] {"Apache FOP " + Version.getVersion() 
                         + ": EPS Transcoder for SVG"});
         gen.writeDSCComment(DSCConstants.CREATION_DATE, 
                     new Object[] {new java.util.Date()});

@@ -32,7 +32,8 @@ import org.apache.fop.fo.FOTreeBuilder;
  * Primary class that activates the FOP process for embedded usage.
  * <P>
  * JAXP is the standard method of embedding FOP in Java programs.
- * Please check our <a href="http://xmlgraphics.apache.org/fop/embedding.html">embedding page</a>
+ * Please check our 
+ * <a href="http://xmlgraphics.apache.org/fop/trunk/embedding.html">embedding page</a>
  * for samples (these are also available within the distribution in 
  * FOP_DIR\examples\embedding)
  * <P>
@@ -40,6 +41,9 @@ import org.apache.fop.fo.FOTreeBuilder;
  * process.  For example, a specific Renderer object can be specified, 
  * also ElementMappings which determine elements in the FO that can be
  * processed) can be added.
+ * <P>
+ * At the moment, it is recommended not to reuse an instance of this
+ * class for more than one rendering run.
  */
 public class Fop implements Constants {
 
@@ -103,6 +107,8 @@ public class Fop implements Constants {
      * </ul>
      * @param ua FOUserAgent object
      * @throws IllegalArgumentException if an unsupported renderer type was requested.
+     * @deprecated Use {@link org.apache.fop.apps.Fop#Fop(java.lang.String, FOUserAgent)} instead!
+     *             This constructor will be removed.
      */
     public Fop(int renderType, FOUserAgent ua) {
         this(getMimeTypeForRenderType(renderType), ua);
@@ -111,6 +117,8 @@ public class Fop implements Constants {
     /**
      * Constructor that creates a default FOUserAgent
      * @see org.apache.fop.apps.Fop#Fop(int, FOUserAgent)
+     * @deprecated Use {@link org.apache.fop.apps.Fop#Fop(java.lang.String)} instead!
+     *             This constructor will be removed.
      */
     public Fop(int renderType) {
         this(renderType, null);
@@ -197,6 +205,7 @@ public class Fop implements Constants {
     /**
      * Get the version of FOP
      * @return the version string
+     * @deprecated Use {@link org.apache.fop.Version#getVersion()} instead!
      */
     public static String getVersion() {
         return org.apache.fop.Version.getVersion();

@@ -34,9 +34,9 @@ import java.net.MalformedURLException;
 import java.util.List;
 
 // FOP
-import org.apache.fop.fo.Constants;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.cli.InputHandler;
 
 import org.apache.commons.logging.impl.SimpleLog;
@@ -283,6 +283,7 @@ public class Fop extends Task {
             case Project.MSG_WARN   : logLevel = SimpleLog.LOG_LEVEL_WARN; break;
             case Project.MSG_ERR    : logLevel = SimpleLog.LOG_LEVEL_ERROR; break;
             case Project.MSG_VERBOSE: logLevel = SimpleLog.LOG_LEVEL_DEBUG; break;
+            default: logLevel = SimpleLog.LOG_LEVEL_INFO;
         }
         SimpleLog logger = new SimpleLog("FOP/Anttask");
         logger.setLevel(logLevel);
@@ -329,68 +330,62 @@ class FOPTaskStarter {
         this.task = task;
     }
 
-    private int determineRenderer(String format) {
-        if ((format == null)
-                || format.equalsIgnoreCase("application/pdf")
-                || format.equalsIgnoreCase("pdf")) {
-            return Constants.RENDER_PDF;
-        } else if (format.equalsIgnoreCase("application/postscript")
-                || format.equalsIgnoreCase("ps")) {
-            return Constants.RENDER_PS;
-        } else if (format.equalsIgnoreCase("application/vnd.mif")
-                || format.equalsIgnoreCase("mif")) {
-            return Constants.RENDER_MIF;
-        } else if (format.equalsIgnoreCase("application/msword")
-                || format.equalsIgnoreCase("application/rtf")
-                || format.equalsIgnoreCase("rtf")) {
-            return Constants.RENDER_RTF;
-        } else if (format.equalsIgnoreCase("application/vnd.hp-PCL")
-                || format.equalsIgnoreCase("pcl")) {
-            return Constants.RENDER_PCL;
-        } else if (format.equalsIgnoreCase("text/plain")
-                || format.equalsIgnoreCase("txt")) {
-            return Constants.RENDER_TXT;
-        } else if (format.equalsIgnoreCase("text/xml")
-                || format.equalsIgnoreCase("at")
-                || format.equalsIgnoreCase("xml")) {
-            return Constants.RENDER_XML;
-        } else if (format.equalsIgnoreCase("image/tiff")
-                || format.equalsIgnoreCase("tiff")
-                || format.equalsIgnoreCase("tif")) {
-            return Constants.RENDER_TIFF;
-        } else if (format.equalsIgnoreCase("image/png")
-                || format.equalsIgnoreCase("png")) {
-            return Constants.RENDER_PNG;
-        } else {
-            String err = "Couldn't determine renderer to use: " + format;
-            throw new BuildException(err);
+    private static final String[][] SHORT_NAMES = {
+        {"pdf",  MimeConstants.MIME_PDF},
+        {"ps",   MimeConstants.MIME_POSTSCRIPT},
+        {"mif",  MimeConstants.MIME_MIF},
+        {"rtf",  MimeConstants.MIME_RTF},
+        {"pcl",  MimeConstants.MIME_PCL},
+        {"txt",  MimeConstants.MIME_PLAIN_TEXT},
+        {"at",   MimeConstants.MIME_FOP_AREA_TREE},
+        {"xml",  MimeConstants.MIME_FOP_AREA_TREE},
+        {"tiff", MimeConstants.MIME_TIFF},
+        {"tif",  MimeConstants.MIME_TIFF},
+        {"png",  MimeConstants.MIME_PNG}
+    };
+
+    private String normalizeOutputFormat(String format) {
+        for (int i = 0; i < SHORT_NAMES.length; i++) {
+            if (SHORT_NAMES[i][0].equals(format)) {
+                return SHORT_NAMES[i][1];
+            }
         }
+        return format; //no change
     }
 
-    private String determineExtension(int renderer) {
-        switch (renderer) {
-            case Constants.RENDER_PDF:
-                return ".pdf";
-            case Constants.RENDER_PS:
-                return ".ps";
-            case Constants.RENDER_MIF:
-                return ".mif";
-            case Constants.RENDER_RTF:
-                return ".rtf";
-            case Constants.RENDER_PCL:
-                return ".pcl";
-            case Constants.RENDER_TXT:
-                return ".txt";
-            case Constants.RENDER_XML:
-                return ".xml";
-            case Constants.RENDER_TIFF:
-                return ".tiff";
-            case Constants.RENDER_PNG:
-                return ".png";
-            default:
-                String err = "Unknown renderer: " + renderer;
-                throw new BuildException(err);
+    private static final String[][] EXTENSIONS = {
+        {MimeConstants.MIME_FOP_AREA_TREE,   ".at.xml"},
+        {MimeConstants.MIME_FOP_AWT_PREVIEW, null},
+        {MimeConstants.MIME_FOP_PRINT,       null},
+        {MimeConstants.MIME_PDF,             ".pdf"},
+        {MimeConstants.MIME_POSTSCRIPT,      ".ps"},
+        {MimeConstants.MIME_PCL,             ".pcl"},
+        {MimeConstants.MIME_PCL_ALT,         ".pcl"},
+        {MimeConstants.MIME_PLAIN_TEXT,      ".txt"},
+        {MimeConstants.MIME_RTF,             ".rtf"},
+        {MimeConstants.MIME_RTF_ALT1,        ".rtf"},
+        {MimeConstants.MIME_RTF_ALT2,        ".rtf"},
+        {MimeConstants.MIME_MIF,             ".mif"},
+        {MimeConstants.MIME_SVG,             ".svg"},
+        {MimeConstants.MIME_PNG,             ".png"},
+        {MimeConstants.MIME_JPEG,            ".jpg"},
+        {MimeConstants.MIME_TIFF,            ".tif"},
+        {MimeConstants.MIME_XSL_FO,          ".fo"}
+    };
+    
+    private String determineExtension(String outputFormat) {
+        for (int i = 0; i < EXTENSIONS.length; i++) {
+            if (EXTENSIONS[i][0].equals(outputFormat)) {
+                String ext = EXTENSIONS[i][1];
+                if (ext == null) {
+                    throw new RuntimeException("Output format '" 
+                            + outputFormat + "' does not produce a file.");
+                } else {
+                    return ext;
+                }
+            }
         }
+        return ".unk"; //unknown
     }
 
     private File replaceExtension(File file, String expectedExt,
@@ -432,8 +427,8 @@ class FOPTaskStarter {
 
         task.log("Using base URL: " + baseURL, Project.MSG_DEBUG);
 
-        int rint = determineRenderer(task.getFormat());
-        String newExtension = determineExtension(rint);
+        String outputFormat = normalizeOutputFormat(task.getFormat());
+        String newExtension = determineExtension(outputFormat);
 
         // actioncount = # of fofiles actually processed through FOP
         int actioncount = 0;
@@ -455,7 +450,7 @@ class FOPTaskStarter {
                 // output file is older than input file
                 if (task.getForce() || !outf.exists() 
                     || (task.getFofile().lastModified() > outf.lastModified() )) {
-                    render(task.getFofile(), outf, rint);
+                    render(task.getFofile(), outf, outputFormat);
                     actioncount++;
                 } else if (outf.exists() 
                         && (task.getFofile().lastModified() <= outf.lastModified() )) {
@@ -507,7 +502,7 @@ class FOPTaskStarter {
                 // output file is older than input file
                 if (task.getForce() || !outf.exists() 
                     || (f.lastModified() > outf.lastModified() )) {
-                    render(f, outf, rint);
+                    render(f, outf, outputFormat);
                     actioncount++;
                 } else if (outf.exists() && (f.lastModified() <= outf.lastModified() )) {
                     skippedcount++;
@@ -526,7 +521,7 @@ class FOPTaskStarter {
     }
 
     private void render(File foFile, File outFile,
-                        int renderer) throws FOPException {
+                        String outputFormat) throws FOPException {
         InputHandler inputHandler = new InputHandler(foFile);
 
         OutputStream out = null;
@@ -543,8 +538,8 @@ class FOPTaskStarter {
         try {
             FOUserAgent userAgent = new FOUserAgent();
             userAgent.setBaseURL(this.baseURL);
-            org.apache.fop.apps.Fop fop = 
-                new org.apache.fop.apps.Fop(renderer, userAgent);
+            org.apache.fop.apps.Fop fop = new org.apache.fop.apps.Fop(
+                    outputFormat, userAgent);
             fop.setOutputStream(out);
             inputHandler.render(fop);
         } catch (Exception ex) {

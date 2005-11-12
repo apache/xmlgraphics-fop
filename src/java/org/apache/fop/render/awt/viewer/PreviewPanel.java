@@ -38,9 +38,9 @@ import javax.swing.border.EmptyBorder;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.PageViewport;
 
-import org.apache.fop.fo.Constants;
 import org.apache.fop.render.awt.AWTRenderer;
 
 
@@ -304,7 +304,7 @@ public class PreviewPanel extends JPanel {
             }
 
             //Always recreate the Fop instance. It is a use-once only.
-            fop = new Fop(Constants.RENDER_AWT, foUserAgent);
+            fop = new Fop(MimeConstants.MIME_FOP_AWT_PREVIEW, foUserAgent);
 
             pagePanels = null;
 

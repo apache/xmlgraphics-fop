@@ -35,6 +35,8 @@ import javax.xml.transform.sax.SAXResult;
 // FOP
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.MimeConstants;
+
 import embedding.model.ProjectTeam;
 
 /**
@@ -56,7 +58,7 @@ public class ExampleObj2PDF {
                 throws IOException, FOPException, TransformerException {
                     
         // Construct fop with desired output format
-        Fop fop = new Fop(Fop.RENDER_PDF);
+        Fop fop = new Fop(MimeConstants.MIME_PDF);
 
         // Setup output
         OutputStream out = new java.io.FileOutputStream(pdf);

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import javax.xml.transform.sax.SAXResult;
 
 //FOP
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.MimeConstants;
 
 /**
  * This class demonstrates the conversion of an XML file to PDF using 
@@ -65,7 +66,7 @@ public class ExampleXML2PDF {
             System.out.println("Transforming...");
             
             // Construct fop with desired output format
-            Fop fop = new Fop(Fop.RENDER_PDF);
+            Fop fop = new Fop(MimeConstants.MIME_PDF);
             
             // Setup output
             OutputStream out = new java.io.FileOutputStream(pdffile);

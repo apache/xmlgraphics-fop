@@ -99,9 +99,9 @@ public abstract class AbstractPSPDFBitmapProducer extends AbstractBitmapProducer
     protected abstract String getTargetExtension();
     
     /**
-     * @return the output format constant for the FOP renderer, i.e. one of Constants.RENDER_*.
+     * @return the output format for the FOP renderer, i.e. a MIME type.
      */
-    protected abstract int getTargetFormat();
+    protected abstract String getTargetFormat();
     
     /** @see org.apache.fop.visual.BitmapProducer */
     public BufferedImage produce(File src, ProducerContext context) {
