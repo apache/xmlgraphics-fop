@@ -1054,7 +1054,16 @@ NOTE:
     <chmod file="${dist.bin.result.dir}/fop" perm="ugo+rx"/>
 
     <zip zipfile="${name}-${version}-bin.zip" basedir="${dist.bin.dir}" includes="**"/>
-    <tar tarfile="${name}-${version}-bin.tar" basedir="${dist.bin.dir}" includes="**"/>
+    <tar longfile="gnu"
+         destfile="${name}-${version}-bin.tar" >
+      <tarfileset dir="${dist.bin.dir}" mode="755">
+        <include name="${name}-${version}/fop"/>
+      </tarfileset>
+      <tarfileset dir="${dist.bin.dir}">
+        <include name="**"/>
+        <exclude name="${name}-${version}/fop"/>
+      </tarfileset>
+    </tar>
     <gzip zipfile="${name}-${version}-bin.tar.gz" src="${name}-${version}-bin.tar"/>
     <delete file="${name}-${version}-bin.tar"/>
   </target>
@@ -1070,11 +1079,19 @@ NOTE:
     </copy>
     <mkdir dir="${dist.src.result.dir}/build"/>
     <copy todir="${dist.src.result.dir}/build" file="build/fop.jar"/>
-    <chmod file="${dist.src.result.dir}/build.sh" perm="ugo+rx"/>
     <chmod file="${dist.src.result.dir}/fop" perm="ugo+rx"/>
 
     <zip zipfile="${name}-${version}-src.zip" basedir="${dist.src.dir}" includes="**"/>
-    <tar tarfile="${name}-${version}-src.tar" basedir="${dist.src.dir}" includes="**"/>
+    <tar longfile="gnu"
+         destfile="${name}-${version}-src.tar" >
+      <tarfileset dir="${dist.src.dir}" mode="755">
+        <include name="${name}-${version}/fop"/>
+      </tarfileset>
+      <tarfileset dir="${dist.src.dir}">
+        <include name="**"/>
+        <exclude name="${name}-${version}/fop"/>
+      </tarfileset>
+    </tar>
     <gzip zipfile="${name}-${version}-src.tar.gz" src="${name}-${version}-src.tar"/>
     <delete file="${name}-${version}-src.tar"/>
   </target>
