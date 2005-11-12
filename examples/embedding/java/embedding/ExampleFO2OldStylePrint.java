@@ -36,6 +36,7 @@ import javax.xml.transform.sax.SAXResult;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.print.PrintRenderer;
 
 /**
@@ -63,7 +64,7 @@ public class ExampleFO2OldStylePrint {
             userAgent.setRendererOverride(renderer);
             
             // Construct fop with desired output format
-            Fop fop = new Fop(Fop.RENDER_PRINT, userAgent);
+            Fop fop = new Fop(MimeConstants.MIME_FOP_PRINT, userAgent);
             //Note: the first parameter here has no effect if we use 
             //FOUserAgent.setRendererOverride()
 

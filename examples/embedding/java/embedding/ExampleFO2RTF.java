@@ -36,6 +36,7 @@ import javax.xml.transform.sax.SAXResult;
 // FOP
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.MimeConstants;
 
 /**
  * This class demonstrates the conversion of an FO file to RTF using FOP.
@@ -58,7 +59,7 @@ public class ExampleFO2RTF {
         
         try {
             // Construct fop with desired output format
-            Fop fop = new Fop(Fop.RENDER_RTF);
+            Fop fop = new Fop(MimeConstants.MIME_RTF);
     
             // Setup output stream.  Note: Using BufferedOutputStream
             // for performance reasons (helpful with FileOutputStreams).

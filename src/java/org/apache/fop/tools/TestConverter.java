@@ -27,6 +27,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.cli.InputHandler;
 import org.apache.fop.tools.anttasks.FileCompare;
 import org.w3c.dom.Document;
@@ -34,7 +35,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.apache.commons.logging.impl.SimpleLog;
-
 
 /**
  * TestConverter is used to process a set of tests specified in
@@ -45,12 +45,11 @@ import org.apache.commons.logging.impl.SimpleLog;
  * The area tree can be used for automatic comparisons between different
  * versions of FOP or the pdf can be view for manual checking and
  * pdf rendering.
- *
  */
 public class TestConverter {
     
     private boolean failOnly = false;
-    private int renderType = Fop.RENDER_XML;
+    private String outputFormat = MimeConstants.MIME_FOP_AREA_TREE;
     private File destdir;
     private File compare = null;
     private String baseDir = "./";
@@ -84,11 +83,11 @@ public class TestConverter {
             if (args[count].equals("-failOnly")) {
                 tc.setFailOnly(true);
             } else if (args[count].equals("-pdf")) {
-                tc.setRenderType(Fop.RENDER_PDF);
+                tc.setOutputFormat(MimeConstants.MIME_PDF);
             } else if (args[count].equals("-rtf")) {
-                tc.setRenderType(Fop.RENDER_RTF);
+                tc.setOutputFormat(MimeConstants.MIME_RTF);
             } else if (args[count].equals("-ps")) {
-                tc.setRenderType(Fop.RENDER_PS);
+                tc.setOutputFormat(MimeConstants.MIME_POSTSCRIPT);
             } else if (args[count].equals("-d")) {
                 tc.setDebug(true);
             } else if (args[count].equals("-b")) {
@@ -115,11 +114,11 @@ public class TestConverter {
     }
 
     /**
-     * Controls output type to generate
-     * @param renderType fo.Constants output constant (RENDER_PDF, RENDER_XML, etc.)
+     * Controls output format to generate
+     * @param outputFormat the MIME type of the output format
      */
-    public void setRenderType(int renderType) {
-        this.renderType = renderType;
+    public void setOutputFormat(String outputFormat) {
+        this.outputFormat = outputFormat;
     }
 
     /**
@@ -169,8 +168,7 @@ public class TestConverter {
             destdir = new File(baseDir + "/" + dest);
             destdir.mkdirs();
             File f = new File(baseDir + "/" + fname);
-            DocumentBuilderFactory factory =
-                DocumentBuilderFactory.newInstance();
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = factory.newDocumentBuilder();
             Document doc = db.parse(f);
 
@@ -183,8 +181,8 @@ public class TestConverter {
             testsuite = doc.getDocumentElement();
 
             if (testsuite.hasAttributes()) {
-                String profile =
-                    testsuite.getAttributes().getNamedItem("profile").getNodeValue();
+                String profile
+                    = testsuite.getAttributes().getNamedItem("profile").getNodeValue();
                 logger.debug("testing test suite:" + profile);
             }
 
@@ -210,8 +208,8 @@ public class TestConverter {
      */
     protected void runTestCase(Node tcase) {
         if (tcase.hasAttributes()) {
-            String profile =
-                tcase.getAttributes().getNamedItem("profile").getNodeValue();
+            String profile
+                = tcase.getAttributes().getNamedItem("profile").getNodeValue();
             logger.debug("testing profile:" + profile);
         }
 
@@ -245,8 +243,8 @@ public class TestConverter {
         Node result = locateResult(testcase, id);
         boolean pass = false;
         if (result != null) {
-            String agreement =
-                result.getAttributes().getNamedItem("agreement").getNodeValue();
+            String agreement
+                = result.getAttributes().getNamedItem("agreement").getNodeValue();
             pass = agreement.equals("full");
         }
 
@@ -288,7 +286,7 @@ public class TestConverter {
 
             FOUserAgent userAgent = new FOUserAgent();
             userAgent.setBaseURL(baseURL);
-            Fop fop = new Fop(renderType, userAgent);
+            Fop fop = new Fop(outputFormat, userAgent);
 
             userAgent.getRendererOptions().put("fineDetail", new Boolean(false));
             userAgent.getRendererOptions().put("consistentOutput", new Boolean(true));
@@ -305,8 +303,7 @@ public class TestConverter {
             OutputStream outStream = new java.io.BufferedOutputStream(
                                  new java.io.FileOutputStream(outputFile));
             fop.setOutputStream(outStream);
-            logger.debug("ddir:" + destdir + " on:" + 
-                              outputFile.getName());
+            logger.debug("ddir:" + destdir + " on:" + outputFile.getName());
             inputHandler.render(fop);
             outStream.close();
 
@@ -327,11 +324,11 @@ public class TestConverter {
      * Return a suitable file extension for the output format.
      */
     private String makeResultExtension() {
-        if (renderType == Fop.RENDER_PDF) {
+        if (MimeConstants.MIME_PDF.equals(outputFormat)) {
            return ".pdf";
-        } else if (renderType == Fop.RENDER_RTF) {
+        } else if (MimeConstants.MIME_RTF.equals(outputFormat)) {
            return ".rtf";
-        } else if (renderType == Fop.RENDER_PS) {
+        } else if (MimeConstants.MIME_POSTSCRIPT.equals(outputFormat)) {
            return ".ps";
         } else {
             return ".at.xml";
@@ -359,8 +356,8 @@ public class TestConverter {
             Node node = cases.item(count);
             String nodename = node.getNodeName();
             if (nodename.equals("result")) {
-                String resultid =
-                    node.getAttributes().getNamedItem("id").getNodeValue();
+                String resultid
+                    = node.getAttributes().getNamedItem("id").getNodeValue();
                 if (id.equals(resultid)) {
                     return node;
                 }

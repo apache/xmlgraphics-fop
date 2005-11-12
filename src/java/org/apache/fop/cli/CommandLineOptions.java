@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.Vector;
 
+import org.apache.fop.Version;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
@@ -225,7 +226,7 @@ public class CommandLineOptions implements Constants {
             } else if (args[i].equals("-at")) {
                 i = i + parseAreaTreeOption(args, i);
             } else if (args[i].equals("-v")) {
-                System.out.println("FOP Version " + Fop.getVersion());
+                System.out.println("FOP Version " + Version.getVersion());
             } else if (args[i].equals("-param")) {
                   if (i + 2 < args.length) {
                       if (xsltParams == null) {

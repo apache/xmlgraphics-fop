@@ -42,7 +42,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
-import org.apache.fop.fo.Constants;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.render.xml.XMLRenderer;
 import org.w3c.dom.Document;
@@ -129,7 +129,7 @@ public class LayoutEngineTester {
             atrenderer.setUserAgent(ua);
             atrenderer.setTransformerHandler(athandler);
             ua.setRendererOverride(atrenderer);
-            Fop fop = new Fop(Constants.RENDER_XML, ua);
+            Fop fop = new Fop(MimeConstants.MIME_FOP_AREA_TREE, ua);
             
             SAXResult fores = new SAXResult(fop.getDefaultHandler());
             transformer.transform(src, fores);

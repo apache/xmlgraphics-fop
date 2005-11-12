@@ -38,6 +38,7 @@ import org.xml.sax.SAXException;
 // FOP
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.MimeConstants;
 
 /**
  * This class demonstrates the conversion of an FO file to PDF using FOP.
@@ -64,7 +65,7 @@ public class ExampleFO2PDFUsingSAXParser {
         
         try {
             // Construct fop and setup output format
-            Fop fop = new Fop(Fop.RENDER_PDF);
+            Fop fop = new Fop(MimeConstants.MIME_PDF);
     
             // Setup output stream.  Note: Using BufferedOutputStream
             // for performance reasons (helpful with FileOutputStreams).

@@ -32,6 +32,7 @@ import junit.framework.TestSuite;
 
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.util.DigestFilter;
 import org.xml.sax.InputSource;
 
@@ -114,7 +115,7 @@ public final class GenericFOPTestCase extends TestCase {
         MessageDigest outDigest = MessageDigest.getInstance("MD5");
         DigestOutputStream out =
             new DigestOutputStream(new ByteArrayOutputStream(), outDigest);
-        Fop fop = new Fop(Fop.RENDER_PDF, foUserAgent);
+        Fop fop = new Fop(MimeConstants.MIME_PDF, foUserAgent);
         fop.setOutputStream(out);
         InputSource source = new InputSource(new StringReader(fo));
         DigestFilter filter = new DigestFilter("MD5");

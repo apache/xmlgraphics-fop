@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import javax.xml.transform.stream.StreamSource;
 // XML
 import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.MimeConstants;
 
 
 /**
@@ -57,7 +58,7 @@ import org.apache.fop.apps.Fop;
  * Example URL: http://servername/fop/servlet/FopPrintServlet?xml=data.xml&xsl=format.xsl
  *
  * @author <a href="mailto:fop-dev@xml.apache.org">Apache XML FOP Development Team</a>
- * @version $Id: FopPrintServlet.java,v 1.2 2003/03/07 09:48:05 jeremias Exp $
+ * @version $Id$
  * (todo) Doesn't work since there's no AWTRenderer at the moment. Revisit when
  * available.
  * (todo) Ev. add caching mechanism for Templates objects
@@ -131,7 +132,7 @@ public class FopPrintServlet extends HttpServlet {
     public void renderFO(InputStream foFile,
                          HttpServletResponse response) throws ServletException {
         try {
-            Fop fop = new Fop(Fop.RENDER_PRINT);
+            Fop fop = new Fop(MimeConstants.MIME_FOP_PRINT);
 
             // Setup JAXP
             TransformerFactory factory = TransformerFactory.newInstance();
@@ -162,7 +163,7 @@ public class FopPrintServlet extends HttpServlet {
     public void renderXML(File xmlfile, File xsltfile,
                           HttpServletResponse response) throws ServletException {
         try {
-            Fop fop = new Fop(Fop.RENDER_PRINT);
+            Fop fop = new Fop(MimeConstants.MIME_FOP_PRINT);
 
             // Setup XSLT
             TransformerFactory factory = TransformerFactory.newInstance();

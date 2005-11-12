@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import org.apache.commons.logging.impl.SimpleLog;
 //FOP
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.MimeConstants;
 
 /**
  * Example servlet to generate a PDF from a servlet.
@@ -61,7 +62,7 @@ import org.apache.fop.apps.FOPException;
  * to the URL.
  *
  * @author <a href="mailto:fop-dev@xml.apache.org">Apache XML FOP Development Team</a>
- * @version $Id: FopServlet.java,v 1.2 2003/03/07 09:48:05 jeremias Exp $
+ * @version $Id$
  * (todo) Ev. add caching mechanism for Templates objects
  */
 public class FopServlet extends HttpServlet {
@@ -200,7 +201,7 @@ public class FopServlet extends HttpServlet {
                 throws FOPException, TransformerException {
 
         //Setup FOP
-        Fop fop = new Fop(Fop.RENDER_PDF);
+        Fop fop = new Fop(MimeConstants.MIME_PDF);
 
         //Setup output
         ByteArrayOutputStream out = new ByteArrayOutputStream();

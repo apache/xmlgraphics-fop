@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
 
 //FOP
-import org.apache.fop.apps.Fop;
+import org.apache.fop.Version;
 
 /**
  * AWT Viewer's "About" dialog.
@@ -68,7 +68,7 @@ public class PreviewDialogAboutBox extends Dialog implements ActionListener {
         imageControl1.setIcon(new ImageIcon(getClass().getResource("images/fop.gif")));
         JLabel label1 = new JLabel(translator.getString("About.Product"));
         JLabel label2 = new JLabel(translator.getString("About.Version")
-                                            + " " + Fop.getVersion());
+                                            + " " + Version.getVersion());
         JLabel label3 = new JLabel(translator.getString("About.Copyright"));
         panel1.setLayout(new BorderLayout());
         panel2.setLayout(new BorderLayout());

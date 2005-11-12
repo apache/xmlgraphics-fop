@@ -37,6 +37,7 @@ import org.apache.avalon.framework.ExceptionUtil;
 //FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fo.Constants;
 
 /**
@@ -48,7 +49,7 @@ public class ExampleAWTViewer {
                 throws IOException, FOPException, TransformerException {
 
         //Setup FOP
-        Fop fop = new Fop(Constants.RENDER_AWT);
+        Fop fop = new Fop(MimeConstants.MIME_FOP_AWT_PREVIEW);
 
         try {
 

@@ -39,6 +39,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 // FOP
+import org.apache.fop.Version;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
@@ -117,7 +118,7 @@ public class FOUserAgent {
     /** Producer:  Metadata element for the system/software that produces
      * the document. (Some renderers can store this in the document.)
      */
-    protected String producer = "Apache FOP Version " + Fop.getVersion();
+    protected String producer = "Apache FOP Version " + Version.getVersion();
 
     /** Creator:  Metadata element for the user that created the
      * document. (Some renderers can store this in the document.)

@@ -41,6 +41,7 @@ import org.w3c.dom.Text;
 
 // FOP
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.MimeConstants;
 
 
 /**
@@ -62,7 +63,7 @@ public class ExampleDOM2PDF {
     public void convertDOM2PDF(Document xslfoDoc, File pdf) {
         try {
             // Construct fop with desired output format
-            Fop fop = new Fop(Fop.RENDER_PDF);
+            Fop fop = new Fop(MimeConstants.MIME_PDF);
             
             // Setup output
             OutputStream out = new java.io.FileOutputStream(pdf);

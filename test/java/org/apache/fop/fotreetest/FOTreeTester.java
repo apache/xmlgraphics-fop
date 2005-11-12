@@ -29,7 +29,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
-import org.apache.fop.fo.Constants;
+import org.apache.fop.apps.MimeConstants;
 
 import org.apache.fop.fotreetest.ext.TestElementMapping;
 
@@ -59,7 +59,7 @@ public class FOTreeTester {
         ua.setBaseURL(testFile.getParentFile().toURL().toString());
         ua.setFOEventHandlerOverride(new DummyFOEventHandler(ua));
         ua.addElementMapping(new TestElementMapping());
-        Fop fop = new Fop(Constants.RENDER_XML, ua);
+        Fop fop = new Fop(MimeConstants.MIME_FOP_AREA_TREE, ua);
         
         SAXResult fores = new SAXResult(fop.getDefaultHandler());
         transformer.transform(src, fores);

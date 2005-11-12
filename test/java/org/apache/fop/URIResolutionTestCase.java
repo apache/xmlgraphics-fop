@@ -40,6 +40,7 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.render.xml.XMLRenderer;
 import org.apache.xpath.XPathAPI;
@@ -115,7 +116,7 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
         ua.setURIResolver(resolver);
         ua.setBaseURL(foFile.getParentFile().toURL().toString());
 
-        Fop fop = new Fop(Fop.RENDER_PDF, ua);
+        Fop fop = new Fop(MimeConstants.MIME_PDF, ua);
 
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
         fop.setOutputStream(baout);
@@ -155,7 +156,7 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
         atrenderer.setTransformerHandler(athandler);
         ua.setRendererOverride(atrenderer);
         
-        Fop fop = new Fop(Fop.RENDER_XML, ua);
+        Fop fop = new Fop(MimeConstants.MIME_FOP_AREA_TREE, ua);
 
         Transformer transformer = tfactory.newTransformer(); //Identity transf.
         Source src = new StreamSource(fo);
