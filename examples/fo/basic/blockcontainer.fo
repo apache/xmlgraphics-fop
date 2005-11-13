@@ -98,7 +98,7 @@
 
       <fo:block>
         The next block-container has an absolute position. It does
-        not effect the flow layout of other blocks.
+        not affect the flow layout of other blocks.
         <fo:block-container absolute-position="absolute"
               left="20pt" top="400pt" right="220pt" bottom="550pt">
           <fo:block>
@@ -113,10 +113,10 @@
 
       <fo:block>
         The next block-container has an absolute position. It does
-        not effect the flow layout of other blocks. This time with
+        not affect the flow layout of other blocks. This time with
         the reference-orientation set.
         <fo:block-container reference-orientation="270" absolute-position="absolute"
-              left="270pt" top="400pt" right="370pt" bottom="500pt">
+              left="400pt" top="370pt" right="500pt" bottom="270pt">
           <fo:block>
               BC:E
           </fo:block>
@@ -134,7 +134,7 @@
       <fo:block>
         The next block-container tests the clipping.
         <fo:block-container reference-orientation="180" absolute-position="absolute"
-              left="100pt" top="550pt" right="200pt" bottom="700pt"
+              right="100pt" bottom="550pt" left="200pt" top="700pt"
               overflow="hidden">
           <fo:block>
               BC:F
@@ -151,7 +151,7 @@
       <fo:block>
         The next block-container tests error-if-overflow.
         <fo:block-container reference-orientation="90" absolute-position="absolute"
-              left="220pt" top="600pt" right="320pt" bottom="700pt"
+              bottom="220pt" left="600pt" top="320pt" right="700pt"
               overflow="error-if-overflow">
           <fo:block>
               BC:G
