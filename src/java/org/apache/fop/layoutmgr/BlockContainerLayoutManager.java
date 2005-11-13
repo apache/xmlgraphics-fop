@@ -51,7 +51,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
     private boolean clip = false;
     private Length width;
     private Length height;
-    private int vpContentIPD;
+    //private int vpContentIPD;
     private int vpContentBPD;
     
     // When viewport should grow with the content.
@@ -143,10 +143,12 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
     
     private int getBPIndents() {
         int indents = 0;
+        /* TODO This is wrong isn't it?
         indents += getBlockContainerFO().getCommonMarginBlock()
                     .spaceBefore.getOptimum(this).getLength().getValue(this);
         indents += getBlockContainerFO().getCommonMarginBlock()
                     .spaceAfter.getOptimum(this).getLength().getValue(this);
+        */
         indents += getBlockContainerFO().getCommonBorderPaddingBackground()
                     .getBPPaddingAndBorder(false, this);
         return indents;
@@ -168,6 +170,15 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         return (abProps.absolutePosition == EN_FIXED);
     }
     
+    /** @see org.apache.fop.layoutmgr.LayoutManager#getContentAreaBPD() */
+    public int getContentAreaBPD() {
+        if (autoHeight) {
+            return -1;
+        } else {
+            return this.vpContentBPD;
+        }
+    }
+    
     /** @see org.apache.fop.layoutmgr.LayoutManager */
     public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
         resetSpaces();
@@ -180,23 +191,26 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         referenceIPD = context.getRefIPD();
         int maxbpd = context.getStackLimit().opt;
         int allocBPD, allocIPD;
-        if (height.getEnum() != EN_AUTO) {
-            allocBPD = height.getValue(this); //this is the content-height
-            allocBPD += getBPIndents();
-        } else {
+        if (height.getEnum() == EN_AUTO 
+                || (!height.isAbsolute() && getAncestorBlockAreaBPD() <= 0)) {
+            //auto height when height="auto" or "if that dimension is not specified explicitly 
+            //(i.e., it depends on content's blockprogression-dimension)" (XSL 1.0, 7.14.1)
             allocBPD = maxbpd;
             autoHeight = true;
+        } else {
+            allocBPD = height.getValue(this); //this is the content-height
+            allocBPD += getBPIndents();
         }
-        if (width.getEnum() != EN_AUTO) {
+        if (width.getEnum() == EN_AUTO) {
+            allocIPD = referenceIPD;
+        } else {
             allocIPD = width.getValue(this); //this is the content-width
             allocIPD += getIPIndents();
-        } else {
-            allocIPD = referenceIPD;
         }
 
         vpContentBPD = allocBPD - getBPIndents();
-        vpContentIPD = allocIPD - getIPIndents();
-        setContentAreaIPD(vpContentIPD);
+        setContentAreaIPD(allocIPD - getIPIndents());
+        
         double contentRectOffsetX = 0;
         contentRectOffsetX += getBlockContainerFO()
                 .getCommonMarginBlock().startIndent.getValue(this);
@@ -208,7 +222,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         
         Rectangle2D rect = new Rectangle2D.Double(
                 contentRectOffsetX, contentRectOffsetY, 
-                vpContentIPD, vpContentBPD);
+                getContentAreaIPD(), getContentAreaBPD());
         relDims = new FODimension(0, 0);
         absoluteCTM = CTM.getCTMandRelDims(getBlockContainerFO().getReferenceOrientation(),
                 getBlockContainerFO().getWritingMode(), rect, relDims);
@@ -364,10 +378,10 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
 
         Point offset = getAbsOffset();
         int allocBPD, allocIPD;
-        if (height.getEnum() != EN_AUTO) {
-            allocBPD = height.getValue(this); //this is the content-height
-            allocBPD += getBPIndents();
-        } else {
+        if (height.getEnum() == EN_AUTO
+                || (!height.isAbsolute() && getAncestorBlockAreaBPD() <= 0)) {
+            //auto height when height="auto" or "if that dimension is not specified explicitly 
+            //(i.e., it depends on content's blockprogression-dimension)" (XSL 1.0, 7.14.1)
             allocBPD = 0;
             if (abProps.bottom.getEnum() != EN_AUTO) {
                 int availHeight;
@@ -401,11 +415,11 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             } else {
                 autoHeight = true;
             }
-        }
-        if (width.getEnum() != EN_AUTO) {
-            allocIPD = width.getValue(this); //this is the content-width
-            allocIPD += getIPIndents();
         } else {
+            allocBPD = height.getValue(this); //this is the content-height
+            allocBPD += getBPIndents();
+        }
+        if (width.getEnum() == EN_AUTO) {
             int availWidth;
             if (isFixed()) {
                 availWidth = (int)getCurrentPV().getViewArea().getWidth(); 
@@ -436,10 +450,13 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                     allocIPD = 0;
                 }
             }
+        } else {
+            allocIPD = width.getValue(this); //this is the content-width
+            allocIPD += getIPIndents();
         }
 
         vpContentBPD = allocBPD - getBPIndents();
-        vpContentIPD = allocIPD - getIPIndents();
+        setContentAreaIPD(allocIPD - getIPIndents());
         
         double contentRectOffsetX = offset.getX();
         contentRectOffsetX += getBlockContainerFO()
@@ -453,7 +470,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         
         Rectangle2D rect = new Rectangle2D.Double(
                 contentRectOffsetX, contentRectOffsetY, 
-                vpContentIPD, vpContentBPD);
+                getContentAreaIPD(), vpContentBPD);
         relDims = new FODimension(0, 0);
         absoluteCTM = CTM.getCTMandRelDims(
                 getBlockContainerFO().getReferenceOrientation(),
@@ -824,11 +841,11 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         if (referenceArea == null) {
             viewportBlockArea = new BlockViewport();
             viewportBlockArea.addTrait(Trait.IS_VIEWPORT_AREA, Boolean.TRUE);
-            viewportBlockArea.setIPD(vpContentIPD);
+            viewportBlockArea.setIPD(getContentAreaIPD());
             if (autoHeight) {
                 viewportBlockArea.setBPD(0);
             } else {
-                viewportBlockArea.setBPD(vpContentBPD);
+                viewportBlockArea.setBPD(getContentAreaBPD());
             }
 
             TraitSetter.setProducerID(viewportBlockArea, getBlockContainerFO().getId());
