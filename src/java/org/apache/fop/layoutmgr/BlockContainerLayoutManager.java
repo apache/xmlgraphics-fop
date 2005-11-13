@@ -395,20 +395,28 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                 if (abProps.bottom.getEnum() != EN_AUTO) {
                     allocBPD -= abProps.bottom.getValue(this);
                     if (allocBPD < 0) {
+                        //TODO Fix absolute b-c layout, layout may need to be defferred until
+                        //after page breaking when the size of the containing box is known.
+                        /* Warning disabled due to a interpretation mistake.
+                         * See: http://marc.theaimsgroup.com/?l=fop-dev&m=113189981926163&w=2
                         log.error("The current combination of top and bottom properties results"
                                 + " in a negative extent for the block-container. 'bottom' may be"
                                 + " at most " + (allocBPD + abProps.bottom.getValue(this)) + " mpt,"
                                 + " but was actually " + abProps.bottom.getValue(this) + " mpt."
                                 + " The nominal available height is " + availHeight + " mpt.");
+                        */
                         allocBPD = 0;
                     }
                 } else {
                     if (allocBPD < 0) {
+                        /* Warning disabled due to a interpretation mistake.
+                         * See: http://marc.theaimsgroup.com/?l=fop-dev&m=113189981926163&w=2
                         log.error("The current combination of top and bottom properties results"
                                 + " in a negative extent for the block-container. 'top' may be"
                                 + " at most " + availHeight + " mpt,"
                                 + " but was actually " + offset.y + " mpt."
                                 + " The nominal available height is " + availHeight + " mpt.");
+                        */
                         allocBPD = 0;
                     }
                 }
@@ -433,20 +441,26 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             if (abProps.right.getEnum() != EN_AUTO) {
                 allocIPD -= abProps.right.getValue(this);
                 if (allocIPD < 0) {
+                    /* Warning disabled due to a interpretation mistake.
+                     * See: http://marc.theaimsgroup.com/?l=fop-dev&m=113189981926163&w=2
                     log.error("The current combination of left and right properties results"
                             + " in a negative extent for the block-container. 'right' may be"
                             + " at most " + (allocIPD + abProps.right.getValue(this)) + " mpt,"
                             + " but was actually " + abProps.right.getValue(this) + " mpt."
                             + " The nominal available width is " + availWidth + " mpt.");
+                    */
                     allocIPD = 0;
                 }
             } else {
                 if (allocIPD < 0) {
+                    /* Warning disabled due to a interpretation mistake.
+                     * See: http://marc.theaimsgroup.com/?l=fop-dev&m=113189981926163&w=2
                     log.error("The current combination of left and right properties results"
                             + " in a negative extent for the block-container. 'left' may be"
                             + " at most " + allocIPD + " mpt,"
                             + " but was actually " + abProps.left.getValue(this) + " mpt."
                             + " The nominal available width is " + availWidth + " mpt.");
+                    */
                     allocIPD = 0;
                 }
             }
