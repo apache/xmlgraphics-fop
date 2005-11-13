@@ -119,7 +119,7 @@
 
 
             <fo:block-container height="17cm" width="19cm" top="9.4cm" left="0cm" position="absolute">
-                <fo:table border-collapse="separate" border-color="yellow" border-style="solid" border-width=".6mm" height="17cm">
+                <fo:table border-collapse="separate" height="17cm" border-color="yellow" border-style="solid" border-width=".6mm" table-layout="fixed" width="100%">
                     <fo:table-column column-width="2.5cm"/>
                     <fo:table-column column-width="11.5cm"/>
                     <fo:table-column column-width="2.5cm"/>

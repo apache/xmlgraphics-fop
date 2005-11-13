@@ -1,11 +1,11 @@
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
-<fo:layout-master-set>
-  <fo:simple-page-master master-name="one">
-    <fo:region-body margin-top="25pt" margin-bottom="25pt" margin-left="50pt" margin-right="50pt" />
-  </fo:simple-page-master>
-</fo:layout-master-set>
-<fo:page-sequence master-reference="one">
-<fo:flow flow-name="xsl-region-body">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="one">
+      <fo:region-body margin-top="25pt" margin-bottom="25pt" margin-left="50pt" margin-right="50pt" />
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="one">
+    <fo:flow flow-name="xsl-region-body">
       <fo:block text-align="center" font-size="16pt" font-weight="bold">
         Block Containers
       </fo:block>
