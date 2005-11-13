@@ -233,6 +233,13 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
                                     , context.getAlignmentContext());
 
         ipd = getAllocationIPD(context.getRefIPD());
+        if (fobj.getLeaderPattern() == EN_USECONTENT && curArea instanceof FilledArea) {
+            // If we have user supplied content make it fit if we can
+            int unitWidth = ((FilledArea)curArea).getUnitWidth();
+            if (ipd.opt < unitWidth && ipd.max >= unitWidth) {
+                ipd.opt = unitWidth;
+            }
+        }
 
         // create the AreaInfo object to store the computed values
         areaInfo = new AreaInfo((short) 0, ipd, false, context.getAlignmentContext());
