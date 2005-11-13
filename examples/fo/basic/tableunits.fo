@@ -26,7 +26,7 @@
     <!-- normal text -->
     <fo:block space-after="1cm" text-align="start" padding="0.4in"
   border="thick solid red">Table unit tests</fo:block>
-    <fo:table border-collapse="collapse" width="6in">
+    <fo:table border-collapse="separate" table-layout="fixed" width="6in">
       <fo:table-column column-width="(4.5in - 2cm) div 3 +1in" background-color="yellow"/>
       <fo:table-column column-width="(4.5in - 2cm) div 3 + 0.5in" background-color="blue"/>
       <fo:table-column column-width="(4.5in - 2cm) div 3 + 2.0cm" background-color="green"/>
@@ -39,7 +39,7 @@
       </fo:table-body>
     </fo:table>
     <!-- table start -->
-    <fo:table border-collapse="collapse" width="6in">
+    <fo:table border-collapse="separate" table-layout="fixed" width="6in">
       <fo:table-column column-width="1in + proportional-column-width(1)" background-color="yellow"/>
       <fo:table-column column-width="2 * (proportional-column-width(1) + .5in) div 2" background-color="blue"/>
       <fo:table-column column-width="proportional-column-width(1) + 2.0cm" background-color="green"/>
@@ -68,7 +68,7 @@ of 3cm on the row </fo:block></fo:table-cell>
 The next table has width=100% on the table no column widths specified on the table-column element.
 </fo:block>
     <!-- table start -->
-    <fo:table border-collapse="collapse" width="100%">
+    <fo:table border-collapse="separate" table-layout="fixed" width="100%">
       <fo:table-column background-color="yellow"/>
       <fo:table-column background-color="blue"/>
       <fo:table-column background-color="green"/>
@@ -86,8 +86,11 @@ deeper than the others to check out the aliignment properties.</fo:block></fo:ta
 The next table has fixed column widths=13cm, ipd.optimum=12cm and ipd.max = 100%.
 </fo:block>
     <!-- table start -->
-    <fo:table border-collapse="collapse" inline-progression-dimension="12cm"
-  inline-progression-dimension.maximum="100%">
+    <fo:table border-collapse="separate" 
+       table-layout="fixed"
+       inline-progression-dimension="12cm"
+       inline-progression-dimension.maximum="100%"
+    >
       <fo:table-column column-width="8cm" background-color="yellow"/>
       <fo:table-column column-width="proportional-column-width(2)" background-color="blue"/>
       <fo:table-column column-width="5cm" background-color="green"/>
@@ -103,8 +106,9 @@ deeper than the others to check out the aliignment properties.</fo:block></fo:ta
 The next table has fixed column widths=16.5cm, ipd.optimum=14cm and ipd.max = 100% (16cm).
 </fo:block>
     <!-- table start -->
-    <fo:table border-collapse="collapse" inline-progression-dimension="14cm"
-  inline-progression-dimension.maximum="100%">
+    <fo:table border-collapse="separate" table-layout="fixed"
+        inline-progression-dimension="14cm"
+        inline-progression-dimension.maximum="100%">
       <fo:table-column column-width="8.5cm" background-color="yellow"/>
       <fo:table-column column-width="proportional-column-width(2)" background-color="blue"/>
       <fo:table-column column-width="8cm" background-color="green"/>
@@ -122,7 +126,7 @@ The next table has width="70% + 1cm" and fixed lengths and the first table-colum
 has column-width="from-parent('width') div 3".
 </fo:block>
     <!-- table start -->
-    <fo:table border-collapse="collapse" width="70% + 1cm">
+    <fo:table border-collapse="separate" table-layout="fixed" width="70% + 1cm">
       <fo:table-column column-width="from-parent('width') div 3" background-color="yellow"/>
       <fo:table-column background-color="blue"/>
       <fo:table-column background-color="green"/>
@@ -141,8 +145,9 @@ The next table specifies inline-progression-dimension="15cm" instead of width. T
 middle column has a fixed width; the other two have default width.
 </fo:block>
     <!-- table start -->
-    <fo:table border-collapse="collapse"
-  inline-progression-dimension="15cm">
+    <fo:table border-collapse="separate"
+        table-layout="fixed"
+        inline-progression-dimension="15cm">
       <fo:table-column background-color="yellow"/>
       <fo:table-column column-width="3cm" background-color="blue"/>
       <fo:table-column background-color="green"/>
@@ -160,7 +165,7 @@ deeper than the others to check out the aliignment properties.</fo:block></fo:ta
 The next table specifies neither width nor inline-progression-dimenion.
 </fo:block>
     <!-- table start -->
-    <fo:table table-layout="fixed" border-collapse="collapse">
+    <fo:table table-layout="fixed" border-collapse="separate">
       <fo:table-column background-color="yellow"/>
       <fo:table-column column-width="3cm" background-color="blue"/>
       <fo:table-column background-color="green"/>
@@ -179,8 +184,8 @@ The next table specifies inline-progression-dimenion.minimum="10cm" and
 specifies a column width of 5cm on the middle column only..
 </fo:block>
     <!-- table start -->
-    <fo:table table-layout="fixed" border-collapse="collapse"
-  inline-progression-dimension.minimum="10cm">
+    <fo:table table-layout="fixed" border-collapse="separate"
+        inline-progression-dimension.minimum="10cm">
       <fo:table-column background-color="yellow"/>
       <fo:table-column column-width="5cm" background-color="blue"/>
       <fo:table-column background-color="green"/>
@@ -199,9 +204,9 @@ inline-progression-dimension.maximum="17cm and
 specifies a column width of 5cm on the middle column only..
 </fo:block>
     <!-- table start -->
-    <fo:table table-layout="fixed" border-collapse="collapse"
-  inline-progression-dimension.minimum="10cm"
-  inline-progression-dimension.maximum="17cm">
+    <fo:table table-layout="fixed" border-collapse="separate"
+        inline-progression-dimension.minimum="10cm"
+        inline-progression-dimension.maximum="17cm">
       <fo:table-column background-color="yellow"/>
       <fo:table-column column-width="5cm" background-color="blue"/>
       <fo:table-column background-color="green"/>

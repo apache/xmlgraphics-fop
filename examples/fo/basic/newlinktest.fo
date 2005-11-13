@@ -91,7 +91,7 @@ align="justify"
   </fo:block>
 
 <!-- table start -->
-    <fo:table>
+    <fo:table table-layout="fixed" width="100%" border-collapse="separate">
       <fo:table-column column-width="50mm"/>
       <fo:table-column column-width="50mm"/>
       <fo:table-column column-width="50mm"/>

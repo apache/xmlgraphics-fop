@@ -305,8 +305,8 @@
             </fo:block>
           </fo:list-item-body>
         </fo:list-item>
-    </fo:list-block>
-    <!-- list end -->
+      </fo:list-block>
+      <!-- list end -->
 
       <fo:block font-size="12pt"
                 font-family="sans-serif"
@@ -318,48 +318,48 @@
       </fo:block>
 
 
-    <!-- table start -->
-    <fo:table>
-      <fo:table-column column-width="20mm"/>
-      <fo:table-column column-width="60mm"/>
-      <fo:table-column column-width="50mm"/>
-      <fo:table-body>
-        <fo:table-row>
-          <fo:table-cell ><fo:block>Entry 1</fo:block></fo:table-cell>
-          <fo:table-cell >
+      <!-- table start -->
+      <fo:table table-layout="fixed" width="100%" border-collapse="separate">
+        <fo:table-column column-width="20mm"/>
+        <fo:table-column column-width="60mm"/>
+        <fo:table-column column-width="50mm"/>
+        <fo:table-body>
+          <fo:table-row>
+            <fo:table-cell ><fo:block>Entry 1</fo:block></fo:table-cell>
+            <fo:table-cell >
               <fo:block text-align="start">
                 <fo:leader leader-pattern="dots"
                            leader-pattern-width="8pt"
                            leader-length="6cm"/>
               </fo:block>
-          </fo:table-cell>
-          <fo:table-cell ><fo:block>p. 12</fo:block></fo:table-cell>
-        </fo:table-row>
-        <fo:table-row>
-          <fo:table-cell ><fo:block>Entry 2 </fo:block></fo:table-cell>
-          <fo:table-cell >
+            </fo:table-cell>
+            <fo:table-cell ><fo:block>p. 12</fo:block></fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell ><fo:block>Entry 2 </fo:block></fo:table-cell>
+            <fo:table-cell >
               <fo:block text-align="start">
                 <fo:leader leader-pattern="dots"
                            leader-pattern-width="8pt"
                            leader-length="6cm"/>
               </fo:block>
-          </fo:table-cell>
-          <fo:table-cell ><fo:block>p. 24</fo:block></fo:table-cell>
-        </fo:table-row>
-        <fo:table-row>
-          <fo:table-cell ><fo:block>Entry 3 </fo:block></fo:table-cell>
-          <fo:table-cell >
+            </fo:table-cell>
+            <fo:table-cell ><fo:block>p. 24</fo:block></fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell ><fo:block>Entry 3 </fo:block></fo:table-cell>
+            <fo:table-cell >
               <fo:block text-align="start">
                 <fo:leader leader-pattern="dots"
                            leader-pattern-width="8pt"
                            leader-length="6cm"/>
               </fo:block>
-          </fo:table-cell>
-          <fo:table-cell ><fo:block>p. 36</fo:block></fo:table-cell>
-        </fo:table-row>
-      </fo:table-body>
-    </fo:table>
-    <!-- table end -->
+            </fo:table-cell>
+            <fo:table-cell ><fo:block>p. 36</fo:block></fo:table-cell>
+          </fo:table-row>
+        </fo:table-body>
+      </fo:table>
+      <!-- table end -->
 
 
 
@@ -367,23 +367,23 @@
                    font-size="15pt"
                    space-before.optimum="16pt"
                    space-after.optimum="12pt">
-      Table of Content
+        Table of Content
       </fo:block>
 
       <fo:block text-align="start"
                    font-size="10pt"
                    space-after.optimum="12pt">
-      shows the use of leader properties in combination to build a table of content.
-      Following values are used for the leader:
-      leader-pattern="dots"
-      leader-pattern-width="8pt"
-      leader-alignment="reference-area"
-      no leader-length is specified, so the default values are used (min: 0, opt: 12pt, max: 100%)
+        shows the use of leader properties in combination to build a table of content.
+        Following values are used for the leader:
+        leader-pattern="dots"
+        leader-pattern-width="8pt"
+        leader-alignment="reference-area"
+        no leader-length is specified, so the default values are used (min: 0, opt: 12pt, max: 100%)
       </fo:block>
 
 
       <!-- Here starts the table -->
-      <fo:table>
+      <fo:table table-layout="fixed" width="100%" border-collapse="separate">
         <fo:table-column column-width="1cm"/>
         <fo:table-column column-width="14.2cm"/>
         <fo:table-column column-width="0.3cm"/>
@@ -437,11 +437,6 @@
 
         </fo:table-body>
       </fo:table>
-
-
-
-
-
 
       <fo:block font-size="14pt"
                 font-family="sans-serif"

@@ -1255,7 +1255,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 <fo:block font-size="14pt" font-family="sans-serif" line-height="10pt" space-after.optimum="15pt" font-weight="bold" start-indent="15pt" break-before="page">
             Content
          </fo:block>
-<fo:table>
+<fo:table table-layout="fixed" width="100%" border-collapse="separate">
 <fo:table-column column-width="1cm"/>
 <fo:table-column column-width="12cm"/>
 <fo:table-column column-width="1cm"/>
