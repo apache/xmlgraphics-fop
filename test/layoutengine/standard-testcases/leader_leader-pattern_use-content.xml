@@ -50,6 +50,26 @@
             <fo:leader leader-length="36pt" leader-pattern="use-content" leader-pattern-width="12pt"><fo:inline border="solid 1pt red" font-size="6pt" alignment-baseline="middle" background-color="yellow">++</fo:inline></fo:leader>
                Content is "++" with l-p-w="12pt" and border small font
           </fo:block>
+          <fo:block>
+            <fo:leader leader-length="36pt" leader-pattern="use-content" leader-pattern-width="12pt"><fo:instream-foreign-object>
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10">
+                <rect x="0" y="0" width="5" height="5" style="fill:red"/>
+                <rect x="5" y="5" width="5" height="5" style="fill:black"/>
+                </svg>
+              </fo:instream-foreign-object></fo:leader>
+              Content is svg 10 x 10
+          </fo:block>
+          <fo:block>
+            <fo:leader leader-pattern="use-content">
+              <fo:instream-foreign-object>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="10">
+                <rect x="0" y="0" width="10" height="5" style="fill:red"/>
+                <rect x="5" y="5" width="10" height="5" style="fill:black"/>
+                </svg>
+                </fo:instream-foreign-object>
+            </fo:leader>
+              Content is svg 20 x 10 which is wider than the default leader-length
+          </fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
@@ -126,5 +146,32 @@
     <eval expected="0" xpath="//flow/block[5]/lineArea/inlineparent/inlineparent[3]/@offset"/>
     <eval expected="2739" xpath="//flow/block[5]/lineArea/inlineparent/inlineparent[3]/inlineparent/@offset"/>
     <eval expected="1000 1000 1000 1000" xpath="//flow/block[5]/lineArea/inlineparent/inlineparent[3]/inlineparent/@bap"/>
+ 
+    <eval expected="11100" xpath="//flow/block[6]/lineArea/@bpd"/>
+    <eval expected="36000" xpath="//flow/block[6]/lineArea/inlineparent/@ipd"/>
+    <eval expected="0" xpath="//flow/block[6]/lineArea/inlineparent/@offset"/>
+    <eval expected="2000" xpath="//flow/block[6]/lineArea/inlineparent/space/@ipd"/>
+    <eval expected="10000" xpath="//flow/block[6]/lineArea/inlineparent/inlineparent[1]/@ipd"/>
+    <eval expected="0" xpath="//flow/block[6]/lineArea/inlineparent/inlineparent[1]/@offset"/>
+    <eval expected="-1384" xpath="//flow/block[6]/lineArea/inlineparent/inlineparent[1]/viewport/@offset"/>
+    <eval expected="0 0 0 0" xpath="//flow/block[6]/lineArea/inlineparent/inlineparent[1]/viewport/@bap"/>
+    <eval expected="2000" xpath="//flow/block[6]/lineArea/inlineparent/space/@ipd"/>
+    <eval expected="10000" xpath="//flow/block[6]/lineArea/inlineparent/inlineparent[2]/@ipd"/>
+    <eval expected="0" xpath="//flow/block[6]/lineArea/inlineparent/inlineparent[2]/@offset"/>
+    <eval expected="-1384" xpath="//flow/block[6]/lineArea/inlineparent/inlineparent[2]/viewport/@offset"/>
+    <eval expected="0 0 0 0" xpath="//flow/block[6]/lineArea/inlineparent/inlineparent[2]/viewport/@bap"/>
+    <eval expected="2000" xpath="//flow/block[6]/lineArea/inlineparent/space/@ipd"/>
+    <eval expected="10000" xpath="//flow/block[6]/lineArea/inlineparent/inlineparent[3]/@ipd"/>
+    <eval expected="0" xpath="//flow/block[6]/lineArea/inlineparent/inlineparent[3]/@offset"/>
+    <eval expected="-1384" xpath="//flow/block[6]/lineArea/inlineparent/inlineparent[3]/viewport/@offset"/>
+    <eval expected="0 0 0 0" xpath="//flow/block[6]/lineArea/inlineparent/inlineparent[3]/viewport/@bap"/>
+ 
+    <eval expected="11100" xpath="//flow/block[7]/lineArea/@bpd"/>
+    <eval expected="23336" xpath="//flow/block[7]/lineArea/inlineparent/@ipd"/>
+    <eval expected="0" xpath="//flow/block[7]/lineArea/inlineparent/@offset"/>
+    <eval expected="23336" xpath="//flow/block[7]/lineArea/inlineparent/inlineparent[1]/@ipd"/>
+    <eval expected="0" xpath="//flow/block[7]/lineArea/inlineparent/inlineparent[1]/@offset"/>
+    <eval expected="20000" xpath="//flow/block[7]/lineArea/inlineparent/inlineparent[1]/viewport/@ipd"/>
+    <eval expected="-1384" xpath="//flow/block[7]/lineArea/inlineparent/inlineparent[1]/viewport/@offset"/>
   </checks>
 </testcase>

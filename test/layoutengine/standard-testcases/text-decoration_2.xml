@@ -31,7 +31,7 @@
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
           <!-- nested inlines -->
-          <fo:block>normal <fo:inline color="blue" text-decoration="underline">under <fo:inline color="red" text-decoration="line-through">through</fo:inline> <fo:inline text-decoration="none">none</fo:inline> under</fo:inline> normal</fo:block>
+          <fo:block>normal <fo:inline color="blue" text-decoration="underline">under <fo:inline color="red" font-size="14pt" text-decoration="line-through">through</fo:inline> <fo:inline text-decoration="none">none</fo:inline> under</fo:inline> normal</fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>

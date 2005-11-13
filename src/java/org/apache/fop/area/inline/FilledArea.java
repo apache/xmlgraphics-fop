@@ -75,6 +75,15 @@ public class FilledArea extends InlineParent {
     }
 
     /**
+     * Return the unit width for the areas to fill the full width.
+     *
+     * @return the unit width
+     */
+    public int getUnitWidth() {
+        return unitWidth;
+    }
+
+    /**
      * Get the child areas for this filed area.
      * This copies the references of the inline areas so that
      * it fills the total width of the area a whole number of times
