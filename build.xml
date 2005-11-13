@@ -753,7 +753,7 @@ list of possible build targets.
     </junit>
   </target>
 
-  <target name="junit-layout-hyphenation" depends="hyphenation-present, junit-compile" description="Runs FOP's JUnit hyphenation layout tests" if="hyphenation.present">
+  <target name="junit-layout-hyphenation" depends="hyphenation-present, junit-compile" if="junit.present" description="Runs FOP's JUnit hyphenation layout tests" if="hyphenation.present">
     <echo message="Running hyphenation layout engine tests"/>
     <mkdir dir="${build.dir}/test-reports/fop"/>
     <junit haltonerror="no" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
