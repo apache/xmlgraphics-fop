@@ -62,7 +62,7 @@ list of possible build targets.
 
   <fileset dir="${basedir}" id="dist.bin">
     <include name="conf/**"/>
-    <include name="docs/**"/>
+    <include name="build/site/**"/>
     <include name="CHANGES"/>
     <include name="LICENSE"/>
     <include name="README"/>
@@ -72,7 +72,6 @@ list of possible build targets.
     <exclude name="docs/**"/>
     <exclude name="src/**"/>
     <exclude name="dist/**"/>
-    <exclude name="build/**"/>
     <exclude name="lib/**"/>
   </fileset>
 
@@ -94,7 +93,7 @@ list of possible build targets.
     <exclude name="lib/classes/**"/>
     <exclude name="lib/org/**"/>
     <exclude name="lib/src/**"/>
-    <exclude name="build/**"/>
+    <include name="build/site/**"/>
     <include name="src/**"/>
     <include name="conf/**"/>
     <include name="hyph/hyphenation.dtd"/>
@@ -106,7 +105,7 @@ list of possible build targets.
     <include name="LICENSE"/>
     <include name="README"/>
     <include name="STATUS"/>
-    <include name="build*"/>
+    <include name="build.*"/>
     <include name="fop.bat"/>
     <include name="fop"/>
   </fileset>
@@ -194,9 +193,11 @@ list of possible build targets.
   <property name="dist.src.result.dir" value="${dist.src.dir}/${name}-${version}"/>
 
   <!-- Importing Apache Forrest for building the docs -->
+  <!--
   <property environment="env"/>
   <property name="forrest.home" value="${env.FORREST_HOME}"/>
   <import file="${env.FORREST_HOME}/main/forrest.build.xml" optional="true"/>
+  -->
 
   <!-- =================================================================== -->
   <!-- Initialization target                                               -->
@@ -1028,11 +1029,15 @@ NOTE:
   <!-- =================================================================== -->
   <target name="docs" description="Generates documentation">
     <echo message="Building documentation with Forrest..."/>
+    <!--
     <echo message="Make sure that you have installed Apache Forrest and"/>
     <echo message="the FORREST_HOME environment variable is set (see http://forrest.apache.org/)"/>
     <echo message="FORREST_HOME = ${forrest.home}"/>
+    -->
+    <echo message="Make sure you have a propper Forrest installation (see http://forrest.apache.org/)"/>
 
-    <antcall target="site"/>
+    <!--<antcall target="site"/>-->
+    <exec executable="forrest"/>
   </target>
   
   <!-- =================================================================== -->
@@ -1040,7 +1045,7 @@ NOTE:
   <!-- =================================================================== -->
   <target name="dist" depends="dist-src,dist-bin" description="Generates the distribution package"/>
 
-  <target name="dist-bin" depends="all">
+  <target name="dist-bin" depends="all,docs">
     <echo message="Building the binary distribution files (zip,tar)"/>
     <fail message="A complete binary build requires Jimi" unless="jimi.present"/>
     <fail message="A complete binary build requires JAI" unless="jai.present"/>
@@ -1069,7 +1074,7 @@ NOTE:
     <delete file="${name}-${version}-bin.tar"/>
   </target>
 
-  <target name="dist-src" depends="all, javadocs">
+  <target name="dist-src" depends="all, javadocs, docs">
     <echo message="Building the source distribution files (zip,tar)"/>
     <mkdir dir="${dist.src.result.dir}"/>
     <copy todir="${dist.src.result.dir}">
