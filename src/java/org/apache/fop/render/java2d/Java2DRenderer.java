@@ -1084,7 +1084,7 @@ public abstract class Java2DRenderer extends AbstractRenderer implements Printab
           renderPageAreas(viewport.getPage());
           return PAGE_EXISTS;
         } catch (FOPException e) {
-            e.printStackTrace();
+            log.error(e);
             return NO_SUCH_PAGE;
         } finally {
           oldState = state;

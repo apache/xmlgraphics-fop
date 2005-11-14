@@ -163,7 +163,6 @@ public class PDFState {
      */
     public boolean setColor(Color col) {
         if (!col.equals(getData().color)) {
-            //System.out.println("old: " + getData().color + ", new: " + col);
             getData().color = col;
             return true;
         } else {

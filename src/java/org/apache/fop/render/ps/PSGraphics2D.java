@@ -190,6 +190,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * @param ioe IOException to handle
      */
     protected void handleIOException(IOException ioe) {
+        //TODO Surely, there's a better way to do this.
         ioe.printStackTrace();
     }
 

@@ -118,19 +118,19 @@ public class PDFEncryptionManager {
             return (PDFEncryption)obj;
         } catch (ClassNotFoundException e) {
             if (checkAvailableAlgorithms()) {
-                System.out.println("JCE and algorithms available, but the "
+                log.warn("JCE and algorithms available, but the "
                     + "implementation class unavailable. Please do a full "
                     + "rebuild.");
             }
             return null;
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            log.error(e);
             return null;
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            log.error(e);
             return null;
         } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            log.error(e);
             return null;
         }
     }

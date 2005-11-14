@@ -61,7 +61,6 @@ import org.apache.fop.fonts.FontInfo;
  * (todo) use drawString(AttributedCharacterIterator iterator...) for some
  *
  * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
- * @author <a href="mailto:jeremias@apache.org">Jeremias Maerki</a>
  * @version $Id: PSTextPainter.java,v 1.15 2003/01/08 14:03:55 jeremias Exp $
  */
 public class PSTextPainter implements TextPainter {
@@ -93,7 +92,6 @@ public class PSTextPainter implements TextPainter {
      * @param g2d the Graphics2D to use
      */
     public void paint(TextNode node, Graphics2D g2d) {
-        // System.out.println("PSText paint");
         String txt = node.getText();
         Point2D loc = node.getLocation();
     
@@ -251,7 +249,6 @@ public class PSTextPainter implements TextPainter {
      * @return new current location
      */
     protected Point2D paintACI(AttributedCharacterIterator aci, Graphics2D g2d, Point2D loc) {
-        //System.out.println("==============================================");
         //ACIUtils.dumpAttrs(aci);
         
         aci.first();
@@ -498,7 +495,6 @@ public class PSTextPainter implements TextPainter {
      * @return null
      */
     public Mark getMark(TextNode node, int pos, boolean all) {
-        System.out.println("PSText getMark");
         return null;
     }
 
@@ -511,7 +507,6 @@ public class PSTextPainter implements TextPainter {
      * @return null
      */
     public Mark selectAt(double x, double y, TextNode node) {
-        System.out.println("PSText selectAt");
         return null;
     }
 
@@ -524,7 +519,6 @@ public class PSTextPainter implements TextPainter {
      * @return null
      */
     public Mark selectTo(double x, double y, Mark beginMark) {
-        System.out.println("PSText selectTo");
         return null;
     }
 
@@ -535,7 +529,6 @@ public class PSTextPainter implements TextPainter {
      * @return null
      */
     public Mark selectFirst(TextNode node) {
-        System.out.println("PSText selectFirst");
         return null;
     }
 
@@ -546,7 +539,6 @@ public class PSTextPainter implements TextPainter {
      * @return null
      */
     public Mark selectLast(TextNode node) {
-        System.out.println("PSText selectLast");
         return null;
     }
 
@@ -558,7 +550,6 @@ public class PSTextPainter implements TextPainter {
      * @return null
      */
     public int[] getSelected(Mark start, Mark finish) {
-        System.out.println("PSText getSelected");
         return null;
     }
 
@@ -570,7 +561,6 @@ public class PSTextPainter implements TextPainter {
      * @return null
      */
     public Shape getHighlightShape(Mark beginMark, Mark endMark) {
-        System.out.println("PSText getHighlightShape");
         return null;
     }
 

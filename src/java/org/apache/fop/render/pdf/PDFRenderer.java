@@ -1027,7 +1027,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         int rx = currentIPPosition + ch.getBorderAndPaddingWidthStart();
         int bl = currentBPPosition + ch.getOffset() + ch.getBaselineOffset();
 
-/*        System.out.println("Text = " + ch.getTextArea() +
+/*        log.debug("Text = " + ch.getTextArea() +
             "; text width: " + ch.getWidth() +
             "; BlockIP Position: " + currentBlockIPPosition +
             "; currentBPPosition: " + currentBPPosition +
@@ -1096,7 +1096,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
         int rx = currentIPPosition + text.getBorderAndPaddingWidthStart();
         int bl = currentBPPosition + text.getOffset() + text.getBaselineOffset();
 
-/*        System.out.println("Text = " + text.getTextArea() +
+/*        log.debug("Text = " + text.getTextArea() +
             "; text width: " + text.getWidth() +
             "; BlockIP Position: " + currentBlockIPPosition +
             "; currentBPPosition: " + currentBPPosition +

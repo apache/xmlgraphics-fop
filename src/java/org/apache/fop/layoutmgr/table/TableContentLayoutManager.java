@@ -692,24 +692,20 @@ public class TableContentLayoutManager implements PercentBaseContext {
         TableBody body = null;
         while (iterator.hasNext()) {
             Position pos = (Position)iterator.next();
-            //System.out.println(pos);
             if (pos instanceof TableContentPosition) {
                 TableContentPosition tcpos = (TableContentPosition)pos;
                 lst.add(tcpos);
-                //System.out.println(tcpos.row);
                 GridUnitPart part = (GridUnitPart)tcpos.gridUnitParts.get(0);
                 if (body == null) {
                     body = part.pgu.getBody();
                 }
                 if (tcpos.getFlag(TableContentPosition.FIRST_IN_ROWGROUP) 
                         && tcpos.row.getFlag(EffRow.FIRST_IN_BODY)) {
-                    //System.out.println("pgu is first in body");
                     firstPos = true;
 
                 }
                 if (tcpos.getFlag(TableContentPosition.LAST_IN_ROWGROUP) 
                         && tcpos.row.getFlag(EffRow.LAST_IN_BODY)) {
-                    //System.out.println("pgu is last in body");
                     lastPos = true;
                     getTableLM().getCurrentPV().addMarkers(body.getMarkers(), 
                             true, firstPos, lastPos);

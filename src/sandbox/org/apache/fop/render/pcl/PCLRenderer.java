@@ -69,7 +69,7 @@ public class PCLRenderer extends PrintRenderer {
             try {
                 fontcode = Integer.parseInt(name.substring(1));
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e);
             }
         }
         switch (fontcode) {

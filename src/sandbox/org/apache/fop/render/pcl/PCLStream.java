@@ -44,8 +44,6 @@ public class PCLStream {
         try {
             out.write(buff);
         } catch (IOException e) {
-            // e.printStackTrace();
-            // e.printStackTrace(System.out);
             throw new RuntimeException(e.toString());
         }
     }

@@ -70,7 +70,7 @@ class PDFGraphicsConfiguration extends GraphicsConfiguration {
     }
 
     /**
-     * FIXX ME: This should return the page bounds in Pts,
+     * TODO: This should return the page bounds in Pts,
      * I couldn't figure out how to get this for the current
      * page from the PDFDocument (this still works for now,
      * but it should be fixed...).
@@ -78,7 +78,6 @@ class PDFGraphicsConfiguration extends GraphicsConfiguration {
      * @return the bounds of the PDF document page
      */
     public Rectangle getBounds() {
-        System.out.println("getting getBounds");
         return null;
     }
 
@@ -110,7 +109,6 @@ class PDFGraphicsConfiguration extends GraphicsConfiguration {
      * @return the default transform for the configuration
      */
     public AffineTransform getDefaultTransform() {
-        System.out.println("getting getDefaultTransform");
         return new AffineTransform();
     }
 
@@ -122,7 +120,6 @@ class PDFGraphicsConfiguration extends GraphicsConfiguration {
      * @return the normalizing transform for the configuration
      */
     public AffineTransform getNormalizingTransform() {
-        System.out.println("getting getNormalizingTransform");
         return new AffineTransform(2, 0, 0, 2, 0, 0);
     }
 

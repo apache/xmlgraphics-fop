@@ -84,7 +84,6 @@ public class PDFTextPainter implements TextPainter {
      * @param g2d the Graphics2D to use
      */
     public void paint(TextNode node, Graphics2D g2d) {
-        // System.out.println("PDFText paint");
         String txt = node.getText();
         Point2D loc = node.getLocation();
         
@@ -328,7 +327,6 @@ public class PDFTextPainter implements TextPainter {
      * @return null
      */
     public Mark getMark(TextNode node, int pos, boolean all) {
-        System.out.println("PDFText getMark");
         return null;
     }
 
@@ -341,7 +339,6 @@ public class PDFTextPainter implements TextPainter {
      * @return null
      */
     public Mark selectAt(double x, double y, TextNode node) {
-        System.out.println("PDFText selectAt");
         return null;
     }
 
@@ -354,7 +351,6 @@ public class PDFTextPainter implements TextPainter {
      * @return null
      */
     public Mark selectTo(double x, double y, Mark beginMark) {
-        System.out.println("PDFText selectTo");
         return null;
     }
 
@@ -365,7 +361,6 @@ public class PDFTextPainter implements TextPainter {
      * @return null
      */
     public Mark selectFirst(TextNode node) {
-        System.out.println("PDFText selectFirst");
         return null;
     }
 
@@ -376,7 +371,6 @@ public class PDFTextPainter implements TextPainter {
      * @return null
      */
     public Mark selectLast(TextNode node) {
-        System.out.println("PDFText selectLast");
         return null;
     }
 
@@ -388,7 +382,6 @@ public class PDFTextPainter implements TextPainter {
      * @return null
      */
     public int[] getSelected(Mark start, Mark finish) {
-        System.out.println("PDFText getSelected");
         return null;
     }
 
@@ -400,7 +393,6 @@ public class PDFTextPainter implements TextPainter {
      * @return null
      */
     public Shape getHighlightShape(Mark beginMark, Mark endMark) {
-        System.out.println("PDFText getHighlightShape");
         return null;
     }
 

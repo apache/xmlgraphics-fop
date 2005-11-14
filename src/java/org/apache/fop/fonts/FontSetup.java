@@ -200,7 +200,9 @@ public class FontSetup {
                     FontTriplet triplet = (FontTriplet) triplets.get(c);
 
                     int weight = FontUtil.parseCSS2FontWeight(triplet.getWeight());
-                    //System.out.println("Registering: "+triplet+" weight="+weight);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Registering: " + triplet + " weight=" + weight);
+                    }
                     fontInfo.addFontProperties(internalName,
                                                triplet.getName(),
                                                triplet.getStyle(),

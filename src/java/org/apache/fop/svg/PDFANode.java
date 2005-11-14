@@ -101,6 +101,7 @@ public class PDFANode extends CompositeGraphicsNode {
                             }
                         }
                     } catch (Exception e) {
+                        //TODO Move this to setDestination() and throw an IllegalArgumentException 
                         e.printStackTrace();
                     }
                     Rectangle2D destRect = new Rectangle2D.Float(x, y, width, height);

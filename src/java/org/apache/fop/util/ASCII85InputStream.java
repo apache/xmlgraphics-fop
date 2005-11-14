@@ -31,7 +31,6 @@ import java.io.IOException;
  * The filter is described in chapter 3.13.3 of the PostScript Language 
  * Reference (third edition).
  *
- * @author <a href="mailto:jeremias@apache.org">Jeremias Maerki</a>
  * @version $Id$
  */
 public class ASCII85InputStream extends InputStream
@@ -119,7 +118,6 @@ public class ASCII85InputStream extends InputStream
         } else {
             int cIndex = 0;
             tuple = (buf - START) * POW85[cIndex];
-            //System.out.println(cIndex + ": " + Long.toHexString(tuple));
             cIndex++;
             while (cIndex < 5) {
                 buf = filteredRead();
@@ -131,7 +129,6 @@ public class ASCII85InputStream extends InputStream
                     throw new IOException("Illegal 'z' within tuple");
                 } else {
                     tuple += (buf - START) * POW85[cIndex];
-                    //System.out.println(cIndex + ": " + Long.toHexString(tuple));
                     cIndex++;
                 }
             }

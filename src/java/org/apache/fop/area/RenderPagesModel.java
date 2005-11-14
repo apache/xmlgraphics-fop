@@ -115,7 +115,7 @@ public class RenderPagesModel extends AreaTreeModel {
                 renderer.renderPage(page);
             } catch (Exception e) {
                 // use error handler to handle this FOP or IO Exception
-                e.printStackTrace();
+                log.error(e);
             }
             page.clear();
         } else {
@@ -159,7 +159,7 @@ public class RenderPagesModel extends AreaTreeModel {
                     }
                 } catch (Exception e) {
                     // use error handler to handle this FOP or IO Exception
-                    e.printStackTrace();
+                    log.error(e);
                 }
                 p.clear();
                 iter.remove();

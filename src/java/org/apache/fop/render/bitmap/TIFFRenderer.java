@@ -202,8 +202,8 @@ public class TIFFRenderer extends Java2DRenderer {
             try {
                 pageImage = getPageImage(current++);
             } catch (FOPException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.error(e);
+                return null;
             }
 
             switch (renderParams.getCompression()) {

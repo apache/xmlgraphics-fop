@@ -108,7 +108,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
 
             // get elements from curLM
             returnedList = curLM.getNextKnuthElements(childLC, alignment);
-            //System.out.println("FLM.getNextKnuthElements> returnedList.size() = " 
+            //log.debug("FLM.getNextKnuthElements> returnedList.size() = " 
             //    + returnedList.size());
 
             // "wrap" the Position inside each element
@@ -148,7 +148,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
                             && ((KnuthPenalty)returnedList.getLast()).getP() 
                                     == -KnuthElement.INFINITE) {
                         // a descendant of this flow has break-after
-/*LF*/                  //System.out.println("FLM - break after!!");
+/*LF*/                  //log.debug("FLM - break after!!");
                         return returnList;
                     }
 /*LF*/          }

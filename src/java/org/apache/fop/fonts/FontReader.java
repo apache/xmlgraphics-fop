@@ -147,7 +147,7 @@ public class FontReader extends DefaultHandler {
      * @see org.xml.sax.ContentHandler#startElement(String, String, String, Attributes)
      */
     public void startElement(String uri, String localName, String qName,
-                             Attributes attributes) {
+                             Attributes attributes) throws SAXException {
         if (localName.equals("font-metrics")) {
             if ("TYPE0".equals(attributes.getValue("type"))) {
                 multiFont = new MultiByteFont();
@@ -190,8 +190,8 @@ public class FontReader extends DefaultHandler {
                 singleFont.setWidth(Integer.parseInt(attributes.getValue("idx")),
                         Integer.parseInt(attributes.getValue("wdt")));
             } catch (NumberFormatException ne) {
-                System.out.println("Malformed width in metric file: "
-                                   + ne.getMessage());
+                throw new SAXException("Malformed width in metric file: "
+                                   + ne.getMessage(), ne);
             }
         } else if ("pair".equals(localName)) {
             currentKerning.put(new Integer(attributes.getValue("kpx2")),
@@ -199,12 +199,12 @@ public class FontReader extends DefaultHandler {
         }
     }
 
-    private int getInt(String str) {
+    private int getInt(String str) throws SAXException {
         int ret = 0;
         try {
             ret = Integer.parseInt(str);
         } catch (Exception e) {
-            /**@todo log this exception */
+            throw new SAXException("Error while parsing integer value: " + str, e);
         }
         return ret;
     }
@@ -212,7 +212,7 @@ public class FontReader extends DefaultHandler {
     /**
      * @see org.xml.sax.ContentHandler#endElement(String, String, String)
      */
-    public void endElement(String uri, String localName, String qName) {
+    public void endElement(String uri, String localName, String qName) throws SAXException {
         String content = text.toString().trim();
         if ("font-name".equals(localName)) {
             returnFont.setFontName(content);

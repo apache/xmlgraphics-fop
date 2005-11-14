@@ -174,12 +174,14 @@ public abstract class AbstractBreaker {
         ElementListObserver.observe(elementList, "breaker", null);
     }
     
+    /**
+     * Starts the page breaking process.
+     * @param flowBPD the constant available block-progression-dimension (used for every part)
+     */
     public void doLayout(int flowBPD) {
         LayoutContext childLC = createLayoutContext();
         childLC.setStackLimit(new MinOptMax(flowBPD));
 
-        //System.err.println("Vertical alignment: " +
-        // currentSimplePageMaster.getRegion(FO_REGION_BODY).getDisplayAlign());
         if (getCurrentDisplayAlign() == Constants.EN_X_FILL) {
             //EN_FILL is non-standard (by LF)
             alignment = Constants.EN_JUSTIFY;
@@ -492,7 +494,6 @@ public abstract class AbstractBreaker {
     private int optimizeLineLength(KnuthSequence effectiveList, int startElementIndex, int endElementIndex) {
         ListIterator effectiveListIterator;
         // optimize line length
-        //System.out.println(" ");
         int boxCount = 0;
         int accumulatedLineLength = 0;
         int greatestMinimumLength = 0;
@@ -520,10 +521,10 @@ public abstract class AbstractBreaker {
         int averageLineLength = 0;
         if (accumulatedLineLength > 0 && boxCount > 0) {
             averageLineLength = (int) (accumulatedLineLength / boxCount);
-            //System.out.println("PSLM> lunghezza media = " + averageLineLength);
+            log.debug("Average line length = " + averageLineLength);
             if (averageLineLength < greatestMinimumLength) {
                 averageLineLength = greatestMinimumLength;
-                //System.out.println("      correzione, ora e' = " + averageLineLength);
+                log.debug("  Correction to: " + averageLineLength);
             }
         }
         return averageLineLength;

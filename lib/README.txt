@@ -17,7 +17,7 @@ Normal Dependencies
     http://jakarta.apache.org/commons/io/
     (I/O routines)
     
-    Apache License v1.1
+    Apache License v2.0
     
 - Apache Jakarta Commons Logging
 

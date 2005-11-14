@@ -81,8 +81,7 @@ public abstract class AbstractBaseLayoutManager
             case LengthBase.CONTAINING_REFAREA_WIDTH:
                 return getReferenceAreaIPD();
             default:
-                log.error("Unknown base type for LengthBase:" + lengthBase);
-                new Exception().printStackTrace();
+                log.error(new Exception("Unknown base type for LengthBase:" + lengthBase));
                 return 0;
             }
         } else {

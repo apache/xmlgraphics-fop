@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,6 @@ package org.apache.fop.svg;
 
 import org.apache.batik.bridge.SVGImageElementBridge;
 
-import org.apache.fop.image.JpegImage;
-import org.apache.fop.image.FopImage;
-import org.apache.fop.image.analyser.ImageReaderFactory;
-
 import java.awt.Shape;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
@@ -32,11 +28,14 @@ import java.io.InputStream;
 
 import org.w3c.dom.Element;
 
-import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.gvt.AbstractGraphicsNode;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.util.ParsedURL;
+
+import org.apache.fop.image.JpegImage;
+import org.apache.fop.image.FopImage;
+import org.apache.fop.image.analyser.ImageReaderFactory;
 
 /**
  * Bridge class for the &lt;image> element when jpeg images.
@@ -55,12 +54,12 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
      * THis checks if it is a jpeg file and creates a jpeg node
      * so the jpeg can be inserted directly into the pdf document.
      * @param ctx the bridge context
-     * @param e the svg element for the image
+     * @param imageElement the svg element for the image
      * @param purl the parsed url for the image resource
      * @return a new graphics node
      */
     protected GraphicsNode createImageGraphicsNode
-        (BridgeContext ctx, Element e, ParsedURL purl) {
+        (BridgeContext ctx, Element imageElement, ParsedURL purl) {
         try {
             InputStream is = purl.openStream();
             if (!is.markSupported()) {
@@ -71,38 +70,41 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
             byte [] data = new byte[3];
             is.read(data);
             is.reset();
-            if ((data[0] == (byte)0xFF) && (data[1] == (byte)0xD8) && 
-                (data[2] == (byte)0xFF)) {
-            FopImage.ImageInfo ii = ImageReaderFactory.make
-                    (purl.toString(), is, null);
+            if ((data[0] == (byte)0xFF) 
+                    && (data[1] == (byte)0xD8) 
+                    && (data[2] == (byte)0xFF)) {
+                FopImage.ImageInfo ii = ImageReaderFactory.make
+                        (purl.toString(), is, null);
                 JpegImage jpeg = new JpegImage(ii);
-                SimpleLog logger = new SimpleLog("FOP/SVG");
-                logger.setLevel(SimpleLog.LOG_LEVEL_INFO);
                 jpeg.load(FopImage.ORIGINAL_DATA);
                 PDFJpegNode node = new PDFJpegNode(jpeg, ctx, e, purl);
-
+    
                 Rectangle2D imgBounds = getImageBounds(ctx, e);
-            Rectangle2D bounds = node.getPrimitiveBounds();
-            float [] vb = new float[4];
-            vb[0] = 0; // x
-            vb[1] = 0; // y
-            vb[2] = (float) bounds.getWidth(); // width
-            vb[3] = (float) bounds.getHeight(); // height
-
+                Rectangle2D bounds = node.getPrimitiveBounds();
+                float [] vb = new float[4];
+                vb[0] = 0; // x
+                vb[1] = 0; // y
+                vb[2] = (float) bounds.getWidth(); // width
+                vb[3] = (float) bounds.getHeight(); // height
+    
                 // handles the 'preserveAspectRatio', 'overflow' and 'clip' 
                 // and sets the appropriate AffineTransform to the image node
                 initializeViewport(ctx, e, node, vb, imgBounds);
-            return node;
+                return node;
             }
         } catch (Exception ex) {
+            //TODO Handle this exception
         }
 
         return superCreateGraphicsNode(ctx, e, purl);
     }
 
+    /**
+     * @see org.apache.batik.bridge.SVGImageElementBridge
+     */
     protected GraphicsNode superCreateGraphicsNode
-        (BridgeContext ctx, Element e, ParsedURL purl) {
-        return super.createImageGraphicsNode(ctx, e, purl);
+        (BridgeContext ctx, Element imageElement, ParsedURL purl) {
+        return super.createImageGraphicsNode(ctx, imageElement, purl);
     }
 
 
@@ -112,21 +114,26 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
      * the PDFGraphics2D.
      */
     public class PDFJpegNode extends AbstractGraphicsNode {
+        
         private JpegImage jpeg;
         private BridgeContext ctx;
-        private Element e;
+        private Element imageElement;
         private ParsedURL purl;
-        private GraphicsNode origGraphicsNode=null;
+        private GraphicsNode origGraphicsNode = null;
+        
         /**
          * Create a new pdf jpeg node for drawing jpeg images
          * into pdf graphics.
          * @param j the jpeg image
+         * @param ctx the bridge context
+         * @param imageElement the SVG image element
+         * @param purl the URL to the image
          */
         public PDFJpegNode(JpegImage j, BridgeContext ctx, 
-                           Element e, ParsedURL purl) {
+                           Element imageElement, ParsedURL purl) {
             this.jpeg = j;
             this.ctx  = ctx;
-            this.e    = e;
+            this.imageElement = imageElement;
             this.purl = purl;
         }
 
@@ -154,6 +161,7 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
                     float height = jpeg.getHeight();
                     pdfg.addJpegImage(jpeg, x, y, width, height);
                 } catch (Exception e) {
+                    //TODO Handle this exception properly
                     e.printStackTrace();
                 }
             } else {
@@ -162,9 +170,9 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
                 if (origGraphicsNode == null) {
                     // Haven't constructed baseclass Graphics Node,
                     // so do so now.
-                    origGraphicsNode = 
-                        PDFImageElementBridge.this.superCreateGraphicsNode
-                        (ctx,  e, purl);
+                    origGraphicsNode 
+                        = PDFImageElementBridge.this.superCreateGraphicsNode
+                            (ctx,  imageElement, purl);
                 }
                 origGraphicsNode.primitivePaint(g2d);
             }
@@ -187,6 +195,7 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
                 return new Rectangle2D.Double(0, 0, jpeg.getWidth(),
                                               jpeg.getHeight());
             } catch (Exception e) {
+                //TODO Handle this exception properly
                 e.printStackTrace();
             }
             return null;

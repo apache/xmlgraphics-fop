@@ -690,7 +690,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         Position lastPos = null;
         while (parentIter.hasNext()) {
             pos = (Position) parentIter.next();
-            //System.out.println("pos = " + pos.getClass().getName());
             if (pos.getIndex() >= 0) {
                 if (firstPos == null) {
                     firstPos = pos;
@@ -728,13 +727,10 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                 // pos was created by this BlockLM and was inside a penalty
                 // allowing or forbidding a page break
                 // nothing to do
-                /* LF *///System.out.println(" penalty");
             } else {
                 // innerPosition was created by another LM
                 positionList.add(innerPosition);
                 lastLM = innerPosition.getLM();
-                /* LF *///System.out.println(" " +
-                      // innerPosition.getClass().getName());
             }
         }
 
@@ -756,7 +752,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                 //    // the last item inside positionList is a LeafPosition
                 //    // (a LineBreakPosition, more precisely); this means that
                 //    // the whole paragraph is on the same page
-                //    System.out.println("paragrafo intero");
                 //    childPosIter = new KnuthPossPosIter(storedList, 0,
                       // storedList.size());
                 //} else {
@@ -781,11 +776,11 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                         lastLM = element.getLayoutManager();
                     }
                 }
-                //System.out.println("addAreas riferito a storedList da " +
-                      // iFirst + " a " + iLast);
-                //System.out.println("splitLength= " + splitLength
-                //                   + " (" + neededUnits(splitLength) + " unita') "
-                //                   + (neededUnits(splitLength) * bpUnit - splitLength) + " spazi");
+                //log.debug("Adding areas from " + iFirst + " to " + iLast);
+                //log.debug("splitLength= " + splitLength
+                //                   + " (" + neededUnits(splitLength) + " units') "
+                //                   + (neededUnits(splitLength) * bpUnit - splitLength) 
+                //                   + " spacing");
                 // add space before and / or after the paragraph
                 // to reach a multiple of bpUnit
                 if (bSpaceBefore && bSpaceAfter) {
@@ -810,8 +805,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                             + foBlockSpaceAfter.min)
                             * bpUnit - splitLength;
                 }
-                //System.out.println("spazio prima = " + adjustedSpaceBefore
-                      // + " spazio dopo = " + adjustedSpaceAfter + " totale = " +
+                //log.debug("space before = " + adjustedSpaceBefore
+                      // + " space after = " + adjustedSpaceAfter + " total = " +
                       // (adjustedSpaceBefore + adjustedSpaceAfter + splitLength));
                 childPosIter = new KnuthPossPosIter(splitList, 0, splitList
                         .size());

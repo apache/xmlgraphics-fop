@@ -232,7 +232,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
      */
     public void addAreas(PositionIterator parentIter,
             LayoutContext layoutContext) {
-        //System.out.println(" BLM.addAreas>");
         getParentArea(null);
 
         // if this will create the first block area in a page
@@ -316,7 +315,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
             //    // the last item inside positionList is a LeafPosition
             //    // (a LineBreakPosition, more precisely); this means that
             //    // the whole paragraph is on the same page
-            //    System.out.println("paragrafo intero");
             //    childPosIter = new KnuthPossPosIter(storedList, 0,
                   // storedList.size());
             //} else {
@@ -341,11 +339,11 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
                     lastLM = element.getLayoutManager();
                 }
             }
-            //System.out.println("addAreas riferito a storedList da " +
-                  // iFirst + " a " + iLast);
-            //System.out.println("splitLength= " + splitLength
-            //                   + " (" + neededUnits(splitLength) + " unita') "
-            //                   + (neededUnits(splitLength) * bpUnit - splitLength) + " spazi");
+            //log.debug("Adding areas from " + iFirst + " to " + iLast);
+            //log.debug("splitLength= " + splitLength
+            //                   + " (" + neededUnits(splitLength) + " units') "
+            //                   + (neededUnits(splitLength) * bpUnit - splitLength) 
+            //                   + " spacing");
             // add space before and / or after the paragraph
             // to reach a multiple of bpUnit
             if (bSpaceBefore && bSpaceAfter) {
@@ -370,7 +368,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
                         + foSpaceAfter.min)
                         * bpUnit - splitLength;
                 }
-            //System.out.println("spazio prima = " + adjustedSpaceBefore
+            //log.debug("spazio prima = " + adjustedSpaceBefore
                   // + " spazio dopo = " + adjustedSpaceAfter + " totale = " +
                   // (adjustedSpaceBefore + adjustedSpaceAfter + splitLength));
             childPosIter = new KnuthPossPosIter(splitList, 0, splitList
