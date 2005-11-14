@@ -97,7 +97,8 @@ list of possible build targets.
     <exclude name="build/**"/>
     <include name="src/**"/>
     <include name="conf/**"/>
-    <include name="hyph/**"/>
+    <include name="hyph/hyphenation.dtd"/>
+    <include name="hyph/readme"/>
     <patternset refid="dist.lib"/>
     <include name="lib/servlet*"/>
     <include name="test/**"/>
