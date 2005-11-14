@@ -336,7 +336,7 @@ public class RTFHandler extends FOEventHandler {
             RtfTextrun textrun = container.getTextrun();
 
             textrun.addParagraphBreak();
-            textrun.pushAttributes(rtfAttr);
+            textrun.pushBlockAttributes(rtfAttr);
             textrun.addBookmark(bl.getId());
         } catch (IOException ioe) {
             // TODO could we throw Exception in all FOEventHandler events?
@@ -367,7 +367,7 @@ public class RTFHandler extends FOEventHandler {
             RtfTextrun textrun = container.getTextrun();
 
             textrun.addParagraphBreak();
-            textrun.popAttributes();
+            textrun.popBlockAttributes();
 
         } catch (IOException ioe) {
             log.error("startBlock:" + ioe.getMessage());
@@ -398,7 +398,7 @@ public class RTFHandler extends FOEventHandler {
             RtfTextrun textrun = container.getTextrun();
 
             textrun.addParagraphBreak();
-            textrun.pushAttributes(rtfAttr);
+            textrun.pushBlockAttributes(rtfAttr);
         } catch (IOException ioe) {
             // TODO could we throw Exception in all FOEventHandler events?
             log.error("startBlock: " + ioe.getMessage());
@@ -426,7 +426,7 @@ public class RTFHandler extends FOEventHandler {
             RtfTextrun textrun = container.getTextrun();
 
             textrun.addParagraphBreak();
-            textrun.popAttributes();
+            textrun.popBlockAttributes();
 
         } catch (IOException ioe) {
             log.error("startBlock:" + ioe.getMessage());
@@ -552,7 +552,7 @@ public class RTFHandler extends FOEventHandler {
                     IRtfTextrunContainer.class, true, this);
 
             RtfTextrun textrun = container.getTextrun();
-            textrun.pushAttributes(rtfAttr);
+            textrun.pushInlineAttributes(rtfAttr);
             textrun.addBookmark(inl.getId());
         } catch (IOException ioe) {
             log.error("startInline:" + ioe.getMessage());
@@ -581,7 +581,7 @@ public class RTFHandler extends FOEventHandler {
                     IRtfTextrunContainer.class, true, this);
 
             RtfTextrun textrun = container.getTextrun();
-            textrun.popAttributes();
+            textrun.popInlineAttributes();
         } catch (IOException ioe) {
             log.error("startInline:" + ioe.getMessage());
             throw new RuntimeException(ioe.getMessage());
@@ -1146,9 +1146,9 @@ public class RTFHandler extends FOEventHandler {
             RtfAttributes rtfAttr
                 = TextAttributesConverter.convertCharacterAttributes(text);
 
-            textrun.pushAttributes(rtfAttr);
+            textrun.pushInlineAttributes(rtfAttr);
             textrun.addString(new String(data, start, length - start));
-            textrun.popAttributes();
+            textrun.popInlineAttributes();
          } catch (IOException ioe) {
             // FIXME could we throw Exception in all FOEventHandler events?
             log.error("characters: " + ioe.getMessage());
