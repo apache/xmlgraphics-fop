@@ -21,6 +21,7 @@ package org.apache.fop.svg;
 import java.awt.geom.AffineTransform;
 
 import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.bridge.DocumentLoader;
 import org.apache.batik.bridge.UserAgent;
 import org.apache.fop.fonts.FontInfo;
 
@@ -37,9 +38,28 @@ public class PDFBridgeContext extends BridgeContext {
     /**
      * Constructs a new bridge context.
      * @param userAgent the user agent
-     * @param fontInfo the font list for the text painter, may be null in which case text is
-     *                 painted as shapes
-     * @param linkTransform AffineTransform to properly place links, may be null
+     * @param loader the Document Loader to use for referenced documents.
+     * @param fontInfo the font list for the text painter, may be null
+     *                 in which case text is painted as shapes
+     * @param linkTransform AffineTransform to properly place links,
+     *                      may be null
+     */
+    public PDFBridgeContext(UserAgent userAgent,
+                            DocumentLoader loader,
+                            FontInfo fontInfo,
+                            AffineTransform linkTransform) {
+        super(userAgent, loader);
+        this.fontInfo = fontInfo;
+        this.linkTransform = linkTransform;
+    }
+
+    /**
+     * Constructs a new bridge context.
+     * @param userAgent the user agent
+     * @param fontInfo the font list for the text painter, may be null
+     *                 in which case text is painted as shapes
+     * @param linkTransform AffineTransform to properly place links,
+     *                      may be null
      */
     public PDFBridgeContext(UserAgent userAgent, FontInfo fontInfo, 
                 AffineTransform linkTransform) {
@@ -51,8 +71,8 @@ public class PDFBridgeContext extends BridgeContext {
     /**
      * Constructs a new bridge context.
      * @param userAgent the user agent
-     * @param fontInfo the font list for the text painter, may be null in which case text is
-     *                 painted as shapes
+     * @param fontInfo the font list for the text painter, may be null
+     *                 in which case text is painted as shapes
      */
     public PDFBridgeContext(UserAgent userAgent, FontInfo fontInfo) {
         this(userAgent, fontInfo, null);
@@ -76,5 +96,10 @@ public class PDFBridgeContext extends BridgeContext {
 
         putBridge(new PDFImageElementBridge());
     }
-    
+
+    // Make sure any 'sub bridge contexts' also have our bridges.
+    public BridgeContext createBridgeContext() {
+        return new PDFBridgeContext(getUserAgent(), getDocumentLoader(),
+                                    fontInfo, linkTransform);
+    }
 }

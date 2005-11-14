@@ -382,7 +382,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     public void addJpegImage(JpegImage jpeg, float x, float y, 
                              float width, float height) {
         preparePainting();
-        String key = "__AddJPEG_" + jpegCount[0];
+        // Need to include hash code as when invoked from FO you
+        // may have several 'independent' PDFGraphics2D so the
+        // count is not enough.
+        String key = "__AddJPEG_" + hashCode() + "_" + jpegCount[0];
         jpegCount[0]++;
         FopPDFImage fopimage = new FopPDFImage(jpeg, key);
         int xObjectNum = this.pdfDoc.addImage(resourceContext, 
