@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 import java.util.Iterator;
+import java.util.ListIterator;
 
 // FOP
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfExternalGraphic;
@@ -42,6 +43,9 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfExternalGraphic;
 public class RtfTextrun extends RtfContainer {
     private boolean bSuppressLastPar = false;
     private RtfListItem rtfListItem;
+    
+    /** Manager for handling space-* property. */
+    private RtfSpaceManager rtfSpaceManager = new RtfSpaceManager();
     
     /**  Class which represents the opening of a RTF group mark.*/
     private class RtfOpenGroupMark extends RtfElement {
@@ -121,24 +125,121 @@ public class RtfTextrun extends RtfContainer {
         super(parent, w, attrs);
     }
     
-    public void pushAttributes(RtfAttributes attrs) throws IOException {
+    
+    /**
+     * Adds instance of <code>OpenGroupMark</code> as a child with attributes.
+     * 
+     * @param attrs  attributes to add
+     * @throws IOException for I/O problems
+     */
+    public void addOpenGroupMark(RtfAttributes attrs) throws IOException {
         RtfOpenGroupMark r = new RtfOpenGroupMark(this, writer, attrs);
     }
-    
-    public void popAttributes() throws IOException {
+
+    /**
+     * Adds instance of <code>CloseGroupMark</code> as a child.
+     * 
+     * @throws IOException for I/O problems
+     */
+    public void addCloseGroupMark() throws IOException {
         RtfCloseGroupMark r = new RtfCloseGroupMark(this, writer);
     }
     
+    /**
+     * Pushes block attributes, notifies all opened blocks about pushing block 
+     * attributes, adds <code>OpenGroupMark</code> as a child.
+     * 
+     * @param attrs  the block attributes to push
+     * @throws IOException for I/O problems
+     */
+    public void pushBlockAttributes(RtfAttributes attrs) throws IOException {
+        rtfSpaceManager.stopUpdatingSpaceBefore();
+        RtfSpaceSplitter splitter = rtfSpaceManager.pushRtfSpaceSplitter(attrs);
+        addOpenGroupMark(splitter.getCommonAttributes());
+    }
+    
+    /**
+     * Pops block attributes, notifies all opened blocks about pushing block 
+     * attributes, adds <code>CloseGroupMark</code> as a child.
+     * 
+     * @throws IOException for I/O problems
+     */
+    public void popBlockAttributes() throws IOException {
+        rtfSpaceManager.popRtfSpaceSplitter();
+        rtfSpaceManager.stopUpdatingSpaceBefore();
+        addCloseGroupMark();
+    }
+
+    /**
+     * Pushes inline attributes.
+     * 
+     * @param attrs  the inline attributes to push
+     * @throws IOException for I/O problems
+     */
+    public void pushInlineAttributes(RtfAttributes attrs) throws IOException {
+        rtfSpaceManager.pushInlineAttributes(attrs);
+        addOpenGroupMark(attrs);
+    }
+
+    /**
+     * Pop inline attributes.
+     * 
+     * @throws IOException for I/O problems
+     */
+    public void popInlineAttributes() throws IOException {
+        rtfSpaceManager.popInlineAttributes();
+        addCloseGroupMark();
+    }
+    
+    /**
+     * Add string to children list.
+     * 
+     * @param s  string to add
+     * @throws IOException for I/O problems
+     */
     public void addString(String s) throws IOException {
+        if (s.equals("")) {
+            return;
+        }
+        RtfAttributes attrs = rtfSpaceManager.getLastInlineAttribute();
+        //add RtfSpaceSplitter to inherit accumulated space
+        rtfSpaceManager.pushRtfSpaceSplitter(attrs);
+        rtfSpaceManager.setCandidate(attrs);
         RtfString r = new RtfString(this, writer, s);
+        rtfSpaceManager.popRtfSpaceSplitter();
     }
     
     public RtfFootnote addFootnote() throws IOException {
         return new RtfFootnote(this, writer);
     }
     
+    /**
+     * Inserts paragraph break before all close group marks.
+     * 
+     * @throws IOException  for I/O problems
+     */
     public void addParagraphBreak() throws IOException {
-        RtfParagraphBreak r = new RtfParagraphBreak(this, writer);
+        // get copy of children list
+        List children = getChildren();
+
+        // delete all previous CloseGroupMark
+        int deletedCloseGroupCount = 0;
+
+        ListIterator lit = children.listIterator(children.size());
+        while (lit.hasPrevious()
+                && (lit.previous() instanceof RtfCloseGroupMark)) {
+            lit.remove();
+            deletedCloseGroupCount++;
+        }
+
+        if (children.size() != 0) {
+            // add paragraph break and restore all deleted close group marks
+            setChildren(children);
+            new RtfParagraphBreak(this, writer);
+            for (int i = 0; i < deletedCloseGroupCount; i++) {
+                addCloseGroupMark();
+            }
+        }
     }
     
     public void addPageNumber(RtfAttributes attr) throws IOException {
