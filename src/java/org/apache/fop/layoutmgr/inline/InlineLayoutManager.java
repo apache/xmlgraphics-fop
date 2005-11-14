@@ -98,18 +98,13 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     
     /** @see LayoutManager#initialize */
     public void initialize() {
-        inlineProps = fobj.getCommonMarginInline();
-        borderProps = fobj.getCommonBorderPaddingBackground();
-
-        int padding = borderProps.getPadding(CommonBorderPaddingBackground.BEFORE, false, this);
-        padding += borderProps.getBorderWidth(CommonBorderPaddingBackground.BEFORE,
-                                             false);
-        padding += borderProps.getPadding(CommonBorderPaddingBackground.AFTER, false, this);
-        padding += borderProps.getBorderWidth(CommonBorderPaddingBackground.AFTER, false);
-        extraBPD = new MinOptMax(padding);
+        int padding = 0;
         font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo(), this);
         lineHeight = fobj.getLineHeight();
+
         if (fobj instanceof Inline) {
+            inlineProps = fobj.getCommonMarginInline();
+            borderProps = fobj.getCommonBorderPaddingBackground();
             alignmentAdjust = ((Inline)fobj).getAlignmentAdjust();
             alignmentBaseline = ((Inline)fobj).getAlignmentBaseline();
             baselineShift = ((Inline)fobj).getBaselineShift();
@@ -120,42 +115,57 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             baselineShift = ((Leader)fobj).getBaselineShift();
             dominantBaseline = ((Leader)fobj).getDominantBaseline();
         }
+        if (borderProps != null) {
+            padding = borderProps.getPadding(CommonBorderPaddingBackground.BEFORE, false, this);
+            padding += borderProps.getBorderWidth(CommonBorderPaddingBackground.BEFORE,
+                                                 false);
+            padding += borderProps.getPadding(CommonBorderPaddingBackground.AFTER, false, this);
+            padding += borderProps.getBorderWidth(CommonBorderPaddingBackground.AFTER, false);
+        }
+        extraBPD = new MinOptMax(padding);
 
     }
 
     /** @see InlineStackingLayoutManager#getExtraIPD(boolean, boolean) */
     protected MinOptMax getExtraIPD(boolean isNotFirst, boolean isNotLast) {
-        int borderAndPadding 
-            = borderProps.getPadding(CommonBorderPaddingBackground.START, isNotFirst, this);
-        borderAndPadding 
-            += borderProps.getBorderWidth(CommonBorderPaddingBackground.START, isNotFirst);
-        borderAndPadding 
-            += borderProps.getPadding(CommonBorderPaddingBackground.END, isNotLast, this);
-        borderAndPadding 
-            += borderProps.getBorderWidth(CommonBorderPaddingBackground.END, isNotLast);
+        int borderAndPadding = 0;
+        if (borderProps != null) {
+            borderAndPadding 
+                = borderProps.getPadding(CommonBorderPaddingBackground.START, isNotFirst, this);
+            borderAndPadding 
+                += borderProps.getBorderWidth(CommonBorderPaddingBackground.START, isNotFirst);
+            borderAndPadding 
+                += borderProps.getPadding(CommonBorderPaddingBackground.END, isNotLast, this);
+            borderAndPadding 
+                += borderProps.getBorderWidth(CommonBorderPaddingBackground.END, isNotLast);
+        }
         return new MinOptMax(borderAndPadding);
     }
 
 
     /** @see InlineStackingLayoutManager#hasLeadingFence(boolean) */
     protected boolean hasLeadingFence(boolean isNotFirst) {
-        return borderProps.getPadding(CommonBorderPaddingBackground.START, isNotFirst, this) > 0
-            || borderProps.getBorderWidth(CommonBorderPaddingBackground.START, isNotFirst) > 0;
+        return borderProps != null
+            && (borderProps.getPadding(CommonBorderPaddingBackground.START, isNotFirst, this) > 0
+                || borderProps.getBorderWidth(CommonBorderPaddingBackground.START, isNotFirst) > 0
+               );
     }
 
     /** @see InlineStackingLayoutManager#hasTrailingFence(boolean) */
     protected boolean hasTrailingFence(boolean isNotLast) {
-        return borderProps.getPadding(CommonBorderPaddingBackground.END, isNotLast, this) > 0
-            || borderProps.getBorderWidth(CommonBorderPaddingBackground.END, isNotLast) > 0;
+        return borderProps != null
+            && (borderProps.getPadding(CommonBorderPaddingBackground.END, isNotLast, this) > 0
+                || borderProps.getBorderWidth(CommonBorderPaddingBackground.END, isNotLast) > 0
+               );
     }
 
     /** @see InlineStackingLayoutManager#getSpaceStart */
     protected SpaceProperty getSpaceStart() {
-        return inlineProps.spaceStart;
+        return inlineProps != null ? inlineProps.spaceStart : null;
     }
     /** @see InlineStackingLayoutManager#getSpaceEnd */
     protected SpaceProperty getSpaceEnd() {
-        return inlineProps.spaceEnd;
+        return inlineProps != null ? inlineProps.spaceEnd : null;
     }
     
     /** @see org.apache.fop.layoutmgr.inline.InlineLayoutManager#createArea(boolean) */

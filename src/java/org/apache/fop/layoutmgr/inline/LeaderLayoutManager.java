@@ -201,6 +201,14 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
 
             widthAdjustArea(curArea, context);
 
+            if (commonBorderPaddingBackground != null) {
+                // Add border and padding to area
+                TraitSetter.setBorderPaddingTraits(curArea,
+                                                   commonBorderPaddingBackground,
+                                                   false, false, this);
+                TraitSetter.addBackground(curArea, commonBorderPaddingBackground, this);
+            }
+
             // add content areas
             KnuthPossPosIter contentIter = new KnuthPossPosIter(contentList, 0, contentList.size());
             clm.addAreas(contentIter, context);
@@ -251,11 +259,19 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
                                     new LeafPosition(this, -1), true));
         seq.add(new KnuthPenalty(0, KnuthElement.INFINITE, false,
                                         new LeafPosition(this, -1), true));
-        seq.add
-            (new KnuthGlue(areaInfo.ipdArea.opt,
-                           areaInfo.ipdArea.max - areaInfo.ipdArea.opt,
-                           areaInfo.ipdArea.opt - areaInfo.ipdArea.min, 
-                           new LeafPosition(this, 0), false));
+        if (alignment == EN_JUSTIFY || alignment == 0) {
+            seq.add
+                (new KnuthGlue(areaInfo.ipdArea.opt,
+                               areaInfo.ipdArea.max - areaInfo.ipdArea.opt,
+                               areaInfo.ipdArea.opt - areaInfo.ipdArea.min, 
+                               new LeafPosition(this, 0), false));
+        } else {
+            seq.add
+                (new KnuthGlue(areaInfo.ipdArea.opt,
+                               0,
+                               0, 
+                               new LeafPosition(this, 0), false));
+        }
         seq.add(new KnuthInlineBox(0, alignmentContext,
                                     new LeafPosition(this, -1), true));
 
@@ -294,11 +310,19 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
                                     new LeafPosition(this, -1), true));
         returnList.add(new KnuthPenalty(0, KnuthElement.INFINITE, false,
                                         new LeafPosition(this, -1), true));
-        returnList.add
-            (new KnuthGlue(areaInfo.ipdArea.opt,
-                           areaInfo.ipdArea.max - areaInfo.ipdArea.opt,
-                           areaInfo.ipdArea.opt - areaInfo.ipdArea.min, 
-                           new LeafPosition(this, 0), false));
+        if (alignment == EN_JUSTIFY || alignment == 0) {
+            returnList.add
+                (new KnuthGlue(areaInfo.ipdArea.opt,
+                               areaInfo.ipdArea.max - areaInfo.ipdArea.opt,
+                               areaInfo.ipdArea.opt - areaInfo.ipdArea.min, 
+                               new LeafPosition(this, 0), false));
+        } else {
+            returnList.add
+                (new KnuthGlue(areaInfo.ipdArea.opt,
+                               0,
+                               0, 
+                               new LeafPosition(this, 0), false));
+        }
         returnList.add(new KnuthInlineBox(0, areaInfo.alignmentContext,
                                     new LeafPosition(this, -1), true));
 

@@ -60,15 +60,13 @@
               Content is svg 10 x 10
           </fo:block>
           <fo:block>
-            <fo:leader leader-pattern="use-content">
-              <fo:instream-foreign-object>
+            <fo:leader leader-pattern="use-content"><fo:instream-foreign-object>
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="10">
                 <rect x="0" y="0" width="10" height="5" style="fill:red"/>
-                <rect x="5" y="5" width="10" height="5" style="fill:black"/>
+                <rect x="10" y="5" width="10" height="5" style="fill:black"/>
                 </svg>
-                </fo:instream-foreign-object>
-            </fo:leader>
-              Content is svg 20 x 10 which is wider than the default leader-length
+                </fo:instream-foreign-object></fo:leader>
+              Content is svg 20 x 10 which is wider than the leader-length
           </fo:block>
         </fo:flow>
       </fo:page-sequence>
@@ -167,9 +165,9 @@
     <eval expected="0 0 0 0" xpath="//flow/block[6]/lineArea/inlineparent/inlineparent[3]/viewport/@bap"/>
  
     <eval expected="11100" xpath="//flow/block[7]/lineArea/@bpd"/>
-    <eval expected="23336" xpath="//flow/block[7]/lineArea/inlineparent/@ipd"/>
+    <eval expected="20000" xpath="//flow/block[7]/lineArea/inlineparent/@ipd"/>
     <eval expected="0" xpath="//flow/block[7]/lineArea/inlineparent/@offset"/>
-    <eval expected="23336" xpath="//flow/block[7]/lineArea/inlineparent/inlineparent[1]/@ipd"/>
+    <eval expected="20000" xpath="//flow/block[7]/lineArea/inlineparent/inlineparent[1]/@ipd"/>
     <eval expected="0" xpath="//flow/block[7]/lineArea/inlineparent/inlineparent[1]/@offset"/>
     <eval expected="20000" xpath="//flow/block[7]/lineArea/inlineparent/inlineparent[1]/viewport/@ipd"/>
     <eval expected="-1384" xpath="//flow/block[7]/lineArea/inlineparent/inlineparent[1]/viewport/@offset"/>
