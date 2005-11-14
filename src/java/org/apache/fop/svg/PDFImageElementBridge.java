@@ -77,9 +77,9 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
                         (purl.toString(), is, null);
                 JpegImage jpeg = new JpegImage(ii);
                 jpeg.load(FopImage.ORIGINAL_DATA);
-                PDFJpegNode node = new PDFJpegNode(jpeg, ctx, e, purl);
+                PDFJpegNode node = new PDFJpegNode(jpeg, ctx, imageElement, purl);
     
-                Rectangle2D imgBounds = getImageBounds(ctx, e);
+                Rectangle2D imgBounds = getImageBounds(ctx, imageElement);
                 Rectangle2D bounds = node.getPrimitiveBounds();
                 float [] vb = new float[4];
                 vb[0] = 0; // x
@@ -89,14 +89,14 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
     
                 // handles the 'preserveAspectRatio', 'overflow' and 'clip' 
                 // and sets the appropriate AffineTransform to the image node
-                initializeViewport(ctx, e, node, vb, imgBounds);
+                initializeViewport(ctx, imageElement, node, vb, imgBounds);
                 return node;
             }
         } catch (Exception ex) {
             //TODO Handle this exception
         }
 
-        return superCreateGraphicsNode(ctx, e, purl);
+        return superCreateGraphicsNode(ctx, imageElement, purl);
     }
 
     /**
