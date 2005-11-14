@@ -776,13 +776,11 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="yes">
+        yes
       </td>
       <td align="center">
-        <ul>
-          <li>TODO Document restrictions</li>
-        </ul>
+        &nbsp;
       </td>
     </tr>
     <tr>
@@ -2102,9 +2100,6 @@
           <li>
             [0.20.5] only "solid" works
           </li>
-          <li>
-            [Trunk] All styles available.
-          </li>
         </ul>
       </td>
     </tr>
@@ -2168,9 +2163,6 @@
         <ul>
           <li>
             [0.20.5] only "solid" works
-          </li>
-          <li>
-            [Trunk] All styles available.
           </li>
         </ul>
       </td>
@@ -2236,9 +2228,6 @@
           <li>
             [0.20.5] only "solid" works
           </li>
-          <li>
-            [Trunk] All styles available.
-          </li>
         </ul>
       </td>
     </tr>
@@ -2302,9 +2291,6 @@
         <ul>
           <li>
             [0.20.5] only "solid" works
-          </li>
-          <li>
-            [Trunk] All styles available.
           </li>
         </ul>
       </td>
@@ -2370,9 +2356,6 @@
           <li>
             [0.20.5] only "solid" works
           </li>
-          <li>
-            [Trunk] All styles available.
-          </li>
         </ul>
       </td>
     </tr>
@@ -2436,9 +2419,6 @@
         <ul>
           <li>
             [0.20.5] only "solid" works
-          </li>
-          <li>
-            [Trunk] All styles available.
           </li>
         </ul>
       </td>
@@ -2504,9 +2484,6 @@
           <li>
             [0.20.5] only "solid" works
           </li>
-          <li>
-            [Trunk] All styles available.
-          </li>
         </ul>
       </td>
     </tr>
@@ -2571,9 +2548,6 @@
           <li>
             [0.20.5] only "solid" works
           </li>
-          <li>
-            [Trunk] All styles available.
-          </li>
         </ul>
       </td>
     </tr>
@@ -2626,9 +2600,6 @@
           </li>
           <li>
             [0.20.5] can be used to control how much the background-color extends beyond the content rectangle
-          </li>
-          <li>
-            [Trunk] Full conformance.
           </li>
         </ul>
       </td>
@@ -3927,7 +3898,7 @@
       <td align="left">
         <ul>
           <li>
-            [Trunk] TODO TBD
+            [Trunk] Value "treat-as-zero-width-space" not supported
           </li>
         </ul>
       </td>
@@ -3951,7 +3922,7 @@
       <td align="left">
         <ul>
           <li>
-            [Trunk] TODO TBD
+            [Trunk] Only the values "ignore" and "ignore-if-surrounding-linefeed" work reliably
           </li>
         </ul>
       </td>
@@ -4609,9 +4580,6 @@
           <li>
             [0.20.5] Workaround for block-container is to use SVG.
           </li>
-          <li>
-            [Trunk] No restrictions.
-          </li>
         </ul>
       </td>
     </tr>
@@ -4653,8 +4621,8 @@
       <td class="partial">
         partial
       </td>
-      <td class="partial">
-        partial
+      <td class="no">
+        no
       </td>
       <td align="left">
         <ul>
@@ -4662,7 +4630,7 @@
             [0.20.5] not value "page"
           </li>
           <li>
-            [Trunk] TODO TBD
+            [Trunk] Not uspported
           </li>
         </ul>
       </td>
@@ -4689,7 +4657,7 @@
             [0.20.5] not value "use-content"
           </li>
           <li>
-            [Trunk] Note: Support for value "use-content" is not required for compliance - fallback "space".
+            [Trunk] Value "use-content" does not work in all circumstances.
           </li>
         </ul>
       </td>
@@ -4708,7 +4676,7 @@
         yes
       </td>
       <td class="yes">
-        partial
+        yes
       </td>
       <td align="left">
         &nbsp;
