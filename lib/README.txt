@@ -25,7 +25,7 @@ Normal Dependencies
     http://jakarta.apache.org/commons/logging/
     (Logging adapter for various logging backends like JDK 1.4 logging or Log4J)
     
-    Apache License v1.1
+    Apache License v2.0
 
 - Apache Avalon Framework
 
