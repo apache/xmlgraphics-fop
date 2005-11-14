@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,17 +18,18 @@
 
 package org.apache.fop.fonts;
 
-//Java
 import java.util.Map;
 
-//FOP
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This class is used to defer the loading of a font until it is really used.
  */
 public class LazyFont extends Typeface implements FontDescriptor {
 
+    private static Log log = LogFactory.getLog(LazyFont.class);
+    
     private String metricsFileName = null;
     private String fontEmbedPath = null;
     private boolean useKerning = false;
@@ -62,13 +63,10 @@ public class LazyFont extends Typeface implements FontDescriptor {
                 if (realFont instanceof FontDescriptor) {
                     realFontDescriptor = (FontDescriptor) realFont;
                 }
-                // System.out.println("Metrics " + metricsFileName + " loaded.");
+                // log.debug("Metrics " + metricsFileName + " loaded.");
             } catch (Exception ex) {
-                ex.printStackTrace();
-                /**@todo Log this exception */
-                //log.error("Failed to read font metrics file "
-                //                     + metricsFileName
-                //                     + " : " + ex.getMessage());
+                log.error("Failed to read font metrics file "
+                                     + metricsFileName, ex);
             }
         }
     }

@@ -141,7 +141,7 @@ public class PrintRenderer extends Java2DRenderer implements Pageable {
         try {
             printerJob.print();
         } catch (PrinterException e) {
-            e.printStackTrace();
+            log.error(e);
             throw new IOException("Unable to print: " + e.getClass().getName()
                     + ": " + e.getMessage());
         }

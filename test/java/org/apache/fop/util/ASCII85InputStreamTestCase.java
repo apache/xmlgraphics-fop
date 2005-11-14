@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.io.CopyUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.fop.pdf.PDFText;
 
@@ -34,8 +34,6 @@ import junit.framework.TestCase;
  * ATTENTION: Some of the tests here depend on the correct behaviour of
  * ASCII85OutputStream. If something fails here make sure 
  * ASCII85OutputStreamTestCase runs!
- * 
- * @author <a href="mailto:jeremias@apache.org">Jeremias Maerki</a>
  */
 public class ASCII85InputStreamTestCase extends TestCase {
 
@@ -52,10 +50,7 @@ public class ASCII85InputStreamTestCase extends TestCase {
         byte[] ascii85 = text.getBytes("US-ASCII");
         InputStream in = new ByteArrayInputStream(ascii85);
         InputStream decoder = new ASCII85InputStream(in);
-        ByteArrayOutputStream baout = new ByteArrayOutputStream();
-        CopyUtils.copy(decoder, baout);
-        baout.close();
-        return baout.toByteArray();
+        return IOUtils.toByteArray(decoder);
     }
 
     private byte[] getChunk(int count) {

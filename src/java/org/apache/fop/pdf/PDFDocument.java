@@ -394,8 +394,6 @@ public class PDFDocument {
         //Add object to list
         this.objects.add(obj);
 
-        //System.out.println("Registering: "+obj);
-
         //Add object to special lists where necessary
         if (obj instanceof PDFFunction) {
             this.functions.add(obj);

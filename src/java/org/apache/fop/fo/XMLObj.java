@@ -173,7 +173,7 @@ public abstract class XMLObj extends FONode {
             element = doc.getDocumentElement();
             buildTopLevel(doc, element);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error while trying to instantiate a DOM Document", e);
         }
         return doc;
     }

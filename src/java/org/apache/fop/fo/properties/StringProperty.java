@@ -61,7 +61,7 @@ public class StringProperty extends Property {
                     if (value.charAt(vlen) == q1) {
                         return new StringProperty(value.substring(1, vlen));
                     }
-                    System.err.println("Warning String-valued property starts with quote"
+                    log.warn("String-valued property starts with quote"
                                        + " but doesn't end with quote: "
                                        + value);
                     // fall through and use the entire value, including first quote
@@ -83,7 +83,7 @@ public class StringProperty extends Property {
      */
     public StringProperty(String str) {
         this.str = str;
-        // System.err.println("Set StringProperty: " + str);
+        // log.debug("Set StringProperty: " + str);
     }
 
     /**

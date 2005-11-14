@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,15 +38,22 @@ import org.apache.fop.fo.expr.PropertyParser;
 
 /**
  * Base class for all property makers
- * @author unascribed
  */
 public class PropertyMaker implements Cloneable {
+
+    /** Logger instance */
+    private static Log log = LogFactory.getLog(PropertyMaker.class);
+
+    /** the property ID */
     protected int propId;
     private boolean inherited = true;
     private Map enums = null;
     private Map keywords = null;
+    /** the default value for the maker */
     protected String defaultValue = null;
+    /** Indicates whether the property is context-dependant and therefore can't be cached. */
     protected boolean contextDep = false;
+    /** Indicates whether the property is set through a shorthand. */
     protected boolean setByShorthand = false;
     private int percentBase = -1;
     private PropertyMaker[] shorthands = null;
@@ -54,8 +61,6 @@ public class PropertyMaker implements Cloneable {
 
     protected Property defaultProperty;
     protected CorrespondingPropertyMaker corresponding;
-
-    private static Log log = LogFactory.getLog(PropertyMaker.class);
 
     /**
      * @return the name of the property for this Maker
@@ -95,7 +100,7 @@ public class PropertyMaker implements Cloneable {
 
     /**
      * Set the inherited flag.
-     * @param inherited
+     * @param inherited true if this is an inherited property
      */
     public void setInherited(boolean inherited) {
         this.inherited = inherited;
@@ -103,8 +108,8 @@ public class PropertyMaker implements Cloneable {
 
     /**
      * Add a keyword-equiv to the maker.
-     * @param keyword
-     * @param value
+     * @param keyword the keyword
+     * @param value the value to be used when the keyword is specified
      */
     public void addKeyword(String keyword, String value) {
         if (keywords == null) {
@@ -115,8 +120,8 @@ public class PropertyMaker implements Cloneable {
 
     /**
      * Add a enum constant.
-     * @param constant
-     * @param value
+     * @param constant the enum constant 
+     * @param value the Property value to use when the constant is specified 
      */
     public void addEnum(String constant, Property value) {
         if (enums == null) {
@@ -127,7 +132,7 @@ public class PropertyMaker implements Cloneable {
 
     /**
      * Add a subproperty to this maker.
-     * @param subproperty
+     * @param subproperty the PropertyMaker for the subproperty
      */
     public void addSubpropMaker(PropertyMaker subproperty) {
         throw new RuntimeException("Unable to add subproperties " + getClass()); 
@@ -179,7 +184,7 @@ public class PropertyMaker implements Cloneable {
 
     /**
      * Set the default value for this maker.
-     * @param defaultValue
+     * @param defaultValue the default value
      * @param contextDep true when the value context dependent and
      *        must not be cached.
      */
@@ -190,7 +195,7 @@ public class PropertyMaker implements Cloneable {
 
     /**
      * Set the percent base identifier for this maker. 
-     * @param percentBase
+     * @param percentBase the percent base (ex. LengthBase.FONTSIZE)
      */
     public void setPercentBase(int percentBase) {
         this.percentBase = percentBase;
@@ -201,7 +206,7 @@ public class PropertyMaker implements Cloneable {
      * makers. It should be true for the subproperties which must be 
      * assigned a value when the base property is assigned a attribute 
      * value directly.
-     * @param setByShorthand
+     * @param setByShorthand true if this subproperty must be set when the base property is set
      */
     public void setByShorthand(boolean setByShorthand) {
         this.setByShorthand = setByShorthand;
@@ -225,18 +230,21 @@ public class PropertyMaker implements Cloneable {
         return null;
     }
 
-    /*
+    /**
      * If the property is a relative property with a corresponding absolute
      * value specified, the absolute value is used. This is also true of
      * the inheritance priority (I think...)
      * If the property is an "absolute" property and it isn't specified, then
      * we try to compute it from the corresponding relative property: this
      * happens in computeProperty.
+     * @param propertyList the applicable property list
+     * @param tryInherit true if inherited properties should be examined.
+     * @return the property value
+     * @throws PropertyException if there is a problem evaluating the property 
      */
     public Property findProperty(PropertyList propertyList, 
                                  boolean tryInherit)
-        throws PropertyException
-    {
+                throws PropertyException {
         Property p = null;
         
         if (log.isTraceEnabled()) {
@@ -275,12 +283,13 @@ public class PropertyMaker implements Cloneable {
      *        Is 0 when retriving a base property.
      * @param propertyList The PropertyList object being built for this FO.
      * @param tryInherit true if inherited properties should be examined.
-     * @param tryDefault true if the default value should be returned. 
+     * @param tryDefault true if the default value should be returned.
+     * @return the property value 
+     * @throws PropertyException if there is a problem evaluating the property 
      */
     public Property get(int subpropertyId, PropertyList propertyList,
                         boolean tryInherit, boolean tryDefault)
-        throws PropertyException
-    {
+                    throws PropertyException {
         Property p = findProperty(propertyList, tryInherit);
 
         if (p == null && tryDefault) {    // default value for this FO!
@@ -307,11 +316,14 @@ public class PropertyMaker implements Cloneable {
      * @param pl the PropertyList containing the property. (TODO: explain
      * what this is used for, or remove it from the signature.)
      * @return an object implementing the PercentBase interface.
+     * @throws PropertyException if there is a problem while evaluating the base property
      */
     public PercentBase getPercentBase(FObj fo, PropertyList pl) throws PropertyException {
-        if (percentBase == -1)
+        if (percentBase == -1) {
             return null;
-        return new LengthBase(fo, pl, percentBase);
+        } else {
+            return new LengthBase(fo, pl, percentBase);
+        }
     }
 
     /**
@@ -414,7 +426,8 @@ public class PropertyMaker implements Cloneable {
                 newProp = convertProperty(newProp, propertyList, fo);
             }
             if (newProp == null) {
-                throw new org.apache.fop.fo.expr.PropertyException("No conversion defined " + pvalue);
+                throw new org.apache.fop.fo.expr.PropertyException(
+                        "No conversion defined " + pvalue);
             }
             return newProp;
         } catch (PropertyException propEx) {
@@ -448,23 +461,21 @@ public class PropertyMaker implements Cloneable {
 
     public Property convertShorthandProperty(PropertyList propertyList,
                                              Property prop, FObj fo)
-        throws PropertyException
-    {
+        throws PropertyException {
         Property pret = convertProperty(prop, propertyList, fo);
         if (pret == null) {
             // If value is a name token, may be keyword or Enum
             String sval = prop.getNCname();
             if (sval != null) {
-                // System.err.println("Convert shorthand ncname " + sval);
+                //log.debug("Convert shorthand ncname " + sval);
                 pret = checkEnumValues(sval);
                 if (pret == null) {
                     /* Check for keyword shorthand values to be substituted. */
                     String pvalue = checkValueKeywords(sval);
                     if (!pvalue.equals(sval)) {
-                        // System.err.println("Convert shorthand keyword" + pvalue);
+                        // log.debug("Convert shorthand keyword" + pvalue);
                         // Substituted a value: must parse it
-                        Property p =
-                            PropertyParser.parse(pvalue,
+                        Property p = PropertyParser.parse(pvalue,
                                                  new PropertyInfo(this,
                                                                   propertyList,
                                                                   fo));
@@ -475,7 +486,7 @@ public class PropertyMaker implements Cloneable {
         }
         if (pret != null) {
             /*
-             * System.err.println("Return shorthand value " + pret.getString() +
+             * log.debug("Return shorthand value " + pret.getString() +
              * " for " + getPropName());
              */
         }
@@ -584,10 +595,10 @@ public class PropertyMaker implements Cloneable {
      * return an appropriate border-right-width Property object.
      * @param propertyList the collection of properties to be considered
      * @return the Property, if found, the correspons, otherwise, null
+     * @throws PropertyException if there is a problem while evaluating the shorthand
      */
     public Property getShorthand(PropertyList propertyList)
-        throws PropertyException
-    {
+                throws PropertyException {
         if (shorthands == null) {
             return null;
         }
@@ -608,6 +619,7 @@ public class PropertyMaker implements Cloneable {
         return null;
     }
     
+    /** @return the name of the property this maker is used for. */
     public String getName() {
         return FOPropertyMapping.getPropertyName(propId);
     }
@@ -615,6 +627,7 @@ public class PropertyMaker implements Cloneable {
     /**
      * Return a clone of the makers. Used by useGeneric() to clone the
      * subproperty makers of the generic compound makers. 
+     * @see java.lang.Object#clone()
      */
     public Object clone() {
         try {

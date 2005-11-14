@@ -18,6 +18,8 @@
  
 package org.apache.fop.render.xml;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.render.RendererContext;
 
@@ -38,6 +40,9 @@ public class XMLXMLHandler implements XMLHandler {
     /** Key for getting the TransformerHandler from the RendererContext */
     public static final String HANDLER = "handler";
 
+    /** Logging instance */
+    private static Log log = LogFactory.getLog(XMLXMLHandler.class);
+    
     private AttributesImpl atts = new AttributesImpl();
     
     /** @see org.apache.fop.render.XMLHandler */
@@ -105,7 +110,7 @@ public class XMLXMLHandler implements XMLHandler {
                 handler.endCDATA();
                 break;
             case Node.ENTITY_REFERENCE_NODE:
-                System.out.println("Ignoring ENTITY_REFERENCE_NODE. NYI");
+                log.warn("Ignoring ENTITY_REFERENCE_NODE. NYI");
                 /*
                 writer.write("&");
                 writer.write();

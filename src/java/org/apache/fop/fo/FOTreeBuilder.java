@@ -265,7 +265,7 @@ public class FOTreeBuilder extends DefaultHandler {
         }
         
         ElementMapping.Maker fobjMaker = findFOMaker(namespaceURI, localName);
-//      System.out.println("found a " + fobjMaker.toString());
+//      log.debug("found a " + fobjMaker.toString());
 
         try {
             foNode = fobjMaker.make(currentFObj);

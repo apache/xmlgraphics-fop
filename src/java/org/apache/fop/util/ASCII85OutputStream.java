@@ -25,7 +25,6 @@ import java.io.IOException;
 /**
  * This class applies a ASCII85 encoding to the stream.
  *
- * @author <a href="mailto:jeremias@apache.org">Jeremias Maerki</a>
  * @version $Id$
  */
 public class ASCII85OutputStream extends FilterOutputStream

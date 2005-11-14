@@ -44,7 +44,7 @@ public class PDFStream extends AbstractPDFStream {
         try {
             data = StreamCacheFactory.getInstance().createStreamCache();
         } catch (IOException ex) {
-            /**@todo Log with Logger */
+            //TODO throw the exception and catch it elsewhere
             ex.printStackTrace();
         }
     }
@@ -58,7 +58,7 @@ public class PDFStream extends AbstractPDFStream {
         try {
             data.getOutputStream().write(s.getBytes());
         } catch (IOException ex) {
-            /**@todo Log with Logger */
+            //TODO throw the exception and catch it elsewhere
             ex.printStackTrace();
         }
 
@@ -82,6 +82,7 @@ public class PDFStream extends AbstractPDFStream {
         try {
             return data.getSize();
         } catch (Exception e) {
+            //TODO throw the exception and catch it elsewhere
             e.printStackTrace();
             return 0;
         }

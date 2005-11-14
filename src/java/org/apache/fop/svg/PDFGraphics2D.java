@@ -240,6 +240,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @param ioe IOException to handle
      */
     protected void handleIOException(IOException ioe) {
+        //TODO Surely, there's a better way to do this.
         ioe.printStackTrace();
     }
 
@@ -439,7 +440,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     public boolean drawImage(Image img, int x, int y,
                              ImageObserver observer) {
         preparePainting();
-        // System.err.println("drawImage:x, y");
 
         int width = img.getWidth(observer);
         int height = img.getHeight(observer);
@@ -493,8 +493,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     public boolean drawImage(Image img, int x, int y, int width, int height,
                                ImageObserver observer) {
         preparePainting();
-        //System.out.println("drawImage x=" + x + " y=" + y 
-        //+ " width=" + width + " height=" + height + " image=" + img.toString());
         // first we look to see if we've already added this image to
         // the pdf document. If so, we just reuse the reference;
         // otherwise we have to build a FopImage and add it to the pdf
@@ -637,7 +635,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @see         java.awt.Graphics#create
      */
     public void dispose() {
-        // System.out.println("dispose");
         pdfDoc = null;
         fontInfo = null;
         currentStream = null;
@@ -662,7 +659,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public void draw(Shape s) {
         preparePainting();
-        // System.out.println("draw(Shape)");
 
         //Transparency shortcut
         Color c;
@@ -833,7 +829,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             //PDFColor  currentColour = new PDFColor(blackMagenta[0], blackMagenta[1]);
             //currentStream.write(currentColour.getColorSpaceOut(fill));
         } else {
-            System.err.println("Color Space not supported by PDFGraphics2D");
+            throw new UnsupportedOperationException(
+                    "Color Space not supported by PDFGraphics2D");
         }
     }
 
@@ -1319,7 +1316,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @see #setClip
      */
     public void drawRenderedImage(RenderedImage img, AffineTransform xform) {
-        //System.out.println("drawRenderedImage");
+        //NYI
     }
 
     /**
@@ -1354,7 +1351,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public void drawRenderableImage(RenderableImage img,
                                     AffineTransform xform) {
-        //System.out.println("drawRenderableImage");
+        //NYI
     }
 
     /**
@@ -1383,7 +1380,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public void drawString(String s, float x, float y) {
         preparePainting();
-        // System.out.println("drawString(String)");
 
         Font fontState;
         if (ovFontState == null) {
@@ -1550,7 +1546,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     public void drawString(AttributedCharacterIterator iterator, float x,
                            float y) {
         preparePainting();
-        System.err.println("drawString(AttributedCharacterIterator)");
 
         Font fontState = null;
 
@@ -1630,7 +1625,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public void fill(Shape s) {
         preparePainting();
-        // System.err.println("fill");
 
         //Transparency shortcut
         Color c;
@@ -1828,7 +1822,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @param     c1 the XOR alternation color
      */
     public void setXORMode(Color c1) {
-        //System.out.println("setXORMode");
+        //NYI
     }
 
 
@@ -1853,7 +1847,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public void copyArea(int x, int y, int width, int height, int dx,
                          int dy) {
-        //System.out.println("copyArea");
+        //NYI
     }
 
 }

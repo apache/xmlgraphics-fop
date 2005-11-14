@@ -46,9 +46,7 @@ class TTFDirTabEntry {
         offset = in.readTTFULong();
         length = in.readTTFULong();
         String tagStr = new String(tag, "ISO-8859-1");
-        // System.err.println("tag='" + tagStr + "'");
 
-        //System.out.println(this.toString());
         return tagStr;
     }
 

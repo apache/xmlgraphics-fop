@@ -500,7 +500,7 @@ public class FOText extends FONode {
         
         public boolean hasNext() {
            if (curIndex == 0) {
-//             System.out.println("->" + new String(ca) + "<-");
+//             log.debug("->" + new String(ca) + "<-");
           }
            return (curIndex < endIndex);
         }
@@ -519,16 +519,16 @@ public class FOText extends FONode {
             if (curIndex < endIndex && nextCharCalled < 2) {
                 startIndex++;
                 nextCharCalled = 0;
-//              System.out.println("removeA: " + new String(ca, startIndex, endIndex - startIndex));
+//              log.debug("removeA: " + new String(ca, startIndex, endIndex - startIndex));
             } else if (curIndex < endIndex) {
                 // copy from curIndex to end to curIndex-1
                 System.arraycopy(ca, curIndex, ca, curIndex - 1, 
                     endIndex - curIndex);
                 endIndex--;
                 curIndex--;
-//              System.out.println("removeB: " + new String(ca, startIndex, endIndex - startIndex));
+//              log.debug("removeB: " + new String(ca, startIndex, endIndex - startIndex));
             } else if (curIndex == endIndex) {
-//              System.out.println("removeC: " + new String(ca, startIndex, endIndex - startIndex));
+//              log.debug("removeC: " + new String(ca, startIndex, endIndex - startIndex));
                 endIndex--;
                 curIndex--;
             }

@@ -223,7 +223,6 @@ public class MultiByteFont extends CIDFont {
                 usedGlyphsIndex.put(new Integer(usedGlyphsCount),
                                     new Integer(retIdx));
                 retIdx = usedGlyphsCount;
-                // System.out.println(c+"("+(int)c+") = "+retIdx);
                 usedGlyphsCount++;
             } else {
                 retIdx = newIdx.intValue();

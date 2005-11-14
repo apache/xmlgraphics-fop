@@ -18,6 +18,9 @@
 
 package org.apache.fop.area;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.image.FopImage;
@@ -34,6 +37,10 @@ import java.util.Iterator;
  * This class represents an area trait that specifies a value for rendering.
  */
 public class Trait implements Serializable {
+
+    /** Logger instance */
+    private static Log log = LogFactory.getLog(Trait.class);
+    
     /**
      * Id reference line, not resolved.
      * not sure if this is needed.
@@ -402,11 +409,11 @@ public class Trait implements Serializable {
             Object o = tclass.newInstance();
             //return o.fromString(sTraitValue);
         } catch (IllegalAccessException e1) {
-            System.err.println("Can't create instance of "
+            log.error("Can't create instance of "
                                + tclass.getName());
             return null;
         } catch (InstantiationException e2) {
-            System.err.println("Can't create instance of "
+            log.error("Can't create instance of "
                                + tclass.getName());
             return null;
         }

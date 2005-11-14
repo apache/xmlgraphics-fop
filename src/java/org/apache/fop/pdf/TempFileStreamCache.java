@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.io.File;
 
 //Commons
-import org.apache.commons.io.CopyUtils;
+import org.apache.commons.io.IOUtils;
 
 /**
  * StreamCache implementation that uses temporary files rather than heap.
@@ -90,11 +90,13 @@ public class TempFileStreamCache implements StreamCache {
         output.close();
         output = null;
 
-        // don't need a buffer because streamCopy is buffered
+        // don't need a buffer because copy() is buffered
         InputStream input = new java.io.FileInputStream(tempFile);
-        final long bytesCopied = CopyUtils.copy(input, out);
-        input.close();
-        return (int)bytesCopied;
+        try {
+            return IOUtils.copy(input, out);
+        } finally {
+            IOUtils.closeQuietly(input);
+        }
     }
 
     /**

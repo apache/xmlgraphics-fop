@@ -432,10 +432,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             if (addedPositions == lineLayouts.getLineCount(activePossibility)) {
                 activePossibility++;
                 addedPositions = 0;
-                //System.out.println(" ");
             }
 
-            //System.out.println("LLM> (" + (lineLayouts.getLineNumber(activePossibility) - addedPositions) + ") difference = " + difference + " ratio = " + ratio);
+            //log.debug("LLM> (" + (lineLayouts.getLineNumber(activePossibility) - addedPositions) + ") difference = " + difference + " ratio = " + ratio);
             lineLayouts.addBreakPosition(makeLineBreakPosition(par,
                                                                (bestActiveNode.line > 1 ? bestActiveNode.previous.position + 1: 0),
                                                                bestActiveNode.position,
@@ -543,26 +542,26 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
             if (pageAlignment == EN_JUSTIFY) {
                 // leave all active nodes and find the optimum line number
-                //System.out.println("LBA.filterActiveNodes> " + activeNodeCount + " layouts");
+                //log.debug("LBA.filterActiveNodes> " + activeNodeCount + " layouts");
                 for (int i = startLine; i < endLine; i++) {
                     for (KnuthNode node = getNode(i); node != null; node = node.next) {
-                        //System.out.println("                       + lines = " + node.line + " demerits = " + node.totalDemerits);
+                        //log.debug("                       + lines = " + node.line + " demerits = " + node.totalDemerits);
                         bestActiveNode = compareNodes(bestActiveNode, node);
                     }
                 }
 
                 // scan the node set once again and remove some nodes
-                //System.out.println("LBA.filterActiveList> layout selection");
+                //log.debug("LBA.filterActiveList> layout selection");
                 for (int i = startLine; i < endLine; i++) {
                     for (KnuthNode node = getNode(i); node != null; node = node.next) {
                         //if (Math.abs(node.line - bestActiveNode.line) > maxDiff) {
                         //if (false) {
                         if (node.line != bestActiveNode.line
                             && node.totalDemerits > MAX_DEMERITS) {
-                            //System.out.println("                     XXX lines = " + node.line + " demerits = " + node.totalDemerits);
+                            //log.debug("                     XXX lines = " + node.line + " demerits = " + node.totalDemerits);
                             removeNode(i, node);
                         } else {
-                            //System.out.println("                      ok lines = " + node.line + " demerits = " + node.totalDemerits);
+                            //log.debug("                      ok lines = " + node.line + " demerits = " + node.totalDemerits);
                         }
                     }
                 }
@@ -1105,8 +1104,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                shorter or longer lines */
             //TODO This code snippet is disabled. Reenable?
             if (false && alignment == EN_JUSTIFY && textAlignment == EN_JUSTIFY) {
-                //System.out.println("LLM.getNextKnuthElements> layouts with more lines? " + lineLayouts.canUseMoreLines());
-                //System.out.println("                          layouts with fewer lines? " + lineLayouts.canUseLessLines());
+                //log.debug("LLM.getNextKnuthElements> layouts with more lines? " + lineLayouts.canUseMoreLines());
+                //log.debug("                          layouts with fewer lines? " + lineLayouts.canUseLessLines());
                 if (!lineLayouts.canUseMoreLines()) {
                     alg.resetAlgorithm();
                     lineLayouts.savePossibilities(true);
@@ -1132,8 +1131,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     lineLayouts.restorePossibilities();
                     iLineWidth = savedLineWidth;
                 }
-                //System.out.println("LLM.getNextKnuthElements> now, layouts with more lines? " + lineLayouts.canUseMoreLines());
-                //System.out.println("                          now, layouts with fewer lines? " + lineLayouts.canUseLessLines());
+                //log.debug("LLM.getNextKnuthElements> now, layouts with more lines? " + lineLayouts.canUseMoreLines());
+                //log.debug("                          now, layouts with fewer lines? " + lineLayouts.canUseLessLines());
             }
         }
         return lineLayouts;
@@ -1299,7 +1298,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             breaker.add(new KnuthPenalty(0, 0, false, elementPosition, false));
         }
 
-        //System.out.println("first=" + nFirstLines + " inner=" + nInnerLines
+        //log.debug("first=" + nFirstLines + " inner=" + nInnerLines
         //                   + " optional=" + nOptionalLines + " eliminable=" + nEliminableLines
         //                   + " last=" + nLastLines
         //                   + " (condOpt=" + nConditionalOptionalLines + " condEl=" + nConditionalEliminableLines + ")");
@@ -1386,7 +1385,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         //}
         //int lineNumberDifference = (int)((double) totalAdj / constantLineHeight);
         int lineNumberDifference = (int) Math.round((double) totalAdj / constantLineHeight + (adj > 0 ? - 0.4 : 0.4));
-        //System.out.println("   LLM> variazione calcolata = " + ((double) totalAdj / constantLineHeight) + " variazione applicata = " + lineNumberDifference);
+        //log.debug("   LLM> variazione calcolata = " + ((double) totalAdj / constantLineHeight) + " variazione applicata = " + lineNumberDifference);
         lineLayouts = (LineLayoutPossibilities)lineLayoutsList.get(pos.getLeafPos());
         lineNumberDifference = lineLayouts.applyLineCountAdjustment(lineNumberDifference);
         return lineNumberDifference * constantLineHeight;
@@ -1405,7 +1404,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         LinkedList returnList = new LinkedList();
         for (int p = 0; p < knuthParagraphs.size(); p++) {
             lineLayouts = (LineLayoutPossibilities)lineLayoutsList.get(p);
-            //System.out.println("demerits of the chosen layout: " + lineLayouts.getChosenDemerits());
+            //log.debug("demerits of the chosen layout: " + lineLayouts.getChosenDemerits());
             for (int i = 0; i < lineLayouts.getChosenLineCount(); i++) {
                 if (!((BlockLevelLayoutManager) parentLM).mustKeepTogether()
                     && i >= fobj.getOrphans()
@@ -1414,10 +1413,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     returnList.add(new KnuthPenalty(0, 0, false, new Position(this), false));
                 }
                 LineBreakPosition lbp = (LineBreakPosition) lineLayouts.getChosenPosition(i);
-                //System.out.println("LLM.getChangedKnuthElements> lineWidth= " + lbp.lineWidth + " difference= " + lbp.difference);
-                //System.out.println("                             shrink= " + lbp.availableShrink + " stretch= " + lbp.availableStretch);
+                //log.debug("LLM.getChangedKnuthElements> lineWidth= " + lbp.lineWidth + " difference= " + lbp.difference);
+                //log.debug("                             shrink= " + lbp.availableShrink + " stretch= " + lbp.availableStretch);
 
-                //System.out.println("linewidth= " + lbp.lineWidth + " difference= " + lbp.difference + " indent= " + lbp.startIndent);
+                //log.debug("linewidth= " + lbp.lineWidth + " difference= " + lbp.difference + " indent= " + lbp.startIndent);
                 MinOptMax contentIPD;
                 if (alignment == EN_JUSTIFY) {
                     contentIPD = new MinOptMax(
@@ -1750,8 +1749,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                         updatedRatio = (float) updatedDifference / lbp.availableShrink;
                     }
                     lc.setIPDAdjust(updatedRatio);
-                    //System.out.println("LLM.addAreas> old difference = " + lbp.difference + " new difference = " + updatedDifference);
-                    //System.out.println("              old ratio = " + lbp.ipdAdjust + " new ratio = " + updatedRatio);
+                    //log.debug("LLM.addAreas> old difference = " + lbp.difference + " new difference = " + updatedDifference);
+                    //log.debug("              old ratio = " + lbp.ipdAdjust + " new ratio = " + updatedRatio);
                 } else if (false && textAlignment == EN_CENTER) {
                     // re-compute indent
                     int updatedIndent = lbp.startIndent

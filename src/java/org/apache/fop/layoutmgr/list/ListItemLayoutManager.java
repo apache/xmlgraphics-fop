@@ -385,10 +385,10 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         while (oldListIterator.hasNext()) {
             oldElement = (KnuthElement)oldListIterator.next();
             Position innerPosition = ((NonLeafPosition) oldElement.getPosition()).getPosition();
-            //System.out.println(" BLM> unwrapping: " + (oldElement.isBox() 
+            //log.debug(" BLM> unwrapping: " + (oldElement.isBox() 
             //  ? "box    " : (oldElement.isGlue() ? "glue   " : "penalty")) 
             //  + " creato da " + oldElement.getLayoutManager().getClass().getName());
-            //System.out.println(" BLM> unwrapping:         " 
+            //log.debug(" BLM> unwrapping:         " 
             //  + oldElement.getPosition().getClass().getName());
             if (innerPosition != null) {
                 // oldElement was created by a descendant of this BlockLM

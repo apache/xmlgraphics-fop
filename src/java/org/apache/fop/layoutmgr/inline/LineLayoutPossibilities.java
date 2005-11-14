@@ -157,7 +157,8 @@ public class LineLayoutPossibilities {
                 chosenIndex = optimumIndex;
             }
         }
-/*LF*/  //System.out.println(">> minLineCount = " + getMinLineCount() + " optLineCount = " + getOptLineCount() + " maxLineCount() = " + getMaxLineCount());
+        //log.debug(">> minLineCount = " + getMinLineCount() 
+        //  + " optLineCount = " + getOptLineCount() + " maxLineCount() = " + getMaxLineCount());
     }
 
     public void addBreakPosition(Position pos, int i) {

@@ -38,7 +38,6 @@ public class CloseBlockerOutputStream extends FilterOutputStream {
      * @see java.io.OutputStream#close()
      */
     public void close() throws IOException {
-        //System.out.println("Not sending close() to " + out);
         try {
             flush();
         } catch (IOException ioe) {

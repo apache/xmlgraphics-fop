@@ -65,7 +65,7 @@ public class CachedRenderPagesModel extends RenderPagesModel {
                         // load page from cache
                         String name = (String)pageMap.get(p);
                         File temp = new File(name);
-                        System.out.println("page serialized to: " + temp.length());
+                        log.debug("page serialized to: " + temp.length());
                         ObjectInputStream in = new ObjectInputStream(
                                              new BufferedInputStream(
                                                new FileInputStream(temp)));
@@ -74,7 +74,7 @@ public class CachedRenderPagesModel extends RenderPagesModel {
                         temp.delete();
                         pageMap.remove(p);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        log.error(e);
                     }
                 }
 
@@ -90,7 +90,7 @@ public class CachedRenderPagesModel extends RenderPagesModel {
                     }
                 } catch (Exception e) {
                     // use error handler to handle this FOP or IO Exception
-                    e.printStackTrace();
+                    log.error(e);
                 }
                 p.clear();
                 iter.remove();
@@ -123,7 +123,7 @@ public class CachedRenderPagesModel extends RenderPagesModel {
             tempstream.close();
             pageMap.put(page, fname);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
         }
     }
 }
