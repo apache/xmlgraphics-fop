@@ -19,6 +19,7 @@ inline_letter-spacing.xml
 inline_word-spacing.xml
 inline_word-spacing_text-align_justify.xml
 leader-alignment.xml
+leader_leader-pattern_use-content_bug.xml
 list-block_keep-with-previous.xml
 list-item_block_keep-with-previous.xml
 page-breaking_4.xml

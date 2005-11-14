@@ -21,6 +21,7 @@ package org.apache.fop.area.inline;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Filled area.
@@ -84,7 +85,21 @@ public class FilledArea extends InlineParent {
     }
 
     /**
-     * Get the child areas for this filed area.
+     * @see org.apache.fop.area.Area#getBPD
+     */
+    public int getBPD() {
+        int bpd = 0;
+        for (Iterator childAreaIt = getChildAreas().iterator(); childAreaIt.hasNext();) {
+            InlineArea area = (InlineArea)childAreaIt.next();
+            if (bpd < area.getBPD()) {
+                bpd = area.getBPD();
+            }
+        }
+        return bpd;
+    }
+    
+    /**
+     * Get the child areas for this filled area.
      * This copies the references of the inline areas so that
      * it fills the total width of the area a whole number of times
      * for the unit width.
