@@ -1457,16 +1457,20 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         String endText = useMultiByte ? "> " : ") ";
 
         AffineTransform trans = getTransform();
-        trans.translate(x, y);
+        //trans.translate(x, y);
         double[] vals = new double[6];
         trans.getMatrix(vals);
 
         concatMatrix(vals);
         Shape imclip = getClip();
         writeClip(imclip);
+
         currentStream.write("BT\n");
 
-        currentStream.write("1 0 0 -1 0 0 Tm [" + startText);
+        //currentStream.write("1 0 0 -1 0 0 Tm [" + startText);
+        currentStream.write("1 0 0 -1 " 
+                + PDFNumber.doubleOut(x) + " " + PDFNumber.doubleOut(y) 
+                + " Tm [" + startText);
 
         int l = s.length();
 
