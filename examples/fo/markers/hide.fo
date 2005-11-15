@@ -42,12 +42,10 @@ ref-id="end-seq1"/>)
 
     <fo:flow flow-name="xsl-region-body">
 <fo:block><fo:marker
-    marker-class-name="message">
-    <fo:block>
+    marker-class-name="message"><fo:block>
 WARNING: Page sequence contains:  <fo:page-number-citation
 ref-id="end-seq1"/> pages.
-      </fo:block>
-</fo:marker>
+      </fo:block></fo:marker>
   </fo:block>
 
   <fo:block text-align="start" font-size="12pt" font-family="sans-serif">
@@ -61,13 +59,11 @@ This page sequence only has one page so you will not see the message.
   </fo:block>
 
 <fo:block id="end-seq1"><fo:marker
-    marker-class-name="term">
-<fo:instream-foreign-object>
+    marker-class-name="term"><fo:instream-foreign-object>
 <svg xmlns="http://www.w3.org/2000/svg" width="15cm" height="1cm" xml:space="preserve">
      <rect style="fill:white;stroke:white" x="0" y="0" width="15cm" height="1cm"/>
 </svg>
-</fo:instream-foreign-object>
-</fo:marker>
+</fo:instream-foreign-object></fo:marker>
   </fo:block>
 
     </fo:flow>
@@ -99,12 +95,10 @@ ref-id="end-of-document"/>)
 
     <fo:flow flow-name="xsl-region-body">
 <fo:block><fo:marker
-    marker-class-name="message">
-    <fo:block>
+    marker-class-name="message"><fo:block>
 WARNING: Page sequence contains:  <fo:page-number-citation
 ref-id="end-of-document"/> pages.
-      </fo:block>
-</fo:marker>
+      </fo:block></fo:marker>
   </fo:block>
 
   <fo:block text-align="start" font-size="12pt" font-family="sans-serif">
@@ -124,12 +118,10 @@ Some more text on last page.
   </fo:block>
 
 <fo:block id="end-of-document"><fo:marker
-    marker-class-name="term">
-<fo:instream-foreign-object>
+    marker-class-name="term"><fo:instream-foreign-object>
 <svg xmlns="http://www.w3.org/2000/svg" width="15cm" height="1cm" xml:space="preserve">     <rect style="fill:white;stroke:white" x="0" y="0" width="15cm" height="1cm"/>
 </svg>
-</fo:instream-foreign-object>
-</fo:marker>
+</fo:instream-foreign-object></fo:marker>
   </fo:block>
 
     </fo:flow>
