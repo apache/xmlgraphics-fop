@@ -226,11 +226,13 @@ public class PSRenderer extends AbstractPathOrientedRenderer {
     
     /** @see org.apache.fop.render.AbstractPathOrientedRenderer */
     protected void fillRect(float x, float y, float width, float height) {
-        try {
-            gen.defineRect(x, y, width, height);
-            gen.writeln("fill");
-        } catch (IOException ioe) {
-            handleIOTrouble(ioe);
+        if (width != 0 && height != 0) {
+            try {
+                gen.defineRect(x, y, width, height);
+                gen.writeln("fill");
+            } catch (IOException ioe) {
+                handleIOTrouble(ioe);
+            }
         }
     }
 
