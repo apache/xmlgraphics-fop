@@ -738,7 +738,9 @@ public class PDFRenderer extends AbstractPathOrientedRenderer {
      * @see org.apache.fop.render.AbstractPathOrientedRenderer#fillRect(float, float, float, float)
      */
     protected void fillRect(float x, float y, float w, float h) {
-        currentStream.add(x + " " + y + " " + w + " " + h + " re f\n");
+        if (w != 0 && h != 0) {
+            currentStream.add(x + " " + y + " " + w + " " + h + " re f\n");
+        }
     }
     
     /**
