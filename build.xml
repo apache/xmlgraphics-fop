@@ -1145,8 +1145,8 @@ NOTE:
     <delete dir="${dist.src.dir}"/>
     <delete dir="${dist.bin.dir}"/>
     <delete>
-      <fileset dir="${basedir}" includes="${Name}-*.tar.gz"/>
-      <fileset dir="${basedir}" includes="${Name}-*.zip"/>
+      <fileset dir="${basedir}" includes="${name}-*.tar.gz"/>
+      <fileset dir="${basedir}" includes="${name}-*.zip"/>
     </delete>
   </target>
 
