@@ -70,6 +70,7 @@ list of possible build targets.
     <!--include name="STATUS"/-->
     <include name="fop.bat"/>
     <include name="fop"/>
+    <include name="examples/**"/>
     <exclude name="docs/**"/>
     <exclude name="src/**"/>
     <exclude name="dist/**"/>
@@ -102,6 +103,7 @@ list of possible build targets.
     <patternset refid="dist.lib"/>
     <include name="lib/servlet*"/>
     <include name="test/**"/>
+    <include name="examples/**"/>
     <!--include name="CHANGES"/-->
     <include name="LICENSE"/>
     <include name="NOTICE"/>
