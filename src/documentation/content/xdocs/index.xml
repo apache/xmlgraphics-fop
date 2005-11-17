@@ -35,11 +35,20 @@
        The primary output target is PDF.
     </p>
         <figure width="480" height="260" src="images/document.jpg" alt="Render Diagram" />
-    <p>The latest version of FOP (0.20.5) is a partial implementation of the
-       <link href="http://www.w3.org/TR/2001/REC-xsl-20011015/">XSL-FO Version 1.0
-       W3C Recommendation</link>.
-       Support for each of the standard's objects and properties is detailed in <link href="compliance.html">FOP Compliance</link>.
-       <link href="download.html">Download</link> options include a precompiled version, source code, and many example files to get you started. <link href="resources.html">Resources</link> include links to XSL-FO introductions and many other useful references. A checklist for <link href="gethelp.html">Getting Help</link> will guide you toward maximizing the usefulness of FOP.
+    <p>
+      The latest stable version of FOP (<link href="0.20.5/">0.20.5</link>) is a partial implementation of the
+      <link href="http://www.w3.org/TR/2001/REC-xsl-20011015/">XSL-FO Version 1.0
+      W3C Recommendation</link>.
+    </p>
+    <p>
+      The latest release of FOP (<link href="0.90/">0.90 alpha 1</link>) is the first preview release 
+      after a large redesign effort and implements a larger subset than 0.20.5 of the 
+      <link href="http://www.w3.org/TR/2001/REC-xsl-20011015/">XSL-FO Version 1.0 W3C Recommendation</link>
+      as well as some parts of the <link href="http://www.w3.org/TR/xsl11">XSL-FO Version 1.1 Working Draft</link>.
+    </p>
+    <p>
+      Support for each of the standard's objects and properties is detailed in <link href="compliance.html">FOP Compliance</link>.
+      <link href="download.html">Download</link> options include a precompiled version, source code, and many example files to get you started. <link href="resources.html">Resources</link> include links to XSL-FO introductions and many other useful references. A checklist for <link href="gethelp.html">Getting Help</link> will guide you toward maximizing the usefulness of FOP.
     </p>
     <p>FOP is proud to be part of <link href="http://xmlgraphics.apache.org">Apache's XML Graphics project</link>.
     </p>
@@ -59,7 +68,7 @@ The most common method is to convert semantic XML to XSL-FO, using an XSLT trans
   </section>
   <section id="objectives">
     <title>FOP Objectives</title>
-    <p>The goals of the Apache XML FOP Project are to deliver an XSL-FO to PDF formatter that is compliant to at least the Basic
+    <p>The goals of the Apache FOP project are to deliver an XSL-FO to PDF formatter that is compliant to at least the Basic
        conformance level described in the W3C Recommendation from 15 October 2001, and that complies with the 11 March 1999 Portable Document
        Format Specification (Version 1.3) from Adobe Systems.
     </p>
@@ -72,7 +81,7 @@ The most common method is to convert semantic XML to XSL-FO, using an XSLT trans
    <p>The FOP layout system is currently being rewritten to better support the XSL-FO standard.</p>
   </section>
   <note>
-    The PDF files on this site are created using FOP.
+    The PDF files on this site are created using Apache FOP.
   </note>
   </body>
 </document>
