@@ -1034,10 +1034,13 @@ NOTE:
     <echo message="the FORREST_HOME environment variable is set (see http://forrest.apache.org/)"/>
     <echo message="FORREST_HOME = ${forrest.home}"/>
     -->
-    <echo message="Make sure you have a propper Forrest installation (see http://forrest.apache.org/)"/>
+    <echo message="Make sure you have a proper Forrest installation (see http://forrest.apache.org/)"/>
 
     <!--<antcall target="site"/>-->
-    <exec executable="forrest"/>
+    <condition property="forrest.call" value="forrest.bat" else="forrest">
+      <os family="windows"/>
+    </condition>
+    <exec executable="${forrest.call}"/>
   </target>
   
   <!-- =================================================================== -->
