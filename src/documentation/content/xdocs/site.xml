@@ -56,7 +56,7 @@
   <!--
   BEGIN Version 0.20.5 tab
   -->
-  <v0205 label="Version 0.20.5" href="0.20.5/" tab="currentversion">
+  <v0205 label="Version 0.20.5" href="0.20.5/" tab="stableversion">
     <about label="About" href="index.html"/>
   
     <using label="Using FOP">
@@ -84,14 +84,33 @@
   -->
   
   <!--
-  BEGIN Version 0.90 tab
+  BEGIN Version 0.90 documentation tab
   -->
-  <!-- TODO Copy from trunk when releasing -->
-  <!--v090 label="Version 0.90" href="0.90/" tab="develversion">
+  <trunk label="FOP 0.90 alpha 1" href="0.90/" tab="currentversion">
     <about label="About" href="index.html"/>
-  </v090-->
+    <upgrading label="Upgrading" href="upgrading.html"/>
+    
+    <using label="Using FOP">
+      <build label="Build" href="compiling.html"/>
+      <config label="Configure" href="configuration.html"/>
+      <run label="Run" href="running.html"/>
+      <embed label="Embed" href="embedding.html"/>
+      <servlet label="Servlets" href="servlets.html"/>
+      <ant label="Ant Task" href="anttask.html"/>
+    </using>
+
+    <features label="Features">
+      <output label="Output Targets" href="output.html"/>
+      <pdfencryption label="PDF Encryption" href="pdfencryption.html"/>
+      <graphics label="Graphics" href="graphics.html"/>
+      <fonts label="Fonts" href="fonts.html"/>
+      <hyphenation label="Hyphenation" href="hyphenation.html"/>    
+      <extensions label="Extensions" href="extensions.html"/>
+    </features>
+    
+  </trunk>
   <!--
-  END Version 0.90 tab
+  END Version 0.90 documentation tab
   -->
   
   <!--

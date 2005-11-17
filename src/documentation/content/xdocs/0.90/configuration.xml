@@ -1,0 +1,146 @@
+<?xml version="1.0" standalone="no"?>
+<!--
+  Copyright 1999-2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<document>
+  <header>
+    <title>Apache FOP: Configuration</title>
+    <version>$Revision$</version>
+  </header>
+
+  <body>
+  <section id="general">
+    <title>Configuration File Basics</title>
+    <p>
+      The FOP configuration file is an XML file containing a variety of settings that are useful 
+      for controlling FOP's behavior, and for helping it find resources that you wish it to use.
+    </p>
+    <p>
+      The easiest way to get started using a FOP configuration file is to copy the sample found 
+      at <code>{fop-dir}/conf/fop.xconf</code> to a location of your choice, and then to 
+      edit it according to your needs.
+      It contains templates for the various configuration options, most of which are commented 
+      out. Remove the comments and change the settings for entries that you wish to use.
+      Be sure to follow any instructions, including comments which specify the value range.
+      Also, since the configuration file is XML, be sure to keep it well-formed.
+    </p>
+    <section id="general-available">
+      <title>Making Configuration Available to FOP</title>
+      <p>After creating your configuration file, you must tell FOP how to find it:</p>
+      <ul>
+        <li>
+          If running FOP from the command-line, see the "-c" command-line option in 
+          <a href="running.html">Running FOP</a>.
+        </li>
+        <li>
+          If running FOP as an embedded application, see 
+          <a href="embedding.html#config-external">Embedding, Using a Configuration File</a>.
+        </li>
+      </ul>
+      <p>
+        See <a href="embedding.html#config-internal">Setting the Configuration Programmatically</a>
+        for instructions on how to do so in an embedded environment.
+      </p>
+    </section>
+  </section>
+  <section id="general-elements">
+    <title>Summary of the General Configuration Options</title>
+    <table>
+      <tr>
+        <th>Element</th>
+        <th>Data Type (for the value)</th>
+        <th>Default Value</th>
+      </tr>
+      <tr>
+        <td>base</td>
+        <td>URL</td>
+        <td>Specifies the base URL based on which relative URL will be resolved.</td>
+      </tr>
+      <tr>
+        <td>resolution</td>
+        <td>Integer, dpi</td>
+        <td>Resolution in dpi (dots per inch) which is used internally.</td>
+      </tr>
+      <tr>
+        <td>default-page-settings</td>
+        <td>n/a</td>
+        <td>
+          Specifies the default width and height of a page if "auto" is specified 
+          for either or both values. Use "height" and "width" attributes on the 
+          default-page-settings element to specify the two values.</td>
+      </tr>
+      <tr>
+        <td>renderers</td>
+        <td>(see text below)</td>
+        <td>Contains the configuration for each renderer. See below.</td>
+      </tr>
+    </table>
+    <p>
+      This is an excerpt from the example configuration file coming with FOP:
+    </p>
+    <source><![CDATA[
+<fop version="1.0">
+
+  <!-- Base URL for resolving relative URLs -->
+  <base>./</base>
+  <!-- Internal resolution in dpi (dots per pixel), default: 72dpi -->
+  <resolution>72</resolution>
+  <!-- default page-height and page-width, in case
+       value is specified as auto -->
+  <default-page-settings height="11in" width="8.26in"/>
+  
+  <!-- etc. etc..... -->
+</fop>]]></source>
+  </section>
+  <section id="renderers">
+    <title>Renderer configuration</title>
+    <p>
+      Each Renderer has its own configuration section which is identified by the
+      MIME type the Renderer is written for, ex. "application/pdf" for the PDF Renderer.
+    </p>
+    <p>
+      The configuration for the PDF Renderer could look like this:
+    </p>
+    <source><![CDATA[
+  <renderers>
+    <renderer mime="application/pdf">
+      <filterList>
+        <!-- provides compression using zlib flate (default is on) -->
+        <value>flate</value>
+      </filterList>
+      <fonts>
+        <font metrics-url="arial.xml" kerning="yes" embed-url="arial.ttf">
+          <font-triplet name="Arial" style="normal" weight="normal"/>
+          <font-triplet name="ArialMT" style="normal" weight="normal"/>
+        </font>
+        <font metrics-url="arialb.xml" kerning="yes" embed-url="arialb.ttf">
+          <font-triplet name="Arial" style="normal" weight="bold"/>
+          <font-triplet name="ArialMT" style="normal" weight="bold"/>
+        </font>
+      </fonts>
+    </renderer>
+    
+    <renderer mime="application/postscript">
+    <!-- etc. etc..... -->]]></source>
+    <p>
+      The details on the font configuration can be found on the separate <a href="fonts.html">Fonts</a> page.
+      Note especially the section entitled <a href="fonts.html#register">Register Fonts with FOP</a>.
+    </p>
+  </section>
+  </body>
+</document>
+
