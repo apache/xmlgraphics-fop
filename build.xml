@@ -63,10 +63,11 @@ list of possible build targets.
   <fileset dir="${basedir}" id="dist.bin">
     <include name="conf/**"/>
     <include name="build/site/**"/>
-    <include name="CHANGES"/>
+    <!--include name="CHANGES"/-->
     <include name="LICENSE"/>
+    <include name="NOTICE"/>
     <include name="README"/>
-    <include name="STATUS"/>
+    <!--include name="STATUS"/-->
     <include name="fop.bat"/>
     <include name="fop"/>
     <exclude name="docs/**"/>
@@ -101,10 +102,11 @@ list of possible build targets.
     <patternset refid="dist.lib"/>
     <include name="lib/servlet*"/>
     <include name="test/**"/>
-    <include name="CHANGES"/>
+    <!--include name="CHANGES"/-->
     <include name="LICENSE"/>
+    <include name="NOTICE"/>
     <include name="README"/>
-    <include name="STATUS"/>
+    <!--include name="STATUS"/-->
     <include name="build.*"/>
     <include name="fop.bat"/>
     <include name="fop"/>
@@ -147,7 +149,7 @@ list of possible build targets.
   <property name="Name" value="Apache FOP"/>
   <property name="name" value="fop"/>
   <property name="NAME" value="FOP"/>
-  <property name="version" value="0.90svn"/>
+  <property name="version" value="0.90alpha1"/>
   <property name="year" value="1999-2005"/>
 
   <property name="javac.debug" value="on"/>
