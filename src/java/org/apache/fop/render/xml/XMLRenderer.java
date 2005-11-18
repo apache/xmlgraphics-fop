@@ -114,9 +114,8 @@ public class XMLRenderer extends PrintRenderer {
     }
 
     /**
-     * Configure the PDF renderer.
-     * Get the configuration to be used for pdf stream filters,
-     * fonts etc.
+     * Configure the XML renderer.
+     * Get the configuration to be used for fonts etc.
      * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
      */
     public void configure(Configuration cfg) throws ConfigurationException {
