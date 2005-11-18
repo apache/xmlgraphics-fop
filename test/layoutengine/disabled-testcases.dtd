@@ -1,7 +1,11 @@
 <!ELEMENT disabled-testcases (testcase)*>
 <!ELEMENT testcase (name?,file,description?,reference*)>
-<!ATTLIST testcase id ID>
-<!ELEMENT name #PCDATA>
-<!ELEMENT file #PCDATA>
-<!ELEMENT description #PCDATA>
-<!ELEMENT reference #PCDATA>
+<!ATTLIST testcase id ID #IMPLIED>
+<!-- Testcase name. Can be used as title in a webpage. -->
+<!ELEMENT name (#PCDATA)>
+<!-- Testcase file. Used for filtering file names, obviously. -->
+<!ELEMENT file (#PCDATA)>
+<!-- Testcase description. Either text, one paragraph, or HTML markup (block level). -->
+<!ELEMENT description ANY>
+<!-- A single reference. Should be an URL. -->
+<!ELEMENT reference (#PCDATA)>
