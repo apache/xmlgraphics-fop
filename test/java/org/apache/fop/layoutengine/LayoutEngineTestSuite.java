@@ -27,6 +27,15 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamSource;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.AndFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
@@ -36,6 +45,10 @@ import org.apache.commons.io.filefilter.PrefixFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.fop.DebugHelper;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -61,11 +74,64 @@ public class LayoutEngineTestSuite {
         return (String[])lines.toArray(new String[lines.size()]);
     }
     
+    public static String[] readDisabledTestcases(File f) throws IOException {
+        List lines = new java.util.ArrayList();
+        Source stylesheet = new StreamSource(new File("test/layoutengine/disabled-testcase2filename.xsl"));
+        Source source = new StreamSource(f);
+        Result result = new SAXResult(new FilenameHandler(lines));
+        try {
+            Transformer transformer = TransformerFactory.newInstance().newTransformer(stylesheet);        
+            transformer.transform(source, result);
+        }
+        catch( TransformerConfigurationException tce ) {
+            throw new RuntimeException(tce);
+        }
+        catch( TransformerException te ) {
+            throw new RuntimeException(te);
+        }
+        return (String[])lines.toArray(new String[lines.size()]);
+    }
+    
+    private static class FilenameHandler extends DefaultHandler {
+        private StringBuffer buffer = new StringBuffer(128);
+        private boolean readingFilename =false;
+        private List filenames;
+
+        public FilenameHandler(List filenames) {
+            this.filenames = filenames;
+        }
+
+        public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+            if (qName!=null && qName.equals("file")) {
+                buffer.setLength(0);
+                readingFilename = true;
+            } else {
+                throw new RuntimeException("Unexpected element while reading disabled testcase file names: "+qName);
+            }
+        }
+
+        public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
+            if (qName!=null && qName.equals("file")) {
+                readingFilename = false;
+                filenames.add(buffer.toString());
+            } else {
+                throw new RuntimeException("Unexpected element while reading disabled testcase file names: "+qName);
+            }
+        }
+
+        public void characters(char[] ch, int start, int length) throws SAXException {
+            if (readingFilename) {
+                buffer.append(ch,start,length);
+            }
+        }
+    }
+    
     public static IOFileFilter decorateWithDisabledList(IOFileFilter filter) throws IOException {
         String disabled = System.getProperty("fop.layoutengine.disabled");
         if (disabled != null && disabled.length() > 0) {
             filter = new AndFileFilter(new NotFileFilter(
-                    new NameFileFilter(readLinesFromFile(new File(disabled)))),
+//                           new NameFileFilter(readLinesFromFile(new File(disabled)))),
+                           new NameFileFilter(readDisabledTestcases(new File(disabled)))),
                     filter);
         }
         return filter;

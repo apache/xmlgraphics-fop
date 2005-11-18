@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<disabled-testcases>
+  <testcase>
+    <name>demo test failure</name>
+    <file>demo-test-failure.fo</file>
+    <description></description>
+  </testcase>
+</disabled-testcases>
