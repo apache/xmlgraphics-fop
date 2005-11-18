@@ -1,0 +1,7 @@
+<!ELEMENT disabled-testcases (testcase)*>
+<!ELEMENT testcase (name?,file,description?,reference*)>
+<!ATTLIST testcase id ID>
+<!ELEMENT name #PCDATA>
+<!ELEMENT file #PCDATA>
+<!ELEMENT description #PCDATA>
+<!ELEMENT reference #PCDATA>

@@ -188,8 +188,10 @@ list of possible build targets.
 
   <property name="build.property.examples.mime.type" value="application/pdf"/>
 
-  <property name="layoutengine.disabled" value="test/layoutengine/disabled-testcases.txt"/>
-  <property name="fotree.disabled" value="test/fotree/disabled-testcases.txt"/>
+  <!--property name="layoutengine.disabled" value="test/layoutengine/disabled-testcases.txt"/-->
+  <!--property name="fotree.disabled" value="test/fotree/disabled-testcases.txt"/-->
+  <property name="layoutengine.disabled" value="test/layoutengine/disabled-testcases.xml"/>
+  <property name="fotree.disabled" value="test/fotree/disabled-testcases.xml"/>
 
   <property name="dist.bin.dir" value="${basedir}/dist-bin"/>
   <property name="dist.src.dir" value="${basedir}/dist-src"/>
