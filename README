@@ -126,10 +126,10 @@ Known issues:
       too big and shrinking is allowed to happen.
     - Block-level content in fo:inlines may produce unwelcome results.
     - inline-container may not work as expected.
-    - letter-spacing and work-spacing may not work as expected.
+    - letter-spacing and word-spacing properties may not work as expected.
     - leaders with leader-pattern="use-content" may not work as expected.
     - keep-with-previous doesn't work inside tables and lists, yet.
-    - White space on direct inline-level children of a marker are not 
+    - White space on direct inline-level children of a marker is not 
       handled correctly.
     - If two consecutive pages don't have the same available width, the 
       content currently isn't properly fit into the available space on
@@ -142,3 +142,8 @@ Known issues:
     - Border and padding conditionality are not supported on table-cells, yet.
     - Copy/Paste from PDF content in Acrobat Reader is not supported for
       text using embedded TrueType fonts.
+    - Column balancing in multi-column documents may not work as expected
+      (Bugzilla #36356)
+    - Omitting fo:table-column or having fo:table-column without a column-width 
+      and attempting to create columns implicitly from the first
+      table row is not implemented, yet (Bugzilla #35656).
