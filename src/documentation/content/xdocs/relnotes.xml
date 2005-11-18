@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no"?>
 <!--
-  Copyright 1999-2004 The Apache Software Foundation
+  Copyright 1999-2005 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN"
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/document-v12.dtd">
 
 <document>
@@ -25,6 +25,136 @@
   </header>
 
     <body>
+<section>
+  <title>FOP 0.90 alpha 1</title>
+  <p>
+    This is the first preview release after the big redesign effort.
+  </p>
+  <p>
+    We would like to encourage you to download the code and to play with it. 
+    We're still in the process of adding new major features and stabilizing 
+    the code. We welcome any feedback you might have and even more, any
+    other form of help to get the project forward.
+  </p>
+  <p>Caveats:</p>
+  <ul>
+    <li>
+      This release is a preview release and not intended for use in a
+      production environment. Use at your own risk!
+    </li>
+    <li>
+      The API is not to be considered stable, yet. Please be prepared 
+      for the API to be changed in a backwards-incompatible way.
+    </li>
+    <li>
+      You may experience different behaviour compared to version 0.20.5.
+      Please consult the <link href="0.90/upgrading.html">"Upgrading"</link> page indicated above for details.
+    </li>
+  </ul>
+  <p>Known Issues:</p>
+  <ul>
+    <li>
+      PCL, MIF and SVG support have not been restored, yet.
+    </li>
+    <li>
+      Java2D/AWT support contains some problems, for example with 
+      block-containers.
+    </li>
+    <li>
+      Support for kerning has not been restored, yet.
+    </li>
+    <li>
+      Auto table layout is not implemented, yet.
+    </li>
+    <li>
+      The collapsing border model on tables is not implemented, yet. Please 
+      use border-collapse="separate" for now.
+    </li>
+    <li>
+      Footnotes may overlap with text of the region-body in multi-column 
+      documents.
+    </li>
+    <li>
+      Space resolution does not work between footnote regions.
+    </li>
+    <li>
+      There's a problem involving nested block-containers and 
+      reference-orientation 180/-180 (<link href="http://issues.apache.org/bugzilla/show_bug.cgi?id=36391">Bugzilla #36391</link>)
+    </li>
+    <li>
+      block-containers with no height currently don't create a fence for
+      spaces as they should (they behave like a normal block).
+    </li>
+    <li>
+      Preserved linefeeds in fo:character are not handled correctly.
+    </li>
+    <li>
+      Zero-width spaces are not handled correctly.
+    </li>
+    <li>
+      An empty block currently produces a fence for stacking constraints
+      which it shouldn't.
+    </li>
+    <li>
+      There are several small problems around white space handling.
+    </li>
+    <li>
+      Images currently don't shrink so they fit on a page when they are 
+      too big and shrinking is allowed to happen.
+    </li>
+    <li>
+      Block-level content in fo:inlines may produce unwelcome results.
+    </li>
+    <li>
+      inline-container may not work as expected.
+    </li>
+    <li>
+      letter-spacing and word-spacing properties may not work as expected.
+    </li>
+    <li>
+      leaders with leader-pattern="use-content" may not work as expected.
+    </li>
+    <li>
+      keep-with-previous doesn't work inside tables and lists, yet.
+    </li>
+    <li>
+      White space on direct inline-level children of a marker is not 
+      handled correctly.
+    </li>
+    <li>
+      If two consecutive pages don't have the same available width, the 
+      content currently isn't properly fit into the available space on
+      the new page.
+    </li>
+    <li>
+      background-images on page-number-citations are not placed correctly.
+    </li>
+    <li>
+      Not all FO elements can be referenced by their "id", most notably:
+      table-body, table-header, table-footer and table-row.
+    </li>
+    <li>
+      The backgrounds of table-body, table-header, table-footer and 
+      table-column are not painted, yet.
+    </li>
+    <li>
+      Border and padding conditionality are not supported on table-cells, yet.
+    </li>
+    <li>
+      Copy/Paste from PDF content in Acrobat Reader is not supported for
+      text using embedded TrueType fonts.
+    </li>
+    <li>
+      Column balancing in multi-column documents may not work as expected
+      (<link href="http://issues.apache.org/bugzilla/show_bug.cgi?id=36356">Bugzilla #36356</link>)
+    </li>
+    <li>
+      Omitting fo:table-column or having fo:table-column without a column-width 
+      and attempting to create columns implicitly from the first
+      table row is not implemented, yet (<link href="http://issues.apache.org/bugzilla/show_bug.cgi?id=35656">Bugzilla #35656</link>).
+    </li>
+  </ul>
+</section>
 <section>
   <title>FOP 0.20.5</title>
   <p>This is the last planned release in the 0.20.x series (aka maintenance branch).</p>
