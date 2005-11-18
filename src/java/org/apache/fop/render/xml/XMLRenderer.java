@@ -30,6 +30,8 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
+import org.apache.avalon.framework.configuration.Configuration;
+import org.apache.avalon.framework.configuration.ConfigurationException;
 
 import org.w3c.dom.Document;
 import org.xml.sax.Attributes;
@@ -69,6 +71,7 @@ import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.WordArea;
+import org.apache.fop.fonts.FontSetup;
 
 /**
  * Renderer that renders areas to XML for debugging purposes.
@@ -108,6 +111,22 @@ public class XMLRenderer extends PrintRenderer {
      */
     public XMLRenderer() {
         context = new RendererContext(this, XML_MIME_TYPE);
+    }
+
+    /**
+     * Configure the PDF renderer.
+     * Get the configuration to be used for pdf stream filters,
+     * fonts etc.
+     * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
+     */
+    public void configure(Configuration cfg) throws ConfigurationException {
+        //Font configuration
+        List cfgFonts = FontSetup.buildFontListFromConfiguration(cfg);
+        if (this.fontList == null) {
+            this.fontList = cfgFonts;
+        } else {
+            this.fontList.addAll(cfgFonts);
+        }
     }
 
     /**
