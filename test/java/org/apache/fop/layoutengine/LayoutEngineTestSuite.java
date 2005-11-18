@@ -76,52 +76,55 @@ public class LayoutEngineTestSuite {
     
     public static String[] readDisabledTestcases(File f) throws IOException {
         List lines = new java.util.ArrayList();
-        Source stylesheet = new StreamSource(new File("test/layoutengine/disabled-testcase2filename.xsl"));
+        Source stylesheet = new StreamSource(
+                new File("test/layoutengine/disabled-testcase2filename.xsl"));
         Source source = new StreamSource(f);
         Result result = new SAXResult(new FilenameHandler(lines));
         try {
-            Transformer transformer = TransformerFactory.newInstance().newTransformer(stylesheet);        
+            Transformer transformer = TransformerFactory.newInstance().newTransformer(stylesheet);
             transformer.transform(source, result);
-        }
-        catch( TransformerConfigurationException tce ) {
-            throw new RuntimeException(tce);
-        }
-        catch( TransformerException te ) {
-            throw new RuntimeException(te);
+        } catch (TransformerConfigurationException tce) {
+            throw new RuntimeException(tce.getMessage());
+        } catch (TransformerException te) {
+            throw new RuntimeException(te.getMessage());
         }
         return (String[])lines.toArray(new String[lines.size()]);
     }
     
     private static class FilenameHandler extends DefaultHandler {
         private StringBuffer buffer = new StringBuffer(128);
-        private boolean readingFilename =false;
+        private boolean readingFilename = false;
         private List filenames;
 
         public FilenameHandler(List filenames) {
             this.filenames = filenames;
         }
 
-        public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
-            if (qName!=null && qName.equals("file")) {
+        public void startElement(String namespaceURI, String localName, String qName, 
+                Attributes atts) throws SAXException {
+            if (qName != null && qName.equals("file")) {
                 buffer.setLength(0);
                 readingFilename = true;
             } else {
-                throw new RuntimeException("Unexpected element while reading disabled testcase file names: "+qName);
+                throw new RuntimeException(
+                        "Unexpected element while reading disabled testcase file names: " + qName);
             }
         }
 
-        public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
-            if (qName!=null && qName.equals("file")) {
+        public void endElement(String namespaceURI, String localName, String qName) 
+                    throws SAXException {
+            if (qName != null && qName.equals("file")) {
                 readingFilename = false;
                 filenames.add(buffer.toString());
             } else {
-                throw new RuntimeException("Unexpected element while reading disabled testcase file names: "+qName);
+                throw new RuntimeException(
+                        "Unexpected element while reading disabled testcase file names: " + qName);
             }
         }
 
         public void characters(char[] ch, int start, int length) throws SAXException {
             if (readingFilename) {
-                buffer.append(ch,start,length);
+                buffer.append(ch, start, length);
             }
         }
     }
@@ -188,7 +191,8 @@ public class LayoutEngineTestSuite {
                 final LayoutEngineTester tester, final File f) {
         suite.addTest(new LayoutEngineTestCase(f.getName()) {
             public void runTest() throws Exception {
-                org.apache.commons.logging.LogFactory.getLog(this.getClass()).info("Starting " + f.getName());
+                org.apache.commons.logging.LogFactory.getLog(
+                        this.getClass()).info("Starting " + f.getName());
                 prepare(tester, f);
                 testMain();
             }
