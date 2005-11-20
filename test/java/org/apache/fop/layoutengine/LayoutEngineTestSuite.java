@@ -63,17 +63,6 @@ public class LayoutEngineTestSuite {
         DebugHelper.registerStandardElementListObservers();
     }
     
-    public static String[] readLinesFromFile(File f) throws IOException {
-        List lines = new java.util.ArrayList();
-        Reader reader = new FileReader(f);
-        BufferedReader br = new BufferedReader(reader);
-        String line;
-        while ((line = br.readLine()) != null) {
-            lines.add(line);
-        }
-        return (String[])lines.toArray(new String[lines.size()]);
-    }
-    
     public static String[] readDisabledTestcases(File f) throws IOException {
         List lines = new java.util.ArrayList();
         Source stylesheet = new StreamSource(
@@ -133,7 +122,6 @@ public class LayoutEngineTestSuite {
         String disabled = System.getProperty("fop.layoutengine.disabled");
         if (disabled != null && disabled.length() > 0) {
             filter = new AndFileFilter(new NotFileFilter(
-//                           new NameFileFilter(readLinesFromFile(new File(disabled)))),
                            new NameFileFilter(readDisabledTestcases(new File(disabled)))),
                     filter);
         }
