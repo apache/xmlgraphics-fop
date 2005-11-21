@@ -1074,11 +1074,9 @@ NOTE:
     <copy todir="${dist.bin.result.dir}/docs">
       <fileset dir="${build.dir}/site"/>
     </copy>
-    <!--
     <copy todir="${dist.bin.result.dir}/javadocs">
       <fileset dir="${build.javadocs.dir}"/>
     </copy>
-    -->
     <mkdir dir="${dist.bin.result.dir}/build"/>
     <copy todir="${dist.bin.result.dir}/build" file="build/fop.jar"/>
     <chmod file="${dist.bin.result.dir}/fop" perm="ugo+rx"/>
@@ -1105,11 +1103,6 @@ NOTE:
     <copy todir="${dist.src.result.dir}">
       <fileset refid="dist.src"/>
     </copy>
-    <!--copy todir="${dist.src.result.dir}/javadocs">
-      <fileset dir="${build.javadocs.dir}"/>
-    </copy-->
-    <!--mkdir dir="${dist.src.result.dir}/build"/>
-    <copy todir="${dist.src.result.dir}/build" file="build/fop.jar"/-->
     <chmod file="${dist.src.result.dir}/fop" perm="ugo+rx"/>
 
     <zip zipfile="${name}-${version}-src.zip" basedir="${dist.src.dir}" includes="**"/>
