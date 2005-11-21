@@ -218,6 +218,11 @@ public class Block extends FObjMixed {
         return breakBefore;
     }
 
+    /** @return the "hyphenation-ladder-count" property.  */
+    public Numeric getHyphenationLadderCount() {
+        return hyphenationLadderCount;
+    }
+
     /** @return the "keep-with-next" property.  */
     public KeepProperty getKeepWithNext() {
         return keepWithNext;

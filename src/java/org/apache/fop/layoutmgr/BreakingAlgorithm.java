@@ -59,6 +59,9 @@ public abstract class BreakingAlgorithm {
     protected int repeatedFlaggedDemerit = 50;
     // demerit for consecutive lines belonging to incompatible fitness classes 
     protected int incompatibleFitnessDemerit = 50;
+    // maximum number of consecutive lines ending with a flagged penalty
+    // only a value >= 1 is a significant limit  
+    protected int maxFlaggedPenaltiesCount;
 
     /**
      * The threshold for considering breaks to be acceptable.
@@ -130,12 +133,14 @@ public abstract class BreakingAlgorithm {
     private boolean partOverflowRecoveryActivated = true;
 
     public BreakingAlgorithm(int align, int alignLast,
-                             boolean first, boolean partOverflowRecovery) {
+                             boolean first, boolean partOverflowRecovery,
+                             int maxFlagCount) {
         alignment = align;
         alignmentLast = alignLast;
         bFirst = first;
         this.partOverflowRecoveryActivated = partOverflowRecovery;
         this.best = new BestRecords();
+        maxFlaggedPenaltiesCount = maxFlagCount;
     }
 
 
@@ -760,6 +765,30 @@ public abstract class BreakingAlgorithm {
             && ((KnuthPenalty) getElement(activeNode.position)).isFlagged()) {
             // add demerit for consecutive breaks at flagged penalties
             demerits += repeatedFlaggedDemerit;
+            // there are at least two consecutive lines ending with a flagged penalty;
+            // check if the previous line end with a flagged penalty too, 
+            // and if this situation is allowed
+            int flaggedPenaltiesCount = 2;
+            for (KnuthNode prevNode = activeNode.previous;
+                 prevNode != null && flaggedPenaltiesCount <= maxFlaggedPenaltiesCount;
+                 prevNode = prevNode.previous) {
+                KnuthElement prevElement = getElement(prevNode.position);
+                if (prevElement.isPenalty()
+                    && ((KnuthPenalty) prevElement).isFlagged()) {
+                    // the previous line ends with a flagged penalty too
+                    flaggedPenaltiesCount ++;
+                } else {
+                    // the previous line does not end with a flagged penalty,
+                    // exit the loop
+                    break;
+                }
+            }
+            if (maxFlaggedPenaltiesCount >= 1
+                && flaggedPenaltiesCount > maxFlaggedPenaltiesCount) {
+                // add infinite demerits, so this break will not be chosen
+                // unless there isn't any alternative break
+                demerits += BestRecords.INFINITE_DEMERITS;
+            }
         }
         if (Math.abs(fitnessClass - activeNode.fitness) > 1) {
             // add demerit for consecutive breaks

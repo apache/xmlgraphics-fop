@@ -19,6 +19,7 @@
 package org.apache.fop.layoutmgr.inline;
 
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.properties.CommonHyphenation;
@@ -52,8 +53,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import org.apache.fop.area.Trait;
 import org.apache.fop.fonts.Font;
-import org.apache.fop.layoutmgr.BreakingAlgorithm.KnuthNode;
-import org.apache.fop.layoutmgr.inline.InlineStackingLayoutManager.StackingIter;
 
 import org.apache.fop.traits.MinOptMax;
 
@@ -79,6 +78,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         textIndent = fobj.getTextIndent();
         lastLineEndIndent = fobj.getLastLineEndIndent();
         hyphenationProperties = fobj.getCommonHyphenation();
+        hyphenationLadderCount = fobj.getHyphenationLadderCount();
         wrapOption = fobj.getWrapOption();
         //
         effectiveAlignment = getEffectiveAlignment(textAlignment, textAlignmentLast);
@@ -140,6 +140,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     private Length lastLineEndIndent;
     private int iIndents = 0;
     private CommonHyphenation hyphenationProperties;
+    private Numeric hyphenationLadderCount;
     private int wrapOption = EN_WRAP;
     //private LayoutProps layoutProps;
 
@@ -385,8 +386,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                                       int textAlign, int textAlignLast,
                                       int indent, int fillerWidth,
                                       int lh, int ld, int fl, boolean first,
-                                      LineLayoutManager llm) {
-            super(textAlign, textAlignLast, first, false);
+                                      int maxFlagCount, LineLayoutManager llm) {
+            super(textAlign, textAlignLast, first, false, maxFlagCount);
             pageAlignment = pageAlign;
             textIndent = indent;
             fillerMinWidth = fillerWidth;
@@ -1045,6 +1046,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                                         textIndent.getValue(this), currPar.lineFiller.opt,
                                         lineHeight.getValue(this), lead, follow,
                                         (knuthParagraphs.indexOf(currPar) == 0),
+                                        hyphenationLadderCount.getEnum() == EN_NO_LIMIT ?
+                                                0 : hyphenationLadderCount.getValue(),
                                         this);
    
         if (hyphenationProperties.hyphenate == EN_TRUE) {
