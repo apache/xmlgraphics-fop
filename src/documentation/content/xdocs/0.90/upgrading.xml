@@ -40,6 +40,9 @@
           The new API is not stable, yet. Please be aware that further changes might still occur!
         </li>
         <li>
+          The configuration file format has changed (see the <a href="configuration.html">Configuration page</a> for details).
+        </li>
+        <li>
           <p>
             The new code is much more strict about the interpretation of the XSL-FO 1.0 specification.
             Things that worked fine in version 0.20.5 might start to produce warnings or even errors
