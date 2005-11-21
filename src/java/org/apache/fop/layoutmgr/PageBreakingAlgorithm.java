@@ -68,7 +68,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                                  int alignment, int alignmentLast,
                                  MinOptMax footnoteSeparatorLength,
                                  boolean partOverflowRecovery) {
-        super(alignment, alignmentLast, true, partOverflowRecovery);
+        super(alignment, alignmentLast, true, partOverflowRecovery, 0);
         this.topLevelLM = topLevelLM;
         this.pageViewportProvider = pageViewportProvider;
         best = new BestPageRecords();
