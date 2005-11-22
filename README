@@ -41,7 +41,7 @@ into a PDF document, certain other output formats or allows you to preview it
 directly on screen.
 
 Apache FOP is part of Apache's XML Graphics project. The homepage of Apache 
-FOP is http://xml.apache.org/fop/.
+FOP is http://xmlgraphics.apache.org/fop/.
     
     
 Where to get help?
@@ -55,7 +55,7 @@ to fop-users-subscribe@xmlgraphics.apache.org.
 
 Before you post any questions, please have a look at the FAQ at 
 http://xmlgraphics.apache.org/fop/faq.html and FO help page at 
-http://xml.apache.org/fop/fo.html.
+http://xmlgraphics.apache.org/fop/fo.html.
 
 Please report bugs to bugzilla at http://issues.apache.org/bugzilla/
 
