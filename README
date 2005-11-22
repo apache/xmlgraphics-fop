@@ -147,3 +147,4 @@ Known issues:
     - Omitting fo:table-column or having fo:table-column without a column-width 
       and attempting to create columns implicitly from the first
       table row is not implemented, yet (Bugzilla #35656).
+    - Leaders with the "rule" pattern don't work for PostScript output.

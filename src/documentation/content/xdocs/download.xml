@@ -91,7 +91,7 @@
       <p/>
       <table>
         <tr>
-          <th colspan="2">Maintenance Branch</th>
+          <th colspan="2">Old Maintenance Branch (for 0.20.5)</th>
         </tr>
         <tr>
           <td>Repository URL</td>
@@ -106,6 +106,25 @@
           <td>
             <link href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/branches/fop-0_20_2-maintain/">
               <code>http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/branches/fop-0_20_2-maintain/</code>
+            </link>
+          </td>
+        </tr>
+        <tr>
+          <th colspan="2">Latest Release Branch</th>
+        </tr>
+        <tr>
+          <td>Repository URL</td>
+          <td>
+            <link href="http://svn.apache.org/repos/asf/xmlgraphics/fop/branches/fop-0_90/">
+              <code>http://svn.apache.org/repos/asf/xmlgraphics/fop/branches/fop-0_90/</code>
+            </link>
+          </td>
+        </tr>
+        <tr>
+          <td>Web view</td>
+          <td>
+            <link href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/branches/fop-0_90/">
+              <code>http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/branches/fop-0_90/</code>
             </link>
           </td>
         </tr>
