@@ -75,5 +75,22 @@ chrisg@www.apache.org:/www/www.apache.org/dist/xml/fop/</code></li>
         <li>Stefan Bodewig's <jump href="http://cvs.apache.org/~bodewig/mirror.html">Making your Downloads Mirrorable</jump></li>
       </ul>
     </section>
+    <section id="announcements">
+      <title>Announcing the release</title>
+      <p>Here's a collected list of places where to announce new FOP releases:</p>
+      <ul>
+        <li>fop-dev@xmlgraphics.apache.org</li>
+        <li>fop-users@xmlgraphics.apache.org</li>
+        <li>general@xmlgraphics.apache.org</li>
+        <li>general@xml.apache.org</li>
+        <li>announce@apache.org</li>
+        <li>XSL-FO@yahoogroups.com</li>
+        <li>www-xsl-fo@w3.org</li>
+        <li>http://xslfo-zone.com/news/index.jsp</li>
+        <li>http://www.w3.org/Style/XSL/</li>
+        <li>http://freshmeat.net/projects/fop/</li>
+        <li>any others?</li>
+      </ul>
+    </section>
   </body>
 </document>
