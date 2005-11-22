@@ -105,6 +105,7 @@
     element lists from list-item-label and list-item-body. The 
     footnotes contained in the KnuthBlockBoxes are not propagated to 
     the combined element list.</description>
+    <reference>http://issues.apache.org/bugzilla/show_bug.cgi?id=37579</reference>
   </testcase>
   <testcase>
     <name>footnote in tables</name>
@@ -113,6 +114,7 @@
     element lists from the individual table-cells. The footnotes 
     contained in the KnuthBlockBoxes are not propagated to the combined 
     element list.</description>
+    <reference>http://issues.apache.org/bugzilla/show_bug.cgi?id=37579</reference>
   </testcase>
   <testcase>
     <name>inline block keep-together</name>
