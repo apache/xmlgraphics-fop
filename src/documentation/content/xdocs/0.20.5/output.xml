@@ -98,7 +98,11 @@ guaranteed to be available in all PDF viewer applications."</em>
     <p>FOP does not currently support several desirable PDF features: document properties (title, author, etc.), and watermarks. One workaround is to use Adobe Acrobat (the full version, not the Reader) to process the file manually or with scripting that it supports.</p>
     <p>Another popular post-processing tool is <link href="http://www.lowagie.com/iText">iText</link>, which has tools for adding security features, document properties, watermarks, and many other features to PDF files.
     </p>
-    <warning>Caveat: iText swallows PDF bookmarks.</warning>
+    <warning>
+      Caveat: iText may swallow PDF bookmarks. But 
+      <link href="http://issues.apache.org/bugzilla/show_bug.cgi?id=37589">Jens Stavnstrup tells us</link>
+      that this doesn't happen if you use iText's PDFStamper.
+    </warning>
     <p>Here is some sample code that uses iText to encrypt a FOP-generated PDF. (Note that FOP now supports <link href="pdfencryption.html">PDF encryption</link>. However the principles for using iText for other PDF features are similar.)</p>
     <source><![CDATA[public static void main(String args[]) {
   try {

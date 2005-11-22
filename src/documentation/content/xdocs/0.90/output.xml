@@ -111,7 +111,11 @@ out = proc.getOutputStream();]]></source>
           which has tools for adding security features, document properties, watermarks, and many 
           other features to PDF files.
         </p>
-        <warning>Caveat: iText may swallow PDF bookmarks.</warning>
+        <warning>
+          Caveat: iText may swallow PDF bookmarks. But 
+          <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=37589">Jens Stavnstrup tells us</a>
+          that this doesn't happen if you use iText's PDFStamper.
+        </warning>
         <p>
           Here is some sample code that uses iText to encrypt a FOP-generated PDF. (Note that FOP now 
           supports <a href="pdfencryption.html">PDF encryption</a>. However the principles for using 
