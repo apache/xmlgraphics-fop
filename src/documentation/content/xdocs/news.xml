@@ -25,6 +25,20 @@
   </header>
   <body>
     <section>
+      <title>22 November 2005 - Apache FOP 0.90 alpha 1 released</title>
+      <p>
+        The Apache FOP team is proud to present to you the largely rewritten 
+        codebase which is finally in a state where you can start to use it. 
+        It has taken over three years to get this far and over two years 
+        without a new release from the FOP project.
+      </p>
+      <p>
+        Please see also the 
+        <link href="http://mail-archives.apache.org/mod_mbox/xmlgraphics-fop-users/200511.mbox/%3c20051123002157.0EB0.JEREMIAS@apache.org%3e">announcement</link>
+        and the <link href="relnotes.html#FOP+0.90+alpha+1">release notes</link>.
+      </p>
+    </section>
+    <section>
       <title>8 September 2005 - New Committer</title>
       <p>Welcome Manuel Mall!</p>
     </section>
