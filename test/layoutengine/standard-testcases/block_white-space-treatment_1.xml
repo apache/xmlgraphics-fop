@@ -19,7 +19,7 @@
   <info>
     <p>
       This test checks white space handling for white-space-treatment
-      with white-spcae-collapse="true".
+      with white-space-collapse="true".
       The test currently fails because white space around formatter generated
       linebreaks is not removed correctly.
     </p>
