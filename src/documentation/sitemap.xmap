@@ -50,5 +50,27 @@
       </map:match>
 
     </map:pipeline>
+    
+    <!-- This is used by xinclude statements in knownissues.xml -->
+    <map:pipeline internal-only="true">
+      <map:match type="regexp" pattern="^(.*?)([^/]*)knownissues-raw-layoutengine.xml$">
+        <map:generate type="file" src="../../test/layoutengine/disabled-testcases.xml"/>
+        <map:transform src="resources/stylesheets/disabled-testcases2document.xsl" >
+          <map:parameter name="bugtracking-url" value="{defaults:bugtracking-url}"/>
+          <map:parameter name="path" value="{1}{2}"/>
+        </map:transform>
+        <map:serialize type="xml-document"/>
+      </map:match>
+      <map:match type="regexp" pattern="^(.*?)([^/]*)knownissues-raw-fotree.xml$">
+        <map:generate type="file" src="../../test/fotree/disabled-testcases.xml"/>
+        <map:transform src="resources/stylesheets/disabled-testcases2document.xsl" >
+          <map:parameter name="bugtracking-url" value="{defaults:bugtracking-url}"/>
+          <map:parameter name="path" value="{1}{2}"/>
+        </map:transform>
+        <map:serialize type="xml-document"/>
+      </map:match>
+    
+    </map:pipeline>
+     
   </map:pipelines>
 </map:sitemap>
